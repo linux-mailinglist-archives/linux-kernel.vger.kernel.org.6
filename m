@@ -1,157 +1,180 @@
-Return-Path: <linux-kernel+bounces-368817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632A09A1533
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568D59A1528
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A91CB2462F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:54:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B898281EE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1911D6DC4;
-	Wed, 16 Oct 2024 21:52:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E261D3633;
+	Wed, 16 Oct 2024 21:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gXQS21vQ"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEFC1D2F6D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2C81D278B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729115555; cv=none; b=Zr4it6rQnlz3BqZPQrPV2a1nO4wTB9O8NOSmktv2ZQV3w8hUy/xPl8RhvEYTLQJY9lyCExmI1NSzwBcY8qMGeDJ51TJoyF7/ma+1us8NYfaz1HN+Q9hAMkbvFKVAkjgil7pARSf0B3XZ6siogi9RHV7yGo0vkEjTRSJB+38daNU=
+	t=1729115543; cv=none; b=J5mCpeybou9o+A6yvmsqHZCD99oehlJEJWyu9DkSI/DAftda5+3Thc/Sfaxl+kqtOhAl9wobDPjX9jAm/h7BfB5StLWxYvqH35v5A6O2SOmIzKmNTJJi7Sdu4KJkGwGBp51DwFNL5fG3V0jDIoq1Pn9J1cwlumsixpSQfAWl14s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729115555; c=relaxed/simple;
-	bh=MLw/OjJP6cNXgUpE4sPWYT6eX3+hx3P7ZwIqHofemPU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LpskmcSbEjA0ByUzBiNmyCh62lR4Flw1fRXyi2ElbwTu6gB71fjJftle2TYzymyQPzYnTsHd8o1Bu58QXG/YCJHpReE2fJEl6fI650BYJuQfGvp1XloQl70jn47xb1+ma3nb+KCg/eSlbAOoaUUwcyIwP0xRGA1Odn81fd9s0Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1BwU-0003SM-Gj
-	for linux-kernel@vger.kernel.org; Wed, 16 Oct 2024 23:52:30 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1BwQ-002OVB-Qb
-	for linux-kernel@vger.kernel.org; Wed, 16 Oct 2024 23:52:26 +0200
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 70FB7354932
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:52:26 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 1449935489A;
-	Wed, 16 Oct 2024 21:52:21 +0000 (UTC)
-Received: from [172.20.34.65] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 2489b82c;
-	Wed, 16 Oct 2024 21:52:19 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Wed, 16 Oct 2024 23:52:01 +0200
-Subject: [PATCH net-next 13/13] net: fec: fec_enet_rx_queue(): factor out
- VLAN handling into separate function fec_enet_rx_vlan()
+	s=arc-20240116; t=1729115543; c=relaxed/simple;
+	bh=Y3muvgVmJCqAAU17DG/5wUwI8+9xq+M0EWweOsJUB+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q5eOzbHaW8NH+hWQmusc1vf8Gno2SEI7bHcwMGcSSHHnrjNszih877Q/73oYthlZvMJM0lYgjUZ6chXN1SAsCHHWR115Y1p2N6CE0FISjCulzv+5MKfpBHEYPqz3hSghqrhcIdW0E4lKrerYm/K9dShRRJ1lgQHEsv66eC7E9Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gXQS21vQ; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-718065d6364so145189a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:52:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729115541; x=1729720341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a5DTUB5GnpyaeFBfW4aLHPqs9cBt4Whkge9o9U0fQHI=;
+        b=gXQS21vQxIRExt1imIMIKMmo2Qxb/LsOcWSRfFqE9w+7sIezaSUj2vDl8ysae5t9sa
+         PthGnF8/fLavEHkmDroO+Vr+IMSOJ8S9ymFvmy9q8HNxXVh73Hpl+FTk4BXEohKb/v+T
+         rsjnvOzHjEdK7JDRv7BtX8vdjt7lnsmfE9Wus=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729115541; x=1729720341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a5DTUB5GnpyaeFBfW4aLHPqs9cBt4Whkge9o9U0fQHI=;
+        b=DUxXVzIRXh+nyA6/WACEzcuQjBiCq38z3ln3MK56HnY9JRlpQ1YQjMwivlgqxVABfG
+         FdC2usa5gI2P46TOzjk8jFsM2Qpeimpgf58kFxFZmHDs4bxwvDlcS/g+dWWviZq40X3c
+         vvxT84bo4sChDzk9rudh0XfoWJm76BZSTUxO0Udi29zK9th3Be9UvBvZY0uGLjcUitBV
+         yGiLoGuuaoCrEuNQaFzj5rHL1Open4WT7OssjKjF3SFTncMOJYYsU+J/AOaDMonptq6/
+         R8xz/spqBsm4+pCB/yl3l0mof4cdRfD+HY0gL0n9h3prw72TRlQLji04nH2DJFKqnRms
+         N+dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUByEjTz+NAtdCjssMzvk6pZEyqOZEPAZoZH+0ao0/9ARtyAtti9kSQB/rwRty9X8hrRCKFNpawMIdudIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhFDGfXUgJAdApi9MpVO3lIde26bKVPQXfbj6ApmnhtQlx/2Q4
+	PeZPEEHpR4+foQLPjFAy/KqXbBjje4354/vvWrigu90D4eu0K44iZ3rzzZz4MzOZWoQyNJIt9wn
+	93rT/GjLNjAGszO4qI5feehiV9Vac0/OJhjd2
+X-Google-Smtp-Source: AGHT+IE7RS2K0RmzSXETL5iGnY3q7rCF1rjKdi3zRgyFiH16uN5b1c6ruvNbCcnCiAsBXO8EUw8a76+9j/5br4+3Y6E=
+X-Received: by 2002:a05:6830:6013:b0:718:678:56e6 with SMTP id
+ 46e09a7af769-718067858a3mr3325173a34.3.1729115540911; Wed, 16 Oct 2024
+ 14:52:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-fec-cleanups-v1-13-de783bd15e6a@pengutronix.de>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
-In-Reply-To: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
-To: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
- Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
-Cc: imx@lists.linux.dev, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2282; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=MLw/OjJP6cNXgUpE4sPWYT6eX3+hx3P7ZwIqHofemPU=;
- b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnEDWRgqGybH94bTPvg7nSPQVDwSx23chmG6x6L
- rSto0ZM+8CJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZxA1kQAKCRAoOKI+ei28
- b1KIB/0Qcyrj8IXmsPuKwCaj7/dfZALaen5kPt+GX0j437FFoKpmt/VE7xkLdO5pLY2u/4QxnpZ
- tEFXCn3jALofRZxBK1ghVuoj6BlbRIcJ7/KCfcz1G8s/+wLBwQlycxzyGcqhP4X8b47Ifje5GX2
- tl0Tl2fFCtoN2yOQBaM6hEW2zKFtJWdSLN17HpBgKFyOgulmUgdJDZs/7Ipcc+LHlICtX7XLPlE
- Kbpo0vg6jkYkM3EpVXXJt9vwQfapOEiTpSFGgpErUAItNwGTenEheKQoRQxIgCJDQ4DjScAOT9l
- hvm/L2UmgfqSEJ6JaKbeEfEeV/1rzvjOBQH/cq94alqczwjL
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
+In-Reply-To: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Wed, 16 Oct 2024 17:52:10 -0400
+Message-ID: <CAEXTbpfSJJF7W6ga9R5ns5naHgK0r=smCierau5fbLAztkjVwA@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] drm/bridge: it6505: fix HDCP CTS fail items and
+ add MCCS support
+To: Hermes.wu@ite.com.tw
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Kenneth Hung <Kenneth.hung@ite.com.tw>, 
+	Pet Weng <Pet.Weng@ite.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In order to clean up of the VLAN handling, factor out the VLAN
-handling into separate function fec_enet_rx_vlan().
+Hi Hermes,
 
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/ethernet/freescale/fec_main.c | 32 ++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+On Wed, Oct 16, 2024 at 3:54=E2=80=AFAM Hermes Wu via B4 Relay
+<devnull+Hermes.wu.ite.com.tw@kernel.org> wrote:
+>
+> This is a v6 patch-set.
+>
+> There are lots of failure items while running HDCP CTS using UNIGRAF DPR-=
+100.
+> In Order to fix those failures, HDCP flow needs to be changed.
+>
+> The DisplayPort AUX protocol supports I2C transport.
+> In Order to support MCCS via the aux channel, the aux-i2c operation is ad=
+ded.
+>
+> v5->v6:
+>         -keep the commit message wrapped at 72-75 chars.
+>         -[10/10] fix return variable being used without being initialized
+>
+> v4->v5:
+>         -add more messages for changes.
+>         -[2/10] modified AUX transfer data size judgment.
+>                 change for-loop to do-while.
+>         -[7/10] change for-loop to do-while.
+>         -[9/10] change wait timer with timer_after()
+>
+>         links:
+>         https://lore.kernel.org/all/20240926074755.22176-4-Hermes.Wu@ite.=
+com.tw/
+>         https://lore.kernel.org/all/20240926075134.22394-1-Hermes.Wu@ite.=
+com.tw/
+>
+> v3->v4:
+>         -split changes  into patches.
+>
+> v2->v3:
+>         -split aux read  KSV function to a patch.
+>         -[1/3] new in v3
+>         -[2/3] add description of patch
+>
+> v1->v2:
+>         - ignored.
+>
+> Hermes Wu (10):
+>   drm/bridge: it6505: Change definition of AUX_FIFO_MAX_SIZE
+>   drm/bridge: it6505: improve AUX operation for edid read
+>   drm/bridge: it6505: add AUX operation for HDCP KSV list read
+>   drm/bridge: it6505: Change definition MAX_HDCP_DOWN_STREAM_COUNT
+>   drm/bridge: it6505: fix HDCP Bstatus check
+>   drm/bridge: it6505: fix HDCP encryption when R0 ready
+>   drm/bridge: it6505: fix HDCP CTS KSV list read with UNIGRAF DPR-100.
+>   drm/bridge: it6505: fix HDCP CTS compare V matching
+>   drm/bridge: it6505: fix HDCP CTS KSV list wait timer
+>   drm/bridge: it6505: add I2C functionality on AUX
+>
+> Change-Id: Iad0c056d72abf2655081357cf40c3b0d3df916b5
+> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+> ---
+> Hermes Wu (10):
+>       drm/bridge: it6505: Change definition of AUX_FIFO_MAX_SIZE
+>       drm/bridge: it6505: improve AUX operation for edid read
+>       drm/bridge: it6505: add AUX operation for HDCP KSV list read
+>       drm/bridge: it6505: Change definition MAX_HDCP_DOWN_STREAM_COUNT
+>       drm/bridge: it6505: fix HDCP Bstatus check
+>       drm/bridge: it6505: fix HDCP encryption when R0 ready
+>       drm/bridge: it6505: fix HDCP CTS KSV list read with UNIGRAF DPR-100=
+.
+>       drm/bridge: it6505: fix HDCP CTS compare V matching
+>       drm/bridge: it6505: fix HDCP CTS KSV list wait timer
+>       drm/bridge: it6505: add I2C functionality on AUX
+>
+>  drivers/gpu/drm/bridge/ite-it6505.c | 334 ++++++++++++++++++++++++++++++=
+------
+>  1 file changed, 277 insertions(+), 57 deletions(-)
+> ---
+> base-commit: b8128f7815ff135f0333c1b46dcdf1543c41b860
+> change-id: 20241015-upstream-v6-9f4b015fecf7
+>
+> Best regards,
+> --
+> Hermes Wu <Hermes.wu@ite.com.tw>
+>
+>
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index d9415c7c16cea3fc3d91e198c21af9fe9e21747e..e14000ba85586b9cd73151e62924c3b4597bb580 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1672,6 +1672,22 @@ fec_enet_run_xdp(struct fec_enet_private *fep, struct bpf_prog *prog,
- 	return ret;
- }
- 
-+static void fec_enet_rx_vlan(struct net_device *ndev, struct sk_buff *skb)
-+{
-+	struct vlan_ethhdr *vlan_header = skb_vlan_eth_hdr(skb);
-+
-+	if (ndev->features & NETIF_F_HW_VLAN_CTAG_RX) {
-+		/* Push and remove the vlan tag */
-+		u16 vlan_tag = ntohs(vlan_header->h_vlan_TCI);
-+
-+		memmove(skb->data + VLAN_HLEN, skb->data, ETH_ALEN * 2);
-+		skb_pull(skb, VLAN_HLEN);
-+		__vlan_hwaccel_put_tag(skb,
-+				       htons(ETH_P_8021Q),
-+				       vlan_tag);
-+	}
-+}
-+
- /* During a receive, the bd_rx.cur points to the current incoming buffer.
-  * When we update through the ring, if the next incoming buffer has
-  * not been given to the system, we just set the empty indicator,
-@@ -1812,19 +1828,9 @@ fec_enet_rx_queue(struct net_device *ndev, u16 queue_id, int budget)
- 			ebdp = (struct bufdesc_ex *)bdp;
- 
- 		/* If this is a VLAN packet remove the VLAN Tag */
--		if ((ndev->features & NETIF_F_HW_VLAN_CTAG_RX) &&
--		    fep->bufdesc_ex &&
--		    (ebdp->cbd_esc & cpu_to_fec32(BD_ENET_RX_VLAN))) {
--			/* Push and remove the vlan tag */
--			struct vlan_ethhdr *vlan_header = skb_vlan_eth_hdr(skb);
--			u16 vlan_tag = ntohs(vlan_header->h_vlan_TCI);
--
--			memmove(skb->data + VLAN_HLEN, skb->data, ETH_ALEN * 2);
--			skb_pull(skb, VLAN_HLEN);
--			__vlan_hwaccel_put_tag(skb,
--					       htons(ETH_P_8021Q),
--					       vlan_tag);
--		}
-+		if (fep->bufdesc_ex &&
-+		    (ebdp->cbd_esc & cpu_to_fec32(BD_ENET_RX_VLAN)))
-+			fec_enet_rx_vlan(ndev, skb);
- 
- 		skb->protocol = eth_type_trans(skb, ndev);
- 
+I'm not sure if this requires a re-spin, but you are supposed to
+collect the reviewed-by tags you received when you send out a new
+version. i.e., put the "Reviewed-by:" lines you received before your
+"Signed-off-by:" line.
 
--- 
-2.45.2
-
-
+Regards,
+Pin-yen
 
