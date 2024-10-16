@@ -1,58 +1,62 @@
-Return-Path: <linux-kernel+bounces-368491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1739A1066
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D179A1068
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FF81B2136C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751921C21619
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AB9212EE5;
-	Wed, 16 Oct 2024 17:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617F72141A7;
+	Wed, 16 Oct 2024 17:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7C/l4ES"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8gpyoy9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70287212627;
-	Wed, 16 Oct 2024 17:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF102139A4;
+	Wed, 16 Oct 2024 17:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729098763; cv=none; b=G7+mL3mGiFnnvHLAyQiU+pTHGuiR2n6wu9Tm6K8wAEd1hySjkXhdnDgTFkKrimmHQTTI382LOSDRUMM7Zx2Ljx+tmfQmKv5oLw6ApvNeVAyqckP8Bqyi7lj8xD2dDfp+W9BrGRCglwOWVeWUOH43BtGZFxQJj8Tvn6rPr1KWF6g=
+	t=1729098764; cv=none; b=lkeEayji+cw3NyK3TdkakvA/1ZeLbiebD7VOq9Hceg74VHWvQ0b9eKp8VjOHFW8+GMz6KpD5ZxSt5MJcMQhoBvHSTJGqCVi5LO0r0fRnBBQ4WtX0+9PHHb6DRKWxWRJc3p7s2vDxl++B81ltT15WsqHrlzjb9pjyGtr223d0jcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729098763; c=relaxed/simple;
-	bh=JsUthygbYceZEJx3q7rytEwLvBuAMfRzz12VG6hZAww=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DrHWyfZb4fv5kfEOQYg4uLr/6lzse+m2mc9EaUlsMq4f7oGfZ2OU1hc+E5IFKxUrOPacpOmqpxwws7cTcZbFz7pI7nj1kH0TTo9vqEnP/TchjSBoRWTYV3quoyMZUgGynUhnUgdhj0fwJwxTkZSjzZR6K5xS1/cpaBV8+HYdvD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7C/l4ES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE93C4CED2;
-	Wed, 16 Oct 2024 17:12:42 +0000 (UTC)
+	s=arc-20240116; t=1729098764; c=relaxed/simple;
+	bh=+aXZrt6/RTi+SPWcF89FLkozplJ0sSJZth1HAEjojNE=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rutAa6pVPiH4aO05uUT90725W8wR69zHjvVxlbwgDc35gJbq3vmBld0Ab50w41ai7UqZl6tlf+7X1R3BIpgshe0AccxM9EVujHKNQVGrJUaP4VAxEThGvmWiUb389Q/A65GP39Mi9sdZGC2Y//9LY7ckBC/YD0xv4XhiVTo2kAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8gpyoy9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54C2C4CECF;
+	Wed, 16 Oct 2024 17:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729098763;
-	bh=JsUthygbYceZEJx3q7rytEwLvBuAMfRzz12VG6hZAww=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=g7C/l4ESdupMl7BNZRYjl87S9vqDDZrbsIJ/XvlRHNEP3sV9NbP+bSWQmWMBfru8I
-	 7EIS6u/8QyNcBLCuuCTum+raP4JdaRxHVwdcg1fMKzx3PSmUj7OmyYAC4ZZtnaKNFo
-	 38vE2+zx12QxD/0XlGSWLqsDuXPWmn2eRnuRBwlddlhsJRaBMjVZxLnKbwuwp5jfLL
-	 7yqsYDYbaSXOVuGb1/9fjU38O+aRcFH/G/KJZOyfgL2QygJFqmxtq4KXTHnBsPTfew
-	 Ptfucb5nhMEA4skkRBJVUaCkew/HvsLVbztMjb4YKp6xWs77Z4ySYsXYZePfI/RT8y
-	 jAX7VjbGu/V6w==
+	s=k20201202; t=1729098764;
+	bh=+aXZrt6/RTi+SPWcF89FLkozplJ0sSJZth1HAEjojNE=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=X8gpyoy9fr8LUnIRMSj0XOYsrHwRSu3cXR8vEY5pslXbvPTiqcTBvR6TxF3zZK9Fj
+	 jRlQfFurLj+u4HtoKtcZ9GXso0em4jH/OmY/ti9jq8aKk9JNeGjZ4+hrBFUhTYuhy8
+	 w28wQM3P21XVCIaaOUwCMJXSxllaAmM0VAqMIRJLbg8F74rX3Hq8oZySQcol1f2HUB
+	 y3hK5/EaysXqjtV4jiTS85Fws1D82LkMsvqwwsbbd3GLpcoa58rPDbOSJTf2oJ05o7
+	 /YwWLySvgi5qRLVfbqo3d9wh1ymSY8T9IOT5LDvCI1trLU5jvf7IxtuMxwA4zKmLOV
+	 9FTmGVM52AbfA==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
- Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
- Ben Gainey <ben.gainey@arm.com>
-In-Reply-To: <20241009062250.730192-1-namhyung@kernel.org>
-References: <20241009062250.730192-1-namhyung@kernel.org>
-Subject: Re: [PATCH] perf evsel: Fix missing inherit + sample read check
-Message-Id: <172909876265.288721.7311517520691951723.b4-ty@kernel.org>
-Date: Wed, 16 Oct 2024 10:12:42 -0700
+ Besar Wicaksono <bwicaksono@nvidia.com>, 
+ James Clark <james.clark@linaro.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ "Liang, Kan" <kan.liang@linux.intel.com>, 
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+ Mike Leach <mike.leach@linaro.org>, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20241003185322.192357-1-leo.yan@arm.com>
+References: <20241003185322.192357-1-leo.yan@arm.com>
+Subject: Re: [PATCH v3 0/7] perf arm-spe: Refactor data source encoding
+Message-Id: <172909876374.288721.8485422607016756276.b4-ty@kernel.org>
+Date: Wed, 16 Oct 2024 10:12:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,13 +67,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Tue, 08 Oct 2024 23:22:50 -0700, Namhyung Kim wrote:
+On Thu, 03 Oct 2024 19:53:15 +0100, Leo Yan wrote:
 
-> It should not clear the inherit bit simply because the kernel doesn't
-> support the sample read with it.  IOW the inherit bit should be kept
-> when the sample read is not requested for the event.
+> As more Arm CPU variants (not only Neoverse CPUs) support data source
+> encoding, they share the same format for the data source packet.
 > 
+> To extend supporting these CPU variants for Arm SPE data source, this
+> series refactors the code. It converts the Neoverse specific naming to
+> the common naming, and then based on the MIDR stored in the metadata to
+> decide if the CPU follows up the common encoding format.
 > 
+> [...]
 
 Applied to perf-tools-next, thanks!
 
