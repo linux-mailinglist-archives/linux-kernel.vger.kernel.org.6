@@ -1,147 +1,222 @@
-Return-Path: <linux-kernel+bounces-367976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B971B9A08FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8D89A0909
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713C6283E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6303E284B5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6A4207A23;
-	Wed, 16 Oct 2024 12:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05602208203;
+	Wed, 16 Oct 2024 12:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3ZnN3EX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mcBrTKfn"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE53206059;
-	Wed, 16 Oct 2024 12:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23021207A00;
+	Wed, 16 Oct 2024 12:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729080244; cv=none; b=Yhoe0V+xPGekS1m5ceVPDYCTIpD667PDEyl5tkTPuhAOckbh/TcaDh5AWsgrQpcx9Ap/48hV6aAczYEkJl31KmLhaNAqSDaxMrGbW+MXwQhbIyPUuJuTrT9m/wF8pOBeZByDOgFLE9f46I27gH+p2R1SybwytMjrKveL+zwYWi4=
+	t=1729080503; cv=none; b=VccVFXblYvi4isA24gQ0c8Gp455aLEXdURhURxMYzfkmF6VZyKkXOu4S78/N4020BwE6km4gDITjzYXfnL905vDbOqNkfqYDGK7yF0rvRUZ/QLk5HQo9fBcN5iYglV7OYm6qUTw3YDk2ssmRVPQJOtkE0dJaWHS7znFVxqvTyRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729080244; c=relaxed/simple;
-	bh=JsKFcB8f/aLo1ZGyXuBIwNbuZC04BdMumuWwsvU+Bx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+uB+fvY4nekqSt48VhjVxVK0IahWf17iHEgV2hOTTMw+ur0chz8CHnkbtAt1C0LisFA36L/we0QLM9usqTS+xLDwfYBAZqd0vKuFQUgUtSRaXme4lj2Hj2UQMcj4sz8LFwLpl5v1ruohUiUwproFDYKq9a4924h5ZsYj3Tdqy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3ZnN3EX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9679C4CEC5;
-	Wed, 16 Oct 2024 12:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729080243;
-	bh=JsKFcB8f/aLo1ZGyXuBIwNbuZC04BdMumuWwsvU+Bx8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A3ZnN3EXczMdEAJFoIiX0I3SZBaYqk1DKrBdC6eygU5SHoVfAcyEaesaq+lVKhdmG
-	 MZTO3jHjJpDAhMzEeTNQHYvyOMhduLV6sNC1UuM0D8MM89WopWYM1O3GIiEFX3l37y
-	 4WFhdkiRrptLI3xtnK/v6r9MVm6IMn0vkvEFMEeZ7H6d5pJ3W/KR6+n4ch4HucPhh5
-	 fMSH/DvD0Wem+Sym6ecuIMIkq8m/NS2wBjtW81vzQOc17F0UYsyXQhDLdCSNHpIUqA
-	 hbi8GJVkpeWcMSWn4l2QA//WV3RU1rFz03UzX9/gGjOURFPqc23mg5bmk2WgTd7YxL
-	 c6R6uAbXjWoBQ==
-Message-ID: <26514aa5-c835-41d4-b0bc-862f3181cb8c@kernel.org>
-Date: Wed, 16 Oct 2024 14:03:54 +0200
+	s=arc-20240116; t=1729080503; c=relaxed/simple;
+	bh=iFXajJ+uhfYq77bvE0Buox5UIoutriZs/rZUrV1WcJE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=HVzdpHssi58uZPBZSZzHBv/BsZfU71o0n4w/soF9z7b6NZis689xs0BGRf6a7iNsrKmi0N4GTu9kboV7oEd9c35C+FoOUHG9CkprwHSIi3YnY5XNcgn3Glm+GVY514jEic02ojjiiEiheiZVx+iWd9kNmKYzd0vNV6MunS86lEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mcBrTKfn; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G9Opr9023504;
+	Wed, 16 Oct 2024 12:07:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=xXHOa8a4oOvBDuDElF/1n1rWwz2Wq3
+	Ens1cHOmyVqx0=; b=mcBrTKfn2i0h/drhPN35CziaXV98CKI83nlMjqQ43nftoq
+	/K5lZK3RPQicu0YfwNX8CSQ6Vwqo59Ex6Npk9YF5C5JVdyKXm3+M4bSHFhtr3hlu
+	YuxDBDGez+lum788WlIPwGUlORYi31Lsa34pnrEjNScejjn1FTSGmMH56CjHSons
+	uEc5hpGJlY7RZLe2uwP0G6mke/KAR9qdBJeSboI6FXDQq2p/BbzZEZJ1q+Lv0nRA
+	0E7X85r7ZhXxkODZxPL74LS93J2v34M0thnZ59iV8gzK6MVf33EyM9i62PIBNGYT
+	gpM58swIwB7CiLvM5epYl+R5K4fGNQexqmGstYRw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aau5rtqn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 12:07:38 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GC06Db015836;
+	Wed, 16 Oct 2024 12:07:38 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aau5rtqg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 12:07:38 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GB8oG9005936;
+	Wed, 16 Oct 2024 12:07:36 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4286510vkq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 12:07:36 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GC7XV051773778
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 12:07:33 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 13B2F20040;
+	Wed, 16 Oct 2024 12:07:33 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 17A0420043;
+	Wed, 16 Oct 2024 12:07:32 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 16 Oct 2024 12:07:32 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt
+ <rostedt@goodmis.org>,
+        Florent Revest <revest@chromium.org>,
+        linux-trace-kernel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Alan
+ Maguire <alan.maguire@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy
+ <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Paul Walmsley
+ <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert
+ Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov
+ <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>,
+        Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph tracer
+In-Reply-To: <172904040206.36809.2263909331707439743.stgit@devnote2> (Masami
+	Hiramatsu's message of "Wed, 16 Oct 2024 10:00:02 +0900")
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+	<172904040206.36809.2263909331707439743.stgit@devnote2>
+Date: Wed, 16 Oct 2024 14:07:31 +0200
+Message-ID: <yt9ded4gfdz0.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: N9NVG4Sz2Y7MUsH0Cajp52m2PEkNu3Cv
+X-Proofpoint-GUID: dysTsyCVI-T_V3s46P20Mv-6vHqlE6mY
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
- Sophgo CV1800 thermal
-To: Haylen Chu <heylenay@4d2.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20241014073813.23984-1-heylenay@4d2.org>
- <20241014073813.23984-2-heylenay@4d2.org>
- <cycdlsi3tb6nqgbzzmypmblpcxxqmn3slqcbf5mq2okw3lqrdr@ghvswymvnslp>
- <Zw5pB_tPuOgIbaxV@ketchup> <e6012be3-01c8-4ff8-bb52-9334c7490c78@kernel.org>
- <Zw-pJZ0jhxR8Oggk@ketchup>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zw-pJZ0jhxR8Oggk@ketchup>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=436
+ priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410160074
 
-On 16/10/2024 13:53, Haylen Chu wrote:
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    enum:
->>>>> +      - sophgo,cv1800-thermal
->>>>
->>>> Not much improved, judging by other patches there is no "CV1800" SoC,
->>>> but that's a family name.  Otherwise please point us to bindings or DTS
->>>> using this SoC.
->>>
->>> "cv1800" is referenced in the clock binding[1] and usb binding[2]. I
->>> don't think there are other CV1800 SoC variants. Usage of "CV1800"
->>
->> There are. git grep cv1800
->>
->>> should be specific and unambiguous.
->>
->> And other places have different name.
-> 
-> Okay, will use cv1800b in the next revision instead. Thanks.
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> writes:
 
-Just to clarify: I assume the name of the SoC is cv1800b.
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>
+> Rewrite fprobe implementation on function-graph tracer.
+> Major API changes are:
+>  -  'nr_maxactive' field is deprecated.
+>  -  This depends on CONFIG_DYNAMIC_FTRACE_WITH_ARGS or
+>     !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS, and
+>     CONFIG_HAVE_FUNCTION_GRAPH_FREGS. So currently works only
+>     on x86_64.
+>  -  Currently the entry size is limited in 15 * sizeof(long).
+>  -  If there is too many fprobe exit handler set on the same
+>     function, it will fail to probe.
+>
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Huacai Chen <chenhuacai@kernel.org>
+> Cc: WANG Xuerui <kernel@xen0n.name>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Naveen N Rao <naveen@kernel.org>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: x86@kernel.org
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+>
+[..]
 
-Best regards,
-Krzysztof
+> diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
+> index ef609bcca0f9..2d06bbd99601 100644
+> --- a/include/linux/fprobe.h
+> +++ b/include/linux/fprobe.h
+> @@ -5,10 +5,11 @@
+[..]
+> +static inline unsigned long encode_fprobe_header(struct fprobe *fp, int size_words)
+> +{
+> +	if (WARN_ON_ONCE(size_words > MAX_FPROBE_DATA_SIZE_WORD ||
+> +	    ((unsigned long)fp & ~FPROBE_HEADER_PTR_MASK) !=
+> +	    ~FPROBE_HEADER_PTR_MASK)) {
+> +		return 0;
+>  	}
+> +	return ((unsigned long)size_words << FPROBE_HEADER_PTR_BITS) |
+> +		((unsigned long)fp & FPROBE_HEADER_PTR_MASK);
+> +}
+> +
+> +/* Return reserved data size in words */
+> +static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
+> +{
+> +	unsigned long ptr;
+> +
+> +	ptr = (val & FPROBE_HEADER_PTR_MASK) | ~FPROBE_HEADER_PTR_MASK;
+> +	if (fp)
+> +		*fp = (struct fprobe *)ptr;
+> +	return val >> FPROBE_HEADER_PTR_BITS;
+> +}
 
+I think that still has the issue that the size is encoded in the
+leftmost fields of the pointer, which doesn't work on all
+architectures. I reported this already in v15
+(https://lore.kernel.org/all/yt9dmsjyx067.fsf@linux.ibm.com/)
 
