@@ -1,103 +1,255 @@
-Return-Path: <linux-kernel+bounces-367337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C6A9A0120
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:12:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFCA9A012F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F551F2252D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838A61C22A47
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDF818C92B;
-	Wed, 16 Oct 2024 06:12:00 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD03E18E741;
+	Wed, 16 Oct 2024 06:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CkyT4YTJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BB418B48D;
-	Wed, 16 Oct 2024 06:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F418C92C;
+	Wed, 16 Oct 2024 06:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059120; cv=none; b=cKWHYuAJlaecblBDIP4cPCwGF4yxesjBqrfs8jhW5XYbzybF6oIHD2QPZhft1Ob4FVLTpTE6On2rwly0k52IAQX+bcVcmPlQ6FbYYol8MiDEx99VAAjT9K5b+AJrLXMhFETcUqgIsEhEHuhQO6+k871Zj41Zb9cAjJZT9eMZtds=
+	t=1729059255; cv=none; b=I6FLV0GQ3KD0TNHUzhI8Xycx5xYoZG9ztK5vWhrdpmtoh19OtDIiH8JE6cbPB7oPOYfUcCmlpu24/Hd0zIfwevDtBeI8nac0kO5tC2FJwQUZNbfGHXfUlsvNn8/JMEeHvBNqQxlDSCosSu1e1MrKtfBWtrtyA6fKGsFxnOt9lcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059120; c=relaxed/simple;
-	bh=WJQhxyDh49Oi3mVNN/Gzfxafsr66Em5h887y/4sZ1+A=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=thCPpC7aA90YmMx5QYsuheYQBsrj14Bgq6vRklqNIfuOzApTwdSqlNhuRcnJA3cGdK3r0kcOt2k0UkRD+c7OrP8JjBuxNY3pdScujbmJAw7toSg3+fCUWldipAT6DpgBU5ftYiht2Vi+lx9zeIShX6jjOxtTvcap1b27xeT4M50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XT0wR13tLz4f3jXl;
-	Wed, 16 Oct 2024 14:11:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 425651A0568;
-	Wed, 16 Oct 2024 14:11:52 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAHPMgmWQ9nKsftEA--.45555S3;
-	Wed, 16 Oct 2024 14:11:52 +0800 (CST)
-Subject: Re: [PATCH RFC] md: lockless bitmap demo
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20241015083557.4033741-1-yukuai1@huaweicloud.com>
- <Zw89BmLBF4S_nX5V@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <518660b5-4b52-b01a-c875-0bda9f75005c@huaweicloud.com>
-Date: Wed, 16 Oct 2024 14:11:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1729059255; c=relaxed/simple;
+	bh=hdyDHBvxXBqMwZseRlYu7TqOeNFFBgQvasFC5gjoWHg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tNIJr5qb8nFyDbcodkKZu4m0nKEwRTJQVTfUn6iIDMuCEpmYE+beKJKIlQSJ+wumEj9heCmG4e72dYsnVfaWU7ys4a/TiqOhn8+pxsq5bk5eq7RT8eFjQNIkBsNVLgD1QYrHGejIuKgIUP6y6171XTT1j/JsK7qirJ/mNhNrpQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CkyT4YTJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G3cMV8027176;
+	Wed, 16 Oct 2024 06:14:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=7/pBTpcop1tijS7MN1fUnG
+	E4qZwAr4Bwc8K19nB+97c=; b=CkyT4YTJRxs4NcKfdZelU7jI8gJ3cJRYrMoUNz
+	o8kpcpLRMPkTsoquF5QkjI5eJrwwlc3SBLSDc1hEp7Y/x8iBzXBaQ3UmZWIvVI6l
+	QxNlTgfyYvsQ6jP0gPdkmiH+LZ2F6tvXpZQrBVST7sJE5BKCVEIqf4lzEidcLzBk
+	Ce7dRzDrOtwokNjeifAzzvgQukeP/2LdflegkqrbErzBcoLKEUY2Fo6c+5s210EP
+	aG9Db1fT58MwqQptYKW4DQHJ8rYefS4Z80ZjvuWsA0iV+OsZ+sfFdkgBP3hK0voT
+	M0VpvBEKOf5G+MzSZLoPzkO42ztmG0nVsTlCYCfzcmyUbiDA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429m0fbh8p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 06:14:06 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49G6E5pA000903
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 06:14:05 GMT
+Received: from xinqzhan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 15 Oct 2024 23:14:03 -0700
+From: Xinqi Zhang <quic_xinqzhan@quicinc.com>
+Date: Wed, 16 Oct 2024 14:13:38 +0800
+Subject: [PATCH v2] firmware: arm_scmi: fix slab-use-after-free in
+ scmi_bus_notifier()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zw89BmLBF4S_nX5V@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHPMgmWQ9nKsftEA--.45555S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYy7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0
-	xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF
-	0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241016-fix-arm-scmi-slab-use-after-free-v2-1-1783685ef90d@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJFZD2cC/5WNTQ6CMBBGr0Jm7ZiWHwVX3sOwaIepTCJUWyAaw
+ t2t3MDl+5LvvRUiB+EIl2yFwItE8WOC/JAB9Wa8M0qXGHKVl1rpCp280YQBIw2C8WEszpHRuIk
+ DusCM55KLqrYFNYogaZ6B02dP3NrEvcTJh89eXPRv/UO+aNRolTqxNQ3Vnbu+ZiEZ6Uh+gHbbt
+ i/EpEJC0gAAAA==
+X-Change-ID: 20241015-fix-arm-scmi-slab-use-after-free-74e358b3c90c
+To: Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi
+	<cristian.marussi@arm.com>
+CC: <linux-arm-msm@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Xinqi Zhang" <quic_xinqzhan@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729059243; l=4879;
+ i=quic_xinqzhan@quicinc.com; s=20241015; h=from:subject:message-id;
+ bh=hdyDHBvxXBqMwZseRlYu7TqOeNFFBgQvasFC5gjoWHg=;
+ b=fSccmVM6PJJcz2UqekVDS1hDmzoAPgWhvecbMUlDgbNrRGlg306/gRJp8T1XJPWn0mzq3M0Ya
+ yaV0Pq6t4ekAFYTX3gdRdOWzji+Gg/KQR6nmMiKgsIZWxrPEgSIp82E
+X-Developer-Key: i=quic_xinqzhan@quicinc.com; a=ed25519;
+ pk=e+mEOolV1It3rv+K/zKK83GBcQFoVe2iQO+mmOoesHg=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pYQU5EEE5ux-nMOUwLcZJtXo2TSe0yYN
+X-Proofpoint-ORIG-GUID: pYQU5EEE5ux-nMOUwLcZJtXo2TSe0yYN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015 phishscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 mlxlogscore=971 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160039
 
-Hi,
+The scmi_dev->name is released prematurely in __scmi_device_destroy(),
+which causes slab-use-after-free when accessing scmi_dev->name in
+scmi_bus_notifier(). So move the release of scmi_dev->name to
+scmi_device_release() to avoid slab-use-after-free.
 
-ÔÚ 2024/10/16 12:11, Christoph Hellwig Ð´µÀ:
-> On Tue, Oct 15, 2024 at 04:35:57PM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Just implement very basic functions, there are lots of todos.
->>
->> Very limited functional testing(mdadm tests and some manual tests), and
->> following performance test for raid10:
-> 
-> Can you explain what it does?
+==================================================================
+BUG: KASAN: slab-use-after-free in strncmp+0xe4/0xec
+Read of size 1 at addr ffffff80a482bcc0 by task swapper/0/1
 
-Sorry this is actually just a RFT patch, Paul will help to test
-performace first. If results really looks good, I will write some
-documents to explain the idea and implementation in later version.
+CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.6.38-debug #1
+Hardware name: Qualcomm Technologies, Inc. SA8775P Ride (DT)
+Call trace:
+ dump_backtrace+0x94/0x114
+ show_stack+0x18/0x24
+ dump_stack_lvl+0x48/0x60
+ print_report+0xf4/0x5b0
+ kasan_report+0xa4/0xec
+ __asan_report_load1_noabort+0x20/0x2c
+ strncmp+0xe4/0xec
+ scmi_bus_notifier+0x5c/0x54c
+ notifier_call_chain+0xb4/0x31c
+ blocking_notifier_call_chain+0x68/0x9c
+ bus_notify+0x54/0x78
+ device_del+0x1bc/0x840
+ device_unregister+0x20/0xb4
+ __scmi_device_destroy+0xac/0x280
+ scmi_device_destroy+0x94/0xd0
+ scmi_chan_setup+0x524/0x750
+ scmi_probe+0x7fc/0x1508
+ platform_probe+0xc4/0x19c
+ really_probe+0x32c/0x99c
+ __driver_probe_device+0x15c/0x3c4
+ driver_probe_device+0x5c/0x170
+ __driver_attach+0x1c8/0x440
+ bus_for_each_dev+0xf4/0x178
+ driver_attach+0x3c/0x58
+ bus_add_driver+0x234/0x4d4
+ driver_register+0xf4/0x3c0
+ __platform_driver_register+0x60/0x88
+ scmi_driver_init+0xb0/0x104
+ do_one_initcall+0xb4/0x664
+ kernel_init_freeable+0x3c8/0x894
+ kernel_init+0x24/0x1e8
+ ret_from_fork+0x10/0x20
 
-Thanks,
-Kuai
+Allocated by task 1:
+ kasan_save_stack+0x2c/0x54
+ kasan_set_track+0x2c/0x40
+ kasan_save_alloc_info+0x24/0x34
+ __kasan_kmalloc+0xa0/0xb8
+ __kmalloc_node_track_caller+0x6c/0x104
+ kstrdup+0x48/0x84
+ kstrdup_const+0x34/0x40
+ __scmi_device_create.part.0+0x8c/0x408
+ scmi_device_create+0x104/0x370
+ scmi_chan_setup+0x2a0/0x750
+ scmi_probe+0x7fc/0x1508
+ platform_probe+0xc4/0x19c
+ really_probe+0x32c/0x99c
+ __driver_probe_device+0x15c/0x3c4
+ driver_probe_device+0x5c/0x170
+ __driver_attach+0x1c8/0x440
+ bus_for_each_dev+0xf4/0x178
+ driver_attach+0x3c/0x58
+ bus_add_driver+0x234/0x4d4
+ driver_register+0xf4/0x3c0
+ __platform_driver_register+0x60/0x88
+ scmi_driver_init+0xb0/0x104
+ do_one_initcall+0xb4/0x664
+ kernel_init_freeable+0x3c8/0x894
+ kernel_init+0x24/0x1e8
+ ret_from_fork+0x10/0x20
 
+Freed by task 1:
+ kasan_save_stack+0x2c/0x54
+ kasan_set_track+0x2c/0x40
+ kasan_save_free_info+0x38/0x5c
+ __kasan_slab_free+0xe8/0x164
+ __kmem_cache_free+0x11c/0x230
+ kfree+0x70/0x130
+ kfree_const+0x20/0x40
+ __scmi_device_destroy+0x70/0x280
+ scmi_device_destroy+0x94/0xd0
+ scmi_chan_setup+0x524/0x750
+ scmi_probe+0x7fc/0x1508
+ platform_probe+0xc4/0x19c
+ really_probe+0x32c/0x99c
+ __driver_probe_device+0x15c/0x3c4
+ driver_probe_device+0x5c/0x170
+ __driver_attach+0x1c8/0x440
+ bus_for_each_dev+0xf4/0x178
+ driver_attach+0x3c/0x58
+ bus_add_driver+0x234/0x4d4
+ driver_register+0xf4/0x3c0
+ __platform_driver_register+0x60/0x88
+ scmi_driver_init+0xb0/0x104
+ do_one_initcall+0xb4/0x664
+ kernel_init_freeable+0x3c8/0x894
+ kernel_init+0x24/0x1e8
+ ret_from_fork+0x10/0x20
 
-> 
-> .
-> 
+Fixes: ee7a9c9f67c5 ("firmware: arm_scmi: Add support for multiple device per protocol")
+Signed-off-by: Xinqi Zhang <quic_xinqzhan@quicinc.com>
+---
+Changes in v2:
+- Standardize commit messages and add Fixes tags.
+- Link to v1: https://lore.kernel.org/r/20241015-fix-arm-scmi-slab-use-after-free-v1-1-b006eba9c8df@quicinc.com
+---
+ drivers/firmware/arm_scmi/bus.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
+index 96b2e5f9a8ef0386525f9d91d2925e7e6d48ac28..157172a5f2b577ce4f04425f967f548230c1ebed 100644
+--- a/drivers/firmware/arm_scmi/bus.c
++++ b/drivers/firmware/arm_scmi/bus.c
+@@ -325,7 +325,10 @@ EXPORT_SYMBOL_GPL(scmi_driver_unregister);
+ 
+ static void scmi_device_release(struct device *dev)
+ {
+-	kfree(to_scmi_dev(dev));
++	struct scmi_device *scmi_dev = to_scmi_dev(dev);
++
++	kfree_const(scmi_dev->name);
++	kfree(scmi_dev);
+ }
+ 
+ static void __scmi_device_destroy(struct scmi_device *scmi_dev)
+@@ -338,7 +341,6 @@ static void __scmi_device_destroy(struct scmi_device *scmi_dev)
+ 	if (scmi_dev->protocol_id == SCMI_PROTOCOL_SYSTEM)
+ 		atomic_set(&scmi_syspower_registered, 0);
+ 
+-	kfree_const(scmi_dev->name);
+ 	ida_free(&scmi_bus_id, scmi_dev->id);
+ 	device_unregister(&scmi_dev->dev);
+ }
+@@ -410,7 +412,6 @@ __scmi_device_create(struct device_node *np, struct device *parent,
+ 
+ 	return scmi_dev;
+ put_dev:
+-	kfree_const(scmi_dev->name);
+ 	put_device(&scmi_dev->dev);
+ 	ida_free(&scmi_bus_id, id);
+ 	return NULL;
+
+---
+base-commit: eca631b8fe808748d7585059c4307005ca5c5820
+change-id: 20241015-fix-arm-scmi-slab-use-after-free-74e358b3c90c
+
+Best regards,
+-- 
+Xinqi Zhang <quic_xinqzhan@quicinc.com>
 
 
