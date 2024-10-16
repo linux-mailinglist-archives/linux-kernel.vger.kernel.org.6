@@ -1,183 +1,140 @@
-Return-Path: <linux-kernel+bounces-368005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47D09A099B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:26:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA2C9A09B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6DF91C230EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C6C282826
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40EB20A5E1;
-	Wed, 16 Oct 2024 12:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AF7209F4D;
+	Wed, 16 Oct 2024 12:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L7NmLwMo"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GzCWVhC1"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA689208D86;
-	Wed, 16 Oct 2024 12:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D274209F40
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729081579; cv=none; b=LHGMvHCr3dfuibVoU4BhZdmEZv0jom1Iw4o8M41sVZV9rWZrPNbUMvYOQm2jCM+knh87rXJ8h6owrlnt3q3lH1Z16L0vJK9LqDU0a9dPDpU1CCNt4HcOlDHnMBLdsByrVFqV/wzyk1AjnTrecMN4nmjuzejdaW0JJlVdP+gaeIs=
+	t=1729081619; cv=none; b=BpuU263/CEtlbuYB5KFAOav9ppX2dpOy0Xegk8Ly1fud8L7TR/XlQfqCaS+l5c+0mfOvtc8VKNgY1GZ8HuHeGUJmvF43xMDR2O7xBp8VLeWeddpbXI0ANLRp2tgN44c3LgAH/YNNr7cfJlwmjcY05NaDdM9obid9ate7kICzvT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729081579; c=relaxed/simple;
-	bh=TpQqZ31NFbWQvsUyhg4OTQUBsWzc/Jkukn8+G3bjmcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9UeI5F5WMH/RmBx6K8gn5fyi85nmyhstbb3nTWUAVlYN24B0Xo75BIli9C0c+hjL0iF6IOQ0CQ99md79kIGWwrPGnwS6j3xTdZkap+ExeYpMTvHQZ0EyxlDJK9GW6Y0leHuEcoN5UDZtvlc15bFThOU09iqh5ZQG1w/TwCst4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L7NmLwMo; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 26C8D40003;
-	Wed, 16 Oct 2024 12:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729081574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CfMLbv1h2yZT1NCmxa2WCjab7I6UZUgpEliYH/fpfkc=;
-	b=L7NmLwMobJYv1rCtSlkFOvpOKT6/5/dJbR62C5VlBQSQUMC9Edd86/iOqp9lLJZEQRi/sa
-	id/71yKs6mPvZUjI6gaOkYnaAG6nfxBMs2uswTnqzN8/DXW4y1nBvc9iFnbJvGBFibFD/t
-	MZYvsajW2JSdWQwjfTX2vWjqsTftTm644zsrJz68vPique2gHJxJ6/skerO37AmNjUtg1J
-	2JgLCyxWkkYKINjfHpkqKnh3MKopaGJFTZEnWPhUkw0ZJKdwxrtGJX5tqT25Vof4V1j5L6
-	V1WBWk2SzWi15STwxnN/TXIN2TL3uPlwNvJAxBeQ50GNArpIqIwVq5ZnUh4yOg==
-Date: Wed, 16 Oct 2024 14:26:13 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
-	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] rtc: pm8xxx: implement qcom,no-alarm flag for
- non-HLOS owned alarm
-Message-ID: <20241016122613e1ba2e2a@mail.local>
-References: <20241015004945.3676-1-jonathan@marek.ca>
- <20241015004945.3676-2-jonathan@marek.ca>
- <Zw9gZkLPMB9ZBQlh@hovoldconsulting.com>
+	s=arc-20240116; t=1729081619; c=relaxed/simple;
+	bh=LDwPhIuQaJcIoTLcEGw7L99PYLDr1WASkARfaDEZm+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hGWCZZgtZG4crWJJLAb1GUbERFQ6N41ujE7VGFgl+4LQtr8fOMp2T/JMqrcYzVf1xh/IyH+VxLKTxP+WrZTAO1r94u9MRF6deu1St0FmLIBqFuPixScvnc5gp1Zv3KDuWkVuQWYOLih5mhp0LiGGaEVfEaiBUTfCw2DifPgWMug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GzCWVhC1; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c96936065dso4820783a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729081616; x=1729686416; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o5XkYbhD7GQ/UM3/ZFxDvMxdDBYYQYu99C2uqRsaiV8=;
+        b=GzCWVhC1MAdf0M2EPwrUl4zc9Jy6ML2awzj0cIr9byxCoWo2z5UYjvIxAiEZ88EIPG
+         QwmG+toMCdtr2UKp4Q3PsWQyUx+05jnEmoH3hIHTdoq8AukmLjE6HY+CGhQttEc8Us/C
+         5sojMb64OfcWjTbQ5n7cYLaQ8vB8I3PRDT2NZWRmu1ktAapSTlvRwHpPSdTHrej5ob6y
+         BymhCg5sRp5TnjKbHbgJR49gojqLQt98Uhp46OTe72iDh3MaeQGD0yXThgotskpK1qZu
+         iWgZUTn8+JgE8GAto61Qy1E3WnVZn70VQOj/DW9pacUzutki55m3LcqO4tzhFfE1pmo2
+         s1tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729081616; x=1729686416;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5XkYbhD7GQ/UM3/ZFxDvMxdDBYYQYu99C2uqRsaiV8=;
+        b=wolZrirCsgYpxBUPUn82+97MDKURJ2mBtUlx3AO/BVXzLbpmdJl1XPoU/XZRJHqbul
+         4xZ7JEgjQjWgwM67qyXmlYd3Ms4lzz6mj7FKatKtTOj3PXD45G+FdNOqC6o44LmkfhUx
+         dhqJP6B0t+epdIlKM7OOv7Kz3qT/hcRZTAZi0tLALY8DNhCdbi9aCTzX1fc7BsiKqHNr
+         uZqdEoFr/HeijSaRLHkj6FQYGJ9P7jWeoQ6RJiCnT6wJd/yPJFrtoL9CelKFGbmebqSb
+         a2XQEYcmCyTSLQ+zq5nQL95cqa5q15puwq1tH7td63oIKOCJqarJIbh09fjImtMqqezI
+         9xiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV66IbLCPVKiAKDPDRjbdgtJ4rw7FmsRDrCwTaqINa/kfdNBdlDVojJjtygJfkRLQV4BvPP7CUO2VYxVcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkASRuf8Ie8/v0D/fpl2ypX+/PXGNlL7cp4scUnb2HkKi3XD5l
+	FFig3p8YF/7L7dhHaTg+Tu8J/6X0JDdeqxYqEEYjJq0XIJAH40TL
+X-Google-Smtp-Source: AGHT+IFcnPGvv+07WP6skyv4hg/FfgbGscqMu7BmRbPY69IWoa1LmdxhGPZoAcM+AnYli8pZGFn0ow==
+X-Received: by 2002:a05:6402:5210:b0:5c9:4a36:8f4e with SMTP id 4fb4d7f45d1cf-5c94a369527mr13528544a12.25.1729081615530;
+        Wed, 16 Oct 2024 05:26:55 -0700 (PDT)
+Received: from [192.168.42.132] ([81.95.8.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4d63fesm1659905a12.13.2024.10.16.05.26.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 05:26:53 -0700 (PDT)
+Message-ID: <8d35081d-74cd-4d4c-ae31-b3b4e8ce65de@gmail.com>
+Date: Wed, 16 Oct 2024 14:26:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw9gZkLPMB9ZBQlh@hovoldconsulting.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/mediatek: Fix color format MACROs in OVL
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dianders@chromium.org
+References: <20241016-color-v2-1-46db5c78a54f@chromium.org>
+Content-Language: en-US
+From: Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20241016-color-v2-1-46db5c78a54f@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 16/10/2024 08:42:46+0200, Johan Hovold wrote:
-> On Mon, Oct 14, 2024 at 08:47:26PM -0400, Jonathan Marek wrote:
-> > Qualcomm x1e80100 firmware sets the ownership of the RTC alarm to ADSP.
-> > Thus writing to RTC alarm registers and receiving alarm interrupts is not
-> > possible.
-> > 
-> > Add a qcom,no-alarm flag to support RTC on this platform.
-> 
-> An alternative may be to drop the alarm interrupt from DT and use that
-> as an indicator.
-> 
-> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> > ---
-> >  drivers/rtc/rtc-pm8xxx.c | 44 +++++++++++++++++++++++++++-------------
-> >  1 file changed, 30 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-> > index c32fba550c8e0..1e78939625622 100644
-> > --- a/drivers/rtc/rtc-pm8xxx.c
-> > +++ b/drivers/rtc/rtc-pm8xxx.c
-> > @@ -61,6 +61,7 @@ struct pm8xxx_rtc {
-> >  	struct rtc_device *rtc;
-> >  	struct regmap *regmap;
-> >  	bool allow_set_time;
-> > +	bool no_alarm;
-> 
-> How about inverting this one and naming it has_alarm or similar to avoid
-> the double negation in your conditionals (!no_alarm)?
-> 
-> >  	int alarm_irq;
-> >  	const struct pm8xxx_rtc_regs *regs;
-> >  	struct device *dev;
-> > @@ -473,9 +474,14 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
-> >  	if (!rtc_dd->regmap)
-> >  		return -ENXIO;
-> >  
-> > -	rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
-> > -	if (rtc_dd->alarm_irq < 0)
-> > -		return -ENXIO;
-> > +	rtc_dd->no_alarm = of_property_read_bool(pdev->dev.of_node,
-> > +						 "qcom,no-alarm");
-> > +
-> 
-> Stray newline.
-> 
-> > +	if (!rtc_dd->no_alarm) {
-> > +		rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
-> > +		if (rtc_dd->alarm_irq < 0)
-> > +			return -ENXIO;
-> > +	}
-> >  
-> >  	rtc_dd->allow_set_time = of_property_read_bool(pdev->dev.of_node,
-> >  						      "allow-set-time");
-> > @@ -503,7 +509,8 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
-> >  
-> >  	platform_set_drvdata(pdev, rtc_dd);
-> >  
-> > -	device_init_wakeup(&pdev->dev, 1);
-> > +	if (!rtc_dd->no_alarm)
-> > +		device_init_wakeup(&pdev->dev, 1);
-> >  
-> >  	rtc_dd->rtc = devm_rtc_allocate_device(&pdev->dev);
-> >  	if (IS_ERR(rtc_dd->rtc))
-> > @@ -512,27 +519,36 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
-> >  	rtc_dd->rtc->ops = &pm8xxx_rtc_ops;
-> >  	rtc_dd->rtc->range_max = U32_MAX;
-> >  
-> > -	rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
-> > -					  pm8xxx_alarm_trigger,
-> > -					  IRQF_TRIGGER_RISING,
-> > -					  "pm8xxx_rtc_alarm", rtc_dd);
-> > -	if (rc < 0)
-> > -		return rc;
-> > +	if (!rtc_dd->no_alarm) {
-> > +		rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
-> > +						  pm8xxx_alarm_trigger,
-> > +						  IRQF_TRIGGER_RISING,
-> > +						  "pm8xxx_rtc_alarm", rtc_dd);
-> > +		if (rc < 0)
-> > +			return rc;
-> > +	}
-> >  
-> >  	rc = devm_rtc_register_device(rtc_dd->rtc);
-> >  	if (rc)
-> >  		return rc;
-> >  
-> > -	rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
-> > -	if (rc)
-> > -		return rc;
-> > +	if (!rtc_dd->no_alarm) {
-> > +		rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
-> > +		if (rc)
-> > +			return rc;
 
-Also, probe must not fail after devm_rtc_allocate_device has been
-called.so you could fix this with this patch.
 
-> > +	} else {
-> > +		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
+On 10/16/24 13:08, Hsin-Te Yuan wrote:
+> In commit 9f428b95ac89 ("drm/mediatek: Add new color format MACROs in
+> OVL"), some new color formats are defined in the MACROs to make the
+> switch statement more concise. That commit was intended to be a no-op
+> cleanup. However, there are typos in these formats MACROs, which cause
+> the return value to be incorrect. Fix the typos to ensure the return
+> value remains unchanged.
 > 
-> I assume that you should be clearing the feature bit before registering
-> the RTC.
-> 
-> > +	}
-> >  
-> >  	return 0;
-> >  }
-> 
-> Johan
+> Fixes: 9f428b95ac89 ("drm/mediatek: Add new color format MACROs in OVL")
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+> ---
+> Changes in v2:
+> - Clarify that the commit get fixed was intended to be a no-op cleanup
+> - Fix the typo in tag
+> - Link to v1: https://lore.kernel.org/r/20241015-color-v1-1-35b01fa0a826@chromium.org
+> ---
+>   drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> index 89b439dcf3a6af9f5799487fdc0f128a9b5cbe4a..1632ac5c23d87e1cdc41013a9cf7864728dcb63b 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> @@ -65,8 +65,8 @@
+>   #define OVL_CON_CLRFMT_RGB	(1 << 12)
+>   #define OVL_CON_CLRFMT_ARGB8888	(2 << 12)
+>   #define OVL_CON_CLRFMT_RGBA8888	(3 << 12)
+> -#define OVL_CON_CLRFMT_ABGR8888	(OVL_CON_CLRFMT_RGBA8888 | OVL_CON_BYTE_SWAP)
+> -#define OVL_CON_CLRFMT_BGRA8888	(OVL_CON_CLRFMT_ARGB8888 | OVL_CON_BYTE_SWAP)
+> +#define OVL_CON_CLRFMT_ABGR8888	(OVL_CON_CLRFMT_ARGB8888 | OVL_CON_BYTE_SWAP)
+> +#define OVL_CON_CLRFMT_BGRA8888	(OVL_CON_CLRFMT_RGBA8888 | OVL_CON_BYTE_SWAP)
+>   #define OVL_CON_CLRFMT_UYVY	(4 << 12)
+>   #define OVL_CON_CLRFMT_YUYV	(5 << 12)
+>   #define OVL_CON_MTX_YUV_TO_RGB	(6 << 16)
+> 
+> ---
+> base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
+> change-id: 20241015-color-e205e75b64aa
+> 
+> Best regards,
+
 
