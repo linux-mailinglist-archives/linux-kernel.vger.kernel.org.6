@@ -1,114 +1,155 @@
-Return-Path: <linux-kernel+bounces-368106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC669A0B44
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:19:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2FE9A0B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7CD1F26AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8571C1F26E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D568020C463;
-	Wed, 16 Oct 2024 13:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A88209686;
+	Wed, 16 Oct 2024 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Or6Jb+Y+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FfEMqM+6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B7020B208;
-	Wed, 16 Oct 2024 13:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7573D1E531;
+	Wed, 16 Oct 2024 13:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729084732; cv=none; b=So13ArxUyEmf7dgXzYU39WXNYhMrWO5E56E7n5+ClH8xjZ0ei2GQJwij4tSK2vfGL/ydRrmO21O8QS4v/OTIinYRyzv35+QRXWWNVxdnSAiFTzFlBWA1SoOIHZdtjtAEmZNn1vgZPTjukxQTyQQKHdkEI+uJHQV0+PK/z2d92+U=
+	t=1729084785; cv=none; b=Hrtcy+78QybbsAY0wuqs4aSuDE147guoHIZ+5mf4C+8N1pyOocpeqfEu0NzTw03O7KBAaxETXNmTlKh8YIhH7qGKS6O2eQM5JXuwsBcWt3+m0p6zqZQmXsMgQQ+DSx38Sb9S2iTIJI/rbsIVVWHOABEpv3T02YUwHsjM80hMnTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729084732; c=relaxed/simple;
-	bh=P2cJ3FrKw3YLzdNPSkhG/vqF3ynZpX9KZsrBVG+D0ZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uBUD4ApGXiOnuux+J3GV6uSMn6FfI3DXwq7AX3XwNtEXXDbbT1suZogIuorP/TgogcmCskTbxN8rswGji4N3+Qkok8MHBgNCqrSA80B4t1SkH0dxrK1tDERXE0StukQ0zD5aeIUJIfhyx623tal/VsHSb3HzK8wfGXvpdwLQkbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Or6Jb+Y+; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1729084785; c=relaxed/simple;
+	bh=SYw7XI5JjSFTHiTR6NbSiOgdW8W+9NX9323XdUFaZ3g=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ZhBLhnuW5jin0Ft/RToGAKkL9uZiv6CHB7eGNCEtfY5sKZ7t2K16CrvFkS1IlyebsHBuMvya/NARB9sbRseAQhuZccEBpYoJHFNGl+hzo4kMFOxK/psGvq47QRjGtCSekaaINvTBaJ0srlJLZfkaot9yVIxSB/PhGkKEWBxdfmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FfEMqM+6; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729084732; x=1760620732;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=P2cJ3FrKw3YLzdNPSkhG/vqF3ynZpX9KZsrBVG+D0ZU=;
-  b=Or6Jb+Y+V86P+LK3PyBJl4JD4+dxQVFKVG3Idm/Hp61VmC7ZTh3zQ4S7
-   Ghj4QcbQbGIStKiF5R+SWRewPLuUusQpLC2vMKYvhkI+15WeRBqzKea0Q
-   HOdbPMAWAGLyiZ3vqVHPEKYHTFPl1LDT53Pzwfklg02LWciHyiN6/YKUl
-   T4yUXmiyJHOTa49NuXHUp52x3L8pB0dsJrTYy12exsCGvax90FZmhYwK3
-   r0asVphspU57/M3z/egqFj71OXXnn4LKenMIovmU1yKgN6mDB1PIRTAok
-   bw6GvNjMxPdd9JomUtBeT5TugCyEFN01dXtnQevlYxwImznONgdncmUf0
-   Q==;
-X-CSE-ConnectionGUID: BwFvVJRHQVyd2ef6c4e8ig==
-X-CSE-MsgGUID: 7QP8N/MyRd+aEBONh/6A9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51069921"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="51069921"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:18:51 -0700
-X-CSE-ConnectionGUID: CMGgOgEdSBeLHWiax18p3g==
-X-CSE-MsgGUID: Xy7uRwpFRjaXlCW1A9CL1A==
+  t=1729084785; x=1760620785;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=SYw7XI5JjSFTHiTR6NbSiOgdW8W+9NX9323XdUFaZ3g=;
+  b=FfEMqM+6jX2sCoKZ6NSU+z6GeidtbMZOkt39w9EErEdeNlmSNBD++emv
+   0sfSwTqdUJcfcjyCiwWNO+9NuncMltPaf3+llp5Bq6fjzVe7qzICrmmwX
+   NXvic9AY+PubnYrLL0905i1fBtcNzKctjbG7L4JjJ1xWP1zqmv7bGzJyB
+   zOKDayrjMd+Ky0x9cTjLFjG/fBslrU3i4Ns2Jog0bGrvb4ERv7Zw7Ta0i
+   dcNmFCTAOJioyi547CGx9wW9woAi2QHK/dUNnmkaT23cd26ClBokF5eB8
+   VnSZhMrfBWpUWzzlYVo1c30vySgGA6I/4w6g+Q6xaxJ6yb3TA8GtoRALG
+   A==;
+X-CSE-ConnectionGUID: M6N5NGQuQZWYzvtjhSDsGQ==
+X-CSE-MsgGUID: IvwQ/MQ/RLWWqZfH5otXQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="27972672"
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="27972672"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:19:10 -0700
+X-CSE-ConnectionGUID: 7CXUroWXScGcKe/XrNzVZw==
+X-CSE-MsgGUID: jjP5wTK5SxCmAQH25pTRVw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="82188313"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 16 Oct 2024 06:18:49 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D5A5C165; Wed, 16 Oct 2024 16:18:47 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Niklas Cassel <cassel@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] ata: libata-scsi: Refactor scsi_6_lba_len() with use of get_unaligned_be24()
-Date: Wed, 16 Oct 2024 16:18:44 +0300
-Message-ID: <20241016131845.898632-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+   d="scan'208";a="109020524"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.221])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:19:07 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 16 Oct 2024 16:19:03 +0300 (EEST)
+To: Philipp Stanner <pstanner@redhat.com>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] PCI: Convert pdev_sort_resources() to use resource
+ name helper
+In-Reply-To: <fc0649b5-d065-2627-f475-d61f0594d0e5@linux.intel.com>
+Message-ID: <5b783894-99f3-b231-9d73-9980d0cac12d@linux.intel.com>
+References: <20241016120048.1355-1-ilpo.jarvinen@linux.intel.com> <1cf314b3e91779e3353bbcaf8ad13516a00642e3.camel@redhat.com> <fc0649b5-d065-2627-f475-d61f0594d0e5@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-898264977-1729084743=:1010"
 
-Refactor scsi_6_lba_len() with use of get_unaligned_be24() to make it
-consistent with other similar helper implementations.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/ata/libata-scsi.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+--8323328-898264977-1729084743=:1010
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index f915e3df57a9..4cef824cbafa 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -1334,17 +1334,8 @@ static unsigned int ata_scsi_flush_xlat(struct ata_queued_cmd *qc)
-  */
- static void scsi_6_lba_len(const u8 *cdb, u64 *plba, u32 *plen)
- {
--	u64 lba = 0;
--	u32 len;
--
--	lba |= ((u64)(cdb[1] & 0x1f)) << 16;
--	lba |= ((u64)cdb[2]) << 8;
--	lba |= ((u64)cdb[3]);
--
--	len = cdb[4];
--
--	*plba = lba;
--	*plen = len;
-+	*plba = get_unaligned_be24(&cdb[1]) & 0x1fffff;
-+	*plen = cdb[4];
- }
- 
- /**
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+On Wed, 16 Oct 2024, Ilpo J=C3=A4rvinen wrote:
 
+> On Wed, 16 Oct 2024, Philipp Stanner wrote:
+>=20
+> > On Wed, 2024-10-16 at 15:00 +0300, Ilpo J=C3=A4rvinen wrote:
+> > > Use pci_resource_name() helper in pdev_sort_resources() to print
+> > > resources in user-friendly format.
+> > >=20
+> > > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > > ---
+> > > =C2=A0drivers/pci/setup-bus.c | 5 +++--
+> > > =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > > index 23082bc0ca37..071c5436b4a5 100644
+> > > --- a/drivers/pci/setup-bus.c
+> > > +++ b/drivers/pci/setup-bus.c
+> > > @@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev
+> > > *dev, struct list_head *head)
+> > > =C2=A0=09int i;
+> > > =C2=A0
+> > > =C2=A0=09pci_dev_for_each_resource(dev, r, i) {
+> > > +=09=09const char *r_name =3D pci_resource_name(dev, i);
+> > > =C2=A0=09=09struct pci_dev_resource *dev_res, *tmp;
+> > > =C2=A0=09=09resource_size_t r_align;
+> > > =C2=A0=09=09struct list_head *n;
+> > > @@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev
+> > > *dev, struct list_head *head)
+> > > =C2=A0
+> > > =C2=A0=09=09r_align =3D pci_resource_alignment(dev, r);
+> > > =C2=A0=09=09if (!r_align) {
+> > > -=09=09=09pci_warn(dev, "BAR %d: %pR has bogus
+> > > alignment\n",
+> > > -=09=09=09=09 i, r);
+> > > +=09=09=09pci_warn(dev, "%s: %pR has bogus
+> > > alignment\n",
+> > > +=09=09=09=09 r_name, r);
+> >=20
+> > Why do you remove the BAR index number, don't you think this
+> > information is also useful?
+>=20
+> That's because of how pci_resource_name() works. The number will be=20
+> included in the returned string and it won't be always same as i.
+> So that change is done on purpose.
+
+That being said, I now realize the other examples use the colon=20
+differently "%s %pR: ..." so I'll change that for v2.
+
+--=20
+ i.
+
+> > One could also consider printing r_align, would that be useful?
+>=20
+> As per the preceeding condition, it's known to be zero so it's not=20
+> that useful for any developer looking at these code lines.
+>=20
+> > Note
+> > that there is a similar pci_warn down below in line 1118 that does
+> > print it. Would you want to change that pci_warn()-string, too?
+>=20
+> pci_warn() on line 1118 does NOT print i (as expected when using=20
+> pci_resource_name()) and there align is not zero so I don't see how this=
+=20
+> is relevant.
+>=20
+> But thanks for taking a look anyway. :-)
+>=20
+>=20
+
+--8323328-898264977-1729084743=:1010--
 
