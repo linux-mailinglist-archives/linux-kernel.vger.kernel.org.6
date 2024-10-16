@@ -1,150 +1,178 @@
-Return-Path: <linux-kernel+bounces-368212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77AEB9A0CB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6929A0CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5FC283080
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E33BB282BFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5447820C020;
-	Wed, 16 Oct 2024 14:32:12 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0518A20CCCF;
+	Wed, 16 Oct 2024 14:32:21 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E079208D7A;
-	Wed, 16 Oct 2024 14:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91D2209F59;
+	Wed, 16 Oct 2024 14:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089132; cv=none; b=jCZNl9Qr7s7V9vX2AJMt+6EEB4rFfph8tiFnpWogz0rHjHOJN109EdzvRGOzLMoWl1854vWt9d2ujcurw2ypbsdFPn8EPy25tkSpuY0/kFvKonLK1r+WYViqy75yBwgYBoTfw0B/8jxHkn4MRYvoImNeSFeT35WwHVLVGh/a/Og=
+	t=1729089140; cv=none; b=eum6IIF90iIbE1JI5GFLHPPBKrkP3srSIf6G2XrvZD2IBB0rA2e0QYZqbsGyOpCSk0uV1RKBXG4s7cC1ew1z4AkbMbQ6sSe9bYsUkqCMj9uQ8tgL4Fox5VQeqQmd5TEByaxxX58Fy+TTOkgTkmDSvcqbnAs0/UMPyMzrM7InkXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089132; c=relaxed/simple;
-	bh=MUBjfKfvAsRsCJe+7h2NNv4bqINVdYqmH7t/ggr/tQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCsvBbJm1TuaDu9k5nMwnq/IAIH/a60q7V9JddOsnTmyw8gfui8PslG1wf2bPDOqWPq1Hl3FJ3HyjGL6VRLcIh+gyZaVwhd93KANFKH8l7kVSu2wmJ9IxH8Kb6SZ5PfOxXCtsata8/pm/dVCoMGkhXJvKDgMOZCZX6YeAlfZmaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=44964 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t154B-00CEWL-NE; Wed, 16 Oct 2024 16:32:01 +0200
-Date: Wed, 16 Oct 2024 16:31:59 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Rongguang Wei <clementwei90@163.com>
-Cc: netfilter-devel@vger.kernel.org, kadlec@netfilter.org,
-	coreteam@netfilter.org, linux-kernel@vger.kernel.org,
-	Rongguang Wei <weirongguang@kylinos.cn>
-Subject: Re: [PATCH v1] netfilter: x_tables: fix ordering of get and update
- table private
-Message-ID: <Zw_OXzBgfFULaEzs@calendula>
-References: <20241016030909.64932-1-clementwei90@163.com>
+	s=arc-20240116; t=1729089140; c=relaxed/simple;
+	bh=cL6/iEITEkqI1kGR9ikJ0rjtp3Ih/i+CjMVOEFFmh4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uNiV83DIAh25bG43ufByw04Ovz9DiYz1QoGwNWoMiD+Yv9iyyU85UAMKdB9doV4Jy0OzzqR+QpgL3vtRT5ftxxVA+h6VxvunNoVWk0xzSyGzdaW9cg9BySRItlE0+eue6jPLDjgBZYz+IsVvYXOUGzoZsvTRYm3Wv8Cti56dHus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso467865966b.1;
+        Wed, 16 Oct 2024 07:32:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729089136; x=1729693936;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sSNiWdoyjPld1XydLnGWhx59ZAvesHEXD9q6WahTtD8=;
+        b=rE7/0CAcBj0oFHOpPX/8Iyg7ukpQMun1EgnSmyPyLt7f3hqy+MaFZFfd7H8hj9GGJo
+         Nd8yZE7PHISk5sGvqu7NnQLU1xkz2zP9kUQdZaEuMuOQhT5FumezwTagUZeI1mhA/Hn+
+         i9Ag24AOhwwVFHFNjM+PBUGqR4AQ+9alRcl0pEuyqg0BmAM3m6fxiwunlwu+wZVH3kPz
+         1vi4ZGZBtWK1dB2md5Zl0bvXaAt1rl1nYp8ylq60XNqc1znq7YdxPfJqkLSvqYqMh4ru
+         7xwmUeLW8fnBapguqkFZ9yl2AhydDFNdtGCKkpuj3vDDHF4XksSs6dloFMHyufhHSNk3
+         cutA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhqbT4UQ6ooaZyNpk6zWdIqbbiO6zpLGiERbWYu7kBNk5VA9MrDl/JGHEShnikJyB1zuvAIPWBWqBQEW8l@vger.kernel.org, AJvYcCV9WERxtx59g65J8syNoE/wx128gdFlO2yvvbmiAgtrG+0D364d60PLq4BOs8DUI+JoF4QKqv3OHmYj@vger.kernel.org, AJvYcCX35nH5DsJcLOP5GmaqM/Vtu27zw96QYr6t/Iq+lRb4DS5s03bIVFW11eYAhLHr2DL2ePAWjZKohaTL@vger.kernel.org, AJvYcCX7N22Ie9F2twII6Zcib54WpSmkI6qbL5uATbdinkQxM+P3Y6Q24/sDdZfWFEp0FmTtjyCfYenY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPfWYS3Cxh+G7cRrKBNhJvqNjLNvNfB3SOKFASumwJbMPF9kgT
+	5nxh/fQNWVVNDBUmi0fBu7dfBy5a1rOuf/6FTOMPhuPt3a+B0IaTWyKgQYa8WkFWOzXYGFCk7+/
+	2xjnDRrFUuOT3Oe3GnLTxMA7t4G8=
+X-Google-Smtp-Source: AGHT+IHIRvEp4YvtVQ1ixCe8NKzoxNPRFn5DlgVaLXK5XyUINKKI62mZa6ua3k/lIFZaBGu7y/WSpqnDGSIiREWEh6c=
+X-Received: by 2002:a17:907:d85f:b0:a99:4025:82e1 with SMTP id
+ a640c23a62f3a-a9a34dfd1fbmr318914166b.41.1729089136043; Wed, 16 Oct 2024
+ 07:32:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016030909.64932-1-clementwei90@163.com>
-X-Spam-Score: -1.9 (-)
+References: <20241015-topic-mcan-wakeup-source-v6-12-v4-0-fdac1d1e7aa6@baylibre.com>
+ <20241015-topic-mcan-wakeup-source-v6-12-v4-3-fdac1d1e7aa6@baylibre.com>
+In-Reply-To: <20241015-topic-mcan-wakeup-source-v6-12-v4-3-fdac1d1e7aa6@baylibre.com>
+From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
+Date: Wed, 16 Oct 2024 23:32:06 +0900
+Message-ID: <CAMZ6RqJfBbFRaynjFAbi5quAvcA1bYj7Dw_vJ7rDsLRaEheZrw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/9] can: m_can: Map WoL to device_set_wakeup_enable
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Vishal Mahaveer <vishalm@ti.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 16, 2024 at 11:09:09AM +0800, Rongguang Wei wrote:
-> From: Rongguang Wei <weirongguang@kylinos.cn>
-> 
-> Meet a kernel panic in ipt_do_table:
-> PANIC: "Unable to handle kernel paging request at virtual address 00706f746b736564"
+On Wed. 16 Oct. 2024 at 04:18, Markus Schneider-Pargmann
+<msp@baylibre.com> wrote:
+> In some devices the pins of the m_can module can act as a wakeup source.
+> This patch helps do that by connecting the PHY_WAKE WoL option to
+> device_set_wakeup_enable. By marking this device as being wakeup
+> enabled, this setting can be used by platform code to decide which
+> sleep or poweroff mode to use.
+>
+> Also this prepares the driver for the next patch in which the pinctrl
+> settings are changed depending on the desired wakeup source.
+>
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
-This patch is no correct.
+I left a nitpick below. Regardless:
 
-> and the stack is:
->      PC: ffff5e1dbecf0750  [ipt_do_table+1432]
->      LR: ffff5e1dbecf04e4  [ipt_do_table+812]
->      SP: ffff8021f7643370  PSTATE: 20400009
->     X29: ffff8021f7643390  X28: ffff802900c3990c  X27: ffffa0405245a000
->     X26: ffff80400ad645a8  X25: ffffa0201c4d8000  X24: ffff5e1dbed00228
->     X23: ffff80400ad64738  X22: 0000000000000000  X21: ffff80400ad64000
->     X20: ffff802114980ae8  X19: ffff8021f7643570  X18: 00000007ea9ec175
->     X17: 0000fffde7b52460  X16: ffff5e1e181e8f20  X15: 0000fffd9a0ae078
->     X14: 610d273b56961dbc  X13: 0a08010100007ecb  X12: f5011880fd874f59
->     X11: ffff5e1dbed10600  X10: ffffa0405245a000   X9: 569b063f004015d5
->      X8: ffff80400ad64738   X7: 0000000000010002   X6: 0000000000000000
->      X5: 0000000000000000   X4: 0000000000000000   X3: 0000000000000000
->      X2: 0000000000000000   X1: 2e706f746b736564   X0: ffff80400ad65850
-> [ffff8021f7643390] ipt_do_table at ffff5e1dbecf074c [ip_tables]
-> [ffff8021f76434d0] iptable_filter_hook at ffff5e1dbfe700a4 [iptable_filter]
-> [ffff8021f76434f0] nf_hook_slow at ffff5e1e18c31c2c
-> [ffff8021f7643530] ip_forward at ffff5e1e18c41924
-> [ffff8021f76435a0] ip_rcv_finish at ffff5e1e18c3fddc
-> [ffff8021f76435d0] ip_rcv at ffff5e1e18c40214
-> [ffff8021f7643630] __netif_receive_skb_one_core at ffff5e1e18bbbed4
-> [ffff8021f7643670] __netif_receive_skb at ffff5e1e18bbbf3c
-> [ffff8021f7643690] process_backlog at ffff5e1e18bbd52c
-> [ffff8021f76436f0] __napi_poll at ffff5e1e18bbc464
-> [ffff8021f7643730] net_rx_action at ffff5e1e18bbc9a8
-> 
-> The panic happend in ipt_do_table function:
-> 
-> 	private = READ_ONCE(table->private);
-> 	jumpstack  = (struct ipt_entry **)private->jumpstack[cpu];
-> 	[...]
-> 	jumpstack[stackid++] = e;	// panic here
-> 
-> In vmcore, the cpu is 4, I read the private->jumpstack[cpu] is 007365325f6b6365,
-> this address between user and kernel address ranges which caused kernel panic.
-> Also the kmem shows that the private->jumpstack address is free.
-> It looks like we get a UAF address here.
-> 
-> But in xt_replace_table function:
-> 
-> 	private = table->private;
-> 	[...]
-> 	smp_wmb();
-> 	table->private = newtable_info;
-> 	smp_mb();
-> 
-> It seems no chance to get a free private member in ipt_do_table.
-> May have a ordering error which looks impossible:
-> 
-> 	smp_wmb();
-> 	table->private = newtable_info;
-> 	private = table->private;
-> 	smp_mb();
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-Makes no sense to me.
-
-> we get table->private after we set new table->private. After that, the
-> private was free in xt_free_table_info and also used in ipt_do_table.
-> Here use READ_ONCE to ensure we get private before we set the new one.
-
-You better enable CONFIG_KASAN there and similar instrumentation to
-check what really is going on there.
-
-> Signed-off-by: Rongguang Wei <weirongguang@kylinos.cn>
 > ---
->  net/netfilter/x_tables.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-> index da5d929c7c85..1ce7a4f268d6 100644
-> --- a/net/netfilter/x_tables.c
-> +++ b/net/netfilter/x_tables.c
-> @@ -1399,7 +1399,7 @@ xt_replace_table(struct xt_table *table,
->  
->  	/* Do the substitution. */
->  	local_bh_disable();
-> -	private = table->private;
-> +	private = READ_ONCE(table->private);
->  
->  	/* Check inside lock: is the old number correct? */
->  	if (num_counters != private->number) {
-> -- 
-> 2.25.1
-> 
-> 
+>  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index a978b960f1f1e1e8273216ff330ab789d0fd6d51..d427645a5b3baf7d0a648e3b008d7d7de7f23374 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -2185,6 +2185,36 @@ static int m_can_set_coalesce(struct net_device *dev,
+>         return 0;
+>  }
+>
+> +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+> +{
+> +       struct m_can_classdev *cdev = netdev_priv(dev);
+> +
+> +       wol->supported = device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +       wol->wolopts = device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +}
+> +
+> +static int m_can_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+> +{
+> +       struct m_can_classdev *cdev = netdev_priv(dev);
+> +       bool wol_enable = !!(wol->wolopts & WAKE_PHY);
+> +       int ret;
+> +
+> +       if ((wol->wolopts & WAKE_PHY) != wol->wolopts)
+
+Here, you want to check if a bit other than WAKE_PHY is set, isn't it?
+What about doing this:
+
+          if (wol->wolopts & ~WAKE_PHY)
+
+instead?
+
+> +               return -EINVAL;
+> +
+> +       if (wol_enable == device_may_wakeup(cdev->dev))
+> +               return 0;
+> +
+> +       ret = device_set_wakeup_enable(cdev->dev, wol_enable);
+> +       if (ret) {
+> +               netdev_err(cdev->net, "Failed to set wakeup enable %pE\n",
+> +                          ERR_PTR(ret));
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static const struct ethtool_ops m_can_ethtool_ops_coalescing = {
+>         .supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS_IRQ |
+>                 ETHTOOL_COALESCE_RX_MAX_FRAMES_IRQ |
+> @@ -2194,10 +2224,14 @@ static const struct ethtool_ops m_can_ethtool_ops_coalescing = {
+>         .get_ts_info = ethtool_op_get_ts_info,
+>         .get_coalesce = m_can_get_coalesce,
+>         .set_coalesce = m_can_set_coalesce,
+> +       .get_wol = m_can_get_wol,
+> +       .set_wol = m_can_set_wol,
+>  };
+>
+>  static const struct ethtool_ops m_can_ethtool_ops = {
+>         .get_ts_info = ethtool_op_get_ts_info,
+> +       .get_wol = m_can_get_wol,
+> +       .set_wol = m_can_set_wol,
+>  };
+>
+>  static int register_m_can_dev(struct m_can_classdev *cdev)
+> @@ -2324,6 +2358,9 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
+>                 goto out;
+>         }
+>
+> +       if (dev->of_node && of_property_read_bool(dev->of_node, "wakeup-source"))
+> +               device_set_wakeup_capable(dev, true);
+> +
+>         /* Get TX FIFO size
+>          * Defines the total amount of echo buffers for loopback
+>          */
+>
+> --
+> 2.45.2
+>
+>
 
