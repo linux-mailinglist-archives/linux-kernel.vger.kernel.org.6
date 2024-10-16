@@ -1,234 +1,104 @@
-Return-Path: <linux-kernel+bounces-367867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886B89A07C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6FE9A07CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED411C2768B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2751C27924
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64AC207203;
-	Wed, 16 Oct 2024 10:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B402071EB;
+	Wed, 16 Oct 2024 10:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z+QLV8kA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="izftSFn+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BED1CACDB;
-	Wed, 16 Oct 2024 10:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3679D1CACDB;
+	Wed, 16 Oct 2024 10:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729075860; cv=none; b=ZIhLBYDT9DObTfkDXbQ9slut5U1wUwLfFxlZot9aLt5SfP18Tq3nrgC5c/mB1Mr4sDjoVGR8fAkF9qLIWas4wGZiSF81JjDo/aIejMR3L3Iexi3ICCYlyas68Uzhj3FRXWxLID+dhyy8NJwfHugryq7133cTIemzODZ1iv/82t4=
+	t=1729075889; cv=none; b=ccQf2srg7zLvsOZHcT/Pws3/0C4pdEypg2tAz/2uClrr3PQwx9zejFBsRMGLmM6ej7WYGLFmyX6ZgKW2keleqlCOkyDIwjrjott/RpNUmo6FVuVSh8kgHZxHzJVUmDZwtjtYBkZT8ndLVJ/v1U7OEGRsWOyEH9rDPgKkEjDf9E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729075860; c=relaxed/simple;
-	bh=PNIap9Mxdye6yXywbk16VpWNVzOz915uVCPZlmzOALo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JeNOVc8DoWwc9viau2KQBRG+tm9b2BPeeJtViDTTM4oPlXdXOO0rGmKo+lxg4+nYL/Clas35edzFLT3JF9Z/9x5vJUKY7UTEXXrrHTmZ01o6y++IIw4GXzDdbmuQm72p2fPx/WIKCc76f/gN22QlfJQYSl7Hw74h+Yi0aLrv/so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z+QLV8kA; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729075859; x=1760611859;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PNIap9Mxdye6yXywbk16VpWNVzOz915uVCPZlmzOALo=;
-  b=Z+QLV8kAgjsiy9SSacTmEU0izrZ1GidBfDaqlNVTBWMeTIxmXsXriaCg
-   ARsYLkfpsR4mlE8EtqC86Wn8qHvW5RBPYXgrJCGbBlb3FdntxwZooL91I
-   nlxNTVCLvfiVll0WgeLKxTgc9MrDc0bD7teByrqKmTqbJIymONijrKQC8
-   x7WvmfLE8rPTA4Lutpra7zDs+lbnyO3NW5eR01V2buXW8CBHKSRDyvcgx
-   ScUF5xdnEmPVs2TK9jKr4D+uC3uGYov8lu1us+Ec7/l8eXfiqZO9feoJu
-   kvRfMhCJ2ev2v4s3O1qt5a7d0hSMzYWVOtYowoIhkCY9G8SK5s2ZLlHex
-   g==;
-X-CSE-ConnectionGUID: fg0EHjLsTtKBv2BigDVJgQ==
-X-CSE-MsgGUID: cDKpGVjdR8qXWc7Oa1+F7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28395566"
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="28395566"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:50:58 -0700
-X-CSE-ConnectionGUID: BcSritA1TJ2xJIzrN/E4tw==
-X-CSE-MsgGUID: rEYd4NKfRJOPJascwiMpVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="82969242"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 16 Oct 2024 03:50:51 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id DE448331; Wed, 16 Oct 2024 13:50:49 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Gaosheng Cui <cuigaosheng1@huawei.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Xiaoyao Li <xiaoyao.li@intel.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH] x86/mtrr: Rename mtrr_overwrite_state() to guest_force_mtrr_state()
-Date: Wed, 16 Oct 2024 13:50:48 +0300
-Message-ID: <20241016105048.757081-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
-References: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1729075889; c=relaxed/simple;
+	bh=LMM7TuS5hAf1w8ZzZUH0GziAYhZkQvCa7eayiPmWRx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I79PCITOWDd5UPiCwRovK/qqxNxW2c+QVs96y2FzYRdWf123oWFUYnPOiNAgFlswf7yN3TRYd+2eRgNlO7ouK0mf6xEWGsQJ4gx1BSHP8FpbRgJAmp1ZF2BzQCXtBmLgXBJw2GVDwDSKilAk9qJEl6Ds5a3brEMJ3UsXxZPiaao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=izftSFn+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274CDC4CEC5;
+	Wed, 16 Oct 2024 10:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729075888;
+	bh=LMM7TuS5hAf1w8ZzZUH0GziAYhZkQvCa7eayiPmWRx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=izftSFn+DzJ0u7ZAB59+401gzH3muVUYFWXej5WX+zcWVFEmk6sljhutT6vWFT/yH
+	 mURlO3+LonYgltU/xL1LYIeHDcC9qXTc/RJW7PaHkPbq9gGGmQfONErihYvLtEmczx
+	 Y6ztULXRiUfUUvb2hK/t7xKazYn443ndL06lZ+zU=
+Date: Wed, 16 Oct 2024 12:51:25 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH RESEND] vdpa: solidrun: Fix UB bug with devres
+Message-ID: <2024101627-tacking-foothill-cdf9@gregkh>
+References: <20241016072553.8891-2-pstanner@redhat.com>
+ <Zw-CqayFcWzOwci_@smile.fi.intel.com>
+ <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
 
-Rename the helper to better reflect its function.
+On Wed, Oct 16, 2024 at 11:22:48AM +0200, Philipp Stanner wrote:
+> On Wed, 2024-10-16 at 12:08 +0300, Andy Shevchenko wrote:
+> > On Wed, Oct 16, 2024 at 09:25:54AM +0200, Philipp Stanner wrote:
+> > > In psnet_open_pf_bar() and snet_open_vf_bar() a string later passed
+> > > to
+> > > pcim_iomap_regions() is placed on the stack. Neither
+> > > pcim_iomap_regions() nor the functions it calls copy that string.
+> > > 
+> > > Should the string later ever be used, this, consequently, causes
+> > > undefined behavior since the stack frame will by then have
+> > > disappeared.
+> > > 
+> > > Fix the bug by allocating the strings on the heap through
+> > > devm_kasprintf().
+> > 
+> > > ---
+> > 
+> > I haven't found the reason for resending. Can you elaborate here?
+> 
+> Impatience ;p
+> 
+> This is not a v2.
+> 
+> I mean, it's a bug, easy to fix and merge [and it's blocking my other
+> PCI work, *cough*]. Should contributors wait longer than 8 days until
+> resending in your opinion?
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
----
- arch/x86/hyperv/ivm.c              |  2 +-
- arch/x86/include/asm/mtrr.h        | 10 +++++-----
- arch/x86/kernel/cpu/mtrr/generic.c |  6 +++---
- arch/x86/kernel/cpu/mtrr/mtrr.c    |  2 +-
- arch/x86/kernel/kvm.c              |  2 +-
- arch/x86/xen/enlighten_pv.c        |  4 ++--
- 6 files changed, 13 insertions(+), 13 deletions(-)
+2 weeks is normally the expected response time, but each subsystem might
+have other time limites, the documentation should show those that do.
 
-diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-index 60fc3ed72830..90aabe1fd3b6 100644
---- a/arch/x86/hyperv/ivm.c
-+++ b/arch/x86/hyperv/ivm.c
-@@ -664,7 +664,7 @@ void __init hv_vtom_init(void)
- 	x86_platform.guest.enc_status_change_finish = hv_vtom_set_host_visibility;
- 
- 	/* Set WB as the default cache mode. */
--	mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-+	guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
- }
- 
- #endif /* defined(CONFIG_AMD_MEM_ENCRYPT) || defined(CONFIG_INTEL_TDX_GUEST) */
-diff --git a/arch/x86/include/asm/mtrr.h b/arch/x86/include/asm/mtrr.h
-index 4218248083d9..c69e269937c5 100644
---- a/arch/x86/include/asm/mtrr.h
-+++ b/arch/x86/include/asm/mtrr.h
-@@ -58,8 +58,8 @@ struct mtrr_state_type {
-  */
- # ifdef CONFIG_MTRR
- void mtrr_bp_init(void);
--void mtrr_overwrite_state(struct mtrr_var_range *var, unsigned int num_var,
--			  mtrr_type def_type);
-+void guest_force_mtrr_state(struct mtrr_var_range *var, unsigned int num_var,
-+			    mtrr_type def_type);
- extern u8 mtrr_type_lookup(u64 addr, u64 end, u8 *uniform);
- extern void mtrr_save_fixed_ranges(void *);
- extern void mtrr_save_state(void);
-@@ -75,9 +75,9 @@ void mtrr_disable(void);
- void mtrr_enable(void);
- void mtrr_generic_set_state(void);
- #  else
--static inline void mtrr_overwrite_state(struct mtrr_var_range *var,
--					unsigned int num_var,
--					mtrr_type def_type)
-+static inline void guest_force_mtrr_state(struct mtrr_var_range *var,
-+					  unsigned int num_var,
-+					  mtrr_type def_type)
- {
- }
- 
-diff --git a/arch/x86/kernel/cpu/mtrr/generic.c b/arch/x86/kernel/cpu/mtrr/generic.c
-index 7b29ebda024f..2fdfda2b60e4 100644
---- a/arch/x86/kernel/cpu/mtrr/generic.c
-+++ b/arch/x86/kernel/cpu/mtrr/generic.c
-@@ -423,7 +423,7 @@ void __init mtrr_copy_map(void)
- }
- 
- /**
-- * mtrr_overwrite_state - set static MTRR state
-+ * guest_force_mtrr_state - set static MTRR state for a guest
-  *
-  * Used to set MTRR state via different means (e.g. with data obtained from
-  * a hypervisor).
-@@ -436,8 +436,8 @@ void __init mtrr_copy_map(void)
-  * @num_var: length of the @var array
-  * @def_type: default caching type
-  */
--void mtrr_overwrite_state(struct mtrr_var_range *var, unsigned int num_var,
--			  mtrr_type def_type)
-+void guest_force_mtrr_state(struct mtrr_var_range *var, unsigned int num_var,
-+			    mtrr_type def_type)
- {
- 	unsigned int i;
- 
-diff --git a/arch/x86/kernel/cpu/mtrr/mtrr.c b/arch/x86/kernel/cpu/mtrr/mtrr.c
-index 989d368be04f..ecbda0341a8a 100644
---- a/arch/x86/kernel/cpu/mtrr/mtrr.c
-+++ b/arch/x86/kernel/cpu/mtrr/mtrr.c
-@@ -625,7 +625,7 @@ void mtrr_save_state(void)
- static int __init mtrr_init_finalize(void)
- {
- 	/*
--	 * Map might exist if mtrr_overwrite_state() has been called or if
-+	 * Map might exist if guest_force_mtrr_state() has been called or if
- 	 * mtrr_enabled() returns true.
- 	 */
- 	mtrr_copy_map();
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 21e9e4845354..7a422a6c5983 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -983,7 +983,7 @@ static void __init kvm_init_platform(void)
- 	x86_platform.apic_post_init = kvm_apic_init;
- 
- 	/* Set WB as the default cache mode for SEV-SNP and TDX */
--	mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-+	guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
- }
- 
- #if defined(CONFIG_AMD_MEM_ENCRYPT)
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index d6818c6cafda..633469fab536 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -171,7 +171,7 @@ static void __init xen_set_mtrr_data(void)
- 
- 	/* Only overwrite MTRR state if any MTRR could be got from Xen. */
- 	if (reg)
--		mtrr_overwrite_state(var, reg, MTRR_TYPE_UNCACHABLE);
-+		guest_force_mtrr_state(var, reg, MTRR_TYPE_UNCACHABLE);
- #endif
- }
- 
-@@ -195,7 +195,7 @@ static void __init xen_pv_init_platform(void)
- 	if (xen_initial_domain())
- 		xen_set_mtrr_data();
- 	else
--		mtrr_overwrite_state(NULL, 0, MTRR_TYPE_WRBACK);
-+		guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
- 
- 	/* Adjust nr_cpu_ids before "enumeration" happens */
- 	xen_smp_count_cpus();
--- 
-2.45.2
+While you wait, take the time to review other pending patches for that
+maintainer, that will ensure that your patches move to the top as they
+will be the only ones remaining.
 
+thanks,
+
+greg k-h
 
