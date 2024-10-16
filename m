@@ -1,145 +1,179 @@
-Return-Path: <linux-kernel+bounces-367803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2083E9A070A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593349A073C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58C828978C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FF41F22171
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CBC207A16;
-	Wed, 16 Oct 2024 10:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77F22071FC;
+	Wed, 16 Oct 2024 10:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f2G/BbQF"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="K7iyw+QR"
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DB3207A13
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579DB20695C;
+	Wed, 16 Oct 2024 10:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.143.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074073; cv=none; b=eCNlDK2AE2Yfhe5unbsVyJV23QdLAhyhhDAFh2KOeA+W9BkCGiKEoJsM2WpDjxeUCLJiYI5ajBhhtFGcQW0o7TVOq6eYxe1pr5sLy4np3Ayoc/xrxGGsrxsMPadHvHuCQFt2v32VvKt08u4y3EpSp7xznFTqx+UTabQIT5fWP9c=
+	t=1729074230; cv=none; b=FgFdekQIE5RuCJ7ca4v99SiypkHkYHjFWCzA3qEQW/yKuOH9QT9fV2w5CUXYcWCpYWtT6rJmux7B+WFQrtSsMHysAwHx7OcI6ejKwy48M6qFehdLqSDOf1vlBCd5rkEqo/GCt+GBFl3deX9vcWFRSb/v0GTjP3X5uSzBKDRS9r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074073; c=relaxed/simple;
-	bh=+vjxN3bVpSF0tBOfRjKZ6xoE3GHMSenDIePKfHckiZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9EWyPpBi6stGjY12o/G8j72WrDorejlWhrAKm2NxQ9RU/AQrlM1q3oUaLyRHHgPamq6MVD2Atjp2o34Aug5WOlRhF2/S5+yO3pqkIBYC4ghiJi0P6lteuMA93cbf8An4SqAXyT+vwbMPdMvgFBbwuGuMs5mk3apb9KyacdpOKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f2G/BbQF; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso4042795e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729074070; x=1729678870; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLdut8E3E3NtKT42b9sOuPXdXDsonyxQjz/a9BL8yAE=;
-        b=f2G/BbQFpmBXJBbkDNZNNXk6xlbfgCDEpT+bXHf5tDm9aY7/5X/+xwlC9VE/rTSTjG
-         VyZKPloBJecLWl29tdZiahgcRhi+4xQQ0uYocJ574gsrtgTbQinTQqFKJAujp0Uw+YJo
-         6ImkbHoGzYhwBLAZNh//Ksw8af9+Bcovm7vu2Yg+HXHWSwOKppg42UY9EXMlva+RrOWe
-         mHIAO5wdxDvM2HYqEFwF6wxS71TuZhLZ3lzhy6lAkSsO4BIPjGVXJT+YFqaIDo7q+Ea1
-         ljf4hAmAVTZNn0I7NGI1vid4IiE2Sta7WYMYXgQIN/QK/IW2s07WCGMslg4UHEH3cSJY
-         H9NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729074070; x=1729678870;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OLdut8E3E3NtKT42b9sOuPXdXDsonyxQjz/a9BL8yAE=;
-        b=MWo8SVbXquR1S0tAYtAElUCat4NQIwbRO3bpVYKiRGl+sE6/Mev/HlLZS8PAj7tyWB
-         imtZti3apICl7id92fuKDWl+x+pvweF7Rs1HYHve2LqGRlTY4Cd9w6exf4GROgo5zZ3S
-         +1II5ThiMf0tMGgGR2gGwYvwxSHcbvyiO+NSGnn3Ef/vC7J9ATajpKwno9GNxmqqpJeg
-         rdUOZd4YwMx8HJRYm3sM5fN4XcjX/eii8js/lloUKoPk3N7vbMUZyMKuvSbBTVrg/UHH
-         jmaiWNh/kxo5b0AEGwlwWkPBzSMnxtE7bVZ5eMtoK2wveTDc/dYUi2TL91IJk2kLLq2/
-         7vHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUScH+z5Kcb7Tix9TzhhGB/4dapvbDPgoinMVBeeMWyrxF5UST//xvuBG20jB6h9xdjrRcn6c20VtQvVMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPIGzB2I9BGh2/dGuX8cbTBBBHd05VyxghxGstzKgdB75qBfko
-	Q6t46AvxFdnLUPPO17gxZOUE4V5rXPb5QMdCNcMZg6Vg94VJe+hN2bheADVhQ8U=
-X-Google-Smtp-Source: AGHT+IHfqISBcwOLeSQZDV2YK8lfIG4NYRGTSreBdpNCo7LHjqixn5TrNwC4CIw/gihbpSQ4m5WEBw==
-X-Received: by 2002:a05:6512:3d23:b0:536:7b74:ef50 with SMTP id 2adb3069b0e04-539e54e81c1mr7747993e87.18.1729074069649;
-        Wed, 16 Oct 2024 03:21:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539ffff366esm407072e87.168.2024.10.16.03.21.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 03:21:09 -0700 (PDT)
-Date: Wed, 16 Oct 2024 13:21:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 0/4] Add GCC and RPMH clock controller for QCS615 SoC
-Message-ID: <6y6bb3vbxaffmaakxv6m4l652rinbbhtzyekxeupdfdvtqooil@e5bjlq7rh2y7>
-References: <20241016-qcs615-clock-driver-v3-0-bb5d4135db45@quicinc.com>
+	s=arc-20240116; t=1729074230; c=relaxed/simple;
+	bh=0aDmPs+anhfc37txHXDwfhfw7YbIofDuRGpzjKfcZG8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A0dzGr5CCeY65yMFtLmHiIi0eTZr8K3TLSiQN94OUpLgXACIgNTRmWU4LpZjSoABWl7C2qcEIMAgwYt3KSZ8iobcK4G3BKo1kIZ/tZ2auhc3gkO6B+uynTwcySVg9qBzRDe0me4pLYLxD3wcYmsFj8o1dIhgL0jxeihzvj9XUfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=K7iyw+QR; arc=none smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1729074228; x=1760610228;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0aDmPs+anhfc37txHXDwfhfw7YbIofDuRGpzjKfcZG8=;
+  b=K7iyw+QRly/WrCpcfIs3Lps7JZbdTu6j/F3DZuVKuJ+RXWHI/PkmhJwW
+   witDdOG2wpL0BfqAFkzIqXAttOAJxHvz/OGqQoEil7x4vjqX7oCzUlf6q
+   9QSDwYX14aW/KW9gy9g29hb5cjYjO1q98BaEkchm4Z/6bg6f4QnpB/ATK
+   +qpxHYG418e2I4IlO1X64I76kSJ1I3TLVEo6DUE8cGwYTauwCsdUHMJMf
+   As19dsQ6pJ/np+qxxnK1st6GSwxPndu1rsI5SteYobQ4jTmCWcBXSyOva
+   ndC54zD1PrydraDFwec7MaSiTb0m/FUoU9XShH1W5GRB6+ewJENUe7D9z
+   g==;
+X-CSE-ConnectionGUID: 9sCI9hpdTQWNadyIbNomKg==
+X-CSE-MsgGUID: eoleS7WdRziscVSoi3rftw==
+X-IronPort-AV: E=Sophos;i="6.11,207,1725292800"; 
+   d="scan'208";a="29536136"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2024 18:23:47 +0800
+IronPort-SDR: 670f8724_4EuPppubrDNw3KN3pw/MKWsiJNSBv4pcvtLIY3jA59vwfxp
+ pAO/KmOhdMZ4fMosybJcDAjV30WRB4t75iDPSqg==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Oct 2024 02:28:05 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Oct 2024 03:23:47 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH RESEND v2] scsi: ufs: Use wait-for-reg in HCE init
+Date: Wed, 16 Oct 2024 13:21:41 +0300
+Message-Id: <20241016102141.441382-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-qcs615-clock-driver-v3-0-bb5d4135db45@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 10:59:42AM +0530, Taniya Das wrote:
-> Add support for Global clock controller(GCC) and the RPMH clock
-> controller for the Qualcomm QCS615 SoC.
-> 
-> The QCS615 SoC is added as part of the below series.
-> https://lore.kernel.org/all/20240913-add_initial_support_for_qcs615-v2-0-9236223e7dab@quicinc.com/
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> 
-> Changes in v3:
-> - Update the gcc_pcie_0_aux_clk_src to use clk_rcg2_shared_ops. [Dmitry]
+The current so called "inner loop" in ufshcd_hba_execute_hce() is open
+coding ufshcd_wait_for_register. Replace it by ufshcd_wait_for_register.
+This is a code simplification - no functional change.
 
-Please don't send the next iteration unless all the comments are resolved.
-Sending your reply to the ML and sending next version at the same time
-isn't really a good way to work.
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
 
-> - Remove an extra line [Dmitry]
-> - Link to v2: https://lore.kernel.org/lkml/20240920-qcs615-clock-driver-v2-0-2f6de44eb2aa@quicinc.com
-> 
-> ---
-> Changes in v2:
-> - Update the compatible in alphabetical order for RPMHCC bindings and driver.
-> - Remove the extra ":" from the GCC bindings.
-> - Update the GCC Kconfig for some required configs and move the GCC init
->   from module to subsys_initcall().
-> - Link to v1: https://lore.kernel.org/r/20240919-qcs615-clock-driver-v1-0-51c0cc92e3a2@quicinc.com
-> 
-> ---
-> Taniya Das (4):
->       dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for QCS615
->       clk: qcom: rpmhcc: Add support for QCS615 Clocks
->       dt-bindings: clock: qcom: Add QCS615 GCC clocks
->       clk: qcom: gcc: Add support for QCS615 GCC clocks
-> 
->  .../devicetree/bindings/clock/qcom,qcs615-gcc.yaml |   59 +
->  .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
->  drivers/clk/qcom/Kconfig                           |    9 +
->  drivers/clk/qcom/Makefile                          |    1 +
->  drivers/clk/qcom/clk-rpmh.c                        |   19 +
->  drivers/clk/qcom/gcc-qcs615.c                      | 3034 ++++++++++++++++++++
->  include/dt-bindings/clock/qcom,qcs615-gcc.h        |  211 ++
->  7 files changed, 3334 insertions(+)
-> ---
-> base-commit: 55bcd2e0d04c1171d382badef1def1fd04ef66c5
-> change-id: 20240919-qcs615-clock-driver-d74abed69854
-> 
-> Best regards,
-> -- 
-> Taniya Das <quic_tdas@quicinc.com>
-> 
+---
+Changes in v2:
+ - Elaborate the commit log (Bart)
+ - Change a while-loop into a for-loop (Bart)
+---
+ drivers/ufs/core/ufshcd.c | 67 ++++++++++++++++++---------------------
+ 1 file changed, 30 insertions(+), 37 deletions(-)
 
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 9e6d008f4ea4..146915f92a85 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -4818,51 +4818,44 @@ EXPORT_SYMBOL_GPL(ufshcd_hba_stop);
+  */
+ static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
+ {
+-	int retry_outer = 3;
+-	int retry_inner;
++	int retry;
+ 
+-start:
+-	if (ufshcd_is_hba_active(hba))
+-		/* change controller state to "reset state" */
+-		ufshcd_hba_stop(hba);
++	for (retry = 3; retry > 0; retry--) {
++		if (ufshcd_is_hba_active(hba))
++			/* change controller state to "reset state" */
++			ufshcd_hba_stop(hba);
+ 
+-	/* UniPro link is disabled at this point */
+-	ufshcd_set_link_off(hba);
++		/* UniPro link is disabled at this point */
++		ufshcd_set_link_off(hba);
+ 
+-	ufshcd_vops_hce_enable_notify(hba, PRE_CHANGE);
++		ufshcd_vops_hce_enable_notify(hba, PRE_CHANGE);
+ 
+-	/* start controller initialization sequence */
+-	ufshcd_hba_start(hba);
++		/* start controller initialization sequence */
++		ufshcd_hba_start(hba);
+ 
+-	/*
+-	 * To initialize a UFS host controller HCE bit must be set to 1.
+-	 * During initialization the HCE bit value changes from 1->0->1.
+-	 * When the host controller completes initialization sequence
+-	 * it sets the value of HCE bit to 1. The same HCE bit is read back
+-	 * to check if the controller has completed initialization sequence.
+-	 * So without this delay the value HCE = 1, set in the previous
+-	 * instruction might be read back.
+-	 * This delay can be changed based on the controller.
+-	 */
+-	ufshcd_delay_us(hba->vps->hba_enable_delay_us, 100);
++		/*
++		 * To initialize a UFS host controller HCE bit must be set to 1.
++		 * During initialization the HCE bit value changes from 1->0->1.
++		 * When the host controller completes initialization sequence
++		 * it sets the value of HCE bit to 1. The same HCE bit is read back
++		 * to check if the controller has completed initialization sequence.
++		 * So without this delay the value HCE = 1, set in the previous
++		 * instruction might be read back.
++		 * This delay can be changed based on the controller.
++		 */
++		ufshcd_delay_us(hba->vps->hba_enable_delay_us, 100);
+ 
+-	/* wait for the host controller to complete initialization */
+-	retry_inner = 50;
+-	while (!ufshcd_is_hba_active(hba)) {
+-		if (retry_inner) {
+-			retry_inner--;
+-		} else {
+-			dev_err(hba->dev,
+-				"Controller enable failed\n");
+-			if (retry_outer) {
+-				retry_outer--;
+-				goto start;
+-			}
+-			return -EIO;
+-		}
+-		usleep_range(1000, 1100);
++		/* wait for the host controller to complete initialization */
++		if (!ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE, CONTROLLER_ENABLE,
++					      CONTROLLER_ENABLE, 1000, 50))
++			break;
++
++		dev_err(hba->dev, "Enabling the controller failed\n");
+ 	}
+ 
++	if (!retry)
++		return -EIO;
++
+ 	/* enable UIC related interrupts */
+ 	ufshcd_enable_intr(hba, UFSHCD_UIC_MASK);
+ 
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
