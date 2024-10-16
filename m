@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-367298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB769A0095
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:28:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614899A0096
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4350E284DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:28:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9316D1C240C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD2418BC1E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552F918BC31;
 	Wed, 16 Oct 2024 05:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IHdr3Mer"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFRGkUgY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D66918BB9A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610418BBB7
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729056476; cv=none; b=QXNfsbQcY8QXVjUuXiy1E+KCfkmfGxLluplN40Qdk9lKEBByJhO1IycNRTqWKN/WD7XxEbvv2OlT5pD08sSOaXuYe4mruTGmdVrRd6SktAFnSGImyKf6qjKpiO8UVdAxH0Qerw0nurTX0s0NvVi+8JvnJxYSjeravIloJ00n0KA=
+	t=1729056476; cv=none; b=h+hksVGyi6SpnIo7vTEF9u9MGCVpAKes0SJCf7d7qWK7CsQ1WDNqhdVDVQ+dFBQ/dhMG7Q+ew62TJCwvnBnMbQ5GYljbf9VTQ9cix2vk+WHIa7pQWFIZCu+O6X8LhOzX7pqrdvvsz05bZSPT0t7ojTFkews+qah00HEqWWYTKC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729056476; c=relaxed/simple;
-	bh=wr9djLuiLRmtMV+CDqPeySU/5of2llOuI/71PgvqERY=;
+	bh=//4Cx99p5jogEeFkicaoyIn2GOAS1p2Dbd+QLByWjhY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ly97jLx0HPnX0mg4gt3JhU6kG3lZZnDIuoe/03X77kM3HMl7fYH3XbPDxgzERK6FHS3CFr+sRNymTcMbzmZeLbq8yPdKjizgWTqRkD1Nb8Ep+fJND92bM/PXQfzz4rAUnypZaElCFJeYlPrf5kWJMl6bm2gTEtzO2BdEyRM+OWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IHdr3Mer; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB302C4CED0;
-	Wed, 16 Oct 2024 05:27:55 +0000 (UTC)
+	 MIME-Version; b=MP5bBWxI9t3+ubG1O4eClpaATiR/xKYz2kA8RXltWZyPw+dR9L9eUxaiySaYa90v7FOf+dD6cHEjRO3TF8ytVSOY19JS6n7S+uww4xraM5DDF6qXayS1uuOS5pbwSEmdV2GuzG0pLhv7WPAJp9mgXUYjpUBJQ50tFS9yOxAnZ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFRGkUgY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A100C4CED1;
+	Wed, 16 Oct 2024 05:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1729056476;
-	bh=wr9djLuiLRmtMV+CDqPeySU/5of2llOuI/71PgvqERY=;
+	bh=//4Cx99p5jogEeFkicaoyIn2GOAS1p2Dbd+QLByWjhY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IHdr3MerMlcwzZt8JbxVEmf1NYGkI5fPbGmI5gET1LwwZqpe30GPz7DGMVSyhcTQT
-	 0VGNb42hAmq2chOSY6VcCExtSg+clAaTnE6aq0qLfgR9N2W1RfU/eA1ATOkZTJVj2V
-	 tFLXj1s4lghCpI8Guw27d8tzGRYCF9D9MaBtKcox7MOBStqprr4TsJnISpcl/BKf0H
-	 WdaBqLrtfKk7eJRLFqSnnDJZpiJwgi4OpmufebcyolmVqNHshQWNKzVOuf4L/M6n1l
-	 C2lbCwwrFMsa7heQf1OHr2kN8+9P6Cnc4NNkQMNEhoedRsdIRTbpvUnB3N0U4v0sKT
-	 VJjFITYr2dw3Q==
+	b=CFRGkUgYtZNKeG774KNogSUIWZp4KHQZzO3bZCW27MX+I3d3Ohz08BJshkQB/TNor
+	 vFV/AygFwrhh6QsxyXjQgK27CT11YlX7xRWwC7vN8AaOF2jr6kX39EPDQZClVZ3sz0
+	 5F16BFDbmLvDaUFYc4yjtsgUM2FjtWaKpZ4o+63IJ4gd8hcu3CHuUOYTv1fZb25UnY
+	 F+5nuoMNs8H7wN2reW6UQgtZ5D8N23Px5gLkTUzvCuk4IOJMzPwagsOx8FlZ0RDyqb
+	 n5lnZpxNElVXny3hvRBJjxMRSaeAi9/JgNIv2iDb8VTc3WA6zsUFFciGGYgAxjhYwN
+	 zW+Xv43o1DV7A==
 From: Vineet Gupta <vgupta@kernel.org>
 To: linux-snps-arc@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org,
-	Vineet Gupta <vgupta@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 2/3] ARC: build: disallow invalid PAE40 + 4K page config
-Date: Tue, 15 Oct 2024 22:27:48 -0700
-Message-ID: <20241016052749.1640081-3-vgupta@kernel.org>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Vineet Gupta <vgupta@kernel.org>
+Subject: [PATCH 3/3] ARC: build: Use __force to suppress per-CPU cmpxchg warnings
+Date: Tue, 15 Oct 2024 22:27:49 -0700
+Message-ID: <20241016052749.1640081-4-vgupta@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241016052749.1640081-1-vgupta@kernel.org>
 References: <20241016052749.1640081-1-vgupta@kernel.org>
@@ -59,52 +60,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The config option being built was
-| CONFIG_ARC_MMU_V4=y
-| CONFIG_ARC_PAGE_SIZE_4K=y
-| CONFIG_HIGHMEM=y
-| CONFIG_ARC_HAS_PAE40=y
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This was hitting a BUILD_BUG_ON() since a 4K page can't hoist 1k, 8-byte
-PTE entries (8 byte due to PAE40). BUILD_BUG_ON() is a good last ditch
-resort, but such a config needs to be disallowed explicitly in Kconfig.
-
-Side-note: the actual fix is single liner dependency, but while at it
-cleaned out a few things:
- - 4K dependency on MMU v3 or v4 is always true, since 288ff7de62af09
-   ("ARC: retire MMUv1 and MMUv2 support")
- - PAE40 dependency in on MMU ver not really ISA, although that follows
-   eventually.
+Currently, the cast of the first argument to cmpxchg_emu_u8() drops the
+__percpu address-space designator, which results in sparse complaints
+when applying cmpxchg() to per-CPU variables in ARC.  Therefore, use
+__force to suppress these complaints, given that this does not pertain
+to cmpxchg() semantics, which are plently well-defined on variables in
+general, whether per-CPU or otherwise.
 
 Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409160223.xydgucbY-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202409251336.ToC0TvWB-lkp@intel.com/
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: <linux-snps-arc@lists.infradead.org>
 Signed-off-by: Vineet Gupta <vgupta@kernel.org>
 ---
- arch/arc/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arc/include/asm/cmpxchg.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 5b2488142041..69c6e71fa1e6 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -297,7 +297,6 @@ config ARC_PAGE_SIZE_16K
- config ARC_PAGE_SIZE_4K
- 	bool "4KB"
- 	select HAVE_PAGE_SIZE_4KB
--	depends on ARC_MMU_V3 || ARC_MMU_V4
- 
- endchoice
- 
-@@ -474,7 +473,8 @@ config HIGHMEM
- 
- config ARC_HAS_PAE40
- 	bool "Support for the 40-bit Physical Address Extension"
--	depends on ISA_ARCV2
-+	depends on MMU_V4
-+	depends on !ARC_PAGE_SIZE_4K
- 	select HIGHMEM
- 	select PHYS_ADDR_T_64BIT
- 	help
+diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
+index 58045c898340..76f43db0890f 100644
+--- a/arch/arc/include/asm/cmpxchg.h
++++ b/arch/arc/include/asm/cmpxchg.h
+@@ -48,7 +48,7 @@
+ 									\
+ 	switch(sizeof((_p_))) {						\
+ 	case 1:								\
+-		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
++		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *__force)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
+ 		break;							\
+ 	case 4:								\
+ 		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
 -- 
 2.43.0
 
