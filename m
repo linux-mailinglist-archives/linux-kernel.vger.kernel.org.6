@@ -1,89 +1,111 @@
-Return-Path: <linux-kernel+bounces-368643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B5A9A12C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A439A12CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B1ABB251BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDD61F24310
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4AF2144D4;
-	Wed, 16 Oct 2024 19:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1DE2144D2;
+	Wed, 16 Oct 2024 19:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq8Ex3+o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4iLvASZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657E9212EF9;
-	Wed, 16 Oct 2024 19:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC27F1885BB;
+	Wed, 16 Oct 2024 19:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107743; cv=none; b=SkdMd/jUWyr8IHZSsgbL3tNQltkt4laxBiz54s88b1RjV2OnlcNdHxM5D989x4wdvN/uuZ+YIkWZaeMkRw8JGFn8054u5RCPGm/CKCaNJbAG2CEwMZDchL8lK19OKDJ8WQl7bI1VzlCXOWHrput4nzpoWhtYBdpJywKps+8vS64=
+	t=1729107777; cv=none; b=boMAqebTJtni7RoMfiFaSEls1UZ/fmtW68SDpBkabNgGdqFCRML9sGdQrwBuLC61UCSABM2Ay5wD7yzJ1roRUHhTiyFTS1fwUMdGU6mPI/fx49r12Vth0NkIZVegtLUuVjzib5UxqHuX9ihPPNNWONEJwXsTksqcD3Rx3aHHviI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107743; c=relaxed/simple;
-	bh=6kuARo6R+izUJawqtMLy82AYZrt2UknikmPasItjF6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=mttfPJyiWCNgPMFtoblmGwnxi7SDnVd8Ww6h8XgXA1t+NWUgour2jOZJMMYDy/BtDYBcFFME2vknQM3RTkX6PUQ0wkRn00bvkAoHNKlwdC9fxqnhNDKeLqOxlXfHXBGkSkEdko8lK1nqXn/UaviKgNRzasAOE/jp9Blh9SDquw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kq8Ex3+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCEAEC4CEC5;
-	Wed, 16 Oct 2024 19:42:22 +0000 (UTC)
+	s=arc-20240116; t=1729107777; c=relaxed/simple;
+	bh=mZzMcn9MbCczzX11J8+TKZRX7Uh7hjxyr0xf7rLHKQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NVWkqe/rZHsIkdaFM4dndtgyI8uaskqHIQerA8Bcdb0GzeKTHESOSKx+tk8nskm9IKeJ2o79Y6BFr1eT7UbR7jdNaN/iWTvoiosoEOrRxF/ItDSj+YTH8pxCEUrErJvj2dBxZv3tWHRC0y3Hc0NW3i4NWgiO6AVAiUsuWhOgnm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4iLvASZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91584C4CEC5;
+	Wed, 16 Oct 2024 19:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729107742;
-	bh=6kuARo6R+izUJawqtMLy82AYZrt2UknikmPasItjF6A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=kq8Ex3+oNplSkp/j91IAnz7zUnun8iysvY9K/o/bsFIcA/eCGuprEaNUXTR7Fk94k
-	 i8tpKIZOauSyBdcDNAOYwDXqi4c5NuL8xbG6j+KaT5Mu9WcTMbsnOkN6HUq7xKluKs
-	 WNIiUm5rVLPRGnmfLIIM6YZhAHxWMgg6ws/CVrKEDjRMZeKrufeD7ORj45ER4/++dN
-	 EcTgrrqHYodO9P+b4g5AN3vvCo+5Y6XIf44wBnS7oL1uxYuBZOrzjwkqXugcFknfna
-	 MaYnw8k3oCKLXaKRw2eBQHEFldHPIrtEEFeod3NsyyDNvYOTzY0zoII5qNXI9APyeZ
-	 6+40M0W8VizgQ==
-Date: Wed, 16 Oct 2024 14:42:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: cpqphp: Remove an unused field in struct ctrl_dbg
-Message-ID: <20241016194221.GA646374@bhelgaas>
+	s=k20201202; t=1729107776;
+	bh=mZzMcn9MbCczzX11J8+TKZRX7Uh7hjxyr0xf7rLHKQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I4iLvASZXoBveFjv8+9epyZ3FYoC2LL6NapNNmpAOzXB1KJ3kRDc54jMETDXw5YHS
+	 cmetoNHDqC83Ujklx02sR7d6YPdtEsJX5sMGdATx+U3+cDPwfgAc1gvl+PuSAe9njh
+	 ELlGAyeUVVU/xGLXeFmsssQFPdtGat14Jmru1f4Orr/1vhi/vSCXXIo6Zr8SS2d000
+	 Mva4ajJUqiYHsHTXMc1ZpThEAbr50ZKVBF+yNXLzB7rlofSfQFnRQf6CGVPcw7AKWK
+	 NKj+a23iHPnKFXmQU5SZoI1K1zw+scRrPeY6seTsFfRxCbuLA35vvQJe6Q1R7Ma1ls
+	 gen+M4eGWLaaQ==
+Date: Wed, 16 Oct 2024 20:42:51 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, Lewis Hanly <lewis.hanly@microchip.com>
+Subject: Re: [RFC v7 4/6] gpio: mpfs: add polarfire soc gpio support
+Message-ID: <20241016-cobbler-connector-9b17ec158e3a@spud>
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+ <20240723-underage-wheat-7dd65c2158e7@wendy>
+ <CACRpkdbRE695f-+do1HYpOZ6e4qxgUBWJzEPO2hTCuZ3xxYHQg@mail.gmail.com>
+ <20241016-shallot-nerd-51eeba039ba0@spud>
+ <20241016-dandelion-hypnosis-9d989bb2fdd1@spud>
+ <CACRpkdbJKWcjBG5ejwsNEgnnGWj69TAtKbgaHP3NiPM5GbiGQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="A7dnOTkzHLL/fEWQ"
 Content-Disposition: inline
-In-Reply-To: <551d0cdaabcf69fcd09a565475c428e09c61e1a3.1728762751.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CACRpkdbJKWcjBG5ejwsNEgnnGWj69TAtKbgaHP3NiPM5GbiGQw@mail.gmail.com>
 
-On Sat, Oct 12, 2024 at 09:53:42PM +0200, Christophe JAILLET wrote:
-> 'ctrl' is unused, remove it to save a few bytes when the structure is
-> allocated.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to pci/hotplug for v6.13, thanks!
+--A7dnOTkzHLL/fEWQ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
-> Compile tested only
-> ---
->  drivers/pci/hotplug/cpqphp_sysfs.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/hotplug/cpqphp_sysfs.c b/drivers/pci/hotplug/cpqphp_sysfs.c
-> index fed1360ee9b1..6143ebf71f21 100644
-> --- a/drivers/pci/hotplug/cpqphp_sysfs.c
-> +++ b/drivers/pci/hotplug/cpqphp_sysfs.c
-> @@ -123,7 +123,6 @@ static int spew_debug_info(struct controller *ctrl, char *data, int size)
->  struct ctrl_dbg {
->  	int size;
->  	char *data;
-> -	struct controller *ctrl;
->  };
->  
->  #define MAX_OUTPUT	(4*PAGE_SIZE)
-> -- 
-> 2.47.0
-> 
+On Wed, Oct 16, 2024 at 09:26:13PM +0200, Linus Walleij wrote:
+> On Wed, Oct 16, 2024 at 12:29=E2=80=AFPM Conor Dooley <conor@kernel.org> =
+wrote:
+>=20
+> > What does bring a nice simplification though, IMO, is regmap. I am
+> > pretty sure that using it was one of the suggestions made last time
+> > Lewis submitted this - so I think I'm going to do that instead.
+>=20
+> If you have the time. Using GPIO_REGMAP for MMIO is not that
+> common and I think the driver is pretty neat as it stands.
+
+As with using the common MMIO stuff, I don't think GPIO_REGMAP provides
+that much value as I cannot use the direction stuff from it. I was
+thinking of using regmap directly, like:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
+=3Dgpio-no-irq&id=3Dc8933e1e3600e3fa29efe28fbb2e343e133f9d67
+which I think reduces how ugly the two direction functions look.
+
+--A7dnOTkzHLL/fEWQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxAXOwAKCRB4tDGHoIJi
+0nzLAP97X5rdMU9SMZrBe1Wh3xgBP+5nGo+g7+4bYyVhUFNghQD9HYvVX4AGihOk
+4WFF1ruWtm4KhgoJOTAXVyYdsz6M4Ak=
+=uvpR
+-----END PGP SIGNATURE-----
+
+--A7dnOTkzHLL/fEWQ--
 
