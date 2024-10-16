@@ -1,90 +1,101 @@
-Return-Path: <linux-kernel+bounces-368399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D582C9A0F6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:12:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A7F9A0F6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4572845B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6D171C22CA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE60A20FA9D;
-	Wed, 16 Oct 2024 16:12:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDC820FA90;
+	Wed, 16 Oct 2024 16:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3bfjRKc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B7A205E23;
-	Wed, 16 Oct 2024 16:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9485C205E23;
+	Wed, 16 Oct 2024 16:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729095126; cv=none; b=Rwjq3kRf3tQkO9SN1MrDzh7P0M4HpVvjPFbUFQOx7V2+mXBBlyCcUVzk6hE1HUJ12RQmUCwA1ypixqdvGuJxb/X95qPTROqabc5B/PL7Er2jkjwCrnFuqgJiO37PssvSlpbqVu/UqsO52iElS4Pfo29HF+WRlW9m24jqG6QiNJw=
+	t=1729095156; cv=none; b=FOJgy2dq3lAvuK8jkucdal/vu9UjBojNwiMiC99a9rM3W3W9gGX9TkXwHZ7Fmro1ilzSD7aeSownhK2edR0ipaNnD621ykG51KfxRS8OBikCM6XWBWmRxlYuilzKGM7hYCzAXudm8nqXzY2DnFu7+LPRH32MJwUiXvDKOLEbVjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729095126; c=relaxed/simple;
-	bh=olTAeeYy1NLCDapKRpMFnDBIFDr4TFhhnSmanR1b1mk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ehk5COW9KasvBTqZPNbxkdmYfEbgYDHEpKmgJ4ba1XSmA4BjN/jHjXcZHCV+/f6GZOlo9Z96F0CCWmcEBrkWXwWuCdFjnrlPMTmaLEuCgCDbb3pL89dF09c7QPEHFifCcQnGUu68vqfYW9qR9k8V+LZvBNXIskSJeWRXRLyw4Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTGDT5Fx0z6D8q7;
-	Thu, 17 Oct 2024 00:11:21 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E5B51400DB;
-	Thu, 17 Oct 2024 00:11:59 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 18:11:58 +0200
-Date: Wed, 16 Oct 2024 17:11:57 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
-	<Benjamin.Cheatham@amd.com>, <rrichter@amd.com>, <nathan.fontenot@amd.com>,
-	<smita.koralahallichannabasappa@amd.com>
-Subject: Re: [PATCH 02/15] cxl/aer/pci: Update is_internal_error() to be
- callable w/o CONFIG_PCIEAER_CXL
-Message-ID: <20241016171157.00004898@Huawei.com>
-In-Reply-To: <20241008221657.1130181-3-terry.bowman@amd.com>
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
-	<20241008221657.1130181-3-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729095156; c=relaxed/simple;
+	bh=/kdo8FDR22c+8gTYCEWztNfSfN4bRIUDHgvEhgdZI5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNwl4NzdQdyXg3Q79JxkdWzSzwTbmRPFlbHqx5UoRFu4hO+ntP/034ACZPh5i14Oacn7iqQmZVNzVpwhLbWpDU6h5ka05J+cuKHp9aJpRwRCv5fIthwRgGNVPwaZxTRm05qOpHIsJCjs4OENfABFr/dkN2A2azM4y/jWEDctbNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3bfjRKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FA74C4CECE;
+	Wed, 16 Oct 2024 16:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729095156;
+	bh=/kdo8FDR22c+8gTYCEWztNfSfN4bRIUDHgvEhgdZI5c=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=C3bfjRKcJPQLjFJvsNgHaB8UUDnRw/cy5yHPnAl8g7ESJln1K2SxgdcOPOWrsUFOz
+	 1h7wyCIeP7U5iShfhe2dJCGf3S3cz/c8zA083NEEFrHKPw7MoAyrlC2WYtnMaxi6GT
+	 ZR5mjHyMumC3LfA8I+9hg9G2Zjve7mWPifWlPiJiGGBjzBPLOqtR3r39wgs2L0zicc
+	 8bkGSIgTDUIw6lG2r25A3bS3eyLDW1yqtKyvjFCH0Khv79qaSw14WfCcwasU/jBZe4
+	 Z2oe8Je9UwJPWpai68/+oYjJXyQuC2epF7BX9NrNofXS/ZONglmj6x6LioTCkn98Nd
+	 zorvdZUtINHAg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E1DD1CE0DCA; Wed, 16 Oct 2024 09:12:35 -0700 (PDT)
+Date: Wed, 16 Oct 2024 09:12:35 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: kernel test robot <oliver.sang@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [peterz-queue:sched/lazy] [sched, x86]  74d850cd4c:
+ WARNING:at_kernel/rcu/rcutorture.c:#rcu_torture_stats_print[rcutorture]
+Message-ID: <b9d0af7f-0b1f-4f55-87a6-f64124f898b8@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <202410151544.7d2292c6-lkp@intel.com>
+ <20241016154048.sdiJ85Zc@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241016154048.sdiJ85Zc@linutronix.de>
 
-On Tue, 8 Oct 2024 17:16:44 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
+On Wed, Oct 16, 2024 at 05:40:48PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2024-10-15 15:47:20 [+0800], kernel test robot wrote:
+> > Hello,
+> Hi,
+> 
+> it took me a while to reproduce this because it does not trigger without
+> the ltp userland and this is not downloaded properly so I had to
+> workaround it. However…
+> 
+> > [   98.006999][  T543] busted-torture: rtc: 00000000639e821e ver: 6796 tfle: 0 rta: 6796 rtaf: 0 rtf: 6787 rtmbe: 1 rtmbkf: 0/0 rtbe: 0 rtbke: 0 rtbf: 0 rtb: 0 nt: 89 barrier: 0/0:0 read-exits: 64 nocb-toggles: 0:0
+> > [   98.017386][  T543] busted-torture: !!! 
+> > [   98.017662][  T543] ------------[ cut here ]------------
+> > [   98.019330][  T543] WARNING: CPU: 0 PID: 543 at kernel/rcu/rcutorture.c:2258 rcu_torture_stats_print+0x24c/0x610 [rcutorture]
+> > [   98.021831][  T543] Modules linked in: rcutorture torture
+> …
+> > [   98.237025][  T543] ------------[ cut here ]------------
+> > [   98.238052][  T543] WARNING: CPU: 0 PID: 543 at kernel/rcu/rcutorture.c:2263 rcu_torture_stats_print+0x373/0x610 [rcutorture]
+> > [   98.240000][  T543] Modules linked in: rcutorture torture
+> …
+> 
+> It took me a while to figure out that this test is using
+> rcu_busted_torture_deferred_free() which in turn invokes the callback
+> before the grace period. Buh.
+> So it looks like LAZY preempt triggers this more reliably than the
+> normal preempt version…
 
-> CXL port error handling will be updated in future and will use
-> logic to determine if an error requires CXL or PCIe processing.
-> Internal errors are one indicator to identify an error is a CXL
-> protocol error.
-> 
-> is_internal_error() is currently limited by CONFIG_PCIEAER_CXL
-> kernel config.
-> 
-> Update the is_internal_error() function's declaration such that it is
-> always available regardless if CONFIG_PCIEAER_CXL kernel config
-> is enabled or disabled.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Given this has nothing specifically to do with CXL, this seems
-sensible to me.
+Agreed!
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Please don't run any rcutorture scenario whose name contains "BUSTED"
+or "busted" unless you are trying to test rcutorture's ability to find
+broken RCU implementations.
+
+							Thanx, Paul
 
