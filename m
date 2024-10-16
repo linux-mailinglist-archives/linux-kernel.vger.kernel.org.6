@@ -1,279 +1,286 @@
-Return-Path: <linux-kernel+bounces-368151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCD59A0BF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE86A9A0BF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE8F1F270DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6504C1F270AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C213920C001;
-	Wed, 16 Oct 2024 13:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC8B20C011;
+	Wed, 16 Oct 2024 13:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RDe8sf89"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2060.outbound.protection.outlook.com [40.107.96.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0wsLRcl"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F9208218
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086757; cv=fail; b=ZgOQmgQblULLKRxJbUfvZOpFMFWW9k+LgH3n1fSO5W3re3izaKC8ApkkfyIslxLaLAE8YLtuoK7qO0uSbW230DP1ePe5uTu+8wsOEIbE4ejk8BLzR3Sc0IOXtWehlzSfmueJ3DeJ72XeX6ZGwGFARbqoTeK1Df8MuE5dXXn6lyo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086757; c=relaxed/simple;
-	bh=shVUVKfEFZuivSxVJt5mxwcjTwZyBijbMyoLaAxOxeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hLcQVDVH0Amgeu1uCg/nAdm1S1kPziY+VfXvvMs0KeP6Aziw2b1ps5LYrBzqC0MrhPUPYRQHXMBIq3CtIUgtMFaVs0TfKeWt1HBXxZPMZwmh1wYTI8Rfx5gVVxLN8E1T73xmMKAcsYKK/P46JKKEZ5yUtMJq6B5Cwr/mtVbn0Pk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RDe8sf89; arc=fail smtp.client-ip=40.107.96.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LeY5WL6fuP1+ii1S+f23HBuJ70EeMgqIykP5MS+EzEAD9qFpvHHsTKrLlJ673MV1zczJ7daFnVFupkJpzi1Y8Nx1S2ZSqAmXPqFWINgnhLLsRXXB/yH1O+uOScurgXTyV0103nSo+E25i/8lIOjARGNLyJFBfNTuTIjpiTjPG3o4AAaFxwnDUpryLYYv/YfarjYpI8UdSHnWtO3E9vsjCg6cv6vmTm/7hUGC5LxX6WZZVlVDLHWkbF62IYI4h+xpLoJ4WJLl/OxtrzJUGgphH/qKD83XzWXl72jAZyJ3GfdaRroL1iFO8JXBzq6IQFQEFtlXHpXb/qqfevuzw/6uaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bkddZNMi3UTxddxTlp/lpOTdA/pRmgqOUvy7yqN3O+I=;
- b=Xs1gldL9OXH9F+LpsRtVvJGNkz8BQ/SgvTJrJLdp5fUnbLwkb7qXs5sBGf0flDTwtrmujOD/tA6cXxNdoJiu4sbSEH3aN86eDd3bcuIfngdUaC4UnFB6CFGWSdG8ZqCQXqjPdbAI1P88ka5dWFy5q7KZWyNKJKP1fHk4G8G+/ZgNcSGZDrUXh/jRHY098Ymx2rrxfNdOvEv7D2ljsUw15zPiPh8sbHCX1ZQ92pzrEiFwl/XsCMZ71CQ879aolKSFe7fIdv9aRGi8pOWwF627arrheCTopHgaXtHgzq6+Tb1FzbnRw1rYZLIVxcX1ztA0H1blKe/USZxLxeHR+aTr/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bkddZNMi3UTxddxTlp/lpOTdA/pRmgqOUvy7yqN3O+I=;
- b=RDe8sf896i9xSv4EHaZbzYrFLnXWUpMbwtKwrJaoMKusbmUoyHzzSsro6VQetceNRNSMjhrZyRW7CtqUSrkqHhjVlF9kEYW+v2VEmwnEeQq9DEIzgxfQcEiUYHW+SL5BOJQCiALmqxKyVvSZkDoiecBZjRF8HTZEhKYbq0cf5VxTAwSg6K6S4uFFZ12Zn9had5ZjW53IPMDRSpvNgX2ytOVh/zGba7cKSR5p7NjVZlvq++q0jfVSJPLs2//Ck/fPvP1wRDeytO50z8tzmQdwtOkoI6QRToq1qbxk59+SNB5E3gB7mePv21HAq+PX5BvVAfaNgH/Dggz0kGK0cG3jNQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SA3PR12MB8439.namprd12.prod.outlook.com (2603:10b6:806:2f7::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 13:52:33 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 13:52:33 +0000
-Date: Wed, 16 Oct 2024 10:52:32 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
-	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
-	kumaranand@google.com
-Subject: Re: [PATCH v6 5/9] iommu/amd: Modify set_dte_entry() to use 256-bit
- DTE helpers
-Message-ID: <20241016135232.GM3559746@nvidia.com>
-References: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
- <20241016051756.4317-6-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016051756.4317-6-suravee.suthikulpanit@amd.com>
-X-ClientProxiedBy: MN0PR03CA0030.namprd03.prod.outlook.com
- (2603:10b6:208:52f::19) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F474208218;
+	Wed, 16 Oct 2024 13:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729086776; cv=none; b=CB/YY+sAv+PEAy7NtSRcdINM0EHScegKuVl+y5ALvFV7mfBcvmO8XMl+BTXUGnHf7YDooRyd/gUKDzMLqiTUqPGsJ+0wRIoSiVSVWJ2hLJsku96W10DOViVU9vG8RwUOGhfZpGPJDahO/uOME2Kn5QUfkly1HdGIG79L7GDzum0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729086776; c=relaxed/simple;
+	bh=iVe6daXBjf0FGiLXnlPk68UAkWUxewdyKA6tLNmKIKo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P9nfmV0gVJS5FsvlTog3Rptluq89S3O26TQUp77Lmw1dd6Mu9nBRA4fnQldrmH8IJh+eyH38uNglkdXAD+6UzE4p9y7O00ffUDfKohOVr8UpzTN+Yfkp3NTt/45v0OCxIyzScCkasBTK+p/IO9eTTyzTEv753Ba7DU7JfEzKiEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0wsLRcl; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4608e389407so11126051cf.2;
+        Wed, 16 Oct 2024 06:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729086774; x=1729691574; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3VyiHnDKcK8FI5+FMxl4L18f3GHTxZZjF4Owll8YQ/M=;
+        b=h0wsLRclH6YU4cDHhCOhHdP/MXBXSEnS+lkDXyGqyFL1qnf4YfQPFIq3ik8YQUj2Gs
+         cL/ZuEN7IWGoPkU6JpaaJr0q7L2Gneq+xBQfH1QvyS4k9AdNN/hxim6Yh8LsSekFQ2jG
+         XSh+dnzZjBXgCSZ4sxQORH2a2okiODhoqObroBDR72NkeYyD2Cn3j8jug3povoDyO/DY
+         KoYbfVYWvrzVDR081wtA7IpDhMlvdX9vEsUZ5wjjdRjt219d5BScUz1wYTxjfq5MNrHZ
+         zXQH2LopVYRqFA153iv3uAyWjYyID9tUaCR5me1SpgqdEDeqT1R82TCl/IMkIoHGU/2z
+         +dKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729086774; x=1729691574;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3VyiHnDKcK8FI5+FMxl4L18f3GHTxZZjF4Owll8YQ/M=;
+        b=i3bxpbUaPcMJMvsvdz2ew45G6+tfJk/2lv/L2dEq8FDhLOcBIL/HJj1GDG2HN3UmNm
+         dVTKNyUl5L+N11Pu8laNjAitSZpAcFfKUqNHhpL3Nm2rr2Q5Omxx3w02TLuWBCUWVIwI
+         vV6CmPivQffpomCmG7S1uGyT79qum1eevaIVg596L9iSu5WMSPe/RVNOtLA2ZKlGz3b7
+         0zVXZCVa3cfyUCbJqA4Ihq1jZEuSmhZrbcutGY3bIlzfN2Xug4n63rEj2vvmCNn66FcH
+         cldvoH9ifvDlNMERhcR8JuTab3VqUw37e+xHSTvt49M9A/2KAdNXNKWI7SCaX4wgYIHQ
+         4tBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWInJ0GvnjoermAhB4QgPRUyXBBsEqQ7eoss+VWxizXahshz2eCPATivCP3AXZLkQzepg6FM/IZKXC+k2Jk7rk=@vger.kernel.org, AJvYcCXxrZJXE+x0CqkvWhSJhdEbEK0WcuyIKGeUlfGN11x26fV8jxoSFiERJdFCzGvwAiNo9OXazBPSDFvg+FM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWE42qmQV+5a1gBE1IqWhamKSDUNjRy5YyZKWV9t1fbrlJNO18
+	eZs6sCfjncs5VR+BRc5G4ijElAvdxypH8OcBQpRmBfdzOT6uN8O6
+X-Google-Smtp-Source: AGHT+IFzoMUCSj95XrQ3tZCSPHNsQFDpMYkK5gKXJ1TOxMmbQ9xytImxkbswPPfby2sYZaboWD6lEw==
+X-Received: by 2002:ac8:58c2:0:b0:460:4e67:d67f with SMTP id d75a77b69052e-4608a430077mr61697731cf.2.1729086773881;
+        Wed, 16 Oct 2024 06:52:53 -0700 (PDT)
+Received: from 156.1.168.192.in-addr.arpa (pool-100-37-170-231.nycmny.fios.verizon.net. [100.37.170.231])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b122260sm18157271cf.50.2024.10.16.06.52.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 06:52:53 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 16 Oct 2024 09:52:51 -0400
+Subject: [PATCH v6] rust: use host dylib naming convention
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA3PR12MB8439:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88352b1e-5b11-4423-5922-08dcede9c8b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fPapqE8+xpKthtXSpnzXlMK3GM2xlBVpboorIDKqT+JXWRV+kAojaMqiOhYo?=
- =?us-ascii?Q?QGUOROQ9xegAF807I6uLbonjlj4caM38900fVUB6qX2J7DMe6sbyVq95RTgt?=
- =?us-ascii?Q?0uUzpscGkLCwV39fjuEWyQ5m6Av/QwXd9hte4KBueZ3KrbdprHGUiBqeLHZ5?=
- =?us-ascii?Q?t60yTWlQFfxbG1wJxbrGukmiUGwWYGWkTfhfG32AT5T3/RZINp2FuosJz+Z9?=
- =?us-ascii?Q?9kovvTNxRqSNNxN9ZfMTcp+pLjDobWp6CaTbfPfDIh/nOXW9q7Xhomc4A44j?=
- =?us-ascii?Q?purEW9X5bHKWaiqNSKssmzIe+AO97Vj8jZ6cyOwSULStOYG+L09sZNHxSqu4?=
- =?us-ascii?Q?Pk/II3mYinje61eSdZ08hH7JPhMbF6LVW67wfxaKJFLQVZPaPJkUkqcuCSy4?=
- =?us-ascii?Q?oiPkBTKugM4WkroHCLUE9HuVNNIlJWrJ4KWHSW1FALrqMF2HzHzt3UNDJC7L?=
- =?us-ascii?Q?ic413T6//Ny1P9PU0MoO+QGCjDMVz08Jqyy+bIfzBja6UrM6Gn5n20fYfPFE?=
- =?us-ascii?Q?AUum/3U4YTLL9jepGlMYQiEpBhuwCqaegBMRgGwhWr/xwxRLOKZjT98ySfGz?=
- =?us-ascii?Q?vMCbH4LtT7TmGe9+jHZ6Mxk5wk1nwm/NqWJ3f65OUvMI5w4/0Gm4ZWMKkV8T?=
- =?us-ascii?Q?+hLe9f/I2JpbUnVFWMTAUL/BuA8rWwxxcFxV7Vp1mUSum5yX10i304mlMEwk?=
- =?us-ascii?Q?UxDj1tBF4zipVZW1iVtrjGFmDAIZQafejDEbJCxyg4YKdN58WumwN4S2HbwQ?=
- =?us-ascii?Q?YpvRQdFyz1uez+dgHQieHNgcn2YG2le/mIL+3o2AeKNbVH6qqrQrf7Ffiiiv?=
- =?us-ascii?Q?rL5DBuOJEHT0G8FLE7+8dYKBOddzbI6LWJyVkcETqBMZOX+kzWi+dO3eeEPy?=
- =?us-ascii?Q?cw4/T34znUm35aU4vYxKohyhknmt438l9alDMrX59r6WzgVjdwfmmJNBV/yq?=
- =?us-ascii?Q?2qQP6/e8uaF4myHqXu+ry4cjlWdamVoxPXnvc4iIq0A6I7WBmFSktopryRSy?=
- =?us-ascii?Q?ARXMzGD0bTyDHrSD+APwBwbchuCf+Ze7jlFSIfHVlcaCZlyyfwGya1ge36h8?=
- =?us-ascii?Q?DNbU0mUvFbh8y5ONpjpce4yLgflnwkGWfJbVBNSwQJqoXYe+o2cLYQsFbbBl?=
- =?us-ascii?Q?/364uGflJVVEVvJ8XGX1gl7n1NuwFhQiV/WgC3jVedlluiLFnqel8IwP/loR?=
- =?us-ascii?Q?HJoeCQGNvAMGA+j+iKmmZVucz2jTQOlRsQHXrPbG1jQVqx8NdZBCYN8mgV2q?=
- =?us-ascii?Q?YJm+8jna2YQp32lm15YJEepALtZWSP6XUdSRe1WYgg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kvB92V/WAghF7r2JfqdAVEq/CPFf9G4bEYjygDodMLbyWk5d/aQKtQXc2mCx?=
- =?us-ascii?Q?NwIxivoY3RORv5/TdU0Amb7ULvR1CU7rQRSIo2qdkG9hpU1RS9jnCORS51kO?=
- =?us-ascii?Q?pYFwOV40LpvvE3Zl0I43esYJC+FqMZi1EPdnCap/qdeNgmwjDEOxbkPxxnj4?=
- =?us-ascii?Q?j5IkLCutmINVvsBYYUx/WkLTtKHHBisSUGgSnsKspmCg731vxhiImaWd04sO?=
- =?us-ascii?Q?cJ+bFPU+VFDfDuQdV8fgDwTodnnS/oKBMzrUSRDNGQtADHKrOMAG2dmtUKjS?=
- =?us-ascii?Q?hcGjN8PurSQzDThqCzBg17ciTISmrLe3rx8h1mCqBmchsPrbx+rUdZgc7Su5?=
- =?us-ascii?Q?YNIifuAg1+K20Md1j3JRITyJC2s0Ux328OzilnU2Mob2SuVJGN8vQpUSL6pY?=
- =?us-ascii?Q?0ZsqEA2CaX8o2YzkSH7MptSpeytDN/fHjGGAXKRN5G5d7jLEx5VifHrSiQRR?=
- =?us-ascii?Q?WgNwPbSGcUO7IyfE9TKybNCeu7alxH2ZRCqUwCb4Us/9l/YqerWHkS6a8NCv?=
- =?us-ascii?Q?chhQ2g87oGZxvzNoF0eIY7NY1ZwSsBezrg8X4CVs3ckLgX/j4L6w3xKjvQe/?=
- =?us-ascii?Q?QLvj6EGZKUSMlVIn1NukW1EECQ6wEgSrlK/ECaB50WqBGWLzXVwLcnov7aLi?=
- =?us-ascii?Q?J61Vyjg6KvLDKr8Gt9VkZiXXKLZull8z0CW5Lx11+xxebYYXJjfJfd9o6KIz?=
- =?us-ascii?Q?PvDPAUKqHxagVfZw06cX0vY+fj9IxifViNs+KUR/RE1kL8GlASfL0WGeLj9C?=
- =?us-ascii?Q?I/EEL/HxDC1wvq5srqSFrW/cd2IR0urvznpYDlyexbjqDS4pWtSCfW+mKoXj?=
- =?us-ascii?Q?5c1m2UJny4rXdz3Lvz0q0Kt7xVmmXoaxPQGF4XGF7iGmAFQsxDC73t9aC3K6?=
- =?us-ascii?Q?mP5dPEdKlpoUeqhWANQ2mnDj/RQarv7McCwfgQ6G9Yhj1HCwNGkdsr+YRcfP?=
- =?us-ascii?Q?RaQee7ULn14+l1BtHW1Y/NiREjhK2cnDn/gZSZfKLuIjg1R5N2jcvZx9xUl8?=
- =?us-ascii?Q?svSJB3PT5reWQkW3ON3qsekYaYclcE59fZtTdS6U3A6r8S76FPOmd1N77hx6?=
- =?us-ascii?Q?0QKwElAO2wX0LKT79NGc4Wo8r+U67UIydCtVS7ehRe9opEv1KRwCPJoxl2AB?=
- =?us-ascii?Q?+X45gjVjVCwLvnc2Z0jHmiuXDnpt4SwbCQcVmIgGtqz9xQG+CX3Vez86ufg0?=
- =?us-ascii?Q?HYvo/Ji6I6oEJK0kHVc2OrTeCipEwAUgytgR7ICHIPjof0Cwtf4DN5o1pbzj?=
- =?us-ascii?Q?V60K9xrGycT//RnLBH5bUoeVarhZq6V7supjPughv6mfW+qlmNTmxIgPkE+5?=
- =?us-ascii?Q?j1a0aVd2R1UlvS6K2aaz3uWSGUD+vB1z/hYQBYYoa/U9w0fMc3if7Mz5gUiB?=
- =?us-ascii?Q?IlAflC0/do0OIMYNvDAUklNmc+okR6sov+opX9k9EK6zIXa2rufl4IlD+Y60?=
- =?us-ascii?Q?sT/gRZwdvbKOy5Spx/TRbmHtKAQ8YvlGWI73EhaNnFQwCbuSs+Ys6Kf7RbQJ?=
- =?us-ascii?Q?1NQpnIYM0+3RrpQ0UjUgyjCta2MlD/g57gBHIVsqxSp/8OvkjCPk6YhwrSng?=
- =?us-ascii?Q?pDZ5l3aQ1DRV322BJyM=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88352b1e-5b11-4423-5922-08dcede9c8b5
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 13:52:33.1714
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2OG0f0MnzTuYkU2OkWDXQ1Nt1WqN3mdei0KEB0ATAhEXajSVRIIwr7Czv4VEJXeB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8439
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241016-b4-dylib-host-macos-v6-1-bbeab5029199@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADLFD2cC/03MTQ7CIBBA4as0s3YaQErRlfcwLvhrmaQUA43RN
+ L27xJXLb/HeDjUUChWu3Q4lvKhSXhvUqQMXzToHJN8MggnJGVdoJfrPQhZjrhsm43JFrsZhdOe
+ BWXmBVj5LmOj9u94fzVPJCbdYgvl7MS2E1Jz1WjYjx80kKv42J0NL73KC4/gCyNorfp8AAAA=
+X-Change-ID: 20241016-b4-dylib-host-macos-16757c350b49
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Wed, Oct 16, 2024 at 05:17:52AM +0000, Suravee Suthikulpanit wrote:
-> +static void set_dte_gcr3_table(struct amd_iommu *iommu,
-> +			       struct iommu_dev_data *dev_data,
-> +			       struct dev_table_entry *target)
-> +{
-> +	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-> +	u64 tmp, gcr3;
-> +
-> +	if (!gcr3_info->gcr3_tbl)
-> +		return;
-> +
-> +	pr_debug("%s: devid=%#x, glx=%#x, gcr3_tbl=%#llx\n",
-> +		 __func__, dev_data->devid, gcr3_info->glx,
-> +		 (unsigned long long)gcr3_info->gcr3_tbl);
-> +
-> +	tmp = gcr3_info->glx;
-> +	target->data[0] |= (tmp & DTE_GLX_MASK) << DTE_GLX_SHIFT;
-> +	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
-> +		target->data[0] |= DTE_FLAG_GIOV;
-> +	target->data[0] |= DTE_FLAG_GV;
-> +
-> +
-> +	gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
-> +
-> +	/* Encode GCR3 table into DTE */
-> +	tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
-> +	target->data[0] |= tmp;
-> +	tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
-> +	tmp |= DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
-> +	target->data[1] |= tmp;
-> +
-> +	/* Guest page table can only support 4 and 5 levels  */
-> +	if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL)
-> +		target->data[2] |= ((u64)GUEST_PGTABLE_5_LEVEL << DTE_GPT_LEVEL_SHIFT);
-> +}
+Because the `macros` crate exposes procedural macros, it must be
+compiled as a dynamic library (so it can be loaded by the compiler at
+compile-time).
 
-This looks OK but suggest to use the new macros and things, it is much
-more readable:
+Before this change the resulting artifact was always named
+`libmacros.so`, which works on hosts where this matches the naming
+convention for dynamic libraries. However the proper name on macOS would
+be `libmacros.dylib`.
 
-diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-index 53e129835b2668..fbae0803bceaa0 100644
---- a/drivers/iommu/amd/amd_iommu_types.h
-+++ b/drivers/iommu/amd/amd_iommu_types.h
-@@ -409,8 +409,7 @@
- #define DTE_FLAG_HAD	(3ULL << 7)
- #define DTE_FLAG_GIOV	BIT_ULL(54)
- #define DTE_FLAG_GV	BIT_ULL(55)
--#define DTE_GLX_SHIFT	(56)
--#define DTE_GLX_MASK	(3)
-+#define DTE_GLX		GENMASK_ULL(57, 56)
- #define DTE_FLAG_IR	BIT_ULL(61)
- #define DTE_FLAG_IW	BIT_ULL(62)
+This turns out to matter even when the dependency is passed with a path
+(`--extern macros=path/to/libmacros.so` rather than `--extern macros`)
+because rustc uses the file name to infer the type of the library (see
+link). This is because there's no way to specify both the path to and
+the type of the external library via CLI flags. The compiler could
+speculatively parse the file to determine its type, but it does not do
+so today.
+
+This means that libraries that match neither rustc's naming convention
+for static libraries nor the platform's naming convention for dynamic
+libraries are *rejected*.
+
+The only solution I've found is to follow the host platform's naming
+convention. This patch does that by querying the compiler to determine
+the appropriate name for the artifact. This allows the kernel to build
+with CONFIG_RUST=y on macOS.
+
+Link: https://github.com/rust-lang/rust/blob/d829780/compiler/rustc_metadata/src/locator.rs#L728-L752
+Co-developed-by: Fiona Behrens <me@kloenk.dev>
+Signed-off-by: Fiona Behrens <me@kloenk.dev>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+V5 -> V6: Removed setting `no-clean-files`. Rewrote description.
+e4 -> V5: Added missing `shell` in rust/Makefile.
+V3 -> V4: Added motivation. Added missing Signed-off-by.
+V2 -> V3: Added .strip() to rustc output to remove errant newline.
+V1 -> V2: De-duplicated and sorted imports. Changed Signed-off-by to
+Co-developed-by.
+---
+ .gitignore                        |  1 +
+ Makefile                          |  2 +-
+ rust/Makefile                     | 20 +++++++++++---------
+ scripts/generate_rust_analyzer.py | 15 +++++++++++----
+ 4 files changed, 24 insertions(+), 14 deletions(-)
+
+diff --git a/.gitignore b/.gitignore
+index a61e4778d011cf706e6784818a1357f392f3a669..088696a6a46a12fdb77eb9ccab5b6b7b11ef4707 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -22,6 +22,7 @@
+ *.dtb.S
+ *.dtbo.S
+ *.dwo
++*.dylib
+ *.elf
+ *.gcno
+ *.gcda
+diff --git a/Makefile b/Makefile
+index a9e723cb05961877d5e6b50920dcabc78cf4988f..470e6f20c513bf0f90a42c586aa92dd7a8b16fb0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1513,7 +1513,7 @@ MRPROPER_FILES += include/config include/generated          \
+ 		  certs/x509.genkey \
+ 		  vmlinux-gdb.py \
+ 		  rpmbuild \
+-		  rust/libmacros.so
++		  rust/libmacros.so rust/libmacros.dylib
  
-@@ -418,15 +417,10 @@
- #define DTE_FLAG_MASK	(0x3ffULL << 32)
- #define DEV_DOMID_MASK	0xffffULL
+ # clean - Delete most, but leave enough to build external modules
+ #
+diff --git a/rust/Makefile b/rust/Makefile
+index 3678e79317f12d7116ad0c2ac1ca416ee5b969aa..0d882103375aa45be78e22f59c64739c8722fd98 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -11,9 +11,6 @@ always-$(CONFIG_RUST) += exports_core_generated.h
+ obj-$(CONFIG_RUST) += helpers/helpers.o
+ CFLAGS_REMOVE_helpers/helpers.o = -Wmissing-prototypes -Wmissing-declarations
  
--#define DTE_GCR3_VAL_A(x)	(((x) >> 12) & 0x00007ULL)
--#define DTE_GCR3_VAL_B(x)	(((x) >> 15) & 0x0ffffULL)
--#define DTE_GCR3_VAL_C(x)	(((x) >> 31) & 0x1fffffULL)
-+#define DTE_GCR3_14_12	GENMASK_ULL(57, 56)
-+#define DTE_GCR3_30_15	GENMASK_ULL(31, 16)
-+#define DTE_GCR3_51_31	GENMASK_ULL(63, 43)
- 
--#define DTE_GCR3_SHIFT_A	58
--#define DTE_GCR3_SHIFT_B	16
--#define DTE_GCR3_SHIFT_C	43
+-always-$(CONFIG_RUST) += libmacros.so
+-no-clean-files += libmacros.so
 -
--#define DTE_GPT_LEVEL_SHIFT	54
- #define DTE_GPT_LEVEL_MASK	GENMASK_ULL(55, 54)
+ always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs
+ obj-$(CONFIG_RUST) += bindings.o kernel.o
+ always-$(CONFIG_RUST) += exports_helpers_generated.h \
+@@ -36,9 +33,14 @@ always-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.c
+ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated.o
+ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.o
  
- #define GCR3_VALID		0x01ULL
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index caea101df7b93d..b0d2174583dbc9 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2012,7 +2012,7 @@ static void set_dte_gcr3_table(struct amd_iommu *iommu,
- 			       struct dev_table_entry *target)
- {
- 	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
--	u64 tmp, gcr3;
-+	u64 gcr3;
+-# Avoids running `$(RUSTC)` for the sysroot when it may not be available.
++# Avoids running `$(RUSTC)` when it may not be available.
+ ifdef CONFIG_RUST
  
- 	if (!gcr3_info->gcr3_tbl)
- 		return;
-@@ -2021,25 +2021,24 @@ static void set_dte_gcr3_table(struct amd_iommu *iommu,
- 		 __func__, dev_data->devid, gcr3_info->glx,
- 		 (unsigned long long)gcr3_info->gcr3_tbl);
- 
--	tmp = gcr3_info->glx;
--	target->data[0] |= (tmp & DTE_GLX_MASK) << DTE_GLX_SHIFT;
--	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
--		target->data[0] |= DTE_FLAG_GIOV;
--	target->data[0] |= DTE_FLAG_GV;
--
--
- 	gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
- 
--	/* Encode GCR3 table into DTE */
--	tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
--	target->data[0] |= tmp;
--	tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
--	tmp |= DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
--	target->data[1] |= tmp;
-+	target->data[0] |= DTE_FLAG_GV |
-+			   FIELD_PREP(DTE_GLX, gcr3_info->glx) |
-+			   FIELD_PREP(DTE_GCR3_14_12, gcr3 >> 12);
-+	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
-+		target->data[0] |= DTE_FLAG_GIOV;
++libmacros_name := $(shell $(RUSTC) --print file-names --crate-name macros --crate-type proc-macro - < /dev/null)
++libmacros_extension := $(patsubst libmacros.%,%,$(libmacros_name))
 +
-+	target->data[1] |= FIELD_PREP(DTE_GCR3_30_15, gcr3 >> 15) |
-+			   FIELD_PREP(DTE_GCR3_51_31, gcr3 >> 31);
++always-$(CONFIG_RUST) += $(libmacros_name)
++
+ # `$(rust_flags)` is passed in case the user added `--sysroot`.
+ rustc_sysroot := $(shell MAKEFLAGS= $(RUSTC) $(rust_flags) --print sysroot)
+ rustc_host_target := $(shell $(RUSTC) --version --verbose | grep -F 'host: ' | cut -d' ' -f2)
+@@ -104,10 +106,10 @@ rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORCE
+ 	+$(call if_changed,rustdoc)
  
- 	/* Guest page table can only support 4 and 5 levels  */
- 	if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL)
--		target->data[2] |= ((u64)GUEST_PGTABLE_5_LEVEL << DTE_GPT_LEVEL_SHIFT);
-+		target->data[2] |=
-+			FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_5_LEVEL);
-+	else
-+		target->data[2] |=
-+			FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_4_LEVEL);
- }
+ rustdoc-kernel: private rustc_target_flags = \
+-    --extern build_error --extern macros=$(objtree)/$(obj)/libmacros.so \
++    --extern build_error --extern macros \
+     --extern bindings --extern uapi
+ rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-macros \
+-    rustdoc-compiler_builtins $(obj)/libmacros.so \
++    rustdoc-compiler_builtins $(obj)/$(libmacros_name) \
+     $(obj)/bindings.o FORCE
+ 	+$(call if_changed,rustdoc)
  
- static void set_dte_entry(struct amd_iommu *iommu,
+@@ -325,10 +327,10 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
+ 		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
+ 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
+ 		--crate-type proc-macro \
+-		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
++		--crate-name $(patsubst lib%.$(libmacros_extension),%,$(notdir $@)) $<
+ 
+ # Procedural macros can only be used with the `rustc` that compiled it.
+-$(obj)/libmacros.so: $(src)/macros/lib.rs FORCE
++$(obj)/$(libmacros_name): $(src)/macros/lib.rs FORCE
+ 	+$(call if_changed_dep,rustc_procmacro)
+ 
+ quiet_cmd_rustc_library = $(if $(skip_clippy),RUSTC,$(RUSTC_OR_CLIPPY_QUIET)) L $@
+@@ -401,7 +403,7 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
+ $(obj)/kernel.o: private rustc_target_flags = \
+     --extern build_error --extern macros --extern bindings --extern uapi
+ $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/build_error.o \
+-    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
++    $(obj)/$(libmacros_name) $(obj)/bindings.o $(obj)/uapi.o FORCE
+ 	+$(call if_changed_rule,rustc_library)
+ 
+ endif # CONFIG_RUST
+diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+index 09e1d166d8d236fcf8c2b2375624b243ebf6e7f7..aa8ea1a4dbe5f9037c8c231d87ddc8d95c297f12 100755
+--- a/scripts/generate_rust_analyzer.py
++++ b/scripts/generate_rust_analyzer.py
+@@ -8,6 +8,7 @@ import json
+ import logging
+ import os
+ import pathlib
++import subprocess
+ import sys
+ 
+ def args_crates_cfgs(cfgs):
+@@ -35,8 +36,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     crates_cfgs = args_crates_cfgs(cfgs)
+ 
+     def append_crate(display_name, root_module, deps, cfg=[], is_workspace_member=True, is_proc_macro=False):
+-        crates_indexes[display_name] = len(crates)
+-        crates.append({
++        crate = {
+             "display_name": display_name,
+             "root_module": str(root_module),
+             "is_workspace_member": is_workspace_member,
+@@ -47,7 +47,15 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+             "env": {
+                 "RUST_MODFILE": "This is only for rust-analyzer"
+             }
+-        })
++        }
++        if is_proc_macro:
++            proc_macro_dylib_name = subprocess.check_output(
++                [os.environ["RUSTC"], "--print", "file-names", "--crate-name", display_name, "--crate-type", "proc-macro", "-"],
++                stdin=subprocess.DEVNULL,
++            ).decode('utf-8').strip()
++            crate["proc_macro_dylib_path"] = f"{objtree}/rust/{proc_macro_dylib_name}"
++        crates_indexes[display_name] = len(crates)
++        crates.append(crate)
+ 
+     # First, the ones in `rust/` since they are a bit special.
+     append_crate(
+@@ -70,7 +78,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+         [],
+         is_proc_macro=True,
+     )
+-    crates[-1]["proc_macro_dylib_path"] = f"{objtree}/rust/libmacros.so"
+ 
+     append_crate(
+         "build_error",
+
+---
+base-commit: 6ce162a002657910104c7a07fb50017681bc476c
+change-id: 20241016-b4-dylib-host-macos-16757c350b49
+
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
+
 
