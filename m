@@ -1,173 +1,87 @@
-Return-Path: <linux-kernel+bounces-367918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DC79A0862
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E5F9A0866
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33BC0286350
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:31:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0860A286521
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2D12076C0;
-	Wed, 16 Oct 2024 11:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bVe4/HHW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3979920607F;
+	Wed, 16 Oct 2024 11:32:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E6118C33F;
-	Wed, 16 Oct 2024 11:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B1718C33F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729078258; cv=none; b=gAgFNRmTtDlajAVqldgJPXmLSV7gky+QqDW6BLsWoxxxVh/5bu18lgD07LTAAarpvxpuVRl/2hTXV64tR4SY45pmSMLeXI7Bfpu/5JBJL4K8a4cWT6eHueRJmyupJgbS6yptvjuTaZuat3ActMapLX5m8L+HAsGXw0ykFk6M09w=
+	t=1729078324; cv=none; b=RnliMlcyD3KX/XN9d8tgnX2Xxo0/RmPfOz1z5/955dGkIjOm89HGHERgUkvuyMWx7wdiqeAxmrB8y/i5m2GomZct8CR6eHC9HEPwUR4kpG73KrYDyE39CJnGUZASU0jTfs39SsWJzawilHmiGtPZyVRESZZetgNzMVuAdtcvASI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729078258; c=relaxed/simple;
-	bh=gj3PUT8+LJdHaIpnA8VwKdoAGoUZFkwFpjcgiW41sR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YyikYe8y+SxcZnLaQqn9LrnyobAweRbCXu8Th3jknLikOjz53woHceQutkxVjDrhKi4Rs5PWGkAln/Cuh7rpAWwPAumMBRdpMEjo9GjhjgzoNEurp4oPXeLjL3kO7i0ux1VveqFLFf8gng4fmow71VWtFLNewGmd90AkUkDlTFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bVe4/HHW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GAIHat011617;
-	Wed, 16 Oct 2024 11:30:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	W/Pdk1RM10rovtP45lZjk1phb37PYeRbY9dnf33ceyY=; b=bVe4/HHWUTCwK1j9
-	w2C7VVgN/yEcm4svFU/7oQk7YthF8L1CSrFHkgs/9wEFd52A1mGzIkxQ19wPjixx
-	egrkj9h8LpQ4evMZe/YO85J4dvbxaV7G/E0mJY8ytWceeBvYQEzKb3kZXk9Bbxfi
-	fvGTFICeQhHsUsUMfxZRyl8lQ+aBGUZCxdwhyu+mTru/pRdKgp+ZFPyWScDipBLw
-	a/yPm0Auq8jb8KjG14sB/62OpNK9Yte4xZW6gdAWH+NMluhule4FhzhEezCoBJzx
-	iDn+kiL6MydcOu1YlDliE2lJk8+E4yH8JwbvQ+fISqrJeE6KkD9/4yXJUXNaVl3v
-	GsERXQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42abm5g69b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 11:30:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49GBUpDk006906
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 11:30:51 GMT
-Received: from [10.217.216.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Oct
- 2024 04:30:47 -0700
-Message-ID: <e7443137-925a-4fa9-916a-7481585ad4c6@quicinc.com>
-Date: Wed, 16 Oct 2024 17:00:43 +0530
+	s=arc-20240116; t=1729078324; c=relaxed/simple;
+	bh=fcC8xvGyh3niNvSrIbnwX8I1nHh6g1RQ82pVzCKwcVs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aHsfYpjkX71tjTNuGvjy9Qppoy7yX++T5oWVKrkbXHllli7ItUqyeeq/boVoPXfkXM7SnRNhuiyzWLFx9cL5lvEgW08XFq80xcMSPB/iS4Hm/Wt3g4MyTnHXBmHhFi29TCAHkmqPeq+EEgiD367fkEmMUn/EL7SVCImf6AzNEm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83a98ea8e2aso71524239f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729078322; x=1729683122;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SvJYFCud4jXaKKQLAMqtZmQNzk/JP+RehKfMmFrCkLI=;
+        b=FrOFp1wqbowa6LoD9L8kkYk1UG2DVp8jsxtalDIo2ckl3YWDMnoWrA/utsTQZT0Rls
+         jro2U+n54h7dYJCKUIzO5IhoS+lQoeqDZb3PSSW5GUbwrd97NGmwhfliwwF9HTC2DaO/
+         lrj8QgMIf0RRqJYNv1H4E0E24CvFRilJuAxBh84feJvA5F56FJVVAcjwsQxEVGjScV27
+         V6e+C4Y9p4Ej79PAbFRKI71I7WEfdvqyYDDgY7AsqoJXoTtuFVOmghEAlyxjLRTP6wID
+         OjX0PhaMmQQahqmKJ7LNRHgw7ds5fA6YfNyAEVH3Vx4nfPnUK4EHZJdwHm3kl9RPw67W
+         Enlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHxJe1CxFYqss2nCWEnF6d/KMkdngc2uYF9vUM8N6Oh9rAG3a5nk0pv5gqDzUb/mEDcdjqaX4lTZEQpGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmF6SEqjh613QqLOUuG4gvM3YGwnK4fWZm+izD4lwKq6yA6Dh2
+	fFQSk8ClZ8IAzQaXtBdgGBO1OzvHuYiAtJhn5TkQ3Qqn4go3vfGa0x1l980ndJkgYMP2MvxDAbT
+	VjUqSy919Y/gsJpXUN/dD8tszQnRYq4R8fox/Jen75HLaqBZ7Lu0nUO8=
+X-Google-Smtp-Source: AGHT+IGGm/As1zjwdwhQUUkUDog7/KBQ+G6/MT9zO8Pqkj7Vlx73yXeIrOJ1u5naBk3JwOBfknv9y4Z+/p/lmgZRBpFrgzO9eHaH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] arm64: dts: qcom: qcm6490-idp: Allow UFS regulators
- load/mode setting
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_kamalw@quicinc.com>,
-        <quic_jprakash@quicinc.com>
-References: <20241016100511.2890983-1-quic_kotarake@quicinc.com>
- <2tunyupop2w7brm6adkdsrytvxbr4g3ixpbmuuqljedeaehze5@se3qsbf6tb6t>
-Content-Language: en-US
-From: Rakesh Kota <quic_kotarake@quicinc.com>
-In-Reply-To: <2tunyupop2w7brm6adkdsrytvxbr4g3ixpbmuuqljedeaehze5@se3qsbf6tb6t>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GC4wYFh9Acohmr55fFUHf-hDeymCyVXu
-X-Proofpoint-GUID: GC4wYFh9Acohmr55fFUHf-hDeymCyVXu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1015 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=609 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160071
+X-Received: by 2002:a05:6e02:1c02:b0:3a0:8eb3:5154 with SMTP id
+ e9e14a558f8ab-3a3b5f1e1a9mr168808175ab.4.1729078322583; Wed, 16 Oct 2024
+ 04:32:02 -0700 (PDT)
+Date: Wed, 16 Oct 2024 04:32:02 -0700
+In-Reply-To: <ddcf93e3-df0d-442c-a490-f6607f313fe3@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670fa432.050a0220.d9b66.0167.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in mi_read
+From: syzbot <syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 10/16/2024 3:54 PM, Dmitry Baryshkov wrote:
-> On Wed, Oct 16, 2024 at 03:35:11PM +0530, Rakesh Kota wrote:
->> The UFS driver expects to be able to set load (and by extension, mode)
->> on its supply regulators. Add the necessary properties to make that
->> possible.
->>
->> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
->> ---
->> Changes V3:
->>   - Somehow after fixing the compilation in last patch, i have missed to
->>     do git  --amend the change. apology for that, in this change i have
->>     fixed that compilation issue.
-> 
-> What actually was changed? The --amend doesn't describe changes. Nor
-> does "fixed that compilation issue".
-> 
-Added missing semicolon (;) after regulator-allow-set-load prop for ldo9 
-regulator.
->>   - Link V2 : https://lore.kernel.org/all/20241015132049.2037500-1-quic_kotarake@quicinc.com/
-> 
-> Where are changes between v1 and v2?
-> 
-i will add changes history in V4 patch.
-> Where is the tag that was given to you for the v2?
-> 
-sorry, i missed adding the Reviewed-by tag and i will add it in V4 patch.
->> ---
->>   arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> index 5f3d4807ac43..bfb1cdc238cc 100644
->> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->> @@ -258,6 +258,8 @@ vreg_l6b_1p2: ldo6 {
->>   			regulator-name = "vreg_l6b_1p2";
->>   			regulator-min-microvolt = <1140000>;
->>   			regulator-max-microvolt = <1260000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->> @@ -265,6 +267,8 @@ vreg_l7b_2p952: ldo7 {
->>   			regulator-name = "vreg_l7b_2p952";
->>   			regulator-min-microvolt = <2400000>;
->>   			regulator-max-microvolt = <3544000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->> @@ -279,6 +283,8 @@ vreg_l9b_1p2: ldo9 {
->>   			regulator-name = "vreg_l9b_1p2";
->>   			regulator-min-microvolt = <1200000>;
->>   			regulator-max-microvolt = <1304000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->> @@ -467,6 +473,8 @@ vreg_l10c_0p88: ldo10 {
->>   			regulator-name = "vreg_l10c_0p88";
->>   			regulator-min-microvolt = <720000>;
->>   			regulator-max-microvolt = <1050000>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
->>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->>   		};
->>   
->> -- 
->> 2.34.1
->>
-> 
+Reported-by: syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com
+Tested-by: syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         2f87d091 Merge tag 'trace-ringbuffer-v6.12-rc3' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e1945f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
