@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-367960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9859A08D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A829A08D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39F64B278B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:54:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45C41F22B3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39C8208D92;
-	Wed, 16 Oct 2024 11:53:59 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F0D207A0E;
+	Wed, 16 Oct 2024 11:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ezV2Eiaf"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33273207A1C;
-	Wed, 16 Oct 2024 11:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD362076BB
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729079639; cv=none; b=AOssE6MUGqhBbE+PASsunK7OQ6xRdYhW33s+4ZxQusz4Fb3UIwn9FBA9tH86F3CCZ71UFAEAuvfgsZwuBNIf9J0WZ5HOazm7mU1mVy7QVocyevRsjF7e8qAY2l7S9p22PCslyRQOGMkquRv1+uREV9kCgHb6eqBQHu7OdirQbFs=
+	t=1729079664; cv=none; b=sb3H6bSW6cJwBqXLS7lzmACu8dl8miAxN5Gxppky+SYTO2xWPoBeNAa11f9WXUZY/I4MVYiBC9A2Uh9rTMv/0NyGUGnwwGUaZrAAxhTGmIvRR5JOY2qc8JICcUKu1Ud4/yUadc7mEp9JTsTZjzTW9LQGeD94yFimwIab+qVX1nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729079639; c=relaxed/simple;
-	bh=+ynl3Q5aOSW4C80BXIUh3QcV82aTaEqoZgyDyW/VpA0=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=igQdO493zogytQfRoSruj6iSvmtaZv7SA59eaLD3VXVMT2Rg5QOJFxWFRMW7eSAF+F5lGQHhAdMK8aQRDZvuD7j6CGm6uclkZ5PFkQNG9bALjxtYf2fvgIiPNEDlq2eEx+PtDkEfefGllsz5zz1aDTVKQ88PQuUNzKvJrlCtdfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XT8Tz43Tsz1spkT;
-	Wed, 16 Oct 2024 19:52:39 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A3ED1A016C;
-	Wed, 16 Oct 2024 19:53:54 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 16 Oct 2024 19:53:53 +0800
-Message-ID: <b9f4958b-ecd6-4a44-afd7-b39b21053630@huawei.com>
-Date: Wed, 16 Oct 2024 19:53:52 +0800
+	s=arc-20240116; t=1729079664; c=relaxed/simple;
+	bh=gY+6WWtPwsCHLipGdXnc1Da0sB/CldWSjMb/9TdeQKY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UGgjBOmDcK6aTHsQRcRnj0rEZ1fVfMANyGcz41Bf4TyA6Zg+eRAXD4GiLx8exUYdwwu7gMFTUAJh02i/judhua3WdoDakFCRega9tsyedpTisnRbRkP2xGEdAmHonqliOy+NQyrOAIpyPbtZzD7XUcYjCkEl4mpYoH/2GlraL8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ezV2Eiaf; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729079658; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=f87hNWeuvH4lhjVT/Nxwn1wxSO5iwJsRdkqFkDnRmhk=;
+	b=ezV2EiafZ4Uw7FrDEQP1j4wYwJzviJA9CIWwJEhiAeyTIedu4lKyFty8e1lfn63UdofSji62JZDYEWo/SNhxRF8pzB/rRWvRWvuY+927NYVvcIQlEl/tGRx3tQXH6NKV1yHhwGl0WeSGacqwvQAMyYkhcgP0is3/1SQcOj7buc8=
+Received: from 30.221.129.144(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WHHRiMh_1729079657 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Oct 2024 19:54:17 +0800
+Message-ID: <5620dcea-3c3b-424f-b24c-bd574fb8ecea@linux.alibaba.com>
+Date: Wed, 16 Oct 2024 19:54:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,40 +47,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <shenjian15@huawei.com>, <salil.mehta@huawei.com>,
-	<liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>, <lanhao@huawei.com>,
-	<chenhao418@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 2/9] net: hns3: add sync command to sync io-pgtable
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20241011094521.3008298-1-shaojijie@huawei.com>
- <20241011094521.3008298-3-shaojijie@huawei.com>
- <20241015181933.3e7afbe3@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241015181933.3e7afbe3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH V4] ocfs2: pass u64 to ocfs2_truncate_inline maybe
+ overflow
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+To: Edward Adam Davis <eadavis@qq.com>, akpm <akpm@linux-foundation.org>
+Cc: jlbec@evilplan.org, l@damenly.org, linux-kernel@vger.kernel.org,
+ mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+ syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <21d7a0d6-faac-4914-8907-1d7d983953f2@linux.alibaba.com>
+ <tencent_D48DB5122ADDAEDDD11918CFB68D93258C07@qq.com>
+ <f34f1b3e-7b31-49ab-ad32-ad63d8194c5f@linux.alibaba.com>
+Content-Language: en-US
+In-Reply-To: <f34f1b3e-7b31-49ab-ad32-ad63d8194c5f@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm000007.china.huawei.com (7.193.23.189)
 
 
-on 2024/10/16 9:19, Jakub Kicinski wrote:
-> On Fri, 11 Oct 2024 17:45:14 +0800 Jijie Shao wrote:
->> To avoid errors in pgtable prefectch, add a sync command to sync
->> io-pagtable.
-> I've never seen net drivers call iommu_iotlb functions.
-> Could you provide more context on what this is doing and
-> why such unusual handling is necessary?
 
-Follow the reply of the previous patch.
+On 10/16/24 7:47 PM, Joseph Qi wrote:
+> 
+> 
+> On 10/16/24 7:43 PM, Edward Adam Davis wrote:
+>> Syzbot reported a kernel BUG in ocfs2_truncate_inline.
+>> There are two reasons for this: first, the parameter value passed is greater
+>> than ocfs2_max_inline_data_with_xattr, second, the start and end parameters
+>> of ocfs2_truncate_inline are "unsigned int".
+>>
+>> So, we need to add a sanity check for byte_start and byte_len right before
+>> ocfs2_truncate_inline() in ocfs2_remove_inode_range(), if they are greater
+>> than ocfs2_max_inline_data_with_xattr return -EINVAL.
+>>
+>> Reported-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=81092778aac03460d6b7
+>> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> 
+> Looks fine.
+> Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> 
 
-In the case of large traffic, the TX bounce buffer may be used up.
-At this point, we go to mapping/unmapping on TX path again.
-So we added the sync command in driver to avoid hardware issue.
+Fixes: 1afc32b95233 ("ocfs2: Write support for inline data")
+Cc: <stable@vger.kernel.org>
 
-Thanks
-Jijie Shao
-
+>> ---
+>> V1 -> V2: move sanity check to ocfs2_remove_inode_range
+>> V2 -> V3: use ocfs2_max_inline_data_with_xattr return value replace UINT_MAX
+>> V3 -> V4: rename variable, modify return value and comments
+>>
+>>  fs/ocfs2/file.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+>> index ad131a2fc58e..47121ee4b4df 100644
+>> --- a/fs/ocfs2/file.c
+>> +++ b/fs/ocfs2/file.c
+>> @@ -1784,6 +1784,14 @@ int ocfs2_remove_inode_range(struct inode *inode,
+>>  		return 0;
+>>  
+>>  	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL) {
+>> +		int id_count = ocfs2_max_inline_data_with_xattr(inode->i_sb, di);
+>> +
+>> +		if (byte_start > id_count || byte_start + byte_len > id_count) {
+>> +			ret = -EINVAL;
+>> +			mlog_errno(ret);
+>> +			goto out;
+>> +		}
+>> +
+>>  		ret = ocfs2_truncate_inline(inode, di_bh, byte_start,
+>>  					    byte_start + byte_len, 0);
+>>  		if (ret) {
+> 
 
 
