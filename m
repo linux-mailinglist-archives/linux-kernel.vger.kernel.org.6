@@ -1,125 +1,331 @@
-Return-Path: <linux-kernel+bounces-367325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE339A00F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:51:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5469A00FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A0D1C211F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97232283722
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7E918C331;
-	Wed, 16 Oct 2024 05:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3604718C351;
+	Wed, 16 Oct 2024 05:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hv5jQLWc"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOiVFytY"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7407B67E;
-	Wed, 16 Oct 2024 05:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4E25221;
+	Wed, 16 Oct 2024 05:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729057903; cv=none; b=IACOoj/3XEsffcOCjxBl1k6zOwah+0hyhOhQwmLH/4Co4CuPmFTsqBy505s44fZJqj5ORkd+ZLHNtPH86INXFI/D2XQeV1d6Z7sRMx9pu79p2GaCjPBAzVBMhiJ3WnwKqrj59ilem/4uubOf8tV8DSp4HUrBqdtPBf8NXq8xEBU=
+	t=1729058348; cv=none; b=VpMAos8wPsKZ+MVXrZ9voq/LSN2nzpxwA0+YGMfcom6C2MpIY0CQcEr5DWwjfNMyI+cvR3gorPnTBrprKsA0kS1oHCRZ6/KEJa1XpfpIDy5Hnop6VSL3HP+Ce3xDVEMy5FsCtAdrcQUtYvukrXNwO2gtcn0yNgdQlN29fPkGBT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729057903; c=relaxed/simple;
-	bh=Ewgkb9Wn/3FQ0Pr73GfDMt7CgKYxSWWI5TOHTj8Ki8g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G9DSzmLcrOx/bfJ6y527Tc0mnBhflvOmqvPdJQkhtE1HzGjcxk07t5IMYnxAp+Zd2CZnCyQ4MZqEjtPivXyICI8XDy5mJcgp735A1Nkt9sGOiLGqlJCKeMS866wnjXhM2rLZ+wyFjrwzyc3Xve+GeNSz9cxXm86LgRskvPJn4fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hv5jQLWc; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1729058348; c=relaxed/simple;
+	bh=0IOA15zRoe6/OrmFHBMCe+SQXioxlhZfzgGZUOT/ub0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J5MYvFJcp0duirkD8lc/CcrAfVTlYzkfsCtv5nOUnW5E8MKgfm54169YYFClUf+yXKsCsF7txN5mFKB6JTMPSjO/7B07JYzj9BfVk4GLjac9jkFLLnc8Mj+s2QAefhXBx4SW2ApKIg5kzef6bBSfMb2EV/Uq/JqmalBgZ1ymCRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOiVFytY; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d808ae924so1011624f8f.0;
-        Tue, 15 Oct 2024 22:51:41 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso44973435ad.2;
+        Tue, 15 Oct 2024 22:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729057900; x=1729662700; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ewgkb9Wn/3FQ0Pr73GfDMt7CgKYxSWWI5TOHTj8Ki8g=;
-        b=hv5jQLWce5d0Oc+E0qIvwJrrOd00Y+iNGiRx5wTiMd92no/3e06BBqMPeVXNgvZwon
-         IgurUHgXlDGKSdclfsUe3bkiUZ/6Vt3cugXEtOF0S+b+JW10v3RMjKU5w9s2o1FRv8r9
-         iQbmqx3HwxuHMzSZ+YAJ8vKWoOXt9q4rqXSb8bgzv79LZhtvk2LABHw/ZrdAsTAIwB3V
-         Eky5v897jEd0j08qe3+rvxbeutuPp0g8vzR/Nq6SJ4ayMDZlpbvGNRpq0LE3urKZT4L3
-         287HaNsE4wur4KZOWgdwIrfawSohoL8g+JmujEqFcCheKyaVqWM0bSagRGiElwUWh33h
-         k05g==
+        d=gmail.com; s=20230601; t=1729058346; x=1729663146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QPuDG0q3hSSZ6Clb715o6VUtr6SxMF93McoY1IuChbw=;
+        b=MOiVFytYM7JTAhGQtN/Rk8aFKIKyhB7aVeNRAYiLgFhAmJxjZOeJi8stbAo13A4RUk
+         8yFDi2gAMTIhwax30BRcokFWlaXakZMNf/TMomW8I9v49BTgPi3dJydgNZAOAIwEBqvz
+         Ra0y40l5KteeETpAL+FCiJxKQSCvq+QX1dqTz0mKDMPpOpCjWYxY7DuYmOc7ux0++ghN
+         fBM8+UCa6KI+7vkhI0ICDkeyuIauRPhiSiEW0PfRlJpnV/Bul/2rw0EE0gcEKHtwk1Nz
+         R5U1WgYaxczEa4vb75coXRhozqcttHC4p/YOMdTRO8OpnycRnXgSz108A5mU3kmQB2tX
+         ruXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729057900; x=1729662700;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ewgkb9Wn/3FQ0Pr73GfDMt7CgKYxSWWI5TOHTj8Ki8g=;
-        b=eCEogiEWcBeqUyFxPqcUcazMKgSTirJWPGbKqaqInu9Srrnn3Z4571wHM+vjzh2d6D
-         sss1VzH3V1+ddRCzlXODghWvQUDS03YtvxdR9muwkCPmJ0Bk187y3Zh5D0RNyyjWS2kF
-         PnYbIuoo/JN/kJIkI4c2cHi0hrbEHYj3ds333pdl2RTv+liCX7ubW1AQ1+1JCT2RJG1j
-         dsszR0f1a9h9C3mvmedtdxWCbVNIkAE4R+CZSJQJw4kBkFCXOLpCQgjVDUX/B/4wyn3d
-         ItnD15fO5j+e7WOK/UzxlBqpqhRXkYB8HHV+8iTw1NL+EMj6zbXdMjSlOKsUgFWHK9NY
-         xEdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYVfM9B+JVWT057sL7U1k1wGHKJogSFXJUYJJnmZNbkb1quM6QRDxsR/TuieEcL6DQUjRnO3N4tTaafbg=@vger.kernel.org, AJvYcCXvRFC2u4LMzDdBgHwCQE0Df2aEgJvYNA5J5cGg1I/FYEQQF4sJnXAK/czBW1NFoW6mpWTwvBrlWBT9mKrK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTU8/9bPpWdWw0UV6u34WD8l0JhTLCZ7fgTYSVaWn2bvW/pycj
-	K8ioyFzjfkv7yiea7PEVKczlfnJRR03OuV/dDG6e9r1FyLbXYAOG
-X-Google-Smtp-Source: AGHT+IGG+VSZkImyOL6QNrq28Q8mz8xCnrVJoJEtOZgMGGpNZc0RJ09HoI6sfiW/UD12giBs8jdB0g==
-X-Received: by 2002:adf:ea41:0:b0:37d:4cd6:6f2f with SMTP id ffacd0b85a97d-37d86ba83b6mr1775930f8f.3.1729057899920;
-        Tue, 15 Oct 2024 22:51:39 -0700 (PDT)
-Received: from ?IPv6:2a02:168:6806:0:98d9:e1d9:9a9e:88ea? ([2a02:168:6806:0:98d9:e1d9:9a9e:88ea])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf8313sm3336774f8f.66.2024.10.15.22.51.39
+        d=1e100.net; s=20230601; t=1729058346; x=1729663146;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QPuDG0q3hSSZ6Clb715o6VUtr6SxMF93McoY1IuChbw=;
+        b=aUq0M7V1Z4KTI51y/UcWuQJ69pdCU8b4Kx08Hc+NWrEd3kNnFVIL/CW4VhxMIe1Z6c
+         hkA4zfSJdM26oIoUO6qQQlfWM55wmfeg1MKvIiGmIKhSfaJXeLWq0pirfLzJjQ64pM+H
+         d0GBKMmF9sZnBMwXZQInNGOMDhZuS2escg8z+bh3acphYwcrvQ+8JfdIuznW5WwDPONR
+         ogTgeCCeyfbPBXggqPppJQijrkXuwPx6FDS0SbQpw0Ji9YyZXSPtvsuh4mQCG7ru1fLx
+         o3BB0228/pMUNcT4vhmw77Emi7BAlOpWPNKQuglrXRo1qIiIpvy5kiN6Ku68Owf6ukYL
+         mZtg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5B8NPaFIbjy5hdu1Y9DDnJiYQTzLm+B6NkNnHhPrLirYkOLqCrAgbQYZi+qDmG7Fcfl32wENN@vger.kernel.org, AJvYcCUjVIeVVBPMOk/ChCth3bXRVRUaNbzgbH4gKISXOqcb533GWate/fUnGP6Cs5L3QyHD+khP/6oAPD14+48uicau@vger.kernel.org, AJvYcCWVF347rXzJQPl5xXJJnJ1ABjlRw0SLsbP5m8u/MoXFzxAunn/DaWXWunc2ZyQB75BgKrI7tN2e3q6SJ9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZI75m7O6PrLS/97qTJT3BnfkLEz+z+7ZwWWLmO8aiXVx7fS6C
+	tGSZ1FSepm5Gfq7gHycAkHdQKikILAQXbgAi6ypXNXz/UAq8aXyJ
+X-Google-Smtp-Source: AGHT+IEqCBmNjWKPdNxBClPBSkGETbCM0sxaz4ASty5qUt1SW57qn3/0UHvWnZRVzp0n10mPgwB9Rg==
+X-Received: by 2002:a17:902:d486:b0:20d:27f8:d72a with SMTP id d9443c01a7336-20d27f8d757mr30672145ad.61.1729058345784;
+        Tue, 15 Oct 2024 22:59:05 -0700 (PDT)
+Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:3f72:2cc4:3779:e19d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d40esm21611265ad.73.2024.10.15.22.59.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 22:51:39 -0700 (PDT)
-Message-ID: <2ae8006f3cfc40ae66b34659365596ac8507d1da.camel@gmail.com>
-Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
- Turris Omnia
-From: Klaus Kudielka <klaus.kudielka@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, Linux Crypto
- Mailing List <linux-crypto@vger.kernel.org>, Boris Brezillon
- <bbrezillon@kernel.org>, Arnaud Ebalard	 <arno@natisbad.org>, Romain Perier
- <romain.perier@free-electrons.com>
-Date: Wed, 16 Oct 2024 07:51:38 +0200
-In-Reply-To: <Zw9AsgqKHJfySScx@gondor.apana.org.au>
-References: <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
-	 <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
-	 <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
-	 <ZwZAExmK52txvHE8@gondor.apana.org.au>
-	 <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
-	 <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
-	 <ZwePSPG8aWm6mwKK@gondor.apana.org.au>
-	 <15fadc356b73a1e8e24183f284b5c0a44a53e679.camel@gmail.com>
-	 <Zw31JIEyh28vK9q7@gondor.apana.org.au>
-	 <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
-	 <Zw9AsgqKHJfySScx@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0-1+b1 
+        Tue, 15 Oct 2024 22:59:05 -0700 (PDT)
+From: Leo Stone <leocstone@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	0x7f454c46@gmail.com
+Cc: Leo Stone <leocstone@gmail.com>,
+	rdunlap@infradead.org,
+	mnassiri@ciena.com,
+	jiapeng.chong@linux.alibaba.com,
+	colin.i.king@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] selftest/tcp-ao: Add filter tests
+Date: Tue, 15 Oct 2024 22:51:52 -0700
+Message-ID: <20241016055823.21299-1-leocstone@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-10-16 at 12:27 +0800, Herbert Xu wrote:
-> On Tue, Oct 15, 2024 at 07:38:27PM +0200, Klaus Kudielka wrote:
-> >=20
-> > So, I applied the TDMA-disable patch, and I saw the same errors.
-> > Then, I applied the printk patch on top of that, and here is the result=
-.
-> >=20
-> > Not sure, whether this makes any sense...
->=20
-> Interesting, I think this shows that the non-TDMA path doesn't
-> work at all :)
->=20
-> Can you apply the TDMA-disable patch, and revert the asynchronous
-> self-test patch? If it still fails, then we'll know for sure that
-> the non-TDMA path is simply broken.
->=20
+Add tests that check if getsockopt(TCP_AO_GET_KEYS) returns the right
+keys when using different filters.
 
-Just to be sure, I checked again:
-- Plain 6.11.0 -> all self-tests PASSED
-- Non-TDMA patch on top of 6.11.0 -> ahash self-tests FAIL
+Sample output:
 
-I tend to agree - it was a nice try, but non-TDMA doesn't work at all.
+> # ok 114 filter keys: by sndid, rcvid, address
+> # ok 115 filter keys: by is_current
+> # ok 116 filter keys: by is_rnext
+> # ok 117 filter keys: by sndid, rcvid
+> # ok 118 filter keys: correct nkeys when in.nkeys < matched_keys
 
-Cheers, Klaus
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+---
+Changes in v2:
+- Changed 2 unnecessary test_error calls to test_fail
+- Added another test to make sure getsockopt returns the right nkeys
+  value when the input nkeys is smaller than the number of matching keys
+- Removed the TODO that this patch addresses
+
+Thank you for your feedback.
+---
+ .../selftests/net/tcp_ao/setsockopt-closed.c  | 180 +++++++++++++++++-
+ 1 file changed, 175 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+index 084db4ecdff6..4bfa76c28e4e 100644
+--- a/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
++++ b/tools/testing/selftests/net/tcp_ao/setsockopt-closed.c
+@@ -6,6 +6,8 @@
+ 
+ static union tcp_addr tcp_md5_client;
+ 
++#define FILTER_TEST_NKEYS 16
++
+ static int test_port = 7788;
+ static void make_listen(int sk)
+ {
+@@ -813,23 +815,191 @@ static void duplicate_tests(void)
+ 	setsockopt_checked(sk, TCP_AO_ADD_KEY, &ao, EEXIST, "duplicate: SendID differs");
+ }
+ 
++
++static void fetch_all_keys(int sk, struct tcp_ao_getsockopt *keys)
++{
++	socklen_t optlen = sizeof(struct tcp_ao_getsockopt);
++
++	memset(keys, 0, sizeof(struct tcp_ao_getsockopt) * FILTER_TEST_NKEYS);
++	keys[0].get_all = 1;
++	keys[0].nkeys = FILTER_TEST_NKEYS;
++	if (getsockopt(sk, IPPROTO_TCP, TCP_AO_GET_KEYS, &keys[0], &optlen))
++		test_error("getsockopt");
++}
++
++static int prepare_test_keys(struct tcp_ao_getsockopt *keys)
++{
++	struct tcp_ao_add test_ao[FILTER_TEST_NKEYS];
++	u8 rcvid = 100, sndid = 100;
++	const char *test_password = "Test password number ";
++	char test_password_scratch[64] = {};
++	int sk = socket(test_family, SOCK_STREAM, IPPROTO_TCP);
++
++	if (sk < 0)
++		test_error("socket()");
++
++	for (int i = 0; i < FILTER_TEST_NKEYS; i++) {
++		snprintf(test_password_scratch, 64, "%s %d", test_password, i);
++		test_prepare_key(&test_ao[i], DEFAULT_TEST_ALGO, this_ip_dest, false, false,
++				 DEFAULT_TEST_PREFIX, 0, sndid++, rcvid++, 0, 0,
++				 strlen(test_password_scratch), test_password_scratch);
++	}
++	test_ao[0].set_current = 1;
++	test_ao[1].set_rnext = 1;
++	/* One key with a different addr and overlapping sndid, rcvid */
++	tcp_addr_to_sockaddr_in(&test_ao[2].addr, &this_ip_addr, 0);
++	test_ao[2].sndid = 100;
++	test_ao[2].rcvid = 100;
++
++	/* Add keys in a random order */
++	for (int i = 0; i < FILTER_TEST_NKEYS; i++) {
++		int randidx = rand() % (FILTER_TEST_NKEYS - i);
++
++		if (setsockopt(sk, IPPROTO_TCP, TCP_AO_ADD_KEY, &test_ao[randidx],
++			       sizeof(struct tcp_ao_add)))
++			test_error("setsockopt()");
++		memcpy(&test_ao[randidx], &test_ao[FILTER_TEST_NKEYS - 1 - i],
++				sizeof(struct tcp_ao_add));
++	}
++
++	fetch_all_keys(sk, keys);
++
++	return sk;
++}
++
++/* Assumes passwords are unique */
++static int compare_mkts(struct tcp_ao_getsockopt *expected, int nexpected,
++			struct tcp_ao_getsockopt *actual, int nactual)
++{
++	int matches = 0;
++
++	for (int i = 0; i < nexpected; i++) {
++		for (int j = 0; j < nactual; j++) {
++			if (memcmp(expected[i].key, actual[j].key, TCP_AO_MAXKEYLEN) == 0)
++				matches++;
++		}
++	}
++	return nexpected - matches;
++}
++
++static void filter_keys_checked(int sk, struct tcp_ao_getsockopt *filter,
++				struct tcp_ao_getsockopt *expected,
++				unsigned int nexpected, const char *tst)
++{
++	struct tcp_ao_getsockopt all_keys[FILTER_TEST_NKEYS] = {};
++	struct tcp_ao_getsockopt filtered_keys[FILTER_TEST_NKEYS] = {};
++	socklen_t len = sizeof(struct tcp_ao_getsockopt);
++
++	fetch_all_keys(sk, all_keys);
++	memcpy(&filtered_keys[0], filter, sizeof(struct tcp_ao_getsockopt));
++	filtered_keys[0].nkeys = FILTER_TEST_NKEYS;
++	if (getsockopt(sk, IPPROTO_TCP, TCP_AO_GET_KEYS, filtered_keys, &len))
++		test_error("getsockopt");
++	if (filtered_keys[0].nkeys != nexpected) {
++		test_fail("wrong nr of keys, expected %u got %u", nexpected,
++			  filtered_keys[0].nkeys);
++		goto out_close;
++	}
++	if (compare_mkts(expected, nexpected, filtered_keys, filtered_keys[0].nkeys)) {
++		test_fail("got wrong keys back");
++		goto out_close;
++	}
++	test_ok("filter keys: %s", tst);
++
++out_close:
++	close(sk);
++	memset(filter, 0, sizeof(struct tcp_ao_getsockopt));
++}
++
++static void filter_tests(void)
++{
++	struct tcp_ao_getsockopt original_keys[FILTER_TEST_NKEYS];
++	struct tcp_ao_getsockopt expected_keys[FILTER_TEST_NKEYS];
++	struct tcp_ao_getsockopt filter = {};
++	int sk, f, nmatches;
++	socklen_t len;
++
++	f = 2;
++	sk = prepare_test_keys(original_keys);
++	filter.rcvid = original_keys[f].rcvid;
++	filter.sndid = original_keys[f].sndid;
++	memcpy(&filter.addr, &original_keys[f].addr, sizeof(original_keys[f].addr));
++	filter.prefix = original_keys[f].prefix;
++	filter_keys_checked(sk, &filter, &original_keys[f], 1, "by sndid, rcvid, address");
++
++	f = -1;
++	sk = prepare_test_keys(original_keys);
++	for (int i = 0; i < original_keys[0].nkeys; i++) {
++		if (original_keys[i].is_current) {
++			f = i;
++			break;
++		}
++	}
++	if (f < 0)
++		test_error("No current key after adding one");
++	filter.is_current = 1;
++	filter_keys_checked(sk, &filter, &original_keys[f], 1, "by is_current");
++
++	f = -1;
++	sk = prepare_test_keys(original_keys);
++	for (int i = 0; i < original_keys[0].nkeys; i++) {
++		if (original_keys[i].is_rnext) {
++			f = i;
++			break;
++		}
++	}
++	if (f < 0)
++		test_error("No rnext key after adding one");
++	filter.is_rnext = 1;
++	filter_keys_checked(sk, &filter, &original_keys[f], 1, "by is_rnext");
++
++	f = -1;
++	nmatches = 0;
++	sk = prepare_test_keys(original_keys);
++	for (int i = 0; i < original_keys[0].nkeys; i++) {
++		if (original_keys[i].sndid == 100) {
++			f = i;
++			memcpy(&expected_keys[nmatches], &original_keys[i],
++			       sizeof(struct tcp_ao_getsockopt));
++			nmatches++;
++		}
++	}
++	if (f < 0)
++		test_error("No key for sndid 100");
++	if (nmatches != 2)
++		test_error("Should have 2 keys with sndid 100");
++	filter.rcvid = original_keys[f].rcvid;
++	filter.sndid = original_keys[f].sndid;
++	filter.addr.ss_family = test_family;
++	filter_keys_checked(sk, &filter, expected_keys, nmatches, "by sndid, rcvid");
++
++	sk = prepare_test_keys(original_keys);
++	filter.get_all = 1;
++	filter.nkeys = FILTER_TEST_NKEYS / 2;
++	len = sizeof(struct tcp_ao_getsockopt);
++	if (getsockopt(sk, IPPROTO_TCP, TCP_AO_GET_KEYS, &filter, &len))
++		test_error("getsockopt");
++	if (filter.nkeys == FILTER_TEST_NKEYS)
++		test_ok("filter keys: correct nkeys when in.nkeys < matched_keys");
++	else
++		test_fail("filter keys: wrong nkeys, expected %u got %u",
++			  FILTER_TEST_NKEYS, filter.nkeys);
++}
++
+ static void *client_fn(void *arg)
+ {
+ 	if (inet_pton(TEST_FAMILY, __TEST_CLIENT_IP(2), &tcp_md5_client) != 1)
+ 		test_error("Can't convert ip address");
+ 	extend_tests();
+ 	einval_tests();
++	filter_tests();
+ 	duplicate_tests();
+-	/*
+-	 * TODO: check getsockopt(TCP_AO_GET_KEYS) with different filters
+-	 * returning proper nr & keys;
+-	 */
+ 
+ 	return NULL;
+ }
+ 
+ int main(int argc, char *argv[])
+ {
+-	test_init(121, client_fn, NULL);
++	test_init(126, client_fn, NULL);
+ 	return 0;
+ }
+-- 
+2.43.0
+
 
