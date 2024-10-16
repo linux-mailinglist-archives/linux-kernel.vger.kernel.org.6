@@ -1,205 +1,142 @@
-Return-Path: <linux-kernel+bounces-367355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BC09A0143
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:20:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39499A0140
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DDC62829C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:20:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DEA9B233DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91E418D626;
-	Wed, 16 Oct 2024 06:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB11718C926;
+	Wed, 16 Oct 2024 06:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A2eRYinE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tkLtLy4R"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB3F156E4;
-	Wed, 16 Oct 2024 06:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA27B41C69
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059607; cv=none; b=DoNEP7ueerjR6C0ubltPApRs0W8h1BtkWkuORDwZS+HNBgIF7uKnmQQexqdg6fbRkv1c05McqXLMHVMW53TX1/dEnU2+OxHMtEv7K1cns5OVkQbncuB1+bwX3/yTntim/JMh8Zyvtx1oOuHYnsJI8ofggKaW8DJFSRxaDjwvBSY=
+	t=1729059581; cv=none; b=avhwsLt26htwRLorYNJKYwW9BhE2na7fkBR0X3KahP7j26UdCdpOif2bRKkiBm6K0cc6/d3Ds8MZL/2NnVCeE/KocZCI61u1stm1QS5SqPZ+vmiYxLFxcv05jG7UVhZJ55yIDeKHsw4FSEj2BLjm1RphAYMl1D3BW4sov6bB0aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059607; c=relaxed/simple;
-	bh=qoQIhnscpiMhEnHFEwY7bxIRzEKmXMR4NV1svM0kguw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQthn8zRA3iTWi2HpCyl/nUlkfobjm9yIo+t4MtyXwPurQNtad57aBa+CqL9lFoD/jXmsDLi5ckYUzofaQda4e1GRaVlnqDcJzBiUNPqSzxRQJXs0KafH5qFzbBCMSG17MOsZ/Qs7S63Ta9cing8E2Ll7ENevhQMaOfl0mkWTrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A2eRYinE; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729059604; x=1760595604;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qoQIhnscpiMhEnHFEwY7bxIRzEKmXMR4NV1svM0kguw=;
-  b=A2eRYinEShSWyvaXYeeiR8E3G6hRyLhn+0vdi420zezs56bEZhC+112L
-   sm2fP7Hv0X4UzyPHhZUUW0JqHIegAQPemd2LgbjHdV6IpsdqZwymvxj6j
-   N4HnV64XdPE7SXRy52E5/2mW83zLXF3jPKfAkfiL+x+cW/z0yL06o7WiM
-   WfsMsk8Is6NHYSze5NNBBinW+dCkoxpRJQFYK6llETDRDTR71BJ0HJk3I
-   0V8kluihSWsgDZbTYnHm0PzCYxsiyaSMy+mlbKSKh0+JH3Kwhn/vlwLFz
-   b+gvQHtxsuM9bs5jOaHM5cvahNTcvOVyODwoyIOpXcLrKZ3lsNZhvLPSz
-   Q==;
-X-CSE-ConnectionGUID: E8NT637mTO+qG+F2LEb8bA==
-X-CSE-MsgGUID: aHH+HhneThSHHQWFqf5/cQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="31359178"
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="31359178"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 23:20:03 -0700
-X-CSE-ConnectionGUID: hiR/INNfShqLgmZEeaXA2w==
-X-CSE-MsgGUID: ZxHKS3cmSV2OIpmrPJpQVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="78295489"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 15 Oct 2024 23:20:01 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0xO2-000KRX-0i;
-	Wed, 16 Oct 2024 06:19:58 +0000
-Date: Wed, 16 Oct 2024 14:19:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sven Schnelle <svens@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 3/3] s390/time: Add PtP driver
-Message-ID: <202410161414.jC5t2eWE-lkp@intel.com>
-References: <20241015105414.2825635-4-svens@linux.ibm.com>
+	s=arc-20240116; t=1729059581; c=relaxed/simple;
+	bh=j3DRb4fAUXg2O0u1R4GmE3iICoNy/FyIRWOy5jr7WMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pHppZz3ryM6xF79Dn19wPi1b+fKbiL2Sz1AAOJfQothdtRWGVMMC4P8ndYGwj49uYWFE1uCbN/+8gfovFNLRQObqBQx/X8l4gaNEKdNoZ5IpCyuxhqhkxWAD2D9dPxRucdiMNGMZuQ3lwqStFapq7y6JagKBDDobC/QDNALgPIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tkLtLy4R; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e221a7e7baso4134578a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729059579; x=1729664379; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OnAP7A1wGyXXVKhgOcNRmKHIX2ZgMMeYE63QwFBQshM=;
+        b=tkLtLy4ROOqWmsxJMACaJDoNj+Hzaz/FN7y1mnGf4jB/C2FUoJ772Z/dqak4DXjJop
+         m/7tqqXxS2kAQeMPT4qAXpfdKasr6tBXff1VWJtyzQTzBNW9BrSDlDIft2uXzse7mxLl
+         WwyC7FyvKKZaL3898MhRKO13fDQgE4+8Sp8i4TFHKq/kogbV6lNb/Tdsz51aKR/CPwkI
+         DB+UoojPtFqb4FU2ZUS426t4Qh/JlzPHa1C9BXlXScj4PczWdRzl+KD5UuRd96a9tyQ0
+         0bpFi7El/ODA1SzJzHyXHFebNJTDXKASnQYxoOlE1g6Ssmn0wqWkcBrG4W9Ij4dQRYZS
+         SgkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729059579; x=1729664379;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OnAP7A1wGyXXVKhgOcNRmKHIX2ZgMMeYE63QwFBQshM=;
+        b=cKF/Clg7whgy/grYWmIdHZZ1kHxrgPSwD/qflgDs8G1xHBgqCBJ9f4mEuZh3JngiYs
+         lhI0S2SqZcx2fux3vjN04yiZGfvgGKj0u+S/L4HDMECfvPHEleuVuN6zvLn8dHdPsYcu
+         gVvLJSJM5hB0/MuT/PUkyMkzVm5noIOU/1i79CySdGqieFuFfVKp8nDNGC64e34iEGFR
+         TVZfkRsEZlNdQYbkfTg7sz2K+MdVw2OeE+2LKpqgtM2KuCT8c9g70TPRx4B6BzuxKdn8
+         M1NnmArOAfdX4jtOA0sDOWNUjmfuuhzXRa+bFXtjvUq1CE9wcl5WaVVDFAO3OUnyzDiR
+         he6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXKbC/gKyvlpKwsTYHwyjaF5os//nM7iZ7vz0a4e8527OpshyljVSyf1eiABheUDFcBEGhHrcHwNhSOTNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+OUstsJuWyoOXkkT+rzO1Gz17HfvH37LJUAbExrWRE/H5kVyo
+	eW83VYf8oNfpCx9DZH85g3lYrkSQf+tmbNir5OwWUFQNpRIkkSvaabm1Q1BpfgEKGNFkyoNnvaN
+	UKlf7vy1J2/pypJRJVXvl3IeBjOnELP3V1MaX
+X-Google-Smtp-Source: AGHT+IFCm0c+eSMR7U26pdR/KPHZMfITwX2EJEYegRfvo1tCCI/MOHfg8gTXS6VabJqTvEoPfmIk/zOLbOmdcjK2OqU=
+X-Received: by 2002:a17:90a:7c4d:b0:2e2:e545:82c5 with SMTP id
+ 98e67ed59e1d1-2e3ab7c4dabmr3281306a91.3.1729059578875; Tue, 15 Oct 2024
+ 23:19:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015105414.2825635-4-svens@linux.ibm.com>
+References: <000000000000c6b91e0621a312f4@google.com> <670e81a9.050a0220.d9b66.0153.GAE@google.com>
+ <20241015153958.df4e735274e389999de60d2e@linux-foundation.org>
+In-Reply-To: <20241015153958.df4e735274e389999de60d2e@linux-foundation.org>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Wed, 16 Oct 2024 08:19:25 +0200
+Message-ID: <CANp29Y6czU3c-9FhdcyjfJtWrnaHJZ4o3WyY6TUeGo7TnP0KtQ@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] BUG: corrupted list in add_to_unbuddied
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: syzbot <syzbot+30eac43568e2b3d65728@syzkaller.appspotmail.com>, 
+	linmiaohe@huawei.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, vitaly.wool@konsulko.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sven,
+Hi Andrew,
 
-kernel test robot noticed the following build errors:
+On Wed, Oct 16, 2024 at 12:40=E2=80=AFAM Andrew Morton
+<akpm@linux-foundation.org> wrote:
+>
+> On Tue, 15 Oct 2024 07:52:25 -0700 syzbot <syzbot+30eac43568e2b3d65728@sy=
+zkaller.appspotmail.com> wrote:
+>
+> > syzbot has found a reproducer for the following issue on:
+> >
+> > HEAD commit:    eca631b8fe80 Merge tag 'f2fs-6.12-rc4' of git://git.ker=
+nel..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D14d0845f980=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcfbd94c114a=
+3d407
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D30eac43568e2b=
+3d65728
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D16df4c405=
+80000
+>
+> Something seems rather wrong with the "syz repro" page.
+>
+>
 
-[auto build test ERROR on s390/features]
-[also build test ERROR on linus/master v6.12-rc3 next-20241015]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+What exactly looks wrong? :)
+The repro mounts an ntfs3 disk image as the first operation, so the
+compressed base64-encoded image takes quite a bit of space there.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sven-Schnelle/s390-time-Add-clocksource-id-to-TOD-clock/20241015-185651
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
-patch link:    https://lore.kernel.org/r/20241015105414.2825635-4-svens%40linux.ibm.com
-patch subject: [PATCH 3/3] s390/time: Add PtP driver
-config: x86_64-buildonly-randconfig-003-20241016 (https://download.01.org/0day-ci/archive/20241016/202410161414.jC5t2eWE-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410161414.jC5t2eWE-lkp@intel.com/reproduce)
+>
+>
+> # https://syzkaller.appspot.com/bug?id=3D6b5f76b3a3783e6b1876d25b2d7a981a=
+c0e0131f
+> # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+> #{"threaded":true,"repeat":true,"procs":6,"slowdown":1,"sandbox":"none","=
+sandbox_arg":0,"tun":true,"netdev":true,"resetnet":true,"cgroups":true,"bin=
+fmt_misc":true,"close_fds":true,"usb":true,"vhci":true,"wifi":true,"ieee802=
+154":true,"sysctl":true,"swap":true,"tmpdir":true,"segv":true}
+> syz_mount_image$ntfs3(&(0x7f0000000000), &(0x7f0000000140)=3D'./bus\x00',=
+ 0x19c6038, &(0x7f0000000180)=3DANY=3D[], 0x1, 0x1f231, &(0x7f000003e780)=
+=3D"$eJzs3QmYTeUfB/D37Pu+XLvBWEO2RLLvsm+pZAvZyRalGhJRSSWpFElCQqhUEklEsi8JSZ=
+KQVEIS/2fu3JlmufOvadf7/TyPOfeee877nnu+94z5ne0ebz25edsGbRISEhKIzZAU50gGSSSJX=
+Iq9xsfGXYoNmdi/EZ3nV9ttftQreZxZcOVtoxYUXjVUa7/MfEsim+xOx09VOLwp3JT7+MW2vXoP=
+Seg9JGHAwKEJXRO6DRw4tGu3fj0Suvce0rdsQst+PboO6ZHQe8CQHoMzvNyz38BBg0YmdB3Q3VA=
+HDe4xZEhC1wEjE/r2GJkwdGDC0MEjE7re2rX3gISyZcsmGCqB36jd/H96CQAAAAAAAAAAAAAAAA=
+AA4M9x6VLaoX0AAAAAAAAAAAAAAAAAAAC4TDVo3LR+OaKkPWcIQxoRhsxlCCH2L9OlXvfPZdNO8=
+qRdoo9yRX82Sn10um/5fuf
+> <and a huge amount more>
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410161414.jC5t2eWE-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> drivers/ptp/ptp_s390.c:21:52: warning: declaration of 'union tod_clock' will not be visible outside of this function [-Wvisibility]
-      21 | static struct timespec64 eitod_to_timespec64(union tod_clock *clk)
-         |                                                    ^
->> drivers/ptp/ptp_s390.c:23:26: error: call to undeclared function 'eitod_to_ns'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      23 |         return ns_to_timespec64(eitod_to_ns(clk));
-         |                                 ^
->> drivers/ptp/ptp_s390.c:28:26: error: call to undeclared function 'tod_to_ns'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      28 |         return ns_to_timespec64(tod_to_ns(tod - TOD_UNIX_EPOCH));
-         |                                 ^
->> drivers/ptp/ptp_s390.c:28:42: error: use of undeclared identifier 'TOD_UNIX_EPOCH'
-      28 |         return ns_to_timespec64(tod_to_ns(tod - TOD_UNIX_EPOCH));
-         |                                                 ^
->> drivers/ptp/ptp_s390.c:34:18: error: variable has incomplete type 'union tod_clock'
-      34 |         union tod_clock tod;
-         |                         ^
-   drivers/ptp/ptp_s390.c:34:8: note: forward declaration of 'union tod_clock'
-      34 |         union tod_clock tod;
-         |               ^
->> drivers/ptp/ptp_s390.c:36:7: error: call to undeclared function 'stp_enabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      36 |         if (!stp_enabled())
-         |              ^
->> drivers/ptp/ptp_s390.c:39:2: error: call to undeclared function 'store_tod_clock_ext_cc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      39 |         store_tod_clock_ext_cc(&tod);
-         |         ^
->> drivers/ptp/ptp_s390.c:49:2: error: call to undeclared function 'ptff'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      49 |         ptff(&tod, sizeof(tod), PTFF_QPT);
-         |         ^
->> drivers/ptp/ptp_s390.c:49:26: error: use of undeclared identifier 'PTFF_QPT'
-      49 |         ptff(&tod, sizeof(tod), PTFF_QPT);
-         |                                 ^
-   drivers/ptp/ptp_s390.c:64:18: error: variable has incomplete type 'union tod_clock'
-      64 |         union tod_clock clk;
-         |                         ^
-   drivers/ptp/ptp_s390.c:64:8: note: forward declaration of 'union tod_clock'
-      64 |         union tod_clock clk;
-         |               ^
-   drivers/ptp/ptp_s390.c:66:2: error: call to undeclared function 'store_tod_clock_ext_cc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      66 |         store_tod_clock_ext_cc(&clk);
-         |         ^
-   drivers/ptp/ptp_s390.c:67:29: error: call to undeclared function 'tod_to_ns'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      67 |         *device_time = ns_to_ktime(tod_to_ns(clk.tod - TOD_UNIX_EPOCH));
-         |                                    ^
-   drivers/ptp/ptp_s390.c:67:49: error: use of undeclared identifier 'TOD_UNIX_EPOCH'
-      67 |         *device_time = ns_to_ktime(tod_to_ns(clk.tod - TOD_UNIX_EPOCH));
-         |                                                        ^
-   drivers/ptp/ptp_s390.c:76:7: error: call to undeclared function 'stp_enabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      76 |         if (!stp_enabled())
-         |              ^
-   1 warning and 13 errors generated.
-
-
-vim +/eitod_to_ns +23 drivers/ptp/ptp_s390.c
-
-    20	
-  > 21	static struct timespec64 eitod_to_timespec64(union tod_clock *clk)
-    22	{
-  > 23		return ns_to_timespec64(eitod_to_ns(clk));
-    24	}
-    25	
-    26	static struct timespec64 tod_to_timespec64(unsigned long tod)
-    27	{
-  > 28		return ns_to_timespec64(tod_to_ns(tod - TOD_UNIX_EPOCH));
-    29	}
-    30	
-    31	static int ptp_s390_stcke_gettime(struct ptp_clock_info *ptp,
-    32					  struct timespec64 *ts)
-    33	{
-  > 34		union tod_clock tod;
-    35	
-  > 36		if (!stp_enabled())
-    37			return -EOPNOTSUPP;
-    38	
-  > 39		store_tod_clock_ext_cc(&tod);
-    40		*ts = eitod_to_timespec64(&tod);
-    41		return 0;
-    42	}
-    43	
-    44	static int ptp_s390_qpt_gettime(struct ptp_clock_info *ptp,
-    45					struct timespec64 *ts)
-    46	{
-    47		unsigned long tod;
-    48	
-  > 49		ptff(&tod, sizeof(tod), PTFF_QPT);
-    50		*ts = tod_to_timespec64(tod);
-    51		return 0;
-    52	}
-    53	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Aleksandr
 
