@@ -1,159 +1,103 @@
-Return-Path: <linux-kernel+bounces-367347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083969A012C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C6A9A0120
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA0E6B247EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F551F2252D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4470F1B21A7;
-	Wed, 16 Oct 2024 06:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Ht6FSJwW"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDF818C92B;
+	Wed, 16 Oct 2024 06:12:00 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A71F1B21B0
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BB418B48D;
+	Wed, 16 Oct 2024 06:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059229; cv=none; b=IXkj735qBg2O9OYYMXUl7byxwFMyvN3zUKtMPqqBW6ZHP3zZc5b7crF9TZDsXh9buqUUQETP2hXZnz7Lu2IjXJVSn/IaT5c/iRNuqfftKfvOnTxEtHbd4b6Q8uLO8BEit4Jv7KjUirYLzSsOxU9zdX4k/AtySyhLLSMGVV2g4ZI=
+	t=1729059120; cv=none; b=cKWHYuAJlaecblBDIP4cPCwGF4yxesjBqrfs8jhW5XYbzybF6oIHD2QPZhft1Ob4FVLTpTE6On2rwly0k52IAQX+bcVcmPlQ6FbYYol8MiDEx99VAAjT9K5b+AJrLXMhFETcUqgIsEhEHuhQO6+k871Zj41Zb9cAjJZT9eMZtds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059229; c=relaxed/simple;
-	bh=ATrdbIDUhnH86m7W+OtdWP4CVjzxrd9JvgnnpcBxdnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X+wQJAw0D9qIaHctZR0NDMuNGIvYm+iYOmOIWwos+RVEZ8G4pahQdcjOJm+Scq4erVSz7lH835dHh82KBDvMATZBk0uQu69WdVptoDIXA10jVq852S0Mi55SyAxg7f9UUX3JX3jwo4rrXxcdHdpRelAjrI3mZxfgVSJYvYfUzEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Ht6FSJwW; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so3672673e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1729059226; x=1729664026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jczdy1uYsb+aLC4nuD27CRmDy+gWKtf6hf+GXkt4V8A=;
-        b=Ht6FSJwWXFQWJJvV1jagsxzYaUf8QL7AsytHxWlXPl7xn/H74x/2N0rqgf10+Otjhf
-         j8OruDuLq94FyJ3XYVV/eXnvlIA9tmohmiTJsFYA9kYUV+3G8Udphfi51uTYnO1OT7XK
-         jOrgg8KY2tRE7xY1LLR34tRI/XDVGbQNnlO6a8esF8IRtH4PwH3q/n8TajmvuD+/TOGz
-         RAtsyk7d7N6PjUPd7sH5Ay1Ku80IXZwV82t3BeqeoTN80Ge1T9pq9F/6f54SvqidRanJ
-         tCFVsFa6zgMXyp3k7DeZ/grZ/uikaCSLu5WvGebtqhAklBUgd698ZfFL2V14uJho7/9v
-         FPFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729059226; x=1729664026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jczdy1uYsb+aLC4nuD27CRmDy+gWKtf6hf+GXkt4V8A=;
-        b=n+JTh/EcCbwH/4eeFvIo5s/tJfDY9Cz92+oqvSntEi/g8K5plZh6cpqReLUjkOax5B
-         wH9wW32fXDgZ/w85NM3Kyh/NgUHGkQ1SbJmvMEJRwotgLinGPZD5YSbFzQJ3Iim3dLFD
-         46VM8Z/LRnx9cI/VLP6cRCt/rs6CxrJh8b2lbw53cJAAb6Fu37jKIi3yLSAIMYRH7KCR
-         Qaft1jC5fpzmHZr6YwV9matBHgWYD96PUuh+FQc/pZaXPMxCZJBzri4puGole0AQNkvB
-         CJIFlCrcV0uYSt9lqzplOoQm5wfNSKM5vuEyPmzbfW+WvQg5vflZhtdat54L9pXxgOxn
-         KuVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+3XRVC5cpdNRxHE1sIGbARFB1NVmTkhC8XMMXa2JVHqQe6CqulSkHHjetkInNdKJs8iLSaNI1JgaF950=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDnJz0EmU6fV3INmRHsM72cyM9Y6T5Pa9fzk4seEwMWoFzFyff
-	DVPT4cVxzeicO2fES+9B4V22shhsPcW+0jf/lh81HJrD4qN1dEUfnoAtXgpXixY=
-X-Google-Smtp-Source: AGHT+IG5g5UDW5Yoyp//orz1P16SZTujxiLgwSoYbPC0qZH5PygE4wzKt9VFBXJTS3UOQcJOev/6gw==
-X-Received: by 2002:a05:6512:1383:b0:536:581c:9d9f with SMTP id 2adb3069b0e04-53a03f2d5b5mr1679641e87.24.1729059226053;
-        Tue, 15 Oct 2024 23:13:46 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2981702bsm141743466b.112.2024.10.15.23.13.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 23:13:45 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: u-boot@lists.denx.de,
-	linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Tom Rini <trini@konsulko.com>
-Subject: [PATCH v9 37/37] CI: Enable qemu_sbsa
-Date: Wed, 16 Oct 2024 08:04:23 +0200
-Message-ID: <20241016060523.888804-38-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241016060523.888804-1-patrick.rudolph@9elements.com>
-References: <20241016060523.888804-1-patrick.rudolph@9elements.com>
+	s=arc-20240116; t=1729059120; c=relaxed/simple;
+	bh=WJQhxyDh49Oi3mVNN/Gzfxafsr66Em5h887y/4sZ1+A=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=thCPpC7aA90YmMx5QYsuheYQBsrj14Bgq6vRklqNIfuOzApTwdSqlNhuRcnJA3cGdK3r0kcOt2k0UkRD+c7OrP8JjBuxNY3pdScujbmJAw7toSg3+fCUWldipAT6DpgBU5ftYiht2Vi+lx9zeIShX6jjOxtTvcap1b27xeT4M50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XT0wR13tLz4f3jXl;
+	Wed, 16 Oct 2024 14:11:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 425651A0568;
+	Wed, 16 Oct 2024 14:11:52 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAHPMgmWQ9nKsftEA--.45555S3;
+	Wed, 16 Oct 2024 14:11:52 +0800 (CST)
+Subject: Re: [PATCH RFC] md: lockless bitmap demo
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241015083557.4033741-1-yukuai1@huaweicloud.com>
+ <Zw89BmLBF4S_nX5V@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <518660b5-4b52-b01a-c875-0bda9f75005c@huaweicloud.com>
+Date: Wed, 16 Oct 2024 14:11:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <Zw89BmLBF4S_nX5V@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHPMgmWQ9nKsftEA--.45555S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYy7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0
+	xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF
+	0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Add QEMU's SBSA ref board to azure pipelines and gitlab CI to run tests on it.
-TEST: Run on Azure pipelines and confirmed that tests succeed.
+Hi,
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-Reviewed-by: Tom Rini <trini@konsulko.com>
----
-Changelog v6:
-- Add gitlab CI support
----
- .azure-pipelines.yml |  8 ++++++++
- .gitlab-ci.yml       | 11 +++++++++++
- 2 files changed, 19 insertions(+)
+ÔÚ 2024/10/16 12:11, Christoph Hellwig Ð´µÀ:
+> On Tue, Oct 15, 2024 at 04:35:57PM +0800, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Just implement very basic functions, there are lots of todos.
+>>
+>> Very limited functional testing(mdadm tests and some manual tests), and
+>> following performance test for raid10:
+> 
+> Can you explain what it does?
 
-diff --git a/.azure-pipelines.yml b/.azure-pipelines.yml
-index 93111eb612..2881851ecf 100644
---- a/.azure-pipelines.yml
-+++ b/.azure-pipelines.yml
-@@ -250,6 +250,11 @@ stages:
-               wget -O - https://github.com/riscv-software-src/opensbi/releases/download/v1.3.1/opensbi-1.3.1-rv-bin.tar.xz | tar -C /tmp -xJ;
-               export OPENSBI=/tmp/opensbi-1.3.1-rv-bin/share/opensbi/lp64/generic/firmware/fw_dynamic.bin;
-           fi
-+          if [[ "\${TEST_PY_BD}" == "qemu-arm-sbsa" ]]; then
-+              wget -O /tmp/bl1.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/bl1.bin;
-+              wget -O /tmp/fip.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/fip.bin;
-+              export BINMAN_INDIRS=/tmp
-+          fi
-           # the below corresponds to .gitlab-ci.yml "script"
-           cd \${WORK_DIR}
-           export UBOOT_TRAVIS_BUILD_DIR=/tmp/\${TEST_PY_BD}
-@@ -415,6 +420,9 @@ stages:
-         qemu_arm64:
-           TEST_PY_BD: "qemu_arm64"
-           TEST_PY_TEST_SPEC: "not sleep"
-+        qemu_arm_sbsa_ref:
-+          TEST_PY_BD: "qemu-arm-sbsa"
-+          TEST_PY_TEST_SPEC: "not sleep"
-         qemu_m68k:
-           TEST_PY_BD: "M5208EVBE"
-           TEST_PY_ID: "--id qemu"
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 7d621031b8..3f02a492d5 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -39,6 +39,11 @@ stages:
-         wget -O - https://github.com/riscv-software-src/opensbi/releases/download/v1.3.1/opensbi-1.3.1-rv-bin.tar.xz | tar -C /tmp -xJ;
-         export OPENSBI=/tmp/opensbi-1.3.1-rv-bin/share/opensbi/lp64/generic/firmware/fw_dynamic.bin;
-       fi
-+    - if [[ "${TEST_PY_BD}" == "qemu-arm-sbsa" ]]; then
-+        wget -O /tmp/bl1.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/bl1.bin;
-+        wget -O /tmp/fip.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/fip.bin;
-+        export BINMAN_INDIRS=/tmp
-+      fi
- 
-   after_script:
-     - cp -v /tmp/${TEST_PY_BD}/*.{html,css,xml} .
-@@ -344,6 +349,12 @@ qemu_arm64 test.py:
-     TEST_PY_TEST_SPEC: "not sleep"
-   <<: *buildman_and_testpy_dfn
- 
-+qemu_arm_sbsa test.py:
-+  variables:
-+    TEST_PY_BD: "qemu-arm-sbsa"
-+    TEST_PY_TEST_SPEC: "not sleep"
-+  <<: *buildman_and_testpy_dfn
-+
- qemu_m68k test.py:
-   variables:
-     TEST_PY_BD: "M5208EVBE"
--- 
-2.46.2
+Sorry this is actually just a RFT patch, Paul will help to test
+performace first. If results really looks good, I will write some
+documents to explain the idea and implementation in later version.
+
+Thanks,
+Kuai
+
+
+> 
+> .
+> 
 
 
