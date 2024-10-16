@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-368557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCF89A114A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:12:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD7F9A114C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83A5AB24C8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA41C286228
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76AB210195;
-	Wed, 16 Oct 2024 18:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CF3212F19;
+	Wed, 16 Oct 2024 18:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YwSKQ73I";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L8bYn70U"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qUkHMZCx"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D5A18A933;
-	Wed, 16 Oct 2024 18:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B079918BB82
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729102312; cv=none; b=Eh/4Devl0DyeBvLkZMIYc1AF2rS0jKHk25rBLmdSFWflrAjPEj3Dueptl2MLRGTMkzSX9CZoPkVIewFH094luL6sbrgT1J+7YFHYMlmm+aTe73APQKvNSoQCul/AypBmrO0AbaY0ttiACgmhFQYCcbqwL2WMcZucDxr17i4R6lg=
+	t=1729102337; cv=none; b=qx1AwZmdP7RnB4s3XoTteZcj8FMXbheKtjiKAODftHRvOa9R7WJwFPkfJ/HlG9X5vvKVqVx4RnCjcZVZbTRBCKFCOnLGHsEiWW9ZstmJ36MQArC2SKEN0iw0Vc1LzRpQeWnlzIrohzhCvaUa+Ih76PXiCd5Ep7B35pyrdf6Eimo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729102312; c=relaxed/simple;
-	bh=+Wn+Zx7onK8xaH489hDkGOEs/OTWomDLOs5/E97dhOw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EHLzGqnEXM4VZoUNwTiiaVPntPxAhUjOH8Q0DmKCn5RXpWg5zbewnAIZe2H9c3CPMLF3uE19dPi7Gd2VJ8Edizq7ChQOLllDmB+jOl6KR2e3Z5gVsoZhDZFyY1UoIZYA5yQYn+15t+Lfwk7f+Ob7VOPXYaPtkVtaQTINavta2nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YwSKQ73I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L8bYn70U; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729102308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kvAgcpABznH0KWyxGhEZ8TIjmB/x70Rq0aMQaMrxErQ=;
-	b=YwSKQ73IfSIQOzsYw2Z8Xx+yQ0BHXvgHtCc5MDOW7dovN+Xw/arAqK/4iORFGhu9LDkVeM
-	PaN3OK05ha29Av82/GLcHiJiSe/N44wKBZBEVH8icElHpV6T6SnVd1Prqpus/3VOXVpjbo
-	+SBstJ3noe0FToeGKBTO/EfJFXSkzUIWlpFYq6mYjVjzJLnfUulR7/DKeoVrKm3xjfWhJd
-	WjVKx5WJvmSYodenqEsR90tSAu5dFCx/pSYY19zCpuwnaAE9NQrKJ1IzJSwvwcmiJ2O4w6
-	ff2giYNKoSuobVqK1MzRECYa/JCV0orkBz1G2fC3XhhB5KDPnUyZ1GNJTcx4Cg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729102308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kvAgcpABznH0KWyxGhEZ8TIjmB/x70Rq0aMQaMrxErQ=;
-	b=L8bYn70UqZcP2iKldhYHnVv7gh4R30TOJKkQc6AMBR/o63oLhDhYbyMRW9dnJusejiZIjT
-	Tv29b2ZaAATa0+Dg==
-To: Marcos Paulo de Souza <mpdesouza@suse.com>, Petr Mladek
- <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Marcos Paulo
- de Souza <mpdesouza@suse.com>
-Subject: Re: [PATCH 1/2] printk: Introduce LOUD_CON flag
-In-Reply-To: <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
-References: <20241016-printk-loud-con-v1-0-065e4dad6632@suse.com>
- <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
-Date: Wed, 16 Oct 2024 20:17:48 +0206
-Message-ID: <84plnz29zv.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1729102337; c=relaxed/simple;
+	bh=pjBU7bP0Uk4e/xSSM+yH9JXOnBNOap5sy3aYwNVqicY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohwTB8GENhEFsBGmAM0lPk0B1qiROGmL1n7hDMRAcoacKwSKV541+LKaWfyzh4NJJ0nnjupH2GGZ1ghioFGUprf+yhZCBXSLVZ+qu/ob1M+MRfZbnz8NUjIMKlEN3VJiNIK3ScM9HDZYypTyNCIgAfphYvP5olTqeFmy7NnYtKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qUkHMZCx; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20ca96a155cso735745ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:12:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729102335; x=1729707135; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AGUSxJLSmS2t2McaXLEaoam4uNrhNWjevpowsdK4u6E=;
+        b=qUkHMZCx5UFeKeXF7+YL0+1ixLiIjmk8KmhuYnb9ijznA5NmHe6zNBdqakdiRikY1g
+         cHbCwRH6CTzEcAtc4n37NSleVWAauU0wUZw+z6+kRMZVFc/v2V+H04ti4lROWmKx48nU
+         QGsxwvYmFd3KH1oRMVAFzktI7tWXgGOPuVO+vgWPyVvdWqFPuIHBgMHbZdb6SLGiiXvX
+         //OUWaWuMEYKiDqi4Zgs4TI9+Jw22/6fmlMKgts6/H2nhUqS60CxzEO9YQ1zv+HAZRVq
+         deKEqRK30ry5e+zhGk71HHunfhS6VRy1Wy2idy4sGTrvLhNxn8hYyCjQoCgdwQZLOcSv
+         aB7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729102335; x=1729707135;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AGUSxJLSmS2t2McaXLEaoam4uNrhNWjevpowsdK4u6E=;
+        b=K2soEa5Mq9xkKEgVDccYmFRvqqMYdqSSFgcWBV977L92zChevuSZq7Z5e+nRp3AcCk
+         1mqnWO8SR0u+wpCxVXtkDjEudTvmHd4ViDzf9XQmkH9QkkkJILyMZNeOChtLsky4miEK
+         KQdy0VcpLAVITPIqAjog6NV0ZNbA9CqesV58JMNcNcB6Q1bux2vOjj37zaUqUYScm5NK
+         jH3W5CT762GqBjoEBHGobSJR45gTBVxzfbhdkm41pcKfzxBi/XNl8dYEHsjpBHM2Rbcp
+         423gDfoQHk4Vm0WWm1q0y97mhcgZ6drwlJoco5LpiWjwWqzPNYzmyTMqAK7SEHgvnZQf
+         3UzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlFShv1I11OtLYXg4cB7mCm3kR44AfvO3oIhe1fziJzNtqMXJ3pT9Fr+nSCxSK3n9Avx2XtCksWMT+4Zs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/zJrz+2/6c7TjjWFNJ2rGU3cvRY+KLXqD4LkVnD0e1rZq6nxP
+	k2ME8FRduBZLb681atYobNeGCvA3xMb8wAKtSZBxpXFXsJy17MDQ9mqxcHmY6Q==
+X-Google-Smtp-Source: AGHT+IEC4f0FCA7jD/T3S9Y3FpFfE6YgpsYbswvi8qmMeUEzDMbMadrb3Bae263HJGs3xq7PNu5TDg==
+X-Received: by 2002:a05:6a20:d80c:b0:1d9:1c20:4092 with SMTP id adf61e73a8af0-1d91c2047f1mr608016637.16.1729102335093;
+        Wed, 16 Oct 2024 11:12:15 -0700 (PDT)
+Received: from thinkpad ([220.158.156.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774d2a0csm3376997b3a.181.2024.10.16.11.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 11:12:14 -0700 (PDT)
+Date: Wed, 16 Oct 2024 23:42:07 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v2 3/4] PCI: imx6: Pass correct sub mode when calling
+ phy_set_mode_ext()
+Message-ID: <20241016181207.qhjkhz266quak6ve@thinkpad>
+References: <20240923-pcie_ep_range-v2-0-78d2ea434d9f@nxp.com>
+ <20240923-pcie_ep_range-v2-3-78d2ea434d9f@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240923-pcie_ep_range-v2-3-78d2ea434d9f@nxp.com>
 
-Hi Marcus,
+On Mon, Sep 23, 2024 at 02:59:21PM -0400, Frank Li wrote:
+> Fix hardcoding to Root Complex (RC) mode by adding a drvdata mode check.
+> Pass PHY_MODE_PCIE_EP if the PCI controller operates in Endpoint (EP) mode.
+> 
 
-On 2024-10-16, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
-> Introduce LOUD_CON flag to printk.
+Patch descriptions should fit within 75 columns.
 
-Generally speaking, I do not like the name "LOUD_CON". The flag is
-related to records, not consoles. Something like "NO_SUPPRESS" or
-"FORCE_PRINT" might be more appropriate. Note that naming is not my
-strength.
+> Fixes: 8026f2d8e8a9 ("PCI: imx6: Call common PHY API to set mode, speed, and submode")
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-> The new flag will make it possible to
-> create a context where printk messages will never be suppressed. This
-> new context information will be stored in the already existing
-> printk_context per-CPU variable. This variable was changed from 'int' to
-> 'unsigned int' to avoid issues with automatic casting.
->
-> This mechanism will be used in the next patch to create a loud_console
-> context on sysrq handling, removing an existing workaround on the
-> loglevel global variable. The workaround existed to make sure that sysrq
-> header messages were sent to all consoles.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-IMO the more interesting aspect is that the "loud" flag is stored in the
-ringbuffer so that the message is not suppressed, even if printed later
-(for example because it was deferred). This actually even fixes a bug
-since the current workaround will not perform as expected if the sysrq
-records are deferred (for example due to threaded printing or consoles
-that are registered later).
+- Mani
 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index beb808f4c367..b893825fe21d 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1321,6 +1321,7 @@ static void boot_delay_msec(int level)
->  	unsigned long timeout;
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 808d1f1054173..bdc2b372e6c13 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -961,7 +961,9 @@ static int imx_pcie_host_init(struct dw_pcie_rp *pp)
+>  			goto err_clk_disable;
+>  		}
 >  
->  	if ((boot_delay == 0 || system_state >= SYSTEM_RUNNING)
-> +		|| is_printk_console_loud()
->  		|| suppress_message_printing(level)) {
+> -		ret = phy_set_mode_ext(imx_pcie->phy, PHY_MODE_PCIE, PHY_MODE_PCIE_RC);
+> +		ret = phy_set_mode_ext(imx_pcie->phy, PHY_MODE_PCIE,
+> +				       imx_pcie->drvdata->mode == DW_PCIE_EP_TYPE ?
+> +						PHY_MODE_PCIE_EP : PHY_MODE_PCIE_RC);
+>  		if (ret) {
+>  			dev_err(dev, "unable to set PCIe PHY mode\n");
+>  			goto err_phy_exit;
+> 
+> -- 
+> 2.34.1
+> 
 
-I do not think "loud" should be a reason to skip the delays. The delays
-are there to slow down printing. I would think that for "loud" messages,
-this is even more important. I suppose this function (as well as
-printk_delay()) would need a new boolean parameter whether it is a
-"loud" message. Then:
-
-	|| (!loud_con && suppress_message_printing(level))
-
-> @@ -2273,6 +2274,9 @@ int vprintk_store(int facility, int level,
->  	if (dev_info)
->  		flags |= LOG_NEWLINE;
->  
-> +	if (is_printk_console_loud())
-> +		flags |= LOG_LOUD_CON;
-> +
->  	if (flags & LOG_CONT) {
->  		prb_rec_init_wr(&r, reserve_size);
->  		if (prb_reserve_in_last(&e, prb, &r, caller_id, PRINTKRB_RECORD_MAX)) {
-
-I guess LOG_LOUD_CON should also be set in the LOG_CONT case (like
-LOG_NEWLINE does).
-
-> diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
-> index 2b35a9d3919d..4618988baeea 100644
-> --- a/kernel/printk/printk_safe.c
-> +++ b/kernel/printk/printk_safe.c
-> @@ -12,7 +12,30 @@
->  
->  #include "internal.h"
->  
-> -static DEFINE_PER_CPU(int, printk_context);
-> +static DEFINE_PER_CPU(unsigned int, printk_context);
-> +
-> +#define PRINTK_SAFE_CONTEXT_MASK		0x0000ffffU
-> +#define PRINTK_LOUD_CONSOLE_CONTEXT_MASK	0xffff0000U
-> +#define PRINTK_LOUD_CONSOLE_CONTEXT_OFFSET	0x00010000U
-> +
-> +void noinstr printk_loud_console_enter(void)
-> +{
-> +	cant_migrate();
-> +	this_cpu_add(printk_context, PRINTK_LOUD_CONSOLE_CONTEXT_OFFSET);
-> +}
-
-Have you tested this with lockdep? AFAICT, the write_sysrq_trigger()
-path can migrate since it is only using rcu_read_lock() in
-__handle_sysrq().
-
-John Ogness
+-- 
+மணிவண்ணன் சதாசிவம்
 
