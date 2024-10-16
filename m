@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-368731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B329A1425
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:37:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 148859A1429
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8F181C21EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:37:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5EAEB220F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2150C21643B;
-	Wed, 16 Oct 2024 20:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A8F216A28;
+	Wed, 16 Oct 2024 20:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZYa5g+i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L01deUNk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79982F9C1;
-	Wed, 16 Oct 2024 20:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84717F9C1;
+	Wed, 16 Oct 2024 20:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729111068; cv=none; b=VhDvxB8qJidDIY9daNC2+dCRSEXyRig8FuAZYsv2moPKL3zlm8TIXYdzoCWAM6UnSW/WBwhQDPmnFYsLXszNZJSTFSHPOX18tbrD/T4okDVG79e6Ab2rpqawJTsi6aeKVRJA/TQbrfABbf0/w1ycyNN7WcjXOI4YeoAhaQBzixs=
+	t=1729111116; cv=none; b=kIvv/uW31hJQBexdRXTWLxWqcjqkM6/bocxYVql3RNG6S9EZch38wrx6c2t5A1u83jUgKf84/632NIIUtKvbgeRsx3agD23kX89mcle3LjE4aBrW9qqlmjzEShpIC33o7UIZZ9jgeQBMB3PvfDJSvdMANqQZglaZttOD3ni8ZK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729111068; c=relaxed/simple;
-	bh=a22KOg6/0QhVhl9Q7ie8IX+K0Lw+hQnqXMS7D/S42Rk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NukGL1EOmW9tANXgEIlko1WT2ucf0JX1tLh+is8NNgWbCVw1BhL3ycoEvCNM+kFvw1Q76kEOmV9G602OPmaobC6bixbuIfNVb3pT7t2TxqhLzyvEXF5hr3rXTERdgveCtvXtpjt5GIWMgm3sNH5PF/A4pcYeCM02i++ejCG8+JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZYa5g+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00961C4CEC5;
-	Wed, 16 Oct 2024 20:37:47 +0000 (UTC)
+	s=arc-20240116; t=1729111116; c=relaxed/simple;
+	bh=VeYldsMUeuH1eIzB54k8tZno3kXJgw65jPdBan5LLDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e8VJkRcBOZHMqyiT/3S2sbrLiXu5BWeIJoXzJBGBB3C5/WJ7fXFUlSgOZBxm+0doUhCw+eHHEO/4hVRCLDquPr1+ioCDw1OrPqqPEMaN1b2yIFTPEi9glDKelDUswoppsEYRgNvZEebEZpwNUqovILVxBq9MXrw7N2RnXGz5h7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L01deUNk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C778C4CEC5;
+	Wed, 16 Oct 2024 20:38:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729111068;
-	bh=a22KOg6/0QhVhl9Q7ie8IX+K0Lw+hQnqXMS7D/S42Rk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PZYa5g+iSMaI4H5wmQ4oSvbR9hp8rIEufxOAoRfsbcY5gJNfndqb2PnXBF4SUWpqN
-	 OBfa2fFvLfw+9/bEBB9vfg3kkZKvmeOARtxOk7wLhZK8cLK0xJFiB0/z7clyH1Xn5W
-	 7s5aNSjwslLWsyaRb9d82bQtWkWZD+9XQQ3zCoZYvLFP4zR22K/iEiJQ0CW+BxeeaH
-	 T5+iUuk8t2Tb5GfV2h5Pcb802WrBUflLDa4X3ytbVMw+qT/KeIiaK40Fytfhnygd1g
-	 sa9N/UtvGqRqDX7V/cL/1FTgykQFkl6KmjURsFKFcyo2uY/pRk68y+NDyKV49zQqdS
-	 9ABV+14ola9Og==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7157c2aca3eso125101a34.0;
-        Wed, 16 Oct 2024 13:37:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUmrVbTBAwuEgPP/XCKb1JMPk3nE+QfAmkYIJp0sDXCBXK8hS2ClXxWnoI4VXQy79M5KxjKw7ojdBk=@vger.kernel.org, AJvYcCVlX3KATGsy3oIV8gnHEyAEFMVuhOp4NLozmR5xFl4dgzIG/TYiZ1yyPD/zrtR0Ngg/j+hDm3Y+wcaYz/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXVpXqXELx5U8gtEHaGV51+PdtADiUUyNIfIY1CWq8vjCySF9O
-	6hM2rOVN0R50R2yv98GyNJjhBa9AuOxAb7zWHWqjsNO66D2z9L+SckvBsOcLpbwC9gvPleIhYJA
-	Oey4fxSmuf6rT7SJL3dNQYEUPgBY=
-X-Google-Smtp-Source: AGHT+IHo0sXK0iP3u2ux2CHT2+gWa5VRrHGENK7IhQm+2J1J7nU3kp/59ByTRPw2WRaI7ITK0nLwVjoGKyiz3l03lEw=
-X-Received: by 2002:a05:6870:56ac:b0:260:ee13:e665 with SMTP id
- 586e51a60fabf-288edfb72e6mr4523159fac.37.1729111067309; Wed, 16 Oct 2024
- 13:37:47 -0700 (PDT)
+	s=k20201202; t=1729111116;
+	bh=VeYldsMUeuH1eIzB54k8tZno3kXJgw65jPdBan5LLDc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L01deUNk90IMXNo76DgQFJeDArg//HVogMGVMjO8toT8vVe/cVgLd9suEZnjZ36Ro
+	 /9vM/ge+aKmKPsmwsEES2uUpXFQj+G/JYolTAWu/8cDi35vu5zGkeRXeJCxrqEdgJG
+	 WO92BdKtyrehU8vaO8oTuB/nMQp0WL5eXQQPl99tEydcgmT69vPbuFvx+lEN8MDarQ
+	 1tWtfp5b9jw4pOud51qPSkclc5kwj+3fQboWDbX5UNYohXATGAUXbRl/zNRQz0dm9Y
+	 olYEvdlvqaQ3Bg1lHHNVYYJJP6jnff5b+/cLj3NUYfVt9JSZgdF7C+yaORVpjmI6V2
+	 /9/Nv2SNwt3Tw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	jassisinghbrar@gmail.com,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	dmitry.baryshkov@linaro.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com,
+	conor+dt@kernel.org,
+	quic_nkela@quicinc.com,
+	quic_psodagud@quicinc.com,
+	abel.vesa@linaro.org
+Subject: Re: (subset) [PATCH V6 0/5] qcom: x1e80100: Enable CPUFreq
+Date: Wed, 16 Oct 2024 15:38:31 -0500
+Message-ID: <172911109550.2912.18415111863856509800.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240612124056.39230-1-quic_sibis@quicinc.com>
+References: <20240612124056.39230-1-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016154851.1293654-1-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20241016154851.1293654-1-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 Oct 2024 22:37:34 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gDH6w-gjE+cr-c4Dp1ekZnMgjjSgyo5f_qfQQ9OpT99w@mail.gmail.com>
-Message-ID: <CAJZ5v0gDH6w-gjE+cr-c4Dp1ekZnMgjjSgyo5f_qfQQ9OpT99w@mail.gmail.com>
-Subject: Re: [PATCH] powercap: intel_rapl_msr: Add PL4 support for Arrowlake-H
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, rui.zhang@intel.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 5:49=E2=80=AFPM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> Add PL4 support for ArrowLake-H platform.
->
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  drivers/powercap/intel_rapl_msr.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/powercap/intel_rapl_msr.c b/drivers/powercap/intel_r=
-apl_msr.c
-> index 1f4c5389676a..cbe07450de93 100644
-> --- a/drivers/powercap/intel_rapl_msr.c
-> +++ b/drivers/powercap/intel_rapl_msr.c
-> @@ -148,6 +148,7 @@ static const struct x86_cpu_id pl4_support_ids[] =3D =
-{
->         X86_MATCH_VFM(INTEL_METEORLAKE, NULL),
->         X86_MATCH_VFM(INTEL_METEORLAKE_L, NULL),
->         X86_MATCH_VFM(INTEL_ARROWLAKE_U, NULL),
-> +       X86_MATCH_VFM(INTEL_ARROWLAKE_H, NULL),
->         {}
->  };
->
-> --
 
-Applied as 6.12-rc material, thanks!
+On Wed, 12 Jun 2024 18:10:51 +0530, Sibi Sankar wrote:
+> This series enables CPUFreq support on the X1E SoC using the SCMI perf
+> protocol. This was originally part of the RFC: firmware: arm_scmi:
+> Qualcomm Vendor Protocol [1]. I've split it up so that this part can
+> land earlier.
+> 
+> V5:
+> * Fix build error reported by kernel test robot by adding 64BIT requirement
+>   to COMPILE_TEST
+> * Pick Rbs
+> 
+> [...]
+
+Applied, thanks!
+
+[3/5] arm64: dts: qcom: x1e80100: Resize GIC Redistributor register region
+      commit: 9ed1a2b8784262e85ec300792a1a37ebd8473be2
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
