@@ -1,61 +1,66 @@
-Return-Path: <linux-kernel+bounces-368769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833409A14BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C20159A14C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E14D1F23918
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2CC1F237E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2CD1D278B;
-	Wed, 16 Oct 2024 21:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D1B1D270B;
+	Wed, 16 Oct 2024 21:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7/6Prv0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4ZVdQXA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FD013B298;
-	Wed, 16 Oct 2024 21:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAFF13B298;
+	Wed, 16 Oct 2024 21:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729113869; cv=none; b=AgJxa+ipRFXg1h5J2uweyQqY2LXr43aOZDukBk598I9sThsyHL5PZK3MwOWeWBnrI7F6L6KtOAFokVmFSXePWmrqt8B5Cp2jILofQAdni19k2wfefUZ56W/JCqk96seK5GT4C5BseIuzMQtEw5HqPMWOZpOUbJaTUJFHC0AYJUc=
+	t=1729113976; cv=none; b=FraUequn9kW845VijZ5plWiMbgQKpQ3oNE/FTOuEpSc172X8hcvjIPUkA6YGtd7SAuUS8mSoZ2RvcvVYJsCVlHYyMGrTu5kcrAvYOOV5qZnhI5P46KkFCA3Hw26piggbc96KBMexE9VjB666EHcQc+b17vP0v3P8MqwL4927MAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729113869; c=relaxed/simple;
-	bh=WmRyooRpNUPsrOSIwLEuGtI5tETK3P7F58Xs9VK/nqU=;
+	s=arc-20240116; t=1729113976; c=relaxed/simple;
+	bh=w2AniAgKUA3iOAqj3cDVFxrqdHgqKwGWULpMr0zhr9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbrZUyKlISAXdX69mhNKd8lEvtJPJr7HO4BuQfUHbXsJGEX0fZ2bWKXLEm4lCBZAHDl1Xuo0WXFEH56q/U1RTy8FQynKXynKWShL5T1vkMqF1d9YqjObNDV6ay9o0emPcFrrM0uWVsn+7Wxm/xgbmoj9EjFtZlPDfzrEeNab1FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7/6Prv0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D230C4CECD;
-	Wed, 16 Oct 2024 21:24:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SqSQrbDRZmknx7fuKQ2TH9MgpNj1mor+0gAXGvZn/IBZIo5FiUdjC63QzRKyUlvFgXbFcXS/mSgm0qP1TsdxiyAe+0vDgB8JYWCJkiT33q6N0A6Kw7tUXskuiQMePJumQQcP4R8kBjW6/bLf+9WDCgFbPtMAAog/ubDWWF+ZANQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4ZVdQXA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E26BC4CEC5;
+	Wed, 16 Oct 2024 21:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729113869;
-	bh=WmRyooRpNUPsrOSIwLEuGtI5tETK3P7F58Xs9VK/nqU=;
+	s=k20201202; t=1729113976;
+	bh=w2AniAgKUA3iOAqj3cDVFxrqdHgqKwGWULpMr0zhr9s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c7/6Prv0V/3uEKt5DQtqrnxyPW+061zPoW9DD2m5SSMpeREYxcAQtl3ic6CvySKSN
-	 e50H621ALjxb7Te6UYMKh3m6wM5StaKEuuqc8NRN/zN8Zamof45GxR2lZx6lc1OuD7
-	 2waucJwnFs8bNs+Nfwzs9+WbTiSK4saf+HJRmnWkdDYfcK5zzR63me4hK3IzJmlP2K
-	 CsBg0dTzFDLeEyEKVCZc889Lju7SQOZCGpIkE579Kds6XwFCXUVqiFAFTXygSjB5GS
-	 bYqIUtBFrUhuynUF6pos3ukihM0+vjR1XMURbBndqor8amdckbZFcuY7QFixWHNEQI
-	 +RP/ffKudQJCw==
-Date: Wed, 16 Oct 2024 14:24:27 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Aleksei Vetrov <vvvvvv@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	patches@lists.linux.dev, stable@vger.kernel.org
-Subject: Re: [PATCH] kbuild: Fully disable
- -Wenum-{compare-conditional,enum-conversion}
-Message-ID: <20241016212427.GA695927@thelio-3990X>
-References: <20241016-disable-two-clang-enum-warnings-v1-1-ae886d7a0269@kernel.org>
- <a22ab6cb-6eb6-44df-9e82-b6e95b9ae08e@app.fastmail.com>
+	b=E4ZVdQXAM5yf8VYAXJnchAT4o0+WSx0YVDSNkWnhXo25iJ56AiSQFc2RzAHjStxBR
+	 0+Mi9nWaMS0673bDbT9wAx4lBTKdyKBinZ9LTRw6gNG4LHtmHhCJ1y4GPtznvX9A7s
+	 pF0gmcOdle3eA9YC249VOGVVlvZ0rJ/XQNtzgUgPQhSlN+Zww4J5Esi30H3y3qMKU0
+	 QO6pL0a3abUM/5rJqiTCppVvS9kKtiQr/swm9IiImXhd0PsSeARBzXtQOyk0+XB0nV
+	 r6W+gxsmelg1cP8MBc8A3z2/D7bhkQzGbUtGz74L7fjR5+yw88oREwl7Qg5Cz/pPYE
+	 jFNzIpLJ4iL3A==
+Date: Wed, 16 Oct 2024 14:26:13 -0700
+From: Kees Cook <kees@kernel.org>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, jannh@google.com,
+	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org,
+	oleg@redhat.com, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	jorgelo@chromium.org, sroettger@google.com, ojeda@kernel.org,
+	adobriyan@gmail.com, anna-maria@linutronix.de, mark.rutland@arm.com,
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+	rdunlap@infradead.org, davem@davemloft.net, hch@lst.de,
+	peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com,
+	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
+	ardb@kernel.org, Liam.Howlett@oracle.com, mhocko@suse.com,
+	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+	enh@google.com, rientjes@google.com, groeck@chromium.org,
+	lorenzo.stoakes@oracle.com
+Subject: Re: [RFC PATCH v2 1/1] exec: seal system mappings
+Message-ID: <202410161424.FA6DBA7D91@keescook>
+References: <20241014215022.68530-1-jeffxu@google.com>
+ <20241014215022.68530-2-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,56 +69,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a22ab6cb-6eb6-44df-9e82-b6e95b9ae08e@app.fastmail.com>
+In-Reply-To: <20241014215022.68530-2-jeffxu@google.com>
 
-On Wed, Oct 16, 2024 at 06:31:27PM +0000, Arnd Bergmann wrote:
-> On Wed, Oct 16, 2024, at 18:01, Nathan Chancellor wrote:
-> > -Wenum-enum-conversion and -Wenum-compare-conditional were strengthened
-> > in clang-19 to warn in C mode, which caused the kernel to move them to
-> > W=1 in commit 75b5ab134bb5 ("kbuild: Move
-> > -Wenum-{compare-conditional,enum-conversion} into W=1") because there
-> > were numerous instances of each that would break builds with -Werror.
-> > Unfortunately, this is not a full solution, as more and more developers,
-> > subsystems, and distributors are building with W=1 as well, so they
-> > continue to see the numerous instances of these warnings.
-> >
-> > Since the move to W=1, there have not been many new instances that have
-> > appeared through various build reports and the ones that have appeared
-> > seem to be following similar existing patterns, suggesting that most
-> > instances of these warnings will not be real issues. The only
-> > alternatives for silencing these warnings are adding casts (which is
-> > generally seen as an ugly practice) or refactoring the enums to macro
-> > defines or a unified enum (which may be undesirable because of type
-> > safety in other parts of the code).
-> >
-> > Disable the warnings altogether so that W=1 users do not see them.
-> 
-> I don't think we have to go all the way of completely disabling
-> the warnings here, they are still potentially useful. I can see
-> three ways of being less aggressive with them:
-> 
-> - keep -Wno-enum-compare-conditional in W=1 and fix up the
->   remaining warnings for that, iirc the Wno-enum-enum-conversion
->   is the one that causes the problems.
-> 
-> - Move them to W=2 instead of always disabled
-> 
-> - Leave the warnings enabled for clang-18 and older.
+(I don't think this needs "RFC" any more)
 
-Arnd and I talked about this offline in the ClangBuiltLinux meeting
-today. I am going to run my usual test matrix against a tree with
--Wenum-compare-conditional turned on to see how many instances of these
-warnings are in the tree and how difficult it would be to silence them
-to address the first point above. I will move -Wenum-enum-conversion to
-W=2 and send that as v2 soon to satisfy point two, which should clear up
-the blockage for the Android folks.
+On Mon, Oct 14, 2024 at 09:50:20PM +0000, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
+> 
+> Seal vdso, vvar, sigpage, uprobes and vsyscall.
+> 
+> Those mappings are readonly or executable only, sealing can protect
+> them from ever changing during the life time of the process. For
+> complete descriptions of memory sealing, please see mseal.rst [1].
+> 
+> System mappings such as vdso, vvar, and sigpage (for arm) are
+> generated by the kernel during program initialization. These mappings
+> are designated as non-writable, and sealing them will prevent them
+> from ever becoming writeable.
+> 
+> Unlike the aforementioned mappings, the uprobe mapping is not
+> established during program startup. However, its lifetime is the same
+> as the process's lifetime [2], thus sealable.
+> 
+> The vdso, vvar, sigpage, and uprobe mappings all invoke the
+> _install_special_mapping() function. As no other mappings utilize this
+> function, it is logical to incorporate sealing logic within
+> _install_special_mapping(). This approach avoids the necessity of
+> modifying code across various architecture-specific implementations.
+> 
+> The vsyscall mapping, which has its own initialization function, is
+> sealed in the XONLY case, it seems to be the most common and secure
+> case of using vsyscall.
+> 
+> It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
+> alter the mapping of vdso, vvar, and sigpage during restore
+> operations. Consequently, this feature cannot be universally enabled
+> across all systems. To address this, a kernel configuration option has
+> been introduced to enable or disable this functionality. Note, uprobe
+> is always sealed and not controlled by this kernel configuration.
+> 
+> [1] Documentation/userspace-api/mseal.rst
+> [2] https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com/
+> 
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> ---
+>  .../admin-guide/kernel-parameters.txt         | 10 ++++
+>  arch/x86/entry/vsyscall/vsyscall_64.c         |  9 +++-
+>  fs/exec.c                                     | 53 +++++++++++++++++++
+>  include/linux/fs.h                            |  1 +
+>  kernel/events/uprobes.c                       |  2 +-
+>  mm/mmap.c                                     |  1 +
+>  security/Kconfig                              | 26 +++++++++
+>  7 files changed, 99 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index e7bfe1bde49e..02e5eb23d76f 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1538,6 +1538,16 @@
+>  			Permit 'security.evm' to be updated regardless of
+>  			current integrity status.
+>  
+> +	exec.seal_system_mappings = [KNL]
+> +			Format: { never | always }
+> +			Seal system mappings: vdso, vvar, sigpage, uprobes,
+> +			vsyscall.
+> +			This overwrites KCONFIG CONFIG_SEAL_SYSTEM_MAPPINGS_*
+> +			- 'never':  never seal system mappings.
+> +			- 'always': always seal system mappings.
+> +			If not specified or invalid, default is the KCONFIG value.
+> +			This option has no effect if CONFIG_64BIT=n
+> +
 
-While disabling the warnings for clang-19 and newer and leaving them on
-for clang-18 and older would technically address the issue at hand, it
-won't result in increased coverage because the whole point of the change
-that caused this in clang-19 is enabling the warning for C code, so
-clang-18 and older won't ever emit these warnings.
+Any reason for "always"/"never" instead of the more traditional y/n
+enabled/disabled, etc?
 
-Cheers,
-Nathan
+Otherwise, this all makes sense to me.
+
+-- 
+Kees Cook
 
