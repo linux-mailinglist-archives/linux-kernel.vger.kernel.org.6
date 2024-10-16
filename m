@@ -1,106 +1,267 @@
-Return-Path: <linux-kernel+bounces-368688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8919B9A1366
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:09:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C35B9A136B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBADD1C21239
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:09:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B563B22E8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEBE216A05;
-	Wed, 16 Oct 2024 20:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDA6216A2D;
+	Wed, 16 Oct 2024 20:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yu+vYDUI"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lu+s/6fg"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D8E1C1741
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83ACB2144C4;
+	Wed, 16 Oct 2024 20:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729109134; cv=none; b=IGo36pBqzHxNhX23yGfBO+HrBOsY0IjhYoi3uq/gubG4TZDvXiKfq8iTY53+tKOUh0p0LKtE8G5WIkiPWx1a+IkU8T8T1Q4R6afNEXt8+hMjN7d8CQaHi4s0AOY/oMYRI5bDW4pg/kRsEB3GAn78lppEwtkb3yQnrougshZpD4E=
+	t=1729109242; cv=none; b=NdW682aG9L8MyuxbL0/q90s1rs61odu8Z0T+zFec9mUOk3KE2nQd3DnvhwCUw5CNeifZe2kQB15YzYmS+5uQQxE5JhFY1kJ5/pKpdiUXbJa1XGKVKAndUU+uiUtExqlSSuIWLjyLbDITkJx7pKcgLBObQfrOydv26+xDV+YEgLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729109134; c=relaxed/simple;
-	bh=4C7oXOdGrYe+yW7Ps83eKYymTHybLV2V5p20sTO2t7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r35vSP9C/Yz+Vg+TCk/nO3Wu3Hn8rcescOOQ1Yk9ZDxn90M69HAQcMGIi0P5w5ppBo9RzDIID0/FReuhXiXNXbewGNxq4FnJgMzJEzi1iSPtOiocJZ0DxyKfOVhLliu0X7lxCbKUVoCc7P7VitgLZE9Cv1xjxbhYmG9eVlVctmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yu+vYDUI; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a3bd664ebaso1055685ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:05:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729109132; x=1729713932; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uq5bLD186tETtBZNYY76DXajC76NELDYBxIFyygj6ek=;
-        b=Yu+vYDUIongb6VCWjRCZySChiwcw63slkTrSTcw25F2a5Qo9Hr41UdboCNZK+rmQSr
-         1f8yZE6Ub9G2r5A1IRLZYdBMxM9L1tcsLc9aV83LRut8T8hi5LNOaMMlwjNyVfRsy2M7
-         Qa4t0WjO63x8pMJeoDWge+vB185b8ubJB5NH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729109132; x=1729713932;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uq5bLD186tETtBZNYY76DXajC76NELDYBxIFyygj6ek=;
-        b=U2u6gg/Thj/+chwp5J5WUxyqMcW4c1LsdbZcQkKRzTA9Lsq/zSKyCq3Zmyh8zMztag
-         y8loX9r1RWkqgeyBQa2dddM/GTfLjBd8yBPWgKOsxOAVXrIj/kqH57cpkPJlE6JOqsTc
-         CKPUUNU1WC9Sm398jICCnKiiTanNQsOSOZivElxKuw13MTC7aUhrD6ypdo6X5GgbfEG4
-         jURxwsJ6lCvZzQ/tGAwaP5fetjZUg+4OCEa85ePaGZhrdDbGP9psiFgO7+i/1Xa6wa83
-         cau12sn1iwNvrhyyKw3EAkda2AoapqM837fp3Er9LKxRFtckPUdx+B99dK4psSt9wTvT
-         2snw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjUIaDZUC9bb8O+oJcfMHgn6PwwyqtXmobEWcYVGapTgQrGzJQA/nzN04EyvaCG5oeRiBQ9Ust3XfN3x4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHZCOGgl1oFRiD6EI51Kp4wrO+2v4nxE+bHxm98BLzMCKdyVg5
-	6IxC3F2BP3fBh7wuyvHkQzZgUBhInX8DjH5dM6Nq+dJvlDNQ/zc2WDAwSLK/v5o=
-X-Google-Smtp-Source: AGHT+IFyrvP7WlAESEzcHpU4lGmOucghLrlftqIdvWhK5bg2twkKKzE7vsK13Hgqb6Ooq9Tj/cJchA==
-X-Received: by 2002:a05:6e02:3b06:b0:3a3:be8a:8717 with SMTP id e9e14a558f8ab-3a3dc4d5afbmr53132945ab.15.1729109132264;
-        Wed, 16 Oct 2024 13:05:32 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec9e1827sm980368173.77.2024.10.16.13.05.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 13:05:31 -0700 (PDT)
-Message-ID: <9533062f-d0a1-44f0-940f-279fadc9c3d3@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 14:05:31 -0600
+	s=arc-20240116; t=1729109242; c=relaxed/simple;
+	bh=A0Q9tNyQ3iHXXqfLpZjkylS2FY8nuKymUen7oRtOtGo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Kv6ih8YISogMjk0eA5ZvoA1zry1xvuHQmbQOB87PN5wYqlK4EegNhNuvq2EBN9CMlVSEsdYHAA2ec/bRGQBlat36FVj3MNr3phH67bC/GTLkfPzaM9NboHTWGA7hiEKjMxlgx4pU8EHMI7/3gO+f1Hepxbm7no/7EeJsKHe0RSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lu+s/6fg; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729109238;
+	bh=A0Q9tNyQ3iHXXqfLpZjkylS2FY8nuKymUen7oRtOtGo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=lu+s/6fg5EOnqGdZxUW8Y+0bKXROZnIM6tYtYPGQqbxnrr/RfGHC+z4y4MREkxxwS
+	 N6RO+GP2DQLTE3wDBLFygxqVIa7AslKyqPT3T0VZDCVbiVrp11J8BCkl+POMY4Hsxt
+	 qH9oniWjr/32ds9+9KENiAtl9O6ZULnmxCHsOa3zfPxl3tOUKmI88IyhETR94/luBE
+	 HoNRSvwPbmxkdvJLOD2f0R/icIsuX7f7HMWDRcJy8kD9jGz4RUEQ3vEtKVCRsw7yl8
+	 7UxDx9rPHspUrdZWnkNaEz1t0Wy41zLj8tpjlhOeSU/Elvk6zyXwghU0pIqrLRxCXF
+	 SzIoWfz5spCfQ==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 43C0717E36C7;
+	Wed, 16 Oct 2024 22:07:18 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v10 0/3] Add initial support for the Rockchip RK3588 HDMI
+ TX Controller
+Date: Wed, 16 Oct 2024 23:06:50 +0300
+Message-Id: <20241016-b4-rk3588-bridge-upstream-v10-0-87ef92a6d14e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpupower: Add Chinese Simplified translation
-To: Kieran Moy <kfatyuip@gmail.com>, shuah@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- ccheng@linuxfoundation.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241015185348.8306-1-kfatyuip@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241015185348.8306-1-kfatyuip@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANocEGcC/43RS07DMBAG4KsgrzGah19hxT0QC9uxaUTbVE6JQ
+ FXvjtMFjVBksZzx+LPm90VMqQxpEs8PF1HSPEzDeKwFwuODiDt/fE9y6GtDEJACAyiDkuWDtXM
+ ylKGv55+n6VySP0hPNvicMbgcRb1/KikPXzf89a3Wu2E6j+X79taMS/c/6owSZDYEbDUTU3iJ4
+ 37vw1j8UxwPYpFnumuurVHVuuyNtl4l1JsarzXb0rhqBnoTfIA+2rilqZWGXUtTi6bQRks1S9V
+ taXqlcXNTvWyqgUOKCZDNlmbuWgempZmqeUZyOSBw2szNrjRULc1WjQKycsgWibc0t9KomZurm
+ mPNLlKMTHpL6341BISW1i2/4KKyfZ+gTv/VrtfrD8sbRsU3AwAA
+X-Change-ID: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Simona Vetter <simona@ffwll.ch>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ devicetree@vger.kernel.org, kernel@collabora.com, 
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>, 
+ Algea Cao <algea.cao@rock-chips.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
 
-On 10/15/24 12:53, Kieran Moy wrote:
-> Sorry for the oversight, thanks for your help!
-> 
-> Signed-off-by: Kieran Moy <kfatyuip@gmail.com>
-> ---
->   tools/power/cpupower/Makefile    |   2 +-
->   tools/power/cpupower/po/zh_CN.po | 942 +++++++++++++++++++++++++++++++
->   2 files changed, 943 insertions(+), 1 deletion(-)
->   create mode 100644 tools/power/cpupower/po/zh_CN.po
-> 
+The Rockchip RK3588 SoC family integrates the Synopsys DesignWare HDMI
+2.1 Quad-Pixel (QP) TX controller, which is a new IP block, quite
+different from those used in the previous generations of Rockchip SoCs.
 
-Thank you. Applied for Linux 6.13-rc1 to branch:
+The controller supports the following features, among others:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/?h=cpupower
+* Fixed Rate Link (FRL)
+* Display Stream Compression (DSC)
+* 4K@120Hz and 8K@60Hz video modes
+* Variable Refresh Rate (VRR) including Quick Media Switching (QMS)
+* Fast Vactive (FVA)
+* SCDC I2C DDC access
+* Multi-stream audio
+* Enhanced Audio Return Channel (EARC)
 
-thanks,
--- Shuah
+This is the last component that needs to be supported in order to enable
+the HDMI output functionality on the RK3588 based SBCs, such as the
+RADXA Rock 5B.  The other components are the Video Output Processor
+(VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for which basic
+support has been already made available via [1] and [2], respectively.
 
+Please note this is a reworked version of the original series, which
+relied on a commonized dw-hdmi approach.  Since the general consensus
+was to handle it as an entirely new IP, I dropped all patches related to
+the old dw-hdmi and Rockchip glue code - a few of them might still make
+sense as general improvements and will be submitted separately.
 
+It's worth mentioning the HDMI output support is currently limited to
+RGB output up to 4K@60Hz, without audio, CEC or any of the HDMI 2.1
+specific features.  Moreover, the VOP2 driver is not able to properly
+handle all display modes supported by the connected screens, e.g. it
+doesn't cope with non-integer refresh rates.
+
+A possible workaround consists of enabling the display controller to
+make use of the clock provided by the HDMI PHY PLL.  This is still work
+in progress and will be submitted later, as well as the required DTS
+updates.
+
+To facilitate testing and experimentation, all HDMI output related
+patches, including those part of this series, are available at [3].
+
+So far I could only verify this on the RADXA Rock 5B board.
+
+Thanks,
+Cristian
+
+[1]: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+[2]: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
+[3]: https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/commits/rk3588-hdmi-bridge-v6.12-rc2
+[4]: https://lore.kernel.org/lkml/20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com/
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v10:
+- Used the .remove() callback instead of .remove_new() and dropped the
+  superfluous white space after .probe assignment (Uwe)
+- Link to v9: https://lore.kernel.org/r/20241010-b4-rk3588-bridge-upstream-v9-0-68c47dde0410@collabora.com
+
+Changes in v9:
+- Introduced HOTPLUG_DEBOUNCE_MS constant and used it for both HPD
+  high/low IRQs handling (Jonas)
+- Made use of drm_hdmi_compute_mode_clock() instead of assuming TMDS
+  character rate does always match pixel clock (Maxime)
+- Collected R-b tags from Maxime
+- Rebased series onto v6.12-rc2
+- Link to v8: https://lore.kernel.org/r/20240929-b4-rk3588-bridge-upstream-v8-0-83538c2cc325@collabora.com
+
+Changes in v8:
+- Added R-b tag from Maxime on the HDMI controller library patch
+- Dropped dw_hdmi_qp_rockchip_encoder_mode_set() from the platform
+  driver according to Maxime's review, the ref_clk rate adjustment is
+  already handled in dw_hdmi_qp_rockchip_encoder_enable()
+- Link to v7: https://lore.kernel.org/r/20240914-b4-rk3588-bridge-upstream-v7-0-2b1348137123@collabora.com
+
+Changes in v7:
+- Added R-b from Krzysztof on DT binding patch (also dropped the
+  superfluous minItems property from resets)
+- Fixed a sparse warning reported by kernel test robot when returning
+  the error pointer from devm_platform_ioremap_resource() (made use of
+  ERR_CAST() helper)
+- Simplified locking in dw_hdmi_qp_i2c_xfer() via guard() (Markus)
+- Dropped high TMDS clock ratio and scrambling support for now (will be
+  submitted separately when ready)
+- Introduced dw_hdmi_qp_bridge_mode_valid() function to filter out
+  unsupported mode clocks
+- Dropped the superfluous 'display' parameter of ->init() in struct
+  dw_hdmi_qp_phy_ops
+- Improved error handling in dw_hdmi_qp_bridge_atomic_enable()
+- Handled dw_hdmi_qp_i2c_adapter() errors as fatal for bridge setup
+- Rebased series onto next-20240913
+- Updated ROCKCHIP_DW_HDMI_QP kconfig to select the recently introduced
+  DRM_BRIDGE_CONNECTOR dependency (Heiko)
+- Link to v6: https://lore.kernel.org/r/20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com
+
+Changes in v6:
+- Improved scrambling setup by using a delayed work queue in conjunction
+  with the bridge ->detect() callback to support use cases like modetest
+  where ->atomic_enable() is not called on reconnection (Maxime)
+- Explicitly include workqueue.h in platform driver
+- Dropped the common binding patch after merging its content into RK
+  specific one; also moved the clocks & irq setup from the bridge
+  library to the platform driver
+- Got rid of the phy-names property and fixed indentation in the binding
+  example (Krzysztof)
+- Link to v5: https://lore.kernel.org/r/20240831-b4-rk3588-bridge-upstream-v5-0-9503bece0136@collabora.com
+
+Changes in v5:
+- Renamed Rockchip binding file to match the SoC compatible (Conor)
+- Made all clocks mandatory (Conor)
+- Renamed rockchip,vo1-grf property to rockchip,vo-grf as future SoCs
+  (e.g. RK3576) may refer to it as vo0 instead of vo1
+- Reworked the setup of high TMDS clock ratio and scrambling
+  * Dropped curr_conn & pix_clock from struct dw_hdmi_qp
+  * Also removed exported function dw_hdmi_qp_set_high_tmds_clock_ratio()
+  * A few additional (mostly cosmetic) changes
+- Link to v4: https://lore.kernel.org/r/20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com
+
+Changes in v4:
+- Added Tested-by tag from Heiko
+- Updated "[PATCH v3 3/5] dt-bindings: display: rockchip: Add schema for
+  RK3588 HDMI TX Controller" according to Rob's review
+  * Referenced full path for synopsys,dw-hdmi-qp.yaml
+  * Moved ports to common schema and updated descriptions
+  * Renamed rockchip,vo1_grf to rockchip,vo1-grf and updated "[PATCH v3
+    5/5] drm/rockchip: Add basic RK3588 HDMI output support" accordingly
+- Dropped "[PATCH v3 4/5] drm/rockchip: Explicitly include bits header"
+  already applied by Heiko
+- Link to v3: https://lore.kernel.org/r/20240807-b4-rk3588-bridge-upstream-v3-0-60d6bab0dc7c@collabora.com
+
+Changes in v3:
+- Reintegrated bridge patchset [4] to allow automated testing and
+  simplify reviewing (Krzysztof); the after-split changes were:
+  * Made use of the new bridge HDMI helpers indicated by Dmitry
+  * Dropped connector creation to ensure driver does only support
+    DRM_BRIDGE_ATTACH_NO_CONNECTOR
+  * Updated I2C segment handling to properly handle connected DVI
+    displays (reported and fixed by Heiko)
+- Updated schema for DW HDMI QP TX IP providing some hardware details
+- Updated patch for DW HDMI QP TX Controller module referring to a
+  support library instead of a platform driver (Krzysztof)
+- Drop empty dw_hdmi_qp_unbind() export from the library and related
+  usage from RK platform driver
+- Drop Fixes tag from "drm/rockchip: Explicitly include bits header"
+  patch (Krzysztof)
+- Link to v2: https://lore.kernel.org/r/20240801-b4-rk3588-bridge-upstream-v2-0-9fa657a4e15b@collabora.com
+
+Changes in v2:
+- Reworked the glue code for RK3588 into a new Rockchip platform driver
+- Moved bridge driver patches to a separate series [4]
+- Dropped all the patches touching to the old dw-hdmi and RK platform
+  drivers
+- Added connector creation to ensure the HDMI QP bridge driver does only
+  support DRM_BRIDGE_ATTACH_NO_CONNECTOR
+- Link to v1: https://lore.kernel.org/r/20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com
+
+---
+Cristian Ciocaltea (3):
+      drm/bridge: synopsys: Add DW HDMI QP TX Controller support library
+      dt-bindings: display: rockchip: Add schema for RK3588 HDMI TX Controller
+      drm/rockchip: Add basic RK3588 HDMI output support
+
+ .../rockchip/rockchip,rk3588-dw-hdmi-qp.yaml       | 188 +++++
+ drivers/gpu/drm/bridge/synopsys/Kconfig            |   8 +
+ drivers/gpu/drm/bridge/synopsys/Makefile           |   2 +
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       | 647 ++++++++++++++++
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h       | 834 +++++++++++++++++++++
+ drivers/gpu/drm/rockchip/Kconfig                   |   9 +
+ drivers/gpu/drm/rockchip/Makefile                  |   1 +
+ drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c     | 424 +++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   2 +
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   1 +
+ include/drm/bridge/dw_hdmi_qp.h                    |  32 +
+ 11 files changed, 2148 insertions(+)
+---
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+change-id: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
 
 
