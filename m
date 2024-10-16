@@ -1,125 +1,87 @@
-Return-Path: <linux-kernel+bounces-368743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BACE9A145E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:48:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9749A1466
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93239B21C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:48:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044CA1F229EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0021D172A;
-	Wed, 16 Oct 2024 20:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3761D1305;
+	Wed, 16 Oct 2024 20:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="pRGDOSpZ"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHAyUZ8O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5050C1B6CF4
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA79418CBF2;
+	Wed, 16 Oct 2024 20:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729111694; cv=none; b=M4MyKeLh3NydAUy9IQqOBmCy2Vpzxwch8ZXZkgLWuGr1YgZAUAmgH4o12i9t3kY+rjY5mE3jgnRHwCh33znyg3c+z5JoUuNkg9IxGF7Z+iJ5NL98wOTBPmq12/tr45of6jY0mFhZxLX3fE1Pj4uVoOXcGKEgcsxYWNuQxO2GjAg=
+	t=1729111877; cv=none; b=mZJBuwnMu+u+Aqrkb1KAU0Mr7QmNwxT5U7r7+C3KcErLyF0zXpyTo1WnA65bXxflOV/whYedJAFKGdgWkTmWPUY9EP0SFfE4cArb0VQ9eBXd5KxcPd4a/NVTNlJuaVsuVvPYU0ci9YlXKs5if3FwBn3N1GG36bZfz+tsaKo7Hyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729111694; c=relaxed/simple;
-	bh=s5jdB/47iAqJ1SA9t4Fiz1puiR5Vpvt284TpWBzKAwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGBIPoj22IvAWC+Kpj9dIW6a/03ysSql3Lh/QOXAnU/gugr+5hJfaUWGGcgXkSUbHzRkKTysPzcHwyDoNmZavVWAwxjjfGXM744mMDDYkxSYth5HLSrrtxh5xjG/W9q4DdCvZSXyEMZxyzuMzwaORS79Q9Ohav/ftj3NEHrQ14Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=pRGDOSpZ; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-118-108.bstnma.fios.verizon.net [173.48.118.108])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 49GKlf2x032094
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 16:47:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1729111664; bh=ZQfBRGme9pAxatUx6tTKcx5TVoNCSmdhu0qbM7fqxB4=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=pRGDOSpZupS963yqAF/o7YmgBqT+cbUZFuVNT8g2HOFVddNY2+ujsVZvyww6oBGwi
-	 6widAQVX9wLzDlYe22RH4uoaFdUYqSXAAVqX6Aobp8Gcx+3slyefatJ2U4GoZyhjuK
-	 hDbk6JXwaona0Il3TPpdi0Fav/S/UCDwdVIQA9a9jUDSEd7yyfoqCrRnsYHFeYCidw
-	 Qd1664UP1EunjqFTU2OCjFd2nF+0hxzvFHcbgKfdqt1qVFpmuj9RBK9Vtodxd9pc3L
-	 uq29rhpUiVsWRZuYmp1/UNinEywlB5Yr8/d7tQiV3HkTi+ivk9kYeSU9kb0HEF1iQf
-	 s/CIwyoyIgdhg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 6566E15C02DB; Wed, 16 Oct 2024 16:47:41 -0400 (EDT)
-Date: Wed, 16 Oct 2024 16:47:41 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, Qianqiang Liu <qianqiang.liu@163.com>,
-        adilger.kernel@dilger.ca,
-        syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, Yang Erkun <yangerkun@huawei.com>
-Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
-Message-ID: <20241016204741.GA3204734@mit.edu>
-References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
- <66efba95.050a0220.3195df.008c.GAE@google.com>
- <Zu+8aQBJgMn7xVws@thinkpad.lan>
- <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
- <20241009155028.u7jpzrw6txldt43j@quack3>
- <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
- <20241014163120.hinbd5jc6mp4vev7@quack3>
- <3930aad6-174d-4422-944e-6c90a3ea065a@huawei.com>
+	s=arc-20240116; t=1729111877; c=relaxed/simple;
+	bh=RonxhO10pQQTlclrveWQs1F0qTeIr+6A7J8x1FFUmVA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=lIjH3cvnUGpUrfo4hfWHLN8OvSq80Ull444DzJD1FUef4T4B1SHb3Zo3B+tUw1NUGzL3Naimjl5nnIuNGxkZC2B1ix0sj+6M9wm1klJ10bfZglCanwQKEIji2OPNOlkawXYAiLX6Rkb+eRJhfO2aGoYsBKGfU+1hjvYWABJFxM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHAyUZ8O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A507AC4CEC5;
+	Wed, 16 Oct 2024 20:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729111877;
+	bh=RonxhO10pQQTlclrveWQs1F0qTeIr+6A7J8x1FFUmVA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=rHAyUZ8OUyCFkqTcUDOdY1F3LFG/UsQSKC1FSCTSlNxN8P/pXA6qrOwsvlmlTt1G/
+	 2fODtzXVM6/ZCSqVGMY2n1XO8QyQRClH141ApD9D/cWJBNnXZrq5MLT7aWUpWM7N7q
+	 +7CYoRpo7nfkVEdNmxWiSuszqUrnwAe87kUk8W6BtYunP+QpFw1gFmhamlofWguDX0
+	 jbJcCUzGif0cqE/RuEM2Ub5ue190TVDzsFGWGPrfljLQz1x6Igkc0KG1DdeVz2anFK
+	 hr2JIYc6w0UBOOoGyJ/6jbkvwc7C91gJHPIETcsMNZKFcVz1COwFh2mKpWcYyihs4P
+	 NVySnqIiUue9w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3423C3822D30;
+	Wed, 16 Oct 2024 20:51:24 +0000 (UTC)
+Subject: Re: [GIT PULL] Crypto Fixes for 6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Zw9RM_jNu9vqp9T8@gondor.apana.org.au>
+References: <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
+ <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
+ <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
+ <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
+ <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZbstBewmaIfrFocE@gondor.apana.org.au>
+ <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
+ <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
+ <ZvDbn6lSNdWG9P6f@gondor.apana.org.au> <Zw9RM_jNu9vqp9T8@gondor.apana.org.au>
+X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Zw9RM_jNu9vqp9T8@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p3
+X-PR-Tracked-Commit-Id: e845d2399a00f866f287e0cefbd4fc7d8ef0d2f7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6f6fc393f4dbaa149962a4662f5dd08513c28905
+Message-Id: <172911188290.1955101.8167362156672429096.pr-tracker-bot@kernel.org>
+Date: Wed, 16 Oct 2024 20:51:22 +0000
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3930aad6-174d-4422-944e-6c90a3ea065a@huawei.com>
 
-On Wed, Oct 16, 2024 at 04:02:40PM +0800, Baokun Li wrote:
-> As server clusters get larger and larger, server maintenance becomes very
-> difficult. Therefore, timely detection of problems (i.e. online scanning,
-> similar to e2fsck -fn) and timely and non-stop fixing of problems (i.e.
-> online fsck, similar to e2fsck -a) have always been the requirements of
-> our customers. Thus online fsck has been on our TODO list, and it's really
-> time to start doing it. 😀
+The pull request you sent on Wed, 16 Oct 2024 13:37:55 +0800:
 
-As far as online scaning is concerned, if you are using LVM, we can
-use a combination of dm-snapshot and e2fsck -fn --- that is what the
-e2scrub command automates.
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p3
 
-Online fsck is much harder, since it would require back pointers to do
-this efficienctly.  To do this, a general way of solving this would
-involve a generalized some kind of b-tree or b+tree where changes are
-managed via jbd2.  This could be used so that (for example) if we had
-a tree which maps block ranges to an inode number, then given a block
-number, we can figure out which inode "owns" that block.  The harder
-part is those objects that have multiple forward pointers --- for
-example an inode might have multiple hard links to multiple
-directories, so we need to handle this somehow.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6f6fc393f4dbaa149962a4662f5dd08513c28905
 
-If we had the jbd2-aware b+tree, we could also use this add support
-for reflink/clone, which would also be cool.
+Thank you!
 
-If this is something that your team really weants to work on, what I'd
-suggest is to create a rough design of what the journaled b+tree would
-look like, and then implement it first, since this is the prerequisite
-for a huge number of advanced file system features.  Implementation
-should be done in a way that makes it easy for the code to be usable
-both in the kernel and in e2fsprogs, since life will be much easier if
-we have e2fsck and debugfs support for the new file system data
-structures from the very beginning of the development.
-
-If your company is willing to invest in the engineering effort to do
-this, great!  But I have to point out that an alternative approach
-that you should consider is whether XFS might be a closer match for
-some of your customers' needs.  The advantage of ext4 is that it is
-much simpler and easier to understand that XFS.  But as we add these
-new features, ext4 will get more complex.  And so one of the design
-considerations we should keep in mind is to keep ext4 as simple and
-miantainable as possible, even as we add new functionality.
-
-Cheers,
-
-						- Ted
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
