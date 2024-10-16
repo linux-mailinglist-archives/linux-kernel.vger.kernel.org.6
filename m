@@ -1,233 +1,110 @@
-Return-Path: <linux-kernel+bounces-367133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857AD99FEFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 406FF99FEEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D51286E9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE16286D52
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73CF15C139;
-	Wed, 16 Oct 2024 02:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051F921E3DE;
+	Wed, 16 Oct 2024 02:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFU6ChOp"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="E7YG7N7v"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C057F41C7F;
-	Wed, 16 Oct 2024 02:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E1613632B;
+	Wed, 16 Oct 2024 02:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729046558; cv=none; b=QhWIU+EQTP+NkY1O/5TTmy0TwDRfi8+s7C4ImIt0pw6HGOSDmSp5C4qRu9ChsrkbfBF0pD4PwDbqNa0LNUto313PqyJJpOjH9HvP0mZuddNWmVykh42VTJnLzzSr+rQ+1ATDVU7O7uA5C13XLGZm8wV+HG1Tu7U1YrzNezzyNcY=
+	t=1729046455; cv=none; b=chr8NfHlp4N0F3Wbo76HxC2L1Au9Q7ux3tIh9UFeJhZjxXfV5dYwDDij+9pWBIrm/EvSrVPHI/fRYl8CksKqkFn1M2ndyLBNH0ib/0Dj/llmJF4LigXQRPs50TN1IPzttyFl7sga3V84pE3fz+lqmvoUf/UthjDDAYq3KAidSqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729046558; c=relaxed/simple;
-	bh=G/JtQuCECjkO51gTaClS0eG2y82hqp4W0SSjj9mq/NM=;
+	s=arc-20240116; t=1729046455; c=relaxed/simple;
+	bh=dos+hc0W4S35iHy7p0Pu9U5NVKEmIuU3OGJnn47lmMI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lRKqdp2obpIxI2ZE7hLJLmFk35mwf4zUTK4eDgnxFGuWoZr6wenIxfmDnPutfM3egcxPmcmFYBwXXqAQNelvE8PGs/zuI9vaiOsxyGsJ8CyrEqlKKGymK38zKlzpN7ApjCFBbEaqnZxONZYX/oSZ2pF4cif0Q7l2YBSB7dqX5Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PFU6ChOp; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso3921339a12.3;
-        Tue, 15 Oct 2024 19:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729046556; x=1729651356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pkuhZA7XRKcZ4xcnxKDKV2Soi5p6GouCmDFIo/OmyP0=;
-        b=PFU6ChOpb6TAL2pw4LpEADMgDarOayMIqZFPVljH6aS+KffbQbJHR+DEquZHsbc5hC
-         SLW9zN8R+reGiQKMcx815xw2RsT1mf8XQGvVNiM9rpNKhQ6/2dKkMdSujtNpNMX6WB3k
-         HnT5eIUrwoLVaFKAi7uMtiCsIDlXqlgoXbeQGUFlezt4LNkbG1QrZPfCPFeiztYU/WvP
-         fNVHbXPYtgtTkpOeXYzE58xRewx7s8SB618orOUIEmcFYPKcjh4q34R+JWRm6d8fniYz
-         zKtQ8OH3KmYiftdkuSTBe3VO/72L3ySmD3Mr57xrXsPvN0UaCobwuI8hNLpMOgu8jO28
-         N61g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729046556; x=1729651356;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pkuhZA7XRKcZ4xcnxKDKV2Soi5p6GouCmDFIo/OmyP0=;
-        b=SHUkYLiX7usnvabs0dFWrDRF4VyerBEJMK2A8yaUiIclUH+ybnbA0wcRSj9M64QMka
-         Ob1TJ3vUjtd5K4Dor+hvy4POGlGY58MzUlhDpBxUdRCEb9aIEEmRK1aE8bykKfyrGTg8
-         DhSruU9eXv7RRJGrkzGe0IJnDOFM1FPeO4YXwiS4H7lgdi2AQAEK2gTYmIz5a1zEAlL1
-         bdvNTA+zSQc9fOI9IQ8Sho7KngSJP1REIK2UlWWX1D+fDNF7E8y3gl2lLlx/c80D8Ngu
-         HmLAa0AmOjdwqxOC1owz5M3s6rLp6Tp+gtqGOhha+cFBXHLYDhlzCeyrvWeb/mN/vDRz
-         K+Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOmodyInEayGg2eEmkESKRopP3n8wPZSx/BRpFdNKwGWiaiIbOLyT084dsT6UEexkt0ITO3LAgqiys@vger.kernel.org, AJvYcCXFj13rmLqJZ7y5n2pounXEdmbRHtuovu1wC0/5oRPOc0he+xGVhm1r0uJCRqufZ4UoUB9SM09jkmLu6ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymaUMxbSu8blU2fC7F3ppY24FH7tuRvhcqwDC8zhXcLOZ7znyb
-	DeRH4BRiczMOr5opR6Tdd8tpDUuVLLNowrjSwUZc+SM1whe144AY
-X-Google-Smtp-Source: AGHT+IGsd6Cj/A0WVB346ToGc4O0T5GRReooiah2nFAch3rEmJoCdddwwJmXz80tiE6kmNFsObecAQ==
-X-Received: by 2002:a17:902:dad2:b0:20c:7be3:2832 with SMTP id d9443c01a7336-20cbb1ae2f7mr156976845ad.31.1729046555959;
-        Tue, 15 Oct 2024 19:42:35 -0700 (PDT)
-Received: from arch-pc.genesyslogic.com.tw (60-251-58-169.hinet-ip.hinet.net. [60.251.58.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17fa5d55sm19353215ad.109.2024.10.15.19.42.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 19:42:35 -0700 (PDT)
-From: Ben Chuang <benchuanggli@gmail.com>
-To: g.gottleuber@tuxedocomputers.com
-Cc: benchuanggli@gmail.com,
-	adrian.hunter@intel.com,
-	ulf.hansson@linaro.org,
-	victor.shih@genesyslogic.com.tw,
-	Lucas.Lai@genesyslogic.com.tw,
-	Greg.tu@genesyslogic.com.tw,
-	HL.Liu@genesyslogic.com.tw,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ben.chuang@genesyslogic.com.tw,
-	ggo@tuxedocomputers.com,
-	cs@tuxedo.de
-Subject: Re: [RFC PATCH 1/1] mmc: sdhci-pci-gli: fix x86/S0ix SoCs suspend for GL9767
-Date: Wed, 16 Oct 2024 10:39:50 +0800
-Message-ID: <20241016023947.134179-4-benchuanggli@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: 4a517433-d105-4e2b-86f8-335e7c537d10@tuxedocomputers.com
-References: 
+	 MIME-Version:Content-Type; b=MdkjY/CPd8zvz96qt813/y7Rzgpn0kK8Xhc0qYad/FpYT8/WfaT973m+KH27g2yr/85sz7fHQZtxSF6jwwPCZTPxWN01Bo/O/aLM/Y0HWMAoYq6iJaD54v0hMVo3OtJHevjVYAb0XZcezGelM1asUNg8Qobu3LKbTm61SjfKCwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=E7YG7N7v; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G2Mb9P010285;
+	Wed, 16 Oct 2024 02:40:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=8RybGAs5L6x+eIvjjeRRFAKBG3ys27coEoOqzNz/v8w=; b=
+	E7YG7N7vWslJ/y0+AeIJ+nGcYG/gNriFFn6Ee3wQrvgLM7U6QUOEpqDATFxxZ8jo
+	h2uSsYaGyhbHvTeAZ1j5zK5tzmBpQ3B0Y6Uf1NqySzhTVaEc9N+QDq0u9zql43hZ
+	Q/vghjnXNeKg+QH2lV799CYYjLjHjPMlxjU3faSUwALXQuhrEKu2ZjL8ER9vj/0v
+	fFtSQh1RxrkDYF+vWJO0r7wpAHlojd6MhWNhq8eQeKBoi1k5DJ1VUbPV79iqQ3PK
+	E5BdC31SQSt54midANNlbYaDL9aFaljTbt/k3/TBZxUrdlU2jAAh185DSDXg5qIS
+	rBG0b+VbOAv7V7w0aOqRBA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427gqt2nc3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 02:40:49 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49G2TBN9027154;
+	Wed, 16 Oct 2024 02:40:49 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 427fjesxyv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 02:40:48 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49G2elg3001510;
+	Wed, 16 Oct 2024 02:40:48 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 427fjesxyf-3;
+	Wed, 16 Oct 2024 02:40:48 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: aacraid@microsemi.com, James.Bottomley@HansenPartnership.com,
+        linux@treblig.org
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: aacraid: Remove unused aac_check_health
+Date: Tue, 15 Oct 2024 22:40:04 -0400
+Message-ID: <172852338081.715793.1995047409349459596.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20240920202304.333108-1-linux@treblig.org>
+References: <20240920202304.333108-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_21,2024-10-15_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=725 adultscore=0
+ spamscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410160016
+X-Proofpoint-GUID: ZoF_z17aFqiRSQtJf_Wa48GQ213LdGyQ
+X-Proofpoint-ORIG-GUID: ZoF_z17aFqiRSQtJf_Wa48GQ213LdGyQ
 
-From: benchuanggli@gmail.com
+On Fri, 20 Sep 2024 21:23:04 +0100, linux@treblig.org wrote:
 
-[Resend email format, Sorry.]
+> aac_check_health has been unused since commit
+>   9473ddb2b037 ("scsi: aacraid: Use correct function to get ctrl health")
+> 
+> Remove it.
+> 
+> (I don't have the hardware to test this, build and booted only)
+> 
+> [...]
 
-Hi Georg and Christoffer,
+Applied to 6.13/scsi-queue, thanks!
 
-On Tue, Oct 15, 2024 at 8:47 PM Georg Gottleuber <g.gottleuber@tuxedocomputers.com> wrote:
->
-> Adapt commit 1202d617e3d04c ("mmc: sdhci-pci-gli: fix LPM negotiation
-> so x86/S0ix SoCs can suspend") also for GL9767 card reader.
->
-> This patch was written without specs or deeper knowledge of PCI sleep
-> states. Tests show that S0ix is reached and a lower power consumption
-> when suspended (6 watts vs 1.2 watts for TUXEDO InfinityBook Pro Gen9
-> Intel).
->
-> The function of the card reader appears to be normal.
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219284
-> Co-developed-by: Christoffer Sandberg <cs@tuxedo.de>
-> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
-> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
-Maybe need a Fixes: f3a5b56c1286 ("mmc: sdhci-pci-gli: Add Genesys Logic GL9767 support")
+[1/1] scsi: aacraid: Remove unused aac_check_health
+      https://git.kernel.org/mkp/scsi/c/5a66581a1af5
 
-> ---
->  drivers/mmc/host/sdhci-pci-gli.c | 65 +++++++++++++++++++++++++++++++-
->  1 file changed, 64 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-pci-gli.c
-> b/drivers/mmc/host/sdhci-pci-gli.c
-> index 0f81586a19df..40f43f5cd5c7 100644
-> --- a/drivers/mmc/host/sdhci-pci-gli.c
-> +++ b/drivers/mmc/host/sdhci-pci-gli.c
-> @@ -1205,6 +1205,32 @@ static void
-> gl9763e_set_low_power_negotiation(struct sdhci_pci_slot *slot,
->         pci_write_config_dword(pdev, PCIE_GLI_9763E_VHS, value);
->  }
->
-> +static void gl9767_set_low_power_negotiation(struct sdhci_pci_slot *slot,
-> +                                            bool enable)
-> +{
-> +       struct pci_dev *pdev = slot->chip->pdev;
-> +       u32 value;
-> +
-> +       pci_read_config_dword(pdev, PCIE_GLI_9767_VHS, &value);
-> +       value &= ~GLI_9767_VHS_REV;
-> +       value |= FIELD_PREP(GLI_9767_VHS_REV, GLI_9767_VHS_REV_W);
-> +       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
-Maybe replace it with gl9767_vhs_write().
-There are two functions gl9767_vhs_write()/gl9767_vhs_read() and they should be
-meant to be Vendor Header Space (VHS) writable/readable.
-
-> +
-> +       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
-> +
-> +       if (enable)
-> +               value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> +       else
-> +               value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> +
-> +       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
-> +
-> +       pci_read_config_dword(pdev, PCIE_GLI_9767_VHS, &value);
-> +       value &= ~GLI_9767_VHS_REV;
-> +       value |= FIELD_PREP(GLI_9767_VHS_REV, GLI_9767_VHS_REV_R);
-> +       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
-Maybe replace it with gl9767_vhs_read().
-
-
-> +}
-> +
->  static void sdhci_set_gl9763e_signaling(struct sdhci_host *host,
->                                         unsigned int timing)
->  {
-> @@ -1470,6 +1496,42 @@ static int gl9763e_suspend(struct sdhci_pci_chip
-> *chip)
->         gl9763e_set_low_power_negotiation(slot, false);
->         return ret;
->  }
-> +
-> +static int gl9767_resume(struct sdhci_pci_chip *chip)
-> +{
-> +       struct sdhci_pci_slot *slot = chip->slots[0];
-> +       int ret;
-> +
-> +       ret = sdhci_pci_gli_resume(chip);
-> +       if (ret)
-> +               return ret;
-> +
-> +       gl9767_set_low_power_negotiation(slot, false);
-> +
-> +       return 0;
-> +}
-> +
-> +static int gl9767_suspend(struct sdhci_pci_chip *chip)
-> +{
-> +       struct sdhci_pci_slot *slot = chip->slots[0];
-> +       int ret;
-> +
-> +       /*
-> +        * Certain SoCs can suspend only with the bus in low-
-> +        * power state, notably x86 SoCs when using S0ix.
-> +        * Re-enable LPM negotiation to allow entering L1 state
-> +        * and entering system suspend.
-> +        */
-> +       gl9767_set_low_power_negotiation(slot, true);
-> +
-> +       ret = sdhci_suspend_host(slot->host);
-> +       if (ret) {
-> +               gl9767_set_low_power_negotiation(slot, false);
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
->  #endif
->
->  static int gli_probe_slot_gl9763e(struct sdhci_pci_slot *slot)
-> @@ -1605,6 +1667,7 @@ const struct sdhci_pci_fixes sdhci_gl9767 = {
->         .probe_slot     = gli_probe_slot_gl9767,
->         .ops            = &sdhci_gl9767_ops,
->  #ifdef CONFIG_PM_SLEEP
-> -       .resume         = sdhci_pci_gli_resume,
-> +       .resume         = gl9767_resume,
-> +       .suspend        = gl9767_suspend,
->  #endif
->  };
-> --
-> 2.34.1
->
-Bugzilla wrote that this issue only happens on Intel models, right? 
-How do you confirm the status of L1/L1SS, measuring PCIe link state via hardware or software?
-Thanks.
-
-Best regards,
-Ben Chuang
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
