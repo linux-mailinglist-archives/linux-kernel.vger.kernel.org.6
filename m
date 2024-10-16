@@ -1,162 +1,99 @@
-Return-Path: <linux-kernel+bounces-368730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0876D9A1414
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:33:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B329A1425
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9641F22E4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8F181C21EAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF2C2141D9;
-	Wed, 16 Oct 2024 20:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2150C21643B;
+	Wed, 16 Oct 2024 20:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3j2IMfy"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZYa5g+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2947F9C1;
-	Wed, 16 Oct 2024 20:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79982F9C1;
+	Wed, 16 Oct 2024 20:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729110814; cv=none; b=B6lmogspxL04b/xc96TSRNkAMY37LH69PPZUvL1zuO4Qu59kHBGDZnWzh78C3S3VxgMSvMMsDLt5bSBT+D8DAPDw95WmuwcdmNs5tmDjDzHMqOJPLiOjNF45NEtvkA8+KBMmLye/jXh9niNuTWKcYxWrDZXu71uVQWPSXZs8//U=
+	t=1729111068; cv=none; b=VhDvxB8qJidDIY9daNC2+dCRSEXyRig8FuAZYsv2moPKL3zlm8TIXYdzoCWAM6UnSW/WBwhQDPmnFYsLXszNZJSTFSHPOX18tbrD/T4okDVG79e6Ab2rpqawJTsi6aeKVRJA/TQbrfABbf0/w1ycyNN7WcjXOI4YeoAhaQBzixs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729110814; c=relaxed/simple;
-	bh=pMvJHzGl0nMmJW+SfscBoegX8VUlTgbV5Pj8ggl5kEc=;
+	s=arc-20240116; t=1729111068; c=relaxed/simple;
+	bh=a22KOg6/0QhVhl9Q7ie8IX+K0Lw+hQnqXMS7D/S42Rk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jFIAHJEuqrLWqteOy1vgkOXELybXZP4mEWXPc6d6Tr+FkI59i8uqFPezxsRVCV0seq8UeqOnlgzTYHtbm+FLAbzG8wCr3VsgHD9aP6dUgistQldVy0/leGyjMHDl+2N8E2RMoWavvuo37t/7v1Vc31+fJLJ37MpP+UIEsOqtdYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j3j2IMfy; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a3b450320aso1172845ab.3;
-        Wed, 16 Oct 2024 13:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729110812; x=1729715612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wP6r2on2k3XrO8K/OQAeP7D2aIemt713ceP9vvL21IA=;
-        b=j3j2IMfyJYRMG80vuz9DzVrp3fkq+JMQKAvjO8RpqDcWuTqe7c8xg0tVU/sy5eMeQe
-         AN//uhfh44ahFUeEeI2LzdJ7L5HXM2R08K3cSOFmV6pT0MXlJMp+KFsCPAIk8z4+mf9u
-         KuLCpqzzcZMYlz2FZWglsD/9v6SHeOPnJ+2eoKBoktcJHFubxYnkALwBDadaJ0y6/zvf
-         sr+6Jtn5luFXoibwW59TrmxiW2jepKdlOcwAzsYJp21azWgVuq9JbvpxUQqiRvRN0x4C
-         dU9J3VS6cjQOuYQ/e+oRTLYeM7CjNPFGGEq2EdyAAjf3rfbJ/7J8ncfYFmpEE/JykcEu
-         FvQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729110812; x=1729715612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wP6r2on2k3XrO8K/OQAeP7D2aIemt713ceP9vvL21IA=;
-        b=G2MBCB3aHQWt74mpBDm2eyDt0uBRjZkPpSjbdeqEIUb9FNU0nPKAfasFE8rPsYLlII
-         D0atpQFpKhKjph3d9z6Tt9pGwbBosgKu55y/p+WWWbrrCWy40KSNyJB+PN35U3LBev5X
-         QGG9+7trrYwgjGUQibb0szYKI92JD/QtPEU4LHsmfy9SLcwpUleWlnfVP39BFCTe5Szw
-         RmPbv5ncyBZ2OEOevcxyacp4dCnpNRnMhxX3gEgWA6YU35UPy8cffcKCTVmEnhpvn50Y
-         6EWxe5qlMwPUnEriXx5+hJ3gDtpopg6nuHwxW4XAMOMG9IN71qvX/e9f42ozGgtNb9GK
-         S9rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRXYoAwbGxhgjUraJ5fmr7xvQzYlCRtjIDNpNM3SR5DiCYLT0xBYpz1iHMlf1zBa8wcBw5RQsXXAF5UXAZ@vger.kernel.org, AJvYcCWnduEyyWDq1ANK3xrCXyouPaK+BoStCywaNx3mEDPfZjgKrvBt3tYqz8T7ocmPbjd1N/HRJh9StRCY@vger.kernel.org, AJvYcCXK8pGBFjIWXmkC19SL3DjnIC1uoLe4jAzmP88GUONyDA6tZDd9jbq8B9CX+550sy54DPMJBconEa+8T208@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL39CcTITfK3HQSsC5NGa/Cszl15iUWZ/dd/5uCstXj4Lx3mbc
-	a5olmtE0BwhpmzErQpVMmgLVhHEVfILLULLnPya296t/0eD0rBDOqdkiw+LPyLrigLES0gUos/o
-	pPsLoSIvyRckOP1R06FHdjf8OJYVsNQ==
-X-Google-Smtp-Source: AGHT+IH3xCk9u44gOw9v8dKsI1AMSxBA8nW1s888n3tjRKc0mXRfRjyO5wN4OTPcGiZDDRx7udSNwtsTYIBC/FapsdE=
-X-Received: by 2002:a05:6e02:1a66:b0:3a3:b1c4:8198 with SMTP id
- e9e14a558f8ab-3a3dc4f5fdemr55708805ab.20.1729110811783; Wed, 16 Oct 2024
- 13:33:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=NukGL1EOmW9tANXgEIlko1WT2ucf0JX1tLh+is8NNgWbCVw1BhL3ycoEvCNM+kFvw1Q76kEOmV9G602OPmaobC6bixbuIfNVb3pT7t2TxqhLzyvEXF5hr3rXTERdgveCtvXtpjt5GIWMgm3sNH5PF/A4pcYeCM02i++ejCG8+JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZYa5g+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00961C4CEC5;
+	Wed, 16 Oct 2024 20:37:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729111068;
+	bh=a22KOg6/0QhVhl9Q7ie8IX+K0Lw+hQnqXMS7D/S42Rk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PZYa5g+iSMaI4H5wmQ4oSvbR9hp8rIEufxOAoRfsbcY5gJNfndqb2PnXBF4SUWpqN
+	 OBfa2fFvLfw+9/bEBB9vfg3kkZKvmeOARtxOk7wLhZK8cLK0xJFiB0/z7clyH1Xn5W
+	 7s5aNSjwslLWsyaRb9d82bQtWkWZD+9XQQ3zCoZYvLFP4zR22K/iEiJQ0CW+BxeeaH
+	 T5+iUuk8t2Tb5GfV2h5Pcb802WrBUflLDa4X3ytbVMw+qT/KeIiaK40Fytfhnygd1g
+	 sa9N/UtvGqRqDX7V/cL/1FTgykQFkl6KmjURsFKFcyo2uY/pRk68y+NDyKV49zQqdS
+	 9ABV+14ola9Og==
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7157c2aca3eso125101a34.0;
+        Wed, 16 Oct 2024 13:37:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmrVbTBAwuEgPP/XCKb1JMPk3nE+QfAmkYIJp0sDXCBXK8hS2ClXxWnoI4VXQy79M5KxjKw7ojdBk=@vger.kernel.org, AJvYcCVlX3KATGsy3oIV8gnHEyAEFMVuhOp4NLozmR5xFl4dgzIG/TYiZ1yyPD/zrtR0Ngg/j+hDm3Y+wcaYz/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXVpXqXELx5U8gtEHaGV51+PdtADiUUyNIfIY1CWq8vjCySF9O
+	6hM2rOVN0R50R2yv98GyNJjhBa9AuOxAb7zWHWqjsNO66D2z9L+SckvBsOcLpbwC9gvPleIhYJA
+	Oey4fxSmuf6rT7SJL3dNQYEUPgBY=
+X-Google-Smtp-Source: AGHT+IHo0sXK0iP3u2ux2CHT2+gWa5VRrHGENK7IhQm+2J1J7nU3kp/59ByTRPw2WRaI7ITK0nLwVjoGKyiz3l03lEw=
+X-Received: by 2002:a05:6870:56ac:b0:260:ee13:e665 with SMTP id
+ 586e51a60fabf-288edfb72e6mr4523159fac.37.1729111067309; Wed, 16 Oct 2024
+ 13:37:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003-preemption-a750-t-v8-9-5c6cb9f256e0@gmail.com>
- <1b9afb20-d608-464c-ae6b-c535564b7e5a@ijzerbout.nl> <eb1a0381-05c3-4ef8-b6de-96824d587a7d@gmail.com>
-In-Reply-To: <eb1a0381-05c3-4ef8-b6de-96824d587a7d@gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 16 Oct 2024 13:33:19 -0700
-Message-ID: <CAF6AEGu0b5EXjvjDn1DTy2zCSDp7yFpGvGoAb3Kc91Y9HK+=pg@mail.gmail.com>
-Subject: Re: [v8,09/12] drm/msm/a6xx: Add traces for preemption
-To: Antonino Maniscalco <antomani103@gmail.com>
-Cc: Kees Bakker <kees@ijzerbout.nl>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Akhil P Oommen <quic_akhilpo@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20241016154851.1293654-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20241016154851.1293654-1-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 16 Oct 2024 22:37:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gDH6w-gjE+cr-c4Dp1ekZnMgjjSgyo5f_qfQQ9OpT99w@mail.gmail.com>
+Message-ID: <CAJZ5v0gDH6w-gjE+cr-c4Dp1ekZnMgjjSgyo5f_qfQQ9OpT99w@mail.gmail.com>
+Subject: Re: [PATCH] powercap: intel_rapl_msr: Add PL4 support for Arrowlake-H
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, rui.zhang@intel.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 5:13=E2=80=AFAM Antonino Maniscalco
-<antomani103@gmail.com> wrote:
+On Wed, Oct 16, 2024 at 5:49=E2=80=AFPM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
 >
-> On 10/8/24 11:10 PM, Kees Bakker wrote:
-> > Op 03-10-2024 om 18:12 schreef Antonino Maniscalco:
-> >> Add trace points corresponding to preemption being triggered and being
-> >> completed for latency measurement purposes.
-> >>
-> >> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> >> Tested-by: Rob Clark <robdclark@gmail.com>
-> >> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-> >> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> >> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
-> >> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> >> ---
-> >>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c |  6 ++++++
-> >>   drivers/gpu/drm/msm/msm_gpu_trace.h       | 28 +++++++++++++++++++++
-> >> +++++++
-> >>   2 files changed, 34 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/
-> >> drm/msm/adreno/a6xx_preempt.c
-> >> index
-> >> 21e333cb6342d33425eb96f97bcc853e9b041b36..6803d5af60cc8fb0f2a52ee160ff=
-dbf0e8ef0209 100644
-> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> >> @@ -7,6 +7,7 @@
-> >>   #include "a6xx_gpu.h"
-> >>   #include "a6xx_gmu.xml.h"
-> >>   #include "msm_mmu.h"
-> >> +#include "msm_gpu_trace.h"
-> >>   /*
-> >>    * Try to transition the preemption state from old to new. Return
-> >> @@ -174,6 +175,8 @@ void a6xx_preempt_irq(struct msm_gpu *gpu)
-> >>       set_preempt_state(a6xx_gpu, PREEMPT_NONE);
-> >> +    trace_msm_gpu_preemption_irq(a6xx_gpu->cur_ring->id);
-> >> +
-> >>       /*
-> >>        * Retrigger preemption to avoid a deadlock that might occur
-> >> when preemption
-> >>        * is skipped due to it being already in flight when requested.
-> >> @@ -294,6 +297,9 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
-> >>        */
-> >>       ring->restore_wptr =3D false;
-> >> +    trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id,
-> >> +        ring ? ring->id : -1);
-> >> +
-> > There is no need for the ternary operator. "ring" should be non-NULL,
-> > otherwise the code would have already crashed.
-> > So the change can just be
-> >      trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id, ring->id)=
-;
+> Add PL4 support for ArrowLake-H platform.
 >
-> You are right, we had a similar cleanup but I missed this particular
-> one, thanks for pointing me at it! I apologize for the late response but
-> I've been at XDC and therefore unable to look at my email. I will point
-> this out to Rob since this series is in msm-next to see if I need to
-> send a separate patch to clean this.
-
-Yes, please send a new commit, I don't want to re-write history on msm-next
-
-BR,
--R
-
-> Best regards,
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  drivers/powercap/intel_rapl_msr.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/powercap/intel_rapl_msr.c b/drivers/powercap/intel_r=
+apl_msr.c
+> index 1f4c5389676a..cbe07450de93 100644
+> --- a/drivers/powercap/intel_rapl_msr.c
+> +++ b/drivers/powercap/intel_rapl_msr.c
+> @@ -148,6 +148,7 @@ static const struct x86_cpu_id pl4_support_ids[] =3D =
+{
+>         X86_MATCH_VFM(INTEL_METEORLAKE, NULL),
+>         X86_MATCH_VFM(INTEL_METEORLAKE_L, NULL),
+>         X86_MATCH_VFM(INTEL_ARROWLAKE_U, NULL),
+> +       X86_MATCH_VFM(INTEL_ARROWLAKE_H, NULL),
+>         {}
+>  };
+>
 > --
-> Antonino Maniscalco <antomani103@gmail.com>
+
+Applied as 6.12-rc material, thanks!
 
