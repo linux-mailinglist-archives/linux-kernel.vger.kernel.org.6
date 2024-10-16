@@ -1,184 +1,117 @@
-Return-Path: <linux-kernel+bounces-367579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C259A040F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2389A0415
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0BE3B26DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:20:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6741B270E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BB11C0DF0;
-	Wed, 16 Oct 2024 08:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458341BBBC8;
+	Wed, 16 Oct 2024 08:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oL01O4G6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JdYb5II8"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67BC1B6D13
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F801BB6A0
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066845; cv=none; b=BgxObl6Oh4tGWvUxb6gx9yv1Mp86A52qXC6s3AgScc4OuIT4PY86RQrE/0FnivAnFyoo1yCA2P+CJM77fuzpXZWsqPdUfnvWHbJheNT8gD5YYwzBbgP9Y60iA7YW4YdmbrM5EbJSeMLTMkKo9S0LeLDECHoanwHXEPqZXRHN5xE=
+	t=1729066873; cv=none; b=n4lSygJAPSlUyakqgWF9Kdr2td4BpKVzPwWO6SI9WHxvoFBVZ3zd/oYuCdDOrUEGGJA0/uw9qrKwVbZDlCjLJHQ5x8Ojhgrzxct5HEzx5cKcWfZWkLhvM1Vh5BRHDZtt5jGLYbS9X4ilJ7uvh0KY4e31iR39FKkCzrS5NBVmG3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066845; c=relaxed/simple;
-	bh=5gT/ZrlswUwhWQfOx7oODTT8+c4NCUSMKOTvGTTq0BU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F5XBD+iKTz6AG+nwo5/mAWsIw1E7WeSB+8erUlnLrl7Ae1fKeIWP3JtHln4B2IYdgYaEV/eb/LYJ4B0kgnSr22p+rzdr+GxDpPcVZppyDE7FURZxuNMY9P95N+X/IZnlP9UOmpHccVZFJc8G7PVsgpDYQJngWMARl8xBUCcTShM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oL01O4G6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 197B5C4CEC5;
-	Wed, 16 Oct 2024 08:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729066845;
-	bh=5gT/ZrlswUwhWQfOx7oODTT8+c4NCUSMKOTvGTTq0BU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oL01O4G6ajjhC41oM+J3YLsh20XfCIV1n2bra39WEJDm4FU4zsXhCtKXybEbAog4q
-	 oOqUWd6iKwO+KEWdFM3vI1IvuAt4h8JaYRQbQrwRmIPYCjgAG2AsVT+FnTfQCNO28d
-	 OMWr5+v9hKTGgMG8k4/dWJ8Z8YySP74gtW7CE5tr6Rmy0w/eGx7iLWIu3DML82Psxn
-	 8tzqkKkGEpsYKZTk/uVS8tfj2XeGNMx+N8KOt1wMEwLK+Sltp4kIBZGLkwBSGwTLJj
-	 QcSWcnRhEbEXcoLt7102TDZLgNKDK+e2pOvtdE91k8uX3WO4K4q0uxM6yRHeEI6KHD
-	 pcpgq5cMwDuIw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to parse temperature correctly in f2fs_get_segment_temp()
-Date: Wed, 16 Oct 2024 16:20:38 +0800
-Message-Id: <20241016082038.607358-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1729066873; c=relaxed/simple;
+	bh=UzSOWuHbZ5Ol08JLBsywiLxpxtXJWiUM0Bw5vEAdwUY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RMeGDwfmybG4Uy6AB8Gkq6xLlYIGh/Tn05t3nqXx0o92qPR6t2oF/DpO10Qc8GpqzqwLSZTwoAGfE6MtZsVaDyDcParTtoqKrdJ5hEGVc494KABguqRORDTbvqaMmJXuce2sKaCY8ghs/7akqLYJTGUw71LpRAYSsMZRVorW9R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JdYb5II8; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4311420b675so57769125e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729066870; x=1729671670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oHuHA10oz+IlUb3WFI3EHpjMKwYEau3D3WrIjZr3cMQ=;
+        b=JdYb5II8Li6JU3BDEJInlG8siyHpud1BLRxGSUF1QSEADszs/qNtNEknMGxJn90PBX
+         7LIdZa2ZpjtS1QBh5yN+I8ghTw9z3JA1x4fW6ZSxj01T75qlxIfHWwObSl4xmlCTcutn
+         3HoXcHLrI9op9zpPPLqJKFVg9JXKvlKfq9fi6BLBJchabkihGivEN/o93/XnGgHWCPYD
+         uIHI61blUCV/sw2wbsnP1dtvGE5Jk7fP+pxYIVFTSI9cTCxoENFDxm51w64EtrhJYVU9
+         XgNT2puBIm4KSlLheE3v5XbLq3R4CLLP+w+tMnIUJnE3GsSPbAkXHD6taW2qih0UN9iC
+         Zvsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729066870; x=1729671670;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oHuHA10oz+IlUb3WFI3EHpjMKwYEau3D3WrIjZr3cMQ=;
+        b=QDX26YDRiT7oW6J38DUwIy2s8yd8xhwAar1TBkeq+ra2dGoAF+9ooKAs39nVMyP0hw
+         N3nIQ5ysSssjcrDsHJzGFb9AOjheQyrfn7uK5u7c5HhGFOat4iLkZd7R9tWL84KK7a4E
+         FW9DlvAyj9rpG9kuMTC5rGgh9IOY0ljzgYfAFRmzIqzDN7qxwA5rDil+sGN8DzyHRFRH
+         YmDFsRrAdlvwJpuC4KnbwAcmze9CEIwVBy7LKkC8k0H3J5hYw7YMLG3LoXfpgLFZ87j5
+         qLvGEKXROlv5FyVr99zbxqcDgzCOIWGNHCwJGkag8QidyIJW0Goewp/nr215UEcUADpM
+         3EPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq+HiQx7V9W6ni2r9v6mh4fCVqZrcamSX43uPMNFxIYc3mzlKmtfVkrglx4B6EHkqHgYZ+1DSopLkqdoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkdrr3I1CyFRuicBSeKQccW859Ho3I5zvML771aUvjZewUqhFg
+	4NYRywGiA1t3prUEsSiCXcBv2LH1xlVMMhu7TijSZyn3+z36Uvp8tnMPlDp5m4i4QxOxCuNE3zC
+	X5co=
+X-Google-Smtp-Source: AGHT+IERLNsDKzULbD6b+VfFRVUqsn5sE8FD5wfQhGK0Pm7Idfsgba53RSTr8weraZ+y4cAyzf8GLQ==
+X-Received: by 2002:a05:600c:4f83:b0:42e:75a6:bb60 with SMTP id 5b1f17b1804b1-4314a322492mr24798595e9.19.1729066870226;
+        Wed, 16 Oct 2024 01:21:10 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f569eacsm41658965e9.20.2024.10.16.01.21.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 01:21:09 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ Danila Tikhonov <danila@jiaxyga.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux@mainlining.org
+In-Reply-To: <20241013212402.15624-1-danila@jiaxyga.com>
+References: <20241013212402.15624-1-danila@jiaxyga.com>
+Subject: Re: [PATCH 0/2] Add Samsung AMS581VF01 panel support
+Message-Id: <172906686939.3993974.10769227098345025810.b4-ty@linaro.org>
+Date: Wed, 16 Oct 2024 10:21:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-In __get_segment_type(), __get_segment_type_6() may return
-CURSEG_COLD_DATA_PINNED or CURSEG_ALL_DATA_ATGC log type, but
-following f2fs_get_segment_temp() can only handle persistent
-log type, fix it.
+Hi,
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h    |  5 +++--
- fs/f2fs/file.c    |  4 ++--
- fs/f2fs/segment.c | 33 +++++++++++++++++++++++++--------
- fs/f2fs/segment.h |  4 ----
- 4 files changed, 30 insertions(+), 16 deletions(-)
+On Mon, 14 Oct 2024 00:24:00 +0300, Danila Tikhonov wrote:
+> This patch series adds support for the Samsung AMS581VF01 panel, used in
+> the Google Pixel 4a (sm7150-google-sunfish). Unlike many other devices,
+> which may use different panels in various revisions, the Pixel 4a has only
+> one possible panel option. Also this panel is not used in other devices.
+> Testing has been done by me.
+> 
+> The driver initializes the panel in normal mode (High Brightness Mode and
+> Brightness Dimming are disabled). High Brightness Mode and Brightness
+> Dimming are not supported yet.
+> 
+> [...]
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ce00cb546f4a..bda61d7ca8dd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1019,7 +1019,7 @@ static inline void set_new_dnode(struct dnode_of_data *dn, struct inode *inode,
- #define NR_CURSEG_PERSIST_TYPE	(NR_CURSEG_DATA_TYPE + NR_CURSEG_NODE_TYPE)
- #define NR_CURSEG_TYPE		(NR_CURSEG_INMEM_TYPE + NR_CURSEG_PERSIST_TYPE)
- 
--enum {
-+enum log_type {
- 	CURSEG_HOT_DATA	= 0,	/* directory entry blocks */
- 	CURSEG_WARM_DATA,	/* data blocks */
- 	CURSEG_COLD_DATA,	/* multimedia or GCed data blocks */
-@@ -3758,7 +3758,8 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
- 			block_t old_addr, block_t new_addr,
- 			unsigned char version, bool recover_curseg,
- 			bool recover_newaddr);
--int f2fs_get_segment_temp(int seg_type);
-+enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
-+						enum log_type seg_type);
- int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 			block_t old_blkaddr, block_t *new_blkaddr,
- 			struct f2fs_summary *sum, int type,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 0e07231dc093..92d7c62eba29 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4858,8 +4858,8 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
- {
- 	struct inode *inode = iter->inode;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	int seg_type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
--	enum temp_type temp = f2fs_get_segment_temp(seg_type);
-+	enum log_type type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
-+	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
- 
- 	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
- 	submit_bio(bio);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 859d70bbc5e7..3ed689157891 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3582,18 +3582,35 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
- 	}
- }
- 
--int f2fs_get_segment_temp(int seg_type)
-+enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
-+						enum log_type type)
- {
--	if (IS_HOT(seg_type))
--		return HOT;
--	else if (IS_WARM(seg_type))
--		return WARM;
--	return COLD;
-+	struct curseg_info *curseg = CURSEG_I(sbi, type);
-+	enum temp_type temp;
-+
-+	switch (curseg->seg_type) {
-+	case CURSEG_HOT_NODE:
-+	case CURSEG_HOT_DATA:
-+		temp = HOT;
-+		break;
-+	case CURSEG_WARM_NODE:
-+	case CURSEG_WARM_DATA:
-+		temp = WARM;
-+		break;
-+	case CURSEG_COLD_NODE:
-+	case CURSEG_COLD_DATA:
-+		temp = COLD;
-+		break;
-+	default:
-+		f2fs_bug_on(sbi, 1);
-+	}
-+
-+	return temp;
- }
- 
- static int __get_segment_type(struct f2fs_io_info *fio)
- {
--	int type = 0;
-+	enum log_type type;
- 
- 	switch (F2FS_OPTION(fio->sbi).active_logs) {
- 	case 2:
-@@ -3609,7 +3626,7 @@ static int __get_segment_type(struct f2fs_io_info *fio)
- 		f2fs_bug_on(fio->sbi, true);
- 	}
- 
--	fio->temp = f2fs_get_segment_temp(type);
-+	fio->temp = f2fs_get_segment_temp(fio->sbi, type);
- 
- 	return type;
- }
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 55a01da6c4be..6a23bb1d16a2 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -34,10 +34,6 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
- 	f2fs_bug_on(sbi, seg_type >= NR_PERSISTENT_LOG);
- }
- 
--#define IS_HOT(t)	((t) == CURSEG_HOT_NODE || (t) == CURSEG_HOT_DATA)
--#define IS_WARM(t)	((t) == CURSEG_WARM_NODE || (t) == CURSEG_WARM_DATA)
--#define IS_COLD(t)	((t) == CURSEG_COLD_NODE || (t) == CURSEG_COLD_DATA)
--
- #define IS_CURSEG(sbi, seg)						\
- 	(((seg) == CURSEG_I(sbi, CURSEG_HOT_DATA)->segno) ||	\
- 	 ((seg) == CURSEG_I(sbi, CURSEG_WARM_DATA)->segno) ||	\
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+
+[1/2] dt-bindings: display: panel: Add Samsung AMS581VF01
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/dca22e99706b70169534575fc82028bb6d44138a
+[2/2] drm/panel: Add Samsung AMS581VF01 panel driver
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b330f3a069a20a5698ac840908579c325b7bdc4a
+
 -- 
-2.40.1
+Neil
 
 
