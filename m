@@ -1,149 +1,457 @@
-Return-Path: <linux-kernel+bounces-368238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652899A0D1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F499A0D1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8864F1C243EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D47287B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC9920C49F;
-	Wed, 16 Oct 2024 14:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rvE5axtg"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD71207A11
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99DE20E026;
+	Wed, 16 Oct 2024 14:45:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79252207A11;
+	Wed, 16 Oct 2024 14:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089916; cv=none; b=t60YjXHbri3wSOIxiehkZ/1yxc4tmrmU+9icE7aORLsYm+G50VxsxX6UcdN2toiGOEzh87QqBwbgN43D/Puo1mHAeMHTM5cCIP6k1L6VGbFliY+hNWgAfxYMTqE2/NpgP7KoGh/SnG7oYz/ugVH8u7b/qBbx4+TJL5aV3Ghpc68=
+	t=1729089923; cv=none; b=YjV/cGhbwbHfV9MkNibZcnXSoKfNO7oIV/YoMMwg0q0knjWUex4NJwmYZh/Zji3+J8g1im3oKR0ShMWnsn/5zs2UxtUohdDxiku/bkJbU3Voq9B8sZ+ov/kDY022fQoOKVMfZjaQnxOC0JFzmCUnUlu7++sTc2i7crdtOY4jW3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089916; c=relaxed/simple;
-	bh=gwAlnD0ysuHK0dO1AtwV9A/Ktyw1gycD/cvHcJw39Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iq0hbvqsCfGsQcTObIiH6iGe0o1ab5qXU8JprB9UR6j3VF8eMcTqCz2ggW5WLZJW72Cgq2mdKevKPUQnxWPVJw8VTEwl2K/vCtzBVryv7IclHLvRHIGSBTIrLNRmxQcyj6k3krkEkxfaITEg5dIZCZynu4Q/gtJKKkF7+fEb9A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rvE5axtg; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4604bd47e35so27220071cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1729089914; x=1729694714; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9XmZhIaaWknSEfe0YZyYzEdhsRIsVMiJXlqkvnAAdos=;
-        b=rvE5axtgCiCvg/Jwh92HNaXNimIADlIVabrEbdG203vs58/c5dCpAp+Pf+lkYZETUd
-         d6TV1jeQBrPgr2zTsvRzj2coFPkEgeC3FrewLO6Sa8d12HpS8vrhxp5QDOBAjl2S6mAI
-         ajkttLYdYAZlR1vcFhQ64R7NExx5lYUBsZa/r6ZDvFTOrmA2gLeP81KMJ4ghMm7ggXka
-         whkHxAJa0zz4wbkpUkGZPJDdvRLo0bNAekcORqw9tpCUxzU/n/K/IFjECMRjReZjf27u
-         JchRntQErYaPGctxJ2/Vcc4BNVuevtXQiConjzj1N3wgaulFEqyi/o/6+RgzIaBVucEw
-         bhfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729089914; x=1729694714;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XmZhIaaWknSEfe0YZyYzEdhsRIsVMiJXlqkvnAAdos=;
-        b=ctxCQKFkF16X8VpP6Pew+l1+J7BgYmvYPt+wo/rLQXY9/FeVSj0SxW0dRzHDWh1IsX
-         8ntLEo9Ab98fG9hBquXJv994eyjTitNJ+H7/tLgd6Dygcq5pYB+vF1oOrobDvxZuhIDy
-         HcDXEiU2jNmL0DcrNzo23qR/+qbU/1W3e5LT2zFtDp9zOrK7UG/Hm8nnACjiRfBQaaPg
-         msqMVCpGN6zXWbpN4qZC9NweazE98fupQfzp36JnNyWReQDvk/ctMVotEMacqxHe3P3v
-         ilrxPZTuxsp5+yOIr8mlMUN8bPJReq5eg0m1Ih08HUJ4wa5BlY/XqdoD7tmhe7zz6pRg
-         NgNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZfK1E23PcJd5RA4HzhazKHB0GRCoQ/zeqB1R0+FrRyo9A9wf71+XINjvy/336P+2lNt/wjaiVwv9BHtI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUQLgoYhg4/BT2yXuoOtdrdUvv4aUNxm9GrMknA2vGOIz/KQAk
-	xJ1A0ernUVj1vazHOGeWcRmCtFgxOn6DbIQ9FvaVPX2+fZqCkI+fDvFNALQtyNKzuR3p7Hwpmka
-	w4w==
-X-Google-Smtp-Source: AGHT+IG8R7QOdgLdchH6ibtO555VIGGYtjlcpf7axOrrEKRn1Mv6DZi0dDn5WSQwaPsa1Hj5wwey3g==
-X-Received: by 2002:ac8:7e88:0:b0:458:2e21:e422 with SMTP id d75a77b69052e-4608a55de64mr61130171cf.50.1729089914282;
-        Wed, 16 Oct 2024 07:45:14 -0700 (PDT)
-Received: from rowland.harvard.edu ([2607:fb60:2501:2805:c6d5:fe22:7fa3:ec54])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b0a4989sm18471381cf.4.2024.10.16.07.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 07:45:13 -0700 (PDT)
-Date: Wed, 16 Oct 2024 10:45:11 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Guan-Yu Lin <guanyulin@google.com>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
-	mathias.nyman@intel.com, yajun.deng@linux.dev,
-	sumit.garg@linaro.org, kekrby@gmail.com, oneukum@suse.com,
-	dianders@chromium.org, perex@perex.cz, tiwai@suse.com,
-	niko.mauno@vaisala.com, andreyknvl@gmail.com,
-	christophe.jaillet@wanadoo.fr, tj@kernel.org,
-	stanley_chang@realtek.com, quic_jjohnson@quicinc.com,
-	ricardo@marliere.net, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-	badhri@google.com, albertccwang@google.com, quic_wcheng@quicinc.com,
-	pumahsu@google.com
-Subject: Re: [PATCH v5 5/5] usb: host: enable sideband transfer during system
- sleep
-Message-ID: <003263c8-c901-496b-ae04-7cccd7f3cfa2@rowland.harvard.edu>
-References: <20241014085816.1401364-1-guanyulin@google.com>
- <20241014085816.1401364-6-guanyulin@google.com>
- <9b5fe5d2-77a7-40b7-b260-856c35d9dcec@rowland.harvard.edu>
- <CAOuDEK2f_mtfiye7MdnOqEkq3pYW1kcdkwEMMBC5CkkQ1OGu3A@mail.gmail.com>
- <fddf19f6-d03a-469e-a56f-ef390c099902@rowland.harvard.edu>
- <CAOuDEK3mmR9052FWEJAVBkUanVJ1MLLebZoANiasUpD9TDBjfg@mail.gmail.com>
+	s=arc-20240116; t=1729089923; c=relaxed/simple;
+	bh=7QhotJwclg4FVK2tyLwn9wAT4xZLTFGqnTO0p3vq8yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tfmzAxK9Q4oeYIPVdV9EPV2FY2T3XE9u2nXu7IaPBXVksIHMS0J6fHFIdVD9cxPIvy8VidT+9EwX/p1FnmGg70lB4tpsjZfCx/XFzIO8doMYixVGI4HvTKmh7RuqazTG57lX0BF0W+VuFSEJ/L7LKdGjvO2eekbFkBdsawu9+PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 801AE1007;
+	Wed, 16 Oct 2024 07:45:50 -0700 (PDT)
+Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9B523F71E;
+	Wed, 16 Oct 2024 07:45:16 -0700 (PDT)
+Message-ID: <83025f39-808a-41fc-911e-1cf40e76662a@arm.com>
+Date: Wed, 16 Oct 2024 15:45:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOuDEK3mmR9052FWEJAVBkUanVJ1MLLebZoANiasUpD9TDBjfg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 29/57] net: igb: Remove PAGE_SIZE compile-time
+ constant assumption
+Content-Language: en-GB
+To: "David S. Miller" <davem@davemloft.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ David Hildenbrand <david@redhat.com>, Eric Dumazet <edumazet@google.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Jakub Kicinski <kuba@kernel.org>, Kalesh Singh <kaleshsingh@google.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Matthias Brugger <mbrugger@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+ Paolo Abeni <pabeni@redhat.com>, Will Deacon <will@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: bpf@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, netdev@vger.kernel.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-29-ryan.roberts@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20241014105912.3207374-29-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 03:40:00PM +0800, Guan-Yu Lin wrote:
-> On Tue, Oct 15, 2024 at 10:43 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> >
-> > On Tue, Oct 15, 2024 at 11:56:00AM +0800, Guan-Yu Lin wrote:
-> > > On Mon, Oct 14, 2024 at 11:56 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > > I'm not so sure about this.  By returning early, you prevent the drivers
-> > > > bound to this device from suspending.  But they can't operate properly
-> > > > when the system is in a low-power mode.  Won't that cause problems?
-> > > >
-> > > > Maybe this really belongs in usb_suspend_device(), and its counterpart
-> > > > belongs in usb_resume_device().
-> > > >
-> > >
-> > > To my understanding, after the system is suspended, the USB driver
-> > > will do nothing as the main processor has been suspended. May I check
-> > > what forms of low power mode and operation we are discussing here?
-> >
-> > S3 suspend.  You are right that the driver will do nothing while the
-> > CPU is suspended.  But what about the times before and after that,
-> > while the suspend and resume procedures are underway?  The driver
-> > needs to be told to cancel any ongoing transfers while the system
-> > suspends and then restart them while the system resumes.
-> >
++ Alexei Starovoitov, Daniel Borkmann, Jesper Dangaard Brouer, John Fastabend,
+Przemek Kitszel, Tony Nguyen
+
+This was a rather tricky series to get the recipients correct for and my script
+did not realize that "supporter" was a pseudonym for "maintainer" so you were
+missed off the original post. Appologies!
+
+More context in cover letter:
+https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+
+
+On 14/10/2024 11:58, Ryan Roberts wrote:
+> To prepare for supporting boot-time page size selection, refactor code
+> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+> intended to be equivalent when compile-time page size is active.
 > 
-> Regarding the cancellation of ongoing transfers during suspend, I
-> believe usb_hcd_flush_endpoint() handles this as discussed below.
+> Convert CPP conditionals to C conditionals. The compiler will dead code
+> strip when doing a compile-time page size build, for the same end
+> effect. But this will also work with boot-time page size builds.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+> 
+> ***NOTE***
+> Any confused maintainers may want to read the cover note here for context:
+> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+> 
+>  drivers/net/ethernet/intel/igb/igb.h      |  25 ++--
+>  drivers/net/ethernet/intel/igb/igb_main.c | 149 +++++++++++-----------
+>  2 files changed, 82 insertions(+), 92 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igb/igb.h b/drivers/net/ethernet/intel/igb/igb.h
+> index 3c2dc7bdebb50..04aeebcd363b3 100644
+> --- a/drivers/net/ethernet/intel/igb/igb.h
+> +++ b/drivers/net/ethernet/intel/igb/igb.h
+> @@ -158,7 +158,6 @@ struct vf_mac_filter {
+>   *	 up negative.  In these cases we should fall back to the 3K
+>   *	 buffers.
+>   */
+> -#if (PAGE_SIZE < 8192)
+>  #define IGB_MAX_FRAME_BUILD_SKB (IGB_RXBUFFER_1536 - NET_IP_ALIGN)
+>  #define IGB_2K_TOO_SMALL_WITH_PADDING \
+>  ((NET_SKB_PAD + IGB_TS_HDR_LEN + IGB_RXBUFFER_1536) > SKB_WITH_OVERHEAD(IGB_RXBUFFER_2048))
+> @@ -177,6 +176,9 @@ static inline int igb_skb_pad(void)
+>  {
+>  	int rx_buf_len;
+>  
+> +	if (PAGE_SIZE >= 8192)
+> +		return NET_SKB_PAD + NET_IP_ALIGN;
+> +
+>  	/* If a 2K buffer cannot handle a standard Ethernet frame then
+>  	 * optimize padding for a 3K buffer instead of a 1.5K buffer.
+>  	 *
+> @@ -196,9 +198,6 @@ static inline int igb_skb_pad(void)
+>  }
+>  
+>  #define IGB_SKB_PAD	igb_skb_pad()
+> -#else
+> -#define IGB_SKB_PAD	(NET_SKB_PAD + NET_IP_ALIGN)
+> -#endif
+>  
+>  /* How many Rx Buffers do we bundle into one write to the hardware ? */
+>  #define IGB_RX_BUFFER_WRITE	16 /* Must be power of 2 */
+> @@ -280,7 +279,7 @@ struct igb_tx_buffer {
+>  struct igb_rx_buffer {
+>  	dma_addr_t dma;
+>  	struct page *page;
+> -#if (BITS_PER_LONG > 32) || (PAGE_SIZE >= 65536)
+> +#if (BITS_PER_LONG > 32) || (PAGE_SIZE_MAX >= 65536)
+>  	__u32 page_offset;
+>  #else
+>  	__u16 page_offset;
+> @@ -403,22 +402,20 @@ enum e1000_ring_flags_t {
+>  
+>  static inline unsigned int igb_rx_bufsz(struct igb_ring *ring)
+>  {
+> -#if (PAGE_SIZE < 8192)
+> -	if (ring_uses_large_buffer(ring))
+> -		return IGB_RXBUFFER_3072;
+> +	if (PAGE_SIZE < 8192) {
+> +		if (ring_uses_large_buffer(ring))
+> +			return IGB_RXBUFFER_3072;
+>  
+> -	if (ring_uses_build_skb(ring))
+> -		return IGB_MAX_FRAME_BUILD_SKB;
+> -#endif
+> +		if (ring_uses_build_skb(ring))
+> +			return IGB_MAX_FRAME_BUILD_SKB;
+> +	}
+>  	return IGB_RXBUFFER_2048;
+>  }
+>  
+>  static inline unsigned int igb_rx_pg_order(struct igb_ring *ring)
+>  {
+> -#if (PAGE_SIZE < 8192)
+> -	if (ring_uses_large_buffer(ring))
+> +	if (PAGE_SIZE < 8192 && ring_uses_large_buffer(ring))
+>  		return 1;
+> -#endif
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+> index 1ef4cb871452a..4f2c53dece1a2 100644
+> --- a/drivers/net/ethernet/intel/igb/igb_main.c
+> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
+> @@ -4797,9 +4797,7 @@ void igb_configure_rx_ring(struct igb_adapter *adapter,
+>  static void igb_set_rx_buffer_len(struct igb_adapter *adapter,
+>  				  struct igb_ring *rx_ring)
+>  {
+> -#if (PAGE_SIZE < 8192)
+>  	struct e1000_hw *hw = &adapter->hw;
+> -#endif
+>  
+>  	/* set build_skb and buffer size flags */
+>  	clear_ring_build_skb_enabled(rx_ring);
+> @@ -4810,12 +4808,11 @@ static void igb_set_rx_buffer_len(struct igb_adapter *adapter,
+>  
+>  	set_ring_build_skb_enabled(rx_ring);
+>  
+> -#if (PAGE_SIZE < 8192)
+> -	if (adapter->max_frame_size > IGB_MAX_FRAME_BUILD_SKB ||
+> +	if (PAGE_SIZE < 8192 &&
+> +	    (adapter->max_frame_size > IGB_MAX_FRAME_BUILD_SKB ||
+>  	    IGB_2K_TOO_SMALL_WITH_PADDING ||
+> -	    rd32(E1000_RCTL) & E1000_RCTL_SBP)
+> +	    rd32(E1000_RCTL) & E1000_RCTL_SBP))
+>  		set_ring_uses_large_buffer(rx_ring);
+> -#endif
+>  }
+>  
+>  /**
+> @@ -5314,12 +5311,10 @@ static void igb_set_rx_mode(struct net_device *netdev)
+>  				     E1000_RCTL_VFE);
+>  	wr32(E1000_RCTL, rctl);
+>  
+> -#if (PAGE_SIZE < 8192)
+> -	if (!adapter->vfs_allocated_count) {
+> +	if (PAGE_SIZE < 8192 && !adapter->vfs_allocated_count) {
+>  		if (adapter->max_frame_size <= IGB_MAX_FRAME_BUILD_SKB)
+>  			rlpml = IGB_MAX_FRAME_BUILD_SKB;
+>  	}
+> -#endif
+>  	wr32(E1000_RLPML, rlpml);
+>  
+>  	/* In order to support SR-IOV and eventually VMDq it is necessary to set
+> @@ -5338,11 +5333,10 @@ static void igb_set_rx_mode(struct net_device *netdev)
+>  
+>  	/* enable Rx jumbo frames, restrict as needed to support build_skb */
+>  	vmolr &= ~E1000_VMOLR_RLPML_MASK;
+> -#if (PAGE_SIZE < 8192)
+> -	if (adapter->max_frame_size <= IGB_MAX_FRAME_BUILD_SKB)
+> +	if (PAGE_SIZE < 8192 &&
+> +	    adapter->max_frame_size <= IGB_MAX_FRAME_BUILD_SKB)
+>  		vmolr |= IGB_MAX_FRAME_BUILD_SKB;
+>  	else
+> -#endif
+>  		vmolr |= MAX_JUMBO_FRAME_SIZE;
+>  	vmolr |= E1000_VMOLR_LPE;
+>  
+> @@ -8435,17 +8429,17 @@ static bool igb_can_reuse_rx_page(struct igb_rx_buffer *rx_buffer,
+>  	if (!dev_page_is_reusable(page))
+>  		return false;
+>  
+> -#if (PAGE_SIZE < 8192)
+> -	/* if we are only owner of page we can reuse it */
+> -	if (unlikely((rx_buf_pgcnt - pagecnt_bias) > 1))
+> -		return false;
+> -#else
+> +	if (PAGE_SIZE < 8192) {
+> +		/* if we are only owner of page we can reuse it */
+> +		if (unlikely((rx_buf_pgcnt - pagecnt_bias) > 1))
+> +			return false;
+> +	} else {
+>  #define IGB_LAST_OFFSET \
+>  	(SKB_WITH_OVERHEAD(PAGE_SIZE) - IGB_RXBUFFER_2048)
+>  
+> -	if (rx_buffer->page_offset > IGB_LAST_OFFSET)
+> -		return false;
+> -#endif
+> +		if (rx_buffer->page_offset > IGB_LAST_OFFSET)
+> +			return false;
+> +	}
+>  
+>  	/* If we have drained the page fragment pool we need to update
+>  	 * the pagecnt_bias and page count so that we fully restock the
+> @@ -8473,20 +8467,22 @@ static void igb_add_rx_frag(struct igb_ring *rx_ring,
+>  			    struct sk_buff *skb,
+>  			    unsigned int size)
+>  {
+> -#if (PAGE_SIZE < 8192)
+> -	unsigned int truesize = igb_rx_pg_size(rx_ring) / 2;
+> -#else
+> -	unsigned int truesize = ring_uses_build_skb(rx_ring) ?
+> +	unsigned int truesize;
+> +
+> +	if (PAGE_SIZE < 8192)
+> +		truesize = igb_rx_pg_size(rx_ring) / 2;
+> +	else
+> +		truesize = ring_uses_build_skb(rx_ring) ?
+>  				SKB_DATA_ALIGN(IGB_SKB_PAD + size) :
+>  				SKB_DATA_ALIGN(size);
+> -#endif
+> +
+>  	skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, rx_buffer->page,
+>  			rx_buffer->page_offset, size, truesize);
+> -#if (PAGE_SIZE < 8192)
+> -	rx_buffer->page_offset ^= truesize;
+> -#else
+> -	rx_buffer->page_offset += truesize;
+> -#endif
+> +
+> +	if (PAGE_SIZE < 8192)
+> +		rx_buffer->page_offset ^= truesize;
+> +	else
+> +		rx_buffer->page_offset += truesize;
+>  }
+>  
+>  static struct sk_buff *igb_construct_skb(struct igb_ring *rx_ring,
+> @@ -8494,16 +8490,16 @@ static struct sk_buff *igb_construct_skb(struct igb_ring *rx_ring,
+>  					 struct xdp_buff *xdp,
+>  					 ktime_t timestamp)
+>  {
+> -#if (PAGE_SIZE < 8192)
+> -	unsigned int truesize = igb_rx_pg_size(rx_ring) / 2;
+> -#else
+> -	unsigned int truesize = SKB_DATA_ALIGN(xdp->data_end -
+> -					       xdp->data_hard_start);
+> -#endif
+>  	unsigned int size = xdp->data_end - xdp->data;
+> +	unsigned int truesize;
+>  	unsigned int headlen;
+>  	struct sk_buff *skb;
+>  
+> +	if (PAGE_SIZE < 8192)
+> +		truesize = igb_rx_pg_size(rx_ring) / 2;
+> +	else
+> +		truesize = SKB_DATA_ALIGN(xdp->data_end - xdp->data_hard_start);
+> +
+>  	/* prefetch first cache line of first page */
+>  	net_prefetch(xdp->data);
+>  
+> @@ -8529,11 +8525,10 @@ static struct sk_buff *igb_construct_skb(struct igb_ring *rx_ring,
+>  		skb_add_rx_frag(skb, 0, rx_buffer->page,
+>  				(xdp->data + headlen) - page_address(rx_buffer->page),
+>  				size, truesize);
+> -#if (PAGE_SIZE < 8192)
+> -		rx_buffer->page_offset ^= truesize;
+> -#else
+> -		rx_buffer->page_offset += truesize;
+> -#endif
+> +		if (PAGE_SIZE < 8192)
+> +			rx_buffer->page_offset ^= truesize;
+> +		else
+> +			rx_buffer->page_offset += truesize;
+>  	} else {
+>  		rx_buffer->pagecnt_bias++;
+>  	}
+> @@ -8546,16 +8541,17 @@ static struct sk_buff *igb_build_skb(struct igb_ring *rx_ring,
+>  				     struct xdp_buff *xdp,
+>  				     ktime_t timestamp)
+>  {
+> -#if (PAGE_SIZE < 8192)
+> -	unsigned int truesize = igb_rx_pg_size(rx_ring) / 2;
+> -#else
+> -	unsigned int truesize = SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) +
+> -				SKB_DATA_ALIGN(xdp->data_end -
+> -					       xdp->data_hard_start);
+> -#endif
+>  	unsigned int metasize = xdp->data - xdp->data_meta;
+> +	unsigned int truesize;
+>  	struct sk_buff *skb;
+>  
+> +	if (PAGE_SIZE < 8192)
+> +		truesize = igb_rx_pg_size(rx_ring) / 2;
+> +	else
+> +		truesize = SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) +
+> +			   SKB_DATA_ALIGN(xdp->data_end -
+> +					  xdp->data_hard_start);
+> +
+>  	/* prefetch first cache line of first page */
+>  	net_prefetch(xdp->data_meta);
+>  
+> @@ -8575,11 +8571,10 @@ static struct sk_buff *igb_build_skb(struct igb_ring *rx_ring,
+>  		skb_hwtstamps(skb)->hwtstamp = timestamp;
+>  
+>  	/* update buffer offset */
+> -#if (PAGE_SIZE < 8192)
+> -	rx_buffer->page_offset ^= truesize;
+> -#else
+> -	rx_buffer->page_offset += truesize;
+> -#endif
+> +	if (PAGE_SIZE < 8192)
+> +		rx_buffer->page_offset ^= truesize;
+> +	else
+> +		rx_buffer->page_offset += truesize;
+>  
+>  	return skb;
+>  }
+> @@ -8634,14 +8629,14 @@ static unsigned int igb_rx_frame_truesize(struct igb_ring *rx_ring,
+>  {
+>  	unsigned int truesize;
+>  
+> -#if (PAGE_SIZE < 8192)
+> -	truesize = igb_rx_pg_size(rx_ring) / 2; /* Must be power-of-2 */
+> -#else
+> -	truesize = ring_uses_build_skb(rx_ring) ?
+> -		SKB_DATA_ALIGN(IGB_SKB_PAD + size) +
+> -		SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) :
+> -		SKB_DATA_ALIGN(size);
+> -#endif
+> +	if (PAGE_SIZE < 8192)
+> +		truesize = igb_rx_pg_size(rx_ring) / 2; /* Must be power-of-2 */
+> +	else
+> +		truesize = ring_uses_build_skb(rx_ring) ?
+> +			SKB_DATA_ALIGN(IGB_SKB_PAD + size) +
+> +			SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) :
+> +			SKB_DATA_ALIGN(size);
+> +
+>  	return truesize;
+>  }
+>  
+> @@ -8650,11 +8645,11 @@ static void igb_rx_buffer_flip(struct igb_ring *rx_ring,
+>  			       unsigned int size)
+>  {
+>  	unsigned int truesize = igb_rx_frame_truesize(rx_ring, size);
+> -#if (PAGE_SIZE < 8192)
+> -	rx_buffer->page_offset ^= truesize;
+> -#else
+> -	rx_buffer->page_offset += truesize;
+> -#endif
+> +
+> +	if (PAGE_SIZE < 8192)
+> +		rx_buffer->page_offset ^= truesize;
+> +	else
+> +		rx_buffer->page_offset += truesize;
+>  }
+>  
+>  static inline void igb_rx_checksum(struct igb_ring *ring,
+> @@ -8825,12 +8820,12 @@ static struct igb_rx_buffer *igb_get_rx_buffer(struct igb_ring *rx_ring,
+>  	struct igb_rx_buffer *rx_buffer;
+>  
+>  	rx_buffer = &rx_ring->rx_buffer_info[rx_ring->next_to_clean];
+> -	*rx_buf_pgcnt =
+> -#if (PAGE_SIZE < 8192)
+> -		page_count(rx_buffer->page);
+> -#else
+> -		0;
+> -#endif
+> +
+> +	if (PAGE_SIZE < 8192)
+> +		*rx_buf_pgcnt = page_count(rx_buffer->page);
+> +	else
+> +		*rx_buf_pgcnt = 0;
+> +
+>  	prefetchw(rx_buffer->page);
+>  
+>  	/* we are reusing so sync this buffer for CPU use */
+> @@ -8881,9 +8876,8 @@ static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
+>  	int rx_buf_pgcnt;
+>  
+>  	/* Frame size depend on rx_ring setup when PAGE_SIZE=4K */
+> -#if (PAGE_SIZE < 8192)
+> -	frame_sz = igb_rx_frame_truesize(rx_ring, 0);
+> -#endif
+> +	if (PAGE_SIZE < 8192)
+> +		frame_sz = igb_rx_frame_truesize(rx_ring, 0);
+>  	xdp_init_buff(&xdp, frame_sz, &rx_ring->xdp_rxq);
+>  
+>  	while (likely(total_packets < budget)) {
+> @@ -8932,10 +8926,9 @@ static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
+>  
+>  			xdp_prepare_buff(&xdp, hard_start, offset, size, true);
+>  			xdp_buff_clear_frags_flag(&xdp);
+> -#if (PAGE_SIZE > 4096)
+>  			/* At larger PAGE_SIZE, frame_sz depend on len size */
+> -			xdp.frame_sz = igb_rx_frame_truesize(rx_ring, size);
+> -#endif
+> +			if (PAGE_SIZE > 4096)
+> +				xdp.frame_sz = igb_rx_frame_truesize(rx_ring, size);
+>  			skb = igb_run_xdp(adapter, rx_ring, &xdp);
+>  		}
+>  
 
-There's more to it than that.  If you cancel ongoing transfers by 
-calling usb_hcd_flush_endpoint() without informing the driver first, the 
-driver will get very confused and think the device has failed.
-
-> Besides calling usb_hcd_flush_endpoint(), are there any other
-> necessary changes before suspending the driver in our scenario? Maybe
-> we could discuss setting usb_device_state to USB_STATE_SUSPENDED.
-> However, my understanding is that this variable reflects the actual
-> device state. Since the device remains active via the sideband in our
-> case,  changing usb_device_state seems unnecessary.
-
-That's right.
-
-I don't think anything else is needed.  Just call 
-usb_suspend_interface() like the normal pathway in usb_suspend_both() 
-does, but skip calling usb_suspend_device().
-
-Alan Stern
 
