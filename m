@@ -1,150 +1,135 @@
-Return-Path: <linux-kernel+bounces-368483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F909A104D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91FA79A1053
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641781C21285
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C45A31C216C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD0A20FAA3;
-	Wed, 16 Oct 2024 17:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7608620F5DF;
+	Wed, 16 Oct 2024 17:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLb+27Qt"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="ox0UoO/G"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BBF136358;
-	Wed, 16 Oct 2024 17:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3F0187342
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729098278; cv=none; b=qYc5IXV0g+aW4608CLgHJdLsYigf2LjBKsvLvhIcGYc1RqLc99WoEAIZZ2xcahYRQ9U2845wG8O+dvowlXULQPrrLeb5LCkEnHW8wVQiElKDJYkGYaLH8YdVSOkClIkgn6UMvwzEvJ+Ep9iJ2MwAUS4bF/d304GARed4DY01F6I=
+	t=1729098512; cv=none; b=SnnoR3pPci/gxriNh/au2SgVDkM4qtiuch4JYbhBS4XXRdmYKruY5LVrbFm7IhO0DqmlL9C8bKRdW1uyRP5ZQAL05BWXB+cUKSoTupPfTOM5GDFqio3ILh41tzo+5yH03H3FU5KFjASlq1SoW0smOH7OWAL9Bv1bE4uztMNx1sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729098278; c=relaxed/simple;
-	bh=kcB/YzNajviFCtfzBnOBHr+U7b/AsbG1t0t4RCfqxm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ozz5yLXuzBuhZTa4ETlGmUrLfriuh7hl1Yus0iZpA1yQWUQKNh6Civc1N9POMQ6K6MtwGxuvrrkFVK9DxXybd+BXa6LCrcC0+nfMsOB1QnZsfzUVhhpgEdyiKl4sfRUk7ZSVPT5V5+mUyTT2BJk5B4Z/3SskaZ76kgTNbG3FKUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLb+27Qt; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d808ae924so6869f8f.0;
-        Wed, 16 Oct 2024 10:04:36 -0700 (PDT)
+	s=arc-20240116; t=1729098512; c=relaxed/simple;
+	bh=vTPL+8RbD5EH+C790fc6r2Ug4lG/D0GptEvfLet8gVM=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=BXOV3SpKZ2Wma6MNdi/Xbooc6dY7Y2n8nClmwntIhKyMQe+DyZOjBOEC1DG/zUP1v7HsDo3PCVnjtDJj8CKYIklXSi0V2hvUK/llT+ns8aSNfgRjEtBN2VSimtDcic59SnWE9c0J91vdeUIWO6y08gY1ADgGJNtD18ruBYkw/LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=ox0UoO/G; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729098275; x=1729703075; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P08mcokF3tnHnUdGZEWpRqKlXEmDsB19KTc81gbPrvM=;
-        b=MLb+27QtB5ElvH0GCsHUVEcqSL8DCgEPOyPGR+hVpEgeugSRFW+Dom6UD1Bh3FrSHu
-         F71zIzzUPC4ZLkBjuXMsf/v3YrJfCgbPmHzHbYOff/M/AX982IMXa8ItIiENcOmAJtXb
-         fSKX3UKGdElyfrh29vvXNH1ORWFHsJta1h05InuuPkhteoqNaZSN5OISd5zqzhE6MWjB
-         UQwLY70kCDl0MMAvI5GnkK0zxeuDj0dergPw38MwJuI4cyU/hevPxHHrFXVpNQay3me7
-         er1HGFvDE4g/Ss7x3Rwe3IcIf7tfBt17O1tfViN9tBBWmh+iNs5gBJXD8Kxf8Lsb0rDs
-         egbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729098275; x=1729703075;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P08mcokF3tnHnUdGZEWpRqKlXEmDsB19KTc81gbPrvM=;
-        b=NUxX0H9n7+QI6+OVirBGZ1E2gp6+a6LY1Qscd+ZmtPT3IeAinlKthmfddZAsnsIaCK
-         oURw9rzWBqiJR4pIfLvi/V8ubjtqj59lvJvNNj2L0GnklhgJL3T0O2kYB2bW0PIByE1P
-         TwrjxG0B1eJRH9pSNowUGXmZQnElxEuvXPDOOrVsDJW8Mqrv4BZC/bppRe9t1dLJfPby
-         /3MzWQfj2Knt+CyWIMQXTf6LMpe/pz5LpeySWbRkAV8Gr6SbWgeFRXf7VMOsUAYf4j6a
-         S+EGtA27+sWSdKlgAqqGgFYs7DRaTz+jjZJY4g9Iae3W2pFupadZaz33W8SzpwkMX2f9
-         c8kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjKsHq3MWksCU1LFfTUokDemqLgkhjRjax+6TwhZPrUWZhhOqm4mZtTKGW5YLnuH9mKt9RTb5fFWA=@vger.kernel.org, AJvYcCUzSSJk8hdE5H1/Ke+dLHLxx1b8B7ozuRYOOVnVy1n5tJxnfHQzfDjk21zkJoy/NhEfRYkrC8Gh@vger.kernel.org, AJvYcCWAMhTPcwSlERGb3gT6OkVbmheUqxyzsurzGQNkJZMU2PnuYi7qh90XUsjkol41YDYj2A4e2Law0zo0nuZc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1pnA0S0fSL02sDWavsnBsCXAhTbpmDuUNtJCUHrjvCbl3fU8C
-	Wq/mq7H+Z9s58WC/rUkzzmLctgSOFdefZR5Pgz9WJCt0H/2VvVlC5FgiWw==
-X-Google-Smtp-Source: AGHT+IHbFd8Z5bwxuthBcMlziOgmWykdpd7TiV2cyqQiMyd5YK5D4CrALefqEeFU7g6RINmYk4GAVA==
-X-Received: by 2002:adf:efd2:0:b0:37d:4527:ba1c with SMTP id ffacd0b85a97d-37d86d599c5mr3445108f8f.49.1729098274504;
-        Wed, 16 Oct 2024 10:04:34 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-7238-7970-7b90-44f4.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:7238:7970:7b90:44f4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a055sm4842390f8f.1.2024.10.16.10.04.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 10:04:33 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 16 Oct 2024 19:04:31 +0200
-Subject: [PATCH] iio: light: veml6030: fix microlux value calculation
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=oQcN6MPtUqLZH1eMRlZJxKQBqb+s5THzi7N50fuEBfc=;
+  b=ox0UoO/GJq2YOtr7hyVFAnBIBClUZHP5SxLosGMU0pBS+pv0zvd6DaAL
+   bJToXKelKsrHpoc5trbW2PCNEzEe4JKd8rBNGqEEx9UYU5vhLeWp4cteX
+   u1kn+WNMGJGjQ6enFeSFLYLHegPLJeWirn9yCqCscplTIigoKWa5bYK1d
+   M=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,208,1725314400"; 
+   d="scan'208";a="189208288"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 19:08:20 +0200
+Date: Wed, 16 Oct 2024 19:08:20 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Luben Tuikov <luben.tuikov@amd.com>
+cc: Alex Deucher <alexander.deucher@amd.com>, linux-kernel@vger.kernel.org, 
+    oe-kbuild-all@lists.linux.dev
+Subject: drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c:145:8-12: opportunity
+ for str_read_write(read) (fwd)
+Message-ID: <23858629-8fe8-94ee-88d0-209dbdee4fbf@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-veml6030-fix-processed-micro-v1-1-4a5644796437@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAB7yD2cC/x3MwQqDMAyA4VeRnA2kzvawVxk7SJNpwLaSgAzEd
- 1/Z8YOf/wIXU3F4DheYnOraakcYB8jbUldB5W6YaJoDhYSnlD3Rg/CjXzysZXEXxqLZGqaQmIh
- jjJyhLw6Tnv33r/d9/wCNGzllbgAAAA==
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rishi Gupta <gupt21@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729098272; l=2074;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=kcB/YzNajviFCtfzBnOBHr+U7b/AsbG1t0t4RCfqxm4=;
- b=ZfFvcJeR6Ju7H8ZBMZv3g7I0G4ApH4xDJ+Cksu8rNogieLQHxkPvCNa34JE4J33VB/hCht1ED
- xYMIAfVK2iMB3giJQkwTqmjd0EPhETdziYEUvQYtlhguhpvxoP22kkX
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=US-ASCII
 
-The raw value conversion to obtain a measurement in lux as
-INT_PLUS_MICRO does not calculate the decimal part properly to display
-it as micro (in this case microlux). It only calculates the module to
-obtain the decimal part from a resolution that is 10000 times the
-provided in the datasheet (0.5376 lux/cnt for the veml6030). The
-resulting value must still be multiplied by 100 to make it micro.
 
-This bug was introduced with the original implementation of the driver.
 
-Cc: stable@vger.kernel.org
-Fixes: 7b779f573c48 ("iio: light: add driver for veml6030 ambient light sensor")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-I found this almost by chance while testing new supported devices. The
-decimal part was always suspiciously small, and when I compared samples
-to the expected value according to the datasheet, it became clear what was
-going on.
+---------- Forwarded message ----------
+Date: Wed, 16 Oct 2024 18:28:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: oe-kbuild@lists.linux.dev
+Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+Subject: drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c:145:8-12: opportunity for
+    str_read_write(read)
 
-Example with a veml7700 (same resolution as the veml6030):
+BCC: lkp@intel.com
+CC: oe-kbuild-all@lists.linux.dev
+CC: linux-kernel@vger.kernel.org
+TO: Luben Tuikov <luben.tuikov@amd.com>
+CC: Alex Deucher <alexander.deucher@amd.com>
 
-Resolution for gain = 1/8, IT = 100 ms: 0.5736 lux/cnt.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
+commit: 93ade343bbadd73999324dcc66c933e398e39818 drm/amdgpu: EEPROM respects I2C quirks
+date:   3 years, 4 months ago
+:::::: branch date: 16 hours ago
+:::::: commit date: 3 years, 4 months ago
+config: i386-randconfig-054-20241016 (https://download.01.org/0day-ci/archive/20241016/202410161814.I6p2Nnux-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
 
-cat in_illuminance_raw in_illuminance_input
-40
-21.005040 -> wrong! 40 * 0.5736 is 21.504.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Julia Lawall <julia.lawall@inria.fr>
+| Closes: https://lore.kernel.org/r/202410161814.I6p2Nnux-lkp@intel.com/
 
-Tested with a veml6035 and a veml7700, the same will happen with the
-original veml6030, as the operation is identical for all devices.
----
- drivers/iio/light/veml6030.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+cocci warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c:145:8-12: opportunity for str_read_write(read)
 
-diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
-index d6f3b104b0e6..a0bf03e37df7 100644
---- a/drivers/iio/light/veml6030.c
-+++ b/drivers/iio/light/veml6030.c
-@@ -691,7 +691,7 @@ static int veml6030_read_raw(struct iio_dev *indio_dev,
- 			}
- 			if (mask == IIO_CHAN_INFO_PROCESSED) {
- 				*val = (reg * data->cur_resolution) / 10000;
--				*val2 = (reg * data->cur_resolution) % 10000;
-+				*val2 = (reg * data->cur_resolution) % 10000 * 100;
- 				return IIO_VAL_INT_PLUS_MICRO;
- 			}
- 			*val = reg;
+vim +145 drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c
 
----
-base-commit: 15e7d45e786a62a211dd0098fee7c57f84f8c681
-change-id: 20241016-veml6030-fix-processed-micro-616d00d555dc
+93ade343bbadd7 Luben Tuikov 2021-01-28  112
+93ade343bbadd7 Luben Tuikov 2021-01-28  113  /**
+93ade343bbadd7 Luben Tuikov 2021-01-28  114   * amdgpu_eeprom_xfer -- Read/write from/to an I2C EEPROM device
+93ade343bbadd7 Luben Tuikov 2021-01-28  115   * @i2c_adap: pointer to the I2C adapter to use
+93ade343bbadd7 Luben Tuikov 2021-01-28  116   * @slave_addr: I2C address of the slave device
+93ade343bbadd7 Luben Tuikov 2021-01-28  117   * @eeprom_addr: EEPROM address from which to read/write
+93ade343bbadd7 Luben Tuikov 2021-01-28  118   * @eeprom_buf: pointer to data buffer to read into/write from
+93ade343bbadd7 Luben Tuikov 2021-01-28  119   * @buf_size: the size of @eeprom_buf
+93ade343bbadd7 Luben Tuikov 2021-01-28  120   * @read: True if reading from the EEPROM, false if writing
+93ade343bbadd7 Luben Tuikov 2021-01-28  121   *
+93ade343bbadd7 Luben Tuikov 2021-01-28  122   * Returns the number of bytes read/written; -errno on error.
+93ade343bbadd7 Luben Tuikov 2021-01-28  123   */
+93ade343bbadd7 Luben Tuikov 2021-01-28  124  int amdgpu_eeprom_xfer(struct i2c_adapter *i2c_adap,
+93ade343bbadd7 Luben Tuikov 2021-01-28  125  		       u16 slave_addr, u16 eeprom_addr,
+93ade343bbadd7 Luben Tuikov 2021-01-28  126  		       u8 *eeprom_buf, u16 buf_size, bool read)
+93ade343bbadd7 Luben Tuikov 2021-01-28  127  {
+93ade343bbadd7 Luben Tuikov 2021-01-28  128  	const struct i2c_adapter_quirks *quirks = i2c_adap->quirks;
+93ade343bbadd7 Luben Tuikov 2021-01-28  129  	u16 limit;
+93ade343bbadd7 Luben Tuikov 2021-01-28  130
+93ade343bbadd7 Luben Tuikov 2021-01-28  131  	if (!quirks)
+93ade343bbadd7 Luben Tuikov 2021-01-28  132  		limit = 0;
+93ade343bbadd7 Luben Tuikov 2021-01-28  133  	else if (read)
+93ade343bbadd7 Luben Tuikov 2021-01-28  134  		limit = quirks->max_read_len;
+93ade343bbadd7 Luben Tuikov 2021-01-28  135  	else
+93ade343bbadd7 Luben Tuikov 2021-01-28  136  		limit = quirks->max_write_len;
+93ade343bbadd7 Luben Tuikov 2021-01-28  137
+93ade343bbadd7 Luben Tuikov 2021-01-28  138  	if (limit == 0) {
+93ade343bbadd7 Luben Tuikov 2021-01-28  139  		return __amdgpu_eeprom_xfer(i2c_adap, slave_addr, eeprom_addr,
+93ade343bbadd7 Luben Tuikov 2021-01-28  140  					    eeprom_buf, buf_size, read);
+93ade343bbadd7 Luben Tuikov 2021-01-28  141  	} else if (limit <= EEPROM_OFFSET_SIZE) {
+93ade343bbadd7 Luben Tuikov 2021-01-28  142  		dev_err_ratelimited(&i2c_adap->dev,
+93ade343bbadd7 Luben Tuikov 2021-01-28  143  				    "maddr:0x%04X size:0x%02X:quirk max_%s_len must be > %d",
+93ade343bbadd7 Luben Tuikov 2021-01-28  144  				    eeprom_addr, buf_size,
+93ade343bbadd7 Luben Tuikov 2021-01-28 @145  				    read ? "read" : "write", EEPROM_OFFSET_SIZE);
 
-Best regards,
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
