@@ -1,159 +1,179 @@
-Return-Path: <linux-kernel+bounces-368455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B989A0FF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC789A0FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE17F1C21B4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33FE6283B7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0E20FAA6;
-	Wed, 16 Oct 2024 16:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23C0210C38;
+	Wed, 16 Oct 2024 16:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ls7MToUP"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ay5FHM5M"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65F217333A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45438210184;
+	Wed, 16 Oct 2024 16:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729097014; cv=none; b=FhKGDWqfiOYy7qPGWsKNI+BShrMQOfSTOP/ukxFm0zrlui4CH3om7pQ1xmLan6R/WtbqOqlt0A4am+/cGzgQ239EYgJXVPXYmqgruLhYj0sk/eivnZnpQkXE2B1E980/YZTCnnse7tmrYpvAHIRMBFUXwl9hfzrraZeF9fQpwTE=
+	t=1729097017; cv=none; b=j2DR7eXyO7L5U5hgF16JotfCefPqgINRaocWXSTuDYFfUi9Ig31BUshkB0GGK2Q4/JsOuqRH13GYpRFaewyrHYwgLqVO1Tn1yMiY1LjPAqO7jMWTYG+i2ROkSnxvJYePE/yVRThplqbUbv0t+ApXZEtW9yzX9fwYHDFrHHPY4r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729097014; c=relaxed/simple;
-	bh=PAnLlIJ7IZpSOKkzxR34dHudM7NbqEwk/FDvc/xFno0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=outoTKR45WuAqYULHQ5X7s4Z1ENrQk4/8/ddy5L1uGxXEykZnAdIOdZeIVO3T9ASynecwiut9fwy/BHKh0GBICk/Qz8qw1klMyVjaojoXqu8Tt8PuparFecAvypRWhmqq71zkbO9ceTYuJIwXl6NwCZxieoqkcSgrLIi2QvCcRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ls7MToUP; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-431195c3538so238235e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729097011; x=1729701811; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FPxiI+mADjCaenek/ylZZF9BNox/DW9nL+0jpgNlAgo=;
-        b=Ls7MToUP1SKdPHZhb89tAcgKeVNKiChlqpNj2xMv3bs+aa8crpqPnpZ6hqXimOtd70
-         Jlyj7FlSwZ6nWGUREUm2O2JCciLa7I5vZXVPmR/LY8TbUvV8uiQHcZT+pNYQKrq2dVZK
-         Xb84hut506E0v2cBRz7jfI8mwp+Xv1TxMlwJaHHiRcfKqAZVv13VwBrvbyLvZRuoBjDq
-         B1G9jjMgJhRSZcnF7wYUtKeqdCooL4tAyilJsJxQ4iYugFJSupYLrg3Fzmhsby4ZRNrF
-         NeLzFSyqdCNu5aby5ZQC6+iqXrPb3NngCjwHvKal0uPWJ1wOuMdpNOboKD8cmaVXhgRF
-         kqKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729097011; x=1729701811;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FPxiI+mADjCaenek/ylZZF9BNox/DW9nL+0jpgNlAgo=;
-        b=E4mchiEZVbyNtSTgqtcSZCaySNVsCqyvYUUnwaODPUvNmpoYeii2fg58nLO1CUJCOt
-         DmK7c9AjyH2XAVwRCGpPCq8PQDyyAMgJVI8pawhku24VJGFv18Ge7Mb2kPkoAT0ksrM9
-         6YxhqAbtoRZdd3YNDIqJm2kPDxJEYs0NOSMc3lRAgguDaPrW6Cn01AoePe12ZiKVmMWP
-         g1HtMYFzvDjii5Q3KaTBB1u6hkzVBCcTFbhxZ0mDJkEG+bAJQh3gqmJOVwlQdGdC7Wgy
-         ehVxZ5REUeMPd0UgLTBb6lnMBgXT6VzFxYfz9YKV+E7l/S4TouaCN8HDAIh3GKMi1l/T
-         EyDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK+FX1r6LlabiN3PCjrOagqHCf8XKRnj3JFG8OFyu8plZBTMBL7ZEpMRFWbbmreZGMbE5SfCHu9DCQQYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ6c+oezDXVJrPzTMLMzpb2qT9A0W/Gx3psryw7+aa0aO8qQzp
-	3HL4ez2lqJJWfM7uzytQDYAO4P/Z7tp+d9zw989PUbMZ2ZMWpcCGJT604lsYYvw=
-X-Google-Smtp-Source: AGHT+IH/RiWi/wLuxckjRbw6+b4invUjSy2+ug/4fb2NCd2a6MkGCcVPopOnamHvkAgMGf2A+q0p/Q==
-X-Received: by 2002:a05:600c:4514:b0:426:60b8:d8ba with SMTP id 5b1f17b1804b1-4314a362525mr34456685e9.28.1729097010609;
-        Wed, 16 Oct 2024 09:43:30 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef80:a75b:8bbb:91be:de0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf819dsm4717719f8f.85.2024.10.16.09.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 09:43:30 -0700 (PDT)
-Date: Wed, 16 Oct 2024 18:43:26 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: x1e80100-crd: describe HID supplies
-Message-ID: <Zw_tLjudvbTKGAMM@linaro.org>
-References: <20241015122427.15995-1-johan+linaro@kernel.org>
- <Zw5w+eCBMQu3CSuz@linaro.org>
+	s=arc-20240116; t=1729097017; c=relaxed/simple;
+	bh=3yW0jPoqpuLtTF7vOk6MT6y6MZ5px9RVH+Nhky2xbog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gFtuQlh3x1evsXPKakKYPdsnQNN5S0NRHjfh7ns+FLiRiQ36GHj1waEZVseDuMA5ErseR+3UGZPkDxZCPbc0QpF8Q0ZNJFU316Dj0aJqXhZur8bNFPn3jgbyMu1sbQKVY0fKTQWrcU0h5SrWFeJ5ItZYPRCVtn3h5sJp62PDuRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ay5FHM5M; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGhSQq050198;
+	Wed, 16 Oct 2024 11:43:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729097008;
+	bh=PXQVfKsvfKxcsT9u+G0+jDHJ/QyMGLSljkiiaGvU1iU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ay5FHM5MBRhS1ahfVL9EN7SFsYgciApG4WEga///RZwPYutO9yh/i5r5NcLSCKNe7
+	 5tPBW8nu8aLOHA7RkHgtzBQi7PV2BeA5Vdk1//cSnJDTdwrjTN0qqNez8GXPGA4JIi
+	 O3BuZb0pCUlMM8ExoCHR6PqguwcK9MHYLuFK6tdw=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GGhSW2108785
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 16 Oct 2024 11:43:28 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
+ Oct 2024 11:43:27 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 16 Oct 2024 11:43:27 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGhRVM110543;
+	Wed, 16 Oct 2024 11:43:27 -0500
+Message-ID: <ca621caa-0b6c-47c7-b602-3db6fc5be839@ti.com>
+Date: Wed, 16 Oct 2024 11:43:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw5w+eCBMQu3CSuz@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Arnd Bergmann <arnd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Hari Nagalla <hnagalla@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241007132441.2732215-1-arnd@kernel.org>
+ <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com> <Zw/bIItwk0jeqKoR@p14s>
+ <07e5b001-b251-4f4f-8ce9-56b43032b5c4@ti.com> <Zw/jkpnGXW6ez56o@p14s>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <Zw/jkpnGXW6ez56o@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Oct 15, 2024 at 04:41:13PM +0300, Abel Vesa wrote:
-> On 24-10-15 14:24:27, Johan Hovold wrote:
-> > Add the missing HID supplies to avoid relying on other consumers to keep
-> > them on.
-> > 
-> > This also avoids the following warnings on boot:
-> > 
-> > 	i2c_hid_of 0-0010: supply vdd not found, using dummy regulator
-> > 	i2c_hid_of 0-0010: supply vddl not found, using dummy regulator
-> > 	i2c_hid_of 1-0015: supply vdd not found, using dummy regulator
-> > 	i2c_hid_of 1-0015: supply vddl not found, using dummy regulator
-> > 	i2c_hid_of 1-003a: supply vdd not found, using dummy regulator
-> > 	i2c_hid_of 1-003a: supply vddl not found, using dummy regulator
-> > 
-> > Note that VREG_MISC_3P3 is also used for things like the fingerprint
-> > reader which are not yet fully described so mark the regulator as always
-> > on for now.
-> > 
-> > Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
-> > Cc: Abel Vesa <abel.vesa@linaro.org>
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 34 +++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> > index 10b28d870f08..4ab7078f76e0 100644
-> > --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> > +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> > @@ -288,6 +288,23 @@ vreg_edp_3p3: regulator-edp-3p3 {
-> >  		regulator-boot-on;
-> >  	};
-> >  
+On 10/16/24 11:02 AM, Mathieu Poirier wrote:
+> On Wed, Oct 16, 2024 at 10:37:35AM -0500, Andrew Davis wrote:
+>> On 10/16/24 10:26 AM, Mathieu Poirier wrote:
+>>> On Mon, Oct 14, 2024 at 09:56:11AM -0500, Andrew Davis wrote:
+>>>> On 10/7/24 8:23 AM, Arnd Bergmann wrote:
+>>>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>>>
+>>>>> The k3-m4 remoteproc driver was merged with incorrect dependencies.
+>>>>> Despite multiple people trying to fix this, the version 6.12-rc2
+>>>>> remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
+>>>>> when the driver is built-in.
+>>>>>
+>>>>> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
+>>>>> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
+>>>>>
+>>>>> Fix the dependency again to make it work in all configurations.
+>>>>> The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
+>>>>> dependencies. The link failure can be avoided with a simple 'depends
+>>>>> do, so turn that into the same 'depends' to ensure we get no circular
+>>>>> on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
+>>>>> we use elsehwere. On the other hand, building for OMAP2PLUS makes
+>>>>> no sense since the hardware only exists on K3.
+>>>>>
+>>>>> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
+>>>>> Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
+>>>>> Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
+>>>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>>>> ---
+>>>>>     drivers/remoteproc/Kconfig | 6 +++---
+>>>>>     1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>>>> index 955e4e38477e..62f8548fb46a 100644
+>>>>> --- a/drivers/remoteproc/Kconfig
+>>>>> +++ b/drivers/remoteproc/Kconfig
+>>>>> @@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
+>>>>>     config TI_K3_M4_REMOTEPROC
+>>>>>     	tristate "TI K3 M4 remoteproc support"
+>>>>> -	depends on ARCH_OMAP2PLUS || ARCH_K3
+>>>>> -	select MAILBOX
+>>>>> -	select OMAP2PLUS_MBOX
+>>>>> +	depends on ARCH_K3 || COMPILE_TEST
+>>>>> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
+>>>>
+>>>> This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
+>>>> dependencies, as often only one ARCH can be selected which prevents
+>>>> compile testing drivers with various multiple architecture deps in
+>>>> one compile test.
+>>>>
+>>>> Normal dependencies, on the other hand, can simply be enabled if one
+>>>> wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
+>>>> cannot be enabled as it has a dependency up the chain that doesn't
+>>>> allow selecting when not on a TI platform. We can fix that as I posted
+>>>> here[0]. With that fix in, this line can be simply become:
+>>>>
+>>>> depends on TI_SCI_PROTOCOL
+>>>
+>>>   From the above and the follow-on conversation with Nishanth, should I understand
+>>> you are working on a patchset to address this issue?  If not I will apply Arnd's
+>>> patch.  People are sending different fix [1] - the issue needs to be addressed
+>>> well before the end of the cycle.
+>>>
+>>
+>> This is a bit complex as it touches multiple subsystems. You should take Arnd's
+>> patch. This will fix this for M4, I will then add a follow on patch doing the same
+>> for the other two remoteproc drivers (DSP and R5).
+>>
+>> When my series here[0] goes in I will then send a final patch removing the depends
+>> TI_SCI_PROTOCOL=n oddness from all 3 drivers. This final step does not need to happen
+>> this cycle though, only the first two steps are needed to prevent any further compile
+>> test issues.
+>>
 > 
-> [...]
-> 
-> >  
-> > +&pm8550ve_8_gpios {
-> > +	misc_3p3_reg_en: misc-3p3-reg-en-state {
-> > +		pins = "gpio6";
-> > +		function = "normal";
-> > +		bias-disable;
-> 
-> Maybe output-enable and input-disable are needed. Can you please check?
+> I have applied Arnd's patch.
 > 
 
-FWIW, there is a reason behind explicitly describing the intended
-direction of the pin for PMIC GPIOs with properties like "output-enable"
-or "input-disable": On QC platforms, PMIC GPIOs can be either in "input"
-mode, "output" mode, or "input+output" mode. If you don't specify
-exactly what you want, then the pinctrl-spmi-gpio driver will only add
-to the existing configuration.
+Follow up series sent: https://lore.kernel.org/lkml/20241016164141.93401-1-afd@ti.com/
 
-For the configuration above this means:
+Andrew
 
- 1. If GPIO6 is disabled or in "output" mode during boot, the resulting
-    mode will be "output".
-
- 2. If GPIO6 is in "input" mode during boot, the resulting mode will be
-    "input+output".
-
-I don't know if "input+output" mode has any negative impact compared to
-pure "output" mode. We usually want to have the pins in a consistent
-state though (i.e. independent of the boot up state).
-
-Thanks,
-Stephan
+>> Andrew
+>>
+>> [0] https://lore.kernel.org/lkml/20241015213322.2649011-1-afd@ti.com/
+>>
+>>> [1]. https://lore.kernel.org/linux-arm-kernel/20241016013922.1392290-1-zengheng4@huawei.com/T/
+>>>
+>>>>
+>>>> Andrew
+>>>>
+>>>> [0] https://lore.kernel.org/lkml/20241014144821.15094-1-afd@ti.com/
+>>>>
+>>>>> +	depends on OMAP2PLUS_MBOX
+>>>>>     	help
+>>>>>     	  Say m here to support TI's M4 remote processor subsystems
+>>>>>     	  on various TI K3 family of SoCs through the remote processor
 
