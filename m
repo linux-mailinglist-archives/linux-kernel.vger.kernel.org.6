@@ -1,92 +1,107 @@
-Return-Path: <linux-kernel+bounces-368613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966619A124B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:06:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B219A124E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4319D1F22001
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:06:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391321C249C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7AE216A19;
-	Wed, 16 Oct 2024 19:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26722141A0;
+	Wed, 16 Oct 2024 19:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y58FASVQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T7jc2qbY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56333216A11;
-	Wed, 16 Oct 2024 19:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CA212E75
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729105555; cv=none; b=rBhHCYLBQXd+G+G2Q3nVHKgrv1aKkwDiQ1K1GQ6NO6ouAOsEh4CoVL73loH9Du+SAZjEv/KmbXod8fSWDlaaUpGgSsS2YOhZcPnhQOQWQPIm4xnNmNb6UV/PyBAWaVfB+QQAeS7eHlqRqM1excHiWB28/4YDCzY+bKlJ+zgWxiE=
+	t=1729105609; cv=none; b=hovXzZzP6OjwbyQdY+OqxmDuOWbBQsQj17IeATNsB7d8SlUXykDK+0BwGY857JOkc3WvRxrHeNUYId4Oe2x7WfIDeDgPhRojOCGhCS27VHxi51nUIBuIPthM1xCQR6DOpooHaKLtOC1Le7NdMwslrbfv4Q01MWUEqB5/inurX+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729105555; c=relaxed/simple;
-	bh=QYnXOGF8R1NDKs5oSA/c2mA8M+lzKSI5dVC/N00m5mw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mDB+p42U4rRZC6zQcjw7aP3ICEz2bL+8S3G0uGvjwoK9ybPb7iiCRgTSwv8cb3UvcR2bNllumPLV7/iYhBtZHJRGqioDl3ab8L8rgvcw9Mw8TKdXAPHoHADXYxH1DXCNbutxfHxB0gCs+BDkThVXtVGnQPpkZ8cUkhu5ViMqeB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y58FASVQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A77C4CEC5;
-	Wed, 16 Oct 2024 19:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729105554;
-	bh=QYnXOGF8R1NDKs5oSA/c2mA8M+lzKSI5dVC/N00m5mw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Y58FASVQ6NNq6uxgMsGAKzEN4iZ6Q/EYA9Tx25JCUyZjAfZaVH8WdLKMddkRTAplv
-	 psXQ0Pmn58m5GSt1EFDrCvzfhw1umwzFdxTaVUMpke7pTxq0JhThoVVv9WmJNyDtW/
-	 LnV262S0MIByN+Na7LeTxqXUZ0hNwTdL/dgWWDPj+UrG9v/hlHHHkb/gn/nkzICI0Q
-	 v/HCQ7MncFcymrtepJuS/MPMv0b9KVZubJ5FYmanqQ3+SEH7YCykadYKFG/nezcHf7
-	 gK4W4Nlr8PaLYlrPoDOCzPJhiKLNdGEEofb9sMwCabTQFY/fn3WYIYJwwXpSWqU6rW
-	 1h04NRr3nQo0A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DB13822D30;
-	Wed, 16 Oct 2024 19:06:01 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729105609; c=relaxed/simple;
+	bh=YgmrGEqzK1Ys0pxhLhfCmeIQoc6TgpXEwuLXueDOBB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FB09ILCm8c5roI1Q39H+5nhctxT7SHOO+ot9SyKJw8y5ZAawwOS7TT/6q6Bbb3eTzvaDgU28K7PgNLiZv/BmSge0kLWljO7JWUuHgWdKwGildo92tianttMj3oyiFbINZ1bJ77Cwzb/yWwcx+MSzuJD6ysqySCX3a9Eddo2HNDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T7jc2qbY; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729105608; x=1760641608;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=YgmrGEqzK1Ys0pxhLhfCmeIQoc6TgpXEwuLXueDOBB0=;
+  b=T7jc2qbY2fB0bI2NQLdyY4j6YWiw8Hz8YG29GF0iGSgf5tz8hTNNae0r
+   YLp73OIbqq/IiuwTkDRyMeWSKCA+sNaC1GslKZnshYi4QR7HBEGW+c5I9
+   2Eu6RG4CfwFI2sB4feJMSH2fEaNaH47yApbKu6SQijS7dBzeGh2xYfeJt
+   qJz94vA1LpS0Py1oqnFQfO72b9v8/ypQQH+YeSubZ0vQZTfvCzkNnB2Dd
+   SG2RMkZ+hcaB/725ZS1U0mGLL6/Dz+CS+/IpBgat+b6zMIUn0V9+/vhsf
+   SrtgH1BN0OadWrbHsjiSj0bDKucZLUCeWkDmVbTIF1zR6j6gIYNBrt9ug
+   Q==;
+X-CSE-ConnectionGUID: hJQrHxSmTpy9IhSb22yC0A==
+X-CSE-MsgGUID: NPu1ARbPRi2NdWWD0VecpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28013165"
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="28013165"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 12:06:41 -0700
+X-CSE-ConnectionGUID: WNQWn4/eRFqm6lxsQ96uZQ==
+X-CSE-MsgGUID: BpLYZa/NTNWdyAxOJB5cvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="115761987"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 16 Oct 2024 12:06:40 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t19Lx-000LJb-2x;
+	Wed, 16 Oct 2024 19:06:37 +0000
+Date: Thu, 17 Oct 2024 03:06:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: htmldocs: <built-in>:1:10: fatal error:
+ './include/linux/compiler-version.h' file not found
+Message-ID: <202410170214.gy9lNemy-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [RESEND PATCH] Bluetooth: hci_qca: use
- devm_clk_get_optional_enabled_with_rate()
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <172910556000.1899946.12785708588610583517.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Oct 2024 19:06:00 +0000
-References: <20240930080938.12505-1-brgl@bgdev.pl>
-In-Reply-To: <20240930080938.12505-1-brgl@bgdev.pl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- bartosz.golaszewski@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
+commit: ce6ed1c4c9876c2880f52f18c41ef2a30d070bc5 kbuild: rebuild GCC plugins when the compiler is upgraded
+date:   3 years, 7 months ago
+reproduce: (https://download.01.org/0day-ci/archive/20241017/202410170214.gy9lNemy-lkp@intel.com/reproduce)
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410170214.gy9lNemy-lkp@intel.com/
 
-On Mon, 30 Sep 2024 10:09:38 +0200 you wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Use the new devm_clk_get_optional_enabled_with_rate() clock helper to
-> shrink the code a bit.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> [...]
+All errors (new ones prefixed by >>):
 
-Here is the summary with links:
-  - [RESEND] Bluetooth: hci_qca: use devm_clk_get_optional_enabled_with_rate()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/5fe50b4b2d0c
+>> <built-in>:1:10: fatal error: './include/linux/compiler-version.h' file not found
+       1 | #include "./include/linux/compiler-version.h"
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+>> <built-in>:1:10: fatal error: './include/linux/compiler-version.h' file not found
+       1 | #include "./include/linux/compiler-version.h"
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+   make[1]: *** [scripts/Makefile.build:116: scripts/mod/devicetable-offsets.s] Error 1
+   make[1]: *** [scripts/Makefile.build:271: scripts/mod/empty.o] Error 1
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
