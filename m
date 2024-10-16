@@ -1,175 +1,169 @@
-Return-Path: <linux-kernel+bounces-367908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B239A0833
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 258849A082D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF5D1F25776
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF041F25742
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB52076B0;
-	Wed, 16 Oct 2024 11:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211A5206E7F;
+	Wed, 16 Oct 2024 11:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuGN/Npf"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BrFdDo9V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1AF15C147;
-	Wed, 16 Oct 2024 11:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9C615C147
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729077432; cv=none; b=dYrY6xmS2aGLmbVmFw1EFFpp+dHdcFk+imw3bnAsrNOIhtepvP577qnf080aP1q0rD9jHYL/eytRgcmXrSQfMlhMum17q+8DmDFW5bWgsHg4UGG8nXFqs+hrO5BRHTjqtViWJGCjXo6Itm2DSrcSTLXsmDD2GWCwBkkisHqYdYg=
+	t=1729077398; cv=none; b=YU0sqsDKrgu8PkumYAMlIAqQgHbHf1zHEXu6rb6H5M6R66LodENZL7Wb2Stz98YcesQbHJRvQZ2Lwlpcha4/r/bQCoKxfODT5BU/SNetx4pf9WXxtgjRYxA2KglWRsxjhksLpk9al1KDwah7QW5jP567M6KLRpiYh4TmyjETUr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729077432; c=relaxed/simple;
-	bh=EU3sgtn4DXMz6YcK+VSDmOMxYa+S5yUUdTVOKmy5kWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nLMKB0KqmCg/PiwQZPLv33BvikRSd9YNe4lwWtBtlMoeKVPwRrnqan4ZBzIJpv+lY0MiQyoO7bkJGRNysLCm3LHXaBNjM+BiMSs0boD5hJtH2QTXuQlG93sFUc+gkIO+ZBzV4ZYOX0Ui2Ir4LZZ+cm9tvpwAhmo++JxT10J5NIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuGN/Npf; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-430ee5c9570so76434315e9.3;
-        Wed, 16 Oct 2024 04:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729077429; x=1729682229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkxMsxXOxgn3VlmEMdu8a32/0K8lNsfFBfaK/Bmgj7o=;
-        b=PuGN/Npf2NKnOZ516tE77jPsdC/d8KzKpXbASJ4QXvaCU4obx0++fWifQ6VUkX7ziK
-         JizKISis/3/GAXInWmJj3AyvPJPPVXJLb1byJTVKHVjcNwEAw5vkBac9d0po8QAn+TqA
-         c5DxR5IiB7Iu7JhejZLrvx0AUN9R6akiue5PtYVewFDOvG8yJqTCE5k6MQN35fEa5VhG
-         MOphgJ7zZP9N19CGR563nXwILkvuYbHhzlyhD/VU0VWilfFz7t2BeiKPpbQlQi+wb6a+
-         pLu/f6On6jWNxVmqt/AzegWAiCI9AqMZFyNZNbmd0DumwG52AIUzEOsN5u6T6rdanqPb
-         Of+w==
+	s=arc-20240116; t=1729077398; c=relaxed/simple;
+	bh=ionG4jDjTyVSCbBxsm9pbenqEucVFWILHnagSxWDumc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mj4Bi5kcKecEcShqECaFfGKSm1hHscsfwIFvqPu6oiL3lHi1akRbtV9Fxg53060k4PjCQazgG6OhJQ+xDUk6fXpMVCny3gAAXt98XWXH66dAseDBZk8d80ntWKzEfrNBl7zsy3vMLudwTc0T7Nx3FOVEYL+DFFcvxrz5GLtT9Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BrFdDo9V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729077396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ionG4jDjTyVSCbBxsm9pbenqEucVFWILHnagSxWDumc=;
+	b=BrFdDo9VKSPz8kBaY39X0spgy26ENQH8k/0TvkN5vZp0Wzv5dE23YtTfBAxpsOyJ8aGimx
+	tZpLCaxYK7jqWHUFqo/RLkwuabz72/LKfzdouT/DJD/PIKpgpux41ngryHy19mi8yCWP9a
+	T9av996x6uqd1lHCxQZnRkcq55wg+Tw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-499-OwI9leORONCRgFhoXgwwuQ-1; Wed, 16 Oct 2024 07:16:35 -0400
+X-MC-Unique: OwI9leORONCRgFhoXgwwuQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43152cd2843so3408585e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:16:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729077429; x=1729682229;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IkxMsxXOxgn3VlmEMdu8a32/0K8lNsfFBfaK/Bmgj7o=;
-        b=UsG17ZXBp8gdr17tcTQRsREFZRkg8cZUNq9/JsmNtZ2fa07SNgKiRUPYPfB9OJPff4
-         kLji7HyruMkPoJDM4xTlGxnXw3XQ0b/oToReYgENlZ+WqZhQLur3GwagDWabov/0pJg1
-         fakEPNoggZ6O1asoO9fDq59wU7/OSpX1NPhAEdrsvkq/fqxYo/+r2OmKCtKJ687fijMf
-         68ISje6tEJ+mxmYY2//v3xxqiPlM0FdHhdXFnKG5limzpCy/QXFm4SQ+uDtkloyaDEFu
-         f2E6am+gPG+ld/txE33/gIfYnoDw0Y+gkn5p7ZSOxvrbdctTZwv3zFYDpqabcfPPrS1m
-         YeeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHsUMSxpenLAWC8yiQ+Cj1PMPrIR+Cq/lIcPSuYZuG9lGAQEF7u4nFId5fi0Jj54L26ZM6kptIiVoxB84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynv+CbHK8cg84v+9woqZXPQpU6phSKmGh5B/ZZ2Q2cKSA9OqQM
-	4dWpmRxRZe1WPu/8Sii4uk72AUG+lbb7IdXKAJggwr0gtI6EW3DT
-X-Google-Smtp-Source: AGHT+IElTykgnhe8E0i8WlwpzDwud6Ln632DjXpuzr5XGiDVXlSq/38dAGkSi7tGDayg61wiBQtnpQ==
-X-Received: by 2002:adf:fa46:0:b0:37c:cc4b:d1d6 with SMTP id ffacd0b85a97d-37d5ff8e817mr13362222f8f.27.1729077429077;
-        Wed, 16 Oct 2024 04:17:09 -0700 (PDT)
-Received: from Max.. ([176.12.137.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a13bsm4040153f8f.13.2024.10.16.04.17.07
+        d=1e100.net; s=20230601; t=1729077394; x=1729682194;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ionG4jDjTyVSCbBxsm9pbenqEucVFWILHnagSxWDumc=;
+        b=RWZ6OiMKqMx8G6E4pAmfBJbR4u2IYgcNEz7TcAc8wgMYJP09lKkEg56vIlBKf5hzHn
+         GsuEmBqBc9wh3kR/LZl4AZwsKCySHzizentuhlhqKQgYir0XIINgKY1Qqg6SefAbmDrv
+         evd28q5qFo03YfvXT8fcE/YQ8vQZh/m2oiKHPnam4QQ476NDpfCsPy2rq8l40yuA7RcK
+         OOx0YHM26elXn5BjPXxCGYvfJERTKth6zdHpevl0CIP9WBXogk7Z2qNtfp+09COGLV9N
+         PdDo1F7jEBAlFC8gwD6qioqNl/0E5fH9dzIip8nVINm5ChIPAnWyDx7hSoJ0CQozyZzc
+         Dv0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWG+zT1JxxGT41BPxVgPK0rzNYd7XCk0kB6wG6TxrAIrI325vhmLt9D0GM/7WJTd6H56RgBQs/UFimRijk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmKpObA6/B7YDH4POA7cydfWQHD9kw6XYSO0psL234Bl1Tzygn
+	ECMz1b8V3U0PQ/ISEYb4xQ9BCYnKoRAsDFzySVbd6cW/HcsZc+Iu80l+hBAFp4LNLZRUi+iPWRZ
+	L+VnQFdNWFM/9yJrcxrEtW9D8R2Uoh5mxcRGBQkhBZ1LV4bxvpASbxdEWCDYJ0A==
+X-Received: by 2002:a05:600c:c0d:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-4311ddffb8dmr160143235e9.0.1729077393818;
+        Wed, 16 Oct 2024 04:16:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHF6mlruAq+rlftht0xklUty2+K9bi4n84O7QB16BRpDQ0gUnzdPdf71NDf6zOxbjqpZa7ZqQ==
+X-Received: by 2002:a05:600c:c0d:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-4311ddffb8dmr160143025e9.0.1729077393411;
+        Wed, 16 Oct 2024 04:16:33 -0700 (PDT)
+Received: from dhcp-64-113.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314f5e2258sm22567745e9.10.2024.10.16.04.16.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 04:17:08 -0700 (PDT)
-From: Max Brener <linmaxi@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Max Brener <linmaxi@gmail.com>
-Subject: [RESEND v2] ext4: Optimization of no-op ext4_truncate triggers
-Date: Wed, 16 Oct 2024 14:16:24 +0300
-Message-ID: <20241016111624.5229-1-linmaxi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 16 Oct 2024 04:16:33 -0700 (PDT)
+Message-ID: <482d0c45ea2121484a85ed9be6a1863b6d39ac1e.camel@redhat.com>
+Subject: Re: [PATCH RESEND] vdpa: solidrun: Fix UB bug with devres
+From: Philipp Stanner <pstanner@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Andy Shevchenko <andy@kernel.org>, Alvaro Karsz
+ <alvaro.karsz@solid-run.com>,  "Michael S. Tsirkin" <mst@redhat.com>, Jason
+ Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
+ =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+ virtualization@lists.linux.dev,  linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Wed, 16 Oct 2024 13:16:32 +0200
+In-Reply-To: <2024101627-tacking-foothill-cdf9@gregkh>
+References: <20241016072553.8891-2-pstanner@redhat.com>
+	 <Zw-CqayFcWzOwci_@smile.fi.intel.com>
+	 <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
+	 <2024101627-tacking-foothill-cdf9@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219306
-v1: https://lore.kernel.org/lkml/20240926221103.24423-1-linmaxi@gmail.com/T/
+On Wed, 2024-10-16 at 12:51 +0200, Greg KH wrote:
+> On Wed, Oct 16, 2024 at 11:22:48AM +0200, Philipp Stanner wrote:
+> > On Wed, 2024-10-16 at 12:08 +0300, Andy Shevchenko wrote:
+> > > On Wed, Oct 16, 2024 at 09:25:54AM +0200, Philipp Stanner wrote:
+> > > > In psnet_open_pf_bar() and snet_open_vf_bar() a string later
+> > > > passed
+> > > > to
+> > > > pcim_iomap_regions() is placed on the stack. Neither
+> > > > pcim_iomap_regions() nor the functions it calls copy that
+> > > > string.
+> > > >=20
+> > > > Should the string later ever be used, this, consequently,
+> > > > causes
+> > > > undefined behavior since the stack frame will by then have
+> > > > disappeared.
+> > > >=20
+> > > > Fix the bug by allocating the strings on the heap through
+> > > > devm_kasprintf().
+> > >=20
+> > > > ---
+> > >=20
+> > > I haven't found the reason for resending. Can you elaborate here?
+> >=20
+> > Impatience ;p
+> >=20
+> > This is not a v2.
+> >=20
+> > I mean, it's a bug, easy to fix and merge [and it's blocking my
+> > other
+> > PCI work, *cough*]. Should contributors wait longer than 8 days
+> > until
+> > resending in your opinion?
+>=20
+> 2 weeks is normally the expected response time, but each subsystem
+> might
+> have other time limites, the documentation should show those that do.
 
-Changes from last version: Moved vfs-level changes to be ext4-level,
-and improved the description of the patch.
+Where do we document that?
 
-This patch enables skipping no-op 'ext4_truncate' calls. Analyzing the kernel
-with ftrace shows ext4_truncate is being sometimes called without making any
-impact, and sometimes userspace programs might call ext4_truncate in vein. By 
-detecting these calls and skipping them, cpu time is saved.
+Regarding resend intervals, the official guide line is contradictory:
+"You should receive comments within a few weeks (typically 2-3)" <->
+"Wait for a minimum of one week before resubmitting or pinging
+reviewers" <--> "It=E2=80=99s also ok to resend the patch or the patch seri=
+es
+after a couple of weeks"
 
-I'll fix this by skipping ext4_truncate call in 'ext4_setattr' when the file's size
-hasn't changed AND it hasn't been truncated since the last disk space preallocation.
-It is meant to consider the case when ext4_truncate is being called to truncate
-preallocated blocks too. Notice that so far, the condition to triggering 
-ext4_truncate by the user was: if (attr->ia_size <= oldsize) which means it is
-being triggered when attr->ia_size == oldsize regardless of whether there are
-preallocated blocks or not - if there are none, then the call is redundant.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#don-=
+t-get-discouraged-or-impatient
 
-Steps:
-1.Add a new inode state flag: EXT4_STATE_TRUNCATED
-2.Clear the flag when ext4_fallocate is being called with FALLOC_FL_KEEP_SIZE flag
-to enable using ext4_truncate again, to remove preallocated disk space that may
-have resulted from this call.
-3.Set EXT4_STATE_TRUNCATED when ext4_truncated is called successfully.
-4.Don't skip ext4_truncate in ext4_setattr when the size of the file has either been
-reduced OR stayed the same, but hasn't been truncated yet. This is in order to allow
-truncating of preallocated blocks.
 
-Signed-off-by: Max Brener <linmaxi@gmail.com>
----
- fs/ext4/ext4.h    | 1 +
- fs/ext4/extents.c | 4 ++++
- fs/ext4/inode.c   | 6 +++++-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+We could make the docu more consistent and specify 2 weeks as the
+minimum time.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 44b0d418143c..34128a88e88f 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1915,6 +1915,7 @@ enum {
- 	EXT4_STATE_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
- 	EXT4_STATE_FC_COMMITTING,	/* Fast commit ongoing */
- 	EXT4_STATE_ORPHAN_FILE,		/* Inode orphaned in orphan file */
-+	EXT4_STATE_TRUNCATED,		/* Inode is truncated */
- };
- 
- #define EXT4_INODE_BIT_FNS(name, field, offset)				\
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 34e25eee6521..b480c29dfc65 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4782,6 +4782,10 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 		ret = ext4_zero_range(file, offset, len, mode);
- 		goto exit;
- 	}
-+
-+	if (mode & FALLOC_FL_KEEP_SIZE)
-+		ext4_clear_inode_state(inode, EXT4_STATE_TRUNCATED);
-+
- 	trace_ext4_fallocate_enter(inode, offset, len, mode);
- 	lblk = offset >> blkbits;
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 54bdd4884fe6..cbdad3253920 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4193,6 +4193,8 @@ int ext4_truncate(struct inode *inode)
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
- 
-+	ext4_set_inode_state(inode, EXT4_STATE_TRUNCATED);
-+
- out_stop:
- 	/*
- 	 * If this was a simple ftruncate() and the file will remain alive,
-@@ -5492,7 +5494,9 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 * Call ext4_truncate() even if i_size didn't change to
- 		 * truncate possible preallocated blocks.
- 		 */
--		if (attr->ia_size <= oldsize) {
-+		if (attr->ia_size < oldsize ||
-+			(attr->ia_size == oldsize &&
-+			!ext4_test_inode_state(inode, EXT4_STATE_TRUNCATED))) {
- 			rc = ext4_truncate(inode);
- 			if (rc)
- 				error = rc;
--- 
-2.43.0
+P.
+
+
+>=20
+> While you wait, take the time to review other pending patches for
+> that
+> maintainer, that will ensure that your patches move to the top as
+> they
+> will be the only ones remaining.
+>=20
+> thanks,
+>=20
+> greg k-h
+>=20
 
 
