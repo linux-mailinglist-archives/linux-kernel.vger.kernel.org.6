@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-367905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8059A082C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:16:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDEA9A0821
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F1E1285408
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2C61F22884
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5505E2076C4;
-	Wed, 16 Oct 2024 11:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3305E1B85CD;
+	Wed, 16 Oct 2024 11:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ailUwRxU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xqNCwMtB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kt1PV4HQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC87202F98;
-	Wed, 16 Oct 2024 11:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D372076B0;
+	Wed, 16 Oct 2024 11:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729077312; cv=none; b=rucl5WgS9PyeUjH6pL2Cxh+5wCcarVo/1CUitLRAVlaz1re4ldrlhjQV6+GeAbZQNYSJ5RUydQ6yrC97wYyve1HOf7/tefBd61F5SUFax9l09PfIdKivdnL7Qn3/poOZOnERHV91tB/UUZbPLs7Q9K5LnrV06FRP/jxMN2VK9As=
+	t=1729077307; cv=none; b=uG6zhqvMYElAC/M8D8gRt8l79+33yocr12GxulJUGu2xMEwnM40pVWtUeKKYn9n4G3QPVHJW4zotehmoQsjPhkOICAvGD1W9nZWCJvIMiebwUB546Pw3/vtRs9CbEiLfQwubhve6PJFdHU5bKTQ197S9btR1fmQAcmwJM5AwLF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729077312; c=relaxed/simple;
-	bh=KeXYT7Y2Y5kusM4KVM64TAK3+woLAQN8jJ27LWspqwE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QY7EHRM5hPL6odO/lxq1jvbm7Ubb6Tqg+c9AcyeVAA4Zalwy5kGXsJHQWTQ1sSZVBOgVimJxVQVMVCQe+9BVIgGlpEGSOgQWd3hu0h1D+Zy9taD4R3K3xVp2BIoVBGtuoPriAPaZ50TwvMBHlmiJRmNrijDMTlRMPt7PmBzaZPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ailUwRxU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xqNCwMtB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729077309;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=taMxV9mtk3n69MLoKAdYPROfMQmRFolbS3Ztd5Pnu6o=;
-	b=ailUwRxUPhMswFw6KNbD9qLockidc3EcNGUOaMUbL91aUGwePokXSpGsGaS0UvAfqRBpml
-	60h1gEn351uOPQiPOkloVnqaPfaFXKzoYXTGlaeOhjJvj5AP1aXn/rqYHAl04jER2wcX/q
-	W8lBjirowRCwdYoI9JjgpMxb4hdLtGHAbxtiDAzaIGu6NlG8FVUSGQWyihRIiUt9J+WgMS
-	iWMmRSdGNJRz5uvKiXh9pRd6lMP5KXAhP2TiERZKJ1VBHCweZJG5aUSRPiV6uD4oIgkEJw
-	ba/aFw5ApuxXhnKzYkCuRbDvGhXI014402yhhqZLeh68AeIDOZUpKRiOLqkGFg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729077309;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=taMxV9mtk3n69MLoKAdYPROfMQmRFolbS3Ztd5Pnu6o=;
-	b=xqNCwMtB8BWzTliqAWJ2BpTVRFKQvciCUP6FsKMjnCJTlJy9QGiNuw75HZN9yJIKy4/ZA+
-	G+h4YaWSABZXBHCg==
-Date: Wed, 16 Oct 2024 13:14:51 +0200
-Subject: [PATCH] tools/nolibc/stdlib: fix getenv() with empty environment
+	s=arc-20240116; t=1729077307; c=relaxed/simple;
+	bh=i1FXqX7vaFlbEdo4x8UD9t358ydTprqjpOUrdWda5UY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=txx3IKEQoABjj/R3mLMZKDlXWn6AOMNk/9Rl1pKc2uNHsutgVThjFf1I6z976zWp2CUlSq3VNzaPUIp3w9I+77OH+z6EJUfC+w64AcMIVnmLRf3DPUfMNwhlGxbSvDUFruClnc+LBZoK0WKJB9oeS546Hdcvtb0s3FqA/LNto5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kt1PV4HQ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729077307; x=1760613307;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=i1FXqX7vaFlbEdo4x8UD9t358ydTprqjpOUrdWda5UY=;
+  b=kt1PV4HQNGzz1N4UYSvrery2NjneY+TzB/N+d2XHOrSQwEncxBuCQCCH
+   9ySsix2Z5iVsvbeNZ1RDhR4ETBllWRWY5QBkZvF/3otL8oCvUd+/tNWBx
+   2Vyu2KwlEucq8+OO/Kmqyntglx7JtZUdiuitrVqiso11I2HyQegtfzw0P
+   lmOT/ohxx813Y3wwX0cCFfe7TTBiWMB9Z1Ej/DfUP2z2vswRdAvZuHUYr
+   3LDBAC+ePguI+VGdgKMf1Jud2TwOn31OMLM9Y9bvfZz0IlhqsXIgFi4gL
+   LSbHw8lCUDsUC0iSMqDdG4cVbv31fGdFyISzxBc6mAmSttuWkE3xMPNd+
+   Q==;
+X-CSE-ConnectionGUID: kV0A8A5pSk2q1uYOC2zDZA==
+X-CSE-MsgGUID: 6V1WvbRaSuqhHihHIuAxNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51054353"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51054353"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 04:15:06 -0700
+X-CSE-ConnectionGUID: 18NRXo91QLy0WV9KmO1Htw==
+X-CSE-MsgGUID: 7/8WkNt8SfKBK2g9azrWHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="108937898"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 16 Oct 2024 04:15:01 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id D265C165; Wed, 16 Oct 2024 14:14:59 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Baoquan He <bhe@redhat.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv4, REBASED 0/4] x86: Reduce code duplication on page table initialization
+Date: Wed, 16 Oct 2024 14:14:54 +0300
+Message-ID: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241016-nolibc-getenv-v1-1-8bc11abd486d@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIACqgD2cC/x3MQQqAIBBA0avIrBPUJLCrRIvS0QZCQ0MC6e5Jy
- 7f4v0HBTFhgZg0yViqUYoccGNhjiwE5uW5QQmkp5MRjOmm3POCNsXJvjNdudF5ZB725Mnp6/t+
- yvu8HXNSq4l8AAAA=
-X-Change-ID: 20241016-nolibc-getenv-f99f4d3df2cd
-To: Willy Tarreau <w@1wt.eu>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729077306; l=1279;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=KeXYT7Y2Y5kusM4KVM64TAK3+woLAQN8jJ27LWspqwE=;
- b=fkJhst66dWkETVCllsXXJUUPP1dDlpIoXVGm5mQQuP/MTWhXozSINhWUWHK1UEhPiMTMRlanl
- Ar/G9Lw3eqeD4N8E7WkEos2R5kiOsqgo5/ScpOpYmpaG7NomsAolFPe
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The environ pointer itself is never NULL, this is guaranteed by crt.h.
-However if the environment is empty, environ will point to a NULL
-pointer.
-While this case will be checked by the loop later, this only happens
-after the first loop iteration.
-To avoid reading invalid memory inside the loop, fix the test that
-checks for an empty environment.
+Use kernel_ident_mapping_init() to initialize kernel page tables where
+possible, replacing manual initialization, reducing code duplication.
 
-Fixes: 077d0a392446 ("tools/nolibc/stdlib: add a simple getenv() implementation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/include/nolibc/stdlib.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v4:
+ - Reviewed-bys from Kai;
+ - Fix comment in acpi_mp_setup_reset() (Rafael);
+v3:
+ - Reviewed-bys from Tom;
+ - Improve commit messages;
+v2:
+ - A separate patch to change what PA is mapped at relocate_kernel() VA.
+ - Improve commit messages;
+ - Add Reveiwed-by from Kai;
 
-diff --git a/tools/include/nolibc/stdlib.h b/tools/include/nolibc/stdlib.h
-index 75aa273c23a6153db6a32facaea16457a522703b..c31967378cf1f699283d801487c1a91d17e4d1ce 100644
---- a/tools/include/nolibc/stdlib.h
-+++ b/tools/include/nolibc/stdlib.h
-@@ -90,7 +90,7 @@ char *getenv(const char *name)
- {
- 	int idx, i;
- 
--	if (environ) {
-+	if (*environ) {
- 		for (idx = 0; environ[idx]; idx++) {
- 			for (i = 0; name[i] && name[i] == environ[idx][i];)
- 				i++;
+Kirill A. Shutemov (4):
+  x86/mm/ident_map: Fix virtual address wrap to zero
+  x86/acpi: Replace manual page table initialization with
+    kernel_ident_mapping_init()
+  x86/64/kexec: Map original relocate_kernel() in
+    init_transition_pgtable()
+  x86/64/kexec: Rewrite init_transition_pgtable() with
+    kernel_ident_mapping_init()
 
----
-base-commit: 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
-change-id: 20241016-nolibc-getenv-f99f4d3df2cd
+ arch/x86/include/asm/kexec.h       |  5 +-
+ arch/x86/kernel/acpi/madt_wakeup.c | 73 +++++-------------------
+ arch/x86/kernel/machine_kexec_64.c | 89 +++++++++++-------------------
+ arch/x86/mm/ident_map.c            | 14 +----
+ 4 files changed, 50 insertions(+), 131 deletions(-)
 
-Best regards,
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.45.2
 
 
