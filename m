@@ -1,175 +1,175 @@
-Return-Path: <linux-kernel+bounces-368169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94ED39A0C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A19E9A0C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0088DB27049
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14F6E1C249DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC4420C479;
-	Wed, 16 Oct 2024 13:58:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3006A20E004;
+	Wed, 16 Oct 2024 13:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L+rFV/ST"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB88820C009;
-	Wed, 16 Oct 2024 13:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF94A20C00F;
+	Wed, 16 Oct 2024 13:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729087139; cv=none; b=c+UdFEoQEGP7nSpk/W1kB0dX5sc3Qo8pBk4bofE9lZ5tywDQYW6Q54DuvWrL96vE7Z1p1d2oXcy9cnTAvnIpkqLWi73zztwj8JqCwXROlBl1QpGkMz96w6Szscnvl9JnyaTjF/C2QnPaPesC2XuX54IFWY1Wbw+UWjlP/Y9LcOU=
+	t=1729087165; cv=none; b=NTVIULIiTW9+eb7wzrschabVgiI6aBa7H6CMQ8oTKpdaM6I4H8GRtExrKSVHKG1bU10SiDXhSe5uVlrdwmpgGXhItRbMCWEP6wl6ovow+Cc0T6loElNXSU0yplnnWqFBLCKICKtX/e7pli8D+1o4snukh8I1pPQ8CKwFywpUWQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729087139; c=relaxed/simple;
-	bh=DCwW1BXaEzYmomHtjqvPhEnDGnecHTjUZgJNEcpFnTA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oV+a8Ndu+BJiDoBSdy205lZFwASoKPuT/2qnXi7suJfPXiNV8QyBT0PXTd8/RSZv0z7t7ZLeTukmM6avmil9VQ3ODZ2duG7RaLkO+1dEcbTHhMmu7xNqSHmZ/TFGk6tTXgX7aHvIrOVklu6Nn0F1A1rzq5hjM9/f1xMjSYCH1MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTCGw6RFvz6D8Y7;
-	Wed, 16 Oct 2024 21:58:16 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 54E9E140B67;
-	Wed, 16 Oct 2024 21:58:54 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 15:58:52 +0200
-Date: Wed, 16 Oct 2024 14:58:51 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
-	<thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Vasily Khoruzhick
-	<anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v4 2/6] thermal: of: Use scoped memory and OF handling
- to simplify thermal_of_trips_init()
-Message-ID: <20241016145851.00004e90@Huawei.com>
-In-Reply-To: <20241010-b4-cleanup-h-of-node-put-thermal-v4-2-bfbe29ad81f4@linaro.org>
-References: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
-	<20241010-b4-cleanup-h-of-node-put-thermal-v4-2-bfbe29ad81f4@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729087165; c=relaxed/simple;
+	bh=1QhS/ZQtaLfxfKipAIdLpF/f15cK8G1+3Y9DdLBavL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoNnwNM1s2UA/TqFslen9Lgq2VpO551C+ltucgfCDv90sFtKJWKrvJs5L4z5tny8JAFYOKq5WDFcZeUo0L7hFAfqbWJIEh7SguB2niuWv3tfpd/gtWmwQceCcZtyHuHqtJCutcGWwmoGz7G31GRw6+M/l7B6AV4YLHLtn+qxK+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L+rFV/ST; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729087165; x=1760623165;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1QhS/ZQtaLfxfKipAIdLpF/f15cK8G1+3Y9DdLBavL8=;
+  b=L+rFV/STUS11d2+EMBMKt02rPROi9a2PyF88Y7uGD38sPV9uSFYoE5uu
+   trAVxB7LM+3kiaCBk9rDrMhXSeVIluuqizSQwck3m25wmIFw83wd95cbm
+   BrAuKDsJB4fN700GsNq/5zXDdBApENM3s3uJMpCWI4EQkiMVtPTMJE8Gb
+   afEwvZ2howneGAjCYOLlsAj+sFaa0uPwWT9Z5EBD/hPT6eZFNB+n9XaOT
+   CJNSaj6J1A47QDVjKGGkQmQ7+CK1YskZa7C6tfrKPk+X2nlxiA4xtAAjQ
+   aNF04Ms6q4weaXSA+dDT4Z7Qrtv+T+kRXBCMAPWVfzxN++FhO6w7LSU/9
+   g==;
+X-CSE-ConnectionGUID: p/QHkfQ0TguJHEH2VB3tAQ==
+X-CSE-MsgGUID: cE6GxUSlQrqrT7ldd3CJ1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="32335950"
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="32335950"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:59:24 -0700
+X-CSE-ConnectionGUID: 35FUm06sQuSy7IjIHDMHBQ==
+X-CSE-MsgGUID: r23weTMzQI2u/Y7UX/aNkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="78284536"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 16 Oct 2024 06:59:18 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t14YW-000KyF-2E;
+	Wed, 16 Oct 2024 13:59:16 +0000
+Date: Wed, 16 Oct 2024 21:59:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kurt Kanzenbach <kurt@linutronix.de>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	George McCollister <george.mccollister@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Rosen Penev <rosenp@gmail.com>, Simon Horman <horms@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Breno Leitao <leitao@debian.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: memcpy to ethtool_puts
+Message-ID: <202410162106.9WmH0oPN-lkp@intel.com>
+References: <20241015200222.12452-3-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015200222.12452-3-rosenp@gmail.com>
 
-On Thu, 10 Oct 2024 20:06:18 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Hi Rosen,
 
-> Obtain the device node reference and allocate memory with
-> scoped/cleanup.h to reduce error handling and make the code a bit
-> simpler.
-> 
-> The code is not equivalent in one minor aspect: outgoing parameter
-> "*ntrips" will not be zeroed on errors of memory allocation.  This
-> difference is not important, because code was already not zeroing it in
-> case of earlier errors and the only caller does not rely on ntrips being
-> 0 in case of errors.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Trivial unrelated comment inline + maybe return_ptr() is the way to go as
-Chen-Yu mentioned.
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[auto build test WARNING on net/main]
+[also build test WARNING on net-next/main linus/master horms-ipvs/master v6.12-rc3 next-20241016]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> ---
-> 
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Chen-Yu Tsai <wenst@chromium.org>
-> 
-> Changes in v4:
-> 1. Significant change: kzalloc() also with scoped-handling so the entire
->    error handling could be removed.
-> 2. Due to above, drop review-tags (Chen-Yu, Jonathan).
-> 
-> Changes in v2:
-> 1. Drop left-over of_node_put in regular exit path (Chen-Yu)
-> ---
->  drivers/thermal/thermal_of.c | 31 ++++++++-----------------------
->  1 file changed, 8 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-> index f0ffc0e335ba9406f4fd858d6c561f9d23f4b842..37db435b54b124abf25b1d75d6cc4fb75f1c1e5c 100644
-> --- a/drivers/thermal/thermal_of.c
-> +++ b/drivers/thermal/thermal_of.c
-> @@ -95,11 +95,9 @@ static int thermal_of_populate_trip(struct device_node *np,
->  
->  static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *ntrips)
->  {
-> -	struct thermal_trip *tt;
-> -	struct device_node *trips;
->  	int ret, count;
->  
-> -	trips = of_get_child_by_name(np, "trips");
-> +	struct device_node *trips __free(device_node) = of_get_child_by_name(np, "trips");
->  	if (!trips) {
->  		pr_err("Failed to find 'trips' node\n");
->  		return ERR_PTR(-EINVAL);
-> @@ -108,36 +106,23 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
->  	count = of_get_child_count(trips);
->  	if (!count) {
->  		pr_err("No trip point defined\n");
-> -		ret = -EINVAL;
-> -		goto out_of_node_put;
-> +		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	tt = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
-> -	if (!tt) {
-> -		ret = -ENOMEM;
-> -		goto out_of_node_put;
-> -	}
-> -
-> -	*ntrips = count;
-> +	struct thermal_trip *tt __free(kfree) = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-memcpy-to-ethtool_puts/20241016-040502
+base:   net/main
+patch link:    https://lore.kernel.org/r/20241015200222.12452-3-rosenp%40gmail.com
+patch subject: [PATCH] net: memcpy to ethtool_puts
+config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20241016/202410162106.9WmH0oPN-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410162106.9WmH0oPN-lkp@intel.com/reproduce)
 
-Trivial and unrelated, but maybe kcalloc(count, sizeof(tt), GFP_KERNEL);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410162106.9WmH0oPN-lkp@intel.com/
 
-> +	if (!tt)
-> +		return ERR_PTR(-ENOMEM);
->  
->  	count = 0;
->  	for_each_child_of_node_scoped(trips, trip) {
->  		ret = thermal_of_populate_trip(trip, &tt[count++]);
->  		if (ret)
-> -			goto out_kfree;
-> +			return ERR_PTR(ret);
->  	}
->  
-> -	of_node_put(trips);
-> +	*ntrips = count;
->  
-> -	return tt;
-> -
-> -out_kfree:
-> -	kfree(tt);
-> -	*ntrips = 0;
-> -out_of_node_put:
-> -	of_node_put(trips);
-> -
-> -	return ERR_PTR(ret);
-> +	return no_free_ptr(tt);
->  }
->  
->  static struct device_node *of_thermal_zone_find(struct device_node *sensor, int id)
-> 
+All warnings (new ones prefixed by >>):
 
+   drivers/net/dsa/mv88e6xxx/chip.c: In function 'mv88e6xxx_get_strings':
+>> drivers/net/dsa/mv88e6xxx/chip.c:1215:13: warning: variable 'count' set but not used [-Wunused-but-set-variable]
+    1215 |         int count = 0;
+         |             ^~~~~
+   during RTL pass: mach
+   drivers/net/dsa/mv88e6xxx/chip.c: In function 'mv88e6xxx_read':
+   drivers/net/dsa/mv88e6xxx/chip.c:68:1: internal compiler error: in arc_ifcvt, at config/arc/arc.cc:9703
+      68 | }
+         | ^
+   0x5b78c1 arc_ifcvt
+   	/tmp/build-crosstools-gcc-13.2.0-binutils-2.41/gcc/gcc-13.2.0/gcc/config/arc/arc.cc:9703
+   0xe431b4 arc_reorg
+   	/tmp/build-crosstools-gcc-13.2.0-binutils-2.41/gcc/gcc-13.2.0/gcc/config/arc/arc.cc:8552
+   0xaed299 execute
+   	/tmp/build-crosstools-gcc-13.2.0-binutils-2.41/gcc/gcc-13.2.0/gcc/reorg.cc:3927
+   Please submit a full bug report, with preprocessed source (by using -freport-bug).
+   Please include the complete backtrace with any bug report.
+   See <https://gcc.gnu.org/bugs/> for instructions.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+
+
+vim +/count +1215 drivers/net/dsa/mv88e6xxx/chip.c
+
+65f60e4582bd32 drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-28  1210  
+dfafe449bbc91d drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2016-11-21  1211  static void mv88e6xxx_get_strings(struct dsa_switch *ds, int port,
+89f09048348936 drivers/net/dsa/mv88e6xxx/chip.c Florian Fainelli 2018-04-25  1212  				  u32 stringset, uint8_t *data)
+f5e2ed022dff60 drivers/net/dsa/mv88e6xxx.c      Andrew Lunn      2015-12-23  1213  {
+04bed1434df256 drivers/net/dsa/mv88e6xxx/chip.c Vivien Didelot   2016-08-31  1214  	struct mv88e6xxx_chip *chip = ds->priv;
+436fe17d273bed drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-01 @1215  	int count = 0;
+dfafe449bbc91d drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2016-11-21  1216  
+89f09048348936 drivers/net/dsa/mv88e6xxx/chip.c Florian Fainelli 2018-04-25  1217  	if (stringset != ETH_SS_STATS)
+89f09048348936 drivers/net/dsa/mv88e6xxx/chip.c Florian Fainelli 2018-04-25  1218  		return;
+89f09048348936 drivers/net/dsa/mv88e6xxx/chip.c Florian Fainelli 2018-04-25  1219  
+c9acece064e3f0 drivers/net/dsa/mv88e6xxx/chip.c Rasmus Villemoes 2019-06-20  1220  	mv88e6xxx_reg_lock(chip);
+c6c8cd5e3ce494 drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-01  1221  
+dfafe449bbc91d drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2016-11-21  1222  	if (chip->info->ops->stats_get_strings)
+436fe17d273bed drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-01  1223  		count = chip->info->ops->stats_get_strings(chip, data);
+436fe17d273bed drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-01  1224  
+577149384b2aab drivers/net/dsa/mv88e6xxx/chip.c Rosen Penev      2024-10-15  1225  	if (chip->info->ops->serdes_get_strings)
+65f60e4582bd32 drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-28  1226  		count = chip->info->ops->serdes_get_strings(chip, port, data);
+c6c8cd5e3ce494 drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-01  1227  
+65f60e4582bd32 drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-28  1228  	mv88e6xxx_atu_vtu_get_strings(data);
+65f60e4582bd32 drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2018-03-28  1229  
+c9acece064e3f0 drivers/net/dsa/mv88e6xxx/chip.c Rasmus Villemoes 2019-06-20  1230  	mv88e6xxx_reg_unlock(chip);
+dfafe449bbc91d drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2016-11-21  1231  }
+dfafe449bbc91d drivers/net/dsa/mv88e6xxx/chip.c Andrew Lunn      2016-11-21  1232  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
