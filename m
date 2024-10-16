@@ -1,119 +1,165 @@
-Return-Path: <linux-kernel+bounces-368070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387BA9A0ADB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:56:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79229A09D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3D81F26293
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85BE228620F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E707820C49D;
-	Wed, 16 Oct 2024 12:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iwi56KRj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F86207A33;
+	Wed, 16 Oct 2024 12:34:51 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF9620E009;
-	Wed, 16 Oct 2024 12:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D75173357
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729083298; cv=none; b=LhuBbcwL66zv/RDRfwQR3G1HNT+pkzybE8ZqkVpr9TOwzD0Ue2IhJY1R0lAXlWcjhYhqz7HsWYpA+KKf2ImgWmE1wAQnMaNWUp102apsdoy/l8K02BtZSpYJ/gs84P3vkGuAYZYJ8ZcZgo/F8NEydfnL5oxzW2elJ0FUTadETPU=
+	t=1729082091; cv=none; b=sB70KVfFD1XObyhBW2XUR6DuP8uj7K7UaLkSRueOuX2LlhPsiG9Fj1pt+93ZmRUUA8dtrhs2IOmfnccl83cbK8fpvZA1nOEHafgDuEDX+d9PSB5L4Prju8SSIu/FUXPTSRgXY8IqpQyxDrJfqPOK/iNT62htWAND2Y717DsuVNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729083298; c=relaxed/simple;
-	bh=KPF0KACT9F/lCJwJBKf87gsgKAHCs8rYUmtPTv/KkxQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=axlsMUkhPxWbI1uF8U7hrBWfd3YJGGi4hYK3sNEY9k4JNCoZByt4TPGQZklrAmhZ1Qq1WpVODQt3nvm5hTKoEMYx70nP2CkZ9pbBHbTVZ73iw+LTo3SQ1Dukz9D7DMN/dMMQLco04V3zlMzYUqQHS+DtVEBf2U0xq9mH6Tgk4rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iwi56KRj; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729083298; x=1760619298;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=KPF0KACT9F/lCJwJBKf87gsgKAHCs8rYUmtPTv/KkxQ=;
-  b=iwi56KRj/FEE/MdK1kjaJLfOXHeqVzjTOpZ9YHu9jmucEMy38uFxRyBF
-   3FdEU/M9wMQCa1k9daUsQ+Jy5sp8vSlM0X1XRBmqgVhjz1vmE29iGPQGL
-   GK6jF4LZ6COiZfl4NShXRqBzyP2Z3L7+XyAxvqBGKqc58AxxkRsz727d/
-   JLwNlzqyictAA+dKbCJRF5vNQnlRI4EKl3zh7F+LnGPh7mB1mvm70lqwi
-   k8Uhep6zLX1Zzf1rTATdRUPpZcIV+oi8+OakfUpdyv8PDgfXRBPAg+GKz
-   CxrQzS87vUIhZIAjLNcCxEyYTn0tm2pPlwP4F6A2mEVYhPMYpqroeb7PM
-   g==;
-X-CSE-ConnectionGUID: BQ+TnEiVRvmZRBXVM/GHtQ==
-X-CSE-MsgGUID: 9SE9jshRRQuoZVip+PFOrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32217654"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="32217654"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:54:57 -0700
-X-CSE-ConnectionGUID: zaX0CHllRP+E2NiHohI2Zg==
-X-CSE-MsgGUID: d54RCjMzRJ+vNid0sTGXig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="82761777"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:54:54 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: tony.luck@intel.com,
-	bp@alien8.de
-Cc: tglx@linutronix.de,
-	dave.hansen@linux.intel.com,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	x86@kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	qiuxu.zhuo@intel.com
-Subject: [PATCH v2 10/10] x86/mce: Fix typos in comments
-Date: Wed, 16 Oct 2024 20:30:36 +0800
-Message-Id: <20241016123036.21366-11-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
-References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+	s=arc-20240116; t=1729082091; c=relaxed/simple;
+	bh=q2FjjIfhL52fwzxnepSd24OhoTHv7x+vgtz+msKcKGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GyfdLDhxiARihW/1wXbDHjbFDdsEJYjhttwWQmlCPM7aPCZvTpBnoZEp9w9ycINiAqXoa78qL2efsE98CYmLlHhDhMUrbu/eP9Dhd80uO8bhokfJ+/rkdyL8B9a9PqWn1JSUoW1PkZM0kWZwnjeR2GsrFuaiv6ArMUU/F1nzzEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XT9Qg4gMtz1xxBG;
+	Wed, 16 Oct 2024 20:34:51 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id C176D1A016C;
+	Wed, 16 Oct 2024 20:34:45 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 16 Oct 2024 20:34:45 +0800
+Message-ID: <584e60dd-8a3b-46d5-87ec-aa7032d3a572@huawei.com>
+Date: Wed, 16 Oct 2024 20:34:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm: shmem: update iocb->ki_pos directly to simplify
+ tmpfs read logic
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, <akpm@linux-foundation.org>,
+	<hughd@google.com>
+CC: <willy@infradead.org>, <david@redhat.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
+ <c390879ab020c44be25de8a07e3f1f87402350e0.1729072803.git.baolin.wang@linux.alibaba.com>
+Content-Language: en-US
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <c390879ab020c44be25de8a07e3f1f87402350e0.1729072803.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-Fix the following typos in comments:
 
-  s/callin/calling/
-  s/TBL/TLB/
 
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- arch/x86/kernel/cpu/mce/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 2024/10/16 18:09, Baolin Wang wrote:
+> Use iocb->ki_pos to check if the read bytes exceeds the file size and to
+> calculate the bytes to be read can help simplify the code logic. Meanwhile,
+> this is also a preparation for improving tmpfs large folios read performace
+> in the following patch.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>   mm/shmem.c | 36 ++++++++++++------------------------
+>   1 file changed, 12 insertions(+), 24 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 66eae800ffab..edab02a26aac 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3106,26 +3106,18 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   	unsigned long offset;
+>   	int error = 0;
+>   	ssize_t retval = 0;
+> -	loff_t *ppos = &iocb->ki_pos;
+>   
+> -	index = *ppos >> PAGE_SHIFT;
+> -	offset = *ppos & ~PAGE_MASK;
+> +	index = iocb->ki_pos >> PAGE_SHIFT;
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 844a6f8d6f39..19e6730e7c22 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1118,7 +1118,7 @@ static noinstr int mce_start(int *no_way_out)
- 	} else {
- 		/*
- 		 * Subject: Now start the scanning loop one by one in
--		 * the original callin order.
-+		 * the original calling order.
- 		 * This way when there are any shared banks it will be
- 		 * only seen by one CPU before cleared, avoiding duplicates.
- 		 */
-@@ -1892,7 +1892,7 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
- 	case X86_VENDOR_AMD:
- 		if (c->x86 == 15 && this_cpu_read(mce_num_banks) > 4) {
- 			/*
--			 * disable GART TBL walk error reporting, which
-+			 * disable GART TLB walk error reporting, which
- 			 * trips off incorrectly with the IOMMU & 3ware
- 			 * & Cerberus:
- 			 */
--- 
-2.17.1
+index calculate could be moved before shmem_get_folio(), then...
+
+> +	offset = iocb->ki_pos & ~PAGE_MASK;
+>   
+>   	for (;;) {
+>   		struct folio *folio = NULL;
+>   		struct page *page = NULL;
+> -		pgoff_t end_index;
+>   		unsigned long nr, ret;
+> -		loff_t i_size = i_size_read(inode);
+> +		loff_t end_offset, i_size = i_size_read(inode);
+>   
+> -		end_index = i_size >> PAGE_SHIFT;
+> -		if (index > end_index)
+> +		if (unlikely(iocb->ki_pos >= i_size))
+>   			break;
+> -		if (index == end_index) {
+> -			nr = i_size & ~PAGE_MASK;
+> -			if (nr <= offset)
+> -				break;
+> -		}
+>   
+>   		error = shmem_get_folio(inode, index, 0, &folio, SGP_READ);
+>   		if (error) {
+> @@ -3148,18 +3140,14 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   		 * We must evaluate after, since reads (unlike writes)
+>   		 * are called without i_rwsem protection against truncate
+>   		 */
+> -		nr = PAGE_SIZE;
+>   		i_size = i_size_read(inode);
+> -		end_index = i_size >> PAGE_SHIFT;
+> -		if (index == end_index) {
+> -			nr = i_size & ~PAGE_MASK;
+> -			if (nr <= offset) {
+> -				if (folio)
+> -					folio_put(folio);
+> -				break;
+> -			}
+> +		if (unlikely(iocb->ki_pos >= i_size)) {
+> +			if (folio)
+> +				folio_put(folio);
+> +			break;
+>   		}
+> -		nr -= offset;
+> +		end_offset = min_t(loff_t, i_size, iocb->ki_pos + to->count);
+> +		nr = min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE - offset);
+>   
+>   		if (folio) {
+>   			/*
+> @@ -3199,8 +3187,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   
+>   		retval += ret;
+>   		offset += ret;
+> -		index += offset >> PAGE_SHIFT;
+>   		offset &= ~PAGE_MASK;
+> +		iocb->ki_pos += ret;
+> +		index = iocb->ki_pos >> PAGE_SHIFT;
+
+remove this line.
+
+>   
+>   		if (!iov_iter_count(to))
+>   			break;
+> @@ -3211,7 +3200,6 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   		cond_resched();
+>   	}
+>   
+> -	*ppos = ((loff_t) index << PAGE_SHIFT) + offset;
+>   	file_accessed(file);
+>   	return retval ? retval : error;
+>   }
 
 
