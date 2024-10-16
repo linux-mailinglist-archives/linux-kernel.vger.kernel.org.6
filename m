@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-368522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B739A10CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:38:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BA19A10D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC42C283D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:38:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A7FDB215F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB542139D3;
-	Wed, 16 Oct 2024 17:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmkyrmWv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B60814A4E2;
-	Wed, 16 Oct 2024 17:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07372139DB;
+	Wed, 16 Oct 2024 17:38:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C99210C25;
+	Wed, 16 Oct 2024 17:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729100267; cv=none; b=ETYfOq4FSPiNBclYzIxktZNPpe9TLqg8AkNmG36gIGa7RRknBPYC8J65d8v6nUeZfDFamfpbcKDykJoNxVv3onPasus27KIHwBQee25ldk7NXgzE8FtWpFad1jY+tVd7JF3lP7nFOWKMIjSMsyMlHYsvCOtRimixokTZs5VtBo4=
+	t=1729100312; cv=none; b=uqptiZPr0RmIsxkPOQ9ZML6G4L4yGS/AZ4cK1OFinbtWHY5yHTBAyuTpFsnqWivicl1EbCpLMJZ42SwKtVR543HgSibe9g54AEg0PxayDOCfig2omP1IKsEViYPl6wNzLlECmjMkX86/PAePgOHFmHgua077mi/5/E6g4kUzlHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729100267; c=relaxed/simple;
-	bh=bPem/LaYBRG3WHofkM1ry3bPYXsGByy3Spwfo1SRxbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVCOW2FewBe5vF/7qw24kKbEeHthDFrgvItB+++mhWPrkUiOQWZ1HeVbxWDHdPY4XzOrvRcXAk37QQszExQAdLcC3cKw0iIQ/7N4FdSv0Nvp3cLBqrkqaSBdAjwb26+wHq6bp3ZTaKRiRzsmxCLv+z65uPtolBTBZDps6CkGUDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmkyrmWv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B390EC4CEC5;
-	Wed, 16 Oct 2024 17:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729100267;
-	bh=bPem/LaYBRG3WHofkM1ry3bPYXsGByy3Spwfo1SRxbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VmkyrmWvpLf4kpPqV8qo8eL/AfTd317NnNwXpPp1ffq4MtNlisEABigA2lUkICTTG
-	 MVDNKmh7qoJ15i9CRK6ublwALR275AqAazOwDWZ3WWV6BLwa6/pewmqbhRbKdmfHuT
-	 RSpAoEkBYmQJvQEUvgZhLDlKzfbw37qRmfv4OFcDbhPYwQ4bKZhqEPUBpRy6eZGKC0
-	 3c04K/lCo/nlT6bHPXGq7BpgOeopObQfXMiyKRY9uEKvUU7QCsD0YWtzslgDa4FBSl
-	 +x8zvYifFPb1WNlCvwkUGX8z8IswYDWkFhekYD3QOxwqtbYyqgSA3iz8mK6cgBj4QF
-	 cg9lP3g15ElFA==
-Date: Wed, 16 Oct 2024 10:37:45 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>, Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [PATCH 2/2] perf x86/topdown: Refine helper
- arch_is_topdown_metrics()
-Message-ID: <Zw_56b61Ik7UFekS@google.com>
-References: <20241011110207.1032235-1-dapeng1.mi@linux.intel.com>
- <20241011110207.1032235-2-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1729100312; c=relaxed/simple;
+	bh=SEjjDzCe3fEF6Q0MD/3Ag7e9BKWXuwcxTsJ00FoOQk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hTIdhXaOu/s41N1srdKSmHdXTz8krKrV6iVrgJWp5r4PbynseUKmwDzqfeqMdK9z+oAzBuDz28umF+Kmc5Mq24ejqYfkFImOKSA9WJw9qsGoci1wUDXr0ckHc8cRiI55tFdDZP2nm/25jFtGPyOhvuYdkdY5WXryBtWMQ6/8Yvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6A28FEC;
+	Wed, 16 Oct 2024 10:38:58 -0700 (PDT)
+Received: from [10.57.87.74] (unknown [10.57.87.74])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 253D33F528;
+	Wed, 16 Oct 2024 10:38:25 -0700 (PDT)
+Message-ID: <b5e89288-d1c9-4c10-91b3-b1351b623ce6@arm.com>
+Date: Wed, 16 Oct 2024 18:38:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241011110207.1032235-2-dapeng1.mi@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/15] drm/rockchip: Set dma mask to 64 bit
+To: Andy Yan <andyshrk@163.com>, heiko@sntech.de
+Cc: hjc@rock-chips.com, krzk+dt@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, s.hauer@pengutronix.de, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ derek.foreman@collabora.com, minhuadotchen@gmail.com,
+ detlev.casanova@collabora.com, Andy Yan <andy.yan@rock-chips.com>
+References: <20240920081626.6433-1-andyshrk@163.com>
+ <20240920082036.6623-1-andyshrk@163.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240920082036.6623-1-andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Ian,
-
-On Fri, Oct 11, 2024 at 11:02:07AM +0000, Dapeng Mi wrote:
-> Leverage the existed function perf_pmu__name_from_config() to check if
-> an event is topdown metrics event. perf_pmu__name_from_config() goes
-> through the defined formats and figures out the config of pre-defined
-> topdown events.
+On 2024-09-20 9:20 am, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
 > 
-> This avoids to figure out the config of topdown pre-defined events with
-> hard-coded format strings "event=" and "umask=" and provides more
-> flexibility.
+> The vop mmu support translate physical address upper 4 GB to iova
+> below 4 GB. So set dma mask to 64 bit to indicate we support address
+>> 4GB.
 > 
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> This can avoid warnging message like this on some boards with DDR
+>> 4 GB:
+> 
+> rockchip-drm display-subsystem: swiotlb buffer is full (sz: 266240 bytes), total 32768 (slots), used 130 (slots)
+> rockchip-drm display-subsystem: swiotlb buffer is full (sz: 266240 bytes), total 32768 (slots), used 0 (slots)
+> rockchip-drm display-subsystem: swiotlb buffer is full (sz: 266240 bytes), total 32768 (slots), used 130 (slots)
+> rockchip-drm display-subsystem: swiotlb buffer is full (sz: 266240 bytes), total 32768 (slots), used 130 (slots)
+> rockchip-drm display-subsystem: swiotlb buffer is full (sz: 266240 bytes), total 32768 (slots), used 0 (slots)
 
-Are you ok with this now?
+There are several things wrong with this...
+
+AFAICS the VOP itself still only supports 32-bit addresses, so the VOP 
+driver should only be setting a 32-bit DMA mask. The IOMMUs support 
+either 32-bit or 40-bit addresses, and the IOMMU driver does set its DMA 
+mask appropriately. None of those numbers is 64, so that's clearly 
+suspicious already. Plus it would seem the claim of the IOMMU being able 
+to address >4GB isn't strictly true for RK3288 (which does supposedly 
+support 8GB of RAM).
+
+Furthermore, the "display-subsystem" doesn't even exist - it does not 
+represent any actual DMA-capable hardware, so it should not have a DMA 
+mask, and it should not be used for DMA API operations. Buffers for the 
+VOP should be DMA-mapped for the VOP device itself. At the very least, 
+the rockchip_gem_alloc_dma() path is clearly broken otherwise (I guess 
+this patch possibly *would* make that brokenness apparent).
+
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> Tested-by: Derek Foreman <derek.foreman@collabora.com>
+> ---
+> 
+> (no changes since v1)
+> 
+>   drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> index 04ef7a2c3833..8bc2ff3b04bb 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> @@ -445,7 +445,9 @@ static int rockchip_drm_platform_probe(struct platform_device *pdev)
+>   		return ret;
+>   	}
+>   
+> -	return 0;
+> +	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(64));
+
+Finally as a general thing, please don't misuse 
+dma_coerce_mask_and_coherent() in platform drivers, just use normal 
+dma_set_mask_and_coherent(). The platform bus code has been initialising 
+the dev->dma_mask pointer for years now, drivers should not be messing 
+with it any more.
 
 Thanks,
-Namhyung
+Robin.
 
-> ---
->  tools/perf/arch/x86/util/topdown.c | 39 +++++++-----------------------
->  1 file changed, 9 insertions(+), 30 deletions(-)
-> 
-> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
-> index cb2c64928bc4..f63747d0abdf 100644
-> --- a/tools/perf/arch/x86/util/topdown.c
-> +++ b/tools/perf/arch/x86/util/topdown.c
-> @@ -41,43 +41,22 @@ bool arch_is_topdown_slots(const struct evsel *evsel)
->  	return false;
->  }
->  
-> -static int compare_topdown_event(void *vstate, struct pmu_event_info *info)
-> -{
-> -	int *config = vstate;
-> -	int event = 0;
-> -	int umask = 0;
-> -	char *str;
-> -
-> -	if (!strcasestr(info->name, "topdown"))
-> -		return 0;
-> -
-> -	str = strcasestr(info->str, "event=");
-> -	if (str)
-> -		sscanf(str, "event=%x", &event);
-> -
-> -	str = strcasestr(info->str, "umask=");
-> -	if (str)
-> -		sscanf(str, "umask=%x", &umask);
-> -
-> -	if (event == 0 && *config == (event | umask << 8))
-> -		return 1;
-> -
-> -	return 0;
-> -}
-> -
->  bool arch_is_topdown_metrics(const struct evsel *evsel)
->  {
-> -	struct perf_pmu *pmu = evsel__find_pmu(evsel);
->  	int config = evsel->core.attr.config;
-> +	const char *name_from_config;
-> +	struct perf_pmu *pmu;
->  
-> -	if (!pmu || !pmu->is_core)
-> +	/* All topdown events have an event code of 0. */
-> +	if ((config & 0xFF) != 0)
->  		return false;
->  
-> -	if (perf_pmu__for_each_event(pmu, false, &config,
-> -				     compare_topdown_event))
-> -		return true;
-> +	pmu = evsel__find_pmu(evsel);
-> +	if (!pmu || !pmu->is_core)
-> +		return false;
->  
-> -	return false;
-> +	name_from_config = perf_pmu__name_from_config(pmu, config);
-> +	return name_from_config && strcasestr(name_from_config, "topdown");
->  }
->  
->  /*
-> -- 
-> 2.40.1
-> 
+> +
+> +	return ret;
+>   }
+>   
+>   static void rockchip_drm_platform_remove(struct platform_device *pdev)
+
 
