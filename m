@@ -1,223 +1,173 @@
-Return-Path: <linux-kernel+bounces-368209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D4F9A0C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:30:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFD99A0CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C49A0B2601D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BEE1C20AD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEB820966A;
-	Wed, 16 Oct 2024 14:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQVaVifu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6021442F6;
-	Wed, 16 Oct 2024 14:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCFB208D97;
+	Wed, 16 Oct 2024 14:31:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BB81FCC78;
+	Wed, 16 Oct 2024 14:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089021; cv=none; b=YOZJUz5cTnf87E+GxLZVBcxpauL99eb26xMIm6926L+LFKkyAJrAQGGYoTYTaob5AOjmYF1Y7dKPpiYkT7Z+ZEY+waeZSgBNuOrWp1uUl3YZ5kycZwqyys0MGsWSE5vtm+q7gwNnrBcyKtbIPYimxYiTbfd3wOt6m+N8rD2Sx54=
+	t=1729089095; cv=none; b=sHru0cKYHTrU7ml2qAIJLPEszWksZWCDOIGU3sZxXlq7HTu7U3MRczI35ACtjRminOpb+7WK4W0Fh5m4aJp8CHn2eM82qLLCTmL8IGucLOuQV6efgjHyPTmGC2R6yOKNor0RjfR0iDkjgqlAsObPRVZa4YYmwydeqA7QC7fm9Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089021; c=relaxed/simple;
-	bh=KnVunvwS+uXcWLqFxX8FcF9FRJdrasd7P5IR2KaMnJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUh5YEIszYSIuVAcTKWDLjUYv/0eBGVqRto1vnyPq/Ey5CjBkrrn4m7qYudez1u94bK8D/bOgFkwypcaOlsY9nIe4pPf7UTbIlj1szkmjbnCyvzXKvOwQwDP/406PREprJ5VOGoGAxj7wfUAiJZjf7V2+1s26X2THbRK59FKl04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQVaVifu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75AEC4CEC5;
-	Wed, 16 Oct 2024 14:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729089020;
-	bh=KnVunvwS+uXcWLqFxX8FcF9FRJdrasd7P5IR2KaMnJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cQVaVifu41CieZ27rZIZt7YSV590QdSFLtvyCTD6JnAECkN4Po5vCMVcBLtJrb1Jo
-	 DzDSr85iPejoqa1l8UCmgKQ94QQUYo+cKJ5168zGfPl/Hv5Z/Fhf3JYoLq7htqAlRK
-	 MAXARHB99n9MNv04puxZ/n4oocsM/uozIeBu2ZRaNtM0rre9nr2IMj8SRnV9TlE3fY
-	 Xh4VtItKJDPAZqN4lHGnyEFFmAxQpSivWc8TPFA+MMENaaJ6JG1MkqzxQ6pYsN8/NT
-	 h4uFwe/nHKxfdi3e36uqHA/8LwAGH+fmCCsBEDYjtaG0QfcSVwJsxgW+XsxtPCSaci
-	 RrN044f/nCFbg==
-Date: Wed, 16 Oct 2024 09:30:26 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Xinqi Zhang <quic_xinqzhan@quicinc.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, 
-	Cristian Marussi <cristian.marussi@arm.com>, linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] firmware: arm_scmi: fix slab-use-after-free in
- scmi_bus_notifier()
-Message-ID: <kzyrhxenfuc4aqvczxaevojfmau5nlyapdb4zivgfv5vbelv7d@raxpdqd2zgri>
-References: <20241016-fix-arm-scmi-slab-use-after-free-v2-1-1783685ef90d@quicinc.com>
+	s=arc-20240116; t=1729089095; c=relaxed/simple;
+	bh=WOrmtnlr1s+7WsjGlFmE8Nm0DVI511aAillhmXEC2iY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d1iGrC9CtUlHIvfx2qDbPcM4Ucexw4SWA3zLFfyAkGyyvtUDsQA0sHbe5qTH4sfZFAB5HgAe8YTtmGyYAAGZNJMPsJmJDKaIn3SdtKGCVBefUhTK0++KfQ2hF/Aj/mL6YezZm/kaYH2m4ifN0mKpP0ewWsFVfq5n4jDkXt719+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 764D2FEC;
+	Wed, 16 Oct 2024 07:32:02 -0700 (PDT)
+Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAB9E3F71E;
+	Wed, 16 Oct 2024 07:31:29 -0700 (PDT)
+Message-ID: <401175cf-e205-4e5c-939f-60b7ab948355@arm.com>
+Date: Wed, 16 Oct 2024 15:31:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-fix-arm-scmi-slab-use-after-free-v2-1-1783685ef90d@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 57/57] arm64: Enable boot-time page size selection
+Content-Language: en-GB
+To: Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Oliver Upton <oliver.upton@linux.dev>,
+ Will Deacon <will@kernel.org>, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-57-ryan.roberts@arm.com>
+ <CD2DC486-F4B1-4043-82BC-0CB2AA513A99@nvidia.com>
+ <daecf1d1-04c7-4513-86db-397c2ef6f768@arm.com>
+ <6C0A53C0-C332-46B3-A84A-3232E9D71003@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <6C0A53C0-C332-46B3-A84A-3232E9D71003@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 02:13:38PM GMT, Xinqi Zhang wrote:
-> The scmi_dev->name is released prematurely in __scmi_device_destroy(),
-> which causes slab-use-after-free when accessing scmi_dev->name in
-> scmi_bus_notifier(). So move the release of scmi_dev->name to
-> scmi_device_release() to avoid slab-use-after-free.
+On 16/10/2024 15:21, Zi Yan wrote:
+> On 16 Oct 2024, at 4:14, Ryan Roberts wrote:
 > 
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in strncmp+0xe4/0xec
-> Read of size 1 at addr ffffff80a482bcc0 by task swapper/0/1
+>> On 15/10/2024 18:42, Zi Yan wrote:
+>>> On 14 Oct 2024, at 6:59, Ryan Roberts wrote:
+>>>
+>>>> Introduce a new Kconfig, ARM64_BOOT_TIME_PAGE_SIZE, which can be
+>>>> selected instead of a page size. When selected, the resulting kernel's
+>>>> page size can be configured at boot via the command line.
+>>>>
+>>>> For now, boot-time page size kernels are limited to 48-bit VA, since
+>>>> more work is required to support LPA2. Additionally MMAP_RND_BITS and
+>>>> SECTION_SIZE_BITS are configured for the worst case (64K pages). Future
+>>>> work could be implemented to be able to configure these at boot time for
+>>>> optimial page size-specific values.
+>>>>
+>>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>>> ---
+>>>
+>>> <snip>
+>>>
+>>>>
+>>>> @@ -1588,9 +1601,10 @@ config XEN
+>>>>  # 4K  |       27          |      12      |       15             |         10              |
+>>>>  # 16K |       27          |      14      |       13             |         11              |
+>>>>  # 64K |       29          |      16      |       13             |         13              |
+>>>> +# BOOT|       29          |    16 (max)  |       13             |         13              |
+>>>>  config ARCH_FORCE_MAX_ORDER
+>>>>  	int
+>>>> -	default "13" if ARM64_64K_PAGES
+>>>> +	default "13" if ARM64_64K_PAGES || ARM64_BOOT_TIME_PAGE_SIZE
+>>>>  	default "11" if ARM64_16K_PAGES
+>>>>  	default "10"
+>>>>  	help
+>>>
+>>> So boot-time page size kernel always has the highest MAX_PAGE_ORDER, which
+>>> means the section size increases for 4KB and 16KB page sizes. Any downside
+>>> for this?
+>>
+>> I guess there is some cost to the buddy when MAX_PAGE_ORDER is larger than it
+>> needs to be - I expect you can explain those details much better than I can. I'm
+>> just setting it to the worst case for now as it was the easiest solution for the
+>> initial series.
 > 
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 6.6.38-debug #1
-> Hardware name: Qualcomm Technologies, Inc. SA8775P Ride (DT)
-> Call trace:
->  dump_backtrace+0x94/0x114
->  show_stack+0x18/0x24
->  dump_stack_lvl+0x48/0x60
->  print_report+0xf4/0x5b0
->  kasan_report+0xa4/0xec
->  __asan_report_load1_noabort+0x20/0x2c
->  strncmp+0xe4/0xec
->  scmi_bus_notifier+0x5c/0x54c
->  notifier_call_chain+0xb4/0x31c
->  blocking_notifier_call_chain+0x68/0x9c
->  bus_notify+0x54/0x78
->  device_del+0x1bc/0x840
->  device_unregister+0x20/0xb4
->  __scmi_device_destroy+0xac/0x280
->  scmi_device_destroy+0x94/0xd0
->  scmi_chan_setup+0x524/0x750
->  scmi_probe+0x7fc/0x1508
->  platform_probe+0xc4/0x19c
->  really_probe+0x32c/0x99c
->  __driver_probe_device+0x15c/0x3c4
->  driver_probe_device+0x5c/0x170
->  __driver_attach+0x1c8/0x440
->  bus_for_each_dev+0xf4/0x178
->  driver_attach+0x3c/0x58
->  bus_add_driver+0x234/0x4d4
->  driver_register+0xf4/0x3c0
->  __platform_driver_register+0x60/0x88
->  scmi_driver_init+0xb0/0x104
->  do_one_initcall+0xb4/0x664
->  kernel_init_freeable+0x3c8/0x894
->  kernel_init+0x24/0x1e8
->  ret_from_fork+0x10/0x20
+> From my past experience (around 5.19), the perf impact (using vm-scalability)
+> seems very small due to MAX_PAGE_ORDER increases [1] (I made MAX_PAGE_ORDER
+> a boot time variable and increased it to 20 for my 1GB THP experiments).
 > 
-> Allocated by task 1:
->  kasan_save_stack+0x2c/0x54
->  kasan_set_track+0x2c/0x40
->  kasan_save_alloc_info+0x24/0x34
->  __kasan_kmalloc+0xa0/0xb8
->  __kmalloc_node_track_caller+0x6c/0x104
->  kstrdup+0x48/0x84
->  kstrdup_const+0x34/0x40
->  __scmi_device_create.part.0+0x8c/0x408
->  scmi_device_create+0x104/0x370
->  scmi_chan_setup+0x2a0/0x750
->  scmi_probe+0x7fc/0x1508
->  platform_probe+0xc4/0x19c
->  really_probe+0x32c/0x99c
->  __driver_probe_device+0x15c/0x3c4
->  driver_probe_device+0x5c/0x170
->  __driver_attach+0x1c8/0x440
->  bus_for_each_dev+0xf4/0x178
->  driver_attach+0x3c/0x58
->  bus_add_driver+0x234/0x4d4
->  driver_register+0xf4/0x3c0
->  __platform_driver_register+0x60/0x88
->  scmi_driver_init+0xb0/0x104
->  do_one_initcall+0xb4/0x664
->  kernel_init_freeable+0x3c8/0x894
->  kernel_init+0x24/0x1e8
->  ret_from_fork+0x10/0x20
+> Larger MAX_PAGE_ORDER means larger section size and larger mem_block size,
+> so the granularity of memory hotplug also increases. In this case:
+> 1. ARM64 4KB: mem_block size increases from 4MB to 32MB,
+> 2. ARM64 16KB: mem_block size increases from 32MB to 128MB,
+> 3. ARM64 64KB: mem_block size keeps the same, 512MB.
 > 
-> Freed by task 1:
->  kasan_save_stack+0x2c/0x54
->  kasan_set_track+0x2c/0x40
->  kasan_save_free_info+0x38/0x5c
->  __kasan_slab_free+0xe8/0x164
->  __kmem_cache_free+0x11c/0x230
->  kfree+0x70/0x130
->  kfree_const+0x20/0x40
->  __scmi_device_destroy+0x70/0x280
->  scmi_device_destroy+0x94/0xd0
->  scmi_chan_setup+0x524/0x750
->  scmi_probe+0x7fc/0x1508
->  platform_probe+0xc4/0x19c
->  really_probe+0x32c/0x99c
->  __driver_probe_device+0x15c/0x3c4
->  driver_probe_device+0x5c/0x170
->  __driver_attach+0x1c8/0x440
->  bus_for_each_dev+0xf4/0x178
->  driver_attach+0x3c/0x58
->  bus_add_driver+0x234/0x4d4
->  driver_register+0xf4/0x3c0
->  __platform_driver_register+0x60/0x88
->  scmi_driver_init+0xb0/0x104
->  do_one_initcall+0xb4/0x664
->  kernel_init_freeable+0x3c8/0x894
->  kernel_init+0x24/0x1e8
->  ret_from_fork+0x10/0x20
+> DavidH was concerned about large mem_block size before. He might have some
+> opinion on this.
 > 
-> Fixes: ee7a9c9f67c5 ("firmware: arm_scmi: Add support for multiple device per protocol")
-> Signed-off-by: Xinqi Zhang <quic_xinqzhan@quicinc.com>
+> 
+>>
+>>>
+>>> Is there any plan (not in this patchset) to support boot-time MAX_PAGE_ORDER
+>>> to keep section size the same?
+>>
+>> Yes absolutely. I should have documented MAX_PAGE_ORDER in the commit log along
+>> with the comments for MMAP_RND_BITS and SECTION_SIZE_BITS - that was an
+>> oversight and I'll fix it in the next version. I plan to look at making all 3
+>> values boot-time configurable in future (although I have no idea at this point
+>> how involved that will be).
+> 
+> In [1], I tried to make MAX_PAGE_ORDER a boot time variable,
+> but for a different purpose, allocating 1GB THP. I needed some additional
+> changes in my patchset, since I assumed MAX_PAGE_ORDER can go beyond
+> section size, which makes things a little bit complicated. For your case,
+> I assume you are not planning to make MAX_PAGE_ORDER bigger than section
+> size, then I should be able to revive my patchset with fewer changes.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Yes correct; no need to make it bigger than section size. Thanks for the patch,
+I'll certainly use it as a base when I get there or if you're interested in
+doing it then even better ;-)
 
-Regards,
-Bjorn
+But I don't think this is urgent. For now, boot-time page size is a new Kconfig
+for arm64. It still supports the compile-time page size options. So having a
+larger MAX_PAGE_ORDER than strictly necessary doesn't represent a regression,
+just a limitation of boot-time page size config - something we can optimize later.
 
-> ---
-> Changes in v2:
-> - Standardize commit messages and add Fixes tags.
-> - Link to v1: https://lore.kernel.org/r/20241015-fix-arm-scmi-slab-use-after-free-v1-1-b006eba9c8df@quicinc.com
-> ---
->  drivers/firmware/arm_scmi/bus.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-> index 96b2e5f9a8ef0386525f9d91d2925e7e6d48ac28..157172a5f2b577ce4f04425f967f548230c1ebed 100644
-> --- a/drivers/firmware/arm_scmi/bus.c
-> +++ b/drivers/firmware/arm_scmi/bus.c
-> @@ -325,7 +325,10 @@ EXPORT_SYMBOL_GPL(scmi_driver_unregister);
->  
->  static void scmi_device_release(struct device *dev)
->  {
-> -	kfree(to_scmi_dev(dev));
-> +	struct scmi_device *scmi_dev = to_scmi_dev(dev);
-> +
-> +	kfree_const(scmi_dev->name);
-> +	kfree(scmi_dev);
->  }
->  
->  static void __scmi_device_destroy(struct scmi_device *scmi_dev)
-> @@ -338,7 +341,6 @@ static void __scmi_device_destroy(struct scmi_device *scmi_dev)
->  	if (scmi_dev->protocol_id == SCMI_PROTOCOL_SYSTEM)
->  		atomic_set(&scmi_syspower_registered, 0);
->  
-> -	kfree_const(scmi_dev->name);
->  	ida_free(&scmi_bus_id, scmi_dev->id);
->  	device_unregister(&scmi_dev->dev);
->  }
-> @@ -410,7 +412,6 @@ __scmi_device_create(struct device_node *np, struct device *parent,
->  
->  	return scmi_dev;
->  put_dev:
-> -	kfree_const(scmi_dev->name);
->  	put_device(&scmi_dev->dev);
->  	ida_free(&scmi_bus_id, id);
->  	return NULL;
-> 
-> ---
-> base-commit: eca631b8fe808748d7585059c4307005ca5c5820
-> change-id: 20241015-fix-arm-scmi-slab-use-after-free-74e358b3c90c
-> 
-> Best regards,
-> -- 
-> Xinqi Zhang <quic_xinqzhan@quicinc.com>
+> In terms of SECTION_SIZE_BITS, why do you want to make it a boot time variable?
+> Since it decides the minimum memory hotplug size, I assume we should keep
+> it unchanged or as small as possible to make virtual machine memory usage
+> efficient.
+
+When I say "boot-time variable" I just mean something that the arch can
+configure at boot based on the selected page size. I'm not proposing to allow
+the user to set it via the command line. That means we need to rid the code of
+any assumptions that it is compile time constant (e.g. c preprocessor usage of
+the value, etc). The same goes for MAX_PAGE_ORDER and the MMAP_RND_BITS stuff.
+
 > 
 > 
+> [1] https://lore.kernel.org/linux-mm/20220811231643.1012912-1-zi.yan@sent.com/
+> 
+> 
+> Best Regards,
+> Yan, Zi
+
 
