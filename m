@@ -1,74 +1,118 @@
-Return-Path: <linux-kernel+bounces-367213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D374499FFD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A2D99FFAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADB91F22AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4B7285299
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC34186287;
-	Wed, 16 Oct 2024 03:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C84617C20F;
+	Wed, 16 Oct 2024 03:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="KmcmHrrG"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A435815C147;
-	Wed, 16 Oct 2024 03:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nDSVfLp2"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFD8101F7;
+	Wed, 16 Oct 2024 03:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729051182; cv=none; b=p2QKsQQyJIjnTjYYP/zg3weL4SkDLIkiZI1hO8ijpyUWc2vWwm2z3UeOMXwriW9r9kZso/slSBxjGPklzUQxYHqX1Pw/E3X8a5lAxmJTCNxIuNnujiNfpOg/1vhgNDzJfWz/xZFexm7Py1kLzlkUK4139IXLdstKFBLohkOyHDM=
+	t=1729050578; cv=none; b=npzBP3Mu9aUpuuaBtWtZ7MwCxQi8Dm/yvLhqwZETISWSa67BkuC0GBTURewQb5JO/3SAuW5iW02LoWWUiM4o9mvwHxA7XB0HRFBycAvIKvziQaEoPCSodLVntQz4Dha4pD7nfzfYcu8n2fdVoLMhLdfKAleIaWlre6ZY47+eMAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729051182; c=relaxed/simple;
-	bh=5rl7VH8L6iLNEFrhwYrW8yXL9lh5vJIeeQzAcZKsO0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZ+trjNvXoJZ3ICwH5p7CVgdwOpaXU3AoBHJnCFFvdmDahT7ktIfvyFPzoc4rrSq/bC+TS08yZGEyN7qa3ItYyBKUibNqBPagkscguoQttAVJSUJy1lI6ujoe6OinIB5atN02eItNevsz+587rRGH6+VQjAZG8WfnKhVogkGKD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=KmcmHrrG; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=5y5oqftq+ocfRHFauntiQYUuSJ9+uX2eH92sTX83kBk=;
-	b=KmcmHrrGjNgTu+rSi8f8ANr694w64EVxsPtZUSPzVR1g9nH0K3W8j1nxPJToZE
-	v8jG0NBJJpLIFxUGVTcd8Ksu5KyzdnisjyGgiMLOKj/lENx9SBb44Y6tkNE9m38D
-	yC3LmjxgfAnIF12ZCV+yzw8gOQVzazHJDK0pYsflgPxgI=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDnaNyQNw9n3dMVAA--.274S3;
-	Wed, 16 Oct 2024 11:48:34 +0800 (CST)
-Date: Wed, 16 Oct 2024 11:48:32 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Carlos Song <carlos.song@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	frank.li@nxp.com
-Subject: Re: [PATCH] arm64: dts: imx93-11x11-evk: remove redundant "sleep"
- pinctrl in lpi2c2 node
-Message-ID: <Zw83kAFABugIDiPY@dragon>
-References: <20240903093911.3235306-1-carlos.song@nxp.com>
+	s=arc-20240116; t=1729050578; c=relaxed/simple;
+	bh=Zc+MM6+KdzmszBqgv4XyLevhOYq81t2SQ7Rs6PSURFU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S11jBb2MpRUb+qRRywD6hOmK+Xk91R4OWi43yMC+cd6Fcizi8B8cfLP8Z1uDJdXn7dY6oKdXUW1IK2J7VHpQL91EUCFQLdkk10JZAWQ/4gfywKgHcxoq8UEH2E5041uNQX8ixRU9DZ+VgKVFp7ARBE07IQKIWHK7C2rRnRFkvX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=nDSVfLp2; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: a4a070348b7111ef8b96093e013ec31c-20241016
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=UX52YhdbKgD96uWWXtuamNI4w+fkohPbaLtS/+eKN6U=;
+	b=nDSVfLp2/IQ+n4FIsafpBaNO/zI7F0N8BU5mfp1zgFvoJlKGLYl/+NIZ6in+7D8W44pj0s6k3so72okIA9pk9/7ytbQ0DEFydwN+BttVpfIs1+MTnYDue5SQJ6TpDYe5ZVVCdgMIQD4Kw/efalK6p5sfjNR2rZi6R0U+XS2Rw6c=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:f4e82bd5-207f-413c-ba9b-133501a46715,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:f20c5165-444a-4b47-a99a-591ade3b04b2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: a4a070348b7111ef8b96093e013ec31c-20241016
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
+	(envelope-from <yunfei.dong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 798193337; Wed, 16 Oct 2024 11:49:28 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 16 Oct 2024 11:49:26 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 16 Oct 2024 11:49:25 +0800
+From: Yunfei Dong <yunfei.dong@mediatek.com>
+To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+CC: Hsin-Yi Wang <hsinyi@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>,
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, Steve
+ Cho <stevecho@chromium.org>, Yunfei Dong <yunfei.dong@mediatek.com>,
+	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v2 0/6] media: mediatek: vcodec: support h264 extend vsi
+Date: Wed, 16 Oct 2024 11:49:19 +0800
+Message-ID: <20241016034927.8181-1-yunfei.dong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903093911.3235306-1-carlos.song@nxp.com>
-X-CM-TRANSID:Ms8vCgDnaNyQNw9n3dMVAA--.274S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUxtxhDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEg96ZWcPEZ+K8QAAsf
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Tue, Sep 03, 2024 at 05:39:11PM +0800, Carlos Song wrote:
-> In lpi2c2 node, default pinctrl and sleep pinctrl have the same value.
-> So "sleep" pinctrl is redundant and remove it.
-> 
-> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+The working buffer address start and end are calculated in kernel
+side currently, can't calculate the address end if the driver only
+getting the address file handle, not the real physical address. Need
+to extend the vsi to calculate the address end in scp.
 
-Applied, thanks!
+Re-construct some interface and add configuration to support extend
+and non extend at the same time. Needn't to parse nal info for extend
+architecture.
+---
+This patch series depends on:
+[1] https://patchwork.kernel.org/project/linux-mediatek/cover/20241012064333.27269-1-yunfei.dong@mediatek.com
+
+---
+compared with v1:
+- combine some pathes together for patch 2
+- re-write patch 4
+---
+Yunfei Dong (4):
+  media: mediatek: vcodec: remove vsi operation in common interface
+  media: mediatek: vcodec: support extend h264 video shared information
+  media: mediatek: vcodec: support extend h264 driver
+  media: mediatek: vcodec: remove parse nal info in kernel
+
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |   2 +
+ .../decoder/vdec/vdec_h264_req_multi_if.c     | 511 +++++++++++++++++-
+ 2 files changed, 486 insertions(+), 27 deletions(-)
+
+-- 
+2.46.0
 
 
