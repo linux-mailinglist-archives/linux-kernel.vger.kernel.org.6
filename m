@@ -1,211 +1,204 @@
-Return-Path: <linux-kernel+bounces-367910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A61A9A0839
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:19:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5619A083A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA3F81C219F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:19:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503561C20DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF92207209;
-	Wed, 16 Oct 2024 11:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AE7206E7F;
+	Wed, 16 Oct 2024 11:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fEZ0jHwO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h84j1AIz"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5150A15C147;
-	Wed, 16 Oct 2024 11:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729077577; cv=none; b=DnDUID4xAQgf0OOD6zPuA8KmOtjKSr6FEfAintZXd4p9ghsiyXyGjqRNZNlW5qBWB44MExqk1KeMssPqveI2qrAFRsALtA72qgEJbOR+Z6fUIGmvAVutPd/O1ZW2V0yoM14P6QhMrK8ZEMkfLRRomOv5oujqBdyEybcPrayco+U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729077577; c=relaxed/simple;
-	bh=FVtPvUPf+eIervD2QjqfFImVj/2vV5aXuTQ4YdK4MKY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=udbpgkoPYqKLpp1bvU+fYqTMxebIteLmUU3Jd9ge7VmlMe9UQFtdI+OQZr8eoUZdaS2htUP4dwbH/HDwfaRFUyRN/bvcmb/NUj7iMIo9+0IFnMdeyNAXPEip92BUvjJbt+eSegULsVE4m5V6Qs1ba2MdUWtXMgk/Z/RAmbtBK3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fEZ0jHwO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GAIHZw011617;
-	Wed, 16 Oct 2024 11:19:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=qMP0Mu8JZbyT1a4ltNfBCk
-	sjG5mXh/8pQFvUu3S9POs=; b=fEZ0jHwOPCfFzHkhHqe4D8l+cdJ+qXtUbv5HDh
-	53hVnWZJcT/cJaCSmEMD7iv80jleYJXOO4kx7TQaDnGk8Ju4RjRtv/a5TnaYjHhG
-	x8yyMA5wYKYWbL/W+GxtqBeJg9wb2Q0WhqySYXy2aVjuWYMNz6vDcA6SiAO6/lQf
-	8aijaAMyAXXSuMDEYuMk5/L8vISLElDIGAZriYiQPF49XwO/equEA7zxEs+B16C4
-	JVqyRAk1o2F6dNi/dvaAOtjBHLcaw2Fgin/iDYqky3CebboM/aySE58dGmWlUHEV
-	IDfuokQDeM61tM6zOtkqXA/Vx+XJpVFI72pJl8Cn2xE6CXqw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42abm5g5c3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 11:19:27 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49GBJQw5003553
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 11:19:26 GMT
-Received: from hu-akakum-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 16 Oct 2024 04:19:18 -0700
-From: Akash Kumar <quic_akakum@quicinc.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Jing Leng <jleng@ambarella.com>, Felipe Balbi
-	<balbi@kernel.org>,
-        Jack Pham <quic_jackp@quicinc.com>, <kernel@quicinc.com>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>,
-        Daniel Scally
-	<dan.scally@ideasonboard.com>
-CC: Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
-        Krishna Kurapati
-	<quic_kriskura@quicinc.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Akash Kumar <quic_akakum@quicinc.com>
-Subject: [PATCH v6] usb: dwc3: gadget: Refine the logic for resizing Tx FIFOs
-Date: Wed, 16 Oct 2024 16:49:04 +0530
-Message-ID: <20241016111904.11375-1-quic_akakum@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4A12071ED
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729077597; cv=fail; b=fxX+FCltApfgPh/tgkeYnCYvCJl0B14FVMBFKE2lsh+oSL6NNKRaFzW2myfD26R6VrXUuOk6Yx7fAjmtiSEI5yeuq/QxxoaMnq6H2T26EiZp0wDxFlxhtKavrtpNdStKPc4axtUnRCS1gDyHLMnthWCbMG05T0I9Rdqmgp66Uyk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729077597; c=relaxed/simple;
+	bh=qyX7rKk7i2/92sVrgCeChb7MrbuRaXM/umqPxm+D98s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lb5HNL3N7OmvS4mY4rZsar9eDM0CGiwJS65KXYqF37g5n34U5EP2v8WLQUSgrhY/nhvxhp/Q2R+3JfCVBo2tGYOiz0ZM/yI6XYM0yLmO+zivVfMgfEpaL/h8ETetV6wwu3X6ww+N4y8BKxwFGAqAZLtm3heEnZUbNFjfpxDjJYM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h84j1AIz; arc=fail smtp.client-ip=40.107.237.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=urDD4BYLko4MZRotdn3oPvZ6qrUX/X/khGYZDFt7Z/+AvOxTncUkJjmYI9+6a+4W8UMphINm9XLL9IU6VVYR5rOT0blHH9aZjrv1RUw5tNWRKMJ27ya4NfKuH4YdAYsXOYedBcF2wGJlBqXccQsexpJhAMLd5PfRMooWgo1YXM/zBrqDVkr+weo0MSeDJd0/gBHoaTVexf9GBetxWQK0JKW3PSbX5pyYVlEio/iYD0Rdd1oDWwNdEclgxx9teeCqgJF4pzG6PFYd1vwpACieWbpPbke8wiH2XpiIV7FXi3O6Novn4J9AJ5NbV9n6M3/YKJCP8fSus+SLLmpyTmYfzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kjp5YG0Hryrl85OqWWfQguDq0uJka0Rkow0ilgKSzZ0=;
+ b=uLqfGGEwect4WCceWsiEFFbwFJ9pzt3v1uyVk9moU3okETg3TjHQU6LLSF4JkscFsL3/hoUZ7q7p9JS/8yTgNp2sjokC7wOZ+Y6LEsO+rohS2ze1RimVMyXPuS7GM6by/Fped4ZHU0E66bOTLgmWKo6+ig5Ga7uiRMqLv6MxlxHKCytjtVqhaJArzgxG0alXelFgGOhCH/64/RnG6Owk8oiZc5NaXVT3/eu4QnuvszhtCclPjs+nBCpCoG/32qxN1rMQLq9su4jGr9vcTyI691kk67/faACsqGIGFi792gdTHaBr+FlAGvwCz1CiKYELBT16jdJkKTA/uk3FmgKXnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kjp5YG0Hryrl85OqWWfQguDq0uJka0Rkow0ilgKSzZ0=;
+ b=h84j1AIzjdpZFcb83A7Nkr/qRVxC5zKzOkZ+rHh+t/UGtBoVukLwvOZi5zcW1Bcoe9ulSO/EdaQukYjoIjtmmexKAPRYSsbIerxk08UD6OcPFr5axO7lnOE2/wuAgkydBxCcjGzR3C1FpZ/3b2acpPVa2bO0OeZKatptP5UNsjlCLWGvUQ2Q8lJi8WNRtt50gtluF/wp9EZr3ZPJEOLXkbR2zIhhjKWXnB7iUch/AhZxcSEBam4b0SaLGxluzlLPmoyFjY2EH3ZNqEltFiXbcxsBeSWM9QBTNa9b1uJID4w0BDlzMDtEB/hJ6FY9CQeQG6qaEkCo1yKcbA1KygQnZQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by PH7PR12MB7163.namprd12.prod.outlook.com (2603:10b6:510:202::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
+ 2024 11:19:52 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
+ 11:19:51 +0000
+Message-ID: <843da504-34bb-4067-85b6-49851a1ff517@nvidia.com>
+Date: Wed, 16 Oct 2024 12:19:46 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] driver core: Avoid false-positive errors for
+ intentionally skipped links
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Saravana Kannan <saravanak@google.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org
+References: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0309.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:391::13) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qIIjMZ7WK2Q7GbA-_AmQiRXRQUIEj6KM
-X-Proofpoint-GUID: qIIjMZ7WK2Q7GbA-_AmQiRXRQUIEj6KM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1011 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160070
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB7163:EE_
+X-MS-Office365-Filtering-Correlation-Id: d721c966-bc39-4a14-2184-08dcedd47405
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VXhRWE1kNE83ZGczZUF2OWM4YTBaWnAvZ1J5eC9RcUplTmVRdDdhRlVUQVhV?=
+ =?utf-8?B?QUw5dXVsT2xCR1RjR2dSTDFDWGltOW4wVXpQOUhNQ0ZHKzdnWjBzZFo4S2hw?=
+ =?utf-8?B?YTBTYm15UEhYNzlYZ3RZTlNQb2JQOVNyckp6dGNWbVQvMWhkOVhTQzNTVHh6?=
+ =?utf-8?B?Si9vNWlLNjFJOHBmS2Z6WDZoemNyaGw1d0xMTEZHYVJRMGsrMmNlVXpmOU1o?=
+ =?utf-8?B?MEhIWVhONVhMa3FsSkl3TnhzOUJIZGhhelRHWitmZ28ySjBLVnp2Q0pudnZt?=
+ =?utf-8?B?UHJWcXgwMjcxZTRxZFl1VXQvZVlMRjRTUWNadmViN3pzbTg0UDRUT0QvNDNM?=
+ =?utf-8?B?dCtOaVNReEdFWDREY20rcXNKemJkaVZ4NDVDdThOY2IweXVTTFY0dDZMSnd5?=
+ =?utf-8?B?L1V3L2duN21tOSsyaGcvd0VrQ1orUkFwWU5LcjFPQXBtQlB2U1c1U2o1a2dP?=
+ =?utf-8?B?eGdSTVBwbVo1VHYxV2s1SVNsZjNDSGxSa3IzNGgvMTlIN3FieVZlN3JGMFor?=
+ =?utf-8?B?bTE0T2ZQM010UjlIUDV3cUpDd2tzWE5VNXVaenZDMWpuZ0FlNlZMQ0lyWVBR?=
+ =?utf-8?B?WDI1bjcxNStDRTUrT3BKRWU0TnBtVUx4WEhQWm52alFYeVZqRTJqUTd4emtP?=
+ =?utf-8?B?cGRBTVVMSTBYUm82S2s1ck5RY1hicnVEKzc1alE0Zjhkc3BDbDQ3cGRCU201?=
+ =?utf-8?B?clJxeGNOaGQ2N3VrZVp0KzFMdlc4OHJDem5zc01wK21GZWFOcThSYlpOZEor?=
+ =?utf-8?B?UjErOEI0TEZYNS81M2dzRCtCZjd2bnlCREV6K2NtM1BXWXFLNDl6eXVHS2w4?=
+ =?utf-8?B?aVlXa3Z0UkgrZ1lJZUlhQ0ZreklpRDlnemU4Yjg5WkdHdnYxS0xSTzNTa3dQ?=
+ =?utf-8?B?WEpJNlltRGE0ZXgrcDladVRUbEYxeDFsTC9ySFRra2VQMHRUVkxaTlJUTmZJ?=
+ =?utf-8?B?RzU5OG1OU2RtTzMxT1lOeG9iS2xhb053cXZvTEMya0M3dWxHTzJUdWsrNUFU?=
+ =?utf-8?B?YXR4Sk4zby9remt3T0hsVWlsa0h4VUtpbisvV1BQSVJKV0JYUFVnemJGVUx2?=
+ =?utf-8?B?S2hONXd4aU1oZXREMTIzbkxjSjIwS1d2WHNDNG5oOVZITUFMZXZkOFhsTkhj?=
+ =?utf-8?B?L1VxR21QcFVyMFFmMWxZbW9JWUtpeUVOb0w2STNTTDBqL0g5OFJSaXQ2Tjlu?=
+ =?utf-8?B?VHliVC9UMm9rK09qOTFibTlZUnEzVnV4cVVrVllubS95NUhPbW02bTRYTit6?=
+ =?utf-8?B?L01ZNWM5ZnlxeFJnTHNieGdndEpVdW5zcjJ4MnMvNk4wNFBsV0dDZFNBWi9F?=
+ =?utf-8?B?U2pnajdDSlltMW8rZnlBNjR2TzJxcVQzemttdktLYUpITEFRc1dYU2RoRHFm?=
+ =?utf-8?B?VDJoRDVJRFVDTXI1R0JXdGdySThBM0xFVjJNdEtnOXBhZjF6aWhIOFZSVVFH?=
+ =?utf-8?B?cnFGM0RMNUVEVFRpcGpWdXExSno0NS82TFZKbDVndnhXbjJXcjFCUlZiY0hS?=
+ =?utf-8?B?R21aY3QycmZqUk01QlBrV0hYR1RuOENIUFoydGlLL1hsZHZaZFBURjJKWmw5?=
+ =?utf-8?B?ZzJaeUxDTStoaTlSK3NpZGpQVlc2WndkTVlQZ2l4WGI2SEZOZlgrTTZJaThq?=
+ =?utf-8?B?ZUhWNGlLa29IRXhGZnF6M0tZOE8rSnorZmZaYXlYMlVvZWtQNERFMWlUMjJ2?=
+ =?utf-8?B?TC9xQU5hREh3aUVMNDRBUGRSWXMxN3NaUjRoSWFXOU8ra0o5bnJJNGpnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VVNGWmcxMXNyajdXZUMyWFozRVVrZ0JrYkVFMml0T2VQSWJobEFTeldBK0lN?=
+ =?utf-8?B?Skdjai9SSUkwUjNkek9GdHB1ajg3a0I0am12ejZza0hRTDRLOWVvd0JBUEd3?=
+ =?utf-8?B?b01sTmNYaVpTL1dLaGREMktFcFIxRGtncEVubzhGc2N2UUdPY09xZHR0aWRS?=
+ =?utf-8?B?WDNUTnBvcFpuQlVKK0NhMDVlRDJPVlVDdHdNRjBndC83c21QeFYrSTE0cXJs?=
+ =?utf-8?B?WW9Ea2VnaHc1dFVNVWd5RW03aXVHT3hUQ0RiSTFUNWUvR2l2MFNxRmNIa3px?=
+ =?utf-8?B?aW1iL3dKY0tiaUZLd3hHOFNsTHptSGVWdkFNSnA1d3VLY084Tkl4bmsrU3dC?=
+ =?utf-8?B?eC8rcnM2Yld3aHRnMmlZREZ1K21mMk0vSmRXZW9XdEIzSnNzU2M1cXJDR0tO?=
+ =?utf-8?B?OGV4TWtESW9mUU1McXlCRHNWcDZTVUlhdDR0Uys0WnhjZUt1ZVJlYUtaelhs?=
+ =?utf-8?B?bWpFaUlLMitoQTVCaGVjTDlsVi9zdHdTVms0SENlVmc5cXU5ZTU4clQ1N2c1?=
+ =?utf-8?B?OVpSbjNDbTY5a2g3Z2VPcEFVVTEvSURQam9SbWJmd3BqUkpqc1BFM1JFWHY3?=
+ =?utf-8?B?OThsS2x4MEpVQzBYRVRCdjZEclFrV3BWWWwxWWVvZlk2cHZwWFozeDRYUktE?=
+ =?utf-8?B?aUNjSmJyeFZkNjAxemYva1BvTlJFZHBqMStKSGJ0SUdiTlFWVnFlZlVGQWw5?=
+ =?utf-8?B?azU4aGtXNDJTSk1BaDZBZVNFQWVmbjIvd3JCaE5zMmhXaGg5SjR6cCt6WWhZ?=
+ =?utf-8?B?M1kraEF2ekh5Y2owQUNSMW5wNWJLcU9FczZBaDZ0cnNjR0VnUUQ1UUk4bXlX?=
+ =?utf-8?B?TFpWVEsvV0o2ZTJZczAxT0JLQkIxekJFaGhlTFJDU2Q3S2Uxd0h1M3Q4bTVC?=
+ =?utf-8?B?NktCMXp0bmpGbW1vanRwQXc3NDVPR09xK2ZzaWFOanFXOHhrc3pCNXFOUlVl?=
+ =?utf-8?B?MWZhMzhkeS9OSnRsM01UVTFmTVpWYnVKbUlKN3RzYnlLMmhZc0JZaDQ5bzhK?=
+ =?utf-8?B?VXJIYkNpRTAwWTdTdFhVVTg0c3BtTGZxWGN1YW40bFlwU0ZVTDA1UlNSeW0r?=
+ =?utf-8?B?ZnNWRVYyZE1QcFJrZUt2ZmJFVHNYaElZS1VBWnIyeWc2c2dlSjRXcHF4RmxM?=
+ =?utf-8?B?cGdPYUEyT1k3S0NPTHJRYkN1a05saWV6dmNOVWZXWjJ4NE1CWXlEa0NndTJh?=
+ =?utf-8?B?SmFHUUhDTEJDS0N5TTNETjN0VUxlSStSdU5tWndEU0FsVnlUdmV5cXFMNk9S?=
+ =?utf-8?B?d0NKRjVOQjhWblhKVGJPUTVUUlc4bWVTb2RIWm1GTmFNcXRweHRLM3JDUTJM?=
+ =?utf-8?B?RXFXRWlmZFdpQUNpSTNKdGRnNWcyWTNzaDFiaGlreVZWVUh0cG9wMXZiTEUx?=
+ =?utf-8?B?RWpSdG9nU2JkeFRyYVhxeWgvNEZhbnB5cFZXdklQUUczcm1NY29jbHZoNVdw?=
+ =?utf-8?B?Zmg3Ry9Hb01lbXVYMldqM1BITjdudXlWbko3UXlYaVpMYm16OFZ3bFhITWtT?=
+ =?utf-8?B?R3krWkVMeTBUdkt5VFFVZHA2Qmh0a25jc2k4M1oxUHJYL1paazAvaFozcldn?=
+ =?utf-8?B?dnNtRkhxRHRvd0NLSWZVUDY2OUpCcEIxS3hNTmRmNlhJZXkvY3pVUXZUT1RE?=
+ =?utf-8?B?SG94RXdLVlR1dmYySnZpQkFtTk90MWFXcnU3R2xCS0w2czJuMk5VU09MaU1V?=
+ =?utf-8?B?WktkalFDT3RCSThTeDI1bmJ6UXIzeGlzeGUySE1tTVNzbXBBZS9VMm5tRjFt?=
+ =?utf-8?B?TFc5UW02dWdFanFSK1RCY3JCQmo5WDRvS0FvclpUQ0VxYW5tazBKTGZkWWxQ?=
+ =?utf-8?B?WkMyYURhRm4xemZZRFdwNmMrSlcyNExkZVpKRVhsM0NTck9MdWtMZlBlMmFl?=
+ =?utf-8?B?MDhPWjFqMHZ4d2FwaUxoVVpMVmdkZlJYK2JyRjI3bU9zMmxrSEFoNFpoTks0?=
+ =?utf-8?B?c3c1ZE1vMTh5YkY4T3BTbUV3dW5OSDdHM2xvai92aGtmWFo0dWNPaE9GSjQy?=
+ =?utf-8?B?aDFydWM0dGR1OVhkeXNPR1JuY0tLTGw2dkZGeml1dG1pczdCWTk0b29NU2tY?=
+ =?utf-8?B?WTJ4bUpKY20xaG0wWno4UTU5VEs2eW0yWjZocFF1QWx2ZTFhQmI2MDQwWkFR?=
+ =?utf-8?Q?g5b0OWwW1CEXmAN2XuCz1EVza?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d721c966-bc39-4a14-2184-08dcedd47405
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 11:19:51.7582
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r5UyEKnhslG0mKleD0AE2gT1u8u9f4H62c3FNa4WM44pap80aDTr/OKTnHoje71q0wqPKuExBpfDx6TurYWaew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7163
 
-The current logic is rigid, setting num_fifos to fixed values.
-3 for any maxburst greater than 1.
-tx_fifo_resize_max_num for maxburst greater than 6.
-Additionally, it did not differentiate much between bulk and
-isochronous transfers, applying similar logic to both.
 
-The updated logic is more flexible and specifically designed to meet
-the unique requirements of both bulk and isochronous transfers. We
-have made every effort to satisfy all needs and requirements, verified
-on our specific platform and application.
+On 15/10/2024 22:27, Nícolas F. R. A. Prado wrote:
+> This series gets rid of the false-positive errors printed when device
+> links are intentionally skipped. Patch 1 commonizes the logic into a
+> helper and patch 2 uses that to remove the error.
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+> Changes in v2:
+> - Added patch 1 introducing the device_link_is_useless() helper and used
+>    that in patch 2
+> - Link to v1: https://lore.kernel.org/r/20240624-fwdevlink-probed-no-err-v1-1-d1213cd354e2@collabora.com
+> 
+> ---
+> Nícolas F. R. A. Prado (2):
+>        driver core: Create device_link_is_useless() helper
+>        driver core: Don't log intentional skip of device link creation as error
+> 
+>   drivers/base/core.c | 28 +++++++++++++++++++---------
+>   1 file changed, 19 insertions(+), 9 deletions(-)
 
-Bulk Transfers: Ensures that num_fifos is optimized by considering both
-the maxburst and DT property "tx-fifo-max-num" for super speed and
-above. For high-speed and below bulk endpoints, a 2K TxFIFO allocation
-is used to meet efficient data transfer needs, considering
-FIFO-constrained platforms.
 
-Isochronous Transfers: Ensures that num_fifos is sufficient by
-considering the maximum packet multiplier for HS and below and maxburst
-for Super-speed and above eps, along with a constraint with the DT
-property "tx-fifo-max-num".
+Looks good to me. For the series ...
 
-This change aims to optimize the allocation of Tx FIFOs for both bulk
-and isochronous endpoints, potentially improving data transfer efficiency
-and overall performance. It also enhances support for all use cases,
-which can be tweaked with DT parameters and the endpoint’s maxburst and
-maxpacket. This structured approach ensures that the appropriate number
-of FIFOs is allocated based on the endpoint type and USB speed.
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
----
-Changes for v6:
-The code has been refactored to replace multiple if checks with a
-switch-case structure based on the USB speed. This change improves
-readability and maintainability by clearly defining behavior for
-different USB speeds. This structured approach ensures that the
-appropriate number of FIFOs is allocated based on the endpoint type
-and USB speed.
+Thanks!
+Jon
 
-Changes for v5:
-Update Calculation for HS and below bulk and isoc eps based on
-suggestion and fixed at 2k for bulk eps considering fifo constrained
-platforms.
-
-Changes for v4:
-Updated commit message as per review comments to clarify that it has
-been tested on specific platforms only and tried best to match all
-expectations.
-
-Changes for v3:
-Redefine logic for resizing tx fifos,added check based on  operating
-speed and used maxp for HS and maxburst for SS  and defined max
-allocation based on dt property.
-
-Changes for v2:
-Redefine logic for resizing tx fifos, handled fifo based on  minimum
-of maxp and maxburts.
-
-Changes for v1:
-Added additional condition to allocate tx fifo for hs isoc  eps,
-keeping the other resize logic same
----
- drivers/usb/dwc3/gadget.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 10178e5eda5a..dc62d0626e53 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -771,15 +771,30 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
- 
- 	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
- 
--	if ((dep->endpoint.maxburst > 1 &&
--	     usb_endpoint_xfer_bulk(dep->endpoint.desc)) ||
-+	switch (dwc->gadget->speed) {
-+	case USB_SPEED_SUPER_PLUS:
-+	case USB_SPEED_SUPER:
-+	if (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
- 	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
--		num_fifos = 3;
--
--	if (dep->endpoint.maxburst > 6 &&
--	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
--	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
--		num_fifos = dwc->tx_fifo_resize_max_num;
-+		num_fifos = min_t(unsigned int,
-+				  dep->endpoint.maxburst,
-+				  dwc->tx_fifo_resize_max_num);
-+		break;
-+	case USB_SPEED_HIGH:
-+	if (usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
-+		num_fifos = min_t(unsigned int,
-+				  usb_endpoint_maxp_mult(dep->endpoint.desc) + 1,
-+				  dwc->tx_fifo_resize_max_num);
-+		break;
-+	}
-+		fallthrough;
-+	case USB_SPEED_FULL:
-+	if (usb_endpoint_xfer_bulk(dep->endpoint.desc))
-+		num_fifos = 2;
-+		break;
-+	default:
-+		break;
-+	}
- 
- 	/* FIFO size for a single buffer */
- 	fifo = dwc3_gadget_calc_tx_fifo_size(dwc, 1);
 -- 
-2.17.1
-
+nvpublic
 
