@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-368451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EEA9A0FE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:41:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E8C9A0FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534C61F22B19
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:41:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72085B24670
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1711120FAA3;
-	Wed, 16 Oct 2024 16:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C700212627;
+	Wed, 16 Oct 2024 16:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pNoSSNO1"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WcV+K+mO"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A84186E54;
-	Wed, 16 Oct 2024 16:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1F520FAA3;
+	Wed, 16 Oct 2024 16:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096867; cv=none; b=WJy+99rAMnneE0XGnHZz3TbTDEgIyRiHCWyWXbtK6IyiIWN957jh9vMIo8G8GDCZvLParUStqlpCUq7WWtAfrqYPWPQT9fAiprLtGL1gWKTnxkd9ytvQYy8or8eqIIP24v91bFtr244wYP8+DLw+nWNM854p/Hn7c/AP8zWP6lc=
+	t=1729096914; cv=none; b=qdx6SX3/p4c6Q7cA5bG9Q+vLJf5B2pPRxgbjimd5BL7n3Xrn4QNUW2rCEkwAYAUpXfFbl0yuCkE4o0ujzNEjer4+ATFys21cX9Jml4NZyu8hiZo2OLY/sFX1mjyoN6SdBVuo9vxWz8bnXAX0Uk65aRkffbKb4JqKia1eVtIV3a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096867; c=relaxed/simple;
-	bh=4+9hMQUGQ0KmEr3MUGdiHSoxY/jqBOYbhdzgiwz1qEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVpnJQe83rNMjNS6XBI4Q6A5QdptDBV/bAH2esRli0HqEsjGBs79hveq1D7ofcOIR6qIpl442YgMZemQXK/hRMuYtese/JsRsJcNB8sgmpLYIFf5Rh10XhRNqPsU1uP7uaD0bP+nFSc6XIiu8MjwjYHr7WITFHyFQtXAi3ArQwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pNoSSNO1; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OPi0Qi7ew8T7pJV/9wlWhHFA+S+BQq/imu/tsZu/g3M=; b=pNoSSNO1akqzN16H+ivxfA5F6w
-	oWLzRYEjkRbAaCfvwjRsqoChyr/VQkXakM4Mbi8nq2NnY7pORaZUyuwbdqeej8/dP+0AqLPNPkifB
-	Gr4nX3Gt8l6tMV3b8/qUc8rjJr5CG3U7D5CUga0I0daNg6ZTu4kYn5g6Z8WBuR85ejaxAAZyFC2UJ
-	8lUXbK650wYjKFdQAgObOgnO67YpBORX/azzOKG/jQ69CI1s0L61KgnmjjhT1kXPKUyaWXDBrM0I4
-	WO7s9MLrq0zfRmRxO60dkpYlqU3Ny8KaIT+aPGUIv527IDTi9eAZuDESu3iiPIJgd8BmNwwVPTHLr
-	TEDDtT9g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1755-0000000CS4t-2ATs;
-	Wed, 16 Oct 2024 16:41:03 +0000
-Date: Wed, 16 Oct 2024 09:41:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
-	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
-	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
-	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
-	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
-Message-ID: <Zw_sn_DdZRUw5oxq@infradead.org>
-References: <20241015152348.3055360-1-ymaman@nvidia.com>
- <20241015152348.3055360-2-ymaman@nvidia.com>
- <Zw9F2uiq6-znYmTk@infradead.org>
- <20241016154428.GD4020792@ziepe.ca>
+	s=arc-20240116; t=1729096914; c=relaxed/simple;
+	bh=DpHtPfq04oiPZVx392+SDoWvf1uEXJ38XX3wKwUtOl0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CMqc+AKOIMXXzxR4yjeUAoAMgMRwHQfGcuIytkn8GnSK8OlYzTMR2vbVlySSIpqE2d7ZlYnX8ceyJNQ5ZmCm1DFJKUEOGhDQtir2XDO7st1SSk6atdfxilq8gRdhh9NHiTFwIEhO31LgNquCeX73SbeLAwcJjZKNLtdKQeZT2ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WcV+K+mO; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfh9m050027;
+	Wed, 16 Oct 2024 11:41:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729096903;
+	bh=4L8V23/lFtOiQ9FZsGss0DJeQC13lVShPiCHSbWsSl8=;
+	h=From:To:CC:Subject:Date;
+	b=WcV+K+mOnvHTH0JAsaZsBzyNgOOxThNQKO9iSUF+LDMC+ChQDTZJ860facbL0bQMI
+	 xjdyHFGU+jg1qeUhMVrfg9L0HvHSOnFCw2P3vn17BlJa96p5KZGgisFVR3mNumHCXW
+	 8v7+5NRAjTgEUy5dCgNOIxODjo1aqMDRG27I5Opc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GGfhjR011854
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 16 Oct 2024 11:41:43 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
+ Oct 2024 11:41:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 16 Oct 2024 11:41:43 -0500
+Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgas109164;
+	Wed, 16 Oct 2024 11:41:42 -0500
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH 0/2] Enable compile testing for K3 RemoteProc drivers
+Date: Wed, 16 Oct 2024 11:41:39 -0500
+Message-ID: <20241016164141.93401-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016154428.GD4020792@ziepe.ca>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Oct 16, 2024 at 12:44:28PM -0300, Jason Gunthorpe wrote:
-> > We are talking about P2P memory here.  How do you manage to get a page
-> > that dma_map_page can be used on?  All P2P memory needs to use the P2P
-> > aware dma_map_sg as the pages for P2P memory are just fake zone device
-> > pages.
-> 
-> FWIW, I've been expecting this series to be rebased on top of Leon's
-> new DMA API series so it doesn't have this issue..
+Hello all,
 
-That's not going to make a difference at this level.
+This is a follow up to [0] that adds the same for the other two K3
+RemoteProc drivers. Series is based on rproc-next branch.
 
-> I'm guessing they got their testing done so far on a system without an
-> iommu translation?
+Thanks,
+Andrew
 
-IOMMU or not doens't matter much for P2P.  The important difference is
-through the host bridge or through a switch.  dma_map_page will work
-for P2P through the host brige (assuming the host bridge even support
-it as it also lacks the error handling for when not), but it lacks the
-handling for P2P through a switch.
+[0] https://lore.kernel.org/lkml/20241007132441.2732215-1-arnd@kernel.org/
 
-> 
-> > which also makes it clear that returning a page from the method is
-> > not that great, a PFN might work a lot better, e.g.
-> > 
-> > 	unsigned long (*device_private_dma_pfn)(struct page *page);
-> 
-> Ideally I think we should not have the struct page * at all through
-> these APIs if we can avoid it..
+Andrew Davis (2):
+  remoteproc: k3-dsp: Add compile testing support
+  remoteproc: k3-r5: Add compile testing support
 
-The input page is the device private page that we have at hand
-anyway.  Until that scheme is complete redone it is the right kind
-of parameter.
+ drivers/remoteproc/Kconfig | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+-- 
+2.39.2
 
 
