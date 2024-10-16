@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-367605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202839A0461
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F369A046B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A231A286AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9F41C23193
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4039A1F8902;
-	Wed, 16 Oct 2024 08:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E84B1FCC6C;
+	Wed, 16 Oct 2024 08:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d6XodqGe"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VnG97B2a"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97DF1BE871;
-	Wed, 16 Oct 2024 08:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C352E1FCC6A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729067657; cv=none; b=amsI4IAzZzCeYwTBD4YNf6VlScB8YmvxibQLs+FO+niHxOc2bg8upsQurABCDTIlMruePXzO4nejxD1T4FMoKlb4EpgTNv19cA5SfFAeMuC5SX6n+uXf8n5JZlMyrKQ3aw31iiLcJsccTIJWpTfpG7nafN1BwfwqX/VWN5pXOsg=
+	t=1729067820; cv=none; b=sAXXVwUzM698aUT7V+VIrn1D9ERrjWpaqZxh7NCZjIo4kpJYoPMkG30oGyIeP3WjtGGmrpyWr65YXrssweZPVat7mDUvOc/l6r7x+G5h4umnixWPlqsN+qniYHF9cD7olfQpi8cJeYTLeaEzQwFAtVPCi2xa2qRqfzMol0BxGKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729067657; c=relaxed/simple;
-	bh=3ixjSPj57/3HkHGg+1AgHR7Q4xBBgsWAjhtgab4RGGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HQcBba1EN8JiTmmstF8gQvXIIf2qJt71egDVBuGAJhWBlY2kCmDK31jDagzsxQ7PxDOJPwXfnA6RvGkYWmSYjejQQXeXbaMsrqCxmBAArJgrUKZMDFbbCzkvbJthtNYGMNFQtSX6k+czNpIPDPf06u613WJCsRVjKW9q9yON5UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d6XodqGe; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G4tSLM013571;
-	Wed, 16 Oct 2024 08:33:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=s1ClHwECgAqvw8fo7bgayDaexlCa/k
-	jzSj/hte/BsI0=; b=d6XodqGefVZ2Oo3pY6raHP+3dLv8SsY/LOAnt0i62dmXK1
-	hU5uCifU8RLSuMzcw7Q5Pk/rHp5A54/luTfmeDzJ2Wkz12ODQ63nc+5m/oH/W6Vr
-	sZIYpxscfjlLGMYYEQVAeqTgFPU9gMTsvQxLIfDzfn5cunyKXwh3VQn7xStqQlOn
-	qvpQc26z8BAlzizP4VlTtu57IeBeShr4sg4Um3MgVhCERbYdvT5aZwUNFPsreabI
-	nS9u9vdoZYwPRgtF9QOgD5ms1OclAbjK8+2feiPWyyN9A06TnXWk45+hGe1rV6IT
-	cUgNSaTJY9MVuirzexgTvfqg9/zz8BOOYPSmL6Gw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42a6vm0x57-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 08:33:32 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49G8XVG1020697;
-	Wed, 16 Oct 2024 08:33:31 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42a6vm0x54-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 08:33:31 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49G7Y1Ui006761;
-	Wed, 16 Oct 2024 08:33:30 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk85e8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 08:33:30 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49G8XQlq54198614
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 08:33:26 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7003720040;
-	Wed, 16 Oct 2024 08:33:26 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E7DB2004B;
-	Wed, 16 Oct 2024 08:33:25 +0000 (GMT)
-Received: from osiris (unknown [9.179.27.227])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 08:33:25 +0000 (GMT)
-Date: Wed, 16 Oct 2024 10:33:23 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Florent Revest <revest@chromium.org>,
-        linux-trace-kernel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v16 04/18] function_graph: Replace fgraph_ret_regs with
- ftrace_regs
-Message-ID: <20241016083323.16801-A-hca@linux.ibm.com>
-References: <172895571278.107311.14000164546881236558.stgit@devnote2>
- <172895575716.107311.6784997045170009035.stgit@devnote2>
- <20241015183906.19678-B-hca@linux.ibm.com>
- <20241016084720.828fefb791af4bcf386aac91@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016084720.828fefb791af4bcf386aac91@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: THvSImdZT7cNTKydum66qvZm3KuHppMe
-X-Proofpoint-GUID: Ti8WhGAnHe5v38r1fomyzE9dHOz0LqKQ
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729067820; c=relaxed/simple;
+	bh=w3g0Fn5Mfd9fDtUeCzIpWV081s38HRgl5Pl5wCNQDG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ehVaHZ/i/jzfRNF+aGSkA8+J8Ms7Vo+CTPG0ydyVELc8wD4HRBHNTPt2axCPTa9RVGWNkkdduQ4x2r3vbNKJEqYMU777PMYTC+wEPKaDVfxMR0k7hJXqGHsx87ETJLZe8UIqPQoakrNaXag10SyEYjd5S9kvcjFsQn6LfdWxDbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VnG97B2a; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43120f65540so36198425e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729067817; x=1729672617; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gKZmMs4w+DDsatMIrnFTI7zIzR+qyauPVq2X7PfsunI=;
+        b=VnG97B2aJiGcNV4XW5AwaohFYBrIreB/nh4Zk+rfpjrH6QhXbW9VnCHDitGArmSxSD
+         YF0VuAaJSnCdQbHVlaam1QM/63vxpZOLOJJ98wxU4jWWuHGoys6060ShGFfeaeXUbr1F
+         70n+AuExU49hT0negJd5FxjWFZuWLrMHP7rbBiYf176YsDSGRLgXmlj8AZmNK0MWj1+C
+         CpRvOFJn5PODWUSoM5yZYXTf8Khp7Z/qJ/Uk6yFiQvDDX/DNMQHCc2d+VFv5wi1ZK2Is
+         gOddCNLeGLNcmHRFmbD7fy6Pgk6YvLD03lROQoKG2SxueVEoKOSsKB9+2xyLHCX3TTHC
+         5DoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729067817; x=1729672617;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gKZmMs4w+DDsatMIrnFTI7zIzR+qyauPVq2X7PfsunI=;
+        b=mJR2PZdBpA3b2j5okheLZwo8Jzhj3MnGCzdurOYtEr6V/w9yFF05echJK0KeVnvZq2
+         ottml89Gee0YJE6qJQAtwex1g3SHoDkUGR6UxxyfRsFij/ndht3ekDzSyRFp4niOOLCv
+         6zek0yu+XgMDN0mxHJEr23EZ7slIeZ18wD7fV3jl+3TqrbZ++6Dx6kbeOy/WZQEBse1O
+         Stne8W6d1jdcP1hhzGCv3e9Rf3D8gBo9WxcSpVJd90fkhUxFAsDFaWAVEoxJ4Nbae/KY
+         jiE7JOknPmB2i4o2cODiuy2Wc626RRoTnocKYdVRHn6y++aaDLgFCj3TQJOZi0k2halw
+         UAaA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0pIIiyte2ht7Mov07haIxc/bCrwqhSzDB7xNxlkTZQczYpfVPaImCf3nVx6uy2IowfStv34A5sKWJJuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9t6wpYJNt/0g3261O650IZT1P5y+ZhC8AJW6HRxAoLRR6518x
+	usSZZJZ2a+XSXorW8shfX3n92MA9+XuWKlpVNw6RIk1znu8D3Yfe46TSF6SuXMQ=
+X-Google-Smtp-Source: AGHT+IFRJdBQH582trH9wT6BtwYZ7vQBkNADiYoMcxo+OBtSWkYERq9wOrwJkvE9a86yjCnfmAOaxA==
+X-Received: by 2002:a05:600c:1c9d:b0:430:57f1:d6d with SMTP id 5b1f17b1804b1-431255d5099mr124678535e9.1.1729067817144;
+        Wed, 16 Oct 2024 01:36:57 -0700 (PDT)
+Received: from dfj (host-79-50-238-21.retail.telecomitalia.it. [79.50.238.21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55defbsm42571395e9.7.2024.10.16.01.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 01:36:56 -0700 (PDT)
+Date: Wed, 16 Oct 2024 10:35:26 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform driver
+Message-ID: <c6emj4i56zozdpkgx6gkzgdlnwvkagll6g2yc6naumnrxqkvee@5ktdjfsem5bj>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+ <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
+ <c3d55f78-5a54-49f8-b6a1-4ed0f24f8666@baylibre.com>
+ <8642bdb546c6046e8fe1d20ef4c93e70c95c6f71.camel@gmail.com>
+ <2815c8b0-e2ad-47cb-b5aa-00297cf57899@baylibre.com>
+ <781cf5fa075e13260e1b20f5acadb70bd8107cd0.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 clxscore=1015
- malwarescore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=539 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160056
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <781cf5fa075e13260e1b20f5acadb70bd8107cd0.camel@gmail.com>
 
-On Wed, Oct 16, 2024 at 08:47:20AM +0900, Masami Hiramatsu wrote:
-> On Tue, 15 Oct 2024 20:39:06 +0200
-> Heiko Carstens <hca@linux.ibm.com> wrote:
+On 15.10.2024 17:00, Nuno Sá wrote:
+> On Tue, 2024-10-15 at 09:38 -0500, David Lechner wrote:
+> > On 10/15/24 1:37 AM, Nuno Sá wrote:
+> > > On Mon, 2024-10-14 at 16:15 -0500, David Lechner wrote:
+> > > > On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > 
+> > > > > Add High Speed ad3552r platform driver.
+> > > > > 
+> > > > 
+> > > > ...
+> > > > 
+> > > > > +static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
+> > > > > +			       struct iio_chan_spec const *chan,
+> > > > > +			       int *val, int *val2, long mask)
+> > > > > +{
+> > > > > +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	switch (mask) {
+> > > > > +	case IIO_CHAN_INFO_SAMP_FREQ: {
+> > > > > +		int sclk;
+> > > > > +
+> > > > > +		ret = iio_backend_read_raw(st->back, chan, &sclk, 0,
+> > > > > +					   IIO_CHAN_INFO_FREQUENCY);
+> > > > 
+> > > > FWIW, this still seems like an odd way to get the stream mode SCLK
+> > > > rate from the backend to me. How does the backend know that we want
+> > > > the stream mode clock rate and not some other frequency value? 
+> > > 
+> > > In this case the backend has a dedicated compatible so sky is the limit :). But
+> > > yeah,
+> > > I'm also not extremely happy with IIO_CHAN_INFO_FREQUENCY. But what do you have
+> > > in
+> > > mind? Using the sampling frequency INFO or a dedicated OP?
+> > > 
+> > 
+> > It think it would be most straightforward to have something
+> > like a iio_backend_get_data_stream_clock_rate() callback since
+> > that is what we are getting.
 > 
-> > That would make things much simpler... e.g. your new patch is also
-> > writing r3 to fregs, why? 
+> Hmmm, what about exporting an actual clock? Maybe it's overkill but from a
+> correctness point of view, seems what we should actually do :)
 > 
-> BTW, according to the document [1], r3 is for "return value 1", isn't it
-> used usually?
+> > 
+> > Re: the other recent discussions about getting too many
+> > callbacks. Instead of a dedicated function like this, we
+> > could make a set of generic functions:
+> > 
+> > iio_backend_{g,s}et_property_{s,u}(8, 16, 32, 64}()
+> > 
 > 
-> [1] https://www.kernel.org/doc/Documentation/s390/Debugging390.txt
+> Hmm interesting approach. I don't dislike it. Kind of a generic getter/setter thingy.
+> We could then still have optional inline helpers that would call the generic
+> functions with the proper enum value.
+> 
+> > that take an enum parameter for the property. This way,
+> > for each new property, we just have to add an enum member
+> > instead of creating a get/set callback pair.
+> > 
+> > Unrelated to this particular case, but taking the idea even
+> > farther, we could also do the same with enable/disable
+> > functions. We talked before about cutting the number of
+> > callbacks in half by using a bool parameter instead of
+> > separate enable/disable callbacks. But we could cut it down
+> > even more by having an enum parameter for the thing we are
+> > enabling/disabling.
+> 
+> If we don't get too strict about types it could even fall into the above u8 category.
+> 
+> Instead of lot of new simple ops we just grow an enum.
 
-That is true for the 32 bit ABI, but not for the 64 bit ABI which we
-care about. Besides other this is also the reason why I removed the
-above file five years ago: f62f7dcbf023 ("Documentation/s390: remove
-outdated debugging390 documentation").
+so a single call for all enable/disable calls. Looks good to me.
 
-If you really want to understand the 64 bit s390 ABI then you need to
-look at https://github.com/IBM/s390x-abi .
+What we want to do now ?
 
-A PDF file of the latest release is available at
-https://github.com/IBM/s390x-abi/releases/download/v1.6.1/lzsabi_s390x.pdf
+So if understand, we don't like too much IIO_CHAN_INFO_FREQUENCY
+but at the same time, we don't want to have several new calls in the
+backend proposing a design change at this stage, where the patch
+was (likely) in a good shape.
 
-See section "1.2.5. Return Values" for return value handling.
+What about to simply add a IIO_CHAN_INFO_BUS_CLK or similar ? 
 
-All of that said, I would appreciate if you would just merge the
-provided patch, unless there is a reason for not doing that. Chances
-are that I missed something with all the recent fregs vs ptregs
-changes.
+> 
+> - Nuno Sá
+> 
+
 
