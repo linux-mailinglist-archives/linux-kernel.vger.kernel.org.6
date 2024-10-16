@@ -1,185 +1,180 @@
-Return-Path: <linux-kernel+bounces-368242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5730D9A0D27
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485609A0D2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9126B29327
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:46:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931ECB26757
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36B820CCC3;
-	Wed, 16 Oct 2024 14:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5856A20C49F;
+	Wed, 16 Oct 2024 14:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIdv5kx5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ho90/ADn"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C809107A0;
-	Wed, 16 Oct 2024 14:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089998; cv=none; b=sLNmRzZ1Fs643vT33+rXWbmWP97aL6Ox+/7/JZ3NpqwbTqqtB+DSwtTayt4giuMHIlyxLw0aQw7GAxjDDP1JfkTjrj0VCq36V8+P2OVXm6rM9BYZhuG9+0HapGxeWINVg8EQUSpUB/m5rCyJUQb8n4c2PVAWA26zUV6pubBLvHU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089998; c=relaxed/simple;
-	bh=mljYCOrfn5VQtElax+itf5albGe4NataoyAA9ei5XS0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=oUTZRCOJ2IVtylNk2rEGMScadddQxgx09X8eWVEIA5nD1Tf6Z3bVpqOWUY3ZIk8Komcaah3iDAkQHMhs4xu/5FqwDaYguCqLB6kN/lZvhpv45eX10ffrlVhkhlhnMbDLqr7joulDAOjBu/pA2mdCGpcncfhWrgQvsy0YF+Y9qdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIdv5kx5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CEA2C4CEC5;
-	Wed, 16 Oct 2024 14:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729089997;
-	bh=mljYCOrfn5VQtElax+itf5albGe4NataoyAA9ei5XS0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qIdv5kx5nL1uiUMFTWI4/g1kr2RmcIUz2PWR2nPj5ad9+BcYPT7FFYjgrplSiTegr
-	 uDlQmEFKE4fB0/2dM1exBAkFhNxEFqJuefV5ak9q9//SjvXC71Ftc47f255bdLeaFI
-	 /FDhrTCCXPJNtt6sWam8Ub0lknZDrpWmt9inpfqypdT4kcQZvdmmdtqhO7Qs/n/2Sl
-	 3c0OvvYyTp8VFqN6PdbwWzjgIuNkRLaxD+RlpVULp+uCtmWU6o0eO6pFe6OEoXATtz
-	 vhc2500888Fsi//9NZI/NyNGDrlyfZjtIhFS9jm6xdruRLUqXTTWuzX6EEjfg7jpNl
-	 9gx958sT8Jqig==
-Date: Wed, 16 Oct 2024 23:46:28 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
- <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
- linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei
- Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
- <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
- linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen
- N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew
- Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph
- tracer
-Message-Id: <20241016234628.b7eba1db0db39d2197a2ea4f@kernel.org>
-In-Reply-To: <yt9ded4gfdz0.fsf@linux.ibm.com>
-References: <172904026427.36809.516716204730117800.stgit@devnote2>
-	<172904040206.36809.2263909331707439743.stgit@devnote2>
-	<yt9ded4gfdz0.fsf@linux.ibm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3017514A4E2;
+	Wed, 16 Oct 2024 14:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729090089; cv=fail; b=HPabOXfa/hbDLSVg9SB4tB/+iMJXlvR0x2+BIwonI3Bn3m+g1veKbw7JEeZNGtt7c76GrUmrn99UV1eKIa+/xDSq28pDD+iBlFL4Ezic8Mk4HAsz+6jDXDZ6d70BMvT+yyBvrqC77G8epkx12AKQdtIDftjo+cE8B/4/2ChtTSQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729090089; c=relaxed/simple;
+	bh=XXGVR4oMU+vnVsxoeMq9s2IqncjCUyyQeRQmJCs4Olc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UA/FSPsVZz5NOl38qZ8jQIPuRhj7M6+dNzjhPf13UjJBJ+Lfjwn+Gl18ps2MCDWM4SXOiC4/wJjqBDPYvklOF1qj2YVEPRdWLiepVHhLhPaZTthR4JOLaSG1xW/E4nLP3AGUDcoDrohTN9qSKwu2wGbOWkXmVLY9EifDbQMo7p8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ho90/ADn; arc=fail smtp.client-ip=40.107.237.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PBJvPytShh3jJX6bnen0Ee05QCeaOJBht1zKZXq6HRB5/4SPCbAVC3ryckjH/H03Nt5PbfketdvQ0aRQ77wRRWU+pOo9lz6qPObk1/2QpBi2lXNDnAoQtaBMVFTgJ/XIqky354c2iDgvGeK9Cje2heWvMm6sg7bvUmS6St62CZ+yvjx8b0qVIp3WnodMr2lE23ffpajxOzQ6oODxNRw6y5jGgw9X1Mwdj7UexVlAaqhF7d1BAdhcy7T7LLojuIUtyyZywiqr7WWCQ3Ii58jKJXMI1DpEw1I+CQad8EprtwQ2a594NKCQSDbRmXnJIQ45LT5xSNZfGr84IxbLklgLUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8sb7CJIo4cG8jRWf25sjzLUHQFtap6osLkjKtKRHD94=;
+ b=s8LKqK6ocl1zzOQRQqv9+xWw4a1xIiF40vv0Ay1ELq180DSDppq3RbfiIb2vgCMjefzFxbghXz2q9dFFMVnVg+KGeZrr/nuMY10CG4zKs/b74vvG1JAqD7PyHOkXuE/J32llrLFPx9hBv+oQtK8X8rJUCCkB3N/+ZeKsjynjY6ZLcoEcYSPqiei2jDyN34p4Xn1htxBjjLZw32tQeK9JpdWqZDozTMOFmt2EobGjJnmns1qbPNuHkLJUQUcIbyUX2JH0uhaAYBPIAVeQvksXRd87QiATd3SmdQhV7vUmCBv6htAZ8FeGdzmmoL4UxWwVnZY4WRukjCzw+ifynIMWug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8sb7CJIo4cG8jRWf25sjzLUHQFtap6osLkjKtKRHD94=;
+ b=ho90/ADnvQmJZFgSQdbhNlfUTdeQX3eAOxb+uIjc288KBT3Q5gvE2woHrEcMVb1mXwCksmM8pRFgtb7JAh8hY0XdelVOikq553zJXNqphVgNhrBXziILEYghOyqFBVQg3qkVMdLs7EtazK4nCyo3JmSlrvBvg1QlG6yh4oEQ4Js=
+Received: from MW4PR04CA0148.namprd04.prod.outlook.com (2603:10b6:303:84::33)
+ by DM4PR12MB5772.namprd12.prod.outlook.com (2603:10b6:8:63::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Wed, 16 Oct
+ 2024 14:48:04 +0000
+Received: from CO1PEPF000075F4.namprd03.prod.outlook.com
+ (2603:10b6:303:84:cafe::4) by MW4PR04CA0148.outlook.office365.com
+ (2603:10b6:303:84::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18 via Frontend
+ Transport; Wed, 16 Oct 2024 14:48:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000075F4.mail.protection.outlook.com (10.167.249.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8069.17 via Frontend Transport; Wed, 16 Oct 2024 14:48:04 +0000
+Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 16 Oct
+ 2024 09:47:59 -0500
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+To: <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
+	<perry.yuan@amd.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
+ Ugwekar" <Dhananjay.Ugwekar@amd.com>
+Subject: [PATCH v2 0/2] cpufreq/amd-pstate: Set initial min_freq to lowest_nonlinear_freq
+Date: Wed, 16 Oct 2024 14:46:38 +0000
+Message-ID: <20241016144639.135610-1-Dhananjay.Ugwekar@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F4:EE_|DM4PR12MB5772:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7725879c-7b68-4d46-2bc1-08dcedf18a3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ifz9ckyhO4Q/1FuUn0D3JhJeca/oSkt4PLWHObTKrPhtPnAebqtfPTor/GHc?=
+ =?us-ascii?Q?Tm8e8es1gC8TAe+tlvDIM4hhEpfRgsLJr7ikfelfbKenSEYLr7Zd7x64eXti?=
+ =?us-ascii?Q?D9gvsm5l5GtCLb2Hz4x8Mkl/ZMiR3Q/TQ82ZqXaGDRVGemmdOk6YBQNrWYDG?=
+ =?us-ascii?Q?bSAJRNy6Bai3/gltNRkr6WuZrR+HeSNpMuYnps4dI0+aExuzCp1t+KDY/rFq?=
+ =?us-ascii?Q?6CJSMSaAPUZwJFDwSfV05xJ/B4Bf5Ox3v5inZaKNCSeq/quYcmNYwG+A3y/6?=
+ =?us-ascii?Q?hXNv8BaeUHbmd8x+zRZIqsj+atvZS15UPXfvd4X8wzOYmpZxmtcQxQ92328U?=
+ =?us-ascii?Q?w9MDkS6OiW7qoxuCfTZ+7hSp/TNWeQPeQKGrc9CWp+z+4I4HcJwgJTcg7n81?=
+ =?us-ascii?Q?Mn31TGev8sLKfGnxjDj+AMf4hMJCJGrE9E1WXhNCzCBt2UxW1JtkZ9gpgBmc?=
+ =?us-ascii?Q?Kf/aRZR7sB06JyTJKHPGQlRSECVi7Gu4GIabk8ZblK4GKJS+v3xU4mLmSFxE?=
+ =?us-ascii?Q?g9wk42PuidcDpMT1Y1xdzfdFYMVtV0gklZ0fA0O2Hm0R7puImcOBHwNRAeXV?=
+ =?us-ascii?Q?EPYc5E91kni9TEm3OoP8tktB06rmM9bWsuxDeAkybkWIrWTOFSx9w1IrOyp6?=
+ =?us-ascii?Q?tMwuhbcFIfqRyZ6vjdKW0P4qMDDdH9BK5k5+5IPgvr1pMSOzigWz83D0Lt7i?=
+ =?us-ascii?Q?8FWqVkcjTqk2aRZfYfNNrrCAPwSFSjLgASNjGFpKUI/Fw7CU8D27v/LVZNYD?=
+ =?us-ascii?Q?Zabn/i1vBvVPEO95BH46r184R7dllJJuv1GZCZGRDvqJiczviie7i/oA6UEj?=
+ =?us-ascii?Q?iRwx2BqbcOaNfyxTyHlHXdijMKJdyoOzvb9/41tsqWP6AbNLLTXazHcr5Vue?=
+ =?us-ascii?Q?7lZq5RklPNTpOre7oPVD0NAWTMEPi+IIMPlJYLmNTYrWHoPkQzl/slIeddvQ?=
+ =?us-ascii?Q?+xyzVgXH4ivWdA9ULGEnci7IvMH3A94vK89zvqDLMrNdo4mbq8XXZ2tJOR2g?=
+ =?us-ascii?Q?dfMJP09KQoQ+otd4CI2nhxfM8qNhRCm7+n3s6Ki/l3ImBvApepIuf6FChYIz?=
+ =?us-ascii?Q?mMS6TJy6Gyo9se399ZDB0CpEkNXESad+itsFvPacw0DhJGu2Zn0XJr1yXk2e?=
+ =?us-ascii?Q?KY9tLcB8zeAoKKR02BwlCtSZE3MzWDHe7vx/shpbXXJcEHVzLwGGgDWZdhIJ?=
+ =?us-ascii?Q?Qk0zUw9USDsK6wnpsOfj0Py/d2o8a2CifowneROiuxqr03cP5eXLQhLPe0p1?=
+ =?us-ascii?Q?mIHa0dchXR6kMArHJXBbn7R3ZVFZI1yNyYRkJ/+R832rAUjYeGShppnDMz5s?=
+ =?us-ascii?Q?m69TQCpKcCp0BO2GV7eu8o50zp6aGwnDoD+L9Ol84Uu8JAcNJ8XH1Yi/pMsF?=
+ =?us-ascii?Q?0znPJ/7wGxB5Fr8AUWtNLgC4yvS5?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 14:48:04.0436
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7725879c-7b68-4d46-2bc1-08dcedf18a3e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F4.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5772
 
-On Wed, 16 Oct 2024 14:07:31 +0200
-Sven Schnelle <svens@linux.ibm.com> wrote:
+According to the AMD architectural programmer's manual volume 2 [1], 
+in section "17.6.4.1 CPPC_CAPABILITY_1" lowest_nonlinear_perf is described 
+as "Reports the most energy efficient performance level (in terms of 
+performance per watt). Above this threshold, lower performance levels 
+generally result in increased energy efficiency. Reducing performance 
+below this threshold does not result in total energy savings for a given 
+computation, although it reduces instantaneous power consumption". So 
+lowest_nonlinear_perf is the most power efficient performance level, and 
+going below that would lead to a worse performance/watt.
 
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> writes:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
-> > Rewrite fprobe implementation on function-graph tracer.
-> > Major API changes are:
-> >  -  'nr_maxactive' field is deprecated.
-> >  -  This depends on CONFIG_DYNAMIC_FTRACE_WITH_ARGS or
-> >     !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS, and
-> >     CONFIG_HAVE_FUNCTION_GRAPH_FREGS. So currently works only
-> >     on x86_64.
-> >  -  Currently the entry size is limited in 15 * sizeof(long).
-> >  -  If there is too many fprobe exit handler set on the same
-> >     function, it will fail to probe.
-> >
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Huacai Chen <chenhuacai@kernel.org>
-> > Cc: WANG Xuerui <kernel@xen0n.name>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > Cc: Naveen N Rao <naveen@kernel.org>
-> > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> > Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> > Cc: Albert Ou <aou@eecs.berkeley.edu>
-> > Cc: Heiko Carstens <hca@linux.ibm.com>
-> > Cc: Vasily Gorbik <gor@linux.ibm.com>
-> > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> > Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> > Cc: Sven Schnelle <svens@linux.ibm.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: x86@kernel.org
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> >
-> [..]
-> 
-> > diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-> > index ef609bcca0f9..2d06bbd99601 100644
-> > --- a/include/linux/fprobe.h
-> > +++ b/include/linux/fprobe.h
-> > @@ -5,10 +5,11 @@
-> [..]
-> > +static inline unsigned long encode_fprobe_header(struct fprobe *fp, int size_words)
-> > +{
-> > +	if (WARN_ON_ONCE(size_words > MAX_FPROBE_DATA_SIZE_WORD ||
-> > +	    ((unsigned long)fp & ~FPROBE_HEADER_PTR_MASK) !=
-> > +	    ~FPROBE_HEADER_PTR_MASK)) {
-> > +		return 0;
-> >  	}
-> > +	return ((unsigned long)size_words << FPROBE_HEADER_PTR_BITS) |
-> > +		((unsigned long)fp & FPROBE_HEADER_PTR_MASK);
-> > +}
-> > +
-> > +/* Return reserved data size in words */
-> > +static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
-> > +{
-> > +	unsigned long ptr;
-> > +
-> > +	ptr = (val & FPROBE_HEADER_PTR_MASK) | ~FPROBE_HEADER_PTR_MASK;
-> > +	if (fp)
-> > +		*fp = (struct fprobe *)ptr;
-> > +	return val >> FPROBE_HEADER_PTR_BITS;
-> > +}
-> 
-> I think that still has the issue that the size is encoded in the
-> leftmost fields of the pointer, which doesn't work on all
-> architectures. I reported this already in v15
-> (https://lore.kernel.org/all/yt9dmsjyx067.fsf@linux.ibm.com/)
+Also setting the minimum frequency to lowest_nonlinear_freq (instead of
+lowest_freq) allows the CPU to idle at a higher frequency which leads
+to more time being spent in a deeper idle state (as trivial idle tasks
+are completed sooner). This has shown a power benefit in some systems.
+In other systems, power consumption has increased but so has the
+throughput/watt.
 
-Oops, thanks for reporting. I should missed that.
+Our objective here is to update the initial lower frequency limit to 
+lowest_nonlinear_freq, while allowing the user to later update the lower 
+limit to anywhere between lowest_freq to highest_freq for the platform.
 
-> I haven't yet fully understood why this logic is needed, but the
-> WARN_ON_ONCE triggers on s390. I'm assuming this fails because fp always
-> has the upper bits of the address set on x86 (and likely others). As an
-> example, in my test setup, fp is 0x8feec218 on s390, while it is
-> 0xffff888100add118 in x86-kvm.
+So, set the policy->min to lowest_nonlinear_freq in the ->verify() 
+callback, only if the original value is equal to FREQ_QOS_MIN_DEFAULT_VALUE
+(i.e. 0). Merge the two identical verify functions while at it.
 
-Ah, so s390 kernel/user memory layout is something like 4G/4G?
-Hmm, this encode expects the leftmost 4bit is filled. For the
-architecture which has 32bit address space, we may be possible to
-use "unsigned long long" for 'val' on shadow stack (and use the
-first 32bit for fp and another 32bit for size).
+Link: https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf [1]
 
-Anyway, I need to redesign it depending on architecture.
+Changes from v1:
+* Modify the initial min_freq from verify callback, instead of adding a
+  new callback in cpufreq_driver struct. (Rafael)
 
-Thank you!
+v1 Link: https://lore.kernel.org/linux-pm/20241003083952.3186-1-Dhananjay.Ugwekar@amd.com/
+
+Dhananjay Ugwekar (2):
+  cpufreq/amd-pstate: Remove the redundant verify() function
+  cpufreq/amd-pstate: Set the initial min_freq to lowest_nonlinear_freq
+
+ drivers/cpufreq/amd-pstate.c | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.34.1
+
 
