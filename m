@@ -1,84 +1,114 @@
-Return-Path: <linux-kernel+bounces-367421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE37E9A0213
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524729A021D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A731C21BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0734E1F2489F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183551AAE17;
-	Wed, 16 Oct 2024 07:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40FB1B21A7;
+	Wed, 16 Oct 2024 07:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugBkn2qM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XYNgrNC4"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306361531E6;
-	Wed, 16 Oct 2024 07:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5AF18E055
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729062302; cv=none; b=ukEvAf1G87R/3n2cSH/lLUMieL/mAtyQXGp2owl6jEQ7EP2swgERgzdBKMAaYqHFMUBQce7cJ0PSZWgfblrJ/7Kw427DevlnH2YVTDRzIbB5fR0Nte0HXAhkH7L5D8qhVNKuHh/4ipGBKhkK+AOy8ZbT60aM6syPqijC+VsAcG8=
+	t=1729062379; cv=none; b=mLlAdvM2sSaMCIAc4CIdwKIIZb2il3JHxZx+1AkEm8Hqow2E6P/KJvmlXF5ke1LBdiee5yYVgrNa1fxuVNSFoCh0GHRpYN2J1qqFUtZPgjwErc3uveYv1BzCW2eScv5b/oMaNczVyvsIpn5bB2AfH45XNuT2bCzLJM7dkhkxJEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729062302; c=relaxed/simple;
-	bh=ekrNsly1HAoIvCMB+fvKmm/GtqXPhfurL2OUwI/uHS4=;
+	s=arc-20240116; t=1729062379; c=relaxed/simple;
+	bh=yc+xfgwSoPvDPrKOnbKE9ossxJ1byQdEQSPhJXUtSsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tT7YUtjToVcyexXh26Ikx4E/g9TfVCH1dsobCGZPqBHIoj49eMPUimzTI/kDYJRg4xhdVkU4CKORfVssMlxrQxt2TgXwstamoJQngDu8lhipICMcKyxC8UaEDYqVEYaggyafLJIAzMBPfFTtjYf6Ccd5HOhz7y9pLie/z1PIunY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugBkn2qM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB92CC4CEC5;
-	Wed, 16 Oct 2024 07:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729062301;
-	bh=ekrNsly1HAoIvCMB+fvKmm/GtqXPhfurL2OUwI/uHS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ugBkn2qMpTt5fhdYAFEszSKOa8y6tBQHH0l7xC6XRYs24b2ByrfsdsSWAqpk98fQR
-	 t//hMU9Bn/zf5OAeU255hkxVjM6OfEdy4BotvE2Cqj4rxKm4nZ5o/pxQ0PnCx/ANni
-	 ctzurZSWH6R8Z4Im97WX3pF2GyOI+R0LY7gvqw7kObW9ineXx0VvmnKcD8yzqylAN5
-	 IUk7QI0Oq/R4Fy/nvkdKyCv3pG968k6GU/H0NiCOj9pi7SSRXApxnHZrwJqdq4309F
-	 sddQNQHlTGJp9EFZpxjkAXGawPp65KMrNuNnsDfjoUhC4Vf1Abd30+PhOyYKnlbDjK
-	 X1WcYsvP3VIMQ==
-Date: Wed, 16 Oct 2024 09:04:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] arm64: dts: exynos: Add button support for c1s
-Message-ID: <scvaaidgqx5d6j4wuhnj5fmhwgope3euevxfofkime7tvtozyh@ndqkuo6q4e2r>
-References: <20241015210450.964093-1-igor.belwon@mentallysanemainliners.org>
- <20241015210450.964093-6-igor.belwon@mentallysanemainliners.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDm3oIfvGxVzMUClNWaOzMY3qzwnnl6JEeozVX68DJj51rtAeh8dt8fl0pLS/yH9xlHNH3E/s/RY2Dpxl5klPABgjhGjPqSR+kh6B+DsRuUpUmXaNwxuONcr2X4qtEQrVmoiUTlUj9fKj4epWDh0DqUXv+5GwlNtgr2JR6jYSPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XYNgrNC4; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=yc+x
+	fgwSoPvDPrKOnbKE9ossxJ1byQdEQSPhJXUtSsU=; b=XYNgrNC4tO4aeMfwLtNh
+	AkIWaXNt2TSjrt4sGQrDGLZZgal7KbkBVqDCqfXd49WGW7nXC0j3YEY+v0LbQf8x
+	PNDnvousL+Mq+Yg5mDu9Zk2gY2yia+5pkGMXeHqfaVPp9T0/XEdNSn2qfNSR02ma
+	+GXv2tx7HKlGVbfCyrWcOom5lT+/t1sh6oocfowaYCskpcYmXgo3A71FlnTzzn6Q
+	JxU1SYV3wxX6bffUpnJAPP5BHMN0I4Nvx3ycgiM9xfNnrShjg5b2+pq7WhPKkoN8
+	9bBnIIiVxagl9kLHm4IVPKKuTZvSZL2c3YKcognl9BmcaoQQkeIve8slquBR4wHu
+	hw==
+Received: (qmail 2961051 invoked from network); 16 Oct 2024 09:06:13 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Oct 2024 09:06:13 +0200
+X-UD-Smtp-Session: l3s3148p1@VVOFtJIkItpehh9v
+Date: Wed, 16 Oct 2024 09:06:12 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	krzk+dt@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, robh@kernel.org
+Subject: Re: [PATCH v1 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+Message-ID: <Zw9l5GoamBe0JJwE@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org
+References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
+ <20241015075134.1449458-3-TroyMitchell988@gmail.com>
+ <Zw4zPOXSJIWEMd2Y@shikoro>
+ <6015d35d-6d91-4ac1-8ebf-4f79b304370f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TGUu8sRgIcCLZI3h"
 Content-Disposition: inline
-In-Reply-To: <20241015210450.964093-6-igor.belwon@mentallysanemainliners.org>
+In-Reply-To: <6015d35d-6d91-4ac1-8ebf-4f79b304370f@gmail.com>
 
-On Tue, Oct 15, 2024 at 11:04:50PM +0200, Igor Belwon wrote:
-> Add button (gpio-keys) support for c1s (SM-N981B).
-> Added are all hardware buttons (vol-, vol+ and power).
-> 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos990-c1s.dts | 49 ++++++++++++++++++++
->  1 file changed, 49 insertions(+)
-> 
 
-I asked you to split your patchsets according to subsystems you target.
-SoC and pinctrl. How is this patch for pinctrl? It's not. It is a DTS,
-so SoC patch. It cannot be applied.
+--TGUu8sRgIcCLZI3h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Subsystems are defined by directories and maintainers file.
 
-Best regards,
-Krzysztof
+> Only a small number of bit definitions in the registers are the same [1].
 
+Oh my gosh, looks like a RNG was tested when shuffling these bits around
+:/ I agree now, combining this into the existing PXA driver will not
+only be quite some work, it will also make the code quite unreadable and
+has a high chance of introducing regressions for a number of platforms
+which are not easy to test these days. Sigh...
+
+> Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part2065 [1]
+
+Thanks for this link!
+
+
+--TGUu8sRgIcCLZI3h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcPZeAACgkQFA3kzBSg
+KbbURxAAq512m7KIkxw3ohy0Mc/DoB3oE8aQbdkHmo+6TkjZpbq6T6+mXYa04W9W
+KDIxHrf/rVOWQlx77r4w1SX8/gW54C4bZFPnDGkOf33JuKkwRTFUV/CybbNJWorl
+ydEZ7pLZtfMX5WwU4Zfw5FrXmBrdDCq4jHTyL/OCrGx2oojO6zx7EfxROderlZGi
+fj/MPVHKHWyRWWp5x1bnyZeJS5vqwejKbms2SqOdowYTwlrtqy7ITHK45Od/pgEs
+G2+VBefLeGuVxqrhiSDNK2dFOLMuVAPkYk0DhUE/rkhvEnQ1zEZqvQV92+iflhKf
+jRIH61nH/2WtYq2h2s8yX6/3jFTo7H1kO6QA0kxr0eCdi8jAJYRLlQgIaxl1eaqU
+sepDUR6rz5DDsfZYdTRubnV/p0BHG+ogs5bh35Jm6f7lRizkSu4CSIIWUAaQG5c3
+NOLy2oSOGW1c95Y68U1wMR9qnDiWk64dmCjHsa6ctuuHfGMilmt2dgX4wpeT8tLn
+CJKBA354WmxhCDLG1Jft6XAekl6d9kde/wlK4u2EOojJ/AjSsqM0h/cruFEBUo+3
+dRMJKRYxAI+yBN9vsaHHKNLL7J+8RwcsfUOEM0UJSyrlac9gaBChsW0uNaa96x5M
+tt01n3t8OQzddYbouqAz9N9cOfgIjtqIhYFlh1tplckDSmlC14w=
+=B6AT
+-----END PGP SIGNATURE-----
+
+--TGUu8sRgIcCLZI3h--
 
