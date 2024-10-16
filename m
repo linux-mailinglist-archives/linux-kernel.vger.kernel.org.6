@@ -1,161 +1,138 @@
-Return-Path: <linux-kernel+bounces-367862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420279A07BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:49:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686B99A07BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4352287793
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:49:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C78F3B21F4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9D62076A4;
-	Wed, 16 Oct 2024 10:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hY8tXSo5"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4285207208;
+	Wed, 16 Oct 2024 10:49:17 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBE9206940
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8A01CACDB;
+	Wed, 16 Oct 2024 10:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729075757; cv=none; b=KJELSnC/saLiGQ3pYK2bJpM9f3TlXE1Va/wdG81ECX9ssuHRmKp0EvzigzrP/MIto3qnL69FrGI4IVveSWB131g/0j4YxEqdHw6AKLZgllh/wMYkiMyS7+QKkoCe58YKHAHL//5tg5YRoG2JoRD64bpF5vPK5EfY2H63uSKdUIo=
+	t=1729075757; cv=none; b=BGWSWrttwyNnXdL8+xddUXHnargJcJVaEpaK6v9umIvc9i/7TFAaFan19q80fwvBnbyy0kcLvxrROcAugdQCUVsVZFRHyR+eRh/Rvw+XEU6KmDmA6mKC27zj13GRG+zUSQjcWBz7hrJ/g1fzEJIZOfWBeiMbg2jwKXqFj5dTe78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729075757; c=relaxed/simple;
-	bh=p3Uy6zh8Ol2qbVeWD/3mGVLL+TASPb0miaj+Lh6GDmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ddY4/WfqCdUyepJZuvarqo8Jd6TykUDV5ya2/L4zHGBmKs0VkcCJOgSGZkuPpzVxA8GrLxUboHV7yZ2wSAvs14CxW3KOlbgl/bmCgD4hEbiOUe+Qei3ca23ihEzD43dkNLxuFPzl17sj4PE+rQhPP9TzzfG2ks4zxnUyEs/b5oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hY8tXSo5; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c93e9e701fso10113a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:49:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729075754; x=1729680554; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rqRqGRF1VySphqdyBOb5GNHPJs16AcbMlWU0XE/fB+o=;
-        b=hY8tXSo5B2hNXHbPz0kMTx7PcuhgBP6B998zlRKZvuJPkLhb8AoEMfSDlMFYKlLA0U
-         boEK6IymXrc9SM2hnwrRDorc8RJ+cztCA/pdKn7OmqgojXpW3m+kIUQUJTbOiabprlAX
-         oqDYSGyWWl13GVddXNCiqUeSdTm9OGlD9gmGHIJ0kLMBtJzfJL81sm2MW4sXEK0rcjkt
-         UuxP4UixGVPjS0a4WSmoTDOMEhJhAVRMv51SdcqNWIv6huxOM01iRPkKfVVZnBK5kF5U
-         OLVQyzkVMwlFZvijofBXJzD4L1q60U8zbJTfV3z8e7UkXUyk85H0/fgek1LtCLM4NDRr
-         q3RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729075754; x=1729680554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rqRqGRF1VySphqdyBOb5GNHPJs16AcbMlWU0XE/fB+o=;
-        b=HILGjHr+s3Q8psorIpOpFx1+i46LNvmb86Z9AfRq4g2M6c4G3IcmQKXdu7/RAcjVqb
-         P6sEnMPqhbjFUVG5C7kBwAWafMGeSXKBZCgtGECbbnaDpqtObPfQCb1tDvPhJ6+itc5z
-         iQ2n8E95OB4sui8s/5hDRJeBZAqN19IF1UAuPL0bojHaOt8TzLyix7DLYecjnEPFFtr9
-         BMZcqWXREeHZfkPlqmupLtJxHyHzeODyc0nfv28Pfj5wXMcoqxlVPce1YhLUoSgD1qrj
-         QqNfGIFA8NYadnr1NnRbyQVmwm+XxWnIV5Pygu+dhs8RFRI6JRwBj9WJMYxyoxRCvs1F
-         F6XA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcndT1dmTecyqoUyGtXiuW3Hj5ZMnTXBa3O2XbWfTFQqcQNQSz/2kNoSDtbrWhb3JsopVFRxjMPqjDLeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz61P8Q6zSTCRVvOI2bJ8/M4R8ZFoExisP2Ys+9FrqL4Dt8jyy3
-	xHE7KfSwHpL2WOgXf1wj9c5puj7c/p7ffHbnwFhxp9KSpT6yPf7fTHOwtehENCEmtrtzJ8RCuOU
-	JyYDUCoXkVx+iQOiZGKNhL5DnkwtTXjvXi7g8
-X-Google-Smtp-Source: AGHT+IEOaQ4cgkPExzBkgZGD4dOtgPfim6YoQJY1ySC/ykGcUlK7ML3iO3mQ0h89zzZPsHTX3ghBdYyNrM7ENxR9XDk=
-X-Received: by 2002:a05:6402:34c6:b0:5c8:84b5:7e78 with SMTP id
- 4fb4d7f45d1cf-5c997a90d4bmr449217a12.4.1729075742925; Wed, 16 Oct 2024
- 03:49:02 -0700 (PDT)
+	bh=Of+KC8iAHIEaZajNpEuiGIfgEX87fKBFGGV1Zqnik38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vGDOfE2NOyicCLWfO80t3vT9TgZG04s+G27NJRc3I5EyhH7d1mHL/3N0zrDm23cP7Snnv5aCPhRlmTPwOQS2mCK3kORwwRDMjYLWP8qABQGsVRGd6mTGhMxW3CU2ENXcFlha0xaIayHkYOiN+zBTyUI4jTeYUoU65rbn9hlsSAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3397C4CECF;
+	Wed, 16 Oct 2024 10:49:15 +0000 (UTC)
+Message-ID: <2bffad36-efc1-44a2-861a-5d6afb7e5b38@xs4all.nl>
+Date: Wed, 16 Oct 2024 12:49:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1726009989.git.ackerleytng@google.com> <bd163de3118b626d1005aa88e71ef2fb72f0be0f.1726009989.git.ackerleytng@google.com>
- <Zwf7k1wmPqEEaRxz@x1n> <diqz8quunrlw.fsf@ackerleytng-ctop.c.googlers.com>
- <Zw7f3YrzqnH-iWwf@x1n> <diqz1q0hndb3.fsf@ackerleytng-ctop.c.googlers.com> <9abab5ad-98c0-48bb-b6be-59f2b3d3924a@redhat.com>
-In-Reply-To: <9abab5ad-98c0-48bb-b6be-59f2b3d3924a@redhat.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Wed, 16 Oct 2024 16:18:49 +0530
-Message-ID: <CAGtprH_AiVJAd4rxKZBC9372swf2hW8kFfWG2y7zBdzCmpLRUw@mail.gmail.com>
-Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
- struct kvm_gmem_private
-To: David Hildenbrand <david@redhat.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, Peter Xu <peterx@redhat.com>, tabba@google.com, 
-	quic_eberman@quicinc.com, roypat@amazon.co.uk, jgg@nvidia.com, 
-	rientjes@google.com, fvdl@google.com, jthoughton@google.com, 
-	seanjc@google.com, pbonzini@redhat.com, zhiquan1.li@intel.com, 
-	fan.du@intel.com, jun.miao@intel.com, isaku.yamahata@intel.com, 
-	muchun.song@linux.dev, erdemaktas@google.com, qperret@google.com, 
-	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
-	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
-	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
-	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
-	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/13] media: v4l2-tpg: prevent the risk of a division by
+ zero
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Zhipeng Lu <alexious@zju.edu.cn>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, stable@vger.kernel.org
+References: <cover.1729074076.git.mchehab+huawei@kernel.org>
+ <953ea061a4fbe43b10f15308aa8d792afb493e44.1729074076.git.mchehab+huawei@kernel.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <953ea061a4fbe43b10f15308aa8d792afb493e44.1729074076.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 2:20=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> >> I also don't know how you treat things like folio_test_hugetlb() on
-> >> possible assumptions that the VMA must be a hugetlb vma.  I'd confess =
-I
-> >> didn't yet check the rest of the patchset yet - reading a large series
-> >> without a git tree is sometimes challenging to me.
-> >>
-> >
-> > I'm thinking to basically never involve folio_test_hugetlb(), and the
-> > VMAs used by guest_memfd will also never be a HugeTLB VMA. That's
-> > because only the HugeTLB allocator is used, but by the time the folio i=
-s
-> > mapped to userspace, it would have already have been split. After the
-> > page is split, the folio loses its HugeTLB status. guest_memfd folios
-> > will never be mapped to userspace while they still have a HugeTLB
-> > status.
->
-> We absolutely must convert these hugetlb folios to non-hugetlb folios.
->
-> That is one of the reasons why I raised at LPC that we should focus on
-> leaving hugetlb out of the picture and rather have a global pool, and
-> the option to move folios from the global pool back and forth to hugetlb
-> or to guest_memfd.
->
-> How exactly that would look like is TBD.
->
-> For the time being, I think we could add a "hack" to take hugetlb folios
-> from hugetlb for our purposes, but we would absolutely have to convert
-> them to non-hugetlb folios, especially when we split them to small
-> folios and start using the mapcount. But it doesn't feel quite clean.
+On 16/10/2024 12:22, Mauro Carvalho Chehab wrote:
+> The logic at tpg_precalculate_line() blindly rescales the
+> buffer even when scaled_witdh is equal to zero. If this ever
 
-As hugepage folios need to be split up in order to support backing
-CoCo VMs with hugepages, I would assume any folio based hugepage
-memory allocation will need to go through split/merge cycles through
-the guest memfd lifetime.
+scaled_witdh -> scaled_width
 
-Plan through next RFC series is to abstract out the hugetlb folio
-management within guest_memfd so that any hugetlb specific logic is
-cleanly separated out and allows guest memfd to allocate memory from
-other hugepage allocators in the future.
+> happens, this will cause a division by zero.
+> 
+> Instead, add a WARN_ON() to trigger such cases and return
+> without doing any precalculation.
+> 
+> Fixes: 63881df94d3e ("[media] vivid: add the Test Pattern Generator")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  drivers/media/common/v4l2-tpg/v4l2-tpg-core.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
+> index c86343a4d0bf..a22f31515d7e 100644
+> --- a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
+> +++ b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
+> @@ -1795,6 +1795,9 @@ static void tpg_precalculate_line(struct tpg_data *tpg)
+>  	unsigned p;
+>  	unsigned x;
+>  
+> +	if (WARN_ON(tpg->src_width == 0))
 
->
-> Simply starting with a separate global pool (e.g., boot-time allocation
-> similar to as done by hugetlb, or CMA) might be cleaner, and a lot of
-> stuff could be factored out from hugetlb code to achieve that.
+You need to check for both src_width and scaled_width.
 
-I am not sure if a separate global pool necessarily solves all the
-issues here unless we come up with more concrete implementation
-details. One of the concerns was the ability of implementing/retaining
-HVO while transferring memory between the separate global pool and
-hugetlb pool i.e. whether it can seamlessly serve all hugepage users
-on the host. Another question could be whether the separate
-pool/allocator simplifies the split/merge operations at runtime.
+Also replace this by WARN_ON_ONCE.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+Regards,
+
+	Hans
+
+> +		return;
+> +
+>  	switch (tpg->pattern) {
+>  	case TPG_PAT_GREEN:
+>  		contrast = TPG_COLOR_100_RED;
+
 
