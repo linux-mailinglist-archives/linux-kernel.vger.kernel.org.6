@@ -1,168 +1,221 @@
-Return-Path: <linux-kernel+bounces-367496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A3BC9A030E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:50:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D89A0311
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7348D1C24624
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2F62886C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA0E1CB9F1;
-	Wed, 16 Oct 2024 07:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64C11C7B79;
+	Wed, 16 Oct 2024 07:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5faxUpb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqpnWXAj"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFC218B478;
-	Wed, 16 Oct 2024 07:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8851C1738;
+	Wed, 16 Oct 2024 07:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065016; cv=none; b=cHmeP+i5D0J97tqD3htGWtNPcbgHRPUBh5cABc41sVbGZtbBWv67FUL8FCgMPvM7ceDVjX1Kb67sfWOWh0TbiO799oqnuhYloXgezkWems7+Dghg0H2I6vHI5ekJzCw/ZcSBDCOzzB+6rgAbu6nFi6KOQzi2OiRfoqkvgjmJ484=
+	t=1729065047; cv=none; b=iv9LapwHZJk0x0ou3sRbaaj67dkLqnSN27l985FXlVh2IlJmBUFxRIBAQm40K6/7RK5gI/hIcMZptsdio+Z4L+QSIESm9HYSUNTBAvx/IK0XUAQkkMwLoDP8C9eoR+SyU4XY9MtclhOROqaW/KGwxC2G7IkFveF2CRxflTpdIog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065016; c=relaxed/simple;
-	bh=a5bL9GkgEINnsaPtdhyx300M2FZuDjH58V7+HBKJ0Bw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LF38EOtxX1Ks0sTFu57G69GKlcoR/kK7DHMyEjKpyOzjCGJLQzxC7fVL1aVnn2DspO1GxJEhfn9sfbOhaDl3X/HbmHK8zhNIxnWDLXNgIfMUDAYdMZBCFbO7Fhy2dgdxZf8FGkFNg/V71GN57XSYEuC+AUy19G8ZaMy3G76cnSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5faxUpb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F307C4CECE;
-	Wed, 16 Oct 2024 07:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729065015;
-	bh=a5bL9GkgEINnsaPtdhyx300M2FZuDjH58V7+HBKJ0Bw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G5faxUpbSfeTtpQGRBahN39kZ4yGcZEvih6Qq8T9Ms1NAB3okRD4SOUWkO4Pcrvdr
-	 sem3LRa1J6cH9C/ROiHNveUSFgXyPBtFl4+PdrkmqEvW9v4t7UgIlQTOUNKorZ+h0G
-	 aIRaoZGhND7fuRi95tYxdN4HGZCUlmHwmkoktYMSQ6D/mzQnH6U5GHeGNhGHP84PLp
-	 Aq1MjWDIBUd/X0W6tLaCvhg2qFrLhJnV91KDAUphOhJ6TXPhqT448BvpDh/W2jTVMW
-	 A/trzBP0nhiSVEeF6I9NyEpT5YrQG0mIvREyAScaBk+W3bcQIU7IjMrfeMbRN+i+EJ
-	 Blc379unz8XzQ==
-Message-ID: <921d3a39-d95c-4156-b376-44e8dc6a6467@kernel.org>
-Date: Wed, 16 Oct 2024 09:50:04 +0200
+	s=arc-20240116; t=1729065047; c=relaxed/simple;
+	bh=Uu2AZgGXRqdhhrna22HLPxO9DEkbdx5WPqejTwlzqxw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WPN7jq1hKPj4gcepO2/1ArRZZ0uGAG3o5spJ4+FcJSfCt1yldHnEFr/DDBa3IcqNp76V+/iC2hAMa7ruUCAoMlGNRxKxj1pogJZozjxcHyqcxsjVoXkQBuHaoHxbAjpVKzioB8a9hYoZ+bu5CNsF9OzZnz+79s2P/Z8iDMX8g4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SqpnWXAj; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c9454f3bfaso6834473a12.2;
+        Wed, 16 Oct 2024 00:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729065044; x=1729669844; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HSNC+5SGIRbATuqyvZHMD9wWlmxIGVun3q7GDqQBxCg=;
+        b=SqpnWXAjeFmrfadZDBk/S/KZnDkZE2muz46E68R0TqPV/WhupkE6uJZRva56g9SQNu
+         zuS0YVqtA35fsDzt43JZuc7rfDZszBSVlXIUAybAkl7wzuJQxxkt2oZ8lY1FVm7tGYDB
+         bkzRdAvor8QbaBPPX2ElSUOm4URDBAw2BNOY5IedwBpwp8hXNBuVEs9wkFMp1Zj0J2iy
+         P/5vvCGgJcC0RJp9z+G/JE4fLK9wy+iy2ClTaPVeFYcFw3oEa7NC66EL5qjlkV4ldfbY
+         xkWwIbqB0YgDW7K4Tc9Ap6B0kp5T+gLxR2kDIDhccBLVJYZnthYlb6JqG/n21N/GJgSR
+         IAbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729065044; x=1729669844;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HSNC+5SGIRbATuqyvZHMD9wWlmxIGVun3q7GDqQBxCg=;
+        b=oH8aDW9/6kjn5s4A8dzFJTzWp5tcCnxNMGBjbn1oL4JZqXp23OjBl4T1Hulad+nlbJ
+         T3gxupWBvBtAXF04CEUCUe5ZYLO+Q/p57oWR12YE/AvjxJHkWRfTRdvshJILCrmyZm88
+         d8Q+S2ljFsuRhQoo3BWI7qffWYx2GgPa6+mYj3aW5K9ILGxD92v6+t2FJ/d9Lq9i6Mr8
+         d9LQp5L3vJJxfN8PEen353LxTnTBoHSX4yOZT26UtdPUjJWMGw+rqMh73fTCTorK9pAl
+         ZZW7W45k/W43G0TXG2USja+yadI/WapdYMX/biwjdtF9WaD7Ha2SBiKm8GL6U5CELkJo
+         wlsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpYFD/p9vQbIrVRy3ibd7fdcZ0gC28e76dWAuCGoavm0PBrzniD2ADSP/1r5rDos7TQxDC42yP+Qdo@vger.kernel.org, AJvYcCWK/iyBkw5UHn2myCUX8AQJCSdufMXtuG9wCxFQrCj0Yi38s5H6RwbzhiIk6tWwwkyAm2pemvR61NPma21n@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIH42PXzlZhkV4w5HneXEUDLnePty5d5yOfJniCgJgy+OEM1KY
+	pblPrYKPD5T38p36GqxAi368+OaLyhM95hNnQU0uCPqZKzV42bEEc0gpBZzmGzNSDQ==
+X-Google-Smtp-Source: AGHT+IFHmYLQxETTPmEeXrSXPJLuthr55iJg3jmQ50v870UkcZTvimJLubGOu8Of4//FtD9xK17l2A==
+X-Received: by 2002:a17:907:7ba8:b0:a9a:1778:7024 with SMTP id a640c23a62f3a-a9a1778712cmr712081066b.20.1729065043397;
+        Wed, 16 Oct 2024 00:50:43 -0700 (PDT)
+Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29817eb9sm150833866b.121.2024.10.16.00.50.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 00:50:42 -0700 (PDT)
+Message-ID: <61cf3072af74a8b2951c948ddc2383ba1e55954d.camel@gmail.com>
+Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform driver
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
+ <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>,  Jonathan Cameron
+ <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Date: Wed, 16 Oct 2024 09:50:41 +0200
+In-Reply-To: <23dafe91-2733-4ed6-901a-d324749d11b2@baylibre.com>
+References: 
+	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+	 <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
+	 <c3d55f78-5a54-49f8-b6a1-4ed0f24f8666@baylibre.com>
+	 <8642bdb546c6046e8fe1d20ef4c93e70c95c6f71.camel@gmail.com>
+	 <2815c8b0-e2ad-47cb-b5aa-00297cf57899@baylibre.com>
+	 <781cf5fa075e13260e1b20f5acadb70bd8107cd0.camel@gmail.com>
+	 <23dafe91-2733-4ed6-901a-d324749d11b2@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/3] arm64: dts: qcom: x1e80100: Add ACD levels for
- GPU
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
- <20241012-gpu-acd-v1-3-1e5e91aa95b6@quicinc.com>
- <5axuqj4hetfkgg2f53ph4um24b7xfyumktreglxqyzfsdhy25e@deucq7vqxq5l>
- <20241015193540.mcpp2dvkmikruncj@hu-akhilpo-hyd.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241015193540.mcpp2dvkmikruncj@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 15/10/2024 21:35, Akhil P Oommen wrote:
-> On Mon, Oct 14, 2024 at 09:40:13AM +0200, Krzysztof Kozlowski wrote:
->> On Sat, Oct 12, 2024 at 01:59:30AM +0530, Akhil P Oommen wrote:
->>> Update GPU node to include acd level values.
->>>
->>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 11 ++++++++++-
->>>  1 file changed, 10 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> index a36076e3c56b..e6c500480eb1 100644
->>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> @@ -3323,60 +3323,69 @@ zap-shader {
->>>  			};
->>>  
->>>  			gpu_opp_table: opp-table {
->>> -				compatible = "operating-points-v2";
->>> +				compatible = "operating-points-v2-adreno";
->>
->> This nicely breaks all existing users of this DTS. Sorry, no. We are way
->> past initial bringup/development. One year past.
-> 
-> It is not obvious to me how it breaks backward compatibility. Could you
+On Tue, 2024-10-15 at 10:23 -0500, David Lechner wrote:
+> On 10/15/24 10:00 AM, Nuno S=C3=A1 wrote:
+> > On Tue, 2024-10-15 at 09:38 -0500, David Lechner wrote:
+> > > On 10/15/24 1:37 AM, Nuno S=C3=A1 wrote:
+> > > > On Mon, 2024-10-14 at 16:15 -0500, David Lechner wrote:
+> > > > > On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+> > > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > >=20
+> > > > > > Add High Speed ad3552r platform driver.
+> > > > > >=20
+> > > > >=20
+> > > > > ...
+> > > > >=20
+> > > > > > +static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
+> > > > > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec c=
+onst *chan,
+> > > > > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int *val, int *val2, l=
+ong mask)
+> > > > > > +{
+> > > > > > +	struct ad3552r_hs_state *st =3D iio_priv(indio_dev);
+> > > > > > +	int ret;
+> > > > > > +
+> > > > > > +	switch (mask) {
+> > > > > > +	case IIO_CHAN_INFO_SAMP_FREQ: {
+> > > > > > +		int sclk;
+> > > > > > +
+> > > > > > +		ret =3D iio_backend_read_raw(st->back, chan, &sclk, 0,
+> > > > > > +					=C2=A0=C2=A0 IIO_CHAN_INFO_FREQUENCY);
+> > > > >=20
+> > > > > FWIW, this still seems like an odd way to get the stream mode SCL=
+K
+> > > > > rate from the backend to me. How does the backend know that we wa=
+nt
+> > > > > the stream mode clock rate and not some other frequency value?=
+=20
+> > > >=20
+> > > > In this case the backend has a dedicated compatible so sky is the l=
+imit :).
+> > > > But
+> > > > yeah,
+> > > > I'm also not extremely happy with IIO_CHAN_INFO_FREQUENCY. But what=
+ do you
+> > > > have
+> > > > in
+> > > > mind? Using the sampling frequency INFO or a dedicated OP?
+> > > >=20
+> > >=20
+> > > It think it would be most straightforward to have something
+> > > like a iio_backend_get_data_stream_clock_rate() callback since
+> > > that is what we are getting.
+> >=20
+> > Hmmm, what about exporting an actual clock? Maybe it's overkill but fro=
+m a
+> > correctness point of view, seems what we should actually do :)
+>=20
+> Does seem overkill to me. I wouldn't do it.
+>=20
 
-I did not say "backward compatibility". I said existing users.
+Yes it is. But to me (now that I slept on the matter) a new backend OP is a=
+lso not
+the way to go (or at least not coherent). We already have .bus_reg_read() a=
+nd
+.bus_reg_write() shared through the platform_data 'struct ad3552r_hs_platfo=
+rm_data'
+interface. Well, in reality we're asking for the bus clock here so better t=
+o add a
+.bus_clock() to that struct. And since (it seems) we are going the path of =
+just
+caring about the high speed rate, we might as well just make it a variable =
+for
+simplicity.
 
-> please elaborate a bit? I am aware that drivers should be backward
-> compatible with DT, but not the other way. Are we talking about kernels other
-> than Linux?
-> 
+> >=20
+> > >=20
+> > > Re: the other recent discussions about getting too many
+> > > callbacks. Instead of a dedicated function like this, we
+> > > could make a set of generic functions:
+> > >=20
+> > > iio_backend_{g,s}et_property_{s,u}(8, 16, 32, 64}()
+> > >=20
+> >=20
+> > Hmm interesting approach. I don't dislike it. Kind of a generic getter/=
+setter
+> > thingy.
+> > We could then still have optional inline helpers that would call the ge=
+neric
+> > functions with the proper enum value.
+> >=20
+> > > that take an enum parameter for the property. This way,
+> > > for each new property, we just have to add an enum member
+> > > instead of creating a get/set callback pair.
+> > >=20
+> > > Unrelated to this particular case, but taking the idea even
+> > > farther, we could also do the same with enable/disable
+> > > functions. We talked before about cutting the number of
+> > > callbacks in half by using a bool parameter instead of
+> > > separate enable/disable callbacks. But we could cut it down
+> > > even more by having an enum parameter for the thing we are
+> > > enabling/disabling.
+> >=20
+> > If we don't get too strict about types it could even fall into the abov=
+e u8
+> > category.
+> >=20
+> > Instead of lot of new simple ops we just grow an enum.
+>=20
+> Sure. For that matter, maybe try to just stick with 32-bit
+> for everything to keep it simple. Probably will eventually
+> need 64-bit for some things, but might be able to get away
+> with avoiding 8 and 16-bit.
+>=20
 
-Boot OpenBSD with new DTS. Previously: worked fine. Now: works less fine.
+Agreed. Anyways, nothing that I will take care in the near future (I would =
+first like
+for things to stabilize a bit). That said, if you want (or anybody else), f=
+eel free
+to send the patches :)
 
-We had exact talk about this during LPC.
-
-> Also, does including "operating-points-v2" too here help?
-
-Fallback? Yes, assuming these are compatible. Not much is explained in
-the commit msg, except duplicating diff. That's not what the commit msg
-is for.
-
-
-Best regards,
-Krzysztof
+- Nuno S=C3=A1
 
 
