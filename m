@@ -1,93 +1,208 @@
-Return-Path: <linux-kernel+bounces-368147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC529A0BE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 397099A0BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F57284B9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6F4284C77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D082D20ADDE;
-	Wed, 16 Oct 2024 13:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABBF20C001;
+	Wed, 16 Oct 2024 13:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmVt5VPx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FUWb6vX1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC83209F29;
-	Wed, 16 Oct 2024 13:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDBE209F29;
+	Wed, 16 Oct 2024 13:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086575; cv=none; b=mNWIshfNc0mKlGc92pxv/DjKmwsut1kHhk0NiOz/Mj4SXb+WzkStMDvrlZ1tfal4MJAGDK/WrEvie8Rmn7iUQasQb8gkF8EqucTVKVH+dU8CWEQT1QWMTo1XmsADpqL2r5w2Qy//5jeDDeO8xpgxk0d+ic2RgVwE6Wvjog/7U08=
+	t=1729086645; cv=none; b=MUEnpBRHFBFtK57wa5txJEDZhjiTOFcP2XWgXioLK78CpoN9LeLZqukKXTckb7UV0wcNoK0w9CpJ265KXs+eiU6tUJv7CNU9aEyWqhmAmV+XgVQHLXwhKTLtBa8UobvWncEmeUlHBb6ndM35Jg2bFcmJtEAXdFWgc0ymQz2AY98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086575; c=relaxed/simple;
-	bh=tOY6XzLiOXjIBKdyYo4UTG7nyOXLEvKocvreGuphhho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWzJsayaU0LocmesR69z6npduuuXM/Lcc4FQEOA39nDGBEsONw9B6n+xgBknfzVTF7Wu8TGa6T/Y+6LPuWrM4M7EyHSJAnzJI1ixdcxROiNZpKtLy536cq+iNDisLTTjrboRqgJNlq+VEjGilrl3N8kXjq/MHneV8u0oM8L6f08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmVt5VPx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8345C4CEC5;
-	Wed, 16 Oct 2024 13:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729086574;
-	bh=tOY6XzLiOXjIBKdyYo4UTG7nyOXLEvKocvreGuphhho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FmVt5VPxAy4FyG7omxUSQpkpTW+ucjkCp/w4sI+sriyKtWzN/uVE92zAdk/lQTbKe
-	 Z1pon91Lp9dy+/k2i2w1296s2zjMpMZw5TcvQVpVs1ZXIRCn+34B2NocOyYp5lMedC
-	 JLmq4A72xrGRdJ+AJrdBF31cGZHt2ATbkIQxOPCSxQq+tYM1xI+wUyNBGjOhoXQkvv
-	 uVZ9oVW8DAxKeHK5oNaUfYlRwcJ4ce1ea9VaJ9tAS4E/n+qoN3aGrM+Ehbn8bvcHQX
-	 1uGjfU9Fb7chd6cI9A5hlw0sNfBL5ICYRID/IpQnA6yDQxRvQuSX04ZLzLqGnYtA+j
-	 dgwS6erh0hw3A==
-Date: Wed, 16 Oct 2024 14:49:30 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wang Hai <wanghai38@huawei.com>
-Cc: sammy@sammy.net, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, zhangxiaoxu5@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net/sun3_82586: fix potential memory leak in
- sun3_82586_send_packet()
-Message-ID: <20241016134930.GF2162@kernel.org>
-References: <20241015144148.7918-1-wanghai38@huawei.com>
+	s=arc-20240116; t=1729086645; c=relaxed/simple;
+	bh=cCyFp+t7Sd2137gzIoliicbY/KrEXDYP1DWhSlBdV7s=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=h89tyvqBeflmeHNK83Z3zXE4nRv+fiHO+0bp6R0td2dsImo3vUmbYDjeiYc9+ODLRzaF+f43yG3lFw3WFbrCEQCQzI13RTnHIusJpGDd2ukfWT/utheOojmPRtUzS1ZZi0XaSiEg50gOqswRtR1F9R/XomUlsdOJxhXmOi4F3TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FUWb6vX1; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729086644; x=1760622644;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=cCyFp+t7Sd2137gzIoliicbY/KrEXDYP1DWhSlBdV7s=;
+  b=FUWb6vX15ffsYOJUas4WryVTqAHXYDKa7f5+uBt4DqL7lDt9UBAVrLSD
+   CSqrFozKyfxoCsvRbHu3Oy5YdA/HzB+yGNVCFakctnqD+1dw/y38WslbH
+   TUJ+fOiqsn+OTu+CE2s/lKiQx5eT35GTaUDr6gvGQpcE6HSb6sWjOBb84
+   RUu14VCzUc7+5NsJKqMSJCtcyGd8TzqIPCliKlGzcx8f7Ub0oIndMxl2K
+   HZcJxffbp6vhkq/9hZRaofwspPzD+PW3csAJPDaJy5d+1zl8caknxcKxT
+   1Kcyf1zHYajsPSiXOcI7BBmwEQdzra7Ns3pETaVNES0ZpQ7DSE52BBAi7
+   Q==;
+X-CSE-ConnectionGUID: Weih43BESR+Tp7a6mGTqPQ==
+X-CSE-MsgGUID: WaC/yloqTHGyyoSVaQ85lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="32335398"
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="32335398"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:50:43 -0700
+X-CSE-ConnectionGUID: XtF+9bcWTiuxW3e/nAlDmQ==
+X-CSE-MsgGUID: /rZ8/DDoQa+7goQess2q8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="78283275"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.221])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:50:40 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 16 Oct 2024 16:50:37 +0300 (EEST)
+To: "Luke D. Jones" <luke@ljones.dev>
+cc: LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, 
+    jikos@kernel.org, platform-driver-x86@vger.kernel.org, 
+    Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com, 
+    superm1@kernel.org, Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v6 1/9] platform/x86: asus-wmi: export symbols used for
+ read/write WMI
+In-Reply-To: <20240930000046.51388-2-luke@ljones.dev>
+Message-ID: <39044aeb-f00f-c9f2-4249-437906d56631@linux.intel.com>
+References: <20240930000046.51388-1-luke@ljones.dev> <20240930000046.51388-2-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015144148.7918-1-wanghai38@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Oct 15, 2024 at 10:41:48PM +0800, Wang Hai wrote:
-> The sun3_82586_send_packet() returns NETDEV_TX_OK without freeing skb
-> in case of skb->len being too long, add dev_kfree_skb() to fix it.
+On Mon, 30 Sep 2024, Luke D. Jones wrote:
+
+> Export some rather helpful read/write WMI symbols using a namespace.
+> These are DEVS and DSTS only, or require the arg0 input.
 > 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> Also does a slight refactor of internals of these functions.
+
+I'm a bit lost where this refers to. I see you're adding another function 
+but nothing is being refactored AFAICT.
+
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->  drivers/net/ethernet/i825xx/sun3_82586.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/platform/x86/asus-wmi.c            | 51 ++++++++++++++++++++--
+>  include/linux/platform_data/x86/asus-wmi.h | 10 +++++
+>  2 files changed, 58 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/i825xx/sun3_82586.c b/drivers/net/ethernet/i825xx/sun3_82586.c
-> index f2d4669c81cf..58a3d28d938c 100644
-> --- a/drivers/net/ethernet/i825xx/sun3_82586.c
-> +++ b/drivers/net/ethernet/i825xx/sun3_82586.c
-> @@ -1012,6 +1012,7 @@ sun3_82586_send_packet(struct sk_buff *skb, struct net_device *dev)
->  	if(skb->len > XMIT_BUFF_SIZE)
->  	{
->  		printk("%s: Sorry, max. framelength is %d bytes. The length of your frame is %d bytes.\n",dev->name,XMIT_BUFF_SIZE,skb->len);
-> +		dev_kfree_skb(skb);
->  		return NETDEV_TX_OK;
->  	}
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 6725a27df62f..0a5221d65130 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -385,7 +385,7 @@ int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval)
+>  {
+>  	return asus_wmi_evaluate_method3(method_id, arg0, arg1, 0, retval);
+>  }
+> -EXPORT_SYMBOL_GPL(asus_wmi_evaluate_method);
+> +EXPORT_SYMBOL_NS_GPL(asus_wmi_evaluate_method, ASUS_WMI);
+>  
+>  static int asus_wmi_evaluate_method5(u32 method_id,
+>  		u32 arg0, u32 arg1, u32 arg2, u32 arg3, u32 arg4, u32 *retval)
+> @@ -549,12 +549,57 @@ static int asus_wmi_get_devstate(struct asus_wmi *asus, u32 dev_id, u32 *retval)
+>  	return 0;
+>  }
+>  
+> -static int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
+> -				 u32 *retval)
+> +/**
+> + * asus_wmi_get_devstate_dsts() - Get the WMI function state.
+> + * @dev_id: The WMI function to call.
+> + * @retval: A pointer to where to store the value returned from WMI.
+> + *
+> + * The returned WMI function state can also be used to determine if the WMI
 
-Thanks,
+"also" ?? You're lacking some context here what else this is useful for,  
+you only talk about "also" part.
 
-I agree that:
-* This code-change is correct,
-* and in keeping with other code in this function.
-* And I agree that this problem goes back to the beginning of git history
+> + * function is supported by checking if the asus_wmi_get_devstate_dsts()
+> + * returns an error.
+> + *
+> + * On success the return value is 0, and the retval is a valid value returned
+> + * by the successful WMI function call. An error value is returned only if the
+> + * WMI function failed, or if it returns "unsupported" which is typically a 0
+> + * (no return, and no 'supported' bit set), or a 0xFFFFFFFE (~1) which if not
+> + * caught here can result in unexpected behaviour later.
+> + */
+> +int asus_wmi_get_devstate_dsts(u32 dev_id, u32 *retval)
+> +{
+> +	int err;
+> +
+> +	err = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS, dev_id, 0, retval);
+> +	if (err)
+> +		return err;
+> +
+> +	*retval &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
+> +	if (*retval == ASUS_WMI_UNSUPPORTED_METHOD)
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+This seems buggy. First ASUS_WMI_DSTS_PRESENCE_BIT bit is unmasked from 
+*retval and then you compare it to ASUS_WMI_UNSUPPORTED_METHOD which can 
+never be true.
+
+> +		return -ENODEV;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(asus_wmi_get_devstate_dsts, ASUS_WMI);
+> +
+> +/**
+> + * asus_wmi_set_devstate() - Set the WMI function state.
+> + * @dev_id: The WMI function to call.
+> + * @ctrl_param: The argument to be used for this WMI function.
+> + * @retval: A pointer to where to store the value returned from WMI.
+> + *
+> + * The returned WMI function state if not checked here for error as
+> + * asus_wmi_set_devstate() is not called unless first paired with a call to
+> + * asus_wmi_get_devstate_dsts() to check that the WMI function is supported.
+
+Please try to rephrase this mess. :-)
+
+-- 
+ i.
+
+> + * On success the return value is 0, and the retval is a valid value returned
+> + * by the successful WMI function call. An error value is returned only if the
+> + * WMI function failed.
+> + */
+> +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval)
+>  {
+>  	return asus_wmi_evaluate_method(ASUS_WMI_METHODID_DEVS, dev_id,
+>  					ctrl_param, retval);
+>  }
+> +EXPORT_SYMBOL_NS_GPL(asus_wmi_set_devstate, ASUS_WMI);
+>  
+>  /* Helper for special devices with magic return codes */
+>  static int asus_wmi_get_devstate_bits(struct asus_wmi *asus,
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 365e119bebaa..6ea4dedfb85e 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -158,8 +158,18 @@
+>  #define ASUS_WMI_DSTS_LIGHTBAR_MASK	0x0000000F
+>  
+>  #if IS_REACHABLE(CONFIG_ASUS_WMI)
+> +int asus_wmi_get_devstate_dsts(u32 dev_id, u32 *retval);
+> +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval);
+>  int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
+>  #else
+> +static inline int asus_wmi_get_devstate_dsts(u32 dev_id, u32 *retval)
+> +{
+> +	return -ENODEV;
+> +}
+> +static inline int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval)
+> +{
+> +	return -ENODEV;
+> +}
+>  static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+>  					   u32 *retval)
+>  {
+> 
 
