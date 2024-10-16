@@ -1,152 +1,114 @@
-Return-Path: <linux-kernel+bounces-368835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE689A156D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:00:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302099A1579
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F3F1F21659
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:00:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D9BAB24C30
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94D61D2F61;
-	Wed, 16 Oct 2024 21:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D75A1D415D;
+	Wed, 16 Oct 2024 21:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SZpkp0aQ"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHYxRThH"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF831D3593
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFD11D4171
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729115953; cv=none; b=F2MJ5Y2/QRk14yiFIUmUUwQJY1qSPNF7qAK8zaQdMNCiAR59iEodXeDeyM7BoMP+zvcAXz4fQS7Cq5TTHYXRaOeucHmMDJjb1Xoov9F8s5BBAqAQ8Alkvgxky92lR9+MyHCBuWZLBV25czCO2io0EZyPSpPgKU2HdbfxDztsoaw=
+	t=1729115975; cv=none; b=ZApr2YybAKnhOR5ocIhLXdtoHYGTAErziuaVyqorcHZR7dBbz/yFZ5kqKk8q6pCdPr1wzGe89L2fKetGI0GyaAHEgVam1fJb1b3GDuEv7MWsKqfsANGKvgy9VJy74KVMNMkxk5UU2TJomHoe+kPrfEZM6PKMA8yoPGMrW91tze0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729115953; c=relaxed/simple;
-	bh=8qYHelQUjDoTybira0O9Q7Zj6yilO0u+xZOecQxQR8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WTS1zePCszdO7jIm0Dz7XCDqS7aOnMPrmPNyLX8pX4btitxMz/GNv4eBTRncE17eFdOVws975ecLn75IxzNlJH5i/VhndZZzPTbl7W1z7hZxOvp4Ay9YF7/zz55YryvgcyCR5akOcI0aaQQ5x7PRsC17YzREg10/tP5oHOZk7Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SZpkp0aQ; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a363feabc6so5079615ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:59:11 -0700 (PDT)
+	s=arc-20240116; t=1729115975; c=relaxed/simple;
+	bh=gZ85YJG7vfi8u4FQ8plCpOZj3X/b0SrmcIPg3BAgSxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qvXW15ygyweP/11tq6dhbnbh82FiJmG99alkEk+aHORlkIydrE7lKVKnRIeGjR4nbKb0E7+fkL6yJeItzngEMztgq49pCIajUuYMUGITwNbW7wIrBkPhvd4bnIrrVLa8aXAbmq+jVYBKk3rXB9mRVQbwQb5LzsKJ2sdIQLkhkFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHYxRThH; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4311420b675so3025535e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729115950; x=1729720750; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nKmb9Wl1EPVaTgFDnEvZmVVLPMr8CXfZoJTK+cdxx8k=;
-        b=SZpkp0aQ0wmscAoqCX51/Rtd77yvPbfpofdwArw9mVjk5LW6GMhWPdz0qOFDTQIFvf
-         BZjeLJOV6jzy1qR+tLP+MfVLgLnSB03oVkzYQ8pwmzUqyF+HsTo0z6L7TamQnbZaofqu
-         ozkAxCb45cn5tMGHnWf+irBLeJSThIW+t1y9Y=
+        d=linaro.org; s=google; t=1729115972; x=1729720772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ki1tK0lXvAt5fjPsKWDnYQ8CptODlSuCyrJG5QK7fGU=;
+        b=hHYxRThHAgoGtSA91y52A02RTY1T6zy7MbeZ74hLr6fiJHHWHsNG522tZU96JksAHa
+         uqtvP0qR88MHrXl6CbB4vWar5+bO/VqLkkYJVtM7hd2DwaRHQO4XgutDc51CQUp9JiAb
+         aBsosPaek2XT7mOWSg8yTdgKGqOPw7g5T5sKbbCqAzac9PE75fL/qwQbygguMADCdkaH
+         AdrBE2/4AeimC9r7PW0eCnIkIeypQaYbxo2DM66WqkLDRQSQJ2HiPt593z7iFvJ10SBp
+         mRyw7fVaEV175SBMhQoBvXMWyXinBTOIg5BLY9o1G9hwfJFmRh8LK7e3zFSPgehG1HIP
+         oFwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729115950; x=1729720750;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nKmb9Wl1EPVaTgFDnEvZmVVLPMr8CXfZoJTK+cdxx8k=;
-        b=byU4si54A58Wh3yrcLGHhMvHE1MoEWDUOx+dqT2q+fMhriJGe+8yqdaCdK5sEg1V0k
-         aJijieAmfy5xaVT/Pg934HQliMzDqeN6YrqHB6i8M8kRPnJJz5Rb5kATCOQjtiYH3GMP
-         jmL+Z+xu9x+hLJIMZlc4wtN7fd3QNnZBXk8KGMOVriyzdOBOi5m8qWZ+ptfoNVg1Sk30
-         4npbHRMr/CSn3K/y1pR1lMN+VQJ6acUkBavogs4xM1fWE8jtrzY3sUhmIM9IaPOXVpdQ
-         7n4eX0BKS2kB4rUSuEpi+mCHxDZGfGI/9tE4tD5xI3G03cyHGzvAEZFIblPj+YCUamSc
-         LYIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVE0nVu9SE0OWI/FNa/ILV1TYIkcNjDArhUB5kmggzYVWboj20Hfht5klxayHmC8ny5IfZ+4YRQCF67h2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4R5RJaYuWKqwDgIQLhcIgqeUr70FdG4G4drqaJWMI6m1J6/xo
-	Oj8G0zxFHwCPEHAVFrE1Py9OZL2xaH3SCKOfb5crI4ByWf+rOqM2zgDax1DB9c0=
-X-Google-Smtp-Source: AGHT+IEPRTO0e9QGvFwLCNnSf650+7rhXWqxmDc8PUGnLVGRYi1Npd/Q8UEd25NszhcXsxF1dwVEuQ==
-X-Received: by 2002:a05:6e02:1aaa:b0:3a2:6d54:33df with SMTP id e9e14a558f8ab-3a3e52a7266mr8993475ab.4.1729115950287;
-        Wed, 16 Oct 2024 14:59:10 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecc68bcasm1049582173.159.2024.10.16.14.59.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 14:59:09 -0700 (PDT)
-Message-ID: <e5889240-8109-4b75-aa27-25a771c4edf0@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 15:59:08 -0600
+        d=1e100.net; s=20230601; t=1729115972; x=1729720772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ki1tK0lXvAt5fjPsKWDnYQ8CptODlSuCyrJG5QK7fGU=;
+        b=bMn9vBcwMsVuZQhd9sCgHG5wxs+2pkzFO/gHt/x60NuN3NsuLGUthjcA8jt1MzSkHG
+         wxZ+oEQZrVQ2YnnyvFzBvt6kleHTsoIp+KKjCWqkRCfR3pRTmuLsEwYzc2o8EQ3TfL/i
+         3VHrd5+M8+nn/UMnm6DGf6LnOsQjs0AnYZ1QswAsLZUht1nsM7Y5ZPsJJp/KZqzESgHQ
+         lm2kM29yV941SeIdLiBwWKmSZonOPE6RzpEv7xPVadmj5T4/vbFZtQ5gb0U8GGOWqZ/2
+         RO8lASj6IpM/cY9xNmGH8xzQVHZK4Ze4rcuMY++NBRZManjxTQFwKtZ3uytJHqagR3bL
+         mqNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPS5fXl26okq4zdwtLc/NEd0bH/a09wkRiZY1a9CJZztSrYEgKurv/cY+T9xTbdAJazEvj++iMmuUriKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1HyFzxIXdItHfj1LGRENWgJ+RjUsH9UiiJoJfKIMdaObyeWdU
+	5bzxXf48FFodxwOocxiW29REvvEIQ4icw58uVsvGxXr+e23xYaLJreTV3wU05UI=
+X-Google-Smtp-Source: AGHT+IFioaXXZK1Tmi+xpk2KBU077R3Z41+bL9fy1kfiTTA6z5vvkSfT0PCGZlciKZoWGT4OuQ40rA==
+X-Received: by 2002:a05:600c:6745:b0:431:40ca:ce6e with SMTP id 5b1f17b1804b1-4314a3acc32mr45668755e9.31.1729115972185;
+        Wed, 16 Oct 2024 14:59:32 -0700 (PDT)
+Received: from localhost.localdomain ([2.125.184.148])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c3bc75sm5888255e9.12.2024.10.16.14.59.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 14:59:31 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: linux-sound@vger.kernel.org,
+	srinivas.kandagatla@linaro.org,
+	broonie@kernel.org
+Cc: lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-arm-msm@vger.kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: tx-macro: correct tx_macro_component_drv name
+Date: Wed, 16 Oct 2024 22:59:30 +0100
+Message-ID: <20241016215930.1144527-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftest: hid: add the missing tests directory
-To: Benjamin Tissoires <bentiss@kernel.org>, Yun Lu <luyun@kylinos.cn>
-Cc: jikos@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241015091520.2431150-1-luyun@kylinos.cn>
- <4ioshjncgxafin7jcm7kne5fahp4l5nhk5664mnrdo7fgutgyn@jac5gopdyjty>
- <96ac2fd6-a885-4455-b0c9-91c514c8f3f5@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <96ac2fd6-a885-4455-b0c9-91c514c8f3f5@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/16/24 09:08, Shuah Khan wrote:
-> On 10/16/24 02:27, Benjamin Tissoires wrote:
->> On Oct 15 2024, Yun Lu wrote:
->>> Commit 160c826b4dd0 ("selftest: hid: add missing run-hid-tools-tests.sh")
->>> has added the run-hid-tools-tests.sh script for it to be installed, but
->>> I forgot to add the tests directory together.
->>>
->>> If running the test case without the tests directory,  will results in
->>> the following error message:
->>>
->>>      make -C tools/testing/selftests/ TARGETS=hid install \
->>>         INSTALL_PATH=$KSFT_INSTALL_PATH
->>>      cd $KSFT_INSTALL_PATH
->>>      ./run_kselftest.sh -t hid:hid-core.sh
->>>
->>>    /usr/lib/python3.11/site-packages/_pytest/config/__init__.py:331: PluggyTeardownRaisedWarning: A plugin raised an exception during an old-style hookwrapper teardown.
->>>    Plugin: helpconfig, Hook: pytest_cmdline_parse
->>>    UsageError: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
->>>    __main__.py: error: unrecognized arguments: --udevd
->>>      inifile: None
->>>      rootdir: /root/linux/kselftest_install/hid
->>>
->>> In fact, the run-hid-tools-tests.sh script uses the scripts in the tests
->>> directory to run tests. The tests directory also needs to be added to be
->>> installed.
->>>
+It should be actually TX-MACRO rather than RX-MACRO.
+Rx_macro_component_drv name is RX-MACRO.
 
-Yun Lu,
-The patch version information doesn't belong in the change log.
-You have to add it below the three dashes as shown below.
-Check submitting patches document for details.
-
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
-v2: add the error message
+ sound/soc/codecs/lpass-tx-macro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  tools/testing/selftests/hid/Makefile | 1 +
-  1 file changed, 1 insertion(+)
-
-There is no need to send another version. I fixed
-it up.
-
->>> v2: add the error message
->>>
->>> Fixes: ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->>
->> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
-
-Thank you.
-
->>
->> Shuah, I guess you'll want to take this one through your tree given that
->> you already took the run-hid-tools-tests.sh one?
->>
-> 
-> Yes. I will take this one. Thanks.
-> 
-
-Thanks for the patch. Applied to linux-kselftest fixes for next rc.
-
-thanks,
--- Shuah
+diff --git a/sound/soc/codecs/lpass-tx-macro.c b/sound/soc/codecs/lpass-tx-macro.c
+index a134584acf90..74e69572796b 100644
+--- a/sound/soc/codecs/lpass-tx-macro.c
++++ b/sound/soc/codecs/lpass-tx-macro.c
+@@ -2230,7 +2230,7 @@ static int tx_macro_register_mclk_output(struct tx_macro *tx)
+ }
+ 
+ static const struct snd_soc_component_driver tx_macro_component_drv = {
+-	.name = "RX-MACRO",
++	.name = "TX-MACRO",
+ 	.probe = tx_macro_component_probe,
+ 	.controls = tx_macro_snd_controls,
+ 	.num_controls = ARRAY_SIZE(tx_macro_snd_controls),
+-- 
+2.45.2
 
 
