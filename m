@@ -1,257 +1,324 @@
-Return-Path: <linux-kernel+bounces-367455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209E09A029B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:31:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38C89A029A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE391F23B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249B31C229CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7A71C3038;
-	Wed, 16 Oct 2024 07:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D841C07E6;
+	Wed, 16 Oct 2024 07:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwGflVpJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLiGzDdy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109091B85EC
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820B17C9FA;
+	Wed, 16 Oct 2024 07:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063848; cv=none; b=UL7jDPEsU7vOqmRddpQEsrSserEMMQ1wGZyWMm9P00uP7bkXCZVAX0d4LisxF0a5H5VpYWJIkEq7w/QCKZ032XV6SXEVL58ivogLuzyEYcqlYp+MJgP8Q7vAxrbnnvPsLs4I4PruJpfxsI7jSoRD6R5b1PaGhf76grBmEmsYaMo=
+	t=1729063843; cv=none; b=nXCJ9oHwDC2nW+dhyr70Kuhm7RCEdE1M4cCVnfnSV5f4urUbUNvA12yMdEo0ULA2RajeeupSwkoJRcPHtupVFMxVIgiGayKtUa1WHeiBU1NjCkRoC7CvBJs76jv8HWth3ARFxcyTLfa1dnNIe8sb+jltSeOVB/ccCluzCIg7BXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063848; c=relaxed/simple;
-	bh=BiGEJtQfZvYa4sIn+ELPpiWdnPMj6XIZ6gDNFCL2g7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nyt65lb85o8NEPDG803XCEG+rkaHD/Hpa+jahrNVcNgDA9abM3jZvqNRezeNvcvnFR3PK/idRDX66jfBnecT0s8ixaDe/HbhCx2RhPO8B5VDX6Bj62pZNPqzCAGnURChrgG6x+xlxV5RS1HUVF7WpqONbXuJtAFsDPIaYpkjajs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwGflVpJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B757C4CED2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:30:47 +0000 (UTC)
+	s=arc-20240116; t=1729063843; c=relaxed/simple;
+	bh=2vkCcYGCQnE92NDuH25qfT6npSXZgVIwv76Lzb4O/VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlB6xRajOuEQfcZAJIE3A11J5SDwWoNeysb/cAATwZaf56Z1b8Jz4k1G+JeoSEYTvRhGd4MibUDEninXlqgMaIPIXbT0lX6wsbDrGpvMMUodpKgd4/h7B7tKVezXZofWt110sA5wfxPTRAATELziI7YHRu7dyokyUIs7b1qNaHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLiGzDdy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E63C4CEC5;
+	Wed, 16 Oct 2024 07:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729063847;
-	bh=BiGEJtQfZvYa4sIn+ELPpiWdnPMj6XIZ6gDNFCL2g7c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CwGflVpJh7LdN4I9Xl1gO9GtAJ5sp/Pj1wWtRWj7AZTJYOMBiJ7hI7Gfs0OezN/s+
-	 5eVdehTpV2kEIcdASKxhe0En5amuWbF33nVlKx1OPj2hAjHSH5fgOxdtaPmJaZKcHx
-	 QKLhexut+hS98/UIPBKZNOWnlrHCkgbQFKeUb/wJhfYsqV2kGJmLHli9F/G1UTxok1
-	 cpRHSwO1u5hAizGJeoTjVdXj2C+gBjT7Skz+qXqBoApopamoYqPu7/CqLq1SI+VAaS
-	 uBAEpM77Ft7SeUElZMfTdtCNfFXeDxiTw7wZtC7QVa4yrCkvoMckE2v/miyicXQ9oq
-	 ZMYpA5mmsg3QA==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so4269136a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:30:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW4ubz3AZkw2WBQxffiv9l2Faf5LQQqzVkbDz7n/FNq9UdXw9esTTzgkEcASmtuHImnoGCAXRHEsmm+hyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg1sUdNuxHfc5Xw1a33WCJlktz8TPz/fc0HAfKYyu+eueHq97w
-	Kwe12ioj1wANjeITMZI7V7zO1dPcWDvimz9IMqJ+P/lEX0mUP0m2yMjglITihUaLahQBCOXVzXk
-	3zfVFoX4x+V42ggEXnvULdiurxGk=
-X-Google-Smtp-Source: AGHT+IGGgI/RALmibbLHEgiBVUT9M21MDnSkFq4Au5DeP01Xn6lKa0uHZWLkvAovFIylEUT/MwPrEjLDn03ZvFDfMUs=
-X-Received: by 2002:a17:907:848:b0:a99:3318:e7c3 with SMTP id
- a640c23a62f3a-a99e3e4c294mr1543126666b.43.1729063846118; Wed, 16 Oct 2024
- 00:30:46 -0700 (PDT)
+	s=k20201202; t=1729063842;
+	bh=2vkCcYGCQnE92NDuH25qfT6npSXZgVIwv76Lzb4O/VM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jLiGzDdyTnVfdnBzrEK5TR1U7Ju81XPhz6Fr2yicFSYRVT2IJPfjZUvX9c5vIldwd
+	 n4PE4GAPtJJUMsNdenRTcRsEqOFvPjaI3+oSMbL1r0q+foGpCm/Xh1nrTU5bXqAepQ
+	 r03i33yxWDtlSOclX4dfxbBXtuh8QN/1+9qlE15R3+4/8hrvhrL2WV5vJUB9G3kGGW
+	 UjpTvc8tQsbAPLYd/69+Pv/KniXRJ8ru/+OdUpAdSa3c88rpPdMiJ+u+OA2IX+2njd
+	 m0W93/L6feq3NEnXczpOXApFcHlhjUXISwzOLhaqcrCLgqslE5dZyJKx7DkVDZPsBO
+	 T5iyKaVnFxBaw==
+Date: Wed, 16 Oct 2024 09:30:38 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Cc: patrick@stwcx.xyz, Pavel Machek <pavel@ucw.cz>, 
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Nate Case <ncase@xes-inc.com>, Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: leds: pca955x: Convert text bindings to
+ YAML
+Message-ID: <yrnxc53ofxpgfrsilqib4zv5bboiinkvlep3hlfxgyhkcievpv@jwxfet2rqeel>
+References: <20241016052941.416034-1-Delphine_CC_Chiu@wiwynn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014035855.1119220-1-maobibo@loongson.cn> <20241014035855.1119220-3-maobibo@loongson.cn>
- <CAAhV-H6nkiw_eOS3jFdojJsCJOA2yiprQmaT5c=SnPhJTOyKkQ@mail.gmail.com>
- <e7c06bf4-897a-7060-61f9-97435d2af16e@loongson.cn> <CAAhV-H6H=Q=1KN5q8kR3j55Ky--FRNifCT93axhqE=vNMArDaQ@mail.gmail.com>
- <1b4070c9-921e-65e3-c2a7-dab486d4f17f@loongson.cn>
-In-Reply-To: <1b4070c9-921e-65e3-c2a7-dab486d4f17f@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 16 Oct 2024 15:30:34 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5fx14iUM_5e36sO-kd8VWpFLG_Qmi5JUHKiPRqrPQsoA@mail.gmail.com>
-Message-ID: <CAAhV-H5fx14iUM_5e36sO-kd8VWpFLG_Qmi5JUHKiPRqrPQsoA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] LoongArch: Add barrier between set_pte and memory access
-To: maobibo <maobibo@loongson.cn>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241016052941.416034-1-Delphine_CC_Chiu@wiwynn.com>
 
-On Wed, Oct 16, 2024 at 2:09=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote=
-:
->
->
->
-> On 2024/10/15 =E4=B8=8B=E5=8D=888:27, Huacai Chen wrote:
-> > On Tue, Oct 15, 2024 at 10:54=E2=80=AFAM maobibo <maobibo@loongson.cn> =
-wrote:
-> >>
-> >>
-> >>
-> >> On 2024/10/14 =E4=B8=8B=E5=8D=882:31, Huacai Chen wrote:
-> >>> Hi, Bibo,
-> >>>
-> >>> On Mon, Oct 14, 2024 at 11:59=E2=80=AFAM Bibo Mao <maobibo@loongson.c=
-n> wrote:
-> >>>>
-> >>>> It is possible to return a spurious fault if memory is accessed
-> >>>> right after the pte is set. For user address space, pte is set
-> >>>> in kernel space and memory is accessed in user space, there is
-> >>>> long time for synchronization, no barrier needed. However for
-> >>>> kernel address space, it is possible that memory is accessed
-> >>>> right after the pte is set.
-> >>>>
-> >>>> Here flush_cache_vmap/flush_cache_vmap_early is used for
-> >>>> synchronization.
-> >>>>
-> >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >>>> ---
-> >>>>    arch/loongarch/include/asm/cacheflush.h | 14 +++++++++++++-
-> >>>>    1 file changed, 13 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/arch/loongarch/include/asm/cacheflush.h b/arch/loongarc=
-h/include/asm/cacheflush.h
-> >>>> index f8754d08a31a..53be231319ef 100644
-> >>>> --- a/arch/loongarch/include/asm/cacheflush.h
-> >>>> +++ b/arch/loongarch/include/asm/cacheflush.h
-> >>>> @@ -42,12 +42,24 @@ void local_flush_icache_range(unsigned long star=
-t, unsigned long end);
-> >>>>    #define flush_cache_dup_mm(mm)                         do { } whi=
-le (0)
-> >>>>    #define flush_cache_range(vma, start, end)             do { } whi=
-le (0)
-> >>>>    #define flush_cache_page(vma, vmaddr, pfn)             do { } whi=
-le (0)
-> >>>> -#define flush_cache_vmap(start, end)                   do { } while=
- (0)
-> >>>>    #define flush_cache_vunmap(start, end)                 do { } whi=
-le (0)
-> >>>>    #define flush_icache_user_page(vma, page, addr, len)   do { } whi=
-le (0)
-> >>>>    #define flush_dcache_mmap_lock(mapping)                        do=
- { } while (0)
-> >>>>    #define flush_dcache_mmap_unlock(mapping)              do { } whi=
-le (0)
-> >>>>
-> >>>> +/*
-> >>>> + * It is possible for a kernel virtual mapping access to return a s=
-purious
-> >>>> + * fault if it's accessed right after the pte is set. The page faul=
-t handler
-> >>>> + * does not expect this type of fault. flush_cache_vmap is not exac=
-tly the
-> >>>> + * right place to put this, but it seems to work well enough.
-> >>>> + */
-> >>>> +static inline void flush_cache_vmap(unsigned long start, unsigned l=
-ong end)
-> >>>> +{
-> >>>> +       smp_mb();
-> >>>> +}
-> >>>> +#define flush_cache_vmap flush_cache_vmap
-> >>>> +#define flush_cache_vmap_early flush_cache_vmap
-> >>>   From the history of flush_cache_vmap_early(), It seems only archs w=
-ith
-> >>> "virtual cache" (VIVT or VIPT) need this API, so LoongArch can be a
-> >>> no-op here.
-> > OK,  flush_cache_vmap_early() also needs smp_mb().
-> >
-> >>
-> >> Here is usage about flush_cache_vmap_early in file linux/mm/percpu.c,
-> >> map the page and access it immediately. Do you think it should be noop
-> >> on LoongArch.
-> >>
-> >> rc =3D __pcpu_map_pages(unit_addr, &pages[unit * unit_pages],
-> >>                                        unit_pages);
-> >> if (rc < 0)
-> >>       panic("failed to map percpu area, err=3D%d\n", rc);
-> >>       flush_cache_vmap_early(unit_addr, unit_addr + ai->unit_size);
-> >>       /* copy static data */
-> >>       memcpy((void *)unit_addr, __per_cpu_load, ai->static_size);
-> >> }
-> >>
-> >>
-> >>>
-> >>> And I still think flush_cache_vunmap() should be a smp_mb(). A
-> >>> smp_mb() in flush_cache_vmap() prevents subsequent accesses be
-> >>> reordered before pte_set(), and a smp_mb() in flush_cache_vunmap()
-> >> smp_mb() in flush_cache_vmap() does not prevent reorder. It is to flus=
-h
-> >> pipeline and let page table walker HW sync with data cache.
-> >>
-> >> For the following example.
-> >>     rb =3D vmap(pages, nr_meta_pages + 2 * nr_data_pages,
-> >>                     VM_MAP | VM_USERMAP, PAGE_KERNEL);
-> >>     if (rb) {
-> >> <<<<<<<<<<< * the sentence if (rb) can prevent reorder. Otherwise with
-> >> any API kmalloc/vmap/vmalloc and subsequent memory access, there will =
-be
-> >> reorder issu. *
-> >>         kmemleak_not_leak(pages);
-> >>         rb->pages =3D pages;
-> >>         rb->nr_pages =3D nr_pages;
-> >>         return rb;
-> >>     }
-> >>
-> >>> prevents preceding accesses be reordered after pte_clear(). This
-> >> Can you give an example about such usage about flush_cache_vunmap()? a=
-nd
-> >> we can continue to talk about it, else it is just guessing.
-> > Since we cannot reach a consensus, and the flush_cache_* API look very
-> > strange for this purpose (Yes, I know PowerPC does it like this, but
-> > ARM64 doesn't). I prefer to still use the ARM64 method which means add
-> > a dbar in set_pte(). Of course the performance will be a little worse,
-> > but still better than the old version, and it is more robust.
-> >
-> > I know you are very busy, so if you have no time you don't need to
-> > send V3, I can just do a small modification on the 3rd patch.
-> No, I will send V3 by myself. And I will drop the this patch in this
-> patchset since by actual test vmalloc_test works well even without this
-> patch on 3C5000 Dual-way, also weak function kernel_pte_init will be
-> replaced with inline function rebased on
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/patc=
-hes/mm-define-general-function-pxd_init.patch
-This patch is in Andrew's mm-unstable branch. As far I know,
-mm-unstable is for next (6.13) and mm-stable is for current (6.12).
+On Wed, Oct 16, 2024 at 01:29:38PM +0800, Delphine CC Chiu wrote:
+> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+> 
+> Convert the text bindings of pca955x to YAML so it could be used to
+> validate the DTS.
+> 
+> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+> ---
+>  .../devicetree/bindings/leds/leds-pca955x.txt |  89 ----------
+>  .../devicetree/bindings/leds/nxp,pca955x.yaml | 161 ++++++++++++++++++
+>  2 files changed, 161 insertions(+), 89 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/leds/leds-pca955x.txt
+>  create mode 100644 Documentation/devicetree/bindings/leds/nxp,pca955x.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-pca955x.txt b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
+> deleted file mode 100644
+> index 817f460f3a72..000000000000
+> --- a/Documentation/devicetree/bindings/leds/leds-pca955x.txt
+> +++ /dev/null
+> @@ -1,89 +0,0 @@
+> -* NXP - pca955x LED driver
+> -
+> -The PCA955x family of chips are I2C LED blinkers whose pins not used
+> -to control LEDs can be used as general purpose I/Os. The GPIO pins can
+> -be input or output, and output pins can also be pulse-width controlled.
+> -
+> -Required properties:
+> -- compatible : should be one of :
+> -	"nxp,pca9550"
+> -	"nxp,pca9551"
+> -	"nxp,pca9552"
+> -	"ibm,pca9552"
+> -	"nxp,pca9553"
+> -- #address-cells: must be 1
+> -- #size-cells: must be 0
+> -- reg: I2C slave address. depends on the model.
+> -
+> -Optional properties:
+> -- gpio-controller: allows pins to be used as GPIOs.
+> -- #gpio-cells: must be 2.
+> -- gpio-line-names: define the names of the GPIO lines
+> -
+> -LED sub-node properties:
+> -- reg : number of LED line.
+> -		from 0 to  1 for the pca9550
+> -		from 0 to  7 for the pca9551
+> -		from 0 to 15 for the pca9552
+> -		from 0 to  3 for the pca9553
+> -- type: (optional) either
+> -	PCA955X_TYPE_NONE
+> -	PCA955X_TYPE_LED
+> -	PCA955X_TYPE_GPIO
+> -	see dt-bindings/leds/leds-pca955x.h (default to LED)
+> -- label : (optional)
+> -	see Documentation/devicetree/bindings/leds/common.txt
+> -- linux,default-trigger : (optional)
+> -	see Documentation/devicetree/bindings/leds/common.txt
+> -
+> -Examples:
+> -
+> -pca9552: pca9552@60 {
+> -	compatible = "nxp,pca9552";
+> -	#address-cells = <1>;
+> -        #size-cells = <0>;
+> -	reg = <0x60>;
+> -
+> -	gpio-controller;
+> -	#gpio-cells = <2>;
+> -	gpio-line-names = "GPIO12", "GPIO13", "GPIO14", "GPIO15";
+> -
+> -	gpio@12 {
+> -		reg = <12>;
+> -		type = <PCA955X_TYPE_GPIO>;
+> -	};
+> -	gpio@13 {
+> -		reg = <13>;
+> -		type = <PCA955X_TYPE_GPIO>;
+> -	};
+> -	gpio@14 {
+> -		reg = <14>;
+> -		type = <PCA955X_TYPE_GPIO>;
+> -	};
+> -	gpio@15 {
+> -		reg = <15>;
+> -		type = <PCA955X_TYPE_GPIO>;
+> -	};
+> -
+> -	led@0 {
+> -		label = "red:power";
+> -		linux,default-trigger = "default-on";
+> -		reg = <0>;
+> -		type = <PCA955X_TYPE_LED>;
+> -	};
+> -	led@1 {
+> -		label = "green:power";
+> -		reg = <1>;
+> -		type = <PCA955X_TYPE_LED>;
+> -	};
+> -	led@2 {
+> -		label = "pca9552:yellow";
+> -		reg = <2>;
+> -		type = <PCA955X_TYPE_LED>;
+> -	};
+> -	led@3 {
+> -		label = "pca9552:white";
+> -		reg = <3>;
+> -		type = <PCA955X_TYPE_LED>;
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/leds/nxp,pca955x.yaml b/Documentation/devicetree/bindings/leds/nxp,pca955x.yaml
+> new file mode 100644
+> index 000000000000..70f8c1dfa75a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/nxp,pca955x.yaml
+> @@ -0,0 +1,161 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/nxp,pca955x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP PCA955X LED controllers
+> +
+> +maintainers:
+> +  - Nate Case <ncase@xes-inc.com>
+> +
+> +description: |
+> +  The PCA955x family of chips are I2C LED blinkers whose pins not used
+> +  to control LEDs can be used as general purpose I/Os. The GPIO pins can
+> +  be input or output, and output pins can also be pulse-width controlled.
+> +
+> +  For more product information please see the link below:
+> +  - https://www.nxp.com/docs/en/data-sheet/PCA9552.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,pca9550
+> +      - nxp,pca9551
+> +      - nxp,pca9552
+> +      - ibm,pca9552
+> +      - nxp,pca9553
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  gpio-controller: true
+> +
+> +  gpio-line-names:
+> +    minItems: 1
+> +    maxItems: 16
+> +
+> +  '#gpio-cells':
 
-But this series is bugfix, so it is for current (6.12).
+Keep consistent quotes: " or '
 
->
-> I dislike the copy-paste method without further understanding :(,
-> although I also copy and paste code, but as least I try best to
-> understand it.
+> +    const: 2
+> +
+> +patternProperties:
+> +  "^led@[0-9a-f]+$":
 
-I dislike too. But in order to make this series be in 6.12, it is
-better to keep copy-paste, and then update the refactoring patch to V2
-for Andrew (rebase and drop is normal for mm-unstable).
+max is 15 leds, so f, thus '+' is not needed. Same in other places.
+
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        minimum: 0
+
+drop minimum, but instead maxItems: 1
 
 
-Huacai
+> +      type:
+> +        description: |
+> +          Output configuration, see include/dt-bindings/leds/leds-pca955x.h
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        default: 0
+> +        minimum: 0
+> +        maximum: 4
 
->
-> Regards
-> Bibo Mao
-> >
-> >
-> > Huacai
-> >
-> >>
-> >> Regards
-> >> Bibo Mao
-> >>> potential problem may not be seen from experiment, but it is needed i=
-n
-> >>> theory.
-> >>>
-> >>> Huacai
-> >>>
-> >>>> +
-> >>>>    #define cache_op(op, addr)                                       =
-      \
-> >>>>           __asm__ __volatile__(                                     =
-      \
-> >>>>           "       cacop   %0, %1                                  \n=
-"     \
-> >>>> --
-> >>>> 2.39.3
-> >>>>
-> >>>>
-> >>
-> >>
->
+I see defines up to 2, not 4. Any changes in binding should be explained
+in commit msg.
+
+
+> +
+> +    required:
+> +      - reg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nxp,pca9550
+> +    then:
+> +      patternProperties:
+> +        "^led@[0-9a-f]+$":
+> +          properties:
+> +            reg:
+> +              maximum: 1
+> +    else:
+> +      if:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              enum:
+> +                - nxp,pca9551
+> +      then:
+> +        patternProperties:
+> +          "^led@[0-9a-f]+$":
+> +            properties:
+> +              reg:
+> +                maximum: 7
+> +      else:
+> +        if:
+> +          properties:
+> +            compatible:
+> +              contains:
+> +                enum:
+> +                  - nxp,pca9552
+> +                  - ibm,pca9552
+> +        then:
+> +          patternProperties:
+> +            "^led@[0-9a-f]+$":
+> +              properties:
+> +                reg:
+> +                  maximum: 15
+> +        else:
+> +          if:
+
+Do not nest else:if. It's not manageable. See other bindings...
+
+> +            properties:
+> +              compatible:
+> +                contains:
+> +                  enum:
+> +                    - nxp,pca9553
+> +          then:
+> +            patternProperties:
+> +              "^led@[0-9a-f]+$":
+> +                properties:
+> +                  reg:
+> +                    maximum: 3
+> +
+> +additionalProperties: false
+
+Best regards,
+Krzysztof
+
 
