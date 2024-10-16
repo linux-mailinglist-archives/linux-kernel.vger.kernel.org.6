@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-367374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0919A0163
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69979A0170
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B925DB25B0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7311C225E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C7D18E362;
-	Wed, 16 Oct 2024 06:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B1418C906;
+	Wed, 16 Oct 2024 06:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERwkFU4Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mwhjqkE1"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D050E18D655;
-	Wed, 16 Oct 2024 06:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7D8171E70;
+	Wed, 16 Oct 2024 06:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059856; cv=none; b=IkZz6PAyuQG1NhNaS5EmcFBqIdx4pUE+WISrZUg89vWE+gnFhJ6yYHGWAaMPDNmZBlM0HhwzNcP/+WU6P6nIwSyUETs4rEkANCTH1DQ5IYoB/UV4+uFFFNBHGHKWmmiYI5VZmP2EvAhg5eabdXJ8gMrCuKXrDsqob9b0BW//+bw=
+	t=1729060266; cv=none; b=RO99dzaUtVYX9nniIZlrC78ke+JRwsvA0pG8YUTi360pKY+INocI+d9BaZWXbubxfEsUCCJrmwRsG1S9mz5CsljXMxaKzSczrSChuM7Wt0HhN7kbPKoL1pGKKYynGBjrf7HAwEN5pY7mWTS+xPgTyDDeqEEDi4E0l8biqk8N0Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059856; c=relaxed/simple;
-	bh=GoiUt5t70hi75J47RBegx6CmkNJuNYszg5HcetA7zeQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y91YWaPveEXbpqsh+WAsMJcpWcOBgDwk+xSYvjSQd0w3HDkYMnYa5pQb++WpLEbZxTT5HKxj783ujQiLGTkL5jP6gd6BnxlAU+Bi/YxVhJLyslNWMYIezJEN4htux/y0c+RXKbRlr+3xATyg12kbhs/J8NWS6+zvELq5U3+2iI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERwkFU4Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D140C4CEC5;
-	Wed, 16 Oct 2024 06:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729059856;
-	bh=GoiUt5t70hi75J47RBegx6CmkNJuNYszg5HcetA7zeQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ERwkFU4QUpU8Prrl3pqtKZBNR2D2+3KbdoevDqSXWIrjo5I7dFZfxJN7IgKlM6hl/
-	 ml4RLYNRWDEB/J2IpF4xzthyXfa0zWewpJR5d6pqDUDa/YB9LXT0Lw8WN5LYToc2gA
-	 EyRW0Z2ntVrTly1Du/jWPOLzX0W0wSPNbGLwRWNmwq5eMsc/MBHXX+MARE54m871wv
-	 YWekq08zuZPEWBJZujkKpfFDB7cXxhfq2HE7v24XIHq373YjC3BKLeqeItNa8OGtvW
-	 Ujug0wfHS+Uo+XB1ZOck6YK7Fi/ksYX4nTpDRSjPTvlGQgqs2YtrKSh6O0vIiE2sWo
-	 lUaXBhHYZ09VA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: Constify pci_register_io_range stub fwnode_handle
-Date: Wed, 16 Oct 2024 06:24:04 +0000
-Message-Id: <20241016062410.2581152-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729060266; c=relaxed/simple;
+	bh=vd1kShkEAAY9b/H1YcxxkckWvZM983ebztMGg3218AU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qeESCAgCOmBJH9o5FHIHYyLk9IzfzrU4mpaFIr8fYzAcRd/A0ZW18m6AGuC8KHnC5DdFdKxG1ke6rMy8mUiObT/DmaD2OtSkPgd/LxA0kfcUo9SV8jZA5FPOkw0BlrSTj1gfNLTCTbS/OBbQ6Uj7kLN+XKAmMpOpj9+wBllpslU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mwhjqkE1; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729060259; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=DVYZ4s29ZW4ZB3Y9mFTDBjLtH0bK73rSgGthvVvT36E=;
+	b=mwhjqkE1SOU+wYP58Nh2RqOURkc4g1LY2qTsa6FQD04myz6n6bNkMMzXQc0MYu7Pm/HVcByy+a5dT3wCpMUTHJjPJKLWgc7Qt+rjueZgywA3zVzu1o6jrW4lqXdFzkrPRypMPFfx9q4XNxNy9zYcW0kisiQ1YD9cNHZoAMtG6gs=
+Received: from 30.221.128.116(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WHGBfOf_1729060257 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Oct 2024 14:30:58 +0800
+Message-ID: <2888bb8f-1ee4-4342-968f-82573d583709@linux.alibaba.com>
+Date: Wed, 16 Oct 2024 14:30:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 net-next 2/3] net/udp: Add 4-tuple hash list basis
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, dsahern@kernel.org,
+ antony.antony@secunet.com, steffen.klassert@secunet.com,
+ linux-kernel@vger.kernel.org, dust.li@linux.alibaba.com,
+ jakub@cloudflare.com, fred.cc@alibaba-inc.com,
+ yubing.qiuyubing@alibaba-inc.com
+References: <20241012012918.70888-1-lulie@linux.alibaba.com>
+ <20241012012918.70888-3-lulie@linux.alibaba.com>
+ <9d611cbc-3728-463d-ba8a-5732e28b8cf4@redhat.com>
+From: Philo Lu <lulie@linux.alibaba.com>
+In-Reply-To: <9d611cbc-3728-463d-ba8a-5732e28b8cf4@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-The patch to change the argument types for pci_register_io_range()
-only caught one of the two implementations, but missed the empty
-version:
 
-drivers/of/address.c: In function 'of_pci_range_to_resource':
-drivers/of/address.c:244:45: error: passing argument 1 of 'pci_register_io_range' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-  244 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
-      |                                             ^~~~~~~~~~~
-In file included from drivers/of/address.c:12:
-include/linux/pci.h:1559:49: note: expected 'struct fwnode_handle *' but argument is of type 'const struct fwnode_handle *'
- 1559 | int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
-      |                           ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+On 2024/10/14 18:07, Paolo Abeni wrote:
+> Hi,
+> 
+> On 10/12/24 03:29, Philo Lu wrote:
+>> @@ -3480,13 +3486,14 @@ static struct udp_table __net_init 
+>> *udp_pernet_table_alloc(unsigned int hash_ent
+>>       if (!udptable)
+>>           goto out;
+>> -    slot_size = sizeof(struct udp_hslot) + sizeof(struct 
+>> udp_hslot_main);
+>> +    slot_size = 2 * sizeof(struct udp_hslot) + sizeof(struct 
+>> udp_hslot_main);
+>>       udptable->hash = vmalloc_huge(hash_entries * slot_size,
+>>                         GFP_KERNEL_ACCOUNT);
+> 
+> I'm sorry for the late feedback.
+> 
+> I think it would be better to make the hash4 infra a no op (no lookup, 
+> no additional memory used) for CONFIG_BASE_SMALL=y builds.
+> 
 
-Change this the same way.
+Got it. There are 2 affected structs, udp_hslot and udp_sock. They (as 
+well as related helpers like udp4_hash4) can be wrapped with 
+CONFIG_BASE_SMALL, and then we can enable BASE_SMALL to eliminate 
+additional overhead of hash4.
 
-Fixes: 6ad99a07e6d2 ("PCI: Constify pci_register_io_range() fwnode_handle")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-If possible, please fold this fixup into the original patch
----
- include/linux/pci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+```
++struct udp_hslot_main {
++	struct udp_hslot	hslot; /* must be the first member */
++#if !IS_ENABLED(CONFIG_BASE_SMALL)
++	u32			hash4_cnt;
++#endif
++} __aligned(2 * sizeof(long));
 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 11421ae5c558..733ff6570e2d 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2019,7 +2019,7 @@ static inline int pci_request_regions(struct pci_dev *dev, const char *res_name)
- { return -EIO; }
- static inline void pci_release_regions(struct pci_dev *dev) { }
- 
--static inline int pci_register_io_range(struct fwnode_handle *fwnode,
-+static inline int pci_register_io_range(const struct fwnode_handle *fwnode,
- 					phys_addr_t addr, resource_size_t size)
- { return -EINVAL; }
- 
+
+@@ -56,6 +56,12 @@ struct udp_sock {
+  	int		 pending;	/* Any pending frames ? */
+  	__u8		 encap_type;	/* Is this an Encapsulation socket? */
+
++#if !IS_ENABLED(CONFIG_BASE_SMALL)
++	/* For UDP 4-tuple hash */
++	__u16 udp_lrpa_hash;
++	struct hlist_node udp_lrpa_node;
++#endif
++
+```
+
+> It would be great if you could please share some benchmark showing the 
+> raw max receive PPS performances for unconnected sockets, with and 
+> without this series applied, to ensure this does not cause any real 
+> regression for such workloads.
+> 
+
+Tested using sockperf tp with default msgsize (14B), 3 times for w/ and 
+w/o the patch set, and results show no obvious difference:
+
+[msg/sec]  test1    test2    test3    mean
+w/o patch  514,664  519,040  527,115  520.3k
+w/  patch  516,863  526,337  527,195  523.5k (+0.6%)
+
+Thank you for review, Paolo.
 -- 
-2.39.5
+Philo
 
 
