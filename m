@@ -1,205 +1,564 @@
-Return-Path: <linux-kernel+bounces-368183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359B99A0C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:16:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECC19A0C5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7081C22A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DBBF28333F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2C720C017;
-	Wed, 16 Oct 2024 14:16:19 +0000 (UTC)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A05720E000;
+	Wed, 16 Oct 2024 14:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eeDkXWjJ"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4B0502BE;
-	Wed, 16 Oct 2024 14:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB92720C49D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729088179; cv=none; b=LVVOp9nxOM0lr28jMq6oACnwYYUKIYLnT2HaFSYS8RhsLpyq4wP1cHZvDqUQcqDuElh3wk+6XRx7nWEzEJxHpJCRf21t1ClDZTX5m0AmG/byRwaT79kXPUN90eZdrkWzPXVHKn8+8bJCq0NsPNBi5Mtudkxj5qqIAOv2+I+S36w=
+	t=1729088189; cv=none; b=ke2g9Ib3nPjrba22yr2iMauDzQRLnC1t/Qn6dOUHBnMJgCCweHDKCPEmDh2Tdn7Ub+W+WrMVSumq9qRYA8A5NzHEeA1ZyYsS5R/cpCuzB/XEjU0iXN4//hwoZB0ztdK8l6702gBKxCDTQ7G851u5kei9HPdd8QdH7RLB8K+DUxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729088179; c=relaxed/simple;
-	bh=OG0ZoHiPmXUDWn0qYiiQHJeobdpgi9P/omaxHHZPUMk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nFKRXYpUNk1hiA7TrHByoIXiJMqBiTExjoP0hSFet70Ey8vUIyxr3ibN2XvVJLT4fFpicQz+CnRFX1VYW+YSlcUi0rToKEOsB5cdpbKJ95bG/SFzLHQAVh0cOgW4PJvPx8SQvzQ3cLyqwGtnM0IkdYxX1O0BklcHuA6NlPN9Ogc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e1543ab8so8452147e87.2;
-        Wed, 16 Oct 2024 07:16:15 -0700 (PDT)
+	s=arc-20240116; t=1729088189; c=relaxed/simple;
+	bh=QxI//qy6SRimH6DFsKj/5JqUXhaavgW4VHaRE77rsA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AxBBJEERf9zEuhF3u/RQvWQ57u/IEg7+STyVwwreOO8xbZqRdS0vtA45Pc9CN9eXJqrXC7cor8KK3/XcyCPU2NBppxo/PPghywTXY4VTmN8Bj/noiDNzmBPBfrYB/BBPxPKaHqWnIvy/f4jZrv6GR7rwC89N6CyzgsQnTTWb7MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eeDkXWjJ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso380314266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729088184; x=1729692984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nkitLVdUIfBswSecoH4/yMlvF1d7Jl0pwk3xAI1xCeg=;
+        b=eeDkXWjJXKFdSKZrd6IVNRdk/aaN/Qw138wR8N7hdI3DAXo9x6I+fK2kMiSCcEL2w1
+         yLXe+yiITwnUHYOSkdpb5rrcUqCEW4cKpSlpK3ymeJJGZiX/kob7ojFAJe8AjB/9S2ja
+         xvnWbZ160GVuffaMjdMQkc2IBRw9p+lCTdh7Ye25l9RKyyjZgIzpKafL+mYLf/sNelPy
+         U4TMWuvTNhZCJqOIYaiwlzfJnVDSxkGltrc+BEYyWUNh1lE6jlf3/lxFouTxx1Tb7gXP
+         t2zwtgHREztv0k/JivwHGS5pjQQTJScHpebBUBCshAtQ7/oSyj7eIb7iEUYQmstqGsqU
+         rv0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729088174; x=1729692974;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zji2jjc7lmYCBaxDKjU5IirMGrQxMUOMfum9ROWevj4=;
-        b=JZjM4S21WAdUuuMHhWrX3J6YxT4/r9e8mvv5O9B460Md4Pk8Nam8X5Mx8D2XF3Iajn
-         FlFBsOLJ7gcPQ8GR9PKE31vyuHyS43uBa8DR+kgUv0zOgMA7bQHSeix6CaJagCXinQ3g
-         Ghb3nN6s4On5kbQQFdoUD+yF6yVKiw/H9uUwVna1bbC+npMDrq8IT6H1Gpg6WeLhkwRr
-         YryQC1DvM3UUX6i5tcSSDT8PX3T5hS5/YPBG/x/0Sb4ofStupLR0/hAm0v2h9TfpLXyh
-         yZa7hSpoID5a0QzJrXxHoKUdfAQFVnu0XlBAbqXGeLLV3ayAf2epDe/pgWrsGW090pWr
-         xDxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUECQIJ3GiG4MC7bhBaOQxCAYQkqFT0Cc/zTyG2LWJeEFM+H/TW9xB9qOe36xk8O+AgQcdfl8QwBQbt@vger.kernel.org, AJvYcCUcxgI0UWfibGpKARDVIlZKTUyQD9s9e8X1nRhTnCQhUiIFmpJOArFisCHM/Gd49VmYWT+O8wbH@vger.kernel.org, AJvYcCXLOwkYHtGgb7M5orts+mWmwwoGWQuCGWANJYxJCSSAzH4QPSYCvUyt3+HMWti0HZWLEPmAyXFg5lPm@vger.kernel.org, AJvYcCXLaRbIHh3E6fbSu2kc8SUUhad0sy56oL2ihb6fapXxKhH/bt6RKL19amaec+14w/gGvk6oFbvHMv6Y0NBh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAX4psY4LXyGZtZ0xIpomR+TcgH4iKbfqGWAeNkGFKBts1eoIc
-	j4eCCeWKa66Eq7jDwU6++UEYJ4FLUrv98E/EBtJs2S67+FOoIYoShNv6x0EVE8G9bM6Il6fNgfB
-	6PvzkKrPjr2ncVGFRbodOZ7rQmn4=
-X-Google-Smtp-Source: AGHT+IE98DjXYsvonEn7MnmPN+JCagURuswXEjP6x9DsDz5MmxRBUXYi+4++5nWYQ8Ogm2EWnbuG+myw2gPNuaM96Gw=
-X-Received: by 2002:a05:6512:1598:b0:539:905c:15c5 with SMTP id
- 2adb3069b0e04-539e5521da6mr11043400e87.35.1729088173959; Wed, 16 Oct 2024
- 07:16:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729088184; x=1729692984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nkitLVdUIfBswSecoH4/yMlvF1d7Jl0pwk3xAI1xCeg=;
+        b=plZYFjOTsfyQ5X6grjag8gtQr4BlVCkhXvrnFAlDgUUNPpg3HnenXzOMGF1H+qnumr
+         OOWowaz76Ja44q185sB1xi9m7H8EZW0QP+ilZBhsSgJrj1d5cAAIAKKWErQlP8890aOS
+         Uor++cO1fiq10iz4ZgM/8f1Si94jEMD5loKjaTekaDz10akxJnYnyLNscqu5oGX/gqf5
+         9KwME6wWhBqPsJZXjz+7BJfaYjvYG+kWoLh6Csw6RdAbMVXCtMQuu/v8UEBsrVnlj/hc
+         taTloHnN6/4lrEDT3z1GwbiUlOyktCcPtRS48RgGQQtF6guhIOhQLiGwKb1JGt9RygA0
+         8ObA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtDdXquE/LArNwvtayh3VfEjTK9caHwL7KTUwPCkPvi7ssoEPpk1ejO7nnDXxbyFw+W2IbKjkygutER4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrtcpB2KH7PIMDxBrzdzc1GTVm0aopi5hiTiawTEwQn5iBPITo
+	Cn9lvisVS5KI8q937RmMFGJ543DcoRA/uQm2ryKOj8/iXaXtG2XJ59wghdq8fB4=
+X-Google-Smtp-Source: AGHT+IF/jHLtlOnJ03hZGYKyu2uazu1k6TC8QznAT+IJJPrAXp2dr5BVCStw4SXjYZcJ93PZUijGyw==
+X-Received: by 2002:a17:907:3ea0:b0:a9a:2a56:91e with SMTP id a640c23a62f3a-a9a2a560a3emr471017466b.6.1729088183771;
+        Wed, 16 Oct 2024 07:16:23 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29844cc9sm186696466b.182.2024.10.16.07.16.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 07:16:23 -0700 (PDT)
+Message-ID: <f60bf3b2-6e3a-4382-93d1-1eca521e4ebd@suse.com>
+Date: Wed, 16 Oct 2024 16:16:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240922145151.130999-1-hal.feng@starfivetech.com>
- <20240922145151.130999-4-hal.feng@starfivetech.com> <CAMZ6Rq+EM37Gvx8bLEwvhn+kUC9yGDiapwD0KX31-x-e-Rm3yQ@mail.gmail.com>
- <EAC60558E0B6E4BB+e5384c3c-ba45-48f5-a86f-a74e84309a14@linux.starfivetech.com>
- <CAMZ6RqLvzvttbCMFbZiY9v=nGcH+O3EV91c+x7GxTbkKhdTcwg@mail.gmail.com>
-In-Reply-To: <CAMZ6RqLvzvttbCMFbZiY9v=nGcH+O3EV91c+x7GxTbkKhdTcwg@mail.gmail.com>
-From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
-Date: Wed, 16 Oct 2024 23:16:03 +0900
-Message-ID: <CAMZ6RqK428Pvwrgc=KPKjetZaTC8R55HzypMooOTziM8eMMxHg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
-To: Hal Feng <hal.feng@linux.starfivetech.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	William Qiu <william.qiu@starfivetech.com>, devicetree@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Hal Feng <hal.feng@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/19] gendwarfksyms: Limit structure expansion
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
+ Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20241008183823.36676-21-samitolvanen@google.com>
+ <20241008183823.36676-31-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20241008183823.36676-31-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed. 16 Oct. 2024 at 14:05, Vincent MAILHOL
-<mailhol.vincent@wanadoo.fr> wrote:
-> On Tue. 15 Oct. 2024 at 18:33, Hal Feng <hal.feng@linux.starfivetech.com> wrote:
-> > On 9/23/2024 11:41 AM, Vincent MAILHOL wrote:
-> > > Hi Hal,
-> > >
-> > > A few more comments on top of what Andrew already wrote.
-> > >
-> > > On Mon. 23 Sep. 2024 at 00:09, Hal Feng <hal.feng@starfivetech.com> wrote:
-> > >> From: William Qiu <william.qiu@starfivetech.com>
-> > >>
-> > >> Add driver for CAST CAN Bus Controller used on
-> > >> StarFive JH7110 SoC.
-> > >>
-> > >> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-> > >> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
-> > >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> > >> ---
+On 10/8/24 20:38, Sami Tolvanen wrote:
+> Expand each structure type only once per exported symbol. This
+> is necessary to support self-referential structures, which would
+> otherwise result in infinite recursion, but is still sufficient for
+> catching ABI changes.
+> 
+> For pointers, limit structure expansion after the first pointer
+> in the symbol type. This should be plenty for detecting ABI
+> differences, but it stops us from pulling in half the kernel for
+> types that contain pointers to large kernel data structures, like
+> task_struct, for example.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Acked-by: Neal Gompa <neal@gompa.dev>
+> ---
+>  scripts/gendwarfksyms/Makefile        |   1 +
+>  scripts/gendwarfksyms/cache.c         |  44 +++++++++++
+>  scripts/gendwarfksyms/dwarf.c         | 109 +++++++++++++++++++++++---
+>  scripts/gendwarfksyms/gendwarfksyms.h |  37 +++++++++
+>  4 files changed, 182 insertions(+), 9 deletions(-)
+>  create mode 100644 scripts/gendwarfksyms/cache.c
+> 
+> diff --git a/scripts/gendwarfksyms/Makefile b/scripts/gendwarfksyms/Makefile
+> index c0d4ce50fc27..c06145d84df8 100644
+> --- a/scripts/gendwarfksyms/Makefile
+> +++ b/scripts/gendwarfksyms/Makefile
+> @@ -2,6 +2,7 @@
+>  hostprogs-always-y += gendwarfksyms
+>  
+>  gendwarfksyms-objs += gendwarfksyms.o
+> +gendwarfksyms-objs += cache.o
+>  gendwarfksyms-objs += die.o
+>  gendwarfksyms-objs += dwarf.o
+>  gendwarfksyms-objs += symbols.o
+> diff --git a/scripts/gendwarfksyms/cache.c b/scripts/gendwarfksyms/cache.c
+> new file mode 100644
+> index 000000000000..2f1517133a20
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/cache.c
+> @@ -0,0 +1,44 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Google LLC
+> + */
+> +
+> +#include "gendwarfksyms.h"
+> +
+> +struct expanded {
+> +	uintptr_t addr;
+> +	struct hlist_node hash;
+> +};
+> +
+> +void __cache_mark_expanded(struct expansion_cache *ec, uintptr_t addr)
+> +{
+> +	struct expanded *es;
+> +
+> +	es = xmalloc(sizeof(struct expanded));
+> +	es->addr = addr;
+> +	hash_add(ec->cache, &es->hash, addr_hash(addr));
+> +}
+> +
+> +bool __cache_was_expanded(struct expansion_cache *ec, uintptr_t addr)
+> +{
+> +	struct expanded *es;
+> +
+> +	hash_for_each_possible(ec->cache, es, hash, addr_hash(addr)) {
+> +		if (es->addr == addr)
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +void cache_clear_expanded(struct expansion_cache *ec)
+> +{
+> +	struct hlist_node *tmp;
+> +	struct expanded *es;
+> +
+> +	hash_for_each_safe(ec->cache, es, tmp, hash) {
+> +		free(es);
+> +	}
+> +
+> +	hash_init(ec->cache);
+> +}
+> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+> index f5cebbdcc212..51dd8e82f9e7 100644
+> --- a/scripts/gendwarfksyms/dwarf.c
+> +++ b/scripts/gendwarfksyms/dwarf.c
+> @@ -26,6 +26,7 @@ static void process_linebreak(struct die *cache, int n)
+>  		       !dwarf_form##attr(&da, value);                  \
+>  	}
+>  
+> +DEFINE_GET_ATTR(flag, bool)
+>  DEFINE_GET_ATTR(udata, Dwarf_Word)
+>  
+>  static bool get_ref_die_attr(Dwarf_Die *die, unsigned int id, Dwarf_Die *value)
+> @@ -79,6 +80,13 @@ static bool match_export_symbol(struct state *state, Dwarf_Die *die)
+>  	return !!state->sym;
+>  }
+>  
+> +static bool is_declaration(Dwarf_Die *die)
+> +{
+> +	bool value;
+> +
+> +	return get_flag_attr(die, DW_AT_declaration, &value) && value;
+> +}
+> +
+>  /*
+>   * Type string processing
+>   */
+> @@ -455,19 +463,28 @@ static void __process_structure_type(struct state *state, struct die *cache,
+>  				     die_callback_t process_func,
+>  				     die_match_callback_t match_func)
+>  {
+> +	bool is_decl;
+> +
+>  	process(cache, type);
+>  	process_fqn(cache, die);
+>  	process(cache, " {");
+>  	process_linebreak(cache, 1);
+>  
+> -	check(process_die_container(state, cache, die, process_func,
+> -				    match_func));
+> +	is_decl = is_declaration(die);
+> +
+> +	if (!is_decl && state->expand.expand) {
+> +		cache_mark_expanded(&state->expansion_cache, die->addr);
+> +		check(process_die_container(state, cache, die, process_func,
+> +					    match_func));
+> +	}
+>  
+>  	process_linebreak(cache, -1);
+>  	process(cache, "}");
+>  
+> -	process_byte_size_attr(cache, die);
+> -	process_alignment_attr(cache, die);
+> +	if (!is_decl && state->expand.expand) {
+> +		process_byte_size_attr(cache, die);
+> +		process_alignment_attr(cache, die);
+> +	}
+>  }
+>  
+>  #define DEFINE_PROCESS_STRUCTURE_TYPE(structure)                        \
+> @@ -520,7 +537,7 @@ static void process_unspecified_type(struct state *state, struct die *cache,
+>  				     Dwarf_Die *die)
+>  {
+>  	/*
+> -	 * These can be emitted for stand-elone assembly code, which means we
+> +	 * These can be emitted for stand-alone assembly code, which means we
+>  	 * might run into them in vmlinux.o.
+>  	 */
+>  	process(cache, "unspecified_type");
 
-(...)
+Nit: This hunk should be folded into patch #9 ("gendwarfksyms: Expand
+structure types").
 
-> > >> +
-> > >> +       if (priv->cantype == CAST_CAN_TYPE_CANFD) {
-> > >> +               priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_FD;
-> > >> +               priv->can.data_bittiming_const = &ccan_data_bittiming_const_canfd;
-> > >> +       } else {
-> > >> +               priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK;
-> > >> +       }
-> > >
-> > > Nitpick, consider doing this:
-> > >
-> > >   priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK;
-> > >   if (priv->cantype == CAST_CAN_TYPE_CANFD) {
-> > >           priv->can.ctrlmode_supported |= CAN_CTRLMODE_FD;
-> > >           priv->can.data_bittiming_const = &ccan_data_bittiming_const_canfd;
-> > >   }
-> >
-> > OK.
-> >
-> > >
-> > > Also, does you hardware support dlc greater than 8 (c.f.
-> > > CAN_CTRLMODE_CC_LEN8_DLC)?
-> >
-> > The class CAN (CC) mode does not support, but the CAN FD mode supports.
->
-> So, CAN_CTRLMODE_CC_LEN8_DLC is a Classical CAN feature. Strictly
-> speaking, this does not exist in CAN FD. Do you mean that only the
-> CAST_CAN_TYPE_CANFD supports sending Classical CAN frames with a DLC
-> greater than 8?
->
-> If none of the Classical CAN or CAN FD variants of your device is able
-> to send Classical CAN frames with a DLC greater than 8, then this is
-> just not supported by your device.
->
-> Could you share the datasheet so that I can double check this?
+> @@ -552,6 +569,42 @@ static void process_cached(struct state *state, struct die *cache,
+>  	}
+>  }
+>  
+> +static void state_init(struct state *state)
+> +{
+> +	state->expand.expand = true;
+> +	state->expand.ptr_depth = 0;
+> +	state->expand.ptr_expansion_depth = 0;
+> +	hash_init(state->expansion_cache.cache);
+> +}
+> +
+> +static void expansion_state_restore(struct expansion_state *state,
+> +				    struct expansion_state *saved)
+> +{
+> +	state->expand = saved->expand;
+> +	state->ptr_depth = saved->ptr_depth;
+> +	state->ptr_expansion_depth = saved->ptr_expansion_depth;
+> +}
+> +
+> +static void expansion_state_save(struct expansion_state *state,
+> +				 struct expansion_state *saved)
+> +{
+> +	expansion_state_restore(saved, state);
+> +}
+> +
+> +static bool is_pointer_type(int tag)
+> +{
+> +	return tag == DW_TAG_pointer_type || tag == DW_TAG_reference_type;
+> +}
+> +
+> +static bool is_expanded_type(int tag)
+> +{
+> +	return tag == DW_TAG_class_type || tag == DW_TAG_structure_type ||
+> +	       tag == DW_TAG_union_type || tag == DW_TAG_enumeration_type;
+> +}
+> +
+> +/* The maximum depth for expanding structures in pointers */
+> +#define MAX_POINTER_EXPANSION_DEPTH 2
+> +
+>  #define PROCESS_TYPE(type)                                \
+>  	case DW_TAG_##type##_type:                        \
+>  		process_##type##_type(state, cache, die); \
+> @@ -559,18 +612,52 @@ static void process_cached(struct state *state, struct die *cache,
+>  
+>  static int process_type(struct state *state, struct die *parent, Dwarf_Die *die)
+>  {
+> +	enum die_state want_state = DIE_COMPLETE;
+>  	struct die *cache;
+> +	struct expansion_state saved;
+>  	int tag = dwarf_tag(die);
+>  
+> +	expansion_state_save(&state->expand, &saved);
+> +
+> +	/*
+> +	 * Structures and enumeration types are expanded only once per
+> +	 * exported symbol. This is sufficient for detecting ABI changes
+> +	 * within the structure.
+> +	 *
+> +	 * We fully expand the first pointer reference in the exported
+> +	 * symbol, but limit the expansion of further pointer references
+> +	 * to at most MAX_POINTER_EXPANSION_DEPTH levels.
+> +	 */
+> +	if (is_pointer_type(tag))
+> +		state->expand.ptr_depth++;
+> +
+> +	if (state->expand.ptr_depth > 0 && is_expanded_type(tag)) {
+> +		if (state->expand.ptr_expansion_depth >=
+> +			    MAX_POINTER_EXPANSION_DEPTH ||
+> +		    cache_was_expanded(&state->expansion_cache, die->addr))
+> +			state->expand.expand = false;
+> +
+> +		if (state->expand.expand)
+> +			state->expand.ptr_expansion_depth++;
+> +	}
+> +
+>  	/*
+> -	 * If we have the DIE already cached, use it instead of walking
+> +	 * If we have want_state already cached, use it instead of walking
+>  	 * through DWARF.
+>  	 */
+> -	cache = die_map_get(die, DIE_COMPLETE);
+> +	if (!state->expand.expand && is_expanded_type(tag))
+> +		want_state = DIE_UNEXPANDED;
+> +
+> +	cache = die_map_get(die, want_state);
+> +
+> +	if (cache->state == want_state) {
+> +		if (want_state == DIE_COMPLETE && is_expanded_type(tag))
+> +			cache_mark_expanded(&state->expansion_cache, die->addr);
+>  
+> -	if (cache->state == DIE_COMPLETE) {
+>  		process_cached(state, cache, die);
+>  		die_map_add_die(parent, cache);
+> +
+> +		expansion_state_restore(&state->expand, &saved);
+>  		return 0;
+>  	}
+>  
 
-I received the datasheet from a good samaritan. With this, I was able
-to confirm a few things.
+The commit message and the comment in process_type() describe that each
+structure type should be expanded only once per symbol, but that doesn't
+seem to be the case?
 
-1/ Your device can support CAN_CTRLMODE_CC_LEN8_DLC:
+Consider the following example:
 
-This is shown in the datasheet at:
+struct A { int m; };
+void foo(struct A a1, struct A a2) {}
 
-  Table 3-52 Definition of the DLC (according to the CAN 2.0 / FD specification)
+Running gendwarfksyms on the compiled file shows the following debug
+output:
 
-DLC values 9 to 15 (binary 1001 to 1111) are accepted by the device.
-When sending and receiving such frames, can_frame->len is set to 8 and
-can_frame->len8_dlc is set to the actual DLC value. Use the
-can_cc_dlc2len() and can_get_cc_dlc() helpers for this.
+$ echo foo | ./build/scripts/gendwarfksyms/gendwarfksyms --debug --dump-types --dump-versions --dump-dies test.o
+[...]
+gendwarfksyms: process_symbol: foo
+subprogram (
+  formal_parameter structure_type A {
+    member base_type int byte_size(4) encoding(5) m data_member_location(0)
+  } byte_size(4) a1 ,
+  formal_parameter structure_type A {
+    member base_type int byte_size(4) encoding(5) m data_member_location(0)
+  } byte_size(4) a2
+)
+-> base_type void
 
+I think it indicates that struct A was expanded twice. My expectation
+would be to see:
 
-2/ Your device can support CAN_CTRLMODE_TDC_AUTO:
+gendwarfksyms: process_symbol: foo
+subprogram (
+  formal_parameter structure_type A {
+    member base_type int byte_size(4) encoding(5) m data_member_location(0)
+  } byte_size(4) a1 ,
+  formal_parameter structure_type A {
+  } a2
+)
+-> base_type void
 
-This is documented in the datasheet at:
+If I follow correctly, the type_expand() logic on the output eventually
+performs only the first expansion for the CRC calculation. However, it
+looks this process_type() code should do the same, if only to be a bit
+faster. Or did I misunderstand anything how this should work?
 
-  8.8 TDC and RDC
+I played with the following (applies on the top of the series), which
+matches my understanding of what should happen:
 
-This will allow the use of higher bitrates (e.g. 4 Mbits/s) in CAN-FD.
-You can refer to this commit for an example of how to implement it:
+diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+index 0112b5e8fbf5..1cc39be02b80 100644
+--- a/scripts/gendwarfksyms/dwarf.c
++++ b/scripts/gendwarfksyms/dwarf.c
+@@ -661,7 +661,6 @@ static void __process_structure_type(struct state *state, struct die *cache,
+ 	is_decl = is_declaration(cache, die);
+ 
+ 	if (!is_decl && state->expand.expand) {
+-		cache_mark_expanded(&state->expansion_cache, die->addr);
+ 		state->expand.current_fqn = cache->fqn;
+ 		check(process_die_container(state, cache, die, process_func,
+ 					    match_func));
+@@ -850,32 +849,35 @@ static int process_type(struct state *state, struct die *parent, Dwarf_Die *die)
+ 	if (is_pointer_type(tag))
+ 		state->expand.ptr_depth++;
+ 
+-	if (state->expand.ptr_depth > 0 && is_expanded_type(tag)) {
+-		if (state->expand.ptr_expansion_depth >=
+-			    MAX_POINTER_EXPANSION_DEPTH ||
+-		    cache_was_expanded(&state->expansion_cache, die->addr))
++	if (is_expanded_type(tag)) {
++		if (cache_was_expanded(&state->expansion_cache, die->addr))
+ 			state->expand.expand = false;
+ 
++		if (state->expand.ptr_depth > 0) {
++			if (state->expand.ptr_expansion_depth >=
++			    MAX_POINTER_EXPANSION_DEPTH)
++				state->expand.expand = false;
++
++			if (state->expand.expand)
++				state->expand.ptr_expansion_depth++;
++		}
++
+ 		if (state->expand.expand)
+-			state->expand.ptr_expansion_depth++;
++			cache_mark_expanded(&state->expansion_cache, die->addr);
++		else
++			want_state = DIE_UNEXPANDED;
+ 	}
+ 
+ 	/*
+ 	 * If we have want_state already cached, use it instead of walking
+ 	 * through DWARF.
+ 	 */
+-	if (!state->expand.expand && is_expanded_type(tag))
+-		want_state = DIE_UNEXPANDED;
+-
+ 	cache = die_map_get(die, want_state);
+ 
+ 	if (cache->state == want_state) {
+ 		die_debug_g("cached addr %p tag %x -- %s", die->addr, tag,
+ 			    die_state_name(cache->state));
+ 
+-		if (want_state == DIE_COMPLETE && is_expanded_type(tag))
+-			cache_mark_expanded(&state->expansion_cache, die->addr);
+-
+ 		process_cached(state, cache, die);
+ 		die_map_add_die(parent, cache);
+ 
 
-  https://git.kernel.org/torvalds/c/1010a8fa9608
+> @@ -611,9 +698,10 @@ static int process_type(struct state *state, struct die *parent, Dwarf_Die *die)
+>  
+>  	/* Update cache state and append to the parent (if any) */
+>  	cache->tag = tag;
+> -	cache->state = DIE_COMPLETE;
+> +	cache->state = want_state;
+>  	die_map_add_die(parent, cache);
+>  
+> +	expansion_state_restore(&state->expand, &saved);
+>  	return 0;
+>  }
+>  
+> @@ -675,11 +763,14 @@ static int process_exported_symbols(struct state *unused, struct die *cache,
+>  		if (!match_export_symbol(&state, die))
+>  			return 0;
+>  
+> +		state_init(&state);
+> +
+>  		if (tag == DW_TAG_subprogram)
+>  			process_subprogram(&state, &state.die);
+>  		else
+>  			process_variable(&state, &state.die);
+>  
+> +		cache_clear_expanded(&state.expansion_cache);
+>  		return 0;
+>  	}
+>  	default:
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
+> index f317de5b0653..6147859ae2af 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.h
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> @@ -104,6 +104,7 @@ struct symbol *symbol_get(const char *name);
+>  
+>  enum die_state {
+>  	DIE_INCOMPLETE,
+> +	DIE_UNEXPANDED,
+>  	DIE_COMPLETE,
+>  	DIE_LAST = DIE_COMPLETE
+>  };
+> @@ -133,6 +134,7 @@ static inline const char *die_state_name(enum die_state state)
+>  {
+>  	switch (state) {
+>  	CASE_CONST_TO_STR(DIE_INCOMPLETE)
+> +	CASE_CONST_TO_STR(DIE_UNEXPANDED)
+>  	CASE_CONST_TO_STR(DIE_COMPLETE)
+>  	}
+>  
+> @@ -155,9 +157,40 @@ void die_map_add_linebreak(struct die *pd, int linebreak);
+>  void die_map_add_die(struct die *pd, struct die *child);
+>  void die_map_free(void);
+>  
+> +/*
+> + * cache.c
+> + */
+> +
+> +#define EXPANSION_CACHE_HASH_BITS 11
+> +
+> +/* A cache for addresses we've already seen. */
+> +struct expansion_cache {
+> +	HASHTABLE_DECLARE(cache, 1 << EXPANSION_CACHE_HASH_BITS);
+> +};
+> +
+> +void __cache_mark_expanded(struct expansion_cache *ec, uintptr_t addr);
+> +bool __cache_was_expanded(struct expansion_cache *ec, uintptr_t addr);
+> +
+> +static inline void cache_mark_expanded(struct expansion_cache *ec, void *addr)
+> +{
+> +	__cache_mark_expanded(ec, (uintptr_t)addr);
+> +}
+> +
+> +static inline bool cache_was_expanded(struct expansion_cache *ec, void *addr)
+> +{
+> +	return __cache_was_expanded(ec, (uintptr_t)addr);
+> +}
+> +
+> +void cache_clear_expanded(struct expansion_cache *ec);
+> +
+>  /*
+>   * dwarf.c
+>   */
+> +struct expansion_state {
+> +	bool expand;
+> +	unsigned int ptr_depth;
+> +	unsigned int ptr_expansion_depth;
+> +};
+>  
+>  struct state {
+>  	struct symbol *sym;
+> @@ -165,6 +198,10 @@ struct state {
+>  
+>  	/* List expansion */
+>  	bool first_list_item;
+> +
+> +	/* Structure expansion */
+> +	struct expansion_state expand;
+> +	struct expansion_cache expansion_cache;
+>  };
+>  
+>  typedef int (*die_callback_t)(struct state *state, struct die *cache,
 
-
-3/ Your device can support CAN_CTRLMODE_3_SAMPLES:
-
-This is called triple mode redundancy (TMR) in your datasheet.
-
-
-4/ Your device can support CAN_CTRLMODE_LISTENONLY:
-
-This is documented in the datasheet at:
-
-  3.9.10.2. Listen Only Mode (LOM)
-
-
-5/ Your device can support CAN_CTRLMODE_ONE_SHOT:
-
-This is documented in the datasheet at:
-
-  6.5.3 Single Shot Transmit Trigger
-
-
-6/ Your device can support CAN_CTRLMODE_BERR_REPORTING:
-
-This is shown in the datasheet at:
-
-  Table 3-24 Error Counter Registers RECNT (0xb2) and TECNT (0xb3)
-
-
-7/ Your device can support CAN_CTRLMODE_PRESUME_ACK:
-
-c.f. the SACK (self acknowledge) register
-
-
-So your device comes with MANY features. I would like to see those
-implemented in your driver. Most of the time, adding a feature just
-means writing one value to a register.
-
-Please let me know if any of this is unclear.
-
-
-Yours sincerely,
-Vincent Mailhol
+-- 
+Thanks,
+Petr
 
