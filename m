@@ -1,161 +1,145 @@
-Return-Path: <linux-kernel+bounces-367103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A1B99FEA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:06:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A031999FEA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76DA21F252C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:06:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCA23B22618
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD99148828;
-	Wed, 16 Oct 2024 02:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5670A14D2B1;
+	Wed, 16 Oct 2024 02:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uxHi+4wk"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lu4jIqXj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602CABA45
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF43143736;
+	Wed, 16 Oct 2024 02:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729044401; cv=none; b=Qw6ntkEG0voV2YRGKctGbhhqmTPMx1Lx4AAl8ol4Qfo9dnBVQDq28UYd+zxPqWu/rJajVoHxfW4iiC9S9O1+t33ZFoqQ2MOWyIdovBrQjofXP9sTcDrQ3R/lpFc1In+011laTG6aXvg/6bgNCoGLgnCtxUsRvmzEJw4pqMIVW2E=
+	t=1729044397; cv=none; b=eowrluVFu3JFQGlFoWLOactEg8AA55PjgIF9Ds7VJwPXaMem4nZ+59Qdqbch3sPSrp+Nov1cw/1a2Me8A7DT7I3H9/VcO1NquX0T0PFqhkxHhl1niR0XuMCB65TDAaCpekaIqBETUqY8hlGyzOa/eY+IKaVq2aGLrwK3JD2hQUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729044401; c=relaxed/simple;
-	bh=mGc2LJ239lBh3Obk+aQrTtDQerRMhSrKUa0lS+XTmok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QDjRrqeVcBo8qhzXQSW5GDIsGqViXE2GZCnnE+2PPYhmaGIwU0PWtnY2UmvWEFnbJE0Hi6ieM1O8nYhZHwrIFz6x34/Usj6YLZJMpb3dzaxMoLW+RaP/yVFk0/2FP+3OLHIDNcP/JwSqitr6EDeYbb21YOGofkJslqtYP+YeMQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uxHi+4wk; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729044389; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=7vZVToKC3dbnWG6wI26M3rdpkCT+T81/lyk9txDYJfQ=;
-	b=uxHi+4wkSvHtMn1SmNqHVBfX4l46WCijZKJmGtUfdx0n+9l3m8e0kUn0znZiO1EJSW7i9ipZsfzenHDxeqp35JR9lydwHZaRyMGt/CSmIv54Z3Mr3r/6SXBM24GHiiR7IFJkA1ZJJJvPmu7kL0vciGsPC9s9iOaMnW0ZADeEt0A=
-Received: from 30.221.129.144(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WHFDVkj_1729044387 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 16 Oct 2024 10:06:28 +0800
-Message-ID: <8947c80d-9fed-4269-8a56-080d4afa782b@linux.alibaba.com>
-Date: Wed, 16 Oct 2024 10:06:27 +0800
+	s=arc-20240116; t=1729044397; c=relaxed/simple;
+	bh=aEa7/Y7h65bZMBSJIpYtv9760VAAbwP31QCb01yRdjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDTXAHZF7yEk1sLdmXL32KK1wzZMBIgLdECWirLWFO7tb2cqF4Cxe3Oaryew2EkVEnx2o0ugy449EHDHEXCtwUxD7osmyfHv2A1wJSK3VrBrAJ2ArYCaoj8xoHOpfXMQiPpH0EeAx7/XMeMYC/k0X7Ksqpws4ZRfOZcl3SoNZTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lu4jIqXj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE6AC4CEC6;
+	Wed, 16 Oct 2024 02:06:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729044397;
+	bh=aEa7/Y7h65bZMBSJIpYtv9760VAAbwP31QCb01yRdjA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lu4jIqXjVEcCPIl2hjDQQEc5SArSAbBioZHYouw2ydTQQ2+rSyBxG+gk9YvGr3aBx
+	 1xCvbS4Nw8pUQpee+Kk//aYv1tPsY6hDCmthQS+B1b/l7ukbZDY7iqu9jjasFxhcfb
+	 gmdEOnUm7IQUq714miBEC4JBIjOVKUZsFNlgWiSyjd4r1719q85xXcxV2Wy9mOagFb
+	 4jn4x77/J8htcZHkz4AJxbzZgAQ8kFnfiIAjm17IR2DX6RN/FD5Bjzu/kgFfUJlW13
+	 DWem1taJVt7iANN+7yEaUTD53n0sT6RNh+KT0yOPZDZjiXiH/zkyTuRxM59bwvFAFe
+	 +CL8ZpCUda2aQ==
+Date: Tue, 15 Oct 2024 19:06:35 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Song Liu <songliubraving@fb.com>, Howard Chu <howardchu95@gmail.com>,
+	Andrea Righi <andrea.righi@linux.dev>, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, james.clark@linaro.org,
+	alan.maguire@oracle.com
+Subject: Re: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature
+ in clang 12
+Message-ID: <Zw8fqyCZNqSABMkM@google.com>
+References: <20241011021403.4089793-1-howardchu95@gmail.com>
+ <Zw61TUe1V97dKWer@google.com>
+ <Zw7D9HXBanPLUO4G@x1>
+ <Zw7JgJc0LOwSpuvx@x1>
+ <Zw7SkmEaz730uVbL@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] ocfs2: add a sanity check for i_size
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
- ocfs2-devel@lists.linux.dev,
- syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <431f1d14-ba07-4903-ab02-b4628e0f1973@linux.alibaba.com>
- <tencent_C8EA75F1764366383C3F373A972436904A09@qq.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <tencent_C8EA75F1764366383C3F373A972436904A09@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zw7SkmEaz730uVbL@x1>
 
+Hi Arnaldo,
 
-
-On 10/14/24 7:47 PM, Edward Adam Davis wrote:
-> Syzbot reported a BUG in ocfs2_read_virt_blocks.
-> ------------[ cut here ]------------
-> kernel BUG at fs/ocfs2/extent_map.c:971!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 1 UID: 0 PID: 5221 Comm: syz-executor117 Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> RIP: 0010:ocfs2_read_virt_blocks+0xaa3/0xb20 fs/ocfs2/extent_map.c:971
-> Code: 8b 54 24 30 8b 4c 24 1c 4c 8b 44 24 38 45 89 e1 ff 74 24 48 e8 7e 0a 0c 00 48 83 c4 08 eb 25 e8 43 d2 34 08 e8 ee d1 0c fe 90 <0f> 0b e8 e6 d1 0c fe 4c 89 e8 45 89 e5 49 89 c4 e9 01 f7 ff ff e8
-> RSP: 0018:ffffc90002e2e820 EFLAGS: 00010293
-> RAX: ffffffff83881432 RBX: 0000000000000000 RCX: ffff88802d3e9e00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90002e2e9f0 R08: ffffffff83880eae R09: 1ffffffff203781d
-> R10: dffffc0000000000 R11: fffffbfff203781e R12: ffff8880764d8878
-> R13: 0000000000000000 R14: 0000000000000000 R15: 1ffff920005c5d18
-> FS:  000055557cd55380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00005628fd41e058 CR3: 000000002d2e6000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  ocfs2_read_dir_block+0x106/0x5c0 fs/ocfs2/dir.c:508
->  ocfs2_find_dir_space_el fs/ocfs2/dir.c:3427 [inline]           // status = ocfs2_read_dir_block(dir, 0, &bh, 0);
-
-As I replied before, the comment behind seems unneeded.
-
->  ocfs2_prepare_dir_for_insert+0x3f2/0x5c60 fs/ocfs2/dir.c:4274
->  ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
->  ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
->  lookup_open fs/namei.c:3595 [inline]
->  open_last_lookups fs/namei.c:3694 [inline]
->  path_openat+0x1c03/0x3590 fs/namei.c:3930
->  do_filp_open+0x235/0x490 fs/namei.c:3960
->  do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
->  do_sys_open fs/open.c:1430 [inline]
->  __do_sys_openat fs/open.c:1446 [inline]
->  __se_sys_openat fs/open.c:1441 [inline]
->  __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> In this path, v_block(0), flags(0), and nr(1) are fixed values that are
-> hard coded, so if i_size is 0, the bug will be triggered.
-> 
-
-This is not a proper commit log.
-You have to convert to the user scenario, but not simply list the
-parameters value that cause the issue.
-
-> Reported-and-tested-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
-> V1 -> V2: keep rc to 0 when falgs contains READHEAD
-> V2 -> V3: check i_size only and alert subject and comments
-> 
->  fs/ocfs2/extent_map.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> #syz test
-> 
-> diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-> index f7672472fa82..29d27a70dbdd 100644
-> --- a/fs/ocfs2/extent_map.c
-> +++ b/fs/ocfs2/extent_map.c
-> @@ -961,13 +961,17 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
->  	int rc = 0;
->  	u64 p_block, p_count;
->  	int i, count, done = 0;
-> +	loff_t i_size = i_size_read(inode);
+On Tue, Oct 15, 2024 at 05:37:38PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Oct 15, 2024 at 04:58:56PM -0300, Arnaldo Carvalho de Melo wrote:
+> > So I'm trying adding extra bounds checking, marking the index as
+> > volatile, adding compiler barriers, etc, all the fun with the verifier,
+> > but got distracted with other stuff, coming back to this now.
 >  
->  	trace_ocfs2_read_virt_blocks(
->  	     inode, (unsigned long long)v_block, nr, bhs, flags,
->  	     validate);
+> > Ok, the following seems to do the trick:
 >  
-> +	if (!i_size)
-> +		return -EINVAL;
-> +
+> > [acme@dell-per740-01 perf-tools]$ git diff
+> > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > index 3b30aa74a3ae..ef87a04ff8d0 100644
+> > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > @@ -486,6 +486,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+> >                                 augmented = true;
+> >                 } else if (size < 0 && size >= -6) { /* buffer */
+> >                         index = -(size + 1);
+> > +                       index &= 7; // To satisfy the bounds checking with the verifier in some kernels
+> >                         aug_size = args->args[index];
+> >  
+> >                         if (aug_size > TRACE_AUG_MAX_BUF)
+> > 
+> > I'll now test it without Howard's patch to see if it fixes the RHEL8 +
+> > clang 17 case.
+> 
+> It works with this one-liner + the simplified patch from Howard and also
+> on this other system (RHEL9), as well as with Fedora 40, it would be
+> nice if someone could test with clang 16 and report back the version of
+> the kernel tested as well as the distro name/release, that way I can try
+> to get my hands on such as system and test there as well.
+> 
+> Its all at:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tmp.perf-tools
+> 
+> This is the current set of patches that when further tested will go to
+> Linus for v6.12:
+> 
+> ⬢[acme@toolbox perf-tools]$ git log --oneline torvalds/master..
+> ff14baa7a290bf42 (HEAD -> perf-tools, x1/perf-tools, perf-tools/tmp.perf-tools) perf trace augmented_raw_syscalls: Add more checks to pass the verifier
+> 46180bec048aad85 perf trace augmented_raw_syscalls: Add extra array index bounds checking to satisfy some BPF verifiers
+> 45d1aadac64869a2 perf build: Change the clang check back to 12.0.1
 
-Take a more consideration, inode size 0 doesn't mean it has no blocks,
-since we have a case that fallocate with KEEP_SIZE.
-Could you please check inode->i_blocks in above coredump?
+Wouldn't it be better to have this change after fixing the verifier
+issues in the later commits?
+
+> 4e21679eb81b5f0d perf trace: The return from 'write' isn't a pid
+> 2d2314d4b09b5ed9 tools headers UAPI: Sync linux/const.h with the kernel headers
+> ⬢[acme@toolbox perf-tools]$
+
+I guess you also need the syscalltbl fix from Jiri Slaby.
+
+https://lore.kernel.org/linux-perf-users/3a592835-a14f-40be-8961-c0cee7720a94@kernel.org/
 
 Thanks,
-Joseph
+Namhyung
 
->  	if (((v_block + nr - 1) << inode->i_sb->s_blocksize_bits) >=
-> -	    i_size_read(inode)) {
-> +	    i_size) {
->  		BUG_ON(!(flags & OCFS2_BH_READAHEAD));
->  		goto out;
->  	}
-
+> 
+> [root@nine ~]# uname -a
+> Linux nine 5.14.0-427.31.1.el9_4.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Aug 9 14:06:03 EDT 2024 x86_64 x86_64 x86_64 GNU/Linux
+> [root@nine ~]# perf trace -e *sleep* sleep 1.234567890
+>      0.000 (1234.742 ms): sleep/80014 clock_nanosleep(rqtp: 0x7ffc55b11240, rmtp: 0x7ffc55b11230)           = 0
+> [root@nine ~]# clang --version
+> clang version 17.0.6 (Red Hat, Inc. 17.0.6-5.el9)
+> Target: x86_64-redhat-linux-gnu
+> Thread model: posix
+> InstalledDir: /usr/bin
+> [root@nine ~]#
+> 
+> - Arnaldo
 
