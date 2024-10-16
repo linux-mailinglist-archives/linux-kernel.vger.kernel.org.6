@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-367705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F29089A05A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:36:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E549A05A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8370BB23299
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B26CD28A156
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63420205E08;
-	Wed, 16 Oct 2024 09:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B57205158;
+	Wed, 16 Oct 2024 09:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vrlCtia3"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EAx/kyrR"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB88205E05
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EF3205E08
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071401; cv=none; b=B8KvpODfp6Mz5zYia/C2CarSuV/Cx6pB9A25098V215tkRvf/lnbXdwrA+DZnEyC0alA09fikQYd/rli25loO4aoeb0vVIeWQT26KYkM6/WZea9eiJ6qGVVs/qMOCA+O3AoQ3U/Wvi762rku3u8fqQghLJ40ei/EWhvAQZJL3ss=
+	t=1729071414; cv=none; b=BbRejvhhKsxrFZtV46aExEAvmx6pj86VBezrzPFu/PFAFRYdvjUXRelOk1KZvis/9y8DGAmdopwlZ47R4/2Im9ehRDZ/ds3GYDYcIitgTsl1qm5aQqN/Ny2gsaC7UNRD+4R+0Rn+2cqXgjnjJ+xgg9ihA5oEZ8VXk5ya+2iFFfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729071401; c=relaxed/simple;
-	bh=621pHK2wAuSXfDX8JVBqoCKT8fO/ERzqBrXyvGkMm7s=;
+	s=arc-20240116; t=1729071414; c=relaxed/simple;
+	bh=AF2PqunK1k+XUN3mW+Re5acyYvzfPCvF2Hb4iVv5SHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxH8F1lhj8g1kd69IOhM7MSWlDgBhX4vY9iybOT42P+PKriG1yT9X/G7BZtAUN5WqJwD7guSa6RVLc4DR4Wk4NN++eY6fLsNe8sR3jlvyRHgji3/i/eNLhCxKWb3b5RWzVa8pz2Qq0LeuvaZqG3r01yEyVquMs+NIHbQlGI+DE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vrlCtia3; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4311420b63fso48406105e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:36:39 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhSjzSm5UcOW8TTiea3kVuaclyg4JZE3dWPCrRcwjDsJsdGwDPu5scnZLnSLTVjbq2+6W+EER3BEQsV9U0yA7iE9cg8OJKXe9sD1IVKrv/Y0ZrDELuD2OGjVEa6NXTkGZ8EUQU6QxfptSrrF4sQD75Yw/vtYqJHeW/iEBfvmfaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EAx/kyrR; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43118c9a955so53790815e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729071398; x=1729676198; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729071411; x=1729676211; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xg72GJRggzMx0IUcLotHk1H3deITPAX3yCIV5HOhBDs=;
-        b=vrlCtia3I8fa+PBjyFfhRtJgBId83mvu52hJAiw0j1y3k+RbbtVhys72f3Ng8anHkl
-         x5VzwW7Dc2FvavTuY6dAYKNAaBXdAnrYp6vYzblQlQS4z99XdtVSWCbLm7VRjbVItJHU
-         83iqxRevukhT4f6ca25fDg3sj+t+spDgFEYvk23ifnj7Pdj1bQ5t3XNvrUtbUjCBlscP
-         z04CtgswzlAb3v0QROZ8KPmeirJG6/6zYj1ufcpJkaqI+XNNsOaWZjwtxk6CU5QDhEJ+
-         OxoGplYCYE+LhjWMGr55h0XLs7RE7fbayUBER+wQM0F048l5WtYifmS386fM2qTEKYUI
-         cHWA==
+        bh=fxIP+503HmacKr52hF4cwN6vKpq9JVczVJoJF+op9ME=;
+        b=EAx/kyrR+Av9RHjIel0Zk3ZKOguBI9KYZ6RbiPrEEYx2C+2zc6dvaNTdxpell8VDdl
+         pFWF6ADVL/tlDRE0jIXOH13tDqy1cuRUBvFHCz8CO2eYbGL/fzcsV09s2MFr2WsLupHw
+         QPOtADxtEgWUH9Cm2o2t1deJokwjiFGtcHPkW4sodffi+UGP2kqJGZDv1Jh6vl/y8Cem
+         EgO/ALORlGfXAx6ttwtVpSkyfIqvIp2zmOdSf2cdjLYAbBjIJCSRUGKeMYX7uw96pGAI
+         416T0+sobZRvZrop9E/MCsxs+SGCpjwsdoyK8kN4iSgvvCjO8ZUijJ/vJv40a+nFcISu
+         c2tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729071398; x=1729676198;
+        d=1e100.net; s=20230601; t=1729071411; x=1729676211;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xg72GJRggzMx0IUcLotHk1H3deITPAX3yCIV5HOhBDs=;
-        b=u+d8wl8r5/DJkG6votvl3GLwLJI8pupqpdJ9Yw6EoNzjD1eCwuR1y/y5rwD84rt9Cr
-         o70tyQf+bXM4uz7RvgGl3wZviJmmjpSuXJk3R4Ngo5efdpMGaJgeoIp/PwYF2oyciJj3
-         LuuF4n9R7Kn299xGIcJPQUHvMLYgjxJinrYiIGQzXykVdM5SCrzoaDN4Eumhvg1CZZzL
-         ijKUmbRVa6SOZE5qYsKfjoWxo242dPBSV8+Mzs1XHmu8KaFnmTnvdna9qJ7XBY1KNcAF
-         Grdiu+dNoBaLeS7WamK1b9PEjBGXXMs4kZWkWjsBmQA7uSx9I2cqpPUAX3FNhkJVjBWO
-         Dqyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcTS4ovsTA55kz/XJjzIfa/6hSRrwaMfyqQC7lYvmYV5Nv6jRdZHjMZz/wdxGzYtrlI6SIT+pYzaFeIGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUZgzQxzzekAlUX5PPGgnzSMjMv/B3X2Ug8n6X0ZoPXtEg3Anb
-	EaZdK1p11NHNSd3zSjcfHTuiVI6C0ZmSPzTdV0Cgb/pFSfEw3pIV80/i8XC2ick=
-X-Google-Smtp-Source: AGHT+IEghUNeNgADNprsC+ldtJxDcl8vYIVGk1k4io7FkREb9/Xph3UyutiqulubHUF90v5+qDABGg==
-X-Received: by 2002:a05:600c:5251:b0:430:5846:7582 with SMTP id 5b1f17b1804b1-431255d53a7mr124063265e9.7.1729071398482;
-        Wed, 16 Oct 2024 02:36:38 -0700 (PDT)
-Received: from localhost (p200300f65f19e3002f38cf427133ca7b.dip0.t-ipconnect.de. [2003:f6:5f19:e300:2f38:cf42:7133:ca7b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6b31b9sm43932725e9.29.2024.10.16.02.36.37
+        bh=fxIP+503HmacKr52hF4cwN6vKpq9JVczVJoJF+op9ME=;
+        b=AU1sVrxfOigiEmQumm0i684sg+HUqUl32oGcZNkQiDHYHu9CMBurrqiDWVoAJDMU4T
+         dGUV/jGL3OQLGWRh7nsy2yyOvIlW+O2vxNH+waS2FvX9bABJijZPMvRRPFgcRpI2nDJp
+         Bgk0APz0RDMHzKpLOdpmxhcVTLbM7fbNMqyVi99e+d06T+9fk3ELCVN8M7ZlmafkvNic
+         rn8vXlS+PhhEhl2V4nwQBU7j3xniSo/IgrOrX0TxzPQy3AFzacyy9hLrCRQ2++LccZCF
+         3UwFsF7lrWI0KnpfEPjfvfyksSAkg4BkEfEUPOmac8iaDVRzsTIXCp885WfvRoeoScOO
+         TwEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF6PVy6oXmo03jOeTqfesSjuPv9vdvxynDFO6ur+G6MMBPEMIoS+xDHexQBkbmDEku0I2cv1K+8yTDbxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdIVlHGomQJXKpNiLtVzslgnhWnxmcbpSaFGM4r50/6+6SgtYN
+	ABspLUsDAoM8aaEKQL4TJOa9/jZAGnxuCj0JoXUVZKbqVV4eh4lHD578rB5NfzE=
+X-Google-Smtp-Source: AGHT+IG6fNHMCd9wfwMroBHIryaVFXQVYfqJpieR0jsQIFDOAiMSqq1/ES6dB3VtdNGRUPAFimGMVw==
+X-Received: by 2002:a05:600c:3555:b0:42c:bb96:340e with SMTP id 5b1f17b1804b1-4311df56158mr144236185e9.31.1729071411221;
+        Wed, 16 Oct 2024 02:36:51 -0700 (PDT)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc123dasm3798064f8f.94.2024.10.16.02.36.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:36:38 -0700 (PDT)
-Date: Wed, 16 Oct 2024 11:36:37 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v2 05/13] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-Message-ID: <4gcjfysohl7qxdfgmxm6j4yd5ps67qpnnwgt776xondsfdwnri@7mde6vfyfiah>
-References: <20241010193705.10362-1-mario.limonciello@amd.com>
- <20241010193705.10362-6-mario.limonciello@amd.com>
+        Wed, 16 Oct 2024 02:36:50 -0700 (PDT)
+Date: Wed, 16 Oct 2024 12:36:48 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
+	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
+	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] clk: imx93: Move IMX93_CLK_END macro to clk driver
+Message-ID: <Zw+JMMUOErRKqEH1@linaro.org>
+References: <20241014182438.732444-1-pengfei.li_1@nxp.com>
+ <20241014182438.732444-2-pengfei.li_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lxvdsuunitj4n5ss"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010193705.10362-6-mario.limonciello@amd.com>
+In-Reply-To: <20241014182438.732444-2-pengfei.li_1@nxp.com>
 
+On 24-10-14 11:24:35, Pengfei Li wrote:
+> IMX93_CLK_END was previously defined in imx93-clock.h to indicate
+> the number of clocks. However, it is not part of the ABI. For starters
+> it does no really appear in DTS. But what's more important - new clocks
+> are described later, which contradicts this define in binding header.
+> So move this macro to clock driver.
+> 
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx93.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index c6a9bc8ecc1f..c8b65146e76e 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -15,6 +15,8 @@
+>  
+>  #include "clk.h"
+>  
+> +#define IMX93_CLK_END 202
+> +
 
---lxvdsuunitj4n5ss
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 05/13] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-MIME-Version: 1.0
+Sorry for this back and forth.
 
-Hello,
+I've been discussing this off-list with Krzysztof and others and
+now I think this is actually not wrong.
 
-On Thu, Oct 10, 2024 at 02:36:57PM -0500, Mario Limonciello wrote:
-> +static struct platform_driver amd_hfi_driver = {
-> +	.driver = {
-> +		.name = AMD_HFI_DRIVER,
-> +		.owner = THIS_MODULE,
-> +		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
-> +	},
-> +	.probe = amd_hfi_probe,
-> +	.remove_new = amd_hfi_remove,
-> +};
+So:
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers. Please just drop "_new".
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-Best regards
-Uwe
-
---lxvdsuunitj4n5ss
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPiSIACgkQj4D7WH0S
-/k6X/gf/V/UrLO/OKcDi9SQY9t6PkfTJfxHmElu30u+461zOqqnUGGzd9gtF9IYg
-SKYlCO9O1IafnD7YbMP944KYjDthfJIPLdbP7Kr42t9W+onfntB1KjZxn/90BQ3r
-jlt8sC+5XcbXTbS8O0yYT1TCRafK+7yyEiRur4FQZ78+cVrfiDNOrrppB+KrWN+k
-r6Z+LMp5TxMZKP4QPOpKBIUR4eaghRnB2PplF3IqGxMgbogarOSYCp5jNvT4UbP9
-Xk9vMTVMpL1PxlNTQyKaT65ARAkOgBFdgFVihgJVFbUCBPfXfiCaSI11CTfv3kR4
-MJy8LhI9oSag63jSEMbFVVA7gqR32w==
-=oSb2
------END PGP SIGNATURE-----
-
---lxvdsuunitj4n5ss--
+>  enum clk_sel {
+>  	LOW_SPEED_IO_SEL,
+>  	NON_IO_SEL,
+> -- 
+> 2.34.1
+> 
 
