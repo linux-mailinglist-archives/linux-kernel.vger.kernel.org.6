@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-367725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAE59A05DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:43:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD169A05E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC577285E74
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:43:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD50FB2252B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD63205E3F;
-	Wed, 16 Oct 2024 09:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACBD205E3F;
+	Wed, 16 Oct 2024 09:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MI14WF+a"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFk+k6Ix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6896205E11;
-	Wed, 16 Oct 2024 09:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2006199221;
+	Wed, 16 Oct 2024 09:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071798; cv=none; b=M8zUUCaLf5VQ2oFjpVGDlWo0pBDQvVJshh7KR48ohQi/nmP9hSjCI8Iq1yLk1xXVG5O7yB0Lj9Gkfb0O0SvNxK/jQdUlr0p3dpUZZSnhzbS0aFicfHRhXIZR0ZViOlWPQH4TQc9oTmpLgQdtGdddZWMewH5Rr1b2vm4J/27z0k8=
+	t=1729071871; cv=none; b=Cv59mTMW4e/v6V02ad/q3xyXc9rKAWOSHUUnLF41DmdJxMrZfynuK3F8biH9c8d5sMofFOTLkQNwfFAjSkG5JOYnrHgEHn38gf/kOjsy31NiefeBV51aEpVV+Ipi3bkyraFgj8Ijs1MIFhKMpy2qL+uHl6yjE8PcV9e+KQGZLBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729071798; c=relaxed/simple;
-	bh=vm6c5zTe3ogCN7P2aIvkVQuXo2ZwDpuNn2J6zMnLtq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pINIPIcupKSQ1d9BNo2a6mb2hnpnbEvCBy7JgfFkL8/N9e/NzUp6+0AN2PqyOxygloyWvEn1OIRm9UEp8+HzLyfXl7tLnpkIlum0AVzlgqLgYJRNWHh61TtcFYHkCmRxvAttQkpmwuZcidBZSXv6gPzVRMtQDP5gvVIQX2dE8Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MI14WF+a; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-207115e3056so51441635ad.2;
-        Wed, 16 Oct 2024 02:43:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729071796; x=1729676596; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4JdPb6dggiDddx2mZKy5AeVivyxS2f7SnBQhHfVM6F0=;
-        b=MI14WF+an5m7V57uTUT9Q+yr5LHxb16yWDF3jh6c7n6NGbjrQtciy9h6zA9XQh5d79
-         +7I43otP4LkQiPAfezqyshEMlMn9nUJMmqebo7bNUKVs5Odo/Q2V6LU7dvCkNfjNy+Y/
-         dxl1CIRksEL4pT89DnnF6QcFARvSUYPXeTAQFafpaF4udyukr0fdmtlmBefQk9Vx3Nrr
-         eBNU5DzmnH/x6mnmrzkUfL0AAcBjsQngp59yt87vbE3r+g2ICtodO5IRDe1wyu+vb/UL
-         BL7VNNfabuAvwWfUtVanRCY85QHxxmnYOpwRMQ/EozmjiEf7/eOGG2fg481WDuwUFUGq
-         +VEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729071796; x=1729676596;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4JdPb6dggiDddx2mZKy5AeVivyxS2f7SnBQhHfVM6F0=;
-        b=TnybExtJyvBcObQUcBExINRSR38Dfg+LW/uBLtJXCQUiKy6bVHxQ/ZiK1XYoRrm8y5
-         ItbAPGHfIU1mCz3pcUfYpksHX/ogdS3nkrAYZWeAyJE2tQt46kkS/PhGXnwmgSiyljtr
-         O7y+aaOARWbGiPWEnFzP+xeKujn+ZU2B3/Pnw0rhDspP8wO0jf/cnmwpBoFiSp679khd
-         pMr8ATWeAvOEuy5QJkVGQiDu06t1clm4f8GPlrhWKCdkyo2RBbHYOMgE604ilis68g6Y
-         BjuUK/seJ4GK7JrjfObd/ykftXx8oh+C4BGeAxumZLx7pe/izpygKYMyS/BPsuNKpTx7
-         it+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWigAnJQ4rhjJPspFqIb8gdmoZ/zI7GpozYwclDMbQHQyX14js6BiuwqmTZQ3Hh5X566sz8Y0A1kM1Uwmhj@vger.kernel.org, AJvYcCXL5rx1J2gnaz91viJjKuUiQIzV/AUaXDHpu1AehK/d7yoiA/vmTbuc3WoL24pnmogTl7R2QZkJGzYO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyzyPJfAQnDV3HFLX2F6B20jephpUoTlRgFFH+6INzs9x7EK1S
-	16TH8gmaqKAQogmAgskPMarsR1XQpJgxvBoiTcBz4appRlwf77h+tKUm5A==
-X-Google-Smtp-Source: AGHT+IFFFhMerPMQrKtmTWnNhpLODC7igg1EoEmBu86qH1UAkTyoc9u0bHxw6TAfW1VuhYm/oz2Wvw==
-X-Received: by 2002:a17:90a:e7d2:b0:2e2:d16e:8769 with SMTP id 98e67ed59e1d1-2e3ab7fb55fmr3546365a91.15.1729071795918;
-        Wed, 16 Oct 2024 02:43:15 -0700 (PDT)
-Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392eff82dsm3638770a91.26.2024.10.16.02.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:43:15 -0700 (PDT)
-Date: Wed, 16 Oct 2024 17:43:11 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 6/6] gpiolib: notify user-space about in-kernel line
- state changes
-Message-ID: <20241016094311.GA210746@rigel>
-References: <20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org>
- <20241015-gpio-notify-in-kernel-events-v3-6-9edf05802271@linaro.org>
- <20241016051944.GA42100@rigel>
- <20241016072730.GA120095@rigel>
- <20241016083747.GB120095@rigel>
- <CAMRc=McR_eMizF6r30NqbgK4mE5ErzR=wbkD4O-Czn=+Oj4AXQ@mail.gmail.com>
- <20241016091714.GA207325@rigel>
- <CAMRc=MdoeyXwKuLmrmJ8zRCtVDNzEd34zgZ5Autye0TNv_OLhg@mail.gmail.com>
+	s=arc-20240116; t=1729071871; c=relaxed/simple;
+	bh=LsyIifKu8l/xyCVS7qYxqZli9QlFHCJR3JE/VlUfY3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sEr1I85e+omOGpgtnD0uXe0G2Ur64OAh/sc1LrpJXF7H0rFPunv3i8UAmjUOgT1PMJaFUcX4/qxCcnQzmkcaUMEZqY73x3aAoQrT7u8jXbP7hu+5PmmJ02Icxn2Tj5w+UYhxTG0Kup+9Y/55+cx318Hpa+7YohKtAf1ebjfT0Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFk+k6Ix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CC2CC4CEC5;
+	Wed, 16 Oct 2024 09:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729071871;
+	bh=LsyIifKu8l/xyCVS7qYxqZli9QlFHCJR3JE/VlUfY3s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jFk+k6IxStUrDwJVbHy48rAnseSQSO0LcpK184KQgRPV0923HiifIdmU4zpOMwEmO
+	 xZFngT2fckNiucIPHvT+hJ0jqw1RxiBesAhXbG4OSymXYbQs6tawfYqfdJYcbD0BY7
+	 lGvw+XmR2Bym/olWZZ1/JK9GZKbxVlAg7pwJF0KGLyGLGbjS4nPhAZXYHFbd67LM93
+	 o0RI2cThzhgqMhLMs5gANYDcF09fyYg/Pjo3o+B8JCk2iDbElkN+cqtO4bZ3Lc+knH
+	 EEFTROw9KPgwniae2I/AtLKNoVbWFko+jkTgnnw1uCZ3bBAN2yv3U7DHxS/ujogW/5
+	 Avyi5tdz3ejrw==
+Message-ID: <7ce0daed-1a90-482c-9521-833baceb73d0@kernel.org>
+Date: Wed, 16 Oct 2024 11:44:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdoeyXwKuLmrmJ8zRCtVDNzEd34zgZ5Autye0TNv_OLhg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: leds: pca955x: Convert text bindings to
+ YAML
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Nate Case <ncase@xes-inc.com>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241016093857.925467-1-Delphine_CC_Chiu@wiwynn.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241016093857.925467-1-Delphine_CC_Chiu@wiwynn.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 11:22:07AM +0200, Bartosz Golaszewski wrote:
-> On Wed, Oct 16, 2024 at 11:17 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > > >
-> > >
-> > > You mean, you get a CHANGED_CONFIG event but the debounce value is not
-> > > in the associated line info?
-> > >
-> >
-> > Correct.
-> >
->
-> Ok, let me see.
->
+On 16/10/2024 11:38, Delphine CC Chiu wrote:
+> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+> 
+> Convert the text bindings of pca955x to YAML so it could be used to
+> validate the DTS.
+> 
+> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 
-When setting from userspace the issue is that linereq_set_config() setting the
-direction will emit, quite possibly before the debounce has been set.  The
-edge_detector_setup() that does set it can also emit, though only if the
-hardware supports debounce.  And then there could be a race between the
-notifier being called and the period being set in the supinfo.
-(the set will probably win that one)
+Thanks.
 
-Debounce set from the kernel side is going to be an issue as cdev
-catches and stores the value from userspace to report in the supinfo - that
-isn't the case for kernel calls to gpiod_set_config().
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Seems moving the debounce value out of the desc and into cdev, which seemed a
-good idea at the time, might come back and bite now if it is no longer
-restricted to being cdev specific.  Now there is an actual reason to
-store it in the desc :(.
-
-Cheers,
-Kent.
+Best regards,
+Krzysztof
 
 
