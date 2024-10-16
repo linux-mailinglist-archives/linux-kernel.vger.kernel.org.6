@@ -1,117 +1,373 @@
-Return-Path: <linux-kernel+bounces-367117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B26C99FECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 770B599FED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA59A1F228F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF6B1F245A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E8A15C14F;
-	Wed, 16 Oct 2024 02:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0z6ESJj"
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB2B15C14B;
+	Wed, 16 Oct 2024 02:27:49 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661BE1859;
-	Wed, 16 Oct 2024 02:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0B4158A2E;
+	Wed, 16 Oct 2024 02:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729045600; cv=none; b=XjuNDc3GodT+D1G0ddCVjLNBiiPoEOqGtHL5Jpz8TiA0bc9mFKoiKkFFK+Zrsaen7NDil6x9uNfaGPCzbJjx+39UWcf5R5MiBjwrpGk78PDJNswsVlnRg84oUj3SiRun4u92PZ6JKV1bCTe9Ik8dVQhm7bTqcj6jri9Wwj81NGA=
+	t=1729045669; cv=none; b=NrZ0CAr+mp80gIWChMSL7G0GftfbmPFOHIbZlaXfyqnQ8WjzGmZ4EWztIRNJJ5fH1JG7uph1oCOxSj13YHhL+AJeZ/wJlyxTTOXKpKzQCRaxTvEG5pwbE4SOvaZjiTv1uSHDVa8cICI86ipPiXHkjP5mJcChAClpYDaeP7oXfyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729045600; c=relaxed/simple;
-	bh=ZPLcrgkpA3DOluLYRzuvfvWdMH3+rXQ5FoHycyywNa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=h2WHnwB8E7tNhSy7aFQCQnImHmFCrV7sZ2TjgvjpYJXx421mzVB+l+sfrt1KGcc/4jch7Yrsp+adEleyTb/rYRXBTVtx9/cg1/nS+1HDlaomREfTyV9+0wRRCgNIla1WeWBa2WOcnwAuIc9pigTIfWgUWG1U/4cm8FhBmJ9uzTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0z6ESJj; arc=none smtp.client-ip=209.85.128.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-4311420b63fso45876995e9.2;
-        Tue, 15 Oct 2024 19:26:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729045596; x=1729650396; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZSxi1jizS1Wxc9UqPR+m8hcJCSAhRZESwhZTU5hM5qc=;
-        b=F0z6ESJjWzmkFBDtH3AOKGaFbwWpa6d+enf+h+rJgYZxk5w6LjTBFO8+yz2CNZsttn
-         OKmUSfY/VUhMnc3ElTCQLqq74SRcvETfqOAVdBBQvzAA1wJgSfEtILc8apxms4taHnKv
-         +T7+/SpmK2B9a8aG5uN2UibC+ePy3Lw/K5Pv8dNKhyeQoBmmteFdO5mDmTnmaAgjzGkq
-         oe9ia01J0Cg0FpVFasTKJyD/S1TwOmLY5bfF8ptadIWAODh0ag+0mOBcUfgyrtvYPUCp
-         672MbI4qo6LaM7Uib5Zj9XM3xm+ohOuwUJGuZ0hmrJCWxaIc+mcSTM4+MRKmwjBU0aL9
-         mKPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729045596; x=1729650396;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZSxi1jizS1Wxc9UqPR+m8hcJCSAhRZESwhZTU5hM5qc=;
-        b=gazFp7LnycET8xC1A5aO8jqo/vSN0zMbvI0N1ERw4AOuNJM+e12hfq7lIOko2P+drj
-         KBFGldoMLY1Ghjq+YnKRWZisVK2FTlFu27VDOwkSIrNgsdtnDNYMaH25ghlwjgGtBm91
-         sDik0t9ncg8o7ayxTOckrqMme4jWJaECYjxEg2NwSGxnLGLzJNM625lxRWrq5YYz/cOP
-         Ty+Xb65OcsQdg9npFxVRbDSqL2rBi7c/Xjl3jHVUbac5H0PW6AD3XT/va6wIWUgG+kXu
-         v6JTRU/4tFTeuKP4pnmreFHRwWfr6iypwcu0H+DtRZIc8syTJ1WV8dzHatv3GP4Gi/I/
-         Adtg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4dWOHg3CBMb8kthtdw3cctYLPI1zrUwfsc/OFvE+GoDCJtgy5wM4AJZK7RPyII+3WpmAuk9OezhQC@vger.kernel.org, AJvYcCV6wtMEOV4PvXnK8Us4YP4JSVVDE0HJdTOkr7cuxId21Ky2QO0CzVafs8HDBIiyrjTah1LCEWWAZ/k4@vger.kernel.org, AJvYcCXTgjinAq4OPaIwJ24BtKOswr3YZV2tGrgXTB9hT5fhwLN10niIyh4bPOuXx/CAHfiUW9z8FhK2oYPfvIdU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuYqn2OX1bzC4oW9M/YvoR59ohF2yviCmvz6eVEhJs+UUlzBaJ
-	brhmRjVntpPzvIQDgemTY6MNnLUFILbJwugSS9Xpxxjw7xfYoBiRtPQ5ZZOtgZWjuw==
-X-Google-Smtp-Source: AGHT+IG5LlEae23Kuhx11vVm5Eh+uJbiVwS7UM9JBBcCaLE7bfJm0VfpTpVXYo+3+W9ajJxcUUPKLg==
-X-Received: by 2002:a5d:4d8c:0:b0:374:bd48:fae9 with SMTP id ffacd0b85a97d-37d5ff2a6fbmr9708805f8f.20.1729045596271;
-        Tue, 15 Oct 2024 19:26:36 -0700 (PDT)
-Received: from [127.0.0.1] ([94.131.108.69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55defbsm34640475e9.7.2024.10.15.19.26.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 19:26:35 -0700 (PDT)
-Message-ID: <6015d35d-6d91-4ac1-8ebf-4f79b304370f@gmail.com>
-Date: Wed, 16 Oct 2024 10:26:29 +0800
+	s=arc-20240116; t=1729045669; c=relaxed/simple;
+	bh=88cg77w6Zl5aXV4euH8inb+ijowXao7uWH3SKEr7VRY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FcQRrtnVSyJ5gELiO1E1JRKGjsqbCCgDr2UxL/ZoB0adYV7rhSg83I8pe/UoLsQ2rg/14klT/QcQY9TgWbzk9kEYEp7NtLIuR3Cc/fbbDMWEvyGEEWR2dPLR9RfYeJN12PogFpYxLo4yjsUcUxDpIspdPtYTssJBOyaflf1ev18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XSvwX12wGzyTL8;
+	Wed, 16 Oct 2024 10:26:20 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id A53651401E0;
+	Wed, 16 Oct 2024 10:27:43 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 16 Oct
+ 2024 10:27:43 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <mripard@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] clk: test: Fix some memory leaks
+Date: Wed, 16 Oct 2024 10:26:58 +0800
+Message-ID: <20241016022658.2131826-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
- <20241015075134.1449458-3-TroyMitchell988@gmail.com>
- <Zw4zPOXSJIWEMd2Y@shikoro>
-Content-Language: en-US
-From: Troy Mitchell <troymitchell988@gmail.com>
-Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- krzk+dt@kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- robh@kernel.org
-In-Reply-To: <Zw4zPOXSJIWEMd2Y@shikoro>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
+CONFIG_CLK_KUNIT_TEST=y, CONFIG_DEBUG_KMEMLEAK=y
+and CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN=y, the following memory leak occurs.
 
+If the KUNIT_ASSERT_*() fails, the latter (exit() or testcases)
+clk_put() or clk_hw_unregister() will fail to release the clk resource
+and cause memory leaks, use new clk_hw_register_kunit()
+and clk_hw_get_clk_kunit() to automatically release them.
 
-On 2024/10/15 17:17, Wolfram Sang wrote:
-> 
->> +/* spacemit i2c registers */
->> +#define ICR          0x0		/* Control Register */
->> +#define ISR          0x4		/* Status Register */
->> +#define ISAR         0x8		/* Slave Address Register */
->> +#define IDBR         0xc		/* Data Buffer Register */
->> +#define ILCR         0x10		/* Load Count Register */
->> +#define IWCR         0x14		/* Wait Count Register */
->> +#define IRST_CYC     0x18		/* Bus reset cycle counter */
->> +#define IBMR         0x1c		/* Bus monitor register */
-> 
-> These registers look a lot like the ones for i2c-pxa. Can the pxa driver
-> maybe be re-used for your I2C core?
-> 
-Only a small number of bit definitions in the registers are the same [1].
-Even if the logic is roughly the same. it still takes a lot of work,
-and i2c-pxa cannot easily add the fifo and dma functions that k1 has.
-Just my opinion, I don't think it's worth it.
-of course, if you think that multiplexing i2c-pxa is a better decision.
-I'd be happy to adopt it
+	unreferenced object 0xffffff80c6af5000 (size 512):
+	  comm "kunit_try_catch", pid 371, jiffies 4294896001
+	  hex dump (first 32 bytes):
+	    20 4c c0 86 e1 ff ff ff e0 1a c0 86 e1 ff ff ff   L..............
+	    c0 75 e3 c6 80 ff ff ff 00 00 00 00 00 00 00 00  .u..............
+	  backtrace (crc 8ca788fa):
+	    [<00000000e21852d0>] kmemleak_alloc+0x34/0x40
+	    [<000000009c583f7b>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<00000000d1bc850c>] __clk_register+0x80/0x1ecc
+	    [<00000000b08c78c5>] clk_hw_register+0xc4/0x110
+	    [<00000000b16d6df8>] clk_multiple_parents_mux_test_init+0x238/0x288
+	    [<0000000014a7e804>] kunit_try_run_case+0x10c/0x3ac
+	    [<0000000026b41f03>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<0000000066619fb8>] kthread+0x2e8/0x374
+	    [<00000000a1157f53>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80c6e37880 (size 96):
+	  comm "kunit_try_catch", pid 371, jiffies 4294896002
+	  hex dump (first 32 bytes):
+	    00 50 af c6 80 ff ff ff 00 00 00 00 00 00 00 00  .P..............
+	    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+	  backtrace (crc b4b766dd):
+	    [<00000000e21852d0>] kmemleak_alloc+0x34/0x40
+	    [<000000009c583f7b>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<0000000086e7dd64>] clk_hw_create_clk.part.0.isra.0+0x58/0x2f4
+	    [<00000000dcf1ac31>] clk_hw_get_clk+0x8c/0x114
+	    [<000000006fab5bfa>] clk_test_multiple_parents_mux_set_range_set_parent_get_rate+0x3c/0xa0
+	    [<00000000c97db55a>] kunit_try_run_case+0x13c/0x3ac
+	    [<0000000026b41f03>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<0000000066619fb8>] kthread+0x2e8/0x374
+	    [<00000000a1157f53>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80c2b56900 (size 96):
+	  comm "kunit_try_catch", pid 395, jiffies 4294896107
+	  hex dump (first 32 bytes):
+	    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+	    00 00 00 00 00 00 00 00 e0 49 c0 86 e1 ff ff ff  .........I......
+	  backtrace (crc 2e59b327):
+	    [<00000000e21852d0>] kmemleak_alloc+0x34/0x40
+	    [<00000000c6c715a8>] __kmalloc_noprof+0x2bc/0x3c0
+	    [<00000000f04a7951>] __clk_register+0x70c/0x1ecc
+	    [<00000000b08c78c5>] clk_hw_register+0xc4/0x110
+	    [<00000000cafa9563>] clk_orphan_transparent_multiple_parent_mux_test_init+0x1a8/0x1dc
+	    [<0000000014a7e804>] kunit_try_run_case+0x10c/0x3ac
+	    [<0000000026b41f03>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<0000000066619fb8>] kthread+0x2e8/0x374
+	    [<00000000a1157f53>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80c87c9400 (size 512):
+	  comm "kunit_try_catch", pid 483, jiffies 4294896907
+	  hex dump (first 32 bytes):
+	    a0 44 c0 86 e1 ff ff ff e0 1a c0 86 e1 ff ff ff  .D..............
+	    20 05 a8 c8 80 ff ff ff 00 00 00 00 00 00 00 00   ...............
+	  backtrace (crc c25b43fb):
+	    [<00000000e21852d0>] kmemleak_alloc+0x34/0x40
+	    [<000000009c583f7b>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<00000000d1bc850c>] __clk_register+0x80/0x1ecc
+	    [<00000000b08c78c5>] clk_hw_register+0xc4/0x110
+	    [<000000002688be48>] clk_single_parent_mux_test_init+0x1a0/0x1d4
+	    [<0000000014a7e804>] kunit_try_run_case+0x10c/0x3ac
+	    [<0000000026b41f03>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<0000000066619fb8>] kthread+0x2e8/0x374
+	    [<00000000a1157f53>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80c6dd2380 (size 96):
+	  comm "kunit_try_catch", pid 483, jiffies 4294896908
+	  hex dump (first 32 bytes):
+	    00 94 7c c8 80 ff ff ff 00 00 00 00 00 00 00 00  ..|.............
+	    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+	  backtrace (crc 4401212):
+	    [<00000000e21852d0>] kmemleak_alloc+0x34/0x40
+	    [<000000009c583f7b>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<0000000086e7dd64>] clk_hw_create_clk.part.0.isra.0+0x58/0x2f4
+	    [<00000000dcf1ac31>] clk_hw_get_clk+0x8c/0x114
+	    [<0000000063eb2c90>] clk_test_single_parent_mux_set_range_disjoint_child_last+0x3c/0xa0
+	    [<00000000c97db55a>] kunit_try_run_case+0x13c/0x3ac
+	    [<0000000026b41f03>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<0000000066619fb8>] kthread+0x2e8/0x374
+	    [<00000000a1157f53>] ret_from_fork+0x10/0x20
+	......
 
-Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part2065 [1]
+Fixes: 02cdeace1e1e ("clk: tests: Add tests for single parent mux")
+Fixes: 2e9cad1abc71 ("clk: tests: Add some tests for orphan with multiple parents")
+Fixes: 433fb8a611ca ("clk: tests: Add missing test case for ranges")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/clk/clk_test.c | 61 ++++++++++--------------------------------
+ 1 file changed, 14 insertions(+), 47 deletions(-)
+
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 41fc8eba3418..aa3ddcfc00eb 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -473,7 +473,7 @@ clk_multiple_parents_mux_test_init(struct kunit *test)
+ 							    &clk_dummy_rate_ops,
+ 							    0);
+ 	ctx->parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
+-	ret = clk_hw_register(NULL, &ctx->parents_ctx[0].hw);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->parents_ctx[0].hw);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -481,7 +481,7 @@ clk_multiple_parents_mux_test_init(struct kunit *test)
+ 							    &clk_dummy_rate_ops,
+ 							    0);
+ 	ctx->parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
+-	ret = clk_hw_register(NULL, &ctx->parents_ctx[1].hw);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->parents_ctx[1].hw);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -489,23 +489,13 @@ clk_multiple_parents_mux_test_init(struct kunit *test)
+ 	ctx->hw.init = CLK_HW_INIT_PARENTS("test-mux", parents,
+ 					   &clk_multiple_parents_mux_ops,
+ 					   CLK_SET_RATE_PARENT);
+-	ret = clk_hw_register(NULL, &ctx->hw);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->hw);
+ 	if (ret)
+ 		return ret;
+ 
+ 	return 0;
+ }
+ 
+-static void
+-clk_multiple_parents_mux_test_exit(struct kunit *test)
+-{
+-	struct clk_multiple_parent_ctx *ctx = test->priv;
+-
+-	clk_hw_unregister(&ctx->hw);
+-	clk_hw_unregister(&ctx->parents_ctx[0].hw);
+-	clk_hw_unregister(&ctx->parents_ctx[1].hw);
+-}
+-
+ /*
+  * Test that for a clock with multiple parents, clk_get_parent()
+  * actually returns the current one.
+@@ -561,18 +551,18 @@ clk_test_multiple_parents_mux_set_range_set_parent_get_rate(struct kunit *test)
+ {
+ 	struct clk_multiple_parent_ctx *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *clk = clk_hw_get_clk_kunit(test, hw, NULL);
+ 	struct clk *parent1, *parent2;
+ 	unsigned long rate;
+ 	int ret;
+ 
+ 	kunit_skip(test, "This needs to be fixed in the core.");
+ 
+-	parent1 = clk_hw_get_clk(&ctx->parents_ctx[0].hw, NULL);
++	parent1 = clk_hw_get_clk_kunit(test, &ctx->parents_ctx[0].hw, NULL);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent1);
+ 	KUNIT_ASSERT_TRUE(test, clk_is_match(clk_get_parent(clk), parent1));
+ 
+-	parent2 = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	parent2 = clk_hw_get_clk_kunit(test, &ctx->parents_ctx[1].hw, NULL);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent2);
+ 
+ 	ret = clk_set_rate(parent1, DUMMY_CLOCK_RATE_1);
+@@ -593,10 +583,6 @@ clk_test_multiple_parents_mux_set_range_set_parent_get_rate(struct kunit *test)
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1 - 1000);
+ 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_1 + 1000);
+-
+-	clk_put(parent2);
+-	clk_put(parent1);
+-	clk_put(clk);
+ }
+ 
+ static struct kunit_case clk_multiple_parents_mux_test_cases[] = {
+@@ -617,7 +603,6 @@ static struct kunit_suite
+ clk_multiple_parents_mux_test_suite = {
+ 	.name = "clk-multiple-parents-mux-test",
+ 	.init = clk_multiple_parents_mux_test_init,
+-	.exit = clk_multiple_parents_mux_test_exit,
+ 	.test_cases = clk_multiple_parents_mux_test_cases,
+ };
+ 
+@@ -637,29 +622,20 @@ clk_orphan_transparent_multiple_parent_mux_test_init(struct kunit *test)
+ 							    &clk_dummy_rate_ops,
+ 							    0);
+ 	ctx->parents_ctx[1].rate = DUMMY_CLOCK_INIT_RATE;
+-	ret = clk_hw_register(NULL, &ctx->parents_ctx[1].hw);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->parents_ctx[1].hw);
+ 	if (ret)
+ 		return ret;
+ 
+ 	ctx->hw.init = CLK_HW_INIT_PARENTS("test-orphan-mux", parents,
+ 					   &clk_multiple_parents_mux_ops,
+ 					   CLK_SET_RATE_PARENT);
+-	ret = clk_hw_register(NULL, &ctx->hw);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->hw);
+ 	if (ret)
+ 		return ret;
+ 
+ 	return 0;
+ }
+ 
+-static void
+-clk_orphan_transparent_multiple_parent_mux_test_exit(struct kunit *test)
+-{
+-	struct clk_multiple_parent_ctx *ctx = test->priv;
+-
+-	clk_hw_unregister(&ctx->hw);
+-	clk_hw_unregister(&ctx->parents_ctx[1].hw);
+-}
+-
+ /*
+  * Test that, for a mux whose current parent hasn't been registered yet and is
+  * thus orphan, clk_get_parent() will return NULL.
+@@ -912,7 +888,7 @@ clk_test_orphan_transparent_multiple_parent_mux_set_range_set_parent_get_rate(st
+ {
+ 	struct clk_multiple_parent_ctx *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *clk = clk_hw_get_clk_kunit(test, hw, NULL);
+ 	struct clk *parent;
+ 	unsigned long rate;
+ 	int ret;
+@@ -921,7 +897,7 @@ clk_test_orphan_transparent_multiple_parent_mux_set_range_set_parent_get_rate(st
+ 
+ 	clk_hw_set_rate_range(hw, DUMMY_CLOCK_RATE_1, DUMMY_CLOCK_RATE_2);
+ 
+-	parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	parent = clk_hw_get_clk_kunit(test, &ctx->parents_ctx[1].hw, NULL);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
+ 
+ 	ret = clk_set_parent(clk, parent);
+@@ -931,9 +907,6 @@ clk_test_orphan_transparent_multiple_parent_mux_set_range_set_parent_get_rate(st
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
+ 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
+-
+-	clk_put(parent);
+-	clk_put(clk);
+ }
+ 
+ static struct kunit_case clk_orphan_transparent_multiple_parent_mux_test_cases[] = {
+@@ -961,7 +934,6 @@ static struct kunit_case clk_orphan_transparent_multiple_parent_mux_test_cases[]
+ static struct kunit_suite clk_orphan_transparent_multiple_parent_mux_test_suite = {
+ 	.name = "clk-orphan-transparent-multiple-parent-mux-test",
+ 	.init = clk_orphan_transparent_multiple_parent_mux_test_init,
+-	.exit = clk_orphan_transparent_multiple_parent_mux_test_exit,
+ 	.test_cases = clk_orphan_transparent_multiple_parent_mux_test_cases,
+ };
+ 
+@@ -986,7 +958,7 @@ static int clk_single_parent_mux_test_init(struct kunit *test)
+ 				      &clk_dummy_rate_ops,
+ 				      0);
+ 
+-	ret = clk_hw_register(NULL, &ctx->parent_ctx.hw);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->parent_ctx.hw);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -994,7 +966,7 @@ static int clk_single_parent_mux_test_init(struct kunit *test)
+ 				   &clk_dummy_single_parent_ops,
+ 				   CLK_SET_RATE_PARENT);
+ 
+-	ret = clk_hw_register(NULL, &ctx->hw);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->hw);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1060,7 +1032,7 @@ clk_test_single_parent_mux_set_range_disjoint_child_last(struct kunit *test)
+ {
+ 	struct clk_single_parent_ctx *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *clk = clk_hw_get_clk_kunit(test, hw, NULL);
+ 	struct clk *parent;
+ 	int ret;
+ 
+@@ -1074,8 +1046,6 @@ clk_test_single_parent_mux_set_range_disjoint_child_last(struct kunit *test)
+ 
+ 	ret = clk_set_rate_range(clk, 3000, 4000);
+ 	KUNIT_EXPECT_LT(test, ret, 0);
+-
+-	clk_put(clk);
+ }
+ 
+ /*
+@@ -1092,7 +1062,7 @@ clk_test_single_parent_mux_set_range_disjoint_parent_last(struct kunit *test)
+ {
+ 	struct clk_single_parent_ctx *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *clk = clk_hw_get_clk_kunit(test, hw, NULL);
+ 	struct clk *parent;
+ 	int ret;
+ 
+@@ -1106,8 +1076,6 @@ clk_test_single_parent_mux_set_range_disjoint_parent_last(struct kunit *test)
+ 
+ 	ret = clk_set_rate_range(parent, 3000, 4000);
+ 	KUNIT_EXPECT_LT(test, ret, 0);
+-
+-	clk_put(clk);
+ }
+ 
+ /*
+@@ -1238,7 +1206,6 @@ static struct kunit_suite
+ clk_single_parent_mux_test_suite = {
+ 	.name = "clk-single-parent-mux-test",
+ 	.init = clk_single_parent_mux_test_init,
+-	.exit = clk_single_parent_mux_test_exit,
+ 	.test_cases = clk_single_parent_mux_test_cases,
+ };
+ 
+-- 
+2.34.1
+
 
