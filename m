@@ -1,195 +1,152 @@
-Return-Path: <linux-kernel+bounces-368833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A076B9A1567
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE689A156D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B662F1F21DD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F3F1F21659
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F961D63D0;
-	Wed, 16 Oct 2024 21:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94D61D2F61;
+	Wed, 16 Oct 2024 21:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLDD3jbJ"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SZpkp0aQ"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0131D61B9;
-	Wed, 16 Oct 2024 21:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF831D3593
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729115898; cv=none; b=PczPXd19AbcMbixALgYqN5h6GNplFls01ABsDC45rE9n0vRz09yYSn53hX1egcjsRL3s4ypyawtTF7mBg4ndrDYmiS5NKDPHc7cJySyU8AHqthQw6/UATFGwdzG6Ws0CEATGj3P47f2X+iA+kFCvSK1+O/3grEPS9zsAlmbCu94=
+	t=1729115953; cv=none; b=F2MJ5Y2/QRk14yiFIUmUUwQJY1qSPNF7qAK8zaQdMNCiAR59iEodXeDeyM7BoMP+zvcAXz4fQS7Cq5TTHYXRaOeucHmMDJjb1Xoov9F8s5BBAqAQ8Alkvgxky92lR9+MyHCBuWZLBV25czCO2io0EZyPSpPgKU2HdbfxDztsoaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729115898; c=relaxed/simple;
-	bh=GCWSI6H+e7J609h8uqCoIHLZm2S86TshFuKVLxQwepI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ok97IsdWqxNNAXF2pSKBlfnBPnXSvQJsxyZMOOMDoS45J/FyvSk1Df7FbqlwhCER4AQOTo/puEFYnJn7wIqRx6hvAV2Y+yVkZMa/W7F7drXlwZIzgA3kJKgx7nBwe6RAY63kyWpKDQizvJtGrt0ObhDnYhxzctNadL6zG0u5vXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLDD3jbJ; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a11e7so423859a12.3;
-        Wed, 16 Oct 2024 14:58:16 -0700 (PDT)
+	s=arc-20240116; t=1729115953; c=relaxed/simple;
+	bh=8qYHelQUjDoTybira0O9Q7Zj6yilO0u+xZOecQxQR8A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WTS1zePCszdO7jIm0Dz7XCDqS7aOnMPrmPNyLX8pX4btitxMz/GNv4eBTRncE17eFdOVws975ecLn75IxzNlJH5i/VhndZZzPTbl7W1z7hZxOvp4Ay9YF7/zz55YryvgcyCR5akOcI0aaQQ5x7PRsC17YzREg10/tP5oHOZk7Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SZpkp0aQ; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a363feabc6so5079615ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:59:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729115895; x=1729720695; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YXjFphjc1IXQr0clE4Kc/JzIAAvDawGyk24jtjb2XPQ=;
-        b=kLDD3jbJXumeu1ma5kEKo5wlJvKFP/GQ3nDVehUOey3T8FbMHRSs1e1jLVgNWMPFAE
-         te5SAS5SaMDcvqEnLZ8cqGoGN+1Ppi1U0FLgFFmcFhJDl7huu6uftlp7Owbyxni0R1KC
-         MfddN8H6Vz/08MJS6LtY2eaGMF50J20rBYHScpuLlAEnxdCmpXuCGOL4dVoKMOGW4jtn
-         eswZfqHXtRAJys88VRuPLpb2P/SyTKZTwgQqzkJjXY7QGjbMde5+D7jqPmzgP1A9RBMJ
-         l3pxA3PF5tUKG5zm2TQce8r6gnNx+pdqnN0J0MTxfOCT2+nXW3t45VRT7SPpofWWofA/
-         nC4g==
+        d=linuxfoundation.org; s=google; t=1729115950; x=1729720750; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nKmb9Wl1EPVaTgFDnEvZmVVLPMr8CXfZoJTK+cdxx8k=;
+        b=SZpkp0aQ0wmscAoqCX51/Rtd77yvPbfpofdwArw9mVjk5LW6GMhWPdz0qOFDTQIFvf
+         BZjeLJOV6jzy1qR+tLP+MfVLgLnSB03oVkzYQ8pwmzUqyF+HsTo0z6L7TamQnbZaofqu
+         ozkAxCb45cn5tMGHnWf+irBLeJSThIW+t1y9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729115895; x=1729720695;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YXjFphjc1IXQr0clE4Kc/JzIAAvDawGyk24jtjb2XPQ=;
-        b=qGW/xXtjzRCP3X02SjHIxG/ZU99necXg7T8QJU0mH9LnTEVkM4M27MfQ+iLWLIAg32
-         YOJQeyrUEncy+PuvE+PzX8qliC3uz/LkSm3VRkWv5G9aibeKlJa0hXj1mpjH2gWCfKJK
-         8+fX/F7E0RJI8vOcEwLQ1mTIj9DIa/QhDvSeZcSH/urV/G0E1bJn0qyJnIzIXsFbqDjD
-         h241E1D8iAJY/seUBTIWl+Zjkzz86yaGNlasNArfnkMeaizGIzvCdoiJkzWUwwXftMA+
-         +KVwOufIrUC+KzgwsoKBwHJWbAvG7YTdDKSmX+aZHa9wtuEbqdHmZTH4kvjUIS3s2Ty1
-         tfAg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9TXUEEfGsByA48Y1yr3XRH9tzEnpKgV67kZP3oW9AIa9vAbju20knF/3y4mCf5tcGfGWIXVSWE3xLQQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEIkIa8Cc9coh+GNSomUa186ikYp92JFY/NGuR3X9pTfYmn+6z
-	dYEe6t7PsLyNGvZ9PM6dhCNm20XFhXxNw+yl7WwY/pFVs+uYxY91ZZkMMLTg
-X-Google-Smtp-Source: AGHT+IFmtx1A/qyl5p7ivfeAnS1HERBrfPYFB3lTRAjM1+C1T1GoJMZdp3Q2fG3znPNHUSxXVUBHQA==
-X-Received: by 2002:a05:6402:520f:b0:5c8:9624:326a with SMTP id 4fb4d7f45d1cf-5c95ac15955mr14380946a12.14.1729115894582;
-        Wed, 16 Oct 2024 14:58:14 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a02-3102-4c14-3e00-7de9-2a44-7a4f-6228.310.pool.telefonica.de. [2a02:3102:4c14:3e00:7de9:2a44:7a4f:6228])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d779de7sm2052305a12.63.2024.10.16.14.58.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 14:58:13 -0700 (PDT)
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Kirill Marinushkin <kmarinushkin@birdec.com>,
-	Kirill Marinushkin <k.marinushkin@gmail.com>
-Subject: [PATCH] ASoC: Change my e-mail to gmail
-Date: Wed, 16 Oct 2024 23:58:10 +0200
-Message-Id: <20241016215810.1544222-1-k.marinushkin@gmail.com>
-X-Mailer: git-send-email 2.31.1
+        d=1e100.net; s=20230601; t=1729115950; x=1729720750;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nKmb9Wl1EPVaTgFDnEvZmVVLPMr8CXfZoJTK+cdxx8k=;
+        b=byU4si54A58Wh3yrcLGHhMvHE1MoEWDUOx+dqT2q+fMhriJGe+8yqdaCdK5sEg1V0k
+         aJijieAmfy5xaVT/Pg934HQliMzDqeN6YrqHB6i8M8kRPnJJz5Rb5kATCOQjtiYH3GMP
+         jmL+Z+xu9x+hLJIMZlc4wtN7fd3QNnZBXk8KGMOVriyzdOBOi5m8qWZ+ptfoNVg1Sk30
+         4npbHRMr/CSn3K/y1pR1lMN+VQJ6acUkBavogs4xM1fWE8jtrzY3sUhmIM9IaPOXVpdQ
+         7n4eX0BKS2kB4rUSuEpi+mCHxDZGfGI/9tE4tD5xI3G03cyHGzvAEZFIblPj+YCUamSc
+         LYIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE0nVu9SE0OWI/FNa/ILV1TYIkcNjDArhUB5kmggzYVWboj20Hfht5klxayHmC8ny5IfZ+4YRQCF67h2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4R5RJaYuWKqwDgIQLhcIgqeUr70FdG4G4drqaJWMI6m1J6/xo
+	Oj8G0zxFHwCPEHAVFrE1Py9OZL2xaH3SCKOfb5crI4ByWf+rOqM2zgDax1DB9c0=
+X-Google-Smtp-Source: AGHT+IEPRTO0e9QGvFwLCNnSf650+7rhXWqxmDc8PUGnLVGRYi1Npd/Q8UEd25NszhcXsxF1dwVEuQ==
+X-Received: by 2002:a05:6e02:1aaa:b0:3a2:6d54:33df with SMTP id e9e14a558f8ab-3a3e52a7266mr8993475ab.4.1729115950287;
+        Wed, 16 Oct 2024 14:59:10 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecc68bcasm1049582173.159.2024.10.16.14.59.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 14:59:09 -0700 (PDT)
+Message-ID: <e5889240-8109-4b75-aa27-25a771c4edf0@linuxfoundation.org>
+Date: Wed, 16 Oct 2024 15:59:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftest: hid: add the missing tests directory
+To: Benjamin Tissoires <bentiss@kernel.org>, Yun Lu <luyun@kylinos.cn>
+Cc: jikos@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241015091520.2431150-1-luyun@kylinos.cn>
+ <4ioshjncgxafin7jcm7kne5fahp4l5nhk5664mnrdo7fgutgyn@jac5gopdyjty>
+ <96ac2fd6-a885-4455-b0c9-91c514c8f3f5@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <96ac2fd6-a885-4455-b0c9-91c514c8f3f5@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Change my contact e-mail in pcm3060 driver and MAINTAINERS
+On 10/16/24 09:08, Shuah Khan wrote:
+> On 10/16/24 02:27, Benjamin Tissoires wrote:
+>> On Oct 15 2024, Yun Lu wrote:
+>>> Commit 160c826b4dd0 ("selftest: hid: add missing run-hid-tools-tests.sh")
+>>> has added the run-hid-tools-tests.sh script for it to be installed, but
+>>> I forgot to add the tests directory together.
+>>>
+>>> If running the test case without the tests directory,  will results in
+>>> the following error message:
+>>>
+>>>      make -C tools/testing/selftests/ TARGETS=hid install \
+>>>         INSTALL_PATH=$KSFT_INSTALL_PATH
+>>>      cd $KSFT_INSTALL_PATH
+>>>      ./run_kselftest.sh -t hid:hid-core.sh
+>>>
+>>>    /usr/lib/python3.11/site-packages/_pytest/config/__init__.py:331: PluggyTeardownRaisedWarning: A plugin raised an exception during an old-style hookwrapper teardown.
+>>>    Plugin: helpconfig, Hook: pytest_cmdline_parse
+>>>    UsageError: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
+>>>    __main__.py: error: unrecognized arguments: --udevd
+>>>      inifile: None
+>>>      rootdir: /root/linux/kselftest_install/hid
+>>>
+>>> In fact, the run-hid-tools-tests.sh script uses the scripts in the tests
+>>> directory to run tests. The tests directory also needs to be added to be
+>>> installed.
+>>>
 
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: Kirill Marinushkin <kmarinushkin@birdec.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-sound@vger.kernel.org
+Yun Lu,
+The patch version information doesn't belong in the change log.
+You have to add it below the three dashes as shown below.
+Check submitting patches document for details.
+
 ---
- MAINTAINERS                    | 2 +-
- sound/soc/codecs/pcm3060-i2c.c | 4 ++--
- sound/soc/codecs/pcm3060-spi.c | 4 ++--
- sound/soc/codecs/pcm3060.c     | 4 ++--
- sound/soc/codecs/pcm3060.h     | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
+v2: add the error message
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7ad507f49324..18b484298f71 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23292,7 +23292,7 @@ F:	Documentation/devicetree/bindings/iio/adc/ti,lmp92064.yaml
- F:	drivers/iio/adc/ti-lmp92064.c
- 
- TI PCM3060 ASoC CODEC DRIVER
--M:	Kirill Marinushkin <kmarinushkin@birdec.com>
-+M:	Kirill Marinushkin <k.marinushkin@gmail.com>
- L:	linux-sound@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/sound/pcm3060.txt
-diff --git a/sound/soc/codecs/pcm3060-i2c.c b/sound/soc/codecs/pcm3060-i2c.c
-index 5330cf46b127..3816b25a8ead 100644
---- a/sound/soc/codecs/pcm3060-i2c.c
-+++ b/sound/soc/codecs/pcm3060-i2c.c
-@@ -2,7 +2,7 @@
- //
- // PCM3060 I2C driver
- //
--// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
-+// Copyright (C) 2018 Kirill Marinushkin <k.marinushkin@gmail.com>
- 
- #include <linux/i2c.h>
- #include <linux/module.h>
-@@ -55,5 +55,5 @@ static struct i2c_driver pcm3060_i2c_driver = {
- module_i2c_driver(pcm3060_i2c_driver);
- 
- MODULE_DESCRIPTION("PCM3060 I2C driver");
--MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.com>");
-+MODULE_AUTHOR("Kirill Marinushkin <k.marinushkin@gmail.com>");
- MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/codecs/pcm3060-spi.c b/sound/soc/codecs/pcm3060-spi.c
-index 3b79734b832b..6095841f2f56 100644
---- a/sound/soc/codecs/pcm3060-spi.c
-+++ b/sound/soc/codecs/pcm3060-spi.c
-@@ -2,7 +2,7 @@
- //
- // PCM3060 SPI driver
- //
--// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
-+// Copyright (C) 2018 Kirill Marinushkin <k.marinushkin@gmail.com>
- 
- #include <linux/module.h>
- #include <linux/spi/spi.h>
-@@ -55,5 +55,5 @@ static struct spi_driver pcm3060_spi_driver = {
- module_spi_driver(pcm3060_spi_driver);
- 
- MODULE_DESCRIPTION("PCM3060 SPI driver");
--MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.com>");
-+MODULE_AUTHOR("Kirill Marinushkin <k.marinushkin@gmail.com>");
- MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
-index 586ec8c7246c..8974200652e7 100644
---- a/sound/soc/codecs/pcm3060.c
-+++ b/sound/soc/codecs/pcm3060.c
-@@ -2,7 +2,7 @@
- //
- // PCM3060 codec driver
- //
--// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
-+// Copyright (C) 2018 Kirill Marinushkin <k.marinushkin@gmail.com>
- 
- #include <linux/module.h>
- #include <sound/pcm_params.h>
-@@ -343,5 +343,5 @@ int pcm3060_probe(struct device *dev)
- EXPORT_SYMBOL(pcm3060_probe);
- 
- MODULE_DESCRIPTION("PCM3060 codec driver");
--MODULE_AUTHOR("Kirill Marinushkin <kmarinushkin@birdec.com>");
-+MODULE_AUTHOR("Kirill Marinushkin <k.marinushkin@gmail.com>");
- MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/codecs/pcm3060.h b/sound/soc/codecs/pcm3060.h
-index 5e1185e7b03d..1b96835600b4 100644
---- a/sound/soc/codecs/pcm3060.h
-+++ b/sound/soc/codecs/pcm3060.h
-@@ -2,7 +2,7 @@
- /*
-  * PCM3060 codec driver
-  *
-- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.com>
-+ * Copyright (C) 2018 Kirill Marinushkin <k.marinushkin@gmail.com>
-  */
- 
- #ifndef _SND_SOC_PCM3060_H
--- 
-2.30.2
+  tools/testing/selftests/hid/Makefile | 1 +
+  1 file changed, 1 insertion(+)
+
+There is no need to send another version. I fixed
+it up.
+
+>>> v2: add the error message
+>>>
+>>> Fixes: ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+>>
+>> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+
+Thank you.
+
+>>
+>> Shuah, I guess you'll want to take this one through your tree given that
+>> you already took the run-hid-tools-tests.sh one?
+>>
+> 
+> Yes. I will take this one. Thanks.
+> 
+
+Thanks for the patch. Applied to linux-kselftest fixes for next rc.
+
+thanks,
+-- Shuah
 
 
