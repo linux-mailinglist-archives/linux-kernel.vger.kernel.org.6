@@ -1,331 +1,224 @@
-Return-Path: <linux-kernel+bounces-368067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EA29A0AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:55:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09DC9A0ADD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B640281985
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:55:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840611F21E95
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7892E20969A;
-	Wed, 16 Oct 2024 12:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8M0rxEV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F9A20821B;
+	Wed, 16 Oct 2024 12:56:42 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEB82076B9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1801D90A2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729083279; cv=none; b=VF91bt2Rz9RwkNX9qpoijw4P0KAOROJUddiqCXN+84DoiztmX655P+7980WQ5iQDfescHKbSuBJPw8rSw+3YBpXlqzXiQbkbFotj2gXZdzToHBtInngd/2MziGi+HWAQ36WmWj0UT/hFnXBvycXqSigaOMCs8nlYq8vXXs2sceo=
+	t=1729083402; cv=none; b=rIXA3tVnT3ZdlYnn6rk64dw9PDGiWqCjwXjOcQeVF/vX0YeWQP01KRJgPLjHY1iEVaXq1LL9hekKoLzaCcrLKPBUHawg1zrzODXMryBdJBzArctrrOpNxxNDonwymez3oWtV/9DOc8c8cWtvluBd5sD7D019rcQtx/y2IZG7A0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729083279; c=relaxed/simple;
-	bh=d4TdEGYImTOATqmYhNnQhAKcNmmDYN77hXAU52eRa+A=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=aAkjP7w+s2K62f2FBAGu8tjjIo8lAFSiUGK0YqT0haLqbuZ2mkEHjgaGB7ax7saULqSIqTz7dn54VPJhc0iONkJcd6k23j1rSKSK56EfbKV9cUFfSbH+x4PgLKhyngBqh4t+d8OrLXjHdJHMKrMYsuucopObzK9u32ybmEkGwjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8M0rxEV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729083277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/vwXWikLxT3NlCFu9+QSdoWKDe0l5OvOeeoMjL9Oe+g=;
-	b=S8M0rxEVg1qKHqA+wdqCmzVVTuW7ibQH41DqjdbnxDIMm6cM8VAaDXLmDIliv8yWQm0lpY
-	t6ScNzQ+7qAtZKyYnW62aXd7CNjUagwm+lShF4ddxSMONpAtCrgsy2w0GiurSK99bXsr1O
-	NSQfnzmMrQueWeCuBzBI6JyndtQSbNk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-540-GvSg7p37M4qgDT5YjbWO-A-1; Wed,
- 16 Oct 2024 08:54:35 -0400
-X-MC-Unique: GvSg7p37M4qgDT5YjbWO-A-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A0901955F40;
-	Wed, 16 Oct 2024 12:54:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E211719560A7;
-	Wed, 16 Oct 2024 12:54:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix lock recursion
+	s=arc-20240116; t=1729083402; c=relaxed/simple;
+	bh=HITsQtGrkBXiY7pgXijFVWEhstszb8OWB1eidzru3Ag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lfkyTS5ju1V48vWr9yHNXrfVxCe90VSwznuVMLL2DZuOzHfWa/oOVLkbs2OyLk1XK/tIhvvmr8mYD4T9tr+0lVGyRmrN5zNSenhpSwYjHfr/z+VHwtw4JaQq/PgZaWSR17dFHp8OShjZar8/ivlzgo69jrQAlpK5jxey3LlYofw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B851560004;
+	Wed, 16 Oct 2024 12:56:32 +0000 (UTC)
+Message-ID: <7375212b-2e40-4f39-a1ca-291c0975b529@ghiti.fr>
+Date: Wed, 16 Oct 2024 14:56:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1114102.1729083271.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 16 Oct 2024 13:54:31 +0100
-Message-ID: <1114103.1729083271@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] riscv/entry: issue about a0/orig_a0 register and ENOSYS
+Content-Language: en-US
+To: Celeste Liu <coelacanthushex@gmail.com>, linux-riscv@lists.infradead.org,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Oleg Nesterov <oleg@redhat.com>, "Dmitry V. Levin" <ldv@strace.io>
+Cc: Andrea Bolognani <abologna@redhat.com>, WANG Xuerui <git@xen0n.name>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
+ Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
+ Yao Zi <ziyao@disroot.org>, Yangyu Chen <cyy@cyyself.name>,
+ Han Gao <gaohan@iscas.ac.cn>, linux-kernel@vger.kernel.org,
+ rsworktech@outlook.com
+References: <59505464-c84a-403d-972f-d4b2055eeaac@gmail.com>
+ <6b2ff48a-ab43-4866-af5a-b8b7d3c23582@ghiti.fr>
+ <6b744fa3-5c1d-460d-bb09-5bc48379d598@gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <6b744fa3-5c1d-460d-bb09-5bc48379d598@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-afs_wake_up_async_call() can incur lock recursion.  The problem is that it
-is called from AF_RXRPC whilst holding the ->notify_lock, but it tries to
-take a ref on the afs_call struct in order to pass it to a work queue - bu=
-t
-if the afs_call is already queued, we then have an extraneous ref that mus=
-t
-be put... calling afs_put_call() may call back down into AF_RXRPC through
-rxrpc_kernel_shutdown_call(), however, which might try taking the
-->notify_lock again.
+On 16/10/2024 14:23, Celeste Liu wrote:
+> On 2024-10-16 20:00, Alexandre Ghiti wrote:
+>> Hi Celeste,
+>>
+>> Thank you for looking into this and really sorry about the late response.
+>>
+>> On 17/09/2024 06:09, Celeste Liu wrote:
+>>> Before PTRACE_GET_SYSCALL_INFO was implemented in v5.3, the only way to
+>>> get syscall arguments was to get user_regs_struct via PTRACE_GETREGSET.
+>>> On some architectures where a register is used as both the first
+>>> argument and the return value and thus will be changed at some stage of
+>>> the syscall process, something like orig_a0 is provided to save the
+>>> original argument register value. But RISC-V doesn't export orig_a0 in
+>>> user_regs_struct (This ABI was designed at e2c0cdfba7f6 ("RISC-V:
+>>> User-facing API").) so userspace application like strace will get the
+>>> right or wrong result depends on the operation order in do_trap_ecall_u()
+>>> function.
+>>>
+>>> This requires we put the ENOSYS process after syscall_enter_from_user_mode()
+>>> or syscall_handler()[1]. Unfortunately, the generic entry API
+>>> syscall_enter_from_user_mode() requires we
+>>>
+>>> *  process ENOSYS before syscall_enter_from_user_mode()
+>>
+>> Where does this requirement come from?
+>>
+>>
+>>> *  or only set a0 to ENOSYS when the return value of
+>>>      syscall_enter_from_user_mode() != -1
+>>>
+>>> Again, if we choose the latter way to avoid conflict with the first
+>>> issue, we will meet the third problem: strace depends on that kernel
+>>> will return ENOSYS when syscall nr is -1 to implement their syscall
+>>> tampering feature[2].
+>>
+>> IIUC, seccomp and others in syscall_enter_from_user_mode() could return -1 and then we could not differentiate with the syscall number being -1.
+>>
+>> But could we imagine, to distinguish between an error and the syscall number being -1, checking again the syscall number after we call syscall_enter_from_user_mode()? If the syscall number is -1, then we set ENOSYS otherwise we don't do anything (a bit like what you did in 52449c17bdd1 ("riscv: entry: set a0 = -ENOSYS only when syscall != -1")).
+>>
+>> Let me know if I completely misunderstood here!
+> Yeah. I found this a bit later after I post this RFC. I include it in a update reply,
+> copy here as well:
+>
+>> But from another angle, syscall number is in a7 register, so we can call the
+>> get_syscall_nr() after calling the syscall_enter_from_user_mode() to bypass the
+>> information lost of the return value of the syscall_enter_from_user_mode(). But
+>> in this way, the syscall number in the syscall_enter_from_user_mode() return
+>> value is useless, and we can remove it directly.
+> So if we get syscall number from a7 register again, the syscall number part of
+> the return value of syscall_enter_from_user_mode() is useless completely.
+> I think it's better to drop it so the later new architecture developer will not
+> run into the same issue. (Actually, the syscall number returned by
+> syscall_enter_from_user_mode() is also the result of get_syscall_nr() at the end
+> of it.) But it will affect other architecture's code so I think there still need
+> some discussions.
+>
+> Or if you think it's better to post a patch and then discuss in patch thread
+> directly, I'm glad to do this.
 
-This case isn't very common, however, so defer it to a workqueue.  The oop=
-s
-looks something like:
 
-  BUG: spinlock recursion on CPU#0, krxrpcio/7001/1646
-   lock: 0xffff888141399b30, .magic: dead4ead, .owner: krxrpcio/7001/1646,=
- .owner_cpu: 0
-  CPU: 0 UID: 0 PID: 1646 Comm: krxrpcio/7001 Not tainted 6.12.0-rc2-build=
-3+ #4351
-  Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
-  Call Trace:
-   <TASK>
-   dump_stack_lvl+0x47/0x70
-   do_raw_spin_lock+0x3c/0x90
-   rxrpc_kernel_shutdown_call+0x83/0xb0
-   afs_put_call+0xd7/0x180
-   rxrpc_notify_socket+0xa0/0x190
-   rxrpc_input_split_jumbo+0x198/0x1d0
-   rxrpc_input_data+0x14b/0x1e0
-   ? rxrpc_input_call_packet+0xc2/0x1f0
-   rxrpc_input_call_event+0xad/0x6b0
-   rxrpc_input_packet_on_conn+0x1e1/0x210
-   rxrpc_input_packet+0x3f2/0x4d0
-   rxrpc_io_thread+0x243/0x410
-   ? __pfx_rxrpc_io_thread+0x10/0x10
-   kthread+0xcf/0xe0
-   ? __pfx_kthread+0x10/0x10
-   ret_from_fork+0x24/0x40
-   ? __pfx_kthread+0x10/0x10
-   ret_from_fork_asm+0x1a/0x30
-   </TASK>
-    =
+Great that we have a solution that does not need to change the ABI :)
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/afs/internal.h |    2 +
- fs/afs/rxrpc.c    |   89 +++++++++++++++++++++++++++++++++++++-----------=
-------
- 2 files changed, 64 insertions(+), 27 deletions(-)
+I think we should start by implementing a fix for riscv only that 
+implements the get_syscall_nr() after syscall_enter_from_user_mode() so 
+that we can merge that in 6.12-rcX.
 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 6e1d3c4daf72..52aab09a32a9 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -130,6 +130,7 @@ struct afs_call {
- 	wait_queue_head_t	waitq;		/* processes awaiting completion */
- 	struct work_struct	async_work;	/* async I/O processor */
- 	struct work_struct	work;		/* actual work processor */
-+	struct work_struct	free_work;	/* Deferred free processor */
- 	struct rxrpc_call	*rxcall;	/* RxRPC call handle */
- 	struct rxrpc_peer	*peer;		/* Remote endpoint */
- 	struct key		*key;		/* security for this call */
-@@ -1331,6 +1332,7 @@ extern int __net_init afs_open_socket(struct afs_net=
- *);
- extern void __net_exit afs_close_socket(struct afs_net *);
- extern void afs_charge_preallocation(struct work_struct *);
- extern void afs_put_call(struct afs_call *);
-+void afs_deferred_put_call(struct afs_call *call);
- void afs_make_call(struct afs_call *call, gfp_t gfp);
- void afs_wait_for_call_to_complete(struct afs_call *call);
- extern struct afs_call *afs_alloc_flat_call(struct afs_net *,
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index c453428f3c8b..5e9df414faf7 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -18,6 +18,7 @@
- =
+And after that, you could come with the nicer solution you propose.
 
- struct workqueue_struct *afs_async_calls;
- =
+Do you think you can send a patch for the quick fix soon? In the 
+meantime, I'm adding the strace testsuite to my CI to make sure it works 
+and we don't break it again :)
 
-+static void afs_deferred_free_worker(struct work_struct *work);
- static void afs_wake_up_call_waiter(struct sock *, struct rxrpc_call *, u=
-nsigned long);
- static void afs_wake_up_async_call(struct sock *, struct rxrpc_call *, un=
-signed long);
- static void afs_process_async_call(struct work_struct *);
-@@ -148,7 +149,9 @@ static struct afs_call *afs_alloc_call(struct afs_net =
-*net,
- 	call->net =3D net;
- 	call->debug_id =3D atomic_inc_return(&rxrpc_debug_id);
- 	refcount_set(&call->ref, 1);
--	INIT_WORK(&call->async_work, afs_process_async_call);
-+	INIT_WORK(&call->async_work, type->async_rx ?: afs_process_async_call);
-+	INIT_WORK(&call->work, call->type->work);
-+	INIT_WORK(&call->free_work, afs_deferred_free_worker);
- 	init_waitqueue_head(&call->waitq);
- 	spin_lock_init(&call->state_lock);
- 	call->iter =3D &call->def_iter;
-@@ -159,6 +162,36 @@ static struct afs_call *afs_alloc_call(struct afs_net=
- *net,
- 	return call;
- }
- =
+Thanks!
 
-+static void afs_free_call(struct afs_call *call)
-+{
-+	struct afs_net *net =3D call->net;
-+	int o;
-+
-+	ASSERT(!work_pending(&call->async_work));
-+
-+	rxrpc_kernel_put_peer(call->peer);
-+
-+	if (call->rxcall) {
-+		rxrpc_kernel_shutdown_call(net->socket, call->rxcall);
-+		rxrpc_kernel_put_call(net->socket, call->rxcall);
-+		call->rxcall =3D NULL;
-+	}
-+	if (call->type->destructor)
-+		call->type->destructor(call);
-+
-+	afs_unuse_server_notime(call->net, call->server, afs_server_trace_put_ca=
-ll);
-+	kfree(call->request);
-+
-+	o =3D atomic_read(&net->nr_outstanding_calls);
-+	trace_afs_call(call->debug_id, afs_call_trace_free, 0, o,
-+		       __builtin_return_address(0));
-+	kfree(call);
-+
-+	o =3D atomic_dec_return(&net->nr_outstanding_calls);
-+	if (o =3D=3D 0)
-+		wake_up_var(&net->nr_outstanding_calls);
-+}
-+
- /*
-  * Dispose of a reference on a call.
-  */
-@@ -173,32 +206,34 @@ void afs_put_call(struct afs_call *call)
- 	o =3D atomic_read(&net->nr_outstanding_calls);
- 	trace_afs_call(debug_id, afs_call_trace_put, r - 1, o,
- 		       __builtin_return_address(0));
-+	if (zero)
-+		afs_free_call(call);
-+}
- =
+Alex
 
--	if (zero) {
--		ASSERT(!work_pending(&call->async_work));
--		ASSERT(call->type->name !=3D NULL);
--
--		rxrpc_kernel_put_peer(call->peer);
--
--		if (call->rxcall) {
--			rxrpc_kernel_shutdown_call(net->socket, call->rxcall);
--			rxrpc_kernel_put_call(net->socket, call->rxcall);
--			call->rxcall =3D NULL;
--		}
--		if (call->type->destructor)
--			call->type->destructor(call);
-+static void afs_deferred_free_worker(struct work_struct *work)
-+{
-+	struct afs_call *call =3D container_of(work, struct afs_call, free_work)=
-;
- =
 
--		afs_unuse_server_notime(call->net, call->server, afs_server_trace_put_c=
-all);
--		kfree(call->request);
-+	afs_free_call(call);
-+}
- =
-
--		trace_afs_call(call->debug_id, afs_call_trace_free, 0, o,
--			       __builtin_return_address(0));
--		kfree(call);
-+/*
-+ * Dispose of a reference on a call, deferring the cleanup to a workqueue
-+ * to avoid lock recursion.
-+ */
-+void afs_deferred_put_call(struct afs_call *call)
-+{
-+	struct afs_net *net =3D call->net;
-+	unsigned int debug_id =3D call->debug_id;
-+	bool zero;
-+	int r, o;
- =
-
--		o =3D atomic_dec_return(&net->nr_outstanding_calls);
--		if (o =3D=3D 0)
--			wake_up_var(&net->nr_outstanding_calls);
--	}
-+	zero =3D __refcount_dec_and_test(&call->ref, &r);
-+	o =3D atomic_read(&net->nr_outstanding_calls);
-+	trace_afs_call(debug_id, afs_call_trace_put, r - 1, o,
-+		       __builtin_return_address(0));
-+	if (zero)
-+		schedule_work(&call->free_work);
- }
- =
-
- static struct afs_call *afs_get_call(struct afs_call *call,
-@@ -220,8 +255,6 @@ static struct afs_call *afs_get_call(struct afs_call *=
-call,
- static void afs_queue_call_work(struct afs_call *call)
- {
- 	if (call->type->work) {
--		INIT_WORK(&call->work, call->type->work);
--
- 		afs_get_call(call, afs_call_trace_work);
- 		if (!queue_work(afs_wq, &call->work))
- 			afs_put_call(call);
-@@ -640,7 +673,8 @@ static void afs_wake_up_call_waiter(struct sock *sk, s=
-truct rxrpc_call *rxcall,
- }
- =
-
- /*
-- * wake up an asynchronous call
-+ * Wake up an asynchronous call.  The caller is holding the call notify
-+ * spinlock around this, so we can't call afs_put_call().
-  */
- static void afs_wake_up_async_call(struct sock *sk, struct rxrpc_call *rx=
-call,
- 				   unsigned long call_user_ID)
-@@ -657,7 +691,7 @@ static void afs_wake_up_async_call(struct sock *sk, st=
-ruct rxrpc_call *rxcall,
- 			       __builtin_return_address(0));
- =
-
- 		if (!queue_work(afs_async_calls, &call->async_work))
--			afs_put_call(call);
-+			afs_deferred_put_call(call);
- 	}
- }
- =
-
-@@ -768,6 +802,7 @@ static int afs_deliver_cm_op_id(struct afs_call *call)
- 		return -ENOTSUPP;
- =
-
- 	trace_afs_cb_call(call);
-+	call->work.func =3D call->type->work;
- =
-
- 	/* pass responsibility for the remainer of this message off to the
- 	 * cache manager op */
-
+>
+>> Thanks again for the thorough explanation,
+>>
+>> Alex
+>>
+>>
+>>> Actually, we tried the both ways in 52449c17bdd1 ("riscv: entry: set
+>>> a0 = -ENOSYS only when syscall != -1") and 61119394631f ("riscv: entry:
+>>> always initialize regs->a0 to -ENOSYS") before.
+>>>
+>>> Naturally, there is a solution:
+>>>
+>>> 1. Just add orig_a0 in user_regs_struct and let strace use it as
+>>>      loongarch does. So only two problems, which can be resolved without
+>>>      conflict, are left here.
+>>>
+>>> The conflicts are the direct result of the limitation of generic entry
+>>> API, so we have another two solutions:
+>>>
+>>> 2. Give up the generic entry API, and switch back to the
+>>>      architecture-specific standardalone implementation.
+>>> 3. Redesign the generic entry API: the problem was caused by
+>>>      syscall_enter_from_user_mode() using the value -1 (which is unused
+>>>      normally) of syscall nr to inform syscall was reject by seccomp/bpf.
+>>>
+>>> In theory, the Solution 1 is best:
+>>>
+>>> *  a0 was used for two purposes in ABI, so using two variables to store
+>>>      it is natural.
+>>> *  Userspace can implement features without depending on the internal
+>>>      behavior of the kernel.
+>>>
+>>> Unfortunately, it's difficult to implement based on the current code.
+>>> The RISC-V defined struct pt_regs as below:
+>>>
+>>>           struct pt_regs {
+>>>                   unsigned long epc;
+>>>           ...
+>>>                   unsigned long t6;
+>>>                   /* Supervisor/Machine CSRs */
+>>>                   unsigned long status;
+>>>                   unsigned long badaddr;
+>>>                   unsigned long cause;
+>>>                   /* a0 value before the syscall */
+>>>                   unsigned long orig_a0;
+>>>           };
+>>>
+>>> And user_regs_struct needs to be a prefix of struct pt_regs, so if we
+>>> want to include orig_a0 in user_regs_struct, we will need to include
+>>> Supervisor/Machine CSRs as well. It's not a big problem. Since
+>>> struct pt_regs is the internal ABI of the kernel, we can reorder it.
+>>> Unfortunately, struct user_regs_struct is defined as below:
+>>>
+>>>           struct user_regs_struct {
+>>>                   unsigned long pc;
+>>>           ...
+>>>                   unsigned long t6;
+>>>           };
+>>>
+>>> It doesn't contain something like reserved[] as padding to leave the
+>>> space to add more registers from struct pt_regs!
+>>> The loongarch do the right thing as below:
+>>>
+>>>           struct user_pt_regs {
+>>>                   /* Main processor registers. */
+>>>                   unsigned long regs[32];
+>>>           ...
+>>>                   unsigned long reserved[10];
+>>>           } __attribute__((aligned(8)));
+>>>
+>>> RISC-V can't include orig_a0 in user_regs_struct without breaking UABI.
+>>>
+>>> Need a discussion to decide to use which solution, or is there any
+>>> other better solution?
+>>>
+>>> [1]: https://github.com/strace/strace/issues/315
+>>> [2]: https://lore.kernel.org/linux-riscv/20240627071422.GA2626@altlinux.org/
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-riscv mailing list
+>>> linux-riscv@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
