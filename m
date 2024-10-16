@@ -1,125 +1,168 @@
-Return-Path: <linux-kernel+bounces-367915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846B19A084A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:26:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808449A0890
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3711F2278B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:26:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4F528A838
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA002076BB;
-	Wed, 16 Oct 2024 11:26:37 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E8420ADE3;
+	Wed, 16 Oct 2024 11:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="g1kG9lJ3"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA13206066;
-	Wed, 16 Oct 2024 11:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14E32071E9;
+	Wed, 16 Oct 2024 11:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729077997; cv=none; b=Xh1/d1b2XUIzG0F8f8lfWqROzHOX1ln85aO5PMC75oJaf66naTqW7ifgjRktlncB0thE59iylRIkchiZxhONAYGPVZyNKDXD4YIITi1rtxbTpY+s7IiUjqGukttg+uYfxcgcb2814GXWeWDyE5ywrPS1J+fkoexCEGpAY0y+Bgw=
+	t=1729078632; cv=none; b=tJEiAMSYIwfM+/FLiD2a0/l2ELueDDDPCB0E78ehE3V3/i50Fkcec5mArMpzQe3IxgRqBe2h/QJHF+rvg8iXsQyacB81Po1GBg+Gp0GoC8jx5nmaoAIGbiUYonsumvqQcFxf1ylNEgD9Ny3eptCn96RwO0OVuSAZaVaAndTau1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729077997; c=relaxed/simple;
-	bh=xP2ktAcfFQ/wdOmDftyeYQc/PCd0CuJ9pfF+bw2S034=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hoNsWzeO5X82uLN8G2pQD60E2cTV72sZWMBaxlT+8Q3ehx13baXm1vgJXJQ94Tidax04TY0sZ+DOUs94di+DZoqGgiZXFKG6V0W35zn1n6ZzA3m8QDg5ScsBrn4oAiaovB1URje1/ZrL/vsK3zOqc+pN9F6Ta/7KnOnNrnoi9O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B55BF40004;
-	Wed, 16 Oct 2024 11:26:24 +0000 (UTC)
-Message-ID: <3fe1e610-c863-4fbf-85cb-6e83ba7684af@ghiti.fr>
-Date: Wed, 16 Oct 2024 13:26:24 +0200
+	s=arc-20240116; t=1729078632; c=relaxed/simple;
+	bh=avHBCgyjDjsDv6KLj8yM6hNz9dbOrf4L4s9y8N+/hM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zz9zAFLLgUGRdVpNwEs9c7S+nbeoyE2WO5DYFX3uploOnpqsi6Whfmhzn55nNGCOzoUPAGQMO7Fwx7wAQt5Aq11WM0vFfQcNXezHHj7r9tx5DBqR/4/L10pnoxZtCSD2M6UJ9vCO7+TtejeVBChZphDL6IvYAVo9qwNYfsdw3ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=g1kG9lJ3 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id ae667072fee69325; Wed, 16 Oct 2024 13:37:01 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 58DF0A93969;
+	Wed, 16 Oct 2024 13:37:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1729078621;
+	bh=avHBCgyjDjsDv6KLj8yM6hNz9dbOrf4L4s9y8N+/hM8=;
+	h=From:Subject:Date;
+	b=g1kG9lJ3oAMfmiCFfY5BiO1Wn/8M8/KIb0o5zoPp0eLsavs9yjetdMREY/g6BBZih
+	 ti3M0TjW0lj0Zwv0+UbcSbn3sQ8M/M5xUvCmHP88nPE0NnMaGwZwTOcancVjOhAJBH
+	 4D8aCtci0ytOlSdT87MNjNqZUzRrPnHCf8Tbe0+ZT3UDnjpp0PpoA0OARmsdrHRecG
+	 pZgRvQZI05ZtEAx1NmEyq74eZyf8dZKe1d5cXzIQnaroCXtGZvb1IpBOhqdMcdaS5s
+	 /z4nfiEoBLkqWbjJ/I92evUp1GonAMoAtr1yJ++Y12Kcyo191XkYzh+Z7qg5bhy/8n
+	 oljguSZOmpGfQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject:
+ [PATCH v1 05/10] thermal: core: Pass trip descriptor to
+ thermal_trip_crossed()
+Date: Wed, 16 Oct 2024 13:27:56 +0200
+Message-ID: <10547668.nUPlyArG6x@rjwysocki.net>
+In-Reply-To: <4958885.31r3eYUQgx@rjwysocki.net>
+References: <4958885.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -fixes] riscv: Do not use fortify in early code
-Content-Language: en-US
-To: Jessica Clarke <jrtc27@jrtc27.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Stuebner <heiko@sntech.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, Jason Montleon <jmontleo@redhat.com>,
- stable@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20241009072749.45006-1-alexghiti@rivosinc.com>
- <1CA19FB3-C1E3-4C2F-A4FB-05B69EC66D2F@jrtc27.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <1CA19FB3-C1E3-4C2F-A4FB-05B69EC66D2F@jrtc27.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
 
-Hi Jessica,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On 16/10/2024 00:04, Jessica Clarke wrote:
-> On 9 Oct 2024, at 08:27, Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
->> Early code designates the code executed when the MMU is not yet enabled,
->> and this comes with some limitations (see
->> Documentation/arch/riscv/boot.rst, section "Pre-MMU execution").
->>
->> FORTIFY_SOURCE must be disabled then since it can trigger kernel panics
->> as reported in [1].
->>
->> Reported-by: Jason Montleon <jmontleo@redhat.com>
->> Closes: https://lore.kernel.org/linux-riscv/CAJD_bPJes4QhmXY5f63GHV9B9HFkSCoaZjk-qCT2NGS7Q9HODg@mail.gmail.com/ [1]
->> Fixes: a35707c3d850 ("riscv: add memory-type errata for T-Head")
->> Fixes: 26e7aacb83df ("riscv: Allow to downgrade paging mode from the command line")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> Is the problem in [1] not just that the early boot path uses memcpy on
-> the result of ALT_OLD_PTR, which is a wildly out-of-bounds pointer from
-> the compiler’s perspective? If so, it would seem better to use
-> unsafe_memcpy for that one call site rather than use the big
-> __NO_FORTIFY hammer, surely?
+In preparation for subsequent changes, modify thermal_trip_crossed()
+to take a trip descriptor pointer instead of a pointer to struct
+thermal_trip and propagate this change to thermal_zone_trip_down().
+
+No functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |   12 +++++++-----
+ drivers/thermal/thermal_core.h |    2 +-
+ drivers/thermal/thermal_trip.c |    2 +-
+ 3 files changed, 9 insertions(+), 7 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -526,10 +526,12 @@ static void thermal_governor_trip_crosse
+ }
+ 
+ static void thermal_trip_crossed(struct thermal_zone_device *tz,
+-				 const struct thermal_trip *trip,
++				 struct thermal_trip_desc *td,
+ 				 struct thermal_governor *governor,
+ 				 bool crossed_up)
+ {
++	const struct thermal_trip *trip = &td->trip;
++
+ 	if (crossed_up) {
+ 		thermal_notify_tz_trip_up(tz, trip);
+ 		thermal_debug_tz_trip_up(tz, trip);
+@@ -589,12 +591,12 @@ void __thermal_zone_device_update(struct
+ 	}
+ 
+ 	list_for_each_entry_safe(td, next, &way_up_list, list_node) {
+-		thermal_trip_crossed(tz, &td->trip, governor, true);
++		thermal_trip_crossed(tz, td, governor, true);
+ 		list_del_init(&td->list_node);
+ 	}
+ 
+ 	list_for_each_entry_safe_reverse(td, next, &way_down_list, list_node) {
+-		thermal_trip_crossed(tz, &td->trip, governor, false);
++		thermal_trip_crossed(tz, td, governor, false);
+ 		list_del_init(&td->list_node);
+ 	}
+ 
+@@ -664,9 +666,9 @@ void thermal_zone_device_update(struct t
+ EXPORT_SYMBOL_GPL(thermal_zone_device_update);
+ 
+ void thermal_zone_trip_down(struct thermal_zone_device *tz,
+-			    const struct thermal_trip *trip)
++			    struct thermal_trip_desc *td)
+ {
+-	thermal_trip_crossed(tz, trip, thermal_get_tz_governor(tz), false);
++	thermal_trip_crossed(tz, td, thermal_get_tz_governor(tz), false);
+ }
+ 
+ int for_each_thermal_governor(int (*cb)(struct thermal_governor *, void *),
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -274,7 +274,7 @@ int thermal_zone_trip_id(const struct th
+ 			 const struct thermal_trip *trip);
+ int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
+ void thermal_zone_trip_down(struct thermal_zone_device *tz,
+-			    const struct thermal_trip *trip);
++			    struct thermal_trip_desc *td);
+ void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
+ 				struct thermal_trip *trip, int hyst);
+ 
+Index: linux-pm/drivers/thermal/thermal_trip.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_trip.c
++++ linux-pm/drivers/thermal/thermal_trip.c
+@@ -118,7 +118,7 @@ void thermal_zone_set_trip_temp(struct t
+ 				tz->passive--;
+ 				WARN_ON_ONCE(tz->passive < 0);
+ 			}
+-			thermal_zone_trip_down(tz, trip);
++			thermal_zone_trip_down(tz, td);
+ 		}
+ 		/*
+ 		 * Invalidate the threshold to avoid triggering a spurious
 
 
-Not sure why fortify complains here, and I have just seen that I forgot 
-to cc Kees (done now).
 
-
->
-> Presumably the non-early path is just as bad to the compiler, but works
-> because patch_text_nosync isn’t instrumented, so that would just align
-> the two.
->
-> Getting the implementation to not be silent on failure during early
-> boot would also be a good idea, but it’s surely better to have
-> FORTIFY_SOURCE enabled with no output for positives than disable the
-> checking in the first place and risk uncaught corruption.
-
-
-I'm not sure to follow: you propose to use unsafe_memcpy() instead of 
-disabling fortify entirely, so we would not get any warning in case of 
-failure anyway right? Or do you propose to modify the fortify code to 
-somehow print a warning? If the latter, it's hard this soon in the boot 
-process (where the mmu is disabled) to make sure that the printing 
-warning path does not try to access any virtual address (which is why 
-the boot failed in the first place) but maybe Kees has an idea.
-
-And I believe that enabling fortify and using the unsafe_*() variants is 
-error-prone since we'd have to make sure that all the "fortified" 
-functions used in that code use the unsafe_*() variants.
-
-So to me, it's way easier in terms of maintenance to just disabling fortify.
-
-Thanks,
-
-Alex
-
-
-> Jess
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
