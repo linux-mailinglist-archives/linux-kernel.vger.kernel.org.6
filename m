@@ -1,134 +1,173 @@
-Return-Path: <linux-kernel+bounces-367917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138549A085C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:30:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DC79A0862
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B72AE1F23AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33BC0286350
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E01206E92;
-	Wed, 16 Oct 2024 11:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2D12076C0;
+	Wed, 16 Oct 2024 11:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GemkPO2I"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bVe4/HHW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0653E206051
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E6118C33F;
+	Wed, 16 Oct 2024 11:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729078221; cv=none; b=J74h51sQUdIK6HMU2AXJhWlgu286dcnQ7KXvrHj8PBHqo333zY/PgvbOvwLHHW2f4qKBpguwFQCD/2CPgQq7S5I4/tWU9LZTNDKjjOkGAlqF7WjFDQiPz/skExMzjneogqCxmU8rOpC9hnWbBwCbwxkkfwEJ6K09+df1wejVPc4=
+	t=1729078258; cv=none; b=gAgFNRmTtDlajAVqldgJPXmLSV7gky+QqDW6BLsWoxxxVh/5bu18lgD07LTAAarpvxpuVRl/2hTXV64tR4SY45pmSMLeXI7Bfpu/5JBJL4K8a4cWT6eHueRJmyupJgbS6yptvjuTaZuat3ActMapLX5m8L+HAsGXw0ykFk6M09w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729078221; c=relaxed/simple;
-	bh=6mNog43tW563Jxg6ZE5L+OMs0VpPqDUyOVAWupos4Yg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hzFkczU8AsRbl5UxKQAABwba+TqIsftZUYQc6sqIzbjZXYwUzow+5+H4VyPWBZUkwn9fYrA3CO6TelOVQK1ix7drLORlYHSlL+EaRIp9eEJzBSscJz2kr1LgqNyPeui85JObxN3qJMoohf3QoveyFGysX6DkgVpFj+4abdxVk8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GemkPO2I; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c803787abso6382515ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729078219; x=1729683019; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQl5G0/AI1StBzfhAYLo7LwBo9nukakIzwgbx3SL5HQ=;
-        b=GemkPO2IZjwH8Hpju27glb2XqV4zFQ3lsa9ocg+Ezwzz1hcUoPNairjX98vK3YGqRY
-         uEXRUNcLKyKPCqtVI+ulInnxpP6YjlE0b8bEJz4+BmJsomFesxixTpbkUqL6ybsBBSJ4
-         WmUbFmBloNAgol6VBl9rdPduFUHmgI/c02WHJQRNHFaE+1wgrIagL3M+Nwx7qVXyi0Ru
-         8mIzlN9szNqk7dT8KrLaTD5P/DCFEzPxyBcPH+JjTDtIRQ+gTVjEREq87ulKa/Gw1oFv
-         ugvCdvTFY/DRNJxdvF6Cuk2UmfZ6UbEUVMUDhiEo35MxRq5w0EEtfS1AkgBR10rklTFp
-         8/EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729078219; x=1729683019;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kQl5G0/AI1StBzfhAYLo7LwBo9nukakIzwgbx3SL5HQ=;
-        b=qE3ViWckQBHeDDRqCW5nXB+kHGRFkkE2eZiuGrOS7tkA3nwcM0gIeFrf2jMXps9+o7
-         d8KblJ4k4V9GEoCV+LsHhTQXkLQbxXOOXNiXexMfc0IbgNS1VyUEaNY9QKV55YkNBP58
-         WInrTNSS8OTPZ9YURX7CBNx8pr96X1cF/l3pXq6p8DpAXVK0qpn/7yZit5dQrjuwGaji
-         eQ6hMTF5Ph5Of1pkLQIwzouo1jss1kiUE5Hiqor8RsfM6j/fe0bXI0BdJIo1rPUdu1M9
-         wINGgwzKgLzgtPwxS7vaMMvzihXXUBJGoQihlK7KHtHw9d8EZDYp42luaoX0oA7iuKHZ
-         HZYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY7eox6d91oBbEu+jZy7x/fQk54QXQm0rjmYuv4SiNthc5Rt/mROhUF0y4xa7M212D3nuWGlg+ucwmqn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxudoqtazAW7bYN5NBT6dMakDbtbbkl6yKSWr3WkDjw5464++h8
-	17aYcc5lgqbRi0FQl3vVGWJ63W1LYDEG7JRqfLaraMhqPi2Ge40L
-X-Google-Smtp-Source: AGHT+IHtcy8eg5KYhfU/Pds2Wh3IVDzktpMJO4CADGPtpjwiShD7kSqhO3e3G+Ufo21QZ5QMZb1wPg==
-X-Received: by 2002:a17:902:ec87:b0:20c:b6cf:f465 with SMTP id d9443c01a7336-20cb6d002c5mr285637545ad.6.1729078219113;
-        Wed, 16 Oct 2024 04:30:19 -0700 (PDT)
-Received: from dev.. ([129.41.59.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804c119sm26899015ad.190.2024.10.16.04.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 04:30:18 -0700 (PDT)
-From: Rohit Chavan <roheetchavan@gmail.com>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Rohit Chavan <roheetchavan@gmail.com>
-Subject: [PATCH v2] staging: gpib: Remove unneeded semicolon.
-Date: Wed, 16 Oct 2024 17:00:10 +0530
-Message-Id: <20241016113010.1619275-1-roheetchavan@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729078258; c=relaxed/simple;
+	bh=gj3PUT8+LJdHaIpnA8VwKdoAGoUZFkwFpjcgiW41sR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YyikYe8y+SxcZnLaQqn9LrnyobAweRbCXu8Th3jknLikOjz53woHceQutkxVjDrhKi4Rs5PWGkAln/Cuh7rpAWwPAumMBRdpMEjo9GjhjgzoNEurp4oPXeLjL3kO7i0ux1VveqFLFf8gng4fmow71VWtFLNewGmd90AkUkDlTFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bVe4/HHW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GAIHat011617;
+	Wed, 16 Oct 2024 11:30:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	W/Pdk1RM10rovtP45lZjk1phb37PYeRbY9dnf33ceyY=; b=bVe4/HHWUTCwK1j9
+	w2C7VVgN/yEcm4svFU/7oQk7YthF8L1CSrFHkgs/9wEFd52A1mGzIkxQ19wPjixx
+	egrkj9h8LpQ4evMZe/YO85J4dvbxaV7G/E0mJY8ytWceeBvYQEzKb3kZXk9Bbxfi
+	fvGTFICeQhHsUsUMfxZRyl8lQ+aBGUZCxdwhyu+mTru/pRdKgp+ZFPyWScDipBLw
+	a/yPm0Auq8jb8KjG14sB/62OpNK9Yte4xZW6gdAWH+NMluhule4FhzhEezCoBJzx
+	iDn+kiL6MydcOu1YlDliE2lJk8+E4yH8JwbvQ+fISqrJeE6KkD9/4yXJUXNaVl3v
+	GsERXQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42abm5g69b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 11:30:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49GBUpDk006906
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 11:30:51 GMT
+Received: from [10.217.216.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Oct
+ 2024 04:30:47 -0700
+Message-ID: <e7443137-925a-4fa9-916a-7481585ad4c6@quicinc.com>
+Date: Wed, 16 Oct 2024 17:00:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] arm64: dts: qcom: qcm6490-idp: Allow UFS regulators
+ load/mode setting
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_kamalw@quicinc.com>,
+        <quic_jprakash@quicinc.com>
+References: <20241016100511.2890983-1-quic_kotarake@quicinc.com>
+ <2tunyupop2w7brm6adkdsrytvxbr4g3ixpbmuuqljedeaehze5@se3qsbf6tb6t>
+Content-Language: en-US
+From: Rakesh Kota <quic_kotarake@quicinc.com>
+In-Reply-To: <2tunyupop2w7brm6adkdsrytvxbr4g3ixpbmuuqljedeaehze5@se3qsbf6tb6t>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GC4wYFh9Acohmr55fFUHf-hDeymCyVXu
+X-Proofpoint-GUID: GC4wYFh9Acohmr55fFUHf-hDeymCyVXu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ clxscore=1015 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ mlxlogscore=609 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160071
 
-This patch cleans up the GPIB driver by removing unneeded semicolons.
 
-Signed-off-by: Rohit Chavan <roheetchavan@gmail.com>
----
-Changes since v1:
- - Make commit message concise
----
- drivers/staging/gpib/tms9914/tms9914.c | 4 ++--
- drivers/staging/gpib/tnt4882/mite.c    | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/gpib/tms9914/tms9914.c b/drivers/staging/gpib/tms9914/tms9914.c
-index aa2308cf5477..6d75294412d8 100644
---- a/drivers/staging/gpib/tms9914/tms9914.c
-+++ b/drivers/staging/gpib/tms9914/tms9914.c
-@@ -439,7 +439,7 @@ static int wait_for_read_byte(gpib_board_t *board, struct tms9914_priv *priv)
- 				     test_bit(TIMO_NUM, &board->status))) {
- 		pr_debug("gpib: pio read wait interrupted\n");
- 		return -ERESTARTSYS;
--	};
-+	}
- 	if (test_bit(TIMO_NUM, &board->status))
- 		return -ETIMEDOUT;
- 
-@@ -473,7 +473,7 @@ static inline uint8_t tms9914_read_data_in(gpib_board_t *board, struct tms9914_p
- 	default:
- 		pr_err("%s: bug! bad holdoff mode %i\n", __func__, priv->holdoff_mode);
- 		break;
--	};
-+	}
- 	spin_unlock_irqrestore(&board->spinlock, flags);
- 
- 	return data;
-diff --git a/drivers/staging/gpib/tnt4882/mite.c b/drivers/staging/gpib/tnt4882/mite.c
-index adb656a5eb2c..882cc4bc122e 100644
---- a/drivers/staging/gpib/tnt4882/mite.c
-+++ b/drivers/staging/gpib/tnt4882/mite.c
-@@ -82,7 +82,7 @@ int mite_setup(struct mite_struct *mite)
- 	if (pci_request_regions(mite->pcidev, "mite")) {
- 		pr_err("mite: failed to request mite io regions.\n");
- 		return -EIO;
--	};
-+	}
- 	addr = pci_resource_start(mite->pcidev, 0);
- 	mite->mite_phys_addr = addr;
- 	mite->mite_io_addr = ioremap(addr, pci_resource_len(mite->pcidev, 0));
--- 
-2.34.1
-
+On 10/16/2024 3:54 PM, Dmitry Baryshkov wrote:
+> On Wed, Oct 16, 2024 at 03:35:11PM +0530, Rakesh Kota wrote:
+>> The UFS driver expects to be able to set load (and by extension, mode)
+>> on its supply regulators. Add the necessary properties to make that
+>> possible.
+>>
+>> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+>> ---
+>> Changes V3:
+>>   - Somehow after fixing the compilation in last patch, i have missed to
+>>     do git  --amend the change. apology for that, in this change i have
+>>     fixed that compilation issue.
+> 
+> What actually was changed? The --amend doesn't describe changes. Nor
+> does "fixed that compilation issue".
+> 
+Added missing semicolon (;) after regulator-allow-set-load prop for ldo9 
+regulator.
+>>   - Link V2 : https://lore.kernel.org/all/20241015132049.2037500-1-quic_kotarake@quicinc.com/
+> 
+> Where are changes between v1 and v2?
+> 
+i will add changes history in V4 patch.
+> Where is the tag that was given to you for the v2?
+> 
+sorry, i missed adding the Reviewed-by tag and i will add it in V4 patch.
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>> index 5f3d4807ac43..bfb1cdc238cc 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>> @@ -258,6 +258,8 @@ vreg_l6b_1p2: ldo6 {
+>>   			regulator-name = "vreg_l6b_1p2";
+>>   			regulator-min-microvolt = <1140000>;
+>>   			regulator-max-microvolt = <1260000>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>>   		};
+>>   
+>> @@ -265,6 +267,8 @@ vreg_l7b_2p952: ldo7 {
+>>   			regulator-name = "vreg_l7b_2p952";
+>>   			regulator-min-microvolt = <2400000>;
+>>   			regulator-max-microvolt = <3544000>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>>   		};
+>>   
+>> @@ -279,6 +283,8 @@ vreg_l9b_1p2: ldo9 {
+>>   			regulator-name = "vreg_l9b_1p2";
+>>   			regulator-min-microvolt = <1200000>;
+>>   			regulator-max-microvolt = <1304000>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>>   		};
+>>   
+>> @@ -467,6 +473,8 @@ vreg_l10c_0p88: ldo10 {
+>>   			regulator-name = "vreg_l10c_0p88";
+>>   			regulator-min-microvolt = <720000>;
+>>   			regulator-max-microvolt = <1050000>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>>   			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>>   		};
+>>   
+>> -- 
+>> 2.34.1
+>>
+> 
 
