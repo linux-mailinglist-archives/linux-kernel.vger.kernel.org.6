@@ -1,216 +1,197 @@
-Return-Path: <linux-kernel+bounces-367599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EDEF9A0444
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:30:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C5B9A0442
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 636411C26F44
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:29:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF7DB27701
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755231D9677;
-	Wed, 16 Oct 2024 08:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527C1D934B;
+	Wed, 16 Oct 2024 08:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R8u1dmxJ"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kkpMGGlA"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777461D8E12
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAE51D8E12
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729067368; cv=none; b=S2Xx28y3BMdwDvotOamXIbgXbEUwHVOK7JfpTIda2QXxZEF5q2ElJEw8ywGugk9MnbVAKtcgp3kXXNU2yvMrJBWYwPe/KzSlVsrodJfjgOlNVYFdon7dVnV4U8CCQqGNH0l4diI6mCnYCsJixegymNw0mwKshR5vYc6n8Se+4uU=
+	t=1729067361; cv=none; b=LarjcehEPknzWdRTC3SmVUGRzLmRApMVsWP45jtnJ27VajYTscH3M+Yu3r4Oz7OdVEfJbRvCkF26Itb36G5GmITNqUmxNJmq1YF3OPzYvlT6YluilMwhhrOcs0S29VVNJqtz2CIESwxfMcCKrySnX04WyYt/d8ia18DcSh0IxNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729067368; c=relaxed/simple;
-	bh=6U/YYe3uj2oCorqVoEzUs7byRWbSLdPBdXWSj51N1Y0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UOw+KOudboXqUiTvNYQCKY94BiPSvUMfLe3RFycRZ6E2zpB8qyjPCHD8TstClYCIxowfZvJsCrwMCitm2fu2fJ9XCmQDgQRBuZigAUtAWD0s4ecY0RwS1I52GO2AbKiiMUjxFk0F1DChEooIdIYK6MJzNmty6B0XD4oHrBduIOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R8u1dmxJ; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43140cadeaaso13613745e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:29:26 -0700 (PDT)
+	s=arc-20240116; t=1729067361; c=relaxed/simple;
+	bh=gRZO8HZpS/Zzwkh1RQTDbb6sKIvOApvjfYVNUIthQ+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e6tYjaTbfPwkdodxUumunlo8OR5J0VL0rMdUCI6dj3JbZG5x40wX+Jymrj8VU6198uap2c2++SJ+6yuve8N0dFRYGmhRHBqNoVj5Nqt08mju2cGLZhWkdN5vpUDC7/63RGb3dvcv60FnOnFFgEFtZC76uXYTUnB0bJjhZDFnyGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kkpMGGlA; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314b316495so9020435e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:29:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729067365; x=1729672165; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qONR6PhzFfCaPdOjWZuY/fyEqCmza+5NO3GwnhyETRQ=;
-        b=R8u1dmxJUaCMiZQ2xCwdkkyMRe4t3L2Ho47a/fMni1r1/1cARNU+dUELJje1z07QeM
-         9MgEe3ydX0neAJ2X8BMRVT++PguvJuuQkffSz/FhS7IQ5BxDepHGell9ksepPlaCtnBD
-         y7pw56HZO4CT20BQR21OLJ/fJ8b4iuhjd9Cf9T9BpBeZsGNgmzHCIIdD0bmKl2F4iQEu
-         skqIk/xTSWreZHHlky0Cgf0TY0I5u10oP6x6neZhTzpHQ3oMmWB8ztlgQrol47PwET98
-         NI65QVNXX/3s7eGC9X0SO4x5b00COw4wxX3oeJyMaAykLgwMbU3XjA9HKj5PYWLzFRd6
-         pfcQ==
+        d=linaro.org; s=google; t=1729067358; x=1729672158; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6iqfBuczay4ElwQktBC/MRXYiJhYxD/GwTaPrSn+Is0=;
+        b=kkpMGGlAnMbI6AkbHkF+Qqbm+Yt2SgZZQhHeI+QhMhEF68ChIpMjvChER2wtalwOUD
+         Nl8iAxfdA+gdP5+sPaC7nkYMLckiZWvJPmc7eR7qgAUdj2TN4x/RBGAsPndAk4CQfk+b
+         Qv/y9zss8sN7OD/AxsnWV9dHM36kDKmC6XiNVFVoVdxEXgfandQcRa87gyED80JWNQDX
+         RszOdDDLo7d0n6cSTCsz+0JYzf9NF2hEesVBjd+uD0Y2JDE478xuCDScuN0Nugpa/KIT
+         LfGIqaUo9A0SWR09HaeIArJvESk/yvrADLzDm8f1FBzYdQKNP3X7pIWOR3rNQ4RjeoUe
+         DcYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729067365; x=1729672165;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qONR6PhzFfCaPdOjWZuY/fyEqCmza+5NO3GwnhyETRQ=;
-        b=QbsvYjWrhPH/nJfXt1OK0d6h3j+q8ALOR15ZjUruYYxH0M7rQiWkpO743E/1jWD/bb
-         mX2aW1+RRB62YyCnsyNbV9/S4TA9C6i5gJp7n4Cfdi3380e2+4q4gStj+lWY84eHAJ+5
-         TwTXquK2p4cDWYtXKMrpa0M2mOR+6HL6zwP//LzBSFZIJsQdxbt92ykQxfiPEYn4gfxI
-         L60dvQuo2Ko8pKArVKHhXTFRZIPzOgRNM3wpAwaz2lMuM+s7S1O9VHkYeVjnir4Gyw95
-         hofqtGJ6eIap0sk3kKku6V1TtOpWN5jaixnukYVFxnQteySYKf7UZBAmk82I4nrqqQQm
-         iEpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5sZ9aD1h/esnYJKvVoXDk3OzcnjcpILDKP6HixFPTgM6oiL9Kr/bWXsYWb4QuxsOBnEen8fclplg7Xo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEdnvtsTyRZbC6mfk6nj4GzPxdosrhIQWa3W6Q1U6x1xmoIbGg
-	GQu2fDHW6rT6j8znPi88fDaepmm3J00faq0tBdcnR6Kw3FsFwXCZXTuM0LNNN3/oS9Lor5kJ6To
-	4azMR1+78WT5xiFNRTpI5xsnDvPEQpSNbu1ks
-X-Google-Smtp-Source: AGHT+IFVaAHMcybvKte3ah0JD/NM2uJw5lDjEjl778BaNy/DBMka/sH24c3hWHtGm+Iuux1NFukr320AygGuKTrsbog=
-X-Received: by 2002:a05:600c:3b83:b0:426:6710:223c with SMTP id
- 5b1f17b1804b1-4311ded1fdfmr156216795e9.9.1729067364603; Wed, 16 Oct 2024
- 01:29:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729067358; x=1729672158;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6iqfBuczay4ElwQktBC/MRXYiJhYxD/GwTaPrSn+Is0=;
+        b=evlF5zsuBla7WyZ2Zt1ec8TamsJtBU0T/tRLMREVd3VtEqq2i+bMw7Je7YSCwsDCTL
+         sIPcx5YwUIQqK4tU8218Ex2/UgsGPj6ZzbfScIUTTYqjKDWKDv1L2BcCxhaXBdsibY7E
+         vk7vvUsEcDd3V3Dc7OLKvQAPS6afO86cdyA9wBPd1b88+xmqNvdItw1tfELWZV+E2OgS
+         ys3CMxODktKsQ7Z9VzGxV2fzxWnypg2ld/hYnCjIFwsuwwkKb721D9Iujh3ZSRkt8wqN
+         n6eMxnD0UqARyNmpJZmGv2S0anIQG8c0D8L4bCK3bIk27VdXId42zkmHnJNVy8yaKTvP
+         arSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLFeFcTy0/gUfLKdcBprCh6PsHoTXL05dHeExySzrFrF++kKNyEOPtLv5FrJZ7JGSBe0Dk0uJOpvAdVgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycIBzIpz0br6nIv3xJPl5wu5Y41sk61bldXdTpF/rRH2Q06ohp
+	+dYc6SXD9AH9WpEyhkptl/80QFaVy3PXdqPvt7Oeyguco8iWBiHTX0jxG45eb1w=
+X-Google-Smtp-Source: AGHT+IFLTR/9sDkPujYWEOmpgOe7TTooUlrji54cUOBo4zxv4bz8Vx9Xi/pwm79C2hqLZjs8UPCD0Q==
+X-Received: by 2002:a5d:69ca:0:b0:37d:4706:f728 with SMTP id ffacd0b85a97d-37d552cbc7dmr11601322f8f.50.1729067357763;
+        Wed, 16 Oct 2024 01:29:17 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa8778csm3678998f8f.25.2024.10.16.01.29.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 01:29:17 -0700 (PDT)
+Message-ID: <d9a4bebe-dde1-438f-bcf7-70b7a5e21848@linaro.org>
+Date: Wed, 16 Oct 2024 09:29:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com> <20241016035214.2229-6-fujita.tomonori@gmail.com>
-In-Reply-To: <20241016035214.2229-6-fujita.tomonori@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 16 Oct 2024 10:29:12 +0200
-Message-ID: <CAH5fLgjTGmD0=9wJRP+aNtHC2ab7e9tuRwnPZZt8RN3wpmZHBg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 5/8] rust: time: Add wrapper for fsleep function
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, anna-maria@linutronix.de, 
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de, jstultz@google.com, 
-	sboyd@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] libperf: evlist: Fix --cpu argument on hybrid
+ platform
+To: Ian Rogers <irogers@google.com>
+Cc: linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org
+References: <20241015145416.583690-1-james.clark@linaro.org>
+ <20241015145416.583690-2-james.clark@linaro.org>
+ <CAP-5=fW7aERe3KHtAoYX9UWsVWrhU95RcCgabgP+DNHi1whjsQ@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fW7aERe3KHtAoYX9UWsVWrhU95RcCgabgP+DNHi1whjsQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 5:54=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> Add a wrapper for fsleep, flexible sleep functions in
-> `include/linux/delay.h` which typically deals with hardware delays.
->
-> The kernel supports several `sleep` functions to handle various
-> lengths of delay. This adds fsleep, automatically chooses the best
-> sleep method based on a duration.
->
-> `sleep` functions including `fsleep` belongs to TIMERS, not
-> TIMEKEEPING. They are maintained separately. rust/kernel/time.rs is an
-> abstraction for TIMEKEEPING. To make Rust abstractions match the C
-> side, add rust/kernel/time/delay.rs for this wrapper.
->
-> fsleep() can only be used in a nonatomic context. This requirement is
-> not checked by these abstractions, but it is intended that klint [1]
-> or a similar tool will be used to check it in the future.
->
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> Link: https://rust-for-linux.com/klint [1]
-> ---
->  rust/helpers/helpers.c    |  1 +
->  rust/helpers/time.c       |  8 ++++++++
->  rust/kernel/time.rs       |  4 +++-
->  rust/kernel/time/delay.rs | 31 +++++++++++++++++++++++++++++++
->  4 files changed, 43 insertions(+), 1 deletion(-)
->  create mode 100644 rust/helpers/time.c
->  create mode 100644 rust/kernel/time/delay.rs
->
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 30f40149f3a9..c274546bcf78 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -21,6 +21,7 @@
->  #include "slab.c"
->  #include "spinlock.c"
->  #include "task.c"
-> +#include "time.c"
->  #include "uaccess.c"
->  #include "wait.c"
->  #include "workqueue.c"
-> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
-> new file mode 100644
-> index 000000000000..7ae64ad8141d
-> --- /dev/null
-> +++ b/rust/helpers/time.c
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/delay.h>
-> +
-> +void rust_helper_fsleep(unsigned long usecs)
-> +{
-> +       fsleep(usecs);
-> +}
-> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> index 9b0537b63cf7..d58daff6f928 100644
-> --- a/rust/kernel/time.rs
-> +++ b/rust/kernel/time.rs
-> @@ -2,12 +2,14 @@
->
->  //! Time related primitives.
->  //!
-> -//! This module contains the kernel APIs related to time and timers that
-> +//! This module contains the kernel APIs related to time that
->  //! have been ported or wrapped for usage by Rust code in the kernel.
->  //!
->  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.=
-h).
->  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
->
-> +pub mod delay;
-> +
->  /// The number of nanoseconds per microsecond.
->  pub const NSEC_PER_USEC: i64 =3D bindings::NSEC_PER_USEC as i64;
->
-> diff --git a/rust/kernel/time/delay.rs b/rust/kernel/time/delay.rs
-> new file mode 100644
-> index 000000000000..dc7e2b3a0ab2
-> --- /dev/null
-> +++ b/rust/kernel/time/delay.rs
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Delay and sleep primitives.
-> +//!
-> +//! This module contains the kernel APIs related to delay and sleep that
-> +//! have been ported or wrapped for usage by Rust code in the kernel.
-> +//!
-> +//! C header: [`include/linux/delay.h`](srctree/include/linux/delay.h).
-> +
-> +use crate::time;
-> +use core::ffi::c_ulong;
-> +
-> +/// Sleeps for a given duration at least.
-> +///
-> +/// Equivalent to the kernel's [`fsleep`], flexible sleep function,
-> +/// which automatically chooses the best sleep method based on a duratio=
-n.
-> +///
-> +/// `Delta` must be longer than one microsecond.
 
-Why is this required? Right now you just round up to one microsecond,
-which seems okay.
 
-> +/// This function can only be used in a nonatomic context.
-> +pub fn fsleep(delta: time::Delta) {
-> +    // SAFETY: FFI call.
-> +    unsafe {
-> +        // Convert the duration to microseconds and round up to preserve
-> +        // the guarantee; fsleep sleeps for at least the provided durati=
-on,
-> +        // but that it may sleep for longer under some circumstances.
-> +        bindings::fsleep(
-> +            ((delta.as_nanos() + time::NSEC_PER_USEC - 1) / time::NSEC_P=
-ER_USEC) as c_ulong,
+On 15/10/2024 4:14 pm, Ian Rogers wrote:
+> On Tue, Oct 15, 2024 at 7:54 AM James Clark <james.clark@linaro.org> wrote:
+>>
+>> Since the linked fixes: commit, specifying a CPU on hybrid platforms
+>> results in an error because Perf tries to open an extended type event
+>> on "any" CPU which isn't valid. Extended type events can only be opened
+>> on CPUs that match the type.
+>>
+>> Before (working):
+>>
+>>    $ perf record --cpu 1 -- true
+>>    [ perf record: Woken up 1 times to write data ]
+>>    [ perf record: Captured and wrote 2.385 MB perf.data (7 samples) ]
+>>
+>> After (not working):
+>>
+>>    $ perf record -C 1 -- true
+>>    WARNING: A requested CPU in '1' is not supported by PMU 'cpu_atom' (CPUs 16-27) for event 'cycles:P'
+>>    Error:
+>>    The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_atom/cycles:P/).
+>>    /bin/dmesg | grep -i perf may provide additional information.
+>>
+>> (Ignore the warning message, that's expected and not particularly
+>> relevant to this issue).
+>>
+>> This is because perf_cpu_map__intersect() of the user specified CPU (1)
+>> and one of the PMU's CPUs (16-27) correctly results in an empty (NULL)
+>> CPU map. However for the purposes of opening an event, libperf converts
+>> empty CPU maps into an any CPU (-1) which the kernel rejects.
+> 
+> Ugh. The cpumap API tries its best to confuse NULL == empty but empty
+> can give you dummy, dummy is also known as 'any' or -1, 'any' sounds a
+> lot like 'all' but sometimes 'all' is only online CPUs. I tried to
+> tidy up the naming a while ago, but there is still a mess.
+> 
 
-You probably want this:
+I don't know if you think this is a good opportunity for me to have a go 
+at finishing separating those? Or is it a dead end?
 
-delta.as_nanos().saturating_add(time::NSEC_PER_USEC - 1) / time::NSEC_PER_U=
-SEC
+>> Fix it by deleting evsels with empty CPU maps in the specific case where
+>> user requested CPU maps are evaluated.
+> 
+> If we delete evsels than the indices can be broken for certain things.
+> I'm guessing asan testing is clean but the large number of side data
+> structures that are indexed by things in another data structure makes
+> the whole code base brittle and I am nervous around this change.
+> 
+>> Fixes: 251aa040244a ("perf parse-events: Wildcard most "numeric" events")
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> 
+> Thanks,
+> Ian
+> 
 
-This would avoid a crash if someone passes i64::MAX nanoseconds and
-CONFIG_RUST_OVERFLOW_CHECKS is enabled.
+Ok if we're not completely opposed to doing it this way I will dig a bit 
+more and double check everything is working.
 
-Alice
+>> ---
+>>   tools/lib/perf/evlist.c | 11 +++++++++--
+>>   1 file changed, 9 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
+>> index c6d67fc9e57e..8fae9a157a91 100644
+>> --- a/tools/lib/perf/evlist.c
+>> +++ b/tools/lib/perf/evlist.c
+>> @@ -47,6 +47,13 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
+>>                   */
+>>                  perf_cpu_map__put(evsel->cpus);
+>>                  evsel->cpus = perf_cpu_map__intersect(evlist->user_requested_cpus, evsel->own_cpus);
+>> +
+>> +               /*
+>> +                * Empty cpu lists would eventually get opened as "any" so remove
+>> +                * genuinely empty ones before they're opened in the wrong place.
+>> +                */
+>> +               if (perf_cpu_map__is_empty(evsel->cpus))
+>> +                       perf_evlist__remove(evlist, evsel);
+>>          } else if (!evsel->own_cpus || evlist->has_user_cpus ||
+>>                  (!evsel->requires_cpu && perf_cpu_map__has_any_cpu(evlist->user_requested_cpus))) {
+>>                  /*
+>> @@ -80,11 +87,11 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
+>>
+>>   static void perf_evlist__propagate_maps(struct perf_evlist *evlist)
+>>   {
+>> -       struct perf_evsel *evsel;
+>> +       struct perf_evsel *evsel, *n;
+>>
+>>          evlist->needs_map_propagation = true;
+>>
+>> -       perf_evlist__for_each_evsel(evlist, evsel)
+>> +       list_for_each_entry_safe(evsel, n, &evlist->entries, node)
+>>                  __perf_evlist__propagate_maps(evlist, evsel);
+>>   }
+>>
+>> --
+>> 2.34.1
+>>
+
 
