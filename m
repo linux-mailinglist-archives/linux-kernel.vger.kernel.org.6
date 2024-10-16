@@ -1,193 +1,186 @@
-Return-Path: <linux-kernel+bounces-368540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814829A110B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8734F9A110C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D571C257E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91BE21C2555A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB22213EC8;
-	Wed, 16 Oct 2024 17:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD312141A0;
+	Wed, 16 Oct 2024 17:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RjkoSb9F"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gjd9xeNy"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCCB210C39
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5250212F1B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729101319; cv=none; b=ZX8As0XDn++keeHfKPlkY39+dCihCR89zsmYan8Swnn63CClmAqciSaOqzjnkZ0tGUe/6HJNtj3nqyoxscGumF5XJjMh3E2/1zqx+thZA/zf33WFJwHzCSGvNFeXcXOmaFNzEUuMEraXCMeHz/cjjGnFu5m6I3061cuVcGc/79k=
+	t=1729101349; cv=none; b=qtv3z+jIxwWu2Ac6wXv6jJXWG6WCo8YWcB6Pb0Wu+pjym5luida54W4wi2/lit9yawc7RHOYvQHW3DQCeCqi8zjPr1DHhSo2+wzwa1ui+KaAfhbQYBIDbpHosALHIxY/nX5xO7C/Bj9OgpmZ7LIV6OWtIUfd8EOTwhYI3N/D6sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729101319; c=relaxed/simple;
-	bh=7mgvjsnHF6pwftLMeSM0ZiGVPTOci+4+7LVesCG/vCQ=;
+	s=arc-20240116; t=1729101349; c=relaxed/simple;
+	bh=FI46zlFWVI+h3vrIeU8t70yHMttMMhpJ5UEVt4s9RUY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUPDMYflSnUvhXX6oPDyLjm9VAciL/gtvayG+vUcbHTjOw5SIJzpdKvNHWw6oh1ujNqP+CB0h5s9Pp8iLFYaCNwMJDyf7hRWMB/n0LYd4I27C1ha+MZLd6AVT+kn2tK7+xEBEYuK/gMH/eNz1XNuxpy2hpGFhlHvJUH5VuxU9yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=RjkoSb9F; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so1396831fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:55:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=USlsokpMXk+KG/Gvr9fz8KKIoCUdsDhN+dmkbfQQQ9DuHQ6ca3O4rhlvKaLDTA5rv5cd50SLTnxGH1d2R9tmgoPkrhmSrTN1CVLlAvudkikGS0C1zVv3Ws9HMaEjSlv+Pb9jai9Ir0wv7oyI1d4o0o2mE4Hv6j8pOl8xFJbTqLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gjd9xeNy; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so17055ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1729101315; x=1729706115; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUaloz4Vc4jQsqzOsKUbEZ5qqx3nnINqEAFtLv6HUpc=;
-        b=RjkoSb9F8yw/XLHUs/vzFMkfC2IEwADTWo0qh2wXmiJNSLCNV4KtFDVWgjyBkAZEF+
-         7uALM/36g+2vJffvqiZ47nVofLI0uo5hRVkcWbuusO9a/qcsddbAtMWNMbW5SgrWOPzH
-         AUAWvR5wyXpZ2l4uIwJ9ilWZsBIQxbl6Hpw+8=
+        d=google.com; s=20230601; t=1729101347; x=1729706147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tgXP4YWR78MH1/k7aqI2PhXOAzbJhF0fNu0sgKIyQXo=;
+        b=Gjd9xeNy+4G+4R3iupTReK6dCoodAUAZ+bqkkzqj7ClRmaamV2Cg0GVzbftYH95ti1
+         oLcvT1nXeBaDB6ZCwyTji8zJbdra9XWlB9hrsQhnnbBBLX+/xRcfirw4YA2gBZU5XvmB
+         n0If/YInihpVkjxvvJ0a0Fo6jy2SzYrs5XoHbivp96ofSXjOsLEvgxaQ9Ca580b6Ydm7
+         ZLXjua5DOlfY/H+Gu3/Lxojlw+SEMDzLrL+1J8oLR38Yww/ZRafU9j3i7ticN/7i1GeD
+         LlVSEwQWY4DZGS8xKm6lhk4Lv2FIhjda1Hmv1p0eOTx3n2SeAqYdOkVXChtoNmFAd/Sf
+         DHSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729101315; x=1729706115;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aUaloz4Vc4jQsqzOsKUbEZ5qqx3nnINqEAFtLv6HUpc=;
-        b=fvwPOLsSO2yCkZoumWDqBL9Rtn28di8Tit1mhY1nDeGxRaYr3NUS537DAeEMkw0DLL
-         4DejmO6g76Y5pqB4E9Sg4nd/H6khU6R3P0G9aNiCK0NTVkjHWCjArDXsL4rBlH89C3RD
-         rPGuFqXpDtiOmbWxA6PU+aP68/pxW892M+zEdbab8xh9V8X2jbyOHjQqFGK+t1gm3i08
-         PYF8s1e59vlq+z0U4AK4R0rwVW5rgJIE/SISvoVKxTrHlf667H7gDngAY2AEdskHo7KU
-         bwNdfVry+DqLmvsH91BvaFBLcRGneMlX+r79gd6iJRCs5CAUgVlQP2rVg7eWcsx5SkJO
-         NVuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOwQVk+QDpJiWsFKpxWEVPXGMU0gzNXdtPyQkXlVGd6Qn08sCrxGN98Dzw4bEUMjvqF92WSYWA6BhI9Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCsRlfD04kIiTHjeVEvC4Bvn7W36mlI7ZmHDwSp/hT/tVKPgsx
-	cSYJj1SxXku+09stDN2WufdaD3RRFB9iJvIUCSiAZMGw5g1hNwVC3cA0gmsgP8gJeTQ7QUUiRJR
-	8AjC/gTEbmn36spLq21TBOG/Bid34g0RdX3Xj
-X-Google-Smtp-Source: AGHT+IFC+0Z78LfMNPMdPmp1lVPyZHwdRICb6Ty0bIk/6qXN6MR4KHHsjYu3g7j5LQOO30yabm7PTN0Gv1eA1G+J+gY=
-X-Received: by 2002:a2e:a98a:0:b0:2fb:55b2:b199 with SMTP id
- 38308e7fff4ca-2fb61bbde6dmr30624361fa.37.1729101315305; Wed, 16 Oct 2024
- 10:55:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729101347; x=1729706147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tgXP4YWR78MH1/k7aqI2PhXOAzbJhF0fNu0sgKIyQXo=;
+        b=eEmDMNPPf2A1vPvw11YnS2rWjpum7uwCrif4ScdYOQ4UKqG564Dwb86uYAvBRbsdnl
+         p5IOKdTscEjFXOEnUVaPW0h2ZAI41LRH14a9MCTw8JmbTxbeh9ZVAnkhRu2XXvG7A3X6
+         QIyshtRp/C8hzYTKwC1F3tr644VUB07pSwHQ/VyVul4GJXbS1K7zWmY05Ihg4hVpKPg6
+         bkIJ0BGP6Obbh7Ik3qdIYXykU0ALUGQP7A9vdd2bmSNN3hYMG3inCeW8/1FUQRHKPK8F
+         k79AEQNEeBtcE5i6YlgYMOEJD2hf9tySiMnBLuYYLOa/B9DeODdabm3gBF0lT2dmzrHS
+         cxvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQY9inMEIpN390weMZOTkBTc+Qh3H2EaO9ugAsuASJIrGzhLOQVFpW+cn0k2U65NfyLxvixhjZnQROqZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOAXsNYAHayzug1yZW33kzzOKyCoEC310oql8/mjocOOI5Bbzk
+	Bhn4+nwjn78Wh4uL4CY0JHN7IujpHoUPkVrFwzQ6SGJw4u5nfmnl6Z5x8Lc1KtwyEXhbchD31vA
+	rueMiC5PJXFVRbZgS9VF6WtRB8nr8pKrkROk7
+X-Google-Smtp-Source: AGHT+IGp8MPrwldFZ08s9nJXGPdGDOsW5oZdgQ71qP2oW4DbMjy0QMSmP4TEalVXqutw5m7JwgzOYpqvrDjOAS5ZiPI=
+X-Received: by 2002:a05:6e02:b21:b0:39f:83dd:5672 with SMTP id
+ e9e14a558f8ab-3a3e5909e21mr159885ab.16.1729101346643; Wed, 16 Oct 2024
+ 10:55:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016090647.691022-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20241016090647.691022-1-andriy.shevchenko@linux.intel.com>
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Wed, 16 Oct 2024 10:55:02 -0700
-Message-ID: <CACKFLi=vng2uM+dxBx7Mq9SXEg0GhccamHUwB5p9CZTxhn1hRw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 1/1] tg3: Increase buffer size for IRQ label
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Pavan Chebbi <pavan.chebbi@broadcom.com>, Michael Chan <mchan@broadcom.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000b4b99306249bc581"
-
---000000000000b4b99306249bc581
+References: <20241011110207.1032235-1-dapeng1.mi@linux.intel.com>
+ <20241011110207.1032235-2-dapeng1.mi@linux.intel.com> <Zw_56b61Ik7UFekS@google.com>
+In-Reply-To: <Zw_56b61Ik7UFekS@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 16 Oct 2024 10:55:33 -0700
+Message-ID: <CAP-5=fWfRwxWsgqD8OUG8+2WrU5Xg+ByqGAbLED9Wf3ZQ=FURw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] perf x86/topdown: Refine helper arch_is_topdown_metrics()
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dapeng Mi <dapeng1.mi@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 2:06=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Oct 16, 2024 at 10:37=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
-> GCC is not happy with the current code, e.g.:
+> Hi Ian,
 >
-> .../tg3.c:11313:37: error: =E2=80=98-txrx-=E2=80=99 directive output may =
-be truncated writing 6 bytes into a region of size between 1 and 16 [-Werro=
-r=3Dformat-truncation=3D]
-> 11313 |                                  "%s-txrx-%d", tp->dev->name, irq=
-_num);
->       |                                     ^~~~~~
-> .../tg3.c:11313:34: note: using the range [-2147483648, 2147483647] for d=
-irective argument
-> 11313 |                                  "%s-txrx-%d", tp->dev->name, irq=
-_num);
+> On Fri, Oct 11, 2024 at 11:02:07AM +0000, Dapeng Mi wrote:
+> > Leverage the existed function perf_pmu__name_from_config() to check if
+> > an event is topdown metrics event. perf_pmu__name_from_config() goes
+> > through the defined formats and figures out the config of pre-defined
+> > topdown events.
+> >
+> > This avoids to figure out the config of topdown pre-defined events with
+> > hard-coded format strings "event=3D" and "umask=3D" and provides more
+> > flexibility.
+> >
+> > Suggested-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 >
-> When `make W=3D1` is supplied, this prevents kernel building. Fix it by
-> increasing the buffer size for IRQ label and use sizeoF() instead of
-> hard coded constants.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Are you ok with this now?
 
-Thanks.
-Reviewed-by: Michael Chan <michael.chan@broadcom.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
 
---000000000000b4b99306249bc581
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Thanks,
+Ian
 
-MIIQbQYJKoZIhvcNAQcCoIIQXjCCEFoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg3EMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
-MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
-rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
-aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
-e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
-cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
-MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
-KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
-/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
-TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
-YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
-CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
-BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
-jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
-9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
-/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
-jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
-AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
-dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
-MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
-IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
-SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
-XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
-J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
-nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBUwwggQ0oAMCAQICDF5AaMOe0cZvaJpCQjANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODIxMzhaFw0yNTA5MTAwODIxMzhaMIGO
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xFTATBgNVBAMTDE1pY2hhZWwgQ2hhbjEoMCYGCSqGSIb3DQEJ
-ARYZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
-ggEBALhEmG7egFWvPKcrDxuNhNcn2oHauIHc8AzGhPyJxU4S6ZUjHM/psoNo5XxlMSRpYE7g7vLx
-J4NBefU36XTEWVzbEkAuOSuJTuJkm98JE3+wjeO+aQTbNF3mG2iAe0AZbAWyqFxZulWitE8U2tIC
-9mttDjSN/wbltcwuti7P57RuR+WyZstDlPJqUMm1rJTbgDqkF2pnvufc4US2iexnfjGopunLvioc
-OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
-/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
-L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
-kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
-5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
-hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
-E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIKZRNzRie/o/hhTGU0Qv8WWDX4hPycpT
-EGthv8GDZRdvMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAx
-NjE3NTUxNVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQA3TWKESLuvZ23XAzRjeK0t9P38SXAoLpr7YS3mc+zI+yeXpQFy
-8rgnAn4E4BptIn1iZXucxiK5gq6AS0LcfocSgD53pEssfJrIWHQBqSG8Wdpalg2vlokDWhnccnlW
-sYI8Ofnbr+GiLMh6VMI7KE1A5HlUvjfbJmU3QAtePVRQWkIZKDQdo5BXe5IVrKr+2dh3qe8x1y7d
-hDLRf2gGXqCYZCf/n5cxYrEGuUvqPgzJLDV9qL7jxVC/MSHtl/bC3x2FclwQd5hMhtP2C8wWoKx4
-nMEYmXsRnEBWQs945okRPKWZOB4uNnReR/wprwpYcduVPY6TqfSi0tMnZgWIAt5y
---000000000000b4b99306249bc581--
+> Thanks,
+> Namhyung
+>
+> > ---
+> >  tools/perf/arch/x86/util/topdown.c | 39 +++++++-----------------------
+> >  1 file changed, 9 insertions(+), 30 deletions(-)
+> >
+> > diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/u=
+til/topdown.c
+> > index cb2c64928bc4..f63747d0abdf 100644
+> > --- a/tools/perf/arch/x86/util/topdown.c
+> > +++ b/tools/perf/arch/x86/util/topdown.c
+> > @@ -41,43 +41,22 @@ bool arch_is_topdown_slots(const struct evsel *evse=
+l)
+> >       return false;
+> >  }
+> >
+> > -static int compare_topdown_event(void *vstate, struct pmu_event_info *=
+info)
+> > -{
+> > -     int *config =3D vstate;
+> > -     int event =3D 0;
+> > -     int umask =3D 0;
+> > -     char *str;
+> > -
+> > -     if (!strcasestr(info->name, "topdown"))
+> > -             return 0;
+> > -
+> > -     str =3D strcasestr(info->str, "event=3D");
+> > -     if (str)
+> > -             sscanf(str, "event=3D%x", &event);
+> > -
+> > -     str =3D strcasestr(info->str, "umask=3D");
+> > -     if (str)
+> > -             sscanf(str, "umask=3D%x", &umask);
+> > -
+> > -     if (event =3D=3D 0 && *config =3D=3D (event | umask << 8))
+> > -             return 1;
+> > -
+> > -     return 0;
+> > -}
+> > -
+> >  bool arch_is_topdown_metrics(const struct evsel *evsel)
+> >  {
+> > -     struct perf_pmu *pmu =3D evsel__find_pmu(evsel);
+> >       int config =3D evsel->core.attr.config;
+> > +     const char *name_from_config;
+> > +     struct perf_pmu *pmu;
+> >
+> > -     if (!pmu || !pmu->is_core)
+> > +     /* All topdown events have an event code of 0. */
+> > +     if ((config & 0xFF) !=3D 0)
+> >               return false;
+> >
+> > -     if (perf_pmu__for_each_event(pmu, false, &config,
+> > -                                  compare_topdown_event))
+> > -             return true;
+> > +     pmu =3D evsel__find_pmu(evsel);
+> > +     if (!pmu || !pmu->is_core)
+> > +             return false;
+> >
+> > -     return false;
+> > +     name_from_config =3D perf_pmu__name_from_config(pmu, config);
+> > +     return name_from_config && strcasestr(name_from_config, "topdown"=
+);
+> >  }
+> >
+> >  /*
+> > --
+> > 2.40.1
+> >
 
