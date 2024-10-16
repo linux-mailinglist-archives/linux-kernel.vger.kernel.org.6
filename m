@@ -1,120 +1,161 @@
-Return-Path: <linux-kernel+bounces-367415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6649A01FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:59:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6380D9A0209
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1341C212D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B9E0B252F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E5A1AF0BA;
-	Wed, 16 Oct 2024 06:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED46190073;
+	Wed, 16 Oct 2024 07:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="g74hGVDI"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eUg6gLVu"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266E819939D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208E4188588
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729061942; cv=none; b=oqIkFLmA8NOpzn2fwwtRWE42wyAArz5PzSZ1Dm09C1nzUOtE1sgTWEZNgQDssZKveEc3vGeNKMNooaeGnSLNZFRWK7dUhj5SnGh1uifafRi4GrVrpro8BpiMvozbW3xxxM7I4pw/VfoQh4Gh9rpRRnQNXyOTcZKGQeWO9FNWDzs=
+	t=1729062092; cv=none; b=LrnRK9weECxYX9DRP4OkwzvCIIykrz3V3AJIxFuOZu0uHoAEN+cmkINwZIPN/uLJ5ma+P3kR6DDJzMu93nLNz94umVldTswiIPucJpqWv7cxNQ5OAn430Mlkkv8fr4qtT0yqbGKb/6RH+LvArm5y2xUWl1iZeRPrv+odzyr68eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729061942; c=relaxed/simple;
-	bh=GgqhkQIww3EnUduiJMY68fYIYly68qVF8vVZyUZJznY=;
+	s=arc-20240116; t=1729062092; c=relaxed/simple;
+	bh=/Hzo2SkzwwDLKXCO8ZcuSqtq5C1ljEdpc4/rzPIw/Ws=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MDamaR89F0NWuNivOk7ug5Db2yMQHOpJdZdlamxC+HGlfbP5nsn2BC8N4oxx7UB6zskm3BvgE/EJ0rbUCq/WOFZtdZzaN/eopCZOvJl9Ps5Rco/TDj2Y3Qs9pVvuasMFMb9nCmxTbt0mKdHYVlVIUgF/Av3htp1lyuefoAMdtsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=g74hGVDI; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-8353b41369fso398498139f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:59:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=PaxM9AejOsYstZuIq8BUiR+uMglz3KOkEq08GbasiY6khg7IuNEYP82dJrB6vPkdX5qnFBtRFoe1K7UZ7bMiGgFGVqZL2TqqhMDdNzxXs+2mSvJJpNtyHiMhL0fIwPwVwBO6/VwTeDyBPM8tQbmY+9GV43CHcQHBDpJh89MOCm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eUg6gLVu; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539fb49c64aso4073365e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1729061940; x=1729666740; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1729062089; x=1729666889; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GgqhkQIww3EnUduiJMY68fYIYly68qVF8vVZyUZJznY=;
-        b=g74hGVDIdKXSRMoExMy2L7duAIytErxpodWT02qBjL8oPHDpvMDmRcasyJO7G7QcJa
-         p0URmffTuHoz6VQMi64tHtPi8QGiwM/Qm4hHvd8TUmsYysmlwCdhvOMDGZsoEygMqnUm
-         Rsd9+uQFFRSYtntyd0O/j8t+3KXLR6Yz/KtVBavFtU2uipV7EwuJAlaQiVEej/lwJ/r4
-         8Hz7qLUMOvmN6ePwR1AW0j2I44VUO2EApFzjTVX3L8pumqmYSwdTHM8lN86qCWo76aBq
-         Kx6/y+x7hufaGaSx6uaaLCNKjyRBEDumuJqe3Y4Ny3wjyvveq0H4tvtcHyrccdIQ+8FB
-         BKfg==
+        bh=aPSA6U2IhZgMRSFXZK5Yj7RxoQjZFaD6SSlWNz1Yb8o=;
+        b=eUg6gLVuBC86WDl2T1PJB7ot1n118NOcGtI9tagwNB5ci0VXw2abchf0hjYHgT7Ihv
+         r+TR/AQVOk17Czf+9IMIdx+PLoRqoJoZitaqiUo0z4ltQW33vWnQPVL/Gu8FXZL/jiQi
+         G+hvU1L7GRihE00Ieh34wqSkn7IhkFOgayFGE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729061940; x=1729666740;
+        d=1e100.net; s=20230601; t=1729062089; x=1729666889;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GgqhkQIww3EnUduiJMY68fYIYly68qVF8vVZyUZJznY=;
-        b=E4029f5XXisUNk9hSu9OU8Cpy7YZbco4KuN3x0K1t3m/mnCwFxrjknGbUhRWzZnB6T
-         NoSBWBoim66yHeav4uTbPIuQJftOlj/q/qT/TnqrEetLWXIPWjhYHG1CabSVDlTUJ/0O
-         WGiRubacW4FmfooBAYZ66LVILFQUAlVacndst+YrTs+jyVxv36XU76UjfH2WE22hOUo6
-         iVW+X6dB10QgWEKd78+A+nECgLxqgJ44a75+RvBrLh9kxqHXljZQsec6DIOXddTn1woz
-         hreQMAlnryax2+aRX2zwUanRrLGB2aGMlPDxJa+3trw2mpdZ22eR5QzlF+6VKjHpHHsT
-         FJ9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWQtDSHP8WTlbo4JrUqIixs2s7k8lTbbqMkREBa99EIHMV/wJt1Y7ouXbrGgtK5VDJdBjMpLumPlKKELy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy8lSmrDvFBkg+axwETGv52wxXDqaOaDrOZ9gzietqYD/gsQti
-	SMGM8gPl/rnh+yDBvOSqU4EaPoQVKk10Pl0gukExs4iqg5Cwwl4Cb2C/mKLBQTGdyxLMk4Y8p/b
-	+DSard53kTMIfgET+88oDAyL/iLOwkBqkH5PQEw==
-X-Google-Smtp-Source: AGHT+IErhSKXVFLT/FTSTbt5YKWJYoMqeAPP9Z85ar2ZS+Bbj8qfmYFetiQos0G6hD7PlYuMWAq/MbtzSisSbfzWG1w=
-X-Received: by 2002:a05:6e02:1385:b0:3a2:7651:9864 with SMTP id
- e9e14a558f8ab-3a3bcdc6befmr119191555ab.12.1729061940262; Tue, 15 Oct 2024
- 23:59:00 -0700 (PDT)
+        bh=aPSA6U2IhZgMRSFXZK5Yj7RxoQjZFaD6SSlWNz1Yb8o=;
+        b=pTpW5mAzYMh+k+JkfExDKX5c7Sn3uZdV0ExC2xUQybQBxjq4A5ZA/fY5E6EcuCTb0B
+         WA45IkSyaH/sR9/d8cN5aIsMfis/kNOUnl4R+/DF84BzWAKYc5+vgsWe//gvhR1VluLu
+         kHCflo7aebbYF2rmQFU676kC+N1yKxxgVGAYByAqbS4mm4Rmie3rXZXj+QJVT7ZwXpjq
+         F2wxQ4wEN4kS45EAZrLtGctc8AbCC+/PG/QcDV6dd4ekU5ZCD6OVXnOeqWJUg9eRk081
+         x0p1x0jR3NbdOIJxXCyk+iXndjAXwagJnTeT5yQZTtZkPnZ+V8exCk5P+c0EdVZ2xRAK
+         Y4fg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1kl0R8ySOe+m+ccERfVOvcALgeDzTldu/Vdk6M1uru5XcNTQybzfiKIg3WBvqeQ9Ygu8azttzqAv68jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfg/+8kfsXx8QkqCtXeuld4gEA66QlqNblp3oP14F9FaJJazzL
+	Qu9/DjS9qf61RYfk/cQDiDCsyqegG2BrqjS5yg/1pxoLTw5e/t+edkIgPmpHZIp5co2Ck+lvKxA
+	Z7hz37mZpBKZ7ux4uIEsmQ6JwMSDd3lDV6Yyl
+X-Google-Smtp-Source: AGHT+IF9nGtCldCGOeLQrTN0Aa5+OFXxu1e3xzkOPVJhXANUIs3qmwtgnQsHFXF0n+2Y3Vn8cKEwmSavH38AfXohfvY=
+X-Received: by 2002:a05:6512:2398:b0:536:741a:6bc5 with SMTP id
+ 2adb3069b0e04-539e54d6122mr10014310e87.12.1729062089143; Wed, 16 Oct 2024
+ 00:01:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1728579958.git.tjeznach@rivosinc.com> <Zw4s3BHQZ6x4d79-@8bytes.org>
- <20241015085945.GC19110@willie-the-truck>
-In-Reply-To: <20241015085945.GC19110@willie-the-truck>
-From: Tomasz Jeznach <tjeznach@rivosinc.com>
-Date: Tue, 15 Oct 2024 23:58:48 -0700
-Message-ID: <CAH2o1u5UMQHvaNNUgKQk1e97c03ntuJALUTaW7gYaCuyfY471g@mail.gmail.com>
-Subject: Re: [PATCH v9 0/7] Linux RISC-V IOMMU Support
-To: Will Deacon <will@kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, Nick Kossifidis <mick@ics.forth.gr>, 
-	Sebastien Boeuf <seb@rivosinc.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux@rivosinc.com
+References: <20241008073430.3992087-1-wenst@chromium.org> <20241008073430.3992087-5-wenst@chromium.org>
+ <CAD=FV=WRSjk3U9Kau0wqkgv3KB=9jM6wCM9Gs-WxWai35sfxTg@mail.gmail.com>
+In-Reply-To: <CAD=FV=WRSjk3U9Kau0wqkgv3KB=9jM6wCM9Gs-WxWai35sfxTg@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 16 Oct 2024 15:01:17 +0800
+Message-ID: <CAGXv+5FW0UTjR_ZiqZ8VEOQkBemt54omtJe_aTj3jvScC-LuMw@mail.gmail.com>
+Subject: Re: [PATCH v8 4/8] i2c: Introduce OF component probe function
+To: Doug Anderson <dianders@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-i2c@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 1:59=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
-:
+On Wed, Oct 16, 2024 at 1:58=E2=80=AFAM Doug Anderson <dianders@chromium.or=
+g> wrote:
 >
-> On Tue, Oct 15, 2024 at 10:50:36AM +0200, Joerg Roedel wrote:
-> > On Thu, Oct 10, 2024 at 12:48:03PM -0700, Tomasz Jeznach wrote:
-> > > This patch series introduces support for RISC-V IOMMU architected
-> > > hardware into the Linux kernel.
+> Hi,
+>
+> On Tue, Oct 8, 2024 at 12:35=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org>=
+ wrote:
 > >
-> > Thanks Tomasz. I plan to merge this driver into the IOMMU tree if no
-> > further objections are raised in this thread by Friday.
-
-Thanks Joerg. I'll try to address any remaining issues asap.
-
+> > +int i2c_of_probe_component(struct device *dev, const struct i2c_of_pro=
+be_cfg *cfg, void *ctx)
+> > +{
+> > +       const struct i2c_of_probe_ops *ops;
+> > +       const char *type;
+> > +       struct i2c_adapter *i2c;
+> > +       int ret;
+> > +
+> > +       ops =3D cfg->ops ?: &i2c_of_probe_dummy_ops;
+> > +       type =3D cfg->type;
+> > +
+> > +       struct device_node *i2c_node __free(device_node) =3D i2c_of_pro=
+be_get_i2c_node(dev, type);
+> > +       if (IS_ERR(i2c_node))
+> > +               return PTR_ERR(i2c_node);
 >
-> Sorry, bad timing on my part -- I just left a couple of questions/comment=
-s
-> after Drew poked me at LPC to look at this.
+> I'm still getting comfortable with the __free() syntax so sorry if I'm
+> wrong, but I _think_ the above is buggy. I believe that the definition
+> of the free function for "device_node" is from:
 >
-> Hopefully we'll get those resolved asap.
+> DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
 >
+> ...which means it'll call of_node_put() to free "i2c_node" when it
+> goes out of scope. of_node_put() handles NULL pointers but _not_ ERR
+> pointers. So I think that if you get an error back and then return via
+> the PTR_ERR(i2c_node) then it'll crash because it will try to free an
+> ERR pointer. Did I get that right? Presumably you need to instead do:
+>
+>   return PTR_ERR(no_free_ptr(i2c_node));
+>
+> ...or change of_node_put() to be a noop for error pointers?
 
-Will, thank you for your valuable feedback.
-Hopefully v10 addressed those comments.
+Good catch! As Andy suggested, it should be updated to handle both.
+I'll add a patch for this.
 
-Best Regards,
-- Tomasz
+> > +struct i2c_of_probe_ops {
+> > +       /**
+> > +        * @enable: Retrieve and enable resources so that the component=
+s respond to probes.
+> > +        *
+> > +        * Resources should be reverted to their initial state before r=
+eturning if this fails.
+>
+> nit: might be worth explicitly noting that returning -EPROBE_DEFER is
+> OK here because this both retrieves resources and enables.
 
-> Will
+Makes sense. Will do.
+
+> > +        */
+> > +       int (*enable)(struct device *dev, struct device_node *bus_node,=
+ void *data);
+> > +
+> > +       /**
+> > +        * @cleanup_early: Release exclusive resources prior to enablin=
+g component.
+>
+> nit: change the word "enabling" to "calling probe() on a detected"
+> since otherwise it could be confused with the "enable" function above.
+
+Makes sense. Will do.
+
+
+ChenYu
 
