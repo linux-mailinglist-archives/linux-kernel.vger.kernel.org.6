@@ -1,126 +1,85 @@
-Return-Path: <linux-kernel+bounces-368267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0119A0D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:55:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C35D9A0D75
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63255288445
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C57EE28504D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5074B20CCEA;
-	Wed, 16 Oct 2024 14:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8648020E00B;
+	Wed, 16 Oct 2024 14:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="agmDJ8UU"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EbybtT4H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C2920821C
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AF854720;
+	Wed, 16 Oct 2024 14:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729090533; cv=none; b=lltsTI8zrKx8LDWQs3t/yxwZFKs1IkZpt425BYpTQJg2ZtvI6hSCqgAojBq4J7aj0ZmDx5f3NOgCLbuH3JuCL6UA49+a4QOkB5iE9UkJiZqIog06mcBlPZVaS70sa8kHxdJxtfzSjRIVgY1KOo+zjiB95uBSpJs4hwmWkYnXVGk=
+	t=1729090577; cv=none; b=nrlLrU6ZyqL2CStFs2ZL91J1UUcLkDIDVkWh6YiqU2Uca6eCGtXj7+QmW8fIgfJGTIfktN5KKQ/TJTr32IKc47W7FahGgR+qvFMWZelhb1PU60N+DeQYseyp13xY/LdbzwbiNg5vosj0pi+B4iZPKM5EtrnfgmYWIDn2os66cP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729090533; c=relaxed/simple;
-	bh=lhStgkW1nOmPDE/zibhXWPJlliM/BQNg1rEJG90y3R8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tgu8xdeNXlsiog28AlPkIYQO+LIkIBySvLpETfWwwEyI3R9MnpypqS7DttdW6eXYyLd1kmoZ6NwRdfHUfeezJShDY0z3k7WeCfVFxfUD3mANp6j9L7f7gNBpJ85PSCvmlOFnMbhEIhXWcBjn+msC8OkHsl7sN9VB7iW3xaMbo5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=agmDJ8UU; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so171805ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729090531; x=1729695331; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x5ndcWCV7GBa6KmSNUJ6McmDrO0FkYlO8NF3CckatKQ=;
-        b=agmDJ8UUPD8qZNqIasRUSLjKi62ccJvOmPjOG3xj/UGR39qJUXcCj8haLNpK/ixbW+
-         7Lr26Ryq2MXUby2lHvqpKwAo34hE1QNc/XjTjMr1odgpiWpGqx1cgo6b0MCcwAJBIrri
-         A6zgQ0ixMgA7/R3Hjeu1tBTNCYP+mga+cko1PoC9zmn0wkif/0nFLjFx9LhgO/ue/t2K
-         j50Qu/Ql2VrJjCFATyBHmxoZTgOQHHmxwSz1WQ2J7u66ptLG//fK6IsyGDDIeWuW9Wt2
-         3RjQ/ifz0N93Z5ZV1Nmgj7bz5BGcsFKlSV/R/pm7sxdXyvLnM+OrBQV8SYcJeB/Nk+Ka
-         WPxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729090531; x=1729695331;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x5ndcWCV7GBa6KmSNUJ6McmDrO0FkYlO8NF3CckatKQ=;
-        b=oN59NYaRuok/s9Kr0OZJJbnEjxA6AUFpuaz6QBaG/TcSSrpcQ4d84Tm9us+z445lqY
-         42B6/3R2W7zjsgjleuQGKlRa7TWApe0hzeZzr//P8NS+OVTe47wC+4SxiI3VbwDbvXbv
-         zoyQIwr7OPHwyR7YK9BlJmHSwp9VuZw2v0sNr/kdbXFUWxysh3N+FSlr6CcZ33QXPgmh
-         twvHIGeT7AHDuRAmSzjpNr9QFYaRbCELIOpRCpedKb0xNmC+BQy8dLW/dUhLfcNeRkmE
-         8EBdz8E4h+ilvOmSzNkUgTonJmDGA1opWFdzfEapFk/+Oj73lDr+I+4WlxaR/Tln3WCL
-         9PHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWYIrfDHkWk9fyyJUeBZqzLRMFt7ImTOnei/6lmKaMGzROMyMdbHF17ZVWDAGV47Lo1ZUnUVZV/pt0qo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBQur2xAJ5DoA4igZV5Ec7z3USRUu9dfSzoWW0Eitq8HP/ZrRx
-	sdqShn7wHzx+Ovr2OeyByvO1Bv1TE5euhL6awTuoedANAAeZmCfDlQRfccSKJoROEtWw+zKghLm
-	OVv4ZUFjNmxtRUqIwS27INIJiU5FtTiebQBlP
-X-Google-Smtp-Source: AGHT+IFAD0SSxWQ+/5diCeKc7c0u4sL0M9E0RTFkufYU9vk1dYWzrc01o217x2qTlswxzulprYDuCd9aEEc+tGDtBM8=
-X-Received: by 2002:a05:6e02:13aa:b0:375:bb49:930d with SMTP id
- e9e14a558f8ab-3a3de7d22dfmr2880775ab.23.1729090531199; Wed, 16 Oct 2024
- 07:55:31 -0700 (PDT)
+	s=arc-20240116; t=1729090577; c=relaxed/simple;
+	bh=/Txg4GO9QuIPp32B0hN8VEiUxRPsJxN+oMvyvV8BJDs=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=ly0Ox9sqLKsswdqrL+CjuvOlBkQka/0AQ2ocCzpzkRfGWHuBgVKcORTYX0jIw8ISjLLUNH6KYeavqUfBsdWvEyBgWupVoRUWA2+dEIAbycfU7zh4ep/dhyTF375OEyvjCnQ2u8+MQCN5t7mfsd6UI43A1sm88G2zBtAL2+zkarw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EbybtT4H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D259AC4CEC5;
+	Wed, 16 Oct 2024 14:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729090576;
+	bh=/Txg4GO9QuIPp32B0hN8VEiUxRPsJxN+oMvyvV8BJDs=;
+	h=Subject:From:To:Cc:Date:From;
+	b=EbybtT4HCNzqZtq8L0iZK5f14OY6oUdDqeZ89iq2ZS2uAkV/9T1ssG8nixs/BsVRQ
+	 7RFX4nyffuEdpoNIjPAr0DAFzRdSCGkR/s/S+YDz9e0gby3agMT09aDGz4US6dW94H
+	 GD5K1Bd0v4voaPZe5bP0JvlfHyMMyB84GxVAZVqxJataUIwfdHe1zqhZq35T+a+dux
+	 K5dSpAFL0u5DGBbEPQGicwOxY3hVFmIj5edvkmkh+mpeIGGHG88VMpCIaCZZxiYbaG
+	 vZ6kMLnW/b0vJjU3njbHn2+e9YOZe7l/robikh82I55utYMvYlIadJfpoSqpWvHBxe
+	 WZY0ipYMxv1Gg==
+Subject: [PATCH net-next] mailmap: update entry for Jesper Dangaard Brouer
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+To: netdev@vger.kernel.org
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
+ =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+ linux-kernel@vger.kernel.org
+Date: Wed, 16 Oct 2024 16:56:13 +0200
+Message-ID: <172909057364.2452383.8019986488234344607.stgit@firesoul>
+User-Agent: StGit/1.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016065654.269994-1-namhyung@kernel.org> <c28ce930-9a70-4f23-9f6b-541c16c212e3@linaro.org>
-In-Reply-To: <c28ce930-9a70-4f23-9f6b-541c16c212e3@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 16 Oct 2024 07:55:17 -0700
-Message-ID: <CAP-5=fW3So87z8Q+J5eNf+a2PP2toDe3GX5HB7akecR7TBV__A@mail.gmail.com>
-Subject: Re: [PATCH] perf test: Speed up some tests using perf list
-To: James Clark <james.clark@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, Leo Yan <leo.yan@arm.com>, 
-	German Gomez <german.gomez@arm.com>, Carsten Haitzler <carsten.haitzler@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 1:25=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
->
->
->
-> On 16/10/2024 7:56 am, Namhyung Kim wrote:
-> > On my system, perf list is very slow to print the whole events.  I thin=
-k
-> > there's a performance issue in SDT and uprobes event listing.  I notice=
-d
-> > this issue while running perf test on x86 but it takes long to check
-> > some CoreSight event which should be skipped quickly.
-> >
-> > Anyway, some test uses perf list to check whether the required event is
-> > available before running the test.  The perf list command can take an
-> > argument to specify event class or (glob) pattern.  But glob pattern is
-> > only to suppress output for unmatched ones after checking all events.
-> >
-> > In this case, specifying event class is better to reduce the number of
-> > events it checks and to avoid buggy subsystems entirely.
-> >
-> > No functional changes intended.
-> >
-> > Cc: German Gomez <german.gomez@arm.com>
-> > Cc: Carsten Haitzler <carsten.haitzler@arm.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
->
-> Reviewed-by: James Clark <james.clark@linaro.org>
+Mapping all my previously used emails to my kernel.org email.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+---
+ .mailmap |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-There's a nice better than >2x speed up waiting in too :-)
-https://lore.kernel.org/lkml/20241011220354.756798-1-irogers@google.com/
+diff --git a/.mailmap b/.mailmap
+index 3faaa5f400c6..8f0eccda7e41 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -301,6 +301,11 @@ Jens Axboe <axboe@kernel.dk> <axboe@fb.com>
+ Jens Axboe <axboe@kernel.dk> <axboe@meta.com>
+ Jens Osterkamp <Jens.Osterkamp@de.ibm.com>
+ Jernej Skrabec <jernej.skrabec@gmail.com> <jernej.skrabec@siol.net>
++Jesper Dangaard Brouer <hawk@kernel.org> <brouer@redhat.com>
++Jesper Dangaard Brouer <hawk@kernel.org> <hawk@comx.dk>
++Jesper Dangaard Brouer <hawk@kernel.org> <jbrouer@redhat.com>
++Jesper Dangaard Brouer <hawk@kernel.org> <jdb@comx.dk>
++Jesper Dangaard Brouer <hawk@kernel.org> <netoptimizer@brouer.com>
+ Jessica Zhang <quic_jesszhan@quicinc.com> <jesszhan@codeaurora.org>
+ Jilai Wang <quic_jilaiw@quicinc.com> <jilaiw@codeaurora.org>
+ Jiri Kosina <jikos@kernel.org> <jikos@jikos.cz>
 
-Thanks,
-Ian
+
 
