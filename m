@@ -1,104 +1,168 @@
-Return-Path: <linux-kernel+bounces-368334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371799A0E6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283C29A0E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F322826E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3D61F229EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68E820E03B;
-	Wed, 16 Oct 2024 15:36:30 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BF320E03B;
+	Wed, 16 Oct 2024 15:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FA2JA8rM"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3936354720
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D7E2076B3;
+	Wed, 16 Oct 2024 15:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729092990; cv=none; b=X7XuOdPANgQr4DR8bwIFr8hi5nNU8PglJaBbhHzIs9DlC2j3DA8yvjjFYu9XdkGhxDNBvX4HuefwruvYAnVA4skXDOh7VTlYX4e150ci/Fo4O9lu9BUHM0UK0geRSNlKDAZZHQ7gR67aqN9E+fJcLvmQaNaIT7wFAzEt401daVo=
+	t=1729093066; cv=none; b=E1boslCHdAQsrN059OSljVKHlcSBSUrdAvPt/F3Bp8DxS9De3FKQwD/EoKWp+yvldYctcykKzGntuu1f18Vj6tUtptqP6vP1PUXSzrNLYKvijQk3FgK/ihlaSowyaz0o/Lo6GjDxhMHNmmYfXoBmcMYNK0bAxMoyQiPx8d9biv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729092990; c=relaxed/simple;
-	bh=CgkR14pDiqmvdlVwR/10tJhB1m+jvhphe5RjoiY2EAw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B7dEH4iurD9830RpgZ3/d1VTz5k1Oj8ZY2Ja/wr5/TV7S8ksDMKntuwBIr3NPQYTPPAW9IUAs4PHe9twj5nq4W2ylCiDOrP3KvWA+FIzqXh5isJejpXMkdwa6RYashwOdeluN8RBZ9A/GS0qKIeLxH6c0bssfCNuzgR3+VqtN/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83a98e5a733so119352039f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:36:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729092988; x=1729697788;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h1m8iALNdyCQ9z7Ll9FSIN7ModedATew2fjWohO2jdo=;
-        b=rJrxd925vgFBiw7camN/5JG4PX7/1kl86KgP8xDlaIqm8vCSflpqQxt5E0z4BmrkRl
-         MjMYSCj7Ae2tO1oKQIHyXalduOVt3LBmf/mjlaZpERdXyBJ3rBp8uzd/nmFq4k8hvMUf
-         kI8cOEsojXP6wkTJDbxsre7uFOlex9Ky9EFUGsgjfnNDNZO6Uq7vUQLiMd/43o+vm7cl
-         Wfsgf2NTMHMyFntXDX7eRMOypFQJelQ/bRDIHpy51LjR5fVp4hTgGHEy+poeL05j7YH6
-         2IhMFJ85v9EJj42L/P5GnWKRvK/j7yEdPXjDHHk2SepWEYuwVoY0TLvBtM2wDXAD40d1
-         n4kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMLkiqRZgroxWecaB1w/pGytgSd5MVsQU9UB0wgc+8cIkpb1VUFtc2xczM08w5qbAl9rcFQNaxs8k1jP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxes9i/vYFljDiDLZ+5H5t3vJf+hI1Eq+1IYOPMst0DUnnqSde
-	p75it30U+Qz2gDgbVJkyisxkK9omI5jwZtlCsouFv5aXrB6wG+WclNo8VV8FyWMIM9LItp7K5vd
-	p27jppBFnpXGSx/prR0QVsVd2jMNV6SPYfQqbH8A9hrRdQQfvyyl2ED8=
-X-Google-Smtp-Source: AGHT+IGao+opzrX99U2GIYHN4x9S9xZrf9xSN6fqQL50WU3QyfGTs29jK5TwZsOTU3lIZUhaloc4/Jm7VdNoEQg030HgUP14F54y
+	s=arc-20240116; t=1729093066; c=relaxed/simple;
+	bh=K6N1yrMQ0yY3qlPPF9f4Bg4MC7Nv1qWm8xs5WpjuER0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qIho5bfUqdoz9WPvoyciHf0wSbdMs8VOjcsotXQQ/0t0WYzr7I1Q1tM8+xWrNx2TkhTg2u2YCeRcGCdyLGB+Al2lYSqbYjSCo/R8FQKXngBXtxw0LWUSzT/IQVHhzJTisHTkPyxu3kSB2fStdMeRROYyYMETXpmeJUyMp5kNkCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FA2JA8rM; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GFbaOv083771;
+	Wed, 16 Oct 2024 10:37:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729093056;
+	bh=+EesAko5MONtF5725/UbVtJbs9fSMJe9BLA51lWSY7k=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=FA2JA8rMRJywtcfvE0EHYLE+l4ephFT2OMLFs1txchGe4xGN0gciPcZw6HLrlrGAu
+	 HcRpscqSYHp+FwBat6jhTsUDAKis3w7ZV6CfIj+VCISRBigf8c7g5FhHMTNK69yjDc
+	 UUmxVtw90wwctbFoIXj0MMwcg6ErHAWd400eVj/A=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GFbaLw004695
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 16 Oct 2024 10:37:36 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
+ Oct 2024 10:37:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 16 Oct 2024 10:37:35 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GFbZLO035770;
+	Wed, 16 Oct 2024 10:37:35 -0500
+Message-ID: <07e5b001-b251-4f4f-8ce9-56b43032b5c4@ti.com>
+Date: Wed, 16 Oct 2024 10:37:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aab:b0:3a3:63c3:352e with SMTP id
- e9e14a558f8ab-3a3b602269emr162928755ab.19.1729092988355; Wed, 16 Oct 2024
- 08:36:28 -0700 (PDT)
-Date: Wed, 16 Oct 2024 08:36:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670fdd7c.050a0220.d5849.0016.GAE@google.com>
-Subject: [syzbot] Monthly xfs report (Oct 2024)
-From: syzbot <syzbot+list43c58946ba7cc70971ae@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Arnd Bergmann <arnd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Hari Nagalla <hnagalla@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241007132441.2732215-1-arnd@kernel.org>
+ <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com> <Zw/bIItwk0jeqKoR@p14s>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <Zw/bIItwk0jeqKoR@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello xfs maintainers/developers,
+On 10/16/24 10:26 AM, Mathieu Poirier wrote:
+> On Mon, Oct 14, 2024 at 09:56:11AM -0500, Andrew Davis wrote:
+>> On 10/7/24 8:23 AM, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> The k3-m4 remoteproc driver was merged with incorrect dependencies.
+>>> Despite multiple people trying to fix this, the version 6.12-rc2
+>>> remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
+>>> when the driver is built-in.
+>>>
+>>> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
+>>> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
+>>>
+>>> Fix the dependency again to make it work in all configurations.
+>>> The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
+>>> dependencies. The link failure can be avoided with a simple 'depends
+>>> do, so turn that into the same 'depends' to ensure we get no circular
+>>> on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
+>>> we use elsehwere. On the other hand, building for OMAP2PLUS makes
+>>> no sense since the hardware only exists on K3.
+>>>
+>>> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
+>>> Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
+>>> Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>> ---
+>>>    drivers/remoteproc/Kconfig | 6 +++---
+>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>> index 955e4e38477e..62f8548fb46a 100644
+>>> --- a/drivers/remoteproc/Kconfig
+>>> +++ b/drivers/remoteproc/Kconfig
+>>> @@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
+>>>    config TI_K3_M4_REMOTEPROC
+>>>    	tristate "TI K3 M4 remoteproc support"
+>>> -	depends on ARCH_OMAP2PLUS || ARCH_K3
+>>> -	select MAILBOX
+>>> -	select OMAP2PLUS_MBOX
+>>> +	depends on ARCH_K3 || COMPILE_TEST
+>>> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
+>>
+>> This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
+>> dependencies, as often only one ARCH can be selected which prevents
+>> compile testing drivers with various multiple architecture deps in
+>> one compile test.
+>>
+>> Normal dependencies, on the other hand, can simply be enabled if one
+>> wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
+>> cannot be enabled as it has a dependency up the chain that doesn't
+>> allow selecting when not on a TI platform. We can fix that as I posted
+>> here[0]. With that fix in, this line can be simply become:
+>>
+>> depends on TI_SCI_PROTOCOL
+> 
+>  From the above and the follow-on conversation with Nishanth, should I understand
+> you are working on a patchset to address this issue?  If not I will apply Arnd's
+> patch.  People are sending different fix [1] - the issue needs to be addressed
+> well before the end of the cycle.
+> 
 
-This is a 31-day syzbot report for the xfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/xfs
+This is a bit complex as it touches multiple subsystems. You should take Arnd's
+patch. This will fix this for M4, I will then add a follow on patch doing the same
+for the other two remoteproc drivers (DSP and R5).
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 9 issues are still open and 23 have been fixed so far.
+When my series here[0] goes in I will then send a final patch removing the depends
+TI_SCI_PROTOCOL=n oddness from all 3 drivers. This final step does not need to happen
+this cycle though, only the first two steps are needed to prevent any further compile
+test issues.
 
-Some of the still happening issues:
+Andrew
 
-Ref Crashes Repro Title
-<1> 1164    Yes   possible deadlock in xfs_ilock_attr_map_shared
-                  https://syzkaller.appspot.com/bug?extid=069cc167ecbee6e3e91a
-<2> 858     Yes   KASAN: stack-out-of-bounds Read in xfs_buf_lock
-                  https://syzkaller.appspot.com/bug?extid=0bc698a422b5e4ac988c
-<3> 214     Yes   possible deadlock in xfs_icwalk_ag (2)
-                  https://syzkaller.appspot.com/bug?extid=4248e91deb3db78358a2
-<4> 141     Yes   possible deadlock in xfs_can_free_eofblocks (2)
-                  https://syzkaller.appspot.com/bug?extid=53d541c7b07d55a392ca
-<5> 101     Yes   KASAN: slab-use-after-free Read in xfs_inode_item_push
-                  https://syzkaller.appspot.com/bug?extid=1a28995e12fd13faa44e
-<6> 83      Yes   INFO: task hung in xfs_buf_item_unpin (2)
-                  https://syzkaller.appspot.com/bug?extid=837bcd54843dd6262f2f
+[0] https://lore.kernel.org/lkml/20241015213322.2649011-1-afd@ti.com/
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+> [1]. https://lore.kernel.org/linux-arm-kernel/20241016013922.1392290-1-zengheng4@huawei.com/T/
+> 
+>>
+>> Andrew
+>>
+>> [0] https://lore.kernel.org/lkml/20241014144821.15094-1-afd@ti.com/
+>>
+>>> +	depends on OMAP2PLUS_MBOX
+>>>    	help
+>>>    	  Say m here to support TI's M4 remote processor subsystems
+>>>    	  on various TI K3 family of SoCs through the remote processor
 
