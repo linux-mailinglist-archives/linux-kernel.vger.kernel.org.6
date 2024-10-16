@@ -1,208 +1,76 @@
-Return-Path: <linux-kernel+bounces-368010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04139A09C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB599A0955
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B27CB272AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:28:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F7D2827A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B3B20C49E;
-	Wed, 16 Oct 2024 12:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewgSS7JQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D543208238;
+	Wed, 16 Oct 2024 12:24:59 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1FD20821C;
-	Wed, 16 Oct 2024 12:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6F2207A03
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729081625; cv=none; b=s38+MPhnutUqUtm0FqgK7HuElUjrN3z/XJYpnGkenQMOPVAb+8cucCTVvG2oV34ixVp9h6FD1LdHM++3A7+PGdkwlnQjodM/5lOpcrrM4CI6tTnUVzqtsvdzpS9wNf0WYeM4DK8b7FJYVmwsLyjPAuskVBXjgULupFYEp+J04ME=
+	t=1729081498; cv=none; b=TLO8dJc91l0rLSCfh8mFxKdudaofh769384fJt5UDJPcZfpQ/+3z1e45pEG2t1RtqA1y0pmqtFQiQpuidAI4Yz9kYTc2PIMSNtQRn9xjzLoGLS9wuq0wZbqDxOLnMQzi+oJn7FGqbOWU719ctm2f9RqjTP9ZXDtcYnAq3vGPYas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729081625; c=relaxed/simple;
-	bh=eY6kLN8OlN+AhPSjfqE9l5XEI+8YBmb961qfGDylvwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AsXymXiubOq2IXvnyu0Yr9ixv0wQBG5QA74AwF064eBSsVSagv3o/B/N/i8zUZN+ztAOY2SNdNuXtQO7boiCqt0izGETpatR+l3wTHFsr4fcJCOEWD2FG1khESIXBR34hzAbsR2cjO+P5BvGN3HrMhlayBnoNyIiE8OiIYp8CZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewgSS7JQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4677BC4CECF;
-	Wed, 16 Oct 2024 12:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729081624;
-	bh=eY6kLN8OlN+AhPSjfqE9l5XEI+8YBmb961qfGDylvwo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ewgSS7JQnctq7Hgrv3uuVnVef5NJ6/W1nB36pkS9n4SMtyIyVrElKtKyFF1q0jkpP
-	 EsFcTPX0SKB8iugJZ8fG/3GbaKQ9JTTxiSf0x8Je0VGHSki/f8KCPFSVhlw3IAbCgq
-	 dHZxxLb3XDQt5YWY63oWKwfSJfIRrZ4ETnxR7W4suuZEwzrS9kg5Y5qEjXIsmjEAIc
-	 d+qNLfS/dkDTekE3774d/xn4huY0MjrfXRLRM5fT0pICnGA4BMmSBqBpOwDvhxDH7h
-	 lEAtUAvDJvuqN4dGETbbq15U4XHTm20JcFbizm6eRWYoC4wDxNk9mafVHZRkNrpKww
-	 GhffryNbJ3RBQ==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>
-Cc: Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>,
-	Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Mike Rapoport <rppt@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>,
-	Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-modules@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH v6 8/8] x86/module: enable ROX caches for module text on 64 bit
-Date: Wed, 16 Oct 2024 15:24:24 +0300
-Message-ID: <20241016122424.1655560-9-rppt@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241016122424.1655560-1-rppt@kernel.org>
-References: <20241016122424.1655560-1-rppt@kernel.org>
+	s=arc-20240116; t=1729081498; c=relaxed/simple;
+	bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=M2tohwPTtMGy5RD7bQ//tpoAxpjvVzjNF29PNxWX5J4KirtVCoTefyVYc0CgFmh0P6QDhCMmbzv5nPCJdri0XZnLKOssOQaktb85poEtnsEv8MpI9t1VGEzp9CydNlIlsNB8ScLgsFaLkS0zI/TPCWQfbzVKFS007AmXaT6hX9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c5a6c5e1so36055965ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:24:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729081496; x=1729686296;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
+        b=AdRP1rQuGzrc3c67iMxuiS4TCrtH4Zscx+xwYX6H7VcU6vfk5jfLlDTymuOQv/EL1j
+         wYNbAEXUmCQh5ojJS/dktKejZr6qz+Y8PFzzgns7wHdrKbI5nJWHwHnfW2nOMELQcacu
+         TA6/8Ke9TF0k6K8iz/WLWb3m3RyMggq/Lw7oKz2HlMdBqKPB2hDeFOAcbLfRwL7S1MQW
+         noleD8w1ZMeNKKOd28Zgw+EQMBvxxRAamk+4VVhpqeDnOXMYr7couGeyYRZSAaPmsZz8
+         PbLSieypl+G90YdF5vLCtMMzyI2+Vq+N9mIG3zR86qmt1Tnj0TKG8XXu5WfBKZxz5U60
+         0Iyw==
+X-Gm-Message-State: AOJu0YzutN1Z8VTBeCYE7HePSp2EuS9H8LAUcOcrVQp0i4W1315BUhd2
+	agtqXb/pqE5eoPjOm7dtfyrBrfDglSN2K2WV7flGymkpLXUeuDZIKrQwBcIQ24o4JySCOk8rogf
+	/2WM/L96nwc14pGGz0iTOWNRLDufpWiMt+4Rbpo5w6wkMMjd2/Rl/LQ8=
+X-Google-Smtp-Source: AGHT+IFtwoTDSmvFExLK6K5idK5cTMkctX8smPHuwVYUAUDmtNwnnxoWhgt95QOPF0aLiY7ell09S7LAJ0njE9E9bmvXwJT6W/7h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2181:b0:3a0:c88c:e674 with SMTP id
+ e9e14a558f8ab-3a3b5f1de0bmr153375675ab.1.1729081495988; Wed, 16 Oct 2024
+ 05:24:55 -0700 (PDT)
+Date: Wed, 16 Oct 2024 05:24:55 -0700
+In-Reply-To: <000000000000657ecd0614456af8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670fb097.050a0220.d5849.0015.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Enable execmem's cache of PMD_SIZE'ed pages mapped as ROX for module
-text allocations on 64 bit.
+***
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- arch/x86/Kconfig   |  1 +
- arch/x86/mm/init.c | 37 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 37 insertions(+), 1 deletion(-)
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+Author: cmeiohas@nvidia.com
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2852fcd82cbd..ff71d18253ba 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -83,6 +83,7 @@ config X86
- 	select ARCH_HAS_DMA_OPS			if GART_IOMMU || XEN
- 	select ARCH_HAS_EARLY_DEBUG		if KGDB
- 	select ARCH_HAS_ELF_RANDOMIZE
-+	select ARCH_HAS_EXECMEM_ROX		if X86_64
- 	select ARCH_HAS_FAST_MULTIPLIER
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index eb503f53c319..c2e4f389f47f 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -1053,18 +1053,53 @@ unsigned long arch_max_swapfile_size(void)
- #ifdef CONFIG_EXECMEM
- static struct execmem_info execmem_info __ro_after_init;
- 
-+#ifdef CONFIG_ARCH_HAS_EXECMEM_ROX
-+void execmem_fill_trapping_insns(void *ptr, size_t size, bool writeable)
-+{
-+	/* fill memory with INT3 instructions */
-+	if (writeable)
-+		memset(ptr, INT3_INSN_OPCODE, size);
-+	else
-+		text_poke_set(ptr, INT3_INSN_OPCODE, size);
-+}
-+#endif
-+
- struct execmem_info __init *execmem_arch_setup(void)
- {
- 	unsigned long start, offset = 0;
-+	enum execmem_range_flags flags;
-+	pgprot_t pgprot;
- 
- 	if (kaslr_enabled())
- 		offset = get_random_u32_inclusive(1, 1024) * PAGE_SIZE;
- 
- 	start = MODULES_VADDR + offset;
- 
-+	if (IS_ENABLED(CONFIG_ARCH_HAS_EXECMEM_ROX)) {
-+		pgprot = PAGE_KERNEL_ROX;
-+		flags = EXECMEM_KASAN_SHADOW | EXECMEM_ROX_CACHE;
-+	} else {
-+		pgprot = PAGE_KERNEL;
-+		flags = EXECMEM_KASAN_SHADOW;
-+	}
-+
- 	execmem_info = (struct execmem_info){
- 		.ranges = {
--			[EXECMEM_DEFAULT] = {
-+			[EXECMEM_MODULE_TEXT] = {
-+				.flags	= flags,
-+				.start	= start,
-+				.end	= MODULES_END,
-+				.pgprot	= pgprot,
-+				.alignment = MODULE_ALIGN,
-+			},
-+			[EXECMEM_KPROBES ... EXECMEM_BPF] = {
-+				.flags	= EXECMEM_KASAN_SHADOW,
-+				.start	= start,
-+				.end	= MODULES_END,
-+				.pgprot	= PAGE_KERNEL,
-+				.alignment = MODULE_ALIGN,
-+			},
-+			[EXECMEM_MODULE_DATA] = {
- 				.flags	= EXECMEM_KASAN_SHADOW,
- 				.start	= start,
- 				.end	= MODULES_END,
--- 
-2.43.0
-
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
 
