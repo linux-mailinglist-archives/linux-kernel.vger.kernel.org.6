@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-367231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56509A0015
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D0D9A0019
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775451F25FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A388D1C222DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4E6187350;
-	Wed, 16 Oct 2024 04:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFA418452E;
+	Wed, 16 Oct 2024 04:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="diRL//Ls"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdJerczv"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FE84A0C;
-	Wed, 16 Oct 2024 04:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A649321E3BF;
+	Wed, 16 Oct 2024 04:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729052262; cv=none; b=VkviF3WRflvXDtDvFsRVEn8AhfqhUXkI4tKOjvucN+WJxj9ptg5JMyrDBa4BcOMsKqyepV0KX/Jn4pxpLJNP81PdLG/ylBNDCTJY360g2m+dhjedGb5b70Td3+aeH58ts9/pl0W2qalhoHeIT8lZTO5YGA/h10kdffyKXJD7740=
+	t=1729052587; cv=none; b=kaBoENfH7QYW0TvtaJddZO8i7tpGlKoEv17ZOKi/+PozasHJkLf7MZasV88SLZiKScwOBIgDxiRV/KVJQfRQ7E8areow8K/BAHkII2ayVDtrc8l0CXTYpA4zvOWAyUfYeVN4wH5/yzn1b5tiHREKDp8k1ziiqpNB91IWP1cAvS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729052262; c=relaxed/simple;
-	bh=YFJHhbYS31Y75rTWk27g/bb9SPMx5GuFvaJtJ59ODFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fXUGGO2CeqgeuUL2At+aDzn8Sd1BTAyw1yrFi0efek3X7IQlmgvcKk52YXdT+LGSsXj/tU2qfqiw/fGvU7XDkep2vMrZk0XMqCQBJqN67j3K4hPojuCZg0k64H+Lq/KR7BaubQLUi+XCCupDySMgxzIx83aCzfmhDPFzTrdc3So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=diRL//Ls; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 90fc54728b7511ef88ecadb115cee93b-20241016
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=1DCabenPzzIyCe0g7pTxKCjOOLbiMHBzb+xs4rZe8uQ=;
-	b=diRL//LscT81YGMHp1OQMg8w8XvR0XuqNXXdjO9X3Dq6nRvYqMtXs9fkPCWcGh+XZ/jgPesKbUlcrLwxqYhglGbd9fGEjyH4rDYgb7WCGkC0W3lTnag0GuN6AiljslJFA1k2xfLwEOWPHOtD+qhWHXlTe8FwPULwyq6MsgutYLY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:7a7c2788-16b5-435d-b964-0de5d69abcd6,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:fa755165-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 90fc54728b7511ef88ecadb115cee93b-20241016
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 992852966; Wed, 16 Oct 2024 12:17:33 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 16 Oct 2024 12:17:31 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Wed, 16 Oct 2024 12:17:31 +0800
-Message-ID: <f624ea86-1754-c365-ab22-a2890960b94c@mediatek.com>
-Date: Wed, 16 Oct 2024 12:17:28 +0800
+	s=arc-20240116; t=1729052587; c=relaxed/simple;
+	bh=PDZSBTmMWo9b2kbSmMjE8hqFjfWQA2TYq8R1eBX3HW0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XHZS1+trsAc5lgjetxueq09iFQE9TZo5jDY5IfK9ufNWDkkDe7y00m2q6DzhxfoNczZGlgNS1S67bs4x0XAVIHICrIqridfMkDMv5AXVY7EALyXKXRgKx3AB1xLzcdegdCWVhjXVQOViI5NEDGF6QeTr150HjSnMtrm/DyLsIUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdJerczv; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e4e481692so3595610b3a.1;
+        Tue, 15 Oct 2024 21:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729052585; x=1729657385; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gmOBl26ejau5/esp+8BV+SXFKf70pqYfUEKz4LKsJpY=;
+        b=XdJerczvtyBs494uziGwMss0fnPQdygzGPY8OAW9bCRpIYDDIVheYV90nErSIb5XYd
+         dG4qqpm7Cb8/aFmZWlAt6bJkbsdE0hblpTZF2i+XRUEKKcxDVfKtADgoCwKLZziuEkrR
+         3GGNjOJsaPDkNeyQZ1qJFmvwGDvS9xSS6KNgKvD6Y7zADOh7LhOuZKGNBNTTVkCUYJY8
+         BuxMKvws19lo7jtnQWro/iTfIOnG90SFzWleSiuQc/aZK0e/xBYL+CE4Mv6IbcZX7Lpz
+         OPVVXqXtF0yOoCP/jMNU4HtCKnK+DbAJnDb2AkRu2vp+GiAetqYi1ck+FMgwnwKS4uOB
+         V7sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729052585; x=1729657385;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gmOBl26ejau5/esp+8BV+SXFKf70pqYfUEKz4LKsJpY=;
+        b=YqffFblIwyM/0wpxCtVpyrfYr3QzF6HXg6/XNajTXufxm6y4oGM2DpW3ZxlqzPMP8z
+         d7J/MYmaGKyRigQGrDkEz/0wKJa27d/7zfSGDi/xBpmsSeNPybz2tkfsKe/zwZfXi3vj
+         Gc4wG/OXO7FBMn2SUPgbJOYwcjP9DFYFkOuLNqXE1ZsQmpsS2ckY2Hp27J8VGrM4a5by
+         W02TGkLrxAPV5hfn6rCH0PhEFhWFyk5OkZ9W5N1QTwt07b30BmKY61e+L3giYK5QwC4V
+         fgOL7jELXDiS0sTv5H35SsrB+1lVqJpvUOqI7vHdXGYP540lzH66uu8WB8hPWOaDAanX
+         kLXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFyWYa2ps5vhhvIMZ24X9Y9J2m4HfZ0I7dXY87Hnq4Q8CwK8f6ymQO+AnLOKTbQITp3+VmFddfk+sdiQ==@vger.kernel.org, AJvYcCXnkzfwdLYKlCGNKUR1N6zBhqn53lD7/433nmYkT4R4Iv6AGjiShj3WnBaGOsDGw/UQzcabKoM1qNywxyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCYrepdANVCVgRzs8u/HtSf2hKCEvYhM8+necq9s/g8bKSKufw
+	F/TztPUfWN0gY8uA08BfHFz2ec4O/GXXdOID5K6+GnKH1lIyroMp
+X-Google-Smtp-Source: AGHT+IGyfYPslhJwRcAU6liAsqT25zSnwSsDE6zYG2noVYjDGvopXZPINLehXxi+3oijkmz8hoSnpg==
+X-Received: by 2002:a05:6a00:181d:b0:71e:104d:6316 with SMTP id d2e1a72fcca58-71e4c1bfb5cmr21039998b3a.21.1729052584819;
+        Tue, 15 Oct 2024 21:23:04 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:11a6:bd6f:94e5:e911:e544:8911])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e773a2f2asm2175122b3a.51.2024.10.15.21.23.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 21:23:04 -0700 (PDT)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: lee@kernel.org
+Cc: angelogioacchino.delregno@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	pavel@ucw.cz,
+	surajsonawane0215@gmail.com
+Subject: [PATCH v2] leds: Fix uninitialized variable 'ret' in mt6370_mc_pattern_clear
+Date: Wed, 16 Oct 2024 09:51:42 +0530
+Message-Id: <20241016042142.8088-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241015085842.GC8348@google.com>
+References: <20241015085842.GC8348@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] dt-bindings: usb: mtu3: add mediatek,usb3-drd property
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: Chunfeng Yun <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, ChiYuan
- Huang <cy_huang@richtek.com>, <linux-usb@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Bear Wang
-	<bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin
-	<macpaul@gmail.com>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chris-qj chen <chris-qj.chen@mediatek.com>
-References: <20241015172100.15150-1-macpaul.lin@mediatek.com>
- <20241015222046.GA2164669-robh@kernel.org>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20241015222046.GA2164669-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Fix the uninitialized symbol 'ret' in the function mt6370_mc_pattern_clear
+to resolve the following warning:
+drivers/leds/rgb/leds-mt6370-rgb.c:604 mt6370_mc_pattern_clear()
+error: uninitialized symbol 'ret'.
+Initialize 'ret' to 0 to prevent undefined behavior from uninitialized
+access.
 
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+V1 : https://lore.kernel.org/linux-arm-kernel/83572cde-19a1-4089-b02b-361a8ef40bee@gmail.com/T/
+V2 : Updated .gitconfig to use the real name "Suraj Sonawane" as per the feedback.
 
-On 10/16/24 06:20, Rob Herring wrote:
-> 	
-> 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
-> 
-> On Wed, Oct 16, 2024 at 01:21:00AM +0800, Macpaul Lin wrote:
->> Add optional 'mediatek,usb3-drd' property to MediaTek MTU3 DT Schema.
->> This flag specify whether it is a USB3 Dual-role device hardware.
->> 
->> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
->> ---
->>  Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml | 6 ++++++
->>  1 file changed, 6 insertions(+)
->> 
->> diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
->> index d4e187c78a0b..1e70af0dac82 100644
->> --- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
->> +++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
->> @@ -155,6 +155,12 @@ properties:
->>        property is used. See graph.txt
->>      $ref: /schemas/graph.yaml#/properties/port
->>  
->> +  mediatek,usb3-drd:
->> +    $ref: /schemas/types.yaml#/definitions/flag
->> +    description:
->> +      Specify whether it is a USB3 Dual-role device hardware.
->> +    type: boolean
->> +
-> 
-> Don't the standard properties such as usb-role-switch or dr_mode work
-> for you?
+ drivers/leds/rgb/leds-mt6370-rgb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've found there are some hardware capability registers could be read
-when probing the device. I'll try if the platform I'm using could access
-these capability registers.
-This patch can be discard. If the hardware really need specify the 
-capability in dts and there is no capability registers, I'll resend
-this patch that time.
+diff --git a/drivers/leds/rgb/leds-mt6370-rgb.c b/drivers/leds/rgb/leds-mt6370-rgb.c
+index 10a0b5b45..87805c21e 100644
+--- a/drivers/leds/rgb/leds-mt6370-rgb.c
++++ b/drivers/leds/rgb/leds-mt6370-rgb.c
+@@ -587,7 +587,7 @@ static inline int mt6370_mc_pattern_clear(struct led_classdev *lcdev)
+ 	struct mt6370_led *led = container_of(mccdev, struct mt6370_led, mc);
+ 	struct mt6370_priv *priv = led->priv;
+ 	struct mc_subled *subled;
+-	int i, ret;
++	int i, ret = 0;
+ 
+ 	mutex_lock(&led->priv->lock);
+ 
+-- 
+2.34.1
 
->>    enable-manual-drd:
->>      $ref: /schemas/types.yaml#/definitions/flag
->>      description:
->> -- 
->> 2.45.2
->> 
-> 
-
-Thanks!
-Macpaul Lin
 
