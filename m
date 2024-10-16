@@ -1,346 +1,204 @@
-Return-Path: <linux-kernel+bounces-368700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CED49A13A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972049A13B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B3E2B239C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:16:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF84B1C2229D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B3E2144C5;
-	Wed, 16 Oct 2024 20:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA53216A2F;
+	Wed, 16 Oct 2024 20:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gmKKphDA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="o3peUJ6b";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="gUvav13Z"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98D1CB9F9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729109788; cv=none; b=RKR8qkWejM5sAAiz2fZZDZGz0GWGS0IQJGJL0wqhCngGlDB/IO3JH+6hgTiEtQPNAuInXf6s8pnhTbF2uWE3pk+uis277oFZimxA8/i+NMYp5sZf5bEtOxQTMAfBjgytMtyaOwVyxmWtMU4y6Uu8YLYM0OmPJHHJmWBsq/dsYGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729109788; c=relaxed/simple;
-	bh=bZzSv4DegGa8Xd2G/fxdzrNAynowRSr1YBY6ag2UhBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VprcOFHICowIeS36eXEa4NsNAZD+75HUZ8XQa4VW/TnZT2WTYbjXeMQLxkC/DU4Y1+0P6fIgHkaQuTkZTIl6aU17s/auFGExtQdqAyE7l0Er8sUc1Sd22KtHc9Apn3KH94AqIxBbppUQnSIo7wvRapAD51FNWu1eNR5q1bx5wwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gmKKphDA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729109785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PuKyXIpwbMkMae+8UA8H2r+y4HqlTOe6EDodUx/P+3c=;
-	b=gmKKphDALSCH5PMovG11CfzCV1NsyQuG54ctVczZmN/ZLO+VG9jaKjKgvurWakWitJTaj/
-	w7MBEJb0LLMShKB14wGLHa8T+Fc8UOlE/83LT271fUlJYdL0LEvH8OemJs1Y0aGqk+qAK3
-	fgr6lOSb5cZNqYpgcH6742z9m8WK5yc=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-456-ZE_sPZvwMwy6QREiS95sSA-1; Wed, 16 Oct 2024 16:16:23 -0400
-X-MC-Unique: ZE_sPZvwMwy6QREiS95sSA-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460942ff8a1so4459761cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:16:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729109782; x=1729714582;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PuKyXIpwbMkMae+8UA8H2r+y4HqlTOe6EDodUx/P+3c=;
-        b=cAu7jtKYOa0mMt36EyLTq/EGH10wnRrEZHntgpS0Xh2Lph3oRCIBP4nUgumKgk2v66
-         Q0yrxCkdyJfyNGphW0Tw7d1R5AKYjmdsi+Bd53HF3nrVe1PggYndfGdg95X49NkJmMlO
-         P/NyQ599ffV8+kIzd8NtDgz3ihHArAkEMowUd75ach8UHMOh3xJjQXSWK9z1yDQSLMBF
-         8qbvqy22Aq7+H4yUia2oCVkCcadXlL47lignGKPgLaqDHsAb0SUcG8RAJgnvt6lfNlRL
-         0Nr+uVp5f3uG5f5b8oXfNXKQdlbOPqfCAarOQtgx5ROcZRCJSgIGqvYqBFu755AolOqL
-         U+dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGcQs4tFxzbfQfFo6iGZXK6HYloGxSc+PG9RUhfbnVCNqTVk1fiqnVcvEAAZtWpHupWs5CXT7u4NWJw3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+WFjy4i/FCoZbu3bSMoVPgynlSRcE65bXvfbCmZDl9XJMOX3r
-	joVFSW7hxIbI0CVwntjIbjelxguQq3PKeqcv2jbMMYuQOlgp1n/BMl/ZW/jZ6giEuv7ghIQUHhu
-	6Xim4fAf/NXepqVLXo6p8jjggFlTJXGZS5G2nlbOWnAnGTBltVofU/AHJ/9oqMA==
-X-Received: by 2002:a05:6214:5a02:b0:6cb:4b65:950f with SMTP id 6a1803df08f44-6cbf9e9683cmr199834156d6.50.1729109782444;
-        Wed, 16 Oct 2024 13:16:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqNPWbjKBjatrXrr1J0gBbmpb2nr0vAKajL1whHjOqzoKvPk6RplkcmqwgplY800VhhFSBLw==
-X-Received: by 2002:a05:6214:5a02:b0:6cb:4b65:950f with SMTP id 6a1803df08f44-6cbf9e9683cmr199833916d6.50.1729109782061;
-        Wed, 16 Oct 2024 13:16:22 -0700 (PDT)
-Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc2292f076sm21192606d6.65.2024.10.16.13.16.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 13:16:21 -0700 (PDT)
-Date: Wed, 16 Oct 2024 16:16:17 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, tabba@google.com,
-	quic_eberman@quicinc.com, roypat@amazon.co.uk, jgg@nvidia.com,
-	rientjes@google.com, fvdl@google.com, jthoughton@google.com,
-	seanjc@google.com, pbonzini@redhat.com, zhiquan1.li@intel.com,
-	fan.du@intel.com, jun.miao@intel.com, isaku.yamahata@intel.com,
-	muchun.song@linux.dev, erdemaktas@google.com, vannapurve@google.com,
-	qperret@google.com, jhubbard@nvidia.com, willy@infradead.org,
-	shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com,
-	kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org,
-	richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com,
-	ajones@ventanamicro.com, vkuznets@redhat.com,
-	maciej.wieczor-retman@intel.com, pgonda@google.com,
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
- struct kvm_gmem_private
-Message-ID: <ZxAfET87vwVwuUfJ@x1n>
-References: <cover.1726009989.git.ackerleytng@google.com>
- <bd163de3118b626d1005aa88e71ef2fb72f0be0f.1726009989.git.ackerleytng@google.com>
- <Zwf7k1wmPqEEaRxz@x1n>
- <diqz8quunrlw.fsf@ackerleytng-ctop.c.googlers.com>
- <Zw7f3YrzqnH-iWwf@x1n>
- <diqz1q0hndb3.fsf@ackerleytng-ctop.c.googlers.com>
- <1d243dde-2ddf-4875-890d-e6bb47931e40@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E27D215F75
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729109890; cv=fail; b=L3cIgLprLAJwfnoR4cl9/n5ynPPLhi+6WCeSPH2QrX36bn4qL2RAeLdnNfqn/oPxQ8ihS9HjLC5f9za+y1AmQEV73VEDHy6UGnGJSiCxWgEY0dH0a44+UQ3APs8GwUryV5Vx1kExnjOrY1mSWmQ1OpHNwzL+4xsmNYJFOOi24yk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729109890; c=relaxed/simple;
+	bh=3B3s966XBYPGtWS3euVwBRJoibA8zMx+du0G0uv8Nwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uVi+5VuVC407kP4lW8rfWEbS2LLOndG6lm5X1HrPkt5M2APvQQVCsRqlUjYHIeyqtYIEjok2k131BO0EAYHhH/GXDKQSO8clw2cKCJpewYh9zt+mcjGZSGG7ahgq5nH/V88vovk8rmK0OhGnOVyzMr+cttNGFKPgJFbSLzFIrpE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=o3peUJ6b; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=gUvav13Z; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GHtdX9024396;
+	Wed, 16 Oct 2024 20:17:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=Hyd+Pze8yb5DThbu
+	QeFMYgV/MV+Ys2I+7ZCMjqUFpRA=; b=o3peUJ6bNB9+Tr8yfv+K+yKc56gZ0DEz
+	J+mSRSgfNK1yZnn4ls3HLjam4gWpJbphoBzYACfydAreW8qe9h78el046YEYxKis
+	covcpLVAchVZQdpklfR7IsW1evFuKwSrse6DzGW+05P3Yw3AvziRsDXMP0+ZKnQS
+	bglD1Xfw4aVdj8sUeJ1lN7PycGyfrTfjo4/0FvT+RkII3A4I12HZyEfdUlgGpZcf
+	YOv6znwDVWEQP6X7Rjo7vjMR28n/mlzisv350rMi7wEDYN/Cfjvgae0PZ3Hj9l/P
+	Ra5nUzGlPG60N9SlAvS5Kd50fEhJwIQM95P0z59RHTXmg62ZCPdqYA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427h09m989-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 20:17:42 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49GIgMdX026420;
+	Wed, 16 Oct 2024 20:17:42 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2045.outbound.protection.outlook.com [104.47.70.45])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fj9b8eg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 20:17:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SvC3UZigBoLx8f7wo+AtUIpJ2dx/SD3VCfSFHHENFSL+ZqzKLNta/kdK7ryY4PlPdOQ04ZyNTvPdiC80PBN6rBCjNE/c97T7FuNWyF71sJ1PHb+1C+jw66NI9Q99uvlXk5XkP5mF7sTWhvsp0XyQs7EOwjtJO6jvekpoC9d9tQus2C6x0XkmE+rSfmeTpyVQGDSLgvAZDZSRN+IHeBEZR4N9jq7nQgxFJv2VBqEDpw04S4PbKKMflymBNdojZrWtPl+m4QkD/zqDrM9tWk8iqyyuf1fSuWX1myc7GvlF+JxXOXdOfVeeiHvZZZYRXvfdMBi9PBO9eBHUFwd+KDB3qQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hyd+Pze8yb5DThbuQeFMYgV/MV+Ys2I+7ZCMjqUFpRA=;
+ b=yzyW1Ttz+Frx2g8Y5QjTCmwzeaEzrO/E4OyAn1mYVfwVWB3pkHknqE9XnwRRR6zpHFs9FWy/cxo8Km5bh0pP92cU+SHe40wxaQ+/GTU1whSFjtGefycEQ4cHiDlXxsKotX/dyXbBUlxe/jeuLhk8bL+2jHD//16vy6Ntr9XK5Yc2fJJsDuj9rhJAKVow/1H8RFmbnVZ5du1KvLtW2W1Hw/D/ftoiHuknfX5yQu2MdMclrzgrCAaJ7ueIg04rTaz1jtQsCIJL27d5gCkIFXfic6xNGlvc4djGfgLCoMcBq3SPFG2o3QgIosyMvrZtBkcgbMmJOUvfH6nWwzwPZ3bMmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hyd+Pze8yb5DThbuQeFMYgV/MV+Ys2I+7ZCMjqUFpRA=;
+ b=gUvav13ZO/4SozBpTT2Yx6pZZs+vd9W5oekrnZLEx1XkjoKRlDvzxn6RHG/NzTXkRG/Hyd8DaPZO0MD/1bT45j8eMLMhaj9N7agjXR5xhyvYxcbeO6DnB0MQxzsn1TBwdSn7xsAxPYLffDqhgRa2JN6JEeKVHyrgfOh1EqnaUBA=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by IA0PR10MB7579.namprd10.prod.outlook.com (2603:10b6:208:493::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Wed, 16 Oct
+ 2024 20:17:38 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
+ 20:17:38 +0000
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Jann Horn <jannh@google.com>, David Hildenbrand <david@redhat.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Jeff Xu <jeffxu@chromium.org>, Pedro Falcato <pedro.falcato@gmail.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: [PATCH 0/2] mm/mremap: Remove extra vma tree walk
+Date: Wed, 16 Oct 2024 16:17:16 -0400
+Message-ID: <20241016201719.2449143-1-Liam.Howlett@oracle.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: YT3PR01CA0100.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:85::33) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1d243dde-2ddf-4875-890d-e6bb47931e40@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|IA0PR10MB7579:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a3d07c8-304a-4f09-2ade-08dcee1f9441
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Mx6O5bDmY+81nzl+ptkvsG9+PHQnfanNqis2EHJpfEIn97BJyLJcnHvXHq5a?=
+ =?us-ascii?Q?Yt0H4tKtv7yVNqgjXOSISBzjyf8lBJ+smR8ZTqMUMdVTGb1zXwkvifmG04cA?=
+ =?us-ascii?Q?CVyBvlcK+AuVaR9+Hg37q9COs5Id0HB6EgOoTPPAk6IqoyhvzY0ptXkwhyC4?=
+ =?us-ascii?Q?2iE7rC45U6vlh1auJKR0ePIs88WzzN+imjqEqI8HW2u14z2Pww1u545XJ2dl?=
+ =?us-ascii?Q?6J9vfMydaqwQeK2X6r/5BTa8dpX0qyI979HyOxnWQYfs1mnmI3cWmhfirKH9?=
+ =?us-ascii?Q?e8xGdL7QcUK7TVe1ldU6lTCMxAJJ93lL6SGPCPCkMXVwNtbSj7kPaoifO761?=
+ =?us-ascii?Q?AFjHW3aDK73bwMAGhoTNt4ldp8oTeZl63tvcoYAsFf1wh0nIEzaEy3trA1df?=
+ =?us-ascii?Q?FQn2kP/MYMiDPFO5WqZiatzRzUs9QNN150HBvRmUinWEq+VXGQRD0xO173kG?=
+ =?us-ascii?Q?oBoPhWNzqKmPO3qvxxRt3uxxsixfvEYrhsJ5nwlPU6zT5MJxL4gnGFaen9l6?=
+ =?us-ascii?Q?zryixzyujkqOs+6QmXFX6sIwu6LPngqn/MuFfBS44OP7r75czKnpD35iNmZa?=
+ =?us-ascii?Q?PXM4Z4vP4dVQVPBbsSRsSedXhA5C59GktqpMdBchm0T7bQ9AYs2X3WpIcQ3c?=
+ =?us-ascii?Q?wKtQMSn36sDk+2qoI2F7/0IXU1S2Wl9Urn0sjK1jJCjWHKGk8UjX3WBFqI1/?=
+ =?us-ascii?Q?MZlsqbMo8Sn+bq1RHpA+PUI7cXKw1VAlzWDZPYyzg8975aQ1MZCNVx9SJ636?=
+ =?us-ascii?Q?9mglgSmNgKKYlBirtjg3X+xMdnN7PkLUyvL3NqhAITksKCECyjOAkBsp+30R?=
+ =?us-ascii?Q?CAzzizv4w3Ul94RCKO7NlazSKETZTGkCdXi1eBFYrJbshaeMSM+FYuKZTVNL?=
+ =?us-ascii?Q?f2sAk04uG/PWV6947tY6ncxoettSL1U6/yFjqoc7JuroMUMXEGDvo4H+I/YK?=
+ =?us-ascii?Q?8v7wt8aJUEpefdUx1tWf4qz7zu0wxpYMnAMoStqaUC7KMcEHDEHFGQgR8sC7?=
+ =?us-ascii?Q?LNPIp28yEYVWrAWWj2JB5hhjni0S/MBY5uXh1VE0K6GRgb4FoETniICcfj02?=
+ =?us-ascii?Q?2OXt1ysXwGqIpI7rFi9SP05jl/Rahv7P53wsX9axAK9NE1IlEGF8C2nWt/Uk?=
+ =?us-ascii?Q?ppy/e57JwaiaH19yidGd6NzRgYCWOTLZU6OvjnxtrCg7SH1Cx0wvYFZEOVB0?=
+ =?us-ascii?Q?F9tViTZMaoobNYZwhQTFumnaTP9qs9Zp+gbU6I6tUeosJYTc8BWN45FnB+7p?=
+ =?us-ascii?Q?tgIYT9ljIc1d7k3anRWJPUIMQ6KUlkqx94DCGk601UXTyVskI6aiUwN6nDcY?=
+ =?us-ascii?Q?9u4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?l/y0G/j6FLccyB7YXfh+voBTExzlj7LW21wWyywwLMkSmMAddImvyNDj/NJJ?=
+ =?us-ascii?Q?Ab4+FK/T8dYY3ECm/75yLyaCKnqlwkLDrUoGlGLm0VrTGlGSFEI4jVgcOEyJ?=
+ =?us-ascii?Q?fh/Jjt5+7FYVr5Pu6ClaV4SkgbflOIoXkmaEb4V0+uvor7HX2Y3f/MYb3xwu?=
+ =?us-ascii?Q?f9EV4s/8u8zFj7rr0ntLG/IEbaRn0mdxQng3DtaDhRBglY4t0wJVyDtsO1a0?=
+ =?us-ascii?Q?d0KXRFC0lMeuAIvPBOoIYk2icgt6/JFT7XAbEbF5kz2Ixfy5MFjnU4Qxk9VD?=
+ =?us-ascii?Q?rkgkBjKTQFX6+7vwuq8EpfrSoUNQGZ1De0+4scFHkt6ik6dGKISM4by/0GWT?=
+ =?us-ascii?Q?KKLywaTLe4OR97JasguVDg7PlUl4STXVR4y1qUJv8rRZ0gx9RbZsPSsFrjTd?=
+ =?us-ascii?Q?YB/9CwHhcNvM9ZwQqxdUHobzc+MdLsoh1j9BoDGy/AvYD7pI4S3cWH2JD+DG?=
+ =?us-ascii?Q?8np9yHxMLIlWa1r4dNGfinVuVAtPOFXQZJRLCjq+/l1TrIIC31WBWRXmgTHu?=
+ =?us-ascii?Q?L1jF/PMcQE/d8rSZBWpmnFr1cColVDLkRpT9eqQaWSylhlLrkUcOl/1JPDda?=
+ =?us-ascii?Q?M+A71SfBSvQKckpAxqECdtbLhO2anmOtwK3r+WoFzZKNzVfrUOeW6XzUUXfF?=
+ =?us-ascii?Q?aa7A/GLG5VQKvwoqUa34m2rkECY3XG/wyAeur7dWzKbNq8Wm+9/mLrbr7rGU?=
+ =?us-ascii?Q?HT0cliTVONvM4I845dj2HobgUXl0inB85LBG+DlkfzQyTDNroGCJCsWbRgbY?=
+ =?us-ascii?Q?1/Sda/dJb5n3A4GIcPtWwI/+6TRZHIb9iPzyKGI7YpvNYi22nDtrSv7E8Owx?=
+ =?us-ascii?Q?Pq/HZ7TTLHwvmT80ag2zTZAS+5DgTMkRoqJSKpTSgBYe/wS/ZiPqkxCSCelP?=
+ =?us-ascii?Q?QBhwWf/pGwj3ZSd4pdfP+v9oVNyqgcxmG76/duJiLwrBX+nZPj28zPU9yTxr?=
+ =?us-ascii?Q?F5tLY+uffGDf1WIlsZX3qY7MZYkPiH8U5+RU81+9P3PzSkn3KpiVCK6gdV+g?=
+ =?us-ascii?Q?1OQYD5Y/LhtdQW9R90XE4MX+J67nAAs2OXIgEecRRiRNnn8KWr8OjHR9pICo?=
+ =?us-ascii?Q?IRtRT4B1v7OPds5thTIXFwA0O3I4wxKy/OiTP4B90YsCetyGWScTzfa/cVjE?=
+ =?us-ascii?Q?wiYhsKoZ/TM6PWw/Bq4A3c1YKCIA4DxaZjbwZ8le3c0RPu/xMTgwHDtyf7zl?=
+ =?us-ascii?Q?z8nec1+w4WYzGQk6CaWRgVx5Jc4wIKO2NP1dsu44x6BSePTt/50LSAOq/IbZ?=
+ =?us-ascii?Q?slCFanKyQnXfsMzoY8tyP9rTrofRNWapSK/P1kttHu7x5g9oZXvtE+trwRsK?=
+ =?us-ascii?Q?XkekeF198k5WNIfCNgj9vNDULKjdqRNic5BHYw1rBUWslN2WJxj+ql+qFPK1?=
+ =?us-ascii?Q?i9UAwRUf7T5W+mp/tGOsBRRYewlKYaOfpPJAW44JoHL9I+X8Eav1KBPBxxZx?=
+ =?us-ascii?Q?nqZbOV88xnfGa41xBKGOJ19yikU88Y9dQWNxD44p1IiI6mx9fw7Yk5whPboj?=
+ =?us-ascii?Q?X1CW5JKXBvkP0Lhgy5QkcDWZkBCH0oZ3qibmia1OXXsw+aedxbrQ01DOwoj2?=
+ =?us-ascii?Q?3wjx7o0W+E0w4djIShEWPNKwuXeo848BNhh5bsLODF7dzJoUsdCCafSP21nh?=
+ =?us-ascii?Q?gQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	PDwsu6wGV3Ufj9Zv9RymEMXUMTLZcXSYzJlyURSeH9M5NVNNX/fWxvJMzm0HYS7mHJ8UEqsfUa3keEnt8YbOu7xkZpfpqkOxsNyr+XRaovNU1QJExGBYf74Cj+PBjpS0gSfbOGaEIqRXfGWwf8KOkQxwKFDKM1smJRCpOQ709upg7QUsbcHmnBrC6hZojXRJ/gIA1bJjKTtI17uVyzQK/6M1GtuBsZZrLo6DXu8mKM8PcJvADgruLuvYIlVdQh9eRORFhenUGoqNbsVqzc9qfAG7lrNRqnlhWFwcZnx66BShXCBU/t8E3Kq5aqOPsRNwDTFxFHTFPp+zBBSIcpQ30Aw0QiDcmLRH0p5h29isf8C9WMVUndY6Xild/kq/3r8TWkqpyLKvuNOSDKH66bHZYewm9uG4xGaAi3ejVJtgVNo/RWhw8x210coiGXfqjgGiUHQoykmQVov7zmM9FFEg2F82tDJyCT/uJMw4AOX/S6kciuaubBHE2Ym6BpZK+AzDnqRpvo7YupGP3P1CywoTHWZwbaLZts9IHyYbef1XV2uGGJpbhUqTu83T6BoYODRHkeWTOJvxvdh1Luz2yq7wzJ/9gTRjBbXsvgU82nga+HY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a3d07c8-304a-4f09-2ade-08dcee1f9441
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 20:17:37.9775
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qvSa1V0mKdvEuZ3wggllMFqXUXFWf/EsKoUk5JuwZypssx2KHPv2Mhfj2srgCDA/Lq38LSJLipg8gN3RrBuDrQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7579
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-16_16,2024-10-16_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=578 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410160128
+X-Proofpoint-GUID: wi_jXTnabrRvOmnZB2eFCwD2miX1nmLY
+X-Proofpoint-ORIG-GUID: wi_jXTnabrRvOmnZB2eFCwD2miX1nmLY
 
-On Wed, Oct 16, 2024 at 10:45:43AM +0200, David Hildenbrand wrote:
-> On 16.10.24 01:42, Ackerley Tng wrote:
-> > Peter Xu <peterx@redhat.com> writes:
-> > 
-> > > On Fri, Oct 11, 2024 at 11:32:11PM +0000, Ackerley Tng wrote:
-> > > > Peter Xu <peterx@redhat.com> writes:
-> > > > 
-> > > > > On Tue, Sep 10, 2024 at 11:43:57PM +0000, Ackerley Tng wrote:
-> > > > > > The faultability xarray is stored on the inode since faultability is a
-> > > > > > property of the guest_memfd's memory contents.
-> > > > > > 
-> > > > > > In this RFC, presence of an entry in the xarray indicates faultable,
-> > > > > > but this could be flipped so that presence indicates unfaultable. For
-> > > > > > flexibility, a special value "FAULT" is used instead of a simple
-> > > > > > boolean.
-> > > > > > 
-> > > > > > However, at some stages of a VM's lifecycle there could be more
-> > > > > > private pages, and at other stages there could be more shared pages.
-> > > > > > 
-> > > > > > This is likely to be replaced by a better data structure in a future
-> > > > > > revision to better support ranges.
-> > > > > > 
-> > > > > > Also store struct kvm_gmem_hugetlb in struct kvm_gmem_hugetlb as a
-> > > > > > pointer. inode->i_mapping->i_private_data.
-> > > > > 
-> > > > > Could you help explain the difference between faultability v.s. the
-> > > > > existing KVM_MEMORY_ATTRIBUTE_PRIVATE?  Not sure if I'm the only one who's
-> > > > > confused, otherwise might be good to enrich the commit message.
-> > > > 
-> > > > Thank you for this question, I'll add this to the commit message to the
-> > > > next revision if Fuad's patch set [1] doesn't make it first.
-> > > > 
-> > > > Reason (a): To elaborate on the explanation in [1],
-> > > > KVM_MEMORY_ATTRIBUTE_PRIVATE is whether userspace wants this page to be
-> > > > private or shared, and faultability is whether the page is allowed to be
-> > > > faulted in by userspace.
-> > > > 
-> > > > These two are similar but may not be the same thing. In pKVM, pKVM
-> > > > cannot trust userspace's configuration of private/shared, and other
-> > > > information will go into determining the private/shared setting in
-> > > > faultability.
-> > > 
-> > > It makes sense to me that the kernel has the right to decide which page is
-> > > shared / private.  No matter if it's for pKVM or CoCo, I believe the normal
-> > > case is most / all pages are private, until some requests to share them for
-> > > special purposes (like DMA).  But that'll need to be initiated as a request
-> > > from the guest not the userspace hypervisor.
-> > 
-> > For TDX, the plan is that the guest will request the page to be remapped
-> > as shared or private, and the handler for that request will exit to
-> > the userspace VMM.
-> > 
-> > The userspace VMM will then do any necessary coordination (e.g. for a
-> > shared to private conversion it may need to unpin pages from DMA), and
-> > then use the KVM_SET_MEMORY_ATTRIBUTES ioctl to indicate agreement with
-> > the guest's requested conversion. This is where
-> > KVM_MEMORY_ATTRIBUTE_PRIVATE will be provided.
-> > 
-> > Patch 38 [1] updates
-> > tools/testing/selftests/kvm/x86_64/private_mem_conversions_test.c to
-> > demonstrate the usage flow for x86.
-> > 
-> > Fuad will be in a better position to explain the flow for pKVM.
-> > 
-> > > I must confess I totally have no idea how KVM_MEMORY_ATTRIBUTE_PRIVATE is
-> > > planned to be used in the future. Currently it's always set at least in
-> > > QEMU if gmemfd is enabled, so it doesn't yet tell me anything..
-> > > 
-> > > If it's driven by the userspace side of the hypervisor, I wonder when
-> > > should the user app request some different value it already was, if the
-> > > kernel already has an answer in this case.  It made me even more confused,
-> > > as we have this in the API doc:
-> > > 
-> > >          Note, there is no "get" API.  Userspace is responsible for
-> > >          explicitly tracking the state of a gfn/page as needed.
-> > > 
-> > > And I do wonder whether we will still need some API just to query whether
-> > > the kernel allows the page to be mapped or not (aka, the "real" shared /
-> > > private status of a guest page).  I guess that's not directly relevant to
-> > > the faultability to be introduced here, but if you or anyone know please
-> > > kindly share, I'd love to learn about it.
-> > 
-> > The userspace VMM will track the initial shared/private state, in the
-> > sense that when the VM is created, the mem_attr_array is initialized
-> > such that the guest pages are all shared.
-> > 
-> > Then when the userspace VMM calls the KVM_SET_MEMORY_ATTRIBUTES ioctl,
-> > it should record all changes so it knows what the state is in the
-> > kernel.
-> > 
-> > Even if userspace VMM doesn't record the state properly, if the
-> > KVM_SET_MEMORY_ATTRIBUTES ioctl is used to request no change
-> > (e.g. setting an already private page to private), it will just be a
-> > no-op in the kernel.
-> > 
-> > > > 
-> > > > Perhaps Fuad can elaborate more here.
-> > > > 
-> > > > Reason (b): In this patch series (mostly focus on x86 first), we're
-> > > > using faultability to prevent any future faults before checking that
-> > > > there are no mappings.
-> > > > 
-> > > > Having a different xarray from mem_attr_array allows us to disable
-> > > > faulting before committing to changing mem_attr_array. Please see
-> > > > `kvm_gmem_should_set_attributes_private()` in this patch [2].
-> > > > 
-> > > > We're not completely sure about the effectiveness of using faultability
-> > > > to block off future faults here, in future revisions we may be using a
-> > > > different approach. The folio_lock() is probably important if we need to
-> > > > check mapcount. Please let me know if you have any ideas!
-> > > > 
-> > > > The starting point of having a different xarray was pKVM's requirement
-> > > > of having separate xarrays, and we later realized that the xarray could
-> > > > be used for reason (b). For x86 we could perhaps eventually remove the
-> > > > second xarray? Not sure as of now.
-> > > 
-> > > Just had a quick look at patch 27:
-> > > 
-> > > https://lore.kernel.org/all/5a05eb947cf7aa21f00b94171ca818cc3d5bdfee.1726009989.git.ackerleytng@google.com/
-> > > 
-> > > I'm not yet sure what's protecting from faultability being modified against
-> > > a concurrent fault().
-> > > 
-> > > I wonder whether one can use the folio lock to serialize that, so that one
-> > > needs to take the folio lock to modify/lookup the folio's faultability,
-> > > then it may naturally match with the fault() handler design, where
-> > > kvm_gmem_get_folio() needs to lock the page first.
-> > > 
-> > > But then kvm_gmem_is_faultable() will need to also be called only after the
-> > > folio is locked to avoid races.
-> > 
-> > My bad. In our rush to get this series out before LPC, the patch series
-> > was not organized very well. Patch 39 [2] adds the
-> > lock. filemap_invalidate_lock_shared() should make sure that faulting
-> > doesn't race with faultability updates.
-> > 
-> > > > > The latter is per-slot, so one level higher, however I don't think it's a
-> > > > > common use case for mapping the same gmemfd in multiple slots anyway for
-> > > > > KVM (besides corner cases like live upgrade).  So perhaps this is not about
-> > > > > layering but something else?  For example, any use case where PRIVATE and
-> > > > > FAULTABLE can be reported with different values.
-> > > > > 
-> > > > > Another higher level question is, is there any plan to support non-CoCo
-> > > > > context for 1G?
-> > > > 
-> > > > I believe guest_memfd users are generally in favor of eventually using
-> > > > guest_memfd for non-CoCo use cases, which means we do want 1G (shared,
-> > > > in the case of CoCo) page support.
-> > > > 
-> > > > However, core-mm's fault path does not support mapping at anything
-> > > > higher than the PMD level (other than hugetlb_fault(), which the
-> > > > community wants to move away from), so core-mm wouldn't be able to map
-> > > > 1G pages taken from HugeTLB.
-> > > 
-> > > Have you looked at vm_operations_struct.huge_fault()?  Or maybe you're
-> > > referring to some other challenges?
-> > > 
-> > 
-> > IIUC vm_operations_struct.huge_fault() is used when creating a PMD, but
-> > PUD mappings will be needed for 1G pages, so 1G pages can't be mapped by
-> > core-mm using vm_operations_struct.huge_fault().
-> 
-> 
-> Just to clarify a bit for Peter: as has been discussed previously, there are
-> rather big difference between CoCo and non-CoCo VMs.
-> 
-> In CoCo VMs, the primary portion of all pages are private, and they are not
-> mapped into user space. Only a handful of pages are commonly shared and
-> mapped into user space.
-> 
-> In non-CoCo VMs, all pages are shared and (for the time being) all pages are
-> mapped into user space from where KVM will consume them.
-> 
-> 
-> Installing pmd/pud mappings into user space (recall: shared memory only) is
-> currently not really a requirement for CoCo VMs, and therefore not the focus
-> of this work.
-> 
-> Further, it's currently considered to be incompatible with getting in-place
-> private<->share conversion on *page* granularity right, as we will be
-> exposing huge/gigantic folios via individual small folios to core-MM.
-> Mapping a PMD/PUD into core-mm, that is composed of multiple folios is not
-> going to fly, unless using a PFNMAP, which has been briefly discussed as
-> well, bu disregarded so far (no page pinning support).
-> 
-> So in the context of this work here, huge faults and PUD/PMD *user space
-> page tables* do not apply.
-> 
-> For non-CoCo VMs there is no in-place conversion problem. One could use the
-> same CoCo implementation, but without user space pud/pmd mappings. KVM and
-> VFIO would have to consume this memory via the guest_memfd in memslots
-> instead of via the user space mappings to more easily get PMD/PUD mappings
-> into the secondary MMU. And the downsides would be sacrificing the vmemmap
+An extra vma tree walk was discovered in some mremap call paths during
+the discussion on mseal() changes.  This patch set removes the extra vma
+tree walk and further cleans up mremap_to().
 
-Is there chance that when !CoCo will be supported, then external modules
-(e.g. VFIO) can reuse the old user mappings, just like before gmemfd?
+Liam R. Howlett (2):
+  mm/mremap: Clean up vma_to_resize()
+  mm/mremap: Remove goto from mremap_to()
 
-To support CoCo, I understand gmem+offset is required all over the places.
-However in a non-CoCo context, I wonder whether the other modules are
-required to stick with gmem+offset, or they can reuse the old VA ways,
-because how it works can fundamentally be the same as before, except that
-the folios now will be managed by gmemfd.
-
-I think the good thing with such approach is when developing CoCo support
-for all these modules, there's less constraints / concerns to be compatible
-with non-CoCo use case, also it'll make it even easier to be used in
-production before all CoCo facilities ready, as most infrastructures are
-already around and being used for years if VA can be mapped and GUPed like
-before.
-
-Thanks,
-
-> optimization and PMD/PUD user space mappings, while at the same time
-> benefiting from being able to easily map only parts of a huge/gigantic page
-> into user space.
-> 
-> 
-> So I consider pmd/pud user space mappings for non-CoCo an independent work
-> item, not something that is part of the current effort of huge/gigantic
-> pages with in-place conversion at page granularity for CoCo VMs.
-> 
-> 
-> More information is available in the bi-weekly upstream MM meeting (that was
-> recorded) and the LPC talks, where most of that has been discussed.
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+ mm/mremap.c | 67 +++++++++++++++++++++++------------------------------
+ 1 file changed, 29 insertions(+), 38 deletions(-)
 
 -- 
-Peter Xu
+2.43.0
 
 
