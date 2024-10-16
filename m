@@ -1,113 +1,136 @@
-Return-Path: <linux-kernel+bounces-367832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D751E9A074D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:29:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6314B9A074E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14FE31C26993
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:29:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E691C25B2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C92E212EEE;
-	Wed, 16 Oct 2024 10:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AF5208D60;
+	Wed, 16 Oct 2024 10:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eeESmpRm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ciwYdosW"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C20E212EE5;
-	Wed, 16 Oct 2024 10:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF73E208989
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074265; cv=none; b=aUhWgOYDza4KtE5YzwQmmjuUlGWMenWt8ph+hwZEc+qd7Fce9EOkkBr3c6B3ka8Ndhf4lwXjzdQZKPA3TFtkYzYljn0aCma+pu27plp5PM3EORDwDanY2q99Rjo3fYNDiiO97pHZ6lkMe8GsiMchaL6TSqsZfAMMr4tgif2geyY=
+	t=1729074280; cv=none; b=Nt0gzfjGW3yD9z0qe2BbKFMI1oR50J30UV2m53KY/QKjHw840NEU6IFTToTrQ14S2x0jZFBdhkeuny6Ilaoe4g7ZCHfyBXs6LS+bDoPLn1pBQ5SkycrAKJUG1xUHx8fgJpwaaRB28WPRsp7sy186cyoGAoJFRHSgIEVuoPvLjEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074265; c=relaxed/simple;
-	bh=JyhxhUVd8DyT3ftBCZnDzf7V31bEENXyt/3/kHeBsEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VgJY7t5tuMxAZEYa/+/vlXtgkduFdqGTeSgyFngE2W/1VXora7mshE+wKj9boI/kaQ861KVPFKXv+FiFi9R3HGyObPHVhNAyt4y9zrMjL9czlnfwwBAJjjBN9xfeAGYt8HUgdp4GRZH64MSg4zzcgJEjd8eLDEx19DgeZWfv5ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eeESmpRm; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729074265; x=1760610265;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JyhxhUVd8DyT3ftBCZnDzf7V31bEENXyt/3/kHeBsEY=;
-  b=eeESmpRmj/DKZkI2qFP/yRFi23dFsbAyLinEfTNskQ2Sw5gl9Ee2VB6H
-   A3l2Ry1LMzbDWEaAjRBUHZpAoPkvXekZZBPY2X0/Qbv2tf0yw2Joqk1Zp
-   V/9XSDPlRJAAWtgCWGrCg9CyRnEgG0JhwXJFwo0l3s2n+ATJBVV5tKRce
-   Z+BSei9BpSWHMolprOCeOkOo12lag2AwkHZqz1MNMxQ4KqkxK0DzyqHQj
-   NKSmMQM+2pb88y5OHVVOTtVABFKeCGGoYZ/i1urFOxKtjoBxpJXk08HcE
-   XLvkVCXf2GX5is59pX9Iuv+W8v1Z/aaqIEZ6NScjDDw2OG5k6SaVAx7Vs
-   Q==;
-X-CSE-ConnectionGUID: Z8PgeoHgQgiGQMxWdkHEyA==
-X-CSE-MsgGUID: TfnFR4y+R1yRwtGEKGkPlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="27985947"
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="27985947"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:24:24 -0700
-X-CSE-ConnectionGUID: 85SBHPE5QYebM675VApPew==
-X-CSE-MsgGUID: NY1lfgY5Q4KhZlACQCWSwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="82961045"
-Received: from cvapit-mobl1.ger.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.236])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:24:22 -0700
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: broonie@kernel.org,
-	tiwai@suse.de,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	pierre-louis.bossart@linux.dev,
-	bard.liao@intel.com
-Subject: [PATCH 11/11] ASoC: SOF: Intel: hda: use machine_check() for SoundWire
-Date: Wed, 16 Oct 2024 18:23:33 +0800
-Message-ID: <20241016102333.294448-12-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
-References: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1729074280; c=relaxed/simple;
+	bh=rd8lV8xcyybj14ozti1TTWcm7mZH/T9eRtu97bQ2Y9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CrOehaM3B8r+iJNudXNCxESp7DIZO71HV052+LBRuePqwZSouzYjllVQ6Ms2Sk7A3qJCXbs7MiOYSyYH+N7qqtMXLSOMlao3Ky9H9UmVrDQW3ITwR9YXleqNQrdwFmjkwj4XJAwiGltPS6YgeVvho+0sCokY9557CeyrQeycF0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ciwYdosW; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so3835710f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729074277; x=1729679077; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K7D7ZvOJaezogmPTDAjDT9QfTx99YDW2toHDAD7luHo=;
+        b=ciwYdosWe474FGjpzYObLD3LYsW9pObj1L+8+V65egzeD40Kp49em5SzMg7wrYbIt5
+         +IayKpWRNnonE/l4bx4xrzYfGNw6Q4lrltEjpuLmeqabXYoPPHP6kH2lXYbKF3G42afU
+         kVDF2NujmvcFA7CO8dSzgaEp+/LmOchyFQ/qKuXeR4bz36fwLnspJSwuex1R03iqFdXw
+         HW6VMTd8BgOaRvERmULAFhvLgRvU0qd8z9dU92QjtOobMWzdKQSgMqpjTUmfSYD2VkCn
+         WiEj3lL5Grq+pNcJec1oOGsXgesuYToDWhyg5Mu2ESnvkKPYCV0tSLbjeXVmTJFm2/Se
+         ArKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729074277; x=1729679077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K7D7ZvOJaezogmPTDAjDT9QfTx99YDW2toHDAD7luHo=;
+        b=TmetplPjAudzHIThY5jE4/oyTXsxdfM3aDGi9Xw8tXamWrlGNrswYRVKLvNfcjqXAv
+         a33Bc58ZPbei87E4SpXxkXCL7v7eWTcryfrUbcUhqd1t/tGyBLEGOnbP82de6iVusv0w
+         zF3GIx6GBoSQtyNHQflrZBiXOzZV6aWviO7+SxgX7ltODUnGyJg3yPIhEJvAhjuBd9zc
+         XR9vLP0jS1uxRofoSY0v66bJQlQl/iQTVma5jssx+iLoNbUbKgKCOu7g2rvGuTq6uXBS
+         fOBRCA6Gug3GH8Wl2ymuHWDURVd7j8CJkGJpVOo6GPsJpN6R1tFAkCl2j8cef6SoWFou
+         1izA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/LyvovZb1gr6NeX75+xq9XPTykxKP0jjMgAlQg4HNisgD9op+6AiuMq6YwgHwSB4CddGuMgAHMnxgbuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD+ajOq1sqFz/faUoaS8NnkW9y7lsHoAgXlOiF9bI8a9UrPrtk
+	ipNuL/1duiqyNGumE5UXmAC1e+NeF02L/YK216htwb0UwXW9PhSYPITiA0WLUW8=
+X-Google-Smtp-Source: AGHT+IECfAeDsAHx70YRZ+3//F9leahyUqpv+lP8UUeInzpfWQ7trt68orsQg6DrKKWRbQoo9ssGvg==
+X-Received: by 2002:adf:fcd1:0:b0:37d:51a2:accd with SMTP id ffacd0b85a97d-37d5fd4603bmr10330076f8f.0.1729074276968;
+        Wed, 16 Oct 2024 03:24:36 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa92741sm3956872f8f.60.2024.10.16.03.24.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 03:24:36 -0700 (PDT)
+Date: Wed, 16 Oct 2024 12:24:35 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Isaac Manjarres <isaacmanjarres@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>, surenb@google.com,
+	kernel-team@android.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] printk: Improve memory usage logging during boot
+Message-ID: <Zw-USn7PUHwCIGfL@pathway.suse.cz>
+References: <20240930184826.3595221-1-isaacmanjarres@google.com>
+ <ZvwZV5MDlQYGJv9N@pathway.suse.cz>
+ <Zv2LQLsIC1y0bCDL@google.com>
+ <Zw5ke11y4TkRQJQ2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw5ke11y4TkRQJQ2@google.com>
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+On Tue 2024-10-15 05:47:55, Isaac Manjarres wrote:
+> On Wed, Oct 02, 2024 at 11:04:48AM -0700, Isaac Manjarres wrote:
+> > On Tue, Oct 01, 2024 at 05:46:31PM +0200, Petr Mladek wrote:
+> > > On Mon 2024-09-30 11:48:24, Isaac J. Manjarres wrote:
+> > > > With the new logs, it is much easier to see exactly why the memory
+> > > > increased by 2304 KB:
+> > > > 
+> > > Note need to send v3. I could update the commit message when committing
+> > > the patch.
+> 
+> I just wanted to follow up to see if there was anything else left
+> for this patch? Otherwise, would it be possible to please merge this?
 
-Use the new machine_check() callback to select an alternate topology
-for RT712-VB devices.
+I am sorry for the delay and thanks for the reminder. Last weeks were
+a bit hectic...
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
----
- sound/soc/sof/intel/hda.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Anyway, I have just comitted the patch into printk/linux.git,
+branch for-6.13.
 
-diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-index 9abc4c071ae5..38921c0db84e 100644
---- a/sound/soc/sof/intel/hda.c
-+++ b/sound/soc/sof/intel/hda.c
-@@ -1124,7 +1124,8 @@ static struct snd_soc_acpi_mach *hda_sdw_machine_select(struct snd_sof_dev *sdev
- 		}
- 		/* Found if all Slaves are checked */
- 		if (i == hdev->info.count || !link->num_adr)
--			break;
-+			if (!mach->machine_check || mach->machine_check(hdev->sdw))
-+				break;
- 	}
- 	if (mach && mach->link_mask) {
- 		mach->mach_params.links = mach->links;
--- 
-2.43.0
+Note:
 
+I have updated the sample messages in the commit message as suggested
+earlier.
+
+Also I double checked the patch and simplified the comment
+in the following hunk. The original one was a bit cryptic.
+
+@@ -1185,20 +1196,25 @@ void __init setup_log_buf(int early)
+ 	if (!early && !new_log_buf_len)
+ 		log_buf_add_cpu();
+ 
+-	if (!new_log_buf_len)
++	if (!new_log_buf_len) {
++		/* Show the memory stats only once. */
++		if (!early)
++			goto out;
++
+ 		return;
++	}
+
+, see also
+https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.13&id=a961ec4e2860af4933e8c1763fe4f038c2d6ac80
+
+Best Regards,
+Petr
 
