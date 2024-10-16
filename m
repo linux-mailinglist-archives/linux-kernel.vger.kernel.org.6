@@ -1,125 +1,138 @@
-Return-Path: <linux-kernel+bounces-368792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0059A14FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:41:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2AF9A14FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87F27B23658
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6171C22656
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19611D2F70;
-	Wed, 16 Oct 2024 21:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503DC1D3181;
+	Wed, 16 Oct 2024 21:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="qByNn6x7"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="lW0IonHC"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F721D2F42
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D355D1D2B37
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114875; cv=none; b=rBQFqDoSLjL+ix01idTtHferKXOhAX3M7ybRcD6g3yi1GcGwa62RN5N2z1RMHHvWB8p1Rzd58in2aIFL3tN5IxzdyemNX5fpQsiF7cDHNxSJ7fvtXWda3v0KhpC8fwbYm5yZQeDUiw4sh/tCN+pkDeQFOKxs87H6y3rbcg9qi/0=
+	t=1729114836; cv=none; b=kmlzVdtKFFKMPOdZ8oucxvcS9kz2Z6Rv25iGadj5+1XPstk0ZTEt71ohmUpARROUo+f3s5JigIDAl8+o13jNklaVM7jlZK6ALVhgZZoDLbxzuqBxbFAu0o4KyS9iLJw6El+mJ8mCTwz1WwFog9JyahEYVfiRJwf+bag9JYWxrFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729114875; c=relaxed/simple;
-	bh=1ODZFGWN7pG3n1mrOfsCXSzGx7bHoac/SNo+CnFKsyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s4jrPZCL7zrnVrt5y6t/sgufJFyhQ6p3lhsvarvHRgWWOUJVEc5om6DiLjoYhFdPrdIHZhGrOWi1mVWvt9HGSVsHTnqve3wBnRnK10Uz8zPfVVnIxy2VcBqFQJpNf3NjTzn44o8nYZSq+8ZmIuRvq2veqBPCfnGM2vI/Jz3OFE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=qByNn6x7; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cb89a4e4cso2024405ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:41:13 -0700 (PDT)
+	s=arc-20240116; t=1729114836; c=relaxed/simple;
+	bh=wfvdwbqhSSF47yDMIkeJXITavFjKyTiIRpRSxc4gHJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KtCgYd5sUCkScMYiCeV7j/6N22q14an+P4BBJjxWGG4RG/Cq9HnXHlyfVfJSwUfwspkdH6AQ6Pg8TKkfj7Rwo5XbfkCJTi6GxCtdf+zMoigwmlEyXPQ8+C/m9MG7CsTPYiLWht8BtWIKYPTUP3pi+CmA2DQMEjeIm2fr9B7IbDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=lW0IonHC; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso261835e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:40:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729114873; x=1729719673; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ddbb9e6b0S7Fxkl43VzMGVnKoYlm5P/BdVV+4+ie3dI=;
-        b=qByNn6x7+VE6G0xxJ6eWlk4mtx0amqo+Yho1ksm4+FGZi0jqre1Xa6D3kbqXQ26y4k
-         sjk4tER+B04oFHKb9Q9+xl1cmsoJJl/8IYhPReLIQX/yrWUhUDYviaHVtlDQWzjzK//m
-         UX04TknoLs487fl/sNjtCeRT2qfhR84kWgH4rGVLfY7tFn57XzYfT6ZIy8HynIF8shOa
-         MukiOe9nrBoZNDiBwBjnjT+pbxet70wXiyMnY3OHiD5cXK9KAmA8mrA6Mz0tp0cLkkug
-         FNNQo6A3R7yL8I+niZ6oqNKaq1ZUFRlk4W4k49G1v5asXxfCtB6pBsa3RTvRuPrVzn8r
-         Yfvg==
+        d=atishpatra.org; s=google; t=1729114832; x=1729719632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aK/FMBO41F0k5XVWKFVW2dU30aEpK/ecSDxmrBc+uhE=;
+        b=lW0IonHCK57Zy6zpC9ZK/nXP3OWlah+MT8POeJYS+707z+NJ2QOVjPagPzVWdB4OOO
+         7U0yOAiryTY5tP0GM9c6xkIg6ETsTMshQpHBNfsz/qhjBL3+YdJkUFcQ3PPeE3GeFcd2
+         9OxXhOSetbZtaWB9rMwqtumDiu2eKf1Kl9ZhE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729114873; x=1729719673;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ddbb9e6b0S7Fxkl43VzMGVnKoYlm5P/BdVV+4+ie3dI=;
-        b=dCw0h6o2t6f8zgXN6ZPdyZpgdHF7tlQ66PUSVhXox/LwC4NLCypjjvNj+uTZ7Mf7Qq
-         d0U5ZQPDjS0RYyogtYgO8f20d4DVMdfUkTq/I+48EB9zF/4h2RGBnCGChNWbcOueyd//
-         n9ZPNSdW3QWZ7iq4nmBgqgX0crmu0K6ReZ2j3+jonKNXotCU23ZCSk8u8JybY/+PZHg+
-         4iwt5AjVA/0qphwirdvvmZJ4/6v8D2k3o1Net2XXxOtEWl3fDBtB7UeI7ejpcgfMdkmR
-         c1tyggoYSpETFcPAtJ4ANY3AVp/04ExKgeW1XFcADhVGkmFdd2oy8amzNRllaB2vGVfT
-         RIYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC8Sqw42TcldW7ckSmwUwda2gvkD43bV+7eULYqO5groD7qr/iXPZ+MzJ8mUY1yi6dUgWXwjWhmZ9JUMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuLiFH36nFoRkQWOIZ2sJmh0Kb1AmEZpXEGDgUk9UBqOVtUKZn
-	eei2mIAZkIYO2CbN9HTzQIxb+hhS6OnRxmEcM13k3FD3M056Nh7pfyTILYVgUzY=
-X-Google-Smtp-Source: AGHT+IFF5kLMoC48OD87DALfa7jzhyotOgHNJHe9KbQ38evTLDmZB7LvV5xXD/UpoPr9cQJIkq3/ww==
-X-Received: by 2002:a17:903:2347:b0:20c:6bff:fca1 with SMTP id d9443c01a7336-20d27ead21emr78451595ad.23.1729114872979;
-        Wed, 16 Oct 2024 14:41:12 -0700 (PDT)
-Received: from localhost.localdomain ([81.17.122.236])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20d17f844c7sm32999215ad.46.2024.10.16.14.41.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 14:41:12 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	kernel-janitors@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V5][next] Bluetooth: btintel_pcie: Remove structurally deadcode
-Date: Wed, 16 Oct 2024 15:39:55 -0600
-Message-ID: <20241016213956.4508-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1729114832; x=1729719632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aK/FMBO41F0k5XVWKFVW2dU30aEpK/ecSDxmrBc+uhE=;
+        b=v6JOgiaaV17sc+NuWHOdZpsQ+/f76wtWV+wsHIAHdHPlHNJopPI/aUfUaRzzFJxgbL
+         FvchfEyWSYK8efnbA5N20F1ypPd2npDte3JZNw7mB28wDsBq/30ySvvL4n4rB926qCJu
+         gWNagQy1ul1qdlBcI+wMdvG/r7blglCU3eq5jvqyJ8eNfP66SEcWH8uZi4R0IavyQmGJ
+         nYFBxyStLArhWUZ2E+jVTsbIYHn95B5e9RaPtCHzTKQBYEyOGIhbFUabGenccJuq+RF+
+         OnfQmeCyUGzCdJWfa8rs4lYajc/q0k1kt278/GiyHTaZ4x+vmxnCMvi1vuNcyS3BrY3L
+         j6fA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhZ8ghELoELFDNGs6BpIhHO2la50HftyMOaheW4qH7TDVn/Y5kN7Vjlvq6ihCzeFkJPurV5YAeQy2Mkfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs2cP5/amKsw8Ws+5OZb20HgiQwMbn6DLvdXB6uU6ZM1pJ4QRo
+	wDuWsRKggLwV83V4ifaKB2PZKc6gg4r+TDYfv7x7jyQcQlGdgmIH/QW1jNYxRn42mG3FktOXey2
+	s38j6vOG1qHJhvPqLNRCYs658YMjT7csIKLCB
+X-Google-Smtp-Source: AGHT+IHm+rppT2jBLrv4MJVazg4/+Wq/0WmR8zBCpedbjekw1BVdrrjEVCQASyp+Ge+wyK6mNgZuORoIrxTa5tX2vRE=
+X-Received: by 2002:a05:6512:3e1f:b0:539:fa3d:a73 with SMTP id
+ 2adb3069b0e04-539fa3d0be6mr6343173e87.39.1729114831422; Wed, 16 Oct 2024
+ 14:40:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-7-apatel@ventanamicro.com>
+In-Reply-To: <20240719160913.342027-7-apatel@ventanamicro.com>
+From: Atish Patra <atishp@atishpatra.org>
+Date: Wed, 16 Oct 2024 14:40:20 -0700
+Message-ID: <CAOnJCUKugAua2ooQL5tJCNFr27pCrsQ53YJuKEs11UYJdVkAPw@mail.gmail.com>
+Subject: Re: [PATCH 06/13] RISC-V: KVM: Don't setup SGEI for zero guest
+ external interrupts
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The switch case statement has a default branch. Thus, the return
-statement at the end of the function can never be reached.
-Fix it by removing the return statement at the end of the
-function.
+On Fri, Jul 19, 2024 at 9:09=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
+> wrote:
+>
+> No need to setup SGEI local interrupt when there are zero guest
+> external interrupts (i.e. zero HW IMSIC guest files).
+>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  arch/riscv/kvm/aia.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/riscv/kvm/aia.c b/arch/riscv/kvm/aia.c
+> index 17ae4a7c0e94..8ffae0330c89 100644
+> --- a/arch/riscv/kvm/aia.c
+> +++ b/arch/riscv/kvm/aia.c
+> @@ -499,6 +499,10 @@ static int aia_hgei_init(void)
+>                         hgctrl->free_bitmap =3D 0;
+>         }
+>
+> +       /* Skip SGEI interrupt setup for zero guest external interrupts *=
+/
+> +       if (!kvm_riscv_aia_nr_hgei)
+> +               goto skip_sgei_interrupt;
+> +
+>         /* Find INTC irq domain */
+>         domain =3D irq_find_matching_fwnode(riscv_get_intc_hwnode(),
+>                                           DOMAIN_BUS_ANY);
+> @@ -522,11 +526,16 @@ static int aia_hgei_init(void)
+>                 return rc;
+>         }
+>
+> +skip_sgei_interrupt:
+>         return 0;
+>  }
+>
+>  static void aia_hgei_exit(void)
+>  {
+> +       /* Do nothing for zero guest external interrupts */
+> +       if (!kvm_riscv_aia_nr_hgei)
+> +               return;
+> +
+>         /* Free per-CPU SGEI interrupt */
+>         free_percpu_irq(hgei_parent_irq, &aia_hgei);
+>  }
+> --
+> 2.34.1
+>
 
-This issue was reported by Coverity Scan.
 
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
----
-V4 -> V5: - Fixed typo in the subject
-	  - Removed Fixes tag as this is a code cleanup
-V3 -> V4: - Fixed typo in the subject
-V2 -> V3: - Removed that the change was successfully built
-	  - Removed the link to Coverity Scan report
-V1 -> V2: - Changed "Fixing" to "Fix" in the changelog
-          - Added that the change was successfully built
-          - Added kernel-janitors mailing list to CC
- 
- drivers/bluetooth/btintel_pcie.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
-index e4ae8c898dfd..660496e55276 100644
---- a/drivers/bluetooth/btintel_pcie.c
-+++ b/drivers/bluetooth/btintel_pcie.c
-@@ -391,7 +391,6 @@ static inline char *btintel_pcie_alivectxt_state2str(u32 alive_intr_ctxt)
- 	default:
- 		return "unknown";
- 	}
--	return "null";
- }
- 
- /* This function handles the MSI-X interrupt for gp0 cause (bit 0 in
--- 
-2.43.0
-
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
+--=20
+Regards,
+Atish
 
