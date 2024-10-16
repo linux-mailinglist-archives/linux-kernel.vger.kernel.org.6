@@ -1,154 +1,180 @@
-Return-Path: <linux-kernel+bounces-368131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AA99A0B8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:35:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5A69A0B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC15A284758
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:35:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED65CB24A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E0020B1EA;
-	Wed, 16 Oct 2024 13:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C112020ADEA;
+	Wed, 16 Oct 2024 13:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nB8SeYFY"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="maObSdMq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2DC207A3B
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CE0209F3C;
+	Wed, 16 Oct 2024 13:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729085742; cv=none; b=r9v1z5sA7WJoTPsRj7Ne2vnKqfCe+gJ7RUAH5LjktxW6/P3Fwki5riZCqJL8q9cZ7GDf+xl4GHbPb7rTO5jiZfLg6v1fbeM7q+lWfNfWpKzf4iJgbOBhpy1lfpRzyqzsFk2G/dODBUBZjVQyQzHt3QfCvX5UHOZor7WRQZMb0BI=
+	t=1729085770; cv=none; b=r1qxuPZD49wJ8zLcZLC2Vr7C5XhgfLEOPehyq9wKteKlIQnunJ4hgHzm6u0CDkfgrnuQcmwFXWME+62TlOT/gK+ecvMH4wc1EyhEXkvz3oVFf3pk1AHTjihaPfy2h0TTjOURl4Js13q4metHtJzD7HNgHVFhtGCesZT+ce74xyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729085742; c=relaxed/simple;
-	bh=W7igrC/eK2v9PvQJY3vqt5RVCwQ9nvtig+iwdm+6N48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XzlrfEGEParCnkMjb6llRd3oXOL52C9x5gN9akpgilPJD69NuraHfSNAeuaXO2P3Oq8egVg3kcLKDXNMMyu45HyAuXNOEjrFg/37UTb9zY/Cfe6upHupJT697mwUk+v7bN9YEr5rNNz+K+JD6nkiIhPnQ6RKtM5hzlHnKxBlGsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nB8SeYFY; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e5ef9e795bso932513b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729085740; x=1729690540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RGFMMPXEklcwVgl1501lsYrVn6gGilFzAu+XllYmFno=;
-        b=nB8SeYFYJUenPLbOqgQGE6STzfvRJNQeM8oj0Ttsle20JzbLVSIuAThnro+rPaPypn
-         S7OLC1x/iT3oTZkLT8sMCeru47U19/iMI0TxNWp/iiUheJqAMvlyviG76i3e8D0eknoN
-         fiVS/iJKNfpGEHQsMZ20ADqWWNd/QpeLWZfDi9GGIjKtXfOIWzHSHg1brOoml67Y2GmB
-         sKaCGT79ffDgQL9Vzw5dUOHw75kOKKAGA2mSys8GmWWw2NGzBQds8yzTETcIgAkUkg/8
-         ij8lP7tLezTuFu2M18kMvJKVLfluAUMYmzoDn1jp5DDnnYgv+/9r1nXS3KYdZrVNeZfb
-         GBaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729085740; x=1729690540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RGFMMPXEklcwVgl1501lsYrVn6gGilFzAu+XllYmFno=;
-        b=RhewyYjYa74QJAWtTHqv3j5ZLHoyvaNYFTx3paksPNHVPfzGycaE8gUW0p444/qKv/
-         pZ6XcC5FM2uBSJaA2jAfYxhkqWEmtzxn103zTtz6Q8mJJ0a8fIe7KPofuxl+tVdhxj+t
-         CraWsQBFAvyzBrHTr3WptiJJm1lX8ut5+TQXPzvuBWaM08uog5LTbT1VMAixl1fQ4Tfd
-         IEDTtqlDw8S212AGojlWtvZvZhI1EkQxlK2xQl6HLGM1zNZgsuPIAo/MsgVzPchMRREc
-         9DOyIIHoC6jQw5ZWmWxOD31uq4jBk/AGG7fqyAHfVI8nOOp9mU0J8PzuLdbfCoIOHu7A
-         C2ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPp12H0LarLyFbUmcbkaLvG/3XlosUMOY5ljhxYSuLiULiOjq89dhYU17CcdYfqMd5/SDX6QvF5pyYz/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx05V0p4RbqwWnpK7SsiRcELj+GOk+2+RAYZrJf9tj2oNEqRQvE
-	PnsXfO3VqC3lZa4FUmQ3DhOdRilh0PK5ysDHZezchwfM2lqrMmEtanEvZ/BTdNpXhZA1RQLNXn/
-	9ohBTLvyqkm7pu5w8fXHiPTCZOPC+gqAY0nLt
-X-Google-Smtp-Source: AGHT+IEo2nUPwW3QYnS5NjXSEN6olMWQdzd+0ZaH/E4OSj3fWe9ng8TxJ6S34oZl/m/kvu2FLQCs6M+Xsq0azbm+z1E=
-X-Received: by 2002:a05:6808:1905:b0:3e0:6864:52d5 with SMTP id
- 5614622812f47-3e5f02584d7mr3874075b6e.27.1729085739815; Wed, 16 Oct 2024
- 06:35:39 -0700 (PDT)
+	s=arc-20240116; t=1729085770; c=relaxed/simple;
+	bh=pZNXk/x0fFwUjZqS/zBnAfyZnmbaXf4MIWAifLb2V1Q=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=CLXrO7AAsnXOqkgUve6gRR+eAV83ZExLVV4596POyASH13RxfHk3YMl3FRUv4RdnqRteGM8nmPipeyUb0X5ywrHsE/jXutMLqINy3yyJAtYcDkWEhQgn9XJfOqtDfbAldOLTdj8iIJdjUVbVCgbSfTZFUKvGTv58efZQGiFreDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=maObSdMq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GCs3FM021241;
+	Wed, 16 Oct 2024 13:36:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:subject:to; s=pp1; bh=YSX7Qf3np3wpVslux96pU8DtgICF+GNcykXf3D0a9
+	jM=; b=maObSdMq9gobBKJPWmzX31K7KNNbmheIkGTgvgDPVg6Hldi4Kj9c9a8Ck
+	Hv+TCuBwoQi84r8BWa+oOQRIm+SOGDHcuxhvl7ZJdETh7MqAelw3MZUJAA2et6oI
+	Sqsfukr1bnKSHzy6JQi7710rS9hTY50qmVVDley0TPMa4tfPuYhN4x5H+6FXFU7e
+	bOeWAZsWWMoUoap8B56ZHGfmhxvJyz96EoGfMHRQekpFngiT836iEsVOpglaehD3
+	TEDVDHN4xnpsHci62XNv3YqlzJ5I284nLbV77OXA1stbp43/n6ovRX9ZtU40PGgy
+	5htOptCwrb7MI0dUtJTp0is777d+Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42adw8r7m6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 13:36:00 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GDa0x0027595;
+	Wed, 16 Oct 2024 13:36:00 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42adw8r7kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 13:36:00 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GCg5eV006690;
+	Wed, 16 Oct 2024 13:35:59 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283es1ur1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 13:35:59 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GDZtmt28508670
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 13:35:55 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A4F220043;
+	Wed, 16 Oct 2024 13:35:55 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5E81320040;
+	Wed, 16 Oct 2024 13:35:55 +0000 (GMT)
+Received: from localhost (unknown [9.155.200.179])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 16 Oct 2024 13:35:55 +0000 (GMT)
+From: Alexander Egorenkov <egorenar@linux.ibm.com>
+To: david@redhat.com
+Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
+        borntraeger@linux.ibm.com, cohuck@redhat.com, corbet@lwn.net,
+        egorenar@linux.ibm.com, eperezma@redhat.com, frankja@linux.ibm.com,
+        gor@linux.ibm.com, hca@linux.ibm.com, imbrenda@linux.ibm.com,
+        jasowang@redhat.com, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
+        svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
+        xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
+Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
+In-Reply-To: <a3f310d0-b878-44c4-9454-f7faf8be04ad@redhat.com>
+Date: Wed, 16 Oct 2024 15:35:55 +0200
+Message-ID: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015140159.8082-1-tttturtleruss@hust.edu.cn>
- <CAD-N9QWdqPaZSh=Xi_CWcKyNmxCS0WOteAtRvwHLZf16fab3eQ@mail.gmail.com>
- <CANpmjNOg=+Y-E0ozJbOoxOzOcayYnZkC0JGtuz4AOQQNmjSUuQ@mail.gmail.com> <c19c79ea-a535-48da-8f13-ae0ff135bbbe@stanley.mountain>
-In-Reply-To: <c19c79ea-a535-48da-8f13-ae0ff135bbbe@stanley.mountain>
-From: Alexander Potapenko <glider@google.com>
-Date: Wed, 16 Oct 2024 15:34:58 +0200
-Message-ID: <CAG_fn=UZwpvANRFqgXX+RA3ZO_KLAcQFs0kjeim0Y75GoAgJ8g@mail.gmail.com>
-Subject: Re: [PATCH] docs/dev-tools: fix a typo
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Marco Elver <elver@google.com>, Dongliang Mu <mudongliangabcd@gmail.com>, 
-	Haoyang Liu <tttturtleruss@hust.edu.cn>, Dmitry Vyukov <dvyukov@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, hust-os-kernel-patches@googlegroups.com, 
-	kasan-dev@googlegroups.com, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: MZec_mqCiGFqFGIM06wGZZ-9NJht6plF
+X-Proofpoint-ORIG-GUID: NI9xYGJknyFiVOPGQDiENcgtrcbdq7fD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ phishscore=0 priorityscore=1501 clxscore=1011 impostorscore=0 adultscore=0
+ mlxlogscore=400 mlxscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410160084
 
-On Wed, Oct 16, 2024 at 3:30=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+
+Hi David,
+
+> My concern is that we'll now have
 >
-> On Tue, Oct 15, 2024 at 04:32:27PM +0200, 'Marco Elver' via HUST OS Kerne=
-l Contribution wrote:
-> > On Tue, 15 Oct 2024 at 16:11, Dongliang Mu <mudongliangabcd@gmail.com> =
-wrote:
-> > >
-> > > On Tue, Oct 15, 2024 at 10:09=E2=80=AFPM Haoyang Liu <tttturtleruss@h=
-ust.edu.cn> wrote:
-> > > >
-> > > > fix a typo in dev-tools/kmsan.rst
-> > > >
-> > > > Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
-> > > > ---
-> > > >  Documentation/dev-tools/kmsan.rst | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/Documentation/dev-tools/kmsan.rst b/Documentation/dev-=
-tools/kmsan.rst
-> > > > index 6a48d96c5c85..0dc668b183f6 100644
-> > > > --- a/Documentation/dev-tools/kmsan.rst
-> > > > +++ b/Documentation/dev-tools/kmsan.rst
-> > > > @@ -133,7 +133,7 @@ KMSAN shadow memory
-> > > >  -------------------
-> > > >
-> > > >  KMSAN associates a metadata byte (also called shadow byte) with ev=
-ery byte of
-> > > > -kernel memory. A bit in the shadow byte is set iff the correspondi=
-ng bit of the
-> > > > +kernel memory. A bit in the shadow byte is set if the correspondin=
-g bit of the
-> > >
-> > > This is not a typo. iff is if and only if
-> >
-> > +1
-> >
-> > https://en.wikipedia.org/wiki/If_and_only_if
-> >
+> bool is_kdump_kernel(void)
+> {
+>         return oldmem_data.start && !is_ipl_type_dump();
+> }
 >
-> Does "iff" really add anything over regular "if"?  I would have thought t=
-he
-> "only if" could be assumed in this case.  Or if it's really necessary the=
-n we
-> could spell it out.
-
-I think you are actually right, "if" should be just as fine in this case.
-
-> regards,
-> dan carpenter
+> Which matches 3), but if 2) is also called "kdump", then should it actually
+> be
 >
+> bool is_kdump_kernel(void)
+> {
+>         return oldmem_data.start;
+> }
+>
+> ?
+>
+> When I wrote that code I was rather convinced that the variant in this patch
+> is the right thing to do.
 
+A short explanation about what a stand-alone kdump is.
 
---=20
-Alexander Potapenko
-Software Engineer
+* First, it's not really a _regular_ kdump activated with kexec-tools and
+  executed by Linux itself but a regular stand-alone dump (SCSI) from the
+  FW's perspective (one has to use HMC or dumpconf to execute it and not
+  with kexec-tools like for the _regular_ kdump).
+* One has to reserve crashkernel memory region in the old crashed kernel
+  even if it remains unused until the dump starts.
+* zipl uses regular kdump kernel and initramfs to create stand-alone
+  dumper images and to write them to a dump disk which is used for
+  IPLIng the stand-alone dumper.
+* The zipl bootloader takes care of transferring the old kernel memory
+  saved in HSA by the FW to the crashkernel memory region reserved by the old
+  crashed kernel before it enters the dumper. The HSA memory is released
+  by the zipl bootloader _before_ the dumper image is entered,
+  therefore, we cannot use HSA to read old kernel memory, and instead
+  use memory from crashkernel region, just like the regular kdump.
+* is_ipl_type_dump() will be true for a stand-alone kdump because we IPL
+  the dumper like a regular stand-alone dump (e.g. zfcpdump).
+* Summarized, zipl bootloader prepares an environment which is expected by
+  the regular kdump for a stand-alone kdump dumper before it is entered.
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+In my opinion, the correct version of is_kdump_kernel() would be
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+bool is_kdump_kernel(void)
+{
+        return oldmem_data.start;
+}
+
+because Linux kernel doesn't differentiate between both the regular
+and the stand-alone kdump where it matters while performing dumper
+operations (e.g. reading saved old kernel memory from crashkernel memory region).
+
+Furthermore, if i'm not mistaken then the purpose of is_kdump_kernel()
+is to tell us whether Linux kernel runs in a kdump like environment and not
+whether the current mode is identical to the proper and true kdump,
+right ? And if stand-alone kdump swims like a duck, quacks like one, then it
+is one, regardless how it was started, by kexecing or IPLing
+from a disk.
+
+The stand-alone kdump has a very special use case which most users will
+never encounter. And usually, one just takes zfcpdump instead which is
+more robust and much smaller considering how big kdump initrd can get.
+stand-alone kdump dumper images cannot exceed HSA memory limit on a Z machine.
+
+Regards
+Alex
 
