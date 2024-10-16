@@ -1,136 +1,272 @@
-Return-Path: <linux-kernel+bounces-367984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA129A0917
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:14:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B679A091C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5D0285A3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:14:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 100A1B24477
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74FD207A2E;
-	Wed, 16 Oct 2024 12:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28DB208205;
+	Wed, 16 Oct 2024 12:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iz0ItiI2"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rlupUrHu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rICVpDPP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rlupUrHu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rICVpDPP"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD24207213;
-	Wed, 16 Oct 2024 12:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C772206E71
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729080820; cv=none; b=DWh2VQtOZSjNfrPAHzTPS5Jcnr5rVqlCVm9R3/Y6Jstdb1Jly2mQVAKQmmEzxHwP7Ml44K0eh+/yzfi9T0yOkEs8QPh17ecswXUQ0oKNIzOCGNEHIt/7Ry/eqwO51FRqrlDwjTXcFMc3fmwnmwfv3WBmwwo87iZl60wYySUSySk=
+	t=1729080824; cv=none; b=I+yvs2qakRIYxjk0rsbaHDj0LD/kTa2w3Pv8xTe7tAKTJAhSPyEpU41QJlF/GIzMSsmJHa0441xjBo/8ew2eGBX05J/TA0pd7DZgz/Y7hnFNVMd2ESuBso2cV76uDye1nqUDoSEHWFp3K25qRfK4oXT0wHTtIxWXUL2VB6tq7pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729080820; c=relaxed/simple;
-	bh=LxgdIJ5aCbhAA0tGanzlSPOGnkH0GsTgoJLehp28SbU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cC3DcA7y4k7ZLtXQAHF7L2pBE2Q+wLZ8AMJhsDlEvbeLd0mcwJ6ReT5kGNb1C8XkxI/ckGKCfTUz8Qf13cR23hrD4qtaw+CeE2M4BYL5eyqY5rzRgQeq8tGsUdnJvCb7Vj0IqM2EsbOQrEkHh6jM/hwFh8uZ0UohV3Y9fvI2RJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iz0ItiI2; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539fb49c64aso4532059e87.0;
-        Wed, 16 Oct 2024 05:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729080817; x=1729685617; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+oPXcEcbH9aP+tlGF1dqJ/DUloPMeXfoEkppJgD36k=;
-        b=Iz0ItiI2CQM7PsZ8TqryaZKpeJaKgea3WpACDTiy4VKcx1YgPAPi9GGZHXObA1QKDP
-         /LTOJfG2019v8kJFIQFlL2hNmlvkJpefSDzf6F8Mqw/BNeBvlXwvO3urnYVAaV1ZYWgv
-         3pjmqHPjNEkdZcVgYt0NNCycZm0MdAqQsiKDoIIJ4sViOYrnWPAMsMwECoJ7jIaSPcRY
-         ynYIKRV+tG5jJt68Qk0DdbAMoTGQvI/Fuj02YmDfQ5PRXzr5/Hgl4pMYgx720IjY0JUa
-         GY9B0jS5quRRkmhgZhET4nCzrh3kqMxx/C4WoqLrfcfGqLYrPF00OqD81lOZR6jRe7NL
-         Ig1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729080817; x=1729685617;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+oPXcEcbH9aP+tlGF1dqJ/DUloPMeXfoEkppJgD36k=;
-        b=AIZbaCFTi0LBplFl6wtIBjc4NXMQlS794oqRToFYrTVkTAiOidOBLTI35VsBVqfFtf
-         koxCkkoW8MGdvSbiWD5Nhf0omImKeCc9Ufk8FcX+qEkPGa3ixbrITvmd5UFt6pfgDXqK
-         e0HSVaC2qNEyQSMJTDdfiEx7IaBwT5tYWSeSyNHOWKBi0J0AbmydRyQFXrrN4+euDzXA
-         GHccTrb/Cjd+/ou1hrgBdZexNPABQghTxUawbFpJDNi4ZSQv5zuLLPlvwryAUEPIX7OD
-         lFv1c+vW2no3lay2H8ENqSrRTXjS/duhbATcGjMsIz6TZjX2XuiAvIKLc0WwYXndXm3v
-         PDww==
-X-Forwarded-Encrypted: i=1; AJvYcCUhH0udU7idt+xDiZIC7Urs+TN95CwcZsnk6hsw2dEp2zWGlQJfni7236oQsFU46iCUpnBTrXi3pTgytf+S4hU=@vger.kernel.org, AJvYcCUmg92L0Aa5hxLhrIYqDEkkwyjYwcI/JwqrXMBmHLh35IFuHOf2ukAgKRGIju58BFIoAY3ck1X88kN2h/tf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoLJwdhi6YUo3AB6uf4FDKWmuKsSU1+qA3pDR6MuzMOiYyPy46
-	L19Y77giV7CyT8Wf26VycRmljK9CQLRI/ilnWs0qz9O+t5Ovm5sC
-X-Google-Smtp-Source: AGHT+IE7+Vrr4DQRMCtFomjskN6sCQK08l0TB1AG0hKY9SyjVs/V8C1+nuKcCxMOUw9t+7ZmSvDQwQ==
-X-Received: by 2002:a05:6512:3402:b0:533:4505:5b2a with SMTP id 2adb3069b0e04-539e5515238mr10424931e87.28.1729080816220;
-        Wed, 16 Oct 2024 05:13:36 -0700 (PDT)
-Received: from pc636 (host-95-203-1-67.mobileonline.telia.com. [95.203.1.67])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a00007193sm436094e87.229.2024.10.16.05.13.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 05:13:35 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 16 Oct 2024 14:13:33 +0200
-To: Julia Lawall <Julia.Lawall@inria.fr>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	kernel-janitors@vger.kernel.org, vbabka@suse.cz, paulmck@kernel.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/17] posix-timers: replace call_rcu by kfree_rcu for
- simple kmem_cache_free callback
-Message-ID: <Zw-t7a2M3rZGdZei@pc636>
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
- <20241013201704.49576-12-Julia.Lawall@inria.fr>
+	s=arc-20240116; t=1729080824; c=relaxed/simple;
+	bh=1q4yEcJFxZRHtqiK0sql/hXShW5iki8lFBMnyaKMa/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fqBBuf4lsS/fjVc1sTZOSSdr3WRmdtnJusaVJuz75k0ZpH54Hi95+UXSQ2aQi24zvO3rpLhJf7elj0O4FyE4NZFJWUf5Tdrfoq+nPhAwvWlPfbVTmp5dA0rjq+l0arMvrFyZYsKxZ+JgGp7lXCQM2drdau4hLE+9fUxEHJaQ1Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rlupUrHu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rICVpDPP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rlupUrHu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rICVpDPP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 60D1521B58;
+	Wed, 16 Oct 2024 12:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729080820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
+	b=rlupUrHuRXpN+GSHy77ojANHeFIMf3pdlQk69VCrQSkldUyPKn1nBlhPM1lgPVbA7FmyOa
+	j4kCvsJ1JS0hDiqxKhjYHvXGHOnN7JixBnbI/SI6OFB7oUy4gYqSkiC8W+aZWgw/nPo4qi
+	4amM/IS3sQxcIN7KXs5kpDfaYuMw+LU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729080820;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
+	b=rICVpDPPYjlz9GViKfD06PJsJwqcVNR1wG71TDzu4iExrydDyqwAmZ+nxYlWDb/R2BkenX
+	eHvuzwzarVzlQRDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rlupUrHu;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rICVpDPP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729080820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
+	b=rlupUrHuRXpN+GSHy77ojANHeFIMf3pdlQk69VCrQSkldUyPKn1nBlhPM1lgPVbA7FmyOa
+	j4kCvsJ1JS0hDiqxKhjYHvXGHOnN7JixBnbI/SI6OFB7oUy4gYqSkiC8W+aZWgw/nPo4qi
+	4amM/IS3sQxcIN7KXs5kpDfaYuMw+LU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729080820;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
+	b=rICVpDPPYjlz9GViKfD06PJsJwqcVNR1wG71TDzu4iExrydDyqwAmZ+nxYlWDb/R2BkenX
+	eHvuzwzarVzlQRDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4403E13433;
+	Wed, 16 Oct 2024 12:13:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id R5f5D/StD2ekbwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 16 Oct 2024 12:13:40 +0000
+Message-ID: <270ca4d5-b35f-4533-87c9-dc15e7b00f6f@suse.cz>
+Date: Wed, 16 Oct 2024 14:13:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013201704.49576-12-Julia.Lawall@inria.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
+Content-Language: en-US
+To: Muchun Song <muchun.song@linux.dev>, chenridong <chenridong@huawei.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Chen Ridong <chenridong@huaweicloud.com>, akpm@linux-foundation.org,
+ david@fromorbit.com, zhengqi.arch@bytedance.com, roman.gushchin@linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, wangweiyang2@huawei.com
+References: <20241014032336.482088-1-chenridong@huaweicloud.com>
+ <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
+ <178A7AC8-0BDA-42CA-86B2-E1C13F3E1E8B@linux.dev>
+ <1dc9acbd-351f-4755-8c56-d3d77aaccfb2@huawei.com>
+ <F8EBBED0-6D7D-4A23-AC8C-3E395EA1BF12@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <F8EBBED0-6D7D-4A23-AC8C-3E395EA1BF12@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 60D1521B58
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Sun, Oct 13, 2024 at 10:16:58PM +0200, Julia Lawall wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
-> 
-> The changes were made using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  kernel/time/posix-timers.c |    9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-> index 4576aaed13b2..fc40dacabe78 100644
-> --- a/kernel/time/posix-timers.c
-> +++ b/kernel/time/posix-timers.c
-> @@ -413,18 +413,11 @@ static struct k_itimer * alloc_posix_timer(void)
->  	return tmr;
->  }
->  
-> -static void k_itimer_rcu_free(struct rcu_head *head)
-> -{
-> -	struct k_itimer *tmr = container_of(head, struct k_itimer, rcu);
-> -
-> -	kmem_cache_free(posix_timers_cache, tmr);
-> -}
-> -
->  static void posix_timer_free(struct k_itimer *tmr)
->  {
->  	put_pid(tmr->it_pid);
->  	sigqueue_free(tmr->sigq);
-> -	call_rcu(&tmr->rcu, k_itimer_rcu_free);
-> +	kfree_rcu(tmr, rcu);
->  }
->  
->  static void posix_timer_unhash_and_free(struct k_itimer *tmr)
+On 10/14/24 11:20, Muchun Song wrote:
 > 
 > 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+>> On Oct 14, 2024, at 17:04, chenridong <chenridong@huawei.com> wrote:
+>> 
+>> 
+>> 
+>> On 2024/10/14 16:43, Muchun Song wrote:
+>>>> On Oct 14, 2024, at 16:13, Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>>> 
+>>>> 
+>>>> 
+>>>> On 10/14/24 08:53, Chen Ridong wrote:
+>>>>> From: Chen Ridong <chenridong@huawei.com>
+>>>>> 
+>>>>> A memleak was found as bellow:
+>>>>> 
+>>>>> unreferenced object 0xffff8881010d2a80 (size 32):
+>>>>>  comm "mkdir", pid 1559, jiffies 4294932666
+>>>>>  hex dump (first 32 bytes):
+>>>>>    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>>>>    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+>>>>>  backtrace (crc 2e7ef6fa):
+>>>>>    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>>>>>    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>>>>>    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>>>>>    [<ffffffff81198dd9>] online_css+0x29/0xa0
+>>>>>    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>>>>>    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>>>>>    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>>>>>    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>>>>>    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>>>>>    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>>>>>    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>>>>>    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>>> 
+>>>>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
+>>>>> err, the info won't be freed. Just fix it.
+>>>>> 
+>>>>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
+>>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>>> ---
+>>>>> mm/shrinker.c | 1 +
+>>>>> 1 file changed, 1 insertion(+)
+>>>>> 
+>>>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>>>>> index dc5d2a6fcfc4..92270413190d 100644
+>>>>> --- a/mm/shrinker.c
+>>>>> +++ b/mm/shrinker.c
+>>>>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>>>> 
+>>>>> err:
+>>>>> mutex_unlock(&shrinker_mutex);
+>>>>> + kvfree(info);
+>>>>> free_shrinker_info(memcg);
+>>>>> return -ENOMEM;
+>>>>> }
+>>>> 
+>>>> There are two scenarios when "goto err:" gets called
+>>>> 
+>>>> - When shrinker_info allocations fails, no kvfree() is required
+>>>> - but after this change kvfree() would be called even
+>>>>  when the allocation had failed originally, which does
+>>>>    not sound right
+>>> Yes. In this case, @info is NULL and kvfree could handle NULL.
+>>> It seems strange but the final behaviour correct.
+>>>> 
+>>>> - shrinker_unit_alloc() fails, kvfree() is actually required
+>>>> 
+>>>> I guess kvfree() should be called just after shrinker_unit_alloc()
+>>>> fails but before calling into "goto err".
+>>> We could do it like this, which avoids ambiguity (if someone ignores
+>>> that kvfree could handle NULL). Something like:
+>>> --- a/mm/shrinker.c
+>>> +++ b/mm/shrinker.c
+>>> @@ -88,13 +88,14 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>>                         goto err;
+>>>                 info->map_nr_max = shrinker_nr_max;
+>>>                 if (shrinker_unit_alloc(info, NULL, nid))
+>>> -                       goto err;
+>>> +                       goto free;
+>>>                 rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>>>         }
+>>>         mutex_unlock(&shrinker_mutex);
+>>>         return ret;
+>>> -
+>>> +free:
+>>> +       kvfree(info);
+>>>  err:
+>>>         mutex_unlock(&shrinker_mutex);
+>>>         free_shrinker_info(memcg);
+>>> Thanks.
+>>>> 
+>>>> But curious, should not both kvzalloc_node()/kvfree() be avoided
+>>>> while inside mutex lock to avoid possible lockdep issues ?
+>> How about:
+>> 
+>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>> index dc5d2a6fcfc4..7baee7f00497 100644
+>> --- a/mm/shrinker.c
+>> +++ b/mm/shrinker.c
+>> @@ -87,9 +87,9 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>                 if (!info)
+>>                         goto err;
+>>                 info->map_nr_max = shrinker_nr_max;
+>> +               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>>                 if (shrinker_unit_alloc(info, NULL, nid))
+>>                         goto err;
+>> -               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>>         }
+>>         mutex_unlock(&shrinker_mutex);
+> 
+> No. We should make sure the @info is fully initialized before others
+> could see it. That's why rcu_assign_pointer is used here.
 
---
-Uladzislau Rezki
+If the info is immediately visible, is the failure cleanup
+free_shrinker_info() safe? It uses kvfree(info) and not kvfree_rcu(), and
+shrinker_unit_free() is also doing kfree().
+
+>> 
+>> I think this is concise.
+>> 
+>> Best regards,
+>> Ridong
+> 
+> 
+
 
