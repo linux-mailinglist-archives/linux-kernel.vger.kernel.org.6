@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-368631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A9D9A1298
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:32:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884789A129C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A5F1C2153A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:32:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D795AB210B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0B62144D3;
-	Wed, 16 Oct 2024 19:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9122141C3;
+	Wed, 16 Oct 2024 19:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHMNNeOI"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fto4zm8j"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1291885BB;
-	Wed, 16 Oct 2024 19:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAD120ADDA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107153; cv=none; b=naSrDiPWOnxsGD6Ih/u/vNszpmd1G1+cvMSV6meYYkhmLfcYHd6aYWR9iaw784lMcJpr0U8GXjr9ODVk3BuGvCB9t8G5aIkQZ9d8fU7q7pTi7iPvZdujYfHAD+jX9LuP0dGTvaE3IX0Abw3BdiOt67aS0ED5ZXEaIa2ynh4sklY=
+	t=1729107189; cv=none; b=DXXMX/+tLK0XgH/fh6r6hwYFnfrtWLCQJpXTSloszRvzJkCAcSotWjLe64bz98fg1fpzp6ZTe9vqH2KgFFqKobc3uAkaWrrxjTFKxsbTgyZtD8Hc8/lw23/gyXlSArtVItH4OpdVq7cG56Hl2O5pnQz5oxuSpEWJXsiHV/ChZFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107153; c=relaxed/simple;
-	bh=DCiowFr9Pu71dlJI3fY1tp1MwHO28XH9VSc6g+FaQw8=;
+	s=arc-20240116; t=1729107189; c=relaxed/simple;
+	bh=A0/ojgL2fvBi172Wbp3BrgprcWdWI/pifihLOrfrqFU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B/hD8L5T0w8D9aLmOo82AeHX5X6REvCz92Cd0GaOYAkNNJOYw7LwoJJY+Hsjy1FDxYEua5NeO7nDmQto1CI1jd1jWuxPeNz5iu8Eu6HnoVs0z2wH4NXUghg+vyeiBXIEr1HAkft57w1540yAJYdbxNMvqYCfB4uQG9DhpdCuJCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHMNNeOI; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so1986755e9.1;
-        Wed, 16 Oct 2024 12:32:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=DyfS+s47/59THDC8oQp8hcnpl/wLrmhsSPwYJOnuZ/6hh1egxYHE/OZFdiLaNnR6+buL39ELLMAuX73A54fvEefwDpQZ+Qgt5azCvbUM2yxCcxEGbFnYHVqknQOTMUy5hLJWY+cl8DiB7Ycvml2xIotMkb+xHALHahzwHbY75cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fto4zm8j; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e38ebcc0abso3451217b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729107150; x=1729711950; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729107187; x=1729711987; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i4rl0B3DN7zWi36BodccOQQbkpQljW1anHrXwo5pjFI=;
-        b=VHMNNeOIDd596EWfUn+4m84HYfQ0Ti01xEnxaB3yjukheZm+DtMQqrhBhIMOLfobpI
-         +IFvou7KIRwaQsBCZrhLKgQrwmtGCkwgESpV/K2S9SNPiAe+A+uUluKfjBcTFCJVCFPY
-         JfMaLNC02PkQci0oVkCt+30oHneK0H/ez5ZC8dhlyBiUO3HhBIXSqGOS+cm+pPUU5ZcK
-         y2dZqhJw/E1V7aJFY94+NFkZ+uD8bh5wHhrwjWQCwoHZFXi2el8kV3hnCPtDKbUSPZxb
-         uAaCV5LcBbeOquZyH+Y/HQSLGVEkthjfOqSYjT5mF4Q9d2r3PHiAx07nbwIfLcU83fvw
-         LIGQ==
+        bh=A0/ojgL2fvBi172Wbp3BrgprcWdWI/pifihLOrfrqFU=;
+        b=fto4zm8jEXnrZwyrpLSk5wFdsLKwuNQ/MKYiEiwgJu3nGAyxURoDzpcc6WuvQ5EPlG
+         TreAAUM8XekH1LN01v64Yz2d7TQO+rZtNRKQTKCPT07zskLzxDeoViqpLEfgaRSdv2S9
+         lugKzScVhNtzA3qj4wIDd82kJYoWmapBCb2k7mVTe6Py9AcN6Ncem8iDFH33q5bQMj/9
+         DNshxbxJJ4pTbjPG0mg0AKDBXA3O79cstPamh4zVOpO0SLMbmVvyUCc1rqbGS3p/vgh0
+         YX4sXDk3T7Ul1BYZ9wIsDq6UumjJMPGw+N3/rOraIYe7t9vhK/3wAtCSWmUwm4oNMZ8g
+         bKvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729107150; x=1729711950;
+        d=1e100.net; s=20230601; t=1729107187; x=1729711987;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i4rl0B3DN7zWi36BodccOQQbkpQljW1anHrXwo5pjFI=;
-        b=MpWkRtaRWd5JM4mNQePrPZaMhpvQAw5OcnfYmmbOgiJzfEHkDuh1ecDEHE6a7qgU60
-         pek14ohtNWiHkUchktYy363qoTiwWB5wOEJSXOxoAEOzZttZG8ID4EoPMBe5vXTh1MLJ
-         simvGXS6eMrvcpP/js1KUvBtDpya2w9TtNzR3bsX7R+saY03HAudlTjgiyos0LpkbrY1
-         U6ovfon00hALLcNiGb16epX3pfxUij1bSxwrFJiL/KxMRqpBJL7O2meMhcSlnS5c3MTV
-         /8JKMyCHGSnwU+Z0R5zwMsnw2WyoTeohKNGVHeYFvbMCuB2yF8wUtiC1ImG+qOrKVHL/
-         y0uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAPT7Tf+jEop/nrcozTit+thWy8ETxqwum+zRxoXY/Lzx5Ej5Mj+hXgfT/djOVfN1wGOeOCAyGGhyhD0DN@vger.kernel.org, AJvYcCUYB98P9EpemNYWOp9YjoMRUruFDPoSh3GI3KrDvq9jmRSp8lU5ezUiN+9RLeH1MkM2KCM=@vger.kernel.org, AJvYcCVpV2mcv1hwH4idZ67GWWNdRuJ7e4wPQGG8ap77eheoR7TLLAqk9SlRrU4I320z/a51RV0K8hqHxznrnA==@vger.kernel.org, AJvYcCVrgwHwevFAgmfVU8lt67rs8aI0SVOQShqZjZ+KILP9M0OPDwLX7b/obNnwqfyCMbFkI5iX0H2s@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjkxe5n0JcKuB5UHvK2QY7YXsw/d6HUTueCR9W4PJsip0KruZu
-	/5YOUFxxSn4n+Yw8eV6iHn0xPAgAAIDsTaWaBSdK/Iv3vJJ+NUxukC1uVkTwht4mnafX2EC+1cp
-	Midi9klCUuRTY60+JUauza3dTfh+CDAcQ
-X-Google-Smtp-Source: AGHT+IF7c2QXjgydXkv+1KGDqbxKGaOuyA03qWTWeiTtkOuAqHwKxV2uYSiiYHoCvtn1g7OFJLr0iNzp8cEzepZNy0E=
-X-Received: by 2002:adf:cd03:0:b0:37d:4ab2:9cdc with SMTP id
- ffacd0b85a97d-37d86bb47aemr3273075f8f.13.1729107149760; Wed, 16 Oct 2024
- 12:32:29 -0700 (PDT)
+        bh=A0/ojgL2fvBi172Wbp3BrgprcWdWI/pifihLOrfrqFU=;
+        b=gl/0H60D609caF4CTstyatpNaEJVKMPD0ih8s2viZJd3uSXJJVJ5OWWmn4OLkCSGM3
+         yFfjwJKGMOvivq7pc2hmLjU7xI2m4YVs0khY2HQDhr21CIhWcOaMtVM+/qS8r17X2pSv
+         p1bShVH9xQLD50Nv20BYkOcJb8/MnfGP00F6Ka3y7N7Q8OngDG0laB84JacmqY6IxVNZ
+         O1e3Lc+5bvYgLO7OSakjhzMZQdynSNVIe3EJxFKAX4ggSfQCUPwZiSawkmoZ9kYNpiOC
+         SYFIa7iosguHEbDXqKWKisuItOBFy4QqjRACfy2GzryxV6BvXK0/2RFqGwHY/OOPUyOZ
+         e0jg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8iN/hIiXHGioPyO23xFDYm0kWgk7eIiQskONV2J5P8UJTtH0hWfNnADXfsEVFAWVoAdUSMJHWePnJOmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyeHBR0QBUWsYcP8zcmQesdUgTVM4A3tQyUrvkKhQyZpBQzYjP
+	D5jwbuvG6XquKevS0z2R6gUXVt2bbRpRo1WYecgFbziUIia43pRbJ0C9JGGvLk6KLvaugtsI9gA
+	8Txxo/1FXMYJuQ0fJk8P+Emxdh4SOUn2zZTMyhg==
+X-Google-Smtp-Source: AGHT+IGX07jif9j6w8MTv7ARHJ9/+lXGQIE504CDxiXkTKXqPtoikEAqB670DW1Rp7uFgjkSTFhaEJvJ5+tdTlNVD8w=
+X-Received: by 2002:a05:690c:388:b0:6e2:e22:12d9 with SMTP id
+ 00721157ae682-6e3d41d08c3mr58083187b3.35.1729107187330; Wed, 16 Oct 2024
+ 12:33:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016170542.7e22b03c@canb.auug.org.au> <CAADnVQJ=Woq=82EDvMT1YRLLTvNgFVSbnZDiR5HUgEhcyBLW4Q@mail.gmail.com>
- <ZxAHZt8pFjxeOx-U@google.com>
-In-Reply-To: <ZxAHZt8pFjxeOx-U@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 16 Oct 2024 12:32:18 -0700
-Message-ID: <CAADnVQLpFZsRbMndY6nHqSWiAh3SfmN8S6KbJ9p9T_WC3x0i_g@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20241016155655.334518-1-colin.i.king@gmail.com> <CACRpkdYhsnRSOgdrDKp7BNqE4TpY3r--cPByFMsq0VRRjW-sAA@mail.gmail.com>
+In-Reply-To: <CACRpkdYhsnRSOgdrDKp7BNqE4TpY3r--cPByFMsq0VRRjW-sAA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 16 Oct 2024 21:32:55 +0200
+Message-ID: <CACRpkdYxsGC5Yay0dOaQEegrLKKkLrcivX7_GVpfQsEa=psdDA@mail.gmail.com>
+Subject: Re: [PATCH][next] pinctrl: th1520: Fix potential null pointer
+ dereference on func
+To: Colin Ian King <colin.i.king@gmail.com>, Kees Cook <kees@kernel.org>, 
+	Kees Bakker <kees@ijzerbout.nl>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-riscv@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 11:35=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
+On Wed, Oct 16, 2024 at 9:31=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+> On Wed, Oct 16, 2024 at 5:56=E2=80=AFPM Colin Ian King <colin.i.king@gmai=
+l.com> wrote:
 >
-> On Wed, Oct 16, 2024 at 09:25:41AM -0700, Alexei Starovoitov wrote:
-> > On Tue, Oct 15, 2024 at 11:05=E2=80=AFPM Stephen Rothwell <sfr@canb.auu=
-g.org.au> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > After merging the bpf-next tree, today's linux-next build (arm64
-> > > defconfig) failed like this:
-> > >
-> > > Building: arm64 defconfig
-> > > In file included from arch/arm64/include/asm/thread_info.h:17,
-> > >                  from include/linux/thread_info.h:60,
-> > >                  from arch/arm64/include/asm/preempt.h:6,
-> > >                  from include/linux/preempt.h:79,
-> > >                  from include/linux/spinlock.h:56,
-> > >                  from include/linux/mmzone.h:8,
-> > >                  from include/linux/gfp.h:7,
-> > >                  from include/linux/slab.h:16,
-> > >                  from mm/slab_common.c:7:
-> > > mm/slab_common.c: In function 'bpf_get_kmem_cache':
-> > > arch/arm64/include/asm/memory.h:427:66: error: passing argument 1 of =
-'virt_to_pfn' makes pointer from integer without a cast [-Wint-conversion]
-> > >   427 |         __is_lm_address(__addr) && pfn_is_map_memory(virt_to_=
-pfn(__addr));      \
-> > >       |                                                              =
-    ^~~~~~
-> > >       |                                                              =
-    |
-> > >       |                                                              =
-    u64 {aka long long unsigned int}
-> > > mm/slab_common.c:1260:14: note: in expansion of macro 'virt_addr_vali=
-d'
-> > >  1260 |         if (!virt_addr_valid(addr))
-> > >       |              ^~~~~~~~~~~~~~~
-> > > arch/arm64/include/asm/memory.h:382:53: note: expected 'const void *'=
- but argument is of type 'u64' {aka 'long long unsigned int'}
-> > >   382 | static inline unsigned long virt_to_pfn(const void *kaddr)
-> > >       |                                         ~~~~~~~~~~~~^~~~~
-> > >
-> > > Caused by commit
-> > >
-> > >   04b069ff0181 ("mm/bpf: Add bpf_get_kmem_cache() kfunc")
-> > >
-> > > I have reverted commit
-> > >
-> > >   08c837461891 ("Merge branch 'bpf-add-kmem_cache-iterator-and-kfunc'=
-")
-> > >
-> > > for today.
+> > The initialization of muxtype deferences pointer func before func
+> > is sanity checked with a null pointer check, hence we have a null
+> > pointer deference issue. Fix this by only deferencing func with
+> > the assignment to muxtype after func has been null pointer checked.
 > >
-> > Thanks for flagging.
-> > Fixed and force pushed.
+> > Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 >
-> Oops, thanks for fixing this.  The virt_addr_valid() was confusing
-> whether it takes unsigned long or a pointer.  It seems each arch has
-> different expectation.
+> Patch applied, added Reported-by Kees since he mailed about this too.
 
-        if (!virt_addr_valid((void *)(long)addr))
+...which was actually the "other Kees" (Bakker), not the one the mailer
+suggested.
 
-did the trick for me and that's what I pushed.
-Odd that our bpf CI on arm64 didn't catch it.
+Yours,
+Linus Walleij
 
