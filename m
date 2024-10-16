@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-367041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA2999FDFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:10:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01B299FE01
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6653E2874A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5291C2438D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193F21D2215;
-	Wed, 16 Oct 2024 01:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422621D270D;
+	Wed, 16 Oct 2024 01:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="EGl6U2s6"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="VOuZ7Mzd"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213DB1C233A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC711D1E9C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729040665; cv=none; b=H3h/dXKSOQQiTWByfdgXliAoa5mgUeHYranOvkYvz1aUQY/gTeGYsX9MGVmXauTfrlEYVG9FFP+PJx5/MXpSbSJAQqagL36/8Za7MMlbh1O8r7AT7eoOftOnP762xLdr5PPDnfeEA+gs3CEfBRvv5j9o9Vwt76KXH4+VPsjVVZA=
+	t=1729040667; cv=none; b=CPXk8NdDkawpUChQz3+8s2Cmync/k36t1WUmpcpL6HAqiA53HImy/yxQPzqb2BA+Z9KPBwK7eWgl9W3wz1IwwR+MFkEVCMnRY/AhLVbX8qgeQKXYcVk9GZmwg9Ly9ZQUehq0QRqY4FQo3PSP1rnDbBI6M6WrYZj3Olvz7gfsHzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729040665; c=relaxed/simple;
-	bh=uBijmJW2oOVCVWghW03aDeybZ37xU5VWTwEgFTeWMTM=;
+	s=arc-20240116; t=1729040667; c=relaxed/simple;
+	bh=D9XOuq5NLdXjEhB+gziaUN9VEXaSfc+cmeGM+FY4CmY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pJ7cNc1JZsSzLvhl6FTxW4fLY2tsE/DtAs37JROxlAcqEseuQr9dfvnxQgqQGcsiikwQHqAm8lBmgAJYmoHdFvqeyLl5d7wwcjQLpv6RfM+WOvZkZfJhugLUuURj328929a1CSRYLCFjMtMibfU0Nluh/m2hSlRjiPKVh6pQNqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=EGl6U2s6; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=hTCIqNnGbqJC6WRaP/VDl/5jR21L9DypTMfNJ5OE+1LB1SMCkWLac6Py5mnYjTHAjZSQHcemk4/M+huWy1Vq6sqYOQrvDA0FExkOXYADXWwiLsb8kfAdDPpjctVuhBkMN1sRRTustD55jwmRLwSyqM4O+PiE/3bGPQKeujOTdvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=VOuZ7Mzd; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4311420b675so55014985e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:04:21 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so57638235e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1729040660; x=1729645460; darn=vger.kernel.org;
+        d=openvpn.net; s=google; t=1729040663; x=1729645463; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vgBicxL465Iq2zDqEf/9aYEGLc+kPrkVMZ+FhEO9LmY=;
-        b=EGl6U2s6EgXcVo8KUknuiIbDqxkylSc2ksQBzgfE5ZDNSjmDboklgX6RE7auYGcG+w
-         KfsnW7zNhmi4DeNuF9cUsotwJ2aIrBDXh8bGdITqcW01prTE2Z+R1GtMZrKKUuOHnMR2
-         TovljQfV1H5uLYx+WQ43DTu/Cz0RvlOMi7nabWPIFHaTv+36UjThJgXjXbW7GKiVLY3D
-         b6+IH2x7qKKbfh5pi3weEgP6eKKM9CXqZw3ZW66nFBXbvYLoa2hONzuz5sSz9Npzz7Yw
-         T0DUL2MJSX3oYrkX+Rj6d1rN6YPEfc53zSeRAjvTAO8YlS/1c2qR07U9aF1PsEKqVMhW
-         HyAg==
+        bh=rMD7l+FSF3xKMSQaJEdYL4+0Pf5IdciRVFCya7TYwek=;
+        b=VOuZ7MzdF8uODgIL+Y1UYc+lrykA72PARhGSHYjihkH62+sMdPLUdIEK6IGB0Q6Suf
+         9l4wnTLm08Q2X0F2L8r1q4iUXaNscZR5POFauBd3Klba4l1Dg3WfkSimmgKLO864avVN
+         GCj14gDWYyutpVElR1mh5GhJe7HXUCCIcmaLZc0EHz5dMFgF1hThK19V7mZlIEMk7oFA
+         Qn4PQ+Z/CjYz7MDOOmRhW4NZPeoG1eb2hi1fN3h5rk1D6y7PCSEYnvzJtlsFMUB1zmh5
+         dlyEsyFQW7ELZyEwUwbGtVVMcHPOCHMqiUIIIJRiTcXkWkSEChuDA0xtdsgCtqOkU/yH
+         VmlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729040660; x=1729645460;
+        d=1e100.net; s=20230601; t=1729040663; x=1729645463;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vgBicxL465Iq2zDqEf/9aYEGLc+kPrkVMZ+FhEO9LmY=;
-        b=pXCu5z7Ctg8NES+nH5gQDslr0HqDxoY1al34dCEOGqAE8LrPqIDI2qn5Flirv63IzG
-         eLoTrgisWnU948k8ZAPAMhhKtviKDTdZG0bs2FCZ7QWXIn6Mhb2roernPQNTlN92hnlt
-         0+Sy/N/2h7X766MsravpB6cMaGwmn4kDG9wJDx8XTsKhNmlsYIlPSiKZs2pDBTHVvZt/
-         eLCjhpu0HU91eL2LGe12TUewGA4R+VsC8566ix9ldB9PdscExfDjf6rln7PaPTxkZo8M
-         ofwNpuQmxYiJqKiK5ORPpTmWw8LovCgXAgLXvqS//ArPszeZ7HURWboxevS2ggzikhl6
-         OujA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhsftU0gNcSrUlzcLBDA5QXQybIlPVMPvdtX49lM7mLc/yujIXZzLSGm2TtY0IgGcWJh8ehs5/G27+3Sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOEOOgeP5PNso5z3dQJz8oEJAPG8czLjayAhaAcGH2dCNROgLZ
-	aRXVjwMiBTExtFM2hWUtRIUvu03cme7hJ20zCbSZARgES2r6CEUt9lQkXaeVyvo=
-X-Google-Smtp-Source: AGHT+IFmBvL88e+Hp27h91RfCL9PhqgUkAVIFgmJvgjbGRZ2wN+Vw8lZ3uWsMsuQYO78SffqFA2GKA==
-X-Received: by 2002:a5d:6182:0:b0:37d:4b07:606b with SMTP id ffacd0b85a97d-37d86d554fbmr1451267f8f.36.1729040660457;
-        Tue, 15 Oct 2024 18:04:20 -0700 (PDT)
+        bh=rMD7l+FSF3xKMSQaJEdYL4+0Pf5IdciRVFCya7TYwek=;
+        b=TH58n8iEecUKV0pweQ1RHU6gkMMjIeGHIz54YUSloeteoZhgkaeADyZVGPKdJWpqBl
+         VRZehhd3PITW1Mr/jyInycazywVFBO+Euow9q82nPf0KlAhNvIvQOoQam0U7J5xi9QUE
+         QBe8kCVLTZsyzoafCWASZfMs9AZk9QLYH7b8UPwIFj1LUKBroP8i3HohkY2ga5mmmDmj
+         JZxRV2v+RhvbEqncyX6yxhINYJgN+UtZ+uZe5ToDss7opwyTHjWaVpyGaQp94CZGVltR
+         xXcplgHrnxlTrBdiQEojdkAastFAIubY0TD55VGb101l8/hNGaBieEB/oeDvw/hL3L90
+         KFlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxexjdfBj9EXMKM3Ef/CSAS72ljnS4y7Z7QQ+68MwL4A1PKRFFO2ifYS6dADTAY3/YmUeq3PeWy30YGnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3lL8n+iY4NNdLVAZ5nAjHL6fcVT+72/qQHgXyWa1m0JyhqryS
+	aeBel/Tu4HzfxjqrAxF22DPsvAVDKJ0MaeRiyKw2IXsWXv+PZojJSrlC5rMLc+c=
+X-Google-Smtp-Source: AGHT+IEsXHjvZSLYefO3htqwaxwzORWf8B0OT6ATZfvFpi1yhCfCetRyT7L5kxe4wZAe75IokFMrDg==
+X-Received: by 2002:a05:600c:1906:b0:42c:b45d:4a7b with SMTP id 5b1f17b1804b1-4314a37bb99mr19466285e9.25.1729040663627;
+        Tue, 15 Oct 2024 18:04:23 -0700 (PDT)
 Received: from serenity.mandelbit.com ([2001:67c:2fbc:1:4c1a:a7c8:72f5:4282])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa8778csm2886765f8f.25.2024.10.15.18.04.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa8778csm2886765f8f.25.2024.10.15.18.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 18:04:19 -0700 (PDT)
+        Tue, 15 Oct 2024 18:04:22 -0700 (PDT)
 From: Antonio Quartulli <antonio@openvpn.net>
-Date: Wed, 16 Oct 2024 03:03:19 +0200
-Subject: [PATCH net-next v9 19/23] ovpn: implement key add/del/swap via
- netlink
+Date: Wed, 16 Oct 2024 03:03:20 +0200
+Subject: [PATCH net-next v9 20/23] ovpn: kill key and notify userspace in
+ case of IV exhaustion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-b4-ovpn-v9-19-aabe9d225ad5@openvpn.net>
+Message-Id: <20241016-b4-ovpn-v9-20-aabe9d225ad5@openvpn.net>
 References: <20241016-b4-ovpn-v9-0-aabe9d225ad5@openvpn.net>
 In-Reply-To: <20241016-b4-ovpn-v9-0-aabe9d225ad5@openvpn.net>
 To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
@@ -89,263 +89,212 @@ To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
  openvpn-devel@lists.sourceforge.net, linux-kselftest@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7966; i=antonio@openvpn.net;
- h=from:subject:message-id; bh=uBijmJW2oOVCVWghW03aDeybZ37xU5VWTwEgFTeWMTM=;
- b=owEBbQGS/pANAwAIAQtw5TqgONWHAcsmYgBnDxDw/CaDBhVBcSDw3zjfvyyeXM+Ti6K3p4oxg
- bjVrQPq5rKJATMEAAEIAB0WIQSZq9xs+NQS5N5fwPwLcOU6oDjVhwUCZw8Q8AAKCRALcOU6oDjV
- h6ICCAC2fKYU+0wxtQcofn51AHb/XtsWkZneMhtxvqgo08DNF5FjPCZzyQrBB7w8F3wNfR9FhfS
- P7Lhyt44Uw0zQw9/0sxAAvn8t8dP9jXiw5IcJUkqIjLcHJT6G3ajM5Cr85hgSJylmWx3xg20mXY
- 3UqxYQm9c6osbd4WN4a0YDHWuJVGOtnHy2udH4i4Rg/FO5A5W2qn7biMSlcgRztyVEcnM3UM1mG
- VTeQHSbry9eGuBbfg2vOSwmHrtWlFtkNlamTmijLHavdQXe0JAe5eHubPp+I5pEN9/vBas99mmB
- o0HMVUrshT8amJE+CGEwzWxfT0FnvVq10uteT6keyHesgeVB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6543; i=antonio@openvpn.net;
+ h=from:subject:message-id; bh=D9XOuq5NLdXjEhB+gziaUN9VEXaSfc+cmeGM+FY4CmY=;
+ b=owEBbQGS/pANAwAIAQtw5TqgONWHAcsmYgBnDxDxD98nCNTe5ud76sPiUO1YuG5F/Zi1VEblA
+ D3GUuO3E42JATMEAAEIAB0WIQSZq9xs+NQS5N5fwPwLcOU6oDjVhwUCZw8Q8QAKCRALcOU6oDjV
+ h6TZB/9EiC73lma2rR+/IWSXjb+n3h1zfkbNg8sSZZeolW3efmCuf69tdyBmvrVZioFJ2spZXCT
+ YHg46IGSCJvSqne+Lb4IbfO/oao/EjvpOPrFyr6JoyAtdxVnSWkhlyebNuYq/Jq5j9RaSEjBwTU
+ HpsNa/6/9GyaXntUF3ki4Jo9cQ/t8TWbHyMlosrJsCOwzHgmcbkSNJ2Q82HZWxmpN7YWq0c+uuu
+ BxSjOCb8qTiMkwwegrDWnXx2v2Wr/es9Nj9uDzTd9Jo8n/vxnCQgsLOb/qVoqiZqI0ysGUa+913
+ OP8urs2N/JO9y6BVRTYavxNq4aapB944jH9ju+pL2s0T38Ts
 X-Developer-Key: i=antonio@openvpn.net; a=openpgp;
  fpr=CABDA1282017C267219885C748F0CCB68F59D14C
 
-This change introduces the netlink commands needed to add, delete and
-swap keys for a specific peer.
+IV wrap-around is cryptographically dangerous for a number of ciphers,
+therefore kill the key and inform userspace (via netlink) should the
+IV space go exhausted.
 
-Userspace is expected to use these commands to create, destroy and
-rotate session keys for a specific peer.
+Userspace has two ways of deciding when the key has to be renewed before
+exhausting the IV space:
+1) time based approach:
+   after X seconds/minutes userspace generates a new key and sends it
+   to the kernel. This is based on guestimate and normally default
+   timer value works well.
+
+2) packet count based approach:
+   after X packets/bytes userspace generates a new key and sends it to
+   the kernel. Userspace keeps track of the amount of traffic by
+   periodically polling GET_PEER and fetching the VPN/LINK stats.
 
 Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
 ---
- drivers/net/ovpn/netlink.c | 210 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 207 insertions(+), 3 deletions(-)
+ drivers/net/ovpn/crypto.c  | 19 ++++++++++++++++
+ drivers/net/ovpn/crypto.h  |  2 ++
+ drivers/net/ovpn/io.c      | 18 ++++++++++++++-
+ drivers/net/ovpn/netlink.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/net/ovpn/netlink.h |  2 ++
+ 5 files changed, 95 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ovpn/netlink.c b/drivers/net/ovpn/netlink.c
-index d504445325ef82db04f87367c858adaf025f6297..bb96645205b6704f7066b7de9a003e01e63c10f7 100644
---- a/drivers/net/ovpn/netlink.c
-+++ b/drivers/net/ovpn/netlink.c
-@@ -679,9 +679,140 @@ int ovpn_nl_peer_del_doit(struct sk_buff *skb, struct genl_info *info)
- 	return ret;
+diff --git a/drivers/net/ovpn/crypto.c b/drivers/net/ovpn/crypto.c
+index f1f7510e2f735e367f96eb4982ba82c9af3c8bfc..56ae2f5e5c33e13933f26acd91c7786f7c02011a 100644
+--- a/drivers/net/ovpn/crypto.c
++++ b/drivers/net/ovpn/crypto.c
+@@ -55,6 +55,25 @@ void ovpn_crypto_state_release(struct ovpn_crypto_state *cs)
+ 	}
  }
  
-+static int ovpn_nl_get_key_dir(struct genl_info *info, struct nlattr *key,
-+			       enum ovpn_cipher_alg cipher,
-+			       struct ovpn_key_direction *dir)
++/* removes the key matching the specified id from the crypto context */
++void ovpn_crypto_kill_key(struct ovpn_crypto_state *cs, u8 key_id)
 +{
-+	struct nlattr *attrs[OVPN_A_KEYDIR_MAX + 1];
-+	int ret;
++	struct ovpn_crypto_key_slot *ks = NULL;
 +
-+	ret = nla_parse_nested(attrs, OVPN_A_KEYDIR_MAX, key,
-+			       ovpn_keydir_nl_policy, info->extack);
-+	if (ret)
-+		return ret;
-+
-+	switch (cipher) {
-+	case OVPN_CIPHER_ALG_AES_GCM:
-+	case OVPN_CIPHER_ALG_CHACHA20_POLY1305:
-+		if (NL_REQ_ATTR_CHECK(info->extack, key, attrs,
-+				      OVPN_A_KEYDIR_CIPHER_KEY) ||
-+		    NL_REQ_ATTR_CHECK(info->extack, key, attrs,
-+				      OVPN_A_KEYDIR_NONCE_TAIL))
-+			return -EINVAL;
-+
-+		dir->cipher_key = nla_data(attrs[OVPN_A_KEYDIR_CIPHER_KEY]);
-+		dir->cipher_key_size = nla_len(attrs[OVPN_A_KEYDIR_CIPHER_KEY]);
-+
-+		/* These algorithms require a 96bit nonce,
-+		 * Construct it by combining 4-bytes packet id and
-+		 * 8-bytes nonce-tail from userspace
-+		 */
-+		dir->nonce_tail = nla_data(attrs[OVPN_A_KEYDIR_NONCE_TAIL]);
-+		dir->nonce_tail_size = nla_len(attrs[OVPN_A_KEYDIR_NONCE_TAIL]);
-+		break;
-+	default:
-+		NL_SET_ERR_MSG_MOD(info->extack, "unsupported cipher");
-+		return -EINVAL;
++	spin_lock_bh(&cs->lock);
++	if (rcu_access_pointer(cs->slots[0])->key_id == key_id) {
++		ks = rcu_replace_pointer(cs->slots[0], NULL,
++					 lockdep_is_held(&cs->lock));
++	} else if (rcu_access_pointer(cs->slots[1])->key_id == key_id) {
++		ks = rcu_replace_pointer(cs->slots[1], NULL,
++					 lockdep_is_held(&cs->lock));
 +	}
++	spin_unlock_bh(&cs->lock);
 +
-+	return 0;
++	if (ks)
++		ovpn_crypto_key_slot_put(ks);
 +}
 +
+ /* Reset the ovpn_crypto_state object in a way that is atomic
+  * to RCU readers.
+  */
+diff --git a/drivers/net/ovpn/crypto.h b/drivers/net/ovpn/crypto.h
+index 3b437d26b531c3034cca5343c755ef9c7ef57276..53a965ec0fad3402317c1ac580aa6faad579a09b 100644
+--- a/drivers/net/ovpn/crypto.h
++++ b/drivers/net/ovpn/crypto.h
+@@ -136,4 +136,6 @@ void ovpn_crypto_state_release(struct ovpn_crypto_state *cs);
+ 
+ void ovpn_crypto_key_slots_swap(struct ovpn_crypto_state *cs);
+ 
++void ovpn_crypto_kill_key(struct ovpn_crypto_state *cs, u8 key_id);
++
+ #endif /* _NET_OVPN_OVPNCRYPTO_H_ */
+diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
+index c857ac9015b75530cf3ae40f8db0d4db4c08e2fa..dc6479d5f3008c4e851bee8d4061e4e85bed40f2 100644
+--- a/drivers/net/ovpn/io.c
++++ b/drivers/net/ovpn/io.c
+@@ -225,6 +225,7 @@ void ovpn_recv(struct ovpn_peer *peer, struct sk_buff *skb)
+ 
+ void ovpn_encrypt_post(void *data, int ret)
+ {
++	struct ovpn_crypto_key_slot *ks = NULL;
+ 	struct ovpn_peer *peer = NULL;
+ 	struct sk_buff *skb = data;
+ 	unsigned int orig_len = 0;
+@@ -237,15 +238,28 @@ void ovpn_encrypt_post(void *data, int ret)
+ 
+ 	/* crypto is done, cleanup skb CB and its members */
+ 	if (likely(ovpn_skb_cb(skb)->ctx)) {
++		ks = ovpn_skb_cb(skb)->ctx->ks;
+ 		peer = ovpn_skb_cb(skb)->ctx->peer;
+ 		orig_len = ovpn_skb_cb(skb)->ctx->orig_len;
+ 
+-		ovpn_crypto_key_slot_put(ovpn_skb_cb(skb)->ctx->ks);
+ 		aead_request_free(ovpn_skb_cb(skb)->ctx->req);
+ 		kfree(ovpn_skb_cb(skb)->ctx);
+ 		ovpn_skb_cb(skb)->ctx = NULL;
+ 	}
+ 
++	if (unlikely(ret == -ERANGE)) {
++		/* we ran out of IVs and we must kill the key as it can't be
++		 * use anymore
++		 */
++		netdev_warn(peer->ovpn->dev,
++			    "killing key %u for peer %u\n", ks->key_id,
++			    peer->id);
++		ovpn_crypto_kill_key(&peer->crypto, ks->key_id);
++		/* let userspace know so that a new key must be negotiated */
++		ovpn_nl_key_swap_notify(peer, ks->key_id);
++		goto err;
++	}
++
+ 	if (unlikely(ret < 0))
+ 		goto err;
+ 
+@@ -275,6 +289,8 @@ void ovpn_encrypt_post(void *data, int ret)
+ 		dev_core_stats_tx_dropped_inc(peer->ovpn->dev);
+ 	if (likely(peer))
+ 		ovpn_peer_put(peer);
++	if (likely(ks))
++		ovpn_crypto_key_slot_put(ks);
+ 	kfree_skb(skb);
+ }
+ 
+diff --git a/drivers/net/ovpn/netlink.c b/drivers/net/ovpn/netlink.c
+index bb96645205b6704f7066b7de9a003e01e63c10f7..09c7df2b1c76c812a3bece6e63c9fac13c96c327 100644
+--- a/drivers/net/ovpn/netlink.c
++++ b/drivers/net/ovpn/netlink.c
+@@ -903,6 +903,61 @@ int ovpn_nl_key_del_doit(struct sk_buff *skb, struct genl_info *info)
+ 	return 0;
+ }
+ 
 +/**
-+ * ovpn_nl_key_new_doit - configure a new key for the specified peer
-+ * @skb: incoming netlink message
-+ * @info: genetlink metadata
++ * ovpn_nl_key_swap_notify - notify userspace peer's key must be renewed
++ * @peer: the peer whose key needs to be renewed
++ * @key_id: the ID of the key that needs to be renewed
 + *
-+ * This function allows the user to install a new key in the peer crypto
-+ * state.
-+ * Each peer has two 'slots', namely 'primary' and 'secondary', where
-+ * keys can be installed. The key in the 'primary' slot is used for
-+ * encryption, while both keys can be used for decryption by matching the
-+ * key ID carried in the incoming packet.
-+ *
-+ * The user is responsible for rotating keys when necessary. The user
-+ * may fetch peer traffic statistics via netlink in order to better
-+ * identify the right time to rotate keys.
-+ * The renegotiation follows these steps:
-+ * 1. a new key is computed by the user and is installed in the 'secondary'
-+ *    slot
-+ * 2. at user discretion (usually after a predetermined time) 'primary' and
-+ *    'secondary' contents are swapped and the new key starts being used for
-+ *    encryption, while the old key is kept around for decryption of late
-+ *    packets.
-+ *
-+ * Return: 0 on success or a negative error code otherwise.
++ * Return: 0 on success or a negative error code otherwise
 + */
- int ovpn_nl_key_new_doit(struct sk_buff *skb, struct genl_info *info)
- {
--	return -EOPNOTSUPP;
-+	struct nlattr *attrs[OVPN_A_KEYCONF_MAX + 1];
-+	struct ovpn_struct *ovpn = info->user_ptr[0];
-+	struct ovpn_peer_key_reset pkr;
-+	struct ovpn_peer *peer;
-+	u32 peer_id;
-+	int ret;
++int ovpn_nl_key_swap_notify(struct ovpn_peer *peer, u8 key_id)
++{
++	struct nlattr *k_attr;
++	struct sk_buff *msg;
++	int ret = -EMSGSIZE;
++	void *hdr;
 +
-+	if (GENL_REQ_ATTR_CHECK(info, OVPN_A_KEYCONF))
-+		return -EINVAL;
++	netdev_info(peer->ovpn->dev, "peer with id %u must rekey - primary key unusable.\n",
++		    peer->id);
 +
-+	ret = nla_parse_nested(attrs, OVPN_A_KEYCONF_MAX,
-+			       info->attrs[OVPN_A_KEYCONF],
-+			       ovpn_keyconf_nl_policy, info->extack);
-+	if (ret)
-+		return ret;
++	msg = nlmsg_new(100, GFP_ATOMIC);
++	if (!msg)
++		return -ENOMEM;
 +
-+	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_PEER_ID))
-+		return -EINVAL;
-+
-+	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_SLOT) ||
-+	    NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_KEY_ID) ||
-+	    NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_CIPHER_ALG) ||
-+	    NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_ENCRYPT_DIR) ||
-+	    NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_DECRYPT_DIR))
-+		return -EINVAL;
-+
-+	peer_id = nla_get_u32(attrs[OVPN_A_KEYCONF_PEER_ID]);
-+	pkr.slot = nla_get_u8(attrs[OVPN_A_KEYCONF_SLOT]);
-+	pkr.key.key_id = nla_get_u16(attrs[OVPN_A_KEYCONF_KEY_ID]);
-+	pkr.key.cipher_alg = nla_get_u16(attrs[OVPN_A_KEYCONF_CIPHER_ALG]);
-+
-+	ret = ovpn_nl_get_key_dir(info, attrs[OVPN_A_KEYCONF_ENCRYPT_DIR],
-+				  pkr.key.cipher_alg, &pkr.key.encrypt);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ovpn_nl_get_key_dir(info, attrs[OVPN_A_KEYCONF_DECRYPT_DIR],
-+				  pkr.key.cipher_alg, &pkr.key.decrypt);
-+	if (ret < 0)
-+		return ret;
-+
-+	peer = ovpn_peer_get_by_id(ovpn, peer_id);
-+	if (!peer) {
-+		NL_SET_ERR_MSG_FMT_MOD(info->extack,
-+				       "no peer with id %u to set key for",
-+				       peer_id);
-+		return -ENOENT;
++	hdr = genlmsg_put(msg, 0, 0, &ovpn_nl_family, 0, OVPN_CMD_KEY_SWAP_NTF);
++	if (!hdr) {
++		ret = -ENOBUFS;
++		goto err_free_msg;
 +	}
 +
-+	ret = ovpn_crypto_state_reset(&peer->crypto, &pkr);
-+	if (ret < 0) {
-+		NL_SET_ERR_MSG_FMT_MOD(info->extack,
-+				       "cannot install new key for peer %u",
-+				       peer_id);
-+		goto out;
-+	}
++	if (nla_put_u32(msg, OVPN_A_IFINDEX, peer->ovpn->dev->ifindex))
++		goto err_cancel_msg;
 +
-+	netdev_dbg(ovpn->dev, "%s: new key installed (id=%u) for peer %u\n",
-+		   __func__, pkr.key.key_id, peer_id);
-+out:
-+	ovpn_peer_put(peer);
++	k_attr = nla_nest_start(msg, OVPN_A_KEYCONF);
++	if (!k_attr)
++		goto err_cancel_msg;
++
++	if (nla_put_u32(msg, OVPN_A_KEYCONF_PEER_ID, peer->id))
++		goto err_cancel_msg;
++
++	if (nla_put_u16(msg, OVPN_A_KEYCONF_KEY_ID, key_id))
++		goto err_cancel_msg;
++
++	nla_nest_end(msg, k_attr);
++	genlmsg_end(msg, hdr);
++
++	genlmsg_multicast_netns(&ovpn_nl_family, dev_net(peer->ovpn->dev), msg,
++				0, OVPN_NLGRP_PEERS, GFP_ATOMIC);
++
++	return 0;
++
++err_cancel_msg:
++	genlmsg_cancel(msg, hdr);
++err_free_msg:
++	nlmsg_free(msg);
 +	return ret;
- }
- 
- int ovpn_nl_key_get_doit(struct sk_buff *skb, struct genl_info *info)
-@@ -691,12 +822,85 @@ int ovpn_nl_key_get_doit(struct sk_buff *skb, struct genl_info *info)
- 
- int ovpn_nl_key_swap_doit(struct sk_buff *skb, struct genl_info *info)
- {
--	return -EOPNOTSUPP;
-+	struct ovpn_struct *ovpn = info->user_ptr[0];
-+	struct nlattr *attrs[OVPN_A_PEER_MAX + 1];
-+	struct ovpn_peer *peer;
-+	u32 peer_id;
-+	int ret;
++}
 +
-+	if (GENL_REQ_ATTR_CHECK(info, OVPN_A_KEYCONF))
-+		return -EINVAL;
-+
-+	ret = nla_parse_nested(attrs, OVPN_A_KEYCONF_MAX,
-+			       info->attrs[OVPN_A_KEYCONF],
-+			       ovpn_keyconf_nl_policy, info->extack);
-+	if (ret)
-+		return ret;
-+
-+	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_PEER_ID))
-+		return -EINVAL;
-+
-+	peer_id = nla_get_u32(attrs[OVPN_A_KEYCONF_PEER_ID]);
-+
-+	peer = ovpn_peer_get_by_id(ovpn, peer_id);
-+	if (!peer) {
-+		NL_SET_ERR_MSG_FMT_MOD(info->extack,
-+				       "no peer with id %u to swap keys for",
-+				       peer_id);
-+		return -ENOENT;
-+	}
-+
-+	ovpn_crypto_key_slots_swap(&peer->crypto);
-+	ovpn_peer_put(peer);
-+
-+	return 0;
- }
- 
- int ovpn_nl_key_del_doit(struct sk_buff *skb, struct genl_info *info)
- {
--	return -EOPNOTSUPP;
-+	struct nlattr *attrs[OVPN_A_KEYCONF_MAX + 1];
-+	struct ovpn_struct *ovpn = info->user_ptr[0];
-+	enum ovpn_key_slot slot;
-+	struct ovpn_peer *peer;
-+	u32 peer_id;
-+	int ret;
-+
-+	if (GENL_REQ_ATTR_CHECK(info, OVPN_A_KEYCONF))
-+		return -EINVAL;
-+
-+	ret = nla_parse_nested(attrs, OVPN_A_KEYCONF_MAX,
-+			       info->attrs[OVPN_A_KEYCONF],
-+			       ovpn_keyconf_nl_policy, info->extack);
-+	if (ret)
-+		return ret;
-+
-+	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_PEER_ID))
-+		return -EINVAL;
-+
-+	if (ret)
-+		return ret;
-+
-+	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_KEYCONF], attrs,
-+			      OVPN_A_KEYCONF_SLOT))
-+		return -EINVAL;
-+
-+	peer_id = nla_get_u32(attrs[OVPN_A_KEYCONF_PEER_ID]);
-+	slot = nla_get_u8(attrs[OVPN_A_KEYCONF_SLOT]);
-+
-+	peer = ovpn_peer_get_by_id(ovpn, peer_id);
-+	if (!peer) {
-+		NL_SET_ERR_MSG_FMT_MOD(info->extack,
-+				       "no peer with id %u to delete key for",
-+				       peer_id);
-+		return -ENOENT;
-+	}
-+
-+	ovpn_crypto_key_slot_delete(&peer->crypto, slot);
-+	ovpn_peer_put(peer);
-+
-+	return 0;
- }
- 
  /**
+  * ovpn_nl_register - perform any needed registration in the NL subsustem
+  *
+diff --git a/drivers/net/ovpn/netlink.h b/drivers/net/ovpn/netlink.h
+index 9e87cf11d1e9813b7a75ddf3705ab7d5fabe899f..33390b13c8904d40b629662005a9eb92ff617c3b 100644
+--- a/drivers/net/ovpn/netlink.h
++++ b/drivers/net/ovpn/netlink.h
+@@ -12,4 +12,6 @@
+ int ovpn_nl_register(void);
+ void ovpn_nl_unregister(void);
+ 
++int ovpn_nl_key_swap_notify(struct ovpn_peer *peer, u8 key_id);
++
+ #endif /* _NET_OVPN_NETLINK_H_ */
 
 -- 
 2.45.2
