@@ -1,117 +1,175 @@
-Return-Path: <linux-kernel+bounces-368156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E989A0C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:58:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94ED39A0C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D963C1F25C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:58:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0088DB27049
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD11C20C00A;
-	Wed, 16 Oct 2024 13:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vwb225Ni"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC4420C479;
+	Wed, 16 Oct 2024 13:58:59 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8696420C02C;
-	Wed, 16 Oct 2024 13:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB88820C009;
+	Wed, 16 Oct 2024 13:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729087103; cv=none; b=SL9JzfYugzpTwHelhomAXj+t285FouujOoYJ5fQpFrdcA03Qy3ViAA5Loo9OTQhy1o+x/s2tDrIg7dGiTlqS1bTSkIr12lt7gDg41rSNK4wEBFOAXvpG2z3MzVIA07jZ4hPMnviCjAzRi7XK9apX4i2Syu5MPaMowudKzSiDV9U=
+	t=1729087139; cv=none; b=c+UdFEoQEGP7nSpk/W1kB0dX5sc3Qo8pBk4bofE9lZ5tywDQYW6Q54DuvWrL96vE7Z1p1d2oXcy9cnTAvnIpkqLWi73zztwj8JqCwXROlBl1QpGkMz96w6Szscnvl9JnyaTjF/C2QnPaPesC2XuX54IFWY1Wbw+UWjlP/Y9LcOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729087103; c=relaxed/simple;
-	bh=tNXxexRa63qPQgCE/PAc1Z8lcuufpKEk5QRRnDaJq+s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Y72N0+2KRyG6SWdc+1hDG6hXd5PJUhlO6ttiuCpjajHxnYOBiX416J9r6AVyTZ686MvfnqIE2AKq9dnmwlFkN5upo9DWEH6RShndzgDJYdlqIrolAUljd/p4TjPYYUby2zGDZl6KmuXtaTcde645K/YO0SDmTKF+gsFjS6+xF/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vwb225Ni; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729087103; x=1760623103;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=tNXxexRa63qPQgCE/PAc1Z8lcuufpKEk5QRRnDaJq+s=;
-  b=Vwb225NiHD3hYho3ad8U/qD03Weyyff5yHqDZ8PKbyhJv/VbJ+WBZtrH
-   csBKE8yLQTcWzn0GRMQFoDl8TF6k8TULETJ6qpAxSxFS+1P+RWaxEn72P
-   az/pYrbl+FTyMtqCntBnEgVTECoO2astNq9XMwAGl1PG3nSvBf/XQAFKj
-   8o+F4ww643ETh157JGd3pHmS0zA0v3oHZbR+GNCTyExvoiGDg7Mni6GZR
-   1iMqnSgPMhh6RAwcTj/kZJZIvKqV+ucptj4Kn072Zv4W/fgXkMbpuMsUU
-   9sKS/1n26dTDs7BpSp6tmU6zSoTtPUp58PcP8Buiktfa1YwiNw6hFIbr5
-   g==;
-X-CSE-ConnectionGUID: 1yfAEEkPQWm1VClMgPbcxw==
-X-CSE-MsgGUID: KEx9i6w8SuafP7k4QH0rKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46009054"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="46009054"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:58:22 -0700
-X-CSE-ConnectionGUID: WVAU1CeSRDWu8KSQ5l2xlA==
-X-CSE-MsgGUID: EOjd0EyUQf25Dm3DlX9PBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="78124999"
-Received: from yungchua-mobl2.ccr.corp.intel.com (HELO [10.246.104.225]) ([10.246.104.225])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:58:20 -0700
-Message-ID: <7f9e4378-3d96-4eee-9b66-cb37739a12f4@linux.intel.com>
-Date: Wed, 16 Oct 2024 21:58:17 +0800
+	s=arc-20240116; t=1729087139; c=relaxed/simple;
+	bh=DCwW1BXaEzYmomHtjqvPhEnDGnecHTjUZgJNEcpFnTA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oV+a8Ndu+BJiDoBSdy205lZFwASoKPuT/2qnXi7suJfPXiNV8QyBT0PXTd8/RSZv0z7t7ZLeTukmM6avmil9VQ3ODZ2duG7RaLkO+1dEcbTHhMmu7xNqSHmZ/TFGk6tTXgX7aHvIrOVklu6Nn0F1A1rzq5hjM9/f1xMjSYCH1MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTCGw6RFvz6D8Y7;
+	Wed, 16 Oct 2024 21:58:16 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 54E9E140B67;
+	Wed, 16 Oct 2024 21:58:54 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
+ 2024 15:58:52 +0200
+Date: Wed, 16 Oct 2024 14:58:51 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
+	<thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Vasily Khoruzhick
+	<anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v4 2/6] thermal: of: Use scoped memory and OF handling
+ to simplify thermal_of_trips_init()
+Message-ID: <20241016145851.00004e90@Huawei.com>
+In-Reply-To: <20241010-b4-cleanup-h-of-node-put-thermal-v4-2-bfbe29ad81f4@linaro.org>
+References: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
+	<20241010-b4-cleanup-h-of-node-put-thermal-v4-2-bfbe29ad81f4@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] ASoC/SoundWire: clean up link DMA during stop for
- IPC4
-From: "Liao, Bard" <yung-chuan.liao@linux.intel.com>
-To: broonie@kernel.org, tiwai@suse.de, vkoul@kernel.org
-Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, pierre-louis.bossart@linux.dev,
- bard.liao@intel.com, ranjani.sridharan@linux.intel.com
-References: <20241016032910.14601-1-yung-chuan.liao@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <20241016032910.14601-1-yung-chuan.liao@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Thu, 10 Oct 2024 20:06:18 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-
-On 10/16/2024 11:29 AM, Bard Liao wrote:
-> Clean up the link DMA for playback during stop for IPC4 is required to
-> reset the DMA read/write pointers when the stream is prepared and
-> restarted after a call to snd_pcm_drain()/snd_pcm_drop(). 
+> Obtain the device node reference and allocate memory with
+> scoped/cleanup.h to reduce error handling and make the code a bit
+> simpler.
 > 
-> The change is mainly on ASoC. We may go via ASoC tree with Vinod's
-> Acked-by tag
+> The code is not equivalent in one minor aspect: outgoing parameter
+> "*ntrips" will not be zeroed on errors of memory allocation.  This
+> difference is not important, because code was already not zeroing it in
+> case of earlier errors and the only caller does not rely on ntrips being
+> 0 in case of errors.
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Trivial unrelated comment inline + maybe return_ptr() is the way to go as
+Chen-Yu mentioned.
 
-Mark,
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-This is a bug fix. Link: https://github.com/thesofproject/sof/issues/9502
-
-Can you pick it for kernel 6.12? Also
-
-All: Cc: stable@vger.kernel.org # 6.10.x 6.11.x
-
-Thanks,
-Bard
-
-> Ranjani Sridharan (4):
->   ASoC: SOF: ipc4-topology: Do not set ALH node_id for aggregated DAIs
->   ASoC: SOF: Intel: hda: Handle prepare without close for non-HDA DAI's
->   soundwire: intel_ace2x: Send PDI stream number during prepare
->   ASoC: SOF: Intel: hda: Always clean up link DMA during stop
+> ---
 > 
->  drivers/soundwire/intel_ace2x.c   | 19 +++++-----------
->  sound/soc/sof/intel/hda-dai-ops.c | 23 +++++++++----------
->  sound/soc/sof/intel/hda-dai.c     | 37 +++++++++++++++++++++++++++----
->  sound/soc/sof/ipc4-topology.c     | 15 +++++++++++--
->  4 files changed, 62 insertions(+), 32 deletions(-)
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Chen-Yu Tsai <wenst@chromium.org>
+> 
+> Changes in v4:
+> 1. Significant change: kzalloc() also with scoped-handling so the entire
+>    error handling could be removed.
+> 2. Due to above, drop review-tags (Chen-Yu, Jonathan).
+> 
+> Changes in v2:
+> 1. Drop left-over of_node_put in regular exit path (Chen-Yu)
+> ---
+>  drivers/thermal/thermal_of.c | 31 ++++++++-----------------------
+>  1 file changed, 8 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+> index f0ffc0e335ba9406f4fd858d6c561f9d23f4b842..37db435b54b124abf25b1d75d6cc4fb75f1c1e5c 100644
+> --- a/drivers/thermal/thermal_of.c
+> +++ b/drivers/thermal/thermal_of.c
+> @@ -95,11 +95,9 @@ static int thermal_of_populate_trip(struct device_node *np,
+>  
+>  static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *ntrips)
+>  {
+> -	struct thermal_trip *tt;
+> -	struct device_node *trips;
+>  	int ret, count;
+>  
+> -	trips = of_get_child_by_name(np, "trips");
+> +	struct device_node *trips __free(device_node) = of_get_child_by_name(np, "trips");
+>  	if (!trips) {
+>  		pr_err("Failed to find 'trips' node\n");
+>  		return ERR_PTR(-EINVAL);
+> @@ -108,36 +106,23 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
+>  	count = of_get_child_count(trips);
+>  	if (!count) {
+>  		pr_err("No trip point defined\n");
+> -		ret = -EINVAL;
+> -		goto out_of_node_put;
+> +		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> -	tt = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
+> -	if (!tt) {
+> -		ret = -ENOMEM;
+> -		goto out_of_node_put;
+> -	}
+> -
+> -	*ntrips = count;
+> +	struct thermal_trip *tt __free(kfree) = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
+
+Trivial and unrelated, but maybe kcalloc(count, sizeof(tt), GFP_KERNEL);
+
+> +	if (!tt)
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	count = 0;
+>  	for_each_child_of_node_scoped(trips, trip) {
+>  		ret = thermal_of_populate_trip(trip, &tt[count++]);
+>  		if (ret)
+> -			goto out_kfree;
+> +			return ERR_PTR(ret);
+>  	}
+>  
+> -	of_node_put(trips);
+> +	*ntrips = count;
+>  
+> -	return tt;
+> -
+> -out_kfree:
+> -	kfree(tt);
+> -	*ntrips = 0;
+> -out_of_node_put:
+> -	of_node_put(trips);
+> -
+> -	return ERR_PTR(ret);
+> +	return no_free_ptr(tt);
+>  }
+>  
+>  static struct device_node *of_thermal_zone_find(struct device_node *sensor, int id)
 > 
 
 
