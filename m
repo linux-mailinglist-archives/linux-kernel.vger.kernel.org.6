@@ -1,167 +1,119 @@
-Return-Path: <linux-kernel+bounces-367745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F9B9A062D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B7B9A062F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB5E0B23625
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:56:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EE1DB2434F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E4C206061;
-	Wed, 16 Oct 2024 09:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5D720605E;
+	Wed, 16 Oct 2024 09:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BW3YTrGz"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0tssgJ1"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61B320605A;
-	Wed, 16 Oct 2024 09:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89F91B78F3;
+	Wed, 16 Oct 2024 09:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072567; cv=none; b=QmGmT9Yvu7dQrNR/8aMjUL3yOFgXBz7ucZV8PrMSjtnapML4t/kEF/U7kbShW9CazcZDIMYQQS4Yf+4biRiqyVU9O/zAPU8ltoHnB/ObCpMKVNKob9dVIcBS/2IsmDftXSgPOfof0WOrJn72WzX4bOKMtONR11PSOucjOBzzHpw=
+	t=1729072595; cv=none; b=Ldoq1NLzJymi8ZpKW4EEpJO+6ONOdHz5XBlmyOngM+aMIZtO3w+W52lDAJW+l79MnrgB89Tadu7f9ijipZcJfpcqHcM9vLVXhFKK7QMJr4uGhKzpd7ThM7YxwVp0zpmtKxhzDJWQVYk7vtausSCV9rk3OAa31IGcomlUeuZWKOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072567; c=relaxed/simple;
-	bh=OyaDcQWeWDMNXD4XJ0lliYzzd5Widg/W6p5haR+rPnM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tkQBg5k4TrrwAhFqOiAOUyexg/S4TTz0GIxljxmOBjUXiI8QwXs67AFex13Ws4sLa2qAUB2zYvpqhzRGC89RHaofmdux+A5GFsqYHVN5VI64B6Y6ium0G4BHa2vggXussx3k7EYRZlQrSRfgtX8F/+SfhhI2Ow1wkfPMb4Trr0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BW3YTrGz; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1729072595; c=relaxed/simple;
+	bh=nITX4l5cqP0y7EEZ7tQeL0WLMHfL/LyZRt/gFUg95m8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=q2jiT9AilAGhK0YBgHHt+KyZc6BP1vgNW3zplnqoHxBIpKGQ0ytJu125TYR82wiqp7h6+XjNqHvQgMoafjBouLsrNGv2pYBJKzCsd/eUIzz/F7oKClqM5ev2gOWCS0Lpy7uPCicIypn1s2wfoqQdhkjd4D8ewQY5Q3EGufSw0u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0tssgJ1; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso287563266b.1;
-        Wed, 16 Oct 2024 02:56:05 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e49ef3b2bso3418760b3a.2;
+        Wed, 16 Oct 2024 02:56:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729072564; x=1729677364; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=I9Dk398NJFynNgEuEoYMoZMW+PxuCplcELYFZehVVxQ=;
-        b=BW3YTrGzUjwvtu08x7aeb6WiM3vWDk+qUgk3XHpliFrxA8KdMDQlwSeMDX4zv3NDQR
-         BwbECAQu9Co3ZedPvoZofBaLTFuTJ4sW2RmoC98wiQ/A+KXDosiF8+QdwYB42tn83lCt
-         clftJot0WZSo4NTKZTwmAJR6rs/Q40YSEbf9RXD7QNRdyqFdu7J1Sn084Q/lFJAFiUFJ
-         TnvDOyza0NOzVHaW8sBrY86xPIjKiefDUPuy9xllnP/U7yzV8cJyD+JkwGA08JbN1axM
-         hXW0UCjSb1gV7fOIybYVrXJme4tL9J6kbghe4HQ04+RQutajk8B7+Zp+QNFNQXfYZOLF
-         R6ig==
+        d=gmail.com; s=20230601; t=1729072593; x=1729677393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E3yNxgct7QY44bG7w60XotfbN9PqaxadBpIDEsrxKZI=;
+        b=d0tssgJ1E+B3h+Kmc1Arm/Eweaa46ZDyfzmwsVODFp6G5fO9Tp1Z3qI0qtcykj47V5
+         lU1OBCxEmDQKl0ZWrMVaKqVUQokMdCPyhuOARiMOHosDS7hNoVq5c0PYIqUukdoIDg1m
+         xTW2nNuDfM5iESRAQV99ZkmdoV1S2+Q4PugpDaVQXokmTWvRz+VRLBLgtxiyi19+X9tk
+         b98vRXn5rPAHNwP0s/EdTDz2cu2UBe5hRARTcUwwufmUxnzumgqb2btPUeRyoMiujqun
+         SxXruPSITtgXW8so4GDsLqAPrQ/dMGA5r+oOjc+r3H/pKFEEz+c0NdnlTXlECl7sTHox
+         L1GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729072564; x=1729677364;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I9Dk398NJFynNgEuEoYMoZMW+PxuCplcELYFZehVVxQ=;
-        b=Spy6GfE3P2K0bjudODQNmyIImMhh9zNjPHdocnMtjaDjxv3uzHbj+s6nLFw3cJt30S
-         IZNt3wudqFW5zMQ9SqLnaf0hr6r83Xr2txIHJi3wUeMZ6RU+IXAIIsy7F8QzKVQfE0gx
-         8Yvvn7gf+WbZ/zZfKUtljyeRrGSsENP1lVIVr+bOoRpgSjz6lt0aGHMbLt+exzXixuoo
-         LtdyM3A1DsGYI4K8O/hchc0SwUKCyZG32Xd3m/qTvHq2kfhP+g3BWMFknig0trKgGte+
-         5INs125rYPqaO7LRbYxqk4uctJgVYdLW1/ggB2bSDfnEn5OuI93Y95TEihCO8YdOg79z
-         sB1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW94HzOEQadSpW81pgSq3bkfACKoBwa8lNnvB79vR0gGlz6VIogiobUzk/BO6Feba8T4n6pg74TOkD6l1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyABrvvVj+nY7oCjnD7CuAEJFvZHF+XIlICx6qWqU27VFnriA7P
-	x5BAu/5UMJn9QGKVnd7BEtm7pzjcm7VbXtkPwLJU6hnv5Ep4vyDZInvKt4Jef9O326q/9cbWhou
-	OiusBMyk01S0LjMZ8Gs8/B9Ceo9bCFqy7y5s=
-X-Google-Smtp-Source: AGHT+IH1DBOS0TpZDMFlnMjSSySR0I4oWJRyhNUfYKtNOpBAC9JSpyG+cJdwsn71m55gNBxDbDesiZ55p6k8DfTcAS0=
-X-Received: by 2002:a17:907:26c2:b0:a99:40e3:23e8 with SMTP id
- a640c23a62f3a-a99e3e4c342mr1426169866b.51.1729072563860; Wed, 16 Oct 2024
- 02:56:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729072593; x=1729677393;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E3yNxgct7QY44bG7w60XotfbN9PqaxadBpIDEsrxKZI=;
+        b=AONlypKpQ1GX/1H/KzU201THnRL+9E1xygbXYouDw0Q8RB4j2TDDFgBkAw7THDucag
+         XRToNOqFs4VrTwCpb3m5HuV5Wax3DWWiR3ovAQVkn1fzjNTQ98u+4JQX+hD6hue1WIKC
+         CNVlgQtlFwhsIZh9XIDY+3U5BktFH58/5aC0BqrWbwMUZQQ/pY3qPCNuj4LeoW4yFPRe
+         T4ewQH49q9ZGmnbZf4d8AxMjAalj6mdS2vPpVVsGloMXfCNbPgPKzFcn8QJfp5CsdO8Q
+         X44tv8DLMHvq0tJs8b1e7ae4j2R0t/TxyH0XNS36ocH6bYO7+P7ct/F29vMBvUhFc0zl
+         jEPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU52ttHO/krGz18ajvoX5hkH8jQbU1ZBw0dusjRpbbbrzxMve80TYTqv8SbzUcuXEjVWrwwTQSx70uwxWQ9@vger.kernel.org, AJvYcCWZQNuvrT9UOGNUeD23G3Odn408vVD1bulLO8sEV7AA87VUsa7yuJOgVJUOuhHY5MVP5PQLRd81pnht@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaF5jRemv+DYR0+lt5i18b/yvlqZGgF/sJr22p1TaX6YElslqs
+	4Xpx8nSMNDa8y4xcRaxktGCV5GbmRO40ysgErT7oi7MmBd2wYUx1
+X-Google-Smtp-Source: AGHT+IFcz0yc81Apz/niZRH1c8GvcpfAlXt/Rr+JESn0CLZRy9SMDtYy1hlbLHmPYLcM9H2gyiJwOg==
+X-Received: by 2002:aa7:88cf:0:b0:71e:4c86:6594 with SMTP id d2e1a72fcca58-71e4c866d85mr22837310b3a.10.1729072592864;
+        Wed, 16 Oct 2024 02:56:32 -0700 (PDT)
+Received: from localhost ([202.85.210.186])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e84982905sm763996b3a.96.2024.10.16.02.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 02:56:32 -0700 (PDT)
+From: Yang Li <yang.li85200@gmail.com>
+To: yang.li85200@gmail.com
+Cc: guoren@kernel.org,
+	linux-csky@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] csky: fix csky_cmpxchg_fixup not working
+Date: Wed, 16 Oct 2024 17:56:26 +0800
+Message-Id: <20241016095626.8162-1-yang.li85200@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241008054615.43062-1-yang.li85200@gmail.com>
+References: <20241008054615.43062-1-yang.li85200@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Adam Green <greena88@gmail.com>
-Date: Wed, 16 Oct 2024 10:55:53 +0100
-Message-ID: <CAC8uq=Ppnmv98mpa1CrWLawWoPnu5abtU69v-=G-P7ysATQ2Pw@mail.gmail.com>
-Subject: Unable to handle kernel paging request at virtual address ffffffc08058e000
-To: linux-mmc@vger.kernel.org
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, 
-	"shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>, sydarn@proton.me
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Good morning,
+In the csky_cmpxchg_fixup function, it is incorrect to use the global
+ variable csky_cmpxchg_stw to determine the address where the exception
+ occurred.The global variable csky_cmpxchg_stw stores the opcode at the
+ time of the exception, while &csky_cmpxchg_stw shows the address where
+ the exception occurred.
 
-I would like to report a regression that appears to have been
-introduced into the linux kernel since v6.9.
+Signed-off-by: Yang Li <yang.li85200@gmail.com>
+---
+V1 -> V2:Eliminate compilation warnings
 
-My device is currently experiencing a panic booting the kernel/rootfs
-from an SD card.
+ arch/csky/mm/fault.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The device is a Powkiddy RGB30 which is a portable handheld gaming
-console with a Rockchip RK3566 SoC (arm64).
+diff --git a/arch/csky/mm/fault.c b/arch/csky/mm/fault.c
+index a885518ce1dd..5226bc08c336 100644
+--- a/arch/csky/mm/fault.c
++++ b/arch/csky/mm/fault.c
+@@ -45,8 +45,8 @@ static inline void csky_cmpxchg_fixup(struct pt_regs *regs)
+ 	if (trap_no(regs) != VEC_TLBMODIFIED)
+ 		return;
+ 
+-	if (instruction_pointer(regs) == csky_cmpxchg_stw)
+-		instruction_pointer_set(regs, csky_cmpxchg_ldw);
++	if (instruction_pointer(regs) == (unsigned long)&csky_cmpxchg_stw)
++		instruction_pointer_set(regs, (unsigned long)&csky_cmpxchg_ldw);
+ 	return;
+ }
+ #endif
+-- 
+2.34.1
 
-I have tested a variety of devices from a couple of manufacturers with
-the same SoC and they all have the same issue,
-I have also tested, 6.12-rc3 and linux-next and the same issue appears present.
-
-A full UART dump can be found here: https://clbin.com/zLZAW
-
-[   41.547983] Unable to handle kernel paging request at virtual
-address ffffffc08058e000
-[   41.553426] Mem abort info:
-[   41.558231]   ESR = 0x0000000096000007
-[   41.563115]   EC = 0x25: DABT (current EL), IL = 32 bits
-[   41.568135]   SET = 0, FnV = 0
-[   41.572882]   EA = 0, S1PTW = 0
-[   41.577575]   FSC = 0x07: level 3 translation fault
-[   41.582404] Data abort info:
-[   41.586995]   ISV = 0, ISS = 0x00000007, ISS2 = 0x00000000
-[   41.591848]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[   41.596664]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[   41.601457] swapper pgtable: 4k pages, 39-bit VAs, pgdp=000000000363e000
-[   41.606359] [ffffffc08058e000] pgd=1000000000225003,
-p4d=1000000000225003, pud=1000000000225003, pmd=1000000000c8c003,
-pte=0000000000000000
-[   41.616442] Internal error: Oops: 0000000096000007 [#1] PREEMPT SMP
-[   41.621544] Modules linked in: hci_uart btrtl bluetooth rfkill
-[   41.626678] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-rc2 #1
-[   41.631922] Hardware name: Powkiddy RGB30 (DT)
-[   41.636951] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   41.642330] pc : dw_mci_idmac_start_dma+0xa0/0x358
-[   41.647585] lr : __dw_mci_start_request+0x21c/0x6a0
-[   41.652827] sp : ffffffc080003da0
-[   41.657882] x29: ffffffc080003da0 x28: ffffff8001f06d80 x27: ffffffc08058d000
-[   41.663399] x26: ffffffc08058e000 x25: 0000000000002711 x24: 0000000000002000
-[   41.668864] x23: ffffff800167dc80 x22: 0000000080000012 x21: 0000000000001000
-[   41.674257] x20: 000000003b5d1000 x19: 0000000000001000 x18: 0000000972073a81
-[   41.679654] x17: ffffff9c39b47000 x16: ffffffc080000000 x15: 0000000000000001
-[   41.685074] x14: 0000000000000004 x13: 000001ba5087c8e8 x12: 00000000000001a8
-[   41.690506] x11: 0000000000000040 x10: ffffffe40628d890 x9 : 0000000000000000
-[   41.695972] x8 : ffffff803fd44080 x7 : 0000000008f0d180 x6 : 000000003b9ac9ff
-[   41.701495] x5 : 0000000000fffffe x4 : ffffffc08058de80 x3 : 00000000b2d05e00
-[   41.707073] x2 : ffffffe40546ab08 x1 : ffffffc08058e000 x0 : 0000000000001000
-[   41.712686] Call trace:
-[   41.717857]  dw_mci_idmac_start_dma+0xa0/0x358
-[   41.723266]  __dw_mci_start_request+0x21c/0x6a0
-[   41.728719]  dw_mci_work_func+0x4c8/0x4d8
-[   41.734144]  process_one_work+0x148/0x284
-[   41.739587]  bh_worker+0x224/0x278
-[   41.744985]  workqueue_softirq_action+0x78/0x88
-[   41.750545]  tasklet_action+0x14/0x3c
-[   41.756023]  handle_softirqs+0x100/0x23c
-[   41.761506]  __do_softirq+0x14/0x20
-[   41.766917]  ____do_softirq+0x10/0x20
-[   41.772301]  call_on_irq_stack+0x24/0x54
-[   41.777689]  do_softirq_own_stack+0x1c/0x40
-[   41.783106]  irq_exit_rcu+0x94/0xd0
-[   41.788455]  el1_interrupt+0x38/0x68
-[   41.793799]  el1h_64_irq_handler+0x18/0x24
-[   41.799200]  el1h_64_irq+0x68/0x6c
-[   41.804532]  default_idle_call+0x28/0x58
-[   41.809931]  do_idle+0x1fc/0x260
-[   41.815152]  cpu_startup_entry+0x34/0x40
-[   41.820346]  kernel_init+0x0/0x140
-[   41.825437]  console_on_rootfs+0x0/0x6c
-[   41.830477]  __primary_switched+0x80/0x88
-[   41.835501] Code: 54000280 d294f8c0 940e1f8c d503203f (b9400340)
-[   41.840748] ---[ end trace 0000000000000000 ]---
-[   41.845896] Kernel panic - not syncing: Oops: Fatal exception in interrupt
-[   41.851321] SMP: stopping secondary CPUs
-[   41.856502] Kernel Offset: 0x2384800000 from 0xffffffc080000000
-[   41.861840] PHYS_OFFSET: 0x0
-[   41.866814] CPU features: 0x0c,00000014,00280928,4201720b
-[   41.872087] Memory Limit: none
-[   41.877119] Rebooting in 1 seconds..
-
-Best regards,
-
-Adam Green
 
