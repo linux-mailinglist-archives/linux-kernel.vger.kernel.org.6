@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-368115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD389A0B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:25:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F69A9A0B69
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01F441C22A94
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:25:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20FC5B2461B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C02209666;
-	Wed, 16 Oct 2024 13:25:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A2D20B1EE;
+	Wed, 16 Oct 2024 13:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4DmXHGq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EA51C2325;
-	Wed, 16 Oct 2024 13:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A103B208D90;
+	Wed, 16 Oct 2024 13:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729085133; cv=none; b=aet9tcq/yfNTFDtYh2rPIvwF3F9kTulIF+xQBYw8tBJGMf2wiYcQ4y6lB481X6Cd1McgqluW2awLb+oWFBQvnW7XXXqZ2cb4fudoZAN2Pd2NiruZrR58Z9ffAdZWjxfrYqvFrm6Pf1rbXfWnZN5GvO4xZyWJ/JY1lm/pSAWMG3M=
+	t=1729085182; cv=none; b=t2eLIKxUCli/JvF0bttu+nNGO5YaOWi4GznVRKQNp4+revfP8RwDsvAm/ww+q/GJDqmNeE7Cf3piO6yW531S48EwEEEF/BCInpcHj4XKNT3HyHmG75cVxchSbHWgrOdNEwXoYba/HjMwo+2UCQuzo4G7O5NIJ9YDKVsh2QiBcHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729085133; c=relaxed/simple;
-	bh=PTfg91UCXRQuEFbsQVtKFhSJ7Kvxu/UJrJD3aHiViZ4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aTDEQWScFFrVMAZXty+rbcKLqczLj/xB5kuZKtOEjZJWIen2pVK0LIUmtc5dk9MDvKnG46QrTt3Ou81Mn+/PDX60IO4EoSK6ZToj8eINVw+MxAxIkDcNA5w5ybiOvG8ZyUu2kbM7ztk9PB4Xvnq6OTUpzGRctBIYXnhF4oQGtHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTBW64fm2z6FGQN;
-	Wed, 16 Oct 2024 21:23:46 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7230D140A77;
-	Wed, 16 Oct 2024 21:25:27 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 15:25:26 +0200
-Date: Wed, 16 Oct 2024 14:25:25 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com>
-CC: Sumanesh Samanta <sumanesh.samanta@broadcom.com>,
-	<linux-pci@vger.kernel.org>, <bhelgaas@google.com>,
-	<manivannan.sadhasivam@linaro.org>, <logang@deltatee.com>,
-	<linux-kernel@vger.kernel.org>, <sathya.prakash@broadcom.com>,
-	<sjeaugey@nvidia.com>
-Subject: Re: [PATCH 1/2 v2] PCI/portdrv: Enable reporting inter-switch P2P
- links
-Message-ID: <20241016142525.000013ca@Huawei.com>
-In-Reply-To: <CAOHJnDv9XK3Pno4pk9bDA1SApnJ-oYmA83EndttpiFh4=i2mMw@mail.gmail.com>
-References: <1726733624-2142-1-git-send-email-shivasharan.srikanteshwara@broadcom.com>
-	<1726733624-2142-2-git-send-email-shivasharan.srikanteshwara@broadcom.com>
-	<20240924155755.000069cd@Huawei.com>
-	<CADbZ7FqUxAQFT0u7QQMuSKePRCEG2nWBzv=ECbSDGu+8WX8iAQ@mail.gmail.com>
-	<20241004113933.00007ec4@Huawei.com>
-	<CAOHJnDv9XK3Pno4pk9bDA1SApnJ-oYmA83EndttpiFh4=i2mMw@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729085182; c=relaxed/simple;
+	bh=ktsUmMq1owm2A/rtmJhchvXSt4SVDq3RopLtu41LSak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AgPc2IXIEAmYpbNu1k6xz18x2SVR9JeQ4+Ix5DZ682d/3YFERWwlvv5B6XCWwFQplHB/fknAqMfxhTVMbeOo3d5dwUGy+GOHQ5rysA4kecb9JZrYyc/vmMV4sAE+1sWixFdrlHAaFO9ujlh0uqbvwNobT8zacGj+uN7s6ximNfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4DmXHGq; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729085181; x=1760621181;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ktsUmMq1owm2A/rtmJhchvXSt4SVDq3RopLtu41LSak=;
+  b=d4DmXHGqoMflT8Ez0yLlrbLlW0i3iondOLc6M27Ol+xoampqEgvXWavb
+   fen7k/pFXmHHw+9lb1hNJeiS6K1SIH3QV/40qgFfiRNScdZ8KaxlS+JN5
+   PoFIrygien13rdzrAClg3QDtL9rCWlBNL3683DpClAiut0yxf8k2U7YbX
+   bYb10U8X6ViI/k9D5ieR1nCRUIjpTb+fOKDyiN9ObQzMAKsqapDnsS0av
+   DEg7kEbD8587ipIjskPI35tvkhvz1Kp3AZs1kCLX2aK/MIi9LoiSVtQvb
+   BrYCgHkCVO0Rpj8ZqIxxxUkt7qzaYAprfw5XcCyzh97i6jKiLYY7aTQMs
+   Q==;
+X-CSE-ConnectionGUID: TbmduhNVTFGbgfjrW52OjQ==
+X-CSE-MsgGUID: eXCX+1r1R96Eu50a/J3khA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="53947539"
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="53947539"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:26:20 -0700
+X-CSE-ConnectionGUID: QI5XSyjLSKKz53+a4UfK6A==
+X-CSE-MsgGUID: gMoiiCdKQrOXvR3CJkwuog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="115665424"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 16 Oct 2024 06:26:17 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 59700165; Wed, 16 Oct 2024 16:26:16 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH net-next v2 1/1] net: ks8851: use %*ph to print small buffer
+Date: Wed, 16 Oct 2024 16:25:26 +0300
+Message-ID: <20241016132615.899037-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Oct 2024 15:10:57 +0530
-Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com> wrote:
+Use %*ph format to print small buffer as hex string. It will change
+the output format from 32-bit words to byte hexdump, but this is not
+critical as it's only a debug message.
 
-> On Fri, Oct 4, 2024 at 4:09=E2=80=AFPM Jonathan Cameron <Jonathan.Cameron=
-@huawei.com>
-> wrote:
-> >
-> > On Thu, 3 Oct 2024 14:41:07 -0600
-> > Sumanesh Samanta <sumanesh.samanta@broadcom.com> wrote:
-> > =20
-> > > Hi Jonathan,
-> > > =20
-> > > >> Need more data that 'there is a link' for this.
-> > > >>I'd like to see some info on bandwidth and latency. =20
-> > >
-> > > As you too noted in your comments, for now, we are only addressing p2p
-> > > connection between "virtual switches", i.e. switches that look
-> > > different to the host, but are actually part of the same physical
-> > > hardware.
-> > > Given that, I am not sure what we should display for bandwidth and
-> > > latency. There is no physical link to traverse between the virtual
-> > > switches, and usually we take that as "infinite" bandwidth and "zero"
-> > > latency. =20
-> >
-> > For a case where you have no information, not having attributes is
-> > sensible. If there is information (CXL CDAT provides this for switches
-> > for instance) then we should have an interface that provides space for
-> > that information.
-> > =20
-> > > As such, any number here will make little sense until we
-> > > start supporting p2p connection between physical switches. =20
-> >
-> > As above, it makes sense in a switch as well - if the information
-> > is available.
-> > =20
-> > > We could,
-> > > of course, have some encoding for the time being, like have "INF" for
-> > > bandwidth and 0 for latency, but again, those will not be very useful
-> > > till the day this scheme is extended to physical switch and we display
-> > > real values, like bandwidth and latency for a x16 PCIe link. Thoughts=
-? =20
-> >
-> > Hide the sysfs attributes for latency and bandwidth if we simply don't
-> > know.  Software built on top of this can then assume full bandwidth
-> > is available or better still run some measurements to establish the
-> > missing data.
-> >
-> > All I really meant by this suggestion is a directory with space for
-> > other info is probably more extensible than a single file. =20
->=20
-> Hi Jonathan,
-> We will make the changes to add a directory for p2p_link related informat=
-ion
-> to be exposed to user. We will only populate the information related to t=
-he
-> inter-switch P2P links. Rest of the attributes can be added for devices t=
-hat
-> report them at a later stage.
-> Please check if the directory structure makes sense to you:
-> /sys/devices/.../B:D:F/p2p_link/links -> Reading this file will return the
-> same
-> information that is returned currently by the p2p_link file.
-Sounds good to me.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: wrapped on 80 (Simon), elaborated the format change (Simon)
+ drivers/net/ethernet/micrel/ks8851_common.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-Jonathan
+diff --git a/drivers/net/ethernet/micrel/ks8851_common.c b/drivers/net/ethernet/micrel/ks8851_common.c
+index 7fa1820db9cc..bb5138806c3f 100644
+--- a/drivers/net/ethernet/micrel/ks8851_common.c
++++ b/drivers/net/ethernet/micrel/ks8851_common.c
+@@ -215,22 +215,6 @@ static void ks8851_init_mac(struct ks8851_net *ks, struct device_node *np)
+ 	ks8851_write_mac_addr(dev);
+ }
+ 
+-/**
+- * ks8851_dbg_dumpkkt - dump initial packet contents to debug
+- * @ks: The device state
+- * @rxpkt: The data for the received packet
+- *
+- * Dump the initial data from the packet to dev_dbg().
+- */
+-static void ks8851_dbg_dumpkkt(struct ks8851_net *ks, u8 *rxpkt)
+-{
+-	netdev_dbg(ks->netdev,
+-		   "pkt %02x%02x%02x%02x %02x%02x%02x%02x %02x%02x%02x%02x\n",
+-		   rxpkt[4], rxpkt[5], rxpkt[6], rxpkt[7],
+-		   rxpkt[8], rxpkt[9], rxpkt[10], rxpkt[11],
+-		   rxpkt[12], rxpkt[13], rxpkt[14], rxpkt[15]);
+-}
+-
+ /**
+  * ks8851_rx_pkts - receive packets from the host
+  * @ks: The device information.
+@@ -296,8 +280,8 @@ static void ks8851_rx_pkts(struct ks8851_net *ks, struct sk_buff_head *rxq)
+ 
+ 				ks->rdfifo(ks, rxpkt, rxalign + 8);
+ 
+-				if (netif_msg_pktdata(ks))
+-					ks8851_dbg_dumpkkt(ks, rxpkt);
++				netif_dbg(ks, pktdata, ks->netdev,
++					  "pkt %12ph\n", &rxpkt[4]);
+ 
+ 				skb->protocol = eth_type_trans(skb, ks->netdev);
+ 				__skb_queue_tail(rxq, skb);
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
