@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-367564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC33F9A03E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EDC9A03E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A17288601
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D68281EDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8631D1E70;
-	Wed, 16 Oct 2024 08:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF42B1D4156;
+	Wed, 16 Oct 2024 08:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQMz4nxj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXwmJQWu"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD191CB9E0;
-	Wed, 16 Oct 2024 08:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D24D1D278B;
+	Wed, 16 Oct 2024 08:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066430; cv=none; b=JSaa6YyFZeXPuiLcRuW/Yq6BQPHgDakTTnTHAGa92rMy91ewaw9AwcpaziVhHYY/RKDIZvXAI2J6zX/7CHB53fQTePiegNoto5nlWQbAFNQ7PggFNjMoohFx7pSrwrz/+PxydFwn3NsjhgC+Qg/CURvzJtcwv8JyLuDSqyJvVN4=
+	t=1729066436; cv=none; b=h9b+Lln4fSGWK5fjNuOTMfmyZxqvGXxMaUni4hIpLrb60GfpAd32xdkOlRaouepPCpZfMpj+HrQ9ZKyIrggZ2eTZrrrXpRkAzRUdxM/P0XmXgeyBJuuY+sKlrjvpNTA/ThA8SS90qAXfllhq67gMVrGPLr6JMBsG2oL4JV0QyVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066430; c=relaxed/simple;
-	bh=rmBpEhEVE7Cfx7/ProAaXt8OTkpq/W8XwrVpBLTEBaE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uk2iNNsKAuUEeudd3WX/JMbzi9VdMX0PELJTHQAvY6j1rVTiqUayhb4f1tPcMdVLNBwEy6sVIpPMaTlbrBJh5JjuA/qVImTZjG3qu6wofe0CZZCR+eYSZQXj0bmvqMLn2gjIWXFyhEX3eI0PWPAL9Ini+ojYAVbmFvxDYopAg5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQMz4nxj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1588C4CEC5;
-	Wed, 16 Oct 2024 08:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729066430;
-	bh=rmBpEhEVE7Cfx7/ProAaXt8OTkpq/W8XwrVpBLTEBaE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oQMz4nxjw8XiQMqw+jnIJ2KCrRngUSdK7bnkfdIXO9mQSS/8HctPkl61bB5jM9HaI
-	 V7Luh8sxwgdamIvfGCk+aAE1zMxmJQ04kbp57Gpveew1w0y4mxGwba7IQnGmq1+ggu
-	 vONY2hqqmYztjDluJBp4DWB6OQ7raYdT8hB4/RpRC6W82MxZY1Wv54NW4NMMM2yZZx
-	 5QimjJP6TH3QPTMmxqfYGJhzzotOtnIlo7d0YDsyvq3AMnNoMiwdjRkI3xxJX0E8G4
-	 +aTOseBks9euO3u0VZze2cP/iYC9MkrNuFNXKQk+rjaao5DYNkAX3V/5MggQCmZb0S
-	 KHuxH0A1laWvg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	syzbot+33379ce4ac76acf7d0c7@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] f2fs: fix to do sanity check on node blkaddr in truncate_node()
-Date: Wed, 16 Oct 2024 16:13:37 +0800
-Message-Id: <20241016081337.598979-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1729066436; c=relaxed/simple;
+	bh=VE234QWU2c0jg8Kgp1MC6oRd9f1i7/85eMkUYLWq/NQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YeUT2EUgHSvE8z1Y/IgvbjgaOT+pFTQLku6WchrC6UduNhkR4dcr9zfpHdUucKL6dM9Om+Xk+czwY2JqMhI4biwUZrLmRNCrXEzrS/7Ah9ZiXth9IqA44eruGdjUROwqSVKshvy9sI9tM2QTbPF18/G72OZndME5QnEibsOdzsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXwmJQWu; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca7fc4484so31229455ad.3;
+        Wed, 16 Oct 2024 01:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729066434; x=1729671234; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uxqG0B8mR4fzbFEa0w+VCmcvQKzrvGlEU7Guq/5xOqA=;
+        b=BXwmJQWuAS3Q+EWwEs/g95skiz55LvV8zFq66aJDow97VYVzSlj3oDeJCUXwedHHQ2
+         5CFWzq2r0UgDdcGP59LPy3vcX85a33XW73E0p0+e0BKsc+eX/z5ayIj5Rd68HrctWVtd
+         G8kXOCbz8WqOz4Sa77RYslb+X/+XL7aGV8OuAO4GdO9zOeo2ApcCRDDP5MOYcq38TSTr
+         Il5W7zxSffx02ejmmrLMJw1si6rvlDRWdocPnLgsFMb9+YPlhDo9KFxWDJoVf9m5PU+E
+         Nbu3xnxTjTMkDcyR34qNwJ9Lf5gj0sKYI83VFpoI7Bm6oVO9CCzFMjLEgsWFV19hOSH3
+         pq7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729066434; x=1729671234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uxqG0B8mR4fzbFEa0w+VCmcvQKzrvGlEU7Guq/5xOqA=;
+        b=iXwgdxC/9qz3zoxviP9bB4cJ9Vbnp19Gt24dbuer0jMpk1k7ChCqi3IfwzqxzCEqCd
+         aOYQADzUfcyrJgb4gjYGFyrhC5KgzxqjdYWxio9VqG9wihy9FwczoCtFSdnbsQQVYbvI
+         vUj7D4GutSPpLgafOVd9OYaJjdJBevH1mDVavNfBEZzVGOja8jBo7zBFidXhQFkPCs9a
+         hFX+KPZw61kVMdtJ6rfsMBs+Up9e6/tPV4/AH+/MqHzGZal73Bs880g7v6BQH0dG6gHu
+         tukGZ/iaBlVpIa74N91L3juImLFivxtdXnM0EpXqX+hKJvdA5evaVxsQy68sGNAA0m1I
+         jvDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW7Pe3PN4uQbvRq8KDNXsfRYBa+7YaDiq1uKH4FEs5Lm/+ZBWP9w66Y1r5FYT9ivbzcXh2BdNnumED@vger.kernel.org, AJvYcCXiMraFCN/mJL8uPPqGbL68h2aaz4topguqGBIJVpK5uauiHKqP0hPVIv3o1LQfJHEiRDlI4EE0kWhyEhml@vger.kernel.org, AJvYcCXygih76EfIO4d5ad97lGKm5VlJemWs2HwF24BHbrycHJOQ1zZCFqR+uVCSDqBsdruBOTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzteIDDW1YcM+vsi3hmh1QvxdJJQxBdhrTDZtWUzHK5KFEZpsBI
+	Y2NlShfudeUKcrm9w29FojOTZgPEosM1HX0ly7CRzgRyefweXZ2A
+X-Google-Smtp-Source: AGHT+IG6d27P9i5lG/uEayhLGFbXmAexef6ZEMQFrZoDVRNPG4gtPVA7uqXB7gWUqNXj/5nvzwaFUg==
+X-Received: by 2002:a17:903:2406:b0:20c:a8cf:fa19 with SMTP id d9443c01a7336-20cbb198f19mr230740795ad.22.1729066434256;
+        Wed, 16 Oct 2024 01:13:54 -0700 (PDT)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d18036213sm23913525ad.168.2024.10.16.01.13.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 01:13:53 -0700 (PDT)
+Date: Wed, 16 Oct 2024 08:13:44 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
+	Jay Vosburgh <jv@jvosburgh.net>,
+	Andy Gospodarek <andy@greyhouse.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] Documentation: bonding: add XDP support
+ explanation
+Message-ID: <Zw91uKWJMT7YlKd0@fedora>
+References: <20241016031649.880-1-liuhangbin@gmail.com>
+ <20241016031649.880-4-liuhangbin@gmail.com>
+ <1e489737-fdd8-43a7-9abc-65599e1cfae1@blackwall.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1e489737-fdd8-43a7-9abc-65599e1cfae1@blackwall.org>
 
-syzbot reports a f2fs bug as below:
+On Wed, Oct 16, 2024 at 10:38:05AM +0300, Nikolay Aleksandrov wrote:
+> > +9.  What modes does bonding have native XDP support?
+> TBH this sounds strange and to be correct it probably needs
+> to end with "for" (What modes does bonding have native XDP support for), but
+> how about something straight-forward like:
+> 
+>  What bonding modes have native XDP support?
+> 
+> or
+> 
+>  What bonding modes support native XDP?
 
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/segment.c:2534!
-RIP: 0010:f2fs_invalidate_blocks+0x35f/0x370 fs/f2fs/segment.c:2534
-Call Trace:
- truncate_node+0x1ae/0x8c0 fs/f2fs/node.c:909
- f2fs_remove_inode_page+0x5c2/0x870 fs/f2fs/node.c:1288
- f2fs_evict_inode+0x879/0x15c0 fs/f2fs/inode.c:856
- evict+0x4e8/0x9b0 fs/inode.c:723
- f2fs_handle_failed_inode+0x271/0x2e0 fs/f2fs/inode.c:986
- f2fs_create+0x357/0x530 fs/f2fs/namei.c:394
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0010:f2fs_invalidate_blocks+0x35f/0x370 fs/f2fs/segment.c:2534
+Thanks, I will use this one.
 
-The root cause is: on a fuzzed image, blkaddr in nat entry may be
-corrupted, then it will cause system panic when using it in
-f2fs_invalidate_blocks(), to avoid this, let's add sanity check on
-nat blkaddr in truncate_node().
-
-Reported-by: syzbot+33379ce4ac76acf7d0c7@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/0000000000009a6cd706224ca720@google.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/node.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 59b13ff243fa..af36c6d6542b 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -905,6 +905,16 @@ static int truncate_node(struct dnode_of_data *dn)
- 	if (err)
- 		return err;
- 
-+	if (ni.blk_addr != NEW_ADDR &&
-+		!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC_ENHANCE)) {
-+		f2fs_err_ratelimited(sbi,
-+			"nat entry is corrupted, run fsck to fix it, ino:%u, "
-+			"nid:%u, blkaddr:%u", ni.ino, ni.nid, ni.blk_addr);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		f2fs_handle_error(sbi, ERROR_INCONSISTENT_NAT);
-+		return -EFSCORRUPTED;
-+	}
-+
- 	/* Deallocate node address */
- 	f2fs_invalidate_blocks(sbi, ni.blk_addr);
- 	dec_valid_node_count(sbi, dn->inode, dn->nid == dn->inode->i_ino);
--- 
-2.40.1
-
+Hangbin
 
