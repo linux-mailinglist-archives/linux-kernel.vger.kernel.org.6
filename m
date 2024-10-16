@@ -1,155 +1,213 @@
-Return-Path: <linux-kernel+bounces-368529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14A79A10F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25C89A10F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC9E6285B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:50:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AEF1F21DDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEDB20F5C6;
-	Wed, 16 Oct 2024 17:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC219210C39;
+	Wed, 16 Oct 2024 17:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joOpKlSd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IhJc8yRA"
+Received: from mail-oo1-f65.google.com (mail-oo1-f65.google.com [209.85.161.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F35318BC23;
-	Wed, 16 Oct 2024 17:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6271F18BC23
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729101056; cv=none; b=pk2C0z1rcutZWLwWy/uDziVzbaLVN8hbnHeoD2Niv+7DvDsuLGoOLIVSCQdeayCP0lEYvHTr70PEcVR6UiKeMeCgg5smIqMK1zMFN1L1sMvfisMEcg21it+DPH1vPtvcmHpJpZ/Htkh/BEylB6N4/HXAQhCQF2BCgMl7sHRmEQE=
+	t=1729101041; cv=none; b=hcpW61ezgUwHJNbEKbdg40xOTDH6V7cMjQ3rE/oPiMequyE8vzsVz/PtiC5+6cyhb4PajaJDFH+9OxW4btizhznAyNIMKaMxtPlH0L5p+WVigGbuNnhkEBwPLOOUXkKmAWWU5FZfmiuIHgNv2VGLdWPkuEeMo6aV7hlAJn2ih5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729101056; c=relaxed/simple;
-	bh=hoU5DGRfSi0AM7CKet0iYo9j9GdgPMDGPjGhM0wKSno=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Gz5smxALhdCygY8Zabn9rfi8nj0Rpjq3gBpavdlecjyyo5G/d2ycLn9LCelegf6B1zOJNpNAD4KfYLxDJHJ5G4dkv68rtpc/hGxphWJVS+daY7d2KyFKUXI1CBCgm8ENKd10jHoXlum76FGobJq4xedsCSPpe0rQzGPL+BqSG34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joOpKlSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ABC9DC4CEC5;
-	Wed, 16 Oct 2024 17:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729101055;
-	bh=hoU5DGRfSi0AM7CKet0iYo9j9GdgPMDGPjGhM0wKSno=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=joOpKlSdtlsK+cPFx91M0RfLr0zarS7AmroBAKCdc8Q0ejrq0O/uRX2Mu9NC69TJb
-	 90m/iOJ7ngKXjE2R3rVK14kxb2xf/jX+804QGx5HtIz8ekCC6OcEMeL57nGtBeMQ+l
-	 uXJY/BIcUov2zz9PloLHWdp1t8eOJaV/H6+m36YFc+C9ha0hMKMGhU4p02/TdMLgpW
-	 aHiSQ3SEWNrl2yLA8NHES50JcGH5DUZSz7jBO8l9/nJh/hNnh0Pj7mABKTouS7pL8Q
-	 5ihxkPJcb4XwKMhV7jBOzA/EFFhEilcwOjjhNM2Kej/J61y3LsSASiwrHgpIvTxvy+
-	 Frer/KfZFs/tA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97252D2A53B;
-	Wed, 16 Oct 2024 17:50:55 +0000 (UTC)
-From: Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>
-Date: Thu, 17 Oct 2024 01:49:49 +0800
-Subject: [PATCH] riscv/entry: get correct syscall number from
- syscall_get_nr()
+	s=arc-20240116; t=1729101041; c=relaxed/simple;
+	bh=eg4hX38TdcUFO5o+WLkV7feOE8NhJ4jv5UMNtSrIzUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SzN1h5HQhIaHpOmm3yBnIEeY3f/t7ETleqf5ZqnLJhs7HBIgWS7qjHocBz9GI3QVxQAU1k0hFXQfE0xN/IqtmKiG+O8VeQxWl9a5P0laFMqK/7Cs42FZZcM2D0D7OX85HVKBN00E31iFftJ54lfsZGDWJBv+atJEttYgLK2akyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=IhJc8yRA; arc=none smtp.client-ip=209.85.161.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oo1-f65.google.com with SMTP id 006d021491bc7-5e988c5813aso91928eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:50:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1729101037; x=1729705837; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lCcgXYhcr1eYAzXAtgbojySY9FznxIOauj/4HQBvgNM=;
+        b=IhJc8yRAx4Dpel48dgT30+xhaW6eL3RweqvSxRQm9aS7HvLe0kiHJzf7SugSovueGm
+         g0E27Apv7XvDXDcQkofrms/LNqAJFvqmU1IgzibMrJTo37G7+IZ9f+Zn0bx9g+Xc8NuJ
+         ueLjXYgm52WT67RXCAcQV3ftgOtUQo10Z5Xa/PWJ4xluKtjp2BVNu3DoymGjKlh1xDni
+         cTMWJ5Xs/RoTOx/u9jBn+ukAE+BIn9/TjYUXsYW16Qj54mSY+MnKbQh52FlynJ0YZEmv
+         VU9P2Rw+eeuGzgnq+JVyXgNG25xmGYmmD/oNHapXj7rHWpKI+v7h69ORSrXBtCeeQgiB
+         WDmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729101037; x=1729705837;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lCcgXYhcr1eYAzXAtgbojySY9FznxIOauj/4HQBvgNM=;
+        b=lqCPEwAX64roruYmJ8vvah4AOk7ZdeSz5HYBc7tr1h3FkjCzdhFHQj0MfxJzvy/U7+
+         xgZmL3lyVHkcUA9sEPlbV3IxLmxdbmLhK34Pq6HIsRvr7CWnbpaNCRUZ4m37DIfq0Q4A
+         4w859jHiTroSlcW8j51f+gc3vpDSJvgns9MPHOrx430mH8Q9dPWomYjdce6WXCDFTj01
+         aROTQ1bKgZ7ZZ6Y8KkAskpSnsgMiIv+TGefUNPexJbTWa9S39P+Zk2TXy0reHeR2m9jm
+         Vws/FfmNu/kFlNuouHpp9u0I4xUSQd6pPcZrivEeIRZ4/kaCFECebsJnqsGTNHxgs24E
+         ZEzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWExSb+2uO0UQxLAJeZN+km6Xa82GdHqVOesPVi+hoVL3fFh3plGXKHN7kt+R+VEBTG63SoXFl6cBL61zE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJdwbFgfUDdQskn0DR6SayR/Eu2oiCgItgkNFQ4r0AkrBF1BkM
+	rR3LoSTIsqPacelaFKikc5xaYRj64ymxXT70w+RpY1Smm3qZEJ7r3Mz/Yau+IHU=
+X-Google-Smtp-Source: AGHT+IEf67VIalr0j/WhSRDBXq34/L7p37bnPDz/zkchcrv8dP9aBwLxPOYp06Fr1fQrz3FrmybhpA==
+X-Received: by 2002:a05:6820:2212:b0:5e7:cb2e:e01c with SMTP id 006d021491bc7-5eb1a2da0f0mr11488027eaf.7.1729101036963;
+        Wed, 16 Oct 2024 10:50:36 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eb4edbcf06sm802586eaf.2.2024.10.16.10.50.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 10:50:36 -0700 (PDT)
+Message-ID: <2e25597c-6278-4bc6-a0c2-3826841c2ac0@sifive.com>
+Date: Wed, 16 Oct 2024 12:50:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/10] riscv: Allow ptrace control of the tagged
+ address ABI
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
+ Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com,
+ Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20240829010151.2813377-1-samuel.holland@sifive.com>
+ <20240829010151.2813377-7-samuel.holland@sifive.com> <ZuOoqTfKs/7G075O@ghost>
+Content-Language: en-US
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <ZuOoqTfKs/7G075O@ghost>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
-X-B4-Tracking: v=1; b=H4sIALz8D2cC/x2MSQqAMAwAvyI5G7AuFf2KeNCaakCqJFAU8e8Wj
- wMz84CSMCn02QNCkZWPkMDkGbhtCishL4mhLMraFMai5wuF1UXUW9207xgEO9POjbW+a30FKT2
- Fkvdvh/F9P1Mix5BmAAAA
-X-Change-ID: 20241016-fix-riscv-syscall-nr-917b566f97f3
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
- Celeste Liu <coelacanthushex@gmail.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>, 
- "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>, 
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>, 
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, 
- Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2366;
- i=CoelacanthusHex@gmail.com; h=from:subject:message-id;
- bh=lQHWH4mdPxR6fSPtGuLhEmZBLbEpDpJ9XVmyzF+kIjU=;
- b=owJ4nJvAy8zAJfY4pvNJRPo6U8bTakkM6fx//rDbHWUTjFeQ1lxc+evTyrQnVWz7ZnMl5gXGN
- bKeX89itrCjlIVBjItBVkyRRWzn09fLSh99WMZrMgNmDisTyBAGLk4BmIiTFyPDhFnn9dIvunfM
- ezeRcxLDm791Uyo+aE9KqdXql5lxwCePn5HhUrLiJuNJhmd61+wIi3naMVdOfk7c5X/cwk3Xt4c
- 4mnjxAQABV0jh
-X-Developer-Key: i=CoelacanthusHex@gmail.com; a=openpgp;
- fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
-X-Endpoint-Received: by B4 Relay for CoelacanthusHex@gmail.com/default with
- auth_id=84
-X-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Reply-To: CoelacanthusHex@gmail.com
 
-From: Celeste Liu <CoelacanthusHex@gmail.com>
+Hi Charlie,
 
-The return value of syscall_enter_from_user_mode() is always -1 when the
-syscall was filtered. We can't know whether syscall_nr is -1 when we get -1
-from syscall_enter_from_user_mode(). And the old syscall variable is
-unusable because syscall_enter_from_user_mode() may change a7 register.
-So get correct syscall number from syscall_get_nr().
+On 2024-09-12 9:51 PM, Charlie Jenkins wrote:
+> On Wed, Aug 28, 2024 at 06:01:28PM -0700, Samuel Holland wrote:
+>> This allows a tracer to control the ABI of the tracee, as on arm64.
+>>
+>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+>> ---
+> 
+> Since this code is identical to the arm64 port, could it be extracted
+> out into the generic ptrace.c and ifdef on either CONFIG_RISCV_ISA_SUPM
+> or CONFIG_ARM64_TAGGED_ADDR_ABI by adding some generic flag like
+> CONFIG_HAVE_ARCH_TAGGED_ADDR_ABI?
 
-So syscall number part of return value of syscall_enter_from_user_mode()
-is completely useless. We can remove it from API and require caller to
-get syscall number from syscall_get_nr(). But this change affect more
-architectures and will block more time. So we split it into another
-patchset to avoid block this fix. (Other architectures can works
-without this change but riscv need it, see Link: tag below)
+Yes, it could be factored out, though I don't know if it is worth the overhead
+for these two trivial functions. I don't see any other code like this outside of
+arch/.
 
-Fixes: 61119394631f ("riscv: entry: always initialize regs->a0 to -ENOSYS")
-Reported-by: Andrea Bolognani <abologna@redhat.com>
-Closes: https://github.com/strace/strace/issues/315
-Link: https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gmail.com/
-Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
----
- arch/riscv/kernel/traps.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+Regards,
+Samuel
 
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 51ebfd23e0076447518081d137102a9a11ff2e45..3125fab8ee4af468ace9f692dd34e1797555cce3 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -316,18 +316,25 @@ void do_trap_ecall_u(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
- 		long syscall = regs->a7;
-+		long res;
- 
- 		regs->epc += 4;
- 		regs->orig_a0 = regs->a0;
--		regs->a0 = -ENOSYS;
- 
- 		riscv_v_vstate_discard(regs);
- 
--		syscall = syscall_enter_from_user_mode(regs, syscall);
-+		res = syscall_enter_from_user_mode(regs, syscall);
-+		/*
-+		 * Call syscall_get_nr() again because syscall_enter_from_user_mode()
-+		 * may change a7 register.
-+		 */
-+		syscall = syscall_get_nr(current, regs);
- 
- 		add_random_kstack_offset();
- 
--		if (syscall >= 0 && syscall < NR_syscalls)
-+		if (syscall < 0 || syscall >= NR_syscalls)
-+			regs->a0 = -ENOSYS;
-+		else if (res != -1)
- 			syscall_handler(regs, syscall);
- 
- 		/*
-
----
-base-commit: 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
-change-id: 20241016-fix-riscv-syscall-nr-917b566f97f3
-
-Best regards,
--- 
-Celeste Liu <CoelacanthusHex@gmail.com>
-
+>>
+>> (no changes since v1)
+>>
+>>  arch/riscv/kernel/ptrace.c | 42 ++++++++++++++++++++++++++++++++++++++
+>>  include/uapi/linux/elf.h   |  1 +
+>>  2 files changed, 43 insertions(+)
+>>
+>> diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+>> index 92731ff8c79a..ea67e9fb7a58 100644
+>> --- a/arch/riscv/kernel/ptrace.c
+>> +++ b/arch/riscv/kernel/ptrace.c
+>> @@ -28,6 +28,9 @@ enum riscv_regset {
+>>  #ifdef CONFIG_RISCV_ISA_V
+>>  	REGSET_V,
+>>  #endif
+>> +#ifdef CONFIG_RISCV_ISA_SUPM
+>> +	REGSET_TAGGED_ADDR_CTRL,
+>> +#endif
+>>  };
+>>  
+>>  static int riscv_gpr_get(struct task_struct *target,
+>> @@ -152,6 +155,35 @@ static int riscv_vr_set(struct task_struct *target,
+>>  }
+>>  #endif
+>>  
+>> +#ifdef CONFIG_RISCV_ISA_SUPM
+>> +static int tagged_addr_ctrl_get(struct task_struct *target,
+>> +				const struct user_regset *regset,
+>> +				struct membuf to)
+>> +{
+>> +	long ctrl = get_tagged_addr_ctrl(target);
+>> +
+>> +	if (IS_ERR_VALUE(ctrl))
+>> +		return ctrl;
+>> +
+>> +	return membuf_write(&to, &ctrl, sizeof(ctrl));
+>> +}
+>> +
+>> +static int tagged_addr_ctrl_set(struct task_struct *target,
+>> +				const struct user_regset *regset,
+>> +				unsigned int pos, unsigned int count,
+>> +				const void *kbuf, const void __user *ubuf)
+>> +{
+>> +	int ret;
+>> +	long ctrl;
+>> +
+>> +	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &ctrl, 0, -1);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return set_tagged_addr_ctrl(target, ctrl);
+>> +}
+>> +#endif
+>> +
+>>  static const struct user_regset riscv_user_regset[] = {
+>>  	[REGSET_X] = {
+>>  		.core_note_type = NT_PRSTATUS,
+>> @@ -182,6 +214,16 @@ static const struct user_regset riscv_user_regset[] = {
+>>  		.set = riscv_vr_set,
+>>  	},
+>>  #endif
+>> +#ifdef CONFIG_RISCV_ISA_SUPM
+>> +	[REGSET_TAGGED_ADDR_CTRL] = {
+>> +		.core_note_type = NT_RISCV_TAGGED_ADDR_CTRL,
+>> +		.n = 1,
+>> +		.size = sizeof(long),
+>> +		.align = sizeof(long),
+>> +		.regset_get = tagged_addr_ctrl_get,
+>> +		.set = tagged_addr_ctrl_set,
+>> +	},
+>> +#endif
+>>  };
+>>  
+>>  static const struct user_regset_view riscv_user_native_view = {
+>> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+>> index b54b313bcf07..9a32532d7264 100644
+>> --- a/include/uapi/linux/elf.h
+>> +++ b/include/uapi/linux/elf.h
+>> @@ -448,6 +448,7 @@ typedef struct elf64_shdr {
+>>  #define NT_MIPS_MSA	0x802		/* MIPS SIMD registers */
+>>  #define NT_RISCV_CSR	0x900		/* RISC-V Control and Status Registers */
+>>  #define NT_RISCV_VECTOR	0x901		/* RISC-V vector registers */
+>> +#define NT_RISCV_TAGGED_ADDR_CTRL 0x902	/* RISC-V tagged address control (prctl()) */
+>>  #define NT_LOONGARCH_CPUCFG	0xa00	/* LoongArch CPU config registers */
+>>  #define NT_LOONGARCH_CSR	0xa01	/* LoongArch control and status registers */
+>>  #define NT_LOONGARCH_LSX	0xa02	/* LoongArch Loongson SIMD Extension registers */
+>> -- 
+>> 2.45.1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
 
