@@ -1,118 +1,110 @@
-Return-Path: <linux-kernel+bounces-368458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC059A0FFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE08D9A1000
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE4E8B23C33
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:45:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5F71F21AB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325F8210184;
-	Wed, 16 Oct 2024 16:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA27B20FAAA;
+	Wed, 16 Oct 2024 16:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaPLBMjf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7hZj20c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D966187877;
-	Wed, 16 Oct 2024 16:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB4814F135;
+	Wed, 16 Oct 2024 16:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729097097; cv=none; b=QQFiIaS3UT3hdjxymgEFk65UVlxqOPrSzz2beEd6cW8cQcvErpfx9eM26Iukc/k7RZcH+J/XnW4Utx1M9bxhKwiODyuSa8DDHm+IfLt8upUxWCn8+cR0LZslLjvE1T9/2W5fKF7XZ8VQjIFZdtr4G2YfXx40Iim/UcNGQ5eWDKA=
+	t=1729097113; cv=none; b=n5qhxttU5QOQua4Bu3m/c/1LJELeLiz7CK5d9LFM5NFVwQ8gAZYs3NIZHPxGqbn+cX3UA07INkdYZ4FKCtR4VdiFXsslF5xFDtEEQIPyea3v5sud2xupwit59D0eOMlbQcT4M08hfZmq6Bcq72ExRidK8U77YBmTdztJhrhQy9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729097097; c=relaxed/simple;
-	bh=BDmv0KJPoJX2cVJ9OAhpm4ejEVa2a93iIcuoRaRIqeU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P8y2jmoATqBk3Fbf7LRqRZwMt9AVdinicRbXqT2rP2juRMJB/KOM/frJl0ysVDX2/PcFWx8vp5/J1ocA70C4nXezJMSrtHVwgN9iob+4NWQOhZ5YNUTMZWd61LRs8mlx2GYdpczhJaJFt8O2GrOO7F+bmwGwsC9LNgA6lchtT44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaPLBMjf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD73C4CEC5;
-	Wed, 16 Oct 2024 16:44:57 +0000 (UTC)
+	s=arc-20240116; t=1729097113; c=relaxed/simple;
+	bh=b7jQbTfdPgYF17RIjC8T8bC2V9vm7YjfPfB5RbvZTww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERb/lKVLiaXGnHH6NZaUyCu3Rcx2rPt4j2d0wQvfUouiMYtMMuFOEwLOJRHbmEwDzn3B3wAZH32XIT67PuRfNBTTGwBCl4ztCEddN6ypiz4lE+OqxfvWwOugY7q2w904fZuKNB99krKLslnRzXuEjywLPjbsUUwMNQgUNOc+71M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7hZj20c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE7CEC4CEC5;
+	Wed, 16 Oct 2024 16:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729097097;
-	bh=BDmv0KJPoJX2cVJ9OAhpm4ejEVa2a93iIcuoRaRIqeU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IaPLBMjfacWuPwt4NXxc1pwePzhFAIUO1kKcN6CYoI+ShhZbCtV4acX8lDX9y8VvV
-	 movLjussRauhirs+c7bL6KCyjExXReJchMLudNRJukQ0jmVBU/vkyXiTommQHRvOxY
-	 8aegrA4PI0JGaZNTVAWsvVUSBfpaqf5gU8738cW5flTdBbV93725vq7vB4HWHL8kA1
-	 nVkJoy+LHCTAa0QeiJ4kZPO72nIOSG/T74Y3N8FW/ZeBi3/eG8+P2UWC2xnkB3juDB
-	 q5l+uRwX+DB7un+k09t3kqoMFNDnAgA3qO5jmav7aShrm4alXkl6ZpdaRYcO50gNB0
-	 s3wIy4vAO0heg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t178o-0049Pe-V6;
-	Wed, 16 Oct 2024 17:44:55 +0100
-Date: Wed, 16 Oct 2024 17:44:54 +0100
-Message-ID: <86wmi83sl5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <quic_bjorande@quicinc.com>
-Subject: Re: [PATCH v2] arm64: Allow packing uncompressed images into distro packages
-In-Reply-To: <20240910-uncompressed-distro-packages-v2-1-51538434787f@quicinc.com>
-References: <20240910-uncompressed-distro-packages-v2-1-51538434787f@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1729097112;
+	bh=b7jQbTfdPgYF17RIjC8T8bC2V9vm7YjfPfB5RbvZTww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H7hZj20c0E0ImYQi2QKj2kgbO7VGdePmMpk1MagJqh32pF1vAu8lxdAFnDHRQggQL
+	 9KiCfhDyFdEes48BYCsQHr3XHU7aQXDhzpiuBpNJkTL+5Go8gKil/sefU8YcZnR5LH
+	 GaRDXFcMXVKsXW/hHDilNPPF2zFPkjFb9CEf7RSrpDlu9kUlSaA7GjFascYlYHKmNa
+	 2DtQr7i7OBrMVARoNC+CLgWjkNyg65PfIdIaSptLUzQUJbPn8ZLvBoLNf6nHH+W59w
+	 fLT+UKENU6YkgF8iGjDlUlbQFcB1nEK9tISrQ9uMOepFxfqkEoSW2pPTSlLRd/mUs/
+	 AD0ywkGqJDtlA==
+Date: Wed, 16 Oct 2024 09:45:09 -0700
+From: Kees Cook <kees@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>, Johannes Berg <johannes@sipsolutions.net>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	David Ahern <dsahern@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 4/5][next] uapi: net: arp: Avoid
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <202410160942.000495E@keescook>
+References: <cover.1729037131.git.gustavoars@kernel.org>
+ <f04e61e1c69991559f5589080462320bf772499d.1729037131.git.gustavoars@kernel.org>
+ <ac2ea738-09fb-4d03-b91c-d54bcfb893c6@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: andersson@kernel.org, catalin.marinas@arm.com, will@kernel.org, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_bjorande@quicinc.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac2ea738-09fb-4d03-b91c-d54bcfb893c6@lunn.ch>
 
-Hi Bjorn,
-
-On Wed, 11 Sep 2024 03:53:16 +0100,
-Bjorn Andersson <andersson@kernel.org> wrote:
+On Wed, Oct 16, 2024 at 02:30:02PM +0200, Andrew Lunn wrote:
+> On Tue, Oct 15, 2024 at 06:32:43PM -0600, Gustavo A. R. Silva wrote:
+> > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> > getting ready to enable it, globally.
+> > 
+> > Address the following warnings by changing the type of the middle struct
+> > members in a couple of composite structs, which are currently causing
+> > trouble, from `struct sockaddr` to `struct sockaddr_legacy`. Note that
+> > the latter struct doesn't contain a flexible-array member.
+> > 
+> > include/uapi/linux/if_arp.h:118:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > include/uapi/linux/if_arp.h:119:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > include/uapi/linux/if_arp.h:121:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > include/uapi/linux/if_arp.h:126:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > include/uapi/linux/if_arp.h:127:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > 
+> > Also, update some related code, accordingly.
+> > 
+> > No binary differences are present after these changes.
 > 
-> From: Bjorn Andersson <quic_bjorande@quicinc.com>
-> 
-> The distro packages (deb-pkg, pacman-pkg, rpm-pkg) are generated using
-> the compressed kernel image, which means that the kernel once installed
-> can not be booted with systemd-boot.
+> These are clearly UAPI files. It would be good to state in the commit
+> message why this is a safe change, at the source level.
 
-Are you sure? I just installed a guest with systemd-boot
-(252.30-1~deb12u, as shipped in Debian), and it is perfectly able to
-boot a compressed kernel.
+I think we can avoid complicating UAPI by doing something like this in
+include/uapi/linux/socket.h:
 
-> 
-> This differs from the packages generated by the distros themselves,
-> which uses the uncompressed image.
-> 
-> Use the newly introduced CONFIG_COMPRESSED_INSTALL option to allow
-> selection of which version of the kernel image should be packaged into
-> the distro packages.
+#ifdef __KERNEL__
+#define __kernel_sockaddr_legacy        sockaddr_legacy
+#else
+#define __kernel_sockaddr_legacy        sockaddr
+#endif
 
-I'm normally building kernels as Debian packages, without any of
-CONFIG_EFI_ZBOOT or CONFIG_COMPRESSED_INSTALL.
+And then the UAPI changes can use __kernel_sockaddr_legacy and userspace
+will resolve to sockaddr (unchanged), and the kernel internals will
+resolve to sockaddr_legacy (fixing the warnings).
 
-As a result, the installed kernel image of a Debian package shoots up
-from ~8M to an impressive 25M, since we're not picking the compressed
-image anymore. Storage may be cheap, but still.
-
-I really don't think CONFIG_COMPRESSED_INSTALL should change the
-existing behaviours, and a new option would be better suited to enable
-this new setup if deemed necessary.
-
-Thanks,
-
-	M.
+-Kees
 
 -- 
-Without deviation from the norm, progress is not possible.
+Kees Cook
 
