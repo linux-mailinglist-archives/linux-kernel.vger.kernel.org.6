@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-367560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FFE9A03D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:12:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821749A03DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC081C26558
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F422A1F22584
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3B51CEAD3;
-	Wed, 16 Oct 2024 08:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DB01B2193;
+	Wed, 16 Oct 2024 08:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nK4UbDBj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="ZRwlek/D"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2B0187850;
-	Wed, 16 Oct 2024 08:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9DA1D2B13
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066369; cv=none; b=TuyFaG9042cC0r8AS04YmLC9ptpx9TXjzRSEckVYUwaNScgeLbP+qhXm5iOm8dXOxWdgH64FjI9b+VT4LHNV+CFlFhRY2TcCBj56wHvHsuHyBsHbVZIOSuu5werWDcRIEK8uLd35t8xmd6trpv6/V/qlUFVw3p8u5zLH2hI+noo=
+	t=1729066404; cv=none; b=o54Z1GdTatEfHwpJtEm9+iSRkttMfnhdnXFoCfU8Ys9t3jq7MJWv6SER2c9tyxumRg6n3fPZSmTuCKtUdd57coMH8w6nYk60SoIoo/DAYBMcIsBAv+0m5t7wrp6KCqZxm/aNNOsTXRbAgOVCBG52BO+Arx/WWJVi+aYktxasquI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066369; c=relaxed/simple;
-	bh=Qdmh6k51UaEvIFsLmFyTr+186GXAMGMaOGtbFGw4cak=;
+	s=arc-20240116; t=1729066404; c=relaxed/simple;
+	bh=nssl3SYilnWVJ40tlUoPhqFzVGRlgsPn//Jw4/h4DNY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5VzLvN8pP13/IntLCh2+CCY2U64F1MVc+NX+hzmg2/fFEpKZjkdXvvO9iFS+tJaegEGtaC5KyQAGH6yKZWWPUdBO8OG5t01GnA0qJhQ385E6FuzQHfPTKV8DRVtuNTkFrvZKrC5NVlrBCbsYq/iEQoh8jcOx9iJLD8weAvoLmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nK4UbDBj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 572E6C4CECE;
-	Wed, 16 Oct 2024 08:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729066368;
-	bh=Qdmh6k51UaEvIFsLmFyTr+186GXAMGMaOGtbFGw4cak=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nK4UbDBjh5Af56lFkoJ5QuA4MZoZVvPmz2sgzhEszcCTSTa1HfMHInGo5GGYq/XeJ
-	 +fJRgCoEkF2oTiuFuNanqUsJdYSbt9VkcdG8n3C9o5i5hFgggCqsfCJnDCio0fFQJy
-	 etUn8E5dFbFcn5wtL6uCVZmDLCVCBtd8pPRGpi3l6cvJnuf1VP6cDTJDwwS+9n69Hk
-	 ekhA5uo8twJlRy8RJ8XQRuRoGCLRlN/pBRpFed0gcff+WOWi+wO14iTwYE50jj8fgt
-	 vla958bnXcNsYTtHsXSIIv9y41lS1RXAwpfLZchGezwKGTGUngTXzOW4MIf+TRthRu
-	 b37N718upUP1A==
-Message-ID: <65ea27ce-0a0d-4324-945b-1d9fcaafd9e8@kernel.org>
-Date: Wed, 16 Oct 2024 17:12:45 +0900
+	 In-Reply-To:Content-Type; b=Gy19p8dJiDGvYU7h9xMzYV3MjvdSLzcQnCkdON4utD9i/hNtJNUacX683e2zgQTT/wzCqr2IlOPYRc16dIFsV6LJuz0xHFejygbcAaDeoNNoO4gSZOaC1McpsPTTM9+0XKS3+88T0GZfqaSB+0NZfU8n5iTZ/Jf/GyieFR2ogac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=ZRwlek/D; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0f198d38so488792166b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1729066401; x=1729671201; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Cn1wIQyWLGynlfKCVlpsBWacDpmNH2hnvnNMUM8wB4=;
+        b=ZRwlek/DIAJXjFOjctKrW0+/vAn5Mccx+/78skyhPfR6YQbguTrL0sJ0z6TzLmaTKu
+         WTURHiM8uP87OsyGSZqPA7A1zMU0uVbeQCC3b3iGJAUuGTM1CETH3Ol/m+/lGA5QKTih
+         IjHny4s66PXDemEuoVOxhTmJJXPs2bT/Sss2u4wqhfyStK8RBYdXN/AknDVorDbWrtxN
+         4HueuYYCI3Gvzw/VY4kGvHMfw6YPs53JeCRG+ETkD/YjJKyGDm8Q9ykgsTqu28Jn4q/O
+         ZHVpNr01g9Tha09LlSTY+8kGjW7d8PvImfG+WpWuKJ/QCOQu51ikSyXOLN7raukxZ3aH
+         CGpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729066401; x=1729671201;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Cn1wIQyWLGynlfKCVlpsBWacDpmNH2hnvnNMUM8wB4=;
+        b=xSNB6Ahg2PPKwqiYwdaP+6wFvIa2S88Gu9wC0yCfnUzEwBbH1B9SD43C9NjVx3Wtqn
+         VFZwMAzKbULvx9llpmZNoqcd1wFUP4Tka/e47n1elGFofvaw+juchxGIH1YUl8XNAjrP
+         qvWtl22zbKaOy2/mz2upq/BufDNSNN/HGfx+jBRlwPVE0eeELzWAsCYah56M7q9x8BA7
+         IM3SdE+tyr3Jio5qj9NnzLBkst0iXQLCmmxaeDmV45Vd8zMFl3KcHTUzihgzCemgvkGn
+         5KrjH+1PxSQNXSoLCwEJu9acnwRtDfibjHfgIsOL6h6hSViC0134wuAWHTbUf4CQBvXu
+         w29g==
+X-Forwarded-Encrypted: i=1; AJvYcCXp7XaWM+gTyeOPiCp3aCc33itSC4Mzt1/ZfhkUP05Y3BauxvCWofRyZZBv36Hv+uyQO0EF3xbF0uDSsys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqcYh/78ZBwVP8kqAekYHqAq6fQu2dld2SViqKVIQt7buAg0s5
+	v+ok5nVNLikx26flOJm3m8NEaV48N6JyAT1fT+uExdvlsEFXJbEvXGAgDwvpKI0=
+X-Google-Smtp-Source: AGHT+IE1k1DMXwgADYwN4dp3IYBX0lX1WogcG6ds4IlQSb+TgJnFAwgx7DT19DgGECGmqpotWy7fIw==
+X-Received: by 2002:a17:906:da83:b0:a7a:9144:e23a with SMTP id a640c23a62f3a-a99e3e437f4mr1409198066b.43.1729066401308;
+        Wed, 16 Oct 2024 01:13:21 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29816bf8sm151707566b.101.2024.10.16.01.13.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 01:13:20 -0700 (PDT)
+Message-ID: <87ebd401-ddb3-4cb8-9e62-424b5497c33e@blackwall.org>
+Date: Wed, 16 Oct 2024 11:13:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,52 +75,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: Constify pci_register_io_range stub fwnode_handle
-To: Arnd Bergmann <arnd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Dan Williams <dan.j.williams@intel.com>,
- Dave Jiang <dave.jiang@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Philipp Stanner <pstanner@redhat.com>, Johan Hovold
- <johan+linaro@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241016062410.2581152-1-arnd@kernel.org>
-From: Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH net-next 1/3] bonding: return detailed error when loading
+ native XDP fails
+To: Daniel Borkmann <daniel@iogearbox.net>, Hangbin Liu
+ <liuhangbin@gmail.com>, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>,
+ Jussi Maki <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>,
+ Andy Gospodarek <andy@greyhouse.net>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20241016031649.880-1-liuhangbin@gmail.com>
+ <20241016031649.880-2-liuhangbin@gmail.com>
+ <b223add3-169a-4753-bdac-9f4cfc95eb97@iogearbox.net>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241016062410.2581152-1-arnd@kernel.org>
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <b223add3-169a-4753-bdac-9f4cfc95eb97@iogearbox.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/16/24 3:24 PM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 16/10/2024 10:59, Daniel Borkmann wrote:
+> On 10/16/24 5:16 AM, Hangbin Liu wrote:
+>> Bonding only supports native XDP for specific modes, which can lead to
+>> confusion for users regarding why XDP loads successfully at times and
+>> fails at others. This patch enhances error handling by returning detailed
+>> error messages, providing users with clearer insights into the specific
+>> reasons for the failure when loading native XDP.
+>>
+>> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+>> ---
+>>   drivers/net/bonding/bond_main.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+>> index b1bffd8e9a95..f0f76b6ac8be 100644
+>> --- a/drivers/net/bonding/bond_main.c
+>> +++ b/drivers/net/bonding/bond_main.c
+>> @@ -5676,8 +5676,11 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+>>         ASSERT_RTNL();
+>>   -    if (!bond_xdp_check(bond))
+>> +    if (!bond_xdp_check(bond)) {
+>> +        BOND_NL_ERR(dev, extack,
+>> +                "No native XDP support for the current bonding mode");
+>>           return -EOPNOTSUPP;
+>> +    }
+>>         old_prog = bond->xdp_prog;
+>>       bond->xdp_prog = prog;
 > 
-> The patch to change the argument types for pci_register_io_range()
-> only caught one of the two implementations, but missed the empty
-> version:
+> LGTM, but independent of these I was more thinking whether something like this
+> could do the trick (only compile tested). That way you also get the fallback
+> without changing anything in the core XDP code.
 > 
-> drivers/of/address.c: In function 'of_pci_range_to_resource':
-> drivers/of/address.c:244:45: error: passing argument 1 of 'pci_register_io_range' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->   244 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
->       |                                             ^~~~~~~~~~~
-> In file included from drivers/of/address.c:12:
-> include/linux/pci.h:1559:49: note: expected 'struct fwnode_handle *' but argument is of type 'const struct fwnode_handle *'
->  1559 | int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
->       |                           ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+> Thanks,
+> Daniel
 > 
-> Change this the same way.
-> 
-> Fixes: 6ad99a07e6d2 ("PCI: Constify pci_register_io_range() fwnode_handle")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index b1bffd8e9a95..2861b3a895ff 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -5915,6 +5915,10 @@ static const struct ethtool_ops bond_ethtool_ops = {
+>      .get_ts_info        = bond_ethtool_get_ts_info,
+>  };
+>  
+> +static const struct device_type bond_type = {
+> +    .name = "bond",
+> +};
+> +
+>  static const struct net_device_ops bond_netdev_ops = {
+>      .ndo_init        = bond_init,
+>      .ndo_uninit        = bond_uninit,
+> @@ -5951,9 +5955,20 @@ static const struct net_device_ops bond_netdev_ops = {
+>      .ndo_hwtstamp_set    = bond_hwtstamp_set,
+>  };
+>  
+> -static const struct device_type bond_type = {
+> -    .name = "bond",
+> -};
+> +static struct net_device_ops bond_netdev_ops_noxdp __ro_after_init;
+> +
+> +static void __init bond_setup_noxdp_ops(void)
+> +{
+> +    memcpy(&bond_netdev_ops_noxdp, &bond_netdev_ops,
+> +           sizeof(bond_netdev_ops));
+> +
+> +    /* Used for bond device mode which does not support XDP
+> +     * yet, see also bond_xdp_check().
+> +     */
+> +    bond_netdev_ops_noxdp.ndo_bpf = NULL;
+> +    bond_netdev_ops_noxdp.ndo_xdp_xmit = NULL;
+> +    bond_netdev_ops_noxdp.ndo_xdp_get_xmit_slave = NULL;
+> +}
+>  
+>  static void bond_destructor(struct net_device *bond_dev)
+>  {
+> @@ -5978,7 +5993,9 @@ void bond_setup(struct net_device *bond_dev)
+>      /* Initialize the device entry points */
+>      ether_setup(bond_dev);
+>      bond_dev->max_mtu = ETH_MAX_MTU;
+> -    bond_dev->netdev_ops = &bond_netdev_ops;
+> +    bond_dev->netdev_ops = bond_xdp_check(bond) ?
+> +                   &bond_netdev_ops :
+> +                   &bond_netdev_ops_noxdp;
 
-Looks fine.
+This will have to be done safely on bond mode change as well.
+If all slaves are released we can switch modes without destroying
+the device.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+>      bond_dev->ethtool_ops = &bond_ethtool_ops;
+>  
+>      bond_dev->needs_free_netdev = true;
+> @@ -6591,6 +6608,8 @@ static int __init bonding_init(void)
+>      int i;
+>      int res;
+>  
+> +    bond_setup_noxdp_ops();
+> +
+>      res = bond_check_params(&bonding_defaults);
+>      if (res)
+>          goto out;
 
--- 
-Damien Le Moal
-Western Digital Research
 
