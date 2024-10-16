@@ -1,270 +1,265 @@
-Return-Path: <linux-kernel+bounces-368543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083079A110F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:57:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FE19A1113
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C68C1C22721
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5951F22AB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC2C212EF5;
-	Wed, 16 Oct 2024 17:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C758616DEAC;
+	Wed, 16 Oct 2024 18:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnBcS6QU"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pR3QK2u/"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2046.outbound.protection.outlook.com [40.107.95.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD61206E86
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729101421; cv=none; b=cGwrHTjQXxreuEA7zcPplycxInZXxAaHNnvDQ14y5Uuj1cS5hm0rr41IJ9bBi9M7i+jC0JlulphNdHE6B2uimclGvIh06yZA243L/IU9JO7Sz5W0Ow+P4TL90UaiYeTNIHdZctuz8kF0rjflcQA9HGrG9wvlLfUEkA5uEHxvHqo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729101421; c=relaxed/simple;
-	bh=8s1K9wD2HCH8gINSBjr1R6uuwclx6M20VrhR5QVFBAI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kFtqZR3FvT4aisJLbIfL6UTjMoI6uFpqx6mAkYeG7C0OYzL/usMa9mywGmYefA/UcClq24n0wMZD/3wNVU5Fk/8yce+1yMcDjeKUUC8YCbd6WBB3qkjU/5Fv5I7a1gXRN8DRety/XK78iz0rIkGYKKtgUirkG/FFZVIGyrXdizA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnBcS6QU; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20cb47387ceso853395ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729101420; x=1729706220; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZWGjvGxfX8EEAliHKilZCZ2TS/WFRhd2LTCSNsE6xI=;
-        b=VnBcS6QUYRczr1SONE/Ic1dWn54Ruqclu4RKgHCXnBR0a3ZZvIQYq4dfCZyUrZAayA
-         Um5oYU7de+zz2lGDgU4vcHWsygNlktubl/dL9Qrw0usyDgZj2RmafFgCtpTjhJOumUzb
-         jlxzA3ngOopt2wof2h4IHJOOIFbR0GHF/9MMukWPpCrJR6qKx2kjChcNIA8LrzYLxHeT
-         AE0t3mc3csj/sHKoBq3nFkBMvYuSS6gcuYxjoFiK8BPtfh10WXVRg4rtMEUXcuRKjaq0
-         ScQD71qV0yvaKSPiViXlwXG2LO+A2C3t+/2qZPKaek1lpj0bWuSTD9H0GOOv+bR+h50o
-         z3Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729101420; x=1729706220;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZWGjvGxfX8EEAliHKilZCZ2TS/WFRhd2LTCSNsE6xI=;
-        b=gbWLaBWxykgrn5UBwJuIKPENTFYDEohzLJvscDtRHYuYIzzp3LQph0lUNPjAFbmK+2
-         kNZuEzYFFPgyJ9uEWrzr1j/OzdwuO4g5mocHVo/TMPq5g8jz6k5qA+rYe8Det3vgPKHn
-         xuOssr7wVPy/3ZGL3E7iIwVFFJlgKyVTlqrNWAjD2TR49Bf2sGNpe0kMp36E2zfWkpTM
-         CrLnLtc+fOyXwYLe+zCNtEX8kyhwmQoVbKxlJIxiC/JCGrf1mTFrWkfplvAoS2+KSRfZ
-         Jbce3yuzXmaQv+XfdyQoYCA8KxXjkB219JQhFDCwMTg7EtT0eidHArrOe8WBV8jjScX5
-         bs2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwQm3brhxm2e3KfL91Ak2rcB2lBJfX10N9ZgDRkbn09WPskUHWQWi9jS4n/WIwVuzfaIQT8xtbjpwgr8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Lpr0nM69BazpNUt9Cr8eW97s9iI5tXbfZ6QOTSphW6WM3OKn
-	dDytI51vA3FthRJFbQXA30edgzGJF79r3E1TgAYT6JlWCqrM2UrG
-X-Google-Smtp-Source: AGHT+IFNGTY1Y7m+BkDSa9oA7wwuSFo3SqxArhkrrEGWefeZEweHFiqP/GUnA1YN3djsQQrFlYqoag==
-X-Received: by 2002:a17:903:124b:b0:20c:e1f5:48c7 with SMTP id d9443c01a7336-20d27f2faf7mr57971925ad.55.1729101419457;
-        Wed, 16 Oct 2024 10:56:59 -0700 (PDT)
-Received: from [127.0.0.1] ([103.156.242.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f994c5sm31660585ad.71.2024.10.16.10.56.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 10:56:58 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Message-ID: <1a481785-a874-4b13-8f1d-f7a1f233da50@gmail.com>
-Date: Thu, 17 Oct 2024 01:56:52 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B3217CA1F;
+	Wed, 16 Oct 2024 18:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729101637; cv=fail; b=ahTDTZU2QpqkIKXUHGfPgoQ9/CbBXGLf1dikXaxSlrOHZimytycd6Ge8QTQsmsJfrPfxu+fN+PXW2r6PutD2frr1vlMDrO7vBbqcI8cpCGHWhQWsYbugwqTvFX6tzeGtYQNftRLXBhlHruwH4ReexhvSV7teG2NBeHON1lD+iOw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729101637; c=relaxed/simple;
+	bh=G3voWbPm6CNjmrkGhtPL12OvDuH4scNhq+snsWa8eQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=cWnkzUU/ABnJ6wiEH99Xu1HzHiYmsO29Mib9/nTJhgFWrDbfm5rbjt1FuF//SGgbpbU3bFk78/MnVYK0ey7xVJrcuuBEVAR91oWKoQW3YNQMkG/CnOcytpHeKUCQgAqDOwjkRigv/A6l6rGk43R8ztP7XXL4ibxJcLe9WZtihwU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pR3QK2u/; arc=fail smtp.client-ip=40.107.95.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g4u1yv5KrxzNex8LNvOVTVpJUaDXLchK/mRNHZBaKOEM4PalJ5cuFeCfZ9GlOmzEhDZQpn3TB3djPdDLWa83l4ZbJWL+3t9QPj38odjdPNUNp++V7LPqAgu/1NWBFTmxdDXpcB+SvWX7WMzMyCxNDBPZo2xyF3DEYGrCQxWwmMhLHSaeCz44gSM1pu0hUbYZLCNQ/57TgkU5ng85v5wLko5KgCRc18Zv136B/6bx5AMdWinBqo8wLXGUt/BRM4KhIokumFMfgxQPOz0JK++FELGUgt7fnmMm1GTW5I5jy/BMIP2yMxqlTW0Fr3YBNpgOJIYoTJcrZsz59gUSJW5XAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GKN5qXhgebMOREQhNJIy5/rJ/djtlmXdjpu8PbzVOAM=;
+ b=LbDGXIxoTB4HSU6PdZDi2c9BKCR8rrwulUpNLP08gMEY3MFmFTqGTGlG4l4VnK8p5Y089tbiErFxZSlfvOIrT4G131lxPQ1bT6wxzTSrrH/vo0IroiKpirfos++ruASSLWYFbFfSDHA02P9lWv5eOYvQsl6tFKyeiYm9TBNQXmQCpOrTR+sG8g/CIGaHTArKm+C/OK44vsZUPHPUWKs9bwbxp+zj4lxOiNdZFCKfTuhPeepVz6wG2LC835NkaGzd6IL6oj6K0O/qTSMnPCXiSpb/Xy2uL+MA3+ZFTrsxndkFxhSiCNgwHnQiLMZpzSrpzmbqj4yoYo2LK64sAStUZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GKN5qXhgebMOREQhNJIy5/rJ/djtlmXdjpu8PbzVOAM=;
+ b=pR3QK2u/C54AYhgB0lYghZO7iarHf90XUqhTH29+bqHjn8XcgpLdgXnm7d39+KoOee5PLIesriv5A9bv925aXJ/BeO4LBFwbp1VmGG6gGscDQ0ome6BxYSAC/HH0BFlgan+d2hIePR//A8PsCB6HHAkLtnbyDDnm5lAJ0GsLDGgmTq/PHV/UvXR7Pu8ly/UePzLvJdK7P4b0JFger+thIQqce/HNvETmJJfBQkhSAhC4ngTqqpMHpVG6jQ5dJTrqgY54wY77tu1BljFITgQmK/HED0olgj6BL3Ni2NYJy2O4MHy3O50fQozTL0TnDdCBcfJpkm1iVlj3F5V+3T066Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MN6PR12MB8544.namprd12.prod.outlook.com (2603:10b6:208:47f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
+ 2024 18:00:32 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
+ 18:00:32 +0000
+Date: Wed, 16 Oct 2024 15:00:31 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Leon Romanovsky <leonro@nvidia.com>
+Subject: [GIT PULL] Please pull RDMA subsystem changes
+Message-ID: <20241016180031.GA176045@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KOpAfJfSG1+0Dt1Q"
+Content-Disposition: inline
+X-ClientProxiedBy: BN0PR04CA0024.namprd04.prod.outlook.com
+ (2603:10b6:408:ee::29) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] riscv/entry: issue about a0/orig_a0 register and ENOSYS
-Content-Language: en-GB-large
-To: Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Oleg Nesterov <oleg@redhat.com>, "Dmitry V. Levin" <ldv@strace.io>
-Cc: Andrea Bolognani <abologna@redhat.com>, WANG Xuerui <git@xen0n.name>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@kernel.org>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
- Yao Zi <ziyao@disroot.org>, Yangyu Chen <cyy@cyyself.name>,
- Han Gao <gaohan@iscas.ac.cn>, linux-kernel@vger.kernel.org,
- rsworktech@outlook.com
-References: <59505464-c84a-403d-972f-d4b2055eeaac@gmail.com>
- <6b2ff48a-ab43-4866-af5a-b8b7d3c23582@ghiti.fr>
- <6b744fa3-5c1d-460d-bb09-5bc48379d598@gmail.com>
- <7375212b-2e40-4f39-a1ca-291c0975b529@ghiti.fr>
- <707db338-4429-49a6-bcab-39ab44c4f770@gmail.com>
-In-Reply-To: <707db338-4429-49a6-bcab-39ab44c4f770@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN6PR12MB8544:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed1cd31e-2376-4ab0-9967-08dcee0c6d8c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oflrXGifbQTHdJSJuN8o+ZWDZwY4j+rBqQEFA+N+CLjERZkczrGEazHIOuI5?=
+ =?us-ascii?Q?TrWVbTv4CoKVTfNt6Bm2tZA3oP73cYsoYAO8IbsnF0DGUFFcjKSI0bFTavyK?=
+ =?us-ascii?Q?MSpF80gRuClGz3B+pO8plmefT4nWGVsYIPX/Zkn+JHEIQlbOMS+Sw8tOvYQs?=
+ =?us-ascii?Q?QSzf0AWu4WuXKgxYGh0iHj6TGTc1iZqgsry+YI48qTKQmKEwrhmKiLbkjjE+?=
+ =?us-ascii?Q?ztk6ySdl9CQTHXvm2PzqTAw7mSn8fvD9OYBJWJv21K3HFR9qQNIMlfBOnN7D?=
+ =?us-ascii?Q?ntrJ3Uao7ldnMPYeVEJ9Wd3ODb4KP16REg9VGlvdvIngBFvShOZ7hz8+2SUA?=
+ =?us-ascii?Q?fDxQmuinSBIgBHYuSa7/qUS8bpWa6l/gWP2LHZrTe4vnqOZRgFlCUDeP4EMR?=
+ =?us-ascii?Q?+qjXUg3wplKy9qShjZmNnOA+jc4hWYzRee//o2yI1li1anu49BdCsa/P84Ez?=
+ =?us-ascii?Q?xsUGlFSeCCfGjSUYzl1L20DWsheHsA6+h2xOuGwwSGcy39e9HNZDrbQvpzuO?=
+ =?us-ascii?Q?Niy/C9wk8FTbHk0zkaUl/LUNaFVY0nji5I5Bb3Fc4fbUASW/e6sy/iMe01vC?=
+ =?us-ascii?Q?xYM42V4C4vdRTo3zQHb66Gnfnb8uskGBSIDj/41M9OfMUYte5stcBuoZMwg8?=
+ =?us-ascii?Q?OU0QKmNR+QjVRKg742n4vK7u5948Cf5HOMHsQSZ5ckMzNiDBVrLWDgzlwOHY?=
+ =?us-ascii?Q?4YU6mg7E/xOVkZkbmMIgtd433+k2wR9lq7KWvsytnf8L46w+cmN2yUNm3fHm?=
+ =?us-ascii?Q?ag8jaSkgHLDyEDXvzTYDMWmyG/tdnhe97en4N//vWCEDW916DY9ElJ+kqQB4?=
+ =?us-ascii?Q?mdcRu6dABrvSGqRlROeYzE1s0HJ5N6gLH+HKLywxgL8adaSV76EqY9SnGKIm?=
+ =?us-ascii?Q?lbNh+w/FpImpypI8dKMZJ/60xFbElsnt4ueQaROZ3n3vMGcxjrmfwgl3le/j?=
+ =?us-ascii?Q?9hc4X8d+CnZa1yXygGGoRT1EF4UyMWuLtoyrhVmq040irbI4Rrfe2V0sB8qt?=
+ =?us-ascii?Q?lG6INXuBibdhiaYiC+KItbxF6PTEOEc5sXS6/ecNMP29SMc34oL2HAzipzDz?=
+ =?us-ascii?Q?uqt9EsWBDeXybu+CewiME4CDLJ7pxbgwTEX4RfvNAhisaCRfu29gN8/WQwPk?=
+ =?us-ascii?Q?Slg1/cB8FufXbGYVh1TUM2mO+YO/bXxgh7U79A2/wKZAzAMkR5MCEcdHyJ2X?=
+ =?us-ascii?Q?xx4eeIADlehsqGywTcm1185XlAigvYDs9TiSC9tpifGqCvJNE9b9KOCHrjnB?=
+ =?us-ascii?Q?qnTELKWFqw70begr8qBr8Sdb8XGq9b6lgbibVaIU7g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Gr6vWeO+89V63qBI4jQt9lXPUKfuw2oGldhWeoORc5BvbunirP1Yef5z6z/6?=
+ =?us-ascii?Q?stJOGSInswo7EZUJ/yNovsvIbRs6YTCA4wmoR+Vh4K9egXqwtmrKpT3EPUgC?=
+ =?us-ascii?Q?nsjlujajIrlMHwdgKaQjAIQg9MsuXl9abX0B1HXqTJIiSN+EpYxgeUz27NzT?=
+ =?us-ascii?Q?47spCDwVvxIStQ/4ZoayyA3jiI+Mj14LhQcuOt3XufMK3o6bX/j4QVYEqTmR?=
+ =?us-ascii?Q?ibDO4HqkQismj61T/EZKwt5/QAs2nNScwrjJtvG+prJljUpIhYEI4eCoBEQN?=
+ =?us-ascii?Q?/8uUte0OV5e/pGqSqg5d4R6mjZP/MSwhzutru+6aE+b+TeunZ1S50rhHuPnf?=
+ =?us-ascii?Q?gtdG0hW/NlwZJ6yl4oahm51jJvo+rBigkAH9ilgmBTOQvmkCWWtuiis+3dqd?=
+ =?us-ascii?Q?44Gjgh7IAL6XjsGwZB+1pl6EYepvltoUKxSI2QopkP/AMFmrCHI8jbMCneRx?=
+ =?us-ascii?Q?5KQHDNIavUCGxZdGkNzewtxIBdGmFpCcRGELJwElVWrPvn3At3lh5ZSD078S?=
+ =?us-ascii?Q?aGy7ww1AOEzQpDPZN2pvqI3WGEyB0nrdblImtXCD9oRDNUEMfE63sMvH7ZWN?=
+ =?us-ascii?Q?PrjG+To36XcNJ0VTpMF2TgoSx6iEsrcOQ9qvyg2hLWUURD84mSutT0u/RONU?=
+ =?us-ascii?Q?J6RVe+8Qqr41L2/OWNsj49yIHsG7w09j8qRgIwRGlWrHEgfiBP3kPbBq9gCz?=
+ =?us-ascii?Q?8C+/2mbpYjie4ziLmMP+Q3arAKj7yOf2LJzCjaPlQ3rt9jwU3PvXCU02mi71?=
+ =?us-ascii?Q?3aJimVVjqNQOn9rS7PAscXQGGIwmJphhLnveIoc2Vm3iQQqzCif7T+s2OM+v?=
+ =?us-ascii?Q?HkizhVPqJBeidkUYhgCzI7fEFEHQKpWHc54gmooUIlcNKruAh3vxi9yOhlSu?=
+ =?us-ascii?Q?/1q8mIjP3oZjTjRCeOgewSConsYsC9w25PRnAgs9cPFGYkt1WIQNjeMs/skh?=
+ =?us-ascii?Q?FL5LT02SndCjdOUwKzN/4HNSQwVJKO0EfItZmrHCV/CaTdbIyzTDHKQFoRtH?=
+ =?us-ascii?Q?mGg4T70bY6EF6DmPLoHxC+/6YCn5K/D0Lh3CxjFwlqfvRQt0f75r0L4nYilt?=
+ =?us-ascii?Q?MTlkiPuc9+F87f3ZsHWxgRZLv3aj8glXwm7Lw/4ILoYKjNCk/sJK8g4vCqqA?=
+ =?us-ascii?Q?4ayQbn3ftcbyOXxaURLjLqbgk/LVxSZ7mV2hcx278AEdTjqgTqg2sAByvbxV?=
+ =?us-ascii?Q?YGRVNYpXSXI8li0AjirtRPCPglaodScUmpdtAbIZ9zTPcPkJbvd8feqRje+B?=
+ =?us-ascii?Q?/5TAppNTyM4okB9AH2LXlAbz1PZgBeLIHWfivo6C2nYDl8kTkdCzU2oXeVCO?=
+ =?us-ascii?Q?5cm9kPAEIVqRq2ON3MmytRaduAf2YETQXqLHzRQMluAIeM+r4DnxKyVykOtX?=
+ =?us-ascii?Q?kkLMSlTILoer+4ZOv0dcb7BmUi8sQ8cgQhn7k4sMFAOmA1qAU9bYRkNR6uGS?=
+ =?us-ascii?Q?kKPYc1j7Y9/STKHix5xokU8E9Ue41UA5FxSWfpTAVt4CYM0919EPRbdo4vHI?=
+ =?us-ascii?Q?RdCo3INB4kBS8Nmx5JHTTWh4eWTEIhcF2ROmE7wLdanfQFzZiX1n9LBBHxtV?=
+ =?us-ascii?Q?v+vW2rHtA/HBUb9LAjo=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed1cd31e-2376-4ab0-9967-08dcee0c6d8c
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 18:00:32.6094
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FaoCeUSQHMsOFl+54Tdsi33M474uoUoZCzrbejVKI4YjuOvp3Yt8wa37udUkbzim
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8544
 
-On 2024-10-16 21:07, Celeste Liu wrote:
+--KOpAfJfSG1+0Dt1Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> On 2024-10-16 20:56, Alexandre Ghiti wrote:
->> On 16/10/2024 14:23, Celeste Liu wrote:
->>> On 2024-10-16 20:00, Alexandre Ghiti wrote:
->>>> Hi Celeste,
->>>>
->>>> Thank you for looking into this and really sorry about the late response.
->>>>
->>>> On 17/09/2024 06:09, Celeste Liu wrote:
->>>>> Before PTRACE_GET_SYSCALL_INFO was implemented in v5.3, the only way to
->>>>> get syscall arguments was to get user_regs_struct via PTRACE_GETREGSET.
->>>>> On some architectures where a register is used as both the first
->>>>> argument and the return value and thus will be changed at some stage of
->>>>> the syscall process, something like orig_a0 is provided to save the
->>>>> original argument register value. But RISC-V doesn't export orig_a0 in
->>>>> user_regs_struct (This ABI was designed at e2c0cdfba7f6 ("RISC-V:
->>>>> User-facing API").) so userspace application like strace will get the
->>>>> right or wrong result depends on the operation order in do_trap_ecall_u()
->>>>> function.
->>>>>
->>>>> This requires we put the ENOSYS process after syscall_enter_from_user_mode()
->>>>> or syscall_handler()[1]. Unfortunately, the generic entry API
->>>>> syscall_enter_from_user_mode() requires we
->>>>>
->>>>> *  process ENOSYS before syscall_enter_from_user_mode()
->>>>
->>>> Where does this requirement come from?
->>>>
->>>>
->>>>> *  or only set a0 to ENOSYS when the return value of
->>>>>      syscall_enter_from_user_mode() != -1
->>>>>
->>>>> Again, if we choose the latter way to avoid conflict with the first
->>>>> issue, we will meet the third problem: strace depends on that kernel
->>>>> will return ENOSYS when syscall nr is -1 to implement their syscall
->>>>> tampering feature[2].
->>>>
->>>> IIUC, seccomp and others in syscall_enter_from_user_mode() could return -1 and then we could not differentiate with the syscall number being -1.
->>>>
->>>> But could we imagine, to distinguish between an error and the syscall number being -1, checking again the syscall number after we call syscall_enter_from_user_mode()? If the syscall number is -1, then we set ENOSYS otherwise we don't do anything (a bit like what you did in 52449c17bdd1 ("riscv: entry: set a0 = -ENOSYS only when syscall != -1")).
->>>>
->>>> Let me know if I completely misunderstood here!
->>> Yeah. I found this a bit later after I post this RFC. I include it in a update reply,
->>> copy here as well:
->>>
->>>> But from another angle, syscall number is in a7 register, so we can call the
->>>> get_syscall_nr() after calling the syscall_enter_from_user_mode() to bypass the
->>>> information lost of the return value of the syscall_enter_from_user_mode(). But
->>>> in this way, the syscall number in the syscall_enter_from_user_mode() return
->>>> value is useless, and we can remove it directly.
->>> So if we get syscall number from a7 register again, the syscall number part of
->>> the return value of syscall_enter_from_user_mode() is useless completely.
->>> I think it's better to drop it so the later new architecture developer will not
->>> run into the same issue. (Actually, the syscall number returned by
->>> syscall_enter_from_user_mode() is also the result of get_syscall_nr() at the end
->>> of it.) But it will affect other architecture's code so I think there still need
->>> some discussions.
->>>
->>> Or if you think it's better to post a patch and then discuss in patch thread
->>> directly, I'm glad to do this.
->>
->>
->> Great that we have a solution that does not need to change the ABI :)
->>
->> I think we should start by implementing a fix for riscv only that implements the get_syscall_nr() after syscall_enter_from_user_mode() so that we can merge that in 6.12-rcX.
->>
->> And after that, you could come with the nicer solution you propose.
->>
->> Do you think you can send a patch for the quick fix soon? In the meantime, I'm adding the strace testsuite to my CI to make sure it works and we don't break it again :)
-> 
-> Ok. I will send patch soon.
+Hi Linus,
 
-Patch has been sent. See https://lore.kernel.org/all/20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com/T/
+Collected rc patches so far this cycle. A lot of bnxt_re activity,
+there will be more rc patches there coming.
 
-> 
->>
->> Thanks!
->>
->> Alex
->>
->>
->>>
->>>> Thanks again for the thorough explanation,
->>>>
->>>> Alex
->>>>
->>>>
->>>>> Actually, we tried the both ways in 52449c17bdd1 ("riscv: entry: set
->>>>> a0 = -ENOSYS only when syscall != -1") and 61119394631f ("riscv: entry:
->>>>> always initialize regs->a0 to -ENOSYS") before.
->>>>>
->>>>> Naturally, there is a solution:
->>>>>
->>>>> 1. Just add orig_a0 in user_regs_struct and let strace use it as
->>>>>      loongarch does. So only two problems, which can be resolved without
->>>>>      conflict, are left here.
->>>>>
->>>>> The conflicts are the direct result of the limitation of generic entry
->>>>> API, so we have another two solutions:
->>>>>
->>>>> 2. Give up the generic entry API, and switch back to the
->>>>>      architecture-specific standardalone implementation.
->>>>> 3. Redesign the generic entry API: the problem was caused by
->>>>>      syscall_enter_from_user_mode() using the value -1 (which is unused
->>>>>      normally) of syscall nr to inform syscall was reject by seccomp/bpf.
->>>>>
->>>>> In theory, the Solution 1 is best:
->>>>>
->>>>> *  a0 was used for two purposes in ABI, so using two variables to store
->>>>>      it is natural.
->>>>> *  Userspace can implement features without depending on the internal
->>>>>      behavior of the kernel.
->>>>>
->>>>> Unfortunately, it's difficult to implement based on the current code.
->>>>> The RISC-V defined struct pt_regs as below:
->>>>>
->>>>>           struct pt_regs {
->>>>>                   unsigned long epc;
->>>>>           ...
->>>>>                   unsigned long t6;
->>>>>                   /* Supervisor/Machine CSRs */
->>>>>                   unsigned long status;
->>>>>                   unsigned long badaddr;
->>>>>                   unsigned long cause;
->>>>>                   /* a0 value before the syscall */
->>>>>                   unsigned long orig_a0;
->>>>>           };
->>>>>
->>>>> And user_regs_struct needs to be a prefix of struct pt_regs, so if we
->>>>> want to include orig_a0 in user_regs_struct, we will need to include
->>>>> Supervisor/Machine CSRs as well. It's not a big problem. Since
->>>>> struct pt_regs is the internal ABI of the kernel, we can reorder it.
->>>>> Unfortunately, struct user_regs_struct is defined as below:
->>>>>
->>>>>           struct user_regs_struct {
->>>>>                   unsigned long pc;
->>>>>           ...
->>>>>                   unsigned long t6;
->>>>>           };
->>>>>
->>>>> It doesn't contain something like reserved[] as padding to leave the
->>>>> space to add more registers from struct pt_regs!
->>>>> The loongarch do the right thing as below:
->>>>>
->>>>>           struct user_pt_regs {
->>>>>                   /* Main processor registers. */
->>>>>                   unsigned long regs[32];
->>>>>           ...
->>>>>                   unsigned long reserved[10];
->>>>>           } __attribute__((aligned(8)));
->>>>>
->>>>> RISC-V can't include orig_a0 in user_regs_struct without breaking UABI.
->>>>>
->>>>> Need a discussion to decide to use which solution, or is there any
->>>>> other better solution?
->>>>>
->>>>> [1]: https://github.com/strace/strace/issues/315
->>>>> [2]: https://lore.kernel.org/linux-riscv/20240627071422.GA2626@altlinux.org/
->>>>>
->>>>>
->>>>> _______________________________________________
->>>>> linux-riscv mailing list
->>>>> linux-riscv@lists.infradead.org
->>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
+Thanks,
+Jason
 
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+
+for you to fetch changes up to dc5006cfcf62bea88076a587344ba5e00e66d1c6:
+
+  RDMA/bnxt_re: Fix the GID table length (2024-10-11 20:49:02 -0300)
+
+----------------------------------------------------------------
+RDMA v6.12 first rc pull
+
+Several miscellaneous fixes:
+
+- Many bnxt_re bug fixes - Memory leaks, kasn, NULL pointer deref, soft
+  lockups, error unwinding and some small functional issues
+
+- Error unwind bug in rdma netlink
+
+- Two issues with incorrect VLAN detection for iWarp
+
+- skb_splice_from_iter() splat in siw
+
+- Give SRP slab caches unique names to resolve the merge window WARN_ON
+  regression
+
+----------------------------------------------------------------
+Abhishek Mohapatra (1):
+      RDMA/bnxt_re: Fix the max CQ WQEs for older adapters
+
+Alexander Zubkov (1):
+      RDMA/irdma: Fix misspelling of "accept*"
+
+Anumula Murali Mohan Reddy (2):
+      RDMA/core: Fix ENODEV error for iWARP test over vlan
+      RDMA/cxgb4: Fix RDMA_CM_EVENT_UNREACHABLE error for iWARP
+
+Bart Van Assche (1):
+      RDMA/srpt: Make slab cache names unique
+
+Bhargava Chenna Marreddy (1):
+      RDMA/bnxt_re: Fix a bug while setting up Level-2 PBL pages
+
+Chandramohan Akula (1):
+      RDMA/bnxt_re: Change the sequence of updating the CQ toggle value
+
+Kalesh AP (7):
+      RDMA/bnxt_re: Fix a possible memory leak
+      RDMA/bnxt_re: Add a check for memory allocation
+      RDMA/bnxt_re: Fix out of bound check
+      RDMA/bnxt_re: Return more meaningful error
+      RDMA/bnxt_re: Fix a possible NULL pointer dereference
+      RDMA/bnxt_re: Fix an error path in bnxt_re_add_device
+      RDMA/bnxt_re: Fix the GID table length
+
+Kashyap Desai (1):
+      RDMA/bnxt_re: Fix incorrect dereference of srq in async event
+
+Qianqiang Liu (1):
+      RDMA/nldev: Fix NULL pointer dereferences issue in rdma_nl_notify_event
+
+Saravanan Vajravel (1):
+      RDMA/bnxt_re: Fix incorrect AVID type in WQE structure
+
+Selvin Xavier (2):
+      RDMA/bnxt_re: Fix the max WQEs used in Static WQE mode
+      RDMA/bnxt_re: Avoid CPU lockups due fifo occupancy check loop
+
+Showrya M N (1):
+      RDMA/siw: Add sendpage_ok() check to disable MSG_SPLICE_PAGES
+
+ drivers/infiniband/core/addr.c              |  2 +
+ drivers/infiniband/core/nldev.c             |  2 +
+ drivers/infiniband/hw/bnxt_re/hw_counters.c |  2 +-
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c    |  6 ++-
+ drivers/infiniband/hw/bnxt_re/main.c        | 47 +++++++++--------
+ drivers/infiniband/hw/bnxt_re/qplib_fp.c    |  5 ++
+ drivers/infiniband/hw/bnxt_re/qplib_fp.h    |  2 +-
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c  |  2 +-
+ drivers/infiniband/hw/bnxt_re/qplib_res.c   | 21 ++------
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c    | 11 +++-
+ drivers/infiniband/hw/bnxt_re/qplib_sp.h    |  1 +
+ drivers/infiniband/hw/cxgb4/cm.c            |  9 ++--
+ drivers/infiniband/hw/irdma/cm.c            |  2 +-
+ drivers/infiniband/sw/siw/siw_qp_tx.c       |  2 +
+ drivers/infiniband/ulp/srpt/ib_srpt.c       | 80 ++++++++++++++++++++++++-----
+ 15 files changed, 133 insertions(+), 61 deletions(-)
+
+--KOpAfJfSG1+0Dt1Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRRRCHOFoQz/8F5bUaFwuHvBreFYQUCZw//PQAKCRCFwuHvBreF
+YcHgAP9Ctw6p0PHAXEt/IWq2DqMyA9v7Ppy0oYcfBhKvO5wkLAEA0oh6ecdAZTbE
+g4mX24x/WCnZXQA1O0bjnG8FwqfHWAE=
+=pu2i
+-----END PGP SIGNATURE-----
+
+--KOpAfJfSG1+0Dt1Q--
 
