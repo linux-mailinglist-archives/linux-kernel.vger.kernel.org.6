@@ -1,383 +1,159 @@
-Return-Path: <linux-kernel+bounces-368897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89269A1636
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D989A163B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97BBD284CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51651C21C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1921D415D;
-	Wed, 16 Oct 2024 23:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145E91D5168;
+	Wed, 16 Oct 2024 23:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JVl34fek"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U8r9mTNo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE30745008
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4804282FA;
+	Wed, 16 Oct 2024 23:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729122093; cv=none; b=Q/JdTMf3+YB7YnN2Yb+5+7K63xe4TBx3j0D4H7UxjnLzT59rVW3OnXXRr41SbWDWtpXLy2EBNdkqTu8dXeRJ/JgQ9+P27eWjXxozZMo3i6NOJwZUi9I1Oc2ebrE+1KaLkXJ8MKRe22n9/QROd+fKI+l8sOCQug7i5QhpDmMNius=
+	t=1729122329; cv=none; b=iedt/Zy8DB7WbTgI4SxdPU7AgfHP6Zodspdt/I3ZfWO8gCPspVv+s5UQlSZiTYHsN7YemKg5rkZahSEhIv0MYuwqonDSY/3i3oIgxApq+F2dw2XnFlH6Evkv86+Iugt9xCUpB+tfelB65qE+N5qwiJqG5kFyLmqYgFsjzuQOAVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729122093; c=relaxed/simple;
-	bh=RRswTXU4k/AnzFdLQe+coTcUgPkoL6Vo+dUI8tc4lAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l03wzDgUho6zO1fwF/n8l9YWBQoSzBtxxsVVylwVnihD3L5E2t6+U5muOGZgW/bljMZ9E0hpQuyRCImwl+qd9kLq2I29eq2U8DkqTG1o7OxlswWNYmqL0k8VwAkSzo5MyVHhhByThcdulV7aATaGuWMoj+xbKNYTIrHBagDujtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JVl34fek; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so2541695a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:41:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729122090; x=1729726890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3BEZJUSML+8CSCJJzTyo8d6sATot5pW+Vdg7IEDfwPQ=;
-        b=JVl34fek3RyPr7fft4WoesHhzaEirOIeuRJtEKyNM5ZvgUdTkNR3WPdyxpw13g5VUK
-         Cl0463c9HF7JjGD6F0OAMnSRF55THFB+y89wPoa/FGrRfD6lMYUt/QKC+UFrl8MBcLZf
-         0LFbbd8vo7ebRaZw0D8EZykd2G/rholTRzwrLZcTgEQmEe+TDsUJWT36dKsjlLCL3M6w
-         nmTqmZsbl4ZmD+EJ+URXohYvTzXAt/Y6OFHCmihkXHSuY2vXBvFYoPY1nW0eGZF2PSFN
-         irYD1gYrebiNouFtadD9eUCzcoEPoLFO2uSjw0QJSEBzNSb8vxEBMwpnxnfVBgGcRi/b
-         oRRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729122090; x=1729726890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3BEZJUSML+8CSCJJzTyo8d6sATot5pW+Vdg7IEDfwPQ=;
-        b=nPSfmaB5I5GULkkfTFFufe3Zo6Xc9iLvX+byl2Pkyqarm2e8+qfvCG4MlyGWtgZUaM
-         e3WfZ7c3KQxYfzIQATh06e2t0/5Bw4pctj6/aAFBWzRfiDvKSsPQDkxB4FIDrQ8+MaA5
-         oHNeOi0SbkuQAqJOnoSkE/5zfnCcDXsr5F0I96tBr5DwJsvthJ5pzZZ2QJzIvo4NDWUb
-         5GJcA46YpgZ0rKs7ia8qjnJOKIt5TODggqKrOF0HkO9Qk+3RleWY5WcK4mhU5ANVILuG
-         sB0lffvXZDEGbNBMqTRyXugX+TgbX3XYIj3wULGA592SdbmrVuHv4eX9yeNtFkNqmjiV
-         vmUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr4vewDv18WLTUxiEPGTW5W884hjLlug+Tk6KYvgO0O3cDdbDlK0AGzbpP0MIpheBhdZwSNyT96EGsgbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV71SI7+cbxdL9EstOj9xJN6/zsKJcOI/yz4/O9JIu63dSVFRx
-	Ll+jmWv4HM99bcU4DrRwLn5izkH0plgPZtK4/N2XrFfEJN9AxQcbbhXkRMI/+7LaNMHLNFmjKu/
-	Aer4JD6pToLD8vmiUTo3CwpF2ImSZQpGYyTg=
-X-Google-Smtp-Source: AGHT+IFpFNN1yQgdfY9Xjr7hFWqOdaR+k/29nfjRc/jI9+D6aolt4lqR3s1ONz+vmchDUvxgFPjIIg6QjPlmxW61zb8=
-X-Received: by 2002:a17:906:478a:b0:a99:f94b:f92e with SMTP id
- a640c23a62f3a-a9a4cc58ef8mr98970966b.27.1729122089676; Wed, 16 Oct 2024
- 16:41:29 -0700 (PDT)
+	s=arc-20240116; t=1729122329; c=relaxed/simple;
+	bh=rOMnaHFbyrqkDa3kCV5cdJC9ZJsY+QGyGyxmU8Hs3fs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJwvB5GzGPvO4TzGIpjLHcnY7R0MWd/5e/6g4uGbXq2j+j3jvGCwUWO7J3NG3ND9DacCE9jaX0oa5Yadd10h6DUqVLN9IJL44XuXnwZcIc1Dmv1Gx4EbFu9ru5EU3toz4X5nGb8nlPx+ox/+6giXo6xTAb4S2rS05qwLKBnS95A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U8r9mTNo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GIFv6J001733;
+	Wed, 16 Oct 2024 23:45:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=FQhUz+ODVS1Mtj88e10qGXt5
+	mYqZRtinSKk8mKi1F+s=; b=U8r9mTNoVCTaX1/2abgmh3pNN4WpCxK0sdUFW/oB
+	sNX5wBIjq13ZXDwTELI6uPSaDItbHT1qrm92Vbk4xAIHkkAvLhC/1ICuzADM0N+1
+	L9aahHfyr47HXhwXGSvqZHYcjqyjcxlXBJwfBqcOa3ND2ZwYFLxhjkPafmNV7v+z
+	r8cd6DfUTsoBGUfEZtcFdX4aOT81rFB7b3QSVCA2IGjgpz1vOPQtQ0QhbajOjNOA
+	6vucz+poZa8FYXbKlp2a40bn1YBW837slTBrSgNK8tAI39s4vq4Hj+4A9u1ePsOI
+	Eq2MYH++iqK1vIXogQLGwCdmh1P52Ww5bWUmnI6peAUaQg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ajm58nks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 23:45:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49GNjGQi031586
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 23:45:16 GMT
+Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 16 Oct 2024 16:45:16 -0700
+Date: Wed, 16 Oct 2024 16:45:15 -0700
+From: Mike Tipton <quic_mdtipton@quicinc.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
+        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
+        <pierre.gondois@arm.com>, <vincent.guittot@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH V5 1/1] cpufreq: scmi: Register for limit change
+ notifications
+Message-ID: <20241016234514.GA17864@hu-mdtipton-lv.qualcomm.com>
+References: <20240603192654.2167620-1-quic_sibis@quicinc.com>
+ <20240603192654.2167620-2-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
- <Zvg-mDsvvOueGpzs@archlinux> <202409281331.1F04259@keescook>
- <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com> <Zv6BEO-1Y0oJ3krr@archlinux>
- <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com> <Zv61dCaxScXuOjZg@archlinux>
- <202410031424.45E5D19@keescook> <Zv8RIs-htdc-PtXB@archlinux>
- <202410040958.C19D3B9E48@keescook> <ZwNb-_UPL9BPSg9N@archlinux>
-In-Reply-To: <ZwNb-_UPL9BPSg9N@archlinux>
-From: Bill Wendling <morbo@google.com>
-Date: Wed, 16 Oct 2024 16:41:11 -0700
-Message-ID: <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in bch2_xattr_validate
-To: Jan Hendrik Farr <kernel@jfarr.cc>
-Cc: Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev, 
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ardb@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240603192654.2167620-2-quic_sibis@quicinc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7_7Zy98waBdmcNbs49DXZjcvcob6oB9b
+X-Proofpoint-ORIG-GUID: 7_7Zy98waBdmcNbs49DXZjcvcob6oB9b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 clxscore=1011 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160152
 
-On Sun, Oct 6, 2024 at 8:56=E2=80=AFPM Jan Hendrik Farr <kernel@jfarr.cc> w=
-rote:
-> > I want to separate several easily confused issues. Instead of just
-> > saying __bdos, let's clearly refer to what calculation within bdos is
-> > being used. There are 3 choices currently:
-> > - alloc_size attribute
-> > - counted_by attribute
-> > - fallback to __bos (which is similar to sizeof(), except that FAMs are=
- 0 sized)
-> >
-> > Additionally there are (for all intents and purposes) 2 size
-> > determinations to be made by __bos and __bdos, via argument 2:
-> > - containing object size (type 0) ("maximum size")
-> > - specific object size (type 1) ("minimum size")
->
-> "maximum" vs "minimum" size would by type 0 vs type 2, but I think you
-> do mean type 0 and type 1 as those are the types currently used by
-> __struct_size and __member_size. Those are both "maximum" sizes.
->
-> >
-> > For example, consider:
-> >
-> > struct posix_acl *acl =3D malloc(1024);
-> > acl->a_count =3D 1;
-> >
-> > what should these return:
-> >
-> >       __bos(acl, 0)
-> >       __bos(acl, 1)
-> >       __bdos(acl, 0)
-> >       __bdos(acl, 1)
-> >       __bos(acl->a_entries, 0)
-> >       __bos(acl->a_entries, 1)
-> >       __bdos(acl->a_entries, 0)
-> >       __bdos(acl->a_entries, 1)
-> >
->
-Thank you for this detailed write-up! I'm sorry for my late response.
+On Tue, Jun 04, 2024 at 12:56:54AM +0530, Sibi Sankar wrote:
+> Register for limit change notifications if supported and use the throttled
+> frequency from the notification to apply HW pressure.
+> 
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+> 
+> v5:
+> * Drop patch 1 and use pm_qos to update constraints. [Vincent]
+> * Use sdev instead of cpu_dev in dev_warn. [Christian]
+> * Pass sdev directly through private data. [Christian]
+> * Dropping Rb's for now.
+> 
+>  drivers/cpufreq/scmi-cpufreq.c | 36 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
 
-> I gathered some data from clang and gcc on all for all these cases and
-> additionally varied whether the allocation size is a compile time known
-> constant, runtime known, or not known. I also varied whether
-> __counted_by was used.
->
-> Source code: [1]
->
->
-> Abbreviations:
->
-> FAM      =3D flexible array member
-> -1       =3D SIZE_MAX
-> p->a_ent =3D p->a_entries
-> comp.    =3D allocation size is compile time known
-> run.     =3D allocation size is compile time known
-> none     =3D allocation size is unknown
-> count    =3D __counted_by attribute in use
-> correct  =3D What I think the correct answers should be. In some places I
-> have two answers. In that case the second number is what the kernel
-> currently expects.
->
->
-> And here's the data:
->
-> function        |comp.|run.|none|count| gcc  |clang |correct
-> ----------------|-----|----|----|-----|------|------|-----
-> bos(p, 0)       |  x  |    |    |     | 1024 | 1024 | 1024
-> bos(p, 0)       |     | x  |    |     |  -1  |  -1  | -1
-> bos(p, 0)       |     |    | x  |     |  -1  |  -1  | -1
-> bos(p, 0)       |  x  |    |    |  x  | 1024 | 1024 | 1024
-> bos(p, 0)       |     | x  |    |  x  |  -1  |  -1  | -1
-> bos(p, 0)       |     |    | x  |  x  |  -1  |  -1  | -1
-> ----------------|-----|----|----|-----|------|------|-----
-> bos(p, 1)       |  x  |    |    |     | 1024 | 1024 | 1024
-> bos(p, 1)       |     | x  |    |     |  -1  |  -1  | -1
-> bos(p, 1)       |     |    | x  |     |  -1  |  -1  | -1
-> bos(p, 1)       |  x  |    |    |  x  | 1024 | 1024 | 1024
-> bos(p, 1)       |     | x  |    |  x  |  -1  |  -1  | -1
-> bos(p, 1)       |     |    | x  |  x  |  -1  |  -1  | -1
-> ----------------|-----|----|----|-----|------|------|-----
-> bdos(p, 0)      |  x  |    |    |     | 1024 | 1024 | 1024
-> bdos(p, 0)      |     | x  |    |     | 1024 | 1024 | 1024
-> bdos(p, 0)      |     |    | x  |     |  -1  |  -1  | -1
-> bdos(p, 0)      |  x  |    |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 0)      |     | x  |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 0)      |     |    | x  |  x  |  -1  |  36  | 43 / 40
-> ----------------|-----|----|----|-----|------|------|-----
-> bdos(p, 1)      |  x  |    |    |     | 1024 | 1024 | 1024
-> bdos(p, 1)      |     | x  |    |     | 1024 | 1024 | 1024
-> bdos(p, 1)      |     |    | x  |     |  -1  |  -1  | -1
-> bdos(p, 1)      |  x  |    |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 1)      |     | x  |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 1)      |     |    | x  |  x  |  -1  |  36  | 43 / 40
-> ----------------|-----|----|----|-----|------|------|-----
-> bos(p->a_ent, 0)|  x  |    |    |     |  996 | 996  | 996
-> bos(p->a_ent, 0)|     | x  |    |     |  -1  |  -1  | -1
-> bos(p->a_ent, 0)|     |    | x  |     |  -1  |  -1  | -1
-> bos(p->a_ent, 0)|  x  |    |    |  x  |  996 | 996  | 996
-> bos(p->a_ent, 0)|     | x  |    |  x  |  -1  |  -1  | -1
-> bos(p->a_ent, 0)|     |    | x  |  x  |  -1  |  -1  | -1
-> ----------------|-----|----|----|-----|------|------|-----
-> bos(p->a_ent, 1)|  x  |    |    |     |  996 | 996  | 992
-> bos(p->a_ent, 1)|     | x  |    |     |  -1  |  -1  | -1
-> bos(p->a_ent, 1)|     |    | x  |     |  -1  |  -1  | -1
-> bos(p->a_ent, 1)|  x  |    |    |  x  |  996 | 996  | 992
-> bos(p->a_ent, 1)|     | x  |    |  x  |  -1  |  -1  | -1
-> bos(p->a_ent, 1)|     |    | x  |  x  |  -1  |  -1  | -1
-> ----------------|-----|----|----|-----|------|------|-----
-> bdos(p->a_ent,0)|  x  |    |    |     |  996 | 996  | 996
-> bdos(p->a_ent,0)|     | x  |    |     |  996 | 996  | 996
-> bdos(p->a_ent,0)|     |    | x  |     |  -1  |  -1  | -1
-> bdos(p->a_ent,0)|  x  |    |    |  x  |   8  |  8   |  8
-> bdos(p->a_ent,0)|     | x  |    |  x  |   8  |  8   |  8
-> bdos(p->a_ent,0)|     |    | x  |  x  |   8  |  8   |  8
-> ----------------|-----|----|----|-----|------|------|-----
-> bdos(p->a_ent,1)|  x  |    |    |     |  996 | 996  | 992
-> bdos(p->a_ent,1)|     | x  |    |     |  996 | 996  | 992
-> bdos(p->a_ent,1)|     |    | x  |     |  -1  |  -1  | -1
-> bdos(p->a_ent,1)|  x  |    |    |  x  |   8  |  8   |  8
-> bdos(p->a_ent,1)|     | x  |    |  x  |   8  |  8   |  8
-> bdos(p->a_ent,1)|     |    | x  |  x  |   8  |  8   |  8
-> ----------------|-----|----|----|-----|------|------|-----
->
-> bos only uses the allocation size to give it's answers. It only works if
-> it is a compile time known constant. bos also does not utilize the
-> __counted_by attribute.
->
-> bdos on the other hand allows the allocation size to be runtime known.
-> It also makes use of the __counted_by attribute if present, which always
-> takes precedence over the allocation size when the compiler supports it
-> for the particular case. So in those cases you can "lie" to the compiler
-> about the size of an object.
->
-> clang supports the __counted_by attribute for both cases (p and
-> p->a_entries). gcc only supports it for p->a_entries cases.
->
->
->
-> Issue A (clang)
-> =3D=3D=3D=3D=3D=3D=3D
->
-> function        |comp.|run.|none|count| gcc  |clang |correct
-> ----------------|-----|----|----|-----|------|------|-----
-> bdos(p, 0)      |  x  |    |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 0)      |     | x  |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 0)      |     |    | x  |  x  |  -1  |  36  | 43 / 40
-> bdos(p, 1)      |  x  |    |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 1)      |     | x  |    |  x  | 1024 |  36  | 43 / 40
-> bdos(p, 1)      |     |    | x  |  x  |  -1  |  36  | 43 / 40
->
-> These cases also represent the "bdos off by 4" issue in clang. clang
-> will compute these results using:
->
-> max(sizeof(struct posix_acl), offsetof(struct posix_acl, a_entries) +
-> count * sizeof(struct posix_acl_entries)) =3D 36
->
-> The kernel on the other hand expects this behavior:
->
-> sizeof(struct posix_acl) + count * sizeof(struct posix_acl_entries) =3D 4=
-0
->
->
-> I think the correct calculation would actually be this:
->
-> offsetof(struct posix_acl, a_entries)
-> + (acl->a_count + 1) * sizeof(struct posix_acl_entry) - 1 =3D 43
->
-> The C11 standard says that when the . or -> operator is used on a struct
-> with an FAM it behaves like the FAM was replaced with the largest array
-> (with the same element type) that would not make the object any larger
-> (see page 113 and 114 of [2]).
-> So there are actually multiple sizes of the object that are consistent
-> with a count of 1.
->
-> malloc-max =3D maximum size of the object
-> malloc-min =3D minimum size of the object
-> FAME =3D flexible array member element
-> (FAME) =3D hypothetical 2nd FAME
->
-> <-----------------malloc-max-------------->
-> <-----------------malloc-min------->
-> <------sizeof(posix_acl)------->
->                             <-FAME-><(FAME)>
->
-> The clang documentation of type 0 (vs type 2) bdos says this:
->
-> If ``type & 2 =3D=3D 0``, the least ``n`` is returned such that accesses =
-to
->    ``(const char*)ptr + n`` and beyond are known to be out of bounds.
->
-> We only _know_ that that access to the last byte of a 2nd hypothetical FA=
-ME
-> would be out of bounds. All the bytes before that are padding that is
-> allowed by the standard.
->
->
-> However, also this calculation doesn't get the kernel out
-> of trouble here. While this would fix the issue for this particular
-> struct it does not solve it for all structs:
->
-> What if the elements of the FAM were chars instead of
-> struct posix_acl_entries here? In that case the kernel is back to
-> overestimating the size of the struct / underreporting the count to the
-> compiler. So while I think this answer is more correct it doesn't
-> actually solve the issue.
->
-> Example:
-> Let's say the kernel allocates one of these posix_acl_char structs for a
-> single char in the array:
->
-> malloc(sizeof(posix_acl_char) + 1 * sizeof(char)) =3D 33
->
-> The C standard actually says that this object will behave like this when
-> the FAM is accessed:
->
-> struct posix_acl {
->     refcount_t a_refcount;
->     struct rcu_head a_rcu;
->     unsigned int a_count;
->     char a_entries[5];
-> };
->
-> a_count should be set to 5, not 1!
->
-While the standard says that it should act as 5 instead of 1 and that
-it's not an error to access padding, the point of the __counted_by
-attribute is to check that the user isn't doing anything "bad" by
-going outside of whatever bounds have been put in place. So I wouldn't
-want __bdos(p->a_entries, 0) to return 5 when the initial allocation
-is for 1. It's confusing given the documentation for the attribute.
+Tested-by: Mike Tipton <quic_mdtipton@quicinc.com>
 
-> So we would really need an option to tell the compiler to use the same
-> size calculation as the kernel expects here, or maybe be able to specify
-> an offset in the __counted_by attribute. Alternatively clang could use
-> an option to disable the use of __counted_by for cases where the whole
-> struct is passed. This would make it behave like gcc.
->
-I would be in favor of disabling __bdos on a whole struct pointer if
-it will match the functionality between the compilers. I don't think
-Qing has that on her plate at the moment, but when / if she revisits
-that we can discuss exactly how to perform the calculations then.
+> 
+> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+> index b87fd127aa43..0edfa55d8e49 100644
+> --- a/drivers/cpufreq/scmi-cpufreq.c
+> +++ b/drivers/cpufreq/scmi-cpufreq.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/export.h>
+>  #include <linux/module.h>
+>  #include <linux/pm_opp.h>
+> +#include <linux/pm_qos.h>
+>  #include <linux/slab.h>
+>  #include <linux/scmi_protocol.h>
+>  #include <linux/types.h>
+> @@ -25,7 +26,9 @@ struct scmi_data {
+>  	int domain_id;
+>  	int nr_opp;
+>  	struct device *cpu_dev;
+> +	struct cpufreq_policy *policy;
+>  	cpumask_var_t opp_shared_cpus;
+> +	struct notifier_block limit_notify_nb;
+>  };
+>  
+>  static struct scmi_protocol_handle *ph;
+> @@ -174,6 +177,25 @@ static struct freq_attr *scmi_cpufreq_hw_attr[] = {
+>  	NULL,
+>  };
+>  
+> +static int scmi_limit_notify_cb(struct notifier_block *nb, unsigned long event, void *data)
+> +{
+> +	struct scmi_data *priv = container_of(nb, struct scmi_data, limit_notify_nb);
+> +	struct scmi_perf_limits_report *limit_notify = data;
+> +	struct cpufreq_policy *policy = priv->policy;
+> +	unsigned int limit_freq_khz;
+> +	int ret;
+> +
+> +	limit_freq_khz = limit_notify->range_max_freq / HZ_PER_KHZ;
+> +
+> +	policy->max = clamp(limit_freq_khz, policy->cpuinfo.min_freq, policy->cpuinfo.max_freq);
+> +
+> +	ret = freq_qos_update_request(policy->max_freq_req, policy->max);
+> +	if (ret < 0)
+> +		pr_warn("failed to update freq constraint: %d\n", ret);
 
-> Issue B (clang + gcc)
-> =3D=3D=3D=3D=3D=3D=3D
->
-> A less serious issue happens with these cases:
->
-> function        |comp.|run.|none|count| gcc  |clang |correct
-> ----------------|-----|----|----|-----|------|------|-----
-> bos(p->a_ent, 1)|  x  |    |    |     |  996 | 996  | 992
-> bos(p->a_ent, 1)|  x  |    |    |  x  |  996 | 996  | 992
-> bdos(p->a_ent,1)|  x  |    |    |     |  996 | 996  | 992
-> bdos(p->a_ent,1)|     | x  |    |     |  996 | 996  | 992
->
-> In this case the size returned by bos/bdos is too large, so this won't
-> lead to false positives. Both clang and gcc simply compute the difference
-> between the pointer from the start of the FAM to the end of the whole
-> struct. I believe this is wrong. According to the C standard the object
-> should behave like the FAM was replaced with the largest array that does
-> not make the object any larger. The size of that array is 124 elements.
-> So the posix_acl becomes:
->
-I reported a similar issue to GCC a while back. The response is that
-it's not incorrect, because the size is still valid (padding, etc.).
-Their view is that, even when asked for the size of the subobject,
-they want to return some value, even if it's larger than the
-subobject, but not outside the bounds of the full object. I strongly
-disagree that it's okay to do that, but I'm probably in the minority.
-Clang's support for 1 as the __bdos's second argument isn't great. I'm
-trying to fix it, but got sidetracked by higher priority issues.
-
-So in conclusion, if turning off the calculation for a pointer to the
-whole struct works, then I'm okay with it.
-
--bw
-
-> struct posix_acl {
->     refcount_t a_refcount;
->     struct rcu_head a_rcu;
->     unsigned int a_count;
->     struct posix_acl_entry a_entries[124];
-> };
->
-> Since this is a type 1 bos/bdos it should return the size of just the
-> array, which is 124 * 8 =3D 992, and not 124.5 * 8 =3D 996.
->
-> [1] https://godbolt.org/z/a5eM3z8PY
-> [2] https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf
->
-> Best Regards
-> Jan
->
+This would be better as a dev_warn() with the cpu device. Other than
+that, looks good to me.
 
