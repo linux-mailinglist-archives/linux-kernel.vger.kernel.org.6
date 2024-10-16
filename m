@@ -1,131 +1,112 @@
-Return-Path: <linux-kernel+bounces-367462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF19F9A02AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:35:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D399A02B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC18285AD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480D21C24624
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D998D1B81DC;
-	Wed, 16 Oct 2024 07:35:10 +0000 (UTC)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AF0192D9D;
+	Wed, 16 Oct 2024 07:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sbdiUbuD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7350433CE;
-	Wed, 16 Oct 2024 07:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD8318FC61;
+	Wed, 16 Oct 2024 07:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729064110; cv=none; b=OQuIKAout/E+fj7Wf2+G8dvKXfecanar41srqo+HzjHenwwBzD3p5VpyYmqpnHXcPI9MEd+4ukYrLM3WkG5j3+hEs1Za6Hrk/X0ytF46K4m3jNlReFBiUaK6fNmd6YF6pwZhmpc0XRT3IzQwIdKy5degzS2Tb/Vorr1FCn94Vgc=
+	t=1729064136; cv=none; b=EB6uP7ey86Q+puQJVNsAQmYMtAe8Q7G7qBsdwPO6YIAOX9GgR2K2iSP6RPraZF36didJc7yHdUDwy7JAri7ixPCOYOOayMYceANGFNEJdDZIipTQrEzbKQVj8b7FGZj8T3aiWPRKc0OC6CE0bC97rAt+X4XUTWUqY1HsxZ4jqV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729064110; c=relaxed/simple;
-	bh=RmlOCU0LD+Zy7W9c/1tcj+LEr2FVQIbbuV9dw+Uv+dQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=srcxmnbQK+BrxZrQxeCxGq5Dv5MVT8igXKwEP6Gqz2VdaDKcK1XxjlP7Cjnq1P3YcVUjSwkffG8cKCJqj0Z9Z9ymNW8Jb1sSnoOlkROz+myNB72d4ySnYyFeYMJV4mwNQZaHVIKfw0jKnWvkDuADu5hJ1qS4uK/+LsQvKPrF+TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so4231444276.0;
-        Wed, 16 Oct 2024 00:35:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729064107; x=1729668907;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/QEFrE87QrYfukN9GRJXRVQgT6TniFvPYDzk8+Z0FuY=;
-        b=SBK7MUSOC+7T6nTxZX/fCoF74vwG/1AX/K/hvIoGnLwdjqRPmP7m/pLJXUy/8mWszB
-         RC83ZQZaIxBb0XXgNmGvSfwHXxrFAdFDIF+ivgcEMnSnHvpsg9aSm/8MDLaBB3w/z57Z
-         fUMeGtM1FbcPgBT3FviZefMCiTo3CFifTJmBLrswt/HVZBa8DhnTAWBbRykCzfUoq9KA
-         Fx5KL84Ruo8+ckK+S7LWknrNMJW+iJZGouKkoiehZF8bBCzUGhx2CU6yhHedBQSqmPM4
-         7ERmDFH4BX2xwo1n83Sxil7rS9BDcReD1EQIo6t+hh4E7olFYkBcrNxN6DoUrifXQf4D
-         6ATg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4xVOXA/9xjMlBHSSpQfuE4bZAngoeYQP8PAPlLyQxyAS4w9oMW0Hpzc+eOxOh1UcqZQHFVr/OVS51pJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5dO3/jnv/ObQ24xFEB7qFbdcs2PXZ59O8qj0+uwWh3kNTs63P
-	+Rmr327VVTw3W5++qO1WHjjz3U5VShA9sPzVZIgE8E73BX5uBVopuw/77N8l
-X-Google-Smtp-Source: AGHT+IHJYx8T9ce3Pf2LzWy8/7jjRdcN85q45rDbgF5HfrHbRO5ZYptii7PlGiEvuFNmYRS7sJRtcA==
-X-Received: by 2002:a05:6902:1ac1:b0:e24:a040:755c with SMTP id 3f1490d57ef6-e2931b645a8mr11001537276.34.1729064107167;
-        Wed, 16 Oct 2024 00:35:07 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e296cc1f09asm510155276.31.2024.10.16.00.35.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 00:35:06 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e214c3d045so46580297b3.0;
-        Wed, 16 Oct 2024 00:35:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEyalAJtzGbkc9WaiUTtZ3PxLKHlBvEWTVfAUkfIs5Flq12YZjQWOibQcjOTSJAY3rC/qtTGI9B+TDKio=@vger.kernel.org
-X-Received: by 2002:a05:690c:83:b0:6e2:313a:a01e with SMTP id
- 00721157ae682-6e3643a5fa5mr124666197b3.32.1729064106281; Wed, 16 Oct 2024
- 00:35:06 -0700 (PDT)
+	s=arc-20240116; t=1729064136; c=relaxed/simple;
+	bh=Xvs+lMtm2asCzvKJhf6aSQBopJmLdUz+khhBY26Z3m0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgScmB0G0NMosuaoB84v6tbIevL7ZH8T8zl78bW3PO0XsMgdaAeOLirkLRE36hd9MTU/82QnMH1n6X+VQReGDvvuC+u6jsfixV5UfPGxZd8qY0aXZahONZ3SjCLX/dKiRhy87kecF9WtkR006NdR8RZ8tqlvnm7ZOmAKT6ukMMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sbdiUbuD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89FB6C4CEC5;
+	Wed, 16 Oct 2024 07:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729064136;
+	bh=Xvs+lMtm2asCzvKJhf6aSQBopJmLdUz+khhBY26Z3m0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sbdiUbuDpqmKqyuvYbLHIkvhphRrEYtQzrkD2vO53pmSGQtE/3fljDvj13IE8jdLA
+	 sOq5IgnO4B8fqHdCzHEksUFUon43dIujQNBqMJkxL5DMilGJlfA0g+/YGA5I05mPwv
+	 8OVhCF625yMDyaTqPWkSjfHK40yB9w+bDdMpb+GQ=
+Date: Wed, 16 Oct 2024 09:35:33 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.15 000/691] 5.15.168-rc1 review
+Message-ID: <2024101620-quaintly-afraid-4d9e@gregkh>
+References: <20241015112440.309539031@linuxfoundation.org>
+ <43399648-ea75-4717-b155-73541deacaba@gmail.com>
+ <2024101515-timothy-overdrawn-b3f7@gregkh>
+ <7df2134c-a2fa-4cb8-8d57-e06fb7f62bca@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009230817.798582-4-fabrizio.castro.jz@renesas.com> <172903035374.1442.2455615035848114832.tip-bot2@tip-bot2>
-In-Reply-To: <172903035374.1442.2455615035848114832.tip-bot2@tip-bot2>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Oct 2024 09:34:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXvvSXbCBywfxqhHU1P6MVADdJ05VY9xe2V5TfCS=Q2rA@mail.gmail.com>
-Message-ID: <CAMuHMdXvvSXbCBywfxqhHU1P6MVADdJ05VY9xe2V5TfCS=Q2rA@mail.gmail.com>
-Subject: Re: [tip: irq/core] arm64: dts: renesas: r9a09g057: Add ICU node
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-tip-commits@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	maz@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7df2134c-a2fa-4cb8-8d57-e06fb7f62bca@gmail.com>
 
-Hi Thomas,
+On Tue, Oct 15, 2024 at 10:25:44AM -0700, Florian Fainelli wrote:
+> On 10/15/24 10:17, Greg Kroah-Hartman wrote:
+> > On Tue, Oct 15, 2024 at 10:09:15AM -0700, Florian Fainelli wrote:
+> > > On 10/15/24 04:19, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 5.15.168 release.
+> > > > There are 691 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > > The whole patch series can be found in one patch at:
+> > > > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.168-rc1.gz
+> > > > or in the git tree and branch at:
+> > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > > > and the diffstat can be found below.
+> > > > 
+> > > > thanks,
+> > > > 
+> > > > greg k-h
+> > > 
+> > > perf fails to build with:
+> > > 
+> > >    CC /local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/util/evsel.o
+> > > util/evsel.c: In function 'evsel__set_count':
+> > > util/evsel.c:1505:14: error: 'struct perf_counts_values' has no member named
+> > > 'lost'
+> > >   1505 |         count->lost   = lost;
+> > >        |              ^~
+> > > make[6]: *** [/local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/build/Makefile.build:97: /local/users/fainelli/buildroot/output/arm/build/linux-custom/tools/perf/util/evsel.o]
+> > > Error 1
+> > > 
+> > > seems like we need to backport upstream
+> > > 89e3106fa25fb1b626a7123dba870159d453e785 ("libperf: Handle read format in
+> > > perf_evsel__read()") to add the 'lost' member.
+> > 
+> > Is this new?  I can't build perf on any older kernels, but others might
+> > have better luck...
+> 
+> Yes this is a new build failure, caused by "perf tools: Support reading
+> PERF_FORMAT_LOST" AFAICT.
 
-On Wed, Oct 16, 2024 at 12:12=E2=80=AFAM tip-bot2 for Fabrizio Castro
-<tip-bot2@linutronix.de> wrote:
-> The following commit has been merged into the irq/core branch of tip:
->
-> Commit-ID:     7607e62525b7f176db4d8115b264e3206c84d6ee
-> Gitweb:        https://git.kernel.org/tip/7607e62525b7f176db4d8115b264e32=
-06c84d6ee
-> Author:        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> AuthorDate:    Thu, 10 Oct 2024 00:08:17 +01:00
-> Committer:     Thomas Gleixner <tglx@linutronix.de>
-> CommitterDate: Wed, 16 Oct 2024 00:01:07 +02:00
->
-> arm64: dts: renesas: r9a09g057: Add ICU node
->
-> Add node for the Interrupt Control Unit IP found on the Renesas
-> RZ/V2H(P) SoC, and modify the pinctrl node as its interrupt parent
-> is the ICU node.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Link: https://lore.kernel.org/all/20241009230817.798582-4-fabrizio.castro=
-.jz@renesas.com
->
-> ---
->  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 90 +++++++++++++++++++++-
+Thanks, I've dropped the offending commits now.
 
-FTR, usually Renesas DTS patches go in through the Renesas and SoC
-trees, to avoid conflicts and unmet dependencies.
-However, if no further references to the  "icu" node are to be made
-in this cycle, queueing it in the tip tree is fine.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+greg k-h
 
