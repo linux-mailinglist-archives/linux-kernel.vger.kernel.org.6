@@ -1,96 +1,173 @@
-Return-Path: <linux-kernel+bounces-368023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DB09A0A0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B52A9A0A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151081C22188
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:38:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE3211C21040
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55412209F3E;
-	Wed, 16 Oct 2024 12:37:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71826209695
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A72A208D73;
+	Wed, 16 Oct 2024 12:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lVwJElp1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3054C207A2C;
+	Wed, 16 Oct 2024 12:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729082264; cv=none; b=jip7Bn6H2iqH0jsR4uHNlEhl/nBQ6SrLANoIApNDy7yMQPVoMO7/MmTh5eBXQFekA9rsfUwqeYSgby+saIV8b/WsAmvqRFcQh61t6My8c3Gv12AENFKG3XwQMaGbXMGz7S65kFQYn8sbKgzsxzoBV3h2bZgDXsN/4HZStqZSMvw=
+	t=1729082328; cv=none; b=izz8hvbPPS5fid108RFvLlMGCxa1nIlX74LXkpTvlSRcopc93hd9q3QBYKrLgvSMIWKDthOO4TsMS1h2B76Lj187jBVksU/G/ksfcPB6Tk9fFAEvWfY2VXHjBdowkLsxkODcwJv1+B8vS8KK9XJSjhkXS78sVZT5LO8aQNW9zMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729082264; c=relaxed/simple;
-	bh=Q/Uo4opeP72V0is0b5O0aSP69/Bj/BN6StF/fWqNNto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DkdofT/w4ww3FJeVkU6A9adeBVqvF8mBcD0TMIvsJbCUX8/t9BOQdtCwXNY/xp/dLBte0+WBKHjUdDBM7taR17Qancw0SNpmDS/0ovhAejZEZoABYI3pwLgyh+XmwUHxcokoDtIgP5nkPC9rfOb3C0GbqiJLQ723DMcSCAEnt34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B27AFEC;
-	Wed, 16 Oct 2024 05:38:10 -0700 (PDT)
-Received: from [10.163.39.8] (unknown [10.163.39.8])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC7783F528;
-	Wed, 16 Oct 2024 05:37:38 -0700 (PDT)
-Message-ID: <162ff655-0c55-4aa8-9ca2-3f818a1233cd@arm.com>
-Date: Wed, 16 Oct 2024 18:07:36 +0530
+	s=arc-20240116; t=1729082328; c=relaxed/simple;
+	bh=pG5z/h1vkVwxMvN3uPx4hrWsE2KHzIpOD2t9beUqJBo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sBscEVuITyc+PlYc//FcWD/hRZFrhvRleyWYwiZdV2/7Iczv4n9ko+ddN/lELVKUjTm/S0BTDGsexLndTDDg0cVHXS937BHFpHP6lA/CPJD0R0EyLITKVuw619RbFlv+uJtuz/kXoAPiznEXWyJqGTzglESEV1mkX+W4+ZPlaVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lVwJElp1; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729082327; x=1760618327;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=pG5z/h1vkVwxMvN3uPx4hrWsE2KHzIpOD2t9beUqJBo=;
+  b=lVwJElp1FVrXw91XKMKJupu15Kl+EHXPqZ7kQRHps447/k6ChXANWDtm
+   FLYnOfxPIVy1DYYDgmSyj7aCd5sNdncbU+RbHkoRsp1cQ/lStDffvjERT
+   aQfj7CmIEqC0Sqyy8eSE64XR5QCXN0wk5FLRkMfW1QJeTEFMmd9Zp18O/
+   5Sh5SBdnIubNLbhSpuZkdmusUKzeg8WXFmbxL2tMQnI8ssIS9MUkKGDeH
+   UWlG+LirZJVBHvyhrUprZSy5gKilUp8KA9XtpmJnZWGgbqCqG8quvBwoe
+   5lJ9npvvp9scIcbjxOYV5okDDkFTJloz6Pmy8FnETKwBuP5w1JTwcyl2X
+   Q==;
+X-CSE-ConnectionGUID: E/iXUnu8RZuFZE74ssLMCg==
+X-CSE-MsgGUID: k4Si4Mu+RXifEaQPfWCXeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51061969"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51061969"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:38:45 -0700
+X-CSE-ConnectionGUID: rrDgVVaVSeia2IFsuK+8OQ==
+X-CSE-MsgGUID: PKsPXAJLQwCf1cHK7TBpAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="79048427"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.221])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:38:42 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 16 Oct 2024 15:38:36 +0300 (EEST)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>, 
+    x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+    Perry Yuan <perry.yuan@amd.com>, LKML <linux-kernel@vger.kernel.org>, 
+    linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, 
+    platform-driver-x86@vger.kernel.org, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v3 14/14] platform/x86: hfi: Add debugfs support
+In-Reply-To: <20241015213645.1476-15-mario.limonciello@amd.com>
+Message-ID: <7b3a2e3b-9c37-09a3-238a-9cc90726c929@linux.intel.com>
+References: <20241015213645.1476-1-mario.limonciello@amd.com> <20241015213645.1476-15-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: numa_clear_kernel_node_hotplug: Add NUMA_NO_NODE
- check for node id
-To: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, yuji2.ishikawa@toshiba.co.jp,
- Mike Rapoport <rppt@kernel.org>
-References: <1729070461-13576-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <1729070461-13576-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Tue, 15 Oct 2024, Mario Limonciello wrote:
 
-
-On 10/16/24 14:51, Nobuhiro Iwamatsu wrote:
-> The acquired memory blocks for reserved may include blocks outside of
-> memory management. In this case, the nid variable is set to NUMA_NO_NODE
-> (-1), so an error occurs in node_set().
-> This adds a check using numa_valid_node() to numa_clear_kernel_node_hotplug()
-> that skips node_set() when nid is set to NUMA_NO_NODE.
+> Add a dump of the class and capabilities table to debugfs to assist
+> with debugging scheduler issues.
 > 
-> Fixes: 87482708210f ("mm: introduce numa_memblks")
-> Cc: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Suggested-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->  mm/numa_memblks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v2->v3:
+>   * New patch
+> ---
+>  drivers/platform/x86/amd/hfi/hfi.c | 31 ++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 > 
-> v2:
->   - Use numa_valid_node() instead of check.
->   - Add Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->   - Update description.
->   - Drop RFC from subject.
-> 
-> diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-> index be52b93a9c58..a3877e9bc878 100644
-> --- a/mm/numa_memblks.c
-> +++ b/mm/numa_memblks.c
-> @@ -349,7 +349,7 @@ static void __init numa_clear_kernel_node_hotplug(void)
->  	for_each_reserved_mem_region(mb_region) {
->  		int nid = memblock_get_region_node(mb_region);
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+> index 6c90b50f0a40..6df80f6ac73c 100644
+> --- a/drivers/platform/x86/amd/hfi/hfi.c
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/acpi.h>
+>  #include <linux/cpu.h>
+>  #include <linux/cpumask.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/gfp.h>
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+> @@ -79,6 +80,8 @@ struct amd_hfi_data {
+>  	void __iomem		*pcc_comm_addr;
+>  	struct acpi_subtable_header	*pcct_entry;
+>  	struct amd_shmem_info	*shmem;
+> +
+> +	struct dentry *dbgfs_dir;
+>  };
 >  
-> -		if (nid != MAX_NUMNODES)
-> +		if (numa_valid_node(nid))
->  			node_set(nid, reserved_nodemask);
->  	}
+>  /**
+> @@ -243,6 +246,8 @@ static void amd_hfi_remove(struct platform_device *pdev)
+>  {
+>  	struct amd_hfi_data *dev = platform_get_drvdata(pdev);
 >  
+> +	debugfs_remove_recursive(dev->dbgfs_dir);
+> +
+>  	mutex_destroy(&dev->lock);
+>  }
+>  
+> @@ -400,6 +405,28 @@ static int amd_hfi_metadata_parser(struct platform_device *pdev,
+>  	return ret;
+>  }
+>  
+> +static int class_capabilities_show(struct seq_file *s, void *unused)
+> +{
+> +	int cpu, idx;
+> +
+> +	seq_puts(s, "CPU #\tWLC\tPerf\tEff\n");
+> +	for_each_present_cpu(cpu) {
+> +		struct amd_hfi_cpuinfo *hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, cpu);
+> +
+> +		seq_printf(s, "%d\t", cpu);
+> +		for (idx = 0; idx < hfi_cpuinfo->nr_class; idx++) {
+> +			seq_printf(s, "%s%d\t%d\t%d\n",
+> +				   idx == 0 ? "" : "\t",
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Is this conditional printing really required? Why cannot you just print \t 
+always here and remove it from the cpu print line?
+
+-- 
+ i.
+
+> +				   idx,
+> +				   hfi_cpuinfo->amd_hfi_classes[idx].perf,
+> +				   hfi_cpuinfo->amd_hfi_classes[idx].eff);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(class_capabilities);
+> +
+>  static int amd_hfi_pm_resume(struct device *dev)
+>  {
+>  	int ret, cpu;
+> @@ -473,6 +500,10 @@ static int amd_hfi_probe(struct platform_device *pdev)
+>  
+>  	schedule_work(&sched_amd_hfi_itmt_work);
+>  
+> +	amd_hfi_data->dbgfs_dir = debugfs_create_dir("amd_hfi", arch_debugfs_dir);
+> +	debugfs_create_file("class_capabilities", 0644, amd_hfi_data->dbgfs_dir, pdev,
+> +			    &class_capabilities_fops);
+> +
+>  	return 0;
+>  }
+>  
+> 
+
 
