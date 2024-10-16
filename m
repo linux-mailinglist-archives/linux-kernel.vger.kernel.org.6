@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-368822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65979A1543
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:57:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F019A1547
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA7728626E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD0C1C20A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41BF1DB546;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C901DB940;
 	Wed, 16 Oct 2024 21:52:39 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE76D1D5CF9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833C81BE871
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729115556; cv=none; b=Mu7Glx2tPQGf9c76/7QO5imDfpvA02DPBo4x5IAiFc3mjqNEy/UFZMwy//hQ6C5BusJ4siTMdN0DXTfQbMi/IHNu01MTHnknf3SJHICyLxiPuWLyA1tBmWgtGI9MwnITJIAmcfrYEpnNjVnY3PTzStFJgg2BV4L43YxkCgOGbfE=
+	t=1729115557; cv=none; b=Hgk6q2aJi9EW+A7bg++a10QlcvwnxoU1ZzKXMi0ailUMfL0SabK/SBhoEjGbN+8RevVp9J0dCRVcaZG+xQUNSd4bNjQ/uCJiPTWqHeCMx2g/jM8cD9fKxzzFbdBo6okg7IO3rJ3j1zOZu9VriHUrww1slW9/UnEfdjyw8Y9wYGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729115556; c=relaxed/simple;
-	bh=r2Bczt3iY/LW5Q+NASe8BndjjkWWTrpEdZ4llRpFXxs=;
+	s=arc-20240116; t=1729115557; c=relaxed/simple;
+	bh=tcNc/WHwbtrSjvHNY6VoFGsID5+2ekA+Dw1Mv/xHWGg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t92h5DQtosOzV4Zl0Exs2kK+/Ma07ddcHR0Or2LOUtIeMT6NII2HEWjQcoomJlqEpoHhLFU0t6XrZmQHvvwRZlKk4m73oFXgunpJXi86VfyVRYQJ4Nnod6Q4+Yu5tAISKmT4v6mc1hgo5jydh/lyRHAq2A0RE++P9CE2o2uh4s8=
+	 In-Reply-To:To:Cc; b=C6HpdhzN2kzzKZ/ttWtUzVRG+1RnsxUWKZ5g/9yj8ZFIT03paHWmBZ3IiONSKQrC/RvlgfhSd6oFy0Q5HvGJdltZYSDjNQrA40sRj7xTOERG351A60K0J9XzIoyby/l+qcZUBcddKUPZqW/3AKSP9aq8+AO0iI/bXE6+b5ZEBs4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,30 +32,30 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <mkl@pengutronix.de>)
-	id 1t1BwU-0003Ru-D4
-	for linux-kernel@vger.kernel.org; Wed, 16 Oct 2024 23:52:30 +0200
+	id 1t1BwU-0003Rg-WA
+	for linux-kernel@vger.kernel.org; Wed, 16 Oct 2024 23:52:31 +0200
 Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <mkl@pengutronix.de>)
-	id 1t1BwQ-002OUu-Jr
+	id 1t1BwQ-002OUl-Gx
 	for linux-kernel@vger.kernel.org; Wed, 16 Oct 2024 23:52:26 +0200
 Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 4AE0E35492F
+	by bjornoya.blackshift.org (Postfix) with SMTP id 35BF435492A
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:52:26 +0000 (UTC)
 Received: from hardanger.blackshift.org (unknown [172.20.34.65])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 53CF9354884;
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 6FC1C354887;
 	Wed, 16 Oct 2024 21:52:20 +0000 (UTC)
 Received: from [172.20.34.65] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 6890ce52;
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 84f0d07b;
 	Wed, 16 Oct 2024 21:52:19 +0000 (UTC)
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Wed, 16 Oct 2024 23:51:54 +0200
-Subject: [PATCH net-next 06/13] net: fec: fec_restart(): make use of
- FEC_ECR_RESET
+Date: Wed, 16 Oct 2024 23:51:55 +0200
+Subject: [PATCH net-next 07/13] net: fec: fec_probe(): update quirk: bring
+ IRQs in correct order
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-fec-cleanups-v1-6-de783bd15e6a@pengutronix.de>
+Message-Id: <20241016-fec-cleanups-v1-7-de783bd15e6a@pengutronix.de>
 References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
 In-Reply-To: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
 To: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
@@ -75,15 +75,15 @@ Cc: imx@lists.linux.dev, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
  Marc Kleine-Budde <mkl@pengutronix.de>
 X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=837; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=r2Bczt3iY/LW5Q+NASe8BndjjkWWTrpEdZ4llRpFXxs=;
- b=owGbwMvMwMWoYbHIrkp3Tz7jabUkhnQB07Z3H6xXrwh34VPUf3Avj2XyPtvVSVqLOysvBUw7N
- UurYKpgJ6MxCwMjF4OsmCJLgMOutgfbWO5q7rGLhxnEygQyhYGLUwAmIryNg2G6xm27LN3Fv3VX
- fv6TO+ulrVjoktyfgg9y2H7U3N+pkda/pICJ7btt+++PZhkVmcZfjgvrXWp+/+DcW+Zf87xU33h
- Mbp+U9Vm/128Jq+fn7ybN+6YFVPz6GcXrvJHbOMjragyvzu+60Jqo1yUhVi/urd1hnRoj8tOly/
- mM97e8ZE2ZpMt3VloyHnILv3g4h/vUEpPeP5ILlV2Ct0oZirpuSsjNZZDcpDitaLG8sKH/xW+3W
- 9tmKuQ5Tw2TWdx4059RO87peGLF2cDqruW/+bfH6G+5qvlJK+veg7bdCsLPNLkkUn/cfSBTf92l
- PkmE7+bk52+NDhk2CM4U/yLePN24zIJxJ6vEQcWb4WkrAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4182; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=tcNc/WHwbtrSjvHNY6VoFGsID5+2ekA+Dw1Mv/xHWGg=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnEDWHUQ1y/LJ9LWKdPDVg29YDLiDTbGto7my/U
+ MlLBpL2+a2JATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZxA1hwAKCRAoOKI+ei28
+ b7G8B/9XMejTYEgUJzMVtEwthcAtlTIH9bg+bzj2LTZLeVqKzEmpC+Fx9s3UZ8NXizKNu5phs+s
+ rwjmJSqb4v5tw3T5QUp9UiKxktMxUWTrboFnimf/BF2FsYIpvQYyu6MZxtazMNuXxhhF+VEpDkp
+ gsEUNHkH9bwKEoAYHG7IwC3SejHTl5vMGwIP5Ql0HlpOLRoa3kjc45e1E+5Ea1aVF3M1NmwTjxT
+ LKtB0sBwVHl1qFvbg3t4PxDbFrUC70dMmsp+S1qX5a1+6C9Rd7k6Ke9gy3bE/F0IFd4sV8WSCkg
+ Tc+3XmaTbGNe6Cw/bM/kGIdTL9vkqfEusRa7H2w1F4ci51n6
 X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
  fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -91,27 +91,116 @@ X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Replace the magic number "1" by the already existing define
-FEC_ECR_RESET.
+With i.MX8MQ and compatible SoCs, the order of the IRQs in the device
+tree is not optimal. The driver expects the first three IRQs to match
+their corresponding queue, while the last (fourth) IRQ is used for the
+PPS:
+
+- 1st IRQ: "int0": queue0 + other IRQs
+- 2nd IRQ: "int1": queue1
+- 3rd IRQ: "int2": queue2
+- 4th IRQ: "pps": pps
+
+However, the i.MX8MQ and compatible SoCs do not use the
+"interrupt-names" property and specify the IRQs in the wrong order:
+
+- 1st IRQ: queue1
+- 2nd IRQ: queue2
+- 3rd IRQ: queue0 + other IRQs
+- 4th IRQ: pps
+
+First rename the quirk from FEC_QUIRK_WAKEUP_FROM_INT2 to
+FEC_QUIRK_INT2_IS_MAIN_IRQ, to better reflect it's functionality.
+
+If the FEC_QUIRK_INT2_IS_MAIN_IRQ quirk is active, put the IRQs back
+in the correct order, this is done in fec_probe().
 
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 ---
- drivers/net/ethernet/freescale/fec_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fec.h      | 24 ++++++++++++++++++++++--
+ drivers/net/ethernet/freescale/fec_main.c | 18 +++++++++++-------
+ 2 files changed, 33 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/freescale/fec.h
+index 63744a86752540fcede7fc4c29865b2529492526..b0f1a3e28d5c8052be3a8a0fa18303a1df2bb5bd 100644
+--- a/drivers/net/ethernet/freescale/fec.h
++++ b/drivers/net/ethernet/freescale/fec.h
+@@ -504,8 +504,28 @@ struct bufdesc_ex {
+  */
+ #define FEC_QUIRK_DELAYED_CLKS_SUPPORT	(1 << 21)
+ 
+-/* i.MX8MQ SoC integration mix wakeup interrupt signal into "int2" interrupt line. */
+-#define FEC_QUIRK_WAKEUP_FROM_INT2	(1 << 22)
++/* With i.MX8MQ and compatible SoCs, the order of the IRQs in the
++ * device tree is not optimal. The driver expects the first three IRQs
++ * to match their corresponding queue, while the last (fourth) IRQ is
++ * used for the PPS:
++ *
++ * - 1st IRQ: "int0": queue0 + other IRQs
++ * - 2nd IRQ: "int1": queue1
++ * - 3rd IRQ: "int2": queue2
++ * - 4th IRQ: "pps": pps
++ *
++ * However, the i.MX8MQ and compatible SoCs do not use the
++ * "interrupt-names" property and specify the IRQs in the wrong order:
++ *
++ * - 1st IRQ: queue1
++ * - 2nd IRQ: queue2
++ * - 3rd IRQ: queue0 + other IRQs
++ * - 4th IRQ: pps
++ *
++ * If the following quirk is active, put the IRQs back in the correct
++ * order, this is done in fec_probe().
++ */
++#define FEC_QUIRK_DT_IRQ2_IS_MAIN_IRQ	BIT(22)
+ 
+ /* i.MX6Q adds pm_qos support */
+ #define FEC_QUIRK_HAS_PMQOS			BIT(23)
 diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 2ee7e4765ba3163fb0d158e60b534b171da26c22..d948ed9810027d5fabe521dc3af2cf505dacd13e 100644
+index d948ed9810027d5fabe521dc3af2cf505dacd13e..f124ffe3619d82dc089f8494d33d2398e6f631fb 100644
 --- a/drivers/net/ethernet/freescale/fec_main.c
 +++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1089,7 +1089,7 @@ fec_restart(struct net_device *ndev)
- 	    ((fep->quirks & FEC_QUIRK_NO_HARD_RESET) && fep->link)) {
- 		writel(0, fep->hwp + FEC_ECNTRL);
- 	} else {
--		writel(1, fep->hwp + FEC_ECNTRL);
-+		writel(FEC_ECR_RESET, fep->hwp + FEC_ECNTRL);
- 		udelay(10);
- 	}
+@@ -157,7 +157,7 @@ static const struct fec_devinfo fec_imx8mq_info = {
+ 		  FEC_QUIRK_ERR007885 | FEC_QUIRK_BUG_CAPTURE |
+ 		  FEC_QUIRK_HAS_RACC | FEC_QUIRK_HAS_COALESCE |
+ 		  FEC_QUIRK_CLEAR_SETUP_MII | FEC_QUIRK_HAS_MULTI_QUEUES |
+-		  FEC_QUIRK_HAS_EEE | FEC_QUIRK_WAKEUP_FROM_INT2 |
++		  FEC_QUIRK_HAS_EEE | FEC_QUIRK_DT_IRQ2_IS_MAIN_IRQ |
+ 		  FEC_QUIRK_HAS_MDIO_C45,
+ };
  
+@@ -4260,10 +4260,7 @@ static void fec_enet_get_wakeup_irq(struct platform_device *pdev)
+ 	struct net_device *ndev = platform_get_drvdata(pdev);
+ 	struct fec_enet_private *fep = netdev_priv(ndev);
+ 
+-	if (fep->quirks & FEC_QUIRK_WAKEUP_FROM_INT2)
+-		fep->wake_irq = fep->irq[2];
+-	else
+-		fep->wake_irq = fep->irq[0];
++	fep->wake_irq = fep->irq[0];
+ }
+ 
+ static int fec_enet_init_stop_mode(struct fec_enet_private *fep,
+@@ -4495,10 +4492,17 @@ fec_probe(struct platform_device *pdev)
+ 		goto failed_init;
+ 
+ 	for (i = 0; i < irq_cnt; i++) {
+-		snprintf(irq_name, sizeof(irq_name), "int%d", i);
++		int irq_num;
++
++		if (fep->quirks & FEC_QUIRK_DT_IRQ2_IS_MAIN_IRQ)
++			irq_num = (i + irq_cnt - 1) % irq_cnt;
++		else
++			irq_num = i;
++
++		snprintf(irq_name, sizeof(irq_name), "int%d", irq_num);
+ 		irq = platform_get_irq_byname_optional(pdev, irq_name);
+ 		if (irq < 0)
+-			irq = platform_get_irq(pdev, i);
++			irq = platform_get_irq(pdev, irq_num);
+ 		if (irq < 0) {
+ 			ret = irq;
+ 			goto failed_irq;
 
 -- 
 2.45.2
