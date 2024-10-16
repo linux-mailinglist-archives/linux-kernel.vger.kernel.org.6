@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-367608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26B59A0468
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:36:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670A29A0463
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CEC1C21B6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2B6284BB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BC31FDFA7;
-	Wed, 16 Oct 2024 08:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26801FCC6D;
+	Wed, 16 Oct 2024 08:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MGCJGGTG"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3071FCC74;
-	Wed, 16 Oct 2024 08:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d89GzWFi"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CC71FCC67
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729067796; cv=none; b=NAvw1zhtvColZGVN+LopXvd9tiXZn05dwd0DMNbABYY7oszgMO7lphaBLhMJiaeLR52sWxLxhK4LnUS8n1teebVpoCAmeWHrDH98tD0QQJ9n8+PEymi9ElvKMbtfO3JZJXQxEpU4xcf0BwMzah22KWukanyP4vqA6QdtmQxPIBc=
+	t=1729067785; cv=none; b=Pbf82DMZhBLgmTwhGZaJUt3/Jial+R+FIceeY61Lm9AaKiXZ0PKRg1cZ3o5BRxLUJ3IJglGU0MM4vuhTJuprPvS/SghWOJFC9Jdr0Sn6bS4Mf+1B7433L/yIVe2z6YV0m1bymo04EB+zSgjaCp/+hZ4BgNrveg7cSIAALl6bui8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729067796; c=relaxed/simple;
-	bh=uTxeLuSwto/BPgScS/3f9pYRmzxMRTM4H7W2/1VV4EE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P+FRnrIyH0wycm10gLsveVI4zW0E4CYvPHL6yzgD+4S2W6GF46jDvNMsZyhtXLCTyaj7a2UJ+jXmFoDK2RYwJ9cG2vLqgFV9fD1Qy2wwuq2M/Ur4id5IYpw5Vn05UvrREJenJutolvXw2RftjE2eKBzQ+wTfRhFVpl8BtNT1+aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MGCJGGTG; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=0oquJHVwiMMkyIWd/5w5Q2GuFTQnhIV33AZa476I+ng=;
-	b=MGCJGGTGPyGs0JgRXDDQJlvvau9YnJCScW9VoAX99/n6oDoMqbweR/okySgCWG
-	469TsZOBD3gMJKjAC4O1YSQITK1fHW1UDUUewnYzRSfjJo4/KKS53t5AB5qie9xN
-	sz3XAjGmJoJOg+3kSuMad5se0hyFPQAnjo5MCSsinEQvc=
-Received: from localhost (unknown [60.166.103.163])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3__3veg9n+mHUBQ--.4196S2;
-	Wed, 16 Oct 2024 16:36:00 +0800 (CST)
-Date: Wed, 16 Oct 2024 16:35:57 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
-	syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
-Subject: Re: [PATCH] nfc/nci: Fix uninit-value issue in nci_ntf_packet
-Message-ID: <Zw967Vgatt8Ob1uO@mac.local>
-References: <ZwqEijEvP7tGGZtW@fedora>
- <670ab923.050a0220.3e960.0029.GAE@google.com>
- <ZwrENfTGYG9wnap0@fedora>
- <d4ba554d-213a-4961-a9f2-6582b38fc082@kernel.org>
+	s=arc-20240116; t=1729067785; c=relaxed/simple;
+	bh=GNCebuizsmxDYYTNS4RuuXhjR8lSTd+b/g+z3SO6iws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ctRbce7TJZqINkg5yupTRR9R2qlDo/gvqzl2e+phr9i1XaZwVLmI6jfsv3hjHvBbPTW1eBlIT/xNOI9qYSQnqUbEEC2Qt578+3J3qYZCT0E7eCnFov1haOPPXNlRBRtwxGBgRVW0P3xDGtWiX7mQV+gRo4IDPfxqI9SvvmPw4u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d89GzWFi; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so62412391fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729067782; x=1729672582; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GNCebuizsmxDYYTNS4RuuXhjR8lSTd+b/g+z3SO6iws=;
+        b=d89GzWFicPLxVm6g1/ek2pHjJ6ktJxCxotIaP4SLI0XkWG4NgP2daNYbcEgJ4jEQJ7
+         9dJ3HRACnnIfOJiJqwD8LzojG73PrjVTz8WN0TS4zBFlqCKITAlij3C0Da9bjt/mb2Wb
+         4MJlw3UMbj4jpNz6g4KyPyUJyoVWuOb514HfATvE4zQ7XdCyCpK00ltrewLFk8sWIUzx
+         I30nt/GQNXIE6kgG1RrM3Lq76GjfZQF+6NSQuWKWPH65RiLEnylf07CcvCzNkIkoMfii
+         96tUQxDJecPUVTMxfDA28VAVP3l1zntlvmYG8fSDKOre1O4HY4SJk73FmG1VdACL1X3D
+         4syw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729067782; x=1729672582;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GNCebuizsmxDYYTNS4RuuXhjR8lSTd+b/g+z3SO6iws=;
+        b=XK966a/mUdGsQ15t6ALuJ1c3wfnAAeuoks6FSi2TQWis16oKWrStB6IFqlmbWZcfew
+         rbMg+uBnDG6tYekTNt/Crn8PVgCtvrOlHnXz+RFIKxuhSxr6dFEpXao0ZRAD+5GpiwZ4
+         WJK6g0OxYveQ8LsYC5sjxxYTbGp9ItGMPizkCK4uImnfRHPTeDozQCBcVJdFcEfE8xXh
+         yAx51jE7M9WUZ4R+f2eEKWZQZTZoaFELdbsMq/fNbKCvJS5TUuAcHOwFuSkwDEj06UAp
+         ZalrW5ubfw/F6XL0PWi/AcF0oltHd7j/ptFb+qNSMWC2v6DAThHbJ34Yl5RP7x5qR8gu
+         4v5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXaes22NDZLKw3CHKSBf4Vn+V/VIO8XI1mtX0ndMSVifVI+SiyRoV39MyfcRwM/Asvv9OVDyQoGUSshI/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1glynoaQNTUQ42ekz5bzkNT42oM+nKWVwROgjYaD+PcFxHMp9
+	gVULy8X3bpF3ijq/vC8BANY3FtcznnueI08ixsBx7SdkyE1yTyaIIm3EPcUXSP98JiWkVVl7LvR
+	mQVy+/5F4+SQ+Qhafyu8OXEKdWbU4OdVJ0P7nBaNRV3vnQ/M5X5nl
+X-Google-Smtp-Source: AGHT+IGBp50/rrajvwuHfUxP9JITk22QCzL/u+4K3VGqPUoJic0EKKUAc1hZr7U/fYC7c25/+4pYzcXLeYPkaJsM5pE=
+X-Received: by 2002:a2e:be1f:0:b0:2fb:30d5:669f with SMTP id
+ 38308e7fff4ca-2fb61b3e651mr19527991fa.7.1729067781865; Wed, 16 Oct 2024
+ 01:36:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4ba554d-213a-4961-a9f2-6582b38fc082@kernel.org>
-X-CM-TRANSID:_____wD3__3veg9n+mHUBQ--.4196S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUwl19UUUUU
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYAl6amcPcKnuWQAAs-
+References: <CAJg=8jz4OwA9LdXtWJuPup+wGVJ8kKFXSboT3G8kjPXBSa-qHA@mail.gmail.com>
+ <20240612-hofiert-hymne-11f5a03b7e73@brauner> <CAJg=8jxMZ16pCEHTyv3Xr0dcHRYdwEZ6ZshXkQPYMXbNfkVTvg@mail.gmail.com>
+ <CAJg=8jyAtJh6Mbj88Ri3J9fXBN0BM+Fh3qwaChGLL0ECuD7w+w@mail.gmail.com>
+In-Reply-To: <CAJg=8jyAtJh6Mbj88Ri3J9fXBN0BM+Fh3qwaChGLL0ECuD7w+w@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 16 Oct 2024 10:36:10 +0200
+Message-ID: <CACT4Y+YS+mSjvx8JheONVbrnA0FZUdm6ciWcvEJOCUzsMwWqXA@mail.gmail.com>
+Subject: Re: possible deadlock in freeze_super
+To: Marius Fleischer <fleischermarius@gmail.com>
+Cc: brauner@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com, harrisonmichaelgreen@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 16, 2024 at 09:58:53AM +0200, Krzysztof Kozlowski wrote:
-> 
-> Same comments as before:
-> 
-> https://lore.kernel.org/all/20240803121817.383567-1-zhanghao1@kylinos.cn/
-> 
-> Respond to existing feedback, please.
-> 
-> Best regards,
-> Krzysztof
+On Tue, 15 Oct 2024 at 21:30, Marius Fleischer
+<fleischermarius@gmail.com> wrote:
+>
+> Hi,
+>
+> Hope you are doing well!
+>
+> Quick update from our side: The reproducers from the previous email
+> still trigger the deadlock on v5.15.167 (commit hash
+> 3a5928702e7120f83f703fd566082bfb59f1a57e). Happy to also test on
+> other kernel versions if that helps.
+>
+> Please let us know if there is any other helpful information we can provide.
+>
+> Wishing you a nice day!
 
-Got it, thanks!
+Hi Marius,
 
--- 
-Best,
-Qianqiang Liu
-
+This is a wrong kernel version for bug reports. Check out:
+https://github.com/google/syzkaller/blob/master/docs/linux/reporting_kernel_bugs.md#reporting-linux-kernel-bugs
 
