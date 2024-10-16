@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-367500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B529A031D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 807379A0305
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67B3A282FCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:52:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B6A286A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43CE1C7B7C;
-	Wed, 16 Oct 2024 07:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="YHMaPFgo"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536541C7B79;
+	Wed, 16 Oct 2024 07:49:39 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2CC1B2193;
-	Wed, 16 Oct 2024 07:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE9E1C4A12
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065142; cv=none; b=TxcVZ4MmLAeiBmadVogcfXV7cs6MwrBJbIJtFnZeOFDA0q6mGjVyJdIFiHZJwbrM8Otv8wjeutFQhdRK+lJoAijpumY74oE8Rfl4zuy6cdiRCUCiy2bi+7q6QeZSDfLHda/xG9OgacIPnxnORHDWDLqBmk79tkovQxW1ATa7HEg=
+	t=1729064979; cv=none; b=pSv4idkOO6iSsU9TR3zZ4mPJ0YQxsDwYQR8OIxBBH6sxa5ALvyj7PfhQn5vVc2QVi5iKygBen7z4PUgsulrpn4JYNMrm4HviKC/qRYCWGZ+CHUtEbivEYqhNYh6KYOFLryBTrhdnd2Dcm/kHAs1tLcDwtWUSXqr4W4o0OtFbuNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065142; c=relaxed/simple;
-	bh=/F97E/ycuflqwcDS1Tna9JdUfzrs3O36f3gM+ABvo/Y=;
+	s=arc-20240116; t=1729064979; c=relaxed/simple;
+	bh=UvLR8V/RBnabgl1BDFGO2W61d72bWrNLaDGaPOb11ZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gXV9DbIXfQlu5uGTK5wZ78BT7ytpiG7TpV12kGMilHTi/MKjpomO2kgNSvCkDFCD8GNuK0n6U2bnT12/GBEcyAqsQ6i55mQk4D1IFFYcgTfEmzetkJG2CGdTdzoy2ikq/0yN6yrh4dbChyc/ZMKOh99Qkvxsp80lvVn46JesZC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=YHMaPFgo; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G6srm9018560;
-	Wed, 16 Oct 2024 09:51:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	y0SO0f4uMsrT8LrR3lXqkljdwmWntT/Iph4CINxfy5A=; b=YHMaPFgoiGLu1edY
-	q237gUsdGzhhRSChb0JYmCmc63uxeAdpVnJ1Xpqn4YVVeWGVEz0588ktYgSw4Az/
-	ldXpceI4mSXTBNBPgwm9L+/2iN1rpNmKZjDcGKM8ejs/sGhQF5ARpW7vONRnLeEu
-	t8ZlhLEGCv+38G9udDGRlEAU7YmZJXhxu35/kKKO6Fw9gXNb/o2N0CRC0yeI/Nbe
-	GTNiU7iax3VpwVM061EyIvLNSq4frrokorTbina9ETewnng70MMTvtrxPAUuofao
-	w5qacnB/hMzHDQ4dRYC27tlytMrHH4TmQSTi08jJQQ+TicPg6lNKTOFaPKDMuckI
-	NyM9cQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42a8mv89ju-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 09:51:49 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A7A5A40048;
-	Wed, 16 Oct 2024 09:50:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 76010231A9D;
-	Wed, 16 Oct 2024 09:49:35 +0200 (CEST)
-Received: from [10.48.86.225] (10.48.86.225) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 16 Oct
- 2024 09:49:34 +0200
-Message-ID: <6948f590-50ba-47d8-91b9-ee6f9d1ee31a@foss.st.com>
-Date: Wed, 16 Oct 2024 09:49:27 +0200
+	 In-Reply-To:Content-Type; b=QDsnUauDzXEQAuNlsEkB3GQFEa4yRJdKZMdnyRtTcB/yHRrBUufYYbO5svH9jTBwWhaWcVlRuTUgsEaZYlAxgWluhrlmcIdXvtNh+qgkb+LS7ZOr7nREC8zqcs885LLA7XF4RF7xL3bdiJa1fkGO6QMnxWP/hYrKrXz9iyLKZXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XT3430dfqz1j9xG;
+	Wed, 16 Oct 2024 15:48:19 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id EF283180042;
+	Wed, 16 Oct 2024 15:49:32 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 16 Oct 2024 15:49:32 +0800
+Message-ID: <007880ac-d73f-4eef-9978-a4f844338522@huawei.com>
+Date: Wed, 16 Oct 2024 15:49:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,136 +47,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: rng: add st,stm32mp25-rng support
-To: Rob Herring <robh@kernel.org>
-CC: Olivia Mackall <olivia@selenic.com>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Lionel Debieve <lionel.debieve@foss.st.com>, <marex@denx.de>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241015-rng-mp25-v2-v3-0-87630d73e5eb@foss.st.com>
- <20241015-rng-mp25-v2-v3-1-87630d73e5eb@foss.st.com>
- <20241015221740.GA2100600-robh@kernel.org>
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, <akpm@linux-foundation.org>,
+	<hughd@google.com>
+CC: <willy@infradead.org>, <david@redhat.com>, <21cnbao@gmail.com>,
+	<ryan.roberts@arm.com>, <ioworker0@gmail.com>, <da.gomez@samsung.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
 Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <20241015221740.GA2100600-robh@kernel.org>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
 
 
-On 10/16/24 00:17, Rob Herring wrote:
-> On Tue, Oct 15, 2024 at 06:48:54PM +0200, Gatien Chevallier wrote:
->> Add RNG STM32MP25x platforms compatible. Update the clock
->> properties management to support all versions.
->>
->> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
->> ---
->> Changes in V3:
->> 	- Add constraint on clock-names for st,stm32mp25-rng compatible
->>
->> Changes in V2
->> 	-Fix missing min/maxItems
->> 	-Removed MP25 RNG example
->> 	-Renamed RNG clocks for mp25 to "core" and "bus"
->> ---
->>   .../devicetree/bindings/rng/st,stm32-rng.yaml      | 34 +++++++++++++++++++++-
->>   1 file changed, 33 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
->> index 340d01d481d12ce8664a60db42182ddaf0d1385b..c276723d566ce4a0d6deca10c491510644d842f8 100644
->> --- a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
->> +++ b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
->> @@ -18,12 +18,20 @@ properties:
->>       enum:
->>         - st,stm32-rng
->>         - st,stm32mp13-rng
->> +      - st,stm32mp25-rng
->>   
->>     reg:
->>       maxItems: 1
->>   
->>     clocks:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 2
->> +
->> +  clock-names:
->> +    minItems: 1
->> +    items:
->> +      - const: core
->> +      - const: bus
->>   
->>     resets:
->>       maxItems: 1
->> @@ -57,6 +65,30 @@ allOf:
->>         properties:
->>           st,rng-lock-conf: false
->>   
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - st,stm32-rng
->> +              - st,stm32mp13-rng
->> +    then:
->> +      properties:
->> +        clocks:
->> +          maxItems: 1
->> +        clock-names: false
+On 2024/10/10 17:58, Baolin Wang wrote:
+> Hi,
 > 
-> It makes no sense that you allowed 1 entry, but then disallow the
-> property. Either drop the 'minItems: 1' at the top level (keeping this)
-> or put 'maxItems: 1' here,
+> This RFC patch series attempts to support large folios for tmpfs.
+> 
+> Considering that tmpfs already has the 'huge=' option to control the THP
+> allocation, it is necessary to maintain compatibility with the 'huge='
+> option, as well as considering the 'deny' and 'force' option controlled
+> by '/sys/kernel/mm/transparent_hugepage/shmem_enabled'.
+> 
+> Add a new huge option 'write_size' to support large folio allocation based
+> on the write size for tmpfs write and fallocate paths. So the huge pages
+> allocation strategy for tmpfs is that, if the 'huge=' option
+> (huge=always/within_size/advise) is enabled or the 'shmem_enabled' option
+> is 'force', it need just allow PMD sized THP to keep backward compatibility
+> for tmpfs. While 'huge=' option is disabled (huge=never) or the 'shmem_enabled'
+> option is 'deny', it will still disable any large folio allocations. Only
+> when the 'huge=' option is 'write_size', it will allow allocating large
+> folios based on the write size.
+> 
+> And I think the 'huge=write_size' option should be the default behavior
+> for tmpfs in future.
+
+Could we avoid new huge= option for tmpfs, maybe support other orders
+for both read/write/fallocate if mount with huge?
+
+> 
+> Any comments and suggestions are appreciated. Thanks.
+> 
+> Changes from RFC v2:
+>   - Drop mTHP interfaces to control huge page allocation, per Matthew.
+>   - Add a new helper to calculate the order, suggested by Matthew.
+>   - Add a new huge=write_size option to allocate large folios based on
+>     the write size.
+>   - Add a new patch to update the documentation.
+> 
+> Changes from RFC v1:
+>   - Drop patch 1.
+>   - Use 'write_end' to calculate the length in shmem_allowable_huge_orders().
+>   - Update shmem_mapping_size_order() per Daniel.
+> 
+> Baolin Wang (4):
+>    mm: factor out the order calculation into a new helper
+>    mm: shmem: change shmem_huge_global_enabled() to return huge order
+>      bitmap
+>    mm: shmem: add large folio support to the write and fallocate paths
+>      for tmpfs
+>    docs: tmpfs: add documention for 'write_size' huge option
+> 
+>   Documentation/filesystems/tmpfs.rst |   7 +-
+>   include/linux/pagemap.h             |  16 ++++-
+>   mm/shmem.c                          | 105 ++++++++++++++++++++--------
+>   3 files changed, 94 insertions(+), 34 deletions(-)
 > 
 
-Hi Rob,
-
-Will put maxItems: 1 here then.
-
->> +    else:
->> +      properties:
->> +        clocks:
->> +          minItems: 2
->> +          maxItems: 2
-> 
-> maxItems is already 2. Only need minItems.
-> 
-
-Yes, will update for V4
-
->> +        clock-names:
->> +          items:
->> +            - const: core
->> +            - const: bus
-> 
-> You already defined the names, don't do it again. You need either
-> nothing or 'minItems: 2' depending on the above.
-> 
-
-I will add minItems: 2 then, thanks!
-
->> +      required:
->> +        - clock-names
->> +
->>   additionalProperties: false
->>   
->>   examples:
->>
->> -- 
->> 2.25.1
->>
 
