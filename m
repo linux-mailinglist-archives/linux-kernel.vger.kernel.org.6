@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-367778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00E29A06B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:10:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A789A06B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674921F26100
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:10:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60246B27C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5353520694A;
-	Wed, 16 Oct 2024 10:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52606206979;
+	Wed, 16 Oct 2024 10:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RtkwtDPA"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YY2Ix3PU"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C6F1FAF17
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF42206050
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729073391; cv=none; b=Z8Pw69rHlVk6ZTfOCmbiCj48EaWdw8Td7zeYBGWGWLNyF5wK8Q2dKd7wUhEuxFYKmyJE01ni/BTccZG3f19dOO3vRd7xrSgLNIHTNstD587pbbsWMI1IR+b9rv0FqBzZlZ0vM8eW9DR6NmpWqsnHz8IlghV5/pZgAwHohw09gYI=
+	t=1729073392; cv=none; b=V8ZpvmcLeL+A+CrJ3qJx1PAXvpBgrEITgvhiZU+8G8qVhcnbZsWVY6/EeoYV6r75SQAPHhg5heQLOvj14dK+KLevlbJ8W14PONMSF1G6y0BfHsbgbfBMYmfgtKfMv0su6Id22au51XPVTAHIZllmxJ6xlQN5VRD7mEw6756Fpms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729073391; c=relaxed/simple;
-	bh=G4q1nSaHcdhW8W+lBVsXIlaXABlbvqzyjc6WgN4XtXM=;
+	s=arc-20240116; t=1729073392; c=relaxed/simple;
+	bh=fh0I9f+0oKK5Ggx4os5HyBVZw9i+Uu8lG+fr8jbL7NI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Mu/TJ2JW4k0Gpbi4qRe7zstAyc/MoA1c9tBZuP7KO1aA7R8nlPmG/XVAOuyIE2y1gNDi8mGHPvVMNW8yV6vHDBQiWfWu244yhecPIHD2zU/m0S8AH8uyzI7ieizywWfzAT6wE4/gNaROCLNaRWhiSHvqlODRBw6HLXe5IQFaV5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RtkwtDPA; arc=none smtp.client-ip=115.124.30.112
+	 MIME-Version; b=jtqeGIHUqQ/kPb1iK11REUYEd7ZD9q9E6uy/06/Asz7akp7ql441Dajf2krH1WY72230+srN7IQDHodfimv4nEOBnrOb+gHn59sKQy/Jcn71XEjph2q3dFTKQZctuljBJIr47w+oeXYEefqUWYwkms8Z2Zpldry0VHh4Muo+tdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YY2Ix3PU; arc=none smtp.client-ip=115.124.30.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1729073379; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=45jXNMOMveZfimQ7xMKpnxhxl+Z6GR9GWhFQh6xPUvM=;
-	b=RtkwtDPA5zNK7X9fng3o5Z0AbVRyNRYkIWBdIP27cDWFoo9q5cVei7/drfUUt7542fOUa+QVg9eRX6nE86wFLJnEhmiq0Tw2/TmW2mvLzhA9S1cpzMnS8kbyPoU8k0NlpzXwIHodBX8300kPAYoS+Zp5+6Eq6U5HtfxFsJpFOgA=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHH-UDB_1729073378 cluster:ay36)
+	t=1729073380; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=wkcQzqhjpS9uwSQXB5+PPSGfoLQjvCtl7yMPRr0AdnM=;
+	b=YY2Ix3PUdGK6OeQxRCOkBAMpgCskzZFO1TJRWbWEiAUtdENrL9EcF9Zc7ZIIZtA5FLDkHVjx2D5jkfcVy1KBJEuKbuMtPXzz6D1KtQHXzGodk4X4aoS/lKray8HJ8IQ+/pOJBcWbc7RngHgjePiRudoKMad4oxxB5cTwMuGKYV0=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHGye6P_1729073379 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Wed, 16 Oct 2024 18:09:39 +0800
+          Wed, 16 Oct 2024 18:09:40 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -46,9 +46,9 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] mm: shmem: update iocb->ki_pos directly to simplify tmpfs read logic
-Date: Wed, 16 Oct 2024 18:09:29 +0800
-Message-Id: <c390879ab020c44be25de8a07e3f1f87402350e0.1729072803.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read performance
+Date: Wed, 16 Oct 2024 18:09:30 +0800
+Message-Id: <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
 References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
@@ -60,95 +60,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use iocb->ki_pos to check if the read bytes exceeds the file size and to
-calculate the bytes to be read can help simplify the code logic. Meanwhile,
-this is also a preparation for improving tmpfs large folios read performace
-in the following patch.
+The tmpfs has already supported the PMD-sized large folios, but the tmpfs
+read operation still performs copying at the PAGE SIZE granularity, which
+is unreasonable. This patch changes to copy data at the folio granularity,
+which can improve the read performance, as well as changing to use folio
+related functions.
+
+Use 'fio bs=64k' to read a 1G tmpfs file populated with 2M THPs, and I can
+see about 20% performance improvement, and no regression with bs=4k.
+Before the patch:
+READ: bw=10.0GiB/s
+
+After the patch:
+READ: bw=12.0GiB/s
 
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- mm/shmem.c | 36 ++++++++++++------------------------
- 1 file changed, 12 insertions(+), 24 deletions(-)
+ mm/shmem.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 66eae800ffab..edab02a26aac 100644
+index edab02a26aac..7e79b6a96da0 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -3106,26 +3106,18 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	unsigned long offset;
- 	int error = 0;
+@@ -3108,13 +3108,12 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
  	ssize_t retval = 0;
--	loff_t *ppos = &iocb->ki_pos;
  
--	index = *ppos >> PAGE_SHIFT;
--	offset = *ppos & ~PAGE_MASK;
-+	index = iocb->ki_pos >> PAGE_SHIFT;
-+	offset = iocb->ki_pos & ~PAGE_MASK;
+ 	index = iocb->ki_pos >> PAGE_SHIFT;
+-	offset = iocb->ki_pos & ~PAGE_MASK;
  
  	for (;;) {
  		struct folio *folio = NULL;
- 		struct page *page = NULL;
--		pgoff_t end_index;
+-		struct page *page = NULL;
  		unsigned long nr, ret;
--		loff_t i_size = i_size_read(inode);
-+		loff_t end_offset, i_size = i_size_read(inode);
+ 		loff_t end_offset, i_size = i_size_read(inode);
++		size_t fsize;
  
--		end_index = i_size >> PAGE_SHIFT;
--		if (index > end_index)
-+		if (unlikely(iocb->ki_pos >= i_size))
+ 		if (unlikely(iocb->ki_pos >= i_size))
  			break;
--		if (index == end_index) {
--			nr = i_size & ~PAGE_MASK;
--			if (nr <= offset)
--				break;
--		}
+@@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		if (folio) {
+ 			folio_unlock(folio);
  
- 		error = shmem_get_folio(inode, index, 0, &folio, SGP_READ);
- 		if (error) {
-@@ -3148,18 +3140,14 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		 * We must evaluate after, since reads (unlike writes)
- 		 * are called without i_rwsem protection against truncate
- 		 */
--		nr = PAGE_SIZE;
- 		i_size = i_size_read(inode);
--		end_index = i_size >> PAGE_SHIFT;
--		if (index == end_index) {
--			nr = i_size & ~PAGE_MASK;
--			if (nr <= offset) {
--				if (folio)
--					folio_put(folio);
--				break;
--			}
-+		if (unlikely(iocb->ki_pos >= i_size)) {
-+			if (folio)
-+				folio_put(folio);
-+			break;
+-			page = folio_file_page(folio, index);
+-			if (PageHWPoison(page)) {
++			if (folio_test_hwpoison(folio) ||
++			    (folio_test_large(folio) &&
++			     folio_test_has_hwpoisoned(folio))) {
+ 				folio_put(folio);
+ 				error = -EIO;
+ 				break;
+@@ -3147,7 +3147,12 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			break;
  		}
--		nr -= offset;
-+		end_offset = min_t(loff_t, i_size, iocb->ki_pos + to->count);
-+		nr = min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE - offset);
+ 		end_offset = min_t(loff_t, i_size, iocb->ki_pos + to->count);
+-		nr = min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE - offset);
++		if (folio)
++			fsize = folio_size(folio);
++		else
++			fsize = PAGE_SIZE;
++		offset = iocb->ki_pos & (fsize - 1);
++		nr = min_t(loff_t, end_offset - iocb->ki_pos, fsize - offset);
  
  		if (folio) {
  			/*
-@@ -3199,8 +3187,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+@@ -3156,7 +3161,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			 * before reading the page on the kernel side.
+ 			 */
+ 			if (mapping_writably_mapped(mapping))
+-				flush_dcache_page(page);
++				flush_dcache_folio(folio);
+ 			/*
+ 			 * Mark the page accessed if we read the beginning.
+ 			 */
+@@ -3166,9 +3171,8 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			 * Ok, we have the page, and it's up-to-date, so
+ 			 * now we can copy it to user space...
+ 			 */
+-			ret = copy_page_to_iter(page, offset, nr, to);
++			ret = copy_folio_to_iter(folio, offset, nr, to);
+ 			folio_put(folio);
+-
+ 		} else if (user_backed_iter(to)) {
+ 			/*
+ 			 * Copy to user tends to be so well optimized, but
+@@ -3186,8 +3190,6 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		}
  
  		retval += ret;
- 		offset += ret;
--		index += offset >> PAGE_SHIFT;
- 		offset &= ~PAGE_MASK;
-+		iocb->ki_pos += ret;
-+		index = iocb->ki_pos >> PAGE_SHIFT;
+-		offset += ret;
+-		offset &= ~PAGE_MASK;
+ 		iocb->ki_pos += ret;
+ 		index = iocb->ki_pos >> PAGE_SHIFT;
  
- 		if (!iov_iter_count(to))
- 			break;
-@@ -3211,7 +3200,6 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		cond_resched();
- 	}
- 
--	*ppos = ((loff_t) index << PAGE_SHIFT) + offset;
- 	file_accessed(file);
- 	return retval ? retval : error;
- }
 -- 
 2.39.3
 
