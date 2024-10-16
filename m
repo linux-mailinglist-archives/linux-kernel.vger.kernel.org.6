@@ -1,77 +1,59 @@
-Return-Path: <linux-kernel+bounces-368548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898709A1135
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2DC9A1136
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44C93285BDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF531C20F0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A35F210195;
-	Wed, 16 Oct 2024 18:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D393120C493;
+	Wed, 16 Oct 2024 18:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kOm0X0sr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GuvaQvD8"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288C216DEAC;
-	Wed, 16 Oct 2024 18:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3F414A09E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729101940; cv=none; b=BOR2qfJGvmq6yv0PI9bjFrGTtkQid+2HsG14Hrlmt9Bd1pT4SsESe1pKcM1b/Kmi8UqHMkzWlbr5I1rRQkLsV6hM76HVkyZJsL3jHZ7nbfSDHEvbZeS530QVql8ScODpfWGI/DDs1OThpXV9IjRbTkRdrGAGwiunRqH0Ego6c9Y=
+	t=1729101969; cv=none; b=d7Z6WqWERxuqMlzIjHbOZKcU/NMaxD5/2EHbOCsGc2DYPsgcpMu8MQhsmJeNfcrNx8WS304KfCLMugmF2PDzAFPnEV7NK/+qiIoIQI7FzD30U0M/u//MsShDzvx9RJVv+j6xSaEqyFFvVm5bh/XfKy5UbXa++6rFLpuoiR6ZQu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729101940; c=relaxed/simple;
-	bh=Uqn6nJwh3np3K3wO0/gNSwr2u+wCMIt0uK+ye+P+3Ao=;
+	s=arc-20240116; t=1729101969; c=relaxed/simple;
+	bh=BF/1BhQsUF1eLE1EbdesXCgiRj7vDd8sk6fDx25KovU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUoWffb5kPEPGeMOOv+U73sb3wLFOo4Qm3ORZCy+RRYyq1W8D1IrzSCjWtbVw7nEcgo2Hn9jQTwVT7VyNN6bPz7q8zrXv4OwoGCbjANSMfKWErm2QRPlBwgFxfY8kERkUKim9ZoAnFhk5llkAAkejtL5jHHwfS8CADWGVBbE/5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kOm0X0sr; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729101939; x=1760637939;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Uqn6nJwh3np3K3wO0/gNSwr2u+wCMIt0uK+ye+P+3Ao=;
-  b=kOm0X0sr1SmbItd0ZFe6ogpD+I7SM6g4qHn5THyAmtv7OnvDjbsKLDkf
-   6puHjjhf8Y1Lkn+NKwMvuRYh1cj5/KEjr3ePx+6HzQQyUzfCwDkRs5xUS
-   cOrIg+dm/Z6oqDcKiMhUsClpLcVsqd8XeLPZJCh9gHBqRsdhu6lxcVGiS
-   EuCePV4DjjLXRZydXG7PVQS6G3Lrp+tgv4t41xvVmCq4uJIUWm1OT2aax
-   0q2iX1xDO1bGKHBvwF710QKQuy0gHVdTNnp4xv/duI+Xn44UgotuMo0vS
-   HxxCrux/FHdVOUtlZ5y3WeAv1AUAbj8bDuqTOQa2NVRl5kM4UZFv+nB9Q
-   g==;
-X-CSE-ConnectionGUID: 2qwnkbTpRjaFAz+ReQq9IQ==
-X-CSE-MsgGUID: ksLcyLf8QsOJ/++NTKKMBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="39144185"
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="39144185"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 11:05:38 -0700
-X-CSE-ConnectionGUID: YC5HAXFITW+7ybKROyyHyw==
-X-CSE-MsgGUID: j+OvdoFtT8SA1TF881bQHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="78194029"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 16 Oct 2024 11:05:36 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t18Or-000LDu-20;
-	Wed, 16 Oct 2024 18:05:33 +0000
-Date: Thu, 17 Oct 2024 02:05:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jann Horn <jannh@google.com>, Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Frank Mori Hess <fmh6jj@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v2] comedi: Flush partial mappings in error case
-Message-ID: <202410170111.K30oyTWa-lkp@intel.com>
-References: <20241015-comedi-tlb-v2-1-cafb0e27dd9a@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B24lA4QlCc7ndkfCXmntAMtgxD/hOmWL1Zx/u8suGIpgN5b6XW66FHUkaL8jDYJSOpAM18j6QOHWGEfboIMazQPCDGxKStM3n344Sz3srzf/v0NksGGdGVI1FDc6MRd4epS7AgZul3kSUOqdokFBHU1N638voqRtfLCo083PwOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GuvaQvD8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BF/1BhQsUF1eLE1EbdesXCgiRj7vDd8sk6fDx25KovU=; b=GuvaQvD8BFF8nXF2/L5Z2D+99n
+	C1T9XHEZXPeCl+E6EpKhJpn12+lv3FDuaQ5VoSfFtV9YiCOyrRa0x5s4Zdh7ZQES9qPVmFVs7c9QY
+	4X6jLcVXhg5VaLZP/bUzg2rY+AhYCP1yCnNOuDEs8C0eTCVA7SJL0JnAIKTzjdX7efZ7hnRUlebbM
+	hDS/p6q2xq706s5G+QxO70UZzrubB8wrLbfQL3ntySUybIWLzxbcCt2ie9MLfMe2HkTi/TGpoWaTN
+	Nv8t9z/5LqLHeaH8vwDAz6iuNgoj0qSXrSMGvVhIjcAj0r9aBbHDl9w3CaJsWc5tiw0Bgzdc/YEBf
+	SLmEHzeQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t18PC-00000008eF5-3kB5;
+	Wed, 16 Oct 2024 18:05:55 +0000
+Date: Wed, 16 Oct 2024 19:05:54 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Waiman Long <llong@redhat.com>
+Cc: lizhe.67@bytedance.com, peterz@infradead.org, mingo@redhat.com,
+	will@kernel.org, boqun.feng@gmail.com, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC 1/2] rwsem: introduce upgrade_read interface
+Message-ID: <ZxAAgikXWswSJ76D@casper.infradead.org>
+References: <20241016043600.35139-1-lizhe.67@bytedance.com>
+ <20241016043600.35139-2-lizhe.67@bytedance.com>
+ <7f7b277a-7019-4bf4-b100-0505c6ce9737@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,33 +62,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015-comedi-tlb-v2-1-cafb0e27dd9a@google.com>
+In-Reply-To: <7f7b277a-7019-4bf4-b100-0505c6ce9737@redhat.com>
 
-Hi Jann,
+On Wed, Oct 16, 2024 at 10:23:14AM -0400, Waiman Long wrote:
+> Another alternative that I have been thinking about is a down_read() variant
+> with intention to upgrade later. This will ensure that only one active
+> reader is allowed to upgrade later. With this, upgrade_read() will always
+> succeed, maybe with some sleeping, as long as the correct down_read() is
+> used.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 6485cf5ea253d40d507cd71253c9568c5470cd27]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jann-Horn/comedi-Flush-partial-mappings-in-error-case/20241016-022809
-base:   6485cf5ea253d40d507cd71253c9568c5470cd27
-patch link:    https://lore.kernel.org/r/20241015-comedi-tlb-v2-1-cafb0e27dd9a%40google.com
-patch subject: [PATCH v2] comedi: Flush partial mappings in error case
-config: arm-randconfig-004-20241016 (https://download.01.org/0day-ci/archive/20241017/202410170111.K30oyTWa-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410170111.K30oyTWa-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410170111.K30oyTWa-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arm-linux-gnueabi-ld: drivers/comedi/comedi_fops.o: in function `comedi_mmap':
->> comedi_fops.c:(.text+0x4be): undefined reference to `zap_vma_ptes'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+How is that different from Kent's SIX locks other than you can take an
+rwsem for write immediately (SIX locks have to be taken for Intent and
+then Upgraded)?
 
