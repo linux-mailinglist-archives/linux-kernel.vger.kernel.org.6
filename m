@@ -1,185 +1,83 @@
-Return-Path: <linux-kernel+bounces-367051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AB499FE19
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:15:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB92499FE1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B16DFB24ACA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 098A61C2436A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94B660B8A;
-	Wed, 16 Oct 2024 01:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024B974BED;
+	Wed, 16 Oct 2024 01:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WoAFB+aU"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2062.outbound.protection.outlook.com [40.107.94.62])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAtj5zYX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECEE2628D;
-	Wed, 16 Oct 2024 01:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729041342; cv=fail; b=GwsnCSVlOJbMpQ9mpS4+bb+xbhNZkHn42RFNMsASCdjp3evhutkoRBY01jNqvjfAl1x8ZxBEXV0kmpwW4QvcipB27esVQVTXYWw0SI+KJVnj01ibvN7hbAuY8G9k5+aCao9IewEtBU9X7JtD1J+gZq4DNRJRgoJraMh+Ib6PUks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729041342; c=relaxed/simple;
-	bh=51jEunZCHebvyiWlCqBosMgyf9G4BQwjUeHiAdf2mWk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XeX6R8wPILn4siMZ9vubDJbRRjrneO3x6sIQfkI625L0AUZMdpG0Oykg6cfAwDVb5v0tNfSLJlwkGmX9QLJdZbPqaHJoDfEs1/1xWZsdmBX7i3g8N4ZLe/Cdk7e1X7HxXutbeZZ27oSCs6X6UQCkTFGkTUSATA8g9waO+OdlmRw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WoAFB+aU; arc=fail smtp.client-ip=40.107.94.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K61ms+k8QA1bq1/OAs14vz5uEDr7qtpRFxHIVZkScUT7ixLNZbB6DrZvqNITaaDswZK8e4C9hkVXpo/7ubofG/mrZeemGn2UGhQSZB0r08ewvTXcyzQnlvCYiIix3IDC7zUD2xwYjs31u9XQqoNm7KzbH+arDHY+4faSrxLAD0OJBqILzcwLvTI7Y/dHazDSSUr6nmFxSAYMthztR1hNpNntpoGaJ31hh2JJY1G8JWOPFo5W/tThZWKoEF2S+nSMBm2Xgvhpls/uQcZNybPV9fIQp9Bx0LHX3VmYp6itkOGah1BEyGa7B8Izf9QvzhfURsaNEZ0st73d2AMoE7DajA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QHab1wJQgGVxame0m+/0juJ00rtb5Orx7QPiYhGAp2g=;
- b=HR92J3S+nyGcsSW5YbsXjek7fIVH1aCf6DTOho/6dm1cr/Sab9k/y2q2JMklcEtu4sfqE9nDtpgkr8hJUWTRFoJgjsg2GDI/v4dOSCEELjrXLsbKYoVVQR6zKeAZTiR4RRWAnNP8NfmaHa3cm85Hh0FHUhfSIelcSYAWHHE0aq05ZK5N4HzGDinvm/msWO29joiMMNNDcREH5xatXWFLTR0FHZ8nul2gqUSxjXRZpdxbdm5U5OeyH51IVc08YVpIGaLVU0prfUz/b5k0hQySEscVV9zzK2yog6WJhfUO4xdUQb5IPnkBno+skkgQNHdILNeH4Kv3mW5pgVj0GPgyew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=nxp.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QHab1wJQgGVxame0m+/0juJ00rtb5Orx7QPiYhGAp2g=;
- b=WoAFB+aUvm0dFUoKjhkYH4KlOa403YtUJEpaiZG5Fcea0YiIwpW7SAOY1KawMR6wzh101kQKHAPf2CFd8gflCZCRu1yQrEV91Jx3J2i75zpgHiUC/2zH6bU8BBIBXR0dLX1x6BzrOuwKqAROfn85ka+xBbkUVrn8MPsMaglcNO8Mee+QI5uS4HFgSXreUkNEXMVn7/8d9ywEgrCjjkYybh4+uLYjFaWxeTq+/NxcsD11SPbr5h6PX+Kyw+Vny0nWQZ+fM24q12ZUlyr8lk8cB0AzKzMP9sMAWV/APUD1i4YYCPrlyWfmZ8bpOmECyk4K2CHOIkb64iK7zREwF74aAw==
-Received: from SJ0PR13CA0137.namprd13.prod.outlook.com (2603:10b6:a03:2c6::22)
- by DS0PR12MB8442.namprd12.prod.outlook.com (2603:10b6:8:125::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.21; Wed, 16 Oct
- 2024 01:15:36 +0000
-Received: from SJ1PEPF000023D8.namprd21.prod.outlook.com
- (2603:10b6:a03:2c6:cafe::3f) by SJ0PR13CA0137.outlook.office365.com
- (2603:10b6:a03:2c6::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18 via Frontend
- Transport; Wed, 16 Oct 2024 01:15:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF000023D8.mail.protection.outlook.com (10.167.244.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.1 via Frontend Transport; Wed, 16 Oct 2024 01:15:36 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Oct
- 2024 18:15:21 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Oct
- 2024 18:15:21 -0700
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 15 Oct 2024 18:15:20 -0700
-Date: Tue, 15 Oct 2024 18:15:19 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Peng Fan <peng.fan@nxp.com>
-CC: Robin Murphy <robin.murphy@arm.com>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>, Joerg Roedel
-	<joro@8bytes.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joy Zou
-	<joy.zou@nxp.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH RFC 0/2] iommu/arm-smmu-v3: bypass streamid zero on i.MX95
-Message-ID: <Zw8Tp4RuVgCdGcc8@Asurada-Nvidia>
-References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
- <a8c42a6c-bac3-4ebc-8a29-e6c0ed4567c3@arm.com>
- <PAXPR04MB8459AB654150BED2FB5FFDE188462@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602D411711;
+	Wed, 16 Oct 2024 01:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729041419; cv=none; b=G1MXhOKOYp54h1NdMWJqWNFnA/jSWO4B0BjV1RZRaiJClkuiVqbCx/A/u6e7NoRw9/cVfXtEmVNJ3o+/P0tSwVvL9oJFo1hN8MIl2X8493tNrxuWRaEPFFVYCLHtOuwRL5kzcJKBWovL0yqD7j0lV2UUMtjdYRKR0KvkHW50+nI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729041419; c=relaxed/simple;
+	bh=ZZ0pEuBlmRW8FNRXada/4lSdbqHqnYDwqQfJu7KD4M0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZUjaBu9ym0YYsHKpiVJWKy3ChyogrKcZWFRJrvvtAH7hCJ/W6E89A+PdlSouvi5wfCxxtlAnUCwyrQ/RskzI1M/4Bgirs2+opaLERCxQB4vzqRI+yi1/+3CQ03rpWNYb1/TRtjd0SK/Ng7aihlO2FQmdoj1e4VYQ90uTDU6MLgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAtj5zYX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DC0CC4CEC6;
+	Wed, 16 Oct 2024 01:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729041418;
+	bh=ZZ0pEuBlmRW8FNRXada/4lSdbqHqnYDwqQfJu7KD4M0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SAtj5zYXdcOBVSGyA3Isu5LshmdG2Vd+Aj3ZZ1C6SxGE0UMj09wU7tmkYktpaISFq
+	 owRP5TYMRmNujqMxr/3kaXVyJDfHK9hLEsG7w5/XiDLwrYheP13Ww2aEZ+q5vLGRuA
+	 LFczZ+sA8P6cINvuVpeq5s3DV7oDr2e/svnF1nW5Lw/cU6hb+hPZLhYbLiIDYps5lb
+	 wyIlj13cqg9Wd7Pno/VcvZfKe8OwAuIUjcZ+IvZfAMbXSg46fTaOaKKrNwtZPRYB8w
+	 OXWh7iIFgbmzLGJwp0HrP6CRC8Lv/94E576NP20d9Bo5Kjdd3LkvhcoU1vGbdHn+7K
+	 oyEaj8j4Y4FYQ==
+Date: Tue, 15 Oct 2024 18:16:57 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <shenjian15@huawei.com>, <salil.mehta@huawei.com>,
+ <liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>, <lanhao@huawei.com>,
+ <chenhao418@huawei.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 1/9] net: hns3: default enable tx bounce buffer when
+ smmu enabled
+Message-ID: <20241015181657.14fe9227@kernel.org>
+In-Reply-To: <20241011094521.3008298-2-shaojijie@huawei.com>
+References: <20241011094521.3008298-1-shaojijie@huawei.com>
+	<20241011094521.3008298-2-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459AB654150BED2FB5FFDE188462@PAXPR04MB8459.eurprd04.prod.outlook.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D8:EE_|DS0PR12MB8442:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a3178e9-ee2f-46bd-8d94-08dced800a39
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?z3E+aVbbMNOgjhPXneQW72YTL1a5XUlrsO1x/kP+Wu4C+l0tcKhc9ZCe2WYz?=
- =?us-ascii?Q?AfJPw3xxstXlMzAoOWq+405UVsNc66FHYG4WmLKyYmLokD5lzRfxxsJjnIZ4?=
- =?us-ascii?Q?cVv2JGyK1I8XBSS18BHBs+jOM4ISnY4N+nR8hGkTJopO87TD0x7RylLgsH5m?=
- =?us-ascii?Q?Ie4zxQvZ6sDM1xOFbx1gHQetCVA+vQgxPR1f2qhXOpC39vSSVJ9CdfIgBVF6?=
- =?us-ascii?Q?EkjohhlHgtXrgqS+f7XHrYazpHWM9jGeuOB3aZZJdMH9Uv8S+DkOnOIJNAPA?=
- =?us-ascii?Q?2CWDFsHHrs8r9BT0FfD/b46w+ajJ9PH8NP6wgsYsQZvGJ8VmHVdH3rD6I6Sq?=
- =?us-ascii?Q?hSMRHX8Bq2cGCCjSCgz72V/pIOwkAJeXlvvvJzgoYOGpem4ApHMc2ff6jFh2?=
- =?us-ascii?Q?7SsuYLTaLhMvkr6GzmNG/6K1WWeI0DlPx4eR6foRSx4kwx0MFPjshtn5838H?=
- =?us-ascii?Q?+cH2l5MbqtJGaNJCb+P8LIHVW+c2TPjgJPdnCeyVFOdpovArqZfDZOJaI9wl?=
- =?us-ascii?Q?7w2pbwIng6MZHx3q1Va+ubPG+XFmja9493qoby8kIOLZEXRlJH+pXfeWFuqk?=
- =?us-ascii?Q?YmR4ipd5ul6oM7dAOPVNSPttj1HrXpOulbutWTI/a3xGOiVRcrv9/OrISbLl?=
- =?us-ascii?Q?1myGIc6GSD9fCCh1aYE23N12Ai4rfOhUE7yJ9pfdhe360WLOjBFaPQT19caM?=
- =?us-ascii?Q?qgnb3NTKd5vh9H5gYLs/zDkNjX3iznL4egBm5dudAqSS/4D7pKIarOa0GSY2?=
- =?us-ascii?Q?8h11yF/eWW8YGaq+j7V1Ob7ySI+EEtkV91+6l0FznOEQnDNKUsSC70VRmERj?=
- =?us-ascii?Q?Uodzfzvai7yo9zKF6hbiAIDIZo+dFJaSfpUmDqOjIfOnUVm3y9EGCNdxnJ5a?=
- =?us-ascii?Q?6Lee+c1xChgdxNp96LxCsCp+SZ6bsTtZxsSCweL7eWUc2lYEr5YVwTYvuFNq?=
- =?us-ascii?Q?ZyyqCT4RvxACC0nDZkvUYGMUzotOlFTMTXCpIV8KYLcfHNRPsUu7oT4vOnjd?=
- =?us-ascii?Q?R3it4489C2VXl1e7IeLy1gEOumfp65+7oFfLXyN4vds4Q2mEklMcZnTa4ZQs?=
- =?us-ascii?Q?lHlxfKhcc3TK7pO1oCTytZQzTQeTi7+gN606sfxHCqowE50cFmNEILIIvpL3?=
- =?us-ascii?Q?VF9ihAwyU1uoISX6hZwgAm7k62Hpow1ImVsdqNR/roCVx3xnI5ztz2Co9q2c?=
- =?us-ascii?Q?YzsumivXGbN3dQQFvJMcQVsDLHXsaLRb1Xoph0QYdsB5hj0bL6gR/iCp2e4E?=
- =?us-ascii?Q?LFTGRqx7JYkh4TSdFHBPIyMxucGbuUn9uoE7mh5aw3xCXQ7LmkXsl5z2JgcH?=
- =?us-ascii?Q?wW2NRSsisiDChUPgbkfKzhtrTggBBcRG7pKFB8ib6ZbyjC4U5iGebzBL+x3a?=
- =?us-ascii?Q?e638A5aJh65rNRIelJhBIoo2i3Tj?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 01:15:36.1814
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a3178e9-ee2f-46bd-8d94-08dced800a39
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D8.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8442
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 12:56:54AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH RFC 0/2] iommu/arm-smmu-v3: bypass streamid
-> > zero on i.MX95
-> >
-> > On 2024-10-15 4:14 am, Peng Fan (OSS) wrote:
-> > > i.MX95 eDMA3 connects to DSU ACP, supporting dma coherent
-> > memory to
-> > > memory operations. However TBU is in the path between eDMA3
-> > and ACP,
-> > > need to bypass the default SID 0 to make eDMA3 work properly.
-> >
-> > I'm confused, why not just describe that the device owns this StreamID
-> > in the DT the normal way, i.e, "iommus = <&smmu 0>;"?
+On Fri, 11 Oct 2024 17:45:13 +0800 Jijie Shao wrote:
+> From: Peiyang Wang <wangpeiyang1@huawei.com>
 > 
-> Current SMMU-v3 driver not support streamID sharing, but we have
-> limited streamIDs(i.MX95 max supports 64 SIDs). However the eDMA
-> supports 64 channels, each channel may have a SID, but not supported
-> by current smmuv3 driver.
-> 
-> We see smmu would degrade the performance in somecases, so
-> we wanna to give user an option to bypass SMMU for eDMA.
+> When TX bounce buffer is enabled, dma map is used only when the buffer
+> initialized. When spending packages, the driver only do dma sync. To
 
-If it's a system-wise global need, adding "iommu.passthrough=y"
-to the bootargs string should work for all trusted devices. And
-particular group can be changed to the IDENTITY domain too upon
-cmdline setting, e.g.
-echo identity | sudo tee /sys/class/pci_bus/0009\:01/device/iommu_group/type
+packages -> packets
 
-Thanks
-Nicolin
+> avoid SMMU prefetch, default enable tx bounce buffer if smmu enabled.
+
+you seem to force it to be enabled, rather than just changing 
+the default. That is strange. Why not let the user lower the value?
+
+Also I don't see why this is a fix. Seems like a performance
+improvement.
+-- 
+pw-bot: cr
 
