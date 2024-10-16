@@ -1,195 +1,122 @@
-Return-Path: <linux-kernel+bounces-368389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D045C9A0F4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:07:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0AB9A0F52
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBD7285DFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68592285000
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC4520F5AB;
-	Wed, 16 Oct 2024 16:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRjC+ivn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC7D20E026
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B771220F5BF;
+	Wed, 16 Oct 2024 16:08:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF720E03D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094848; cv=none; b=IKC3IWofBIvqXUqDnuP1Z2zN5KBTKA8IDfbgpdeeA+QmDFakwko7Fo3ttjyQI6RJezFLYLsPZ7ykGv8W4K7DLUFsYdVCjyZjz2MhG/amyCpXm0VvhFlHJtDwhLkbtdMvTC0H2mBVbyFhWsnOMTImNluTyUw7MVbFitJacfhfLw8=
+	t=1729094888; cv=none; b=TqI/33ZHfzarPrrzazVYmKcSadVHSkCGQ/X9dbyxU2tzyrAHCYflPTUOQEXaKlRVXV5fGkdnCaMSkdWATTWBpU9E/l5jJXVIr7xwgMalHTV/M+6I9V1KbcKzS7PNjNRvDcsJ49Vim7ZxCVTfBYgWJFL02dyD798peejg32Yr9Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094848; c=relaxed/simple;
-	bh=+Dua7Z0GJyzlQBV+rd2Hbe6TGrUQcvL/edukW/JnAzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JRwtqWC32t2j//Ri5/ChOLWww3LQLcCcjfRnIQ3Urdqosn2L8Y96bcm6u9P4nT892mu5XX9t3jZw90r+XSLnPrZb24umb108dsg1WQKiwZ53sSg3pRs3Q+TT3vPiG3meZutRAHVgPN2UhIJhlCFvSkpQz8VTELEb0EDf/xYqRZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRjC+ivn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16C9C4CEC5;
-	Wed, 16 Oct 2024 16:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729094845;
-	bh=+Dua7Z0GJyzlQBV+rd2Hbe6TGrUQcvL/edukW/JnAzU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kRjC+ivnzJyeNxqZzYEK3W1UZPmK6LvTscyPiuMkafdtHM6wH7Y+9txDLo+rHMpe4
-	 +KI3cjvKKuRXhTVa4Pc2avzpSXXUmj9fwD5twM0rMeXOlPHJ1/FLD0meLEpUsYr+MQ
-	 B7hY4gw486vmAuMbiQrRR3PtgMmUDEQ0UF/CKKyAQbK+rbSRK0/YEPhv+GU9Wg7iST
-	 BPENyegB/4wsfZa0RW8Rt6jNnuUdbiNAtVksdQcqscyPfxHrqdC0YJG6K59lniw/HT
-	 uiR6cik+DpAnSB0PLagz3pHXTiBGg2gT2MtkZIgKWOg7LonJV0XkekVaJ2UdqIpzIV
-	 9FdeeGRTA7Y2g==
-Date: Wed, 16 Oct 2024 16:07:24 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: fix to parse temperature correctly in
- f2fs_get_segment_temp()
-Message-ID: <Zw_kvFpU53626D90@google.com>
-References: <20241016082038.607358-1-chao@kernel.org>
+	s=arc-20240116; t=1729094888; c=relaxed/simple;
+	bh=7OH6X9fld2kMyP6pTpcFyCrPl0K0mQXCFWEEjmoi7v4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A1pdqZdeLoc5yO2swNkkcsUAuJCQBC0FI0CODyHoJDzZ4HD/b4FWc+IqZG8NEgxBAFSsea5ChiUNMHOSLw3kUJCWpyBRsVx8BQ+9Mvu784vojeCZRfcQm02KKcuY6iguIlcNRQdDbGV6FihgEEPfIPgdXMzJohSBNxKI/Gv/SaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7CBCFEC;
+	Wed, 16 Oct 2024 09:08:34 -0700 (PDT)
+Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5203F71E;
+	Wed, 16 Oct 2024 09:08:02 -0700 (PDT)
+Message-ID: <4fe2408b-7435-41c2-a6b8-82cefeea50ed@arm.com>
+Date: Wed, 16 Oct 2024 17:08:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016082038.607358-1-chao@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
+ Donald Dutile <ddutile@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <1fd0dae8-b04a-42b9-9d6f-32100610ef76@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <1fd0dae8-b04a-42b9-9d6f-32100610ef76@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10/16, Chao Yu wrote:
-> In __get_segment_type(), __get_segment_type_6() may return
-> CURSEG_COLD_DATA_PINNED or CURSEG_ALL_DATA_ATGC log type, but
-> following f2fs_get_segment_temp() can only handle persistent
-> log type, fix it.
+On 16/10/2024 16:16, David Hildenbrand wrote:
+>> Performance Testing
+>> ===================
+>>
+>> I've run some limited performance benchmarks:
+>>
+>> First, a real-world benchmark that causes a lot of page table manipulation (and
+>> therefore we would expect to see regression here if we are going to see it
+>> anywhere); kernel compilation. It barely registers a change. Values are times,
+>> so smaller is better. All relative to base-4k:
+>>
+>> |             |    kern |    kern |    user |    user |    real |    real |
+>> | config      |    mean |   stdev |    mean |   stdev |    mean |   stdev |
+>> |-------------|---------|---------|---------|---------|---------|---------|
+>> | base-4k     |    0.0% |    1.1% |    0.0% |    0.3% |    0.0% |    0.3% |
+>> | compile-4k  |   -0.2% |    1.1% |   -0.2% |    0.3% |   -0.1% |    0.3% |
+>> | boot-4k     |    0.1% |    1.0% |   -0.3% |    0.2% |   -0.2% |    0.2% |
+>>
+>> The Speedometer JavaScript benchmark also shows no change. Values are runs per
+>> min, so bigger is better. All relative to base-4k:
+>>
+>> | config      |    mean |   stdev |
+>> |-------------|---------|---------|
+>> | base-4k     |    0.0% |    0.8% |
+>> | compile-4k  |    0.4% |    0.8% |
+>> | boot-4k     |    0.0% |    0.9% |
+>>
+>> Finally, I've run some microbenchmarks known to stress page table manipulations
+>> (originally from David Hildenbrand). The fork test maps/allocs 1G of anon
+>> memory, then measures the cost of fork(). The munmap test maps/allocs 1G of anon
+>> memory then measures the cost of munmap()ing it. The fork test is known to be
+>> extremely sensitive to any changes that cause instructions to be aligned
+>> differently in cachelines. When using this test for other changes, I've seen
+>> double digit regressions for the slightest thing, so 12% regression on this test
+>> is actually fairly good. This likely represents the extreme worst case for
+>> regressions that will be observed across other microbenchmarks (famous last
+>> words). Values are times, so smaller is better. All relative to base-4k:
+>>
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/f2fs.h    |  5 +++--
->  fs/f2fs/file.c    |  4 ++--
->  fs/f2fs/segment.c | 33 +++++++++++++++++++++++++--------
->  fs/f2fs/segment.h |  4 ----
->  4 files changed, 30 insertions(+), 16 deletions(-)
+> ... and here I am, worrying about much smaller degradation in these micro-
+> benchmark ;) You're right, these are pure micro-benchmarks, and while 12% does
+> sound like "much", even stupid compiler code movement can result in such changes
+> in the fork() micro benchmark.
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index ce00cb546f4a..bda61d7ca8dd 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1019,7 +1019,7 @@ static inline void set_new_dnode(struct dnode_of_data *dn, struct inode *inode,
->  #define NR_CURSEG_PERSIST_TYPE	(NR_CURSEG_DATA_TYPE + NR_CURSEG_NODE_TYPE)
->  #define NR_CURSEG_TYPE		(NR_CURSEG_INMEM_TYPE + NR_CURSEG_PERSIST_TYPE)
->  
-> -enum {
-> +enum log_type {
->  	CURSEG_HOT_DATA	= 0,	/* directory entry blocks */
->  	CURSEG_WARM_DATA,	/* data blocks */
->  	CURSEG_COLD_DATA,	/* multimedia or GCed data blocks */
-> @@ -3758,7 +3758,8 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
->  			block_t old_addr, block_t new_addr,
->  			unsigned char version, bool recover_curseg,
->  			bool recover_newaddr);
-> -int f2fs_get_segment_temp(int seg_type);
-> +enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
-> +						enum log_type seg_type);
->  int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  			block_t old_blkaddr, block_t *new_blkaddr,
->  			struct f2fs_summary *sum, int type,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 0e07231dc093..92d7c62eba29 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -4858,8 +4858,8 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
->  {
->  	struct inode *inode = iter->inode;
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> -	int seg_type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
-> -	enum temp_type temp = f2fs_get_segment_temp(seg_type);
-> +	enum log_type type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
-> +	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
->  
->  	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
->  	submit_bio(bio);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 859d70bbc5e7..3ed689157891 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3582,18 +3582,35 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
->  	}
->  }
->  
-> -int f2fs_get_segment_temp(int seg_type)
-> +enum temp_type f2fs_get_segment_temp(struct f2fs_sb_info *sbi,
-> +						enum log_type type)
->  {
-> -	if (IS_HOT(seg_type))
-> -		return HOT;
-> -	else if (IS_WARM(seg_type))
-> -		return WARM;
-> -	return COLD;
-> +	struct curseg_info *curseg = CURSEG_I(sbi, type);
-> +	enum temp_type temp;
+> So I think this is just fine, and actually "surprisingly" small. And, there is
+> even a way to statically compile a page size and not worry about that at all.
+> 
+> As discussed ahead of times, I consider this change very valuable. In RHEL, the
+> biggest issue is actually the test matrix, that cannot really be reduced
+> significantly ... but it will make shipping/packaging easier.
+> 
+> CCing Don, who did the separate 64k RHEL flavor kernel.
+> 
 
-To avoid static compilier complaint:
+Thanks, David! I'm planning to investigate and see if I can improve even on that
+12%. I have a couple of ideas. But like you say, I don't think this should be a
+blocker to moving forwards.
 
-error: variable 'temp' is used uninitialized whenever switch default is taken
-
-let's assign one.
-
-	enum temp_type temp = COLD;
-
-> +
-> +	switch (curseg->seg_type) {
-> +	case CURSEG_HOT_NODE:
-> +	case CURSEG_HOT_DATA:
-> +		temp = HOT;
-> +		break;
-> +	case CURSEG_WARM_NODE:
-> +	case CURSEG_WARM_DATA:
-> +		temp = WARM;
-> +		break;
-> +	case CURSEG_COLD_NODE:
-> +	case CURSEG_COLD_DATA:
-> +		temp = COLD;
-> +		break;
-> +	default:
-> +		f2fs_bug_on(sbi, 1);
-> +	}
-> +
-> +	return temp;
->  }
->  
->  static int __get_segment_type(struct f2fs_io_info *fio)
->  {
-> -	int type = 0;
-> +	enum log_type type;
->  
->  	switch (F2FS_OPTION(fio->sbi).active_logs) {
->  	case 2:
-> @@ -3609,7 +3626,7 @@ static int __get_segment_type(struct f2fs_io_info *fio)
->  		f2fs_bug_on(fio->sbi, true);
->  	}
->  
-> -	fio->temp = f2fs_get_segment_temp(type);
-> +	fio->temp = f2fs_get_segment_temp(fio->sbi, type);
->  
->  	return type;
->  }
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 55a01da6c4be..6a23bb1d16a2 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -34,10 +34,6 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
->  	f2fs_bug_on(sbi, seg_type >= NR_PERSISTENT_LOG);
->  }
->  
-> -#define IS_HOT(t)	((t) == CURSEG_HOT_NODE || (t) == CURSEG_HOT_DATA)
-> -#define IS_WARM(t)	((t) == CURSEG_WARM_NODE || (t) == CURSEG_WARM_DATA)
-> -#define IS_COLD(t)	((t) == CURSEG_COLD_NODE || (t) == CURSEG_COLD_DATA)
-> -
->  #define IS_CURSEG(sbi, seg)						\
->  	(((seg) == CURSEG_I(sbi, CURSEG_HOT_DATA)->segno) ||	\
->  	 ((seg) == CURSEG_I(sbi, CURSEG_WARM_DATA)->segno) ||	\
-> -- 
-> 2.40.1
 
