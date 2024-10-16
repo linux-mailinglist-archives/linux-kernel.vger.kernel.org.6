@@ -1,200 +1,151 @@
-Return-Path: <linux-kernel+bounces-368660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0042C9A1313
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:00:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D0A9A1317
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248BC1C222DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:00:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E12ADB22F48
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A59A215F5C;
-	Wed, 16 Oct 2024 20:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CF6216A1A;
+	Wed, 16 Oct 2024 20:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="0QnX+y+f"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bH9msgWp"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA931C1741
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FAB2141B4
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108829; cv=none; b=AfxBaY4ma/A53/L9qUQcV3vRs0dcpa3zGo3sTJchXFSfi1Mz1JeEKRyrlQ1Cj5+v4yOoJ2PEMFNot2poXKMPd/rIwzYEAmbikXPEQM4W1WVa0VgfGqq3H5mNfogTDZt3RGYds4ropxhhdX5BNqb2fw/XGVpBe+J4SwO8AwMIvnk=
+	t=1729108831; cv=none; b=Rynz7ZZV7TTkjnKcgSTdhXavVdsMYM61V7tlbDrE0FDi6ieTaYGnDGXhKUWM4IM/ZPpAUZhgtwU+aVFW3KS09Mf4zuYgYvfr90jDm5pK/8pT2IbQFvNsYiTzF4Qhbmp4OxKoOpku2x2ZwcLHZ/SHRaOvGyVfp5JESWGkr/t1U/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108829; c=relaxed/simple;
-	bh=Yy+427w6SA0Uyrx7chHSxLxb5fuPBo1r7UcsPY7j9hA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eF32JrceLv/BTVm1dr5kWYeq04e74tS9EkIVSeQ0gAPUsvvy2rxsRS4v1qTe1LByunRx1uP4t8s9dp0B3Nmy20Cph7rSaXw7qSWfDza6uanh627TLzwIvnnJcXPvLUs57JAt7Ul7YDrd6rz3/dRpdz8pegP0UUy6eY5qyvG+q2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=0QnX+y+f; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A8C642C0436;
-	Thu, 17 Oct 2024 09:00:24 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1729108824;
-	bh=Yy+427w6SA0Uyrx7chHSxLxb5fuPBo1r7UcsPY7j9hA=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=0QnX+y+fGDKmNo9ux8OzlVHONdJVDwcUslIkKAa5/OP1ULgkXbmOb7X1kBRAYc7Ec
-	 42bW2ejPD3lovvci9vlUbfgYzAtxxiEd8poEnX0mbj+gpjub62wyP8Pp5yooPSTEHO
-	 Tg5YGz83xeA1CNPnMSOTNcctV1nnEYUE/2nJxkpe6rd7WibVc2qNAnDPuXqCZF5myV
-	 7Uzdg+6qK3f1O9lo/Z1Jr1sXF2jsmy9LEmR7lBD7dtN5+R2XJG4MG7z5TfVHqRUq7Z
-	 WgwtPkRktF9Cj1ULv/rC5obIX8/cuBrYDBlPY/6xo5OMhIecKudngXRm5knCkWJkJS
-	 botZYZ/BZlteA==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67101b580001>; Thu, 17 Oct 2024 09:00:24 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 17 Oct 2024 09:00:24 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.48; Thu, 17 Oct 2024 09:00:24 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 17 Oct 2024 09:00:24 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "lee@kernel.org"
-	<lee@kernel.org>, "sre@kernel.org" <sre@kernel.org>,
-	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v6 3/6] dt-bindings: mfd: Add Realtek RTL9300 switch
- peripherals
-Thread-Topic: [PATCH v6 3/6] dt-bindings: mfd: Add Realtek RTL9300 switch
- peripherals
-Thread-Index: AQHbH1XyRCVZAOY+h0G2xpDtEx4lKrKIFFgAgADcY4CAAAK9gA==
-Date: Wed, 16 Oct 2024 20:00:23 +0000
-Message-ID: <c5f93d92-6bba-41f7-98e0-1e21d61d5941@alliedtelesis.co.nz>
-References: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
- <20241015225948.3971924-4-chris.packham@alliedtelesis.co.nz>
- <5o77wkohvujnfnm4xm73b65gpx5by7chhyhdbuw3dkpota53us@5x6jlcabjoes>
- <1c7abf59-588b-4679-8638-7e9985f133d1@alliedtelesis.co.nz>
-In-Reply-To: <1c7abf59-588b-4679-8638-7e9985f133d1@alliedtelesis.co.nz>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7582E3B684A33745A5E735E3207E9CBE@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1729108831; c=relaxed/simple;
+	bh=GXWa88oli4PWmA5+fzUJhszGi/k7b0FRJFJ5Zof4XW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CvIdAy5b3jjtRSMiPkbU0e/WxXhP9noeNWly0uUIULp1m/CzkxE8z2cqcR2AkQTh/y0mmB4L7ETmo2CIcLfF7HzdEwE5CQrmkI+0AmWtOiwsBZOsbLX3auDf8yuZi3CsvmW24MDLz1rRNmSWzOz7IQOe5rcv46dV9zxbnmfNK6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bH9msgWp; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8323b555a6aso9026439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729108829; x=1729713629; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/PVXpXafwswvIYBcxSLxNIvr3U2zHo65AX9f3Pm1fo0=;
+        b=bH9msgWpZgjmM5tcDOFe5xlK6iQ5HoiF8Elbmk3nLjD9EoLb1Sv++CRN/jByRQEgx8
+         18gAemz9xd6Bh/9Nbr/8gH2vRskgxmrwInye065u39Ff3PRtnK5ItCwBRR1AnLlxFqoA
+         EEeGLL8/cZy2otxIcm0E2EU91WADcx/iTtkzg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729108829; x=1729713629;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/PVXpXafwswvIYBcxSLxNIvr3U2zHo65AX9f3Pm1fo0=;
+        b=FdhddZPN0pCztpT+Bf1zhJgSPBz/a1bNbpyQny1VNQm6xonM9ee1NPt8C1lUvvBvrA
+         QW7y8PjLYcTh4EqIkcdnPbqKbcBLc4BIa54LqRT8eieo2swgHS/In7yAk2qr+9cnXsJM
+         nm1y1CpWKBWFnVZEg9HPOtNQHej8awy78IpKHMJ4zGZIQwAU9Dfz0MQlGBztsvkhVYDl
+         9E+mvQKFqI3puSLQyoTrqjVwvZrHc6ZCe8lWldhGlaLdnVHvnm9ERdUCNV8V5C7v6fBl
+         rYULsXwqM3PcC8jPA/t6VcrdNkSWF0rQ/ZVsSK8oWnLUadO7ZDkkriq5PuljfttqNN0d
+         Xwrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiig3ERQQcpQ2XoOnwp/jzyOePce9/1EEVN3ivEEw+YjsH7CzPyCC/Nv4smCpSG15dqnVQCs5KfcuiDQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz64uy9nPnXSaHsh3sc4mNzfWTRnknkfYoK1Z+eBGPbk+hFW/gn
+	iQubnpCFAgBtFBo743UXx6G8A/MdFJJzfzTF17zHy60AU5yoHkhgUtN4wxkvASI=
+X-Google-Smtp-Source: AGHT+IFhemGMrTXm0sMyQyLUJ9gqBzqux5ju24bsXrdrLEcJKKlddo3PTMuUfwbHsZl+/lq10WstqQ==
+X-Received: by 2002:a05:6602:6403:b0:837:7f69:eac2 with SMTP id ca18e2360f4ac-8379241ac0emr1848647239f.1.1729108829163;
+        Wed, 16 Oct 2024 13:00:29 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecc44a2asm981213173.154.2024.10.16.13.00.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 13:00:28 -0700 (PDT)
+Message-ID: <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
+Date: Wed, 16 Oct 2024 14:00:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=67101b58 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=gEfo2CItAAAA:8 a=TXPRNiiwDGDrT-YAXYQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Christian Brauner <christian@brauner.io>
+Cc: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
+ <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-DQpPbiAxNy8xMC8yNCAwODo1MCwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4NCj4gT24gMTYvMTAv
-MjQgMTk6NDEsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+PiBPbiBXZWQsIE9jdCAxNiwg
-MjAyNCBhdCAxMTo1OTo0NUFNICsxMzAwLCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPj4+ICtwcm9w
-ZXJ0aWVzOg0KPj4+ICvCoCBjb21wYXRpYmxlOg0KPj4+ICvCoMKgwqAgb25lT2Y6DQo+Pj4gK8Kg
-wqDCoMKgwqAgLSBpdGVtczoNCj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgIC0gZW51bToNCj4+PiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLSByZWFsdGVrLHJ0bDkzMDJiLWkyYw0KPj4+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtIHJlYWx0ZWsscnRsOTMwMmMtaTJjDQo+Pj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC0gcmVhbHRlayxydGw5MzAzLWkyYw0KPj4+ICvCoMKg
-wqDCoMKgwqDCoMKgwqAgLSBjb25zdDogcmVhbHRlayxydGw5MzAxLWkyYw0KPj4+ICvCoMKgwqDC
-oMKgIC0gY29uc3Q6IHJlYWx0ZWsscnRsOTMwMS1pMmMNCj4+PiArDQo+Pj4gK8KgIHJlZzoNCj4+
-PiArwqDCoMKgIGRlc2NyaXB0aW9uOiBSZWdpc3RlciBvZmZzZXQgYW5kIHNpemUgdGhpcyBJMkMg
-Y29udHJvbGxlci4NCj4+PiArDQo+Pj4gK8KgICIjYWRkcmVzcy1jZWxscyI6DQo+Pj4gK8KgwqDC
-oCBjb25zdDogMQ0KPj4+ICsNCj4+PiArwqAgIiNzaXplLWNlbGxzIjoNCj4+PiArwqDCoMKgIGNv
-bnN0OiAwDQo+Pj4gKw0KPj4+ICtwYXR0ZXJuUHJvcGVydGllczoNCj4+PiArwqAgJ15pMmNAWzAt
-N10kJzoNCj4+PiArwqDCoMKgICRyZWY6IC9zY2hlbWFzL2kyYy9pMmMtY29udHJvbGxlci55YW1s
-DQo+Pj4gK8KgwqDCoCB1bmV2YWx1YXRlZFByb3BlcnRpZXM6IGZhbHNlDQo+Pj4gKw0KPj4+ICvC
-oMKgwqAgcHJvcGVydGllczoNCj4+PiArwqDCoMKgwqDCoCByZWc6DQo+Pj4gK8KgwqDCoMKgwqDC
-oMKgIGRlc2NyaXB0aW9uOiBUaGUgU0RBIHBpbiBhc3NvY2lhdGVkIHdpdGggdGhlIEkyQyBidXMu
-DQo+Pj4gK8KgwqDCoMKgwqDCoMKgIG1heEl0ZW1zOiAxDQo+Pj4gKw0KPj4+ICvCoMKgwqAgcmVx
-dWlyZWQ6DQo+Pj4gK8KgwqDCoMKgwqAgLSByZWcNCj4+PiArDQo+Pj4gK3JlcXVpcmVkOg0KPj4+
-ICvCoCAtIGNvbXBhdGlibGUNCj4+PiArwqAgLSByZWcNCj4+PiArDQo+Pj4gK3VuZXZhbHVhdGVk
-UHJvcGVydGllczogZmFsc2UNCj4+IFRoaXMgaGFzIHRvIGJlOiBhZGRpdGlvbmFsUHJvcGVydGll
-czogZmFsc2UNCj4NCj4gSG1tLCB3aGVuIEkgZG8gdGhhdCB0aGUgZHRfYmluZGluZ19jaGVjayBj
-b21wbGFpbnMNCj4NCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9yZWFs
-dGVrLHJ0bDkzMDEtc3dpdGNoLmV4YW1wbGUuZHRiOiANCj4gZXRoZXJuZXQtc3dpdGNoQDFiMDAw
-MDAwOiBpMmNAMzZjOmkyY0AwOiAnI2FkZHJlc3MtY2VsbHMnLCANCj4gJyNzaXplLWNlbGxzJywg
-J2dwaW9AMjAnIGRvIG5vdCBtYXRjaCBhbnkgb2YgdGhlIHJlZ2V4ZXM6IA0KPiAncGluY3RybC1b
-MC05XSsnDQo+IMKgwqDCoMKgwqDCoMKgIGZyb20gc2NoZW1hICRpZDogDQo+IGh0dHA6Ly9kZXZp
-Y2V0cmVlLm9yZy9zY2hlbWFzL21mZC9yZWFsdGVrLHJ0bDkzMDEtc3dpdGNoLnlhbWwjDQo+IERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvcmVhbHRlayxydGw5MzAxLXN3aXRj
-aC5leGFtcGxlLmR0YjogDQo+IGV0aGVybmV0LXN3aXRjaEAxYjAwMDAwMDogaTJjQDM2YzppMmNA
-MjogJyNhZGRyZXNzLWNlbGxzJywgDQo+ICcjc2l6ZS1jZWxscycsICdncGlvQDIwJyBkbyBub3Qg
-bWF0Y2ggYW55IG9mIHRoZSByZWdleGVzOiANCj4gJ3BpbmN0cmwtWzAtOV0rJw0KPiDCoMKgwqDC
-oMKgwqDCoCBmcm9tIHNjaGVtYSAkaWQ6IA0KPiBodHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1h
-cy9tZmQvcmVhbHRlayxydGw5MzAxLXN3aXRjaC55YW1sIw0KPiBEb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMS1zd2l0Y2guZXhhbXBsZS5kdGI6IA0K
-PiBldGhlcm5ldC1zd2l0Y2hAMWIwMDAwMDA6IGkyY0AzODg6aTJjQDc6ICcjYWRkcmVzcy1jZWxs
-cycsIA0KPiAnI3NpemUtY2VsbHMnLCAnZ3Bpb0AyMCcgZG8gbm90IG1hdGNoIGFueSBvZiB0aGUg
-cmVnZXhlczogDQo+ICdwaW5jdHJsLVswLTldKycNCj4gwqDCoMKgwqDCoMKgwqAgZnJvbSBzY2hl
-bWEgJGlkOiANCj4gaHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvbWZkL3JlYWx0ZWsscnRs
-OTMwMS1zd2l0Y2gueWFtbCMNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21m
-ZC9yZWFsdGVrLHJ0bDkzMDEtc3dpdGNoLmV4YW1wbGUuZHRiOiANCj4gaTJjQDM2YzogaTJjQDA6
-ICcjYWRkcmVzcy1jZWxscycsICcjc2l6ZS1jZWxscycsICdncGlvQDIwJyBkbyBub3QgDQo+IG1h
-dGNoIGFueSBvZiB0aGUgcmVnZXhlczogJ3BpbmN0cmwtWzAtOV0rJw0KPiDCoMKgwqDCoMKgwqDC
-oCBmcm9tIHNjaGVtYSAkaWQ6IA0KPiBodHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1hcy9pMmMv
-cmVhbHRlayxydGw5MzAxLWkyYy55YW1sIw0KPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMS1zd2l0Y2guZXhhbXBsZS5kdGI6IA0KPiBpMmNAMzZj
-OiBpMmNAMjogJyNhZGRyZXNzLWNlbGxzJywgJyNzaXplLWNlbGxzJywgJ2dwaW9AMjAnIGRvIG5v
-dCANCj4gbWF0Y2ggYW55IG9mIHRoZSByZWdleGVzOiAncGluY3RybC1bMC05XSsnDQo+IMKgwqDC
-oMKgwqDCoMKgIGZyb20gc2NoZW1hICRpZDogDQo+IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hl
-bWFzL2kyYy9yZWFsdGVrLHJ0bDkzMDEtaTJjLnlhbWwjDQo+IERvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9tZmQvcmVhbHRlayxydGw5MzAxLXN3aXRjaC5leGFtcGxlLmR0YjogDQo+
-IGkyY0AzODg6IGkyY0A3OiAnI2FkZHJlc3MtY2VsbHMnLCAnI3NpemUtY2VsbHMnLCAnZ3Bpb0Ay
-MCcgZG8gbm90IA0KPiBtYXRjaCBhbnkgb2YgdGhlIHJlZ2V4ZXM6ICdwaW5jdHJsLVswLTldKycN
-Cj4gwqDCoMKgwqDCoMKgwqAgZnJvbSBzY2hlbWEgJGlkOiANCj4gaHR0cDovL2RldmljZXRyZWUu
-b3JnL3NjaGVtYXMvaTJjL3JlYWx0ZWsscnRsOTMwMS1pMmMueWFtbCMNCj4NCj4gVGhvc2UgcHJv
-cGVydGllcyBzaG91bGQgYmUgZ2V0dGluZyBkZWZpbmVkIHZpYSB0aGUgaTJjLWNvbnRyb2xsZXIu
-eWFtbCANCj4gc2NoZW1hIHNvIEkgbXVzdCBiZSBtaXNzaW5nIHNvbWV0aGluZywgSSdtIGp1c3Qg
-bm90IHN1cmUgd2hhdC4NCg0KU2lsbHkgbWUuIEkgcmVtb3ZlZCB0aGUgd3JvbmcgdW5ldmFsdWF0
-ZWRQcm9wZXJ0aWVzLiBJZiBJIGZpeCB1cCB0aGUgb25lIA0KeW91IGFjdHVhbGx5IHBvaW50ZWQg
-b3V0IGl0J3MgZmluZS4gdjcgY29taW5nIHNvb24uDQoNCj4NCj4+DQo+Pj4gKw0KPj4+ICtleGFt
-cGxlczoNCj4+PiArwqAgLSB8DQo+Pj4gK8KgwqDCoCBpMmNAMzZjIHsNCj4+PiArwqDCoMKgwqDC
-oCBjb21wYXRpYmxlID0gInJlYWx0ZWsscnRsOTMwMS1pMmMiOw0KPj4+ICvCoMKgwqDCoMKgIHJl
-ZyA9IDwweDM2YyAweDE0PjsNCj4+PiArwqDCoMKgwqDCoCAjYWRkcmVzcy1jZWxscyA9IDwxPjsN
-Cj4+PiArwqDCoMKgwqDCoCAjc2l6ZS1jZWxscyA9IDwwPjsNCj4+PiArDQo+Pj4gK8KgwqDCoMKg
-wqAgaTJjQDAgew0KPj4+ICvCoMKgwqDCoMKgwqDCoCByZWcgPSA8MD47DQo+Pj4gK8KgwqDCoMKg
-wqDCoMKgICNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPj4+ICvCoMKgwqDCoMKgwqDCoCAjc2l6ZS1j
-ZWxscyA9IDwwPjsNCj4+PiArwqDCoMKgwqDCoMKgwqAgZ3Bpb0AyMCB7DQo+Pj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoCBjb21wYXRpYmxlID0gIm54cCxwY2E5NTU1IjsNCj4+PiArwqDCoMKgwqDCoMKg
-wqDCoMKgIGdwaW8tY29udHJvbGxlcjsNCj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgICNncGlvLWNl
-bGxzID0gPDI+Ow0KPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqAgcmVnID0gPDB4MjA+Ow0KPj4+ICvC
-oMKgwqDCoMKgwqDCoCB9Ow0KPj4+ICvCoMKgwqDCoMKgIH07DQo+Pj4gKw0KPj4+ICvCoMKgwqDC
-oMKgIGkyY0AyIHsNCj4+PiArwqDCoMKgwqDCoMKgwqAgcmVnID0gPDI+Ow0KPj4+ICvCoMKgwqDC
-oMKgwqDCoCAjYWRkcmVzcy1jZWxscyA9IDwxPjsNCj4+PiArwqDCoMKgwqDCoMKgwqAgI3NpemUt
-Y2VsbHMgPSA8MD47DQo+Pj4gK8KgwqDCoMKgwqDCoMKgIGdwaW9AMjAgew0KPj4+ICvCoMKgwqDC
-oMKgwqDCoMKgwqAgY29tcGF0aWJsZSA9ICJueHAscGNhOTU1NSI7DQo+Pj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoCBncGlvLWNvbnRyb2xsZXI7DQo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoCAjZ3Bpby1j
-ZWxscyA9IDwyPjsNCj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgIHJlZyA9IDwweDIwPjsNCj4+PiAr
-wqDCoMKgwqDCoMKgwqAgfTsNCj4+PiArwqDCoMKgwqDCoCB9Ow0KPj4+ICvCoMKgwqAgfTsNCj4+
-PiArwqDCoMKgIGkyY0AzODggew0KPj4+ICvCoMKgwqDCoMKgIGNvbXBhdGlibGUgPSAicmVhbHRl
-ayxydGw5MzAxLWkyYyI7DQo+Pj4gK8KgwqDCoMKgwqAgcmVnID0gPDB4Mzg4IDB4MTQ+Ow0KPj4+
-ICvCoMKgwqDCoMKgICNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPj4+ICvCoMKgwqDCoMKgICNzaXpl
-LWNlbGxzID0gPDA+Ow0KPj4+ICsNCj4+PiArwqDCoMKgwqDCoCBpMmNANyB7DQo+Pj4gK8KgwqDC
-oMKgwqDCoMKgIHJlZyA9IDw3PjsNCj4+PiArwqDCoMKgwqDCoMKgwqAgI2FkZHJlc3MtY2VsbHMg
-PSA8MT47DQo+Pj4gK8KgwqDCoMKgwqDCoMKgICNzaXplLWNlbGxzID0gPDA+Ow0KPj4+ICvCoMKg
-wqDCoMKgIH07DQo+Pj4gK8KgwqDCoCB9Ow0KPj4gWW95IGhhdmUgbm93IG11bHRpcGxlIHNhbWUg
-ZXhhbXBsZXMuIEtlZXAgb25seSBvbmUsIGNvbXBsZXRlIGluIHRoZSANCj4+IHBhcmVudA0KPj4g
-c2NoZW1hLg0KPg0KPiBPSy4gSSdsbCBrZWVwIG9uZSBleGFtcGxlIG9mIGEgY29udHJvbGxlciB3
-aXRoIGEgbm9uLXplcm8gY2hhbm5lbCBpbiANCj4gdGhlIGkyYyBiaW5kaW5nIGFuZCBsZWF2ZSBh
-IG1vcmUgY29tcGxldGUgZXhhbXBsZSBpbiB0aGUgbWZkLg0KPg0KPj4+IGRpZmYgLS1naXQgDQo+
-Pj4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMw
-MS1zd2l0Y2gueWFtbCANCj4+PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9t
-ZmQvcmVhbHRlayxydGw5MzAxLXN3aXRjaC55YW1sDQo+Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQN
-Cj4+PiBpbmRleCAwMDAwMDAwMDAwMDAuLmYwNTMzMDNhYjFlNg0KPj4+IC0tLSAvZGV2L251bGwN
-Cj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3JlYWx0ZWss
-cnRsOTMwMS1zd2l0Y2gueWFtbA0KPj4+IEBAIC0wLDAgKzEsMTE0IEBADQo+Pj4gKyMgU1BEWC1M
-aWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wLW9ubHkgT1IgQlNELTItQ2xhdXNlKQ0KPj4+ICsl
-WUFNTCAxLjINCj4+IEJlc3QgcmVnYXJkcywNCj4+IEtyenlzenRvZg0KPj4=
+On 10/16/24 04:20, Lorenzo Stoakes wrote:
+> Add tests to assert that PIDFD_SELF_* correctly refers to the current
+> thread and process.
+> 
+> This is only practically meaningful to pidfd_send_signal() and
+> pidfd_getfd(), but also explicitly test that we disallow this feature for
+> setns() where it would make no sense.
+> 
+> We cannot reasonably wait on ourself using waitid(P_PIDFD, ...) so while in
+> theory PIDFD_SELF_* would work here, we'd be left blocked if we tried it.
+> 
+> We defer testing of mm-specific functionality which uses pidfd, namely
+> process_madvise() and process_mrelease() to mm testing (though note the
+> latter can not be sensibly tested as it would require the testing process
+> to be dying).
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>   tools/testing/selftests/pidfd/pidfd.h         |   8 +
+>   .../selftests/pidfd/pidfd_getfd_test.c        | 141 ++++++++++++++++++
+>   .../selftests/pidfd/pidfd_setns_test.c        |  11 ++
+>   tools/testing/selftests/pidfd/pidfd_test.c    |  76 ++++++++--
+>   4 files changed, 224 insertions(+), 12 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
+> index 88d6830ee004..1640b711889b 100644
+> --- a/tools/testing/selftests/pidfd/pidfd.h
+> +++ b/tools/testing/selftests/pidfd/pidfd.h
+> @@ -50,6 +50,14 @@
+>   #define PIDFD_NONBLOCK O_NONBLOCK
+>   #endif
+>   
+> +/* System header file may not have this available. */
+> +#ifndef PIDFD_SELF_THREAD
+> +#define PIDFD_SELF_THREAD -100
+> +#endif
+> +#ifndef PIDFD_SELF_THREAD_GROUP
+> +#define PIDFD_SELF_THREAD_GROUP -200
+> +#endif
+> +
+
+As mentioned in my response to v1 patch:
+
+kselftest has dependency on "make headers" and tests include
+headers from linux/ directory
+
+These local make it difficult to maintain these tests in the
+longer term. Somebody has to go clean these up later.
+
+The import will be fine and you can control that with -I flag in
+the makefile. Remove these and try to get including linux/pidfd.h
+working.
+
+Please revise this patch to include the header file and remove
+these local defines.
+
+thanks,
+-- Shuah
 
