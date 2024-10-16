@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-367313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A309A00C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:33:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DBA9A00C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9161F22399
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:33:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9135B24518
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C61A18BC0B;
-	Wed, 16 Oct 2024 05:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gwy6j0CK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A9C189BBE;
+	Wed, 16 Oct 2024 05:34:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9B64CB5B;
-	Wed, 16 Oct 2024 05:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340A9172777
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729056810; cv=none; b=i97mFSzcxrfcB6p+CwJaFhiBUsRqit9o1myphPzDlTeBlzRG7K48027QFmET0YvFJjuJdIUrKuv8h6Vux2/zVuE6s272yXeeNb5bDork5DqWOSrSFMlKyIg2m2GSKoi2dDKaPohY6feeg2NKVPl1f31WwAzfPvbweThFWfgUE20=
+	t=1729056845; cv=none; b=jJoDtUHVz8k1LSqAwsHBOL2bV/a8x0v/YlJPfv8v1sbLFwnOrtZPzrGN0vltzfM0CQagOt5eT3fo3dGkQTbdZwsYpdTqz0Xjo3Fg513MwHtfugJV7hKVl0ujIqbnfynEo3LjZK9rsWzADrfnS2MWs1/VieHqM2NdV52Ki8nWIgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729056810; c=relaxed/simple;
-	bh=+e7T4hQZhKNwlhm9rLtAT+cyHx82aCspHPskjYq2sJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFsiH1MfkpIHKhDMmbWiyjnuvnnPqZfKdZIeSMuN/WjrkbSferX4D3KDR0O9yedJVtG8mc4KnvJXpVDLSCbhp77lOU25c/7Jh/ZMV1JbVmq9/+wI5c/LRWLjmM2CSNXSmyygXW3b441eUBDWM43PpTswDeMOIEUoFTitrfOCKZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gwy6j0CK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B4EC4CED2;
-	Wed, 16 Oct 2024 05:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729056810;
-	bh=+e7T4hQZhKNwlhm9rLtAT+cyHx82aCspHPskjYq2sJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gwy6j0CKh6DZ+NbkaOTbvU9/fZ+ZmXpK0UP0hDj5S9jNfgvy6TjmEJyhXSXakHPSi
-	 ODd1XIH83PIjp1EEVxMIM+r8ogP3quUNZNig2byeKzK/wZE6hc2cnHNThNNqarZPdb
-	 Z1j6Xp1fOGt7/RylphZgrL67LNtS2oZxbwqL/cZ4=
-Date: Wed, 16 Oct 2024 07:33:23 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dominik Karol =?utf-8?Q?Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: dpenkler@gmail.com, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2] staging: gpib: Add TODO file
-Message-ID: <2024101609-getaway-appendage-1f88@gregkh>
-References: <20241015192838.16740-1-dominik.karol.piatkowski@protonmail.com>
+	s=arc-20240116; t=1729056845; c=relaxed/simple;
+	bh=kJLecZJXDQwCQ+Aj94XwkW9OyLWSVhjr115PCz0RzFM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=d6CvKGbqr3WD+9kTVyU334feag0OEz0IQDHQNorNReoosHSCi7ntgyQe315muThJAiK5SqyRpGIMkdQPv4PSkKuRU/rfehsRk3ZmJhf3+bp1cRJovIUcxQcCpp1VwftmGTlgMM8od0NGKUJ6sfXPfX+Jwh1rcVOx5PUu8DWisDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83a709455a7so476115139f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:34:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729056843; x=1729661643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6FpoelTa9GKN5g/rJ1NmD/+p5tqyDj7lx/aPpf294Uo=;
+        b=wNPQgT5zwJnU/G9+FIQxPQNHQHXsC53u7sgz/apbY/8I+f8XA4rd/L4Nw2YkCf6D0K
+         ZQ9i1CQCFu6fCyPQEfa7nMGcZ8IpJ4TVLPaCLrNeXx6rjt/L3e7ZpHTzTEQQC4CeDXJ8
+         nEU9WPOnqZSTbBj/kUTmfb9xbAFc4H3jrPF8hH2/3hPRpVTHAWX03ohRCailgQroxeMh
+         xOk7tow4guiTg7R2R94De9FDsNI+8KprD+DFnzJ/wT9TQ5Dgfkc4UVX5+WkeQbc8/xWN
+         pa9QbLWwTv4clPZyPaNi9tM8TijOh5vlHwFoinCrUbdUMXKMXqisLau1tmAdM1mm3wLW
+         TGTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbMNUfaG8+KOC3zugDf7QwD/hiebksvD3wfKsRhIvYOxpX9NKhh+fMUU3pGOOpo/x7KNFqDRiHmUhG+PI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+/k5gv9l9+Utj4ljH5YuOVQBWCHwasIqYNmofTfJifT5hNmFM
+	aqcSREi26zUrOekx2mzblpHGI/7r6PvJInIl/F6IxtL+mRIsdBMg5sYBpszxUlk2DSew03VG+j0
+	yeC79CSPAOSLa0B08vZuboEb4VwepBxqUMh5r7YedB0ApTElG/6m8aEE=
+X-Google-Smtp-Source: AGHT+IGlXH0hOYWbDCpliipMMkV+ON4CbsgpZ/j/WhoMG1UvkZ6fukspdIo97kjbryTAFGApMU6jRARXG+xOCO7hkilYu9rhX3Yq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241015192838.16740-1-dominik.karol.piatkowski@protonmail.com>
+X-Received: by 2002:a05:6e02:1e07:b0:3a3:6b20:5e20 with SMTP id
+ e9e14a558f8ab-3a3bcdcdfc4mr112981725ab.13.1729056843213; Tue, 15 Oct 2024
+ 22:34:03 -0700 (PDT)
+Date: Tue, 15 Oct 2024 22:34:03 -0700
+In-Reply-To: <CAGiJo8T5fAOgFBo5PwDObAJM=aiT=J0i2quXFo6XmPX4Fe=bZw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670f504b.050a0220.d9b66.0161.GAE@google.com>
+Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in move_addr_to_user (7)
+From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
+To: danielyangkang@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 15, 2024 at 07:28:57PM +0000, Dominik Karol Piątkowski wrote:
-> Add a TODO file stub for the gpib driver.
-> 
-> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
-> ---
-> v2: Remove maintainers from TODO, as they can be found in MAINTAINERS file
->  drivers/staging/gpib/TODO | 2 ++
->  1 file changed, 2 insertions(+)
->  create mode 100644 drivers/staging/gpib/TODO
-> 
-> diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
-> new file mode 100644
-> index 000000000000..850dc1102e54
-> --- /dev/null
-> +++ b/drivers/staging/gpib/TODO
-> @@ -0,0 +1,2 @@
-> +TODO:
-> +- checkpatch.pl fixes
-> -- 
-> 2.34.1
-> 
-> 
-> 
+Hello,
 
-Hi,
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: min NUM max NUM pkt NUM
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+EBUG: min 14 max 14 pkt 1
+Warning: Permanently added '10.128.1.180' (ED25519) to the list of known hosts.
+executing program
+executing program
+executing program
+executing program
+executing program
+executing program
+executing program
 
-You are receiving this message because of the following common error(s)
-as indicated below:
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+Tested on:
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+commit:         2f87d091 Merge tag 'trace-ringbuffer-v6.12-rc3' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c52c40580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
+dashboard link: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1229c45f980000
 
-thanks,
-
-greg k-h's patch email bot
 
