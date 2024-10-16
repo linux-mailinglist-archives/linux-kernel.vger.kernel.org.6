@@ -1,203 +1,100 @@
-Return-Path: <linux-kernel+bounces-368285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5FF9A0DAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F869A0DB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29103283859
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2711128312D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5F320E02D;
-	Wed, 16 Oct 2024 15:09:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0098C20B1EE;
-	Wed, 16 Oct 2024 15:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D8920E034;
+	Wed, 16 Oct 2024 15:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noabd1xE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E7854F95;
+	Wed, 16 Oct 2024 15:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729091367; cv=none; b=kkqDR5cKdQrKvo9Ar3e7+tkOZHk/pkFfo9+okXJHCDlRIl9e9Ij0eupqMmHokmPkqaWaQWPJxNlMPHTw937Zc1MMKR5quVEqcCvH1t8HO7ymx0FyBwgF6isJwrDyJYhhCxqvEZxlcgk8dW/WZZmYX016MjosU+Y8EJUjrU4Pvic=
+	t=1729091427; cv=none; b=q8C3Xsb939Clk52YEoM07rhwnyqZaCmEizfMQW6+tDnsnuear/sVWUu/zCsG41iZ+togk1vGxhI2dDQzIWCnhGCyl6V9k1r6jr0lz5vJsvyfJIOx+jQze/X1tFweDSaCoNJgc6QHtGMt2AvXOe65Y5EhPMn9WvgG+JU5qhCf8jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729091367; c=relaxed/simple;
-	bh=gRPb5P1k9UfY8ZGiYWYsNqS7y22Jny7V3mVzeUcEEe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i5GhRh/SN59ycN8pRuR1Djwk6Jp59TrZMuMZweCuBIhXRwFd/dNWg48tjWJxfyHPrpElopY+gYzAOtBzSnOz2GwwksUuyj1eYwAEAJoW9R6jB2Jy6HuOovJlFjpt6u4SXQ1A7G9unsaxt96ZCQ4MHEOhWym7aU5LiCf6gKORL3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1651FEC;
-	Wed, 16 Oct 2024 08:09:53 -0700 (PDT)
-Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C8003F528;
-	Wed, 16 Oct 2024 08:09:20 -0700 (PDT)
-Message-ID: <d3643b60-0c67-462b-b8c4-95854d2983b0@arm.com>
-Date: Wed, 16 Oct 2024 16:09:19 +0100
+	s=arc-20240116; t=1729091427; c=relaxed/simple;
+	bh=NTgGD59qf94Xj0J2P9c0n6Kdata3dVUb0roq94UWpPU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=O2ImJ+dZXTjQrwvvylN32uqXVp4QRf1ma1H/2NV1njFD6mxso0937fOkqNgiVfCd/KKLZlNHSfyOerh22xkRHLm5+dl/02z7GEytElqQZ11j6p5AefOyV3fzZt7oDRRUQPppxOlvgC/iNwy+OB+/QnfOUizmDLDkHC8VX7X5mBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noabd1xE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E871DC4CEC5;
+	Wed, 16 Oct 2024 15:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729091426;
+	bh=NTgGD59qf94Xj0J2P9c0n6Kdata3dVUb0roq94UWpPU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=noabd1xEt62dUzoOmnlBp08TTUQhdvGSGIeAqMo93CNTvaKfJzQcaDfgyOcCZeQ+1
+	 O289FTBhdLNmupFNkmVb8piMN66INPzxbCCqdscKs2QM2CWGkRYqs/1OWVxI3UMsTh
+	 9BP32y4QC4ki8tytD+iwjVJN1iBovcEr6JMi9XAzIBV1Biak6mIx0xPvP7zA0f5vMg
+	 S+x4+EZ6A/TE8G9OMMTZ78Cn2Jq8Tvk1P3gysqHK1d0zHrRl2Lny2Be3SNZT0DUx9T
+	 4FOL732vnx2a+tpEvZACyE/Wsa6kOoyz7Cbii5btbjFShiImr8tAHSaCJPxW33PDAi
+	 1ctUjk11N6neg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CCC3822D30;
+	Wed, 16 Oct 2024 15:10:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 21/57] sunrpc: Remove PAGE_SIZE compile-time
- constant assumption
-Content-Language: en-GB
-To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anna Schumaker <anna@kernel.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Trond Myklebust <trondmy@kernel.org>,
- Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-21-ryan.roberts@arm.com>
- <bee3f66f-cc22-4b3e-be07-23ce4c90df20@arm.com>
- <Zw/SE9+AMYmzBprS@tissot.1015granger.net>
- <33a6cc271475b0fc520b8fc20ed0b4f7742a2560.camel@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <33a6cc271475b0fc520b8fc20ed0b4f7742a2560.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf v1 1/2] bpf: fix link info netfilter flags to populate
+ defrag flag
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172909143125.1848445.4811107844774285676.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Oct 2024 15:10:31 +0000
+References: <20241011193252.178997-1-wudevelops@gmail.com>
+In-Reply-To: <20241011193252.178997-1-wudevelops@gmail.com>
+To: Tyrone Wu <wudevelops@gmail.com>
+Cc: bpf@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ riel@surriel.com, shakeel.butt@linux.dev, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-patches-bot@fb.com
 
-On 16/10/2024 15:54, Jeff Layton wrote:
-> On Wed, 2024-10-16 at 10:47 -0400, Chuck Lever wrote:
->> On Wed, Oct 16, 2024 at 03:42:12PM +0100, Ryan Roberts wrote:
->>> + Chuck Lever, Jeff Layton
->>>
->>> This was a rather tricky series to get the recipients correct for and my script
->>> did not realize that "supporter" was a pseudonym for "maintainer" so you were
->>> missed off the original post. Appologies!
->>>
->>> More context in cover letter:
->>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->>>
->>>
->>> On 14/10/2024 11:58, Ryan Roberts wrote:
->>>> To prepare for supporting boot-time page size selection, refactor code
->>>> to remove assumptions about PAGE_SIZE being compile-time constant. Code
->>>> intended to be equivalent when compile-time page size is active.
->>>>
->>>> Updated array sizes in various structs to contain enough entries for the
->>>> smallest supported page size.
->>>>
->>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>>> ---
->>>>
->>>> ***NOTE***
->>>> Any confused maintainers may want to read the cover note here for context:
->>>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->>>>
->>>>  include/linux/sunrpc/svc.h      | 8 +++++---
->>>>  include/linux/sunrpc/svc_rdma.h | 4 ++--
->>>>  include/linux/sunrpc/svcsock.h  | 2 +-
->>>>  3 files changed, 8 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
->>>> index a7d0406b9ef59..dda44018b8f36 100644
->>>> --- a/include/linux/sunrpc/svc.h
->>>> +++ b/include/linux/sunrpc/svc.h
->>>> @@ -160,6 +160,8 @@ extern u32 svc_max_payload(const struct svc_rqst *rqstp);
->>>>   */
->>>>  #define RPCSVC_MAXPAGES		((RPCSVC_MAXPAYLOAD+PAGE_SIZE-1)/PAGE_SIZE \
->>>>  				+ 2 + 1)
->>>> +#define RPCSVC_MAXPAGES_MAX	((RPCSVC_MAXPAYLOAD+PAGE_SIZE_MIN-1)/PAGE_SIZE_MIN \
->>>> +				+ 2 + 1)
->>
->> There is already a "MAX" in the name, so adding this new macro seems
->> superfluous to me. Can we get away with simply updating the
->> "RPCSVC_MAXPAGES" macro, instead of adding this new one?
->>
+Hello:
+
+This series was applied to bpf/bpf.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
+
+On Fri, 11 Oct 2024 19:32:51 +0000 you wrote:
+> This patch correctly populates the `bpf_link_info.netfilter.flags` field
+> when user passes the `BPF_F_NETFILTER_IP_DEFRAG` flag.
 > 
-> +1 that was my thinking too. This is mostly just used to size arrays,
-> so we might as well just change the existing macro.
+> Fixes: 84601d6ee68a ("bpf: add bpf_link support for BPF_NETFILTER programs")
+> Signed-off-by: Tyrone Wu <wudevelops@gmail.com>
+> ---
+>  net/netfilter/nf_bpf_link.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-I agree, its not the prettiest. I was (incorrectly) assuming you would want to
-continue to limit the number of actual pages at runtime based on the in-use page
-size. That said, looking again at the code, RPCSVC_MAXPAGES never actually gets
-used to dynamically allocate any memory. So I propose to just do the following:
+Here is the summary with links:
+  - [bpf,v1,1/2] bpf: fix link info netfilter flags to populate defrag flag
+    https://git.kernel.org/bpf/bpf/c/92f3715e1eba
+  - [bpf,v1,2/2] selftests/bpf: add asserts for netfilter link info
+    https://git.kernel.org/bpf/bpf/c/2aa587fd6659
 
-#define RPCSVC_MAXPAGES		((RPCSVC_MAXPAYLOAD+PAGE_SIZE_MIN-1)/
-						PAGE_SIZE_MIN + 2 + 1)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-That will be 259 in practice (assuming PAGE_SIZE_MIN=4K).
-
-> 
-> With 64k pages we probably wouldn't need arrays as long as these will
-> be. Fixing those array sizes to be settable at runtime though is not a
-> trivial project though.
-
-Indeed. Hopefully the above is sufficient.
-
-Thanks for the review!
-Ryan
-
-> 
->>
->>>>  /*
->>>>   * The context of a single thread, including the request currently being
->>>> @@ -190,14 +192,14 @@ struct svc_rqst {
->>>>  	struct xdr_stream	rq_res_stream;
->>>>  	struct page		*rq_scratch_page;
->>>>  	struct xdr_buf		rq_res;
->>>> -	struct page		*rq_pages[RPCSVC_MAXPAGES + 1];
->>>> +	struct page		*rq_pages[RPCSVC_MAXPAGES_MAX + 1];
->>>>  	struct page *		*rq_respages;	/* points into rq_pages */
->>>>  	struct page *		*rq_next_page; /* next reply page to use */
->>>>  	struct page *		*rq_page_end;  /* one past the last page */
->>>>  
->>>>  	struct folio_batch	rq_fbatch;
->>>> -	struct kvec		rq_vec[RPCSVC_MAXPAGES]; /* generally useful.. */
->>>> -	struct bio_vec		rq_bvec[RPCSVC_MAXPAGES];
->>>> +	struct kvec		rq_vec[RPCSVC_MAXPAGES_MAX]; /* generally useful.. */
->>>> +	struct bio_vec		rq_bvec[RPCSVC_MAXPAGES_MAX];
->>>>  
->>>>  	__be32			rq_xid;		/* transmission id */
->>>>  	u32			rq_prog;	/* program number */
->>>> diff --git a/include/linux/sunrpc/svc_rdma.h b/include/linux/sunrpc/svc_rdma.h
->>>> index d33bab33099ab..7c6441e8d6f7a 100644
->>>> --- a/include/linux/sunrpc/svc_rdma.h
->>>> +++ b/include/linux/sunrpc/svc_rdma.h
->>>> @@ -200,7 +200,7 @@ struct svc_rdma_recv_ctxt {
->>>>  	struct svc_rdma_pcl	rc_reply_pcl;
->>>>  
->>>>  	unsigned int		rc_page_count;
->>>> -	struct page		*rc_pages[RPCSVC_MAXPAGES];
->>>> +	struct page		*rc_pages[RPCSVC_MAXPAGES_MAX];
->>>>  };
->>>>  
->>>>  /*
->>>> @@ -242,7 +242,7 @@ struct svc_rdma_send_ctxt {
->>>>  	void			*sc_xprt_buf;
->>>>  	int			sc_page_count;
->>>>  	int			sc_cur_sge_no;
->>>> -	struct page		*sc_pages[RPCSVC_MAXPAGES];
->>>> +	struct page		*sc_pages[RPCSVC_MAXPAGES_MAX];
->>>>  	struct ib_sge		sc_sges[];
->>>>  };
->>>>  
->>>> diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
->>>> index 7c78ec6356b92..6c6bcc82685a3 100644
->>>> --- a/include/linux/sunrpc/svcsock.h
->>>> +++ b/include/linux/sunrpc/svcsock.h
->>>> @@ -40,7 +40,7 @@ struct svc_sock {
->>>>  
->>>>  	struct completion	sk_handshake_done;
->>>>  
->>>> -	struct page *		sk_pages[RPCSVC_MAXPAGES];	/* received data */
->>>> +	struct page *		sk_pages[RPCSVC_MAXPAGES_MAX];	/* received data */
->>>>  };
->>>>  
->>>>  static inline u32 svc_sock_reclen(struct svc_sock *svsk)
->>>
->>
-> 
 
 
