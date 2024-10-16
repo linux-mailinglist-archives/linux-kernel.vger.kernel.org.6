@@ -1,141 +1,125 @@
-Return-Path: <linux-kernel+bounces-367897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2059A0817
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:09:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24AF9A081C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986C7288DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:09:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB22C1C22B13
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD62076AB;
-	Wed, 16 Oct 2024 11:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F212076C0;
+	Wed, 16 Oct 2024 11:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSklbpKG"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lW4v3yx9"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6648418C33F;
-	Wed, 16 Oct 2024 11:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0442076A7
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076985; cv=none; b=UBTtfT9cT52uzCB+LWz/Sn+1KAyIBOm2OINrWm0P29IoZHZPHB8BuYwIYTE5LmZU9R4iWP2dZvD3/cCNfv9r4joPTZEnZ2TKRTmRzRJVRrSPDXoM9xhHB0VA9sDXNAMkBCp7m6IxnAsRuGMlRqiqq9eINxCw3ypZc62iNgMSt/E=
+	t=1729077218; cv=none; b=XyaL0nkMf/UN/8KL0QfFmQQ4yFW3SoCUCPodiOcty4MwjN9Z9Cmh0kVX2fsh17aSt2Tbf3UOxgmvKM/CPAgiZyun39o3COvmmZdn8jBPJZmizzbmAvIwH6uBZXEBQM0ethyi5mqo/JDpHXrN7FjqaPPOcIAuaVR7uH0yuwonLIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076985; c=relaxed/simple;
-	bh=SLcPoBGdRC9UOLWq3AO2q4XKPPr0ypIEKylqHD0nJc4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=b9/Zcy6NP1u/RpGD3Jt8Y1bTouc85ilzKZeY8DaN4PxGt6yMN4z+jhVkxU7yqmgRnMtCajhDxF4vSYlGTSnrHzI1DM9XRbaOi8qPNdrPx9tD/b3gusNcj/zOHtwUw74ydrLQPqa88PdiCZL/eGa4K6jzGyXiIj3V+sU4lyBU0VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSklbpKG; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e13375d3so5387939e87.3;
-        Wed, 16 Oct 2024 04:09:43 -0700 (PDT)
+	s=arc-20240116; t=1729077218; c=relaxed/simple;
+	bh=MMbOyLTO3wGcAW166+A0Nh8rO8ikdhlxZ3EdZM2YtmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=raHmEqsd3evqi6KlHE6NS1jvJPLqk7vCa0BcqT2ncWEgcTV66Nm9vv/0jas9cIMi2YqHB34HrjuvMyv0vH9xHZs2TMysb8Q6jOT4kOGdHJtp7qOd5Sn4E1W0+qFm4fwW4USquzJZJQy22lj+EkZ5TCsW7ZWm/OB2Uc2KFljlMkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lW4v3yx9; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e35bf59cf6so8097667b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:13:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729076981; x=1729681781; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JmxNFT1MumQs5zr5JY45ZMTsB54enVuUrCy+urpfilo=;
-        b=hSklbpKGUFp6jEI6S4FM5AqmQbKVrhPZtw6QS9I/eMRkcOfa+fcAvn72sqDNp9nGTs
-         0/+c4Uqd/LrG8rZiiipnmv7jCVWL9DPeLHvH0/F7bz8UKtDKAAz9SjsofXBm5BoP2C+h
-         LfFwZS+WjZe1nvpQsx9Yg2nqxDfsQcgBNYzyH9wnOMyhsuQwuWUAcvHpU23jjeqrv/Kt
-         sBNGrsLBoXCQWCpjRnqxJuR7CKy3dw7sdSRnlALmI5mYMsN4yG+raWUfkjIISGm8Fcyt
-         lw/Gbq7Z0bJlM4qxbfR3ch/w7epdYm1QpECfUFhDubf4cKfVM7CuvufY+9AWl2bIYZwo
-         zBLA==
+        d=linaro.org; s=google; t=1729077216; x=1729682016; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=t35RrnvDQXTH6WlgCiQGNdu+PPMpKHTypuZ5fkXYJTs=;
+        b=lW4v3yx93W1CHx3QzUfXgEKy4YShpkbhrLrw1zdYNBrxPpCOuW4B4pdI4LjezKnhQq
+         brcsPDoYP3kpsmrG2SvVSxcMsFiQ223iJBm8Dajv4bgrYiffblm48ggMODcddxvaKnG3
+         oJqJTQOetUWwHtrrKRuwYM9YAs4N2Ds49vwoNoL00Lb1npILyqicV+7emxXp02sK0E/r
+         sz0KMmrJyxB933CkyPJU12UgYzmUaBHlLhxLweH0+HoAKv4mqfPlSB9rNxnOu6L5SixI
+         Tc1c4wDEGrRG6jkyQeNXYphEn2mQjaW7KC4YGzSjTY51Pq3/nPJdxd6EHD+oloPpg02v
+         5t/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729076981; x=1729681781;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JmxNFT1MumQs5zr5JY45ZMTsB54enVuUrCy+urpfilo=;
-        b=NorvMaBoorZtH9TyWRg2AajuRIkPHsweoDQuVqVVW3HfM0ZRIFru7rLwGq4Y8rtfho
-         eXC71/R/cyxQ25AJ/W+lJnIlG/cKZlYXc4+kHhHuDRlVgmY7Ye8lj2IfAzIGV77U80HH
-         uVvlyOOwP+45CkINKDCK4KTraua5VXWDb+3uDH/Jx/bR0y63kzleA/c0518XSK+1LwzU
-         DAkEeeiSfECkHCxOdpkbvr3AFPBQKy1+3wQPuX9VFJOA1CkOK1DSufUkGcMt54GPS86Z
-         ckyS8bVEUo4JZAZgLqy6Fv50ANndel4jh+rBEUi66qg04CcFtqkTTYwyskNarwfx+ZHg
-         KZCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkFoBEWgdp321oJtlkvXAVyZZGr+ZP1BPXztb8fbdkFNuEJ1NWUyyHj0gRl4LrlbMmy62d0hTo/nQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa2i11W698vfReH4OO4x2t72bnjL/B26CpZZ6tUQpnULPkmE6o
-	AfoyJKnCTSLFZvGvPE0ttYaOlJcWtpE9eaVzK8q3/LFiNX/kB9nEG05v1w34CcwPyLxkvkawIrP
-	CMo71uY7BIlpxGZhhGYh/iIbkSqJKn3E=
-X-Google-Smtp-Source: AGHT+IHf+WOTS37RhxhEr/sgmuPjCld0APshHwWOoYDfE6FJO7cym/sNDlTzDn2/vPTzQj1X5QbM5iP5skJIoS/uP90=
-X-Received: by 2002:a05:6512:3b26:b0:53a:423:6eac with SMTP id
- 2adb3069b0e04-53a04237046mr2023256e87.0.1729076981238; Wed, 16 Oct 2024
- 04:09:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729077216; x=1729682016;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t35RrnvDQXTH6WlgCiQGNdu+PPMpKHTypuZ5fkXYJTs=;
+        b=Zb04wmTMFvfG3qI0Bdrf5y8WYjmEa5evXzP3pwcwHKlA9RpQLcsre/e6owarAGjL6K
+         nzh7o0rE2ulGgTGv135Qm7Oj8ARRY/BpZCQPKkXu+L0yacInkLtGuhHS0OFJfP4RD5Z7
+         b276K8Yr8JB4H8D02CFHRTQ/zwsbGwALBvO7Wb1NjphqzYbkvh9TyHZU/TVEtOyhNuLE
+         akh/CviZaDXzfUitmPxp0DTe3OHS/1F0wR+SDOIXYNNHq79a87CUCB/Lx05nDt9p0mxU
+         1EM+F6BnS7CPx/QBrlRlgIujQLsnyOyA98XI1xJSteKTiABkoiZRL9HvFIvqQkC/7pBS
+         3zxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfOj3psRXcDgvUFYRuRhqFWz1PJlMEoGm8jLlTEMBkd0yQwuECvP09lvmzrsNn3AJNigWktiGtq0dUPQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTcL1iTSW+yPDpbWiCDLDXDbHVD+3sk2/1T1f7jLSsWZvhiuiH
+	lmR5GPZ30YaSEMZql9IAgD977QBgei0bj3yDNpomM40npduy6/pn75lHKPcdeOHMGlyydVOcuuW
+	MhSnUvLtc1f8G3xpzkFvqcI7LO5ZJUTgCoGu+uA==
+X-Google-Smtp-Source: AGHT+IFbaQB1b7uprlpkX9leHepB8/oAO3NTYJHXyEBNTbByJjabNy9Zt6W7LL2bl36doaQxwSWNeBZZmKsWoyLbeNU=
+X-Received: by 2002:a05:690c:3587:b0:664:74cd:5548 with SMTP id
+ 00721157ae682-6e3d34ee5a7mr30758017b3.1.1729077215816; Wed, 16 Oct 2024
+ 04:13:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xiongwei Song <sxwbruce@gmail.com>
-Date: Wed, 16 Oct 2024 19:09:29 +0800
-Message-ID: <CALy5rjUMnocsh80gPB+4UgaFS-Gsz5KAFnAN8Nj7m_oyohFfvg@mail.gmail.com>
-Subject: XFS performance degradation during running cp command with big test file
-To: cem@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-3-quic_rajkbhag@quicinc.com> <ftvwsizfupm7veg662adnzc6jpulk5shga3xmvbtom3saclnf6@bmatmqw5lp72>
+ <gnv7i3m5ooxtyi4ywgq4q5sq3wj6j7xtjx6puuixoulypeiwjo@65wfj657x5ug> <28d9b410-dcf0-4431-81a3-6c33d536d217@kernel.org>
+In-Reply-To: <28d9b410-dcf0-4431-81a3-6c33d536d217@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 16 Oct 2024 14:13:24 +0300
+Message-ID: <CAA8EJpotk=pgcmFePrqESnpE5edRZVboCs-M9-nPOQcG0xa2Jg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/22] arm64: dts: qcom: add wifi node for IPQ5332
+ based RDP441
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org, 
+	linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jeff Johnson <jjohnson@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Dear Experts,
+On Wed, 16 Oct 2024 at 13:55, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 16/10/2024 12:30, Dmitry Baryshkov wrote:
+> > On Wed, Oct 16, 2024 at 08:58:25AM +0200, Krzysztof Kozlowski wrote:
+> >> On Tue, Oct 15, 2024 at 11:56:17PM +0530, Raj Kumar Bhagat wrote:
+> >>> RDP441 is based on IPQ5332. It has inbuilt AHB bus based IPQ5332 WiFi
+> >>> device.
+> >>>
+> >>> Describe and add WiFi node for RDP441. Also, reserve the memory
+> >>> required by IPQ5332 firmware.
+> >>>
+> >>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+> >>
+> >> Don't send one DTS patch in 22 patchset targetting different subsystem.
+> >> Imagine, how wireless maintainers are supposed to apply their bits? 21
+> >> commands instead of one command?
+> >
+> > Huh? b4 shazam -P 1,3-22 should work. Or ideally the DTS should be the
+>
+> Hm indeed, it wasn't some time ago.
+>
+> > last one, so applying all other patches should be obvious. As a reviewer
+> > I find it troublesome to review bindindings / driver without an actual
+> > DTS snippet.
+>
+> Considering that patchsets for certain subsystem *have to skip DTS* (you
+> cannot include DTS in the series), then better get used to such
+> inconvenience.
 
-We are facing a performance degradation on the XFS partition. We
-was trying to copy a big file(200GB ~ 250GB) from a path to /dev/null,
-when performing cp command to 60s ~ 90s, the reading speed was
-suddenly down. At the beginning, the reading speed was around
-1080MB/s, 60s later the speed was down to around 350MB/s. This
-problem  is only found with XFS + Thick LUN.
+Yes, I'm getting used to that for some of the subsys.
 
-The test environment:
-Storage Model: Dell unity XT 380 Think/Thin LUN
-Linux Version: 4.12.14
 
-The steps to run test:
-1) Create a xfs partition with following commands
-   parted -a opt /dev/sdb mklabel gpt mkpart sdb xfs 0% 100%
-   mkfs.xfs /dev/sdbx
-   mount /dev/sdbx /xfs
-2) Create a ~200GB file named fileA in the partition.
-3) Run cp command to copy the file created in step 2. Meanwhile,
-   run iostat vmstat and blktrace to capture logs.
-   cp /xfs/fileA /dev/null
-
-To narrow down this issue, we also did some experiments
-below to compare:
-1) Run the test with dd command with XFS + Thick LUN
-   dd if=/xfs/fileA of=/dev/null bs=32k status=progress
-   Result: also meet performance degradation
-   Speed: around 650MB/S
-   Speed has changed to around 350MB/S since the 60s ~ 90s of cp run.
-
-2) Run the test with dd command with raw device with XFS + Thick LUN
-   dd if=/dev/sdbx of=/dev/null bs=32k status=progress
-   Results: No performance degradation
-   Speed: around 520MB/s
-
-3) Run run test with ext4 + Think LUN
-   cp /xfs/fileA /dev/null
-   Results: No performance degradation
-   Speed: around 1080MB/s
-
-4) Run the test with cp with XFS + Thin LUN
-   cp /xfs/fileA /dev/null
-   Result: No performance degradation
-   Speed: around 500MB/s
-
-5) Run the test with dd with XFS + Thin LUN
-   dd if=/xfs/fileA of=/dev/null bs=32k status=progress
-   Result: No performance degradation
-   Speed: around 500MB/s
-
-It seems the issue only can be triggered with XFS + Thick LUN,
-no matter dd or cp to read the test file. We would like to learn
-if there is something special with XFS in this test situation?
-Is it known?
-
-Do you have any thoughts or suggestions? Also, do you need vmstat
-or iostat logs or blktrace or any other logs to address this issue?
-
-Thank you in advance.
-
-Regards,
-Bruce
+-- 
+With best wishes
+Dmitry
 
