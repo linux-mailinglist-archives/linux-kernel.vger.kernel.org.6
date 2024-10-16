@@ -1,143 +1,367 @@
-Return-Path: <linux-kernel+bounces-367351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A939A0138
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:17:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D1D9A013A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBCF282F1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:17:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4917AB225C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698E418C347;
-	Wed, 16 Oct 2024 06:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003B218C03E;
+	Wed, 16 Oct 2024 06:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaFxcZdN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cese27kP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1F518BC05;
-	Wed, 16 Oct 2024 06:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B67C18BC05
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059443; cv=none; b=uRHza+CXYVhMKYsF4zwtj9gx3VM2GrRmBfwNjTaCfeLVMr1PZ26ewRXLRw6JnUBsbZkMcG1JcNOqcGWcIQdWlq4E3EjTRb3PSKKomRzn9Gm3oCvSgoH3EjQ1ZmcvVUW52OX3RHzEeZqFn006sNWofVic3RhHvS0vypAml94tsU4=
+	t=1729059480; cv=none; b=hqpABXacMafZU3fwIXHrNHG0hErKMNfAQEBEgp/dhv0b8Ov/3eyDUVj1EtQhRQUdgpZwazn+tr6kT2XC4krw7qW/5LXkPzY9F446m+6b/8n3LS4Q+qlrCjRTTiPZS+4NssrvuLaMX7HT7LJ4EbTs9cGyBNPTxrreEdBjcHKpMcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059443; c=relaxed/simple;
-	bh=j2o1JI5+4KDVVJgJMPrHXFuEh6+VO0eeG8uZGayDRPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gh7x2/TP/8D5qil0Pvs4K7ehskuBP7N9O5MlCqNwTDSxOALpAeehkbDURHVHtDir13bu95WAbvgTHsTChdAbYJvu7hA5++rOl92DhMIts2YkKGzmjiGj9q7jmVjHeQFtl7gqgGE8Z8dT3j2LYKfaYalj4uENveMesZpxNIRloQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaFxcZdN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFEAC4CEC5;
-	Wed, 16 Oct 2024 06:17:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729059443;
-	bh=j2o1JI5+4KDVVJgJMPrHXFuEh6+VO0eeG8uZGayDRPE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iaFxcZdNmXgjJPhp9mJJT4gtNgJtamcDnzVR7GUTBI7F593gPsBW4HE/uAydBO10w
-	 oudm+CTy//YR3ozfbcdWATjyuuPgb4FSY7aqr6FLwmFk4g3/s1uQpZhYaYO/BiHj1x
-	 /dLmXLtKhgQ/dTyXM8hq96UyVfPuCWyDbxabpnkaf2yyGnxHmA/cN0PcO3L/z7wPCy
-	 YGxo6wKqbGczQluhQ1EjPh6CQpxbDAbXtBb0+UGG0k1UwT6SrFL5MV6XHNbJKitTK7
-	 eBVvIwSaIEstt25PoXbP5Y/YbG77S7LajpM90/zuGr6t+qGYltWnZvawEcQOWumTJB
-	 cZ/d4n4qfXa/g==
-Message-ID: <b5267106-27a3-48e5-9fd3-912b4c62155c@kernel.org>
-Date: Wed, 16 Oct 2024 08:17:18 +0200
+	s=arc-20240116; t=1729059480; c=relaxed/simple;
+	bh=DbGFQO1PVOYb+7WvhwRXAC3V0LwgDa2w/LNZHgQKhBU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PU92i8+qX6dmRScDbHjAIcbBoxJF0kCtkrFqmo7NNXZcS89M0tLQPOotbTz+nYsGiuSGEbfYCIW2Pe58DeRY/WzTYjoCTWdMzVbIn/rGQ0d0iiitaGpm6w8D9Zyu2QSWLklN9JSQ2PAqXBj8gaWSIiZwf6J4DTDQEHavWilCyuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cese27kP; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729059478; x=1760595478;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=DbGFQO1PVOYb+7WvhwRXAC3V0LwgDa2w/LNZHgQKhBU=;
+  b=cese27kPS1toEWkKjwdbJsaVPwFKn0qfnVkCM19SILIxrGJr264q0Rwl
+   5vpT5LeRlawORC76mat1lyo8kvzdiniOUB4rlEPGHnxlERYGk2q2ciRuP
+   XJsMxGmTBbJKjzl1Q62ebhD9Ayvzj/GPO1KCN3jYoXo26yoT3DQvbks4r
+   lJxnP5s4KcsgNIAwGeZs0We0onHagavWVH6FrU84Of+j0Nr/HOOn/F61x
+   xU5ZkXTpaAg4AOcE1wb1e+v3EEWBpaK3X27XpuZQF4WfUi6KAof3gUkdz
+   K8e4QvNPSyX7JYsFltvvDyzLVEAtDr2FV+AUkjHikQYMb+aGl1xnX2f0S
+   w==;
+X-CSE-ConnectionGUID: V8XxA+wuRP6R1lRq0bafYg==
+X-CSE-MsgGUID: rSliFnsWQ7K3ZgI8UerOrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28367119"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="28367119"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 23:17:57 -0700
+X-CSE-ConnectionGUID: vbhxgz5HQSOemlec6166lA==
+X-CSE-MsgGUID: Yv/2DeicReqkGatn6QXyGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="78475506"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO [10.245.246.80]) ([10.245.246.80])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 23:17:54 -0700
+Message-ID: <ee955c4d3e63edd3d1e37b6467bf01c2c4efc827.camel@linux.intel.com>
+Subject: Re: [PATCH v2] locking/ww_mutex: Adjust to lockdep nest_lock
+ requirements
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: intel-xe@lists.freedesktop.org, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
+ <longman@redhat.com>, Maarten Lankhorst <maarten@lankhorst.se>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Wed, 16 Oct 2024 08:17:50 +0200
+In-Reply-To: <Zw6touohNwfqs3T0@boqun-archlinux>
+References: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
+	 <Zw19sMtnKdyOVQoh@boqun-archlinux>
+	 <bf7632b74c075f2c430fdb98cefed486b4d9e74f.camel@linux.intel.com>
+	 <Zw6touohNwfqs3T0@boqun-archlinux>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: arm: cpus: Add Samsung Mongoose M5
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- David Wronek <davidwronek@gmail.com>, Sibi Sankar <quic_sibis@quicinc.com>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241015210205.963931-1-igor.belwon@mentallysanemainliners.org>
- <20241015210205.963931-2-igor.belwon@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241015210205.963931-2-igor.belwon@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 15/10/2024 23:02, Igor Belwon wrote:
-> Add a compatible for the Samsung Mongoose M5 cores, found in
-> the Exynos 990.
-> 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+On Tue, 2024-10-15 at 11:00 -0700, Boqun Feng wrote:
+> On Tue, Oct 15, 2024 at 05:27:28PM +0200, Thomas Hellstr=C3=B6m wrote:
+> [..]
+> > > diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+> > > index 6f6a5fc85b42..6750321e3e9a 100644
+> > > --- a/lib/locking-selftest.c
+> > > +++ b/lib/locking-selftest.c
+> > > @@ -1720,8 +1720,6 @@ static void ww_test_normal(void)
+> > > =C2=A0{
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+> > >=20
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WWAI(&t);
+> > > -
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * None of the ww_mut=
+ex codepaths should be taken in the
+> > > 'normal'
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * mutex calls. The e=
+asiest way to verify this is by
+> > > using
+> > > the
+> > > @@ -1770,6 +1768,8 @@ static void ww_test_normal(void)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ww_mutex_base_unlock(&o.ba=
+se);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN_ON(o.ctx !=3D (void *=
+)~0UL);
+> > >=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WWAI(&t);
+> > > +
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* nest_lock */
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 o.ctx =3D (void *)~0UL;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ww_mutex_base_lock_nest_lo=
+ck(&o.base, &t);
+> > >=20
+> > > Please confirm whether this change is intended.
+> >=20
+> > This fix looks correct and while this change was not intended, I
+> > think
+> > it makes sense and if this locking order is present in existing
+> > code
+> > apart from this selftest, it's probably easily fixable.
+> >=20
+> > >=20
+> > > The second is a case as follow:
+> > >=20
+> > > 	ww_acquire_init(...);
+> > > 	spin_lock(...);
+> > > 	ww_mutex_lock(...); // this should trigger a context
+> > > 			=C2=A0=C2=A0=C2=A0 // invalidation. But the mutex was
+> > > 			=C2=A0=C2=A0=C2=A0 // initialized by ww_acquire_init()
+> > > as a
+> > > 			=C2=A0=C2=A0=C2=A0 // LD_WAIT_INV lock.
+> > >=20
+> > > The following could fix this:
+> > >=20
+> > > diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+> > > index a401a2f31a77..45ff6f7a872b 100644
+> > > --- a/include/linux/ww_mutex.h
+> > > +++ b/include/linux/ww_mutex.h
+> > > @@ -156,8 +156,8 @@ static inline void ww_acquire_init(struct
+> > > ww_acquire_ctx *ctx,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 debug_check_no_locks_freed=
+((void *)ctx, sizeof(*ctx));
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lockdep_init_map(&ctx->dep=
+_map, ww_class->acquire_name,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ &ww_class->acquire_key, 0);
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lockdep_init_map(&ctx->first_lo=
+ck_dep_map, ww_class-
+> > > > mutex_name,
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &w=
+w_class->mutex_key, 0);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lockdep_init_map_wait(&ctx->fir=
+st_lock_dep_map, ww_class-
+> > > > mutex_name,
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 &ww_class->mutex_key, 0,
+> > > LD_WAIT_SLEEP);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_acquire(&ctx->dep_ma=
+p, 0, 0, _RET_IP_);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_acquire_nest(&ctx->f=
+irst_lock_dep_map, 0, 0, &ctx-
+> > > > dep_map, _RET_IP_);
+> > > =C2=A0#endif
+> > >=20
+> > > A v3 with all these fixed would look good to me, and I can add a
+> > > Tested-by tag to it. Thanks!
+> >=20
+> > The fix here is a bit confusing. It looks like this test is crafted
+> > to
+> > fail because we take a sleeping ww_mutex inside a spinlock. But the
+> > ww_mutex lockdep map is already initialized as LD_WAIT_SLEEP. How
+> > come
+> > the first_lock_dep_map locking mode LD_WAIT_INV is used in the
+> > ww_mutex_lock()? Is that because of the lockdep hlock refcounting?
+> >=20
+>=20
+> No, it's not because of refcounting, actually in this case
+> refcounting
+> won't happen because there is a spin_lock sitting in between:
+>=20
+> held_locks stack:
+>=20
+> 	ww_lockdep_acquire
+> 	=C2=A0 ww_lockdep_mutex
+> 	=C2=A0=C2=A0=C2=A0 lock_A
+>=20
+> because there is a lock_A here, the following "if" will be false for
+> ww_mutex_lock() in the test case:
+>=20
+> 	hlock =3D curr->held_locks + depth - 1;
+> 	if (hlock->class_idx =3D=3D class_idx && nest_lock) {
+>=20
+> The reason why the wait types of 'first_lock_dep_map' matter is
+> because
+> the lock class it shares with ww_mutex_lock() are registered at
+> *acquire* time. So because we do
+>=20
+> 	ww_acquire_init():
+> 	=C2=A0 ...
+> 	=C2=A0 lockdep_init_map(...);
+> 	=C2=A0 ...
+> 	=C2=A0 mutex_acquire_nest(...);
+> 	...
+> 	ww_mutex_lock():
+> 	=C2=A0 __mutex_lock_common():
+> 	=C2=A0=C2=A0=C2=A0 mutex_acquire_nest(...);
+>=20
+> in the test case, these two mutex_acquire_nest()s use different
+> lockdep_maps but share the same key, therefore whoever call
+> mutex_acquire_nest() registers the lock class with its wait types.
+>=20
+> So even though first_lock_dep_map is a fake lock, it has to have the
+> same wait types as a real mutex.
 
-I am not going to review untested code, sorry.
+Understood.
+>=20
+> Does this make sense?
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Yes it does. I'll update to a v3, and add a Tested-by: tag. Would you
+like a Co-developed-by: tag as well?
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Thanks,
+Thomas
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Best regards,
-Krzysztof
+>=20
+> Regards,
+> Boqun
+>=20
+> > Thanks,
+> > Thomas
+> >=20
+> >=20
+> >=20
+> > >=20
+> > > Regards,
+> > > Boqun
+> > >=20
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > > Cc: Will Deacon <will@kernel.org>
+> > > > Cc: Waiman Long <longman@redhat.com>
+> > > > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > > > Cc: Maarten Lankhorst <maarten@lankhorst.se>
+> > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > > > Cc: dri-devel@lists.freedesktop.org
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > Signed-off-by: Thomas Hellstr=C3=B6m
+> > > > <thomas.hellstrom@linux.intel.com>
+> > > > ---
+> > > > =C2=A0include/linux/ww_mutex.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| 14 ++++++++++++++
+> > > > =C2=A0kernel/locking/test-ww_mutex.c |=C2=A0 8 +++++---
+> > > > =C2=A02 files changed, 19 insertions(+), 3 deletions(-)
+> > > >=20
+> > > > diff --git a/include/linux/ww_mutex.h
+> > > > b/include/linux/ww_mutex.h
+> > > > index bb763085479a..a401a2f31a77 100644
+> > > > --- a/include/linux/ww_mutex.h
+> > > > +++ b/include/linux/ww_mutex.h
+> > > > @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
+> > > > =C2=A0#endif
+> > > > =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> > > > =C2=A0	struct lockdep_map dep_map;
+> > > > +	/**
+> > > > +	 * @first_lock_dep_map: fake lockdep_map for first
+> > > > locked
+> > > > ww_mutex.
+> > > > +	 *
+> > > > +	 * lockdep requires the lockdep_map for the first
+> > > > locked
+> > > > ww_mutex
+> > > > +	 * in a ww transaction to remain in memory until all
+> > > > ww_mutexes of
+> > > > +	 * the transaction have been unlocked. Ensure this by
+> > > > keeping a
+> > > > +	 * fake locked ww_mutex lockdep map between
+> > > > ww_acquire_init() and
+> > > > +	 * ww_acquire_fini().
+> > > > +	 */
+> > > > +	struct lockdep_map first_lock_dep_map;
+> > > > =C2=A0#endif
+> > > > =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+> > > > =C2=A0	unsigned int deadlock_inject_interval;
+> > > > @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct
+> > > > ww_acquire_ctx *ctx,
+> > > > =C2=A0	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
+> > > > =C2=A0	lockdep_init_map(&ctx->dep_map, ww_class-
+> > > > >acquire_name,
+> > > > =C2=A0			 &ww_class->acquire_key, 0);
+> > > > +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class-
+> > > > > mutex_name,
+> > > > +			 &ww_class->mutex_key, 0);
+> > > > =C2=A0	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
+> > > > +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0,
+> > > > &ctx-
+> > > > > dep_map, _RET_IP_);
+> > > > =C2=A0#endif
+> > > > =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+> > > > =C2=A0	ctx->deadlock_inject_interval =3D 1;
+> > > > @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct
+> > > > ww_acquire_ctx *ctx)
+> > > > =C2=A0static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx=
+)
+> > > > =C2=A0{
+> > > > =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> > > > +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
+> > > > =C2=A0	mutex_release(&ctx->dep_map, _THIS_IP_);
+> > > > =C2=A0#endif
+> > > > =C2=A0#ifdef DEBUG_WW_MUTEXES
+> > > > diff --git a/kernel/locking/test-ww_mutex.c
+> > > > b/kernel/locking/test-
+> > > > ww_mutex.c
+> > > > index 10a5736a21c2..5d58b2c0ef98 100644
+> > > > --- a/kernel/locking/test-ww_mutex.c
+> > > > +++ b/kernel/locking/test-ww_mutex.c
+> > > > @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
+> > > > =C2=A0	int ret;
+> > > > =C2=A0
+> > > > =C2=A0	ww_mutex_init(&mtx.mutex, &ww_class);
+> > > > -	ww_acquire_init(&ctx, &ww_class);
+> > > > +	if (flags & TEST_MTX_CTX)
+> > > > +		ww_acquire_init(&ctx, &ww_class);
+> > > > =C2=A0
+> > > > =C2=A0	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
+> > > > =C2=A0	init_completion(&mtx.ready);
+> > > > @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
+> > > > =C2=A0		ret =3D wait_for_completion_timeout(&mtx.done,
+> > > > TIMEOUT);
+> > > > =C2=A0	}
+> > > > =C2=A0	ww_mutex_unlock(&mtx.mutex);
+> > > > -	ww_acquire_fini(&ctx);
+> > > > +	if (flags & TEST_MTX_CTX)
+> > > > +		ww_acquire_fini(&ctx);
+> > > > =C2=A0
+> > > > =C2=A0	if (ret) {
+> > > > =C2=A0		pr_err("%s(flags=3D%x): mutual exclusion
+> > > > failure\n",
+> > > > @@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
+> > > > =C2=A0	if (ret)
+> > > > =C2=A0		return ret;
+> > > > =C2=A0
+> > > > -	ret =3D stress(2047, hweight32(STRESS_ALL)*ncpus,
+> > > > STRESS_ALL);
+> > > > +	ret =3D stress(2046, hweight32(STRESS_ALL)*ncpus,
+> > > > STRESS_ALL);
+> > > > =C2=A0	if (ret)
+> > > > =C2=A0		return ret;
+> > > > =C2=A0
+> > > > --=20
+> > > > 2.46.0
+> > > >=20
+> >=20
 
 
