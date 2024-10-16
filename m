@@ -1,112 +1,219 @@
-Return-Path: <linux-kernel+bounces-368693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050A39A1371
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:10:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B539A1373
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98074B21811
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:10:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44123B22256
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47102170AF;
-	Wed, 16 Oct 2024 20:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03352170B5;
+	Wed, 16 Oct 2024 20:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ELQ8f8MC"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MR/ToICw"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDA615C145
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A9A2170B4;
+	Wed, 16 Oct 2024 20:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729109291; cv=none; b=a0bNDUCE7OE90xgdOazkkR4+H+aT8Jwruafl2Oxx+E/0lXHRXgeA6O9YMwsZEuXnPfvMUEBv5rdtSGk4OW0s7S1vcqIgwcjKFjzz2YL7+xSCakFTeuJefRwYPt/45z6yUn7hhAENemZmlv6VWE3EekOGocPTjTMzeFbieZAc38U=
+	t=1729109325; cv=none; b=Vdc3fF4P2p78hLsdKrP9V0gaRfULA8ruy5eGDtqweeHx3gvroxMb9adRoJccyK4rJVC4cBdmM6VRDpsI2dQytQbXwYJqVoJ+40xxBixv6TqJ6tdjUlVjZ9vHQQjGzNgj2vRp/N+KdeOcU6V1TcoCo/HNNkuaglXGFREABkW01kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729109291; c=relaxed/simple;
-	bh=GdkznF4IVV6bJMBN5T9UjLgi67lcbrBzwicDpDkQp9I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Pss3N8hYpuFdPUYKckUVVgBCZ15/tonyb7JEdjq98EKl+QD9YolpZIc0w1yNgW7vBV30xtVhdfOq9GiMdWDgRxY/cSXx5aqTNvKqztjq+BXR+Et1OUaZw/NmDQJ2lgW1qehnymQiOrIWo7ts9n7tcut5hqHe0jJmE+0ZFj8jQzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ELQ8f8MC; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460969c49f2so66171cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729109289; x=1729714089; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4x8ZP9Vbh+VTFMg/xiymQsuRxJWNJs+6ZIoiCkqRAm0=;
-        b=ELQ8f8MCgEZdN7ebs/2UTku/Lil307fm23SFWqNud42h8l0pZk/3mGIwrFk+9/GqRd
-         bfy/axuXZV9U6D5AoIN1Xlwjg09BHCNngHZJ0gBv8KMKqRr6Y4zeESc4edzVOhj5nhvO
-         KdU3nQ1z3oU5MKJxoo/FVmnoC0ExtogNqK1F5SX2QIZu5z3/5Lj9l2X2mKMJ/pH/zxt3
-         IJdTuNmGNOzL06kGcKcZuupNTx4ja0bESrXGoilTMi4TMme72n1pLMAiFnWrT48JvDVp
-         3tbjIt1RHHb9XsIqHoEf2+7rmlRShIrM8OQs7nxiPlHtFn88OF5Zqnyg9+8cgBIRWFrE
-         ZBMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729109289; x=1729714089;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4x8ZP9Vbh+VTFMg/xiymQsuRxJWNJs+6ZIoiCkqRAm0=;
-        b=RGqixafb8+yQ3czUMMX9Dh/KbmE8068nIny8AhQJCgwxaaii0ZGPLDOp4eWUhFZDSe
-         mvejRfLZQHl7Gld/GgmaZFI/qpLf+zNjsVlYTJy5JvotuB+rcLAqdiKspr2waCreWouF
-         z8doDbSa5tSA1m0AbI0vKDKHfL7pdTgxP1GCTIUihg4YUaZQuV/m4phe8ENCK2WzACHM
-         TLQTHH1JNO/TBh183gv0aSwajUlMQ/bQCpDkMUdC8XWs5Gi47g3SnR8HdETOa7zTXQzg
-         FabL11tkUbWTkpSEcZeDOh7ydt5OTfnmnKrXY6Ps20TtWzAC79skp8BbJr0+rBCjD3rc
-         OT0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/68Hchcfs7IeBt98xeSswBs5Q75AO5dfk91ifxq5pwmjHXTvGTeXuGbiOdRN/8K5iya3BmqZ0Hhdty84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr9viWpx7rewmMGYx4g0y2xMGrW/41Si1BcAx/rNu89rBz1ij0
-	u9E76TyGwdPCM9ld+TgTM11JCNtmT/+N5E2rNzv60YaaP3zfNC4pXLJ3nNBqJM7G8yauzOb4xOF
-	DJajV80EEbWU80GlFom9BEQ2ouEL+zF2N+c/l
-X-Google-Smtp-Source: AGHT+IF5hnOqY+1pTXpL3951R89pfy6xU8zLwGpCYH8n03Mf3vHjGku1bi4mgVj553z973h+Q6KOOQ98ZWYCxNR51ds=
-X-Received: by 2002:a05:622a:4e98:b0:45f:6f3:5671 with SMTP id
- d75a77b69052e-4609c8e1896mr731531cf.20.1729109288691; Wed, 16 Oct 2024
- 13:08:08 -0700 (PDT)
+	s=arc-20240116; t=1729109325; c=relaxed/simple;
+	bh=ncs4lF1J9377PDY2VvSSwpTm5rKBTECZUImi+NbuJeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RW09Y1EUrjYuEAQT46MqPE0OeOxKagczhsqJjV0vtuoZZkUVKzmPqspUKbC00GThizVqMRWmeScggZ9eyrYNBzMujjY1nLG6lOHtpKvUxL9uVzHL9YEwohqkbkCp+y044ctj59Y1re4BpT4vXL8Z1LtRlMRebqyp/k5dqbCVod8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MR/ToICw; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E095EA57;
+	Wed, 16 Oct 2024 22:06:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729109219;
+	bh=ncs4lF1J9377PDY2VvSSwpTm5rKBTECZUImi+NbuJeg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MR/ToICwjBRDRCcjflya5yRQGvj7PhH4hm8tpkGZhpegzCbKewENLC9AJHVjSpm/n
+	 oUtmUvyBz2H+XGSmddarclutrXxTZHXYzRkrtJQcfiNW4moWAKXrzMQNcZ1nipDzBx
+	 8Zfe9Opd+DSeJIC2daIPjAFiizyucr1AB69kaZfU=
+Date: Wed, 16 Oct 2024 23:08:36 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: ov5645: add HAS_EVENTS supporty
+Message-ID: <20241016200836.GF30496@pendragon.ideasonboard.com>
+References: <20241014173840.412695-1-tomm.merciai@gmail.com>
+ <20241014175452.GB13238@pendragon.ideasonboard.com>
+ <Zw4IrU8bOOtq26Gx@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <Zw6aZiBvRM5hvqVn@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Raghavendra Rao Ananta <rananta@google.com>
-Date: Wed, 16 Oct 2024 13:07:58 -0700
-Message-ID: <CAJHc60yoipTA7WywvPSM52X-NgCTgy2Dvxn8OrCT=vPJNNxNxw@mail.gmail.com>
-Subject: [kvm-unit-tests] arm64: Build failures in fpu.c test with clang
-To: subhasish.ghosh@arm.com, andrew.jones@linux.dev, joey.gouly@arm.com
-Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zw6aZiBvRM5hvqVn@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 
-Hello,
+Hi Tommaso,
 
-Compiling the kvm-unit-tests for arm64 with clang gives the following error:
+On Tue, Oct 15, 2024 at 06:37:58PM +0200, Tommaso Merciai wrote:
+> On Tue, Oct 15, 2024 at 08:16:13AM +0200, Tommaso Merciai wrote:
+> > On Mon, Oct 14, 2024 at 08:54:52PM +0300, Laurent Pinchart wrote:
+> > > On Mon, Oct 14, 2024 at 07:38:40PM +0200, Tommaso Merciai wrote:
+> > > > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > > > userspace has to be able to subscribe to control events so that it is
+> > > > notified when the control changes value.
+> > > > Add missing HAS_EVENTS support: flag and .(un)subscribe_event().
+> > > > 
+> > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > > ---
+> > > >  drivers/media/i2c/ov5645.c | 10 +++++++++-
+> > > >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> > > > index 0c32bd2940ec..2c5145d5c616 100644
+> > > > --- a/drivers/media/i2c/ov5645.c
+> > > > +++ b/drivers/media/i2c/ov5645.c
+> > > > @@ -29,6 +29,7 @@
+> > > >  #include <linux/slab.h>
+> > > >  #include <linux/types.h>
+> > > >  #include <media/v4l2-ctrls.h>
+> > > > +#include <media/v4l2-event.h>
+> > > >  #include <media/v4l2-fwnode.h>
+> > > >  #include <media/v4l2-subdev.h>
+> > > >  
+> > > > @@ -1034,6 +1035,11 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
+> > > >  	.s_stream = ov5645_s_stream,
+> > > >  };
+> > > >  
+> > > > +static const struct v4l2_subdev_core_ops ov5645_subdev_core_ops = {
+> > > > +	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > > > +	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > > > +};
+> > > > +
+> > > >  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> > > >  	.enum_mbus_code = ov5645_enum_mbus_code,
+> > > >  	.enum_frame_size = ov5645_enum_frame_size,
+> > > > @@ -1043,6 +1049,7 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> > > >  };
+> > > >  
+> > > >  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
+> > > > +	.core = &ov5645_subdev_core_ops,
+> > > >  	.video = &ov5645_video_ops,
+> > > >  	.pad = &ov5645_subdev_pad_ops,
+> > > >  };
+> > > > @@ -1178,7 +1185,8 @@ static int ov5645_probe(struct i2c_client *client)
+> > > >  
+> > > >  	v4l2_i2c_subdev_init(&ov5645->sd, client, &ov5645_subdev_ops);
+> > > >  	ov5645->sd.internal_ops = &ov5645_internal_ops;
+> > > > -	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > > > +	ov5645->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > > > +			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > > 
+> > > Instead of patching every subdev driver, should we handle all of this in
+> > > the subdev core ? If a control handler is set for the subdev, we could
+> > > set the HAS_EVENTS flag automatically, and default to
+> > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> > > if there are no control operations.
+> 
+> Premit:
+>  - Don't know if I'm wrong eh.
 
-arm/fpu.c:235:3: error: unknown register name 'q0' in asm
-                fpu_reg_read(outdata);
-                ^
-arm/fpu.c:59:10: note: expanded from macro 'fpu_reg_read'
-                     : "q0", "q1", "q2", "q3",          \
-                       ^
-arm/fpu.c:281:3: error: unknown register name 'q0' in asm
-                fpu_reg_write(*indata);
-                ^
-arm/fpu.c:92:10: note: expanded from macro 'fpu_reg_write'
-                     : "q0", "q1", "q2", "q3",          \
-                       ^
-2 errors generated.
+Nobody knows :-)
 
-It's likely that clang doesn't have "q" registers in its dictionary,
-so I tried replacing it with "v" registers, only in the clobbered
-list. However, I think this granted clang to optimize the code in a
-way that causes data abort at in fpu_reg_read() at the first
-instruction:
+> This can be done into:
+> 
+> __v4l2_subdev_init_finalize()
+> 
+> Adding:
+> 
+> 	if (sd->ctrl_handler)
+> 		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
+> 
+> And check if there are no control operations using:
+> 
+> bool has_subscribe_event;
+> bool has_unsubscribe_event;
+> 
+> 
+> has_subscribe_event = v4l2_subdev_has_op(sd, core, subscribe_event);
+> has_unsubscribe_event = v4l2_subdev_has_op(sd, core, unsubscribe_event);
+> 
+> if (!has_subscribe_event)
+> 	assign v4l2_ctrl_subdev_subscribe_event as default .subscribe ops(somehow)
 
-stp q0, q1, [%0], #32\n\t"
+We can't change the ops structure as it's constant. Something like this
+could do:
 
-Although removing the optimization flag, -O2, generates correct code
-and the test passes.
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index 3a4ba08810d2..41ae18a0d41e 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -691,10 +691,24 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
 
-Any suggestions on how to deal with this in a better way?
+ 	case VIDIOC_SUBSCRIBE_EVENT:
+-		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
++		if (v4l2_subdev_has_op(sd, core, subscribe_event))
++			return v4l2_subdev_call(sd, core, subscribe_event, vfh,
++						arg);
++		else if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
++			 vfh->ctrl_handler)
++			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
++		else
++			return -ENOIOCTLCMD;
 
-Thank you.
-Raghavendra
+ 	case VIDIOC_UNSUBSCRIBE_EVENT:
+-		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
++		if (!(sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS))
++			return -ENOIOCTLCMD;
++
++		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
++			return v4l2_subdev_call(sd, core, unsubscribe_event,
++						vfh, arg);
++		else
++			return v4l2_event_subdev_unsubscribe(sd, vfh, sub);
+
+ #ifdef CONFIG_VIDEO_ADV_DEBUG
+ 	case VIDIOC_DBG_G_REGISTER:
+
+> if (!has_unsubscribe_event)
+> 	assign v4l2_event_subdev_unsubscribe as default .unsubscribe ops (somehow)
+> 
+> 
+> Or maybe v4l2_subdev_init_finalize() it's too late?
+> I'm completely wrong? What do you think?
+
+I like v4l2_subdev_init_finalize() as we're pushing all subdev drivers
+to use it, so it's an extra incentive.
+
+> > Well :)
+> > Not every subdev drivers, but only the ones I'm testing.
+> > 
+> > Yesterday I was playing with ov5645 :) And I got:
+> > 
+> > v4l2-compliance -d /dev/v4l-subdev1
+> > 
+> > test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+> > fail: v4l2-test-controls.cpp(1108): subscribe event for control 'User Controls' failed
+> > 
+> > Joke apart fully agree and thanks for your hint!
+> > I will take  a look :)
+> > 
+> > > >  	ov5645->pad.flags = MEDIA_PAD_FL_SOURCE;
+> > > >  	ov5645->sd.dev = &client->dev;
+> > > >  	ov5645->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+
+-- 
+Regards,
+
+Laurent Pinchart
 
