@@ -1,100 +1,147 @@
-Return-Path: <linux-kernel+bounces-368286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F869A0DB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:10:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708329A0DB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2711128312D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:10:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B9EDB25D58
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D8920E034;
-	Wed, 16 Oct 2024 15:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC3E20E019;
+	Wed, 16 Oct 2024 15:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noabd1xE"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RGcTtxZQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E7854F95;
-	Wed, 16 Oct 2024 15:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6B254F95;
+	Wed, 16 Oct 2024 15:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729091427; cv=none; b=q8C3Xsb939Clk52YEoM07rhwnyqZaCmEizfMQW6+tDnsnuear/sVWUu/zCsG41iZ+togk1vGxhI2dDQzIWCnhGCyl6V9k1r6jr0lz5vJsvyfJIOx+jQze/X1tFweDSaCoNJgc6QHtGMt2AvXOe65Y5EhPMn9WvgG+JU5qhCf8jA=
+	t=1729091463; cv=none; b=HEl3QWw31iM6+A88XUO7y+mGkxvQ3VbxBbFo4NhpitGGtDxdOisoxJSAm3FFQ8iNzRLNyHyjovMzFLGTiKveplbKEiAGLYcH49BSrr4uESHepE0/w2X4TEnEY9uH2TARJHaOggs6uB+k9eD9ygAZaf+d8ClTS+FO+r3edNLPlXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729091427; c=relaxed/simple;
-	bh=NTgGD59qf94Xj0J2P9c0n6Kdata3dVUb0roq94UWpPU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=O2ImJ+dZXTjQrwvvylN32uqXVp4QRf1ma1H/2NV1njFD6mxso0937fOkqNgiVfCd/KKLZlNHSfyOerh22xkRHLm5+dl/02z7GEytElqQZ11j6p5AefOyV3fzZt7oDRRUQPppxOlvgC/iNwy+OB+/QnfOUizmDLDkHC8VX7X5mBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noabd1xE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E871DC4CEC5;
-	Wed, 16 Oct 2024 15:10:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729091426;
-	bh=NTgGD59qf94Xj0J2P9c0n6Kdata3dVUb0roq94UWpPU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=noabd1xEt62dUzoOmnlBp08TTUQhdvGSGIeAqMo93CNTvaKfJzQcaDfgyOcCZeQ+1
-	 O289FTBhdLNmupFNkmVb8piMN66INPzxbCCqdscKs2QM2CWGkRYqs/1OWVxI3UMsTh
-	 9BP32y4QC4ki8tytD+iwjVJN1iBovcEr6JMi9XAzIBV1Biak6mIx0xPvP7zA0f5vMg
-	 S+x4+EZ6A/TE8G9OMMTZ78Cn2Jq8Tvk1P3gysqHK1d0zHrRl2Lny2Be3SNZT0DUx9T
-	 4FOL732vnx2a+tpEvZACyE/Wsa6kOoyz7Cbii5btbjFShiImr8tAHSaCJPxW33PDAi
-	 1ctUjk11N6neg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CCC3822D30;
-	Wed, 16 Oct 2024 15:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729091463; c=relaxed/simple;
+	bh=v04/kYKtJQtrsjHsyGjBFxXxzpNdJt5YRVCbs60TOTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QFlx86hgih5X0Y2WLgrNEsH+rXXjw4acHmxM5DjF7yLnkldiqXoSUGrmEKqHTu8uHGK3cjR90YN6t8VN75nwS2pc+NzZMWvHNb86WZRl6kb+3YCMF1eso5XUBWr34aD4BA7bZ7pVlh6md2RIvZZ87ZmiztHVy6wcQH8elXTfxd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RGcTtxZQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE5BC4CEC5;
+	Wed, 16 Oct 2024 15:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729091462;
+	bh=v04/kYKtJQtrsjHsyGjBFxXxzpNdJt5YRVCbs60TOTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RGcTtxZQ11J8tP78zZSR3N3v84XKOKYipcMIxMKKr3PuaAQ3OZ7WDb2amQcJmOGR9
+	 xTEL6lolQpkhWP1eK+wmZEH/NnxZq3S5FuKvzII5LeyEwFM79nZAHwXFz5qHsRjtAW
+	 aauU37htlsp8RyzqNP9ZSR4LW3M+UzMuGi2fkPfo=
+Date: Wed, 16 Oct 2024 17:10:59 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dominik Karol =?utf-8?Q?Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: dpenkler@gmail.com, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2] staging: gpib: Add TODO file
+Message-ID: <2024101632-overreach-paradox-d31b@gregkh>
+References: <20241015192838.16740-1-dominik.karol.piatkowski@protonmail.com>
+ <2024101609-getaway-appendage-1f88@gregkh>
+ <B28HXaYBd4-AP7g9jMpXgQEcJIzAQUsaUqMerdy_Hk0tR2Q9RKTAmcYbtq3LR06X3yHj0R6D4bLJHEHCYsszgjvnfhgZ7K5QwOzx5JLNI_A=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf v1 1/2] bpf: fix link info netfilter flags to populate
- defrag flag
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172909143125.1848445.4811107844774285676.git-patchwork-notify@kernel.org>
-Date: Wed, 16 Oct 2024 15:10:31 +0000
-References: <20241011193252.178997-1-wudevelops@gmail.com>
-In-Reply-To: <20241011193252.178997-1-wudevelops@gmail.com>
-To: Tyrone Wu <wudevelops@gmail.com>
-Cc: bpf@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- riel@surriel.com, shakeel.butt@linux.dev, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-patches-bot@fb.com
+In-Reply-To: <B28HXaYBd4-AP7g9jMpXgQEcJIzAQUsaUqMerdy_Hk0tR2Q9RKTAmcYbtq3LR06X3yHj0R6D4bLJHEHCYsszgjvnfhgZ7K5QwOzx5JLNI_A=@protonmail.com>
 
-Hello:
-
-This series was applied to bpf/bpf.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Fri, 11 Oct 2024 19:32:51 +0000 you wrote:
-> This patch correctly populates the `bpf_link_info.netfilter.flags` field
-> when user passes the `BPF_F_NETFILTER_IP_DEFRAG` flag.
+On Wed, Oct 16, 2024 at 01:34:07PM +0000, Dominik Karol Piątkowski wrote:
+> On Wednesday, October 16th, 2024 at 07:33, Greg KH <gregkh@linuxfoundation.org> wrote:
 > 
-> Fixes: 84601d6ee68a ("bpf: add bpf_link support for BPF_NETFILTER programs")
-> Signed-off-by: Tyrone Wu <wudevelops@gmail.com>
-> ---
->  net/netfilter/nf_bpf_link.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > 
+> > On Tue, Oct 15, 2024 at 07:28:57PM +0000, Dominik Karol Piątkowski wrote:
+> > 
+> > > Add a TODO file stub for the gpib driver.
+> > > 
+> > > Signed-off-by: Dominik Karol Piątkowski dominik.karol.piatkowski@protonmail.com
+> > > ---
+> > > v2: Remove maintainers from TODO, as they can be found in MAINTAINERS file
+> > > drivers/staging/gpib/TODO | 2 ++
+> > > 1 file changed, 2 insertions(+)
+> > > create mode 100644 drivers/staging/gpib/TODO
+> > > 
+> > > diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
+> > > new file mode 100644
+> > > index 000000000000..850dc1102e54
+> > > --- /dev/null
+> > > +++ b/drivers/staging/gpib/TODO
+> > > @@ -0,0 +1,2 @@
+> > > +TODO:
+> > > +- checkpatch.pl fixes
+> > > --
+> > > 2.34.1
+> > 
+> > 
+> > Hi,
+> > 
+> > This is the friendly patch-bot of Greg Kroah-Hartman. You have sent him
+> > a patch that has triggered this response. He used to manually respond
+> > to these common problems, but in order to save his sanity (he kept
+> > writing the same thing over and over, yet to different people), I was
+> > created. Hopefully you will not take offence and will fix the problem
+> > in your patch and resubmit it so that it can be accepted into the Linux
+> > kernel tree.
+> > 
+> > You are receiving this message because of the following common error(s)
+> > as indicated below:
+> > 
+> > - This looks like a new version of a previously submitted patch, but you
+> > did not list below the --- line any changes from the previous version.
+> > Please read the section entitled "The canonical patch format" in the
+> > kernel file, Documentation/process/submitting-patches.rst for what
+> > needs to be done here to properly describe this.
+> > 
+> > If you wish to discuss this problem further, or you have questions about
+> > how to resolve this issue, please feel free to respond to this email and
+> > Greg will reply once he has dug out from the pending patches received
+> > from other developers.
+> > 
+> > thanks,
+> > 
+> > greg k-h's patch email bot
+> 
+> Hi Greg,
+> 
+> I listed the changes below the --- line. Probably I should have added extra
+> newline, or maybe even another --- line below the changes in order to not
+> trigger the patch-bot message and make it more readable.
 
-Here is the summary with links:
-  - [bpf,v1,1/2] bpf: fix link info netfilter flags to populate defrag flag
-    https://git.kernel.org/bpf/bpf/c/92f3715e1eba
-  - [bpf,v1,2/2] selftests/bpf: add asserts for netfilter link info
-    https://git.kernel.org/bpf/bpf/c/2aa587fd6659
+Ah, yes, that's why it missed it, sorry.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> Maybe I should also
+> explicitly use "V1 -> V2" instead of "v2" when listing changes? I am trying
+> to understand the filtering rules that are in use, in order to avoid this
+> situation in the future.
 
+Either is fine, but it was the blank line that caused this to be
+triggered.
 
+> I see that in Documentation/process/submitting-patches.rst there is an extra
+> newline after listed changes, would it be enough?
+
+Yes.
+
+But before you resend this, you should come up with some more things
+other than checkpatch for the TODO file, as that's just the base-minimum
+here.  THere are other things that need to be done to get this out of
+staging, take some time to look at the code to get an idea of what needs
+to be done.
+
+thanks,
+
+greg k-h
 
