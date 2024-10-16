@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-367135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A090599FEFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:43:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7040D99FF09
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6A81F22032
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:43:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD6B8B225F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F65C161326;
-	Wed, 16 Oct 2024 02:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C4cMOhWo"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF8A165EE8;
+	Wed, 16 Oct 2024 02:47:20 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895D01531CC
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEE4433CB;
+	Wed, 16 Oct 2024 02:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729046613; cv=none; b=roDM+jqymNSPblhMBwPzs1eGTcALI7AsTqgo73LBgbNo8QGv1/opiKg/O+sFWU5ASI6B0uSYsWL8PNtyNfRfbstWjFG7x12MLHpoUJWHapm3zLE+wKgDpWwfIZYG0Ic2XmEdXbvKVHpZM1o08lzx7HUzbCdO3cqBcHHtM4WrzWw=
+	t=1729046839; cv=none; b=QEjs54xaiLoTEVurp4O//KMG1G6/FcbS+X7gdMZJ3Qo5B0wkNGxMRJDZN4PChMjtq4C6oRyTiY4tVVJS7KwZB6/O3ce1XqG0krX9Rvmlby+duhQYUp2jpO9YMPJMcmdChp7kp3rDbHC5LIsslhKhFejjnCkZzBGdxZa1pt0bstI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729046613; c=relaxed/simple;
-	bh=5quQ9Z0Z7oHrCaae6DYZXYqEEC6z7KWjNFlHX9O+WfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otD8xYnb5sC3TTfFW3qCXXz2xG+RMMHqB8LKjdcAEj6uZIGXvPdV4eKhkyiXErcJQ10QZTwctH3uAvildkDnekc5SQOs5fxjHcOnZezQHPkPY+Ovb+BYcgiC//0Mp/yBMmvJY+OdmXblYzKrkZMKljVIJJWS0vs1C8vFPt541kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C4cMOhWo; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <5f64d14a-4de3-4abe-a0be-9288c2594cdb@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729046608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pSaXD5yyprV6bSzARBG4h8KizvJMBQBv9KzMrwwDgvs=;
-	b=C4cMOhWoqx+tyJFg5CUAMnEbOvgh3AuGWQIgG/g34fXpfURtu5nB9aiav7goxR4KT6nEEz
-	n37G6spoazyKYON98bIYAtrf+gvABTzWldLm8gViQUv0KZkrXynZHbhPef6VnJ0FachHNN
-	swnN7gmeRfw6445WEVYZGRJ7rVcmorY=
-Date: Wed, 16 Oct 2024 10:43:12 +0800
+	s=arc-20240116; t=1729046839; c=relaxed/simple;
+	bh=5vhbPHK3Lf0vVi0FNmnj/Mq/QQhJ12Fqy9P86uNPUiI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mXJS9yOpvaPZjWad+xqem4bMQevJhR2fplq+TaUxW8sURfPp8f8T1q0U2PnzTr4G0fP//X9fdMQx6ckXTjf60s+nMAWG6M6hyWHRRzRT6aZfM+SIsXIhkQdhqiEWYd0ir44hlnDUr5ui3ojQQ2JsNYSeJrCDXVIPDZBPRwmDeMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id 49G2lCuv090236;
+	Wed, 16 Oct 2024 10:47:12 +0800 (+08)
+	(envelope-from Xiuhong.Wang@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 49G2jGh1081782;
+	Wed, 16 Oct 2024 10:45:16 +0800 (+08)
+	(envelope-from Xiuhong.Wang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XSwLB5Yyhz2PVftg;
+	Wed, 16 Oct 2024 10:45:06 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 16 Oct 2024 10:45:13 +0800
+From: Xiuhong Wang <xiuhong.wang@unisoc.com>
+To: <tj@kernel.org>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
+        <cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <niuzhiguo84@gmail.com>, <ke.wang@unisoc.com>, <xiuhong.wang.cn@gmail.com>
+Subject: [PATCH V2] Revert "blk-throttle: Fix IO hang for a corner case"
+Date: Wed, 16 Oct 2024 10:45:08 +0800
+Message-ID: <20241016024508.3340330-1-xiuhong.wang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 1/3] Docs/zh_CN: Translate page_tables.rst to
- Simplified Chinese
-To: Pengyu Zhang <zpenya1314@gmail.com>, alexs@kernel.org,
- siyanteng@loongson.cn, corbet@lwn.net, seakeel@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- yaxin_wang_uestc@163.com, zenghui.yu@linux.dev
-References: <20241015154301.4736-1-zpenya1314@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20241015154301.4736-1-zpenya1314@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 49G2jGh1081782
 
+This reverts commit 5b7048b89745c3c5fb4b3080fb7bced61dba2a2b.
 
+The main purpose of this patch is cleanup.
+The throtl_adjusted_limit function was removed after
+commit bf20ab538c81 ("blk-throttle: remove
+CONFIG_BLK_DEV_THROTTLING_LOW"), so the problem of not being
+able to scale after setting bps or iops to 1 will not occur.
+So revert this commit that bps/iops can be set to 1.
 
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+---
+V1 -> V2: Updated description to clarify this is mostly a cleanup
+---
+ block/blk-throttle.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-在 2024/10/15 23:43, Pengyu Zhang 写道:
-> Hi Yanteng
->
->>> +随着内存容量的增加，久而久之层级结构逐渐加深。Linux 最初使用 4KB 页面和一个名为
->>> +`swapper_pg_dir` 的页表，该页表拥有 1024 个条目(entries)，覆盖 4MB 的内存，
->>> +事实上Torvald 的第一台计算机正好就有 4MB 物理内存。条目在这张表中被称为 *PTE*:s
->>> +- 页表条目(page table entries)。
->> page table entries -> 页表项。 So:
->> 每一个页表项在这张表中被称为 *PTE*:s
->>
->>> +
->>> +软件页表层级结构反映了页表硬件已经变得分层化的事实，而这种分层化的目的是为了节省
->>> +页表内存并加快地址映射速度。
->>> +
->>> +当然，人们可以想象一张拥有大量条目的单一线性的页表将整个内存分为一个个页。而且，
->> Hmm， let's exec %s/条目/页表项 in vim.
-> This translation is indeed the most confusing part for me. When 'entry' appears
-> on its own, I previously tended to translate it as '表项'.  However, I noticed
-> that other Chinese documents have used '条目', so I reused their translation.
-> In our context, though, I believe 'page table entries' and 'entry' are better
-> translated as'页表项' and '表项' respectively.
-Many things are chaotic in their early stages, and Chinese translations 
-are no exception. However,
-we are working to change this situation, for example:
-Documentation/translations/zh_CN/glossary.rst
-> How about exec s/页表条目/页表项 and s/条目/表项.
-I think that's OK; if you don't mind, you can go ahead and add it to the 
-glossary.
-
-Thank，
-Yanteng
-
->
-> Thanks,
-> Pengyu
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 2c4192e12efa..443d1f47c2ce 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1485,13 +1485,13 @@ static ssize_t tg_set_limit(struct kernfs_open_file *of,
+ 			goto out_finish;
+ 
+ 		ret = -EINVAL;
+-		if (!strcmp(tok, "rbps") && val > 1)
++		if (!strcmp(tok, "rbps"))
+ 			v[0] = val;
+-		else if (!strcmp(tok, "wbps") && val > 1)
++		else if (!strcmp(tok, "wbps"))
+ 			v[1] = val;
+-		else if (!strcmp(tok, "riops") && val > 1)
++		else if (!strcmp(tok, "riops"))
+ 			v[2] = min_t(u64, val, UINT_MAX);
+-		else if (!strcmp(tok, "wiops") && val > 1)
++		else if (!strcmp(tok, "wiops"))
+ 			v[3] = min_t(u64, val, UINT_MAX);
+ 		else
+ 			goto out_finish;
+-- 
+2.25.1
 
 
