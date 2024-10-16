@@ -1,230 +1,236 @@
-Return-Path: <linux-kernel+bounces-367595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE599A0437
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:28:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0490D9A0432
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7C0282FC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D5028329C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECC11CEADB;
-	Wed, 16 Oct 2024 08:27:53 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6131D1F5A;
+	Wed, 16 Oct 2024 08:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="fc+pDScL"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16DC1C4A2B
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729067273; cv=fail; b=uX+T3KZQf2sendWVPCWcoD1GDLnUjP6pRxxuhgvY4geRoCz8RgVQynIp2hc0BvjjNHPs9CXgjWeOqNi4jO3RWrABnv+EVfGXjk3R5CiVwnHZMzyXOUjkR/XuSjIvhP1w6TJy1ov3v2qTyfWs2FOJbSnSxXTKtwFruN73AeORmck=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729067273; c=relaxed/simple;
-	bh=Ku1jyo5RWNqMu/ztmDD6EiEGKRwQQuWBBdL4lZw9d1g=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=qcEKeHwn106C9aTNFoDfaDs5GIG10luI1isWQqz/MXvzAlq3nMO8l5Hrk2Kd8q3gdS6eLgOrizld7DNqOG+lPfs/r/zjTjI3M1zKC2hRSJnWR7ggzfhq+94L8lD7EasJzjnBAB/Z71KKRRxvDq0uxSIzkqEn8QGkag4D+BNNA7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G60WR4002866;
-	Wed, 16 Oct 2024 01:27:20 -0700
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2046.outbound.protection.outlook.com [104.47.55.46])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42a397gc3k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 01:27:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lAfsbv6fPyuGdpsgdqDOh3uGKbsY9+IihBJ4UoX5sBjORLNU9RwzoBxvzMmonKULTw1x39Yt+YfEXPXSLYMP0BkbSPxewaPlOy7WBx0/GoMs6jkUEf6YDrWQtXby0DljntHruhBKXl0EKjIiFMzVZeOLFObgjBnWcmcDZgctxLvnlI71lCf2hVYUts+oE/iCPSHzUD20X9oLm+hrdbd5yxpmWeNjCq7gvgevb02z1TTv2/gcnV8S1AjOJcy5dhoesiJcy0Vkf/saByDPVCCRkIv3YgzVxV5rurC7XJk7YKbX0RiUGB5XvjS8OVIsA4FPUPxSxohU+4ek8jWp+GQ5/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f+UE8vjJbeHaW42Q4jY1dKkICD+yVPCTye5SlmN6TOk=;
- b=qMQbJjIZOyXkyf8+9jCjPisFg5pTvoLu8LFHEbhSSUydF1pEPGCj/EfevnUG5tTsnJwF4Bv0uPGLXtQdt4wDAQSAFMk1uHa4tob0d26uF0VVhWIXNGPh+GE+c6HYAgogWHTQCy6fPN+1VsuKMbvJg6Nz0wy2i8ntrbC6XC+jdDQhJsDj7QopADBVh3aYjyKsWZM2Jc0/UqQwGeD9FKMX42LrF0IFmmy+35eujj4xVFxSwknfFsT7jzhySLAcWYdDUdKo6q5ppWVfjiwARKkdFx0jutRRX+PL3jCCU0uNnR0Bu8cRbhWfGpvh0fTTFNXuhIRvoltnAY99kiWZHu3zKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from SA2PR11MB5193.namprd11.prod.outlook.com (2603:10b6:806:fa::5)
- by SA1PR11MB6710.namprd11.prod.outlook.com (2603:10b6:806:25a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Wed, 16 Oct
- 2024 08:27:17 +0000
-Received: from SA2PR11MB5193.namprd11.prod.outlook.com
- ([fe80::8ce7:ab08:1934:1d71]) by SA2PR11MB5193.namprd11.prod.outlook.com
- ([fe80::8ce7:ab08:1934:1d71%5]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
- 08:27:17 +0000
-From: Xulin Sun <xulin.sun@windriver.com>
-To: jyri.sarha@iki.fi, tomi.valkeinen@ideasonboard.com
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
-        airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, xulin.sun@windriver.com
-Subject: [PATCH] drm/tilcdc: conditionally calling drm_atomic_helper_shutdown()
-Date: Wed, 16 Oct 2024 16:27:02 +0800
-Message-Id: <20241016082702.2981970-1-xulin.sun@windriver.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0041.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::15) To SA2PR11MB5193.namprd11.prod.outlook.com
- (2603:10b6:806:fa::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E5F18A95E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729067253; cv=none; b=Mw49xTXoLGanawLSjtC1fqIqXGRw12Lm2uFOWutkfYi6dhCOt9J+qIydQBg1DK+uSQpJALvG7yGelPas7i4UOsx0Pbrk4573bSbcTi33gzIN3/q2T+3eIU1PIjO3NZkQcm85BMoL8UWV3nJ7R0+nmXLzrVAwi4fnbQaob1AYlXQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729067253; c=relaxed/simple;
+	bh=PVa+FJXTDWZeoxAqKHBZCp7maASc8TfoL8hAtOc6GlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xuayw/LOFjzOOVJmcXYvfSqq24ueFI68DXHDLW2FmfWQ75jzZUE5bfERETXD7zu+X1XVDwYgSq1zectAV1vgZ8YKqCLH8s9ZMYRZ9WXn/1yjMe9SSp28w224gxARDt+ZHeUtYTQ2S2pBtpeJ1X9YNbTFVtyZ+TKFLmeWyrW96AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=fc+pDScL; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43124843b04so37270575e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1729067249; x=1729672049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g28iCX0O5SYkdDCU+JsYvIfeHBkuIrm9r0ykt0NO+9k=;
+        b=fc+pDScL3abGiXe83W+w8fg/MkPF/zYvLkGkdEFW8s0DJVKIpsI0bTh64Mg1Jc5aSX
+         I3ixyF+LXBqW29D/5LFFfg19X6AXgQCowmDzsibLrowdCexaA3Bjoq9aM30grWFMVoAa
+         83MCYg/Tt/+NH04tX7iqt5GSk/uLyMut0HTvWIhvQL3+qE6tcYCk3UP/arzHiboKEKfI
+         ZnJnHuMJvHE0kvJP9aJ6o6Xj75b4PwIV2znhtUw4ZKd67RFPjshlLglLrIBifhzaD8xb
+         5Si4taiAfCOXgGcfEqPkzDS0fNRpMeHc/N77Vp5AQmvCWNc2erADVjGaMYjcWyYDTlXr
+         QAFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729067249; x=1729672049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g28iCX0O5SYkdDCU+JsYvIfeHBkuIrm9r0ykt0NO+9k=;
+        b=RJIlykHIx5xia7fFsNbwmPfAoiFN/ykYvV9NmeybD+NkV2KAc4Ya2Mp9sqbAfUgypA
+         WII+2roR5o3ciTQvw9P56B43Qf5tg77HO4tnr2TnD+k6C3mQuA/dhKiLeYOTi/6ofIGK
+         gBnFOL/tCq+Ffm+wjKcJQNdE2zHZ1vFdjifNsDp+o+09Z8QqcKIVStcs+zgMftCfIJoM
+         uNRJyzZXR6kSN6ZfeAE2MBq1RkndeGnLRrhmqgG+OQvVmfU++f4KM8VPv+Q3CH6VDuYt
+         7jb6r/c9Y2oSqaBerFsRXg8uCcA6jSBbStZCxwSIY5rZ/mnwVoq7QFQ3nO9ywyEBIoGG
+         +Kjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSXE5BtdQSx+ca/qSCnm/1/+gxPsq9i10kfk3i78XMiYFamnSXWJGEUfRVYb/mqLOmvsa0GRJn3dJ5Hec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO0jZIce7XXa4EuDdLavtn09opquvbw4P62qXoopA4lPGEjom7
+	ulezVTW/TG9IJVamutzoErNDjU1a6APkN6hLNNdfq+hbO1kmm++zvbph7XLOxvA=
+X-Google-Smtp-Source: AGHT+IERexqRaMF2wo6pgIqzaWfNekkvkAvO40P+daGklxVCAETU0FoDFC6Q5O/KGhVi2SAiAuuztQ==
+X-Received: by 2002:a05:600c:5122:b0:42f:8d36:855e with SMTP id 5b1f17b1804b1-4311deb5f47mr177561545e9.5.1729067248934;
+        Wed, 16 Oct 2024 01:27:28 -0700 (PDT)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314bf60fc4sm24841625e9.38.2024.10.16.01.27.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 01:27:28 -0700 (PDT)
+Date: Wed, 16 Oct 2024 10:27:24 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+	ryazanov.s.a@gmail.com, Andrew Lunn <andrew@lunn.ch>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	openvpn-devel@lists.sourceforge.net,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v9 04/23] ovpn: add basic interface
+ creation/destruction/management routines
+Message-ID: <Zw947Jb637o-I4RV@nanopsycho.orion>
+References: <20241016-b4-ovpn-v9-0-aabe9d225ad5@openvpn.net>
+ <20241016-b4-ovpn-v9-4-aabe9d225ad5@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PR11MB5193:EE_|SA1PR11MB6710:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad660575-8db9-4327-d62c-08dcedbc588b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hGOWC6Q70cSPPj2LcMIL/yUhKV4WN2yJJdZHHu7DewsJFSyiVP/8FUJnec4q?=
- =?us-ascii?Q?kWs/xV1nTjvVunQghphJmgVrZ709lgFOYVxhPtpOOuKyQf5w3CCzckKJgLfn?=
- =?us-ascii?Q?uXOTIJGFqOgrbX+fcnvcTkKid4q7EYIQdZr4HWM2MmxjBiX0R3+nEHSwYcsy?=
- =?us-ascii?Q?Al3QKCBwgeuTzYdTw3bp2Qa+Le43YK0VU/TrBPxKzRb7o7XMj40sr/5kSDuX?=
- =?us-ascii?Q?boEtKKlJUQlaSvyzpSiWrgKIX8xIYFV1GDcwA8NuSqDo34XuLiYX+hsLzmxU?=
- =?us-ascii?Q?kSeP+v9mtS9wHh6BqNlPdr/u+Vf1NNd4p3c9UR1KyZigcnG7GXzAoc9vH60Y?=
- =?us-ascii?Q?Tn2a++7dRW2vy3siL3vbBQbA1TzdXroaHzgVeXVNFtmnjZiF7mxpWyFDkoZC?=
- =?us-ascii?Q?RBMMjwqSoN4EwiNeIPkSa7RsWgyiXwSHeT2KNIH5jpPYfvImwztpacO8rzT1?=
- =?us-ascii?Q?IrgljNYt17KDN3aH16nUbFe0K1AUJYNcqVN2+FgI5fRJPtTQp5mTD5JNd78S?=
- =?us-ascii?Q?yjY12KzJk5MOxzwCNFg9yNRWMinRTLUL/KKhuqYjvlDNafOKes8nu7YYaVjS?=
- =?us-ascii?Q?CdC6vvZvVFWetig4b8Xw0GWI2v3ya1DBybJQQXLuIyDhjEmJk+oHnLE0DRXa?=
- =?us-ascii?Q?eFa88KjXUwc6XgUfQeiBaFlmHwQjwg6w9HRMoWSW3Ho1dKqinSDeJG5kqyDF?=
- =?us-ascii?Q?qbuSHY6Gipi9mFa1liDr2zOJtFn7cS1udF/xVT/zYZyXryZAmKDOnVbf4+IM?=
- =?us-ascii?Q?jdxYwMMpO7YTQGmmlyE/UAfdfSzih/ZXu9r2yiiy7Zv1+SjV5hB9p28k/2CG?=
- =?us-ascii?Q?eUQkDveMzIzOSfztlBDj0VbWh/AUtT/WAfXU6lSqZRQd33xC8JlJb/RzJnsD?=
- =?us-ascii?Q?91EbvBeoawV7HBwyrw/PaOdDFTTJFu7zWMcvPKiCeuUeKLzyh+Y5TpnR98rj?=
- =?us-ascii?Q?nahlbEGHHOxBX7vPOSP7jolRki6m5xPqefcz0yi8QZCO8Ixtl11wdQHvTxQW?=
- =?us-ascii?Q?jj1CF+74zqZgKmZnKD8KB8aJVrfpGbPa4Dd60Z43m527ZDWGDNiLr1cnX9On?=
- =?us-ascii?Q?cuLI/+ehwE46cC1+jb0ZTTZ2LtpWW8zcuhyiHwh0hu4u296eK1WL4sHHFwrb?=
- =?us-ascii?Q?MFO7YCZs8qRHlbiBv9lzGGnWVUrYwhfxMaoM6MvXCMMVVLhj147Mlm3crWjo?=
- =?us-ascii?Q?dN8+Cy69h8i7SVuQfgZBqVr/7mtvwZWSR9J3rSBYB3f5h77lC1UDsAwekpcy?=
- =?us-ascii?Q?MbJudLh4wzuqtV9N7XURlwbMNoozQ02e+9Iwgd6HQMWRfontNdCU+OGD2V14?=
- =?us-ascii?Q?tBOd5gQhCdfhcKIBB/vD0GgJ6adVQTxKCfDf2beX2WBShQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA2PR11MB5193.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1hxvvNk/ujS9vR6kvbtVhAU63NbDGJ7lh3CvLnJsQOILwCOcbt8CUsgGlYA8?=
- =?us-ascii?Q?QRUMNke0HEMHE5ex5md+YnWnK4Yjk0Cw6DZ4GWnTooPHnaaF583Gce0yqAnm?=
- =?us-ascii?Q?HdXC89GzaC6pnI7yltTUB2/A33tXbcH9MdrkEoj4R2PixRUG7/Rquw7B49dS?=
- =?us-ascii?Q?KNrK1UqleJRxxqJrdVluHwAkpxEW5hraEOF/4YILaX8ws5e/PfWRowRXGDpM?=
- =?us-ascii?Q?nDIB5gPlzWb9HIvpLXdyCHfg3tJCbVhuHhYjTiwxWOAt43azmQvIGYP7VlR/?=
- =?us-ascii?Q?WmtgukAJ2Og9g/MoS1zTC2WjjUnHzxCw5LTObsfCuQvX1fAqaVZp+dQbGvWP?=
- =?us-ascii?Q?7Utwhx+i2MAPTWrlv3Zo+L2CzBwroTz4ra2rTRml3u5nQ2f3vjK8PVNRKe1I?=
- =?us-ascii?Q?XWooqTnSZ8hbkihknBl8sjyOcPTU2Ezj+PDyBbrq7rjvbKPu3773WBlKJN92?=
- =?us-ascii?Q?6f2BgoiG1gxI7GapCTLZDFcAGiGBH8VenwFwb4rUdZH7W/bLYW84IM9jgCOH?=
- =?us-ascii?Q?4qa2b5S3+hDTiFycqgkVNkY1JjvC8qoSFMh104Zw23ai+G1iMlpvBh4tQw4D?=
- =?us-ascii?Q?Ci8bzBY2ne2MNLy1UgbGkWTQtB+S8TG7ZISTIsul31wFcqwwFyrau/5GHemb?=
- =?us-ascii?Q?F1U3pC6ZMCZsuShSQCAmhLr/cVc96SEbBGcqrq/wn06BClUWmjjt3gM3SZ6D?=
- =?us-ascii?Q?Z1IAD4MBOylhSBbXxrGt2R39dlo13heke9I4isxW/RGZcIhZKPglt/N/BGak?=
- =?us-ascii?Q?qFNldh9bs9oC780o/0vf/zNhrqAwEhowqPm2U0zpZnnEAIrZJm9b3r8O4PyQ?=
- =?us-ascii?Q?Z7Xz3dGdA6blTPMqPfZM/Cbd2yBzmQqerOrLmt7qCmwe1FG4gOBeIWMzcIvI?=
- =?us-ascii?Q?+OMv4N/v5vDQPY9RrYZH54isP8M4zgvabWflHOPt9vH9dNEYWYjetTXhp9Vb?=
- =?us-ascii?Q?l/DB58AN1t/Lf3pWxKmuYpnhQiS+zsIvj4eQWjVM+ClRR1W0aslfiEn8pr5z?=
- =?us-ascii?Q?aAL9zVnuUoIvlehb2OTX207qZfTuhQ7r0HmmrYLIaWQyaM8QoNvXP7nH7/FQ?=
- =?us-ascii?Q?N5UFAMgcOELs0I3j1eSLDHqL/ryEIeBdmfdQS2ulK9QMUYytpqbw7rDNsqOZ?=
- =?us-ascii?Q?inPg+Tq4ZvY64O97jLaZHFTxIel4WM8UqvST/o2u6wYFmTwr4ZFpYnG5ThPA?=
- =?us-ascii?Q?Ci0x4mlmxe+YiKEYnMkWwO0/0aM28TUh9KdjiiCFrcm/YoTacFW4XXPW6fDw?=
- =?us-ascii?Q?CnDlVnKoaPdrUT+0ShTbPq7S6NKpIOkA9niGD0M9e/ISUNJqwhwtFTzvROtS?=
- =?us-ascii?Q?Pya1SVG4qNFCyjGCq/OUJeAMFKinHW+n7xBfOufJOwGybPSX6N8brMmipx+n?=
- =?us-ascii?Q?Ny7/jGAlvXbXlBpF0dEj40AH48SBbcc5Oj2ymCbFyy3FAQ7lNaiIH4BGY8NO?=
- =?us-ascii?Q?6tiMsb2T/qcvRIFQ32Yhf2N9SKqoewAtmGwGTPHLJ51o05XQ26jEADhgj2Ra?=
- =?us-ascii?Q?Z3tAP9gKXQn6RjNi28WNsmrQYWeOYxqr9Zq+LgQuFf7qbfnN21PAT14qVYx4?=
- =?us-ascii?Q?ed2+xT3o2txhWxymh/Sa9Un3Sn4xMPwEgdpxonem?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad660575-8db9-4327-d62c-08dcedbc588b
-X-MS-Exchange-CrossTenant-AuthSource: SA2PR11MB5193.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 08:27:17.6315
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AH2AWW5qsaiz8Efaq48biu2FRgyvndtZRgvJtFJjUUVP5/K91KQmjkp2d9CwB2Xjinq5fnTU8v2KkJXxNOG0AQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6710
-X-Proofpoint-ORIG-GUID: Aniz20oSpSp4EP1qFrQHU5pgqsAzW3O0
-X-Authority-Analysis: v=2.4 cv=Fc1lx4+6 c=1 sm=1 tr=0 ts=670f78e8 cx=c_pps a=OGaRt8TyNAR4X2Yz4FfAAw==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=DAUX931o1VcA:10 a=bRTqI5nwn0kA:10 a=t7CeM3EgAAAA:8 a=YuAILjPrcoIfSKu_7RYA:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: Aniz20oSpSp4EP1qFrQHU5pgqsAzW3O0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-16_06,2024-10-15_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1011
- spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 mlxscore=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2410160055
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-b4-ovpn-v9-4-aabe9d225ad5@openvpn.net>
 
-The `drm_atomic_helper_shutdown(dev)` is called only if
-`priv->is_registered` is true, ensuring that it runs only when the device
-has been properly registered. Otherwise, if it encounters a defer probe,
-the following call trace will appear.
+Wed, Oct 16, 2024 at 03:03:04AM CEST, antonio@openvpn.net wrote:
+>Add basic infrastructure for handling ovpn interfaces.
+>
+>Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+>---
+> drivers/net/ovpn/main.c       | 115 ++++++++++++++++++++++++++++++++++++++++--
+> drivers/net/ovpn/main.h       |   7 +++
+> drivers/net/ovpn/ovpnstruct.h |   8 +++
+> drivers/net/ovpn/packet.h     |  40 +++++++++++++++
+> include/uapi/linux/if_link.h  |  15 ++++++
+> 5 files changed, 180 insertions(+), 5 deletions(-)
+>
+>diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
+>index d5bdb0055f4dd3a6e32dc6e792bed1e7fd59e101..eead7677b8239eb3c48bb26ca95492d88512b8d4 100644
+>--- a/drivers/net/ovpn/main.c
+>+++ b/drivers/net/ovpn/main.c
+>@@ -10,18 +10,52 @@
+> #include <linux/genetlink.h>
+> #include <linux/module.h>
+> #include <linux/netdevice.h>
+>+#include <linux/inetdevice.h>
+>+#include <net/ip.h>
+> #include <net/rtnetlink.h>
+>-#include <uapi/linux/ovpn.h>
+>+#include <uapi/linux/if_arp.h>
+> 
+> #include "ovpnstruct.h"
+> #include "main.h"
+> #include "netlink.h"
+> #include "io.h"
+>+#include "packet.h"
+> 
+> /* Driver info */
+> #define DRV_DESCRIPTION	"OpenVPN data channel offload (ovpn)"
+> #define DRV_COPYRIGHT	"(C) 2020-2024 OpenVPN, Inc."
+> 
+>+static void ovpn_struct_free(struct net_device *net)
+>+{
+>+}
+>+
+>+static int ovpn_net_open(struct net_device *dev)
+>+{
+>+	netif_tx_start_all_queues(dev);
+>+	return 0;
+>+}
+>+
+>+static int ovpn_net_stop(struct net_device *dev)
+>+{
+>+	netif_tx_stop_all_queues(dev);
+>+	return 0;
+>+}
+>+
+>+static const struct net_device_ops ovpn_netdev_ops = {
+>+	.ndo_open		= ovpn_net_open,
+>+	.ndo_stop		= ovpn_net_stop,
+>+	.ndo_start_xmit		= ovpn_net_xmit,
+>+};
+>+
+>+static const struct device_type ovpn_type = {
+>+	.name = OVPN_FAMILY_NAME,
+>+};
+>+
+>+static const struct nla_policy ovpn_policy[IFLA_OVPN_MAX + 1] = {
+>+	[IFLA_OVPN_MODE] = NLA_POLICY_RANGE(NLA_U8, OVPN_MODE_P2P,
+>+					    OVPN_MODE_MP),
+>+};
+>+
+> /**
+>  * ovpn_dev_is_valid - check if the netdevice is of type 'ovpn'
+>  * @dev: the interface to check
+>@@ -33,16 +67,76 @@ bool ovpn_dev_is_valid(const struct net_device *dev)
+> 	return dev->netdev_ops->ndo_start_xmit == ovpn_net_xmit;
+> }
+> 
+>+static void ovpn_setup(struct net_device *dev)
+>+{
+>+	/* compute the overhead considering AEAD encryption */
+>+	const int overhead = sizeof(u32) + NONCE_WIRE_SIZE + 16 +
+>+			     sizeof(struct udphdr) +
+>+			     max(sizeof(struct ipv6hdr), sizeof(struct iphdr));
+>+
+>+	netdev_features_t feat = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM |
+>+				 NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
+>+				 NETIF_F_HIGHDMA;
+>+
+>+	dev->needs_free_netdev = true;
+>+
+>+	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
+>+
+>+	dev->netdev_ops = &ovpn_netdev_ops;
+>+
+>+	dev->priv_destructor = ovpn_struct_free;
+>+
+>+	dev->hard_header_len = 0;
+>+	dev->addr_len = 0;
+>+	dev->mtu = ETH_DATA_LEN - overhead;
+>+	dev->min_mtu = IPV4_MIN_MTU;
+>+	dev->max_mtu = IP_MAX_MTU - overhead;
+>+
+>+	dev->type = ARPHRD_NONE;
+>+	dev->flags = IFF_POINTOPOINT | IFF_NOARP;
+>+	dev->priv_flags |= IFF_NO_QUEUE;
+>+
+>+	dev->lltx = true;
+>+	dev->features |= feat;
+>+	dev->hw_features |= feat;
+>+	dev->hw_enc_features |= feat;
+>+
+>+	dev->needed_headroom = OVPN_HEAD_ROOM;
+>+	dev->needed_tailroom = OVPN_MAX_PADDING;
+>+
+>+	SET_NETDEV_DEVTYPE(dev, &ovpn_type);
+>+}
+>+
+> static int ovpn_newlink(struct net *src_net, struct net_device *dev,
+> 			struct nlattr *tb[], struct nlattr *data[],
+> 			struct netlink_ext_ack *extack)
+> {
+>-	return -EOPNOTSUPP;
+>+	struct ovpn_struct *ovpn = netdev_priv(dev);
+>+	enum ovpn_mode mode = OVPN_MODE_P2P;
+>+
+>+	if (data && data[IFLA_OVPN_MODE]) {
+>+		mode = nla_get_u8(data[IFLA_OVPN_MODE]);
 
-WARNING: CPU: 0 PID: 13 at drivers/gpu/drm/drm_atomic_state_helper.c:174 drm_atomic_helper_crtc_duplicate_state+0x68/0x70
-Modules linked in:
-CPU: 0 PID: 13 Comm: kworker/u2:1
-Hardware name: Generic AM33XX (Flattened Device Tree)
-Workqueue: events_unbound deferred_probe_work_func
- unwind_backtrace from show_stack+0x18/0x1c
- show_stack from dump_stack_lvl+0x24/0x2c
- dump_stack_lvl from __warn+0x80/0x134
- __warn from warn_slowpath_fmt+0x19c/0x1a4
- warn_slowpath_fmt from drm_atomic_helper_crtc_duplicate_state+0x68/0x70
- drm_atomic_helper_crtc_duplicate_state from drm_atomic_get_crtc_state+0x70/0x110
- drm_atomic_get_crtc_state from drm_atomic_helper_disable_all+0x98/0x1c8
- drm_atomic_helper_disable_all from drm_atomic_helper_shutdown+0x90/0x144
- drm_atomic_helper_shutdown from tilcdc_fini+0x58/0xe0
- tilcdc_fini from tilcdc_init.constprop.0+0x23c/0x620
- tilcdc_init.constprop.0 from tilcdc_pdev_probe+0x58/0xac
- tilcdc_pdev_probe from platform_probe+0x64/0xb8
- platform_probe from really_probe+0xd0/0x2e0
- really_probe from __driver_probe_device+0x90/0x1a8
- __driver_probe_device from driver_probe_device+0x38/0x10c
- driver_probe_device from __device_attach_driver+0x9c/0x110
- __device_attach_driver from bus_for_each_drv+0x98/0xec
- bus_for_each_drv from __device_attach+0xb0/0x1ac
- __device_attach from bus_probe_device+0x90/0x94
- bus_probe_device from deferred_probe_work_func+0x80/0xac
- deferred_probe_work_func from process_one_work+0x198/0x3f8
- process_one_work from worker_thread+0x35c/0x550
- worker_thread from kthread+0x108/0x124
- kthread from ret_from_fork+0x14/0x28
-Exception stack(0xe0039fb0 to 0xe0039ff8)
-9fa0:                                     00000000 00000000 00000000 00000000
-9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
----[ end trace 0000000000000000 ]---
-tilcdc 4830e000.lcdc: [drm] *ERROR* Disabling all crtc's during unload failed with -12
+Some sanity check perhaps? "validate" op is here for that purpose.
 
-Signed-off-by: Xulin Sun <xulin.sun@windriver.com>
----
- drivers/gpu/drm/tilcdc/tilcdc_drv.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-index cd5eefa06060..9c11ea126b46 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-@@ -171,11 +171,12 @@ static void tilcdc_fini(struct drm_device *dev)
- 	if (priv->crtc)
- 		tilcdc_crtc_shutdown(priv->crtc);
- 
--	if (priv->is_registered)
-+	if (priv->is_registered) {
- 		drm_dev_unregister(dev);
-+		drm_atomic_helper_shutdown(dev);
-+	}
- 
- 	drm_kms_helper_poll_fini(dev);
--	drm_atomic_helper_shutdown(dev);
- 	tilcdc_irq_uninstall(dev);
- 	drm_mode_config_cleanup(dev);
- 
--- 
-2.34.1
+>+		netdev_dbg(dev, "setting device mode: %u\n", mode);
+>+	}
+>+
+>+	ovpn->dev = dev;
+>+	ovpn->mode = mode;
+>+
+>+	/* turn carrier explicitly off after registration, this way state is
+>+	 * clearly defined
+>+	 */
+>+	netif_carrier_off(dev);
+>+
+>+	return register_netdevice(dev);
 
+[...]
 
