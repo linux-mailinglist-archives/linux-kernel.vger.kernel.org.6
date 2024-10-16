@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-367724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D739A05DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:43:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FAE59A05DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E156B256C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC577285E74
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6312205E3F;
-	Wed, 16 Oct 2024 09:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD63205E3F;
+	Wed, 16 Oct 2024 09:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XwzIRXg0"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MI14WF+a"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F37D205E2E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6896205E11;
+	Wed, 16 Oct 2024 09:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071774; cv=none; b=uaeLwfNObKQhGbmopD3AskT5aPHvpdIJtn2ElMT3PKQTnqyjOm/i/cJFjSE5od2OYjeiXfbh+IkkOcd4dg21n7iGaK67xYuTer0015YuIDiZbesMNi0dq0m63UVx+PukyC6sYkzqyMh4U5EjiPZiVCGvL9xC6zgL5TpzkLhtSxg=
+	t=1729071798; cv=none; b=M8zUUCaLf5VQ2oFjpVGDlWo0pBDQvVJshh7KR48ohQi/nmP9hSjCI8Iq1yLk1xXVG5O7yB0Lj9Gkfb0O0SvNxK/jQdUlr0p3dpUZZSnhzbS0aFicfHRhXIZR0ZViOlWPQH4TQc9oTmpLgQdtGdddZWMewH5Rr1b2vm4J/27z0k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729071774; c=relaxed/simple;
-	bh=4xIAM5pNqvMEv0HpuFsspU0wQu/ksWAfjmz6gy5Oxn8=;
+	s=arc-20240116; t=1729071798; c=relaxed/simple;
+	bh=vm6c5zTe3ogCN7P2aIvkVQuXo2ZwDpuNn2J6zMnLtq8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iz7a0sDSB2p7xPpdTtLXkJPJKcKGWoHUvGdsrDtdPe8LWyoXkgcSyfHFGb+putCmbE3jIfJ44A7nvo2u01uB6/MxIdjK4+6vJ/4B/4Is3IMiGdJLaqKrhgAuINkimA8BAo9ibMnt+dce7vkcEABu7aTH7QJIiM0X/GUioLERKsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XwzIRXg0; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c935d99dc5so7226886a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:42:52 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pINIPIcupKSQ1d9BNo2a6mb2hnpnbEvCBy7JgfFkL8/N9e/NzUp6+0AN2PqyOxygloyWvEn1OIRm9UEp8+HzLyfXl7tLnpkIlum0AVzlgqLgYJRNWHh61TtcFYHkCmRxvAttQkpmwuZcidBZSXv6gPzVRMtQDP5gvVIQX2dE8Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MI14WF+a; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-207115e3056so51441635ad.2;
+        Wed, 16 Oct 2024 02:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729071771; x=1729676571; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y+nQ/TeUc4unHc0CviCK96FS6Nvx0I+2yJNdAgUGoGM=;
-        b=XwzIRXg0ONXr9rQ1YWW8TkCfdUyWeLSH3K3llSQNufr+c4IgbTaR4u+DFI4tWqgzu1
-         r2oJl2c+/g/NS/ChEeZXJgcH28vR+lrW1JbmmbrRKv51znSq4d5LfQGkei7mxZX3zNoY
-         pyvAd9+dhyat5HeCRtpdzatql1kyxpFqqqgcryp12WqTeVcjyB9jNv92rQcJf9eNYFFl
-         ITluoR7nureO+4qySTIweIejh28zv5g57H5twKx8fiZWizri7QqzH9fdrDFJR5VT2QHe
-         qpdNjZns9aRXkVvTQA31XZckgtllOHGJQejz+ePfIPXPXF6Alh2slQ65W5ZOSswIDX+d
-         hPQg==
+        d=gmail.com; s=20230601; t=1729071796; x=1729676596; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4JdPb6dggiDddx2mZKy5AeVivyxS2f7SnBQhHfVM6F0=;
+        b=MI14WF+an5m7V57uTUT9Q+yr5LHxb16yWDF3jh6c7n6NGbjrQtciy9h6zA9XQh5d79
+         +7I43otP4LkQiPAfezqyshEMlMn9nUJMmqebo7bNUKVs5Odo/Q2V6LU7dvCkNfjNy+Y/
+         dxl1CIRksEL4pT89DnnF6QcFARvSUYPXeTAQFafpaF4udyukr0fdmtlmBefQk9Vx3Nrr
+         eBNU5DzmnH/x6mnmrzkUfL0AAcBjsQngp59yt87vbE3r+g2ICtodO5IRDe1wyu+vb/UL
+         BL7VNNfabuAvwWfUtVanRCY85QHxxmnYOpwRMQ/EozmjiEf7/eOGG2fg481WDuwUFUGq
+         +VEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729071771; x=1729676571;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y+nQ/TeUc4unHc0CviCK96FS6Nvx0I+2yJNdAgUGoGM=;
-        b=enhIEcbLKB0ybI7XGHNc+GCrDE+f/4eZ5LzXRy73IG/SrSO+7wKEJmINC1OSv5g6eK
-         GxKj0qKWQfi75oCEji8zWt1FiKr0vCxfsEJDOGZDy0URl2L/nPWvzo+EBF0cuBfPVzJp
-         UAS250wKoBrtvqiKK47kAG9D/V/mUo5biOz2ubZA7B+3lLDmHAiHbcTPL+8YqqjhTZGb
-         AhG2a6aGrWpQIfAcuN8mEVjkBZuG/0h7BJCVlpyjliivFTBBekE/DmObMWHjsin99PSM
-         ofR4dUM7oZIt96WNi+KRAQHu+sRmcSiIQYivdUrVMJQI/B1MVipSSKpR0yPXXP0KKcgv
-         kkBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyPR4WIuS202KVDYjW9cZ3GtRqz0jGruDEJ6dVlr9lpRRl9TrWqTLdI0YNgXdhwAwOdhDmxIk5Ev90O9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWbABqR90k0QRcdprI4dqVWqqITQD9JfDkKI7wnYgrq0ah/T0M
-	KX5SsfwIo3/jj/3asZ6qovqEuvkSsxUeKLoTvMLVKjOdarRpezcOdLMZdgqKBk4=
-X-Google-Smtp-Source: AGHT+IHuQUwNqVXDGfNnrsLMBWvMT3Rt4PH0OsGQcCtq/cBUbz9Oasr9CWvqqQlecwsti+WIotAZBA==
-X-Received: by 2002:a17:907:f1dc:b0:a99:4780:1af with SMTP id a640c23a62f3a-a9a34d0d06fmr260498066b.31.1729071770678;
-        Wed, 16 Oct 2024 02:42:50 -0700 (PDT)
-Received: from localhost (p200300f65f19e3002f38cf427133ca7b.dip0.t-ipconnect.de. [2003:f6:5f19:e300:2f38:cf42:7133:ca7b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2974a49asm162647566b.89.2024.10.16.02.42.50
+        d=1e100.net; s=20230601; t=1729071796; x=1729676596;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4JdPb6dggiDddx2mZKy5AeVivyxS2f7SnBQhHfVM6F0=;
+        b=TnybExtJyvBcObQUcBExINRSR38Dfg+LW/uBLtJXCQUiKy6bVHxQ/ZiK1XYoRrm8y5
+         ItbAPGHfIU1mCz3pcUfYpksHX/ogdS3nkrAYZWeAyJE2tQt46kkS/PhGXnwmgSiyljtr
+         O7y+aaOARWbGiPWEnFzP+xeKujn+ZU2B3/Pnw0rhDspP8wO0jf/cnmwpBoFiSp679khd
+         pMr8ATWeAvOEuy5QJkVGQiDu06t1clm4f8GPlrhWKCdkyo2RBbHYOMgE604ilis68g6Y
+         BjuUK/seJ4GK7JrjfObd/ykftXx8oh+C4BGeAxumZLx7pe/izpygKYMyS/BPsuNKpTx7
+         it+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWigAnJQ4rhjJPspFqIb8gdmoZ/zI7GpozYwclDMbQHQyX14js6BiuwqmTZQ3Hh5X566sz8Y0A1kM1Uwmhj@vger.kernel.org, AJvYcCXL5rx1J2gnaz91viJjKuUiQIzV/AUaXDHpu1AehK/d7yoiA/vmTbuc3WoL24pnmogTl7R2QZkJGzYO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyzyPJfAQnDV3HFLX2F6B20jephpUoTlRgFFH+6INzs9x7EK1S
+	16TH8gmaqKAQogmAgskPMarsR1XQpJgxvBoiTcBz4appRlwf77h+tKUm5A==
+X-Google-Smtp-Source: AGHT+IFFFhMerPMQrKtmTWnNhpLODC7igg1EoEmBu86qH1UAkTyoc9u0bHxw6TAfW1VuhYm/oz2Wvw==
+X-Received: by 2002:a17:90a:e7d2:b0:2e2:d16e:8769 with SMTP id 98e67ed59e1d1-2e3ab7fb55fmr3546365a91.15.1729071795918;
+        Wed, 16 Oct 2024 02:43:15 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e392eff82dsm3638770a91.26.2024.10.16.02.43.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:42:50 -0700 (PDT)
-Date: Wed, 16 Oct 2024 11:42:49 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	NXP S32 Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>, 
-	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
-	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>, Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-Message-ID: <turfqcpjz2dxrng73v5iphpsh3pvhhv73guo4m2vvzplqycsa3@iyrzsimppo57>
-References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
- <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
+        Wed, 16 Oct 2024 02:43:15 -0700 (PDT)
+Date: Wed, 16 Oct 2024 17:43:11 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 6/6] gpiolib: notify user-space about in-kernel line
+ state changes
+Message-ID: <20241016094311.GA210746@rigel>
+References: <20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org>
+ <20241015-gpio-notify-in-kernel-events-v3-6-9edf05802271@linaro.org>
+ <20241016051944.GA42100@rigel>
+ <20241016072730.GA120095@rigel>
+ <20241016083747.GB120095@rigel>
+ <CAMRc=McR_eMizF6r30NqbgK4mE5ErzR=wbkD4O-Czn=+Oj4AXQ@mail.gmail.com>
+ <20241016091714.GA207325@rigel>
+ <CAMRc=MdoeyXwKuLmrmJ8zRCtVDNzEd34zgZ5Autye0TNv_OLhg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="af47a2hrdy2esf76"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdoeyXwKuLmrmJ8zRCtVDNzEd34zgZ5Autye0TNv_OLhg@mail.gmail.com>
 
+On Wed, Oct 16, 2024 at 11:22:07AM +0200, Bartosz Golaszewski wrote:
+> On Wed, Oct 16, 2024 at 11:17 AM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > > >
+> > >
+> > > You mean, you get a CHANGED_CONFIG event but the debounce value is not
+> > > in the associated line info?
+> > >
+> >
+> > Correct.
+> >
+>
+> Ok, let me see.
+>
 
---af47a2hrdy2esf76
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-MIME-Version: 1.0
+When setting from userspace the issue is that linereq_set_config() setting the
+direction will emit, quite possibly before the debounce has been set.  The
+edge_detector_setup() that does set it can also emit, though only if the
+hardware supports debounce.  And then there could be a race between the
+notifier being called and the period being set in the supinfo.
+(the set will probably win that one)
 
-Hello,
+Debounce set from the kernel side is going to be an issue as cdev
+catches and stores the value from userspace to report in the supinfo - that
+isn't the case for kernel calls to gpiod_set_config().
 
-On Tue, Oct 15, 2024 at 01:51:31PM +0300, Ciprian Costea wrote:
-> +static void rtc_disable(struct rtc_priv *priv)
+Seems moving the debounce value out of the desc and into cdev, which seemed a
+good idea at the time, might come back and bite now if it is no longer
+restricted to being cdev specific.  Now there is an actual reason to
+store it in the desc :(.
 
-A very generic name for a driver specific function. I'm a big fan of
-driver specific prefixes and I wonder why this isn't called
-s34g_rtc_disable().
+Cheers,
+Kent.
 
-Also a comment about what is actually disabled here would be nice (or
-maybe a better name). I hope this doesn't stop the RTC ticking??
-
-> +static struct platform_driver rtc_driver = {
-> +	.driver		= {
-> +		.name			= "s32g-rtc",
-> +		.pm				= &rtc_pm_ops,
-> +		.of_match_table = rtc_dt_ids,
-> +	},
-> +	.probe		= rtc_probe,
-> +	.remove_new	= rtc_remove,
-> +};
-
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers. Please just drop "_new".
-
-Best regards
-Uwe
-
---af47a2hrdy2esf76
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPipYACgkQj4D7WH0S
-/k4bKggAlZ0dNrVMhxkUcOgNHdnZPmocMix0MolUyuwACDvLltKjsR3ytfo+npI6
-Nq3Dh//oMITtQoRk2As0cx/Vxohwu6tbB5Cw+3QAXDVjrVwDF2qyp1Jt61r47UUh
-2fAC5bDFVKS3Y4fC98KBQHDNQQLXdjT39zofsEyGJPsJZJfwYhGMvcT1sMc5cVyV
-Ecp5uh+Tveo6kEkIzZxCQZNwY/vnnYmHoUBCcEoq4vjAI+I84KEa+cKWTLK937Bm
-ok/d7R26aSCjmjRbBoGqpzohnAC7EwWFcfdQb0D5QSoEgDVyIjHENg8chlk3alcE
-seCjwzOM3DEgdrZf12g9G5PNWgYHsQ==
-=nTI6
------END PGP SIGNATURE-----
-
---af47a2hrdy2esf76--
 
