@@ -1,126 +1,233 @@
-Return-Path: <linux-kernel+bounces-367567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289EC9A03E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:16:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910EA9A03EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4472B27B30
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1585A1F20CD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A95F1D2B37;
-	Wed, 16 Oct 2024 08:15:02 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD211B6CFE;
+	Wed, 16 Oct 2024 08:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxWtPzgC"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1867D1D14FC;
-	Wed, 16 Oct 2024 08:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BA5180021
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066501; cv=none; b=Cxc3ER65jxZD+u4mc3OkzZLVtAH7FM/xTfZgXuEShZ/g75HtFuGtn8YRM1mkn0SKH7wM0ZOKOGP5MUIk7baU7v3+EKMFL6CDq2+1fXdFCErW6ZMtE1IH4yX0WIrpdhoCkvhRywklTcOhk3tLYQfeH3kieK7KKwc7Tf0pxLJe8p4=
+	t=1729066535; cv=none; b=a6xeucntqA2pMYn+mQmRdITnUnjSRKM2i1E4A9/M7OwcIIOIZFS5c0ZkK/gWCPel95QWkAyoWvJzQ5HjultcdHla+hXeFXETm6/G+6Bcek5Agjtvpf2CfnM1w6XeuUzlYqXipLiTfj+io1/J+Y17wJlQxOiA8phXzc9ui0eKovE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066501; c=relaxed/simple;
-	bh=AeeIRsmAculXd0dhod8ePmCmOOk0j8YnvSaah4Mgsxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=la5y4mA+uA8zBdFeQ3Y9cUdgm03cCeDiQycFJ4/dmepRXHAH5qa5b3NMtXIGLJaIXL3EAcfxJV1sO78UZlwkEYdwdJtwz6vO7fZUC0UEKagTT7EYzAM78tK86KVSm2d/l6tr4UMlVNsREck8Pyh9EdyZIoAoIbELwVr7DRiRNtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: by air.basealt.ru (Postfix, from userid 490)
-	id 4B93B2F2024D; Wed, 16 Oct 2024 08:14:57 +0000 (UTC)
-X-Spam-Level: 
-Received: from [192.168.0.103] (unknown [178.76.204.78])
-	by air.basealt.ru (Postfix) with ESMTPSA id 69E862F20257;
-	Wed, 16 Oct 2024 08:14:56 +0000 (UTC)
-Message-ID: <f3836285-befc-92af-38ef-e58a84f920fd@basealt.ru>
-Date: Wed, 16 Oct 2024 11:14:55 +0300
+	s=arc-20240116; t=1729066535; c=relaxed/simple;
+	bh=1IuA3bPqqaF9ChAHU+88Fb58RTiFz8iAP0BqIuxg7OI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oPzm4Ac5fg8vcrCaZY1hTJlG6Fre2+8TYQKiRmhgZNsE4bPRFxjowGYxKD/SveuubG9oRHNXHXEJtbH2xS7GjU+nRLVefrU2rGr3BFl54dX8XsD83ufDec1ZW3cRsUNro7baMj97RnzOFEjBpofAEDBMStsb/8FFJdbBHmDX/GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gxWtPzgC; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-50d73699e13so420214e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729066531; x=1729671331; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WcI16q3sDOqKZecGXpjAdaHkVmug7qW5nF3fWN5j7Sg=;
+        b=gxWtPzgCcKNNoGeX+LsKsV1X3wHOCrPxLu0ZHy5U0esZm74fesCEwnQ5/2/MgTJJxb
+         4C+uUimXuvZmdnhQWj3lXYMCt9DnHcQcMcI6pdQGRtmHjFRDoNvZ9WLI0ebX7xyfYa40
+         6qvBbmVfp9ag7x0ggd2c6gjXA5QCKQkMRKXhmAvcYXolRTH4gMUoU64tN56sxnyjGnVd
+         Q5qOrt9DdlPAlVzgdUdKd13h5wuh52bRjmLF3ySOsdzs2INIjrfGidOc94LKRPLGgPSv
+         hA2oYRZ5ldJLg34eb8RV4NatqlWkMLQtr6j5qTNRfWon75LYhDS/yLUB806JlFRUrVKZ
+         f98w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729066531; x=1729671331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WcI16q3sDOqKZecGXpjAdaHkVmug7qW5nF3fWN5j7Sg=;
+        b=AMTeVAN4Im6TIr1AkDnvnbeYua5y/8KHDk/watz4hoM+kPi4oK8K6A8hChpy71gBVo
+         c8vTTNRBFrM3k1QMuELFjV1vddbxcDjpcqAiWVM4W98WK2IRHvsZQSydGRL0XCzWqO2+
+         7dz6Ze4ZAIH5gcA00lUZNbwgGRRs/roEn11JZ6dTJonTyxdpsl0r3ZyQle4GA2H1Ik0q
+         +n8pCmIZLtv7GiumuYSzwG9htNAr+bF0C3UWvwEvQ8H58CRHfA0/IhQUrNBwIqRMrLIN
+         vXY/pbadtmdFlCcEXvtFo+ln6i9iiArWhi+x6w+arfjVgcPvG1j02EskioqkB0YKYdBh
+         FIjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPZbhFBa593L0u8i5gTkU3Co9k5qOiTS3pst124DcEt6I6KLx0ddFwTlNNSSyhRXfl+FTfeToEqpA3Igk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2lWYon4N7EQn8QZUyuCcI2fu+hplhQ/SbgfOKh7a2Mtd8pSrC
+	P3VwTPpUobZUSqAyVCO66CY+Rk+4Hb1tuSsHK9YsKn3Bh4cs1Z2mbHZXID8ZeqtAV6oJb5+Muax
+	iq/4cFkbbOBwNFzyoLc5X43cLlwXqbUGTYD192WSEPrjQ9tTzaT0=
+X-Google-Smtp-Source: AGHT+IHxOwITgnRBE6TVGRHtx87wi7sbYnfJoxuv+8L8wixdpSdQXnE1+VUBsdANoINyaftmyTfT0tGd6kA6S8OH86w=
+X-Received: by 2002:a05:6122:10f9:b0:50d:4bd2:bc9b with SMTP id
+ 71dfb90a1353d-50d8cbc570dmr2383374e0c.0.1729066531501; Wed, 16 Oct 2024
+ 01:15:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2] ALSA: hda/conexant - Fix audio routing for HP EliteOne
- 1000 G2
-Content-Language: en-US
-To: Takashi Iwai <tiwai@suse.de>, Kai-Heng Feng <kaihengf@nvidia.com>
-Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- bo liu <bo.liu@senarytech.com>
-References: <20241009134248.662175-1-kovalev@altlinux.org>
- <87h69ltmgn.wl-tiwai@suse.de>
- <b0ac19a5-1d93-41a5-beaa-279939e8ebde@nvidia.com>
- <87y12wsfin.wl-tiwai@suse.de>
- <6ef8fef9-c44d-40d6-f7e1-236e68175071@basealt.ru>
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-In-Reply-To: <6ef8fef9-c44d-40d6-f7e1-236e68175071@basealt.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241015112501.498328041@linuxfoundation.org>
+In-Reply-To: <20241015112501.498328041@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 16 Oct 2024 13:45:20 +0530
+Message-ID: <CA+G9fYtqUBXiXPm1kzEabqSzQy41Bh-OieCgnvNi5jVnHh4dpQ@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/791] 6.1.113-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 15 Oct 2024 at 16:56, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.113 release.
+> There are 791 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.1.113-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
-10.10.2024 11:36, Vasiliy Kovalev пишет:
-> 
-> 10.10.2024 08:17, Takashi Iwai wrote:
->> On Thu, 10 Oct 2024 05:32:18 +0200,
->> Kai-Heng Feng wrote:
->>>
->>>
->>> On 2024/10/9 9:50 PM, Takashi Iwai wrote:
->>>> On Wed, 09 Oct 2024 15:42:48 +0200,
->>>> Vasiliy Kovalev wrote:
->>>>>
->>>>> There is a problem with simultaneous audio output to headphones and
->>>>> speakers, and when headphones are turned off, the speakers also turn
->>>>> off and do not turn them on.
->>>>>
->>>>> However, it was found that if you boot linux immediately after 
->>>>> windows,
->>>>> there are no such problems. When comparing alsa-info, the only 
->>>>> difference
->>>>> is the different configuration of Node 0x1d:
->>>>>
->>>>> working conf. (windows): Pin-ctls: 0x80: HP
->>>>> not working     (linux): Pin-ctls: 0xc0: OUT HP
->>>>>
->>>>> This patch disable the AC_PINCTL_OUT_EN bit of Node 0x1d and fixes the
->>>>> described problem.
->>>
->>> Though this is already applied, is it possible to see if the issue
->>> also happens on S4?
->>>
->>> Linux doesn't put PCI devices like HDA to D3 during shutdown and
->>> reboot while Windows does, that might be the reason boot Linux after
->>> Windows can workaround the issue.
->>>
->>> Linux does put PCI devices to D3 for hibernate (S4), so we can use it
->>> as an experiment.
->>
->> Right, it should have been the cached version so that the setup is
->> reapplied automatically; i.e. replace snd_hda_set_pin_ctl() with
->> snd_hda_set_pin_ctl_cached().
->>
->> Vasiliy, care to test and submit an incremental fix?
-> 
-> Ok, I compiled the module with the proposed changes and sent it to the 
-> user for testing on a machine with this codec. After testing, I will 
-> write about the result.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Using the snd_hda_set_pin_ctl_cache() function instead of 
-snd_hda_set_pin_ctl() leads to the same positive result, there are no 
-problems with sound.  The patch has been sent [1]
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-[1] https://lore.kernel.org/all/20241016080713.46801-1-kovalev@altlinux.org/
+## Build
+* kernel: 6.1.113-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 7e3aa874350e5222a88aac9d02d8bc5a8ff44f80
+* git describe: v6.1.112-792-g7e3aa874350e
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
+12-792-g7e3aa874350e
 
->>
->> thanks,
->>
->> Takashi
+## Test Regressions (compared to v6.1.110-137-g4f910bc2b928)
+
+## Metric Regressions (compared to v6.1.110-137-g4f910bc2b928)
+
+## Test Fixes (compared to v6.1.110-137-g4f910bc2b928)
+
+## Metric Fixes (compared to v6.1.110-137-g4f910bc2b928)
+
+## Test result summary
+total: 205815, pass: 164289, fail: 3758, skip: 37525, xfail: 243
+
+## Build Summary
+* arc: 10 total, 10 passed, 0 failed
+* arm: 270 total, 270 passed, 0 failed
+* arm64: 82 total, 82 passed, 0 failed
+* i386: 56 total, 52 passed, 4 failed
+* mips: 52 total, 50 passed, 2 failed
+* parisc: 8 total, 8 passed, 0 failed
+* powerpc: 72 total, 68 passed, 4 failed
+* riscv: 22 total, 22 passed, 0 failed
+* s390: 28 total, 28 passed, 0 failed
+* sh: 20 total, 20 passed, 0 failed
+* sparc: 14 total, 14 passed, 0 failed
+* x86_64: 66 total, 66 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
 
 --
-Thanks,
-Vasiliy Kovalev
+Linaro LKFT
+https://lkft.linaro.org
 
