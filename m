@@ -1,173 +1,76 @@
-Return-Path: <linux-kernel+bounces-367390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE4E9A01AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:43:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C30D9A01AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DADB1C23399
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:43:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C841F22B9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709C519340B;
-	Wed, 16 Oct 2024 06:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAu+fXzN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AFE1925BC;
+	Wed, 16 Oct 2024 06:42:58 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CBB190073;
-	Wed, 16 Oct 2024 06:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7919018E37D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729060960; cv=none; b=ZDvH58sAaMz7BM5ejm7e22aGXcXF+cp2hOZdBZ483lawOo0Iuy3qUF+Pgcyiy91N8cqMp6Nib0tLWhC+2p1dUo0mSIylfsovTSdbDFCEMCmvjpanndGJ+HeYgrskrnXGKuXuGt4JTS/YyJYlw4rYIjeCXSllVqziDME4eO0E2e8=
+	t=1729060977; cv=none; b=eN/CvDPrykNTgdTdggdVTDxzVButa9ES2UG7F4v9hnq/fUSHpvnyGsuLA8Atf4HeUtEsvdkVTh+hpr3ryg2gojZTXMTHPV8sc6kZSjHLFfrSLo/isGMDnwVuFHZokgygei+Nd3EVm9DiKVn/HprPmvCn3qqmjly9uGY1Js6HhZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729060960; c=relaxed/simple;
-	bh=SodGRJK6SdKaiOHwTixQxzX5Vp7/ZcsL2J0q86kEjOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQlrTwcp/But2+MMiTIkfImRhPSz6fiShgK0rX0z7+7Q2e3fjErk2XO6EFas8cFnvMu4C1AVOhylkFl0tuNBLr/wBOmOZYmKTuh+gqVv5ohJfR5KCo2sJZVY9mz/yenXzaTZN4uUcEDtqurHEnITNdLzmfzysNAiAnPzIFRb0G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAu+fXzN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409FBC4CEC5;
-	Wed, 16 Oct 2024 06:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729060960;
-	bh=SodGRJK6SdKaiOHwTixQxzX5Vp7/ZcsL2J0q86kEjOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nAu+fXzNo/4J58eTjlJvWwgg1LcCUch4gsRi8eWWo/QqieaARhDEenGBptNjRK8Q7
-	 UF3UrHHl3i+LHFpZQU/Qd1o70QDQWnhZKzJjXqK7wzbDHHfEIzm4U+vlpYEENNUlFF
-	 B+N8rdbfYB7Jo+WbeLMS3Vs0pDk3MrwAicDUopeF1g8BEARKKEK1lBcNhaz0nxgsEN
-	 cUC4m7oF+Erk0LYna+3hHsGztpzlVvCVnVIBchRkLIEarllmNfRXAxNE7cg5uLGHHC
-	 WU53Rta3jJDDSFHQh2ufZASF3kkkF5Uy8v/gH5zrv0ciCDJYIE82JNzwqsBw8CvjZm
-	 bYyDiGLwm0ZAQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t0xk6-000000004nI-36Dv;
-	Wed, 16 Oct 2024 08:42:46 +0200
-Date: Wed, 16 Oct 2024 08:42:46 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-arm-msm@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] rtc: pm8xxx: implement qcom,no-alarm flag for
- non-HLOS owned alarm
-Message-ID: <Zw9gZkLPMB9ZBQlh@hovoldconsulting.com>
-References: <20241015004945.3676-1-jonathan@marek.ca>
- <20241015004945.3676-2-jonathan@marek.ca>
+	s=arc-20240116; t=1729060977; c=relaxed/simple;
+	bh=GWwxhh0nAYzm5C4/pUUBI8qxHuAt745ivHJVcYQGU+w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Y2wUvQ0CET4k1j6lM6wwT9uqf1huOTEXMN1uH/ToWg5dh7BbK8PkFsWso4yQTd32KTus2vSEZ87cA8aPvbsxA5SjZS6eKp6zl4rL7NHDfYXcTk5fljE0GSmmjYayTqZ9vJVyepgSNvLoOWMRIIuoZ07TZ0jLn3lTVfrk+nF7hf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b45bfc94so39000565ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:42:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729060975; x=1729665775;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NMo3tm5waadTIHnWKbCuWMp3eDlrAGY4SZ166H3iClE=;
+        b=nAJSkyEvGsva2uNTr/5oN3sdLfONa/mRpcLlk/JaXryGdjEOhAVIGj512+64MbqEIn
+         axGCy6eTiztxlJIZqIRDvXn9WDafHdWieDntFwwRtN24sEA/yItYYIOueqeGiF59/2NL
+         gALLqgvTvsFERGhyN1t7FUcEBAt/ZgLC4QVq0ow+vev3WbdL0J0TFacnyU+87wTFigm5
+         ZoOUoIiEK+rlYznMLAtzEGWSRwfg6o/zt4YPKIbbQKwBWXVyeYZb52l/TUtvsGBOzuBL
+         KHvH6W+O3PYz6EBm+grzSdBrJuhpTnl1qlGCIwYLNl4NsevGgCqJrvj9vDoJ76wqILaF
+         rhmQ==
+X-Gm-Message-State: AOJu0YyVPgKkJOBVkDk+wnqeuDmI3iOUgV90E1RKUhkphGKBxWPpumiq
+	SNTiWrrX3xsfrvjUMELJ+mcboy+92lNWYTtdQclX540SYROpDFvGCEEDyhSVgOUAMB4fh9EgBMW
+	ixQizowkG6enhLrYnDvGxMtbD34yGbpJ+byoUJ4RnjV/2aYFzj6FLK/E=
+X-Google-Smtp-Source: AGHT+IGrQ01lggTum9UOXFG1i4eHLdBgdlpx8YyGZBCupyxNaWsRAwfNXUXtk1ZT1R9OSlduxCAHlmtgNQgYhOHA9tPoljeit69G
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015004945.3676-2-jonathan@marek.ca>
+X-Received: by 2002:a92:c244:0:b0:3a0:c820:c5f0 with SMTP id
+ e9e14a558f8ab-3a3dc4f9191mr31471695ab.24.1729060975546; Tue, 15 Oct 2024
+ 23:42:55 -0700 (PDT)
+Date: Tue, 15 Oct 2024 23:42:55 -0700
+In-Reply-To: <66fed783.050a0220.9ec68.0051.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670f606f.050a0220.d5849.0013.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+4d24267b490e2b68a5fa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 14, 2024 at 08:47:26PM -0400, Jonathan Marek wrote:
-> Qualcomm x1e80100 firmware sets the ownership of the RTC alarm to ADSP.
-> Thus writing to RTC alarm registers and receiving alarm interrupts is not
-> possible.
-> 
-> Add a qcom,no-alarm flag to support RTC on this platform.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-An alternative may be to drop the alarm interrupt from DT and use that
-as an indicator.
+***
 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/rtc/rtc-pm8xxx.c | 44 +++++++++++++++++++++++++++-------------
->  1 file changed, 30 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-> index c32fba550c8e0..1e78939625622 100644
-> --- a/drivers/rtc/rtc-pm8xxx.c
-> +++ b/drivers/rtc/rtc-pm8xxx.c
-> @@ -61,6 +61,7 @@ struct pm8xxx_rtc {
->  	struct rtc_device *rtc;
->  	struct regmap *regmap;
->  	bool allow_set_time;
-> +	bool no_alarm;
+Subject: 
+Author: kent.overstreet@linux.dev
 
-How about inverting this one and naming it has_alarm or similar to avoid
-the double negation in your conditionals (!no_alarm)?
-
->  	int alarm_irq;
->  	const struct pm8xxx_rtc_regs *regs;
->  	struct device *dev;
-> @@ -473,9 +474,14 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->  	if (!rtc_dd->regmap)
->  		return -ENXIO;
->  
-> -	rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
-> -	if (rtc_dd->alarm_irq < 0)
-> -		return -ENXIO;
-> +	rtc_dd->no_alarm = of_property_read_bool(pdev->dev.of_node,
-> +						 "qcom,no-alarm");
-> +
-
-Stray newline.
-
-> +	if (!rtc_dd->no_alarm) {
-> +		rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
-> +		if (rtc_dd->alarm_irq < 0)
-> +			return -ENXIO;
-> +	}
->  
->  	rtc_dd->allow_set_time = of_property_read_bool(pdev->dev.of_node,
->  						      "allow-set-time");
-> @@ -503,7 +509,8 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, rtc_dd);
->  
-> -	device_init_wakeup(&pdev->dev, 1);
-> +	if (!rtc_dd->no_alarm)
-> +		device_init_wakeup(&pdev->dev, 1);
->  
->  	rtc_dd->rtc = devm_rtc_allocate_device(&pdev->dev);
->  	if (IS_ERR(rtc_dd->rtc))
-> @@ -512,27 +519,36 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->  	rtc_dd->rtc->ops = &pm8xxx_rtc_ops;
->  	rtc_dd->rtc->range_max = U32_MAX;
->  
-> -	rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
-> -					  pm8xxx_alarm_trigger,
-> -					  IRQF_TRIGGER_RISING,
-> -					  "pm8xxx_rtc_alarm", rtc_dd);
-> -	if (rc < 0)
-> -		return rc;
-> +	if (!rtc_dd->no_alarm) {
-> +		rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
-> +						  pm8xxx_alarm_trigger,
-> +						  IRQF_TRIGGER_RISING,
-> +						  "pm8xxx_rtc_alarm", rtc_dd);
-> +		if (rc < 0)
-> +			return rc;
-> +	}
->  
->  	rc = devm_rtc_register_device(rtc_dd->rtc);
->  	if (rc)
->  		return rc;
->  
-> -	rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
-> -	if (rc)
-> -		return rc;
-> +	if (!rtc_dd->no_alarm) {
-> +		rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
-> +		if (rc)
-> +			return rc;
-> +	} else {
-> +		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
-
-I assume that you should be clearing the feature bit before registering
-the RTC.
-
-> +	}
->  
->  	return 0;
->  }
-
-Johan
+#syz fix bcachefs: Fix lockdep splat in bch2_accounting_read
 
