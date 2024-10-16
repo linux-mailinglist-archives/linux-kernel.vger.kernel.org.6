@@ -1,126 +1,230 @@
-Return-Path: <linux-kernel+bounces-368741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFA59A1456
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:44:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E0D9A145C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D115B1C21E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:44:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A2F0B219BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CFC217325;
-	Wed, 16 Oct 2024 20:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJZq1F2d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2A32170D5;
-	Wed, 16 Oct 2024 20:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E7F1D14FC;
+	Wed, 16 Oct 2024 20:46:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EFC4409;
+	Wed, 16 Oct 2024 20:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729111404; cv=none; b=KLDM1dTdDrX2GbkU2y8SF7W6Z2PeG0nWMLB1WqqnuKgRZbEpH/cEXvmSgLp1Lre/V68Y0o3jOXkpmmQ1fLnNn4gFKRShcqSnXpEJwCoU8X92qDNR96Zshhnq9QAQ8LM5GzX7g14v/9rbx5iqc/4OZczCTOlkPVI5V3UqEASKHFE=
+	t=1729111584; cv=none; b=Dfxn9HBogMVXeDYKmg5FOmCLNx/MrAblq0UWzelMjeyS4aCKgvN+oJbPgMu7jg7gFXWyaBEuxZlc3U4CKMjHR8HXsodegs9IRGE/e0rSUKLlK+YQxh6+dhY+/qn0+6BVtJWgaATbUJmQJEmb7Y+FZPPrckAW369/nTnBce+TTDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729111404; c=relaxed/simple;
-	bh=qo/iVoYCKv6clO7FRi1PwRL1hqwG01g25YyRsbCYQ00=;
+	s=arc-20240116; t=1729111584; c=relaxed/simple;
+	bh=/KMPwYFTR0mcPuXM/4Ws8Eh2JBFSNKdpOapdPGGNn/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YG17SS4uBsDB/OGfy7+k48BKcUa4rqpwk56+5PPu1JgAvcgMQAB+Ls5YB6becCB928Voxgk9kqHdXkcuybcg+ONhThR8GWBfDh5f6WRra3oXL6KJ4KEWW4t6kfSp5bV7jfFIrGEqjOGQ340jXpOiY0zRdikL2GZ4fAdYGy+Lb5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJZq1F2d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E29C4CECD;
-	Wed, 16 Oct 2024 20:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729111404;
-	bh=qo/iVoYCKv6clO7FRi1PwRL1hqwG01g25YyRsbCYQ00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AJZq1F2dulcRjkSp/MnZnzLjHNPn3ZptXhO7JV7B3NrGDtMWpHuPHDzKBFv2U9Owq
-	 6zDdDSEn2+ZcGf3f8ciCWjuUgHtgy3lwetxKCoauF6g00b220IlNk2dIcod9jxWLrh
-	 7VhZQnFmSmfeWrAh5IYhhuOe3IyU3zIclimupa0sRSH9zRQ6vNWno4qkoxPIPz5wZ6
-	 NCV7qT1DCHVesCR/hEnE/SZ3Yixt3z9Knw2JuTM+bY2itrLyNrNqskP5UHKhmAC5s0
-	 nsk5UI4oR4DRmtXNImEDJOXplbCeiCkexpL5qUnDWJjYzSxuLrYl64ErstZVcIBlZl
-	 dIfIyjuNJqs8w==
-Date: Wed, 16 Oct 2024 13:43:21 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jan Hendrik Farr <kernel@jfarr.cc>
-Cc: Bill Wendling <morbo@google.com>,
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <202410161342.53075D369C@keescook>
-References: <ZvV6X5FPBBW7CO1f@archlinux>
- <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
- <Zvg-mDsvvOueGpzs@archlinux>
- <202409281331.1F04259@keescook>
- <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
- <Zv6BEO-1Y0oJ3krr@archlinux>
- <CAGG=3QVecaZfoRrjToToq8=Azh8M0vQ5Q=V8dfhdBnDR8GWy5A@mail.gmail.com>
- <Zw8iawAF5W2uzGuh@archlinux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2uV8JP6UQo8GzuAmG/g+CvKd3220RnQI1T1r+3hlZnTnUP4kRLgqDGMCjKhY0SgrAvFBHyp8npGYAqoK1OEcpapZUba+onsibHd0kn3LBpf1WdXbhuTdBifHqNWRoflhpxtPjT3kL77DD8cmeiL4+ihdbwNdWtutBEK/fY1GTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91F32FEC;
+	Wed, 16 Oct 2024 13:46:49 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DEC03F58B;
+	Wed, 16 Oct 2024 13:46:15 -0700 (PDT)
+Date: Wed, 16 Oct 2024 22:45:35 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	catalin.marinas@arm.com, rafael@kernel.org,
+	yang@os.amperecomputing.com, lihuisong@huawei.com,
+	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
+	Bibek Basu <bbasu@nvidia.com>
+Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
+ arch_freq_avg_get_on_cpu
+Message-ID: <ZxAl77IYcMO2SfWh@arm.com>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-4-beata.michalska@arm.com>
+ <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
+ <ZvU4mR_FZa7jXUgk@arm.com>
+ <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
+ <Zv8PKlr_PJgxazro@arm.com>
+ <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+ <Zwe1p0La_AFknglf@arm.com>
+ <evllzzjufritriziohz22gm5qs44jedpft5lcfjfwnekarqtdx@eg42ik2l7bxu>
+ <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zw8iawAF5W2uzGuh@archlinux>
+In-Reply-To: <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
 
-On Wed, Oct 16, 2024 at 04:18:19AM +0200, Jan Hendrik Farr wrote:
-> On 15 18:22:50, Bill Wendling wrote:
-> > On Thu, Oct 3, 2024 at 4:33â€¯AM Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> > > On 02 11:18:57, Thorsten Blum wrote:
-> > > > On 28. Sep 2024, at 22:34, Kees Cook <kees@kernel.org> wrote:
-> > > > > [...]
+On Mon, Oct 14, 2024 at 11:16:36PM +0530, Sumit Gupta wrote:
+> 
+> 
+> On 11/10/24 21:59, Vanshidhar Konda wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Thu, Oct 10, 2024 at 01:08:23PM GMT, Beata Michalska wrote:
+> > > On Thu, Oct 03, 2024 at 02:54:22PM -0700, Vanshidhar Konda wrote:
+> > > > On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
+> > > > > On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
+> > > > > > On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
+> > > > > > > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
+> > > > > > > > Hi Beata,
+> > > > > > > Hi Sumit,
+> > > > > > > >
+> > > > > > > > Thank you for the patches.
+> > > > > > > Thank you for having a look at those.
+> > > > > > > >
+> > > > > > > > On 13/09/24 18:59, Beata Michalska wrote:
+> > > > > > > > > External email: Use caution opening links or attachments
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > With the Frequency Invariance Engine (FIE) being
+> > > > already wired up with
+> > > > > > > > > sched tick and making use of relevant (core counter
+> > > > and constant
+> > > > > > > > > counter) AMU counters, getting the average frequency
+> > > > for a given CPU,
+> > > > > > > > > can be achieved by utilizing the frequency scale
+> > > > factor which reflects
+> > > > > > > > > an average CPU frequency for the last tick period length.
+> > > > > > > > >
+> > > > > > > > > The solution is partially based on APERF/MPERF
+> > > > implementation of
+> > > > > > > > > arch_freq_get_on_cpu.
+> > > > > > > > >
+> > > > > > > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> > > > > > > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > > > > > > > > ---
+> > > > > > > > >   arch/arm64/kernel/topology.c | 109
+> > > > +++++++++++++++++++++++++++++++----
+> > > > > > > > >   1 file changed, 99 insertions(+), 10 deletions(-)
+> > > > > > > > >
+> > > > 
+> > > > --- snip ----
+> > > > 
+> > > > > > > >
+> > > > > > > >     ..
+> > > > > > > >   freq_comput:
+> > > > > > > >     scale = arch_scale_freq_capacity(cpu);
+> > > > > > > >     freq = scale * arch_scale_freq_ref(cpu);
+> > > > > > > >   ----
+> > > > > > > >
+> > > > > > > This boils down to the question what that function, and
+> > > > the information it
+> > > > > > > provides, represent really. The 'unknown' here simply says
+> > > > the CPU has been idle
+> > > > > > > for a while and as such the frequency data is a bit stale
+> > > > and it does not
+> > > > > > > represent the average freq the CPU is actually running at
+> > > > anymore, which is
+> > > > > > > the intention here really. Or, that the given CPU is a
+> > > > non-housekeeping one.
+> > > > > > > Either way I believe this is a useful information, instead
+> > > > of providing
+> > > > > > > stale data with no indication on whether the frequency is
+> > > > really the 'current'
+> > > > > > > one or not.
+> > > > > > >
+> > > > > > > If that is somehow undesirable we can discuss this
+> > > > further, though I'd rather
+> > > > > > > avoid exposing an interface where the feedback provided is open to
+> > > > > > > interpretation at all times.
+> > > > > >
+> > > > > > Would it make sense to identify that the frequency reporting
+> > > > is unknown due to
+> > > > > > cpu being idle vs some other issue like being a
+> > > > non-housekeeping CPU? Would
+> > > > > > returning a value of 0 make it easier for tools to represent
+> > > > that the CPU is
+> > > > > > currently idle?
+> > > > > That is an option.
+> > > > > Another one would be to return an error for those cases. This
+> > > > would make it
+> > > > > easier to distinguish between valid frequency &/| idle CPU vs
+> > > > tickless CPU
+> > > > > (EINVAL vs ENOENT) ?
 > > > > >
-> > > > > Sorry, I've been out of commission with covid. Globally disabling this
-> > > > > macro for clang is not the right solution (way too big a hammer).
-> > > > >
-> > > > > Until Bill has a fix, we can revert commit
-> > > > > 86e92eeeb23741a072fe7532db663250ff2e726a, as the problem is limited to
-> > > > > certain situations where 'counted_by' is in use.
-> > > >
-> > > > I already encountered two other related __counted_by() issues [1][2]
-> > > > that are now being reverted. Would it be an option to disable it
-> > > > globally, but only for Clang < v19 (where it looks like it'll be fixed)?
-> > > >
-> > > > Otherwise adding __counted_by() might be a slippery slope for a long
-> > > > time and the edge cases don't seem to be that rare anymore.
-> > > >
-> > > > Thanks,
-> > > > Thorsten
-> > > >
-> > > > [1] https://lore.kernel.org/all/20240909162725.1805-2-thorsten.blum@toblux.com/
-> > > > [2] https://lore.kernel.org/all/20240923213809.235128-2-thorsten.blum@linux.dev/
-> > >
-> > > This issue is now fixed on the llvm main branch:
-> > > https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf769fc9a93e8a
-> > >
-> > > So presumably this will go into 19.1.2, not sure what this means for
-> > > distros that ship clang 18. Will they have to be notified to backport
-> > > this?
-> > >
-> > FYI, Clang 19.1.2 shipped with your fix in it.
+> > > > 
+> > > > That seems like a good idea but I suspect it would be confusing
+> > > > to the end user.
+> > > > 
+> > > > If a user runs `cat
+> > > > /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
+> > > > get an error in some cases or get a number in some other iterations.
+> > > > 
+> > > That is a fair point but I am not entirely convinced using '0'
+> > > instead makes
+> > > things any more clearer as this is in no way a valid CPU frequency.
+> > > As long as we document the expected behaviour keeping the interface well
+> > > defined,  both options should be fine I guess.
+> > > 
+> > 
+> > Another option could be to list out the reason as 'idle' or 'no entry'
+> > instead of
+> > returning EINVAL or ENOENT. These wouldn't be valid values either but
+> > cat on the
+> > sysfs node wouldn't return an error.
+> > 
+> > Thanks,
+> > Vanshidhar
 > > 
 > 
-> Thx for the info.
+> Ya, listing the clear reason sounds better.
 > 
-> How should we continue with the "off by 4" issue? The way I see it either
-> the kernel has to change struct_size (lots of work) or clang has to get
-> an option to follow the kernels behavior. I'm in favor of adding an
-> option to clang.
+> Thank you,
+> Sumit Gupta
+>
+I'd still prefer returning an error as that is a clear indication on failure
+upon read. Furthermore, that would also make that attribute stick to single-type
+rule for sysfs, which is currently not the case and will not be if we return
+'idle' or 'no entry'. That said, I am happy to make that change if that would be
+the final decision and that one is not mine, as the change is ultimately the
+cpufreq one.
 
-I'm planning on checking how much impact there is on the kernel to fix
-struct_size() to be precise. It really does need to match __bdos for
-Clang and GCC.
 
--Kees
-
--- 
-Kees Cook
+---
+BR
+Beata
+> > > @Viresh: what is your opinion on that one ?
+> > > 
+> > > ---
+> > > BR
+> > > Beata
+> > > > Thanks,
+> 
+> ....
+> 
+> > > > > > > > > +               cpu = ref_cpu;
+> > > > > > > > > +               goto retry;
+> > > > > > > > > +       }
+> > > > > > > > > +       /*
+> > > > > > > > > +        * Reversed computation to the one used to determine
+> > > > > > > > > +        * the arch_freq_scale value
+> > > > > > > > > +        * (see amu_scale_freq_tick for details)
+> > > > > > > > > +        */
+> > > > > > > > > +       scale = arch_scale_freq_capacity(cpu);
+> > > > > > > > > +       freq = scale * arch_scale_freq_ref(cpu);
+> > > > > > > > > +       freq >>= SCHED_CAPACITY_SHIFT;
+> > > > > > > > > +       return freq;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > >
+> > > > > > > > >   static void amu_fie_setup(const struct cpumask *cpus)
+> > > > > > > > >   {
+> > > > > > > > >          int cpu;
+> > > > > > > > > --
+> > > > > > > > > 2.25.1
+> > > > > > > > >
 
