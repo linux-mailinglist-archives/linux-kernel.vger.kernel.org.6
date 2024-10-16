@@ -1,342 +1,309 @@
-Return-Path: <linux-kernel+bounces-367648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A759F9A04EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:00:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D97A9A04EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FDFB28A59F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28371C233A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D51D20512A;
-	Wed, 16 Oct 2024 09:00:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C5204F8E;
+	Wed, 16 Oct 2024 09:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="jddibJ96"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5411C6F55;
-	Wed, 16 Oct 2024 09:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6978158D9C;
+	Wed, 16 Oct 2024 09:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729069211; cv=none; b=X+16r0HpuTLCWETHxalGflC/+azkzNhFjSzgs09P1C97z244Sx4/Ogsq0TCfaXx8B4klweEfDmu+0W/9l/d9/Z+tfcTejUhvD1GG+Ik/+MgcaIldrlbPIDwG5FJmcuKdpG/+exHgY7CMi1D9RPRbqj9wRfmR7Yd74QL6/ajwHcU=
+	t=1729069244; cv=none; b=SDSdQAUn47MvHiOE4Dcl34oyFXlXmiygtkd8a98vowBHHCJBVflBz61MhbKIM/ikvoJC4w5VFpPR+WvLMpvxA87fTiNQmhNpNVJkWD8nHs06/q4L+P+3HazQ/GZ3uWd+1AkY78zLCHiJBSkoYukCHysAEvFvAGNWrpJXe3k24mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729069211; c=relaxed/simple;
-	bh=Z8vYqfcihPahyj6XkwjiIM4tnoQjxhP9bBwIwwT90C4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LGZukVFs+LKB3HCfZDlVprBHxCD5U7VThfW55f39M+uiPl8tJth4sjTjHTyLLqy4sI+o2AwwsRkEnc5F+hEPe8n6K7UzVLSis1Mj3rzK6082iyjiQxIlvdpD3LYFMqCEkOPe2APKdHO2cocbG15LG8NhygCeu4bMxm/lFWzzk4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XT4cx6f2mz67ntN;
-	Wed, 16 Oct 2024 16:58:25 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3079E140B67;
-	Wed, 16 Oct 2024 17:00:06 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 11:00:04 +0200
-Date: Wed, 16 Oct 2024 10:00:03 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Greg KH <gregkh@linuxfoundation.org>, <linuxarm@huawei.com>,
-	<shiju.jose@huawei.com>, <linux-edac@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <bp@alien8.de>,
-	<tony.luck@intel.com>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
-	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
-	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
-	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
-	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, Jassi Brar
-	<jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v13 12/18] platform: Add __free() based cleanup function
- for platform_device_put
-Message-ID: <20241016100003.000072fd@Huawei.com>
-In-Reply-To: <CAJZ5v0iRzFQ4EaHKjs0oirmh1HpkONz--JKYB3oLrT84A+XXzA@mail.gmail.com>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-13-shiju.jose@huawei.com>
-	<20241014164339.00003e73@Huawei.com>
-	<2024101410-turf-junior-7739@gregkh>
-	<2024101451-reword-animation-2179@gregkh>
-	<20241014181654.00005180@Huawei.com>
-	<CAJZ5v0j-mwZmuciSTaL8MyAp530y=n9HbQ=uVvcnvGLR1n+YuQ@mail.gmail.com>
-	<20241015101025.00005305@Huawei.com>
-	<20241015104021.00002906@huawei.com>
-	<2024101517-bubbling-deploy-1be0@gregkh>
-	<CAJZ5v0iyc5gvpXjpZdmv-vh8+haPENz+UBXVSF6UDBCRT12fMg@mail.gmail.com>
-	<20241015151947.00006a4f@Huawei.com>
-	<CAJZ5v0iRzFQ4EaHKjs0oirmh1HpkONz--JKYB3oLrT84A+XXzA@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729069244; c=relaxed/simple;
+	bh=6IGxvc6NwaVw4PEo4Yzm/DjnoysdqVlUpzuzFQ9taw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZcAwnyuWCKbjT5cg/Az2t8AmvzZujKcP32Z2v/F4e7QrY4B5NJLMjL6P2KJexR4a3TvQ0n9j+gjHHifzfduWcELAGtkJivgNGdhMvEWNWmPjnpxHl2eFV+w5wlDMgzsJmtXH+MZogtNGr7uS9r1OCoBZX28Qup9nYOffaoQx+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=jddibJ96; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1729069232; bh=6IGxvc6NwaVw4PEo4Yzm/DjnoysdqVlUpzuzFQ9taw0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jddibJ96eXrb9Oku2KNGvGmJCESxJDcSf2TDnUU9GNm8gqlFHYeywhhBLPuLXQMEy
+	 36ZjXsQeg7Uqr5lRKBXwxtGhkK546EQ3hkcmS88OzOCCpzupKO+9a6uNrDJqSkTLIx
+	 Uh7e2BSA1MuDSaIsC7EzT4Gj/K7yKX9TOKitwEjogsomP5+meiRhxl6a4nRIt78h4v
+	 24PKd7sAhYi0tuUJFtqgosSGAWea4YnG94eDaXWJnESzPLpeVmYyn0uxEMrLYiYVVq
+	 MOHZUSQEV6ncrJnd2uGO0UK9oLZdLgVRreVtpMdKpOlRLWx53p5BnRjVSajYXFB2Me
+	 eyRp4obaqiyRg==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id 6600A1002B3; Wed, 16 Oct 2024 10:00:32 +0100 (BST)
+Date: Wed, 16 Oct 2024 10:00:32 +0100
+From: Sean Young <sean@mess.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, unicorn_wang@outlook.com,
+	inochiama@outlook.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com
+Subject: Re: [PATCH v4 2/3] pwm: sophgo: add driver for Sophgo SG2042 PWM
+Message-ID: <Zw-AsJjZIaa_OIfq@gofer.mess.org>
+References: <cover.1729037302.git.unicorn_wang@outlook.com>
+ <cc69b47d068ff339db4c93d3103ed80d10a172d0.1729037302.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc69b47d068ff339db4c93d3103ed80d10a172d0.1729037302.git.unicorn_wang@outlook.com>
 
-On Tue, 15 Oct 2024 17:35:31 +0200
-"Rafael J. Wysocki" <rafael@kernel.org> wrote:
+On Wed, Oct 16, 2024 at 08:20:18AM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Add a PWM driver for PWM controller in Sophgo SG2042 SoC.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
 
-> On Tue, Oct 15, 2024 at 4:19=E2=80=AFPM Jonathan Cameron
-> <Jonathan.Cameron@huawei.com> wrote:
-> >
-> > On Tue, 15 Oct 2024 15:32:28 +0200
-> > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> > =20
-> > > On Tue, Oct 15, 2024 at 12:17=E2=80=AFPM Greg KH <gregkh@linuxfoundat=
-ion.org> wrote: =20
-> > > >
-> > > > On Tue, Oct 15, 2024 at 10:40:54AM +0100, Jonathan Cameron wrote: =
-=20
-> > > > > On Tue, 15 Oct 2024 10:10:25 +0100
-> > > > > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> > > > > =20
-> > > > > > On Mon, 14 Oct 2024 20:06:40 +0200
-> > > > > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> > > > > > =20
-> > > > > > > On Mon, Oct 14, 2024 at 7:17=E2=80=AFPM Jonathan Cameron
-> > > > > > > <Jonathan.Cameron@huawei.com> wrote: =20
-> > > > > > > >
-> > > > > > > > On Mon, 14 Oct 2024 18:04:37 +0200
-> > > > > > > > Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > > > > =20
-> > > > > > > > > On Mon, Oct 14, 2024 at 06:00:51PM +0200, Greg KH wrote: =
-=20
-> > > > > > > > > > On Mon, Oct 14, 2024 at 04:43:39PM +0100, Jonathan Came=
-ron wrote: =20
-> > > > > > > > > > > On Wed, 9 Oct 2024 13:41:13 +0100
-> > > > > > > > > > > <shiju.jose@huawei.com> wrote:
-> > > > > > > > > > > =20
-> > > > > > > > > > > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > > > > > > > >
-> > > > > > > > > > > > Add __free() based cleanup function for platform_de=
-vice_put().
-> > > > > > > > > > > >
-> > > > > > > > > > > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@h=
-uawei.com>
-> > > > > > > > > > > > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> > > > > > > > > > > > ---
-> > > > > > > > > > > >  include/linux/platform_device.h | 1 +
-> > > > > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > > > > >
-> > > > > > > > > > > > diff --git a/include/linux/platform_device.h b/incl=
-ude/linux/platform_device.h
-> > > > > > > > > > > > index d422db6eec63..606533b88f44 100644
-> > > > > > > > > > > > --- a/include/linux/platform_device.h
-> > > > > > > > > > > > +++ b/include/linux/platform_device.h
-> > > > > > > > > > > > @@ -232,6 +232,7 @@ extern int platform_device_add_=
-data(struct platform_device *pdev,
-> > > > > > > > > > > >  extern int platform_device_add(struct platform_dev=
-ice *pdev);
-> > > > > > > > > > > >  extern void platform_device_del(struct platform_de=
-vice *pdev);
-> > > > > > > > > > > >  extern void platform_device_put(struct platform_de=
-vice *pdev);
-> > > > > > > > > > > > +DEFINE_FREE(platform_device_put, struct platform_d=
-evice *, if (_T) platform_device_put(_T))
-> > > > > > > > > > > >
-> > > > > > > > > > > >  struct platform_driver {
-> > > > > > > > > > > >         int (*probe)(struct platform_device *); =20
-> > > > > > > > > > >
-> > > > > > > > > > > +CC Greg KH and Rafael.
-> > > > > > > > > > >
-> > > > > > > > > > > Makes sure to include them on v14 as this needs revie=
-w from a driver core point
-> > > > > > > > > > > of view I think. =20
-> > > > > > > > > >
-> > > > > > > > > > Why is this needed for a platform device?  This feels l=
-ike you will have
-> > > > > > > > > > to do more work to "keep" the reference on the normal p=
-ath than you to
-> > > > > > > > > > today to release the reference on the error path, right=
-?  Have a pointer
-> > > > > > > > > > to a patch that uses this? =20
-> > > > > > > > >
-> > > > > > > > > Ah, is it this one:
-> > > > > > > > >       https://lore.kernel.org/all/20241014164955.00003439=
-@Huawei.com/
-> > > > > > > > > ?
-> > > > > > > > >
-> > > > > > > > > If so, no, that's an abuse of a platform device, don't do=
- that, make a
-> > > > > > > > > REAL device on the bus that this device lives on.  If it =
-doesn't live on
-> > > > > > > > > a real bus, then put it on the virtual bus but do NOT abu=
-se the platform
-> > > > > > > > > device layer for something like this. =20
-> > > > > > > >
-> > > > > > > > Ok.  Probably virtual bus it is then.  Rafael, what do you =
-think makes sense
-> > > > > > > > for a 'feature' that is described only by an ACPI table (he=
-re RAS2)?
-> > > > > > > > Kind of similar(ish) to say IORT. =20
-> > > > > > >
-> > > > > > > Good question.
-> > > > > > >
-> > > > > > > I guess it depends on whether or not there are any registers =
-to access
-> > > > > > > or AML to interact with.  If so, I think that a platform devi=
-ce makes
-> > > > > > > sense. =20
-> > > > > >
-> > > > > > Unfortunately still a gray area I think.
-> > > > > >
-> > > > > > This does access mailbox memory addresses, but they are provided
-> > > > > > by an existing platform device, so maybe platform device for th=
-is
-> > > > > > device is still inappropriate :(
-> > > > > >
-> > > > > > What this uses is:
-> > > > > > PCC channel (mailbox in memory + doorbells, etc but that is ind=
-irectly
-> > > > > > provided as a service via reference in ACPI to the PCCT table e=
-ntry
-> > > > > > allowing this to find the mailbox device - which is a platform
-> > > > > > device drivers/mailbox/pcc.c).
-> > > > > > Because it's all spec defined content in the mailbox messages, =
-we don't
-> > > > > > have the more flexible (and newer I think) 'register' via opera=
-tion region
-> > > > > > stuff in AML.
-> > > > > >
-> > > > > > A wrinkle though.  The mailbox data is mapped into this driver =
-via
-> > > > > > an acpi_os_ioremap() call.
-> > > > > >
-> > > > > > So I'm thinking we don't have a strong reason for a platform de=
-vice
-> > > > > > other than 'similarity' to other examples.  Never the strongest=
- reason!
-> > > > > >
-> > > > > > We'll explore alternatives and see what they end up looking lik=
-e.
-> > > > > >
-> > > > > > Jonathan
-> > > > > > =20
-> > > > >
-> > > > > Greg,
-> > > > >
-> > > > > I'm struggling a little to figure out how you envision the virtua=
-l bus
-> > > > > working here.  So before we spend too much time implementing the =
-wrong thing
-> > > > > as it feels non trivial, let me check my understanding.
-> > > > >
-> > > > > Would this mean registering a ras2 bus via subsys_virtual_registe=
-r().
-> > > > > (Similar to done for memory tiers) =20
-> > > >
-> > > > It should show up under /sys/devices/virtual/ is what I mean.
-> > > > =20
-> > > > > On that we'd then add all the devices: one per RAS2 PCC descripto=
-r (these
-> > > > > are one per independent feature). Each feature has its own mailbo=
-x sub
-> > > > > channel (via a reference to the PCC mailbox devices .
-> > > > > Typically you have one of these per feature type per numa node, b=
-ut
-> > > > > that isn't guaranteed.  That will then need wiring up with bus->p=
-robe() etc
-> > > > > so that the RAS2 edac feature drivers can find this later and bin=
-d to it to
-> > > > > register with edac etc.
-> > > > >
-> > > > > So spinning up a full new bus, to support this?  I'm not against =
-that. =20
-> > > >
-> > > > No, again, see how the stuff that shows up in /sys/devices/virtual
-> > > > works, that should be much simpler.
-> > > >
-> > > > But really, as this is a "bus", just make a new one.  I don't under=
-stand
-> > > > why ACPI isn't creating your devices for you, as this is ACPI code,
-> > > > perhaps just fix that up instead?  That would make much more sense =
-to
-> > > > me... =20
-> > >
-> > > Because it is a data-only table, not AML.
-> > >
-> > > It looks to me like this could be an auxiliary device, similar to the
-> > > Intel VSEC driver: see intel_vsec_add_aux() etc.
-> > > =20
-> >
-> > That was in the other branch of the thread abbreviated as auxbus.
-> > My concern with that approach is we have no parent device and the
-> > auxiliary bus is always described as being for sub parts of a
-> > compound device. In the intel_vsec case there is always a parent
-> > pci device or platform device.
-> >
-> > I don't think there is any functional requirement for a real parent,
-> > it just feels like abuse given the stated purpose of auxiliary bus.
-> > Greg, auxiliary bus or separate acpi_ras2 bus feel better to you?
-> >
-> > We'd need to parent it off something to avoid the check in
-> > auxiliary_device_init() + all devices should have a parent anyway. =20
->=20
-> Wouldn't that be the platform device providing the mailbox memory
-> addresses mentioned in one of the previous messages?
+LGTM.
 
-Added Sudeep and Jassi given this feels like we'd need their input
-to consider doing this.
+Signed-off-by: Sean Young <sean@mess.org>
 
-Hmm. Probably works, though it will be a little inelegant as we'll have
-a discovery path unrelated to the mailbox provider discovery path
-that then instantiates children of the mailbox device. This is just
-one consumer of the mailbox device. It feels not too bad for this particular
-combination at all because RAS2 entries don't have any other resources
-so unlike many PCC channel users we wouldn't be introduce devices with
-wider scope than the mailbox parent device (note I think there is only
-device for all PCC in the system - each actual mailbox is a PCC subspace).
-
-1) Mailbox path:
-	acpi_pcc_probe() in drivers/mailbox/pcc.c via postcore_init_call()
- 	Checks there are PCC channels in PCCT ACPI table.
-	Instantiates a platform device and binds that via
-	platform_create_bundle()
-	Probes the available channels and stashes all the info
-	about them in arrays associated with that platform device.
-	Calls mbox_controller_register() which sounds like as
-	class registration but isn't. That just puts it on
-	LIST_HEAD(mbox_cons) so that it can be searched for
-	by consumers of this channel.
-2) RAS2 parsing (tweaked version of patch 13)
-	acpi_ras2_probe() currently via a late_initcall()
-	Checks for RAS2 table and for each RAS2 PCC descriptor and
-	gets a channel from the appropriate mailbox via
-	pcc_mbox_request_channel() giving us a struct pcc_mbox_chan.
-	Then we would need to get from there to the platform device
-	that represents all the mailboxes.
-	pcc_mbox->mchan->mbox_controller->dev is it I think.
-	Finally we parent our new device off that.
-
-What do people think of this vs option of spinning a new bus/acpi_ras2
-and no parent relationship between a ras2 feature entry the PCC
-platform device - just a client of mailbox relationship
-(effectively what is in patch 13, but with devices on a new bus rather
-than as platform_device)
-https://lore.kernel.org/all/20241009124120.1124-14-shiju.jose@huawei.com/
-is that patch.
-
-Jonathan
-
-
-
-
-
-
+> ---
+>  drivers/pwm/Kconfig             |  10 ++
+>  drivers/pwm/Makefile            |   1 +
+>  drivers/pwm/pwm-sophgo-sg2042.c | 181 ++++++++++++++++++++++++++++++++
+>  3 files changed, 192 insertions(+)
+>  create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
+> 
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 0915c1e7df16..ec85f3895936 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -584,6 +584,16 @@ config PWM_SL28CPLD
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-sl28cpld.
+>  
+> +config PWM_SOPHGO_SG2042
+> +	tristate "Sophgo SG2042 PWM support"
+> +	depends on ARCH_SOPHGO || COMPILE_TEST
+> +	help
+> +	  PWM driver for the PWM controller on Sophgo SG2042 SoC. The PWM
+> +	  controller supports outputing 4 channels of PWM waveforms.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called pwm_sophgo_sg2042.
+> +
+>  config PWM_SPEAR
+>  	tristate "STMicroelectronics SPEAr PWM support"
+>  	depends on PLAT_SPEAR || COMPILE_TEST
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 9081e0c0e9e0..539e0def3f82 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -53,6 +53,7 @@ obj-$(CONFIG_PWM_RZ_MTU3)	+= pwm-rz-mtu3.o
+>  obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+>  obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
+>  obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
+> +obj-$(CONFIG_PWM_SOPHGO_SG2042)	+= pwm-sophgo-sg2042.o
+>  obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+>  obj-$(CONFIG_PWM_SPRD)		+= pwm-sprd.o
+>  obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
+> diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
+> new file mode 100644
+> index 000000000000..bed753877851
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-sophgo-sg2042.c
+> @@ -0,0 +1,181 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Sophgo SG2042 PWM Controller Driver
+> + *
+> + * Copyright (C) 2024 Sophgo Technology Inc.
+> + * Copyright (C) 2024 Chen Wang <unicorn_wang@outlook.com>
+> + *
+> + * Limitations:
+> + * - After reset, the output of the PWM channel is always high.
+> + *   The value of HLPERIOD/PERIOD is 0.
+> + * - When HLPERIOD or PERIOD is reconfigured, PWM will start to
+> + *   output waveforms with the new configuration after completing
+> + *   the running period.
+> + * - When PERIOD and HLPERIOD is set to 0, the PWM wave output will
+> + *   be stopped and the output is pulled to high.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +
+> +#include <asm/div64.h>
+> +
+> +/*
+> + * Offset RegisterName
+> + * 0x0000 HLPERIOD0
+> + * 0x0004 PERIOD0
+> + * 0x0008 HLPERIOD1
+> + * 0x000C PERIOD1
+> + * 0x0010 HLPERIOD2
+> + * 0x0014 PERIOD2
+> + * 0x0018 HLPERIOD3
+> + * 0x001C PERIOD3
+> + * Four groups and every group is composed of HLPERIOD & PERIOD
+> + */
+> +#define SG2042_HLPERIOD(chan) ((chan) * 8 + 0)
+> +#define SG2042_PERIOD(chan) ((chan) * 8 + 4)
+> +
+> +#define SG2042_PWM_CHANNELNUM	4
+> +
+> +/**
+> + * struct sg2042_pwm_ddata - private driver data
+> + * @base:		base address of mapped PWM registers
+> + * @clk_rate_hz:	rate of base clock in HZ
+> + */
+> +struct sg2042_pwm_ddata {
+> +	void __iomem *base;
+> +	unsigned long clk_rate_hz;
+> +};
+> +
+> +static void pwm_sg2042_config(void __iomem *base, unsigned int chan, u32 period, u32 hlperiod)
+> +{
+> +	writel(period, base + SG2042_PERIOD(chan));
+> +	writel(hlperiod, base + SG2042_HLPERIOD(chan));
+> +}
+> +
+> +static int pwm_sg2042_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			    const struct pwm_state *state)
+> +{
+> +	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
+> +	u32 hlperiod;
+> +	u32 period;
+> +
+> +	if (state->polarity == PWM_POLARITY_INVERSED)
+> +		return -EINVAL;
+> +
+> +	if (!state->enabled) {
+> +		pwm_sg2042_config(ddata->base, pwm->hwpwm, 0, 0);
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * Period of High level (duty_cycle) = HLPERIOD x Period_clk
+> +	 * Period of One Cycle (period) = PERIOD x Period_clk
+> +	 */
+> +	period = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->period, NSEC_PER_SEC), U32_MAX);
+> +	hlperiod = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->duty_cycle, NSEC_PER_SEC), U32_MAX);
+> +
+> +	if (hlperiod > period) {
+> +		dev_err(pwmchip_parent(chip), "period < hlperiod, failed to apply current setting\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev_dbg(pwmchip_parent(chip), "chan[%u]: period=%u, hlperiod=%u\n",
+> +		pwm->hwpwm, period, hlperiod);
+> +
+> +	pwm_sg2042_config(ddata->base, pwm->hwpwm, period, hlperiod);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pwm_sg2042_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+> +				struct pwm_state *state)
+> +{
+> +	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
+> +	unsigned int chan = pwm->hwpwm;
+> +	u32 hlperiod;
+> +	u32 period;
+> +
+> +	period = readl(ddata->base + SG2042_PERIOD(chan));
+> +	hlperiod = readl(ddata->base + SG2042_HLPERIOD(chan));
+> +
+> +	if (!period && !hlperiod)
+> +		state->enabled = false;
+> +	else
+> +		state->enabled = true;
+> +
+> +	state->period = DIV_ROUND_UP_ULL((u64)period * NSEC_PER_SEC, ddata->clk_rate_hz);
+> +	state->duty_cycle = DIV_ROUND_UP_ULL((u64)hlperiod * NSEC_PER_SEC, ddata->clk_rate_hz);
+> +
+> +	state->polarity = PWM_POLARITY_NORMAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pwm_ops pwm_sg2042_ops = {
+> +	.apply = pwm_sg2042_apply,
+> +	.get_state = pwm_sg2042_get_state,
+> +};
+> +
+> +static const struct of_device_id sg2042_pwm_ids[] = {
+> +	{ .compatible = "sophgo,sg2042-pwm" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, sg2042_pwm_ids);
+> +
+> +static int pwm_sg2042_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct sg2042_pwm_ddata *ddata;
+> +	struct pwm_chip *chip;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	chip = devm_pwmchip_alloc(dev, SG2042_PWM_CHANNELNUM, sizeof(*ddata));
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+> +	ddata = pwmchip_get_drvdata(chip);
+> +
+> +	ddata->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(ddata->base))
+> +		return PTR_ERR(ddata->base);
+> +
+> +	clk = devm_clk_get_enabled(dev, "apb");
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to get base clk\n");
+> +
+> +	ret = devm_clk_rate_exclusive_get(dev, clk);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to get exclusive rate\n");
+> +
+> +	ddata->clk_rate_hz = clk_get_rate(clk);
+> +	if (!ddata->clk_rate_hz || ddata->clk_rate_hz > NSEC_PER_SEC)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Invalid clock rate: %lu\n", ddata->clk_rate_hz);
+> +
+> +	chip->ops = &pwm_sg2042_ops;
+> +	chip->atomic = true;
+> +
+> +	ret = devm_pwmchip_add(dev, chip);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "failed to register PWM chip\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver pwm_sg2042_driver = {
+> +	.driver	= {
+> +		.name = "sg2042-pwm",
+> +		.of_match_table = sg2042_pwm_ids,
+> +	},
+> +	.probe = pwm_sg2042_probe,
+> +};
+> +module_platform_driver(pwm_sg2042_driver);
+> +
+> +MODULE_AUTHOR("Chen Wang");
+> +MODULE_DESCRIPTION("Sophgo SG2042 PWM driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.34.1
+> 
 
