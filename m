@@ -1,230 +1,125 @@
-Return-Path: <linux-kernel+bounces-368742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E0D9A145C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:46:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BACE9A145E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A2F0B219BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:46:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93239B21C9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E7F1D14FC;
-	Wed, 16 Oct 2024 20:46:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EFC4409;
-	Wed, 16 Oct 2024 20:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0021D172A;
+	Wed, 16 Oct 2024 20:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="pRGDOSpZ"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5050C1B6CF4
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729111584; cv=none; b=Dfxn9HBogMVXeDYKmg5FOmCLNx/MrAblq0UWzelMjeyS4aCKgvN+oJbPgMu7jg7gFXWyaBEuxZlc3U4CKMjHR8HXsodegs9IRGE/e0rSUKLlK+YQxh6+dhY+/qn0+6BVtJWgaATbUJmQJEmb7Y+FZPPrckAW369/nTnBce+TTDA=
+	t=1729111694; cv=none; b=M4MyKeLh3NydAUy9IQqOBmCy2Vpzxwch8ZXZkgLWuGr1YgZAUAmgH4o12i9t3kY+rjY5mE3jgnRHwCh33znyg3c+z5JoUuNkg9IxGF7Z+iJ5NL98wOTBPmq12/tr45of6jY0mFhZxLX3fE1Pj4uVoOXcGKEgcsxYWNuQxO2GjAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729111584; c=relaxed/simple;
-	bh=/KMPwYFTR0mcPuXM/4Ws8Eh2JBFSNKdpOapdPGGNn/E=;
+	s=arc-20240116; t=1729111694; c=relaxed/simple;
+	bh=s5jdB/47iAqJ1SA9t4Fiz1puiR5Vpvt284TpWBzKAwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T2uV8JP6UQo8GzuAmG/g+CvKd3220RnQI1T1r+3hlZnTnUP4kRLgqDGMCjKhY0SgrAvFBHyp8npGYAqoK1OEcpapZUba+onsibHd0kn3LBpf1WdXbhuTdBifHqNWRoflhpxtPjT3kL77DD8cmeiL4+ihdbwNdWtutBEK/fY1GTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91F32FEC;
-	Wed, 16 Oct 2024 13:46:49 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DEC03F58B;
-	Wed, 16 Oct 2024 13:46:15 -0700 (PDT)
-Date: Wed, 16 Oct 2024 22:45:35 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org,
-	yang@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
-	Bibek Basu <bbasu@nvidia.com>
-Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
- arch_freq_avg_get_on_cpu
-Message-ID: <ZxAl77IYcMO2SfWh@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-4-beata.michalska@arm.com>
- <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
- <ZvU4mR_FZa7jXUgk@arm.com>
- <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
- <Zv8PKlr_PJgxazro@arm.com>
- <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
- <Zwe1p0La_AFknglf@arm.com>
- <evllzzjufritriziohz22gm5qs44jedpft5lcfjfwnekarqtdx@eg42ik2l7bxu>
- <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGBIPoj22IvAWC+Kpj9dIW6a/03ysSql3Lh/QOXAnU/gugr+5hJfaUWGGcgXkSUbHzRkKTysPzcHwyDoNmZavVWAwxjjfGXM744mMDDYkxSYth5HLSrrtxh5xjG/W9q4DdCvZSXyEMZxyzuMzwaORS79Q9Ohav/ftj3NEHrQ14Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=pRGDOSpZ; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-118-108.bstnma.fios.verizon.net [173.48.118.108])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 49GKlf2x032094
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 16:47:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1729111664; bh=ZQfBRGme9pAxatUx6tTKcx5TVoNCSmdhu0qbM7fqxB4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=pRGDOSpZupS963yqAF/o7YmgBqT+cbUZFuVNT8g2HOFVddNY2+ujsVZvyww6oBGwi
+	 6widAQVX9wLzDlYe22RH4uoaFdUYqSXAAVqX6Aobp8Gcx+3slyefatJ2U4GoZyhjuK
+	 hDbk6JXwaona0Il3TPpdi0Fav/S/UCDwdVIQA9a9jUDSEd7yyfoqCrRnsYHFeYCidw
+	 Qd1664UP1EunjqFTU2OCjFd2nF+0hxzvFHcbgKfdqt1qVFpmuj9RBK9Vtodxd9pc3L
+	 uq29rhpUiVsWRZuYmp1/UNinEywlB5Yr8/d7tQiV3HkTi+ivk9kYeSU9kb0HEF1iQf
+	 s/CIwyoyIgdhg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 6566E15C02DB; Wed, 16 Oct 2024 16:47:41 -0400 (EDT)
+Date: Wed, 16 Oct 2024 16:47:41 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, Qianqiang Liu <qianqiang.liu@163.com>,
+        adilger.kernel@dilger.ca,
+        syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
+Message-ID: <20241016204741.GA3204734@mit.edu>
+References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
+ <66efba95.050a0220.3195df.008c.GAE@google.com>
+ <Zu+8aQBJgMn7xVws@thinkpad.lan>
+ <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
+ <20241009155028.u7jpzrw6txldt43j@quack3>
+ <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
+ <20241014163120.hinbd5jc6mp4vev7@quack3>
+ <3930aad6-174d-4422-944e-6c90a3ea065a@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
+In-Reply-To: <3930aad6-174d-4422-944e-6c90a3ea065a@huawei.com>
 
-On Mon, Oct 14, 2024 at 11:16:36PM +0530, Sumit Gupta wrote:
-> 
-> 
-> On 11/10/24 21:59, Vanshidhar Konda wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Thu, Oct 10, 2024 at 01:08:23PM GMT, Beata Michalska wrote:
-> > > On Thu, Oct 03, 2024 at 02:54:22PM -0700, Vanshidhar Konda wrote:
-> > > > On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
-> > > > > On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
-> > > > > > On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
-> > > > > > > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
-> > > > > > > > Hi Beata,
-> > > > > > > Hi Sumit,
-> > > > > > > >
-> > > > > > > > Thank you for the patches.
-> > > > > > > Thank you for having a look at those.
-> > > > > > > >
-> > > > > > > > On 13/09/24 18:59, Beata Michalska wrote:
-> > > > > > > > > External email: Use caution opening links or attachments
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > With the Frequency Invariance Engine (FIE) being
-> > > > already wired up with
-> > > > > > > > > sched tick and making use of relevant (core counter
-> > > > and constant
-> > > > > > > > > counter) AMU counters, getting the average frequency
-> > > > for a given CPU,
-> > > > > > > > > can be achieved by utilizing the frequency scale
-> > > > factor which reflects
-> > > > > > > > > an average CPU frequency for the last tick period length.
-> > > > > > > > >
-> > > > > > > > > The solution is partially based on APERF/MPERF
-> > > > implementation of
-> > > > > > > > > arch_freq_get_on_cpu.
-> > > > > > > > >
-> > > > > > > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> > > > > > > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > > > > > > > > ---
-> > > > > > > > >   arch/arm64/kernel/topology.c | 109
-> > > > +++++++++++++++++++++++++++++++----
-> > > > > > > > >   1 file changed, 99 insertions(+), 10 deletions(-)
-> > > > > > > > >
-> > > > 
-> > > > --- snip ----
-> > > > 
-> > > > > > > >
-> > > > > > > >     ..
-> > > > > > > >   freq_comput:
-> > > > > > > >     scale = arch_scale_freq_capacity(cpu);
-> > > > > > > >     freq = scale * arch_scale_freq_ref(cpu);
-> > > > > > > >   ----
-> > > > > > > >
-> > > > > > > This boils down to the question what that function, and
-> > > > the information it
-> > > > > > > provides, represent really. The 'unknown' here simply says
-> > > > the CPU has been idle
-> > > > > > > for a while and as such the frequency data is a bit stale
-> > > > and it does not
-> > > > > > > represent the average freq the CPU is actually running at
-> > > > anymore, which is
-> > > > > > > the intention here really. Or, that the given CPU is a
-> > > > non-housekeeping one.
-> > > > > > > Either way I believe this is a useful information, instead
-> > > > of providing
-> > > > > > > stale data with no indication on whether the frequency is
-> > > > really the 'current'
-> > > > > > > one or not.
-> > > > > > >
-> > > > > > > If that is somehow undesirable we can discuss this
-> > > > further, though I'd rather
-> > > > > > > avoid exposing an interface where the feedback provided is open to
-> > > > > > > interpretation at all times.
-> > > > > >
-> > > > > > Would it make sense to identify that the frequency reporting
-> > > > is unknown due to
-> > > > > > cpu being idle vs some other issue like being a
-> > > > non-housekeeping CPU? Would
-> > > > > > returning a value of 0 make it easier for tools to represent
-> > > > that the CPU is
-> > > > > > currently idle?
-> > > > > That is an option.
-> > > > > Another one would be to return an error for those cases. This
-> > > > would make it
-> > > > > easier to distinguish between valid frequency &/| idle CPU vs
-> > > > tickless CPU
-> > > > > (EINVAL vs ENOENT) ?
-> > > > >
-> > > > 
-> > > > That seems like a good idea but I suspect it would be confusing
-> > > > to the end user.
-> > > > 
-> > > > If a user runs `cat
-> > > > /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
-> > > > get an error in some cases or get a number in some other iterations.
-> > > > 
-> > > That is a fair point but I am not entirely convinced using '0'
-> > > instead makes
-> > > things any more clearer as this is in no way a valid CPU frequency.
-> > > As long as we document the expected behaviour keeping the interface well
-> > > defined,  both options should be fine I guess.
-> > > 
-> > 
-> > Another option could be to list out the reason as 'idle' or 'no entry'
-> > instead of
-> > returning EINVAL or ENOENT. These wouldn't be valid values either but
-> > cat on the
-> > sysfs node wouldn't return an error.
-> > 
-> > Thanks,
-> > Vanshidhar
-> > 
-> 
-> Ya, listing the clear reason sounds better.
-> 
-> Thank you,
-> Sumit Gupta
->
-I'd still prefer returning an error as that is a clear indication on failure
-upon read. Furthermore, that would also make that attribute stick to single-type
-rule for sysfs, which is currently not the case and will not be if we return
-'idle' or 'no entry'. That said, I am happy to make that change if that would be
-the final decision and that one is not mine, as the change is ultimately the
-cpufreq one.
+On Wed, Oct 16, 2024 at 04:02:40PM +0800, Baokun Li wrote:
+> As server clusters get larger and larger, server maintenance becomes very
+> difficult. Therefore, timely detection of problems (i.e. online scanning,
+> similar to e2fsck -fn) and timely and non-stop fixing of problems (i.e.
+> online fsck, similar to e2fsck -a) have always been the requirements of
+> our customers. Thus online fsck has been on our TODO list, and it's really
+> time to start doing it. ðŸ˜€
 
+As far as online scaning is concerned, if you are using LVM, we can
+use a combination of dm-snapshot and e2fsck -fn --- that is what the
+e2scrub command automates.
 
----
-BR
-Beata
-> > > @Viresh: what is your opinion on that one ?
-> > > 
-> > > ---
-> > > BR
-> > > Beata
-> > > > Thanks,
-> 
-> ....
-> 
-> > > > > > > > > +               cpu = ref_cpu;
-> > > > > > > > > +               goto retry;
-> > > > > > > > > +       }
-> > > > > > > > > +       /*
-> > > > > > > > > +        * Reversed computation to the one used to determine
-> > > > > > > > > +        * the arch_freq_scale value
-> > > > > > > > > +        * (see amu_scale_freq_tick for details)
-> > > > > > > > > +        */
-> > > > > > > > > +       scale = arch_scale_freq_capacity(cpu);
-> > > > > > > > > +       freq = scale * arch_scale_freq_ref(cpu);
-> > > > > > > > > +       freq >>= SCHED_CAPACITY_SHIFT;
-> > > > > > > > > +       return freq;
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > >
-> > > > > > > > >   static void amu_fie_setup(const struct cpumask *cpus)
-> > > > > > > > >   {
-> > > > > > > > >          int cpu;
-> > > > > > > > > --
-> > > > > > > > > 2.25.1
-> > > > > > > > >
+Online fsck is much harder, since it would require back pointers to do
+this efficienctly.  To do this, a general way of solving this would
+involve a generalized some kind of b-tree or b+tree where changes are
+managed via jbd2.  This could be used so that (for example) if we had
+a tree which maps block ranges to an inode number, then given a block
+number, we can figure out which inode "owns" that block.  The harder
+part is those objects that have multiple forward pointers --- for
+example an inode might have multiple hard links to multiple
+directories, so we need to handle this somehow.
+
+If we had the jbd2-aware b+tree, we could also use this add support
+for reflink/clone, which would also be cool.
+
+If this is something that your team really weants to work on, what I'd
+suggest is to create a rough design of what the journaled b+tree would
+look like, and then implement it first, since this is the prerequisite
+for a huge number of advanced file system features.  Implementation
+should be done in a way that makes it easy for the code to be usable
+both in the kernel and in e2fsprogs, since life will be much easier if
+we have e2fsck and debugfs support for the new file system data
+structures from the very beginning of the development.
+
+If your company is willing to invest in the engineering effort to do
+this, great!  But I have to point out that an alternative approach
+that you should consider is whether XFS might be a closer match for
+some of your customers' needs.  The advantage of ext4 is that it is
+much simpler and easier to understand that XFS.  But as we add these
+new features, ext4 will get more complex.  And so one of the design
+considerations we should keep in mind is to keep ext4 as simple and
+miantainable as possible, even as we add new functionality.
+
+Cheers,
+
+						- Ted
 
