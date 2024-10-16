@@ -1,103 +1,100 @@
-Return-Path: <linux-kernel+bounces-367047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D864199FE11
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B718A99FE14
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15EDB1C25FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631AF1F263D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFD55478E;
-	Wed, 16 Oct 2024 01:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FF6433CB;
+	Wed, 16 Oct 2024 01:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVq9HOVS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pG4bHGBa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFCE156E4;
-	Wed, 16 Oct 2024 01:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49659EAD8;
+	Wed, 16 Oct 2024 01:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729041134; cv=none; b=bFeVp3aJ2b8pGZ8/K1nzyL2bj8TYkL5hCerothQbSpX/vZ4frw2291Rn8rFeQm1rpp7Acj7biBBtbzp/8TzeDuJxXFYhLVbD+AFMySpwvmQMNtcP+GiDtV51Cg5oBR5m5Iafg+8DUeThaNhIn2fTgzFwnujr39KJajK/4XX+8pU=
+	t=1729041174; cv=none; b=sRFvo31pXj5ZGFnvnO/I3PAO24Jx+B/dMgsJaLGU4/yI3BI+a/2cH2IK6hoo+HCZOtN9QLoA9SJP56k0gxjBwSgiIvRth/V7WqzsujYRC8b6C/utiT+PcsT5oozk0r8ujiE8fpYCVCaOvWoh6LbhtHoz5mEO7R0ncl/QvurR8w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729041134; c=relaxed/simple;
-	bh=VemgeqR6PLt24NUX7NJuOTaNEAKcqD2LL37deiSOZS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TSbDDwTqBTEHXRTqLsyjrZhc22qX9wErMcj16/ydGn1Esl5XfCD/3IB54mRZ2tB5QSNXbdc+e71lnWteYqhmPPdkuxIAGn4c8tp//nk0yRdFC3Yb54du9qSViPvmRCxLjjdGq1ujjX8sjoD9F7a/wAJivYZT50PA078YLBdwmG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVq9HOVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E89DC4CEC6;
-	Wed, 16 Oct 2024 01:12:13 +0000 (UTC)
+	s=arc-20240116; t=1729041174; c=relaxed/simple;
+	bh=VxWTJtL4UhcHUgiO8c9vRLgmVY3RWfHNeBKpSIE1xXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VJEJR9jJI+h3qyrP6ij5pI9Hjviaq3FOptqi2A6Nk0Zf/kimobV5eK3CfxYiTEkIyXhzodnwkX0KDfAyIdO50Fh+R6NHignVx//CQWZ/7tJomtnh/eqh2fOtPZfMVUzmtgnzAO1joeGl6+u/cwV6HPPG5tdVsar4B+C9xzGVvoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pG4bHGBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9836EC4CEC6;
+	Wed, 16 Oct 2024 01:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729041133;
-	bh=VemgeqR6PLt24NUX7NJuOTaNEAKcqD2LL37deiSOZS4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QVq9HOVSsVLytn5g1cE0DOfJl3A3Oh6tAMcm7iPpJFya1KSsxH2h6uoTqY7tdYpoh
-	 Pz1aVx2jdO0/6igu4M+7LN7ciwk+k3OEu5hE71jIRnuV9C9b1l4lKprgU2vl6f67SU
-	 3gdd9cZq4mvmz7FY0VZM7yU9T+z/OWLfHQ2pHEPgUyHW7LwEcIsmAQ1bKvqRojYFGk
-	 6vBW01LphTfmDKLeZBi+tA3E9GC7VzFNAcGUSgbX45IFvRgn9r4OnF6kgPI8oXTy6B
-	 qLui/fZ22phIpQx2NkZtUCIIEdWd01Sm3WKGLHJJ69rIRcFiu2NUogDRajwije3WB5
-	 0R9tUWc5Kq+3Q==
-From: Jakub Kicinski <kuba@kernel.org>
-To: paulmck@kernel.org
-Cc: netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org,
-	rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kees@kernel.org,
-	matttbe@kernel.org
-Subject: [PATCH rcu] configs/debug: make sure PROVE_RCU_LIST=y takes effect
-Date: Tue, 15 Oct 2024 18:11:44 -0700
-Message-ID: <20241016011144.3058445-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.46.2
+	s=k20201202; t=1729041173;
+	bh=VxWTJtL4UhcHUgiO8c9vRLgmVY3RWfHNeBKpSIE1xXg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pG4bHGBa+pDf/vRO0j2iEMVaXQI0mfI5zAk3nEPv7xO0wrtOTPTcgkr7/9U0blrqN
+	 FPZbKQ/kXqr7X5Guu5LDQq84HAXilY2+QdioUscPUvrCMjGcMN4UW4OjLGvJOwxhUH
+	 c4XjtSN5So/DjQ7OZtMJ+24wKINeiF/aGb9AAypo2xonhI6rV9f05r9Xdn9f0aEXXQ
+	 63DXSkxlwyWVENBdxXOsWZRDlBOlpWt+nw10H12hzUyQUCUd5YqsLhq0ss6gCh7Izo
+	 Mxx0B9pj3rToHV3hrh/oi6oXHEZiE1ErnOszaVdFufhwWYQ0oZL5aIGNVgxofKp2bH
+	 /qwrKz9RM30mg==
+Message-ID: <8a83918f-6885-4766-9648-de88a7a99f07@kernel.org>
+Date: Wed, 16 Oct 2024 10:12:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] genirq/msi: Add cleanup guard define for
+ msi_lock_descs()/msi_unlock_descs()
+To: Frank Li <Frank.Li@nxp.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>, maz@kernel.org,
+ tglx@linutronix.de, jdmason@kudzu.us
+References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
+ <20241015-ep-msi-v3-1-cedc89a16c1a@nxp.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20241015-ep-msi-v3-1-cedc89a16c1a@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit 0aaa8977acbf ("configs: introduce debug.config for CI-like setup")
-added CONFIG_PROVE_RCU_LIST=y to the common CI config,
-but RCU_EXPERT is not set, and it's a dependency for
-CONFIG_PROVE_RCU_LIST=y. Make sure CIs take advantage
-of CONFIG_PROVE_RCU_LIST=y, recent fixes in networking
-indicate that it does catch bugs.
+On 10/16/24 7:07 AM, Frank Li wrote:
+> Add a cleanup DEFINE_GUARD macro for msi_lock_descs() and
+> msi_unlock_descs() to simplify lock and unlock operations in error path.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  include/linux/msi.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/linux/msi.h b/include/linux/msi.h
+> index b10093c4d00ea..0b6cb7f303887 100644
+> --- a/include/linux/msi.h
+> +++ b/include/linux/msi.h
+> @@ -228,6 +228,8 @@ int msi_setup_device_data(struct device *dev);
+>  void msi_lock_descs(struct device *dev);
+>  void msi_unlock_descs(struct device *dev);
+>  
+> +DEFINE_GUARD(msi_descs, struct device *, msi_lock_descs(_T), msi_unlock_descs(_T))
+> +
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
----
-I'd be slightly tempted to still send it to Linux for v6.12.
+This belongs with patch 3 since it is first used there.
 
-CC: paulmck@kernel.org
-CC: frederic@kernel.org
-CC: neeraj.upadhyay@kernel.org
-CC: joel@joelfernandes.org
-CC: rcu@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: kees@kernel.org
-CC: matttbe@kernel.org
----
- kernel/configs/debug.config | 1 +
- 1 file changed, 1 insertion(+)
+>  struct msi_desc *msi_domain_first_desc(struct device *dev, unsigned int domid,
+>  				       enum msi_desc_filter filter);
 
-diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
-index 509ee703de15..20552f163930 100644
---- a/kernel/configs/debug.config
-+++ b/kernel/configs/debug.config
-@@ -103,6 +103,7 @@ CONFIG_BUG_ON_DATA_CORRUPTION=y
- #
- # RCU Debugging
- #
-+CONFIG_RCU_EXPERT=y
- CONFIG_PROVE_RCU=y
- CONFIG_PROVE_RCU_LIST=y
- #
 -- 
-2.46.2
-
+Damien Le Moal
+Western Digital Research
 
