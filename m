@@ -1,129 +1,135 @@
-Return-Path: <linux-kernel+bounces-367840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7C39A076D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C429A0770
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A1C1F279DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:31:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C6D1F27548
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49135207A31;
-	Wed, 16 Oct 2024 10:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7C2205E15;
+	Wed, 16 Oct 2024 10:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MveEge+1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XuTX012g"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3650F207A1E;
-	Wed, 16 Oct 2024 10:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D81206E66;
+	Wed, 16 Oct 2024 10:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074586; cv=none; b=cCg0nzF4p04Yw59Fqf3ZxNhLO8VUYoJvxcqYIr2oGpDyE/5Aww2lcL4Lw4+uV2L9hsCC7MFD2MUq/VHjHOeNXkiIX9T7EAMP9KjUN4fiyQyJj6NhLjHQQdz6YZeIBhsApbGqZSmBC0Q00BHNb4kAHH3y2hj1L/Sr2+I9MgAXjcA=
+	t=1729074617; cv=none; b=scLSU6kO6tUcodZOP8a/hw53yhG41ipYS3+/dpHTpZjAMo71c6OScENr2tWyYAVXz2j5X+RtOjI34haVaiRAzSSWOINsQHK8brsNEBWCw73Go4iwuxJ65tj/BpFXUrzR7EaYmKTBYQWne6metwqcLQXjX6BMF//Bx/uhcVtGbfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074586; c=relaxed/simple;
-	bh=/I9NuBzwS0z/PzxTR4AlnYAU0plH7o11dVm/FJnJcMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBy3MGU/GfjmIpzvEikYlMgzZ6YHj4ij5veVBn85GG1uLpdXq6E4GzpqBJNfAFlWMwemnep9h6IW9r/xThuhPrkoCuMrtnSN38hIFesFPKLjsERx/lGoBb5l5ilyEwZNYlg16inks3wjhMvBpYdWlQyt26IcfAttGRb2+0UflN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MveEge+1; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729074585; x=1760610585;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=/I9NuBzwS0z/PzxTR4AlnYAU0plH7o11dVm/FJnJcMY=;
-  b=MveEge+1E6krLFQPenA5aFvAlcZDrhamJXubzsIhPiEt9ryXQaQ83tZW
-   ILy3+wLLxRD76Gg2hIh/6x+9UaPXsyhIRINC+Ngp5aOfKIcNcqOJWe7Oi
-   7cC8aAJwqRP5aUtKjLe2dQ+A44Q3tSoHzb7jFaQEpiNoHVonHTpaS0PaH
-   XR8vs5SiuYbcPdVAmM0lyKaci0Vq93yOKSVDCImA4ZPxSellTRg3YeKFa
-   PBgQYpJ1B+29fSmG2ew6k0XHidah2cNRXev/9rzcmgySE8u+Y6bu6id3Y
-   arNAQVe86hHGMlcm7ZMMb4uWQOe7t+0N+ZhheZZqxtu3RGbdfp1/Ok0Dz
-   g==;
-X-CSE-ConnectionGUID: vjZCacEfTbWfYDL4Uz68lA==
-X-CSE-MsgGUID: MJNLHGSgTOSdJF1rZw1vhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="31380237"
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="31380237"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:29:44 -0700
-X-CSE-ConnectionGUID: TYPotaPhQ9idPd4HWmjtZg==
-X-CSE-MsgGUID: 78XPk2XQRJyYgT1Pni6Yzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="82148971"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:29:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t11He-00000003imA-05Ek;
-	Wed, 16 Oct 2024 13:29:38 +0300
-Date: Wed, 16 Oct 2024 13:29:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] i2c: Introduce OF component probe function
-Message-ID: <Zw-VkQ3di5nFHiXB@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-5-wenst@chromium.org>
- <CAD=FV=WRSjk3U9Kau0wqkgv3KB=9jM6wCM9Gs-WxWai35sfxTg@mail.gmail.com>
- <CAGXv+5FW0UTjR_ZiqZ8VEOQkBemt54omtJe_aTj3jvScC-LuMw@mail.gmail.com>
- <CAGXv+5GHDt3_Td8B441xv=-G1=LBfSXp8_sQ4XRRPX1f4VyTMQ@mail.gmail.com>
+	s=arc-20240116; t=1729074617; c=relaxed/simple;
+	bh=cRAgtSIsyIr9GAtElLAGSrRFE8VIKMnNg9VaP5MYO2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QQT5j52/pl8yUbaMUC58HF0MyCnBNautrDIogK15wcZcWc/hvxVNOSvuaFOr2wH/CpzB1Oyk3UTyR0uw2G/WYvs3zmo7KZLmPsQglIPyUdIUBYkYOPYccfMsXwKJv5gxj16Z9ARb3VHpZ6q8rBV3qz50O4HLuQb5ryQjrwG13YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XuTX012g; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G8Q8ck026699;
+	Wed, 16 Oct 2024 10:30:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	F8OUigvW89v160sjD6OuJdUfPjC11GaxwgQ6XpOluJw=; b=XuTX012gytkC8CDK
+	s++23YnplGId90xyQ+hz8EVNjN5xU5F0MymIHMxEIppcGEfQKvscoEWVEfsx1vq1
+	mlOQezC+wyQ97iexRdyhmgedpKAadPwgrb/z7ixABZ6nR4iWYFLMywddEylbaXmG
+	XvWHXH8mztX+8bKGn+HlqXSLa30Ht1+oYBxqYAi0b/68B5zJRlGxgBu9f1NVKTOq
+	C//6MTAyREetIlBHK7ba+LocTw2WzMoRfr146H/p4JLukdwnkLz2WmPOw044L13o
+	hQ9dc+Ty2VACkNAOx0kU71NDhqOfGxoqc6w2sYzM162dxIhyUtHFKeY+BLz82w74
+	Bv+N7w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a8w6gmvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 10:30:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49GAU4Fo009153
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 10:30:04 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Oct
+ 2024 03:30:00 -0700
+Message-ID: <66cf771e-1663-e85c-02e8-524427ab40ec@quicinc.com>
+Date: Wed, 16 Oct 2024 15:59:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 02/28] media: iris: add platform driver for iris video
+ device
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@baylibre.com>
+CC: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Hans
+ Verkuil" <hverkuil@xs4all.nl>,
+        Sebastian Fricke
+	<sebastian.fricke@collabora.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-2-c5eaa4e9ab9e@quicinc.com>
+ <r7p4glfxjkcecm7fi4qkl3utn3damrun6lfzkmn5wddcd7pxq7@fpav7mavmckn>
+Content-Language: en-US
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <r7p4glfxjkcecm7fi4qkl3utn3damrun6lfzkmn5wddcd7pxq7@fpav7mavmckn>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5GHDt3_Td8B441xv=-G1=LBfSXp8_sQ4XRRPX1f4VyTMQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9Tf6QqAziIYesTm4yMc4U2jZAa81b_Ki
+X-Proofpoint-ORIG-GUID: 9Tf6QqAziIYesTm4yMc4U2jZAa81b_Ki
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1011 mlxlogscore=999
+ malwarescore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160065
 
-On Wed, Oct 16, 2024 at 05:28:05PM +0800, Chen-Yu Tsai wrote:
-> On Wed, Oct 16, 2024 at 3:01 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
-> > On Wed, Oct 16, 2024 at 1:58 AM Doug Anderson <dianders@chromium.org> wrote:
-> > > On Tue, Oct 8, 2024 at 12:35 AM Chen-Yu Tsai <wenst@chromium.org> wrote:
 
-...
 
-> > > ...which means it'll call of_node_put() to free "i2c_node" when it
-> > > goes out of scope. of_node_put() handles NULL pointers but _not_ ERR
-> > > pointers. So I think that if you get an error back and then return via
-> > > the PTR_ERR(i2c_node) then it'll crash because it will try to free an
-> > > ERR pointer. Did I get that right? Presumably you need to instead do:
-> > >
-> > >   return PTR_ERR(no_free_ptr(i2c_node));
-> > >
-> > > ...or change of_node_put() to be a noop for error pointers?
-> >
-> > Good catch! As Andy suggested, it should be updated to handle both.
-> > I'll add a patch for this.
+On 10/16/2024 3:08 PM, Uwe Kleine-König wrote:
+> Hello,
 > 
-> On second thought, it might be better to change i2c_of_probe_get_i2c_node()
-> to return NULL on errors. That seems to be what most functions do. I only
-> found a handful of exceptions.
+> On Mon, Oct 14, 2024 at 02:37:23PM +0530, Dikshita Agarwal wrote:
+>> +static struct platform_driver qcom_iris_driver = {
+>> +	.probe = iris_probe,
+>> +	.remove_new = iris_remove,
+>> +	.driver = {
+>> +		.name = "qcom-iris",
+>> +		.of_match_table = iris_dt_match,
+>> +	},
+>> +};
+> 
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers. Please just drop "_new".
+> 
+Noted, Thanks!
 
-It seems that OF has been written in the assumption that device node pointer
-is never an error pointer. So, probably fixing your function is the best
-approach right now.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Dikshita
+> Best regards
+> Uwe
 
