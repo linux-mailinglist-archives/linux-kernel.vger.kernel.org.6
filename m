@@ -1,125 +1,217 @@
-Return-Path: <linux-kernel+bounces-368262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE4A19A0D66
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:54:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576469A0D68
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48CE7B2187C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:54:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB5E1C22E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8541920E004;
-	Wed, 16 Oct 2024 14:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E534720E02E;
+	Wed, 16 Oct 2024 14:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="sG7AtR3h"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVhI0dlK"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBEE212F13;
-	Wed, 16 Oct 2024 14:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA70920E012;
+	Wed, 16 Oct 2024 14:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729090370; cv=none; b=PR3xaMsHsIbHLSDssc/J+yi0ZIk9MPP7wdS4NnCDEt2rv0/XG67do6OfBMClbBLs5MRMXshk2d/xzAelwBX4FW2WQ1/Roc6pIYmMMyBd0HCGbf61j/Pw0x82pzQvINCh42Sb+twwz5F3/QkuHr/CFr0Fc67jtTeyaOWQvB8z42U=
+	t=1729090381; cv=none; b=YJbv2XN9IRGgI5NUhwaWnuoL09iI1LsIUOGcLK78j3/3jM5OcY36DoZagK/Iq5E26AGlSu4naIoUSjzms2uznwR5CmSeyJiGc5LUPLcPI7Y0eUA7h/5+Ot1cxJRP6LihvxCCfb/KtVVPpaK2lfpbSgnMl4ljam4iRizsfgwWQlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729090370; c=relaxed/simple;
-	bh=pqkRlIAl5dDEfH3Z126a7ZXKSdRQuLa8iK2JZ1XN4fk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lpWf0j1fIwQeO7XIuBRFGXZYHrx1sKBWFUy1CHJTV18eiLfA+OQo45UdlFLxV8ZQAkgFZwo0I4xUehFDDX/hycVlOMLQDUihAGjkcAhpP3fxsDc1TgkHd1rwEzuKzuLyhA5/znxMWM76AR2bHbDoZciWxPElhf3cOOLJA1k93P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=sG7AtR3h; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1443342C28
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1729090362; bh=hrEbj5bpeB01P7bbH3mV9rjR6Y1usox02y6Xk6iwfRA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=sG7AtR3hrHYmDbYoI9CQsPEcKg7Zdp/ibP2ORln3SNjLLHhiEZAbKEq8N9jpTas3Z
-	 LeYPKGMOnqMd9E5zTfcThSzsA9YEic/QGKpR3BR592h1VB/QCYs0EOnVVlRzFEaooZ
-	 kQd/CS5IoSGGT7woX+msugMh0teB/7uCW3IjIkC3CYmiJPnDL1Css41R9y0jGP3A2C
-	 aGg76KjDlKGD1osZ/QmAErGSlRg8AhO/aclpO030mUqMEqvTcGnnaiZalqTFfgP/LC
-	 OhR/jPhinO//iuSuRDAplchC3zUs4kawrFludLaPLt7Fu5zq7fYXytiB5mP/lifMC7
-	 bVKsJBtbMG/AQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 1443342C28;
-	Wed, 16 Oct 2024 14:52:42 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Marco Elver <elver@google.com>
-Cc: Dongliang Mu <mudongliangabcd@gmail.com>, Haoyang Liu
- <tttturtleruss@hust.edu.cn>, Alexander Potapenko <glider@google.com>,
- Dmitry Vyukov <dvyukov@google.com>,
- hust-os-kernel-patches@googlegroups.com, kasan-dev@googlegroups.com,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs/dev-tools: fix a typo
-In-Reply-To: <c19c79ea-a535-48da-8f13-ae0ff135bbbe@stanley.mountain>
-References: <20241015140159.8082-1-tttturtleruss@hust.edu.cn>
- <CAD-N9QWdqPaZSh=Xi_CWcKyNmxCS0WOteAtRvwHLZf16fab3eQ@mail.gmail.com>
- <CANpmjNOg=+Y-E0ozJbOoxOzOcayYnZkC0JGtuz4AOQQNmjSUuQ@mail.gmail.com>
- <c19c79ea-a535-48da-8f13-ae0ff135bbbe@stanley.mountain>
-Date: Wed, 16 Oct 2024 08:52:41 -0600
-Message-ID: <87msj45ccm.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1729090381; c=relaxed/simple;
+	bh=uA1XOwFgRsIEk0Sn+4hyN4zB571af+CZ+WkJvLKZ80g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lupl/dl1uhZQ7VrYhzsrKjUau/J3TX5D+rnJx3G5j5Uuem3pIb16RqD/kb3He2LxrR0XqdqoABNnjHDtZGS+FG8ALrDdYCwGdHPxLP12FsTwbaYUXyrKhf6vCPs8dez0zk6LW3GUEqmcOi3+31Hsspg4gTHMtLx9gVHxIU5V718=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WVhI0dlK; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so3371298a12.1;
+        Wed, 16 Oct 2024 07:52:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729090379; x=1729695179; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WqaHzTXb3EYsFR+TrFKuj3DUg8JmTWCmD6QeLvYOQKk=;
+        b=WVhI0dlKf8ghrL7rTMaeMkbcdzdeh2OyMdjpNMabw5girreZRf4N239sUcNUn4+W6d
+         32qBo3hHVPm3lvh65pOb7aasot3Agvg7ar96zC2zmIQHgMQPnQFWEjPrBrfXEisAinlx
+         1POgCPJf/HNwwzQpPeuLH9NGN/QRGelGNB9Gcf2EU7icw87jPNV3YZ763V7aBQ57uWbC
+         3nAkJMQKJTo2M9IxP26KFoQXkM8oS7g54bmFWweAoMxIyZblq9uVlWE/3rtLk86PAE5Z
+         f8kgpYyjizmdA1zhZdjfOXbKQs7UAtfWtWeeQXXJslbtG8VFvglx54C5DOEppv64IZ4u
+         recA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729090379; x=1729695179;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WqaHzTXb3EYsFR+TrFKuj3DUg8JmTWCmD6QeLvYOQKk=;
+        b=fxBV410czGWCqOUFkSoScfD91OA3aILLHJ3oV8yD1+2EpY+F9irF4IGyt+Dit03MMC
+         sSCbZwz6IAtPdTzgCjNTO40A5Cw4erm0uwqYvutgIaFy5J2/gveD49Sc8lWU48jvQPJX
+         P0sUOkGlIyree9oXBEH9MsUoPDiDe55PpnpiRxhN8I/11DhfsZxgNsy+1C1wUMXRjqYa
+         RO8Y+EfiAiGKCkYMT1hnzEqMHJ24ag6mDzFdSNWKl6poOH5UPUcrD9Xjn/18jBpPQ2Fz
+         5jGfzgkQ8y/Sb8GWueOObatSSEe6vIa/dN7w3Y+JktcIBXzTq0zyS4kXfdP+CbQgteVq
+         kZlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1DXaSBALdj47ej/qRrn23Ym5K4LNPgthJbNkIVsbaWI3/qVyPqSdzgQqRwnCUJIDBTNxod6rQ@vger.kernel.org, AJvYcCWGlrNqo4s7tdmpOdJc1kC+vvKjRmneTn08r3re7GPJPSIUlh95eTonrgO0DnO/2+eoES9etk3lptAD@vger.kernel.org, AJvYcCWdv4V82eA35lln95tJhrWlts79Yq/+vZn9Yos2pjlNYg599alQ18rOeSE5wyRbqQK4eY8vnrQ3l8P4Azw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXB9eXidiM4jlekYHgbbuPI9Ds3ROLL4sn1VndRBCYQvtH4wFS
+	mJAnXExXlXflEchf7kTCaWr8BvKtRKy/LJ5NQMF2mdjF26IbgahQJrlzDaOztj9GZkEsjOl5s/d
+	UF5VxpIbnoVNJ+2mm2pv191AmJ6fC3jg1
+X-Google-Smtp-Source: AGHT+IGpO0lm6WWsi1VfJG4NOgrjc4r6LGzQbumUxwFDZ5MWErkaI0YwZ7RSyrf11QIXXvc9iTyf9q698j19mWB2/v4=
+X-Received: by 2002:a05:6a21:150a:b0:1d2:ba7c:c6e7 with SMTP id
+ adf61e73a8af0-1d8bcf5abaamr22834524637.30.1729090378945; Wed, 16 Oct 2024
+ 07:52:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240919103403.3986-1-aha310510@gmail.com>
+In-Reply-To: <20240919103403.3986-1-aha310510@gmail.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Wed, 16 Oct 2024 23:52:47 +0900
+Message-ID: <CAO9qdTHgSwtaVfwzUYgSNX_3Yx=hmyYQnUb-OpP6k2u_gRZVGg@mail.gmail.com>
+Subject: Re: [PATCH v2] usb: using mutex lock and supporting O_NONBLOCK flag
+ in iowarrior_read()
+To: gregkh@linuxfoundation.org, oneukum@suse.com
+Cc: colin.i.king@gmail.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
-
-> On Tue, Oct 15, 2024 at 04:32:27PM +0200, 'Marco Elver' via HUST OS Kerne=
-l Contribution wrote:
->> On Tue, 15 Oct 2024 at 16:11, Dongliang Mu <mudongliangabcd@gmail.com> w=
-rote:
->> >
->> > On Tue, Oct 15, 2024 at 10:09=E2=80=AFPM Haoyang Liu <tttturtleruss@hu=
-st.edu.cn> wrote:
->> > >
->> > > fix a typo in dev-tools/kmsan.rst
->> > >
->> > > Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
->> > > ---
->> > >  Documentation/dev-tools/kmsan.rst | 2 +-
->> > >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > >
->> > > diff --git a/Documentation/dev-tools/kmsan.rst b/Documentation/dev-t=
-ools/kmsan.rst
->> > > index 6a48d96c5c85..0dc668b183f6 100644
->> > > --- a/Documentation/dev-tools/kmsan.rst
->> > > +++ b/Documentation/dev-tools/kmsan.rst
->> > > @@ -133,7 +133,7 @@ KMSAN shadow memory
->> > >  -------------------
->> > >
->> > >  KMSAN associates a metadata byte (also called shadow byte) with eve=
-ry byte of
->> > > -kernel memory. A bit in the shadow byte is set iff the correspondin=
-g bit of the
->> > > +kernel memory. A bit in the shadow byte is set if the corresponding=
- bit of the
->> >
->> > This is not a typo. iff is if and only if
->>=20
->> +1
->>=20
->> https://en.wikipedia.org/wiki/If_and_only_if
->>=20
+Jeongjun Park <aha310510@gmail.com> wrote:
 >
-> Does "iff" really add anything over regular "if"?  I would have thought t=
-he
-> "only if" could be assumed in this case.  Or if it's really necessary the=
-n we
-> could spell it out.
+> iowarrior_read() uses the iowarrior dev structure, but does not use any
+> lock on the structure. This can cause various bugs including data-races,
+> so it is more appropriate to use a mutex lock to safely protect the
+> iowarrior dev structure. When using a mutex lock, you should split the
+> branch to prevent blocking when the O_NONBLOCK flag is set.
+>
+> In addition, it is unnecessary to check for NULL on the iowarrior dev
+> structure obtained by reading file->private_data. Therefore, it is
+> better to remove the check.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 
-Somebody "fixing" occurrences of "iff" are a regular occurrence; it's an
-attractive nuisance for non-native speakers.  For that reason alone, I'm
-coming to the conclusion that we should just spell it out when that is
-the intended meaning.
+I think this patch should be moved to the usb-linus tree to be applied in the
+next rc version. iowarrior_read() is very vulnerable to a data-race because it
+reads a struct iowarrior without a mutex_lock. I think this almost certainly
+leads to a data-race, so I think this function should be moved to the
+usb-linus tree to be fixed as soon as possible.
 
-jon
+I would appreciate it if you could review this.
+
+Regards,
+
+Jeongjun Park
+
+> ---
+> v1 -> v2: Added cc tag and change log
+>
+>  drivers/usb/misc/iowarrior.c | 46 ++++++++++++++++++++++++++++--------
+>  1 file changed, 36 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+> index 6d28467ce352..a513766b4985 100644
+> --- a/drivers/usb/misc/iowarrior.c
+> +++ b/drivers/usb/misc/iowarrior.c
+> @@ -277,28 +277,45 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+>         struct iowarrior *dev;
+>         int read_idx;
+>         int offset;
+> +       int retval;
+>
+>         dev = file->private_data;
+>
+> +       if (file->f_flags & O_NONBLOCK) {
+> +               retval = mutex_trylock(&dev->mutex);
+> +               if (!retval)
+> +                       return -EAGAIN;
+> +       } else {
+> +               retval = mutex_lock_interruptible(&dev->mutex);
+> +               if (retval)
+> +                       return -ERESTARTSYS;
+> +       }
+> +
+>         /* verify that the device wasn't unplugged */
+> -       if (!dev || !dev->present)
+> -               return -ENODEV;
+> +       if (!dev->present) {
+> +               retval = -ENODEV;
+> +               goto exit;
+> +       }
+>
+>         dev_dbg(&dev->interface->dev, "minor %d, count = %zd\n",
+>                 dev->minor, count);
+>
+>         /* read count must be packet size (+ time stamp) */
+>         if ((count != dev->report_size)
+> -           && (count != (dev->report_size + 1)))
+> -               return -EINVAL;
+> +           && (count != (dev->report_size + 1))) {
+> +               retval = -EINVAL;
+> +               goto exit;
+> +       }
+>
+>         /* repeat until no buffer overrun in callback handler occur */
+>         do {
+>                 atomic_set(&dev->overflow_flag, 0);
+>                 if ((read_idx = read_index(dev)) == -1) {
+>                         /* queue empty */
+> -                       if (file->f_flags & O_NONBLOCK)
+> -                               return -EAGAIN;
+> +                       if (file->f_flags & O_NONBLOCK) {
+> +                               retval = -EAGAIN;
+> +                               goto exit;
+> +                       }
+>                         else {
+>                                 //next line will return when there is either new data, or the device is unplugged
+>                                 int r = wait_event_interruptible(dev->read_wait,
+> @@ -309,28 +326,37 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+>                                                                   -1));
+>                                 if (r) {
+>                                         //we were interrupted by a signal
+> -                                       return -ERESTART;
+> +                                       retval = -ERESTART;
+> +                                       goto exit;
+>                                 }
+>                                 if (!dev->present) {
+>                                         //The device was unplugged
+> -                                       return -ENODEV;
+> +                                       retval = -ENODEV;
+> +                                       goto exit;
+>                                 }
+>                                 if (read_idx == -1) {
+>                                         // Can this happen ???
+> -                                       return 0;
+> +                                       retval = 0;
+> +                                       goto exit;
+>                                 }
+>                         }
+>                 }
+>
+>                 offset = read_idx * (dev->report_size + 1);
+>                 if (copy_to_user(buffer, dev->read_queue + offset, count)) {
+> -                       return -EFAULT;
+> +                       retval = -EFAULT;
+> +                       goto exit;
+>                 }
+>         } while (atomic_read(&dev->overflow_flag));
+>
+>         read_idx = ++read_idx == MAX_INTERRUPT_BUFFER ? 0 : read_idx;
+>         atomic_set(&dev->read_idx, read_idx);
+> +       mutex_unlock(&dev->mutex);
+>         return count;
+> +
+> +exit:
+> +       mutex_unlock(&dev->mutex);
+> +       return retval;
+>  }
+>
+>  /*
+> --
 
