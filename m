@@ -1,160 +1,162 @@
-Return-Path: <linux-kernel+bounces-368314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F39F9A0E25
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:27:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5C89A0E26
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65E9A1C24737
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0277D1F23A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D257420F5C1;
-	Wed, 16 Oct 2024 15:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B9320E02F;
+	Wed, 16 Oct 2024 15:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="f7T1o1Pw"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TYYv1lK+"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AECE20E02F;
-	Wed, 16 Oct 2024 15:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E5F20E035
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729092378; cv=none; b=cVDjgwyC2GrPxynivqUZ6f2wZ8QFyfWouJ5GiaY+j/AnQEDU55m94cxoGpT7So8t5/57NRL8LIjvAz2afrBsQgPal+9vYt/TBCOvmr6mj8wehz0omIgAfAd09Aosggl34YAJWOOucJRueIBcSuHN6CBp5aWX09u2QBQN4e+lWco=
+	t=1729092389; cv=none; b=GAOxAeZgBdCsrRQYEd3bTLDJHMQ7JV/nSH83s7xv90dArdswpQDiaWeFZ5HDVZGc6JaCB4iG8iLffQE9d7ZM6R20jyqZcddwU+pBH1Iz+wFdjvx4NnhYuRtWZ97o7/csQbFti08DDUv7eZdvOFpURVPcq4IjnH3hmF/WaLRWaOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729092378; c=relaxed/simple;
-	bh=vxkX0OaUYqYmW+6/PZydX12bb2XsbzXN3OxUgLZdfdI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TbFGIm+9H8iEPXGg1oxtmK3fmrzoOALn6RoQ94CDsUpq7EYim8ZzGgjAOrJB11Ykam4ZwI2qjM59KWV/PKPtb+FNcbEJ4foHssfE6Lw2xb/ENjp5g/HYP2C6Rq0Huv4/2zadmxEi0Gy/pqWyg3HDB0aNWxfB2vTtFXQszxPE7rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=f7T1o1Pw; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 5F1F512001F;
-	Wed, 16 Oct 2024 18:26:01 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 5F1F512001F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1729092361;
-	bh=1ikeBZbubc4DVoAfNpzprl2Ps8Yd9DmnJ95uv3sHsDw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=f7T1o1PwryalGIHyzDwlzmyxL1yUBFvfyM7YlT/mo4MgWBmZ63Oj/Rr6m/Q5h3tXm
-	 M9FMnAtpUwr+07h+O+0ovD9aKhLOoRl9xJz6IQe6JveqdZgC2m4sunTVXSCfSuVcp8
-	 ZY/PvcPVjEuAitbOIRyBWW4YGvDPUU6SHxVmDqZQjGfSuk0F78/huBeYm0BLCxIybr
-	 X3ZgDODd4mgnZBiOLh3KaTBaBq1pGdHlFnXurk+VtLJt91CRqXrIbxhZyfvu85vLBF
-	 akvC/FoZNLAGFkD7y3p2bpHR+nH/8OCBSM0m5VY43Cvj14v+Yvi5XBQMMERRMBF/Ib
-	 q6lvBX47DiZcA==
-Received: from smtp.sberdevices.ru (unknown [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 18:26:01 +0300 (MSK)
-From: George Stark <gnstark@salutedevices.com>
-To: <u.kleine-koenig@pengutronix.de>, <neil.armstrong@linaro.org>,
-	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kernel@salutedevices.com>, George Stark <gnstark@salutedevices.com>
-Subject: [PATCH v2 4/4] pwm: meson: Enable constant and polarity features for g12, axg, s4
-Date: Wed, 16 Oct 2024 18:25:53 +0300
-Message-ID: <20241016152553.2321992-5-gnstark@salutedevices.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241016152553.2321992-1-gnstark@salutedevices.com>
-References: <20241016152553.2321992-1-gnstark@salutedevices.com>
+	s=arc-20240116; t=1729092389; c=relaxed/simple;
+	bh=KTgnqcC7x3ror7WB6z40vDXc8FyUKwbCayrpv6TJ9WU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=daNx/jlPLP7Bjhh+PdVk30u0Dm70+iuAD3zTgOPkhIwhmc6z9aoLzGQ6a/kYtgVK0Xq6ZUGotgn4YLdPF6PnL/lQPH+vBqwRHQUSMLy0yQbhNs2wT7gx9Mj9NdmfzKqe5SGqJICSq9AvU1BPOg4SfqZzTRPihp9HBmE+6t+Iyv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TYYv1lK+; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7163489149eso5581444a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:26:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729092387; x=1729697187; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yGUG8kIdO138NYD1p1N2N2xx7Da7NoNNAVUbHzLKyz8=;
+        b=TYYv1lK+hkoE35xDoJFR4M2TavF+wQBOaGcaWrdZWHZzY3E8VnaZPlTW6NZ512s7su
+         CG8VoBvgPmKik3cxwDPTqqJYzjEunxzWp+NYobjaxSBEir8jnkDiUcj/iHeiTS46qmbF
+         vo9Mez/0WoGEuSQ8non+/4evdmu0BibhC1CDQoC8jfbY/vay+YBDyKDVGcqN2kiN/SdK
+         +usWUbJVCH6Erx8rv5t6Cnm0ZTf+kKBDOQQNtESMtqA1cLqG6EZrJLHnXgzbzHfQ/Y7U
+         vZi/6oVmAvDPn9uZn3b9Ed6AoRRU2c2byxYmtrfq19CpX1iRK5N76mOoZHRQNyCa5Ieo
+         IxVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729092387; x=1729697187;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yGUG8kIdO138NYD1p1N2N2xx7Da7NoNNAVUbHzLKyz8=;
+        b=Nt6/gQRZhJKwhtr0ivika9v9Cyy1gDqXv86QAEPGhZt052jIdwz4+KFWkx/sY+v+ha
+         TfmD568cYmLo4yNamjYfd259kgZnhlK0XL5Peduz/P3jFOZdYu37kYew9S6nPRJwC9ip
+         DEmhJVrwsY0S1cQguhFjIU3Rkloduqa7O1URQ99hFcrJl/8uohUBLfLKEHxTCIAWmwYo
+         9mX9nAk5I119YpCKjYVx5ZhN7tE0Z4iVyAuFCPV3uyb1JxbrohFcw0X5MeRPiXCRA7IV
+         esJ/HlYCjDMjqyCXiU7M+ZLs9BVf3kbQKK+Ebl2jgIO45lfBGVcbU0JxHxmGRW0wWVf9
+         e66Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV26ytB9MwbFWRVrO7QMzRbd8HG67w5kvLh4eXJBTAsQC7a7hO+RZAY6mvZr4tReGhrZFwisa9B8x8NhLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1+ZMUuxMAck26r2tmfNABPtHw28BQe38Hxk2XtK5ssKRZnoeQ
+	D7WVsQJxyrKzyj9bZYygYKXU3c0+FKC9LqPsbqkKbidAlpX240fSNEulnR27uFcPhNo+mPdjYKJ
+	j
+X-Google-Smtp-Source: AGHT+IGgcLUwsw9+vZX+u2b6BeJKt6i8hCS8ohMzM5KQDBjn1/8dNRYAEWTkMJAef+iNELkLqzDvKQ==
+X-Received: by 2002:a05:6a20:b40b:b0:1d8:f4f7:35ee with SMTP id adf61e73a8af0-1d8f4f7378dmr9344144637.8.1729092387345;
+        Wed, 16 Oct 2024 08:26:27 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:2add:7601:8402:667])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6d3fddsm2997522a12.52.2024.10.16.08.26.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 08:26:26 -0700 (PDT)
+Date: Wed, 16 Oct 2024 09:26:24 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
+Message-ID: <Zw/bIItwk0jeqKoR@p14s>
+References: <20241007132441.2732215-1-arnd@kernel.org>
+ <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188483 [Oct 16 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/16 12:08:00 #26762169
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com>
 
-g12, axg and s4 SoC families support constant and polarity bits
-so enable those features in corresponding chip data structs.
+On Mon, Oct 14, 2024 at 09:56:11AM -0500, Andrew Davis wrote:
+> On 10/7/24 8:23 AM, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > The k3-m4 remoteproc driver was merged with incorrect dependencies.
+> > Despite multiple people trying to fix this, the version 6.12-rc2
+> > remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
+> > when the driver is built-in.
+> > 
+> > arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
+> > ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
+> > 
+> > Fix the dependency again to make it work in all configurations.
+> > The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
+> > dependencies. The link failure can be avoided with a simple 'depends
+> > do, so turn that into the same 'depends' to ensure we get no circular
+> > on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
+> > we use elsehwere. On the other hand, building for OMAP2PLUS makes
+> > no sense since the hardware only exists on K3.
+> > 
+> > Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
+> > Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
+> > Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >   drivers/remoteproc/Kconfig | 6 +++---
+> >   1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > index 955e4e38477e..62f8548fb46a 100644
+> > --- a/drivers/remoteproc/Kconfig
+> > +++ b/drivers/remoteproc/Kconfig
+> > @@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
+> >   config TI_K3_M4_REMOTEPROC
+> >   	tristate "TI K3 M4 remoteproc support"
+> > -	depends on ARCH_OMAP2PLUS || ARCH_K3
+> > -	select MAILBOX
+> > -	select OMAP2PLUS_MBOX
+> > +	depends on ARCH_K3 || COMPILE_TEST
+> > +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
+> 
+> This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
+> dependencies, as often only one ARCH can be selected which prevents
+> compile testing drivers with various multiple architecture deps in
+> one compile test.
+> 
+> Normal dependencies, on the other hand, can simply be enabled if one
+> wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
+> cannot be enabled as it has a dependency up the chain that doesn't
+> allow selecting when not on a TI platform. We can fix that as I posted
+> here[0]. With that fix in, this line can be simply become:
+> 
+> depends on TI_SCI_PROTOCOL
 
-Signed-off-by: George Stark <gnstark@salutedevices.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/pwm/pwm-meson.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+From the above and the follow-on conversation with Nishanth, should I understand
+you are working on a patchset to address this issue?  If not I will apply Arnd's
+patch.  People are sending different fix [1] - the issue needs to be addressed
+well before the end of the cycle.
 
-diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-index d9d51f0af103..ca822174f7ba 100644
---- a/drivers/pwm/pwm-meson.c
-+++ b/drivers/pwm/pwm-meson.c
-@@ -558,26 +558,36 @@ static const struct meson_pwm_data pwm_gxbb_ao_data = {
- static const struct meson_pwm_data pwm_axg_ee_data = {
- 	.parent_names = { "xtal", "fclk_div5", "fclk_div4", "fclk_div3" },
- 	.channels_init = meson_pwm_init_channels_meson8b_legacy,
-+	.has_constant = true,
-+	.has_polarity = true,
- };
- 
- static const struct meson_pwm_data pwm_axg_ao_data = {
- 	.parent_names = { "xtal", "axg_ao_clk81", "fclk_div4", "fclk_div5" },
- 	.channels_init = meson_pwm_init_channels_meson8b_legacy,
-+	.has_constant = true,
-+	.has_polarity = true,
- };
- 
- static const struct meson_pwm_data pwm_g12a_ee_data = {
- 	.parent_names = { "xtal", NULL, "fclk_div4", "fclk_div3" },
- 	.channels_init = meson_pwm_init_channels_meson8b_legacy,
-+	.has_constant = true,
-+	.has_polarity = true,
- };
- 
- static const struct meson_pwm_data pwm_g12a_ao_ab_data = {
- 	.parent_names = { "xtal", "g12a_ao_clk81", "fclk_div4", "fclk_div5" },
- 	.channels_init = meson_pwm_init_channels_meson8b_legacy,
-+	.has_constant = true,
-+	.has_polarity = true,
- };
- 
- static const struct meson_pwm_data pwm_g12a_ao_cd_data = {
- 	.parent_names = { "xtal", "g12a_ao_clk81", NULL, NULL },
- 	.channels_init = meson_pwm_init_channels_meson8b_legacy,
-+	.has_constant = true,
-+	.has_polarity = true,
- };
- 
- static const struct meson_pwm_data pwm_meson8_v2_data = {
-@@ -586,10 +596,14 @@ static const struct meson_pwm_data pwm_meson8_v2_data = {
- 
- static const struct meson_pwm_data pwm_meson_axg_v2_data = {
- 	.channels_init = meson_pwm_init_channels_meson8b_v2,
-+	.has_constant = true,
-+	.has_polarity = true,
- };
- 
- static const struct meson_pwm_data pwm_s4_data = {
- 	.channels_init = meson_pwm_init_channels_s4,
-+	.has_constant = true,
-+	.has_polarity = true,
- };
- 
- static const struct of_device_id meson_pwm_matches[] = {
--- 
-2.25.1
+[1]. https://lore.kernel.org/linux-arm-kernel/20241016013922.1392290-1-zengheng4@huawei.com/T/
 
+> 
+> Andrew
+> 
+> [0] https://lore.kernel.org/lkml/20241014144821.15094-1-afd@ti.com/
+> 
+> > +	depends on OMAP2PLUS_MBOX
+> >   	help
+> >   	  Say m here to support TI's M4 remote processor subsystems
+> >   	  on various TI K3 family of SoCs through the remote processor
 
