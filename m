@@ -1,129 +1,112 @@
-Return-Path: <linux-kernel+bounces-368141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582219A0BCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:43:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BED9A0BCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D111F22A2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:43:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDDF1F24229
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6BA209F59;
-	Wed, 16 Oct 2024 13:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="VefHAbya"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC305208209;
+	Wed, 16 Oct 2024 13:45:38 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652EF187555
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1754E524B4
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086229; cv=none; b=GhPViuug/BEwXhb1r9UcNpGZctBXBXq8JyCCi88rijvWp08IlnEmKA60xIqKVtxMuZE4CKrzKfxS6KQtdAZ3fzH9StNosXU+QsOze5LRspBe2kgCi1uaIyIIPrpWuRYsb4rYdWwMlyu7VUBe7y6c8fyKeyfJEdpZhrSjZnBGmA0=
+	t=1729086338; cv=none; b=UwXJNOWLdjJnRsSwLR6q6giEk1sXfvhyQUQZL8t5MDOdEkChEJYs66GvNOjIso+2goCJKXZN0EyKy8HTsrhz5l14YzGviSPyBG7iu8xQm68opcsFK7q2notJjBAR17Te+a8OzEkfop8xVdvdK84xtoV3ErEJeb9jJ3p2SVq8l50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086229; c=relaxed/simple;
-	bh=KWcWN0Jm2eUdhtHlZSZFOhv8Zx+tr8YDUBPTLQTMBgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ftXQ5TiLtVxaCjLVR2sdhejlFK11JWC4GnREAJUdpPGqZ7mT5Y0waVCiwc822dPwIWuWuVlRHPu+AXc3hTLmugjTimWyebpxfGP//fRi8JqNEQTZMr9hr1RDmGQsjf0f0hhr5kmRo2Po0EV2GcnV3ppk8Q8h70wQUBXseCx1okU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=VefHAbya; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2817856b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:43:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729086228; x=1729691028; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hPSkU20Itc6yAh+bZBbT2R0RT9oB/wml9mSdgooTOww=;
-        b=VefHAbyajJ+EibY++LZu5yyNn8ulR6BdY4Xor9w+0ufoTXHxwawvH65ukuEch2Gmgs
-         D4giuT05u9kSpUZ9VzhhX5V0nNeKJlYoU7YwZ0KMgYPYb34NR/LcuYtvESYJykH2cqDh
-         yWu0zAMjnSJJsSO1+v8Ejr7/XR73n09RrvRyXPYTWx+DMA8/ischIZlALM3fMo6wTi07
-         kmJlIPaOhBZLq5G5a47+tk8TQFm7/H9I0BunCss/tJR+1SRHEy3jxITB2d+UJBTlMnjR
-         RULfdPFnO36GW0u7qDhNWewOC8akmqPiEt33zkobuFE7bmA0++KXjO4A0GmhgOdZOsAe
-         QMvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729086228; x=1729691028;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hPSkU20Itc6yAh+bZBbT2R0RT9oB/wml9mSdgooTOww=;
-        b=beLiXN0R+ydBseBuyaodwWfJwjziFDqEjX8081ucLtYojgSGsZLurW7NkssipRtIgB
-         lktjIQZP8m2PVM0TN8tEaRT08hZJFqFljQzZtGSnF+B92U1/5pX736GMjFAnvc0YLUQo
-         NI7iwpWEiJu+a9YgAa2JkYerggfdTgJTgwDQ7L46yVXpAZDp6w90zVC2KzjMrmVy7lO8
-         FiE9WAlDNaw40e1LU1ZtxTDWUkys3X3mWym9zd2AngMcoGfnoblq3RoadUNX6yyk4BAL
-         G+GnDg6TIhbgMejfJfexuUEWeY8HsKNruT18I4c6zHv8FUM2X2Snc8UYLoOzp/JNSrdp
-         dsaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/MnuMbyxoCQCHGh4RG+7WlwyFt762B4Ac1fNyqy5ruDixzqKJqJps5tlD1Ozj9xDDMxZGi9oCia7PLaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOFtBtwgcVIhx6A3jRLIFqe4BlSaya8G32WSf/I1Io+lOPwujk
-	tLB8d+aC7WL6YYFDfTDNGNRLx4vkYefhuLxou8QKxKHcULgoB1C7UH8LQFqF5pc=
-X-Google-Smtp-Source: AGHT+IE1Q+vPA30KNlMFxGEt9h2r7Mf4JtaF8VKYh5yzDNUyMZMQT+8Yyx33/wO8c5gt6uUjOIGAxw==
-X-Received: by 2002:a05:6a20:d49b:b0:1d7:cc6:53d0 with SMTP id adf61e73a8af0-1d8c9576f83mr22762980637.5.1729086227779;
-        Wed, 16 Oct 2024 06:43:47 -0700 (PDT)
-Received: from localhost.localdomain ([132.178.238.27])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20d17f84e9bsm28977495ad.19.2024.10.16.06.43.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 06:43:47 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: drew@pdp7.com,
-	guoren@kernel.org,
-	wefu@redhat.com,
-	linus.walleij@linaro.org
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] pinctrl: th1520: Dereference pointer only after NULL check
-Date: Wed, 16 Oct 2024 07:42:21 -0600
-Message-ID: <20241016134223.4079-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729086338; c=relaxed/simple;
+	bh=mVNtxpGX0BU6BkcgeLmDnZouvF44w9LmQQ2xF50LKZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SAtS2GOFEsBUYKhTqF67IUFdlNlj4TGZSzvLr/OC0vEDlaF8v6yuDFMyjBPTZ/KdVX2jzpa4wxveWeXdiIm/tDRL9MsalV5sUonLJSv6pKToAbRgzsdCXvyt4Psjxbdf/agpg9PwNndczcZWpFDyhpELSJiuhMrMJx/qoMyEQTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XTBxw3ZtZz18N5p;
+	Wed, 16 Oct 2024 21:43:32 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B1071401E0;
+	Wed, 16 Oct 2024 21:45:25 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 16 Oct 2024 21:45:24 +0800
+Message-ID: <6457b1fa-9afd-4552-ae5b-3a0379bcc3e5@huawei.com>
+Date: Wed, 16 Oct 2024 21:45:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, <akpm@linux-foundation.org>,
+	<hughd@google.com>
+CC: <willy@infradead.org>, <david@redhat.com>, <21cnbao@gmail.com>,
+	<ryan.roberts@arm.com>, <ioworker0@gmail.com>, <da.gomez@samsung.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <007880ac-d73f-4eef-9978-a4f844338522@huawei.com>
+ <584662fb-cb1f-4b2c-9075-f70d31473c9d@linux.alibaba.com>
+Content-Language: en-US
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <584662fb-cb1f-4b2c-9075-f70d31473c9d@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-The pointer `func` is dereferenced before NULL check.
-Move the dereference after the NULL check.
 
-This issue was reported by Coverity Scan.
-Report:
-CID 1600802: (#1 of 1): Dereference before null check
-(REVERSE_INULL)
-check_after_deref: Null-checking func suggests that it
-may be null, but it has already been dereferenced on all
-paths leading to the check.
 
-Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
----
- drivers/pinctrl/pinctrl-th1520.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 2024/10/16 17:29, Baolin Wang wrote:
+> 
+> 
+> On 2024/10/16 15:49, Kefeng Wang wrote:
+>>
+>>
+>> On 2024/10/10 17:58, Baolin Wang wrote:
+>>> Hi,
+>>>
+>>> This RFC patch series attempts to support large folios for tmpfs.
+>>>
+>>> Considering that tmpfs already has the 'huge=' option to control the THP
+>>> allocation, it is necessary to maintain compatibility with the 'huge='
+>>> option, as well as considering the 'deny' and 'force' option controlled
+>>> by '/sys/kernel/mm/transparent_hugepage/shmem_enabled'.
+>>>
+>>> Add a new huge option 'write_size' to support large folio allocation 
+>>> based
+>>> on the write size for tmpfs write and fallocate paths. So the huge pages
+>>> allocation strategy for tmpfs is that, if the 'huge=' option
+>>> (huge=always/within_size/advise) is enabled or the 'shmem_enabled' 
+>>> option
+>>> is 'force', it need just allow PMD sized THP to keep backward 
+>>> compatibility
+>>> for tmpfs. While 'huge=' option is disabled (huge=never) or the 
+>>> 'shmem_enabled'
+>>> option is 'deny', it will still disable any large folio allocations. 
+>>> Only
+>>> when the 'huge=' option is 'write_size', it will allow allocating large
+>>> folios based on the write size.
+>>>
+>>> And I think the 'huge=write_size' option should be the default behavior
+>>> for tmpfs in future.
+>>
+>> Could we avoid new huge= option for tmpfs, maybe support other orders
+>> for both read/write/fallocate if mount with huge?
+> 
+> Um, I am afraid not, as that would break the 'huge=' compatibility. That 
+> is to say, users still want PMD-sized huge pages if 'huge=always'.
 
-diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-index 7474d8da32f9..07f8b51fb294 100644
---- a/drivers/pinctrl/pinctrl-th1520.c
-+++ b/drivers/pinctrl/pinctrl-th1520.c
-@@ -803,11 +803,13 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
- {
- 	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
- 	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
--	enum th1520_muxtype muxtype = (uintptr_t)func->data;
-+	enum th1520_muxtype muxtype;
- 
- 	if (!func)
- 		return -EINVAL;
- 
-+	muxtype = (uintptr_t)func->data;
-+
- 	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
- 				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
- 				 muxtype);
--- 
-2.43.0
-
+Yes, compatibility maybe an issue, but only write/fallocate side support
+large folio is a little strange, maybe a new mode to support both read/
+write/fallocate?
 
