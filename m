@@ -1,84 +1,65 @@
-Return-Path: <linux-kernel+bounces-368450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131F89A0FDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EEA9A0FE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B998B1F21DFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534C61F22B19
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945B420FA9B;
-	Wed, 16 Oct 2024 16:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1711120FAA3;
+	Wed, 16 Oct 2024 16:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zvRU/axg"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pNoSSNO1"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D4420F5AA
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A84186E54;
+	Wed, 16 Oct 2024 16:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096719; cv=none; b=pCxmGzrA8OGYoBUAU5xO60n/gnfjamaiMyqXicLiRv73o0LYnlaZXE6tM7coNhTaDfoYJ3CHaHRAO+8nTPix+LMi/gxQPnT6tQBrNEYb2exfVWyreopOZVCemPDSwgFOxFhAeClDoMdT5QHovKoDTmOuPsiQ/kqZ5dgymxFsmcw=
+	t=1729096867; cv=none; b=WJy+99rAMnneE0XGnHZz3TbTDEgIyRiHCWyWXbtK6IyiIWN957jh9vMIo8G8GDCZvLParUStqlpCUq7WWtAfrqYPWPQT9fAiprLtGL1gWKTnxkd9ytvQYy8or8eqIIP24v91bFtr244wYP8+DLw+nWNM854p/Hn7c/AP8zWP6lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096719; c=relaxed/simple;
-	bh=3dr4dqfOkWOJbyer5ytCTlDI0AwlwUfu+DtjziI3WXM=;
+	s=arc-20240116; t=1729096867; c=relaxed/simple;
+	bh=4+9hMQUGQ0KmEr3MUGdiHSoxY/jqBOYbhdzgiwz1qEQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q9ps10Vg3l+L28LQx2X7bbZNlklbNowFSJAIm7zLh5C1IOnoDIZZ8CZhfUnrY3OGYDpTv+Kc9ThAoWDRKhLdhn7cRRIjTg5aUu2BMjZnZl/znxacpyNPMlE1pV+EUsbwqm1sb7zKWDcqyXuAi8WB6QYd72Vuaj3QTvZq+hV/UJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zvRU/axg; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3b3f4b2afso1975ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729096717; x=1729701517; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ci6gNrzUyVsUIE6Wb8jNNaoAEPNDjVwvjmEavYBzbkw=;
-        b=zvRU/axgwpd1rmEqJkgcLqyUvgFTesCL1AMLOt3d7Gf+j5h2jYqUHdcMZbHJFotcPQ
-         aY4DF3zk2KXvvt2Ya2UmfkWr/3VFnQQY2Ep2UoBTz+Own7Ul89pABAyM/LCzYV5Jtq1Y
-         IDeMj5XZGRB2vP14C78XoeWkDUIZqC7zRTELmHl4+Kh/X1KLHD3Ja8g5OA5ixvXMBxxZ
-         G4QMVRxwKIHM/muezbLAAr7aByk8nYXJYN5VuEPcShuNP8LSIDBdog6LA9CjAVNQUtGy
-         p8IGWZIcmgUKezDF6oSExPKkUFs9w5NfKL9al9U0J47/wbLotSJYRGw8/XudoZUqXyhO
-         R+kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729096717; x=1729701517;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ci6gNrzUyVsUIE6Wb8jNNaoAEPNDjVwvjmEavYBzbkw=;
-        b=CJlEyGmSy+ubCZzIbTsTNYfOaBh13zKjW//rJFX09gBVRRNd4NIRPsX1Y75Au7y6Wr
-         FjRkzdRw69Hxb5B41vsVgn/eKzWje1W4Sb9wGCaWdDqtSeEpDPwKbajtElKx0LyQpC0N
-         WCrcgCtSnNelE5BZbvvsV1uOsmnMha7NjCX8OOpxLVMm3Z3hg6KPutTSK2+h/SH2wnA1
-         SggZ+sv4chkLVA3or7uYK91mXaAzNyMrjQGmMoj6+bpeEY8v8FBaksKG+x+m0g5AshZ6
-         tyeKWbWFu6gogZa3FhxBpy/JdP2N8THt4WptFzLxxO4iHzxVvxH8r1nXpoxDv1VCZYL4
-         AL8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUoWuE+6IVcw1Jgakn9Je0zLCXdawpTJgBkkehit71r4RFj0eJm8zO/m8oU58xB4VTvSOg7kX4bh7HmhmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUTh5gVgNhla4aHSTXpwIkPc3n86MCjh96JXYoI9NE2TOBMi/t
-	ykpt0hPvmvddeLezsLufiyHCu/33tRLcQAmX5fjzOgroou3ZsgixttnnoCBjDQ==
-X-Google-Smtp-Source: AGHT+IEY+QUM0YmGraUZwx4v/H6sPrKFmZo465qYrhwg9e1tZH4Rkey11zyj3Tb+y462yCpgUBcTcQ==
-X-Received: by 2002:a05:6e02:1a2c:b0:3a0:a224:eb2c with SMTP id e9e14a558f8ab-3a3de7d3001mr3543425ab.25.1729096716574;
-        Wed, 16 Oct 2024 09:38:36 -0700 (PDT)
-Received: from google.com ([2620:15c:2d:3:76d:3939:1f56:8278])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f84e9bsm30973075ad.19.2024.10.16.09.38.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 09:38:36 -0700 (PDT)
-Date: Wed, 16 Oct 2024 09:38:31 -0700
-From: Isaac Manjarres <isaacmanjarres@google.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>, surenb@google.com,
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] printk: Improve memory usage logging during boot
-Message-ID: <Zw_sB7wK97w4Y0Fe@google.com>
-References: <20240930184826.3595221-1-isaacmanjarres@google.com>
- <ZvwZV5MDlQYGJv9N@pathway.suse.cz>
- <Zv2LQLsIC1y0bCDL@google.com>
- <Zw5ke11y4TkRQJQ2@google.com>
- <Zw-USn7PUHwCIGfL@pathway.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FVpnJQe83rNMjNS6XBI4Q6A5QdptDBV/bAH2esRli0HqEsjGBs79hveq1D7ofcOIR6qIpl442YgMZemQXK/hRMuYtese/JsRsJcNB8sgmpLYIFf5Rh10XhRNqPsU1uP7uaD0bP+nFSc6XIiu8MjwjYHr7WITFHyFQtXAi3ArQwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pNoSSNO1; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OPi0Qi7ew8T7pJV/9wlWhHFA+S+BQq/imu/tsZu/g3M=; b=pNoSSNO1akqzN16H+ivxfA5F6w
+	oWLzRYEjkRbAaCfvwjRsqoChyr/VQkXakM4Mbi8nq2NnY7pORaZUyuwbdqeej8/dP+0AqLPNPkifB
+	Gr4nX3Gt8l6tMV3b8/qUc8rjJr5CG3U7D5CUga0I0daNg6ZTu4kYn5g6Z8WBuR85ejaxAAZyFC2UJ
+	8lUXbK650wYjKFdQAgObOgnO67YpBORX/azzOKG/jQ69CI1s0L61KgnmjjhT1kXPKUyaWXDBrM0I4
+	WO7s9MLrq0zfRmRxO60dkpYlqU3Ny8KaIT+aPGUIv527IDTi9eAZuDESu3iiPIJgd8BmNwwVPTHLr
+	TEDDtT9g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1755-0000000CS4t-2ATs;
+	Wed, 16 Oct 2024 16:41:03 +0000
+Date: Wed, 16 Oct 2024 09:41:03 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
+	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
+	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
+	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
+Message-ID: <Zw_sn_DdZRUw5oxq@infradead.org>
+References: <20241015152348.3055360-1-ymaman@nvidia.com>
+ <20241015152348.3055360-2-ymaman@nvidia.com>
+ <Zw9F2uiq6-znYmTk@infradead.org>
+ <20241016154428.GD4020792@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,45 +68,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zw-USn7PUHwCIGfL@pathway.suse.cz>
+In-Reply-To: <20241016154428.GD4020792@ziepe.ca>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Oct 16, 2024 at 12:24:35PM +0200, Petr Mladek wrote:
-> I am sorry for the delay and thanks for the reminder. Last weeks were
-> a bit hectic...
+On Wed, Oct 16, 2024 at 12:44:28PM -0300, Jason Gunthorpe wrote:
+> > We are talking about P2P memory here.  How do you manage to get a page
+> > that dma_map_page can be used on?  All P2P memory needs to use the P2P
+> > aware dma_map_sg as the pages for P2P memory are just fake zone device
+> > pages.
 > 
-> Anyway, I have just comitted the patch into printk/linux.git,
-> branch for-6.13.
-> 
-> Note:
-> 
-> I have updated the sample messages in the commit message as suggested
-> earlier.
-> 
-> Also I double checked the patch and simplified the comment
-> in the following hunk. The original one was a bit cryptic.
-> 
-> @@ -1185,20 +1196,25 @@ void __init setup_log_buf(int early)
->  	if (!early && !new_log_buf_len)
->  		log_buf_add_cpu();
->  
-> -	if (!new_log_buf_len)
-> +	if (!new_log_buf_len) {
-> +		/* Show the memory stats only once. */
-> +		if (!early)
-> +			goto out;
-> +
->  		return;
-> +	}
-> 
-> , see also
-> https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.13&id=a961ec4e2860af4933e8c1763fe4f038c2d6ac80
-> 
-> Best Regards,
-> Petr
+> FWIW, I've been expecting this series to be rebased on top of Leon's
+> new DMA API series so it doesn't have this issue..
 
-No worries! I completely understand. Thank you for merging the patch
-into your tree, and for cleaning up the commit message/comment.
+That's not going to make a difference at this level.
 
-Thanks,
-Isaac
+> I'm guessing they got their testing done so far on a system without an
+> iommu translation?
+
+IOMMU or not doens't matter much for P2P.  The important difference is
+through the host bridge or through a switch.  dma_map_page will work
+for P2P through the host brige (assuming the host bridge even support
+it as it also lacks the error handling for when not), but it lacks the
+handling for P2P through a switch.
+
+> 
+> > which also makes it clear that returning a page from the method is
+> > not that great, a PFN might work a lot better, e.g.
+> > 
+> > 	unsigned long (*device_private_dma_pfn)(struct page *page);
+> 
+> Ideally I think we should not have the struct page * at all through
+> these APIs if we can avoid it..
+
+The input page is the device private page that we have at hand
+anyway.  Until that scheme is complete redone it is the right kind
+of parameter.
+
 
