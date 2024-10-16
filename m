@@ -1,168 +1,81 @@
-Return-Path: <linux-kernel+bounces-368337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283C29A0E83
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:37:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B2B9A0E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3D61F229EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:37:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71D45B279EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BF320E03B;
-	Wed, 16 Oct 2024 15:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E73D20E02F;
+	Wed, 16 Oct 2024 15:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FA2JA8rM"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PZWWOk03"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D7E2076B3;
-	Wed, 16 Oct 2024 15:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37ED54720
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093066; cv=none; b=E1boslCHdAQsrN059OSljVKHlcSBSUrdAvPt/F3Bp8DxS9De3FKQwD/EoKWp+yvldYctcykKzGntuu1f18Vj6tUtptqP6vP1PUXSzrNLYKvijQk3FgK/ihlaSowyaz0o/Lo6GjDxhMHNmmYfXoBmcMYNK0bAxMoyQiPx8d9biv8=
+	t=1729093083; cv=none; b=L3pOOaLva9Y7F7e5fjDzzmGhfxNZbCBJU1pl94cHITD8ghXFAj38GVC9tmo17K2MqdKwYw0rQFuKxN8FYCskww0yiCONS0DgMHBnI7IGgGp0Yu4sKNCBaUF8qF07PZRiAh3uOrBv6ekR7k+14lDiRQDoSblB59o5/986PuHbMN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093066; c=relaxed/simple;
-	bh=K6N1yrMQ0yY3qlPPF9f4Bg4MC7Nv1qWm8xs5WpjuER0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qIho5bfUqdoz9WPvoyciHf0wSbdMs8VOjcsotXQQ/0t0WYzr7I1Q1tM8+xWrNx2TkhTg2u2YCeRcGCdyLGB+Al2lYSqbYjSCo/R8FQKXngBXtxw0LWUSzT/IQVHhzJTisHTkPyxu3kSB2fStdMeRROYyYMETXpmeJUyMp5kNkCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FA2JA8rM; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GFbaOv083771;
-	Wed, 16 Oct 2024 10:37:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729093056;
-	bh=+EesAko5MONtF5725/UbVtJbs9fSMJe9BLA51lWSY7k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FA2JA8rMRJywtcfvE0EHYLE+l4ephFT2OMLFs1txchGe4xGN0gciPcZw6HLrlrGAu
-	 HcRpscqSYHp+FwBat6jhTsUDAKis3w7ZV6CfIj+VCISRBigf8c7g5FhHMTNK69yjDc
-	 UUmxVtw90wwctbFoIXj0MMwcg6ErHAWd400eVj/A=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GFbaLw004695
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 16 Oct 2024 10:37:36 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
- Oct 2024 10:37:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 16 Oct 2024 10:37:35 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GFbZLO035770;
-	Wed, 16 Oct 2024 10:37:35 -0500
-Message-ID: <07e5b001-b251-4f4f-8ce9-56b43032b5c4@ti.com>
-Date: Wed, 16 Oct 2024 10:37:35 -0500
+	s=arc-20240116; t=1729093083; c=relaxed/simple;
+	bh=NKBeUU2C2029C+iUhop9Nzweyb84SlkdW0dRWtxqJCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uz7/r1722jdZ7fpt8Ogp8//guiADe4csVH4ijv+BetkmshDYLTbe+T3OvxUU4Khy2r5yAmE/WFFnDZyDKosshCm7PKSWRMhmQpU9Xv2ULaLlFIF9uA9Etn3WhkhMfAjWmXX4JaNic5jQVUiBlZn/ttoQu7IxVqi3V51vQIg7i64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PZWWOk03; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NE/daF3JwSlAOHoHFySuoCdtdh/nK5By8Ql8VqAMJdQ=; b=PZWWOk03YymV9i8fSPmYETeYdU
+	mePBbxPtqyNy51/xnqtP2chxnEgKVphBP4GiWmdJhyZm4/96KluzISKDb/RHLQ4v/H6g8qgHNhrhA
+	ijYkWh+Ozk1U9gkf0R1NtfA6ExnLFD/1K3SZu3kB9QpyrINgYZw0gH1pAGbPvnY5yuHmnhuli4IkY
+	9CvcF+m6hI9aDdn29XxtoQAMcv/HuYT6Sql8ptWPpNzdVBc4TV6Rbt6iLfvMdQFdAI2p/Xh4lQwcI
+	28zM0hU8h1B4zWySnLRW/7PA/yMTemsXk8pIYFrc4+kV+C6tMEdP7QWgkdrY+aOr7ovVcKp1GNZGO
+	HJS5YXxw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t165w-00000008Jej-1xLm;
+	Wed, 16 Oct 2024 15:37:52 +0000
+Date: Wed, 16 Oct 2024 16:37:52 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read
+ performance
+Message-ID: <Zw_d0EVAJkpNJEbA@casper.infradead.org>
+References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
+ <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Arnd Bergmann <arnd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Hari Nagalla <hnagalla@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241007132441.2732215-1-arnd@kernel.org>
- <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com> <Zw/bIItwk0jeqKoR@p14s>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <Zw/bIItwk0jeqKoR@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
 
-On 10/16/24 10:26 AM, Mathieu Poirier wrote:
-> On Mon, Oct 14, 2024 at 09:56:11AM -0500, Andrew Davis wrote:
->> On 10/7/24 8:23 AM, Arnd Bergmann wrote:
->>> From: Arnd Bergmann <arnd@arndb.de>
->>>
->>> The k3-m4 remoteproc driver was merged with incorrect dependencies.
->>> Despite multiple people trying to fix this, the version 6.12-rc2
->>> remains broken and causes a build failure with CONFIG_TI_SCI_PROTOCOL=m
->>> when the driver is built-in.
->>>
->>> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in function `k3_m4_rproc_probe':
->>> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference to `devm_ti_sci_get_by_phandle'
->>>
->>> Fix the dependency again to make it work in all configurations.
->>> The 'select OMAP2PLUS_MBOX' no longer matches what the other drivers
->>> dependencies. The link failure can be avoided with a simple 'depends
->>> do, so turn that into the same 'depends' to ensure we get no circular
->>> on TI_SCI_PROTOCOL', but the extra COMPILE_TEST alternative is what
->>> we use elsehwere. On the other hand, building for OMAP2PLUS makes
->>> no sense since the hardware only exists on K3.
->>>
->>> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem")
->>> Fixes: ba0c0cb56f22 ("remoteproc: k3-m4: use the proper dependencies")
->>> Fixes: 54595f2807d2 ("mailbox, remoteproc: omap2+: fix compile testing")
->>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>> ---
->>>    drivers/remoteproc/Kconfig | 6 +++---
->>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->>> index 955e4e38477e..62f8548fb46a 100644
->>> --- a/drivers/remoteproc/Kconfig
->>> +++ b/drivers/remoteproc/Kconfig
->>> @@ -341,9 +341,9 @@ config TI_K3_DSP_REMOTEPROC
->>>    config TI_K3_M4_REMOTEPROC
->>>    	tristate "TI K3 M4 remoteproc support"
->>> -	depends on ARCH_OMAP2PLUS || ARCH_K3
->>> -	select MAILBOX
->>> -	select OMAP2PLUS_MBOX
->>> +	depends on ARCH_K3 || COMPILE_TEST
->>> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
->>
->> This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
->> dependencies, as often only one ARCH can be selected which prevents
->> compile testing drivers with various multiple architecture deps in
->> one compile test.
->>
->> Normal dependencies, on the other hand, can simply be enabled if one
->> wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
->> cannot be enabled as it has a dependency up the chain that doesn't
->> allow selecting when not on a TI platform. We can fix that as I posted
->> here[0]. With that fix in, this line can be simply become:
->>
->> depends on TI_SCI_PROTOCOL
-> 
->  From the above and the follow-on conversation with Nishanth, should I understand
-> you are working on a patchset to address this issue?  If not I will apply Arnd's
-> patch.  People are sending different fix [1] - the issue needs to be addressed
-> well before the end of the cycle.
-> 
+On Wed, Oct 16, 2024 at 06:09:30PM +0800, Baolin Wang wrote:
+> @@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  		if (folio) {
+>  			folio_unlock(folio);
+>  
+> -			page = folio_file_page(folio, index);
+> -			if (PageHWPoison(page)) {
+> +			if (folio_test_hwpoison(folio) ||
+> +			    (folio_test_large(folio) &&
+> +			     folio_test_has_hwpoisoned(folio))) {
 
-This is a bit complex as it touches multiple subsystems. You should take Arnd's
-patch. This will fix this for M4, I will then add a follow on patch doing the same
-for the other two remoteproc drivers (DSP and R5).
+Hm, so if we have hwpoison set on one page in a folio, we now can't read
+bytes from any page in the folio?  That seems like we've made a bad
+situation worse.
 
-When my series here[0] goes in I will then send a final patch removing the depends
-TI_SCI_PROTOCOL=n oddness from all 3 drivers. This final step does not need to happen
-this cycle though, only the first two steps are needed to prevent any further compile
-test issues.
-
-Andrew
-
-[0] https://lore.kernel.org/lkml/20241015213322.2649011-1-afd@ti.com/
-
-> [1]. https://lore.kernel.org/linux-arm-kernel/20241016013922.1392290-1-zengheng4@huawei.com/T/
-> 
->>
->> Andrew
->>
->> [0] https://lore.kernel.org/lkml/20241014144821.15094-1-afd@ti.com/
->>
->>> +	depends on OMAP2PLUS_MBOX
->>>    	help
->>>    	  Say m here to support TI's M4 remote processor subsystems
->>>    	  on various TI K3 family of SoCs through the remote processor
 
