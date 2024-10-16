@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-367723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6D09A05D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:43:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D739A05DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96AFAB2523C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:42:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E156B256C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0A420606C;
-	Wed, 16 Oct 2024 09:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6312205E3F;
+	Wed, 16 Oct 2024 09:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5ZIfUVy"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XwzIRXg0"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD24205E20;
-	Wed, 16 Oct 2024 09:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F37D205E2E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071742; cv=none; b=NU8hqXGTdxYUuwy76XDyLE4rhRIZ1FHL7MX6B7u1PiIFCiPWBWqLGmTeWc5+2+BYK79W+VVKP+cHYA0fRQhIqgBeKGk+MQ25iF7fJso6MZ/8pQdeM4CZmXvWbF4IUIJUwisGm4fGSd3quDY0hMmCG6m/mcvA1MYzBk2f/p6evi8=
+	t=1729071774; cv=none; b=uaeLwfNObKQhGbmopD3AskT5aPHvpdIJtn2ElMT3PKQTnqyjOm/i/cJFjSE5od2OYjeiXfbh+IkkOcd4dg21n7iGaK67xYuTer0015YuIDiZbesMNi0dq0m63UVx+PukyC6sYkzqyMh4U5EjiPZiVCGvL9xC6zgL5TpzkLhtSxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729071742; c=relaxed/simple;
-	bh=0ROIun9+2bA4UZLe9ILmjg9JaR1lCe7+bRu/u/vnsPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cM6Rw/qzgswpUdvdFcT8SNw40i76hxi/rZpj7gBXlWn0UC4DWmz1zPcWYURkwd5itZYEcBI7cJ2HxW+/mZqAa70GOncQ28++KiLFwRAWmt9CVc4lK5H8ywhRUfDQk9nrAg4pQvbaTSEtSHrykv3t9T92DboiKGGcRD69igTaEIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5ZIfUVy; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso414831a12.1;
-        Wed, 16 Oct 2024 02:42:20 -0700 (PDT)
+	s=arc-20240116; t=1729071774; c=relaxed/simple;
+	bh=4xIAM5pNqvMEv0HpuFsspU0wQu/ksWAfjmz6gy5Oxn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iz7a0sDSB2p7xPpdTtLXkJPJKcKGWoHUvGdsrDtdPe8LWyoXkgcSyfHFGb+putCmbE3jIfJ44A7nvo2u01uB6/MxIdjK4+6vJ/4B/4Is3IMiGdJLaqKrhgAuINkimA8BAo9ibMnt+dce7vkcEABu7aTH7QJIiM0X/GUioLERKsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XwzIRXg0; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c935d99dc5so7226886a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:42:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729071740; x=1729676540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0ROIun9+2bA4UZLe9ILmjg9JaR1lCe7+bRu/u/vnsPw=;
-        b=C5ZIfUVynL2ub+WCGXjhpHT9Enb5jBw/5DpuFOszL09mEf108Dhxv/ki6Y7M0O5sAz
-         Pg8qY79VegIMuzleH7NGADqbPH5zHYMc8QQoHMZiCuAZFkgYcHjUHq5Pa7rEzHZvy314
-         K8oQswOn+IOcunvmi55QvVO+MPZQHlATtBcTC+S9Nzoq2zR9r9Qa516XTTL+UjvORkBZ
-         L5MHmMiNrtSbzH6DTLyklQ0Hu7H55aQNwTvw6W+OYFVQjO1Jm/0XHsGX+Ed9uW20kRuI
-         a3WetXZH0Hwbprwyu6NZtqDhf5ym/pw9CGkIDbtyspX9iW/sFklZTX2K/h0w4oLg/Ji2
-         3AIA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729071771; x=1729676571; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+nQ/TeUc4unHc0CviCK96FS6Nvx0I+2yJNdAgUGoGM=;
+        b=XwzIRXg0ONXr9rQ1YWW8TkCfdUyWeLSH3K3llSQNufr+c4IgbTaR4u+DFI4tWqgzu1
+         r2oJl2c+/g/NS/ChEeZXJgcH28vR+lrW1JbmmbrRKv51znSq4d5LfQGkei7mxZX3zNoY
+         pyvAd9+dhyat5HeCRtpdzatql1kyxpFqqqgcryp12WqTeVcjyB9jNv92rQcJf9eNYFFl
+         ITluoR7nureO+4qySTIweIejh28zv5g57H5twKx8fiZWizri7QqzH9fdrDFJR5VT2QHe
+         qpdNjZns9aRXkVvTQA31XZckgtllOHGJQejz+ePfIPXPXF6Alh2slQ65W5ZOSswIDX+d
+         hPQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729071740; x=1729676540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0ROIun9+2bA4UZLe9ILmjg9JaR1lCe7+bRu/u/vnsPw=;
-        b=vpIkEiFuiFeNUON7nQEaHWaxB8+heeYQI0pL5aNekbwCjVulj0tjs9aoRRe2BDDgsi
-         L8K5ofulr6pb2GXctz2jhfIWv7JtCAEE4qWhmA2pEZyHasIueWYn8Axo1yFmx9vWsVO2
-         otkNVlShk4tMQaTws1fdg8rKdQRPOVxMqtcznWxuukoZANWCZbKQScRiNlmFSOuv9bbe
-         cCfsJ1NC3iNaVX13+6S1ByADRHw+3CldkVzxAgYl0KHrNKZMp255koPjoHMyPgwwXVLS
-         okR0pEBv8IBmwawkOr4SN/mdIHvGWPqie29XdSgYamU7zazWXlRsk08yRiOzRAolZCi9
-         34Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4JRWrv++k7ZN3AhDPOvW+stge+kS+5VG1dL9amjT7kwj6Ppwa5lML3j5WObMv4EioE314hCvkY9nUJTTGWyw=@vger.kernel.org, AJvYcCVOnUhZ5T+2PH9q1dgX6qeI/VbGQZOp2cedEU7LUx5SBwVPHp/xt+jMyOUmWmLOAbtoFSptMJYv@vger.kernel.org, AJvYcCWru1AcE7j9CZGG0rd2FsoXrdg0XVZWyEHYyXLX5afOZKAcrPv5XeV5D1MpI44aEQL9LNzIf2IxhyJZS4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3SZ6YhNtc1RajsRdFjABgfTxgXHCnsulxrhQPjtib8gA6eqH3
-	1buGgTIHULCdloZhacfdxtHm1dWuOxA5RtwequYYblMtmUnRz2YJhOzvH0W0Nx+ep6w59v4Q4Rd
-	mz2gJBhnU2yJqSaLLG45aETrzips=
-X-Google-Smtp-Source: AGHT+IHi0A8/PV6E9lyeXG/3wVsU9tT7kuHybNSxajW9mmWYQ7zdVM067KZbEGHzCY1n7J1Vvlg+DTAGazeQKOvFmUY=
-X-Received: by 2002:a17:902:da84:b0:20b:642c:222b with SMTP id
- d9443c01a7336-20d2fe58acdmr9802325ad.15.1729071740219; Wed, 16 Oct 2024
- 02:42:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729071771; x=1729676571;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y+nQ/TeUc4unHc0CviCK96FS6Nvx0I+2yJNdAgUGoGM=;
+        b=enhIEcbLKB0ybI7XGHNc+GCrDE+f/4eZ5LzXRy73IG/SrSO+7wKEJmINC1OSv5g6eK
+         GxKj0qKWQfi75oCEji8zWt1FiKr0vCxfsEJDOGZDy0URl2L/nPWvzo+EBF0cuBfPVzJp
+         UAS250wKoBrtvqiKK47kAG9D/V/mUo5biOz2ubZA7B+3lLDmHAiHbcTPL+8YqqjhTZGb
+         AhG2a6aGrWpQIfAcuN8mEVjkBZuG/0h7BJCVlpyjliivFTBBekE/DmObMWHjsin99PSM
+         ofR4dUM7oZIt96WNi+KRAQHu+sRmcSiIQYivdUrVMJQI/B1MVipSSKpR0yPXXP0KKcgv
+         kkBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyPR4WIuS202KVDYjW9cZ3GtRqz0jGruDEJ6dVlr9lpRRl9TrWqTLdI0YNgXdhwAwOdhDmxIk5Ev90O9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWbABqR90k0QRcdprI4dqVWqqITQD9JfDkKI7wnYgrq0ah/T0M
+	KX5SsfwIo3/jj/3asZ6qovqEuvkSsxUeKLoTvMLVKjOdarRpezcOdLMZdgqKBk4=
+X-Google-Smtp-Source: AGHT+IHuQUwNqVXDGfNnrsLMBWvMT3Rt4PH0OsGQcCtq/cBUbz9Oasr9CWvqqQlecwsti+WIotAZBA==
+X-Received: by 2002:a17:907:f1dc:b0:a99:4780:1af with SMTP id a640c23a62f3a-a9a34d0d06fmr260498066b.31.1729071770678;
+        Wed, 16 Oct 2024 02:42:50 -0700 (PDT)
+Received: from localhost (p200300f65f19e3002f38cf427133ca7b.dip0.t-ipconnect.de. [2003:f6:5f19:e300:2f38:cf42:7133:ca7b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2974a49asm162647566b.89.2024.10.16.02.42.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 02:42:50 -0700 (PDT)
+Date: Wed, 16 Oct 2024 11:42:49 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	NXP S32 Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>, 
+	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>, Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Message-ID: <turfqcpjz2dxrng73v5iphpsh3pvhhv73guo4m2vvzplqycsa3@iyrzsimppo57>
+References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
+ <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-6-fujita.tomonori@gmail.com> <CAH5fLgjTGmD0=9wJRP+aNtHC2ab7e9tuRwnPZZt8RN3wpmZHBg@mail.gmail.com>
-In-Reply-To: <CAH5fLgjTGmD0=9wJRP+aNtHC2ab7e9tuRwnPZZt8RN3wpmZHBg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 16 Oct 2024 11:42:07 +0200
-Message-ID: <CANiq72mKJuCdB2kCwBj5M04bw2O+7L9=yPiGJQeyMjWEsCxAMA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 5/8] rust: time: Add wrapper for fsleep function
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com, 
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
-	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="af47a2hrdy2esf76"
+Content-Disposition: inline
+In-Reply-To: <20241015105133.656360-3-ciprianmarian.costea@oss.nxp.com>
 
-On Wed, Oct 16, 2024 at 10:29=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> You probably want this:
->
-> delta.as_nanos().saturating_add(time::NSEC_PER_USEC - 1) / time::NSEC_PER=
-_USEC
->
-> This would avoid a crash if someone passes i64::MAX nanoseconds and
-> CONFIG_RUST_OVERFLOW_CHECKS is enabled.
 
-I think we should document whether `fsleep` is expected to be usable
-for "forever" values.
+--af47a2hrdy2esf76
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v2 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+MIME-Version: 1.0
 
-It sounds like that, given "too large" values in `msecs_to_jiffies`
-mean "infinite timeout".
+Hello,
 
-Cheers,
-Miguel
+On Tue, Oct 15, 2024 at 01:51:31PM +0300, Ciprian Costea wrote:
+> +static void rtc_disable(struct rtc_priv *priv)
+
+A very generic name for a driver specific function. I'm a big fan of
+driver specific prefixes and I wonder why this isn't called
+s34g_rtc_disable().
+
+Also a comment about what is actually disabled here would be nice (or
+maybe a better name). I hope this doesn't stop the RTC ticking??
+
+> +static struct platform_driver rtc_driver = {
+> +	.driver		= {
+> +		.name			= "s32g-rtc",
+> +		.pm				= &rtc_pm_ops,
+> +		.of_match_table = rtc_dt_ids,
+> +	},
+> +	.probe		= rtc_probe,
+> +	.remove_new	= rtc_remove,
+> +};
+
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers. Please just drop "_new".
+
+Best regards
+Uwe
+
+--af47a2hrdy2esf76
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPipYACgkQj4D7WH0S
+/k4bKggAlZ0dNrVMhxkUcOgNHdnZPmocMix0MolUyuwACDvLltKjsR3ytfo+npI6
+Nq3Dh//oMITtQoRk2As0cx/Vxohwu6tbB5Cw+3QAXDVjrVwDF2qyp1Jt61r47UUh
+2fAC5bDFVKS3Y4fC98KBQHDNQQLXdjT39zofsEyGJPsJZJfwYhGMvcT1sMc5cVyV
+Ecp5uh+Tveo6kEkIzZxCQZNwY/vnnYmHoUBCcEoq4vjAI+I84KEa+cKWTLK937Bm
+ok/d7R26aSCjmjRbBoGqpzohnAC7EwWFcfdQb0D5QSoEgDVyIjHENg8chlk3alcE
+seCjwzOM3DEgdrZf12g9G5PNWgYHsQ==
+=nTI6
+-----END PGP SIGNATURE-----
+
+--af47a2hrdy2esf76--
 
