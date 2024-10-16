@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-367689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613A89A056A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:25:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BA79A0573
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92EA21C21691
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514F6281129
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60388205E10;
-	Wed, 16 Oct 2024 09:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943FC205E0F;
+	Wed, 16 Oct 2024 09:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CeN1sePk"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1BXvJrO"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10311D172E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B54E204F88;
+	Wed, 16 Oct 2024 09:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729070730; cv=none; b=qPwb0m8I8vnLTukbeSSf6C/vZz9TSQ4zZagJddWgeQty8gaaotuqS/7UOS5GcoHol0xoRUxsGjKg7Qdx+8zYeuLyihPCZCHbbTCAK1BXizx/lSj5b0avMnyCZcYC4AtH+3MifEN+XEJjgbsnANkp44+mgit2cIoiPgdw6RBFR5c=
+	t=1729070796; cv=none; b=hZ19MjWyRe4WBddI+f4yPQoJ90plbreZiQc1CZyd/xitkhDjVuGmZCJDPZkDoNRPtmAyX67g5hY862QEDUffddv4ZgpRSf7FX0ZHrgiwRMfLbzTUQ4LyslAeSvc2f7KHVizjckUjJLmr9ivBSafFgPQIg35EckdbNuMgFTN4Ve8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729070730; c=relaxed/simple;
-	bh=CsGgD+qH71/AKiBo/WfF0YMK/W1xSO5fBqqJd4DYfSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REmZ7tRU5bEXMkv9VFm/MOrFaC1Ja+zPEe6jW1sI8XZrcpwwVOEqJI5l6U5T80lAp/a4CTxxBhugygXIHrGxMtcPSRa5v5wQnrSu1R0WHW/kCgTK4plWI3wIrjUKO1XoIRxNRxNffFeFcz7BRl+xkrk5xKf4ds9th/DlpxPE/q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CeN1sePk; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99ebb390a5so131634066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:25:28 -0700 (PDT)
+	s=arc-20240116; t=1729070796; c=relaxed/simple;
+	bh=xbv8g/d+YBrSH2U04+r+NIqzL9Cm0yWo2vxM2Km/75A=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Fqg2fUW48Ps6XmVxulPxaqNPMle+Npdv6LaI2hE2wcCLbpI38wbIpvtec8LkrCK6PrUOyCFtPR7eJ0BG8men3LnSOBbZ3JVmDK8D8C6d+QehRzn3yuaVRym2Wdgx3FSr/0LqB75jTJUVOJx/QMcpZHwjWD9qN1GNBxAyXIUrYUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1BXvJrO; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a16b310f5so379478766b.0;
+        Wed, 16 Oct 2024 02:26:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729070727; x=1729675527; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAcAhz+WKByaKGZfhQyRvSHovNnJyQjvHY17d0j7nbE=;
-        b=CeN1sePko6BupsLWMU5Bew+MiCam5HBqApyfr1bbevRByKdxO8Mj1gVG33FSykzRTz
-         qpBJfd/UCTPOAtC2falu+3MZjQD7oBdXwIe+Ej59z8xlfYN1MMle4PLuAxphffw6lxPE
-         EGvLt2k/dR+0s742UvxCYJ6cEGYAa48E1ZfBuMSiV8eeGYuhv4gu1QJDcPvWw6i7YtTi
-         z2C3VI3E4o3Tgxno24j7f1hDK7Ak5E+WQRMNqdE+VhrXUFChveK+Lax+EpRxanXeIiXM
-         1eJWuq6x+YKgvp3GaFAPPiTOt7OvkZ8nunTS4fn5VC9FwnC42Q4IytW3I9aHw/RMAwoO
-         fE3g==
+        d=gmail.com; s=20230601; t=1729070793; x=1729675593; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rMaOQqtMK7dh5z6AqS9oePkZV37kLn6/iI4c+MM8NYw=;
+        b=I1BXvJrOyn5iKAaj9SV9QTzEf6yRC4p00uSN1RFBpCMgxH52l0LIdtyUETs3Vv9WHk
+         W5pCYy1Jt8RGSeYJS2mc3iUrmPBcHCRfwiS4O28fBsggz2hRRb7/t9LToHysDLspeWKC
+         sBHcAA418ebdr1h8tLK6iOO0trr0qKHPJF/nnowW6hW6FuDjMtkIZ/8T4Ly7E700iL61
+         bPzWGQm2I2IxtxjLq6mXDdUYhjhHGf3xK6kgOgdNMlt8z49Cjx36O9LcMTnN83lhfgnI
+         gAAmiZE7/g6IrfFR8Ekwdlaizo+BzZRvxteUTuSva/wPPfpIBaI5zY0CLuqK0u2D2rxA
+         mFpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729070727; x=1729675527;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nAcAhz+WKByaKGZfhQyRvSHovNnJyQjvHY17d0j7nbE=;
-        b=ZYXDgF0yy29IXYffsg8qOwWQI8hETbKiQ7A32snYqCyBa+3fyNWsMXPX+sHaz7ly4J
-         ylOgMH+n51Ja68xewz5YsvKfc0MB4xNk18Ei/OCytyJPrwsGrRueEL03kfw5jFs6zMcS
-         4bkB+TPaXJavgeB2Ub0OlPZDweQlfQ2BnIkdLcFv2KcoQ1bvOxRhXBQ/3G6J57BDCOs6
-         VgmO8M3XRmaFqRdLGVnmEn4KAZsicVpnEV7mBoQ/RbPL5VM6Br9qDoddDPsdxs6ZDTLg
-         hQGX+zlgRRqS82GC2iZkCBVQ//0GgN4gvRYARTlFtMaF4os2ZlPggxoPzc6wqQGATkuA
-         1UNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2J4m/2LkTPnQa7U6F9Ba3iZhpFi6NYyl1pQihFlW6X+mlbVMgvyOE3NqoXy/k3l2oqb7xeS8dSehNdEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/PeNfgC/Ryl6TLmPD+GO/tPMCmtcOZSlgUaZvUjrSDlTIBsQc
-	flPA10UBOFts7essc4lM4aSA7mEecticDQYS6SzEQ3D6Jz8B6mbeZ0B12SxaeTI=
-X-Google-Smtp-Source: AGHT+IGuH9rxVdG1k866GOE7xv2ukPlrZjmmiS/KSiq5f3JFKCZWOSxSvImth/A6E1KhcU5tZlcuVQ==
-X-Received: by 2002:a17:907:2da9:b0:a99:4566:cd42 with SMTP id a640c23a62f3a-a9a332bd9bcmr393696566b.0.1729070727076;
-        Wed, 16 Oct 2024 02:25:27 -0700 (PDT)
-Received: from localhost (p200300f65f19e3002f38cf427133ca7b.dip0.t-ipconnect.de. [2003:f6:5f19:e300:2f38:cf42:7133:ca7b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29817520sm161210466b.114.2024.10.16.02.25.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:25:26 -0700 (PDT)
-Date: Wed, 16 Oct 2024 11:25:25 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, quic_tengfan@quicinc.com, quic_tingweiz@quicinc.com, 
-	quic_aiquny@quicinc.com, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: add the tlmm driver for QCS8300
- platforms
-Message-ID: <c7ahyrbo3bw6vgfwqaubricap52muhxyhsnb5cfhzvo3n67dsr@gp6vehlfwblo>
-References: <20241009-qcs8300_tlmm-v2-0-9e40dee5e4f1@quicinc.com>
- <20241009-qcs8300_tlmm-v2-2-9e40dee5e4f1@quicinc.com>
+        d=1e100.net; s=20230601; t=1729070793; x=1729675593;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rMaOQqtMK7dh5z6AqS9oePkZV37kLn6/iI4c+MM8NYw=;
+        b=QEbMkJR9215u2g8ZWhnPeEoOsSoUnnFt1B5GJUF0vzATSvNjDhevmQmxWAs192pjLc
+         FoMW9FWkXyifHx0EfG0sHcJkiWhXKY1lywYjpvegXMdYuHqwh+QSbU6TrI3jnN1o6xM5
+         FZU4t25FWB+Wquaov3ba3OkrQ2+ZyGB4FVIIG6AJmzaR4DZmp/gC4ZzDdpoLMkWGH44A
+         0ULxWNerFS9zWl9nBGhwj7bO4hzBKj/VZitytbdTugSOa0qpvHhQWIpHZ0on742LVOao
+         PEW8/IUNjwgKYgy9xwczng883WqJPJ/jtYqDFm8ow1cbTl6OS74+UmSXmXM/0tBEiJwl
+         /5Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUBvij4Jw3PK6eqhpoaamyHfnRaonEUxrGa0ZPdbyf88NhUwyzRyREWjrjjaXpnLJBx8YGvxAG3XIyC@vger.kernel.org, AJvYcCWIsmApHFdjVdBvn5NU95EYNpCZ8sqRCkRPMDvvQCFRcI1o2Ph3jnKHsmWMsCHPgo/RkN2grwUgnjGoySk2@vger.kernel.org, AJvYcCXl+WtUJDwT4UMIKsw3sZreF0eYJyJRMavVdSqdHomU7cO0PkkiS3rStgzabaxSG5SfOnvT9qNczBmFYC9B41w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/X2y2ZT3ax1wcWjgmohLmvB3GSVagrjLcHAGn8RbGHSqtKjtI
+	vtXIZvMSLUNbWrpfKDxzLnp1xCB8+GDloVvm1X0JZiIASPt++ZGO
+X-Google-Smtp-Source: AGHT+IHMzxBtdEjtVgLCn4hmoAnv2sE5tdGFWFFOdsQvOO0VupDmPCb8kIWiZ+cHK0TgZ/yPcT5P7A==
+X-Received: by 2002:a17:907:3fa0:b0:a99:f9e6:1d0 with SMTP id a640c23a62f3a-a99f9e61f50mr1161706966b.27.1729070792226;
+        Wed, 16 Oct 2024 02:26:32 -0700 (PDT)
+Received: from [10.34.14.228] ([95.183.227.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a298170fesm165347266b.142.2024.10.16.02.26.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 02:26:31 -0700 (PDT)
+Message-ID: <f9b09f59-a222-4b75-a6ef-c7fb7c2cff9e@gmail.com>
+Date: Wed, 16 Oct 2024 12:26:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j5kcwsuh3x6dnxeb"
-Content-Disposition: inline
-In-Reply-To: <20241009-qcs8300_tlmm-v2-2-9e40dee5e4f1@quicinc.com>
+User-Agent: Mozilla Thunderbird
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH 2/2] watchdog: mtk_wdt: Add support for MT6735 WDT
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20230302124015.75546-1-y.oudjana@protonmail.com>
+ <20230302124015.75546-3-y.oudjana@protonmail.com>
+ <0398e95e-dbb8-2e41-7b36-12e36b8729f0@collabora.com>
+Content-Language: en-US
+In-Reply-To: <0398e95e-dbb8-2e41-7b36-12e36b8729f0@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 02/03/2023 6:15 pm, AngeloGioacchino Del Regno wrote:
+> Il 02/03/23 13:40, Yassine Oudjana ha scritto:
+>> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>>
+>> Add support for the watchdog timer/top reset generation unit found on 
+>> MT6735.
+>> Disable WDT_MODE_IRQ_EN in mtk_wdt_restart in order to make TOPRGU assert
+>> the SYSRST pin instead of issuing an IRQ. This change may be needed in 
+>> other
+>> SoCs as well.
+>>
+>> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>> ---
+>>   drivers/watchdog/mtk_wdt.c | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
+>> index a9c437598e7e..5a7a7b2b3727 100644
+>> --- a/drivers/watchdog/mtk_wdt.c
+>> +++ b/drivers/watchdog/mtk_wdt.c
+>> @@ -10,6 +10,7 @@
+>>    */
+>>   #include <dt-bindings/reset/mt2712-resets.h>
+>> +#include <dt-bindings/reset/mediatek,mt6735-wdt.h>
+>>   #include <dt-bindings/reset/mediatek,mt6795-resets.h>
+>>   #include <dt-bindings/reset/mt7986-resets.h>
+>>   #include <dt-bindings/reset/mt8183-resets.h>
+>> @@ -82,6 +83,10 @@ static const struct mtk_wdt_data mt2712_data = {
+>>       .toprgu_sw_rst_num = MT2712_TOPRGU_SW_RST_NUM,
+>>   };
+>> +static const struct mtk_wdt_data mt6735_data = {
+>> +    .toprgu_sw_rst_num = MT6735_TOPRGU_RST_NUM,
+>> +};
+>> +
+>>   static const struct mtk_wdt_data mt6795_data = {
+>>       .toprgu_sw_rst_num = MT6795_TOPRGU_SW_RST_NUM,
+>>   };
+>> @@ -187,9 +192,15 @@ static int mtk_wdt_restart(struct watchdog_device 
+>> *wdt_dev,
+>>   {
+>>       struct mtk_wdt_dev *mtk_wdt = watchdog_get_drvdata(wdt_dev);
+>>       void __iomem *wdt_base;
+>> +    u32 reg;
+>>       wdt_base = mtk_wdt->wdt_base;
+>> +    /* Enable reset in order to issue a system reset instead of an 
+>> IRQ */
+>> +    reg = readl(wdt_base + WDT_MODE);
+>> +    reg &= ~WDT_MODE_IRQ_EN;
+>> +    writel(reg | WDT_MODE_KEY, wdt_base + WDT_MODE);
+> 
+> This is unnecessary and already done in mtk_wdt_start().
+> If you think you *require* this snippet, you most likely misconfigured the
+> devicetree node for your device :-)
 
---j5kcwsuh3x6dnxeb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: add the tlmm driver for QCS8300
- platforms
-MIME-Version: 1.0
+Ok so mtk_wdt_start is never called. I'm still not quite sure how the 
+watchdog works but it seems to me like it's supposed to be started from 
+userspace. I also see some drivers calling it in probe.
 
-Hello,
-
-On Wed, Oct 09, 2024 at 03:13:34PM +0800, Jingyi Wang wrote:
-> +static struct platform_driver qcs8300_pinctrl_driver = {
-> +	.driver = {
-> +		.name = "qcs8300-tlmm",
-> +		.of_match_table = qcs8300_pinctrl_of_match,
-> +	},
-> +	.probe = qcs8300_pinctrl_probe,
-> +	.remove_new = msm_pinctrl_remove,
-> +};
-
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers. Please just drop "_new".
-
-Best regards
-Uwe
-
---j5kcwsuh3x6dnxeb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPhoMACgkQj4D7WH0S
-/k5wKAf+IPTyWzUJGyfnwvsaubOBtnB01M9oVSzRUcNzhJPT73Kfs+cV+EuTUZAO
-BCLxBt2kYj7apexaqmUlQ1tXV4LKJg/b3HMSRRSse/p8/3coNijUhzWrkyecF5mz
-4OiEhQ1+n08h+u3ewHZ1WqQFICNXmOvoeYZ1DoZYV+G0N3sPsFHfngj9luRiI/4A
-fhwzWJA+0P3AWQQYWGMouOFZh5WXQXsEHwwfEUfBg7s/pyL7wiJtXKTVTx7Ziv1X
-cd2LuwjZvlstCkQrnS6QRn9G9XuE0YSfE+H4vra5SRr6k7YaKqlY2OIKev7OFbhV
-7KiwUUEE0UdVHFDIeXrvZ7lCJN/9/w==
-=BODQ
------END PGP SIGNATURE-----
-
---j5kcwsuh3x6dnxeb--
+Say I don't want to use the watchdog (which I don't, all I need from 
+TOPRGU is the resets, I don't care about the watchdog). Not starting the 
+watchdog means I can't reset the system because all mtk_wdt_restart will 
+do is make TOPRGU send me an IRQ that I have no use for. According to 
+the datasheet, setting WDT_MODE_IRQ_EN configures TOPRGU to send an IRQ 
+on system reset event (either watchdog timeout or software watchdog 
+reset) while clearing it makes it actually issue a system reset. What 
+can I do in this case?
 
