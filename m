@@ -1,194 +1,207 @@
-Return-Path: <linux-kernel+bounces-368299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A25A9A0DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:17:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFA29A0DDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD47B1F239AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D373D28528C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6545F20F5A1;
-	Wed, 16 Oct 2024 15:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD6320F5B5;
+	Wed, 16 Oct 2024 15:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JAujxf0J"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2089.outbound.protection.outlook.com [40.107.220.89])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LtjlC2zr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397F3206066;
-	Wed, 16 Oct 2024 15:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729091800; cv=fail; b=swKh8fmv8UqcIOpTAHhi3FISaG63MPDAeWQBlkMaB2/lfM87MJ11uqvEP4I7pGbrgAwEqJsyw0VKvbLiP+v/OUIZ6eQgKbAqHxrylWaa6K58c3V6ZB8C1M/6z3EVUCamSu5cBsBgv4vz6FPOyY47oNoylWkux64J6C8Om9693yk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729091800; c=relaxed/simple;
-	bh=vCaEXZgKgbOrkJMU/vChwev7+aHHIMQcefRX/7SFTVE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uQOu6IBFBC930MFEV5zfyRqzVV0Ex8aLQgzqwrOFWgHdUsc9HYt4jY/EgWIwcsJvssVtgo2kuJoes1KC3cRpIF0azRFqjBkCO+U9yTleCQPmEn0e9MKKV+2gfbwDaCiXE34dEfblpSwt/tkwfxBaZJPYW9Rzk3Ww5yuwx3Kt3I0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JAujxf0J; arc=fail smtp.client-ip=40.107.220.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zEyIMZ78rIkV6aZ4IpCpcQ7OnEKFL+W1bVlme0jDVNFLd8o++wF+1pF4dpTdpQ/4ECNkAYf3+VbPuI7W8mxIAJ4lx/ROqj8d4AEdzlZ0EQAZ4I3thWLJaVpqu7Ikf2IOX7g23xjiWxEPjFf0UYgEgOgi2h6vEWPkvSfbMgNFZUoMARjNwQxZryJtHGwtlY9zyOqoacbuRYbgeVCEm0ZHKMM1YUD9bLR9SUkpuU4uyzTkd2yV1fhUcrgcw/6rf83549bPSsQAMEMZV9PpZyyPdqVsloRSD3E0lZ21Og9oTBGkHiIqXnJEM3Y6Kwnxp2DG9nRApCqEILurnbg3YtGAvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pGDwgZxUF0hUviyyiK9unu5OqHtKdOxwcpBQrvL/G8I=;
- b=xLv1J1oQDex9U6r7B//WnTUuzGejG3pmr69tfkeg/g9weDQqxw2QOptGQWNq4M/AdBS6UaOJH11MeCTF8hBMLEGBlS17OAlLhH9yIHZwpzv3kz9znTn+U3xFeMTFLg+W6ifIUVSZ00i1Kg/kYiSa2VWikowqpmP/oP/gohkrkaG+hLUaY6p0muTZLhRBdmtwUValWMpinREQi+eSNyguyElDP225I8a4r8A27RMzbLdiMTOfzHH6iVtLNKYS21zQCQl78gjjzMgc4FMChiIrC0lCcOrlfs1NADx5pn0d3a67JuH2VM7XPAY1OndbRUw4K6TKKwgamPh7CnP3Jk4PJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pGDwgZxUF0hUviyyiK9unu5OqHtKdOxwcpBQrvL/G8I=;
- b=JAujxf0JqH8rWeUGqoCEuxUjr+vWxQgTpB39XYXjExC2ml5unCK3m09Z1LqDvWeNaL1zeSiop+9FmgxmhgwCrC2eQtrQndWuIknZfxCyYesRlGuVU9b06081alU+Z5WznYUfZc0y/RbfmlP9rkZw4CwzfP0qUp+EFdulz1VJVKui0OT03h/Hf335O96qFTJWJLvjRpw4aB/MjDQ9HhgMehKHFAtewgYnNbbUWJxX+VgnFvHW61B/MT0L0+Irs6kkNwcPS8Gf+ZSnlSv7xhP1pU5rZOOxJmi6l5O1426eN8ubxstq/mXJtdnz9uLNnN2qxXVt5bH5xannmBBJziNq5g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL1PR12MB5851.namprd12.prod.outlook.com (2603:10b6:208:396::13)
- by MN0PR12MB6002.namprd12.prod.outlook.com (2603:10b6:208:37e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 15:16:35 +0000
-Received: from BL1PR12MB5851.namprd12.prod.outlook.com
- ([fe80::d4a:9ce3:c92e:e938]) by BL1PR12MB5851.namprd12.prod.outlook.com
- ([fe80::d4a:9ce3:c92e:e938%6]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 15:16:35 +0000
-Message-ID: <1a667504-72bd-445b-8bf8-a6604b7beb2b@nvidia.com>
-Date: Wed, 16 Oct 2024 18:16:28 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/4] GPU Direct RDMA (P2P DMA) for Device Private Pages
-To: Christoph Hellwig <hch@infradead.org>
-Cc: nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-mm@kvack.org, herbst@redhat.com,
- lyude@redhat.com, dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
- jgg@ziepe.ca, leon@kernel.org, jglisse@redhat.com,
- akpm@linux-foundation.org, dri-devel@lists.freedesktop.org,
- apopple@nvidia.com, bskeggs@nvidia.com
-References: <20241015152348.3055360-1-ymaman@nvidia.com>
- <Zw8_x0Tvux9IMbly@infradead.org>
-Content-Language: en-US
-From: Yonatan Maman <ymaman@nvidia.com>
-In-Reply-To: <Zw8_x0Tvux9IMbly@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0181.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9f::17) To BL1PR12MB5851.namprd12.prod.outlook.com
- (2603:10b6:208:396::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E75720CCEA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729091810; cv=none; b=RSEocqwOfD0PNAG0EcoG5TpXbV0zrf8f9eOFyzQnL8+4bDuvck67AAG1wnbUC70EdGF8DJAsOVg2Kx9dXs8vyIqFpshnONt7tth76boWmzRrbmgPc2lw4fwzPZzjzfW2RJv4h6KmWRj/AzeFIr5oGFIHyC8ksn0nSrH+lNnN1IQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729091810; c=relaxed/simple;
+	bh=58KIiYGBvkzWTiADjEdlOgRX4OijCEWEURpwZFevy/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ilKAxqk8pxDjd4rzzmFEp6YBkSPluK479Jkrqnv7yeSSUaHkWBES38TqMEVsNkqhIXY/vQOX3tndud7GznlXjJf8jxAFI+LFph0MwGdmevxb3/cEhKDEaKyhUIKUJHdo0Mfdo2/oUbTf4DXR4PToQ+3y1e32ptxHj2KY59l20Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LtjlC2zr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729091807;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rckCI6BcQdAYpz3FvS5gzBv3y2Neehx7nzPLfaUCfW4=;
+	b=LtjlC2zrAU6iVSD3uEezx0ioMthelBNFW7dpra0h9JvhPQBaSuG7LWWKt6MRVkBfSnLHOT
+	uNfniTw3fdQ6/LBsekewgB7RUpdS3e7U4qtthu8jyBBrjmzA14nHnAHS9A+Mgw/rtT+gP0
+	XPGJ0q8n+DDRM4jdCVhX1LqvbKsf/os=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-MS7Ic3EoNeeMw18i4u3Xtg-1; Wed, 16 Oct 2024 11:16:46 -0400
+X-MC-Unique: MS7Ic3EoNeeMw18i4u3Xtg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4313a8e81fdso13887745e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:16:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729091805; x=1729696605;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rckCI6BcQdAYpz3FvS5gzBv3y2Neehx7nzPLfaUCfW4=;
+        b=jTnWVsNfADpvXSo/Mh5Mhn7MUgbs/wrAX4atkyidY8j72eSQXPnn3+QykORbXGoZx8
+         Jkdyv5Did0906YP+rbm0hUctYwTl+swsR0BfSRpzyUo5WPJxa6Y5plxYbxs4jK46J3Cx
+         dWLHHIESYv3d0ypgu4dXUX/caV6+xRMhRXkDVGiWN/Hz6jqsKplflo+2L9lNnULZw7WJ
+         3fPQwfEGnUGmsBXq4x8fyiBYKwmEMGS94QcRVAcKrfkoVV2snXy4yKZ+2DEPAEURfsxM
+         KFLTguOD+cAvf5kVvb/UvFpXm2gT9JrvQ6BKl38xp7t/oyq76U74Xr8h7HZMrqc7Bj4e
+         iGRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVowGxdoBLp+EQgrPLjbzMKUHl2RY0EIraAa166m8V5TdWQIdXw9d9zCEoojLsxy1ZbVXdFyGbvAXdtLCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaeTqlRuiHcJRUej8A2azFyP12Ke6ZjlJOwKEa/Oa1j+mZ17Ev
+	8qZFihWWYpLV8SiAOPoTX39XxZ9ftsUUHAlHorOJy5UYj7/MT6p0PCPdJm2oH3rp6qGT50oKT86
+	WiJ3IzWeTCoqpOx7K5giuDZcDgctGV5gG3GDOE2/LfC5tUTEkZCBcJ7CL10wQ0Q==
+X-Received: by 2002:a05:600c:444f:b0:42f:8515:e479 with SMTP id 5b1f17b1804b1-431255d4e6cmr114950705e9.4.1729091804898;
+        Wed, 16 Oct 2024 08:16:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhhGcNrxVmkNJEtywMCqvJOFcBc8Fpq5HqvDzLlA5aNRCPuGv5s1RDNR37gx+mmV9Y0mGGVw==
+X-Received: by 2002:a05:600c:444f:b0:42f:8515:e479 with SMTP id 5b1f17b1804b1-431255d4e6cmr114950495e9.4.1729091804477;
+        Wed, 16 Oct 2024 08:16:44 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3? (p200300cbc74bd00003a9de5c9ae6ccb3.dip0.t-ipconnect.de. [2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4315069032asm24478235e9.0.2024.10.16.08.16.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 08:16:44 -0700 (PDT)
+Message-ID: <1fd0dae8-b04a-42b9-9d6f-32100610ef76@redhat.com>
+Date: Wed, 16 Oct 2024 17:16:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5851:EE_|MN0PR12MB6002:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4741652-2e00-4d5f-ea20-08dcedf585d5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a0ZWRktKem51amtJVW52OGd1MTRKdDdRekJVOWFxS2Jpck9hVGxBRjFtTlRo?=
- =?utf-8?B?TEVKZXlPczR6Nmo5ODFSbGVTQitDMWd2NFRqdnV5Y1Ruc3cvblZXM0dJdUlS?=
- =?utf-8?B?N1JwNFovL2ZGSGZyUGc4WGh4M0FINzBxVXk5blZrNFNTeDZWaWlidkQ2NjhV?=
- =?utf-8?B?YlRHNnluQVVXRUZVSjVIaFNVVnlSVUpVbEp3d2ZuVy9wSUpTb0pkMndlKzUv?=
- =?utf-8?B?YVp4STZuaEdwVEl3TFdwZ2gvcDE0NWRLNTFUcXBObkY0a1A0d3RIdHluT2py?=
- =?utf-8?B?clFiNDZ2MnFYMW5uWmVYWm5QNE4veGJkZlpveFdJRzBlRWs1ekZ1OFluUWp0?=
- =?utf-8?B?U0FoZkJGa2dKOFdlTU9uZDJieldUNHBCZ3oyM3NjcVR6aTRodDBiU0dBTU1B?=
- =?utf-8?B?N205VlE3TmV2RDZxOXNraVN5cWUrWVNLQTdtWlRLWDF2Qlc5cHQ3TDNhcHNJ?=
- =?utf-8?B?dXhEU1o3cFE0UFJERTNBR2tWVlVVMmUyY3FCOXMzYjFDZGFzRHhUZ0NTdW1G?=
- =?utf-8?B?VGxmYStxd2N1ZmlQYkFwSU1mOHhUMUI5SDAxYnZsUUM2MlZDSThCbklYd253?=
- =?utf-8?B?V3VTSE9kdTkxOHZYZGhtTGF6NkhDQUVCM2tFNTNWYnA5Z3NKSk1RVWFlUTlp?=
- =?utf-8?B?Nkc1c1g2S3F3RWRvdnBOUFJ0OWRhUlRYM01TT2h4VGNtQzZmNDVhUlZsMUxE?=
- =?utf-8?B?WUF5YUowR1FTL3JDNkU3dlhncWJUeDFaY25jb0VpQVFOUTJKd0M1ZlI3S0hB?=
- =?utf-8?B?Ym05bTBhZzI3bjJYZUFzbDhTV0kwZXcwTXByMnZsNk9FY0UrR0I4VElRZzBT?=
- =?utf-8?B?SzgvQUp1emxIaUtvc0VHR1FOd0dMYjluWGI3Vm9hVm1wSXN5S0VMeGlHeFNi?=
- =?utf-8?B?eEZQSGY3NkFZcHZpc2xyTXQxamZBbHJYVWJoZHhaZmVlV2gwV0lqeXZ6dlBx?=
- =?utf-8?B?YU9IOHlPcEQvQUhqbW5XZW9PMTZFbW1XSTlaMnpCS3Bvb2NQQlRqT2dFbUVZ?=
- =?utf-8?B?dUdlcGpwU3loWlBGWm9zUUtwOXBQa1ZsbXJBd0ZQN3V6VkNlV0tVTlk5dGIx?=
- =?utf-8?B?YVJmQUtFcmlsaUwzeFNxTFVvUWl4RDNlaGhlQ2VnTnlLcTdjY2Yyajl5Szky?=
- =?utf-8?B?WHBXc1ovZXcxVkhpUlVHRDF1OFNqY21tTFhZcUpLbUE5SlFuY0xVbzd2SUo5?=
- =?utf-8?B?V2xvT3NYMk1aRk52d3RaUHN5emowbUZHSkF2WmgzR0tXMGtpR3RJbEFWd1Vz?=
- =?utf-8?B?YlNacmNOZ3EzTHV5TTVXYlhUYnV1UUdpc2oyUDlNWkl5NFVsaVgyL25aTjJL?=
- =?utf-8?B?RVBlcXNnaWZLTG9mNDgzSkdHQjNzM2h2MzNOdERGNG9lejRibm5LZzlUWStJ?=
- =?utf-8?B?TDFObEpYOEFlQ0lzNkNySDZtNVBzc2xVR2tNOGZxZnY5cU4rM3hobVBmZk9N?=
- =?utf-8?B?cUNReVdtT3VkQVhKNldRTW8xVjN0ckk5ZDRuUnI3aSt2eWNsZDlSQVljZWVl?=
- =?utf-8?B?STVOQ1BjcFFnTGdPV2JsVyt3ZFVkU3hOczFUWFVGZDdka1A3SDUwZWVOZVFv?=
- =?utf-8?B?MjVJQWd2U0t2OVcra3lnNzNLWVh6TnZpTklHbzlZOU1Cb1YycWVQZjhUNUtS?=
- =?utf-8?B?cjR5dTJLRXVwZE12Qzl2czJ6dTBJQzNNeDBJQ0R6aytlWXRraE9CRkNXN0pK?=
- =?utf-8?B?RVM2ZklLdm9QMXFDRTNma2RKcmhjS1lUbHJaU1hObFR6andWZnoySDF3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5851.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ekZ2RTRCUWZZNXg5ZXIxQVcvTEsrN2lybGRaMUFxYmswTjRsRmJWYkxjQUtW?=
- =?utf-8?B?S3EvMHFKay9idUUzUW40TDdaZGJjcFpaaU1rZFczOHNlSnk0U0x0eDhlaEE1?=
- =?utf-8?B?WWRKaTdJWlorR3dvd2M0Y05BSEhOK2NKaGY4aHpmRFVkdCswNEsyK3BsclNq?=
- =?utf-8?B?a0JxbmZmeUZIc3dzY0dKOG5rR000TWZ6Ym1za0ZxSGo5VkxkOTBCSmxKZ3E0?=
- =?utf-8?B?K2JVVDJkRXYrTTRWb0dpOHUrb2xleFFITFg0MmFhSlRkK0NMSG1jQVNaLy9D?=
- =?utf-8?B?MDF1ZHVELzJqQWYxNWxaSHIxOVVLK0o2eGI5MGJleFlGYmpraFVNNEEzRlJI?=
- =?utf-8?B?cU9HSC83aWxyYWpNVDA3MGhMZkVPT25McUJKU2ZqZHVIbWZkMVg5MEV5Qmpk?=
- =?utf-8?B?QXVwYzFwYWFNTUZHSXBpZVg2RUJmRTQ0TVNlcmdHM0pMUURPeTNxNFozK2RI?=
- =?utf-8?B?MCsxRGl3MW1yWnVKcHFUTCtlTE9kWkVDeERTVDkxWnBNdFFlZS9QQ0JJbGpV?=
- =?utf-8?B?bU51cFptTEliRkVVVzBGZ3dKSUFFNFNtRnpYR01WUWc5WHlhbGp2QnJ2VFdG?=
- =?utf-8?B?dytEZzVvdE1yM0pNaFcycmtYb1VxYXljVmRPdlhyMlBUK1ZVaWNVN04zUFll?=
- =?utf-8?B?L2lQUGIyb3Q1VUlROHg4VEdUTlBOQlJoMmVranZIaVdoelhqbzA4VXVmejRo?=
- =?utf-8?B?SHBGVlhyTVRaakFSVUx5QUFDUzU3SCt0QVJXSHo4UE82YTlBVS80bGU1THMx?=
- =?utf-8?B?Q2tISUR6RTF6QzdPKzc3SUpqaDJZTXdVQkNLMnY2L1pEV1daOENsd2QvNkEv?=
- =?utf-8?B?blRtY0h0dUFoT2dCeTZEU0d6SUV4TGJaVGlqalg5THZOQnpPOXloVEJFMTM3?=
- =?utf-8?B?TlVGSFRUTzJRcGllTGNIYWlqL2MwYUM2akJIbmdpZlBRSkhEaWQyeFhmMGZF?=
- =?utf-8?B?dC9USlliaS9ORGR3K3BDSUhXR3FNQ0xwNkwybFJzaHVHZ0JyK3JOcXovZm5r?=
- =?utf-8?B?Tk5kWTF0YzVadktBNng2N1VtSkQyNi94dUlqOGxWTlVPampNeFNvRlpQU2VH?=
- =?utf-8?B?UUo4R3VxRGlZNTFTODZ0eUd2TlN6K2tmQ3l4dXRERHdoblBCdU5zMjd1Q1RX?=
- =?utf-8?B?NHhqOGNkV3ZIU0hkM0xzdzNvMjY1Mk9NajJydzlIMG0xYis5WkJkNjd4ZTZX?=
- =?utf-8?B?aXllcFN0OURVS1dGS1BYRW9BUExWV0ppN0FJUWR0ZVRTZlp6V2l4SzFVa3pG?=
- =?utf-8?B?bUE3bkZZWGFjZ2tCWVBLbHV0NzFOS0prcXMxRUZyRk1zV05BYXVWQzcyYWZN?=
- =?utf-8?B?aHN5MGNRMC81S1lnbGp6VzdWejFEa1dpR1Z1Z1R4TURVRXRLdndaOGJPdHdG?=
- =?utf-8?B?d1hxcUswaEZDL0J4ci94aDRNMHNOTGZZWUEwYTRWZ1FKUHRLRVoxaDNyUVdT?=
- =?utf-8?B?Ylg0UHNqbE5yMkxuOE1OTENEQzd6VGM5UU82VU5ZZ05YV2xxbXk0NG1YaENh?=
- =?utf-8?B?Zm50Q0Q2TDgxeVdFS3NtQ2g0UHFCVE1RSFVwbnhPbGE2YmJKVExNRExHaWxU?=
- =?utf-8?B?cVJTMVlPWlhJL25jdFMzcVhXQ202QU9nVXA4VE4rMHBhV045b3l3SXcxaU51?=
- =?utf-8?B?S0traXN5SDhuRHkwRzIyUkZ3VkNNZkR3a0s4dTlXMjh6cG1wNmRxRnFNNE5Z?=
- =?utf-8?B?ck9JTXF2K2dpRmxwbkVNdlhIQkRuU0d1V1NLM1FkNHEyT0pNcGR6MGVqb2VH?=
- =?utf-8?B?UzBybEhTQ0RmeDl0RW1USTdiWExwSnl2cmhLSlVVaDNzT3FqeHVXdUYyMnBJ?=
- =?utf-8?B?a2M0Wm5sOTRxakdZOUhqWGhwNWptTkV5QUVQOS9nNmFIUW9IT2Npd3YzOXhM?=
- =?utf-8?B?RjhiTVh1NGtQeVQzMm1DSGFEejZ4NTVKcVM4cUZIdmlMaVBaZzZWQTU3MnZZ?=
- =?utf-8?B?VEJuZzg5VHhGQmpzV1E0dlcrTHlkZzFXMkxxYnkvZjZkMWUyaTZ4Q210bWNW?=
- =?utf-8?B?cnBKNGhMUVhmY0NUWVZMaWNleTBNdUxQT2FRbVIybENuQTBQdWcrWDhTQXJQ?=
- =?utf-8?B?ZmlRSXNQOUl1NzFNWmpzRE5XL25zbjZlUkJ1cDZtL1ZKSHpHRGIzSlZoOUVn?=
- =?utf-8?Q?U77aKGGXXJjnosFWBHf8+bCLi?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4741652-2e00-4d5f-ea20-08dcedf585d5
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5851.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 15:16:35.0116
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3iXYNIzDQ946eEJIYseuA3E24Q66vPxgQ9UUGYa/t+f2ChXV0oSNfZldBIE704GEGbHNIX0roEXkSGdYB8twFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6002
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
+ Donald Dutile <ddutile@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241014105514.3206191-1-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 16/10/2024 7:23, Christoph Hellwig wrote:
-> On Tue, Oct 15, 2024 at 06:23:44PM +0300, Yonatan Maman wrote:
->> From: Yonatan Maman <Ymaman@Nvidia.com>
->>
->> This patch series aims to enable Peer-to-Peer (P2P) DMA access in
->> GPU-centric applications that utilize RDMA and private device pages. This
->> enhancement is crucial for minimizing data transfer overhead by allowing
->> the GPU to directly expose device private page data to devices such as
->> NICs, eliminating the need to traverse system RAM, which is the native
->> method for exposing device private page data.
+> Performance Testing
+> ===================
 > 
-> Please tone down your marketing language and explain your factual
-> changes.  If you make performance claims back them by numbers.
+> I've run some limited performance benchmarks:
+> 
+> First, a real-world benchmark that causes a lot of page table manipulation (and
+> therefore we would expect to see regression here if we are going to see it
+> anywhere); kernel compilation. It barely registers a change. Values are times,
+> so smaller is better. All relative to base-4k:
+> 
+> |             |    kern |    kern |    user |    user |    real |    real |
+> | config      |    mean |   stdev |    mean |   stdev |    mean |   stdev |
+> |-------------|---------|---------|---------|---------|---------|---------|
+> | base-4k     |    0.0% |    1.1% |    0.0% |    0.3% |    0.0% |    0.3% |
+> | compile-4k  |   -0.2% |    1.1% |   -0.2% |    0.3% |   -0.1% |    0.3% |
+> | boot-4k     |    0.1% |    1.0% |   -0.3% |    0.2% |   -0.2% |    0.2% |
+> 
+> The Speedometer JavaScript benchmark also shows no change. Values are runs per
+> min, so bigger is better. All relative to base-4k:
+> 
+> | config      |    mean |   stdev |
+> |-------------|---------|---------|
+> | base-4k     |    0.0% |    0.8% |
+> | compile-4k  |    0.4% |    0.8% |
+> | boot-4k     |    0.0% |    0.9% |
+> 
+> Finally, I've run some microbenchmarks known to stress page table manipulations
+> (originally from David Hildenbrand). The fork test maps/allocs 1G of anon
+> memory, then measures the cost of fork(). The munmap test maps/allocs 1G of anon
+> memory then measures the cost of munmap()ing it. The fork test is known to be
+> extremely sensitive to any changes that cause instructions to be aligned
+> differently in cachelines. When using this test for other changes, I've seen
+> double digit regressions for the slightest thing, so 12% regression on this test
+> is actually fairly good. This likely represents the extreme worst case for
+> regressions that will be observed across other microbenchmarks (famous last
+> words). Values are times, so smaller is better. All relative to base-4k:
 > 
 
-Got it, thanks! I'll fix that. Regarding performance, we’re achieving 
-over 10x higher bandwidth and 10x lower latency using perftest-rdma, 
-especially (with a high rate of GPU memory access).
+... and here I am, worrying about much smaller degradation in these 
+micro-benchmark ;) You're right, these are pure micro-benchmarks, and 
+while 12% does sound like "much", even stupid compiler code movement can 
+result in such changes in the fork() micro benchmark.
+
+So I think this is just fine, and actually "surprisingly" small. And, 
+there is even a way to statically compile a page size and not worry 
+about that at all.
+
+As discussed ahead of times, I consider this change very valuable. In 
+RHEL, the biggest issue is actually the test matrix, that cannot really 
+be reduced significantly ... but it will make shipping/packaging easier.
+
+CCing Don, who did the separate 64k RHEL flavor kernel.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
