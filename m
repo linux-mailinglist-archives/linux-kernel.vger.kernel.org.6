@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-368646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBD49A12D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:43:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5C29A12D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75CB3B25625
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:43:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F35F1F25AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDDD2144D4;
-	Wed, 16 Oct 2024 19:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C8C2144C5;
+	Wed, 16 Oct 2024 19:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTHw7X82"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lp1kRoSC"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B22144B8
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98C312E75
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107830; cv=none; b=js+sKXqgexM0Wa9YzDBv1YyM+sAQsVANXwfL1/FYyV+5Vxo2XtsqG0wZBH/b4J4IfW8fVqwjBUFvwQK0Kn3ykWDZ7vPGyUTb4lTcx+9u1iHs4r2cca1R3QKvcF6uEDQ8MyZtTWmUdZvLRhPxxVC2BY7Tq6w/pvmnXiebmL2dApM=
+	t=1729107867; cv=none; b=Ne16SdC8L7/54g0ps/NwDnKl27GAB0u5B5TUJFNjDk7ZlYaU1EV0hLu1QMT7v8D400/lgPoRszNXFc7cq1WyT3v1HuVre6pH4ZBuVJDx7DTqKSJE6xKgHB9Uakr74Nf7lthat3+AoC5RP3PO4mAYtBqp+cVUMzFibSFkOSm0CX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107830; c=relaxed/simple;
-	bh=sDSKmpxYE9rh2jjOsxbNkFDWO/cqOxbWBd3xn9LCO+g=;
+	s=arc-20240116; t=1729107867; c=relaxed/simple;
+	bh=uwqjPvhLDzkg3BcCJuC1vIodGkhXgYT3Z/wU0paL358=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cgt8exFt3x1SPk2Mm0LtxtdAyy3msEqZJlG496MUjVRRtL02yb1esA6lfbA2ukJuGfNuGaZ+Nyr09qCIaeCqBthAK1o/38X9deCQpIJR2wi2N6ysYfRsvGuxY/mGsB/T2NDHb4ciQ2JXFHgWLKOxk2fRFPJsaMKklNlKCwSEMb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTHw7X82; arc=none smtp.client-ip=192.198.163.19
+	 In-Reply-To:Content-Type; b=XLGxDg099gZZd0LykIAnpBS+JCkXuPyt109pyXC+Zd4agEBmp47OaS5lH+hcMU18FqwzBLWgQJuOiFF64GNRTIYeUu9pZJfmbxnKbNiN9cS9WgmUf2Ahyd6rwctgfKIc7ep3EDHS9DqRtqYiBora85yIodC4SXOaEsudwKoRNUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lp1kRoSC; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729107828; x=1760643828;
+  t=1729107866; x=1760643866;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=sDSKmpxYE9rh2jjOsxbNkFDWO/cqOxbWBd3xn9LCO+g=;
-  b=WTHw7X827HX+x11+EQZWe66eHLN7HEc3niyiAFz182V1Z2naouX02oAI
-   dXRro55/P7yjsdREfM2XGmnj3veD7MzGqxCpLOjyLYho9J/Jd1jPMS/mw
-   w5Dk5glUqttGDKIkzg/02QQljld68/aTUnp8oub2YSFv39uQqNRCrzJzS
-   E/5XYtxlbh/e4feNToAo3OIbvN9czcb9vNPZXzRolBSr0hFNEglmw6q72
-   4Bv/9EJhR5V8uGnI0PkQ07rNCiOM0mH1M8GfRPNOcge7rts/yISWrm/qi
-   4aEx6yMPf/9MIqqQoUbarT8P3J8p8WzA4mKAOcwpRalgn0m+r6l4iY8VA
-   w==;
-X-CSE-ConnectionGUID: jWbstG07Sua6uF91T/3JUA==
-X-CSE-MsgGUID: sYD6gkK4TuqIoa5mZDy5VQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28044375"
+  bh=uwqjPvhLDzkg3BcCJuC1vIodGkhXgYT3Z/wU0paL358=;
+  b=lp1kRoSCrLN8/6H2wvpA1kzYZHSLo5CEIrdJvpqSeoKvi6HRvdr2meWt
+   wf6tcr8UF/2IyzrBHdhzFnUXunfza7WyTlz1KgYC0q5dvHO56x10IZuLv
+   F4zzxbDhAgD0sFbDs4c3pmzrJY1gJyaW0md12+DBBu2KtXOD/szjmKglo
+   jWkqxZUiJruQ5KEMpWhd+eUVm7Vr7eE1rotP5Z7o3r78gFFDMLQoGwiMW
+   Aq7kM7rmsS3wMTXzPF7fmT1v6QeOscazyqapMiCGZF2I2VvHVxJA0QBds
+   T5voZEJmGWuaMsNkmydFTf18bY82K+PRcnXECAH2SUNgnBor43TOUrzh0
+   A==;
+X-CSE-ConnectionGUID: 7ivPmri3S5uZ56J3GYw2FA==
+X-CSE-MsgGUID: ffhXPwmnTYKZQgy4XBimsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28044479"
 X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
-   d="scan'208";a="28044375"
+   d="scan'208";a="28044479"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 12:43:47 -0700
-X-CSE-ConnectionGUID: SR/kJhNATrisyTIR4DfzTA==
-X-CSE-MsgGUID: 7RJqfyk+R0ar2XkMlNzOCw==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 12:44:20 -0700
+X-CSE-ConnectionGUID: l14Im3nITcuxC+1W535t8A==
+X-CSE-MsgGUID: Fxb7comrRdelMKCz0bK9PA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
-   d="scan'208";a="109091285"
+   d="scan'208";a="109091592"
 Received: from iweiny-desk3.amr.corp.intel.com (HELO [10.124.222.19]) ([10.124.222.19])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 12:43:47 -0700
-Message-ID: <33c61588-7083-4851-965a-f4f1d46ff44c@intel.com>
-Date: Wed, 16 Oct 2024 12:43:46 -0700
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 12:44:19 -0700
+Message-ID: <de705cdf-ccce-460f-846e-dfc63c63af1a@intel.com>
+Date: Wed, 16 Oct 2024 12:44:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,8 +68,9 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when
  comparing in percpu_add_op()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
  Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
  Christoph Lameter <cl@linux.com>, Thomas Gleixner <tglx@linutronix.de>,
@@ -80,7 +81,7 @@ Cc: Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
  <morbo@google.com>, Justin Stitt <justinstitt@google.com>
 References: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com>
  <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
- <ZxAAlEyvxzWpwQQ0@smile.fi.intel.com> <ZxAD0-kQJ0_lDxje@smile.fi.intel.com>
+ <20241016192011.GY17263@noisy.programming.kicks-ass.net>
 From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -126,22 +127,46 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <ZxAD0-kQJ0_lDxje@smile.fi.intel.com>
+In-Reply-To: <20241016192011.GY17263@noisy.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/16/24 11:20, Andy Shevchenko wrote:
->> Maybe more readable, but wouldn't it be theoretically buggy for u64?
->> I'm talking about the case when u64 == UINT_MAX, which will be true
->> in your case and false in mine.
->>
->>>         const int pao_ID__ = (__builtin_constant_p(val) &&
->>>                               ((val) == 1 || (int)(val) == -1)) ?
->>>
->>>                                 (int)(val) : 0;
-> This code _is_ buggy, thanks to my new test case.
-> 
-> [   66.161375] pcp -1 (0xffffffffffffffff) != expected 4294967295 (0xffffffff)
+On 10/16/24 12:20, Peter Zijlstra wrote:
+> The code as is, is wrong, I don't think we'll ever end up in the dec
+> case for 'short' unsigned types. Clang is just clever enough to realize
+> this and issues a warning.
 
-Thanks for pointing that out Andy (and Peter too)!
+Ahhh, that's the key to it.  Thanks, Peter.
+
+> Something like so might work:
+> 
+> 	const int pao_ID__ = __builtin_constant_p(val) ?
+> 				((typeof(var))(val) == 1 ? 1 :
+> 				 ((typeof(var))(val) == (typeof(var))-1 ? -1 : 0 )) : 0;
+
+Would anybody hate if we broke this up a bit, like:
+
+        const typeof(var) _val = val;
+        const int paoconst = __builtin_constant_p(val);
+        const int paoinc   = paoconst && ((_val) == 1);
+        const int paodec   = paoconst && ((_val) == (typeof(var))-1);
+
+and then did
+
+	if (paoinc)
+		percpu_unary_op(size, qual, "inc", var);
+	...
+
+Or even:
+
+#define PAOINC 1234
+
+ 	const int pao_ID__ = __builtin_constant_p(val) ?
+ 				((typeof(var))(val) == 1 ? PAOINC :
+	...
+	if (PAOINC)
+		percpu_unary_op(size, qual, "inc", var);
+
+Since the 1 and -1 ternary results end up just being magic numbers
+anyway.  Otherwise that pao_ID__ expression is pretty gnarly.
 
