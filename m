@@ -1,116 +1,127 @@
-Return-Path: <linux-kernel+bounces-367729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF599A05E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:48:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61F49A05CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC13284657
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:48:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 245F11C217A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700EE1B78F3;
-	Wed, 16 Oct 2024 09:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5DB205E31;
+	Wed, 16 Oct 2024 09:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="oR1R/nO5"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C511B6D13
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FntViEVo"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A96B205E08
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072130; cv=none; b=Q3nIpYd3fONvcbPnAF2Umy4MyFpRbCwxQecZKrmm0YzVK6Re7dGg42wrXJXTuVLcqNtYN2Y8eoaw5scCSubsnoFm62u5apLXHKFJforZAjNRTMOsSaUSk8XGhQYEHiQvHnZMGXKKu1K8e5fJ5GyIFOt3hP7+BtoMNuvpS3XlIis=
+	t=1729071692; cv=none; b=pcGtF4FoNuDSTDrebYVEWwASrUqNqau1LS6JB1o3VS6e1pe8R9aA1m/2riEaA4F/4IY6a/a8RWmCxD/rL2pMmITRXE6IkHDTqf7PF9y40Xf5nanO/fWek3JRiFjw1v1wSJnCHibOBKwQL9HuRTp0KMUcdpkw52j5viIK7eC97nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072130; c=relaxed/simple;
-	bh=D4ZIvpLXGjOGc57fdQgXtrHNIKToHnqKt5ztXwXmG2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PoqvfQvBIS3BzRN1bvtjNtlX/QJkeBIEghlUjkADe1xtuHS2ka9erAo+JE8I5TG6BT2Ah0eK2PifxrWvKe86lUA5ZNcRTIuioPfvkcDAzy8BP21UboxSug0tyreZyTCcS0wlil0SVjjx81sxdMhdkSBDv1XIefFQphArWtHLR2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=oR1R/nO5; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 69CE214C1E1;
-	Wed, 16 Oct 2024 11:39:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1729071588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKKCM8vsmuJw2e87CzOm6FJ2PosV5LE229Af8qrBvGs=;
-	b=oR1R/nO5g1A3VVcMusNHveBTxJMzDmKsfMq84X8iH2qEBU8P0doZj5QGMYa4WQ+aJ8PeS5
-	cSe911T5vLNSvg9baUet9qfW0M4IqNoH+WwYhFkIEPO13y3usYr/q0RgaBWQJ74SCu6b2s
-	kguSW0KVQMIYcOmMyjF34bWnvRmEHeGS3hkQZq67Cph+PiojPU7TXVPWHAzRGFCKnA9LA6
-	BGrZsLjTA9dm+8RrPPJ739OzVsz/vX9eIcEx6IYOudl8W3R+9EMzTNXJTkA93Oij4AcSn1
-	FXshK2xiJ45eE4Incr6Q7yqt2xUBGYGyhY4iug5DCfFBUwoA6/FI/vGxuzR0cw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c1fa19b0;
-	Wed, 16 Oct 2024 09:39:43 +0000 (UTC)
-Date: Wed, 16 Oct 2024 18:39:28 +0900
-From: asmadeus@codewreck.org
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Will Deacon <will@kernel.org>, ericvh@kernel.org, lucho@ionkov.net,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
-	keirf@google.com, regressions@lists.linux.dev
-Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
-Message-ID: <Zw-J0DdrCFLYpT5y@codewreck.org>
-References: <20240923100508.GA32066@willie-the-truck>
- <20241009153448.GA12532@willie-the-truck>
- <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
+	s=arc-20240116; t=1729071692; c=relaxed/simple;
+	bh=sVZnqwpnk8S59BMYoaDVHb4o2JgmACO7+oCJTiW+8WI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oCg304dbbe61yDhA9HCnXwMDVyMJiEHROfRyd5Q+f3eNPLintMLrijRs0RKbnepDgNv0aXBrMDChyhgrTagnbqOTYjRkyV6e3m92rgZQwpYnecYQUekv/DqedyYGt5cA1tXbYRILojZ9p/VPsQTdngrV3u2eJGwaZwBpSgPhU5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FntViEVo; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4314a26002bso10830155e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729071688; x=1729676488; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/eCP0XrWxjwVqv0id7P9/rEghAaXmJu6xIKtnmf1oA=;
+        b=FntViEVoX9o0RFBOat2NryN0C1vRCNUZfYUgbM/DiZfpVbb4Q0rAa0yYaR1NtkY8gC
+         R/z9aMnRHJ+utl630c0BDtUkN6w0ryjO3MlTCdG7kfhGhNgW86JkTK991SCoNxzmnmgr
+         6RgF17JWnG4AVVAOMsM1JgFDpwpZHjFpXV1Hf/ORFpUX3c2TBWDDKSF6T4NapvzYPxRX
+         HfAToAyfUxdD7f8RRy6j0oHbECxfoUUCff7cQCijTG5AdcMt113bhC8OmUqW9M2/zRew
+         RlXbHjig7qo29N+bQHK4JPKNs/wCfGAq5Ff2Us6ri7rzqMoJmHC6Rxj0TsnkmPNkDUfm
+         SJJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729071688; x=1729676488;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n/eCP0XrWxjwVqv0id7P9/rEghAaXmJu6xIKtnmf1oA=;
+        b=inSt3RDOwcO8eJDl0h8+CORaD4O2AfBnlRMRjjwaUwQNX0HHM02U54b7WGXHtQyB7Q
+         Ed2TU+vNRkjpwum6lOexMhV+5x5Ad/+0RuRT3TLUGMpH1fplZt58oPxohLgTh9w7pRpx
+         1HSCspleOMuTIU0mtcYvGzvqym79R93O2F5X/MPjDzQBpIefB5ImEHQL0pZfJKZOI1HC
+         isE4CBtI3lphecz/cRN/OkDtPFpbuWhIXUMxs4oVhwnW8Is5pOaH0AUM6HjP/jevQXvo
+         xmaLVFByyN/nESWRn2vnlt/Rv0ZKFoqtnVXcf3CmkP+zVn4hG58J8g/0CZQQq84sSYYf
+         ymHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULoq+Wej7iJguJi+Dqr6y6Pe8aVtdyA4g3edA4RCekC5qkg/6DS15gh1fWeoUv5aUHmMRJsZGwALgLjPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytgdX1/CVgB1IfEH1EtEHo7e0Oz3vslI9gc8czEyzu1oWmjpaC
+	Y6lf+cQn8tVzqg/mZ8hJV4oUncFsGA41K9hGANWGp4llCj2UQQy1pMPdGdBGh8PWlNLPGpJ1Xr+
+	7
+X-Google-Smtp-Source: AGHT+IEYxpwMg04b4kVb9eSt7RVotoV1GH3NuOvLOI7E9t231bHLqlKRk0gJybhWsGhROLUbIc780Q==
+X-Received: by 2002:a05:600c:1c14:b0:431:450b:32d8 with SMTP id 5b1f17b1804b1-4314a381ef0mr30630985e9.22.1729071688088;
+        Wed, 16 Oct 2024 02:41:28 -0700 (PDT)
+Received: from [127.0.1.1] ([2a05:6e02:10a5:e010:472a:1760:2b0d:11e9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56998fsm43654735e9.16.2024.10.16.02.41.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 02:41:27 -0700 (PDT)
+From: Guillaume La Roque <glaroque@baylibre.com>
+Subject: [PATCH v3 0/2] irqchip: Kconfig: Add module support for TI
+ inta/intr
+Date: Wed, 16 Oct 2024 11:41:08 +0200
+Message-Id: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADSKD2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0Mz3ZLM3PyU0pzUYl1DcxNzcwMjQ9OUFAsloPqCotS0zAqwWdGxtbU
+ Aj+qR/FsAAAA=
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ vishalm@ti.com, Mattijs Korpershoek <mkorpershoek@baylibre.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Guillaume La Roque <glaroque@baylibre.com>, 
+ Nicolas Frayer <nfrayer@baylibre.com>
+X-Mailer: b4 0.14.1
 
-Thorsten Leemhuis wrote on Tue, Oct 15, 2024 at 08:07:10PM +0200:
-> Thx for bringing this to my attention. I had hoped that Eric might reply
-> and waited a bit, but that did not happen. I kind of expected that, as
-> he seems to be  somewhat afk, as the last mail from him on lore is from
-> mid-September; and in the weeks before that he did not post much either.
-> Hmmm. :-/
+Added module support for TI interrupt aggregator and interrupt router
+drivers. Default value for both drivers is ARCH_K3 and the interrupt
+aggregator depends on ARCH_K3 as it contains 64 bit only ops.
+Tested allmodconfig builds with ARCH=arm and ARCH=arm64.
 
-Right, I had hoped he'd find time to look further into this and kept my
-head in the ground, but it looks like we'll have to handle this somehow...
+Changes in v3:
+- Add MODULE_LICENSE in drivers
 
-One note though he did sent a patch that seems related and wasn't sent
-for merge:
-https://lore.kernel.org/all/CAFkjPTn7JAbmKYASaeBNVpumOncPaReiPbc4Ph6ik3nNf8UTNg@mail.gmail.com/T/#u
+Changes in v2:
+- Added depends on ARCH_K3 for the interrupt aggregator driver as it
+  uses
+64 bit ops
 
-Will, perhaps you can try it? I'm pretty sure the setup to reproduce
-this is easy enough that I'll be able to reproduce in less than an hour
-(export two tmpfs [sequential inode number fs] wthin the same 9p mount
-in qemu without 'multidevs=remap'), but I don't even have that time
-right now.
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+---
+Nicolas Frayer (2):
+      irqchip: Kconfig: module build support for the TI interrupt router driver
+      irqchip: Kconfig: Added module build support for the TI interrupt aggregator
 
-(I didn't even read the patch properly and it might not help at all,
-sorry in this case)
+ arch/arm64/Kconfig.platforms      | 2 --
+ drivers/irqchip/Kconfig           | 8 +++++---
+ drivers/irqchip/irq-ti-sci-inta.c | 1 +
+ drivers/irqchip/irq-ti-sci-intr.c | 1 +
+ 4 files changed, 7 insertions(+), 5 deletions(-)
+---
+base-commit: 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
+change-id: 20241016-timodules-174770215dd8
 
-> CCed Christian and Al, maybe they might be able to help directly or
-> indirectly somehow. If not, we likely need to get Linus involved to
-> decide if we want to at least temporarily revert the changes you mentioned.
-
-I'm not sure this really needs to get Linus involved - it's breaking a
-server that used to work even if qemu has been printing a warning about
-these duplicate qid.path for a while, and the server really is the
-better place to remap these inodes as we have no idea of the underlying
-device id as far as I know...
-
-So the question really just is do we have or can we build a workable, so
-the question is can we resonable do any better, or do we just want to
-live wth the old behaviour.
-(Note that as far as I understand the old code isn't 100% "loop" proof
-either anyway, a open(O_CREAT)/mkdir/mknod could happen to get identical
-inode numbers as well, it's just less likely so folks haven't been
-hitting it)
-
-
-Thanks,
+Best regards,
 -- 
-Dominique
+Guillaume La Roque <glaroque@baylibre.com>
+
 
