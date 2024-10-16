@@ -1,236 +1,194 @@
-Return-Path: <linux-kernel+bounces-367487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7F29A02E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:44:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311719A02DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8161C2427B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:44:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89D4FB2519C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677181C7612;
-	Wed, 16 Oct 2024 07:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBEB1C07E2;
+	Wed, 16 Oct 2024 07:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="JEUjsCpV"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2064.outbound.protection.outlook.com [40.107.22.64])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CCtwvnSJ"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE26B1B4C23;
-	Wed, 16 Oct 2024 07:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729064647; cv=fail; b=Y/WvdpnDX3p6ZAAnWbEHtFXA3fk8DM6O5rtouSnv+0MUR1H/d4waM3SUgGRftFPIMR1610OO483aRNWvObLJjljVlg8K2UorxfLgfPeIqy4u1I1gIDuThgcGMFLAxxD76/UajiVvRgric1ibsRUkWmtb5JRnmDU+9EZlwO37YRQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729064647; c=relaxed/simple;
-	bh=ECj8R/F1t3KFohA8yQAwqii2MacCWG7p82k2bB/SGws=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=o9TWMgs/MuYwueYBHl6thBoAVk1f4+ERtSTd5Kwc1MuaYRIm2h3qV7QlktlBNn2fsd1KcX9ws1jbuimdffxRvd2Lrj/FujMvyvGi+h8MNUDE9Y9wKF6hb60YA2S8r4rnmUOdOD7PfDNyuBugO5loIZBML7Cxe1kZJNm3dG290JE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=JEUjsCpV; arc=fail smtp.client-ip=40.107.22.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TlC7V+39aES++2Q4Se91LowYIWhx0PRnFbA77BnwelFRf8RbKBKW8W60qQPgNm2jNc4IB6i2uQi1Fz0SaB+JhXysRTT0qHgl/q2V1bgAuVgwaUoxvTtkBc8KjANFbr+gCR7AsBHJPl+YkgJ1IyYJMUJI5p/5M7MNdlAJb8LDbi88pZrWRRL/KqR5TwioXR6ejUTJJ9Iydm05kg0yg/ZDXWBhQqwOJK6E1t+s0SHDfqjcyNGnJu+zVHRoIDdxmycJvQFezXET6fh9LmyK504+B3xxZ7n1AmQiACHvDaYdkcMsJwa54q/WZbzfUy1QVMivS4YnkAGvTchZKLWQvtd3cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f44ml4snFkVwlkTRiqFlMQtrTlIyA2nxYMZaPdOLAWk=;
- b=a3JaNqMrRQp3a94WHIeXdAiic3AN0JpcyrsEVE4RfMCcmDqer/kotFQ1MnDXCFBdgCFe7YHlVa+MI0s+nrE7lMSU6YQ7bxK4csRicRV66lyWFMbLZRfjLfdj+milrqV77/d0sV7zuG2Wu9jjQbYYAVsFASYzWy2dtXpNIoYgHqT/b5i+lYlCxNzm4s/bQnE3jDzQUUJUA2P8o9OihgLo3t1NMoX56B8JTUFO4Kble5a7AoqdbQWTVrhw0q+vzNDI7P9l/LNgvc266I/COVMvqHuD6J83e/g+HgCGVP5Nq1Osmm5Yk5S3oHhno04CZNoasZQxbsB/UchhZ8kP1TaFmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=leica-geosystems.com; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f44ml4snFkVwlkTRiqFlMQtrTlIyA2nxYMZaPdOLAWk=;
- b=JEUjsCpVb5cCFSJ4iudOLfkC283O99Yvy4YJY8hX8lrYhdunx8aNfexsNlA1BldBrCUy3zyBDIQuMsPzJaj9QlE7JuyXvzUelvhX5xV1INQwBraewy/QmIswvuVGrFOW2ksCG8j4tCDz6rnuB3J28w/rf768evj+sqs1GTvcToM=
-Received: from DU2PR04CA0292.eurprd04.prod.outlook.com (2603:10a6:10:28c::27)
- by DB8PR06MB6363.eurprd06.prod.outlook.com (2603:10a6:10:129::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 07:43:59 +0000
-Received: from DB1PEPF000509EB.eurprd03.prod.outlook.com
- (2603:10a6:10:28c:cafe::8e) by DU2PR04CA0292.outlook.office365.com
- (2603:10a6:10:28c::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18 via Frontend
- Transport; Wed, 16 Oct 2024 07:43:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.94) by
- DB1PEPF000509EB.mail.protection.outlook.com (10.167.242.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.17 via Frontend Transport; Wed, 16 Oct 2024 07:43:58 +0000
-Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Wed, 16 Oct 2024 09:43:58 +0200
-From: Mamta Shukla <mamta.shukla@leica-geosystems.com>
-To: dinguyen@kernel.org,
-	alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: bsp-development.geo@leica-geosystems.com,
-	Mamta Shukla <mamta.shukla@leica-geosystems.com>
-Subject: [PATCH] arm: dts: socfpga: use reset-name "stmmaceth-ocp" instead of "ahb"
-Date: Wed, 16 Oct 2024 09:41:59 +0200
-Message-Id: <20241016074159.2723256-1-mamta.shukla@leica-geosystems.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEAC18C039
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729064599; cv=none; b=rqkiOT6SiGmHzVCeGlzvrY+h0JUZP2vrDrF4ZyHs0NujpRgI6f+PIfYLZkM6oGrgAtya40SgmAIH7YghmeAJJc6pzank1FXQcQLrHXEL76TWtQMzCY1l+Nuwx2LxPqONZw7wLbRsZNP7hHNUcLc73xmTIfmrsIIY8id/4vnsvrM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729064599; c=relaxed/simple;
+	bh=/RcCAilO9pgxTRMKsQDDzVlxiLUl3ImBOZ+NYjOQwQg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FoPQLtTkZsN4ILFnLql8UtuAz7YhYPuVyory9JjcB9gvBZ8KNlwAzMEQ7v6SDyVuBI74jdXjkRh2mXn/HvibKDepHot3WTka14bb4OUNB7zQzNT+R4UlX7jcs71NJd7jLkLoAXV8ae6g+JMUCkRAkYnGy28AbJbJjerfOmS16HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CCtwvnSJ; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1729064595; x=1729323795;
+	bh=/RcCAilO9pgxTRMKsQDDzVlxiLUl3ImBOZ+NYjOQwQg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=CCtwvnSJ08C4NQqidF9KCDwQc/VpccIPijK1BeQo/KRRwd2V+jvGPtjBQCz7KpJDf
+	 oAzfoQ8x/CfxQ2rOIpvj7qKS7DRRxZwd69uljTyvDFVVucbt2/Yozsyqt5NRmXt6EG
+	 QwXVSIry5s9Q7vsf9cOB+YI/dGf3gfE3dvWrPlwh4WSpX08Lz/XOV9a/rhvJcQCIR/
+	 4kzZ01nUvjHFa13nqV8REUUnfVaboRry1kaagDrU8EorXAWGDpVwJm4FG7CNxrZV3/
+	 U0F0wy33bbDaMWi68ZSCG+cwuTg7ThAUmNtCGIXueMUYyoTUllbHCwo3jctS4pYjRo
+	 Rvqmnz5Ti5z1Q==
+Date: Wed, 16 Oct 2024 07:43:12 +0000
+To: Andy Yan <andyshrk@163.com>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
+Subject: Re:Re:Re:[PATCH v5] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <NxE_v2487UegHySoZJi6ZnC6t8tn63tH7DDaCBVIsShJHz1_dH_6o1pRHqGBhHq7LWIKlWitYH7Fbh0YDyEBNN8Pt0u27irk1VwuqMj8Y9c=@proton.me>
+In-Reply-To: <rCXfMQ7epSo6CgnBpBcowcSa1ndRRyfEaDJLFhS4w2-S047bVknK4vU1_qPR7h1ho8SznXj5dYrBHRUmQe-MICdSB0OLm0P-N48lQzgWnfI=@proton.me>
+References: <20241014222022.571819-4-pZ010001011111@proton.me> <7b45f190.452f.1928e41b746.Coremail.andyshrk@163.com> <o_Cyz_ARcHj4zNlovv75MBwslIRhn3YWlscoNrlpLVobh7eWIMEQR5bNv0yhHx2KEx_gbYi_gH-8Y-CdvRZs9lZscz3-lhAbM50GXUdtSKY=@proton.me> <30940542.b36d.19290215124.Coremail.andyshrk@163.com> <1974DYrs9gLrQrZ5VwCglFgKDDK686iyqnS_g6uPB-s9wZ_4CqfZXPjmYWihLgrkRu7ptNjpkFeqB0uTt73RFId6cL8FowQ8LFltPmaKCoI=@proton.me> <1ae9f15d.e52.19292e05e73.Coremail.andyshrk@163.com> <rCXfMQ7epSo6CgnBpBcowcSa1ndRRyfEaDJLFhS4w2-S047bVknK4vU1_qPR7h1ho8SznXj5dYrBHRUmQe-MICdSB0OLm0P-N48lQzgWnfI=@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: fbe0cdd32c280e3064ebe9989c10d3a295b445a0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 16 Oct 2024 07:43:58.0704 (UTC) FILETIME=[29149F00:01DB1F9F]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509EB:EE_|DB8PR06MB6363:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: dde93b50-dd76-47c7-501d-08dcedb64bc5
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?76yeJazws6bjd4cjwxbOp8Orqqbvp4bGLbwkKUumqjYWYeq1MaX72NpL652a?=
- =?us-ascii?Q?YH+hhWeYZQCFTKfhem974RoRw6jcbGp04mNy9IZvW9h3k0PZ1hagQtfBaMAo?=
- =?us-ascii?Q?FOs+2CvNHHvDJaX9ZI4AuWhgvv09h7yc4ogcg6G+7K4kSmzylJS6t61p0Sjp?=
- =?us-ascii?Q?CksIDI538OI1b7dYFSbpCbVgrrR21VuXE0Vg+eEwkmmMW5FRTCE/m7mh8nps?=
- =?us-ascii?Q?SLvP5HwzikyYYA8SzX2fQrbgR+Zm3yvus34wUuGTfz9ZXauQrRCtRxe5rTfd?=
- =?us-ascii?Q?Gm7t1TFJVV/s7FmWrRXmp6bXJzetsDXCPN1BmZvOrqGFjMcCrl/loyOKDBOP?=
- =?us-ascii?Q?RNWvrOghuumWXpdBI/4HUJl8adj281bXWhi0EA4Kt0NaH293zPa30fkta7L/?=
- =?us-ascii?Q?XMLM8RiBN9vOOBPjn/UDZtRf7Iz3iVrik1ixnaAoPMrjGPgeTG9zTmP+uXRe?=
- =?us-ascii?Q?6I4c1/QTVglMbQR3AEzLByGN3bGao6vWkovKWwjzN9sTS/ZUpcYm6fWYkNZE?=
- =?us-ascii?Q?azBu/sy/K3meIGlgC+Tin3cQR4+CO093qyeJnI0NbkhRqqAyz07ha58KCeSW?=
- =?us-ascii?Q?huE4eMsmExYPdHOTSxBYqMIIAWQnlPRvH7hlh56xqxQvQq1LMY/Zb7bfCCRl?=
- =?us-ascii?Q?3VbWqNX3H7+N6ojZv7cGi9YI784GdMsqYxOLDvBcun3n+06KVXyLjMNP4at/?=
- =?us-ascii?Q?dkxH7rqtFJGAusJa5MpI4RKmv5hGiin7ko1Dl118g6PM8+dRljlJetVZdI1S?=
- =?us-ascii?Q?NIzc3aT/IXmdOhwh1on/2G8G/cocRGeYnjpKDw7ZIfWnkjpcd7v4X6gnykVA?=
- =?us-ascii?Q?7KelyWwci9KJuDmEqJF8YBP5xHklnfgUJaRWDJu0TjtGIaEo3RMEKga6iWyw?=
- =?us-ascii?Q?N8aYFdnCV1I9Y41hqeDe8Y27mm5aCS3yR/xcwEVse7f5eu4h0ucMWIyidNXb?=
- =?us-ascii?Q?NUsD5Z8aMtd0WJc4wD47uqhQNZiz2fX76fbPzKuf6Q4qlHBp7Hi9FTwjHzrG?=
- =?us-ascii?Q?W7nbo4XJXdpRbanVgib/cBbW0rlF+ix/TCWN8ZN70kIIB+u4rv6ZfIjGdIYQ?=
- =?us-ascii?Q?bwzl0hDs0GfRN/MZ9f0HvWj0WYCM2E5m2Aa3lr1afHhco/46SunUjGngZzkI?=
- =?us-ascii?Q?N0kQ9MTiEbHLwNxeyvxwUbjGlP3KNhPbibjugBgUf/a1+Hl7A8lSxlDBKXns?=
- =?us-ascii?Q?qyQlDnJL++SEYYGhAZAwGZ8NJXM7ln4Kj6nTCMnWoLh3LmyvRLF7L+6N/yPX?=
- =?us-ascii?Q?ZH8Y5P3z0ag17gnqjEZj/QZKJNe3KtFQXnrZfXIplzEACjZSxeoEULB7CmMc?=
- =?us-ascii?Q?/6sT21GEJPB5iLfQ2DRtPusoj6wdgurc57jSRHay11ag7O+OU9sm46/6IAre?=
- =?us-ascii?Q?VrYD+BAkV+K93H0wFrFXtbVP+rav0xVfH0BCLAkwIFvWQ+iN4Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 07:43:58.9414
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dde93b50-dd76-47c7-501d-08dcedb64bc5
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509EB.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR06MB6363
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The "stmmaceth-ocp" reset line in dwmac-socfpga driver is required
-to get EMAC controller out of reset on Arria10[1].
-Changed in Upstream to "ahb"(331085a423b  arm64: dts: socfpga: change the
-reset-name of "stmmaceth-ocp" to "ahb" ).
+Hi Andy, Ignore the message I'm answering to. I accidentally sent it premat=
+urely.=20
 
-If "ahb" reset-line is used, connection via ssh is found to be slow and significant
-packet loss observed with ping. This prominently happens with Real Time Kernel
-(PREEMPT_RT enabled). Further with STMMAC-SELFTEST Driver enabled, ethtool test
-also FAILS.
+On Wednesday, October 16th, 2024 at 9:41 AM, Piotr Zalewski <pZ010001011111=
+@proton.me> wrote:
 
-$ ethtool -t eth0
-[  322.946709] socfpga-dwmac ff800000.ethernet eth0: entered promiscuous mode
-[  323.374558] socfpga-dwmac ff800000.ethernet eth0: left promiscuous mode
-The test result is FAIL
-The test extra info:
- 1. MAC Loopback                 0
- 2. PHY Loopback                 -110
- 3. MMC Counters                 -110
- 4. EEE                          -95
- 5. Hash Filter MC               0
- 6. Perfect Filter UC            -110
- 7. MC Filter                    -110
- 8. UC Filter                    0
- 9. Flow Control                 -110
-10. RSS                          -95
-11. VLAN Filtering               -95
-12. VLAN Filtering (perf)        -95
-13. Double VLAN Filter           -95
-14. Double VLAN Filter (perf)    -95
-15. Flexible RX Parser           -95
-16. SA Insertion (desc)          -95
-17. SA Replacement (desc)        -95
-18. SA Insertion (reg)           -95
-19. SA Replacement (reg)         -95
-20. VLAN TX Insertion            -95
-21. SVLAN TX Insertion           -95
-22. L3 DA Filtering              -95
-23. L3 SA Filtering              -95
-24. L4 DA TCP Filtering          -95
-25. L4 SA TCP Filtering          -95
-26. L4 DA UDP Filtering          -95
-27. L4 SA UDP Filtering          -95
-28. ARP Offload                  -95
-29. Jumbo Frame                  -110
-30. Multichannel Jumbo           -95
-31. Split Header                 -95
-32. TBS (ETF Scheduler)          -95
-
-[  324.881327] socfpga-dwmac ff800000.ethernet eth0: Link is Down
-[  327.995360] socfpga-dwmac ff800000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-
-Link:[1] https://www.intel.com/content/www/us/en/docs/programmable/683711/21-2/functional-description-of-the-emac.html
-Signed-off-by: Mamta Shukla <mamta.shukla@leica-geosystems.com>
----
- arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-index f36063c57c7f..72c55e5187ca 100644
---- a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-@@ -440,7 +440,7 @@ gmac0: ethernet@ff800000 {
- 			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
- 			clock-names = "stmmaceth", "ptp_ref";
- 			resets = <&rst EMAC0_RESET>, <&rst EMAC0_OCP_RESET>;
--			reset-names = "stmmaceth", "ahb";
-+			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			snps,axi-config = <&socfpga_axi_setup>;
- 			status = "disabled";
- 		};
-@@ -460,7 +460,7 @@ gmac1: ethernet@ff802000 {
- 			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
- 			clock-names = "stmmaceth", "ptp_ref";
- 			resets = <&rst EMAC1_RESET>, <&rst EMAC1_OCP_RESET>;
--			reset-names = "stmmaceth", "ahb";
-+			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			snps,axi-config = <&socfpga_axi_setup>;
- 			status = "disabled";
- 		};
-@@ -480,7 +480,7 @@ gmac2: ethernet@ff804000 {
- 			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
- 			clock-names = "stmmaceth", "ptp_ref";
- 			resets = <&rst EMAC2_RESET>, <&rst EMAC2_OCP_RESET>;
--			reset-names = "stmmaceth", "ahb";
-+			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			snps,axi-config = <&socfpga_axi_setup>;
- 			status = "disabled";
- 		};
--- 
-2.25.1
-
+> Hi Andy,
+>=20
+> On Wednesday, October 16th, 2024 at 3:10 AM, Andy Yan andyshrk@163.com wr=
+ote:
+>=20
+> > Hi Piotr,
+> >=20
+> > At 2024-10-16 04:13:40, "Piotr Zalewski" pZ010001011111@proton.me wrote=
+:
+> >=20
+> > > Hi Andy
+> > >=20
+> > > On Tuesday, October 15th, 2024 at 2:22 PM, Andy Yan andyshrk@163.com =
+wrote:
+> > >=20
+> > > > > > > + struct vop2_video_port *vp,
+> > > > > > > + struct drm_crtc *crtc,
+> > > > > > > + struct drm_crtc_state *crtc_state)
+> > > > > > > +{
+> > > > > > > +
+> > > > > > > + if (vop2->lut_regs && crtc_state->color_mgmt_changed) {
+> > > > > > > + if (!crtc_state->gamma_lut) {
+> > > > > > > + vop2_vp_dsp_lut_disable(vp);
+> > > > > > > + return;
+> > > > > > > + }
+> > > > > > > +
+> > > > > > > + if (vop2_supports_seamless_gamma_lut_update(vop2)) {
+> > > > > >=20
+> > > > > > I think it's bettery to check for rk3568/rk3566 here, the newer=
+ soc will all follow
+> > > > > > rk3588 support seamless gamma lut update.
+> > > > >=20
+> > > > > I will change in the next version.
+> > > > >=20
+> > > > > > > + vop2_writel(vop2, RK3568_LUT_PORT_SEL, FIELD_PREP(
+> > > > > > > + RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL,
+> > > > > > > + vp->id));
+> > > > > > > + vop2_crtc_write_gamma_lut(vop2, crtc);
+> > > > > > > + vop2_vp_dsp_lut_enable(vp);
+> > > > > > > + vop2_vp_dsp_lut_update_enable(vp);
+> > > > > > > + } else {
+> > > > > >=20
+> > > > > > As for rk3566/68, we should do exclusive check here, because th=
+ere is only
+> > > > > > one gamma , only one VP can use it at a time. See my comments i=
+n V3:
+> > > > >=20
+> > > > > What do you mean exactly by exclusive check in this case.It's tru=
+e that
+> > > > > gamma LUT is shared across video ports in rk356x but, if I correc=
+tly
+> > > > > understand, this doesn't forbid to reprogram LUT port sel and all=
+ow other
+> > > > > VP to use gamma LUT.
+> > > >=20
+> > > > Yes, we can reprogram LUT port sel, but we need to make sure the th=
+e dsp_lut_en bit in VPx is cleared if we
+> > > > want reprogram LUT port sel form VPx to VPy.
+> > >=20
+> > > Ok I get it now. Is such rework correct? - when gamma LUT for rk356x =
+is
+> > > being set, instead of disabling the LUT before the gamma LUT write fo=
+r the
+> > > current CRTC's video port, active video port is selected. Selection i=
+s
+> > > based on if DSP LUT EN bit is set for particular video port. eg:
+> >=20
+> > If the userspace want to set gamma for CRTCx, then that is indeed where=
+ they want to set the
+> > gamma on=E3=80=82The driver silently sets the gamma on another CRTC, wh=
+ich is not what the user wants.
+>=20
+>=20
+> Hello maybe there is some misunderstanding, here is full version of my re=
+work
+> ```
+>=20
+> > I think there are two options=EF=BC=9A
+> > =EF=BC=881=EF=BC=89return a error if gamma is enable on other CRTC=
+=EF=BC=8C this is what we done in our BSP code[1]
+> > (2) disable the dsp_lut on privious CRTC, then switch to the current CR=
+TC which userspace wants.
+> >=20
+> > [1]https://github.com/armbian/linux-rockchip/blob/rk3576-6.1-dev-2024_0=
+4_19/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c#L3666
+>=20
+>=20
+> Hmm ok in my solution I supposedo
+>=20
+> > > ```
+> > > static struct vop2_video_port *vop2_vp_dsp_lut_get_active_vp(struct v=
+op2 *vop2)
+> > > {
+> > > struct vop2_video_port *vp;
+> > > int i;
+> > > for (i =3D 0; i < vop2->data->nr_vps; i++) {
+> > > vp =3D &vop2->vps[i];
+> > >=20
+> > > if (vp->crtc.dev !=3D NULL && vop2_vp_dsp_lut_is_enabled(vp)) {
+> > > return vp;
+> > > }
+> > > }
+> > > return NULL;
+> > > }
+> > >=20
+> > > (...)
+> > >=20
+> > > struct vop2_video_port *active_vp =3D vop2_vp_dsp_lut_get_active_vp(v=
+op2);
+> > >=20
+> > > if (active_vp) {
+> > > vop2_vp_dsp_lut_disable(active_vp);
+> > > vop2_cfg_done(active_vp);
+> > > if (!vop2_vp_dsp_lut_poll_disable(active_vp))
+> > > return;
+> > > }
+> > >=20
+> > > vop2_writel(vop2, RK3568_LUT_PORT_SEL, vp->id);
+> > > vop2_crtc_write_gamma_lut(vop2, crtc);
+> > > vop2_vp_dsp_lut_enable(vp);
+> > > ```
+>=20
+>=20
+> Best Regards, Piotr Zalewski
 
