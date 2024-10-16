@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-368202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5900C9A0C8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:23:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372349A0C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B40E0B291D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:23:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A4101C21C77
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C35209690;
-	Wed, 16 Oct 2024 14:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C797C20ADDA;
+	Wed, 16 Oct 2024 14:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Spkcdxyb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Gp2v7ciE"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2C71422DD
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E948D208D7A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729088601; cv=none; b=TzqM6ZK/h7gQQMXjx2HPEUDK8Aey5uTeO1LWR1i/uDxvFQzbulB2W9S1RQpZTVGDWgJVnPBtX7RjwEl0augYhSjwcdCH+Kps9kN4Pfq9JbV+GnUziytzvXTzYXsnnwHYi7JM7qMnA1TrTCHSBM1TEKyAoVpjbEm73m6Btrzocp0=
+	t=1729088647; cv=none; b=tjZ5sx/WfktmbpnyKVy0k+7U12CosUb/cwLPBm9+dZACisz5+G/SC8aE62DxgVX25sDY3aCGmuMcE4lrydUCk54U/NK3kIXkMNFg28TG2WRP0qs0wAjEARiLvpt+cZCspl8gom3XX6x0x12wnOvhID5QvlF4Gs+7NSvJIKs/5xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729088601; c=relaxed/simple;
-	bh=dCqLV0KeLQh0el4YRKcSIbmce5c8HKKiys28RGREd/g=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=n2bU5ivh6daqU6vzKSTB3oJO1sMMOu9klDzOZU0EYNM1e1O08V/A0ruFVfKWE5CsLk2oTe/jXgcozCqmaQ8Vv9gVsZWKfQvgEOujHmE6pmBm/GyA7MfABHUM6qL7joDKeNCcBDiQMSpN+tnsWhJUKruJR6J7/ZhuqBmcsrlJls0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Spkcdxyb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729088598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R/KW/XoaEe9YPin6L1l6dmEf2XR0ptPwsvepwftJ/SU=;
-	b=SpkcdxybYgujutRrD/aCq4mLTFZZBikZjTiskp5jE9YLpGqhsDqVsWW+pk2v9SvSVAUUaj
-	OWZbVVKXlKJlfF+klRH0VzWnI+PeN4Q3MW07K1cGJfezima8/jb7St+/FPvvWZFvZbrb9l
-	eTbpG3+Ih3vzRFtgs/V6dtzqXmZDdws=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-318-3eutnRxSPhayrhfp-Ls0Sg-1; Wed, 16 Oct 2024 10:23:17 -0400
-X-MC-Unique: 3eutnRxSPhayrhfp-Ls0Sg-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbd3754f4fso94212666d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:23:17 -0700 (PDT)
+	s=arc-20240116; t=1729088647; c=relaxed/simple;
+	bh=vPgCKlp/fkdCqoo25YhOZH+lCfLuAqTff6zAEe4hdhc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eMWmtVd1Rk5CC0Z2zM6dCb6SXafKrH27a+IRatHgbLau3PDA+Ft0ud+dlUQH6ZjFdqcc0SjiibepqGP3R3NIssYdKysLcBMlh07x6R2g0uQrpAglxMvwoL03KVBnYHYVAQ+PZsB/cvACIRyMZvFa3FnZN8Fku3e0ySOUW167yk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Gp2v7ciE; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d325beee2so4020205f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1729088643; x=1729693443; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xqaxYfVYHtTEYM/dunJ7hIKbCemvQpX6A9xYcV7v7Jo=;
+        b=Gp2v7ciEJhLGDLCNQQnX820T1pHs4luaCKZcKeynI9F22H31VBG16c6Hoy4pKrywdF
+         TUFvDwc03mTdBtSwDX+m7x3LLJjgr+KPLCu0AUqgqJH8KldI5YauoBYFjUiIAdvc1kj2
+         48N3nh1njD+uL0uCFLc1iqGKuO//b+ywvgUuopL7x1eC1K7nGlCaeFN+ao4tcQhhtMZG
+         Jw8P6WZn9daE6w4i+03BJf/M2o7QFFeYUvzkCoWiE6SUw+MGtEn8F5KwzzMEj5nIP5cb
+         7PTT8txZpSBu+bHWSQ55g+QQI3iN2hdm45GzHpdME/6eE9OtKD4zhz1EGyNF6WTxJknp
+         xlzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729088596; x=1729693396;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/KW/XoaEe9YPin6L1l6dmEf2XR0ptPwsvepwftJ/SU=;
-        b=VWMZws4aLv5LXQRT5GbVbDFZEB01N2yW6Q9KEyj+JN/BK3osXmcVuKsW11zqF9cbHL
-         euM4gKLKGyUuAtI/+jxQfwBN1gAq/5c3S8XzvCfUFMLG1AfPdzhS2KghcyznfmhQV5q6
-         CT08qIzUQ1hbHamJOfB3cu9iW4EnMJWeoKjqPTQhbKpNXl/ygsJKRGr1d6TJrylCgOeY
-         n93A+nrCfkmVw2kLwx7I3NuHPBlRXwJ8PjtWcB2Hp56mDQMydaO8OiY4lE7sloT2ZaxH
-         q55VwzKeT9RBeSNYVONPr1HzaMHekngdqljmnAhksuVLWGmIGqdnrPd6D2QlrNce+upx
-         QPLQ==
-X-Gm-Message-State: AOJu0Yzmo6aVD8831xl2nPEMg7xPxuTom2EEOLVQ5FLL/N7f3j5azNao
-	uRTB0F5s8preqwvj1ISfYjby0qsLohT20BCPpw65Pi2ChdggoqTU/suYOncgrrqIYb3jqk6sr+u
-	d5oAc1GDvEJOmyZq9qmA5RD0Did0yZzCbBAJRtes9z2yS7gZKZit7Z7A02JNyf87fZIuoVAs3
-X-Received: by 2002:a05:6214:2f10:b0:6c3:5496:3e06 with SMTP id 6a1803df08f44-6cbefffdfe6mr302613966d6.10.1729088595817;
-        Wed, 16 Oct 2024 07:23:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlmSxZTKIDajxln309baSOeFhzJ8LjphoJlbw+lLiJL6M7eRNZKov97jwPhJoCscR7o086vw==
-X-Received: by 2002:a05:6214:2f10:b0:6c3:5496:3e06 with SMTP id 6a1803df08f44-6cbefffdfe6mr302613556d6.10.1729088595418;
-        Wed, 16 Oct 2024 07:23:15 -0700 (PDT)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc2295b8fbsm18467386d6.75.2024.10.16.07.23.14
+        d=1e100.net; s=20230601; t=1729088643; x=1729693443;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xqaxYfVYHtTEYM/dunJ7hIKbCemvQpX6A9xYcV7v7Jo=;
+        b=Pl1CFcSHAlWPpdXg+Ei1C9CmHpz8TWfudm4baZfg3UBiwasFxWEwW1r6EvRsmzOEv9
+         ZS6z6UXhskVCg0wf1UWTp6SZ53hdnyqq2NUEO1LDx9NeY3wiu/zxCiKo2nE20YXzf6T/
+         gN9cwsfl85gAKVsEooYuU0xoVt9c7qCYxVMUOgqUDCwstaEPcMKvIjAD/wZcYoattac6
+         v1k+QPcsZdhxfC88TcRBDtf2NrVNTsw7Ejai1I1djjdA+L6CsH1Ps8x3LRO+vN281hdS
+         wasFfCvWAifjZ6c2YvFUKt4F/4g4ODPHn/mGWcA/jCLCRm0CqqH2i8HrMMhnD+ok1SFO
+         kBcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrkyU+tulAMZuYL8e38GY0y6ThQZ4HjsjFWmMIgatf0t8NerOu5QwMJg3k9pV1qHCeTCrsztkwcxZxcdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfp3r3esK741KngN2OZfBDJW/R+Jb87AI36psG3YAn4Zz3Z6Op
+	sV7HbMUioZM4CtCyddSOED5Gh5GQrfLJeHFl0uVfdbRHKqcLl/+LbYNeXqfWotY=
+X-Google-Smtp-Source: AGHT+IFuG8N98Jj4LDTvTNhKOp3goLcQvvJir6NR+6bYYNpkfJTPphpDDkVGXyDbvEj0os7chUA1Sg==
+X-Received: by 2002:a5d:5310:0:b0:37d:481e:8e29 with SMTP id ffacd0b85a97d-37d5ff3020emr8831268f8f.25.1729088643169;
+        Wed, 16 Oct 2024 07:24:03 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:e5be:11e:5baa:6774? ([2001:67c:2fbc:1:e5be:11e:5baa:6774])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf819dsm4413626f8f.85.2024.10.16.07.24.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 07:23:14 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <7f7b277a-7019-4bf4-b100-0505c6ce9737@redhat.com>
-Date: Wed, 16 Oct 2024 10:23:14 -0400
+        Wed, 16 Oct 2024 07:24:02 -0700 (PDT)
+Message-ID: <e8e46092-c954-4579-9bdc-563bf30f68f5@openvpn.net>
+Date: Wed, 16 Oct 2024 16:24:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,212 +76,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/2] rwsem: introduce upgrade_read interface
-To: lizhe.67@bytedance.com, peterz@infradead.org, mingo@redhat.com,
- will@kernel.org, boqun.feng@gmail.com, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20241016043600.35139-1-lizhe.67@bytedance.com>
- <20241016043600.35139-2-lizhe.67@bytedance.com>
+Subject: Re: [PATCH net-next v9 04/23] ovpn: add basic interface
+ creation/destruction/management routines
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241016-b4-ovpn-v9-0-aabe9d225ad5@openvpn.net>
+ <20241016-b4-ovpn-v9-4-aabe9d225ad5@openvpn.net>
+ <Zw947Jb637o-I4RV@nanopsycho.orion>
 Content-Language: en-US
-In-Reply-To: <20241016043600.35139-2-lizhe.67@bytedance.com>
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <Zw947Jb637o-I4RV@nanopsycho.orion>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+On 16/10/2024 10:27, Jiri Pirko wrote:
+> Wed, Oct 16, 2024 at 03:03:04AM CEST, antonio@openvpn.net wrote:
+>> Add basic infrastructure for handling ovpn interfaces.
+>>
+>> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+>> ---
+>> drivers/net/ovpn/main.c       | 115 ++++++++++++++++++++++++++++++++++++++++--
+>> drivers/net/ovpn/main.h       |   7 +++
+>> drivers/net/ovpn/ovpnstruct.h |   8 +++
+>> drivers/net/ovpn/packet.h     |  40 +++++++++++++++
+>> include/uapi/linux/if_link.h  |  15 ++++++
+>> 5 files changed, 180 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
+>> index d5bdb0055f4dd3a6e32dc6e792bed1e7fd59e101..eead7677b8239eb3c48bb26ca95492d88512b8d4 100644
+>> --- a/drivers/net/ovpn/main.c
+>> +++ b/drivers/net/ovpn/main.c
+>> @@ -10,18 +10,52 @@
+>> #include <linux/genetlink.h>
+>> #include <linux/module.h>
+>> #include <linux/netdevice.h>
+>> +#include <linux/inetdevice.h>
+>> +#include <net/ip.h>
+>> #include <net/rtnetlink.h>
+>> -#include <uapi/linux/ovpn.h>
+>> +#include <uapi/linux/if_arp.h>
+>>
+>> #include "ovpnstruct.h"
+>> #include "main.h"
+>> #include "netlink.h"
+>> #include "io.h"
+>> +#include "packet.h"
+>>
+>> /* Driver info */
+>> #define DRV_DESCRIPTION	"OpenVPN data channel offload (ovpn)"
+>> #define DRV_COPYRIGHT	"(C) 2020-2024 OpenVPN, Inc."
+>>
+>> +static void ovpn_struct_free(struct net_device *net)
+>> +{
+>> +}
+>> +
+>> +static int ovpn_net_open(struct net_device *dev)
+>> +{
+>> +	netif_tx_start_all_queues(dev);
+>> +	return 0;
+>> +}
+>> +
+>> +static int ovpn_net_stop(struct net_device *dev)
+>> +{
+>> +	netif_tx_stop_all_queues(dev);
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct net_device_ops ovpn_netdev_ops = {
+>> +	.ndo_open		= ovpn_net_open,
+>> +	.ndo_stop		= ovpn_net_stop,
+>> +	.ndo_start_xmit		= ovpn_net_xmit,
+>> +};
+>> +
+>> +static const struct device_type ovpn_type = {
+>> +	.name = OVPN_FAMILY_NAME,
+>> +};
+>> +
+>> +static const struct nla_policy ovpn_policy[IFLA_OVPN_MAX + 1] = {
+>> +	[IFLA_OVPN_MODE] = NLA_POLICY_RANGE(NLA_U8, OVPN_MODE_P2P,
+>> +					    OVPN_MODE_MP),
+>> +};
+>> +
+>> /**
+>>   * ovpn_dev_is_valid - check if the netdevice is of type 'ovpn'
+>>   * @dev: the interface to check
+>> @@ -33,16 +67,76 @@ bool ovpn_dev_is_valid(const struct net_device *dev)
+>> 	return dev->netdev_ops->ndo_start_xmit == ovpn_net_xmit;
+>> }
+>>
+>> +static void ovpn_setup(struct net_device *dev)
+>> +{
+>> +	/* compute the overhead considering AEAD encryption */
+>> +	const int overhead = sizeof(u32) + NONCE_WIRE_SIZE + 16 +
+>> +			     sizeof(struct udphdr) +
+>> +			     max(sizeof(struct ipv6hdr), sizeof(struct iphdr));
+>> +
+>> +	netdev_features_t feat = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM |
+>> +				 NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
+>> +				 NETIF_F_HIGHDMA;
+>> +
+>> +	dev->needs_free_netdev = true;
+>> +
+>> +	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
+>> +
+>> +	dev->netdev_ops = &ovpn_netdev_ops;
+>> +
+>> +	dev->priv_destructor = ovpn_struct_free;
+>> +
+>> +	dev->hard_header_len = 0;
+>> +	dev->addr_len = 0;
+>> +	dev->mtu = ETH_DATA_LEN - overhead;
+>> +	dev->min_mtu = IPV4_MIN_MTU;
+>> +	dev->max_mtu = IP_MAX_MTU - overhead;
+>> +
+>> +	dev->type = ARPHRD_NONE;
+>> +	dev->flags = IFF_POINTOPOINT | IFF_NOARP;
+>> +	dev->priv_flags |= IFF_NO_QUEUE;
+>> +
+>> +	dev->lltx = true;
+>> +	dev->features |= feat;
+>> +	dev->hw_features |= feat;
+>> +	dev->hw_enc_features |= feat;
+>> +
+>> +	dev->needed_headroom = OVPN_HEAD_ROOM;
+>> +	dev->needed_tailroom = OVPN_MAX_PADDING;
+>> +
+>> +	SET_NETDEV_DEVTYPE(dev, &ovpn_type);
+>> +}
+>> +
+>> static int ovpn_newlink(struct net *src_net, struct net_device *dev,
+>> 			struct nlattr *tb[], struct nlattr *data[],
+>> 			struct netlink_ext_ack *extack)
+>> {
+>> -	return -EOPNOTSUPP;
+>> +	struct ovpn_struct *ovpn = netdev_priv(dev);
+>> +	enum ovpn_mode mode = OVPN_MODE_P2P;
+>> +
+>> +	if (data && data[IFLA_OVPN_MODE]) {
+>> +		mode = nla_get_u8(data[IFLA_OVPN_MODE]);
+> 
+> Some sanity check perhaps? "validate" op is here for that purpose.
 
-On 10/16/24 12:35 AM, lizhe.67@bytedance.com wrote:
-> From: Li Zhe <lizhe.67@bytedance.com>
->
-> Introduce a new rwsem interface upgrade_read(). We can call it
-> to upgrade the lock into write rwsem lock after we get read lock.
-> This interface will wait for all readers to exit before obtaining
-> the write lock. In addition, this interface has a higher priority
-> than any process waiting for the write lock and subsequent threads
-> that want to obtain the read lock.
->
-> Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> ---
->   include/linux/rwsem.h  |  1 +
->   kernel/locking/rwsem.c | 87 ++++++++++++++++++++++++++++++++++++++++--
->   2 files changed, 85 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-> index c8b543d428b0..90183ab5ea79 100644
-> --- a/include/linux/rwsem.h
-> +++ b/include/linux/rwsem.h
-> @@ -249,6 +249,7 @@ DEFINE_GUARD_COND(rwsem_write, _try, down_write_trylock(_T))
->    * downgrade write lock to read lock
->    */
->   extern void downgrade_write(struct rw_semaphore *sem);
-> +extern int upgrade_read(struct rw_semaphore *sem);
->   
->   #ifdef CONFIG_DEBUG_LOCK_ALLOC
->   /*
-> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-> index 2bbb6eca5144..0583e1be3dbf 100644
-> --- a/kernel/locking/rwsem.c
-> +++ b/kernel/locking/rwsem.c
-> @@ -37,6 +37,7 @@
->    * meanings when set.
->    *  - Bit 0: RWSEM_READER_OWNED - rwsem may be owned by readers (just a hint)
->    *  - Bit 1: RWSEM_NONSPINNABLE - Cannot spin on a reader-owned lock
-> + *  - Bit 2: RWSEM_UPGRADING    - doing upgrade read process
->    *
->    * When the rwsem is reader-owned and a spinning writer has timed out,
->    * the nonspinnable bit will be set to disable optimistic spinning.
-> @@ -62,7 +63,8 @@
->    */
->   #define RWSEM_READER_OWNED	(1UL << 0)
->   #define RWSEM_NONSPINNABLE	(1UL << 1)
-> -#define RWSEM_OWNER_FLAGS_MASK	(RWSEM_READER_OWNED | RWSEM_NONSPINNABLE)
-> +#define RWSEM_UPGRADING		(1UL << 2)
-> +#define RWSEM_OWNER_FLAGS_MASK	(RWSEM_READER_OWNED | RWSEM_NONSPINNABLE | RWSEM_UPGRADING)
->   
->   #ifdef CONFIG_DEBUG_RWSEMS
->   # define DEBUG_RWSEMS_WARN_ON(c, sem)	do {			\
-> @@ -93,7 +95,8 @@
->    * Bit  0    - writer locked bit
->    * Bit  1    - waiters present bit
->    * Bit  2    - lock handoff bit
-> - * Bits 3-7  - reserved
-> + * Bit  3    - upgrade read bit
-> + * Bits 4-7  - reserved
->    * Bits 8-30 - 23-bit reader count
->    * Bit  31   - read fail bit
->    *
-> @@ -117,6 +120,7 @@
->   #define RWSEM_WRITER_LOCKED	(1UL << 0)
->   #define RWSEM_FLAG_WAITERS	(1UL << 1)
->   #define RWSEM_FLAG_HANDOFF	(1UL << 2)
-> +#define RWSEM_FLAG_UPGRADE_READ	(1UL << 3)
->   #define RWSEM_FLAG_READFAIL	(1UL << (BITS_PER_LONG - 1))
->   
->   #define RWSEM_READER_SHIFT	8
-> @@ -143,6 +147,13 @@ static inline void rwsem_set_owner(struct rw_semaphore *sem)
->   	atomic_long_set(&sem->owner, (long)current);
->   }
->   
-> +static inline void rwsem_set_owner_upgrade(struct rw_semaphore *sem)
-> +{
-> +	lockdep_assert_preemption_disabled();
-> +	atomic_long_set(&sem->owner, (long)current | RWSEM_UPGRADING |
-> +			RWSEM_READER_OWNED | RWSEM_NONSPINNABLE);
-> +}
+Isn't the parsing happening here enough
 
-Because of possible  racing between 2 competing upgraders, read lock 
-owner setting has to be atomic to avoid one overwriting the others.
+https://elixir.bootlin.com/linux/v6.12-rc3/source/net/core/rtnetlink.c#L3659
 
+The IFINFO_DATA is parsed using the policy I provided (which comes with 
+limits for the mode attribute).
 
-> +
->   static inline void rwsem_clear_owner(struct rw_semaphore *sem)
->   {
->   	lockdep_assert_preemption_disabled();
-> @@ -201,7 +212,7 @@ static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
->   	 */
->   	long count = atomic_long_read(&sem->count);
->   
-> -	if (count & RWSEM_WRITER_MASK)
-> +	if ((count & RWSEM_WRITER_MASK) && !(count & RWSEM_FLAG_UPGRADE_READ))
->   		return false;
->   	return rwsem_test_oflags(sem, RWSEM_READER_OWNED);
->   }
-> @@ -1336,6 +1347,8 @@ static inline int __down_write_trylock(struct rw_semaphore *sem)
->   static inline void __up_read(struct rw_semaphore *sem)
->   {
->   	long tmp;
-> +	unsigned long flags;
-> +	struct task_struct *owner;
->   
->   	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
->   	DEBUG_RWSEMS_WARN_ON(!is_rwsem_reader_owned(sem), sem);
-> @@ -1349,6 +1362,9 @@ static inline void __up_read(struct rw_semaphore *sem)
->   		clear_nonspinnable(sem);
->   		rwsem_wake(sem);
->   	}
-> +	owner = rwsem_owner_flags(sem, &flags);
-> +	if (unlikely(!(tmp & RWSEM_READER_MASK) && (flags & RWSEM_UPGRADING)))
-> +		wake_up_process(owner);
->   	preempt_enable();
->   }
->   
-> @@ -1641,6 +1657,71 @@ void downgrade_write(struct rw_semaphore *sem)
->   }
->   EXPORT_SYMBOL(downgrade_write);
->   
-> +static inline void rwsem_clear_upgrade_flag(struct rw_semaphore *sem)
-> +{
-> +	atomic_long_andnot(RWSEM_FLAG_UPGRADE_READ, &sem->count);
-> +}
-> +
-> +/*
-> + * upgrade read lock to write lock
-> + */
-> +static inline int __upgrade_read(struct rw_semaphore *sem)
-> +{
-> +	long tmp;
-> +
-> +	preempt_disable();
-> +
-> +	tmp = atomic_long_read(&sem->count);
-> +	do {
-> +		if (tmp & (RWSEM_WRITER_MASK | RWSEM_FLAG_UPGRADE_READ)) {
-> +			preempt_enable();
-> +			return -EBUSY;
-> +		}
-> +	} while (!atomic_long_try_cmpxchg(&sem->count, &tmp,
-> +		tmp + RWSEM_FLAG_UPGRADE_READ + RWSEM_WRITER_LOCKED - RWSEM_READER_BIAS));
-> +
-> +	if ((tmp & RWSEM_READER_MASK) == RWSEM_READER_BIAS) {
-> +		/* fast path */
-> +		DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
-> +		rwsem_clear_upgrade_flag(sem);
-> +		rwsem_set_owner(sem);
-> +		preempt_enable();
-> +		return 0;
-> +	}
-> +	/* slow path */
-> +	raw_spin_lock_irq(&sem->wait_lock);
-> +	rwsem_set_owner_upgrade(sem);
-> +
-> +	set_current_state(TASK_UNINTERRUPTIBLE);
-> +
-> +	for (;;) {
-> +		if (!(atomic_long_read(&sem->count) & RWSEM_READER_MASK))
-> +			break;
-> +		raw_spin_unlock_irq(&sem->wait_lock);
-> +		schedule_preempt_disabled();
-> +		set_current_state(TASK_UNINTERRUPTIBLE);
-> +		raw_spin_lock_irq(&sem->wait_lock);
-> +	}
-> +
-> +	rwsem_clear_upgrade_flag(sem);
-> +	rwsem_set_owner(sem);
-> +	__set_current_state(TASK_RUNNING);
-> +	raw_spin_unlock_irq(&sem->wait_lock);
-> +	preempt_enable();
-> +	return 0;
-> +}
-> +
-> +/*
-> + * upgrade read lock to write lock
-> + *
-> + * Return: 0 on success, error code on failure
-> + */
-> +int upgrade_read(struct rw_semaphore *sem)
-> +{
-> +	return __upgrade_read(sem);
-> +}
-> +EXPORT_SYMBOL(upgrade_read);
+Or am I misreading the code and I still need to provide an 
+implementation for .validate?
 
-This new interface should have an API similar to a trylock. True if 
-successful, false otherwise. I like the read_try_upgrade() name.
+Regards,
 
-Another alternative that I have been thinking about is a down_read() 
-variant with intention to upgrade later. This will ensure that only one 
-active reader is allowed to upgrade later. With this, upgrade_read() 
-will always succeed, maybe with some sleeping, as long as the correct 
-down_read() is used.
+> 
+> 
+>> +		netdev_dbg(dev, "setting device mode: %u\n", mode);
+>> +	}
+>> +
+>> +	ovpn->dev = dev;
+>> +	ovpn->mode = mode;
+>> +
+>> +	/* turn carrier explicitly off after registration, this way state is
+>> +	 * clearly defined
+>> +	 */
+>> +	netif_carrier_off(dev);
+>> +
+>> +	return register_netdevice(dev);
+> 
+> [...]
 
-Cheers,
-Longman
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
 
