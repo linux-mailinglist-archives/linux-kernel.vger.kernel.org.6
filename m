@@ -1,325 +1,221 @@
-Return-Path: <linux-kernel+bounces-367512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF369A0344
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF159A0353
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B261289598
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 922261C28107
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAC81D365C;
-	Wed, 16 Oct 2024 07:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71BD1D174C;
+	Wed, 16 Oct 2024 07:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcubLegV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="depyvZa7"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B741D1E65
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C1F1C4A3B;
+	Wed, 16 Oct 2024 07:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065253; cv=none; b=Ws9ImslWm+tikDDtls7NVY43NpTeuPL1aF9lz4cLz7uDgZPsmfr+Pehtvi3cHbLVITj5ywaIazCBC/vGVuFkRFY9ta6OyIYm+SCKMGvAZnPmXOyvJ0KXDQCVm1mIZm45zJeqiBkAGhQm29HXIW2PlZEnLm9fWD7ONHEr8AIhtgU=
+	t=1729065416; cv=none; b=RULnEJxZLHxTYsfROPyfVwPs1l4IiVZjagt4smhiQ2QsrG8D7/zj8yQ9g5Dhq5C4+RrRMotNKk9q8zBM1jnbLKBDhqy2blaWrLhiMd0RdN/K6KFly1EP1yJnyRdlblNH/IXSKNGCSaQDRP4rMFtVmadVohpDEvBRIXkJ7UT163c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065253; c=relaxed/simple;
-	bh=6GLNfhT3dwFCU0ldrvAxlBEYAVhF9inTvSCRJuALhUM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OnkhYIH3yvwotxV3IjUBpFG5yDM5MR4SbjwHYuDHv19Cdf2bMIOyxICAXdGp9/j7Bmx87S3CsGiJMpw4ZYXTBWb4IQ9L3j8hFfAab/0MF4S0Uevxqvn7zCK0h/MAnSj/rVg1SsFXtiyQxIDCOFZWYMChKZDQvRHNPbFuror89Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcubLegV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0ED2EC4CEE1;
-	Wed, 16 Oct 2024 07:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729065253;
-	bh=6GLNfhT3dwFCU0ldrvAxlBEYAVhF9inTvSCRJuALhUM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RcubLegV69nSYpNMFnLbBsCv8k9HLfxrkW9RxkM5SGKPouHMPfq6VY6FlriMWQ2f+
-	 WIao5bt1lDyzAOlGXv4wAw6OgJ2+Nidv3dLQ+ZGXcUZ595d8C32TxejRDslvtsqlcA
-	 wTp3yxXYw3UwIok4HUz8ycO2uZrYgv44VchaTx6fzveYjLEtfcTF8ZJxp/wRz2b89w
-	 UlLFy4c8iHlUmVGVvLI7B7AW7j7ljqkDckJNiP3avA//llOFkOPfiz76aE6tepgQjT
-	 vro+McEqbRPs30ytrXJpLW79OTWLY8IPlEokqULOKX27aIkgMTb5SGBIJKptcon8ry
-	 475zkvpmd2jmQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0774BD20684;
-	Wed, 16 Oct 2024 07:54:13 +0000 (UTC)
-From: Hermes Wu via B4 Relay <devnull+Hermes.wu.ite.com.tw@kernel.org>
-Date: Wed, 16 Oct 2024 15:54:22 +0800
-Subject: [PATCH v6 10/10] drm/bridge: it6505: add I2C functionality on AUX
+	s=arc-20240116; t=1729065416; c=relaxed/simple;
+	bh=YqL74olZT3BLUQw+1lIKGl4Y46U0hCeVmqVpRVGkuRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=I6QIeyNuWdy11zbET4QCjPYBN7qRKOy5vAR3TP8koAQa9AcvSsxUt08BWgHN5opT+969AHXTwYtOjB/ytAHF4VLwzv4NzUlDYfNobfMp7M5003gLxL8uodRuT6fGhOkwvSy6CkCFq7tB2YtXDyIV3mtOeAENufoRTk6APu1SvxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=depyvZa7; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G6skv5018459;
+	Wed, 16 Oct 2024 09:56:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	h6vGd2oGBXjp3LNF/ZKw/vXaPHEfmCmhPVsuuoUPWew=; b=depyvZa7mGSXdNw8
+	yhclXZax0Axo/lHoHn1i24hp+ok9KMlz+PK6qfri9cPONBSVd7JHVCQh4CdyDXWT
+	D4sIa/LBgGnOZ7yXGdqDQ+MRmb1jgbs0dlHlCcizb6GtxFGPq7jXNJslyhoSq8p1
+	z6CvY5QmMo/nBblCTm9uX6eKORPLEaUWbeFH65iAW3LbbRsyb2hOZ/gRcG0t5d8i
+	a0N79pI/rDFQoqUl3+3oHX3afqlL6BWkKCjxSz1ObcSGFWkRKjFrQ6bPeVJC242P
+	jiT/TyhpFZaNoAnv65F/t9XmptqrR+cWArmmwrlNR1gADK99hVUpGFlktYg4P6Ys
+	VsEg7Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42a8mv8ah1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 09:56:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CBC414004B;
+	Wed, 16 Oct 2024 09:55:16 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B0F6239453;
+	Wed, 16 Oct 2024 09:54:28 +0200 (CEST)
+Received: from [10.48.86.225] (10.48.86.225) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 16 Oct
+ 2024 09:54:27 +0200
+Message-ID: <90ce2c1e-6e8b-43ba-9313-8b5560cb8e4d@foss.st.com>
+Date: Wed, 16 Oct 2024 09:54:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-upstream-v6-v6-10-4d93a0c46de1@ite.com.tw>
-References: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
-In-Reply-To: <20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Pin-yen Lin <treapking@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>, 
- Hermes Wu <Hermes.wu@ite.com.tw>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729065263; l=6869;
- i=Hermes.wu@ite.com.tw; s=20241016; h=from:subject:message-id;
- bh=gC24eYRJHnPLzseZNt75kdykjMNImvebHR8wNIWmjqI=;
- b=/kQxXDYIYkHFaB4DOWo4CSEL55oW2OyDK3DQrzHNVSJCp0K1DYMGJGZJj/9YfmCW5kfLW1v9c
- MPetwk5YNYxA6Pidpt1t3vCqVBqFiEV+yg5TJ2I5ixWB8Yr7e7zjvmQ
-X-Developer-Key: i=Hermes.wu@ite.com.tw; a=ed25519;
- pk=kV18uQEXox+1WccdQceCbMlJKN+BBNUk3N8VsoULcQ0=
-X-Endpoint-Received: by B4 Relay for Hermes.wu@ite.com.tw/20241016 with
- auth_id=250
-X-Original-From: Hermes Wu <Hermes.wu@ite.com.tw>
-Reply-To: Hermes.wu@ite.com.tw
-
-From: Hermes Wu <Hermes.wu@ite.com.tw>
-
-DisplayPort AUX protocol supports I2C transport which is capable of
-reading EDID or supports MCCS.
-
-In drm_dp_helper, drm_dp_i2c_xfer() packs I2C requests into a
-sequence of AUX requests.
-it6505_aux_i2c_operation() is implemented to match drm_dp_i2c_xfer()
-operactions.
-it6505_aux_i2c_transfer() adds I2C functionality
-for it6505_aux_transfer().
-
-Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
----
- drivers/gpu/drm/bridge/ite-it6505.c | 177 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 175 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 4fc2147e9788501f0161180fc865072ab965ecbf..04e17737f0d7228e5178984aefe124f88bce0825 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -267,6 +267,18 @@
- #define REG_SSC_CTRL1 0x189
- #define REG_SSC_CTRL2 0x18A
- 
-+#define REG_AUX_USER_CTRL 0x190
-+#define EN_USER_AUX BIT(0)
-+#define USER_AUX_DONE BIT(1)
-+#define AUX_EVENT BIT(4)
-+
-+#define REG_AUX_USER_DATA_REC 0x191
-+#define M_AUX_IN_REC   0xF0
-+#define M_AUX_OUT_REC  0x0F
-+
-+#define REG_AUX_USER_REPLY 0x19A
-+#define REG_AUX_USER_RXB(n) (n + 0x19B)
-+
- #define RBR DP_LINK_BW_1_62
- #define HBR DP_LINK_BW_2_7
- #define HBR2 DP_LINK_BW_5_4
-@@ -302,6 +314,8 @@
- #define MAX_EQ_LEVEL 0x03
- #define AUX_WAIT_TIMEOUT_MS 15
- #define AUX_FIFO_MAX_SIZE 16
-+#define AUX_I2C_MAX_SIZE 4
-+#define AUX_I2C_DEFER_RETRY 4
- #define PIXEL_CLK_DELAY 1
- #define PIXEL_CLK_INVERSE 0
- #define ADJUST_PHASE_THRESHOLD 80000
-@@ -324,7 +338,12 @@
- enum aux_cmd_type {
- 	CMD_AUX_NATIVE_READ = 0x0,
- 	CMD_AUX_NATIVE_WRITE = 0x5,
-+	CMD_AUX_GI2C_ADR = 0x08,
-+	CMD_AUX_GI2C_READ = 0x09,
-+	CMD_AUX_GI2C_WRITE = 0x0A,
- 	CMD_AUX_I2C_EDID_READ = 0xB,
-+	CMD_AUX_I2C_READ = 0x0D,
-+	CMD_AUX_I2C_WRITE = 0x0C,
- 
- 	/* KSV read with AUX FIFO extend from CMD_AUX_NATIVE_READ*/
- 	CMD_AUX_GET_KSV_LIST = 0x10,
-@@ -1106,6 +1125,161 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
- 	return ret;
- }
- 
-+static bool it6505_aux_i2c_reply_defer(u8 reply)
-+{
-+	if (reply == DP_AUX_NATIVE_REPLY_DEFER || reply == DP_AUX_I2C_REPLY_DEFER)
-+		return true;
-+	return false;
-+}
-+
-+static bool it6505_aux_i2c_reply_nack(u8 reply)
-+{
-+	if (reply == DP_AUX_NATIVE_REPLY_NACK || reply == DP_AUX_I2C_REPLY_NACK)
-+		return true;
-+	return false;
-+}
-+
-+static int it6505_aux_i2c_wait(struct it6505 *it6505, u8 *reply)
-+{
-+	int err = 0;
-+	unsigned long timeout;
-+	struct device *dev = it6505->dev;
-+
-+	timeout = jiffies + msecs_to_jiffies(AUX_WAIT_TIMEOUT_MS) + 1;
-+
-+	do {
-+		if (it6505_read(it6505, REG_AUX_USER_CTRL) & AUX_EVENT)
-+			break;
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(dev, "Timed out waiting AUX I2C, BUSY = %X\n",
-+				it6505_aux_op_finished(it6505));
-+			err = -ETIMEDOUT;
-+			goto end_aux_i2c_wait;
-+		}
-+		usleep_range(300, 800);
-+	} while (!it6505_aux_op_finished(it6505));
-+
-+	*reply = it6505_read(it6505, REG_AUX_USER_REPLY) >> 4;
-+
-+	if (*reply == 0)
-+		goto end_aux_i2c_wait;
-+
-+	if (it6505_aux_i2c_reply_defer(*reply))
-+		err = -EBUSY;
-+	else if (it6505_aux_i2c_reply_nack(*reply))
-+		err = -ENXIO;
-+
-+end_aux_i2c_wait:
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, USER_AUX_DONE, USER_AUX_DONE);
-+	return err;
-+}
-+
-+static int it6505_aux_i2c_readb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int ret, i;
-+	int retry;
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_READ);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+		if (it6505_aux_i2c_reply_defer(*reply))
-+			continue;
-+		if (ret >= 0)
-+			break;
-+	}
-+
-+	for (i = 0; i < size; i++)
-+		buf[i] = it6505_read(it6505, REG_AUX_USER_RXB(0 + i));
-+
-+	return size;
-+}
-+
-+static int it6505_aux_i2c_writeb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int i, ret;
-+	int retry;
-+
-+	for (i = 0; i < size; i++)
-+		it6505_write(it6505, REG_AUX_OUT_DATA0 + i, buf[i]);
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_WRITE);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+		if (it6505_aux_i2c_reply_defer(*reply))
-+			continue;
-+		if (ret >= 0)
-+			break;
-+	}
-+	return size;
-+}
-+
-+static ssize_t it6505_aux_i2c_operation(struct it6505 *it6505,
-+					struct drm_dp_aux_msg *msg)
-+{
-+	int ret;
-+	ssize_t request_size, data_cnt = 0;
-+	u8 *buffer = msg->buffer;
-+
-+	/* set AUX user mode */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_USER_MODE | AUX_NO_SEGMENT_WR, AUX_USER_MODE);
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, EN_USER_AUX);
-+	/* clear AUX FIFO */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO);
-+
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO, 0x00);
-+
-+	it6505_write(it6505, REG_AUX_ADR_0_7, 0x00);
-+	it6505_write(it6505, REG_AUX_ADR_8_15, msg->address << 1);
-+
-+	if (msg->size == 0) {
-+		/* IIC Start/STOP dummy write */
-+		it6505_write(it6505, REG_AUX_ADR_16_19, msg->request);
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_ADR);
-+		ret = it6505_aux_i2c_wait(it6505, &msg->reply);
-+		goto end_aux_i2c_transfer;
-+	}
-+
-+	/* IIC data transfer */
-+	data_cnt = 0;
-+	do {
-+		request_size = min_t(ssize_t, msg->size - data_cnt, AUX_I2C_MAX_SIZE);
-+		it6505_write(it6505, REG_AUX_ADR_16_19,
-+			     msg->request | ((request_size - 1) << 4));
-+		if ((msg->request & DP_AUX_I2C_READ) == DP_AUX_I2C_READ)
-+			ret = it6505_aux_i2c_readb(it6505, &buffer[data_cnt],
-+						   request_size, &msg->reply);
-+		else
-+			ret = it6505_aux_i2c_writeb(it6505, &buffer[data_cnt],
-+						    request_size, &msg->reply);
-+
-+		if (ret < 0)
-+			goto end_aux_i2c_transfer;
-+
-+		data_cnt += request_size;
-+	} while (data_cnt < msg->size);
-+	ret = data_cnt;
-+end_aux_i2c_transfer:
-+
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, 0);
-+	it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, 0);
-+	return ret;
-+}
-+
-+static ssize_t it6505_aux_i2c_transfer(struct drm_dp_aux *aux,
-+				       struct drm_dp_aux_msg *msg)
-+{
-+	struct it6505 *it6505 = container_of(aux, struct it6505, aux);
-+
-+	guard(mutex)(&it6505->aux_lock);
-+	return it6505_aux_i2c_operation(it6505, msg);
-+}
-+
- static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 				   struct drm_dp_aux_msg *msg)
- {
-@@ -1115,9 +1289,8 @@ static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 	int ret;
- 	enum aux_cmd_reply reply;
- 
--	/* IT6505 doesn't support arbitrary I2C read / write. */
- 	if (is_i2c)
--		return -EINVAL;
-+		return it6505_aux_i2c_transfer(aux, msg);
- 
- 	switch (msg->request) {
- 	case DP_AUX_NATIVE_READ:
-
--- 
-2.34.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
+ platforms
+To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
+        Herbert
+ Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
+ <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
+ <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
+ <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
+ <8c13b0aa-7fb1-493c-9abc-5e5cfd982855@denx.de>
+ <d862765e-e396-4f7c-97ff-76df9aa03216@foss.st.com>
+ <dca83197-3484-4d6b-8507-118bf9e80e19@denx.de>
+ <b06b5d09-190b-4567-aecd-4be1f1dee172@foss.st.com>
+ <e5a21bb8-00c3-41f1-9a4d-856eb1465d45@denx.de>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <e5a21bb8-00c3-41f1-9a4d-856eb1465d45@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
 
+
+On 10/15/24 17:39, Marek Vasut wrote:
+> On 10/15/24 5:10 PM, Gatien CHEVALLIER wrote:
+>>
+>>
+>> On 10/14/24 20:55, Marek Vasut wrote:
+>>> On 10/14/24 2:36 PM, Gatien CHEVALLIER wrote:
+>>>>
+>>>>
+>>>> On 10/14/24 10:52, Marek Vasut wrote:
+>>>>> On 10/14/24 10:38 AM, Gatien CHEVALLIER wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 10/11/24 18:17, Marek Vasut wrote:
+>>>>>>> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
+>>>>>>>
+>>>>>>> [...]
+>>>>>>>
+>>>>>>>> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct 
+>>>>>>>> platform_device *ofdev)
+>>>>>>>>       priv->rng.read = stm32_rng_read;
+>>>>>>>>       priv->rng.quality = 900;
+>>>>>>>> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
+>>>>>>>> +        return -EINVAL;
+>>>>>>>> +
+>>>>>>>> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
+>>>>>>>> sizeof(*priv->clk_bulk),
+>>>>>>>> +                      GFP_KERNEL);
+>>>>>>>> +    if (!priv->clk_bulk)
+>>>>>>>> +        return -ENOMEM;
+>>>>>>>
+>>>>>>> Try this:
+>>>>>>>
+>>>>>>> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
+>>>>>>> ...
+>>>>>>> // Swap the clock if they are not in the right order:
+>>>>>>> if (priv->data->nb_clock == 2 &&
+>>>>>>>      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
+>>>>>>> {
+>>>>>>>   const char *id = priv->clk_bulk[1].id;
+>>>>>>>   struct clk *clk = priv->clk_bulk[1].clk;
+>>>>>>>   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
+>>>>>>>   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
+>>>>>>>   priv->clk_bulk[0].id = id;
+>>>>>>>   priv->clk_bulk[0].clk = clk;
+>>>>>>> }
+>>>>>>>
+>>>>>>
+>>>>>> Hi Marek,
+>>>>>>
+>>>>>> This won't work as the name returned by this API is clk->core->name.
+>>>>>> AFAICT, it doesn't correspond to the names present in the device tree
+>>>>>> under the "clock-names" property.
+>>>>>> Any other idea or are you fine with what's below?
+>>>>> Hmmm, it is not great, but at least it reduces the changes 
+>>>>> throughout the driver, so that is an improvement.
+>>>>>
+>>>>> I guess one could do some of_clk_get() and clk_is_match() in probe 
+>>>>> to look up the clock in OF by name and then compare which clock is 
+>>>>> which before swapping them in clk_bulk[] array, but that might be 
+>>>>> too convoluted?
+>>>>
+>>>> Yes, probably too much. What's present in the patch is not close to
+>>>> perfection but has the advantage of being straightforward. If we agree
+>>>> on that, I'll send a V3 containing the modifications in the bindings
+>>>> file.
+>>> Errr, I'm sorry, maybe there is a way to do this better. Look at 
+>>> drivers/clk/clk-bulk.c :
+>>>
+>>>   15 static int __must_check of_clk_bulk_get(struct device_node *np, 
+>>> int num_clks,
+>>>   16                                         struct clk_bulk_data *clks)
+>>>   17 {
+>>>   18         int ret;
+>>>   19         int i;
+>>>   20
+>>>   21         for (i = 0; i < num_clks; i++) {
+>>>   22                 clks[i].id = NULL;
+>>>   23                 clks[i].clk = NULL;
+>>>   24         }
+>>>   25
+>>>   26         for (i = 0; i < num_clks; i++) {
+>>>   27                 of_property_read_string_index(np, "clock-names", 
+>>> i, &clks[i].id);
+>>>   28                 clks[i].clk = of_clk_get(np, i);
+>>>
+>>> If I read this right, then clks[i].id should be the DT clock name. So 
+>>> the swap conditional above could use .id to identify whether the 
+>>> first position is core clock or not, like this:
+>>>
+>>> if (priv->data->nb_clock == 2 &&
+>>>      strcmp(__clk_get_name(priv->clk_bulk[0].id), "core"))
+>>>                                              ^^
+>>>
+>>> You might need to use devm_clk_bulk_get_all() to access the 
+>>> of_clk_bulk_get() .
+>>>
+>>> Or am I missing something still ?
+>>
+>> Oooooh I see, devm_clk_bulk_get() and devm_clk_bulk_get_all() use
+>> a different path. I don't understand why, to be honest... The doc
+>> doesn't state this difference either.
+> 
+> Indeed, but maybe git log could clarify that ? I learnt about this 
+> useful trick at last year Embedded Recipes:
+> 
+> $ git log -L:clk_bulk_get_all:drivers/clk/clk-bulk.c
+> 
+
+Will definitely keep that somewhere, thanks.
+
+>> I'll give this a try while also correcting the issue that the robot
+>> highlighted.
+> Thank you !
 
