@@ -1,190 +1,236 @@
-Return-Path: <linux-kernel+bounces-367844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7CF9A077C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:33:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D490A9A077D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3390282160
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044D51C220C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE5C206E70;
-	Wed, 16 Oct 2024 10:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE40206E66;
+	Wed, 16 Oct 2024 10:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TQ9rk2dh"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQwkM9RD"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9B8206954;
-	Wed, 16 Oct 2024 10:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074796; cv=fail; b=jL/LqopNv/yjeqwur2WM3MWKsFk55FWZhRWWcT1y0OXNyUkGxAYNWP3eyYbElMSFMdaxY0cznY2Xoy/oF6uYNa1Of/ezGHoW4FQjrPtYD09wx/pyc04PR4hpy5EHMDc3MhAapxizz6d+FF2WA7ngnqMZYTNKff5YLBE008WCv04=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074796; c=relaxed/simple;
-	bh=kuklsSb4UH4Xp9Xb3BIzb/z0mTGcF00wb+U4tPz5pAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=s/1Z9PZGPBR3HRDKFEtXFCfL8ymuv7lZs0Lc25dK31LeuC2tcU15JQL5acsl7MwWMKpu+zc6WevKp+8aFAYupAjMcLyKfaCh4DllYG9LrBIN8qBSAsf3WBJteWDssZdYKy9vpQlNMClvpCkCMwYDdNJETpukBlYK46FyAFKQWDc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TQ9rk2dh; arc=fail smtp.client-ip=40.107.223.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KXnM+NU5MmW6/Ze60Ow87HztGfzThPFwGi9QTQKScgTdrjPatFGMU/UGEvUxCm2i8CUTJhK1N15P4wVCCTiDwm6tM7SNO6sb47ecDEieGacMDl3gRjYqWx3SF82f807ptfYtiEdwB/hTdYVAsGQ6WEOw+v//WeRNjS5ExRTCJ12hmOo60RxYo9G7uVouLjdSab1J3VOQSkq+g/kt/ukGcorrP59r4aFafd74y3E8jtM5pJXGOdk49oTQ4oI3nCvDEtRseIZH6yJkrWUfuY2GI3fI3X3tPUByd6aQLKiFNZ6wqpZhVaB0OKBwFZ3EFTLzMT9OqoVjirqC/i6Tzrp1BQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t+lOh6s3rnkI6IkPOYDUpwqphndxX6litptJvz82m4Y=;
- b=OM5HCFwDWPna0jgU5+sCdFpGe7XHgXlJ6mczBW6KLiONstcNW2EEbhezjZ+kblPox0hL5i0vbqsq/ESsqvXGenXV0EfMRkANaK4bEVf1zzL6Vq0ZV5Tu3k1wJe9ClhQKKkJMpX4+KS430NfgBdQ1mXFx5+Iw+pw+vcuJ/kC2cOTW64sSe0Sw7zRdEVSr4rTsRYZwUUlqag/0Fll8Qv2Ct2TwspX3ffBfGyD9BKC0O+8WqzzoXEL9/mAhfxV+bdDqOPYyaj/VTRuopxGRJlxSIUEpZjKjpUA1SFbHEDEmOSYtbnmuGaEsJ9opqsPLqcQQfwiK1vnA29d9HpBXqS8XEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t+lOh6s3rnkI6IkPOYDUpwqphndxX6litptJvz82m4Y=;
- b=TQ9rk2dh46tam0kB1y2qd7+328K+W3TFzrTrj0MvtIi22TnOhpaGSdgGJXNdVeOLoL9XtHhWyCbNJlNstPsMHOPb9Xw+7gwGLGHJQ7N5dsy1e3J/ZB10DLVf4jqcjLZXcjyKcTMU4+c16nZrRoXa/4zqGtausIT06lnym4zhd6Q=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- DM4PR12MB5842.namprd12.prod.outlook.com (2603:10b6:8:65::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.27; Wed, 16 Oct 2024 10:33:12 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%4]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 10:33:11 +0000
-Date: Wed, 16 Oct 2024 16:03:01 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Subject: Re: [PATCH 4/4] cpufreq/amd-pstate: Drop needless EPP initialization
-Message-ID: <Zw+WXSoSiFzrUDT5@BLRRASHENOY1.amd.com>
-References: <20241012174519.897-1-mario.limonciello@amd.com>
- <20241012174519.897-4-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241012174519.897-4-mario.limonciello@amd.com>
-X-ClientProxiedBy: PN2PR01CA0131.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:6::16) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4F5205E36
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729074857; cv=none; b=OlZ5+cTUayWFjYzINuhQ67X4cuBUb189jEQgUgSl/O+DX8yAICTU+4RruwrVOBLKwmoFGjwawMx1d/AIgBpNRXJR6OermSg1TA6+GTeWsi3riRGhciMLzWKT+E+vgwYII9qA6RtaBRm2TzA2qX7H8g26ZcDhlEVAmiJMwlxUPFQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729074857; c=relaxed/simple;
+	bh=UXXLyzxRETsC1bCs0BzCmf0TqtVoV4wY4aQYvxI2SWM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jHUFT4hNiboV7enrZuVtOMSQUBoGY3oppB+oPbWHRJO9HpLdvbyiT5pRnS/TeFYbafWgq2w68u4eatkvbgHdQ1Xgm/JcHxBJ5ekmMNO0KsQlX9XEXNvDyoSsKiWOqhYxzeNvQp7z1SMIV2cDfRJnIFlNeeOxK22/oFbomQ5ZyWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQwkM9RD; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso553194a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729074855; x=1729679655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CMMW6WISxalccZ13+6+AMnKOcdO+bnf3tzViTwYWYqw=;
+        b=MQwkM9RDY78I11tbqhtYY3oCzQLsKuURZyDGuiljVQDuX2wpTVcWJC0KFNgH4ONWdm
+         FQvTslV8Zoshhvus05++S34du9S0W2igzqilxJpFXblUopQ+aS/oisby3R0nGl1d0gbY
+         JrOJYvRRc9vWvsW0lRUFMabMAYbvNlL7YAWyHq7a/WkWlngsI0QMMMLbXnfbX7WCdw6y
+         BZgzPuTOQNPiUm/SZurHNSDo37RuqECOIoUn0g4V63p2WmUr9k2RvwCex2XUd5jfNobx
+         664MOHLgb9h8Ao9VG485yKY7uqTOJ+jgE8e+6NMH6M0VzWKfHUmr3mUJQ9Gg4UT8+aYc
+         1IQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729074855; x=1729679655;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CMMW6WISxalccZ13+6+AMnKOcdO+bnf3tzViTwYWYqw=;
+        b=MgkmyxZmzPA000+YNn4ukJQ3L6w1fTTiOLyp2EyzHd+u1aTBAA3762RGWiHlOSe2SB
+         gzId0FJLNSD2dHBqy/XkmrMx/RGfoTYAh53Y1VDfAs66r7QtOPFMnevFVNug6UeFyZMm
+         ow3dBpCV0GCP3G+wPmG8RKd0GyevP1qqqi4PwfQ5gdz2ZsvhRviUcDI5eSYWINRuLwBA
+         QQSALSSMWuVvYUf+11uxm6iY/hpl8vehd6X3mB+XJXzEU95VP2vhVeY6IVGz4GM5YI7D
+         gsCdPNcXQMDb439mtFi4YNeAXFxhK0dyfdEWOt+TnyHB3HOIPxMjb6TMZe/tPi88adZ0
+         q9eA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFAhryHVMBsTyVPslsCJmyDXdkJAVu5ADU/lGunA1by5vPkX2zmerIjxEjPuJX6Vrn//4I6VtshxhtoAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5HAgt9LLCl1hTP/9kYXYJxfOkG05lPa+ney4QINWrDZ7fk3ta
+	/4Xyfsb46RWa+ne/M1DKTSNxmyULB6Xf0Sh1UPw8k3BU+A/jAvsb
+X-Google-Smtp-Source: AGHT+IFoSo8yfBkITfbAWie1n/b8MsknWXue1dS3xGBRZrEpTKBwLU/aVPHqnpE8nssMoSOL6y0CRA==
+X-Received: by 2002:a05:6a20:9743:b0:1d9:651:7d34 with SMTP id adf61e73a8af0-1d90651859emr4405151637.12.1729074855106;
+        Wed, 16 Oct 2024 03:34:15 -0700 (PDT)
+Received: from dev.. ([129.41.59.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774ccfa0sm2852374b3a.177.2024.10.16.03.34.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 03:34:14 -0700 (PDT)
+From: Rohit Chavan <roheetchavan@gmail.com>
+To: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Rohit Chavan <roheetchavan@gmail.com>
+Subject: [PATCH v2] staging: gpib: Replace kmalloc/memset with kzalloc.
+Date: Wed, 16 Oct 2024 16:04:06 +0530
+Message-Id: <20241016103406.1618448-1-roheetchavan@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|DM4PR12MB5842:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8465c7fa-ea22-4dfc-cc5f-08dcedcdef1b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lX3vijgnBr6XeQd3VSXT2rw9F9t4dIlRoyYtR1455dVXsBykOduwV2EPVEfT?=
- =?us-ascii?Q?rodmiIGGrrY29IfGKnDuI1que83IcOzpDSjwwP6prDbc3ppUdfJ5xykfG2FY?=
- =?us-ascii?Q?9ih/66MnkoNgdW5SQsXd4UMVYicbyhzPX8Bwqrv2Cd/4Vw/JfxkxX6QC/KGF?=
- =?us-ascii?Q?K8ZvAOazW7NYsZn6b7B1320tx2YLelmg8LXo8It67Uw/M3bEnwKcDqoTUqk8?=
- =?us-ascii?Q?RFChuo9pT+3mN/rm62qoM7pxeQMCtbeYlaW6YzjL5LdSKAW4mUhLFpf7Ansp?=
- =?us-ascii?Q?FETYeyC+v35xE3IqWYTYQf+2ALBfkkz2Vc5JRQQVasrzj1/FufS+uyZtx23J?=
- =?us-ascii?Q?Gqb03s5/iR3QbMWLGVTRfkwF/9DPnZEM599nSKLD06c802vsO7Ynuhxkl4A6?=
- =?us-ascii?Q?LRFLbIYl1HGzmqVCx/c2/Rd215jvo3jQYFzCCkzO0TArWVeiXuu2CBW9o6hh?=
- =?us-ascii?Q?eh3Vm5pDlOswR1MeT49dbLbgbTJxrRAC+XR1zCfqHaU5udTLpnFKNKru80nC?=
- =?us-ascii?Q?xTB0pXyKVss2C7izsw+jA+8rjtSTlB59sDDOr0Ip2axp+wXCMVz8gjDlPZ9p?=
- =?us-ascii?Q?L1W1ilLQtUf4T7bM8s1q7h/e6IDGWBuSs5htGTdsCKCBJIsPcOA5z6ZG4s/W?=
- =?us-ascii?Q?n2Hoh1S8Ky9sq4+K2R+0m1qLSp595GhOaJkrMH+VtOQ34cPEwsOryUfSMCCJ?=
- =?us-ascii?Q?lWAiVi9+gyTxCNCl4dETZlwj3BWyQrnwKnrNLqBWcI8u0lGundvjGakgLXLU?=
- =?us-ascii?Q?P03a1afgPH2njO7JyF6Ls4FCJSEQLeBPsNkaUemHzzyMgHL5bBDYrV7dNwjG?=
- =?us-ascii?Q?FRDaYtMg+R8NbFLhKZeg3b3KMKTlMe4tOiKPXzrvxNPi0fdpzTsCqWXd6myp?=
- =?us-ascii?Q?BTGrIAoz22NRV7B7bntJNruo2NGIkpZCdt6OO2b6V/nRPm/C1sn43xkuA0pW?=
- =?us-ascii?Q?WjbVhgcGWeiIkk6U3EvhpZkvjbjl75qVvgJq23DcTnuS7jo2Tw9mD/PLDjky?=
- =?us-ascii?Q?Gz69otgFtaUA+NvfPSD9Km6yGATCmE3NRpeil7GVUaTNrANj9qwAFIB5Mz8+?=
- =?us-ascii?Q?gcoWHTTi88bbfV0EsZC0NVJ51Ui1OjgBjHW5PatAHmEW+GacNft5fekOvL1f?=
- =?us-ascii?Q?3sUqTaR8ArWjrCRKs1GboyJotB6+924c2/6ZoXrTPoznv2z4znahZ6o9EQfE?=
- =?us-ascii?Q?9z/Gv5O9OicEOnL+/s7T+zvOPdWmDCElOWZMv/VjlK68fIEexeygiFnfci8a?=
- =?us-ascii?Q?5XcoL/HBnY9uYmBBag4MBthnIHrb51jrfLusc58CjQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?b/hcVqnoyzcNfOnOi2Nn0iwTgf6eF+dyZJuQtnuadQPZl1X9+bRadxfqfDqF?=
- =?us-ascii?Q?2+FmegrZefTxK+e7ZdXxyqpCs87sMuW3J2YzRFg4NMM6kw1RqcNrxtm7AapC?=
- =?us-ascii?Q?BSWEuhTcZiKDYU72800cXjziwoOqSew/Y+uiSE1pE7EuKV6mNo8Z4pD1M+lf?=
- =?us-ascii?Q?hNoIzPdADjVcK9h6jhyYwBMCh8Fx64m+MlXcmTK1jqi+CV1y6Y5nhUu2Pn5c?=
- =?us-ascii?Q?CLW01F51EtcB5wJvO2PvO80arsLGBbfaR/vxVHSz290wSQETdyvVkn991zq9?=
- =?us-ascii?Q?dZ22oCAFfK1XZgC7YdIgcJktkCSC1dNSZYJSK4SpuB+0ch4y7o5Bu1fD9zAu?=
- =?us-ascii?Q?INBB53PxUzYaoVhoBa3ZYojx+Va+SMo0Pkot3Awn7QelaADi5SWEMQhK4+qu?=
- =?us-ascii?Q?yKf+1HtJpGXGM1fycQGIrs1eKEZUdJhSJJGNaur9X5HRvdNemyypDIcPbXIa?=
- =?us-ascii?Q?Yy6up45BPgFH7214lLcqj7xsyEEg/xk5RYhv/ZQWMlghbLzRp29RvSYOoa+k?=
- =?us-ascii?Q?uxKeXBfyjA1MTL1SPzhL6rs/ZibioeXGl/xG7F3rMp6nW4teJwvp+m9/zakm?=
- =?us-ascii?Q?59woBbiNDIFa0qPMo2N/V2D24czDACIVIgJ7mFH1xZ0zh8Nx+BIDOPvF0qz0?=
- =?us-ascii?Q?ETKDcdFVOZy9eDmJjl60R7Y7+JJTMilafmqxnuTTErDiHWoVWQy7lRQmCmJG?=
- =?us-ascii?Q?dqsM42CkjUEvfClqeHWsz+zqc3ruzcuIjnKNWb87+P3JqoWTCiOpaBOWQh/X?=
- =?us-ascii?Q?xpCtdm3hN3XLBpv0AFhCfIaVG8kwcdost1ChhmUuu4x7nQWb0f1zAnz9VN++?=
- =?us-ascii?Q?ezNdZybx5VLAwdL8JNx4Ut8d5/MZRrsCAacQfvFRjwkS2FvNlRmjPt82tgmR?=
- =?us-ascii?Q?AGfeMdVIij4Pb95sfFiyGwuNLFTCX91bVpTkL00OWpgb4UU5nfbwA4z860AO?=
- =?us-ascii?Q?4SllvCDIBz+g2RnQXRM7vkPcBs9CLdlzQiAnc6K6lGW2iAlihPyiaa0AvPFn?=
- =?us-ascii?Q?6eK3gfhFA0Od4301yo17bxL6NAIiav7N+qp1lxLB3qUqzU1G10MEddpidJjM?=
- =?us-ascii?Q?jRIBZbV0S0CqVec/3ei5tAOsCmWya88sU+WVWkKtu0bOZlhqApTWl4tF92eG?=
- =?us-ascii?Q?/X3JANiA/GMIL/W2/Ut9iwRI5iYnx7ROjcbWRXZp1biMlPrO2eMD/8g+yWlf?=
- =?us-ascii?Q?ZFSvjNoCfoe9PwMX3eWTLVmSZv+I2TKAbLpXiaHxvwZE5k29pwpZcmmW9QiU?=
- =?us-ascii?Q?1Wfbbg5tIgMZRkU36v4f5+NnDgmwVjAuvXO1oduxSom8htMpfb/xMqp+qbTV?=
- =?us-ascii?Q?qI8iQDC55eUJojSfzfCrNdaSt1Akoxqma96sUaXBrzchoJl4ghuRLTP/3ydM?=
- =?us-ascii?Q?h8Acd2lsCbJCZ2TP2T/FZAO0W+0C4XpqyPH7ashCsoU1Ml6rWFilsYeeyj5b?=
- =?us-ascii?Q?sLeHqIEww1B6IaavqRV64MpuymQS0wqcssjeZWOhTofcZCIK2e5BE6jOxFbV?=
- =?us-ascii?Q?X4Qudkij/TKp8w7swfZ+jrS8rjGiEgJmfjGjeTzybt6JRF0wi6zYapEg8c5J?=
- =?us-ascii?Q?wtXBT01DD6Nd2hscloItQ2p5H6yajZOIsI+TUmoI?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8465c7fa-ea22-4dfc-cc5f-08dcedcdef1b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 10:33:11.8676
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: us1EK+SDKGAMfjqVqK9lEzAYaBOCmwzBcMFhEThcXL5BFbID1WUlst9/Y/3pTTelQ2PT7YpJInrnzKMeopWS/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5842
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 12, 2024 at 12:45:19PM -0500, Mario Limonciello wrote:
-> The EPP value doesn't need to be cached to the CPPC request in
-> amd_pstate_epp_update_limit() because it's passed as an argument
-> at the end to amd_pstate_set_epp() and stored at that time.
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+This patch replaces kmalloc + memset with kzalloc in the GPIB driver.
 
-Thanks for cleaning it up.
+Signed-off-by: Rohit Chavan <roheetchavan@gmail.com>
+---
+Changes since v1:
+ - Merge similar patches in single one
+ - Make commit message concise
+---
+ drivers/staging/gpib/agilent_82350b/agilent_82350b.c | 3 +--
+ drivers/staging/gpib/cb7210/cb7210.c                 | 3 +--
+ drivers/staging/gpib/gpio/gpib_bitbang.c             | 3 +--
+ drivers/staging/gpib/hp_82335/hp82335.c              | 3 +--
+ drivers/staging/gpib/hp_82341/hp_82341.c             | 3 +--
+ drivers/staging/gpib/ines/ines_gpib.c                | 3 +--
+ drivers/staging/gpib/tnt4882/mite.c                  | 4 +---
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c          | 3 +--
+ 8 files changed, 8 insertions(+), 17 deletions(-)
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+diff --git a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
+index 1296db4d47c6..cff555447ee9 100644
+--- a/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
++++ b/drivers/staging/gpib/agilent_82350b/agilent_82350b.c
+@@ -518,10 +518,9 @@ void agilent_82350b_return_to_local(gpib_board_t *board)
+ int agilent_82350b_allocate_private(gpib_board_t *board)
+ 
+ {
+-	board->private_data = kmalloc(sizeof(struct agilent_82350b_priv), GFP_KERNEL);
++	board->private_data = kzalloc(sizeof(struct agilent_82350b_priv), GFP_KERNEL);
+ 	if (!board->private_data)
+ 		return -ENOMEM;
+-	memset(board->private_data, 0, sizeof(struct agilent_82350b_priv));
+ 	return 0;
+ }
+ 
+diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
+index 59f6dde3d966..d32576c21988 100644
+--- a/drivers/staging/gpib/cb7210/cb7210.c
++++ b/drivers/staging/gpib/cb7210/cb7210.c
+@@ -1199,10 +1199,9 @@ static int cb_gpib_probe(struct pcmcia_device *link)
+ 	DEBUG(0, "%s(0x%p)\n", __func__, link);
+ 
+ 	/* Allocate space for private device-specific data */
+-	info = kmalloc(sizeof(*info), GFP_KERNEL);
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+ 		return -ENOMEM;
+-	memset(info, 0, sizeof(*info));
+ 
+ 	info->p_dev = link;
+ 	link->priv = info;
+diff --git a/drivers/staging/gpib/gpio/gpib_bitbang.c b/drivers/staging/gpib/gpio/gpib_bitbang.c
+index 81a952beee0d..847e4bea2cb1 100644
+--- a/drivers/staging/gpib/gpio/gpib_bitbang.c
++++ b/drivers/staging/gpib/gpio/gpib_bitbang.c
+@@ -1105,10 +1105,9 @@ static int bb_line_status(const gpib_board_t *board)
+ 
+ static int allocate_private(gpib_board_t *board)
+ {
+-	board->private_data = kmalloc(sizeof(struct bb_priv), GFP_KERNEL);
++	board->private_data = kzalloc(sizeof(struct bb_priv), GFP_KERNEL);
+ 	if (!board->private_data)
+ 		return -1;
+-	memset(board->private_data, 0, sizeof(struct bb_priv));
+ 	return 0;
+ }
+ 
+diff --git a/drivers/staging/gpib/hp_82335/hp82335.c b/drivers/staging/gpib/hp_82335/hp82335.c
+index 4e277997684b..cf92fc0b3337 100644
+--- a/drivers/staging/gpib/hp_82335/hp82335.c
++++ b/drivers/staging/gpib/hp_82335/hp82335.c
+@@ -201,10 +201,9 @@ return_to_local : hp82335_return_to_local,
+ 
+ int hp82335_allocate_private(gpib_board_t *board)
+ {
+-	board->private_data = kmalloc(sizeof(struct hp82335_priv), GFP_KERNEL);
++	board->private_data = kzalloc(sizeof(struct hp82335_priv), GFP_KERNEL);
+ 	if (!board->private_data)
+ 		return -1;
+-	memset(board->private_data, 0, sizeof(struct hp82335_priv));
+ 	return 0;
+ }
+ 
+diff --git a/drivers/staging/gpib/hp_82341/hp_82341.c b/drivers/staging/gpib/hp_82341/hp_82341.c
+index d37dd8335523..8ad1c885a9fb 100644
+--- a/drivers/staging/gpib/hp_82341/hp_82341.c
++++ b/drivers/staging/gpib/hp_82341/hp_82341.c
+@@ -459,10 +459,9 @@ return_to_local : hp_82341_return_to_local,
+ 
+ int hp_82341_allocate_private(gpib_board_t *board)
+ {
+-	board->private_data = kmalloc(sizeof(struct hp_82341_priv), GFP_KERNEL);
++	board->private_data = kzalloc(sizeof(struct hp_82341_priv), GFP_KERNEL);
+ 	if (!board->private_data)
+ 		return -ENOMEM;
+-	memset(board->private_data, 0, sizeof(struct hp_82341_priv));
+ 	return 0;
+ }
+ 
+diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
+index 9dbbdb048b9f..87f9d3789c5f 100644
+--- a/drivers/staging/gpib/ines/ines_gpib.c
++++ b/drivers/staging/gpib/ines/ines_gpib.c
+@@ -1063,10 +1063,9 @@ static int ines_gpib_probe(struct pcmcia_device *link)
+ 	DEBUG(0, "%s(0x%p)\n", __func__ link);
+ 
+ 	/* Allocate space for private device-specific data */
+-	info = kmalloc(sizeof(*info), GFP_KERNEL);
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+ 		return -ENOMEM;
+-	memset(info, 0, sizeof(*info));
+ 
+ 	info->p_dev = link;
+ 	link->priv = info;
+diff --git a/drivers/staging/gpib/tnt4882/mite.c b/drivers/staging/gpib/tnt4882/mite.c
+index 882cc4bc122e..0edf34d243e9 100644
+--- a/drivers/staging/gpib/tnt4882/mite.c
++++ b/drivers/staging/gpib/tnt4882/mite.c
+@@ -57,12 +57,10 @@ void mite_init(void)
+ 	for (pcidev = pci_get_device(PCI_VENDOR_ID_NATINST, PCI_ANY_ID, NULL);
+ 		pcidev;
+ 		pcidev = pci_get_device(PCI_VENDOR_ID_NATINST, PCI_ANY_ID, pcidev)) {
+-		mite = kmalloc(sizeof(*mite), GFP_KERNEL);
++		mite = kzalloc(sizeof(*mite), GFP_KERNEL);
+ 		if (!mite)
+ 			return;
+ 
+-		memset(mite, 0, sizeof(*mite));
+-
+ 		mite->pcidev = pcidev;
+ 		pci_dev_get(mite->pcidev);
+ 		mite->next = mite_devices;
+diff --git a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
+index ef4b9ce36741..0a850926c118 100644
+--- a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
++++ b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
+@@ -1644,10 +1644,9 @@ static int ni_gpib_probe(struct pcmcia_device *link)
+ 	DEBUG(0, "%s(0x%p)\n", __func__, link);
+ 
+ 	/* Allocate space for private device-specific data */
+-	info = kmalloc(sizeof(*info), GFP_KERNEL);
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+ 		return -ENOMEM;
+-	memset(info, 0, sizeof(*info));
+ 
+ 	info->p_dev = link;
+ 	link->priv = info;
+-- 
+2.34.1
 
---
-Thanks and Regards
-gautham.
-
-> ---
->  drivers/cpufreq/amd-pstate.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 8d2541f2c74b..90868c8b214e 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1528,12 +1528,6 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
->  	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
->  		epp = 0;
->  
-> -	/* Set initial EPP value */
-> -	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
-> -		value &= ~GENMASK_ULL(31, 24);
-> -		value |= (u64)epp << 24;
-> -	}
-> -
->  	WRITE_ONCE(cpudata->cppc_req_cached, value);
->  	return amd_pstate_set_epp(cpudata, epp);
->  }
-> -- 
-> 2.43.0
-> 
 
