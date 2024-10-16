@@ -1,263 +1,205 @@
-Return-Path: <linux-kernel+bounces-367676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A3C9A053C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:19:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F58B9A053E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2059E1C23772
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A35621C22CA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BE7204934;
-	Wed, 16 Oct 2024 09:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D6A20514D;
+	Wed, 16 Oct 2024 09:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AOIFTttB"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEC718C340;
-	Wed, 16 Oct 2024 09:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y31SZN6p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FB21C6F55
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729070362; cv=none; b=rFIAP95Qc2d0OWZfv0FUaO2FxVfDYU/fd0L716FuqJVZyunKTp0k9O4xw/T1dgNU8wuKKwKkzFHipCf6kyulFkhemJZYecsynG9gYVOSxRxGcAxCOeb48uM+/klLl5o2ZvXOgyegbf9ThVrwzFA3kYMJ3Nb6WccrttWP175bOWA=
+	t=1729070414; cv=none; b=TXFCrcXiY7OI/QqM3jlHIkWgWZvzax+hQO8eCYUwXcmwfXpLzrieXjq+EicF850zWf9VcgxmuPd5tNBpvZJSRmVPacUWQROA89sJcscXSjkddeVJSjyfJdUFI8lye7zjjkC+PfX9FqJtAmLgiTQ6PMcOoCwCH2DTXpHr8gHCF2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729070362; c=relaxed/simple;
-	bh=73bOvUs5wNzbKFsHil/BudCZ9KCbKZXx8bVT4FczrBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eqoqeW8AEMTBuMIIG8/nmdR3IHprCbOhljBIA2JGR1zhD+pdL+XPVJqYl7ibrzaYjPyXSCGOWDUOC8Tc1elrKtELutiGX8pTUEv42Sg4ZXc9JTbrakFw8VPAp3bs3m0nswlTGl3Gq5lqf9xFF4qnvKCo4P3gce54BNk2AGMmafQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AOIFTttB; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=WGSXt6ULlR1WLi/9Kbe6qexmm6LVK3aPg0RqCBD2umc=;
-	b=AOIFTttBn9/F8zulvHd2ooOdZ2QsEksYI8Jm/cqJ3wBsA8k5EKv47cmPe3P/MW
-	F4KTerztfrGMdQ+3IRst13Wq37NWsEZthBTpUDiVvs0onUGji44t6Me/Yhw92ldb
-	jQaB+Z5hUwYynPZYH+eWkFbezKxiZiS+pa2+8b+V4TEqc=
-Received: from [10.42.12.92] (unknown [111.48.69.246])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3v7jqhA9nmQzbBQ--.7007S2;
-	Wed, 16 Oct 2024 17:18:35 +0800 (CST)
-Message-ID: <dea6d512-64c7-4ec1-a99d-6796e434c9a4@163.com>
-Date: Wed, 16 Oct 2024 17:18:34 +0800
+	s=arc-20240116; t=1729070414; c=relaxed/simple;
+	bh=ZJgqU7D2tEQg77R4kba5Yy9aZywjprp4o4yoANv/N74=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I5k0vLJgqzfrpeJEcSX2EbEOjhT5B5Q49ls4rJkW2PjXurz4x5Wrtjq/qvPcQA8CPtJkM6fvFAAsGjzk+sZSZD7RLhUsCTgu2nTr7jPLFu5B+Lsq4ZV8su2Nmvt/AENXMZTU292rglgMC+zSNGx4WiPo0BbVG1/zeUq7b4PIfFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y31SZN6p; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729070411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MD4PH+TjntKYNaAOSsAlc5YKOp3Bk0mCE3I/9BhgQQM=;
+	b=Y31SZN6pJMno48C2cH/26jSHSgLoqJCONHbL4HtoA3fFlSKU0z+/rFsWEeUQHKHf8Tky37
+	AElmG6z1H1NF+EyFBj3DO2aJ3Ar4q/TM0xXCxATmOC48ExXdBofT1I6nLikqOfbQrnSbD2
+	kcVTat+8tAxpjD1uuq7HRAJ/aSQhC2U=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-JGGOLuF_OJ6zH1KC-6Qn8A-1; Wed,
+ 16 Oct 2024 05:20:05 -0400
+X-MC-Unique: JGGOLuF_OJ6zH1KC-6Qn8A-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7A00A1955EE6;
+	Wed, 16 Oct 2024 09:20:03 +0000 (UTC)
+Received: from dhcpe026.fit.vutbr.com (unknown [10.45.226.97])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 502691956086;
+	Wed, 16 Oct 2024 09:19:53 +0000 (UTC)
+From: vmolnaro@redhat.com
+To: linux-perf-users@vger.kernel.org,
+	acme@kernel.org,
+	acme@redhat.com
+Cc: mpetlan@redhat.com,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf test: Handle perftool-testsuite_probe failure due to broken DWARF
+Date: Wed, 16 Oct 2024 11:19:30 +0200
+Message-ID: <20241016091930.191761-1-vmolnaro@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: clone3: Use the capget and capset syscall
- directly
-Content-Language: en-US
-To: Shuah Khan <skhan@linuxfoundation.org>, brauner@kernel.org,
- shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>
-References: <20241015105955.126994-1-zhouyuhang1010@163.com>
- <806bee31-d740-49c9-abe0-06820cfa7395@linuxfoundation.org>
-From: zhouyuhang <zhouyuhang1010@163.com>
-In-Reply-To: <806bee31-d740-49c9-abe0-06820cfa7395@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v7jqhA9nmQzbBQ--.7007S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3XFyxtFWDXFykKFyDJw4fXwb_yoWxXw1rpa
-	48AF4YkFs5Xr1xGa4xZwsruFyFyFWkXF1xtr1UJ34Ykr1a9r1xtr40kFy8K3W29a93uw4r
-	Zay0gFWfuFyDJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jvLvtUUUUU=
-X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiYBt6JmcPe7fR9wAAsl
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+From: Veronika Molnarova <vmolnaro@redhat.com>
 
+Test case test_adding_blacklisted ends in failure if the blacklisted
+probe is of an assembler function with no DWARF available. At the same
+time, probing the blacklisted function with ASM DWARF doesn't test the
+blacklist itself as the failure is a result of the broken DWARF.
 
-在 2024/10/15 23:31, Shuah Khan 写道:
-> On 10/15/24 04:59, zhouyuhang wrote:
->> From: zhouyuhang <zhouyuhang@kylinos.cn>
->>
->> The libcap commit aca076443591 ("Make cap_t operations thread safe.")
->> added a __u8 mutex at the beginning of the struct _cap_struct, it 
->> changes
->> the offset of the members in the structure that breaks the assumption
->> made in the "struct libcap" definition in 
->> clone3_cap_checkpoint_restore.c.
->> This will make the test fail. So use the capget and capset syscall
->> directly and remove the libcap library dependency like the
->> commit 663af70aabb7 ("bpf: selftests: Add helpers to directly use
->> the capget and capset syscall") does.
->>
->> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
->> ---
->>   tools/testing/selftests/clone3/Makefile       |  1 -
->>   .../clone3/clone3_cap_checkpoint_restore.c    | 53 ++++++++-----------
->>   .../selftests/clone3/clone3_cap_helpers.h     | 23 ++++++++
->>   3 files changed, 44 insertions(+), 33 deletions(-)
->>   create mode 100644 tools/testing/selftests/clone3/clone3_cap_helpers.h
->>
->> diff --git a/tools/testing/selftests/clone3/Makefile 
->> b/tools/testing/selftests/clone3/Makefile
->> index 84832c369a2e..59d26e8da8d2 100644
->> --- a/tools/testing/selftests/clone3/Makefile
->> +++ b/tools/testing/selftests/clone3/Makefile
->> @@ -1,6 +1,5 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
->> -LDLIBS += -lcap
->>     TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
->>       clone3_cap_checkpoint_restore
->> diff --git 
->> a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c 
->> b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->> index 3c196fa86c99..242088eeec88 100644
->> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->> @@ -15,7 +15,6 @@
->>   #include <stdio.h>
->>   #include <stdlib.h>
->>   #include <stdbool.h>
->> -#include <sys/capability.h>
->>   #include <sys/prctl.h>
->>   #include <sys/syscall.h>
->>   #include <sys/types.h>
->> @@ -26,6 +25,7 @@
->>     #include "../kselftest_harness.h"
->>   #include "clone3_selftests.h"
->> +#include "clone3_cap_helpers.h"
->>     static void child_exit(int ret)
->>   {
->> @@ -87,47 +87,36 @@ static int test_clone3_set_tid(struct 
->> __test_metadata *_metadata,
->>       return ret;
->>   }
->>   -struct libcap {
->> -    struct __user_cap_header_struct hdr;
->> -    struct __user_cap_data_struct data[2];
->> -};
->> -
->>   static int set_capability(void)
->>   {
->> -    cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
->> -    struct libcap *cap;
->> -    int ret = -1;
->> -    cap_t caps;
->> -
->> -    caps = cap_get_proc();
->> -    if (!caps) {
->> -        perror("cap_get_proc");
->> +    struct __user_cap_data_struct data[2];
->> +    struct __user_cap_header_struct hdr = {
->> +        .version = _LINUX_CAPABILITY_VERSION_3,
->> +    };
->> +    __u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
->> +    __u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
->> +    int ret;
->> +
->> +    ret = capget(&hdr, data);
->> +    if (ret) {
->> +        perror("capget");
->>           return -1;
->>       }
->>         /* Drop all capabilities */
->> -    if (cap_clear(caps)) {
->> -        perror("cap_clear");
->> -        goto out;
->> -    }
->> +    memset(&data, 0, sizeof(data));
->>   -    cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
->> -    cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
->> +    data[0].effective |= cap0;
->> +    data[0].permitted |= cap0;
->>   -    cap = (struct libcap *) caps;
->> +    data[1].effective |= cap1;
->> +    data[1].permitted |= cap1;
->>   -    /* 40 -> CAP_CHECKPOINT_RESTORE */
->> -    cap->data[1].effective |= 1 << (40 - 32);
->> -    cap->data[1].permitted |= 1 << (40 - 32);
->> -
->> -    if (cap_set_proc(caps)) {
->> -        perror("cap_set_proc");
->> -        goto out;
->> +    ret = capset(&hdr, data);
->> +    if (ret) {
->> +        perror("capset");
->> +        return -1;
->>       }
->> -    ret = 0;
->> -out:
->> -    if (cap_free(caps))
->> -        perror("cap_free");
->>       return ret;
->>   }
->>   diff --git a/tools/testing/selftests/clone3/clone3_cap_helpers.h 
->> b/tools/testing/selftests/clone3/clone3_cap_helpers.h
->> new file mode 100644
->> index 000000000000..3fa59ef68fb8
->> --- /dev/null
->> +++ b/tools/testing/selftests/clone3/clone3_cap_helpers.h
->> @@ -0,0 +1,23 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef __CLONE3_CAP_HELPERS_H
->> +#define __CLONE3_CAP_HELPERS_H
->> +
->> +#include <linux/capability.h>
->> +
->> +/*
->> + * Compatible with older version
->> + * header file without defined
->> + * CAP_CHECKPOINT_RESTORE.
->> + */
->> +#ifndef CAP_CHECKPOINT_RESTORE
->> +#define CAP_CHECKPOINT_RESTORE 40
->> +#endif
->> +
->> +/*
->> + * Removed the libcap library dependency.
->> + * So declare them here directly.
->> + */
->> +int capget(cap_user_header_t header, cap_user_data_t data);
->> +int capset(cap_user_header_t header, const cap_user_data_t data);
->
-> Sorry you haven't addressed my comments on your v1 yet.
->
-> I repeat that this is not the right direction to define system
-> calls locally.
->
+When the broken DWARF output is encountered, check if the probed
+function was compiled by the assembler. If so, the broken DWARF message
+is expected and does not report a perf issue, else report a failure.
+If the ASM DWARF affected the probe, try the next probe on the blacklist.
+If the first 5 probes are defective due to broken DWARF, skip the test
+case.
 
-I got it. I am willing to modify the code so that syscalls are not 
-defined in local files,
-but this would require including sys/capability.h which would not remove 
-the
-dependency on the libcap library. So, should we directly use syscalls or 
-use the
-libcap library function in the "set_capability" function, or do you have 
-a better way.
-I'd like to refer to your advice.
+Fixes: def5480d63c1e847 ("perf testsuite probe: Add test for blacklisted kprobes handling")
+Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
+---
+ .../base_probe/test_adding_blacklisted.sh     | 74 +++++++++++++++----
+ 1 file changed, 59 insertions(+), 15 deletions(-)
 
-> Try this:
->
-> Run make headers in the kernel repo.
-> Build without making any changes.
-> Then add you changes and add linux/capability.h to include files
->
-> Tell me what happens.
->
-> thanks,
-> -- Shuah
-
-I tried this, here are my steps.
-
-Firstly, I ran 'make headers' in the kernel repo and it was successful.
-Then I wasn't quite sure which path you were referring to as' build ',
-so I compiled and installed libcap, and also compiled test, all of which 
-were successful.
-Afterwards, I applied my patch and the test was successfully built and 
-running.
-I guess what you're trying to express may be that these system calls 
-have already
-been defined in sys/capability, and those defined in the local file are 
-duplicated with it.
-So I included sys/capability.h and linux/capability.h and defined the 
-system calls in the test,
-but there were no errors.
-
-I think there may be a problem with my operation, and I hope you can 
-point it out.
+diff --git a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
+index b5dc10b2a73810b3..f67b3b267ac55269 100755
+--- a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
++++ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
+@@ -19,35 +19,79 @@
+ TEST_RESULT=0
+ 
+ # skip if not supported
+-BLACKFUNC=`head -n 1 /sys/kernel/debug/kprobes/blacklist 2> /dev/null | cut -f2`
+-if [ -z "$BLACKFUNC" ]; then
++BLACKFUNC_LIST=`head -n 5 /sys/kernel/debug/kprobes/blacklist 2> /dev/null | cut -f2`
++if [ -z "$BLACKFUNC_LIST" ]; then
+ 	print_overall_skipped
+ 	exit 0
+ fi
+ 
++# chceck if locate is present to find vmlinux with DWARF debug info
++locate --help 2&> /dev/null
++if [ $? -eq 0 ]; then
++	VMLINUX_FILE=$(locate -r '/vmlinux$' | xargs -I{} sh -c 'test -f "{}" && echo "{}"' | grep "$(uname -r)")
++fi
++
+ # remove all previously added probes
+ clear_all_probes
+ 
+ 
+ ### adding blacklisted function
+-
+-# functions from blacklist should be skipped by perf probe
+-! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOGS_DIR/adding_blacklisted.err
+-PERF_EXIT_CODE=$?
+-
+ REGEX_SCOPE_FAIL="Failed to find scope of probe point"
+ REGEX_SKIP_MESSAGE=" is blacklisted function, skip it\."
+-REGEX_NOT_FOUND_MESSAGE="Probe point \'$BLACKFUNC\' not found."
++REGEX_NOT_FOUND_MESSAGE="Probe point \'$RE_EVENT\' not found."
+ REGEX_ERROR_MESSAGE="Error: Failed to add events."
+ REGEX_INVALID_ARGUMENT="Failed to write event: Invalid argument"
+ REGEX_SYMBOL_FAIL="Failed to find symbol at $RE_ADDRESS"
+-REGEX_OUT_SECTION="$BLACKFUNC is out of \.\w+, skip it"
+-../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
+-CHECK_EXIT_CODE=$?
+-
+-print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
+-(( TEST_RESULT += $? ))
+-
++REGEX_OUT_SECTION="$RE_EVENT is out of \.\w+, skip it"
++REGEX_MISSING_DECL_LINE="A function DIE doesn't have decl_line. Maybe broken DWARF?"
++
++BLACKFUNC=""
++SKIP_DWARF=0
++
++for BLACKFUNC in $BLACKFUNC_LIST; do
++	echo "Probing $BLACKFUNC"
++
++	# functions from blacklist should be skipped by perf probe
++	! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOGS_DIR/adding_blacklisted.err
++	PERF_EXIT_CODE=$?
++
++	# check for bad DWARF polluting the result
++	../common/check_all_patterns_found.pl "$REGEX_MISSING_DECL_LINE" >/dev/null < $LOGS_DIR/adding_blacklisted.err
++
++	if [ $? -eq 0 ]; then
++		SKIP_DWARF=1
++
++		# confirm that the broken DWARF comes from assembler
++		if [ -n "$VMLINUX_FILE" ]; then
++			readelf -wi "$VMLINUX_FILE" |
++			awk -v probe="$BLACKFUNC" '/DW_AT_language/ { comp_lang = $0 }
++										$0 ~ probe { if (comp_lang) { print comp_lang }; exit }' |
++			grep -q "MIPS assembler"
++
++			CHECK_EXIT_CODE=$?
++			if [ $CHECK_EXIT_CODE -ne 0 ]; then
++				SKIP_DWARF=0 # broken DWARF while available
++				break
++			fi
++		else
++			echo "Result polluted by broken DWARF, trying another probe"
++		fi
++
++	else
++		../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
++		CHECK_EXIT_CODE=$?
++
++		SKIP_DWARF=0
++		break
++	fi
++done
++
++if [ $SKIP_DWARF -eq 1 ]; then
++	print_testcase_skipped "adding blacklisted function $BLACKFUNC"
++else
++	print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
++	(( TEST_RESULT += $? ))
++fi
+ 
+ ### listing not-added probe
+ 
+-- 
+2.43.0
 
 
