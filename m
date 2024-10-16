@@ -1,157 +1,149 @@
-Return-Path: <linux-kernel+bounces-368157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12289A0C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:58:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB939A0C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D52EB246DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B787B256A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B521020CCE0;
-	Wed, 16 Oct 2024 13:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LwU8tC7f"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F3F20F5AB;
+	Wed, 16 Oct 2024 13:58:28 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A14209F29
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F411820C03F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729087105; cv=none; b=CnR5N7VErrf9qVlvgS/HoDtPSlXH/DmrkpKIAgJqtFvI6yd76ypmcAA0QVyDmQ1Aizm1eUo6omRNNQKB4QwmHc26ExT1lmnVYrniKNeNN7xt4wrxx0R4gnvRExvwDvmMClm3uVhDq3zcPKJllH/6Q6QUqesTJDjTXR46a8zvW7A=
+	t=1729087107; cv=none; b=CMytzLReYQAbuq6jDTlqqft/sUcWVVKgvtnVAj4dFS9C8hwVrf8a1jwke+dY9ykevnE0eXJ0y8oIkEMSN88r5c3zeyascl7y4mfj0s35khmDikEzjnJGq+pSOjcHgun7NbwBkd04vKFkGZQd68Z6mhXMb697H2unJr2r6jXYlx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729087105; c=relaxed/simple;
-	bh=Z4TjoCMH9PRPDw2uOwXm1Dd+eYyQXGwlDJ8FviYm59Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=twawm6M6BpGARhEosbM1UWahQH2h8kYm12CY1FI6BH4CFYcRHyyK4abI+1wtcc7eoKVOI49dqrkfyKW35F/KkJgvrKLt2W7MTqxAM5nqu91OxW3bGjNajcrOk7GP5y7gaJxqBJmSrzfltFbQzSCvO4CkzQbcjMHKlQ7+FEx735o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LwU8tC7f; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729087102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oAKVska2/oBebQjO+wukHO9XQB/mkPF/9mcuDaF4jWA=;
-	b=LwU8tC7fC99/81tGRXxd9Uz13XkQmdJ9woTLrsFucXiOdP6fn5qB/nMr6D2qBsy8Ysrr0w
-	yY+6Nq9zTTKKP9CM6yo3h8G+Xb8blOr8D1ke0bNlNILcLVUKTagUXQiWpa+TCeoOVbsn/1
-	sVGNQ2IMabfqwixmLFEpvf5QMlJDssA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-489-iff35SGPMK-38-86S4ximw-1; Wed,
- 16 Oct 2024 09:58:19 -0400
-X-MC-Unique: iff35SGPMK-38-86S4ximw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAD681955D91;
-	Wed, 16 Oct 2024 13:58:17 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.194.13])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4133C19560A2;
-	Wed, 16 Oct 2024 13:58:15 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH] verification/dot2: Improve dot parser robustness
+	s=arc-20240116; t=1729087107; c=relaxed/simple;
+	bh=p1xoTdRWHxbpJYFPocjjD/k91A3hz/ET82iys+wS7Os=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FlLaot25yXyv52xin+dO18o9mwKt9CYMkfceqIiUdRNOwHpNW86UL3ffrxfzx163jWv8/2JC8y7K8edMtbIxLCvY81S2DaRUYu3FFoMf7+XG6IWcDNx5g9aUtz7sih+2x8WW2n6J+JVdtaDRbn9sDIE7JL2n7VJutI7w0L8Itbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1t14Xd-0003H5-PT; Wed, 16 Oct 2024 15:58:21 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1t14Xd-002HjG-3B; Wed, 16 Oct 2024 15:58:21 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1t14Xc-00BU5S-3D;
+	Wed, 16 Oct 2024 15:58:20 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
 Date: Wed, 16 Oct 2024 15:58:12 +0200
-Message-ID: <20241016135812.59296-1-gmonaco@redhat.com>
+Subject: [PATCH v7 7/9] usb: gadget: uvc: set nbuffers to minimum
+ STREAMING_MIN_BUFFERS in uvc_queue_setup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240403-uvc_request_length_by_interval-v7-7-e224bb1035f0@pengutronix.de>
+References: <20240403-uvc_request_length_by_interval-v7-0-e224bb1035f0@pengutronix.de>
+In-Reply-To: <20240403-uvc_request_length_by_interval-v7-0-e224bb1035f0@pengutronix.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Daniel Scally <dan.scally@ideasonboard.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Avichal Rakesh <arakesh@google.com>, 
+ Jayant Chowdhary <jchowdhary@google.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1928;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=p1xoTdRWHxbpJYFPocjjD/k91A3hz/ET82iys+wS7Os=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBnD8Z7Om6EfinVW5Cow+C1IkkkMK4IdC0diReNx
+ dzxIDjTu0CJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZw/GewAKCRC/aVhE+XH0
+ q6uwD/0aizggiuVqSZMlzlvvriGjXgtsSLE3YyciXl3VVz5Hs1+fMvak+5wYsSXZ0IXcC4M+bWd
+ XEhD6DsTGUlO0bXXnazYZ/JgPf+BUlegErqjYXAv9rDwVjprPQ1zaAEhAmCjX+0zJeI8y5azG0I
+ aJcIb7qpsDGzL3406CvEAVj1bPq6e5bce7Uk2mmTnkAUiyVEIGoVheN9h2/blQ9F6gJyBfL1ziy
+ mojFkGODORs5Zj0kXMu1YGY7128C1/8PyplPQw2uJwaXqsaCNCnDhL6jnMgHXhjNZOaHAepluEL
+ KEglKE4ndvQlnRsBTmvtENL3SM0EQ0XklyDQt3UWvwNE1QHJHXsAAV9xARR/YNu73uEnFCYvjTu
+ imiR5FostREvwqVmUB7cUMIqHTBDrjrKusRbnCmgBoKf00pFKEM13QnDN3xkTDr2+YL036VH9xj
+ hrrIDElEZ2bxzVbDc8kKyR9yo6/TWJl2MNea6S7EHElESFo00khtO/13a9gaP7q81yCXD+FmeqU
+ WLBAb1/YJ7R70lRW2MZv0TEIB4I9sxUt2QWkAL0BzCYZpH2G5NLGWYGHdtjDAP8YawUNCfXPbVP
+ w5llwQ4oLrpYZ7I9+iWXh3YL5R1cLO7i39aE+qa17nKvpMS1ZRXYnf8+YyZdgrKqGcNOVIoaTtF
+ UEHR2p13Grmj7MQ==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This patch makes the dot parser used by dot2c and dot2k slightly more
-robust, namely:
-* allows parsing files with the gv extension (GraphViz)
-* correctly parses edges with any indentation
-    * used to work only with a single character (e.g. '\t')
-Additionally it fixes a couple of warnings reported by pylint such as
-wrong indentation and comparison to False instead of `not ...`
+We set the minimum amount of v4l2 buffers that is possibly be pending
+to UVCG_STREAMING_MIN_BUFFERS which is two. This way the driver will
+always have at least one frame pending to be encoded while the other
+is being enqueued in the hardware.
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+
 ---
- tools/verification/dot2/automata.py | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+v5 -> v7: -
+v4 -> v5:
+ - using STREAMING_MIN_BUFFERS set the min nbuffers
+ - renamed the patch since the function changed
+ - removed the g_ctrl function
+ - reordered this patch in the series
+v1 -> v4: -
+---
+ drivers/usb/gadget/function/uvc.h       | 2 ++
+ drivers/usb/gadget/function/uvc_queue.c | 3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/tools/verification/dot2/automata.py b/tools/verification/dot2/automata.py
-index baffeb960ff0..6eec09bbefdc 100644
---- a/tools/verification/dot2/automata.py
-+++ b/tools/verification/dot2/automata.py
-@@ -29,7 +29,7 @@ class Automata:
+diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
+index bedb4ef42864f..6f44dd7323150 100644
+--- a/drivers/usb/gadget/function/uvc.h
++++ b/drivers/usb/gadget/function/uvc.h
+@@ -74,6 +74,8 @@ extern unsigned int uvc_gadget_trace_param;
+ #define UVCG_REQ_MAX_INT_COUNT			16
+ #define UVCG_REQ_MAX_ZERO_COUNT			(2 * UVCG_REQ_MAX_INT_COUNT)
  
-     def __get_model_name(self):
-         basename = ntpath.basename(self.__dot_path)
--        if basename.endswith(".dot") == False:
-+        if not basename.endswith(".dot") and not basename.endswith(".gv"):
-             print("not a dot file")
-             raise Exception("not a dot file: %s" % self.__dot_path)
++#define UVCG_STREAMING_MIN_BUFFERS		2
++
+ /* ------------------------------------------------------------------------
+  * Structures
+  */
+diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadget/function/uvc_queue.c
+index 6757a4e25a743..5eaeae3e2441c 100644
+--- a/drivers/usb/gadget/function/uvc_queue.c
++++ b/drivers/usb/gadget/function/uvc_queue.c
+@@ -21,6 +21,7 @@
+ #include <media/videobuf2-vmalloc.h>
  
-@@ -68,9 +68,9 @@ class Automata:
-     def __get_cursor_begin_events(self):
-         cursor = 0
-         while self.__dot_lines[cursor].split()[0] != "{node":
--           cursor += 1
-+            cursor += 1
-         while self.__dot_lines[cursor].split()[0] == "{node":
--           cursor += 1
-+            cursor += 1
-         # skip initial state transition
-         cursor += 1
-         return cursor
-@@ -94,11 +94,11 @@ class Automata:
-                 initial_state = state[7:]
-             else:
-                 states.append(state)
--                if self.__dot_lines[cursor].__contains__("doublecircle") == True:
-+                if "doublecircle" in self.__dot_lines[cursor]:
-                     final_states.append(state)
-                     has_final_states = True
+ #include "uvc.h"
++#include "uvc_video.h"
  
--                if self.__dot_lines[cursor].__contains__("ellipse") == True:
-+                if "ellipse" in self.__dot_lines[cursor]:
-                     final_states.append(state)
-                     has_final_states = True
+ /* ------------------------------------------------------------------------
+  * Video buffers queue management.
+@@ -47,6 +48,8 @@ static int uvc_queue_setup(struct vb2_queue *vq,
  
-@@ -110,7 +110,7 @@ class Automata:
-         # Insert the initial state at the bein og the states
-         states.insert(0, initial_state)
+ 	if (*nbuffers > UVC_MAX_VIDEO_BUFFERS)
+ 		*nbuffers = UVC_MAX_VIDEO_BUFFERS;
++	if (*nbuffers < UVCG_STREAMING_MIN_BUFFERS)
++		*nbuffers = UVCG_STREAMING_MIN_BUFFERS;
  
--        if has_final_states == False:
-+        if not has_final_states:
-             final_states.append(initial_state)
+ 	*nplanes = 1;
  
-         return states, initial_state, final_states
-@@ -120,7 +120,7 @@ class Automata:
-         cursor = self.__get_cursor_begin_events()
- 
-         events = []
--        while self.__dot_lines[cursor][1] == '"':
-+        while self.__dot_lines[cursor].lstrip()[0] == '"':
-             # transitions have the format:
-             # "all_fired" -> "both_fired" [ label = "disable_irq" ];
-             #  ------------ event is here ------------^^^^^
-@@ -161,7 +161,7 @@ class Automata:
-         # and we are back! Let's fill the matrix
-         cursor = self.__get_cursor_begin_events()
- 
--        while self.__dot_lines[cursor][1] == '"':
-+        while self.__dot_lines[cursor].lstrip()[0] == '"':
-             if self.__dot_lines[cursor].split()[1] == "->":
-                 line = self.__dot_lines[cursor].split()
-                 origin_state = line[0].replace('"','').replace(',','_')
 
-base-commit: 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
 -- 
-2.47.0
+2.39.5
 
 
