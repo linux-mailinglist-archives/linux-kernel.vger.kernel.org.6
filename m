@@ -1,113 +1,156 @@
-Return-Path: <linux-kernel+bounces-367476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB5F9A02CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8199A02CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C973289903
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63032289E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F0C1BA89B;
-	Wed, 16 Oct 2024 07:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE851C1741;
+	Wed, 16 Oct 2024 07:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKqPdkhp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O9QcEgLU"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6DA1C3038;
-	Wed, 16 Oct 2024 07:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D0C1BA89C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729064383; cv=none; b=bvAV07WudR+dOY19F6NgN+GOU+E8nEHjvMcid+3vbsCIvazZ3TRiqEUceS/gXtfr0FcfPcDpCCPTOEQg9YDZq6qCZjUIg2zONp8/cixdaRyVsTcerrXifENuQqh4XLVQD9sn8TTV+cbhaO+X++BS7HJMSQU39hKmoPNH5FV1Vv0=
+	t=1729064407; cv=none; b=OiFAKKkxtVqsY4Zy3KAK4OIH5vLu7MLq1PWtdE2orluHzec9ppTpOwEQWpg1okgi6Symjy82vT9mEzCiPoWXvo3e//nI4Sz/EHz9zRCCvP0B8GegnOMguvNKV9rimV4EyvEi5vTh7akBdSBDiy5h4Q1er/Gh3L28yt1cto9zBEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729064383; c=relaxed/simple;
-	bh=JwlapJ+AcLRxc8DJk5lCV6cAs+f8NWoxtM5p0m6/BRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KpXKKm3tWEZ4X+Y4y8fqfjoFEbi9nrBYj65b0bqWGI5qdAZYUvMbVX1A0/KiNbxEARWrlR2vZRnNnAqXLdMqe0LF+joHR+M7ogYtfgEN1gN5Zm9HQCNNlNZXkIuHsS3CiyRO6EqIm6yttL8H9m1YQ7Kf9b+WSacQ46u0Jllr38o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKqPdkhp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21089C4CEC5;
-	Wed, 16 Oct 2024 07:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729064383;
-	bh=JwlapJ+AcLRxc8DJk5lCV6cAs+f8NWoxtM5p0m6/BRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HKqPdkhpzRULtlbjRsA7XfTRCuekD2rMTiiaBvAkSqyzeUwgvv4+G8cAuI0bw0LQB
-	 DKHrIFd/nkQpKOeA/oTNyIQ/Yz/htcPwyHgSryWhstoFDIz4zrw/hTPQgIvlG8yZX8
-	 luRmbhqcMxgazv1XrTBNtcu+sveCz5gYgFBLG1cg6iTY1xIuGI5Ygtdva49JpRM3g4
-	 nI8ebQvaLXO5uNPp9zWxqhy3hF5R8ksBLIBRu6Hg4LwYv2yG0wPBT7BoUyugdESsh+
-	 5RcHZ3ZECOr9di+xLIgMAc1v20+O4F0boi88wgZWCtA9BlLlRL+yfcGEi01gIR9NO7
-	 VsA1864MI+FXQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t0ydJ-0000000065Y-2NWQ;
-	Wed, 16 Oct 2024 09:39:49 +0200
-Date: Wed, 16 Oct 2024 09:39:49 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH] clk: qcom: videocc-sm8350: use HW_CTRL_TRIGGER for
- vcodec GDSCs
-Message-ID: <Zw9txV7gmWE5D8BE@hovoldconsulting.com>
-References: <20240901093024.18841-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1729064407; c=relaxed/simple;
+	bh=rcYzwefzKTgPK3mB86FXObjcdy9RYBz+8Enp8eDLiqQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fe8XOs52TwJG4PGKFYJpXBdcqG86ezBpdA1ZWNtF3/MOMWg29UVIXRJ3JyyHxYrPfCpkycm2/IeTxrNqcKOxKnDmHOb1XXacKlM6fBabb9pQqWYWMl0TzZw8Ci9O76yaV+VZ2sLzEinZIaw6f4Ifs4kkGL0fnKWFGzFUJVgPqj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O9QcEgLU; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e66ba398so9278e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729064404; x=1729669204; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ehTktfLGz6twLu/5oBplmy0RG+dW6zbCHDSQvLGj34=;
+        b=O9QcEgLUy49dCdv5ZOhb5rgPLIb4V3tdKxOJMDXOZkVukcv3SjzrbMSXy5oJ1HFvKh
+         Trm2ZlTKQWBio+r4pjuMMO9QE8VptyULNw0o1I3uu5v90brYC+3kcvXyycgwgzklnqFJ
+         5Ce3ZBu0QeituC5obozZgGQZZC+EGagM3G/Iv6vATkBmpWNuIHN4dCs0hwGUV1dWGWlI
+         PrPf4LWVVsXM9tsZL+90Q1RdavwUPafLaH46y8OtJts1N99I/dszfDKVs1/HbZOmTYk7
+         XgZUosHTK7/hAhdEGn2kgVFya6YH/XFAPZcImSbogN9smm+iFwotjEfFS7culMi2yQLR
+         Uo4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729064404; x=1729669204;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ehTktfLGz6twLu/5oBplmy0RG+dW6zbCHDSQvLGj34=;
+        b=fXAODBK7dE2+d9dTTQFJbRF4nDOVZRzzxTm8KleMmOp13HUGe/l7qqbs2S6KUF+oZN
+         zQwQSrl6oE0OmXLd5TykpRlBhWQ2DzeFcnCNlWfdXZqbv6nWMJ9vtB/KuY+77WdT+Ec/
+         C21U1A9dXl0bQmejX8mdUO7P5nunwxBlg+prud0+QH/thecCW3UoXJO6fE1Ko9q8bLGQ
+         PypSg5GicdePWlLPNQqJYFmquzsGGyRXkq00ZG5vymFRuNIx87ru2hUlhHbEx6ZWWNME
+         fHTtx5NIEAvcVuIjeaF417fZt491yJWJbeS+QZF5GexDjQuTn9zZpK+CCBeUiFVIFShi
+         AHgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTk3GB1Y493lifBb1hNVDnKRm3HAC0L8AdxZdiuwvOCYn1SZ3Kgmyi9vZZ/XuleZ0AyNt6hcnrtGWySNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbkHuMZsdrqv3PtHPSVcF3uWIUhdgfaibTnuQprl5Gxo8QiHlR
+	nbtFbtnFfiqEDKLaH2laQ60htYKU+eCbPBz7ePva+dl0tIIOCe13CZwccY49Oi9/H3NLnxzjayV
+	hkioOeNilA93hFKloCxyqPoAUhBteKYMnmx79
+X-Google-Smtp-Source: AGHT+IF5Uo+ip/0IVhP7Pd4XrUlYyoWYSwUDIYM9E+pUSFy/eEfINVsRLlW6lVJRybb2mEhD/UI0LJqdNWhb2s5k+zA=
+X-Received: by 2002:a05:6512:2206:b0:530:ae18:810e with SMTP id
+ 2adb3069b0e04-53a05f2e6d2mr232691e87.5.1729064403721; Wed, 16 Oct 2024
+ 00:40:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240901093024.18841-1-johan+linaro@kernel.org>
+References: <20241014085816.1401364-1-guanyulin@google.com>
+ <20241014085816.1401364-6-guanyulin@google.com> <9b5fe5d2-77a7-40b7-b260-856c35d9dcec@rowland.harvard.edu>
+ <CAOuDEK2f_mtfiye7MdnOqEkq3pYW1kcdkwEMMBC5CkkQ1OGu3A@mail.gmail.com> <fddf19f6-d03a-469e-a56f-ef390c099902@rowland.harvard.edu>
+In-Reply-To: <fddf19f6-d03a-469e-a56f-ef390c099902@rowland.harvard.edu>
+From: Guan-Yu Lin <guanyulin@google.com>
+Date: Wed, 16 Oct 2024 15:40:00 +0800
+Message-ID: <CAOuDEK3mmR9052FWEJAVBkUanVJ1MLLebZoANiasUpD9TDBjfg@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] usb: host: enable sideband transfer during system sleep
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
+	mathias.nyman@intel.com, yajun.deng@linux.dev, sumit.garg@linaro.org, 
+	kekrby@gmail.com, oneukum@suse.com, dianders@chromium.org, perex@perex.cz, 
+	tiwai@suse.com, niko.mauno@vaisala.com, andreyknvl@gmail.com, 
+	christophe.jaillet@wanadoo.fr, tj@kernel.org, stanley_chang@realtek.com, 
+	quic_jjohnson@quicinc.com, ricardo@marliere.net, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, badhri@google.com, 
+	albertccwang@google.com, quic_wcheng@quicinc.com, pumahsu@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 01, 2024 at 11:30:24AM +0200, Johan Hovold wrote:
-> A recent change in the venus driver results in a stuck clock on the
-> Lenovo ThinkPad X13s, for example, when streaming video in firefox:
-> 
-> 	video_cc_mvs0_clk status stuck at 'off'
-> 	WARNING: CPU: 6 PID: 2885 at drivers/clk/qcom/clk-branch.c:87 clk_branch_wait+0x144/0x15c
-> 	...
-> 	Call trace:
-> 	 clk_branch_wait+0x144/0x15c
-> 	 clk_branch2_enable+0x30/0x40
-> 	 clk_core_enable+0xd8/0x29c
-> 	 clk_enable+0x2c/0x4c
-> 	 vcodec_clks_enable.isra.0+0x94/0xd8 [venus_core]
-> 	 coreid_power_v4+0x464/0x628 [venus_core]
-> 	 vdec_start_streaming+0xc4/0x510 [venus_dec]
-> 	 vb2_start_streaming+0x6c/0x180 [videobuf2_common]
-> 	 vb2_core_streamon+0x120/0x1dc [videobuf2_common]
-> 	 vb2_streamon+0x1c/0x6c [videobuf2_v4l2]
-> 	 v4l2_m2m_ioctl_streamon+0x30/0x80 [v4l2_mem2mem]
-> 	 v4l_streamon+0x24/0x30 [videodev]
-> 
-> using the out-of-tree sm8350/sc8280xp venus support. [1]
-> 
-> Update also the sm8350/sc8280xp GDSC definitions so that the hw control
-> mode can be changed at runtime as the venus driver now requires.
-> 
-> Fixes: ec9a652e5149 ("venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode on V6")
-> Link: https://lore.kernel.org/lkml/20230731-topic-8280_venus-v1-0-8c8bbe1983a5@linaro.org/ # [1]
-> Cc: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On Tue, Oct 15, 2024 at 10:43=E2=80=AFPM Alan Stern <stern@rowland.harvard.=
+edu> wrote:
+>
+> On Tue, Oct 15, 2024 at 11:56:00AM +0800, Guan-Yu Lin wrote:
+> > On Mon, Oct 14, 2024 at 11:56=E2=80=AFPM Alan Stern <stern@rowland.harv=
+ard.edu> wrote:
+> > > I'm not so sure about this.  By returning early, you prevent the driv=
+ers
+> > > bound to this device from suspending.  But they can't operate properl=
+y
+> > > when the system is in a low-power mode.  Won't that cause problems?
+> > >
+> > > Maybe this really belongs in usb_suspend_device(), and its counterpar=
+t
+> > > belongs in usb_resume_device().
+> > >
+> >
+> > To my understanding, after the system is suspended, the USB driver
+> > will do nothing as the main processor has been suspended. May I check
+> > what forms of low power mode and operation we are discussing here?
+>
+> S3 suspend.  You are right that the driver will do nothing while the
+> CPU is suspended.  But what about the times before and after that,
+> while the suspend and resume procedures are underway?  The driver
+> needs to be told to cancel any ongoing transfers while the system
+> suspends and then restart them while the system resumes.
+>
 
-This one did not make it into 6.11 and should now be backported as well:
+Regarding the cancellation of ongoing transfers during suspend, I
+believe usb_hcd_flush_endpoint() handles this as discussed below.
+Besides calling usb_hcd_flush_endpoint(), are there any other
+necessary changes before suspending the driver in our scenario? Maybe
+we could discuss setting usb_device_state to USB_STATE_SUSPENDED.
+However, my understanding is that this variable reflects the actual
+device state. Since the device remains active via the sideband in our
+case,  changing usb_device_state seems unnecessary.
 
-Cc: stable@vger.kernel.org	# 6.11
+> > usb_suspend_device() did close the required port/bus to maintain usb
+> > transfer.
+>
+> I don't know what you mean by that.
+>
 
-Bjorn, can you pick it up for 6.12-rc?
+Nothing special here, I'm just echoing what you've mentioned and
+trying to bring up the discussion about usb_hcd_flush_endpoint().
 
-Johan
+> >  However, there are additional usb_hcd_flush_endpoint() calls
+> > aside from usb_suspend_device(). Maybe we should consider not doing
+> > those also since some of the endpoints are now handled by the
+> > sideband.
+>
+> Those calls should not be skipped.  If the sideband controller wants
+> to handle the endpoints on its own, it can go right ahead.  The main
+> controller and the USB core need to know that they shouldn't use the
+> endpoint while the system is suspending.
+>
+> Alan Stern
+
+Got it, let me update the patch and put the related changes into
+usb_suspend_device()/usb_resume_device().
+
+Regards,
+Guan-Yu
 
