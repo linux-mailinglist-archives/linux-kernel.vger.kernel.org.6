@@ -1,110 +1,153 @@
-Return-Path: <linux-kernel+bounces-368231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0569A0D04
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:42:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258539A0D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB3C5B285DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 570111C24C95
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BEA20E01F;
-	Wed, 16 Oct 2024 14:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FC420CCE2;
+	Wed, 16 Oct 2024 14:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="JPu0z5jO"
-Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="eqz+ZzEe"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE01120C015;
-	Wed, 16 Oct 2024 14:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56EF20C030;
+	Wed, 16 Oct 2024 14:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089714; cv=none; b=j42a+bV0w3fzuZHlB75GCDyaKksoALuuKmKqjZsd4kWO+Yf1uTcbmfXpFFJj82LASrSNpzzgcAKqIxzSslTPpcSxxwScZmfp+u2VafRZWgJYNO4QxjBM3KQrCae6L0HdLwrcJKYTZAAHrJuNrhFnDtuICxNPVINDYuuWptJ88LQ=
+	t=1729090041; cv=none; b=VVrrLpntXRxnULnq8PikCAI2scC2fXgZxX70Fr6p/FcQpFQHGDBZUFCj5Zs7ihw6MUEVZlP4pjBPmUy5MjP11YZ5ibm6IWmBrG6maUe/fV4MJucZVGBmyIv72j28xpOGmKGJuFyWsVhziqAdUOfKAKUuWlnayz0E6O1q5JS+bd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089714; c=relaxed/simple;
-	bh=5pqAUeM+sCAUVEmtTmEbLzJQvE1ZOR58MpVxFnbuY4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dDydktcIvOeoYz8o6WwHq4hKffxgFVQiQCujcU/k6VZO64FLEL8SrkTqcEvYfuuwM1fKSMwh9hCpQ2aQj2WDYwZKkNXUzey3uYbRkvNGKhLbSdSnWmz4aqZ2KfsSotsfroukPIgeLTMdPSIm1fWDhaadd/AYXx3jnJvpj0BpTk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=JPu0z5jO; arc=none smtp.client-ip=63.250.43.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4XTDF50qn7zGpSN;
-	Wed, 16 Oct 2024 14:41:45 +0000 (UTC)
-Received: from igor-systemproductname.lan (83.8.245.91.ipv4.supernova.orange.pl [83.8.245.91])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4XTDDx2QSDz2x99;
-	Wed, 16 Oct 2024 14:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1729089699;
-	bh=5pqAUeM+sCAUVEmtTmEbLzJQvE1ZOR58MpVxFnbuY4I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JPu0z5jOyc/Ys3kRKdHWOR+JUgtpBOWjHE6M+6/FXoWoXxR+HTnRaNBMUOnjlr32o
-	 r6vmMO2U7ckI8nObdiX5oYsg/gtVxs5BYULyfjK/UQptkwiF/JH0OsdL81wC/bqCpI
-	 o++eeonoymx5eJs6hnhOALhcRL3bIGZQhGZWb0ZW1bCJjgs4csUyjK+gYFNnLXOrBc
-	 6jQ2D3cdjsFpFnZczI8gLw5S7c0ZqqeavELfMGSkjTUF7ChpVH3D1dJVJPs9Ls1YwR
-	 FFkkH26RQc7Vq3PkBMxPJdpsvLhEpeimifWdhzi8jaqKk89EoBblJHVFoH/vi6VRy1
-	 DLdq7m2cyPRMA==
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: krzk@kernel.org
-Cc: alim.akhtar@samsung.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linus.walleij@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	robh@kernel.org,
-	s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com
-Subject: Re: Re: [PATCH v2 0/5] Add Exynos990 pinctrl and chipid drivers
-Date: Wed, 16 Oct 2024 16:41:12 +0200
-Message-ID: <20241016144112.17588-1-igor.belwon@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <795657e1-5232-494c-9ac5-a62455b0f6f9@kernel.org>
-References: <795657e1-5232-494c-9ac5-a62455b0f6f9@kernel.org>
+	s=arc-20240116; t=1729090041; c=relaxed/simple;
+	bh=e+TIRciza/vvufbwrNW5J03twMSw4vY0BZ4AxLju8EA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c6tedjcQOahJshbbMkWoKAHdohdnW9YFjNc42WUGl+VVGt04hsS9BX2+vtuVfj5hdV2FDKIQT/Fgll5b4GsJFY2AYN7bHDEhmsngukEMFASQGWQYv9sDxw7dCmU8b9iWfyAOTxvxYUsfUibtLju38LIjmtsy5H2p4oY4B78JJac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=eqz+ZzEe; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1729090031; x=1729694831; i=christian@heusel.eu;
+	bh=hjnT9M4mEwhQcX6HN2oREWy4Xe5jdIaWnGiY896x81k=;
+	h=X-UI-Sender-Class:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=eqz+ZzEeah6q2ZR+Zuvouq3dXYdS/UXzyVccb06xRwZKu9G0T3GNQg9W1DA7Geh4
+	 hKwElefB3HPQcPe+buMcN6y5gJ4ikSamB1ClXWXnGGDVs8ETyJmY092/nhTNxeKU0
+	 n6h7VScVQNqtcSBzh7VFcXolkmq3vuRhJFUCs2UDCL02Utp/CDJy3sV4JqCI2d5fY
+	 H0AdQocSZKLX+rDFiZNZHdr2cD7VfrKF8snfVzI981mzuxj3SBQdO4G42dEIEwERG
+	 TKhwt6b+QFCd91YflMkN8WgODIyiecrAZUM6pRdWHkAoz0omWeZCsBj+b6BodtYOW
+	 H+vz/1LqQJHmSdAu+Q==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from meterpeter.localdomain ([141.70.80.5]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1Mnq0K-1tkcVb2WHi-00nqvu; Wed, 16 Oct 2024 16:41:41 +0200
+From: Christian Heusel <christian@heusel.eu>
+Date: Wed, 16 Oct 2024 16:41:27 +0200
+Subject: [PATCH] ACPI: resource: Add LG 16T90SP to
+ irq1_level_low_skip_override[]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20241016-lg-gram-pro-keyboard-v1-1-34306123102f@heusel.eu>
+X-B4-Tracking: v=1; b=H4sIAJbQD2cC/x3MQQqEMAxA0atI1gasiFqvIi6ijTU4YyUFUcS7W
+ 1y+xf83RFbhCF12g/IhUcKWYPIMpoU2zyguGcqirExhavx59Ep/3DXgytcYSB1asq4dLVFdNZD
+ SXXmW89v2w/O8MOqaRmYAAAA=
+X-Change-ID: 20241016-lg-gram-pro-keyboard-9a9d8b9aa647
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dirk Holten <dirk.holten@gmx.de>, stable@vger.kernel.org, 
+ Christian Heusel <christian@heusel.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1503; i=christian@heusel.eu;
+ h=from:subject:message-id; bh=CSPiURth0ATt48Q8xTO87pn/66S/ELojo8qP5nvbFFU=;
+ b=owEBbQKS/ZANAwAIAcBH1PMotSWFAcsmYgBnD9ClZkJ7s6RmWtZl1ofj7hD8Pr2TvjbTnPD0u
+ aT4RHwRhO2JAjMEAAEIAB0WIQRvd5reJHprig9yzBPAR9TzKLUlhQUCZw/QpQAKCRDAR9TzKLUl
+ hewrEACvguxZXxIFb1IfOcbjzJ0YxfkwzJB5Llg+tMmYn/sv2TfXc0iyoUu24AS8j9m5B68L4Wk
+ bXzkBwlx/gsONGhUgZn7dJ6vrSNInIJaI60f/2Rx0cl5Andemm97aRu0QbWUs8cegID/NREvde1
+ cQ2KdCkPV3iBfaSPmBWOjRhJqn5rVeMOTTXri0fVVDR4R1qmNYYOX3tZxr4GcQ2ch+8TsSSkVbj
+ 8eJ0cv7DUYzR+nA/hXw45wd1eg7wbbIsIKhShJ/94pL1bnZfSJsZOWLkfto5sIghWyBmy1Ehy7a
+ NJKf5lU5Vp3zHRcyWTYFgI3E995SjyYVoyHm+c3LeZyEAd+0HVybEq92U4AnJg9dea2+XTiUzHU
+ 5elBxrc5616qfQNz0HSzsu4H8WeGqTbngyJmvstuvW3k42pgUvfhcuSe3XklhCfPRhhRygsIawC
+ XA6kPFjK1oWVHDbvLhSQWIwTiBo4tyf0fDVMdjaiHT2vsbcGE+Q7qOEFs7mgUekfayHqfVI+/GQ
+ HZPQTKpwBPBZ0XgFN2hZfbFGE4QPTJ8tX4MnBD+lOTG+6NfbWgTYXsZKtWNFPNI2LHS0X7Bt/ld
+ f75SOm2QfboIkv0l8DvuKMGYshkP9Mnl+EI2+D+QuB7nt4yWTPzQLD09gyJwqZBdGR9jr6PJPEb
+ MdhhEifijWH8dTg==
+X-Developer-Key: i=christian@heusel.eu; a=openpgp;
+ fpr=6F779ADE247A6B8A0F72CC13C047D4F328B52585
+X-Provags-ID: V03:K1:MJM/TLh4Ctyc8wpwKqDucvI2zOXawtRtTOlJ77LFKB6sHy/kl19
+ BfN0pTfwDQnpa3Icx0eBeJCRu0ROHuNuv9N0ObH9yOCQO8ph6LSOHxvJPdhp+uLxGI6/Klg
+ qmCfTNBDWVMxghpN5qNrxuJV55eOHQoozIeHzuoNWS81HcaYIryMuuHH1i8QrkA1ZEa0mCB
+ OMPqQYLEoM3kVZ5iZwLTg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/2GXG50CAgg=;bQdeS8ufVytJk4SLtXIMDdx0H0Y
+ qdEGfoXCIghtSoF0IRJ4Z/FlVaTxp+gLTcMGlEoH8MPkA25HV7TOuUYDcA3okYgoExN4K+UAx
+ qkuQndo/e9hyN0/hEwuD1EMJrr0N7NRlPVOUuEKnzlPreZEfCtwDnh6a1Qp86eJFy1RvPZDca
+ EKJG//i4IUk8c1RCRfX+mqsUAZC8v6CpluI6+fIiocXFWs+pMprwlW4OTRcZUHXp7fzwpPVGP
+ SXCztAbJ0jQatfKeM2Y8E3R5YI5sqBugEir6p/i1IM+v34f4pt1CMjIv0ItmFUgy/tT+ZtKas
+ ovp71IiR77P4p5an74yxNQ9yfuv+8f1044KXfrxc/qMFtGZDaXrLnegDNX4e+KQFAl39Vmrry
+ JzvPM6XXLcV6QEhTzc5ioRJ5BvrnTiW8kPB1uRacEnm7Dt4NW7evZ+4MsKi/0rQFLm4LgBXYo
+ TZAOOckTPOOBqjG925bUt5lcfw/qgck2BzvBWDE2LRl9KHNekvPINMwg2EaAmyK0RIwWUaHiv
+ vK75bRYggZtA87ad6TgQeEFnKkawixmR8V01CkBgd3ip8LTdfKouS8Qr7+Wy7WY+t34vOsuCM
+ 5/IorfgK9twBlpJZIyj5J+IhbIMik6oguHF2GgKIgJbjpiDuR2AWsK1oe0F/7jbUzkBemRxhS
+ FPmIvzLk6EVjAziNADYJWkCbjOOJMJ0ZudZ7pglFkI7+nu6xBSBK65/4YMOTl+03ziT4FHHBG
+ r8+ljvoXdlUwmJcucleL3RwFsbNzl3PWg==
 
-On Wed, 16 Oct 2024 09:19:58 +0200, Krzysztof Kozlowski wrote:
-> On 16/10/2024 09:06, Krzysztof Kozlowski wrote:
->> On Tue, Oct 15, 2024 at 11:04:45PM +0200, Igor Belwon wrote:
->>> Hi folks,
->>>
->>> This series adds support for the drivers for the Exynos 990 SoC. It
->>> consists of the pinctrl driver and the chipid driver. The product ID
->>> of this chip for chipid is 0xe9830000. The pinctrl bank types are the
->>> same as in the Exynos 850 chip.
->>>
->>> Changes in v2:
->>>  - Moved bindings from SoC bringup commit
->>>  - Moved device tree changes from SoC bringup commit
->>>  - Ordered pinctrl nodes by unit address in SoC DT
->>>  - Moved the exynos990-wakeup-eint binding to the correct if.
->> 
-> Moved? That's not what I asked for. Are you sure you have this warning
-> free? That's a requirement for Samsung (see maintainer profile).
->
-> Ah, I see now what you did - you removed the interrupt. That's
-> surprising. I don't understand why.
+The LG Gram Pro 16 2-in-1 (2024) the 16T90SP has its keybopard IRQ (1)
+described as ActiveLow in the DSDT, which the kernel overrides to EdgeHigh
+which breaks the keyboard.
 
-Hi Krzysztof,
+Add the 16T90SP to the irq1_level_low_skip_override[] quirk table to fix
+this.
 
-Thank you for the review.
-The interrupt was actually my oversight. This SoCs pin controller does
-not mux interrupts (much like E850 and Tensor). It's still compatible
-with the Exynos7 model as a fallback though.
+Reported-by: Dirk Holten <dirk.holten@gmx.de>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219382
+Cc: stable@vger.kernel.org
+Suggested-by: Dirk Holten <dirk.holten@gmx.de>
+Signed-off-by: Christian Heusel <christian@heusel.eu>
+=2D--
+Note that I do not have the relevant hardware since I'm sending in this
+quirk at the request of someone else.
+
+Also does this change need a "Fixes: ..." tag?
+=2D--
+ drivers/acpi/resource.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
+index 129bceb1f4a27df93439bcefdb27fd9c91258028..dd6249fb76c24f08db4149883b=
+e4548130d0ef1e 100644
+=2D-- a/drivers/acpi/resource.c
++++ b/drivers/acpi/resource.c
+@@ -502,6 +502,11 @@ static const struct dmi_system_id irq1_level_low_skip=
+_override[] =3D {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
+ 			DMI_MATCH(DMI_BOARD_NAME, "17U70P"),
+ 		},
++		/* LG Electronics 16T90SP */
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
++			DMI_MATCH(DMI_BOARD_NAME, "16T90SP"),
++		},
+ 	},
+ 	{ }
+ };
+
+=2D--
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241016-lg-gram-pro-keyboard-9a9d8b9aa647
 
 Best regards,
-Igor
+=2D-
+Christian Heusel <christian@heusel.eu>
+
 
