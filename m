@@ -1,99 +1,376 @@
-Return-Path: <linux-kernel+bounces-368421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0119A0F9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:25:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54139A0FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649B828168B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD201F28939
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEF7210C38;
-	Wed, 16 Oct 2024 16:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A86120F5CD;
+	Wed, 16 Oct 2024 16:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LI1p4dZ0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bqdrUuAi"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2061.outbound.protection.outlook.com [40.107.249.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B70920F5AB;
-	Wed, 16 Oct 2024 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729095853; cv=none; b=CJ51kU9YvLunYJP4GVzx/2kCsqtTKVkVSPA/X9LxEYw94ZnvPIL73s7NeD29MpR4CIswD5En1POmR1Lwaz4EzGCvfwZd48IL0ske/uOEdNsBEw9k6vED0PRbRuUuG6rjnitpY8N5S70qbmV/Y13qwe4MZYlXJfselUjVMp+2BwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729095853; c=relaxed/simple;
-	bh=ELkQCkvnvsqAkcqwDniUM4x92rERmqEI7Yu0ccyKwIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SyNYgz0KXyoy8i5Z86MK9OLD5qGnWyq6qpl0bCBmTD1Qc4cgAn7E6F1bPG9ze73reT5xV8TDOuY9K0VydN6TYBdMnSy0PRPwvoEcQM7Ee5/Sj+oCV6TgI5Su6Ta4DCwhC1TOrBVghPGNCNIFFaAoHkViqBJWwW69WBwd4UAYKMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LI1p4dZ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238EBC4CEC5;
-	Wed, 16 Oct 2024 16:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729095853;
-	bh=ELkQCkvnvsqAkcqwDniUM4x92rERmqEI7Yu0ccyKwIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LI1p4dZ0tqVMNN2oq8AWE3gnu4GavO7BVvIZE+MP92vuVOQ9b5kFaDnCJbr0k3l+j
-	 10CIWlynzgTSz9CnLiXHZROmYp8a040ZXnuDwnW6/CJDxq9DaZMNCYUOHtH95XaAqt
-	 PA6nn93gtOgH9k6lj1mmfoi0A2+pWKWoLJfgGVIa+19P5aEq/x2J/dWoPkajOVxORO
-	 XFfSRURIiS7A2ZSKdGgrgLUuE5T/vcD1Jrwip43/lERBW0IcTNSgIedKMZsM8uSVqp
-	 5gtLUO9F0KcGpRZ2UakmZd1ElpWWJQp26iZTSaS/TjVCykxE2tZ3pQDPIOV0p4Fo1q
-	 cAbjMnKQL33HA==
-Date: Wed, 16 Oct 2024 16:24:11 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-	will@kernel.org, catalin.marinas@arm.com,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH 2/2] arm64/crc32: Implement 4-way interleave using PMULL
-Message-ID: <20241016162411.GA3228925@google.com>
-References: <20241015104138.2875879-4-ardb+git@google.com>
- <20241015104138.2875879-6-ardb+git@google.com>
- <20241016030349.GD1138@sol.localdomain>
- <CAMj1kXHDqD29TzE=2cw55qeKrnybgkYFCdy4jU_4E=OaUOkZNg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661AE2101BB;
+	Wed, 16 Oct 2024 16:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729095893; cv=fail; b=LCEXuuycnEqD33Cyi9gQVMxQ9l2XTBNkYYrhzjvMH7gRL+5trPgu6zyjlY4/5r9KaqGN8JT1ORmTElA8zpNGLG/V/5tcY+x6nmwlTggFk0sETYD3Ted76MPM99kraqV+T5RNP1d2t+S82L81T64e6YfRl0nQHYVMyWNA+GyO+gc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729095893; c=relaxed/simple;
+	bh=9oijvjMra3mSd5Y1SrI180rIkvD8Mh9XeqZs/FO/N4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AUIepbWI9S5m73JIwlQFZ5gMd8S9T/QiVqGykkkvWWv2ecbJ/+VJz2hgU2y0TGlCeafk602CSsTRZ5pKun0HLY8OOlReVViBZZv8jMKeXWUgkyr8yq257TxlYBoBH9c0l+L6P9Ad9xUyRPT33OERVQ3fDVMJn0267Xaz3/OEeEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bqdrUuAi; arc=fail smtp.client-ip=40.107.249.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DjZUaEp4qe9LEEVU7HZa0YVjxPhxTAtNG2lY8PSTEgBqEAwoaJAO3l9CjLBJBwnQLON049v68i74Pd6QmYJZTRBfRybi3q3+FwVcD1VguLVfEQYzVToPNeWOZgXtXEfL4e4qIKHsnP4J+yPZi0/7lyBP943knQoeIovLbjsqpv88z+2UVxVFZtwGlSGqaZNYl0z1vzBVRJPkl4rLeF5LoGihUbdHbfJjfkxTGApFbSxsBZQzWAr/I1pIWa7adjv0a6cUVHcWlwXXlQXQzs2J9abexaeTHdYGBSwjSMn69E3A0fH5ZovrgsU9BkFgaW3e9ZPEgxcujrEnKKwkNK7e+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OchMtW/vNcwg0aN3c2nTP6GxHvW7xjWRaJ3bSJMelU0=;
+ b=H3swL7ItvpAxh+hN7VUif9UoimJs1ylqAmVHzInET0oApf+GL7i0HarLHqIEhCScUVBUyh/hiS/yTCZo84YWKk+lArEUQnv82ogtdJF/Gatzesogogula3MLh3ZqfUyPLaZySi8SOjF7S24q+OchmHj6m6VBoSXw1MTRuW8ELxXvVRBMcg7lkvTg/ne9/YR2pP5qr52PZjMbdaEznIFdWTf1zY6rAT/8ltSyBFwuTkD9AzXE+jRFm+Ui52kRqIRLweB6AvBZAeOtLf+gWggtd1fwuc6nquRpJusc2uvHl8gQjZQtlQM9c9xFkcJlOD8nIdhvdPGpGjAZBaoOLGxJUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OchMtW/vNcwg0aN3c2nTP6GxHvW7xjWRaJ3bSJMelU0=;
+ b=bqdrUuAi/2t88nJRDFCjm7KSUgXJdYDMqmjjigr6GGb2l23A/i2r4jP7YP0XhE0W/rMyrOoK8lUnn1WhMkazPW3Bcvxs1YaXQVu0aWunE5yNyGFS/eaTtgyvBTEjcI1gI5WgtlsYKc4fpvSbIMod9r7rLtV6AIIrr5W8put1cjmdx1Lpw8Zg6wu6jVbFc9hRAIf+bw20Ibjla0zMNiENK9D7SGa8xWlALPPlBJbsWg4zzDQTWVcTAar39y49L0tLGYqz6OEgV0QT0OdI5SvupiX3mje4jOowf1JmH7t3xZBoCynUlp/u2JVhT6njZBNt6iNx7koUv2cJmFZHhD6CWw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AS8PR04MB8596.eurprd04.prod.outlook.com (2603:10a6:20b:427::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Wed, 16 Oct
+ 2024 16:24:48 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%3]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
+ 16:24:48 +0000
+Date: Wed, 16 Oct 2024 12:24:39 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Olof Johansson <olof@lixom.net>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH 2/3] arm64: dts: fsl-lx2160a: add rev2 support
+Message-ID: <Zw/oxwypUt5bpWd2@lizhi-Precision-Tower-5810>
+References: <20240826-2160r2-v1-0-106340d538d6@nxp.com>
+ <20240826-2160r2-v1-2-106340d538d6@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826-2160r2-v1-2-106340d538d6@nxp.com>
+X-ClientProxiedBy: SJ0PR13CA0162.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c7::17) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHDqD29TzE=2cw55qeKrnybgkYFCdy4jU_4E=OaUOkZNg@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS8PR04MB8596:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bf21237-96e4-48f1-002b-08dcedff0ddc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6SxkN2ikYYEkwYXRKEY74LT6z+zt0bANpgiSX35kdrtcBv/FAHtTFFHDq951?=
+ =?us-ascii?Q?jMpQIlERJ+jfwiKewQguDEUbGQSU0PcOEmx6+VNv8rwv6EkQs3UDLiwOHk3q?=
+ =?us-ascii?Q?5wSDv9Sms/ZQuz6YxvVtwMfOWhZ5FqNlWC6bGvzra23nZhrYFTTuDaz7JCfY?=
+ =?us-ascii?Q?uGzvjyaalBpGxUjYxFY0me2vwFc4b11ckMQ1Pokrvo8Gz86yo0D4dmLzAW8Y?=
+ =?us-ascii?Q?5Ufrvfetpuzmxyy3ObIti9N2qeSWGaW/w/rvGRKXGKxjlAYC1jYPLK4+aqNb?=
+ =?us-ascii?Q?ssm4HuBT5R5gh6VOBp7GH4ghO6RVh81is2Pr9gVOiZXNCzoF7tlij6nQuF+f?=
+ =?us-ascii?Q?dZoonib0zIvI87YZbJj8JXlvqavhJDiYHQp+k3HwlS3Ll3k+2Uef6O6pRTWl?=
+ =?us-ascii?Q?KchGpLxK/9I2iXLqApsFr+WsF/nXmDoZ3/xYlJ0X7Q11vLhbvSKepRkZ1MzT?=
+ =?us-ascii?Q?+UkWCarXsd+EEtLAugosyTrN6qohBzYr0kPvlYnOfVSGrUnSihrMpOANfgy4?=
+ =?us-ascii?Q?gkoIk8lFNXfiV543hRj2DYNrC6n13QhuvbE7evu2tJ1fsUnogtIZ2f/snIaO?=
+ =?us-ascii?Q?yMg2fim8OvTqrdcj5SA2mV7lEdWQOgAqPjbt2dhi5PqdQRloCayRTfqx3xSM?=
+ =?us-ascii?Q?6NKG60uM+b+qPb7+tsxuT1q8+gRxEszzW7ddJP+odeW6CnRy+ku1EPHrg7XH?=
+ =?us-ascii?Q?ODaWTtjyG6wmngL4rw34hoAxYTmBiCKI9Q/HOBEKWbJcH6B4kHOlaFGijd5a?=
+ =?us-ascii?Q?GEte5xTqWIA5+QRW3O0KC27XS3d5YAk7I3iUC/ipES57v3mxn5bDBJTCmrXG?=
+ =?us-ascii?Q?MZjztDCqoMw5w5roglJGAGlTExr0JexWBPHkihxb40AFD1t1bbbSA7GjG0vW?=
+ =?us-ascii?Q?6fW3yvF79L2T6pejnLLAaVkGhIdfL3+9rCm5rFc03Pv7teSfH9TVgkdRNAsI?=
+ =?us-ascii?Q?SHk7yrcIEOgzAKYnNm6un/jO37nqp+7qp2ctpm4nVGMKe7p5oG3pB3N7GfVe?=
+ =?us-ascii?Q?cwgux4biIFMotNv6cDZedykv9AR4Iz0AEYuTZtujaX7NLFnXlzZPAWG0W4tX?=
+ =?us-ascii?Q?rpMLHzqqXBqPDM2SkyIyUr8n8FfaZMotP9AhaZseec4+XNJKYn5t/GlldF0i?=
+ =?us-ascii?Q?LTyS/3801y1xC93NODP+9RrfGTkBgzb006NlAgsBYpGkMba1DlJQv88ufAJ/?=
+ =?us-ascii?Q?VGUtDBRh0n5w/fAsEGjhJtk48aP5XzonGoTdliCYqbzlDeq6sZ3i7GAaS2kQ?=
+ =?us-ascii?Q?U7LEy/b9gEhwh0wchsDmq8Os1BO/5DqNDdW5A9l9juFODJo6coVxYP7ncuXL?=
+ =?us-ascii?Q?wrTz80EfdjOJ6PPw2Hk1cn9x0QqPGOMjA4Tw+AkuHD4yOw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6UVuEA2xTuuGAASeSjSZSxLx4swGx6dsKlcjz/W1X16wh0zRzI8bQe7GWtzw?=
+ =?us-ascii?Q?MOOy6wYe4qIwHMk9W//MqdvyTQLa4TLH9mQZX2Yt2T0wav8zEroF+s86p41+?=
+ =?us-ascii?Q?x4gqBPRWYvdbJq4t2vrBWyhxDJ2Rzi2kM6ED2JYk++gHBIuEMGhVbBar7X1q?=
+ =?us-ascii?Q?LvgwE1m5BwczakSwqSyGeXy+l7In5qHLNERKAqGiDwMLJ0lsuoqDghwuCA56?=
+ =?us-ascii?Q?Rl3KHH5q/Z3nXdiZ13lsQa+HtLnYVikgOwTy5ofk3flbfydAjVsv/ZaSG6L1?=
+ =?us-ascii?Q?fhW6qnkbfblFAyDgaoZCJhUtnsgKrstKZGUrfUeK8aoYHFtFP73MwGQXYHK3?=
+ =?us-ascii?Q?7KzQtflxjL1pnlqEssuvIcyeOMTRmFYd5VZC+uWQYuoUqWT9MFLmDUyXOG2B?=
+ =?us-ascii?Q?rxcfGiNN/kntMRdlZIdC5WzwAHmfQX7W6ZGKTCQolugIvMpsv0NKGGty7saE?=
+ =?us-ascii?Q?uFxjoSCWZcd0HqKZsgyDn5QmUnOw3pTgibPuNVgsy4+lLuONZ6gxTCCuLHox?=
+ =?us-ascii?Q?cjOtCqR8kyGPlQdxI5IiUyMHURLky1Yr4xWUUbisoRzlHUH3YBqEhn+961JF?=
+ =?us-ascii?Q?jEeeeBvzlIciwPDJwEfYNLHEYV9JKjeydRL9+qH4e3sWuXqRJTc6Z6RqzVn2?=
+ =?us-ascii?Q?crr24HOtzqNB3DMXBSORPSKzSZb4XUt1XZOutSEEW0E27gEqSfK8MOpxgpyJ?=
+ =?us-ascii?Q?YMa9qlXRJxjivdpvx1yZ+DpCYBdYiUVHwZ8E5Xp8lTR5HGh3PoPLum1h6OkE?=
+ =?us-ascii?Q?hW/WQcIpUENAwZmZkOGkDYYLYaqICOwCsJmnDwaDxvFTazwqH5Z2D6ejNxjd?=
+ =?us-ascii?Q?AGVdKxg5SyC3vvgsV2/InPqbvTn+qnUcTob45ymTLLguLJIfCaQiv8u0cqw0?=
+ =?us-ascii?Q?R4Jv5M7MqePQMZOMqmHr2ysdV3vKboh03IhbPGrelsPpsfRJE0IHfTJUcxpb?=
+ =?us-ascii?Q?5ziZFFplvg7P8smQlvvO3JX3YoQOJV2ytYRW7Dk9U2SeiXjqSUGFB9ZbM4kw?=
+ =?us-ascii?Q?rDAtS+b8gFsFBLEo8RaA9LDNt9/5VmckzOvkCPZdyERi3qDU3LDPdpdEt9Xo?=
+ =?us-ascii?Q?3ehtljLuHPZ60V+WFJh5z8FEpneqK1+jl8LRgw/9NvTccssfm9tlQf3jd9lQ?=
+ =?us-ascii?Q?dso0uPIDC4fKCSvtrcg0hqZOeEeeaRWJ4tSc3j2MyQJyDYrAcaahi/kfylDM?=
+ =?us-ascii?Q?V7Xv+Lq2frrGQkEokcvqoM8PDMmIlEJXNezid1Kd5cxxsC0i8yA0G6GSTS51?=
+ =?us-ascii?Q?lu79orFc/8N33we3Si7DjzY9EIW1Tbl8cDc7Wl6Wbg402S0Re0Wh/Pl1lbfy?=
+ =?us-ascii?Q?Dalzq6Vlti7d3DYCZWATnpWz7DbhNk5Sqkg2rqIs4WWGl/IQgz2WU/1s3Y3y?=
+ =?us-ascii?Q?hivP3kcvCMIqpBaqrHZOmJzPCwa7TUeleB/bDij1adAa1sTNU0p67GDYi5T0?=
+ =?us-ascii?Q?Dz5BI9XGtxwnMKS0QsJWvvx0XDt5/TV6pipTCvwhF+Lrrfix6bGskq7Z7MvM?=
+ =?us-ascii?Q?/1evWFzXs7kZgZHwG4yGzTo6C0l5uhgnhpZjaiOGZs+Jdltn2irWmQE+StUX?=
+ =?us-ascii?Q?KD3DlvsZjREt2fpHHtY=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bf21237-96e4-48f1-002b-08dcedff0ddc
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 16:24:48.5963
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FnX0f3oNrCRKVyLyAUKCN8zXoFIF4rxWzwyY1piU7PanuOa83oquPg/bAj4GSsoeWZ5GicXEm8wGXhl24uGr4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8596
 
-On Wed, Oct 16, 2024 at 09:12:41AM +0200, Ard Biesheuvel wrote:
-> > I'd recommend calling the file crc32-4way.S and the functions
-> > crc32*_arm64_4way(), rather than crc32-pmull.S and crc32*_pmull().  This would
-> > avoid confusion with a CRC implementation that is actually based entirely on
-> > pmull (which is possible).
-> 
-> I'm well aware :-)
-> 
-> commit 8fefde90e90c9f5c2770e46ceb127813d3f20c34
-> Author: Ard Biesheuvel <ardb@kernel.org>
-> Date:   Mon Dec 5 18:42:27 2016 +0000
-> 
->     crypto: arm64/crc32 - accelerated support based on x86 SSE implementation
-> 
-> commit 598b7d41e544322c8c4f3737ee8ddf905a44175e
-> Author: Ard Biesheuvel <ardb@kernel.org>
-> Date:   Mon Aug 27 13:02:45 2018 +0200
-> 
->     crypto: arm64/crc32 - remove PMULL based CRC32 driver
-> 
-> I removed it because it wasn't actually faster, although that might be
-> different on modern cores.
+On Mon, Aug 26, 2024 at 05:38:33PM -0400, Frank Li wrote:
+> Add rev2 dtsi. Although uboot fixup can change compatible string
+> fsl,lx2160a-pcie to fsl,ls2088a-pcie since 2019, it is quite confused and
+> should correctly reflect hardware status. So add fsl-lx2160a-rev2.dtsi to
+> overwrite pcie's compatible string.
+>
+> Add PCIe EP nodes.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-The PMULL-based code removed by commit 598b7d41e544 was only 4-wide.  On
-Apple M1, a 12-wide PMULL-based CRC32 is actually faster than 4-way CRC32,
-especially if the eor3 instruction from the sha3 extension is utilized.
+Shawn:
 
-This was not the case on non-Apple CPUs I tested (in 2022), though.  12-wide is
-very wide and is a bit inconvenient, and IMO it's not worth doing in the kernel
-at this point.  It would be interesting to test the very latest CPUs, though.
+	Do you have chance to check this?
 
-- Eric
+best regards
+Frank
+
+>  .../arm64/boot/dts/freescale/fsl-lx2160a-rev2.dtsi | 170 +++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     |   2 +-
+>  2 files changed, 171 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rev2.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rev2.dtsi
+> new file mode 100644
+> index 0000000000000..432e54f6f7ae5
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rev2.dtsi
+> @@ -0,0 +1,170 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +//
+> +// Device Tree file for LX2160 REV2
+> +//
+> +// Copyright 2025 NXP
+> +
+> +/dts-v1/;
+> +
+> +#include "fsl-lx2160a.dtsi"
+> +
+> +&pcie1 {
+> +	compatible = "fsl,lx2160ar2-pcie", "fsl,ls2088a-pcie";
+> +	reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
+> +	      0x80 0x00000000 0x0 0x00002000>; /* configuration space */
+> +	reg-names = "regs", "config";
+> +
+> +	ranges = <0x81000000 0x0 0x00000000 0x80 0x00010000 0x0 0x00010000
+> +		  0x82000000 0x0 0x40000000 0x80 0x40000000 0x0 0x40000000>;
+> +
+> +	interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "intr";
+> +
+> +	/delete-property/ apio-wins;
+> +	/delete-property/ ppio-wins;
+> +};
+> +
+> +&pcie2 {
+> +	compatible = "fsl,lx2160ar2-pcie", "fsl,ls2088a-pcie";
+> +	reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
+> +	       0x88 0x00000000 0x0 0x00002000>; /* configuration space */
+> +	reg-names = "regs", "config";
+> +
+> +	ranges = <0x81000000 0x0 0x00000000 0x88 0x00010000 0x0 0x00010000
+> +		  0x82000000 0x0 0x40000000 0x88 0x40000000 0x0 0x40000000>;
+> +
+> +	interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "intr";
+> +
+> +	/delete-property/ apio-wins;
+> +	/delete-property/ ppio-wins;
+> +};
+> +
+> +&pcie3 {
+> +	compatible = "fsl,lx2160ar2-pcie", "fsl,ls2088a-pcie";
+> +	reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
+> +	       0x90 0x00000000 0x0 0x00002000>; /* configuration space */
+> +	reg-names = "regs", "config";
+> +
+> +	ranges = <0x81000000 0x0 0x00000000 0x90 0x00010000 0x0 0x00010000
+> +		  0x82000000 0x0 0x40000000 0x90 0x40000000 0x0 0x40000000>;
+> +
+> +	interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "intr";
+> +
+> +	/delete-property/ apio-wins;
+> +	/delete-property/ ppio-wins;
+> +};
+> +
+> +
+> +&pcie4 {
+> +	compatible = "fsl,lx2160ar2-pcie", "fsl,ls2088a-pcie";
+> +	reg = <0x00 0x03700000 0x0 0x00100000   /* controller registers */
+> +	       0x98 0x00000000 0x0 0x00002000>; /* configuration space */
+> +	reg-names = "regs", "config";
+> +
+> +	ranges = <0x81000000 0x0 0x00000000 0x98 0x00010000 0x0 0x00010000
+> +		  0x82000000 0x0 0x40000000 0x98 0x40000000 0x0 0x40000000>;
+> +
+> +	interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "intr";
+> +
+> +	/delete-property/ apio-wins;
+> +	/delete-property/ ppio-wins;
+> +};
+> +
+> +&pcie5 {
+> +	compatible = "fsl,lx2160ar2-pcie", "fsl,ls2088a-pcie";
+> +	reg = <0x00 0x03800000 0x0 0x00100000   /* controller registers */
+> +	       0xa0 0x00000000 0x0 0x00002000>; /* configuration space */
+> +	reg-names = "regs", "config";
+> +
+> +	ranges = <0x81000000 0x0 0x00000000 0xa0 0x00010000 0x0 0x00010000
+> +		  0x82000000 0x0 0x40000000 0xa0 0x40000000 0x0 0x40000000>;
+> +
+> +	interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "intr";
+> +
+> +	/delete-property/ apio-wins;
+> +	/delete-property/ ppio-wins;
+> +};
+> +
+> +&pcie6 {
+> +	compatible = "fsl,lx2160ar2-pcie", "fsl,ls2088a-pcie";
+> +	reg = <0x00 0x03900000 0x0 0x00100000   /* controller registers */
+> +	       0xa8 0x00000000 0x0 0x00002000>; /* configuration space */
+> +	reg-names = "regs", "config";
+> +
+> +	ranges = <0x81000000 0x0 0x00000000 0xa8 0x00010000 0x0 0x00010000
+> +		  0x82000000 0x0 0x40000000 0xa8 0x40000000 0x0 0x40000000>;
+> +
+> +	interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "intr";
+> +
+> +	/delete-property/ apio-wins;
+> +	/delete-property/ ppio-wins;
+> +};
+> +
+> +&soc {
+> +	pcie_ep1: pcie-ep@3400000 {
+> +		compatible = "fsl,lx2160ar2-pcie-ep";
+> +		reg = <0x00 0x03400000 0x0 0x00100000
+> +		       0x80 0x00000000 0x8 0x00000000>;
+> +		reg-names = "regs", "addr_space";
+> +		num-ob-windows = <8>;
+> +		num-ib-windows = <8>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pcie_ep2: pcie-ep@3500000 {
+> +		compatible = "fsl,lx2160ar2-pcie-ep";
+> +		reg = <0x00 0x03500000 0x0 0x00100000
+> +		       0x88 0x00000000 0x8 0x00000000>;
+> +		reg-names = "regs", "addr_space";
+> +		num-ob-windows = <8>;
+> +		num-ib-windows = <8>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pcie_ep3: pcie-ep@3600000 {
+> +		compatible = "fsl,lx2160ar2-pcie-ep";
+> +		reg = <0x00 0x03600000 0x0 0x00100000
+> +		       0x90 0x00000000 0x8 0x00000000>;
+> +		reg-names = "regs", "addr_space";
+> +		num-ob-windows = <256>;
+> +		num-ib-windows = <24>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pcie_ep4: pcie-ep@3700000 {
+> +		compatible = "fsl,lx2160ar2-pcie-ep";
+> +		reg = <0x00 0x03700000 0x0 0x00100000
+> +		       0x98 0x00000000 0x8 0x00000000>;
+> +		reg-names = "regs", "addr_space";
+> +		num-ob-windows = <8>;
+> +		num-ib-windows = <8>;
+> +		status = "disabled";
+> +	};
+> +
+> +
+> +	pcie_ep5: pcie-ep@3800000 {
+> +		compatible = "fsl,lx2160ar2-pcie-ep";
+> +		reg = <0x00 0x03800000 0x0 0x00100000
+> +		       0xa0 0x00000000 0x8 0x00000000>;
+> +		reg-names = "regs", "addr_space";
+> +		num-ob-windows = <256>;
+> +		num-ib-windows = <24>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pcie_ep6: pcie-ep@3900000 {
+> +		compatible = "fsl,lx2160ar2-pcie-ep";
+> +		reg = <0x00 0x03900000 0x0 0x00100000
+> +		       0xa8 0x00000000 0x8 0x00000000>;
+> +		reg-names = "regs", "addr_space";
+> +		num-ob-windows = <8>;
+> +		num-ib-windows = <8>;
+> +		status = "disabled";
+> +	};
+> +};
+> +
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> index 26c7ca31e22e7..b2dea03e1b8ec 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> @@ -613,7 +613,7 @@ cluster2-3-crit {
+>  		};
+>  	};
+>
+> -	soc {
+> +	soc: soc {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
+>  		#size-cells = <2>;
+>
+> --
+> 2.34.1
+>
 
