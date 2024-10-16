@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-367625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064F19A049B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:49:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB6A9A049C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCACE283CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCD51F268CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6EB2038A5;
-	Wed, 16 Oct 2024 08:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085222036E7;
+	Wed, 16 Oct 2024 08:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kVIeTejc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="dJLer9UG"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D6A1865E2;
-	Wed, 16 Oct 2024 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E311865E2
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729068538; cv=none; b=SO7PVLwF5ib1snF6HX95FL02pk2Lq7PoGL8g0zt9Rtl4a3a0TCKEleJQCq4jKJgcbl5UCyIyuLxlEb6WhajXHyfozHDu6Xrj6Z+C07KvSX3bRBe8KhF/ObTKin2j/eoeX/ZxMYnI3BlXqJf+210/XtiKAYjKI+lNyaRM9nxZAeA=
+	t=1729068549; cv=none; b=ZIhOaiFWM8z3Xh8b85sGgzJMrXHXiz+MN2y+J9SXrGRUSS/cvdJ/3OXbR4A+JyX4Nsg32hv1BnPX68nNBCeJg226LMY0cud0D1UVoBfqTTb6qg0MMftH1VU0z0TlGvrtgpgn8jN13r7skWPxC0IzOxpIpeAuWmhtgXsKnMTz1+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729068538; c=relaxed/simple;
-	bh=4VgZz4yLtQii/zVmyg9PHNVDdQYpnxH1Pv+8yYlKqxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BlN6XxNaAZAdKaQqqR9HWsVieLnnH4R4OCGCuOVsA1235nEPCpbvbccJnI0o+YWqK4Siu+qdvaTu7swbx1V30FMr1MDrPvDmuTCTVmKr+dUaa1M/ZmN3J8HXyORlDDC4oLhAjoT4iKTMuE5CYGnDUCahefDtvEQYM2cf269Evm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kVIeTejc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G8PuON014334;
-	Wed, 16 Oct 2024 08:48:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4VgZz4yLtQii/zVmyg9PHNVDdQYpnxH1Pv+8yYlKqxM=; b=kVIeTejcPqWkS1cI
-	rxdKdfprP5VIAukccatnHx3devfaHQuNx1LaNDVhYtJXWCwTZ0ca9TxqgEaeJYdh
-	6DtVkBKnuU9Jd1yg3PnXJqFIA1sdiQdkFO2n33amqPcJvRYAko6nI5GGw1bth/Ar
-	pqaLgCdYpXCTMOTs84N+19VaDQ5IcPB/W3A2U9/jQTPSSskWs0brnuKiOhDeZY8d
-	AlVRg6DbumKysnnGscMAHg6FyDlD6vlvZx+z11rlXFBQw1CGj0ZRPhxWjFdlBpb+
-	QZpOGhgKNF3sJFEgWwKzbXI/sjGBKvw5+ps4I1OlEh9CzX2ue9Odi/tXjSl7OU/y
-	mwaISQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a79h8jv6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 08:48:50 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49G8mnYa006852
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 08:48:49 GMT
-Received: from [10.50.26.161] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Oct
- 2024 01:48:44 -0700
-Message-ID: <ed906492-a82a-4c20-9966-26d862ec03c4@quicinc.com>
-Date: Wed, 16 Oct 2024 14:18:41 +0530
+	s=arc-20240116; t=1729068549; c=relaxed/simple;
+	bh=JNdecXlVBjpt105dLJ8bY6z8Z1Yc45TzZ+/TfYyxcMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CRAaDw57Ob3F+puKLDe0g+wlOoT7u96Kd377A53UipFoWsv4bl4VIiWENjP27g97DaglTWgG8TSByi7bKlQgaqx+tF0YCb7TynisAKtYzr0i1YN7+olv4WX3R4qeUm6eusE6pb67T2Kv9wxteBgAL6Iu+d0DVzQ2A77Nnd8uDo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=dJLer9UG; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7180ab89c58so69168a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:49:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1729068547; x=1729673347; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yhbVQyfRkW94fc9SRqBIvGYEHn8LmJMPO3GJTuoNbLk=;
+        b=dJLer9UGV7iWkmsfaTffqfX/1nCc0fT/tA7UBR47czI3K4LlMMipkNbC8QceEzU7OR
+         JIhqEka6j1wZLbuYTk8OX15+EaNXQnpY3EMXRBOU/azJGaxmfQrM+Kg9z30wnR3IKSHd
+         8YHMQPjm/coi/IxwnYUTas7QKP2vQyisBaGX3NtFva9492V+gaNjkm+z99Gz6qKdPhjP
+         xCi732KWdCcXHRvjz+mQyw1birp9WDMHkkxicRGdRh5juAywbl0NguBZeRSgQDewG1pj
+         pePvYMzsIHaryA772JYFvSYCNlJIhdDhy7pF4UHRVlKY8Hl3L4QaGu1EuPferpLUef5Q
+         XpkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729068547; x=1729673347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yhbVQyfRkW94fc9SRqBIvGYEHn8LmJMPO3GJTuoNbLk=;
+        b=tPxRan1vjvxbQNtSJBkfxlriopcf8IpqwFb4CeI0lrAqFH+Cu5ES+lKcN2P2ICIbP2
+         TE5zfHFAzalg+qsBWuRPU/4Oe6QclAZyHfEGtmUPKiauS+RXI9Ap9ytswgXAqWqkyocJ
+         2wWB1eQE9vuVuyZ4CudKeA913ZmOpF+YhMIVct3lIqW5LXbKWhzq5G8+s/o38ek6YFin
+         ZuQXcGmbeUiKqJuArptmsxerLP1HRH2y2BcuO2J+VF5hAsG7hQ0Fbn5dQ/DCQr/SBdyU
+         ApkJ/MPuUdV/I2diLFmWZcwBFgZ5fjdDkXWOIgJCc/Y+t9kLM9qgx9H9dwNzTtQjGzF6
+         v7cA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh6qW1OBoA/WSmonndAOeH+hCEf0shSOZ6Jsu2iTIx222Lp61l+LWUemFCWitbaymSJki3J3S5b0CGUmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/lTfz2b7ealyyNL3JxF0a+vtVVdRI02HQZnLzpn5AIL0CzSic
+	azgd2URFBvn8KYoqvXCwNQuqgnMS2gKLKQ4xTxmbpmGMYSdhxdXX3xKSYnuhS/A=
+X-Google-Smtp-Source: AGHT+IHX6rhmfA7N9aepcCXGWg+aLVBjn3PwoP8vJv4Eo4/lvnu7ZU5x91ThivPntsl/7ggjwaAxNw==
+X-Received: by 2002:a05:6830:63cb:b0:710:f38a:191c with SMTP id 46e09a7af769-717d6411af5mr16721457a34.11.1729068546855;
+        Wed, 16 Oct 2024 01:49:06 -0700 (PDT)
+Received: from sunil-laptop ([106.51.192.229])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eb4eee7f3csm651965eaf.47.2024.10.16.01.48.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 01:49:05 -0700 (PDT)
+Date: Wed, 16 Oct 2024 14:18:55 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+Cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alexghiti@rivosinc.com,
+	conor.dooley@microchip.com, rafael.j.wysocki@intel.com,
+	haibo1.xu@intel.com, jeeheng.sia@starfivetech.com,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] RISC-V: ACPI: fix early_ioremap to early_memremap
+Message-ID: <Zw9991h7QtX2S__m@sunil-laptop>
+References: <20241014130141.86426-1-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/22] arm64: dts: qcom: add wifi node for IPQ5332
- based RDP441
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        Kalle Valo
-	<kvalo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeff Johnson
-	<jjohnson@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-3-quic_rajkbhag@quicinc.com>
- <ftvwsizfupm7veg662adnzc6jpulk5shga3xmvbtom3saclnf6@bmatmqw5lp72>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <ftvwsizfupm7veg662adnzc6jpulk5shga3xmvbtom3saclnf6@bmatmqw5lp72>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FqqHyzGn5_myvUH1deseV5_5ag_P7ZuJ
-X-Proofpoint-ORIG-GUID: FqqHyzGn5_myvUH1deseV5_5ag_P7ZuJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=874 suspectscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 adultscore=0 mlxscore=0 spamscore=0
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410160058
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014130141.86426-1-cuiyunhui@bytedance.com>
 
-On 10/16/2024 12:28 PM, Krzysztof Kozlowski wrote:
-> On Tue, Oct 15, 2024 at 11:56:17PM +0530, Raj Kumar Bhagat wrote:
->> RDP441 is based on IPQ5332. It has inbuilt AHB bus based IPQ5332 WiFi
->> device.
->>
->> Describe and add WiFi node for RDP441. Also, reserve the memory
->> required by IPQ5332 firmware.
->>
->> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-> Don't send one DTS patch in 22 patchset targetting different subsystem.
-> Imagine, how wireless maintainers are supposed to apply their bits? 21
-> commands instead of one command?
+On Mon, Oct 14, 2024 at 09:01:41PM +0800, Yunhui Cui wrote:
+> When SVPBMT is enabled, __acpi_map_table() will directly access the
+> data in DDR through the IO attribute, rather than through hardware
+> cache consistency, resulting in incorrect data in the obtained ACPI
+> table.
+> 
+> The log: ACPI: [ACPI:0x18] Invalid zero length.
+> 
+> We do not assume whether the bootloader flushes or not. We should
+> access in a cacheable way instead of maintaining cache consistency
+> by software.
+> 
+> Fixes: 3b426d4b5b14 ("RISC-V: ACPI : Fix for usage of pointers in different address space")
+> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>  arch/riscv/kernel/acpi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
+> index 6e0d333f57e5..2fd29695a788 100644
+> --- a/arch/riscv/kernel/acpi.c
+> +++ b/arch/riscv/kernel/acpi.c
+> @@ -210,7 +210,7 @@ void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
+>  	if (!size)
+>  		return NULL;
+>  
+> -	return early_ioremap(phys, size);
+> +	return early_memremap(phys, size);
+>  }
+>  
+>  void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
+> @@ -218,7 +218,7 @@ void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
+>  	if (!map || !size)
+>  		return;
+>  
+> -	early_iounmap(map, size);
+> +	early_memunmap(map, size);
+>  }
+>  
+Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
 
-Sure, we can drop the DTS patch from this series. Will take this patch
-separately once the binding (qcom,ath12k-ahb.yaml) is merged.
+Thanks,
+Sunil
 
