@@ -1,218 +1,112 @@
-Return-Path: <linux-kernel+bounces-368784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A749A14E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3221B9A14EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A341F23C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC9F1F22779
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB161D2F72;
-	Wed, 16 Oct 2024 21:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B821D2F4E;
+	Wed, 16 Oct 2024 21:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="DLZbzp2E"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="ysyGKW3J"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCDD1D2B03
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B971D2B03
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114680; cv=none; b=IZBEm/52DkJTxN/4bOXhlVH3J5SCu/r8rquzYePelpJ7ysSP22k1G73cr2HvluGHJhzWl+t8mz38vwg3ny6aMKYGG8FBrp0DJmTI4gxwZvGyO+NBGpHZWPw1jFgEvmXhOp9LBChOa7FkJ7lbKX4DLn1eCsuLUlAIr8ziQfonIqg=
+	t=1729114756; cv=none; b=Fd+wVgzo7Yd3hcd/267f2JI4i2AVDyUt7jH1f/9VGmOJ3okAuZfoz1XgR7OqpVq1rkT0OEBYkk7SPMaPAHIslkChKGuz1KqhWMRTSHyFboNGB3XQJjjm++ncdPph9nZj2deijRi8dF1nDR1hzymWmVivIzM35MUON/ikxsa+B0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729114680; c=relaxed/simple;
-	bh=0ftiz8/PJ2BXnKXN6KtR+nBUTcWtl/DbJJX/Z6yLX5o=;
+	s=arc-20240116; t=1729114756; c=relaxed/simple;
+	bh=k7GxTv21vlnA+IKy5RrAYAcCA8X9XxHW0ySsY+Tvi3k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZNmg+Amt+DtxLHwy/lfy88mNX/T+IUxDVBRxjS4yN4u9hMrOn58erYPwQLhP21e8a6d6VBsr2Dso3gW/kKgx6b86xdnBC9pX0GiMRZH+mPBk/wRMLfEFtVZLa41ge8DfHNenSNL7SbgiJyDLfB9Y1h2AfhMU2LwNcMFAiRjQ8/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=DLZbzp2E; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e4b7409fso291862e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:37:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=WnLcQn83OmZfgHrrOJ02cb+cbvdyBRAq+D+NG+HIBBJZ3ZuQ5rJGgzpp5aYt/zsIyb0LKvUFH3wpAcwDKOU+N1IPMdYIhRHi6iMo8j5n0u5qlStpg8E5WYfFLGjbxLGdEnB2ntYUWP0Yvszlw3x3tSN5lwKXY+ev5H4Fjf0U5OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=ysyGKW3J; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c973697b52so400180a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atishpatra.org; s=google; t=1729114677; x=1729719477; darn=vger.kernel.org;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729114752; x=1729719552; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2YznlNfPmglMUg5tZFDFUIFHN41LFVDmI36C4tGvTFk=;
-        b=DLZbzp2E1VAmpLQiuGykjBJDklC+r7B3t2M3c93roMJg/VWHKlj6xncOomPinD17Gr
-         nTJYyZFNNXZ71nhjW0+2SHvVhFWt5mw2GMdpsrkDDhhCFB/EvoBkzmaIeyhZYTwib5bX
-         Qkv2QVuW8n4PF4QMvihvBmoP1w4jXa9elmFFk=
+        bh=sGbTpYZZEZP+mGuvzqT9GIg1Bljms7cSdFODzrCOUm4=;
+        b=ysyGKW3JYSClX/KxZX/QZpz1IRfsZnUcsas9RzzdWZ6ZFg91cuyPMT5aofgZUDiiOu
+         /+wXqwPFI86iSCNkxmdVpJe7f0Q41oSl6wK+UWHvsDAub4WWdZkh59G2GvC7WdBMTLan
+         F3g/08Ly1V02LMhvGSlXnnq4OYnVAE29fL093cgB3D/yhRI4buWY2PvhSjid1n6RPyCm
+         611Y/WcWOrhJVsguctvm2gA+QTDF6agjEzzRJ5dvhsMG3vj4BiKQ4PuxTJQzhLLagSgf
+         bYEiG/ey4VyWTHOg+xgv2jFhCyxtjvqcqc8jDoJKSOoesdR6auhOgRWQeNUtWZn4FeKR
+         tcBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729114677; x=1729719477;
+        d=1e100.net; s=20230601; t=1729114752; x=1729719552;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2YznlNfPmglMUg5tZFDFUIFHN41LFVDmI36C4tGvTFk=;
-        b=gp5rIXFfJW0C6Z1oPa3Fue9JLdL3rG/2hA44VziMSdXkAft126XLbUDMalVu0vPzTX
-         +L6r2FIO8WzQzUs94UW4FrsyS5nPpk9N7LHSkPPkeSXf8i2RJ5wYkjVvHPn9eVAcu0+P
-         y4zrvL4vzwJS7zpHQWk+bPa8enbNlGiYQ/Ah9TMdiLxCr0EDUHAPsMBskK+iiNZRfVRO
-         mpItrnyEj7j/DHygUe1lFPfo4sprXthi0OXkZG0CTAO8OeGpQ1qO8UuKHY5EvEa6xlEE
-         SnY07xay0rCsXGM7pVR14LwQsrxGXy5E1X0QG1foBEP2uh/CRvb8Ox5si5jZMVmjTCDX
-         oSnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQmpJvrWimu9B3XlETpX+0oDsc2hEICvr0PEZ8pCXiJ65H0MHb//Ezw3G+taV5w76f1sm397H5QKTymeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP/3lNCuXsekd9haaC/NvA9IqJ5P12ZnXtdkRZDdgYbLeceeK4
-	q8BZ8Jal+S69pAXN+zp11OfLFOf+EnKQdfhT97qf2FiYLtDVdvV1H0T7vyZ6KAKTsK0iaCOUmxc
-	tnwkjC908B7pqq+g3ffwbo2+vnHQu/6iX9wzr
-X-Google-Smtp-Source: AGHT+IFj9tyESsCJ6J96tM8hMvteUTyEpM92Iaw4llEr3qWo3ylAwmBp3kDxxSD8nRDRtkcl2BXGiAgd+cAwfJXLyIQ=
-X-Received: by 2002:a05:6512:3c81:b0:53a:41a:69bb with SMTP id
- 2adb3069b0e04-53a0c709c49mr241179e87.28.1729114677218; Wed, 16 Oct 2024
- 14:37:57 -0700 (PDT)
+        bh=sGbTpYZZEZP+mGuvzqT9GIg1Bljms7cSdFODzrCOUm4=;
+        b=Y+sLYjurz7fNwKwncrkR4R6MO9e7Wqr8KtJFU3SNDlLSs+HZfWOPsFYd7GLsi5oI7G
+         aWy7/CeLRAhkL14BGv/epKBuzyi8SvKCAy+Kg739Aohj36E4Pitb05KX0g+5FwSWiryn
+         wq12anWZXLV167W+AcCRWLSiJUvD5qRRnMH+DlmPRj7munj4QzQDfV4IMbAhCz5HDRui
+         U6UOAZhMuqFiciqh8FTHJmtdMT/cBRdp4Aza3zaCIAjhadda43L8ZzpfNlLL5VESWQ92
+         1wZljZn2bcieIrMa179gMHPGBiNpRz5ilSXNoD16FPpjHIq9fZ4MfW10DM/gdUlsb9/B
+         zhxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvNwMeyW8JvNDhb/uRaKEhtb9DUCjhf9zilBKIx1z9k+pp1Y9s1gQbjEO37gFa3BwPTW28Sn6uc2ovC/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPTZUUlTY9QmVJ4UFZPAr2+uCD0q7K6YV+Xz3DXxGOWH7IfkO2
+	vFGaQ5/K7VXIwa6a64IUuntniu4ZoWwpHeKPMc9wbKrrPcbmrk5fIMMikXAjlVN652ZYN8deLEg
+	0EIXYUw3RJtKTGM82E/zsGliHMfynvQzzWQY5Zw==
+X-Google-Smtp-Source: AGHT+IGfXrUOPkq3mI2TubA4yiUF56RfE+/zlumUxASWgWuC+eB9Q8NPP8mccdlaABo7RMO5uJK/NoWjyHvR/RsH+kI=
+X-Received: by 2002:a05:6402:5247:b0:5c9:6b39:d9e5 with SMTP id
+ 4fb4d7f45d1cf-5c96b39dad8mr13701812a12.20.1729114751823; Wed, 16 Oct 2024
+ 14:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-5-apatel@ventanamicro.com>
-In-Reply-To: <20240719160913.342027-5-apatel@ventanamicro.com>
-From: Atish Patra <atishp@atishpatra.org>
-Date: Wed, 16 Oct 2024 14:37:45 -0700
-Message-ID: <CAOnJCU+4qNAsqDO4bvL9OdRdFBDavpTiLEEYSaYpHG4R=1W0Og@mail.gmail.com>
-Subject: Re: [PATCH 04/13] RISC-V: KVM: Break down the __kvm_riscv_switch_to()
- into macros
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+References: <20241015232212.19242-1-everestkc@everestkc.com.np> <e22aebb2-0961-459c-bc02-3165c364115b@stanley.mountain>
+In-Reply-To: <e22aebb2-0961-459c-bc02-3165c364115b@stanley.mountain>
+From: "Everest K.C." <everestkc@everestkc.com.np>
+Date: Wed, 16 Oct 2024 15:39:00 -0600
+Message-ID: <CAEO-vhGc9A5NfRDng1j43czdWo7=DO0wahC1Y5mQrF4w6kZRpg@mail.gmail.com>
+Subject: Re: [PATCH V4][next] Bluetooth: btintel_pcie: Remove structrually deadcode
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, skhan@linuxfoundation.org, 
+	kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 9:09=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
-> wrote:
+On Wed, Oct 16, 2024 at 8:42=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 >
-> Break down the __kvm_riscv_switch_to() function into macros so that
-> these macros can be later re-used by SBI NACL extension based low-level
-> switch function.
+> On Tue, Oct 15, 2024 at 05:22:05PM -0600, Everest K.C. wrote:
+> > The switch case statement has a default branch. Thus, the return
+> > statement at the end of the function can never be reached.
+> > Fix it by removing the return statement at the end of the
+> > function.
+> >
+> > This issue was reported by Coverity Scan.
+> >
+> > Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between dr=
+iver and firmware")
+> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> > Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> > ---
+> > V3 -> V4: - Fixed typo in the subject
 >
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/kvm/vcpu_switch.S | 52 +++++++++++++++++++++++++++---------
->  1 file changed, 40 insertions(+), 12 deletions(-)
+> I don't like to be the typo police but, no, you didn't fix the typo.  :P
+No, using the correct spelling helps in searching the patches in lore.
+Thank you, will send a V5.
+> regards,
+> dan carpenter
 >
-> diff --git a/arch/riscv/kvm/vcpu_switch.S b/arch/riscv/kvm/vcpu_switch.S
-> index 3f8cbc21a644..9f13e5ce6a18 100644
-> --- a/arch/riscv/kvm/vcpu_switch.S
-> +++ b/arch/riscv/kvm/vcpu_switch.S
-> @@ -11,11 +11,7 @@
->  #include <asm/asm-offsets.h>
->  #include <asm/csr.h>
->
-> -       .text
-> -       .altmacro
-> -       .option norelax
-> -
-> -SYM_FUNC_START(__kvm_riscv_switch_to)
-> +.macro SAVE_HOST_GPRS
->         /* Save Host GPRs (except A0 and T0-T6) */
->         REG_S   ra, (KVM_ARCH_HOST_RA)(a0)
->         REG_S   sp, (KVM_ARCH_HOST_SP)(a0)
-> @@ -40,10 +36,12 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->         REG_S   s9, (KVM_ARCH_HOST_S9)(a0)
->         REG_S   s10, (KVM_ARCH_HOST_S10)(a0)
->         REG_S   s11, (KVM_ARCH_HOST_S11)(a0)
-> +.endm
->
-> +.macro SAVE_HOST_AND_RESTORE_GUEST_CSRS __resume_addr
->         /* Load Guest CSR values */
->         REG_L   t0, (KVM_ARCH_GUEST_SSTATUS)(a0)
-> -       la      t1, .Lkvm_switch_return
-> +       la      t1, \__resume_addr
->         REG_L   t2, (KVM_ARCH_GUEST_SEPC)(a0)
->
->         /* Save Host and Restore Guest SSTATUS */
-> @@ -62,7 +60,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->         REG_S   t0, (KVM_ARCH_HOST_SSTATUS)(a0)
->         REG_S   t1, (KVM_ARCH_HOST_STVEC)(a0)
->         REG_S   t3, (KVM_ARCH_HOST_SSCRATCH)(a0)
-> +.endm
->
-> +.macro RESTORE_GUEST_GPRS
->         /* Restore Guest GPRs (except A0) */
->         REG_L   ra, (KVM_ARCH_GUEST_RA)(a0)
->         REG_L   sp, (KVM_ARCH_GUEST_SP)(a0)
-> @@ -97,13 +97,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->
->         /* Restore Guest A0 */
->         REG_L   a0, (KVM_ARCH_GUEST_A0)(a0)
-> +.endm
->
-> -       /* Resume Guest */
-> -       sret
-> -
-> -       /* Back to Host */
-> -       .align 2
-> -.Lkvm_switch_return:
-> +.macro SAVE_GUEST_GPRS
->         /* Swap Guest A0 with SSCRATCH */
->         csrrw   a0, CSR_SSCRATCH, a0
->
-> @@ -138,7 +134,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->         REG_S   t4, (KVM_ARCH_GUEST_T4)(a0)
->         REG_S   t5, (KVM_ARCH_GUEST_T5)(a0)
->         REG_S   t6, (KVM_ARCH_GUEST_T6)(a0)
-> +.endm
->
-> +.macro SAVE_GUEST_AND_RESTORE_HOST_CSRS
->         /* Load Host CSR values */
->         REG_L   t0, (KVM_ARCH_HOST_STVEC)(a0)
->         REG_L   t1, (KVM_ARCH_HOST_SSCRATCH)(a0)
-> @@ -160,7 +158,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->         REG_S   t1, (KVM_ARCH_GUEST_A0)(a0)
->         REG_S   t2, (KVM_ARCH_GUEST_SSTATUS)(a0)
->         REG_S   t3, (KVM_ARCH_GUEST_SEPC)(a0)
-> +.endm
->
-> +.macro RESTORE_HOST_GPRS
->         /* Restore Host GPRs (except A0 and T0-T6) */
->         REG_L   ra, (KVM_ARCH_HOST_RA)(a0)
->         REG_L   sp, (KVM_ARCH_HOST_SP)(a0)
-> @@ -185,6 +185,34 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->         REG_L   s9, (KVM_ARCH_HOST_S9)(a0)
->         REG_L   s10, (KVM_ARCH_HOST_S10)(a0)
->         REG_L   s11, (KVM_ARCH_HOST_S11)(a0)
-> +.endm
-> +
-> +       .text
-> +       .altmacro
-> +       .option norelax
-> +
-> +       /*
-> +        * Parameters:
-> +        * A0 <=3D Pointer to struct kvm_vcpu_arch
-> +        */
-> +SYM_FUNC_START(__kvm_riscv_switch_to)
-> +       SAVE_HOST_GPRS
-> +
-> +       SAVE_HOST_AND_RESTORE_GUEST_CSRS .Lkvm_switch_return
-> +
-> +       RESTORE_GUEST_GPRS
-> +
-> +       /* Resume Guest using SRET */
-> +       sret
-> +
-> +       /* Back to Host */
-> +       .align 2
-> +.Lkvm_switch_return:
-> +       SAVE_GUEST_GPRS
-> +
-> +       SAVE_GUEST_AND_RESTORE_HOST_CSRS
-> +
-> +       RESTORE_HOST_GPRS
->
->         /* Return to C code */
->         ret
-> --
-> 2.34.1
->
-
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
-
---=20
-Regards,
-Atish
+Thanks,
+Everest K.C.
 
