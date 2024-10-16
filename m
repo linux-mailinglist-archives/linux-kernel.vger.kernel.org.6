@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-368490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843CA9A1065
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:12:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1739A1066
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497C9281877
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:12:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FF81B2136C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9537E212630;
-	Wed, 16 Oct 2024 17:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AB9212EE5;
+	Wed, 16 Oct 2024 17:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqK7ac09"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7C/l4ES"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0791210C01;
-	Wed, 16 Oct 2024 17:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70287212627;
+	Wed, 16 Oct 2024 17:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729098763; cv=none; b=V8NiP8fT4tsKrDFtsmPiNyf/m2Y/YixjCEi1P1WeSjKguCL2Yqguv4+o5872Awu1m0p7blgOkLfpdWMjMjkJmRqBKU/U7WhzBVXFLzKgaYxJw/U9Ajuo4v4PUc6yI/N1hFdgDe4RbgWSNvt/v/jvn6gcz4e3cw34zU/XIkmaUoc=
+	t=1729098763; cv=none; b=G7+mL3mGiFnnvHLAyQiU+pTHGuiR2n6wu9Tm6K8wAEd1hySjkXhdnDgTFkKrimmHQTTI382LOSDRUMM7Zx2Ljx+tmfQmKv5oLw6ApvNeVAyqckP8Bqyi7lj8xD2dDfp+W9BrGRCglwOWVeWUOH43BtGZFxQJj8Tvn6rPr1KWF6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729098763; c=relaxed/simple;
-	bh=lFQPezS2i4B2u6KpoHCdXtTqSLsp8pf3GFF2tDZvQBM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kN70j1qF4uKBnjaBI/mRjsdprH+pEyN4lmBWVF1KDcTkUCZl4AS3yYkmlZQBDzzHsdol1EaiztTJq6AfE5fUJM7vn/mT6MsAY2Ouhd1nfO9qLNxnCRAFV4GawqERb3CAUXf7L8i/IBsTAMI0x/iEX/F/l7HcUhYRI2465OMQkTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqK7ac09; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D1DC4CED1;
+	bh=JsUthygbYceZEJx3q7rytEwLvBuAMfRzz12VG6hZAww=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DrHWyfZb4fv5kfEOQYg4uLr/6lzse+m2mc9EaUlsMq4f7oGfZ2OU1hc+E5IFKxUrOPacpOmqpxwws7cTcZbFz7pI7nj1kH0TTo9vqEnP/TchjSBoRWTYV3quoyMZUgGynUhnUgdhj0fwJwxTkZSjzZR6K5xS1/cpaBV8+HYdvD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7C/l4ES; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE93C4CED2;
 	Wed, 16 Oct 2024 17:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729098762;
-	bh=lFQPezS2i4B2u6KpoHCdXtTqSLsp8pf3GFF2tDZvQBM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=iqK7ac09qcSV2o14tzRzLMFQYHJObD2F5CMfcABKXEG+ztKVjK+zWnUM9b0r50X21
-	 EYxWyQAahpkSnbXt1yRRyNkvOfnDoJakqNlMMYC3szdHarJlG+sDtlGCNRFc6bqXVO
-	 Pyilw++3uUgzi92AN7ANjXCMUEBV/xmw3SA2Z9NIINo1OkWHjP40EEzNFr0I/4k8ty
-	 KSTCOCmxkhN2DSDAiWbqzcXOLc24Io5bGPGt2BnFKGQ0hW8rflOhGFfnC1T79D/U5k
-	 eNza3Z9NWohAR/H/bRMwbcpvvfw3+8QVvVukowwsY9yZWR/KqqyJ08PC8uZatxHUzm
-	 4LDg5RPZkiQuw==
+	s=k20201202; t=1729098763;
+	bh=JsUthygbYceZEJx3q7rytEwLvBuAMfRzz12VG6hZAww=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=g7C/l4ESdupMl7BNZRYjl87S9vqDDZrbsIJ/XvlRHNEP3sV9NbP+bSWQmWMBfru8I
+	 7EIS6u/8QyNcBLCuuCTum+raP4JdaRxHVwdcg1fMKzx3PSmUj7OmyYAC4ZZtnaKNFo
+	 38vE2+zx12QxD/0XlGSWLqsDuXPWmn2eRnuRBwlddlhsJRaBMjVZxLnKbwuwp5jfLL
+	 7yqsYDYbaSXOVuGb1/9fjU38O+aRcFH/G/KJZOyfgL2QygJFqmxtq4KXTHnBsPTfew
+	 Ptfucb5nhMEA4skkRBJVUaCkew/HvsLVbztMjb4YKp6xWs77Z4ySYsXYZePfI/RT8y
+	 jAX7VjbGu/V6w==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Ian Rogers <irogers@google.com>, 
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com, 
- Tim Chen <tim.c.chen@linux.intel.com>, 
- linux-perf-users <linux-perf-users@vger.kernel.org>, 
- LKML <linux-kernel@vger.kernel.org>, 
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <20241004170756.18064-1-vineethr@linux.ibm.com>
-References: <20241004170756.18064-1-vineethr@linux.ibm.com>
-Subject: Re: [PATCH v6] perf sched timehist: Add pre-migration wait time
- option
-Message-Id: <172909876202.288721.13527604855301602409.b4-ty@kernel.org>
+ Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+ Ben Gainey <ben.gainey@arm.com>
+In-Reply-To: <20241009062250.730192-1-namhyung@kernel.org>
+References: <20241009062250.730192-1-namhyung@kernel.org>
+Subject: Re: [PATCH] perf evsel: Fix missing inherit + sample read check
+Message-Id: <172909876265.288721.7311517520691951723.b4-ty@kernel.org>
 Date: Wed, 16 Oct 2024 10:12:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,18 +63,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Fri, 04 Oct 2024 22:37:56 +0530, Madadi Vineeth Reddy wrote:
+On Tue, 08 Oct 2024 23:22:50 -0700, Namhyung Kim wrote:
 
-> pre-migration wait time is the time that a task unnecessarily spends
-> on the runqueue of a CPU but doesn't get switched-in there. In terms
-> of tracepoints, it is the time between sched:sched_wakeup and
-> sched:sched_migrate_task.
+> It should not clear the inherit bit simply because the kernel doesn't
+> support the sample read with it.  IOW the inherit bit should be kept
+> when the sample read is not requested for the event.
 > 
-> Let's say a task woke up on CPU2, then it got migrated to CPU4 and
-> then it's switched-in to CPU4. So, here pre-migration wait time is
-> time that it was waiting on runqueue of CPU2 after it is woken up.
 > 
-> [...]
 
 Applied to perf-tools-next, thanks!
 
