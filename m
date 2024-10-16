@@ -1,148 +1,219 @@
-Return-Path: <linux-kernel+bounces-367670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850089A0527
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:13:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800FB9A04A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31BAF1F227F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:13:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9D5DB25437
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BD6204F9A;
-	Wed, 16 Oct 2024 09:13:06 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996A520370F;
+	Wed, 16 Oct 2024 08:49:44 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F6C205E11;
-	Wed, 16 Oct 2024 09:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268161865E2;
+	Wed, 16 Oct 2024 08:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729069985; cv=none; b=E6Doh60JcwkIh73DvCgNznoifyiPcG3Ksi3kG5Qe5MX1xEoKEBJgERhF469svCBXfhHx4zylo39X0Pkvrl/9UAWqZtt0xa/zLuPJfvw0BlCiLfa/tuoc5HpwZ7tD0GaBU6QwUO82u/iblQnPRA0mQH47qbeuzPenxwSbs28Pd8M=
+	t=1729068584; cv=none; b=jV16jkJjqb0j2PZPPFJ7Uede+l6kJKXcywNChKjUsWj6Jt1aDWafHuR3hYBUDh2tcfjBG26Sd2tWQrFfr3LwYtn2BaW48Zx9Keu9Msu4qhv+3gY1FA6BVia9N38An+puXk3uFUxYBFmzvnZlicdS2EeblWsNG/uWLDSjVeDa5pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729069985; c=relaxed/simple;
-	bh=Q7YiFkq6G86CYppOK/tGA2/5+gyUMdTXdv0mAC/q77Y=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=bVwuB4dZ+/q7FRkpmkC582gCIoMu7/k1RLLPteRNGN1D5iBGD2/gqm8G3NG1HtxyOdBIDTZDLalU4iX+D9dz+O5tyelprIHBOXX+icvTD5yc08lItzq2p+3XCduAWL5u9cIAgPGDHG5+nWG2h25VkEjxKn84pMNRVKYjbIaDUHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E68231A199B;
-	Wed, 16 Oct 2024 11:12:56 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AE4DF1A18D9;
-	Wed, 16 Oct 2024 11:12:56 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 187131939E62;
-	Wed, 16 Oct 2024 17:12:55 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com
-Subject: [PATCH v3 3/3] arm64: dts: imx93-9x9-qsb: Add PDM microphone sound card support
-Date: Wed, 16 Oct 2024 16:49:17 +0800
-Message-Id: <1729068557-10073-4-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1729068557-10073-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1729068557-10073-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1729068584; c=relaxed/simple;
+	bh=vkvuwCURHLuwXxOfCJFJX0cte944VNl4VhcckEIF+Kg=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=GGKXvzJ4WuBbd8gb2xXCxbd3EHRXwaPORe/dEm3U535pSVWeF7icPDmSBWYB91bqomIwH6RCKHXEDca1AoU8SW8hkysOO+gW7x3/O88jWD5EbTxsrPi/ZKIN0u/Ryd+ZojA5LqTusdwFYboIxnske24qm4wgqqEJWsGG42nzcs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XT4Py1lmHz20q7J;
+	Wed, 16 Oct 2024 16:48:54 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4AC8C1A0188;
+	Wed, 16 Oct 2024 16:49:38 +0800 (CST)
+Received: from [10.174.162.134] (10.174.162.134) by
+ kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 16 Oct 2024 16:49:37 +0800
+Subject: Re: [PATCH v3] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: <guohanjun@huawei.com>, <sudeep.holla@arm.com>, <mark.rutland@arm.com>,
+	<maz@kernel.org>, <rafael@kernel.org>, <lenb@kernel.org>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241015152602.184108-1-zhengzengkai@huawei.com>
+ <Zw6b3V5Mk2tIGmy5@lpieralisi>
+From: Zheng Zengkai <zhengzengkai@huawei.com>
+Message-ID: <4cea2a07-49b0-7703-4cdf-49ded9a2c9e4@huawei.com>
+Date: Wed, 16 Oct 2024 16:49:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <Zw6b3V5Mk2tIGmy5@lpieralisi>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200010.china.huawei.com (7.221.188.124)
 
-Add PDM micphone sound card support, configure the pinmux.
+Hi Lorenzo,
 
-This sound card supports recording sound from PDM
-microphone and convert the PDM format data to PCM data.
+ÔÚ 2024/10/16 0:44, Lorenzo Pieralisi Ð´µÀ:
+> On Tue, Oct 15, 2024 at 11:26:02PM +0800, Zheng Zengkai wrote:
+>> As suggested by Marc and Lorenzo, first we need to check whether the
+> I would just describe the change, the tags and Link: are there to
+> describe this patch history.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- .../boot/dts/freescale/imx93-9x9-qsb.dts      | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-index eb872014c11d..10f931e334e2 100644
---- a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-+++ b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-@@ -122,6 +122,20 @@ simple-audio-card,codec {
- 		};
- 	};
- 
-+	sound-micfil {
-+		compatible = "fsl,imx-audio-card";
-+		model = "micfil-audio";
-+
-+		pri-dai-link {
-+			link-name = "micfil hifi";
-+			format = "i2s";
-+
-+			cpu {
-+				sound-dai = <&micfil>;
-+			};
-+		};
-+	};
-+
- 	sound-wm8962 {
- 		compatible = "fsl,imx-audio-wm8962";
- 		model = "wm8962-audio";
-@@ -271,6 +285,12 @@ exp-sel-hog {
- 			gpios = <22 GPIO_ACTIVE_HIGH>;
- 			output-low;
- 		};
-+
-+		mic-can-sel-hog {
-+			gpio-hog;
-+			gpios = <17 GPIO_ACTIVE_HIGH>;
-+			output-low;
-+		};
- 	};
- 
- 	pmic@25 {
-@@ -355,6 +375,15 @@ &lpuart1 { /* console */
- 	status = "okay";
- };
- 
-+&micfil {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pdm>;
-+	assigned-clocks = <&clk IMX93_CLK_PDM>;
-+	assigned-clock-parents = <&clk IMX93_CLK_AUDIO_PLL>;
-+	assigned-clock-rates = <49152000>;
-+	status = "okay";
-+};
-+
- &mu1 {
- 	status = "okay";
- };
-@@ -468,6 +497,14 @@ MX93_PAD_CCM_CLKO1__GPIO3_IO26		0x31e
- 		>;
- 	};
- 
-+	pinctrl_pdm: pdmgrp {
-+		fsl,pins = <
-+			MX93_PAD_PDM_CLK__PDM_CLK			0x31e
-+			MX93_PAD_PDM_BIT_STREAM0__PDM_BIT_STREAM00	0x31e
-+			MX93_PAD_PDM_BIT_STREAM1__PDM_BIT_STREAM01	0x31e
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX93_PAD_UART1_RXD__LPUART1_RX		0x31e
--- 
-2.34.1
+Do you mean that the previous patch below also need to be listed in this 
+change log history?
 
+https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
+
+
+>> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+>> de-referencing what it points at to detect the length of the platform
+>> timer struct and then check that the length of current platform_timer
+>> struct is also valid, i.e. the length is not zero and within gtdt_end.
+>> Now next_platform_timer() only checks against gtdt_end for the entry of
+>> subsequent platform timer without checking the length of it and will
+>> not report error if the check failed and the existing check in function
+>> acpi_gtdt_init() is also not enough.
+>>
+>> Modify the for_each_platform_timer() iterator and use it combined with
+>> a dedicated check function platform_timer_valid() to do the check
+>> against table length (gtdt_end) for each element of platform timer
+>> array in function acpi_gtdt_init(), making sure that both their entry
+>> and length actually fit in the table.
+>>
+>> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>> Co-developed-by: Marc Zyngier <maz@kernel.org>
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+>> ---
+>> Changes in v3:
+>> - based on Marc's patch and reuse the for_each_platform_timer() loop
+>>
+>> Changes in v2:
+>> - Check against gtdt_end for both entry and len of each array element
+>> Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
+>>
+>> Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
+>> ---
+>>   drivers/acpi/arm64/gtdt.c | 32 +++++++++++++++++++++-----------
+>>   1 file changed, 21 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+>> index c0e77c1c8e09..3583c99afb0d 100644
+>> --- a/drivers/acpi/arm64/gtdt.c
+>> +++ b/drivers/acpi/arm64/gtdt.c
+>> @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
+>>   
+>>   static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
+>>   
+>> -static inline __init void *next_platform_timer(void *platform_timer)
+>> +static __init bool platform_timer_valid(void *platform_timer)
+>>   {
+>>   	struct acpi_gtdt_header *gh = platform_timer;
+>>   
+>> -	platform_timer += gh->length;
+>> -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
+>> -		return platform_timer;
+>> +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
+>> +		platform_timer < acpi_gtdt_desc.gtdt_end &&
+>> +		gh->length != 0 &&
+>> +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
+>> +}
+>> +
+>> +static __init void *next_platform_timer(void *platform_timer)
+>> +{
+>> +	struct acpi_gtdt_header *gh = platform_timer;
+>>   
+>> -	return NULL;
+>> +	return platform_timer + gh->length;
+>>   }
+>>   
+>> -#define for_each_platform_timer(_g)				\
+>> -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
+>> +#define for_each_platform_timer(_g, first_entry)	\
+>> +	for (_g = first_entry; platform_timer_valid(_g);	\
+>>   	     _g = next_platform_timer(_g))
+>>   
+>>   static inline bool is_timer_block(void *platform_timer)
+>> @@ -155,8 +161,9 @@ bool __init acpi_gtdt_c3stop(int type)
+>>   int __init acpi_gtdt_init(struct acpi_table_header *table,
+>>   			  int *platform_timer_count)
+>>   {
+>> -	void *platform_timer;
+>> +	void *platform_timer, *tmp;
+> It makes more sense - thank you and Marc.
+>
+> Nit: you don't really need another pointer (ie tmp) but you may keep
+> it if that makes the code clearer - all you need to do is using
+> platform_timer as an iterator and initialize
+
+
+Yes, the tmp pointer can be removed for conciseness.
+
+Thanks!
+
+
+>
+> 	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+>
+> if all checks passed (you are using tmp just because after the loop
+> platform_timer can't be used to initialize acpi_gtdt_desc.platform_timer).
+>
+> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>
+> (now let's see if this survives GTDTs out there :))
+>>   	struct acpi_table_gtdt *gtdt;
+>> +	int cnt = 0;
+>>   
+>>   	gtdt = container_of(table, struct acpi_table_gtdt, header);
+>>   	acpi_gtdt_desc.gtdt = gtdt;
+>> @@ -177,7 +184,10 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+>>   	}
+>>   
+>>   	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+>> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+>> +	for_each_platform_timer(tmp, platform_timer)
+>> +		cnt++;
+>> +
+>> +	if (cnt != gtdt->platform_timer_count) {
+>>   		pr_err(FW_BUG "invalid timer data.\n");
+>>   		return -EINVAL;
+>>   	}
+>> @@ -305,7 +315,7 @@ int __init acpi_arch_timer_mem_init(struct arch_timer_mem *timer_mem,
+>>   	void *platform_timer;
+>>   
+>>   	*timer_count = 0;
+>> -	for_each_platform_timer(platform_timer) {
+>> +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
+>>   		if (is_timer_block(platform_timer)) {
+>>   			ret = gtdt_parse_timer_block(platform_timer, timer_mem);
+>>   			if (ret)
+>> @@ -398,7 +408,7 @@ static int __init gtdt_sbsa_gwdt_init(void)
+>>   	if (ret || !timer_count)
+>>   		goto out_put_gtdt;
+>>   
+>> -	for_each_platform_timer(platform_timer) {
+>> +	for_each_platform_timer(platform_timer, acpi_gtdt_desc.platform_timer) {
+>>   		if (is_non_secure_watchdog(platform_timer)) {
+>>   			ret = gtdt_import_sbsa_gwdt(platform_timer, gwdt_count);
+>>   			if (ret)
+>> -- 
+>> 2.20.1
+>>
+> .
+>
 
