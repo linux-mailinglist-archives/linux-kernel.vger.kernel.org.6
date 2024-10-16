@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-367565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EDC9A03E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:15:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DC99A03E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D68281EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1960A282E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF42B1D4156;
-	Wed, 16 Oct 2024 08:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXwmJQWu"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D24D1D278B;
-	Wed, 16 Oct 2024 08:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB88F1D221C;
+	Wed, 16 Oct 2024 08:14:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C8B1D1F63;
+	Wed, 16 Oct 2024 08:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066436; cv=none; b=h9b+Lln4fSGWK5fjNuOTMfmyZxqvGXxMaUni4hIpLrb60GfpAd32xdkOlRaouepPCpZfMpj+HrQ9ZKyIrggZ2eTZrrrXpRkAzRUdxM/P0XmXgeyBJuuY+sKlrjvpNTA/ThA8SS90qAXfllhq67gMVrGPLr6JMBsG2oL4JV0QyVE=
+	t=1729066490; cv=none; b=BzMJZEri99Sv4Bk5fPEPiIR0cqAje6VSgY4vMo1Sggtmu5TjXjcrZoTuhoa2K6lmb/sUn20uAhVHaDP8n/GS+jQFXJg9ofjPrtWwbdIbG1aROwsIUn7tS/oyCofDkGDKByBRJ4STHQUKMUocXifIB/jpze1M7n6RUwF8K3JdRWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066436; c=relaxed/simple;
-	bh=VE234QWU2c0jg8Kgp1MC6oRd9f1i7/85eMkUYLWq/NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YeUT2EUgHSvE8z1Y/IgvbjgaOT+pFTQLku6WchrC6UduNhkR4dcr9zfpHdUucKL6dM9Om+Xk+czwY2JqMhI4biwUZrLmRNCrXEzrS/7Ah9ZiXth9IqA44eruGdjUROwqSVKshvy9sI9tM2QTbPF18/G72OZndME5QnEibsOdzsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXwmJQWu; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca7fc4484so31229455ad.3;
-        Wed, 16 Oct 2024 01:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729066434; x=1729671234; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uxqG0B8mR4fzbFEa0w+VCmcvQKzrvGlEU7Guq/5xOqA=;
-        b=BXwmJQWuAS3Q+EWwEs/g95skiz55LvV8zFq66aJDow97VYVzSlj3oDeJCUXwedHHQ2
-         5CFWzq2r0UgDdcGP59LPy3vcX85a33XW73E0p0+e0BKsc+eX/z5ayIj5Rd68HrctWVtd
-         G8kXOCbz8WqOz4Sa77RYslb+X/+XL7aGV8OuAO4GdO9zOeo2ApcCRDDP5MOYcq38TSTr
-         Il5W7zxSffx02ejmmrLMJw1si6rvlDRWdocPnLgsFMb9+YPlhDo9KFxWDJoVf9m5PU+E
-         Nbu3xnxTjTMkDcyR34qNwJ9Lf5gj0sKYI83VFpoI7Bm6oVO9CCzFMjLEgsWFV19hOSH3
-         pq7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729066434; x=1729671234;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uxqG0B8mR4fzbFEa0w+VCmcvQKzrvGlEU7Guq/5xOqA=;
-        b=iXwgdxC/9qz3zoxviP9bB4cJ9Vbnp19Gt24dbuer0jMpk1k7ChCqi3IfwzqxzCEqCd
-         aOYQADzUfcyrJgb4gjYGFyrhC5KgzxqjdYWxio9VqG9wihy9FwczoCtFSdnbsQQVYbvI
-         vUj7D4GutSPpLgafOVd9OYaJjdJBevH1mDVavNfBEZzVGOja8jBo7zBFidXhQFkPCs9a
-         hFX+KPZw61kVMdtJ6rfsMBs+Up9e6/tPV4/AH+/MqHzGZal73Bs880g7v6BQH0dG6gHu
-         tukGZ/iaBlVpIa74N91L3juImLFivxtdXnM0EpXqX+hKJvdA5evaVxsQy68sGNAA0m1I
-         jvDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW7Pe3PN4uQbvRq8KDNXsfRYBa+7YaDiq1uKH4FEs5Lm/+ZBWP9w66Y1r5FYT9ivbzcXh2BdNnumED@vger.kernel.org, AJvYcCXiMraFCN/mJL8uPPqGbL68h2aaz4topguqGBIJVpK5uauiHKqP0hPVIv3o1LQfJHEiRDlI4EE0kWhyEhml@vger.kernel.org, AJvYcCXygih76EfIO4d5ad97lGKm5VlJemWs2HwF24BHbrycHJOQ1zZCFqR+uVCSDqBsdruBOTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzteIDDW1YcM+vsi3hmh1QvxdJJQxBdhrTDZtWUzHK5KFEZpsBI
-	Y2NlShfudeUKcrm9w29FojOTZgPEosM1HX0ly7CRzgRyefweXZ2A
-X-Google-Smtp-Source: AGHT+IG6d27P9i5lG/uEayhLGFbXmAexef6ZEMQFrZoDVRNPG4gtPVA7uqXB7gWUqNXj/5nvzwaFUg==
-X-Received: by 2002:a17:903:2406:b0:20c:a8cf:fa19 with SMTP id d9443c01a7336-20cbb198f19mr230740795ad.22.1729066434256;
-        Wed, 16 Oct 2024 01:13:54 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d18036213sm23913525ad.168.2024.10.16.01.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 01:13:53 -0700 (PDT)
-Date: Wed, 16 Oct 2024 08:13:44 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] Documentation: bonding: add XDP support
- explanation
-Message-ID: <Zw91uKWJMT7YlKd0@fedora>
-References: <20241016031649.880-1-liuhangbin@gmail.com>
- <20241016031649.880-4-liuhangbin@gmail.com>
- <1e489737-fdd8-43a7-9abc-65599e1cfae1@blackwall.org>
+	s=arc-20240116; t=1729066490; c=relaxed/simple;
+	bh=wxQg2GJ5ktlDu9srXxIIKK0Wg/EJpooJh/rWWUWYADg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CqHFC+jaso7g+/wvVBCycH4OQ979BOAr+Dm/d/WKixA+iobpII6rBb76n86Rp2DVW4CQl9DHFA28EZn8lk4UabIM3DnqgUIgP9g0OzKttnbiDOTPG5Zy69qREXlT1UYbMac5Ppwa8oxvE6jTE8namYIpBmGJBCWKxQg37sGcFzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D218FEC;
+	Wed, 16 Oct 2024 01:15:16 -0700 (PDT)
+Received: from [10.57.86.207] (unknown [10.57.86.207])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 399FC3F71E;
+	Wed, 16 Oct 2024 01:14:43 -0700 (PDT)
+Message-ID: <daecf1d1-04c7-4513-86db-397c2ef6f768@arm.com>
+Date: Wed, 16 Oct 2024 09:14:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e489737-fdd8-43a7-9abc-65599e1cfae1@blackwall.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 57/57] arm64: Enable boot-time page size selection
+Content-Language: en-GB
+To: Zi Yan <ziy@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ David Hildenbrand <david@redhat.com>, Greg Marsden
+ <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Oliver Upton <oliver.upton@linux.dev>,
+ Will Deacon <will@kernel.org>, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-57-ryan.roberts@arm.com>
+ <CD2DC486-F4B1-4043-82BC-0CB2AA513A99@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CD2DC486-F4B1-4043-82BC-0CB2AA513A99@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 10:38:05AM +0300, Nikolay Aleksandrov wrote:
-> > +9.  What modes does bonding have native XDP support?
-> TBH this sounds strange and to be correct it probably needs
-> to end with "for" (What modes does bonding have native XDP support for), but
-> how about something straight-forward like:
+On 15/10/2024 18:42, Zi Yan wrote:
+> On 14 Oct 2024, at 6:59, Ryan Roberts wrote:
 > 
->  What bonding modes have native XDP support?
+>> Introduce a new Kconfig, ARM64_BOOT_TIME_PAGE_SIZE, which can be
+>> selected instead of a page size. When selected, the resulting kernel's
+>> page size can be configured at boot via the command line.
+>>
+>> For now, boot-time page size kernels are limited to 48-bit VA, since
+>> more work is required to support LPA2. Additionally MMAP_RND_BITS and
+>> SECTION_SIZE_BITS are configured for the worst case (64K pages). Future
+>> work could be implemented to be able to configure these at boot time for
+>> optimial page size-specific values.
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
 > 
-> or
+> <snip>
 > 
->  What bonding modes support native XDP?
+>>
+>> @@ -1588,9 +1601,10 @@ config XEN
+>>  # 4K  |       27          |      12      |       15             |         10              |
+>>  # 16K |       27          |      14      |       13             |         11              |
+>>  # 64K |       29          |      16      |       13             |         13              |
+>> +# BOOT|       29          |    16 (max)  |       13             |         13              |
+>>  config ARCH_FORCE_MAX_ORDER
+>>  	int
+>> -	default "13" if ARM64_64K_PAGES
+>> +	default "13" if ARM64_64K_PAGES || ARM64_BOOT_TIME_PAGE_SIZE
+>>  	default "11" if ARM64_16K_PAGES
+>>  	default "10"
+>>  	help
+> 
+> So boot-time page size kernel always has the highest MAX_PAGE_ORDER, which
+> means the section size increases for 4KB and 16KB page sizes. Any downside
+> for this?
 
-Thanks, I will use this one.
+I guess there is some cost to the buddy when MAX_PAGE_ORDER is larger than it
+needs to be - I expect you can explain those details much better than I can. I'm
+just setting it to the worst case for now as it was the easiest solution for the
+initial series.
 
-Hangbin
+> 
+> Is there any plan (not in this patchset) to support boot-time MAX_PAGE_ORDER
+> to keep section size the same?
+
+Yes absolutely. I should have documented MAX_PAGE_ORDER in the commit log along
+with the comments for MMAP_RND_BITS and SECTION_SIZE_BITS - that was an
+oversight and I'll fix it in the next version. I plan to look at making all 3
+values boot-time configurable in future (although I have no idea at this point
+how involved that will be).
+
+Thanks,
+Ryan
+
+> 
+> Best Regards,
+> Yan, Zi
+
 
