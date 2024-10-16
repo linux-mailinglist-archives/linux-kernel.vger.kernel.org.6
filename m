@@ -1,134 +1,203 @@
-Return-Path: <linux-kernel+bounces-368284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0329A0DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:08:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5FF9A0DAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD0F1C22E5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29103283859
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CC420F5A2;
-	Wed, 16 Oct 2024 15:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PDbirnB/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED07354F95;
-	Wed, 16 Oct 2024 15:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5F320E02D;
+	Wed, 16 Oct 2024 15:09:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0098C20B1EE;
+	Wed, 16 Oct 2024 15:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729091321; cv=none; b=VwZEGxr+vZcwxJ40S/80yOAmb3bgdgylcqa8BnL69r2w4K4lq5BcfILlJ3gBkEa8+yctFsNw/PtuNxDcDkQoufQ2j8QM/dL5B3x54sR/iJ+/31Sy0HuFEs7VHza/rm40viYp/HDRg7iUPqhNhIdYWvvqv2A79rU4pRC+Ojx8xjo=
+	t=1729091367; cv=none; b=kkqDR5cKdQrKvo9Ar3e7+tkOZHk/pkFfo9+okXJHCDlRIl9e9Ij0eupqMmHokmPkqaWaQWPJxNlMPHTw937Zc1MMKR5quVEqcCvH1t8HO7ymx0FyBwgF6isJwrDyJYhhCxqvEZxlcgk8dW/WZZmYX016MjosU+Y8EJUjrU4Pvic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729091321; c=relaxed/simple;
-	bh=c+h6z8KA0p7DWiCCHGOMlbBC8IvDrobXyQkIgXT35QU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpjSlka5Pf008BdZweSegBN//xJM6bdOQJFAggS3vofyon+dwOtrkX9ZsdtuTM0M/96TaAyCvGpmsdEbdy0JsGqIANXBwp/+y/AQVr5dqQlpdRjDJiF9QQewmYvM9+1eRggWfF849ZMOw26fwvRggghb6/SIwGlrxP713ApSiFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PDbirnB/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E364FC4CECF;
-	Wed, 16 Oct 2024 15:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729091320;
-	bh=c+h6z8KA0p7DWiCCHGOMlbBC8IvDrobXyQkIgXT35QU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PDbirnB/qsGzmQaEBfBNtZCxM+MSA+4l8kMTCa1cfgZDcOPSmnRdvHU1YoYchNImt
-	 Gt75j5v1TAN+89zvxJUbfIcliiqFAdBjDtSX2n2+B8KOfZosRdH2sbUSU2cROxldS0
-	 Zj6Jvjv0rYWtzHMa+CHTUPZ5bUV+TKG3ASm3Z3Iw=
-Date: Wed, 16 Oct 2024 17:08:37 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH RESEND] vdpa: solidrun: Fix UB bug with devres
-Message-ID: <2024101617-magazine-buckle-975d@gregkh>
-References: <20241016072553.8891-2-pstanner@redhat.com>
- <Zw-CqayFcWzOwci_@smile.fi.intel.com>
- <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
- <2024101627-tacking-foothill-cdf9@gregkh>
- <482d0c45ea2121484a85ed9be6a1863b6d39ac1e.camel@redhat.com>
+	s=arc-20240116; t=1729091367; c=relaxed/simple;
+	bh=gRPb5P1k9UfY8ZGiYWYsNqS7y22Jny7V3mVzeUcEEe8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i5GhRh/SN59ycN8pRuR1Djwk6Jp59TrZMuMZweCuBIhXRwFd/dNWg48tjWJxfyHPrpElopY+gYzAOtBzSnOz2GwwksUuyj1eYwAEAJoW9R6jB2Jy6HuOovJlFjpt6u4SXQ1A7G9unsaxt96ZCQ4MHEOhWym7aU5LiCf6gKORL3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1651FEC;
+	Wed, 16 Oct 2024 08:09:53 -0700 (PDT)
+Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C8003F528;
+	Wed, 16 Oct 2024 08:09:20 -0700 (PDT)
+Message-ID: <d3643b60-0c67-462b-b8c4-95854d2983b0@arm.com>
+Date: Wed, 16 Oct 2024 16:09:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <482d0c45ea2121484a85ed9be6a1863b6d39ac1e.camel@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 21/57] sunrpc: Remove PAGE_SIZE compile-time
+ constant assumption
+Content-Language: en-GB
+To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Anna Schumaker <anna@kernel.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ David Hildenbrand <david@redhat.com>, Greg Marsden
+ <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Trond Myklebust <trondmy@kernel.org>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-21-ryan.roberts@arm.com>
+ <bee3f66f-cc22-4b3e-be07-23ce4c90df20@arm.com>
+ <Zw/SE9+AMYmzBprS@tissot.1015granger.net>
+ <33a6cc271475b0fc520b8fc20ed0b4f7742a2560.camel@kernel.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <33a6cc271475b0fc520b8fc20ed0b4f7742a2560.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 01:16:32PM +0200, Philipp Stanner wrote:
-> On Wed, 2024-10-16 at 12:51 +0200, Greg KH wrote:
-> > On Wed, Oct 16, 2024 at 11:22:48AM +0200, Philipp Stanner wrote:
-> > > On Wed, 2024-10-16 at 12:08 +0300, Andy Shevchenko wrote:
-> > > > On Wed, Oct 16, 2024 at 09:25:54AM +0200, Philipp Stanner wrote:
-> > > > > In psnet_open_pf_bar() and snet_open_vf_bar() a string later
-> > > > > passed
-> > > > > to
-> > > > > pcim_iomap_regions() is placed on the stack. Neither
-> > > > > pcim_iomap_regions() nor the functions it calls copy that
-> > > > > string.
-> > > > > 
-> > > > > Should the string later ever be used, this, consequently,
-> > > > > causes
-> > > > > undefined behavior since the stack frame will by then have
-> > > > > disappeared.
-> > > > > 
-> > > > > Fix the bug by allocating the strings on the heap through
-> > > > > devm_kasprintf().
-> > > > 
-> > > > > ---
-> > > > 
-> > > > I haven't found the reason for resending. Can you elaborate here?
-> > > 
-> > > Impatience ;p
-> > > 
-> > > This is not a v2.
-> > > 
-> > > I mean, it's a bug, easy to fix and merge [and it's blocking my
-> > > other
-> > > PCI work, *cough*]. Should contributors wait longer than 8 days
-> > > until
-> > > resending in your opinion?
-> > 
-> > 2 weeks is normally the expected response time, but each subsystem
-> > might
-> > have other time limites, the documentation should show those that do.
+On 16/10/2024 15:54, Jeff Layton wrote:
+> On Wed, 2024-10-16 at 10:47 -0400, Chuck Lever wrote:
+>> On Wed, Oct 16, 2024 at 03:42:12PM +0100, Ryan Roberts wrote:
+>>> + Chuck Lever, Jeff Layton
+>>>
+>>> This was a rather tricky series to get the recipients correct for and my script
+>>> did not realize that "supporter" was a pseudonym for "maintainer" so you were
+>>> missed off the original post. Appologies!
+>>>
+>>> More context in cover letter:
+>>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+>>>
+>>>
+>>> On 14/10/2024 11:58, Ryan Roberts wrote:
+>>>> To prepare for supporting boot-time page size selection, refactor code
+>>>> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+>>>> intended to be equivalent when compile-time page size is active.
+>>>>
+>>>> Updated array sizes in various structs to contain enough entries for the
+>>>> smallest supported page size.
+>>>>
+>>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>>> ---
+>>>>
+>>>> ***NOTE***
+>>>> Any confused maintainers may want to read the cover note here for context:
+>>>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+>>>>
+>>>>  include/linux/sunrpc/svc.h      | 8 +++++---
+>>>>  include/linux/sunrpc/svc_rdma.h | 4 ++--
+>>>>  include/linux/sunrpc/svcsock.h  | 2 +-
+>>>>  3 files changed, 8 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
+>>>> index a7d0406b9ef59..dda44018b8f36 100644
+>>>> --- a/include/linux/sunrpc/svc.h
+>>>> +++ b/include/linux/sunrpc/svc.h
+>>>> @@ -160,6 +160,8 @@ extern u32 svc_max_payload(const struct svc_rqst *rqstp);
+>>>>   */
+>>>>  #define RPCSVC_MAXPAGES		((RPCSVC_MAXPAYLOAD+PAGE_SIZE-1)/PAGE_SIZE \
+>>>>  				+ 2 + 1)
+>>>> +#define RPCSVC_MAXPAGES_MAX	((RPCSVC_MAXPAYLOAD+PAGE_SIZE_MIN-1)/PAGE_SIZE_MIN \
+>>>> +				+ 2 + 1)
+>>
+>> There is already a "MAX" in the name, so adding this new macro seems
+>> superfluous to me. Can we get away with simply updating the
+>> "RPCSVC_MAXPAGES" macro, instead of adding this new one?
+>>
 > 
-> Where do we document that?
+> +1 that was my thinking too. This is mostly just used to size arrays,
+> so we might as well just change the existing macro.
 
-Documentation/process/maintainer-*
+I agree, its not the prettiest. I was (incorrectly) assuming you would want to
+continue to limit the number of actual pages at runtime based on the in-use page
+size. That said, looking again at the code, RPCSVC_MAXPAGES never actually gets
+used to dynamically allocate any memory. So I propose to just do the following:
 
-> Regarding resend intervals, the official guide line is contradictory:
-> "You should receive comments within a few weeks (typically 2-3)" <->
-> "Wait for a minimum of one week before resubmitting or pinging
-> reviewers" <--> "It’s also ok to resend the patch or the patch series
-> after a couple of weeks"
+#define RPCSVC_MAXPAGES		((RPCSVC_MAXPAYLOAD+PAGE_SIZE_MIN-1)/
+						PAGE_SIZE_MIN + 2 + 1)
+
+That will be 259 in practice (assuming PAGE_SIZE_MIN=4K).
+
 > 
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#don-t-get-discouraged-or-impatient
+> With 64k pages we probably wouldn't need arrays as long as these will
+> be. Fixing those array sizes to be settable at runtime though is not a
+> trivial project though.
+
+Indeed. Hopefully the above is sufficient.
+
+Thanks for the review!
+Ryan
+
 > 
+>>
+>>>>  /*
+>>>>   * The context of a single thread, including the request currently being
+>>>> @@ -190,14 +192,14 @@ struct svc_rqst {
+>>>>  	struct xdr_stream	rq_res_stream;
+>>>>  	struct page		*rq_scratch_page;
+>>>>  	struct xdr_buf		rq_res;
+>>>> -	struct page		*rq_pages[RPCSVC_MAXPAGES + 1];
+>>>> +	struct page		*rq_pages[RPCSVC_MAXPAGES_MAX + 1];
+>>>>  	struct page *		*rq_respages;	/* points into rq_pages */
+>>>>  	struct page *		*rq_next_page; /* next reply page to use */
+>>>>  	struct page *		*rq_page_end;  /* one past the last page */
+>>>>  
+>>>>  	struct folio_batch	rq_fbatch;
+>>>> -	struct kvec		rq_vec[RPCSVC_MAXPAGES]; /* generally useful.. */
+>>>> -	struct bio_vec		rq_bvec[RPCSVC_MAXPAGES];
+>>>> +	struct kvec		rq_vec[RPCSVC_MAXPAGES_MAX]; /* generally useful.. */
+>>>> +	struct bio_vec		rq_bvec[RPCSVC_MAXPAGES_MAX];
+>>>>  
+>>>>  	__be32			rq_xid;		/* transmission id */
+>>>>  	u32			rq_prog;	/* program number */
+>>>> diff --git a/include/linux/sunrpc/svc_rdma.h b/include/linux/sunrpc/svc_rdma.h
+>>>> index d33bab33099ab..7c6441e8d6f7a 100644
+>>>> --- a/include/linux/sunrpc/svc_rdma.h
+>>>> +++ b/include/linux/sunrpc/svc_rdma.h
+>>>> @@ -200,7 +200,7 @@ struct svc_rdma_recv_ctxt {
+>>>>  	struct svc_rdma_pcl	rc_reply_pcl;
+>>>>  
+>>>>  	unsigned int		rc_page_count;
+>>>> -	struct page		*rc_pages[RPCSVC_MAXPAGES];
+>>>> +	struct page		*rc_pages[RPCSVC_MAXPAGES_MAX];
+>>>>  };
+>>>>  
+>>>>  /*
+>>>> @@ -242,7 +242,7 @@ struct svc_rdma_send_ctxt {
+>>>>  	void			*sc_xprt_buf;
+>>>>  	int			sc_page_count;
+>>>>  	int			sc_cur_sge_no;
+>>>> -	struct page		*sc_pages[RPCSVC_MAXPAGES];
+>>>> +	struct page		*sc_pages[RPCSVC_MAXPAGES_MAX];
+>>>>  	struct ib_sge		sc_sges[];
+>>>>  };
+>>>>  
+>>>> diff --git a/include/linux/sunrpc/svcsock.h b/include/linux/sunrpc/svcsock.h
+>>>> index 7c78ec6356b92..6c6bcc82685a3 100644
+>>>> --- a/include/linux/sunrpc/svcsock.h
+>>>> +++ b/include/linux/sunrpc/svcsock.h
+>>>> @@ -40,7 +40,7 @@ struct svc_sock {
+>>>>  
+>>>>  	struct completion	sk_handshake_done;
+>>>>  
+>>>> -	struct page *		sk_pages[RPCSVC_MAXPAGES];	/* received data */
+>>>> +	struct page *		sk_pages[RPCSVC_MAXPAGES_MAX];	/* received data */
+>>>>  };
+>>>>  
+>>>>  static inline u32 svc_sock_reclen(struct svc_sock *svsk)
+>>>
+>>
 > 
-> We could make the docu more consistent and specify 2 weeks as the
-> minimum time.
 
-Trying to tell other people what they are required to do, when you don't
-pay them, is going to be a bit difficult :)
-
-Just leave it as-is, and again, take the time to do reviews for the
-maintainers you are trying to get patches accepted for.  That's the
-simplest way to make forward progress faster.
-
-good luck!
-
-greg k-h
 
