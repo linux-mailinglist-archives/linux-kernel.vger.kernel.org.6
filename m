@@ -1,273 +1,361 @@
-Return-Path: <linux-kernel+bounces-368375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864DB9A0F1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:54:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042889A0F21
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5841C22BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84D2283A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705FA20F5A6;
-	Wed, 16 Oct 2024 15:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A0D20F5CA;
+	Wed, 16 Oct 2024 15:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5ZaIvfn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pawzloib"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B2B207A2E;
-	Wed, 16 Oct 2024 15:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094070; cv=fail; b=AFg2eD9d32XuqmogycltGmod1BXsIlxdKbwA5RwiYr4wTjJc0KU4noby3tdXGZIks8gOrd2zPSYW4AOe8td75g2wLHa1atd6DYn2AVajIfWje8xkdo7s44wjxfvQyeFGcaQ5nnDWoY8zboe5MHKQRBXrVHg02kcX6/sCC4IYaS4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094070; c=relaxed/simple;
-	bh=VC+ZDqC0Et4Z6IwBihQuG4yyUhbnFeTxxrEtkbeGgKo=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ahvxeyCfI/axRfFRosL6Owidsv3O3VRo7QV3Fo32ZlRI/JLrnccHbHTZp5csoNPpxBWXCbOfn3/3R0h/XbNMf6RnbKhYXbPq+vDr0pbOiy+8fPhFGjaVFQha/5Bh5KEPqwSo2cStelR+WRKJAkxHP182Saw68Uo3b+9/1WYQo5A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5ZaIvfn; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729094069; x=1760630069;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=VC+ZDqC0Et4Z6IwBihQuG4yyUhbnFeTxxrEtkbeGgKo=;
-  b=j5ZaIvfnrU+Ev3yNSzK83zVqAIlziRdohIaY9TuVg0j5k5KvPLmf8slz
-   mYJES64RcesUjnA3c/R/Kp9fp7NQJ1QGUPMLtz3YkxSBl4s1+DpFIO6MO
-   Vu/9i9yiwGtwjDLzPLjSLwfPZaZImj7iSsV1T/3Lb/ztOFX7QgTzrbA1C
-   MSqCyQ4CWQju/qRNI9qjtLqm7oe9oay2Hhf8NqtIxNOi36N2kzisVNGDO
-   iQm4QK6BQNt8d4DPQJMOi7Xek8/4OJAbFx31weEMKobAsG/P7ZPIhXaMB
-   XqrlJhH+UHeF9ocQDODA5uAxA0v//AejUaZbzQSZ1mFvcVwifdIwQH4Vh
-   Q==;
-X-CSE-ConnectionGUID: bfvVwq/2RvKsThxo1ShLcg==
-X-CSE-MsgGUID: kalrNf1DTuKcx3Df29J0Cg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="46045788"
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="46045788"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 08:54:26 -0700
-X-CSE-ConnectionGUID: DyP19+fsSaO+H9+5svb6mA==
-X-CSE-MsgGUID: iwgpi/KuSl2I5dVpeDMtGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="78224418"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Oct 2024 08:54:26 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 16 Oct 2024 08:54:25 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 16 Oct 2024 08:54:25 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 16 Oct 2024 08:54:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v+f7Kn2xn6ORI36jIccsnUWe8cIGrVKXpUkj6cblHyYfA4t865rhimV+JZYkpXcupgAG8APjEonu0KWOzR4rei0L6AuvWkwabvvR3xtPCJzj7zVJobz1Qfm3OjWA3PRLudhWMo2nHpMYmrGnD1E78IFJq8bxk9SxiFwlKqStSLHX31kfvvPt6dsjQuKU9QQW7x0czrl0UqPt4UfegCkv5OiVT+xfQhP4v32+ZCuT7VIlm2I2/eKzo3uLvwNICE2VSBkZSSUR0aVyeSyh6pNa86p8g44MglNzCG5d+jIPcpYVdtVmaVk4wWE9uSjXTB/xwqEaFAvnzYCprgKYnE2cUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G/81C7dc09sUp5roKHONkTGiv1pyNdQP/glW1STD3uE=;
- b=m5swH4ICNrBp5n0YktslbqyTgGXYwb4YKqg12Z9X8xVVUAUz+CjUBgMCaBHvrARbe9FfFYmyctJ2Sr4auy/Yfwx0jz3P7UI4J8zKpU+e1YOPk/2tz10F7lIMhiL3aDuHUswncHVI//PExDYY8huljWxMoI9UlAyOZ/JfOtR2HU3kLX/y7dKkP4lj3/4oAf3egdFFihxKuuuWJyzZ89rSD1CNn7PrFvyv8YWA9eYdrb0EWXeOT+vBRtjOqZEfPv+qV4UkFpLgo467laCrkd1Do7R1vXByJvg+8ZJyZvRpNdJ1432Xb/T4Ad38l6EQmXhViPtmR09JAbBKAFu0r0tmPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by BN9PR11MB5243.namprd11.prod.outlook.com (2603:10b6:408:134::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.19; Wed, 16 Oct
- 2024 15:54:21 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 15:54:21 +0000
-Message-ID: <ca29046a-29db-4bb0-815a-c482385194c7@intel.com>
-Date: Wed, 16 Oct 2024 08:54:18 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] x86/resctrl: Introduce sdciae_capable in rdt_resource
-To: <babu.moger@amd.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>
-CC: <fenghua.yu@intel.com>, <hpa@zytor.com>, <paulmck@kernel.org>,
-	<thuth@redhat.com>, <xiongwei.song@windriver.com>, <ardb@kernel.org>,
-	<pawan.kumar.gupta@linux.intel.com>, <daniel.sneddon@linux.intel.com>,
-	<sandipan.das@amd.com>, <kai.huang@intel.com>, <peterz@infradead.org>,
-	<kan.liang@linux.intel.com>, <pbonzini@redhat.com>, <xin3.li@intel.com>,
-	<ebiggers@google.com>, <alexandre.chartre@oracle.com>, <perry.yuan@amd.com>,
-	<tan.shaopeng@fujitsu.com>, <james.morse@arm.com>, <tony.luck@intel.com>,
-	<maciej.wieczor-retman@intel.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <peternewman@google.com>,
-	<eranian@google.com>
-References: <cover.1723824984.git.babu.moger@amd.com>
- <cf9e47bbd66dbbdb76f0124620fad2f1b06e977e.1723824984.git.babu.moger@amd.com>
- <254da029-81b2-4745-bc78-5aefeb33adb0@intel.com>
- <b96e5de8-75ce-4a7a-8788-f5d3a959d771@amd.com>
- <89da43fd-69fb-48a6-830e-e157360aeab6@amd.com>
- <dbe8a012-eb21-426f-a8e4-46efee26da62@intel.com>
- <bf67bc4e-9cf8-4cac-9ffb-2d4f81ab7e30@amd.com>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <bf67bc4e-9cf8-4cac-9ffb-2d4f81ab7e30@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0352.namprd03.prod.outlook.com
- (2603:10b6:303:dc::27) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C78420E02C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729094106; cv=none; b=dbGy7J40Thh1yZ6VNJv+M82MkJLQ+lfE4WDS5sXEA5t9ztUVVbvbrTQ9pbsOXZPsSjO63RdNnok6GgRThlKLL/t3xDOYaqLHEVDGBdYf7zc/Ewo3majY5q/5YuAZr53QFFe1XvH288TjkAJYXifNQTkR3fLvD4lD9otoFpkDb9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729094106; c=relaxed/simple;
+	bh=qYl2Sy0hY1O7mS4Yywghy4Pbib9+2/q8/iAS6YXwtjw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ou/WaAyyRBNKn73DCrPAbgw4TMLXnpwuOVhGObrQb8pk1i001jm+jXCKo50IG+VzfPogx/lNzdxT/3YEj2BGXo3G5y+WGThcLTR9orlePX/DgM4i5H578CNGsEqsJcMGrWzMvdGxh+LCemavU5qkWj2jcSQ644/MHDNuUUvG4ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pawzloib; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729094102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=48P55mGkCCxQ03xjhgzSLSsbrSXDZPkk4TcShvxlXM8=;
+	b=PawzloibEchqWsf88lDRJrxPiJ/wCbmaBNzWfNbaOM9+sC1b5+ZCDII/rmQOwRauNVBHIR
+	7A8oYDjywRPn1HfkWzqtXlwpBqyH+fBm7MZrfmuM1EUaB2lF/IiLXIpAgUPHDKXLoNMeXS
+	K8HQhLRa52LA92hEMSRidTX4bD4eenw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-bhLKV6ENNZulslny9KUSPw-1; Wed, 16 Oct 2024 11:55:01 -0400
+X-MC-Unique: bhLKV6ENNZulslny9KUSPw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5a3afa84so2106109f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:55:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729094100; x=1729698900;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=48P55mGkCCxQ03xjhgzSLSsbrSXDZPkk4TcShvxlXM8=;
+        b=ZL5FnKaWPEYSloLw7TH1c/cUUYNY6nJt50JlueqDiE/K7ebDZLZtjXSQ+WueQF9WEq
+         x5RWi6Wi2pFxjmn09r9gc+7BdupSYEtwhADHAMrFZbVDfoOwsH6iOGq9RqcsUf/TYd+o
+         cyQWM7wphZll0/Bvn/sNp3JqEd5to2hNSujWiUXhWSd4fQZoyZMl76EzeS1sozubyPkl
+         92vlg26fbhywCC7oYvkMF00ZFOzDrpEp5g+wcqhEgFWnh/l3e/Zo56V+yeJ0gyQwLjUk
+         b5/jI80faik6WWxfKnyyunNUpoXHS1bR/qCBmzn4RUHhxIqoOWPj+4k6n42tsAhzhImh
+         h7kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNo5g3dPX6u9aA266l0oCQNbujVT0U5KbZHt9YFt+BCvmDW+HRzV9C+W6tjkHIAV/nQttRkF4iBFIexnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9urObiquZjvi9FxxgGz/0CM0vfHAhxkGzN2f3TteA6clGJWjs
+	aWbtyJAkpH9pBHKCqhAlplvMf/bFqq2BLdBSPUCblrKMpWMf7yDAu5N5ptwNbVzIUknmH+tX4nL
+	soJNo3Xzq2MxkT9T5MVehPVVY6caWObsZcDlvaLFOesdD0Veu7+jl3UXXyr/DjQ==
+X-Received: by 2002:a05:6000:10c1:b0:37d:4a68:61a1 with SMTP id ffacd0b85a97d-37d601cd19amr10687154f8f.56.1729094100039;
+        Wed, 16 Oct 2024 08:55:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQtbfVTBZ5NkmWo/03oyq9JfbDyRlPhDr0wCs2j6/mCMXk6wnjrnWGYEMTUmZ0bShmT8bRQQ==
+X-Received: by 2002:a05:6000:10c1:b0:37d:4a68:61a1 with SMTP id ffacd0b85a97d-37d601cd19amr10687102f8f.56.1729094098224;
+        Wed, 16 Oct 2024 08:54:58 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3? (p200300cbc74bd00003a9de5c9ae6ccb3.dip0.t-ipconnect.de. [2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a04asm4651030f8f.8.2024.10.16.08.54.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 08:54:57 -0700 (PDT)
+Message-ID: <87956f31-472d-4091-8061-1e55fea7a3d7@redhat.com>
+Date: Wed, 16 Oct 2024 17:54:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|BN9PR11MB5243:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2487d5f1-f3ca-431b-dadf-08dcedfaccec
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UlBHQVpIOTZJWE9pakl1QUVxQitwRmNtWjVFanIzWm9PMzFscmt1a1RZMEh5?=
- =?utf-8?B?V2w3eW1iblZaNHVUQVpqTGVvTzJDKzYxSVJ3QzdlQVp4cUJLRXc1aHhvWm1Q?=
- =?utf-8?B?U2NXUWRNa1QxU2piVVVrN3F3dTM5aVhPTFRVdEdyMkE4S3N2RGZ3eWtyWkRC?=
- =?utf-8?B?Nm5EVEFOekN0Y2s0Y3ViOTNTdkNyK2FkSHBLUjRKUXZLZVNZOWxtRGVxTEQ4?=
- =?utf-8?B?RGZ1YVNqdUduVVhOSU5HY29ONi9Eek9iQS81SHI3NWJFdzRMbi85bDhNcFhR?=
- =?utf-8?B?ZFhaSlh0UnlsdCtjRDF3a1oyY0JoamNzRzY1c3VmZ2gvVnp1d0J6N0JibkZJ?=
- =?utf-8?B?NWtzTDByeWNITy9BVlBTQjhEYm1yOGhPek1XR2U2N1Jib3dnZ3FDVGdzZDNq?=
- =?utf-8?B?aFlOYStwWFVlak5JNjM0VkJUR1JUanFxNkxKa0RPLy9qNk9sRmRRWDJpMXZt?=
- =?utf-8?B?Yzc4Tmt3SHR5dWFOelFHTUVVd0txNzFHQ3VqeTFRbkdwNUZPN3RZY2NVanp5?=
- =?utf-8?B?bllMZ0UvU2FBbjZiWXFQck5GL1ZPRkR5T2hNTDFhNC9YZ2FKc1BiVVZIRmFk?=
- =?utf-8?B?QTdhN1J0TFF0b240OGxpWGIrcjVmVVNwNHdLVlI5dk5EOHNZY1hTdUdhb3FZ?=
- =?utf-8?B?cUJkWTN5VFBYam5ubDVUdlJTNU96dldsWC9MSXZTaUxlYzUwdGwvNVQwUEhy?=
- =?utf-8?B?Y0tvdEtqMVBvZ2tUbG5HN2pJWkM5dlU0eUc3WUM2dFZENnIzdFpUVVp5NDBF?=
- =?utf-8?B?UHVyZmtSZ0Y1U3dGamtwL0d4TnRBdXgvTXQ3QnA2ZXprK2l4QUJDaGRVZ0l4?=
- =?utf-8?B?ZDFZd0U1Rld5a3U2VVdLaUUxZm16UUNrdkwvcWV5V1hGWmNCWnhLL3Z5N3ZL?=
- =?utf-8?B?THQrMU0xakpCZXkzTVRpRzBWVFFVQi9hNW5MZzA0MmI3aXpGRlVpd3pxZ0Ft?=
- =?utf-8?B?MTNvR3NZckJIVXh2Z0kxMEF3WjFoek83ZlNjMnpyR2JpcXNvd2hpNTZvd0pH?=
- =?utf-8?B?YXNOMGV2cy9vdUxmeG1jd0tOb2VYN3ljRklBMFBNS0YwaHNpczA2Q0xEbDlT?=
- =?utf-8?B?NDdVQ3lHdVVkdzYrMk0zU2pLWTd4MHFNRzAwaVY1QUlFbjQxUHA5RWc3Tys4?=
- =?utf-8?B?amFOTmRIUWxDK1ZrREg5SjlWbGJsZGs1dHZYMDZpMW5JZlZvV29vSHl3VXNt?=
- =?utf-8?B?bE9LZEQ1QzdFL2NWa2ljQ1h2b1htNzduTEJUYSszeE1VcCtiVWpWeVRsK0xS?=
- =?utf-8?B?N1FvcDlzWWxzRjcyeXN2Ry9sL0cyY2RhMG9zeWJQUEo1b0VCSENGVGsvdmt6?=
- =?utf-8?B?cTNheTBEUkdzK0ptS1BHSXhCTEM1dmg5bmk4VFdWdm9SbUI3M0VYaUtDRGpL?=
- =?utf-8?B?VW5ZcDR0ZHdQckxMd1J0Y2hhRER6bGh6Uk5QNURBenZQZlRNNHJiczZCQmxk?=
- =?utf-8?B?a29TVmwyZkFWQ0dIWnp5SnhQZ2R5aDQrTkYycUp1NzU5dlN5dkR3akNOZWtD?=
- =?utf-8?B?a2JFdnVod0ZpYUxGclA0Q09vamorT002ZnNyOXp4ekJMVUtVb3hQOXZVaFc0?=
- =?utf-8?B?cEJuMlNHVmN6Q25RTHptSDZSSTVPUGpiQWs5ZnFCcTBCazk0dWRyTi9TZFZp?=
- =?utf-8?B?eUR4VzdrNk1FVGZybFU0OTZEalZMaVJ6TmN1eXVld1NNVFlobVpoV0QzTkI5?=
- =?utf-8?B?RXM3OVFQd01QTm9kV3hFSFBQczFYc0R3ZWZ1SW0veDBWbVNvUW1mcXNRPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dU9jRXlSc0xSL2dlVHd1cGpuKzF0a3JDREk1ODNGRDR6NnF1K3h4Y085aUp5?=
- =?utf-8?B?aW0wcUs3QnZRNmVKWW04eUQ1bS84R3dTSXYydGRWQTFlcTBpNnlTVkRaM1B2?=
- =?utf-8?B?T25nNU9HYTlmQmlXZ09KVGphWUhNNU5TK21yMnhMRnpmU0tlTGhHVWRETEpO?=
- =?utf-8?B?TVJYdHdFMzZBV1dZNDNJUDd4WE1MV2hLSmdyN2RISENwMWgzY29ISzdRUmgy?=
- =?utf-8?B?dXRTQzEzMUNuT1hNbDRmQTFtaFpnM0JiMjdrN3owSjVyczZTQVNlWUFEQzVZ?=
- =?utf-8?B?N1F3ZmhTWHdjTkVZT1hXaU56cmZZU3NZU3VuVVhzeUJiZThIUERhQmYrNWpq?=
- =?utf-8?B?U1g1ZzZJWEZpSWdKRlBIM3U2dC91RkFSTFN4b3pxTHZ2SDY5RWFGV3g3eVNn?=
- =?utf-8?B?a0c3M1FaU21OL09ZQnJEeVMzV1Q5cnh2aFhjU0dmUkpLWUdHYUNTUVlQanVB?=
- =?utf-8?B?cXlqZ1ZsOE9td1Jod3NSb0pQYkhlaUFVaU5JNW5ZYzd0NVZqMG9STlNMZkNM?=
- =?utf-8?B?cWlwWlhBbWZkak52YVJwUSt1MFRacU4rcUprVlVqWnJsZUhpME5DWnNRQXpP?=
- =?utf-8?B?L3hyRjNveWd3SW1OVkphQWU0bUxSL0tkZmNoN2JESzlMRVZhbjYzZU1ycjdN?=
- =?utf-8?B?UVpSMjYvOER4LzBjOVFYRmFUOEpYV3NtV3VJWWdSY2VNclZsUHpLOWZ5V1hr?=
- =?utf-8?B?Y0dBa2taV2hqMCtEUFUzWC9adTJtTmpiK3JFYmxMNDFnUTdzb3M4azB6VCtz?=
- =?utf-8?B?ZU52QmlYMnNqNHArMkZDbjVsckxCcTRTNHUrbVhmR3JiWUhRbHB2ZkVGcity?=
- =?utf-8?B?by9rVzM2SCtIQVRoSzZjWTJGRC9yNE5pMXIrSnd3ZzJ6Q2M1YkRXdTZJZTBz?=
- =?utf-8?B?K1NRVVljSGlGOVo0UGZDWkhNaysvRHRiZ013SjZnOHNUV0g4OXFiSVpmT2c2?=
- =?utf-8?B?cGNPYXFWbXV0UDNFVGJjRVdxTDVHanJNOWkrUW54dndnbjRPL0VFU08xV1NK?=
- =?utf-8?B?cWRlSUZXbHMrWjYzQmJJRlpxMDB1cnJmM0FXTkJzeWdSL0dwSWRJWm9GMjN0?=
- =?utf-8?B?K1drWkRIWU1rbkM3M2kwdGo2WFhTdnZTUXI3a3ViVGdFSEVjeEp2djN5Yk5G?=
- =?utf-8?B?b3lUZysyNW1HWkFTb3hOU0hMNTllYjREdno2SEpyMUowMDJ1QlMwWVMrSGtI?=
- =?utf-8?B?T2ZQbmw1b0haVDlIUStodHQwcGQvNG5yT3kzVjIzb0FhVXBaTVErNTZHQm13?=
- =?utf-8?B?TnpTOS9xdjVJZVdCSVhuLzR5Q3RnZUQ5SVFmSWlpZ1BEL0FNdS9lejJCWS9Y?=
- =?utf-8?B?aXRXWVNhT2JMdW94V01vTnZzcHdPNHc5ek54L2lwK1cwb291RENNYlk2T0tz?=
- =?utf-8?B?V1I3bVYrVmZlRjlNTFZxb0xrYWJuVEhKRFpvbGRpaVRLT1pTdjJRc2g1bDYv?=
- =?utf-8?B?aXFTenMwR1VYaGVDazRLUldDdVdqRnAvb2FCcklPd0V6WEFyVnJqRkQ5VkF0?=
- =?utf-8?B?WXRlNERYZ3hSVURnYTRjWm4wdVpobU9GbC9KVEdjR2VTM2tvc2tJK3M3ZGdY?=
- =?utf-8?B?cTFkMGl3bzRUSlBWYzluSnR0eUs0NVd5VWpaZTQweFlPU1JEcW10a05KcmNJ?=
- =?utf-8?B?UzF4RC8zeG9ZbXYzbGViSXo4dlprNHFIY2F5eTFiNENrZUlmY3BldHMxQ25V?=
- =?utf-8?B?UEZwakxNVUg0Wlc0N2lEc2FDVkxNd2U2ZzE1Tk5ZMHQyTWEzbHRNUS8xZURz?=
- =?utf-8?B?emJaVG1oVDVuUUVGUERYOUdBMlJ4c0lpY3pSTkt2N29qaEJ4OElIWjFQWWNL?=
- =?utf-8?B?cUZoUVY1T2VvL3FFT21WQm1zSHhLNVZkY21heEVONllra1cxaFZtbS9yVzZL?=
- =?utf-8?B?WHNITm05NGtuVXRZcEN0ZDNyTGE4RmMzY1hGNTRqYUFJMDhOYTdWaUhvbW4x?=
- =?utf-8?B?ZWgvZ2plUzdiQ3RaMzh3WFU3djFYUGlHNC9TTjJnM2tmbGFEcHpmMHRUY2JO?=
- =?utf-8?B?dWVLVDMrQUZZcm1SY3VUMUlmZ2l1aVFyTGdYUzUxRUlIT0JoUmR6SkFIbDVq?=
- =?utf-8?B?YjFOMWtqSlR4RmYrRHpRd0FmSEdFb2hHWHBKUjQvQ2NKOXhIZDN4djFoZUR3?=
- =?utf-8?B?UW9JVE9LR3dra1ROZG5NeGN2TjE3TVExZS9KVnYzWUt1UHZocmJjT1hNV3d3?=
- =?utf-8?B?T2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2487d5f1-f3ca-431b-dadf-08dcedfaccec
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 15:54:21.6723
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uFXYV7JwkmiMQC2TVno8hytGMPsfqEnp49ae9y+g6n+l6rYPR6TDsJnkA6/bSwNC8EsrRrEbXFKUbnxq42wMUs+mjdWolrA2YVUUqD1d9Qk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5243
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
+From: David Hildenbrand <david@redhat.com>
+To: Alexander Egorenkov <egorenar@linux.ibm.com>
+Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
+ borntraeger@linux.ibm.com, cohuck@redhat.com, corbet@lwn.net,
+ eperezma@redhat.com, frankja@linux.ibm.com, gor@linux.ibm.com,
+ hca@linux.ibm.com, imbrenda@linux.ibm.com, jasowang@redhat.com,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
+ svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
+ xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
+References: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+ <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Babu,
-
-On 10/15/24 1:40 PM, Moger, Babu wrote:
-> On 9/19/24 10:33, Reinette Chatre wrote:
->> On 9/18/24 11:22 AM, Moger, Babu wrote:
->>> On 9/18/24 10:27, Moger, Babu wrote:
->>>> On 9/13/24 15:45, Reinette Chatre wrote:
->>>>> On 8/16/24 9:16 AM, Babu Moger wrote:
->>>>>> Detect SDCIAE`(L3 Smart Data Cache Injection Allocation Enforcement)
->>>>>
->>>>> (stray ` char)
->>>>
->>>> Sure.
->>>>
->>>>>
->>>>>> feature and initialize sdciae_capable.
->>>>>
->>>>> (This is a repeat of the discussion we had surrounding the ABMC feature.)
->>>>>
->>>>> By adding "sdciae_capable" to struct rdt_resource the "sdciae" feature
->>>>> becomes a resctrl fs feature. Any other architecture that has a "similar
->>>>> but perhaps not identical feature to AMD's SDCIAE" will be forced to also
->>>>> call it "sdciae" ... sdciae seems like a marketing name to me and resctrl
->>>>> needs something generic that could later be built on (if needed) by other
->>>>> architectures.
->>>>
->>>> How about "cache_inject_capable" ?
->>>>
->>>> This seems generic. I will change the description also.
->>>>
+On 16.10.24 17:47, David Hildenbrand wrote:
 >>>
->>> Basically, this feature reserves specific CLOS for SDCI cache.
->>>
->>> We can also name "clos_reserve_capable".
+>>> When I wrote that code I was rather convinced that the variant in this patch
+>>> is the right thing to do.
 >>
->> Naming is always complicated. I think we should try to stay away from
->> "clos" in a generic name since that creates problem when trying to
->> apply it to Arm and is very specific to how AMD implements this
->> feature. "cache_inject_capable" does sound much better to me ...
->> it also looks like this may be more appropriate as a property
->> of struct resctrl_cache?
+>> A short explanation about what a stand-alone kdump is.
+>>
+>> * First, it's not really a _regular_ kdump activated with kexec-tools and
+>>     executed by Linux itself but a regular stand-alone dump (SCSI) from the
+>>     FW's perspective (one has to use HMC or dumpconf to execute it and not
+>>     with kexec-tools like for the _regular_ kdump).
 > 
-> Coming back to this again, I feel 'cache_inject_capable' is kind of very
-> generic. Cache injection term is used very generically everywhere.
+> Ah, that makes sense.
 > 
-> Does  'cache_reserve_capable" sound good ?  This is inside the resctrl
-> subsystem. We know what it is referring to.
+>> * One has to reserve crashkernel memory region in the old crashed kernel
+>>     even if it remains unused until the dump starts.
+>> * zipl uses regular kdump kernel and initramfs to create stand-alone
+>>     dumper images and to write them to a dump disk which is used for
+>>     IPLIng the stand-alone dumper.
+>> * The zipl bootloader takes care of transferring the old kernel memory
+>>     saved in HSA by the FW to the crashkernel memory region reserved by the old
+>>     crashed kernel before it enters the dumper. The HSA memory is released
+>>     by the zipl bootloader _before_ the dumper image is entered,
+>>     therefore, we cannot use HSA to read old kernel memory, and instead
+>>     use memory from crashkernel region, just like the regular kdump.
+>> * is_ipl_type_dump() will be true for a stand-alone kdump because we IPL
+>>     the dumper like a regular stand-alone dump (e.g. zfcpdump).
+>> * Summarized, zipl bootloader prepares an environment which is expected by
+>>     the regular kdump for a stand-alone kdump dumper before it is entered.
+> 
+> Thanks for the details!
+> 
+>>
+>> In my opinion, the correct version of is_kdump_kernel() would be
+>>
+>> bool is_kdump_kernel(void)
+>> {
+>>           return oldmem_data.start;
+>> }
+>>
+>> because Linux kernel doesn't differentiate between both the regular
+>> and the stand-alone kdump where it matters while performing dumper
+>> operations (e.g. reading saved old kernel memory from crashkernel memory region).
+>>
+> 
+> Right, but if we consider "/proc/vmcore is available", a better version
+> would IMHO be:
+> 
+> bool is_kdump_kernel(void)
+> {
+>             return dump_available();
+> }
+> 
+> Because that is mostly (not completely) how is_kdump_kernel() would have
+> worked right now *after* we had the elfcorehdr_alloc() during the
+> fs_init call.
+> 
+> 
+>> Furthermore, if i'm not mistaken then the purpose of is_kdump_kernel()
+>> is to tell us whether Linux kernel runs in a kdump like environment and not
+>> whether the current mode is identical to the proper and true kdump,
+>> right ? And if stand-alone kdump swims like a duck, quacks like one, then it
+>> is one, regardless how it was started, by kexecing or IPLing
+>> from a disk.
+> 
+> Same thinking here.
+> 
+>>
+>> The stand-alone kdump has a very special use case which most users will
+>> never encounter. And usually, one just takes zfcpdump instead which is
+>> more robust and much smaller considering how big kdump initrd can get.
+>> stand-alone kdump dumper images cannot exceed HSA memory limit on a Z machine.
+> 
+> Makes sense, so it boils down to either
+> 
+> bool is_kdump_kernel(void)
+> {
+>            return oldmem_data.start;
+> }
+> 
+> Which means is_kdump_kernel() can be "false" even though /proc/vmcore is
+> available or
+> 
+> bool is_kdump_kernel(void)
+> {
+>            return dump_available();
+> }
+> 
+> Which means is_kdump_kernel() can never be "false" if /proc/vmcore is
+> available. There is the chance of is_kdump_kernel() being "true" if
+> "elfcorehdr_alloc()" fails with -ENODEV.
+> 
+> 
+> You're call :) Thanks!
 > 
 
-Since this is inside resctrl "cache_reserve_capable" sounds like existing
-CAT to me. Could it help if the term "io" appears in the name? Something like
-"io_reserve_capable"? When this is a member of struct resctrl_cache it should
-be implicit that it refers to the cache.
+What I think we should do is the following (improved comment + patch
+description), but I'll do whatever you think is better:
 
-Reinette
+
+ From e86194b5195c743eff33f563796b9c725fecc65f Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Wed, 4 Sep 2024 14:57:10 +0200
+Subject: [PATCH] s390/kdump: provide custom is_kdump_kernel()
+
+s390 currently always results in is_kdump_kernel() == false until
+vmcore_init()->elfcorehdr_alloc() ran, because it sets
+"elfcorehdr_addr = ELFCORE_ADDR_MAX;" early during setup_arch to deactivate
+any elfcorehdr= kernel parameter.
+
+Let's follow the powerpc example and implement our own logic. Let's use
+"dump_available()", because this is mostly (with one exception when
+elfcorehdr_alloc() fails with -ENODEV) when we would create /proc/vmcore
+and when is_kdump_kernel() would have returned "true" after
+vmcore_init().
+
+This is required for virtio-mem to reliably identify a kdump
+environment before vmcore_init() was called to not try hotplugging memory.
+
+Update the documentation above dump_available().
+
+Tested-by: Mario Casquero <mcasquer@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  arch/s390/include/asm/kexec.h |  4 ++++
+  arch/s390/kernel/crash_dump.c |  6 ++++++
+  arch/s390/kernel/smp.c        | 16 ++++++++--------
+  3 files changed, 18 insertions(+), 8 deletions(-)
+
+diff --git a/arch/s390/include/asm/kexec.h b/arch/s390/include/asm/kexec.h
+index 1bd08eb56d5f..bd20543515f5 100644
+--- a/arch/s390/include/asm/kexec.h
++++ b/arch/s390/include/asm/kexec.h
+@@ -94,6 +94,9 @@ void arch_kexec_protect_crashkres(void);
+  
+  void arch_kexec_unprotect_crashkres(void);
+  #define arch_kexec_unprotect_crashkres arch_kexec_unprotect_crashkres
++
++bool is_kdump_kernel(void);
++#define is_kdump_kernel is_kdump_kernel
+  #endif
+  
+  #ifdef CONFIG_KEXEC_FILE
+@@ -107,4 +110,5 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+  int arch_kimage_file_post_load_cleanup(struct kimage *image);
+  #define arch_kimage_file_post_load_cleanup arch_kimage_file_post_load_cleanup
+  #endif
++
+  #endif /*_S390_KEXEC_H */
+diff --git a/arch/s390/kernel/crash_dump.c b/arch/s390/kernel/crash_dump.c
+index 51313ed7e617..43bbaf534dd2 100644
+--- a/arch/s390/kernel/crash_dump.c
++++ b/arch/s390/kernel/crash_dump.c
+@@ -237,6 +237,12 @@ int remap_oldmem_pfn_range(struct vm_area_struct *vma, unsigned long from,
+  						       prot);
+  }
+  
++bool is_kdump_kernel(void)
++{
++	return dump_available();
++}
++EXPORT_SYMBOL_GPL(is_kdump_kernel);
++
+  static const char *nt_name(Elf64_Word type)
+  {
+  	const char *name = "LINUX";
+diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
+index 4df56fdb2488..bd41e35a27a0 100644
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -574,7 +574,7 @@ int smp_store_status(int cpu)
+  
+  /*
+   * Collect CPU state of the previous, crashed system.
+- * There are four cases:
++ * There are three cases:
+   * 1) standard zfcp/nvme dump
+   *    condition: OLDMEM_BASE == NULL && is_ipl_type_dump() == true
+   *    The state for all CPUs except the boot CPU needs to be collected
+@@ -587,16 +587,16 @@ int smp_store_status(int cpu)
+   *    with sigp stop-and-store-status. The firmware or the boot-loader
+   *    stored the registers of the boot CPU in the absolute lowcore in the
+   *    memory of the old system.
+- * 3) kdump and the old kernel did not store the CPU state,
+- *    or stand-alone kdump for DASD
+- *    condition: OLDMEM_BASE != NULL && !is_kdump_kernel()
++ * 3) kdump or stand-alone kdump for DASD
++ *    condition: OLDMEM_BASE != NULL && !is_ipl_type_dump() == false
+   *    The state for all CPUs except the boot CPU needs to be collected
+   *    with sigp stop-and-store-status. The kexec code or the boot-loader
+   *    stored the registers of the boot CPU in the memory of the old system.
+- * 4) kdump and the old kernel stored the CPU state
+- *    condition: OLDMEM_BASE != NULL && is_kdump_kernel()
+- *    This case does not exist for s390 anymore, setup_arch explicitly
+- *    deactivates the elfcorehdr= kernel parameter
++ *
++ * Note that the old kdump mode where the old kernel stored the CPU state
++ * does no longer exist: setup_arch explicitly deactivates the elfcorehdr=
++ * kernel parameter. The is_kdump_kernel() implementation on s390 is independent
++ * of the elfcorehdr= parameter, and is purely based on dump_available().
+   */
+  static bool dump_available(void)
+  {
+-- 
+2.46.1
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
