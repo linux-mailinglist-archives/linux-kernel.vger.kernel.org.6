@@ -1,138 +1,119 @@
-Return-Path: <linux-kernel+bounces-368579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A629A119D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:32:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2409A11A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2971EB20DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:32:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850D61C22622
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063CD18BC33;
-	Wed, 16 Oct 2024 18:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B842141A7;
+	Wed, 16 Oct 2024 18:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NkAVhJkT"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T46ZaHFZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D9418BB89
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECA118C33E;
+	Wed, 16 Oct 2024 18:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729103540; cv=none; b=oLSCT42Dx6W0wK5I/T5isbWHEchsGZy4EhmulNHoLyDUoj2CP77umUyD0aKriRxgP6VfgL5qJjIaV0kuoki4XKbQSOy6MhAShy2nsGr/cb/r5zbOLl5O2Wf9CGAOGsBc5J6QLQ8NdZHjGKRe4fdqlM89FOxr/RMNVAyqRkJJhMY=
+	t=1729103720; cv=none; b=Gct+xvq91Xz9EoG/XC2gYO2J27cuQvHhJ0vey3A+uUS4+cC1mejagGzBGhcvoJhy+p925SuGiCpfdgqMS1/1c8ecoBWAe+rye9auch/4nC90Weckn3mi0QzJtMxj4iVvmHxiUWSZegVpg2eOgH3YCoy/Umg/hrSLL8LSz9O6Pzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729103540; c=relaxed/simple;
-	bh=EUpKjPw0TjH6jIqO9u+AwJdLn0bo9vlIlSUSehKj3xA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZdJMUUS5mbyi+ToxBxIJGm9hNXKrtNlKK55aqHcsHsL9fuTqCL5FieHe7cUs3J1E7FkYrRGMnWSU8A6JWUTtKYdP2d3DBlVMkcgn+dptzClQif3b7wRfpAnRuoGDTggD0nf9HqcX/XTp/nYX5YjjUGFQ6w5GWz0vjlJS8iSw55g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NkAVhJkT; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314311959aso1183475e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729103536; x=1729708336; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x5wnG/XXkbBBxfuxVxDQB2UThw1UiIyk7I2E8YBU9cg=;
-        b=NkAVhJkT5imoZhhphqyq/PxDLHPEXudUnT+1ZjgkVvEpS0yf9NBmv8UlPNgfkwThPE
-         nXsnMTA8W4OS97WRoi053pNQuIhTMfw2iaUOCrtbpMDCD4rmjb31W6nO0pGVMrrWA1NU
-         KrOMA4mWB6xb6kqzh1FIsyRjUSeDdvXjpkQi/gGiyKQ+mQtiMlfdEWHDBfxqdwuWBD4w
-         ml8wOqJ9LrC5Ut8GDJXYBI+jpu9NwRhQp+FKu8h3VRwBcsGXywznDE5iqRcwNdmAKDyy
-         E8QkWaHQH3BzPaCzllLDYBClCv9iYvxyKBiFf+UJ009r0Le0/kwH3M7/jRVUb3O9gPkW
-         YCjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729103536; x=1729708336;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x5wnG/XXkbBBxfuxVxDQB2UThw1UiIyk7I2E8YBU9cg=;
-        b=AMQbSgEy3FABK6lji8V5sA3uJAuFNK7c7CfTnWk+Vi7KMlfLEpc+wPB29jy/hjq5Al
-         wfa/Zqh5SxgA8WuVywvUIT0YTZp9+yK6He5PKpIgYFrbfZzQ2XeY9aQIiuUI0wV3T/uQ
-         kzr0cHVsnxvGeVqAdIqX/tlbcvbhABXEzQMoOjMaqZ95EoSUBLNJY+zTuE4QTHMDdNKU
-         OcSW0TEGaeoSQOfe2mFMHyhkkNGB7zIYqhmXbZawII36yXfwxUnibOPatUnWJBLN020K
-         6LYRnaDPqPpPIVHuDutZSOKAIRPS6vjYxW8PbApifTUxZ1ARow53i5f8TvXPkHtw8AAZ
-         8XfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyEPLoJq8CHUdtkWRHCXIiDHT96RAo+Qvfh/zQgNgMCTRtU/ynDp8mnakRG/4Zk0G+VeCr2AMNUXPUeKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCFEglfcpg1FmA56ZK+wXtt6HNDgSHufIV5xgEcY/wJIeLYdGa
-	fCASoSe2f1uIjYzP1Jo8NpkYSctdgTk5tqs0XaELdOZnqzwsWlAEq4To7Gv6fWA=
-X-Google-Smtp-Source: AGHT+IFLcus725VljaUUGVmu/rOwU1gPwfoWv724VI3Thb10mvWyJcaDjIPQyXmNkdDE63CvpwwwfA==
-X-Received: by 2002:a05:600c:3b14:b0:42c:bae0:f065 with SMTP id 5b1f17b1804b1-431255d4e77mr155553275e9.5.1729103535871;
-        Wed, 16 Oct 2024 11:32:15 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:10a5:e010:a9c0:1c6c:5427:e89d? ([2a05:6e02:10a5:e010:a9c0:1c6c:5427:e89d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc40a24sm4962549f8f.104.2024.10.16.11.32.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 11:32:15 -0700 (PDT)
-Message-ID: <ba5a5208-50c5-4f84-b1e2-18fa9bbe3b75@baylibre.com>
-Date: Wed, 16 Oct 2024 20:32:14 +0200
+	s=arc-20240116; t=1729103720; c=relaxed/simple;
+	bh=Wbzx8WQNkx2LfwF5/9Fel6fTjsfrcYca5cm8SsQhTXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkNGYjEPESvVsmW4jy+E2MGcm65uow+B5ExA1kA7qs6xazKq9mXoAp4EqD10LCEvaElfQaohEeLPi6U0kbmtGuB124nC5QipEkGLqJyOEZ5M1M4OFrLI17/m55e/gfx57v2yEL5YD3gHoE0gqhHLDkc7tRQQN6RksQYB8oTnG5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T46ZaHFZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC86EC4CEC5;
+	Wed, 16 Oct 2024 18:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729103720;
+	bh=Wbzx8WQNkx2LfwF5/9Fel6fTjsfrcYca5cm8SsQhTXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T46ZaHFZPG8Y8J2eE5/mNSEyJWM+ipCnlZ1Fy/sZzxRhW1z/ybed5qvDEB14LbAfH
+	 iAMepQqhxQ9RePBIs11NLkMzD0oai4SAa25TAfvk63W5hnk5Se3rkDq6XOm5LAqgxY
+	 9KEAyPi8VjW0zvkRA132pYG7ngtotf/7r0IggB0vtd+gs+ZPyXuAMYqvC00X/XtbuF
+	 Riw0cALxO2a8aL9qBTMvmbTpU4+BP70ZOf+dJZOKmNf6jG7AfzZTCS5q3tFdjv+zOh
+	 8/Z+1QR3rGVKK9Hvz6menRdqzGue9K+wCjdOqem3m92jY1a9vqoXB4XssgPRKq1Aul
+	 34IOb030opWnw==
+Date: Wed, 16 Oct 2024 11:35:18 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <ZxAHZt8pFjxeOx-U@google.com>
+References: <20241016170542.7e22b03c@canb.auug.org.au>
+ <CAADnVQJ=Woq=82EDvMT1YRLLTvNgFVSbnZDiR5HUgEhcyBLW4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] irqchip: Kconfig: module build support for the TI
- interrupt router driver
-To: Thomas Gleixner <tglx@linutronix.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- vishalm@ti.com, Mattijs Korpershoek <mkorpershoek@baylibre.com>,
- Kevin Hilman <khilman@baylibre.com>, Nicolas Frayer <nfrayer@baylibre.com>
-References: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
- <20241016-timodules-v3-1-fa71091ade98@baylibre.com> <875xpsatqo.ffs@tglx>
-Content-Language: en-US
-From: Guillaume LA ROQUE <glaroque@baylibre.com>
-In-Reply-To: <875xpsatqo.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQJ=Woq=82EDvMT1YRLLTvNgFVSbnZDiR5HUgEhcyBLW4Q@mail.gmail.com>
 
-Hi ,
+On Wed, Oct 16, 2024 at 09:25:41AM -0700, Alexei Starovoitov wrote:
+> On Tue, Oct 15, 2024 at 11:05 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> >
+> > After merging the bpf-next tree, today's linux-next build (arm64
+> > defconfig) failed like this:
+> >
+> > Building: arm64 defconfig
+> > In file included from arch/arm64/include/asm/thread_info.h:17,
+> >                  from include/linux/thread_info.h:60,
+> >                  from arch/arm64/include/asm/preempt.h:6,
+> >                  from include/linux/preempt.h:79,
+> >                  from include/linux/spinlock.h:56,
+> >                  from include/linux/mmzone.h:8,
+> >                  from include/linux/gfp.h:7,
+> >                  from include/linux/slab.h:16,
+> >                  from mm/slab_common.c:7:
+> > mm/slab_common.c: In function 'bpf_get_kmem_cache':
+> > arch/arm64/include/asm/memory.h:427:66: error: passing argument 1 of 'virt_to_pfn' makes pointer from integer without a cast [-Wint-conversion]
+> >   427 |         __is_lm_address(__addr) && pfn_is_map_memory(virt_to_pfn(__addr));      \
+> >       |                                                                  ^~~~~~
+> >       |                                                                  |
+> >       |                                                                  u64 {aka long long unsigned int}
+> > mm/slab_common.c:1260:14: note: in expansion of macro 'virt_addr_valid'
+> >  1260 |         if (!virt_addr_valid(addr))
+> >       |              ^~~~~~~~~~~~~~~
+> > arch/arm64/include/asm/memory.h:382:53: note: expected 'const void *' but argument is of type 'u64' {aka 'long long unsigned int'}
+> >   382 | static inline unsigned long virt_to_pfn(const void *kaddr)
+> >       |                                         ~~~~~~~~~~~~^~~~~
+> >
+> > Caused by commit
+> >
+> >   04b069ff0181 ("mm/bpf: Add bpf_get_kmem_cache() kfunc")
+> >
+> > I have reverted commit
+> >
+> >   08c837461891 ("Merge branch 'bpf-add-kmem_cache-iterator-and-kfunc'")
+> >
+> > for today.
+> 
+> Thanks for flagging.
+> Fixed and force pushed.
 
-Le 16/10/2024 à 18:38, Thomas Gleixner a écrit :
-> On Wed, Oct 16 2024 at 11:41, Guillaume La Roque wrote:
->> From: Nicolas Frayer <nfrayer@baylibre.com>
-> irqchip: Kconfig: is not a valid prefix.
->
-> This is about the TI SCI router, so this wants to use the
-> irqchip/ti-whatever prefix.
->
->> Added module build support in Kconfig for the TI SCI interrupt router
->> driver
-> Added?
->
-> This wants to be 'Add ...'
->
-> You fail to explain why it is valid to build this as a module, i.e. you
-> did the analysis that there is no dependency on this before modules can
-> be loaded.
+Oops, thanks for fixing this.  The virt_addr_valid() was confusing
+whether it takes unsigned long or a pointer.  It seems each arch has
+different expectation.
 
-
-i will rewrite commit message and title .
-
->
->>   MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ticom>");
->>   MODULE_DESCRIPTION("K3 Interrupt Router driver over TI SCI protocol");
->> +MODULE_LICENSE("GPL");
-> This change is not mentioned in the change log.
-
-it's mandatory for have possiblity to build in module so for me no 
-really needed to explain this but i will add why in commit message.
-
-
-thanks for review.
-
-Guillaume
-
->
-> Thanks,
->
->          tglx
-
+Thanks,
+Namhyung
 
 
