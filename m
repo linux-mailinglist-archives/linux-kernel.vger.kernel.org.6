@@ -1,189 +1,182 @@
-Return-Path: <linux-kernel+bounces-368559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B799A1150
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:13:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5AC9A1154
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE784B25137
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:13:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457BA1C20D9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1C9210C1B;
-	Wed, 16 Oct 2024 18:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA49212F1E;
+	Wed, 16 Oct 2024 18:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7WxejpA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WhE8Uygb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FAE18A933
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370B518A933;
+	Wed, 16 Oct 2024 18:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729102419; cv=none; b=VlFzFV75t/egPLzWPzvKA+SIMFcyymTGwkAqz5gq1yRNrs2O2EYUhSoNrEgdcUKuZ8KUbFSM0W3V8w6h8FC5gRMI/Lxqj0vEyqAfdcPqXAlGVPTYZ7NyfKhdzFURph+M63LCydYNST3p2w9nWqvtD1Fb4eJTH0FiYTKk1CkSQHo=
+	t=1729102479; cv=none; b=Pc2YwuaIJMqjUm2kcTArlQH0rJGxRsD/55vYrsA7xkSCtmiEQS6dJXw0PDndP/jLy8nH4PWBcd4PVSoR7Vrp8jBfZcqaPYD43O5F9KPJ1ZtwqEyXXbnjk+iEQCWK12VqY+6yDGY/n4bm7zJ68w1Hs+iSEjQBY6O0BtMBF2fKV1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729102419; c=relaxed/simple;
-	bh=3fWqLZ8/cKyEB9d/VXMXRwpRVNKHL6GCJ7yAv+Rpg7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=uKH/onPjnc5GQXcerHBtKMtVgNOvrHCM2SxmrZ2GDP+uBkEo8lYDlK6nEOj3YhkwAuOT8jdH8shi/LpxDx+Rl63cL1x3YZTS3eGjDi2ihJdhWPc6NS8W63rEIIWT+tdbtKe8+iV2K4PI4cWL/ZFAJL94+pPeK7cqSbZX1L/KZGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7WxejpA; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729102417; x=1760638417;
-  h=date:from:to:cc:subject:message-id;
-  bh=3fWqLZ8/cKyEB9d/VXMXRwpRVNKHL6GCJ7yAv+Rpg7Y=;
-  b=H7WxejpAILSlOV1A/YS/0fPrE7iEl6S6szXbXtyCKHrE6MfAsojRAV3e
-   hiXgp9lQoq+eMblDP1E6FGH64q4k3WrkGLpXDfJwTQwBnkW7g09+eZ0Oa
-   Hlf3z0BgWheVRI8GuDFwW50FlZ7y2q6Xxj+hs3/RxXMR5mEtHdJ/GaGyv
-   R9pO5POsMmJ/LwWAOCDpvyuoOfAqDlR1QoEk9xGsnrM92a4UJ8LlBDdbP
-   CXeKUu+F2Kbk/22wTUW4mWuZ629PWP5I51314HlYZCLiYivuzg64q8WPg
-   YWh6tz5CQ5Sw2/bnE1bmlHpLHewhK/xZWbwDqBauQs7UEzGlfzWUBADO1
-   w==;
-X-CSE-ConnectionGUID: TSr+E3twSMOnLeO4U2Iklg==
-X-CSE-MsgGUID: fhAIkWfaSjODO+5FWCpZlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28656547"
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="28656547"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 11:13:37 -0700
-X-CSE-ConnectionGUID: Ay/z8ywBSZWI5xdpNV34+Q==
-X-CSE-MsgGUID: +yLuqgKlRm2cLY1c4Ukigw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="83377802"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 16 Oct 2024 11:13:37 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t18Wc-000LER-08;
-	Wed, 16 Oct 2024 18:13:34 +0000
-Date: Thu, 17 Oct 2024 02:12:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/urgent] BUILD SUCCESS
- d038109ac1c6bf619473dda03a16a6de58170f7f
-Message-ID: <202410170224.rbrEqSgM-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1729102479; c=relaxed/simple;
+	bh=LuUZlapvI84DdJZHU9QMoCDC+FCF9KdOGMfDaQYtbQw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=BDeOtmvn0bfZ++9FHeKW5MuEzhu27wR4zCuoy49txhpk+R1AMfnIvsayWRkNGxV/+GZ24sI1kKOFMg5x6/9ZVbhr10cxUhK7U3s586Gnh9uDf7p692UavCL+kBUAsFhaHbkiJ+o62Xk9tk37tXCWzwnx9vw78OB6J/a4jcMgAeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WhE8Uygb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGo2TY027587;
+	Wed, 16 Oct 2024 18:13:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=gEUxcOe9Ffkf05DAObJrOzHApc1WNv
+	zljlsK5BIJmpo=; b=WhE8UygbgECe86BrZHE5+vPV0zNpOd3+JpVpsMtcoB7+2d
+	vGtg4yt4OfF/oY+Wiw1PPLrEqBntk1ON+hvgvvpvZ80icX9tSctAIVnVkYCrI6qM
+	ogYmdrd775fjfxg3aA2yoVF4MKuY895knbCSIeT5MD/X8H+yoUGgYE4kl5UQSZzy
+	asxXf/Epsg+S55FUptnwLJ51oexx65GpQfJ2XSnfM+SXe6Y9lbmO4/BL1iRrGJTU
+	4KJQPuWCFj3IsTnMA1HeaiSvOZg691KvOS1skn/J/TfkXxDwtwfTmUYip6u4qlI8
+	1NvT0Z3AXYzSpz1Cbuf2cNNm+xaWrPpXcxOtofSw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ahbr0avh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:13:32 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GICmD4007410;
+	Wed, 16 Oct 2024 18:13:31 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ahbr0ava-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:13:31 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGTD9u002408;
+	Wed, 16 Oct 2024 18:13:30 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emtuf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:13:30 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GIDQWH54919478
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 18:13:26 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 42C7720043;
+	Wed, 16 Oct 2024 18:13:26 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C1C922004D;
+	Wed, 16 Oct 2024 18:13:25 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 16 Oct 2024 18:13:25 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>,
+        Florent Revest <revest@chromium.org>,
+        linux-trace-kernel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Alan
+ Maguire <alan.maguire@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy
+ <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Paul Walmsley
+ <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert
+ Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov
+ <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>,
+        Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph tracer
+In-Reply-To: <20241016101022.185f741b@gandalf.local.home> (Steven Rostedt's
+	message of "Wed, 16 Oct 2024 10:10:22 -0400")
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+	<172904040206.36809.2263909331707439743.stgit@devnote2>
+	<yt9ded4gfdz0.fsf@linux.ibm.com>
+	<20241016101022.185f741b@gandalf.local.home>
+Date: Wed, 16 Oct 2024 20:13:25 +0200
+Message-ID: <yt9da5f3gblm.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jgMfR1X7UjfollVmKBkZZEBGkodkC0dW
+X-Proofpoint-ORIG-GUID: dyEvInqsMKjOzSGioAThkCdgUFrU3kvR
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=520
+ clxscore=1015 adultscore=0 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160115
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
-branch HEAD: d038109ac1c6bf619473dda03a16a6de58170f7f  irqchip/renesas-rzg2l: Fix missing put_device
+Steven Rostedt <rostedt@goodmis.org> writes:
 
-elapsed time: 1164m
+> On Wed, 16 Oct 2024 14:07:31 +0200
+> Sven Schnelle <svens@linux.ibm.com> wrote:
+>
+>> > +/* Return reserved data size in words */
+>> > +static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
+>> > +{
+>> > +	unsigned long ptr;
+>> > +
+>> > +	ptr = (val & FPROBE_HEADER_PTR_MASK) | ~FPROBE_HEADER_PTR_MASK;
+>> > +	if (fp)
+>> > +		*fp = (struct fprobe *)ptr;
+>> > +	return val >> FPROBE_HEADER_PTR_BITS;
+>> > +}  
+>> 
+>> I think that still has the issue that the size is encoded in the
+>> leftmost fields of the pointer, which doesn't work on all
+>> architectures. I reported this already in v15
+>> (https://lore.kernel.org/all/yt9dmsjyx067.fsf@linux.ibm.com/)
+>
+> From what you said in v15:
+>
+>> I haven't yet fully understood why this logic is needed, but the
+>> WARN_ON_ONCE triggers on s390. I'm assuming this fails because fp always
+>> has the upper bits of the address set on x86 (and likely others). As an
+>> example, in my test setup, fp is 0x8feec218 on s390, while it is
+>> 0xffff888100add118 in x86-kvm.
+>
+> Since we only need to save 4 bits for size, we could have what it is
+> replacing always be zero or always be f, depending on the arch. The
+> question then is, is s390's 4 MSBs always zero?
 
-configs tested: 97
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-14.1.0
-alpha                            allyesconfig    clang-20
-alpha                               defconfig    gcc-14.1.0
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.1.0
-arc                              allyesconfig    clang-20
-arc                                 defconfig    gcc-14.1.0
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.1.0
-arm                              allyesconfig    clang-20
-arm                                 defconfig    gcc-14.1.0
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.1.0
-arm64                               defconfig    gcc-14.1.0
-csky                              allnoconfig    gcc-14.1.0
-csky                                defconfig    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.1.0
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.1.0
-i386                             allmodconfig    clang-18
-i386                              allnoconfig    clang-18
-i386                             allyesconfig    clang-18
-i386        buildonly-randconfig-001-20241016    gcc-11
-i386        buildonly-randconfig-002-20241016    gcc-11
-i386        buildonly-randconfig-003-20241016    gcc-11
-i386        buildonly-randconfig-004-20241016    gcc-11
-i386        buildonly-randconfig-005-20241016    gcc-11
-i386        buildonly-randconfig-006-20241016    gcc-11
-i386                                defconfig    clang-18
-i386                  randconfig-001-20241016    gcc-11
-i386                  randconfig-002-20241016    gcc-11
-i386                  randconfig-003-20241016    gcc-11
-i386                  randconfig-004-20241016    gcc-11
-i386                  randconfig-005-20241016    gcc-11
-i386                  randconfig-006-20241016    gcc-11
-i386                  randconfig-011-20241016    gcc-11
-i386                  randconfig-012-20241016    gcc-11
-i386                  randconfig-013-20241016    gcc-11
-i386                  randconfig-014-20241016    gcc-11
-i386                  randconfig-015-20241016    gcc-11
-i386                  randconfig-016-20241016    gcc-11
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-loongarch                           defconfig    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-m68k                                defconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-microblaze                          defconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-nios2                             allnoconfig    gcc-14.1.0
-nios2                               defconfig    gcc-14.1.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.1.0
-openrisc                            defconfig    gcc-12
-parisc                           allmodconfig    gcc-14.1.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.1.0
-parisc                              defconfig    gcc-12
-parisc64                            defconfig    gcc-14.1.0
-powerpc                          allmodconfig    gcc-14.1.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.1.0
-riscv                            allmodconfig    gcc-14.1.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.1.0
-riscv                               defconfig    gcc-12
-s390                             allmodconfig    gcc-14.1.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-s390                                defconfig    gcc-12
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-sh                               allyesconfig    gcc-14.1.0
-sh                                  defconfig    gcc-12
-sparc                            allmodconfig    gcc-14.1.0
-sparc64                             defconfig    gcc-12
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-18
-x86_64                           allyesconfig    clang-18
-x86_64                              defconfig    clang-18
-x86_64                                  kexec    gcc-12
-x86_64                               rhel-8.3    gcc-12
-x86_64                           rhel-8.3-bpf    clang-18
-x86_64                         rhel-8.3-kunit    clang-18
-x86_64                           rhel-8.3-ltp    clang-18
-x86_64                          rhel-8.3-rust    clang-18
-xtensa                            allnoconfig    gcc-14.1.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+s390 has separate address spaces for kernel and userspace - so kernel
+addresses could be anywhere. I don't know think the range should be
+limited artifically because of some optimizations.
 
