@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-367438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C979A0247
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:20:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129D19A024B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D357281BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEC6B21A34
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CA11B0F22;
-	Wed, 16 Oct 2024 07:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB671B78F3;
+	Wed, 16 Oct 2024 07:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uf5OIvNE"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGvfHaqY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA375189B91
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E46E189B91;
+	Wed, 16 Oct 2024 07:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063195; cv=none; b=dKil2oztl882LqKaTitNbmyymeuade00pFdsZgz/BwwOeYJoCbvTCiAbhjESEZR9LdGng6Ew6ThIBo3IP3P7U0c58MpXpCQ1CWEiRKgAt9xkyS5lt+eUTDcuWutv5HaHfSxNi6CV0f1i2uJOagMXDt0+PJjx8yKSTT5qZ5qOPy4=
+	t=1729063204; cv=none; b=FVN63v0hWrcVDOaIrHmtiYO+t+Q7anSBT1XoRQrM5ISFeEDoE0up8k/UiRHmn4J+tORC8/hiX4ILuyTWpEizXUvKDJMG6jx8koRJJkx6gJVxuOiIrxz9pVbAugR1AJO1vZElXEGpXDPJHQI/2dLIwnPptnueAN0N1tkPvbeMORo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063195; c=relaxed/simple;
-	bh=20bnFoPKDbLPVMTGyYK5V3qcRiT2PJ50MaAdGYRnu8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=piWukc7E4i3TsRgWhyayh8A+NofWi3GMFt61SgIw/hBL/s2DYGhStvg/YqrallQyYdLeJoVkmEUaqfabDQFboko/U1rD/GqwovjDAjY2TFs9JSodYYDzvI6kmAhyRnTRyBEW2oGvuWaSq1ax9iflV9B48zly5DZUwsskEuOLWBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uf5OIvNE; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cf3e36a76so27233365ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729063193; x=1729667993; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORRdXeranIroI87MdpV/cKKqGxHy63/cqT3DlViNNmY=;
-        b=Uf5OIvNEVbomdUbUgFdZXa7Pi/rHtL/qSmu9WRoGcllF1mo4ySdCQOskRNSWGeWF/v
-         K9g9ln8Ytwl6l256lJJx62d4zcI3+t4wVF3OO0LW7+M6azdrmjzkSjmtHkjlaFWP2LBq
-         qyzZsgN+Q15Elh7rq6JMUMqAAXvyz5DTntmE4+wqRXz4xe4tr0ct06f+V4K+3DOPanzM
-         qsuvBMMly3yCUpTonFqa9GBHgmIyIQ567phEO1gOE0NTQXUN6adJA8EaNe7yQ0I/J9vm
-         +CybTdI5WazddAJjqhjE08/P0ercVxaVWLZzPaZ8hYXt2iWUo8yYp8Zvm84PXouxhcTY
-         4zTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729063193; x=1729667993;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ORRdXeranIroI87MdpV/cKKqGxHy63/cqT3DlViNNmY=;
-        b=XByME47OF8uhgDLVQgFlfywEpdb7I/KexQpNXo1GO9+CMSN/nbv3u+rxD/KIwM+XxX
-         O9P/1r6pzVS+BwalqqtZKhblEdI+/lvMFgNLsfB7EqBlW7OKoztaZUW/oKiQFzmJ0Ows
-         BQZWiLtGYVg7TiuBe1lP3zPzxHnnZkkeV/26XJNPisO3+ISzVxk3Y0FKE22gncc0XY0W
-         mt9EvbtTII7xN90vVeDuUJjVxTyMLYH3Swx4BB4KIYfPJqwukvheokLbmf7t2z4EsH7Q
-         K+2n5A0xt9j5pw5mfDjySu2nBnv6me2wBeOflbKmXg49ekcmhYsm2sy5KnJvBEe5KVYS
-         utjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVB+VTa/OAvkc3NTjazX5d7li5ksdaL5ufnw3vjVTi9ncsCeOnLogUvOG5uUUYWUL/8sDbZdQn0FrIhdr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVH18JE4spFwlG9x9N7DypGxsRdth3N3WZ6E9XeRKZ/8V/iKLa
-	sjuphMQ9acci1aKya0SFBr/HPCRrx+7VJ4SA/lVOv79ne/1Htugm
-X-Google-Smtp-Source: AGHT+IHVhO1haPkv3eqY6vBJ5eR16keLbXkNRgpzWheFvnqzrJrAhxR5Q/Kdzt/ENgq+UbGiIl29wg==
-X-Received: by 2002:a17:902:cf09:b0:207:4c7c:743b with SMTP id d9443c01a7336-20ca1315ec7mr227619165ad.0.1729063193134;
-        Wed, 16 Oct 2024 00:19:53 -0700 (PDT)
-Received: from dev.. ([129.41.59.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d2ffsm23109415ad.100.2024.10.16.00.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 00:19:52 -0700 (PDT)
-From: Rohit Chavan <roheetchavan@gmail.com>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Rohit Chavan <roheetchavan@gmail.com>
-Subject: [PATCH] staging: gpib: Remove unneeded semicolon.
-Date: Wed, 16 Oct 2024 12:49:41 +0530
-Message-Id: <20241016071941.1615135-1-roheetchavan@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729063204; c=relaxed/simple;
+	bh=Ujc+2yc2jMeZ/VzNCOM2ysZvhm+BmdYsXS5Mdc72pUs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dQeB0YLD/1wGl3E26nNOCSiztUB4zTcP4onsJcM2IX4orus8Kpu1leLRJB22VcRnqnd3pxTVIK6jFcngJ9xT3SdkH73IU9djrJ2hN1cys4fsZHFiIuROkOSyjpbtmMHfeEbYtj6KWXTesafrU4t1zGTZwDZnLvSp0yYc1Ljn+3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGvfHaqY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D534C4CEC5;
+	Wed, 16 Oct 2024 07:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729063203;
+	bh=Ujc+2yc2jMeZ/VzNCOM2ysZvhm+BmdYsXS5Mdc72pUs=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=QGvfHaqYE1IPmCYN2J1T+qJYcsg8wDSEX1LYaClNfxY9O3dYPe73zos5OET+ESPeD
+	 ody3dNaDhb0wpr1R6YOXGZE0+VcVM5qy9/xmugZHjcHTsNCkVw8XcJxLWKFp8BVany
+	 GY4E5D8tKLIHWkkg/oWo+MD4uVeTbrIOSxrFu4mknFA06aN/7MIqh/1Y196FtKDP67
+	 KdtRYWF0JM7+Xa20bGpqkIIUedd0Iu85ESD3CO9b+jAa0clxBBFEoloT6Vd2xT5ZEb
+	 1a06UtmJ4899+L1Pz3nxYRoToAhDPsR7gtsvTZ0RTZkdM5QMVOIamQCSvJFfCC/Iux
+	 qESwPyraJY/7Q==
+Message-ID: <795657e1-5232-494c-9ac5-a62455b0f6f9@kernel.org>
+Date: Wed, 16 Oct 2024 09:19:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] Add Exynos990 pinctrl and chipid drivers
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241015210450.964093-1-igor.belwon@mentallysanemainliners.org>
+ <m7sxqsmaczjufn2jqjmo5xribsihwy4s4w7nsybub2ji62klrm@ecwv57qogd73>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <m7sxqsmaczjufn2jqjmo5xribsihwy4s4w7nsybub2ji62klrm@ecwv57qogd73>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch cleans up the GPIB driver code by removing
-unneeded semicolons.
+On 16/10/2024 09:06, Krzysztof Kozlowski wrote:
+> On Tue, Oct 15, 2024 at 11:04:45PM +0200, Igor Belwon wrote:
+>> Hi folks,
+>>
+>> This series adds support for the drivers for the Exynos 990 SoC. It
+>> consists of the pinctrl driver and the chipid driver. The product ID
+>> of this chip for chipid is 0xe9830000. The pinctrl bank types are the
+>> same as in the Exynos 850 chip.
+>>
+>> Changes in v2:
+>>  - Moved bindings from SoC bringup commit
+>>  - Moved device tree changes from SoC bringup commit
+>>  - Ordered pinctrl nodes by unit address in SoC DT
+>>  - Moved the exynos990-wakeup-eint binding to the correct if.
+> 
+> Moved? That's not what I asked for. Are you sure you have this warning
+> free? That's a requirement for Samsung (see maintainer profile).
 
-Files modified:
-drivers/staging/gpib/tms9914/tms9914.c
-drivers/staging/gpib/tnt4882/mite.c
+Ah, I see now what you did - you removed the interrupt. That's
+surprising. I don't understand why.
 
-Signed-off-by: Rohit Chavan <roheetchavan@gmail.com>
----
- drivers/staging/gpib/tms9914/tms9914.c | 4 ++--
- drivers/staging/gpib/tnt4882/mite.c    | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/gpib/tms9914/tms9914.c b/drivers/staging/gpib/tms9914/tms9914.c
-index aa2308cf5477..6d75294412d8 100644
---- a/drivers/staging/gpib/tms9914/tms9914.c
-+++ b/drivers/staging/gpib/tms9914/tms9914.c
-@@ -439,7 +439,7 @@ static int wait_for_read_byte(gpib_board_t *board, struct tms9914_priv *priv)
- 				     test_bit(TIMO_NUM, &board->status))) {
- 		pr_debug("gpib: pio read wait interrupted\n");
- 		return -ERESTARTSYS;
--	};
-+	}
- 	if (test_bit(TIMO_NUM, &board->status))
- 		return -ETIMEDOUT;
- 
-@@ -473,7 +473,7 @@ static inline uint8_t tms9914_read_data_in(gpib_board_t *board, struct tms9914_p
- 	default:
- 		pr_err("%s: bug! bad holdoff mode %i\n", __func__, priv->holdoff_mode);
- 		break;
--	};
-+	}
- 	spin_unlock_irqrestore(&board->spinlock, flags);
- 
- 	return data;
-diff --git a/drivers/staging/gpib/tnt4882/mite.c b/drivers/staging/gpib/tnt4882/mite.c
-index adb656a5eb2c..882cc4bc122e 100644
---- a/drivers/staging/gpib/tnt4882/mite.c
-+++ b/drivers/staging/gpib/tnt4882/mite.c
-@@ -82,7 +82,7 @@ int mite_setup(struct mite_struct *mite)
- 	if (pci_request_regions(mite->pcidev, "mite")) {
- 		pr_err("mite: failed to request mite io regions.\n");
- 		return -EIO;
--	};
-+	}
- 	addr = pci_resource_start(mite->pcidev, 0);
- 	mite->mite_phys_addr = addr;
- 	mite->mite_io_addr = ioremap(addr, pci_resource_len(mite->pcidev, 0));
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
