@@ -1,199 +1,103 @@
-Return-Path: <linux-kernel+bounces-368855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288BF9A15AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:11:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A929A15B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2991C21542
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:11:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951D8B21E69
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A581D4359;
-	Wed, 16 Oct 2024 22:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F8B1D4351;
+	Wed, 16 Oct 2024 22:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSWnKtOA"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZ7EFYQG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8516B1D4325
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15B845008;
+	Wed, 16 Oct 2024 22:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729116656; cv=none; b=pF1UALmYT9VmIMACjO1gTE8HPxjvTXNNUImabl/qDgrMNXit582TgmUMwPrWWNBqBMA1a6knw5iO/M0q3LkfYUdpJQTYiOYTEEqogddjF0aO5S+DU1qZ0F2dCL4y/C4unBwBB6V4yvsk86o4yAuMrcxWgw2yk5IOJ6WVViG/kSE=
+	t=1729116926; cv=none; b=u62JrtF+zgUcMOjQBPumMIvKTqEiErFPdDY929Y8c2HLyaXjwGoewnuCeFpXSCATNn5dQ0wgLT+zzfrlDPjkIxq0BfmAgCXeLPpDO/PaZNT4GbZh3tTB15HSO9e839MgoB+xI6rNmOVaO8FRvktN8yYQJMiHgP4cdPSae2O8Bq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729116656; c=relaxed/simple;
-	bh=DnqN0GYxTQTNhr1sTx2f2oTCRxAX06WOtWLVVwvY7mU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sdBAIJTnC5rHF4onGY7F4qMLg5xTwY3XKuOfyI7kCJMKKroA6RYYP/rmG3ZP/hrCJWYfTIKKQIGkM1JrAnIqpEC/vB9LadvdeBZpn/OtFmp3FmZYSJ1k8bnBXYRvcvsRO6y2YBFCOlf6TQLZtOnBD/rbT80Dk+9F2x4sYxhuN8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSWnKtOA; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315abed18aso269315e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729116652; x=1729721452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zkmU+TMQPcdZQQS44rLXxdRUirokbMiNxtTTnsu7A1M=;
-        b=dSWnKtOA7yw1Owg3mmik+FTQ90RHSGMwPHhQX0LG4gTZ/yg7nIu8ULx488nnf6Y/IG
-         NjeexXsnBp04pQ3pFtpZMvkaB2zs62TPvRJ1JDLlcAfDWNXs9Q+cjlaJJ0LanT/YQMNt
-         CbhBHxn4ySkZoDgUwHNvccqYNido4CrJO/XgCbL7Yn/QdMw9Og6OrGiMgbihq6cERPQZ
-         txt/uHMDQStlfdbOLuZT1LlyxFydyhErsL04yJ9+iGNxDuixOs5l8GFJNv5H5fIFXI5n
-         V4Tmf3JkqU387J0aeoMCN210+s2YOLW2kAqrm9vR+C5H12oiL3KW/xu4Qu/eehUCCMt2
-         aylg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729116652; x=1729721452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zkmU+TMQPcdZQQS44rLXxdRUirokbMiNxtTTnsu7A1M=;
-        b=Lj3+YRgv3DmCuqH7MSGVIytN9AdUb/FYV1ECZv1RF93rjc6uHROtH1t7jT51nuEOxf
-         OnRARoZOmmN8sefK8WlsYIReK6Jfrg+N06hk3uwlojVqwzGu/nZOcBo7RSNMcuuplYx0
-         Jm7/jt+8V8MEcbFZEATBIuVovybep6rWhVXUYG8skY7XmYXNeqXssrnywAyqaEmjVC3Q
-         ziRkZMAtGqJdtkiPhaFcApiC8eKrutKK4c/gHcNIFetMyYLljELPHOaxVpK5wh+VftJr
-         zoo/PUx1LzzHPNpVx2p1XqRaDiu0bWGJkjbgqjolBnXVOM6Gs3mC9Qu2mfh7BBtlLREg
-         7M/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWM8RSoWXlo2z26BT0upQ+Dh0FciVi8dNS2v9GLW3CgN79e27kbquEPxMG97byWdDT43Z1rroLR4DYiRSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/MhWQ4L/Bpa22lqnfyS7r0+rLBc2+77xrp2t/2L8MoQTKmjaO
-	5JEE0vekLkbMMrL1uzh9JBpKi52lMAgFu7RcgF+SrUlMtiBUKzc9Be1yro8I5D8=
-X-Google-Smtp-Source: AGHT+IE/7GB+laIBn4fQ2eRBjGrY2BLeDRMpZT3OgDpcIf9Rc1ybtQP6yIC4+eEfg4Ir/JeWq7i1xA==
-X-Received: by 2002:a05:600c:1d0b:b0:42f:8fcd:486c with SMTP id 5b1f17b1804b1-4312561a417mr140028865e9.33.1729116651788;
-        Wed, 16 Oct 2024 15:10:51 -0700 (PDT)
-Received: from localhost.localdomain ([2.125.184.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c38b39sm6267325e9.6.2024.10.16.15.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 15:10:50 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: srinivas.kandagatla@linaro.org,
-	a39.skl@gmail.com,
-	linux-sound@vger.kernel.org,
-	broonie@kernel.org,
-	dmitry.baryshkov@linaro.org
-Cc: lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	vkoul@kernel.org
-Subject: [PATCH v2] ASoC: codecs: lpass-rx-macro: fix RXn(rx,n) macro for DSM_CTL and SEC7 regs
-Date: Wed, 16 Oct 2024 23:10:49 +0100
-Message-ID: <20241016221049.1145101-1-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729116926; c=relaxed/simple;
+	bh=kTS3L4lI/mgAWvx8mcJRAk114PqILHt4bMeyJslU/4o=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=SowXgZYRbfHXlERJteAy0gC6+PXRf3V2P+QzNfLAYb4JEfl1vRk931wrBTY8KAwbAj7GjcFNMIa9Y2u2NSF8wxFIjTXhqiExzuWJJ5y7992rmYRXqEHvJPbW7/SDGwVvgipsuFp4btIoIBlJo3E+5ksHepckIehh6y86hT/bXYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZ7EFYQG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8FDCC4CEC5;
+	Wed, 16 Oct 2024 22:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729116925;
+	bh=kTS3L4lI/mgAWvx8mcJRAk114PqILHt4bMeyJslU/4o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oZ7EFYQGKJwCD1UnwDRHAzfkYRWKUr6T3xWM4xAxq5UMLPLziit8tzepdK7RQE8le
+	 NnDb7RtAIl1Fq/uiX2rvNdb38dfuFsaM1A1C8yVwNBtjyuMbo6QryYta2MzqVe55LK
+	 mXtfxAwLZHx+Bp5TUduVGGsgZRYKQVATA4Y1gXNe7eOs+DdWPErXodiMVx09oCG1Ko
+	 c4E9yTD0ksPDbY3YY3Cbkklgg7o8edV9+iJ8G0WkDyZuPh3tntPDWfy2P4p98APcVL
+	 Nv1447Is9HSU19y04eSTaerhVGN89TlnITW7fmN0yVzYe0innvCvkNywzGodmw9SXC
+	 eNCSX7rWRcfTA==
+Date: Thu, 17 Oct 2024 07:15:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
+ <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v17 01/16] function_graph: Pass ftrace_regs to entryfunc
+Message-Id: <20241017071516.684c8cf6490f26a42065994d@kernel.org>
+In-Reply-To: <20241016095325.34176fc9@gandalf.local.home>
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+	<172904027515.36809.1961937054923520469.stgit@devnote2>
+	<20241016095325.34176fc9@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Turns out some registers of pre-2.5 version of rxmacro codecs are not
-located at the expected offsets but 0xc further away in memory. So far
-the detected registers are CDC_RX_RX2_RX_PATH_SEC7 and
-CDC_RX_RX2_RX_PATH_DSM_CTL.
+On Wed, 16 Oct 2024 09:53:25 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n) macro incorrectly generates the address
-0x540 for RX2 but it should be 0x54C and it also overwrites
-CDC_RX_RX2_RX_PATH_SEC7 which is located at 0x540.
-The same goes for CDC_RX_RXn_RX_PATH_SEC7(rx, n).
+> On Wed, 16 Oct 2024 09:57:55 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Pass ftrace_regs to the fgraph_ops::entryfunc(). If ftrace_regs is not
+> > available, it passes a NULL instead. User callback function can access
+> > some registers (including return address) via this ftrace_regs.
+> 
+> BTW, you can use "fgraph:" for short. It makes the subject easier to read.
+> I've been using that instead of "function_graph:" lately.
 
-Fix this by introducing additional rxn_reg_stride2 offset. For 2.5 version
-and above this offset will be equal to 0.
-With such change the corresponding RXn() macros will generate the same
-values for 2.5 codec version for all RX paths and the same old values
-for pre-2.5 version for RX0 and RX1. However for the latter case with
-RX2 path it will also add rxn_reg_stride2 on top.
+OK, I'll use it in the next version.
 
-While at this, also remove specific if-check for INTERP_AUX from
-rx_macro_digital_mute() and rx_macro_enable_interp_clk(). These if-check
-was used to handle such special offset for AUX interpolator but since
-CDC_RX_RXn_RX_PATH_SEC7(rx, n) and CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)
-macros will generate the correst addresses of dsm register, they are no
-longer needed.
+Thank you,
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
+> 
+> -- Steve
 
-Changes in v2:
-- updated macros as suggested by Mark and Dmitry;
-- removed INTERP_AUX if-check in two functions;
 
-Link to previous patch: https://lore.kernel.org/lkml/20240925043823.520218-1-alexey.klimov@linaro.org/
-
- sound/soc/codecs/lpass-rx-macro.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index ef7a70fa6966..febbbe073962 100644
---- a/sound/soc/codecs/lpass-rx-macro.c
-+++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -202,12 +202,14 @@
- #define CDC_RX_RXn_RX_PATH_SEC3(rx, n)	(0x042c  + rx->rxn_reg_stride * n)
- #define CDC_RX_RX0_RX_PATH_SEC4		(0x0430)
- #define CDC_RX_RX0_RX_PATH_SEC7		(0x0434)
--#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)	(0x0434  + rx->rxn_reg_stride * n)
-+#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)		\
-+	(0x0434 + (rx->rxn_reg_stride * n) + ((n > 1) ? rx->rxn_reg_stride2 : 0))
- #define CDC_RX_DSM_OUT_DELAY_SEL_MASK	GENMASK(2, 0)
- #define CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE	0x2
- #define CDC_RX_RX0_RX_PATH_MIX_SEC0	(0x0438)
- #define CDC_RX_RX0_RX_PATH_MIX_SEC1	(0x043C)
--#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	(0x0440  + rx->rxn_reg_stride * n)
-+#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	\
-+	(0x0440 + (rx->rxn_reg_stride * n) + ((n > 1) ? rx->rxn_reg_stride2 : 0))
- #define CDC_RX_RXn_DSM_CLK_EN_MASK	BIT(0)
- #define CDC_RX_RX0_RX_PATH_DSM_CTL	(0x0440)
- #define CDC_RX_RX0_RX_PATH_DSM_DATA1	(0x0444)
-@@ -645,6 +647,7 @@ struct rx_macro {
- 	int rx_mclk_cnt;
- 	enum lpass_codec_version codec_version;
- 	int rxn_reg_stride;
-+	int rxn_reg_stride2;
- 	bool is_ear_mode_on;
- 	bool hph_pwr_mode;
- 	bool hph_hd2_mode;
-@@ -1929,9 +1932,6 @@ static int rx_macro_digital_mute(struct snd_soc_dai *dai, int mute, int stream)
- 							      CDC_RX_PATH_PGA_MUTE_MASK, 0x0);
- 			}
- 
--			if (j == INTERP_AUX)
--				dsm_reg = CDC_RX_RXn_RX_PATH_DSM_CTL(rx, 2);
--
- 			int_mux_cfg0 = CDC_RX_INP_MUX_RX_INT0_CFG0 + j * 8;
- 			int_mux_cfg1 = int_mux_cfg0 + 4;
- 			int_mux_cfg0_val = snd_soc_component_read(component, int_mux_cfg0);
-@@ -2702,9 +2702,6 @@ static int rx_macro_enable_interp_clk(struct snd_soc_component *component,
- 
- 	main_reg = CDC_RX_RXn_RX_PATH_CTL(rx, interp_idx);
- 	dsm_reg = CDC_RX_RXn_RX_PATH_DSM_CTL(rx, interp_idx);
--	if (interp_idx == INTERP_AUX)
--		dsm_reg = CDC_RX_RXn_RX_PATH_DSM_CTL(rx, 2);
--
- 	rx_cfg2_reg = CDC_RX_RXn_RX_PATH_CFG2(rx, interp_idx);
- 
- 	if (SND_SOC_DAPM_EVENT_ON(event)) {
-@@ -3821,6 +3818,7 @@ static int rx_macro_probe(struct platform_device *pdev)
- 	case LPASS_CODEC_VERSION_2_0:
- 	case LPASS_CODEC_VERSION_2_1:
- 		rx->rxn_reg_stride = 0x80;
-+		rx->rxn_reg_stride2 = 0xc;
- 		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_pre_2_5_defaults);
- 		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
- 		if (!reg_defaults)
-@@ -3834,6 +3832,7 @@ static int rx_macro_probe(struct platform_device *pdev)
- 	case LPASS_CODEC_VERSION_2_7:
- 	case LPASS_CODEC_VERSION_2_8:
- 		rx->rxn_reg_stride = 0xc0;
-+		rx->rxn_reg_stride2 = 0x0;
- 		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_2_5_defaults);
- 		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
- 		if (!reg_defaults)
 -- 
-2.45.2
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
