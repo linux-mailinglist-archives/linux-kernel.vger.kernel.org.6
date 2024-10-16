@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-367020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3146E99FDBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:04:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A3299FDC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552131C27C1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91D871F262F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10B8146013;
-	Wed, 16 Oct 2024 01:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2535478E;
+	Wed, 16 Oct 2024 01:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="eqkq5H/A"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="GsXS4HPt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lONXBMp/"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4222261D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB68433C0;
+	Wed, 16 Oct 2024 01:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729040494; cv=none; b=LlNT97I8HZqxEizqnDggAZoRBaglT2fvMayL1FwRH/Q5nmaWYixxfgLubolOdPef0+gJj7R2O1o2g64hK9DBMUJpuT1gEVXUgVdKMpx5j1BHa2/7iJZCiwAG2xFsAUZyxIe57vdhQqPHTcwBtlRiBZqLQ9WNNOC4hVzDhSYkwr8=
+	t=1729040516; cv=none; b=F81qLA9BRuqCiNbV41sS/DqYZ/tj9fjSG9gEecbf0s23JoKfbmk/odqOCOBB9Jp9lVbYNkO/aBMtoJ8VvdfmUhzdSfwTLt/8yyM5nmJnz8JecuABpy/n/guQYgavYaY7UYv+cPMCsHEjartonebFGG30Ib+H3Y7DWb4bAktRla8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729040494; c=relaxed/simple;
-	bh=+yv22d3jWrd3J5Ds/95GRaZM3vdt8i+Vst/MlLElr7E=;
+	s=arc-20240116; t=1729040516; c=relaxed/simple;
+	bh=KdpREzc9dGXqnwQc78NDdv4y2juh4OmvBapjp32dZhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gVS0hbUXpn8S1KRYGg+Kz+FuQiTH4M6U0t58Q+dLmH45tALIg7k/BGl/iWwpcwJFe0w8AJzHqwRI0LfGflxe6iQ8uaHkPwCrK8h3tJNdM4/FQQGnBPQqwqSE9CndovA2skMVTT9FJPazC9fp6NoqJronMdAiTIyDbWQUYkmWzeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=eqkq5H/A; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea6a4f287bso2374835a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 18:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1729040491; x=1729645291; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LwITyP/tHiSvmhKS9kDwYbqHDTa6LjHd2wgVqJpiwS0=;
-        b=eqkq5H/AtnY76kuYoaHvFwRN1Ddh4XPGKJHEYT5GHcVk3waG5id0H30nFzN6lDkI/U
-         1X1MGyxodW8gyp8ZEOX9zKRhNBrafAncy0UUEWRL5ajoYTZ7od4k216irLOE3QxoAxve
-         a8h281DS5tun114NNOqR/WpYAdSPu/h0aAXAs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729040491; x=1729645291;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwITyP/tHiSvmhKS9kDwYbqHDTa6LjHd2wgVqJpiwS0=;
-        b=j33yiM8yF3m7US9ypb1r0P1297SHjG6LuU4S+USJWGzr/ABgH9pIganrrNTyhpTdns
-         r3q1MqoSAQPm0GMRKqK+7riaaVJ1/qfIlA7rSBSfFc90NKHmJl96PBC9b17rCWSTbqy0
-         9CuO3m8ckHmbE7nAMWCuMzAbmj2xSdTVaKMxu4eu5rkHGhjFjt76ZBaX8t5hj8Au5JEW
-         plA1DVCrtzwtQv+OHlGu0iOkvNh660jcBKqfg8pqxfHDbo7uGFmNQJDzg585MKavlGiK
-         F1vUxFKgy9S+tgZKLhI10elVj9JyQKfmpQxQZynQIA7v/vX1vljeYLVR8yAFzczAhugw
-         1b5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXSr3ghlxZfyM6xu7BzKvQabLEMc1iWKt4OuuJMIFORex8GVoNWtH6vhqdnPUCAygREPOAj9AoS3By/5j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLa9XjoPsk1aZn4BVBwBNnqbI4lOmWUm94nEueooZhNZsy0RP7
-	Z0lbERUbr/EiW+FEvyS/hVfR9Jjueu8eywnFvOqPYcuuS7bMudiE0TX4yOIsfXI=
-X-Google-Smtp-Source: AGHT+IFgtcJqMf5QpqhZob66AklcaVZNotbGk59N2QQ8WDGlir7z/0wQgN7eOkPKJvZ6Cb/Eod3ktw==
-X-Received: by 2002:a05:6a21:3a42:b0:1d8:f977:8cda with SMTP id adf61e73a8af0-1d8f977d2efmr5042091637.27.1729040491522;
-        Tue, 15 Oct 2024 18:01:31 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774cf5b0sm1967351b3a.167.2024.10.15.18.01.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 18:01:31 -0700 (PDT)
-Date: Tue, 15 Oct 2024 18:01:26 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Kurt Kanzenbach <kurt@linutronix.de>
-Cc: netdev@vger.kernel.org, vinicius.gomes@intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>
-Subject: Re: [RFC net-next v2 2/2] igc: Link queues to NAPI instances
-Message-ID: <Zw8QZowkIRM-8-U1@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>, netdev@vger.kernel.org,
-	vinicius.gomes@intel.com, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>
-References: <20241014213012.187976-1-jdamato@fastly.com>
- <20241014213012.187976-3-jdamato@fastly.com>
- <87h69d3bm2.fsf@kurt.kurt.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WH/ZPbKP1thn4YgOWD7YmRVl3IdzX65MO2trr6fdild+XIgXpC9LNvvv/fzDNouemARzeA/lIrX1//yZGqiNx8V4q4cEH37rlcK+SdGZa6W43K8XKLvj0P2GTWZJfNg1hroiLeZ72s/dh3MgtP9ImNcWh9tcqdYpj80ENk2INIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=GsXS4HPt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lONXBMp/; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id DB8721380140;
+	Tue, 15 Oct 2024 21:01:52 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 15 Oct 2024 21:01:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1729040512; x=
+	1729126912; bh=ix1kaT0kXVOr670NC1pEd1wDq4DKtakXkrb5dNokVEg=; b=G
+	sXS4HPtuN+L76rAyPCKvNjY9dpwyRe6IHN94Dn3Z7oX/N+vjlJU3EGX50hc9p5Wf
+	5WUZdxsF664OqmnIZDAhy/o3C5g8iN3ALvNDZkkyVVVqVhbyw918dwp8GusbYvtA
+	mEV+VAXTTNGwLWSvxEvG9u5DOPLARQLG/OsdxD97My0ZEESko9bGvmBiw+mfF8Nk
+	03OIpZXR4tPvn0Gz1K4GWJphMlCmkJlZloljA1dwUo/iF3pUZN+BnN9BIpoTRsGF
+	mwC2I1rFlRHVd4DMRIi+6gP5EH9cmF/8HlyIvmlwnmam1nHH9efJSQC/vPohvBtS
+	yhQB6xmhC1hncrkdOrBDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1729040512; x=1729126912; bh=ix1kaT0kXVOr670NC1pEd1wDq4DK
+	takXkrb5dNokVEg=; b=lONXBMp/qObhUx08ipU7/u89veRakSutm+7lH2ht57K0
+	Un6wSCCe4otJJZHq5uTuDNvFGLxPT3aOcXfChl1oPI5AW4XHxQ3/oE3dUGlgT37H
+	cJBOVQ424WDsF3Dt0v0wv0T1rYVq7Oy2/4wv80C7sZ8O9y+IHd08dU9/kVQZtOR0
+	pYltpX/BdGinW5w5HTI1bRBhEUFd0V9hRiEEp7qaAV0xO1/BnkcA6WxRv+VvJDtN
+	1FVsUBg+I6uoZrI7h5wzXGZHdU2W5JxdKPAh71xTuYsf7x7tW6+Za3/LEhckzNsn
+	dgGsqywM6jB7WDfHPMxoaQXP1xx9YGeKAX8+s5YIRA==
+X-ME-Sender: <xms:fxAPZ2XoHKpDWyU-7MU-ZwFWEGLZqDIN9yEKtKDwS1ab4tkU94e-Ug>
+    <xme:fxAPZynNK4JMhZ1d0TqARnmoA1o0eIbjPPGejzH5uv_27TYtIYIztC4GGvLJVhyQm
+    F5Dx7cHbMaMD5xQkgU>
+X-ME-Received: <xmr:fxAPZ6aIJW65chvRKnav2m82-4LxEYQnif9jcw4gllxNzq5d6sUdKnaGz6hoPBvb7k6p-qHnA0czbZEIihd6gw0Ra_TRgtyn8vle>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegkedggedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
+    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepveeilefhudekffehkeff
+    udduvedvfeduleelfeegieeljeehjeeuvdeghfetvedvnecuffhomhgrihhnpehkvghrnh
+    gvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtth
+    hopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhhunhhinhhorhhirdhm
+    ohhrihhmohhtohdrghigsehrvghnvghsrghsrdgtohhmpdhrtghpthhtohepphhrrggshh
+    grkhgrrhdrtghsvghnghhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhi
+    vgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhifigrihesshhushgvrdgtohhmpd
+    hrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopehg
+    vggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheplhhinhhugi
+    dqshhouhhnugesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghrvgig
+    sehpvghrvgigrdgtiidprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:fxAPZ9W-q9BhCq_PnkOKMxTjDfSy1QndQUjLnCEwmleY8kN_MYwQBw>
+    <xmx:fxAPZwljMwUJqUV2Ael1UnrZaLLmGOIel_xRQOwabvLRAah0PhCLvg>
+    <xmx:fxAPZyfdDf0SssqcqvzU5ovGhx3xqs7w-0J5vt2mhSGMK0Z-TQFX4A>
+    <xmx:fxAPZyHFKVg1Gu2TRR4Vw5H-uPzc9gCUNYXUxOWqfnFDnfZLVLTweQ>
+    <xmx:gBAPZ-kJHo3p_T91pMDaIuHwCJ_WJ4QoE-gKnNTwPfGdMKFIQ7KvYXlp>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Oct 2024 21:01:48 -0400 (EDT)
+Date: Wed, 16 Oct 2024 10:01:45 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 0/3] ASoC: Rename "sh" to "renesas"
+Message-ID: <20241016010145.GA72114@workstation.local>
+Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241015113757.152548-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CA+V-a8u8bkCjL-YSyMOiKOtfZC8upBwGzhrJ0o+EmZ9S3z5hGA@mail.gmail.com>
+ <87h69cevrt.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,153 +125,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87h69d3bm2.fsf@kurt.kurt.home>
+In-Reply-To: <87h69cevrt.wl-kuninori.morimoto.gx@renesas.com>
 
-On Tue, Oct 15, 2024 at 12:27:01PM +0200, Kurt Kanzenbach wrote:
-> On Mon Oct 14 2024, Joe Damato wrote:
-> > Link queues to NAPI instances via netdev-genl API so that users can
-> > query this information with netlink. Handle a few cases in the driver:
-> >   1. Link/unlink the NAPIs when XDP is enabled/disabled
-> >   2. Handle IGC_FLAG_QUEUE_PAIRS enabled and disabled
-> >
-> > Example output when IGC_FLAG_QUEUE_PAIRS is enabled:
-> >
-> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> >                          --dump queue-get --json='{"ifindex": 2}'
-> >
-> > [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-> >  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
-> >  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
-> >  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
-> >  {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
-> >  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
-> >  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
-> >  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
-> >
-> > Since IGC_FLAG_QUEUE_PAIRS is enabled, you'll note that the same NAPI ID
-> > is present for both rx and tx queues at the same index, for example
-> > index 0:
-> >
-> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
-> >
-> > To test IGC_FLAG_QUEUE_PAIRS disabled, a test system was booted using
-> > the grub command line option "maxcpus=2" to force
-> > igc_set_interrupt_capability to disable IGC_FLAG_QUEUE_PAIRS.
-> >
-> > Example output when IGC_FLAG_QUEUE_PAIRS is disabled:
-> >
-> > $ lscpu | grep "On-line CPU"
-> > On-line CPU(s) list:      0,2
-> >
-> > $ ethtool -l enp86s0  | tail -5
-> > Current hardware settings:
-> > RX:		n/a
-> > TX:		n/a
-> > Other:		1
-> > Combined:	2
-> >
-> > $ cat /proc/interrupts  | grep enp
-> >  144: [...] enp86s0
-> >  145: [...] enp86s0-rx-0
-> >  146: [...] enp86s0-rx-1
-> >  147: [...] enp86s0-tx-0
-> >  148: [...] enp86s0-tx-1
-> >
-> > 1 "other" IRQ, and 2 IRQs for each of RX and Tx, so we expect netlink to
-> > report 4 IRQs with unique NAPI IDs:
-> >
-> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> >                          --dump napi-get --json='{"ifindex": 2}'
-> > [{'id': 8196, 'ifindex': 2, 'irq': 148},
-> >  {'id': 8195, 'ifindex': 2, 'irq': 147},
-> >  {'id': 8194, 'ifindex': 2, 'irq': 146},
-> >  {'id': 8193, 'ifindex': 2, 'irq': 145}]
-> >
-> > Now we examine which queues these NAPIs are associated with, expecting
-> > that since IGC_FLAG_QUEUE_PAIRS is disabled each RX and TX queue will
-> > have its own NAPI instance:
-> >
-> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> >                          --dump queue-get --json='{"ifindex": 2}'
-> > [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-> >  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
-> >  {'id': 0, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
-> >  {'id': 1, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
-> >
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > ---
-> >  v2:
-> >    - Update commit message to include tests for IGC_FLAG_QUEUE_PAIRS
-> >      disabled
-> >    - Refactored code to move napi queue mapping and unmapping to helper
-> >      functions igc_set_queue_napi and igc_unset_queue_napi
-> >    - Adjust the code to handle IGC_FLAG_QUEUE_PAIRS disabled
-> >    - Call helpers to map/unmap queues to NAPIs in igc_up, __igc_open,
-> >      igc_xdp_enable_pool, and igc_xdp_disable_pool
-> >
-> >  drivers/net/ethernet/intel/igc/igc.h      |  3 ++
-> >  drivers/net/ethernet/intel/igc/igc_main.c | 58 +++++++++++++++++++++--
-> >  drivers/net/ethernet/intel/igc/igc_xdp.c  |  2 +
-> >  3 files changed, 59 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
-> > index eac0f966e0e4..7b1c9ea60056 100644
-> > --- a/drivers/net/ethernet/intel/igc/igc.h
-> > +++ b/drivers/net/ethernet/intel/igc/igc.h
-> > @@ -337,6 +337,9 @@ struct igc_adapter {
-> >  	struct igc_led_classdev *leds;
-> >  };
-> >  
-> > +void igc_set_queue_napi(struct igc_adapter *adapter, int q_idx,
-> > +			struct napi_struct *napi);
-> > +void igc_unset_queue_napi(struct igc_adapter *adapter, int q_idx);
-> >  void igc_up(struct igc_adapter *adapter);
-> >  void igc_down(struct igc_adapter *adapter);
-> >  int igc_open(struct net_device *netdev);
-> > diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> > index 7964bbedb16c..59c00acfa0ed 100644
-> > --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> > +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> > @@ -4948,6 +4948,47 @@ static int igc_sw_init(struct igc_adapter *adapter)
-> >  	return 0;
-> >  }
-> >  
-> > +void igc_set_queue_napi(struct igc_adapter *adapter, int q_idx,
-> > +			struct napi_struct *napi)
-> > +{
-> > +	if (adapter->flags & IGC_FLAG_QUEUE_PAIRS) {
-> > +		netif_queue_set_napi(adapter->netdev, q_idx,
-> > +				     NETDEV_QUEUE_TYPE_RX, napi);
-> > +		netif_queue_set_napi(adapter->netdev, q_idx,
-> > +				     NETDEV_QUEUE_TYPE_TX, napi);
-> > +	} else {
-> > +		if (q_idx < adapter->num_rx_queues) {
-> > +			netif_queue_set_napi(adapter->netdev, q_idx,
-> > +					     NETDEV_QUEUE_TYPE_RX, napi);
-> > +		} else {
-> > +			q_idx -= adapter->num_rx_queues;
-> > +			netif_queue_set_napi(adapter->netdev, q_idx,
-> > +					     NETDEV_QUEUE_TYPE_TX, napi);
-> > +		}
-> > +	}
-> > +}
-> 
-> In addition, to what Vinicius said. I think this can be done
-> simpler. Something like this?
-> 
-> void igc_set_queue_napi(struct igc_adapter *adapter, int vector,
-> 			struct napi_struct *napi)
-> {
-> 	struct igc_q_vector *q_vector = adapter->q_vector[vector];
-> 
-> 	if (q_vector->rx.ring)
-> 		netif_queue_set_napi(adapter->netdev, vector, NETDEV_QUEUE_TYPE_RX, napi);
-> 
-> 	if (q_vector->tx.ring)
-> 		netif_queue_set_napi(adapter->netdev, vector, NETDEV_QUEUE_TYPE_TX, napi);
-> }
+Hi,
 
-Ah, yes, that is much simpler. Thanks for the suggestion. I'll do
-that for the v3.
+On Wed, Oct 16, 2024 at 12:28:22AM +0000, Kuninori Morimoto wrote:
+> Please add/remove
+> 
+> + L: alsa-devel@alsa-project.org
+
+Just a small nitpicking, but I think it better to take care of a merged
+commit in which the list address for sound subsystem is changed to
+linux-sound@vger.kernel.org. See:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/MAINTAINERS?h=for-next&id=33027006ecf3
+
+
+Regards
+
+Takashi Sakamoto
 
