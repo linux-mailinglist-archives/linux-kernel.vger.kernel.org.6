@@ -1,54 +1,35 @@
-Return-Path: <linux-kernel+bounces-367851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44099A0796
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5289A0799
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF60B25C79
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA3B7B25F15
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29EB206975;
-	Wed, 16 Oct 2024 10:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XJCJEqUp"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A38206970;
+	Wed, 16 Oct 2024 10:40:10 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671E71C9DC8;
-	Wed, 16 Oct 2024 10:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2621C9DC8;
+	Wed, 16 Oct 2024 10:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729075204; cv=none; b=qCOOapYtT5XYqFVCdt3UR+hk4FELPwRsvaBsUGs+CUDSdBmgcAUj3xncVTxsq8TEtYv0Ko5wdp6Q57Jwi9NNrDG8LhTeVqQWbm/GMpAbhr8usNQ3kY1vkawYxxNOnx9i5O/dM1qoOwk6W4HHzQSKh/01SFK+5F106CjLSkuLXEE=
+	t=1729075210; cv=none; b=HMUIK895KPm8jw2FGtoF4zm7yoNCWlOZNhDUisVOV0wXdkvkzazycQx2ENRFpcpg/JAkkpoWXGPwcRMq2oLch6Dzv/u7YC1xxJpNtF3mEqdyKbbxtLqtGIvsmpzH1/FhE9hyH+TGLW7rcWQLjYUW1exbEmjadNcpARC19lcH/MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729075204; c=relaxed/simple;
-	bh=dtUNeLW0XzuJcUmXw9cAyk4KOVcrQm3s/E+y1ypOjU4=;
+	s=arc-20240116; t=1729075210; c=relaxed/simple;
+	bh=j8sRzyXajqjtNMQPb/OiDHGp54Yx9GZzd8mn+XoLYpA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d4NdJt9O9i7TaYeVtSiBMfJNMFsEvmCOEhVEtM5cS4phuFCrAmuxANa1E321Y+nCt6PQwoDLDB0V63qciDlXSPrQtNg9AgnqUC2vKwl10baMAw7WEjztNiyYCVhkexBi7OFu9wQxenbBFQb+6Dova0/M0m/wy+HtjfCdeNOqGLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XJCJEqUp; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729075200;
-	bh=dtUNeLW0XzuJcUmXw9cAyk4KOVcrQm3s/E+y1ypOjU4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XJCJEqUp2gz+e267eyy2CmnJQAuvblWZTF9vz+9NFpDF6kSiO7hpBOQGG9vzgGukC
-	 1QlnGCS7jl9ghgoUjGwkQ+2AUho0/KBaucd7TBvEAiYuvjscpxtpL3V+hdo+pucaLG
-	 +16kZTGtFY6zfuUqGFo1jZv244i1ZBdBbdKKP3lHMyGWfuvuXoX036V6v+75dUxzFR
-	 2m9hoVhSIf6p6PvC/4PZXSzeVHGjKkoJGCXMbPV+GhUz0IbTUQsqS25Tt6gqkabxCl
-	 IwfzZWNkpRrXhdSWw2+dJe3jEmXmp3PVnQdwwwrN7JdTQkADCoZt7MfMo7XP+UVFxz
-	 VLFAHoGG8N3zg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B64D917E139E;
-	Wed, 16 Oct 2024 12:39:59 +0200 (CEST)
-Message-ID: <36e86177-a220-494d-8b25-55ce62cf054d@collabora.com>
-Date: Wed, 16 Oct 2024 12:39:59 +0200
+	 In-Reply-To:Content-Type; b=CqAQsgkCFKuOX0nLzNz4DkHDoHicf/IBrktLUXtpAJbrYGxQ5WckWK+mcUJLGrI+YCzlk6k1sEM4ljLuGIfGPBVZ1ZH7KwnsrRuARzHTanq6+WzyQLq6a5qF3+objKN437wvcE5D3u4kFSFvqlpVXF2cdKSUQqFH42TJL+gjIjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB41C4CEC5;
+	Wed, 16 Oct 2024 10:40:08 +0000 (UTC)
+Message-ID: <a08cd653-2b2b-4b50-a1eb-0e13be4c946f@xs4all.nl>
+Date: Wed, 16 Oct 2024 12:40:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,104 +37,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: mediatek: mt8188: Add ethernet node
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Richard Cochran <richardcochran@gmail.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
- Jianguo Zhang <jianguo.zhang@mediatek.com>,
- Macpaul Lin <macpaul.lin@mediatek.com>,
- Hsuan-Yu Lin <shane.lin@canonical.com>
-References: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
- <20241015-genio700-eth-v1-1-16a1c9738cf4@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241015-genio700-eth-v1-1-16a1c9738cf4@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 13/13] media: pulse8-cec: fix data timestamp at
+ pulse8_setup()
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ stable@vger.kernel.org
+References: <cover.1729074076.git.mchehab+huawei@kernel.org>
+ <8d5dfc87d297a92d5ccc750c5c002bbc4226d3ad.1729074076.git.mchehab+huawei@kernel.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <8d5dfc87d297a92d5ccc750c5c002bbc4226d3ad.1729074076.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Il 15/10/24 20:15, Nícolas F. R. A. Prado ha scritto:
-> Describe the ethernet present on the MT8188.
+On 16/10/2024 12:22, Mauro Carvalho Chehab wrote:
+> There is a hidden overflow condition there. As date is signed
+> and u8 is unsigned, doing:
 > 
-> Signed-off-by: Jianguo Zhang <jianguo.zhang@mediatek.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> Signed-off-by: Hsuan-Yu Lin <shane.lin@canonical.com>
-> [Cleaned up to pass dtbs_check, follow DTS style guidelines, removed
-> hardcoded mac address and split between mt8188 and genio700 commits]
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> 	date = (data[0] << 24)
+> 
+> With a value bigger than 07f will make all upper bits of date
+> 0xffffffff. This can be demonstrated with this small code:
+> 
+> <code>
+> 
+> typedef int64_t time64_t;
+> typedef uint8_t u8;
+> 
+> int main(void)
+> {
+> 	u8 data[] = { 0xde ,0xad , 0xbe, 0xef };
+> 	time64_t date;
+> 
+> 	date = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+> 	printf("Invalid data = 0x%08lx\n", date);
+> 
+> 	date = ((unsigned)data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+> 	printf("Expected data = 0x%08lx\n", date);
+> 
+> 	return 0;
+> }
+> </code>
+> 
+> Fix it by converting the upper bit calculation to unsigned.
+> 
+> Fixes: cea28e7a55e7 ("media: pulse8-cec: reorganize function order")
+> Cc: stable@vger.kernel.org
+
+Not a fix either, just an improvement. The worst that can happen is that in 2038
+the wrong date is shown, provided they release new firmware for this device in
+that year :-)
+
+Regards,
+
+	Hans
+
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
->   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 95 ++++++++++++++++++++++++++++++++
->   1 file changed, 95 insertions(+)
+>  drivers/media/cec/usb/pulse8/pulse8-cec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> index b493207a1b688dba51bf5e0e469349263f54ca94..9e3981d6d5cfc8201d8caef256de1299aa8199e3 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> @@ -1647,6 +1647,101 @@ spi5: spi@11019000 {
->   			status = "disabled";
->   		};
->   
-> +		eth: ethernet@11021000 {
-> +			compatible = "mediatek,mt8188-gmac", "mediatek,mt8195-gmac",
-> +				     "snps,dwmac-5.10a";
-> +			reg = <0 0x11021000 0 0x4000>;
-> +			interrupts = <GIC_SPI 716 IRQ_TYPE_LEVEL_HIGH 0>;
-> +			interrupt-names = "macirq";
-> +			clocks = <&pericfg_ao CLK_PERI_AO_ETHERNET>,
-> +				 <&pericfg_ao CLK_PERI_AO_ETHERNET_BUS>,
-> +				 <&topckgen CLK_TOP_SNPS_ETH_250M>,
-> +				 <&topckgen CLK_TOP_SNPS_ETH_62P4M_PTP>,
-> +				 <&topckgen CLK_TOP_SNPS_ETH_50M_RMII>,
-> +				 <&pericfg_ao CLK_PERI_AO_ETHERNET_MAC>;
-
-			clock-names = "axi", "apb", "mac_main", "ptp_ref",
-				      "rmii_internal", "mac_cg";
-
-Since we can compress clock-names, we should just do that :-)
-
-> +			clock-names = "axi",
-> +				      "apb",
-> +				      "mac_main",
-> +				      "ptp_ref",
-> +				      "rmii_internal",
-> +				      "mac_cg";
-> +			assigned-clocks = <&topckgen CLK_TOP_SNPS_ETH_250M>,
-> +					  <&topckgen CLK_TOP_SNPS_ETH_62P4M_PTP>,
-> +					  <&topckgen CLK_TOP_SNPS_ETH_50M_RMII>;
-> +			assigned-clock-parents = <&topckgen CLK_TOP_ETHPLL_D2>,
-> +						 <&topckgen CLK_TOP_ETHPLL_D8>,
-> +						 <&topckgen CLK_TOP_ETHPLL_D10>;
-> +			power-domains = <&spm MT8188_POWER_DOMAIN_ETHER>;
-> +			mediatek,pericfg = <&infracfg_ao>;
-> +			snps,axi-config = <&stmmac_axi_setup>;
-> +			snps,mtl-rx-config = <&mtl_rx_setup>;
-> +			snps,mtl-tx-config = <&mtl_tx_setup>;
-> +			snps,txpbl = <16>;
-> +			snps,rxpbl = <16>;
-> +			snps,clk-csr = <0>;
-> +			status = "disabled";
-
-Well, the MDIO bus is part of the IP anyway, so I think we can just put it here.
-
-			eth_mdio: mdio {
-				compatible = "snps,dwmac-mdio";
-				#address-cells = <1>;
-				#size-cells = <0>;
-			};
-
-
-> +
-> +			stmmac_axi_setup: stmmac-axi-config {
-
-Please reorder:
-				snps,blen = <0 0 0 0 16 8 4>;
-				snps,rd_osr_lmt = <0x7>;
-				snps,wr_osr_lmt = <0x7>;
-
-Cheers,
-Angelo
+> diff --git a/drivers/media/cec/usb/pulse8/pulse8-cec.c b/drivers/media/cec/usb/pulse8/pulse8-cec.c
+> index ba67587bd43e..171366fe3544 100644
+> --- a/drivers/media/cec/usb/pulse8/pulse8-cec.c
+> +++ b/drivers/media/cec/usb/pulse8/pulse8-cec.c
+> @@ -685,7 +685,7 @@ static int pulse8_setup(struct pulse8 *pulse8, struct serio *serio,
+>  	err = pulse8_send_and_wait(pulse8, cmd, 1, cmd[0], 4);
+>  	if (err)
+>  		return err;
+> -	date = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+> +	date = ((unsigned)data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+>  	dev_info(pulse8->dev, "Firmware build date %ptT\n", &date);
+>  
+>  	dev_dbg(pulse8->dev, "Persistent config:\n");
 
 
