@@ -1,127 +1,103 @@
-Return-Path: <linux-kernel+bounces-368194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BA39A0C71
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:19:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423B59A0C73
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 252C0B286D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:19:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A049FB287E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0070520C011;
-	Wed, 16 Oct 2024 14:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE992071F8;
+	Wed, 16 Oct 2024 14:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="uYqr+c7M"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/6fsmOs"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5338020ADDA;
-	Wed, 16 Oct 2024 14:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5491B1422DD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729088326; cv=none; b=SIqu5COi2b/zYZDvXrU3m/AmOUd/l6u+a+tb67dOk6oMBaidCsbUXkPAZycgcIChe//jdDEw6QMQ2xFp1hYarR0uW9qknF1/0dk3lXCRHvB0KixtxbVL5CqYpDIwihyvPH9wTq6Exo3/8tJBxOfi70py0pVfjcz4plAF5VrWddY=
+	t=1729088405; cv=none; b=VHjOCtg5qpvv37mR/4Mc2UVEToW/OdMpZ0RknsGganjNi7Kknjz9bA0TYFykg9/K4SbO6Ta37NWnAhoLpIPp9nZNdPGa8LyzV+l1lpLjQmZw+QVcDjFv65qr9Ug54fYFaLF5t4lRx2PMEsLSAWA1z/pjZJaolq8xQ0VFVzaiBdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729088326; c=relaxed/simple;
-	bh=1SgBcW6Fix9iqgyCPKwWFUk/Intqb+PvahMLyVaBZNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fCmeJQHG/gDt/nyU7l5eKKqybMxjwlW0YJ2ohcQ4BCtg7SbEw/2Poax9mJ1qWMO5AJnFt6JHYQGE2QUIqTLnc0A0Y664CxhlX/WXnjhtsgvI9Wj/Mda1xNGnq+9oYOhfqJ25SOlQ1NZRnTRrEg7wOqVC7LnqaMYufIDFJbfhAtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=uYqr+c7M; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=WVSfqM6t5XYigKCrGasm6YaByww0kzpN12wmfrKZMfo=; t=1729088324; x=1729520324;
-	 b=uYqr+c7MMGwTSirTvKRIo3+BTDClGTyFO+P7T1S2Qa7lH1QYbeeoXGDu48gQ+tQ5U0SGb7QAsd
-	bMT/NuM1IqHTO5MVtuTI3W/FxNnbPe5r4mNGW8Me9HVJBKiqiPx2yGz2DAPKk1OvvwCCirIKNP6Nl
-	SSyclWOOYYHfxHsB4jO70e1inG3wClYzmUYBVxgqpT6VT5pD/syIz/s8+TVk6GV4qKEpxacC/QQlC
-	9wDYzne2HbIUSHdB3BGk+JlmduI1p7X6jCbPyMLSHBLeTX9rF/DROJTjzNHd4yEpBe04PNj9pLo6Z
-	4jnKD374W3XlIjbwOuYdnOWYcRId4/7/fYZ6Q==;
-Received: from ip4d148da6.dynamic.kabel-deutschland.de ([77.20.141.166] helo=truhe.fritz.box); authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	id 1t14rJ-0003uH-QA; Wed, 16 Oct 2024 16:18:41 +0200
-From: Thorsten Leemhuis <linux@leemhuis.info>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	linux-modules@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] module: sign with sha512 instead of sha1 by default
-Date: Wed, 16 Oct 2024 16:18:41 +0200
-Message-ID: <52ee32c0c92afc4d3263cea1f8a1cdc809728aff.1729088288.git.linux@leemhuis.info>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1729088405; c=relaxed/simple;
+	bh=pJUkxQtwyw746nk67DanPGVIfzvUtiNSIx6NJeAjoGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=on9ktNDBpko45gOAFpBroQaAMORgNrMMrHaMewO0TNP1+9hnpd3+zPfxuLke2f83RuM+GFDyDTdc1YwyopnnMp+foREEMAybSYsjzI5ZFqfAnLmuF/fyLQ5XqtuDNVbf2ef2OL0pzspTc0zcvcSKb/5YK2xqF5reZgAOsvBVbH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h/6fsmOs; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c9404c0d50so6939628a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729088402; x=1729693202; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l6YX0eX++W7tAw6O3U3cWC8A1iR7EUNPF7MLoOd5k00=;
+        b=h/6fsmOsVKa/rTFjLs7/ohro8Xj9oItztNAao/PdoEYl/fiCeqXyY5E/dK7yN0qB6m
+         zChMX5JqU2zzzK4cXTb5ufUMwI58YS4keLW9ZXbBBnrJCUMTMguLYHvRktSde3LHXIzZ
+         m+klZI2UX+4E4BudjwL6NhGVgu++Z5NI4Jqs5n9Mlg004gt5cbPs6wBVi6OX4de1c3Kb
+         q6tPM8oYFPlTSL77V0R0uuW3MVk5umEdL/5lkaynvO/RnOkEQjCsO9+kSX7hOiEfiir2
+         OR3yBbnhCRPjXBwAk9qGLPq3TymOebO8Cpb6JzU87TQAF0PrkeQcD2nhLVoK2GSzLcQQ
+         POnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729088402; x=1729693202;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l6YX0eX++W7tAw6O3U3cWC8A1iR7EUNPF7MLoOd5k00=;
+        b=vL0NGJNxxI/LdiSeaZwiCj+9NhItIa6MdLmeNNyFh5rZWIaYYjPR8HYg+FBQECpwWJ
+         /OAPotxt71kUC3zngeATY4gZHg+s6zlAtbEOQlfv5JfiUiK6XAtvTmrzaNEbBSATlDFp
+         vbYBvMVcg/dnzrW7HWOjd2BNEp4WYfsKc4PDyqRxapHbyIDMjD85Qjct/2MkOkKKBhSY
+         bPpZnPXEeq6iMYuHKkQ4suwpd9mj4Ww9ZDsDxGZ//JVrBDug5zdtH8lNC6bmqjLS+xld
+         /bKF1TfA4oj8hvHJlSOReBZMMT17oBHNuV5nVgRvjOVbXgTIiTJ8COPfrup0aO5KZDIR
+         g6fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcGw/zkd9vO8caUFwwsW1HsFFzmCq4iix0ua4xSQI7uuJzWuRqz8PjFeAkiIdIy26r1T9rOyTKrxjOvIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7jWXI6y6/FIRDu05pQLLpU9g2hZaYYTaZhGRyn7ZTtXfb932u
+	dD8sy4ShXfkx7ptqn6olfIp1j4xGix8tR8NZ5gJmfXM4xyxEnNnB0DjHHvpriH0=
+X-Google-Smtp-Source: AGHT+IHZn1ughsOxXkjsi52tYdi0Vt+QgnG0sILlX8vmnAbEOr3JjvX4QEzTCq1ABBvJX69sd1x70g==
+X-Received: by 2002:a05:6402:5c9:b0:5c9:58a0:240a with SMTP id 4fb4d7f45d1cf-5c9950b9252mr3065086a12.14.1729088401552;
+        Wed, 16 Oct 2024 07:20:01 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4d6297sm1769537a12.15.2024.10.16.07.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 07:20:00 -0700 (PDT)
+Date: Wed, 16 Oct 2024 17:19:57 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Everest K.C." <everestkc@everestkc.com.np>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: dpenkler@gmail.com, gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: other staging/gpib bugs completed
+Message-ID: <912561b9-e446-42e8-8922-9e8952355c79@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1729088324;aa6d0e34;
-X-HE-SMSGID: 1t14rJ-0003uH-QA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Switch away from using sha1 for module signing by default and use the
-more modern sha512 instead, which is what among others Arch, Fedora,
-RHEL, and Ubuntu are currently using for their kernels.
+Keep up the good work, Everest.  Here are some other bugs you could fix if you
+want.
 
-Sha1 has not been considered secure against well-funded opponents since
-2005[1]; since 2011 the NIST and other organizations furthermore
-recommended its replacement[2]. This is why OpenSSL on RHEL9, Fedora
-Linux 41+[3], and likely some other current and future distributions
-reject the creation of sha1 signatures, which leads to a build error of
-allmodconfig configurations:
+drivers/staging/gpib/agilent_82357a/agilent_82357a.c:1381 agilent_82357a_attach() warn: inconsistent returns '&agilent_82357a_hotplug_lock'.
+drivers/staging/gpib/common/gpib_os.c:889 board_type_ioctl() warn: maybe return -EFAULT instead of the bytes remaining?
+drivers/staging/gpib/common/iblib.c:242 ibonline() warn: assigning IS_ERR()
+drivers/staging/gpib/common/iblib.c:505 ibsad() warn: AAA no lower bound on 'addr' rl='s32min-30'
+drivers/staging/gpib/eastwood/fluke_gpib.c:592 fluke_dma_read() error: NULL dereference inside function 'dma_unmap_single_attrs((0), bus_address, length, 2, 0)()'. '0' '(0)' 17 9
+drivers/staging/gpib/eastwood/fluke_gpib.c:592 fluke_dma_read() error: NULL dereference inside function (pos=17)
+drivers/staging/gpib/eastwood/fluke_gpib.c:949 fluke_init() warn: was hexadecimal intended '10'
+(perhaps intentional?  Just leave it if so.)
+drivers/staging/gpib/ni_usb/ni_usb_gpib.c:837 ni_usb_write() warn: inconsistent returns '&ni_priv->addressed_transfer_lock'.
+drivers/staging/gpib/ni_usb/ni_usb_gpib.c:1103 ni_usb_request_system_control() error: uninitialized symbol 'ibsta'.
+(this last bug is tricky to spot.)
 
-  80A20474797F0000:error:03000098:digital envelope routines:do_sigver_init:invalid digest:crypto/evp/m_sigver.c:342:
-  make[4]: *** [.../certs/Makefile:53: certs/signing_key.pem] Error 1
-  make[4]: *** Deleting file 'certs/signing_key.pem'
-  make[4]: *** Waiting for unfinished jobs....
-  make[3]: *** [.../scripts/Makefile.build:478: certs] Error 2
-  make[2]: *** [.../Makefile:1936: .] Error 2
-  make[1]: *** [.../Makefile:224: __sub-make] Error 2
-  make[1]: Leaving directory '...'
-  make: *** [Makefile:224: __sub-make] Error 2
+regards,
+dan carpenter
 
-This change makes allmodconfig work again and sets a default that is
-more appropriate for current and future users, too.
-
-Link: https://www.schneier.com/blog/archives/2005/02/cryptanalysis_o.html [1]
-Link: https://csrc.nist.gov/projects/hash-functions [2]
-Link: https://fedoraproject.org/wiki/Changes/OpenSSLDistrustsha1SigVer [3]
-Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
----
-
-v2:
-* use 'default MODULE_SIG_SHA512' in the "Hash algorithm to sign
-  modules" choice instead of resorting the entries there.
-* rewrite patch description
-* drop RFC tag
-
-v1: https://lore.kernel.org/all/42aa307d7ffae1851b4a8787f5c276dd0b3beece.1728543368.git.linux@leemhuis.info/
----
- kernel/module/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-index 7c6588148d42d3..0c746a150e34e2 100644
---- a/kernel/module/Kconfig
-+++ b/kernel/module/Kconfig
-@@ -231,6 +231,7 @@ comment "Do not forget to sign required modules with scripts/sign-file"
- choice
- 	prompt "Hash algorithm to sign modules"
- 	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
-+	default MODULE_SIG_SHA512
- 	help
- 	  This determines which sort of hashing algorithm will be used during
- 	  signature generation.  This algorithm _must_ be built into the kernel
-
-base-commit: d3d1556696c1a993eec54ac585fe5bf677e07474
--- 
-2.45.0
 
 
