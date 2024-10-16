@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-368097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742FD9A0B26
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1AE9A0B2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30A13283864
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59ED12847CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D0E1EB5B;
-	Wed, 16 Oct 2024 13:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732D2154454;
+	Wed, 16 Oct 2024 13:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="Lw5HtMEg"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e44/G4wx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915C921E3C8
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B52021E3C8;
+	Wed, 16 Oct 2024 13:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729084539; cv=none; b=C2qIE4TUnBWqHMo7Zh8v6nH9k+80kK/uZJrWTbfoBTzQS+D6E4rqQPo8UXlCIcn7F6THbI0bZxbTdox6Vqrw+zj56fmx7AnvU8t2UjxoKBzW+AYy/mI8nHTp0WfxoNfyR00Z83ZB0FgBhgiiAdpcqnl2snPM+vNQmWsMqkT4+Yk=
+	t=1729084606; cv=none; b=STwaSdJpkf2iOCtrmSJJuvWAnrytuW2BOlISzY7gNIaliA2YKahXDW/NOriLM0FvLR2KHXSwR1fSkBEFOZtx6MkuYs+kZp6aXs6J+QsS4eq+CQP2D6IvbdWO5zbpHDuz79UZ6KCQYmG8cvuxZUd+/DpYu09h3w74joapFrpcWX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729084539; c=relaxed/simple;
-	bh=pbHJdYq3Cl6bsiTqD2H2t0/S+/hLDft0ZLgCKnlO4+U=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=MgvF2olkRMoQisIaywINl+FkNeKTFV0eGDnSz0VmJGp4PVFYToYTiTO2G0FL7H+E/gxR57+dSv8IKl8SjQ+l727+cooBian8d8chrW6qNtyjq3Pm0WibSd2DtGEUQFll2fic0xgniKWXA07a/VLG+LbYHvYLIQog7yP6w1VHYss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=Lw5HtMEg; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b14077ec5aso72571585a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1729084536; x=1729689336; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pnXUgF95/LKVBB0GjZAyL4bfQKFXiH3SHgWxlYsd26k=;
-        b=Lw5HtMEgtKKgdH4eyuePsNtzM375boN+RAI5i+ophGeBNWrJF0qRGUN19VTE56a1O9
-         +tU4X6ad7Y8CR4n4zf2uiTb8RwmVFPIS/9Pbsofh5T2d415gyyjC3gkwMLmILDJZqHhJ
-         dnHATqJ9fpM/jlRmZ7EeqZZI0Yrmis2z4P9zi4mBDIbrWNhy5sB7Woww6JDCI3TPZVVv
-         xx3RKlg8NyXFGQathvxiX4G13A5AdXzbkOFlDzt0c/0t4udC+LPDc4wTox/f28OxkD6A
-         i36iIwCObRlh61WxD7wDGeRZGQ6+2Hv1cirWhL26pbhkBvn1RCISgLN27Sr1RUn/1YM9
-         lGUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729084536; x=1729689336;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pnXUgF95/LKVBB0GjZAyL4bfQKFXiH3SHgWxlYsd26k=;
-        b=olXU1Vgzz6IX7pZLGVvbvCTmn9qmM8jPySJp/cVPA+FwM9yJM2Mh1E0Y2JNEwmtW1R
-         nikuouwjW5ChJOeQhdOhz5IyU1JXtq8n+8cJP0IE8wApRpOzftKowH7VI9OmT+gSmUNO
-         PZlztyYsc83qmzD5K5DrV2tQ6Vj2SlhICfVmg/s7VocXDvdeacwT8fAhPPUJpdp+QUYU
-         Tq8DcFS95T3JfwQi30/g5U2A8jUqWmVgwM8dnuzd4XdZsDqmyPQfsy8QGWRiIHHHKYjL
-         3oNTsaVeawD9eqKAOitwySuJ+mnfQbI4F8ago7OCxRCgVucjA9hL1i4t6T6wj9WQVY21
-         ns0g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ayQPpQLGCiwlec1oAwcxrXDn1di0dpXyr4dVPOI4FNxzN7AJ7n3fkpfDLaPdKKQSIAnokpu9Q7GDfck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcI94gzA/iurcKwT2oW+GvMAFXnSrzCyHMYjih0bNnSF7YEbLF
-	1xgJVGxXuaSgxljlbRYzSYvMQ3PcDyny9PzhgsFBqQIRYGymCJmYWIIPO8oiVDmMmp2LaEN+9BI
-	pALg=
-X-Google-Smtp-Source: AGHT+IGS5fUx6e6JC++mu954E0arTgZMh5pUZB0wjKyczky28hg9nAS8gt4UigcgEiM5CHpaQq/Idg==
-X-Received: by 2002:a05:620a:29c3:b0:7a9:ae0c:b6d5 with SMTP id af79cd13be357-7b11a3792b9mr3022886585a.9.1729084536316;
-        Wed, 16 Oct 2024 06:15:36 -0700 (PDT)
-Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1418e4725sm127984985a.125.2024.10.16.06.15.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 06:15:35 -0700 (PDT)
-Subject: Re: [PATCH v3 1/5] rtc: pm8xxx: implement qcom,no-alarm flag for
- non-HLOS owned alarm
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241015004945.3676-1-jonathan@marek.ca>
- <20241015004945.3676-2-jonathan@marek.ca>
- <Zw9gZkLPMB9ZBQlh@hovoldconsulting.com>
- <682acd15-58c5-6bdf-f913-0940a2733451@marek.ca>
- <Zw-5TA9SZtZ_gSIP@hovoldconsulting.com>
-From: Jonathan Marek <jonathan@marek.ca>
-Message-ID: <8c8df288-cb8c-2e59-a570-e8dcf39a367f@marek.ca>
-Date: Wed, 16 Oct 2024 09:12:08 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+	s=arc-20240116; t=1729084606; c=relaxed/simple;
+	bh=hsymzkfTuge0XXIe3+kaUv0mZkgehaT5poyKfewWQAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UUA69dS/2t+2R6jXP4SPhTgwZSWbBCSygXPODUVjovY+iLZdjRvQSuraT7e4n6SzKcdSskHzfPwpXqNFOx8sP3X7b7hz71am9nAFPEkSMStyby+x3n89tW2c0CAnDlHrUwWOTvlXWAh2d41la54jTtxMaW24UpC7xEUYL50JJZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e44/G4wx; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729084606; x=1760620606;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hsymzkfTuge0XXIe3+kaUv0mZkgehaT5poyKfewWQAc=;
+  b=e44/G4wxxdjLj6y+Ocgj+eJs4+SqMlm/BAWO3sctpkzwguOKWy58GPzW
+   37o95ddT1m/zQ/34XJ1XCe+7QnOUwCUZ65vGH4rm1CcOvoiIsHiJdwJ/N
+   8bjeTwbHWO4i9jQCq8tdMqXDPyBDU5hOrRkFNlNGdDaLhhA7OzNGIKkeu
+   50nC6hVpdMdrRTIbcUBbQUV2Ab8ILNCOEHv1hjjrsrzz6M+dArsFWSLNA
+   Ua2c5qO5+GhKe3aROFx7j7OJE999IySI/r66mcPnoe745jNV3a6/oOazl
+   pVhBwfPLFPpKCjoxAwSf1yo04mQ5hBDlq4+4t+fUOVflS9AniJGR0has+
+   A==;
+X-CSE-ConnectionGUID: 0PKVb3szR7KhTWP2eYZxyQ==
+X-CSE-MsgGUID: QeE7BaQZSYODHTwffox7SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="53946200"
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="53946200"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:12:28 -0700
+X-CSE-ConnectionGUID: W2jlOTDJQZy7XEs3ijPUlQ==
+X-CSE-MsgGUID: mHgPJ6DfQ02YDs6j9nSMYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="115655247"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 16 Oct 2024 06:12:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A538D165; Wed, 16 Oct 2024 16:12:24 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Sean Young <sean@mess.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH v1 1/1] ati_remote: don't push static constants on stack for %*ph
+Date: Wed, 16 Oct 2024 16:12:19 +0300
+Message-ID: <20241016131219.897966-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zw-5TA9SZtZ_gSIP@hovoldconsulting.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/16/24 9:02 AM, Johan Hovold wrote:
->>>>    	int alarm_irq;
->>>>    	const struct pm8xxx_rtc_regs *regs;
->>>>    	struct device *dev;
->>>> @@ -473,9 +474,14 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->>>>    	if (!rtc_dd->regmap)
->>>>    		return -ENXIO;
->>>>    
->>>> -	rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
->>>> -	if (rtc_dd->alarm_irq < 0)
->>>> -		return -ENXIO;
->>>> +	rtc_dd->no_alarm = of_property_read_bool(pdev->dev.of_node,
->>>> +						 "qcom,no-alarm");
->>>> +
->>>
->>> Stray newline.
->>>
->>
->> That's not a stray newline?
-> 
-> There was no empty line between the assignment and check before this
-> change, but now there is even though there should not be.
->   
+There is no need to pass constants via stack. The width may be explicitly
+specified in the format.
 
-There was no empty line between the "alarm_irq" assignment and check, 
-and there still isn't. That empty line separating the new 
-of_property_read_bool() line.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/media/rc/ati_remote.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I could move both of_property_read_bool() lines together to make it look 
-better.
+diff --git a/drivers/media/rc/ati_remote.c b/drivers/media/rc/ati_remote.c
+index d7721e60776e..a733914a2574 100644
+--- a/drivers/media/rc/ati_remote.c
++++ b/drivers/media/rc/ati_remote.c
+@@ -311,9 +311,9 @@ static void ati_remote_dump(struct device *dev, unsigned char *data,
+ 		if (data[0] != (unsigned char)0xff && data[0] != 0x00)
+ 			dev_warn(dev, "Weird byte 0x%02x\n", data[0]);
+ 	} else if (len == 4)
+-		dev_warn(dev, "Weird key %*ph\n", 4, data);
++		dev_warn(dev, "Weird key %4ph\n", data);
+ 	else
+-		dev_warn(dev, "Weird data, len=%d %*ph ...\n", len, 6, data);
++		dev_warn(dev, "Weird data, len=%d %6ph ...\n", len, data);
+ }
+ 
+ /*
+@@ -502,7 +502,7 @@ static void ati_remote_input_report(struct urb *urb)
+ 
+ 	if (data[1] != ((data[2] + data[3] + 0xd5) & 0xff)) {
+ 		dbginfo(&ati_remote->interface->dev,
+-			"wrong checksum in input: %*ph\n", 4, data);
++			"wrong checksum in input: %4ph\n", data);
+ 		return;
+ 	}
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
->>>> +	if (!rtc_dd->no_alarm) {
->>>> +		rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
->>>> +		if (rtc_dd->alarm_irq < 0)
->>>> +			return -ENXIO;
->>>> +	}
-> 
-> Johan
-> 
 
