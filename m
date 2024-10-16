@@ -1,99 +1,86 @@
-Return-Path: <linux-kernel+bounces-368519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AF79A10BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:35:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9459A10BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA591C2229E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB69D1F22CB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6BB212624;
-	Wed, 16 Oct 2024 17:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510BC212629;
+	Wed, 16 Oct 2024 17:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IiXfwICt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pt5w5zxS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5LUU7qE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F68F18660A;
-	Wed, 16 Oct 2024 17:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE27618660A;
+	Wed, 16 Oct 2024 17:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729100121; cv=none; b=toyDl8Ny3zA81yjo3vrH+POy1E1Xj6VpKS10TfVVP7ICNfgSgnwZ82jkCCHhB/aTdZPM73IEoUF4UjJdvtoixRVG0P3xVpS39/r0KKU5juJ2czoBfI9yU67w0AvpZffurEK8jq6CUCj2ahs+2gJJwZPU15kziot/FBgOwi0PV+o=
+	t=1729100143; cv=none; b=SJLIcrIaToPeL6IG1yG9Ir2hPll4dHn2Yo4op+CYCHie/ZiBY4wNNNALnlqI0fcMQqXuwOX45PH5Vh9FP3woICODv+qt+zcLm/9YQ1XErwfXccnHVx6CJUBPwO32pYLuff5VUs/MEaQqlZ9pXoma9uizVNKAbLP4YZZwXa0ftBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729100121; c=relaxed/simple;
-	bh=p8bgC4HdVsPKF33YDC5yBWtaY+EH5NkSqt0VYV41+z8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DjhKy3sYihnNZ9AilDYcA3ySJIQoW/XoCMgdBTz2scof9UH4+IbFxfBQjKamB+eBzeNbbOXeWWPW2Oe+6zK0N0N56vhQRr7ElIAdE5rKBXuAv4m8GMcLt0AMykFKhuX2mXLL4pritYyzKo6di4HnLSGpalVJopwwh/tmyFQwg0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IiXfwICt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pt5w5zxS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729100118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ftTHX3aDbfuhiYSSswl8jerjMR2AN5shXO76BX64Gd8=;
-	b=IiXfwICtg/N2j4ik+acBkLZu4hcfivG9UaAZT4lwsYowMXC4x7fey68HwgK4hEqBTWk2r8
-	6pd5j/k0VSTyO+m6evv3vh4BTNTr1piMfzuVHsnM4diEtvAuzvZ0YpdvC8VjbjwGf67sYq
-	A0VOJYtTOV93eLoDi5LXZvccSVRIr5Dfuf/xK7j12li9Qb5XzqLEVC8MaUls+K6HQi/Wc9
-	lT2KJpqO/9QGeUpTRxxMByBzi2fnSN4u7Mb+kHea4kELOlDAG1eLrwUe1tFQ0keGUAVPcb
-	y37nRFCrF5I8KJHKtasj9O5m3bqImu8y/hHsqfzRIvkjo6+/cudduDn/GoqVWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729100118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ftTHX3aDbfuhiYSSswl8jerjMR2AN5shXO76BX64Gd8=;
-	b=Pt5w5zxS+TQS7IMz5uzUZuPv9FrURkwOuTrvihz0w4BQ0fafiMk2K0s/0MOckFGoSNUf6/
-	PC5LAaa0PHVgckBw==
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Kishon Vijay Abraham I
- <kishon@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, imx@lists.linux.dev, Niklas Cassel
- <cassel@kernel.org>, dlemoal@kernel.org, maz@kernel.org, jdmason@kudzu.us
-Subject: Re: [PATCH v3 3/6] PCI: endpoint: Add RC-to-EP doorbell support
- using platform MSI controller
-In-Reply-To: <Zw/vq4EweR+yTphB@lizhi-Precision-Tower-5810>
-References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
- <20241015-ep-msi-v3-3-cedc89a16c1a@nxp.com> <87bjzkau33.ffs@tglx>
- <Zw/vq4EweR+yTphB@lizhi-Precision-Tower-5810>
-Date: Wed, 16 Oct 2024 19:35:17 +0200
-Message-ID: <87wmi89ciy.ffs@tglx>
+	s=arc-20240116; t=1729100143; c=relaxed/simple;
+	bh=ROiqOKc+y+FMS/tbuJk2v1Iu+PyGJTcxIghGmgkwt3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfUJW7m5fAd4ulK7c2P6xCeaqCVi4roMEr4/KZA5eldXLqepUiRheefg7+JjU+lpqN+l4QXYkTwmb7zW0WLBumhyV+6DHs+EKjA3qxZ7AwubM0FX+qsge2wjeZrjmeaV35miapA2l3weMC6J1PYRA+wUXP6shWkIn+1+96OjuSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5LUU7qE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA1BC4CEC5;
+	Wed, 16 Oct 2024 17:35:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729100143;
+	bh=ROiqOKc+y+FMS/tbuJk2v1Iu+PyGJTcxIghGmgkwt3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W5LUU7qEFpvKqi3O2xhYVd43GB0ADaT7hxeehOdOcOcEi4Fog3Px8Mx6PMmURQQo3
+	 jVdfeS1Ux65MfJNnd0/7OaIu/lAmBR+wsE6/Ibhjuwxp2uLnVSsKMlmMKwpKMDeKfy
+	 aatMYhD45+l9c/az4Bbc9R4N5i4u1I7c5G8/BDlfTNmAs12NXTbqiZxnIbNVhqoGZi
+	 Z0US7eucQo6p+GFkDjl+0U6FcADFLyxc7zLaNb4uDfMJQ+FgsBVkr+mji58P50W8w2
+	 bG+v5wBwVd3caDLvUDbaSRctTGVhMbJmPgu0N7CBibfOmZxg8rGwn/j1o8Y0zL/yay
+	 h5xL438CW5JMw==
+Date: Wed, 16 Oct 2024 12:35:42 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: upstream@airoha.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Olivia Mackall <olivia@selenic.com>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: Re: [PATCH 1/2] dt-bindings: rng: add support for Airoha EN7581 TRNG
+Message-ID: <172910014160.2079862.17744202694058478290.robh@kernel.org>
+References: <20241016151845.23712-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016151845.23712-1-ansuelsmth@gmail.com>
 
-On Wed, Oct 16 2024 at 12:54, Frank Li wrote:
-> On Wed, Oct 16, 2024 at 06:30:40PM +0200, Thomas Gleixner wrote:
->> > +	scoped_guard(msi_descs, dev)
->> > +		msi_for_each_desc(desc, dev, MSI_DESC_ALL) {
->>
->> That's just wrong. Nothing in this code has to fiddle with MSI
->> descriptors or the descriptor lock.
->>
->>         for (i = 0; i < num_db; i++) {
->>             virq = msi_get_virq(dev, i);
->
-> Thanks, Change to msi_for_each_desc() is based on comments on
-> https://lore.kernel.org/imx/20231017183722.GB137137@thinkpad/
->
-> So my original implement is correct.
 
-Yes, very much so.
+On Wed, 16 Oct 2024 17:18:41 +0200, Christian Marangi wrote:
+> Add support for Airoha EN7581 True Random Number generator.
+> 
+> This module can generate up to 4bytes of raw data at times and support
+> self health test at startup. The module gets noise for randomness from
+> various source from ADC, AP, dedicated clocks and other devices attached
+> to the SoC producing true random numbers.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/rng/airoha,en7581-trng.yaml      | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rng/airoha,en7581-trng.yaml
+> 
 
-Thanks,
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-        tglx
 
