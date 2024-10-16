@@ -1,244 +1,233 @@
-Return-Path: <linux-kernel+bounces-368386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB149A0F43
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:04:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A619A0F45
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2068286257
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:04:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03896B24386
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283D320F5AB;
-	Wed, 16 Oct 2024 16:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A874220E013;
+	Wed, 16 Oct 2024 16:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmMgAQKC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHLf4DoB"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4911FDF81
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298E720E021;
+	Wed, 16 Oct 2024 16:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094669; cv=none; b=GZ1iAKyFGjPF/Bwd69tSUYDoTd+Uf8LNRkmvP+rJiT00gbd+IK++ZuQjVWp+dzcW4u9yZCkvb8v8wIOmr2cuMHabWF9+uMUdmTKLN5b4F/3KYAhM1ZE+u6OCdDoK3g7pz11x6M0FGu2w6ZhmVlKuC3uZfb9fjyRcvK8o+scJd7U=
+	t=1729094684; cv=none; b=Mq9HKRyaqx9N9lACIO8StbSOpITIANt4+3AKjel8X8GggppsoTHqx7AlEitq3QuVtl5JH1At/aTj106i9lfdqTu73jQHCRVYodk7NVsX08dca0xmDJI2pUunprcXfUoD+XteC76EpidSEKNfFtnH4daQoiDCH8V9OT8/b/gT8Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094669; c=relaxed/simple;
-	bh=zuOSy95G7mDcuWKPvFJYP2uNmIQJLYkDJb2JZ/9eicQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izRTR8Mc5MKJUep3fObuEFC4oMSnxhxwK4y7IzRbXnMZQ8mdKlbriznlwu+NRSa2zYMn9mMFiFSs0cJS6U+heQ6TkKgoGSkEluiRhcE+9b/fxq1sJDOdtyOIlwhs8LLwoUw9H1bDu9N4Hak5Tpy5V3K0nuE2EQ4NNbhoJ7IHzYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmMgAQKC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74751C4CECE;
-	Wed, 16 Oct 2024 16:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729094668;
-	bh=zuOSy95G7mDcuWKPvFJYP2uNmIQJLYkDJb2JZ/9eicQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UmMgAQKCgYgOyDg1JwnEM5XDeTw8054VjwarH8AowFAe0y8P9kdZUdg55EGRt83Vv
-	 YazuM0y28B5xMwMRx3KmrpwO7tS8kiJl0IKInGiktmQCSV15ZOvxusFA69DpqaaYqZ
-	 P2cM7DLg5ncX2vn0blWozDG6jUMKHN/gIVpVHS1p0ys8wtM6g9G16U3i42tmEW8pM+
-	 7lWaFiE1u2itvZm9fCRXRDiZ7ohPJyydAVm2HN+hVWALEkRzBwzrRf5vtKqbJPi0MC
-	 o1fOn6eUfp7GD+OoQblfqk6Ix9MuixOH2OlQb7WaLn0zCgE3TfJuTLcq2ChxstrvHq
-	 RsSxukwe00/qQ==
-Date: Wed, 16 Oct 2024 16:04:26 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Yi Sun <yi.sun@unisoc.com>
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, sunyibuaa@gmail.com,
-	niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com
-Subject: Re: [RFC PATCH 2/2] f2fs: introduce
- f2fs_invalidate_consecutive_blocks()
-Message-ID: <Zw_kCu3J7f7iQrFF@google.com>
-References: <20241016052758.3400359-1-yi.sun@unisoc.com>
- <20241016052758.3400359-3-yi.sun@unisoc.com>
+	s=arc-20240116; t=1729094684; c=relaxed/simple;
+	bh=EKUEzfiN3YmtYYObeTxmHkJxrDJnt9VxyDY0QeTrbWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e4iDnQyNi6zj+1MY8giVY0inKPycrzYQLZZPRr0U8A6HEpD7Kk57HoOZ5MllAyyPrWfmt1V4dkN0D3oNgwjB6CalRiDIQ9M69w+s5OS+iIiPVEa6HPfllvMyQ/0y1EfXwT/yzWDZdF28VRgoQ7hJi+h+hp2CwuxOTzdwnECQLzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHLf4DoB; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e1543ab8so8683250e87.2;
+        Wed, 16 Oct 2024 09:04:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729094680; x=1729699480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GNQBpV9vPDQPiHMaNRNKdEtYD8Kastgat0oNqI9eUbM=;
+        b=LHLf4DoBRCsgZJv0CC9LbdaT9ziQrgMSEfFHhTmA07ImgbJK6rm8TCxK91koTUvsjT
+         FoKNH90NWpp38vM8GKXKVbWf/DKxUVTh/X7qt1mjHKjxBKoUJaqvEKEEJNjVZ823DUdW
+         3sHT8MGJrz1cxbBbHyQzrFtYGe+yv/SPu1s033W+FkzBq5CVDEqHY0bZZw4o4GaJusA3
+         LuOEPIkI6NSbR6QpmkwM8y7HpGLicUWnsQYKIlSmT+JQ6kDXcVu3Y33KFkHd0pMD7/ed
+         vaIAuL8otDhsvqw+LoiS0mwa24KbsTguY1a4XBZ23FAWy1SbxVJBgj17cOs+7tGvRkvz
+         rbfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729094680; x=1729699480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GNQBpV9vPDQPiHMaNRNKdEtYD8Kastgat0oNqI9eUbM=;
+        b=UYgpzD/w9pK6qyautTNfT7yJYnrWI6vxjUbliZMX5HSrXNace3wmgoqNBqDEUsLRfC
+         7Lq8zUBM2NfEImDZptuBm9se50scHmf3zMLTgR7tjFTFVW8Z5k9gh9C0WBfMVi4UvZrz
+         Bs9q6PKONkIW2kIqQjHTwhd2kkPnX00mZOCA6LUyvFLoqdgMIPuW9iZ7ZMv4NQ8N3o+x
+         K+FZ+p7wfPOcRGMgJG9cd0OfuXNS1xuMfaVMYFAD5f3oZ521dZiAUCJ/N2aUK743TJks
+         PsHw3wvIbIV7pXgcXiVtFdENswmVAlKcQhZNO317w02UR6hX/SaanCWs/QIFIwCC2JFP
+         +pLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4sfmqjDi/uxfEPkRfAnZMJIO6Tnk/9RA+Tzi8yKQV/0SkwNEsJTA4mVgMJ+IVDyGyHcAc3CiUVCG3kzl5+xr2Yg==@vger.kernel.org, AJvYcCXHPJQPipnDpvOxj7Yl+YioUGSS/2jJ+uLhCnfd4YHfMpewzdv/9kPTX9ypCta4L/DWAVculWR4YQjnRNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwslcvI4e7GnmawNdGU81h9hNT9bdClkp8HbWlWT7+LDjVMxj2Y
+	vMTFZ4V8twxo8riFOlZBH4xRZDcOhxE1imgLLtg9pm12AzqWVn1kgAjsicAzdGJR5VbksJ5kiK9
+	QUvY+zpGhN2bbSkv0hSbI8IvvG6g=
+X-Google-Smtp-Source: AGHT+IHTfdOsutRT8m9ec/Y2Ofh5xKP8lNEpD8YNQl32O/trKfsU29BoYw0WuAcEok2Y/C0Rm8PMWo6RhNhJCFzenbI=
+X-Received: by 2002:a05:6512:1598:b0:539:905c:15c5 with SMTP id
+ 2adb3069b0e04-539e5521da6mr11438781e87.35.1729094679769; Wed, 16 Oct 2024
+ 09:04:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016052758.3400359-3-yi.sun@unisoc.com>
+References: <20241016045546.2613436-1-quic_mojha@quicinc.com>
+In-Reply-To: <20241016045546.2613436-1-quic_mojha@quicinc.com>
+From: anish kumar <yesanishhere@gmail.com>
+Date: Wed, 16 Oct 2024 09:04:27 -0700
+Message-ID: <CABCoZhB3NNv0bi=wDvQ9HzYBin6qP522QrMvqw=HSnLn8VgeOg@mail.gmail.com>
+Subject: Re: [PATCH v3] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2573 void f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi, block_t addr, int cnt)
-2574 {
-2575         unsigned int segno = GET_SEGNO(sbi, addr);
-2576         unsigned int segno2 = GET_SEGNO(sbi, addr + cnt - 1);
-2577         struct sit_info *sit_i = SIT_I(sbi);
-2578
-2579         f2fs_bug_on(sbi, addr == NULL_ADDR || segno != segno2);
+On Tue, Oct 15, 2024 at 9:57=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.com=
+> wrote:
+>
+> Multiple call to glink_subdev_stop() for the same remoteproc can happen
+> if rproc_stop() fails from Process-A that leaves the rproc state to
+> RPROC_CRASHED state later a call to recovery_store from user space in
+> Process B triggers rproc_trigger_recovery() of the same remoteproc to
+> recover it results in NULL pointer dereference issue in
+> qcom_glink_smem_unregister().
+>
+> There is other side to this issue if we want to fix this via adding a
+> NULL check on glink->edge which does not guarantees that the remoteproc
+> will recover in second call from Process B as it has failed in the first
+> Process A during SMC shutdown call and may again fail at the same call
+> and rproc can not recover for such case.
 
-This hits a panic here while running fsstress.
+What is the guarantee that the second stop also will fail? I feel
+it should be handled in user space, if rproc calls are failing then
+there is a bigger issue and then let userspace decide what to do if it
+is happening continuously. Also, why not add this DEFUNCT_STATE
+in other callbacks, as all callbacks from core to rproc driver can fail?
+>
+> Add a new rproc state RPROC_DEFUNCT i.e., non recoverable state of
 
-On 10/16, Yi Sun wrote:
-> When doing truncate, consecutive blocks in the same segment
-> can be processed at the same time. So that the efficiency of
-> doing truncate can be improved.
-> 
-> Add f2fs_invalidate_compress_pages_range() only for doing truncate.
-> Add check_f2fs_invalidate_consecutive_blocks() only for doing
-> truncate and to determine whether the blocks are continuous and
-> belong to the same segment.
-> 
-> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+Even if this state is present, ultimately it will be up to user space to
+decide what to do, right?
+
+> remoteproc and the only way to recover from it via system restart.
+>
+>         Process-A                                       Process-B
+>
+>   fatal error interrupt happens
+>
+>   rproc_crash_handler_work()
+>     mutex_lock_interruptible(&rproc->lock);
+>     ...
+>
+>        rproc->state =3D RPROC_CRASHED;
+>     ...
+>     mutex_unlock(&rproc->lock);
+>
+>     rproc_trigger_recovery()
+>      mutex_lock_interruptible(&rproc->lock);
+>
+>       adsp_stop()
+>       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+>       remoteproc remoteproc3: can't stop rproc: -22
+>      mutex_unlock(&rproc->lock);
+>
+>                                                 echo enabled > /sys/class=
+/remoteproc/remoteprocX/recovery
+>                                                 recovery_store()
+>                                                  rproc_trigger_recovery()
+>                                                   mutex_lock_interruptibl=
+e(&rproc->lock);
+>                                                    rproc_stop()
+>                                                     glink_subdev_stop()
+>                                                       qcom_glink_smem_unr=
+egister() =3D=3D|
+>                                                                          =
+            |
+>                                                                          =
+            V
+>                                                       Unable to handle ke=
+rnel NULL pointer dereference
+>                                                                 at virtua=
+l address 0000000000000358
+>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > ---
->  fs/f2fs/compress.c | 14 ++++++++++++++
->  fs/f2fs/f2fs.h     |  5 +++++
->  fs/f2fs/file.c     | 34 +++++++++++++++++++++++++++++++++-
->  fs/f2fs/segment.c  | 25 +++++++++++++++++++++++++
->  4 files changed, 77 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 7f26440e8595..70929a87e9bf 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -2014,6 +2014,20 @@ void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino)
->  	} while (index < end);
->  }
->  
-> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
-> +					block_t blkaddr, int cnt)
-> +{
-> +	if (!sbi->compress_inode)
-> +		return;
-> +
-> +	if (cnt < 1) {
-> +		f2fs_bug_on(sbi, 1);
-> +		cnt = 1;
-> +	}
-> +
-> +	invalidate_mapping_pages(COMPRESS_MAPPING(sbi), blkaddr, blkaddr + cnt - 1);
-> +}
-> +
->  int f2fs_init_compress_inode(struct f2fs_sb_info *sbi)
->  {
->  	struct inode *inode;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index ce00cb546f4a..99767f35678f 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3716,6 +3716,7 @@ int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
->  int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
->  void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
->  void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
-> +void f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi, block_t addr, int cnt);
->  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
->  int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
->  void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
-> @@ -4375,6 +4376,8 @@ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
->  bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
->  								block_t blkaddr);
->  void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino);
-> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
-> +					block_t blkaddr, int cnt);
->  #define inc_compr_inode_stat(inode)					\
->  	do {								\
->  		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);		\
-> @@ -4432,6 +4435,8 @@ static inline bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi,
->  				struct page *page, block_t blkaddr) { return false; }
->  static inline void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi,
->  							nid_t ino) { }
-> +static inline void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
-> +						block_t blkaddr, int cnt) { }
->  #define inc_compr_inode_stat(inode)		do { } while (0)
->  static inline int f2fs_is_compressed_cluster(
->  				struct inode *inode,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 7057efa8ec17..634691e3b5f1 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -612,6 +612,18 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
->  	return finish_preallocate_blocks(inode);
->  }
->  
-> +static bool check_f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi,
-> +					block_t blkaddr1, block_t blkaddr2)
-> +{
-> +	if (blkaddr2 - blkaddr1 != 1)
-> +		return false;
-> +
-> +	if (GET_SEGNO(sbi, blkaddr1) != GET_SEGNO(sbi, blkaddr2))
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
->  void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-> @@ -621,6 +633,9 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->  	int cluster_index = 0, valid_blocks = 0;
->  	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
->  	bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
-> +	block_t con_start;
-> +	bool run_invalid = true;
-> +	int con_cnt = 1;
->  
->  	addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
->  
-> @@ -652,7 +667,24 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->  				valid_blocks++;
->  		}
->  
-> -		f2fs_invalidate_blocks(sbi, blkaddr);
-> +		if (run_invalid)
-> +			con_start = blkaddr;
-> +
-> +		if (count > 1 &&
-> +			check_f2fs_invalidate_consecutive_blocks(sbi, blkaddr,
-> +				le32_to_cpu(*(addr + 1)))) {
-> +			run_invalid = false;
-> +
-> +			if (con_cnt++ == 1)
-> +				con_start = blkaddr;
-> +		} else {
-> +			run_invalid = true;
-> +		}
-> +
-> +		if (run_invalid) {
-> +			f2fs_invalidate_consecutive_blocks(sbi, con_start, con_cnt);
-> +			con_cnt = 1;
-> +		}
->  
->  		if (!released || blkaddr != COMPRESS_ADDR)
->  			nr_free++;
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index f118faf36d35..edb8a78985ba 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2570,6 +2570,31 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
->  	up_write(&sit_i->sentry_lock);
->  }
->  
-> +void f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi, block_t addr, int cnt)
-> +{
-> +	unsigned int segno = GET_SEGNO(sbi, addr);
-> +	unsigned int segno2 = GET_SEGNO(sbi, addr + cnt - 1);
-> +	struct sit_info *sit_i = SIT_I(sbi);
-> +
-> +	f2fs_bug_on(sbi, addr == NULL_ADDR || segno != segno2);
-> +	if (addr == NEW_ADDR || addr == COMPRESS_ADDR)
-> +		return;
-> +
-> +	f2fs_truncate_meta_inode_pages(sbi, addr, cnt);
-> +	f2fs_invalidate_compress_pages_range(sbi, addr, cnt);
-> +
-> +	/* add it into sit main buffer */
-> +	down_write(&sit_i->sentry_lock);
-> +
-> +	update_segment_mtime(sbi, addr, 0);
-> +	update_sit_entry(sbi, addr, -cnt);
-> +
-> +	/* add it into dirty seglist */
-> +	locate_dirty_segment(sbi, segno);
-> +
-> +	up_write(&sit_i->sentry_lock);
-> +}
-> +
->  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
->  {
->  	struct sit_info *sit_i = SIT_I(sbi);
-> -- 
-> 2.25.1
+> Changes in v3:
+>  - Fix kernel test reported error.
+>
+> Changes in v2:
+>  - Removed NULL pointer check instead added a new state to signify
+>    non-recoverable state of remoteproc.
+>
+>  drivers/remoteproc/remoteproc_core.c  | 3 ++-
+>  drivers/remoteproc/remoteproc_sysfs.c | 1 +
+>  include/linux/remoteproc.h            | 5 ++++-
+>  3 files changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/re=
+moteproc_core.c
+> index f276956f2c5c..c4e14503b971 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1727,6 +1727,7 @@ static int rproc_stop(struct rproc *rproc, bool cra=
+shed)
+>         /* power off the remote processor */
+>         ret =3D rproc->ops->stop(rproc);
+>         if (ret) {
+> +               rproc->state =3D RPROC_DEFUNCT;
+>                 dev_err(dev, "can't stop rproc: %d\n", ret);
+>                 return ret;
+>         }
+> @@ -1839,7 +1840,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>                 return ret;
+>
+>         /* State could have changed before we got the mutex */
+> -       if (rproc->state !=3D RPROC_CRASHED)
+> +       if (rproc->state =3D=3D RPROC_DEFUNCT || rproc->state !=3D RPROC_=
+CRASHED)
+>                 goto unlock_mutex;
+>
+>         dev_err(dev, "recovering %s\n", rproc->name);
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/r=
+emoteproc_sysfs.c
+> index 138e752c5e4e..5f722b4576b2 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -171,6 +171,7 @@ static const char * const rproc_state_string[] =3D {
+>         [RPROC_DELETED]         =3D "deleted",
+>         [RPROC_ATTACHED]        =3D "attached",
+>         [RPROC_DETACHED]        =3D "detached",
+> +       [RPROC_DEFUNCT]         =3D "defunct",
+>         [RPROC_LAST]            =3D "invalid",
+>  };
+>
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index b4795698d8c2..3e4ba06c6a9a 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -417,6 +417,8 @@ struct rproc_ops {
+>   *                     has attached to it
+>   * @RPROC_DETACHED:    device has been booted by another entity and wait=
+ing
+>   *                     for the core to attach to it
+> + * @RPROC_DEFUNCT:     device neither crashed nor responding to any of t=
+he
+> + *                     requests and can only recover on system restart.
+>   * @RPROC_LAST:                just keep this one at the end
+>   *
+>   * Please note that the values of these states are used as indices
+> @@ -433,7 +435,8 @@ enum rproc_state {
+>         RPROC_DELETED   =3D 4,
+>         RPROC_ATTACHED  =3D 5,
+>         RPROC_DETACHED  =3D 6,
+> -       RPROC_LAST      =3D 7,
+> +       RPROC_DEFUNCT   =3D 7,
+> +       RPROC_LAST      =3D 8,
+>  };
+>
+>  /**
+> --
+> 2.34.1
+>
+>
 
