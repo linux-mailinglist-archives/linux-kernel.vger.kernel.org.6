@@ -1,118 +1,187 @@
-Return-Path: <linux-kernel+bounces-368885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4719A1616
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:22:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4219A1618
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A668EB23183
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:22:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B8D8B230D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E241D5156;
-	Wed, 16 Oct 2024 23:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="af7Bah2k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264471D5142;
+	Wed, 16 Oct 2024 23:22:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4CB14EC47;
-	Wed, 16 Oct 2024 23:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AE81D47AE
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729120915; cv=none; b=ez2vxTzvjsccT8Ksha5y9zuBcrr8p46agMyIKZKXbFPeFO8kYhuX44BpggqHcxWttWWMIYRLOrO5TupCKMe0YHIPv7zEaUNvbDkFcRsld/3vE7QiUhufko5Lc/pRWg1BwuSMebcJn3u+KsI6efUINtx02QC2FPvMtsNCLW1AKyA=
+	t=1729120949; cv=none; b=Z+dAjilXX9XNCRblCmNoYwtuefTJ+17DBZjRWj0PRSjy2t7ykRGT6/p0AOVjwTjLNbmVFeDMYbDxoFdV7k1I0eQtbIpOBwFf4IUwSuyWLNgU4g4wXVU3aVVT0SyVhG91kYw8r2+lhBBP/rhjOe/h5xxPtba6Xf+vtFS+AgA1z8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729120915; c=relaxed/simple;
-	bh=jj2l+z5z0T64UjsqbIKx9n9DA8OiXqjAqg3PCGZgsoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nWkp0/mGsgo+rAxNJeK7eNErqGMJC5/T79fYjwq2VFVmlUXarOCjbX90Zp/qQLNiCHUdUuklhg2yDyVHKWaR2rHznHBaNIe2SVT6Ovxgd2mUtoD3WaDBR7UpSCu3HHXmJ5uGZC5LvNIODPdW765mGjWlbkLsjDZ2MVwsHDFDPJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=af7Bah2k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82CEC4CEC5;
-	Wed, 16 Oct 2024 23:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729120914;
-	bh=jj2l+z5z0T64UjsqbIKx9n9DA8OiXqjAqg3PCGZgsoU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=af7Bah2k2HGKpQSGvVX0//1Ci0GFMWdzohzgWvqZ9Ud5O2dzDbLEEIPrUPxCRrhl2
-	 w+Bw0udf0cCZ3+n/WXZwh0KBAMGY/XvxgpJbH4cp7gV1tUKBQYdp0Ofc2ct7zdCh1Q
-	 +wLXSNDXsYQuOQRZ1Ay85/IZyvUi/SWqSWbHVXsy6R62raD0HUR5Kql/usoTjVrzSy
-	 hIR20HgR3CkCEFc+uVEIsmi56qZiILM87EB81FchDBLU7swQG6osrl3E/toanDh4R3
-	 r+IGcCk9V4cWh5cZzCnD5mQ04fFBHzmI0IYUpnEUclr9BfO0qkkOo1Un3FPWT+scGP
-	 FpHJUYW5QDvnw==
-Date: Wed, 16 Oct 2024 16:21:52 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, Helge Deller <deller@gmx.de>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
-	gary@garyguo.net, Michael Ellerman <mpe@ellerman.id.au>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	neal@gompa.dev, marcan@marcan.st, j@jannau.net,
-	asahi@lists.linux.dev, linux-modules@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 14/16] modules: Support extended MODVERSIONS info
-Message-ID: <ZxBKkJu-XPOGs-NG@bombadil.infradead.org>
-References: <20240925233854.90072-1-mmaurer@google.com>
- <20240925233854.90072-15-mmaurer@google.com>
- <ZwmlEYdS0aPVF32k@bombadil.infradead.org>
- <CAGSQo01o4fWYwSzZHX5dyTUKcaCSZ7z-hPQ8w63tgBPGbM_UCA@mail.gmail.com>
- <ZwmnnMmqVWLaelvQ@bombadil.infradead.org>
- <Zwm4lXdKB9RfPQ5M@bombadil.infradead.org>
- <Zwm4v_1wh5RwuHxF@bombadil.infradead.org>
- <CAGSQo03df-tnmwcz4nh3qtuQPKQ2zLHW0juQyKUXGsdeS7QkLA@mail.gmail.com>
+	s=arc-20240116; t=1729120949; c=relaxed/simple;
+	bh=mVE0l1hRwBDS/FZtpe0sXBUiTBSJha3jv4Akusym25g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PLifm7XTxQZEQSbQOUNuQ+p0OhvttB/p0eZZ9+krMdrh0n5T8gyCvdyiICR4PVDIdC1x2C2f1wHR9g+me/8/roO3FBSy+GKyfZRkhq7CSp2icJBbZBc2XpwQgn5cF4qbh4uMY+6L+AwHPnokLPczXbmzU67ogWAaefufvVheJY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c5a6c5e1so4507655ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:22:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729120947; x=1729725747;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nbtPBNOsMBhRrfsUYqjp/D614SNfpBqJ7uG2QiYsvQA=;
+        b=FR4nH6aLFKSY5hDJZG56lKm8g/adQ/7scdO/UVkMnlmRs0m3t3wc5YInPZ9QXuKSlZ
+         BK0saojGZmZJ8JIKtm39a4cLVs7LqxYHGciFqhK67WJyaWOZEyJeq29qrIREAOC2lJ3x
+         TXR0Eo7Yi6oVx7cIS8CSCr+xnOPl+xH1DDIGV6gEuHL75njiphDuuSkT5mXK71e4HyTJ
+         chXO3hHCTtDjrUbfuAT7K/OHOvCmZfte7H6NxT2iSkHVVwAPizNDCsM1aM7ZaZ1AHHRv
+         GTPoYOm/jrqyDnU1mWA+Vfbr5cFr/+N0Pb1SxreG/IKPAsLkK8NTmjduGM/ufqkS/HDa
+         XH0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWIrGrL5eMTJY6A0goGeEW3QrOWlahRHMpP7TS3okATESxXnNhUDL9/MnFmz6mu7s0pqdqvm5nQplpTo60=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6GAIyy8dGxCluDuHgNk8CNPaF7SmW5XBRdLxuQrV3Io2usoZX
+	ryjleqzoIZroDlqK7cAGLA4chDW8tBnGl75aAByhpBICavR8jCeCO945wU3tiZEewwtQ+me8pU6
+	Xgvq7Z5J2ve3P0hAEW+Y818ITW3yC7MCXC/9sFL3XqNUf4z8IV/FdACc=
+X-Google-Smtp-Source: AGHT+IF0Z9/TtTiy8unpNEcLnO8CgOACIjGn47ZfVzHjXJbB0BCJtpz3T25UeW8XeFU70EuzF3AJdIxNGt99Na5fG7Kvo3mYSnLG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGSQo03df-tnmwcz4nh3qtuQPKQ2zLHW0juQyKUXGsdeS7QkLA@mail.gmail.com>
+X-Received: by 2002:a92:c241:0:b0:3a0:8f20:36e7 with SMTP id
+ e9e14a558f8ab-3a3b5fb649bmr200318245ab.19.1729120947034; Wed, 16 Oct 2024
+ 16:22:27 -0700 (PDT)
+Date: Wed, 16 Oct 2024 16:22:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67104ab3.050a0220.d9b66.0175.GAE@google.com>
+Subject: [syzbot] [xfs?] INFO: task hung in xfs_ail_push_all_sync (2)
+From: syzbot <syzbot+611be8174be36ca5dbc9@syzkaller.appspotmail.com>
+To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 15, 2024 at 04:22:22PM -0700, Matthew Maurer wrote:
-> So, the basic things I can think of to test here are:
-> 
-> 1. The kernel can still load the previous MODVERSIONS format
-> 2. The kernel can load the new MODVERSIONS format
-> 3. If we artificially tweak a CRC in the previous format, it will fail to load.
-> 4. If we artificially tweak a CRC in the new format, it will fail to load.
-> 5. With CONFIG_EXTENDED_MODVERSIONS enabled, the kernel will build and
-> load modules with long symbol names, with MODVERSIONS enabled.
-> 
-> Is there anything else you were thinking of here, or are those the
-> kinds of checks you were envisioning?
+Hello,
 
-That sounds great. Yeah, the above would be great to test. A while ago
-I wrote a new modules selftests in order to test possible improvements
-on find_symbol() but I also did this due to push the limits of the
-numbers of symbols we could support. I wrote all this to also test the
-possible 64-bit alignment benefits of __ksymtab_ sections on
-architectures without CONFIG_HAVE_ARCH_PREL32_RELOCATIONS (e.g. ppc64,
-ppc64le, parisc, s390x,...). But come to think of it, you might be
-able to easily leverage this to also just test long symbols by self
-generated symbols as another test case. In case its useful to you I've
-put this in a rebased branch 20241016-modules-symtab branch. Feel free
-to use as you see fit.
+syzbot found the following issue on:
 
-I forget what we concluded on Helge Deller's alignement patches, I think
-there was an idea on how to address the alignment through other means.
+HEAD commit:    09f6b0c8904b Merge tag 'linux_kselftest-fixes-6.12-rc3' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14af3fd0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=611be8174be36ca5dbc9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c7705f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d2fb27980000
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=20241016-modules-symtab
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-09f6b0c8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3844cfd6d6b9/vmlinux-09f6b0c8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8752e101c1ff/bzImage-09f6b0c8.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/5410decf46fa/mount_1.gz
 
-  Luis
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+611be8174be36ca5dbc9@syzkaller.appspotmail.com
+
+INFO: task syz-executor279:5128 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00291-g09f6b0c8904b #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor279 state:D stack:25488 pid:5128  tgid:5105  ppid:5102   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0x1895/0x4b30 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6774
+ xfs_ail_push_all_sync+0x236/0x310 fs/xfs/xfs_trans_ail.c:726
+ xfs_log_quiesce+0xdf/0x5b0 fs/xfs/xfs_log.c:1018
+ xfs_fs_freeze+0x8d/0x1a0 fs/xfs/xfs_super.c:936
+ freeze_super+0x81b/0xee0 fs/super.c:2107
+ fs_bdev_freeze+0x1ac/0x320 fs/super.c:1484
+ bdev_freeze+0xd6/0x220 block/bdev.c:257
+ xfs_fs_goingdown+0xa9/0x160 fs/xfs/xfs_fsops.c:446
+ xfs_file_ioctl+0x12e5/0x1a30 fs/xfs/xfs_ioctl.c:1343
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f70924b2539
+RSP: 002b:00007f709243f168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f709253c6d8 RCX: 00007f70924b2539
+RDX: 0000000020000080 RSI: 000000008004587d RDI: 0000000000000005
+RBP: 00007f709253c6d0 R08: 00007f709243f6c0 R09: 0000000000000000
+R10: 00007f709243f6c0 R11: 0000000000000246 R12: 00007f709253c6dc
+R13: 000000000000006e R14: 00007ffd410540a0 R15: 00007ffd41054188
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/25:
+ #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
+2 locks held by getty/4897:
+ #0: ffff88801e2510a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000039b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+5 locks held by syz-executor279/5128:
+ #0: ffff888031ccc6b0 (&bdev->bd_fsfreeze_mutex){+.+.}-{3:3}, at: bdev_freeze+0x2a/0x220 block/bdev.c:248
+ #1: ffff888011c84420 (sb_writers#10){++++}-{0:0}, at: sb_wait_write fs/super.c:1896 [inline]
+ #1: ffff888011c84420 (sb_writers#10){++++}-{0:0}, at: freeze_super+0x4e9/0xee0 fs/super.c:2085
+ #2: ffff888011c840e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #2: ffff888011c840e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #2: ffff888011c840e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: freeze_super+0x4f1/0xee0 fs/super.c:2086
+ #3: ffff888011c84518 (sb_pagefaults#2){+.+.}-{0:0}, at: sb_wait_write fs/super.c:1896 [inline]
+ #3: ffff888011c84518 (sb_pagefaults#2){+.+.}-{0:0}, at: freeze_super+0x519/0xee0 fs/super.c:2090
+ #4: ffff888011c84610 (sb_internal#2){++++}-{0:0}, at: sb_wait_write fs/super.c:1896 [inline]
+ #4: ffff888011c84610 (sb_internal#2){++++}-{0:0}, at: freeze_super+0x7cc/0xee0 fs/super.c:2104
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 25 Comm: khungtaskd Not tainted 6.12.0-rc2-syzkaller-00291-g09f6b0c8904b #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
