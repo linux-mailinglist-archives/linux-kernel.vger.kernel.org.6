@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-367678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7287C9A0542
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:21:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866569A0546
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9651F2613C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:21:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06D0DB2233E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EAF20514E;
-	Wed, 16 Oct 2024 09:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="dTwXUxgw"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F70C205E15;
+	Wed, 16 Oct 2024 09:21:40 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94851D90DD
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81325205E0D;
+	Wed, 16 Oct 2024 09:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729070456; cv=none; b=Cqt6BX5joOLaHo5sU4zrD9n6SWW9/LSoVnsG4/7Z8W9ZNigzd0VotF3VCP/L7AH0BTLXSO/SUDcQddX8yYhvpOew2yO5jCz3MesASq1NPlOnb8fMC9U/9JftKAEgo+trzAcqABL9LhruC8xJVnL70ooYY374/GWC7AX/OWb24uA=
+	t=1729070500; cv=none; b=RbHa75l8eVhhC3DSEo0zSMvaXynSLjZAk72P88nHXNV+8znrgjnc32UQ8kxWtAu2vAWybKwr5LrKOjmK68q3YVFQrXCvKd1+rI9dv4MIvPCqED6KCty07cMScvxiv1CpP2BQEtbRkhXbY9Mn8Tlpb5qWP9kpIYv6qRp61SaJ4EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729070456; c=relaxed/simple;
-	bh=ASnhTiI9Zj4VlqH3e6Vrg804fSxhSb+KIGUHBuAcIbI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=GAkS8l4sd9RfoPm0mJQu6q66eVvgEIJ7VlfkHVMvtjebvXmbi/DgXjCqi344cMhBaC+t+zWPuNRaQvE+Ap6kRekCWEPcRZankIG/VtI9xih1FeAYTMHOKeAv/bgjl/0MLMgFC3zVqetYqron9gX+pA/Lrb5Hc7s1Gvzr8cpMOGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=dTwXUxgw; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1729070500; c=relaxed/simple;
+	bh=Zmk0DMCi8BdU6gy+8tuTz5PJW3hPVFEifUbqgSaCYnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5zoP498Xd1y6/t5yRfhxlSFHRGwmzco0LDsjhsd/1dbtJUpFM+UiQXihw0AjrPCuYhDOCIJ4jOk3w4vo7odchdxPq1KHANjFFbihi9Eq2kYZfJUXCs3RaaoNxWXK/1YT8dq29W2PMOPeXd5fxGzMaFlDW5pnJjsJqg02eY3V+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id DFE9E1C00A2; Wed, 16 Oct 2024 11:21:29 +0200 (CEST)
+Date: Wed, 16 Oct 2024 11:21:29 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/791] 6.1.113-rc2 review
+Message-ID: <Zw+FmcvPJraq4EPz@duo.ucw.cz>
+References: <20241015112501.498328041@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1729070451;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ASnhTiI9Zj4VlqH3e6Vrg804fSxhSb+KIGUHBuAcIbI=;
-	b=dTwXUxgwWOSp/7cSq8f+Q9BrSVJvBcZpuWiRO/C0MuMXqKEy65LUdMFhyugjkPuiaKQX+J
-	XjcYVNA0Y2k03FXkPsghIoowCYUlgBDrEoW4XEybvokiVsAyLuVorWOxlD7DHgIii2hniw
-	CDLA70L/+bDiZRl/Kc/vXFA5BHJ3ZMNeccgsSOae5TJhiwckMViYuMGOaR7C9NI4RUIQ5Y
-	Ufy0KDNdklLmEWtzDW3b9g/PTcscWmYM25j4SQR720pEorD03PNfCcxsCTtzMlc6A1j7Xe
-	RfEUbXtSqypKLmD1EW8n6id4Q4C+7a/TNvnUNyZYAY/4umYI49rl3u8DB5c3cQ==
-Content-Type: multipart/signed;
- boundary=39b5e2c23b7ab15aaaaca0434076be4b6e0bbab25d73def0f3a97a2bb909;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Wed, 16 Oct 2024 11:20:39 +0200
-Message-Id: <D4X4BE9PTJ1Q.2TDYBLWRFYMYA@cknow.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Piotr Zalewski" <pZ010001011111@proton.me>, "Andy Yan"
- <andyshrk@163.com>
-Cc: <hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
- <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
- <dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <skhan@linuxfoundation.org>, "Daniel Stone" <daniel@fooishbar.org>, "Dragan
- Simic" <dsimic@manjaro.org>
-Subject: Re: [PATCH v5] rockchip/drm: vop2: add support for gamma LUT
-References: <20241014222022.571819-4-pZ010001011111@proton.me>
- <7b45f190.452f.1928e41b746.Coremail.andyshrk@163.com>
- <o_Cyz_ARcHj4zNlovv75MBwslIRhn3YWlscoNrlpLVobh7eWIMEQR5bNv0yhHx2KEx_gbYi_gH-8Y-CdvRZs9lZscz3-lhAbM50GXUdtSKY=@proton.me> <30940542.b36d.19290215124.Coremail.andyshrk@163.com> <1974DYrs9gLrQrZ5VwCglFgKDDK686iyqnS_g6uPB-s9wZ_4CqfZXPjmYWihLgrkRu7ptNjpkFeqB0uTt73RFId6cL8FowQ8LFltPmaKCoI=@proton.me> <1ae9f15d.e52.19292e05e73.Coremail.andyshrk@163.com> <QvjHFQ4xeCu-8Isrm_jtNRWLowVNFzC8qnHJ6LUGI2iFTTJoEK8fBrXjG9LUrn5Wt9fJ9F04ukEf-koifwCR0uH9nr0AelyiWI85KASNkOQ=@proton.me>
-In-Reply-To: <QvjHFQ4xeCu-8Isrm_jtNRWLowVNFzC8qnHJ6LUGI2iFTTJoEK8fBrXjG9LUrn5Wt9fJ9F04ukEf-koifwCR0uH9nr0AelyiWI85KASNkOQ=@proton.me>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Twvg5mkRtqF6fXoc"
+Content-Disposition: inline
+In-Reply-To: <20241015112501.498328041@linuxfoundation.org>
 
---39b5e2c23b7ab15aaaaca0434076be4b6e0bbab25d73def0f3a97a2bb909
+
+--Twvg5mkRtqF6fXoc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Wed Oct 16, 2024 at 11:16 AM CEST, Piotr Zalewski wrote:
-> I will rework it to[1] and test it. (Have to check if hdmi out on pt2 wor=
-ks).
+Hi!
 
-Last time I tried it, hdmi out did work.
+> This is the start of the stable review cycle for the 6.1.113 release.
+> There are 791 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
---39b5e2c23b7ab15aaaaca0434076be4b6e0bbab25d73def0f3a97a2bb909
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--Twvg5mkRtqF6fXoc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZw+FbAAKCRDXblvOeH7b
-bjJ/AP9HFSyCMdeIZVb5Xx2YLeCvCLYIdCd+0plBVEZMy44IyQEA7w7WGs8+Eh2X
-6nE2wlGoI5H/WUG0o0By0qK9bgse/gs=
-=BmBs
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZw+FmQAKCRAw5/Bqldv6
+8gY8AKCzYppavq0a7IHZTWHjFMrAoFhx4QCgsTVS8+LQWlppxDTo6UuzyNpmSyE=
+=Tthn
 -----END PGP SIGNATURE-----
 
---39b5e2c23b7ab15aaaaca0434076be4b6e0bbab25d73def0f3a97a2bb909--
+--Twvg5mkRtqF6fXoc--
 
