@@ -1,159 +1,160 @@
-Return-Path: <linux-kernel+bounces-368618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638EC9A1265
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4579A1270
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0ED286149
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A641C21B19
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0ED42139D1;
-	Wed, 16 Oct 2024 19:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165D52144B8;
+	Wed, 16 Oct 2024 19:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s+AE5uFV"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="cvkobwFk"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CD818B481;
-	Wed, 16 Oct 2024 19:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B223A212EF9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729106430; cv=none; b=SYQyiiaEWDYMRO+bu3b3+UU6r54trKY+CHOUSBcZ6jQWiAxVxRoppnlcxXeDIe1pY38O93exvSWH+yeGcUmzfvoHGbD+jUc3MyfZvf1yrmCRVud+e6gkKvICJ5OjTF0Xk6aTl5q7jtdYNizJ8tNfLOPD86MeHWHJDtIGvghoKs4=
+	t=1729106715; cv=none; b=ahcfuLjIfay/ZbC0s7Q6WiMtDXNX65wbp+t2HujdvQ6lAddFkWybgLbVktedR/L62mpEJqqqgXWgBmL76O7QDbW9qg98cHFBGGOSXFJ0vDrTfgB8ln3XtBlxDwIJ8dMhhjg4+0r4ce1K7ZiZtrvR2urs1oumMdOKTXrnsRHJyQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729106430; c=relaxed/simple;
-	bh=zy2vnCmqC5q8dP1XS7bM49+n95NVXsGGxJQUl+m54Ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgcrNH1zK6Zjvfxq7k7LV0bpRIVAz5Nrro8pGiw9oW80EeTB+iZ1FHZBMztKnML/qgziDGvlXiZBnNeyZk8i+H21TtK73zQoKBKkSa8sR0eazBcaH8qiPsIwDTn7KsSydranQW8JZimvO7OpsQnwHnGlDk+WATzk/nzxC9foTTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s+AE5uFV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=r2FMoZv7GZi36tQ4QRe51XXDDSE6b5fb9oopiYGqumo=; b=s+AE5uFVm06tAz5ZjzacGLzCuJ
-	7YUtR0tG2I+4egdsgithCbAgd3zsLGdV8yCaIEjKbeBgV87U71Ofh39b9aSu8hDRqf14HqKd1KZrE
-	vmWv06vwCWlEgqjpQ+ZysBpfND0RsjWHsYjxoX2/jifAMK6emeUb3AsW0FZQDmp0/MKAGPRdjCnY5
-	RmYUt/FDwOnzXNlD8SZxhtVXakkE+zrsYTk0T1kambUxLcvA2qKy2rZrvA8PGSBG4PhbxYIXWkMjV
-	10fV2Vuop+Bhe86fVueT9fbwJpx3ofurJWTW93Llo69b3bU2QYK8Fp0OeyG1jG4ijS2kmShyFtPkn
-	wvn5DgSA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t19Z6-00000008naR-10Hi;
-	Wed, 16 Oct 2024 19:20:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CE99B300777; Wed, 16 Oct 2024 21:20:11 +0200 (CEST)
-Date: Wed, 16 Oct 2024 21:20:11 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when
- comparing in percpu_add_op()
-Message-ID: <20241016192011.GY17263@noisy.programming.kicks-ass.net>
-References: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com>
- <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
+	s=arc-20240116; t=1729106715; c=relaxed/simple;
+	bh=aydxmUkA63wDYnemWtt5D14565/Yn90YGLFSu5WU2Lo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L22vOi5St+8LtGqZbLbqghnVsFtw8UJh9Ip7ziiIQL2gdJnvaQNsYNKJ8YeE0WMrsglPw1UIdFkmGGNsigzKq9g5CzNssApml50fGfx+APIPTQEuTG5AjOyWz/vyfkSg98gNz0KjzruIZqqAO/m2wiDPKHOd/1QpaKlUwoijImc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=cvkobwFk; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4603f64ef17so1510821cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1729106712; x=1729711512; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PnTj8Lsaioq+rT9KMPtZOlgLCzamtAdxNe82cXp5oXQ=;
+        b=cvkobwFkVgJ5o65CeWrDcr2Barp5oM6cNqMHxJGn4myixLz3+TAwYws/vxY+2Dfjgr
+         GS3YKlVQuJkRzVZ59uMgsG7SeC9gX/f3nT7MPZXK0sJi1Pkq7D71xTpM/mReYJs5KYVp
+         5kXzFUMSYP/K++CZpGcXhc+RG97hJlWMlR921RRUAKQui72keQ5SBkklOuEiLMKxuZjk
+         9e7833sfRmJh3IhcLjwviFeG83s+3Xr8McljJ0KnTa82/UpY+4H/LTAM+CN552Ss6REB
+         j2XvokVGGtRSoBJPS2/7A86rtVvaSm7jNs42k7GZGalq+IlPW07Vk/GU6YA+oqtdr3gq
+         TEIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729106712; x=1729711512;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PnTj8Lsaioq+rT9KMPtZOlgLCzamtAdxNe82cXp5oXQ=;
+        b=X4BJSwm0hx0P39iLIT6U592jd23xrIJAKvJvhUSBNKXm2d+1JrlX0pRbHmYWbPa+IJ
+         WlC0gYBGqBDG4pfpA939u+321DmflqG0udRpcL3wN5HY+oQEtR8+rdH5tgdQwlK7hBYq
+         7yaYZJxajy8zxzozJw8+zFiPH6WOLUykJxbfMwqFz1ZJWY+/5obupeK0kFu+2YChRvIY
+         3QFUUyci39IimiCJoqyTTjGiDQAPHTI8gNO8l/Zb89Ku+FoTZQRMkH9Jv+Ggo4lC4mZl
+         o+TExQChp7jwt+0PyCi3Rv0AJMvlMK0Ucll7hCg1R1bBtGFyKDnzd16v88noOQLHv6XH
+         TyxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8O8OnccfM0ZLMTxmG4nLRNagoTH1k5dNhJtM5Bs5FWlf7LTTAU8P9LRV+6g7ZVAIwgdUUvuKyrf9P3s8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZz1xOutaBDlyQITVZdmVF31ThCUXoSv3hQRvE5sf6LQ9r+1EN
+	9a3C0hHBgo4bAtJIe2TzmEIULXPejzQSv2NO1fCH2X+dTyaxtCLV4KbIYVm75EM=
+X-Google-Smtp-Source: AGHT+IFLVilbKzRtR60hRVdAb2iSSymL1i+DXwV1S5+mgYdi39fcAJXLybQT7kl4t9CDE81sORKOAQ==
+X-Received: by 2002:a05:622a:551a:b0:45f:890c:5f49 with SMTP id d75a77b69052e-4609b4e7150mr13277981cf.24.1729106712569;
+        Wed, 16 Oct 2024 12:25:12 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b38ce69sm20271651cf.90.2024.10.16.12.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 12:25:11 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: dan.j.williams@intel.com,
+	ira.weiny@intel.com,
+	david@redhat.com,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	hpa@zytor.com,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	rppt@kernel.org,
+	akpm@linux-foundation.org,
+	alison.schofield@intel.com,
+	Jonathan.Cameron@huawei.com,
+	rrichter@amd.com,
+	ytcoode@gmail.com,
+	haibo1.xu@intel.com,
+	dave.jiang@intel.com
+Subject: [PATCH v2 0/3] mm/memblock,x86,acpi: hotplug memory alignment advisement
+Date: Wed, 16 Oct 2024 15:24:42 -0400
+Message-ID: <20241016192445.3118-1-gourry@gourry.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 08:44:56AM -0700, Dave Hansen wrote:
-> Andy,
-> 
-> The subject here is not very informative.  It explains the "what" of the
-> patch, but not the "why".
-> 
-> A better subject might have been:
-> 
-> 	x86/percpu: Fix clang warning when dealing with unsigned types
-> 
-> > --- a/arch/x86/include/asm/percpu.h
-> > +++ b/arch/x86/include/asm/percpu.h
-> > @@ -234,9 +234,10 @@ do {									\
-> >   */
-> >  #define percpu_add_op(size, qual, var, val)				\
-> >  do {									\
-> > -	const int pao_ID__ = (__builtin_constant_p(val) &&		\
-> > -			      ((val) == 1 || (val) == -1)) ?		\
-> > -				(int)(val) : 0;				\
-> > +	const int pao_ID__ =						\
-> > +		(__builtin_constant_p(val) &&				\
-> > +			((val) == 1 ||					\
-> > +			 (val) == (typeof(val))-1)) ? (int)(val) : 0;	\
-> 
-> This doesn't _look_ right.
-> 
-> Let's assume 'val' is a u8.  (u8)-1 is 255, right?  So casting the -1
-> over to a u8 actually changed its value.  So the comparison that you
-> added would actually trigger for 255:
-> 
-> 	(val) == (typeof(val))-1))
-> 
-> 	255 == (u8)-1
-> 	255 == 255
+When physical address regions are not aligned to memory block size,
+the misaligned portion is lost (stranded capacity).
 
-Which is correct, no? Add of 255 to an u8 is the same as decrement one.
+Block size (min/max/selected) is architecture defined. Most architectures
+tend to use the minimum block size or some simplistic heurist. On x86,
+memory block size increases up to 2GB, and is otherwise fitted to the
+alignment of non-hotplug (special purpose memory).
 
-> That's not the end of the world because the pao_ID__ still ends up at
-> 255 and the lower if() falls into the "add" bucket, but it isn't great
-> for reading the macro.  It seems like it basically works on accident.
+CXL exposes its memory for management through the ACPI CEDT (CXL Early
+Detection Table) in a field called the CXL Fixed Memory Window.  Per
+the CXL specification, this memory must be aligned to at least 256MB.
 
-You're correct in that it does not achieve the desired result (in all
-cases). But this is because (int)(val) will never turn into -1 when val
-== 255.
+When a CFMW aligns on a size less than the block size, this causes a
+loss of up to 2GB per CFMW on x86.  It is not uncommon for CFMW to be
+allocated per-device - though this behavior is BIOS defined.
 
-> Wouldn't casting 'val' over to an int be shorter, more readable, not
-> have that logical false match *and* line up with the cast later on in
-> the expression?
-> 
->         const int pao_ID__ = (__builtin_constant_p(val) &&
->                               ((val) == 1 || (int)(val) == -1)) ?
-> 
->                                 (int)(val) : 0;
-> 
-> Other suggestions to make it more readable would be welcome.
+This patch set provides 3 things:
+ 1) implement advise/probe functions in mm/memblock.c to report/probe
+    architecture agnostic hotplug memory alignment advice.
+ 2) update x86 memblock size logic to consider the hotplug advice
+ 3) add code in acpi/numa/srat.c to report CFMW alignment advice
 
-This is very very wrong. No u8 value when cast to int will ever equal
--1. Notably (int)(u8)255 == 255.
+The advisement interfaces are design to be called during arch_init
+code prior to allocator and smp_init.  start_kernel will call these
+through setup_arch() (via acpi and mm/init_64.c on x86), which occurs
+prior to mm_core_init and smp_init - so no need for atomics.
 
-> Since I'm making comments, I would have really appreciated some extra
-> info here like why you are hitting this and nobody else is.  This is bog
-> standard code that everybody compiles.  Is clang use _that_ unusual?  Or
-> do most clang users just ignore all the warnings?  Or are you using a
-> bleeding edge version of clang that spits out new warnings that other
-> clang users aren't seeing?
+There's an attempt to signal callers to advise() that probe has already
+occurred, but this is predicated on the notion that probe() actually
+occurs (which presently only happens on x86). This is to assist debugging
+future users who may mistakenly call this after allocator or smp init.
 
-The code as is, is wrong, I don't think we'll ever end up in the dec
-case for 'short' unsigned types. Clang is just clever enough to realize
-this and issues a warning.
+Likewise, if probe() occurs more than once, we return -EBUSY to prevent
+inconsistent values from being reported - i.e. this interaction should
+happen exactly once, and all other behavior is an error / the probed
+value should be acquired via memory_block_size_bytes() instead.
 
-Something like so might work:
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Gregory Price <gourry@gourry.net>
 
-	const int pao_ID__ = __builtin_constant_p(val) ?
-				((typeof(var))(val) == 1 ? 1 :
-				 ((typeof(var))(val) == (typeof(var))-1 ? -1 : 0 )) : 0;
+Gregory Price (3):
+  mm/memblock: implement memblock_advise_size_order and probe functions
+  x86: probe memblock size advisement value during mm init
+  acpi,srat: reduce memory block size if CFMWS has a smaller alignment
 
-This should get, assuming typeof(var) is u8, a dec for both 255 and -1.
+ arch/x86/mm/init_64.c    | 16 +++++++++++++
+ drivers/acpi/numa/srat.c | 42 ++++++++++++++++++++++++++++++++++
+ include/linux/memblock.h |  2 ++
+ mm/memblock.c            | 49 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 109 insertions(+)
 
+-- 
+2.43.0
 
 
