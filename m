@@ -1,83 +1,125 @@
-Return-Path: <linux-kernel+bounces-368217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0D49A0CC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:35:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2989A0CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EE92B26F43
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF451F229F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDE1208D7A;
-	Wed, 16 Oct 2024 14:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F49B208D7D;
+	Wed, 16 Oct 2024 14:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="On8ulFps";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8bM/sX0L"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="fYujzWgt";
+	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="a9ubdfs1"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BCE1D1748;
-	Wed, 16 Oct 2024 14:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089306; cv=none; b=hRY0iUgcph3X2CYkxv4RG4QH1mOaEBwuX2uUFg23/gqQ6xmgrDmQHcqN3/vpVNGO4/4GyVypUEGV/5qDgIHLlEwMVTh/OtFiMeMHVXdnXTDBwm0HpsuRkaPOMi9Ed4hCPThmYLIre8ctm8h1LWgwwzYxPtFDrGnboP874zVEyRs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089306; c=relaxed/simple;
-	bh=pQMQXj/R2fZDK/7JoZqlsC3XPxjmyc64AUqjn4r+iLA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AO4MTjtSu+nNuju+GRGIq3bCd+Fv773+fGj/MQmj82JVa8mIt4QX9+XIbV0qt99WJzzN6kaXEMc10BnhUAen4YS5LRQXw0L77mEwlYlbu1KE4vMyAO5JKvXN2giyDP+yZ1rHJg9yY2Xwv5RHDq8t6CkzG+Y0qC4HxfyAEmzRb+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=On8ulFps; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8bM/sX0L; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729089302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pQMQXj/R2fZDK/7JoZqlsC3XPxjmyc64AUqjn4r+iLA=;
-	b=On8ulFpseIFW4ue5RlZ9mMhudTTqRw2BvQ8vYls+Jngd0o2oXS8rmd+80vzQN2Cbs0OPDi
-	ff3jbd3yxGLS7cQROyr84NrvmYkSJlVntQuIZenJlWiIZROG7NS9GGtchxivZbsF1X4p92
-	+lAQxvnLptBLEuZObfp8zDU3YgAjJWVdHf/thR4NAU1sXO7DcwoF1TSQE4iiQcR23mWhg6
-	El12KY9IADu8AoCd34PCzc4RAUYac1BQxBOcdSzLZUU0xIfN9vFXKExwK5sgChGpy7llTX
-	tgvX7fkekhncp2i877NlehYIHlcrQCeOELuoIYygRXbEt27i3OxQ8PICK7ZrOw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729089302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pQMQXj/R2fZDK/7JoZqlsC3XPxjmyc64AUqjn4r+iLA=;
-	b=8bM/sX0LvP1G6jFgAGGxNA1J0n5yRnB6o5NwHWQduoG2Xh7l/aIMJ3BQamTAATnFq6zHxh
-	DrPISF1cXIJSnHDw==
-To: Markus Elfring <Markus.Elfring@web.de>, Fabrizio Castro
- <fabrizio.castro.jz@renesas.com>, linux-renesas-soc@vger.kernel.org, Geert
- Uytterhoeven <geert+renesas@glider.be>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>, Chris Paterson
- <Chris.Paterson2@renesas.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [v4] irqchip/renesas-rzg2l: Fix missing put_device
-In-Reply-To: <692cabd4-038b-403a-b21e-69a2b0492e57@web.de>
-References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
- <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de> <871q0hdofq.ffs@tglx>
- <692cabd4-038b-403a-b21e-69a2b0492e57@web.de>
-Date: Wed, 16 Oct 2024 16:35:02 +0200
-Message-ID: <87iktsce09.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86881D1748;
+	Wed, 16 Oct 2024 14:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729089352; cv=pass; b=VdLhC/ikE+oFWtBLjU+JU4fwZFTciEomADG6s0SZKKzjYmroYQs/c9++/HjxYpZ2lQwvf66dsFfeQDV+DqjZf09rau/5vq/8yB35tYoM9TDt8QwLbzEHt88k0qI8yuJb5Hqoy8/LwDav4sJcKm6ECfjV7SfojHIpk0bAztnTEM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729089352; c=relaxed/simple;
+	bh=h419Z3V/aaon8M+3jOc/PFtlEbfPppa2NuFJJYYWug0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ttRYze1nBH4qTimCr+UuQdYI0xN4vBJgPrwjNm1SbmHWzsu49Ycmr2+hKayngcX1Dfc+qe4ceCN7BGXsYg5hOr1FO3J2GqVkLMCsnd6Dk0vK8tNsLe5hylyne+aJ+EPfnpTqU+jJDCpBsJ+UJNIBBdX7DzIzZBJVGSq2RcAZyAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de; spf=pass smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=fYujzWgt; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=a9ubdfs1; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aepfle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1729089329; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=rR+kvGYFCfnPj2RXfUAtlM2IOsISuYY0xe6jYO2hyzaHB0ydLzYs/fQGhk89bK3vmf
+    I8Dr79XuHU8lk52rN/m0cMbmQdYfBFBFH/IuNZ31h2f130/aIFKZLblMmMLBwa8s2h8T
+    gidevjjxZRaWbvvP7H9lE8YuaMThUUa43WU7VQ6ex+r3W61/3yZprT5hG0nzJqSBlQ+e
+    YZULZqc7BApa8Y4DB7Qm7APu+RpMQ03iUOPOr0Bo6fcY3JBZkyOuqqa3oF2IkktISm5t
+    /AWtG7PRFPxzQU/L14hlssjvMjrUk1O5lMyWvTRIE/gohKrODVdHJjcQuYxN/OnBaJR3
+    zG9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1729089329;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Io0PU/P9fjKf7Ebpo/yC87JDg+SO2JBL1gLbqaKaO6Y=;
+    b=CeLy5/Bu4cwKhe3stRc+tuve9dSWmEF+b8SEZR2PgYF+IrNFOv2Cjb8vmGoZG1zI7u
+    e96QCIciHutRJHsPFLmROrfazHIPqinMllMuc230PkT50dVf+MEISIN3nvwI+XblQaYd
+    K5+eOCxSc9I73LY/z8YrWgTFXB5RV8uhMjNpTJ9hCMlgAQTZ2shmOhCdQpGGjtFHOhDA
+    cPjJtxLFdhUk5FiH07kDOONs9mUkmWRO1PD++CIyU5LPa1ytdnj3FtRE8JQLpGciCjT0
+    YAokLl5d5YcW1auz8FQlvaZhyowRZApEzhfm0oX5P2ppFaBxqsDRDA0iWx0T2dV3fl6/
+    wXQw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1729089329;
+    s=strato-dkim-0002; d=aepfle.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Io0PU/P9fjKf7Ebpo/yC87JDg+SO2JBL1gLbqaKaO6Y=;
+    b=fYujzWgtfdf9EQBKAa9cFSI4bhM+bDccn6H2Cc40exF2qWlk9LqROGd4tXHAx0JLCa
+    dIuuVwu8GtmxAffARfLVCxo+aFJr3SYWPhhDdCl4qsDZNkLqFwlmvtgRVprmv1se7k9G
+    1RB/d4BekB+C/3Jt1FOZldL3CbdypAwxvm+/6uaAiedMAcGAMZpBJu/LDSxOgYVrFk2J
+    sOCFPAaFg6fKevB/Lf/1vAlIPD21Es3tSOqjgthyvpX9HtSgRXeM5JXNdjkHnvVd0Uta
+    OyVDKGBzlxgKM2F/VkvKcSQusCL/L3E3amfxD4Cj3acEK92lHdOQtxemvstNGGq3CjOF
+    ZnCA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1729089329;
+    s=strato-dkim-0003; d=aepfle.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Io0PU/P9fjKf7Ebpo/yC87JDg+SO2JBL1gLbqaKaO6Y=;
+    b=a9ubdfs1rte67GGEkwM78ysjxzI7og6sIds3ttzpgqy7jMspeC+UYI2Z/1K7YqQkBJ
+    iDVSTNUlHcAdtZvCWgAw==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAg4x9Fz7RcwtehfOImJwE3/YIR5VTNLPLdtEAAwSMQ=="
+Received: from sender
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id Dd652509GEZT8oc
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 16 Oct 2024 16:35:29 +0200 (CEST)
+From: Olaf Hering <olaf@aepfle.de>
+To: Wei Liu <wei.liu@kernel.org>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Dexuan Cui <decui@microsoft.com>
+Subject: [PATCH v1] tools: hv: change permissions of NetworkManager configuration file
+Date: Wed, 16 Oct 2024 16:35:10 +0200
+Message-ID: <20241016143521.3735-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Oct 16 2024 at 11:38, Markus Elfring wrote:
->> We are not doing cleanups in a bug fix.
->
-> Additional adjustments can be offered in subsequent update steps
-> (within a patch series?).
+Align permissions of the resulting .nmconnection file, instead of
+the input file from hv_kvp_daemon. To avoid the tiny time frame
+where the output file is world-readable, use umask instead of chmod.
 
-Feel free to send patches.
+Fixes: 42999c90 ("Support for keyfile based connection profile")
+
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
+ tools/hv/hv_set_ifconfig.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/hv/hv_set_ifconfig.sh b/tools/hv/hv_set_ifconfig.sh
+index 440a91b35823..2f8baed2b8f7 100755
+--- a/tools/hv/hv_set_ifconfig.sh
++++ b/tools/hv/hv_set_ifconfig.sh
+@@ -81,7 +81,7 @@ echo "ONBOOT=yes" >> $1
+ 
+ cp $1 /etc/sysconfig/network-scripts/
+ 
+-chmod 600 $2
++umask 0177
+ interface=$(echo $2 | awk -F - '{ print $2 }')
+ filename="${2##*/}"
+ 
 
