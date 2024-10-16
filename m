@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-367134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777A599FEFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:43:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A090599FEFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D431B245D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6A81F22032
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129F4165EE8;
-	Wed, 16 Oct 2024 02:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F65C161326;
+	Wed, 16 Oct 2024 02:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AdCpU6lF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C4cMOhWo"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E103141C7F;
-	Wed, 16 Oct 2024 02:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895D01531CC
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729046611; cv=none; b=kPKRdWJ3kXkqpJ9n7u2HGgP7I7V9stCpuFqRG7+jYp307NtyhV3tYF8Ho77qlPNkkD0YoANmxRt568dGRp4IXg2IobmyfcpN1HXJNxoHcjJzweAT9pYOcfPU7kIAs6zGgl0ES8ej0o9aLx42Rayk+dSNjAssyrStY6VVHLz0XvE=
+	t=1729046613; cv=none; b=roDM+jqymNSPblhMBwPzs1eGTcALI7AsTqgo73LBgbNo8QGv1/opiKg/O+sFWU5ASI6B0uSYsWL8PNtyNfRfbstWjFG7x12MLHpoUJWHapm3zLE+wKgDpWwfIZYG0Ic2XmEdXbvKVHpZM1o08lzx7HUzbCdO3cqBcHHtM4WrzWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729046611; c=relaxed/simple;
-	bh=gmClh4vC9apW7WXPxFb5ohfP2cG8mfYVLZj/iwBafnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OLH8jFtI/bDE9Po6toch1snxbUwKLr2bRTsI/wo7Vth76/xPy3JxGN/G8oiwuGxxNTNFj9uZHVPN1Sz9SwXktShxn6p83x5MsAQpbvEWk9iR2xi/s9KkGIrcSFfIeu3skoeLgqJTfufFcFfqA7pVtBjWit+VcF3gEfHa61iDXT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AdCpU6lF; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729046610; x=1760582610;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=gmClh4vC9apW7WXPxFb5ohfP2cG8mfYVLZj/iwBafnc=;
-  b=AdCpU6lF9lPtOs12xFijF+jzIsgyo+f3EfRFWSy42lFdPyqNrBAnWFqb
-   vzgk0Ysw0GtBL4mz22gWjzZXEISCkj8ry3oS5fb3xlwYVrBySORhKa7ap
-   zU8ofy2nvRADReEZDQcxkqPZ6w3YCf+TnHZVNQKLPtwI0Q7tT624BE2bw
-   9J8qfrW0Dlizum/ClNEWn/GxHvej9PsE4TushBB8tIQZ1jaBL6V26puV1
-   CYtd0pxyOn2yWwMuuQhXBe9jrk+YJBg3UORUddmq2W3dm8YvsPPTIYH55
-   /eq5WRY5yixFzBIkgj9jbRV3e4HVWfYWj2EZB3iuVJv350nOz07iDB4Om
-   Q==;
-X-CSE-ConnectionGUID: M/4toGfDQD2od/dSXGFjBg==
-X-CSE-MsgGUID: 65ajBRTVSo+4S8G6KUEADQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="31347173"
-X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
-   d="scan'208";a="31347173"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 19:43:29 -0700
-X-CSE-ConnectionGUID: /kM2ZodySLSglj5Kci5apA==
-X-CSE-MsgGUID: DmkaH0FiS9GME18WLuBayA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
-   d="scan'208";a="78545703"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 15 Oct 2024 19:43:27 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t0u0T-000KBU-0V;
-	Wed, 16 Oct 2024 02:43:25 +0000
-Date: Wed, 16 Oct 2024 10:42:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	linux-doc@vger.kernel.org
-Subject: [tip:timers/core 40/40] htmldocs: Warning: drivers/regulator/core.c
- references a file that doesn't exist: Documentation/timers/timers-howto.rst
-Message-ID: <202410161059.a0f6IBwj-lkp@intel.com>
+	s=arc-20240116; t=1729046613; c=relaxed/simple;
+	bh=5quQ9Z0Z7oHrCaae6DYZXYqEEC6z7KWjNFlHX9O+WfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=otD8xYnb5sC3TTfFW3qCXXz2xG+RMMHqB8LKjdcAEj6uZIGXvPdV4eKhkyiXErcJQ10QZTwctH3uAvildkDnekc5SQOs5fxjHcOnZezQHPkPY+Ovb+BYcgiC//0Mp/yBMmvJY+OdmXblYzKrkZMKljVIJJWS0vs1C8vFPt541kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C4cMOhWo; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <5f64d14a-4de3-4abe-a0be-9288c2594cdb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729046608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pSaXD5yyprV6bSzARBG4h8KizvJMBQBv9KzMrwwDgvs=;
+	b=C4cMOhWoqx+tyJFg5CUAMnEbOvgh3AuGWQIgG/g34fXpfURtu5nB9aiav7goxR4KT6nEEz
+	n37G6spoazyKYON98bIYAtrf+gvABTzWldLm8gViQUv0KZkrXynZHbhPef6VnJ0FachHNN
+	swnN7gmeRfw6445WEVYZGRJ7rVcmorY=
+Date: Wed, 16 Oct 2024 10:43:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: Re: [PATCH v5 1/3] Docs/zh_CN: Translate page_tables.rst to
+ Simplified Chinese
+To: Pengyu Zhang <zpenya1314@gmail.com>, alexs@kernel.org,
+ siyanteng@loongson.cn, corbet@lwn.net, seakeel@gmail.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yaxin_wang_uestc@163.com, zenghui.yu@linux.dev
+References: <20241015154301.4736-1-zpenya1314@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20241015154301.4736-1-zpenya1314@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Anna-Maria,
 
-First bad commit (maybe != root cause):
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-head:   1f455f601e2060497f9883991e8d5e79fbc7b047
-commit: 1f455f601e2060497f9883991e8d5e79fbc7b047 [40/40] timers/Documentation: Cleanup delay/sleep documentation
-reproduce: (https://download.01.org/0day-ci/archive/20241016/202410161059.a0f6IBwj-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410161059.a0f6IBwj-lkp@intel.com/
+在 2024/10/15 23:43, Pengyu Zhang 写道:
+> Hi Yanteng
+>
+>>> +随着内存容量的增加，久而久之层级结构逐渐加深。Linux 最初使用 4KB 页面和一个名为
+>>> +`swapper_pg_dir` 的页表，该页表拥有 1024 个条目(entries)，覆盖 4MB 的内存，
+>>> +事实上Torvald 的第一台计算机正好就有 4MB 物理内存。条目在这张表中被称为 *PTE*:s
+>>> +- 页表条目(page table entries)。
+>> page table entries -> 页表项。 So:
+>> 每一个页表项在这张表中被称为 *PTE*:s
+>>
+>>> +
+>>> +软件页表层级结构反映了页表硬件已经变得分层化的事实，而这种分层化的目的是为了节省
+>>> +页表内存并加快地址映射速度。
+>>> +
+>>> +当然，人们可以想象一张拥有大量条目的单一线性的页表将整个内存分为一个个页。而且，
+>> Hmm， let's exec %s/条目/页表项 in vim.
+> This translation is indeed the most confusing part for me. When 'entry' appears
+> on its own, I previously tended to translate it as '表项'.  However, I noticed
+> that other Chinese documents have used '条目', so I reused their translation.
+> In our context, though, I believe 'page table entries' and 'entry' are better
+> translated as'页表项' and '表项' respectively.
+Many things are chaotic in their early stages, and Chinese translations 
+are no exception. However,
+we are working to change this situation, for example:
+Documentation/translations/zh_CN/glossary.rst
+> How about exec s/页表条目/页表项 and s/条目/表项.
+I think that's OK; if you don't mind, you can go ahead and add it to the 
+glossary.
 
-All warnings (new ones prefixed by >>):
+Thank，
+Yanteng
 
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
-   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
->> Warning: drivers/regulator/core.c references a file that doesn't exist: Documentation/timers/timers-howto.rst
-   Using alabaster theme
+>
+> Thanks,
+> Pengyu
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
