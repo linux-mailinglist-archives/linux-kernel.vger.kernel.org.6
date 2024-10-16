@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-367046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E41199FE0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:12:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88B599FE15
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23870288D36
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:12:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498731F26488
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667507405A;
-	Wed, 16 Oct 2024 01:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9855A3A8F0;
+	Wed, 16 Oct 2024 01:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="gLW1l2Dh"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0A8433C0;
-	Wed, 16 Oct 2024 01:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="YpS2mcL6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C660EAD8
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729040973; cv=none; b=LEW6rG9/rkOADNumVk+RFJyzWlIT78bHrtLUskfSUJbm2TnS+ErtRrW/FnB/gcuHyD2YWush1AXPpHXWDTd0MZerds6aikHdZAsZ0skpxAPGFAaD0p+oqUyYiBeAs5+k5G86+lJsvQ92OjzRD4RFDth5UkfxhuaetBLRO1xGnPM=
+	t=1729041222; cv=none; b=RLgBw0NgRZc8un/hC/ID/f7R3XBgV+Xu3NyDTUEZ2a/sUQagHwUp/FfLGaWLzKuj8joi9MXV9E55Po3rpDO/LdrR8L8TIov+3VJST9jkbG5fEChdPJFDKS/CsbO9Gm5a/Qz9GUSZXqHWlzu7c/W2ZGVWMwjAar92JZE5eHwzYg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729040973; c=relaxed/simple;
-	bh=QB8nv0mgmERydGi8qLYufLLFealMe6fq/N6zy54RpZA=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Hn+79LBm2gR91tIVMXGT06P6syVfchKiS9gDo1RCsBQXwiN/WxbFq/9XUL80kmiZ5+AO4Q4wqX52fjMOJXEIVfyIi8P6hmof6tqWE8cApEEN2fpFcgl5R9l2TQbPBbeLtztx6/E+hsMQumg2YTj66nestMlGbaKej2Fm470TgmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=gLW1l2Dh; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1729041222; c=relaxed/simple;
+	bh=LlMvX1u/aZun/Cj+2Ut5XXqlyLiUxfzKdE/LlLGMhW4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=jvZ4mUAU7g81rc7ZyTmrc5lMUmxuXFpYsDP7Fi2+oJC+r3p4aYQVuuVvQOdF4nu2ZCM1E/LpAqHuDm0EibR/vC2wPRtcV3VYdHEbIzHqUT51wKw+zSuqMgv5fn3zmYFTHgdu625LjjOyMQCBWsdMXoJsBVhWWQyNCjGpgfnBr88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=YpS2mcL6 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=O2wrtQeBkCB38wP4gV4qBGfHrLsFLIPdqiJchweefcE=; b=Y
+	pS2mcL6o9Hd2Knvld4yS1U7WKjQCgEgvuQFb5W1OhWPzXd1K8i5rYuUYLLPDP9jw
+	T/3UNX+CBQ0T3h07Ycmt0lRCd7UqR8RxxuMqEf70T4QnWrAAwgsxY4rgg1zhbjgH
+	bOLY8nYocJEPB+u4mz9wtSH+CR3F7AFtPI1QuIuM3s=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-105 (Coremail) ; Wed, 16 Oct 2024 09:10:30 +0800
+ (CST)
+Date: Wed, 16 Oct 2024 09:10:30 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Piotr Zalewski" <pZ010001011111@proton.me>
+Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, "Daniel Stone" <daniel@fooishbar.org>, 
+	"Dragan Simic" <dsimic@manjaro.org>, 
+	"Diederik de Haas" <didi.debian@cknow.org>
+Subject: Re:Re:Re:[PATCH v5] rockchip/drm: vop2: add support for gamma LUT
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <1974DYrs9gLrQrZ5VwCglFgKDDK686iyqnS_g6uPB-s9wZ_4CqfZXPjmYWihLgrkRu7ptNjpkFeqB0uTt73RFId6cL8FowQ8LFltPmaKCoI=@proton.me>
+References: <20241014222022.571819-4-pZ010001011111@proton.me>
+ <7b45f190.452f.1928e41b746.Coremail.andyshrk@163.com>
+ <o_Cyz_ARcHj4zNlovv75MBwslIRhn3YWlscoNrlpLVobh7eWIMEQR5bNv0yhHx2KEx_gbYi_gH-8Y-CdvRZs9lZscz3-lhAbM50GXUdtSKY=@proton.me>
+ <30940542.b36d.19290215124.Coremail.andyshrk@163.com>
+ <1974DYrs9gLrQrZ5VwCglFgKDDK686iyqnS_g6uPB-s9wZ_4CqfZXPjmYWihLgrkRu7ptNjpkFeqB0uTt73RFId6cL8FowQ8LFltPmaKCoI=@proton.me>
+X-NTES-SC: AL_Qu2ZC/yfvkgo5ieeYukXn0kXhec2W8Czvvgg34JRP5k0tyTsxzgGbW9cHXjP+s6ULwOhoAi6XyNfxM5FYqxheYdcoK+gaNV3RtBFHaU1nGk4
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1729040962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q62TzgJVkucL37i2DOtU/nMFPRmh8xCYuwUlxEw9sIs=;
-	b=gLW1l2DhyXVLupEjarCByz0tD8ShAZZzloSBhFAKSRaxZx+TVF3cxBP5F7h6wFQckjGSZt
-	yFQ4xPp1HJBivkYsPUVWbaHtnN5HZ86UKo7H18t3/8zBBETrnjcPv8XZ0Pm5nqqZV95tTM
-	y0HR1QhvZxfNnwjKZFOL6cdfKKI257FDheLAtbMHBGU32xw5DF+K8EgNNRdrQN30l0J9u9
-	xUPgBgIf5xCxBy/4ZNtWrxhi8Fc3daJRRgjqlFIzXeQeKtLqyojElj2IJ8Q/o04usCp62x
-	isdsq4tligJ6g9VPgYNdT/hyUyr4A+KdWQ/AF8FLLtcwz2dDpT9nuVP0lkZ8oA==
-Date: Wed, 16 Oct 2024 03:09:20 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Cenk Uluisik <cenk.uluisik@googlemail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Chris
- Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>, Andy Yan
- <andyshrk@163.com>, Tim Lunn <tim@feathertop.org>, Jagan Teki
- <jagan@edgeble.ai>, Michael Riesch <michael.riesch@wolfvision.net>, Jimmy
- Hon <honyuenkwun@gmail.com>, Jing Luo <jing@jing.rocks>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] arm64: dts: rockchip: Add rk3588-orangepi-5b
- device tree and refactor
-In-Reply-To: <CAAWLpRtOcxc7=EAw6NPtkwqCNJ0LRE50StjZ4h4ra7wvhsyeaA@mail.gmail.com>
-References: <20241015192905.28969-1-cenk.uluisik@googlemail.com>
- <20241015192905.28969-2-cenk.uluisik@googlemail.com>
- <CAAWLpRtOcxc7=EAw6NPtkwqCNJ0LRE50StjZ4h4ra7wvhsyeaA@mail.gmail.com>
-Message-ID: <03103381f2a356b4a23ead545e456460@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Message-ID: <1ae9f15d.e52.19292e05e73.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:aSgvCgDnTz6GEg9ncJgOAA--.31233W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQB6XmcPD5hNtgABsI
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hello Cenk,
-
-On 2024-10-15 21:33, Cenk Uluisik wrote:
-> I accidently didnt save the Patch Version on the first email, it's the
-> same patch but with fixed versioning. It was an accident, sorry.
-
-As I suggested already, it's always a good idea to send patches
-to your own email address first, before sending them to the ML(s),
-to check the patches one last time and make sure everything looks
-good.  That's the way I do it, FWIW.
-
-> Am Di., 15. Okt. 2024 um 21:29 Uhr schrieb Cenk Uluisik
-> <cenk.uluisik@googlemail.com>:
-> 
->> Implements a slightly modified rk3588s-orangepi-5b.dts from the
->> vendor.
->> Unfortunately the &wireless_bluetooth and &wireless_wlan are not
->> implemented yet.
->> 
->> Bigger parts of the rk3588s-orangepi-5.dts file were moved into a
->> new
->> rk3588s-orangepi-5.dtsi file, so that both device trees from the
->> orangepi-5 and 5b include from it and avoid including from the .dts.
->> 
->> This changes the Orange Pi 5's sdmmc alias to be mmc1, breaking
->> existing
->> users if they used the /dev/mmc0 device file, so it's consistent
->> with all
->> the other rk3588 DTS, which, is also the new default that rockchip
->> wants
->> to use.
->> https://github.com/orangepi-xunlong/linux-orangepi/commit/
->> bce92d16b230b8e93c2831fb7768839fd7bbab04
->> Therefore add the sdhc alias to be mmc0 on the
->> rk3588s-orangepi-5b.dts.
->> 
->> The "enable-active-low" warning is addressed here:
->> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/
->> 
-> commit/?h=v6.12-armsoc/dtsfixes&id=f4d29bebaa6118c1e51e8f1c21ce2b34f43e1479
->> The "leds-gpio" warning was already there because the DTS checking
->> script
->> might not like the ID, which is probably avoidable by renaming it,
->> but this
->> will be addressed in a seperate issue.
->> 
->> How does this board differ from the original Orange Pi 5?
->> - the Orange Pi 5 has a M.2 NVMe M-key PCI 2.0x1
->> slot (hooked to combphy0_ps) whereas the Orange Pi 5b uses
->> combphy0_ps
->> for the WiFi.
->> - The Orange Pi 5 with the M.2 socket has a regulator defined
->> hooked to
->> "GPIO0_C5" (i.e. PCIE_PWREN_H) whereas the Orange Pi 5B has
->> GPIO0_C5
->> hooked to BT_WAKE_HOST.
->> - builtin eMMC storage
->> - no SPI NOR flash (u-boot, preboot etc. initiates
->> from within the eMMC
->> storage)
->> - ap6275p Wifi module (like the Orange Pi 5 Plus)
->> - builtin BlueTooth module
->> 
->> Signed-off-by: Cenk Uluisik <cenk.uluisik@googlemail.com>
+CkhpIFBpb3RyLAoKQXQgMjAyNC0xMC0xNiAwNDoxMzo0MCwgIlBpb3RyIFphbGV3c2tpIiA8cFow
+MTAwMDEwMTExMTFAcHJvdG9uLm1lPiB3cm90ZToKPkhpIEFuZHkKPgo+T24gVHVlc2RheSwgT2N0
+b2JlciAxNXRoLCAyMDI0IGF0IDI6MjIgUE0sIEFuZHkgWWFuIDxhbmR5c2hya0AxNjMuY29tPiB3
+cm90ZToKPgo+PiA+ID4gPiArIHN0cnVjdCB2b3AyX3ZpZGVvX3BvcnQgKnZwLAo+PiA+ID4gPiAr
+IHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPj4gPiA+ID4gKyBzdHJ1Y3QgZHJtX2NydGNfc3RhdGUg
+KmNydGNfc3RhdGUpCj4+ID4gPiA+ICt7Cj4+ID4gPiA+ICsKPj4gPiA+ID4gKyBpZiAodm9wMi0+
+bHV0X3JlZ3MgJiYgY3J0Y19zdGF0ZS0+Y29sb3JfbWdtdF9jaGFuZ2VkKSB7Cj4+ID4gPiA+ICsg
+aWYgKCFjcnRjX3N0YXRlLT5nYW1tYV9sdXQpIHsKPj4gPiA+ID4gKyB2b3AyX3ZwX2RzcF9sdXRf
+ZGlzYWJsZSh2cCk7Cj4+ID4gPiA+ICsgcmV0dXJuOwo+PiA+ID4gPiArIH0KPj4gPiA+ID4gKwo+
+PiA+ID4gPiArIGlmICh2b3AyX3N1cHBvcnRzX3NlYW1sZXNzX2dhbW1hX2x1dF91cGRhdGUodm9w
+MikpIHsKPj4gPiA+IAo+PiA+ID4gSSB0aGluayBpdCdzIGJldHRlcnkgdG8gY2hlY2sgZm9yIHJr
+MzU2OC9yazM1NjYgaGVyZSwgdGhlIG5ld2VyIHNvYyB3aWxsIGFsbCBmb2xsb3cKPj4gPiA+IHJr
+MzU4OCBzdXBwb3J0IHNlYW1sZXNzIGdhbW1hIGx1dCB1cGRhdGUuCj4+ID4gCj4+ID4gSSB3aWxs
+IGNoYW5nZSBpbiB0aGUgbmV4dCB2ZXJzaW9uLgo+PiA+IAo+PiA+ID4gPiArIHZvcDJfd3JpdGVs
+KHZvcDIsIFJLMzU2OF9MVVRfUE9SVF9TRUwsIEZJRUxEX1BSRVAoCj4+ID4gPiA+ICsgUkszNTg4
+X0xVVF9QT1JUX1NFTF9fR0FNTUFfQUhCX1dSSVRFX1NFTCwKPj4gPiA+ID4gKyB2cC0+aWQpKTsK
+Pj4gPiA+ID4gKyB2b3AyX2NydGNfd3JpdGVfZ2FtbWFfbHV0KHZvcDIsIGNydGMpOwo+PiA+ID4g
+PiArIHZvcDJfdnBfZHNwX2x1dF9lbmFibGUodnApOwo+PiA+ID4gPiArIHZvcDJfdnBfZHNwX2x1
+dF91cGRhdGVfZW5hYmxlKHZwKTsKPj4gPiA+ID4gKyB9IGVsc2Ugewo+PiA+ID4gCj4+ID4gPiBB
+cyBmb3IgcmszNTY2LzY4LCB3ZSBzaG91bGQgZG8gZXhjbHVzaXZlIGNoZWNrIGhlcmUsIGJlY2F1
+c2UgdGhlcmUgaXMgb25seQo+PiA+ID4gb25lIGdhbW1hICwgb25seSBvbmUgVlAgY2FuIHVzZSBp
+dCBhdCBhIHRpbWUuIFNlZSBteSBjb21tZW50cyBpbiBWMzoKPj4gPiAKPj4gPiBXaGF0IGRvIHlv
+dSBtZWFuIGV4YWN0bHkgYnkgZXhjbHVzaXZlIGNoZWNrIGluIHRoaXMgY2FzZS5JdCdzIHRydWUg
+dGhhdAo+PiA+IGdhbW1hIExVVCBpcyBzaGFyZWQgYWNyb3NzIHZpZGVvIHBvcnRzIGluIHJrMzU2
+eCBidXQsIGlmIEkgY29ycmVjdGx5Cj4+ID4gdW5kZXJzdGFuZCwgdGhpcyBkb2Vzbid0IGZvcmJp
+ZCB0byByZXByb2dyYW0gTFVUIHBvcnQgc2VsIGFuZCBhbGxvdyBvdGhlcgo+PiA+IFZQIHRvIHVz
+ZSBnYW1tYSBMVVQuCj4+IAo+PiAKPj4gWWVzLCB3ZSBjYW4gcmVwcm9ncmFtIExVVCBwb3J0IHNl
+bCwgYnV0IHdlIG5lZWQgdG8gbWFrZSBzdXJlIHRoZSB0aGUgZHNwX2x1dF9lbiBiaXQgaW4gVlB4
+IGlzIGNsZWFyZWQgaWYgd2UKPj4gd2FudCByZXByb2dyYW0gTFVUIHBvcnQgc2VsIGZvcm0gVlB4
+IHRvIFZQeS4KPj4gCj4KPk9rIEkgZ2V0IGl0IG5vdy4gSXMgc3VjaCByZXdvcmsgY29ycmVjdD8g
+LSB3aGVuIGdhbW1hIExVVCBmb3IgcmszNTZ4IGlzCj5iZWluZyBzZXQsIGluc3RlYWQgb2YgZGlz
+YWJsaW5nIHRoZSBMVVQgYmVmb3JlIHRoZSBnYW1tYSBMVVQgd3JpdGUgZm9yIHRoZQo+Y3VycmVu
+dCBDUlRDJ3MgdmlkZW8gcG9ydCwgYWN0aXZlIHZpZGVvIHBvcnQgaXMgc2VsZWN0ZWQuIFNlbGVj
+dGlvbiBpcyAKPmJhc2VkIG9uIGlmIERTUCBMVVQgRU4gYml0IGlzIHNldCBmb3IgcGFydGljdWxh
+ciB2aWRlbyBwb3J0LiBlZzoKCklmIHRoZSB1c2Vyc3BhY2Ugd2FudCB0byBzZXQgZ2FtbWEgZm9y
+IENSVEN4LCAgdGhlbiB0aGF0IGlzIGluZGVlZCB3aGVyZSB0aGV5IHdhbnQgdG8gc2V0IHRoZQpn
+YW1tYSBvbuOAglRoZSBkcml2ZXIgc2lsZW50bHkgc2V0cyB0aGUgZ2FtbWEgb24gYW5vdGhlciBD
+UlRDLCB3aGljaCBpcyBub3Qgd2hhdCB0aGUgdXNlciB3YW50cy4KCkkgdGhpbmsgdGhlcmUgYXJl
+IHR3byBvcHRpb25z77yaCu+8iDHvvIlyZXR1cm4gYSBlcnJvciBpZiBnYW1tYSBpcyBlbmFibGUg
+b24gb3RoZXIgQ1JUQ++8jCB0aGlzIGlzIHdoYXQgd2UgZG9uZSBpbiBvdXIgQlNQIGNvZGVbMV0K
+ICAoMikgIGRpc2FibGUgdGhlIGRzcF9sdXQgb24gcHJpdmlvdXMgQ1JUQywgdGhlbiBzd2l0Y2gg
+dG8gdGhlIGN1cnJlbnQgQ1JUQyB3aGljaCB1c2Vyc3BhY2Ugd2FudHMuCgpbMV1odHRwczovL2dp
+dGh1Yi5jb20vYXJtYmlhbi9saW51eC1yb2NrY2hpcC9ibG9iL3JrMzU3Ni02LjEtZGV2LTIwMjRf
+MDRfMTkvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMjTDM2NjYK
+Cgo+YGBgCj5zdGF0aWMgc3RydWN0IHZvcDJfdmlkZW9fcG9ydCAqdm9wMl92cF9kc3BfbHV0X2dl
+dF9hY3RpdmVfdnAoc3RydWN0IHZvcDIgKnZvcDIpCj57Cj4Jc3RydWN0IHZvcDJfdmlkZW9fcG9y
+dCAqdnA7Cj4JaW50IGk7Cj4JZm9yIChpID0gMDsgaSA8IHZvcDItPmRhdGEtPm5yX3ZwczsgaSsr
+KSB7Cj4JCXZwID0gJnZvcDItPnZwc1tpXTsKPgo+CQlpZiAodnAtPmNydGMuZGV2ICE9IE5VTEwg
+JiYgdm9wMl92cF9kc3BfbHV0X2lzX2VuYWJsZWQodnApKSB7Cj4JCQlyZXR1cm4gdnA7Cj4JCX0K
+Pgl9Cj4JcmV0dXJuIE5VTEw7Cj59Cj4KPiguLi4pCj4KPnN0cnVjdCB2b3AyX3ZpZGVvX3BvcnQg
+KmFjdGl2ZV92cCA9IHZvcDJfdnBfZHNwX2x1dF9nZXRfYWN0aXZlX3ZwKHZvcDIpOwo+Cj5pZiAo
+YWN0aXZlX3ZwKSB7Cj4Jdm9wMl92cF9kc3BfbHV0X2Rpc2FibGUoYWN0aXZlX3ZwKTsKPgl2b3Ay
+X2NmZ19kb25lKGFjdGl2ZV92cCk7Cj4JaWYgKCF2b3AyX3ZwX2RzcF9sdXRfcG9sbF9kaXNhYmxl
+KGFjdGl2ZV92cCkpCj4JCXJldHVybjsKPn0KPgo+dm9wMl93cml0ZWwodm9wMiwgUkszNTY4X0xV
+VF9QT1JUX1NFTCwgdnAtPmlkKTsKPnZvcDJfY3J0Y193cml0ZV9nYW1tYV9sdXQodm9wMiwgY3J0
+Yyk7Cj52b3AyX3ZwX2RzcF9sdXRfZW5hYmxlKHZwKTsKPmBgYAo+Cj4KPj4gPiA+ID4gCj4+ID4g
+PiA+IGRybV9jcnRjX2hlbHBlcl9hZGQoJnZwLT5jcnRjLCAmdm9wMl9jcnRjX2hlbHBlcl9mdW5j
+cyk7Cj4+ID4gPiA+ICsgaWYgKHZvcDItPmx1dF9yZWdzICYmIHZwLT5jcnRjLmRldiAhPSBOVUxM
+KSB7Cj4+ID4gPiA+ICsgY29uc3Qgc3RydWN0IHZvcDJfdmlkZW9fcG9ydF9kYXRhICp2cF9kYXRh
+ID0gJnZvcDJfZGF0YS0+dnBbdnAtPmlkXTsKPj4gPiA+ID4gCj4+ID4gPiA+ICsgZHJtX21vZGVf
+Y3J0Y19zZXRfZ2FtbWFfc2l6ZSgmdnAtPmNydGMsIHZwX2RhdGEtPmdhbW1hX2x1dF9sZW4pOwo+
+PiA+ID4gPiArIGRybV9jcnRjX2VuYWJsZV9jb2xvcl9tZ210KCZ2cC0+Y3J0YywgMCwgZmFsc2Us
+Cj4+ID4gPiA+ICsgdnBfZGF0YS0+Z2FtbWFfbHV0X2xlbik7Cj4+ID4gPiAKPj4gPiA+IEl0IHNl
+ZW1zIHRoYXQgd2UgY2FuIGtlZXAgaXQgaW4gb25lIGxpbmUsIHRoZSBkZWZhdWx0IGxpbWl0IG9m
+IGxpbnV4IGtlcm5lbCBjb2Rpbmcgc3R5bGUgaXMgMTAwIGNoYXJhY3RlcnMgbm93Lgo+PiA+IAo+
+PiA+IFRoYW5rcy4gSSBkaWRuJ3Qga25vdywgSSB3aWxsIGFtZW5kIGl0Lgo+PiAKPj4gCj4+IFNl
+ZSBiZGM0OGZhMTFlNDYoImNoZWNrcGF0Y2gvY29kaW5nLXN0eWxlOiBkZXByZWNhdGUgODAtY29s
+dW1uIHdhcm5pbmciKQo+PiAKPgo+SW50ZXJlc3RpbmcuCj4KPkJlc3QgcmVnYXJkcywgUGlvdHIg
+WmFsZXdza2kK
 
