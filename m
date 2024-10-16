@@ -1,236 +1,191 @@
-Return-Path: <linux-kernel+bounces-367592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0490D9A0432
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9006C9A0434
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D5028329C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176DF1F26823
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6131D1F5A;
-	Wed, 16 Oct 2024 08:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6809C1C4A28;
+	Wed, 16 Oct 2024 08:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="fc+pDScL"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="P+o3Xo6r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E5F18A95E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B671C4A2B;
+	Wed, 16 Oct 2024 08:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729067253; cv=none; b=Mw49xTXoLGanawLSjtC1fqIqXGRw12Lm2uFOWutkfYi6dhCOt9J+qIydQBg1DK+uSQpJALvG7yGelPas7i4UOsx0Pbrk4573bSbcTi33gzIN3/q2T+3eIU1PIjO3NZkQcm85BMoL8UWV3nJ7R0+nmXLzrVAwi4fnbQaob1AYlXQ=
+	t=1729067262; cv=none; b=CQATgcWc+3Y3eJVFqRiJdh8QixJ9COS/6rKwyQFjk2ecAkPF1/yFZARyWBtpCr6LmS2GsvFCjuCPEUI1JtsCFYdMOmIf8VKFu9MOVBLoamUCn0pDMNwCnVdqPUuWgCt94Jxp8XU0esL0sau+C3UIR6DxZ4ae5pDbYWht2zpFvkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729067253; c=relaxed/simple;
-	bh=PVa+FJXTDWZeoxAqKHBZCp7maASc8TfoL8hAtOc6GlY=;
+	s=arc-20240116; t=1729067262; c=relaxed/simple;
+	bh=8RD/VOzmlDwwtrSA+gQBG+6osbDmJnW21kPNiXA0F+4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xuayw/LOFjzOOVJmcXYvfSqq24ueFI68DXHDLW2FmfWQ75jzZUE5bfERETXD7zu+X1XVDwYgSq1zectAV1vgZ8YKqCLH8s9ZMYRZ9WXn/1yjMe9SSp28w224gxARDt+ZHeUtYTQ2S2pBtpeJ1X9YNbTFVtyZ+TKFLmeWyrW96AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=fc+pDScL; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43124843b04so37270575e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1729067249; x=1729672049; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g28iCX0O5SYkdDCU+JsYvIfeHBkuIrm9r0ykt0NO+9k=;
-        b=fc+pDScL3abGiXe83W+w8fg/MkPF/zYvLkGkdEFW8s0DJVKIpsI0bTh64Mg1Jc5aSX
-         I3ixyF+LXBqW29D/5LFFfg19X6AXgQCowmDzsibLrowdCexaA3Bjoq9aM30grWFMVoAa
-         83MCYg/Tt/+NH04tX7iqt5GSk/uLyMut0HTvWIhvQL3+qE6tcYCk3UP/arzHiboKEKfI
-         ZnJnHuMJvHE0kvJP9aJ6o6Xj75b4PwIV2znhtUw4ZKd67RFPjshlLglLrIBifhzaD8xb
-         5Si4taiAfCOXgGcfEqPkzDS0fNRpMeHc/N77Vp5AQmvCWNc2erADVjGaMYjcWyYDTlXr
-         QAFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729067249; x=1729672049;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g28iCX0O5SYkdDCU+JsYvIfeHBkuIrm9r0ykt0NO+9k=;
-        b=RJIlykHIx5xia7fFsNbwmPfAoiFN/ykYvV9NmeybD+NkV2KAc4Ya2Mp9sqbAfUgypA
-         WII+2roR5o3ciTQvw9P56B43Qf5tg77HO4tnr2TnD+k6C3mQuA/dhKiLeYOTi/6ofIGK
-         gBnFOL/tCq+Ffm+wjKcJQNdE2zHZ1vFdjifNsDp+o+09Z8QqcKIVStcs+zgMftCfIJoM
-         uNRJyzZXR6kSN6ZfeAE2MBq1RkndeGnLRrhmqgG+OQvVmfU++f4KM8VPv+Q3CH6VDuYt
-         7jb6r/c9Y2oSqaBerFsRXg8uCcA6jSBbStZCxwSIY5rZ/mnwVoq7QFQ3nO9ywyEBIoGG
-         +Kjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSXE5BtdQSx+ca/qSCnm/1/+gxPsq9i10kfk3i78XMiYFamnSXWJGEUfRVYb/mqLOmvsa0GRJn3dJ5Hec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO0jZIce7XXa4EuDdLavtn09opquvbw4P62qXoopA4lPGEjom7
-	ulezVTW/TG9IJVamutzoErNDjU1a6APkN6hLNNdfq+hbO1kmm++zvbph7XLOxvA=
-X-Google-Smtp-Source: AGHT+IERexqRaMF2wo6pgIqzaWfNekkvkAvO40P+daGklxVCAETU0FoDFC6Q5O/KGhVi2SAiAuuztQ==
-X-Received: by 2002:a05:600c:5122:b0:42f:8d36:855e with SMTP id 5b1f17b1804b1-4311deb5f47mr177561545e9.5.1729067248934;
-        Wed, 16 Oct 2024 01:27:28 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314bf60fc4sm24841625e9.38.2024.10.16.01.27.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 01:27:28 -0700 (PDT)
-Date: Wed, 16 Oct 2024 10:27:24 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
-	ryazanov.s.a@gmail.com, Andrew Lunn <andrew@lunn.ch>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	openvpn-devel@lists.sourceforge.net,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v9 04/23] ovpn: add basic interface
- creation/destruction/management routines
-Message-ID: <Zw947Jb637o-I4RV@nanopsycho.orion>
-References: <20241016-b4-ovpn-v9-0-aabe9d225ad5@openvpn.net>
- <20241016-b4-ovpn-v9-4-aabe9d225ad5@openvpn.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aIpU1qhbfcF2NPOHBk+auQMR9H/Ea8Y07obkwgOHWZ4OhCz9nbmJ9LHHxiuxnht7JYRwN0Rz3ewtXIYw3GCW4nSC3iwC3je1z5qZJ6ijtCGT0lyBoyFRJz+uWrMGOFvmqPhe6VkY3J0y8bqJ+EQYnMTdHY15euOYZp7Zbf1ljAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=P+o3Xo6r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9EEEC4CEC5;
+	Wed, 16 Oct 2024 08:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729067262;
+	bh=8RD/VOzmlDwwtrSA+gQBG+6osbDmJnW21kPNiXA0F+4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P+o3Xo6rt58y99ocXZmPwF6b0aRHio0aDP6p1EF9OrhoSoSLuhU0tDJdRSqLz2/72
+	 bUt10i708fmWOxyfPFWnIoGdY5IPO6re8hqVz46/w2XtOVY8ZjVEIoC1ICAc1EVFdC
+	 QsLd5aYoajDJC1uHSVMv6R/cE0x6VafyLlkODM9Q=
+Date: Wed, 16 Oct 2024 10:27:39 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>
+Cc: Bin Liu <b-liu@ti.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: musb: Fix hardware lockup on first Rx endpoint
+ request
+Message-ID: <2024101625-fetal-oboe-1b9a@gregkh>
+References: <e905e5d9c3e76786f154a87d54690fe1a90d755a.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241016-b4-ovpn-v9-4-aabe9d225ad5@openvpn.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e905e5d9c3e76786f154a87d54690fe1a90d755a.camel@gmail.com>
 
-Wed, Oct 16, 2024 at 03:03:04AM CEST, antonio@openvpn.net wrote:
->Add basic infrastructure for handling ovpn interfaces.
->
->Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
->---
-> drivers/net/ovpn/main.c       | 115 ++++++++++++++++++++++++++++++++++++++++--
-> drivers/net/ovpn/main.h       |   7 +++
-> drivers/net/ovpn/ovpnstruct.h |   8 +++
-> drivers/net/ovpn/packet.h     |  40 +++++++++++++++
-> include/uapi/linux/if_link.h  |  15 ++++++
-> 5 files changed, 180 insertions(+), 5 deletions(-)
->
->diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
->index d5bdb0055f4dd3a6e32dc6e792bed1e7fd59e101..eead7677b8239eb3c48bb26ca95492d88512b8d4 100644
->--- a/drivers/net/ovpn/main.c
->+++ b/drivers/net/ovpn/main.c
->@@ -10,18 +10,52 @@
-> #include <linux/genetlink.h>
-> #include <linux/module.h>
-> #include <linux/netdevice.h>
->+#include <linux/inetdevice.h>
->+#include <net/ip.h>
-> #include <net/rtnetlink.h>
->-#include <uapi/linux/ovpn.h>
->+#include <uapi/linux/if_arp.h>
+On Sat, Oct 05, 2024 at 03:19:10PM +0200, Hubert Wiśniewski wrote:
+> There is a possibility that a request's callback could be invoked from
+> usb_ep_queue() (call trace below, supplemented with missing calls):
 > 
-> #include "ovpnstruct.h"
-> #include "main.h"
-> #include "netlink.h"
-> #include "io.h"
->+#include "packet.h"
+> req->complete from usb_gadget_giveback_request
+> 	(drivers/usb/gadget/udc/core.c:999)
+> usb_gadget_giveback_request from musb_g_giveback
+> 	(drivers/usb/musb/musb_gadget.c:147)
+> musb_g_giveback from rxstate
+> 	(drivers/usb/musb/musb_gadget.c:784)
+> rxstate from musb_ep_restart
+> 	(drivers/usb/musb/musb_gadget.c:1169)
+> musb_ep_restart from musb_ep_restart_resume_work
+> 	(drivers/usb/musb/musb_gadget.c:1176)
+> musb_ep_restart_resume_work from musb_queue_resume_work
+> 	(drivers/usb/musb/musb_core.c:2279)
+> musb_queue_resume_work from musb_gadget_queue
+> 	(drivers/usb/musb/musb_gadget.c:1241)
+> musb_gadget_queue from usb_ep_queue
+> 	(drivers/usb/gadget/udc/core.c:300)
 > 
-> /* Driver info */
-> #define DRV_DESCRIPTION	"OpenVPN data channel offload (ovpn)"
-> #define DRV_COPYRIGHT	"(C) 2020-2024 OpenVPN, Inc."
+> According to the docstring of usb_ep_queue(), this should not happen:
 > 
->+static void ovpn_struct_free(struct net_device *net)
->+{
->+}
->+
->+static int ovpn_net_open(struct net_device *dev)
->+{
->+	netif_tx_start_all_queues(dev);
->+	return 0;
->+}
->+
->+static int ovpn_net_stop(struct net_device *dev)
->+{
->+	netif_tx_stop_all_queues(dev);
->+	return 0;
->+}
->+
->+static const struct net_device_ops ovpn_netdev_ops = {
->+	.ndo_open		= ovpn_net_open,
->+	.ndo_stop		= ovpn_net_stop,
->+	.ndo_start_xmit		= ovpn_net_xmit,
->+};
->+
->+static const struct device_type ovpn_type = {
->+	.name = OVPN_FAMILY_NAME,
->+};
->+
->+static const struct nla_policy ovpn_policy[IFLA_OVPN_MAX + 1] = {
->+	[IFLA_OVPN_MODE] = NLA_POLICY_RANGE(NLA_U8, OVPN_MODE_P2P,
->+					    OVPN_MODE_MP),
->+};
->+
-> /**
->  * ovpn_dev_is_valid - check if the netdevice is of type 'ovpn'
->  * @dev: the interface to check
->@@ -33,16 +67,76 @@ bool ovpn_dev_is_valid(const struct net_device *dev)
-> 	return dev->netdev_ops->ndo_start_xmit == ovpn_net_xmit;
-> }
+> "Note that @req's ->complete() callback must never be called from within
+> usb_ep_queue() as that can create deadlock situations."
 > 
->+static void ovpn_setup(struct net_device *dev)
->+{
->+	/* compute the overhead considering AEAD encryption */
->+	const int overhead = sizeof(u32) + NONCE_WIRE_SIZE + 16 +
->+			     sizeof(struct udphdr) +
->+			     max(sizeof(struct ipv6hdr), sizeof(struct iphdr));
->+
->+	netdev_features_t feat = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM |
->+				 NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
->+				 NETIF_F_HIGHDMA;
->+
->+	dev->needs_free_netdev = true;
->+
->+	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
->+
->+	dev->netdev_ops = &ovpn_netdev_ops;
->+
->+	dev->priv_destructor = ovpn_struct_free;
->+
->+	dev->hard_header_len = 0;
->+	dev->addr_len = 0;
->+	dev->mtu = ETH_DATA_LEN - overhead;
->+	dev->min_mtu = IPV4_MIN_MTU;
->+	dev->max_mtu = IP_MAX_MTU - overhead;
->+
->+	dev->type = ARPHRD_NONE;
->+	dev->flags = IFF_POINTOPOINT | IFF_NOARP;
->+	dev->priv_flags |= IFF_NO_QUEUE;
->+
->+	dev->lltx = true;
->+	dev->features |= feat;
->+	dev->hw_features |= feat;
->+	dev->hw_enc_features |= feat;
->+
->+	dev->needed_headroom = OVPN_HEAD_ROOM;
->+	dev->needed_tailroom = OVPN_MAX_PADDING;
->+
->+	SET_NETDEV_DEVTYPE(dev, &ovpn_type);
->+}
->+
-> static int ovpn_newlink(struct net *src_net, struct net_device *dev,
-> 			struct nlattr *tb[], struct nlattr *data[],
-> 			struct netlink_ext_ack *extack)
-> {
->-	return -EOPNOTSUPP;
->+	struct ovpn_struct *ovpn = netdev_priv(dev);
->+	enum ovpn_mode mode = OVPN_MODE_P2P;
->+
->+	if (data && data[IFLA_OVPN_MODE]) {
->+		mode = nla_get_u8(data[IFLA_OVPN_MODE]);
+> In fact, a hardware lockup might occur in the following sequence:
+> 
+> 1. The gadget is initialized using musb_gadget_enable().
+> 2. Meanwhile, a packet arrives, and the RXPKTRDY flag is set, raising an
+>    interrupt.
+> 3. If IRQs are enabled, the interrupt is handled, but musb_g_rx() finds an
+>    empty queue (next_request() returns NULL). The interrupt flag has
+>    already been cleared by the glue layer handler, but the RXPKTRDY flag
+>    remains set.
+> 4. The first request is enqueued using usb_ep_queue(), leading to the call
+>    of req->complete(), as shown in the call trace above.
+> 5. If the callback enables IRQs and another packet is waiting, step (3)
+>    repeats. The request queue is empty because usb_g_giveback() removes the
+>    request before invoking the callback.
+> 6. The endpoint remains locked up, as the interrupt triggered by hardware
+>    setting the RXPKTRDY flag has been handled, but the flag itself remains
+>    set.
+> 
+> For this scenario to occur, it is only necessary for IRQs to be enabled at
+> some point during the complete callback. This happens with the USB Ethernet
+> gadget, whose rx_complete() callback calls netif_rx(). If called in the
+> task context, netif_rx() disables the bottom halves (BHs). When the BHs are
+> re-enabled, IRQs are also enabled to allow soft IRQs to be processed. The
+> gadget itself is initialized at module load (or at boot if built-in), but
+> the first request is enqueued when the network interface is brought up,
+> triggering rx_complete() in the task context via ioctl(). If a packet
+> arrives while the interface is down, it can prevent the interface from
+> receiving any further packets from the USB host.
+> 
+> The situation is quite complicated with many parties involved. This
+> particular issue can be resolved in several possible ways:
+> 
+> 1. Ensure that callbacks never enable IRQs. This would be difficult to
+>    enforce, as discovering how netif_rx() interacts with interrupts was
+>    already quite challenging and u_ether is not the only function driver.
+>    Similar "bugs" could be hidden in other drivers as well.
+> 2. Disable MUSB interrupts in musb_g_giveback() before calling the callback
+>    and re-enable them afterwars (by calling musb_{dis,en}able_interrupts(),
+>    for example). This would ensure that MUSB interrupts are not handled
+>    during the callback, even if IRQs are enabled. In fact, it would allow
+>    IRQs to be enabled when releasing the lock. However, this feels like an
+>    inelegant hack.
+> 3. Modify the interrupt handler to clear the RXPKTRDY flag if the request
+>    queue is empty. While this approach also feels like a hack, it wastes
+>    CPU time by attempting to handle incoming packets when the software is
+>    not ready to process them.
+> 4. Flush the Rx FIFO instead of calling rxstate() in musb_ep_restart().
+>    This ensures that the hardware can receive packets when there is at
+>    least one request in the queue. Once IRQs are enabled, the interrupt
+>    handler will be able to correctly process the next incoming packet
+>    (eventually calling rxstate()). This approach may cause one or two
+>    packets to be dropped (two if double buffering is enabled), but this
+>    seems to be a minor issue, as packet loss can occur when the software is
+>    not yet ready to process them. Additionally, this solution makes the
+>    gadget driver compliant with the rule mentioned in the docstring of
+>    usb_ep_queue().
+> 
+> There may be additional solutions, but from these four, the last one has
+> been chosen as it seems to be the most appropriate, as it addresses the
+> "bad" behavior of the driver.
+> 
+> Signed-off-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
+> ---
+>  drivers/usb/musb/musb_gadget.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
+> index bdf13911a1e5..c6076df0d50c 100644
+> --- a/drivers/usb/musb/musb_gadget.c
+> +++ b/drivers/usb/musb/musb_gadget.c
+> @@ -1161,12 +1161,19 @@ void musb_free_request(struct usb_ep *ep, struct usb_request *req)
+>   */
+>  void musb_ep_restart(struct musb *musb, struct musb_request *req)
+>  {
+> +	u16 csr;
+> +	void __iomem *epio = req->ep->hw_ep->regs;
+> +
+>  	trace_musb_req_start(req);
+>  	musb_ep_select(musb->mregs, req->epnum);
+> -	if (req->tx)
+> +	if (req->tx) {
+>  		txstate(musb, req);
+> -	else
+> -		rxstate(musb, req);
+> +	} else {
+> +		csr = musb_readw(epio, MUSB_RXCSR);
+> +		csr |= MUSB_RXCSR_FLUSHFIFO | MUSB_RXCSR_P_WZC_BITS;
+> +		musb_writew(epio, MUSB_RXCSR, csr);
+> +		musb_writew(epio, MUSB_RXCSR, csr);
+> +	}
+>  }
+>  
+>  static int musb_ep_restart_resume_work(struct musb *musb, void *data)
+> 
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> -- 
+> 2.30.2
+> 
+> 
 
-Some sanity check perhaps? "validate" op is here for that purpose.
+What commit id does this fix?
 
+thanks,
 
->+		netdev_dbg(dev, "setting device mode: %u\n", mode);
->+	}
->+
->+	ovpn->dev = dev;
->+	ovpn->mode = mode;
->+
->+	/* turn carrier explicitly off after registration, this way state is
->+	 * clearly defined
->+	 */
->+	netif_carrier_off(dev);
->+
->+	return register_netdevice(dev);
-
-[...]
+greg k-h
 
