@@ -1,257 +1,216 @@
-Return-Path: <linux-kernel+bounces-368498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710219A1076
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:18:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9BA9A1082
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9451A1C21F0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32E21F22F89
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6A020C487;
-	Wed, 16 Oct 2024 17:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6520F212624;
+	Wed, 16 Oct 2024 17:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a7c2u9XJ"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2064.outbound.protection.outlook.com [40.107.243.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4Y5pPBe"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E8D187350;
-	Wed, 16 Oct 2024 17:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729099094; cv=fail; b=pUOqB3d9ih5cN+aZDIcnYv0uBEKB/vtdSHw3PdzHJJ+z1H5Uwty8rtBRaT1jbl/nrYa3oxPVCMdd/JQ27BMHBV9pZ/dHU2UTCzM5i8LAW/md6GlB6XbGCNZgQxfX4zKwony/W2jTKHLm+Icpg4tLiiurQDr+tgt0WwhU+Xak29E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729099094; c=relaxed/simple;
-	bh=Mf2NQxwEUzG0hNGDOICUGIwO0we3+sciI2oA06ytgeE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lvn8Mo7s8HsezRp6CQpel1Lth1A0ZDfB36DvaQ8484vK940W0P5quPXzZ5jvbBxlYVWrfOxWlZQwkhKYw/a2BI0vQbswQvgq4qNXVJhmx0fBZ5PzpeLfhQ98eSl9JN1VTDcJwlohEeGUz246LWgcddFRybTbzWSg0XoeFSOPNbQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a7c2u9XJ; arc=fail smtp.client-ip=40.107.243.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QhUgy0o1ULuK4VdFZ5gkN1b0qi0xVwIx1oh4e8nSfxfsNJCwfeeqWctWGra8p/xX4Ht7JNM9xbYd9YINNW0lvUFQz7WsBx80XZ4w9OZ04dzdH0mwI/xgKfArB+DJUbIAoCsXg5pabncO0LCZMhpc8US1v4dCQeFQA/NKBSOtQgkc9M5JfDPMi3tPhh+AVWFsAAvO1uot8lusJFgQsaWPMA0kCLs7S95tgOJYAsEUdAt6bQE+kO48BR4NcrrZ1Bi4XO21AqRlLcSgp/XpEiqeCjPRj+wj6MyeWMSat843mbvbqxt9hpTwGBOdi6xyv4GZNdxHdAxyo15mEhvK+TrMqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m9vwyarPFx21K7HnD2vTsc3gLCvBS+sI6fYFVlnIzO8=;
- b=RUEn+fO5YbjtJg3JcIuVTYalJA5GV98I0ediAQvuRgnxp4SO9tBphBWmyC4ruTS+dEIk4Az+W2cO5DR3e+R58xfP+zXQBbvaUmCyYOBUHsydUX8WAx69xe8QpZedBJJihgyTKS6HlIdXfW5ak8UrAiXCylmlQ/4OiwiAP+bZQy9Vn5HJSLdM09IcqmU11RLe1hFZAKpwAzn2mka6eLvJIt9iLnFUFVf4q1GGYTl5tTVTRwFrU8TnKE6+0j9a4nhZpWDRYfxxHj/g+nQq/sCPClFv4DGNKLsIsbpGfSxv73qpurqVJ+Si57qLBgp/nhUcmHtn6jsUSpSHB1shvC0bJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m9vwyarPFx21K7HnD2vTsc3gLCvBS+sI6fYFVlnIzO8=;
- b=a7c2u9XJ8xHdIZ79s42jLohxRavvkC5Sx3jH+Jx+LZOESDbX9yVc0YrHI1Bmm/SSO0Ueqx7ME54tPNUEBJsOV4Byxy0v+iozGEgvevFGZPNZb+5bWNr6rmabIz03er/3jISai0Pq5ke0H2Yfs8CJEyfA+vsVCKILLA61kb+tjUI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- CH3PR12MB8234.namprd12.prod.outlook.com (2603:10b6:610:125::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 17:18:08 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%6]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 17:18:08 +0000
-Message-ID: <b7e89c01-72c9-4e26-bd88-6cfcfdc78033@amd.com>
-Date: Wed, 16 Oct 2024 12:18:06 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/15] cxl/aer/pci: Add CXL PCIe port correctable error
- support in AER service driver
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, dave@stgolabs.net,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
- nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
- <20241008221657.1130181-5-terry.bowman@amd.com>
- <20241016172235.00001e65@Huawei.com>
-From: Terry Bowman <Terry.Bowman@amd.com>
-In-Reply-To: <20241016172235.00001e65@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN4PR0501CA0121.namprd05.prod.outlook.com
- (2603:10b6:803:42::38) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18D3188580;
+	Wed, 16 Oct 2024 17:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729099272; cv=none; b=e5LGcAC1NLbMqWv2o9nVIfWNUoO3wW2sBPsLXFoG77BC5RS6o230cZLcYio1NkNCGkFzeOUMt5IhovWrNL+Db85id8c3pp8h1RCLOrmA1vmwhdcJZRsi31aZWXm9np+6qUo+IDcB2w7dKbtNCoeG0A7scCcjnMOwunMneLEsQ6I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729099272; c=relaxed/simple;
+	bh=pE67RiyjvIOKtyfw/S0Zs4qanipSNG01XM8veQFduUg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DG9YSijjlSYBoVSVG8vDp6A09v12ImH1ftelLudQR9kFxdiCnJdCgcGczEKu3OEIhDbVqmWFMhFsvvf2fu8waqZcfOsCY4H91cwyKMcwVOoVja4OaCpusovWd7B1mkzc50OGufndOyB7gWCTeE2zsf+Y0ZPpDyM/OAQL0GI+qlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4Y5pPBe; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so940301fa.1;
+        Wed, 16 Oct 2024 10:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729099269; x=1729704069; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1GP0B75uZXvlMdPMs8sxWFWqOcAn6bbZYSntM7zvNeg=;
+        b=F4Y5pPBe9APpbwYadbXbku8Zf1SvfCcTmpFqH2tcxBpfRem46aWpcnOIjcpfdTVrN0
+         hzmZ2TuPFtm8hWNkxzARRhEZRw5FtvjDv+uj9w4MQpH6aSvnuRIwetc2fvow8d/aLRBN
+         Hg6xpCrgjG/b8Ogohu74shFj/p9Lnb3B9GwgXT/GHzIj0CLZEkxLpeuUbqQ5RL1ZO2I8
+         m+3qnWn+4zPi14XbOeGsEd/XTefl6wZEm4bPAAak2lQrZP+1G1L33lw49JDPP89Ll2gS
+         9JPZm/U795oK278WSn+m6iBXipACNaPO3j8wL8HiS0xAcMOTtov05U6PyendIRFHuxj5
+         /1wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729099269; x=1729704069;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1GP0B75uZXvlMdPMs8sxWFWqOcAn6bbZYSntM7zvNeg=;
+        b=p9XjJm6t+Ryl7OFH/cCZcrEQm41BDGmWT8ZMsspzarHEPuBCpL1Glv2xSD1v8skAwo
+         otVEcuJ7N7l9CjAZlQUPm31TQhgY0YP7E1baUYsFzzv6QtJ81jngptHq1LA20KjxYK8P
+         ex9dPxT5M0/CeKtCLW7MHsLmmMdDIi3OyPCOHlimVfzgh2YlhnPhWGI0bZmZOZiC/DJ/
+         to3WgckRfemCU6uy08AvGyfoQcYvBhmFtfIFwTAPbpDeKhUYDCuUNeqUZFxxnEzY2iaj
+         Y6zn0LDtdHXKLbB/8tiwzrcnBltxzrjksarZtaHA6n5WLHAjgD919dnXiNRUv3YLb8Ec
+         OYcw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0+az4LC9NsanuNVaHlZCitnEN73vQE8FTkKJi/QgedsM2G49plalUhcKwVGWsLCK2Sd3VMUaK/VEyyA32@vger.kernel.org, AJvYcCUDu1z5n9G7nGSWnIZppTG6y5mXYu4LexWH3f4xPYcFBiClXWyTHxkSxcLcfWvypfNEHQ3vmk5KUhjuj8v/Ww==@vger.kernel.org, AJvYcCVAQXrQL/YABB+w06V3V7wLB0Hqy0g9v+P3sek8vWNLeLfk+wJsm942CdsockYa5N9B+xQDF1UVRnkYsQ==@vger.kernel.org, AJvYcCVfbQO3y3Kokwx81IH+QwekX1tCHtnXtohJaKS7ILW0zobeyX6PcmZwh6NmEFcRJOahFKjUANfrpvJt38ANTLGjM3P7@vger.kernel.org, AJvYcCVh2due35+hEMlw83F2XsUgZyrfNOFnrXkHuZ6XXgPJJqBBqPYHPHUoK5qBteJitfHBx1u7FlYkQpTI3m8=@vger.kernel.org, AJvYcCVoOxQkCwWhWLqmH3Y9vLX+jTobEXcpab3cLcCcSeugOdv0lCpUsTfwrR839aj5XghGPGs+A+WhzgEO0+a6MA==@vger.kernel.org, AJvYcCW1GcjJUk9VdB7ffqyUUYx3Cm6xbaOl+AttCo9/Z7BuhqF2glUDANNL5kA3Abjjw021zw+NpK2JpzDsrA==@vger.kernel.org, AJvYcCWi2Y8h4TfBsjD9Ow2LIYQSQ9ifrixYlEZ+H59wt7d9NEa9o/eWTFeGSsvZhR2gBg/mx2E=@vger.kernel.org, AJvYcCX6+3x/O5DqvAdjhc2WoHNHQPZkjiUH8SdXIuZyq+67E/NWl6bXo7pFoMbycpJtCUDwjQOGBKOo5BZQeAIC@vger.kernel.org, AJvYcCXSSS7c
+ R8tZjUtHjlQDBL+VhMqDq+WKoGVkj8MjcrX8wxCatb+9diPm0DBBPoS2vq12PJU1TysjGogFNg==@vger.kernel.org, AJvYcCXU2RhPV/PiBSp29rYchoRB20kVZ/U1VnIsA5GZqVYG2l8ix0kU9lFokTuwVLI/sW5WmCeXZ+jIGUsLJlL6770=@vger.kernel.org, AJvYcCXjPZqekd9b9imA7W1+YoYaO2XyAu1PEIMcYkV1qerhaHcDoMor6oY1dGkL2rjOnDWjRj7UoHA6NGQMcg==@vger.kernel.org, AJvYcCXs50Ra7As3Fl/iXT9krRlcBnjXFpoQJ/5vo3Ahi+JIRN7YXJI7NCRcz5V/jbMptEETMF7gSmuHj+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8xoNQAol8JL6PXC1Fsh/rXK5LlLpSXgL607GcYQXDVvITp3+i
+	vP8dNqdtp6bZVRyFE/Ex+WV+Gg0aN/NBxbWUTaXarLj7k0t7LF5C
+X-Google-Smtp-Source: AGHT+IE3BOIzolDg/ircoXlrXALD+U8X6mjirKNd/VoSdJ8ZQKv3Aj0k5T5yFcByNzOByKxATFiOdw==
+X-Received: by 2002:a05:6512:402a:b0:539:f619:b458 with SMTP id 2adb3069b0e04-539f619b4cbmr6540423e87.22.1729099268652;
+        Wed, 16 Oct 2024 10:21:08 -0700 (PDT)
+Received: from pc636 (host-95-203-1-67.mobileonline.telia.com. [95.203.1.67])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffa8a5fsm512819e87.26.2024.10.16.10.21.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 10:21:08 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 16 Oct 2024 19:21:02 +0200
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 2/8] mm: vmalloc: don't account for number of nodes
+ for HUGE_VMAP allocations
+Message-ID: <Zw_1_ln440eHTjGt@pc636>
+References: <20241016122424.1655560-1-rppt@kernel.org>
+ <20241016122424.1655560-3-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|CH3PR12MB8234:EE_
-X-MS-Office365-Filtering-Correlation-Id: 450c4e9e-be17-4e5f-9a10-08dcee068107
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cFFxN2Zkb1gxNC8wa3JqdHFPRno1K3BZMVJFcFo0eUNIWXgzSWlQU01xdklL?=
- =?utf-8?B?UzV4OCtKNE1Fd0g4VU9IL2p1RjFYaVMwVVpqbDdVZkthREUrOU5tVTRHVk9B?=
- =?utf-8?B?blFleEZQTGlqWE1sc3pvZlJnbjJSdEdJbm1zODAvN003Ymg1YWFJQlo0QTZT?=
- =?utf-8?B?TTVXRjFkU2ZYNjh6VU5JcnMrbzV4dmhiSHFYK3IxSGhYY1M3OFpFWWprY2sr?=
- =?utf-8?B?UHZSYjB0djYzVk02N2VKQThUMHM4K0pqUXVYdC8zbk92R3NNL0NMand5WFQv?=
- =?utf-8?B?M1BvMW9EOHljcFVoYkc3TU9QMWtLbWcwd2J5TzV1MmpOSS82QzEyS0FMd045?=
- =?utf-8?B?dVlEbS9COGIyclJzejFOcU56UWNsZ2hSY0hBZFJGM1JUem93amRWT3BoQWJV?=
- =?utf-8?B?TVc2WFhtTGFDc1lQT2ZLalJoTHp5ZklVblE0QjlBNnlFQWpzR1Y0dUJwcEpW?=
- =?utf-8?B?YUUyZmxDT1J6ZVo3VXJDL3JQOTVkRGhvN1BGbnBNZFZ5QUV2NVM3UnhjcGFZ?=
- =?utf-8?B?KzRubjZpbjloZXJ0b3RFZVJVOTVFQnNHYXoyQy9jemNPb1Q4ei9WRjFmN0ZL?=
- =?utf-8?B?bFcyb0s3MzNteGtHcTBKU2hsd1k2LzNJVEpYYU15a3lFTU5ObWYyTWdSb2lB?=
- =?utf-8?B?N3NRRUJyMEVVaFVJZXlrT3FUZDBrUDI0Uk1JalNXTmI4bGRmUWVWK3Q3MUN4?=
- =?utf-8?B?L3FadHVDZURvb29XU3lJSGFhZWVrZVBQVm5iOWJLOTIvY0dKb05WUkJ4RkhC?=
- =?utf-8?B?d1BveVlzYVBZa1A5cnpmU2F4VTdMbGtlemxvcWZkYXo1aUNxd1BkQm1Bdm5m?=
- =?utf-8?B?aTV2ZmtuWG1QdThHUHlKc0pyRG1iYU1PQzVDS2xWeDlEeUVISzFCMTNGRlYy?=
- =?utf-8?B?QjkyV0JBYUJqYStSRlM2ZjFJbFRKNkRFWUR1NTZUMEdtNm5QNU85QjhyRWto?=
- =?utf-8?B?dGdIQ1pSc0JXVml6U1FxMDJkRGdiVFk5L1ZSZU1uTGF3cDcrckVOalQzY1NX?=
- =?utf-8?B?QTFXd0YvNXNGQ1hWK3NLNmg2NkZMN2E2YmpWbHdMdkgxODlJTFZwOHRFN3hL?=
- =?utf-8?B?RjkwQmYra3pkWHRFaXdYSkZ0QVd5a1VMZ0tsQkZJMVZTZFg0Q2ZsY3c1aFBG?=
- =?utf-8?B?WVhBc3ArSDI5MGZOQVJJb2xLckFNNGJzdk9SVGJ2SEliMGpwNmtSL0RyS0dP?=
- =?utf-8?B?bEhBRjY1SVlSTkFKUnRKRGRHZXpDWlNPMUdTSUc1eEdYTUVxS3VHNS9TTXJG?=
- =?utf-8?B?dlplMERhZWVpZU5OWXRUdmE2ZkRYdmN3aklMZ3l4QUQ0OXc2SmJ3dXBHUFUr?=
- =?utf-8?B?VTgxNXJnc0dhRUdGd3dBNnpFa29YZlo5emFRY1J4WFRtUjBLVUtqSHJQSFhS?=
- =?utf-8?B?SS9wOE1VQ2dhTHhBbVlzeklETE9hYURLNGRPR0FvZkpRSEhKSlJLSFVnMDli?=
- =?utf-8?B?UEFCeU5YejdCeCtiUmJ5WGdMSUJEQ1hRQkQrelhKWFB5L2ZZNDR1NXY3ZjFK?=
- =?utf-8?B?WWtxVDJJYUFPbnQ0ZjZGZmlZQmlCalYxVHF4aGtqRHRwM2JjMzF4NVo1THk5?=
- =?utf-8?B?QUNVT0c0R050ZkNuWWdLNTExUWlidkF2TDVVM0FhNDdrenRGQUtaZUs0Qi9E?=
- =?utf-8?B?UWVOMU5WVVo2Rmo0KzFrSEs1bUZrWlowWnhTdmFNTjYrRzM0WGJsR3lGcW9a?=
- =?utf-8?B?elJxY0ZsZ2FiMlF6a2hDdFcvSHJxdkZ0WFB0MVBNeDNXNS9ZQUdYdWN3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YlJ2aFZkSDJPZUlmMHoyb29KbjMxL1RKNTBCQXJON1QzbC82dHZZWUVlcWZP?=
- =?utf-8?B?Z0U2WCt5UUdKaDhHcDdXTWg2MjZNdHc2REc4TiszbkNpVUJCT2oxY2gvcDBJ?=
- =?utf-8?B?SWdIeGhrM05adGJldE9lb2E5bUtlb3F1dnBPd1VyanFVUEMvSXREclIzV1pj?=
- =?utf-8?B?L2ZRMVFBeHJ1Z3BHQThqSnRKdnBFU29wWHpRZEJXeEg5WCt0RWQzSVcveUtk?=
- =?utf-8?B?dkZDNWxpMVBHVkp4SmJWUUZFd2k1K2hWbmxoRTEyM0dnWHhmVUphYUd6LzRW?=
- =?utf-8?B?RTdDN3ZkenVKU0JhakRVcUVFbnRUM1hGYitrME1OWGlFY2swZ3BteW8zVWhs?=
- =?utf-8?B?V0h2NGNVbWptNjNHWHFpVnZ1MklYcW9zWFYwNnBWcXdEZDhRb3czWU1za3d1?=
- =?utf-8?B?SDNZQ1FHMVZUa0p4WnV6N3BnemtWRkJwdm5qcTRicVhwR0ZOdFlWR2dzUDdk?=
- =?utf-8?B?L3NIRnQ1c2VGNEl1R3BhcEhmYlU3K2hMZDJJWXVwSHQ1T29tSkxlZ0daZTcr?=
- =?utf-8?B?NldjOFVjNlBYS3dJQVNFbGlEZUxTQi90enVvSURTbWlZaDNXSjNkT0crVE04?=
- =?utf-8?B?eGwzOXpHN1VBdzA2c3YrMCt5OEczLzFOeHdpVkFpMmxzUXA2TEhaM3RhVklt?=
- =?utf-8?B?MXZOR1V4OU9ZZjgzYUlvUTYvY25QcjNzeWYxV1hUR3Y1eFhtT0p1eUczUDFD?=
- =?utf-8?B?WDVwYVZWc1NYK29UOXlOK3hNWUhJaGx0TEo0Qmx3VnVnaGYwYzlKVXRZQVdv?=
- =?utf-8?B?aG9KZXBnSm5wWmhXeEtSU2FBL2ZWNEZCZXpzSDhYK2NBSllVTFhwNFNTdHpa?=
- =?utf-8?B?WmQ0YVNJaFhCeEM0amFiOG8rVkdyRVNhWk1ONTRkbVlYbGY4RUx0SnFDcDRV?=
- =?utf-8?B?dU9rK0VrbUdtdGRnUmtKSmpTa0hPM1Y4RkUrZDhXMkUwQ1BnYVdDL09IVmQ0?=
- =?utf-8?B?ZkhPaHFCYzNnMVZKZnBNSFF0bHkvUStjNWo2NU1Xc1lZbFdFR3J5TXA1TVBQ?=
- =?utf-8?B?MXBaZEV4a0xzNVIrUndWOVNKMlhhYzMvV3RjWTBGaXJ2SGwvQmJXckFpb3pC?=
- =?utf-8?B?RVFBTDN2OFMyY3htRVZnc1JpN1FqTjc1MnI5M1NndTlOdDNmY1NOOGVacDQy?=
- =?utf-8?B?NUU5a0tyUElmdG9KVTR1bFAwM0xERWlhS0FlY0VZL2VhdEk0Y04vTjJyVFAw?=
- =?utf-8?B?Y3J4RnNjZm9Pc2NyODkrYVdoVldTSDlHMkxrV2ZqWVVSQk5wSmcwQnMrUXFS?=
- =?utf-8?B?V3NkajZ5TUp1b09DaHB1ZTlRWGZHSjJsdFViTzRMR204YU5iU0hmZm1OaWt6?=
- =?utf-8?B?TFhiajloK0VJV1JmWkgveTF1dU5jcURaU0R5R09ON0RqM0NiWjVpS1VtWjlh?=
- =?utf-8?B?Sk1zdnRxNFJiZnVxMUd1SVJrVHVob09GZ2JibXQ2OG1ScmhHdnJrRHkwSmRT?=
- =?utf-8?B?Z0R3MnhRYzdkZ1NvOSt2dWZZS3gzUGl2aDR5cFVWMkxxTDk3YytpZkRQbFJM?=
- =?utf-8?B?Z1NnT2NiemZobW1FdDB5S2hkU3ZVdXVkRDdBZmxTNVRGSVhPTXJzaG8yR0ph?=
- =?utf-8?B?eWM5ejBVYjJmNzIvQkFSbGpLajByNlNudkFFdHNMcmM1U3hRSDVvdVJ4ZWdJ?=
- =?utf-8?B?QUlCV1pFM085eklhYVQ4NFhjM20wbDBtRkU3NSt6bHZGVHhyTWlNUFBXTXVx?=
- =?utf-8?B?N2JZdFh6VVpPSjhaMncyblQyZUxrZEN5TzU3eG96dmRSUXUrY3RpR204dm1q?=
- =?utf-8?B?OXl3emg1Y3pMdDBHbUllWXNJMUxBQnI5bnI0S2RZYmhqeHB1T2EraE5MNXBU?=
- =?utf-8?B?Ny91UjN4MGtYdklDdXIxdWZWUkVzRlNSSExVcHRwSDNOV0ZYUFJtNlczZk1M?=
- =?utf-8?B?UzVId3pUbWgydUgxbUk0S2M3N1E0dG82TTlxQmk4TTRUZTVOYVR3SlB0UUc3?=
- =?utf-8?B?OVdmc3ZkZXlWRnpFT0NiVVVVaExjdFJoSERGT2w2d2tOQVE4TnlaRFlBUkg3?=
- =?utf-8?B?ak04M1JnMFZZd1NRSFZ4M0lIMlVPRk54VzhqQ3NqTjNXWWZpWm81djZjWVlF?=
- =?utf-8?B?QU5pNDJVQlN1UUNpRWZVVnhlWG9pd2RnazZYeDVWdXRjREExc2tFWW0vRitG?=
- =?utf-8?Q?VMgli6oZUAwmKwBCz7h9l7MwJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 450c4e9e-be17-4e5f-9a10-08dcee068107
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 17:18:08.3396
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J6yK8HRWDe4m5ATeoo2WVjC2n5UMsQ+Uu1Tvhx7BWMfMZUIdeqXB5pqI3Xg1sHvYAkhuJ56Oui90CxhJ4chxdg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8234
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016122424.1655560-3-rppt@kernel.org>
 
-Hi Jonathan,
+On Wed, Oct 16, 2024 at 03:24:18PM +0300, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> vmalloc allocations with VM_ALLOW_HUGE_VMAP that do not explicitly
+> specify node ID will use huge pages only if size_per_node is larger than
+> a huge page.
+> Still the actual allocated memory is not distributed between nodes and
+> there is no advantage in such approach.
+> On the contrary, BPF allocates SZ_2M * num_possible_nodes() for each
+> new bpf_prog_pack, while it could do with a single huge page per pack.
+> 
+> Don't account for number of nodes for VM_ALLOW_HUGE_VMAP with
+> NUMA_NO_NODE and use huge pages whenever the requested allocation size
+> is larger than a huge page.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  mm/vmalloc.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 634162271c00..86b2344d7461 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3763,8 +3763,6 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+>  	}
+>  
+>  	if (vmap_allow_huge && (vm_flags & VM_ALLOW_HUGE_VMAP)) {
+> -		unsigned long size_per_node;
+> -
+>  		/*
+>  		 * Try huge pages. Only try for PAGE_KERNEL allocations,
+>  		 * others like modules don't yet expect huge pages in
+> @@ -3772,13 +3770,10 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+>  		 * supporting them.
+>  		 */
+>  
+> -		size_per_node = size;
+> -		if (node == NUMA_NO_NODE)
+> -			size_per_node /= num_online_nodes();
+> -		if (arch_vmap_pmd_supported(prot) && size_per_node >= PMD_SIZE)
+> +		if (arch_vmap_pmd_supported(prot) && size >= PMD_SIZE)
+>  			shift = PMD_SHIFT;
+>  		else
+> -			shift = arch_vmap_pte_supported_shift(size_per_node);
+> +			shift = arch_vmap_pte_supported_shift(size);
+>  
+>  		align = max(real_align, 1UL << shift);
+>  		size = ALIGN(real_size, 1UL << shift);
+>
+Looking at this place, i see that an overwriting a "size" approach seems as
+something that is a bit hard to follow. Below we have following code:
 
-On 10/16/24 11:22, Jonathan Cameron wrote:
-> On Tue, 8 Oct 2024 17:16:46 -0500
-> Terry Bowman <terry.bowman@amd.com> wrote:
-> 
->> The AER service driver currently does not manage CXL PCIe port
->> protocol errors reported by CXL root ports, CXL upstream switch ports,
->> and CXL downstream switch ports. Consequently, RAS protocol errors
->> from CXL PCIe port devices are not properly logged or handled.
->>
->> These errors are reported to the OS via the root port's AER correctable
->> and uncorrectable internal error fields. While the AER driver supports
->> handling downstream port protocol errors in restricted CXL host (RCH)
->> mode also known as CXL1.1, it lacks the same functionality for CXL
->> PCIe ports operating in virtual hierarchy (VH) mode, introduced in
->> CXL2.0.
->>
->> To address this gap, update the AER driver to handle CXL PCIe port
->> device protocol correctable errors (CE).
->>
->> The uncorrectable error handling (UCE) will be added in a future
->> patch.
->>
->> Make this update alongside the existing downstream port RCH error
->> handling logic, extending support to CXL PCIe ports in VH.
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Minor comments inline.
-> 
-> J
->> ---
->>  drivers/pci/pcie/aer.c | 54 +++++++++++++++++++++++++++++++++---------
->>  1 file changed, 43 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->> index dc8b17999001..1c996287d4ce 100644
->> --- a/drivers/pci/pcie/aer.c
->> +++ b/drivers/pci/pcie/aer.c
->> @@ -40,6 +40,8 @@
->>  #define AER_MAX_TYPEOF_COR_ERRS		16	/* as per PCI_ERR_COR_STATUS */
->>  #define AER_MAX_TYPEOF_UNCOR_ERRS	27	/* as per PCI_ERR_UNCOR_STATUS*/
->>  
->> +#define CXL_DVSEC_PORT_EXTENSIONS	3
-> 
-> Duplicate of definition in drivers/cxl/cxlpci.h
-> 
-> Maybe wrap it up in an is_cxl_port() or similar? Or just 
-> move that to a header both places can exercise.
-> 
-> 
+<snip>
+...
+again:
+	area = __get_vm_area_node(real_size, align, shift, VM_ALLOC |
+	  VM_UNINITIALIZED | vm_flags, start, end, node,
+	  gfp_mask, caller);
+...
+<snip>
 
-Ok. I'll move the value '3' into the function call rather than use a #define.
+where we pass a "real_size", whereas there is only one place in the
+__vmalloc_node_range_noprof() function where a "size" is used. It is
+in the end of function:
 
->> +
->>  struct aer_err_source {
->>  	u32 status;			/* PCI_ERR_ROOT_STATUS */
->>  	u32 id;				/* PCI_ERR_ROOT_ERR_SRC */
->> @@ -941,6 +943,17 @@ static bool find_source_device(struct pci_dev *parent,
->>  	return true;
->>  }
->>  
->> +static bool is_pcie_cxl_port(struct pci_dev *dev)
->> +{
->> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT) &&
->> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM) &&
->> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_DOWNSTREAM))
->> +		return false;
->> +
->> +	return (!!pci_find_dvsec_capability(dev, PCI_VENDOR_ID_CXL,
->> +					    CXL_DVSEC_PORT_EXTENSIONS));
-> 
-> No need for the !! it will return the same without that clamping to 1/0
-> because any non 0 value is true.
-> 
+<snip>
+...
+	size = PAGE_ALIGN(size);
+	if (!(vm_flags & VM_DEFER_KMEMLEAK))
+		kmemleak_vmalloc(area, size, gfp_mask);
 
-Ok
+	return area->addr;
+<snip>
 
-Regards,
-Terry
->> +}
->> +
+As fro this patch:
+
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+
+--
+Uladzislau Rezki
 
