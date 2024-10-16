@@ -1,233 +1,195 @@
-Return-Path: <linux-kernel+bounces-367524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899779A036C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 860879A038E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4168028756F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1F82812FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD311B2193;
-	Wed, 16 Oct 2024 07:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2D61C4A2B;
+	Wed, 16 Oct 2024 08:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F9SI5TvI"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wZQ8W61S"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3596F1D014E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3A4165F1A;
+	Wed, 16 Oct 2024 08:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065576; cv=none; b=rC4mPYxdWMWKNOFbvL3BMJg2pW1NfTCaQ/kr5GL42ms9k5frJH3Dc7ZtKXX4C2UBNt9JykJJtoOhCWEKgJOT9yKhhw8FtizuiH4gHU6gIbffCKUzdA0TFy5x3klLRbEPeINAG89Nnrq1FWZf0U63xTrtz4QlzW56Rxz8YHOkDN0=
+	t=1729065804; cv=none; b=j1cuTavDx1gbq1mjt20dkL/Q1P+lo889l0EhcL16q3vRsvkWgEVCrCF8hvG9yEUnOHBF+aiC2FziTj3nnbX3xYqdVTAyP6/WzBn0jBLENkkTZLGoo9CiETJ+NiQCljuUFSkLczuZFZ/e8wob2XbezcJtFAsGO1hh+fGj7PMW/zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065576; c=relaxed/simple;
-	bh=/BiKXgb/ifi8dpicYpJPPROj1PZWiwo5txuUrOXm8tY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lRIc3qm8pZAr2kT1UlvU85jrp2phWia3nDece6gFvHWhObgEzC1mhHqbeqKeauoQdkvXtOAzNXTsInp9Pc42WN5dGhmzXbBqQk+Sww9gWckmATankYL6B95ssyKZYnYS+6V0P4z6oc8XBWSiLQHGuxU+EwTYje7o10LyCWsb8yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F9SI5TvI; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-50d399891d6so976591e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729065573; x=1729670373; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GvCnBTztCAnhD2mHou1d1ZIRw6cIuOdYGceF0zdZt5Q=;
-        b=F9SI5TvIRiEUTCVlZXuS0C9ebLIqYl7jaQqwbwgt2YGqXRXHU2kx3HNegEMY4YILNF
-         1SgZbIyBYvb7u+lRk1iibyb+mLqeDU4DPxAQUq/95ONW+HE4Z1kaFeMaLVwmkXcKEd9j
-         E7p2J+6Ut/441A8Rv2ZiyY7UxIX9RVsqmD3k1PrU0dJzqqT+n1/O8T9Bckuu0SLIer6i
-         phcq5P617hwzCFXS3MPw/ppyZT9Cu9jZrvqnNz6WDimlzNUFkZqlKtaYHZXxzB/+eHYg
-         XvPJ+c4QRxBTb00JZnvMObiCdNVF48F/2XYeoGO0bm8mTF2x3CgJJIU/JkzafhZgbI/7
-         ZQRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729065573; x=1729670373;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GvCnBTztCAnhD2mHou1d1ZIRw6cIuOdYGceF0zdZt5Q=;
-        b=xRxj8agvvE9unBSiuZm7Dvg2S2TP7d72zb6oPp/AQscRJlHkKUL+QMSLxSXmyzsdBK
-         StyGtwtptVPnUTlw/9koEnJ0b+GJDFXx52jacvxVAMWnB44b0j26fDRnLiUV9imAQrgd
-         QRyFzcbJAno5NqApWYsUw3QXKPJfP+WPjfX0GgLXnWoVzjpRnC/ZO3Ae/BFw5fhPJPN/
-         xPlTjctAKSejquWGFBXNDMeRZnmt2NKKSeIgpqlsVNQRG0lF6W1pafzu/5YpnANw+Yed
-         jpsYNRsnHe8fKUXON1DD/l4MHJp3TLAa/cZiE7XWl1c/G4b3q0qO3KW42qI3Cgv0aj3r
-         E+iA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5SQVFPqFopkozxscudQQRajiLMghlK2iBhPESZZ8fukj+Yx5Dz8dJNQnu4KV+LLM5O783msK0XrEPcLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlEYLwZk4gYA5ekkQ0egUBnBP7jSIbaMeY+yHw3eCqESe1VfmJ
-	JvgT5nf4S8y8fcjnBJw2JVJdNSZDSC4Xot3TdpeHEJ7BglWbAirTMbb5G0dl5zvq3yyun2WI/+F
-	GsrcvkslwvRDKwxw2goJCA2jahHuElduk6iEweQ==
-X-Google-Smtp-Source: AGHT+IG4hpwFBZCh4eDUtnLHfS4is5WIEfhKJ8QttRME4agWUgCKIL3gqQiAFbfsookdZ7aXIpHbJF73RL1Vb4bfH5Q=
-X-Received: by 2002:a05:6122:1acc:b0:4f5:22cc:71b9 with SMTP id
- 71dfb90a1353d-50d374b96e2mr8280137e0c.5.1729065573128; Wed, 16 Oct 2024
- 00:59:33 -0700 (PDT)
+	s=arc-20240116; t=1729065804; c=relaxed/simple;
+	bh=DFikqo19SayUhwxpFxCxaYbGjVZY1En2Hg2xOPgktIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CxdRt2ezrwCgl95XFrD8mTrilHSZQZLFO9aOCWL8CdZZf6SD1fjYTIEnzzWLBhHdlEx4fOE4vuiM9+Lv80htaY49UfL3dgSCrVBKSAEPvEIUQitsbVvHDciBvfbI9mHzRxXtb5c2/ZPjDka+l+ngTYOmE+p8Dyr2oixRZnE02Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wZQ8W61S; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G6sjMl018446;
+	Wed, 16 Oct 2024 10:03:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	dDbXP1ypjZvqBpQf3NNZh4juY6YR5BwVX+yEcMU8AeY=; b=wZQ8W61S+g48IfSZ
+	Xw6brGKtcXYpt7dv3cY1g6wBH/z7ifinQCnpJFyrxz21zNv66Iiykwwbi6FlUnx+
+	V7GC5q50s2ePjF2SS7ih61LJ4r8n6Wr4j99sdlvUJVwGi6qaTFLhhF//oDLaJT4Y
+	jZSW/e9SWZ7TRdGHVNmNBUaWIdMXXvp0jkNb1FFUUVT9QNeM/+YgVoZ1cFdQ0eqO
+	PC6mNTFL8jFrbALX+lY/fciBjM58IzF8R4z/qZNL7Bdu4GeWXblB/95v2pqwZayI
+	OX9PWZi5ZS431p0765koJ60H1/zPMLVMdqKoLEQVB830vY343fcBwsyXgsX5nD3f
+	qRwZ8Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42a8mv8bmt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 10:03:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 095D7400BD;
+	Wed, 16 Oct 2024 10:01:35 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CEF8323B7AF;
+	Wed, 16 Oct 2024 10:00:22 +0200 (CEST)
+Received: from [10.48.86.225] (10.48.86.225) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 16 Oct
+ 2024 10:00:22 +0200
+Message-ID: <050d36ef-b674-4204-a731-7bcfb936e3aa@foss.st.com>
+Date: Wed, 16 Oct 2024 10:00:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015112327.341300635@linuxfoundation.org>
-In-Reply-To: <20241015112327.341300635@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 16 Oct 2024 13:29:22 +0530
-Message-ID: <CA+G9fYtmRGt9pXfRk=Bfnac7gbotdw8PcEsSOmD0nUefYHuBpQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/211] 6.6.57-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: rng: add st,stm32mp25-rng support
+To: Rob Herring <robh@kernel.org>
+CC: Olivia Mackall <olivia@selenic.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>, <marex@denx.de>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241015-rng-mp25-v2-v3-0-87630d73e5eb@foss.st.com>
+ <20241015-rng-mp25-v2-v3-1-87630d73e5eb@foss.st.com>
+ <20241015221740.GA2100600-robh@kernel.org>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <20241015221740.GA2100600-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, 15 Oct 2024 at 16:55, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.57 release.
-> There are 211 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.57-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On 10/16/24 00:17, Rob Herring wrote:
+> On Tue, Oct 15, 2024 at 06:48:54PM +0200, Gatien Chevallier wrote:
+>> Add RNG STM32MP25x platforms compatible. Update the clock
+>> properties management to support all versions.
+>>
+>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+>> ---
+>> Changes in V3:
+>> 	- Add constraint on clock-names for st,stm32mp25-rng compatible
+>>
+>> Changes in V2
+>> 	-Fix missing min/maxItems
+>> 	-Removed MP25 RNG example
+>> 	-Renamed RNG clocks for mp25 to "core" and "bus"
+>> ---
+>>   .../devicetree/bindings/rng/st,stm32-rng.yaml      | 34 +++++++++++++++++++++-
+>>   1 file changed, 33 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+>> index 340d01d481d12ce8664a60db42182ddaf0d1385b..c276723d566ce4a0d6deca10c491510644d842f8 100644
+>> --- a/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+>> +++ b/Documentation/devicetree/bindings/rng/st,stm32-rng.yaml
+>> @@ -18,12 +18,20 @@ properties:
+>>       enum:
+>>         - st,stm32-rng
+>>         - st,stm32mp13-rng
+>> +      - st,stm32mp25-rng
+>>   
+>>     reg:
+>>       maxItems: 1
+>>   
+>>     clocks:
+>> -    maxItems: 1
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    items:
+>> +      - const: core
+>> +      - const: bus
+>>   
+>>     resets:
+>>       maxItems: 1
+>> @@ -57,6 +65,30 @@ allOf:
+>>         properties:
+>>           st,rng-lock-conf: false
+>>   
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - st,stm32-rng
+>> +              - st,stm32mp13-rng
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          maxItems: 1
+>> +        clock-names: false
+> 
+> It makes no sense that you allowed 1 entry, but then disallow the
+> property. Either drop the 'minItems: 1' at the top level (keeping this)
+> or put 'maxItems: 1' here,
+> 
+>> +    else:
+>> +      properties:
+>> +        clocks:
+>> +          minItems: 2
+>> +          maxItems: 2
+> 
+> maxItems is already 2. Only need minItems.
+> 
+>> +        clock-names:
+>> +          items:
+>> +            - const: core
+>> +            - const: bus
+> 
+> You already defined the names, don't do it again. You need either
+> nothing or 'minItems: 2' depending on the above.
+> 
 
-## Build
-* kernel: 6.6.57-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: a3810192966c3144d8cf988e8a13fc18a2dde677
-* git describe: v6.6.56-212-ga3810192966c
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.5=
-6-212-ga3810192966c
+Actually, I'll do it the other way around, sorry for the noise.
+I'll remove this and remove minItems at the top level to keep the
+item list.
 
-## Test Regressions (compared to v6.6.54-387-g75430d7252ba)
-
-## Metric Regressions (compared to v6.6.54-387-g75430d7252ba)
-
-## Test Fixes (compared to v6.6.54-387-g75430d7252ba)
-
-## Metric Fixes (compared to v6.6.54-387-g75430d7252ba)
-
-## Test result summary
-total: 161514, pass: 133557, fail: 1868, skip: 25978, xfail: 111
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 41 total, 41 passed, 0 failed
-* i386: 28 total, 26 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 36 total, 35 passed, 1 failed
-* riscv: 19 total, 19 passed, 0 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+>> +      required:
+>> +        - clock-names
+>> +
+>>   additionalProperties: false
+>>   
+>>   examples:
+>>
+>> -- 
+>> 2.25.1
+>>
 
