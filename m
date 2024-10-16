@@ -1,148 +1,147 @@
-Return-Path: <linux-kernel+bounces-368645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0042B9A12CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:43:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBD49A12D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320EF1C23331
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:43:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75CB3B25625
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138F1215F44;
-	Wed, 16 Oct 2024 19:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDDD2144D4;
+	Wed, 16 Oct 2024 19:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0NMHJxKd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTHw7X82"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7096D2144CE;
-	Wed, 16 Oct 2024 19:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B22144B8
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107777; cv=none; b=ap+xgehOjxuXqKEsDr+0cOroUyhJYZkWSDzcyIsOEWgYFKhUJ0QUZ+qYteDJwkTbHbyA9V9sY4aPnHMiUdogJA38X3019XuhEh2CYsPt3ZcL49PBlMyNnWkbI2zBMYqVxoeR3KYqm2+gD0tqodDHUs7oZfg7KxcoEs6raju7g2A=
+	t=1729107830; cv=none; b=js+sKXqgexM0Wa9YzDBv1YyM+sAQsVANXwfL1/FYyV+5Vxo2XtsqG0wZBH/b4J4IfW8fVqwjBUFvwQK0Kn3ykWDZ7vPGyUTb4lTcx+9u1iHs4r2cca1R3QKvcF6uEDQ8MyZtTWmUdZvLRhPxxVC2BY7Tq6w/pvmnXiebmL2dApM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107777; c=relaxed/simple;
-	bh=LLzFnTpTL1+XFRq4+TKXAgrc///vCyQPUGO2IHwl6Ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+086pJyNtyuJEwqZXnzbYxLWQJEj32i/fRBoOp5YGmRj2nCVMdc4xfT8+vro+LB+9DsCfmTOe2Jg2vlrKAeBjUB3q3PBD+ewvmAytuz0RUc2/gO3RcDMf0QE1pBe1t1zvTbPiF4VOvKwCN/V4uESnY80TwiEIuW/wvri+0CgAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0NMHJxKd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E39CC4CECD;
-	Wed, 16 Oct 2024 19:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729107777;
-	bh=LLzFnTpTL1+XFRq4+TKXAgrc///vCyQPUGO2IHwl6Ro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0NMHJxKdPXrNVTJJELxvcjP6EXndmZPKY/cVa8r0jrIipsik5JX8iDyHowdWGprVf
-	 9/NrWwBchzPp3veG3nCJTj5bZtgrghrA/UrbB3NhfiaDta1rG+G1i1KcQYazyRbnHr
-	 tYnYkPICnlWj/mOfQIIsaTXRNwNGrRy9DzO3sJQI=
-Date: Wed, 16 Oct 2024 21:42:53 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Yuanchu Xie <yuanchu@google.com>
-Cc: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	virtualization@lists.linux.dev, dev@lists.cloudhypervisor.org
-Subject: Re: [PATCH v3 1/2] virt: pvmemcontrol: control guest physical memory
- properties
-Message-ID: <2024101628-audibly-maverick-e1fe@gregkh>
-References: <20241016193947.48534-1-yuanchu@google.com>
+	s=arc-20240116; t=1729107830; c=relaxed/simple;
+	bh=sDSKmpxYE9rh2jjOsxbNkFDWO/cqOxbWBd3xn9LCO+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cgt8exFt3x1SPk2Mm0LtxtdAyy3msEqZJlG496MUjVRRtL02yb1esA6lfbA2ukJuGfNuGaZ+Nyr09qCIaeCqBthAK1o/38X9deCQpIJR2wi2N6ysYfRsvGuxY/mGsB/T2NDHb4ciQ2JXFHgWLKOxk2fRFPJsaMKklNlKCwSEMb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTHw7X82; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729107828; x=1760643828;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sDSKmpxYE9rh2jjOsxbNkFDWO/cqOxbWBd3xn9LCO+g=;
+  b=WTHw7X827HX+x11+EQZWe66eHLN7HEc3niyiAFz182V1Z2naouX02oAI
+   dXRro55/P7yjsdREfM2XGmnj3veD7MzGqxCpLOjyLYho9J/Jd1jPMS/mw
+   w5Dk5glUqttGDKIkzg/02QQljld68/aTUnp8oub2YSFv39uQqNRCrzJzS
+   E/5XYtxlbh/e4feNToAo3OIbvN9czcb9vNPZXzRolBSr0hFNEglmw6q72
+   4Bv/9EJhR5V8uGnI0PkQ07rNCiOM0mH1M8GfRPNOcge7rts/yISWrm/qi
+   4aEx6yMPf/9MIqqQoUbarT8P3J8p8WzA4mKAOcwpRalgn0m+r6l4iY8VA
+   w==;
+X-CSE-ConnectionGUID: jWbstG07Sua6uF91T/3JUA==
+X-CSE-MsgGUID: sYD6gkK4TuqIoa5mZDy5VQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28044375"
+X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
+   d="scan'208";a="28044375"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 12:43:47 -0700
+X-CSE-ConnectionGUID: SR/kJhNATrisyTIR4DfzTA==
+X-CSE-MsgGUID: 7RJqfyk+R0ar2XkMlNzOCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
+   d="scan'208";a="109091285"
+Received: from iweiny-desk3.amr.corp.intel.com (HELO [10.124.222.19]) ([10.124.222.19])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 12:43:47 -0700
+Message-ID: <33c61588-7083-4851-965a-f4f1d46ff44c@intel.com>
+Date: Wed, 16 Oct 2024 12:43:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016193947.48534-1-yuanchu@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when
+ comparing in percpu_add_op()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+ Christoph Lameter <cl@linux.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+References: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com>
+ <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
+ <ZxAAlEyvxzWpwQQ0@smile.fi.intel.com> <ZxAD0-kQJ0_lDxje@smile.fi.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <ZxAD0-kQJ0_lDxje@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 12:39:46PM -0700, Yuanchu Xie wrote:
-> Pvmemcontrol provides a way for the guest to control its physical memory
-> properties and enables optimizations and security features. For example,
-> the guest can provide information to the host where parts of a hugepage
-> may be unbacked, or sensitive data may not be swapped out, etc.
+On 10/16/24 11:20, Andy Shevchenko wrote:
+>> Maybe more readable, but wouldn't it be theoretically buggy for u64?
+>> I'm talking about the case when u64 == UINT_MAX, which will be true
+>> in your case and false in mine.
+>>
+>>>         const int pao_ID__ = (__builtin_constant_p(val) &&
+>>>                               ((val) == 1 || (int)(val) == -1)) ?
+>>>
+>>>                                 (int)(val) : 0;
+> This code _is_ buggy, thanks to my new test case.
 > 
-> Pvmemcontrol allows guests to manipulate its gPTE entries in the SLAT,
-> and also some other properties of the memory mapping on the host.
-> This is achieved by using the KVM_CAP_SYNC_MMU capability. When this
-> capability is available, the changes in the backing of the memory region
-> on the host are automatically reflected into the guest. For example, an
-> mmap() or madvise() that affects the region will be made visible
-> immediately.
-> 
-> There are two components of the implementation: the guest Linux driver
-> and Virtual Machine Monitor (VMM) device. A guest-allocated shared
-> buffer is negotiated per-cpu through a few PCI MMIO registers; the VMM
-> device assigns a unique command for each per-cpu buffer. The guest
-> writes its pvmemcontrol request in the per-cpu buffer, then writes the
-> corresponding command into the command register, calling into the VMM
-> device to perform the pvmemcontrol request.
-> 
-> The synchronous per-cpu shared buffer approach avoids the kick and busy
-> waiting that the guest would have to do with virtio virtqueue transport.
-> 
-> User API
-> >From the userland, the pvmemcontrol guest driver is controlled via the
-> ioctl(2) call. It requires CAP_SYS_ADMIN.
-> 
-> ioctl(fd, PVMEMCONTROL_IOCTL, struct pvmemcontrol_buf *buf);
-> 
-> Guest userland applications can tag VMAs and guest hugepages, or advise
-> the host on how to handle sensitive guest pages.
-> 
-> Supported function codes and their use cases:
-> PVMEMCONTROL_FREE/REMOVE/DONTNEED/PAGEOUT. For the guest. One can reduce
-> the struct page and page table lookup overhead by using hugepages backed
-> by smaller pages on the host. These pvmemcontrol commands can allow for
-> partial freeing of private guest hugepages to save memory. They also
-> allow kernel memory, such as kernel stacks and task_structs to be
-> paravirtualized if we expose kernel APIs.
-> 
-> PVMEMCONTROL_MERGEABLE can inform the host KSM to deduplicate VM pages.
-> 
-> PVMEMCONTROL_UNMERGEABLE is useful for security, when the VM does not
-> want to share its backing pages.
-> The same with PVMEMCONTROL_DONTDUMP, so sensitive pages are not included
-> in a dump.
-> MLOCK/UNLOCK can advise the host that sensitive information is not
-> swapped out on the host.
-> 
-> PVMEMCONTROL_MPROTECT_NONE/R/W/RW. For guest stacks backed by hugepages,
-> stack guard pages can be handled in the host and memory can be saved in
-> the hugepage.
-> 
-> PVMEMCONTROL_SET_VMA_ANON_NAME is useful for observability and debugging
-> how guest memory is being mapped on the host.
-> 
-> Sample program making use of PVMEMCONTROL_DONTNEED:
-> https://github.com/Dummyc0m/pvmemcontrol-user
-> 
-> The VMM implementation is part of Cloud Hypervisor, the feature
-> pvmemcontrol can be enabled and the VMM can then provide the device to a
-> supporting guest.
-> https://github.com/cloud-hypervisor/cloud-hypervisor
-> 
-> -
-> Changelog
-> PATCH v2 -> v3
-> - added PVMEMCONTROL_MERGEABLE for memory dedupe.
-> - updated link to the upstream Cloud Hypervisor repo, and specify the
->   feature required to enable the device.
-> PATCH v1 -> v2
-> - fixed byte order sparse warning. ioread/write already does
->   little-endian.
-> - add include for linux/percpu.h
-> RFC v1 -> PATCH v1
-> - renamed memctl to pvmemcontrol
-> - defined device endianness as little endian
+> [   66.161375] pcp -1 (0xffffffffffffffff) != expected 4294967295 (0xffffffff)
 
-As per the kernel documentation, this changelog is in the wrong place.
-Please put it in the correct location.
-
-thanks,
-
-greg k-h
+Thanks for pointing that out Andy (and Peter too)!
 
