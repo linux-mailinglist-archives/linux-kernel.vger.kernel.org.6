@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-368085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B6B9A0AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 666FA9A0AFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B583F280DB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F521280D6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73E3209F59;
-	Wed, 16 Oct 2024 13:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ad5gA8s4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA29208D85;
+	Wed, 16 Oct 2024 13:05:53 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C77C208D99;
-	Wed, 16 Oct 2024 13:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E1D206E66
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729083957; cv=none; b=tlGEhkoU1OFqRUnCzw0EiNBBdmqDypLzuAZbMyEXwmAMv2JHKFSGuqqa0YI2Z5qlvuvdHqgBI6XdhrxhQfV0E/ADlRzG/Wza5rS+i7crzPZq3NrRDudEQkY6PPdy/yjBizTt3M5pnw0RDN32GTLN8WlgOivObs5MT1BOAZ8ZZAI=
+	t=1729083953; cv=none; b=rDLe1lvQww9XsTv44T8t3Zj6uH/rZrbezA5TcY7w/JR2GObyVxPeKSIA2RK/F07fDKChfIiBDUHbizX1RQQSulJ0LBhIIXFOkNbiAooke2dn76jEqy1+RKsiUmwXuX+cQyqeD7nWpN+lF0Er3jNAXvKz4LAkDJOSk++W++jUFFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729083957; c=relaxed/simple;
-	bh=fft/pJsETeg9caTaRxKFCq/djw1/xF5qXNnUEu1uXsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZIoBKPrPqDueuc/IbSjp8eufln6AzJQyfbkLDTZXMCEA8ZFkrjzP+6YdNz329LmDqUPp78NQx0XbRgW0X3VtSgeQcZlDzd16RwOxUz0WLYH3yJTfhzFufQbbxgMeNC6sq5b6+VT9rmQoQIGsPXJCGU3WjRuzCjWr0pNMUb2J+4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ad5gA8s4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97BDAC4CEC5;
-	Wed, 16 Oct 2024 13:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729083956;
-	bh=fft/pJsETeg9caTaRxKFCq/djw1/xF5qXNnUEu1uXsY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ad5gA8s4/j3KUQc1MIB3l+kq0Dl1b+MpFdyZP/Y/W6oSwbPr/A/cvALObpSyq2iVk
-	 HTbF9fyCnCX37TAR9soqNzM22tkJUCMB1OKtlObllm2VTGwdG5wvemre2vs7aEYFrw
-	 l4sxy0CcOMVzYnTXIgnKUSF7ImqYBzqn78hZSsyErPtUBUWU7K9HxM848C7h0iAbDF
-	 6EPOO1Jq5+22dM02zRU7rTDo+qv/eWtnxUGzoCgEoyG6MkSTPLGJaRikKG2qrUpz0m
-	 IvDvtmu5Cmr7Tp7zevgUBPnTBB0jNhZR+PRIsqUB4l7xKJPf7USB8CeeaaNlVVWo/2
-	 22HhpB+q99E8Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot <syzbot+985ada84bf055a575c07@syzkaller.appspotmail.com>,
-	syzkaller-bugs@googlegroups.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] nilfs2: fix kernel bug due to missing clearing of buffer delay flag
-Date: Wed, 16 Oct 2024 15:05:45 +0200
-Message-ID: <20241016-dreiviertel-erzittern-f8742ac9db30@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241015213300.7114-1-konishi.ryusuke@gmail.com>
-References: <670cb3f6.050a0220.3e960.0052.GAE@google.com> <20241015213300.7114-1-konishi.ryusuke@gmail.com>
+	s=arc-20240116; t=1729083953; c=relaxed/simple;
+	bh=FbR3gg6JVCrfH92imBLO6smtkMM1oMDMyVjwGG9rvgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FadCrcHkcg1J48OzBHaQYSmVuu/OvysAYcBrFm/0UM1EFh2RX1LVVh1ZVzuSNvgmtiLM/slI5DqKjBw+nCSfihkEnap9meV9UL6RrEvvKcvP3gqWxXcVjZCGJnOafqSGnWxLyhi2Im8xZJEXvtEqsjVTCf3LANGX32o0OFXQj3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6B75C4CEC5;
+	Wed, 16 Oct 2024 13:05:51 +0000 (UTC)
+Message-ID: <5f56441c-6ba4-4ef4-9f4b-84496c3414de@linux-m68k.org>
+Date: Wed, 16 Oct 2024 23:05:48 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1214; i=brauner@kernel.org; h=from:subject:message-id; bh=fft/pJsETeg9caTaRxKFCq/djw1/xF5qXNnUEu1uXsY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTz79Lt2KVjLO886y3TmZpX1m7TArS2bGpZwuW6v7+8X eH2rZWuHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNZF8nwP3LfBt2uxnV12stL D6qyvS/pjW7X/FCrNZdJ9tAE5XVcSowM8/7NMq/SPJDPOCFiyZ2XCw18TvMr2artqFl41FLc5/N KXgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] m68k: mcfgpio: Fix incorrect register offset for
+ CONFIG_M5441x
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Steven King <sfking@fdwdc.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+References: <20241016-fix-m5441x-gpio-v2-1-f419777bc90d@yoseli.org>
+Content-Language: en-US
+From: Greg Ungerer <gerg@linux-m68k.org>
+In-Reply-To: <20241016-fix-m5441x-gpio-v2-1-f419777bc90d@yoseli.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 16 Oct 2024 06:32:07 +0900, Ryusuke Konishi wrote:
-> Syzbot reported that after nilfs2 reads a corrupted file system image
-> and degrades to read-only, the BUG_ON check for the buffer delay flag
-> in submit_bh_wbc() may fail, causing a kernel bug.
+Hi JM,
+
+On 16/10/24 17:24, Jean-Michel Hautbois wrote:
+> Fix a typo in the CONFIG_M5441x preprocessor condition, where the GPIO
+> register offset was incorrectly set to 8 instead of 0. This prevented
+> proper GPIO configuration for m5441x targets.
 > 
-> This is because the buffer delay flag is not cleared when clearing the
-> buffer state flags to discard a page/folio or a buffer head. So, fix
-> this.
+> Fixes: bea8bcb12da0 ("m68knommu: Add support for the Coldfire m5441x.")
+> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+
+Looks good, thanks for the v2.
+Applied to the m68knommu git tree, for-next branch.
+
+Regards
+Greg
+
+
+> ---
+> Changes in v2:
+> - The commit fixed is not the one in v1
+> - Link to v1: https://lore.kernel.org/r/20241016-fix-m5441x-gpio-v1-1-0a29befd4b8d@yoseli.org
+> ---
+>   arch/m68k/include/asm/mcfgpio.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] nilfs2: fix kernel bug due to missing clearing of buffer delay flag
-      https://git.kernel.org/vfs/vfs/c/6ed469df0bfb
+> diff --git a/arch/m68k/include/asm/mcfgpio.h b/arch/m68k/include/asm/mcfgpio.h
+> index 019f24439546..9c91ecdafc45 100644
+> --- a/arch/m68k/include/asm/mcfgpio.h
+> +++ b/arch/m68k/include/asm/mcfgpio.h
+> @@ -136,7 +136,7 @@ static inline void gpio_free(unsigned gpio)
+>    * read-modify-write as well as those controlled by the EPORT and GPIO modules.
+>    */
+>   #define MCFGPIO_SCR_START		40
+> -#elif defined(CONFIGM5441x)
+> +#elif defined(CONFIG_M5441x)
+>   /* The m5441x EPORT doesn't have its own GPIO port, uses PORT C */
+>   #define MCFGPIO_SCR_START		0
+>   #else
+> 
+> ---
+> base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+> change-id: 20241016-fix-m5441x-gpio-e671833569b4
+> 
+> Best regards,
 
