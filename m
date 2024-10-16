@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-368712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C390E9A13D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:28:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49979A13D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87ED1C22073
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:28:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2DDDB21B20
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711D4216A37;
-	Wed, 16 Oct 2024 20:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A026C216A16;
+	Wed, 16 Oct 2024 20:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="RmCjY/M6"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="G+sN4Fqs"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E0F2141D9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8140B216A19
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729110501; cv=none; b=gHA7SZkt/CewDEl/+4MPbgRwlGXG7hVqYRXLo1Y1yqgYbWaLvnGZtg0nSw/9onj6jNbJaYPdt7I6PZ22hDRYs5sbT8sZ4l7fr9DW6eUrKUYr1LqMpi8hWyw04LvV8soXmcjQLm3zemHepe9nQ/WqJfEEg3q1uCH26IbXZjjqn7w=
+	t=1729110502; cv=none; b=GDJXkOB2W1LSPUtj3LpLnQ2nuA+/Z2sXTp72buC1g/Z/60IMXBpK7zVvSTrCGEo0Qz210mdeF0hHrEAnS4p9MtKJJWnymHRuiMf2ip+MQwGb5TyB2/yGH0lKsF9ron+ejBcQXxQCWuTmQBmXcR6+weNBLPF27caQ2ow25o/yDPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729110501; c=relaxed/simple;
-	bh=VKn9uJMsOsTjjYre0G0WrWsRlaciyvDyOJYk+dw8fas=;
+	s=arc-20240116; t=1729110502; c=relaxed/simple;
+	bh=OXtwgpX1p78eIzz35BpZxxK9L/PdXgpGUs52e85uLCo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fT0bWaGe9RSdJFshVXMqXDvvLPntDoaact73ljUvs2zy8VNUaD5xwEO/gwVvgFiX7br6XZp6EsKHwSHEU4AYlvhCYzPa1Hw8vvLQfoyzXlvSbGr2BPCjygjZz/UkewRfRaiy6lv2hLvJ7ByIVGgwlK4gRBJ4ar3udLXnB8l9C6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=RmCjY/M6; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=nI2Q+wRRZEhZs4+jBoO6Azyd3L+hWJMUdTkiKYXqvhTPvQE1ooS5phCyj33K484U/lR7Y/P/1w24rpiEcxeIEnxR63izKnBlghjr65rU1iSFqnnFwaBdAfFr/rs+W7fYng00y/Q3uKNFM1YZMjiPMHrLkkCabcZpGGBv8Mnu4Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=G+sN4Fqs; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20caccadbeeso2499755ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:28:19 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e28b75dbd6so173633a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:28:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1729110499; x=1729715299; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1729110501; x=1729715301; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=olAKLc1ubtUo3zWjyBg9w1ODcp643i2ah+QLaW6GItw=;
-        b=RmCjY/M62ZDQPWk3lDkidhzaZgqK71xT2bL9T7nkIYBTNTx8dA2/Zfpc5HyAA1l5Iu
-         2Z0n6lqPkKClOW/JfVhL2UHwiA+1Vgxk8wRWxZEUKs1S8PjRRmYJorB0ivnzpjcNSv1j
-         8dfrEI8JyxWJ3b8FUwogONE86aB1P/Gtk/Cjpy0ExErof4IrgW2RMEkrcstzWXMzcKYn
-         eNbxN/R3J1xzse5FYHWTbR8p8elKWqKmlrePnFWhd0FfbN45UJ28DG/RLUe9urK69ik1
-         lBkc/w26zRHpuufItiLv1xdXGCGQ5s0GDmfTEWqKyA/Omnz2mmqlhIWhDZLzWyGSLpMU
-         oh9A==
+        bh=6UwuohaBpRoU5PwojE5+Gkdri+a8AExwGUOzfsduKVM=;
+        b=G+sN4FqsxkHrmO6xPSaI6OwKIJARb9IWkg4iW0znyY8WRCcpQi519mDxAehsJZGuM1
+         v9+SJUbL9JrEiFwpQjtEA1B/DIQ26qBNT2yAGZTbIlmdBASmJEdzKllEtyYJ6a8pwnIj
+         dX2uYPs0geavcphePV7b4g/EECR2pHP3tboIF1rS6sOhyDyqiodXs5KJqHlwHR9D47V/
+         bE2jSTnIOZKs/dYwLBPDDF2SXr2MxukSUuvH1GC0lqhWe6vIHB4yWXirxXJ8HYpHJ8h1
+         CawAh5dafgE06KTfE/b3sFpx8lE8iBP5xPw+iDmfmJt5BNKAKmGHxFKRBYEbWeLcYsIK
+         vnBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729110499; x=1729715299;
+        d=1e100.net; s=20230601; t=1729110501; x=1729715301;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=olAKLc1ubtUo3zWjyBg9w1ODcp643i2ah+QLaW6GItw=;
-        b=GHZR9QD0SUXGIxaojHXagUVzds2fjbMsi1ic8tLKghOPVqQ+3kIJrHJGMAnXqnraiA
-         larRc2uQ2gef7iBWFAPFG4jhxFGzUb/hb6RULBIOsFFpNexFDfcsN3VbBzu98nYc/R+Z
-         7ayRs9984xaMZyUsxPEpz+15myyKX7fQchw5NRzH4MGgJvmOXRL+DJOq8HI6Nu6c+QdL
-         CBO3lWuUqZMiQJ+7R+xLJ9IUxbev/7ZYUwgjFOF2KUj9uGHZdk05dYpiYrlR35jg/Wqh
-         /6IjK9h+P2mDJ2i4agtA/URcaIszjQTgdaiMut941GxLic7gDg5jbzmwdEC9JGL53wbG
-         lUjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPv8O0hy4Qq5NNu40RLZVKiMSWdFOOaEegSTIFMT7+Y0HcCozTeEEpQn7+05VvbPRTVc+3W1K6sizO6IQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg+DEWl8BBLamdL5Q9AdhoPUqxxiKM1WFH53Rk+n3cMY2sYVv5
-	O8veByntsOfXPSLPfz7x7CAhdzceTVwTN0TboHSEm4KcPGDy1UxnbG4CThsOU1M=
-X-Google-Smtp-Source: AGHT+IFM0/E+iUAS6tZ0dnNm0aBuUaS4hqVs4p2U2s4QRcOm7iZw1qqdWPovB3OjQaczkhgEOCQhtA==
-X-Received: by 2002:a17:903:1108:b0:20c:ea0a:9665 with SMTP id d9443c01a7336-20cea0a98aemr161412995ad.32.1729110499094;
-        Wed, 16 Oct 2024 13:28:19 -0700 (PDT)
+        bh=6UwuohaBpRoU5PwojE5+Gkdri+a8AExwGUOzfsduKVM=;
+        b=c0GC9cdSv7Ia32ARTYv1qr1EXx8vqB8aPa3GPifdBvZWTHVnXWb4owK5F9k1/h8QzJ
+         JvxQWpwYr7RmQOhTnfIHW8r/x0FNWFkvnPS/F9mCIyA2nJE+zYEArxtgE6sZKouQ8Hmb
+         eXquQ6cNQ5AGogp05NxAvSwxqD7q10gyuAXWYM+s/4SyRmvcQ7nVtnrxfrU7c1Jx/daC
+         BKwSbfTcw4T1teD2AFun/iZx7yV1zKR9VJxhojJOIBdiVHQP1v2fCfAJbkdyVEE2DOGK
+         MOqhMUhMAf4MgDF72vGUwADZbtGNcIWlPNcUk0frdOkasnZWC1xpb6jSowRcF/UQU2fe
+         w6nA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6UEyjlwQZgT1HrSsN+ZXJQtMAEVowk8FIGOLqE1vYhmkgGC4giP8CbewkqGgXty6CG0lQkKlydcwnH5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxV6X8xeteU0BuP0Fc/rXF1lhPU0HuDlnThgJvxOj1eR+lU2Lc
+	oDCWQuu7NT35BX/lPfdiRMzZW1BmvlkF7xKvWkJPT3+iwrbXuhii9ONO6L5sTns=
+X-Google-Smtp-Source: AGHT+IErL2Sdr8ec9Qw+ve0FvDLKKtrRKua+qTZ3t0Y1FVqURXGPbdbwTPYS3WSCoIo51bNOUX9RUA==
+X-Received: by 2002:a17:90b:802:b0:2e1:ce7b:6069 with SMTP id 98e67ed59e1d1-2e31538f1camr20096245a91.33.1729110500826;
+        Wed, 16 Oct 2024 13:28:20 -0700 (PDT)
 Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e08f8f89sm228613a91.38.2024.10.16.13.28.17
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e08f8f89sm228613a91.38.2024.10.16.13.28.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 13:28:18 -0700 (PDT)
+        Wed, 16 Oct 2024 13:28:20 -0700 (PDT)
 From: Samuel Holland <samuel.holland@sifive.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-riscv@lists.infradead.org
@@ -86,11 +86,10 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
 	Evgenii Stepanov <eugenis@google.com>,
 	Charlie Jenkins <charlie@rivosinc.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v5 01/10] dt-bindings: riscv: Add pointer masking ISA extensions
-Date: Wed, 16 Oct 2024 13:27:42 -0700
-Message-ID: <20241016202814.4061541-2-samuel.holland@sifive.com>
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: [PATCH v5 02/10] riscv: Add ISA extension parsing for pointer masking
+Date: Wed, 16 Oct 2024 13:27:43 -0700
+Message-ID: <20241016202814.4061541-3-samuel.holland@sifive.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20241016202814.4061541-1-samuel.holland@sifive.com>
 References: <20241016202814.4061541-1-samuel.holland@sifive.com>
@@ -103,62 +102,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 The RISC-V Pointer Masking specification defines three extensions:
-Smmpm, Smnpm, and Ssnpm. Document the behavior of these extensions as
-following the ratified version 1.0 of the specification.
+Smmpm, Smnpm, and Ssnpm. Add support for parsing each of them. The
+specific extension which provides pointer masking support to userspace
+(Supm) depends on the kernel's privilege mode, so provide a macro to
+abstract this selection.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Smmpm implies the existence of the mseccfg CSR. As it is the only user
+of this CSR so far, there is no need for an Xlinuxmseccfg extension.
+
 Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
 
-Changes in v5:
- - Update pointer masking spec version to 1.0 and state to ratified
+(no changes since v3)
 
 Changes in v3:
- - Note in the commit message that the ISA extension spec is frozen
+ - Rebase on riscv/for-next (ISA extension list conflicts)
+ - Remove RISCV_ISA_EXT_SxPM, which was not used anywhere
 
 Changes in v2:
- - Update pointer masking specification version reference
+ - Provide macros for the extension affecting the kernel and userspace
 
- .../devicetree/bindings/riscv/extensions.yaml  | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/riscv/include/asm/hwcap.h | 5 +++++
+ arch/riscv/kernel/cpufeature.c | 3 +++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index 2cf2026cff57..28bf1daa1d27 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -128,6 +128,18 @@ properties:
-             changes to interrupts as frozen at commit ccbddab ("Merge pull
-             request #42 from riscv/jhauser-2023-RC4") of riscv-aia.
+diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+index 46d9de54179e..8608883da453 100644
+--- a/arch/riscv/include/asm/hwcap.h
++++ b/arch/riscv/include/asm/hwcap.h
+@@ -93,6 +93,9 @@
+ #define RISCV_ISA_EXT_ZCMOP		84
+ #define RISCV_ISA_EXT_ZAWRS		85
+ #define RISCV_ISA_EXT_SVVPTC		86
++#define RISCV_ISA_EXT_SMMPM		87
++#define RISCV_ISA_EXT_SMNPM		88
++#define RISCV_ISA_EXT_SSNPM		89
  
-+        - const: smmpm
-+          description: |
-+            The standard Smmpm extension for M-mode pointer masking as
-+            ratified at commit d70011dde6c2 ("Update to ratified state")
-+            of riscv-j-extension.
-+
-+        - const: smnpm
-+          description: |
-+            The standard Smnpm extension for next-mode pointer masking as
-+            ratified at commit d70011dde6c2 ("Update to ratified state")
-+            of riscv-j-extension.
-+
-         - const: smstateen
-           description: |
-             The standard Smstateen extension for controlling access to CSRs
-@@ -147,6 +159,12 @@ properties:
-             and mode-based filtering as ratified at commit 01d1df0 ("Add ability
-             to manually trigger workflow. (#2)") of riscv-count-overflow.
+ #define RISCV_ISA_EXT_XLINUXENVCFG	127
  
-+        - const: ssnpm
-+          description: |
-+            The standard Ssnpm extension for next-mode pointer masking as
-+            ratified at commit d70011dde6c2 ("Update to ratified state")
-+            of riscv-j-extension.
-+
-         - const: sstc
-           description: |
-             The standard Sstc supervisor-level extension for time compare as
+@@ -101,8 +104,10 @@
+ 
+ #ifdef CONFIG_RISCV_M_MODE
+ #define RISCV_ISA_EXT_SxAIA		RISCV_ISA_EXT_SMAIA
++#define RISCV_ISA_EXT_SUPM		RISCV_ISA_EXT_SMNPM
+ #else
+ #define RISCV_ISA_EXT_SxAIA		RISCV_ISA_EXT_SSAIA
++#define RISCV_ISA_EXT_SUPM		RISCV_ISA_EXT_SSNPM
+ #endif
+ 
+ #endif /* _ASM_RISCV_HWCAP_H */
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index b3a057c36996..94596bca464e 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -377,9 +377,12 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_BUNDLE(zvksg, riscv_zvksg_bundled_exts),
+ 	__RISCV_ISA_EXT_DATA(zvkt, RISCV_ISA_EXT_ZVKT),
+ 	__RISCV_ISA_EXT_DATA(smaia, RISCV_ISA_EXT_SMAIA),
++	__RISCV_ISA_EXT_DATA(smmpm, RISCV_ISA_EXT_SMMPM),
++	__RISCV_ISA_EXT_SUPERSET(smnpm, RISCV_ISA_EXT_SMNPM, riscv_xlinuxenvcfg_exts),
+ 	__RISCV_ISA_EXT_DATA(smstateen, RISCV_ISA_EXT_SMSTATEEN),
+ 	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
+ 	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
++	__RISCV_ISA_EXT_SUPERSET(ssnpm, RISCV_ISA_EXT_SSNPM, riscv_xlinuxenvcfg_exts),
+ 	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
+ 	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
+ 	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
 -- 
 2.45.1
 
