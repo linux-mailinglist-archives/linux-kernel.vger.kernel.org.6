@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-368161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB939A0C18
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:59:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02029A0C17
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B787B256A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0571F272D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F3F20F5AB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5C220C014;
 	Wed, 16 Oct 2024 13:58:28 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F411820C03F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB3B20C000
 	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729087107; cv=none; b=CMytzLReYQAbuq6jDTlqqft/sUcWVVKgvtnVAj4dFS9C8hwVrf8a1jwke+dY9ykevnE0eXJ0y8oIkEMSN88r5c3zeyascl7y4mfj0s35khmDikEzjnJGq+pSOjcHgun7NbwBkd04vKFkGZQd68Z6mhXMb697H2unJr2r6jXYlx8=
+	t=1729087107; cv=none; b=Nhj/03iIE+HznOlJ3KYqzvCxCCZ9P8qNNaLBfbqND7tJ0ok/appG+fua7YtdPC/VY88mLP3PJ4OiJoAMartgIDY/zRQOSFiluQf1vTd1jbFrTbWEcEB2zmvI4Eq9gex/eF2Rv3M7ycSbFcG62b8Ij89gPfvhsfF/FtWBcff2ugM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729087107; c=relaxed/simple;
-	bh=p1xoTdRWHxbpJYFPocjjD/k91A3hz/ET82iys+wS7Os=;
+	bh=0mH4CO2b/d19TFj3TcXj0yg1eJ2aecYH2/1yxCflbn8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FlLaot25yXyv52xin+dO18o9mwKt9CYMkfceqIiUdRNOwHpNW86UL3ffrxfzx163jWv8/2JC8y7K8edMtbIxLCvY81S2DaRUYu3FFoMf7+XG6IWcDNx5g9aUtz7sih+2x8WW2n6J+JVdtaDRbn9sDIE7JL2n7VJutI7w0L8Itbk=
+	 In-Reply-To:To:Cc; b=B/84oEhTZHZBOn1Nxzmenzm3FusMXShYTyaanzTNb79S/i2QtGyfXi1z6EJfvWPMaohZlYmiNhHAzdqKcV7aaIujXwdFSIu0850skfnJZZ5Co3pFvI/RW6XNDgJp+8ig4SrJna9+k7KfGJtfVygfAjWlk2cy+Xy3Gq3zXYy/Osk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1t14Xd-0003H5-PT; Wed, 16 Oct 2024 15:58:21 +0200
+	id 1t14Xd-0003H3-PX; Wed, 16 Oct 2024 15:58:21 +0200
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1t14Xd-002HjG-3B; Wed, 16 Oct 2024 15:58:21 +0200
+	id 1t14Xd-002HjH-3I; Wed, 16 Oct 2024 15:58:21 +0200
 Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
 	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1t14Xc-00BU5S-3D;
-	Wed, 16 Oct 2024 15:58:20 +0200
+	id 1t14Xd-00BU5S-00;
+	Wed, 16 Oct 2024 15:58:21 +0200
 From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Wed, 16 Oct 2024 15:58:12 +0200
-Subject: [PATCH v7 7/9] usb: gadget: uvc: set nbuffers to minimum
- STREAMING_MIN_BUFFERS in uvc_queue_setup
+Date: Wed, 16 Oct 2024 15:58:13 +0200
+Subject: [PATCH v7 8/9] usb: gadget: uvc: add trace of enqueued and
+ completed requests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240403-uvc_request_length_by_interval-v7-7-e224bb1035f0@pengutronix.de>
+Message-Id: <20240403-uvc_request_length_by_interval-v7-8-e224bb1035f0@pengutronix.de>
 References: <20240403-uvc_request_length_by_interval-v7-0-e224bb1035f0@pengutronix.de>
 In-Reply-To: <20240403-uvc_request_length_by_interval-v7-0-e224bb1035f0@pengutronix.de>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -66,21 +66,21 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
  kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1928;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4563;
  i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=p1xoTdRWHxbpJYFPocjjD/k91A3hz/ET82iys+wS7Os=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBnD8Z7Om6EfinVW5Cow+C1IkkkMK4IdC0diReNx
- dzxIDjTu0CJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZw/GewAKCRC/aVhE+XH0
- q6uwD/0aizggiuVqSZMlzlvvriGjXgtsSLE3YyciXl3VVz5Hs1+fMvak+5wYsSXZ0IXcC4M+bWd
- XEhD6DsTGUlO0bXXnazYZ/JgPf+BUlegErqjYXAv9rDwVjprPQ1zaAEhAmCjX+0zJeI8y5azG0I
- aJcIb7qpsDGzL3406CvEAVj1bPq6e5bce7Uk2mmTnkAUiyVEIGoVheN9h2/blQ9F6gJyBfL1ziy
- mojFkGODORs5Zj0kXMu1YGY7128C1/8PyplPQw2uJwaXqsaCNCnDhL6jnMgHXhjNZOaHAepluEL
- KEglKE4ndvQlnRsBTmvtENL3SM0EQ0XklyDQt3UWvwNE1QHJHXsAAV9xARR/YNu73uEnFCYvjTu
- imiR5FostREvwqVmUB7cUMIqHTBDrjrKusRbnCmgBoKf00pFKEM13QnDN3xkTDr2+YL036VH9xj
- hrrIDElEZ2bxzVbDc8kKyR9yo6/TWJl2MNea6S7EHElESFo00khtO/13a9gaP7q81yCXD+FmeqU
- WLBAb1/YJ7R70lRW2MZv0TEIB4I9sxUt2QWkAL0BzCYZpH2G5NLGWYGHdtjDAP8YawUNCfXPbVP
- w5llwQ4oLrpYZ7I9+iWXh3YL5R1cLO7i39aE+qa17nKvpMS1ZRXYnf8+YyZdgrKqGcNOVIoaTtF
- UEHR2p13Grmj7MQ==
+ bh=0mH4CO2b/d19TFj3TcXj0yg1eJ2aecYH2/1yxCflbn8=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBnD8Z8mDtmNcR5F4/cpzQ/l8FFDJ3HRyuqKlOOy
+ 0Owx3cZMC+JAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZw/GfAAKCRC/aVhE+XH0
+ q25UEAC3HbWR+gG5dFir37oWCwKAXD0ElHI4qvtwL4qgnpVn7ofoNjxYzI/zm8FAZGv/qYlafTf
+ D5XPpsmkiAk29/kym8rBpDMBZVaZS7mm5VVlch/4vMqH+ji6/Mm5sp3kg6cR3tNvTRCs0NpBllD
+ K4ynZf/1UdFCAjyHNW8RthOU61Y0W15IehYhTC+sJWyZXV/LD6doewa+c+vyWyd9lX+cpuWhn06
+ RyZuVJZLgozEKNgy3yb9t8GMdX1VTH8YxqgYDakE2F5d8PQRlr+Nr9OvS9Wxr2NCyLv5UC49yf4
+ E9xhZAylLfpsvY3+E0hVi7JVn4CxM/EU754IyuvZ5692xF+uzdyjLvhxXmbkFK9d6dxnzvrPA7f
+ ybspTsJeBEUq5Dy+69EUPtFgVADFdSSMeI9K4by2FJbUBiyrtL0caf6u1UhobEVsbmCa1Q4KyGl
+ rPM8nTizmO1xzrL56Wl/e69Rv+jujXfVhQBjwjtg3P/aJUW+F/I98LWQKSYnVC/8xntlFPGC2PP
+ RWDXABoqVbY13Nd6b/rY9tU3vKQNTXMvjYmMRomOwIkbhi6KuUKx8qEqoLw3E3Ebk9Gf36KWJVP
+ 8ymlo+t+0n6rzYvCWDdMiUyIBg9LHO3PoZVISu90oTA1b0ceANpSrIAJP8M0EMGZAXSu83p0hPZ
+ 1DEKm8zFQL3ifTg==
 X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
  fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -88,60 +88,156 @@ X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-We set the minimum amount of v4l2 buffers that is possibly be pending
-to UVCG_STREAMING_MIN_BUFFERS which is two. This way the driver will
-always have at least one frame pending to be encoded while the other
-is being enqueued in the hardware.
+This patch is adding trace events for each request that is being
+enqueued into the hw and will be completed. This way it is possible
+to track the fill status of the gadget hardware and find potential
+issues.
 
 Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
 ---
-v5 -> v7: -
-v4 -> v5:
- - using STREAMING_MIN_BUFFERS set the min nbuffers
- - renamed the patch since the function changed
- - removed the g_ctrl function
- - reordered this patch in the series
-v1 -> v4: -
+v6 -> v7:
+ - add missing CFLAGS for uvc_trace.o in Makefile
+v5 -> v6:
+ - fixed compile rule as module
+ - reordered header files
+v1 -> v5:
+ - new patch
 ---
- drivers/usb/gadget/function/uvc.h       | 2 ++
- drivers/usb/gadget/function/uvc_queue.c | 3 +++
- 2 files changed, 5 insertions(+)
+ drivers/usb/gadget/function/Makefile    |  4 +++
+ drivers/usb/gadget/function/uvc_trace.c | 11 ++++++
+ drivers/usb/gadget/function/uvc_trace.h | 60 +++++++++++++++++++++++++++++++++
+ drivers/usb/gadget/function/uvc_video.c |  5 +++
+ 4 files changed, 80 insertions(+)
 
-diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
-index bedb4ef42864f..6f44dd7323150 100644
---- a/drivers/usb/gadget/function/uvc.h
-+++ b/drivers/usb/gadget/function/uvc.h
-@@ -74,6 +74,8 @@ extern unsigned int uvc_gadget_trace_param;
- #define UVCG_REQ_MAX_INT_COUNT			16
- #define UVCG_REQ_MAX_ZERO_COUNT			(2 * UVCG_REQ_MAX_INT_COUNT)
- 
-+#define UVCG_STREAMING_MIN_BUFFERS		2
+diff --git a/drivers/usb/gadget/function/Makefile b/drivers/usb/gadget/function/Makefile
+index 87917a7d4a9be..7ce1637276f09 100644
+--- a/drivers/usb/gadget/function/Makefile
++++ b/drivers/usb/gadget/function/Makefile
+@@ -41,6 +41,10 @@ obj-$(CONFIG_USB_F_UAC1_LEGACY)	+= usb_f_uac1_legacy.o
+ usb_f_uac2-y			:= f_uac2.o
+ obj-$(CONFIG_USB_F_UAC2)	+= usb_f_uac2.o
+ usb_f_uvc-y			:= f_uvc.o uvc_queue.o uvc_v4l2.o uvc_video.o uvc_configfs.o
++ifneq ($(CONFIG_TRACING),)
++    CFLAGS_uvc_trace.o		:= -I$(src)
++    usb_f_uvc-y			+= uvc_trace.o
++endif
+ obj-$(CONFIG_USB_F_UVC)		+= usb_f_uvc.o
+ usb_f_midi-y			:= f_midi.o
+ obj-$(CONFIG_USB_F_MIDI)	+= usb_f_midi.o
+diff --git a/drivers/usb/gadget/function/uvc_trace.c b/drivers/usb/gadget/function/uvc_trace.c
+new file mode 100644
+index 0000000000000..d384f6d8221a5
+--- /dev/null
++++ b/drivers/usb/gadget/function/uvc_trace.c
+@@ -0,0 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * trace.c - USB UVC Gadget Trace Support
++ *
++ * Copyright (C) 2024 Pengutronix e.K.
++ *
++ * Author: Michael Grzeschik <m.grzeschik@pengutronix.de>
++ */
 +
- /* ------------------------------------------------------------------------
-  * Structures
-  */
-diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadget/function/uvc_queue.c
-index 6757a4e25a743..5eaeae3e2441c 100644
---- a/drivers/usb/gadget/function/uvc_queue.c
-+++ b/drivers/usb/gadget/function/uvc_queue.c
-@@ -21,6 +21,7 @@
- #include <media/videobuf2-vmalloc.h>
- 
++#define CREATE_TRACE_POINTS
++#include "uvc_trace.h"
+diff --git a/drivers/usb/gadget/function/uvc_trace.h b/drivers/usb/gadget/function/uvc_trace.h
+new file mode 100644
+index 0000000000000..04c33cf43cc2d
+--- /dev/null
++++ b/drivers/usb/gadget/function/uvc_trace.h
+@@ -0,0 +1,60 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * trace.h - USB UVC Gadget Trace Support
++ *
++ * Copyright (C) 2024 Pengutronix e.K.
++ *
++ * Author: Michael Grzeschik <m.grzeschik@pengutronix.de>
++ */
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM uvcg
++
++#if !defined(__UVCG_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
++#define __UVCG_TRACE_H
++
++#include <linux/types.h>
++#include <linux/tracepoint.h>
++#include <linux/usb/gadget.h>
++#include <asm/byteorder.h>
++
++DECLARE_EVENT_CLASS(uvcg_video_req,
++	TP_PROTO(struct usb_request *req, u32 queued),
++	TP_ARGS(req, queued),
++	TP_STRUCT__entry(
++		__field(struct usb_request *, req)
++		__field(u32, length)
++		__field(u32, queued)
++	),
++	TP_fast_assign(
++		__entry->req = req;
++		__entry->length = req->length;
++		__entry->queued = queued;
++	),
++	TP_printk("req %p length %u queued %u",
++		__entry->req,
++		__entry->length,
++		__entry->queued)
++);
++
++DEFINE_EVENT(uvcg_video_req, uvcg_video_complete,
++	TP_PROTO(struct usb_request *req, u32 queued),
++	TP_ARGS(req, queued)
++);
++
++DEFINE_EVENT(uvcg_video_req, uvcg_video_queue,
++	TP_PROTO(struct usb_request *req, u32 queued),
++	TP_ARGS(req, queued)
++);
++
++#endif /* __UVCG_TRACE_H */
++
++/* this part has to be here */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH .
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE uvc_trace
++
++#include <trace/define_trace.h>
+diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
+index 677eaf5b7e4d0..23fad3bc72c03 100644
+--- a/drivers/usb/gadget/function/uvc_video.c
++++ b/drivers/usb/gadget/function/uvc_video.c
+@@ -19,6 +19,7 @@
  #include "uvc.h"
-+#include "uvc_video.h"
+ #include "uvc_queue.h"
+ #include "uvc_video.h"
++#include "uvc_trace.h"
  
- /* ------------------------------------------------------------------------
-  * Video buffers queue management.
-@@ -47,6 +48,8 @@ static int uvc_queue_setup(struct vb2_queue *vq,
+ /* --------------------------------------------------------------------------
+  * Video codecs
+@@ -271,6 +272,8 @@ static int uvcg_video_ep_queue(struct uvc_video *video, struct usb_request *req)
  
- 	if (*nbuffers > UVC_MAX_VIDEO_BUFFERS)
- 		*nbuffers = UVC_MAX_VIDEO_BUFFERS;
-+	if (*nbuffers < UVCG_STREAMING_MIN_BUFFERS)
-+		*nbuffers = UVCG_STREAMING_MIN_BUFFERS;
+ 	atomic_inc(&video->queued);
  
- 	*nplanes = 1;
++	trace_uvcg_video_queue(req, atomic_read(&video->queued));
++
+ 	return ret;
+ }
  
+@@ -408,6 +411,8 @@ uvc_video_complete(struct usb_ep *ep, struct usb_request *req)
+ 	 */
+ 	queue_work(video->async_wq, &video->pump);
+ 
++	trace_uvcg_video_complete(req, atomic_read(&video->queued));
++
+ 	spin_unlock_irqrestore(&video->req_lock, flags);
+ 
+ 	kthread_queue_work(video->kworker, &video->hw_submit);
 
 -- 
 2.39.5
