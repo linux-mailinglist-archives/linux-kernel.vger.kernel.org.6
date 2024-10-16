@@ -1,285 +1,87 @@
-Return-Path: <linux-kernel+bounces-368868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D90F9A15DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:39:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24CC9A15E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96168B22B3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:39:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27383B22A01
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE4D1D47A3;
-	Wed, 16 Oct 2024 22:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464BA1D45FE;
+	Wed, 16 Oct 2024 22:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ES5D5lL4"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RsQ2oaWC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F471D4161
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4DA1D279F
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729118335; cv=none; b=aNh1gMW5q/I489eC4VHGH/6zEEof4zTqmD7O0LJS+gNCuF6ER2dG3YEtHH6fIVoYoUcONzdqWrnEnBGhYtpIvIFNSVoxDGMjrzQzOm0sYhaBd5gJalnnOl7fmmTPI0sna9QMYUJ6qSajdDVZ3N5PNF8SkNkGrh8pzhexqy41Vn0=
+	t=1729118488; cv=none; b=HuttPwvRHTDz2hD9B5WZbK6u0Tc6bTplAckwnC2x1s2XHmmBdC48tMkA2md+8yF0ZnmKfZE5sg4i7WCQofVdqgPzz3+Ol8LGAKr/mX+TJ6eGKlDu2BM5fUNVu1dFF3oUBDMjBSNYsLVnF5M00bZ/8VgaTt/jL/FQScPRGTY+uCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729118335; c=relaxed/simple;
-	bh=NbnNRvmjZJubvyTcaKg6ILzesZLmfD5iMvU3AWzbVyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+gdRSRcbTmeApW1aHnZ0n4TBAHEq2GkzP1+tKmIT+yFB4eqLtQJye52i6k2yZuN8Bej4Uwe3608D6Kv/zcL9AlP6C7lw4QsDFqfgSWTtr/8ANBoD+pDeDiLx3xk5HW1D5PlEjVAIl9xmSqKiLeCcqdUm1RjADIeInMms4/eiJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ES5D5lL4; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3b0247d67so1531755ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729118332; x=1729723132; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pQRRRq47/Hw9MX6ZtToVorakNDyg07L0TFDDDji46Mo=;
-        b=ES5D5lL4AwPZ8yvkNaLWYQDxf67wOqUkmVxkEl/UQS/wn2b0Oar3tPuxpyHDhqe28T
-         VBQEkCMcDQf2F70/D4SeyBApNmTtCXlXqy4PCRJy1+F9T+qNHSIRxEqNW/sTm1hRqFy/
-         CX1DhyqQMTWkLgH/4Yer3Re6NvbS1kAabZC2Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729118332; x=1729723132;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pQRRRq47/Hw9MX6ZtToVorakNDyg07L0TFDDDji46Mo=;
-        b=BdBDBl62VI1hFxaeDmq/6yaqH1E7Sfgs08Hwg+U80L2zn1q1TILmEFuFCR+zaNLqef
-         NB9xv057VGXLGbIxHqAQlxvvRr/eDvEbbMuEKNsR6ZWpfqv4HsciAa3+ibdJ9hBQni+E
-         i06S6CPqSXgc2dGi5sBn3+BX5VuYm5p7LMqDM6Z8+zsBHvHDnI9eeLlQWjyShhoi/c/Q
-         hsf/rdm0D7NafkojaG6CKv/avADN/z3OSIr7m3/rEPWHkeIVErAjYb0DjPioMaYUSErB
-         PZxiiWO5sHghF7aAZLPe+4gMp0+8+eTPH6MIZqCGYJ3ucPE0AhuorNVji6wcERaPsNGZ
-         wuFw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4SWyAaUgK+7MEAVmjxPqL1RJd9HG+qOH+faf4qGc2OkegTj4bqQphdAfBZAz7qQhDXZg3uHvNeX6FU9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyXnJQgtwXqt1s4RZB7W8hdRPJyg2a4OyOOOlZO95aQkc2jpWi
-	7bI+EV0pfOCRS49l9Zw7dZXp4zwNKoZLWLDBoy4Z++jQyep8G4Fmv4ioKGe2yAg=
-X-Google-Smtp-Source: AGHT+IFivQcgqrz4+LdP/xfhfGNmIqN1nL/+KVDlxQRCS03LTC4/8hYkEZhoL+4u2csjPmdOw2hZKA==
-X-Received: by 2002:a05:6e02:3cc2:b0:3a3:a307:6851 with SMTP id e9e14a558f8ab-3a3bce0858dmr137968295ab.22.1729118331696;
-        Wed, 16 Oct 2024 15:38:51 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec9632cbsm1058985173.20.2024.10.16.15.38.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 15:38:51 -0700 (PDT)
-Message-ID: <84c0de17-899e-46fd-8b72-534d8a02c259@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 16:38:50 -0600
+	s=arc-20240116; t=1729118488; c=relaxed/simple;
+	bh=Q5W0ZogIf37LVk2LLoADzxo0M3GONipCWt/BMiZHnoI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Wk4D2guxj0dJTy49kF33+pSn5wfW4BmONuMtgEAZeq6jKbKKBQVrdDUNcqHc+vUxyXPsuAgDmwPgRiSFq6m0Y6dK4fcrK8bIOvmrzOkz84Zm//os+bTP50q2j89sGxsDWs1Zr8SCZBGNKvdXV+76YgqubcxH9NcdhcPccSHuX1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RsQ2oaWC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2239C4CEC5;
+	Wed, 16 Oct 2024 22:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1729118488;
+	bh=Q5W0ZogIf37LVk2LLoADzxo0M3GONipCWt/BMiZHnoI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RsQ2oaWCOoTUPLdcsvbRvsd/julwO5aBAfMpXF+bp/T0jF1ycpZ/FGE6ibvFpVAyd
+	 aRkI60vHXx45gyZ+g32+/TDmtu2c4L9o09Caqh/iFAnF4EtcdSIA9aleWOhtCwkttn
+	 nlgKqsITd8zjRfdWtGoYSlA1Vi45Ueu8w9qJpD2I=
+Date: Wed, 16 Oct 2024 15:41:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, Alistair Popple
+ <apopple@nvidia.com>, Shigeru Yoshida <syoshida@redhat.com>, David
+ Hildenbrand <david@redhat.com>, Jason Gunthorpe <jgg@nvidia.com>, Minchan
+ Kim <minchan@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>
+Subject: Re: [PATCH] mm/gup: stop leaking pinned pages in low memory
+ conditions
+Message-Id: <20241016154127.3e369be7398bd0c3db27e8e3@linux-foundation.org>
+In-Reply-To: <5e499b63-8b38-4ddc-82ab-848301fd8d2b@nvidia.com>
+References: <20241016202242.456953-1-jhubbard@nvidia.com>
+	<20241016145739.770543d44313967f611f3810@linux-foundation.org>
+	<5e499b63-8b38-4ddc-82ab-848301fd8d2b@nvidia.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
- Oliver Sang <oliver.sang@intel.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
- <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
- <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 10/16/24 16:06, Lorenzo Stoakes wrote:
-> On Wed, Oct 16, 2024 at 02:00:27PM -0600, Shuah Khan wrote:
->> On 10/16/24 04:20, Lorenzo Stoakes wrote:
->>> Add tests to assert that PIDFD_SELF_* correctly refers to the current
->>> thread and process.
->>>
->>> This is only practically meaningful to pidfd_send_signal() and
->>> pidfd_getfd(), but also explicitly test that we disallow this feature for
->>> setns() where it would make no sense.
->>>
->>> We cannot reasonably wait on ourself using waitid(P_PIDFD, ...) so while in
->>> theory PIDFD_SELF_* would work here, we'd be left blocked if we tried it.
->>>
->>> We defer testing of mm-specific functionality which uses pidfd, namely
->>> process_madvise() and process_mrelease() to mm testing (though note the
->>> latter can not be sensibly tested as it would require the testing process
->>> to be dying).
->>>
->>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> ---
->>>    tools/testing/selftests/pidfd/pidfd.h         |   8 +
->>>    .../selftests/pidfd/pidfd_getfd_test.c        | 141 ++++++++++++++++++
->>>    .../selftests/pidfd/pidfd_setns_test.c        |  11 ++
->>>    tools/testing/selftests/pidfd/pidfd_test.c    |  76 ++++++++--
->>>    4 files changed, 224 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
->>> index 88d6830ee004..1640b711889b 100644
->>> --- a/tools/testing/selftests/pidfd/pidfd.h
->>> +++ b/tools/testing/selftests/pidfd/pidfd.h
->>> @@ -50,6 +50,14 @@
->>>    #define PIDFD_NONBLOCK O_NONBLOCK
->>>    #endif
->>> +/* System header file may not have this available. */
->>> +#ifndef PIDFD_SELF_THREAD
->>> +#define PIDFD_SELF_THREAD -100
->>> +#endif
->>> +#ifndef PIDFD_SELF_THREAD_GROUP
->>> +#define PIDFD_SELF_THREAD_GROUP -200
->>> +#endif
->>> +
->>
->> As mentioned in my response to v1 patch:
->>
->> kselftest has dependency on "make headers" and tests include
->> headers from linux/ directory
-> 
-> Right but that assumes you install the kernel headers on the build system,
-> which is quite a painful thing to have to do when you are quickly iterating
-> on a qemu setup.
+On Wed, 16 Oct 2024 15:05:28 -0700 John Hubbard <jhubbard@nvidia.com> wrote:
 
-Yes that is exactly what we do. kselftest build depends on headers
-install. The way it works for qemu is either using vitme-ng or
-building tests and installing them in your vm.. This is what CIs do.
+> On 10/16/24 2:57 PM, Andrew Morton wrote:
+> > On Wed, 16 Oct 2024 13:22:42 -0700 John Hubbard <jhubbard@nvidia.com> wrote:
+> ...
+> >> Fix this by unpinning the pages that __get_user_pages_locked() has
+> >> pinned, in such error cases.
+> > 
+> > Thanks.
+> > 
+> >> Fixes: 24a95998e9ba ("mm/gup.c: simplify and fix check_and_migrate_movable_pages() return codes")
+> > 
+> > I'll add this to the -stable backport pile, although this seems a bit
+> > marginal?
+> 
+> I'm on the fence about that. It is marginal: you have to
+> exhaust memory. On the other hand, a real user reported
+> this bug to us.
+> 
+> I guess I'd lean toward "correctness in -stable", and
+> add it to the pile, in the end.
 
-> 
-> This is a use case I use all the time so not at all theoretical.
-
-This is what CIs do. Yes - it works for them to build and install
-headers. You don't have to install them on the build system. You
-run "make headers" in your repo. You could use O= option for
-relocatable build.
-
-> 
-> Unfortunately this seems broken on my system anyway :( - see below.
-> 
->>
->> These local make it difficult to maintain these tests in the
->> longer term. Somebody has to go clean these up later.
-> 
-> I don't agree, tests have to be maintained alongside the core code, and if
-> these values change (seems unlikely) then the tests will fail and can
-> easily be updated.
-> 
-> This was the approach already taken in this file with other linux
-> header-defined values, so we'll also be breaking the precendence.
-
-Some of these defines were added a while back. Often these defines
-need cleaning up. I would rather not see new ones added unless it is
-absolutely necessary.
-
-> 
->>
->> The import will be fine and you can control that with -I flag in
->> the makefile. Remove these and try to get including linux/pidfd.h
->> working.
-> 
-> I just tried this and it's not fine :) it immediately broke the build as
-> pidfd.h imports linux/fcntl.h which conflicts horribly with system headers
-> on my machine.
-> 
-> For instance f_owner_ex gets redefined among others and fails the build e..g:
-> 
-> /usr/include/asm-generic/fcntl.h:155:8: error: redefinition of ‘struct f_owner_ex’
->    155 | struct f_owner_ex {
->        |        ^~~~~~~~~~
-> In file included from /usr/include/bits/fcntl.h:61,
->                   from /usr/include/fcntl.h:35,
->                   from pidfd_test.c:6:
-> /usr/include/bits/fcntl-linux.h:274:8: note: originally defined here
->    274 | struct f_owner_ex
->        |        ^~~~~~~~~~
-> 
-> It seems only one other test tries to do this as far as I can tell (I only
-> did a quick grep), so it's not at all standard it seems.
-> 
-> This issue occurred even when I used make headers_install to create
-> sanitised user headers and added them to the include path.
-> 
-> A quick google suggests linux/fcntl.h (imported by this pidfd.h uapi
-> header) and system fcntl.h is a known thing. Slightly bizarre...
-> 
-> I tried removing the <fcntl.h> include and that resulted in <sys/mount.h>
-> conflicting:
-> 
-> In file included from /usr/include/fcntl.h:35,
->                   from /usr/include/sys/mount.h:24,
->                   from pidfd.h:17,
->                   from pidfd_test.c:22:
-> /usr/include/bits/fcntl.h:35:8: error: redefinition of ‘struct flock’
->     35 | struct flock
->        |        ^~~~~
-> In file included from /tmp/hdr/include/asm/fcntl.h:1,
->                   from /tmp/hdr/include/linux/fcntl.h:5,
->                   from /tmp/hdr/include/linux/pidfd.h:7,
->                   from pidfd.h:6:
-> /usr/include/asm-generic/fcntl.h:195:8: note: originally defined here
->    195 | struct flock {
->        |        ^~~~~
-> 
-> So I don't think I can actually work around this, at least on my system,
-> and I can't really sensibly submit a patch that I can't run on my own
-> machine :)
-> 
-> I may be missing something here.
-> 
->>
->> Please revise this patch to include the header file and remove
->> these local defines.
-> 
-> I'm a little stuck because of the above, but I _could_ do the following in
-> the test pidfd.h header.:
-> 
-> #define _LINUX_FCNTL_H
-> #include "../../../../include/uapi/linux/pidfd.h"
-> #undef _LINUX_FCNTL_H
-> 
-
-Does this test really need fcntl.h is another question.
-This is another problem with too many includes. The test
-built just fine on my system on 6.12-rc3 with
-
-+/* #include <fcntl.h> */
-
-> Which prevents the problematic linux/fcntl.h header from being included and
-> includes the right header.
-> 
-> But I'm not sure this is hugely better than what we already have
-> maintinability-wise? Either way if something changes to break it it'll
-> break the test build.
-> 
-
-If these defines are in a header file - tests include them. Part
-of test development is figuring out these problems.
-
-> Let me know if this is what you want me to do. Otherwise I'm not sure how
-> to proceed - this header just seems broken at least on my system (arch
-> linux at 6.11.1).
-> 
-> An aside:
-> 
-> The existing code already taken the approach I take (this is partly why I
-> did it), I think it'd be out of the scope of my series to change that, for
-> instance in pidfd.h:
-> 
-> #ifndef PIDFD_NONBLOCK
-> #define PIDFD_NONBLOCK O_NONBLOCK
-> #endif
-> 
-> Alongside a number of other defines. So those will have to stay at least
-> for now for being out of scope, but obviously if people would prefer to
-> move the whole thing that can be followed up later.
-> 
->>
-
-I would like us to explore before giving up and saying these will
-stay.
-
-thanks,
--- Shuah
-
+Thanks.  It's a super-simple patch, which helps the decision.
 
