@@ -1,254 +1,208 @@
-Return-Path: <linux-kernel+bounces-367532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ECE9A037C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:03:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E36C9A037A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9095F2810DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25763280D80
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1CC1D14FC;
-	Wed, 16 Oct 2024 08:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A13C1D1E8A;
+	Wed, 16 Oct 2024 08:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="LygDk3C4"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7571CB9F0
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="N12qOrVn"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ABF1C4A2B;
+	Wed, 16 Oct 2024 08:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065765; cv=none; b=SgpqjxKlIEMS3fYWjwmpzaicxoXkQpwOVKfoZ8BqaHXNAlsg8/l1aIpAi8CXU2tF9i7bzDkMgUCcxs+IDfyAzjlSOQwqRM2ReztQU6eDhzl+WBgrXEkBWNcaRnRlxdaeUQRsglcLMrOi+poHELejxS2Mxg3d/HPQaeZZLiC3tGE=
+	t=1729065751; cv=none; b=eN4NEXTvj2Unrxhxg5UJTzscPnPzh6zodVnYBROKpXK/wjZJ0TBCqc6aW4K0CzimLgeZWwrjJYSl2NiFVVdB73fF5HXHihK+KjlI/QDtoA4Fix4fIErQSRVsYo6YcE+EcC7Xknez0Am5hbTU3LYBOU9WLRDv6jKqMlebTHtdZlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065765; c=relaxed/simple;
-	bh=obyV78oUjWVeKRdPHEazO9TW3s8naiInq747cCOT01Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RaG+p2wMTvEA2sgJlSU20RQ1pgWUZ+LQ5j18kyWKAlIxqbfXkQRhq/9VR8+vgZnEPsv9+1jf16+UVxXDdD4CavrPgWQkUoTI5H4ntcY9HXc1zJ+wAaYjznQZ/Qi13SowDw08TeI+Hj8GgRies3S/rgUVcRI0m+E2lA/Vvnedz/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=LygDk3C4; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G2fw8i022296;
-	Wed, 16 Oct 2024 01:02:31 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=2
-	vBA9/YIjtC9NXvu1JNHv6kTYHCKQnYXVoCmc4mw7mw=; b=LygDk3C4BSVopTzgi
-	fCCpAPM0jq2PpAu0YIl37509r9+50+aA967C0v9MuUhdVJU1AcVhmXHnGc9Um23T
-	XW2e2zQRUWELiCZcN0zecvwZKziRxTud0bxc0ONN3hBJRYUMKRb1xydk33gEz6+r
-	0GCLLIP7fdrE3NcjtXEsD4m+iloIMz5nDAfiMGc5z30JbzhccB5AVCDrw0z7JrgO
-	OFiwftQF6PHX0nKbJIYWZ2dgn4H/BySO9Bnm/fRPQ6vMIQxiLnT3P4Vv4Y72o46x
-	ZfKwq+k7boyV3PWZr9UW9X//TYHUsz3FfqxSvEfBdpJPlH8gJLhqd63w6yZQ+8BU
-	qjyLQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42a4x4gfvc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 01:02:31 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 16 Oct 2024 01:02:31 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 16 Oct 2024 01:02:30 -0700
-Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
-	by maili.marvell.com (Postfix) with ESMTP id 1BAC23F706D;
-	Wed, 16 Oct 2024 01:02:27 -0700 (PDT)
-From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <bbhushan2@marvell.com>, <gcherian@marvell.com>, <sgoutham@marvell.com>,
-        <jonathan.cameron@huawei.com>,
-        Gowthami Thiagarajan
-	<gthiagarajan@marvell.com>
-Subject: [PATCH v9 5/5] perf/marvell : Odyssey LLC-TAD performance monitor support
-Date: Wed, 16 Oct 2024 13:31:53 +0530
-Message-ID: <20241016080153.3546353-6-gthiagarajan@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241016080153.3546353-1-gthiagarajan@marvell.com>
-References: <20241016080153.3546353-1-gthiagarajan@marvell.com>
+	s=arc-20240116; t=1729065751; c=relaxed/simple;
+	bh=/8EZ5d33aVstxkBsP37ajT8/LEvDSLg38YMUJYuEIJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R3qjd+5HM8k21G2tQTFS6jSsygDFt3PwrcQ/9BGgfVhD+JCOe2Vusjh+CakI94+pbIZUMQyW254JI6s5hojnZnBtvq5AlyRDGPQX8Eosms5QiHYyxf064WdYeFqrntTaTk/1op+cY5O/QyfBADYb+lF8w/BcWSjR/JV6aR//gOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=N12qOrVn; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=+kd8E0tUUE88A8KHdSiWw5mBRqTS3PtOuVObV/42bZ8=;
+	b=N12qOrVn0038JMV9Qb1PvaHdg0P2yezMX9lp1KGUqX9tiLyBg35+FjqqBZJ5NU
+	YW+3Nf8Q1aDGshlhg+CZl4f1DAy7tWuUluHiJJo5mUtpsn4ot2ulQXreTNxmfWlr
+	Y8eH+DCQz03UhUJ6J+gZZmjpSIQTUFy5NxwA5xyTp1Hdg=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDHxAP0cg9n8ngZAA--.391S3;
+	Wed, 16 Oct 2024 16:01:58 +0800 (CST)
+Date: Wed, 16 Oct 2024 16:01:55 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	shengjiu.wang@gmail.com
+Subject: Re: [PATCH v2 1/3] arm64: dts: imx93-9x9-qsb: Enable sound-wm8962
+ sound card
+Message-ID: <Zw9y84AzNwUhUAhJ@dragon>
+References: <1726106381-1138-1-git-send-email-shengjiu.wang@nxp.com>
+ <1726106381-1138-2-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: T5c0wA9tYPVyx9cM7yJ6qixeaGTQmNQM
-X-Proofpoint-ORIG-GUID: T5c0wA9tYPVyx9cM7yJ6qixeaGTQmNQM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1726106381-1138-2-git-send-email-shengjiu.wang@nxp.com>
+X-CM-TRANSID:Mc8vCgDHxAP0cg9n8ngZAA--.391S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGw4kJFWkurWktw18AFW7CFg_yoWrJF1xpr
+	9xursagr1FgFyxt3sxX3ZIkrW3Gw4kKr9I9r12vrW8ArsFvasFq345Kr1ruryrGrn5Zw4Y
+	yFy5Xry7C3ZIqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzc_fUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCQZ6ZWcPLG3NiQABs8
 
-Each TAD provides eight 64-bit counters for monitoring
-cache behavior.The driver always configures the same counter for
-all the TADs. The user would end up effectively reserving one of
-eight counters in every TAD to look across all TADs.
-The occurrences of events are aggregated and presented to the user
-at the end of running the workload. The driver does not provide a
-way for the user to partition TADs so that different TADs are used for
-different applications.
+On Thu, Sep 12, 2024 at 09:59:39AM +0800, Shengjiu Wang wrote:
+> Add wm8962 sound card which connects to sai3. The connection
+> of SAI3 and wm8962 is controlled by PCAL6524HEAZ module, add
+> gpio-hog for it.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  .../boot/dts/freescale/imx93-9x9-qsb.dts      | 74 +++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
+> index f8a73612fa05..10f3366b8253 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
+> @@ -68,6 +68,15 @@ reg_vref_1v8: regulator-adc-vref {
+>  		regulator-max-microvolt = <1800000>;
+>  	};
+>  
+> +	reg_audio_pwr: regulator-audio-pwr {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "audio-pwr";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		gpio = <&pcal6524 16 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +	};
+> +
+>  	reg_rpi_3v3: regulator-rpi {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "VDD_RPI_3V3";
+> @@ -88,6 +97,22 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+>  		enable-active-high;
+>  		off-on-delay-us = <12000>;
+>  	};
+> +
+> +	sound-wm8962 {
+> +		compatible = "fsl,imx-audio-wm8962";
+> +		model = "wm8962-audio";
+> +		audio-cpu = <&sai3>;
+> +		audio-codec = <&wm8962>;
+> +		hp-det-gpio = <&pcal6524 4 GPIO_ACTIVE_HIGH>;
+> +		audio-routing =
+> +			"Headphone Jack", "HPOUTL",
+> +			"Headphone Jack", "HPOUTR",
+> +			"Ext Spk", "SPKOUTL",
+> +			"Ext Spk", "SPKOUTR",
+> +			"AMIC", "MICBIAS",
+> +			"IN3R", "AMIC",
+> +			"IN1R", "AMIC";
+> +	};
+>  };
+>  
+>  &adc1 {
+> @@ -136,6 +161,28 @@ &lpi2c1 {
+>  	pinctrl-0 = <&pinctrl_lpi2c1>;
+>  	status = "okay";
+>  
+> +	wm8962: codec@1a {
 
-The performance events reflect various internal or interface activities.
-By combining the values from multiple performance counters, cache
-performance can be measured in terms such as: cache miss rate, cache
-allocations, interface retry rate, internal resource occupancy, etc.
+Can we use audio-codec for node name?
 
-Each supported counter's event and formatting information is exposed
-to sysfs at /sys/devices/tad/. Use perf tool stat command to measure
-the pmu events. For instance:
+Shawn
 
-perf stat -e tad_hit_ltg,tad_hit_dtg <workload>
-
-Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
----
- Documentation/admin-guide/perf/index.rst      |  1 +
- .../admin-guide/perf/mrvl-odyssey-tad-pmu.rst | 37 +++++++++++++++++++
- drivers/perf/marvell_cn10k_tad_pmu.c          | 35 ++++++++++++++++++
- 3 files changed, 73 insertions(+)
- create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-tad-pmu.rst
-
-diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-index f9be610b2e6d..0aecdc3e4efa 100644
---- a/Documentation/admin-guide/perf/index.rst
-+++ b/Documentation/admin-guide/perf/index.rst
-@@ -15,6 +15,7 @@ Performance monitor support
-    qcom_l3_pmu
-    starfive_starlink_pmu
-    mrvl-odyssey-ddr-pmu
-+   mrvl-odyssey-tad-pmu
-    arm-ccn
-    arm-cmn
-    arm-ni
-diff --git a/Documentation/admin-guide/perf/mrvl-odyssey-tad-pmu.rst b/Documentation/admin-guide/perf/mrvl-odyssey-tad-pmu.rst
-new file mode 100644
-index 000000000000..ad1975b14087
---- /dev/null
-+++ b/Documentation/admin-guide/perf/mrvl-odyssey-tad-pmu.rst
-@@ -0,0 +1,37 @@
-+====================================================================
-+Marvell Odyssey LLC-TAD Performance Monitoring Unit (PMU UNCORE)
-+====================================================================
-+
-+Each TAD provides eight 64-bit counters for monitoring
-+cache behavior.The driver always configures the same counter for
-+all the TADs. The user would end up effectively reserving one of
-+eight counters in every TAD to look across all TADs.
-+The occurrences of events are aggregated and presented to the user
-+at the end of running the workload. The driver does not provide a
-+way for the user to partition TADs so that different TADs are used for
-+different applications.
-+
-+The performance events reflect various internal or interface activities.
-+By combining the values from multiple performance counters, cache
-+performance can be measured in terms such as: cache miss rate, cache
-+allocations, interface retry rate, internal resource occupancy, etc.
-+
-+The PMU driver exposes the available events and format options under sysfs::
-+
-+        /sys/bus/event_source/devices/tad/events/
-+        /sys/bus/event_source/devices/tad/format/
-+
-+Examples::
-+
-+   $ perf list | grep tad
-+        tad/tad_alloc_any/                                 [Kernel PMU event]
-+        tad/tad_alloc_dtg/                                 [Kernel PMU event]
-+        tad/tad_alloc_ltg/                                 [Kernel PMU event]
-+        tad/tad_hit_any/                                   [Kernel PMU event]
-+        tad/tad_hit_dtg/                                   [Kernel PMU event]
-+        tad/tad_hit_ltg/                                   [Kernel PMU event]
-+        tad/tad_req_msh_in_exlmn/                          [Kernel PMU event]
-+        tad/tad_tag_rd/                                    [Kernel PMU event]
-+        tad/tad_tot_cycle/                                 [Kernel PMU event]
-+
-+   $ perf stat -e tad_alloc_dtg,tad_alloc_ltg,tad_alloc_any,tad_hit_dtg,tad_hit_ltg,tad_hit_any,tad_tag_rd <workload>
-diff --git a/drivers/perf/marvell_cn10k_tad_pmu.c b/drivers/perf/marvell_cn10k_tad_pmu.c
-index 15f9f67cb3bd..29976b435417 100644
---- a/drivers/perf/marvell_cn10k_tad_pmu.c
-+++ b/drivers/perf/marvell_cn10k_tad_pmu.c
-@@ -39,6 +39,7 @@ struct tad_pmu {
- 
- enum mrvl_tad_pmu_version {
- 	TAD_PMU_V1 = 1,
-+	TAD_PMU_V2,
- };
- 
- struct tad_pmu_data {
-@@ -222,6 +223,24 @@ static const struct attribute_group tad_pmu_events_attr_group = {
- 	.attrs = tad_pmu_event_attrs,
- };
- 
-+static struct attribute *ody_tad_pmu_event_attrs[] = {
-+	TAD_PMU_EVENT_ATTR(tad_req_msh_in_exlmn, 0x3),
-+	TAD_PMU_EVENT_ATTR(tad_alloc_dtg, 0x1a),
-+	TAD_PMU_EVENT_ATTR(tad_alloc_ltg, 0x1b),
-+	TAD_PMU_EVENT_ATTR(tad_alloc_any, 0x1c),
-+	TAD_PMU_EVENT_ATTR(tad_hit_dtg, 0x1d),
-+	TAD_PMU_EVENT_ATTR(tad_hit_ltg, 0x1e),
-+	TAD_PMU_EVENT_ATTR(tad_hit_any, 0x1f),
-+	TAD_PMU_EVENT_ATTR(tad_tag_rd, 0x20),
-+	TAD_PMU_EVENT_ATTR(tad_tot_cycle, 0xFF),
-+	NULL
-+};
-+
-+static const struct attribute_group ody_tad_pmu_events_attr_group = {
-+	.name = "events",
-+	.attrs = ody_tad_pmu_event_attrs,
-+};
-+
- PMU_FORMAT_ATTR(event, "config:0-7");
- 
- static struct attribute *tad_pmu_format_attrs[] = {
-@@ -260,6 +279,13 @@ static const struct attribute_group *tad_pmu_attr_groups[] = {
- 	NULL
- };
- 
-+static const struct attribute_group *ody_tad_pmu_attr_groups[] = {
-+	&ody_tad_pmu_events_attr_group,
-+	&tad_pmu_format_attr_group,
-+	&tad_pmu_cpumask_attr_group,
-+	NULL
-+};
-+
- static int tad_pmu_probe(struct platform_device *pdev)
- {
- 	const struct tad_pmu_data *dev_data;
-@@ -350,6 +376,8 @@ static int tad_pmu_probe(struct platform_device *pdev)
- 
- 	if (version == TAD_PMU_V1)
- 		tad_pmu->pmu.attr_groups = tad_pmu_attr_groups;
-+	else
-+		tad_pmu->pmu.attr_groups = ody_tad_pmu_attr_groups;
- 
- 	tad_pmu->cpu = raw_smp_processor_id();
- 
-@@ -385,6 +413,12 @@ static const struct tad_pmu_data tad_pmu_data = {
- };
- #endif
- 
-+#ifdef CONFIG_ACPI
-+static const struct tad_pmu_data tad_pmu_v2_data = {
-+	.id   = TAD_PMU_V2,
-+};
-+#endif
-+
- #ifdef CONFIG_OF
- static const struct of_device_id tad_pmu_of_match[] = {
- 	{ .compatible = "marvell,cn10k-tad-pmu", .data = &tad_pmu_data },
-@@ -395,6 +429,7 @@ static const struct of_device_id tad_pmu_of_match[] = {
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id tad_pmu_acpi_match[] = {
- 	{"MRVL000B", (kernel_ulong_t)&tad_pmu_data},
-+	{"MRVL000D", (kernel_ulong_t)&tad_pmu_v2_data},
- 	{},
- };
- MODULE_DEVICE_TABLE(acpi, tad_pmu_acpi_match);
--- 
-2.25.1
+> +		compatible = "wlf,wm8962";
+> +		reg = <0x1a>;
+> +		clocks = <&clk IMX93_CLK_SAI3_GATE>;
+> +		DCVDD-supply = <&reg_audio_pwr>;
+> +		DBVDD-supply = <&reg_audio_pwr>;
+> +		AVDD-supply = <&reg_audio_pwr>;
+> +		CPVDD-supply = <&reg_audio_pwr>;
+> +		MICVDD-supply = <&reg_audio_pwr>;
+> +		PLLVDD-supply = <&reg_audio_pwr>;
+> +		SPKVDD1-supply = <&reg_audio_pwr>;
+> +		SPKVDD2-supply = <&reg_audio_pwr>;
+> +		gpio-cfg = <
+> +			0x0000 /* 0:Default */
+> +			0x0000 /* 1:Default */
+> +			0x0000 /* 2:FN_DMICCLK */
+> +			0x0000 /* 3:Default */
+> +			0x0000 /* 4:FN_DMICCDAT */
+> +			0x0000 /* 5:Default */
+> +		>;
+> +	};
+> +
+>  	ptn5110: tcpc@50 {
+>  		compatible = "nxp,ptn5110", "tcpci";
+>  		reg = <0x50>;
+> @@ -194,6 +241,12 @@ pcal6524: gpio@22 {
+>  		interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&pinctrl_pcal6524>;
+> +
+> +		exp-sel-hog {
+> +			gpio-hog;
+> +			gpios = <22 GPIO_ACTIVE_HIGH>;
+> +			output-low;
+> +		};
+>  	};
+>  
+>  	pmic@25 {
+> @@ -286,6 +339,17 @@ &mu2 {
+>  	status = "okay";
+>  };
+>  
+> +&sai3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_sai3>;
+> +	assigned-clocks = <&clk IMX93_CLK_SAI3>;
+> +	assigned-clock-parents = <&clk IMX93_CLK_AUDIO_PLL>;
+> +	assigned-clock-rates = <12288000>;
+> +	fsl,sai-mclk-direction-output;
+> +	fsl,sai-synchronous-rx;
+> +	status = "okay";
+> +};
+> +
+>  &usbotg1 {
+>  	dr_mode = "otg";
+>  	hnp-disable;
+> @@ -443,6 +507,16 @@ MX93_PAD_SD2_RESET_B__GPIO3_IO07	0x31e
+>  		>;
+>  	};
+>  
+> +	pinctrl_sai3: sai3grp {
+> +		fsl,pins = <
+> +			MX93_PAD_GPIO_IO12__SAI3_RX_SYNC		0x31e
+> +			MX93_PAD_GPIO_IO18__SAI3_RX_BCLK		0x31e
+> +			MX93_PAD_GPIO_IO17__SAI3_MCLK			0x31e
+> +			MX93_PAD_GPIO_IO19__SAI3_TX_DATA00		0x31e
+> +			MX93_PAD_GPIO_IO20__SAI3_RX_DATA00		0x31e
+> +		>;
+> +	};
+> +
+>  	pinctrl_usdhc2_gpio: usdhc2gpiogrp {
+>  		fsl,pins = <
+>  			MX93_PAD_SD2_CD_B__GPIO3_IO00		0x31e
+> -- 
+> 2.34.1
+> 
 
 
