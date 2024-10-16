@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-368754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C0A9A147D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD24A9A148D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561461C23854
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516AF283F31
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEF21D2F66;
-	Wed, 16 Oct 2024 21:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420291D2780;
+	Wed, 16 Oct 2024 21:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Oe6K4plL"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mr5jHd4Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11D518F2F9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBF31B6CF2;
+	Wed, 16 Oct 2024 21:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729112441; cv=none; b=M0r19OjU5sAY+CH/wETBteZAlVDJ3XJspnPteB3cKAboqbsNxvFL29MBg1BQltd4FtelMoH+CtmcdlbUj3GBSS4kyo9V7PgudUs2A6zho1tT3e2nN+kluT4QcQULJEkZJ9YEhD28o8HjakD6kJauDUTFVWHEtn+n0rLy0M7F7So=
+	t=1729112492; cv=none; b=kvrej3XQqOzBUUzuEIwF/m6EOBWt8Ey/IoJ2uLH3FOrwFjzVK260C/H4aaWpNWLetmtByZRyLN0T/RAd7tmVzDfu4zufqbmQLV+XuAXeXyk0n0OgVBmZ9fT1HNMWDdR3+OGPXcFthbQ5pFGTPLF8F74vSb7Bcg60/TEvn1rp5zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729112441; c=relaxed/simple;
-	bh=4t5+OjK1ZS+gJDrLrnU/uff8C+hpDMwYCYudiNig0/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TbhFcr/QrrGo17OZH1V3MfqGXg72aEwJrlwVEUfcautWZXwZhZLclCsomfw+YXt02NDa+HNwwt4NJc4bCFmGQ6IBWRe2aANew3IAZX0q6ftOffKDdbwgA2sQUR9x9bIm0oilJEzfdaWnY5X1FbR7799kfb60aJrodei7r4sbkQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Oe6K4plL; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83a9630eeb2so10603739f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729112439; x=1729717239; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KQkUyFxL6KPO58jEIgRqgtkUgZXFKeeIN5h6kSZxcRY=;
-        b=Oe6K4plLWdAVvmEtOXl4JrYl3pD5Ge1iCniA3ybTHa6ArDrTcNE6yeFpgC4TlqU5Jx
-         uuZ81ESMyt9gONFSslUo7DWnMtaoxQ4QanWrdk3j0+KuQut+Or53EzcruTDsMe0nXZ02
-         bAoUC3yw7JMATQbqG3oW/ZNMbQBaLddXzNSZM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729112439; x=1729717239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KQkUyFxL6KPO58jEIgRqgtkUgZXFKeeIN5h6kSZxcRY=;
-        b=h+Q+YSwzy/VKvFUoaiRphXf/2geFYnKaSmoS2D3ozGT4sSofGWVzPuIHFbm0/6z29D
-         y6UVU5Fp9v2rxvTAfVTTJ1IHk02jGLWOMFoc7AljAjUUsiHTTlW78s5HfyLqaUgUk9b7
-         d58GkrNAwJmoxtiaDte+EhdUkUlE/3b6KwgtiFImrIjtv/+lCQH0P4xrNdbXyUGFfxHQ
-         SQ5bC5B2wKBUjd/qhRyHpIG64aMg7i+9IPEZgFkdHC1DDDLbNE41oSsQeZlEFdQLhYTV
-         EjIwNccRwnwAeUWn3Hh4vvoI3XVgbTBQlO4eNiFqjuoaJC0Tnm9dJ73AjaugIfvuK6xW
-         +m1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUcSvO87Vv7cXJ/w3XIGyrzG6lgJvbCHWIX3BMAyyMY9EMpPBSY574vEg2PXuPBOH0TZk0YqFGlMohONNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCp3cbRzg1A3BS1V3Kjusa/RuuR2oCLUZSvHSpjbrYRSUEvm1k
-	HekWLKUuBkAgFV1TvIRCg4MMtchMlKoH21+NAKG5xeO+Zj0edRTG/gGQigCY0nM=
-X-Google-Smtp-Source: AGHT+IEr/mLDFSHaahfcbR6Ju6YahNPQWbFH52bUJmc8ClQuj82clhMLrKIsGaKx1CqLOFpCh6SR8A==
-X-Received: by 2002:a05:6602:3f92:b0:82a:48c5:4d04 with SMTP id ca18e2360f4ac-83a64ce007amr1258719239f.6.1729112438477;
-        Wed, 16 Oct 2024 14:00:38 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a8b53c85asm97470939f.51.2024.10.16.14.00.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 14:00:37 -0700 (PDT)
-Message-ID: <2f82fbcb-4a3c-4dfe-8852-7fc0b27c38e4@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 15:00:37 -0600
+	s=arc-20240116; t=1729112492; c=relaxed/simple;
+	bh=Dy250ErH1M84sPkAmkdtD//W3ieAYLPbTj8Aa5iqc6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WTNt5/lwPnXlmd+lccqPXxpDxBjRZdAKsKW2UOzPiq/KF4I2FH26fsPRG+NrpNw1MIKKIHk67KN6PtitUxshAXyQjOFShpWjOQE0vs19lW4ySh+YUB+dfBMyzrTGZoHHvnvk1N9Zf3B+1BlLUIEiDAZVsjXZA8J3KnNG8jkuWy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mr5jHd4Q; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729112490; x=1760648490;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Dy250ErH1M84sPkAmkdtD//W3ieAYLPbTj8Aa5iqc6g=;
+  b=Mr5jHd4QqGkGo1JxeD5mehyaiDy1lKBtbS+JJTS05dF0WF4dEZA259yH
+   JWRPIEdtKaFBe+PEoWsxWLDOpMTMLQl1cAVl1FvYBNJVjidZabLXh384G
+   TSry/i1LolQMBKDOLP5kK+Q4nYVmCiLmopf8FUWTOOQz4ryjvWD5MvlvF
+   gdng2O64mjFmutyO5LOPm2elg0DQq7SJOCuNV382gSMfKT+CditIMMYrD
+   iQ7lzcKhnYFrUUIR+tkdQ8/dzVSyzbfM2s47NcWiY2VYn73ntqLXCY+2X
+   V9XXc3REy8Zm2Jdpx0c21AFSCxIHQrUi9jBHWk6S029DhxWX5AKfIuO98
+   A==;
+X-CSE-ConnectionGUID: w6T5T1QSRKeG7DJNvp0CkQ==
+X-CSE-MsgGUID: 17Q3vsWUTRKNxZ7puFNPHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46052583"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46052583"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 14:01:29 -0700
+X-CSE-ConnectionGUID: QYPaPXYmTkSN6bnWJqd2uw==
+X-CSE-MsgGUID: TS2YPx1tQF+r8SreI3BFew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
+   d="scan'208";a="78375589"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.245])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 14:01:28 -0700
+Date: Wed, 16 Oct 2024 14:01:26 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: shiju.jose@huawei.com
+Cc: dave.jiang@intel.com, dan.j.williams@intel.com,
+	jonathan.cameron@huawei.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dave@stgolabs.net, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com
+Subject: Re: [RFC PATCH 0/4] Updates for CXL Event Records
+Message-ID: <ZxAppnCBf4wFgcQ0@aschofie-mobl2.lan>
+References: <20241016163349.1210-1-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] pinctrl: th1520: Dereference pointer only after
- NULL check
-To: "Everest K.C." <everestkc@everestkc.com.np>, drew@pdp7.com,
- guoren@kernel.org, wefu@redhat.com, linus.walleij@linaro.org
-Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241016134223.4079-1-everestkc@everestkc.com.np>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241016134223.4079-1-everestkc@everestkc.com.np>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016163349.1210-1-shiju.jose@huawei.com>
 
-On 10/16/24 07:42, Everest K.C. wrote:
-> The pointer `func` is dereferenced before NULL check.
-> Move the dereference after the NULL check.
+On Wed, Oct 16, 2024 at 05:33:45PM +0100, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> CXL spec rev 3.1 CXL Event Records has updated w.r.t CXL spec rev 3.0.
+> Add updates for the above spec changes in the CXL events records and CXL
+> trace events implementation.
+> 
+> Note: Please apply following fix patch first if not present.
+> https://patchwork.kernel.org/project/cxl/patch/20241014143003.1170-1-shiju.jose@huawei.com/
+> 
+> Shiju Jose (4):
+>   cxl/events: Updates for CXL Common Event Record Format
+>   cxl/events: Updates for CXL General Media Event Record
+>   cxl/events: Updates for CXL DRAM Event Record
+>   cxl/events: Updates for CXL Memory Module Event Record
 
-Change log looks fine.
+Thanks, this looks useful! I didn't review line by line but do
+have some feedback before for a v1:
 
-Short log that clearly says it is a fix would be better:
+- Suggest being more explicit in the commit msg(s). Something like:
+cxl/events: Update Common Event Record to CXL spec 3.1
 
-Fix potential null pointer defereference
+- I was a bit surprised that this doesn't simply append new fields
+to the TP_printk() output. Is there some reason for that?
+
+- How about updating the mock of these events to include these new
+fields. I don't think this introduces any new formats, but I would
+certainly eyeball all 3: dmesg tp_printk, trace file, and monitor
+output because all 3 (sadly) present a bit differently.
+
+-- Alison
 
 > 
-> This issue was reported by Coverity Scan.
-> Report:
-> CID 1600802: (#1 of 1): Dereference before null check
-> (REVERSE_INULL)
-> check_after_deref: Null-checking func suggests that it
-> may be null, but it has already been dereferenced on all
-> paths leading to the check.
+>  drivers/cxl/core/trace.h | 201 +++++++++++++++++++++++++++++++++------
+>  include/cxl/event.h      |  20 +++-
+>  2 files changed, 190 insertions(+), 31 deletions(-)
 > 
-> Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
->   drivers/pinctrl/pinctrl-th1520.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+> -- 
+> 2.34.1
 > 
-> diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-> index 7474d8da32f9..07f8b51fb294 100644
-> --- a/drivers/pinctrl/pinctrl-th1520.c
-> +++ b/drivers/pinctrl/pinctrl-th1520.c
-> @@ -803,11 +803,13 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
->   {
->   	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
->   	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
-> -	enum th1520_muxtype muxtype = (uintptr_t)func->data;
-> +	enum th1520_muxtype muxtype;
->   
->   	if (!func)
->   		return -EINVAL;
->   
-> +	muxtype = (uintptr_t)func->data;
-> +
->   	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
->   				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
->   				 muxtype);
-
-Otherwise looks good to me. With the change to short log:
-
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
-
 
