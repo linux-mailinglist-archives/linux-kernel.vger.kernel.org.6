@@ -1,159 +1,193 @@
-Return-Path: <linux-kernel+bounces-368898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D989A163B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:45:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F599A163D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51651C21C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C204B22787
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145E91D5168;
-	Wed, 16 Oct 2024 23:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9911D5154;
+	Wed, 16 Oct 2024 23:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U8r9mTNo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hloGVJNt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4804282FA;
-	Wed, 16 Oct 2024 23:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A261D26E0
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729122329; cv=none; b=iedt/Zy8DB7WbTgI4SxdPU7AgfHP6Zodspdt/I3ZfWO8gCPspVv+s5UQlSZiTYHsN7YemKg5rkZahSEhIv0MYuwqonDSY/3i3oIgxApq+F2dw2XnFlH6Evkv86+Iugt9xCUpB+tfelB65qE+N5qwiJqG5kFyLmqYgFsjzuQOAVE=
+	t=1729122515; cv=none; b=sk/pjXCXNJvcFVpSWzV+RIRfuJq/kVmdSIWKwbF9Tq1zDOowIv9Az2LmAYGMZJIM60ZQInFsMbDFKYUHk1gjZV44j9dquer6O1vW0Td6bnS6lUyiXyqtv5sdEpKljjIwMBG7CQzfMCE0zQZPkKTxXPNLKHRyyFbzjKmBojrm+x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729122329; c=relaxed/simple;
-	bh=rOMnaHFbyrqkDa3kCV5cdJC9ZJsY+QGyGyxmU8Hs3fs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJwvB5GzGPvO4TzGIpjLHcnY7R0MWd/5e/6g4uGbXq2j+j3jvGCwUWO7J3NG3ND9DacCE9jaX0oa5Yadd10h6DUqVLN9IJL44XuXnwZcIc1Dmv1Gx4EbFu9ru5EU3toz4X5nGb8nlPx+ox/+6giXo6xTAb4S2rS05qwLKBnS95A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U8r9mTNo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GIFv6J001733;
-	Wed, 16 Oct 2024 23:45:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=FQhUz+ODVS1Mtj88e10qGXt5
-	mYqZRtinSKk8mKi1F+s=; b=U8r9mTNoVCTaX1/2abgmh3pNN4WpCxK0sdUFW/oB
-	sNX5wBIjq13ZXDwTELI6uPSaDItbHT1qrm92Vbk4xAIHkkAvLhC/1ICuzADM0N+1
-	L9aahHfyr47HXhwXGSvqZHYcjqyjcxlXBJwfBqcOa3ND2ZwYFLxhjkPafmNV7v+z
-	r8cd6DfUTsoBGUfEZtcFdX4aOT81rFB7b3QSVCA2IGjgpz1vOPQtQ0QhbajOjNOA
-	6vucz+poZa8FYXbKlp2a40bn1YBW837slTBrSgNK8tAI39s4vq4Hj+4A9u1ePsOI
-	Eq2MYH++iqK1vIXogQLGwCdmh1P52Ww5bWUmnI6peAUaQg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ajm58nks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 23:45:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49GNjGQi031586
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 23:45:16 GMT
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 16 Oct 2024 16:45:16 -0700
-Date: Wed, 16 Oct 2024 16:45:15 -0700
-From: Mike Tipton <quic_mdtipton@quicinc.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
-        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
-        <pierre.gondois@arm.com>, <vincent.guittot@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH V5 1/1] cpufreq: scmi: Register for limit change
- notifications
-Message-ID: <20241016234514.GA17864@hu-mdtipton-lv.qualcomm.com>
-References: <20240603192654.2167620-1-quic_sibis@quicinc.com>
- <20240603192654.2167620-2-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1729122515; c=relaxed/simple;
+	bh=PaGsx/p0g1rFIDlC9skbTCx5rM5FzER3gMJF5RCNy3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4kqHD1yTtgzHy34DXi+VnMnlG10N5KcjnM2eE1ZnGUuneyhIa3kP5fPHjsjnM4R5gN2IDQZs4OI9Ko0dxqKz52Em4yCTGMHYZ7Uz/PIVnQU5bP/381UNmVoLcnBEluR7wOTcsu/4jDZLvLoL/hIImoYa0+QR+yaPt/kIGhd6AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hloGVJNt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729122512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w5zbNhf2ti3veBbqghgqqHYmZD0VaAPt+Z/wXzjXNA4=;
+	b=hloGVJNtPMc/kGKg21JoVWq0U1t5yNE+PRSgae5rXGbfARCZG8zy4dTiLS6kGavecfb56L
+	i/NUfaj7Es1pZwqyj59hPgkMTTqequ7qZXpD3VnCkltNxPaDbihhPafivKq1Tm6X4X5w8J
+	Fe4Zi/fonsvfWw7bxGoBTx7o/n9eIrE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-QXFk1vzHNKWcuwhiSxyKfQ-1; Wed,
+ 16 Oct 2024 19:48:27 -0400
+X-MC-Unique: QXFk1vzHNKWcuwhiSxyKfQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3C67195608F;
+	Wed, 16 Oct 2024 23:48:25 +0000 (UTC)
+Received: from f39 (unknown [10.39.192.145])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8CC4D19560A3;
+	Wed, 16 Oct 2024 23:48:22 +0000 (UTC)
+Date: Thu, 17 Oct 2024 01:48:19 +0200
+From: Eder Zulian <ezulian@redhat.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	williams@redhat.com, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
+Subject: Re: [PATCH] rust: Fix build error
+Message-ID: <ZxBQw1X_OG26RO9o@f39>
+References: <20241014195253.1704625-1-ezulian@redhat.com>
+ <Zw1_rXUyjTBOh0QH@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603192654.2167620-2-quic_sibis@quicinc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7_7Zy98waBdmcNbs49DXZjcvcob6oB9b
-X-Proofpoint-ORIG-GUID: 7_7Zy98waBdmcNbs49DXZjcvcob6oB9b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- mlxscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 suspectscore=0 clxscore=1011 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160152
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zw1_rXUyjTBOh0QH@boqun-archlinux>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Jun 04, 2024 at 12:56:54AM +0530, Sibi Sankar wrote:
-> Register for limit change notifications if supported and use the throttled
-> frequency from the notification to apply HW pressure.
+Hi Boqun,
+On Mon, Oct 14, 2024 at 01:31:41PM -0700, Boqun Feng wrote:
+> Hi Eder,
 > 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+> Thanks for the patch!
+Sure, my pleasure.
 > 
-> v5:
-> * Drop patch 1 and use pm_qos to update constraints. [Vincent]
-> * Use sdev instead of cpu_dev in dev_warn. [Christian]
-> * Pass sdev directly through private data. [Christian]
-> * Dropping Rb's for now.
+> On Mon, Oct 14, 2024 at 09:52:53PM +0200, Eder Zulian wrote:
+> > When CONFIG_DEBUG_SPINLOCK=y and CONFIG_PREEMPT_RT=y the following build
+> > error occurs:
+> > 
+> >     In file included from rust/helpers/helpers.c:22:
+> >     rust/helpers/spinlock.c: In function ‘rust_helper___spin_lock_init’:
+> >     rust/helpers/spinlock.c:10:30: error: implicit declaration of function ‘spinlock_check’; did you mean ‘spin_lock_bh’? [-Wimplicit-function-declaration]
+> >        10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+> >           |                              ^~~~~~~~~~~~~~
+> >           |                              spin_lock_bh
+> >     rust/helpers/spinlock.c:10:30: error: passing argument 1 of ‘__raw_spin_lock_init’ makes pointer from integer without a cast [-Wint-conversion]
+> >        10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+> >           |                              ^~~~~~~~~~~~~~~~~~~~
+> >           |                              |
+> >           |                              int
+> >     In file included from ./include/linux/wait.h:9,
+> >                      from ./include/linux/wait_bit.h:8,
+> >                      from ./include/linux/fs.h:6,
+> >                      from ./include/linux/highmem.h:5,
+> >                      from ./include/linux/bvec.h:10,
+> >                      from ./include/linux/blk_types.h:10,
+> >                      from ./include/linux/blkdev.h:9,
+> >                      from ./include/linux/blk-mq.h:5,
+> >                      from rust/helpers/blk.c:3,
+> >                      from rust/helpers/helpers.c:10:
+> >     ./include/linux/spinlock.h:101:52: note: expected ‘raw_spinlock_t *’ {aka ‘struct raw_spinlock *’} but argument is of type ‘int’
+> >       101 |   extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char *name,
+> >           |                                    ~~~~~~~~~~~~~~~~^~~~
+> >     make[2]: *** [scripts/Makefile.build:229: rust/helpers/helpers.o] Error 1
+> > 
+> > Error observed while building a rt-debug kernel for aarch64.
+> > 
+> > On a PREEMPT_RT build, spin locks have been mapped to rt_mutex types, so
+> > avoid the raw_spinlock_init call for RT.
+> > 
 > 
->  drivers/cpufreq/scmi-cpufreq.c | 36 ++++++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
+> This is true, but to keep lockdep working I think we need to open code
+> the PREEMPT_RT version of spin_lock_init(), please see below
+> 
+> > Suggested-by: Clark Williams <williams@redhat.com>
+> > 
+> 
+> ^ unnecessary emtpy line here.
+Thanks for pointing it out. Should I fix it and send a v2?
+> 
+> > Signed-off-by: Eder Zulian <ezulian@redhat.com>
+> > ---
+> >  rust/helpers/spinlock.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
+> > index acc1376b833c..924c1a380448 100644
+> > --- a/rust/helpers/spinlock.c
+> > +++ b/rust/helpers/spinlock.c
+> > @@ -6,7 +6,7 @@
+> >  void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+> >  				  struct lock_class_key *key)
+> >  {
+> > -#ifdef CONFIG_DEBUG_SPINLOCK
+> > +#if defined(CONFIG_DEBUG_SPINLOCK) && !defined(CONFIG_PREEMPT_RT)
+> >  	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+> >  #else
+> >  	spin_lock_init(lock);
+> 
+> This should be:
+> 
+> void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+>  				  struct lock_class_key *key)
+> {
+> #ifdef CONFIG_DEBUG_SPINLOCK
+> # if defined(CONFIG_PREEMPT_RT)
+Even though I don't have a strong preference on this, in my opinion, there is no
+much difference here just a line break and inverted logic. Perhaps it would be
+better to write like this: 'if (IS_ENABLED(CONFIG_PREEMPT_RT && ... ) { this }
+else { that }', however, spinlock_check() is not declared for PREEMPT_RT
+kernels because its declaration is conditional to #ifndef CONFIG_PREEMPT_RT in
+'spinlock.h'. spinlock_check() as is does not make sense for PREEMPT_RT
+because spinlock is not mapped to raw_spinlock but to rt_mutex (cf.
+'spinlock_types.h')
+> 	rt_mutex_base_init(&(lock)->lock);
+> 	__rt_spin_lock_init(lock, name, key, false);
+Apparently, this ^ matches spin_lock_init() in 'spinlock_rt.h', if true, we could
+call spin_lock_init() for PREEMPT_RT kernels. However the debug version of
+__rt_spin_lock_init() (instrumented with lockdep in 'spinlock_rt.c') depends
+on CONFIG_DEBUG_LOCK_ALLOC. Luckily, in my opnion, the #ifdefs are already in
+place.
+> # else /* !CONFIG_PREEMPT_RT */
+>   	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+> # endif /* CONFIG_PREEMPT_RT */
+> #else
+> 	spin_lock_init(lock);
+> #endif
+> }
+> 
+Please let me know what you think, and bear with me if I'm missing something.
+Thanks.
+> Regards,
+> Boqun
+> 
+> > -- 
+> > 2.46.2
+> > 
+> > 
+> 
 
-Tested-by: Mike Tipton <quic_mdtipton@quicinc.com>
-
-> 
-> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-> index b87fd127aa43..0edfa55d8e49 100644
-> --- a/drivers/cpufreq/scmi-cpufreq.c
-> +++ b/drivers/cpufreq/scmi-cpufreq.c
-> @@ -16,6 +16,7 @@
->  #include <linux/export.h>
->  #include <linux/module.h>
->  #include <linux/pm_opp.h>
-> +#include <linux/pm_qos.h>
->  #include <linux/slab.h>
->  #include <linux/scmi_protocol.h>
->  #include <linux/types.h>
-> @@ -25,7 +26,9 @@ struct scmi_data {
->  	int domain_id;
->  	int nr_opp;
->  	struct device *cpu_dev;
-> +	struct cpufreq_policy *policy;
->  	cpumask_var_t opp_shared_cpus;
-> +	struct notifier_block limit_notify_nb;
->  };
->  
->  static struct scmi_protocol_handle *ph;
-> @@ -174,6 +177,25 @@ static struct freq_attr *scmi_cpufreq_hw_attr[] = {
->  	NULL,
->  };
->  
-> +static int scmi_limit_notify_cb(struct notifier_block *nb, unsigned long event, void *data)
-> +{
-> +	struct scmi_data *priv = container_of(nb, struct scmi_data, limit_notify_nb);
-> +	struct scmi_perf_limits_report *limit_notify = data;
-> +	struct cpufreq_policy *policy = priv->policy;
-> +	unsigned int limit_freq_khz;
-> +	int ret;
-> +
-> +	limit_freq_khz = limit_notify->range_max_freq / HZ_PER_KHZ;
-> +
-> +	policy->max = clamp(limit_freq_khz, policy->cpuinfo.min_freq, policy->cpuinfo.max_freq);
-> +
-> +	ret = freq_qos_update_request(policy->max_freq_req, policy->max);
-> +	if (ret < 0)
-> +		pr_warn("failed to update freq constraint: %d\n", ret);
-
-This would be better as a dev_warn() with the cpu device. Other than
-that, looks good to me.
 
