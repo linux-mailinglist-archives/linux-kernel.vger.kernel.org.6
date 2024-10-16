@@ -1,78 +1,96 @@
-Return-Path: <linux-kernel+bounces-368748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3EAE9A146D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:52:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3619A146F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881C0283AAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2D02836D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994CF1D2215;
-	Wed, 16 Oct 2024 20:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArKmJApu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A21D14FA
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A05A1D175F;
+	Wed, 16 Oct 2024 20:52:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B64D18CBF2;
+	Wed, 16 Oct 2024 20:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729111897; cv=none; b=gpWeVWyUaw+S7kOvZHNAs4w2HKoCC8ToYm6ftwbx4UV1RSdL9/mqXHHaTuOE368/uhmqI5ol9Iusu/Ic/XZKEc3jLXabM9kWOpuLB1aRlpI2yonoPRRVD39Cw0jvA2a0hquOuU5lshQFIP6eHLubHOPlZ5ibeiB69RnL5Ah8ow0=
+	t=1729111953; cv=none; b=buUzQVsEi8ZdZ7eXZzzQvlVt2tWKlwMeuBvPOFK8Ts2UqfBtq8eQ833NkgzwZhA+ITlxqF2w9zwbGo4qQZJI+jwajcSvsQp1Pin7hzC7x6ms2wGNSGLNvMcNlLB2Z/a0BHYg3jZhCBachtnEE+Kr55yo3eN5Uz2OIRxhqj4Nh18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729111897; c=relaxed/simple;
-	bh=nlbGYvs5fC23YEOAffqw/dmlHnsRXYPAlB3wjGqOwUM=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=l4RU5LR6WVwazldzUXI1nYkJ6KJ+DpkSCOVJp8dL+ZvKsEkfRlaXj6QPOPtkPAtu6Z1alcl0U6HkJBJGpONVQHyk2TqO4lFaaQe+lbC6Id8kpPCRiFA5Nd5cnHg0iI9LvUsINqK2gLNy3JMo0a4jj02HYio9ap42HTq/x6oJMQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArKmJApu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF41C4CEC5;
-	Wed, 16 Oct 2024 20:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729111896;
-	bh=nlbGYvs5fC23YEOAffqw/dmlHnsRXYPAlB3wjGqOwUM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ArKmJApugfPOntI4p/bDMmbGJxwrcqRIBPDACS/HzVqWO9O71JEA2lR59k2VzpH8k
-	 0okLMfNhzpdw6YkIZeODmMiSfmL15ep+l/IyhVdNK2DECWOYjPDM/MLttDszznEx7s
-	 qKK4GE7hsYjrrncENYzDADiycfinl3MW7k3y5jyfmqYPZf50jkWnM6zODoAVVNxLwW
-	 APYDxLB0yBzfNAVNriqS1zuGZBl/SSBPP7p0FxmQfpDmMvg4FA79cfCWwcy0yWV5s2
-	 bkwngnl5CwsoNR33moQvbPLQaPiW5S2+rGHF3iM8tyUqLB6wggeJb169yvsUoQSC+0
-	 IvmShi2MyUAUA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 713A13822D30;
-	Wed, 16 Oct 2024 20:51:43 +0000 (UTC)
-Subject: Re: [GIT PULL] sched_ext: Fixes for v6.12-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zw7Syx6dUES0a_R5@slm.duckdns.org>
-References: <Zw7Syx6dUES0a_R5@slm.duckdns.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zw7Syx6dUES0a_R5@slm.duckdns.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc3-fixes
-X-PR-Tracked-Commit-Id: 60e339be100d7d49e13616bd8b4b1b864f0a64a0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dff6584301ddeb147ae306b140ccf2e128e29030
-Message-Id: <172911190193.1955101.18309260484712245882.pr-tracker-bot@kernel.org>
-Date: Wed, 16 Oct 2024 20:51:41 +0000
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, sched-ext@meta.com, David Vernet <void@manifault.com>
+	s=arc-20240116; t=1729111953; c=relaxed/simple;
+	bh=3EqYGbI+bMfTypvkrfFd6Ho2LtNLC/GdIbIiEaDAHgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCmMkSAr1KyCweQbvyKuCiJYeOx0L9UJCxaODFzdqIOHBaCa/0RY1wMxJ6+Ln2jmVY87alKRBIF64734LibjjwjBMcY3e4GUTq6AA71V9+LlPRdGDOO/YBhB5UQWQlcTy+lqTWuvvfVLSFumTkM5mgRRZTyzATfG2i6VjJPMHCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E9C8FEC;
+	Wed, 16 Oct 2024 13:53:01 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5BB23F528;
+	Wed, 16 Oct 2024 13:52:27 -0700 (PDT)
+Date: Wed, 16 Oct 2024 22:51:57 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, ionela.voinescu@arm.com,
+	sudeep.holla@arm.com, will@kernel.org, rafael@kernel.org,
+	viresh.kumar@linaro.org, sumitg@nvidia.com,
+	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
+	lihuisong@huawei.com, zhanjie9@hisilicon.com
+Subject: Re: [PATCH v7 0/4] Add support for AArch64 AMUv1-based average freq
+Message-ID: <ZxAnbflwMuIWpKCW@arm.com>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <Zw-cje76QgQIN5kq@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw-cje76QgQIN5kq@arm.com>
 
-The pull request you sent on Tue, 15 Oct 2024 10:38:35 -1000:
+On Wed, Oct 16, 2024 at 11:59:25AM +0100, Catalin Marinas wrote:
+Hi Catalin,
+> Hi Beata,
+> 
+> On Fri, Sep 13, 2024 at 02:29:40PM +0100, Beata Michalska wrote:
+> > This series adds support for obtaining an average CPU frequency based on
+> > a hardware provided feedback. The average frequency is being exposed via
+> > dedicated yet optional cpufreq sysfs attribute - cpuinfo_avg_freq.
+> > The architecture specific bits are being provided for AArch64, caching on
+> > existing implementation for FIE and AMUv1 support: the frequency scale
+> > factor, updated on each sched tick, serving as a base for retrieving
+> > the frequency for a given CPU, representing an average frequency
+> > reported between the ticks.
+> > 
+> > The changes have been rather lightly (due to some limitations) tested on
+> > an FVP model. Note that some small discrepancies have been observed while
+> > testing (on the model) and this is currently being investigated, though it
+> > should not have any significant impact on the overall results.
+> > 
+> > Note that [PATCH 2/4] arm64: amu: Delay allocating cpumask for AMU FIE support
+> > can be merged independently.
+> 
+> What's the plan with the rest of the patches? Are you going to respin?
+> The first patch would need an ack from Rafael or Viresh if we are to
+> merge them via the arm64 tree.
+>
+I am still waiting on any feedback on [PATCH 1/4] - changes to cpufreq, as that
+one drives the changes in arch specific bits. There is also an ongoing discussion
+on how to handle idle cpu cases - so I would say we still need to agree on few
+details.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc3-fixes
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dff6584301ddeb147ae306b140ccf2e128e29030
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+---
+BR
+Beata
+> Thanks.
+> 
+> -- 
+> Catalin
 
