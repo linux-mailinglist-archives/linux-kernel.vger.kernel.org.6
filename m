@@ -1,142 +1,107 @@
-Return-Path: <linux-kernel+bounces-367893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3197A9A080E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:08:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8719A080F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E7E1B2605A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:08:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F922B263B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB45D2076B8;
-	Wed, 16 Oct 2024 11:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D45B2076AD;
+	Wed, 16 Oct 2024 11:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RihX+YSb"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M79v4IGG"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986B920694F;
-	Wed, 16 Oct 2024 11:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F70207216
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076886; cv=none; b=JIep5x3LjLU3v1xy0+zDhd6GnFYzxSwait1UPK6jyNQ8Bbbf7AyARzbdyGwIrfTivtirIy9vzBRZpMH0ByhwXRSOvS/RYboQ1PNCslN75Y4f2jr+d6d8Q3g2SzJs0k0bF1KV9CFCK0CGV3wBnODJgLXiTPo8mFIa5JH8KcAHfj4=
+	t=1729076914; cv=none; b=OTTc73K463KEcTIMbgJjq4YNQUyQxrEMOuaCCVTsmee34HtxBFilQbB96IN1BE89cSxqt0GeF/6Go5pGpK0hOgB2ESCv2YOy/Pjhz5bTCOHtyx8mC2swzpQ7TKh2X7Sh9oBtavFTstquFMmFdK0xWdSDj1ZfhbTEAPpneEe9v5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076886; c=relaxed/simple;
-	bh=GxKG4+Zaa8Exeey8AdpBwGfCynvajyhPcr9selFKhGE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPVXG/C2FfVhmvKZh/ly62m0wYjHHOC8azX8qdbLrMvKyz2jCuB73KvzO6Z0VKiVQ3PLKAAbTIn0b35+No+2KqlxBXzwQ9+oyNVZjExqi/vjN0bjg8gFZBd3M/sjX3na2ccksvxEdHVVPrXCzj0xmXgSAgk45ywfuxKrrpp9uWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RihX+YSb; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb50e84ec7so22547221fa.1;
-        Wed, 16 Oct 2024 04:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729076883; x=1729681683; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jPuPFBsmpS6kyoRLa40oYeelH6usyUcNmM0E4LHOWqA=;
-        b=RihX+YSbpKeh8Qg7Qg4a958lgYLsWbD6G9/YXJxKiKdoyyxnvsiGsBfpLok7LjOCpg
-         wvtOXVFBMSs4P81DKoaVir9MscJgQnbxoOV3Jg+lUg3aHVQ7hB4cHq0EPb1irY2Gu95r
-         Opseu9aM5FdISuN796BR8GlSt6D1BgCnDlGdX1FvynFTyZcd59qvQ1sZPeg+rN14dxP4
-         UkkXkpc4r21X9mV3Eg+ZWR5V8etyO1/x2p7V8ji08ujATyVw4PLB6KFOi4y5v8SG/nSe
-         yntvjEE8FC5b/oeNONTzSLUVYiOKsoArendUdBhRm3YfAxXqIQ76GNRgQQi7e/jGvlwI
-         FGrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729076883; x=1729681683;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jPuPFBsmpS6kyoRLa40oYeelH6usyUcNmM0E4LHOWqA=;
-        b=s8kiEGo8K3rMXPvVb58nZXEJL9zqUgdvDvOOGgpr49R3YBB3C0iot8cY1O7Uy3k1IA
-         oyWMWwlMDNsIN8oAwE1vAYh4M1WJxtrYXEY89LqcvCOdKZXXjd9UnbXqxGid6apv6ghu
-         YV8xkwIv6HV8Y1GpMfCPPnrKYlvRtBtgQNg6XfBNHJ0W7UFOrogpxakT93iaa6kwxHP7
-         XHF44MIxa4ZbhK8FMpz1SZfhvwe0+trb8BEK712u3lu8HaCRH6wKLU0ZKZ2knce72hRZ
-         mJOnUOOP41WzXaj2SFaLnDz8Szc70ttC4SnSxNTcrw6BOt1TJRWogsWpgGRTcEzAXAwU
-         dt+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUA1TlmLVgVuH+ljN7UxER71/PoQhJGf5DQyqiU/yMS4AiFDPz5CBKXb/dHATt1UKmWFXKq8H2IyulOF3Nr@vger.kernel.org, AJvYcCUf8ZleUCrThn0pA0ya+/bEao0+fKQjJRQKWfsgVaV3oKl7ljEZjL80eIMplCvNu0Kc6OhTlqz0@vger.kernel.org, AJvYcCWT/CIM76o1mRGQSsMXHOV2RDpygnPi6r5CxJ5NuXWQ+GLYLlpCjSbqzLL5dlhNcUWFFHXzX+g/q/tmWZRZ+3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7jYmPVrGU9MPAHCKH2UIRhkNv1zE1nnQtKuwnANUzgp91M44M
-	WPy3SeE0+RtuczSFaZNv6ThjGPWoNP6j01IzVDN488CpUIbJU1xs
-X-Google-Smtp-Source: AGHT+IEHessqDzBZmmSlW84vsn2IkViAv/IV58tYEB2Akc/jcICFPjSzRBjgIngWFJgycMKdtw7HXw==
-X-Received: by 2002:a2e:b88b:0:b0:2fb:57b7:5cc with SMTP id 38308e7fff4ca-2fb61bb6a8emr23201981fa.36.1729076882416;
-        Wed, 16 Oct 2024 04:08:02 -0700 (PDT)
-Received: from pc636 (host-95-203-1-67.mobileonline.telia.com. [95.203.1.67])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb5d0fdde5sm3912151fa.21.2024.10.16.04.08.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 04:08:01 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 16 Oct 2024 13:07:58 +0200
-To: Julia Lawall <Julia.Lawall@inria.fr>, Roopa Prabhu <roopa@nvidia.com>
-Cc: Roopa Prabhu <roopa@nvidia.com>, kernel-janitors@vger.kernel.org,
-	vbabka@suse.cz, paulmck@kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/17] net: bridge: replace call_rcu by kfree_rcu for
- simple kmem_cache_free callback
-Message-ID: <Zw-ejnmxwVkiVPNM@pc636>
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
- <20241013201704.49576-9-Julia.Lawall@inria.fr>
+	s=arc-20240116; t=1729076914; c=relaxed/simple;
+	bh=SoCYVjaqz3dv2KpNcE7x9EdZSutXqMox9KS5XWAY63g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AmDwJtgCq2fEBSkS89rePUZN+pNSt0kcruNx5afuAwPVULlv1wmEn16UnHOs8nzvfcVFwmLdvCCXnoozZiNNewHhpGcNQADOBtjB6ib7k7fFtFFVIZHxmAL6IEOGkLnKPzG5a4z+T1NXEpNnTHwdHCOyqbWIxmz/FXMHkr2JpIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M79v4IGG; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729076908; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=fQFX2pO924HgiGGOPPFwyRN7LBwbGT/o+cYDHumYHwI=;
+	b=M79v4IGGRVap2WXMGIxwvkeJ6ucA4d/4kLndyQlKq7/8j8GAJ2iAqS82zenxYrqfAISSMh69wM2B3W87MwYbmpEhGF5xfdTP9Pz7CKGKpcp8t/p+O0LJhOo+YayC6DBnOoOkSIlNKhxCz2+1tV0On3FkKIG+eDBmI2EWtqwiy7Q=
+Received: from 30.221.129.144(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WHHN-cm_1729076906 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Oct 2024 19:08:27 +0800
+Message-ID: <106ceb9b-0f7f-4962-98e7-d9fa86d08a0a@linux.alibaba.com>
+Date: Wed, 16 Oct 2024 19:08:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013201704.49576-9-Julia.Lawall@inria.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] ocfs2: add a sanity check for i_size
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
+ ocfs2-devel@lists.linux.dev,
+ syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <8947c80d-9fed-4269-8a56-080d4afa782b@linux.alibaba.com>
+ <tencent_D0CBD2F8C64B09A0EEDA2EFF0C8367DB0606@qq.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <tencent_D0CBD2F8C64B09A0EEDA2EFF0C8367DB0606@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 13, 2024 at 10:16:55PM +0200, Julia Lawall wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
-> 
-> The changes were made using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  net/bridge/br_fdb.c |    9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-> index 642b8ccaae8e..1cd7bade9b3b 100644
-> --- a/net/bridge/br_fdb.c
-> +++ b/net/bridge/br_fdb.c
-> @@ -73,13 +73,6 @@ static inline int has_expired(const struct net_bridge *br,
->  	       time_before_eq(fdb->updated + hold_time(br), jiffies);
->  }
->  
-> -static void fdb_rcu_free(struct rcu_head *head)
-> -{
-> -	struct net_bridge_fdb_entry *ent
-> -		= container_of(head, struct net_bridge_fdb_entry, rcu);
-> -	kmem_cache_free(br_fdb_cache, ent);
-> -}
-> -
->  static int fdb_to_nud(const struct net_bridge *br,
->  		      const struct net_bridge_fdb_entry *fdb)
->  {
-> @@ -329,7 +322,7 @@ static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
->  	if (test_and_clear_bit(BR_FDB_DYNAMIC_LEARNED, &f->flags))
->  		atomic_dec(&br->fdb_n_learned);
->  	fdb_notify(br, f, RTM_DELNEIGH, swdev_notify);
-> -	call_rcu(&f->rcu, fdb_rcu_free);
-> +	kfree_rcu(f, rcu);
->  }
->  
->  /* Delete a local entry if no other port had the same address.
-> 
-> 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
---
-Uladzislau Rezki
+
+On 10/16/24 11:52 AM, Edward Adam Davis wrote:
+> On Wed, 16 Oct 2024 10:06:27 +0800, Joseph Qi wrote:
+>>> Reported-and-tested-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
+>>> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+>>> ---
+>>> V1 -> V2: keep rc to 0 when falgs contains READHEAD
+>>> V2 -> V3: check i_size only and alert subject and comments
+>>>
+>>>  fs/ocfs2/extent_map.c | 6 +++++-
+>>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> #syz test
+>>>
+>>> diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+>>> index f7672472fa82..29d27a70dbdd 100644
+>>> --- a/fs/ocfs2/extent_map.c
+>>> +++ b/fs/ocfs2/extent_map.c
+>>> @@ -961,13 +961,17 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
+>>>  	int rc = 0;
+>>>  	u64 p_block, p_count;
+>>>  	int i, count, done = 0;
+>>> +	loff_t i_size = i_size_read(inode);
+>>>  
+>>>  	trace_ocfs2_read_virt_blocks(
+>>>  	     inode, (unsigned long long)v_block, nr, bhs, flags,
+>>>  	     validate);
+>>>  
+>>> +	if (!i_size)
+>>> +		return -EINVAL;
+>>> +
+>>
+>> Take a more consideration, inode size 0 doesn't mean it has no blocks,
+>> since we have a case that fallocate with KEEP_SIZE.
+>> Could you please check inode->i_blocks in above coredump?
+> I have previously verified the value of inode->i_blocks in my testing environment, which is 0.
+> 
+So it seems the check condition should be:
+
+  (v_block + nr) > (inode->i_blocks >> (inode->i_sb->s_blocksize_bits - 9))
+
 
