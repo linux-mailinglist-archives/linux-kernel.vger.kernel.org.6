@@ -1,204 +1,291 @@
-Return-Path: <linux-kernel+bounces-367911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5619A083A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:20:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4334A9A083F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503561C20DD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:20:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6475E1C22470
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AE7206E7F;
-	Wed, 16 Oct 2024 11:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B0F2076C4;
+	Wed, 16 Oct 2024 11:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h84j1AIz"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pc9Nav5h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4A12071ED
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729077597; cv=fail; b=fxX+FCltApfgPh/tgkeYnCYvCJl0B14FVMBFKE2lsh+oSL6NNKRaFzW2myfD26R6VrXUuOk6Yx7fAjmtiSEI5yeuq/QxxoaMnq6H2T26EiZp0wDxFlxhtKavrtpNdStKPc4axtUnRCS1gDyHLMnthWCbMG05T0I9Rdqmgp66Uyk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729077597; c=relaxed/simple;
-	bh=qyX7rKk7i2/92sVrgCeChb7MrbuRaXM/umqPxm+D98s=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lb5HNL3N7OmvS4mY4rZsar9eDM0CGiwJS65KXYqF37g5n34U5EP2v8WLQUSgrhY/nhvxhp/Q2R+3JfCVBo2tGYOiz0ZM/yI6XYM0yLmO+zivVfMgfEpaL/h8ETetV6wwu3X6ww+N4y8BKxwFGAqAZLtm3heEnZUbNFjfpxDjJYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h84j1AIz; arc=fail smtp.client-ip=40.107.237.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=urDD4BYLko4MZRotdn3oPvZ6qrUX/X/khGYZDFt7Z/+AvOxTncUkJjmYI9+6a+4W8UMphINm9XLL9IU6VVYR5rOT0blHH9aZjrv1RUw5tNWRKMJ27ya4NfKuH4YdAYsXOYedBcF2wGJlBqXccQsexpJhAMLd5PfRMooWgo1YXM/zBrqDVkr+weo0MSeDJd0/gBHoaTVexf9GBetxWQK0JKW3PSbX5pyYVlEio/iYD0Rdd1oDWwNdEclgxx9teeCqgJF4pzG6PFYd1vwpACieWbpPbke8wiH2XpiIV7FXi3O6Novn4J9AJ5NbV9n6M3/YKJCP8fSus+SLLmpyTmYfzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kjp5YG0Hryrl85OqWWfQguDq0uJka0Rkow0ilgKSzZ0=;
- b=uLqfGGEwect4WCceWsiEFFbwFJ9pzt3v1uyVk9moU3okETg3TjHQU6LLSF4JkscFsL3/hoUZ7q7p9JS/8yTgNp2sjokC7wOZ+Y6LEsO+rohS2ze1RimVMyXPuS7GM6by/Fped4ZHU0E66bOTLgmWKo6+ig5Ga7uiRMqLv6MxlxHKCytjtVqhaJArzgxG0alXelFgGOhCH/64/RnG6Owk8oiZc5NaXVT3/eu4QnuvszhtCclPjs+nBCpCoG/32qxN1rMQLq9su4jGr9vcTyI691kk67/faACsqGIGFi792gdTHaBr+FlAGvwCz1CiKYELBT16jdJkKTA/uk3FmgKXnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kjp5YG0Hryrl85OqWWfQguDq0uJka0Rkow0ilgKSzZ0=;
- b=h84j1AIzjdpZFcb83A7Nkr/qRVxC5zKzOkZ+rHh+t/UGtBoVukLwvOZi5zcW1Bcoe9ulSO/EdaQukYjoIjtmmexKAPRYSsbIerxk08UD6OcPFr5axO7lnOE2/wuAgkydBxCcjGzR3C1FpZ/3b2acpPVa2bO0OeZKatptP5UNsjlCLWGvUQ2Q8lJi8WNRtt50gtluF/wp9EZr3ZPJEOLXkbR2zIhhjKWXnB7iUch/AhZxcSEBam4b0SaLGxluzlLPmoyFjY2EH3ZNqEltFiXbcxsBeSWM9QBTNa9b1uJID4w0BDlzMDtEB/hJ6FY9CQeQG6qaEkCo1yKcbA1KygQnZQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH7PR12MB7163.namprd12.prod.outlook.com (2603:10b6:510:202::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 11:19:52 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
- 11:19:51 +0000
-Message-ID: <843da504-34bb-4067-85b6-49851a1ff517@nvidia.com>
-Date: Wed, 16 Oct 2024 12:19:46 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] driver core: Avoid false-positive errors for
- intentionally skipped links
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Saravana Kannan <saravanak@google.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org
-References: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0309.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:391::13) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498C6206066;
+	Wed, 16 Oct 2024 11:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729077734; cv=none; b=YgAhUBVphBKcEccdafscNsJsj6rdjG5T7QgSGiF38C9ADADV8feLa3I8fDtUyh9/tfVfrow1ZVjqiKW9w9qvM+Q9Xqg5h3R6xwuLnax1ABZYAaSvIadjOpcDZdf06KdopaFmIWYby8pcWZhc4O8XoAeSOj4apUpm3s/jMT6EI6o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729077734; c=relaxed/simple;
+	bh=Gau0sTeAKP4PxxVTvgkDOWCBf/ZUVWIEi4VtTvfm0rk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcHQXkobGPt0LC8L66vOsQfpgMSR0hiwZZufftMkHxHIxl0SiduYH18+BS9YT/u2oMUrHyNmTf7jgGm1Tr8RNnr8WeUlQE+gSI4rfGeMgDu/SwjswRRkOGtXhn0sF1MT0a7z8R67ePH5Ie/3OcNxSBr8y6Ggs2yASCGzs6q0RF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pc9Nav5h; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729077732; x=1760613732;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Gau0sTeAKP4PxxVTvgkDOWCBf/ZUVWIEi4VtTvfm0rk=;
+  b=Pc9Nav5hkW70ooy7/1CypARVAAld8kdAqRH3tzwKXjUfwGMK5yCXpQBO
+   0W/ooFiAL4G2fejlfXlXswSBygzQwy3jMHtUpwZm+Zf7oqF81Ftzfav2K
+   o9Ieat1PJEaoPhLHhSeGntgpganZZLCnbvqf3socR95h2dgR7yWJh1w+e
+   ukHqbk8MOmSDaRVc9jtN+5J+bZDazKCF6BV+AHWHnBYSBY1FQM754femJ
+   dk/amQtaMdK0AcGO6RwUktpd+6qb/rgBfPBjXSYgd1xhZOf+YEyeHAEE8
+   x9hSXm6fxDrfBI1lU0a+xykfCkm78WD5LiMXye21PgZTNslZEwKSSk6bn
+   g==;
+X-CSE-ConnectionGUID: 6MHXf17qSLmpg62V9FShUA==
+X-CSE-MsgGUID: WmeBFeIkRvuuxQjIUgPuWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="32317972"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="32317972"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 04:22:12 -0700
+X-CSE-ConnectionGUID: 8j/7+9XOS+SQsZvNVHkwvw==
+X-CSE-MsgGUID: 9Iz2gBfdTWe9P65TlLL2GQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="78083159"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 16 Oct 2024 04:22:10 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t126R-000Kpv-0m;
+	Wed, 16 Oct 2024 11:22:07 +0000
+Date: Wed, 16 Oct 2024 19:21:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-crypto@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] lib/digsig: Use scope-based resource management
+ for two MPI variables in digsig_verify_rsa()
+Message-ID: <202410161914.lY62TWL3-lkp@intel.com>
+References: <300a0376-f003-4862-bb16-7e004733c9c1@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB7163:EE_
-X-MS-Office365-Filtering-Correlation-Id: d721c966-bc39-4a14-2184-08dcedd47405
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VXhRWE1kNE83ZGczZUF2OWM4YTBaWnAvZ1J5eC9RcUplTmVRdDdhRlVUQVhV?=
- =?utf-8?B?QUw5dXVsT2xCR1RjR2dSTDFDWGltOW4wVXpQOUhNQ0ZHKzdnWjBzZFo4S2hw?=
- =?utf-8?B?YTBTYm15UEhYNzlYZ3RZTlNQb2JQOVNyckp6dGNWbVQvMWhkOVhTQzNTVHh6?=
- =?utf-8?B?Si9vNWlLNjFJOHBmS2Z6WDZoemNyaGw1d0xMTEZHYVJRMGsrMmNlVXpmOU1o?=
- =?utf-8?B?MEhIWVhONVhMa3FsSkl3TnhzOUJIZGhhelRHWitmZ28ySjBLVnp2Q0pudnZt?=
- =?utf-8?B?UHJWcXgwMjcxZTRxZFl1VXQvZVlMRjRTUWNadmViN3pzbTg0UDRUT0QvNDNM?=
- =?utf-8?B?dCtOaVNReEdFWDREY20rcXNKemJkaVZ4NDVDdThOY2IweXVTTFY0dDZMSnd5?=
- =?utf-8?B?L1V3L2duN21tOSsyaGcvd0VrQ1orUkFwWU5LcjFPQXBtQlB2U1c1U2o1a2dP?=
- =?utf-8?B?eGdSTVBwbVo1VHYxV2s1SVNsZjNDSGxSa3IzNGgvMTlIN3FieVZlN3JGMFor?=
- =?utf-8?B?bTE0T2ZQM010UjlIUDV3cUpDd2tzWE5VNXVaenZDMWpuZ0FlNlZMQ0lyWVBR?=
- =?utf-8?B?WDI1bjcxNStDRTUrT3BKRWU0TnBtVUx4WEhQWm52alFYeVZqRTJqUTd4emtP?=
- =?utf-8?B?cGRBTVVMSTBYUm82S2s1ck5RY1hicnVEKzc1alE0Zjhkc3BDbDQ3cGRCU201?=
- =?utf-8?B?clJxeGNOaGQ2N3VrZVp0KzFMdlc4OHJDem5zc01wK21GZWFOcThSYlpOZEor?=
- =?utf-8?B?UjErOEI0TEZYNS81M2dzRCtCZjd2bnlCREV6K2NtM1BXWXFLNDl6eXVHS2w4?=
- =?utf-8?B?aVlXa3Z0UkgrZ1lJZUlhQ0ZreklpRDlnemU4Yjg5WkdHdnYxS0xSTzNTa3dQ?=
- =?utf-8?B?WEpJNlltRGE0ZXgrcDladVRUbEYxeDFsTC9ySFRra2VQMHRUVkxaTlJUTmZJ?=
- =?utf-8?B?RzU5OG1OU2RtTzMxT1lOeG9iS2xhb053cXZvTEMya0M3dWxHTzJUdWsrNUFU?=
- =?utf-8?B?YXR4Sk4zby9remt3T0hsVWlsa0h4VUtpbisvV1BQSVJKV0JYUFVnemJGVUx2?=
- =?utf-8?B?S2hONXd4aU1oZXREMTIzbkxjSjIwS1d2WHNDNG5oOVZITUFMZXZkOFhsTkhj?=
- =?utf-8?B?L1VxR21QcFVyMFFmMWxZbW9JWUtpeUVOb0w2STNTTDBqL0g5OFJSaXQ2Tjlu?=
- =?utf-8?B?VHliVC9UMm9rK09qOTFibTlZUnEzVnV4cVVrVllubS95NUhPbW02bTRYTit6?=
- =?utf-8?B?L01ZNWM5ZnlxeFJnTHNieGdndEpVdW5zcjJ4MnMvNk4wNFBsV0dDZFNBWi9F?=
- =?utf-8?B?U2pnajdDSlltMW8rZnlBNjR2TzJxcVQzemttdktLYUpITEFRc1dYU2RoRHFm?=
- =?utf-8?B?VDJoRDVJRFVDTXI1R0JXdGdySThBM0xFVjJNdEtnOXBhZjF6aWhIOFZSVVFH?=
- =?utf-8?B?cnFGM0RMNUVEVFRpcGpWdXExSno0NS82TFZKbDVndnhXbjJXcjFCUlZiY0hS?=
- =?utf-8?B?R21aY3QycmZqUk01QlBrV0hYR1RuOENIUFoydGlLL1hsZHZaZFBURjJKWmw5?=
- =?utf-8?B?ZzJaeUxDTStoaTlSK3NpZGpQVlc2WndkTVlQZ2l4WGI2SEZOZlgrTTZJaThq?=
- =?utf-8?B?ZUhWNGlLa29IRXhGZnF6M0tZOE8rSnorZmZaYXlYMlVvZWtQNERFMWlUMjJ2?=
- =?utf-8?B?TC9xQU5hREh3aUVMNDRBUGRSWXMxN3NaUjRoSWFXOU8ra0o5bnJJNGpnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VVNGWmcxMXNyajdXZUMyWFozRVVrZ0JrYkVFMml0T2VQSWJobEFTeldBK0lN?=
- =?utf-8?B?Skdjai9SSUkwUjNkek9GdHB1ajg3a0I0am12ejZza0hRTDRLOWVvd0JBUEd3?=
- =?utf-8?B?b01sTmNYaVpTL1dLaGREMktFcFIxRGtncEVubzhGc2N2UUdPY09xZHR0aWRS?=
- =?utf-8?B?WDNUTnBvcFpuQlVKK0NhMDVlRDJPVlVDdHdNRjBndC83c21QeFYrSTE0cXJs?=
- =?utf-8?B?WW9Ea2VnaHc1dFVNVWd5RW03aXVHT3hUQ0RiSTFUNWUvR2l2MFNxRmNIa3px?=
- =?utf-8?B?aW1iL3dKY0tiaUZLd3hHOFNsTHptSGVWdkFNSnA1d3VLY084Tkl4bmsrU3dC?=
- =?utf-8?B?eC8rcnM2Yld3aHRnMmlZREZ1K21mMk0vSmRXZW9XdEIzSnNzU2M1cXJDR0tO?=
- =?utf-8?B?OGV4TWtESW9mUU1McXlCRHNWcDZTVUlhdDR0Uys0WnhjZUt1ZVJlYUtaelhs?=
- =?utf-8?B?bWpFaUlLMitoQTVCaGVjTDlsVi9zdHdTVms0SENlVmc5cXU5ZTU4clQ1N2c1?=
- =?utf-8?B?OVpSbjNDbTY5a2g3Z2VPcEFVVTEvSURQam9SbWJmd3BqUkpqc1BFM1JFWHY3?=
- =?utf-8?B?OThsS2x4MEpVQzBYRVRCdjZEclFrV3BWWWwxWWVvZlk2cHZwWFozeDRYUktE?=
- =?utf-8?B?aUNjSmJyeFZkNjAxemYva1BvTlJFZHBqMStKSGJ0SUdiTlFWVnFlZlVGQWw5?=
- =?utf-8?B?azU4aGtXNDJTSk1BaDZBZVNFQWVmbjIvd3JCaE5zMmhXaGg5SjR6cCt6WWhZ?=
- =?utf-8?B?M1kraEF2ekh5Y2owQUNSMW5wNWJLcU9FczZBaDZ0cnNjR0VnUUQ1UUk4bXlX?=
- =?utf-8?B?TFpWVEsvV0o2ZTJZczAxT0JLQkIxekJFaGhlTFJDU2Q3S2Uxd0h1M3Q4bTVC?=
- =?utf-8?B?NktCMXp0bmpGbW1vanRwQXc3NDVPR09xK2ZzaWFOanFXOHhrc3pCNXFOUlVl?=
- =?utf-8?B?MWZhMzhkeS9OSnRsM01UVTFmTVpWYnVKbUlKN3RzYnlLMmhZc0JZaDQ5bzhK?=
- =?utf-8?B?VXJIYkNpRTAwWTdTdFhVVTg0c3BtTGZxWGN1YW40bFlwU0ZVTDA1UlNSeW0r?=
- =?utf-8?B?ZnNWRVYyZE1QcFJrZUt2ZmJFVHNYaElZS1VBWnIyeWc2c2dlSjRXcHF4RmxM?=
- =?utf-8?B?cGdPYUEyT1k3S0NPTHJRYkN1a05saWV6dmNOVWZXWjJ4NE1CWXlEa0NndTJh?=
- =?utf-8?B?SmFHUUhDTEJDS0N5TTNETjN0VUxlSStSdU5tWndEU0FsVnlUdmV5cXFMNk9S?=
- =?utf-8?B?d0NKRjVOQjhWblhKVGJPUTVUUlc4bWVTb2RIWm1GTmFNcXRweHRLM3JDUTJM?=
- =?utf-8?B?RXFXRWlmZFdpQUNpSTNKdGRnNWcyWTNzaDFiaGlreVZWVUh0cG9wMXZiTEUx?=
- =?utf-8?B?RWpSdG9nU2JkeFRyYVhxeWgvNEZhbnB5cFZXdklQUUczcm1NY29jbHZoNVdw?=
- =?utf-8?B?Zmg3Ry9Hb01lbXVYMldqM1BITjdudXlWbko3UXlYaVpMYm16OFZ3bFhITWtT?=
- =?utf-8?B?R3krWkVMeTBUdkt5VFFVZHA2Qmh0a25jc2k4M1oxUHJYL1paazAvaFozcldn?=
- =?utf-8?B?dnNtRkhxRHRvd0NLSWZVUDY2OUpCcEIxS3hNTmRmNlhJZXkvY3pVUXZUT1RE?=
- =?utf-8?B?SG94RXdLVlR1dmYySnZpQkFtTk90MWFXcnU3R2xCS0w2czJuMk5VU09MaU1V?=
- =?utf-8?B?WktkalFDT3RCSThTeDI1bmJ6UXIzeGlzeGUySE1tTVNzbXBBZS9VMm5tRjFt?=
- =?utf-8?B?TFc5UW02dWdFanFSK1RCY3JCQmo5WDRvS0FvclpUQ0VxYW5tazBKTGZkWWxQ?=
- =?utf-8?B?WkMyYURhRm4xemZZRFdwNmMrSlcyNExkZVpKRVhsM0NTck9MdWtMZlBlMmFl?=
- =?utf-8?B?MDhPWjFqMHZ4d2FwaUxoVVpMVmdkZlJYK2JyRjI3bU9zMmxrSEFoNFpoTks0?=
- =?utf-8?B?c3c1ZE1vMTh5YkY4T3BTbUV3dW5OSDdHM2xvai92aGtmWFo0dWNPaE9GSjQy?=
- =?utf-8?B?aDFydWM0dGR1OVhkeXNPR1JuY0tLTGw2dkZGeml1dG1pczdCWTk0b29NU2tY?=
- =?utf-8?B?WTJ4bUpKY20xaG0wWno4UTU5VEs2eW0yWjZocFF1QWx2ZTFhQmI2MDQwWkFR?=
- =?utf-8?Q?g5b0OWwW1CEXmAN2XuCz1EVza?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d721c966-bc39-4a14-2184-08dcedd47405
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 11:19:51.7582
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r5UyEKnhslG0mKleD0AE2gT1u8u9f4H62c3FNa4WM44pap80aDTr/OKTnHoje71q0wqPKuExBpfDx6TurYWaew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7163
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <300a0376-f003-4862-bb16-7e004733c9c1@web.de>
+
+Hi Markus,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
+[also build test ERROR on herbert-crypto-2.6/master herbert-cryptodev-2.6/master linus/master v6.12-rc3 next-20241016]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/crypto-lib-mpi-Extend-support-for-scope-based-resource-management/20241012-231156
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/300a0376-f003-4862-bb16-7e004733c9c1%40web.de
+patch subject: [PATCH v3 2/3] lib/digsig: Use scope-based resource management for two MPI variables in digsig_verify_rsa()
+config: hexagon-randconfig-r064-20241016 (https://download.01.org/0day-ci/archive/20241016/202410161914.lY62TWL3-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410161914.lY62TWL3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410161914.lY62TWL3-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from lib/digsig.c:25:
+   In file included from include/linux/mpi.h:21:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __raw_readb(PCI_IOBASE + addr);
+                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+                                                     ^
+   In file included from lib/digsig.c:25:
+   In file included from include/linux/mpi.h:21:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+                                                     ^
+   In file included from lib/digsig.c:25:
+   In file included from include/linux/mpi.h:21:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writeb(value, PCI_IOBASE + addr);
+                               ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+>> lib/digsig.c:176:3: error: expected statement
+                   }
+                   ^
+   lib/digsig.c:178:2: error: expected statement
+           }
+           ^
+   6 warnings and 2 errors generated.
 
 
-On 15/10/2024 22:27, Nícolas F. R. A. Prado wrote:
-> This series gets rid of the false-positive errors printed when device
-> links are intentionally skipped. Patch 1 commonizes the logic into a
-> helper and patch 2 uses that to remove the error.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
-> Changes in v2:
-> - Added patch 1 introducing the device_link_is_useless() helper and used
->    that in patch 2
-> - Link to v1: https://lore.kernel.org/r/20240624-fwdevlink-probed-no-err-v1-1-d1213cd354e2@collabora.com
-> 
-> ---
-> Nícolas F. R. A. Prado (2):
->        driver core: Create device_link_is_useless() helper
->        driver core: Don't log intentional skip of device link creation as error
-> 
->   drivers/base/core.c | 28 +++++++++++++++++++---------
->   1 file changed, 19 insertions(+), 9 deletions(-)
+vim +176 lib/digsig.c
 
-
-Looks good to me. For the series ...
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
+    63	
+    64	/*
+    65	 * RSA Signature verification with public key
+    66	 */
+    67	static int digsig_verify_rsa(struct key *key,
+    68			    const char *sig, int siglen,
+    69			       const char *h, int hlen)
+    70	{
+    71		int err = -EINVAL;
+    72		unsigned long len;
+    73		unsigned long mlen, mblen;
+    74		unsigned int l;
+    75		int head, i;
+    76		unsigned char *out1 = NULL;
+    77		const char *m;
+    78		MPI pkey[2];
+    79		uint8_t *p, *datap;
+    80		const uint8_t *endp;
+    81		const struct user_key_payload *ukp;
+    82		struct pubkey_hdr *pkh;
+    83	
+    84		down_read(&key->sem);
+    85		ukp = user_key_payload_locked(key);
+    86	
+    87		if (!ukp) {
+    88			/* key was revoked before we acquired its semaphore */
+    89			err = -EKEYREVOKED;
+    90			goto err1;
+    91		}
+    92	
+    93		if (ukp->datalen < sizeof(*pkh))
+    94			goto err1;
+    95	
+    96		pkh = (struct pubkey_hdr *)ukp->data;
+    97	
+    98		if (pkh->version != 1)
+    99			goto err1;
+   100	
+   101		if (pkh->algo != PUBKEY_ALGO_RSA)
+   102			goto err1;
+   103	
+   104		if (pkh->nmpi != 2)
+   105			goto err1;
+   106	
+   107		datap = pkh->mpi;
+   108		endp = ukp->data + ukp->datalen;
+   109	
+   110		for (i = 0; i < pkh->nmpi; i++) {
+   111			unsigned int remaining = endp - datap;
+   112			pkey[i] = mpi_read_from_buffer(datap, &remaining);
+   113			if (IS_ERR(pkey[i])) {
+   114				err = PTR_ERR(pkey[i]);
+   115				goto free_keys;
+   116			}
+   117			datap += remaining;
+   118		}
+   119	
+   120		mblen = mpi_get_nbits(pkey[0]);
+   121		mlen = DIV_ROUND_UP(mblen, 8);
+   122	
+   123		if (mlen == 0) {
+   124			err = -EINVAL;
+   125			goto free_keys;
+   126		}
+   127	
+   128		err = -ENOMEM;
+   129	
+   130		out1 = kzalloc(mlen, GFP_KERNEL);
+   131		if (!out1)
+   132			goto free_keys;
+   133	
+   134		{
+   135			unsigned int nret = siglen;
+   136			MPI in __free(mpi_free) = mpi_read_from_buffer(sig, &nret);
+   137	
+   138			if (IS_ERR(in)) {
+   139				err = PTR_ERR(in);
+   140				goto in_exit;
+   141			}
+   142	
+   143			{
+   144				MPI res __free(mpi_free) = mpi_alloc(mpi_get_nlimbs(in) * 2);
+   145	
+   146				if (!res)
+   147					goto res_exit;
+   148	
+   149				err = mpi_powm(res, in, pkey[1], pkey[0]);
+   150				if (err)
+   151					goto res_exit;
+   152	
+   153				if (mpi_get_nlimbs(res) * BYTES_PER_MPI_LIMB > mlen) {
+   154					err = -EINVAL;
+   155					goto res_exit;
+   156				}
+   157	
+   158				p = mpi_get_buffer(res, &l, NULL);
+   159				if (!p) {
+   160					err = -EINVAL;
+   161					goto res_exit;
+   162				}
+   163	
+   164				len = mlen;
+   165				head = len - l;
+   166				memset(out1, 0, head);
+   167				memcpy(out1 + head, p, l);
+   168	
+   169				kfree(p);
+   170	
+   171				m = pkcs_1_v1_5_decode_emsa(out1, len, mblen, &len);
+   172	
+   173				if (!m || len != hlen || memcmp(m, h, hlen))
+   174					err = -EINVAL;
+   175	res_exit:
+ > 176			}
+   177	in_exit:
+   178		}
+   179	
+   180		kfree(out1);
+   181	free_keys:
+   182		while (--i >= 0)
+   183			mpi_free(pkey[i]);
+   184	err1:
+   185		up_read(&key->sem);
+   186	
+   187		return err;
+   188	}
+   189	
 
 -- 
-nvpublic
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
