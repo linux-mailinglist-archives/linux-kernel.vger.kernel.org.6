@@ -1,220 +1,133 @@
-Return-Path: <linux-kernel+bounces-368050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3AF9A0AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1EE9A0AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C535B29DEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315532827F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341C5208D7A;
-	Wed, 16 Oct 2024 12:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70F8208970;
+	Wed, 16 Oct 2024 12:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="dKgbQGTn"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQVYDu94"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6BC208970
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D923A41C69
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729082877; cv=none; b=JzFSpDqG9mONSGciIG/fEOrVmkzAsQ6pwg4aMyj2VrO8CVrf54tAfrxfMp6BltgNwFZPfdpQef3m5vOY36tAoAVUmhngoz4zqCysg22zJvm+rvmKeXQZs3tj6ho6J59w9zwvbK1jxNZ8PYPUDDK+jVXLmkibh5IT5bQ8NI+6SX8=
+	t=1729082964; cv=none; b=AhTd63xcP/28TeoEsFny1CGcKXEfFcwBjhhlJJROaEKbntI+ikUwuzr2VSrQ0j+RLrmyh7rW9CcAO77/GF5tb1sI3WTgug9ssYTX7eT0YFrUDlNA9AwnzA3UQg2poNxvjYx8FLXqHwgHBIxJrBCH6GXNpJiSLD9c5pehY+8aiWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729082877; c=relaxed/simple;
-	bh=g51coeeDVq27OXnjABdvj8baLUmBO75MzrKxgaB9n70=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VLzadH/6Jput4mq8ajp1IHsGbl/tu9vtqGjvsonlD8IW7TqpmIXPmlfEB6mqaKGaH4AxofhsNAUjLC8RdcdU+hUtJpfyYdX3E31cJAqMGknsiYwaqcHjetnP/WNsu9lm650Lfo6i7QS8SHTDpi1/cRLSor/ZTCGtPN/jGjNnQts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=dKgbQGTn; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b12a02596aso197855385a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1729082874; x=1729687674; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TC7OenCi6BcmKhaUOKIWjRKNFWfW4OciD6p4bX/XIcI=;
-        b=dKgbQGTnPzCcyG2QUPZqCe6/4EgqZGuToImWx8Mk6lD3nfNws7RiAg291352sORHCu
-         1aGz1qa8NPlSZ21OQ5Fbx8yD+RGZPu3TxV8IAXAgqEujuaMTIrZscTTXqQMfNg48fcS4
-         lPPcZFzbvonEc8imBC+o6FXcpT9fkKbAj7BHoxBeo0lld4O0uu+1w5jcDDaNvo80kAPo
-         9atHi24rhkafca122z1TsZ955w3WHm0QTtPvpZeIzXkFnL+va96f/W0Em0JgEm82+kcM
-         vqDEOkp+c3Y/zpcCkZPOGSx7jBb9P87NGcMIPh3NxWMQg5S/7y4ffih0VNea3C3fep5I
-         03Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729082874; x=1729687674;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TC7OenCi6BcmKhaUOKIWjRKNFWfW4OciD6p4bX/XIcI=;
-        b=qo0j3Hg5WjBZueXqfoSjRLbbvoQK6BD2P/2ig40ZNvSdJD6YumfHC5hL1r3BIxYTNL
-         bHf9TJeGIC/FR7w47jLu6aLKi4UtwvZRoD58wUVhotKvyiKb4IfGMCnQFcu8ZTGtHkvB
-         gFq/Ni1J+NYCClQwJYK5pA2r8tVOVPXtCdZDqmq2AOlDIEIy+2V/OxTO4+3asl8/YYgn
-         OCHMSqfmMJzSmRdmbQwTka5u82rJZluT+Inv89tLSj1K3BqQvjnrg7xbVcXC60B5eUKw
-         6ScE5AUXOoyDl3X9DBJ//oB4Vt11JzmS0LCfA/alinMPNtB4fr9FOScJ+oVUapJor8qs
-         VV5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVR7NeKsnwUSlM0r+HH9eAUwztZ0XMO0dlmen3qHBCoYp9CCRwYhS7PCotgmYX/wwYIw/13SS7/tk45CFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsHiKQJrF3nkHq+nN+/AS5znp+5qgFBHmXPqP00V72QubmPtSz
-	jmjGdVMCIVo9xcof4Fz+S73OUjzwVrjncToym30114Xn6UQK2k5N8w89p7HX0+FajrsC8S8zoav
-	JjiI=
-X-Google-Smtp-Source: AGHT+IE0f7DKjeAf362gR4xxSMpdGgpWn0MOdABboL55FWebwTaQAdvc/lcntp68K3qPqHE6C3++Dg==
-X-Received: by 2002:a05:620a:2684:b0:7b1:3bcf:cbc3 with SMTP id af79cd13be357-7b1417fa39cmr456626185a.35.1729082874291;
-        Wed, 16 Oct 2024 05:47:54 -0700 (PDT)
-Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b0e22dfsm17283211cf.35.2024.10.16.05.47.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 05:47:53 -0700 (PDT)
-Subject: Re: [PATCH v3 1/5] rtc: pm8xxx: implement qcom,no-alarm flag for
- non-HLOS owned alarm
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241015004945.3676-1-jonathan@marek.ca>
- <20241015004945.3676-2-jonathan@marek.ca>
- <Zw9gZkLPMB9ZBQlh@hovoldconsulting.com>
-From: Jonathan Marek <jonathan@marek.ca>
-Message-ID: <682acd15-58c5-6bdf-f913-0940a2733451@marek.ca>
-Date: Wed, 16 Oct 2024 08:44:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+	s=arc-20240116; t=1729082964; c=relaxed/simple;
+	bh=HwiRrLovhi8LSfvXKaIbyTd2a0RDbYHEaljrRHXbSN8=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=aNfMwNOVTHzcFo2c6cYINvHe7qTW5tnzpjGKffAhgv4sYri0Tcz7SsKr96Rjtlm6EniLt+FMecvOvznRG+D2yUW4bGrXmC8MsB5CC0jzKubZs8Mcvc2AnPwtMITCI3dBKG/6LXopdsb8chTfzfxktFgyzd3XwHpDB07mI6sSnJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQVYDu94; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729082961;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=F2GwOhZduJ+ppO9KA2LHBNxiV3yxP7zUCAL35HJly9U=;
+	b=bQVYDu949WiOKWibli8LGMGzXi2lgCVo7jRCjUlU62Z4uv7ZCrXsg7kwAzN1F90UHQSowZ
+	bShfafyUieDr06ogZ6h7g6ElbxkmIMKjQJehhYpH6XNUd7YM8mG/4ODrgDpBrFBKGrh38/
+	IgM7eoBDjAZfRyUOXKE0qMAHNXlhaXU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-drk9t9IAP-qSCjjXgzBeQw-1; Wed,
+ 16 Oct 2024 08:49:18 -0400
+X-MC-Unique: drk9t9IAP-qSCjjXgzBeQw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7CBD61955EAC;
+	Wed, 16 Oct 2024 12:49:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BB32C3000198;
+	Wed, 16 Oct 2024 12:49:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] kheaders: Ignore silly-rename files
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zw9gZkLPMB9ZBQlh@hovoldconsulting.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1113846.1729082954.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 16 Oct 2024 13:49:14 +0100
+Message-ID: <1113847.1729082954@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 10/16/24 2:42 AM, Johan Hovold wrote:
-> On Mon, Oct 14, 2024 at 08:47:26PM -0400, Jonathan Marek wrote:
->> Qualcomm x1e80100 firmware sets the ownership of the RTC alarm to ADSP.
->> Thus writing to RTC alarm registers and receiving alarm interrupts is not
->> possible.
->>
->> Add a qcom,no-alarm flag to support RTC on this platform.
-> 
-> An alternative may be to drop the alarm interrupt from DT and use that
-> as an indicator.
-> 
+Tell tar to ignore silly-rename files (".__afs*" and ".nfs*") when buildin=
+g
+the header archive.  These occur when a file that is open is unlinked
+locally, but hasn't yet been closed.  Such files are visible to the user
+via the getdents() syscall and so programs may want to do things with them=
+.
 
-That wouldn't be right, the registers/interrupt still exist and should 
-be described in DT.
+During the kernel build, such files may be made during the processing of
+header files and the cleanup may get deferred by fput() which may result i=
+n
+tar seeing these files when it reads the directory, but they may have
+disappeared by the time it tries to open them, causing tar to fail with an
+error.  Further, we don't want to include them in the tarball if they stil=
+l
+exist.
 
-(if you have firmware that allows access to the alarm, now you only have 
-to delete the qcom,no-alarm property in your dts to use it)
+With CONFIG_HEADERS_INSTALL=3Dy, something like the following may be seen:
 
->> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
->> ---
->>   drivers/rtc/rtc-pm8xxx.c | 44 +++++++++++++++++++++++++++-------------
->>   1 file changed, 30 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
->> index c32fba550c8e0..1e78939625622 100644
->> --- a/drivers/rtc/rtc-pm8xxx.c
->> +++ b/drivers/rtc/rtc-pm8xxx.c
->> @@ -61,6 +61,7 @@ struct pm8xxx_rtc {
->>   	struct rtc_device *rtc;
->>   	struct regmap *regmap;
->>   	bool allow_set_time;
->> +	bool no_alarm;
-> 
-> How about inverting this one and naming it has_alarm or similar to avoid
-> the double negation in your conditionals (!no_alarm)?
-> 
+   find: './kernel/.tmp_cpio_dir/include/dt-bindings/reset/.__afs2080': No=
+ such file or directory
+   tar: ./include/linux/greybus/.__afs3C95: File removed before we read it
 
-My reasoning is that the DT flag has to be negative, and its better to 
-use the same name as the DT flag, but inverting it is OK.
+The find warning doesn't seem to cause a problem.
 
->>   	int alarm_irq;
->>   	const struct pm8xxx_rtc_regs *regs;
->>   	struct device *dev;
->> @@ -473,9 +474,14 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->>   	if (!rtc_dd->regmap)
->>   		return -ENXIO;
->>   
->> -	rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
->> -	if (rtc_dd->alarm_irq < 0)
->> -		return -ENXIO;
->> +	rtc_dd->no_alarm = of_property_read_bool(pdev->dev.of_node,
->> +						 "qcom,no-alarm");
->> +
-> 
-> Stray newline.
-> 
+Fix this by telling tar when called from in gen_kheaders.sh to exclude suc=
+h
+files.  This only affects afs and nfs; cifs uses the Windows Hidden
+attribute to prevent the file from being seen.
 
-That's not a stray newline?
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Masahiro Yamada <masahiroy@kernel.org>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-kernel@vger.kernel.org
+---
+ kernel/gen_kheaders.sh |    1 +
+ 1 file changed, 1 insertion(+)
 
->> +	if (!rtc_dd->no_alarm) {
->> +		rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
->> +		if (rtc_dd->alarm_irq < 0)
->> +			return -ENXIO;
->> +	}
->>   
->>   	rtc_dd->allow_set_time = of_property_read_bool(pdev->dev.of_node,
->>   						      "allow-set-time");
->> @@ -503,7 +509,8 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->>   
->>   	platform_set_drvdata(pdev, rtc_dd);
->>   
->> -	device_init_wakeup(&pdev->dev, 1);
->> +	if (!rtc_dd->no_alarm)
->> +		device_init_wakeup(&pdev->dev, 1);
->>   
->>   	rtc_dd->rtc = devm_rtc_allocate_device(&pdev->dev);
->>   	if (IS_ERR(rtc_dd->rtc))
->> @@ -512,27 +519,36 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->>   	rtc_dd->rtc->ops = &pm8xxx_rtc_ops;
->>   	rtc_dd->rtc->range_max = U32_MAX;
->>   
->> -	rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
->> -					  pm8xxx_alarm_trigger,
->> -					  IRQF_TRIGGER_RISING,
->> -					  "pm8xxx_rtc_alarm", rtc_dd);
->> -	if (rc < 0)
->> -		return rc;
->> +	if (!rtc_dd->no_alarm) {
->> +		rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
->> +						  pm8xxx_alarm_trigger,
->> +						  IRQF_TRIGGER_RISING,
->> +						  "pm8xxx_rtc_alarm", rtc_dd);
->> +		if (rc < 0)
->> +			return rc;
->> +	}
->>   
->>   	rc = devm_rtc_register_device(rtc_dd->rtc);
->>   	if (rc)
->>   		return rc;
->>   
->> -	rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
->> -	if (rc)
->> -		return rc;
->> +	if (!rtc_dd->no_alarm) {
->> +		rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
->> +		if (rc)
->> +			return rc;
->> +	} else {
->> +		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
-> 
-> I assume that you should be clearing the feature bit before registering
-> the RTC.
-> 
+diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
+index 383fd43ac612..7e1340da5aca 100755
+--- a/kernel/gen_kheaders.sh
++++ b/kernel/gen_kheaders.sh
+@@ -89,6 +89,7 @@ find $cpio_dir -type f -print0 |
+ =
 
-Right, it just needs to be after devm_rtc_allocate_device, not 
-devm_rtc_register_device.
+ # Create archive and try to normalize metadata for reproducibility.
+ tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=3D$KBUILD_BUILD_TIMESTAMP}" \
++    --exclude=3D".__afs*" --exclude=3D".nfs*" \
+     --owner=3D0 --group=3D0 --sort=3Dname --numeric-owner --mode=3Du=3Drw=
+,go=3Dr,a+X \
+     -I $XZ -cf $tarfile -C $cpio_dir/ . > /dev/null
+ =
 
->> +	}
->>   
->>   	return 0;
->>   }
-> 
-> Johan
-> 
 
