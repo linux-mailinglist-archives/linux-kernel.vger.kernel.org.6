@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-368016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468F69A09D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:30:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CAA9A0AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB33AB277F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020421C220F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1668F208201;
-	Wed, 16 Oct 2024 12:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BCA2076BA;
+	Wed, 16 Oct 2024 12:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lzx22hkL"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M5wDCbOf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FD61DFF5;
-	Wed, 16 Oct 2024 12:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A35206945;
+	Wed, 16 Oct 2024 12:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729081844; cv=none; b=MTomKPgic//cE3nJvITHPKKfDZqT7Pr0qmZubpzMAiQpjVjpveS7SxixP2UXOk+iDmw0qhXVBUrRjzQr5RRXc5gBOJENeUn+auE9Dsw7gQS+2bciu72S66Mp+0HaT+iiqX2Sg8lcdiFJtmfWDgks8Rhx0YYxI4/TJQOnaDIXpGI=
+	t=1729083220; cv=none; b=X7EH9HkQG/0S3XKNKA8aNpW6qU55ioWtddZNAFkvOapQBNd8nSRy7rDpaa339ueJnmv8nFWgtHTN/PschMc6mQDZNcjSahH2+rRP22vW10zY5XqgO3PDWDWi/TVgljkpamHqUeOP+Q7hMlJcuI8bA4orP42loIJIfW5B4SwwY/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729081844; c=relaxed/simple;
-	bh=8ItB8GX4brTAtKv9DPFQRgvH2s2EG6Du2d7C4auImP0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=epjYu/G8VcUZ9cf3wwkhE8tf1sYVxxzyxMnXVfD1OcKFVCIaeC0dSoiFtqk5gC5L5fLVzyGR/XHA7FUtg8Awk5l86U2IzJBgbvooJMo6s8GeeDZvkN0YaiI0ZgAHYQ1znOqD1MiMSdYq06NaYnDPfA1SaMdELKOk85qfRavxb9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lzx22hkL; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GCThTD014061;
-	Wed, 16 Oct 2024 12:30:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=NP+q8P
-	lXDawFgvRDYFei3jtXLCEGrXvSZgAkTMaquMg=; b=lzx22hkLX2wjJFOq6McD05
-	bsy8aeJo4dZIB5/H89hhnEQ5l57ndsnhnaL4XGFv1DeJgldVNFl8576Z6v+ZtfPD
-	KnQI9G4kEZq+bBpYTKqJyAYBRhUcVZuXb4Mv0ktDZvMQ+E8TlDtApQtD8RAuw8WE
-	mvrFqhvu0BFSf0G4zf+KK4NXpLZaGRHWZ63swmglZemuYLSXRzeeEHA2PhXPevKZ
-	Tjv/BkFJC2uwl5qpffORMryDLrf84tmDGFnJISdBLR/BdaPfPld1lPa92PIq119o
-	I4LDkPdDQ5m583IYHfbI3re8e0evR2vQFiHy0ZTx5w6hRZB5Yx7ReUOhbOR4Z6kg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42adhqg094-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 12:30:33 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GCUXI1016152;
-	Wed, 16 Oct 2024 12:30:33 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42adhqg08w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 12:30:33 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GAIYQ7006405;
-	Wed, 16 Oct 2024 12:30:32 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk97nu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 12:30:32 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GCUSb622806846
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 12:30:28 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C9D720043;
-	Wed, 16 Oct 2024 12:30:28 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E6C220040;
-	Wed, 16 Oct 2024 12:30:23 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.244.19])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 12:30:22 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1729083220; c=relaxed/simple;
+	bh=MYdWvQMzNgVnn/YA/XsqtsTxzmfDhV3ZeuC9irRKkZo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Z0S1lH9eK4ZijehYTDkmxv6N5/kG4Dl8N0tsm6TEV5s71VXL11buHxzOMO4BUpST5Zn5GY16F+0WeLB5gDJvBVf4sBLuYn56EG3fZ50a2MYrZ83/mKz3R+8J1E2f+cNXNWVqJ/oRni3iWNB1NPBiBw6FCKrHO6So/I1KdNJ0Whg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M5wDCbOf; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729083219; x=1760619219;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=MYdWvQMzNgVnn/YA/XsqtsTxzmfDhV3ZeuC9irRKkZo=;
+  b=M5wDCbOfFVnmEfZS/+f5x0OdFh5yS3IEl1LAamyXM7bYALq9fmiTONLb
+   JPKL1Ek7dibMThjS/y9a+uI6QcI6ilh1kuw4wISPnpaTZsrkVraOmGcQW
+   1B/c4AMKeMiJt1taMQ3m56n4p5YgZTJdbK7Vn6ZNxtsgMoXINbRTmn6lH
+   86uoHnpB1zYCdSg48fdHVxSeCwaAlN4tosS2Wat9k4GMV0u/z7IcjjLsj
+   0F5olpxlzNrX1rqb5hkfhD2hDgFZ6yWAAfs0P99wUTTUdq5Jcoc7xlnNS
+   cWWTdF3GwzCNKujvpQIruq8ohj4bdC/L8ErgOb0BDyl+ZqkkVpJ8o8bqY
+   Q==;
+X-CSE-ConnectionGUID: x4lvyTXrT3CiVI2jjstn+g==
+X-CSE-MsgGUID: +RsLRAIASXSbnoQvk35MMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32217415"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="32217415"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:53:37 -0700
+X-CSE-ConnectionGUID: FpEVZkUBTiuaE7VkGSUH+A==
+X-CSE-MsgGUID: mNZbp9+vR2m+7+31tecn3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="82761539"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:53:29 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: tony.luck@intel.com,
+	bp@alien8.de
+Cc: tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	x86@kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qiuxu.zhuo@intel.com
+Subject: [PATCH v2 00/10] x86/mce: Clean up some x86/mce code
+Date: Wed, 16 Oct 2024 20:30:26 +0800
+Message-Id: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH] tools/perf/tests: Remove duplicate evlist__delete in
- tests/tool_pmu.c
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <172892779762.897882.10648635927487710641.b4-ty@kernel.org>
-Date: Wed, 16 Oct 2024 18:00:12 +0530
-Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        irogers@google.com, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
-        disgoel@linux.vnet.ibm.com, hbathini@linux.ibm.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D96F2226-12DA-4087-802B-74B347BFE43B@linux.vnet.ibm.com>
-References: <20241013170732.71339-1-atrajeev@linux.vnet.ibm.com>
- <172892779762.897882.10648635927487710641.b4-ty@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 5HNLB9f0Hp45-X39MzvxShrV9gbxJRzD
-X-Proofpoint-ORIG-GUID: 6yOhLDAqGiOT7OTwDqwYVOVveR1iCt9e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- lowpriorityscore=0 mlxscore=0 spamscore=0 phishscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410160077
+
+1. Clean up some x86/mce code as below. No functional changes intended.
+
+    - Simplify some code.
+
+    - Remove some unnecessary code.
+
+    - Improve readability for some code.
+
+    - Fix some typos.
+
+    [ Reduce the text segment size by ~116 bytes. ]
+
+2. Pass the following basic tests:
+
+   - Compile test.
+
+   - Correctable/uncorrectable memory errors can be notified via CMCI/MCE interrupts.
+
+   - Correctable/uncorrectable memory errors can be dispatched to the mcelog daemon and the EDAC driver.
+
+   [ Tested on an Intel Sapphire Rapids server. ]
+
+3. This patch series is based on v6.12-rc3.
+
+4. Changes in v2:
+
+   - Collect "Reviewed-by:" tags for patch {1-8,10}.
+
+   - Update the commit message of patch 9 to include the names of all
+     variables that don't need NULL pointer initializations.
+
+Thanks Tony for reviewing this patch series.
+
+Qiuxu Zhuo (10):
+  x86/mce/dev-mcelog: Use xchg() to get and clear the flags
+  x86/mce/intel: Use MCG_BANKCNT_MASK instead of 0xff
+  x86/mce: Make several functions return bool
+  x86/mce/threshold: Remove the redundant this_cpu_dec_return()
+  x86/mce/genpool: Make mce_gen_pool_create() return explicit error codes
+  x86/mce: Convert multiple if () statements into a switch() statement
+  x86/mce: Remove the unnecessary {}
+  x86/mce: Remove the redundant zeroing assignments
+  x86/mce/amd: Remove unnecessary NULL pointer initializations
+  x86/mce: Fix typos in comments
+
+ arch/x86/include/asm/mce.h           |  4 +--
+ arch/x86/kernel/cpu/mce/amd.c        | 18 +++++------
+ arch/x86/kernel/cpu/mce/core.c       | 47 ++++++++++++++--------------
+ arch/x86/kernel/cpu/mce/dev-mcelog.c | 11 ++-----
+ arch/x86/kernel/cpu/mce/genpool.c    |  8 ++---
+ arch/x86/kernel/cpu/mce/intel.c      | 11 ++++---
+ arch/x86/kernel/cpu/mce/threshold.c  |  2 +-
+ 7 files changed, 46 insertions(+), 55 deletions(-)
 
 
-
-> On 14 Oct 2024, at 11:13=E2=80=AFPM, Namhyung Kim =
-<namhyung@kernel.org> wrote:
->=20
-> On Sun, 13 Oct 2024 22:37:32 +0530, Athira Rajeev wrote:
->=20
->> The testcase for tool_pmu failed in powerpc as below:
->>=20
->> ./perf test -v "Parsing without PMU name"
->>  8: Tool PMU                                                        :
->>  8.1: Parsing without PMU name                                      : =
-FAILED!
->>=20
->> This happens when parse_events results in either skip or fail
->> of an event. Because the code invokes evlist__delete(evlist)
->> and "goto out".
->>=20
->> [...]
->=20
-> Applied to perf-tools-next, thanks!
-
-Thanks Namhyung for picking the change
-
-Athira
->=20
-> Best regards,
-> Namhyung
->=20
->=20
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+-- 
+2.17.1
 
 
