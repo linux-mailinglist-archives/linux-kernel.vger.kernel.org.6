@@ -1,249 +1,180 @@
-Return-Path: <linux-kernel+bounces-368461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E30D9A1004
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:46:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C979A1007
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7BDAB24ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00C2A1C21495
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB2E20C03A;
-	Wed, 16 Oct 2024 16:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6C620FAAA;
+	Wed, 16 Oct 2024 16:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g3decX5o"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2076.outbound.protection.outlook.com [40.107.237.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NQB7NY+B"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9424D15B987;
-	Wed, 16 Oct 2024 16:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729097192; cv=fail; b=pTkC9qu0mRZNrBZhI1MPN62p9s3bg+R10oMPhEXYM7SiZbuAT1+ldndXPbEKFpISNT7zpoyLm8kVEhfU7fzlIrvC1WiLWuTtK9RIV9/6D2bexLQB+YC4kDm+ODxwi4kS1+qmyqwn+qgiwEeUVllXPpJ2pZpx0is2nLj/ggsD6nU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729097192; c=relaxed/simple;
-	bh=eUPnCvHFNhONzsjT3i0+17hXh03QLzA2gf7d4/EFjVc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ELjSamAS7XiV6a3UIoTEHkmRvwH0EVj64spXtson5haUNJ9futVsRolcODpeqv1AXOgzbn5fa2szyESWflmLdNhbR9T6L2G99cvWlMlabCqhdhAdJJbUQifGAE6sKIflZbfK/ru5EHJl4Accg3WI9am70Shxp72eBeB+V+QvYtY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g3decX5o; arc=fail smtp.client-ip=40.107.237.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ivZJI0ZSt0MGeOHkwZnm0Tln5NAlM+BtphGVblc88xY4SMOR8Wh5ZYnlv0X8plCvWAhSEYP7P4xvDTBrmn34dCZCkMwxz5B3rAWimp5hoKNi0EtstTuZ3aeNOOMhV/rOTWe45A1Y87Tq5WMdfONaenUyjqnMXQAtvUvo1iADwR6cZmd2yg1f+9uNXJiZMFdmHG0Mz0ZHIXbqINdzWRm5gCKN6Y26IpF9QqHab0PmnILTHUhtX2DTSSR/C4FspOsrRWLGTOX7YOQ384C6xo36s/SN7b7rgu74cq05lXC3zrjjdi65+JwPxKks3X81J19DMRAUcFAeSiW2V6GV6Usz7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dNFERzO+zCOOGI4Jyf4a1c9QSfQfOMQ2fuIsQIYXvik=;
- b=qlZNG9POwapL79U4TtWG/uVnFfBve9TlxlXJ8/Af6yyjt9B6Q2lHFXLIUdsNH+5aRTSi7gZ+taZCpm3Abr3e83i0Wo15iTCdxWaM/hJo0bsVbn21vL5wkQZ1FKvav/csDuZqWFI4W+z3fenvmHZ8JuYmJ8Bcq9BRsiKnQv9VCVQGg8qPu2f2gt6FFT5Jh5yk2rEyL2MrApJxUsEsq5iYarMwiSRwwv/mFKZimQVre7PKenEMSjvMDKxzt7ddYPb3P99gs2CLFU1ohHAOSEa6ronAZqxK0elAQ/LIMH/EDmE3hHy3ZdODb4AojDDClWM7l7w5a4k0+2tBMBu13669pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dNFERzO+zCOOGI4Jyf4a1c9QSfQfOMQ2fuIsQIYXvik=;
- b=g3decX5oyH1e5Fa7ZQ+5Q8JQsJr2dy6+RMZrdO8L4swsLXWd+Suow6mY/rABXPvch+8M8+LyxhT/Wm6k5ScuCx2Nu6x+b3hpIo5wKAhP+7FFfzTUGrgRj1DVNBKM8MltQpIyZVfT28e+9SmVtKt2R2NZ1ThgEIOBBUrGc4NfzzY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by IA0PR12MB8745.namprd12.prod.outlook.com (2603:10b6:208:48d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Wed, 16 Oct
- 2024 16:46:27 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8048.029; Wed, 16 Oct 2024
- 16:46:27 +0000
-Message-ID: <08dbb3e1-ab5c-41e1-978c-9c8885ffbe20@amd.com>
-Date: Wed, 16 Oct 2024 11:46:23 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH 3/7] x86/resctrl: Introduce sdciae_capable in rdt_resource
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org
-Cc: fenghua.yu@intel.com, hpa@zytor.com, paulmck@kernel.org,
- thuth@redhat.com, xiongwei.song@windriver.com, ardb@kernel.org,
- pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
- sandipan.das@amd.com, kai.huang@intel.com, peterz@infradead.org,
- kan.liang@linux.intel.com, pbonzini@redhat.com, xin3.li@intel.com,
- ebiggers@google.com, alexandre.chartre@oracle.com, perry.yuan@amd.com,
- tan.shaopeng@fujitsu.com, james.morse@arm.com, tony.luck@intel.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
-References: <cover.1723824984.git.babu.moger@amd.com>
- <cf9e47bbd66dbbdb76f0124620fad2f1b06e977e.1723824984.git.babu.moger@amd.com>
- <254da029-81b2-4745-bc78-5aefeb33adb0@intel.com>
- <b96e5de8-75ce-4a7a-8788-f5d3a959d771@amd.com>
- <89da43fd-69fb-48a6-830e-e157360aeab6@amd.com>
- <dbe8a012-eb21-426f-a8e4-46efee26da62@intel.com>
- <bf67bc4e-9cf8-4cac-9ffb-2d4f81ab7e30@amd.com>
- <ca29046a-29db-4bb0-815a-c482385194c7@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <ca29046a-29db-4bb0-815a-c482385194c7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0065.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::16) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5883A1DA26;
+	Wed, 16 Oct 2024 16:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729097287; cv=none; b=j2lb5/7mR0HdiAW8O2fOd9DglnVGQuJjFUkqXJgw4HizzfZ8wlQ4wLt3aHfJHe7JGnAI+GRG74uRSWWn2NF2CM/iuWpm+/TXDNSrD8YNlZ0lfcmi08avt/hSZkjbLWzONXYx7MXMmElD6N39tlJvZqjttrSjWH4qeuzEkqQ7L2o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729097287; c=relaxed/simple;
+	bh=Y6h0zmFJh3wMh6qM+Xo9YzKTaJYAVH0Lyb3PtWSMY0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mOAnyI2lAPVYu09G6olq4y4Zjy4Z8Siql86ldpte+RZlTSSkyUZLjwpfi908UqD+acHAv5FdV4OQiWkxSjxz+ZeUvWO/WjPmUGNglzezm4WQ9XSBPUeHJEnEx0xchvqcZABB1eCWTrja0+F62iAEtnA9v8ky+hAD7WWVNlSeyq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NQB7NY+B; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGUhoq022141;
+	Wed, 16 Oct 2024 16:47:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nEBogYK/MS2jfRRue1Jp4UCww4Z/6+0yOvwDWySCrh0=; b=NQB7NY+B76NSp4jj
+	U1+HBepX+J4nOEyehf0vw6IBpleZPRTZRKHv5vzqjO43QCbQt9Z3aNA14sQhtqax
+	2T9/ztvZz8vxUsdxPjjgljePqLxLr4Vg49hAQixhYVRP6CSlH/gxbNxOYjq3ZZ4N
+	SGI5lScDGztcDitGK/EMM/LfY8DIa16m/N2h1jgvy8HI3JJNBqC7JhmHSrkiGC9a
+	VjQUUS3dTgJaXfCGRWmFXgQ4eRC6Fxh/FZF6wzHzPgheq37PE2VOSvWIeICcceDJ
+	OlEehmUlls16vyI5/slUOOIUnwwc2oJtOjo2yhuCiNBv3D7H6OCWciYWbDngExwI
+	zz54qQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429uapc5g1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 16:47:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49GGlw9Y006515
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 16:47:58 GMT
+Received: from [10.48.241.64] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Oct
+ 2024 09:47:58 -0700
+Message-ID: <452ec614-7883-4e0f-ae0a-25d22d0be41c@quicinc.com>
+Date: Wed, 16 Oct 2024 09:47:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|IA0PR12MB8745:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30520f71-25ee-4428-13c4-08dcee0213d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SkRZcGlpd0JjMDdHbGRiSTZ4ZUMreFRaVEdwMFdmNkF2Y3U2UWFHaklHUERB?=
- =?utf-8?B?dGM4UkdQYUZnN214NTlJc3R4MXB1endTUS8yUkJSdnhYbEFITnhXVFpFUFpv?=
- =?utf-8?B?UFRidUd5L1pGKytwcFV0RDdnVUlOZG11U1B1NXVweWRFN241RkZaSEx2dkNm?=
- =?utf-8?B?SzFUT2I4cUJGaEdBV1ZjR2QyZ0lDVzRaUnU3WjROT0RKNGJFeGpsMVVWaXVs?=
- =?utf-8?B?b3Q0VE9BQjZmN2gxRXVwZFhXQ0t2cEpDdjg3RUg1Uyt1dndOaWhjNWpac2lQ?=
- =?utf-8?B?bVczelE3OW4wSEdVZndQc3ZrdnNRc1cyTGd2bFpFcENFR3NTWEVMSEhCR0Fk?=
- =?utf-8?B?bkJzQ2NBU2RIYnFEMng3VVd5SWxVMDF6STZrckcrYjRRS2hNM1h4cW1TYUpw?=
- =?utf-8?B?TEo3TitpelNxb3ZCWnR2QjQ0dDhhYlgySExER3pCdVViT2hWc05kbFhTMXRh?=
- =?utf-8?B?ME5pWGk1YXJzZmk2S2Vla2c1R2hXYXhDY1I4QTRiaVRXWTlhaCtnZmJaUlFp?=
- =?utf-8?B?Mmc5MTU4UTRzTEdnTEtFSXBoYjd3VFV0Qm81d0NmOUxSUkVrSm15TWdTNDBJ?=
- =?utf-8?B?a1hXN0JSZ0s5MkxVWUpyeWZYNzlzYjBBMzZ5VTZ1VVV3bHl3SkptbVFJVXFC?=
- =?utf-8?B?a21rODVNcXl1WmpOZkZTRzBaSlNOR29HOEpFcGZKUHhEbGtpVUhCRkc5MnNh?=
- =?utf-8?B?SFlLdVpUY3duZk9yczBBNkx3VksycVNKVGhZbzR6YzQxZVF0emYwNHpYRG1T?=
- =?utf-8?B?dnpxL3l4ajR3YzF4bDB3L3pqUk1hWUlXckFNc0JNVndXY2pZdERGZm5GMnp4?=
- =?utf-8?B?RmR4WmpVUHF6NnFXa2tDRjBiYVZRdFVvSU5rY1JKdkF2RzlOejVxMUhkc1Zq?=
- =?utf-8?B?Q3FlK2hlVzQrdXdRbWpCL3hRRFoyc1J0R3RpRCtvNzBEM0E3aUFaYXdoVyty?=
- =?utf-8?B?ZFU1UlJwMXdGRGlMdEZzY1htUG9GZThBaU1USVdZMFk5RVhpUkJlQ0tOYVRv?=
- =?utf-8?B?Wkw4YzlXTXp6R0l6OGZHVVIwUk43QStKTjVSVVlwZ3JVd1BTMjZFYUczWC9v?=
- =?utf-8?B?dVc1dTZUVHhUeWRZbE5zUngyZ0ZwZyticjRoZmppR3N6WkhuSkRtNXp2UkNY?=
- =?utf-8?B?T3o1Zis5Z0FGR0I1SG9mWlJGQndNVGdiWFJBNklJMng0UWI2VWFhQjV2Ykxj?=
- =?utf-8?B?clZpOUpZTys4amVndHJGOWxSbzA5cmVXUXBtM0FaVUpOd1VObjE2eHVtQkJU?=
- =?utf-8?B?ZHJQK29MN0ZlaVlabUJMd1ZMTTNmbzZDMTMrQUw5S2FBYk5NN3c2VEtNc0xH?=
- =?utf-8?B?aXBOMGZkYkVlR3lPT0I2YjlxSXY0MXVJNW1Ua3loRUEyQTFnOGREVnBRcVdy?=
- =?utf-8?B?aEdidkMwRmJXL0ZlRmNGOHI5QWR2U0F4MTFJT05qL0lpaGNnM3hqRkZtY3pj?=
- =?utf-8?B?MTBzVzREU1NZd1Y0NjA5QWlQYWtOMFUrZ0dXUGluWFBYK0tsVkNjdFdBQWk3?=
- =?utf-8?B?YllYcjZPaXFkYzdvNEtUZ21Kdlg0MWNhY25VYW9nTGZNRUxrbEZLY0E2amdH?=
- =?utf-8?B?cCtEakNyU1lSTTdLTWlGVi93K3pIMUw1NjgwNGNXRThWZi9rZ0kwMmVmZ1Vk?=
- =?utf-8?B?cUppdGhnRGpIc201YXNWTmE3MDIwUWROOHRwalVGMkFhdzNTbUh3Tzh5OGZI?=
- =?utf-8?B?aTltM3NFMlZpOEplWUFWbXNpT3Q3MmZmUzBYUEZOVm1nRFE1aWpJcC9RPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UUZpc3lxalBnQ2NmakdMKzZtT1Z6R2JwWVZ5RWh0ODNMcGJEK016YWJnTnNv?=
- =?utf-8?B?clBEamJseXBxaXh2amhiVFUvRFhCQ1FwQ1NCSzNJS25TRkxvTmdzaXVaSXpT?=
- =?utf-8?B?U09BQVozdlRrR2lTVnVEc1NYREFIVWt0WkZsc1VZN3dyazd0cGpuSnFzbHZs?=
- =?utf-8?B?ZkpmbFRLYVRQWkJHUFN2YzN0b0pOWTV3UUxhYlNhU0ZhOXRjM1RvUjhRaStz?=
- =?utf-8?B?YWFucXdRakhiaEc5eWVOU1lDaXU2YUdGNW1VNGNGaVJjZmxKYmh1elNGZkd1?=
- =?utf-8?B?RGNMOXpnR3FzczF0S0F2TDdhODFZdlp5S1NCUnFUWDJ2alpwTkU4elh4K0Zi?=
- =?utf-8?B?N2wxNmJVNVpkajNVbjBnUkxoQm4rdTBxc2NMVzkzdFZCeEowck5ybVpUY3ly?=
- =?utf-8?B?Q3VFUU9CNzJLb0xRV0hjSFBlMEJzbFMvSElmOGZvemlSSFVIVFNRQ2ZlNXFM?=
- =?utf-8?B?dUFnUkZ0VFJvM2V5OTdFM2FnMVFuaGdzSEpDU1VuSU0xNmRCcmYzOGliT3B1?=
- =?utf-8?B?MG1LblNOTDczZ3dVT25RZ2JzU0hhZVFmSGFsMnZQUWRGY04wMWRXSDNCNitr?=
- =?utf-8?B?SzIvbFJaS00vU25NRGR4UWp4a2pFNWdNUWt3UnVncUhXcXh3RStmc0xtWk0z?=
- =?utf-8?B?VnlRRzNoTXloMER3ZTJ5OUZWZlNqbFM3cFZ5N1ZKcDRBTVNkdzNDUVdWTDgv?=
- =?utf-8?B?bHAwUml0SlZ4dUFEamo1akZFRFhzeU1uQ3J2bDdFVjlvNzlVMk9UczdLaUMr?=
- =?utf-8?B?ZzFZY2pqMnVnVUQvYkJVMXpkNFZhalo4Y2hpQ01vZm9FUVZvbkNRcTZ0bkF4?=
- =?utf-8?B?SGR2NWNtRFVtY2t5WXlnKzE1WHdBVkd0OTg2YVlrOEZWM3I4cVJleVpKVm85?=
- =?utf-8?B?ZXFjS05oWmQ0U2x0S2FwMDBRZnB5MXNjQVlBdXlNazc1aktSZDYzQ3FLOXkv?=
- =?utf-8?B?VWlWKzhKM0ZGSXhKM3ErWWdYU0pZb1JmcmxXVlBMaElwK2RDbGc3bUFmVHNJ?=
- =?utf-8?B?RXVYZ2RTVk45dTV0dzBBNS9iVWhtWnpMVXpBQ1RCT0phU3lWWVo4K0lBRDlC?=
- =?utf-8?B?ZGt1NTgyMjM0M0pHSVlxMkJpUzVMTDg5WUwwRy9Sakgwc3piUlUxQ2pGY0Iv?=
- =?utf-8?B?bzJVWmdxeDFVSGl1Njl6cGJvcEVYSnlKN3ZUT3dLR1lKdkJ1S0pjakxuYWtx?=
- =?utf-8?B?b1l0cHQwcWtzYU9SdVlyWXdFSG5BT1licTY2VmhRbEx5RjdBM3pYODBoTXhn?=
- =?utf-8?B?dXR6alNyMW40YktpL0N6a0ZkSlRWRWpCMTR5Ty9RNmVjTWNORjlWRXJrb1RY?=
- =?utf-8?B?cUpvRVVGZVo2TzdsaDVsUWZCcVNJcjRnbllCcjc5eDFuaHFuZUttZXMxYzlC?=
- =?utf-8?B?dmFvZ1oxZUdpK2g2MjByOFZlM2VHVEJnendKVU5lRHAwSVZFRFJxOFh4aHVI?=
- =?utf-8?B?TmxWYWx0SmhGUnJYV2l4RGszMFFGNWxKd29uWDBRYmF1TFZNU2I1U0o4RUdF?=
- =?utf-8?B?VlFzRElUc0Q2Y1I4Wjk2THo3MkNSdlI4QWpqb3MzK2dkNldmM3Bzb25SUGVS?=
- =?utf-8?B?YjJWclZ2ZDV1ZVMrM24zbXhZbkJPclhocDhKcDlSUlJRQ3AyOTRoWDRrL1NS?=
- =?utf-8?B?cW1TaFlnNEoya1VJZlQ1U2NFcThua3VCK2pMYmJFazJlYUtTd21oWDZxdkZP?=
- =?utf-8?B?b3MvRktqcFdSWnVndUtSQXJ2ZmhBTkErU2RQa0xMcnpSL1BsS2syTFloKytz?=
- =?utf-8?B?SGs3SUZ0VFM2Rjd3U1pyd09YU2xudGdhRWlqekxRSGZpU1JlSjgyazFWQ0hR?=
- =?utf-8?B?NnlZMlNlekhiYWhlazRjYWUrcTZXUXNWUjE5SkUyT2kzTXozRHJZTmlzTnRM?=
- =?utf-8?B?cTZ2TEpEYTBUalV5ZWlid0dzeUNsN0s4OGUwenptYS9WVk9MMWx1Q1JRb1dR?=
- =?utf-8?B?bFpEanYvcjNTL08xQ3RsZVU3VU1UejVaL29nY1A1MXFXczVOa0RKMDBaOUZx?=
- =?utf-8?B?YWZhejc2bnRoWlRwSWhnYlZFR1EzcEpvbGZKcVdxZUp3dGxvQjFMZ3ZiMkV1?=
- =?utf-8?B?eEZ5UnhsQVpXK3kvaTAxRlpJR0xhalBhd0xteWg0dmpuQ3R0ODAwcERGcERJ?=
- =?utf-8?Q?maeE=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30520f71-25ee-4428-13c4-08dcee0213d6
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 16:46:27.1729
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DjfpN/zX5kFh+NrA1ciprQome6dd3gReIqDEqz4WRCGjmy/ywMYnVyxRAqtpG6DG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8745
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] wifi: ath12k: fix crash when unbinding
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, <kvalo@kernel.org>,
+        <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <ath12k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <stable@vger.kernel.org>
+References: <20241016123452.206671-1-jtornosm@redhat.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20241016123452.206671-1-jtornosm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Lcn3FpWuayJyWA0UI1MQbYCmc418XGl8
+X-Proofpoint-GUID: Lcn3FpWuayJyWA0UI1MQbYCmc418XGl8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 mlxlogscore=747
+ phishscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160107
 
-Hi Reinette,
+On 10/16/2024 5:34 AM, Jose Ignacio Tornos Martinez wrote:
+> If there is an error during some initialization realated to firmware,
 
-On 10/16/24 10:54, Reinette Chatre wrote:
-> Hi Babu,
+previous review comment missed:
+s/realated/related/
+
+> the funcion ath12k_dp_cc_cleanup is already call to release resources.
+
+previous review comment missed:
+s/funcion/function/
+
+> However this is released again when the device is unbinded (ath12k_pci),
+> and we get:
+> [  382.050650] BUG: kernel NULL pointer dereference, address: 0000000000000020
+> [  382.050656] #PF: supervisor read access in kernel mode
+> [  382.050657] #PF: error_code(0x0000) - not-present page
+> [  382.050659] PGD 0 P4D 0
+> [  382.050661] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+> [  382.050664] CPU: 0 UID: 0 PID: 6541 Comm: bash Kdump: loaded Not tainted 6.12.0-rc1+ #14
+> [  382.050666] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
+> [  382.050667] RIP: 0010:ath12k_dp_cc_cleanup.part.0+0xb6/0x500 [ath12k]
+> [  382.050688] Code: 8b 76 28 48 8b 7b 10 45 31 c0 b9 02 00 00 00 e8 30 3d 35 c2 be 02 00 00 00 4c 89 f7 e8 e3 00 fb c2 49 83 c7 28 49 39 ef 74 31 <41> f6 47 20 01 75 ab 4c 89 ff e8 2b de a2 c2 84 c0 74 0e 49 8b 17
+> [  382.050689] RSP: 0018:ffffa3e3c0e83990 EFLAGS: 00010297
+> [  382.050691] RAX: 0000000000000000 RBX: ffff90de08750000 RCX: 0000000000000000
+> [  382.050692] RDX: 0000000000000001 RSI: ffff90de08751178 RDI: ffff90de08751970
+> [  382.050693] RBP: 0000000000005000 R08: 0000000000000200 R09: 000000000040003f
+> [  382.050694] R10: 000000000040003f R11: 0000000000000000 R12: dead000000000122
+> [  382.050695] R13: dead000000000100 R14: ffffffffc0b6f948 R15: 0000000000000000
+> [  382.050696] FS:  00007f216b1ab740(0000) GS:ffff90de5fc00000(0000) knlGS:0000000000000000
+> [  382.050698] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  382.050699] CR2: 0000000000000020 CR3: 000000001a26c000 CR4: 0000000000752ef0
+> [  382.050702] PKRU: 55555554
+> [  382.050703] Call Trace:
+> [  382.050705]  <TASK>
+> [  382.050707]  ? __die_body.cold+0x19/0x27
+> [  382.050719]  ? page_fault_oops+0x15a/0x2f0
+> [  382.050723]  ? exc_page_fault+0x7e/0x180
+> [  382.050724]  ? asm_exc_page_fault+0x26/0x30
+> [  382.050729]  ? ath12k_dp_cc_cleanup.part.0+0xb6/0x500 [ath12k]
+> [  382.050740]  ? delay_halt_tpause+0x1a/0x20
+> [  382.050742]  ath12k_dp_free+0x67/0x110 [ath12k]
+> [  382.050753]  ath12k_core_deinit+0x8d/0xb0 [ath12k]
+> [  382.050762]  ath12k_pci_remove+0x50/0xf0 [ath12k]
+> [  382.050771]  pci_device_remove+0x3f/0xb0
+> [  382.050773]  device_release_driver_internal+0x19c/0x200
+> [  382.050777]  unbind_store+0xa1/0xb0
+
+FYI I didn't comment on this previously but
+<https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages>
+has some guidance on trimming backtraces in commit messages.
+
+> ...
 > 
-> On 10/15/24 1:40 PM, Moger, Babu wrote:
->> On 9/19/24 10:33, Reinette Chatre wrote:
->>> On 9/18/24 11:22 AM, Moger, Babu wrote:
->>>> On 9/18/24 10:27, Moger, Babu wrote:
->>>>> On 9/13/24 15:45, Reinette Chatre wrote:
->>>>>> On 8/16/24 9:16 AM, Babu Moger wrote:
->>>>>>> Detect SDCIAE`(L3 Smart Data Cache Injection Allocation Enforcement)
->>>>>>
->>>>>> (stray ` char)
->>>>>
->>>>> Sure.
->>>>>
->>>>>>
->>>>>>> feature and initialize sdciae_capable.
->>>>>>
->>>>>> (This is a repeat of the discussion we had surrounding the ABMC feature.)
->>>>>>
->>>>>> By adding "sdciae_capable" to struct rdt_resource the "sdciae" feature
->>>>>> becomes a resctrl fs feature. Any other architecture that has a "similar
->>>>>> but perhaps not identical feature to AMD's SDCIAE" will be forced to also
->>>>>> call it "sdciae" ... sdciae seems like a marketing name to me and resctrl
->>>>>> needs something generic that could later be built on (if needed) by other
->>>>>> architectures.
->>>>>
->>>>> How about "cache_inject_capable" ?
->>>>>
->>>>> This seems generic. I will change the description also.
->>>>>
->>>>
->>>> Basically, this feature reserves specific CLOS for SDCI cache.
->>>>
->>>> We can also name "clos_reserve_capable".
->>>
->>> Naming is always complicated. I think we should try to stay away from
->>> "clos" in a generic name since that creates problem when trying to
->>> apply it to Arm and is very specific to how AMD implements this
->>> feature. "cache_inject_capable" does sound much better to me ...
->>> it also looks like this may be more appropriate as a property
->>> of struct resctrl_cache?
->>
->> Coming back to this again, I feel 'cache_inject_capable' is kind of very
->> generic. Cache injection term is used very generically everywhere.
->>
->> Does  'cache_reserve_capable" sound good ?  This is inside the resctrl
->> subsystem. We know what it is referring to.
->>
+> The issue is always reproducible from a VM because the MSI addressing
+> initialization is failing.
 > 
-> Since this is inside resctrl "cache_reserve_capable" sounds like existing
-> CAT to me. Could it help if the term "io" appears in the name? Something like
-> "io_reserve_capable"? When this is a member of struct resctrl_cache it should
-> be implicit that it refers to the cache.
+> In order to fix the issue, just set to NULL the relaeased structure in
 
-Yea. Naming is difficult.
+Guess I missed this 1st time:
+s/relaeased/released/
 
-How about "io_alloc_capable"?
+> ath12k_dp_cc_cleanup at the end.
+> 
+> cc: stable@vger.kernel.org
+> Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
+> Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+> ---
+> v2:
+>   - Fix the commit size in Fixes
+> v1: https://lore.kernel.org/linux-wireless/20241010175102.207324-2-jtornosm@redhat.com/
+> 
+>  drivers/net/wireless/ath/ath12k/dp.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath12k/dp.c b/drivers/net/wireless/ath/ath12k/dp.c
+> index 61aa78d8bd8c..789d430e4455 100644
+> --- a/drivers/net/wireless/ath/ath12k/dp.c
+> +++ b/drivers/net/wireless/ath/ath12k/dp.c
+> @@ -1241,6 +1241,7 @@ static void ath12k_dp_cc_cleanup(struct ath12k_base *ab)
+>  	}
+>  
+>  	kfree(dp->spt_info);
+> +	dp->spt_info = NULL;
+>  }
+>  
+>  static void ath12k_dp_reoq_lut_cleanup(struct ath12k_base *ab)
 
--- 
-Thanks
-Babu Moger
 
