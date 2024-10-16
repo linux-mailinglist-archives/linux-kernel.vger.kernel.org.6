@@ -1,111 +1,218 @@
-Return-Path: <linux-kernel+bounces-367410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031119A01D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:57:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7019A01D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2261C20CFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F26C281421
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89732193072;
-	Wed, 16 Oct 2024 06:57:10 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B8419939D;
+	Wed, 16 Oct 2024 06:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXEDOe0r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6D9170A37
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C63170A37;
+	Wed, 16 Oct 2024 06:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729061830; cv=none; b=QUaHmGMWgpTzWzyPRIfEI58HWljXK0p9cjxxp+Oo52IZVxWvCnxO0i8AvSnTepHz2hTLx18wnWLsGbywl24D7pIEwF+L3vws5fNq4hhkZs1nElfporMhF41sioLm1quXR4pxl3wHFkuFdF3e1qNvHrb8vHhfpBCE5GqjUjDa6V4=
+	t=1729061815; cv=none; b=ipKOYnFpaYmYQ6iS4BZt+WXZlPmzotq/pywkKnN6MCepfG6NBbysXobPxOcc6nV6gSu6vWJpMUUnWHjBJZue2tCUNQLy96HG1RAmZDHxWqBF850+BT3rTtewLVR+2wgLFyMHjBvta5w7TQvDvML7aCVlIbUbhhC3O24VGI+ksR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729061830; c=relaxed/simple;
-	bh=/Pw7Lk19rpr5qs/y7YRHB+eljjtpGRyvbk/W8F7QdUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U1qGIsoyj4U2M5ae1X8cb45rJERV4MSZajZUfmiJAp4DyxJ8OOiBDtlFph8sTkH22GU6B1KZFm6G2Jb64gW2uQkk6q7qvE0s9wKFUa8JHV2YFCFoDOXsw/fOWsnjdECfHWn10/7H/AfIng3DQ5gVuqZGr778Bn0tPkCCJpaXbN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2e41bd08bso65885667b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:57:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729061826; x=1729666626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ULg06Dva0WoBj0m6VE1kEFmhnHFLA053b6bZA0CjUQ=;
-        b=VTnqaMFyUp6ripROLjMWVZNwBp9n2uHGnUVbw2h0IxIGSzN88Imb8GXFO7b/ifw3EU
-         2mgKxz+2n6LyQ52BYymn3fKrNQkVoK2SfMhaqynS9QcJyhFFuP1U7gbslIN4m1Gfw/OS
-         Cy0ypfo/4rjz4vfFFcGb4SJ1gaoWjonC7AjklV0qduJq9xtfWv7ysQBk8qUe7p+EfRqU
-         LMKJvkikp9wQU+aca0iURzTOhEt13p5KsBVuRvdwUZ1RR0Magkif1xN1sCuDFklc2aHX
-         Evd56SlvOG531nCGdpqdSH2Ga/vN76TYSohlIh6wGIycjUxgGq+aQlbJfb8nGtQHF1Au
-         CJkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2pkUmuHJleIlqSNmrTXXJdvnS8xKfdtRBQlZoOKHVzEFX94sWItmRl6R1f0HGymrCIABcWCOGFs8gKaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/dUegDfm1my2hmyX/QGVkY2SuDGYeQIxa0gJQCIyMF6M/MJYf
-	WkGlc7k+dJSsQp96lt5Dt5HNax5L9Dkzb3upGLkN+uMkED+SAO2CbXkSiLOF
-X-Google-Smtp-Source: AGHT+IF/owlHOK8PNBgPDWJ6bQ9y3LIURU770QsPHRdPRdZHY6JNWdkpBY98Lk1Hpf4arS6dFcuu4A==
-X-Received: by 2002:a05:690c:3381:b0:6e2:12e5:35b4 with SMTP id 00721157ae682-6e363f17f9cmr119939587b3.0.1729061826337;
-        Tue, 15 Oct 2024 23:57:06 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e3c5d25fbfsm5940497b3.124.2024.10.15.23.57.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 23:57:05 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e214c3d045so46369137b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:57:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXdOcygtYTXSq2KuWOYPQn3FtAdtJkAQZX8L0hkj6Go5l5o8z5TuUeIZXADuw4NRpv8MrM7du2ggHZmDzY=@vger.kernel.org
-X-Received: by 2002:a05:690c:6305:b0:6e3:3a22:7205 with SMTP id
- 00721157ae682-6e3644c0082mr125754047b3.44.1729061825389; Tue, 15 Oct 2024
- 23:57:05 -0700 (PDT)
+	s=arc-20240116; t=1729061815; c=relaxed/simple;
+	bh=67Lo5XWuBMF7Ka0ADi5GW/RvQSjy2I7Ba8q6tBW1DUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gepOozrWvWZYJnykiKJMXBeI9PlMBirdN2zeerPy5833/YzacqaYNnmU8dsvl8LABUnRm1FuyvxWmQ2kIIlGQyiKt3I2AVQ7XEGEHbKR0DhYOMWLNe8R2TANnGnDiaQYKf0POBLEb6MT5593bRHKsobjTpZynoPzfWxrC3/5pMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXEDOe0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8430C4CEC5;
+	Wed, 16 Oct 2024 06:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729061815;
+	bh=67Lo5XWuBMF7Ka0ADi5GW/RvQSjy2I7Ba8q6tBW1DUo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eXEDOe0rgoY9xpwBoNmyk5+/AH5CT2frDv5ITkGgxoBKBKAOLMkT72jI3p96nrSR6
+	 MoluXHpBjU+09J053pkrjDyYIQ2ft3odWhaLrnAzAX6OAwIXX6WktZJF8XT55G8mJP
+	 nKsyuxpLfT65r4++IS8wVcf3JQ47Vuupzp6YBAQWmFK+txyC1vrmZ83O557I4D8sRP
+	 tMhxnXUNuif1NAAdtn/p2a9cyQWez1i6e0bG/uLffLn5dwl3dLn1MxLnATXOymjBam
+	 /hen14b0mqLmyJvwEOxD7CCx6UwC/4sO4yEBPnIMAemWvgXiOL0lTTE+IyN1ZX0mVh
+	 mzVy+kTV1eGaA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	James Clark <james.clark@linaro.org>,
+	Leo Yan <leo.yan@arm.com>,
+	German Gomez <german.gomez@arm.com>,
+	Carsten Haitzler <carsten.haitzler@arm.com>
+Subject: [PATCH] perf test: Speed up some tests using perf list
+Date: Tue, 15 Oct 2024 23:56:54 -0700
+Message-ID: <20241016065654.269994-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016-fix-m5441x-gpio-v1-1-0a29befd4b8d@yoseli.org>
-In-Reply-To: <20241016-fix-m5441x-gpio-v1-1-0a29befd4b8d@yoseli.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 16 Oct 2024 08:56:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVktMFfPQZqvB6cdMOmxwBuG7CW9rqm1kU+p9MnrF1SWA@mail.gmail.com>
-Message-ID: <CAMuHMdVktMFfPQZqvB6cdMOmxwBuG7CW9rqm1kU+p9MnrF1SWA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: mcfgpio: Fix incorrect register offset for CONFIG_M5441x
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: Greg Ungerer <gerg@uclinux.org>, linux-m68k@lists.linux-m68k.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Jean-Michel,
+On my system, perf list is very slow to print the whole events.  I think
+there's a performance issue in SDT and uprobes event listing.  I noticed
+this issue while running perf test on x86 but it takes long to check
+some CoreSight event which should be skipped quickly.
 
-Thanks for your patch!
+Anyway, some test uses perf list to check whether the required event is
+available before running the test.  The perf list command can take an
+argument to specify event class or (glob) pattern.  But glob pattern is
+only to suppress output for unmatched ones after checking all events.
 
-On Wed, Oct 16, 2024 at 8:45=E2=80=AFAM Jean-Michel Hautbois
-<jeanmichel.hautbois@yoseli.org> wrote:
-> Fix a typo in the CONFIG_M5441x preprocessor condition, where the GPIO
-> register offset was incorrectly set to 8 instead of 0. This prevented
-> proper GPIO configuration for m5441x targets.
->
-> Fixes: 83c6bdb827c9 ("m68knommu: Implement gpio support for m54xx.")
+In this case, specifying event class is better to reduce the number of
+events it checks and to avoid buggy subsystems entirely.
 
-The typo was introduced in a different commit, so the correct tag would be
-Fixes: bea8bcb12da09bd3 ("m68knommu: Add support for the Coldfire m5441x.")
+No functional changes intended.
 
-> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: German Gomez <german.gomez@arm.com>
+Cc: Carsten Haitzler <carsten.haitzler@arm.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/tests/shell/lib/coresight.sh             | 2 +-
+ tools/perf/tests/shell/lock_contention.sh           | 2 +-
+ tools/perf/tests/shell/record.sh                    | 2 +-
+ tools/perf/tests/shell/test_arm_coresight.sh        | 2 +-
+ tools/perf/tests/shell/test_arm_coresight_disasm.sh | 2 +-
+ tools/perf/tests/shell/test_arm_spe.sh              | 2 +-
+ tools/perf/tests/shell/test_arm_spe_fork.sh         | 2 +-
+ tools/perf/tests/shell/test_intel_pt.sh             | 2 +-
+ tools/perf/tests/shell/trace+probe_vfs_getname.sh   | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/tools/perf/tests/shell/lib/coresight.sh b/tools/perf/tests/shell/lib/coresight.sh
+index 11ed2c25ed912649..184d62e7e5bdf9f4 100644
+--- a/tools/perf/tests/shell/lib/coresight.sh
++++ b/tools/perf/tests/shell/lib/coresight.sh
+@@ -18,7 +18,7 @@ BIN="$DIR/$TEST"
+ # If the test tool/binary does not exist and is executable then skip the test
+ if ! test -x "$BIN"; then exit 2; fi
+ # If CoreSight is not available, skip the test
+-perf list cs_etm | grep -q cs_etm || exit 2
++perf list pmu | grep -q cs_etm || exit 2
+ DATD="."
+ # If the data dir env is set then make the data dir use that instead of ./
+ if test -n "$PERF_TEST_CORESIGHT_DATADIR"; then
+diff --git a/tools/perf/tests/shell/lock_contention.sh b/tools/perf/tests/shell/lock_contention.sh
+index c1ec5762215ba430..30d195d4c62f74d0 100755
+--- a/tools/perf/tests/shell/lock_contention.sh
++++ b/tools/perf/tests/shell/lock_contention.sh
+@@ -27,7 +27,7 @@ check() {
+ 		exit
+ 	fi
+ 
+-	if ! perf list | grep -q lock:contention_begin; then
++	if ! perf list tracepoint | grep -q lock:contention_begin; then
+ 		echo "[Skip] No lock contention tracepoints"
+ 		err=2
+ 		exit
+diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
+index 8d6366d96883edb3..3eee72242290d1fb 100755
+--- a/tools/perf/tests/shell/record.sh
++++ b/tools/perf/tests/shell/record.sh
+@@ -94,7 +94,7 @@ test_per_thread() {
+ 
+ test_register_capture() {
+   echo "Register capture test"
+-  if ! perf list | grep -q 'br_inst_retired.near_call'
++  if ! perf list pmu | grep -q 'br_inst_retired.near_call'
+   then
+     echo "Register capture test [Skipped missing event]"
+     return
+diff --git a/tools/perf/tests/shell/test_arm_coresight.sh b/tools/perf/tests/shell/test_arm_coresight.sh
+index 3302ea0b96723b1a..6b8c4831eedc6f10 100755
+--- a/tools/perf/tests/shell/test_arm_coresight.sh
++++ b/tools/perf/tests/shell/test_arm_coresight.sh
+@@ -12,7 +12,7 @@
+ glb_err=0
+ 
+ skip_if_no_cs_etm_event() {
+-	perf list | grep -q 'cs_etm//' && return 0
++	perf list pmu | grep -q 'cs_etm//' && return 0
+ 
+ 	# cs_etm event doesn't exist
+ 	return 2
+diff --git a/tools/perf/tests/shell/test_arm_coresight_disasm.sh b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
+index af63e3757cb0a930..dba086a40d846721 100755
+--- a/tools/perf/tests/shell/test_arm_coresight_disasm.sh
++++ b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
+@@ -8,7 +8,7 @@
+ # the script. Test all 3 parts are working correctly by running the script.
+ 
+ skip_if_no_cs_etm_event() {
+-	perf list | grep -q 'cs_etm//' && return 0
++	perf list pmu | grep -q 'cs_etm//' && return 0
+ 
+ 	# cs_etm event doesn't exist
+ 	return 2
+diff --git a/tools/perf/tests/shell/test_arm_spe.sh b/tools/perf/tests/shell/test_arm_spe.sh
+index 03d5c7d12ee53d07..6c21fb1f10d8f129 100755
+--- a/tools/perf/tests/shell/test_arm_spe.sh
++++ b/tools/perf/tests/shell/test_arm_spe.sh
+@@ -9,7 +9,7 @@
+ # German Gomez <german.gomez@arm.com>, 2021
+ 
+ skip_if_no_arm_spe_event() {
+-	perf list | grep -E -q 'arm_spe_[0-9]+//' && return 0
++	perf list pmu | grep -E -q 'arm_spe_[0-9]+//' && return 0
+ 
+ 	# arm_spe event doesn't exist
+ 	return 2
+diff --git a/tools/perf/tests/shell/test_arm_spe_fork.sh b/tools/perf/tests/shell/test_arm_spe_fork.sh
+index 1a7e6a82d0e34124..8efeef9fb9564a56 100755
+--- a/tools/perf/tests/shell/test_arm_spe_fork.sh
++++ b/tools/perf/tests/shell/test_arm_spe_fork.sh
+@@ -5,7 +5,7 @@
+ # German Gomez <german.gomez@arm.com>, 2022
+ 
+ skip_if_no_arm_spe_event() {
+-	perf list | grep -E -q 'arm_spe_[0-9]+//' && return 0
++	perf list pmu | grep -E -q 'arm_spe_[0-9]+//' && return 0
+ 	return 2
+ }
+ 
+diff --git a/tools/perf/tests/shell/test_intel_pt.sh b/tools/perf/tests/shell/test_intel_pt.sh
+index 723ec501f99abe03..bf9017b812aa6ed9 100755
+--- a/tools/perf/tests/shell/test_intel_pt.sh
++++ b/tools/perf/tests/shell/test_intel_pt.sh
+@@ -5,7 +5,7 @@
+ set -e
+ 
+ # Skip if no Intel PT
+-perf list | grep -q 'intel_pt//' || exit 2
++perf list pmu | grep -q 'intel_pt//' || exit 2
+ 
+ shelldir=$(dirname "$0")
+ # shellcheck source=lib/waiting.sh
+diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+index 3146a1eece0789ae..97b4b9cd23784c89 100755
+--- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+@@ -19,7 +19,7 @@ skip_if_no_perf_trace || exit 2
+ . "$(dirname $0)"/lib/probe_vfs_getname.sh
+ 
+ trace_open_vfs_getname() {
+-	evts="$(echo "$(perf list syscalls:sys_enter_open* 2>/dev/null | grep -E 'open(at)? ' | sed -r 's/.*sys_enter_([a-z]+) +\[.*$/\1/')" | sed ':a;N;s:\n:,:g')"
++	evts="$(echo "$(perf list tracepoint 2>/dev/null | grep -E 'syscalls:sys_enter_open(at)? ' | sed -r 's/.*sys_enter_([a-z]+) +\[.*$/\1/')" | sed ':a;N;s:\n:,:g')"
+ 	perf trace -e $evts touch $file 2>&1 | \
+ 	grep -E " +[0-9]+\.[0-9]+ +\( +[0-9]+\.[0-9]+ ms\): +touch/[0-9]+ open(at)?\((dfd: +CWD, +)?filename: +\"?${file}\"?, +flags: CREAT\|NOCTTY\|NONBLOCK\|WRONLY, +mode: +IRUGO\|IWUGO\) += +[0-9]+$"
+ }
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
