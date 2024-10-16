@@ -1,137 +1,110 @@
-Return-Path: <linux-kernel+bounces-368384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6529A0F41
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:04:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856169A0F42
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8640286131
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:04:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F1EB22FE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74FA20E013;
-	Wed, 16 Oct 2024 16:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F64C20F5B0;
+	Wed, 16 Oct 2024 16:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="znm5wPG4"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wY88EJA1"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CA054F95
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B24720E013
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094638; cv=none; b=geUVv62cmX1YPBDmZVDEBtPrJWFTDmhO4QVD7qNdVh6x/BEMAkRg5CFm//W0C77Hdc/1GvzrwIAs6ZUADeDQydxsH3k4Q51uDC/ZCanJppvI3AOVmvLXDeWtb8i34hl751uQwi88iaUxeYCO+PSiZuZhlA10a1oRDlferIcd1QY=
+	t=1729094660; cv=none; b=mGvcE3tLaNXutO/N/BtDB8utDCT1yU7FX9A9TdD7A4GrIAOrAa9J6Pm19ln8uE2pvylNmxdpKqGyLuYu87JZkmgaHvld5NDIpfrVyCNXqqfZPyG8G/aJoD5pKrDJCzzIHz20SrDdH5lNZ0PkK2oF4RUm9w1g1I38OI4QwFBEpIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094638; c=relaxed/simple;
-	bh=BRBodJOMHQSSigJ75vx6VlllvyeNnPVrzypoa5NpDmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APiiVFYXthAnU7v4hrVCD4KFuvT38WE+sgshPasv2BFfIfg2KXNlW0nRUgf11lU7Nfi4l+y3r+SmG1PESDH9ewpt0eUsdXEt5yj4xOo4VUXoCyzeWPpvuHJlH6sJyApkG0N5POqDw0MXVnrOItBJ2tQiN41rSJ7Q57IfRukKbN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=znm5wPG4; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e74900866so1621953b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:03:56 -0700 (PDT)
+	s=arc-20240116; t=1729094660; c=relaxed/simple;
+	bh=rsrRjdXFsw1zqlE9yI9qOJKxcWh0+Zmduvrfpm+of48=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=OuokKpx4koaHsbqlKFG2LN21UzcbjZN0oC+XS4DjxtyNRvJUNIcRXOuzndBVVhYdR3I5VHgrkkmQeTtJK8iqUiDkI2YX7aKmMOHUSsFHlXROKR3aV7tVk38y160BhHlNkjS4/afYAgVGi9hFH+YTn8Nt2W5SiS50FRjRmRpqZoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wY88EJA1; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2605ce4276so12098438276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729094636; x=1729699436; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9A2M3l9xrLracluunXQqaUIfsa0L4iWpemVG+XIr3TY=;
-        b=znm5wPG4UwAcrV0D8/rg64a2e95SNfnq6VxRAkoSjqJAA2k/n5rO5HoJdSIQnWei8k
-         /JE360Ia1opqBbXcYqp4hnCho2kXa94wuNO36LNx+TeDOr5F5Q5hxoHTqmGTegHLUlQq
-         EmBp5muTVoAQj+MmaGvUCPdanZQj0zMXjGjQ/nVXBkmQg2auomYj8DHqNI6AG15HvXne
-         J7NZ//2c/st3Nb51tcZPtGgmALG7+b+EkqQZKV6dMrnr8U839MX0kHdKS1iVk0Nslg5D
-         nN8rnVUYZLMCWYm8gJSlf8KJ5H9tNyhLqelTOH/gGr5Khxm/cD2mSqM3OekGC+b4YnRe
-         r0gA==
+        d=google.com; s=20230601; t=1729094657; x=1729699457; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DSYeyjKcx92ZEc/VnHoFN/wUNlf5dg+yo+Qgoftk8gQ=;
+        b=wY88EJA1Suyq8TlU6pzrs+waWa3PZD36t3bg3TZ1tisTaKhDAQ6fTBbi3X3ZiY+q88
+         bd71D31QRH//zy193nfGJZUsxwtKPwZabzwjT1UJ7UhJtcRb240CdHP0pzoWD72VDU2o
+         RaXpBslVz9uJEGSD6dRwfgMH+JZbHX9ZurJJ0u3EGvrw2wxGHzqqwTampc9pMc58eXhT
+         LgzwKg6mPLeSv+RC+1i34u4QPJnWZrh1iOKRsyplYGXXC94iBDOAZDkvjQyKuIjLHBhS
+         qASb5RIx3jfJjz75DKPcKLFoXBfgTs45fv/jAu1kNMNulvizRF0GSfznh6l8EoEcSGDp
+         QK1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729094636; x=1729699436;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9A2M3l9xrLracluunXQqaUIfsa0L4iWpemVG+XIr3TY=;
-        b=jCNW4zHO3A75fiBJrR+A6d7cPCX1eyoJalc8L/+VKk9otSDL/HLgIU3PGCj5DwHaoF
-         S0fQr4BrsJtomYzSudryimMug+/ejNdPNjiwhXBAN5KsusmzuhruRyDox2RSViOPlMMZ
-         hhA5FPLTUN8dXrC1l6lJumgd8bwYecprTGek9wDdbn02G9QCgVJYIuu/FLFd3XJt/MW8
-         u7nIsprB47jqMi49rpMcWVmramZ68mX9UKaSdairfk6Al3qwdhL1uiZI3izZw6KnZq1i
-         SyS06n+ZgTX4QAgCp3gnmRsMr4TDKi422fACSYpA17j47Z/i96TksBVivyKwI938cxZ5
-         wS3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNDnUgAJIQ5ImHL0z+WcXjWoi6RmCmzBW68bjkbYg2N95cJpF9H4VKo7Cnb95F0NWGBdJp609afkcl1Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKT6NfAA9qbhK1CwCltNkEpYl8xllQ6UWliRSLVIWRBzi4yXjR
-	lrfzMnMXtEYghUPh88v8X33hb6Y3P674woNeslfIMVJXQOotsptV0zrrgFzFdQU=
-X-Google-Smtp-Source: AGHT+IFnobAnzJkSiUdU1I3b1rXS40/87QouJg7Eja2z0OpdeH1cg34MQqLrXEfnUMVAVSZABkiRgg==
-X-Received: by 2002:a05:6a00:2d9d:b0:71e:7d52:fa6d with SMTP id d2e1a72fcca58-71e7daef151mr6268997b3a.21.1729094635890;
-        Wed, 16 Oct 2024 09:03:55 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:2add:7601:8402:667])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a4251sm3204256b3a.128.2024.10.16.09.03.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 09:03:55 -0700 (PDT)
-Date: Wed, 16 Oct 2024 10:03:52 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Zeng Heng <zengheng4@huawei.com>
-Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	bobo.shaobowang@huawei.com
-Subject: Re: [PATCH] firmware: ti_sci: Fix compilation failure when
- CONFIG_TI_SCI_PROTOCOL=m
-Message-ID: <Zw/j6DSmke5pJsJD@p14s>
-References: <20241016013922.1392290-1-zengheng4@huawei.com>
+        d=1e100.net; s=20230601; t=1729094657; x=1729699457;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DSYeyjKcx92ZEc/VnHoFN/wUNlf5dg+yo+Qgoftk8gQ=;
+        b=Lxe83x1P9eUvV/w5rRFigpvWXSuLuSYOlJe5LQ4870oBqR/h478iCY9/WEyKr/REiw
+         GOd04SMYpBydXYYMtgn8yqNZuu2WMwvZbqKUI8gE9mytXN+Ysvl33voxMKOBAh75DN08
+         sc43eOvZpXZPBIuBjbvzrwJaWaTzgxnX97a0G0+KwkzguAC/zbyBJ1wVX2zgGWaNKPi1
+         b5ZVWfj/lkZ+knYYRS98tY+OJMDOyRbfDLYXhjvr7EkFnSYzr6h8+jg25rwpI8Vf/5cj
+         YiheYKN0O39t+Xqy/OK2F+wW+uLq2W3acj5/zsGP5y94ScN/vpOcCLZq4tjDSIfT87E8
+         rmoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfhTdG2fm/iMXWSAfBXMrAkKxtmJRrlQfuzOGyeXBhX+qHPoEWLQBWS6kS2NrIc8Ek9XUkuwh75om2LLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxY/VKruMbJd7N7C3Uq0q77EGJgL7btzClnWzk98bm9FXHRKBp
+	eWcDlWRM1Wl6EmOuzVKVsMQf7rmAmaMIm+yiGozddyLGfxqH8/aP3g/7dhoyxHljLVS4VXmsBWi
+	xL5X+Gg==
+X-Google-Smtp-Source: AGHT+IFN9QIAUX+G7dHHxMOSStW0LKTyts98fvIunCBBIU8jmmsbmlo3lu+jhizVefZJsBO/7eo9xeApLYDE
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:a00a:f237:9bc0:79c])
+ (user=irogers job=sendgmr) by 2002:a25:26c4:0:b0:e28:ef6f:3624 with SMTP id
+ 3f1490d57ef6-e2978319b29mr2465276.5.1729094657082; Wed, 16 Oct 2024 09:04:17
+ -0700 (PDT)
+Date: Wed, 16 Oct 2024 09:04:13 -0700
+Message-Id: <20241016160413.51587-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016013922.1392290-1-zengheng4@huawei.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Subject: [PATCH v1] perf tool_pmu: Remove duplicate io.h header
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 16, 2024 at 09:39:22AM +0800, Zeng Heng wrote:
-> When build with CONFIG_TI_SCI_PROTOCOL=m && CONFIG_TI_K3_M4_REMOTEPROC=y,
-> compilation tool chain would throw the following error message:
-> 
->    arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o:
->    in function `k3_m4_rproc_probe':
->    ti_k3_m4_remoteproc.c:(.text+0xc24):
->    undefined reference to `devm_ti_sci_get_by_phandle'
-> 
-> This is because devm_ti_sci_get_by_phandle() is compiled into the driver
-> module rather than compiled into kernel, it causes compilation couldn't
-> find the reference of devm_ti_sci_get_by_phandle() when tool chain tries
-> to link ti_k3_m4_remoteproc.o into kernel image.
-> 
-> Replace IS_ENABLED with IS_REACHABLE to fix the problem.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/all/202410150837.FOGlkGvW-lkp@intel.com/
-> Fixes: aa276781a64a ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
-> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
-> ---
->  include/linux/soc/ti/ti_sci_protocol.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
-> index bd0d11af76c5..cd44ee7f294b 100644
-> --- a/include/linux/soc/ti/ti_sci_protocol.h
-> +++ b/include/linux/soc/ti/ti_sci_protocol.h
-> @@ -572,7 +572,7 @@ struct ti_sci_resource {
->  	struct ti_sci_resource_desc *desc;
->  };
->  
-> -#if IS_ENABLED(CONFIG_TI_SCI_PROTOCOL)
-> +#if IS_REACHABLE(CONFIG_TI_SCI_PROTOCOL)
+Remove duplicate inclusion of api/io.h.
 
-I have applied Arnd's patch [1] to fix this problem.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410131417.ynhvnEJb-lkp@intel.com/
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/tool_pmu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks,
-Mathieu
+diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
+index bd1cee643eb5..4fb097578479 100644
+--- a/tools/perf/util/tool_pmu.c
++++ b/tools/perf/util/tool_pmu.c
+@@ -11,7 +11,6 @@
+ #include "tsc.h"
+ #include <api/fs/fs.h>
+ #include <api/io.h>
+-#include <api/io.h>
+ #include <internal/threadmap.h>
+ #include <perf/threadmap.h>
+ #include <fcntl.h>
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-[1]. https://lore.kernel.org/lkml/e6c84b91-20ce-474a-87f8-9faeb64f3724@app.fastmail.com/T/
-
->  const struct ti_sci_handle *ti_sci_get_handle(struct device *dev);
->  int ti_sci_put_handle(const struct ti_sci_handle *handle);
->  const struct ti_sci_handle *devm_ti_sci_get_handle(struct device *dev);
-> -- 
-> 2.25.1
-> 
-> 
 
