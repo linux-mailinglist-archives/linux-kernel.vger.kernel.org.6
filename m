@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-368222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9369A0CE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:38:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB43C9A0CE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFFC21C211DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEEF2844B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1840F20C02C;
-	Wed, 16 Oct 2024 14:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981D220C015;
+	Wed, 16 Oct 2024 14:38:47 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766CD156225;
-	Wed, 16 Oct 2024 14:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFCE156225;
+	Wed, 16 Oct 2024 14:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089487; cv=none; b=OzAhOgHaHhqvYKAREi57V5o1gNk/Tdl6fV9qIJVStM9pl/G6Hhzam4t5J49Rreuoft/uI0ErMIHRK8vQvB+DQBh0icbLzn8sabsAIPEL3xHVmZqYx25sqBkug0dYdpW9XBKrhfGOt/HPBPvqAVo3y+DGogvcMrHF0skBZXPy3eo=
+	t=1729089527; cv=none; b=u6nNRya4x+qjghLMd/5RuPG5V+t+C2hmc6D5mPZwIRFJtlb6q3Sv8VEg7UaCFiTD4Dz2uuoJMA/m0zbqYUCIkVkJWGUzGBWdCSV15ig1zLNUClUzApM1GvyFjm91uvUCVTskJky8Xx1nD07PxTT8+/W/hUK0bId7QVrd7XFkuDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089487; c=relaxed/simple;
-	bh=wE+Tk0teM1O/8JvtpEGGB5Mc/ioX6WvBEmyunfQU9us=;
+	s=arc-20240116; t=1729089527; c=relaxed/simple;
+	bh=oz6Od5/ci5WzOfHrstjNf8YgzQMhcAz1OMVv1+MmwJE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SV00xRumKCDZnkWqgm4fl7DRFjjPh33Lg9/KiQL54OdYrEYgNEtEJ4gw/XRvRE1iOpoG3Pk0yMw+eshDH4EjABXq5m0NdVOESCbR7oTdfit+xt4FgDdLi6ttOuw5MzdQqXu0eoIjRBu3O2+H5pCJ5uXTN1/BEg/g4nztrlYFlcE=
+	 In-Reply-To:Content-Type; b=ggKj61IT0Edzc7vMgUzhBbNyj+cnsNVwsqU+tyEXgEsJAhvOEYm3s3x7aFy+MB0O4CdTJ+Z8THHKWx8z7SrBpEk/jhgZ50j6t6Ixqv/Zk+7sN9EGCYGC/Rk4lxKsZVkQkSjbPIw16QVUeZagEM7yICKxH6zRrHjrsAp+HszSiRw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9160BFEC;
-	Wed, 16 Oct 2024 07:38:34 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FE33FEC;
+	Wed, 16 Oct 2024 07:39:14 -0700 (PDT)
 Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77FA33F71E;
-	Wed, 16 Oct 2024 07:37:59 -0700 (PDT)
-Message-ID: <18546e4a-81c7-41f4-b07f-2e6501a936b8@arm.com>
-Date: Wed, 16 Oct 2024 15:37:57 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09A253F71E;
+	Wed, 16 Oct 2024 07:38:41 -0700 (PDT)
+Message-ID: <e977c32e-d1a9-499d-8833-576c09747a48@arm.com>
+Date: Wed, 16 Oct 2024 15:38:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,35 +41,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 06/57] mm: Remove PAGE_SIZE compile-time constant
+Subject: Re: [RFC PATCH v1 13/57] bpf: Remove PAGE_SIZE compile-time constant
  assumption
 Content-Language: en-GB
-To: Andrew Morton <akpm@linux-foundation.org>,
+To: Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
  Anshuman Khandual <anshuman.khandual@arm.com>,
  Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Christoph Lameter <cl@linux.com>, David Hildenbrand <david@redhat.com>,
- David Rientjes <rientjes@google.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Michal Hocko <mhocko@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Miroslav Benes <mbenes@suse.cz>, Pekka Enberg <penberg@kernel.org>,
- Richard Weinberger <richard@nod.at>, Shakeel Butt <shakeel.butt@linux.dev>,
- Vignesh Raghavendra <vigneshr@ti.com>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Matthew Wilcox <willy@infradead.org>
-Cc: cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-mtd@lists.infradead.org
+ Daniel Borkmann <daniel@iogearbox.net>, David Hildenbrand
+ <david@redhat.com>, Greg Marsden <greg.marsden@oracle.com>,
+ Ivan Ivanov <ivan.ivanov@suse.com>, Kalesh Singh <kaleshsingh@google.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Matthias Brugger <mbrugger@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+ Will Deacon <will@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
  <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-6-ryan.roberts@arm.com>
+ <20241014105912.3207374-13-ryan.roberts@arm.com>
 From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241014105912.3207374-6-ryan.roberts@arm.com>
+In-Reply-To: <20241014105912.3207374-13-ryan.roberts@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-+ Matthew Wilcox
++ Andrii Nakryiko
 
 This was a rather tricky series to get the recipients correct for and my script
 did not realize that "supporter" was a pseudonym for "maintainer" so you were
@@ -84,22 +79,21 @@ On 14/10/2024 11:58, Ryan Roberts wrote:
 > to remove assumptions about PAGE_SIZE being compile-time constant. Code
 > intended to be equivalent when compile-time page size is active.
 > 
-> Refactor "struct vmap_block" to use a flexible array for used_mmap since
-> VMAP_BBMAP_BITS is not a compile time constant for the boot-time page
-> size case.
+> Refactor "struct bpf_ringbuf" so that consumer_pos, producer_pos,
+> pending_pos and data are no longer embedded at (static) page offsets
+> within the struct. This can't work for boot-time page size because the
+> page size isn't known at compile-time. Instead, only define the meta
+> data in the struct, along with pointers to those values. At "struct
+> bpf_ringbuf" allocation time, the extra pages are allocated at the end
+> and the pointers are initialized to point to the correct locations.
 > 
-> Update various BUILD_BUG_ON() instances to check against appropriate
-> page size limit.
-> 
-> Re-define "union swap_header" so that it's no longer exactly page-sized.
-> Instead define a flexible "magic" array with a define which tells the
-> offset to where the magic signature begins.
-> 
-> Consider page size limit in some CPP condditionals.
-> 
-> Wrap global variables that are initialized with PAGE_SIZE derived values
-> using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
-> deferred for boot-time page size builds.
+> Additionally, only expose the __PAGE_SIZE enum to BTF for compile-time
+> page size builds. We don't know the page size at compile-time for
+> boot-time builds. NOTE: This may need some extra thought; perhaps
+> __PAGE_SIZE should be exposed as 0 in this case? And/or perhaps
+> __PAGE_SIZE_MIN/__PAGE_SIZE_MAX should be exposed? And there would need
+> to be a runtime mechanism for querying the page size (e.g.
+> getpagesize()).
 > 
 > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
@@ -108,317 +102,205 @@ On 14/10/2024 11:58, Ryan Roberts wrote:
 > Any confused maintainers may want to read the cover note here for context:
 > https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 > 
->  drivers/mtd/mtdswap.c         |  4 ++--
->  include/linux/mm.h            |  2 +-
->  include/linux/mm_types_task.h |  2 +-
->  include/linux/mmzone.h        |  3 ++-
->  include/linux/slab.h          |  7 ++++---
->  include/linux/swap.h          | 17 ++++++++++++-----
->  include/linux/swapops.h       |  6 +++++-
->  mm/memcontrol.c               |  2 +-
->  mm/memory.c                   |  4 ++--
->  mm/mmap.c                     |  2 +-
->  mm/page-writeback.c           |  2 +-
->  mm/slub.c                     |  2 +-
->  mm/sparse.c                   |  2 +-
->  mm/swapfile.c                 |  2 +-
->  mm/vmalloc.c                  |  7 ++++---
->  15 files changed, 39 insertions(+), 25 deletions(-)
+>  kernel/bpf/core.c    |  9 ++++++--
+>  kernel/bpf/ringbuf.c | 54 ++++++++++++++++++++++++--------------------
+>  2 files changed, 37 insertions(+), 26 deletions(-)
 > 
-> diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
-> index 680366616da24..7412a32708114 100644
-> --- a/drivers/mtd/mtdswap.c
-> +++ b/drivers/mtd/mtdswap.c
-> @@ -1062,13 +1062,13 @@ static int mtdswap_auto_header(struct mtdswap_dev *d, char *buf)
->  {
->  	union swap_header *hd = (union swap_header *)(buf);
->  
-> -	memset(buf, 0, PAGE_SIZE - 10);
-> +	memset(buf, 0, SWAP_HEADER_MAGIC);
->  
->  	hd->info.version = 1;
->  	hd->info.last_page = d->mbd_dev->size - 1;
->  	hd->info.nr_badpages = 0;
->  
-> -	memcpy(buf + PAGE_SIZE - 10, "SWAPSPACE2", 10);
-> +	memcpy(buf + SWAP_HEADER_MAGIC, "SWAPSPACE2", 10);
->  
->  	return 0;
->  }
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 09a840517c23a..49c2078354e6e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2927,7 +2927,7 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
->  static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
->  {
->  	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
-> -	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
-> +	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE_MAX);
->  	return ptlock_ptr(virt_to_ptdesc(pte));
+> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> index 7ee62e38faf0e..485875aa78e63 100644
+> --- a/kernel/bpf/core.c
+> +++ b/kernel/bpf/core.c
+> @@ -89,10 +89,15 @@ void *bpf_internal_load_pointer_neg_helper(const struct sk_buff *skb, int k, uns
+>  	return NULL;
 >  }
 >  
-> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
-> index a2f6179b672b8..c356897d5f41c 100644
-> --- a/include/linux/mm_types_task.h
-> +++ b/include/linux/mm_types_task.h
-> @@ -37,7 +37,7 @@ struct page;
+> -/* tell bpf programs that include vmlinux.h kernel's PAGE_SIZE */
+> +/*
+> + * tell bpf programs that include vmlinux.h kernel's PAGE_SIZE. We can only do
+> + * this for compile-time PAGE_SIZE builds.
+> + */
+> +#if PAGE_SIZE_MIN == PAGE_SIZE_MAX
+>  enum page_size_enum {
+>  	__PAGE_SIZE = PAGE_SIZE
+>  };
+> +#endif
 >  
->  struct page_frag {
->  	struct page *page;
-> -#if (BITS_PER_LONG > 32) || (PAGE_SIZE >= 65536)
-> +#if (BITS_PER_LONG > 32) || (PAGE_SIZE_MAX >= 65536)
->  	__u32 offset;
->  	__u32 size;
->  #else
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 1dc6248feb832..cd58034b82c81 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -1744,6 +1744,7 @@ static inline bool movable_only_nodes(nodemask_t *nodes)
->   */
->  #define PA_SECTION_SHIFT	(SECTION_SIZE_BITS)
->  #define PFN_SECTION_SHIFT	(SECTION_SIZE_BITS - PAGE_SHIFT)
-> +#define PFN_SECTION_SHIFT_MIN	(SECTION_SIZE_BITS - PAGE_SHIFT_MAX)
+>  struct bpf_prog *bpf_prog_alloc_no_stats(unsigned int size, gfp_t gfp_extra_flags)
+>  {
+> @@ -100,7 +105,7 @@ struct bpf_prog *bpf_prog_alloc_no_stats(unsigned int size, gfp_t gfp_extra_flag
+>  	struct bpf_prog_aux *aux;
+>  	struct bpf_prog *fp;
 >  
->  #define NR_MEM_SECTIONS		(1UL << SECTIONS_SHIFT)
+> -	size = round_up(size, __PAGE_SIZE);
+> +	size = round_up(size, PAGE_SIZE);
+>  	fp = __vmalloc(size, gfp_flags);
+>  	if (fp == NULL)
+>  		return NULL;
+> diff --git a/kernel/bpf/ringbuf.c b/kernel/bpf/ringbuf.c
+> index e20b90c361316..8e4093ddbc638 100644
+> --- a/kernel/bpf/ringbuf.c
+> +++ b/kernel/bpf/ringbuf.c
+> @@ -14,9 +14,9 @@
 >  
-> @@ -1753,7 +1754,7 @@ static inline bool movable_only_nodes(nodemask_t *nodes)
->  #define SECTION_BLOCKFLAGS_BITS \
->  	((1UL << (PFN_SECTION_SHIFT - pageblock_order)) * NR_PAGEBLOCK_BITS)
+>  #define RINGBUF_CREATE_FLAG_MASK (BPF_F_NUMA_NODE)
 >  
-> -#if (MAX_PAGE_ORDER + PAGE_SHIFT) > SECTION_SIZE_BITS
-> +#if (MAX_PAGE_ORDER + PAGE_SHIFT_MAX) > SECTION_SIZE_BITS
->  #error Allocator MAX_PAGE_ORDER exceeds SECTION_SIZE
->  #endif
->  
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index eb2bf46291576..11c6ff3a12579 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -347,7 +347,7 @@ static inline unsigned int arch_slab_minalign(void)
->   */
->  #define __assume_kmalloc_alignment __assume_aligned(ARCH_KMALLOC_MINALIGN)
->  #define __assume_slab_alignment __assume_aligned(ARCH_SLAB_MINALIGN)
-> -#define __assume_page_alignment __assume_aligned(PAGE_SIZE)
-> +#define __assume_page_alignment __assume_aligned(PAGE_SIZE_MIN)
->  
->  /*
->   * Kmalloc array related definitions
-> @@ -358,6 +358,7 @@ static inline unsigned int arch_slab_minalign(void)
->   * (PAGE_SIZE*2).  Larger requests are passed to the page allocator.
->   */
->  #define KMALLOC_SHIFT_HIGH	(PAGE_SHIFT + 1)
-> +#define KMALLOC_SHIFT_HIGH_MAX	(PAGE_SHIFT_MAX + 1)
->  #define KMALLOC_SHIFT_MAX	(MAX_PAGE_ORDER + PAGE_SHIFT)
->  #ifndef KMALLOC_SHIFT_LOW
->  #define KMALLOC_SHIFT_LOW	3
-> @@ -426,7 +427,7 @@ enum kmalloc_cache_type {
->  	NR_KMALLOC_TYPES
+> -/* non-mmap()'able part of bpf_ringbuf (everything up to consumer page) */
+> +/* non-mmap()'able part of bpf_ringbuf (everything defined in struct) */
+>  #define RINGBUF_PGOFF \
+> -	(offsetof(struct bpf_ringbuf, consumer_pos) >> PAGE_SHIFT)
+> +	(PAGE_ALIGN(sizeof(struct bpf_ringbuf)) >> PAGE_SHIFT)
+>  /* consumer page and producer page */
+>  #define RINGBUF_POS_PAGES 2
+>  #define RINGBUF_NR_META_PAGES (RINGBUF_PGOFF + RINGBUF_POS_PAGES)
+> @@ -69,10 +69,10 @@ struct bpf_ringbuf {
+>  	 * validate each sample to ensure that they're correctly formatted, and
+>  	 * fully contained within the ring buffer.
+>  	 */
+> -	unsigned long consumer_pos __aligned(PAGE_SIZE);
+> -	unsigned long producer_pos __aligned(PAGE_SIZE);
+> -	unsigned long pending_pos;
+> -	char data[] __aligned(PAGE_SIZE);
+> +	unsigned long *consumer_pos;
+> +	unsigned long *producer_pos;
+> +	unsigned long *pending_pos;
+> +	char *data;
 >  };
 >  
-> -typedef struct kmem_cache * kmem_buckets[KMALLOC_SHIFT_HIGH + 1];
-> +typedef struct kmem_cache * kmem_buckets[KMALLOC_SHIFT_HIGH_MAX + 1];
+>  struct bpf_ringbuf_map {
+> @@ -134,9 +134,15 @@ static struct bpf_ringbuf *bpf_ringbuf_area_alloc(size_t data_sz, int numa_node)
+>  	rb = vmap(pages, nr_meta_pages + 2 * nr_data_pages,
+>  		  VM_MAP | VM_USERMAP, PAGE_KERNEL);
+>  	if (rb) {
+> +		void *base = rb;
+> +
+>  		kmemleak_not_leak(pages);
+>  		rb->pages = pages;
+>  		rb->nr_pages = nr_pages;
+> +		rb->consumer_pos = (unsigned long *)(base + PAGE_SIZE * RINGBUF_PGOFF);
+> +		rb->producer_pos = (unsigned long *)(base + PAGE_SIZE * (RINGBUF_PGOFF + 1));
+> +		rb->pending_pos = rb->producer_pos + 1;
+> +		rb->data = base + PAGE_SIZE * nr_meta_pages;
+>  		return rb;
+>  	}
 >  
->  extern kmem_buckets kmalloc_caches[NR_KMALLOC_TYPES];
+> @@ -179,9 +185,9 @@ static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t data_sz, int numa_node)
+>  	init_irq_work(&rb->work, bpf_ringbuf_notify);
 >  
-> @@ -524,7 +525,7 @@ static __always_inline unsigned int __kmalloc_index(size_t size,
->  	/* Will never be reached. Needed because the compiler may complain */
->  	return -1;
+>  	rb->mask = data_sz - 1;
+> -	rb->consumer_pos = 0;
+> -	rb->producer_pos = 0;
+> -	rb->pending_pos = 0;
+> +	*rb->consumer_pos = 0;
+> +	*rb->producer_pos = 0;
+> +	*rb->pending_pos = 0;
+>  
+>  	return rb;
 >  }
-> -static_assert(PAGE_SHIFT <= 20);
-> +static_assert(PAGE_SHIFT_MAX <= 20);
->  #define kmalloc_index(s) __kmalloc_index(s, true)
->  
->  #include <linux/alloc_tag.h>
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index ba7ea95d1c57a..e85df0332979f 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -132,10 +132,17 @@ static inline int current_is_kswapd(void)
->   * bootbits...
->   */
->  union swap_header {
-> -	struct {
-> -		char reserved[PAGE_SIZE - 10];
-> -		char magic[10];			/* SWAP-SPACE or SWAPSPACE2 */
-> -	} magic;
-> +	/*
-> +	 * Exists conceptually, but since PAGE_SIZE may not be known at compile
-> +	 * time, we must access through pointer arithmetic at run time.
-> +	 *
-> +	 * struct {
-> +	 * 	char reserved[PAGE_SIZE - 10];
-> +	 * 	char magic[10];			   SWAP-SPACE or SWAPSPACE2
-> +	 * } magic;
-> +	 */
-> +#define SWAP_HEADER_MAGIC	(PAGE_SIZE - 10)
-> +	char magic[1];
->  	struct {
->  		char		bootbits[1024];	/* Space for disklabel etc. */
->  		__u32		version;
-> @@ -201,7 +208,7 @@ struct swap_extent {
->   * Max bad pages in the new format..
->   */
->  #define MAX_SWAP_BADPAGES \
-> -	((offsetof(union swap_header, magic.magic) - \
-> +	((SWAP_HEADER_MAGIC - \
->  	  offsetof(union swap_header, info.badpages)) / sizeof(int))
->  
->  enum {
-> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-> index cb468e418ea11..890fe6a3e6702 100644
-> --- a/include/linux/swapops.h
-> +++ b/include/linux/swapops.h
-> @@ -34,10 +34,14 @@
->   */
->  #ifdef MAX_PHYSMEM_BITS
->  #define SWP_PFN_BITS		(MAX_PHYSMEM_BITS - PAGE_SHIFT)
-> +#define SWP_PFN_BITS_MAX	(MAX_PHYSMEM_BITS - PAGE_SHIFT_MIN)
->  #else  /* MAX_PHYSMEM_BITS */
->  #define SWP_PFN_BITS		min_t(int, \
->  				      sizeof(phys_addr_t) * 8 - PAGE_SHIFT, \
->  				      SWP_TYPE_SHIFT)
-> +#define SWP_PFN_BITS_MAX	min_t(int, \
-> +				      sizeof(phys_addr_t) * 8 - PAGE_SHIFT_MIN, \
-> +				      SWP_TYPE_SHIFT)
->  #endif	/* MAX_PHYSMEM_BITS */
->  #define SWP_PFN_MASK		(BIT(SWP_PFN_BITS) - 1)
->  
-> @@ -519,7 +523,7 @@ static inline struct folio *pfn_swap_entry_folio(swp_entry_t entry)
->  static inline bool is_pfn_swap_entry(swp_entry_t entry)
+> @@ -300,8 +306,8 @@ static unsigned long ringbuf_avail_data_sz(struct bpf_ringbuf *rb)
 >  {
->  	/* Make sure the swp offset can always store the needed fields */
-> -	BUILD_BUG_ON(SWP_TYPE_SHIFT < SWP_PFN_BITS);
-> +	BUILD_BUG_ON(SWP_TYPE_SHIFT < SWP_PFN_BITS_MAX);
+>  	unsigned long cons_pos, prod_pos;
 >  
->  	return is_migration_entry(entry) || is_device_private_entry(entry) ||
->  	       is_device_exclusive_entry(entry) || is_hwpoison_entry(entry);
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c5f9195f76c65..4b17bec566fbd 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4881,7 +4881,7 @@ static int __init mem_cgroup_init(void)
->  	 * to work fine, we should make sure that the overfill threshold can't
->  	 * exceed S32_MAX / PAGE_SIZE.
+> -	cons_pos = smp_load_acquire(&rb->consumer_pos);
+> -	prod_pos = smp_load_acquire(&rb->producer_pos);
+> +	cons_pos = smp_load_acquire(rb->consumer_pos);
+> +	prod_pos = smp_load_acquire(rb->producer_pos);
+>  	return prod_pos - cons_pos;
+>  }
+>  
+> @@ -418,7 +424,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+>  	if (len > ringbuf_total_data_sz(rb))
+>  		return NULL;
+>  
+> -	cons_pos = smp_load_acquire(&rb->consumer_pos);
+> +	cons_pos = smp_load_acquire(rb->consumer_pos);
+>  
+>  	if (in_nmi()) {
+>  		if (!spin_trylock_irqsave(&rb->spinlock, flags))
+> @@ -427,8 +433,8 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+>  		spin_lock_irqsave(&rb->spinlock, flags);
+>  	}
+>  
+> -	pend_pos = rb->pending_pos;
+> -	prod_pos = rb->producer_pos;
+> +	pend_pos = *rb->pending_pos;
+> +	prod_pos = *rb->producer_pos;
+>  	new_prod_pos = prod_pos + len;
+>  
+>  	while (pend_pos < prod_pos) {
+> @@ -440,7 +446,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+>  		tmp_size = round_up(tmp_size + BPF_RINGBUF_HDR_SZ, 8);
+>  		pend_pos += tmp_size;
+>  	}
+> -	rb->pending_pos = pend_pos;
+> +	*rb->pending_pos = pend_pos;
+>  
+>  	/* check for out of ringbuf space:
+>  	 * - by ensuring producer position doesn't advance more than
+> @@ -460,7 +466,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+>  	hdr->pg_off = pg_off;
+>  
+>  	/* pairs with consumer's smp_load_acquire() */
+> -	smp_store_release(&rb->producer_pos, new_prod_pos);
+> +	smp_store_release(rb->producer_pos, new_prod_pos);
+>  
+>  	spin_unlock_irqrestore(&rb->spinlock, flags);
+>  
+> @@ -506,7 +512,7 @@ static void bpf_ringbuf_commit(void *sample, u64 flags, bool discard)
+>  	 * new data availability
 >  	 */
-> -	BUILD_BUG_ON(MEMCG_CHARGE_BATCH > S32_MAX / PAGE_SIZE);
-> +	BUILD_BUG_ON(MEMCG_CHARGE_BATCH > S32_MAX / PAGE_SIZE_MIN);
+>  	rec_pos = (void *)hdr - (void *)rb->data;
+> -	cons_pos = smp_load_acquire(&rb->consumer_pos) & rb->mask;
+> +	cons_pos = smp_load_acquire(rb->consumer_pos) & rb->mask;
 >  
->  	cpuhp_setup_state_nocalls(CPUHP_MM_MEMCQ_DEAD, "mm/memctrl:dead", NULL,
->  				  memcg_hotplug_cpu_dead);
-> diff --git a/mm/memory.c b/mm/memory.c
-> index ebfc9768f801a..14b5ef6870486 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4949,8 +4949,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->  	return ret;
->  }
->  
-> -static unsigned long fault_around_pages __read_mostly =
-> -	65536 >> PAGE_SHIFT;
-> +static __DEFINE_GLOBAL_PAGE_SIZE_VAR(unsigned long, fault_around_pages,
-> +				     __read_mostly, 65536 >> PAGE_SHIFT);
->  
->  #ifdef CONFIG_DEBUG_FS
->  static int fault_around_bytes_get(void *data, u64 *val)
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index d0dfc85b209bb..d9642aba07ac4 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2279,7 +2279,7 @@ int expand_downwards(struct vm_area_struct *vma, unsigned long address)
->  }
->  
->  /* enforced gap between the expanding stack and other mappings. */
-> -unsigned long stack_guard_gap = 256UL<<PAGE_SHIFT;
-> +DEFINE_GLOBAL_PAGE_SIZE_VAR(unsigned long, stack_guard_gap, 256UL<<PAGE_SHIFT);
->  
->  static int __init cmdline_parse_stack_guard_gap(char *p)
->  {
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 4430ac68e4c41..8fc9ac50749bd 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2292,7 +2292,7 @@ static int page_writeback_cpu_online(unsigned int cpu)
->  #ifdef CONFIG_SYSCTL
->  
->  /* this is needed for the proc_doulongvec_minmax of vm_dirty_bytes */
-> -static const unsigned long dirty_bytes_min = 2 * PAGE_SIZE;
-> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(unsigned long, dirty_bytes_min, 2 * PAGE_SIZE);
->  
->  static struct ctl_table vm_page_writeback_sysctls[] = {
->  	{
-> diff --git a/mm/slub.c b/mm/slub.c
-> index a77f354f83251..82f6e98cf25bb 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -5001,7 +5001,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
->  static inline int alloc_kmem_cache_cpus(struct kmem_cache *s)
->  {
->  	BUILD_BUG_ON(PERCPU_DYNAMIC_EARLY_SIZE <
-> -			NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH *
-> +			NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH_MAX *
->  			sizeof(struct kmem_cache_cpu));
->  
->  	/*
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index dc38539f85603..2491425930c4d 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -277,7 +277,7 @@ static unsigned long sparse_encode_mem_map(struct page *mem_map, unsigned long p
->  {
->  	unsigned long coded_mem_map =
->  		(unsigned long)(mem_map - (section_nr_to_pfn(pnum)));
-> -	BUILD_BUG_ON(SECTION_MAP_LAST_BIT > PFN_SECTION_SHIFT);
-> +	BUILD_BUG_ON(SECTION_MAP_LAST_BIT > PFN_SECTION_SHIFT_MIN);
->  	BUG_ON(coded_mem_map & ~SECTION_MAP_MASK);
->  	return coded_mem_map;
->  }
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 38bdc439651ac..6311a1cc7e46b 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -2931,7 +2931,7 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
->  	unsigned long swapfilepages;
->  	unsigned long last_page;
->  
-> -	if (memcmp("SWAPSPACE2", swap_header->magic.magic, 10)) {
-> +	if (memcmp("SWAPSPACE2", &swap_header->magic[SWAP_HEADER_MAGIC], 10)) {
->  		pr_err("Unable to find swap-space signature\n");
+>  	if (flags & BPF_RB_FORCE_WAKEUP)
+>  		irq_work_queue(&rb->work);
+> @@ -580,9 +586,9 @@ BPF_CALL_2(bpf_ringbuf_query, struct bpf_map *, map, u64, flags)
+>  	case BPF_RB_RING_SIZE:
+>  		return ringbuf_total_data_sz(rb);
+>  	case BPF_RB_CONS_POS:
+> -		return smp_load_acquire(&rb->consumer_pos);
+> +		return smp_load_acquire(rb->consumer_pos);
+>  	case BPF_RB_PROD_POS:
+> -		return smp_load_acquire(&rb->producer_pos);
+> +		return smp_load_acquire(rb->producer_pos);
+>  	default:
 >  		return 0;
 >  	}
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index a0df1e2e155a8..b4fbba204603c 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2497,12 +2497,12 @@ struct vmap_block {
->  	spinlock_t lock;
->  	struct vmap_area *va;
->  	unsigned long free, dirty;
-> -	DECLARE_BITMAP(used_map, VMAP_BBMAP_BITS);
->  	unsigned long dirty_min, dirty_max; /*< dirty range */
->  	struct list_head free_list;
->  	struct rcu_head rcu_head;
->  	struct list_head purge;
->  	unsigned int cpu;
-> +	unsigned long used_map[];
->  };
+> @@ -680,12 +686,12 @@ static int __bpf_user_ringbuf_peek(struct bpf_ringbuf *rb, void **sample, u32 *s
+>  	u64 cons_pos, prod_pos;
 >  
->  /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
-> @@ -2600,11 +2600,12 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
->  	unsigned long vb_idx;
->  	int node, err;
->  	void *vaddr;
-> +	size_t size;
+>  	/* Synchronizes with smp_store_release() in user-space producer. */
+> -	prod_pos = smp_load_acquire(&rb->producer_pos);
+> +	prod_pos = smp_load_acquire(rb->producer_pos);
+>  	if (prod_pos % 8)
+>  		return -EINVAL;
 >  
->  	node = numa_node_id();
+>  	/* Synchronizes with smp_store_release() in __bpf_user_ringbuf_sample_release() */
+> -	cons_pos = smp_load_acquire(&rb->consumer_pos);
+> +	cons_pos = smp_load_acquire(rb->consumer_pos);
+>  	if (cons_pos >= prod_pos)
+>  		return -ENODATA;
 >  
-> -	vb = kmalloc_node(sizeof(struct vmap_block),
-> -			gfp_mask & GFP_RECLAIM_MASK, node);
-> +	size = struct_size(vb, used_map, BITS_TO_LONGS(VMAP_BBMAP_BITS));
-> +	vb = kmalloc_node(size, gfp_mask & GFP_RECLAIM_MASK, node);
->  	if (unlikely(!vb))
->  		return ERR_PTR(-ENOMEM);
+> @@ -715,7 +721,7 @@ static int __bpf_user_ringbuf_peek(struct bpf_ringbuf *rb, void **sample, u32 *s
+>  		 * Update the consumer pos, and return -EAGAIN so the caller
+>  		 * knows to skip this sample and try to read the next one.
+>  		 */
+> -		smp_store_release(&rb->consumer_pos, cons_pos + total_len);
+> +		smp_store_release(rb->consumer_pos, cons_pos + total_len);
+>  		return -EAGAIN;
+>  	}
 >  
+> @@ -737,9 +743,9 @@ static void __bpf_user_ringbuf_sample_release(struct bpf_ringbuf *rb, size_t siz
+>  	 * prevents another task from writing to consumer_pos after it was read
+>  	 * by this task with smp_load_acquire() in __bpf_user_ringbuf_peek().
+>  	 */
+> -	consumer_pos = rb->consumer_pos;
+> +	consumer_pos = *rb->consumer_pos;
+>  	 /* Synchronizes with smp_load_acquire() in user-space producer. */
+> -	smp_store_release(&rb->consumer_pos, consumer_pos + rounded_size);
+> +	smp_store_release(rb->consumer_pos, consumer_pos + rounded_size);
+>  }
+>  
+>  BPF_CALL_4(bpf_user_ringbuf_drain, struct bpf_map *, map,
 
 
