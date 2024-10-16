@@ -1,155 +1,178 @@
-Return-Path: <linux-kernel+bounces-368107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2FE9A0B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 768199A0B4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8571C1F26E47
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1B21F26AFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A88209686;
-	Wed, 16 Oct 2024 13:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35032207A35;
+	Wed, 16 Oct 2024 13:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FfEMqM+6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjofVzqG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7573D1E531;
-	Wed, 16 Oct 2024 13:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E69C1EB5B
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729084785; cv=none; b=Hrtcy+78QybbsAY0wuqs4aSuDE147guoHIZ+5mf4C+8N1pyOocpeqfEu0NzTw03O7KBAaxETXNmTlKh8YIhH7qGKS6O2eQM5JXuwsBcWt3+m0p6zqZQmXsMgQQ+DSx38Sb9S2iTIJI/rbsIVVWHOABEpv3T02YUwHsjM80hMnTg=
+	t=1729084835; cv=none; b=eAMqnDiJRp/Tzjyt5z9RRwHolyJiCDAk5Uoa50fpejbn307gl2n1iw1NjShfe7XzBDsjTEJ1Vu4AWSZKr5hU55vq5SuLKbk07ZMcsaIt7sDVzAJYguFIfju9hJwQJBbVwMJgnu8AjBp+c1NCDfLo1EdC+BNVW6FLA0ZN3BT47Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729084785; c=relaxed/simple;
-	bh=SYw7XI5JjSFTHiTR6NbSiOgdW8W+9NX9323XdUFaZ3g=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZhBLhnuW5jin0Ft/RToGAKkL9uZiv6CHB7eGNCEtfY5sKZ7t2K16CrvFkS1IlyebsHBuMvya/NARB9sbRseAQhuZccEBpYoJHFNGl+hzo4kMFOxK/psGvq47QRjGtCSekaaINvTBaJ0srlJLZfkaot9yVIxSB/PhGkKEWBxdfmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FfEMqM+6; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729084785; x=1760620785;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=SYw7XI5JjSFTHiTR6NbSiOgdW8W+9NX9323XdUFaZ3g=;
-  b=FfEMqM+6jX2sCoKZ6NSU+z6GeidtbMZOkt39w9EErEdeNlmSNBD++emv
-   0sfSwTqdUJcfcjyCiwWNO+9NuncMltPaf3+llp5Bq6fjzVe7qzICrmmwX
-   NXvic9AY+PubnYrLL0905i1fBtcNzKctjbG7L4JjJ1xWP1zqmv7bGzJyB
-   zOKDayrjMd+Ky0x9cTjLFjG/fBslrU3i4Ns2Jog0bGrvb4ERv7Zw7Ta0i
-   dcNmFCTAOJioyi547CGx9wW9woAi2QHK/dUNnmkaT23cd26ClBokF5eB8
-   VnSZhMrfBWpUWzzlYVo1c30vySgGA6I/4w6g+Q6xaxJ6yb3TA8GtoRALG
-   A==;
-X-CSE-ConnectionGUID: M6N5NGQuQZWYzvtjhSDsGQ==
-X-CSE-MsgGUID: IvwQ/MQ/RLWWqZfH5otXQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="27972672"
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="27972672"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:19:10 -0700
-X-CSE-ConnectionGUID: 7CXUroWXScGcKe/XrNzVZw==
-X-CSE-MsgGUID: jjP5wTK5SxCmAQH25pTRVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="109020524"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.221])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:19:07 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 16 Oct 2024 16:19:03 +0300 (EEST)
-To: Philipp Stanner <pstanner@redhat.com>
-cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] PCI: Convert pdev_sort_resources() to use resource
- name helper
-In-Reply-To: <fc0649b5-d065-2627-f475-d61f0594d0e5@linux.intel.com>
-Message-ID: <5b783894-99f3-b231-9d73-9980d0cac12d@linux.intel.com>
-References: <20241016120048.1355-1-ilpo.jarvinen@linux.intel.com> <1cf314b3e91779e3353bbcaf8ad13516a00642e3.camel@redhat.com> <fc0649b5-d065-2627-f475-d61f0594d0e5@linux.intel.com>
+	s=arc-20240116; t=1729084835; c=relaxed/simple;
+	bh=5o/PNdwqbAYuqE9gFljqmHpGaggXOYQkQ5hjQx/jUWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WC0vtPkVdHFAfI7NUH1dypbo3GtTjNGNLPTLhckSaAwN3iRqtQQENlwhNlBB97MV8Fmi9tJRw46veHKL0m5GyKUh9hCftc41j3jpWjaBjNU1mYSnkwibvSvAlgGp4OHQt8phTj02NG/aMY/fAw7nJgXgBOGa5o87HesQy9vykCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjofVzqG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4F4C4CEC5;
+	Wed, 16 Oct 2024 13:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729084835;
+	bh=5o/PNdwqbAYuqE9gFljqmHpGaggXOYQkQ5hjQx/jUWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LjofVzqGWKfCbkYtLw2UvVl91Yx7ANrBR9j4mSDwO7VnSEuCwBTEYkFFPMILJJvsX
+	 ZmvtQcsLPX+gHJ8L77DHccoFyxfu/rn7gMC8g0GRVxJc3+4Rr8rZKIN2w48C7SdVze
+	 07FNCeRzrdFFfYaDjtV26HpJe+sM2G7gAueBu6QyCVHwp9mEMyZw0p7OIC9nOiLiIA
+	 rKrkyR+7chsRzqyWZ16byF+o+v7wESxJGtPQRfdVvo2KJi+NCS2klvyYuhTuUsrMNV
+	 3EUW5vs2Jj2cPuq4cLsrFJ3f/Is41/9tZ/x3HjJMdXlRQ/D6fFsHPpHUAqOjGZMLAG
+	 ClIBrWTpZeSUQ==
+Date: Wed, 16 Oct 2024 14:20:31 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>
+Subject: Re: [PATCH v4 5/5] mfd: tqmx86: add I2C IRQ support
+Message-ID: <20241016132031.GD1152434@google.com>
+References: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
+ <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
+ <20241015113841.GH8348@google.com>
+ <8fbae19e7e85a8fc8d6f9738155ec8fe44e63061.camel@ew.tq-group.com>
+ <20241016130715.GA1152434@google.com>
+ <e2842ba1ea0f5dfa818e4cbb9aefe343f48c1e53.camel@ew.tq-group.com>
+ <20241016131832.GC1152434@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-898264977-1729084743=:1010"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241016131832.GC1152434@google.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, 16 Oct 2024, Lee Jones wrote:
 
---8323328-898264977-1729084743=:1010
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+> On Wed, 16 Oct 2024, Matthias Schiffer wrote:
+> 
+> > On Wed, 2024-10-16 at 14:07 +0100, Lee Jones wrote:
+> > > 
+> > > On Wed, 16 Oct 2024, Matthias Schiffer wrote:
+> > > 
+> > > > On Tue, 2024-10-15 at 12:38 +0100, Lee Jones wrote:
+> > > > > 
+> > > > > On Mon, 07 Oct 2024, Matthias Schiffer wrote:
+> > > > > 
+> > > > > > From: Gregor Herburger <gregor.herburger@tq-group.com>
+> > > > > > 
+> > > > > > The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
+> > > > > > Add module parameter to allow configuring the IRQ number, similar to the
+> > > > > > handling of the GPIO IRQ.
+> > > > > > 
+> > > > > > Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
+> > > > > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > > > > > ---
+> > > > > > 
+> > > > > > v2: improve module parameter description (was patch 4/4)
+> > > > > > v3: replace IRQ 0 resource with an empty placeholder to simplify error handling
+> > > > > > v4: no changes
+> > > > > > 
+> > > > > >  drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
+> > > > > >  1 file changed, 19 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> > > > > > index e444fcd2a3e9d..057d035b71d33 100644
+> > > > > > --- a/drivers/mfd/tqmx86.c
+> > > > > > +++ b/drivers/mfd/tqmx86.c
+> > > > > > @@ -50,6 +50,7 @@
+> > > > > >  #define TQMX86_REG_IO_EXT_INT_9			2
+> > > > > >  #define TQMX86_REG_IO_EXT_INT_12		3
+> > > > > >  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
+> > > > > > +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
+> > > > > >  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
+> > > > > >  #define TQMX86_REG_SAUC		0x17
+> > > > > >  
+> > > > > > @@ -60,7 +61,16 @@ static uint gpio_irq;
+> > > > > >  module_param(gpio_irq, uint, 0);
+> > > > > >  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
+> > > > > >  
+> > > > > > -static const struct resource tqmx_i2c_soft_resources[] = {
+> > > > > > +static uint i2c_irq;
+> > > > > > +module_param(i2c_irq, uint, 0);
+> > > > > > +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)");
+> > > > > > +
+> > > > > > +static struct resource tqmx_i2c_soft_resources[] = {
+> > > > > > +	/*
+> > > > > > +	 * Placeholder for IRQ resource - must come first to be filled in by the
+> > > > > > +	 * probe function.
+> > > > > > +	 */
+> > > > > > +	{},
+> > > > > 
+> > > > > Having a NULLed entry in the first slot doesn't sit well with me at all.
+> > > > > 
+> > > > > In order for us to avoid wasting memory, it would be better to place the
+> > > > > entry at the end of the array with a blank entry:
+> > > > > 
+> > > > >   DEFINE_RES_IRQ(0),
+> > > > > 
+> > > > > Later comes the matching code which updates the 0 value to something sane.
+> > > > > 
+> > > > > Before you call to the add the devices, check to see if the value has
+> > > > > changed.  If it hasn't, deprecate num_resources, effectively masking the
+> > > > > last entry in the array.  Then when platform_device_add_resources()
+> > > > > comes to duplicate the array, it will only copy the relevant entries.
+> > > > 
+> > > > I chose my current solution because it resulted in more simple and maintainable code:
+> > > > 
+> > > > - No dynamic array access, the IRQ resource is always written to index 0
+> > > 
+> > > Which is fragile (even with the comment).  If you're going to directly
+> > > index array elements, please do so with a unique identifier rather than
+> > > relying on it happening to reside in the first.
+> > > 
+> > > > - No surprises regarding num_resources, it is always equal to ARRAY_SIZE(resources)
+> > > 
+> > > No surprises, but sometimes it's incorrect.
+> > > 
+> > > > It also allowed to make all mfd_cell const; to make num_resources modifyable, either the const would
+> > > > need to be removed, or each mfd_cell would need to be copied to a stack variable in the probe
+> > > > function.
+> > > > 
+> > > > In my opinion, these benefits outweigh the 2*64 bytes saved for the additional resources allocated
+> > > > by platform_device_add_resources() - and 128 bytes doesn't seem significant at all, in particular
+> > > > considering that this driver is used on x86_64 only.
+> > > 
+> > > But doesn't outweigh my disliking for placing a NULL element at the
+> > > start of the array.  If you _must_ do something like this, please place
+> > > it at the end of the array.
+> > > 
+> > 
+> > Ok, will move the placeholder to the end, and access it using a defined index instead of 0. I would
+> > still prefer to keep num_resources constant instead of adjusting it. Does this sound acceptable to
+> > you?
+> 
+> It would allow me to sleep at night, yes. :)
 
-On Wed, 16 Oct 2024, Ilpo J=C3=A4rvinen wrote:
+Place a neat, succinct single line comment on the same line please.
 
-> On Wed, 16 Oct 2024, Philipp Stanner wrote:
->=20
-> > On Wed, 2024-10-16 at 15:00 +0300, Ilpo J=C3=A4rvinen wrote:
-> > > Use pci_resource_name() helper in pdev_sort_resources() to print
-> > > resources in user-friendly format.
-> > >=20
-> > > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > > ---
-> > > =C2=A0drivers/pci/setup-bus.c | 5 +++--
-> > > =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> > > index 23082bc0ca37..071c5436b4a5 100644
-> > > --- a/drivers/pci/setup-bus.c
-> > > +++ b/drivers/pci/setup-bus.c
-> > > @@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev
-> > > *dev, struct list_head *head)
-> > > =C2=A0=09int i;
-> > > =C2=A0
-> > > =C2=A0=09pci_dev_for_each_resource(dev, r, i) {
-> > > +=09=09const char *r_name =3D pci_resource_name(dev, i);
-> > > =C2=A0=09=09struct pci_dev_resource *dev_res, *tmp;
-> > > =C2=A0=09=09resource_size_t r_align;
-> > > =C2=A0=09=09struct list_head *n;
-> > > @@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev
-> > > *dev, struct list_head *head)
-> > > =C2=A0
-> > > =C2=A0=09=09r_align =3D pci_resource_alignment(dev, r);
-> > > =C2=A0=09=09if (!r_align) {
-> > > -=09=09=09pci_warn(dev, "BAR %d: %pR has bogus
-> > > alignment\n",
-> > > -=09=09=09=09 i, r);
-> > > +=09=09=09pci_warn(dev, "%s: %pR has bogus
-> > > alignment\n",
-> > > +=09=09=09=09 r_name, r);
-> >=20
-> > Why do you remove the BAR index number, don't you think this
-> > information is also useful?
->=20
-> That's because of how pci_resource_name() works. The number will be=20
-> included in the returned string and it won't be always same as i.
-> So that change is done on purpose.
+For example - not verbatim:
 
-That being said, I now realize the other examples use the colon=20
-differently "%s %pR: ..." so I'll change that for v2.
+	[IRQ] = {}, /* Placeholder */
 
---=20
- i.
-
-> > One could also consider printing r_align, would that be useful?
->=20
-> As per the preceeding condition, it's known to be zero so it's not=20
-> that useful for any developer looking at these code lines.
->=20
-> > Note
-> > that there is a similar pci_warn down below in line 1118 that does
-> > print it. Would you want to change that pci_warn()-string, too?
->=20
-> pci_warn() on line 1118 does NOT print i (as expected when using=20
-> pci_resource_name()) and there align is not zero so I don't see how this=
-=20
-> is relevant.
->=20
-> But thanks for taking a look anyway. :-)
->=20
->=20
-
---8323328-898264977-1729084743=:1010--
+-- 
+Lee Jones [李琼斯]
 
