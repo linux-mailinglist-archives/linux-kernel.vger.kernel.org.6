@@ -1,313 +1,136 @@
-Return-Path: <linux-kernel+bounces-368381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7449A0F38
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:00:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2939A0F3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4122863D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:00:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 777F6B21BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0299D3FBA5;
-	Wed, 16 Oct 2024 16:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2340F20F5BF;
+	Wed, 16 Oct 2024 16:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rmdaho1r"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lSBC/NJY"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576B054F95
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D8654F95
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094442; cv=none; b=Cs2mmAsikEnCnZakykx/SE03xhoJgqiHLEd6h/NX9OfxLSLg/CE5iiUYWqFzyX0dCP17Bz+zVdm42MMCrj/GlmPrKB4E7LculC1gzcooNvYoAjtqiJXcOJXLOStuQNP4YbRflvnluH/Bjs2fvOGyeBnkOM60ZxVJQVvypprH4zU=
+	t=1729094537; cv=none; b=Zfyrz99g8o6BNpJBf9h+07STCo5pqQmcxw/ydPgoH6/QINWRO+0Nai45NtA4sCoZEcU4oGvOeyI2xnmBU+E6iMrLeVcm2rbdJlFh8IjGG6/CEQgMjds15eIb95N9Cvo0Be3x5vhHWyBR2wNEQPKgS9BjzfEFxpjrReQz9uuM+14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094442; c=relaxed/simple;
-	bh=7PTo7ATdJKBztulMVqdU/OaPxvIkBpBkKwX871nJqVA=;
+	s=arc-20240116; t=1729094537; c=relaxed/simple;
+	bh=izfJPuESLdADVyQIKgA65BaWb+dPd/rXtKW7oYvGde0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=gNGC9+dFe3AtSKf3UfbJ6JnPrerM2yGdep8O7I1jNAL6R4k3FuO4u2MRz+7atqVeEr5wQEwgchywqmTacXYPzNubbt4ZzN+CtH3X1vs+Kxuq8ZcdLtTfnc641V+7MmR2h91cgAevgOmCIsmAfF1HWIHmXfrSAyf+qWzp4ZHe/ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rmdaho1r; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c93e9e701fso17842a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:00:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=RLJhDqoEIXr266whIZ1D/R/Liu8Wlj9n2R5G/hdUh1rQhPjY8hIs+J/1JIRhOXHdrjjF2YVsKqzlkeoUHBjIwXBTQ4xUN6IILEbzJLh/rVqLcqPxCkDxOAKSdQoUzer6jd2lyrqQVs2eur++Tt2E8KjGucK68pvW+BNWgMlGKs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lSBC/NJY; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso3387022e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:02:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729094439; x=1729699239; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=chromium.org; s=google; t=1729094533; x=1729699333; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qa8NFpxmV2KKMPMWE09yZK0j+QN5oO3iXzDey8XQmBI=;
-        b=Rmdaho1r/0W8OzDBGy5ZJ10BFwJsyvwGylvoqBrw6u1RRuaNgnX8Mp/gRMb8/jsi6o
-         oOd1B8c5hIJHBznWie+gM6tVcPpzFGsR4aaKYNVSCtBzFXvMUs74qM5815UdXh0m8vaO
-         /C1HCPXEmFy21+qIglu6kZTRPZxAOVBFWFtQT+dcTLl2FAThRrDVuXVg7CIORzaR7x4t
-         aAAcmHcfdME0Xy6DgVw7IE+z6s98HOBL4YjpDSB0p9f7jDHsmnO0qsgvdhsH6ehLKgrg
-         SA76VBpW1peqD05SgKd0FYYt85KboG1TY4iwEhaca4yN/36nZUOgkc7vH7FgA1bdJROd
-         ToXQ==
+        bh=cUD59f78GtNOAlqBmjuglWzX0LStg1/+Dw/KZ/SMHA4=;
+        b=lSBC/NJYhu1mXb4EIhJcUgbjb05G4kgqYouNihyL1ERmgjyOYc6woWimGAhi9pbJNt
+         vJL85a2GnlVcLz2Y2hSpwMpjvIkIBkLKtL0LGaB1qzsl47gBNKNnRJfjb2TbubpuxSM+
+         UOAcWXayhK+Pdwtfnpnmh/KRd5Dg2bA+x6i3Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729094439; x=1729699239;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1729094533; x=1729699333;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qa8NFpxmV2KKMPMWE09yZK0j+QN5oO3iXzDey8XQmBI=;
-        b=bNPJGm9VxZ0nr/T8sccnAZsu1DoqWKR1muvGK0zskqydxVZnLZqfL/x2mtW9J0f+5X
-         S83BA41X+92SMlu4m9kzr+r4fJMlyAotJ+fxwaCM2Sq0UmzqbCb45lsqao5/T3LTBwui
-         udp1brdHQl31E9Fmgam2liFYr2ckte+PjPXPlzvyNZqIDRC6+QXn01I6l81MEYeIS25v
-         E2okY+SjHNRVthNdxqc9kUZ+0sm/Da+foo2sXgF+raODWWLSWQeKQ/a2oQVr/10reDVK
-         i/izyD/PpFoB9cPDKZvJHQ/KJCnf4dBXR2vM8PAVHLvM1VJ3y5lDgiaLY4CbiW3GbAdW
-         oitQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUURAjDcT4ILeS8zrrEDVylPGi8AlYeHe8f1Q2xeXWhLs+GVXFj/wa7b9thj3cx4G3Cxm3TV+9GnN2Mz0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8c8FLFVa99KqARnndhdM3ZJkiJfMvueOYtxBWYeKklID2oNHt
-	rVV2biXhCyru/VY1+oC76VV9Vupb9WUDvb+VlbvMmLMW7F+XkNuEolBSS8wrrUxEezyn8iRzPGt
-	KV3pNwztYyT2zA6VCi//rcdjqyNPJwtvdYs4U
-X-Google-Smtp-Source: AGHT+IGTFrv2alUePOetWLW0RF+CqiSAQBuYFWA0NuJoz5ABIgUEJXZEmQ0VzCf+TPqF152AaBDGNyuugEy4WKrUbyQ=
-X-Received: by 2002:a05:6402:2681:b0:5c2:5641:af79 with SMTP id
- 4fb4d7f45d1cf-5c997539f25mr556341a12.0.1729094437912; Wed, 16 Oct 2024
- 09:00:37 -0700 (PDT)
+        bh=cUD59f78GtNOAlqBmjuglWzX0LStg1/+Dw/KZ/SMHA4=;
+        b=HLjh2U2gCSE490d3AY39WiE+Kddcfews/vnsP8kS8GaDnw3IraiE6P8lCQyB9NhzQv
+         VZ2TG8/OocE0qAfhPvifv630WKYrz3T3GMJ7TZZXQ0vzJhQQTDlrZwZXEx6lICkwqfo1
+         qYybAQfMbxIkjoub9gGK49db4XYTcLE3BALI2LQrAfG0DhYpxCHca+Ev+pNvvcpaVFAk
+         3zIBKrKflD0yx+NqZuiENZYAMKUzqcy6tgJ2RBMtc0NRyVnH5IheCW1NfGh89aeWgSJB
+         UGncYFmkALe4nD2QPcQ6HA6tsuKnBDPACYeF//sLqhz8n86kLYnO+tKJn3NpLHiZTdxk
+         ws3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWIB/TUBXDFRm8stF6BaplIzVh3ltRbqvFjoPyWGxH5AcV6pRcF09XF2q1UmCmhcsBtc053oIaAd4nlPdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcsaEqdELaUCLqCnxWzGpo8+fe1bXCuIcIr+a7VkyiQ1cCD+RL
+	QtapLpgZezL4yfphXlG6R/H0Rbwr1NI3ly23y384UrIyyOJ5YnZHufSqjlEKEEuxxeQihxWP/GE
+	/7FaG
+X-Google-Smtp-Source: AGHT+IEUXVleXKYhl2NpvbZRlW/hcYtK3uSj23x4qHl0hr3l7JfI4BZWJO7Sc9LMIBL0zFYq3X5Q7A==
+X-Received: by 2002:a05:6512:31cc:b0:539:f763:789d with SMTP id 2adb3069b0e04-539f7639a28mr6563104e87.43.1729094532917;
+        Wed, 16 Oct 2024 09:02:12 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a0001d856sm486700e87.299.2024.10.16.09.02.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 09:02:11 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f8490856so3842236e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:02:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVTDltHPROzSJUsy0EgzXqqjXSVchTgthQWxk69g0fUlA/a6xFZ77Vvkd/89KIWIySQMNHH/BETd/6fHA=@vger.kernel.org
+X-Received: by 2002:a2e:70a:0:b0:2f7:6653:8046 with SMTP id
+ 38308e7fff4ca-2fb329c2176mr77403341fa.25.1729094531214; Wed, 16 Oct 2024
+ 09:02:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016-fix-munmap-abort-v1-1-601c94b2240d@google.com> <3lixuwepwvc6zqy57k2zcw4dntd7cc5cwlx7xxoieuo3pvaajy@e2p5zf5mdzon>
-In-Reply-To: <3lixuwepwvc6zqy57k2zcw4dntd7cc5cwlx7xxoieuo3pvaajy@e2p5zf5mdzon>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 16 Oct 2024 17:59:59 +0200
-Message-ID: <CAG48ez02xVZzOwfx869pEh+UhRvbpq5Z4RVz_Y-S-i6Hm21Jdw@mail.gmail.com>
-Subject: Re: [PATCH fix 6.12] mm: mark mas allocation in vms_abort_munmap_vmas
- as __GFP_NOFAIL
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240819073020.3291287-1-quic_sibis@quicinc.com> <CAD=FV=VnQCO+y_wy=KQhK3wGwHGfO0+MQntgoPh78ZygcgNiig@mail.gmail.com>
+In-Reply-To: <CAD=FV=VnQCO+y_wy=KQhK3wGwHGfO0+MQntgoPh78ZygcgNiig@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 16 Oct 2024 09:01:57 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UXm59wL3yX5+8-BKt+h+uBqvYKa-+y2kMo7SHdCqnVcg@mail.gmail.com>
+Message-ID: <CAD=FV=UXm59wL3yX5+8-BKt+h+uBqvYKa-+y2kMo7SHdCqnVcg@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: Re-order writes to the IMEM region
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 5:40=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
-> * Jann Horn <jannh@google.com> [241016 11:08]:
-> > vms_abort_munmap_vmas() is a recovery path where, on entry, some VMAs
-> > have already been torn down halfway (in a way we can't undo) but are
-> > still present in the maple tree.
+Hi,
+
+On Mon, Aug 19, 2024 at 4:40=E2=80=AFPM Doug Anderson <dianders@chromium.or=
+g> wrote:
+>
+> Hi,
+>
+> On Mon, Aug 19, 2024 at 12:30=E2=80=AFAM Sibi Sankar <quic_sibis@quicinc.=
+com> wrote:
 > >
-> > At this point, we *must* remove the VMAs from the VMA tree, otherwise
-> > we get UAF.
->
-> Wait, the vma should be re-attached without PTEs and files closed in
-> this case.  I don't see how we are hitting the UAF in your example - we
-> shouldn't unless there is something with the driver itself and the file
-> close?
->
-> My concern is that I am missing an error scenario.
-
-Where are the files supposed to be closed? vms_clean_up_area() unlinks
-the VMA from the file and calls ->close() but doesn't unlink the file,
-right?
-
-FWIW, I tested on commit eca631b8fe80 (current mainline head), I
-didn't check whether anything in the MM tree already addresses this.
-(I probably should have...)
-
-> But since this is under a lock that allows sleeping, shouldn't the
-> shrinker kick in?
-
-Yeah, I think without error injection, you'd basically only fail this
-allocation if the OOM killer has already decided to kill your task and
-the system is entirely out of memory.
-
-OOM kills IIRC have two effects on the page allocator:
-
-1. they allow allocating with no watermarks (ALLOC_OOM) (based on the
-theory that you might need to allocate some memory in order to be able
-to exit and free more memory)
-2. they allow giving up on GFP_KERNEL allocations (see the "/* Avoid
-allocations with no watermarks from looping endlessly */" part of
-__alloc_pages_slowpath())
-
-> Should we just use __GFP_NOFAIL for the first store
-> instead of the error path?
-
-Which first store? Do you mean get rid of vms_abort_munmap_vmas()
-entirely somehow?
-
-> > Fixes: 4f87153e82c4 ("mm: change failure of MAP_FIXED to restoring the =
-gap on failure")
-> > Signed-off-by: Jann Horn <jannh@google.com>
+> > Any write access to the IMEM region when the Q6 is setting up XPU
+> > protection on it will result in a XPU violation. Fix this by ensuring
+> > IMEM writes related to the MBA post-mortem logs happen before the Q6
+> > is brought out of reset.
+> >
+> > Fixes: 318130cc9362 ("remoteproc: qcom_q6v5_mss: Add MBA log extraction=
+ support")
+> > Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 > > ---
-> > This can be tested with the following reproducer (on a kernel built wit=
-h
-> > CONFIG_KASAN=3Dy, CONFIG_FAILSLAB=3Dy, CONFIG_FAULT_INJECTION_DEBUG_FS=
-=3Dy,
-> > with the reproducer running as root):
-> >
-> > ```
-> >
-> >   typeof(x) __res =3D (x);      \
-> >   if (__res =3D=3D (typeof(x))-1) \
-> >     err(1, "SYSCHK(" #x ")"); \
-> >   __res;                      \
-> > })
-> >
-> > static void write_file(char *name, char *buf) {
-> >   int fd =3D open(name, O_WRONLY);
-> >   if (fd =3D=3D -1)
-> >     err(1, "unable to open for writing: %s", name);
-> >   if (SYSCHK(write(fd, buf, strlen(buf))) !=3D strlen(buf))
-> >     errx(1, "write %s", name);
-> >   SYSCHK(close(fd));
-> > }
-> >
-> > int main(void) {
-> >   // make a large area with a bunch of VMAs
-> >   char *area =3D SYSCHK(mmap(NULL, AREA_SIZE, PROT_NONE, MAP_PRIVATE|MA=
-P_ANONYMOUS, -1, 0));
-> >   for (int off=3D0; off<AREA_SIZE; off +=3D 0x2000)
-> >     SYSCHK(mmap(area+off, 0x1000, PROT_READ, MAP_FIXED|MAP_PRIVATE|MAP_=
-ANONYMOUS, -1, 0));
-> >
-> >   // open a file whose mappings use usbdev_vm_ops, and map it in part o=
-f this area
-> >   int map_fd =3D SYSCHK(open("/dev/bus/usb/001/001", O_RDONLY));
-> >   void *map =3D SYSCHK(mmap(area, 0x1000, PROT_READ, MAP_SHARED|MAP_FIX=
-ED, map_fd, 0));
-> >   close(map_fd);
-> >
-> >   // make RWX mapping request fail late
-> >   SYSCHK(prctl(65/*PR_SET_MDWE*/, 1/*PR_MDWE_REFUSE_EXEC_GAIN*/, 0, 0, =
-0));
-> >
-> >   // some random other file
-> >   int fd =3D SYSCHK(open("/etc/passwd", O_RDONLY));
-> >
-> >   /* disarm for now */
-> >   write_file("/sys/kernel/debug/failslab/probability", "0");
-> >
-> >   /* fail allocations of maple_node... */
-> >   write_file("/sys/kernel/debug/failslab/cache-filter", "Y");
-> >   write_file("/sys/kernel/slab/maple_node/failslab", "1");
-> >   /* ... even though it's a sleepable allocation... */
-> >   write_file("/sys/kernel/debug/failslab/ignore-gfp-wait", "N");
-> >   /* ... in this task... */
-> >   write_file("/sys/kernel/debug/failslab/task-filter", "Y");
-> >   write_file("/proc/self/make-it-fail", "1");
-> >   /* ... every time... */
-> >   write_file("/sys/kernel/debug/failslab/times", "-1");
-> >   /* ... after 8 successful allocations (value chosen experimentally)..=
-. */
-> >   write_file("/sys/kernel/debug/failslab/space", "2048"); // one object=
- is 256
-> >   /* ... and print where the allocations actually failed... */
-> >   write_file("/sys/kernel/debug/failslab/verbose", "2");
-> >   /* ... and that's it, arm it */
-> >   write_file("/sys/kernel/debug/failslab/probability", "100");
-> >
-> >   // This mmap request will fail late due to MDWE.
-> >   // The error recovery path will attempt to clear out the VMA pointers=
- with a
-> >   // spanning_store (which will be blocked by error injection).
-> >   mmap(area, AREA_SIZE, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP=
-_FIXED, fd, 0);
-> >
-> >   /* disarm */
-> >   write_file("/sys/kernel/debug/failslab/probability", "0");
-> >
-> >   SYSCHK(munmap(map, 0x1000)); // UAF expected here
-> >   system("cat /proc/$PPID/maps");
-> > }
-> > ```
-> >
-> > Result:
-> > ```
-> > FAULT_INJECTION: forcing a failure.
-> > name failslab, interval 1, probability 100, space 256, times -1
-> > CPU: 3 UID: 0 PID: 607 Comm: unmap-fail Not tainted 6.12.0-rc3-00013-ge=
-ca631b8fe80 #518
-> > [...]
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0x80/0xa0
-> >  should_fail_ex+0x4d3/0x5c0
-> > [...]
-> >  should_failslab+0xc7/0x130
-> >  kmem_cache_alloc_noprof+0x73/0x3a0
-> > [...]
-> >  mas_alloc_nodes+0x3a3/0x690
-> >  mas_nomem+0xaa/0x1d0
-> >  mas_store_gfp+0x515/0xa80
-> > [...]
-> >  mmap_region+0xa96/0x2590
-> > [...]
-> >  do_mmap+0x71e/0xfe0
-> > [...]
-> >  vm_mmap_pgoff+0x17a/0x2f0
-> > [...]
-> >  ksys_mmap_pgoff+0x2ee/0x460
-> >  do_syscall_64+0x68/0x140
-> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [...]
-> >  </TASK>
-> > mmap: unmap-fail: (607) Unable to abort munmap() operation
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > BUG: KASAN: slab-use-after-free in dec_usb_memory_use_count+0x365/0x430
-> > Read of size 8 at addr ffff88810e9ba8b8 by task unmap-fail/607
+> >  drivers/remoteproc/qcom_q6v5_mss.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> What was this pointer?
-
-Should be the "struct usb_memory *usbm".
-
-> >
-> > CPU: 3 UID: 0 PID: 607 Comm: unmap-fail Not tainted 6.12.0-rc3-00013-ge=
-ca631b8fe80 #518
-> > [...]
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0x66/0xa0
-> >  print_report+0xce/0x670
-> > [...]
-> >  kasan_report+0xf7/0x130
-> > [...]
-> >  dec_usb_memory_use_count+0x365/0x430
-> >  remove_vma+0x76/0x120
-> >  vms_complete_munmap_vmas+0x447/0x750
-> >  do_vmi_align_munmap+0x4b9/0x700
-> > [...]
-> >  do_vmi_munmap+0x164/0x2e0
-> >  __vm_munmap+0x128/0x2a0
-> > [...]
-> >  __x64_sys_munmap+0x59/0x80
-> >  do_syscall_64+0x68/0x140
-> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [...]
-> >  </TASK>
-> >
-> > Allocated by task 607:
-> >  kasan_save_stack+0x33/0x60
-> >  kasan_save_track+0x14/0x30
-> >  __kasan_kmalloc+0xaa/0xb0
-> >  usbdev_mmap+0x1a0/0xaf0
-> >  mmap_region+0xf6e/0x2590
-> >  do_mmap+0x71e/0xfe0
-> >  vm_mmap_pgoff+0x17a/0x2f0
-> >  ksys_mmap_pgoff+0x2ee/0x460
-> >  do_syscall_64+0x68/0x140
-> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> >
-> > Freed by task 607:
-> >  kasan_save_stack+0x33/0x60
-> >  kasan_save_track+0x14/0x30
-> >  kasan_save_free_info+0x3b/0x60
-> >  __kasan_slab_free+0x4f/0x70
-> >  kfree+0x148/0x450
-> >  vms_clean_up_area+0x188/0x220
+> As discussed offlist, this isn't a perfect fix since writes to this
+> IMEM could happen by other drivers and those could still cause things
+> to go boom if they run in parallel with this driver. That being said:
+> * It seems like a more proper fix needs a coordinated effort between a
+> device's built-in firmware and the modem firmware. This is difficult /
+> near impossible to get done properly.
+> * Even if we do a more proper fix, making this change won't hurt.
+> * This change will immediately improve things by avoiding the XPU
+> violation in the most common case.
 >
-> What line is this?
+> I've confirmed that the test case I had where things were going boom
+> is fixed. Thus:
+>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Tested-by: Douglas Anderson <dianders@chromium.org>
 
-Should be the vma->vm_ops->close(vma) call. (That would call
-dec_usb_memory_use_count(), which tail-calls kfree(), so the
-dec_usb_memory_use_count() wouldn't show up in a stack trace.)
+Just checking in to see if there's anything else needed for this patch
+to land. Thanks! :-)
 
-I don't have this kernel build anymore though, sorry. If you want I'll
-rebuild and get a properly symbolized trace.
+-Doug
 
