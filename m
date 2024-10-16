@@ -1,138 +1,151 @@
-Return-Path: <linux-kernel+bounces-367861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686B99A07BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:49:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DAF9A07C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C78F3B21F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:49:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E90288BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4285207208;
-	Wed, 16 Oct 2024 10:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2174207A0A;
+	Wed, 16 Oct 2024 10:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QyzDllOb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8A01CACDB;
-	Wed, 16 Oct 2024 10:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3F22076D1;
+	Wed, 16 Oct 2024 10:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729075757; cv=none; b=BGWSWrttwyNnXdL8+xddUXHnargJcJVaEpaK6v9umIvc9i/7TFAaFan19q80fwvBnbyy0kcLvxrROcAugdQCUVsVZFRHyR+eRh/Rvw+XEU6KmDmA6mKC27zj13GRG+zUSQjcWBz7hrJ/g1fzEJIZOfWBeiMbg2jwKXqFj5dTe78=
+	t=1729075760; cv=none; b=FjmXH0AtgZKoNgtl0QIqI8nAg+024066R7AK5QUGVht0od8DAD9oDXaPEMYEK+X0yTgHRGoNJDzQCsuEHJi/YVA9WQR6jWBk9hVBNFdki+3IVhX1sfquExU/qo6BfVA4Pd66hGw/gHJNxvy+ZvmD52S6lgi7PSkgHBysZ4aUubE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729075757; c=relaxed/simple;
-	bh=Of+KC8iAHIEaZajNpEuiGIfgEX87fKBFGGV1Zqnik38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vGDOfE2NOyicCLWfO80t3vT9TgZG04s+G27NJRc3I5EyhH7d1mHL/3N0zrDm23cP7Snnv5aCPhRlmTPwOQS2mCK3kORwwRDMjYLWP8qABQGsVRGd6mTGhMxW3CU2ENXcFlha0xaIayHkYOiN+zBTyUI4jTeYUoU65rbn9hlsSAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3397C4CECF;
-	Wed, 16 Oct 2024 10:49:15 +0000 (UTC)
-Message-ID: <2bffad36-efc1-44a2-861a-5d6afb7e5b38@xs4all.nl>
-Date: Wed, 16 Oct 2024 12:49:14 +0200
+	s=arc-20240116; t=1729075760; c=relaxed/simple;
+	bh=FEayBlbykrVTjYuMEz+BFZKS8/AP+nKNYBRbQnR+8s4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AAzTAXaLefxsSq0fdrC/NZI+DUsPcKaAOwYx6xxp8n4SNcgtJ9zhhU7IGOYrOj2GzprIvpU1KBfJ4fm3bkplZUGvOhV1AolPxTvTtHD3lZzWtUEZnO9ACc9MgSErrUnengpqksx8HExVNVbicdRB8XB1B4PhIQ2R6bRAfTBLdo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QyzDllOb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618FCC4CED6;
+	Wed, 16 Oct 2024 10:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729075759;
+	bh=FEayBlbykrVTjYuMEz+BFZKS8/AP+nKNYBRbQnR+8s4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QyzDllObsNdSWlHUkqNWjNdgY5TxfY6Zcics+F4XqWSkjiSn/FTT9/wmQTWHT/VAu
+	 RH23LQg4WDjEMJnK4CtzVb4cgvfEyNDfmHC/HqfpTtK3lqrna85wBR9jnxA4YM9JaF
+	 NmkLo0cNXjZuLvAPDmCuR2qgaCpgD2olRiLO1Ma9X/pX6b2NWs/OKl4i2Q7NjCl97g
+	 ccAcWnLZFJKtdU1mAsRLizmaoyhcW6m6/xkwG6tRClOQFAAmCgQkP6B2EoPlQODgrf
+	 Caq+l0xaUYqDHbvBsxQxen1gHcyI5YEeb8vh9NSnI5xa64EJizptqluvjbOXxX+vzO
+	 Y0RkV3IG7xACg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Tom Zanussi <zanussi@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v6 0/3] tracing: Support poll on event hist file
+Date: Wed, 16 Oct 2024 19:49:15 +0900
+Message-ID:  <172907575534.470540.12941248697563459082.stgit@mhiramat.roam.corp.google.com>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/13] media: v4l2-tpg: prevent the risk of a division by
- zero
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Zhipeng Lu <alexious@zju.edu.cn>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, stable@vger.kernel.org
-References: <cover.1729074076.git.mchehab+huawei@kernel.org>
- <953ea061a4fbe43b10f15308aa8d792afb493e44.1729074076.git.mchehab+huawei@kernel.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <953ea061a4fbe43b10f15308aa8d792afb493e44.1729074076.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 16/10/2024 12:22, Mauro Carvalho Chehab wrote:
-> The logic at tpg_precalculate_line() blindly rescales the
-> buffer even when scaled_witdh is equal to zero. If this ever
+Hi,
 
-scaled_witdh -> scaled_width
+Here is the v6 patch to support polling on event 'hist' file.
+The previous version is here;
 
-> happens, this will cause a division by zero.
-> 
-> Instead, add a WARN_ON() to trigger such cases and return
-> without doing any precalculation.
-> 
-> Fixes: 63881df94d3e ("[media] vivid: add the Test Pattern Generator")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  drivers/media/common/v4l2-tpg/v4l2-tpg-core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
-> index c86343a4d0bf..a22f31515d7e 100644
-> --- a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
-> +++ b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
-> @@ -1795,6 +1795,9 @@ static void tpg_precalculate_line(struct tpg_data *tpg)
->  	unsigned p;
->  	unsigned x;
->  
-> +	if (WARN_ON(tpg->src_width == 0))
+https://lore.kernel.org/all/172398710447.295714.4489282566285719918.stgit@devnote2
 
-You need to check for both src_width and scaled_width.
+This version is rebased on the ftrace/for-next branch of the
+linux-trace tree, and use global irq_work and wq instead of per-event
+one.
 
-Also replace this by WARN_ON_ONCE.
+Background
+----------
+There has been interest in allowing user programs to monitor kernel
+events in real time. Ftrace provides `trace_pipe` interface to wait
+on events in the ring buffer, but it is needed to wait until filling
+up a page with events in the ring buffer. We can also peek the
+`trace` file periodically, but that is inefficient way to monitor
+a randomely happening event.
 
-Regards,
+Overview
+--------
+This patch set allows user to `poll`(or `select`, `epoll`) on event
+histogram interface. As you know each event has its own `hist` file
+which shows histograms generated by trigger action. So user can set
+a new hist trigger on any event you want to monitor, and poll on the
+`hist` file until it is updated.
 
-	Hans
+There are 2 poll events are supported, POLLIN and POLLPRI. POLLIN
+means that there are any readable update on `hist` file and this
+event will be flashed only when you call read(). So, this is
+useful if you want to read the histogram periodically.
+The other POLLPRI event is for monitoring trace event. Like the
+POLLIN, this will be returned when the histogram is updated, but
+you don't need to read() the file and use poll() again.
 
-> +		return;
-> +
->  	switch (tpg->pattern) {
->  	case TPG_PAT_GREEN:
->  		contrast = TPG_COLOR_100_RED;
+Note that this waits for histogram update (not event arrival), thus
+you must set a histogram on the event at first.
 
+Usage
+-----
+Here is an example usage:
+
+----
+TRACEFS=/sys/kernel/tracing
+EVENT=$TRACEFS/events/sched/sched_process_free
+
+# setup histogram trigger and enable event
+echo "hist:key=comm" >> $EVENT/trigger
+echo 1 > $EVENT/enable
+
+# Wait for update
+poll pri $EVENT/hist
+
+# Event arrived.
+echo "process free event is comming"
+tail $TRACEFS/trace
+----
+
+The 'poll' command is in the selftest patch.
+
+You can take this series also from here;
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/event-hist-poll
+
+Thank you,
+---
+
+Masami Hiramatsu (Google) (3):
+      tracing/hist: Add poll(POLLIN) support on hist file
+      tracing/hist: Support POLLPRI event for poll on histogram
+      selftests/tracing: Add hist poll() support test
+
+
+ include/linux/trace_events.h                       |   14 +++
+ kernel/trace/trace_events.c                        |   14 +++
+ kernel/trace/trace_events_hist.c                   |  100 +++++++++++++++++++-
+ tools/testing/selftests/ftrace/Makefile            |    2 
+ tools/testing/selftests/ftrace/poll.c              |   74 +++++++++++++++
+ .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 +++++++++++++++
+ 6 files changed, 275 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/poll.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
