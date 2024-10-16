@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-368791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C8D9A14FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F8E9A150E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB3528657C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7041F23B2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2321D2F4A;
-	Wed, 16 Oct 2024 21:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E5q2MDBe"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AB51D415B;
+	Wed, 16 Oct 2024 21:41:59 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE601D175F;
-	Wed, 16 Oct 2024 21:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD971D2B2F;
+	Wed, 16 Oct 2024 21:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114855; cv=none; b=dp33s5hj5rqW1U3farhX2U9c4YCi3Q1sya8QahwW2wf9qbdNXdA0h0RN2qtKpD5esTHyIZRgLNeZGOf0ju4spXK2bUHmSWAP//LDzjoSwfeKKbhRwr6/gA82rs6ThEk2GXyPiFd2TiUdZzluA9r1RmiIsjxpos0/94ZU+w4K2pM=
+	t=1729114919; cv=none; b=TcD3Pe+Mmx404JpX6gL8848w6M95GA3mlk0GeGmML9r8SE1tDzgg36QGT0F0ovSQw4sxHvXeWdpuRH/Q/UAmHqDhWOZisGL8FpEtLOa7GumLYWoF4RzEP9+UUvRnKsSrwiIPNeEyTb11n7rlRyJoFenJaGeFnWnhElaGq033Mx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729114855; c=relaxed/simple;
-	bh=xVn4o4rGOsQXlA0r8hXlilg0V9t/iR/PfJwTgU4wtds=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=hAbThqDD4xdZGRPD4SXyTEhs/xDIro1FzO9+UQjVtFQkGunNqGrdq8INh85Haw2X8kfpffq3JhACrnecga19y8tjfbNm0n3ram7FmhYa+Po0CkQ1synZPHfYIuQCQs1SShK8AeCamD1Gu1nfdxeT8csRnQhteM0uOplH4L++IF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E5q2MDBe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB452C4CEC5;
-	Wed, 16 Oct 2024 21:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729114855;
-	bh=xVn4o4rGOsQXlA0r8hXlilg0V9t/iR/PfJwTgU4wtds=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=E5q2MDBeJ3AZEty7jlfuBZlXwHvH+1m7Z9dZd0BIzU0s53rKiwi4JhM4716FlxplO
-	 /ewjFWULDN1R2tGN/ui3NteZZucqNUBwhgb6sdP5H6FNCJBq2hIyD45FRoOart/LnH
-	 S7ntzFtD0B7EakHcbUIIllC/0nnMc3HKMhWllxw9Ex9sANIZlPlkjavIysCjs8lHyW
-	 K0gVnndTZTxQa6IFzw2AlLqoEHCrnN2n5mstdm7XjluqsRnDIM0aUfGAAHjtuhkk6G
-	 T8VwWxAx6rS8MPXTobD6SBiu6E/m7EpMjmXNNEO9Co8eptzQUZGSGzqKFV87Q5lHL2
-	 aH0GkEG0+EOmg==
-Message-ID: <85a4214a67d69a2cd458a9e2bcca7338.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729114919; c=relaxed/simple;
+	bh=S3EfK2JVGZ3joMiaZUylXW+vGex1gp8GJngUZrzgF2k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YVd+npUtg7Yh5JTpEd+B+jCiRkk3DSuH0ygYZ8bqHsyGVlM/YI4Xtk7b4uJ6myuFv4AfF+l8xurRJXkR2ZgsOPn/QXGELHi+wiGMCgj3tOVdjNFjHSy9f7sYJ8hHlZdvn7hXBvQnH2VK4mr+hiju3dHlvwfc5xsJBaYYNTCU5b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4ACC4CECD;
+	Wed, 16 Oct 2024 21:41:58 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 46BE01060453; Wed, 16 Oct 2024 23:41:56 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, lee@kernel.org, sre@kernel.org, 
+ tsbogend@alpha.franken.de, markus.stockhausen@gmx.de, 
+ Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-mips@vger.kernel.org
+In-Reply-To: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
+References: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
+Subject: Re: (subset) [PATCH v6 0/6] RTL9300 support for reboot and i2c
+Message-Id: <172911491628.630785.7202407720248115906.b4-ty@collabora.com>
+Date: Wed, 16 Oct 2024 23:41:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241016022658.2131826-1-ruanjinjie@huawei.com>
-References: <20241016022658.2131826-1-ruanjinjie@huawei.com>
-Subject: Re: [PATCH] clk: test: Fix some memory leaks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: ruanjinjie@huawei.com
-To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mripard@kernel.org, mturquette@baylibre.com
-Date: Wed, 16 Oct 2024 14:40:52 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Quoting Jinjie Ruan (2024-10-15 19:26:58)
-> CONFIG_CLK_KUNIT_TEST=3Dy, CONFIG_DEBUG_KMEMLEAK=3Dy
-> and CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN=3Dy, the following memory leak occurs.
->=20
-> If the KUNIT_ASSERT_*() fails, the latter (exit() or testcases)
-> clk_put() or clk_hw_unregister() will fail to release the clk resource
-> and cause memory leaks, use new clk_hw_register_kunit()
-> and clk_hw_get_clk_kunit() to automatically release them.
-[...]
->=20
-> Fixes: 02cdeace1e1e ("clk: tests: Add tests for single parent mux")
-> Fixes: 2e9cad1abc71 ("clk: tests: Add some tests for orphan with multiple=
- parents")
-> Fixes: 433fb8a611ca ("clk: tests: Add missing test case for ranges")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
 
-Applied to clk-fixes
+On Wed, 16 Oct 2024 11:59:42 +1300, Chris Packham wrote:
+> As requested I've combined my two series into a single one to provide some
+> better context for reviewers. I'm not sure which trees the patches should go in
+> via. The first two are reasonably independent and could go in via linux-pm. I
+> guess technically the last one could go via linux-i2c but it needs the and the
+> bindings/dts updates which would probably make sense to come via linux-mips.
+> 
+> --
+> 2.46.1
+> 
+> [...]
+
+Applied, thanks!
+
+[1/6] dt-bindings: reset: syscon-reboot: Add reg property
+      commit: e7af7d13316dc5e2293c4f777f71bd8331f5d7a5
+[2/6] power: reset: syscon-reboot: Accept reg property
+      commit: ce38cdc908557953604ffb0a91ef5ae3fbdf1c6b
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
 
