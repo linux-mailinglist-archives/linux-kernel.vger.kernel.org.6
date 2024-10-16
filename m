@@ -1,143 +1,160 @@
-Return-Path: <linux-kernel+bounces-367932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E2F9A0892
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:39:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7207B9A0843
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E081F24A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:39:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D389286404
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D9520B208;
-	Wed, 16 Oct 2024 11:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8576E2076C3;
+	Wed, 16 Oct 2024 11:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="ovtVzU9e"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbxcZs/4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BA0207A10;
-	Wed, 16 Oct 2024 11:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF251206E9C;
+	Wed, 16 Oct 2024 11:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729078633; cv=none; b=ljt7rXLJJGftmn9yAInl5Txzut9U/nIMK7qikJaR2cLNL7R4uRuUbkfQlhAOP0GQ8fwDn/xhTffN9rFBuLAFO/jgVt4YNVddIlOIEescKM+vXUeG7ULu7IMcnEbcZfyineNJbN/v4Fyo3YXW50a9EVdpqeY4QS711oscI40nNFU=
+	t=1729077893; cv=none; b=lqKDNzV2zPGmIDDYyDS0EldL/9U9+X0MuYpzAMnWTBeIdEgN8i/5Fpyon0iZxfHvDlFDdljNASmYRZoxbPOZCwa+F3puJKXM7itVl1uxJl1KT3JO7Y3/cuywcbh5fg18Pzd5mYQK2YXDTQg3HSBr9ri9SvVXeQe3EpeYEtl1uZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729078633; c=relaxed/simple;
-	bh=+IWjNL+/5z93DZM/IY4hMGHmNMClcNBj981ne4LwJMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WL+iw01aTNvzYil8NBtjTYdUJ48MXbMyvqbJLOHBWyJqcqOlwt5jeb8LwkANvQYh5e3+te5UK50jFq4mSQ8JkfhBD90JEFJDUoJYZNh5gy5O4MyUXkidREpNbQ7UG80k/as16AyK/1ricSinFVEhIhKiYkdN4SlQRNb0yI9TQLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=ovtVzU9e reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id a5553dbf070f50d8; Wed, 16 Oct 2024 13:37:02 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id AF3ABA93969;
-	Wed, 16 Oct 2024 13:37:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1729078622;
-	bh=+IWjNL+/5z93DZM/IY4hMGHmNMClcNBj981ne4LwJMM=;
-	h=From:Subject:Date;
-	b=ovtVzU9estYbvNQk7wC7k0jNYU5xWz+7hDcNjG0pOvwv/ZJYZBakyXNguY9sS8EEU
-	 ZcS0gPW5xhZt319QC08DCC7+8oSTb3rXppNLchmc8hkkFyQVQ4JKxUoWX6Z9t2qTVL
-	 oqf5inLJjUL52eZM7bvcp7JDyIMBCDcvwLqKrfx3HZ8jdgAmkSx1deIkGhpsBsDUxP
-	 zxUoGxu0Qg0L345YAVWKLxyFshg3tTQGnceq8k4efDOr7doz7skFf/gt8xxVBu716C
-	 trIUQMupulYjyVrqnTyy4vHtgqRSA8Ij7AxzbbibigBBHJjP/QmxP3kjJ0i6IG4zGL
-	 DBi4YoWZj2rvg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v1 02/10] thermal: core: Rename trip list node in struct
- thermal_trip_desc
-Date: Wed, 16 Oct 2024 13:23:27 +0200
-Message-ID: <2201558.irdbgypaU6@rjwysocki.net>
-In-Reply-To: <4958885.31r3eYUQgx@rjwysocki.net>
-References: <4958885.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1729077893; c=relaxed/simple;
+	bh=/f5ZOuxkKpkc2C8e/hGt/Hm9Ch/o+QxbJJIVvOOBMdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GLQpPTocxqIHI8c8TOLbP4XYx+apH7QoXzFIoCKpXXYhvlTl91f+ZuSLOWGIEfhXWuHoVCQPo+PZzXBo2ycdtLxY7ld6gk1CGpQF6m0dzG8E9qm6CEbyugX46y3maWz8Ow1+w6Khe4ulf5qnWuM5aNWWGs5rYC2ofFrCAFs8MAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbxcZs/4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA96C4CEC5;
+	Wed, 16 Oct 2024 11:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729077892;
+	bh=/f5ZOuxkKpkc2C8e/hGt/Hm9Ch/o+QxbJJIVvOOBMdY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lbxcZs/4W2dDLIVibJqUCESaXCiXNHPq150CvFTaEIW6zyKoJnhfQR9/UJSB/OoH0
+	 VLCr7WNUsxwNUt1fbhaM28g7IjUUg5CehSG36wgoDpajeE56sFdfTru6jYHx1DA9G9
+	 fbOEp+Od0GASkKaNdf4HLNYLnadKzvQEhcNUHMbwX0RUl5gryBgRz1h011+z6wB94Y
+	 RFqE/HOpCDfa/+qKNAS3HOIjltvjx/Cx6RURSCZCXD4y/IlqyHt9EyJmP63n+PVzZf
+	 TiuBMoII8cXBdm4YWm+hFZ31Ky8fQTEzutIDOO03Ig/xny8EmI9YWNIZUG8dMOB3Vd
+	 CY9Cd+DqhFoHQ==
+Date: Wed, 16 Oct 2024 13:24:48 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH 10/13] media: adv7604 prevent underflow condition when
+ reporting colorspace
+Message-ID: <20241016132448.15e5a4fa@foz.lan>
+In-Reply-To: <e591ffa7-4214-4ec0-91f3-65c809aedce9@xs4all.nl>
+References: <cover.1729074076.git.mchehab+huawei@kernel.org>
+	<41d12c1afd6571f9cc56c1b920df6ba558d0b927.1729074076.git.mchehab+huawei@kernel.org>
+	<e591ffa7-4214-4ec0-91f3-65c809aedce9@xs4all.nl>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Em Wed, 16 Oct 2024 12:57:53 +0200
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
 
-Since the list node field in struct thermal_trip_desc is going to be
-used for purposes other than trip crossing notification, rename it
-to list_node.
+> On 16/10/2024 12:22, Mauro Carvalho Chehab wrote:
+> > Currently, adv76xx_log_status() reads some date using
+> > io_read() which may return negative values. The current logi
+> > doesn't check such errors, causing colorspace to be reported
+> > on a wrong way at adv76xx_log_status().
+> > 
+> > If I/O error happens there, print a different message, instead
+> > of reporting bogus messages to userspace.
+> > 
+> > Fixes: 54450f591c99 ("[media] adv7604: driver for the Analog Devices ADV7604 video decoder")
+> > Cc: stable@vger.kernel.org  
+> 
+> Not really a fix since this would just affect logging for debugging
+> purposes. I would personally just drop the Fixes and Cc tag.
 
-No functional impact.
+The issue is on a VIDIOC_ ioctl, so part of media API. Ok, this is
+used only for debugging purposes and should, instead be implemented
+via debugfs, etc, but, in summary: it is what it is: part of the V4L2
+uAPI.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |   10 +++++-----
- drivers/thermal/thermal_core.h |    2 +-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+-
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -414,13 +414,13 @@ static void add_trip_to_sorted_list(stru
- 	struct thermal_trip_desc *entry;
- 
- 	/* Assume that the new entry is likely to be the last one. */
--	list_for_each_entry_reverse(entry, list, notify_list_node) {
-+	list_for_each_entry_reverse(entry, list, list_node) {
- 		if (entry->notify_temp <= td->notify_temp) {
--			list_add(&td->notify_list_node, &entry->notify_list_node);
-+			list_add(&td->list_node, &entry->list_node);
- 			return;
- 		}
- 	}
--	list_add(&td->notify_list_node, list);
-+	list_add(&td->list_node, list);
- }
- 
- static void handle_thermal_trip(struct thermal_zone_device *tz,
-@@ -586,10 +586,10 @@ void __thermal_zone_device_update(struct
- 
- 	thermal_zone_set_trips(tz, low, high);
- 
--	list_for_each_entry(td, &way_up_list, notify_list_node)
-+	list_for_each_entry(td, &way_up_list, list_node)
- 		thermal_trip_crossed(tz, &td->trip, governor, true);
- 
--	list_for_each_entry_reverse(td, &way_down_list, notify_list_node)
-+	list_for_each_entry_reverse(td, &way_down_list, list_node)
- 		thermal_trip_crossed(tz, &td->trip, governor, false);
- 
- 	if (governor->manage)
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -31,7 +31,7 @@ struct thermal_trip_attrs {
- struct thermal_trip_desc {
- 	struct thermal_trip trip;
- 	struct thermal_trip_attrs trip_attrs;
--	struct list_head notify_list_node;
-+	struct list_head list_node;
- 	struct list_head thermal_instances;
- 	int notify_temp;
- 	int threshold;
+Now, the question about what should have Fixes: tag and what
+shouldn't is a different matter. I've saw long discussions about
+that at the kernel mailing lists. In the particular case of y2038,
+I'm pretty sure I saw some of them with Fixes tag on it.
+
+> 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
+> 
+> Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > ---
+> >  drivers/media/i2c/adv7604.c | 26 +++++++++++++++++---------
+> >  1 file changed, 17 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+> > index 48230d5109f0..272945a878b3 100644
+> > --- a/drivers/media/i2c/adv7604.c
+> > +++ b/drivers/media/i2c/adv7604.c
+> > @@ -2519,10 +2519,10 @@ static int adv76xx_log_status(struct v4l2_subdev *sd)
+> >  	const struct adv76xx_chip_info *info = state->info;
+> >  	struct v4l2_dv_timings timings;
+> >  	struct stdi_readback stdi;
+> > -	u8 reg_io_0x02 = io_read(sd, 0x02);
+> > +	int ret;
+> > +	u8 reg_io_0x02;
+> >  	u8 edid_enabled;
+> >  	u8 cable_det;
+> > -
+> >  	static const char * const csc_coeff_sel_rb[16] = {
+> >  		"bypassed", "YPbPr601 -> RGB", "reserved", "YPbPr709 -> RGB",
+> >  		"reserved", "RGB -> YPbPr601", "reserved", "RGB -> YPbPr709",
+> > @@ -2621,13 +2621,21 @@ static int adv76xx_log_status(struct v4l2_subdev *sd)
+> >  	v4l2_info(sd, "-----Color space-----\n");
+> >  	v4l2_info(sd, "RGB quantization range ctrl: %s\n",
+> >  			rgb_quantization_range_txt[state->rgb_quantization_range]);
+> > -	v4l2_info(sd, "Input color space: %s\n",
+> > -			input_color_space_txt[reg_io_0x02 >> 4]);
+> > -	v4l2_info(sd, "Output color space: %s %s, alt-gamma %s\n",
+> > -			(reg_io_0x02 & 0x02) ? "RGB" : "YCbCr",
+> > -			(((reg_io_0x02 >> 2) & 0x01) ^ (reg_io_0x02 & 0x01)) ?
+> > -				"(16-235)" : "(0-255)",
+> > -			(reg_io_0x02 & 0x08) ? "enabled" : "disabled");
+> > +
+> > +	ret = io_read(sd, 0x02);
+> > +	if (ret < 0) {
+> > +		v4l2_info(sd, "Can't read Input/Output color space\n");
+> > +	} else {
+> > +		reg_io_0x02 = ret;
+> > +
+> > +		v4l2_info(sd, "Input color space: %s\n",
+> > +				input_color_space_txt[reg_io_0x02 >> 4]);
+> > +		v4l2_info(sd, "Output color space: %s %s, alt-gamma %s\n",
+> > +				(reg_io_0x02 & 0x02) ? "RGB" : "YCbCr",
+> > +				(((reg_io_0x02 >> 2) & 0x01) ^ (reg_io_0x02 & 0x01)) ?
+> > +					"(16-235)" : "(0-255)",
+> > +				(reg_io_0x02 & 0x08) ? "enabled" : "disabled");
+> > +	}
+> >  	v4l2_info(sd, "Color space conversion: %s\n",
+> >  			csc_coeff_sel_rb[cp_read(sd, info->cp_csc) >> 4]);
+> >    
+> 
 
 
 
+Thanks,
+Mauro
 
