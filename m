@@ -1,148 +1,279 @@
-Return-Path: <linux-kernel+bounces-368150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D791E9A0BEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:52:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCD59A0BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B90F286539
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE8F1F270DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7774920C007;
-	Wed, 16 Oct 2024 13:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C213920C001;
+	Wed, 16 Oct 2024 13:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0EIQuVk1"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RDe8sf89"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2060.outbound.protection.outlook.com [40.107.96.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B68B208218
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086752; cv=none; b=Owk34Pw83nUJznMXwrE/C4GxHrYD6kJ8rmphebWeiIVAb2lIXdXEVUsEpJPGTuzMRxL8mGROKepgoGU5zssCKIx8hdZzG+A24clo3Er9W40YU6MJ/ERRAZZ9Vli87zlVCmtvV1UynDmqdZuMkTfHNxH+w79z8R74aoLJMCtX3g4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086752; c=relaxed/simple;
-	bh=VVX/YrughqBZ9ns5PdhCeSOcP7HVYly5xSyjLWSoCXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2fdjhCgqb+BY53/Z1WlWD5AiyQhkgd4P9gLrapjHs59wZ2H7cFHILNcge/LH+gUqVmXbZ7yVVQio6QaYTuV8o8Px3kt5CgvaGY6GBkm1IRSkuaP9oKzUXJqPxlB5A582fAQc2TIy2cNkZu3j90pJf5uE4XwcAnNFyTuetWRFSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0EIQuVk1; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c94dd7e1c0so7262821a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729086749; x=1729691549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4K5n0bY/MNJApsUthAN1NPIj08Soy9GOdy9ssrn3mY=;
-        b=0EIQuVk1RYpfv2q6yHbVisFomkrz76v+bd54R0k+TujCLMa4HAWrrugOLo35eq+k7i
-         gl3zBhDzNrMu0SyrG+Ved2jIJU8iI0Snon54x6JmGnamzEca4cfsGLXmUKek8ySBMJm/
-         ub7/vDTKV2RSs27RZoSzFCpEIWYkEbhtBIyRuFUIF6KbLhKfQqSFLgmKhY4vcQc4BnOX
-         0iMZUf5+Vbp5r9dPo4GZMrJYBc7dYBBA5sBoJpFe++QP+GCL9bmqlRE6FpK1p/yd7FIN
-         R3RmRVHJtpS51AqROAWD13J7IAhbVby9Z8sJBIsQGdUtCYh9qmsNMlLhGWBgRml5rAWm
-         YtvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729086749; x=1729691549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B4K5n0bY/MNJApsUthAN1NPIj08Soy9GOdy9ssrn3mY=;
-        b=fcXDyQ+2+Zb2Dm69H+n8lbIPdqd3zh9dMEp43YdGVmnDEhaLUlWSddzRyM/t2y7E2W
-         3xzQTczhMgpZiBzTxgoJOnd3tG2tbXo6057E5MBfFhaTwgKQ5YHsz/dr8Oksn5nbzKuW
-         V7AkweefDODMNPWn8XT49GTJxv6J/O9WRlr6urjE0PHL11B/jIBMJlQwANJalfoimRwz
-         +qu/L94EEd/u89cx/wAT1KAMzVdMM+uwtF6++xxlf5cQmexNDy+coWtiKEesSW/vRPu8
-         GtXteTq1iNQo4UXTJ0L3o91Phv9p/t+/5fat/qZjYDk/jggSWFIS/lCMS2UR3TOZr6Hx
-         zd4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXmJ3WDbM42jfyVbiapGh1uVW6SLcNIY7YkBF7Ib5cB9I5k7TnhUQLUyaSrjkkSB3i8W5t22KfdX8cEZ9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz4Yv1VZFmJ339yGkahEHcaUwDYYoxuw76C7KUL5YdsOXcoi4N
-	XrKTRDLn/3gszfthqj+pcPlLUHpTdyVRLvUEwmYEVADzEy3n/XeCl8CCl3jzqB0=
-X-Google-Smtp-Source: AGHT+IGoNQzV+Bg1qNjVUvhK/C+rlK7lfaTe4z86a7lUttjr0E2+hamRKC5LOMtljrg6bMBomFnMuA==
-X-Received: by 2002:a05:6402:42c6:b0:5c9:8d36:e2e7 with SMTP id 4fb4d7f45d1cf-5c98d36e3b1mr5159175a12.33.1729086748713;
-        Wed, 16 Oct 2024 06:52:28 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:e416:44e3:8348:4e6f])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d7b4a63sm1754723a12.79.2024.10.16.06.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 06:52:28 -0700 (PDT)
-Date: Wed, 16 Oct 2024 15:52:25 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Yassine Oudjana <yassine.oudjana@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Sam Shih <sam.shih@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Yassine Oudjana <y.oudjana@protonmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 2/2] clk: mediatek: Add drivers for MediaTek MT6735
- main clock and reset drivers
-Message-ID: <2ceewj7y4ybqyv4xxnms63zsi3bbw5t6opvjf3z4rorsxlwfq6@jlwzyy4umyif>
-References: <20241010132659.81606-1-y.oudjana@protonmail.com>
- <20241010132659.81606-3-y.oudjana@protonmail.com>
- <vn466kmo2uqrf6ap54oat2bipj4lsfri7asnsrptrlthva6j5m@dop6xit2pzjk>
- <ad000fdb-4474-49c4-9357-f23491231b07@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F9208218
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729086757; cv=fail; b=ZgOQmgQblULLKRxJbUfvZOpFMFWW9k+LgH3n1fSO5W3re3izaKC8ApkkfyIslxLaLAE8YLtuoK7qO0uSbW230DP1ePe5uTu+8wsOEIbE4ejk8BLzR3Sc0IOXtWehlzSfmueJ3DeJ72XeX6ZGwGFARbqoTeK1Df8MuE5dXXn6lyo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729086757; c=relaxed/simple;
+	bh=shVUVKfEFZuivSxVJt5mxwcjTwZyBijbMyoLaAxOxeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hLcQVDVH0Amgeu1uCg/nAdm1S1kPziY+VfXvvMs0KeP6Aziw2b1ps5LYrBzqC0MrhPUPYRQHXMBIq3CtIUgtMFaVs0TfKeWt1HBXxZPMZwmh1wYTI8Rfx5gVVxLN8E1T73xmMKAcsYKK/P46JKKEZ5yUtMJq6B5Cwr/mtVbn0Pk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RDe8sf89; arc=fail smtp.client-ip=40.107.96.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LeY5WL6fuP1+ii1S+f23HBuJ70EeMgqIykP5MS+EzEAD9qFpvHHsTKrLlJ673MV1zczJ7daFnVFupkJpzi1Y8Nx1S2ZSqAmXPqFWINgnhLLsRXXB/yH1O+uOScurgXTyV0103nSo+E25i/8lIOjARGNLyJFBfNTuTIjpiTjPG3o4AAaFxwnDUpryLYYv/YfarjYpI8UdSHnWtO3E9vsjCg6cv6vmTm/7hUGC5LxX6WZZVlVDLHWkbF62IYI4h+xpLoJ4WJLl/OxtrzJUGgphH/qKD83XzWXl72jAZyJ3GfdaRroL1iFO8JXBzq6IQFQEFtlXHpXb/qqfevuzw/6uaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bkddZNMi3UTxddxTlp/lpOTdA/pRmgqOUvy7yqN3O+I=;
+ b=Xs1gldL9OXH9F+LpsRtVvJGNkz8BQ/SgvTJrJLdp5fUnbLwkb7qXs5sBGf0flDTwtrmujOD/tA6cXxNdoJiu4sbSEH3aN86eDd3bcuIfngdUaC4UnFB6CFGWSdG8ZqCQXqjPdbAI1P88ka5dWFy5q7KZWyNKJKP1fHk4G8G+/ZgNcSGZDrUXh/jRHY098Ymx2rrxfNdOvEv7D2ljsUw15zPiPh8sbHCX1ZQ92pzrEiFwl/XsCMZ71CQ879aolKSFe7fIdv9aRGi8pOWwF627arrheCTopHgaXtHgzq6+Tb1FzbnRw1rYZLIVxcX1ztA0H1blKe/USZxLxeHR+aTr/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bkddZNMi3UTxddxTlp/lpOTdA/pRmgqOUvy7yqN3O+I=;
+ b=RDe8sf896i9xSv4EHaZbzYrFLnXWUpMbwtKwrJaoMKusbmUoyHzzSsro6VQetceNRNSMjhrZyRW7CtqUSrkqHhjVlF9kEYW+v2VEmwnEeQq9DEIzgxfQcEiUYHW+SL5BOJQCiALmqxKyVvSZkDoiecBZjRF8HTZEhKYbq0cf5VxTAwSg6K6S4uFFZ12Zn9had5ZjW53IPMDRSpvNgX2ytOVh/zGba7cKSR5p7NjVZlvq++q0jfVSJPLs2//Ck/fPvP1wRDeytO50z8tzmQdwtOkoI6QRToq1qbxk59+SNB5E3gB7mePv21HAq+PX5BvVAfaNgH/Dggz0kGK0cG3jNQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SA3PR12MB8439.namprd12.prod.outlook.com (2603:10b6:806:2f7::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
+ 2024 13:52:33 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
+ 13:52:33 +0000
+Date: Wed, 16 Oct 2024 10:52:32 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+	kumaranand@google.com
+Subject: Re: [PATCH v6 5/9] iommu/amd: Modify set_dte_entry() to use 256-bit
+ DTE helpers
+Message-ID: <20241016135232.GM3559746@nvidia.com>
+References: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
+ <20241016051756.4317-6-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016051756.4317-6-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: MN0PR03CA0030.namprd03.prod.outlook.com
+ (2603:10b6:208:52f::19) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nn67jih5s63rwj76"
-Content-Disposition: inline
-In-Reply-To: <ad000fdb-4474-49c4-9357-f23491231b07@collabora.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA3PR12MB8439:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88352b1e-5b11-4423-5922-08dcede9c8b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fPapqE8+xpKthtXSpnzXlMK3GM2xlBVpboorIDKqT+JXWRV+kAojaMqiOhYo?=
+ =?us-ascii?Q?QGUOROQ9xegAF807I6uLbonjlj4caM38900fVUB6qX2J7DMe6sbyVq95RTgt?=
+ =?us-ascii?Q?0uUzpscGkLCwV39fjuEWyQ5m6Av/QwXd9hte4KBueZ3KrbdprHGUiBqeLHZ5?=
+ =?us-ascii?Q?t60yTWlQFfxbG1wJxbrGukmiUGwWYGWkTfhfG32AT5T3/RZINp2FuosJz+Z9?=
+ =?us-ascii?Q?9kovvTNxRqSNNxN9ZfMTcp+pLjDobWp6CaTbfPfDIh/nOXW9q7Xhomc4A44j?=
+ =?us-ascii?Q?purEW9X5bHKWaiqNSKssmzIe+AO97Vj8jZ6cyOwSULStOYG+L09sZNHxSqu4?=
+ =?us-ascii?Q?Pk/II3mYinje61eSdZ08hH7JPhMbF6LVW67wfxaKJFLQVZPaPJkUkqcuCSy4?=
+ =?us-ascii?Q?oiPkBTKugM4WkroHCLUE9HuVNNIlJWrJ4KWHSW1FALrqMF2HzHzt3UNDJC7L?=
+ =?us-ascii?Q?ic413T6//Ny1P9PU0MoO+QGCjDMVz08Jqyy+bIfzBja6UrM6Gn5n20fYfPFE?=
+ =?us-ascii?Q?AUum/3U4YTLL9jepGlMYQiEpBhuwCqaegBMRgGwhWr/xwxRLOKZjT98ySfGz?=
+ =?us-ascii?Q?vMCbH4LtT7TmGe9+jHZ6Mxk5wk1nwm/NqWJ3f65OUvMI5w4/0Gm4ZWMKkV8T?=
+ =?us-ascii?Q?+hLe9f/I2JpbUnVFWMTAUL/BuA8rWwxxcFxV7Vp1mUSum5yX10i304mlMEwk?=
+ =?us-ascii?Q?UxDj1tBF4zipVZW1iVtrjGFmDAIZQafejDEbJCxyg4YKdN58WumwN4S2HbwQ?=
+ =?us-ascii?Q?YpvRQdFyz1uez+dgHQieHNgcn2YG2le/mIL+3o2AeKNbVH6qqrQrf7Ffiiiv?=
+ =?us-ascii?Q?rL5DBuOJEHT0G8FLE7+8dYKBOddzbI6LWJyVkcETqBMZOX+kzWi+dO3eeEPy?=
+ =?us-ascii?Q?cw4/T34znUm35aU4vYxKohyhknmt438l9alDMrX59r6WzgVjdwfmmJNBV/yq?=
+ =?us-ascii?Q?2qQP6/e8uaF4myHqXu+ry4cjlWdamVoxPXnvc4iIq0A6I7WBmFSktopryRSy?=
+ =?us-ascii?Q?ARXMzGD0bTyDHrSD+APwBwbchuCf+Ze7jlFSIfHVlcaCZlyyfwGya1ge36h8?=
+ =?us-ascii?Q?DNbU0mUvFbh8y5ONpjpce4yLgflnwkGWfJbVBNSwQJqoXYe+o2cLYQsFbbBl?=
+ =?us-ascii?Q?/364uGflJVVEVvJ8XGX1gl7n1NuwFhQiV/WgC3jVedlluiLFnqel8IwP/loR?=
+ =?us-ascii?Q?HJoeCQGNvAMGA+j+iKmmZVucz2jTQOlRsQHXrPbG1jQVqx8NdZBCYN8mgV2q?=
+ =?us-ascii?Q?YJm+8jna2YQp32lm15YJEepALtZWSP6XUdSRe1WYgg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kvB92V/WAghF7r2JfqdAVEq/CPFf9G4bEYjygDodMLbyWk5d/aQKtQXc2mCx?=
+ =?us-ascii?Q?NwIxivoY3RORv5/TdU0Amb7ULvR1CU7rQRSIo2qdkG9hpU1RS9jnCORS51kO?=
+ =?us-ascii?Q?pYFwOV40LpvvE3Zl0I43esYJC+FqMZi1EPdnCap/qdeNgmwjDEOxbkPxxnj4?=
+ =?us-ascii?Q?j5IkLCutmINVvsBYYUx/WkLTtKHHBisSUGgSnsKspmCg731vxhiImaWd04sO?=
+ =?us-ascii?Q?cJ+bFPU+VFDfDuQdV8fgDwTodnnS/oKBMzrUSRDNGQtADHKrOMAG2dmtUKjS?=
+ =?us-ascii?Q?hcGjN8PurSQzDThqCzBg17ciTISmrLe3rx8h1mCqBmchsPrbx+rUdZgc7Su5?=
+ =?us-ascii?Q?YNIifuAg1+K20Md1j3JRITyJC2s0Ux328OzilnU2Mob2SuVJGN8vQpUSL6pY?=
+ =?us-ascii?Q?0ZsqEA2CaX8o2YzkSH7MptSpeytDN/fHjGGAXKRN5G5d7jLEx5VifHrSiQRR?=
+ =?us-ascii?Q?WgNwPbSGcUO7IyfE9TKybNCeu7alxH2ZRCqUwCb4Us/9l/YqerWHkS6a8NCv?=
+ =?us-ascii?Q?chhQ2g87oGZxvzNoF0eIY7NY1ZwSsBezrg8X4CVs3ckLgX/j4L6w3xKjvQe/?=
+ =?us-ascii?Q?QLvj6EGZKUSMlVIn1NukW1EECQ6wEgSrlK/ECaB50WqBGWLzXVwLcnov7aLi?=
+ =?us-ascii?Q?J61Vyjg6KvLDKr8Gt9VkZiXXKLZull8z0CW5Lx11+xxebYYXJjfJfd9o6KIz?=
+ =?us-ascii?Q?PvDPAUKqHxagVfZw06cX0vY+fj9IxifViNs+KUR/RE1kL8GlASfL0WGeLj9C?=
+ =?us-ascii?Q?I/EEL/HxDC1wvq5srqSFrW/cd2IR0urvznpYDlyexbjqDS4pWtSCfW+mKoXj?=
+ =?us-ascii?Q?5c1m2UJny4rXdz3Lvz0q0Kt7xVmmXoaxPQGF4XGF7iGmAFQsxDC73t9aC3K6?=
+ =?us-ascii?Q?mP5dPEdKlpoUeqhWANQ2mnDj/RQarv7McCwfgQ6G9Yhj1HCwNGkdsr+YRcfP?=
+ =?us-ascii?Q?RaQee7ULn14+l1BtHW1Y/NiREjhK2cnDn/gZSZfKLuIjg1R5N2jcvZx9xUl8?=
+ =?us-ascii?Q?svSJB3PT5reWQkW3ON3qsekYaYclcE59fZtTdS6U3A6r8S76FPOmd1N77hx6?=
+ =?us-ascii?Q?0QKwElAO2wX0LKT79NGc4Wo8r+U67UIydCtVS7ehRe9opEv1KRwCPJoxl2AB?=
+ =?us-ascii?Q?+X45gjVjVCwLvnc2Z0jHmiuXDnpt4SwbCQcVmIgGtqz9xQG+CX3Vez86ufg0?=
+ =?us-ascii?Q?HYvo/Ji6I6oEJK0kHVc2OrTeCipEwAUgytgR7ICHIPjof0Cwtf4DN5o1pbzj?=
+ =?us-ascii?Q?V60K9xrGycT//RnLBH5bUoeVarhZq6V7supjPughv6mfW+qlmNTmxIgPkE+5?=
+ =?us-ascii?Q?j1a0aVd2R1UlvS6K2aaz3uWSGUD+vB1z/hYQBYYoa/U9w0fMc3if7Mz5gUiB?=
+ =?us-ascii?Q?IlAflC0/do0OIMYNvDAUklNmc+okR6sov+opX9k9EK6zIXa2rufl4IlD+Y60?=
+ =?us-ascii?Q?sT/gRZwdvbKOy5Spx/TRbmHtKAQ8YvlGWI73EhaNnFQwCbuSs+Ys6Kf7RbQJ?=
+ =?us-ascii?Q?1NQpnIYM0+3RrpQ0UjUgyjCta2MlD/g57gBHIVsqxSp/8OvkjCPk6YhwrSng?=
+ =?us-ascii?Q?pDZ5l3aQ1DRV322BJyM=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88352b1e-5b11-4423-5922-08dcede9c8b5
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 13:52:33.1714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2OG0f0MnzTuYkU2OkWDXQ1Nt1WqN3mdei0KEB0ATAhEXajSVRIIwr7Czv4VEJXeB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8439
 
+On Wed, Oct 16, 2024 at 05:17:52AM +0000, Suravee Suthikulpanit wrote:
+> +static void set_dte_gcr3_table(struct amd_iommu *iommu,
+> +			       struct iommu_dev_data *dev_data,
+> +			       struct dev_table_entry *target)
+> +{
+> +	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
+> +	u64 tmp, gcr3;
+> +
+> +	if (!gcr3_info->gcr3_tbl)
+> +		return;
+> +
+> +	pr_debug("%s: devid=%#x, glx=%#x, gcr3_tbl=%#llx\n",
+> +		 __func__, dev_data->devid, gcr3_info->glx,
+> +		 (unsigned long long)gcr3_info->gcr3_tbl);
+> +
+> +	tmp = gcr3_info->glx;
+> +	target->data[0] |= (tmp & DTE_GLX_MASK) << DTE_GLX_SHIFT;
+> +	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
+> +		target->data[0] |= DTE_FLAG_GIOV;
+> +	target->data[0] |= DTE_FLAG_GV;
+> +
+> +
+> +	gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
+> +
+> +	/* Encode GCR3 table into DTE */
+> +	tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
+> +	target->data[0] |= tmp;
+> +	tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
+> +	tmp |= DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
+> +	target->data[1] |= tmp;
+> +
+> +	/* Guest page table can only support 4 and 5 levels  */
+> +	if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL)
+> +		target->data[2] |= ((u64)GUEST_PGTABLE_5_LEVEL << DTE_GPT_LEVEL_SHIFT);
+> +}
 
---nn67jih5s63rwj76
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 2/2] clk: mediatek: Add drivers for MediaTek MT6735
- main clock and reset drivers
-MIME-Version: 1.0
+This looks OK but suggest to use the new macros and things, it is much
+more readable:
 
-Hello,
-
-On Wed, Oct 16, 2024 at 11:57:12AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 16/10/24 11:28, Uwe Kleine-K=F6nig ha scritto:
-> > On Thu, Oct 10, 2024 at 04:26:57PM +0300, Yassine Oudjana wrote:
-> > > +static struct platform_driver clk_mt6735_apmixedsys =3D {
-> > > +	.probe =3D clk_mt6735_apmixed_probe,
-> > > +	.remove_new =3D clk_mt6735_apmixed_remove,
-> > > +	.driver =3D {
-> > > +		.name =3D "clk-mt6735-apmixedsys",
-> > > +		.of_match_table =3D of_match_mt6735_apmixedsys,
-> > > +	},
-> > > +};
-> >=20
-> > After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> > return void") .remove() is (again) the right callback to implement for
-> > platform drivers. Please just drop "_new".
->=20
-> Oh wow, I didn't notice that during my review. Sorry about that.
-
-No problem, I blame noone. You cannot be aware of every change in the
-tree.
-
-Best regards
-Uwe
-
---nn67jih5s63rwj76
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPxQ8ACgkQj4D7WH0S
-/k5qMAgAp6xUYRchPuw1po6lUEMN+JvpwOJDGGuzkdLZRYtB3pAzVFj+6l9LFhDG
-ABrboGHLYWfrdSXu1A6GG/6JkqhqPARGgDcggUaN7v5V7c9uQi7xh07FnEObuj08
-B/UINBv6DDchFLGMFoyla0einCWSwOS9wYejj2w8OtVKl3C934Eyx2FCHmmyS64a
-KNzoeRj8YgFzvOtwyrIshytiX6CwCwDOTNqgVi2KWT60znHiFY2AW4ymZ0Lb/Spv
-jIgDU4PMBuATWRqfcqveSiYi68xVmC92QY1ygM7dHGzFMHy3DlYTeSqzYA0JdM3g
-5Q2yDUlNkA4pfm5E3QiIgZPPfjbC2g==
-=a556
------END PGP SIGNATURE-----
-
---nn67jih5s63rwj76--
+diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
+index 53e129835b2668..fbae0803bceaa0 100644
+--- a/drivers/iommu/amd/amd_iommu_types.h
++++ b/drivers/iommu/amd/amd_iommu_types.h
+@@ -409,8 +409,7 @@
+ #define DTE_FLAG_HAD	(3ULL << 7)
+ #define DTE_FLAG_GIOV	BIT_ULL(54)
+ #define DTE_FLAG_GV	BIT_ULL(55)
+-#define DTE_GLX_SHIFT	(56)
+-#define DTE_GLX_MASK	(3)
++#define DTE_GLX		GENMASK_ULL(57, 56)
+ #define DTE_FLAG_IR	BIT_ULL(61)
+ #define DTE_FLAG_IW	BIT_ULL(62)
+ 
+@@ -418,15 +417,10 @@
+ #define DTE_FLAG_MASK	(0x3ffULL << 32)
+ #define DEV_DOMID_MASK	0xffffULL
+ 
+-#define DTE_GCR3_VAL_A(x)	(((x) >> 12) & 0x00007ULL)
+-#define DTE_GCR3_VAL_B(x)	(((x) >> 15) & 0x0ffffULL)
+-#define DTE_GCR3_VAL_C(x)	(((x) >> 31) & 0x1fffffULL)
++#define DTE_GCR3_14_12	GENMASK_ULL(57, 56)
++#define DTE_GCR3_30_15	GENMASK_ULL(31, 16)
++#define DTE_GCR3_51_31	GENMASK_ULL(63, 43)
+ 
+-#define DTE_GCR3_SHIFT_A	58
+-#define DTE_GCR3_SHIFT_B	16
+-#define DTE_GCR3_SHIFT_C	43
+-
+-#define DTE_GPT_LEVEL_SHIFT	54
+ #define DTE_GPT_LEVEL_MASK	GENMASK_ULL(55, 54)
+ 
+ #define GCR3_VALID		0x01ULL
+diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+index caea101df7b93d..b0d2174583dbc9 100644
+--- a/drivers/iommu/amd/iommu.c
++++ b/drivers/iommu/amd/iommu.c
+@@ -2012,7 +2012,7 @@ static void set_dte_gcr3_table(struct amd_iommu *iommu,
+ 			       struct dev_table_entry *target)
+ {
+ 	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
+-	u64 tmp, gcr3;
++	u64 gcr3;
+ 
+ 	if (!gcr3_info->gcr3_tbl)
+ 		return;
+@@ -2021,25 +2021,24 @@ static void set_dte_gcr3_table(struct amd_iommu *iommu,
+ 		 __func__, dev_data->devid, gcr3_info->glx,
+ 		 (unsigned long long)gcr3_info->gcr3_tbl);
+ 
+-	tmp = gcr3_info->glx;
+-	target->data[0] |= (tmp & DTE_GLX_MASK) << DTE_GLX_SHIFT;
+-	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
+-		target->data[0] |= DTE_FLAG_GIOV;
+-	target->data[0] |= DTE_FLAG_GV;
+-
+-
+ 	gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
+ 
+-	/* Encode GCR3 table into DTE */
+-	tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
+-	target->data[0] |= tmp;
+-	tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
+-	tmp |= DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
+-	target->data[1] |= tmp;
++	target->data[0] |= DTE_FLAG_GV |
++			   FIELD_PREP(DTE_GLX, gcr3_info->glx) |
++			   FIELD_PREP(DTE_GCR3_14_12, gcr3 >> 12);
++	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
++		target->data[0] |= DTE_FLAG_GIOV;
++
++	target->data[1] |= FIELD_PREP(DTE_GCR3_30_15, gcr3 >> 15) |
++			   FIELD_PREP(DTE_GCR3_51_31, gcr3 >> 31);
+ 
+ 	/* Guest page table can only support 4 and 5 levels  */
+ 	if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL)
+-		target->data[2] |= ((u64)GUEST_PGTABLE_5_LEVEL << DTE_GPT_LEVEL_SHIFT);
++		target->data[2] |=
++			FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_5_LEVEL);
++	else
++		target->data[2] |=
++			FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_4_LEVEL);
+ }
+ 
+ static void set_dte_entry(struct amd_iommu *iommu,
 
