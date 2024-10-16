@@ -1,81 +1,211 @@
-Return-Path: <linux-kernel+bounces-367881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1D39A07EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:59:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BCE9A07F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9442840F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11F5284DD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D77207209;
-	Wed, 16 Oct 2024 10:59:31 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323B720720E;
+	Wed, 16 Oct 2024 11:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GNRExqbZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098F21C1724;
-	Wed, 16 Oct 2024 10:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85A820605B;
+	Wed, 16 Oct 2024 11:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076371; cv=none; b=mwUodxUNnJJFpaiHOOTfLoWDMHLAyMnkcC+xK3NSKXqfAmuIicxTnXxu/miOQDHKRC7w59TBHpzkhKZ1fhtJVf73+op5gotJCcPiIC/5MqpbKHnTJqsis7AdfVvNiLFp1p7DFn9j+c4DOx8fI7lKrB+R5dHwZ/q298RfDdvI7dc=
+	t=1729076538; cv=none; b=btrFc619U/caggv6KhxmA7jevCw8srOQo9q913oIrbvPuiMQQTJmpR99PIdEu14SEMenb7BpOJelzflm54jLHbKqyx7n47vTLx3SBZBhfDd3jCx+WGMIiiRv+eBymgktt+iXg9SHDPjBMKFU0lriBKFgwX+NMoBEte0iTr/Mf9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076371; c=relaxed/simple;
-	bh=AewB8jTNjDQGLluYNK7Yved4ijvMxXqWIBDXW6YuSD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTgCLgzPHLJhUxESzOOUNKQ2WHmwrte96aZfMbSM6BGM2a0GyHxrIG5pD27nvhUdafI5g7+nHiH7NKzrcArm/eU5vLwWj1qYC1NM6n1ApiGdfQrEpZ6O0rMZg4GPI7YhitMRgzMH5ZAvUg0bRYVC1ZscvZ6SXz+4ih4hpECf/Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC956C4CEC5;
-	Wed, 16 Oct 2024 10:59:27 +0000 (UTC)
-Date: Wed, 16 Oct 2024 11:59:25 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, ionela.voinescu@arm.com,
-	sudeep.holla@arm.com, will@kernel.org, rafael@kernel.org,
-	viresh.kumar@linaro.org, sumitg@nvidia.com,
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com, zhanjie9@hisilicon.com
-Subject: Re: [PATCH v7 0/4] Add support for AArch64 AMUv1-based average freq
-Message-ID: <Zw-cje76QgQIN5kq@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
+	s=arc-20240116; t=1729076538; c=relaxed/simple;
+	bh=am5o/KYY1etx3argiWIputsDa9TZyhUJ250fOWswMRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BV0z/ev+LBlK7M7U6ejLUi6+tF0q9FQSW9d2dIr6PtfhPEgiJ7wPg9QvUs4dOeb/DnJQGIIUbOhtb7QhisGyXYULJtckvWJu8GE20v5c78jP/75qj4dT/o8LrA3sL6YXd/svXC8xUfzTP7XDc/y8zPr7e9VMiwCASe1kmglr5d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GNRExqbZ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729076537; x=1760612537;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=am5o/KYY1etx3argiWIputsDa9TZyhUJ250fOWswMRM=;
+  b=GNRExqbZ439bFH0Zs1DexKyuWyjIqavyxDfmMX8pgGee+flGOIRdFnQd
+   IffyjmbZvWsd5/Sac3fg6QorXKdtW1RXNOllKU605jsFp0OIHgWDVQDTN
+   HXcTj+73973+V0ABLK3KaV7xPz6WWZGe2d6TmcU7d/+pZaKBasyvbKoxg
+   8h34V0umq/E1DKRvwreo3S0VZVL9g+CxFGvHElOnhx7om/thibMvWzJfE
+   ffayN1qGw/X0N01x4HRXqGQgpXfaQ19UNmMWMEd6gTlaqB3LasgIfSiZB
+   BR7nrDWISGVMRQvhH2wBi4uGLANCp+qq6vGFZeCGoDUDl4BFPe3AOXJ+9
+   Q==;
+X-CSE-ConnectionGUID: WYLQjZTzS0eCp8ifTYERqA==
+X-CSE-MsgGUID: uk0zDcj7QYu1A1p3HCr5yA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28717996"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="28717996"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 04:02:16 -0700
+X-CSE-ConnectionGUID: mw/cg0N0QoyvOaYXhrs2zg==
+X-CSE-MsgGUID: 6rjdik0ETVOn85RinJUveQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="77870298"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 16 Oct 2024 04:02:12 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7A57D1AC; Wed, 16 Oct 2024 14:02:11 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tero Kristo <tero.kristo@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	David Gow <davidgow@google.com>
+Subject: [PATCH v2 1/1] platform/x86: intel: Add 'intel' prefix to the modules automatically
+Date: Wed, 16 Oct 2024 13:59:51 +0300
+Message-ID: <20241016105950.785820-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913132944.1880703-1-beata.michalska@arm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Beata,
+Rework Makefile to add 'intel' prefix to the modules automatically.
+This removes a lot of boilerplate code in it and also makes robust
+against mistypos in the prefix.
 
-On Fri, Sep 13, 2024 at 02:29:40PM +0100, Beata Michalska wrote:
-> This series adds support for obtaining an average CPU frequency based on
-> a hardware provided feedback. The average frequency is being exposed via
-> dedicated yet optional cpufreq sysfs attribute - cpuinfo_avg_freq.
-> The architecture specific bits are being provided for AArch64, caching on
-> existing implementation for FIE and AMUv1 support: the frequency scale
-> factor, updated on each sched tick, serving as a base for retrieving
-> the frequency for a given CPU, representing an average frequency
-> reported between the ticks.
-> 
-> The changes have been rather lightly (due to some limitations) tested on
-> an FVP model. Note that some small discrepancies have been observed while
-> testing (on the model) and this is currently being investigated, though it
-> should not have any significant impact on the overall results.
-> 
-> Note that [PATCH 2/4] arm64: amu: Delay allocating cpumask for AMU FIE support
-> can be merged independently.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-What's the plan with the rest of the patches? Are you going to respin?
-The first patch would need an ack from Rafael or Viresh if we are to
-merge them via the arm64 tree.
+v2: fixed obvious typos (LKP), Cc'ed to Kbuild ML (Ilpo), dropped RFC marker
 
-Thanks.
+Note to Kbuild people: TBH I rather want to have something like this
+to be available on the level of Kbuild for any of the subdirectories
+in question.
 
+ drivers/platform/x86/intel/Makefile           | 68 ++++++++-----------
+ .../intel/{intel_plr_tpmi.c => plr_tpmi.c}    |  0
+ .../x86/intel/{tpmi.c => vsec_tpmi.c}         |  2 +-
+ 3 files changed, 30 insertions(+), 40 deletions(-)
+ rename drivers/platform/x86/intel/{intel_plr_tpmi.c => plr_tpmi.c} (100%)
+ rename drivers/platform/x86/intel/{tpmi.c => vsec_tpmi.c} (99%)
+
+diff --git a/drivers/platform/x86/intel/Makefile b/drivers/platform/x86/intel/Makefile
+index 74db065c82d6..78acb414e154 100644
+--- a/drivers/platform/x86/intel/Makefile
++++ b/drivers/platform/x86/intel/Makefile
+@@ -17,50 +17,40 @@ obj-$(CONFIG_INTEL_UNCORE_FREQ_CONTROL)	+= uncore-frequency/
+ 
+ 
+ # Intel input drivers
+-intel-hid-y				:= hid.o
+-obj-$(CONFIG_INTEL_HID_EVENT)		+= intel-hid.o
+-intel-vbtn-y				:= vbtn.o
+-obj-$(CONFIG_INTEL_VBTN)		+= intel-vbtn.o
++intel-target-$(CONFIG_INTEL_HID_EVENT)		+= hid.o
++intel-target-$(CONFIG_INTEL_VBTN)		+= vbtn.o
+ 
+ # Intel miscellaneous drivers
+-obj-$(CONFIG_INTEL_ISHTP_ECLITE)	+= ishtp_eclite.o
+-intel_int0002_vgpio-y			:= int0002_vgpio.o
+-obj-$(CONFIG_INTEL_INT0002_VGPIO)	+= intel_int0002_vgpio.o
+-intel_oaktrail-y			:= oaktrail.o
+-obj-$(CONFIG_INTEL_OAKTRAIL)		+= intel_oaktrail.o
+-intel_sdsi-y				:= sdsi.o
+-obj-$(CONFIG_INTEL_SDSI)		+= intel_sdsi.o
+-intel_vsec-y				:= vsec.o
+-obj-$(CONFIG_INTEL_VSEC)		+= intel_vsec.o
++intel-target-$(CONFIG_INTEL_INT0002_VGPIO)	+= int0002_vgpio.o
++intel-target-$(CONFIG_INTEL_ISHTP_ECLITE)	+= ishtp_eclite.o
++intel-target-$(CONFIG_INTEL_OAKTRAIL)		+= oaktrail.o
++intel-target-$(CONFIG_INTEL_SDSI)		+= sdsi.o
++intel-target-$(CONFIG_INTEL_VSEC)		+= vsec.o
+ 
+ # Intel PMIC / PMC / P-Unit drivers
+-intel_bxtwc_tmu-y			:= bxtwc_tmu.o
+-obj-$(CONFIG_INTEL_BXTWC_PMIC_TMU)	+= intel_bxtwc_tmu.o
+-intel_crystal_cove_charger-y		:= crystal_cove_charger.o
+-obj-$(CONFIG_X86_ANDROID_TABLETS)	+= intel_crystal_cove_charger.o
+-intel_bytcrc_pwrsrc-y			:= bytcrc_pwrsrc.o
+-obj-$(CONFIG_INTEL_BYTCRC_PWRSRC)	+= intel_bytcrc_pwrsrc.o
+-intel_chtdc_ti_pwrbtn-y			:= chtdc_ti_pwrbtn.o
+-obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
+-intel_chtwc_int33fe-y			:= chtwc_int33fe.o
+-obj-$(CONFIG_INTEL_CHTWC_INT33FE)	+= intel_chtwc_int33fe.o
+-intel_mrfld_pwrbtn-y			:= mrfld_pwrbtn.o
+-obj-$(CONFIG_INTEL_MRFLD_PWRBTN)	+= intel_mrfld_pwrbtn.o
+-intel_punit_ipc-y			:= punit_ipc.o
+-obj-$(CONFIG_INTEL_PUNIT_IPC)		+= intel_punit_ipc.o
++intel-target-$(CONFIG_INTEL_BYTCRC_PWRSRC)	+= bytcrc_pwrsrc.o
++intel-target-$(CONFIG_INTEL_BXTWC_PMIC_TMU)	+= bxtwc_tmu.o
++intel-target-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= chtdc_ti_pwrbtn.o
++intel-target-$(CONFIG_INTEL_CHTWC_INT33FE)	+= chtwc_int33fe.o
++intel-target-$(CONFIG_X86_ANDROID_TABLETS)	+= crystal_cove_charger.o
++intel-target-$(CONFIG_INTEL_MRFLD_PWRBTN)	+= mrfld_pwrbtn.o
++intel-target-$(CONFIG_INTEL_PUNIT_IPC)		+= punit_ipc.o
+ 
+ # TPMI drivers
+-intel_vsec_tpmi-y			:= tpmi.o
+-obj-$(CONFIG_INTEL_TPMI)		+= intel_vsec_tpmi.o
+-obj-$(CONFIG_INTEL_PLR_TPMI)		+= intel_plr_tpmi.o
+-
+-intel_tpmi_power_domains-y		:= tpmi_power_domains.o
+-obj-$(CONFIG_INTEL_TPMI_POWER_DOMAINS)	+= intel_tpmi_power_domains.o
++intel-target-$(CONFIG_INTEL_PLR_TPMI)		+= plr_tpmi.o
++intel-target-$(CONFIG_INTEL_TPMI_POWER_DOMAINS)	+= tpmi_power_domains.o
++intel-target-$(CONFIG_INTEL_TPMI)		+= vsec_tpmi.o
+ 
+ # Intel Uncore drivers
+-intel-rst-y				:= rst.o
+-obj-$(CONFIG_INTEL_RST)			+= intel-rst.o
+-intel-smartconnect-y			:= smartconnect.o
+-obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
+-intel_turbo_max_3-y			:= turbo_max_3.o
+-obj-$(CONFIG_INTEL_TURBO_MAX_3)		+= intel_turbo_max_3.o
++intel-target-$(CONFIG_INTEL_RST)		+= rst.o
++intel-target-$(CONFIG_INTEL_SMARTCONNECT)	+= smartconnect.o
++intel-target-$(CONFIG_INTEL_TURBO_MAX_3)	+= turbo_max_3.o
++
++# Add 'intel' prefix to each module listed in intel-target-*
++define INTEL_OBJ_TARGET
++intel-$(1)-y := $(1).o
++obj-$(2) += intel-$(1).o
++endef
++
++$(foreach target, $(basename $(intel-target-y)), $(eval $(call INTEL_OBJ_TARGET,$(target),y)))
++$(foreach target, $(basename $(intel-target-m)), $(eval $(call INTEL_OBJ_TARGET,$(target),m)))
+diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/plr_tpmi.c
+similarity index 100%
+rename from drivers/platform/x86/intel/intel_plr_tpmi.c
+rename to drivers/platform/x86/intel/plr_tpmi.c
+diff --git a/drivers/platform/x86/intel/tpmi.c b/drivers/platform/x86/intel/vsec_tpmi.c
+similarity index 99%
+rename from drivers/platform/x86/intel/tpmi.c
+rename to drivers/platform/x86/intel/vsec_tpmi.c
+index 486ddc9b3592..c637e32048a3 100644
+--- a/drivers/platform/x86/intel/tpmi.c
++++ b/drivers/platform/x86/intel/vsec_tpmi.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * intel-tpmi : Driver to enumerate TPMI features and create devices
++ * Driver to enumerate TPMI features and create devices
+  *
+  * Copyright (c) 2023, Intel Corporation.
+  * All Rights Reserved.
 -- 
-Catalin
+2.43.0.rc1.1336.g36b5255a03ac
+
 
