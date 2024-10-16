@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-368596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048859A11D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:46:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1824E9A11E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8421F2524D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:46:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD59BB220C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555661B4F2F;
-	Wed, 16 Oct 2024 18:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3421B4F2F;
+	Wed, 16 Oct 2024 18:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="hkxptrEy"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8491DA26;
-	Wed, 16 Oct 2024 18:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj0y9r4p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182316E86F;
+	Wed, 16 Oct 2024 18:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729104365; cv=none; b=gpxq0Q3nYMgBNxy6CsKWGsX+LkmBj3DUTYxlBuydJNsgcH4Ymtl7AJczkxMCcLeuY32cXF8E9ve74RTjmdZ9Ih8Cf4hIcgyMD1jLmQB4ew8dmpX80yI6YjEjBbAOFGocX7fGPD0HhYcuQOm6imVsPeLzvtgmDADQh1DDkPy7deM=
+	t=1729104692; cv=none; b=t0T6kevo0ezRjZYNra+H2OLT8Sg49O+5e+/mNXKNQ1rXe7hVKUP2gGTZ0+TxXVYNrP5gc5m0XIpI3f7neJVQUN7LuBRLsWo7tT6ykwjJrnHmltcB112Qm8znu7h2sk4R2HbGBewki4CBhYlvSBBpF6Mqg3NLLZNCmj1XipPf/sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729104365; c=relaxed/simple;
-	bh=cMZwR6cryvoRu0vR9qjUJvRH0BAagieaFPpUnTvBpWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qsg9lr9VC/1a/IC9TRY4bxtCPjYQv/dKCGP+NOg3mLzY58QYaX2GWsrSf/uT7RtKSvCKy0TYgmL8R+KyAAfuQi6fOQGvbX09KPnoMXZNy5dwa9A5rVGDMxI1ONkLeC3XEEUX0ZcjPsbka3HCayTwdlePnsh9JR5EyVsUBzyGHc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=hkxptrEy; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1729104352; bh=cMZwR6cryvoRu0vR9qjUJvRH0BAagieaFPpUnTvBpWI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hkxptrEyzThow4MEK0ZySGjZtMqcKvxTLk/eOxgTdvqA+T4AQUNgBqLLX/50SmRH2
-	 16C8vOE+Wh3H5eOe3afeYSxpRrMN5+04+Fcu+fd8rDQqffxmFha/Zz5d7mHf8ueddw
-	 I5zfpRzWBcIcthMI0Guj2hIqgWN7TfIQ9EYM95YGPzyQihsFE5rJRzdRGK7YU5WqtK
-	 Ov7Lmr2XlSXZVYNNMeDGrIx8OlHUipxwzAqI0Flm5rUD0HeYD2lBgAWXJ3joTwCVZL
-	 FgVEwbZGHik9eBBeG32niY8sPn9yBnn3HH429uFXoVBjLnAPv7sxqTlrplHzBYYmvK
-	 ds4r6Ak+ysD+k8JWKPazWD+rjrWNZkOFTWmHhM9wk4rDPos5rqgz7FDhgpCz0aanZb
-	 jdbwUd96OkImZDpsx92B75T/n7MtDZOu5yYMPe5L09ObGGz4rrz8Y5RezznEdmwH9s
-	 Md9YFwiUUtpO94m0MUYzxCYJKK7HHQliQbzZN6MsOW5IYvLcKegDl8MlUQgs1Rgbcp
-	 B5d6SwlG+TFFbFCqbI4kt2LflA7Dk+0Sy7DzGHGdw5zSVYztyMRWnu0rzTOA0JvuEK
-	 hDpCbfeIv6RMGH+2SOCJkKen0oJtDmlqVP7fNwv0QtNDzGxeKNsY7M6+tGwJ0ltGU2
-	 BdB3BzxBjYJih1wwDqcoGAqs=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id CABFC167DD7;
-	Wed, 16 Oct 2024 20:45:51 +0200 (CEST)
-Message-ID: <3a875620-513c-498a-ada2-c515de75de3b@ijzerbout.nl>
-Date: Wed, 16 Oct 2024 20:45:48 +0200
+	s=arc-20240116; t=1729104692; c=relaxed/simple;
+	bh=MN1HRH02DeXpotThFBo9SNUk9jLPl86YgdWUzF8+UdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VMWhJxuyxgBw4rSRIgtWVthHXCfKKXBl5W8vBrPk7hzTaLNUZPgPq1ohD3FO4nk7hnQ0KWCwe3bMxT47PIKNaIZa1IK0jEMx0NfiFukDeB4Su99N8xtZk4PyFUIpro2Vn2AOeiI5V8fHvqbQ4SfbyO8f6uDTlQzgHz/d10ibWaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj0y9r4p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AABC4CEC5;
+	Wed, 16 Oct 2024 18:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729104692;
+	bh=MN1HRH02DeXpotThFBo9SNUk9jLPl86YgdWUzF8+UdM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=dj0y9r4pDeIkUGOWJ64wqYfCuLAi70so7iZDPHZPXs4FAzEVGvLG1u0AqeL6tkpJ7
+	 GD8RJlJVXkec3HoAp8qvkTD3MkY6MmgoCmpOJ8HvP5WyfIL9jUhKQTOAzLvxEc2tv2
+	 eITupwkCwS+/4RDHeYoNGAHZHxpOqBjfujmCGXLUt/PDQvQ1R0xyCPC8ZK/6b9rfIt
+	 tjaB6B6mU/4nKa/wCD32yjZ0ias2pH4XIYywObTyKbIlq115ivut989q/SqDaph6mD
+	 Pdsq44OgANCzKhmoqgGEp//k1Q09wZsAHF6U4Dv5rfmkLTrfeV+z4DMzHflTo1k6I5
+	 kgRjSXOcHSRlA==
+Message-ID: <800c377d-1ba4-4831-9c32-939d640e13dd@kernel.org>
+Date: Wed, 16 Oct 2024 21:51:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,98 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] pinctrl: th1520: Factor out casts
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-References: <20241011144826.381104-1-emil.renner.berthing@canonical.com>
- <20241011144826.381104-4-emil.renner.berthing@canonical.com>
+Subject: Re: [PATCH v5 3/3] clk: twl: add TWL6030 support
+To: Andreas Kemnade <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>,
+ linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Lee Jones <lee@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <20241014161109.2222-1-andreas@kemnade.info>
+ <20241014161109.2222-4-andreas@kemnade.info>
 Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20241011144826.381104-4-emil.renner.berthing@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241014161109.2222-4-andreas@kemnade.info>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Op 11-10-2024 om 16:48 schreef Emil Renner Berthing:
-> Limit the casts to get the mux data and flags from the driver data
-> pointer with each pin to two inline functions as requested by Andy
-> during review.
->
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> ---
->   drivers/pinctrl/pinctrl-th1520.c | 22 +++++++++++++++++-----
->   1 file changed, 17 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-> index 8bd40cb2f013..7474d8da32f9 100644
-> --- a/drivers/pinctrl/pinctrl-th1520.c
-> +++ b/drivers/pinctrl/pinctrl-th1520.c
-> @@ -152,6 +152,16 @@ static enum th1520_muxtype th1520_muxtype_get(const char *str)
->   		(TH1520_MUX_##m0 <<  0) | (TH1520_MUX_##m1 <<  5) | (TH1520_MUX_##m2 << 10) | \
->   		(TH1520_MUX_##m3 << 15) | (TH1520_MUX_##m4 << 20) | (TH1520_MUX_##m5 << 25)) }
->   
-> +static unsigned long th1520_pad_muxdata(void *drv_data)
-> +{
-> +	return (uintptr_t)drv_data & TH1520_PAD_MUXDATA;
-> +}
-> +
-> +static bool th1520_pad_no_padcfg(void *drv_data)
-> +{
-> +	return (uintptr_t)drv_data & TH1520_PAD_NO_PADCFG;
-> +}
-> +
->   static const struct pinctrl_pin_desc th1520_group1_pins[] = {
->   	TH1520_PAD(0,  OSC_CLK_IN,    ____, ____, ____, ____, ____, ____, TH1520_PAD_NO_PADCFG),
->   	TH1520_PAD(1,  OSC_CLK_OUT,   ____, ____, ____, ____, ____, ____, TH1520_PAD_NO_PADCFG),
-> @@ -590,7 +600,7 @@ static int th1520_pinconf_get(struct pinctrl_dev *pctldev,
->   	u32 value;
->   	u32 arg;
->   
-> -	if ((uintptr_t)desc->drv_data & TH1520_PAD_NO_PADCFG)
-> +	if (th1520_pad_no_padcfg(desc->drv_data))
->   		return -ENOTSUPP;
->   
->   	value = readl_relaxed(th1520_padcfg(thp, pin));
-> @@ -660,7 +670,7 @@ static int th1520_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
->   	unsigned int i;
->   	u16 mask, value;
->   
-> -	if ((uintptr_t)desc->drv_data & TH1520_PAD_NO_PADCFG)
-> +	if (th1520_pad_no_padcfg(desc->drv_data))
->   		return -ENOTSUPP;
->   
->   	mask = 0;
-> @@ -793,12 +803,14 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
->   {
->   	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
->   	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
-> +	enum th1520_muxtype muxtype = (uintptr_t)func->data;
-You cannot use func before checking for NULL (see if statement below)
->   
->   	if (!func)
->   		return -EINVAL;
-> +
->   	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
-> -				 (uintptr_t)thp->desc.pins[gsel].drv_data & TH1520_PAD_MUXDATA,
-> -				 (uintptr_t)func->data);
-> +				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
-> +				 muxtype);
->   }
->   
->   static int th1520_gpio_request_enable(struct pinctrl_dev *pctldev,
-> @@ -809,7 +821,7 @@ static int th1520_gpio_request_enable(struct pinctrl_dev *pctldev,
->   	const struct pin_desc *desc = pin_desc_get(pctldev, offset);
->   
->   	return th1520_pinmux_set(thp, offset,
-> -				 (uintptr_t)desc->drv_data & TH1520_PAD_MUXDATA,
-> +				 th1520_pad_muxdata(desc->drv_data),
->   				 TH1520_MUX_GPIO);
->   }
->   
 
+
+On 14/10/2024 19:11, Andreas Kemnade wrote:
+> The TWL6030 has similar clocks, so add support for it. Take care of the
+> resource grouping handling needed.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
