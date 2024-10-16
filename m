@@ -1,138 +1,87 @@
-Return-Path: <linux-kernel+bounces-368187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690FB9A0C61
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57F99A0C60
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EC8D1F22B9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:17:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FF71B26D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EA820C00B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909AE209F3E;
 	Wed, 16 Oct 2024 14:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I0AI9lLk"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Che9ZTe0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92FF52F76
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59EB1494CC;
+	Wed, 16 Oct 2024 14:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729088241; cv=none; b=DbT0MnvTHCzEClfTwOu5Xl72eEo8aB4VrzVgGmvQt5QgMXErJr+nb4s5TiM012g307v8qGB4/fXa3skfQGf5I2pdVrxr/8ThtmkSwGta/H+2hCUzvyNGaY+PQVuKrBjAutTwzy4h+suw7LfjShmsLuChn1olAfTBCzUo0pVJL3A=
+	t=1729088241; cv=none; b=tXCvPeDwEIQQDQxdk5Bba8i6LgRyJpUVse+Io9jXwezbvhGwbyIh8xi5vdpTIVaSPRwikgDgmIFjCINbWUnDNjVAcC/+e5UvL7sjxTklK/nGsCkTZxeqqkMSyfNj6LULdk6O8Prk6HrIgQkLxtNB8vJNuQMTgpD5qcsHN44R2zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729088241; c=relaxed/simple;
-	bh=RkfnvbTItgBER23gVByVBNHD6sByga+na5XXIkiUVzI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hky3ZkVk5+1COD2xj9pSqU2MII6SvLF+jdFZl91UsLvSnwch6xGvsTvBowtIHIc4utxdQ6O68aIm3Pi4ttRnIAh8mtI+Up5XunuUlGSzR57I+yilPAwUzEFAnzkVMiuocwPQ0VnYk9cNafUL23IJ5fHO9NPKS2o3pXeBENCRds4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I0AI9lLk; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cdda5cfb6so35073345ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729088239; x=1729693039; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EVKER3hv6evoPvIqFuw9dG82LeQOTjgI9oXF+N5WCUE=;
-        b=I0AI9lLklH6qiYkroz4lK52MYnVzoY080qMxDMH0o+DgbyGhVxLzr9K3+zrQktQIeV
-         UCGP5geY69qe+O/O3RxlhMjdrASTHeV8y6vcp7Y2c720l1bDHbV65H/CaRwiGCZv0Ip9
-         KHgkyNblAGQQRtABrj/OAPyL8eGBChvgcxS3M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729088239; x=1729693039;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EVKER3hv6evoPvIqFuw9dG82LeQOTjgI9oXF+N5WCUE=;
-        b=VibUEwsHsslWc7ISZXhINmXqtdum0v0MiB/gKSzEwG1ftFPNQL5aLYiKnLonUpDih3
-         OuYBZ6XIST5qGHCrNuYTrkfFmjdv7nZ30CJJ/I3XuTZcA2x/nvg0UQqRoq8bCv4UEZJH
-         +G0EBtusvlSGjDWmr4i7TtGVD2n363M5aO8aWHDxhfX+eXVbQa2anYLDvNqJqRRteo+6
-         clwlUR1gUMGu28vvQpZWUeDHOd4BXHTUtAepvBhN2mros64lujXJyd1f8GKOYkmhuLtH
-         uWmicrtrJk8Fv5QdVSPMNjtUMyZJaapa4ie5fyDLYxIS3EHsS7mPanegPBpoAh/tq8Ap
-         reaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXv9ubEWn5zAOaxrHcjgtBU+2LpRorpivhLHkSphIAwYNPQxaZrBEcdNopJzgFgl0blvbq8prMAGGnmX9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxcs7Kgl6AsdHNagyc7fDtxZtO+8rAU02wXv/egstqIGpeQ07J
-	59Q7Pn14aHqkQA0JqY0SZZZrqa/uuqyQ/2YsE0TocDBqbqNt8DIEQhg5RHDBRg==
-X-Google-Smtp-Source: AGHT+IGZHtq9NBH/rxgUzuhq/wqmFAtg/Km4mXJX3jx3iEj2labIFGH9kDPhLj3+H6UaQUaFSyyVpg==
-X-Received: by 2002:a17:902:ec83:b0:20c:5404:ed69 with SMTP id d9443c01a7336-20ca167bbbbmr242478095ad.31.1729088239049;
-        Wed, 16 Oct 2024 07:17:19 -0700 (PDT)
-Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f844ecsm29243015ad.14.2024.10.16.07.17.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 07:17:18 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Wed, 16 Oct 2024 14:17:14 +0000
-Subject: [PATCH v3] drm/mediatek: Fix color format MACROs in OVL
+	bh=xvD0EGIlA23nJe+ETgrqTCv8spRK9sqdryQTaYwbPe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pl9pSA3RGM+0gJEQDSELjyqarLfKTOw7n4EgW0N8ZmAMIc6f3zGdXcT64EBZiK4mh0qak4KxtqUuhSn+peyahY7W21xvpiarYTHpl4cTpfLww8FPaUdlNrRBy+i7lyvElfo0xpRhCKTmYqbFxiNOZcQHrypOQODEwRRjBX+tbmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Che9ZTe0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00EDEC4CEC5;
+	Wed, 16 Oct 2024 14:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729088240;
+	bh=xvD0EGIlA23nJe+ETgrqTCv8spRK9sqdryQTaYwbPe4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Che9ZTe0y868yFLJ7Yq2FLCfwnzruS+q+UMoHXrFDUL2yTI9P5tjg6MxCcayTTwVz
+	 JRihxVb/WGD25c/VayBpzr/R2no38EsBzMneisUa4g4gT/lLwmwuAjXaGU2kPDcSUj
+	 IULsR7ZSm4dSV0GLTLEft36j7i2pn5PV0OC/a9s79hRLEcsQMuHdHq9bFUQkrRrkAw
+	 tQ/aPVwNRLaw4ZCRprft1qx6CShDjpjdF0jRR5fIzaskNOsgB2iuMzHYLB7AOsti3+
+	 yfiRcZaW4WX2zy3iaHzURerzYv26CTuBeXV0lKCP6EkQFDFgDYFpf6OcI7A2V9MD7F
+	 ApPVP4W5IetiA==
+Date: Wed, 16 Oct 2024 15:17:15 +0100
+From: Simon Horman <horms@kernel.org>
+To: boehm.jakub@gmail.com
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] net: plip: fix break; causing plip to never transmit
+Message-ID: <20241016141715.GH2162@kernel.org>
+References: <20241015-net-plip-tx-fix-v1-1-32d8be1c7e0b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-color-v3-1-e0f5f44a72d8@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAOnKD2cC/12MwQqDMBAFf0X23JQkJlF66n+UHmJcdaEaSdrQI
- v57o1AoHufxZhaIGAgjXIoFAiaK5KcM5akAN9ipR0ZtZpBcKsGFZs4/fGAoucZKN0ZZC/k7B+z
- ovXdu98wDxacPnz2bxLYeC0kwwUrdcNFZbmtprm4IfqTXePahhy2S5L9ofqLMojJto11VW626g
- 7iu6xcSdymQ1gAAAA==
-X-Change-ID: 20241015-color-e205e75b64aa
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- dianders@chromium.org, Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-7be4f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015-net-plip-tx-fix-v1-1-32d8be1c7e0b@gmail.com>
 
-In commit 9f428b95ac89 ("drm/mediatek: Add new color format MACROs in
-OVL"), some new color formats are defined in the MACROs to make the
-switch statement more concise. That commit was intended to be a no-op
-cleanup. However, there are typos in these formats MACROs, which cause
-the return value to be incorrect. Fix the typos to ensure the return
-value remains unchanged.
+On Tue, Oct 15, 2024 at 05:16:04PM +0200, Jakub Boehm via B4 Relay wrote:
+> From: Jakub Boehm <boehm.jakub@gmail.com>
+> 
+> Since commit
+>   71ae2cb30531 ("net: plip: Fix fall-through warnings for Clang")
+> 
+> plip was not able to send any packets, this patch replaces one
+> unintended break; with fallthrough; which was originally missed by
+> commit 9525d69a3667 ("net: plip: mark expected switch fall-throughs").
+> 
+> I have verified with a real hardware PLIP connection that everything
+> works once again after applying this patch.
+> 
+> Fixes: 71ae2cb30531 ("net: plip: Fix fall-through warnings for Clang")
+> Signed-off-by: Jakub Boehm <boehm.jakub@gmail.com>
 
-Fixes: 9f428b95ac89 ("drm/mediatek: Add new color format MACROs in OVL")
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
-Changes in v3:
-- Add missing Reviewed-by tag
-- Link to v2: https://lore.kernel.org/r/20241016-color-v2-1-46db5c78a54f@chromium.org
-
-Changes in v2:
-- Clarify that the commit get fixed was intended to be a no-op cleanup
-- Fix the typo in tag
-- Link to v1: https://lore.kernel.org/r/20241015-color-v1-1-35b01fa0a826@chromium.org
----
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index 89b439dcf3a6af9f5799487fdc0f128a9b5cbe4a..1632ac5c23d87e1cdc41013a9cf7864728dcb63b 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -65,8 +65,8 @@
- #define OVL_CON_CLRFMT_RGB	(1 << 12)
- #define OVL_CON_CLRFMT_ARGB8888	(2 << 12)
- #define OVL_CON_CLRFMT_RGBA8888	(3 << 12)
--#define OVL_CON_CLRFMT_ABGR8888	(OVL_CON_CLRFMT_RGBA8888 | OVL_CON_BYTE_SWAP)
--#define OVL_CON_CLRFMT_BGRA8888	(OVL_CON_CLRFMT_ARGB8888 | OVL_CON_BYTE_SWAP)
-+#define OVL_CON_CLRFMT_ABGR8888	(OVL_CON_CLRFMT_ARGB8888 | OVL_CON_BYTE_SWAP)
-+#define OVL_CON_CLRFMT_BGRA8888	(OVL_CON_CLRFMT_RGBA8888 | OVL_CON_BYTE_SWAP)
- #define OVL_CON_CLRFMT_UYVY	(4 << 12)
- #define OVL_CON_CLRFMT_YUYV	(5 << 12)
- #define OVL_CON_MTX_YUV_TO_RGB	(6 << 16)
-
----
-base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
-change-id: 20241015-color-e205e75b64aa
-
-Best regards,
--- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
