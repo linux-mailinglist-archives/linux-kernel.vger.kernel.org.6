@@ -1,81 +1,123 @@
-Return-Path: <linux-kernel+bounces-368338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B2B9A0E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D859A0E91
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71D45B279EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BEB2888F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E73D20E02F;
-	Wed, 16 Oct 2024 15:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9365454720;
+	Wed, 16 Oct 2024 15:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PZWWOk03"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6ZyP12h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37ED54720
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E837120E02F;
+	Wed, 16 Oct 2024 15:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093083; cv=none; b=L3pOOaLva9Y7F7e5fjDzzmGhfxNZbCBJU1pl94cHITD8ghXFAj38GVC9tmo17K2MqdKwYw0rQFuKxN8FYCskww0yiCONS0DgMHBnI7IGgGp0Yu4sKNCBaUF8qF07PZRiAh3uOrBv6ekR7k+14lDiRQDoSblB59o5/986PuHbMN0=
+	t=1729093114; cv=none; b=uREmHzAULnOmFXRj+URJ3W801nfVwpD/a8IZQxbQHaOECdJycfpwCS6d1E17eZN2Pd2Zo5fBsvnqPNMEZt8yeCzgpg5p7EApuq7xdx/ZWpRSKgHUKd+kH0HhDonSSIx0tnvZ/d86RPwRjdIoVJyeg3GM7v3yWq4LaFt0fvSaxHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093083; c=relaxed/simple;
-	bh=NKBeUU2C2029C+iUhop9Nzweyb84SlkdW0dRWtxqJCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uz7/r1722jdZ7fpt8Ogp8//guiADe4csVH4ijv+BetkmshDYLTbe+T3OvxUU4Khy2r5yAmE/WFFnDZyDKosshCm7PKSWRMhmQpU9Xv2ULaLlFIF9uA9Etn3WhkhMfAjWmXX4JaNic5jQVUiBlZn/ttoQu7IxVqi3V51vQIg7i64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PZWWOk03; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NE/daF3JwSlAOHoHFySuoCdtdh/nK5By8Ql8VqAMJdQ=; b=PZWWOk03YymV9i8fSPmYETeYdU
-	mePBbxPtqyNy51/xnqtP2chxnEgKVphBP4GiWmdJhyZm4/96KluzISKDb/RHLQ4v/H6g8qgHNhrhA
-	ijYkWh+Ozk1U9gkf0R1NtfA6ExnLFD/1K3SZu3kB9QpyrINgYZw0gH1pAGbPvnY5yuHmnhuli4IkY
-	9CvcF+m6hI9aDdn29XxtoQAMcv/HuYT6Sql8ptWPpNzdVBc4TV6Rbt6iLfvMdQFdAI2p/Xh4lQwcI
-	28zM0hU8h1B4zWySnLRW/7PA/yMTemsXk8pIYFrc4+kV+C6tMEdP7QWgkdrY+aOr7ovVcKp1GNZGO
-	HJS5YXxw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t165w-00000008Jej-1xLm;
-	Wed, 16 Oct 2024 15:37:52 +0000
-Date: Wed, 16 Oct 2024 16:37:52 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read
- performance
-Message-ID: <Zw_d0EVAJkpNJEbA@casper.infradead.org>
-References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
- <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1729093114; c=relaxed/simple;
+	bh=dFW8u8wREC5V/rE4CPEL3TXXHyVXddI7PBsgSDXHwTM=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=rbrZqPBmccPTKFWzodDHOPvtuswVbS5iXXM4ww4Z5k6DcuJNLqmDYBvg0E4lEu9ck/ZjIBkNv4ZdyVHCJJUhzGZfRZMUE27TrQIhN4x3ywcvWVQEbQJElUdvmVX0LNb3SPGXNofl/W9AzTjc+yoTbtO+Cf13ClVV6d4FSuiZ4gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6ZyP12h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4502EC4CEC7;
+	Wed, 16 Oct 2024 15:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729093113;
+	bh=dFW8u8wREC5V/rE4CPEL3TXXHyVXddI7PBsgSDXHwTM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=I6ZyP12hU9L6hiBtylHFmizE+cd2yG3IZLUQTA3nmpFMGeAdr02jM6p0dMcfaklMs
+	 Vf9+YyPNTy2j1ZkKaIKGnCG/wD7TzTD7meVPIU5kT5tO0tM5s3kcmqRP+BQRADvwGP
+	 UpC5ncTZ1BKst5FUFa2lkvY8h+TM1F1S6U1yMRAFinzR/GjUEBUteaqwJxr4XNi4kx
+	 TqFv6KMho9uPIPS0+W21HQesrR3TaB3JqQjXqfT6GasoXsIbmyMxSg+BU6bZu26UAi
+	 dke3/kEzJNQ62V8oJFGkfWI5udhRBN+frLhNIgrZpcqM/7/al+RDl4W+o3/dbKFx75
+	 m/l1Lmi7OQojA==
+Date: Wed, 16 Oct 2024 10:38:32 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Jianguo Zhang <jianguo.zhang@mediatek.com>, 
+ Hsuan-Yu Lin <shane.lin@canonical.com>, 
+ fanyi zhang <fanyi.zhang@mediatek.com>, netdev@vger.kernel.org, 
+ Macpaul Lin <macpaul.lin@mediatek.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Pablo Sun <pablo.sun@mediatek.com>
+In-Reply-To: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
+References: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
+Message-Id: <172909289110.1676363.14494745221795348933.robh@kernel.org>
+Subject: Re: [PATCH 0/2] Enable Ethernet on the Genio 700 EVK board
 
-On Wed, Oct 16, 2024 at 06:09:30PM +0800, Baolin Wang wrote:
-> @@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  		if (folio) {
->  			folio_unlock(folio);
->  
-> -			page = folio_file_page(folio, index);
-> -			if (PageHWPoison(page)) {
-> +			if (folio_test_hwpoison(folio) ||
-> +			    (folio_test_large(folio) &&
-> +			     folio_test_has_hwpoisoned(folio))) {
 
-Hm, so if we have hwpoison set on one page in a folio, we now can't read
-bytes from any page in the folio?  That seems like we've made a bad
-situation worse.
+On Tue, 15 Oct 2024 14:15:00 -0400, Nícolas F. R. A. Prado wrote:
+> The patches in this series add the ethernet node on mt8188 and enable it
+> on the Genio 700 EVK board.
+> 
+> The changes were picked up from the downstream branch at
+> https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-mtk/+git/jammy,
+> cleaned up and split into two commits.
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+> Nícolas F. R. A. Prado (2):
+>       arm64: dts: mediatek: mt8188: Add ethernet node
+>       arm64: dts: mediatek: mt8390-genio-700-evk: Enable ethernet
+> 
+>  arch/arm64/boot/dts/mediatek/mt8188.dtsi           | 95 ++++++++++++++++++++++
+>  .../boot/dts/mediatek/mt8390-genio-700-evk.dts     | 25 ++++++
+>  2 files changed, 120 insertions(+)
+> ---
+> base-commit: 7f773fd61baa9b136faa5c4e6555aa64c758d07c
+> change-id: 20241015-genio700-eth-252304da766c
+> 
+> Best regards,
+> --
+> Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y mediatek/mt8390-genio-700-evk.dtb' for 20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com:
+
+arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: jpeg-decoder@1a040000: iommus: [[118, 685], [118, 686], [118, 690], [118, 691], [118, 692], [118, 693]] is too long
+	from schema $id: http://devicetree.org/schemas/media/mediatek-jpeg-decoder.yaml#
+
+
+
+
 
 
