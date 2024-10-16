@@ -1,272 +1,142 @@
-Return-Path: <linux-kernel+bounces-367986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B679A091C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:14:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610C29A091D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 100A1B24477
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B0D1F22A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28DB208205;
-	Wed, 16 Oct 2024 12:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C10C20820E;
+	Wed, 16 Oct 2024 12:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rlupUrHu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rICVpDPP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rlupUrHu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rICVpDPP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdIdiS69"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C772206E71
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E102076DA;
+	Wed, 16 Oct 2024 12:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729080824; cv=none; b=I+yvs2qakRIYxjk0rsbaHDj0LD/kTa2w3Pv8xTe7tAKTJAhSPyEpU41QJlF/GIzMSsmJHa0441xjBo/8ew2eGBX05J/TA0pd7DZgz/Y7hnFNVMd2ESuBso2cV76uDye1nqUDoSEHWFp3K25qRfK4oXT0wHTtIxWXUL2VB6tq7pc=
+	t=1729080887; cv=none; b=Jg/CSt+Zr9MUXnaGxBs3pPY/r4I+KWXTXl5H4XcJsJ1NJ6b/OtVagQCpybsjBzSD5X65BCI7/wCsDblSwZUuIoQan/Bkpf8doVyCTSe5dfV5OsHb0g2JiXTuyLFzU3hYeDhAghJjXFiMtc2SapJr/TzQv7kdlZjeJ6XKWKUCg6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729080824; c=relaxed/simple;
-	bh=1q4yEcJFxZRHtqiK0sql/hXShW5iki8lFBMnyaKMa/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fqBBuf4lsS/fjVc1sTZOSSdr3WRmdtnJusaVJuz75k0ZpH54Hi95+UXSQ2aQi24zvO3rpLhJf7elj0O4FyE4NZFJWUf5Tdrfoq+nPhAwvWlPfbVTmp5dA0rjq+l0arMvrFyZYsKxZ+JgGp7lXCQM2drdau4hLE+9fUxEHJaQ1Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rlupUrHu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rICVpDPP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rlupUrHu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rICVpDPP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 60D1521B58;
-	Wed, 16 Oct 2024 12:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729080820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
-	b=rlupUrHuRXpN+GSHy77ojANHeFIMf3pdlQk69VCrQSkldUyPKn1nBlhPM1lgPVbA7FmyOa
-	j4kCvsJ1JS0hDiqxKhjYHvXGHOnN7JixBnbI/SI6OFB7oUy4gYqSkiC8W+aZWgw/nPo4qi
-	4amM/IS3sQxcIN7KXs5kpDfaYuMw+LU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729080820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
-	b=rICVpDPPYjlz9GViKfD06PJsJwqcVNR1wG71TDzu4iExrydDyqwAmZ+nxYlWDb/R2BkenX
-	eHvuzwzarVzlQRDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rlupUrHu;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rICVpDPP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729080820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
-	b=rlupUrHuRXpN+GSHy77ojANHeFIMf3pdlQk69VCrQSkldUyPKn1nBlhPM1lgPVbA7FmyOa
-	j4kCvsJ1JS0hDiqxKhjYHvXGHOnN7JixBnbI/SI6OFB7oUy4gYqSkiC8W+aZWgw/nPo4qi
-	4amM/IS3sQxcIN7KXs5kpDfaYuMw+LU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729080820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yk42CWZOANsqQxbXzgz8My19rRwDUHEJZtFu8XOqV3g=;
-	b=rICVpDPPYjlz9GViKfD06PJsJwqcVNR1wG71TDzu4iExrydDyqwAmZ+nxYlWDb/R2BkenX
-	eHvuzwzarVzlQRDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4403E13433;
-	Wed, 16 Oct 2024 12:13:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id R5f5D/StD2ekbwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 16 Oct 2024 12:13:40 +0000
-Message-ID: <270ca4d5-b35f-4533-87c9-dc15e7b00f6f@suse.cz>
-Date: Wed, 16 Oct 2024 14:13:39 +0200
+	s=arc-20240116; t=1729080887; c=relaxed/simple;
+	bh=2/Suc9WTfhdUXwiTzxc/IflbPBFAA6X/l6N4Gk2D62g=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pFEK74nww3AcY2AtuH12GYeqcV51hLbl/OXDGCVSS2m3Qz7efT1Et20o4lAeTx/4hKjAcMifk/p9vt2f4AmXChirdU2uFlwFizA8DlIeEe77DUYnXWAxGKpHSBBIe8MAh2Nc4nZGVkzbsUYS1jAxfyfbmuqIq7xXpx+soTD0j5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdIdiS69; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb5111747cso35124871fa.2;
+        Wed, 16 Oct 2024 05:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729080884; x=1729685684; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l0eI5lAUbdT2xgG8Sg5gfm2pTZ0+zaLZVdb9X/94txA=;
+        b=NdIdiS69KcBs2gR2T+FD8BZ4KQ6rj2VTySweFm80aO0pfyyvjz4eIjjW4CGNnPr9Rj
+         gAUADkpHWQnlpRYTIftDzl2FQrQ7W8K6ELfinJZ4uhCqHTYgLOFdV9Ga5X8YnuaO9TDv
+         YXOpoB1CovDeDV5iu3qLG4whMX/wBCt4epeRKCiixBHIxh5e5rbbNy+Z5EaULtsX4Uw+
+         WmcEP393Px2yYdDCML1sHqZ7yrA8kM+vfd0ZsBXT69WW6qhoiPPDBeZfymDLCedkPfiz
+         PlDnkduo9Vi/Ymmk42EXWsgjGsOPoE/VsvcDRfckDEekNacgzh6GDQPvpjSueExxoLdz
+         q07g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729080884; x=1729685684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l0eI5lAUbdT2xgG8Sg5gfm2pTZ0+zaLZVdb9X/94txA=;
+        b=Ged/FrJdmiG25jVUGfRvhMi6uV61Fft2I09L08pw/QxdR5+9OGyGDnrEYMkjmMTbeL
+         jZftwTq/ysR8mJ22M0Ik2ouD3HhfK4hec4m/l4rpSnVHHloPT+jQ4CsLtgzTtFJua7Ow
+         7kP4S67difREyG+XTw515rbUWhuJELusBES1oy6j3epe1sa+iQlUI8hZn2nakueSlz4X
+         HcAbpAov2yYYmsRcOuxQAi2ymZLazQJ+75qSJSObbdpWjpbJYhJlAqcqEzLCFW5mN2pY
+         263db6j1w+EurmlvCbeMaO/RIB8jNi025UeE2BSdrJtaVVwddlMLX9ISXu1d4HTKmLOi
+         O5oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHChxVumws4hDI1pXn9PxO0nuaGp4N8xf28SKRu3CxKT1HFEA2hCuBmW7PFaaYYfEZqloQhu2Yx7EobtwUmsY=@vger.kernel.org, AJvYcCUZwFp12pewxLqUpf4VRdTBbLqbudV43EUpC76Wmw9BsHPjQzNAOp7QByTjVq7CaTuawpRmRT5llAvu2mjq@vger.kernel.org, AJvYcCXAJpkD6B9Ye+XBeCyidb+1vSHBr8Cie4SOsQL293m2cq075C7Lh8SiNTbA1CPNG/Twy2eG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNZrykROUuBXjyu2XSf4Ila77t5CCCPaSFwEe4/W8Oad51Q3fR
+	RGt+SaLXTWiu5MHUNWHO8c/Inrg5I13zcYkxCvw08HtQ5AafvqiH
+X-Google-Smtp-Source: AGHT+IFISaLoEL1v0HSzO0EUOZSFeeQBuVf/qhinkQvpqUzk15fW+vJulRLe5xE0klVquRlwEnymMA==
+X-Received: by 2002:a05:651c:1990:b0:2fb:4f0c:e3d8 with SMTP id 38308e7fff4ca-2fb4f0cea31mr54327131fa.27.1729080883239;
+        Wed, 16 Oct 2024 05:14:43 -0700 (PDT)
+Received: from pc636 (host-95-203-1-67.mobileonline.telia.com. [95.203.1.67])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb5d194034sm3994531fa.78.2024.10.16.05.14.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 05:14:42 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 16 Oct 2024 14:14:40 +0200
+To: Julia Lawall <Julia.Lawall@inria.fr>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, kernel-janitors@vger.kernel.org,
+	vbabka@suse.cz, paulmck@kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/17] KVM: PPC: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <Zw-uMDwxBvl0R0mL@pc636>
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+ <20241013201704.49576-14-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-Content-Language: en-US
-To: Muchun Song <muchun.song@linux.dev>, chenridong <chenridong@huawei.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- Chen Ridong <chenridong@huaweicloud.com>, akpm@linux-foundation.org,
- david@fromorbit.com, zhengqi.arch@bytedance.com, roman.gushchin@linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, wangweiyang2@huawei.com
-References: <20241014032336.482088-1-chenridong@huaweicloud.com>
- <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
- <178A7AC8-0BDA-42CA-86B2-E1C13F3E1E8B@linux.dev>
- <1dc9acbd-351f-4755-8c56-d3d77aaccfb2@huawei.com>
- <F8EBBED0-6D7D-4A23-AC8C-3E395EA1BF12@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <F8EBBED0-6D7D-4A23-AC8C-3E395EA1BF12@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 60D1521B58
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241013201704.49576-14-Julia.Lawall@inria.fr>
 
-On 10/14/24 11:20, Muchun Song wrote:
+On Sun, Oct 13, 2024 at 10:17:00PM +0200, Julia Lawall wrote:
+> Since SLOB was removed and since
+> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> it is not necessary to use call_rcu when the callback only performs
+> kmem_cache_free. Use kfree_rcu() directly.
+> 
+> The changes were made using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  arch/powerpc/kvm/book3s_mmu_hpte.c |    8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/arch/powerpc/kvm/book3s_mmu_hpte.c b/arch/powerpc/kvm/book3s_mmu_hpte.c
+> index ce79ac33e8d3..d904e13e069b 100644
+> --- a/arch/powerpc/kvm/book3s_mmu_hpte.c
+> +++ b/arch/powerpc/kvm/book3s_mmu_hpte.c
+> @@ -92,12 +92,6 @@ void kvmppc_mmu_hpte_cache_map(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+>  	spin_unlock(&vcpu3s->mmu_lock);
+>  }
+>  
+> -static void free_pte_rcu(struct rcu_head *head)
+> -{
+> -	struct hpte_cache *pte = container_of(head, struct hpte_cache, rcu_head);
+> -	kmem_cache_free(hpte_cache, pte);
+> -}
+> -
+>  static void invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+>  {
+>  	struct kvmppc_vcpu_book3s *vcpu3s = to_book3s(vcpu);
+> @@ -126,7 +120,7 @@ static void invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+>  
+>  	spin_unlock(&vcpu3s->mmu_lock);
+>  
+> -	call_rcu(&pte->rcu_head, free_pte_rcu);
+> +	kfree_rcu(pte, rcu_head);
+>  }
+>  
+>  static void kvmppc_mmu_pte_flush_all(struct kvm_vcpu *vcpu)
 > 
 > 
->> On Oct 14, 2024, at 17:04, chenridong <chenridong@huawei.com> wrote:
->> 
->> 
->> 
->> On 2024/10/14 16:43, Muchun Song wrote:
->>>> On Oct 14, 2024, at 16:13, Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>>> 
->>>> 
->>>> 
->>>> On 10/14/24 08:53, Chen Ridong wrote:
->>>>> From: Chen Ridong <chenridong@huawei.com>
->>>>> 
->>>>> A memleak was found as bellow:
->>>>> 
->>>>> unreferenced object 0xffff8881010d2a80 (size 32):
->>>>>  comm "mkdir", pid 1559, jiffies 4294932666
->>>>>  hex dump (first 32 bytes):
->>>>>    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>>>>    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
->>>>>  backtrace (crc 2e7ef6fa):
->>>>>    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
->>>>>    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
->>>>>    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
->>>>>    [<ffffffff81198dd9>] online_css+0x29/0xa0
->>>>>    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
->>>>>    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
->>>>>    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
->>>>>    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
->>>>>    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
->>>>>    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
->>>>>    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
->>>>>    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>> 
->>>>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
->>>>> err, the info won't be freed. Just fix it.
->>>>> 
->>>>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
->>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>>> ---
->>>>> mm/shrinker.c | 1 +
->>>>> 1 file changed, 1 insertion(+)
->>>>> 
->>>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
->>>>> index dc5d2a6fcfc4..92270413190d 100644
->>>>> --- a/mm/shrinker.c
->>>>> +++ b/mm/shrinker.c
->>>>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>>> 
->>>>> err:
->>>>> mutex_unlock(&shrinker_mutex);
->>>>> + kvfree(info);
->>>>> free_shrinker_info(memcg);
->>>>> return -ENOMEM;
->>>>> }
->>>> 
->>>> There are two scenarios when "goto err:" gets called
->>>> 
->>>> - When shrinker_info allocations fails, no kvfree() is required
->>>> - but after this change kvfree() would be called even
->>>>  when the allocation had failed originally, which does
->>>>    not sound right
->>> Yes. In this case, @info is NULL and kvfree could handle NULL.
->>> It seems strange but the final behaviour correct.
->>>> 
->>>> - shrinker_unit_alloc() fails, kvfree() is actually required
->>>> 
->>>> I guess kvfree() should be called just after shrinker_unit_alloc()
->>>> fails but before calling into "goto err".
->>> We could do it like this, which avoids ambiguity (if someone ignores
->>> that kvfree could handle NULL). Something like:
->>> --- a/mm/shrinker.c
->>> +++ b/mm/shrinker.c
->>> @@ -88,13 +88,14 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>                         goto err;
->>>                 info->map_nr_max = shrinker_nr_max;
->>>                 if (shrinker_unit_alloc(info, NULL, nid))
->>> -                       goto err;
->>> +                       goto free;
->>>                 rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>>         }
->>>         mutex_unlock(&shrinker_mutex);
->>>         return ret;
->>> -
->>> +free:
->>> +       kvfree(info);
->>>  err:
->>>         mutex_unlock(&shrinker_mutex);
->>>         free_shrinker_info(memcg);
->>> Thanks.
->>>> 
->>>> But curious, should not both kvzalloc_node()/kvfree() be avoided
->>>> while inside mutex lock to avoid possible lockdep issues ?
->> How about:
->> 
->> diff --git a/mm/shrinker.c b/mm/shrinker.c
->> index dc5d2a6fcfc4..7baee7f00497 100644
->> --- a/mm/shrinker.c
->> +++ b/mm/shrinker.c
->> @@ -87,9 +87,9 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>                 if (!info)
->>                         goto err;
->>                 info->map_nr_max = shrinker_nr_max;
->> +               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>                 if (shrinker_unit_alloc(info, NULL, nid))
->>                         goto err;
->> -               rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>         }
->>         mutex_unlock(&shrinker_mutex);
-> 
-> No. We should make sure the @info is fully initialized before others
-> could see it. That's why rcu_assign_pointer is used here.
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
-If the info is immediately visible, is the failure cleanup
-free_shrinker_info() safe? It uses kvfree(info) and not kvfree_rcu(), and
-shrinker_unit_free() is also doing kfree().
-
->> 
->> I think this is concise.
->> 
->> Best regards,
->> Ridong
-> 
-> 
-
+--
+Uladzislau Rezki
 
