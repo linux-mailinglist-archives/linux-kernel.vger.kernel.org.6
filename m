@@ -1,109 +1,196 @@
-Return-Path: <linux-kernel+bounces-368758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD369A1495
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:06:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E4C9A149A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FFC2844EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7091B1F23531
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CD11D2780;
-	Wed, 16 Oct 2024 21:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4611D27AF;
+	Wed, 16 Oct 2024 21:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNxerzC6"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="cJ8mC289"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D335478E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729112758; cv=none; b=s4TLyt6EC7lN/PVXc6N/QgfgkiMw7IJ/LUpzaQFwtxcQfHPKvh7ZpE4gLeaJ/fDcf/3phXX1SUUs07wT/6s9OPcruuwVGN9s0X/ID4h7BqtSxF3PKN2SBw463ai1zCEJDdGyxMMc750souP6WpMtbNViV48xJyoNLM3Att6WBPc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729112758; c=relaxed/simple;
-	bh=WZW00TKTaoemSd6JPBFYlmG2IMjRqCAXZEuW81RfWK8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mHcKqtF0wCKo+8ZBloGxeny2e9XUGwucgkEDaoY/0RDWUa0JP5kJVRAsPvRqPpEfRHxThl7CdAYL4EOjeG5r9EVg4MKsPgpX0AEQlP598RGel8XiYCLSpkPv3KGOdjJDmWs4VZWFzI8RcD8SouDTFpbOnmJDD6/owV1S7mrp4Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VNxerzC6; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e38fabff35so7519467b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729112755; x=1729717555; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mc2AnrLM2UF0S090yPZTAZNfP2OSi9FUUhZDFa9DYsQ=;
-        b=VNxerzC6t86Yym04K1aLDj6fmY8rvympoix6EPXdefK7Kk8UuWLz85DhDdQwBigCC6
-         BziXr/ASvqBnecGBfYUhwOuiMsGGH6oWN9bnRp8354Dz/BbneCVB0HN2I0e1SZgBFr06
-         WyILTpfQeX7z4t0NgKadFfyAu2dWQFNmDAo41XpBCg4PX7xsaBMpWj5p8POgSlAXMC5b
-         25yGOmc7sZjyNdk8P5sr/Tjs7lcgAjjksfQDc/chg/TxvVHtoiTHeDH1uT0GMmx22gl8
-         JFFrrcL5aM4auvQ4X8OpSfXzTw4vY6vX572Zg2LH+d2Pn7e9xgHUYaar2h5nOtpgQhQM
-         uKgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729112755; x=1729717555;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mc2AnrLM2UF0S090yPZTAZNfP2OSi9FUUhZDFa9DYsQ=;
-        b=Ab7KNNAxfKG6u0lynnoBOgClGl/pXgJHYzxtmoFoo0KftLJfbmU5E/jvmWBTwFg9pc
-         6L+hXXqo8nTGDesOisd1Vc/LvYyiXPVgFOnXOQmwt3VdjRL3/l78bZaMszmgonJgUUrw
-         39eT+EhoUTsY5TZqtOaUj4ayN8HNhJkkNM4ToSIFtNR3qGaZXJT/a1bQp84+13yvSY0Q
-         PjT1A9xV9Cv8Oj7X0dderOm0MGKUyCDbOccTnnxXITCw4A37xNGJUPEcLKVyJAMt0DMd
-         SN2n8hgnakPSggiWicm3GAsEQQ4zXsvRhBEyx2db0dNfnIyYdRhDi8p2pZgAmddRmCEp
-         CKiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCa5uaJbUIgDlFB+bCmYY71t8GqkJkp9iKklElYHG+xgTnk7Et704DTQNQ7Fmx5MCAiYKK0x+AWWdNoSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRuZCaK8cYejNY2cWLWoEwna2WV21BDJQ8hp9YaDNSsKdrEO6K
-	OjRwpCLlIKpzKVmMOyFgrx18PUAHv12npFi+7BY7UAIKC211DZQHyyuFMo3zAXE73fPdIDQaQM2
-	hZg==
-X-Google-Smtp-Source: AGHT+IGkf38vmY/wJdMjW1LCURxYE7Ec+J9yr0i/d8iGrua/q+lp0G6QiUUZJgyY0LEomNIZeY0ALfUpKv0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:f407:0:b0:e1a:6bf9:aa83 with SMTP id
- 3f1490d57ef6-e29782d5fa6mr5916276.3.1729112755243; Wed, 16 Oct 2024 14:05:55
- -0700 (PDT)
-Date: Wed, 16 Oct 2024 14:05:53 -0700
-In-Reply-To: <20241015195227.GA18617@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809B15478E;
+	Wed, 16 Oct 2024 21:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729112952; cv=pass; b=aNW4Oi8+8F/n8BQfgAkluC/xbNcPKqCdHcyrD2GdhPCbg5tDuY8NNzAdzuvvaJU8kQtJMYwqpR25d/qILRIUuzfThjFAlp04OolLy+gpbou1KpptvGNsw+5W8Xo/LooVn46yMg86lEYL4fQNUUcR4jPqOMyJrtRzppOUFQ0oCU0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729112952; c=relaxed/simple;
+	bh=0+/gOofFsi9y7W7CR0Vh3GmtxpBEIW2ejcZ6SSgd9u0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTHpwWCyFYqE0bpvg0+o16phuV6d7qOyQlFA0iE1TjFJj16EYM1Ww6N7ocmayFHelAaVh4BBtUVfcXGYRTB22EmnBIwZmsPkU0zEVe1bqOK7BkvyIYi304/BxOOW7UNcsCYDWBrEQcCbw7iid4F8RjqTEUQ4TjqFWPYGHDnnroM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=cJ8mC289; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729112918; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=P/sQO56NlFMcz8/Wtr3rvXuE3ImE+rn+9KYMixtkTpmiTBuBPgzzl7rWQK7sxKZpcIZNudwDMs3W76fYQxUGAQpZaOiLiNGsZhF1ITQBdVoPL+xZH81MB+XXEm1hyNGM34kACQsc5cnFwUHR5s70BtH7pIzStZy/oXdkvsg1Io4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729112918; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=OevVExCd74K4CyzC/2y78MWTRGO9BEZ5ceg9Xn4oW9Q=; 
+	b=WA7G/mTI3tuk/+QwbO0vA8BQPiBPfC1q/9aevZC9u6FWz77/O4Ngu3IKDkZPz6o6ljoXz8s0PXz6iqWXVlnSTx9UxPCTh9ept1TjPXcAYplSUcF6zi00vSxYv39TZb2JvvvwS7SItZPQQj+MvoqkuLmW09LPMRnhFsdRoY4me6M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729112918;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=OevVExCd74K4CyzC/2y78MWTRGO9BEZ5ceg9Xn4oW9Q=;
+	b=cJ8mC289aPpdg4XIj+WzPPSGf3XLikTxs/jUnzQGjbqrAw9mIIXlq1f0JRPYs4fw
+	pB1xFcR14rG99ZC7QAwcxJku4dRbWZTXOvXoMgNOy4Qj4uldzD0Vrw1XY2/M8u2/9RM
+	uPWrjnz+LwWs43FloZCEWcgtIKSpziCiDzhomeIg=
+Received: by mx.zohomail.com with SMTPS id 172911291581182.66214312711384;
+	Wed, 16 Oct 2024 14:08:35 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 945E5106044F; Wed, 16 Oct 2024 23:08:30 +0200 (CEST)
+Date: Wed, 16 Oct 2024 23:08:30 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Alisa-Dariana Roman <alisa.roman@analog.com>, Christian Eggers <ceggers@arri.de>, 
+	Peter Rosin <peda@axentia.se>, Paul Cercueil <paul@crapouillou.net>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] iio: consumers: copy/release available info from
+ producer to fix race
+Message-ID: <7qvxz3fuwcjeq2ewv3nterlf72wbymt7np5nnjitzkt6smzh7v@737455c4xapy>
+References: <20241015-iio-read-avail-release-v3-0-ac3e08f25cb3@gmail.com>
+ <20241015-iio-read-avail-release-v3-2-ac3e08f25cb3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240927161657.68110-1-iorlov@amazon.com> <20240927161657.68110-2-iorlov@amazon.com>
- <Zwmyzg5WiKKvySS1@google.com> <20241015195227.GA18617@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
-Message-ID: <ZxAqscbrROD1_szG@google.com>
-Subject: Re: [PATCH 1/3] KVM: x86, vmx: Add function for event delivery error generation
-From: Sean Christopherson <seanjc@google.com>
-To: Ivan Orlov <iorlov@amazon.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com, 
-	pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, x86@kernel.org, jalliste@amazon.com, 
-	nh-open-source@amazon.com, pdurrant@amazon.co.uk
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="omr3pkjg6x5yc4vn"
+Content-Disposition: inline
+In-Reply-To: <20241015-iio-read-avail-release-v3-2-ac3e08f25cb3@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/229.70.43
+X-ZohoMailClient: External
 
-On Tue, Oct 15, 2024, Ivan Orlov wrote:
-> > > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > > index c67e448c6ebd..afd785e7f3a3 100644
-> > > --- a/arch/x86/kvm/vmx/vmx.c
-> > > +++ b/arch/x86/kvm/vmx/vmx.c
-> > > @@ -6550,19 +6550,10 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
-> > >  	     exit_reason.basic != EXIT_REASON_APIC_ACCESS &&
-> > >  	     exit_reason.basic != EXIT_REASON_TASK_SWITCH &&
-> > >  	     exit_reason.basic != EXIT_REASON_NOTIFY)) {
-> > > -		int ndata = 3;
-> > > +		gpa_t gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
-> > > +		bool is_mmio = exit_reason.basic == EXIT_REASON_EPT_MISCONFIG;
-> > 
-> > There's no need for is_mmio, just pass INVALID_GPA when the GPA isn't known.
-> 
-> Ah alright, then we definitely don't need an is_mmio field. I assume we
-> can't do MMIO at GPA=0, right?
 
-Wrong :-)
+--omr3pkjg6x5yc4vn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/5] iio: consumers: copy/release available info from
+ producer to fix race
+MIME-Version: 1.0
 
-From an architectural perspective, GPA=0 is not special in any way.  E.g. prior
-to L1TF, Linux would happily use the page with PFN=0.
+Hi,
+
+On Tue, Oct 15, 2024 at 01:06:35PM +0200, Matteo Martelli wrote:
+> Consumers need to call the producer's read_avail_release_resource()
+> callback after reading producer's available info. To avoid a race
+> condition with the producer unregistration, change inkern
+> iio_channel_read_avail() so that it copies the available info from the
+> producer and immediately calls its release callback with info_exists
+> locked.
+>=20
+> Also, modify the users of iio_read_avail_channel_raw() and
+> iio_read_avail_channel_attribute() to free the copied available buffers
+> after calling these functions.
+>=20
+> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+> ---
+> diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/suppl=
+y/ingenic-battery.c
+> index 0a40f425c27723ccec49985b8b5e14a737b6a7eb..3db000d9fff9a7a6819631314=
+547b3d16db7f967 100644
+> --- a/drivers/power/supply/ingenic-battery.c
+> +++ b/drivers/power/supply/ingenic-battery.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/power_supply.h>
+>  #include <linux/property.h>
+> +#include <linux/slab.h>
+> =20
+>  struct ingenic_battery {
+>  	struct device *dev;
+> @@ -79,8 +80,10 @@ static int ingenic_battery_set_scale(struct ingenic_ba=
+ttery *bat)
+>  		dev_err(bat->dev, "Unable to read channel avail scale\n");
+>  		return ret;
+>  	}
+> -	if (ret !=3D IIO_AVAIL_LIST || scale_type !=3D IIO_VAL_FRACTIONAL_LOG2)
+> -		return -EINVAL;
+> +	if (ret !=3D IIO_AVAIL_LIST || scale_type !=3D IIO_VAL_FRACTIONAL_LOG2)=
+ {
+> +		ret =3D -EINVAL;
+> +		goto out;
+> +	}
+> =20
+>  	max_mV =3D bat->info->voltage_max_design_uv / 1000;
+> =20
+> @@ -99,7 +102,8 @@ static int ingenic_battery_set_scale(struct ingenic_ba=
+ttery *bat)
+> =20
+>  	if (best_idx < 0) {
+>  		dev_err(bat->dev, "Unable to find matching voltage scale\n");
+> -		return -EINVAL;
+> +		ret =3D -EINVAL;
+> +		goto out;
+>  	}
+> =20
+>  	/* Only set scale if there is more than one (fractional) entry */
+> @@ -109,10 +113,13 @@ static int ingenic_battery_set_scale(struct ingenic=
+_battery *bat)
+>  						  scale_raw[best_idx + 1],
+>  						  IIO_CHAN_INFO_SCALE);
+>  		if (ret)
+> -			return ret;
+> +			goto out;
+>  	}
+> =20
+> -	return 0;
+> +	ret =3D 0;
+> +out:
+> +	kfree(scale_raw);
+> +	return ret;
+>  }
+> =20
+>  static enum power_supply_property ingenic_battery_properties[] =3D {
+
+It should be enough to declare scale_raw like this at the beginning
+of the function and otherwise keep it as is when you include
+<linux/cleanup.h>:
+
+const int *scale_raw __free(kfree) =3D NULL;
+
+Greetings,
+
+-- Sebastian
+
+--omr3pkjg6x5yc4vn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcQK0sACgkQ2O7X88g7
++pqmyg//aywh/aS9OiaC40xG03DJKnIbmtOS2ex1ddHCFNbiFgbDE/ASfF4VixQa
+LSLQVi1QZysDaJ6a8+ri67OxQNagQjPeKersbuHUnXGSo4JZQl7ANVu/soO69xR/
+PXngBjlP6goz0qUHgUOhMLhWxEJ+djUniI2+ZBbRAJVxVPPEPklHBya+eDwo4/W8
+r+fLQhyO3few3Hk31BTSwyyjX8Qz2YPrU3XxsR5irRaCbcYS2vI9TFaXsAdmnNct
+u5F8SjyesppgHLv/OLH6kUTLFhF5zfswv0FblOJEoJCvCCsge/kIAh+qDYMJe2rk
+nmi9Ie/eMyOuiqLb2GseoXdN9p2zDavDm5yKgg5e5I89vPz/+3BkPp4saTATnkzJ
+uiML1GgSAPxwCUzk/UqcQlfNK1vbIlI/0zYlK+HnedGrV21ysmsfL8OUWmXTU4Ji
+1nDInw/Umf+bUzdXZCAZ4nNU0ewf5vC6ZlWX7t2XKQmbn9cF0BtWtdOawm4xBlcy
+93yY+xw9LSsmYMOSnwuTNK2YUNHvNm9UaL8zgDhg2QrSXqP857vi4BaH1u7PonyB
+lol4EBdsVwHzaG0ngpPKvLitgd+S8HlOOzN6aLgdEoEcDiY1WdhXpEtsa8Vu6Yo+
+2Qd9oAyIE71i8UdnF+WjKPPpXJEyIVgZHLlGF5NeIXf/mFTHpDM=
+=I+0p
+-----END PGP SIGNATURE-----
+
+--omr3pkjg6x5yc4vn--
 
