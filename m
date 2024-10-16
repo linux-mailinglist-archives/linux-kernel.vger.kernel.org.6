@@ -1,185 +1,84 @@
-Return-Path: <linux-kernel+bounces-367609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F369A046B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:37:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26B59A0468
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D9F41C23193
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CEC1C21B6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E84B1FCC6C;
-	Wed, 16 Oct 2024 08:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BC31FDFA7;
+	Wed, 16 Oct 2024 08:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VnG97B2a"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C352E1FCC6A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MGCJGGTG"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3071FCC74;
+	Wed, 16 Oct 2024 08:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729067820; cv=none; b=sAXXVwUzM698aUT7V+VIrn1D9ERrjWpaqZxh7NCZjIo4kpJYoPMkG30oGyIeP3WjtGGmrpyWr65YXrssweZPVat7mDUvOc/l6r7x+G5h4umnixWPlqsN+qniYHF9cD7olfQpi8cJeYTLeaEzQwFAtVPCi2xa2qRqfzMol0BxGKI=
+	t=1729067796; cv=none; b=NAvw1zhtvColZGVN+LopXvd9tiXZn05dwd0DMNbABYY7oszgMO7lphaBLhMJiaeLR52sWxLxhK4LnUS8n1teebVpoCAmeWHrDH98tD0QQJ9n8+PEymi9ElvKMbtfO3JZJXQxEpU4xcf0BwMzah22KWukanyP4vqA6QdtmQxPIBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729067820; c=relaxed/simple;
-	bh=w3g0Fn5Mfd9fDtUeCzIpWV081s38HRgl5Pl5wCNQDG4=;
+	s=arc-20240116; t=1729067796; c=relaxed/simple;
+	bh=uTxeLuSwto/BPgScS/3f9pYRmzxMRTM4H7W2/1VV4EE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ehVaHZ/i/jzfRNF+aGSkA8+J8Ms7Vo+CTPG0ydyVELc8wD4HRBHNTPt2axCPTa9RVGWNkkdduQ4x2r3vbNKJEqYMU777PMYTC+wEPKaDVfxMR0k7hJXqGHsx87ETJLZe8UIqPQoakrNaXag10SyEYjd5S9kvcjFsQn6LfdWxDbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VnG97B2a; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43120f65540so36198425e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729067817; x=1729672617; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gKZmMs4w+DDsatMIrnFTI7zIzR+qyauPVq2X7PfsunI=;
-        b=VnG97B2aJiGcNV4XW5AwaohFYBrIreB/nh4Zk+rfpjrH6QhXbW9VnCHDitGArmSxSD
-         YF0VuAaJSnCdQbHVlaam1QM/63vxpZOLOJJ98wxU4jWWuHGoys6060ShGFfeaeXUbr1F
-         70n+AuExU49hT0negJd5FxjWFZuWLrMHP7rbBiYf176YsDSGRLgXmlj8AZmNK0MWj1+C
-         CpRvOFJn5PODWUSoM5yZYXTf8Khp7Z/qJ/Uk6yFiQvDDX/DNMQHCc2d+VFv5wi1ZK2Is
-         gOddCNLeGLNcmHRFmbD7fy6Pgk6YvLD03lROQoKG2SxueVEoKOSsKB9+2xyLHCX3TTHC
-         5DoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729067817; x=1729672617;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gKZmMs4w+DDsatMIrnFTI7zIzR+qyauPVq2X7PfsunI=;
-        b=mJR2PZdBpA3b2j5okheLZwo8Jzhj3MnGCzdurOYtEr6V/w9yFF05echJK0KeVnvZq2
-         ottml89Gee0YJE6qJQAtwex1g3SHoDkUGR6UxxyfRsFij/ndht3ekDzSyRFp4niOOLCv
-         6zek0yu+XgMDN0mxHJEr23EZ7slIeZ18wD7fV3jl+3TqrbZ++6Dx6kbeOy/WZQEBse1O
-         Stne8W6d1jdcP1hhzGCv3e9Rf3D8gBo9WxcSpVJd90fkhUxFAsDFaWAVEoxJ4Nbae/KY
-         jiE7JOknPmB2i4o2cODiuy2Wc626RRoTnocKYdVRHn6y++aaDLgFCj3TQJOZi0k2halw
-         UAaA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0pIIiyte2ht7Mov07haIxc/bCrwqhSzDB7xNxlkTZQczYpfVPaImCf3nVx6uy2IowfStv34A5sKWJJuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9t6wpYJNt/0g3261O650IZT1P5y+ZhC8AJW6HRxAoLRR6518x
-	usSZZJZ2a+XSXorW8shfX3n92MA9+XuWKlpVNw6RIk1znu8D3Yfe46TSF6SuXMQ=
-X-Google-Smtp-Source: AGHT+IFRJdBQH582trH9wT6BtwYZ7vQBkNADiYoMcxo+OBtSWkYERq9wOrwJkvE9a86yjCnfmAOaxA==
-X-Received: by 2002:a05:600c:1c9d:b0:430:57f1:d6d with SMTP id 5b1f17b1804b1-431255d5099mr124678535e9.1.1729067817144;
-        Wed, 16 Oct 2024 01:36:57 -0700 (PDT)
-Received: from dfj (host-79-50-238-21.retail.telecomitalia.it. [79.50.238.21])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55defbsm42571395e9.7.2024.10.16.01.36.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 01:36:56 -0700 (PDT)
-Date: Wed, 16 Oct 2024 10:35:26 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform driver
-Message-ID: <c6emj4i56zozdpkgx6gkzgdlnwvkagll6g2yc6naumnrxqkvee@5ktdjfsem5bj>
-References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
- <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
- <c3d55f78-5a54-49f8-b6a1-4ed0f24f8666@baylibre.com>
- <8642bdb546c6046e8fe1d20ef4c93e70c95c6f71.camel@gmail.com>
- <2815c8b0-e2ad-47cb-b5aa-00297cf57899@baylibre.com>
- <781cf5fa075e13260e1b20f5acadb70bd8107cd0.camel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+FRnrIyH0wycm10gLsveVI4zW0E4CYvPHL6yzgD+4S2W6GF46jDvNMsZyhtXLCTyaj7a2UJ+jXmFoDK2RYwJ9cG2vLqgFV9fD1Qy2wwuq2M/Ur4id5IYpw5Vn05UvrREJenJutolvXw2RftjE2eKBzQ+wTfRhFVpl8BtNT1+aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MGCJGGTG; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=0oquJHVwiMMkyIWd/5w5Q2GuFTQnhIV33AZa476I+ng=;
+	b=MGCJGGTGPyGs0JgRXDDQJlvvau9YnJCScW9VoAX99/n6oDoMqbweR/okySgCWG
+	469TsZOBD3gMJKjAC4O1YSQITK1fHW1UDUUewnYzRSfjJo4/KKS53t5AB5qie9xN
+	sz3XAjGmJoJOg+3kSuMad5se0hyFPQAnjo5MCSsinEQvc=
+Received: from localhost (unknown [60.166.103.163])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3__3veg9n+mHUBQ--.4196S2;
+	Wed, 16 Oct 2024 16:36:00 +0800 (CST)
+Date: Wed, 16 Oct 2024 16:35:57 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+	syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
+Subject: Re: [PATCH] nfc/nci: Fix uninit-value issue in nci_ntf_packet
+Message-ID: <Zw967Vgatt8Ob1uO@mac.local>
+References: <ZwqEijEvP7tGGZtW@fedora>
+ <670ab923.050a0220.3e960.0029.GAE@google.com>
+ <ZwrENfTGYG9wnap0@fedora>
+ <d4ba554d-213a-4961-a9f2-6582b38fc082@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <781cf5fa075e13260e1b20f5acadb70bd8107cd0.camel@gmail.com>
+In-Reply-To: <d4ba554d-213a-4961-a9f2-6582b38fc082@kernel.org>
+X-CM-TRANSID:_____wD3__3veg9n+mHUBQ--.4196S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUwl19UUUUU
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYAl6amcPcKnuWQAAs-
 
-On 15.10.2024 17:00, Nuno Sá wrote:
-> On Tue, 2024-10-15 at 09:38 -0500, David Lechner wrote:
-> > On 10/15/24 1:37 AM, Nuno Sá wrote:
-> > > On Mon, 2024-10-14 at 16:15 -0500, David Lechner wrote:
-> > > > On 10/14/24 5:08 AM, Angelo Dureghello wrote:
-> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > 
-> > > > > Add High Speed ad3552r platform driver.
-> > > > > 
-> > > > 
-> > > > ...
-> > > > 
-> > > > > +static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
-> > > > > +			       struct iio_chan_spec const *chan,
-> > > > > +			       int *val, int *val2, long mask)
-> > > > > +{
-> > > > > +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	switch (mask) {
-> > > > > +	case IIO_CHAN_INFO_SAMP_FREQ: {
-> > > > > +		int sclk;
-> > > > > +
-> > > > > +		ret = iio_backend_read_raw(st->back, chan, &sclk, 0,
-> > > > > +					   IIO_CHAN_INFO_FREQUENCY);
-> > > > 
-> > > > FWIW, this still seems like an odd way to get the stream mode SCLK
-> > > > rate from the backend to me. How does the backend know that we want
-> > > > the stream mode clock rate and not some other frequency value? 
-> > > 
-> > > In this case the backend has a dedicated compatible so sky is the limit :). But
-> > > yeah,
-> > > I'm also not extremely happy with IIO_CHAN_INFO_FREQUENCY. But what do you have
-> > > in
-> > > mind? Using the sampling frequency INFO or a dedicated OP?
-> > > 
-> > 
-> > It think it would be most straightforward to have something
-> > like a iio_backend_get_data_stream_clock_rate() callback since
-> > that is what we are getting.
+On Wed, Oct 16, 2024 at 09:58:53AM +0200, Krzysztof Kozlowski wrote:
 > 
-> Hmmm, what about exporting an actual clock? Maybe it's overkill but from a
-> correctness point of view, seems what we should actually do :)
+> Same comments as before:
 > 
-> > 
-> > Re: the other recent discussions about getting too many
-> > callbacks. Instead of a dedicated function like this, we
-> > could make a set of generic functions:
-> > 
-> > iio_backend_{g,s}et_property_{s,u}(8, 16, 32, 64}()
-> > 
+> https://lore.kernel.org/all/20240803121817.383567-1-zhanghao1@kylinos.cn/
 > 
-> Hmm interesting approach. I don't dislike it. Kind of a generic getter/setter thingy.
-> We could then still have optional inline helpers that would call the generic
-> functions with the proper enum value.
+> Respond to existing feedback, please.
 > 
-> > that take an enum parameter for the property. This way,
-> > for each new property, we just have to add an enum member
-> > instead of creating a get/set callback pair.
-> > 
-> > Unrelated to this particular case, but taking the idea even
-> > farther, we could also do the same with enable/disable
-> > functions. We talked before about cutting the number of
-> > callbacks in half by using a bool parameter instead of
-> > separate enable/disable callbacks. But we could cut it down
-> > even more by having an enum parameter for the thing we are
-> > enabling/disabling.
-> 
-> If we don't get too strict about types it could even fall into the above u8 category.
-> 
-> Instead of lot of new simple ops we just grow an enum.
+> Best regards,
+> Krzysztof
 
-so a single call for all enable/disable calls. Looks good to me.
+Got it, thanks!
 
-What we want to do now ?
-
-So if understand, we don't like too much IIO_CHAN_INFO_FREQUENCY
-but at the same time, we don't want to have several new calls in the
-backend proposing a design change at this stage, where the patch
-was (likely) in a good shape.
-
-What about to simply add a IIO_CHAN_INFO_BUS_CLK or similar ? 
-
-> 
-> - Nuno Sá
-> 
+-- 
+Best,
+Qianqiang Liu
 
 
