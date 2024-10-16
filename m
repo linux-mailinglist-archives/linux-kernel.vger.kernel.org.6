@@ -1,132 +1,176 @@
-Return-Path: <linux-kernel+bounces-367754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97DA9A0650
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:00:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCE09A0657
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F09B2189E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294801C22D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07F0206069;
-	Wed, 16 Oct 2024 09:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36651FCC79;
+	Wed, 16 Oct 2024 10:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="glgvlEd7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFL5+1eU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A177F20606A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985B21E3DC;
+	Wed, 16 Oct 2024 10:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072794; cv=none; b=uC1kDlQRjzwLOblF3XtzO/TqNF5pzFCeKjEo9MCISO3r4dQvRbX8dh1Tqf53eAf5CAeuKq+B3/Fttf27JXvqgEzvd4zYj8AIrMbHCCbHQbXJVhkOKTU6FRW9AxU+lVVm335qf9escxjB2n57QY/ww0SD2dRhkawt+ffHbCtrlvM=
+	t=1729072872; cv=none; b=OG2Vw/Z0LG2qoO/7/k2UQoeNu+OQmITtkVcwI1op5r1hESK3fUaVH9aZmCaMw6/fsc73wVp2pq4gTR8ZRH+u6XF6jaS0nw7Ed5/Fil4nkF/Q7I53Fbk8ak7ur3fUpw86YbE02a0uF8HeZOZXqnWXMcvIaMXHMBv1YiidORLhUdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072794; c=relaxed/simple;
-	bh=2XC6R4guj5S2LQ3efLjxy0pDXaC+7A8Y4fP4r0jXNJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CI8XX13mSHfDTt3w1vg2z4kDn3oU/UR0GBoruJW0rZqL02+xyXb0vN/9FIABsJ8hD4mHkIKPBKJ17i7+WRc1Kt5a9X2WXZge0Lo7uIuBUS7/dlgKXHZ3a/DWCHQvvZxIltq03lAJFcb/XO/JTOQYphSgmEA9u3lfsmY+XtgEo14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=glgvlEd7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729072791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=klkIURfPfIeZWqtniUUVslo0WqVi18vzVEHDUiCNehs=;
-	b=glgvlEd7Vqk1eMYdCXBQKlO9mLPRfWCe8+C/5mvC8XYZskxmsxNWfDFV8LDwlUvaeIjYml
-	sdi/HAKv+PwUU++6q9ziR3kDeOQ09CcL312IAtD5O28tatuyXQAdbgX5ix6IAcEjdFcjdP
-	G3arFFLug+t9uHvjwziDPf1viPa6O0Y=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-47-LLDyAnyGOYWihZggmpGeFQ-1; Wed, 16 Oct 2024 05:59:50 -0400
-X-MC-Unique: LLDyAnyGOYWihZggmpGeFQ-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-539f7abe2e6so2710959e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:59:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729072789; x=1729677589;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=klkIURfPfIeZWqtniUUVslo0WqVi18vzVEHDUiCNehs=;
-        b=O2Clk3ToqZ+dgzeESRkzAxxhiArd6xcTkw5eDIOPgxMLGvbtU94dBynSIvnQGkrVqm
-         zJpbCghT/CvtTI6ZMyUKogA0tBJ0D7Z7HRQdKbtiqCC/4OLZdQapTnseCgs7OTNgJ8Ua
-         J9b29bElE24UeQ9G7IFDncmcJLUoXMc2r9y4nIqMzWxUDelhOjUxFCAhVtt47X7+m8Ar
-         VwEyIUeJ4IIievPl6lHIf18Ymnot1cEwT/h8Doj7iviLpMScbL2G84yBACeXWcbKqdjt
-         +xx79AtQsjjveMGtvuS07dSBfbfHHlPTkZW8FVm8y93s7ZKCeez/mxEyOLnWbUtvnxa9
-         PQyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT7uClJe8jNySXYh9xiaSzkTb+wxJuUKej2avwUesMuK+yizGXuwzxPvvF+u+BM3wPRHJX8TN+Mi6kOXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPOHOStVUsV/G74evgtvEoPlIrLt/NDiNudbw0AZaYxvwHLmt0
-	q2SL4AQGA4v7YOccNDn5zDnx+SXh8WRY8ki9pTzyUV8iuX+7SSVi2/flBTSg2L35Pqj2BW1GlSK
-	tfcJQfnaB7iPSSgdXrg0J2xq6KU8fNE+gmqXA7PvfeBF6xptXUIT/P6qSoNkumQ==
-X-Received: by 2002:a05:6512:2245:b0:539:f7de:df6a with SMTP id 2adb3069b0e04-539f7dee23amr5447502e87.52.1729072787293;
-        Wed, 16 Oct 2024 02:59:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFekB89aRCErYZDVnkCQyydN+Q4Cis1HQZOYg9npYTESVjqq1XcbpghIXt6aIaMbsNL8W0r7Q==
-X-Received: by 2002:a05:6512:2245:b0:539:f7de:df6a with SMTP id 2adb3069b0e04-539f7dee23amr5447479e87.52.1729072786837;
-        Wed, 16 Oct 2024 02:59:46 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4d710csm1545673a12.10.2024.10.16.02.59.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 02:59:45 -0700 (PDT)
-Message-ID: <e385eea0-694d-47d7-9eab-0c2dcda9b0f4@redhat.com>
-Date: Wed, 16 Oct 2024 11:59:44 +0200
+	s=arc-20240116; t=1729072872; c=relaxed/simple;
+	bh=D39NBDdVFY1jqqBfci4OkEy41KSDh8bapxuV2d7f1Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BHAM9smOPyXWDxw+420mNoZFyfpSY1FIBTbkKXicIKiWrJOcqOYEYCT843GvFcMYZwBARww9qxU9umVNb5OFzaUrUu45HM7NPFLrt7Z6YD+BKqoqH7FkdalXwtMHJmsNEcv/RWJfhQA43rTa91fPR7laS5hbeJk5Ka+G+KwrRBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFL5+1eU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B4CC4CEC5;
+	Wed, 16 Oct 2024 10:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729072871;
+	bh=D39NBDdVFY1jqqBfci4OkEy41KSDh8bapxuV2d7f1Ow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RFL5+1eUB/7QVL7nq53SyV6YL2Oz5Do7vcTbjSkcuZ6Re3Js90pykGY6b3OxJRdkr
+	 xJ+i+izBe0aBS8VOKfz6KWl5qEqh9xYcxg5VfIGJN4lLfyaV8LsM/oud5hx9p/f8KS
+	 Ypk4C1qsvB3dSX1dAZyFuLxgKjwtmEBpvw6hECSr/qcptdcbClqFXR9JQApm71FBgD
+	 n5FombtcGen+fWJS/8QGUtt3X29UdQmM0y20DP0XZiqVXAhkVkVaIi2sf0e+TNFYSd
+	 Vu8NvcvCGpGhnbB5ftgIkHn8zbwd6fsKzUnxAxxJgObO90hgAKlr+KELaagNPlvmfH
+	 Sm73QXNUsNu3A==
+Date: Wed, 16 Oct 2024 12:01:06 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>
+Cc: guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
+	maz@kernel.org, rafael@kernel.org, lenb@kernel.org,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ACPI: GTDT: Tighten the check for the array of
+ platform timer structures
+Message-ID: <Zw+O4nZisbkdvNtz@lpieralisi>
+References: <20241016095458.34126-1-zhengzengkai@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/13] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
- platform-driver-x86@vger.kernel.org,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-References: <20241010193705.10362-1-mario.limonciello@amd.com>
- <20241010193705.10362-6-mario.limonciello@amd.com>
- <4gcjfysohl7qxdfgmxm6j4yd5ps67qpnnwgt776xondsfdwnri@7mde6vfyfiah>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <4gcjfysohl7qxdfgmxm6j4yd5ps67qpnnwgt776xondsfdwnri@7mde6vfyfiah>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016095458.34126-1-zhengzengkai@huawei.com>
 
-Hi,
-
-On 16-Oct-24 11:36 AM, Uwe Kleine-König wrote:
-> Hello,
+On Wed, Oct 16, 2024 at 05:54:58PM +0800, Zheng Zengkai wrote:
+> As suggested by Marc and Lorenzo, first we need to check whether the
+> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+> de-referencing what it points at to detect the length of the platform
+> timer struct and then check that the length of current platform_timer
+> struct is also valid, i.e. the length is not zero and within gtdt_end.
+> Now next_platform_timer() only checks against gtdt_end for the entry of
+> subsequent platform timer without checking the length of it and will
+> not report error if the check failed and the existing check in function
+> acpi_gtdt_init() is also not enough.
 > 
-> On Thu, Oct 10, 2024 at 02:36:57PM -0500, Mario Limonciello wrote:
->> +static struct platform_driver amd_hfi_driver = {
->> +	.driver = {
->> +		.name = AMD_HFI_DRIVER,
->> +		.owner = THIS_MODULE,
->> +		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
->> +	},
->> +	.probe = amd_hfi_probe,
->> +	.remove_new = amd_hfi_remove,
->> +};
+> Modify the for_each_platform_timer() iterator and use it combined with
+> a dedicated check function platform_timer_valid() to do the check
+> against table length (gtdt_end) for each element of platform timer
+> array in function acpi_gtdt_init(), making sure that both their entry
+> and length actually fit in the table.
 > 
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers. Please just drop "_new".
+> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Co-developed-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> ---
+> Changes in v4:
+> - remove the tmp pointer to make the code more concise.
+> 
+> Changes in v3:
+> - based on Marc's patch and reuse the for_each_platform_timer() loop
+> Link to v3: https://lore.kernel.org/linux-arm-kernel/20241015152602.184108-1-zhengzengkai@huawei.com/
+> 
+> Changes in v2:
+> - Check against gtdt_end for both entry and len of each array element
+> Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
+> 
+> Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
+> 
+> Link to previous related patches:
+> https://lore.kernel.org/all/20241008082429.33646-1-zhengzengkai@huawei.com/
+> https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
+> ---
+>  drivers/acpi/arm64/gtdt.c | 29 ++++++++++++++++++++---------
+>  1 file changed, 20 insertions(+), 9 deletions(-)
 
-Note there is a "[v3,05/14] platform/x86: hfi: Introduce AMD Hardware
-Feedback Interface Driver" patch superseding this one now; and that one
-has the same issue.
+Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
 
-Regards,
-
-Hans
-
+> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> index c0e77c1c8e09..d7c4e1b9915b 100644
+> --- a/drivers/acpi/arm64/gtdt.c
+> +++ b/drivers/acpi/arm64/gtdt.c
+> @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
+>  
+>  static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
+>  
+> -static inline __init void *next_platform_timer(void *platform_timer)
+> +static __init bool platform_timer_valid(void *platform_timer)
+>  {
+>  	struct acpi_gtdt_header *gh = platform_timer;
+>  
+> -	platform_timer += gh->length;
+> -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
+> -		return platform_timer;
+> +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
+> +		platform_timer < acpi_gtdt_desc.gtdt_end &&
+> +		gh->length != 0 &&
+> +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
+> +}
+> +
+> +static __init void *next_platform_timer(void *platform_timer)
+> +{
+> +	struct acpi_gtdt_header *gh = platform_timer;
+>  
+> -	return NULL;
+> +	return platform_timer + gh->length;
+>  }
+>  
+>  #define for_each_platform_timer(_g)				\
+> -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
+> +	for (_g = acpi_gtdt_desc.platform_timer; platform_timer_valid(_g);\
+>  	     _g = next_platform_timer(_g))
+>  
+>  static inline bool is_timer_block(void *platform_timer)
+> @@ -157,6 +163,7 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+>  {
+>  	void *platform_timer;
+>  	struct acpi_table_gtdt *gtdt;
+> +	int cnt = 0;
+>  
+>  	gtdt = container_of(table, struct acpi_table_gtdt, header);
+>  	acpi_gtdt_desc.gtdt = gtdt;
+> @@ -176,12 +183,16 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+>  		return 0;
+>  	}
+>  
+> -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> +	for_each_platform_timer(platform_timer)
+> +		cnt++;
+> +
+> +	if (cnt != gtdt->platform_timer_count) {
+> +		acpi_gtdt_desc.platform_timer = NULL;
+>  		pr_err(FW_BUG "invalid timer data.\n");
+>  		return -EINVAL;
+>  	}
+> -	acpi_gtdt_desc.platform_timer = platform_timer;
+> +
+>  	if (platform_timer_count)
+>  		*platform_timer_count = gtdt->platform_timer_count;
+>  
+> -- 
+> 2.20.1
+> 
 
