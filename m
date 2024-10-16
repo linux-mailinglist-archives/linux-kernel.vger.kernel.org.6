@@ -1,102 +1,68 @@
-Return-Path: <linux-kernel+bounces-368428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3201F9A0FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:30:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CDC9A0FB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FAE28292A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2A81F26338
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E29720FA8B;
-	Wed, 16 Oct 2024 16:30:19 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5C3210C19;
+	Wed, 16 Oct 2024 16:30:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D1015E5CA;
-	Wed, 16 Oct 2024 16:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB8215E5CA;
+	Wed, 16 Oct 2024 16:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096219; cv=none; b=I5e/4cuWhndCyaGG1A9UlZNAmtabhcp7Sn2OphVP85Edm7vIykY32qbblqmkZ+qC6GQ9A8ZLW0TyaTn415+KK+F0GNHviPEgX+ehRlkuctvFbFNJIDio5yGEj0Su+bb4Ast3rKukQaaFmwLE9jKZ/TbvfNwIha/5IRNg4fwAE/0=
+	t=1729096221; cv=none; b=q1jDcItwdR+ZtqydlBrDE9yntUPbEyy7abaMObgK5YrhKUu/b4LOg/IXUPYnzesEMgXTsAu/rg8I1N+3teR9SuhxvxgP9/l3RtUSfbkdqr+AwfNwY4rRR5ZPeHjqWBsP2ByKv/TRmkDxd1rNZIK1LcenaTAcEzvmYb8Q5g7bTHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096219; c=relaxed/simple;
-	bh=ifgkVkIER1fekyXXjdFz/dVArNLvS3sJe+MD8HitC70=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t/l0Jj/JuoRu1VFO0XfNsvVp4MZS6d61RH0HYRQoMN9+tfMB+06yVrR99+HIiVjWsohjfpoqVcAY9RPT5zaLvLf+vOZU7UROBux90vDO2qcz/30ZU3FCZtIdDU7J65cwXrh6tr7nYtnGSqNHnGen9un0qMUrMQAODgmuC85UaYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTGcJ4qxZz6J67l;
-	Thu, 17 Oct 2024 00:28:32 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E977A140B39;
-	Thu, 17 Oct 2024 00:30:13 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 18:30:13 +0200
-Date: Wed, 16 Oct 2024 17:30:11 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
-	<Benjamin.Cheatham@amd.com>, <rrichter@amd.com>, <nathan.fontenot@amd.com>,
-	<smita.koralahallichannabasappa@amd.com>
-Subject: Re: [PATCH 06/15] cxl/aer/pci: Introduce PCI_ERS_RESULT_PANIC to
- pci_ers_result type
-Message-ID: <20241016173011.000021e4@Huawei.com>
-In-Reply-To: <20241008221657.1130181-7-terry.bowman@amd.com>
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
-	<20241008221657.1130181-7-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729096221; c=relaxed/simple;
+	bh=HNOqh7nnETdziHGNfo2HvthKVM7we6fo8qe8+HyE8zE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BYu53vgRgOCJHAz2dqA/TWa/2r8kDcscwuN9EI9MqROoz95dIguf7MC/b1A/GaYUZ5ruTTPwPBCMfby7o2KoN6tBNbznIcalxNmBFhsbCnTNEqqB8CfJ3DAv4AVDOU0F8p57jb3Ux8MqFcpivH13Iv4EnVJ6ml/xx7RnI4VoElI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7217CC4CED0;
+	Wed, 16 Oct 2024 16:30:19 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/arm64: Ensure stable names for GCS stress test results
+Date: Wed, 16 Oct 2024 17:30:16 +0100
+Message-Id: <172909620948.3163505.7404760502678129111.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241011-arm64-gcs-stress-stable-name-v1-1-4950f226218e@kernel.org>
+References: <20241011-arm64-gcs-stress-stable-name-v1-1-4950f226218e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Oct 2024 17:16:48 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
-
-> The CXL AER service will be updated to support CXL PCIe port error
-> handling in the future. These devices will use a system panic during
-> recovery handling.
-
-Recovery handling by panic? :) That's an interesting form of recovery..
-
+On Fri, 11 Oct 2024 15:36:25 +0100, Mark Brown wrote:
+> The GCS stress test program currently uses the PID of the threads it
+> creates in the test names it reports, resulting in unstable test names
+> between runs. Fix this by using a thread number instead.
 > 
-> Add PCI_ERS_RESULT_PANIC enumeration to pci_ers_result type.
 > 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> ---
->  include/linux/pci.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 4cf89a4b4cbc..6f7e7371161d 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -857,6 +857,9 @@ enum pci_ers_result {
->  
->  	/* No AER capabilities registered for the driver */
->  	PCI_ERS_RESULT_NO_AER_DRIVER = (__force pci_ers_result_t) 6,
-> +
-> +	/* Device state requires system panic */
-> +	PCI_ERS_RESULT_PANIC = (__force pci_ers_result_t) 7,
->  };
->  
->  /* PCI bus error event callbacks */
+
+Applied to arm64 (for-next/gcs), thanks!
+
+[1/1] kselftest/arm64: Ensure stable names for GCS stress test results
+      https://git.kernel.org/arm64/c/9b9be7825851
+
+-- 
+Catalin
 
 
