@@ -1,296 +1,367 @@
-Return-Path: <linux-kernel+bounces-368863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C569A15CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:31:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A66A9A15D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9774E1F233FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:31:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F9151F23496
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCC81D45F0;
-	Wed, 16 Oct 2024 22:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A2B1D4352;
+	Wed, 16 Oct 2024 22:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eTHtfRlG";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qnPxuHRo"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="io84udQE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F23621E3A4;
-	Wed, 16 Oct 2024 22:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B0E1B0F29;
+	Wed, 16 Oct 2024 22:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729117857; cv=fail; b=kwVpmKg+KoQQH7c1Vn2BRiKtiP1VEBp/WB83V2AqT8uBUitLA8zokTPIMn2wIXVnAnSsJ3HUUAjyAnatWsfYNYYlAChE9FGm/EJ8owNs56XlupcJsEp1h6nfrMkPVoyoZQe/EwJeX8PbG2m4RHooxep7TWvqUng3pjfkQBW5wRs=
+	t=1729117896; cv=fail; b=DtW9CQArjCYRETVVpzgJkJR7y8m42NT4QeM+9qwGmtzFSYRXvjGD5Ww7PBviWEc51vHkn3E2WwVm4GtyQ7o2dFDrLDkc4IFBUD5xs0a+ojH/I0XLDP7wowEYOsWKdj66TixZ3AneGT3hw/z5rVP4rALBXwAAt+KC2kPjCrHub8w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729117857; c=relaxed/simple;
-	bh=Otegg4sP5WSHqqmzXwqf567m+mxi5pjzXvppuaL11EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tBvxpn2gUSypfe0af0S0uSlHcm1MShmReBci6wzzdO/S6wMeH7KU5e/AvvDjT+4JiqsfXqDWGc9IX0xmVz7pSI0SxNOqMQI8CaxOKM8nFsGmDHhyO49U+hMTzQsHppFUj21zlR1t3Y9DqQ8/0//9iW7B7i2i/eWkzMlJLv6D/uE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eTHtfRlG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=qnPxuHRo; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GKtgI7001601;
-	Wed, 16 Oct 2024 22:30:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=sWU0QFi5C+x+QrmXu3Af48fUPRo482vD0gFEn7egaqE=; b=
-	eTHtfRlG8kY3IZQgNKnhYz3gQdmMUssJIGS+Rjj6asXovzhHqA0jJCtf5CD51Xzd
-	KUORzUG+pHzDLsbFP6o9Uuw5fDA6gsASzPYEh4uoxM1VmukFE3NRz8U79XxmNB5X
-	a93WEWx4NSUEFEOEvBty4j+3E8MTS9umCPhvmX8QG3DhV3RNL7VKBqOr+5Oenx6F
-	/GWG7xte2bMnJBnCn9xWVcLSZr92F1L8eMHOonIWtrE9SMgkaxvFKVzkWmN+7RZj
-	eJHHWc0bz1LAEiZDxImauorAUh/FFvzOYDnFPS9A2khV4U+F2C9Ux3ZpJTJscPaj
-	zYaclbI8Ob08ra3Q5tehSA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427hntd1sk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 22:30:40 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49GLg6vs014817;
-	Wed, 16 Oct 2024 22:30:39 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2042.outbound.protection.outlook.com [104.47.74.42])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fj9ejjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 22:30:39 +0000
+	s=arc-20240116; t=1729117896; c=relaxed/simple;
+	bh=BizUtCUwR5ASyQesyOvoWyltEsrFX34Y5FUdrYE+R/w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=m0viofTjH8CMiwt4qedWvIMLMz7ikT4p1b26MYUWbSDDCVY1TJRFnbr82SGAbCMyEkvFoJ7WjMaMlcQ5EDlrivSmnC3DxcfeKpoBdXIZMQQAbifvsWr6RYcAkF0xSrLjlGKTxZJ459S4ABWi/4dzYcTJgcYSY5uD00TYI9OUuCU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=io84udQE; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729117894; x=1760653894;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BizUtCUwR5ASyQesyOvoWyltEsrFX34Y5FUdrYE+R/w=;
+  b=io84udQELgwCDIRczIu8E66JS7O6lGFeN3RTWsRNcK9nY1YU669uSn2A
+   Pm67rBpB+wsZlUJHqqgUUuD1GEhuV8zSX/xl6FkyJUSA09OxWfkwBagoj
+   6YDumLn1lHQty30tIekHcHExaRZpmjxsN14tz455th+wp+WvKGgPa1M0b
+   +0JMLEUPXaxLXuz1j1yZJ0QLvoeTG2HGfe+dD24W958qWeNoZ4gvWv6HD
+   IPAau5cvdBPlg2gd0sJwxmMoAZ5idAHHw/axJIn/mPOwMjB5Vm/vqxFZX
+   3t2DWqgRjSdB0LEzIGgUCbx3+tyQHBfF33o9d7S2TgvtgCWICcsH7jNtb
+   w==;
+X-CSE-ConnectionGUID: IUHbxkx3Q0iUSCnWLOP5Zg==
+X-CSE-MsgGUID: qHgdGT0jSHainbEvMzS7Kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39138375"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39138375"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 15:31:34 -0700
+X-CSE-ConnectionGUID: utJAFz7nSGmaqq7Hh/Gjsg==
+X-CSE-MsgGUID: FvdIPhsaTr6z7vCVeNB/sQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
+   d="scan'208";a="82904601"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Oct 2024 15:31:33 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 16 Oct 2024 15:31:32 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 16 Oct 2024 15:31:32 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 16 Oct 2024 15:31:32 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ymhKSR0eGeEQJHhA+grupwQt19e9+5rlhZ4WAXBi6r4z0Jw0dKKPP9vGdnq9QeojeLdxdGTNWkyByCn2n1F2YykcJVyg/lghRO/Vp/YyCaJHI9mT/tyOcjPoZtQflLjqSsLpNzOsHxorZsxsJs1qm0/Y7ys4dVWP0AbcbYFv+VWpYsS5Um/lEjAjuvEGwPfjo9ldBIrnCBF7l+RsldqeiN5B1V4cbf4BcgWJ7TOFDbYVxSFeMIHYa1liu3kmi84AfuCQOYITuSjX5eYefOiw4n918IL0bvXEYpwTSAsr1anRIgJtvHnAFK1xbtJsxAsGhndwMcYyuq8SIzjsikhrrw==
+ b=Zqe6g+WCrocq+tu2IUvZ3laLQ7vEmb3pPYW2lCaZMYxs/f8KNWb857IkpA5flOnwSEmdvhqcwISQYHO3aTBFuI+pXcdPph8vE9ViaCiCAzSiJ/YOzSCxgXRYwdK3uf3gfiXPyThxsiI/0SjInl52oln3Nk8qug+SL2X2UuiaIOwcOimpSJbm3Z7Zs2zQlF8AJiDvwLoGR7iasKgrnu1+bcOqrBXfJEoeZqOlRje6AqOLomUNJ+o5je0B2aPLkoOPAFwqIsY7E/rAbdRlBDr5kfNKViSkWJyZc6QRxhYm5gs47PDdKMR59dgMSLPxPDOY5nhFDt03lPyTDNBbMiZbng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sWU0QFi5C+x+QrmXu3Af48fUPRo482vD0gFEn7egaqE=;
- b=wlRJWV2j9hb0DI3BNQqOJ5eRD1FGkZju0GF7cB4kHE4G5kJZNaMRPHbATGjIZqNVc6LsTsgSLb0BA0RrX1do45GVVnOccthJX4xY0m50hWgy8QLL4jvk6tAdPWPufKoNrE4D4+EucNAPg+xH4vIGFWgo3e7ygNLHRcw3kHwBDQrY0FprVhughx8E/E6oMyrQoF4NPRBEUwOGOxdmmeytUSWZs3Z2K2C73ZGAmAH61BvK+nzALAPd0NgVLX7NTJ2ytFMM/nUMFQWdzjlSNGIN1Ie4KDm+vy6byV7uBdS5t6Ox4SE7fgM7/XmNbcIZVqQJQ1XnuKcTCSR57ugZenK2lA==
+ bh=95uJI37J86n6aSUifxkRxIQkeqZet7stPI6+7kBPrak=;
+ b=tV1yQDO+Xt+3p6SJTo2qoZVP7i2O2vyjLdxuY7HLbsslIs84XwhyHcxZi4NVMlsoAIBI7OAY9/4yl+1/Fk3sU4pJfpmyn7460rZ/sFRbjr1MbOgfXV+sbdzVb7d+yPiH1/LexFIsUWuDeQdz8bfR6HXyn80Jx+iiGRUQk7byjNtTUfa3mj25KaztoyoUH+obczPGHuz19Egw6qMyXxvqXdI4bkbLSlDfLjx98nPOChqKWePVQJFms9WlYXvDIJU/IP/Ui1Uo5VUxeUk+u3/uT9ozXwgdA+Y2CVo2a3DyqfC29E6DRP1YkEqZlB3QHwQjLgytG9pvqHm1cQKPJSPipw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sWU0QFi5C+x+QrmXu3Af48fUPRo482vD0gFEn7egaqE=;
- b=qnPxuHRom1iBbikqaH5KemUEVAPuhXu7xJ4nh7yYJFFfmj/q5m5l1AKf30ruJ57dTj/o2AjtyTB2x4uATGGJInnzMx5P6dEr03I6UtD6K5o8MNQoF1L7K6+jepjTDZzjsf1b0df8e8M2+4p4BPfhYnW6/85avYbugggsj+UJMuw=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by CH3PR10MB7493.namprd10.prod.outlook.com (2603:10b6:610:15d::5) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by PH0PR11MB5093.namprd11.prod.outlook.com (2603:10b6:510:3e::23) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 22:30:36 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
- 22:30:36 +0000
-Date: Wed, 16 Oct 2024 23:30:26 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>
-Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
-Message-ID: <97fbdb19-fe46-45e2-883c-2ec0e0e6416c@lucifer.local>
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
- <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
- <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
-X-ClientProxiedBy: LO0P123CA0010.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:354::19) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+ 2024 22:31:29 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
+ 22:31:29 +0000
+From: "Keller, Jacob E" <jacob.e.keller@intel.com>
+To: Vladimir Oltean <olteanv@gmail.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Nguyen,
+ Anthony L" <anthony.l.nguyen@intel.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: RE: [PATCH net-next 3/8] lib: packing: add pack_fields() and
+ unpack_fields()
+Thread-Topic: [PATCH net-next 3/8] lib: packing: add pack_fields() and
+ unpack_fields()
+Thread-Index: AQHbHA5vnE2jdv2v3ES9KKHxeuCXIbKJXz0AgAAKlACAAJJnEA==
+Date: Wed, 16 Oct 2024 22:31:28 +0000
+Message-ID: <CO1PR11MB5089220BBAF882B14F4B70DBD6462@CO1PR11MB5089.namprd11.prod.outlook.com>
+References: <20241011-packing-pack-fields-and-ice-implementation-v1-0-d9b1f7500740@intel.com>
+ <20241011-packing-pack-fields-and-ice-implementation-v1-3-d9b1f7500740@intel.com>
+ <601668d5-2ed2-4471-9c4f-c16912dd59a5@intel.com>
+ <20241016134030.mzglrc245gh257mg@skbuf>
+In-Reply-To: <20241016134030.mzglrc245gh257mg@skbuf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR11MB5089:EE_|PH0PR11MB5093:EE_
+x-ms-office365-filtering-correlation-id: 156a95d0-67bd-4d7b-1799-08dcee324737
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Pr/KiztzVzHChRr3okWUS+GQcZ5TW0yoH8qlhw9DVPM5d9mkOmEPBs37PVkc?=
+ =?us-ascii?Q?ok7BbM8y72XE2iDN5pgVP/t92fhKyGu/OH9wDXrNUOf8ljO8kYuo0BmEKvet?=
+ =?us-ascii?Q?f6h0/yr8ulVsoq0BHVHLSCbKlZG0kw2oEqUULw1oBzKBj/35cbpLEeR+tZkx?=
+ =?us-ascii?Q?lrdTXCTIiWSyYyjLYE1TEB1qLFuWgcazbqgye9oKtN5eI0/YiVAMeKVJuwSY?=
+ =?us-ascii?Q?CUbiXa/plbLDJwbA8zoWEiYAoSi3LxegEYKqSoAAVQdH5DHNLejjtSiCOgCG?=
+ =?us-ascii?Q?r2M7hihb6xIz7kOmuwGMsHexLXuH1ynab1QPNgq/uPoiuGfaQJUrqqxnwaH7?=
+ =?us-ascii?Q?IaL7W8d5u6iVo2yPNLca+OZ/6XTYu2Gbc+0AY+s+ShcgzxzFMeMahV29iQge?=
+ =?us-ascii?Q?UEy46yBxTRM+G5kLSHHWJJAf5e8h+ZGawM6L2qbxdd4O4PKCMJ0EWdOexOlB?=
+ =?us-ascii?Q?RwZSUXNFg6DhVrNtPZ2F8agEBMrB5Zk51UUkHh6JYFkT81+iTwzttI4R1pIN?=
+ =?us-ascii?Q?jpDHdg4Q9CrtYSEwh/WaVTGO7hrf6ly5j0uzymHYiJr2lbEQ6/NDa7OwdLqS?=
+ =?us-ascii?Q?KNMh5WL3i5jDswDhNvQMoQ7KawNV3N/jDmSgfinKDb0gM4kN34T+WpugWCj7?=
+ =?us-ascii?Q?w8TvVJ43ONt0eQcFC3VkehUeIHM758xW+waSTJRaPuOfR+FJWQanzMv1hmZZ?=
+ =?us-ascii?Q?7d8QsvPvj9f1UOkB419hPq/fs2bQw3FkLX6qRGJgrDSw3K242Hjxv1VfC/7i?=
+ =?us-ascii?Q?G+aJ0GCw3yr29WaSCP0LGZIWiNUHgnm0yxv8QRBYM5WQtP8Tihf+Jd4JygKx?=
+ =?us-ascii?Q?FqxQ4HfP8j3N0G5dJfWUWCeTZm5mSS29Cl9KNGevEEHmF/nPhrRLcZCCvfdV?=
+ =?us-ascii?Q?/MZX9mjChktWGZ+WBVAt62PsQQQx9FlCPLN+wvs8Y/YjaHJnxOqte7bOyRt+?=
+ =?us-ascii?Q?ShnUU5mTlqMSUeJFAX8s55RLUwAS4n2RuYjD+eWNADn0IwTSTftJvIzhFcXC?=
+ =?us-ascii?Q?Soj/pwEbSEQuTUr38he0ZxxrH8piR5781ezu0RvFojDvpVaXydcTx5KKRHtA?=
+ =?us-ascii?Q?8qtK97q8sfZSEou6B2NwZU4xB8Hzx29j77R149s8Pwd2plyY55iOse08o/3e?=
+ =?us-ascii?Q?ysTWzqFNtgu2rs4w7ZLtBBHgNb3b0tGtlKPURSeM3H1p72mYRtBJnYJ3kEQJ?=
+ =?us-ascii?Q?mkpcjjOuYPJS7sbXZHcX1hfDsyaMZIuPEwbg++KQpXmqgCvFZP2yTt1MDuat?=
+ =?us-ascii?Q?MSZCqTGVmRxSeY5EFP3jN1E9M0hljJm0sz8a7Fd+YvHhoBTU38hhZA3XnrcR?=
+ =?us-ascii?Q?Zw/hvbeTcCR+kKzqeGYT1cNMh8V4qvqVCslmGJ3KrmLi277mn808c9/e+Cyh?=
+ =?us-ascii?Q?DfgWAkw=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?CvXmlyOBqFTyObinHEfExaYmc6i1vA9K3RHxhjLwzJeEVX3W2S9yvLxv25Pb?=
+ =?us-ascii?Q?3Pr/5n6lhpmOpg8Kq/JptmcB5ENR23pq+x9i95Avsz0V3VrMsU7Ytart9jhq?=
+ =?us-ascii?Q?HD2S0V9+4Fs4Ud292/Et87nBF+QMRgG8yXeqaHN1qCrPD+k187THRhDwHxlc?=
+ =?us-ascii?Q?e45ROykSp1DvdopdDwxAVXJoHprU0yvah5Y6flmHOiX1vjTGcTMF6RVQNiiG?=
+ =?us-ascii?Q?uq9Z1tQvJRPvBld6d6Xflk04LhtfzjTEJD12zWUv8x460o+mC3qokeow7Hqc?=
+ =?us-ascii?Q?lH1uzqcL9RbInvzzLq08N7FslOUIRe6K41vCebAD8AAXuuTtYzr+7+noqHZ+?=
+ =?us-ascii?Q?JADRjEEOjGeV3Jw2YhJ6HtN+LIeRyMYet5tjCOpTlT1cXvpBm+0Xg0wiiCjM?=
+ =?us-ascii?Q?8pPpbg0tiKrZbpyWXzgZpKbnHzxvW+GM4LShcUIe04sQxsvZvWZDh3Kvji13?=
+ =?us-ascii?Q?AaTo+UVwp+nKZQ/ggiL7sHYJ9l0Orzcspb8FaHKpOf6EJ/UbATluhjw3fN4y?=
+ =?us-ascii?Q?iewAa2RCU+p9tTt50lbPYIxjviKO1ef0ihBMqPcbIeDW6PL25TdZVjhlNi1G?=
+ =?us-ascii?Q?sD92+A+ORFyZnKIBoyzKbFBJDZlQP/dUNhjntpRLcsNucST3JrlobkzSoJkd?=
+ =?us-ascii?Q?0rD5juYX/SPtOP6zp6SIaDqTpVvtrOCQ9ixWZSLZHbkSGc7ihzlxM6G+Ze99?=
+ =?us-ascii?Q?BVXOFHzxnyRvXi6wQy4JrezwplebhBs68Uw0p+UOI0RQFYROj4kGj4Nm33SC?=
+ =?us-ascii?Q?KVxPIfigJxIp9oAK0viIsKP9eVOItHdSb5iNF8aEpSyXYJlcfibvABDV/gob?=
+ =?us-ascii?Q?SoI/N4Xczq9q3rCCT3G1RdQZX8CvgqWNc6z0NfmQDhV1wivTK+tDbGBRWhKK?=
+ =?us-ascii?Q?YDJQacWgTdX/TmCsGER9s6+HE8G4PpK36PiEJdKBo0kaSCWpiTHxs2oTn3UJ?=
+ =?us-ascii?Q?q9SG2PldhpHYI6B9K1oZsRiIRSzp3+6qAsdP8fscmIA3Yy/v4h+eZbzQH6rt?=
+ =?us-ascii?Q?M/1v/j4+kZYxPYl+QO/fPH7ry1Txi/JlXpTVKbG5s4hXa1/n4Sp7gsZITjhl?=
+ =?us-ascii?Q?ugxgLvy2/CUD7nObDOpHhKA5yGkR/A2wdnzslvVRygHR9Nq5ReUWBcPrMFzt?=
+ =?us-ascii?Q?HNiXYXHPnIo250W4dkD7XkzXJ2fpMv3SlhuINMzddCSN/UJFO5wWxqvmcBLG?=
+ =?us-ascii?Q?aTJap8njdy/EwMkq3AwBL4XaHqh55YTtclRFhw2yvjzOcKVdmOmODB9SYc9c?=
+ =?us-ascii?Q?6IsT2vOJZY0hpZoE1j0MgisWTMlap/SD20P1wyyd5+La0QJppCvh1oBEEKnL?=
+ =?us-ascii?Q?n8F2rTm/9ty9MNPljuuIGGIzKnr/5r4gl4SrkhXaGd+/KnmoPCYu9Ci234qP?=
+ =?us-ascii?Q?HiNRO9cF8pXO1GwJt4HvIB6LyZFfF9gWKjmmGRxkfq9wYHPS8rUek6Z+hbAf?=
+ =?us-ascii?Q?ildU1gUdd9bg+L/mt7jD7ckgoyZSN3V3BgfKBSmj3hD7OvDsT5zkminrjx2H?=
+ =?us-ascii?Q?pYhZNgaIWRPSIIOTkMB6sceJdnzA21/3Coor3syu7xd/Rf9B50SQYOFmV28g?=
+ =?us-ascii?Q?M6we28fMNwdWVZOwMNViSKYHv3VONq2vctfWOPPO?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH3PR10MB7493:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43895c86-7be8-484a-ba43-08dcee322796
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|10070799003|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dHZlaTJOVnA5YTU5QjlmMC8zRGlFM0dMeHR3Sy8rR3RwWEFNQm90L0ZkQ1lv?=
- =?utf-8?B?ZWZYSFVKZ0hGcnNxKy9ES3c1ZDRwK0gzdW8rdkZvR1Q0T0svYi9LVzdxejNm?=
- =?utf-8?B?bWUyUXlXZ1labHlHK0s1UWtpaFRML2RKZjZsMXlWSFdRajNXaUNIZ1hKRkZr?=
- =?utf-8?B?ZkhDYmRPRlpKeFJSYUZIZ0hiQ1BCdDRzalJIc0tmY3pKZHVTWTJLN2UrdjU0?=
- =?utf-8?B?NmRsSnFUVXJ5Nys0ZHNUUHRiSk1tZFY3RWFPc0FsM3cralR0THVrdVdyRkE1?=
- =?utf-8?B?NWFyZzZISWh0dGNBalVmVWtXS09yTzJpRHl0YzFjSlBoVzBjS01xTnA4NzV6?=
- =?utf-8?B?RVQ1RUZ3NENXQStWb2l6L3d3UXhrNG9paWp6WGJLZ0Fhc0FBZVdzbDBHVXky?=
- =?utf-8?B?RXYzeXdLazdieUZOUHZGUnRtaUlrUDd4MWtuSm02SVZBQkhaY2EvcUxQZFBK?=
- =?utf-8?B?Vkd2dEJsdDd4Mk04WTVZTDdRSSsyV2U2YTBSeEtzR0xTbko2S1BackVrNVli?=
- =?utf-8?B?SzQxSzlkc3VkNDJTR0dOaUd0eXNiNm1qM3RMdklUSXQ2OUs2Tml4K0hhbytJ?=
- =?utf-8?B?NzYydXNVOFVETjU4OVdSNm44TVYvT3ZVUGxrczBJK2FjWkRyQ3lmSURxZ05l?=
- =?utf-8?B?eWkzWXRQMTZSZzVoZzdoQ1BuQTN4cWRJb0ovcmNLUmhtZGR3bW1WTmhLOTU5?=
- =?utf-8?B?Umpvd2NRbHIvdmVyM1lybHk4U0ZiOU16VVNodUZleXJRb25FVzg1b3lrNEpL?=
- =?utf-8?B?N05qUnJiRytSenFZUFFHa3liYjVoZzZXV2ZseGY1YjFPMmFCRnc2S1QzU2VF?=
- =?utf-8?B?M1ZVVjJPV1FzNTM1czVzWjVkakNGT2JSVGdPNnBHTE1qTENwK1FzT0tLUDFX?=
- =?utf-8?B?SFRpR2wyWDVkOXl4bWdyZ2NxTnE3eEUwU3NBUGpjcWJZNURVZm50MDRPWGlH?=
- =?utf-8?B?dTl5aEdJUlZYWFo4OENKOHBIWngrcTB3TFR6M0psazQ5TFlPTVlWNUJYTVNs?=
- =?utf-8?B?Q2VDL0p5cHpYNHFuR0ZOU2Nhc1N0NmtYTEEreUtHOURtTmdlS2c5YXFnYlpp?=
- =?utf-8?B?ZWMzYWxoVXZsSVB2MENlN2U2Q0xoQ2tqV252VW9yajE4cENQK0E3ODNhb3la?=
- =?utf-8?B?OVM3RHR4YkRPZVJ3TUgxT0tuSi92WFdtcWtQTS9QNWRBenZPdEV3RnJEd1hV?=
- =?utf-8?B?YlE3a3kybDRucXRKdThPNzQ5MmRPVEptc3BTbTE4Zm9nRVVjeVE1a3UvVlhG?=
- =?utf-8?B?blQ2SnV0UlFKYmltbFlpTVluZTZ4SXVDby9aTmlIWkRLRUFjOVJCMVR1V2xk?=
- =?utf-8?B?ZjZySHIrWnlMZFMwY2xFa0tyRE54bVBvT2d5NGp4bERIZTl6TTJxS3packlD?=
- =?utf-8?B?WTFNUGlLaVRaY3VORG1xSElncDdGTXhKaXVvSFhkOVA0NWh4enl3OEdNa0Uz?=
- =?utf-8?B?SHMxS2lwSXZ1aG9VU1R6a2s5LzBwb1UxclJJdU1uOEdndURwNTZsRTNUczE5?=
- =?utf-8?B?Y1ZmN1JoRUhVMnhpRThPYi91VG1mVEhBbmg1Wko0V3JSMW03ZTVYbm8zeG9j?=
- =?utf-8?B?WThFcUV4bGtwU0U4bEkzdHU1Z1BjRkptVUsxSzZNTkpKcGh0MXhkMjJKSVVM?=
- =?utf-8?B?by9xbU9SN09QRHNCUkwrOG5CR1RkVU9TNkV0dkJ5U2d1ZWcwdDRLZVdiYUJm?=
- =?utf-8?B?WFFkNHE3R0xhVGl6aDQyZFVEYTd2L0p5a3M5TFVPK2tKVGFpMkcyWWovbVZY?=
- =?utf-8?Q?kQqxTXuO5kR1hfmZgtOoLp4NLgS3MH6Yrgj6rgO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(10070799003)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MTExa1g0NWpjZG9HeWxHbDhlNkNxV2ZLd1JEZ2tRd1lWdGNtZHR6bkJDQzRT?=
- =?utf-8?B?SGxaQTJEYWNndStSLzVIZ1lHZzB2U2tEM1ZHSkFQanYvYmtYenlZSFozOHRR?=
- =?utf-8?B?eWNweDhjaHdmZWhXcmdoVkI3SFhPT2phRFMrbWkvTHlIUEsrcVRwejJrQUJH?=
- =?utf-8?B?SjZtOEhrR0dWOVVYQTc5YXlpeWdhcXlkQ0VsUjlyZjBTa25pUWxyeEhITG1I?=
- =?utf-8?B?bFZqQ2tqd09raDRhbGNoSmdGOXBCMFVUSDVURXU0VVVKNG4xM2VjQ1ZjMi9x?=
- =?utf-8?B?d0t4L0MzRDhYNTRYUGhQZGdlcXF4Z0lEQlVHY0x5NGQxelhTNlpWRXNmb1Jr?=
- =?utf-8?B?OTFnbVV3WGF4dHJ2ZzVBVnpsdytIa2dQRE0vUGduQWl2c29Qb1ZJVStnWkxn?=
- =?utf-8?B?UkozNDViZXF6M01Nckc1NGNJVU5NRCtraTJCTzBzaFQzMWFWOHZ1VC92amZE?=
- =?utf-8?B?TUdFN2RIb1E2aFQyYUxUa2QzczRzTHcxWE5PTUIyeml0a3hBZVlzU2ljcHVx?=
- =?utf-8?B?UllodEtYWGxlaW8vVlVKN08zQXB1MmpsbVJjS1VWd09JTEJEMzNjNUNadjZy?=
- =?utf-8?B?akpMRFF3YUwzK21pQmpFcHlnQnV4eTZmWGxnQmluOGNhUitGVnY1SUEwTDlh?=
- =?utf-8?B?MnpSRVkxcTM3cjJtbEhYVG1NejU5Vmx1SjRUMEJFazQzZGd3QlZNZXd2M0or?=
- =?utf-8?B?S2J3SXhIMDJ5WXZuOGFjd1FUZ05ERy9vR0d3QXZwUmt4NXpDN2crbFE1L3FZ?=
- =?utf-8?B?T0MyZ2djZy9JMnlSTUNTWjNHUThWK09KT05TYXo2WUhKb3FkR2p4bEtGN3hV?=
- =?utf-8?B?Y2xXQWQvYnMwQUYwb01JUTVUVUhNdkFZNVptVTgwbFRVblNEdVZ2dVZ0cHRw?=
- =?utf-8?B?ZVo2VnJYUm80R2RoOHc2eG9lYmF0SWNwZ1dGMzV1dnBLeUZLTjhUWFJlSXFw?=
- =?utf-8?B?RXRGYXhnTmhHTVdEeDdBeHlJdDNaRFV6V0FKYlp2S2lqallaclBwd2Z2ZlFQ?=
- =?utf-8?B?NGVHTGJrU2tvdm96RWNkYy81U0crS05oSHZMWHJoN2g2Z1NSYXhzYXF4aFpQ?=
- =?utf-8?B?YTl1Z1ZUbFN1b1NEanErY1BtN1R3VHBmQWdoK3NzL2hvcFQva2JWcmRZajdN?=
- =?utf-8?B?WG5jRW15RnNCZU9NUXNxNEY2WGIxWllxOElKZ1hvcXE2RXQ2N25OcFJCbFN2?=
- =?utf-8?B?YWUvQTJtTFlTQmZPTWdsMVk2aGxlMjVkaTIwNjZiK1dVdUhSWU5tL3hoODZX?=
- =?utf-8?B?WWljYlhtWUlwRXpOV256YnI1VG1YclU2YWtKdkNYQ0t4MFhBNGxibkVlNk5P?=
- =?utf-8?B?akNQa21nVnpJQ2RvS0tUNkw0NU91QnR6dERnKzhacVorVENjdDZWanFhRGRJ?=
- =?utf-8?B?RUVZTWQ5TjlhQUdhRkN1dS9qVGd2SzMrTUdvWkNhSE1PYUpRVHVtbXZDOFZB?=
- =?utf-8?B?VDZsT3BZN0RtRkFZaG9FN3JPRnlxOHFLbFRUOTRVSmUrcE5xYUZjRzJWQlFH?=
- =?utf-8?B?Y2N4WjNXc3dQR3JmMGJBendzdVZ5WkpaVWpyK2EybmhwemxyRzlFd0pqRXgx?=
- =?utf-8?B?MGxmY1F0MFdqMUptS0lMeCtYaVQvRWp2N011UlJFZ3poZU5EVG51eFlsTlgv?=
- =?utf-8?B?M3MvYWVyVEh4MWZUWlZMbU4vQjBsRklkbGVOQWN6RUJZeE1kbUlqTnhGdXUw?=
- =?utf-8?B?TTU3Rlc5RXZvWFdmL0xUUk5NMDhWWHhBd0NqR2h2N25YVDYzd2s1R1FqWjk2?=
- =?utf-8?B?ZGhCKzQ1TEFuMXg3QXEvSHVoaDd1SU05Szd3aVp6ZGZMVGh6ME1oKzdsQVBm?=
- =?utf-8?B?bHVxZHpmMWRHcFk2K2R5RGpLRmNVMEZIVVhNaEtGMEI1cGl4MUhQRTROdmk2?=
- =?utf-8?B?VkJaTFV1RlhaMkdkZExaUy9TamVnNmRuaXdZNythZnRvVzJacVdVRmhJZC9H?=
- =?utf-8?B?cXR1UmRBK3FmeVdITmlXM2tGZHNCYnhndkkrbE1mZHQwd2xWZWVOaUdDaEtY?=
- =?utf-8?B?bHh5YlhnWWpHWEI4dWFlUGJtMUU5L0VSVElhZGk1RUZ5a3laVTdxSE1kZGxO?=
- =?utf-8?B?RE5GY1FsTDE2QnUrUlc4LzFlQ3RBcnlrWEN1RHNEM1UwdXZ4WkVKTkJRR0Ey?=
- =?utf-8?B?eVBhOURrUVBqcXRDbWVlOFhhaVkrOWFwdWw4cCtnN3hiWWIyYWQrcDBMZ3F3?=
- =?utf-8?B?Tm52N0JocXlaM0hUbEJxMGxZWTdQeTgwODAxL1ZiN1lTREUxVEd6QjdRQno5?=
- =?utf-8?B?YmlNUnVNYlhwaEdIQzdPeFE5OUpBPT0=?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	m48H5z4iCgFTWcA8fTYdxDK8vNLE9DjAQ4ds0MNbZVVHGvgQjQzfl04BkYLvs4A9dy0iJDZVkf3Nvtw4xCVt+53QZeNxFT85o6vP3aLvtrngO400TVMY14aKq5MdSudaDCKoPnTvroKIQAx4i4KLXi4hGyvfPVZ51zQ0XZnmw+PRWHg/tbX155JU70GTMOX2Bnlb7WKXed/fj5lrEFNw4I7+ZrrrjUpOjkZq+LUtF2hrjaTe5V1u/TuxnGGT8X82d8DyRZK0qdV/cDMKt7gu3Zb3lESarswGgGT2bEt75msra1RVjwQgo+/QtD+S2XjBLxP3EijujYjY0mvcLHmj+CzDWah3qDmrv/qxTXUyqrKCGQCSGgkzi29WMBf9Y+BHydfTNEJrdmlU37eLS/ALoC+9yjfkX6UtX7xEiEmmaTTbWjTmbiU0RO4ul4ijVX0jqzv84ud3RjSELPCYYBzNnfbGAS1JTDb2vK71jC3QISir5dCnz4e1JNUDbSBAViuv06EzutBxe2FTKCZ8YonKlpSpF7XP1D28xMe6Q9d7mLOpfzLnNlYl7jIyAFWSZsXCLlVUMx22tCDQ+OfFKCpNGBRTC4/z8Y/pLEaJpz460qY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43895c86-7be8-484a-ba43-08dcee322796
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 22:30:36.0595
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 156a95d0-67bd-4d7b-1799-08dcee324737
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2024 22:31:29.0250
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b+PMw80fFfH7V2po7bUFpE7JDdJbeENVtFxcJcP57II+i8HGKGFCd8yfoM59gJOEko4m1Xr4dayYd1BZQbrgw7hQNEQI9V8iaGaFknpbQIA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7493
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-16_17,2024-10-16_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 mlxscore=0
- mlxlogscore=999 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410160143
-X-Proofpoint-ORIG-GUID: 1BDbttrMSazcUtn626PEDTQ-u8N8WJV6
-X-Proofpoint-GUID: 1BDbttrMSazcUtn626PEDTQ-u8N8WJV6
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: w8q3z+dWH4hKZ0tRSXSk4Pz3mezVTm4PxexazE9/S116gHQJ4bcihAzts7enQkGnlt6duExx44QJuwBVYY7FFgDF7rG/aAbxth706IvvoYo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5093
+X-OriginatorOrg: intel.com
 
-On Wed, Oct 16, 2024 at 11:06:34PM +0100, Lorenzo Stoakes wrote:
-[sniip]
+
+
+> -----Original Message-----
+> From: Vladimir Oltean <olteanv@gmail.com>
+> Sent: Wednesday, October 16, 2024 6:41 AM
+> To: Kitszel, Przemyslaw <przemyslaw.kitszel@intel.com>
+> Cc: Keller, Jacob E <jacob.e.keller@intel.com>; linux-kernel@vger.kernel.=
+org;
+> Andrew Morton <akpm@linux-foundation.org>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Nguyen, Anthony L <anthony.l.nguyen@intel.com>;
+> netdev@vger.kernel.org; Vladimir Oltean <vladimir.oltean@nxp.com>
+> Subject: Re: [PATCH net-next 3/8] lib: packing: add pack_fields() and
+> unpack_fields()
+>=20
+> On Wed, Oct 16, 2024 at 03:02:38PM +0200, Przemek Kitszel wrote:
+> > On 10/11/24 20:48, Jacob Keller wrote:
+> > > From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> > >
+> > > This is new API which caters to the following requirements:
+> > >
+> > > - Pack or unpack a large number of fields to/from a buffer with a sma=
+ll
+> > >    code footprint. The current alternative is to open-code a large nu=
+mber
+> > >    of calls to pack() and unpack(), or to use packing() to reduce tha=
+t
+> > >    number to half. But packing() is not const-correct.
+> > >
+> > > - Use unpacked numbers stored in variables smaller than u64. This
+> > >    reduces the rodata footprint of the stored field arrays.
+> > >
+> > > - Perform error checking at compile time, rather than at runtime, and
+> > >    return void from the API functions. To that end, we introduce
+> > >    CHECK_PACKED_FIELD_*() macros to be used on the arrays of packed
+> > >    fields. Note: the C preprocessor can't generate variable-length co=
+de
+> > >    (loops),  as would be required for array-style definitions of stru=
+ct
+> > >    packed_field arrays. So the sanity checks use code generation at
+> > >    compile time to $KBUILD_OUTPUT/include/generated/packing-checks.h.
+> > >    There are explicit macros for sanity-checking arrays of 1 packed
+> > >    field, 2 packed fields, 3 packed fields, ..., all the way to 50 pa=
+cked
+> > >    fields. In practice, the sja1105 driver will actually need the var=
+iant
+> > >    with 40 fields. This isn't as bad as it seems: feeding a 39 entry
+> > >    sized array into the CHECK_PACKED_FIELDS_40() macro will actually
+> > >    generate a compilation error, so mistakes are very likely to be ca=
+ught
+> > >    by the developer and thus are not a problem.
+> > >
+> > > - Reduced rodata footprint for the storage of the packed field arrays=
+.
+> > >    To that end, we have struct packed_field_s (small) and packed_fiel=
+d_m
+> > >    (medium). More can be added as needed (unlikely for now). On these
+> > >    types, the same generic pack_fields() and unpack_fields() API can =
+be
+> > >    used, thanks to the new C11 _Generic() selection feature, which ca=
+n
+> > >    call pack_fields_s() or pack_fields_m(), depending on the type of =
+the
+> > >    "fields" array - a simplistic form of polymorphism. It is evaluate=
+d at
+> > >    compile time which function will actually be called.
+> > >
+> > > Over time, packing() is expected to be completely replaced either wit=
+h
+> > > pack() or with pack_fields().
+> > >
+> > > Co-developed-by: Jacob Keller <jacob.e.keller@intel.com>
+> > > Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+> > > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> > > ---
+> > >   include/linux/packing.h  |  69 ++++++++++++++++++++++
+> > >   lib/gen_packing_checks.c |  31 ++++++++++
+> > >   lib/packing.c            | 149
+> ++++++++++++++++++++++++++++++++++++++++++++++-
+> > >   Kbuild                   |  13 ++++-
+> > >   4 files changed, 259 insertions(+), 3 deletions(-)
 > >
-> > The import will be fine and you can control that with -I flag in
-> > the makefile. Remove these and try to get including linux/pidfd.h
-> > working.
->
-> I just tried this and it's not fine :) it immediately broke the build as
-> pidfd.h imports linux/fcntl.h which conflicts horribly with system headers
-> on my machine.
->
-> For instance f_owner_ex gets redefined among others and fails the build e..g:
->
-> /usr/include/asm-generic/fcntl.h:155:8: error: redefinition of ‘struct f_owner_ex’
->   155 | struct f_owner_ex {
->       |        ^~~~~~~~~~
-> In file included from /usr/include/bits/fcntl.h:61,
->                  from /usr/include/fcntl.h:35,
->                  from pidfd_test.c:6:
-> /usr/include/bits/fcntl-linux.h:274:8: note: originally defined here
->   274 | struct f_owner_ex
->       |        ^~~~~~~~~~
->
-> It seems only one other test tries to do this as far as I can tell (I only
-> did a quick grep), so it's not at all standard it seems.
->
-> This issue occurred even when I used make headers_install to create
-> sanitised user headers and added them to the include path.
->
-> A quick google suggests linux/fcntl.h (imported by this pidfd.h uapi
-> header) and system fcntl.h is a known thing. Slightly bizarre...
->
-> I tried removing the <fcntl.h> include and that resulted in <sys/mount.h>
-> conflicting:
->
-> In file included from /usr/include/fcntl.h:35,
->                  from /usr/include/sys/mount.h:24,
->                  from pidfd.h:17,
->                  from pidfd_test.c:22:
-> /usr/include/bits/fcntl.h:35:8: error: redefinition of ‘struct flock’
->    35 | struct flock
->       |        ^~~~~
-> In file included from /tmp/hdr/include/asm/fcntl.h:1,
->                  from /tmp/hdr/include/linux/fcntl.h:5,
->                  from /tmp/hdr/include/linux/pidfd.h:7,
->                  from pidfd.h:6:
-> /usr/include/asm-generic/fcntl.h:195:8: note: originally defined here
->   195 | struct flock {
->       |        ^~~~~
->
-> So I don't think I can actually work around this, at least on my system,
-> and I can't really sensibly submit a patch that I can't run on my own
-> machine :)
->
-> I may be missing something here.
->
+> >
+> > > diff --git a/lib/gen_packing_checks.c b/lib/gen_packing_checks.c
+> > > new file mode 100644
+> > > index 000000000000..3213c858c2fe
+> > > --- /dev/null
+> > > +++ b/lib/gen_packing_checks.c
+> > > @@ -0,0 +1,31 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +#include <stdio.h>
+> > > +
+> > > +int main(int argc, char **argv)
+> > > +{
+> > > +	printf("/* Automatically generated - do not edit */\n\n");
+> > > +	printf("#ifndef GENERATED_PACKING_CHECKS_H\n");
+> > > +	printf("#define GENERATED_PACKING_CHECKS_H\n\n");
+> > > +
+> > > +	for (int i =3D 1; i <=3D 50; i++) {
+> >
+> > either you missed my question, or I have missed your reply during
+> > internal round of review, but:
+> >
+> > do we need 50? that means 1MB file, while it is 10x smaller for n=3D27
+>=20
 
-[snip]
+That is partly why we generate the file instead of committing it. We could =
+reduce this to 40, (or make it 40 once we add the sja1105 driver).
 
-Some added data:
+This would somewhat limit the size, at least until/unless another place in =
+the code adds more fields to an array.
 
-OK so I asked people on fedi to compile the following locally (also a
-variant with _GNU_SOURCE being defined):
+> The sja1105 driver will need checks for arrays of 40 fields, it's in the
+> commit message. Though if the file size is going to generate comments
+> even at this initial dimension, then maybe it isn't the best way forward.=
+..
+>=20
+> Suggestions for how to scale up the compile-time checks?
+>=20
+> Originally the CHECK_PACKED_FIELD_OVERLAP() weren't the cartesian
+> product of all array elements. I just assumed that the field array would
+> be ordered from MSB to LSB. But then, Jacob wondered why the order isn't
+> from LSB to MSB. The presence/absence of the QUIRK_LSW32_IS_FIRST quirk
+> seems to influence the perception of which field layout is natural.
+> So the full-blown current overlap check is the compromise to use the
+> same sanity check macros everywhere. Otherwise, we'd have to introduce
+> CHECK_PACKED_FIELDS_5_UP() and CHECK_PACKED_FIELDS_5_DOWN(), and
+> although even that would be smaller in size than the full cartesian
+> product, it's harder to use IMO.
+>=20
 
-	#include <linux/pidfd.h>
-	#include <fcntl.h>
+Another option would be to implement something external to C to validate th=
+e fields, perhaps something in sparse? Downside being that it is less likel=
+y to be checked, so more risk that bugs creep in.
 
-	int main(void) {}
-
-And they are all encountering the same issue as I am on a number of
-different distros (ordering of includes doesn't seem to matter either).
-
-So this seems like a known-broken thing.
-
-And we can't really isolate inclusion of this file since all the tests
-interact directly with defines from it.
-
-So it seems the only solution is the workaround I suggested previously I
-think with the header guard define hack.
-
-[snip]
+> > > +		printf("#define CHECK_PACKED_FIELDS_%d(fields, pbuflen) \\\n",
+> i);
+> > > +		printf("\t({ typeof(&(fields)[0]) _f =3D (fields); typeof(pbuflen)=
+ _len =3D
+> (pbuflen); \\\n");
+> > > +		printf("\tBUILD_BUG_ON(ARRAY_SIZE(fields) !=3D %d); \\\n", i);
+> > > +		for (int j =3D 0; j < i; j++) {
+> > > +			int final =3D (i =3D=3D 1);
+> >
+> > you could replace both @final variables and ternary operators from
+> > the prints by simply moving the final "})\n" outside the loops
+>=20
+> I don't see how, could you illustrate with some code? (assuming you're
+> not proposing to change the generated output?) Even if you move the
+> final "})\n" outside the loop, I'm not seeing how you would avoid
+> printing the last " \\" without keeping track of the "final" variable
+> anyway, point at which you're better off with the ternary than yet
+> another printf() call?
+>=20
+> > > +
+> > > +			printf("\tCHECK_PACKED_FIELD(_f[%d], _len);%s\n",
+> > > +			       j, final ? " })\n" : " \\");
+> > > +		}
+> > > +		for (int j =3D 1; j < i; j++) {
+> > > +			for (int k =3D 0; k < j; k++) {
+> > > +				int final =3D (j =3D=3D i - 1) && (k =3D=3D j - 1);
+> > > +
+> > > +				printf("\tCHECK_PACKED_FIELD_OVERLAP(_f[%d],
+> _f[%d]);%s\n",
+> > > +				       k, j, final ? " })\n" : " \\");
+> > > +			}
+> > > +		}
+> > > +	}
+> > > +
+> > > +	printf("#endif /* GENERATED_PACKING_CHECKS_H */\n");
+> > > +}
 
