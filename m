@@ -1,218 +1,247 @@
-Return-Path: <linux-kernel+bounces-368354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBEDC9A0ED5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:46:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D9C9A0EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E311F23AD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:46:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C588281888
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714CA20C03D;
-	Wed, 16 Oct 2024 15:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAF320E021;
+	Wed, 16 Oct 2024 15:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OaK5VvgA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/NpD7Ky"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A403209687
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A2D20C002
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093578; cv=none; b=Zw5nFQSMzEQczdiONxhI0R3njo4MxRJ7m/hYZkDCQ4t7B++NFekwKKzqZafYYzPL7jsodGlIFXBEMmbjoG0ZqU+OisaA13BebT490NiMylh6a4KYmI5nS+Z9SnUX1DkUGe9yVZcMvm0158YtNCiMYwNX0SfDGdGbtbCQVKZxRCY=
+	t=1729093668; cv=none; b=HJ37iBsYPSU4mUWbMWXdi7Dn2YhypJ6J/bxMcA+4WCmvqU+aIIMjoFht0oLS5IohlVpqdRBwGH+S9A+xsQu1OLCV4DmBeI1uawCcGbYRGQhjzL7rzTDGaqUEMHSzT33bAOLAvO+UoJuMxBHhEoi0Tzacv9h1ZMFxXWXU3QI7wVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093578; c=relaxed/simple;
-	bh=5v17HX0W3McVtavPi0fHNUdsvhXZegnTOQOZGJeE6ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuHwcT7uyxYBOOttG6+m+MMiJoaIe+ZjRC6PPeULtbBwqT3goWDSLFVhsl/CJYrLjThE6LLGlE+HEW8rj1E/vnLgfAZlvbEhlFr64X5k4t99MBgPSgrCwaMrDcP6ZDEdyn75WpfzCb2dOjD5l/fTXO7lHiGMwM2FYMviRWaPCW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OaK5VvgA; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1729093668; c=relaxed/simple;
+	bh=bWT0jZQi2gTGU5Bd8og0Hyl0LagtMrLPaQKxohyIPwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X3fs0doI7KRacOE8Bp6I+F0Vtdt/ihYY93ctI115lgbf36tWLpXTv/JfDBB9DeD/As7uEMSgD/kij75KlgDbon/zR7RgyDCfVZrECjA5sUWoeq9MBOY1QzCxx3cd7oBl4gzxQTgpbZ+V060mJT+iLtyXRTkjMZ6JWAxH3ZgtKr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/NpD7Ky; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729093576;
+	s=mimecast20190719; t=1729093665;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/NU9Hb4g5OFv5RQv2jPUd5Yt/H5y3tYF3G31JyGCSJo=;
-	b=OaK5VvgA40N78iAdahkJDtIUtNUPJJB1E9cEJy6OZLU0yqafg2Rba6q88Oc7I0kva4+ICF
-	0HfNidR3SE8z0fXe6Sf9nzsKTMunBcyfMm69MtCfdUEIMtHDrZ2kVQCJlWbNgXa9zJJUbZ
-	1B1wEO/qBcrUkrq9ap3ekA/LwCtzTVE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-E_7IF1TFPMW9oeMIkXQcpQ-1; Wed,
- 16 Oct 2024 11:46:10 -0400
-X-MC-Unique: E_7IF1TFPMW9oeMIkXQcpQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0BB8419560AB;
-	Wed, 16 Oct 2024 15:46:06 +0000 (UTC)
-Received: from bfoster (unknown [10.22.64.74])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9ABB3195607C;
-	Wed, 16 Oct 2024 15:46:03 +0000 (UTC)
-Date: Wed, 16 Oct 2024 11:47:24 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, ying.huang@intel.com,
-	feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [linus:master] [iomap]  c5c810b94c:
- stress-ng.metamix.ops_per_sec -98.4% regression
-Message-ID: <Zw_gDDlIEgZbApU_@bfoster>
-References: <202410141536.1167190b-oliver.sang@intel.com>
- <Zw1IHVLclhiBjDkP@bfoster>
- <Zw7jwnvBaMwloHXG@dread.disaster.area>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VIzfBQnPXM1p+cHUAfPvEKZFWEw7tRlCE5XfNpemY2E=;
+	b=J/NpD7KyhLJnE51SBwRGTSll16PmZ1gX5JY1UhVF4CGGDsNOqagIVtvq4M2n4gFlXQPGD3
+	Tfgu8+DjQ+Vz30aTxcKYhUMqu8dd/JSefg1EPdjzXBMPfD1WB2YcXHZwbWLJvnxfDLGf54
+	zhGWF8lX2ePluYb6C6Ze+bKs0EU4Sic=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-103-_H7uoNphOKGwBX8CwRQJzw-1; Wed, 16 Oct 2024 11:47:43 -0400
+X-MC-Unique: _H7uoNphOKGwBX8CwRQJzw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43157e3521dso752495e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:47:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729093662; x=1729698462;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VIzfBQnPXM1p+cHUAfPvEKZFWEw7tRlCE5XfNpemY2E=;
+        b=PbdLMKCpXIFUjr/TWBrnasSiwJgLTTm7lw1D+T6GhwkGHk9DJR0BdFf+yDBUHYSFQ3
+         lIWXEIr+IloJUbuJcWTkL9b3vJupBpkqM9CFFzmICrDbvEAi4AlAXd2qRSCIIgM3VYWw
+         KSuBkMEXwHsm2E0U7b67wLJhy1Ty00sbPO3b8HrwvwySFmcyg3NcxUPqRqvNqUl3UGi4
+         /iPYx9kvUSp8BIqNGFYxr2aq5Kl3UPzKAuya0NrR7lRsMZCyad8LozxVV4gufbVZJbIY
+         4irQKgV8ypLcbIHm2/ojFl9cVulPl+Gg62Jp8ppAdYivzcWzSP8t5qzH2UOPhb+s1jgT
+         zIGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpGR3riKhzR/AFrPNYbIN1GZu2RYDQMiCUmv7lGK9dqLkVU8vilxSGV/9WTQoTGCvxoIKWXYa2sq1Cyhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyINdyKHHdvm9/uCBx71sqoaPVKT4A/9u/jUbM2unpGwf63o++M
+	PA9A5ooBPc7WahIHDNDFC9bSuq7K/mNP1Hc0ixGn8mFQOdFxtwF6mogwi/J3J7L9rDmWYXV6WYr
+	N1UzRjVxeK9MlfjTC0dH3TQZv+95D/k3PGgdqNn4SrSpc1hmXafmS2mTNSiLF7Q==
+X-Received: by 2002:a05:600c:4711:b0:430:54a4:5b02 with SMTP id 5b1f17b1804b1-43125619e8fmr121331215e9.34.1729093662302;
+        Wed, 16 Oct 2024 08:47:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/bW0hLobbLXjaDGKyq9Ar43ysgaBvBnKudmwOIGvXULooHv87b61qCzy2T1b+NaF7gXinDw==
+X-Received: by 2002:a05:600c:4711:b0:430:54a4:5b02 with SMTP id 5b1f17b1804b1-43125619e8fmr121330835e9.34.1729093661825;
+        Wed, 16 Oct 2024 08:47:41 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3? (p200300cbc74bd00003a9de5c9ae6ccb3.dip0.t-ipconnect.de. [2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4315069032asm25144845e9.0.2024.10.16.08.47.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 08:47:41 -0700 (PDT)
+Message-ID: <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
+Date: Wed, 16 Oct 2024 17:47:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zw7jwnvBaMwloHXG@dread.disaster.area>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
+To: Alexander Egorenkov <egorenar@linux.ibm.com>
+Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
+ borntraeger@linux.ibm.com, cohuck@redhat.com, corbet@lwn.net,
+ eperezma@redhat.com, frankja@linux.ibm.com, gor@linux.ibm.com,
+ hca@linux.ibm.com, imbrenda@linux.ibm.com, jasowang@redhat.com,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
+ svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
+ xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
+References: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 08:50:58AM +1100, Dave Chinner wrote:
-> On Mon, Oct 14, 2024 at 12:34:37PM -0400, Brian Foster wrote:
-> > On Mon, Oct 14, 2024 at 03:55:24PM +0800, kernel test robot wrote:
-> > > 
-> > > 
-> > > Hello,
-> > > 
-> > > kernel test robot noticed a -98.4% regression of stress-ng.metamix.ops_per_sec on:
-> > > 
-> > > 
-> > > commit: c5c810b94cfd818fc2f58c96feee58a9e5ead96d ("iomap: fix handling of dirty folios over unwritten extents")
-> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > > 
-> > > testcase: stress-ng
-> > > config: x86_64-rhel-8.3
-> > > compiler: gcc-12
-> > > test machine: 64 threads 2 sockets Intel(R) Xeon(R) Gold 6346 CPU @ 3.10GHz (Ice Lake) with 256G memory
-> > > parameters:
-> > > 
-> > > 	nr_threads: 100%
-> > > 	disk: 1HDD
-> > > 	testtime: 60s
-> > > 	fs: xfs
-> > > 	test: metamix
-> > > 	cpufreq_governor: performance
-> > > 
-> > > 
-> > > 
-> > > 
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-lkp/202410141536.1167190b-oliver.sang@intel.com
-> > > 
-> > > 
-> > > Details are as below:
-> > > -------------------------------------------------------------------------------------------------->
-> > > 
-> > > 
-> > > The kernel config and materials to reproduce are available at:
-> > > https://download.01.org/0day-ci/archive/20241014/202410141536.1167190b-oliver.sang@intel.com
-> > > 
-> > 
-> > So I basically just run this on a >64xcpu guest and reproduce the delta:
-> > 
-> >   stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --metamix 64
-> > 
-> > The short of it is that with tracing enabled, I see a very large number
-> > of extending writes across unwritten mappings, which basically means XFS
-> > eof zeroing is calling zero range and hitting the newly introduced
-> > flush. This is all pretty much expected given the patch.
+>>
+>> When I wrote that code I was rather convinced that the variant in this patch
+>> is the right thing to do.
 > 
-> Ouch.
+> A short explanation about what a stand-alone kdump is.
 > 
-> The conditions required to cause this regression are that we either
-> first use fallocate() to preallocate beyond EOF, or buffered writes
-> trigger specualtive delalloc beyond EOF and they get converted to
-> unwritten beyond EOF through background writeback or fsync
-> operations. Both of these lead to unwritten extents beyond EOF that
-> extending writes will fall into.
-> 
-> All we need now is the extending writes to be slightly
-> non-sequential and those non-sequential extending writes will not
-> land at EOF but at some distance beyond it. At this point, we
-> trigger the new flush code. Unfortunately, this is actually a fairly
-> common workload pattern.
-> 
-> For example, experience tells me that NFS server processing of async
-> sequential write requests from a client will -always- end up with
-> slightly out of order extending writes because the incoming async
-> write requests are processed concurrently. Hence they always race to
-> extend the file and slightly out of order file extension happens
-> quite frequently.
-> 
-> Further, the NFS client will also periodically be sending a write
-> commit request (i.e. server side fsync), the
-> NFS server writeback will convert the speculative delalloc that
-> extends beyond EOF into unwritten extents beyond EOF whilst the
-> incoming extending write requests are still incoming from the
-> client.
-> 
-> Hence I think that there are common workloads (e.g. large sequential
-> writes on a NFS client) that set up the exact conditions and IO
-> patterns necessary to trigger this performance regression in
-> production systems...
-> 
+> * First, it's not really a _regular_ kdump activated with kexec-tools and
+>    executed by Linux itself but a regular stand-alone dump (SCSI) from the
+>    FW's perspective (one has to use HMC or dumpconf to execute it and not
+>    with kexec-tools like for the _regular_ kdump).
 
-It's not clear to me that purely out of order writeback via NFS would
-produce the same sort of hit here because we'd only flush on write
-extensions. I think the pathological case would have to be something
-like reordering such that every other write lands sequentially to
-maximize the number of post-eof write extensions, and then going back
-and filling in the gaps. That seems rather suboptimal to start, and
-short of that the cost of the flushes will start to amortize to some
-degree (including with commit requests, etc.).
+Ah, that makes sense.
 
-That said, I don't have much experience with NFS and I think this is a
-reasonable enough argument to try and optimize here. If you or anybody
-has an NFS test/workload that might exacerbate this condition, let me
-know and I'll try to play around with it.
+> * One has to reserve crashkernel memory region in the old crashed kernel
+>    even if it remains unused until the dump starts.
+> * zipl uses regular kdump kernel and initramfs to create stand-alone
+>    dumper images and to write them to a dump disk which is used for
+>    IPLIng the stand-alone dumper.
+> * The zipl bootloader takes care of transferring the old kernel memory
+>    saved in HSA by the FW to the crashkernel memory region reserved by the old
+>    crashed kernel before it enters the dumper. The HSA memory is released
+>    by the zipl bootloader _before_ the dumper image is entered,
+>    therefore, we cannot use HSA to read old kernel memory, and instead
+>    use memory from crashkernel region, just like the regular kdump.
+> * is_ipl_type_dump() will be true for a stand-alone kdump because we IPL
+>    the dumper like a regular stand-alone dump (e.g. zfcpdump).
+> * Summarized, zipl bootloader prepares an environment which is expected by
+>    the regular kdump for a stand-alone kdump dumper before it is entered.
 
-> > I ran a quick experiment to skip the flush on sub-4k ranges in favor of
-> > doing explicit folio zeroing. The idea with that is that the range is
-> > likely restricted to single folio and since it's dirty, we can assume
-> > unwritten conversion is imminent and just explicitly zero the range. I
-> > still see a decent number of flushes from larger ranges in that
-> > experiment, but that still seems to get things pretty close to my
-> > baseline test (on a 6.10 distro kernel).
+Thanks for the details!
+
 > 
-> What filesystems other than XFS actually need this iomap bandaid
-> right now?  If there are none (which I think is the case), then we
-> should just revert this change it until a more performant fix is
-> available for XFS.
+> In my opinion, the correct version of is_kdump_kernel() would be
+> 
+> bool is_kdump_kernel(void)
+> {
+>          return oldmem_data.start;
+> }
+> 
+> because Linux kernel doesn't differentiate between both the regular
+> and the stand-alone kdump where it matters while performing dumper
+> operations (e.g. reading saved old kernel memory from crashkernel memory region).
 > 
 
-I think that's a bit hasty. I had one or two ideas/prototypes to work
-around this sort of problem before the flush patches even landed, it
-just wasn't clear to me they were worth the extra logic. I'd prefer to
-try and iterate on performance from a baseline of functional correctness
-rather than the other way around, if possible.
+Right, but if we consider "/proc/vmcore is available", a better version 
+would IMHO be:
 
-A quick hack to test out some of that on latest master brings the result
-of this test right back to baseline in my local env. Let me play around
-with trying to work that into something more production worthy before we
-break out the pitchforks.. ;)
+bool is_kdump_kernel(void)
+{
+           return dump_available();
+}
 
-Brian
+Because that is mostly (not completely) how is_kdump_kernel() would have 
+worked right now *after* we had the elfcorehdr_alloc() during the 
+fs_init call.
 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+
+> Furthermore, if i'm not mistaken then the purpose of is_kdump_kernel()
+> is to tell us whether Linux kernel runs in a kdump like environment and not
+> whether the current mode is identical to the proper and true kdump,
+> right ? And if stand-alone kdump swims like a duck, quacks like one, then it
+> is one, regardless how it was started, by kexecing or IPLing
+> from a disk.
+
+Same thinking here.
+
 > 
+> The stand-alone kdump has a very special use case which most users will
+> never encounter. And usually, one just takes zfcpdump instead which is
+> more robust and much smaller considering how big kdump initrd can get.
+> stand-alone kdump dumper images cannot exceed HSA memory limit on a Z machine.
+
+Makes sense, so it boils down to either
+
+bool is_kdump_kernel(void)
+{
+          return oldmem_data.start;
+}
+
+Which means is_kdump_kernel() can be "false" even though /proc/vmcore is 
+available or
+
+bool is_kdump_kernel(void)
+{
+          return dump_available();
+}
+
+Which means is_kdump_kernel() can never be "false" if /proc/vmcore is 
+available. There is the chance of is_kdump_kernel() being "true" if 
+"elfcorehdr_alloc()" fails with -ENODEV.
+
+
+You're call :) Thanks!
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
