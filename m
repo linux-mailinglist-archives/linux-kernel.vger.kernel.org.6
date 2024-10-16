@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-367362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F929A0154
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:23:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22399A0157
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7CAC2830E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:23:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DE75B21BC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C0318D637;
-	Wed, 16 Oct 2024 06:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8208E18D64C;
+	Wed, 16 Oct 2024 06:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDuKTfsf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8BHQFiQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE5F60B8A;
-	Wed, 16 Oct 2024 06:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B6418CC02;
+	Wed, 16 Oct 2024 06:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059789; cv=none; b=Nl7LJ4uReJy2JhO9i1AKSMOJVcUx4fTP8JzxQnRpwG3qV5k8WkkDQjDEdehDEujvVHJYCtYygTscvh8fbjTy6YCneQaVoMuFPtG6loPfkj2k6MLTrAHL6Fu/7/8vTIkqyjpolCHEGkLsFtwyEIm1JV1w+ivFN1DW/auhVRMUSAI=
+	t=1729059829; cv=none; b=IxwSk1zcnE4WA4T4YcvCCNJ1+v5++/N84WfW0zEXx9oafIcV34eh8w5lzlyavG+x87DgkREhXAA2tW+eOv0VDt7JfAIUGGB0RfXAUICoArnmVTRTeaTxqGjwm2/8WqRMhDWjAm/DnVMwufCUa9f+41ZcP54+sor5NPGJPoXZhWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059789; c=relaxed/simple;
-	bh=9/Awi+ArhEANRER83g2LYfAGAW5xtoAqhywO3+Wyt7k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=crv+EPJat4mPCnlYFGz7/Q+NAaarOOsfA+kn7s6n2GEbEk1mN59a5ijw4FRqy4gOTm358MbRnp1Te4Fj2gh0MVZ+4g/whAuzR9kiBOvQzHHj8b7rRIAKva5tdln5dqoQ54I3/VbNdS9NWHE54lc2wKx3QLwp1e90Sui/iSpdRxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDuKTfsf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E9C4C4CEC5;
-	Wed, 16 Oct 2024 06:23:05 +0000 (UTC)
+	s=arc-20240116; t=1729059829; c=relaxed/simple;
+	bh=Og38/G7jNcGI3shyyTG9Y9Ul1EbSQha9WhdMrb/+3zE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y6F54QhRt2H5ZJrg2lSCd2HSriyNSld+caNGEDQB/+ePTqf63AfGoiyH9bg2LfinvmetHOUYUQzHlOFsCKNdInFZ3qNFJJ4IIbiowfj7KwMSU/BNlVn7QX7MRYxacdtyseexH/FDaCEubWPJBS/Ynd1AfKj5SgW8rlo3k/S7YUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8BHQFiQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99CE1C4CEC5;
+	Wed, 16 Oct 2024 06:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729059788;
-	bh=9/Awi+ArhEANRER83g2LYfAGAW5xtoAqhywO3+Wyt7k=;
+	s=k20201202; t=1729059829;
+	bh=Og38/G7jNcGI3shyyTG9Y9Ul1EbSQha9WhdMrb/+3zE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=NDuKTfsf+GnDeUf9ZAjQAGu1Fj/a2QNa/0VHfvudTHbPg9SO7KX6s++jhqDGaBkMt
-	 Oo0dsYUyPObbfi6ZhAmGOBABfgs9NSIr5z6Ct4OSR8/5STHis/O5rEH/AxAvxXRa4j
-	 2UdajvRrMDoXXknV4MWG+yDmGhhI91LDoAZZrejZMVagqU6/YzS2r2bH0ik3PMZV6y
-	 4eupgAQtj6ukVf59s7WPcf6faflCN41IW0FjunVjEpiilgDJa1umlqGNMRWBNEqwM3
-	 KlxOVRvlMI7jWNC3J1x7gmsguAST8b/rm3D9sXZsbh2hFIAMNdALgk6/BEtKgp6Abx
-	 df7Uc2Pk83OiQ==
+	b=O8BHQFiQ53bGOJ5Tg2oLQXLwzT78t87mjVWWOC6SaHqciptvr8Dwb6brv0h71PLNQ
+	 NypjLMmlFqhIpH1J6Vh9XI3QxXT8WTjxqilq1quVLd5NQUS30gFtWuUOC32C7a/Oo7
+	 lWBS6OGkwUEf/UpxnE0CUZd5kGrmcdRetnGO1BnnYpku1lBG/u7xnEX7fiwzs8zw3d
+	 Q7sna6M207Gi7UICXtnj1xzHw5Ku8atlKuS4wCbUL/bb9cpnw/teVwCsZ3hu8V3IFd
+	 zUldPnNcp9q6axzDa6gOOofyOZLYBLVA3ZopCRMSRWVxk9fsCpJk+0tnSKs6zfTDja
+	 6IhjGWINC1DFg==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Alexander Duyck <alexanderduyck@fb.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+To: Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	kernel-team@meta.com,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
+	Josef Bacik <josef@toxicpanda.com>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] eth: fbnic: add CONFIG_PTP_1588_CLOCK_OPTIONAL dependency
-Date: Wed, 16 Oct 2024 06:22:58 +0000
-Message-Id: <20241016062303.2551686-1-arnd@kernel.org>
+Subject: [PATCH] iomap: provide iomap_want_unshare_iter() stub for !CONFIG_BLOCK
+Date: Wed, 16 Oct 2024 06:23:40 +0000
+Message-Id: <20241016062344.2571015-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,36 +62,39 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-fbnic fails to link as built-in when PTP support is in a loadable
-module:
+When block device support is disabled, DAX fails to link with:
 
-aarch64-linux-ld: drivers/net/ethernet/meta/fbnic/fbnic_ethtool.o: in function `fbnic_get_ts_info':
-fbnic_ethtool.c:(.text+0x428): undefined reference to `ptp_clock_index'
-aarch64-linux-ld: drivers/net/ethernet/meta/fbnic/fbnic_time.o: in function `fbnic_time_start':
-fbnic_time.c:(.text+0x820): undefined reference to `ptp_schedule_worker'
-aarch64-linux-ld: drivers/net/ethernet/meta/fbnic/fbnic_time.o: in function `fbnic_ptp_setup':
-fbnic_time.c:(.text+0xa68): undefined reference to `ptp_clock_register'
+aarch64-linux/bin/aarch64-linux-ld: fs/dax.o: in function `dax_file_unshare':
+dax.c:(.text+0x2694): undefined reference to `iomap_want_unshare_iter'
 
-Add the appropriate dependency to enforce this.
+Return false in this case, as far as I can tell, this cannot happen
+without block devices.
 
-Fixes: 6a2b3ede9543 ("eth: fbnic: add RX packets timestamping support")
+Fixes: 6ef6a0e821d3 ("iomap: share iomap_unshare_iter predicate code with fsdax")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ethernet/meta/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/iomap.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/net/ethernet/meta/Kconfig b/drivers/net/ethernet/meta/Kconfig
-index 85519690b837..831921b9d4d5 100644
---- a/drivers/net/ethernet/meta/Kconfig
-+++ b/drivers/net/ethernet/meta/Kconfig
-@@ -23,6 +23,7 @@ config FBNIC
- 	depends on !S390
- 	depends on MAX_SKB_FRAGS < 22
- 	depends on PCI_MSI
-+	depends on PTP_1588_CLOCK_OPTIONAL
- 	select NET_DEVLINK
- 	select PAGE_POOL
- 	select PHYLINK
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index e04c060e8fe1..84ec2b7419c5 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -281,7 +281,14 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
+ bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
+ int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+ 		const struct iomap_ops *ops);
++#ifdef CONFIG_BLOCK
+ bool iomap_want_unshare_iter(const struct iomap_iter *iter);
++#else
++static inline bool iomap_want_unshare_iter(const struct iomap_iter *iter)
++{
++	return false;
++}
++#endif
+ int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
+ 		bool *did_zero, const struct iomap_ops *ops);
+ int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
 -- 
 2.39.5
 
