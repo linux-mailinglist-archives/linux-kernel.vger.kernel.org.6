@@ -1,121 +1,199 @@
-Return-Path: <linux-kernel+bounces-368756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD24A9A148D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:01:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE01B9A148A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516AF283F31
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:01:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222971C240BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420291D2780;
-	Wed, 16 Oct 2024 21:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mr5jHd4Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4597B1D2B2F;
+	Wed, 16 Oct 2024 21:01:15 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBF31B6CF2;
-	Wed, 16 Oct 2024 21:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969A94409;
+	Wed, 16 Oct 2024 21:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729112492; cv=none; b=kvrej3XQqOzBUUzuEIwF/m6EOBWt8Ey/IoJ2uLH3FOrwFjzVK260C/H4aaWpNWLetmtByZRyLN0T/RAd7tmVzDfu4zufqbmQLV+XuAXeXyk0n0OgVBmZ9fT1HNMWDdR3+OGPXcFthbQ5pFGTPLF8F74vSb7Bcg60/TEvn1rp5zs=
+	t=1729112474; cv=none; b=J8Rg8wu5SSEo+fuMdV1I1MgSncStWregB9qzlUe3OH6+C2m93jwILQ7f53AvsSfUFIHYeOXpDRvnJ6PoluGEioahxcj0HBqmEq7fMbXgfb3SH/sscaoLwY9DqNGG07E8TAB8cQapBs+BbAK+sjZ2YLMeZ8VQBzv3brncZ1MPbxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729112492; c=relaxed/simple;
-	bh=Dy250ErH1M84sPkAmkdtD//W3ieAYLPbTj8Aa5iqc6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WTNt5/lwPnXlmd+lccqPXxpDxBjRZdAKsKW2UOzPiq/KF4I2FH26fsPRG+NrpNw1MIKKIHk67KN6PtitUxshAXyQjOFShpWjOQE0vs19lW4ySh+YUB+dfBMyzrTGZoHHvnvk1N9Zf3B+1BlLUIEiDAZVsjXZA8J3KnNG8jkuWy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mr5jHd4Q; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729112490; x=1760648490;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dy250ErH1M84sPkAmkdtD//W3ieAYLPbTj8Aa5iqc6g=;
-  b=Mr5jHd4QqGkGo1JxeD5mehyaiDy1lKBtbS+JJTS05dF0WF4dEZA259yH
-   JWRPIEdtKaFBe+PEoWsxWLDOpMTMLQl1cAVl1FvYBNJVjidZabLXh384G
-   TSry/i1LolQMBKDOLP5kK+Q4nYVmCiLmopf8FUWTOOQz4ryjvWD5MvlvF
-   gdng2O64mjFmutyO5LOPm2elg0DQq7SJOCuNV382gSMfKT+CditIMMYrD
-   iQ7lzcKhnYFrUUIR+tkdQ8/dzVSyzbfM2s47NcWiY2VYn73ntqLXCY+2X
-   V9XXc3REy8Zm2Jdpx0c21AFSCxIHQrUi9jBHWk6S029DhxWX5AKfIuO98
-   A==;
-X-CSE-ConnectionGUID: w6T5T1QSRKeG7DJNvp0CkQ==
-X-CSE-MsgGUID: 17Q3vsWUTRKNxZ7puFNPHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46052583"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="46052583"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 14:01:29 -0700
-X-CSE-ConnectionGUID: QYPaPXYmTkSN6bnWJqd2uw==
-X-CSE-MsgGUID: TS2YPx1tQF+r8SreI3BFew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
-   d="scan'208";a="78375589"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.108.245])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 14:01:28 -0700
-Date: Wed, 16 Oct 2024 14:01:26 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: shiju.jose@huawei.com
-Cc: dave.jiang@intel.com, dan.j.williams@intel.com,
-	jonathan.cameron@huawei.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dave@stgolabs.net, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	tanxiaofei@huawei.com, prime.zeng@hisilicon.com
-Subject: Re: [RFC PATCH 0/4] Updates for CXL Event Records
-Message-ID: <ZxAppnCBf4wFgcQ0@aschofie-mobl2.lan>
-References: <20241016163349.1210-1-shiju.jose@huawei.com>
+	s=arc-20240116; t=1729112474; c=relaxed/simple;
+	bh=k1HVXdWEl9r8b7TWbb3PEMrECBBSUgCGgBCTB9XVEhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PDvAwy44qOXyIlxo2VEJZMmt/uf1OoV/oqh3lVQECuGpwf1OjZUj1xX+5Q0WJNY9tCSMFRbUbonmF5e+BWDwEfjb8wXCj14LaTMHKDYiKIzGtAVXMoR4qesJzACFJt/8TkhX5H7K4a54o5D5v+G3vReN5nQsXJHdrmmFdxB8Lwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368BFC4CEC5;
+	Wed, 16 Oct 2024 21:01:07 +0000 (UTC)
+Date: Wed, 16 Oct 2024 17:01:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski
+ <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain
+ <bcain@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, Christoph
+ Hellwig <hch@infradead.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, Helge Deller
+ <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, John Paul
+ Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet
+ <kent.overstreet@linux.dev>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Matt Turner <mattst88@gmail.com>, Max Filippov
+ <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Simek
+ <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>, Richard
+ Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>, Song Liu
+ <song@kernel.org>, Stafford Horne <shorne@gmail.com>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>,
+ Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+ bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v6 6/8] x86/module: prepare module loading for ROX
+ allocations of text
+Message-ID: <20241016170128.7afeb8b0@gandalf.local.home>
+In-Reply-To: <20241016122424.1655560-7-rppt@kernel.org>
+References: <20241016122424.1655560-1-rppt@kernel.org>
+	<20241016122424.1655560-7-rppt@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016163349.1210-1-shiju.jose@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 05:33:45PM +0100, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> CXL spec rev 3.1 CXL Event Records has updated w.r.t CXL spec rev 3.0.
-> Add updates for the above spec changes in the CXL events records and CXL
-> trace events implementation.
-> 
-> Note: Please apply following fix patch first if not present.
-> https://patchwork.kernel.org/project/cxl/patch/20241014143003.1170-1-shiju.jose@huawei.com/
-> 
-> Shiju Jose (4):
->   cxl/events: Updates for CXL Common Event Record Format
->   cxl/events: Updates for CXL General Media Event Record
->   cxl/events: Updates for CXL DRAM Event Record
->   cxl/events: Updates for CXL Memory Module Event Record
+On Wed, 16 Oct 2024 15:24:22 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-Thanks, this looks useful! I didn't review line by line but do
-have some feedback before for a v1:
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 8da0e66ca22d..b498897b213c 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -118,10 +118,13 @@ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+>  		return ret;
+>  
+>  	/* replace the text with the new text */
+> -	if (ftrace_poke_late)
+> +	if (ftrace_poke_late) {
+>  		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
+> -	else
+> -		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
+> +	} else {
+> +		mutex_lock(&text_mutex);
+> +		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
+> +		mutex_unlock(&text_mutex);
+> +	}
+>  	return 0;
+>  }
 
-- Suggest being more explicit in the commit msg(s). Something like:
-cxl/events: Update Common Event Record to CXL spec 3.1
+So this slows down the boot by over 30ms. That may not sound like much, but
+we care very much about boot times. This code is serialized with boot and
+runs whenever ftrace is configured in the kernel. The way I measured this,
+was that I added:
 
-- I was a bit surprised that this doesn't simply append new fields
-to the TP_printk() output. Is there some reason for that?
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 4dd0ad6c94d6..b72bb9943140 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -104,6 +104,8 @@ static int ftrace_verify_code(unsigned long ip, const char *old_code)
+ 	return 0;
+ }
+ 
++u64 sdr_total;
++
+ /*
+  * Marked __ref because it calls text_poke_early() which is .init.text. That is
+  * ok because that call will happen early, during boot, when .init sections are
+@@ -114,6 +116,8 @@ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+ 			  const char *new_code)
+ {
+ 	int ret = ftrace_verify_code(ip, old_code);
++	u64 start, stop;
++
+ 	if (ret)
+ 		return ret;
+ 
+@@ -121,9 +125,12 @@ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+ 	if (ftrace_poke_late) {
+ 		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
+ 	} else {
++		start = trace_clock_local();
+ 		mutex_lock(&text_mutex);
+ 		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
+ 		mutex_unlock(&text_mutex);
++		stop = trace_clock_local();
++		sdr_total += stop - start;
+ 	}
+ 	return 0;
+ }
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c01375adc471..93284557144d 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -10738,6 +10738,11 @@ __init static int tracer_alloc_buffers(void)
+ 
+ 	register_snapshot_cmd();
+ 
++	{
++		extern u64 sdr_total;
++		printk("SDR TOTAL: %lld\n", sdr_total);
++	}
++
+ 	test_can_verify();
+ 
+ 	return 0;
 
-- How about updating the mock of these events to include these new
-fields. I don't think this introduces any new formats, but I would
-certainly eyeball all 3: dmesg tp_printk, trace file, and monitor
-output because all 3 (sadly) present a bit differently.
 
--- Alison
+And did the same before this patch. I ran it three times and have the
+following numbers (all in nanoseconds):
 
-> 
->  drivers/cxl/core/trace.h | 201 +++++++++++++++++++++++++++++++++------
->  include/cxl/event.h      |  20 +++-
->  2 files changed, 190 insertions(+), 31 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+before: 11356637	11863526	11507750
+ after: 43978750	41293162	42741067
+
+Before this patch, the total updates took 11ms. After the patch it takes
+around 42ms. This is because we are patching 59 thousand sites with this.
+
+# dmesg |grep ftrace
+[    1.620569] ftrace: allocating 59475 entries in 233 pages
+[    1.667178] ftrace: allocated 233 pages with 5 groups
+
+
+If this is only needed for module load, can we at least still use the
+text_poke_early() at boot up?
+
+ 	if (ftrace_poke_late) {
+ 		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
+	} else if (system_state == SYSTEM_BOOTING) {
+		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
+ 	} else {
+ 		mutex_lock(&text_mutex);
+ 		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
+ 		mutex_unlock(&text_mutex);
+ 	}
+
+?
+
+The above if statement looks to slow things down just slightly, but only by
+2ms, which is more reasonable.
+
+-- Steve
 
