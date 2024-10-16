@@ -1,116 +1,94 @@
-Return-Path: <linux-kernel+bounces-367661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3E79A0510
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068B79A0514
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06D69B25C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5832877E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2E6205E04;
-	Wed, 16 Oct 2024 09:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6YHOl+x"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03024205125;
+	Wed, 16 Oct 2024 09:09:06 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286F6205125;
-	Wed, 16 Oct 2024 09:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494B1134A8;
+	Wed, 16 Oct 2024 09:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729069697; cv=none; b=Nj1WckkFq79oWc/T7XUqSg7jiQ39A3wgZai7IcqyjnT1G6MRCBqN2dYWBCX05CrL9t1GVCTeoft/R3Bh+pBf82kGO4Xcyviy/YcW7ukPNoT4pSZOJdga5TTuaNT5xy4SOAyJZlt+pChanBjoJOoIWCMrmHhRXgEXZUJvnCDahBA=
+	t=1729069745; cv=none; b=aZITqFU1qoeggMSR9JdzQqEwAQPokicS3OF39VDaHTeATf2VKZMUrt6RmQtaR+dPn2ezo5fohk1ht183CKBNwlXz7biTlYIpUXXRZ1rFG7TZV+EUTbM9R3z/v0rFEFEDyPOtpT5WTQ5ZGjvpd3N/ibYHpVOYouHgGoIA/2yHhVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729069697; c=relaxed/simple;
-	bh=CbyAZqMMc0gbRedEKGzjGqancCc65SQSYPTA0D/J3QQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qtsc1qN0L4y/DB0xRd1C5HnwCxPptpHEB3aZe9APGJrwbGTOwVGykB438hXDKtKQi4+tFpf1xBAmjDn2xTn9UOqWZVfXFqm5XVK6C11UoWgEGQ87l2jJEzyPNvvmkTQB9Pi4zljGSR+oALgatb+QMjtOyGDMlF7Peafk6iLZuVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6YHOl+x; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d58377339so5097360f8f.1;
-        Wed, 16 Oct 2024 02:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729069694; x=1729674494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pCckWqcba+fa3Shgw28lw4/flbtKS6dT3/BQMij0a0E=;
-        b=f6YHOl+xB4PocYKL/ynkZYm/CkMmyHufzinKj+w1t4YAIEx7abyLTSi5legsIThhRc
-         Pxn8MlpK/0GlvC19sMaPVu/t4HIZ87wCfLjCfyA39kX62dHRHKvZD22op3SLPYJF+G4s
-         Y4OqB7nBVwwxvwgm1mkdEsAMkjA5epWZfNAFDuHYEmvt8c4/Pvvl+5P4VJ/9/Z/+hCZE
-         Z0FA3kwpBb+TKwnzoYNciwi8xyeiAsldiGhIIKNMawC19aaOJdGw/lHkZexGW78wwCAD
-         iNFAy1Da0FuBOVsQJo+K3v3lEWwGGeK44jDNAheAi7blnIeTd6oy1wjiJdUStsoooBNQ
-         jU9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729069694; x=1729674494;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pCckWqcba+fa3Shgw28lw4/flbtKS6dT3/BQMij0a0E=;
-        b=U8VRh+FFyTKj5ZpzR9jG0i1Bl6noTQvf8I7NQLvHSeyyOJyTCEArtMLN2Dy9ib1a8F
-         r8ojMzaZSvt2TVK0rUK9KLtPPuQeGDAKUtyn32AkHtkLUPr0wjO+KVNN8sXQa5N+WCAz
-         iDvjDZwPmbhG46E6lMk22irQ4QK/YrKtIOfB9zfn7Ova2s4URKal/VVYbEnJMNeJZVz1
-         9HTlJk7u95WuKe0KccV+8O+vWIUL0dfd/K9ZInwpChoYT9yyTj7R0DjWMVyNyI0bIqs9
-         QPbg0kW6S1lAyijJzFbqYkVP5gjEfDNpfvYTz77Pe9BqTsSr86M+d47bB92HC7lzzsLS
-         ydlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXz8DlWtyi7h36XEhKGBgqywZWiHrE65Ns6zeAOlNauE5rBlTNEJQf7SsyCvmrzIYRMxBs6bWsKSTj81Yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi6vxRcmLVCb8PihYS4XlbrRnhuMUk8X0/T8rY3ZrZnC6szg8L
-	RCis1Hn5++gRIsm1EytR1saluuFt3gSJ50AaL9G1jwSsSmW+PzZM
-X-Google-Smtp-Source: AGHT+IEuoW36ECs0G3BohpHYmIuQ52zx189xfDZHUYwD27qVnNtffHsYOR71klxFyQQ5Hjzch7ywDQ==
-X-Received: by 2002:adf:9bd2:0:b0:37d:51b7:5e08 with SMTP id ffacd0b85a97d-37d5ff5a4cemr13000270f8f.18.1729069694199;
-        Wed, 16 Oct 2024 02:08:14 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a04asm3780781f8f.8.2024.10.16.02.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:08:13 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "tunndeling" -> "tunneling"
-Date: Wed, 16 Oct 2024 10:08:12 +0100
-Message-Id: <20241016090812.280238-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729069745; c=relaxed/simple;
+	bh=wJbwFG5BGPzQ/NGKhwbaKN/QlUVFVcVA/g8ORsnwSOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3oC3reTpp4o7QW6kMfj1uWnfoABn2sHQrSZByTsBrEEP8ck15/eQWLTGue17MinFnvTqu5YYaYKgm1jBz+Ejn4yhj3wBDMEvOX/lgu4S+BZwLINbPk0skp8QYgFBE/Bmg8PHKaK2NBnXQKJitiPW5E8wqoPWC1nxL3GxveT9Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: DGmrN+ygRZ2wOoR/ExLtCA==
+X-CSE-MsgGUID: klSEgzEGQcqTV5hxaW3EhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="32425568"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="32425568"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 02:09:03 -0700
+X-CSE-ConnectionGUID: RoebudO2StuMC+xZ3Byhcw==
+X-CSE-MsgGUID: Q8JvlAiaQx2gCwjpS2+3ZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="78230317"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 02:09:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1t101Z-00000003hZQ-2DBw;
+	Wed, 16 Oct 2024 12:08:57 +0300
+Date: Wed, 16 Oct 2024 12:08:57 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH RESEND] vdpa: solidrun: Fix UB bug with devres
+Message-ID: <Zw-CqayFcWzOwci_@smile.fi.intel.com>
+References: <20241016072553.8891-2-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016072553.8891-2-pstanner@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-There is a spelling mistake in a dm_error message. Fix it.
+On Wed, Oct 16, 2024 at 09:25:54AM +0200, Philipp Stanner wrote:
+> In psnet_open_pf_bar() and snet_open_vf_bar() a string later passed to
+> pcim_iomap_regions() is placed on the stack. Neither
+> pcim_iomap_regions() nor the functions it calls copy that string.
+> 
+> Should the string later ever be used, this, consequently, causes
+> undefined behavior since the stack frame will by then have disappeared.
+> 
+> Fix the bug by allocating the strings on the heap through
+> devm_kasprintf().
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
 
-diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-index 518e5d1f3d90..e05b8fddf2af 100644
---- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-+++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-@@ -1637,7 +1637,7 @@ static bool retrieve_link_cap(struct dc_link *link)
- 	/* Read DP tunneling information. */
- 	status = dpcd_get_tunneling_device_data(link);
- 	if (status != DC_OK)
--		dm_error("%s: Read tunndeling device data failed.\n", __func__);
-+		dm_error("%s: Read tunneling device data failed.\n", __func__);
- 
- 	dpcd_set_source_specific_data(link);
- 	/* Sink may need to configure internals based on vendor, so allow some
+I haven't found the reason for resending. Can you elaborate here?
+
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
+
 
 
