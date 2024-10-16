@@ -1,204 +1,234 @@
-Return-Path: <linux-kernel+bounces-367478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD9D9A02D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC079A02D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9491C1C23CC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C83D7B2587A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313E41CBA1D;
-	Wed, 16 Oct 2024 07:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297041B6D00;
+	Wed, 16 Oct 2024 07:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="tbluw9Bl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LFvAv43C"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c8C523os"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DA31C07C7;
-	Wed, 16 Oct 2024 07:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A5018C039
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729064411; cv=none; b=QM1wy6w56rGdgbeNgXRJqqCEh097Qkvq09FwqFtAVsIQOvFZtc+GT2HDznC9X6x3Pn7MWhsjOJsxB5Eq/ZF+Fm27VRmu1t6ftAgDBj+XRkYnnAHpUDZ4sjvBqEjHYYaiqzcCUHJmvW//me4Ey/T3xCeaSLiGPp6finaqTCMMMB0=
+	t=1729064456; cv=none; b=ofJ1NSzejaRTKY0x54rx/kmqiuX2O+NYAU5dmmM8vkZtpkv739TfOaEjhQHrwJHq7vm+JxaFiojHZOrtJyCP0bedPaCRZ80RiRaHHvbS0R8WjSozNomiyVsbCFWXUvRoPCJ/fnmBTnSBeth8ymOpOX4R2CJRHGhOykfHg2RfiQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729064411; c=relaxed/simple;
-	bh=2K9I4dEZSZaLGP786jdd9tj7AwcQBYamTml0LLQlvA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7HyIHwGMbGg4L3mcqGHq7cVl6aCGRrq8fwKtiT/ssFlbfjCUihm0tsgjjAUGeVoq9WivMnsBVGOZj/iLsPSWPGlFFWji9dcDsmDJSZFiqztUI2ak5bDuC1ZCDNfltmuzOYa2+JUrJusGYuKJKrYJNWuHV/v134J2dUfgVFqy3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=tbluw9Bl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LFvAv43C; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 89423114013F;
-	Wed, 16 Oct 2024 03:40:07 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 16 Oct 2024 03:40:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1729064407; x=1729150807; bh=g6kKlS32Dy
-	dPcblsR6GxRBrbqbAVbnXNg1huJZEWIBE=; b=tbluw9BlvGtb/R3smkGLBsxbab
-	3sjd11n0tfccJXhd8zMUcfqIvg0kjaTfkGZpMyg5ylQ4Oz8lZc2p7DOKnPFAAU9q
-	20PYg1rOMqAHvRTbTEQQK85KdRNgcZrzDThxFQna1RmScQesEXvMMGFN+HJq/XHF
-	M4/K6ol/SiAmKRTtCmKjuzpfLcC8Y+QggmLHgG87lwgmAykr3wNHQmtBMgxEGCV4
-	jjbbvoo7F0PMQDooxYwL5EQF4wPqiOpx1GPXBrd031Udp+OgkClTEO4xWlxBMf6n
-	3rxwm6nICfIElw5e0WN2b45posBwqHpavAK1J/Fc/RRu9zlUOfO3APJmh8Pw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1729064407; x=1729150807; bh=g6kKlS32DydPcblsR6GxRBrbqbAV
-	bnXNg1huJZEWIBE=; b=LFvAv43Crq/FYvgL+iJCyPIuPHVBw+p4vKke4KtMPdQR
-	/nm8R4j29sfM+Qeh8E32Aq9vYvO7orJZSSmj9ASfMeRJ5mdbGAFGOMXZ5P3kxlCn
-	7PcshU5f5X2wK5fa6ql+OrsF3aS4zSRSlo0Q42zCyX7NscmxehIQj027byihUKyr
-	W+/mqv1srYNOAi2/o64xArE2UrawzyLSIoV6mDTx6qZAUhI8FWfJ8rM8GX/SVIxP
-	0qkYD5u7+JuRpD/xpMbMa7hoiEwhRv40RBvx7AtCtJnDb2MaSkh60FhxgiIoFJWP
-	PCGamVyRr7dr0bYINNgD5kxY5cPhn6MyWVTWYbT9aw==
-X-ME-Sender: <xms:1m0PZ-fdSrkrf_4IGAYABttQHwIGWkCabXga37DlYgqmuo1P0sEmTg>
-    <xme:1m0PZ4MhKFNCdusclPZldqkam4asg8dJO-hvsrcBIe3x-wmtrermoEaKI4gkNtBlL
-    0QS65Wy1f3I3A>
-X-ME-Received: <xmr:1m0PZ_hOVuxcgiBWjRI5ao6XUYj4mk4fGfFFSlyVYqr-er505tgP-Jdv2GEifVGAYFS8OhmVeIKhRejkKA-Mza4Fq2fV6Lp5M2IDTg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegkedguddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
-    frrghtthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueef
-    hffgheekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
-    hrtghpthhtohepughpvghnkhhlvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhi
-    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:1m0PZ7_bNU3HQwXX6WkbocKECLGphNtK9RVUE-2RdqObCboKT2vhvw>
-    <xmx:1m0PZ6vus7WCa8AozBPhwJCFyio1VIfULnjDYyiTAaf4w03qNdj8lg>
-    <xmx:1m0PZyHdlNbngznmD3qLhAv3T9RCJyzJzXhr67XsypFWkvYsAukWlA>
-    <xmx:1m0PZ5NeFwfwdqUnbHTlDfuFEs92Qgq2glLipAKJbfMeugiDn1smBg>
-    <xmx:120PZ4Dllq4iFyHTRLCvzYTIaPXaTwoKyDYwxIoybjFh9HRGalu6UbWI>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Oct 2024 03:40:06 -0400 (EDT)
-Date: Wed, 16 Oct 2024 09:40:03 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Message-ID: <2024101623-education-buffoon-0988@gregkh>
-References: <20241015165538.634707e5@canb.auug.org.au>
+	s=arc-20240116; t=1729064456; c=relaxed/simple;
+	bh=5GVAi+bhcePsWEYVLMgDG/0Qx7jWgHtNbLsxjBpZDrY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xcf88fKZdS+TqxYZoJ4AI2MqXzDmI13nXiqlsD07ue7T6C6jFPYkubKQqoCsz5HRLVVIfqlWKBZvnigF+TZ+T7GAYB7ZYCbYCI5w5NakxdjNPmsoj8YirW8E3qW9E4l4KAt6kT8dIJDLvgxPTpn2hRZmYrVOBXZNAyp4KaoOG2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c8C523os; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-50d46cfcbc1so1178004e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729064453; x=1729669253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9fxdEiMjI1kbFJLU9iCKob8gjry+HYoZGnvhFNVGwWc=;
+        b=c8C523os+6JKXWlZeRAf/OiH01dDmI3aLfGbBJqXzi+/qBkqGq1qRuHqfjeah7h0Uc
+         bCBZ/3QAXonT6lJIqwe3cludAkzAJ2GAHiXIyLMXDUTMu3U+bLljj7w6fH6qQXkLlCdO
+         oI3uNROdY6t7HgqC3o3pdaxovemQHyrKgQxzKt3xazOtFK7iuW71/97FzsrIediV1LZs
+         +qGPMHGe15hogJ67+nC8IgrJ/DTVHYEIPIlMYYAdyqa1swcGynrv2ZpFoyQeoP3CW7/E
+         QCnBIe9Tt9l5Ydgyh9oUXFSBhOnqk7oFky3ubsvvp0IWR6jxIHcAVcnmZn57vp5cL3/X
+         4CzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729064453; x=1729669253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fxdEiMjI1kbFJLU9iCKob8gjry+HYoZGnvhFNVGwWc=;
+        b=KWJeUws0Vy55clWwXMVLFfjHSZE0XaUdcBsXEvlt+H0IEzj8gbaAaE0YKjTB1+ZbQ1
+         eaao43kJtQATaHEjQCJ0nFMvGLkk25OTmiXv1x4jwgbaFcmklI4zX5+8lEwJ1KElQF0+
+         ZyVTdhEqHI99CI4LTSMjHFUfftmbTKqVpHbkDWlqjEiZ+MYNO0r7zTm9W91sqSz+L3Io
+         PPlhCCTt9HdnkYxNNy4QqMzMueSOLx/PElWCqoYj/ziORp6z+dFQSdOMXbaJy8OzkuZF
+         N1kMp0ocg8vA3qkYy2QPY38G1pblMYbatj7gIR8GtFTTOhISIuXP/tfLFIZwUy/algEU
+         Pmlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/SmoyQCXuk0kIpw344o2Etxb/eyHjgpM/3o0RH4mI9i+aSU52eNNWcS2p2KtsEk3YizBkxE9uSua/pz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDinCpsb3Pxapx+PTj1gIdbpjyTUj5bAbzOnaYzoxrvFiU8HJc
+	6wmgdl8JLIDUFEQFQOnd5/ZwarrhGgf0ZO7dNxrIUqCotj7WNBK0TV1P7sGX1nh91S/wc8JT1Gj
+	tYqWy+VnMwVeFSfHthoqs3kYeezzeAtaoP70ToA==
+X-Google-Smtp-Source: AGHT+IHgEMfsjH9bzsZHBJgDDw+V22MXAo6YY84e6SPiz5FA1A06KLQhyeLPZTen3pbZWCvJC+YyQN6kc+2u67SjUsk=
+X-Received: by 2002:a05:6122:4688:b0:50d:869a:e542 with SMTP id
+ 71dfb90a1353d-50d869ae972mr4197374e0c.9.1729064453520; Wed, 16 Oct 2024
+ 00:40:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015165538.634707e5@canb.auug.org.au>
+References: <20241015112329.364617631@linuxfoundation.org> <48040478-dda1-9424-9dc8-4a8bdce0987b@w6rz.net>
+In-Reply-To: <48040478-dda1-9424-9dc8-4a8bdce0987b@w6rz.net>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 16 Oct 2024 13:10:42 +0530
+Message-ID: <CA+G9fYuWHakzSbBeLWeL=0A47j1TXJY+eDt_cRRz7zzQ_bF+Qw@mail.gmail.com>
+Subject: Re: [PATCH 6.11 000/212] 6.11.4-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>, Ron Economos <re@w6rz.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 04:55:38PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the staging tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> ld: warning: discarding dynamic section .glink
-> ld: warning: discarding dynamic section .plt
-> ld: linkage table error against `nec7210_board_online'
-> ld: stubs don't match calculated size
-> ld: can not build stubs: bad value
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_t1_delay':
-> fmh_gpib.c:(.text+0x5e8): undefined reference to `nec7210_t1_delay'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_serial_poll_status':
-> fmh_gpib.c:(.text+0x70c): undefined reference to `nec7210_serial_poll_status'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_secondary_address':
-> fmh_gpib.c:(.text+0x7e4): undefined reference to `nec7210_secondary_address'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_primary_address':
-> fmh_gpib.c:(.text+0x898): undefined reference to `nec7210_primary_address'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_update_status':
-> fmh_gpib.c:(.text+0x958): undefined reference to `nec7210_update_status'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_parallel_poll_response':
-> fmh_gpib.c:(.text+0xa18): undefined reference to `nec7210_parallel_poll_response'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_parallel_poll':
-> fmh_gpib.c:(.text+0xad8): undefined reference to `nec7210_parallel_poll'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_parallel_poll_configure':
-> fmh_gpib.c:(.text+0xb98): undefined reference to `nec7210_parallel_poll_configure'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_disable_eos':
-> fmh_gpib.c:(.text+0xc4c): undefined reference to `nec7210_disable_eos'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_enable_eos':
-> fmh_gpib.c:(.text+0xce4): undefined reference to `nec7210_enable_eos'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_remote_enable':
-> fmh_gpib.c:(.text+0xd98): undefined reference to `nec7210_remote_enable'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_interface_clear':
-> fmh_gpib.c:(.text+0xe58): undefined reference to `nec7210_interface_clear'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_request_system_control':
-> fmh_gpib.c:(.text+0xf18): undefined reference to `nec7210_request_system_control'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_go_to_standby':
-> fmh_gpib.c:(.text+0xfcc): undefined reference to `nec7210_go_to_standby'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_take_control':
-> fmh_gpib.c:(.text+0x1098): undefined reference to `nec7210_take_control'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_command':
-> fmh_gpib.c:(.text+0x1170): undefined reference to `nec7210_command'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_write':
-> fmh_gpib.c:(.text+0x123c): undefined reference to `nec7210_write'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_read':
-> fmh_gpib.c:(.text+0x133c): undefined reference to `nec7210_read'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_device_match':
-> fmh_gpib.c:(.text+0x15d0): undefined reference to `gpib_match_device_path'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_init.isra.0':
-> fmh_gpib.c:(.text+0x3164): undefined reference to `nec7210_board_reset'
-> ld: fmh_gpib.c:(.text+0x31a4): undefined reference to `nec7210_set_handshake_mode'
-> ld: fmh_gpib.c:(.text+0x335c): undefined reference to `nec7210_board_online'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_pci_attach_impl':
-> fmh_gpib.c:(.text+0x35a0): undefined reference to `gpib_pci_get_device'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_pci_detach':
-> fmh_gpib.c:(.text+0x5018): undefined reference to `nec7210_board_reset'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_detach':
-> fmh_gpib.c:(.text+0x5508): undefined reference to `nec7210_board_reset'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_fifo_read_countable':
-> fmh_gpib.c:(.text+0x6168): undefined reference to `nec7210_set_reg_bits'
-> ld: fmh_gpib.c:(.text+0x6180): undefined reference to `nec7210_set_reg_bits'
-> ld: fmh_gpib.c:(.text+0x6634): undefined reference to `nec7210_set_reg_bits'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_fifo_write_countable':
-> fmh_gpib.c:(.text+0x6f1c): undefined reference to `nec7210_set_reg_bits'
-> ld: fmh_gpib.c:(.text+0x6f34): undefined reference to `nec7210_set_reg_bits'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o:fmh_gpib.c:(.text+0x6f98): more undefined references to `nec7210_set_reg_bits' follow
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_internal_interrupt':
-> fmh_gpib.c:(.text+0x80a4): undefined reference to `push_gpib_event'
-> ld: fmh_gpib.c:(.text+0x80c4): undefined reference to `nec7210_interrupt_have_status'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_dma_callback':
-> fmh_gpib.c:(.text+0x887c): undefined reference to `nec7210_set_reg_bits'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_fifo_read':
-> fmh_gpib.c:(.text+0x8a84): undefined reference to `nec7210_set_reg_bits'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_dma_write':
-> fmh_gpib.c:(.text+0x95d8): undefined reference to `nec7210_set_reg_bits'
-> ld: fmh_gpib.c:(.text+0x95f0): undefined reference to `nec7210_set_reg_bits'
-> ld: fmh_gpib.c:(.text+0x9a88): undefined reference to `nec7210_set_reg_bits'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o:fmh_gpib.c:(.text+0xac38): more undefined references to `nec7210_set_reg_bits' follow
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_exit_module':
-> fmh_gpib.c:(.exit.text+0x38): undefined reference to `gpib_unregister_driver'
-> ld: fmh_gpib.c:(.exit.text+0x44): undefined reference to `gpib_unregister_driver'
-> ld: fmh_gpib.c:(.exit.text+0x50): undefined reference to `gpib_unregister_driver'
-> ld: fmh_gpib.c:(.exit.text+0x5c): undefined reference to `gpib_unregister_driver'
-> ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_init_module':
-> fmh_gpib.c:(.init.text+0x100): undefined reference to `gpib_register_driver'
-> ld: fmh_gpib.c:(.init.text+0x110): undefined reference to `gpib_register_driver'
-> ld: fmh_gpib.c:(.init.text+0x120): undefined reference to `gpib_register_driver'
-> ld: fmh_gpib.c:(.init.text+0x130): undefined reference to `gpib_register_driver'
-> 
-> Caused by commit
-> 
->   8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB driver")
-> 
-> I have marked that driver as BROKEN for today.
+On Tue, 15 Oct 2024 at 20:48, Ron Economos <re@w6rz.net> wrote:
+>
+> On 10/15/24 4:25 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.11.4 release.
+> > There are 212 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >       https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.11.4-rc2.gz
+> > or in the git tree and branch at:
+> >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.11.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 
-Thanks, I'll go take your patch from next and add it to my tree for
-this, sorry about the build issues.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-greg k-h
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.11.4-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 9e707bd5fc5996c97d762a16515399c2afc4d70d
+* git describe: v6.11.3-213-g9e707bd5fc59
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
+.3-213-g9e707bd5fc59
+
+## Test Regressions (compared to v6.11.2-559-gdd3578144a91)
+
+## Metric Regressions (compared to v6.11.2-559-gdd3578144a91)
+
+## Test Fixes (compared to v6.11.2-559-gdd3578144a91)
+
+## Metric Fixes (compared to v6.11.2-559-gdd3578144a91)
+
+## Test result summary
+total: 168728, pass: 140205, fail: 2283, skip: 26240, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 131 total, 129 passed, 2 failed
+* arm64: 43 total, 43 passed, 0 failed
+* i386: 18 total, 16 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 36 total, 35 passed, 1 failed
+* riscv: 16 total, 14 passed, 2 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 35 total, 34 passed, 1 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
