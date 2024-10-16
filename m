@@ -1,115 +1,247 @@
-Return-Path: <linux-kernel+bounces-368517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01079A10B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:34:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7399A10B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42F6FB21CCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C23F1F22A60
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567EA2101B7;
-	Wed, 16 Oct 2024 17:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C394718A6DC;
+	Wed, 16 Oct 2024 17:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDb4nTyY"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8s6zelf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E92D520
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2239BD520;
+	Wed, 16 Oct 2024 17:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729100036; cv=none; b=DK9cvO1d76OF4B+GvMtRdQGN4fwjGwths9VhwYw/IsSgvVBEPIZZsvCE9b2a36JVbOAHiPcto0lZeVKKRi/hfiv69UO15HF8gQ7lJ1oX9OaAd3KxoHCowWaXjXlxhhCkndmGdanX47AEC3rcK+iUm0F30MAxGlEYv2UDGSPTGX4=
+	t=1729100091; cv=none; b=KQkf/xYPA2o46ji/22SppbqbsT77slQGOgXKegvkCnwbkjrA+zd+XyH09mo/NuxihaaJHJtoFhbC0X9kFB8PVILXdFF7ogqbXKab8SsCEspt0Rqx9K/K6FHFiuIfBdyEJek983Yl4NjZ89zn+Gc5Ihhh9nltvGem6tSukFr3umk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729100036; c=relaxed/simple;
-	bh=gyJH/Ci+RPSQVaEOaWZV2qr9zXN5fKe6fan5uW4cN8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ApiavAva7gPG4ehXjsC9Jz6uK7F0S4p08X1EWsTTSn/ZILx823kQuT93ZGF1WggAzYAJ1UmAIvg7miaZ5fXpyUSxzivUYazfmMiDs3Hr6caz/s6vYYsg+F7r9aDCybwExWbZRGmHvV69Br7eDVDzaBncTdHt7KwjbkbSqtDJ+WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDb4nTyY; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a3dc089d8so7722966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729100033; x=1729704833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+IOikhW/mkeClxBwUKE9q02/XVbq9Al3HpYKbaOM8oc=;
-        b=CDb4nTyYPneqSrT74iU/9J2xJYQGDo15pTLwqTMZvEsMQIczEMfEkdYUWHgxho8xtV
-         MtHDsHNrghw/RFoNwaX5ssYJcp4bLoR94ckMD/5k9XY9aase7G+edyJhja6mdYzXJdtd
-         mMdq3QwOlqr4OVlER+cRxYQ6mb35dz6u0HMps26PMzWMrKbuudvhGeOKqMAn5kbLstrw
-         c+8iCBK+tPeLD0RwiTWWS3mUQ7Gne8UTSS0UmcDofkdo74Vp1Dp4MdeumEK+OrubCHCc
-         /iUKH6mdBqBdSjyF4MTMLFSwasP5NWkbLFQWwwhMFkzSf9r6AZ1El/h5WK39OMUW8prQ
-         7QdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729100033; x=1729704833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+IOikhW/mkeClxBwUKE9q02/XVbq9Al3HpYKbaOM8oc=;
-        b=Vv3DQfW+dpv47roXB7SrjnwhnAm4i1+ucHIbSrGPVTBLvl0rQEoXL7Hx1xuvas2Z0H
-         3N9etr/jpBKH0eZxqpKJqarfVbLy8/R6Ui3Ms7HnMxm7Fctx8FwSGibk3CYF0MKSWrbk
-         wkQsLVVXi5zuGxYAwOkeMIeU+mL4F0971oFg7hFFIwGAyIyxtJHCV0VPPfR/KkWeAgr1
-         fPqIAdwo30W3X6lS91DwIsMFheLLLPv9OcSi0cWzMHrvyAyM1p4hItB3ySxqe3N1zoX4
-         cjCZRdCuHnRDzTvlunMMcjFgMaPqErx/c8a3IDxE5Xxa5RP7TFsJIJkSzuSQ9N7Tqh4f
-         gWDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtAtQB62Xv6V4Wz+GSjZYmY3viXJag9M+9PLK6Jx0KqqwuFg9h7zIiAglB6l04Ga41BUoCebvc1oSpbFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxELznYyuozuN/iVKSMeMReNdD5mrhCTnLdzdtwvFutFH6Zxb4U
-	L+wC101TZKnUOa90lFvhxum4slQwdKOyx18gmfTzRPU5dpn5uk47+pHnjFmuy7LZM3bWDwfJAy2
-	7w0vmgcs+w6wUfFKCJSbMyWhoEFVBmQ==
-X-Google-Smtp-Source: AGHT+IFP8z26q8+zMFhY0n7+zyhNFca/ubEfFS0Oeu7VoKL4Qp8i/zfK/GxAwwiqYj8Gwo/u0cRynUmK0xLGDPsGNaI=
-X-Received: by 2002:a17:907:ea6:b0:a9a:230b:ff2c with SMTP id
- a640c23a62f3a-a9a230bffe4mr694507166b.30.1729100033305; Wed, 16 Oct 2024
- 10:33:53 -0700 (PDT)
+	s=arc-20240116; t=1729100091; c=relaxed/simple;
+	bh=cbKceK9RKKYDjCR5a/tMdY+Ui4JEm2VDrKb40ItW1NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJwl6tPbm6u2R7TXAJX+Vg7lNnwN4SJNLf+Y6b699wxDIu7ESyQEBgQU0Eg4QmfhkiwoooKJfBl++J4+ePGUj/meKBsyCypRLupmFHaKBXNo6Qz2DGW01sseilE5uaLInUNKvGGd+BtanOKyGy7zNcsfiCqn/u8ykkQ4icQxFP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8s6zelf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 367CBC4CEC5;
+	Wed, 16 Oct 2024 17:34:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729100090;
+	bh=cbKceK9RKKYDjCR5a/tMdY+Ui4JEm2VDrKb40ItW1NE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u8s6zelfAtzbWxwmKiGlkbvvc2y/mqCvnf/631J1t4hR8amTZ4lCliopP/e7PB2X/
+	 YFy0U7JNPI9cPtBHb6rQuv/nOPt0ntgedIPN8SDN4m9wVGlmCBGuW3Akk4vc3W6NXi
+	 LCiUE2EJqZgn0x9DKJJGUNb9WUNRnmXFJpUDrCEkbN/b7KSyJ0E9vJbqJZKfH96NoI
+	 J3oH0JN7Py6pKFz9R2Gr4fEDouGkBC+G9YerfDkXoJsS+CelvEVvv6pxKJfbR90M6U
+	 YMEn8KeztYUhgwOh5xrAdbkglxmCfI2DVAs4TamkTuA/4/EgDo1CdQiW07ULUCaMQa
+	 yFXSYr56ooUsQ==
+Date: Wed, 16 Oct 2024 10:34:48 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+	irogers@google.com, hbathini@linux.ibm.com,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+	maddy@linux.ibm.com, kjain@linux.ibm.com,
+	disgoel@linux.vnet.ibm.com
+Subject: Re: [PATCH V2 1/2] tools/perf/pmu-events/powerpc: Add support for
+ compat events in json
+Message-ID: <Zw_5OLkwefdGOnA3@google.com>
+References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
- <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
- <Zw_d0EVAJkpNJEbA@casper.infradead.org>
-In-Reply-To: <Zw_d0EVAJkpNJEbA@casper.infradead.org>
-From: Yang Shi <shy828301@gmail.com>
-Date: Wed, 16 Oct 2024 10:33:41 -0700
-Message-ID: <CAHbLzkogrubD_rPH7zf1T454r-BsxL951YH=rGAfNqPZJSCGow@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read performance
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org, 
-	hughd@google.com, david@redhat.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
 
-On Wed, Oct 16, 2024 at 8:38=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Wed, Oct 16, 2024 at 06:09:30PM +0800, Baolin Wang wrote:
-> > @@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kiocb =
-*iocb, struct iov_iter *to)
-> >               if (folio) {
-> >                       folio_unlock(folio);
-> >
-> > -                     page =3D folio_file_page(folio, index);
-> > -                     if (PageHWPoison(page)) {
-> > +                     if (folio_test_hwpoison(folio) ||
-> > +                         (folio_test_large(folio) &&
-> > +                          folio_test_has_hwpoisoned(folio))) {
->
-> Hm, so if we have hwpoison set on one page in a folio, we now can't read
-> bytes from any page in the folio?  That seems like we've made a bad
-> situation worse.
+Hello Athira,
 
-Yeah, I agree. I think we can fallback to page copy if
-folio_test_has_hwpoisoned is true. The PG_hwpoison flag is per page.
+On Thu, Oct 10, 2024 at 08:21:06PM +0530, Athira Rajeev wrote:
+> perf list picks the events supported for specific platform
+> from pmu-events/arch/powerpc/<platform>. Example power10 events
+> are in pmu-events/arch/powerpc/power10, power9 events are part
+> of pmu-events/arch/powerpc/power9. The decision of which
+> platform to pick is determined based on PVR value in powerpc.
+> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
+> 
+> Example:
+> 
+> Format:
+>         PVR,Version,JSON/file/pathname,Type
+> 
+> 0x004[bcd][[:xdigit:]]{4},1,power8,core
+> 0x0066[[:xdigit:]]{4},1,power8,core
+> 0x004e[[:xdigit:]]{4},1,power9,core
+> 0x0080[[:xdigit:]]{4},1,power10,core
+> 0x0082[[:xdigit:]]{4},1,power10,core
+> 
+> The code gets the PVR from system using get_cpuid_str function
+> in arch/powerpc/util/headers.c ( from SPRN_PVR ) and compares
+> with value from mapfile.csv
+> 
+> In case of compat mode, say when partition is booted in a power9
+> mode when the system is a power10, add an entry to pick the
+> ISA architected events from "pmu-events/arch/powerpc/compat".
+> Add json file generic-events.json which will contain these
+> events which is supported in compat mode.
+> 
+> Suggested-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
 
-The folio_test_has_hwpoisoned is kept set if the folio split is failed
-in memory failure handler.
+Is this the latest version?
 
->
->
+Thanks,
+Namhyung
+
+> ---
+> 
+>  .../arch/powerpc/compat/generic-events.json   | 117 ++++++++++++++++++
+>  .../perf/pmu-events/arch/powerpc/mapfile.csv  |   1 +
+>  2 files changed, 118 insertions(+)
+>  create mode 100644 tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
+> 
+> diff --git a/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json b/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
+> new file mode 100644
+> index 000000000000..6f5e8efcb098
+> --- /dev/null
+> +++ b/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
+> @@ -0,0 +1,117 @@
+> +[
+> +  {
+> +    "EventCode": "0x600F4",
+> +    "EventName": "PM_CYC",
+> +    "BriefDescription": "Processor cycles."
+> +  },
+> +  {
+> +    "EventCode": "0x100F2",
+> +    "EventName": "PM_CYC_INST_CMPL",
+> +    "BriefDescription": "1 or more ppc insts finished"
+> +  },
+> +  {
+> +    "EventCode": "0x100f4",
+> +    "EventName": "PM_FLOP_CMPL",
+> +    "BriefDescription": "Floating Point Operations Finished."
+> +  },
+> +  {
+> +    "EventCode": "0x100F6",
+> +    "EventName": "PM_L1_ITLB_MISS",
+> +    "BriefDescription": "Number of I-ERAT reloads."
+> +  },
+> +  {
+> +    "EventCode": "0x100F8",
+> +    "EventName": "PM_NO_INST_AVAIL",
+> +    "BriefDescription": "Number of cycles the ICT has no itags assigned to this thread."
+> +  },
+> +  {
+> +    "EventCode": "0x100fc",
+> +    "EventName": "PM_LD_CMPL",
+> +    "BriefDescription": "Load instruction completed."
+> +  },
+> +  {
+> +    "EventCode": "0x200F0",
+> +    "EventName": "PM_ST_CMPL",
+> +    "BriefDescription": "Stores completed from S2Q (2nd-level store queue)."
+> +  },
+> +  {
+> +    "EventCode": "0x200F2",
+> +    "EventName": "PM_INST_DISP",
+> +    "BriefDescription": "PowerPC instruction dispatched."
+> +  },
+> +  {
+> +    "EventCode": "0x200F4",
+> +    "EventName": "PM_RUN_CYC",
+> +    "BriefDescription": "Processor cycles gated by the run latch."
+> +  },
+> +  {
+> +    "EventCode": "0x200F6",
+> +    "EventName": "PM_L1_DTLB_RELOAD",
+> +    "BriefDescription": "DERAT Reloaded due to a DERAT miss."
+> +  },
+> +  {
+> +    "EventCode": "0x200FA",
+> +    "EventName": "PM_BR_TAKEN_CMPL",
+> +    "BriefDescription": "Branch Taken instruction completed."
+> +  },
+> +  {
+> +    "EventCode": "0x200FC",
+> +    "EventName": "PM_L1_ICACHE_MISS",
+> +    "BriefDescription": "Demand instruction cache miss."
+> +  },
+> +  {
+> +    "EventCode": "0x200FE",
+> +    "EventName": "PM_L1_RELOAD_FROM_MEM",
+> +    "BriefDescription": "L1 Dcache reload from memory"
+> +  },
+> +  {
+> +    "EventCode": "0x300F0",
+> +    "EventName": "PM_ST_MISS_L1",
+> +    "BriefDescription": "Store Missed L1"
+> +  },
+> +  {
+> +    "EventCode": "0x300FC",
+> +    "EventName": "PM_DTLB_MISS",
+> +    "BriefDescription": "Data PTEG reload"
+> +  },
+> +  {
+> +    "EventCode": "0x300FE",
+> +    "EventName": "PM_DATA_FROM_L3MISS",
+> +    "BriefDescription": "Demand LD - L3 Miss (not L2 hit and not L3 hit)"
+> +  },
+> +  {
+> +    "EventCode": "0x400F0",
+> +    "EventName": "PM_LD_MISS_L1",
+> +    "BriefDescription": "L1 Dcache load miss"
+> +  },
+> +  {
+> +    "EventCode": "0x400F2",
+> +    "EventName": "PM_CYC_INST_DISP",
+> +    "BriefDescription": "Cycle when instruction(s) dispatched."
+> +  },
+> +  {
+> +    "EventCode": "0x400F6",
+> +    "EventName": "PM_BR_MPRED_CMPL",
+> +    "BriefDescription": "A mispredicted branch completed. Includes direction and target."
+> +  },
+> +  {
+> +    "EventCode": "0x400FA",
+> +    "EventName": "PM_RUN_INST_CMPL",
+> +    "BriefDescription": "PowerPC instruction completed while the run latch is set."
+> +  },
+> +  {
+> +    "EventCode": "0x400FC",
+> +    "EventName": "PM_ITLB_MISS",
+> +    "BriefDescription": "Instruction TLB reload (after a miss), all page sizes. Includes only demand misses."
+> +  },
+> +  {
+> +    "EventCode": "0x400fe",
+> +    "EventName": "PM_LD_NOT_CACHED",
+> +    "BriefDescription": "Load data not cached."
+> +  },
+> +  {
+> +    "EventCode": "0x500fa",
+> +    "EventName": "PM_INST_CMPL",
+> +    "BriefDescription": "Instructions."
+> +  }
+> +]
+> diff --git a/tools/perf/pmu-events/arch/powerpc/mapfile.csv b/tools/perf/pmu-events/arch/powerpc/mapfile.csv
+> index 4d5e9138d4cc..cbd3cb443784 100644
+> --- a/tools/perf/pmu-events/arch/powerpc/mapfile.csv
+> +++ b/tools/perf/pmu-events/arch/powerpc/mapfile.csv
+> @@ -16,3 +16,4 @@
+>  0x004e[[:xdigit:]]{4},1,power9,core
+>  0x0080[[:xdigit:]]{4},1,power10,core
+>  0x0082[[:xdigit:]]{4},1,power10,core
+> +0x00ffffff,1,compat,core
+> -- 
+> 2.27.0
+> 
 
