@@ -1,187 +1,117 @@
-Return-Path: <linux-kernel+bounces-368637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE59F9A12B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:36:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F309A12BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85393B23B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D1C1C21886
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB69215F61;
-	Wed, 16 Oct 2024 19:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D759D2144CD;
+	Wed, 16 Oct 2024 19:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLtq5enn"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tS1OkGaV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842E92144D6;
-	Wed, 16 Oct 2024 19:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC391865ED;
+	Wed, 16 Oct 2024 19:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107336; cv=none; b=JesjPsRE5y4JoJk0j1WjzMJ0Vs5rNncZni3wzIQMI2GOy1ZvpldCjDx4GDg08QUPkMA+n3a0TikqUqML0JCmUzeFpXc6kBhmZ9dW7LUFlbRjm9dohRoQnQuspIDGNALeoePgksLKnZU3yZwyKrxcnnyo5X0EcKDoYAkMHNUYtQE=
+	t=1729107484; cv=none; b=BynfS8jrGog4bMOYW6iUdyZsRw7wnVLVqng8TNJEVzeUWnsQxP0tJ6bd1syZQPKmdLL1rPq5lPpfyYOobhwypbw+vB4W6Kh54gPrB1AIFr4SxHsM1sysZKKj88R1C2U3ZpjjK4yLvyXU5wnB121B2SIsZ6LUdOqOuO7SEGml8zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107336; c=relaxed/simple;
-	bh=NNrE3qOWb+EtP1SO1axezSvQxQFBxRZOewvdPogIiNY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=cgOfup+EwBPQmnRArmfTfZKjWE/D3N5HOwWvaUKRxLv3Td7Z10J0++qacDPc1H2aIO2iI7Rnn7yt7cqx/gJzZ92zUdp99iz7s3nu7jnmJmQC6O9ofDLDy5OP69vna/Xp5aGyx0wWPRQXo9WCCj6OokbF0KX/HvZXzqrPQ2eDdBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLtq5enn; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e5130832aso118005b3a.0;
-        Wed, 16 Oct 2024 12:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729107334; x=1729712134; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=COadM9mdsklFEqY/AYc1kTUqOtiuxLFYkQWjQblcUb8=;
-        b=HLtq5enn+P7wkznoglSsUZSekjpbt17gufFZdVQ9s7qT+aXeQZ3MeSr8xY+yTLEZpX
-         U4wzUYwV8oeqqGa9TjiKAaxQUuliyTYY1bu/V41jvEm04a3AbsRYtzvpwMbUeC3W54bB
-         ABY71juL3H1fFfN9C5IY80DJOZOtCwhQ+NT+1l324/acgP++8PWTfAHNAVo4rpsz95WX
-         S/vI5wmwV0o05dWku3EBC6JxMihyAxwErdGuz5vQavXVEUDDK+0kUX7AXYIeGxxSFyal
-         V4SatUVc5zQTmD1ORstit0X08/BSVLYO6tvzBprMP6TbYEwnyGI5prBIGHxy9b6UU7LR
-         pvJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729107334; x=1729712134;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=COadM9mdsklFEqY/AYc1kTUqOtiuxLFYkQWjQblcUb8=;
-        b=V9jU8WqZTakG7hEKTio8q5LfTthTExlMq7HPlg5g0oVhsYzE9l2PEuCrF8vM41zuh/
-         JaMjffM3E3nvM7lTkLt3zupb23FZCjDYHF1aUEMa5RLVzUNEHzEN8PgCnFqcFAC10sYU
-         iJw/43cvQsl7W7ZhqlIH/dS3384yzL9fHOFwrHv/0PABE9Waw6WX5pkDJOi04pBRhMjU
-         6bNGDvQZl6n/0Ioln/2eAQIHjl+vZwTZyPFKViUA4W0YC4n9HnIK4e/8u2wSn2R95QvQ
-         vpl+LpYLW4GAgX7P+WsUftnbqXY+pzOEsq+18uWtjNBSRTmUD3/8vqVABY4gB70uqnKA
-         UJQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUM7/p+rcfmCEQ46Fm3+SUs82OKzvl7QPqwuyhftNOHW5qAQrqGy3WK9STPzDh5hraohTbJwwKiOAt6ES3eilrd6g==@vger.kernel.org, AJvYcCWztfmMYTj6nYdXME8svb730k3z1m2g8UDoZuo/CkPJcIqyyk8HgWoFLXoTv383pcwKrwo=@vger.kernel.org, AJvYcCXu5QuclPf2rw/n3Y94GVw0xQWLEwhq6LRbO2GTVflsCQFRNW4xYhxK/+T/kq1xlBac8RO/mbeLhuwObA3t@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLig/mAq3CLW6/k1PxdMaCGvKzFmatimIF9GLvDM/078TSv+6E
-	OoKekkkGEXHJIezZof0bvpS5dXfyICfAY+kI0FeJxnpf40huLAb07S2BPIr9DrpHU4y3G0kcJGM
-	JLhpbMG1M5kIc9UZkWPguf1Ohv8k=
-X-Google-Smtp-Source: AGHT+IFoR2J8QArYG4GdvA2ZTWym2yAF0bf4yapmxEQIyk6yGf8CBIPNs9eBCYoDoGXIUYd1KvkSmPfdgVyJgfl2iMU=
-X-Received: by 2002:a05:6a00:2e11:b0:71e:6ed:9108 with SMTP id
- d2e1a72fcca58-71e4c13db67mr24548702b3a.2.1729107333688; Wed, 16 Oct 2024
- 12:35:33 -0700 (PDT)
+	s=arc-20240116; t=1729107484; c=relaxed/simple;
+	bh=6dGoC9a9JiCAYeGpX5fIjP+CJ42IJn9E3kkE2FQNvL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=inyC2DyD2OqWYWJwvWc79ldVxQagOBNy0UedOPPAfAqMuODEyTx8JxXuJ4ckoVJppuCCseYOp1RHHENPdvPzNwL3GiISppkTNUM3UyrXahDeryp5unO4To/1UHpFdha7O59m+kiKGTkygWNeYGQ1h/pvcd0Weuk0tOEbAWKx8Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tS1OkGaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82649C4CEC5;
+	Wed, 16 Oct 2024 19:38:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729107483;
+	bh=6dGoC9a9JiCAYeGpX5fIjP+CJ42IJn9E3kkE2FQNvL0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=tS1OkGaVsIsv4ZJFraTecKZ2QFO4nUAEAoichSykLSfGjHXeNTJSjpqnrQ69xbYnh
+	 URdczNK3W+SkrSWC/V9ZyJFc9etIglHTD7o4KNBZIdKvzjqj500kca4FrMAUoIE5vT
+	 yok6MdDEoiwPwiCpUm9r8k+S3Fb9BSAzaEwWEl8vupOe9Nhlb6Eztq4LBhL2hGIOg/
+	 5z4dLaBohTguxawa/FZHPqiMK3SiTDXcrO2aMgFmprS2/knK5C7rT2wSNrVQxz0VQz
+	 PQxGoNWWyxGOQ3DZKevs1L3byjSr1qq1p3uI1zEn1PwLP8fZu5X0Y2cNMIHCmerxLr
+	 5NgHJdKtbl58A==
+Date: Wed, 16 Oct 2024 14:38:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jim Quinlan <jim2101024@gmail.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>
+Subject: Re: [PATCH v3 04/11] PCI: brcmstb: Expand inbound size calculation
+ helper
+Message-ID: <20241016193802.GA645895@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 16 Oct 2024 12:35:21 -0700
-Message-ID: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
-Subject: The state of uprobes work and logistics
-To: Peter Ziljstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>
-Cc: Linux trace kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Jiri Olsa <jolsa@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Liao Chang <liaochang1@huawei.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANCKTBt17LCyvQQnOqMdu1KUY61bRKCYQC8=+HDYaddj-MAd2Q@mail.gmail.com>
 
-Hello,
+On Wed, Oct 16, 2024 at 01:09:00PM -0400, Jim Quinlan wrote:
+> On Mon, Oct 14, 2024 at 1:25 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Mon, Oct 14, 2024 at 10:10:11AM -0700, Florian Fainelli wrote:
+> > > On 10/14/24 09:57, Bjorn Helgaas wrote:
+> > > > On Mon, Oct 14, 2024 at 04:07:03PM +0300, Stanimir Varbanov wrote:
+> > > > > BCM2712 memory map can supports up to 64GB of system
+> > > > > memory, thus expand the inbound size calculation in
+> > > > > helper function up to 64GB.
+> > > >
+> > > > The fact that the calculation is done in a helper isn't important
+> > > > here.  Can you make the subject line say something about supporting
+> > > > DMA for up to 64GB of system memory?
+> > > >
+> > > > This is being done specifically for BCM2712, but I assume it's safe
+> > > > for *all* brcmstb devices, right?
+> > >
+> > > It is safe in the sense that all brcmstb devices with this PCIe
+> > > controller will adopt the same encoding of the size, all of the
+> > > currently supported brcmstb devices have a variety of
+> > > limitations when it comes to the amount of addressable DRAM
+> > > however. Typically we have a hard limit at 4GB of DRAM per
+> > > memory controller, some devices can do 2GB x3, 4GB x2, or 4GB
+> > > x1.
+> > >
+> > > Does that answer your question?
+> >
+> > I'd like something in the commit log to the effect that while
+> > we're doing this to support more system memory on BCM2712, this
+> > change is safe for other SoCs that don't support as much system
+> > memory.
+> 
+> This setting configures the size of an RC's inbound window to system
+> memory.  Any inbound access outside of all of the inbound windows
+> will be discarded.
+> 
+> Some existing SoCs cannot support the 64GB size.  Configuring such
+> an SoC to 64GB will effectively disable the entire window.
 
-I wanted to provide a bit of a context about and tie together a few
-separate work streams (across a few separate kernel trees) all
-revolving around uprobe improvements, as there are a bunch of them and
-I'm sure it's hard to keep track of all of them. And hopefully I can
-also get Peter and ARM maintainer's input on some specific questions I
-asked below. Thank you in advance!
+So I *think* you're saying that this patch will break existing SoCs
+that don't support the 64GB size, right?
 
-In short, in the last few months there was a high activity around
-fixing and improving uprobes. All this is the result of increased and
-more varied use of uprobes/uretprobe in production settings. Uprobe
-performance is **very** important, and yes, we do have real use cases
-that go to millions per second uprobe/uretprobe triggering throughput,
-unfortunately. So any small bit of performance and scalability
-improvement is helpful. No, this isn't just some nerdy perf
-optimization work (I've been asked this a few times, so I thought I'd
-emphasize this again).
-
-So, we've already landed a bunch of work, mainly (not an exhaustive list):
-
-  - various clean ups, API improvements, and bug fixes from Oleg
-Nesterov ([0], [1]). This simplified internal APIs and was a
-prerequisite of the rest of the work;
-  - changes to refcounting and RCU-ifying of uprobe lifetime from me
-([2]). This improved single-threaded performance somewhat, but mainly
-significantly improved scalability in the presence of multiple CPUs
-triggering lots of uprobes;
-  - ARM64-specific optimization of uprobe emulation of NOP instruction
-by Liao Chang ([3]). This change alone gives 2x (!) speed up for a
-USDT tracing use cases *on ARM64* (we already have this optimization
-in x86-64);
-  - there was a bit earlier work by Jiri Olsa ([4]) to add uretprobe()
-syscall, giving +30% speed ups.
-
-And there are a few more outstanding changes:
-
-  - Jiri Olsa's uprobe "session" support ([5]). This is less
-performance focused, but important functionality by itself. But I'm
-calling this out here because the first two patches are pure uprobe
-internal changes, and I believe they should go into tip/perf/core to
-avoid conflicts with the rest of pending uprobe changes.
-
-Peter, do you mind applying those two and creating a stable tag for
-bpf-next to pull? We'll apply the rest of Jiri's series to
-bpf-next/master.
-
-  - Liao Chang's ARM64-specific STP instruction emulation support
-([6]). This one will give 2x (!) improvement for a common case of
-having STP instruction being a first instruction in traced user
-function (similar to NOP for USDTs).
-
-ARM64 maintainers (cc'ed Catalin, Will, and Mark), can you guys please
-take another look? This one was a bit more controversial, but
-hopefully there is a way to massage it to be acceptable and not
-introduce unnecessary slowdowns (there were some concerns about memory
-ordering/visibility, which hopefully don't apply to uprobe cases).
-It's an important improvement, I'd really appreciate it if we can make
-progress here, thank you!
-
-  - my speculative VMA-to-uprobe lookup series ([7]). This makes entry
-uprobe scalability scale linearly with the number of CPUs (the
-ultimate goal of uprobe scalability work).
-
-I think it's ready to go in. It has **implicit** dependency on
-Christian Brauner's recent change for FMODE_BACKING, for which he
-provided a stable tag. Peter, do you have any remaining concerns or
-this can be also merged soon?
-
-  - another patch set of mine, switching uretprobe fast path to SRCU
-(with timeout) ([8]). This makes return uprobes (uretprobes) linearly
-scalable in the common case (again, the ultimate scalability goal).
-
-I haven't gotten much feedback here, would love to get some objective
-review here. This is an important counterpart to the speculative
-VMA-to-uprobe lookup series. Both are needed in practice.
-
-  - patch set dropping unnecessary siglock usage in uprobe by Liao
-Chang ([9]). This one removes yet another lock, for a less common case
-(at least on x86-64) of single-stepped uprobe (where the probed
-instruction can't be emulated).
-
-This one needs a rebase, but it was already acked by Oleg. Liao,
-please prioritize the rebase and send v4 ASAP, so this is not lost.
-
-
-As you can see, lots of stuff needs to be landed and most of it is in
-good shape already. I'd love to hear thoughts of relevant people
-called out above, thank you!
-
-
-  [0] https://lore.kernel.org/linux-trace-kernel/20240729134444.GA12293@redhat.com/
-  [1] https://lore.kernel.org/linux-trace-kernel/20240929144201.GA9429@redhat.com/
-  [2] https://lore.kernel.org/linux-trace-kernel/20240903174603.3554182-1-andrii@kernel.org/
-  [3] https://lore.kernel.org/linux-trace-kernel/20240909071114.1150053-1-liaochang1@huawei.com/
-  [4] https://lore.kernel.org/linux-trace-kernel/20240523121149.575616-1-jolsa@kernel.org/
-  [5] https://lore.kernel.org/bpf/20241015091050.3731669-1-jolsa@kernel.org/
-  [6] https://lore.kernel.org/linux-trace-kernel/20240910060407.1427716-1-liaochang1@huawei.com/
-  [7] https://lore.kernel.org/linux-trace-kernel/20241010205644.3831427-1-andrii@kernel.org/
-  [8] https://lore.kernel.org/linux-trace-kernel/20241008002556.2332835-1-andrii@kernel.org/
-  [9] https://lore.kernel.org/linux-trace-kernel/20240815014629.2685155-1-liaochang1@huawei.com/
-
--- Andrii
+Bjorn
 
