@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-368159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383AE9A0C16
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:59:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E989A0C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0252288397
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:59:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D963C1F25C2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9C820E02D;
-	Wed, 16 Oct 2024 13:58:27 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD11C20C00A;
+	Wed, 16 Oct 2024 13:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vwb225Ni"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014F820C463
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8696420C02C;
+	Wed, 16 Oct 2024 13:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729087107; cv=none; b=i6UJUvY99a/P71lbpThMaBmn1qFsU4UBKJkQUNNP2eUqmEc49snWDpVDZg1A5Rl6y6xpOwRCJ06Thq+Eq7ZwN39vjdgPKOuvvEtzku8mCIi7WB8fPOBKbGd45WloN9+NIkBA09kPaZPz72R+GiqjyAe2hmPByia/meMB6QCMiog=
+	t=1729087103; cv=none; b=SL9JzfYugzpTwHelhomAXj+t285FouujOoYJ5fQpFrdcA03Qy3ViAA5Loo9OTQhy1o+x/s2tDrIg7dGiTlqS1bTSkIr12lt7gDg41rSNK4wEBFOAXvpG2z3MzVIA07jZ4hPMnviCjAzRi7XK9apX4i2Syu5MPaMowudKzSiDV9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729087107; c=relaxed/simple;
-	bh=lxMrwpZ77rgZrCcv4E5I3U8EaQhP4MIcvyniUzUZWhA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OiIFOm4lF+bm0kSoBtVoditFlKIY2gKs+zGQzzqvOUVsqneqyfYO+Wd9X+PqLa0SUren7eGl1AJ2DTUgduoMciRYTYME4N+9ijnHiyaE0AxioGV1cpnuazsJovQhBOH9RU7WPs7b7PW+EudqczReMfIna0m4npNWjpjSpeQVZN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1t14Xd-0003H4-O8; Wed, 16 Oct 2024 15:58:21 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1t14Xd-002HjI-3L; Wed, 16 Oct 2024 15:58:21 +0200
-Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
-	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1t14Xd-00BU5S-01;
-	Wed, 16 Oct 2024 15:58:21 +0200
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Wed, 16 Oct 2024 15:58:14 +0200
-Subject: [PATCH v7 9/9] usb: gadget: uvc: dont call
- usb_composite_setup_continue when not streaming
+	s=arc-20240116; t=1729087103; c=relaxed/simple;
+	bh=tNXxexRa63qPQgCE/PAc1Z8lcuufpKEk5QRRnDaJq+s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Y72N0+2KRyG6SWdc+1hDG6hXd5PJUhlO6ttiuCpjajHxnYOBiX416J9r6AVyTZ686MvfnqIE2AKq9dnmwlFkN5upo9DWEH6RShndzgDJYdlqIrolAUljd/p4TjPYYUby2zGDZl6KmuXtaTcde645K/YO0SDmTKF+gsFjS6+xF/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vwb225Ni; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729087103; x=1760623103;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=tNXxexRa63qPQgCE/PAc1Z8lcuufpKEk5QRRnDaJq+s=;
+  b=Vwb225NiHD3hYho3ad8U/qD03Weyyff5yHqDZ8PKbyhJv/VbJ+WBZtrH
+   csBKE8yLQTcWzn0GRMQFoDl8TF6k8TULETJ6qpAxSxFS+1P+RWaxEn72P
+   az/pYrbl+FTyMtqCntBnEgVTECoO2astNq9XMwAGl1PG3nSvBf/XQAFKj
+   8o+F4ww643ETh157JGd3pHmS0zA0v3oHZbR+GNCTyExvoiGDg7Mni6GZR
+   1iMqnSgPMhh6RAwcTj/kZJZIvKqV+ucptj4Kn072Zv4W/fgXkMbpuMsUU
+   9sKS/1n26dTDs7BpSp6tmU6zSoTtPUp58PcP8Buiktfa1YwiNw6hFIbr5
+   g==;
+X-CSE-ConnectionGUID: 1yfAEEkPQWm1VClMgPbcxw==
+X-CSE-MsgGUID: KEx9i6w8SuafP7k4QH0rKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46009054"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46009054"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:58:22 -0700
+X-CSE-ConnectionGUID: WVAU1CeSRDWu8KSQ5l2xlA==
+X-CSE-MsgGUID: EOjd0EyUQf25Dm3DlX9PBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="78124999"
+Received: from yungchua-mobl2.ccr.corp.intel.com (HELO [10.246.104.225]) ([10.246.104.225])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:58:20 -0700
+Message-ID: <7f9e4378-3d96-4eee-9b66-cb37739a12f4@linux.intel.com>
+Date: Wed, 16 Oct 2024 21:58:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] ASoC/SoundWire: clean up link DMA during stop for
+ IPC4
+From: "Liao, Bard" <yung-chuan.liao@linux.intel.com>
+To: broonie@kernel.org, tiwai@suse.de, vkoul@kernel.org
+Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, pierre-louis.bossart@linux.dev,
+ bard.liao@intel.com, ranjani.sridharan@linux.intel.com
+References: <20241016032910.14601-1-yung-chuan.liao@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <20241016032910.14601-1-yung-chuan.liao@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240403-uvc_request_length_by_interval-v7-9-e224bb1035f0@pengutronix.de>
-References: <20240403-uvc_request_length_by_interval-v7-0-e224bb1035f0@pengutronix.de>
-In-Reply-To: <20240403-uvc_request_length_by_interval-v7-0-e224bb1035f0@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Daniel Scally <dan.scally@ideasonboard.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Avichal Rakesh <arakesh@google.com>, 
- Jayant Chowdhary <jchowdhary@google.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1116;
- i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=lxMrwpZ77rgZrCcv4E5I3U8EaQhP4MIcvyniUzUZWhA=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBnD8Z88gJtVaxHj75VmfrPgW5ryXP6R57oHQ4T8
- QMXUsyvSD2JAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZw/GfAAKCRC/aVhE+XH0
- qzZeD/9LNNHzSWIZRPjbyAcnY5lTswVMrMdcGtoylDHPnrj1xoxad4+5W9s9ZA1tUHIm4txVDdF
- Fen1nYlDehldlyn68Ca2h8oVcr5ZQdQhnwGteFYw9/LwXIqOpO8pRSBy5Sq0YPo5pJcB7HDvoJA
- CFJ7uIV8gmu5PQAy619EgSnbRWMm0k/qzrAkcUUioed24lWB/8AoA5nCNX0RtfVpA1CGnGwBDen
- Q7dETeO7OxWiXZfx7PLaC4/KHGD2C6qvLrKnCd4ua1/bcAC3icYsqlzhnlSslmgo27IhPcIAFSd
- pyWGd1qFRp2X5s9BbpaTy8bQ8KkwHWMGXZiE12uxUGYAKkZ8Xd/+MdvItMMT7SNeu69d00tISWP
- q/4X9Fhi6x1vAuOMPxelGUGgUS0iPVP6HuGDgaFS6+jMD2v9a8Ak6pta5f/NaVNKKr72lFQuSlA
- GlvZdTujNFvORsVb9zMiAXqiY9IeZjCYuBTybWtjv71Ww2ajIQdxU3C1G+OYEML8j6yPwJFlWv2
- nYsLnxpec9vEuEejNfG5aH7nyg3MEoRcp727ge4CUdz18jiRGtArhS8An+q3LhgxC0huG4I36Ej
- Kaj0bDsWQOU2ekmUxJLn+IFcl958dEbUYFJ9Gp2ipKO3N6TQbb0Px/Y4PAju7LAtgY70KmgMKPN
- OO+6VMxkQQVT2oQ==
-X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
- fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-If the streamoff call was triggered by some previous disconnect
-or userspace application shutdown the uvc_function_setup_continue
-should not be called and the state should not be overwritten.
 
-For this situation the set_alt(0) was never called and the streaming ep
-has no USB_GADGET_DELAYED_STATUS pending.
 
-Since the state then was already updated before we also omit the state
-update.
+On 10/16/2024 11:29 AM, Bard Liao wrote:
+> Clean up the link DMA for playback during stop for IPC4 is required to
+> reset the DMA read/write pointers when the stream is prepared and
+> restarted after a call to snd_pcm_drain()/snd_pcm_drop(). 
+> 
+> The change is mainly on ASoC. We may go via ASoC tree with Vinod's
+> Acked-by tag
+> 
 
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Mark,
 
----
-v5 -> v7: -
-v1 -> v5: - new patch
----
- drivers/usb/gadget/function/uvc_v4l2.c | 3 +++
- 1 file changed, 3 insertions(+)
+This is a bug fix. Link: https://github.com/thesofproject/sof/issues/9502
 
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-index ab89f1630acb0..3492855f0fb29 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.c
-+++ b/drivers/usb/gadget/function/uvc_v4l2.c
-@@ -546,6 +546,9 @@ uvc_v4l2_streamoff(struct file *file, void *fh, enum v4l2_buf_type type)
- 	if (ret < 0)
- 		return ret;
- 
-+	if (uvc->state != UVC_STATE_STREAMING)
-+		return 0;
-+
- 	uvc->state = UVC_STATE_CONNECTED;
- 	uvc_function_setup_continue(uvc, 1);
- 	return 0;
+Can you pick it for kernel 6.12? Also
 
--- 
-2.39.5
+All: Cc: stable@vger.kernel.org # 6.10.x 6.11.x
+
+Thanks,
+Bard
+
+> Ranjani Sridharan (4):
+>   ASoC: SOF: ipc4-topology: Do not set ALH node_id for aggregated DAIs
+>   ASoC: SOF: Intel: hda: Handle prepare without close for non-HDA DAI's
+>   soundwire: intel_ace2x: Send PDI stream number during prepare
+>   ASoC: SOF: Intel: hda: Always clean up link DMA during stop
+> 
+>  drivers/soundwire/intel_ace2x.c   | 19 +++++-----------
+>  sound/soc/sof/intel/hda-dai-ops.c | 23 +++++++++----------
+>  sound/soc/sof/intel/hda-dai.c     | 37 +++++++++++++++++++++++++++----
+>  sound/soc/sof/ipc4-topology.c     | 15 +++++++++++--
+>  4 files changed, 62 insertions(+), 32 deletions(-)
+> 
 
 
