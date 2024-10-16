@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-368894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76739A1634
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:31:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF5A9A1635
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4110B282643
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:31:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AF6FB228A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D841D63E0;
-	Wed, 16 Oct 2024 23:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9B21D47DC;
+	Wed, 16 Oct 2024 23:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="S8J2E9Cb"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ES2hMIB9"
+Received: from qs51p00im-qukt01072301.me.com (qs51p00im-qukt01072301.me.com [17.57.155.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DA91D5ABD;
-	Wed, 16 Oct 2024 23:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F4C1B2189
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729121466; cv=none; b=Dv4JDFABG26uRCgWlkwe0ovIMO6xMnctV8D+PkPS3nFsNuiknV0soMs7vyla2BL+pt1IKA1YgmJntEeasM4iLUwHLX2Eu2h3akK/eOQMpD3rm5iplPHlRovylFMwyWZVXp6rgTkrnmw4tyHYZDRi+GzSyS9bJY4gb6UVFeTrbuw=
+	t=1729121748; cv=none; b=YlRdVmBj8lxomu2QfHE5WKUVRaDMQqCQ6Qa2sWwbmgUdSVzobneZ+b3KzYcjP4eruHVYSxvj2ynND6LlBwkt8A/QJe+Qdb5ay9S14pclnYr6S5siGLnjo3pd6MXJSPg8vTSKPWMJ8vgv5BBaElMWXQzaBTEU1Hxi+cUDsharpbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729121466; c=relaxed/simple;
-	bh=9ZGFls6Wc4YkbHehUV1q2pSXo7q62XqE2ggwM8kW4WE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DIcb/Q9l3RkxNOGdiPsc5B2b8Ry37T5X6Ss7spLrtmps3BHjLE5r02pPb0N30WOq3EWd3iMirnTHvFSr6xIwNmNZcmWttWNnDiM9ChlN8N3omkkzEm82dmX2be3hy4MTAsgvYRzKfZSNhcZNRT3FmcnWDCiEKi49LlArAsPei6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=S8J2E9Cb; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GNUm1r053754;
-	Wed, 16 Oct 2024 18:30:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729121448;
-	bh=9SV5h8xedLWD+ge5L6A7dBrptUEb+vs8XnTxh54IE50=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=S8J2E9Cbslmqv2F3lVzPZQc7xpFtqPRhd2REiXnX9pqg7AJsJTGCCBaav9JhBqLDi
-	 Qk4HhRXXGZTD/Xdz4aiOKP41LzANOQJQhOWoJa68t28OL6Q8FD/r3hkKBgaoWGuCwL
-	 iegmiStOzWaM5pJNVSHKYsXHXhfpndKUZvjYGr3g=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GNUmvD104267;
-	Wed, 16 Oct 2024 18:30:48 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
- Oct 2024 18:30:47 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 16 Oct 2024 18:30:47 -0500
-Received: from fllvsmtp7.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GNUj7m070988;
-	Wed, 16 Oct 2024 18:30:47 -0500
-From: Andrew Davis <afd@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 5/5] arm64: dts: ti: k3-am64: Add PCIe ctrl node to main_conf region
-Date: Wed, 16 Oct 2024 18:30:44 -0500
-Message-ID: <20241016233044.240699-6-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241016233044.240699-1-afd@ti.com>
-References: <20241016233044.240699-1-afd@ti.com>
+	s=arc-20240116; t=1729121748; c=relaxed/simple;
+	bh=gdwTVAwWb9VdzRsGZopWrMq8IXjxY6qHdy0/H1n9jUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jYRjvW0bCuoGbXwumA6BqMWQtgS3SQHuQygbGrF2mrm/SM7Kvl+uDtepoRaia21PFXCA0GmYxdDUV3Ek2UQF00CmhxiZS4D37VlH+69KMpFhELKfiKf+vV/wT6emzP/K1VJtehLkqn+B9SUbAEJ6TtP7aKnBMSJ42bU3fDXkH7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ES2hMIB9; arc=none smtp.client-ip=17.57.155.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1729121746;
+	bh=4O6bY24xBTUD4eTJn/i/gevB4jlr+Frj2BgzgIvn6KQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=ES2hMIB9tySlH6IMhVQCgZUVmRksEFP5mEsyf6eNA3wzVfI9tmyaTEfQef+cNxjMi
+	 Rw0VpHOiiLxr6NAIW4GL5gskIJkkDslzaXOK6v8lncCATlFyMCNavFOFjnZE/loekz
+	 5qFEEGtAEnfbExLtVVsru6RqtJTN5z6KnfAQjFxCTpfpozIDMlnrfefbH/6wE5PnT8
+	 KZ51LKH1ozLY2Iagtfehz1V8pjFM5L1ThkIZuTPuUXtDTtCQORQ/y93gYu9gfPR9yx
+	 RpHStDzfeeJMbrwCl8VWKW8mwHwVe1LNV1+sZeoXyTgBpTocJgz0X8aIBx4USZlIfP
+	 +PYVryk3c1P+A==
+Received: from [192.168.1.26] (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
+	by qs51p00im-qukt01072301.me.com (Postfix) with ESMTPSA id 03DF425401B2;
+	Wed, 16 Oct 2024 23:35:41 +0000 (UTC)
+Message-ID: <4be42749-5444-4847-9396-820667d5a9e2@icloud.com>
+Date: Thu, 17 Oct 2024 07:35:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] cxl/region: Fix wrong logic for finding a free switch
+ cxl decoder
+To: Dan Williams <dan.j.williams@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241017-const_dfc_prepare-v6-1-fc842264a1cc@quicinc.com>
+ <671045fc36835_3ee2294a5@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <671045fc36835_3ee2294a5@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Proofpoint-GUID: V1NzOHRLfubtklamPbYDlgBRgqGYis2j
+X-Proofpoint-ORIG-GUID: V1NzOHRLfubtklamPbYDlgBRgqGYis2j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-16_17,2024-10-16_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 spamscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=999 malwarescore=0 phishscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2410160151
 
-This region is used for controlling the function of the PCIe IP. It is
-compatible with "ti,j784s4-pcie-ctrl", add this here and use it with
-the PCIe node.
+On 2024/10/17 07:02, Dan Williams wrote:
+> Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Provided that all child switch cxl decoders are sorted by ID in ascending
+>> order, then it is wrong for current match_free_decoder()'s logic to find
+>> a free cxl decoder as explained below:
+>>
+>> Port
+>>  ├── cxld A        <---->  region A
+>>  ├── cxld B        // no region
+>>  ├── cxld C        <---->  region C
+>>
+>> Current logic will find cxld B as a free one, but cxld B is not true
+>> free since region C has not been torn down, so current logic is wrong.
+>>
+>> Fixed by verifying if cxl decoder with ID (@port->commit_end + 1) can
+>> be returned as finding result.
+>>
+>> Link: https://lore.kernel.org/all/670af54931b8_964fe29427@dwillia2-xfh.jf.intel.com.notmuch/
+>> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>> This patch is incremental to below patch series with title "cxl: Initialization and shutdown fixes"
+>> http://lore.kernel.org/172862483180.2150669.5564474284074502692.stgit@dwillia2-xfh.jf.intel.com
+>>
+>> This patch is based on Dan's recommendation shown by below link:
+>> https://lore.kernel.org/all/670af54931b8_964fe29427@dwillia2-xfh.jf.intel.com.notmuch/
+> 
+> ...and Dan and already sent a patch he is happier with here:
+> 
+> http://lore.kernel.org/172895072669.39002.9296583943188706348.stgit@dwillia2-xfh.jf.intel.com
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am64-main.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+this is a optimized one based your recommendation, namely, above link.
+please don't hesitate to use it as your V2 if you like this one.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-index 7eae18399caa6..66587f20aa0fe 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-@@ -51,6 +51,11 @@ chipid@14 {
- 			reg = <0x00000014 0x4>;
- 		};
- 
-+		pcie0_ctrl: pcie-ctrl@4070 {
-+			compatible = "ti,j784s4-pcie-ctrl", "syscon";
-+			reg = <0x4070 0x4>;
-+		};
-+
- 		serdes_ln_ctrl: mux-controller@4080 {
- 			compatible = "reg-mux";
- 			reg = <0x4080 0x4>;
-@@ -1036,7 +1041,7 @@ pcie0_rc: pcie@f102000 {
- 		interrupt-names = "link_state";
- 		interrupts = <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>;
- 		device_type = "pci";
--		ti,syscon-pcie-ctrl = <&main_conf 0x4070>;
-+		ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
- 		max-link-speed = <2>;
- 		num-lanes = <1>;
- 		power-domains = <&k3_pds 114 TI_SCI_PD_EXCLUSIVE>;
--- 
-2.39.2
+you maybe also have below change when you send V2
+Reported-by: Zijun Hu <zijun_hu@icloud.com>
+to
+Reported-by: Zijun Hu <quic_zijuhu@quicinc.com>
+
+So let us close discussion for this mail thread and go to your above thread.
+
+
+
 
 
