@@ -1,211 +1,157 @@
-Return-Path: <linux-kernel+bounces-368599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE589A120A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C77E19A123B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC88280FA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8A52851A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AAA2144CF;
-	Wed, 16 Oct 2024 18:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9389212D0A;
+	Wed, 16 Oct 2024 19:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4dD2MHY"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="o5YAmND+"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D7E18DF97;
-	Wed, 16 Oct 2024 18:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6063618C32C;
+	Wed, 16 Oct 2024 19:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729104848; cv=none; b=k+Ng1bNFrdEOUXkeU06K/xWpuAzH4TXpB0NHg3VnCkJ+je7sJSOgTAmNq6x1vk4FVKJhHcRmBD0f8VbCWso8al8zH0tK3EpplLbKBAmxdIYZun+MCSt9mu4zcgyxC0eTqT8/m/OYCC4Dtzd29sVKwOiF1nc7Sw15Sf2hgrU7SEs=
+	t=1729105444; cv=none; b=OOYlSjjhlQQHFjKHZJ+Da1/Ms8cAMED00wsv27mJG4EgfFwdUX5RSU31Ojk0t/0BISMlo5tV0b8/znYHNmkqGcdLS8HxJpgRexWxT4tq7J7fxYK529+i4tcS4SlNMouvFS+QgPCozvLh/mMJI3pt/9PBgg103Vj+eauRPJiIpZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729104848; c=relaxed/simple;
-	bh=LauhmpdfjKVxohaWUWRIdDCAVcbZX4SRGZMXO5IqS/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jkp8u37Y4p0Tl5UNaNIWgfT1HSHXXJKcNcIHPxH+AJQnCo/jq/Ks/LU2uVWmRDU4JX1hZTZ85OCG6+bSHHMoF7cydV2GQwNboLJQqa53pa1t+1RllBm2FNwBX0r9l44eZiWHOYc0mWY31/egI5vgvxM3bdJVxOfUEXT22jOPP9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4dD2MHY; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c693b68f5so1551785ad.1;
-        Wed, 16 Oct 2024 11:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729104846; x=1729709646; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1WEbBQ2/i7lkFW0aLtN2j+zp34lAewWd7prOWA+b1kM=;
-        b=K4dD2MHYJVBqbdB9biaUDopgUeJD5RvYujLTCO3HFrTF4BTtB3N3vZb07e16Lm9kVq
-         r36Bz2kF65QGCn0uW71BqJVeDkVZd/ggwmkwLByCNRZR7snfGOu+EgK6IFEyqklLFCua
-         fMPTgFRs4pi9p0Oa73mMCBkr+zCsJKU8eGHq/XT1CWwcLgiNGWP48r9jT6CDe/1ymCTe
-         PRZhGQr4pwtHnNUPG8F+j1Y2Ze9HGqsQRrBbedM/R+etVR68V0HDH5KFncKHVrWfav0w
-         BAC0i3qmS2PQt0ymnWkGBzRgM6zguuTka6H+rqUHkDnzcFlIHxu5u45rlkoYH8esw7FM
-         kfXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729104846; x=1729709646;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1WEbBQ2/i7lkFW0aLtN2j+zp34lAewWd7prOWA+b1kM=;
-        b=eIWI8XgH0WnxIkiFeG2hXFmSadKy9PvyMT3aJlwkC81PIzgnp/+ifGzCfCFCeg2POX
-         QadL4N8n4MCWDa93wC3ThhT9fj8warLCVBOW9k/b2F/LiNUmRLnDLAddXs5rQMNYWMGs
-         3w5XXBYBi2BQT6RVBU7rhKS+KutzLhEN8UGbn55DWCQ5tsa/9X3kvlZ0wEtO0rEPYiFu
-         ih4CWQg0rD0tg71jqCQR3oC/3qswdEVO4PC2IT0PhSGykFOa0LmSBK0jI4VgVUy0mjAc
-         qqzrS7UP4BT4+S3P///cKn4hEpUlm5jf9SGtTd2gbYwUCs3haR+mJjRdeZrOJevTqwmz
-         Chdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCPd7+fitHC6J6b6qdvoQk21bWiiGBf9jxlqQrxzItw3GlJQLbv4vGPZMCYu2T4mpkgE0ltsoJuQilUBZf@vger.kernel.org, AJvYcCUEWRsVAZwNYRcbQkBGbq3qukwE4xGLZ2Rh3X2V3p4CVdfXdx+QlJpiBLLBeMWoreK1PTQZqUM2Vy2X@vger.kernel.org, AJvYcCUKCoTZVnhDb6sAWm0Dy9OUCi5yAc/sSIrxB9jo/XgOApG/DXg8H8rRWh/CDmSVTFa6ilNPoqVI+typ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxXn5bzcFkdKkTEfoCdwQYwoc34mHWOXZdPRShxv8tL2D7TKyd
-	+QGHNiwJJXIuRRl5M49gSa7+xE6dpB/N9xxSHIb0SLzVcJB0t1bk
-X-Google-Smtp-Source: AGHT+IFNUMYvFYf4p3MkHE6cA9zg4WL2xzIDxgXIGOqB3badx678F5VvqdOq/3/xoTfYOzgxjR4ntA==
-X-Received: by 2002:a17:903:120a:b0:205:3e6d:9949 with SMTP id d9443c01a7336-20ca16be7demr281535785ad.52.1729104846268;
-        Wed, 16 Oct 2024 11:54:06 -0700 (PDT)
-Received: from Emma ([2401:4900:1c97:c88d:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805e56bsm31733715ad.286.2024.10.16.11.54.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 11:54:05 -0700 (PDT)
-Date: Wed, 16 Oct 2024 18:54:03 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Karan Sanghavi <karansanghvi98@gmail.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Anup <anupnewsmail@gmail.com>
-Subject: [PATCH v3] dt-bindings: spi: Convert to dtschema
-Message-ID: <ZxALy6p8m9eS9uIW@Emma>
+	s=arc-20240116; t=1729105444; c=relaxed/simple;
+	bh=/74NNXODGmu8ufxQH40ap2ecmtDk4kAjNZoCH931Ing=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rJRyFDnxGKAa3MEg2AcaUW0XqrcVYA3AY42vSW7QGprFopyWrzZzzolCwPTlepOguCmaFsilT2Jlr+pWNKPUcck61XaqXUpoZY5qO/ihbu+0hXehwwEfDjEHlMfx5sHbAK4MZDYQ+XO7Ljcr6epojpF+vr2N+38THEGyurEFqo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=o5YAmND+; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.1.130] (51B6DD9D.dsl.pool.telekom.hu [81.182.221.157])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 3365EE4593;
+	Wed, 16 Oct 2024 18:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1729104850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=g5hHxZIvJPe5a0dvjg8DVu3+r55DcwrKjSAeKs0qEkA=;
+	b=o5YAmND+ngZMYKh2PMQYJd6LhOMMHgJsws91B7KLnnxd20gedbEvg5JvqHTMbjwdhX5QXD
+	M0CN0s1nxohKluqW2h7kuP/HaZlURDT48xNon2NLJqRe4FaJwE80a7HFIXdzMN9HTE9JeI
+	k5Ecbcc/HtZExwJUHq0Ket0RgQJn1krHyrBp4OgmdMxA9yYXRP9C8dI1ywThjxjFytxtIM
+	DAmfOn+ggu7jziFuwi44wOvUEtHJi4HztVIcV6lQKHe8g1Z3oWUIyB1gbXlmIvA1WOmACo
+	2LljYFdOtfgSrZ14iZdkQFeIDOK+IiMOCbVbjkh0OzIjdQM+CmvwlFz12j/I2w==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Wed, 16 Oct 2024 20:54:05 +0200
+Subject: [PATCH v2] power: supply: bq27xxx: Fix registers of bq27426
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241016-fix_bq27426-v2-1-aa6c0f51a9f6@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAMwLEGcC/22MzQoCIRRGX2W46wy9yDi16j1iCP9yLpSWhhSD7
+ 57NuuX5Ps5ZofhMvsBxWCH7SoVS7IC7AeyiY/CMXGdAjpIfuGJXel/ME5XEkXHH0RjUdhISuvH
+ Ivt9b7Tx3Xqi8Uv5s8Sp+6/9OFUww45ycrFR81O501xRvFCmGfcoB5tbaF5zJ9wWrAAAA
+X-Change-ID: 20240907-fix_bq27426-0d02bb2ac814
+To: =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729104850; l=2798;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=/74NNXODGmu8ufxQH40ap2ecmtDk4kAjNZoCH931Ing=;
+ b=BU+Gocp0O/44OGKVTEJlScwaGLeJMdJr97LtB0o0ifE4LEe+7THccUDv1nZ2kVTEbkm4uN+85
+ 8FiRTEoHyYcAOW4Tb0k5VnS374zypZbayegCJoIm50MKMTFHqGT1DUu
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Convert bcm2835-aux-spi binding to Dt schema
+Correct bq27426 registers, according to technical reference manual
+it does not have Design Capacity register so it is not register
+compatible with bq27421.
 
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
+Changes in v2:
+- Fix commit message.
+- Link to v1: https://lore.kernel.org/r/20240907-fix_bq27426-v1-1-bdd48c4706ad@mainlining.org
+---
+ drivers/power/supply/bq27xxx_battery.c | 37 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 35 insertions(+), 2 deletions(-)
 
-Changes since V2:
- - Modified the Patch subject
- - Removed unnecessary description and example
+diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+index e47556ec3cfeadd6ce014559d90807b293d781d5..40c5ac7a111886d56f7c7bfe0a0ab2a4838830aa 100644
+--- a/drivers/power/supply/bq27xxx_battery.c
++++ b/drivers/power/supply/bq27xxx_battery.c
+@@ -449,9 +449,29 @@ static u8
+ 		[BQ27XXX_REG_AP] = 0x18,
+ 		BQ27XXX_DM_REG_ROWS,
+ 	},
++	bq27426_regs[BQ27XXX_REG_MAX] = {
++		[BQ27XXX_REG_CTRL] = 0x00,
++		[BQ27XXX_REG_TEMP] = 0x02,
++		[BQ27XXX_REG_INT_TEMP] = 0x1e,
++		[BQ27XXX_REG_VOLT] = 0x04,
++		[BQ27XXX_REG_AI] = 0x10,
++		[BQ27XXX_REG_FLAGS] = 0x06,
++		[BQ27XXX_REG_TTE] = INVALID_REG_ADDR,
++		[BQ27XXX_REG_TTF] = INVALID_REG_ADDR,
++		[BQ27XXX_REG_TTES] = INVALID_REG_ADDR,
++		[BQ27XXX_REG_TTECP] = INVALID_REG_ADDR,
++		[BQ27XXX_REG_NAC] = 0x08,
++		[BQ27XXX_REG_RC] = 0x0c,
++		[BQ27XXX_REG_FCC] = 0x0e,
++		[BQ27XXX_REG_CYCT] = INVALID_REG_ADDR,
++		[BQ27XXX_REG_AE] = INVALID_REG_ADDR,
++		[BQ27XXX_REG_SOC] = 0x1c,
++		[BQ27XXX_REG_DCAP] = INVALID_REG_ADDR,
++		[BQ27XXX_REG_AP] = 0x18,
++		BQ27XXX_DM_REG_ROWS,
++	},
+ #define bq27411_regs bq27421_regs
+ #define bq27425_regs bq27421_regs
+-#define bq27426_regs bq27421_regs
+ #define bq27441_regs bq27421_regs
+ #define bq27621_regs bq27421_regs
+ 	bq27z561_regs[BQ27XXX_REG_MAX] = {
+@@ -769,10 +789,23 @@ static enum power_supply_property bq27421_props[] = {
+ };
+ #define bq27411_props bq27421_props
+ #define bq27425_props bq27421_props
+-#define bq27426_props bq27421_props
+ #define bq27441_props bq27421_props
+ #define bq27621_props bq27421_props
+ 
++static enum power_supply_property bq27426_props[] = {
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
++	POWER_SUPPLY_PROP_CURRENT_NOW,
++	POWER_SUPPLY_PROP_CAPACITY,
++	POWER_SUPPLY_PROP_CAPACITY_LEVEL,
++	POWER_SUPPLY_PROP_TEMP,
++	POWER_SUPPLY_PROP_TECHNOLOGY,
++	POWER_SUPPLY_PROP_CHARGE_FULL,
++	POWER_SUPPLY_PROP_CHARGE_NOW,
++	POWER_SUPPLY_PROP_MANUFACTURER,
++};
++
+ static enum power_supply_property bq27z561_props[] = {
+ 	POWER_SUPPLY_PROP_STATUS,
+ 	POWER_SUPPLY_PROP_PRESENT,
 
- .../bindings/spi/brcm,bcm2835-aux-spi.txt     | 38 --------------
- .../bindings/spi/brcm,bcm2835-aux-spi.yaml    | 51 +++++++++++++++++++
- 2 files changed, 51 insertions(+), 38 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
- create mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
+---
+base-commit: 15e7d45e786a62a211dd0098fee7c57f84f8c681
+change-id: 20240907-fix_bq27426-0d02bb2ac814
 
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
-deleted file mode 100644
-index d7668f41b..000000000
---- a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
-+++ /dev/null
-@@ -1,38 +0,0 @@
--Broadcom BCM2835 auxiliary SPI1/2 controller
--
--The BCM2835 contains two forms of SPI master controller, one known simply as
--SPI0, and the other known as the "Universal SPI Master"; part of the
--auxiliary block. This binding applies to the SPI1/2 controller.
--
--Required properties:
--- compatible: Should be "brcm,bcm2835-aux-spi".
--- reg: Should contain register location and length for the spi block
--- interrupts: Should contain shared interrupt of the aux block
--- clocks: The clock feeding the SPI controller - needs to
--	  point to the auxiliary clock driver of the bcm2835,
--	  as this clock will enable the output gate for the specific
--	  clock.
--- cs-gpios: the cs-gpios (native cs is NOT supported)
--	    see also spi-bus.txt
--
--Example:
--
--spi1@7e215080 {
--	compatible = "brcm,bcm2835-aux-spi";
--	reg = <0x7e215080 0x40>;
--	interrupts = <1 29>;
--	clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI1>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	cs-gpios = <&gpio 18>, <&gpio 17>, <&gpio 16>;
--};
--
--spi2@7e2150c0 {
--	compatible = "brcm,bcm2835-aux-spi";
--	reg = <0x7e2150c0 0x40>;
--	interrupts = <1 29>;
--	clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI2>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	cs-gpios = <&gpio 43>, <&gpio 44>, <&gpio 45>;
--};
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-new file mode 100644
-index 000000000..351019d68
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/brcm,bcm2835-aux-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM2835 Auxiliary SPI1/2 Controller
-+
-+maintainers:
-+  - Karan Sanghavi <karansanghvi98@gmail.com>
-+
-+description: The BCM2835 contains two forms of SPI master controller. One is known simply as
-+  SPI0, and the other as the "Universal SPI Master," part of the auxiliary block.
-+  This binding applies to the SPI1 and SPI2 auxiliary controllers.
-+
-+allOf:
-+  - $ref: spi-controller.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,bcm2835-aux-spi
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/bcm2835-aux.h>
-+    spi@7e215080 {
-+        compatible = "brcm,bcm2835-aux-spi";
-+        reg = <0x7e215080 0x40>;
-+        interrupts = <1 29>;
-+        clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI1>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
+Best regards,
 -- 
-2.43.0
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
 
