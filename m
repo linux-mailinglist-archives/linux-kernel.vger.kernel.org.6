@@ -1,265 +1,192 @@
-Return-Path: <linux-kernel+bounces-367672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAB19A0534
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:16:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00BD9A0537
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D15281654
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:16:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51E51C23845
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7EE1CACE5;
-	Wed, 16 Oct 2024 09:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251351CC8AB;
+	Wed, 16 Oct 2024 09:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D6qlyN58"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OwIqEw0o"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B518818BC31
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A8318C340
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729070190; cv=none; b=i45MXg/ABbE84M20G3jKFZuhYmlUzbrI4eXFo9LMWGyHKn/dstLnkKHq6xNnYg1Djf+sWI0ss6E8aFN7UvDW7++rHvxFnioMdsbuVV0ox/Be4rrjaScHVLT86hjT9hwamck5XwYHVRUFlXfZx69EQFhCY+btZ3cMdHHo9j2NO68=
+	t=1729070228; cv=none; b=she4aS1qC+dUBEuZU9pzB6REbq6Etz/w8VpucuTAKyc1Sw+54J8SgrVVaf1vVp4zxQZ+nLTT8iwIBCSnjrEzT90QX4AG4BeuPycq+W4d9vbJh1sQ0MTcHfj7wEteFZnJvk/t7+Q64mNfaxdlx1lHsy4WBvuXWuiIVwRwA5nktzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729070190; c=relaxed/simple;
-	bh=onyxEH1KISQiqYJGLI7raCS1+ZwS7w8hY8gPJibtVYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dTJrqd6AgelU/kgZBGzjMsJvZX+uWGUp93iZFk+3AoZSf/WgZwtsPo3wyVinz/8hZEQiLIzxKTYpnhbPlNhZUeVYQAMiCDwyxUpQXWs00oHrHq3b0QlX1bANzuDaOyrZTWKIx/V2oCpI8d07tl081U7yPPFzuo9TSfTjNqW+PQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D6qlyN58; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729070189; x=1760606189;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=onyxEH1KISQiqYJGLI7raCS1+ZwS7w8hY8gPJibtVYU=;
-  b=D6qlyN58D5ttLjFsX9ChAzE0eWa2nAfEoqgQm34QL70KwGkxLYkhkXY2
-   TBkdquc99GX+cvFLvk3TgbJcs6DBrJxzIUJ6Epd0zfZDrODKOJK4s35Qo
-   ENZi5XZdo3/MTvEBCYgDQJYEWBGeZycb74pdWwMbraqvATkFKpGZpSlLZ
-   NC9HNti9fI8SHIugGWEoXLL/GGjhdSO8VH1rMJf2tnU5u+keaUv0TTcCR
-   ntWCgPE7QCIxuEsUoK12TNiB0KEZJx++eI++wwQ24nyljy99rsrd6vNBp
-   CakBIoHqXOviNkBbk51s09sDCuAafzyqAuhLxQln/0MuVYYxeNMx1GJia
-   Q==;
-X-CSE-ConnectionGUID: tg1SVWvYQsm1nWDHcagQLg==
-X-CSE-MsgGUID: 3I26O4GaSPeJJun6xA1/3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28707676"
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="28707676"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 02:15:06 -0700
-X-CSE-ConnectionGUID: 1MK7xEv8RT2+CXCKAsHcxw==
-X-CSE-MsgGUID: lNK2xPKSR/aLm2sD7BaYaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="78517618"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 16 Oct 2024 02:15:01 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t107P-000Kfj-2u;
-	Wed, 16 Oct 2024 09:14:59 +0000
-Date: Wed, 16 Oct 2024 17:14:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kernel@collabora.com,
-	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/panthor: Rreset device and load FW after failed
- PM suspend
-Message-ID: <202410161634.8YjhTQM2-lkp@intel.com>
-References: <20241011225906.3789965-3-adrian.larumbe@collabora.com>
+	s=arc-20240116; t=1729070228; c=relaxed/simple;
+	bh=IIdP8N4KQ/tEiy6MwyXh62Fj0dF3hmgc69ZxFphSU6Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rJi1jXw205V+aX3Zkilv3Yuq5My+QbnSSJ82et1lVy/bot18wpClSJtd3EiUizJjTJYZxmvAh1uOMshyjH1PMccHTr6gXXFuDz/qBbmuq8JhZ96mOe/xGzIeJfo8BGTwKXqN/uLxlafNmVm8qYTi0+QZk3Tdyfd+m64ym12iq6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OwIqEw0o; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1729070223; x=1729329423;
+	bh=IIdP8N4KQ/tEiy6MwyXh62Fj0dF3hmgc69ZxFphSU6Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=OwIqEw0oZ4t7WB0wouqU7K4VoJ1kS9XdsUiHb6CmsGeAtQ0t/BndXaxDxSSFTFN5P
+	 e377u1aXIAodESsoORfYVFaY8MyueRmw30DDdBWtG3FccUYjcr6OSvtjFy0dj3QT5J
+	 1AjBhywIwVL1tgrcPTIHjJLmDyqguv1dhuXFSIZHFv0ptCE3fHjiqeae9EzKblYb5r
+	 rpEQ34Wh+xjppbIDuNesKcfGPmjvXT6k0BTzn+8uDpmVBVUjUsoc+LAuujDlshqZWl
+	 6KCHlQ42gk5tSgG9HOJXqJd3/YKQemljPYXKD1aI+KvNj7oiY7AHSdeLsp/0SlH3iw
+	 fDCAwccF0Xfow==
+Date: Wed, 16 Oct 2024 09:16:56 +0000
+To: Andy Yan <andyshrk@163.com>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
+Subject: Re:Re:Re:[PATCH v5] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <QvjHFQ4xeCu-8Isrm_jtNRWLowVNFzC8qnHJ6LUGI2iFTTJoEK8fBrXjG9LUrn5Wt9fJ9F04ukEf-koifwCR0uH9nr0AelyiWI85KASNkOQ=@proton.me>
+In-Reply-To: <1ae9f15d.e52.19292e05e73.Coremail.andyshrk@163.com>
+References: <20241014222022.571819-4-pZ010001011111@proton.me> <7b45f190.452f.1928e41b746.Coremail.andyshrk@163.com> <o_Cyz_ARcHj4zNlovv75MBwslIRhn3YWlscoNrlpLVobh7eWIMEQR5bNv0yhHx2KEx_gbYi_gH-8Y-CdvRZs9lZscz3-lhAbM50GXUdtSKY=@proton.me> <30940542.b36d.19290215124.Coremail.andyshrk@163.com> <1974DYrs9gLrQrZ5VwCglFgKDDK686iyqnS_g6uPB-s9wZ_4CqfZXPjmYWihLgrkRu7ptNjpkFeqB0uTt73RFId6cL8FowQ8LFltPmaKCoI=@proton.me> <1ae9f15d.e52.19292e05e73.Coremail.andyshrk@163.com>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: bd4fcee4497191b7dd8a0ab9b0a41400e663f077
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241011225906.3789965-3-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Adrián,
+Hi Andy,
 
-kernel test robot noticed the following build errors:
+On Wednesday, October 16th, 2024 at 3:10 AM, Andy Yan <andyshrk@163.com> wr=
+ote:
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on linus/master v6.12-rc3 next-20241016]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Hi Piotr,
+>=20
+> At 2024-10-16 04:13:40, "Piotr Zalewski" pZ010001011111@proton.me wrote:
+>=20
+> > Hi Andy
+> >=20
+> > On Tuesday, October 15th, 2024 at 2:22 PM, Andy Yan andyshrk@163.com wr=
+ote:
+> >=20
+> > > > > > + struct vop2_video_port *vp,
+> > > > > > + struct drm_crtc *crtc,
+> > > > > > + struct drm_crtc_state *crtc_state)
+> > > > > > +{
+> > > > > > +
+> > > > > > + if (vop2->lut_regs && crtc_state->color_mgmt_changed) {
+> > > > > > + if (!crtc_state->gamma_lut) {
+> > > > > > + vop2_vp_dsp_lut_disable(vp);
+> > > > > > + return;
+> > > > > > + }
+> > > > > > +
+> > > > > > + if (vop2_supports_seamless_gamma_lut_update(vop2)) {
+> > > > >=20
+> > > > > I think it's bettery to check for rk3568/rk3566 here, the newer s=
+oc will all follow
+> > > > > rk3588 support seamless gamma lut update.
+> > > >=20
+> > > > I will change in the next version.
+> > > >=20
+> > > > > > + vop2_writel(vop2, RK3568_LUT_PORT_SEL, FIELD_PREP(
+> > > > > > + RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL,
+> > > > > > + vp->id));
+> > > > > > + vop2_crtc_write_gamma_lut(vop2, crtc);
+> > > > > > + vop2_vp_dsp_lut_enable(vp);
+> > > > > > + vop2_vp_dsp_lut_update_enable(vp);
+> > > > > > + } else {
+> > > > >=20
+> > > > > As for rk3566/68, we should do exclusive check here, because ther=
+e is only
+> > > > > one gamma , only one VP can use it at a time. See my comments in =
+V3:
+> > > >=20
+> > > > What do you mean exactly by exclusive check in this case.It's true =
+that
+> > > > gamma LUT is shared across video ports in rk356x but, if I correctl=
+y
+> > > > understand, this doesn't forbid to reprogram LUT port sel and allow=
+ other
+> > > > VP to use gamma LUT.
+> > >=20
+> > > Yes, we can reprogram LUT port sel, but we need to make sure the the =
+dsp_lut_en bit in VPx is cleared if we
+> > > want reprogram LUT port sel form VPx to VPy.
+> >=20
+> > Ok I get it now. Is such rework correct? - when gamma LUT for rk356x is
+> > being set, instead of disabling the LUT before the gamma LUT write for =
+the
+> > current CRTC's video port, active video port is selected. Selection is
+> > based on if DSP LUT EN bit is set for particular video port. eg:
+>=20
+>=20
+> If the userspace want to set gamma for CRTCx, then that is indeed where t=
+hey want to set the
+> gamma on=E3=80=82The driver silently sets the gamma on another CRTC, whic=
+h is not what the user wants.
+>=20
+> I think there are two options=EF=BC=9A
+> =EF=BC=881=EF=BC=89return a error if gamma is enable on other CRTC=
+=EF=BC=8C this is what we done in our BSP code[1]
+> (2) disable the dsp_lut on privious CRTC, then switch to the current CRTC=
+ which userspace wants.
+>=20
+> [1]https://github.com/armbian/linux-rockchip/blob/rk3576-6.1-dev-2024_04_=
+19/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c#L3666
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Adri-n-Larumbe/drm-panthor-Retry-OPP-transition-to-suspension-state-a-few-times/20241012-070112
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20241011225906.3789965-3-adrian.larumbe%40collabora.com
-patch subject: [PATCH 3/3] drm/panthor: Rreset device and load FW after failed PM suspend
-config: i386-buildonly-randconfig-001-20241016 (https://download.01.org/0day-ci/archive/20241016/202410161634.8YjhTQM2-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410161634.8YjhTQM2-lkp@intel.com/reproduce)
+When I think about it, userspace tools set gamma LUT for all
+active CRTCs with gamma LUT support[2] so essentially when there is only=20
+one which can be active implicitly (like in the case of rk356x) in BSP code=
+=20
+you provided[1], it will go with the first one and in the second approach=
+=20
+it will end up setting second one in the end. I think this=20
+solution[1] is better if assumed that first CRTC is always "main" one.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410161634.8YjhTQM2-lkp@intel.com/
+I will rework it to[1] and test it. (Have to check if hdmi out on pt2 works=
+).
 
-All errors (new ones prefixed by >>):
+[2] https://gitlab.com/chinstrap/gammastep/-/blob/master/src/gamma-drm.c?re=
+f_type=3Dheads#L261
 
->> drivers/gpu/drm/panthor/panthor_sched.c:3104:29: error: no member named 'runtime_error' in 'struct dev_pm_info'
-    3104 |         if (ptdev->base.dev->power.runtime_error) {
-         |             ~~~~~~~~~~~~~~~~~~~~~~ ^
-   include/linux/compiler.h:55:47: note: expanded from macro 'if'
-      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-         |                                               ^~~~
-   include/linux/compiler.h:57:52: note: expanded from macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                    ^~~~
->> drivers/gpu/drm/panthor/panthor_sched.c:3104:29: error: no member named 'runtime_error' in 'struct dev_pm_info'
-    3104 |         if (ptdev->base.dev->power.runtime_error) {
-         |             ~~~~~~~~~~~~~~~~~~~~~~ ^
-   include/linux/compiler.h:55:47: note: expanded from macro 'if'
-      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-         |                                               ^~~~
-   include/linux/compiler.h:57:61: note: expanded from macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                             ^~~~
->> drivers/gpu/drm/panthor/panthor_sched.c:3104:29: error: no member named 'runtime_error' in 'struct dev_pm_info'
-    3104 |         if (ptdev->base.dev->power.runtime_error) {
-         |             ~~~~~~~~~~~~~~~~~~~~~~ ^
-   include/linux/compiler.h:55:47: note: expanded from macro 'if'
-      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
-         |                                               ^~~~
-   include/linux/compiler.h:57:86: note: expanded from macro '__trace_if_var'
-      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
-         |                                                                                      ^~~~
-   include/linux/compiler.h:68:3: note: expanded from macro '__trace_if_value'
-      68 |         (cond) ?                                        \
-         |          ^~~~
-   3 errors generated.
+> > ```
+> > static struct vop2_video_port *vop2_vp_dsp_lut_get_active_vp(struct vop=
+2 *vop2)
+> > {
+> > struct vop2_video_port *vp;
+> > int i;
+> > for (i =3D 0; i < vop2->data->nr_vps; i++) {
+> > vp =3D &vop2->vps[i];
+> >=20
+> > if (vp->crtc.dev !=3D NULL && vop2_vp_dsp_lut_is_enabled(vp)) {
+> > return vp;
+> > }
+> > }
+> > return NULL;
+> > }
+> >=20
+> > (...)
+> >=20
+> > struct vop2_video_port *active_vp =3D vop2_vp_dsp_lut_get_active_vp(vop=
+2);
+> >=20
+> > if (active_vp) {
+> > vop2_vp_dsp_lut_disable(active_vp);
+> > vop2_cfg_done(active_vp);
+> > if (!vop2_vp_dsp_lut_poll_disable(active_vp))
+> > return;
+> > }
+> >=20
+> > vop2_writel(vop2, RK3568_LUT_PORT_SEL, vp->id);
+> > vop2_crtc_write_gamma_lut(vop2, crtc);
+> > vop2_vp_dsp_lut_enable(vp);
+> > ```
 
-
-vim +3104 drivers/gpu/drm/panthor/panthor_sched.c
-
-  3081	
-  3082	static struct dma_fence *
-  3083	queue_run_job(struct drm_sched_job *sched_job)
-  3084	{
-  3085		struct panthor_job *job = container_of(sched_job, struct panthor_job, base);
-  3086		struct panthor_group *group = job->group;
-  3087		struct panthor_queue *queue = group->queues[job->queue_idx];
-  3088		struct panthor_device *ptdev = group->ptdev;
-  3089		struct panthor_scheduler *sched = ptdev->scheduler;
-  3090		struct panthor_job_ringbuf_instrs instrs;
-  3091		struct panthor_job_cs_params cs_params;
-  3092		struct dma_fence *done_fence;
-  3093		int ret;
-  3094	
-  3095		/* Stream size is zero, nothing to do except making sure all previously
-  3096		 * submitted jobs are done before we signal the
-  3097		 * drm_sched_job::s_fence::finished fence.
-  3098		 */
-  3099		if (!job->call_info.size) {
-  3100			job->done_fence = dma_fence_get(queue->fence_ctx.last_fence);
-  3101			return dma_fence_get(job->done_fence);
-  3102		}
-  3103	
-> 3104		if (ptdev->base.dev->power.runtime_error) {
-  3105			ret = panthor_device_reset_sync(ptdev);
-  3106			if (drm_WARN_ON(&ptdev->base, ret))
-  3107				return ERR_PTR(ret);
-  3108			drm_WARN_ON(&ptdev->base, pm_runtime_set_active(ptdev->base.dev));
-  3109		}
-  3110	
-  3111		ret = pm_runtime_resume_and_get(ptdev->base.dev);
-  3112		if (drm_WARN_ON(&ptdev->base, ret))
-  3113			return ERR_PTR(ret);
-  3114	
-  3115		mutex_lock(&sched->lock);
-  3116		if (!group_can_run(group)) {
-  3117			done_fence = ERR_PTR(-ECANCELED);
-  3118			goto out_unlock;
-  3119		}
-  3120	
-  3121		dma_fence_init(job->done_fence,
-  3122			       &panthor_queue_fence_ops,
-  3123			       &queue->fence_ctx.lock,
-  3124			       queue->fence_ctx.id,
-  3125			       atomic64_inc_return(&queue->fence_ctx.seqno));
-  3126	
-  3127		job->profiling.slot = queue->profiling.seqno++;
-  3128		if (queue->profiling.seqno == queue->profiling.slot_count)
-  3129			queue->profiling.seqno = 0;
-  3130	
-  3131		job->ringbuf.start = queue->iface.input->insert;
-  3132	
-  3133		get_job_cs_params(job, &cs_params);
-  3134		prepare_job_instrs(&cs_params, &instrs);
-  3135		copy_instrs_to_ringbuf(queue, job, &instrs);
-  3136	
-  3137		job->ringbuf.end = job->ringbuf.start + (instrs.count * sizeof(u64));
-  3138	
-  3139		panthor_job_get(&job->base);
-  3140		spin_lock(&queue->fence_ctx.lock);
-  3141		list_add_tail(&job->node, &queue->fence_ctx.in_flight_jobs);
-  3142		spin_unlock(&queue->fence_ctx.lock);
-  3143	
-  3144		/* Make sure the ring buffer is updated before the INSERT
-  3145		 * register.
-  3146		 */
-  3147		wmb();
-  3148	
-  3149		queue->iface.input->extract = queue->iface.output->extract;
-  3150		queue->iface.input->insert = job->ringbuf.end;
-  3151	
-  3152		if (group->csg_id < 0) {
-  3153			/* If the queue is blocked, we want to keep the timeout running, so we
-  3154			 * can detect unbounded waits and kill the group when that happens.
-  3155			 * Otherwise, we suspend the timeout so the time we spend waiting for
-  3156			 * a CSG slot is not counted.
-  3157			 */
-  3158			if (!(group->blocked_queues & BIT(job->queue_idx)) &&
-  3159			    !queue->timeout_suspended) {
-  3160				queue->remaining_time = drm_sched_suspend_timeout(&queue->scheduler);
-  3161				queue->timeout_suspended = true;
-  3162			}
-  3163	
-  3164			group_schedule_locked(group, BIT(job->queue_idx));
-  3165		} else {
-  3166			gpu_write(ptdev, CSF_DOORBELL(queue->doorbell_id), 1);
-  3167			if (!sched->pm.has_ref &&
-  3168			    !(group->blocked_queues & BIT(job->queue_idx))) {
-  3169				pm_runtime_get(ptdev->base.dev);
-  3170				sched->pm.has_ref = true;
-  3171			}
-  3172			panthor_devfreq_record_busy(sched->ptdev);
-  3173		}
-  3174	
-  3175		/* Update the last fence. */
-  3176		dma_fence_put(queue->fence_ctx.last_fence);
-  3177		queue->fence_ctx.last_fence = dma_fence_get(job->done_fence);
-  3178	
-  3179		done_fence = dma_fence_get(job->done_fence);
-  3180	
-  3181	out_unlock:
-  3182		mutex_unlock(&sched->lock);
-  3183		pm_runtime_mark_last_busy(ptdev->base.dev);
-  3184		pm_runtime_put_autosuspend(ptdev->base.dev);
-  3185	
-  3186		return done_fence;
-  3187	}
-  3188	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards, Piotr Zalewski
 
