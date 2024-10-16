@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-367927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE929A088D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846B19A084A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D509928A3F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3711F2278B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58A620968C;
-	Wed, 16 Oct 2024 11:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="sQW3sOh3"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA002076BB;
+	Wed, 16 Oct 2024 11:26:37 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AE2206E92;
-	Wed, 16 Oct 2024 11:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA13206066;
+	Wed, 16 Oct 2024 11:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729078631; cv=none; b=eaeT+6D9ST9QezK+SrrlxAvNAg8wtj/O/az5fvxjY9OVvwzDz5D1KD+6+n7buWod5n1ynS5FG7BO7sI7K8GA5xTee3VecsGtLYi97J1oKu7dOcGb8lJ7kd8ZRWf2S1JtdyLZOHXfIodnJfcU/wtAZ+MphxJmyOD45/hjawFqk1g=
+	t=1729077997; cv=none; b=Xh1/d1b2XUIzG0F8f8lfWqROzHOX1ln85aO5PMC75oJaf66naTqW7ifgjRktlncB0thE59iylRIkchiZxhONAYGPVZyNKDXD4YIITi1rtxbTpY+s7IiUjqGukttg+uYfxcgcb2814GXWeWDyE5ywrPS1J+fkoexCEGpAY0y+Bgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729078631; c=relaxed/simple;
-	bh=dhkcwHcy1qf8BqFwZpE/80n76Nr/JxMr0kW9TvKncw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ih+8nvS3GUxLltROaCF0uCDydh+smrQmg1BnhU6OCDS/aSkpJOizUUZ4YHqXlO0Vqpn+o4jlyA+ILAG3Q5vmi2U+lX5J1JUB/N4CpEhLGtuEtFy77mPGRfeScja21a7kwudl0mHO5thI1/g1EHJso4EHdCHTdiunhNRqO+9WsTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=sQW3sOh3 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 4e92effa67a29842; Wed, 16 Oct 2024 13:37:02 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 04683A93969;
-	Wed, 16 Oct 2024 13:37:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1729078622;
-	bh=dhkcwHcy1qf8BqFwZpE/80n76Nr/JxMr0kW9TvKncw0=;
-	h=From:Subject:Date;
-	b=sQW3sOh36cP/a9wK3LE0GuzH9JIb5u32gEjEKLVOdjNfX4bMVtChEk3UpgFaxcBnl
-	 n2QWUW9A5UEE3PPSVqQIQMakn4d75U2vAIRO1N+XzHaiT8zpRQG1KzzS18/wS0HRRo
-	 jX7df9FyR/8KrDZ4ZkmNMAdGHZk7K+TZGpvR5UilYIFqP5gtDhRwhao5yFsEIs+m+s
-	 q2D6aZlpU2ne9R4VNp4J9aCx7pxB5rPaHs2MHHUKxOtxXOCn/92IQ27RiXYPxgQEp0
-	 MapYG00nLsRcQcN9grzmCD8BifGR9z/pmxmmTedrbBtJ/gyZXlHgj65stDKjjaxYzC
-	 08mXPs6YpyXYw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v1 04/10] thermal: core: Rearrange __thermal_zone_device_update()
-Date: Wed, 16 Oct 2024 13:26:20 +0200
-Message-ID: <3323276.44csPzL39Z@rjwysocki.net>
-In-Reply-To: <4958885.31r3eYUQgx@rjwysocki.net>
-References: <4958885.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1729077997; c=relaxed/simple;
+	bh=xP2ktAcfFQ/wdOmDftyeYQc/PCd0CuJ9pfF+bw2S034=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hoNsWzeO5X82uLN8G2pQD60E2cTV72sZWMBaxlT+8Q3ehx13baXm1vgJXJQ94Tidax04TY0sZ+DOUs94di+DZoqGgiZXFKG6V0W35zn1n6ZzA3m8QDg5ScsBrn4oAiaovB1URje1/ZrL/vsK3zOqc+pN9F6Ta/7KnOnNrnoi9O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B55BF40004;
+	Wed, 16 Oct 2024 11:26:24 +0000 (UTC)
+Message-ID: <3fe1e610-c863-4fbf-85cb-6e83ba7684af@ghiti.fr>
+Date: Wed, 16 Oct 2024 13:26:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -fixes] riscv: Do not use fortify in early code
+Content-Language: en-US
+To: Jessica Clarke <jrtc27@jrtc27.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Stuebner <heiko@sntech.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Jason Montleon <jmontleo@redhat.com>,
+ stable@vger.kernel.org, Kees Cook <keescook@chromium.org>
+References: <20241009072749.45006-1-alexghiti@rivosinc.com>
+ <1CA19FB3-C1E3-4C2F-A4FB-05B69EC66D2F@jrtc27.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <1CA19FB3-C1E3-4C2F-A4FB-05B69EC66D2F@jrtc27.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Jessica,
 
-In preparation for subsequent changes, move the invocations of
-thermal_thresholds_handle() and thermal_zone_set_trips() in
-__thermal_zone_device_update() after the processing of the
-temporary trip lists.
-
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -588,10 +588,6 @@ void __thermal_zone_device_update(struct
- 			high = td->threshold;
- 	}
- 
--	thermal_thresholds_handle(tz, &low, &high);
--
--	thermal_zone_set_trips(tz, low, high);
--
- 	list_for_each_entry_safe(td, next, &way_up_list, list_node) {
- 		thermal_trip_crossed(tz, &td->trip, governor, true);
- 		list_del_init(&td->list_node);
-@@ -602,6 +598,10 @@ void __thermal_zone_device_update(struct
- 		list_del_init(&td->list_node);
- 	}
- 
-+	thermal_thresholds_handle(tz, &low, &high);
-+
-+	thermal_zone_set_trips(tz, low, high);
-+
- 	if (governor->manage)
- 		governor->manage(tz);
- 
+On 16/10/2024 00:04, Jessica Clarke wrote:
+> On 9 Oct 2024, at 08:27, Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>> Early code designates the code executed when the MMU is not yet enabled,
+>> and this comes with some limitations (see
+>> Documentation/arch/riscv/boot.rst, section "Pre-MMU execution").
+>>
+>> FORTIFY_SOURCE must be disabled then since it can trigger kernel panics
+>> as reported in [1].
+>>
+>> Reported-by: Jason Montleon <jmontleo@redhat.com>
+>> Closes: https://lore.kernel.org/linux-riscv/CAJD_bPJes4QhmXY5f63GHV9B9HFkSCoaZjk-qCT2NGS7Q9HODg@mail.gmail.com/ [1]
+>> Fixes: a35707c3d850 ("riscv: add memory-type errata for T-Head")
+>> Fixes: 26e7aacb83df ("riscv: Allow to downgrade paging mode from the command line")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Is the problem in [1] not just that the early boot path uses memcpy on
+> the result of ALT_OLD_PTR, which is a wildly out-of-bounds pointer from
+> the compiler’s perspective? If so, it would seem better to use
+> unsafe_memcpy for that one call site rather than use the big
+> __NO_FORTIFY hammer, surely?
 
 
+Not sure why fortify complains here, and I have just seen that I forgot 
+to cc Kees (done now).
 
+
+>
+> Presumably the non-early path is just as bad to the compiler, but works
+> because patch_text_nosync isn’t instrumented, so that would just align
+> the two.
+>
+> Getting the implementation to not be silent on failure during early
+> boot would also be a good idea, but it’s surely better to have
+> FORTIFY_SOURCE enabled with no output for positives than disable the
+> checking in the first place and risk uncaught corruption.
+
+
+I'm not sure to follow: you propose to use unsafe_memcpy() instead of 
+disabling fortify entirely, so we would not get any warning in case of 
+failure anyway right? Or do you propose to modify the fortify code to 
+somehow print a warning? If the latter, it's hard this soon in the boot 
+process (where the mmu is disabled) to make sure that the printing 
+warning path does not try to access any virtual address (which is why 
+the boot failed in the first place) but maybe Kees has an idea.
+
+And I believe that enabling fortify and using the unsafe_*() variants is 
+error-prone since we'd have to make sure that all the "fortified" 
+functions used in that code use the unsafe_*() variants.
+
+So to me, it's way easier in terms of maintenance to just disabling fortify.
+
+Thanks,
+
+Alex
+
+
+> Jess
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
