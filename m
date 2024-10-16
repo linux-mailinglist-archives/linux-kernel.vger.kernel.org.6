@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-368368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9F59A0F09
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391D49A0F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7DA3286F67
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1FD72863FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC68215F5B;
-	Wed, 16 Oct 2024 15:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8F720F5DF;
+	Wed, 16 Oct 2024 15:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DzIUZBOe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ua6fQ0XN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4846F215F43;
-	Wed, 16 Oct 2024 15:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBE220F5A3;
+	Wed, 16 Oct 2024 15:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093746; cv=none; b=KtQU/zgl0/ekZmeLyt4NbAZbPI7mLQV1OgfqBEmvLfp0/2DL/iX2Td1a5qbqK94yXHmLJ7Iq2jixsCvqJgmvi0ZvKG7vHY/6maJDBRjLzXGxf/RwVPz+0WRBIILPEreJh6aXe97lWGlqAhy6XaL2C1c6MdAYpoizlyrDsxBlDII=
+	t=1729093828; cv=none; b=rXwjtNQgHV+Uv7kepSfx8l4Dm0FLUhDYm7SbmI/EDYvK/QfZcE5icp7KY8Jxj9skknMYOIHBy9rbdqOMoenrJMWHBuHADqMECUcjYxM1TFS/A9LNB0BUoNacPnlY9dNtqAzUhJNogerG3Z3TNsFJas1Xtm0Nq6Hkyhfi0/Ijvq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093746; c=relaxed/simple;
-	bh=azYBYsEL8TBwKLy2DqMkcAlok1XYNMnVrkAzCSDpOi4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kFhTOrNOkZMts7GMKrVnE1VNg4diQz74ZL2r6cW0rHnTU/L4juOpZe2iPN4nyFpai5PjNKAlA8BDEFbiWf0C3XUcEdkYZB258rpdNHL5RUOVDyBwotV3rQVPAcY2p9JYF2VeOwr8SO87TnO4Xxorvb0zBDwVAfmpf6XUKUU/hyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DzIUZBOe; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729093745; x=1760629745;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=azYBYsEL8TBwKLy2DqMkcAlok1XYNMnVrkAzCSDpOi4=;
-  b=DzIUZBOeQj8kYxm1+K+g8AcLYP4BsJ1H8IdKRATIrAEsELvA2bMDP47r
-   UC1RFWuYKuIFpU38q6y7SRZO4zQZzsCzHJFysMq3Vt4KhM5YsSKkhlivx
-   qZ+7mLj7cvCLUMDLHeNpJ2+Vd6sX+cgPLJGX9hi1/UGaIvCXbEn5l6i71
-   sqYdsCVYRdgYcUZHVOalDsEnA08+vsVg3HiCLfMxWYn5huwvISjWEYm69
-   1Cv51xfeZgNBA4YpeyBEdrlYePOwBPSPpvefO8+fHQEJ7z5TD+R8LpOc0
-   M0dhqUCfVNcaFT7UGCVHAhVsct2vehFRBPrf7N0wtLmtDqRjqsOYKUQ6M
-   g==;
-X-CSE-ConnectionGUID: lyON3SSbRvyG9gyGzY44MQ==
-X-CSE-MsgGUID: tM3DZuGgTHKkLTnmYh8kMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="16167186"
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="16167186"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 08:49:04 -0700
-X-CSE-ConnectionGUID: uehkeSnsTsSnE/0GvlFLVg==
-X-CSE-MsgGUID: 8ctFh2bYS3+4C0vxO9S8Hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="83091757"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.21])
-  by orviesa003.jf.intel.com with ESMTP; 16 Oct 2024 08:49:04 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	rui.zhang@intel.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] powercap: intel_rapl_msr: Add PL4 support for Arrowlake-H
-Date: Wed, 16 Oct 2024 08:48:51 -0700
-Message-ID: <20241016154851.1293654-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1729093828; c=relaxed/simple;
+	bh=yrQkUOhCimydslTMP1sM5M5FprUZtXRx80+SQ5c++Es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+3dJp2fkc5nHmHkJwxLdxHD7X0WFDLv5S08zJOFh7DtXiyW/xETatbKZNaqljIph2EP9NMPfU42bS5byFloBk7zYs1A3LEG3mPyJNK8si3HgFOVIijXLjWiOkl+1iSGe6nfQeIzq44z9ItHRa6dJiSnq05YPOOCGLiFKctxgxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ua6fQ0XN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C893BC4CEC5;
+	Wed, 16 Oct 2024 15:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729093826;
+	bh=yrQkUOhCimydslTMP1sM5M5FprUZtXRx80+SQ5c++Es=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Ua6fQ0XNsg4aX9Kj9H9WW4v/givnHKjDdY+MECAztUFCxVyk9yGYKCQCCQ803Jbnd
+	 OnxdKGeIVeyB19jD0gwMS712SS+3OQnLAhP1tYSainnELzSAR5TAnon2Svco8UhcW5
+	 73r5GgUpJXwyFYFwp8tC/tVZ9C+qCzW8vi75Jl+kXtq3eJTLzMDmQXcmx0nwY/UTkG
+	 VHY6ROPiwrO0eU6OcTyB8XZpiIvSn1sjo882mzDm+cX1b0/Zk5v6W97QMgdNdCd4BI
+	 FbuAscV4Ie+q1POEA0xajso24wcodQT13YWYpYhCNB7fPN0ZTRmWfHJiJ62F6+ti1y
+	 VhcS7gIpRwZLw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6B0CBCE0DCA; Wed, 16 Oct 2024 08:50:26 -0700 (PDT)
+Date: Wed, 16 Oct 2024 08:50:26 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org, matttbe@kernel.org
+Subject: Re: [PATCH rcu] configs/debug: make sure PROVE_RCU_LIST=y takes
+ effect
+Message-ID: <451bea22-0ffb-4eb0-bbf4-12d7b7742026@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241016011144.3058445-1-kuba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016011144.3058445-1-kuba@kernel.org>
 
-Add PL4 support for ArrowLake-H platform.
+On Tue, Oct 15, 2024 at 06:11:44PM -0700, Jakub Kicinski wrote:
+> Commit 0aaa8977acbf ("configs: introduce debug.config for CI-like setup")
+> added CONFIG_PROVE_RCU_LIST=y to the common CI config,
+> but RCU_EXPERT is not set, and it's a dependency for
+> CONFIG_PROVE_RCU_LIST=y. Make sure CIs take advantage
+> of CONFIG_PROVE_RCU_LIST=y, recent fixes in networking
+> indicate that it does catch bugs.
+> 
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/powercap/intel_rapl_msr.c | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
 
-diff --git a/drivers/powercap/intel_rapl_msr.c b/drivers/powercap/intel_rapl_msr.c
-index 1f4c5389676a..cbe07450de93 100644
---- a/drivers/powercap/intel_rapl_msr.c
-+++ b/drivers/powercap/intel_rapl_msr.c
-@@ -148,6 +148,7 @@ static const struct x86_cpu_id pl4_support_ids[] = {
- 	X86_MATCH_VFM(INTEL_METEORLAKE, NULL),
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L, NULL),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE_U, NULL),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE_H, NULL),
- 	{}
- };
- 
--- 
-2.45.0
-
+> ---
+> I'd be slightly tempted to still send it to Linux for v6.12.
+> 
+> CC: paulmck@kernel.org
+> CC: frederic@kernel.org
+> CC: neeraj.upadhyay@kernel.org
+> CC: joel@joelfernandes.org
+> CC: rcu@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: kees@kernel.org
+> CC: matttbe@kernel.org
+> ---
+>  kernel/configs/debug.config | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
+> index 509ee703de15..20552f163930 100644
+> --- a/kernel/configs/debug.config
+> +++ b/kernel/configs/debug.config
+> @@ -103,6 +103,7 @@ CONFIG_BUG_ON_DATA_CORRUPTION=y
+>  #
+>  # RCU Debugging
+>  #
+> +CONFIG_RCU_EXPERT=y
+>  CONFIG_PROVE_RCU=y
+>  CONFIG_PROVE_RCU_LIST=y
+>  #
+> -- 
+> 2.46.2
+> 
 
