@@ -1,186 +1,185 @@
-Return-Path: <linux-kernel+bounces-367050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A70499FE17
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:15:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AB499FE19
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3CA283DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:15:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B16DFB24ACA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAAA60B8A;
-	Wed, 16 Oct 2024 01:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94B660B8A;
+	Wed, 16 Oct 2024 01:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="kUeeZU+A"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011048.outbound.protection.outlook.com [52.101.125.48])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WoAFB+aU"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2062.outbound.protection.outlook.com [40.107.94.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235731EF01;
-	Wed, 16 Oct 2024 01:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECEE2628D;
+	Wed, 16 Oct 2024 01:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729041308; cv=fail; b=aWyBuepGmiLxdafVVhFXgn6O+z1rzgrBPeI0O56RTmpXpqdUu++MoZjuXCBC/ySmttAK0Eq1GhAVeFfl6obLVuDoFUpD+Xi+ft+A1OyUdIlJ26XMJN9LJSXS3jHtnHjwu6ajVf0cxHTvvNM4lsUwxnK+QF2Dj2zObX4Gl30b27o=
+	t=1729041342; cv=fail; b=GwsnCSVlOJbMpQ9mpS4+bb+xbhNZkHn42RFNMsASCdjp3evhutkoRBY01jNqvjfAl1x8ZxBEXV0kmpwW4QvcipB27esVQVTXYWw0SI+KJVnj01ibvN7hbAuY8G9k5+aCao9IewEtBU9X7JtD1J+gZq4DNRJRgoJraMh+Ib6PUks=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729041308; c=relaxed/simple;
-	bh=L68hQX19XxdQm8B+ShhW6xymnLVp/4DNF55XlT94cfE=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=CmVn2i82or7tLf9tWDhzd0TwtnHbzPW5YoN8ytyYKiXfBpLg9AbyprXVWMwXubbNu3uKYmxo5ZXkYEfGQUQcytZ7L9FAukGAMGb+PAsmqZgJw5rWSBMtZduyfNzxGdnnFNNygtThYMyO3szkSeDwhdFafkkiwb3iR8kjIy+esJk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=kUeeZU+A; arc=fail smtp.client-ip=52.101.125.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	s=arc-20240116; t=1729041342; c=relaxed/simple;
+	bh=51jEunZCHebvyiWlCqBosMgyf9G4BQwjUeHiAdf2mWk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XeX6R8wPILn4siMZ9vubDJbRRjrneO3x6sIQfkI625L0AUZMdpG0Oykg6cfAwDVb5v0tNfSLJlwkGmX9QLJdZbPqaHJoDfEs1/1xWZsdmBX7i3g8N4ZLe/Cdk7e1X7HxXutbeZZ27oSCs6X6UQCkTFGkTUSATA8g9waO+OdlmRw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WoAFB+aU; arc=fail smtp.client-ip=40.107.94.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BbnDG1VCLIiCWUsZfoYKyH2m2M1TihxPl/y9EKvWuiLtM1eAAkV2O++HyJ4oI4liAdGPPBsj+VfWbMZ5SFHnT6PiVIuhm3EMTMm81M0KRicOY0C0nKUq3d9XH6matD24lsuA7ICNtHFC/uOviE7C92d39R7ecZ6LM4tMRDlQuDyaVMLuOxpQF7x8avPf9Rw9OSklOoXE3895qUX+aJT1XRXpuUOFWYad1cUVAIBOhKtw8+L6GQ14S2BvI79LD55CGuGwjtURT1ffsqORoxJ1Vol9IxVPvprkWOfIOOOtR9GBzrRm2RmOL/JievtM8EyMmkaAlqf9ZZO/Lu7BzUrJKA==
+ b=K61ms+k8QA1bq1/OAs14vz5uEDr7qtpRFxHIVZkScUT7ixLNZbB6DrZvqNITaaDswZK8e4C9hkVXpo/7ubofG/mrZeemGn2UGhQSZB0r08ewvTXcyzQnlvCYiIix3IDC7zUD2xwYjs31u9XQqoNm7KzbH+arDHY+4faSrxLAD0OJBqILzcwLvTI7Y/dHazDSSUr6nmFxSAYMthztR1hNpNntpoGaJ31hh2JJY1G8JWOPFo5W/tThZWKoEF2S+nSMBm2Xgvhpls/uQcZNybPV9fIQp9Bx0LHX3VmYp6itkOGah1BEyGa7B8Izf9QvzhfURsaNEZ0st73d2AMoE7DajA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HSmYGJN8p8ZIOBehbIZ9MZsTVKsnHk9Q0rJR+rsaJfs=;
- b=g225opN+tccLPd1wWuwt/rFPWRHVPGL+Zx9DzdGx9urbhyuaVFJZLb7/ZzVOT3rOWdRsEVOdpMT85EQuUEFxjrQenwyrVsybVYZEnlnx6yoAEWEYe3D1umcQochNbC9cojR9PtMO41RkjKh6ikRPSN7bVEPqWt/DZw/b4zt9+2xob4P9EfEE+tPHgtlRRjPx2hSXByU6ly8ml7oYlFAkeBX+nXDNETC4ug4G7XXpqwFS0623WF+tqp6tNFZAHJ83fmRZybX9DQeEw2YmdUB8ufUaWWr2BrlJa9lKV9Ou24tefkqbf7ykRTkxch1yxilAYDdJypAk/WmxIl1YBW4cdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
+ bh=QHab1wJQgGVxame0m+/0juJ00rtb5Orx7QPiYhGAp2g=;
+ b=HR92J3S+nyGcsSW5YbsXjek7fIVH1aCf6DTOho/6dm1cr/Sab9k/y2q2JMklcEtu4sfqE9nDtpgkr8hJUWTRFoJgjsg2GDI/v4dOSCEELjrXLsbKYoVVQR6zKeAZTiR4RRWAnNP8NfmaHa3cm85Hh0FHUhfSIelcSYAWHHE0aq05ZK5N4HzGDinvm/msWO29joiMMNNDcREH5xatXWFLTR0FHZ8nul2gqUSxjXRZpdxbdm5U5OeyH51IVc08YVpIGaLVU0prfUz/b5k0hQySEscVV9zzK2yog6WJhfUO4xdUQb5IPnkBno+skkgQNHdILNeH4Kv3mW5pgVj0GPgyew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=nxp.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HSmYGJN8p8ZIOBehbIZ9MZsTVKsnHk9Q0rJR+rsaJfs=;
- b=kUeeZU+A5kcyYb77Za1JG0OaDap16l07RqIkP67Nbgx1S0Mv5dAmVa+mObTIC/NIqriQfK7hILBJcQ68Eb1aebl9PmJg5yrkww6izM6BwTRr1zFvrLCqPKLb/kGyNVA08sNnV50dv7Lx0uY4T0ZaVwOxEAdXyVOel8GOYMpX298=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by OS3PR01MB6210.jpnprd01.prod.outlook.com
- (2603:1096:604:f5::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 01:15:02 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%5]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
- 01:15:02 +0000
-Message-ID: <87ed4getm2.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-sound@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 0/3] ASoC: Rename "sh" to "renesas"
-In-Reply-To: <20241016010145.GA72114@workstation.local>
-References: <20241015113757.152548-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-	<CA+V-a8u8bkCjL-YSyMOiKOtfZC8upBwGzhrJ0o+EmZ9S3z5hGA@mail.gmail.com>
-	<87h69cevrt.wl-kuninori.morimoto.gx@renesas.com>
-	<20241016010145.GA72114@workstation.local>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 16 Oct 2024 01:15:02 +0000
-X-ClientProxiedBy: TYCPR01CA0175.jpnprd01.prod.outlook.com
- (2603:1096:400:2b2::15) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+ bh=QHab1wJQgGVxame0m+/0juJ00rtb5Orx7QPiYhGAp2g=;
+ b=WoAFB+aUvm0dFUoKjhkYH4KlOa403YtUJEpaiZG5Fcea0YiIwpW7SAOY1KawMR6wzh101kQKHAPf2CFd8gflCZCRu1yQrEV91Jx3J2i75zpgHiUC/2zH6bU8BBIBXR0dLX1x6BzrOuwKqAROfn85ka+xBbkUVrn8MPsMaglcNO8Mee+QI5uS4HFgSXreUkNEXMVn7/8d9ywEgrCjjkYybh4+uLYjFaWxeTq+/NxcsD11SPbr5h6PX+Kyw+Vny0nWQZ+fM24q12ZUlyr8lk8cB0AzKzMP9sMAWV/APUD1i4YYCPrlyWfmZ8bpOmECyk4K2CHOIkb64iK7zREwF74aAw==
+Received: from SJ0PR13CA0137.namprd13.prod.outlook.com (2603:10b6:a03:2c6::22)
+ by DS0PR12MB8442.namprd12.prod.outlook.com (2603:10b6:8:125::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.21; Wed, 16 Oct
+ 2024 01:15:36 +0000
+Received: from SJ1PEPF000023D8.namprd21.prod.outlook.com
+ (2603:10b6:a03:2c6:cafe::3f) by SJ0PR13CA0137.outlook.office365.com
+ (2603:10b6:a03:2c6::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18 via Frontend
+ Transport; Wed, 16 Oct 2024 01:15:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000023D8.mail.protection.outlook.com (10.167.244.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.1 via Frontend Transport; Wed, 16 Oct 2024 01:15:36 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Oct
+ 2024 18:15:21 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 15 Oct
+ 2024 18:15:21 -0700
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 15 Oct 2024 18:15:20 -0700
+Date: Tue, 15 Oct 2024 18:15:19 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Peng Fan <peng.fan@nxp.com>
+CC: Robin Murphy <robin.murphy@arm.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>, Joerg Roedel
+	<joro@8bytes.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joy Zou
+	<joy.zou@nxp.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH RFC 0/2] iommu/arm-smmu-v3: bypass streamid zero on i.MX95
+Message-ID: <Zw8Tp4RuVgCdGcc8@Asurada-Nvidia>
+References: <20241015-smmuv3-v1-0-e4b9ed1b5501@nxp.com>
+ <a8c42a6c-bac3-4ebc-8a29-e6c0ed4567c3@arm.com>
+ <PAXPR04MB8459AB654150BED2FB5FFDE188462@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8459AB654150BED2FB5FFDE188462@PAXPR04MB8459.eurprd04.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS3PR01MB6210:EE_
-X-MS-Office365-Filtering-Correlation-Id: e741cdd4-3ee9-4706-b42c-08dced7ff5d8
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D8:EE_|DS0PR12MB8442:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a3178e9-ee2f-46bd-8d94-08dced800a39
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|38350700014;
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?k2miLNhem8B70JUbDIhXZph+oyffdXGerZt+DGvmhNce8PfwKRDiRCuvo3oN?=
- =?us-ascii?Q?D9bK9hIKScYOf9prBnUSsgUv0ygcAyoCbr6f+ODuluNpE0GFN2jjjanSsseA?=
- =?us-ascii?Q?8+8rnK/Uq53m5Fd6mqfugSFHZjV4xVqyreQkPsNmYzAjfxhIrBAAs82IGiwg?=
- =?us-ascii?Q?k3eIO7gLyqwn/9GDc3jTuv7yDtTiZitLAQlzldwXFurwaCEQztPhEhwRlyKn?=
- =?us-ascii?Q?L6D+5dwcMr1jW/9d6h2p8TWAeJdcyZl5a/vu9m4njw37WxdsEY9+JLixhGhf?=
- =?us-ascii?Q?ozvfBf+IIZIMUvQOIWJ7e5tDuub5vB8BKOu71XOfZOkdX/poJBj4cy+jKW84?=
- =?us-ascii?Q?/pYMlg20jpwTlk3Y+hPmxnOtdiHu6jwx7tHMPojXArjEJr15ouQfLK+hoc1M?=
- =?us-ascii?Q?gTCRvBLMigMAReQpV77jd5gEOPVQUk1oTI17qnzks4wxClhhdugUXSnMYX+W?=
- =?us-ascii?Q?KllId1sKE2vz17I/CoBGffjEHz8WkJgUpxL0fIP+Cs4kTJb0P2H0jjR3E51q?=
- =?us-ascii?Q?F7iaoiZqf2+qX7zM6kdX38GID3lBOWC2SQtYMVAyVF/H3XHCS9945AyjFwml?=
- =?us-ascii?Q?1kBCBLNycRFkn4kAMs39UNPg9aWHpa+bZePFXjxV+53Kfa2s4aGuT1kWYtgJ?=
- =?us-ascii?Q?D0/N+pafYzjnV3L/VTj7MSAvbQIkmF/QQnRwPeGUdI1TsVnhqpCvQBcmCzGu?=
- =?us-ascii?Q?ipB0RAYeeATqbdHNWOSmTujR+5bnqAQafQycDjeTZsfdyWuQY0aBaqJcT2U6?=
- =?us-ascii?Q?it3irl3SVzBiCTg9fUZKEVxkeD3yyb4zHlJkwDe3KeUuqZ8WqV+oymKibuLU?=
- =?us-ascii?Q?FdeAyf+GIJr6rKLnsDHkL79H5l3zKofyNQJhXsY4xLFZtjB9jvavHLdqWgHO?=
- =?us-ascii?Q?a9JyxZBMJ4bOevGqZwCfj7y0EZDVcZrCaoJqZsGeFh1RZ3Cm9YhU/0aEoTU1?=
- =?us-ascii?Q?mqzhz+ORxef9eDrPT9Phlxha8jkqC5SPze37WDC2xwK2fd+Gc/FY5F7sT6HS?=
- =?us-ascii?Q?GedyqSrUGUepIIIJ71Okvp9fAyaCiir4L9u8CufT4DPK05dxtE433qQKBJaW?=
- =?us-ascii?Q?JrKeKxK8k+8SnTUCZAO2Q++iFEQVPScuNjrbYTmtJYwNb+5wvINlDBybKtch?=
- =?us-ascii?Q?sM6jMbXWzRI0/JNLHbo9w8l12cpb2WZyX3XRBqs6km6XCxOxdQp4z1qAEio8?=
- =?us-ascii?Q?3ruMODdCVG7MAkMg7MCHvUJnTtgIoQG5H5c446SGIzIHvCB6Ff6cbNbis2ot?=
- =?us-ascii?Q?p/pBttsJQk3bZbKdeOtxHQxUgeoJ0S2fdlWqJEmCFswKKZV/fmB3i9KblffH?=
- =?us-ascii?Q?tEbi8UTtCsh9ERtIzkbnTlKXxWeD01Va8oQwk/21JLYRBw=3D=3D?=
+	=?us-ascii?Q?z3E+aVbbMNOgjhPXneQW72YTL1a5XUlrsO1x/kP+Wu4C+l0tcKhc9ZCe2WYz?=
+ =?us-ascii?Q?AfJPw3xxstXlMzAoOWq+405UVsNc66FHYG4WmLKyYmLokD5lzRfxxsJjnIZ4?=
+ =?us-ascii?Q?cVv2JGyK1I8XBSS18BHBs+jOM4ISnY4N+nR8hGkTJopO87TD0x7RylLgsH5m?=
+ =?us-ascii?Q?Ie4zxQvZ6sDM1xOFbx1gHQetCVA+vQgxPR1f2qhXOpC39vSSVJ9CdfIgBVF6?=
+ =?us-ascii?Q?EkjohhlHgtXrgqS+f7XHrYazpHWM9jGeuOB3aZZJdMH9Uv8S+DkOnOIJNAPA?=
+ =?us-ascii?Q?2CWDFsHHrs8r9BT0FfD/b46w+ajJ9PH8NP6wgsYsQZvGJ8VmHVdH3rD6I6Sq?=
+ =?us-ascii?Q?hSMRHX8Bq2cGCCjSCgz72V/pIOwkAJeXlvvvJzgoYOGpem4ApHMc2ff6jFh2?=
+ =?us-ascii?Q?7SsuYLTaLhMvkr6GzmNG/6K1WWeI0DlPx4eR6foRSx4kwx0MFPjshtn5838H?=
+ =?us-ascii?Q?+cH2l5MbqtJGaNJCb+P8LIHVW+c2TPjgJPdnCeyVFOdpovArqZfDZOJaI9wl?=
+ =?us-ascii?Q?7w2pbwIng6MZHx3q1Va+ubPG+XFmja9493qoby8kIOLZEXRlJH+pXfeWFuqk?=
+ =?us-ascii?Q?YmR4ipd5ul6oM7dAOPVNSPttj1HrXpOulbutWTI/a3xGOiVRcrv9/OrISbLl?=
+ =?us-ascii?Q?1myGIc6GSD9fCCh1aYE23N12Ai4rfOhUE7yJ9pfdhe360WLOjBFaPQT19caM?=
+ =?us-ascii?Q?qgnb3NTKd5vh9H5gYLs/zDkNjX3iznL4egBm5dudAqSS/4D7pKIarOa0GSY2?=
+ =?us-ascii?Q?8h11yF/eWW8YGaq+j7V1Ob7ySI+EEtkV91+6l0FznOEQnDNKUsSC70VRmERj?=
+ =?us-ascii?Q?Uodzfzvai7yo9zKF6hbiAIDIZo+dFJaSfpUmDqOjIfOnUVm3y9EGCNdxnJ5a?=
+ =?us-ascii?Q?6Lee+c1xChgdxNp96LxCsCp+SZ6bsTtZxsSCweL7eWUc2lYEr5YVwTYvuFNq?=
+ =?us-ascii?Q?ZyyqCT4RvxACC0nDZkvUYGMUzotOlFTMTXCpIV8KYLcfHNRPsUu7oT4vOnjd?=
+ =?us-ascii?Q?R3it4489C2VXl1e7IeLy1gEOumfp65+7oFfLXyN4vds4Q2mEklMcZnTa4ZQs?=
+ =?us-ascii?Q?lHlxfKhcc3TK7pO1oCTytZQzTQeTi7+gN606sfxHCqowE50cFmNEILIIvpL3?=
+ =?us-ascii?Q?VF9ihAwyU1uoISX6hZwgAm7k62Hpow1ImVsdqNR/roCVx3xnI5ztz2Co9q2c?=
+ =?us-ascii?Q?YzsumivXGbN3dQQFvJMcQVsDLHXsaLRb1Xoph0QYdsB5hj0bL6gR/iCp2e4E?=
+ =?us-ascii?Q?LFTGRqx7JYkh4TSdFHBPIyMxucGbuUn9uoE7mh5aw3xCXQ7LmkXsl5z2JgcH?=
+ =?us-ascii?Q?wW2NRSsisiDChUPgbkfKzhtrTggBBcRG7pKFB8ib6ZbyjC4U5iGebzBL+x3a?=
+ =?us-ascii?Q?e638A5aJh65rNRIelJhBIoo2i3Tj?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Fc7/PUrvECiVemUhosBoizu2GuUPjs72k4e3cF7uRvKhFWOlTD1zZJ3ASvp7?=
- =?us-ascii?Q?LX1poUr8qcqJ6TmSfDh66Eichjo6i7Qcv/Fv8i4rXxmrZAmsmDb4e3mk+vO5?=
- =?us-ascii?Q?IfQH6cFv+rHBKVT1WoQbV4ZZ/ZyRTMpKpeGjXyNyaR3+1nHh8XJFJyAPWGug?=
- =?us-ascii?Q?FfSfAfxvlLnl/yyhnmpCjqwxJCfJY2UZyMSW0Lv4g9/RV9pGHpc2ChjsrIK8?=
- =?us-ascii?Q?wAkZYIY7AwBl7lGMpsE/7UFZYHmKt9reACTK+q7ANEgF7gGaiypsKWqZhTE1?=
- =?us-ascii?Q?LviVYnFx+WE2fCPtxX81LbX3GQP1d5d1x5rMg1BlA4hFM56xhDUgRLRBZCD3?=
- =?us-ascii?Q?EtVP8Eicle7If/N3jTOqyqUPib+sMy6KaDI7KQcfOwDdbtXvbSsvSC6s+Gfn?=
- =?us-ascii?Q?H1dulGbO1YP7htJ48GDu+aPDZcsasndjdbi29iCdBn3PqNPklFVXRPK9XpJ9?=
- =?us-ascii?Q?lO5byK5j6fqEnRXJkVBPyWJdihC1IbmbelrUIaxnWZCwF+N0WX6BfTKqOot5?=
- =?us-ascii?Q?RZoQGiUenABtGPj5f7NGbti9gypr/dNlJ7wqHqvNoVrp/+gOUPYRYxm8/yeB?=
- =?us-ascii?Q?fYpRGBQtHrhzeFa8upu7eFHlL9KwZRcU6ctlTDXjCIq4EiJ91pH/TztdLETa?=
- =?us-ascii?Q?JXxX8l4TOLPwBFkTtEAi0tww1/OY3jm4Qm8oiUUQzSME7fxAiKTHOH5+1EHJ?=
- =?us-ascii?Q?0hh8emQHPGVMva+auxZWsEe4K3Z022u8T9tINC9jwadpjzRpTue2CsXo48aj?=
- =?us-ascii?Q?1A8KgnuXAF0/FFnzS3TPGurVd1XVcOnXQpZJqwjMNguug81NemOQKQCG42+G?=
- =?us-ascii?Q?M/Si/5p/SWG7LGgk0g/4Am7cxVLeJUchEIuy4dbx0kwvJWiaM4jX5ZP8ZEXd?=
- =?us-ascii?Q?0FsP/RG680H0y8za4h9JoH7uwSEH7582ByZ9aSiIod9/c3G3kBzvMAvWT76l?=
- =?us-ascii?Q?UwvqYZM0Fikiq73snL+uDEFe37keEJ1hfNVH3LyqKCu5666C6Cc9qkrnEjIH?=
- =?us-ascii?Q?GvrI04bdLBBJ9Wp9Oi+cxBwH6AFyWHZu4hogwsYA6sRkGhQS1I7va6hYdH3J?=
- =?us-ascii?Q?3Q2+Ufcohi0EafnUmfaoMEDLRzkhy5ajrOM3w+VDjA4nEXcwFFYJxDh+Ro3a?=
- =?us-ascii?Q?x2rxkaKL5Ocf9X4Y6gctbbc2N0gXk7vlCta84Uc/NiZyESj5bh/if5zX9H7g?=
- =?us-ascii?Q?g1aoo69+d7tC32gmuqhOajfzVoKGU0Ldy9eGsxi3fNDhj6Kd7xHLLt7jqmX4?=
- =?us-ascii?Q?JVGu1rZNcGPPYuMii8yQE6VbvIK4USLw/MC5c0FDfNgOsmegSZhfpJt/Bnhk?=
- =?us-ascii?Q?VP/3/pvAVNp1jwzSyWK6P9eKP3dSZid+RzLBJWqHyvSmwL74NGqvcRu71KtQ?=
- =?us-ascii?Q?YbebDQL9v74spXXJLeNTyo1jMvjC8kkn9xdMCG9mku/Up9luZkz5j9zcbB3s?=
- =?us-ascii?Q?SoaFU+aUCEd8vI7Smcs1Nnnh1ZR1I/GDhQw1YuZJogMSVhOpHXJkmk3VOGFJ?=
- =?us-ascii?Q?fKI//nmsA6u4t8JQdszHkAz0fMiNITDKCFDZpfb9lukJ2LvSS3JrkdmoWaS7?=
- =?us-ascii?Q?8naQ7y6fcoTyssDN5tPumscZwdq/bY0cQVHTt+gfgxRAA+FpEwryyP5Gs5mg?=
- =?us-ascii?Q?dQTc838k/seIXU78OONIJzo=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e741cdd4-3ee9-4706-b42c-08dced7ff5d8
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 01:15:02.1903
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 01:15:36.1814
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MwN5eNMlYsqzEEWdHhxSENn1CTJU8HoweQakC97VLtQH/M5GF2FgmqC5xuH6hMp72kpJtSEBSu9saQ06EDSeH3k0BvDbHHzUEPSRm+edMWgVZaEk1G1OT4nqd8RghRCg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6210
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a3178e9-ee2f-46bd-8d94-08dced800a39
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D8.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8442
 
-
-Hi Sakamoto-san
-
-> > + L: alsa-devel@alsa-project.org
+On Wed, Oct 16, 2024 at 12:56:54AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH RFC 0/2] iommu/arm-smmu-v3: bypass streamid
+> > zero on i.MX95
+> >
+> > On 2024-10-15 4:14 am, Peng Fan (OSS) wrote:
+> > > i.MX95 eDMA3 connects to DSU ACP, supporting dma coherent
+> > memory to
+> > > memory operations. However TBU is in the path between eDMA3
+> > and ACP,
+> > > need to bypass the default SID 0 to make eDMA3 work properly.
+> >
+> > I'm confused, why not just describe that the device owns this StreamID
+> > in the DT the normal way, i.e, "iommus = <&smmu 0>;"?
 > 
-> Just a small nitpicking, but I think it better to take care of a merged
-> commit in which the list address for sound subsystem is changed to
-> linux-sound@vger.kernel.org. See:
+> Current SMMU-v3 driver not support streamID sharing, but we have
+> limited streamIDs(i.MX95 max supports 64 SIDs). However the eDMA
+> supports 64 channels, each channel may have a SID, but not supported
+> by current smmuv3 driver.
+> 
+> We see smmu would degrade the performance in somecases, so
+> we wanna to give user an option to bypass SMMU for eDMA.
 
-Ah...
-I have somehow noticed about this, but I didn't know this mail/patch.
-I now understand many things, Thanks
+If it's a system-wise global need, adding "iommu.passthrough=y"
+to the bootargs string should work for all trusted devices. And
+particular group can be changed to the IDENTITY domain too upon
+cmdline setting, e.g.
+echo identity | sudo tee /sys/class/pci_bus/0009\:01/device/iommu_group/type
 
-
-Thank you for your help !!
-
-Best regards
----
-Kuninori Morimoto
+Thanks
+Nicolin
 
