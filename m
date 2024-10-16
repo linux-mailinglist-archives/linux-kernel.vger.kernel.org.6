@@ -1,170 +1,133 @@
-Return-Path: <linux-kernel+bounces-367112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5117F99FEBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:22:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA64B99FEC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BFE1286C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:22:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F045286D80
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0126C15821A;
-	Wed, 16 Oct 2024 02:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EFD163A97;
+	Wed, 16 Oct 2024 02:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ULTqGZWT"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="KdVlktDk"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BECA13B2A9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7AB15C13E
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729045347; cv=none; b=XJxKx+1aIfIrAocZ0XxYwp82pFhKQVpQ+yYx6kE1a+auz57ZTBxOJ0T8lxd1FARBwko8VGU2xQQt+NzUuRAo2A/NlUDyQzgZT9RjFXI2dpJ6u8ZTOcaN3jgTB+7vkgdCzCVj25qgMUY9UGKG6cZ0FqIuffBo5hPngVzhSeJ1fmg=
+	t=1729045446; cv=none; b=RxsPSRG11Wt608aldIQgIKhkdAIfZzJJoAzxJ3qEtRbevsgqTkMl3zAv8c9dbPWnB8KJXXRpMtOPIa8E0pKTz20Qbr2uIfrPdEE58HkP/BDjzuV0lswxXgU5JN7cjjvYMJMfRfMCgP3CrjRgEsl9Muk0tRH6MZuy65IyDK4AFFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729045347; c=relaxed/simple;
-	bh=NOynqRfViNtUhFapJiYI60gq2G1E0ZSreychgvI/3bM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=W3Shyr3L4Q89WE2Wq7YzcxOdarWOzwYf6AK0pJlAy5qm7FpXhW8Z+jmQXPHPwe3NMCTMbv8a++CT/SMmDGfUIeJ5kmz5vl4rpPzGx1kYCGQiYqDNU0ETUaF4t2cAtciRtsqM/0D060MRM8+K9AriHvEWyEWAWeEmwtpBtGuHcg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ULTqGZWT; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729045340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EqMEPBv9cbTNi1dL6eZXF7Kd8dswrfA1mgY3e9zu5E4=;
-	b=ULTqGZWThzVRjIWzTix80c/Piy17H6duMu8563CHHIeupJaV4GSfC7AxlxVGVX+NBgTEtK
-	z0vpjt0Lx9eVYZQiLhM8Gvm/5mKCLaAUw+PulHntAgIcfglI8I2mDUr/uvPAqFUeveQAe2
-	aHzFN1dk53JF/pJwKn/LBaMZVfTFIBw=
+	s=arc-20240116; t=1729045446; c=relaxed/simple;
+	bh=vkFin8YAkk9Wiv1FM6Rwn193R82QUFJ0lMHnYMg5PW8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spHWb87CN0kwTEPFnKLgxpCpm1JNmWMo79aByuIIuPoGkFqajKFuuoHHJgZRhLVbGMTQxY2faoKf4M7ed8FHgUjkJohP23YPP/h4uIrJKmXsqPMCoLwXNvybbTCGESJMSiTFHwFnSvFPLCTU+FPzpQn87WNRvtuKGlVKMV0lGow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=KdVlktDk; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4603d3e4552so67003401cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1729045444; x=1729650244; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rSM5JzEpw8IEvYl8Wi1gclJRID81zECxLDVfM6LHr2o=;
+        b=KdVlktDkDJHkWr7HFDsQQHLqYLaHgT1E396S+UnUXghwn7T1HNdjC1PSsHNIcfm3za
+         74ThQGHppDbKkl5FmUp03FrB2qv6SCgFExp07/GT0uF2fSnUmr3s5goWsd7YETMzEM0X
+         A57kjMF+uUYKjlQOh1Yrvv1j6HhDNJ0cI5PF8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729045444; x=1729650244;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rSM5JzEpw8IEvYl8Wi1gclJRID81zECxLDVfM6LHr2o=;
+        b=hcF3F8FeeBV+bG/o7grV4Md5GyNZqa8QoJo/nEbhz88YSnNUUrpVLn68h8kV0zgEB0
+         U5U+z+dqWjtQJckWP3sQL4/OgjR5SvRQFhjhHSbh0LsZxt6lmfC7CqZ/o/ThZhFc+dUR
+         U48zaJ8Iu8h4GyjvpIokooMq5DFx07vjB3Swbbj/Pb/9JHf0fKiBaU9RGn+6Zanamn5R
+         moAeufT9qeUpzS77iuW9mDCUzMi8xnrfrKcL2cCoao6A8x7mIoLgI6eoZyRdRuSosXJn
+         QXmAKTuxoXPkH7d4LksGT21opC7O+vgvTvsAn8qJdceZd4pzaeEUuMoV4ocP60+ytGHy
+         Z73A==
+X-Forwarded-Encrypted: i=1; AJvYcCX1F50SDC68DH0oPP6pJ8OfY0ClXHSsYYG2v6h7GIecf9aR0zvTJRWMHZTDu2dKAA1vsplGeovDeOvrUTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFvhPwwDNH8h1pFgiSuUXVTZJHoj50DKiQ5pkQmXpa9pYyXj9r
+	nwebWl/Yt6neaeV6/WjzTFiAo9Wj+sHVMX+twNRf2sgdCNAeyb9lmtwN8mSZMTYAXSAD7fBnn8X
+	p
+X-Google-Smtp-Source: AGHT+IFWCC/S9dXsp+A051MHox+o20A3NL3tpfTZfFxD6YcOo1vnCybm1oZluCcvQ9PpRfE9CJMD1A==
+X-Received: by 2002:ac8:5806:0:b0:458:2523:c060 with SMTP id d75a77b69052e-4605844500amr232582351cf.29.1729045444189;
+        Tue, 15 Oct 2024 19:24:04 -0700 (PDT)
+Received: from localhost ([91.196.69.99])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b0a3fa3sm12755241cf.5.2024.10.15.19.24.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 19:24:03 -0700 (PDT)
+Message-ID: <670f23c3.050a0220.1fe46c.5dd2@mx.google.com>
+X-Google-Original-Message-ID: <20241016022358.GA117803@JoelBox.>
+Date: Tue, 15 Oct 2024 22:23:58 -0400
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: paulmck@kernel.org, netdev@vger.kernel.org, frederic@kernel.org,
+	neeraj.upadhyay@kernel.org, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org, matttbe@kernel.org
+Subject: Re: [PATCH rcu] configs/debug: make sure PROVE_RCU_LIST=y takes
+ effect
+References: <20241016011144.3058445-1-kuba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <4a18e997-3a94-4248-8923-c3764d12b0d6@huawei.com>
-Date: Wed, 16 Oct 2024 10:21:30 +0800
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>,
- akpm@linux-foundation.org,
- david@fromorbit.com,
- zhengqi.arch@bytedance.com,
- roman.gushchin@linux.dev,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- wangweiyang2@huawei.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FD2AA126-5885-41C7-ACFD-85C764170B9E@linux.dev>
-References: <20241014032336.482088-1-chenridong@huaweicloud.com>
- <m3cjozicivz4ydv6ovzkupuzpcvc7uptlhjd3bndpsak3z7ill@6txhj7tpejir>
- <cbf8475d-5c79-4fa4-b2a1-f553166b0afd@arm.com>
- <4a18e997-3a94-4248-8923-c3764d12b0d6@huawei.com>
-To: chenridong <chenridong@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016011144.3058445-1-kuba@kernel.org>
 
+On Tue, Oct 15, 2024 at 06:11:44PM -0700, Jakub Kicinski wrote:
+> Commit 0aaa8977acbf ("configs: introduce debug.config for CI-like setup")
+> added CONFIG_PROVE_RCU_LIST=y to the common CI config,
+> but RCU_EXPERT is not set, and it's a dependency for
+> CONFIG_PROVE_RCU_LIST=y. Make sure CIs take advantage
+> of CONFIG_PROVE_RCU_LIST=y, recent fixes in networking
+> indicate that it does catch bugs.
+> 
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-> On Oct 16, 2024, at 09:25, chenridong <chenridong@huawei.com> wrote:
->=20
->=20
->=20
-> On 2024/10/15 14:55, Anshuman Khandual wrote:
->> On 10/14/24 16:59, Kirill A. Shutemov wrote:
->>> On Mon, Oct 14, 2024 at 03:23:36AM +0000, Chen Ridong wrote:
->>>> From: Chen Ridong <chenridong@huawei.com>
->>>>=20
->>>> A memleak was found as bellow:
->>>>=20
->>>> unreferenced object 0xffff8881010d2a80 (size 32):
->>>>   comm "mkdir", pid 1559, jiffies 4294932666
->>>>   hex dump (first 32 bytes):
->>>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  =
-................
->>>>     40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  =
-@...............
->>>>   backtrace (crc 2e7ef6fa):
->>>>     [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
->>>>     [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
->>>>     [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
->>>>     [<ffffffff81198dd9>] online_css+0x29/0xa0
->>>>     [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
->>>>     [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
->>>>     [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
->>>>     [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
->>>>     [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
->>>>     [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
->>>>     [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
->>>>     [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>=20
->>>> In the alloc_shrinker_info function, when shrinker_unit_alloc =
-return
->>>> err, the info won't be freed. Just fix it.
->>>>=20
->>>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for =
-shrinker_info::{map, nr_deferred}")
->>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>> ---
->>>>  mm/shrinker.c | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>=20
->>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
->>>> index dc5d2a6fcfc4..92270413190d 100644
->>>> --- a/mm/shrinker.c
->>>> +++ b/mm/shrinker.c
->>>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>>    err:
->>>>   mutex_unlock(&shrinker_mutex);
->>>> + kvfree(info);
->>>>   free_shrinker_info(memcg);
->>>>   return -ENOMEM;
->>>>  }
->>>=20
->>> NAK. If in the future there going to one more error case after
->>> rcu_assign_pointer() we will end up with double free.
->>>=20
->>> This should be safer:
->>>=20
->>> diff --git a/mm/shrinker.c b/mm/shrinker.c
->>> index dc5d2a6fcfc4..763fd556bc7d 100644
->>> --- a/mm/shrinker.c
->>> +++ b/mm/shrinker.c
->>> @@ -87,8 +87,10 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>   if (!info)
->>>   goto err;
->>>   info->map_nr_max =3D shrinker_nr_max;
->>> - if (shrinker_unit_alloc(info, NULL, nid))
->>> + if (shrinker_unit_alloc(info, NULL, nid)) {
->>> + kvfree(info);
->>>   goto err;
->>> + }
->>>   rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>>   }
->>>   mutex_unlock(&shrinker_mutex);
->> Agreed, this is what I mentioned earlier as well.
->> ------------------------------------------------------------------
->> I guess kvfree() should be called just after shrinker_unit_alloc()
->> fails but before calling into "goto err"
->> ------------------------------------------------------------------
->=20
-> After discussion, it seems that v1 is acceptable.
-> Hi, Muchun, do you have any other opinions?
+thanks,
 
-I insist on my opinion, not mixing two different approaches
-to do release resources.
+ - Joel
 
-Thanks.
-
->=20
-> Best regards,
-> Ridong
-
+> ---
+> I'd be slightly tempted to still send it to Linux for v6.12.
+> 
+> CC: paulmck@kernel.org
+> CC: frederic@kernel.org
+> CC: neeraj.upadhyay@kernel.org
+> CC: joel@joelfernandes.org
+> CC: rcu@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: kees@kernel.org
+> CC: matttbe@kernel.org
+> ---
+>  kernel/configs/debug.config | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/configs/debug.config b/kernel/configs/debug.config
+> index 509ee703de15..20552f163930 100644
+> --- a/kernel/configs/debug.config
+> +++ b/kernel/configs/debug.config
+> @@ -103,6 +103,7 @@ CONFIG_BUG_ON_DATA_CORRUPTION=y
+>  #
+>  # RCU Debugging
+>  #
+> +CONFIG_RCU_EXPERT=y
+>  CONFIG_PROVE_RCU=y
+>  CONFIG_PROVE_RCU_LIST=y
+>  #
+> -- 
+> 2.46.2
+> 
 
