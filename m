@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-368072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531FC9A0AE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E679A0AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2E6284E3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5918D2811EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F96208D7D;
-	Wed, 16 Oct 2024 12:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB7520969E;
+	Wed, 16 Oct 2024 12:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPf+MQjb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7rh8kBz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8351F1D90A2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5E8208980;
 	Wed, 16 Oct 2024 12:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729083456; cv=none; b=vBq8O3AyXEjbkCOp0+1AHPQnKFHMHsjZVXdulygZnbPx8SFBpLNqfqMg9PZqJ7+iNH7eXY77lb+zBJQLcN4jAWdu+vh1tcedNyQmYWQhU9wP7ug3vvwcu98Xm2Eq0IrnTvOQI1eDV8H2nDIihMa/lzokPOigeGKFxz8xDcHmeyo=
+	t=1729083458; cv=none; b=NvWHIso76lk49wNB/Of40r/tzuTPqKcPwVGzvfrUpiy4zvRKTduPMzu2lbenZAjnlfghdTpTBFiMFNK+dFaVYNdk1Nq92kiUQG3nTj5H+CfMkbVbZV9noDcq/K30LfR7yhbGOOlfcezZH/4TF0J0IGWJAZRgLtaMMV7KHcvn/zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729083456; c=relaxed/simple;
-	bh=FfgZGYDcZtRzNtqkV/CBVQD9Jhebbo2tapsViEbSXpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bpaFNeyMssUgNMokYE5O8Xb0arphJ27wCXwEVd5KsqmAIWuFt6S5bxuVtAThv16mc0XvLN4Up21g7kO49PrnbIrMCcO/LnGAYzzFZp3wEU9ENXt8jNh0NYTB2cUf0IC1TaPD3ilrJVKUd3v5KZsw+5VWYcSECsqg/YWCoqb+qCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPf+MQjb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18680C4CEC5;
-	Wed, 16 Oct 2024 12:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729083456;
-	bh=FfgZGYDcZtRzNtqkV/CBVQD9Jhebbo2tapsViEbSXpE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uPf+MQjb2Z4epXq2IKSKCOErbGG7QgcsoYx9EYlsgIdCJpcpzIjJgQGj7TiAlU0VH
-	 EpeUkCwMmIAH/A6VNCH2WLxLGjwo0VC0Ws1DN5Nl6qHQ+tkB6wE2hPnMxS5bkid2Zq
-	 nzfMXq/VVJfby6HFDfbOaWpSpRVq24Sp5mmH1oq+8r/fLvORJF8gmAHk8WHK5l6tCj
-	 IAOQFUPVfF5xoFjVQ2VN+fGe1R2sdvx1WVn+WT/v4vOuP6UjrGJAgR1ZtyvqjdTBi+
-	 NQtN003CSKW/Tfru21oTo+jz1Rw2m6vU/Ldl64MYQvDzQGPv2uGyM2r0AsjYo6V+HA
-	 XQ1rqbOAZ4hbA==
-Message-ID: <adecc9c1-0bbc-42ec-8098-aa323a1f5f48@kernel.org>
-Date: Wed, 16 Oct 2024 14:57:28 +0200
+	s=arc-20240116; t=1729083458; c=relaxed/simple;
+	bh=LvLMHQGJAvYO/dKqTYLk5f3spffzr3oHEXbV5qyztso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rmXmUtMUr64B5orf3oXTD+c5FNWZEJacPKWKPBIes6z9T99tb4UW9kusL+RlpZXkW+U5c86C0a0/6D449Q8c6/Lnqiy7fZlpGQNi1hBkKhzUTyq/HO8RVpzPxtRf2Zk7FmU8gGUXuNJXW7EcQU8kgCtsKg5sCAlQpT02veT2//o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7rh8kBz; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729083457; x=1760619457;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LvLMHQGJAvYO/dKqTYLk5f3spffzr3oHEXbV5qyztso=;
+  b=U7rh8kBzMkAN9bhHhB7UB97fcmfFcqSb0JeeCB4you+qdShIudSpvBH8
+   us3IZjK9QoDXv0sUeXVO20raNzt9yriTYSdy7ygl+QKjspTHOgXK56MAx
+   h2+bgj6Antv8yZmISMKD3f5MMNJptG70JoZXwC/hiU1CyRB3+/bIrM9g1
+   ZqCZtqeXKRMNAThzMjK6kSFrkZIIp3EoHdOic9efUeOsk8QsIbNr43du2
+   lIMWN33ZojneM03UNzjEfLOPTSjOQWyVbnETAIh1Xssuzwu9iGwAa9bQy
+   bXe3hwvXRISwZOgha8ipekdR3N00iZGXj4KlJ0ScL055GuGPLJLxqI8IA
+   A==;
+X-CSE-ConnectionGUID: b54Fh8RaSi2a1miMBK0i1Q==
+X-CSE-MsgGUID: P7GfvZlRRsCdvjRdT8V22w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51064199"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51064199"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:57:35 -0700
+X-CSE-ConnectionGUID: g7vC8qJ4RoKmAQd7+mpBng==
+X-CSE-MsgGUID: M/AeNeg+R++xL0Olth51ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="82761945"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:57:32 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 923F111F7E7;
+	Wed, 16 Oct 2024 15:57:29 +0300 (EEST)
+Date: Wed, 16 Oct 2024 12:57:29 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 08/13] media: ar0521: don't overflow when checking PLL
+ values
+Message-ID: <Zw-4OVuTCE13H-Yl@kekkonen.localdomain>
+References: <cover.1729074076.git.mchehab+huawei@kernel.org>
+ <39b23d468eea2714a24a94cb6c20aef5aff492e6.1729074076.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: spacemit: Add clock
- controllers of Spacemit K1 SoC
-To: Haylen Chu <heylenay@4d2.org>, Haylen Chu <heylenay@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>
-References: <SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB4221BDC11EE244C7D70C229DD7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <zsayhliz4a4fauzmvkimd4uzucuunt6gmkypjlqh4omle4uqx4@cbknudobc57g>
- <Zw-tTEViagJFPFtv@ketchup>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zw-tTEViagJFPFtv@ketchup>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39b23d468eea2714a24a94cb6c20aef5aff492e6.1729074076.git.mchehab+huawei@kernel.org>
 
-On 16/10/2024 14:10, Haylen Chu wrote:
->>
->>
->>> +        - spacemit,mpmu
->>> +
->>> +examples:
->>> +  - |
->>> +    syscon_apbs: system-control@d4090000 {
->>
->> Only one example, keep it in parent node.
+Hi Mauro,
+
+On Wed, Oct 16, 2024 at 12:22:24PM +0200, Mauro Carvalho Chehab wrote:
+> The PLL checks are comparing 64 bit integers with 32 bit
+> ones. Depending on the values of the variables, this may
+> underflow.
 > 
-> Should I drop the example block in this binding completely and move it
-> to its parent's binding (the syscon) or just drop the parent here?
+> Fix it ensuring that both sides of the expression are u64.
 > 
+> Fixes: 852b50aeed15 ("media: On Semi AR0521 sensor driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  drivers/media/i2c/ar0521.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ar0521.c b/drivers/media/i2c/ar0521.c
+> index fc27238dd4d3..24873149096c 100644
+> --- a/drivers/media/i2c/ar0521.c
+> +++ b/drivers/media/i2c/ar0521.c
+> @@ -255,10 +255,10 @@ static u32 calc_pll(struct ar0521_dev *sensor, u32 freq, u16 *pre_ptr, u16 *mult
+>  			continue; /* Minimum value */
+>  		if (new_mult > 254)
+>  			break; /* Maximum, larger pre won't work either */
+> -		if (sensor->extclk_freq * (u64)new_mult < AR0521_PLL_MIN *
+> +		if (sensor->extclk_freq * (u64)new_mult < (u64)AR0521_PLL_MIN *
+>  		    new_pre)
+>  			continue;
+> -		if (sensor->extclk_freq * (u64)new_mult > AR0521_PLL_MAX *
+> +		if (sensor->extclk_freq * (u64)new_mult > (u64)AR0521_PLL_MAX *
+>  		    new_pre)
+>  			break; /* Larger pre won't work either */
+>  		new_pll = div64_round_up(sensor->extclk_freq * (u64)new_mult,
 
-Please drop entire example from this binding and implement one, full
-example in the parent binding file (so in the syscon).
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Best regards,
-Krzysztof
-
+-- 
+Sakari Ailus
 
