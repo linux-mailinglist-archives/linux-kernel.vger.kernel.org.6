@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-367623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A479A0495
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:47:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CA89A0497
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8001F264A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:47:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DB11C21BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B358204F77;
-	Wed, 16 Oct 2024 08:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326FE20371A;
+	Wed, 16 Oct 2024 08:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qeF+fzjX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="svm83vBC"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90698204956;
-	Wed, 16 Oct 2024 08:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E011865E2;
+	Wed, 16 Oct 2024 08:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729068424; cv=none; b=j+Dj8AwdoBgUKCockP62/keKh+p08Uqcgb9OoS1yzoLUTsL63fE34lwoDK/HCzchmjzj7pi+q6eKqt5KEALzIdMUyHdI1xEiO7kvEF42rLbKl+ogxgC3XLPiJOPJcYPgQZcAvoidvrB9dQ7ClYv4IWLzqtGhFTMjkxlPHAAPqlw=
+	t=1729068462; cv=none; b=krWmGOyOIitk4JLRLAQFy8kJzDqX+plepenBiMhCXmV5Cs8mThSfuOwZjAJ14mSPHNtVPEvAT6r7+I3o/HVsdOmactvrNoLXv2HWElFn74fsZQyv5s+DHCS94//6Y2ucBTt2R8Q4FOEgB10wz8JADWUoVPkr87nhqkZxJGPolh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729068424; c=relaxed/simple;
-	bh=wWtowav7TJAkiJ8EeqkOQSPalsHYuxiQpdSu485gz6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nk9nGlE/wolot/WHIUhCs8HQYKq+Hdea+TfTEf0qYzxpGML10h1yWEfb7PA4GJYwx1PkIT5hoEROSQ4eV9O612iAOhQKrAgJxqMJiuvppmEEwRKOe16nPvOBVfX59bI8kHRg74iUCBHkRaaqHyTju3W+tjBcoBtONR9br68qo4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qeF+fzjX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9251DC4CEC5;
-	Wed, 16 Oct 2024 08:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729068424;
-	bh=wWtowav7TJAkiJ8EeqkOQSPalsHYuxiQpdSu485gz6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qeF+fzjXRN0JEWmn2yrQmDSjc79FOmXOReTtT9ZRF+U03/KfaThTn1bJeEZuS/5w3
-	 6tfLPOhqFThgjgM1TnBPh4gAJ9idGcEXqaKWLLHHlh7VTSa+UynYqzrXxOBNOadSa6
-	 964qbYfaFbcG/S1s2M+9KUxSKAZbY5k5pUPNAo04=
-Date: Wed, 16 Oct 2024 10:47:00 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Avichal Rakesh <arakesh@google.com>,
-	Jayant Chowdhary <jchowdhary@google.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH v6 0/9] usb: gadget: uvc: effectively fill the udc isoc
- pipeline with available video buffers and fixes
-Message-ID: <2024101636-studied-job-41b2@gregkh>
-References: <20240403-uvc_request_length_by_interval-v6-0-08c05522e1f5@pengutronix.de>
+	s=arc-20240116; t=1729068462; c=relaxed/simple;
+	bh=82YI7Z52AFsteD5PsTQd98UUo48eHMHj25ilOXMJ9lI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=atPMb0addIMPRX7v44RABznmw5mFANEMyPRnA0mBKxt4Pu1Q6xoW3IIu+v+jO7AWkATj+eJCVg0Loonh2CWY2pq39Mwu9N5HDBbAx3d4fn0wRxMwAuAyVAVo1iXKQtPo00pfbdscdCmb1imZ4FLVqXbMdwG5UIV00Fs7dJmvI4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=svm83vBC; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729068456; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=vqPkEBMNc4XMmyNn8kfg23RI9ATLDy2sfoPdlwSx/js=;
+	b=svm83vBCjJ0D8PaC6yXtZYu4GqLYHYl5a1QeY55rlqfXHk+ArSkfyQYS45o1WNWbLqQ7EoOt+CTXGmFR5ujTGB8g8ZRC2XTbt5SbduubepHdbYCs5FiL5v6AeF4k6zq8SU63MKdwp64LLU2Gv7mXiXByts1RGx5oVouLQgw6m0E=
+Received: from 30.221.128.116(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WHGiB83_1729068455 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Oct 2024 16:47:36 +0800
+Message-ID: <bd4e9e18-caf8-45eb-9b53-8bc5fc24e925@linux.alibaba.com>
+Date: Wed, 16 Oct 2024 16:47:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403-uvc_request_length_by_interval-v6-0-08c05522e1f5@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 net-next 2/3] net/udp: Add 4-tuple hash list basis
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, dsahern@kernel.org,
+ antony.antony@secunet.com, steffen.klassert@secunet.com,
+ linux-kernel@vger.kernel.org, dust.li@linux.alibaba.com,
+ jakub@cloudflare.com, fred.cc@alibaba-inc.com,
+ yubing.qiuyubing@alibaba-inc.com
+References: <20241012012918.70888-1-lulie@linux.alibaba.com>
+ <20241012012918.70888-3-lulie@linux.alibaba.com>
+ <9d611cbc-3728-463d-ba8a-5732e28b8cf4@redhat.com>
+ <2888bb8f-1ee4-4342-968f-82573d583709@linux.alibaba.com>
+ <7dde23ec-e813-4495-a0ca-6ed0f1276aa6@redhat.com>
+From: Philo Lu <lulie@linux.alibaba.com>
+In-Reply-To: <7dde23ec-e813-4495-a0ca-6ed0f1276aa6@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 29, 2024 at 08:59:20PM +0200, Michael Grzeschik wrote:
-> This patch series is improving the size calculation and allocation of
-> the uvc requests. Using the selected frame duration of the stream it is
-> possible to calculate the number of requests based on the interval
-> length.
+
+
+On 2024/10/16 15:45, Paolo Abeni wrote:
+> On 10/16/24 08:30, Philo Lu wrote:
+>> On 2024/10/14 18:07, Paolo Abeni wrote:
+>>> It would be great if you could please share some benchmark showing the
+>>> raw max receive PPS performances for unconnected sockets, with and
+>>> without this series applied, to ensure this does not cause any real
+>>> regression for such workloads.
+>>>
+>>
+>> Tested using sockperf tp with default msgsize (14B), 3 times for w/ and
+>> w/o the patch set, and results show no obvious difference:
+>>
+>> [msg/sec]  test1    test2    test3    mean
+>> w/o patch  514,664  519,040  527,115  520.3k
+>> w/  patch  516,863  526,337  527,195  523.5k (+0.6%)
+>>
+>> Thank you for review, Paolo.
 > 
-> It also precalculates the request length based on the actual per frame
-> size for compressed formats.
+> Are the value in packet per seconds, or bytes per seconds? Are you doing 
+> a loopback test or over the wire? The most important question is: is the 
+> receiver side keeping (at least) 1 CPU fully busy? Otherwise the test is 
+> not very relevant.
 > 
-> For this calculations to work it was needed to rework the request
-> queueing by moving the encoding to one extra thread (in this case we
-> chose the qbuf) context.
+
+It's in packet per seconds (msg/sec). I make the cpu fully busy by 
+binding the nic irq the same cpu with the server socket. The consumption 
+is like:
+
+%Cpu0:
+3.0 us,  35.0 sy,  0.0 ni,  0.0 id,  0.0 wa,  7.0 hi,  55.0 si,  0.0 st
+
+> It looks like you have some setup issue, or you are using a relatively 
+> low end H/W: the expected packet rate for reasonable server H/W is well 
+> above 1M (possibly much more than that, but I can't put my hands on 
+> recent H/W, so I can't provide a more accurate figure).
 > 
-> Next it was needed to move the actual request enqueueing to one extra
-> thread which is kept busy to fill the isoc queue in the udc.
+> A single socket, user-space, UDP sender is usually unable to reach such 
+> tput without USO, and even with USO you likely need to do an over-the- 
+> wire test to really be able to keep the receiver fully busy. AFAICS 
+> sockperf does not support USO for the sender.
 > 
-> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> ---
-> Changes in v6:
-> - fixes in: ("usb: gadget: uvc: add trace of enqueued and completed requests")
-> - Link to v5: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v5-0-2de78794365c@pengutronix.de
+> You could use the udpgso_bench_tx/udpgso_bench_rx pair from the net 
+> selftests directory instead.
+> 
 
-Breaks the build for me:
+Thank you for your suggestion. I'll try it to see if I can get higher pps.
+-- 
+Philo
 
-In file included from drivers/usb/gadget/function/uvc_trace.h:60,
-                 from drivers/usb/gadget/function/uvc_trace.c:11:
-./include/trace/define_trace.h:95:42: fatal error: ./uvc_trace.h: No such file or directory
-   95 | #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
-      |                                          ^
-
-what did you build this against?
-
-thanks,
-
-greg k-h
 
