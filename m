@@ -1,200 +1,93 @@
-Return-Path: <linux-kernel+bounces-367923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB179A087F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509EC9A088F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 048731C2292F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94D51F2465D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75659207A1F;
-	Wed, 16 Oct 2024 11:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="afIj5sK6"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443B92076C0;
+	Wed, 16 Oct 2024 11:37:15 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239AB1C07EA;
-	Wed, 16 Oct 2024 11:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83C92076CB;
+	Wed, 16 Oct 2024 11:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729078630; cv=none; b=W4sevt4EBcxTh185UM2eo7P6iJd4b22ZUUNTYsV7tD60nPs7HCrwsFuVtbDhl6YlLGfUg4O8SX0ErLCmPsjXv2+qHU/REfElJxWkTt2/Qnvz0i0bghbkYkpdUZ2NPVV6Kwa/1f+wS7uMl6INDQph2w/kEgQJEI7KS1/i19g9/GE=
+	t=1729078633; cv=none; b=XoQnZJYFVaIxSzGJfyeflYGSSAKWfA0MtjogE0EynmEV5IiFFLAniHdPT3uXS//RJ0iifGfjlbFjmQUM7PIURpAqVKq9jYnhEBWpAG1rjmbzpB7an7tphQuT9npb7h/cdbzEAvmlzIrNqJ7s9SvCbf2iDKLqNUC2Gzu3au43gjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729078630; c=relaxed/simple;
-	bh=W6ms6IB5xPz9+aEODY9WwV/YTEgoMBDqfCiU9w2ssEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lnjb1i1d7Z2qS5xdamdFRf/OkoEUvZYS7X3sO1h1oDXsrus64W0ghv1PnH/E24hOEeOO6UEb5tN8TvM0tCUCtlzVv8PmlFhPGGMlG89w8g60H1Vl2jonQH02Lzi0otlcYC/yw/a8ShMUQu5zmiiUwf/cPiZ9JWkWnjNpuysao+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=afIj5sK6 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 732c7bb1b8c2d880; Wed, 16 Oct 2024 13:36:59 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 467A1A93969;
-	Wed, 16 Oct 2024 13:36:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1729078619;
-	bh=W6ms6IB5xPz9+aEODY9WwV/YTEgoMBDqfCiU9w2ssEY=;
-	h=From:Subject:Date;
-	b=afIj5sK6ov7QxGjuty+dkRxWMF9HpgunHEgRu/Y5LODsVD/ANQH+Q0SgwPWzCIynA
-	 DQ5S5TyAlrn09nkDlS2c8yOUQNKUuLcV2NkVKPaQgxlf3PWHGwFOXuk8xtXcdQVWnK
-	 cY1/zAs4cUjwWuWfLozn5ilFQkLuqOGdtHpS3+CWxT91OvJhQjbDHrKH79RlwVHd3a
-	 waMTkv4g1aPKv1A88Asp1Bdmb8uCpx4LhqboM+aIQQdSOtmSvi2DZGSC+68VFQQVVa
-	 vgGlYeni9hDzqcaoeV/dKMZUruRsYDRGrO8GYiXz/G+qACmLxJm08GbeiSvcsvyqQS
-	 3C2gBbQre3oow==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v1 10/10] thermal: core: Relocate thermal zone initialization routine
-Date: Wed, 16 Oct 2024 13:36:03 +0200
-Message-ID: <1906685.CQOukoFCf9@rjwysocki.net>
-In-Reply-To: <4958885.31r3eYUQgx@rjwysocki.net>
-References: <4958885.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1729078633; c=relaxed/simple;
+	bh=XmT6/qpQYuafRC7vpReyn5bI9r22CRroPgAxEDA1uww=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tlu7JxxF3Ib9IPeUVjd4llQfah6h2XnNneYUW5GglZqzlKYyjIcU6xfnDLSZWBW6fqz8ezsnfFuzS+4J9rqsafBXNQIVtL2vTkDsApvxSbaQHdTkp0C88za+QFm0LzGSLytkYU25c5l5GhKR1oTvHPYNvuoaqZUVedb9ckPGFrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XT8893jccz1xx82;
+	Wed, 16 Oct 2024 19:37:13 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9D3EA180042;
+	Wed, 16 Oct 2024 19:37:07 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 16 Oct 2024 19:37:06 +0800
+Message-ID: <67bf12d3-db22-4344-aaa3-9e40c7a0ea52@huawei.com>
+Date: Wed, 16 Oct 2024 19:37:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Move thermal_zone_device_init() along with thermal_zone_device_check()
-closer to the callers of the former, where they fit better together.
-
-No functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |   82 ++++++++++++++++++++---------------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -429,14 +429,6 @@ static void move_trip_to_sorted_list(str
- 	list_add(&td->list_node, list);
- }
- 
--static void thermal_zone_device_check(struct work_struct *work)
--{
--	struct thermal_zone_device *tz = container_of(work, struct
--						      thermal_zone_device,
--						      poll_queue.work);
--	thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
--}
--
- static void move_to_trips_high(struct thermal_zone_device *tz,
- 			       struct thermal_trip_desc *td)
- {
-@@ -458,39 +450,6 @@ static void move_to_trips_invalid(struct
- 	list_move(&td->list_node, &tz->trips_invalid);
- }
- 
--static void thermal_zone_device_init(struct thermal_zone_device *tz)
--{
--	struct thermal_trip_desc *td, *next;
--
--	INIT_DELAYED_WORK(&tz->poll_queue, thermal_zone_device_check);
--
--	tz->temperature = THERMAL_TEMP_INIT;
--	tz->passive = 0;
--	tz->prev_low_trip = -INT_MAX;
--	tz->prev_high_trip = INT_MAX;
--	for_each_trip_desc(tz, td) {
--		struct thermal_instance *instance;
--
--		list_for_each_entry(instance, &td->thermal_instances, trip_node)
--			instance->initialized = false;
--	}
--	/*
--	 * At this point, all valid trips need to be moved to trips_high so that
--	 * mitigation can be started if the zone temperature is above them.
--	 */
--	list_for_each_entry_safe(td, next, &tz->trips_invalid, list_node) {
--		if (td->trip.temperature != THERMAL_TEMP_INVALID)
--			move_to_trips_high(tz, td);
--	}
--	/* The trips_reached list may not be empty during system resume. */
--	list_for_each_entry_safe(td, next, &tz->trips_reached, list_node) {
--		if (td->trip.temperature == THERMAL_TEMP_INVALID)
--			move_to_trips_invalid(tz, td);
--		else
--			move_to_trips_high(tz, td);
--	}
--}
--
- static void thermal_governor_trip_crossed(struct thermal_governor *governor,
- 					  struct thermal_zone_device *tz,
- 					  const struct thermal_trip *trip,
-@@ -1425,6 +1384,47 @@ int thermal_zone_get_crit_temp(struct th
- }
- EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
- 
-+static void thermal_zone_device_check(struct work_struct *work)
-+{
-+	struct thermal_zone_device *tz = container_of(work, struct
-+						      thermal_zone_device,
-+						      poll_queue.work);
-+	thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-+}
-+
-+static void thermal_zone_device_init(struct thermal_zone_device *tz)
-+{
-+	struct thermal_trip_desc *td, *next;
-+
-+	INIT_DELAYED_WORK(&tz->poll_queue, thermal_zone_device_check);
-+
-+	tz->temperature = THERMAL_TEMP_INIT;
-+	tz->passive = 0;
-+	tz->prev_low_trip = -INT_MAX;
-+	tz->prev_high_trip = INT_MAX;
-+	for_each_trip_desc(tz, td) {
-+		struct thermal_instance *instance;
-+
-+		list_for_each_entry(instance, &td->thermal_instances, trip_node)
-+			instance->initialized = false;
-+	}
-+	/*
-+	 * At this point, all valid trips need to be moved to trips_high so that
-+	 * mitigation can be started if the zone temperature is above them.
-+	 */
-+	list_for_each_entry_safe(td, next, &tz->trips_invalid, list_node) {
-+		if (td->trip.temperature != THERMAL_TEMP_INVALID)
-+			move_to_trips_high(tz, td);
-+	}
-+	/* The trips_reached list may not be empty during system resume. */
-+	list_for_each_entry_safe(td, next, &tz->trips_reached, list_node) {
-+		if (td->trip.temperature == THERMAL_TEMP_INVALID)
-+			move_to_trips_invalid(tz, td);
-+		else
-+			move_to_trips_high(tz, td);
-+	}
-+}
-+
- static int thermal_zone_init_governor(struct thermal_zone_device *tz)
- {
- 	struct thermal_governor *governor;
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <shenjian15@huawei.com>, <salil.mehta@huawei.com>,
+	<liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>, <lanhao@huawei.com>,
+	<chenhao418@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 1/9] net: hns3: default enable tx bounce buffer when
+ smmu enabled
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20241011094521.3008298-1-shaojijie@huawei.com>
+ <20241011094521.3008298-2-shaojijie@huawei.com>
+ <20241015181657.14fe9227@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20241015181657.14fe9227@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
 
+on 2024/10/16 9:16, Jakub Kicinski wrote:
+> On Fri, 11 Oct 2024 17:45:13 +0800 Jijie Shao wrote:
+>> From: Peiyang Wang <wangpeiyang1@huawei.com>
+>>
+>> When TX bounce buffer is enabled, dma map is used only when the buffer
+>> initialized. When spending packages, the driver only do dma sync. To
+> packages -> packets
+>
+>> avoid SMMU prefetch, default enable tx bounce buffer if smmu enabled.
+> you seem to force it to be enabled, rather than just changing
+> the default. That is strange. Why not let the user lower the value?
+>
+> Also I don't see why this is a fix. Seems like a performance
+> improvement.
+
+The SMMU engine on HIP09 chip has a hardware issue. SMMU pagetable 
+prefetch features may prefetch and use a invalid PTE even the PTE is 
+valid at that time. This will cause the device trigger fake pagefaults. 
+The solution is to avoid prefetching by adding a SYNC command when smmu 
+mapping a iova. But the performance of nic has a sharp drop. Then we do 
+this workaround, always enable tx bounce buffer, avoid mapping/unmapping 
+on TX path. This issue only affects HNS3, so we always enable tx bounce 
+buffer to improve performance. Thanks， Jijie Shao
 
 
