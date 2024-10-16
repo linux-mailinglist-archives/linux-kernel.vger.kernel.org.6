@@ -1,48 +1,60 @@
-Return-Path: <linux-kernel+bounces-368014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1649A09D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:30:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C959A09D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C2D1F260B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E6921C23917
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD21208D74;
-	Wed, 16 Oct 2024 12:29:58 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6B9208D7B;
+	Wed, 16 Oct 2024 12:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NB23OE8e"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A16207A2E;
-	Wed, 16 Oct 2024 12:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249C0208967;
+	Wed, 16 Oct 2024 12:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729081797; cv=none; b=d4787aJcz+vav2qVo+DUAsVU5czd9wmUioP2H2Uf+1NRfx//vrToe3u3uMx3TKD1wtkUO19Km6rFQRer7kkfxz9Q5k4wmf3TiKZ3IBin0l2mJIY9Lc9+nQG9AVTCtLA+Er0z8I5sfeT9GuBWcDVNlTgp13Qct2rLQoufICBk3Rs=
+	t=1729081814; cv=none; b=MnRf7OXQRQYeAbgSlAGQ/rn8h3VhLgLXRwgFkw/NesuoqKAOKpBts1oDHftWfkuSIJ57rlIeeNNBJ7ZqGmqCnCNGBRnmgyvyJU7m6k83aiqaeFgLMMJy/zaWw1LRir2U57n9R8/gdPi0wqQx+TnW/bK8uE1CCFDYS8pf3397Ubo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729081797; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	s=arc-20240116; t=1729081814; c=relaxed/simple;
+	bh=yfronMD/0sqfo2W00JFpXL5mPjECoj5aRC+oS3N63mM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaUx3JtDEK9Dz8BQkWPfYJm8XFP2arRGKKLI43jh5LAzZFbdwgAN5+io7Nt4ERJlmozjZGjS63b42UI6B5qPCiFQlh9Lu3xd5LFNB6AimRzjTDA/h3wYhoRlHysj2xmceP6NZpkbWZAlxqPuXLY8vAG82yoyD/XaFdZYhlqW1QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 60558227AAF; Wed, 16 Oct 2024 14:29:52 +0200 (CEST)
-Date: Wed, 16 Oct 2024 14:29:52 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com,
-	hch@lst.de, cem@kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, hare@suse.de,
-	martin.petersen@oracle.com, catherine.hoang@oracle.com,
-	mcgrof@kernel.org, ritesh.list@gmail.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH v9 7/8] xfs: Validate atomic writes
-Message-ID: <20241016122951.GB18025@lst.de>
-References: <20241016100325.3534494-1-john.g.garry@oracle.com> <20241016100325.3534494-8-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ktYIojXQ2V38mbMadBKei/gthZeC0Iq0aPPftdTscwyPj1bLHnd//L37zxVCHiAcrUp9pyZgZ3I1b8Lbx4kAhmfd7wT9fW40MQCBrI/q+15TGr7BBZSHX6GYqI9kckSS1sJtRBott7zN6Zvx+86up0YKGADeeHPM0YeNoCND0hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NB23OE8e; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=VNZ0CnDCnif96FdXN4ThyG+lS+ftdhJNbhPPcNy6QXc=; b=NB23OE8ecI35qBQzMsiWAwzS8I
+	Q3DXbhMQ5cZqFFB+tHlV66LdfpBpb5kPNH0C6Z1lW1FWd7OieuaHYyVT+uD3/hao45L2HdnzaIXVW
+	zYpX0A0lKs9Cs1ATafGTIPVOBHmWVeBI/QNvNDQwUNPAOc/0TKyMSgMw6Gu6jM6lEi5c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t13AA-00A9Nv-4e; Wed, 16 Oct 2024 14:30:02 +0200
+Date: Wed, 16 Oct 2024 14:30:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern <dsahern@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH 4/5][next] uapi: net: arp: Avoid
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <ac2ea738-09fb-4d03-b91c-d54bcfb893c6@lunn.ch>
+References: <cover.1729037131.git.gustavoars@kernel.org>
+ <f04e61e1c69991559f5589080462320bf772499d.1729037131.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,10 +63,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016100325.3534494-8-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <f04e61e1c69991559f5589080462320bf772499d.1729037131.git.gustavoars@kernel.org>
 
-Looks good:
+On Tue, Oct 15, 2024 at 06:32:43PM -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Address the following warnings by changing the type of the middle struct
+> members in a couple of composite structs, which are currently causing
+> trouble, from `struct sockaddr` to `struct sockaddr_legacy`. Note that
+> the latter struct doesn't contain a flexible-array member.
+> 
+> include/uapi/linux/if_arp.h:118:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> include/uapi/linux/if_arp.h:119:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> include/uapi/linux/if_arp.h:121:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> include/uapi/linux/if_arp.h:126:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> include/uapi/linux/if_arp.h:127:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Also, update some related code, accordingly.
+> 
+> No binary differences are present after these changes.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+These are clearly UAPI files. It would be good to state in the commit
+message why this is a safe change, at the source level.
+
+Could user space code expect the type struct sockaddr and we are going
+to get warnings when struct sockaddr_legacy is found? Have you tried
+compiling an old arp binary, one that uses the IOCTL? The netfilter
+code also references it:
+
+http://charette.no-ip.com:81/programming/doxygen/netfilter/structarpreq.html
+
+You also need to submit a patch to the man page:
+
+https://man7.org/linux/man-pages/man7/arp.7.html
+
+You might also want to build some Rust code:
+
+https://docs.diesel.rs/master/libc/struct.arpreq.html
+
+I've no idea what Rust does when a C structure has a type change.
+
+	Andrew
 
