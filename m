@@ -1,125 +1,126 @@
-Return-Path: <linux-kernel+bounces-367566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DC99A03E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:15:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289EC9A03E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1960A282E36
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4472B27B30
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB88F1D221C;
-	Wed, 16 Oct 2024 08:14:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C8B1D1F63;
-	Wed, 16 Oct 2024 08:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A95F1D2B37;
+	Wed, 16 Oct 2024 08:15:02 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1867D1D14FC;
+	Wed, 16 Oct 2024 08:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066490; cv=none; b=BzMJZEri99Sv4Bk5fPEPiIR0cqAje6VSgY4vMo1Sggtmu5TjXjcrZoTuhoa2K6lmb/sUn20uAhVHaDP8n/GS+jQFXJg9ofjPrtWwbdIbG1aROwsIUn7tS/oyCofDkGDKByBRJ4STHQUKMUocXifIB/jpze1M7n6RUwF8K3JdRWw=
+	t=1729066501; cv=none; b=Cxc3ER65jxZD+u4mc3OkzZLVtAH7FM/xTfZgXuEShZ/g75HtFuGtn8YRM1mkn0SKH7wM0ZOKOGP5MUIk7baU7v3+EKMFL6CDq2+1fXdFCErW6ZMtE1IH4yX0WIrpdhoCkvhRywklTcOhk3tLYQfeH3kieK7KKwc7Tf0pxLJe8p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066490; c=relaxed/simple;
-	bh=wxQg2GJ5ktlDu9srXxIIKK0Wg/EJpooJh/rWWUWYADg=;
+	s=arc-20240116; t=1729066501; c=relaxed/simple;
+	bh=AeeIRsmAculXd0dhod8ePmCmOOk0j8YnvSaah4Mgsxw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CqHFC+jaso7g+/wvVBCycH4OQ979BOAr+Dm/d/WKixA+iobpII6rBb76n86Rp2DVW4CQl9DHFA28EZn8lk4UabIM3DnqgUIgP9g0OzKttnbiDOTPG5Zy69qREXlT1UYbMac5Ppwa8oxvE6jTE8namYIpBmGJBCWKxQg37sGcFzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D218FEC;
-	Wed, 16 Oct 2024 01:15:16 -0700 (PDT)
-Received: from [10.57.86.207] (unknown [10.57.86.207])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 399FC3F71E;
-	Wed, 16 Oct 2024 01:14:43 -0700 (PDT)
-Message-ID: <daecf1d1-04c7-4513-86db-397c2ef6f768@arm.com>
-Date: Wed, 16 Oct 2024 09:14:41 +0100
+	 In-Reply-To:Content-Type; b=la5y4mA+uA8zBdFeQ3Y9cUdgm03cCeDiQycFJ4/dmepRXHAH5qa5b3NMtXIGLJaIXL3EAcfxJV1sO78UZlwkEYdwdJtwz6vO7fZUC0UEKagTT7EYzAM78tK86KVSm2d/l6tr4UMlVNsREck8Pyh9EdyZIoAoIbELwVr7DRiRNtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: by air.basealt.ru (Postfix, from userid 490)
+	id 4B93B2F2024D; Wed, 16 Oct 2024 08:14:57 +0000 (UTC)
+X-Spam-Level: 
+Received: from [192.168.0.103] (unknown [178.76.204.78])
+	by air.basealt.ru (Postfix) with ESMTPSA id 69E862F20257;
+	Wed, 16 Oct 2024 08:14:56 +0000 (UTC)
+Message-ID: <f3836285-befc-92af-38ef-e58a84f920fd@basealt.ru>
+Date: Wed, 16 Oct 2024 11:14:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 57/57] arm64: Enable boot-time page size selection
-Content-Language: en-GB
-To: Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Oliver Upton <oliver.upton@linux.dev>,
- Will Deacon <will@kernel.org>, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-57-ryan.roberts@arm.com>
- <CD2DC486-F4B1-4043-82BC-0CB2AA513A99@nvidia.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CD2DC486-F4B1-4043-82BC-0CB2AA513A99@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2] ALSA: hda/conexant - Fix audio routing for HP EliteOne
+ 1000 G2
+Content-Language: en-US
+To: Takashi Iwai <tiwai@suse.de>, Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bo liu <bo.liu@senarytech.com>
+References: <20241009134248.662175-1-kovalev@altlinux.org>
+ <87h69ltmgn.wl-tiwai@suse.de>
+ <b0ac19a5-1d93-41a5-beaa-279939e8ebde@nvidia.com>
+ <87y12wsfin.wl-tiwai@suse.de>
+ <6ef8fef9-c44d-40d6-f7e1-236e68175071@basealt.ru>
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+In-Reply-To: <6ef8fef9-c44d-40d6-f7e1-236e68175071@basealt.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 15/10/2024 18:42, Zi Yan wrote:
-> On 14 Oct 2024, at 6:59, Ryan Roberts wrote:
+
+10.10.2024 11:36, Vasiliy Kovalev пишет:
 > 
->> Introduce a new Kconfig, ARM64_BOOT_TIME_PAGE_SIZE, which can be
->> selected instead of a page size. When selected, the resulting kernel's
->> page size can be configured at boot via the command line.
+> 10.10.2024 08:17, Takashi Iwai wrote:
+>> On Thu, 10 Oct 2024 05:32:18 +0200,
+>> Kai-Heng Feng wrote:
+>>>
+>>>
+>>> On 2024/10/9 9:50 PM, Takashi Iwai wrote:
+>>>> On Wed, 09 Oct 2024 15:42:48 +0200,
+>>>> Vasiliy Kovalev wrote:
+>>>>>
+>>>>> There is a problem with simultaneous audio output to headphones and
+>>>>> speakers, and when headphones are turned off, the speakers also turn
+>>>>> off and do not turn them on.
+>>>>>
+>>>>> However, it was found that if you boot linux immediately after 
+>>>>> windows,
+>>>>> there are no such problems. When comparing alsa-info, the only 
+>>>>> difference
+>>>>> is the different configuration of Node 0x1d:
+>>>>>
+>>>>> working conf. (windows): Pin-ctls: 0x80: HP
+>>>>> not working     (linux): Pin-ctls: 0xc0: OUT HP
+>>>>>
+>>>>> This patch disable the AC_PINCTL_OUT_EN bit of Node 0x1d and fixes the
+>>>>> described problem.
+>>>
+>>> Though this is already applied, is it possible to see if the issue
+>>> also happens on S4?
+>>>
+>>> Linux doesn't put PCI devices like HDA to D3 during shutdown and
+>>> reboot while Windows does, that might be the reason boot Linux after
+>>> Windows can workaround the issue.
+>>>
+>>> Linux does put PCI devices to D3 for hibernate (S4), so we can use it
+>>> as an experiment.
 >>
->> For now, boot-time page size kernels are limited to 48-bit VA, since
->> more work is required to support LPA2. Additionally MMAP_RND_BITS and
->> SECTION_SIZE_BITS are configured for the worst case (64K pages). Future
->> work could be implemented to be able to configure these at boot time for
->> optimial page size-specific values.
+>> Right, it should have been the cached version so that the setup is
+>> reapplied automatically; i.e. replace snd_hda_set_pin_ctl() with
+>> snd_hda_set_pin_ctl_cached().
 >>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
+>> Vasiliy, care to test and submit an incremental fix?
 > 
-> <snip>
-> 
+> Ok, I compiled the module with the proposed changes and sent it to the 
+> user for testing on a machine with this codec. After testing, I will 
+> write about the result.
+
+Using the snd_hda_set_pin_ctl_cache() function instead of 
+snd_hda_set_pin_ctl() leads to the same positive result, there are no 
+problems with sound.  The patch has been sent [1]
+
+[1] https://lore.kernel.org/all/20241016080713.46801-1-kovalev@altlinux.org/
+
 >>
->> @@ -1588,9 +1601,10 @@ config XEN
->>  # 4K  |       27          |      12      |       15             |         10              |
->>  # 16K |       27          |      14      |       13             |         11              |
->>  # 64K |       29          |      16      |       13             |         13              |
->> +# BOOT|       29          |    16 (max)  |       13             |         13              |
->>  config ARCH_FORCE_MAX_ORDER
->>  	int
->> -	default "13" if ARM64_64K_PAGES
->> +	default "13" if ARM64_64K_PAGES || ARM64_BOOT_TIME_PAGE_SIZE
->>  	default "11" if ARM64_16K_PAGES
->>  	default "10"
->>  	help
-> 
-> So boot-time page size kernel always has the highest MAX_PAGE_ORDER, which
-> means the section size increases for 4KB and 16KB page sizes. Any downside
-> for this?
+>> thanks,
+>>
+>> Takashi
 
-I guess there is some cost to the buddy when MAX_PAGE_ORDER is larger than it
-needs to be - I expect you can explain those details much better than I can. I'm
-just setting it to the worst case for now as it was the easiest solution for the
-initial series.
-
-> 
-> Is there any plan (not in this patchset) to support boot-time MAX_PAGE_ORDER
-> to keep section size the same?
-
-Yes absolutely. I should have documented MAX_PAGE_ORDER in the commit log along
-with the comments for MMAP_RND_BITS and SECTION_SIZE_BITS - that was an
-oversight and I'll fix it in the next version. I plan to look at making all 3
-values boot-time configurable in future (although I have no idea at this point
-how involved that will be).
-
+--
 Thanks,
-Ryan
-
-> 
-> Best Regards,
-> Yan, Zi
-
+Vasiliy Kovalev
 
