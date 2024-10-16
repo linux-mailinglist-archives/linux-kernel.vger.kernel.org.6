@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-368796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F8E9A150E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:42:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876D19A150C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7041F23B2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:42:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28798B24964
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AB51D415B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC59F1D4153;
 	Wed, 16 Oct 2024 21:41:59 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD971D2B2F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD501D2B1A;
 	Wed, 16 Oct 2024 21:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114919; cv=none; b=TcD3Pe+Mmx404JpX6gL8848w6M95GA3mlk0GeGmML9r8SE1tDzgg36QGT0F0ovSQw4sxHvXeWdpuRH/Q/UAmHqDhWOZisGL8FpEtLOa7GumLYWoF4RzEP9+UUvRnKsSrwiIPNeEyTb11n7rlRyJoFenJaGeFnWnhElaGq033Mx0=
+	t=1729114919; cv=none; b=lRDym14lJmDxHL3MBIJHS6FvtgJzAjjDEAebQCe883YodRwq798nLsjKlwAhRMaAvn5IJiCEuDHdSXwZA2ozF9xshe/HEimq92h+96z8MAINw4TlvwS2eZj90ImB4j3PpuBIi2s7jxq7VolMfoVJsHfMB9bEANrJXm/+bT2rwv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729114919; c=relaxed/simple;
-	bh=S3EfK2JVGZ3joMiaZUylXW+vGex1gp8GJngUZrzgF2k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YVd+npUtg7Yh5JTpEd+B+jCiRkk3DSuH0ygYZ8bqHsyGVlM/YI4Xtk7b4uJ6myuFv4AfF+l8xurRJXkR2ZgsOPn/QXGELHi+wiGMCgj3tOVdjNFjHSy9f7sYJ8hHlZdvn7hXBvQnH2VK4mr+hiju3dHlvwfc5xsJBaYYNTCU5b8=
+	bh=/6y5g0m6O0+fk05eterbm4ntycsxyuN+VaQnCIO+K/0=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=K7mEEj2SLk3xhjQFJuTZAO2zMZgWl2KCJlBaAknF2U8agY2nwYQOxrJkhVJ+AAkJPkEKFYpBYjlGYNXMecyMwnpk8taF4zByvoGi0c554zd7N3oL8gcHYVBj5CdmxNXGWMshVtBMbFhvSgI4xGPal1ghK5b5KDpgEWjYjgF04mU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4ACC4CECD;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C640EC4CEC5;
 	Wed, 16 Oct 2024 21:41:58 +0000 (UTC)
 Received: by mercury (Postfix, from userid 1000)
-	id 46BE01060453; Wed, 16 Oct 2024 23:41:56 +0200 (CEST)
+	id 41C91106044F; Wed, 16 Oct 2024 23:41:56 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, lee@kernel.org, sre@kernel.org, 
- tsbogend@alpha.franken.de, markus.stockhausen@gmx.de, 
- Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-mips@vger.kernel.org
-In-Reply-To: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
-References: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
-Subject: Re: (subset) [PATCH v6 0/6] RTL9300 support for reboot and i2c
-Message-Id: <172911491628.630785.7202407720248115906.b4-ty@collabora.com>
+To: khilman@baylibre.com, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, 
+ Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+ Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, tony@atomide.com, 
+ linux-omap@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+In-Reply-To: <20241016080314.222674-1-andreas@kemnade.info>
+References: <20241016080314.222674-1-andreas@kemnade.info>
+Subject: Re: (subset) [PATCH v5 0/3] power: supply: twl6030/32 charger
+Message-Id: <172911491622.630785.377200401875530760.b4-ty@collabora.com>
 Date: Wed, 16 Oct 2024 23:41:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,24 +53,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 16 Oct 2024 11:59:42 +1300, Chris Packham wrote:
-> As requested I've combined my two series into a single one to provide some
-> better context for reviewers. I'm not sure which trees the patches should go in
-> via. The first two are reasonably independent and could go in via linux-pm. I
-> guess technically the last one could go via linux-i2c but it needs the and the
-> bindings/dts updates which would probably make sense to come via linux-mips.
+On Wed, 16 Oct 2024 10:03:11 +0200, Andreas Kemnade wrote:
+> Add basic support for the charger in the TWL6030/32. Supported is the USB
+> path. AC path is not handled yet, also there is no entry yet
+> in /sys/class/power_supply with type battery yet.
 > 
-> --
-> 2.46.1
+> Without this series, devices will happily drain battery when running
+> on mainline.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] dt-bindings: reset: syscon-reboot: Add reg property
-      commit: e7af7d13316dc5e2293c4f777f71bd8331f5d7a5
-[2/6] power: reset: syscon-reboot: Accept reg property
-      commit: ce38cdc908557953604ffb0a91ef5ae3fbdf1c6b
+[1/3] dt-bindings: power: supply: Add TI TWL603X charger
+      commit: 421aadd19a622852172ccc15ad4049201fd1f80b
+[2/3] power: supply: initial support for TWL6030/32
+      commit: b45cdceba64d79a2538aeb36926fd9a065f0f753
 
 Best regards,
 -- 
