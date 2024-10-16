@@ -1,93 +1,74 @@
-Return-Path: <linux-kernel+bounces-367540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FFD9A0396
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:05:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A299B9A039F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8ED5B27B7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EC6281D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2064B1D461B;
-	Wed, 16 Oct 2024 08:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6711D5ACF;
+	Wed, 16 Oct 2024 08:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="2yj2s5eS"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IjHv7E37"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB151D1F5A;
-	Wed, 16 Oct 2024 08:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AAB1D54CD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065807; cv=none; b=aYATSTSBtpYTqks2sjW5WBBa9FXjycGRdIZBKYatG5Bvi2aSWgNiOg4941+PAT397puC0fpWi1/tMNcmz+yWoRjcwpoTC15yxT5A6N60/9b6tAn+2BmLY6JG2kJpNpL/doSvQKzF6ZEvFqk/qclSak4EybVx5wXK554JMU654Qo=
+	t=1729065815; cv=none; b=j0inGpWlwqnWngEbjYgacrcHAibzpxefGN7vUNHWmv6i4aUTv3aLM5Gjza60gZF3dGHrxZwNDbJuQiRKhR/kj6lY9yJMY7HIKr8zdQoRAHrb/ZvOVBU05esJG6AwzXEhO77l/+NYussX8TnvAcSGRplhTNBgZ56Pc+eaAuZJGQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065807; c=relaxed/simple;
-	bh=avbkBuu+IeylLDazEvd0vZ3GdpIvrosWqQVh97Iqy/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g5adLHmBKSgTVdBPd1CtKsiPyc2ZgmSr1QnrgMYyHpCTxr+THU5wstN8u2Lc9sP8qgXDO+1RE80iwcVddiR+4rAWx8g0uMkSgqNvhV4PS+jg+bJLy/LlZgIUeVCmT5n5d/X8oJjeAxmpdklTYwWzt2LZkrPT1Q6hdrCr5EtddN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=2yj2s5eS; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1729065815; c=relaxed/simple;
+	bh=cCY7fIIdD9vzLcDjnHfpOMFMIQtReCFg/F86NN2j8Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmeV590xp204ca56Hfun4SKDZoauhkpgNKaK1KAtENNg3afqstiiXX+9hgsuCRJE985SaA+9VcFfxqNKCl66S54pinQFXr6EhAb5yySh6q3zADydjL0WGAHj4aMjrjQy6WOXOhy9A/ZU5f44OOj+HX3yX0xZh6jRQqjowOALhQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IjHv7E37; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=PbKIZr1whktnbITD00APK/aUO0+aJL4weKLvHytG4m4=; b=2yj2s5eSe5s1p/PZqGvHq1Rkk7
-	/Dy8fN3tJYAWv1zf6CnLyxnO4z2R1uAXVzHNYZx8dbjDb9sYmNhtX245YkF4rCH50T66zA184dHjV
-	td2uUAkxQOecXydEwAnY9DaaW/mVSllKU5THjfAUngiE8cyTa1gLDsWYe5GCBI9r0z9eMUwx5nH8p
-	Z2db0WKncI448S8gfRYioNAoQxU3Hrdhp+gB+da/WH6ZuFAUQi/wMOK4G9qzJzCtsf3sOkDjr4RtS
-	so4MjSBauFFdbGr/dxTNMb6cZok+AoGQ/rSuwDkBx8eFaS7HsML8Rt5rk9/uSnATSPRf5HHCxSmIQ
-	i4Sa3fNQ==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: khilman@baylibre.com,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Sebastian Reichel <sre@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	tony@atomide.com,
-	linux-omap@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v5 3/3] ARM: dts: ti/omap: use standard node name for twl4030 charger
-Date: Wed, 16 Oct 2024 10:03:14 +0200
-Message-Id: <20241016080314.222674-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241016080314.222674-1-andreas@kemnade.info>
-References: <20241016080314.222674-1-andreas@kemnade.info>
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cCY7fIIdD9vzLcDjnHfpOMFMIQtReCFg/F86NN2j8Pg=; b=IjHv7E37m/fgFFaRVelx/XvCgx
+	TqBYcC6nZKkJytqtM3wjX5j35H/1sU2/1o8Gha8Pn6MPyEDOCZsl4/vaO0/jcGCS8VrAeuXiCJgWM
+	oI9tV7bTH/Us0f7Hjqq7u8sTEdz4gEbr34C/tu5RflD9YlMeyXCOogKARGUTzkHWGShB0RgNZnLes
+	G2uTpffmr/S8bXiY6utyF5AdRJ/vwflxp9MIPXTJNIeYlDJlik5/k4hsUTpe4TYvdEuEScynz2LUb
+	+hCyZXMXQp4yn6H0Y2i1gyWGvMWIv//tHFciVLy+kYZHDUFGRcQxjzbARIwUHtMM4zJs1bB0bSL+k
+	ImvMvxsg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0z0H-0000000Aw9l-0FTJ;
+	Wed, 16 Oct 2024 08:03:33 +0000
+Date: Wed, 16 Oct 2024 01:03:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: lizhe.67@bytedance.com
+Cc: hch@infradead.org, akpm@linux-foundation.org, boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	longman@redhat.com, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org
+Subject: Re: [RFC 1/2] rwsem: introduce upgrade_read interface
+Message-ID: <Zw9zVQs4Jp_oUpjM@infradead.org>
+References: <Zw9s86K0Dv2FZvt2@infradead.org>
+ <20241016080057.43997-1-lizhe.67@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016080057.43997-1-lizhe.67@bytedance.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Use the established node name for the charger.
+On Wed, Oct 16, 2024 at 04:00:57PM +0800, lizhe.67@bytedance.com wrote:
+> OK I know what you mean. It is indeed OK to remove "extern", but all function
+> declarations in the rwsem.h have the "extern" prefix. I think it would be
+> better to keep it consistent.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/ti/omap/twl4030.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/ti/omap/twl4030.dtsi b/arch/arm/boot/dts/ti/omap/twl4030.dtsi
-index a5d9c5738317a..07b9ca942e78d 100644
---- a/arch/arm/boot/dts/ti/omap/twl4030.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/twl4030.dtsi
-@@ -16,7 +16,7 @@ rtc {
- 		interrupts = <11>;
- 	};
- 
--	charger: bci {
-+	charger: charger {
- 		compatible = "ti,twl4030-bci";
- 		interrupts = <9>, <2>;
- 		bci3v1-supply = <&vusb3v1>;
--- 
-2.39.2
-
+They are pointless and should never be added.
 
