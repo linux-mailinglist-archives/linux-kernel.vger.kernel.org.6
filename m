@@ -1,124 +1,169 @@
-Return-Path: <linux-kernel+bounces-367268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7879A0059
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:55:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E549A005C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CAF31F25EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:55:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E051C2280B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8549418A6CE;
-	Wed, 16 Oct 2024 04:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C82189906;
+	Wed, 16 Oct 2024 04:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spKCuFxq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HsCYLc8r"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2E721E3BA;
-	Wed, 16 Oct 2024 04:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D4A21E3BA
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729054500; cv=none; b=R/U1RA+RSOM/hjg+ugWdK8rCiZqACf3vhB8AqvLeBrPJkpdnh1NfHVa8BPDUYpoKzs0NJ+tPMKQ5TvZDVetkb/wIJDpqxp204Fjm6M9ccoUCo+lhiEIe5vZnfZvbSfRipQX8oc6KmlGA3N5hXkhTPg7PqOORkxvPbQLZJFUkxgI=
+	t=1729054565; cv=none; b=FZ0QESSSIXFXLKFvcLcYp0F58fnVBcTg2+Uvdms+cHnevySHaScgc8S1BfBoopvahiW1GNQMdR3i0GRxqUvV226+n71ExZdvXwUZ9YqLhzzisszLq/4KTkfyjMWpoS2RldP/nQvatBJ9YMHFeu+IzB5e4cvaAbVe+evqAuMOUho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729054500; c=relaxed/simple;
-	bh=ZAbZqueFOhysiBh+zQ8zwnfD/RNSp46lSmK1+1nFQxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2nKnZ0ZW7kgTf9iPjmYb02Zbg6gH8Scq0L1RUEhuMBUZaDMqX00HFpSUMzimhM1aI+CchiNT+YmHlJiZ8DJADbx/A8ukstmP+AlP7PwMys4gnG3QXGGszYhLHkz6pvWSOaluFQkKLPyK13rwDrC7yRj7eQsnNTRyXyBnUA4+PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spKCuFxq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F35C4CEC5;
-	Wed, 16 Oct 2024 04:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729054498;
-	bh=ZAbZqueFOhysiBh+zQ8zwnfD/RNSp46lSmK1+1nFQxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=spKCuFxqFYLLRQaxwItjw18wjF6ni0fsOJovIA8hgE4lrkgpkYgjzKY0wjP/EGaDI
-	 jijnGKTjmD+iHWPVwoq9gaoAPwZgjxXL68dYv5XWsGOOM+k8nbmNR2z/OBymU47+pV
-	 FoMpooWFZ8WadAoq4BHTPMz2KQvGET8A+3V0MPjN8cxeiLpfJUy62PGmBgo9WUyV9g
-	 Ykfp6rp2RraUcyHXpNN5P4rqEIRuAu6GKrVFfOZ0btOGa1h0PMW3/3bvb7AQX1xtm7
-	 N3gqVNPp/BcJnazGbHRJIsQMPSXfH8QL26VuvrnaX07u8fP/Hd7GgAMiczDfD1/AY0
-	 dTPItXhMLpQ6Q==
-Date: Wed, 16 Oct 2024 10:24:53 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com,
-	quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v1 1/5] dt-bindings: dmaengine: qcom: gpi: Add additional
- arg to dma-cell property
-Message-ID: <Zw9HHRyvfd66Qn4a@vaman>
-References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
- <20241015120750.21217-2-quic_jseerapu@quicinc.com>
+	s=arc-20240116; t=1729054565; c=relaxed/simple;
+	bh=AUMzU7Efyp1APsBKCm3NngSObkuSLuWxnc0K82Q09Rs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kobm31Dtp9k5a8d4lwn/3OeMFFrDGKb6PJ6jAeHSBtgnEDbiwABozDcecoe7JULomXc51F6x/SyRamKwkVyjXmpL7Dsz3+iYCcaXZ/DsYj2yT1mJ+ID920zSDh6XR+IYlJEvVMilsXvaMLkOCq1tMNIZuPeeqXiz6MEqpoa+vm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HsCYLc8r; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4a47cdaf158so1121210137.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729054562; x=1729659362; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XsSA0Jh+tBY3flF9iO9sgAWGwBYIu1+LghALUo3LUJ0=;
+        b=HsCYLc8rBzFvdNbhl+zhb4cHPHZyDeso9u/xHQp9YiduDYnlfoTfnKPUGFC0rw+0sH
+         1cdDXIgSoMsVkpg02zw1eZHAhKbgyKbRJWfYWAyNP5f2XXIfJcKjJR9BgmhrsursBBpt
+         NNq++Z8a9j34r6kGkBgT15eWorhreeO6laED0PGIMOlDyKYaP4xUh/GtrauB5nxngXRt
+         liAv7X/8AwKc/+XUVGIBpEOj4paQRSjtOeIAM1Toe01Ael8cvu+VRf2vIplkWHCYDfRL
+         wwnGEzJoIG4vPgnX0rxUdZRNXupSOytGs4m3/30JPAHx4sJHXokrSu1vEyj1+fFkDn3D
+         EwDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729054562; x=1729659362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XsSA0Jh+tBY3flF9iO9sgAWGwBYIu1+LghALUo3LUJ0=;
+        b=fIDPOw/je1d/FxQavP+WNVihn4hdKH0tfjGNJYN9Itho7eEvjaFYKde4/ds12FHfjK
+         AD+P3EoM9kFb3DzPXBbTLcCtfsW+ktm0fgCZ4XTp7bA0LZnu953zO5t8+hYNe1jdICrv
+         3aUu0TMx4twxZ5EVEqVTxjHs4Q/eetJQU86ej6Qug2D++4mNgJz2qVqHNMjWRHFNf/2C
+         1NtlfzoxdJKlQ6OJJIF9pnSrr7qLNF9FoOFQOOAuNItgUuGkv0pAMjr282EqEc0jYZHj
+         MVs9SqiK5Vp2V6HUp+dXYg6IQs6LeX682aWfIsoumOkCuME1d/fVyxUIlmKw4VduQgjF
+         YJWw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6kI53uIAeX4U5BL3KcQKvxkjZNKXxkwaMRA6hFXvsaJJq29k1uwne1LpeT/i1BuygMrjFWVBE4XF8uRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKHk2I6xd5gqxqInbMJmjlecrtsrhGEdNBWB7N+7xSyZgDEa+c
+	8PNY77s3KQPtzXIdVSOEUjlIIMGnVq7WtGysSDCz9sumBhtTQWuaMaqbIIRk1fsnPXNkJXwFvOe
+	wGsN+3QiNy+6QLM1obmbblOjCWAhv7+tiSdQ8
+X-Google-Smtp-Source: AGHT+IFyzal6eYYu43TFxwjEGK1mcMNHndK2EfcE3+NjBZLwlfi/97EorJRMMm806cCeydg53YO0Dfdpj2CY7d3y9zA=
+X-Received: by 2002:a05:6102:6c6:b0:492:a93d:7cab with SMTP id
+ ada2fe7eead31-4a475f12a2cmr10158787137.1.1729054562299; Tue, 15 Oct 2024
+ 21:56:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015120750.21217-2-quic_jseerapu@quicinc.com>
+References: <20241014221231.832959-1-weixugc@google.com>
+In-Reply-To: <20241014221231.832959-1-weixugc@google.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Tue, 15 Oct 2024 22:55:23 -0600
+Message-ID: <CAOUHufb2nJ4-qEWrS_d0X_8FbLKR-+=OC3yNh1ExthKXiYYKHQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm/mglru: reset page lru tier bits when activating
+To: Wei Xu <weixugc@google.com>
+Cc: Brian Geffon <bgeffon@google.com>, Jan Alexander Steffens <heftig@archlinux.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Suleiman Souhlal <suleiman@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15-10-24, 17:37, Jyothi Kumar Seerapu wrote:
-> When high performance with multiple i2c messages in a single transfer
-> is required, employ Block Event Interrupt (BEI) to trigger interrupts
-> after specific messages transfer and the last message transfer,
-> thereby reducing interrupts.
-> 
-> For each i2c message transfer, a series of Transfer Request Elements(TREs)
-> must be programmed, including config tre for frequency configuration,
-> go tre for holding i2c address and dma tre for holding dma buffer address,
-> length as per the hardware programming guide. For transfer using BEI,
-> multiple I2C messages may necessitate the preparation of config, go,
-> and tx DMA TREs. However, a channel TRE size of 64 is often insufficient,
-> potentially leading to failures due to inadequate memory space.
-> 
-> Add additional argument to dma-cell property for channel TRE size.
-> With this, adjust the channel TRE size via the device tree.
-> The default size is 64, but clients can modify this value based on
-> their specific requirements.
-> 
-> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+On Mon, Oct 14, 2024 at 4:12=E2=80=AFPM Wei Xu <weixugc@google.com> wrote:
+>
+> folio_activate() calls lru_gen_add_folio() to move the folio to the
+> youngest generation.  But unlike folio_update_gen()/folio_inc_gen(),
+> lru_gen_add_folio() doesn't reset the folio lru tier bits
+> (LRU_REFS_MASK | LRU_REFS_FLAGS).  Fix this inconsistency in
+> lru_gen_add_folio() when activating a folio.
+>
+> Fixes: 018ee47f1489 ("mm: multi-gen LRU: exploit locality in rmap")
+> Signed-off-by: Wei Xu <weixugc@google.com>
 > ---
->  Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
-> index 4df4e61895d2..002495921643 100644
-> --- a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
-> +++ b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
-> @@ -54,14 +54,16 @@ properties:
->      maxItems: 13
->  
->    "#dma-cells":
-> -    const: 3
-> +    minItems: 3
-> +    maxItems: 4
->      description: >
->        DMA clients must use the format described in dma.txt, giving a phandle
-> -      to the DMA controller plus the following 3 integer cells:
-> +      to the DMA controller plus the following 4 integer cells:
->        - channel: if set to 0xffffffff, any available channel will be allocated
->          for the client. Otherwise, the exact channel specified will be used.
->        - seid: serial id of the client as defined in the SoC documentation.
->        - client: type of the client as defined in dt-bindings/dma/qcom-gpi.h
-> +      - channel-tre-size: size of the channel TRE (transfer ring element)
+>  include/linux/mm_inline.h | 5 ++++-
+>  include/linux/mmzone.h    | 2 ++
+>  mm/vmscan.c               | 2 --
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+> index 6f801c7b36e2..87580e8363ef 100644
+> --- a/include/linux/mm_inline.h
+> +++ b/include/linux/mm_inline.h
+> @@ -222,6 +222,7 @@ static inline bool lru_gen_add_folio(struct lruvec *l=
+ruvec, struct folio *folio,
+>  {
+>         unsigned long seq;
+>         unsigned long flags;
+> +       unsigned long mask;
+>         int gen =3D folio_lru_gen(folio);
+>         int type =3D folio_is_file_lru(folio);
+>         int zone =3D folio_zonenum(folio);
+> @@ -257,7 +258,9 @@ static inline bool lru_gen_add_folio(struct lruvec *l=
+ruvec, struct folio *folio,
+>         gen =3D lru_gen_from_seq(seq);
+>         flags =3D (gen + 1UL) << LRU_GEN_PGOFF;
+>         /* see the comment on MIN_NR_GENS about PG_active */
+> -       set_mask_bits(&folio->flags, LRU_GEN_MASK | BIT(PG_active), flags=
+);
+> +       mask =3D LRU_GEN_MASK | BIT(PG_active);
+> +       mask |=3D folio_test_active(folio) ? (LRU_REFS_MASK | LRU_REFS_FL=
+AGS) : 0;
 
-This is a firmware /software property, why should this be in hardware
-description?
+We shouldn't clear PG_workingset here because it can affect PSI
+accounting, if the activation is due to workingset refault.
 
--- 
-~Vinod
+Also, nit:
+  mask =3D LRU_GEN_MASK;
+  if (folio_test_active(folio))
+    mask |=3D LRU_REFS_MASK | BIT(PG_active) | BIT(PG_referenced);
+
+> +       set_mask_bits(&folio->flags, mask, flags);
+>
+>         lru_gen_update_size(lruvec, folio, -1, gen);
+>         /* for folio_rotate_reclaimable() */
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 17506e4a2835..96dea31fb211 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -403,6 +403,8 @@ enum {
+>         NR_LRU_GEN_CAPS
+>  };
+>
+> +#define LRU_REFS_FLAGS         (BIT(PG_referenced) | BIT(PG_workingset))
+> +
+>  #define MIN_LRU_BATCH          BITS_PER_LONG
+>  #define MAX_LRU_BATCH          (MIN_LRU_BATCH * 64)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 9d1e1c4e383d..907262ebaef8 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2601,8 +2601,6 @@ static bool should_clear_pmd_young(void)
+>   *                          shorthand helpers
+>   ***********************************************************************=
+*******/
+>
+> -#define LRU_REFS_FLAGS (BIT(PG_referenced) | BIT(PG_workingset))
+> -
+>  #define DEFINE_MAX_SEQ(lruvec)                                         \
+>         unsigned long max_seq =3D READ_ONCE((lruvec)->lrugen.max_seq)
+>
+> --
+> 2.47.0.rc1.288.g06298d1525-goog
+>
+>
 
