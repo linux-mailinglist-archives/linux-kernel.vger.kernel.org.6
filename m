@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-368339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D859A0E91
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:38:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329149A0E96
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BEB2888F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:38:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8466DB22E31
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9365454720;
-	Wed, 16 Oct 2024 15:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEC420F5D8;
+	Wed, 16 Oct 2024 15:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6ZyP12h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKQgcL0b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E837120E02F;
-	Wed, 16 Oct 2024 15:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE7E20F5CD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093114; cv=none; b=uREmHzAULnOmFXRj+URJ3W801nfVwpD/a8IZQxbQHaOECdJycfpwCS6d1E17eZN2Pd2Zo5fBsvnqPNMEZt8yeCzgpg5p7EApuq7xdx/ZWpRSKgHUKd+kH0HhDonSSIx0tnvZ/d86RPwRjdIoVJyeg3GM7v3yWq4LaFt0fvSaxHc=
+	t=1729093116; cv=none; b=TMLIN9j9IrnW8FWhbTXBDf3EmAqJS8n0OXMTtekMdWh6E23oU7D6r4hj2F7IvW7PDyL91xnsKpkykqMigcuMJ36rBu/J9i/HSnuIQYX6ulbR4XYxDZ4tWMPtyxAk/IMMxYKp3ZwWJdmcV38DxZaTG2yhv1hal+SwsbMw0VuLvjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093114; c=relaxed/simple;
-	bh=dFW8u8wREC5V/rE4CPEL3TXXHyVXddI7PBsgSDXHwTM=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=rbrZqPBmccPTKFWzodDHOPvtuswVbS5iXXM4ww4Z5k6DcuJNLqmDYBvg0E4lEu9ck/ZjIBkNv4ZdyVHCJJUhzGZfRZMUE27TrQIhN4x3ywcvWVQEbQJElUdvmVX0LNb3SPGXNofl/W9AzTjc+yoTbtO+Cf13ClVV6d4FSuiZ4gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6ZyP12h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4502EC4CEC7;
-	Wed, 16 Oct 2024 15:38:33 +0000 (UTC)
+	s=arc-20240116; t=1729093116; c=relaxed/simple;
+	bh=29ow3Nc5Mi5UPGBCiX3p6gcTOJuG3+bSE570gzg2QgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqqE8xi8tXQZIFQBhMRTOyEqT4QmUC5sB9dkr1+m08+G+xSDDyKM6rw642WAZhqeHTmKJIzYp4FEkgKLsvTrRp0bF9rXqVsQr1VUXpBHuH6AbUZbmR1sSRXDZqlEVBLYqAi72UzYr3/TmK7iwHtL+C1eEWaLKsq+Dj7P1H/9tvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKQgcL0b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822A7C4CECF;
+	Wed, 16 Oct 2024 15:38:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729093113;
-	bh=dFW8u8wREC5V/rE4CPEL3TXXHyVXddI7PBsgSDXHwTM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=I6ZyP12hU9L6hiBtylHFmizE+cd2yG3IZLUQTA3nmpFMGeAdr02jM6p0dMcfaklMs
-	 Vf9+YyPNTy2j1ZkKaIKGnCG/wD7TzTD7meVPIU5kT5tO0tM5s3kcmqRP+BQRADvwGP
-	 UpC5ncTZ1BKst5FUFa2lkvY8h+TM1F1S6U1yMRAFinzR/GjUEBUteaqwJxr4XNi4kx
-	 TqFv6KMho9uPIPS0+W21HQesrR3TaB3JqQjXqfT6GasoXsIbmyMxSg+BU6bZu26UAi
-	 dke3/kEzJNQ62V8oJFGkfWI5udhRBN+frLhNIgrZpcqM/7/al+RDl4W+o3/dbKFx75
-	 m/l1Lmi7OQojA==
-Date: Wed, 16 Oct 2024 10:38:32 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1729093116;
+	bh=29ow3Nc5Mi5UPGBCiX3p6gcTOJuG3+bSE570gzg2QgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bKQgcL0b1wNTfytC/wVDlDeCvENl0LBhevXSYBUE6VlyPM3bJDSngob4BdYyiv0gu
+	 liwk3uiMiDGYjffxQ88BtNfRTwJa0Fq9saX+1ckbVQ/Nl8BqRflJkkPissKd0Y9ALT
+	 V3p/0nYyXNdc0sUEe8LO8G+MYGYALfpZjfvvfMzws63VP30VSLsUwpgKiwrmakoczQ
+	 /R7cIW5+Ozv+JNkHJvg/OGx8ILu7V9uX8G2bg6vip2RzJrN/5/anTjhiozWeP5DYi9
+	 7uIFbk1u4w2UeZQfqQ0v2ku2HREFlTTHcBgmirERU+muTV4V1HgoV0YW8L/b9TT79y
+	 lVcUqkDFJOAVw==
+Date: Wed, 16 Oct 2024 08:38:33 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>,
+	David Hildenbrand <david@redhat.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject: Re: [PATCH -v2] resource: Remove dependency on SPARSEMEM from
+ GET_FREE_REGION
+Message-ID: <20241016153833.GA385255@thelio-3990X>
+References: <20241016014730.339369-1-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Jianguo Zhang <jianguo.zhang@mediatek.com>, 
- Hsuan-Yu Lin <shane.lin@canonical.com>, 
- fanyi zhang <fanyi.zhang@mediatek.com>, netdev@vger.kernel.org, 
- Macpaul Lin <macpaul.lin@mediatek.com>, Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Pablo Sun <pablo.sun@mediatek.com>
-In-Reply-To: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
-References: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
-Message-Id: <172909289110.1676363.14494745221795348933.robh@kernel.org>
-Subject: Re: [PATCH 0/2] Enable Ethernet on the Genio 700 EVK board
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016014730.339369-1-ying.huang@intel.com>
 
+On Wed, Oct 16, 2024 at 09:47:30AM +0800, Huang Ying wrote:
+> We want to use the functions (get_free_mem_region()) configured via
+> GET_FREE_REGION in resource kunit tests.  However, GET_FREE_REGION
+> depends on SPARSEMEM now.  This makes resource kunit tests cannot be
+> built on some architectures lacking SPARSEMEM, or causes config
+> warning as follows,
+> 
+>   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+>   Depends on [n]: SPARSEMEM [=n]
+>   Selected by [y]:
+>   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+> 
+> When get_free_mem_region() was introduced the only consumers were
+> those looking to pass the address range to memremap_pages(). That
+> address range needed to be mindful of the maximum addressable platform
+> physical address which at the time only SPARSMEM defined via
+> MAX_PHYSMEM_BITS.
+> 
+> Given that memremap_pages() also depended on SPARSEMEM via
+> ZONE_DEVICE, it was easier to just depend on that definition than
+> invent a general MAX_PHYSMEM_BITS concept outside of SPARSEMEM.
+> 
+> Turns out that decision was buggy and did not account for KASAN
+> consumption of physical address space. That problem was resolved
+> recently with commit ea72ce5da228 ("x86/kaslr: Expose and use the end
+> of the physical memory address space"), and GET_FREE_REGION dropped
+> its MAX_PHYSMEM_BITS dependency.
+> 
+> Then commit 99185c10d5d9 ("resource, kunit: add test case for
+> region_intersects()"), went ahead and fixed up the only remaining
+> dependency on SPARSEMEM which was usage of the PA_SECTION_SHIFT macro
+> for setting the default alignment. A PAGE_SIZE fallback is fine in the
+> SPARSEMEM=n case.
+> 
+> With those build dependencies gone GET_FREE_REGION no longer depends
+> on SPARSEMEM.  So, the patch removes dependency on SPARSEMEM from
+> GET_FREE_REGION to fix the build issues.
+> 
+> Link: https://lore.kernel.org/lkml/20240922225041.603186-1-linux@roeck-us.net/
+> Fixes: 99185c10d5d9 ("resource, kunit: add test case for region_intersects()")
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-On Tue, 15 Oct 2024 14:15:00 -0400, Nícolas F. R. A. Prado wrote:
-> The patches in this series add the ethernet node on mt8188 and enable it
-> on the Genio 700 EVK board.
-> 
-> The changes were picked up from the downstream branch at
-> https://git.launchpad.net/~canonical-kernel/ubuntu/+source/linux-mtk/+git/jammy,
-> cleaned up and split into two commits.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Tested-by: Nathan Chancellor <nathan@kernel.org> # build
+
+Thanks for adding the Fixes tag, as this should go via -hotfixes.
+
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
 > ---
-> Nícolas F. R. A. Prado (2):
->       arm64: dts: mediatek: mt8188: Add ethernet node
->       arm64: dts: mediatek: mt8390-genio-700-evk: Enable ethernet
+>  mm/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
 > 
->  arch/arm64/boot/dts/mediatek/mt8188.dtsi           | 95 ++++++++++++++++++++++
->  .../boot/dts/mediatek/mt8390-genio-700-evk.dts     | 25 ++++++
->  2 files changed, 120 insertions(+)
-> ---
-> base-commit: 7f773fd61baa9b136faa5c4e6555aa64c758d07c
-> change-id: 20241015-genio700-eth-252304da766c
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 4c9f5ea13271..33fa51d608dc 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1085,7 +1085,6 @@ config HMM_MIRROR
+>  	depends on MMU
+>  
+>  config GET_FREE_REGION
+> -	depends on SPARSEMEM
+>  	bool
+>  
+>  config DEVICE_PRIVATE
+> -- 
+> 2.39.2
 > 
-> Best regards,
-> --
-> Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y mediatek/mt8390-genio-700-evk.dtb' for 20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com:
-
-arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb: jpeg-decoder@1a040000: iommus: [[118, 685], [118, 686], [118, 690], [118, 691], [118, 692], [118, 693]] is too long
-	from schema $id: http://devicetree.org/schemas/media/mediatek-jpeg-decoder.yaml#
-
-
-
-
-
 
