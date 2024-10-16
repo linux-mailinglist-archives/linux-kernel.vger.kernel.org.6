@@ -1,145 +1,140 @@
-Return-Path: <linux-kernel+bounces-368130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FB09A0B88
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1CB9A0B7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F390281EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9EE61F25E9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20639208D63;
-	Wed, 16 Oct 2024 13:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAF93A8F0;
+	Wed, 16 Oct 2024 13:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TvunK528"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="H+4Bd0ah"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC931D8E1D;
-	Wed, 16 Oct 2024 13:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B8F1D8E1D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729085733; cv=none; b=G+it5ZK69KywwXqFOrwreCf3dsYHWx7Apal2Ne9c471pdt3lqpgtYep0I2qvvbfTObwhdueIFTnd6kvxJlNnj9nZvj781H2xImpIOonvJmEr0gvy21jt/uBmmn6FXLnJKx3BDC1Fu6Q2pqcQVLQv1SaDxqvEz76pbcY8MwRRNjA=
+	t=1729085652; cv=none; b=g21zinjvk+t58fczWSCYyVcHlzBo56P+3tlRgOaV6M1BWGotvY0qzvRJNgdtLoavoNaaqM2zjXviw8bgWQRZYlMptUPvmLQSHhezpqIHWzVqJCoD5QAaGER6fz1jrbIPonS4SK0J00Ti5+SlVZWilkHYCKukB9HR0d3iTvC/23U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729085733; c=relaxed/simple;
-	bh=FzAlRA8pLPeLqTdYnVhbuzSLx+1InD1DoZ5BCd9/5w8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cKE90jTZQcvSG4pBZRp8DASxDwgOsVt3jrjEG2WG1gcZ/lJHiGtmRxW1pXmmWRSI9TtwG4ujaopNvx/l7oI0ZAdaqM2z/LPRF0EObkh+cqD1LfGuyyZRiX4Ij/8JdCu6rREzjZ0uz0iSY7pNLGVKUT2FGcicFvAXEhVsjzLtnxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TvunK528; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729085732; x=1760621732;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FzAlRA8pLPeLqTdYnVhbuzSLx+1InD1DoZ5BCd9/5w8=;
-  b=TvunK528zYZ1sfUeP2e1P9fj14HSYMgq9cJuXTGg7QEtwgY9d5j2edYW
-   5nnpC3Kc3ENZIjOmqlaTDTZ6J2qr+T01iMtxK67i5vR9Pd7z8z5qZa3kH
-   qKRD0nLxzn25Qpi0SCMjDPgclZ8zHIThbx8hW0x7FuTe9UowsGuxw/eRH
-   EKYyn9myTpbXupW2wk9CKglaD57Z3KRJry3WNVzzBCGI5ewSd3fpVwHXj
-   iO7FzZkTS4RefBfMxUIa9UrDYWauRywUjslPgFpo/Q7HhGpUgwcqEohC7
-   VEoWc9By+VS74WUl4YsYsjmLl/4kZIPi9ZcLPyZI8Okfk7D4V3EcRtCuw
-   Q==;
-X-CSE-ConnectionGUID: nIvRfgwsReme/wKLxvVCVg==
-X-CSE-MsgGUID: I6tv6b86RAu5DCSqQ5B+7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="32333965"
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="32333965"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:35:32 -0700
-X-CSE-ConnectionGUID: +fk8pQQYTMO5/oV9c5J9Zw==
-X-CSE-MsgGUID: L7IWNxReRwuBJdeHS+ZKSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="77905325"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 16 Oct 2024 06:35:29 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 8B267165; Wed, 16 Oct 2024 16:35:27 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Kuehne <thomas.kuehne@gmx.li>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] HID: debug: Remove duplicates from 'keys'
-Date: Wed, 16 Oct 2024 16:32:40 +0300
-Message-ID: <20241016133523.899754-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1729085652; c=relaxed/simple;
+	bh=Wm6j0HHXHr6rZrgJv9XtSE7kyw4KMDFQKc6FGm2m+C0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VBMjbdMEx1fHFQEFzhn6t60g+bFCqWNMbJ2hMgi6BuLGhXkMDnMspMlG8Dq4GeuoYgIYTmBqJZoS7/MM/c0Jbm21vGFkw/h0R6CktO0/6YwVBHls9+lQgVpbvwxKs2G1MqC2sfE+XyycKEJwx8yyx6VVDw/SSCmwKoqi9ylDozo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=H+4Bd0ah; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1729085649; x=1729344849;
+	bh=Wm6j0HHXHr6rZrgJv9XtSE7kyw4KMDFQKc6FGm2m+C0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=H+4Bd0ahESOKUsvwcjZf2E7HUqPfEvb+dzskyu50OGVSduieOznONkKb72qNivKZW
+	 Q8GcWbmqioajaH98BLz2tHhtOTOey50VIuRxjBdhUOqXc0DhbdBJasxDS/d82jKfeX
+	 254jBfhAHwvNvQg1wbeCFf80Md7l9MVnyiwA4T2WRbDqZl5QrFJVJ7p01XfGTHrGDu
+	 4Xw3UkEOh53QMsYnYB4rPDEmKn6vF+pSw11cAJ+L20KCu/rH6vjMIndrz6+lkCYWP8
+	 hTSRAnehXzleSsojRVjiseVNEdDBEgxELUM74haoLODapNNI6MPuujOQV8t+FI1Nq9
+	 jCSZ2oHvGwkkA==
+Date: Wed, 16 Oct 2024 13:34:07 +0000
+To: Greg KH <gregkh@linuxfoundation.org>
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: dpenkler@gmail.com, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2] staging: gpib: Add TODO file
+Message-ID: <B28HXaYBd4-AP7g9jMpXgQEcJIzAQUsaUqMerdy_Hk0tR2Q9RKTAmcYbtq3LR06X3yHj0R6D4bLJHEHCYsszgjvnfhgZ7K5QwOzx5JLNI_A=@protonmail.com>
+In-Reply-To: <2024101609-getaway-appendage-1f88@gregkh>
+References: <20241015192838.16740-1-dominik.karol.piatkowski@protonmail.com> <2024101609-getaway-appendage-1f88@gregkh>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 5c17d14c4951bdc73c9970c4d97f82f5b669eed7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Duplicates in 'keys prevents kernel builds with clang, `make W=1` and
-CONFIG_WERROR=y, for example:
+On Wednesday, October 16th, 2024 at 07:33, Greg KH <gregkh@linuxfoundation.=
+org> wrote:
 
-drivers/hid/hid-debug.c:3443:18: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
- 3443 |         [KEY_HANGEUL] = "HanGeul",              [KEY_HANGUP_PHONE] = "HangUpPhone",
-      |                         ^~~~~~~~~
-drivers/hid/hid-debug.c:3217:18: note: previous initialization is here
- 3217 |         [KEY_HANGUEL] = "Hangeul",              [KEY_HANJA] = "Hanja",
-      |                         ^~~~~~~~~
+>=20
+>=20
+> On Tue, Oct 15, 2024 at 07:28:57PM +0000, Dominik Karol Pi=C4=85tkowski w=
+rote:
+>=20
+> > Add a TODO file stub for the gpib driver.
+> >=20
+> > Signed-off-by: Dominik Karol Pi=C4=85tkowski dominik.karol.piatkowski@p=
+rotonmail.com
+> > ---
+> > v2: Remove maintainers from TODO, as they can be found in MAINTAINERS f=
+ile
+> > drivers/staging/gpib/TODO | 2 ++
+> > 1 file changed, 2 insertions(+)
+> > create mode 100644 drivers/staging/gpib/TODO
+> >=20
+> > diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
+> > new file mode 100644
+> > index 000000000000..850dc1102e54
+> > --- /dev/null
+> > +++ b/drivers/staging/gpib/TODO
+> > @@ -0,0 +1,2 @@
+> > +TODO:
+> > +- checkpatch.pl fixes
+> > --
+> > 2.34.1
+>=20
+>=20
+> Hi,
+>=20
+> This is the friendly patch-bot of Greg Kroah-Hartman. You have sent him
+> a patch that has triggered this response. He used to manually respond
+> to these common problems, but in order to save his sanity (he kept
+> writing the same thing over and over, yet to different people), I was
+> created. Hopefully you will not take offence and will fix the problem
+> in your patch and resubmit it so that it can be accepted into the Linux
+> kernel tree.
+>=20
+> You are receiving this message because of the following common error(s)
+> as indicated below:
+>=20
+> - This looks like a new version of a previously submitted patch, but you
+> did not list below the --- line any changes from the previous version.
+> Please read the section entitled "The canonical patch format" in the
+> kernel file, Documentation/process/submitting-patches.rst for what
+> needs to be done here to properly describe this.
+>=20
+> If you wish to discuss this problem further, or you have questions about
+> how to resolve this issue, please feel free to respond to this email and
+> Greg will reply once he has dug out from the pending patches received
+> from other developers.
+>=20
+> thanks,
+>=20
+> greg k-h's patch email bot
 
-Fix this by removing them.
+Hi Greg,
 
-The logic of removal is that, remove...
-1) if there is a constant that uses another defined constant, OR
-2) the one that appears later in the list.
+I listed the changes below the --- line. Probably I should have added extra
+newline, or maybe even another --- line below the changes in order to not
+trigger the patch-bot message and make it more readable. Maybe I should als=
+o
+explicitly use "V1 -> V2" instead of "v2" when listing changes? I am trying
+to understand the filtering rules that are in use, in order to avoid this
+situation in the future.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: fixed which one to remove for KEY_HANGEUL (Jiri)
- drivers/hid/hid-debug.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+I see that in Documentation/process/submitting-patches.rst there is an extr=
+a
+newline after listed changes, would it be enough?
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index d5abfe652fb5..541d682af15a 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -3309,9 +3309,9 @@ static const char *keys[KEY_MAX + 1] = {
- 	[KEY_EPG] = "EPG",			[KEY_PVR] = "PVR",
- 	[KEY_MHP] = "MHP",			[KEY_LANGUAGE] = "Language",
- 	[KEY_TITLE] = "Title",			[KEY_SUBTITLE] = "Subtitle",
--	[KEY_ANGLE] = "Angle",			[KEY_ZOOM] = "Zoom",
-+	[KEY_ANGLE] = "Angle",
- 	[KEY_MODE] = "Mode",			[KEY_KEYBOARD] = "Keyboard",
--	[KEY_SCREEN] = "Screen",		[KEY_PC] = "PC",
-+	[KEY_PC] = "PC",
- 	[KEY_TV] = "TV",			[KEY_TV2] = "TV2",
- 	[KEY_VCR] = "VCR",			[KEY_VCR2] = "VCR2",
- 	[KEY_SAT] = "Sat",			[KEY_SAT2] = "Sat2",
-@@ -3409,8 +3409,7 @@ static const char *keys[KEY_MAX + 1] = {
- 	[BTN_TRIGGER_HAPPY35] = "TriggerHappy35", [BTN_TRIGGER_HAPPY36] = "TriggerHappy36",
- 	[BTN_TRIGGER_HAPPY37] = "TriggerHappy37", [BTN_TRIGGER_HAPPY38] = "TriggerHappy38",
- 	[BTN_TRIGGER_HAPPY39] = "TriggerHappy39", [BTN_TRIGGER_HAPPY40] = "TriggerHappy40",
--	[BTN_DIGI] = "Digi",			[BTN_STYLUS3] = "Stylus3",
--	[BTN_TOOL_QUINTTAP] = "ToolQuintTap",	[BTN_WHEEL] = "Wheel",
-+	[BTN_STYLUS3] = "Stylus3",		 [BTN_TOOL_QUINTTAP] = "ToolQuintTap",
- 	[KEY_10CHANNELSDOWN] = "10ChannelsDown",
- 	[KEY_10CHANNELSUP] = "10ChannelsUp",
- 	[KEY_3D_MODE] = "3DMode",		[KEY_ADDRESSBOOK] = "Addressbook",
-@@ -3440,7 +3439,7 @@ static const char *keys[KEY_MAX + 1] = {
- 	[KEY_FN_RIGHT_SHIFT] = "FnRightShift",	[KEY_FRAMEBACK] = "FrameBack",
- 	[KEY_FRAMEFORWARD] = "FrameForward",	[KEY_FULL_SCREEN] = "FullScreen",
- 	[KEY_GAMES] = "Games",			[KEY_GRAPHICSEDITOR] = "GraphicsEditor",
--	[KEY_HANGEUL] = "HanGeul",		[KEY_HANGUP_PHONE] = "HangUpPhone",
-+	[KEY_HANGUP_PHONE] = "HangUpPhone",
- 	[KEY_IMAGES] = "Images",		[KEY_KBD_LCD_MENU1] = "KbdLcdMenu1",
- 	[KEY_KBD_LCD_MENU2] = "KbdLcdMenu2",	[KEY_KBD_LCD_MENU3] = "KbdLcdMenu3",
- 	[KEY_KBD_LCD_MENU4] = "KbdLcdMenu4",	[KEY_KBD_LCD_MENU5] = "KbdLcdMenu5",
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Thanks,
 
+Dominik Karol
 
