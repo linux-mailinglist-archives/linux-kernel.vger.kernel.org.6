@@ -1,124 +1,100 @@
-Return-Path: <linux-kernel+bounces-367251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778359A0032
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5213E9A0035
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6C69B24C66
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFBC8B25398
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A695189F30;
-	Wed, 16 Oct 2024 04:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BF7189913;
+	Wed, 16 Oct 2024 04:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqzSOuOm"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="W2RmBfMV"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553CB21E3BF;
-	Wed, 16 Oct 2024 04:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645681885A0;
+	Wed, 16 Oct 2024 04:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729052748; cv=none; b=HVQ/cZVMplM6HE8k+bvLADOuIawlLMk0/KmKrZccHq2//vqrNMctOYEvoGoNoTrr20U9ck6zNMiusnYB2p5WrNrCiF7uYwpyZMH04eg0a3PIKd4dh/x6ps1iXBh7doUOZLwIHj0Ldyv/H52W8ESHay4un8zMwCsfMt3Q4JAS1rk=
+	t=1729052859; cv=none; b=DnYvBWnjC2txetsHARXQ3HcXxvPFAYd9BaFc7O8mCN1pLn6BXQGHOi8gf8D9zXS7ciz+viedMGbgKnW3bmJWR0LmSl6IoK1Qb7v95Ta9j579zKsX+z4gRnif+jyj9aQE9a91yGPMWRZz5BO+XPOvPCU49+jyjLtUHJjckD/w7TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729052748; c=relaxed/simple;
-	bh=oxAFJQbiQnzQGUda9QEXJFc+5bXiKV8Aixsv52j/zEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTwNP7Vf4oLTb4lVuK2MYyg/SlaU5sbupJ2+XK0q/fQZsS1oQkDAcIfP8L89gxRvzbvs+66iHBYDdDnCOzQk4jte1oInEwEj4MjJxuRbus1kai2EpYSBHDvmAAoGlTClVPMfTWnIDfa2sY4ChLLzHnUhtShCDGmkITiG5pkzvm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqzSOuOm; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so3135469b3a.0;
-        Tue, 15 Oct 2024 21:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729052746; x=1729657546; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AuSywXYoElsxrjkfwv/M1S/AVxPVwxoJ4Eg9UCE0j2Y=;
-        b=JqzSOuOmjZVse9732ekWLG6a6qH4UD6MyuneFfouL1XcqjVYvBq8CjgL06vxmciQBB
-         fzBgaNdmNiFbAswvCFFEMqKMCHhhSIqHhIeKwI/BZKEUqRm1YbEBxdzFc0Vq7Yiv9bSC
-         oTXQz6NUzya1BITvov2t+H5Ph0C6nyEBAjAnReS0l9fJmMLtLlyBTLtDWIN4hCB5mk3e
-         HYZbm+tZ0rAM3AC21dQehLx7wEavBKy4vAubmilW2/l8+SdIk9KK5993rUb9zzdSeTDY
-         1Q31XQSNc+ZXc+aShhwGFEdlTXaqYLt5YzZrGbam3x69smwIKDJHzfvNLFPiPiVUBZ+i
-         Piyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729052746; x=1729657546;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AuSywXYoElsxrjkfwv/M1S/AVxPVwxoJ4Eg9UCE0j2Y=;
-        b=w4l2uWSYz+Dmz/qWTiAHZfM1qTBcZgHLdNROTYRrv7+CGEcgKlVcPtu+RRbN0rxuyk
-         GQj9e+LwFzhIzzwybghfMtk5PbU68usll+5lXPFV9qoDu9pvZT7w/DZKnfgIFJOT0zAH
-         VSfqN00CV9AzD6ETePAfDoc6s6//sM9AtlJ8MfnTQF4kov2MFvf27VNLr/wphaWp4W3G
-         GYKaNgKro4uGBu5btHmb3mZpKCEgsrZKvt5lkADSpnmwqyXg1kD4g2wf4pisJvYtdENz
-         ZVI5GXF/C3Y6uTzpbNE3UsNXVFeDopCUJ+ZWbxz9FSjwu3ASdTNiLcDTrRq7ucBvwFW3
-         fKYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUItdIwrq/DMfYJkTzqXHHOc5bq2VrzbAu8Jeie4BERcA8wKOYXuaPf1KehRkegyALDjYYYClzH/ktepw==@vger.kernel.org, AJvYcCXmgnvEyMQsXzLcUbdMkanZ4QlmnZgEyabadEKYceoFYqvG1VfaeyQ6XbF1kc5mH3XcOglMzZbLsvIsUNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzbWNIR9/Q8xVz1kpqyOtyQAfSsofxZXJ+0IymTo4CoY+1/kgC
-	XAz23W2R/YXa1eteXlrFVtuq8anLLcJmejoInDIsYiR0AcE2M4sA
-X-Google-Smtp-Source: AGHT+IEOVdMM8PcWZxl1hPvTCKwG2lQG4t9e4+Akb4lepcYLEtP3F6f9LMfzoo6aVvTlm9dEICcxmg==
-X-Received: by 2002:a05:6a00:21d5:b0:71e:14c:8d31 with SMTP id d2e1a72fcca58-71e4c17c145mr21607003b3a.16.1729052744203;
-        Tue, 15 Oct 2024 21:25:44 -0700 (PDT)
-Received: from ?IPV6:2409:40c0:11a6:bd6f:94e5:e911:e544:8911? ([2409:40c0:11a6:bd6f:94e5:e911:e544:8911])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e773a2ffbsm2173954b3a.81.2024.10.15.21.25.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Oct 2024 21:25:43 -0700 (PDT)
-Message-ID: <c824a2f7-e661-4d8a-a11d-a4df0aeff720@gmail.com>
-Date: Wed, 16 Oct 2024 09:55:37 +0530
+	s=arc-20240116; t=1729052859; c=relaxed/simple;
+	bh=hVLTmQoIR4NnPP/Mi71p3DtZcSEuUiBYU5Kz9KmXAhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pzld0DGWNb3/GfaSgPz4uZ6t4sHxZVDgPLGxpU9hNruMbfaOwpJRoLJo+pHvCyUqkR1Ncb6mwArclPE7ShStcmieB1kcbTMEXAm18C5kCSQkmZegmYVwkd2vhHINJQX0dwFpzU2D22ifvxO43BIwXvxKdW8Db8R/BeoIrKYJQjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=W2RmBfMV; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=NW9YDCtZFYicQcANZrspiKTFqONICzgJfERuIxJwwNk=; b=W2RmBfMVuKF8/X6cU1pFP4vbbb
+	m5RHycH82wjxokH01lOZgqBFHEhKONi0FdfoEJK+01FFvXf//SUdl92CaDJPeCoWtj3PhcoaypIXV
+	LyF73HIlP6Q/dyECLqlm043QnjiOeC0DmpewYgvQ3mRZQm8/n4k+vJi9An9kHyPMGe9ADvgJsRvAt
+	qcHMWZmUshTbNOloHXs7ek80fDS9ZCxPwsU+buExbS4NJ7uPG3Kf5geu7/+27yr7iqe5K6njSqrpq
+	0ypVFFtu/u21DI9SQWnss/ETObnxzOI1s4pmeKEctoNJ5ovnm5uDUGFUuOkcr5iHssc1RpEYT0Gev
+	Y68j3kvA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t0vTI-009jQQ-2p;
+	Wed, 16 Oct 2024 12:27:31 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 16 Oct 2024 12:27:30 +0800
+Date: Wed, 16 Oct 2024 12:27:30 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Romain Perier <romain.perier@free-electrons.com>
+Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
+ Turris Omnia
+Message-ID: <Zw9AsgqKHJfySScx@gondor.apana.org.au>
+References: <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
+ <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
+ <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
+ <ZwZAExmK52txvHE8@gondor.apana.org.au>
+ <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
+ <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
+ <ZwePSPG8aWm6mwKK@gondor.apana.org.au>
+ <15fadc356b73a1e8e24183f284b5c0a44a53e679.camel@gmail.com>
+ <Zw31JIEyh28vK9q7@gondor.apana.org.au>
+ <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH] leds: Fix uninitialized variable 'ret' in
- mt6370_mc_pattern_clear
-To: Lee Jones <lee@kernel.org>
-Cc: pavel@ucw.cz, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241006131337.48442-1-surajsonawane0215@gmail.com>
- <172863776565.3130628.18378710932238203204.b4-ty@kernel.org>
- <7274be28-aefe-49b1-b8e1-dd1c2bad96d0@gmail.com>
- <20241015085842.GC8348@google.com>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <20241015085842.GC8348@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5db212655dc98945fa3f529925821879a03ff554.camel@gmail.com>
 
-On 15/10/24 14:28, Lee Jones wrote:
->> On 11/10/24 14:39, Lee Jones wrote:
->>> On Sun, 06 Oct 2024 18:43:37 +0530, SurajSonawane2415 wrote:
->>>> Fix the uninitialized symbol 'ret' in the function mt6370_mc_pattern_clear
->>>> to resolve the following warning:
->>>> drivers/leds/rgb/leds-mt6370-rgb.c:604 mt6370_mc_pattern_clear()
->>>> error: uninitialized symbol 'ret'.
->>>> Initialize 'ret' to 0 to prevent undefined behavior from uninitialized
->>>> access.
->>>>
->>>> [...]
->>> Applied, thanks!
->>>
->>> [1/1] leds: Fix uninitialized variable 'ret' in mt6370_mc_pattern_clear
->>>         commit: b5a5659aebfffbcddb81abafe042fb4044b6ff9e
->>>
->>> --
->>> Lee Jones [李琼斯]
->>>
->> Thank you! I'm glad the patch was applied. I'll ensure future patches follow
->> the necessary guidelines.
-> Sorry, this is a tooling error.  The patch was not meant to be applied.
+On Tue, Oct 15, 2024 at 07:38:27PM +0200, Klaus Kudielka wrote:
+>
+> So, I applied the TDMA-disable patch, and I saw the same errors.
+> Then, I applied the printk patch on top of that, and here is the result.
 > 
-> Please resubmit it using your updated .gitconfig file.
-Thank you. I have updated my .gitconfig to use my real name "Suraj 
-Sonawane" as requested and have resubmitted the patch.
+> Not sure, whether this makes any sense...
 
-Best regards,
-Suraj Sonawane
+Interesting, I think this shows that the non-TDMA path doesn't
+work at all :)
+
+Can you apply the TDMA-disable patch, and revert the asynchronous
+self-test patch? If it still fails, then we'll know for sure that
+the non-TDMA path is simply broken.
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
