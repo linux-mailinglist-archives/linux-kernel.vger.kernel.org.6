@@ -1,130 +1,95 @@
-Return-Path: <linux-kernel+bounces-367963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82659A08DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA20A9A08DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CCD328131A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C189281B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8289208D64;
-	Wed, 16 Oct 2024 11:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2991207A22;
+	Wed, 16 Oct 2024 11:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9zm1Q7u"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QdKtOuHv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D177206979;
-	Wed, 16 Oct 2024 11:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3881207A06
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729079691; cv=none; b=i4Zesp0bFgiTj1WyGA8fvXe8/Hg4o0LZ9B/EMIBaUyJmLIdlUfMAiPVzWjW2Uudqzm9PD055ttG6akSxoGbN6fZ4hThSW+EfaY2ZYEMEoWgw4oxVorW+8p/T7RIJApcORZtgMrS4444CNgxWIf1tIJ12kYF2zjzgCYdscQS6p58=
+	t=1729079780; cv=none; b=Xj+XmKtlfi/LuRnZSPV4Aqpr7RRwGTt8g/lF0nqcjbmNB2XaUo64UpVlP6yZWMG3UuX9MtMtfJMhitpVBcxU/ufjZPD1b1RY8qtwsn3qHGQUOqnpPRP9tYVSrafnj0DwBUwVxWwh9Kr1XekOFWI61kYJnBCsjboa0s6cF94Y8rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729079691; c=relaxed/simple;
-	bh=L5o8ve+VBHrYej/fsSNBUxsfqyYd3ayQ8f7khXw4HFI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QASegUVGE8hWbcVE2lpQ4pm95k4Fn6YH8ymXEYmK0du5KUnCXU5KP81gLth/R10Ib295FIZfCVKJxDhelYo6e66nhJi35EQP4CYmBK2e/1HiQzCuFtgJ2Way+Hv4aJOBrSlIjIjxFTwo8iXGvWnuq4W0xoHmXmt4VCdALyAIfvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9zm1Q7u; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99ffeea60bso526181366b.3;
-        Wed, 16 Oct 2024 04:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729079688; x=1729684488; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=z0OTk8uA9zI9WVj1Qu6RX4DnD4VV3Dh4MTgYuYdKIqQ=;
-        b=N9zm1Q7up9OA5XXiNFteryjYZH7G28JYwLjB+HkAqs/eRyUjmA0pjWVBWsahr4rzBQ
-         bGhyeGRAv3bNC1k9gTGieNkPjO/nTV7eIO1nKknzyVK572woTexDacCVifl5GzkhX0U+
-         H2d0ZlOQLIEUvnid8l6IuE/ci//r+7sFE/vFEE5dvn3TVbqAIceKRLlYCxPImjurggGM
-         0xK+y014z4M6ySeA7hvuulPvIMrR9y1f3oLxkNR2nVhxLuIvJbGnYqW0+C/VodtgFemQ
-         tFjxLmb8C7vsk1AyU9s+o/e8UVGmgK64AHv7UGxA69IpswdM3y88AKdzfFukyuaLbGto
-         341Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729079688; x=1729684488;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z0OTk8uA9zI9WVj1Qu6RX4DnD4VV3Dh4MTgYuYdKIqQ=;
-        b=FoY0vNmhO77UACCkHtmJI3+NoDLi6D+jr60SrrBcRM5lCTxVcWLIzyRbWcvEi/p/GP
-         wC4edCbjkPrjWrv4NRgDOvK0sNo8Lnfx7cjY3q0Rb1B5rv1yo4WPpnyJzNkTDo3VWR8I
-         nHlP3h9y24q+XG0Vh5sohucQjXHB1je1/fFSj3ZdXmW6or/5IKmRECjzAN/O4fuS/HK1
-         hWVVAJ7Jgtd2z1uEEMhK5vWwvydHl9uMIhUjpT9n55CKdd/rxsbm5868fkUGBEXFgiYx
-         /3vW5BBS2/u40D8avhv2ARLeRuP1Ivc5iWaRvQe+3BEkaq3n6Ht1cL/EIjwedemSkcrO
-         h9ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVYjklbzyWMEk/zruA3Xp2Z1nHBmP+7ADbFTrkPkb+0vxaZds6+5VlCdp05p070+QlWa1AvfMiHIboh4U6K@vger.kernel.org, AJvYcCWz3EIhpUTP/Vg4h6g1+b194ETkrf9q8pNwfehyFw/+aPjGA2IGettu7YrQwQ9mx1Wkx/gnB7h3ezQE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxct8Ju2jJQa1AH9jKkE5e53gK95VKl0TgHG45JIeDMYPstcj+B
-	6W6kVWSABr7aZroKv/3FHo4qvx/063eWf9Ymflp9YAcPMLNmHPt/oluecpGwrjDgjA==
-X-Google-Smtp-Source: AGHT+IF/9oRF6YEKgYiwKxIqKCxwILrNcGJG10m81vLSGKTHRuCSu+6WqBf7IYEFKl9bNKlIV000Xg==
-X-Received: by 2002:a17:907:724f:b0:a99:ee83:2b19 with SMTP id a640c23a62f3a-a99ee832da8mr1278188366b.35.1729079687512;
-        Wed, 16 Oct 2024 04:54:47 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a298443f3sm173586666b.165.2024.10.16.04.54.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 04:54:47 -0700 (PDT)
-Message-ID: <8caf3074e925dd131ff62375c6849a7f3ac6c5a6.camel@gmail.com>
-Subject: Re: [PATCH v6 7/8] iio: dac: ad3552r: add high-speed platform driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Angelo Dureghello
- <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
- <nuno.sa@analog.com>,  Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>,  Jonathan Cameron
- <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Date: Wed, 16 Oct 2024 13:54:46 +0200
-In-Reply-To: <f1f7f187-f1d4-4d81-9187-ac238c0ca964@baylibre.com>
-References: 
-	<20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
-	 <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-7-eeef0c1e0e56@baylibre.com>
-	 <549566b00524c0230a6a970b74a38dbe58e2589d.camel@gmail.com>
-	 <f1f7f187-f1d4-4d81-9187-ac238c0ca964@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729079780; c=relaxed/simple;
+	bh=ZE6tSbBnrgSxfs8hfG9pixVaeQvAehA2fgnct8qkbRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=brspmdY5AlGbT78hIknXC3yF3MeO04dXuFM89sokBE4d8/o7CFV+wz8Qrmt9khAD5E/gVdGIJYR+6MNfgsE92gaRR9FPHc+hvNm7y03smqLZmTUznvTePYm1imYRIbwRJFEBYCfX8aS4d9H+D2iohUSdLzRdpLorJkrMNNevL3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QdKtOuHv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729079778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZE6tSbBnrgSxfs8hfG9pixVaeQvAehA2fgnct8qkbRI=;
+	b=QdKtOuHvHPDX9B+M1h+sQcVYiJyac6xJ3FPvzgKDgKUiGb8OozpqIZ/n+itcuw3kyDnjJa
+	c4EzM6xg+j30mFCZOBx281AHnTQPvmHxXSBFeoT5g/myZLNGlOsDK2G2pdkqipxlmzC6Xn
+	KHL02/Fmt85DsHrhPFbMpIJ41hVYA1E=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-Pa8X15QgOwyDlrPk5r75DA-1; Wed,
+ 16 Oct 2024 07:55:44 -0400
+X-MC-Unique: Pa8X15QgOwyDlrPk5r75DA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 45F7C195608C;
+	Wed, 16 Oct 2024 11:55:42 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.76])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DC7A51955EA4;
+	Wed, 16 Oct 2024 11:55:38 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: quic_jjohnson@quicinc.com
+Cc: ath12k@lists.infradead.org,
+	jjohnson@kernel.org,
+	jtornosm@redhat.com,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] wifi: ath12k: fix warning when unbinding
+Date: Wed, 16 Oct 2024 13:55:35 +0200
+Message-ID: <20241016115536.204583-1-jtornosm@redhat.com>
+In-Reply-To: <2f6f7649-772e-42e6-a762-f2d66b7e3b22@quicinc.com>
+References: <2f6f7649-772e-42e6-a762-f2d66b7e3b22@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, 2024-10-15 at 09:48 -0500, David Lechner wrote:
-> On 10/15/24 2:15 AM, Nuno S=C3=A1 wrote:
-> > On Mon, 2024-10-14 at 12:08 +0200, Angelo Dureghello wrote:
-> > > From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> ...
->=20
-> > > +	} else {
-> > > +		err =3D ad3552r_qspi_update_reg_bits(st,
-> > > +					AD3552R_REG_ADDR_INTERFACE_CONFIG_A,
-> > > +					AD3552R_MASK_SOFTWARE_RESET,
-> > > +					AD3552R_MASK_SOFTWARE_RESET, 1);
-> > > +		if (err)
-> > > +			return err;
-> > > +	}
-> > > +	msleep(100);
-> >=20
-> > nit: fsleep()
-> >=20
->=20
-> fsleep() is microseconds, but we really do want milliseconds here.
-> Datasheet t_18 is 100 ms. (Internally, fsleep() calls msleep()
+Hello Jeff,
 
-I know. That's why the nitpick :). I just see it as a good practice...
-=20
-> for anything over 20 ms anyway so makes more sense to just call
-> msleep() directly and avoid 3 extra 0s.)
->=20
+> this test is unnecessary since kfree() already handles NULL
+I agree and normally kfree behaves in that way, but in this case the
+warning comes from free_large_kmalloc. Unbinding from VMs, the warning is
+always happening if the previous crash is fixed (first commit of this
+series).
 
-Anyways, fair enough
+Thanks
 
-- Nuno S=C3=A1
+Best regards
+José Ignacio
+
 
