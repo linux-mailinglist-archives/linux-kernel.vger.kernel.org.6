@@ -1,201 +1,112 @@
-Return-Path: <linux-kernel+bounces-368112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FF09A0B55
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7739A0B61
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 505B9B22A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:23:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5821F26BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833DC209686;
-	Wed, 16 Oct 2024 13:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3C020ADE7;
+	Wed, 16 Oct 2024 13:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cv9b72WL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="68yNfONX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cv9b72WL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="68yNfONX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sg76Cfyi"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364CD1C2325;
-	Wed, 16 Oct 2024 13:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059572076C7
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729085028; cv=none; b=pMkX0Ov25UcpQhIKif0b5GpQCJLlt9o0tJSlMH2EnyD2eBYJ9Sl1FwRMkZnv2np2RAqYXySFIlof3J+59J0dTRGGTp0S4/QLdJr6UwZM7t/XHeUx3bmmGtbHqycrviLxpsAuYsgV+m3NM+FDrlgjTefW0cc+/IbbFUjcSssUNUs=
+	t=1729085030; cv=none; b=ngoI8xh9FzNbeRB46wtVV9BCCQSzJSlt7oK2IHrEkUcnyKlhiKYX+DzbmKDvjIag1MpP4NZAfJmj7kIX8nqv9FOzXnX+mLecvxOHRVh18CLxPEI56ZRP/6Z4PnTzevoygrkvTH/cibFkMkcnN01zmNrv8ci++TB8U5OhpXgmAtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729085028; c=relaxed/simple;
-	bh=Vyes9UArj6kLabqe01BeO1W1BwzZyrwUMN88W+36opQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eb+slpMa3XH78pKqR8ii6W+14+u9SH41fwu9+/YRZJ84nRi6Xs7OYUrq4z57lPXwQBSYMJ4tpFPSyzxTbXeVsyL+CdTQXNUxs/cptb3ajsP17rsttBRjZb8lmq6I5re+GC800h2xuhVMB4hp0fV+mgGFgKlYGuniO6YGvZ2P7zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cv9b72WL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=68yNfONX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cv9b72WL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=68yNfONX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 272AA21B27;
-	Wed, 16 Oct 2024 13:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729085024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZO+sKhTsv8pLLoDC9fSPMQBrWslqPRrnnr+bCHanc4=;
-	b=cv9b72WLMisKxFkDbxDM9PHu8D6CgEzyOm4N2OgsTzd3tU2CTEsR5DIKdjZioE5QVIuD76
-	Pj6Y9zHfEsrD2Xly8mFEyHnyPF/mUx0fi2d48fGewt0+Sx6wraNphgf4xYXlGzDqFDbrg6
-	uHvaTW1yLcpubxrBclh3jsZHOSk7icU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729085024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZO+sKhTsv8pLLoDC9fSPMQBrWslqPRrnnr+bCHanc4=;
-	b=68yNfONXzqZZSINr4shKJhlRIhTFUuo4ivNuzNnGSGbPhpEbtqav0Y7MMLMecULYjYNCVu
-	2/3AsDmC+PL1+PAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cv9b72WL;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=68yNfONX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729085024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZO+sKhTsv8pLLoDC9fSPMQBrWslqPRrnnr+bCHanc4=;
-	b=cv9b72WLMisKxFkDbxDM9PHu8D6CgEzyOm4N2OgsTzd3tU2CTEsR5DIKdjZioE5QVIuD76
-	Pj6Y9zHfEsrD2Xly8mFEyHnyPF/mUx0fi2d48fGewt0+Sx6wraNphgf4xYXlGzDqFDbrg6
-	uHvaTW1yLcpubxrBclh3jsZHOSk7icU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729085024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZZO+sKhTsv8pLLoDC9fSPMQBrWslqPRrnnr+bCHanc4=;
-	b=68yNfONXzqZZSINr4shKJhlRIhTFUuo4ivNuzNnGSGbPhpEbtqav0Y7MMLMecULYjYNCVu
-	2/3AsDmC+PL1+PAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 18C871376C;
-	Wed, 16 Oct 2024 13:23:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Og3DBWC+D2eoCAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 16 Oct 2024 13:23:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AF776A083E; Wed, 16 Oct 2024 15:23:39 +0200 (CEST)
-Date: Wed, 16 Oct 2024 15:23:39 +0200
-From: Jan Kara <jack@suse.cz>
-To: Alessandro Zanni <alessandro.zanni87@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com,
-	alessandrozanni.dev@gmail.com,
-	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
-Subject: Re: [PATCH] fs: Fix uninitialized value issue in from_kuid
-Message-ID: <20241016132339.cq5qnklyblfxw4xl@quack3>
-References: <20241016123723.171588-1-alessandro.zanni87@gmail.com>
+	s=arc-20240116; t=1729085030; c=relaxed/simple;
+	bh=dbDkIDa3GX4Zg3hAEieWmi+3rL+bB6774AhqEXmpu0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZBfQKxW6x+BHXh8HLQiageM1TLR3z3zsVbAj3uz2k4MSb/BtAlYVjK9JQSuXuAWxwdtJ/ngP1WluxPwxijNnfMAdMMEQ4wEL6J7ufNTsznkednOvtFr9Ep+oKWGXVXWbft+8An4ZqSYatYAwRpIgRP4Q7Rs0RvJPYwB0RoUEUV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sg76Cfyi; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4605674e9cdso42650451cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729085027; x=1729689827; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dbDkIDa3GX4Zg3hAEieWmi+3rL+bB6774AhqEXmpu0o=;
+        b=sg76CfyiwdlKvO9rKLtwgAOjtlTBwRBk1P5J5s0KAsACjD13PUooCdFHdJVW0hXglu
+         LpnaSzpj2pF9NkfaLWvnbrCZr48YIBCkUxu8Cj1o6OyvJWHPA6PW+aX54pFPrdT0fEWh
+         4P1/dBy/4YAw7lNwO/jxV+GcqkiAKg9bq9WaDgLqrB5JmzB8CS/l+u+1tSPOBW5f7P/D
+         80SRrEsDtNf+PNv1POoNfFP/pTrjc7SY4GGSPxU7KmP9Y2rhrvZc1syk3d/ADoFaRn1n
+         rQ2KGz9d83Vc/0P/iPYNISPoGznawLKVxoRbDsEd89rAXxvowEh4nDp0LReeNtDRQIXP
+         Dixw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729085027; x=1729689827;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dbDkIDa3GX4Zg3hAEieWmi+3rL+bB6774AhqEXmpu0o=;
+        b=nlTWaNllQPCwcsuafay2AhmuFlGPq/EHpmt/jKf6WTylKr0wEJnbcV0jm/qtWPy2FH
+         Maaa3pbZxe795QIPH5LBZCZWMFdr/qsMKBcgtdfCM6BwPSAXM6usA8ACPYj5uRK1GXvp
+         iPko3sFwH0Px31Q72f7ga75ZvpRNiZ1sNHCr2Gm3LJYTPZdR51R8VXB8lRbNyszjhAy4
+         7Np6hstRymD9Z6ak2+0nGh5eIWrTMMV6rxxZWL86s4f51Eun7AtOyNh/XL71t+IH7ky9
+         KONDhDWcaUcJkTYQxdIuhiy5NDfzFt91leDkRym//x9c/nqF43h2YSSYxgjjSsi5ct8o
+         xiog==
+X-Forwarded-Encrypted: i=1; AJvYcCX0xnnbvle6iFNXEZKNykxVG3J+ag47hmV5H+eysSQ8iISFztjRfgVtMAK1EvR9ZCAY5q2GkVlokVbDZbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRQxGroTyCSI76m9RHHwtE5JzCegaZ1EjJWTFdp8YQ2DDdHbU9
+	Pwj4Xj6o1t/ZmojeTlVtyGjLxUgq9QPBP3YFZ+G7pDFPx7j5VLAPxN+sbwbhe5c=
+X-Google-Smtp-Source: AGHT+IEZJCs7JeC3qYycuknITXAGTgPkMxv/8NcrZC6M9sKoTxw2qcOZrgR0vjx/et/Nl5XilfsUGw==
+X-Received: by 2002:a05:622a:5912:b0:460:874f:f8bf with SMTP id d75a77b69052e-460874ffa63mr73466761cf.34.1729085026837;
+        Wed, 16 Oct 2024 06:23:46 -0700 (PDT)
+Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b232976sm17776181cf.58.2024.10.16.06.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 06:23:46 -0700 (PDT)
+Message-ID: <ccd95fb3-1756-4d52-bb7b-881502f7ac81@baylibre.com>
+Date: Wed, 16 Oct 2024 09:23:44 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016123723.171588-1-alessandro.zanni87@gmail.com>
-X-Rspamd-Queue-Id: 272AA21B27
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TAGGED_RCPT(0.00)[6c55f725d1bdc8c52058];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,linuxfoundation.org,gmail.com,syzkaller.appspotmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] docs: iio: new docs for ad7625 driver
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Lechner <dlechner@baylibre.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20240909-ad7625_r1-v5-0-60a397768b25@baylibre.com>
+ <20240909-ad7625_r1-v5-3-60a397768b25@baylibre.com>
+ <20241015190034.3a6f6761@jic23-huawei>
+Content-Language: en-US
+From: Trevor Gamblin <tgamblin@baylibre.com>
+In-Reply-To: <20241015190034.3a6f6761@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 16-10-24 14:37:19, Alessandro Zanni wrote:
-> Fix uninitialized value issue in from_kuid by initializing the newattrs
-> structure in do_truncate() method.
 
-Thanks for the fix. It would be helpful to provide a bit more information
-in the changelog so that one doesn't have to open the referenced syzbot
-report to understand the problem. In this case I'd write something like:
-
-ocfs2_setattr() uses attr->ia_uid in a trace point even though ATTR_UID
-isn't set. Initialize all fields of newattrs to avoid uninitialized
-variable use.
-
-But see below as I don't think this is really the right fix.
-
-> Fixes: uninit-value in from_kuid reported here
->  https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
-
-Fixes tag should reference some preexisting commit this patch is fixing. As
-such this tag is not really applicable here. Keeping the syzbot reference
-in Reported-by and Closes (or possibly change that to References) is good
-enough.
-
-> Reported-by: syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
-> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-> ---
->  fs/open.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index acaeb3e25c88..57c298b1db2c 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -40,7 +40,7 @@ int do_truncate(struct mnt_idmap *idmap, struct dentry *dentry,
->  		loff_t length, unsigned int time_attrs, struct file *filp)
->  {
->  	int ret;
-> -	struct iattr newattrs;
-> +	struct iattr newattrs = {0};
-
-We usually perform such initialization as:
-	struct iattr newattrs = {};
-
-That being said there are many more places calling notify_change() and none
-of them is doing the initialization so this patch only fixes that one
-particular syzbot reproducer but doesn't really deal with the problem.
-Looking at the bigger picture I think the right solution really is to fix
-ocfs2_setattr() to not touch attr->ia_uid when ATTR_UID isn't set and
-similarly for attr->ia_gid and ATTR_GID.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On 2024-10-15 14:00, Jonathan Cameron wrote:
+> On Mon, 09 Sep 2024 10:30:49 -0400
+> Trevor Gamblin <tgamblin@baylibre.com> wrote:
+>
+>> Add documentation for the AD7625/AD7626/AD7960/AD7961 ADCs.
+>>
+>> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> Bot picked up that this wasn't added to index.rst. I fixed up.
+Thank you!
+>
+> Thanks,
+>
+> Jonathan
 
