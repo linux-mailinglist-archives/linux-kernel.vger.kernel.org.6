@@ -1,103 +1,116 @@
-Return-Path: <linux-kernel+bounces-367527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C139A9A0376
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:01:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4CB9A0378
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F06280C36
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:01:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D899FB2453B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E001D14FA;
-	Wed, 16 Oct 2024 08:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E771CBA1B;
+	Wed, 16 Oct 2024 08:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1xcPC1F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="kMa7zmI1"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1553F165F1A;
-	Wed, 16 Oct 2024 08:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBA9165F1A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065705; cv=none; b=quVMVq/37/z/nGyYbr7Q7X6SBmYN40Tr6zqTju8PCt52X3Kv3lITxSxzKE68SO+dsLX+OJuCooblAdlbfuHN4ou0oiYdL1HuYHeTefQk4ZX12fDtfgtGPmrYefhKUv9HmHPKXm1k8coQ7WHERaHfVvmpqef75cZZ2gUJ9vEVJ6c=
+	t=1729065750; cv=none; b=OC+Es5mMqFHPmUICeW4aEABeHrjshdBldW51mPh5SIi+DAF47Zq2gDggXvarlyZ/QbMZ+DRW4Xz471yGeRxsOIQTlOcRlCoQHK4MAsgSUkswfo9Ry4ziDB1TRGR6iwB6pjPkluUAM86/0seaKK8KH2oPyHimJmKN3g2PCPQ+ENA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065705; c=relaxed/simple;
-	bh=pgnglVAzXGWeon4rHJ4Kx6rcYL2QifFuXYmp+TSwhZE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Kzlj7Lou4BtJdWfo1YUkixzeIMp/+/wirCdMw5I7EpOKkDe3hafsLxznRKCTnoMHUFkZrdJ/kpJ26z/QfuehpQDgGAblkvGaXfNzvy4o7DVJmd+Msx0fPK/0vWZF7ZhqweKAktUI64dnBl9sd90IIx47h//dWDGQKejVjNbbpCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1xcPC1F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F72C4CEC5;
-	Wed, 16 Oct 2024 08:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729065704;
-	bh=pgnglVAzXGWeon4rHJ4Kx6rcYL2QifFuXYmp+TSwhZE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=i1xcPC1FYoDnq2vDB6Dn8+VXcxT6fsXr3uXUs6SupvmWvwUHhEinGQfkNJ/y8V/Cl
-	 SeAkmvm0WMnu0rUpBLsazdxlxraBnjvVCq3a1gtxFBnuIsT2sre1xyukHqBaoBPmij
-	 qelxExb1jKt4xXvNjZZkm5s3D+WRcZD4Rv1aVJnuoEULMbfO90G0XfytM9ONOsqCJp
-	 FmIyYoiHVGvWa8G3k5Ba7QzE/BCdPlrTY3g6rfqwQE3XVK2dKFsRcN59/Z50vMK+vo
-	 uLJgO+AsxsIzQHWqq5hUNvFJttccJfWdEMcjyjl+WsqUis6PMuuhPnnlhN78o54fVs
-	 q5q+ZbigrgHVg==
-From: Lee Jones <lee@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
- Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
- Vladimir Oltean <olteanv@gmail.com>, 
- "David S . Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Sebastian Reichel <sre@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-pm@vger.kernel.org, netdev@vger.kernel.org, linux-rtc@vger.kernel.org, 
- linux-sound@vger.kernel.org, Alexandre Mergnat <amergnat@baylibre.com>, 
- Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>, 
- Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, 
- MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-In-Reply-To: <20241001104145.24054-3-macpaul.lin@mediatek.com>
-References: <20241001104145.24054-1-macpaul.lin@mediatek.com>
- <20241001104145.24054-3-macpaul.lin@mediatek.com>
-Subject: Re: (subset) [PATCH v8 3/3] dt-bindings: mfd: mediatek: mt6397:
- Convert to DT schema format
-Message-Id: <172906569700.1146121.13634550536849127452.b4-ty@kernel.org>
-Date: Wed, 16 Oct 2024 09:01:37 +0100
+	s=arc-20240116; t=1729065750; c=relaxed/simple;
+	bh=cMG59VbWtdd6kbGdD1k9MKeyHbvip4f0lbniB6UTT4M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JLdUJadsq0Q6keFN8zsJDpzCMXJNL5gkU9sNAgAKJfK8LsiM21I9uKljS+CPZTGc49yVkqOU6z0voiAxAviJOE0Z0U9QLWuXWx7D1BEG/Cvn5MFPyVUwiFqW7mr2/ja+Bj4l3ocO49Gy9BUB8o/U+1m4y5Ly/iVrCzS8PEtBN2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=kMa7zmI1; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G37u71008286;
+	Wed, 16 Oct 2024 01:02:09 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=/x962+IYdit39k/M4/0b8X4
+	fRrDBungmMIOQSwSbcOM=; b=kMa7zmI1UZvLKNlqOH3aweEBrpqe03oQ/Z6aASm
+	ShtGKRsGrM+BLskiC/dEvItlWCVRE8GPWAdJBCz8DUJ3hp2pnjUPt1gI+jNVTfL1
+	mFZieDLhJC/XRJqD8KoIFgWGeLjZFX5OS+q+dWFs70muEHIWbfGdQsHRrPPc3UQK
+	VcltBgG/16VUK0mMh/JXmD0OaDz92GP8FcXUymNB16E6iRJpD5+pzvWPMQtuBMJ/
+	jUEh9pJWBufb2O1g21i5bZCUR3gGovtwNlsslQ7NLOVBmKloD0Yz/Wvz5xumBmPP
+	6phvVDR5mfHJlzO9kpZxjaKByyf2e4O9L+ojoN+bkKVRlSg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42a5ahre34-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 01:02:08 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 16 Oct 2024 01:02:07 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 16 Oct 2024 01:02:07 -0700
+Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
+	by maili.marvell.com (Postfix) with ESMTP id 0B26A3F706D;
+	Wed, 16 Oct 2024 01:02:04 -0700 (PDT)
+From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+To: <will@kernel.org>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <bbhushan2@marvell.com>, <gcherian@marvell.com>, <sgoutham@marvell.com>,
+        <jonathan.cameron@huawei.com>,
+        Gowthami Thiagarajan
+	<gthiagarajan@marvell.com>
+Subject: [PATCH v9 0/5] Marvell Odyssey uncore performance monitor support
+Date: Wed, 16 Oct 2024 13:31:48 +0530
+Message-ID: <20241016080153.3546353-1-gthiagarajan@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-Proofpoint-GUID: JG5qzsqowmdtQt8NkvvceT5fAEaIERD_
+X-Proofpoint-ORIG-GUID: JG5qzsqowmdtQt8NkvvceT5fAEaIERD_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
 
-On Tue, 01 Oct 2024 18:41:45 +0800, Macpaul Lin wrote:
-> Convert the mfd: mediatek: mt6397 binding to DT schema format.
-> 
-> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
-> subdevices. They share a common PMIC design but have variations in
-> subdevice combinations.
-> 
-> Key updates in this conversion:
-> 
-> [...]
+Odyssey is a 64 bit ARM based SoC with multiple performance monitor
+units for various blocks.
 
-Applied, thanks!
+This series of patches introduces support for uncore performance monitor
+units (PMUs) on the Marvell Odyssey platform. The PMUs covered in this
+series include the DDR PMU and LLC-TAD PMU.
 
-[3/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT schema format
-      commit: 6e357f572638547e9c9e8d8abb7dc572c12032f3
+v8->v9:
+- Addressed the review comments.
+- Added platform specific flag in DDR PMU driver instead of version
+  as there is already a platform specific data.
 
---
-Lee Jones [李琼斯]
+Gowthami Thiagarajan (5):
+  perf/marvell: Refactor to extract platform data - no functional change
+  perf/marvell: Refactor to extract platform specific ops - no
+    functional change
+  perf/marvell: Odyssey DDR Performance monitor support
+  perf/marvell : Refactor to extract platform data - no functional
+    change
+  perf/marvell : Odyssey LLC-TAD performance monitor support
+
+ Documentation/admin-guide/perf/index.rst      |   2 +
+ .../admin-guide/perf/mrvl-odyssey-ddr-pmu.rst |  80 +++
+ .../admin-guide/perf/mrvl-odyssey-tad-pmu.rst |  37 ++
+ drivers/perf/marvell_cn10k_ddr_pmu.c          | 516 +++++++++++++++---
+ drivers/perf/marvell_cn10k_tad_pmu.c          |  66 ++-
+ 5 files changed, 630 insertions(+), 71 deletions(-)
+ create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
+ create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-tad-pmu.rst
+
+-- 
+2.25.1
 
 
