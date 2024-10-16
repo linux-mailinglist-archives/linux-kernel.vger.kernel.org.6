@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-368426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7D89A0FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:28:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346E59A0FB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9FF5B207E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1ADD2838E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3510A210194;
-	Wed, 16 Oct 2024 16:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RX2G9AaP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF7A210195;
+	Wed, 16 Oct 2024 16:29:09 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220FC20F5CB
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ACC210183;
+	Wed, 16 Oct 2024 16:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096124; cv=none; b=M3GZ2Xrv0EO5gLbek5v4GIO7VVSO2FCB3Pb2mi8ecsTKjZe25B7JpZOE9Cy1aYiTURYvF+qFGirXdnER1LkE+ImYJ0jlJFw0Q0Y+qA3SK3IHwvHZ+qVIrpQihev4NH2PkWyV3V7+h1e0glHX4p/hZLty8+zTS7Fv1FzO3G4/TPk=
+	t=1729096148; cv=none; b=fLnR6x939sBt2Bz3UpLQnHA8QY5QDuDBxHlXBwvi0h00aOpo6k1LfAjmgg1p7apcN0JqE4WJ6nTZma5n2c13CvpCxDTtyhwxYIcrx5WG+GBAhQrcB4J6/6FW4PPlBn6oDq81GH8H/wRK8YPJVzbzyMAVSuJ1eBIOv5b+1SyBpQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096124; c=relaxed/simple;
-	bh=l8A3AThTq+ezAyEa6ZdEacg08ACdKh98w19rNnepIiU=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=YpvB7ke5F9g5PO+zhzJQfFJYGywmXWyEOcY07bKbo5jgHZGrtrfFIUFsvfeB+kH9t00P5EKtCKmK2hg7Q+DTjKCENgov3ucUjak6VQSm43zJNInVxxvQ1FfCE0cQmovdDKQFCjIuChDIj+SH2sjNo/XWbQTx5IWf1mA+G2sZL2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RX2G9AaP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729096122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=73sRhC/MVUgLr8wQOAXRbG/9ryOP4YoRdbzww8lNz4M=;
-	b=RX2G9AaP3lA/+lLaP0MSAesWjNzVzi9TNY7UQEebiyBlf72Kzz/Oprcz6CM47irMzQdjMv
-	YlF4lxUqqyhlNyatqBxHbO6mowr1zSdPEiQN2Px0KnNlIbe08JMhVnW6OCOcBrG256tffT
-	gacpLXQjWwCw0rO2oA6G3GXOh3xcjmk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-acA3QZC1NvWB9lBdONbJig-1; Wed,
- 16 Oct 2024 12:28:39 -0400
-X-MC-Unique: acA3QZC1NvWB9lBdONbJig-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0BC619560A1;
-	Wed, 16 Oct 2024 16:28:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 02B621956086;
-	Wed, 16 Oct 2024 16:28:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>,
-    Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    Trond Myklebust <trondmy@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Downgrade i_rwsem for a buffered write
+	s=arc-20240116; t=1729096148; c=relaxed/simple;
+	bh=m03GgYfpjhsbMSm0//osAxU4REPjr4beIsD/5qr/bus=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iQOIL9L3Oij8CGxyEKri27gyvVKZ3ZGEbw31DH7ze7B+FQ2nqT7WOiLO3RrNHwXaebb8IgOB5WlSR9dpe/JWsOxgRhD4FLmND+FK+8+RfgrLIz1b4W9NdoV+Wmf/04zWBoS9447Zixh1VYSU0pPN/FjvvnJf+J7D5dXUuHW3On0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTGc74yg5z6JB1g;
+	Thu, 17 Oct 2024 00:28:23 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6CF221400DB;
+	Thu, 17 Oct 2024 00:29:01 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
+ 2024 18:29:00 +0200
+Date: Wed, 16 Oct 2024 17:28:59 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
+	<Benjamin.Cheatham@amd.com>, <rrichter@amd.com>, <nathan.fontenot@amd.com>,
+	<smita.koralahallichannabasappa@amd.com>
+Subject: Re: [PATCH 05/15] cxl/aer/pci: Update AER driver to read UCE fatal
+ status for all CXL PCIe port devices
+Message-ID: <20241016172859.00004209@Huawei.com>
+In-Reply-To: <20241008221657.1130181-6-terry.bowman@amd.com>
+References: <20241008221657.1130181-1-terry.bowman@amd.com>
+	<20241008221657.1130181-6-terry.bowman@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1317957.1729096113.1@warthog.procyon.org.uk>
-Date: Wed, 16 Oct 2024 17:28:33 +0100
-Message-ID: <1317958.1729096113@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-In the I/O locking code borrowed from NFS into netfslib, i_rwsem is held
-locked across a buffered write - but this causes a performance regression
-in cifs as it excludes buffered reads for the duration (cifs didn't use any
-locking for buffered reads).
+On Tue, 8 Oct 2024 17:16:47 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Mitigate this somewhat by downgrading the i_rwsem to a read lock across the
-buffered write.  This at least allows parallel reads to occur whilst
-excluding other writes, DIO, truncate and setattr.
+> The AER service driver's aer_get_device_err_info() function does not
+> read uncorrectable (UCE) fatal error status from PCIe upstream port
+> devices. As a result, fatal errors are not logged or handled as needed
+> for CXL PCIe upstream switch port devices.
 
-Note that this shouldn't be a problem for a buffered write as a read
-through an mmap can circumvent i_rwsem anyway.
+I wonder why not?  Is this the first ever upstream port to
+report an uncorrectable error (that didn't mean the link was
+down) or is there something more subtle going on.
 
-Also note that we might want to make this change in NFS also.
+PCI folk, this one looks like it might cause problems to me.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Trond Myklebust <trondmy@kernel.org>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/locking.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> Update the aer_get_device_err_info() function to read the UCE fatal
+error_info()
 
-diff --git a/fs/netfs/locking.c b/fs/netfs/locking.c
-index 21eab56ee2f9..2249ecd09d0a 100644
---- a/fs/netfs/locking.c
-+++ b/fs/netfs/locking.c
-@@ -109,6 +109,7 @@ int netfs_start_io_write(struct inode *inode)
- 		up_write(&inode->i_rwsem);
- 		return -ERESTARTSYS;
- 	}
-+	downgrade_write(&inode->i_rwsem);
- 	return 0;
- }
- EXPORT_SYMBOL(netfs_start_io_write);
-@@ -123,7 +124,7 @@ EXPORT_SYMBOL(netfs_start_io_write);
- void netfs_end_io_write(struct inode *inode)
- 	__releases(inode->i_rwsem)
- {
--	up_write(&inode->i_rwsem);
-+	up_read(&inode->i_rwsem);
- }
- EXPORT_SYMBOL(netfs_end_io_write);
- 
+> status for all CXL PCIe port devices.
+> 
+> The fatal error status will be used in future patches implementing
+> CXL PCIe port error handling and logging.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+>  drivers/pci/pcie/aer.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 1c996287d4ce..9b2872c8e20d 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1282,6 +1282,7 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
+>  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
+>  		   type == PCI_EXP_TYPE_RC_EC ||
+>  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
+> +		   type == PCI_EXP_TYPE_UPSTREAM ||
+>  		   info->severity == AER_NONFATAL) {
+>  
+>  		/* Link is still healthy for IO reads */
+So this comment makes me worried.  In general case the fatal
+error may mean we can't talk to the USP?
+
+Jonathan
+
 
 
