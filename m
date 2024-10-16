@@ -1,37 +1,84 @@
-Return-Path: <linux-kernel+bounces-367014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB0C99FDA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D175A99FD94
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CF51F2634F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76CD0285EB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D9C17A597;
-	Wed, 16 Oct 2024 01:00:25 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C28013792B;
+	Wed, 16 Oct 2024 00:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbI+a/Ww"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEAE13BAE2;
-	Wed, 16 Oct 2024 01:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7E311711;
+	Wed, 16 Oct 2024 00:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729040425; cv=none; b=fdlwp5oyBp2G/CwlmHZN0+/tl28BETEyo1It0goj6K3bDlXF3w6EE2GKxyMx4yU7WQT0rmBg3tK9t0bEaYK1X9hXTWWbBjmC58GlYL12qyY3118zlP5LyANqIldKT+SEFrtdDLVert2XoiAcfVY2z+8+a2zuWJHrAS+aIzzs5f0=
+	t=1729040397; cv=none; b=ZlXwiPcccmpURsCLC8vkqXQeCuPdY6TZLscD7zzSYhJcOMeD3/R2dUcDWLFg8SCrg+FlA8DdY8l9Pmi7SNc6bgpZdx108u4SpeBdLhn6sqkG4uRD6xZ8Rb9cwSNadZpmUUm/bJY87/echuS3hqKT6Rd2xQSYNSm+kUq/DWpjMvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729040425; c=relaxed/simple;
-	bh=3f4GLOsluvHuCgnEd7+tScd/3iBGplIPsNtjui2V1jw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AQikcrqqRDYx9DtsleBpGm4X9L/sGHeR4bHVKkcrJhpm5s2kHQOBU5KCODp3KgncTtrtR42LgGs3OFsWspyszFVIMtlWEKLEGIW8vtm5f4DoTFPmIgst6GiDH4FYmPpmAAjumPxZQYWV+3xtyFzNbtZMll5T0rbHiTxemMNsdXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Yixun Lan <dlan@gentoo.org>
-Date: Wed, 16 Oct 2024 08:59:43 +0800
-Subject: [PATCH v5 3/3] riscv: dts: spacemit: add pinctrl property to uart0
- in BPI-F3
+	s=arc-20240116; t=1729040397; c=relaxed/simple;
+	bh=esSXKg6uH+OqLu6aGZIVdM6opgQ4eeUg08Z4bn7GCrc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lh1gEiwVmaZ3R13HPjPpdVtOdj/KYxuTPghtD8yWCrPARa58gZ4ZNri1pfx6jI4voLkr+xGDcjJcCvU6LKYN0Gnt96J6bx2X/IWHqpCa592r28ZvxdiXLvM1+PI0OMptF3tEYKL9R8OVpZ0pnpsBt/g81QMHluWDHTahFBmDK5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbI+a/Ww; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4A9C4CEC6;
+	Wed, 16 Oct 2024 00:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729040397;
+	bh=esSXKg6uH+OqLu6aGZIVdM6opgQ4eeUg08Z4bn7GCrc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lbI+a/WwNSKpfSXvenh8Ny0UnXf6CnkLNmq0qk9Atp+VOx+4SHc9S2n/OqBC7YAzJ
+	 ahSvkS4ScAXKWaEcYqMC16yC1+Y17oCKwh6R6EpDBQ6l18v03KRsLLpartx0GnJSTJ
+	 s/COhdWDlNOex5oOEWNzumqoivqrHv++5FPDx+2/9afI0zWbUdZ26DvOO2DfzmfIsI
+	 BYWQhP3TS2fC3g/XmZON6cJAwGfwVuW3naApQmGuS7OF+HXn9psV5Yyps8mc9Y5ezQ
+	 3QAaquC24WMooPPbFy7AhXDCq6zXCyh42OinKxeHwvQLrkh+7cC5Dzdi2+w1kyu7zK
+	 DeAb6mO7PPW2g==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arch@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v17 10/16] ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
+Date: Wed, 16 Oct 2024 09:59:47 +0900
+Message-ID: <172904038762.36809.10389599753913114668.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <172904026427.36809.516716204730117800.stgit@devnote2>
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,117 +86,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-02-k1-pinctrl-v5-3-03d395222e4f@gentoo.org>
-References: <20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org>
-In-Reply-To: <20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>
-Cc: Yangyu Chen <cyy@cyyself.name>, Jesse Taube <mr.bossman075@gmail.com>, 
- Jisheng Zhang <jszhang@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
- Icenowy Zheng <uwu@icenowy.me>, Meng Zhang <zhangmeng.kevin@spacemit.com>, 
- Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2397; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=3f4GLOsluvHuCgnEd7+tScd/3iBGplIPsNtjui2V1jw=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBnDxAUXO1zc9Ta5tpeIyJ2hq8POoNXUp36J5SWW
- j325v/ZbzCJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZw8QFF8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277fn2EACeD6FHKXHz5bLlk9
- YMe230S4sl1NDB31Ct1jK3fgjJv4E1eKpGO3Wjj696e/f13vBKIfW1VLXzncYCifOQqV1yfGrRX
- wSdZOgA8RYiq8JGNn7DBvENGHjkDcQulGNZo7kac8SpHmLTeucu3R8BuQ1hj9nY+ABgYxp/dvhV
- PQKt35+Vxnd3PqVqt6HAl3sEpzFH4JnRBPKn2SDRa65UgWJ2BDQIm2UiMVcNO5uqx0cvZZlhxVg
- XTJd24XxFH8jlv/SNIXVRebnT1AN8yzs0Gspzk4EV2p5gz1VgSoLk0u94hYE8Vkz/s3+75Fk+vY
- 2T0H4CgfhfhL0GQvWy0zOPSVNE75TdV/YAnKIkL/afOaNowm5af/l8FFHssDjcg8CKN/wIKN4N/
- y5e2hIb1oIKYs+cuLuTjT4uKq8b1p6OsGwmdDmn9X+r/69YNIrsebG8M4F5TVAQNDV2W7ZkXoMo
- Q7D0xOjUjmZmD5Y5TWJOZKkYxOd/7pZ88thSKMzUUCSGl2sqK3fjY4/j2ZBElqCnEvt8AVuM7kH
- PQKXdaU3I6yuqADx9JuGNHFMJkyTG1c2pIxqKxbdAvRqtVrdD6D6o1q0e7qiQne6jesgzewwvsI
- 35yS9RaH5xf8S+3giwv3APN7oyMvrdawRvUGCytnYFl0j8W4qOe4Ijuwh1d4rIgces0w==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Transfer-Encoding: 8bit
 
-Before pinctrl driver implemented, the uart0 controller reply on
-bootloader for setting correct pin mux and configurations.
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Now, let's add pinctrl property to uart0 of Bananapi-F3 board.
+Add CONFIG_HAVE_FTRACE_GRAPH_FUNC kconfig in addition to ftrace_graph_func
+macro check. This is for the other feature (e.g. FPROBE) which requires to
+access ftrace_regs from fgraph_ops::entryfunc() can avoid compiling if
+the fgraph can not pass the valid ftrace_regs.
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N Rao <naveen@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
 ---
- arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts |  3 +++
- arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi    | 20 ++++++++++++++++++++
- arch/riscv/boot/dts/spacemit/k1.dtsi            |  5 +++++
- 3 files changed, 28 insertions(+)
+ Changes in v8:
+  - Newly added.
+---
+ arch/arm64/Kconfig     |    1 +
+ arch/loongarch/Kconfig |    1 +
+ arch/powerpc/Kconfig   |    1 +
+ arch/riscv/Kconfig     |    1 +
+ arch/x86/Kconfig       |    1 +
+ kernel/trace/Kconfig   |    5 +++++
+ 6 files changed, 10 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 023274189b492598b312d27609051a855c021d40..bc88d4de25a621f1baa5b2b96cfa0083144847af 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -4,6 +4,7 @@
-  */
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 9a654bbcc350..e927e7250254 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -212,6 +212,7 @@ config ARM64
+ 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	select HAVE_GUP_FAST
++	select HAVE_FTRACE_GRAPH_FUNC
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_TRACER
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 2b0dc9830ec1..5e15c8ed7faf 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -133,6 +133,7 @@ config LOONGARCH
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if !ARCH_STRICT_ALIGN
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_GUP_FAST
++	select HAVE_FTRACE_GRAPH_FUNC
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 8094a01974cc..0888aabff071 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -238,6 +238,7 @@ config PPC
+ 	select HAVE_EBPF_JIT
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	select HAVE_GUP_FAST
++	select HAVE_FTRACE_GRAPH_FUNC
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_FUNCTION_DESCRIPTORS	if PPC64_ELF_ABI_V1
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 851486fc935a..e59e7bf6c0ed 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -142,6 +142,7 @@ config RISCV
+ 	select HAVE_DYNAMIC_FTRACE if !XIP_KERNEL && MMU && (CLANG_SUPPORTS_DYNAMIC_FTRACE || GCC_SUPPORTS_DYNAMIC_FTRACE)
+ 	select HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 	select HAVE_DYNAMIC_FTRACE_WITH_ARGS if HAVE_DYNAMIC_FTRACE
++	select HAVE_FTRACE_GRAPH_FUNC
+ 	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
+ 	select HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_GRAPH_FREGS
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 22cb0d181552..b42f9e7f1b87 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -232,6 +232,7 @@ config X86
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_GUP_FAST
+ 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
++	select HAVE_FTRACE_GRAPH_FUNC		if HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_GRAPH_FREGS	if HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_GRAPH_TRACER	if X86_32 || (X86_64 && DYNAMIC_FTRACE)
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 82654bbfad9a..2fc55a1a88aa 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -34,6 +34,11 @@ config HAVE_FUNCTION_GRAPH_TRACER
+ config HAVE_FUNCTION_GRAPH_FREGS
+ 	bool
  
- #include "k1.dtsi"
-+#include "k1-pinctrl.dtsi"
- 
- / {
- 	model = "Banana Pi BPI-F3";
-@@ -15,5 +16,7 @@ chosen {
- };
- 
- &uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_2_cfg>;
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..a8eac5517f8578d60cb45214589ccb45ac376b9a
---- /dev/null
-+++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
-+ */
++config HAVE_FTRACE_GRAPH_FUNC
++	bool
++	help
++	  True if ftrace_graph_func() is defined.
 +
-+#include <dt-bindings/gpio/gpio.h>
-+
-+#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
-+
-+&pinctrl {
-+	uart0_2_cfg: uart0-2-cfg {
-+		uart0-2-pins {
-+			pinmux = <K1_PADCONF(68, 2)>,
-+				 <K1_PADCONF(69, 2)>;
-+
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+};
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 0777bf9e01183f34c1eb82525418fe1a660b25a9..a2d5f7d4a942af26b3ba991928f23b2d9943366a 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -416,6 +416,11 @@ uart9: serial@d4017800 {
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pinctrl@d401e000 {
-+			compatible = "spacemit,k1-pinctrl";
-+			reg = <0x0 0xd401e000 0x0 0x400>;
-+		};
-+
- 		plic: interrupt-controller@e0000000 {
- 			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
- 			reg = <0x0 0xe0000000 0x0 0x4000000>;
-
--- 
-2.47.0
+ config HAVE_DYNAMIC_FTRACE
+ 	bool
+ 	help
 
 
