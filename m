@@ -1,108 +1,136 @@
-Return-Path: <linux-kernel+bounces-367920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04009A0870
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:33:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BD59A087E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5CE283147
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:33:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740C01F23F1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A828206E91;
-	Wed, 16 Oct 2024 11:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAEE207A13;
+	Wed, 16 Oct 2024 11:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKKTl3Mw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="WzqzqSl3"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6E51D63E1;
-	Wed, 16 Oct 2024 11:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2395C15C147;
+	Wed, 16 Oct 2024 11:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729078423; cv=none; b=nx2vKk6XL/Rz75ySmgISOdGof2B7vlZUDYIDFkBtE6jYlW9Hyo9ZDNu2Grhf7C0kZphnrRPpixk5OLd6bM81QY/a3WRFb+K9Rfa3yfvwrjAMoY21cF0UXl22Wo9Y4TfjaNBarlcXo4HXjr/D+5gvW+KCd2MeMFyqsp1LAsYGDwo=
+	t=1729078630; cv=none; b=iOVatQ1v7L5a9IkU/q3DG6sAzBGsLPiM9yIJpxlXgAgZKJ7tcVv2UcEG5x+6Q+otsM5Aobb4Hh56sGrUyJ89XIHUYM9XsGmBQrHI2X/S8DSB5rGSJWNoVtQQl6lMgMsNT41vRlWaYr8NCywo0TJR88JtWdwDnwbQlh2ye3tqvf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729078423; c=relaxed/simple;
-	bh=9ScozBNebsgvalEmePITX1ws62/I3yp/zbZR7NP4zOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWGVEGP8APvyike3ZGOuwAWjBg6+0pQnwVpZA0Lm3znwBNOGMRqLr9yhWtrnCZmjt80BiSOnHy3aAuS4QDIVdUTN/4PK8W1cGDLaoSOwh6dSusgN0bjN3f90ldR1DGdwBUIrSu0DVfZlC/y90pg05Xd4en4pKEadi+fu037Ts40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKKTl3Mw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33340C4CEC5;
-	Wed, 16 Oct 2024 11:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729078423;
-	bh=9ScozBNebsgvalEmePITX1ws62/I3yp/zbZR7NP4zOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vKKTl3MwO5DNxmgTMZJ9RTe3/xZcBbmDfoIFARlcgAdlRIb6c7gZpm1+7xnwyEQJi
-	 LDLDPLLTLVmZZVYhuu54/6V8lUBIWLDCyiW6gb+ZLdDUsmOq2xpIabQW5vr3S0lu/I
-	 4i43pVbotUKWNJTMBZbkPj+mgDv1J0GJU5H6Zk7EnFL7X/004dXqSRn51gE9V8gIwL
-	 x+SMH7NLTp4IikC/WA5gnXmHbJfalDtzbSRhA2ZsO5XLrwdkXFcbhHG/fijaTyWPqv
-	 OJkG8XC/8EO5j5d+scuRDhYnYnncoU5vMKo9A7yX9G6tP53FrsVuXiJNqQ+2f2QY9j
-	 n2YFunartvzsQ==
-Date: Wed, 16 Oct 2024 12:33:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the regulator tree
-Message-ID: <4bb56093-5358-4d3b-aba8-f8815d2347a6@sirena.org.uk>
-References: <20241016135943.24e1fab0@canb.auug.org.au>
- <20241016075510.GL8348@google.com>
+	s=arc-20240116; t=1729078630; c=relaxed/simple;
+	bh=qCU084GYS1VrCYFQf8e+tB+oEPIBJ40QscA3anRgR9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=un0x40cYBifN0x/0i3pKiFUfKkU8YoKPVtNo9b03Uw6j8jcXwf9+UQvXKcX1fL2lvYer6CnsHiBQI48sZNbrSJfIdQwmWPzzzM8YIog+i6bY+f/7sKWe1E3ZmaQiBNHJRBuRzPKKyBGvq6uyAMYGrTYABbkHgaLjAt10IFietGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=WzqzqSl3; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id b85c8fbfce650e62; Wed, 16 Oct 2024 13:37:00 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 52667A93969;
+	Wed, 16 Oct 2024 13:37:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1729078620;
+	bh=qCU084GYS1VrCYFQf8e+tB+oEPIBJ40QscA3anRgR9c=;
+	h=From:Subject:Date;
+	b=WzqzqSl3v1ByVcNUmSCYPx+VsCAjD07uZoCB2ToEigMPe6izdumN5cohdzJZYPSll
+	 9b37oCgnJ4pusOfraRJr1drIljiRZuGXzjdDJTGfKTIJcoERRoaoFQEiy4VxZJhDza
+	 s1fWNHpFxPf+QfGT6y2u65oErp0/u/RzHwoBukeps92TeA4VPiCj5bfRDA1v05nL9a
+	 VJwTib9jnuWEAGyONh4aBt+sE8/zPta2CsR/CYYsIyece15zAm2TXYee+HqcfmIpej
+	 IXBM7QvsRanTaAAPOhiw5ju9vgmysbYd6MJUwhrriF3SPEJ/Fz/jNPVGan9ZN0CHZg
+	 6T1VEggW/0JnA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v1 08/10] thermal: core: Eliminate thermal_zone_trip_down()
+Date: Wed, 16 Oct 2024 13:33:43 +0200
+Message-ID: <1807510.VLH7GnMWUR@rjwysocki.net>
+In-Reply-To: <4958885.31r3eYUQgx@rjwysocki.net>
+References: <4958885.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4pbWwzK1roPK/fv4"
-Content-Disposition: inline
-In-Reply-To: <20241016075510.GL8348@google.com>
-X-Cookie: Snow Day -- stay home.
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Since thermal_zone_set_trip_temp() is not located in the same file
+as thermal_trip_crossed(), it can invoke the latter directly without
+using the thermal_zone_trip_down() wrapper that has no other users.
+
+Update thermal_zone_set_trip_temp() accordingly and drop
+thermal_zone_trip_down().
+
+No functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |    8 +-------
+ drivers/thermal/thermal_core.h |    2 --
+ 2 files changed, 1 insertion(+), 9 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -565,7 +565,7 @@ void thermal_zone_set_trip_temp(struct t
+ 		 * are needed to compensate for the lack of it going forward.
+ 		 */
+ 		if (tz->temperature >= td->threshold)
+-			thermal_zone_trip_down(tz, td);
++			thermal_trip_crossed(tz, td, thermal_get_tz_governor(tz), false);
+ 
+ 		/*
+ 		 * Invalidate the threshold to avoid triggering a spurious
+@@ -699,12 +699,6 @@ void thermal_zone_device_update(struct t
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_device_update);
+ 
+-void thermal_zone_trip_down(struct thermal_zone_device *tz,
+-			    struct thermal_trip_desc *td)
+-{
+-	thermal_trip_crossed(tz, td, thermal_get_tz_governor(tz), false);
+-}
+-
+ int for_each_thermal_governor(int (*cb)(struct thermal_governor *, void *),
+ 			      void *data)
+ {
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -273,8 +273,6 @@ void thermal_zone_set_trips(struct therm
+ int thermal_zone_trip_id(const struct thermal_zone_device *tz,
+ 			 const struct thermal_trip *trip);
+ int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
+-void thermal_zone_trip_down(struct thermal_zone_device *tz,
+-			    struct thermal_trip_desc *td);
+ void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
+ 				struct thermal_trip *trip, int hyst);
+ 
 
 
---4pbWwzK1roPK/fv4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Oct 16, 2024 at 08:55:10AM +0100, Lee Jones wrote:
-> On Wed, 16 Oct 2024, Stephen Rothwell wrote:
-
-> > The following commits are also in the mfd tree as different commits
-> > (but the same patches):
-
-> >   d7a5f27342a8 ("mfd: sec-core: add s2dos05 support")
-> >   ef9690c04f3b ("dt-bindings: mfd: add samsung,s2dos05")
-
-> And these ones do not follow the style expected by the subsystem.
-
-> Mark can you please remove these without reverting and further dirtying
-> MFD's history please?  One little rebase isn't going to hurt in the long
-> run. :)
-
-There's additional stuff on top of them now and I'm not clear that the
-regulator patch would build without the MFD.  I don't understand why you
-said to apply the patches after I'd reviewed the regulator patch,
-usually you insist on waiting until all other subsystems have reviewed
-before applying the MFD cores :(
-
---4pbWwzK1roPK/fv4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcPpJIACgkQJNaLcl1U
-h9BjEAgAg00TLK85W088ESGSXAQwk+RAG/RGXaGLfYeNESBwkXhqMTzUleLM5YxK
-4nCKSmui4gQl1GDrXplqdnJeyj46WyMMLc7EkBFs1fXzPsidMLrCfpLvLtNiu+7N
-2rAQsxpxSaYVWc2yfmZcPD9MX7v+diFErHf/lAzeh5eEOCH2bSSAJsymqVT0m/RN
-b8aa0yxAstjbBtPz3xZSnke4MwM70eDa/epQAC/L8ITuC4OOK/FZiisJ5JAHbyay
-k0aMMSmNjeiI/GVbp7rafA5TCWYJZmSPqnPRK2tK4E60qfQ2Y8wZyd5NJma7waQT
-w0i46HheZFf0ebWPBiEvWqm6onN8ow==
-=Nn6J
------END PGP SIGNATURE-----
-
---4pbWwzK1roPK/fv4--
 
