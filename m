@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-368641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034BC9A12C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:40:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225E39A12C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8D4286614
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C243E1F2438C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E222215F4B;
-	Wed, 16 Oct 2024 19:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B7B2144B9;
+	Wed, 16 Oct 2024 19:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yNEy3q9e"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="uSxMnabM"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AAA2144CF
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031231865ED
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107609; cv=none; b=M5XOYtE/sypn3pumqSo+JvBwpObPTQQ14hV5j/1zEHAWeqeRj6JD6WsieqSkE4zUMQbGXgaBppk0JvWZMNi85NJenWijdsK4CyvibaR2kOyAVrdRWj4ZOzrysolps4Bbhq/mEf41+WxpHFEEFdE5c7PPHsJgGVUn+CazxsdMg+0=
+	t=1729107721; cv=none; b=gIR039Q+k+pJQ242803dGPKwwTRFyatw0/FCmruz+WeBJR+sEbSh2xVQO6C+mm0UQJVU9aLR6E5sCKc3uIvgIg2GI9uNkou3SX2cJncsHj9MD+Zmvod4uJn89Lvp1ZEheNXn3DeqC3ak1pxk6+AJQ56kNFWb4PDq414ifp1RfDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107609; c=relaxed/simple;
-	bh=brdpjYmJXn7ThpNb9Jl/rpudqX5V0z7rIkZzPSG5KKY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HWVmBz41+yU6USShciPw+dBc1ps4N8k1jgN0h3G3qG5Qjpn0IVNC4qwFQb0+nTTPH6xkP5lhZOMAml73l2O6l2j/f2m/RfbAprRaxN8WT8RdwsyjNDA+Ir9BFtVOEBkQ2Yy3UFDi/1SQi+YrmY5gEqEEQ8ocghYDx8FW6rZ5UPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yNEy3q9e; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3204db795so3915847b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729107607; x=1729712407; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bynrZn787vSIAU/ezJKfwwCMHmL7B1s8v41NnSYH3Dc=;
-        b=yNEy3q9etGvb9tlW+XuHAU5gSQuNugSpDwcN8Djer1TLOcAd8TgZ+j9+vkjbkbIuso
-         VOR5HJd5eyL7KjlYq6urk5SJh7P0spUPk1kdoE3mO3KU1DV4l2LezuragN4Ziki/xZjP
-         o33sVjpQooSx+D8/Q1xHAaSOwZRweZHmTb3vzSNLyxpv3H6EZ6niEzvrGsOoC/RNpC4+
-         xQmWL04H7YgbaLkq/BLboEBeDmhg8UDuiU45vGmngaTGToofZ8YPpKEGEmHqN0r8PEc+
-         mWk4DvUcZ8GX9veCfqzSjh86obye442rQ8Evsv6oCWQ++uyqA9B1GX0tZBWjRfNrOcIK
-         eoNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729107607; x=1729712407;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bynrZn787vSIAU/ezJKfwwCMHmL7B1s8v41NnSYH3Dc=;
-        b=GnqKcSCjQGNruEO1Ynlr/cvffBHe0nZoSQr1loh9lTlbBZF4XRkzw76isnm39qGotb
-         sEQKBXriQr2uJKmzRU+s8pP9KjcOBP9cF8xX9CFZ/0khVD86hsuWkxY5pCDJ2fM9Z+2D
-         W+uZWRxatb3/jDNcVLOy6/J3tNuJeNG0D4t4Uqgq5Ae1tmhuxLZIzPJDMlW0VeHo3STD
-         ZzW0L4QPBOoZcTtIbTS4ptqNSv+X+grMyM2vZML0Zas4bwMac87Pub4l6elEliDPCiZM
-         bF8R4G+zHyxo693wiGmoiNfBN3s7dBCYqv2EuvLCXbc4BJ0RH5xxfNqVngBwbAkIqeSz
-         A+Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbBmeSQysR9RRqjwELbyuerMJUPp/oRpOR2VHRadq8gpFUlr2C5qmKkaWS6v6cKQSTyviawrfIEQKRcyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyFLTYHB77JSh1MfayaCuUGXL8v2LQ/WKdvtHYAV2GoiMRZk7q
-	tj3SFCq0OgObGk4chOMNtrWU+JBSVWitDK/fsyki6MO3YlOXfjPPjk6kYz7y4wVilJeJNr06Rg8
-	Fcm1IAQ==
-X-Google-Smtp-Source: AGHT+IEH6Dg9sYSxl39ijcngJbLw6yN9e0XfWHt8FeRQb2Rg19LkaJCzumI4mMLitFRShT3qz+ALDt4YegFs
-X-Received: from yuanchu.svl.corp.google.com ([2620:15c:2c5:11:2793:a280:1184:4a14])
- (user=yuanchu job=sendgmr) by 2002:a05:690c:2fc9:b0:66a:764f:e57f with SMTP
- id 00721157ae682-6e3d41fb686mr66667b3.7.1729107606955; Wed, 16 Oct 2024
- 12:40:06 -0700 (PDT)
-Date: Wed, 16 Oct 2024 12:39:47 -0700
-In-Reply-To: <20241016193947.48534-1-yuanchu@google.com>
+	s=arc-20240116; t=1729107721; c=relaxed/simple;
+	bh=F2Suugf57GPw3RqJq7bRvLar9lCs5cHH4M9EOSt6p1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N23yrArhkRD/QMR2SLtKcEawwkH4QWJVnNO/2FZMRhpplayDgaxIG3ydfHr9JqlwboSOmoSL2C+LoVCBHf1qysI9S7NLEvW2pPT8vcnY9XN8/+JM8zd+i41V1rOrc0D6SwtAXK5ZU8vWZj2656702WwISNe3r8UEfNGKRmBO0Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=uSxMnabM; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 73A1D2C0436;
+	Thu, 17 Oct 2024 08:41:55 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1729107715;
+	bh=zuhAErChXmTZvMoGaqhA8T5c9vvGGKPoIeF7VyoGiNY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uSxMnabM8svO3VExiUHPh8uF7M5CWm7RNSVRPg1XEufT1e6lqYQ3z4NYUOzEdK5IW
+	 JnNwse1GJSORonBPvsLK+F+uyFQWDqUKDvd5bOTVL3D3mBEQW1MmEZPtDEbaD/Hy3H
+	 u0CTsJk7dkLhNriWfn1Q/uqAEt6n7H6lBOu3+biHFoh84+pMpcfNXH9XFFpeSwEXd2
+	 fdNfWyOnSKhEvONv2EnBqyXh5lAdUfE0JI7pClO1RMOarzU5A9uaGjI08ykxq8E7Dv
+	 L3EWpLo6+/rtKaX5A8sqBqWS/MPLCxK3q9KvWLll3YbHfX3g0qQeXkSoapnlm3NC8Z
+	 S4Vbn6U/LtrMQ==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B671017030000>; Thu, 17 Oct 2024 08:41:55 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 2CA2713EE32;
+	Thu, 17 Oct 2024 08:41:55 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 28DC6280482; Thu, 17 Oct 2024 08:41:55 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2] kbuild: Restore the ability to build out of tree dtbs
+Date: Thu, 17 Oct 2024 08:41:49 +1300
+Message-ID: <20241016194149.4178898-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241016193947.48534-1-yuanchu@google.com>
-X-Mailer: git-send-email 2.46.0
-Message-ID: <20241016193947.48534-2-yuanchu@google.com>
-Subject: [PATCH v3 2/2] virt: pvmemcontrol: add Yuanchu and Pasha as maintainers
-From: Yuanchu Xie <yuanchu@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, virtualization@lists.linux.dev, 
-	dev@lists.cloudhypervisor.org, Yuanchu Xie <yuanchu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=67101703 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=nLVBVlUmovVwbiQ-:21 a=DAUX931o1VcA:10 a=N9YJ-UhC3puMJLZ-EMAA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-The pvmemcontrol driver lives under drivers/virt/pvmemcontrol. We
-specify maintainers for the driver.
+A build pattern to handle out of tree dtbs is to copy the .dts file into
+the kernel source tree and run `make myboard.dtb`. This is supported by
+the wildcard %.dtb rule in the Makefile but recent changes to split the
+dtb handling out of scripts/Makefile.build stopped this from working.
+Restore this functionality by looking for .dtb in $(MAKECMDGOALS) as
+well as $(targets).
 
-Signed-off-by: Yuanchu Xie <yuanchu@google.com>
+Fixes: e7e2941300d2 ("kbuild: split device tree build rules into scripts/=
+Makefile.dtbs")
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index aacccb376c28..5e661f39e07d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18125,6 +18125,13 @@ L:	linux-wireless@vger.kernel.org
- S:	Supported
- F:	drivers/net/wireless/purelifi/plfxlc/
- 
-+PVMEMCONTROL GUEST DRIVER
-+M:	Yuanchu Xie <yuanchu@google.com>
-+M:	Pasha Tatashin <pasha.tatashin@soleen.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Supported
-+F:	drivers/virt/pvmemcontrol/
-+
- PVRUSB2 VIDEO4LINUX DRIVER
- M:	Mike Isely <isely@pobox.com>
- L:	pvrusb2@isely.net	(subscribers-only)
--- 
-2.46.0
+Notes:
+    Changes in v2:
+    - keep $(target) and search for .dtb in $(MAKECMDGOALS)
+
+ scripts/Makefile.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 8f423a1faf50..78763a4bc58a 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -449,7 +449,7 @@ ifneq ($(userprogs),)
+ include $(srctree)/scripts/Makefile.userprogs
+ endif
+=20
+-ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o,$(=
+targets)),)
++ifneq ($(need-dtbslist)$(dtb-y)$(dtb-)$(filter %.dtb %.dtb.o %.dtbo.o,$(=
+targets))$(filter %.dtb,$(MAKECMDGOALS)),)
+ include $(srctree)/scripts/Makefile.dtbs
+ endif
+=20
+--=20
+2.47.0
 
 
