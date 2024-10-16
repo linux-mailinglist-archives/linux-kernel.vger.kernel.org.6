@@ -1,260 +1,675 @@
-Return-Path: <linux-kernel+bounces-368095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF4E9A0B21
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:15:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC469A0B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F5262838D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:15:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39201F264A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BAF524B0;
-	Wed, 16 Oct 2024 13:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA24E209F41;
+	Wed, 16 Oct 2024 13:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="GV0QkZ8v";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="K4guGZKZ"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="jTn0znAE"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906C11534E9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33222071FF
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729084513; cv=none; b=HyZliEEQrTKtBI73bp25uFTYRWbmCyBdZq0kfB/nIlF6ZV3HMx9rS5EHPa1UCUxfbqWZQjnnvbc8FKMymMbNjZAndoBtReyJ30k9QVzAuemjRoAEuZKO76d456HQm/CutamTQX8CgBteauE/lhHAz8HA5ouyHiIt/59zkQ3VnI4=
+	t=1729084517; cv=none; b=ST9842vGxu49NO+gRwZ15bZLJPCTKqV3e9TgslUtTIqX1y1Rw7V4A7xurpHzzExqPtD0lrvm4z3vqEqCWTHAF7GiiKQSyYoQUKtZzD1l1DYFuEzttKoZeQHVw8dzv4dBuIKcktmIZDzfUce0AebEw3/C1Q9su1WfgapyzmAgQ3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729084513; c=relaxed/simple;
-	bh=/YjbQv0xi8wt3m4MqV0H2h9hhzbCQ5eFbB9RcYdgb9s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C5DoQ44Xl8+rbjgNVDAscvAahlnj2bAkBBZxSgbdV9e8Dzj3+U0idbf8otmparMYz48l3bBPG1hPGgDjXNUkZobf93a2FdXnr9w6nPkkoU5HrFUDVLiPR78/rLkoxnTx6HUCHebXX02I30zkRxpYi06qZnw8BZoLGT5iAMNcTHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=GV0QkZ8v; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=K4guGZKZ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1729084509; x=1760620509;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=bnTavOEUNGQBF8Z5PNFSkC8+akVEFhp1o9XVwbxC+q4=;
-  b=GV0QkZ8vkFWT1OQykeiaH9gZQAFsN3p/JcB3Kl4uGrV85ehvbesDX1g+
-   zxM3SbCaRvpX/GAqQ3n3wNIBqpsR5CTjy6MqRJ/g+8jgGw2+d9BB4OUyr
-   k1iI2C9t2yF6soJKRW2jxN+zZmZaOMM2zgAcUuX6tFq/a4vRPOqljaESk
-   Z5UwmvvTV8jMrxEcZHbCOcuaWPPi+UmcMoIXGCR7caq927JIWASGghiTc
-   LAFy+/N+RQhn3IMYLwu0ctqL2Okpvcq+AYUjVpO6iPUruBwx77ctBr+K7
-   34EsXk+mbM5hTMrS51IXKREw+615OhvHgglPMTlbISb9WJTwVX3BK+4kM
-   g==;
-X-CSE-ConnectionGUID: dp2fysH4Tc+aI0TUFhsRFw==
-X-CSE-MsgGUID: sZyAVIKMTpGF2k4kwY7Scg==
-X-IronPort-AV: E=Sophos;i="6.11,208,1725314400"; 
-   d="scan'208";a="39496462"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 16 Oct 2024 15:15:07 +0200
-X-CheckPoint: {670FBC5B-0-BD84CFBF-E7C15A70}
-X-MAIL-CPID: DA531BA824FCDFD95CC9BF12A8CC9D9D_3
-X-Control-Analysis: str=0001.0A682F1E.670FBC5B.0047,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7D590169931;
-	Wed, 16 Oct 2024 15:14:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1729084502;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=bnTavOEUNGQBF8Z5PNFSkC8+akVEFhp1o9XVwbxC+q4=;
-	b=K4guGZKZk8yalXLMmytKJWw72qTFu2AAhq1RfYL0SQ6qoDQZHS3PCAXMdsIBfvV1vus5py
-	BQ7csb8yKahKAfUr0V2dve3liL+mpKfiRd5SiNHr6Obv/NKKyJEtAS74ruJB4Ujo5D2BXa
-	6rd2eSC4Rn1eUXm6dFuStMZ3w4YJhL2mEWZurhdXQ2Be8uZba+uy0dlXjeFAWhnSEYZMAY
-	ZLRtzEVhNAJBzGHScog8PhSkOI7WonWI/CpHJNLXM74S0jXplnTmLyON/b9eeNWXsoOvTv
-	f465t7KMhL+wZbx3kUPeXNkFk+Sd8YXPOqLw4+wie37jbywc0B+l5GNJvF/QgQ==
-Message-ID: <e2842ba1ea0f5dfa818e4cbb9aefe343f48c1e53.camel@ew.tq-group.com>
-Subject: Re: [PATCH v4 5/5] mfd: tqmx86: add I2C IRQ support
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org, Gregor Herburger
-	 <gregor.herburger@tq-group.com>
-Date: Wed, 16 Oct 2024 15:14:53 +0200
-In-Reply-To: <20241016130715.GA1152434@google.com>
-References: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
-	 <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
-	 <20241015113841.GH8348@google.com>
-	 <8fbae19e7e85a8fc8d6f9738155ec8fe44e63061.camel@ew.tq-group.com>
-	 <20241016130715.GA1152434@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729084517; c=relaxed/simple;
+	bh=WJIafTu5qLim9e3cPlurA+BtM95iv1jimLCjpjD5sh4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qR1HZj9AjtZr9VToO5iN+ffSqpsMQkcjD1akrYcxEZFrzciWCOw9qVCpRt7voc96zPrl4/oTWsIbRSFVpsxfy9Ff1gsRj2Q4IurcadmmYPibPsN0MsE3GyxQOtdQtJ81cxArwTbrAikefDKsc8u3TdEfDi8JyeeKvoOoiRVlIlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=jTn0znAE; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G98fQA024811;
+	Wed, 16 Oct 2024 06:15:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Je8d+oleZZ/ZqbHAvPM08TD
+	AWqtwGKtE+dsY0raV9kE=; b=jTn0znAEG5BCZ7cK0Bl6HVPclBlL3ivjE4w7UBM
+	sX5EZxgBtvIfLcTyOUgvLNzH86OQ2+qBY1w49H9WnJBLjHnH4NASStTU8l57zSQ/
+	FRpgTZ74J0yvYlhJiqHSSaUIm1D2EPCnLVTSUEvyphHDhBSj6YREHAaYl6PrenZ3
+	9Uj0Kg19v9lMNjcWrc6Ovtkng0UXptX98QPAODzciCNo0BzBDK4dNyRZ6Pu671EE
+	DrE0bI8kJ5tudciVaSVcDX7VEYxMHOmZPpBIXGEGLu7/VPpkV8t5roCJix+XO9Ra
+	VD6aeVXgHaCNKj8p+6rnK9ZQnn5B6n4ecTVc+pbhMXJ1a8A==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42aakerdp3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 06:15:05 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 16 Oct 2024 06:15:04 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 16 Oct 2024 06:15:04 -0700
+Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
+	by maili.marvell.com (Postfix) with ESMTP id 8FBA65B696F;
+	Wed, 16 Oct 2024 06:15:00 -0700 (PDT)
+From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+To: <will@kernel.org>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <gcherian@marvell.com>, <sgoutham@marvell.com>, <lcherian@marvell.com>,
+        Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Subject: [PATCH v9] perf/marvell: Marvell PEM performance monitor support
+Date: Wed, 16 Oct 2024 18:44:57 +0530
+Message-ID: <20241016131457.3821256-1-gthiagarajan@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: _2Ei9aAOFdeFi5jYcsPw99416u4dRuJr
+X-Proofpoint-ORIG-GUID: _2Ei9aAOFdeFi5jYcsPw99416u4dRuJr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
 
-On Wed, 2024-10-16 at 14:07 +0100, Lee Jones wrote:
->=20
-> On Wed, 16 Oct 2024, Matthias Schiffer wrote:
->=20
-> > On Tue, 2024-10-15 at 12:38 +0100, Lee Jones wrote:
-> > >=20
-> > > On Mon, 07 Oct 2024, Matthias Schiffer wrote:
-> > >=20
-> > > > From: Gregor Herburger <gregor.herburger@tq-group.com>
-> > > >=20
-> > > > The i2c-ocores controller can run in interrupt mode on tqmx86 modul=
-es.
-> > > > Add module parameter to allow configuring the IRQ number, similar t=
-o the
-> > > > handling of the GPIO IRQ.
-> > > >=20
-> > > > Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
-> > > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com=
->
-> > > > ---
-> > > >=20
-> > > > v2: improve module parameter description (was patch 4/4)
-> > > > v3: replace IRQ 0 resource with an empty placeholder to simplify er=
-ror handling
-> > > > v4: no changes
-> > > >=20
-> > > >  drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
-> > > >  1 file changed, 19 insertions(+), 1 deletion(-)
-> > > >=20
-> > > > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-> > > > index e444fcd2a3e9d..057d035b71d33 100644
-> > > > --- a/drivers/mfd/tqmx86.c
-> > > > +++ b/drivers/mfd/tqmx86.c
-> > > > @@ -50,6 +50,7 @@
-> > > >  #define TQMX86_REG_IO_EXT_INT_9			2
-> > > >  #define TQMX86_REG_IO_EXT_INT_12		3
-> > > >  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
-> > > > +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
-> > > >  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
-> > > >  #define TQMX86_REG_SAUC		0x17
-> > > > =20
-> > > > @@ -60,7 +61,16 @@ static uint gpio_irq;
-> > > >  module_param(gpio_irq, uint, 0);
-> > > >  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, =
-9, 12)");
-> > > > =20
-> > > > -static const struct resource tqmx_i2c_soft_resources[] =3D {
-> > > > +static uint i2c_irq;
-> > > > +module_param(i2c_irq, uint, 0);
-> > > > +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9,=
- 12)");
-> > > > +
-> > > > +static struct resource tqmx_i2c_soft_resources[] =3D {
-> > > > +	/*
-> > > > +	 * Placeholder for IRQ resource - must come first to be filled in=
- by the
-> > > > +	 * probe function.
-> > > > +	 */
-> > > > +	{},
-> > >=20
-> > > Having a NULLed entry in the first slot doesn't sit well with me at a=
-ll.
-> > >=20
-> > > In order for us to avoid wasting memory, it would be better to place =
-the
-> > > entry at the end of the array with a blank entry:
-> > >=20
-> > >   DEFINE_RES_IRQ(0),
-> > >=20
-> > > Later comes the matching code which updates the 0 value to something =
-sane.
-> > >=20
-> > > Before you call to the add the devices, check to see if the value has
-> > > changed.  If it hasn't, deprecate num_resources, effectively masking =
-the
-> > > last entry in the array.  Then when platform_device_add_resources()
-> > > comes to duplicate the array, it will only copy the relevant entries.
-> >=20
-> > I chose my current solution because it resulted in more simple and main=
-tainable code:
-> >=20
-> > - No dynamic array access, the IRQ resource is always written to index =
-0
->=20
-> Which is fragile (even with the comment).  If you're going to directly
-> index array elements, please do so with a unique identifier rather than
-> relying on it happening to reside in the first.
->=20
-> > - No surprises regarding num_resources, it is always equal to ARRAY_SIZ=
-E(resources)
->=20
-> No surprises, but sometimes it's incorrect.
->=20
-> > It also allowed to make all mfd_cell const; to make num_resources modif=
-yable, either the const would
-> > need to be removed, or each mfd_cell would need to be copied to a stack=
- variable in the probe
-> > function.
-> >=20
-> > In my opinion, these benefits outweigh the 2*64 bytes saved for the add=
-itional resources allocated
-> > by platform_device_add_resources() - and 128 bytes doesn't seem signifi=
-cant at all, in particular
-> > considering that this driver is used on x86_64 only.
->=20
-> But doesn't outweigh my disliking for placing a NULL element at the
-> start of the array.  If you _must_ do something like this, please place
-> it at the end of the array.
->=20
+PCI Express Interface PMU includes various performance counters
+to monitor the data that is transmitted over the PCIe link. The
+counters track various inbound and outbound transactions which
+includes separate counters for posted/non-posted/completion TLPs.
+Also, inbound and outbound memory read requests along with their
+latencies can also be monitored. Address Translation Services(ATS)events
+such as ATS Translation, ATS Page Request, ATS Invalidation along with
+their corresponding latencies are also supported.
 
-Ok, will move the placeholder to the end, and access it using a defined ind=
-ex instead of 0. I would
-still prefer to keep num_resources constant instead of adjusting it. Does t=
-his sound acceptable to
-you?
+The performance counters are 64 bits wide.
 
-Best,
-Matthias
+For instance,
+perf stat -e ib_tlp_pr <workload>
+tracks the inbound posted TLPs for the workload.
 
+Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Signed-off-by: Linu Cherian <lcherian@marvell.com>
+---
+v8->v9:
+- Removed additional commas and minor cosmetic changes 
 
+ Documentation/admin-guide/perf/index.rst      |   1 +
+ .../admin-guide/perf/mrvl-pem-pmu.rst         |  56 +++
+ MAINTAINERS                                   |   6 +
+ drivers/perf/Kconfig                          |   7 +
+ drivers/perf/Makefile                         |   1 +
+ drivers/perf/marvell_pem_pmu.c                | 425 ++++++++++++++++++
+ include/linux/cpuhotplug.h                    |   1 +
+ 7 files changed, 497 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf/mrvl-pem-pmu.rst
+ create mode 100644 drivers/perf/marvell_pem_pmu.c
 
-> > >=20
-> > > >  	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-> > > >  };
-> > > > =20
-> > > > @@ -263,6 +273,14 @@ static int tqmx86_probe(struct platform_device=
- *pdev)
-> > > >  	ocores_platform_data.clock_khz =3D tqmx86_board_id_to_clk_rate(de=
-v, board_id);
-> > > > =20
-> > > >  	if (i2c_det =3D=3D TQMX86_REG_I2C_DETECT_SOFT) {
-> > > > +		if (i2c_irq) {
-> > > > +			err =3D tqmx86_setup_irq(dev, "I2C", i2c_irq, io_base,
-> > > > +					       TQMX86_REG_IO_EXT_INT_I2C_SHIFT);
-> > > > +			if (!err)
-> > > > +				/* Assumes the IRQ resource placeholder is first */
-> > > > +				tqmx_i2c_soft_resources[0] =3D DEFINE_RES_IRQ(i2c_irq);
-> > > > +		}
-> > > > +
-> > > >  		err =3D devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-> > > >  					   tqmx86_i2c_soft_dev,
-> > > >  					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
-> > > > --=20
-> > > > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefe=
-ld, Germany
-> > > > Amtsgericht M=C3=BCnchen, HRB 105018
-> > > > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, St=
-efan Schneider
-> > > > https://www.tq-group.com/
-> > > >=20
-> > >=20
-> >=20
-> > --=20
-> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
-Germany
-> > Amtsgericht M=C3=BCnchen, HRB 105018
-> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
- Schneider
-> > https://www.tq-group.com/
->=20
+diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
+index 0aecdc3e4efa..072b510385c4 100644
+--- a/Documentation/admin-guide/perf/index.rst
++++ b/Documentation/admin-guide/perf/index.rst
+@@ -28,3 +28,4 @@ Performance monitor support
+    meson-ddr-pmu
+    cxl
+    ampere_cspmu
++   mrvl-pem-pmu
+diff --git a/Documentation/admin-guide/perf/mrvl-pem-pmu.rst b/Documentation/admin-guide/perf/mrvl-pem-pmu.rst
+new file mode 100644
+index 000000000000..c39007149b97
+--- /dev/null
++++ b/Documentation/admin-guide/perf/mrvl-pem-pmu.rst
+@@ -0,0 +1,56 @@
++=================================================================
++Marvell Odyssey PEM Performance Monitoring Unit (PMU UNCORE)
++=================================================================
++
++The PCI Express Interface Units(PEM) are associated with a corresponding
++monitoring unit. This includes performance counters to track various
++characteristics of the data that is transmitted over the PCIe link.
++
++The counters track inbound and outbound transactions which
++includes separate counters for posted/non-posted/completion TLPs.
++Also, inbound and outbound memory read requests along with their
++latencies can also be monitored. Address Translation Services(ATS)events
++such as ATS Translation, ATS Page Request, ATS Invalidation along with
++their corresponding latencies are also tracked.
++
++There are separate 64 bit counters to measure posted/non-posted/completion
++tlps in inbound and outbound transactions. ATS events are measured by
++different counters.
++
++The PMU driver exposes the available events and format options under sysfs,
++/sys/bus/event_source/devices/mrvl_pcie_rc_pmu_<>/events/
++/sys/bus/event_source/devices/mrvl_pcie_rc_pmu_<>/format/
++
++Examples::
++
++  # perf list | grep mrvl_pcie_rc_pmu
++  mrvl_pcie_rc_pmu_<>/ats_inv/             [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ats_inv_latency/     [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ats_pri/             [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ats_pri_latency/     [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ats_trans/           [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ats_trans_latency/   [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_inflight/         [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_reads/            [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_req_no_ro_ebus/   [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_req_no_ro_ncb/    [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_tlp_cpl_partid/   [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_tlp_dwords_cpl_partid/ [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_tlp_dwords_npr/   [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_tlp_dwords_pr/    [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_tlp_npr/          [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ib_tlp_pr/           [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_inflight_partid/  [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_merges_cpl_partid/ [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_merges_npr_partid/ [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_merges_pr_partid/ [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_reads_partid/     [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_tlp_cpl_partid/   [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_tlp_dwords_cpl_partid/ [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_tlp_dwords_npr_partid/ [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_tlp_dwords_pr_partid/ [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_tlp_npr_partid/   [Kernel PMU event]
++  mrvl_pcie_rc_pmu_<>/ob_tlp_pr_partid/    [Kernel PMU event]
++
++
++  # perf stat -e ib_inflight,ib_reads,ib_req_no_ro_ebus,ib_req_no_ro_ncb <workload>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a097afd76ded..138b49d0a0e3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13851,6 +13851,12 @@ S:	Supported
+ F:	Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
+ F:	drivers/net/ethernet/marvell/octeontx2/af/
+ 
++MARVELL PEM PMU DRIVER
++M:	Linu Cherian <lcherian@marvell.com>
++M:	Gowthami Thiagarajan <gthiagarajan@marvell.com>
++S:	Supported
++F:	drivers/perf/marvell_pem_pmu.c
++
+ MARVELL PRESTERA ETHERNET SWITCH DRIVER
+ M:	Taras Chornyi <taras.chornyi@plvision.eu>
+ S:	Supported
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index bab8ba64162f..4e268de351c4 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -284,4 +284,11 @@ config CXL_PMU
+ 
+ 	  If unsure say 'm'.
+ 
++config MARVELL_PEM_PMU
++	tristate "MARVELL PEM PMU Support"
++	depends on ARCH_THUNDER || (COMPILE_TEST && 64BIT)
++	help
++	  Enable support for PCIe Interface performance monitoring
++	  on Marvell platform.
++
+ endmenu
+diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
+index 8268f38e42c5..de71d2574857 100644
+--- a/drivers/perf/Makefile
++++ b/drivers/perf/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_ARM_SPE_PMU) += arm_spe_pmu.o
+ obj-$(CONFIG_ARM_DMC620_PMU) += arm_dmc620_pmu.o
+ obj-$(CONFIG_MARVELL_CN10K_TAD_PMU) += marvell_cn10k_tad_pmu.o
+ obj-$(CONFIG_MARVELL_CN10K_DDR_PMU) += marvell_cn10k_ddr_pmu.o
++obj-$(CONFIG_MARVELL_PEM_PMU) += marvell_pem_pmu.o
+ obj-$(CONFIG_APPLE_M1_CPU_PMU) += apple_m1_cpu_pmu.o
+ obj-$(CONFIG_ALIBABA_UNCORE_DRW_PMU) += alibaba_uncore_drw_pmu.o
+ obj-$(CONFIG_DWC_PCIE_PMU) += dwc_pcie_pmu.o
+diff --git a/drivers/perf/marvell_pem_pmu.c b/drivers/perf/marvell_pem_pmu.c
+new file mode 100644
+index 000000000000..1d917107f15c
+--- /dev/null
++++ b/drivers/perf/marvell_pem_pmu.c
+@@ -0,0 +1,425 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Marvell PEM(PCIe RC) Performance Monitor Driver
++ *
++ * Copyright (C) 2024 Marvell.
++ */
++
++#include <linux/acpi.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/perf_event.h>
++#include <linux/platform_device.h>
++
++/*
++ * Each of these events maps to a free running 64 bit counter
++ * with no event control, but can be reset.
++ */
++enum pem_events {
++	IB_TLP_NPR,
++	IB_TLP_PR,
++	IB_TLP_CPL,
++	IB_TLP_DWORDS_NPR,
++	IB_TLP_DWORDS_PR,
++	IB_TLP_DWORDS_CPL,
++	IB_INFLIGHT,
++	IB_READS,
++	IB_REQ_NO_RO_NCB,
++	IB_REQ_NO_RO_EBUS,
++	OB_TLP_NPR,
++	OB_TLP_PR,
++	OB_TLP_CPL,
++	OB_TLP_DWORDS_NPR,
++	OB_TLP_DWORDS_PR,
++	OB_TLP_DWORDS_CPL,
++	OB_INFLIGHT,
++	OB_READS,
++	OB_MERGES_NPR,
++	OB_MERGES_PR,
++	OB_MERGES_CPL,
++	ATS_TRANS,
++	ATS_TRANS_LATENCY,
++	ATS_PRI,
++	ATS_PRI_LATENCY,
++	ATS_INV,
++	ATS_INV_LATENCY,
++	PEM_EVENTIDS_MAX
++};
++
++static u64 eventid_to_offset_table[] = {
++	[IB_TLP_NPR]	     = 0x0,
++	[IB_TLP_PR]	     = 0x8,
++	[IB_TLP_CPL]	     = 0x10,
++	[IB_TLP_DWORDS_NPR]  = 0x100,
++	[IB_TLP_DWORDS_PR]   = 0x108,
++	[IB_TLP_DWORDS_CPL]  = 0x110,
++	[IB_INFLIGHT]	     = 0x200,
++	[IB_READS]	     = 0x300,
++	[IB_REQ_NO_RO_NCB]   = 0x400,
++	[IB_REQ_NO_RO_EBUS]  = 0x408,
++	[OB_TLP_NPR]         = 0x500,
++	[OB_TLP_PR]          = 0x508,
++	[OB_TLP_CPL]         = 0x510,
++	[OB_TLP_DWORDS_NPR]  = 0x600,
++	[OB_TLP_DWORDS_PR]   = 0x608,
++	[OB_TLP_DWORDS_CPL]  = 0x610,
++	[OB_INFLIGHT]        = 0x700,
++	[OB_READS]	     = 0x800,
++	[OB_MERGES_NPR]      = 0x900,
++	[OB_MERGES_PR]       = 0x908,
++	[OB_MERGES_CPL]      = 0x910,
++	[ATS_TRANS]          = 0x2D18,
++	[ATS_TRANS_LATENCY]  = 0x2D20,
++	[ATS_PRI]            = 0x2D28,
++	[ATS_PRI_LATENCY]    = 0x2D30,
++	[ATS_INV]            = 0x2D38,
++	[ATS_INV_LATENCY]    = 0x2D40,
++};
++
++struct pem_pmu {
++	struct pmu pmu;
++	void __iomem *base;
++	unsigned int cpu;
++	struct	device *dev;
++	struct hlist_node node;
++};
++
++#define to_pem_pmu(p)	container_of(p, struct pem_pmu, pmu)
++
++static int eventid_to_offset(int eventid)
++{
++	return eventid_to_offset_table[eventid];
++}
++
++/* Events */
++static ssize_t pem_pmu_event_show(struct device *dev,
++				  struct device_attribute *attr,
++				  char *page)
++{
++	struct perf_pmu_events_attr *pmu_attr;
++
++	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
++	return sysfs_emit(page, "event=0x%02llx\n", pmu_attr->id);
++}
++
++#define PEM_EVENT_ATTR(_name, _id)					\
++	(&((struct perf_pmu_events_attr[]) {				\
++	{ .attr = __ATTR(_name, 0444, pem_pmu_event_show, NULL),	\
++		.id = _id, }						\
++	})[0].attr.attr)
++
++static struct attribute *pem_perf_events_attrs[] = {
++	PEM_EVENT_ATTR(ib_tlp_npr, IB_TLP_NPR),
++	PEM_EVENT_ATTR(ib_tlp_pr, IB_TLP_PR),
++	PEM_EVENT_ATTR(ib_tlp_cpl_partid, IB_TLP_CPL),
++	PEM_EVENT_ATTR(ib_tlp_dwords_npr, IB_TLP_DWORDS_NPR),
++	PEM_EVENT_ATTR(ib_tlp_dwords_pr, IB_TLP_DWORDS_PR),
++	PEM_EVENT_ATTR(ib_tlp_dwords_cpl_partid, IB_TLP_DWORDS_CPL),
++	PEM_EVENT_ATTR(ib_inflight, IB_INFLIGHT),
++	PEM_EVENT_ATTR(ib_reads, IB_READS),
++	PEM_EVENT_ATTR(ib_req_no_ro_ncb, IB_REQ_NO_RO_NCB),
++	PEM_EVENT_ATTR(ib_req_no_ro_ebus, IB_REQ_NO_RO_EBUS),
++	PEM_EVENT_ATTR(ob_tlp_npr_partid, OB_TLP_NPR),
++	PEM_EVENT_ATTR(ob_tlp_pr_partid, OB_TLP_PR),
++	PEM_EVENT_ATTR(ob_tlp_cpl_partid, OB_TLP_CPL),
++	PEM_EVENT_ATTR(ob_tlp_dwords_npr_partid, OB_TLP_DWORDS_NPR),
++	PEM_EVENT_ATTR(ob_tlp_dwords_pr_partid, OB_TLP_DWORDS_PR),
++	PEM_EVENT_ATTR(ob_tlp_dwords_cpl_partid, OB_TLP_DWORDS_CPL),
++	PEM_EVENT_ATTR(ob_inflight_partid, OB_INFLIGHT),
++	PEM_EVENT_ATTR(ob_reads_partid, OB_READS),
++	PEM_EVENT_ATTR(ob_merges_npr_partid, OB_MERGES_NPR),
++	PEM_EVENT_ATTR(ob_merges_pr_partid, OB_MERGES_PR),
++	PEM_EVENT_ATTR(ob_merges_cpl_partid, OB_MERGES_CPL),
++	PEM_EVENT_ATTR(ats_trans, ATS_TRANS),
++	PEM_EVENT_ATTR(ats_trans_latency, ATS_TRANS_LATENCY),
++	PEM_EVENT_ATTR(ats_pri, ATS_PRI),
++	PEM_EVENT_ATTR(ats_pri_latency, ATS_PRI_LATENCY),
++	PEM_EVENT_ATTR(ats_inv, ATS_INV),
++	PEM_EVENT_ATTR(ats_inv_latency, ATS_INV_LATENCY),
++	NULL
++};
++
++static struct attribute_group pem_perf_events_attr_group = {
++	.name = "events",
++	.attrs = pem_perf_events_attrs,
++};
++
++PMU_FORMAT_ATTR(event, "config:0-5");
++
++static struct attribute *pem_perf_format_attrs[] = {
++	&format_attr_event.attr,
++	NULL
++};
++
++static struct attribute_group pem_perf_format_attr_group = {
++	.name = "format",
++	.attrs = pem_perf_format_attrs,
++};
++
++/* cpumask */
++static ssize_t pem_perf_cpumask_show(struct device *dev,
++				     struct device_attribute *attr,
++				     char *buf)
++{
++	struct pem_pmu *pmu = dev_get_drvdata(dev);
++
++	return cpumap_print_to_pagebuf(true, buf, cpumask_of(pmu->cpu));
++}
++
++static struct device_attribute pem_perf_cpumask_attr =
++	__ATTR(cpumask, 0444, pem_perf_cpumask_show, NULL);
++
++static struct attribute *pem_perf_cpumask_attrs[] = {
++	&pem_perf_cpumask_attr.attr,
++	NULL
++};
++
++static struct attribute_group pem_perf_cpumask_attr_group = {
++	.attrs = pem_perf_cpumask_attrs,
++};
++
++static const struct attribute_group *pem_perf_attr_groups[] = {
++	&pem_perf_events_attr_group,
++	&pem_perf_cpumask_attr_group,
++	&pem_perf_format_attr_group,
++	NULL
++};
++
++static int pem_perf_event_init(struct perf_event *event)
++{
++	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
++	struct hw_perf_event *hwc = &event->hw;
++	struct perf_event *sibling;
++
++	if (event->attr.type != event->pmu->type)
++		return -ENOENT;
++
++	if (event->attr.config >= PEM_EVENTIDS_MAX)
++		return -EINVAL;
++
++	if (is_sampling_event(event) ||
++	    event->attach_state & PERF_ATTACH_TASK) {
++		return -EOPNOTSUPP;
++	}
++
++	if (event->cpu < 0)
++		return -EOPNOTSUPP;
++
++	/*  We must NOT create groups containing mixed PMUs */
++	if (event->group_leader->pmu != event->pmu &&
++	    !is_software_event(event->group_leader))
++		return -EINVAL;
++
++	for_each_sibling_event(sibling, event->group_leader) {
++		if (sibling->pmu != event->pmu &&
++		    !is_software_event(sibling))
++			return -EINVAL;
++	}
++	/*
++	 * Set ownership of event to one CPU, same event can not be observed
++	 * on multiple cpus at same time.
++	 */
++	event->cpu = pmu->cpu;
++	hwc->idx = -1;
++	return 0;
++}
++
++static u64 pem_perf_read_counter(struct pem_pmu *pmu,
++				 struct perf_event *event, int eventid)
++{
++	return readq_relaxed(pmu->base + eventid_to_offset(eventid));
++}
++
++static void pem_perf_event_update(struct perf_event *event)
++{
++	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
++	struct hw_perf_event *hwc = &event->hw;
++	u64 prev_count, new_count;
++
++	do {
++		prev_count = local64_read(&hwc->prev_count);
++		new_count = pem_perf_read_counter(pmu, event, hwc->idx);
++	} while (local64_xchg(&hwc->prev_count, new_count) != prev_count);
++
++	local64_add((new_count - prev_count), &event->count);
++}
++
++static void pem_perf_event_start(struct perf_event *event, int flags)
++{
++	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
++	struct hw_perf_event *hwc = &event->hw;
++	int eventid = hwc->idx;
++
++	/*
++	 * All counters are free-running and associated with
++	 * a fixed event to track in Hardware
++	 */
++	local64_set(&hwc->prev_count,
++		    pem_perf_read_counter(pmu, event, eventid));
++
++	hwc->state = 0;
++}
++
++static int pem_perf_event_add(struct perf_event *event, int flags)
++{
++	struct hw_perf_event *hwc = &event->hw;
++
++	hwc->idx = event->attr.config;
++	if (WARN_ON_ONCE(hwc->idx >= PEM_EVENTIDS_MAX))
++		return -EINVAL;
++	hwc->state |= PERF_HES_STOPPED;
++
++	if (flags & PERF_EF_START)
++		pem_perf_event_start(event, flags);
++
++	return 0;
++}
++
++static void pem_perf_event_stop(struct perf_event *event, int flags)
++{
++	struct hw_perf_event *hwc = &event->hw;
++
++	if (flags & PERF_EF_UPDATE)
++		pem_perf_event_update(event);
++
++	hwc->state |= PERF_HES_STOPPED;
++}
++
++static void pem_perf_event_del(struct perf_event *event, int flags)
++{
++	struct hw_perf_event *hwc = &event->hw;
++
++	pem_perf_event_stop(event, PERF_EF_UPDATE);
++	hwc->idx = -1;
++}
++
++static int pem_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
++{
++	struct pem_pmu *pmu = hlist_entry_safe(node, struct pem_pmu, node);
++	unsigned int target;
++
++	if (cpu != pmu->cpu)
++		return 0;
++
++	target = cpumask_any_but(cpu_online_mask, cpu);
++	if (target >= nr_cpu_ids)
++		return 0;
++
++	perf_pmu_migrate_context(&pmu->pmu, cpu, target);
++	pmu->cpu = target;
++	return 0;
++}
++
++static int pem_perf_probe(struct platform_device *pdev)
++{
++	struct pem_pmu *pem_pmu;
++	struct resource *res;
++	void __iomem *base;
++	char *name;
++	int ret;
++
++	pem_pmu = devm_kzalloc(&pdev->dev, sizeof(*pem_pmu), GFP_KERNEL);
++	if (!pem_pmu)
++		return -ENOMEM;
++
++	pem_pmu->dev = &pdev->dev;
++	platform_set_drvdata(pdev, pem_pmu);
++
++	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	pem_pmu->base = base;
++
++	pem_pmu->pmu = (struct pmu) {
++		.module	      = THIS_MODULE,
++		.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
++		.task_ctx_nr = perf_invalid_context,
++		.attr_groups = pem_perf_attr_groups,
++		.event_init  = pem_perf_event_init,
++		.add	     = pem_perf_event_add,
++		.del	     = pem_perf_event_del,
++		.start	     = pem_perf_event_start,
++		.stop	     = pem_perf_event_stop,
++		.read	     = pem_perf_event_update,
++	};
++
++	/* Choose this cpu to collect perf data */
++	pem_pmu->cpu = raw_smp_processor_id();
++
++	name = devm_kasprintf(pem_pmu->dev, GFP_KERNEL, "mrvl_pcie_rc_pmu_%llx",
++			      res->start);
++	if (!name)
++		return -ENOMEM;
++
++	cpuhp_state_add_instance_nocalls(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
++					 &pem_pmu->node);
++
++	ret = perf_pmu_register(&pem_pmu->pmu, name, -1);
++	if (ret)
++		goto error;
++
++	return 0;
++error:
++	cpuhp_state_remove_instance_nocalls(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
++					    &pem_pmu->node);
++	return ret;
++}
++
++static void pem_perf_remove(struct platform_device *pdev)
++{
++	struct pem_pmu *pem_pmu = platform_get_drvdata(pdev);
++
++	cpuhp_state_remove_instance_nocalls(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
++					    &pem_pmu->node);
++
++	perf_pmu_unregister(&pem_pmu->pmu);
++}
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id pem_pmu_acpi_match[] = {
++	{"MRVL000E", 0},
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, pem_pmu_acpi_match);
++#endif
++
++static struct platform_driver pem_pmu_driver = {
++	.driver	= {
++		.name   = "pem-pmu",
++		.acpi_match_table = ACPI_PTR(pem_pmu_acpi_match),
++		.suppress_bind_attrs = true,
++	},
++	.probe		= pem_perf_probe,
++	.remove		= pem_perf_remove,
++};
++
++static int __init pem_pmu_init(void)
++{
++	int ret;
++
++	ret = cpuhp_setup_state_multi(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
++				      "perf/marvell/pem:online", NULL,
++				       pem_pmu_offline_cpu);
++	if (ret)
++		return ret;
++
++	ret = platform_driver_register(&pem_pmu_driver);
++	if (ret)
++		cpuhp_remove_multi_state(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE);
++	return ret;
++}
++
++static void __exit pem_pmu_exit(void)
++{
++	platform_driver_unregister(&pem_pmu_driver);
++	cpuhp_remove_multi_state(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE);
++}
++
++module_init(pem_pmu_init);
++module_exit(pem_pmu_exit);
++
++MODULE_DESCRIPTION("Marvell PEM Perf driver");
++MODULE_AUTHOR("Linu Cherian <lcherian@marvell.com>");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index 2361ed4d2b15..61d9a66d1807 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -227,6 +227,7 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_ARM_APM_XGENE_ONLINE,
+ 	CPUHP_AP_PERF_ARM_CAVIUM_TX2_UNCORE_ONLINE,
+ 	CPUHP_AP_PERF_ARM_MARVELL_CN10K_DDR_ONLINE,
++	CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
+ 	CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE,
+ 	CPUHP_AP_PERF_POWERPC_CORE_IMC_ONLINE,
+ 	CPUHP_AP_PERF_POWERPC_THREAD_IMC_ONLINE,
+-- 
+2.25.1
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
