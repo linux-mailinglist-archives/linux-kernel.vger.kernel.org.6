@@ -1,400 +1,74 @@
-Return-Path: <linux-kernel+bounces-367617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149109A0481
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:42:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412049A0483
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F57B25354
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E121F2205B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331ED1FDF83;
-	Wed, 16 Oct 2024 08:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C969E1FCC78;
+	Wed, 16 Oct 2024 08:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8EJI6Qy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544511FDFB3;
-	Wed, 16 Oct 2024 08:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HEENpf4S"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9861D1E75;
+	Wed, 16 Oct 2024 08:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729068140; cv=none; b=RcF+pN76kbpT91v/1Glr2BnBKiVu606NDlldzErIsKsK9cqqjYzlNUhCqw5xPvrwdfYcB1vaAxbkUVB2hszlmNAO8ftofuWFhsQ/NUeYiCyWED9nU1IK8mawCd0c/enhBd2TLMHBPIePjACfDPpMM56g7TMdkZ6yesGSbdxDpls=
+	t=1729068203; cv=none; b=Xc1e8hOB+rrdf4medzlp/4G+7U9U7u/rsRhh2zhJy9j0BVkVSxot2sgJHvwQ0J8YqlSi7VskOnvj8liFyjOfCzdPLFWkFVxRg05H2VX9jXEDxW3NGyi2My9CJ4zGj9+ERw8LG8LzLyV+jEWiicptmM4LAS5Z7Q4agqxempEe6RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729068140; c=relaxed/simple;
-	bh=wHRUPCInftXktRQjwW5qErEUkBxtnkI+ct5K4x0Kjeg=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AGTH+t7OU2BCWq35Tmg7ho1T5xSgeCd5saXmKARMYo6EC3XGuxzlqTag+t+ckEB28TaWjZwUPxFuEUQiWfZLXq2eUxdvaC9YXXUAYT20vgbPIwM6hOFf56TnhecC3MVJXqHspp8DYMTY6hGnmc3CE7tUggoZq/l51tIqVPh0D1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8EJI6Qy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB71BC4CEC5;
-	Wed, 16 Oct 2024 08:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729068139;
-	bh=wHRUPCInftXktRQjwW5qErEUkBxtnkI+ct5K4x0Kjeg=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=H8EJI6QyzVq7BVG6U+eK2mXppjc0yF8hGs82w5eyIL7bWyWF/hgzvWOLYFpUOqrLp
-	 wzKqDWUwP7zCzEVQ01PujAbM+GZTrnFiX400L583s1i9r51VP/1hixrQJhTGpKLHvY
-	 N4D/LSPak1HIeglNS13+GQSqC4I4xX0Hjqrh8lwqeHPIvHg94Z07V9ulAMmx54v/6v
-	 QiSxTGlKgqAob9nqQEaVMIErDl985X68bunNUgA4UfJ8jFoo0cpUWS9oGfjTTm5+1W
-	 Zx1IDoaqgNq202BkP6dLtuzxzpo9Xrd6SaAb3Mmhg4nUq4D0WImcN0ACc1Xyvgav5A
-	 SwXEYUPL4kv8A==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	puranjay12@gmail.com
-Subject: [PATCH bpf-next v5 2/2] selftests/bpf: Augment send_signal test with remote signaling
-Date: Wed, 16 Oct 2024 08:41:36 +0000
-Message-Id: <20241016084136.10305-3-puranjay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241016084136.10305-1-puranjay@kernel.org>
-References: <20241016084136.10305-1-puranjay@kernel.org>
+	s=arc-20240116; t=1729068203; c=relaxed/simple;
+	bh=jzDEQX0G4aFdYBgBD8Q9TVHHCXcVx8mUrzPKx46F6UY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQJh3X409kw3Niac1HAEn9NP5WO1RQ5r9UnhtZj4c9zDQajU+IutzhPj6ro6snSwf/Fc5M7uKhlWC68EBZTvMGEf6WtWtR9qcPgdjF/S0Zfa3Nvqjx1ZIvwaxqEsEORsdyyPKOtnddCm1RFMDiWMB11SHWpGk1Y5x+0JU1iSeLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HEENpf4S; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=8cxRSQIWKMfv15uvq9UbQkjHI3xRuImVJscKgphQC98=;
+	b=HEENpf4SpRrJHEpj+Zhrj5da5JQGEtelKCSUETcT4e+UMtQHKtjxglAJR5KAtE
+	Pe21yv2hrClsDEA0YxjmNWki3ftRr7btgi6oQfSqXH/NEjfxzd7IwULySUsI73E/
+	SIZfv7lzF3MTh0I8Umvm8/TH0HPZ4D5zgZ+uTYa8bdZxw=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgCXH7OBfA9n8OQZAA--.452S3;
+	Wed, 16 Oct 2024 16:42:43 +0800 (CST)
+Date: Wed, 16 Oct 2024 16:42:40 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Diogo Silva <diogompaissilva@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, aisheng.dong@nxp.com, Frank.Li@nxp.com,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: imx8: Fix lvds0 device tree
+Message-ID: <Zw98gEMgXbx8lIjr@dragon>
+References: <20240917065801.2579750-1-diogompaissilva@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917065801.2579750-1-diogompaissilva@gmail.com>
+X-CM-TRANSID:M88vCgCXH7OBfA9n8OQZAA--.452S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsPfHUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxB6ZWcPLTjrhwAAsV
 
-Add testcases to test bpf_send_signal_task(). In these new test cases,
-the main process triggers the BPF program and the forked process
-receives the signals. The target process's signal handler receives a
-cookie from the bpf program.
+On Tue, Sep 17, 2024 at 08:58:01AM +0200, Diogo Silva wrote:
+> Some clock output names on lvds0 device tree were duplicated from mipi1,
+> which caused an -EEXIST when registering these clocks during probe.
+> 
+> Fixes: 0fba24b3b956 ("arm64: dts: imx8: add basic lvds0 and lvds1 subsystem")
+> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
 
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
----
- .../selftests/bpf/prog_tests/send_signal.c    | 133 +++++++++++++-----
- .../bpf/progs/test_send_signal_kern.c         |  35 ++++-
- 2 files changed, 130 insertions(+), 38 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/send_signal.c b/tools/testing/selftests/bpf/prog_tests/send_signal.c
-index 6cc69900b3106..1aed94ec14efb 100644
---- a/tools/testing/selftests/bpf/prog_tests/send_signal.c
-+++ b/tools/testing/selftests/bpf/prog_tests/send_signal.c
-@@ -8,17 +8,25 @@ static int sigusr1_received;
- 
- static void sigusr1_handler(int signum)
- {
--	sigusr1_received = 1;
-+	sigusr1_received = 8;
-+}
-+
-+static void sigusr1_siginfo_handler(int s, siginfo_t *i, void *v)
-+{
-+	sigusr1_received = (int)(long long)i->si_value.sival_ptr;
- }
- 
- static void test_send_signal_common(struct perf_event_attr *attr,
--				    bool signal_thread)
-+				    bool signal_thread, bool remote)
- {
- 	struct test_send_signal_kern *skel;
-+	struct sigaction sa;
- 	int pipe_c2p[2], pipe_p2c[2];
- 	int err = -1, pmu_fd = -1;
-+	volatile int j = 0;
- 	char buf[256];
- 	pid_t pid;
-+	int old_prio;
- 
- 	if (!ASSERT_OK(pipe(pipe_c2p), "pipe_c2p"))
- 		return;
-@@ -39,11 +47,14 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 	}
- 
- 	if (pid == 0) {
--		int old_prio;
--		volatile int j = 0;
--
- 		/* install signal handler and notify parent */
--		ASSERT_NEQ(signal(SIGUSR1, sigusr1_handler), SIG_ERR, "signal");
-+		if (remote) {
-+			sa.sa_sigaction = sigusr1_siginfo_handler;
-+			sa.sa_flags = SA_RESTART | SA_SIGINFO;
-+			ASSERT_NEQ(sigaction(SIGUSR1, &sa, NULL), -1, "sigaction");
-+		} else {
-+			ASSERT_NEQ(signal(SIGUSR1, sigusr1_handler), SIG_ERR, "signal");
-+		}
- 
- 		close(pipe_c2p[0]); /* close read */
- 		close(pipe_p2c[1]); /* close write */
-@@ -52,10 +63,12 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 		 * that if an interrupt happens, the underlying task
- 		 * is this process.
- 		 */
--		errno = 0;
--		old_prio = getpriority(PRIO_PROCESS, 0);
--		ASSERT_OK(errno, "getpriority");
--		ASSERT_OK(setpriority(PRIO_PROCESS, 0, -20), "setpriority");
-+		if (!remote) {
-+			errno = 0;
-+			old_prio = getpriority(PRIO_PROCESS, 0);
-+			ASSERT_OK(errno, "getpriority");
-+			ASSERT_OK(setpriority(PRIO_PROCESS, 0, -20), "setpriority");
-+		}
- 
- 		/* notify parent signal handler is installed */
- 		ASSERT_EQ(write(pipe_c2p[1], buf, 1), 1, "pipe_write");
-@@ -66,20 +79,25 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 		/* wait a little for signal handler */
- 		for (int i = 0; i < 1000000000 && !sigusr1_received; i++) {
- 			j /= i + j + 1;
--			if (!attr)
--				/* trigger the nanosleep tracepoint program. */
--				usleep(1);
-+			if (remote)
-+				sleep(1);
-+			else
-+				if (!attr)
-+					/* trigger the nanosleep tracepoint program. */
-+					usleep(1);
- 		}
- 
--		buf[0] = sigusr1_received ? '2' : '0';
--		ASSERT_EQ(sigusr1_received, 1, "sigusr1_received");
-+		buf[0] = sigusr1_received;
-+
-+		ASSERT_EQ(sigusr1_received, 8, "sigusr1_received");
- 		ASSERT_EQ(write(pipe_c2p[1], buf, 1), 1, "pipe_write");
- 
- 		/* wait for parent notification and exit */
- 		ASSERT_EQ(read(pipe_p2c[0], buf, 1), 1, "pipe_read");
- 
- 		/* restore the old priority */
--		ASSERT_OK(setpriority(PRIO_PROCESS, 0, old_prio), "setpriority");
-+		if (!remote)
-+			ASSERT_OK(setpriority(PRIO_PROCESS, 0, old_prio), "setpriority");
- 
- 		close(pipe_c2p[1]);
- 		close(pipe_p2c[0]);
-@@ -93,6 +111,17 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
- 		goto skel_open_load_failure;
- 
-+	/* boost with a high priority so we got a higher chance
-+	 * that if an interrupt happens, the underlying task
-+	 * is this process.
-+	 */
-+	if (remote) {
-+		errno = 0;
-+		old_prio = getpriority(PRIO_PROCESS, 0);
-+		ASSERT_OK(errno, "getpriority");
-+		ASSERT_OK(setpriority(PRIO_PROCESS, 0, -20), "setpriority");
-+	}
-+
- 	if (!attr) {
- 		err = test_send_signal_kern__attach(skel);
- 		if (!ASSERT_OK(err, "skel_attach")) {
-@@ -100,8 +129,12 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 			goto destroy_skel;
- 		}
- 	} else {
--		pmu_fd = syscall(__NR_perf_event_open, attr, pid, -1 /* cpu */,
--				 -1 /* group id */, 0 /* flags */);
-+		if (!remote)
-+			pmu_fd = syscall(__NR_perf_event_open, attr, pid, -1 /* cpu */,
-+					 -1 /* group id */, 0 /* flags */);
-+		else
-+			pmu_fd = syscall(__NR_perf_event_open, attr, getpid(), -1 /* cpu */,
-+					 -1 /* group id */, 0 /* flags */);
- 		if (!ASSERT_GE(pmu_fd, 0, "perf_event_open")) {
- 			err = -1;
- 			goto destroy_skel;
-@@ -119,11 +152,30 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 	/* trigger the bpf send_signal */
- 	skel->bss->signal_thread = signal_thread;
- 	skel->bss->sig = SIGUSR1;
--	skel->bss->pid = pid;
-+	if (!remote) {
-+		skel->bss->target_pid = 0;
-+		skel->bss->pid = pid;
-+	} else {
-+		skel->bss->target_pid = pid;
-+		skel->bss->pid = getpid();
-+	}
- 
- 	/* notify child that bpf program can send_signal now */
- 	ASSERT_EQ(write(pipe_p2c[1], buf, 1), 1, "pipe_write");
- 
-+	/* For the remote test, the BPF program is triggered from this
-+	 * process but the other process/thread is signaled.
-+	 */
-+	if (remote) {
-+		if (!attr) {
-+			for (int i = 0; i < 10; i++)
-+				usleep(1);
-+		} else {
-+			for (int i = 0; i < 100000000; i++)
-+				j /= i + 1;
-+		}
-+	}
-+
- 	/* wait for result */
- 	err = read(pipe_c2p[0], buf, 1);
- 	if (!ASSERT_GE(err, 0, "reading pipe"))
-@@ -133,7 +185,7 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 		goto disable_pmu;
- 	}
- 
--	ASSERT_EQ(buf[0], '2', "incorrect result");
-+	ASSERT_EQ(buf[0], 8, "incorrect result");
- 
- 	/* notify child safe to exit */
- 	ASSERT_EQ(write(pipe_p2c[1], buf, 1), 1, "pipe_write");
-@@ -142,18 +194,21 @@ static void test_send_signal_common(struct perf_event_attr *attr,
- 	close(pmu_fd);
- destroy_skel:
- 	test_send_signal_kern__destroy(skel);
-+	/* restore the old priority */
-+	if (remote)
-+		ASSERT_OK(setpriority(PRIO_PROCESS, 0, old_prio), "setpriority");
- skel_open_load_failure:
- 	close(pipe_c2p[0]);
- 	close(pipe_p2c[1]);
- 	wait(NULL);
- }
- 
--static void test_send_signal_tracepoint(bool signal_thread)
-+static void test_send_signal_tracepoint(bool signal_thread, bool remote)
- {
--	test_send_signal_common(NULL, signal_thread);
-+	test_send_signal_common(NULL, signal_thread, remote);
- }
- 
--static void test_send_signal_perf(bool signal_thread)
-+static void test_send_signal_perf(bool signal_thread, bool remote)
- {
- 	struct perf_event_attr attr = {
- 		.freq = 1,
-@@ -162,10 +217,10 @@ static void test_send_signal_perf(bool signal_thread)
- 		.config = PERF_COUNT_SW_CPU_CLOCK,
- 	};
- 
--	test_send_signal_common(&attr, signal_thread);
-+	test_send_signal_common(&attr, signal_thread, remote);
- }
- 
--static void test_send_signal_nmi(bool signal_thread)
-+static void test_send_signal_nmi(bool signal_thread, bool remote)
- {
- 	struct perf_event_attr attr = {
- 		.sample_period = 1,
-@@ -191,21 +246,35 @@ static void test_send_signal_nmi(bool signal_thread)
- 		close(pmu_fd);
- 	}
- 
--	test_send_signal_common(&attr, signal_thread);
-+	test_send_signal_common(&attr, signal_thread, remote);
- }
- 
- void test_send_signal(void)
- {
- 	if (test__start_subtest("send_signal_tracepoint"))
--		test_send_signal_tracepoint(false);
-+		test_send_signal_tracepoint(false, false);
- 	if (test__start_subtest("send_signal_perf"))
--		test_send_signal_perf(false);
-+		test_send_signal_perf(false, false);
- 	if (test__start_subtest("send_signal_nmi"))
--		test_send_signal_nmi(false);
-+		test_send_signal_nmi(false, false);
- 	if (test__start_subtest("send_signal_tracepoint_thread"))
--		test_send_signal_tracepoint(true);
-+		test_send_signal_tracepoint(true, false);
- 	if (test__start_subtest("send_signal_perf_thread"))
--		test_send_signal_perf(true);
-+		test_send_signal_perf(true, false);
- 	if (test__start_subtest("send_signal_nmi_thread"))
--		test_send_signal_nmi(true);
-+		test_send_signal_nmi(true, false);
-+
-+	/* Signal remote thread and thread group */
-+	if (test__start_subtest("send_signal_tracepoint_remote"))
-+		test_send_signal_tracepoint(false, true);
-+	if (test__start_subtest("send_signal_perf_remote"))
-+		test_send_signal_perf(false, true);
-+	if (test__start_subtest("send_signal_nmi_remote"))
-+		test_send_signal_nmi(false, true);
-+	if (test__start_subtest("send_signal_tracepoint_thread_remote"))
-+		test_send_signal_tracepoint(true, true);
-+	if (test__start_subtest("send_signal_perf_thread_remote"))
-+		test_send_signal_perf(true, true);
-+	if (test__start_subtest("send_signal_nmi_thread_remote"))
-+		test_send_signal_nmi(true, true);
- }
-diff --git a/tools/testing/selftests/bpf/progs/test_send_signal_kern.c b/tools/testing/selftests/bpf/progs/test_send_signal_kern.c
-index 92354cd720440..176a355e30624 100644
---- a/tools/testing/selftests/bpf/progs/test_send_signal_kern.c
-+++ b/tools/testing/selftests/bpf/progs/test_send_signal_kern.c
-@@ -1,27 +1,50 @@
- // SPDX-License-Identifier: GPL-2.0
- // Copyright (c) 2019 Facebook
--#include <linux/bpf.h>
-+#include <vmlinux.h>
- #include <linux/version.h>
- #include <bpf/bpf_helpers.h>
- 
--__u32 sig = 0, pid = 0, status = 0, signal_thread = 0;
-+struct task_struct *bpf_task_from_pid(int pid) __ksym;
-+void bpf_task_release(struct task_struct *p) __ksym;
-+int bpf_send_signal_task(struct task_struct *task, int sig, enum pid_type type, u64 value) __ksym;
-+
-+__u32 sig = 0, pid = 0, status = 0, signal_thread = 0, target_pid = 0;
- 
- static __always_inline int bpf_send_signal_test(void *ctx)
- {
-+	struct task_struct *target_task = NULL;
- 	int ret;
-+	u64 value;
- 
- 	if (status != 0 || pid == 0)
- 		return 0;
- 
- 	if ((bpf_get_current_pid_tgid() >> 32) == pid) {
--		if (signal_thread)
--			ret = bpf_send_signal_thread(sig);
--		else
--			ret = bpf_send_signal(sig);
-+		if (target_pid) {
-+			target_task = bpf_task_from_pid(target_pid);
-+			if (!target_task)
-+				return 0;
-+			value = 8;
-+		}
-+
-+		if (signal_thread) {
-+			if (target_pid)
-+				ret = bpf_send_signal_task(target_task, sig, PIDTYPE_PID, value);
-+			else
-+				ret = bpf_send_signal_thread(sig);
-+		} else {
-+			if (target_pid)
-+				ret = bpf_send_signal_task(target_task, sig, PIDTYPE_TGID, value);
-+			else
-+				ret = bpf_send_signal(sig);
-+		}
- 		if (ret == 0)
- 			status = 1;
- 	}
- 
-+	if (target_task)
-+		bpf_task_release(target_task);
-+
- 	return 0;
- }
- 
--- 
-2.40.1
+Applied, thanks!
 
 
