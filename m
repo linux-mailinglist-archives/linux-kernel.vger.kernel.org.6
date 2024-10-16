@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-367294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5680D9A0090
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:20:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67BC9A0091
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067D91F21428
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:20:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56683B22726
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E474E18BBA6;
-	Wed, 16 Oct 2024 05:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8E318B49F;
+	Wed, 16 Oct 2024 05:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KNRC5j4E"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wy2Ddf2u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C921918B481;
-	Wed, 16 Oct 2024 05:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC361171D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729056045; cv=none; b=DZ/LiCyZtk/Wcb8Ub4HL9US6DvU761Ad6EZmM+YURZqwwILemM6aPYkYMyf7JqyA/yMa1RcYlwMDGvtj2aW1q31shokqJw4QBzZSV9c9dBFn7X4Pno9V9g1j0/WDrCaHRl2fPZSOtYnNkJ6VZedylMP4M4gH/K5OwbNzKxqZKgI=
+	t=1729056380; cv=none; b=rBRdAjZO53YLmiKyT9psoaP1qTvwkE9LvO2ZqqOBnVoX/vdoJklRBTFoycHE+BaB+mIR4S+DgVzxSooe+Z/TyN5gzDq/xU9W7qS2USpW8W0FsiC2nMXrKOjiyHLpKBKMQGY/pM5FYDtjYzEw1nxZwGPBp0ZXl5rpREgm+sRgbL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729056045; c=relaxed/simple;
-	bh=kY9s7ieYNFRf5vd6rWLrxX3RydNTXVEAmhHE6BU8hOw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ChuGa9mzkYEo4nBysalsNKeCKgcP9q4gZoWRSSPIQ97djRqMQxhYbobwB21HjDWzQ9X4705OyYqtTkJy5RQusYW0tGCeGf5AU7SR7uGEF5ZF9Es2LNSpJZzaSksNxebSvAZk10l2hRaHUC+HE0GXgnHZXntDutvODr/FhvUE3eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KNRC5j4E; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G5FDnr012151;
-	Wed, 16 Oct 2024 05:20:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=93dRBASK2NX/nahhuRQA/0Vp278JrC
-	oL/iXOrYitZYw=; b=KNRC5j4Eux0ksx2ivs1VBB6Qq4jGgynlVzU50891JkkKfr
-	5e/KfQyhmFSJIxIM0JnPK7UAwGYnDnVw6jAiDSqiWzBRnQXbM08Z3Mg6QSMfm8hx
-	DjWWyopaFqI6AozMJ65yAbaoqJLivwLeZA1uAEKrO+WyMpVSFh+IT7FcqtdVDiHS
-	hOLobSnKfR4VT61S2zRWjsFcEZNRIf9lmfOiZZtqKvUoh/CueXSs4t1/8XrVtgku
-	XOyuZIw7wReaelRvbRkd7bR4Er+IPxeN3SLh+KWTJCcwQqgDE4/PVxjZdaPJEJmF
-	Q5bVWHiebCSrsbtGH9enXIqx3q9N+FKQXJ8jme6Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42a762r0gt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 05:20:30 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49G5KT0R021873;
-	Wed, 16 Oct 2024 05:20:29 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42a762r0gq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 05:20:29 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49G407VL004988;
-	Wed, 16 Oct 2024 05:20:28 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nj76ed-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 05:20:28 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49G5KRdx55116116
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 05:20:27 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8063420043;
-	Wed, 16 Oct 2024 05:20:24 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 607D120040;
-	Wed, 16 Oct 2024 05:20:24 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 05:20:24 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, linux-s390@vger.kernel.org,
-        Yangbo Lu
- <yangbo.lu@nxp.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] ptp: Add clock name to uevent
-In-Reply-To: <Zw81Nlx9OF-PveY0@hoboy.vegasvil.org> (Richard Cochran's message
-	of "Tue, 15 Oct 2024 20:38:30 -0700")
-References: <20241015084728.1833876-1-svens@linux.ibm.com>
-	<20241015084728.1833876-3-svens@linux.ibm.com>
-	<c9c1c660-9278-426c-9290-b9b0cb76dcaf@lunn.ch>
-	<Zw81Nlx9OF-PveY0@hoboy.vegasvil.org>
-Date: Wed, 16 Oct 2024 07:20:24 +0200
-Message-ID: <yt9dr08gfwtj.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729056380; c=relaxed/simple;
+	bh=rdIG8bdON8eg0upmdIZgzqWAZ14iwo7fh0+LLx9BfdA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MuXuymSXgPzTtFc3Vx7PJN1rrvWON3sQC7/terDk+xL+AZs3e4tV1eAzsyj7VQvmca5k8ZrLOdDzY1BHwsdRxNBUdaN9Po5+Pq9QHaJ6I5E6scckzNOyUY+5SouqbKCx1OyY/sdhFBe7GJBETRDE/8UTquSidleKdQxl3DGTiA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wy2Ddf2u; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729056376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rdIG8bdON8eg0upmdIZgzqWAZ14iwo7fh0+LLx9BfdA=;
+	b=Wy2Ddf2uYvYdpEoanR5g5Q0TrCJ4Rb0x72KfEaM7l9fGR76UGT4XUf4k2GOgBD+fSHUeOb
+	9SPZVE2VQ2cVCMngkbWoEhqc9hFivq3cGn+yiKLRhEpz9XwKHAxdOGeOJSuuts04bLKDQL
+	3eyiip529MauJY2X8EKE8BQ16n4yH1A=
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com
+ [209.85.160.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-txKib_-uM_yJqT2-0RK4_A-1; Wed, 16 Oct 2024 01:26:15 -0400
+X-MC-Unique: txKib_-uM_yJqT2-0RK4_A-1
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-2886d7f00f4so3797916fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:26:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729056374; x=1729661174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rdIG8bdON8eg0upmdIZgzqWAZ14iwo7fh0+LLx9BfdA=;
+        b=thAWPKuclakdv7yU1ohGJsKMiXkOeqGgJXN+c+KtB25j9hTVlB2FufyKlCQlAZ5jGi
+         voLF/jvq0OpFHFWhe1zQic5j7dElFIC0uqUf3JFaZbRmlL0JkAGvPMCbFZsLZt3wFWZJ
+         F2PjWJL/MlJRN/TMBa9J6nMSEPeHRkY+kwHt57xFbzAAi9UAM5xUidfAVLwm5zmCKAff
+         yAAiQo0bwPKMkZm+PbF5YtufS/KEu2lY5ITy9GpnB75I5WmHPtKjWF0ZviXM50WmDzv/
+         RywpPw9QfNpFoUKTgJkQk1rxhff1Zp7/y4KW/gVp7b9z5wT99WaZdSUAzn/adjNzrKzl
+         qc7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUHd+YnAE/cH1UHaErUCZMV5D5kNcYMRKh7cc9AlcvoYqdqjY2I2Lt+DagFVUpSJYf5FB0NJNFO0h6w2lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytrmQT3x8FIcmxJCa5c+mPcKRHxkN1U2U3o0ZdjHAKlnv2VEn9
+	yGvFKwwffiXlxejBMi1yGvuGAuaBxBG1UoWoXW0eMw9/S8rWYNPr/xGbCr4YAYnnlF4mXDWM9uW
+	I0bwQuJPsiHVjEWlhBETcXnnJp8d5mN10DQ86rXAbbeZiUAP8zPu3UVbdpbeISeNyVJtzhT6T/8
+	pTZboSujv3VW8QMknBu8ylyz5sMi53PJh/Mium
+X-Received: by 2002:a05:6870:3295:b0:277:eea4:a436 with SMTP id 586e51a60fabf-2886dce9923mr11714431fac.7.1729056374282;
+        Tue, 15 Oct 2024 22:26:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHiwn4RE3PioCKXl96uz0dXLqcSvrhpM0cdTcTe9wx/x5I/zORO0z5prrIEan+L0+LNFhQwIPGrANg5wAyQEA=
+X-Received: by 2002:a05:6870:3295:b0:277:eea4:a436 with SMTP id
+ 586e51a60fabf-2886dce9923mr11714422fac.7.1729056374017; Tue, 15 Oct 2024
+ 22:26:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: IKpiQpf83eHtSz42-ABl1IBGWSOMLfov
-X-Proofpoint-ORIG-GUID: Zhwun_uNYFZouXgHlJPaKdU871Evb0Rw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=409 clxscore=1011 bulkscore=0 spamscore=0 priorityscore=1501
- phishscore=0 malwarescore=0 adultscore=0 mlxscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160031
+References: <20241009072749.45006-1-alexghiti@rivosinc.com> <1CA19FB3-C1E3-4C2F-A4FB-05B69EC66D2F@jrtc27.com>
+In-Reply-To: <1CA19FB3-C1E3-4C2F-A4FB-05B69EC66D2F@jrtc27.com>
+From: Jason Montleon <jmontleo@redhat.com>
+Date: Wed, 16 Oct 2024 01:26:02 -0400
+Message-ID: <CAJD_bPLcKX+U1k60mgsB_==qrQE+jnLMXSotq3rMrH_o+FtOQQ@mail.gmail.com>
+Subject: Re: [PATCH -fixes] riscv: Do not use fortify in early code
+To: Jessica Clarke <jrtc27@jrtc27.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Heiko Stuebner <heiko@sntech.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Richard Cochran <richardcochran@gmail.com> writes:
-
-> On Tue, Oct 15, 2024 at 02:43:28PM +0200, Andrew Lunn wrote:
->>  * @name:      A short "friendly name" to identify the clock and to
->>  *             help distinguish PHY based devices from MAC based ones.
->>  *             The string is not meant to be a unique id.
->> 
->> If the name is not unique, you probably should not be using it for
->> udev naming.
+On Tue, Oct 15, 2024 at 6:05=E2=80=AFPM Jessica Clarke <jrtc27@jrtc27.com> =
+wrote:
 >
-> +1
+> On 9 Oct 2024, at 08:27, Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+> >
+> > Early code designates the code executed when the MMU is not yet enabled=
+,
+> > and this comes with some limitations (see
+> > Documentation/arch/riscv/boot.rst, section "Pre-MMU execution").
+> >
+> > FORTIFY_SOURCE must be disabled then since it can trigger kernel panics
+> > as reported in [1].
+> >
+> > Reported-by: Jason Montleon <jmontleo@redhat.com>
+> > Closes: https://lore.kernel.org/linux-riscv/CAJD_bPJes4QhmXY5f63GHV9B9H=
+FkSCoaZjk-qCT2NGS7Q9HODg@mail.gmail.com/ [1]
+> > Fixes: a35707c3d850 ("riscv: add memory-type errata for T-Head")
+> > Fixes: 26e7aacb83df ("riscv: Allow to downgrade paging mode from the co=
+mmand line")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 >
-> Maybe the name is unique for s390, but it will not be in general.
+> Is the problem in [1] not just that the early boot path uses memcpy on
+> the result of ALT_OLD_PTR, which is a wildly out-of-bounds pointer from
+> the compiler=E2=80=99s perspective? If so, it would seem better to use
+> unsafe_memcpy for that one call site rather than use the big
+> __NO_FORTIFY hammer, surely?
+>
 
-As already written to Greg, i will drop this Patch. The name is unique,
-i was just not aware that the clock_name attribute is present in sysfs.
+I can add that replacing memcpy with unsafe_memcpy did also work for
+me. Once it was narrowed down, this is what I originally did in order
+to boot.
+
+Jason
+
+> Presumably the non-early path is just as bad to the compiler, but works
+> because patch_text_nosync isn=E2=80=99t instrumented, so that would just =
+align
+> the two.
+>
+> Getting the implementation to not be silent on failure during early
+> boot would also be a good idea, but it=E2=80=99s surely better to have
+> FORTIFY_SOURCE enabled with no output for positives than disable the
+> checking in the first place and risk uncaught corruption.
+>
+> Jess
+>
+
 
