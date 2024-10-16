@@ -1,187 +1,98 @@
-Return-Path: <linux-kernel+bounces-368886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4219A1618
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:22:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52189A1622
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B8D8B230D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:22:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3850DB2296D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264471D5142;
-	Wed, 16 Oct 2024 23:22:30 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BDE1D5173;
+	Wed, 16 Oct 2024 23:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="srDjm2OR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AE81D47AE
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DE914EC47;
+	Wed, 16 Oct 2024 23:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729120949; cv=none; b=Z+dAjilXX9XNCRblCmNoYwtuefTJ+17DBZjRWj0PRSjy2t7ykRGT6/p0AOVjwTjLNbmVFeDMYbDxoFdV7k1I0eQtbIpOBwFf4IUwSuyWLNgU4g4wXVU3aVVT0SyVhG91kYw8r2+lhBBP/rhjOe/h5xxPtba6Xf+vtFS+AgA1z8Y=
+	t=1729121310; cv=none; b=H81N3HfIu8H5xnDZAfyypz2FRLeAwXqT6TcMU/cMXaKRJnb0pAVoDP88aUq4HGPq0dbi8cuAdGmLE7zqDLxTvh7QMwJqf3upJyaF/Bk672isW61J0RF6VI+jcvry0OIxzPOYBjQH/Pkfvbk34rxPXN6hTVY6JiZJFtdMQ1lytPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729120949; c=relaxed/simple;
-	bh=mVE0l1hRwBDS/FZtpe0sXBUiTBSJha3jv4Akusym25g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PLifm7XTxQZEQSbQOUNuQ+p0OhvttB/p0eZZ9+krMdrh0n5T8gyCvdyiICR4PVDIdC1x2C2f1wHR9g+me/8/roO3FBSy+GKyfZRkhq7CSp2icJBbZBc2XpwQgn5cF4qbh4uMY+6L+AwHPnokLPczXbmzU67ogWAaefufvVheJY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c5a6c5e1so4507655ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:22:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729120947; x=1729725747;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nbtPBNOsMBhRrfsUYqjp/D614SNfpBqJ7uG2QiYsvQA=;
-        b=FR4nH6aLFKSY5hDJZG56lKm8g/adQ/7scdO/UVkMnlmRs0m3t3wc5YInPZ9QXuKSlZ
-         BK0saojGZmZJ8JIKtm39a4cLVs7LqxYHGciFqhK67WJyaWOZEyJeq29qrIREAOC2lJ3x
-         TXR0Eo7Yi6oVx7cIS8CSCr+xnOPl+xH1DDIGV6gEuHL75njiphDuuSkT5mXK71e4HyTJ
-         chXO3hHCTtDjrUbfuAT7K/OHOvCmZfte7H6NxT2iSkHVVwAPizNDCsM1aM7ZaZ1AHHRv
-         GTPoYOm/jrqyDnU1mWA+Vfbr5cFr/+N0Pb1SxreG/IKPAsLkK8NTmjduGM/ufqkS/HDa
-         XH0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIrGrL5eMTJY6A0goGeEW3QrOWlahRHMpP7TS3okATESxXnNhUDL9/MnFmz6mu7s0pqdqvm5nQplpTo60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6GAIyy8dGxCluDuHgNk8CNPaF7SmW5XBRdLxuQrV3Io2usoZX
-	ryjleqzoIZroDlqK7cAGLA4chDW8tBnGl75aAByhpBICavR8jCeCO945wU3tiZEewwtQ+me8pU6
-	Xgvq7Z5J2ve3P0hAEW+Y818ITW3yC7MCXC/9sFL3XqNUf4z8IV/FdACc=
-X-Google-Smtp-Source: AGHT+IF0Z9/TtTiy8unpNEcLnO8CgOACIjGn47ZfVzHjXJbB0BCJtpz3T25UeW8XeFU70EuzF3AJdIxNGt99Na5fG7Kvo3mYSnLG
+	s=arc-20240116; t=1729121310; c=relaxed/simple;
+	bh=Cf2GH1PBloo5u/SL/FWRlv6cAAqFO5p0+n+kcE4KN6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mtXnkex0x4mZs6RuejM9oN0MYrhyhoCF1noXf5G7ElUZOcwH07C7sUKyHnVKc7RvNLPJ19Z3QUhZmFi49JqCQIdrTzjDn/yYLgOdrN/XF2w62GscGFaErHp1ia9oT8tWmPv4t1L7e6zsn/aTVF+bk8a01yWP+5NjhPzDP7RiUpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=srDjm2OR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B1F6C4CEC5;
+	Wed, 16 Oct 2024 23:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729121309;
+	bh=Cf2GH1PBloo5u/SL/FWRlv6cAAqFO5p0+n+kcE4KN6Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=srDjm2OR+icJr6InORy6hB9Et8mZt7YKSYCYKk8rd9PM8f15H6wXjPfsW5BWBcxtA
+	 rfzs9xlCI1KZ5e1+FWD7W69gMw7D1Of7Ezc816dZM7D8x2ulF9Urb4d8GJh6W2IeWt
+	 YECUnauGjoBOjPIbd0dayFBbR/YjoogtnWmN1iOuwAsDZVjTx1GvSgjumKnwVNq+N9
+	 G5/KlyH7nPYg2bGxbGbsPu71INdgmOtJ6GlTgPEjYOsa19V3oVopHoWzG0XO+p527o
+	 LMHGSeE4mPM6Y6hCT9rNSRaj8HkAT0RgCXBVTYNRU7p0mceDkOa32deaQA3ktNejKk
+	 n99Y5QGRhMXzQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: dm-devel@lists.linux.dev
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	Israel Rukshin <israelr@nvidia.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Subject: [RFC PATCH v2 0/2] dm-inlinecrypt: add target for inline block device encryption
+Date: Wed, 16 Oct 2024 16:27:46 -0700
+Message-ID: <20241016232748.134211-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c241:0:b0:3a0:8f20:36e7 with SMTP id
- e9e14a558f8ab-3a3b5fb649bmr200318245ab.19.1729120947034; Wed, 16 Oct 2024
- 16:22:27 -0700 (PDT)
-Date: Wed, 16 Oct 2024 16:22:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67104ab3.050a0220.d9b66.0175.GAE@google.com>
-Subject: [syzbot] [xfs?] INFO: task hung in xfs_ail_push_all_sync (2)
-From: syzbot <syzbot+611be8174be36ca5dbc9@syzkaller.appspotmail.com>
-To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This is yet another proposal for dm-inlinecrypt, this one resulting from
+the conversation at
+https://lore.kernel.org/linux-block/20240916085741.1636554-2-quic_mdalam@quicinc.com/T/#u.
+This brings in the work that was already done in Android's
+dm-default-key but drops the passthrough support, as it doesn't seem
+like that will go anywhere upstream anytime soon.  This makes the
+proposal suitable as a replacement for dm-crypt only.
 
-syzbot found the following issue on:
+Compared to the other patch linked above, this patch addresses a large
+number of issues, the main ones being mentioned at
+https://lore.kernel.org/linux-block/20240921185519.GA2187@quark.localdomain/
 
-HEAD commit:    09f6b0c8904b Merge tag 'linux_kselftest-fixes-6.12-rc3' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14af3fd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
-dashboard link: https://syzkaller.appspot.com/bug?extid=611be8174be36ca5dbc9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c7705f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d2fb27980000
+Changed in v2:
+- Split block exports into a separate patch.
+- Return the key from STATUSTYPE_TABLE.  This is a misfeature, but it's
+  needed to comply with the device-mapper UAPI.
+- Don't pass uninitialized key to blk_crypto_evict_key().
+- Use {} instead of {0}.
+- Simplify inlinecrypt_prepare_ioctl().
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-09f6b0c8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3844cfd6d6b9/vmlinux-09f6b0c8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8752e101c1ff/bzImage-09f6b0c8.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5410decf46fa/mount_1.gz
+Eric Biggers (2):
+  block: export blk-crypto symbols required by dm-inlinecrypt
+  dm-inlinecrypt: add target for inline block device encryption
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+611be8174be36ca5dbc9@syzkaller.appspotmail.com
-
-INFO: task syz-executor279:5128 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc2-syzkaller-00291-g09f6b0c8904b #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor279 state:D stack:25488 pid:5128  tgid:5105  ppid:5102   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6774
- xfs_ail_push_all_sync+0x236/0x310 fs/xfs/xfs_trans_ail.c:726
- xfs_log_quiesce+0xdf/0x5b0 fs/xfs/xfs_log.c:1018
- xfs_fs_freeze+0x8d/0x1a0 fs/xfs/xfs_super.c:936
- freeze_super+0x81b/0xee0 fs/super.c:2107
- fs_bdev_freeze+0x1ac/0x320 fs/super.c:1484
- bdev_freeze+0xd6/0x220 block/bdev.c:257
- xfs_fs_goingdown+0xa9/0x160 fs/xfs/xfs_fsops.c:446
- xfs_file_ioctl+0x12e5/0x1a30 fs/xfs/xfs_ioctl.c:1343
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f70924b2539
-RSP: 002b:00007f709243f168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f709253c6d8 RCX: 00007f70924b2539
-RDX: 0000000020000080 RSI: 000000008004587d RDI: 0000000000000005
-RBP: 00007f709253c6d0 R08: 00007f709243f6c0 R09: 0000000000000000
-R10: 00007f709243f6c0 R11: 0000000000000246 R12: 00007f709253c6dc
-R13: 000000000000006e R14: 00007ffd410540a0 R15: 00007ffd41054188
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/25:
- #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
-2 locks held by getty/4897:
- #0: ffff88801e2510a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000039b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-5 locks held by syz-executor279/5128:
- #0: ffff888031ccc6b0 (&bdev->bd_fsfreeze_mutex){+.+.}-{3:3}, at: bdev_freeze+0x2a/0x220 block/bdev.c:248
- #1: ffff888011c84420 (sb_writers#10){++++}-{0:0}, at: sb_wait_write fs/super.c:1896 [inline]
- #1: ffff888011c84420 (sb_writers#10){++++}-{0:0}, at: freeze_super+0x4e9/0xee0 fs/super.c:2085
- #2: ffff888011c840e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock fs/super.c:56 [inline]
- #2: ffff888011c840e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
- #2: ffff888011c840e0 (&type->s_umount_key#44){+.+.}-{3:3}, at: freeze_super+0x4f1/0xee0 fs/super.c:2086
- #3: ffff888011c84518 (sb_pagefaults#2){+.+.}-{0:0}, at: sb_wait_write fs/super.c:1896 [inline]
- #3: ffff888011c84518 (sb_pagefaults#2){+.+.}-{0:0}, at: freeze_super+0x519/0xee0 fs/super.c:2090
- #4: ffff888011c84610 (sb_internal#2){++++}-{0:0}, at: sb_wait_write fs/super.c:1896 [inline]
- #4: ffff888011c84610 (sb_internal#2){++++}-{0:0}, at: freeze_super+0x7cc/0xee0 fs/super.c:2104
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 25 Comm: khungtaskd Not tainted 6.12.0-rc2-syzkaller-00291-g09f6b0c8904b #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+ block/blk-crypto.c          |   3 +
+ drivers/md/Kconfig          |  10 +
+ drivers/md/Makefile         |   1 +
+ drivers/md/dm-inlinecrypt.c | 417 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 431 insertions(+)
+ create mode 100644 drivers/md/dm-inlinecrypt.c
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: c964ced7726294d40913f2127c3f185a92cb4a41
+-- 
+2.47.0
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
