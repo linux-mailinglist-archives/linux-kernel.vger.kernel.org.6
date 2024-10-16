@@ -1,259 +1,175 @@
-Return-Path: <linux-kernel+bounces-367907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9949A0831
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:17:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B239A0833
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9550B25837
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF5D1F25776
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FDB20607A;
-	Wed, 16 Oct 2024 11:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB52076B0;
+	Wed, 16 Oct 2024 11:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gZ5xuUqy";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PNIxcDy9"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuGN/Npf"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4335E15C147
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729077404; cv=fail; b=uWp0l6x8loaFPt/kPHFdsp5yE+0Cb9Z1KRhcvHJGaqB1Ip397W1eyX2A03fYHHngqk6ZMu2LM4tvl59FvYL7/J9hemQ8+KU4DFs8tph20dQvZ2N0wlETt93dppgFhj8SIkd9V1+Pefp1qOEUPUh5FqJ0qPYswo3tHiRUHKVAJrE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729077404; c=relaxed/simple;
-	bh=FhNPm1WWwb3iGuVfzgGjiH5mro8bQHkYDUCc04J2Nnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=olT/fddlyd8FLg7gYW5qloBzsVoRAPkaXD9oXFtE75mJN3V24Befv8JNlteEdqfuzVCrrWyGcg7/WVjbZKKQCllzg3jA2WVVXg+N9CSOXOSXbY5/Bhss3E7XKnSGm2iPqdlKPiWO0aTsVMq3CSr+EfDc9LtOOwmkpghL0ID5wrQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gZ5xuUqy; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PNIxcDy9; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G9tcPA010050;
-	Wed, 16 Oct 2024 11:16:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=e4Nn1yy4zKB/9LQAlk
-	+byvZ1JarlywApRcNSfwuRElU=; b=gZ5xuUqyD4Io1ZW8tcz22fIJSjNaKTLDEF
-	GlSAb8iBRiL7V+cDXp86cq/TOqRZt+mlTN/wUPipoS2GUFfZiUIFzMQAv+vfiTdp
-	wLnt7lt3EpR+T5WGecrdincyPLblhyz+Z5xSDCEMhsHRQPX7RlUW6643vGA0eLEI
-	BUs8nV75ZvDFbsOdiSLjaRuLGMYSS35pamBwPtnvfbpwsopmyM6llvLUhNVveajR
-	UrhQcbzS6HpfmWPpcoxcFUkikzDxN84mEXzn8XQ/2uV/iaAkX41Q/WwzUwFolGXR
-	9gIrSt6BMv8de8DlYQYvoN/t8uzlVT1Z7B1ORi7gWJmCtCcOwAeA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427hntbh30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 11:16:36 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49GAMGBr019864;
-	Wed, 16 Oct 2024 11:16:36 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fj8px6d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 11:16:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c/bJwUzHjQXAcKe+u1Uy7hhyye6wnOFtJgnWJOgKDXOWuQl2J53ieZrYrwp4XYx4FkyVo9RKQoxuPrQrqL9C+1cnlUVfozQFIz/1ic/uPsDLQjZiXf8C8BRodfkVqDS4fSa44SMK1slNoGlN+aTBEv8hlmQUUFOv7vch15waazP3ksVEdJ9zGcsT8SevW/kpJOVOyc0f+tVtqSNJ1v+inuXPMOo3xjWSRvM/U1BnqUmJlBgeHLes/JIAvaT8yAF6ENo/QY/Ymbnl+kDVmYF8Z2Orn5w6QLg8PMbmTst76OPZJl5atsWPt21wFAIFuwK6kDh8Px0fYFFhtmtAPrKdcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e4Nn1yy4zKB/9LQAlk+byvZ1JarlywApRcNSfwuRElU=;
- b=mlPvLLv+0lSm4eiNb64Jre5fINzCJmwAkUXssrbYASztC1HmBn6FBLd3vd27mQIhajaaMYzfNemD++VWarL+9g414DQ4QZauUGj6bLwYZ8qBDPwOeSALh5rvr7QVj43RJQd7X9RFgp1C/J89eqvtADnOTEGGE7ELnqTX9IzwjyFY6UbPiet0WQOb7BUZFL7YV4XosJN4MkdMfJTwA++mCorAezoXGdEA+KklLuTrjiheuQAnIzVdPmak4dy9SF69SssvtMoYrC9j+3Qo1EuWedtIky/T5EQBRi+smKJ9Hl1608c3Vl1EA+sXob08A2+KunXqlY+v3QbQxB1n0EG8ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1AF15C147;
+	Wed, 16 Oct 2024 11:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729077432; cv=none; b=dYrY6xmS2aGLmbVmFw1EFFpp+dHdcFk+imw3bnAsrNOIhtepvP577qnf080aP1q0rD9jHYL/eytRgcmXrSQfMlhMum17q+8DmDFW5bWgsHg4UGG8nXFqs+hrO5BRHTjqtViWJGCjXo6Itm2DSrcSTLXsmDD2GWCwBkkisHqYdYg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729077432; c=relaxed/simple;
+	bh=EU3sgtn4DXMz6YcK+VSDmOMxYa+S5yUUdTVOKmy5kWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nLMKB0KqmCg/PiwQZPLv33BvikRSd9YNe4lwWtBtlMoeKVPwRrnqan4ZBzIJpv+lY0MiQyoO7bkJGRNysLCm3LHXaBNjM+BiMSs0boD5hJtH2QTXuQlG93sFUc+gkIO+ZBzV4ZYOX0Ui2Ir4LZZ+cm9tvpwAhmo++JxT10J5NIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuGN/Npf; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-430ee5c9570so76434315e9.3;
+        Wed, 16 Oct 2024 04:17:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e4Nn1yy4zKB/9LQAlk+byvZ1JarlywApRcNSfwuRElU=;
- b=PNIxcDy9wheeOEApN2VQpFP1d0Bvse9+uBqMK1w3/bG4119SAIB3BV63dxlow2WFhSOCttoSNY7M0OVltZ8nyETh/CoBlPzwMKBWYKTPlIN2cBemAjITl7W3M0JwdaKwOKTg1XiPThDWKIGhNo5BBfsHE+mK+ifpB6TZ6eEHqS4=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by PH0PR10MB4774.namprd10.prod.outlook.com (2603:10b6:510:3b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 11:16:14 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
- 11:16:14 +0000
-Date: Wed, 16 Oct 2024 12:16:10 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
-Message-ID: <04f2a791-6b44-4743-b074-bda537cbc8e4@lucifer.local>
-References: <20241013223601.3823-1-spasswolf@web.de>
- <02217d08-bc08-4ffe-8e63-07878561f9b7@lucifer.local>
- <3b4dccf8dfbfb5a9d7c07a745c48a96164fbf19a.camel@web.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b4dccf8dfbfb5a9d7c07a745c48a96164fbf19a.camel@web.de>
-X-ClientProxiedBy: LO4P265CA0267.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37c::7) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+        d=gmail.com; s=20230601; t=1729077429; x=1729682229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IkxMsxXOxgn3VlmEMdu8a32/0K8lNsfFBfaK/Bmgj7o=;
+        b=PuGN/Npf2NKnOZ516tE77jPsdC/d8KzKpXbASJ4QXvaCU4obx0++fWifQ6VUkX7ziK
+         JizKISis/3/GAXInWmJj3AyvPJPPVXJLb1byJTVKHVjcNwEAw5vkBac9d0po8QAn+TqA
+         c5DxR5IiB7Iu7JhejZLrvx0AUN9R6akiue5PtYVewFDOvG8yJqTCE5k6MQN35fEa5VhG
+         MOphgJ7zZP9N19CGR563nXwILkvuYbHhzlyhD/VU0VWilfFz7t2BeiKPpbQlQi+wb6a+
+         pLu/f6On6jWNxVmqt/AzegWAiCI9AqMZFyNZNbmd0DumwG52AIUzEOsN5u6T6rdanqPb
+         Of+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729077429; x=1729682229;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IkxMsxXOxgn3VlmEMdu8a32/0K8lNsfFBfaK/Bmgj7o=;
+        b=UsG17ZXBp8gdr17tcTQRsREFZRkg8cZUNq9/JsmNtZ2fa07SNgKiRUPYPfB9OJPff4
+         kLji7HyruMkPoJDM4xTlGxnXw3XQ0b/oToReYgENlZ+WqZhQLur3GwagDWabov/0pJg1
+         fakEPNoggZ6O1asoO9fDq59wU7/OSpX1NPhAEdrsvkq/fqxYo/+r2OmKCtKJ687fijMf
+         68ISje6tEJ+mxmYY2//v3xxqiPlM0FdHhdXFnKG5limzpCy/QXFm4SQ+uDtkloyaDEFu
+         f2E6am+gPG+ld/txE33/gIfYnoDw0Y+gkn5p7ZSOxvrbdctTZwv3zFYDpqabcfPPrS1m
+         YeeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHsUMSxpenLAWC8yiQ+Cj1PMPrIR+Cq/lIcPSuYZuG9lGAQEF7u4nFId5fi0Jj54L26ZM6kptIiVoxB84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yynv+CbHK8cg84v+9woqZXPQpU6phSKmGh5B/ZZ2Q2cKSA9OqQM
+	4dWpmRxRZe1WPu/8Sii4uk72AUG+lbb7IdXKAJggwr0gtI6EW3DT
+X-Google-Smtp-Source: AGHT+IElTykgnhe8E0i8WlwpzDwud6Ln632DjXpuzr5XGiDVXlSq/38dAGkSi7tGDayg61wiBQtnpQ==
+X-Received: by 2002:adf:fa46:0:b0:37c:cc4b:d1d6 with SMTP id ffacd0b85a97d-37d5ff8e817mr13362222f8f.27.1729077429077;
+        Wed, 16 Oct 2024 04:17:09 -0700 (PDT)
+Received: from Max.. ([176.12.137.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a13bsm4040153f8f.13.2024.10.16.04.17.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 04:17:08 -0700 (PDT)
+From: Max Brener <linmaxi@gmail.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Max Brener <linmaxi@gmail.com>
+Subject: [RESEND v2] ext4: Optimization of no-op ext4_truncate triggers
+Date: Wed, 16 Oct 2024 14:16:24 +0300
+Message-ID: <20241016111624.5229-1-linmaxi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|PH0PR10MB4774:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2124e454-567a-4744-e457-08dcedd3f28a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?L3JJ3of0RHMl7Ou3eZPnXDx5OpKDMTDlSZLnz9zylpzibYZyMLbsgOr5E3O2?=
- =?us-ascii?Q?teNtuX/EwHG3fTLIAM6DBrg6rkQY66OlIMdWSBia6W1wheF99w6HXdoc8IMq?=
- =?us-ascii?Q?h1q8+FDovVYiRMwQ3GaXH3nY0WFcx2eWWlhV9sUqBwLcE98LeOtL8hm56m7m?=
- =?us-ascii?Q?7JpBlmDvAKMvmdbEKybz2V22R+LPE1NU5vuKdg4qnrPtArJSKIuPG495z3Lj?=
- =?us-ascii?Q?4Gv8ZnKEGx2e6IRow13T4B61GgHWuVCcvfFoTmW1dJAGQe5vzDcep8qfyGPD?=
- =?us-ascii?Q?kBcz/AhhcSfFv8XSkbYmQ+NmLabAH2AW6tFYH8kWRbTAsm+kNIAEPR06W9zI?=
- =?us-ascii?Q?5HTH5uXWh16tPPaasyJYLJj8IRLmwixd+74Lh96GB6E5URz+ZSaD9jh1zLV8?=
- =?us-ascii?Q?lIZK8Hb2cIfPIU9xzvUnlmSknh2h24bKIKlYDnx29UnZgE3jjViqhlx1+t3V?=
- =?us-ascii?Q?jOk0Dn8/dPABDCthjMD1rRPvOW36ugsr5QXQ74S7sPiTSwb4mnZRE9xo9wd7?=
- =?us-ascii?Q?dw+eir/bpqjPt74kI6IUBe+V7q6WXClRw/WnNx4DHPvJi6l1X0mv1FUMZjFP?=
- =?us-ascii?Q?oEUC6UWMMjPQ8qESRfLShyMiwCynMy4eEKGCfu/OYIoivr60I49gxsoevWrM?=
- =?us-ascii?Q?Ay/jdho5y7MEFqRJak0fKxlrr0xYprZGCYdDUHzMQShrH/7jREunDSn0pxu8?=
- =?us-ascii?Q?9Etr4BAqYpRkRWl5+XKH/Z5Z1/9PXOLauaejs/bHJ9QTYDsAoBdvqBFGZNbx?=
- =?us-ascii?Q?mQBPhXbQK1r53smqlAvwWFN+oUuBoC4adE/TghcH2rdqp+KpCo309G64bGzH?=
- =?us-ascii?Q?avUdQzSEQXEj5mTpC9fJGJl9GJlfr9ky2LLw293/XxQUXPASyCFivvXpl08P?=
- =?us-ascii?Q?u/ILvihWTRu/8T0ET1SPVTANNTSNAjLewN5WrSaVac03obe6qAwj3BC/C8ug?=
- =?us-ascii?Q?j4uUgjTwKUg65R4y9QHhXMBI6cpGcIji3okR/owxzKvWAYPjEhZ1z0jEg2LX?=
- =?us-ascii?Q?TD9KJrv/0curlA0HEUEMSbkcZt+qgCCY+LNtA96Q2ug0ua5ldbifjB5V6hu2?=
- =?us-ascii?Q?QDuWhQab0FpCP0MlR6u4yWlEd4qPhVEafem5V45oI6Cfs5tQjNzjpL74hPeI?=
- =?us-ascii?Q?yyyBnU/T1txcLzUz6A6+IoNV3W+QkTnB6r97qpNaC8duGN7G9MdekPw0J7QA?=
- =?us-ascii?Q?9l2hOoWc+0pA0gjqjDBvl9BYufPgG6Q2O7FX8z/xo3MYGoaOfcjTKn2VMj8U?=
- =?us-ascii?Q?ygBP/3Yv8j7Dof0sRw43G76J8GdpNYlFiT8YazOXyQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CRDHEO6BFhqR3HdPt899Mt4qSnRWvLzKPa3yOqcL+1o/LTHEyQ8kym9OsoTe?=
- =?us-ascii?Q?RFqDoTi59GIOjTXBgCwhv5uAFB/Gw4VAushU+Yf964XqDNrpMnXgUiOB4Ezk?=
- =?us-ascii?Q?I21JIOZZtwmfd9OW7IIKVH9U4pvbpL2kBChm9+UrDrDDiyWz5GacGyFom4R9?=
- =?us-ascii?Q?OMpB5kD1hg8lt/UPyOn9wCaTw9cGuIke65Vnxs2PSwyxHF5bH/sfr2KaBGzk?=
- =?us-ascii?Q?Renf0O7Ci2oXxHUi1mNgjZaPeh8xqDsMgmlSs87YUQE3UqkNsKfsdNqQS8tj?=
- =?us-ascii?Q?zGZHRy1Zm6WVAJkaAHbygKPihalcusc6Ipe5QoCz3UxM0EsCZpk5KSv5ZSTl?=
- =?us-ascii?Q?LOYSuX3gkGHIskbtdmWSbKu6IzmMlt9/wlUO5TqR7XmF8cmNmDputlMwMllj?=
- =?us-ascii?Q?mtMvS1JWc5IzbbSYhmnVN1uuLC4CVQK8+uI3iTFQ7eG7qq5hHWL/AEz65On4?=
- =?us-ascii?Q?KLgzFbrcOrSa/4D8o1tIXOi6u/1HG+nacAV3XvvS2uOtF9Wt0TRrHRxXyDv1?=
- =?us-ascii?Q?wFY6VdVBgaF9AQ0FCWxOmoIKGc5ICXIwsLfJtTpLGikNOvECigzd+vCa3EuR?=
- =?us-ascii?Q?u6C5yQEIX8rx2YXR+yB9SqIsFYuFrhx88akmQEjrQ+VbMLibBQcv9/5BpPVb?=
- =?us-ascii?Q?t35sMyjlpq+G2+10nEldPImRAGnclaSJABGT4bobSFHYutbXUOmQpZ55y6qI?=
- =?us-ascii?Q?sVq2JLGr7dtEocUIsCv3EBqPkBDVQviObxeJk51MpfnNlpE70Fcmi2gh/PQG?=
- =?us-ascii?Q?N6eGuPMuLyTM+5oHnHl6FmapAROnLuFt029/7eIuzd+ymF1T7mpFO48onKl1?=
- =?us-ascii?Q?dKDsfEZXj65UaX3E22mzDaGTpa+GyRMl4+s1Va0/6kpIQwKVCDZPqzzRbh2b?=
- =?us-ascii?Q?7mWjGPScyedeXpB5MgegB6oc0RDjJA7yLoiEpBfI+jf2huqx5uozE/+MLMbf?=
- =?us-ascii?Q?YFHise4dQHaUxDTvRKepC9cgXqJAU9hBIFOy8Nx26BDsjpXCBiH8Fh0gdqBv?=
- =?us-ascii?Q?JqqkNRA+MpmKZ1e8xdLMbthvrUPZavb5jze9i5oIzt2IdRaho7BUcQNpkIJJ?=
- =?us-ascii?Q?VJnzkJR/iVnX8fEzxLAq37Eyop1bIvvYsx7/fXJorbU6348aa0KkvlgSyAl1?=
- =?us-ascii?Q?MksHBxsyWL0jpo6rsMe2a0FWhboJJ76J5Ts8l7k6AWJx/mAavFKmkMTFugu9?=
- =?us-ascii?Q?tZnTtALJ5yNXqPunulUghD35dqY3V9+wuUBbe/kgdQHmqAvTYu95/XG5x/zd?=
- =?us-ascii?Q?uxMmgvQlJgp1amW685PmBhYRGnKHIAx1JLEODr0MUcnZ9MXRXdZzPNtaGxIy?=
- =?us-ascii?Q?j3XdvCfozvJkNNl90Fch1/syy2znbPc82VJDV17HcMy/N0j0mDqHmvwZdC4F?=
- =?us-ascii?Q?MGyjpVzO3/xgcV9dvPRPHxn3wc4fGEY3te7kfQb7/eLRTVnurG/4R4bfwHxN?=
- =?us-ascii?Q?uljiV1BwHJ0PQiBng2a7Uwze1RiXkKCx5p64wVjMUgPCNTpym/J25V6IGeGP?=
- =?us-ascii?Q?OdgOYTFLhVq9e/veDEQLF/R8Brt/bWBQD0nynW/gzUaSD1huiwD1vzuzskX1?=
- =?us-ascii?Q?eMzODy1nzLtc/MQTPRJo4/IXFwaGiESPLYPgroX2tmtFcnV6L16t2h12Wwcq?=
- =?us-ascii?Q?7xvc2RBnika2sGCdkBt14UEQvBwLNoVXoUFub8ayF1RD9Fell0GjkbhaCTYO?=
- =?us-ascii?Q?Ar7URQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1IS9Lbe4gpV/J2E7o//BSxiTYI4KfpoTAFxkKIlPhmUtuuG4OZWCqlTj1kiPabW1+fQtqXAxMcNdlPZWxIuGX2Y0ZUVEjf47bJeiVjRNC/dx0KCHnMYQLrpLiCwN/iBgcgwFd1OwbVm7FZfaH3XuHfFSHoUQdTns3oQO7I8q+5TPeekmdewq1FSKOEJnYgl6EFgfysUo6qId4z95zzeLbaEvEP8C47sqyCRd+bNjou6QA433FG/odKlt1mWVHxBlCEJwJoETQcH486qFY1NSUP6Qj+fUXtRwvSAaAfZ58PygLz+HPHJOrB5yMpYv+yq/BGd4Rg3YmqnudlNmeUfmtMUoudzR3PzUfVHdT6cS7x7UX9KdM5/0mbtFAMS/naaVx2yQ+cNh41IlFBRjsL0HMj+Dxy8iUpCi83Y2czzlcugvUznal8w5XmHjiVxXGlGdzbeIqIxG6HYYbOWXVKLEdz1KLyz4BElSFvSMry/Qi8aftgGdKlkXFAsYsUknEvf2dOWsXcn6vGJfh13rztN+weq+lWPWJACgF5oc1jlmL6k8Qstqq9gHhq0DIIsXMRvF8oiZ7nlHZChBFwz9tQsAw2GYdVMn26wdUBFWIvzTiOc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2124e454-567a-4744-e457-08dcedd3f28a
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 11:16:14.3866
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MGKTHPMBjwB1Kctv/xhkZDG1dY8Yibh9GvCfFMtyU0vX8OHjKt5XRIyW2HDDZTHqj8VXAF+yViTZlSDb9zKrc+5v8t8oiyitQMFKsUjB8WU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4774
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-16_09,2024-10-15_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 phishscore=0
- adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410160070
-X-Proofpoint-ORIG-GUID: 39jU5BN6HzTyzOrrAjaHpUuXZGU8EuZt
-X-Proofpoint-GUID: 39jU5BN6HzTyzOrrAjaHpUuXZGU8EuZt
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 12:28:51PM +0200, Bert Karwatzki wrote:
-> Am Montag, dem 14.10.2024 um 10:46 +0100 schrieb Lorenzo Stoakes:
-> > On Mon, Oct 14, 2024 at 12:35:59AM +0200, Bert Karwatzki wrote:
-> > > I created a program which can trigger the bug on newer kernel (after the
-> > > "Avoid zeroing vma tree in mmap_region()" patch and before the fix).
-> > > My original goal was to trigger the bug on older kernels,
-> > > but that does not work, yet.
-> > >
-> > > Bert Karwatzki
-> >
-> > Thanks, that's great!
-> >
-> > For older kernels the problem should still be present, the fundamental
-> > thing that changed from the point of view of this bug is that merge won't
-> > contribute to the number of VMAs being overwritten at once.
-> >
-> > To trigger prior to commit f8d112a4e657 ("mm/mmap: avoid zeroing vma tree
-> > in mmap_region()") you would need to create a situation where the _clear_
-> > triggers the bug, i.e. you must consistute all the VMAs that are being
-> > overwritten by the store from existing VMAs you are overwriting with a
-> > MAP_FIXED.
-> >
-> > So some tweaks should get you there...
-> > >
->
-> I don't think triggering the bug on a clear works, because a write of a %NULL
-> that will cause a node to end with a %NULL becomes a spanning write into the
-> next node:
->
-> /*
->  * mas_is_span_wr() - Check if the write needs to be treated as a write that
->  * spans the node.
->  * @mas: The maple state
->  * @piv: The pivot value being written
->  * @type: The maple node type
->  * @entry: The data to write
->  *
->  * Spanning writes are writes that start in one node and end in another OR if
->  * the write of a %NULL will cause the node to end with a %NULL.
->  *
->  * Return: True if this is a spanning write, false otherwise.
->  */
-> static bool mas_is_span_wr(struct ma_wr_state *wr_mas)
-> {
->
->
-> I think the could would trigger in this situation
->
->               Node_0
-> 	     /
->             /
-> 	 Node_1
->          /    \
->         /      \
->      Node_2    Node_3
->
-> but only if Node_3 contained only two ranges, one empty range and one normal
-> range, and if the mmap into empty range of Node_3 would merge with the last
-> range of Node_2 and the last range of Node_3. But I think the rebalancing of the
-> tree will make it very hard if not impossible to create such a node.
->
->
-> Bert Karwatzki
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219306
+v1: https://lore.kernel.org/lkml/20240926221103.24423-1-linmaxi@gmail.com/T/
 
-Hm well that would explain why we couldn't hit it so easy in the past then,
-and is a good thing... :)
+Changes from last version: Moved vfs-level changes to be ext4-level,
+and improved the description of the patch.
 
-Still the bug is still a bug even if hard to hit from mm code and should
-get backported (obviously you're suggesting otherwise, just to emphasise :)
+This patch enables skipping no-op 'ext4_truncate' calls. Analyzing the kernel
+with ftrace shows ext4_truncate is being sometimes called without making any
+impact, and sometimes userspace programs might call ext4_truncate in vein. By 
+detecting these calls and skipping them, cpu time is saved.
+
+I'll fix this by skipping ext4_truncate call in 'ext4_setattr' when the file's size
+hasn't changed AND it hasn't been truncated since the last disk space preallocation.
+It is meant to consider the case when ext4_truncate is being called to truncate
+preallocated blocks too. Notice that so far, the condition to triggering 
+ext4_truncate by the user was: if (attr->ia_size <= oldsize) which means it is
+being triggered when attr->ia_size == oldsize regardless of whether there are
+preallocated blocks or not - if there are none, then the call is redundant.
+
+Steps:
+1.Add a new inode state flag: EXT4_STATE_TRUNCATED
+2.Clear the flag when ext4_fallocate is being called with FALLOC_FL_KEEP_SIZE flag
+to enable using ext4_truncate again, to remove preallocated disk space that may
+have resulted from this call.
+3.Set EXT4_STATE_TRUNCATED when ext4_truncated is called successfully.
+4.Don't skip ext4_truncate in ext4_setattr when the size of the file has either been
+reduced OR stayed the same, but hasn't been truncated yet. This is in order to allow
+truncating of preallocated blocks.
+
+Signed-off-by: Max Brener <linmaxi@gmail.com>
+---
+ fs/ext4/ext4.h    | 1 +
+ fs/ext4/extents.c | 4 ++++
+ fs/ext4/inode.c   | 6 +++++-
+ 3 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 44b0d418143c..34128a88e88f 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1915,6 +1915,7 @@ enum {
+ 	EXT4_STATE_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
+ 	EXT4_STATE_FC_COMMITTING,	/* Fast commit ongoing */
+ 	EXT4_STATE_ORPHAN_FILE,		/* Inode orphaned in orphan file */
++	EXT4_STATE_TRUNCATED,		/* Inode is truncated */
+ };
+ 
+ #define EXT4_INODE_BIT_FNS(name, field, offset)				\
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 34e25eee6521..b480c29dfc65 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4782,6 +4782,10 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 		ret = ext4_zero_range(file, offset, len, mode);
+ 		goto exit;
+ 	}
++
++	if (mode & FALLOC_FL_KEEP_SIZE)
++		ext4_clear_inode_state(inode, EXT4_STATE_TRUNCATED);
++
+ 	trace_ext4_fallocate_enter(inode, offset, len, mode);
+ 	lblk = offset >> blkbits;
+ 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 54bdd4884fe6..cbdad3253920 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4193,6 +4193,8 @@ int ext4_truncate(struct inode *inode)
+ 	if (IS_SYNC(inode))
+ 		ext4_handle_sync(handle);
+ 
++	ext4_set_inode_state(inode, EXT4_STATE_TRUNCATED);
++
+ out_stop:
+ 	/*
+ 	 * If this was a simple ftruncate() and the file will remain alive,
+@@ -5492,7 +5494,9 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 * Call ext4_truncate() even if i_size didn't change to
+ 		 * truncate possible preallocated blocks.
+ 		 */
+-		if (attr->ia_size <= oldsize) {
++		if (attr->ia_size < oldsize ||
++			(attr->ia_size == oldsize &&
++			!ext4_test_inode_state(inode, EXT4_STATE_TRUNCATED))) {
+ 			rc = ext4_truncate(inode);
+ 			if (rc)
+ 				error = rc;
+-- 
+2.43.0
+
 
