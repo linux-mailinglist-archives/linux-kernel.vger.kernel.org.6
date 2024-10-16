@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-366976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690EB99FD21
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:29:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C48299FD24
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C96A0B23356
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:29:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D6E4286215
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51188E552;
-	Wed, 16 Oct 2024 00:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4FC10A0E;
+	Wed, 16 Oct 2024 00:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmV1IpK7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNs/CgGW"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86AFB641;
-	Wed, 16 Oct 2024 00:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB67F4C91;
+	Wed, 16 Oct 2024 00:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729038575; cv=none; b=dysIJ5vBtnyMYO0S50FKDc6IFEEYVrrAlRWQWwhZ0CL2UwRhQYJj5dVW0FrvUAYWE787eMEHSz+xGbzIFE+eVHNZ+Gvh1k9SnCnh14ec5+ed72rL9s9+Xa+fq3P3YWR1M9CyJbMcf6UvyG4LTlX0hQmDtjieQSHKnNNs210fSGk=
+	t=1729038654; cv=none; b=cha/ymoE37Y8OKzpKm2rWvsCX06FS+IIYbsYFtAG1HPkHrfIDC7bpnoxhpZSAUzKL+xuMOkyfY4SyrBEOU5D+VWXQf4d/OHaThC8iQJxwzfnoKmpuvUGphE9xsZ4KNUrapuzJFaBEo55+IzDgccDn+pMtTzYztL+N6PX2PN90Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729038575; c=relaxed/simple;
-	bh=UX50Uuxyl6KpeCZ9V3FN/RT0FMfn23uteQZUQF7qX3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCbl8wwZ4DJIt9O0wO54bplr2uwVm0km/XznQfFmmyWC7LzmjrUENRUCAwZUK0zIZohI12dHg7N8CG6gD5oBirb89Ul8J+48/CCABgsiCJCkJIevCpj82SQft7FDm5TG6PuF9r61Vf/LT+RfxbmMdvE5jnyu6rHY52fTgPNT24Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmV1IpK7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1550C4CEC6;
-	Wed, 16 Oct 2024 00:29:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729038575;
-	bh=UX50Uuxyl6KpeCZ9V3FN/RT0FMfn23uteQZUQF7qX3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rmV1IpK7eC0ZkRA9iAfkT4ehVfQmWr/FMidbJ6A0Ua6XWquSP1/uz2h4etMyqXMXU
-	 CJc6ms0TTFw5KgWfNb/Ou8cMEDodCNEejrvib/NL+AfLYZQVyZ+FFg/kvJne0hiCtB
-	 bSw5AmObtOsM31cU47axeglWnUnWfk1EQcaWImPrl3cqkOjKfa/hhzvFTms586Z/zT
-	 JdTTgIinlVvliFxvIdEIfidTA9NVb82pVBB5omfCoVBBp/Qn4z9jlhv9W071EG3xE/
-	 svnhpuPwU+QIDpBhHr9dryqi9xIkT/xjxp1toZ0//rJRyc8oDN9PpxQEVZCUB7pBdk
-	 YHMNaKt5SoZ3g==
-Date: Tue, 15 Oct 2024 18:29:31 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: [PATCH 2/5][next] nfsd: avoid -Wflex-array-member-not-at-end warnings
-Message-ID: <9a04f3f766b2f8438887f6a003cf288d0f366fb8.1729037131.git.gustavoars@kernel.org>
-References: <cover.1729037131.git.gustavoars@kernel.org>
+	s=arc-20240116; t=1729038654; c=relaxed/simple;
+	bh=2cDb0ailydQMJuvujdQMAJYj23Rv+5l8p/IbZr+TNCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VX6M+xbSQeeO8TuUox7dz53liB3ld1FPKAJXmp8+995F4gZyykAJ62xNtANwH+87KPSy61JYIpRjOWfbE2I/pfc/Whmbzpd9rWfrkmGkHtJm0kOWfk3Dquw8mtud+Gyj2Zgea56+TNGZDjqnNsbk4FRivmTDqhg13h2pHhY79ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNs/CgGW; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e2e41bd08bso63799547b3.2;
+        Tue, 15 Oct 2024 17:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729038652; x=1729643452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2cDb0ailydQMJuvujdQMAJYj23Rv+5l8p/IbZr+TNCI=;
+        b=lNs/CgGW0wffFZS7hZX8m3+QCfM1kBGzLgy8+z4dokRUOR6bK2HHReS5zbef8FbHWo
+         EgV5/Sfc1mVC21wwrSOtm7YKZqI1m8Y491QQpdD6ZVvY4fx3sD/WjuCywS3MOBfYm+gj
+         0t+TlH7pSXPkzNSYEJdeJU8fHPTua4I+1lATTm9OcGbTPbVyyTMeDjwnOzdfVSrcw+Fu
+         wmou7jUFuI65eesB6b6foe4YR2+xEb+M03Nm24QAwLNhdoAnSje3b+dBs4jq12A6n2pa
+         ke+LxJfgWzuAJkSmO647uuuhQLSYjSZg5TbpdXB1RqpM9BdwakKu/jKsjY+z7dtklXFC
+         xI9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729038652; x=1729643452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2cDb0ailydQMJuvujdQMAJYj23Rv+5l8p/IbZr+TNCI=;
+        b=alaFSt+wWxw+kCNgk4difN7usFqPhE0a+xqrW/7B/m8LKEbazSjoTvvHN2PxFPyiah
+         tL3upR6xgD3FHqTEh1EDww/dZZ65sFsfOSomgLvfoIrUho+lAx6DFjxznQct1ChxRm34
+         e6JgDwSQP+/q7cNHas2SC82n034iTVe/62c+sC7r8ItLVUHTjKH+2jdaeroumWF+Zptx
+         LacjDLVd78JBMGshvNcO2JKM7LPAKzIrf2q5Oc5oYCU7e/5iwK8pOr+0NWN8l4wXovH5
+         98eSrntcQzTyk9V+YQ4R7nWIhe+vaVokVaYKIbZoXVC5OYbdNy3J7L+PSJAZ5207hAuX
+         3qAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3WILnoyEMWcBgBthixW6JLUDTOVNQgrTXAXC04XBdv9BiF3OqHRcZIWcIHoRv0OhS/21QlYXKGjWMYro=@vger.kernel.org, AJvYcCWxqMcKwD4l2uGHOnvD+F+32QJKlv+bE+S1DKOQp9pEoPiNRpjibrhcWIqAJbITmxnpU+HSJkHv6JtS9Q==@vger.kernel.org, AJvYcCX09ogFoAlgmoeTaYSid0qEF04fstuKUaFNJNNm46xvH3SNoqYUc9BdBmgDJwOb+isFRpPVAUe1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbMDnDAd5zaVhDSCJftMJbNsCSXaoa2uaqgoQXhbUeLqN9IU/5
+	wt6T7PUqqzqjTLfj8Zqq9YlhnsmWLGGx/B7zF0OvZzjwIqyinK9QgYQwtumnuf4WEzTL4kc9Hv7
+	XZ0S+iIaPJvyFbhC3x8k/d9QtCsw=
+X-Google-Smtp-Source: AGHT+IEzZ1401A66cnTaLazO09AGR7FswC1miTbFjp04uuxyin9LgA2Vxaoy1nKm96YyDLpZX5QqNx5bI5oYpD1/Xys=
+X-Received: by 2002:a05:690c:6612:b0:6e3:ca30:25f with SMTP id
+ 00721157ae682-6e3ca300303mr30880277b3.25.1729038651707; Tue, 15 Oct 2024
+ 17:30:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1729037131.git.gustavoars@kernel.org>
+References: <c2ac8e30806af319eb96f67103196b7cda22d562.1729031472.git.danielyangkang@gmail.com>
+ <20241016000300.70582-1-kuniyu@amazon.com> <CAGiJo8Qo-uZZLLyRsq+BKfcxgcpA7B5agOzSkO5czHv6aHLStw@mail.gmail.com>
+In-Reply-To: <CAGiJo8Qo-uZZLLyRsq+BKfcxgcpA7B5agOzSkO5czHv6aHLStw@mail.gmail.com>
+From: Daniel Yang <danielyangkang@gmail.com>
+Date: Tue, 15 Oct 2024 17:30:15 -0700
+Message-ID: <CAGiJo8QAswcqdiUMruyOC7_hM5WXcfUkZjFSE9Te39ouAjnbng@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2 RESEND] resolve gtp possible deadlock warning
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alibuda@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, 
+	guwen@linux.alibaba.com, jaka@linux.ibm.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Tue, Oct 15, 2024 at 5:24=E2=80=AFPM Daniel Yang <danielyangkang@gmail.c=
+om> wrote:
+>
+> On Tue, Oct 15, 2024 at 5:03=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.=
+com> wrote:
+> >
+> > From: Daniel Yang <danielyangkang@gmail.com>
+> > Date: Tue, 15 Oct 2024 15:48:05 -0700
+> > > From: Daniel Yang <danielyangkang@gmail.com>
+> > >
+> > > Moved lockdep annotation to separate function for readability.
+> > >
+> > > Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> > > Reported-by: syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
+> >
+> > This tag is bogus, why not squash to patch 1 ?
+> >
+> > Also, patch 1 needs Fixes: tag.
+>
+> I wanted to split them up since D. Wythe suggested the fix when I was
+> having trouble finding where the packets were being created so I
+> wanted to give credit.
 
-Address the following warnings by changing the type of the middle struct
-members in `struct nfsd_genl_rqstp`, which are currently causing trouble,
-from `struct sockaddr` to `struct sockaddr_legacy`. Note that the latter
-struct doesn't contain a flexible-array member.
-
-fs/nfsd/nfsd.h:74:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/nfsd/nfsd.h:75:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Also, update some related code, accordingly.
-
-No binary differences are present after these changes.
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- fs/nfsd/nfsctl.c | 4 ++--
- fs/nfsd/nfsd.h   | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 3adbc05ebaac..884bfdc7a255 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1599,9 +1599,9 @@ int nfsd_nl_rpc_status_get_dumpit(struct sk_buff *skb,
- 			genl_rqstp.rq_stime = rqstp->rq_stime;
- 			genl_rqstp.rq_opcnt = 0;
- 			memcpy(&genl_rqstp.rq_daddr, svc_daddr(rqstp),
--			       sizeof(struct sockaddr));
-+			       sizeof(struct sockaddr_legacy));
- 			memcpy(&genl_rqstp.rq_saddr, svc_addr(rqstp),
--			       sizeof(struct sockaddr));
-+			       sizeof(struct sockaddr_legacy));
- 
- #ifdef CONFIG_NFSD_V4
- 			if (rqstp->rq_vers == NFS4_VERSION &&
-diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-index 004415651295..44be32510595 100644
---- a/fs/nfsd/nfsd.h
-+++ b/fs/nfsd/nfsd.h
-@@ -71,8 +71,8 @@ struct readdir_cd {
- #define NFSD_MAX_OPS_PER_COMPOUND	50
- 
- struct nfsd_genl_rqstp {
--	struct sockaddr		rq_daddr;
--	struct sockaddr		rq_saddr;
-+	struct sockaddr_legacy	rq_daddr;
-+	struct sockaddr_legacy	rq_saddr;
- 	unsigned long		rq_flags;
- 	ktime_t			rq_stime;
- 	__be32			rq_xid;
--- 
-2.34.1
-
+I'll squash and resend with the Fixes: tag and put him in the
+Suggested-by: or something since it matters to you.
 
