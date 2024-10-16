@@ -1,80 +1,129 @@
-Return-Path: <linux-kernel+bounces-368140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F539A0BC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:41:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582219A0BCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E278B2853BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:41:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D111F22A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49329209687;
-	Wed, 16 Oct 2024 13:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6BA209F59;
+	Wed, 16 Oct 2024 13:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oVpTpZ/h"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="VefHAbya"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11595125B9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652EF187555
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086088; cv=none; b=QqR4x7FHHMbEpBMQVHg17oNbSPjVCcRxR5rG1cDxiIILqnf6O+PCsJDJWFQ6kg8hZ457FgKZMcxlOHaqfmFZmC1fv+mq+pmF64VK9f3kcb4vaac5BwtTGv8d/8u39HzA15kNeynl3VMFwZGVFYD2ZGIHo/mDjjpDI93Clf40iyM=
+	t=1729086229; cv=none; b=GhPViuug/BEwXhb1r9UcNpGZctBXBXq8JyCCi88rijvWp08IlnEmKA60xIqKVtxMuZE4CKrzKfxS6KQtdAZ3fzH9StNosXU+QsOze5LRspBe2kgCi1uaIyIIPrpWuRYsb4rYdWwMlyu7VUBe7y6c8fyKeyfJEdpZhrSjZnBGmA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086088; c=relaxed/simple;
-	bh=Vw3WdylphoiNDJyo8Y9KPyEbQ3q3sHVG413pORDG2XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ltrZ6s/aV9fF8Fga5nafGf4xYewL8desaT4Mg7oKraKx0cd8QFt+ErlTEG8LXzafHUbnlLE/Am1biK9GuGP37JyNnAKh7fx0yw37xboqe0TlEWxWrpDVrl6FuWZ9kpNDX/DPTFB9N0/UcOpVD7+MuVMWI8YBpUeeXiSHP/8oREM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oVpTpZ/h; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B14EE40002;
-	Wed, 16 Oct 2024 13:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729086084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vw3WdylphoiNDJyo8Y9KPyEbQ3q3sHVG413pORDG2XU=;
-	b=oVpTpZ/h/azP3l+Ti9Hps/n/5+Q6G3DGyJwI72R8fFjGqKh9er3l4z6Gkj/kIRTT/kixCI
-	Exr7EU1axNIOndz4sx6Y++8fV+vlSavD2lOYw3dGAStr1NoKXVO35TER3fXfMO6w/Omwbo
-	skWzkgLXxiPboPlBxrkD9WnzMH+I8Q7OO0UnelVEcd3bitgz8+DALws8zaX2FcvWafgjVi
-	pomIGTj9CQ7RAh9Ng767aRhHVMjXlgslXI3s9bCm1oADRwWJVZFp9hWxlFpGD0JIN5dRlM
-	tMe+QJArkqQcINgzJKdqpNlLLprSi3l0sGJL0eopEabIYwulyzuhWxi/WCrhTw==
-Message-ID: <edf663fc-43f3-4bb6-af50-19ab606e1cef@bootlin.com>
-Date: Wed, 16 Oct 2024 15:41:22 +0200
+	s=arc-20240116; t=1729086229; c=relaxed/simple;
+	bh=KWcWN0Jm2eUdhtHlZSZFOhv8Zx+tr8YDUBPTLQTMBgE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ftXQ5TiLtVxaCjLVR2sdhejlFK11JWC4GnREAJUdpPGqZ7mT5Y0waVCiwc822dPwIWuWuVlRHPu+AXc3hTLmugjTimWyebpxfGP//fRi8JqNEQTZMr9hr1RDmGQsjf0f0hhr5kmRo2Po0EV2GcnV3ppk8Q8h70wQUBXseCx1okU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=VefHAbya; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2817856b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:43:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729086228; x=1729691028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hPSkU20Itc6yAh+bZBbT2R0RT9oB/wml9mSdgooTOww=;
+        b=VefHAbyajJ+EibY++LZu5yyNn8ulR6BdY4Xor9w+0ufoTXHxwawvH65ukuEch2Gmgs
+         D4giuT05u9kSpUZ9VzhhX5V0nNeKJlYoU7YwZ0KMgYPYb34NR/LcuYtvESYJykH2cqDh
+         yWu0zAMjnSJJsSO1+v8Ejr7/XR73n09RrvRyXPYTWx+DMA8/ischIZlALM3fMo6wTi07
+         kmJlIPaOhBZLq5G5a47+tk8TQFm7/H9I0BunCss/tJR+1SRHEy3jxITB2d+UJBTlMnjR
+         RULfdPFnO36GW0u7qDhNWewOC8akmqPiEt33zkobuFE7bmA0++KXjO4A0GmhgOdZOsAe
+         QMvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729086228; x=1729691028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hPSkU20Itc6yAh+bZBbT2R0RT9oB/wml9mSdgooTOww=;
+        b=beLiXN0R+ydBseBuyaodwWfJwjziFDqEjX8081ucLtYojgSGsZLurW7NkssipRtIgB
+         lktjIQZP8m2PVM0TN8tEaRT08hZJFqFljQzZtGSnF+B92U1/5pX736GMjFAnvc0YLUQo
+         NI7iwpWEiJu+a9YgAa2JkYerggfdTgJTgwDQ7L46yVXpAZDp6w90zVC2KzjMrmVy7lO8
+         FiE9WAlDNaw40e1LU1ZtxTDWUkys3X3mWym9zd2AngMcoGfnoblq3RoadUNX6yyk4BAL
+         G+GnDg6TIhbgMejfJfexuUEWeY8HsKNruT18I4c6zHv8FUM2X2Snc8UYLoOzp/JNSrdp
+         dsaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/MnuMbyxoCQCHGh4RG+7WlwyFt762B4Ac1fNyqy5ruDixzqKJqJps5tlD1Ozj9xDDMxZGi9oCia7PLaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOFtBtwgcVIhx6A3jRLIFqe4BlSaya8G32WSf/I1Io+lOPwujk
+	tLB8d+aC7WL6YYFDfTDNGNRLx4vkYefhuLxou8QKxKHcULgoB1C7UH8LQFqF5pc=
+X-Google-Smtp-Source: AGHT+IE1Q+vPA30KNlMFxGEt9h2r7Mf4JtaF8VKYh5yzDNUyMZMQT+8Yyx33/wO8c5gt6uUjOIGAxw==
+X-Received: by 2002:a05:6a20:d49b:b0:1d7:cc6:53d0 with SMTP id adf61e73a8af0-1d8c9576f83mr22762980637.5.1729086227779;
+        Wed, 16 Oct 2024 06:43:47 -0700 (PDT)
+Received: from localhost.localdomain ([132.178.238.27])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20d17f84e9bsm28977495ad.19.2024.10.16.06.43.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 06:43:47 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: drew@pdp7.com,
+	guoren@kernel.org,
+	wefu@redhat.com,
+	linus.walleij@linaro.org
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	linux-riscv@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] pinctrl: th1520: Dereference pointer only after NULL check
+Date: Wed, 16 Oct 2024 07:42:21 -0600
+Message-ID: <20241016134223.4079-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mux: mmio: Add suspend and resume support
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com,
- theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com
-References: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 9/11/24 10:53, Thomas Richard wrote:
-> The status of each mux is read during suspend and stored in the private
-> memory of the mux_chip.
-> Then the state is restored during the resume.
+The pointer `func` is dereferenced before NULL check.
+Move the dereference after the NULL check.
 
-Hello Peter,
+This issue was reported by Coverity Scan.
+Report:
+CID 1600802: (#1 of 1): Dereference before null check
+(REVERSE_INULL)
+check_after_deref: Null-checking func suggests that it
+may be null, but it has already been dereferenced on all
+paths leading to the check.
 
-Did you have time to look at this patch ?
+Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+ drivers/pinctrl/pinctrl-th1520.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Regards,
+diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
+index 7474d8da32f9..07f8b51fb294 100644
+--- a/drivers/pinctrl/pinctrl-th1520.c
++++ b/drivers/pinctrl/pinctrl-th1520.c
+@@ -803,11 +803,13 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ {
+ 	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
+-	enum th1520_muxtype muxtype = (uintptr_t)func->data;
++	enum th1520_muxtype muxtype;
+ 
+ 	if (!func)
+ 		return -EINVAL;
+ 
++	muxtype = (uintptr_t)func->data;
++
+ 	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
+ 				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
+ 				 muxtype);
+-- 
+2.43.0
 
-Thomas
 
