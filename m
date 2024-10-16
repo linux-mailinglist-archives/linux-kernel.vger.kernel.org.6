@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-368457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E41C9A0FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:44:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC059A0FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE741C209B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:44:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE4E8B23C33
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A1520FAA6;
-	Wed, 16 Oct 2024 16:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325F8210184;
+	Wed, 16 Oct 2024 16:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="cH8xcVPp"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaPLBMjf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8EF17CA1D;
-	Wed, 16 Oct 2024 16:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729097071; cv=pass; b=X76xG1xuAlatPDt1NiXWvHTRbWBfltP4NbDVAsohq9Fiq2WKxUsQVHZ5yZCSVBjGQJoUgv42fs1QfZMPhPn0/h47DpiFNP7KmkWPy4rVBEMJ5G9OZjQDzdBsQXBM+QNlO08+s/qX2xNokL5YL6WGRCqouNNkNRjzZnO3UCHx3Fw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729097071; c=relaxed/simple;
-	bh=ojFXVVeQZGgtN6vcT6igavztvLxIzfW1jK0ZdXlv3B8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wu8HelCsvz9/6R+Aahs/bqqXKvDjr4YDvu7yZXkkJHXNcd+RPjGRYPxCfmkMnSv5MQYmH6UB6eftho7SZEjjkIDiwIwaOUguLwfOnJJ9ceOq5NaypU0x+AHMZw85pS+F6MRD9vN1UFbbQ9YhL1cITvGEZPJtK5WUtK/O2aA46ig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=cH8xcVPp; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729097044; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KaLJhY2x2InqoZkfO7V8PKBnIjfMnc/m/C1+rd8yCGKFAuV3VV1lNLD4FhvCYfZayeinL9h29fzswP6yM9iD+Svmg5jzEDPBcoT6D4Onn+x/dW1iQpaUwVoKvN+PxUfH4U6VHEqgKJ8hSoG6GVoqOukDgSeY6BGk/SxmzxM00K0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729097044; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=E6uPqykNee58PqlLG7URU7ixNKBWZqWVJSo5nXew2es=; 
-	b=EZ31NDYe5lIJZqtueZNrvUbXFw5Qp7t1Xsr224kTLms1CTHOT3p8lCLRydAj3kDQcKVuxvDyxAawYY+3bdCY2YkGo8jwQPrvABuEjGkJl9ecYuqcMJe+tB+lkmTWxonEPGCO7mDtOtl1nTEXLVbIqhclZCvAg+R4gHPFZWVMRKk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729097044;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=E6uPqykNee58PqlLG7URU7ixNKBWZqWVJSo5nXew2es=;
-	b=cH8xcVPpTFTWKAjsmZzdPjYS6pWPSs9VTtGvmL2phPJvHA33ABDfp31yF+/JSnSE
-	aJ9AEs2We3dkQXWGdKM7RnHHO9R5VtWYDeudTO1VmDcHc9TnmbQm4t06BcqecGDow3W
-	Fd+DHNvzuP6mSXuvrysN/j/rREFdynfCr5tDTq88=
-Received: by mx.zohomail.com with SMTPS id 1729097043765679.2832689445722;
-	Wed, 16 Oct 2024 09:44:03 -0700 (PDT)
-Date: Wed, 16 Oct 2024 17:43:59 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 9/9] drm/panfrost: Explicitly clean up panfrost fence
-Message-ID: <3mkdo37kvulmticy7g5siwk3skvbg33fnrioolcgofgbakbnph@3dyq77kiotig>
-References: <20241014233758.994861-1-adrian.larumbe@collabora.com>
- <20241014233758.994861-9-adrian.larumbe@collabora.com>
- <94be6c2a-47fd-4157-b5d8-307040eaa3b7@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D966187877;
+	Wed, 16 Oct 2024 16:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729097097; cv=none; b=QQFiIaS3UT3hdjxymgEFk65UVlxqOPrSzz2beEd6cW8cQcvErpfx9eM26Iukc/k7RZcH+J/XnW4Utx1M9bxhKwiODyuSa8DDHm+IfLt8upUxWCn8+cR0LZslLjvE1T9/2W5fKF7XZ8VQjIFZdtr4G2YfXx40Iim/UcNGQ5eWDKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729097097; c=relaxed/simple;
+	bh=BDmv0KJPoJX2cVJ9OAhpm4ejEVa2a93iIcuoRaRIqeU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P8y2jmoATqBk3Fbf7LRqRZwMt9AVdinicRbXqT2rP2juRMJB/KOM/frJl0ysVDX2/PcFWx8vp5/J1ocA70C4nXezJMSrtHVwgN9iob+4NWQOhZ5YNUTMZWd61LRs8mlx2GYdpczhJaJFt8O2GrOO7F+bmwGwsC9LNgA6lchtT44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaPLBMjf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD73C4CEC5;
+	Wed, 16 Oct 2024 16:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729097097;
+	bh=BDmv0KJPoJX2cVJ9OAhpm4ejEVa2a93iIcuoRaRIqeU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IaPLBMjfacWuPwt4NXxc1pwePzhFAIUO1kKcN6CYoI+ShhZbCtV4acX8lDX9y8VvV
+	 movLjussRauhirs+c7bL6KCyjExXReJchMLudNRJukQ0jmVBU/vkyXiTommQHRvOxY
+	 8aegrA4PI0JGaZNTVAWsvVUSBfpaqf5gU8738cW5flTdBbV93725vq7vB4HWHL8kA1
+	 nVkJoy+LHCTAa0QeiJ4kZPO72nIOSG/T74Y3N8FW/ZeBi3/eG8+P2UWC2xnkB3juDB
+	 q5l+uRwX+DB7un+k09t3kqoMFNDnAgA3qO5jmav7aShrm4alXkl6ZpdaRYcO50gNB0
+	 s3wIy4vAO0heg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t178o-0049Pe-V6;
+	Wed, 16 Oct 2024 17:44:55 +0100
+Date: Wed, 16 Oct 2024 17:44:54 +0100
+Message-ID: <86wmi83sl5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <quic_bjorande@quicinc.com>
+Subject: Re: [PATCH v2] arm64: Allow packing uncompressed images into distro packages
+In-Reply-To: <20240910-uncompressed-distro-packages-v2-1-51538434787f@quicinc.com>
+References: <20240910-uncompressed-distro-packages-v2-1-51538434787f@quicinc.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <94be6c2a-47fd-4157-b5d8-307040eaa3b7@amd.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: andersson@kernel.org, catalin.marinas@arm.com, will@kernel.org, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_bjorande@quicinc.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 16.10.2024 15:12, Christian König wrote:
-> Am 15.10.24 um 01:31 schrieb Adrián Larumbe:
-> > Doesn't make any functional difference because generic dma_fence is the
-> > first panfrost_fence structure member, but I guess it doesn't hurt either.
-> 
-> As discussed with Sima we want to push into the exactly opposite direction
-> because that requires that the panfrost module stays loaded as long as fences
-> are around.
+Hi Bjorn,
 
-Does that mean in future commits the struct dma_fence_ops' .release pointer will be
-done with altogether?
+On Wed, 11 Sep 2024 03:53:16 +0100,
+Bjorn Andersson <andersson@kernel.org> wrote:
+> 
+> From: Bjorn Andersson <quic_bjorande@quicinc.com>
+> 
+> The distro packages (deb-pkg, pacman-pkg, rpm-pkg) are generated using
+> the compressed kernel image, which means that the kernel once installed
+> can not be booted with systemd-boot.
 
-> So clearly a NAK to this one here. Rather document on the structure that the
-> dma_fence structure must be the first member.
+Are you sure? I just installed a guest with systemd-boot
+(252.30-1~deb12u, as shipped in Debian), and it is perfectly able to
+boot a compressed kernel.
+
 > 
-> Regards,
-> Christian.
+> This differs from the packages generated by the distros themselves,
+> which uses the uncompressed image.
 > 
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > ---
-> >   drivers/gpu/drm/panfrost/panfrost_job.c | 6 ++++++
-> >   1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> > index 5d83c6a148ec..fa219f719bdc 100644
-> > --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> > +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> > @@ -85,9 +85,15 @@ static const char *panfrost_fence_get_timeline_name(struct dma_fence *fence)
-> >   	}
-> >   }
-> > +static void panfrost_fence_release(struct dma_fence *fence)
-> > +{
-> > +	kfree(to_panfrost_fence(fence));
-> > +}
-> > +
-> >   static const struct dma_fence_ops panfrost_fence_ops = {
-> >   	.get_driver_name = panfrost_fence_get_driver_name,
-> >   	.get_timeline_name = panfrost_fence_get_timeline_name,
-> > +	.release = panfrost_fence_release,
-> >   };
-> >   static struct dma_fence *panfrost_fence_create(struct panfrost_device *pfdev, int js_num)
+> Use the newly introduced CONFIG_COMPRESSED_INSTALL option to allow
+> selection of which version of the kernel image should be packaged into
+> the distro packages.
+
+I'm normally building kernels as Debian packages, without any of
+CONFIG_EFI_ZBOOT or CONFIG_COMPRESSED_INSTALL.
+
+As a result, the installed kernel image of a Debian package shoots up
+from ~8M to an impressive 25M, since we're not picking the compressed
+image anymore. Storage may be cheap, but still.
+
+I really don't think CONFIG_COMPRESSED_INSTALL should change the
+existing behaviours, and a new option would be better suited to enable
+this new setup if deemed necessary.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
