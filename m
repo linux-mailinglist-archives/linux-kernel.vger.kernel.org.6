@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-368221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4689A0CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:36:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9369A0CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47668283D29
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFFC21C211DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC2420C036;
-	Wed, 16 Oct 2024 14:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1840F20C02C;
+	Wed, 16 Oct 2024 14:38:08 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B335B208200;
-	Wed, 16 Oct 2024 14:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766CD156225;
+	Wed, 16 Oct 2024 14:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089400; cv=none; b=bci8WG80gKSDhHXQ8pydUdDcIxkgvntmXuzzXeTMCbKvtJj810EoORfBl+gNJ0UjBAJFlky1D7JwmVpiP6rAkPLv2hzrHJ2aOOXtYBnVWHJLeVW9D5/SlaMXBoqa8f58+H3xk9QYNHGadQ4pChwn+BmmeYjQQqhLOJDFt/suT6M=
+	t=1729089487; cv=none; b=OzAhOgHaHhqvYKAREi57V5o1gNk/Tdl6fV9qIJVStM9pl/G6Hhzam4t5J49Rreuoft/uI0ErMIHRK8vQvB+DQBh0icbLzn8sabsAIPEL3xHVmZqYx25sqBkug0dYdpW9XBKrhfGOt/HPBPvqAVo3y+DGogvcMrHF0skBZXPy3eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089400; c=relaxed/simple;
-	bh=tkA71tZuRGCSEa5zg6s/NyX2uWIDxGjiveGujrpji5w=;
+	s=arc-20240116; t=1729089487; c=relaxed/simple;
+	bh=wE+Tk0teM1O/8JvtpEGGB5Mc/ioX6WvBEmyunfQU9us=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QTRbWQtBXTm0i2mV+z23M+PmCeU5ExV6mzD8NZwK+GGehrLV4gZobN67866C7Em1dRDbTFTU5Ma+XhfFCm62IqQXV0Zba4YED+iF5m5m4fFjQoVhlvOcEiSrtOinWG/ESylqY7HyuOTP/CRazt6gj5Ze/GR7ChpfViJNKfUlhmY=
+	 In-Reply-To:Content-Type; b=SV00xRumKCDZnkWqgm4fl7DRFjjPh33Lg9/KiQL54OdYrEYgNEtEJ4gw/XRvRE1iOpoG3Pk0yMw+eshDH4EjABXq5m0NdVOESCbR7oTdfit+xt4FgDdLi6ttOuw5MzdQqXu0eoIjRBu3O2+H5pCJ5uXTN1/BEg/g4nztrlYFlcE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF38E1007;
-	Wed, 16 Oct 2024 07:37:06 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9160BFEC;
+	Wed, 16 Oct 2024 07:38:34 -0700 (PDT)
 Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 720843F71E;
-	Wed, 16 Oct 2024 07:36:26 -0700 (PDT)
-Message-ID: <1b23c7d2-5779-4481-8318-1ae950261d15@arm.com>
-Date: Wed, 16 Oct 2024 15:36:24 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77FA33F71E;
+	Wed, 16 Oct 2024 07:37:59 -0700 (PDT)
+Message-ID: <18546e4a-81c7-41f4-b07f-2e6501a936b8@arm.com>
+Date: Wed, 16 Oct 2024 15:37:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,60 +41,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 01/57] mm: Add macros ahead of supporting boot-time
- page size selection
+Subject: Re: [RFC PATCH v1 06/57] mm: Remove PAGE_SIZE compile-time constant
+ assumption
 Content-Language: en-GB
-To: "David S. Miller" <davem@davemloft.net>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
+To: Andrew Morton <akpm@linux-foundation.org>,
  Anshuman Khandual <anshuman.khandual@arm.com>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Chris Zankel <chris@zankel.net>, Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, Dinh Nguyen <dinguyen@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Greg Marsden <greg.marsden@oracle.com>, Helge Deller <deller@gmx.de>,
- Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Ivan Ivanov <ivan.ivanov@suse.com>, Johannes Berg
- <johannes@sipsolutions.net>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Jonas Bonn <jonas@southpole.se>, Kalesh Singh <kaleshsingh@google.com>,
- Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Matthias Brugger <mbrugger@suse.com>, Max Filippov <jcmvbkbc@gmail.com>,
- Miroslav Benes <mbenes@suse.cz>, Rich Felker <dalias@libc.org>,
- Richard Weinberger <richard@nod.at>, Stafford Horne <shorne@gmail.com>,
- Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, x86@kernel.org,
- Albert Ou <aou@eecs.berkeley.edu>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Brian Cain <bcain@quicinc.com>,
- Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Vineet Gupta <vgupta@kernel.org>
-Cc: linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
- linux-mm@kvack.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
- sparclinux@vger.kernel.org
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christoph Lameter <cl@linux.com>, David Hildenbrand <david@redhat.com>,
+ David Rientjes <rientjes@google.com>, Greg Marsden
+ <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Michal Hocko <mhocko@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Miroslav Benes <mbenes@suse.cz>, Pekka Enberg <penberg@kernel.org>,
+ Richard Weinberger <richard@nod.at>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Matthew Wilcox <willy@infradead.org>
+Cc: cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-mtd@lists.infradead.org
 References: <20241014105514.3206191-1-ryan.roberts@arm.com>
  <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-6-ryan.roberts@arm.com>
 From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241014105912.3207374-1-ryan.roberts@arm.com>
+In-Reply-To: <20241014105912.3207374-6-ryan.roberts@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-+ Albert Ou, Alexander Gordeev, Brian Cain, Guo Ren, Heiko Carstens, Michael
-Ellerman, Michal Simek, Palmer Dabbelt, Paul Walmsley, Vasily Gorbik, Vineet Gupta.
++ Matthew Wilcox
 
 This was a rather tricky series to get the recipients correct for and my script
 did not realize that "supporter" was a pseudonym for "maintainer" so you were
@@ -105,86 +80,26 @@ https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 
 
 On 14/10/2024 11:58, Ryan Roberts wrote:
-> arm64 can support multiple base page sizes. Instead of selecting a page
-> size at compile time, as is done today, we will make it possible to
-> select the desired page size on the command line.
+> To prepare for supporting boot-time page size selection, refactor code
+> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+> intended to be equivalent when compile-time page size is active.
 > 
-> In this case PAGE_SHIFT and it's derivatives, PAGE_SIZE and PAGE_MASK
-> (as well as a number of other macros related to or derived from
-> PAGE_SHIFT, but I'm not worrying about those yet), are no longer
-> compile-time constants. So the code base needs to cope with that.
+> Refactor "struct vmap_block" to use a flexible array for used_mmap since
+> VMAP_BBMAP_BITS is not a compile time constant for the boot-time page
+> size case.
 > 
-> As a first step, introduce MIN and MAX variants of these macros, which
-> express the range of possible page sizes. These are always compile-time
-> constants and can be used in many places where PAGE_[SHIFT|SIZE|MASK]
-> were previously used where a compile-time constant is required.
-> (Subsequent patches will do that conversion work). When the arch/build
-> doesn't support boot-time page size selection, the MIN and MAX variants
-> are equal and everything resolves as it did previously.
+> Update various BUILD_BUG_ON() instances to check against appropriate
+> page size limit.
 > 
-> Additionally, introduce DEFINE_GLOBAL_PAGE_SIZE_VAR[_CONST]() which wrap
-> global variable defintions so that for boot-time page size selection
-> builds, the variable being wrapped is initialized at boot-time, instead
-> of compile-time. This is done by defining a function to do the
-> assignment, which has the "constructor" attribute. Constructor is
-> preferred over initcall, because when compiling a module, the module is
-> limited to a single initcall but constructors are unlimited. For
-> built-in code, constructors are now called earlier to guarrantee that
-> the variables are initialized by the time they are used. Any arch that
-> wants to enable boot-time page size selection will need to select
-> CONFIG_CONSTRUCTORS.
+> Re-define "union swap_header" so that it's no longer exactly page-sized.
+> Instead define a flexible "magic" array with a define which tells the
+> offset to where the magic signature begins.
 > 
-> These new macros need to be available anywhere PAGE_SHIFT and friends
-> are available. Those are defined via asm/page.h (although some arches
-> have a sub-include that defines them). Unfortunately there is no
-> reliable asm-generic header we can easily piggy-back on, so let's define
-> a new one, pgtable-geometry.h, which we include near where each arch
-> defines PAGE_SHIFT. Ugh.
+> Consider page size limit in some CPP condditionals.
 > 
-> -------
-> 
-> Most of the problems that need to be solved over the next few patches
-> fall into these broad categories, which are all solved with the help of
-> these new macros:
-> 
-> 1. Assignment of values derived from PAGE_SIZE in global variables
-> 
->   For boot-time page size builds, we must defer the initialization of
->   these variables until boot-time, when the page size is known. See
->   DEFINE_GLOBAL_PAGE_SIZE_VAR[_CONST]() as described above.
-> 
-> 2. Define static storage in units related to PAGE_SIZE
-> 
->   This static storage will be defined according to PAGE_SIZE_MAX.
-> 
-> 3. Define size of struct so that it is related to PAGE_SIZE
-> 
->   The struct often contains an array that is sized to fill the page. In
->   this case, use a flexible array with dynamic allocation. In other
->   cases, the struct fits exactly over a page, which is a header (e.g.
->   swap file header). In this case, remove the padding, and manually
->   determine the struct pointer within the page.
-> 
-> 4. BUILD_BUG_ON() with values derived from PAGE_SIZE
-> 
->   In most cases, we can change these to compare againt the appropriate
->   limit (either MIN or MAX). In other cases, we must change these to
->   run-time BUG_ON().
-> 
-> 5. Ensure page alignment of static data structures
-> 
->   Align instead to PAGE_SIZE_MAX.
-> 
-> 6. #ifdeffery based on PAGE_SIZE
-> 
->   Often these can be changed to c code constructs. e.g. a macro that
->   returns a different value depending on page size can be changed to use
->   the ternary operator and the compiler will dead code strip it for the
->   compile-time constant case and runtime evaluate it for the non-const
->   case. Or #if/#else/#endif within a function can be converted to c
->   if/else blocks, which are also dead code stripped for the const case.
->   Sometimes we can change the c-preprocessor logic to use the
->   appropriate MIN/MAX limit.
+> Wrap global variables that are initialized with PAGE_SIZE derived values
+> using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
+> deferred for boot-time page size builds.
 > 
 > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
@@ -193,373 +108,317 @@ On 14/10/2024 11:58, Ryan Roberts wrote:
 > Any confused maintainers may want to read the cover note here for context:
 > https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
 > 
->  arch/alpha/include/asm/page.h          |  1 +
->  arch/arc/include/asm/page.h            |  1 +
->  arch/arm/include/asm/page.h            |  1 +
->  arch/arm64/include/asm/page-def.h      |  2 +
->  arch/csky/include/asm/page.h           |  3 ++
->  arch/hexagon/include/asm/page.h        |  2 +
->  arch/loongarch/include/asm/page.h      |  2 +
->  arch/m68k/include/asm/page.h           |  1 +
->  arch/microblaze/include/asm/page.h     |  1 +
->  arch/mips/include/asm/page.h           |  1 +
->  arch/nios2/include/asm/page.h          |  2 +
->  arch/openrisc/include/asm/page.h       |  1 +
->  arch/parisc/include/asm/page.h         |  1 +
->  arch/powerpc/include/asm/page.h        |  2 +
->  arch/riscv/include/asm/page.h          |  1 +
->  arch/s390/include/asm/page.h           |  1 +
->  arch/sh/include/asm/page.h             |  1 +
->  arch/sparc/include/asm/page.h          |  3 ++
->  arch/um/include/asm/page.h             |  2 +
->  arch/x86/include/asm/page_types.h      |  2 +
->  arch/xtensa/include/asm/page.h         |  1 +
->  include/asm-generic/pgtable-geometry.h | 71 ++++++++++++++++++++++++++
->  init/main.c                            |  5 +-
->  23 files changed, 107 insertions(+), 1 deletion(-)
->  create mode 100644 include/asm-generic/pgtable-geometry.h
+>  drivers/mtd/mtdswap.c         |  4 ++--
+>  include/linux/mm.h            |  2 +-
+>  include/linux/mm_types_task.h |  2 +-
+>  include/linux/mmzone.h        |  3 ++-
+>  include/linux/slab.h          |  7 ++++---
+>  include/linux/swap.h          | 17 ++++++++++++-----
+>  include/linux/swapops.h       |  6 +++++-
+>  mm/memcontrol.c               |  2 +-
+>  mm/memory.c                   |  4 ++--
+>  mm/mmap.c                     |  2 +-
+>  mm/page-writeback.c           |  2 +-
+>  mm/slub.c                     |  2 +-
+>  mm/sparse.c                   |  2 +-
+>  mm/swapfile.c                 |  2 +-
+>  mm/vmalloc.c                  |  7 ++++---
+>  15 files changed, 39 insertions(+), 25 deletions(-)
 > 
-> diff --git a/arch/alpha/include/asm/page.h b/arch/alpha/include/asm/page.h
-> index 70419e6be1a35..d0096fb5521b8 100644
-> --- a/arch/alpha/include/asm/page.h
-> +++ b/arch/alpha/include/asm/page.h
-> @@ -88,5 +88,6 @@ typedef struct page *pgtable_t;
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif /* _ALPHA_PAGE_H */
-> diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
-> index def0dfb95b436..8d56549db7a33 100644
-> --- a/arch/arc/include/asm/page.h
-> +++ b/arch/arc/include/asm/page.h
-> @@ -6,6 +6,7 @@
->  #define __ASM_ARC_PAGE_H
->  
->  #include <uapi/asm/page.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #ifdef CONFIG_ARC_HAS_PAE40
->  
-> diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
-> index 62af9f7f9e963..417aa8533c718 100644
-> --- a/arch/arm/include/asm/page.h
-> +++ b/arch/arm/include/asm/page.h
-> @@ -191,5 +191,6 @@ extern int pfn_valid(unsigned long);
->  
->  #include <asm-generic/getorder.h>
->  #include <asm-generic/memory_model.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif
-> diff --git a/arch/arm64/include/asm/page-def.h b/arch/arm64/include/asm/page-def.h
-> index 792e9fe881dcf..d69971cf49cd2 100644
-> --- a/arch/arm64/include/asm/page-def.h
-> +++ b/arch/arm64/include/asm/page-def.h
-> @@ -15,4 +15,6 @@
->  #define PAGE_SIZE		(_AC(1, UL) << PAGE_SHIFT)
->  #define PAGE_MASK		(~(PAGE_SIZE-1))
->  
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif /* __ASM_PAGE_DEF_H */
-> diff --git a/arch/csky/include/asm/page.h b/arch/csky/include/asm/page.h
-> index 0ca6c408c07f2..95173d57adc8b 100644
-> --- a/arch/csky/include/asm/page.h
-> +++ b/arch/csky/include/asm/page.h
-> @@ -92,4 +92,7 @@ static inline unsigned long virt_to_pfn(const void *kaddr)
->  #include <asm-generic/getorder.h>
->  
->  #endif /* !__ASSEMBLY__ */
-> +
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif /* __ASM_CSKY_PAGE_H */
-> diff --git a/arch/hexagon/include/asm/page.h b/arch/hexagon/include/asm/page.h
-> index 8a6af57274c2d..ba7ad5231695f 100644
-> --- a/arch/hexagon/include/asm/page.h
-> +++ b/arch/hexagon/include/asm/page.h
-> @@ -139,4 +139,6 @@ static inline unsigned long virt_to_pfn(const void *kaddr)
->  #endif /* ifdef __ASSEMBLY__ */
->  #endif /* ifdef __KERNEL__ */
->  
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif
-> diff --git a/arch/loongarch/include/asm/page.h b/arch/loongarch/include/asm/page.h
-> index e85df33f11c77..9862e8fb047a6 100644
-> --- a/arch/loongarch/include/asm/page.h
-> +++ b/arch/loongarch/include/asm/page.h
-> @@ -123,4 +123,6 @@ extern int __virt_addr_valid(volatile void *kaddr);
->  
->  #endif /* !__ASSEMBLY__ */
->  
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif /* _ASM_PAGE_H */
-> diff --git a/arch/m68k/include/asm/page.h b/arch/m68k/include/asm/page.h
-> index 8cfb84b499751..4df4681b02194 100644
-> --- a/arch/m68k/include/asm/page.h
-> +++ b/arch/m68k/include/asm/page.h
-> @@ -60,5 +60,6 @@ extern unsigned long _ramend;
->  
->  #include <asm-generic/getorder.h>
->  #include <asm-generic/memory_model.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif /* _M68K_PAGE_H */
-> diff --git a/arch/microblaze/include/asm/page.h b/arch/microblaze/include/asm/page.h
-> index 8810f4f1c3b02..abc23c3d743bd 100644
-> --- a/arch/microblaze/include/asm/page.h
-> +++ b/arch/microblaze/include/asm/page.h
-> @@ -142,5 +142,6 @@ static inline const void *pfn_to_virt(unsigned long pfn)
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif /* _ASM_MICROBLAZE_PAGE_H */
-> diff --git a/arch/mips/include/asm/page.h b/arch/mips/include/asm/page.h
-> index 4609cb0326cf3..3d91021538f02 100644
-> --- a/arch/mips/include/asm/page.h
-> +++ b/arch/mips/include/asm/page.h
-> @@ -227,5 +227,6 @@ static inline unsigned long kaslr_offset(void)
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif /* _ASM_PAGE_H */
-> diff --git a/arch/nios2/include/asm/page.h b/arch/nios2/include/asm/page.h
-> index 0722f88e63cc7..2e5f93beb42b7 100644
-> --- a/arch/nios2/include/asm/page.h
-> +++ b/arch/nios2/include/asm/page.h
-> @@ -97,4 +97,6 @@ extern struct page *mem_map;
->  
->  #endif /* !__ASSEMBLY__ */
->  
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif /* _ASM_NIOS2_PAGE_H */
-> diff --git a/arch/openrisc/include/asm/page.h b/arch/openrisc/include/asm/page.h
-> index 1d5913f67c312..a0da2a9842241 100644
-> --- a/arch/openrisc/include/asm/page.h
-> +++ b/arch/openrisc/include/asm/page.h
-> @@ -88,5 +88,6 @@ static inline unsigned long virt_to_pfn(const void *kaddr)
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif /* __ASM_OPENRISC_PAGE_H */
-> diff --git a/arch/parisc/include/asm/page.h b/arch/parisc/include/asm/page.h
-> index 4bea2e95798f0..2a75496237c09 100644
-> --- a/arch/parisc/include/asm/page.h
-> +++ b/arch/parisc/include/asm/page.h
-> @@ -173,6 +173,7 @@ extern int npmem_ranges;
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  #include <asm/pdc.h>
->  
->  #define PAGE0   ((struct zeropage *)absolute_pointer(__PAGE_OFFSET))
-> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
-> index 83d0a4fc5f755..4601c115b6485 100644
-> --- a/arch/powerpc/include/asm/page.h
-> +++ b/arch/powerpc/include/asm/page.h
-> @@ -300,4 +300,6 @@ static inline unsigned long kaslr_offset(void)
->  #include <asm-generic/memory_model.h>
->  #endif /* __ASSEMBLY__ */
->  
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif /* _ASM_POWERPC_PAGE_H */
-> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-> index 7ede2111c5917..e5af7579e45bf 100644
-> --- a/arch/riscv/include/asm/page.h
-> +++ b/arch/riscv/include/asm/page.h
-> @@ -204,5 +204,6 @@ static __always_inline void *pfn_to_kaddr(unsigned long pfn)
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif /* _ASM_RISCV_PAGE_H */
-> diff --git a/arch/s390/include/asm/page.h b/arch/s390/include/asm/page.h
-> index 16e4caa931f1f..42157e7690a77 100644
-> --- a/arch/s390/include/asm/page.h
-> +++ b/arch/s390/include/asm/page.h
-> @@ -275,6 +275,7 @@ static inline unsigned long virt_to_pfn(const void *kaddr)
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #define AMODE31_SIZE		(3 * PAGE_SIZE)
->  
-> diff --git a/arch/sh/include/asm/page.h b/arch/sh/include/asm/page.h
-> index f780b467e75d7..09533d46ef033 100644
-> --- a/arch/sh/include/asm/page.h
-> +++ b/arch/sh/include/asm/page.h
-> @@ -162,5 +162,6 @@ typedef struct page *pgtable_t;
->  
->  #include <asm-generic/memory_model.h>
->  #include <asm-generic/getorder.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  
->  #endif /* __ASM_SH_PAGE_H */
-> diff --git a/arch/sparc/include/asm/page.h b/arch/sparc/include/asm/page.h
-> index 5e44cdf2a8f2b..4327fe2bfa010 100644
-> --- a/arch/sparc/include/asm/page.h
-> +++ b/arch/sparc/include/asm/page.h
-> @@ -9,4 +9,7 @@
->  #else
->  #include <asm/page_32.h>
->  #endif
-> +
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif
-> diff --git a/arch/um/include/asm/page.h b/arch/um/include/asm/page.h
-> index 9ef9a8aedfa66..f26011808f514 100644
-> --- a/arch/um/include/asm/page.h
-> +++ b/arch/um/include/asm/page.h
-> @@ -119,4 +119,6 @@ extern unsigned long uml_physmem;
->  #define __HAVE_ARCH_GATE_AREA 1
->  #endif
->  
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif	/* __UM_PAGE_H */
-> diff --git a/arch/x86/include/asm/page_types.h b/arch/x86/include/asm/page_types.h
-> index 52f1b4ff0cc16..6d2381342047f 100644
-> --- a/arch/x86/include/asm/page_types.h
-> +++ b/arch/x86/include/asm/page_types.h
-> @@ -71,4 +71,6 @@ extern void initmem_init(void);
->  
->  #endif	/* !__ASSEMBLY__ */
->  
-> +#include <asm-generic/pgtable-geometry.h>
-> +
->  #endif	/* _ASM_X86_PAGE_DEFS_H */
-> diff --git a/arch/xtensa/include/asm/page.h b/arch/xtensa/include/asm/page.h
-> index 4db56ef052d22..86952cb32af23 100644
-> --- a/arch/xtensa/include/asm/page.h
-> +++ b/arch/xtensa/include/asm/page.h
-> @@ -200,4 +200,5 @@ static inline unsigned long ___pa(unsigned long va)
->  #endif /* __ASSEMBLY__ */
->  
->  #include <asm-generic/memory_model.h>
-> +#include <asm-generic/pgtable-geometry.h>
->  #endif /* _XTENSA_PAGE_H */
-> diff --git a/include/asm-generic/pgtable-geometry.h b/include/asm-generic/pgtable-geometry.h
-> new file mode 100644
-> index 0000000000000..358e729a6ac37
-> --- /dev/null
-> +++ b/include/asm-generic/pgtable-geometry.h
-> @@ -0,0 +1,71 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef ASM_GENERIC_PGTABLE_GEOMETRY_H
-> +#define ASM_GENERIC_PGTABLE_GEOMETRY_H
-> +
-> +#if   defined(PAGE_SHIFT_MAX) && defined(PAGE_SIZE_MAX) && defined(PAGE_MASK_MAX) && \
-> +      defined(PAGE_SHIFT_MIN) && defined(PAGE_SIZE_MIN) && defined(PAGE_MASK_MIN)
-> +/* Arch supports boot-time page size selection. */
-> +#elif defined(PAGE_SHIFT_MAX) || defined(PAGE_SIZE_MAX) || defined(PAGE_MASK_MAX) || \
-> +      defined(PAGE_SHIFT_MIN) || defined(PAGE_SIZE_MIN) || defined(PAGE_MASK_MIN)
-> +#error Arch must define all or none of the boot-time page size macros
-> +#else
-> +/* Arch does not support boot-time page size selection. */
-> +#define PAGE_SHIFT_MIN	PAGE_SHIFT
-> +#define PAGE_SIZE_MIN	PAGE_SIZE
-> +#define PAGE_MASK_MIN	PAGE_MASK
-> +#define PAGE_SHIFT_MAX	PAGE_SHIFT
-> +#define PAGE_SIZE_MAX	PAGE_SIZE
-> +#define PAGE_MASK_MAX	PAGE_MASK
-> +#endif
-> +
-> +/*
-> + * Define a global variable (scalar or struct), whose value is derived from
-> + * PAGE_SIZE and friends. When PAGE_SIZE is a compile-time constant, the global
-> + * variable is simply defined with the static value. When PAGE_SIZE is
-> + * determined at boot-time, a pure initcall is registered and run during boot to
-> + * initialize the variable.
-> + *
-> + * @type: Unqualified type. Do not include "const"; implied by macro variant.
-> + * @name: Variable name.
-> + * @...:  Initialization value. May be scalar or initializer.
-> + *
-> + * "static" is declared by placing "static" before the macro.
-> + *
-> + * Example:
-> + *
-> + * struct my_struct {
-> + *         int a;
-> + *         char b;
-> + * };
-> + *
-> + * static DEFINE_GLOBAL_PAGE_SIZE_VAR(struct my_struct, my_variable, {
-> + *         .a = 10,
-> + *         .b = 'e',
-> + * });
-> + */
-> +#if PAGE_SIZE_MIN != PAGE_SIZE_MAX
-> +#define __DEFINE_GLOBAL_PAGE_SIZE_VAR(type, name, attrib, ...)		\
-> +	type name attrib;						\
-> +	static int __init __attribute__((constructor)) __##name##_init(void)	\
-> +	{								\
-> +		name = (type)__VA_ARGS__;				\
-> +		return 0;						\
-> +	}
-> +
-> +#define DEFINE_GLOBAL_PAGE_SIZE_VAR(type, name, ...)			\
-> +	__DEFINE_GLOBAL_PAGE_SIZE_VAR(type, name, , __VA_ARGS__)
-> +
-> +#define DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(type, name, ...)		\
-> +	__DEFINE_GLOBAL_PAGE_SIZE_VAR(type, name, __ro_after_init, __VA_ARGS__)
-> +#else /* PAGE_SIZE_MIN == PAGE_SIZE_MAX */
-> +#define __DEFINE_GLOBAL_PAGE_SIZE_VAR(type, name, attrib, ...)		\
-> +	type name attrib = __VA_ARGS__;					\
-> +
-> +#define DEFINE_GLOBAL_PAGE_SIZE_VAR(type, name, ...)			\
-> +	__DEFINE_GLOBAL_PAGE_SIZE_VAR(type, name, , __VA_ARGS__)
-> +
-> +#define DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(type, name, ...)		\
-> +	__DEFINE_GLOBAL_PAGE_SIZE_VAR(const type, name, , __VA_ARGS__)
-> +#endif
-> +
-> +#endif /* ASM_GENERIC_PGTABLE_GEOMETRY_H */
-> diff --git a/init/main.c b/init/main.c
-> index 206acdde51f5a..ba1515eb20b9d 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -899,6 +899,8 @@ static void __init early_numa_node_init(void)
->  #endif
->  }
->  
-> +static __init void do_ctors(void);
-> +
->  asmlinkage __visible __init __no_sanitize_address __noreturn __no_stack_protector
->  void start_kernel(void)
+> diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
+> index 680366616da24..7412a32708114 100644
+> --- a/drivers/mtd/mtdswap.c
+> +++ b/drivers/mtd/mtdswap.c
+> @@ -1062,13 +1062,13 @@ static int mtdswap_auto_header(struct mtdswap_dev *d, char *buf)
 >  {
-> @@ -910,6 +912,8 @@ void start_kernel(void)
->  	debug_objects_early_init();
->  	init_vmlinux_build_id();
+>  	union swap_header *hd = (union swap_header *)(buf);
 >  
-> +	do_ctors();
-> +
->  	cgroup_init_early();
+> -	memset(buf, 0, PAGE_SIZE - 10);
+> +	memset(buf, 0, SWAP_HEADER_MAGIC);
 >  
->  	local_irq_disable();
-> @@ -1360,7 +1364,6 @@ static void __init do_basic_setup(void)
->  	cpuset_init_smp();
->  	driver_init();
->  	init_irq_proc();
-> -	do_ctors();
->  	do_initcalls();
+>  	hd->info.version = 1;
+>  	hd->info.last_page = d->mbd_dev->size - 1;
+>  	hd->info.nr_badpages = 0;
+>  
+> -	memcpy(buf + PAGE_SIZE - 10, "SWAPSPACE2", 10);
+> +	memcpy(buf + SWAP_HEADER_MAGIC, "SWAPSPACE2", 10);
+>  
+>  	return 0;
 >  }
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 09a840517c23a..49c2078354e6e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2927,7 +2927,7 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+>  static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
+>  {
+>  	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+> -	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
+> +	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE_MAX);
+>  	return ptlock_ptr(virt_to_ptdesc(pte));
+>  }
+>  
+> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
+> index a2f6179b672b8..c356897d5f41c 100644
+> --- a/include/linux/mm_types_task.h
+> +++ b/include/linux/mm_types_task.h
+> @@ -37,7 +37,7 @@ struct page;
+>  
+>  struct page_frag {
+>  	struct page *page;
+> -#if (BITS_PER_LONG > 32) || (PAGE_SIZE >= 65536)
+> +#if (BITS_PER_LONG > 32) || (PAGE_SIZE_MAX >= 65536)
+>  	__u32 offset;
+>  	__u32 size;
+>  #else
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 1dc6248feb832..cd58034b82c81 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -1744,6 +1744,7 @@ static inline bool movable_only_nodes(nodemask_t *nodes)
+>   */
+>  #define PA_SECTION_SHIFT	(SECTION_SIZE_BITS)
+>  #define PFN_SECTION_SHIFT	(SECTION_SIZE_BITS - PAGE_SHIFT)
+> +#define PFN_SECTION_SHIFT_MIN	(SECTION_SIZE_BITS - PAGE_SHIFT_MAX)
+>  
+>  #define NR_MEM_SECTIONS		(1UL << SECTIONS_SHIFT)
+>  
+> @@ -1753,7 +1754,7 @@ static inline bool movable_only_nodes(nodemask_t *nodes)
+>  #define SECTION_BLOCKFLAGS_BITS \
+>  	((1UL << (PFN_SECTION_SHIFT - pageblock_order)) * NR_PAGEBLOCK_BITS)
+>  
+> -#if (MAX_PAGE_ORDER + PAGE_SHIFT) > SECTION_SIZE_BITS
+> +#if (MAX_PAGE_ORDER + PAGE_SHIFT_MAX) > SECTION_SIZE_BITS
+>  #error Allocator MAX_PAGE_ORDER exceeds SECTION_SIZE
+>  #endif
+>  
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index eb2bf46291576..11c6ff3a12579 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -347,7 +347,7 @@ static inline unsigned int arch_slab_minalign(void)
+>   */
+>  #define __assume_kmalloc_alignment __assume_aligned(ARCH_KMALLOC_MINALIGN)
+>  #define __assume_slab_alignment __assume_aligned(ARCH_SLAB_MINALIGN)
+> -#define __assume_page_alignment __assume_aligned(PAGE_SIZE)
+> +#define __assume_page_alignment __assume_aligned(PAGE_SIZE_MIN)
+>  
+>  /*
+>   * Kmalloc array related definitions
+> @@ -358,6 +358,7 @@ static inline unsigned int arch_slab_minalign(void)
+>   * (PAGE_SIZE*2).  Larger requests are passed to the page allocator.
+>   */
+>  #define KMALLOC_SHIFT_HIGH	(PAGE_SHIFT + 1)
+> +#define KMALLOC_SHIFT_HIGH_MAX	(PAGE_SHIFT_MAX + 1)
+>  #define KMALLOC_SHIFT_MAX	(MAX_PAGE_ORDER + PAGE_SHIFT)
+>  #ifndef KMALLOC_SHIFT_LOW
+>  #define KMALLOC_SHIFT_LOW	3
+> @@ -426,7 +427,7 @@ enum kmalloc_cache_type {
+>  	NR_KMALLOC_TYPES
+>  };
+>  
+> -typedef struct kmem_cache * kmem_buckets[KMALLOC_SHIFT_HIGH + 1];
+> +typedef struct kmem_cache * kmem_buckets[KMALLOC_SHIFT_HIGH_MAX + 1];
+>  
+>  extern kmem_buckets kmalloc_caches[NR_KMALLOC_TYPES];
+>  
+> @@ -524,7 +525,7 @@ static __always_inline unsigned int __kmalloc_index(size_t size,
+>  	/* Will never be reached. Needed because the compiler may complain */
+>  	return -1;
+>  }
+> -static_assert(PAGE_SHIFT <= 20);
+> +static_assert(PAGE_SHIFT_MAX <= 20);
+>  #define kmalloc_index(s) __kmalloc_index(s, true)
+>  
+>  #include <linux/alloc_tag.h>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index ba7ea95d1c57a..e85df0332979f 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -132,10 +132,17 @@ static inline int current_is_kswapd(void)
+>   * bootbits...
+>   */
+>  union swap_header {
+> -	struct {
+> -		char reserved[PAGE_SIZE - 10];
+> -		char magic[10];			/* SWAP-SPACE or SWAPSPACE2 */
+> -	} magic;
+> +	/*
+> +	 * Exists conceptually, but since PAGE_SIZE may not be known at compile
+> +	 * time, we must access through pointer arithmetic at run time.
+> +	 *
+> +	 * struct {
+> +	 * 	char reserved[PAGE_SIZE - 10];
+> +	 * 	char magic[10];			   SWAP-SPACE or SWAPSPACE2
+> +	 * } magic;
+> +	 */
+> +#define SWAP_HEADER_MAGIC	(PAGE_SIZE - 10)
+> +	char magic[1];
+>  	struct {
+>  		char		bootbits[1024];	/* Space for disklabel etc. */
+>  		__u32		version;
+> @@ -201,7 +208,7 @@ struct swap_extent {
+>   * Max bad pages in the new format..
+>   */
+>  #define MAX_SWAP_BADPAGES \
+> -	((offsetof(union swap_header, magic.magic) - \
+> +	((SWAP_HEADER_MAGIC - \
+>  	  offsetof(union swap_header, info.badpages)) / sizeof(int))
+>  
+>  enum {
+> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> index cb468e418ea11..890fe6a3e6702 100644
+> --- a/include/linux/swapops.h
+> +++ b/include/linux/swapops.h
+> @@ -34,10 +34,14 @@
+>   */
+>  #ifdef MAX_PHYSMEM_BITS
+>  #define SWP_PFN_BITS		(MAX_PHYSMEM_BITS - PAGE_SHIFT)
+> +#define SWP_PFN_BITS_MAX	(MAX_PHYSMEM_BITS - PAGE_SHIFT_MIN)
+>  #else  /* MAX_PHYSMEM_BITS */
+>  #define SWP_PFN_BITS		min_t(int, \
+>  				      sizeof(phys_addr_t) * 8 - PAGE_SHIFT, \
+>  				      SWP_TYPE_SHIFT)
+> +#define SWP_PFN_BITS_MAX	min_t(int, \
+> +				      sizeof(phys_addr_t) * 8 - PAGE_SHIFT_MIN, \
+> +				      SWP_TYPE_SHIFT)
+>  #endif	/* MAX_PHYSMEM_BITS */
+>  #define SWP_PFN_MASK		(BIT(SWP_PFN_BITS) - 1)
+>  
+> @@ -519,7 +523,7 @@ static inline struct folio *pfn_swap_entry_folio(swp_entry_t entry)
+>  static inline bool is_pfn_swap_entry(swp_entry_t entry)
+>  {
+>  	/* Make sure the swp offset can always store the needed fields */
+> -	BUILD_BUG_ON(SWP_TYPE_SHIFT < SWP_PFN_BITS);
+> +	BUILD_BUG_ON(SWP_TYPE_SHIFT < SWP_PFN_BITS_MAX);
+>  
+>  	return is_migration_entry(entry) || is_device_private_entry(entry) ||
+>  	       is_device_exclusive_entry(entry) || is_hwpoison_entry(entry);
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index c5f9195f76c65..4b17bec566fbd 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4881,7 +4881,7 @@ static int __init mem_cgroup_init(void)
+>  	 * to work fine, we should make sure that the overfill threshold can't
+>  	 * exceed S32_MAX / PAGE_SIZE.
+>  	 */
+> -	BUILD_BUG_ON(MEMCG_CHARGE_BATCH > S32_MAX / PAGE_SIZE);
+> +	BUILD_BUG_ON(MEMCG_CHARGE_BATCH > S32_MAX / PAGE_SIZE_MIN);
+>  
+>  	cpuhp_setup_state_nocalls(CPUHP_MM_MEMCQ_DEAD, "mm/memctrl:dead", NULL,
+>  				  memcg_hotplug_cpu_dead);
+> diff --git a/mm/memory.c b/mm/memory.c
+> index ebfc9768f801a..14b5ef6870486 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4949,8 +4949,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>  	return ret;
+>  }
+>  
+> -static unsigned long fault_around_pages __read_mostly =
+> -	65536 >> PAGE_SHIFT;
+> +static __DEFINE_GLOBAL_PAGE_SIZE_VAR(unsigned long, fault_around_pages,
+> +				     __read_mostly, 65536 >> PAGE_SHIFT);
+>  
+>  #ifdef CONFIG_DEBUG_FS
+>  static int fault_around_bytes_get(void *data, u64 *val)
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index d0dfc85b209bb..d9642aba07ac4 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2279,7 +2279,7 @@ int expand_downwards(struct vm_area_struct *vma, unsigned long address)
+>  }
+>  
+>  /* enforced gap between the expanding stack and other mappings. */
+> -unsigned long stack_guard_gap = 256UL<<PAGE_SHIFT;
+> +DEFINE_GLOBAL_PAGE_SIZE_VAR(unsigned long, stack_guard_gap, 256UL<<PAGE_SHIFT);
+>  
+>  static int __init cmdline_parse_stack_guard_gap(char *p)
+>  {
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 4430ac68e4c41..8fc9ac50749bd 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2292,7 +2292,7 @@ static int page_writeback_cpu_online(unsigned int cpu)
+>  #ifdef CONFIG_SYSCTL
+>  
+>  /* this is needed for the proc_doulongvec_minmax of vm_dirty_bytes */
+> -static const unsigned long dirty_bytes_min = 2 * PAGE_SIZE;
+> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(unsigned long, dirty_bytes_min, 2 * PAGE_SIZE);
+>  
+>  static struct ctl_table vm_page_writeback_sysctls[] = {
+>  	{
+> diff --git a/mm/slub.c b/mm/slub.c
+> index a77f354f83251..82f6e98cf25bb 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -5001,7 +5001,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
+>  static inline int alloc_kmem_cache_cpus(struct kmem_cache *s)
+>  {
+>  	BUILD_BUG_ON(PERCPU_DYNAMIC_EARLY_SIZE <
+> -			NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH *
+> +			NR_KMALLOC_TYPES * KMALLOC_SHIFT_HIGH_MAX *
+>  			sizeof(struct kmem_cache_cpu));
+>  
+>  	/*
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index dc38539f85603..2491425930c4d 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -277,7 +277,7 @@ static unsigned long sparse_encode_mem_map(struct page *mem_map, unsigned long p
+>  {
+>  	unsigned long coded_mem_map =
+>  		(unsigned long)(mem_map - (section_nr_to_pfn(pnum)));
+> -	BUILD_BUG_ON(SECTION_MAP_LAST_BIT > PFN_SECTION_SHIFT);
+> +	BUILD_BUG_ON(SECTION_MAP_LAST_BIT > PFN_SECTION_SHIFT_MIN);
+>  	BUG_ON(coded_mem_map & ~SECTION_MAP_MASK);
+>  	return coded_mem_map;
+>  }
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 38bdc439651ac..6311a1cc7e46b 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -2931,7 +2931,7 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
+>  	unsigned long swapfilepages;
+>  	unsigned long last_page;
+>  
+> -	if (memcmp("SWAPSPACE2", swap_header->magic.magic, 10)) {
+> +	if (memcmp("SWAPSPACE2", &swap_header->magic[SWAP_HEADER_MAGIC], 10)) {
+>  		pr_err("Unable to find swap-space signature\n");
+>  		return 0;
+>  	}
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index a0df1e2e155a8..b4fbba204603c 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2497,12 +2497,12 @@ struct vmap_block {
+>  	spinlock_t lock;
+>  	struct vmap_area *va;
+>  	unsigned long free, dirty;
+> -	DECLARE_BITMAP(used_map, VMAP_BBMAP_BITS);
+>  	unsigned long dirty_min, dirty_max; /*< dirty range */
+>  	struct list_head free_list;
+>  	struct rcu_head rcu_head;
+>  	struct list_head purge;
+>  	unsigned int cpu;
+> +	unsigned long used_map[];
+>  };
+>  
+>  /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
+> @@ -2600,11 +2600,12 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
+>  	unsigned long vb_idx;
+>  	int node, err;
+>  	void *vaddr;
+> +	size_t size;
+>  
+>  	node = numa_node_id();
+>  
+> -	vb = kmalloc_node(sizeof(struct vmap_block),
+> -			gfp_mask & GFP_RECLAIM_MASK, node);
+> +	size = struct_size(vb, used_map, BITS_TO_LONGS(VMAP_BBMAP_BITS));
+> +	vb = kmalloc_node(size, gfp_mask & GFP_RECLAIM_MASK, node);
+>  	if (unlikely(!vb))
+>  		return ERR_PTR(-ENOMEM);
 >  
 
 
