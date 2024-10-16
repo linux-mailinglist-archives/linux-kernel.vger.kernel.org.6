@@ -1,140 +1,68 @@
-Return-Path: <linux-kernel+bounces-368432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2E59A0FBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6779A0FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0884D1F26E9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7D3288053
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B59212641;
-	Wed, 16 Oct 2024 16:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y6C0XCQb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qHeBuB60"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F135E210C38;
+	Wed, 16 Oct 2024 16:30:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA8121262D;
-	Wed, 16 Oct 2024 16:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9955C1714BD
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096244; cv=none; b=uyV5EUu8iZPIJKJdC50JOfgNukXjSCN+DTAdMrk/sipGZu4trydXwz5JG9yNg5Wc9hlHrJNh5Xah/K+iD13W8TPRW38fK1YoYM5np+pvWPvBwZ2H2NRXvqxUZxJcBUQczm5+KWyhAydsyf9w+RPjnYPjIQYdbzj13VFlKIYZ6ls=
+	t=1729096249; cv=none; b=EM/jBPIUhSaHzJuOZUoQm1A+oqTfhmnpzcYks+KwTKebGOop4qrauIa6wkHxu45JNT8R5sfX50Fy2WG+fOyB21m71iwK2bd3EmDMP4acXN2E8I08B5KousEJoqdrsVwENePqLayFzqIvQHwPe3xafA6LAoAz3wwA4K/QpOK2gtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096244; c=relaxed/simple;
-	bh=cDmL46+7Ku1CNJyK9Pw37iodZ7eTlrRbqtcHf6yfnVM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a0B98CM6RMDIx5gBtF7uxvp2IfAN+zEyoUCEKOCclmlkg95frD7iEZxrnpiQj9E5NkJuh22zYsjKudxecTE5JfrezW0WK9aVqF3fhA3Ot6VAndexEbv6X2XRI+1nfXjmXGIxaRZdtVdsHZdvOIIly5SuO7g7B9SzbUQJkoLGhqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y6C0XCQb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qHeBuB60; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729096240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SWyLDPM1si1whstwx/9ABSaUWaUgglk4Hprd/du6iYw=;
-	b=Y6C0XCQbnjXu9g+n7ipBQO4mi2O8D6Yj4e4zkTe6iEyN5gezy/VlLmZCJd3+lc570n/oTN
-	ObHrXxAE6/Q1Yk0QuLlNoo19QmId5Yv6nj3/PmWEhrGyTqz5/Gw3dmRoWCc6t5Quu8e1AR
-	qjIXbgatuF3iAbeKZxW2BTdp+gEDzfUYvef+bR4LFPn/8f/vgW1tiI4O2v1wRmKkjQ42Ol
-	saKriitcideFKMmPaVFr906BhCiMAd4rVH47eIyKLaLZyFyiUk/tmkQCRa4KKFH9sBBSwN
-	O0nSbblOSWl7/N5GvPY7phHDZONfp3S1sL0Kaoe2kNsfCUizgRTktHW1kazKfg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729096240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SWyLDPM1si1whstwx/9ABSaUWaUgglk4Hprd/du6iYw=;
-	b=qHeBuB60aYAix5Z9uU78up425Aybm/bfCt6Zy73SAyWJWcD2rHExAaLg/mXZ9+EUM7daqn
-	/LA+K/BCsIz8hWDg==
-To: Frank Li <Frank.Li@nxp.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
- dlemoal@kernel.org, maz@kernel.org, jdmason@kudzu.us, Frank Li
- <Frank.Li@nxp.com>
-Subject: Re: [PATCH v3 3/6] PCI: endpoint: Add RC-to-EP doorbell support
- using platform MSI controller
-In-Reply-To: <20241015-ep-msi-v3-3-cedc89a16c1a@nxp.com>
-References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
- <20241015-ep-msi-v3-3-cedc89a16c1a@nxp.com>
-Date: Wed, 16 Oct 2024 18:30:40 +0200
-Message-ID: <87bjzkau33.ffs@tglx>
+	s=arc-20240116; t=1729096249; c=relaxed/simple;
+	bh=lYElYRFS2rDGFf0dDDojxO5ebYviRYINloGUHHrhgLE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uu2vJemijtiLMrfk8Zg0Mh5AnUMbeBtPrM520RQy3aB1gf2Wi2H+Q7oqPo4zf0OfXKsQX+jcMNtaEV0HoBApOxx2bwO35sIvHzICNiUEaeZ1O97h3M0qBu6pX8G2DM5INTayFCbgh8YnmDYYUD8bW44kOiFLy0scqCJRrfOE0Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3446C4CEC5;
+	Wed, 16 Oct 2024 16:30:47 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: linux-arm-kernel@lists.infradead.org,
+	Gavin Shan <gshan@redhat.com>
+Cc: Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	ardb@kernel.org,
+	anshuman.khandual@arm.com,
+	shan.gavin@gmail.com
+Subject: Re: [PATCH] arm64: head: Drop SWAPPER_TABLE_SHIFT
+Date: Wed, 16 Oct 2024 17:30:45 +0100
+Message-Id: <172909623125.3163685.8468137355196920156.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241014030341.995806-1-gshan@redhat.com>
+References: <20241014030341.995806-1-gshan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 15 2024 at 18:07, Frank Li wrote:
-> +static int pci_epc_alloc_doorbell(struct pci_epc *epc, u8 func_no, u8 vfunc_no, int num_db)
-> +{
-> +	struct msi_desc *desc, *failed_desc;
-> +	struct pci_epf *epf;
-> +	struct device *dev;
-> +	int i = 0;
-> +	int ret;
-> +
-> +	if (IS_ERR_OR_NULL(epc))
-> +		return -EINVAL;
-> +
-> +	/* Currently only support one func and one vfunc for doorbell */
-> +	if (func_no || vfunc_no)
-> +		return -EINVAL;
-> +
-> +	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
-> +	if (!epf)
-> +		return -EINVAL;
-> +
-> +	dev = epc->dev.parent;
-> +	ret = platform_device_msi_init_and_alloc_irqs(dev, num_db, pci_epc_write_msi_msg);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to allocate MSI\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	scoped_guard(msi_descs, dev)
-> +		msi_for_each_desc(desc, dev, MSI_DESC_ALL) {
+On Mon, 14 Oct 2024 13:03:41 +1000, Gavin Shan wrote:
+> There is no users of SWAPPER_TABLE_SHIFT after commit 84b04d3e6bdb
+> ("arm64: kernel: Create initial ID map from C code"). Just drop it.
+> 
+> 
 
-That's just wrong. Nothing in this code has to fiddle with MSI
-descriptors or the descriptor lock.
+Applied to arm64 (for-next/misc), thanks!
 
-        for (i = 0; i < num_db; i++) {
-            virq = msi_get_virq(dev, i);
+[1/1] arm64: head: Drop SWAPPER_TABLE_SHIFT
+      https://git.kernel.org/arm64/c/0f612c6eb13a
 
-> +			ret = request_irq(desc->irq, pci_epf_doorbell_handler, 0,
-> +					  kasprintf(GFP_KERNEL, "pci-epc-doorbell%d", i++), epf);
-> +			if (ret) {
-> +				dev_err(dev, "Failed to request doorbell\n");
-> +				failed_desc = desc;
-> +				goto err_request_irq;
-> +			}
-> +		}
-> +
-> +	return 0;
-> +
-> +err_request_irq:
-> +	scoped_guard(msi_descs, dev)
-> +		msi_for_each_desc(desc, dev, MSI_DESC_ALL) {
-> +			if (desc == failed_desc)
-> +				break;
-> +			kfree(free_irq(desc->irq, epf));
+-- 
+Catalin
 
-All instances of interrupts get 'epf' as device id. So if the third
-instance failed to be requested, you free 'epf' when freeing the first
-interrupt and then again when freeing the second one.
-
-Thanks,
-
-        tglx
 
