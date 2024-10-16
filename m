@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-368794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F7C9A150D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:42:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1B09A1512
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75F72864A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53A11F24676
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03141D4156;
-	Wed, 16 Oct 2024 21:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4150F1D54D6;
+	Wed, 16 Oct 2024 21:42:02 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532841D2B39;
-	Wed, 16 Oct 2024 21:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72031D517F;
+	Wed, 16 Oct 2024 21:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114919; cv=none; b=X/uDvy8a6sAh9dcAhtGhGGW68fmKnY3XFSIKcdT9FDnTe+mAAn0bPqibi3ENevQnHBcKtptzQPx8l61iaYSn5aotiM4OheoIinsLYPX4d/01xdXzfPukCHDG99x7B3gNZE9GnlcU6gNLFq6fap9d3Fn586J9zQTIfqwW0pWFbEw=
+	t=1729114921; cv=none; b=lv5WpuHF7BTKO2gP3qOPexnSw5/YIv9dFo8zdlyVz2wfxj5Dv+j6Mvi0QV2oMLlZcI+twBi2h2l2llPV1DmnU8grgW4cQHkT2cS0+q1rIflJlfesoxCGzGAQlObdBuUyXK/Gb6FSinwXDAwNeyoc5LVBBitNMAhfpkA2ZTjj2d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729114919; c=relaxed/simple;
-	bh=wIyJk825vxE1cB6sJzT4gQT3wkEZCWbDwEm4otlzDjs=;
+	s=arc-20240116; t=1729114921; c=relaxed/simple;
+	bh=UatnwLdLYEqwbn7VVH986cj25w1ARhMFB6bRK9YGE7Q=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TaN3pD+2vNGJBu3TYfWCQuIzV1U3HV3WTaSBIaL9yWec7Q4NEzOOFJCcMF+9zYPP1rd/dXE/zLdghoO6Mp9yhaXl0MiIe6fxmXnBEU7aQnJSm/hc+sYe7BMsqvbM4yAavpHz5XsaAzpHPYJO7OmRbeK6ObBP5pyYMHRum+yuFu8=
+	 MIME-Version:Content-Type; b=ch5pT3d/7r1/Oi2k+6y/NhJxwnAGLVm/Han8+vJ36JebL+bWpBQedOuWQps/piVary8aQpwIP/y6KZsnkShB9p/ROZhfaVwpwgqt9m+U4T2dABtrrOI7DxDdYbh/ui+8cJc4TObW9cwOS5QGrM4dzoLjeydKo1iWX6Y80fGQu/A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2643C4AF09;
-	Wed, 16 Oct 2024 21:41:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 630B5C4CED3;
+	Wed, 16 Oct 2024 21:42:01 +0000 (UTC)
 Received: by mercury (Postfix, from userid 1000)
-	id 4DDDE106045D; Wed, 16 Oct 2024 23:41:56 +0200 (CEST)
+	id 54C5B1060460; Wed, 16 Oct 2024 23:41:56 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: 'Lucas Tsai ' <lucas_tsai@richtek.com>, 
+ Sebastian Reichel <sre@kernel.org>, cy_huang@richtek.com
 Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241005-power-supply-cleanups-v1-0-45303b2d0a4d@weissschuh.net>
-References: <20241005-power-supply-cleanups-v1-0-45303b2d0a4d@weissschuh.net>
-Subject: Re: (subset) [PATCH 0/4] power: supply: core: random cleanups and
- optimizations
-Message-Id: <172911491630.630785.7870261570020412690.b4-ty@collabora.com>
+In-Reply-To: <cover.1727252762.git.cy_huang@richtek.com>
+References: <cover.1727252762.git.cy_huang@richtek.com>
+Subject: Re: [PATCH 0/2] power: supply: rt9471: Fix WDT bitfield and
+ charger status
+Message-Id: <172911491633.630785.17931516784281011855.b4-ty@collabora.com>
 Date: Wed, 16 Oct 2024 23:41:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -47,23 +47,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Sat, 05 Oct 2024 12:06:14 +0200, Thomas Weißschuh wrote:
-> Some independent cleanups and optimizations.
+On Wed, 25 Sep 2024 16:32:57 +0800, cy_huang@richtek.com wrote:
+> From: ChiYuan Huang <cy_huang@richtek.com>
 > 
+> This patch series add the following fixes that reported from the end
+> market included WDT bitfield and the real charger status.
 > 
+> ChiYuan Huang (2):
+>   power: supply: rt9471: Fix wrong WDT function regfield declaration
+>   power: supply: rt9471: Use IC status regfield to report real charger
+>     status
+> 
+> [...]
 
 Applied, thanks!
 
-[1/4] power: supply: core: use device mutex wrappers
-      commit: bd3ee57b9d4c58edbf6f7bba071f6e508c7ff1c6
-[2/4] power: supply: core: unexport power_supply_property_is_writeable()
-      commit: cf70da29c4993bf23df68b67a82dfa3da8234e75
-[3/4] power: supply: core: mark attribute arrays as ro_after_init
-      commit: 3120b5f218ca8e2b375d496e2ff3f4f861fbc013
+[1/2] power: supply: rt9471: Fix wrong WDT function regfield declaration
+      commit: d10ff07dd2b933e3864c592ca932996b07bbf22a
+[2/2] power: supply: rt9471: Use IC status regfield to report real charger status
+      commit: c46a9ee5c6210682611d3d4276436c23a95e1996
 
 Best regards,
 -- 
