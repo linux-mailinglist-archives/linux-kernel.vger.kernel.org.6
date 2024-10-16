@@ -1,324 +1,135 @@
-Return-Path: <linux-kernel+bounces-367454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38C89A029A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:30:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DD79A029E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249B31C229CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:30:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036611C229CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D841C07E6;
-	Wed, 16 Oct 2024 07:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA07E1B6D00;
+	Wed, 16 Oct 2024 07:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLiGzDdy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="dlnk1jIu"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820B17C9FA;
-	Wed, 16 Oct 2024 07:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325A718A920
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063843; cv=none; b=nXCJ9oHwDC2nW+dhyr70Kuhm7RCEdE1M4cCVnfnSV5f4urUbUNvA12yMdEo0ULA2RajeeupSwkoJRcPHtupVFMxVIgiGayKtUa1WHeiBU1NjCkRoC7CvBJs76jv8HWth3ARFxcyTLfa1dnNIe8sb+jltSeOVB/ccCluzCIg7BXg=
+	t=1729063865; cv=none; b=h7xW8QR3o5uD7y1tlUxnvsP6PkjQIUWV2wZScRg/5471IXsENmAM60REPDDrulyErA/SeGwLKUMklUHUO0/y4WIvdTgqQr0N6tScE33nhF4XkaVYB8s6Llf4CQJ0lL3ePXEnEoR8D0q7symzm9FK4FqEPyCNlIFK6h+qzD732m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063843; c=relaxed/simple;
-	bh=2vkCcYGCQnE92NDuH25qfT6npSXZgVIwv76Lzb4O/VM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GlB6xRajOuEQfcZAJIE3A11J5SDwWoNeysb/cAATwZaf56Z1b8Jz4k1G+JeoSEYTvRhGd4MibUDEninXlqgMaIPIXbT0lX6wsbDrGpvMMUodpKgd4/h7B7tKVezXZofWt110sA5wfxPTRAATELziI7YHRu7dyokyUIs7b1qNaHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLiGzDdy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E63C4CEC5;
-	Wed, 16 Oct 2024 07:30:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729063842;
-	bh=2vkCcYGCQnE92NDuH25qfT6npSXZgVIwv76Lzb4O/VM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jLiGzDdyTnVfdnBzrEK5TR1U7Ju81XPhz6Fr2yicFSYRVT2IJPfjZUvX9c5vIldwd
-	 n4PE4GAPtJJUMsNdenRTcRsEqOFvPjaI3+oSMbL1r0q+foGpCm/Xh1nrTU5bXqAepQ
-	 r03i33yxWDtlSOclX4dfxbBXtuh8QN/1+9qlE15R3+4/8hrvhrL2WV5vJUB9G3kGGW
-	 UjpTvc8tQsbAPLYd/69+Pv/KniXRJ8ru/+OdUpAdSa3c88rpPdMiJ+u+OA2IX+2njd
-	 m0W93/L6feq3NEnXczpOXApFcHlhjUXISwzOLhaqcrCLgqslE5dZyJKx7DkVDZPsBO
-	 T5iyKaVnFxBaw==
-Date: Wed, 16 Oct 2024 09:30:38 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-Cc: patrick@stwcx.xyz, Pavel Machek <pavel@ucw.cz>, 
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Nate Case <ncase@xes-inc.com>, Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, 
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: leds: pca955x: Convert text bindings to
- YAML
-Message-ID: <yrnxc53ofxpgfrsilqib4zv5bboiinkvlep3hlfxgyhkcievpv@jwxfet2rqeel>
-References: <20241016052941.416034-1-Delphine_CC_Chiu@wiwynn.com>
+	s=arc-20240116; t=1729063865; c=relaxed/simple;
+	bh=qDCAzGXoZ0pOdnIynMDnFsAu40UrMUBUAHTC2okKCYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YrAgqps7npghnS9rKQbLr5/NRvqTR99biBsF5zkNQRBeh6czC4+Nd9K8awhiMNptApRKdult7ZIa7kuSYK0EyEgYwpRIeNb4aS/TabkXhFIYnCsNy28KT/yeT8+FCMPzUqHSFVurkHyhg+gNMfE/282Cg07DyAKIIEFgl1bQE+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=dlnk1jIu; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so26290741fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:31:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1729063860; x=1729668660; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R34hHdvFIYMq9ZmXSvfE0IG+MHVNqzXq4FOqKZ22TY0=;
+        b=dlnk1jIu7SWMpQ6rcxAqfJ1nYIna9+tQWxqn95djO6cBBQrLq0g9HrCrytWgE6odtU
+         QrSAab/DXF6QZWalAFREBBN7dCsARv5iM4gJrpDZCzxVWE58lx4hEs4A4ZKWhj4zOpi9
+         PYMCthmhSVLTnLa76G2dP7k2gkwBIiJKAIZFB8n05urZm7G4dUbrsYDsTjl0P3QekLqs
+         6thQ1lQ0ExdmC8Cmdc7vAkRgBDqKjmDeL7KjlU4YDegWvqBopLl/24+pIq4CQILHNi4A
+         7yryG6AqiQLkKxEyZPU4ZBFP2nTadHaP0h44CFXUiaVEAiI1jAYQV165TgEjLh/KJpnQ
+         yQrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729063860; x=1729668660;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R34hHdvFIYMq9ZmXSvfE0IG+MHVNqzXq4FOqKZ22TY0=;
+        b=rm+1iXtwL5j1kA1Le8e6JrOUHg1UwgbdXUyLQzZLq4pOvhgFvXvsXb4WWLY3LDf4eb
+         W4QKJoscRSVYb8SFhDNtNVMaR6uBAmuIREDMrciktoZ4T6pINYlHrkdGLIowqRavw7FK
+         gjimjdebKT1ZavR1z13OG8l3hbr7NlR/k6Mbh1PuPcctKHOXgK4gUgor4nQ0RlS/EutO
+         50yTZ/wGzfLTLtka+T871tKQQQXh9ydWnIvS2CZ/X/CnJdyfSONrtKbIFcTfL0IQXRNB
+         crJvf5CLl7TtiCUebLzI4szHm2HIMr2t/f1k+AFRZRSMIrcbzM78IZh8RBmMcz30Md3C
+         ACJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrEfpLMeQ1by4xLmVkZlqt7+MXpv4yfgxWlfUXnLtb8ZPlWgCWKqjy3G5zzms43zYm+BfZtgs6NPIGj5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs1KindbZpe+ZbPQ+WLyiXP/GF+bXfrCUdYhQghuWijKOM5y5B
+	iK64CuQnOSCoPSl+9yGTIr5AFtu7ZdRZAF00AbkdfRpTFXqIp6yOGWouJRh7pnYwwxiXCiDcaxJ
+	hSRo=
+X-Google-Smtp-Source: AGHT+IHldw33jGlDpRijQvlYNzDaS979Wd9CwKdwa32VsF108XYz7aKToHH+pl4TTjCUxVNH7ilcrA==
+X-Received: by 2002:a05:651c:154b:b0:2fb:65c8:b4ca with SMTP id 38308e7fff4ca-2fb65c8b665mr6122741fa.40.1729063860180;
+        Wed, 16 Oct 2024 00:31:00 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d7b73bdsm1416283a12.85.2024.10.16.00.30.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 00:30:59 -0700 (PDT)
+Message-ID: <4accc34d-77f2-46d4-bf66-c10fe5e8f372@blackwall.org>
+Date: Wed, 16 Oct 2024 10:30:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241016052941.416034-1-Delphine_CC_Chiu@wiwynn.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/3] bonding: return detailed error when loading
+ native XDP fails
+To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>,
+ Jussi Maki <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>,
+ Andy Gospodarek <andy@greyhouse.net>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20241016031649.880-1-liuhangbin@gmail.com>
+ <20241016031649.880-2-liuhangbin@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20241016031649.880-2-liuhangbin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 01:29:38PM +0800, Delphine CC Chiu wrote:
-> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+On 16/10/2024 06:16, Hangbin Liu wrote:
+> Bonding only supports native XDP for specific modes, which can lead to
+> confusion for users regarding why XDP loads successfully at times and
+> fails at others. This patch enhances error handling by returning detailed
+> error messages, providing users with clearer insights into the specific
+> reasons for the failure when loading native XDP.
 > 
-> Convert the text bindings of pca955x to YAML so it could be used to
-> validate the DTS.
-> 
-> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 > ---
->  .../devicetree/bindings/leds/leds-pca955x.txt |  89 ----------
->  .../devicetree/bindings/leds/nxp,pca955x.yaml | 161 ++++++++++++++++++
->  2 files changed, 161 insertions(+), 89 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/leds/leds-pca955x.txt
->  create mode 100644 Documentation/devicetree/bindings/leds/nxp,pca955x.yaml
+>  drivers/net/bonding/bond_main.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-pca955x.txt b/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-> deleted file mode 100644
-> index 817f460f3a72..000000000000
-> --- a/Documentation/devicetree/bindings/leds/leds-pca955x.txt
-> +++ /dev/null
-> @@ -1,89 +0,0 @@
-> -* NXP - pca955x LED driver
-> -
-> -The PCA955x family of chips are I2C LED blinkers whose pins not used
-> -to control LEDs can be used as general purpose I/Os. The GPIO pins can
-> -be input or output, and output pins can also be pulse-width controlled.
-> -
-> -Required properties:
-> -- compatible : should be one of :
-> -	"nxp,pca9550"
-> -	"nxp,pca9551"
-> -	"nxp,pca9552"
-> -	"ibm,pca9552"
-> -	"nxp,pca9553"
-> -- #address-cells: must be 1
-> -- #size-cells: must be 0
-> -- reg: I2C slave address. depends on the model.
-> -
-> -Optional properties:
-> -- gpio-controller: allows pins to be used as GPIOs.
-> -- #gpio-cells: must be 2.
-> -- gpio-line-names: define the names of the GPIO lines
-> -
-> -LED sub-node properties:
-> -- reg : number of LED line.
-> -		from 0 to  1 for the pca9550
-> -		from 0 to  7 for the pca9551
-> -		from 0 to 15 for the pca9552
-> -		from 0 to  3 for the pca9553
-> -- type: (optional) either
-> -	PCA955X_TYPE_NONE
-> -	PCA955X_TYPE_LED
-> -	PCA955X_TYPE_GPIO
-> -	see dt-bindings/leds/leds-pca955x.h (default to LED)
-> -- label : (optional)
-> -	see Documentation/devicetree/bindings/leds/common.txt
-> -- linux,default-trigger : (optional)
-> -	see Documentation/devicetree/bindings/leds/common.txt
-> -
-> -Examples:
-> -
-> -pca9552: pca9552@60 {
-> -	compatible = "nxp,pca9552";
-> -	#address-cells = <1>;
-> -        #size-cells = <0>;
-> -	reg = <0x60>;
-> -
-> -	gpio-controller;
-> -	#gpio-cells = <2>;
-> -	gpio-line-names = "GPIO12", "GPIO13", "GPIO14", "GPIO15";
-> -
-> -	gpio@12 {
-> -		reg = <12>;
-> -		type = <PCA955X_TYPE_GPIO>;
-> -	};
-> -	gpio@13 {
-> -		reg = <13>;
-> -		type = <PCA955X_TYPE_GPIO>;
-> -	};
-> -	gpio@14 {
-> -		reg = <14>;
-> -		type = <PCA955X_TYPE_GPIO>;
-> -	};
-> -	gpio@15 {
-> -		reg = <15>;
-> -		type = <PCA955X_TYPE_GPIO>;
-> -	};
-> -
-> -	led@0 {
-> -		label = "red:power";
-> -		linux,default-trigger = "default-on";
-> -		reg = <0>;
-> -		type = <PCA955X_TYPE_LED>;
-> -	};
-> -	led@1 {
-> -		label = "green:power";
-> -		reg = <1>;
-> -		type = <PCA955X_TYPE_LED>;
-> -	};
-> -	led@2 {
-> -		label = "pca9552:yellow";
-> -		reg = <2>;
-> -		type = <PCA955X_TYPE_LED>;
-> -	};
-> -	led@3 {
-> -		label = "pca9552:white";
-> -		reg = <3>;
-> -		type = <PCA955X_TYPE_LED>;
-> -	};
-> -};
-> diff --git a/Documentation/devicetree/bindings/leds/nxp,pca955x.yaml b/Documentation/devicetree/bindings/leds/nxp,pca955x.yaml
-> new file mode 100644
-> index 000000000000..70f8c1dfa75a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/nxp,pca955x.yaml
-> @@ -0,0 +1,161 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/nxp,pca955x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP PCA955X LED controllers
-> +
-> +maintainers:
-> +  - Nate Case <ncase@xes-inc.com>
-> +
-> +description: |
-> +  The PCA955x family of chips are I2C LED blinkers whose pins not used
-> +  to control LEDs can be used as general purpose I/Os. The GPIO pins can
-> +  be input or output, and output pins can also be pulse-width controlled.
-> +
-> +  For more product information please see the link below:
-> +  - https://www.nxp.com/docs/en/data-sheet/PCA9552.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,pca9550
-> +      - nxp,pca9551
-> +      - nxp,pca9552
-> +      - ibm,pca9552
-> +      - nxp,pca9553
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  gpio-controller: true
-> +
-> +  gpio-line-names:
-> +    minItems: 1
-> +    maxItems: 16
-> +
-> +  '#gpio-cells':
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index b1bffd8e9a95..f0f76b6ac8be 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -5676,8 +5676,11 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+>  
+>  	ASSERT_RTNL();
+>  
+> -	if (!bond_xdp_check(bond))
+> +	if (!bond_xdp_check(bond)) {
+> +		BOND_NL_ERR(dev, extack,
+> +			    "No native XDP support for the current bonding mode");
+>  		return -EOPNOTSUPP;
+> +	}
+>  
+>  	old_prog = bond->xdp_prog;
+>  	bond->xdp_prog = prog;
 
-Keep consistent quotes: " or '
+I guess this is based on our discussion earlier?
 
-> +    const: 2
-> +
-> +patternProperties:
-> +  "^led@[0-9a-f]+$":
-
-max is 15 leds, so f, thus '+' is not needed. Same in other places.
-
-> +    type: object
-> +    $ref: common.yaml#
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        minimum: 0
-
-drop minimum, but instead maxItems: 1
-
-
-> +      type:
-> +        description: |
-> +          Output configuration, see include/dt-bindings/leds/leds-pca955x.h
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        default: 0
-> +        minimum: 0
-> +        maximum: 4
-
-I see defines up to 2, not 4. Any changes in binding should be explained
-in commit msg.
-
-
-> +
-> +    required:
-> +      - reg
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nxp,pca9550
-> +    then:
-> +      patternProperties:
-> +        "^led@[0-9a-f]+$":
-> +          properties:
-> +            reg:
-> +              maximum: 1
-> +    else:
-> +      if:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              enum:
-> +                - nxp,pca9551
-> +      then:
-> +        patternProperties:
-> +          "^led@[0-9a-f]+$":
-> +            properties:
-> +              reg:
-> +                maximum: 7
-> +      else:
-> +        if:
-> +          properties:
-> +            compatible:
-> +              contains:
-> +                enum:
-> +                  - nxp,pca9552
-> +                  - ibm,pca9552
-> +        then:
-> +          patternProperties:
-> +            "^led@[0-9a-f]+$":
-> +              properties:
-> +                reg:
-> +                  maximum: 15
-> +        else:
-> +          if:
-
-Do not nest else:if. It's not manageable. See other bindings...
-
-> +            properties:
-> +              compatible:
-> +                contains:
-> +                  enum:
-> +                    - nxp,pca9553
-> +          then:
-> +            patternProperties:
-> +              "^led@[0-9a-f]+$":
-> +                properties:
-> +                  reg:
-> +                    maximum: 3
-> +
-> +additionalProperties: false
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
 
