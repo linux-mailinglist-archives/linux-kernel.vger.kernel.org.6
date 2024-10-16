@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-368654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5309A12F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2DA9A12FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28E3286DF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0355A286DF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28663215030;
-	Wed, 16 Oct 2024 19:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43C2215030;
+	Wed, 16 Oct 2024 19:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWYIaCGq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="n3gRld9y"
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8655120605A;
-	Wed, 16 Oct 2024 19:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2263C20605A;
+	Wed, 16 Oct 2024 19:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108522; cv=none; b=DeN6jUnNLySlW15CSRreqJ+4Ciiyttq2A8RimA2nJHwORUrX0oYJCpc5rwEn1WMnPX9fgPacSYFaL4iq2E4mNiDwGnuTbqZffl7tIgtG5T4TkjKlsLfUOemd9Xd5+3UjxjJFQIs5VPG29L0p//ApKTtbX0v1Y2fVK+WEM9ljREk=
+	t=1729108570; cv=none; b=fzDdbZtEXTujNfz9lKD93KNBlEdwgttYOWV7O2JHTZqawgooxKXh60N2NmS+yJTTzuzjR0fqNgSDrkv8PmkE+jiwyM/JiSVkv2H7z4Y/6Go8J9Fpxv9bBNd884BSODwaQFk6JLviDCSZPpNaP72kx+2A60e+l8+i/zvgo9ah1mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108522; c=relaxed/simple;
-	bh=ZiwDKcccpmSvuqWCu6YQOcI9Jl8IlIIZv33czqaIoj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=BElqzmXKiF2UQDeA1REKUJGQY+dRDwR1CyaS5fpl6y7NzCtP9GxzDxsXPCGm4pBR5TM0lqlbhj4MkPurS14g8QyWntvMHelEef++N4dY6zPlhHPYn0UDZ4xQioSda2KDHSZqGBHyrZ+/Da2+3ve+38oJbOkbotpyX3sRQl6Yyso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWYIaCGq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4815C4CEC5;
-	Wed, 16 Oct 2024 19:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729108522;
-	bh=ZiwDKcccpmSvuqWCu6YQOcI9Jl8IlIIZv33czqaIoj0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=IWYIaCGqroH5yIR/0mJGOFtj4UZeicBHalefzbDbF/fjw+/nZwSLTl++SRgLuAL26
-	 M/hNjRzEBHWoxQ5xP10w1WZHUpKOzkWRPU3Jt2zAgF4KQHYvn5uhGVLfPgbFrfUfsq
-	 FQeOjFE+meLgRkV032V3fVSjvNCQatn7k+dtujbuaPYJlxskCXiIPDlROwTKKNgB5B
-	 T1Nx8e1TkEqjXv7jJk5ynHskF/Siabc5kDerOGleVTfqE71m7mCqJDO5QKr3MbNK1o
-	 GSHEPFz/muUt+7WxV9jAotsFuBbSjUqieDjK9Lf5S3g1NuoLwNvuLWT4sysYdogTjV
-	 E1ZSyFO37ygOg==
-Date: Wed, 16 Oct 2024 14:55:20 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Constify pci_register_io_range stub fwnode_handle
-Message-ID: <20241016195520.GA647036@bhelgaas>
+	s=arc-20240116; t=1729108570; c=relaxed/simple;
+	bh=Zdrk/r8+WlDkCB62s1EuRzuDF8xWThDyLPnimb+N0AQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRiXfDfhEed+5BJwAf5ObrrsXMvzBPESzZvYf65N6j/HhCOxyROy3KSZLAiTQkhrZUKoMgYc6Vbh3QBYGSNlxdzP5isHRF+Lan9Ve+FIV2/zANeX8jnTeGI4dIFazqykYhjqz+mWi/TgILu+nnl1sfWqaOiLIU2vEpwOx1iauMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=n3gRld9y; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 2E973457383A;
+	Wed, 16 Oct 2024 15:56:01 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
+	in-reply-to:content-disposition:content-type:content-type
+	:mime-version:references:message-id:subject:subject:from:from
+	:date:date:received:received; s=mail; t=1729108560; x=
+	1730922961; bh=Zdrk/r8+WlDkCB62s1EuRzuDF8xWThDyLPnimb+N0AQ=; b=n
+	3gRld9yjTQWzCUsZ6tpNZT4iIo1f78Ab8MLjDBPMkZt5FAXiLDAQpOSrwbOGbynK
+	nK6WVLbFWju3/FDs4dr/SeE3a48Ri7tQPjSpHhKecvHNUzuO0PcPPTuGFhjgxVCu
+	wqMqL9Smr5SATK0LZKTRkTAhPd3Qj7QUPZOE/UVuQ0=
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id FG2oBYjaJ1wl; Wed, 16 Oct 2024 15:56:00 -0400 (EDT)
+Received: from freedom.csh.rit.edu (unknown [129.21.49.24])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id A133945735E9;
+	Wed, 16 Oct 2024 15:56:00 -0400 (EDT)
+Date: Wed, 16 Oct 2024 15:55:59 -0400
+From: Mary Strodl <mstrodl@csh.rit.edu>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Subject: Re: [PATCH v5] gpio: add support for FTDI's MPSSE as GPIO
+Message-ID: <ZxAaT-HqOsGn1jpc@freedom.csh.rit.edu>
+References: <20241009131131.1618329-1-mstrodl@csh.rit.edu>
+ <172888967999.6626.5327506199486226336.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,55 +67,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016062410.2581152-1-arnd@kernel.org>
+In-Reply-To: <172888967999.6626.5327506199486226336.b4-ty@linaro.org>
 
-On Wed, Oct 16, 2024 at 06:24:04AM +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Oct 14, 2024 at 09:08:01AM +0200, Bartosz Golaszewski wrote:
+> Applied, thanks!
 > 
-> The patch to change the argument types for pci_register_io_range()
-> only caught one of the two implementations, but missed the empty
-> version:
-> 
-> drivers/of/address.c: In function 'of_pci_range_to_resource':
-> drivers/of/address.c:244:45: error: passing argument 1 of 'pci_register_io_range' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
->   244 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
->       |                                             ^~~~~~~~~~~
-> In file included from drivers/of/address.c:12:
-> include/linux/pci.h:1559:49: note: expected 'struct fwnode_handle *' but argument is of type 'const struct fwnode_handle *'
->  1559 | int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
->       |                           ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-> 
-> Change this the same way.
-> 
-> Fixes: 6ad99a07e6d2 ("PCI: Constify pci_register_io_range() fwnode_handle")
+> [1/1] gpio: add support for FTDI's MPSSE as GPIO
+>       commit: c46a74ff05c0ac76ba11ef21c930c3b447abf31a
 
-I assume Rob took the original and will take care of this as well:
-
-  https://lore.kernel.org/all/20241010220747.GA579765@bhelgaas/
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> If possible, please fold this fixup into the original patch
-> ---
->  include/linux/pci.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 11421ae5c558..733ff6570e2d 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -2019,7 +2019,7 @@ static inline int pci_request_regions(struct pci_dev *dev, const char *res_name)
->  { return -EIO; }
->  static inline void pci_release_regions(struct pci_dev *dev) { }
->  
-> -static inline int pci_register_io_range(struct fwnode_handle *fwnode,
-> +static inline int pci_register_io_range(const struct fwnode_handle *fwnode,
->  					phys_addr_t addr, resource_size_t size)
->  { return -EINVAL; }
->  
-> -- 
-> 2.39.5
-> 
+Thank you very much! Please let me know if you need
+anything else on my end!
 
