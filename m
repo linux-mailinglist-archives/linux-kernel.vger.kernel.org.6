@@ -1,85 +1,105 @@
-Return-Path: <linux-kernel+bounces-366985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-366986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E8799FD46
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:39:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC5699FD4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11AE1F25162
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B052824FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 00:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53FB12B64;
-	Wed, 16 Oct 2024 00:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29BB12B64;
+	Wed, 16 Oct 2024 00:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gJZTMpTb"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NjN+wfnH"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A49E574;
-	Wed, 16 Oct 2024 00:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195D31078B;
+	Wed, 16 Oct 2024 00:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729039173; cv=none; b=JKhzQUg1kiKcMporHN33cAgXlqsPeMU1NAZA+aeKqqHzgi3J1swmjCRe+qOsUbj8I/G3eoxErwSQpXIRqQyBVYbz1aRqXwDeFZMlJ/VnwUqC+CcLJyb3l4hAnc5thU6DmBOWV0gUTBWLNaFCNaZ96psBYZsorAWS8FLFgrFApJs=
+	t=1729039218; cv=none; b=NJpUO3B450xCxEhKUQxSXOfvHFYcyNTl2cfDHgKn6SqAlTtY6QRvxlYPElp9wxmqTvqWjDh2oW51In4ES/Q0IhfuUf66dGRioMnS0C68ZB0gJFOBodBMpSMFI/7Bpxj7nFd5cYcfaqEtNUNF3trh5HQEdiRCI14QJIHSXJeY7/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729039173; c=relaxed/simple;
-	bh=NWbY6OXSvcmHKbN3b0tntR9ySnQkm96XP+dKuWme7+w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GOikII9NmocEJCQZ5ZWTN7UsbLEA8tQdHqH31zP/1tXGELpQQNwRgCP3tsSTWD7NejxtObMCIwd++lBday9rz6EzuBODlKKmw/y4M6+pG9fucPAAt4W8QQOEjiH1sY3eW5gw/P+Yv6kSE+IoTTHQRS3/mcLTEECLLm1vFvvL7J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gJZTMpTb; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729039162; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=EhULM1Y7gWC2aKBOupKX6U4ba4logDI2HZcOfsu36wY=;
-	b=gJZTMpTbQyjRdVAQ7DXcDvk4fIQ/BHrgQ8w5Ak7OM2uJrFG5whHeELf6pF2WyWXoApmbiX78K2Vvyr5Da9MHmKGSlkl6PrCINig4X6t83ZoljEnmm1iDKH3YssPohPhoDLQ43D8pKXsnKMcz9QQiUyakbdIrj8Dm/YolQsMqG/E=
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WHF.Nkf_1729039160 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 16 Oct 2024 08:39:21 +0800
-From: Yang Li <yang.lee@linux.alibaba.com>
-To: lanzano.alex@gmail.com,
-	jic23@kernel.org,
-	lars@metafoo.de
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] iio: imu: bmi270: Remove duplicated include in bmi270_i2c.c
-Date: Wed, 16 Oct 2024 08:39:19 +0800
-Message-Id: <20241016003919.113306-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1729039218; c=relaxed/simple;
+	bh=GLVruwFWVTz0wRTmofVnvzSyIYOMa12IIPY2nPPvGd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eDXZQi00h4Nax07uXJqsyPbz4VveljwX9kPxTJkAgF2RTzzmhZjaG3NKYgg+s5hSKAh2ifz5CcQ7BWOHHK1ytk1bEk9eqxDOsbmhvS+J7xXUTcy0YxrMxCC4cIYVMbIS2v9YiXVDal20auV/owcbL9gv9HxaZ1YJ9lwDaqTT/zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NjN+wfnH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729039213;
+	bh=m3SSqPNg5cdqB/jyc2ZUh+Kf6hcOrHPzq39ybdyldqo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NjN+wfnHB/pO56FfiLN9Dvx5Jkk8Qtkbj8btGPmLoYzz5h8+0KzxHocXufbfAjah9
+	 EYYoTEPkyIRksnUEr0nP2AqiQPsVe16pCp4j7v6ZHYzhzyls4xwSvpTMcpX9PEEFug
+	 myneeY7I7pEfeo2MS9g0JTjZyCjI9HwAsKqt6/387W2tUKjND+ohqcYUf67UBlppmY
+	 jkusQpRWsvY+qeMIKN1wqznmic1dOJ0al3vFpR+iroGhBw2YnTHdwL8hYD5iX+rEq0
+	 EjFep4TyXTUYbpC9aBXYIPTnI9JpwgcO2Z5xUlCVsM1xqO2iR3FFPPfoTNer4c32Zj
+	 ewI67x11sZvfw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XSsZ51VTPz4wcy;
+	Wed, 16 Oct 2024 11:40:13 +1100 (AEDT)
+Date: Wed, 16 Oct 2024 11:40:13 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the v4l-dvb tree
+Message-ID: <20241016114013.37522900@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/vwuH3yolwJUuz/z/08lPuld";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The header files linux/module.h is included twice in bmi270_i2c.c,
-so one inclusion of each can be removed.
+--Sig_/vwuH3yolwJUuz/z/08lPuld
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11363
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- drivers/iio/imu/bmi270/bmi270_i2c.c | 1 -
- 1 file changed, 1 deletion(-)
+Hi all,
 
-diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
-index e9025d22d5cc..71cc271cdf30 100644
---- a/drivers/iio/imu/bmi270/bmi270_i2c.c
-+++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
-@@ -3,7 +3,6 @@
- #include <linux/module.h>
- #include <linux/i2c.h>
- #include <linux/iio/iio.h>
--#include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/regmap.h>
- 
--- 
-2.32.0.3.g01195cf9f
+The following commit is also in the mm tree as a different commit (but
+the same patch):
 
+  c5120f3b20a1 ("MAINTAINERS: mailmap: update Alexey Klimov's email address=
+")
+
+This is commit
+
+  d6f369d3d989 ("MAINTAINERS: mailmap: update Alexey Klimov's email address=
+")
+
+in the mm-unstable branch of the mm tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vwuH3yolwJUuz/z/08lPuld
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcPC20ACgkQAVBC80lX
+0GyvOAf+Nn5ihH4EYZs/ShV5VmE6QRO9OmNnQe3YyQnY+J+usuoFsGvJyvgfE6O1
+dYX/ntwtDjVAZqlXNC76dA/qzA8pj0DB2qqPa0tshv4hrwwoVZnvYGtPTvZiwuMz
+lAwX0N21l42eYIeE01u7GNA5jl0P2o7olaWU132GNLOj41m66kvwyAyykgqV4U3z
+7/V0e2FOjbPD4akenMy6AY7hK47zbpRMW0C2PJiGaa8WW4fr6DJ3P+YgoVy4NTGR
+qFAvi63qJEHQMgdPkiEZUSP6YB91Xx1Nsn5OD/H6ZfpLp3U+bMiiZ2ZBiNTJ59R4
+zPC8geKs7koHZOiDlVvFEn6TFJ8E+g==
+=kgbl
+-----END PGP SIGNATURE-----
+
+--Sig_/vwuH3yolwJUuz/z/08lPuld--
 
