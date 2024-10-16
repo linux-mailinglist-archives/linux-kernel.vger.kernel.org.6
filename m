@@ -1,151 +1,87 @@
-Return-Path: <linux-kernel+bounces-368661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D0A9A1317
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:00:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FC89A131E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E12ADB22F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C863281E25
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CF6216A1A;
-	Wed, 16 Oct 2024 20:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bH9msgWp"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B4D18C323;
+	Wed, 16 Oct 2024 20:02:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FAB2141B4
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B57512E4A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108831; cv=none; b=Rynz7ZZV7TTkjnKcgSTdhXavVdsMYM61V7tlbDrE0FDi6ieTaYGnDGXhKUWM4IM/ZPpAUZhgtwU+aVFW3KS09Mf4zuYgYvfr90jDm5pK/8pT2IbQFvNsYiTzF4Qhbmp4OxKoOpku2x2ZwcLHZ/SHRaOvGyVfp5JESWGkr/t1U/M=
+	t=1729108925; cv=none; b=UgH0txH+6ybJ7JHnWqeYHfjitL4//WrZ+amFziAvNruY/nf/vJYwfawrUM5chXsR2GLbEvwJHNeowbBBPdj9Gg+1HI2F/rTPf2LtJORnh0q5/Pai5Ko9AG3PZvYY5fE4HRwzDm61EHwj7Mw+f+IGX+Ln4/8DAyuANmYIzGizMRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108831; c=relaxed/simple;
-	bh=GXWa88oli4PWmA5+fzUJhszGi/k7b0FRJFJ5Zof4XW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CvIdAy5b3jjtRSMiPkbU0e/WxXhP9noeNWly0uUIULp1m/CzkxE8z2cqcR2AkQTh/y0mmB4L7ETmo2CIcLfF7HzdEwE5CQrmkI+0AmWtOiwsBZOsbLX3auDf8yuZi3CsvmW24MDLz1rRNmSWzOz7IQOe5rcv46dV9zxbnmfNK6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bH9msgWp; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8323b555a6aso9026439f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729108829; x=1729713629; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/PVXpXafwswvIYBcxSLxNIvr3U2zHo65AX9f3Pm1fo0=;
-        b=bH9msgWpZgjmM5tcDOFe5xlK6iQ5HoiF8Elbmk3nLjD9EoLb1Sv++CRN/jByRQEgx8
-         18gAemz9xd6Bh/9Nbr/8gH2vRskgxmrwInye065u39Ff3PRtnK5ItCwBRR1AnLlxFqoA
-         EEeGLL8/cZy2otxIcm0E2EU91WADcx/iTtkzg=
+	s=arc-20240116; t=1729108925; c=relaxed/simple;
+	bh=/hM0GH8pP41hNOz3k4QArR0udcAUYYRNBFOhJ8Jjsy8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=K4gvJd39/Yfd33upykFfFs9olTeJpzxT49gGmpBq2VsaHDfGJ8faxwoqLfbmXcBV7Q7qidzdMMECkWISWsdW/5XPUG+e0LUqCZOo++K4Wr8/PoIjElEeR4TBQ/Cd7ZNMHi+BtdsDKzWyjAJ6sKAbnx3QnjIali2p7xg5bOeH238=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3cc9fa12dso2225035ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:02:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729108829; x=1729713629;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729108923; x=1729713723;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/PVXpXafwswvIYBcxSLxNIvr3U2zHo65AX9f3Pm1fo0=;
-        b=FdhddZPN0pCztpT+Bf1zhJgSPBz/a1bNbpyQny1VNQm6xonM9ee1NPt8C1lUvvBvrA
-         QW7y8PjLYcTh4EqIkcdnPbqKbcBLc4BIa54LqRT8eieo2swgHS/In7yAk2qr+9cnXsJM
-         nm1y1CpWKBWFnVZEg9HPOtNQHej8awy78IpKHMJ4zGZIQwAU9Dfz0MQlGBztsvkhVYDl
-         9E+mvQKFqI3puSLQyoTrqjVwvZrHc6ZCe8lWldhGlaLdnVHvnm9ERdUCNV8V5C7v6fBl
-         rYULsXwqM3PcC8jPA/t6VcrdNkSWF0rQ/ZVsSK8oWnLUadO7ZDkkriq5PuljfttqNN0d
-         Xwrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiig3ERQQcpQ2XoOnwp/jzyOePce9/1EEVN3ivEEw+YjsH7CzPyCC/Nv4smCpSG15dqnVQCs5KfcuiDQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz64uy9nPnXSaHsh3sc4mNzfWTRnknkfYoK1Z+eBGPbk+hFW/gn
-	iQubnpCFAgBtFBo743UXx6G8A/MdFJJzfzTF17zHy60AU5yoHkhgUtN4wxkvASI=
-X-Google-Smtp-Source: AGHT+IFhemGMrTXm0sMyQyLUJ9gqBzqux5ju24bsXrdrLEcJKKlddo3PTMuUfwbHsZl+/lq10WstqQ==
-X-Received: by 2002:a05:6602:6403:b0:837:7f69:eac2 with SMTP id ca18e2360f4ac-8379241ac0emr1848647239f.1.1729108829163;
-        Wed, 16 Oct 2024 13:00:29 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbecc44a2asm981213173.154.2024.10.16.13.00.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 13:00:28 -0700 (PDT)
-Message-ID: <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 14:00:27 -0600
+        bh=qA0/1wwvCfN46pLupyOybJmqe7Gy+PVEf+xGhYJvatg=;
+        b=sezeJCKV+DLDIT3FGc4AuF5CArGLEFjJ9aL0zA3uviUU1RPvET0cvkcNTku2xYGOjb
+         f40XfqFYFwWKfFZEFHASOd16PbCcARIcxrH5KqaQklnHoZWtGJcMwvwiKtN9vBL+6U7c
+         jiSAFzIZS2sSOFXO9MdiKA//aaPH172Dt0S880yj0f2HMjgACAatL430ge0KRLNioRNH
+         aama+gxpAbZ8Yh+LJHdF4pJITyTi5QnMN7g7eVxIDvYyvgZQJnkTP0eqvs1BpEBDTyf5
+         58pb/3haBWgIxpmle+iwtMjB5Fk2ACH9A05e1n+DST/vpEL+N35I/mEgwznQKTzOCy84
+         RmJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrfCUXlL0MLOjGzifVI70xKGSYeGKZYT19koLBZ89/llNItKLAogxaxYmwa8ReTK8iu/sIYE9AFFQx0as=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSG/+FMt1/1Vfh4KPl7muN/xVqE8fyZVuUxjTKZh9tCjtxMDpr
+	FXuRCwIDVekgSBgXyeUEBv24AH3hp/ln2W+DH3RX7aeB1NPNYS4SWDGj5Nk6D56lUvBJlx/Zvef
+	0iiJShBJfiEbw6GliY4790RT93ATsv5qTFmvRoFTgKje+E9zW5Yu4m98=
+X-Google-Smtp-Source: AGHT+IHdummiZte34JlUd0vbwbpx6FGCj1sjek4YfaVhsLyzRma0nG5/1Vu7b7KTUro0wJFbZK4Yqf3WUT/k7+XMAvAQjicD141U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Christian Brauner <christian@brauner.io>
-Cc: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2185:b0:3a0:bd91:3842 with SMTP id
+ e9e14a558f8ab-3a3bce0b188mr159670605ab.24.1729108923167; Wed, 16 Oct 2024
+ 13:02:03 -0700 (PDT)
+Date: Wed, 16 Oct 2024 13:02:03 -0700
+In-Reply-To: <53cfa80b-e1f9-4784-b725-e4e7b5c0cb4c@nvidia.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67101bbb.050a0220.d5849.0019.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: cmeiohas@nvidia.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/16/24 04:20, Lorenzo Stoakes wrote:
-> Add tests to assert that PIDFD_SELF_* correctly refers to the current
-> thread and process.
-> 
-> This is only practically meaningful to pidfd_send_signal() and
-> pidfd_getfd(), but also explicitly test that we disallow this feature for
-> setns() where it would make no sense.
-> 
-> We cannot reasonably wait on ourself using waitid(P_PIDFD, ...) so while in
-> theory PIDFD_SELF_* would work here, we'd be left blocked if we tried it.
-> 
-> We defer testing of mm-specific functionality which uses pidfd, namely
-> process_madvise() and process_mrelease() to mm testing (though note the
-> latter can not be sensibly tested as it would require the testing process
-> to be dying).
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->   tools/testing/selftests/pidfd/pidfd.h         |   8 +
->   .../selftests/pidfd/pidfd_getfd_test.c        | 141 ++++++++++++++++++
->   .../selftests/pidfd/pidfd_setns_test.c        |  11 ++
->   tools/testing/selftests/pidfd/pidfd_test.c    |  76 ++++++++--
->   4 files changed, 224 insertions(+), 12 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-> index 88d6830ee004..1640b711889b 100644
-> --- a/tools/testing/selftests/pidfd/pidfd.h
-> +++ b/tools/testing/selftests/pidfd/pidfd.h
-> @@ -50,6 +50,14 @@
->   #define PIDFD_NONBLOCK O_NONBLOCK
->   #endif
->   
-> +/* System header file may not have this available. */
-> +#ifndef PIDFD_SELF_THREAD
-> +#define PIDFD_SELF_THREAD -100
-> +#endif
-> +#ifndef PIDFD_SELF_THREAD_GROUP
-> +#define PIDFD_SELF_THREAD_GROUP -200
-> +#endif
-> +
+Hello,
 
-As mentioned in my response to v1 patch:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-kselftest has dependency on "make headers" and tests include
-headers from linux/ directory
+Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+Tested-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
 
-These local make it difficult to maintain these tests in the
-longer term. Somebody has to go clean these up later.
+Tested on:
 
-The import will be fine and you can control that with -I flag in
-the makefile. Remove these and try to get including linux/pidfd.h
-working.
+commit:         89e9ae55 IB/hfi1: make clear_all_interrupts static
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f6d030580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10527727980000
 
-Please revise this patch to include the header file and remove
-these local defines.
-
-thanks,
--- Shuah
+Note: testing is done by a robot and is best-effort only.
 
