@@ -1,54 +1,45 @@
-Return-Path: <linux-kernel+bounces-367698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B4C9A0587
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1E99A058B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D968B222EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:28:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97EBA1C26736
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99DB206043;
-	Wed, 16 Oct 2024 09:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E79205E0F;
+	Wed, 16 Oct 2024 09:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z2WrxwlF"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="b9yMIeNv"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67859205E07;
-	Wed, 16 Oct 2024 09:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDA51B6D13
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729070922; cv=none; b=HRrQ4+oLfYQl6sphLVJ1EwHrObg6WI3STeD9MKIebpxuTQlHfc9KOW1kgkJ5BzUnIActv86qEa0pN5QyUqy9ysEs8AxY/SF7X8T5BSG4ix5j98DeyzKyPGGWmLP6st7G7q1Rz6HWyeEj5CmTNH1/uGC9KovPpiL1Ea3+Or8hEzo=
+	t=1729070973; cv=none; b=W+gadCXix/eOMbakReOTaLx617ymUxWNCqsyQQos+8kTs95b+xn+JgqlD1wwvz4wQytE2fzTdcXmNrmo8gJOR4ZKT3sj2lGSbcc3+kGoduysmgtJefv6rbp3VKBuooFmkxGkHXTo2X2OCspnPp14BJofZIjleoRYC/D2wXe+XxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729070922; c=relaxed/simple;
-	bh=1J6QfXBg9V1ZgA0yYgTnAj6Ox1PdlYEoRDRtJvp7+yI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uAChpFy9dmQp0uAbZhHxs0uyw5xJw1C4G6lLkDX/JJ00QqOqqK6zqMIU+vrPnFNzqafBHdK50kofiGrk7fFJiuZvceR4LT7NkV9vY4fb8xo5sOd6R7+ygFXJbdJ3euACIfIIE2Rn0bkSRGtcMMuCH+hQA2IkQo2W59cJYiK36zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z2WrxwlF; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729070918;
-	bh=1J6QfXBg9V1ZgA0yYgTnAj6Ox1PdlYEoRDRtJvp7+yI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Z2WrxwlF/UbdQHHE3PaQ7S2n7qo/CiLPzkdsI3xTOvi2AKewdUkExHRZztiXYWHPI
-	 UesLbavjU/KvWScNPW/g3Q0UxtvFsB176XHje9NQbBtCP0HV49M9lVqyvD4BKUKrUt
-	 ThVeZukTzs/QEutWPDryjwwccLK4hwHKHEBObU2WmRaEdbWxvM3gPFBrzhBFy4txBr
-	 UxEIYy1mO0MPWI+kUSQ+lC9WfAAYjVYsIgo0w5YoM7kJEz3Nytk1FZ90NuQMgXWG4E
-	 DB87X6qHxD8Qc6Cu++5/3kumSN6xVdRMJJvqiuXdfR9jCKRhCev+eHYXmCiZIPneWd
-	 RobPZ1sJd8dqQ==
-Received: from [192.168.1.90] (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F33B617E121F;
-	Wed, 16 Oct 2024 11:28:37 +0200 (CEST)
-Message-ID: <9ca2a9dc-b643-40ce-8177-68533d0733d1@collabora.com>
-Date: Wed, 16 Oct 2024 12:28:37 +0300
+	s=arc-20240116; t=1729070973; c=relaxed/simple;
+	bh=oNPDzVSl+xBfjTRQ3rIqVpLAXnRB+TMqhgrj7f7/HI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XgKxx9qb7/B5MJWG5/H9bVjLAxPnW4AJZAf2j1yozKdvuNd5stfgDVtiQAQkJaDgRB/ZvBxSbWrDbBsL8XwF6zVE0P3hukwVem0LnJ/vtPWMgR4RzdfjMFUjY6N0zYhsxFduodov2FCJTeTArTbf+PyC+ze8Rh9eYovdlQomByU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=b9yMIeNv; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729070962; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=xxFxERcJvuRvYGMsAAdT7h/9R3PvKzVYz/k10k5qIRM=;
+	b=b9yMIeNvgTgLlDM2zQLcYU2G84+Oc6/MoXrso1U3WMFtCFbIqJO3TQJML22uae+lyY4nZHh3e+BeBsnMcgWjv5DZz6KzWB2c3fIRZZkd9uAtyrjPYc206oQrbeRJ6GKXDi6NJPHz1gQ/P0uapPcec3fbih6rvrpxvldTd0owaLw=
+Received: from 30.74.144.157(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHGvQyY_1729070960 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 16 Oct 2024 17:29:20 +0800
+Message-ID: <584662fb-cb1f-4b2c-9075-f70d31473c9d@linux.alibaba.com>
+Date: Wed, 16 Oct 2024 17:29:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,69 +47,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Provide devm_clk_bulk_get_all_enabled() helper
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+To: Kefeng Wang <wangkefeng.wang@huawei.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, david@redhat.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <007880ac-d73f-4eef-9978-a4f844338522@huawei.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <007880ac-d73f-4eef-9978-a4f844338522@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/26/24 1:43 PM, Cristian Ciocaltea wrote:
-> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-> return the number of clocks stored in the clk_bulk_data table referenced
-> by the clks argument.
-> 
-> That is required in case there is a need to iterate these clocks later,
-> therefore I couldn't see any use case of this parameter and should have
-> been simply removed from the function declaration.
-> 
-> The first patch in the series provides devm_clk_bulk_get_all_enabled()
-> variant, which is consistent with devm_clk_bulk_get_all() in terms of
-> the returned value:
-> 
->  > 0 if one or more clocks have been stored
->  = 0 if there are no clocks
->  < 0 if an error occurred
-> 
-> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
-> the past form of 'enable'.
-> 
-> The next two patches switch existing users of devm_clk_get_enable() to
-> the new helper - there were only two, as of next-20240913.
-> 
-> The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
-> helper.
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
-> Changes in v2:
-> - Dropped references to 'broken' API in commit descriptions, per Mani's
->   suggestion
-> - Added R-b tags from Angelo and Mani
-> - Link to v1:
->   https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com
 
-[...]
 
-This still applies cleanly on next-20241016 and there are no new users
-of devm_clk_bulk_get_all_enable(), hence I wonder if anything else is
-missing to get it merged.
+On 2024/10/16 15:49, Kefeng Wang wrote:
+> 
+> 
+> On 2024/10/10 17:58, Baolin Wang wrote:
+>> Hi,
+>>
+>> This RFC patch series attempts to support large folios for tmpfs.
+>>
+>> Considering that tmpfs already has the 'huge=' option to control the THP
+>> allocation, it is necessary to maintain compatibility with the 'huge='
+>> option, as well as considering the 'deny' and 'force' option controlled
+>> by '/sys/kernel/mm/transparent_hugepage/shmem_enabled'.
+>>
+>> Add a new huge option 'write_size' to support large folio allocation 
+>> based
+>> on the write size for tmpfs write and fallocate paths. So the huge pages
+>> allocation strategy for tmpfs is that, if the 'huge=' option
+>> (huge=always/within_size/advise) is enabled or the 'shmem_enabled' option
+>> is 'force', it need just allow PMD sized THP to keep backward 
+>> compatibility
+>> for tmpfs. While 'huge=' option is disabled (huge=never) or the 
+>> 'shmem_enabled'
+>> option is 'deny', it will still disable any large folio allocations. Only
+>> when the 'huge=' option is 'write_size', it will allow allocating large
+>> folios based on the write size.
+>>
+>> And I think the 'huge=write_size' option should be the default behavior
+>> for tmpfs in future.
+> 
+> Could we avoid new huge= option for tmpfs, maybe support other orders
+> for both read/write/fallocate if mount with huge?
 
-Thanks,
-Cristian
+Um, I am afraid not, as that would break the 'huge=' compatibility. That 
+is to say, users still want PMD-sized huge pages if 'huge=always'.
 
