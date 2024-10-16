@@ -1,121 +1,144 @@
-Return-Path: <linux-kernel+bounces-367819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3D29A0739
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:26:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E11E9A073B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508A028C346
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1534528D1FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0497420697D;
-	Wed, 16 Oct 2024 10:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C6B2071F6;
+	Wed, 16 Oct 2024 10:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xiuc74sn"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ezzjGnOI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A7C20695C;
-	Wed, 16 Oct 2024 10:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44021206E6A;
+	Wed, 16 Oct 2024 10:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074206; cv=none; b=WcP/oA+p2d7/dS6xpxx1QELPfgUTGZVAaBybEUPZfSc3anCDGSv1NOpYSN+pCXjrp3eS1DEwXIvFvz8QgUbdrd8wWsb21ruRK8ZEps1HkR6QrVRysbhNDzsrIzKTAa1BKZ2KdYFri4QbnQzBU3Z1g/PfI0aNjIVZyzK0+K3SS0k=
+	t=1729074229; cv=none; b=IX4AIboJ8hgRmn+CjeJ/z3dlJaijCMJ8YKRW50E6dc/ipTvs40W1UpvBFQrPi2OWTepkdFx+MDFYn//GttMwFdWM2zrhPwjNIpqNsA6qgI1jxGTKqPqo0Vl3jFq31wId/IQxzM1pIx9CBjmFL6DSvR/FThzRivG/vxY6axZ6rGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074206; c=relaxed/simple;
-	bh=q/4Xnfo2QoXLnMrsQKtONWcJi0JMSdcZjjDyjdhf5aQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kIFWgZirZLs7hGNsXB4Ltvh55Z8K/96wnXG8Y6qSFhrwGS+0HWoNM9k6Kbh0bU/jX5CNN5YDLhx1VbdgxvQgdU/skMwXpVb/xVbi/lBAQYkf/lKmR47BJ/6dT4zs0FJs+MBF9IEqQGpSX4SQFdL1+9LB39ftsUyIAsfzrk6Qf64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xiuc74sn; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e1543ab8so7973097e87.2;
-        Wed, 16 Oct 2024 03:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729074203; x=1729679003; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q/4Xnfo2QoXLnMrsQKtONWcJi0JMSdcZjjDyjdhf5aQ=;
-        b=Xiuc74snO0c3vlAdKJIF5lswKqCH/Z8NrsqFGOwA+/iPxQTM63te+fuOE/pHJ/Z5lO
-         mbpPAt4D3zellMOGOsEEB7xfdZT+XIq6DZgYZKJON1MXrtaTDNwMRXWlWXABS0MeMKO2
-         gQxKd2Hcv294mTUff3JQK2F0kesD0UvzQyth7lyCohrz3qHcFBwseYfabbWZ7jDJ59r6
-         7Ocn435wNP5HpfKyS0x8zAvpgqYFqOPtbu2HGHha6fZ1Wfh4WNJEwQJt7Ifu4wQ7Je92
-         JKcNrqkYwB3s6QkWfYbIur92zqjKVJMCqyaFp1kxmQu7OGK7mm3g+RjFAB41fp1M5yjT
-         gC8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729074203; x=1729679003;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q/4Xnfo2QoXLnMrsQKtONWcJi0JMSdcZjjDyjdhf5aQ=;
-        b=w0vW3K0A11OVCITp73paCicsbiFRShmWDvDEcdJrQHJY/fA7/2HJkm3rw3iY72FSW3
-         sFX/4TASg0cMZHihEbQTOSkBMsn39/k3v1peUJYQPruf0Ak3WLrnrRipGbwsgQpyxTq9
-         KGo84THduHBiHSGzCp4lx1cCs69TgrzFztqisCvGtyEbyeIc2Lv3zs0n/q7bup8vkcHO
-         NHpm0fkblQCP4dcWd2WfiEPsRq6N+ao78cHcDv4O0bfgkBO/GaHJ49XPbLBAm+A4HC49
-         R3FNwspjphsg4zoGEo/4CJlrx3P65FNtF5chAJy4+C2jAi6TVg1/xNjTRRzznMqEiKpL
-         rg9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUTehgTrfTAQmd3gB8cMpZDkljIyzBOG4R1f3d+rrToEn6PGz/i8trTQD6ns2X0LurmsXLIV0Jh@vger.kernel.org, AJvYcCXFSpJUd+3upIiU6rlnknJAHPyv2KyWfnV8QLFYeZzy9jxTv0wLIpSiMebW0puj8ZH0DKQ/WK7RMzsmaYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIJT2QqDXFER9Abh3taWW50Jms7ph7cSm1Hvb4D35aEXYtS3KV
-	YznkhFvi0Wi2pcNvQsLkSS9Aq2iyGXC+yUoJ85tGnC6hiuxQ5adzi/IRZlptPGSlEKGnTdm98Xn
-	Ge3wqgiN8gWqzO3Zk6RjhD8WdHU4=
-X-Google-Smtp-Source: AGHT+IHecL3xyZYXLTNm5iA6rs/KvXKjLMOFmfwx3AdAWDJHF6WIEmSzNsGABI2L/R0hEVHbIIgQ2Q6LGf7wWO/MM7E=
-X-Received: by 2002:a05:6512:10d1:b0:536:a695:9414 with SMTP id
- 2adb3069b0e04-539e54d7907mr9596702e87.6.1729074202511; Wed, 16 Oct 2024
- 03:23:22 -0700 (PDT)
+	s=arc-20240116; t=1729074229; c=relaxed/simple;
+	bh=duvDr9mn6ONznmwCzM0juLtAPd4mMVAfQxkSAW/w++c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YDmSxQ8k3bMglbPKJBLADZCDgVjVwGABw60pFxFuyQPQbm7cfGsG69yVRrGF6/D11MK43mOwCEgf3DSbCcPnIKqIH3covtoVxRXOG2UXmok5IpwQz8BRcWYVUfwmmpeiu0JYy+sowvlBH/zZYnHlI0XpYguI95X59LOp2z6E1QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ezzjGnOI; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729074228; x=1760610228;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=duvDr9mn6ONznmwCzM0juLtAPd4mMVAfQxkSAW/w++c=;
+  b=ezzjGnOIHZicWzXwSu1qdFF9Q4DxoGQAYulHyNmWs6+D8R2BzUnbLE03
+   aJJ1rTiFbeP4XoBWR3qJnn+KN+rBCq/9tFeeGj+TRtpiBsczhzl/eJ1p8
+   FkK5mvjBzhSkojx0C2V6HgqH7cuMd9wTpQ6wfUO+Pqz+6CmLPhDN7GswU
+   S5BKFZWifRaqugb4S46e9ziJN2a7ik+ZAbcWixFGaETTZd3Ezg/itTivv
+   BLM+Dpuct7Ef82W0jC9taXvzoNAfU4LOATEuYRkKZ5EK7u/MqYU2vCi0p
+   c9E7vVjYJR56eGOfilKp8DJBu8+ODds3Cp7Vobq2mCo4vMkxV1QKvR+V3
+   Q==;
+X-CSE-ConnectionGUID: /PpkekT6QD2X4diniJM3uQ==
+X-CSE-MsgGUID: zmcnADvMSuKURG6sBtcQhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="27985856"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="27985856"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:23:47 -0700
+X-CSE-ConnectionGUID: ayjCf5bTQAuFg+OaTaUUZQ==
+X-CSE-MsgGUID: 8BsxSgJPRPSWXotGpoJbtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="82960807"
+Received: from cvapit-mobl1.ger.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.236])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:23:45 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: broonie@kernel.org,
+	tiwai@suse.de,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH 00/11] ASoC/soundwire: add initial support for SDCA
+Date: Wed, 16 Oct 2024 18:23:22 +0800
+Message-ID: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016072553.8891-2-pstanner@redhat.com> <Zw-CqayFcWzOwci_@smile.fi.intel.com>
- <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
-In-Reply-To: <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 16 Oct 2024 13:22:44 +0300
-Message-ID: <CAHp75VcO5g1UerroLaiUa4n7Aj8TPQ594tPGdG-T-xkh4uqyCA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] vdpa: solidrun: Fix UB bug with devres
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Alvaro Karsz <alvaro.karsz@solid-run.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 12:22=E2=80=AFPM Philipp Stanner <pstanner@redhat.c=
-om> wrote:
-> On Wed, 2024-10-16 at 12:08 +0300, Andy Shevchenko wrote:
-> > On Wed, Oct 16, 2024 at 09:25:54AM +0200, Philipp Stanner wrote:
+We need to get rt712 version by reading SDCA version and functions.
+This patch series adds initial support for SDCA and add a helper to tell
+if the codec is RT712_VB.
 
-...
+This series may go via the ASoC tree with Vinod's Acked-by tag.
 
-> > > ---
-> >
-> > I haven't found the reason for resending. Can you elaborate here?
->
-> Impatience ;p
->
-> This is not a v2.
+Bard Liao (1):
+  soundwire: sdw_intel: include linux/acpi.h
 
-It doesn't matter, the reviewers and maintainers should get a clue
-which version is to be used (even if it's a simple resend) and why it
-has been sent.
+Pierre-Louis Bossart (10):
+  ASoC/soundwire: remove sdw_slave_extended_id
+  ASoC: SDCA: add initial module
+  soundwire: slave: lookup SDCA version and functions
+  ASoC: SDCA: add quirk function for RT712_VB match
+  ASoC: rt712-sdca: detect the SMART_MIC function during the probe stage
+  ASoC: soc-acpi: introduce new 'machine check' callback
+  ASoC: sdw_utils: add SmartMic DAI for RT712 VB
+  ASoC: sdw_utils: add SmartMic DAI for RT713 VB
+  ASoC: Intel: soc-acpi: add is_device_rt712_vb() helper
+  ASoC: SOF: Intel: hda: use machine_check() for SoundWire
 
-> I mean, it's a bug, easy to fix and merge [and it's blocking my other
-> PCI work, *cough*]. Should contributors wait longer than 8 days until
-> resending in your opinion?
+ drivers/soundwire/Kconfig                     |   1 +
+ drivers/soundwire/amd_init.c                  |  12 +-
+ drivers/soundwire/intel_init.c                |  13 +-
+ drivers/soundwire/slave.c                     |  14 ++
+ include/linux/soundwire/sdw.h                 |   9 +-
+ include/linux/soundwire/sdw_amd.h             |   7 +-
+ include/linux/soundwire/sdw_intel.h           |   8 +-
+ include/sound/sdca.h                          |  62 +++++++
+ include/sound/sdca_function.h                 |  55 ++++++
+ include/sound/soc-acpi.h                      |   8 +-
+ sound/soc/Kconfig                             |   1 +
+ sound/soc/Makefile                            |   1 +
+ sound/soc/amd/ps/pci-ps.c                     |   3 +-
+ sound/soc/codecs/rt712-sdca-sdw.c             |   1 +
+ sound/soc/codecs/rt712-sdca.c                 |  38 +++-
+ sound/soc/codecs/rt712-sdca.h                 |   1 +
+ sound/soc/intel/Kconfig                       |   5 +
+ sound/soc/intel/common/Makefile               |   3 +
+ .../intel/common/soc-acpi-intel-mtl-match.c   |  51 ++++++
+ .../intel/common/soc-acpi-intel-sdca-quirks.c |  42 +++++
+ .../intel/common/soc-acpi-intel-sdca-quirks.h |  14 ++
+ sound/soc/sdca/Kconfig                        |  11 ++
+ sound/soc/sdca/Makefile                       |   5 +
+ sound/soc/sdca/sdca_device.c                  |  67 +++++++
+ sound/soc/sdca/sdca_functions.c               | 173 ++++++++++++++++++
+ sound/soc/sdw_utils/soc_sdw_utils.c           |  18 +-
+ sound/soc/soc-acpi.c                          |  30 +--
+ sound/soc/sof/amd/acp-common.c                |   3 +-
+ sound/soc/sof/intel/hda.c                     |  19 +-
+ 29 files changed, 610 insertions(+), 65 deletions(-)
+ create mode 100644 include/sound/sdca.h
+ create mode 100644 include/sound/sdca_function.h
+ create mode 100644 sound/soc/intel/common/soc-acpi-intel-sdca-quirks.c
+ create mode 100644 sound/soc/intel/common/soc-acpi-intel-sdca-quirks.h
+ create mode 100644 sound/soc/sdca/Kconfig
+ create mode 100644 sound/soc/sdca/Makefile
+ create mode 100644 sound/soc/sdca/sdca_device.c
+ create mode 100644 sound/soc/sdca/sdca_functions.c
 
-Usually we may ping for that. And yeah, depending on the maintainers
-it takes a while to get it to the point. In some (quite rare I
-believe) cases we may escalate up to Linus about this. I probably has
-only one case like that in my full period of working on the Linux
-kernel project (several years).
+-- 
+2.43.0
 
---=20
-With Best Regards,
-Andy Shevchenko
 
