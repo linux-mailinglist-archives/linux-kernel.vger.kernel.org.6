@@ -1,147 +1,331 @@
-Return-Path: <linux-kernel+bounces-368063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF17E9A0ACE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EA29A0AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B021C21E69
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B640281985
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F221209679;
-	Wed, 16 Oct 2024 12:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7892E20969A;
+	Wed, 16 Oct 2024 12:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="L5WmpncI"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S8M0rxEV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA9C209F5A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEB82076B9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729083257; cv=none; b=chx2EJGerpBvPA/ZjihGKXCPgtVozWd7/J5nbI1XmbXcgeMA35dzkj84o5weqpc/ARspw0LaoQkgfNmEdnvXejzK5UwxKJLYS7sZDZFVvSfP7rgZ7y6zmPTgCWYu8FDoziZx91Q2739YZQlaGrp8+XKJw5o/8zHfByAcbFKaBP0=
+	t=1729083279; cv=none; b=VF91bt2Rz9RwkNX9qpoijw4P0KAOROJUddiqCXN+84DoiztmX655P+7980WQ5iQDfescHKbSuBJPw8rSw+3YBpXlqzXiQbkbFotj2gXZdzToHBtInngd/2MziGi+HWAQ36WmWj0UT/hFnXBvycXqSigaOMCs8nlYq8vXXs2sceo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729083257; c=relaxed/simple;
-	bh=fcRTIfNZx/JTFIjknzqhd10DJMrU/ZuxcvSaaXGx9ps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k0lWAXD6hPhZgGPdTo1G6aqRxMvfmyoYdaOqJ7Iu9GRWTrinBozOnVZwX90ZzxY+sf5K1+UbJnqebB7m9h3uA9x7UGmK4YGKQapwM8ZWZqqzQmfbVNtjVO6id0LLhUHMmHrdxDa5qnjwT9immLr00PkZoe5j/k97uHhotviW0TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=L5WmpncI; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso1578811a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:54:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729083253; x=1729688053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=56Jzig5ogJflOPUw3lWuUlJeigmnzp1xLLN+rEXcG9g=;
-        b=L5WmpncIV6FgzP/3q9JI+iPsLUcZxtVXNAmT2S/49wlULmT/Uso5lIFzBdw9I0UoWi
-         HwI5MRVZ9XtmKgKyW4nk2vw/O7GanIK9nNS1zHcDZBGV/3YR5cFY62na+rdRUo17/scv
-         Wj6z+qpa0VM65qj1ISw7dCRnXDm3hhs0GLSzJBFzRfMavCgUnbQO2fydyiwKWJplI2l2
-         OZ7p0gBg5l+yfLaVVrb9x/jRI75EtS9OhhYpF1gUt+WGTHZPowYoe3xpCc9Qv6DmyUCm
-         mKBm+JwO1zzX+uyylTs6JiICYXPFxx46eAC3WMw54OIcVpyCiywR4yz0kw8aZd6F1XQk
-         AI4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729083253; x=1729688053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=56Jzig5ogJflOPUw3lWuUlJeigmnzp1xLLN+rEXcG9g=;
-        b=BnFszjWfSVIaPBEm6w3hpwCIe0i+04lIKfyb+cW9U+oY/R10Ii9Oh2fyb8f9llNPg1
-         lDmAaI99sVqt/W2jQdEoi5Lo9iVdZuF6vjvN3gJGmyUlIQ0LrbjajgNLgv9xyZqCB6vL
-         tHTlqMIYM/hVz/175WgP2oljm7IwFbr7oPJPZ1hT2YvROk1e5e7UVzJvc35rARy/KrtQ
-         pdLpiC8URBgolcRYg/H9VKPG68O6UAJeCoS17M1JeYNRvQh3PrPo4/2z/CNXUVEOZQwc
-         07QRsiV1yN2NlkI9kEP30o3iw9jgbbql/5s42oQuBPbdSZKI5UxQA1bxAIsErUmVKDnW
-         IkJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7F34LAqN/BB5VruJ9m0T73IH3+ePkuZsHpBSXiQwG268qafk8s0yJBaTc0yrBDimKiMQ9JP8TvLRwx+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXdwDOC9kMpVATZY7QnyfCf2C5M6yx6KvRrlnw3G/9+pZTmPlP
-	eFhZqwE+jMoJrNndmbO3s7jaQLeTlV6EtT7cI/OXYmtzt0GMmzBif2B6fGCus8La17X1Fwt57c2
-	wRrjV2CIxWRyAZvLCp99FLABaIXoCUBrr3bmxmQ==
-X-Google-Smtp-Source: AGHT+IFVkh3RJDsr7T3iGN0FxyNqlY+ZdO0pgZdL+clmv27JbwkFocdoahprSMAP9YpeEkHe+AcZIQXG98m5aSCIXJo=
-X-Received: by 2002:a05:6402:50c9:b0:5c5:cda5:9328 with SMTP id
- 4fb4d7f45d1cf-5c9947e3fc7mr5014646a12.4.1729083252971; Wed, 16 Oct 2024
- 05:54:12 -0700 (PDT)
+	s=arc-20240116; t=1729083279; c=relaxed/simple;
+	bh=d4TdEGYImTOATqmYhNnQhAKcNmmDYN77hXAU52eRa+A=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=aAkjP7w+s2K62f2FBAGu8tjjIo8lAFSiUGK0YqT0haLqbuZ2mkEHjgaGB7ax7saULqSIqTz7dn54VPJhc0iONkJcd6k23j1rSKSK56EfbKV9cUFfSbH+x4PgLKhyngBqh4t+d8OrLXjHdJHMKrMYsuucopObzK9u32ybmEkGwjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S8M0rxEV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729083277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/vwXWikLxT3NlCFu9+QSdoWKDe0l5OvOeeoMjL9Oe+g=;
+	b=S8M0rxEVg1qKHqA+wdqCmzVVTuW7ibQH41DqjdbnxDIMm6cM8VAaDXLmDIliv8yWQm0lpY
+	t6ScNzQ+7qAtZKyYnW62aXd7CNjUagwm+lShF4ddxSMONpAtCrgsy2w0GiurSK99bXsr1O
+	NSQfnzmMrQueWeCuBzBI6JyndtQSbNk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-540-GvSg7p37M4qgDT5YjbWO-A-1; Wed,
+ 16 Oct 2024 08:54:35 -0400
+X-MC-Unique: GvSg7p37M4qgDT5YjbWO-A-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A0901955F40;
+	Wed, 16 Oct 2024 12:54:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E211719560A7;
+	Wed, 16 Oct 2024 12:54:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix lock recursion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016075319.4092-1-everestkc@everestkc.com.np> <2024101654-jasmine-ransack-7190@gregkh>
-In-Reply-To: <2024101654-jasmine-ransack-7190@gregkh>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Wed, 16 Oct 2024 06:54:00 -0600
-Message-ID: <CAEO-vhGuJUdbBhchbga33TNWvZXTXHWbd4=M8xeWkHAi1rnw2g@mail.gmail.com>
-Subject: Re: [PATCH V2] staging: gpib: Remove a dead condition in if statement
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: dpenkler@gmail.com, skhan@linuxfoundation.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1114102.1729083271.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Wed, 16 Oct 2024 13:54:31 +0100
+Message-ID: <1114103.1729083271@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Oct 16, 2024 at 2:04=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Wed, Oct 16, 2024 at 01:53:18AM -0600, Everest K.C. wrote:
-> > The variable `residue` is an unsigned int, also the function
-> > `fluke_get_dma_residue` returns an unsigned int. The value of
-> > an unsigned int can only be 0 at minimum.
-> > The less-than-zero comparison can never be true.
-> > Fix it by removing the dead condition in the if statement.
-> >
-> > This issue was reported by Coverity Scan.
-> > Report:
-> > CID 1600782: (#1 of 1): Macro compares unsigned to 0 (NO_EFFECT)
-> > unsigned_compare: This less-than-zero comparison of an unsigned value
-> > is never true. residue < 0U.
-> >
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > ---
-> > V1 -> V2: - Fixed typo of comparison in changelog
-> >           - Removed Fixes tag
-> >
-> >  drivers/staging/gpib/eastwood/fluke_gpib.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/stagi=
-ng/gpib/eastwood/fluke_gpib.c
-> > index f9f149db222d..51b4f9891a34 100644
-> > --- a/drivers/staging/gpib/eastwood/fluke_gpib.c
-> > +++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
-> > @@ -644,7 +644,7 @@ static int fluke_dma_read(gpib_board_t *board, uint=
-8_t *buffer,
-> >        */
-> >       usleep_range(10, 15);
-> >       residue =3D fluke_get_dma_residue(e_priv->dma_channel, dma_cookie=
-);
-> > -     if (WARN_ON_ONCE(residue > length || residue < 0))
-> > +     if (WARN_ON_ONCE(residue > length))
->
-> No, this is incorrect, now we never notice is the call to
-> fluke_get_dma_residue() has failed.  Please fix that bug instead (hint,
-> Covertity is giving you a pointer to where something might be wrong, but
-> this change is NOT how to fix it.)
-I need a little guidance here.
-My best guess to fix the bug would be to make fluke_get_dma_residue()
-return an int instead of unsigned int or size_t. But theoretically the
-maximum value of residue can be UINT_MAX, and casting it to int will
-result in a negative number, which in turn will cause  the error check
-condition to evaluate to true.
-The best solution I see would be to make fluke_get_dma_residue() return
-an int (-1 for error and 0 for success). Then pass the address of residue
-reference to fluke_get_dma_residue() to be updated.
-Am I on the right track ?
+afs_wake_up_async_call() can incur lock recursion.  The problem is that it
+is called from AF_RXRPC whilst holding the ->notify_lock, but it tries to
+take a ref on the afs_call struct in order to pass it to a work queue - bu=
+t
+if the afs_call is already queued, we then have an extraneous ref that mus=
+t
+be put... calling afs_put_call() may call back down into AF_RXRPC through
+rxrpc_kernel_shutdown_call(), however, which might try taking the
+->notify_lock again.
 
-Also,I searched for the functions with names that match get_dma_residue
-in the kernel source code and found that they return unsigned int. I also
-noticed that no error checks have been made to check if get_dma_residue
-was successful.
-> thanks,
->
-> greg k-h
-Thanks,
-Everest K.C.
+This case isn't very common, however, so defer it to a workqueue.  The oop=
+s
+looks something like:
+
+  BUG: spinlock recursion on CPU#0, krxrpcio/7001/1646
+   lock: 0xffff888141399b30, .magic: dead4ead, .owner: krxrpcio/7001/1646,=
+ .owner_cpu: 0
+  CPU: 0 UID: 0 PID: 1646 Comm: krxrpcio/7001 Not tainted 6.12.0-rc2-build=
+3+ #4351
+  Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x47/0x70
+   do_raw_spin_lock+0x3c/0x90
+   rxrpc_kernel_shutdown_call+0x83/0xb0
+   afs_put_call+0xd7/0x180
+   rxrpc_notify_socket+0xa0/0x190
+   rxrpc_input_split_jumbo+0x198/0x1d0
+   rxrpc_input_data+0x14b/0x1e0
+   ? rxrpc_input_call_packet+0xc2/0x1f0
+   rxrpc_input_call_event+0xad/0x6b0
+   rxrpc_input_packet_on_conn+0x1e1/0x210
+   rxrpc_input_packet+0x3f2/0x4d0
+   rxrpc_io_thread+0x243/0x410
+   ? __pfx_rxrpc_io_thread+0x10/0x10
+   kthread+0xcf/0xe0
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork+0x24/0x40
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork_asm+0x1a/0x30
+   </TASK>
+    =
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/afs/internal.h |    2 +
+ fs/afs/rxrpc.c    |   89 +++++++++++++++++++++++++++++++++++++-----------=
+------
+ 2 files changed, 64 insertions(+), 27 deletions(-)
+
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 6e1d3c4daf72..52aab09a32a9 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -130,6 +130,7 @@ struct afs_call {
+ 	wait_queue_head_t	waitq;		/* processes awaiting completion */
+ 	struct work_struct	async_work;	/* async I/O processor */
+ 	struct work_struct	work;		/* actual work processor */
++	struct work_struct	free_work;	/* Deferred free processor */
+ 	struct rxrpc_call	*rxcall;	/* RxRPC call handle */
+ 	struct rxrpc_peer	*peer;		/* Remote endpoint */
+ 	struct key		*key;		/* security for this call */
+@@ -1331,6 +1332,7 @@ extern int __net_init afs_open_socket(struct afs_net=
+ *);
+ extern void __net_exit afs_close_socket(struct afs_net *);
+ extern void afs_charge_preallocation(struct work_struct *);
+ extern void afs_put_call(struct afs_call *);
++void afs_deferred_put_call(struct afs_call *call);
+ void afs_make_call(struct afs_call *call, gfp_t gfp);
+ void afs_wait_for_call_to_complete(struct afs_call *call);
+ extern struct afs_call *afs_alloc_flat_call(struct afs_net *,
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index c453428f3c8b..5e9df414faf7 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -18,6 +18,7 @@
+ =
+
+ struct workqueue_struct *afs_async_calls;
+ =
+
++static void afs_deferred_free_worker(struct work_struct *work);
+ static void afs_wake_up_call_waiter(struct sock *, struct rxrpc_call *, u=
+nsigned long);
+ static void afs_wake_up_async_call(struct sock *, struct rxrpc_call *, un=
+signed long);
+ static void afs_process_async_call(struct work_struct *);
+@@ -148,7 +149,9 @@ static struct afs_call *afs_alloc_call(struct afs_net =
+*net,
+ 	call->net =3D net;
+ 	call->debug_id =3D atomic_inc_return(&rxrpc_debug_id);
+ 	refcount_set(&call->ref, 1);
+-	INIT_WORK(&call->async_work, afs_process_async_call);
++	INIT_WORK(&call->async_work, type->async_rx ?: afs_process_async_call);
++	INIT_WORK(&call->work, call->type->work);
++	INIT_WORK(&call->free_work, afs_deferred_free_worker);
+ 	init_waitqueue_head(&call->waitq);
+ 	spin_lock_init(&call->state_lock);
+ 	call->iter =3D &call->def_iter;
+@@ -159,6 +162,36 @@ static struct afs_call *afs_alloc_call(struct afs_net=
+ *net,
+ 	return call;
+ }
+ =
+
++static void afs_free_call(struct afs_call *call)
++{
++	struct afs_net *net =3D call->net;
++	int o;
++
++	ASSERT(!work_pending(&call->async_work));
++
++	rxrpc_kernel_put_peer(call->peer);
++
++	if (call->rxcall) {
++		rxrpc_kernel_shutdown_call(net->socket, call->rxcall);
++		rxrpc_kernel_put_call(net->socket, call->rxcall);
++		call->rxcall =3D NULL;
++	}
++	if (call->type->destructor)
++		call->type->destructor(call);
++
++	afs_unuse_server_notime(call->net, call->server, afs_server_trace_put_ca=
+ll);
++	kfree(call->request);
++
++	o =3D atomic_read(&net->nr_outstanding_calls);
++	trace_afs_call(call->debug_id, afs_call_trace_free, 0, o,
++		       __builtin_return_address(0));
++	kfree(call);
++
++	o =3D atomic_dec_return(&net->nr_outstanding_calls);
++	if (o =3D=3D 0)
++		wake_up_var(&net->nr_outstanding_calls);
++}
++
+ /*
+  * Dispose of a reference on a call.
+  */
+@@ -173,32 +206,34 @@ void afs_put_call(struct afs_call *call)
+ 	o =3D atomic_read(&net->nr_outstanding_calls);
+ 	trace_afs_call(debug_id, afs_call_trace_put, r - 1, o,
+ 		       __builtin_return_address(0));
++	if (zero)
++		afs_free_call(call);
++}
+ =
+
+-	if (zero) {
+-		ASSERT(!work_pending(&call->async_work));
+-		ASSERT(call->type->name !=3D NULL);
+-
+-		rxrpc_kernel_put_peer(call->peer);
+-
+-		if (call->rxcall) {
+-			rxrpc_kernel_shutdown_call(net->socket, call->rxcall);
+-			rxrpc_kernel_put_call(net->socket, call->rxcall);
+-			call->rxcall =3D NULL;
+-		}
+-		if (call->type->destructor)
+-			call->type->destructor(call);
++static void afs_deferred_free_worker(struct work_struct *work)
++{
++	struct afs_call *call =3D container_of(work, struct afs_call, free_work)=
+;
+ =
+
+-		afs_unuse_server_notime(call->net, call->server, afs_server_trace_put_c=
+all);
+-		kfree(call->request);
++	afs_free_call(call);
++}
+ =
+
+-		trace_afs_call(call->debug_id, afs_call_trace_free, 0, o,
+-			       __builtin_return_address(0));
+-		kfree(call);
++/*
++ * Dispose of a reference on a call, deferring the cleanup to a workqueue
++ * to avoid lock recursion.
++ */
++void afs_deferred_put_call(struct afs_call *call)
++{
++	struct afs_net *net =3D call->net;
++	unsigned int debug_id =3D call->debug_id;
++	bool zero;
++	int r, o;
+ =
+
+-		o =3D atomic_dec_return(&net->nr_outstanding_calls);
+-		if (o =3D=3D 0)
+-			wake_up_var(&net->nr_outstanding_calls);
+-	}
++	zero =3D __refcount_dec_and_test(&call->ref, &r);
++	o =3D atomic_read(&net->nr_outstanding_calls);
++	trace_afs_call(debug_id, afs_call_trace_put, r - 1, o,
++		       __builtin_return_address(0));
++	if (zero)
++		schedule_work(&call->free_work);
+ }
+ =
+
+ static struct afs_call *afs_get_call(struct afs_call *call,
+@@ -220,8 +255,6 @@ static struct afs_call *afs_get_call(struct afs_call *=
+call,
+ static void afs_queue_call_work(struct afs_call *call)
+ {
+ 	if (call->type->work) {
+-		INIT_WORK(&call->work, call->type->work);
+-
+ 		afs_get_call(call, afs_call_trace_work);
+ 		if (!queue_work(afs_wq, &call->work))
+ 			afs_put_call(call);
+@@ -640,7 +673,8 @@ static void afs_wake_up_call_waiter(struct sock *sk, s=
+truct rxrpc_call *rxcall,
+ }
+ =
+
+ /*
+- * wake up an asynchronous call
++ * Wake up an asynchronous call.  The caller is holding the call notify
++ * spinlock around this, so we can't call afs_put_call().
+  */
+ static void afs_wake_up_async_call(struct sock *sk, struct rxrpc_call *rx=
+call,
+ 				   unsigned long call_user_ID)
+@@ -657,7 +691,7 @@ static void afs_wake_up_async_call(struct sock *sk, st=
+ruct rxrpc_call *rxcall,
+ 			       __builtin_return_address(0));
+ =
+
+ 		if (!queue_work(afs_async_calls, &call->async_work))
+-			afs_put_call(call);
++			afs_deferred_put_call(call);
+ 	}
+ }
+ =
+
+@@ -768,6 +802,7 @@ static int afs_deliver_cm_op_id(struct afs_call *call)
+ 		return -ENOTSUPP;
+ =
+
+ 	trace_afs_cb_call(call);
++	call->work.func =3D call->type->work;
+ =
+
+ 	/* pass responsibility for the remainer of this message off to the
+ 	 * cache manager op */
+
 
