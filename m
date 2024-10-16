@@ -1,133 +1,108 @@
-Return-Path: <linux-kernel+bounces-367317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496FC9A00D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:36:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685279A00D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001341F21F77
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CA5728170D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDCE18BC1D;
-	Wed, 16 Oct 2024 05:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EFA18BC0B;
+	Wed, 16 Oct 2024 05:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpOf2n+v"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XWzBMw5A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C83D21E3A4;
-	Wed, 16 Oct 2024 05:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C058A5221
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729056972; cv=none; b=ox2aQyw9aa8tQVR0tmAcYJnjoLOUrywRI6XJV4YGhmVvErzRVXxoNUUrvq0GbXQje6ANIY48560X9PvFF+tVigpOZM+9Lc4D/yK4dCBm4toJ10AHN0RytlZxeZlGEvXRqX03RdjDTaX4dyZRgg9Bql6za+PH8B8yDpyzwuFiIRs=
+	t=1729057082; cv=none; b=locgG2XL2s6JpHzuBlxlocRbGDNgGCV4Mr2Sr+2aV8hhNGfOuJvQyHwV+FJJs6wX36j7/It/HH/fMecm9j7GytoLU3deloz4IGLNUNXpgO2j0tf4/CVgF56yIYjB1I5h7fahYn65vogklJYQctTfirSRC61ZcQ9IzPTiKIug7uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729056972; c=relaxed/simple;
-	bh=AkFlicyemJIypTbpaoNWqMseVAcg9/xRYW9x0I/QujU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FRnL2YNYWH5V8B/GBUhGUCMUHcLUfOOlVhlwshtSl/8tbc1c6BSGzEcDOYX4GxqzyMlhTiCgJM3pJXl8dSb/CC9emcztuwh+Ok3k7mDDuV9wLHSwI3CcTzsGuvhRBih9jzw/OEvt/p7I3ZEdcmmN/hfNyJEUHMFtuXEdFbS/1xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpOf2n+v; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e6c754bdso3383966e87.2;
-        Tue, 15 Oct 2024 22:36:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729056968; x=1729661768; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FpFzgW48v/2WJ52rpa7W+YR88yLyOSmQvacK2YcE0vs=;
-        b=CpOf2n+vo0pa82tUjxQEBWLMvOkqHtw3qpB8Xr469Cvjxb8200tSARbOUmxQ5M+u0N
-         aByhHnotzDZrf474lTMVZZzlJwYMkxkPvWGlcBOKWP0VufiizH5dm57U89nHZUIR9Xh3
-         F5Gw9Ix3VIlO33KESKE785l2Vnmnq54OdsZ2onfzgvNKbIexK8uRUfCrYJUdwW7LCjvm
-         4wCTwUClxR+b4yN32KgqtXB0okRsXni8eLHd6B6sPn/IAE4IxEKWeUb5LJGE80wlJE1p
-         TUbgiGwU+vaSdWEblJVeIIIco2KLSorNwXrpCBXqLImak33kBVSj/07SdOlp01kuad5O
-         +4BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729056968; x=1729661768;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FpFzgW48v/2WJ52rpa7W+YR88yLyOSmQvacK2YcE0vs=;
-        b=EaYQFZOkSCyfZgYEXYTaeBZR7MKLRyENSpUgzhclVCO7kSMsKbSQPI+27Y7pjfdvGs
-         Y/uUhCgCI4IKL7/oU5b6oA5rh7XFCR0o/BDvfWni09vm8na80OCw0t3w8IKevmA7tS+A
-         OPP+sdCDJgt9K+jBvYDyL7B4VRTZtR8MmLzeQBDk0XYQAluI2WQDRSZW0wY1Ww4Q+Y7q
-         0LmKHL9i+44j2USgBeMs0TLwuifPiAhpUrJ/sHBEjLdGlPH5jR9lhrohZNSvvFqhB02W
-         UvLbDuTRygIX7XcFPp/zF4eUZ2cBsTb6Px0l+m77pT5/UMpw6WClt8M7zuW9Misur8U+
-         1AHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoSqsJ2/bIbwMbQbjjhrzoggaCOfEdMBYg11YfvMQ64yWm19ofCoS8OADscT2talMCcxGBhLpjb7VdUa1y@vger.kernel.org, AJvYcCXBscylOEf3agxzmfCAUMiEohzD6eS3ud9hMHK4eWmYvfaGbSaMkErFC6/q+M0yIc6fukdSlhcf8ABTYg==@vger.kernel.org, AJvYcCXLJ3LH0DGiSTNxL843vmDLOImNZlgZUZ93Fo2RKd1/V+VptPEvvVwf3J//fOlEn+TOmy9JkxZP7wmmQruXGqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxtzezgPvB8b5UdSGoJ9LC1uWXwwwYHH0nhvLOtdZtoH8c5wUK
-	djd7u3S9/VuG+Tvr9ZkJXhTGaNLOgWrGeu9wQyKodSX1WGQUbUxRTgIqWpJ3erSRBwjp4lAux3+
-	6i/+CXeMAOUAq0cYXt/CCwyTHvaVzgAwA
-X-Google-Smtp-Source: AGHT+IHndmCm/EMXJXuOFINZjOEoWro6KrtmVvkmaBHgAUiFCfIOV+zT26SggvV9rS71zmBuYVLfzcWnox5WdYRK8qs=
-X-Received: by 2002:a05:6512:3f29:b0:539:ee04:2321 with SMTP id
- 2adb3069b0e04-539ee0424e1mr5151271e87.33.1729056967486; Tue, 15 Oct 2024
- 22:36:07 -0700 (PDT)
+	s=arc-20240116; t=1729057082; c=relaxed/simple;
+	bh=XhomE7uLtzfqoa/UY3qMOT2SZfe6/gT7Ffy1EAEKZvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrWXc018xsSN3k90OruO7abjZDWsp34f32iRrHt11luryyi6VRAU3kIzL773KbIIHfFVRPtW3TCun3C5Qa3+FdJoa+tLwrMyicJ0qHD7pH1ETFgmIaITCnuvoeCjgckYJhkEEDFQx3Qchz8jHjzayEkGORIBp5nHDOhyKHW4xsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XWzBMw5A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E01A0C4CEC5;
+	Wed, 16 Oct 2024 05:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729057082;
+	bh=XhomE7uLtzfqoa/UY3qMOT2SZfe6/gT7Ffy1EAEKZvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XWzBMw5A5jc9Ps7KeWl6RMHD8zs1vALDZZI1xPqUMOJD3tn/HItUWdCphQykFvFJv
+	 0uSAuSWU8c+UrJaEV/xpNyUh+b2tUJ0mMGvBt7mvAeqJK4xU0U3UfZwrlXXcvrUgBQ
+	 HhsnbXdVOX2ctYWwDwlhaAG8Ya/1z9InIY+ilgtQ=
+Date: Wed, 16 Oct 2024 07:37:55 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 2/2] driver core: Don't log intentional skip of device
+ link creation as error
+Message-ID: <2024101645-crushed-defection-0782@gregkh>
+References: <20241015-fwdevlink-probed-no-err-v2-0-756c5e9cf55c@collabora.com>
+ <20241015-fwdevlink-probed-no-err-v2-2-756c5e9cf55c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015102036.2882322-1-suhui@nfschina.com> <c0afa02b-991c-4601-bacb-13ace9cb96f2@stanley.mountain>
-In-Reply-To: <c0afa02b-991c-4601-bacb-13ace9cb96f2@stanley.mountain>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 16 Oct 2024 00:35:56 -0500
-Message-ID: <CAH2r5msLmsCn_uHqyzFy8CXy6uCheOECNSXLReJdS4u1C4aN0w@mail.gmail.com>
-Subject: Re: [PATCH v2] smb: client: fix possible double free in smb2_set_ea()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Su Hui <suhui@nfschina.com>, sfrench@samba.org, pc@manguebit.com, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, stfrench@microsoft.com, 
-	tom@talpey.com, bharathsm@microsoft.com, nathan@kernel.org, 
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241015-fwdevlink-probed-no-err-v2-2-756c5e9cf55c@collabora.com>
 
-merged into cifs-2.6.git for-next pending additional testing
+On Tue, Oct 15, 2024 at 05:27:18PM -0400, Nícolas F. R. A. Prado wrote:
+> Commit ac66c5bbb437 ("driver core: Allow only unprobed consumers for
+> SYNC_STATE_ONLY device links") introduced an early return in
+> device_link_add() to prevent useless links from being created. However
+> the calling function fw_devlink_create_devlink() unconditionally prints
+> an error if device_link_add() didn't create a link, even in this case
+> where it is intentionally skipping the link creation.
+> 
+> Add a check to detect if the link wasn't created intentionally and in
+> that case don't log an error.
+> 
+> Fixes: ac66c5bbb437 ("driver core: Allow only unprobed consumers for SYNC_STATE_ONLY device links")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>  drivers/base/core.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-On Tue, Oct 15, 2024 at 5:45=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> On Tue, Oct 15, 2024 at 06:20:37PM +0800, Su Hui wrote:
-> > Clang static checker(scan-build) warning=EF=BC=9A
-> > fs/smb/client/smb2ops.c:1304:2: Attempt to free released memory.
-> >  1304 |         kfree(ea);
-> >       |         ^~~~~~~~~
-> >
-> > There is a double free in such case:
-> > 'ea is initialized to NULL' -> 'first successful memory allocation for
-> > ea' -> 'something failed, goto sea_exit' -> 'first memory release for e=
-a'
-> > -> 'goto replay_again' -> 'second goto sea_exit before allocate memory
-> > for ea' -> 'second memory release for ea resulted in double free'.
-> >
-> > Re-initialie 'ea' to NULL near to the replay_again label, it can fix th=
-is
-> > double free problem.
-> >
-> > Fixes: 4f1fffa23769 ("cifs: commands that are retried should have repla=
-y flag set")
-> > Signed-off-by: Su Hui <suhui@nfschina.com>
-> > ---
-> > v2:
-> > - Move 'ea =3D NULL' near to the replay_again label.(Dan's suggestion)
->
-> Thanks!
->
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> regards,
-> dan carpenter
->
->
+Hi,
 
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
---=20
-Thanks,
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Steve
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
