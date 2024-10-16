@@ -1,2692 +1,524 @@
-Return-Path: <linux-kernel+bounces-368764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280079A14AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:14:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804A99A14AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D538D282EF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:14:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E39A1F23677
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4961D2F42;
-	Wed, 16 Oct 2024 21:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784601D2715;
+	Wed, 16 Oct 2024 21:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DfBHT0oK"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZVh3WIz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B3E1D175F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8499313B298;
+	Wed, 16 Oct 2024 21:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729113268; cv=none; b=fdst7zxbHCygPQNK8Oc2VDQoYx6S5N1ITLcgsz5ayyjfyPAawwJ67T07fOVBY6fpC8W0V04zABqUYfaz2X8Ht8D0l2X9sTg1MdYbmUJwpOa0fN5h/VWuLwy0nPT1XPwy/zkIGHSRv3SgS6yH79aIqx4sXjccNF7cPe8DI+0c13E=
+	t=1729113392; cv=none; b=BhmIZTv/cwNc+gwsPo4vF3sBlXOZiszgA7n4IACh9n1z5sHt67cWpb+bXjwPbJoRhdC1SCcNN/dawba7yfgKrOjUdE+WES8ILgq8gIkL0eLBQjRt/gKEBSo63zIeI9s4qFWN7S/yS8FG8jRYFDe0PRC1ouwf7KIfkPp+tcShjwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729113268; c=relaxed/simple;
-	bh=bCWDYvGy0MLriDKV3lHOjM/CJyy07zDkNybmPyT4tQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r0LYuXojsJtULqwcg+jydoUqgZabKcpCEQXLmxuUibf8hkJ4Pr7HAoPJYHfVYnPDI0oV6GnaPsmtEV5MLISmrRn7Faf/WhLSiVSj5DLFQMmk3JiHNM0EPR79YkKLH8tFWfDsV7ap8BaCkwbM9dBayXP46G24hCAW8COnvJqMpVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DfBHT0oK; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a3b6b281d4so1437005ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:14:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729113263; x=1729718063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FFj8PV0AcNw8qYLpiMOG+BNZiGQhlcninSVkL6HdYzE=;
-        b=DfBHT0oKz1BLO403A3qq14YuI601eGKaDU6Z2oFhFhSjogR9XH2ImCQohCuiQ2B3sj
-         WSDLSLPuGZh8bvXTSHfh+P0/6uXF0Hdej9A6RJfkPJb32eULLEccwijGulHdKJmyHcyt
-         wM9t271dqH1+qibSYT4Yth2YodbP3K+2TiSrY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729113263; x=1729718063;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FFj8PV0AcNw8qYLpiMOG+BNZiGQhlcninSVkL6HdYzE=;
-        b=jzDPmGGW9J2XYOJoQtPk44Ue3IlnkjbqQQVc8LkEEd+S+GkIXJnY8l2dM0W/VFBS6h
-         MeIrVsFD5OS8wwmn33yJs+tDt7M7Dg4ICGQnhW4PPYioDjMt6cJawD3E3dK4kaBPZ9fl
-         UBM+QVFs5kD50aCgqxLgmd0gSbCJFX/seiH8DXQo9k0fbGvPTECto8leWNr8RRxnX/eN
-         ZszI4Gxx5V7hu6NfEFhLNpZZglNBNi8NOVfr/HfeFkkA3nPg0ka+hGpsYY9FEB/9D8Xp
-         IeU/Dp+o9vhXb/eXsgZ1E7KjKJvFVbzYCkWTdvM4ODMS39hirvDRbWc0tJZsw+5bhtxq
-         bfAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbdS9yWjEgRmEM4zEL+FbxPmaeLlUhB98Y+QTDxqW6n27Dj1kfXwtJjGG/6K8lqlbB+cTgPWGe2oSNcWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGnOeh3HgCgzlaEB2afIgk9baZdTE/dZd+bkeqj3SnoaJMRyD1
-	K1Y7MO20vyosglQMPXMxanGZUWnUnyuOgtfIS+JDJOwQ+bwLhqkuKbiHOHhFZlM=
-X-Google-Smtp-Source: AGHT+IEb9+6cCmoWn53u9fTduayqRYYv3UGuP2TX36lXACXAGJ9l622P5JQrIlgSpL+nPRYA72l9Xw==
-X-Received: by 2002:a05:6e02:b26:b0:3a0:c7f9:29e2 with SMTP id e9e14a558f8ab-3a3dc4f0a75mr54452175ab.19.1729113262436;
-        Wed, 16 Oct 2024 14:14:22 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3d70cd49esm10216675ab.48.2024.10.16.14.14.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 14:14:21 -0700 (PDT)
-Message-ID: <a86855c4-3724-43e8-9bdf-fb53743cd723@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 15:14:20 -0600
+	s=arc-20240116; t=1729113392; c=relaxed/simple;
+	bh=o5cqmyrKpL5t6ZkOnGwlG7q0ciAQv941z5k5kWswV3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M7FE1sA0mgt6YeEWqB4Xeqp8fOwAH8IQqG5iMTTrCUzxwpwcj7jUistO1lcAQyGWNn+jQpA66eyqMk0mFE1RQwnSWLE5cAFIR0kNQyKoAgMr4Qm9F1fx9eNhOHSKU7ELjUcbcVrEIa6tm5H1WSdgfBVDNf0wqdpIstJmZv2tcrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZVh3WIz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F1AC4CEC5;
+	Wed, 16 Oct 2024 21:16:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729113392;
+	bh=o5cqmyrKpL5t6ZkOnGwlG7q0ciAQv941z5k5kWswV3A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dZVh3WIzw/Sj7Quir9mrXQ92957yKsFMW9xqeJBxzKhzG2XE8U86B9Obb3+jXNfQA
+	 XhwGB+/LhfDS0nmmQ11pgRPW9w7VTknEo5ECDuKeqSI+vBgU61PF565H6HJ6CrUwyu
+	 UghL4PWTrSYHNq2qNgFeAM2NPnaqQt7lAxg84YFAPbdnWS+BClxLKqOgqxioIms7FS
+	 Griz1xigTVutmWODDwXRHB6DOGe3A2hy/Nre3O/r0VjFWCe5lCR+8kYU6ZmSe/esKT
+	 r+mxImSnmi/AiwzWjkwez11Q9Z9ZhDudJLeFi+jQb08pPi8xYCO18KC/QM4fNbPSCZ
+	 Qdxs0in9OtHAw==
+Date: Wed, 16 Oct 2024 14:16:30 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH -next v4 1/2] perf stat: Support inherit events during
+ fork() for bperf
+Message-ID: <ZxAtLsClDW8x0H_a@google.com>
+References: <20241012023225.151084-1-wutengda@huaweicloud.com>
+ <20241012023225.151084-2-wutengda@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 23/23] testing/selftest: add test tool and
- scripts for ovpn module
-To: Antonio Quartulli <antonio@openvpn.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- openvpn-devel@lists.sourceforge.net, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241016-b4-ovpn-v9-0-aabe9d225ad5@openvpn.net>
- <20241016-b4-ovpn-v9-23-aabe9d225ad5@openvpn.net>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241016-b4-ovpn-v9-23-aabe9d225ad5@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241012023225.151084-2-wutengda@huaweicloud.com>
 
-On 10/15/24 19:03, Antonio Quartulli wrote:
-> The ovpn-cli tool can be compiled and used as selftest for the ovpn
-> kernel module.
-> 
-> It implements the netlink API and can thus be integrated in any
-> script for more automated testing.
-> 
-> Along with the tool, 2 scripts are added that perform basic
-> functionality tests by means of network namespaces.
-> 
-> The scripts can be performed in sequence by running run.sh
-> 
-> Cc: shuah@kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+Hello,
 
-I almost gave my Reviewed-by when I saw the very long argument parsing
-in the main() - please see comment below under main().
-
-Let's simply the logic using getopt() - it is way too long and
-complex.
-
+On Sat, Oct 12, 2024 at 02:32:24AM +0000, Tengda Wu wrote:
+> bperf has a nice ability to share PMUs, but it still does not support
+> inherit events during fork(), resulting in some deviations in its stat
+> results compared with perf.
+> 
+> perf stat result:
+> $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
+> 
+>    Performance counter stats for './perf test -w sqrtloop':
+> 
+>        2,316,038,116      cycles
+>        2,859,350,725      instructions
+> 
+>          1.009603637 seconds time elapsed
+> 
+>          1.004196000 seconds user
+>          0.003950000 seconds sys
+> 
+> bperf stat result:
+> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>       ./perf test -w sqrtloop
+> 
+>    Performance counter stats for './perf test -w sqrtloop':
+> 
+>           18,762,093      cycles
+>           23,487,766      instructions
+> 
+>          1.008913769 seconds time elapsed
+> 
+>          1.003248000 seconds user
+>          0.004069000 seconds sys
+> 
+> In order to support event inheritance, two new bpf programs are added
+> to monitor the fork and exit of tasks respectively. When a task is
+> created, add it to the filter map to enable counting, and reuse the
+> `accum_key` of its parent task to count together with the parent task.
+> When a task exits, remove it from the filter map to disable counting.
+> 
+> After support:
+> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>       ./perf test -w sqrtloop
+> 
+>  Performance counter stats for './perf test -w sqrtloop':
+> 
+>      2,316,252,189      cycles
+>      2,859,946,547      instructions
+> 
+>        1.009422314 seconds time elapsed
+> 
+>        1.003597000 seconds user
+>        0.004270000 seconds sys
+> 
+> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
 > ---
->   MAINTAINERS                                       |    1 +
->   tools/testing/selftests/Makefile                  |    1 +
->   tools/testing/selftests/net/ovpn/.gitignore       |    2 +
->   tools/testing/selftests/net/ovpn/Makefile         |   16 +
->   tools/testing/selftests/net/ovpn/config           |   10 +
->   tools/testing/selftests/net/ovpn/data-test-tcp.sh |    9 +
->   tools/testing/selftests/net/ovpn/data-test.sh     |  157 ++
->   tools/testing/selftests/net/ovpn/data64.key       |    5 +
->   tools/testing/selftests/net/ovpn/float-test.sh    |  122 ++
->   tools/testing/selftests/net/ovpn/ovpn-cli.c       | 2136 +++++++++++++++++++++
->   tools/testing/selftests/net/ovpn/tcp_peers.txt    |    5 +
->   tools/testing/selftests/net/ovpn/udp_peers.txt    |    5 +
->   12 files changed, 2469 insertions(+)
+>  tools/perf/builtin-stat.c                     |  4 +-
+>  tools/perf/util/bpf_counter.c                 | 57 +++++++++---
+>  tools/perf/util/bpf_counter.h                 | 13 ++-
+>  tools/perf/util/bpf_counter_cgroup.c          |  3 +-
+>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 87 +++++++++++++++++--
+>  tools/perf/util/bpf_skel/bperf_u.h            |  5 ++
+>  6 files changed, 145 insertions(+), 24 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8edccdabd96ab4a4e8e9ed24d18ecbcd6d33ecec..ee94f245a18557974ff35b82d9d6d883357e6a01 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17476,6 +17476,7 @@ T:	git https://github.com/OpenVPN/linux-kernel-ovpn.git
->   F:	Documentation/netlink/specs/ovpn.yaml
->   F:	drivers/net/ovpn/
->   F:	include/uapi/linux/ovpn.h
-> +F:	tools/testing/selftests/net/ovpn/
->   
->   P54 WIRELESS DRIVER
->   M:	Christian Lamparter <chunkeey@googlemail.com>
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index b38199965f99014f3e2636fe8d705972f2c0d148..3ae2dd6492ca70d5e317c6e5b4e2560b060e3214 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -68,6 +68,7 @@ TARGETS += net/hsr
->   TARGETS += net/mptcp
->   TARGETS += net/netfilter
->   TARGETS += net/openvswitch
-> +TARGETS += net/ovpn
->   TARGETS += net/packetdrill
->   TARGETS += net/rds
->   TARGETS += net/tcp_ao
-> diff --git a/tools/testing/selftests/net/ovpn/.gitignore b/tools/testing/selftests/net/ovpn/.gitignore
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ee44c081ca7c089933659689303c303a9fa9713b
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/.gitignore
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0+
-> +ovpn-cli
-> diff --git a/tools/testing/selftests/net/ovpn/Makefile b/tools/testing/selftests/net/ovpn/Makefile
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..9510c9b171390809bcce9f8c81a3a0abce885ac0
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/Makefile
-> @@ -0,0 +1,16 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2020-2024 OpenVPN, Inc.
-> +#
-> +CFLAGS = -Wall -Wl,--no-as-needed -g -O2 $(KHDR_INCLUDES)
-> +CFLAGS += $(shell pkg-config --cflags libnl-3.0 libnl-genl-3.0)
-> +
-> +LDFLAGS = -lmbedtls -lmbedcrypto
-> +LDFLAGS += $(shell pkg-config --libs libnl-3.0 libnl-genl-3.0)
-> +
-> +TEST_PROGS = data-test.sh \
-> +	data-test-tcp.sh \
-> +	float-test.sh
-> +
-> +TEST_GEN_FILES = ovpn-cli
-> +
-> +include ../../lib.mk
-> diff --git a/tools/testing/selftests/net/ovpn/config b/tools/testing/selftests/net/ovpn/config
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..71946ba9fa175c191725e369eb9b973503d9d9c4
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/config
-> @@ -0,0 +1,10 @@
-> +CONFIG_NET=y
-> +CONFIG_INET=y
-> +CONFIG_STREAM_PARSER=y
-> +CONFIG_NET_UDP_TUNNEL=y
-> +CONFIG_DST_CACHE=y
-> +CONFIG_CRYPTO=y
-> +CONFIG_CRYPTO_AES=y
-> +CONFIG_CRYPTO_GCM=y
-> +CONFIG_CRYPTO_CHACHA20POLY1305=y
-> +CONFIG_OVPN=m
-> diff --git a/tools/testing/selftests/net/ovpn/data-test-tcp.sh b/tools/testing/selftests/net/ovpn/data-test-tcp.sh
-> new file mode 100755
-> index 0000000000000000000000000000000000000000..65f05659b5fd8f05d216f2c22898e7f89a6ea4de
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/data-test-tcp.sh
-> @@ -0,0 +1,9 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2024 OpenVPN, Inc.
-> +#
-> +#  Author:	Antonio Quartulli <antonio@openvpn.net>
-> +
-> +PROTO="TCP"
-> +
-> +source data-test.sh
-> diff --git a/tools/testing/selftests/net/ovpn/data-test.sh b/tools/testing/selftests/net/ovpn/data-test.sh
-> new file mode 100755
-> index 0000000000000000000000000000000000000000..9c649c680b57bbebaf58761193950def7d3dad74
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/data-test.sh
-> @@ -0,0 +1,157 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2020-2024 OpenVPN, Inc.
-> +#
-> +#  Author:	Antonio Quartulli <antonio@openvpn.net>
-> +
-> +#set -x
-> +set -e
-> +
-> +UDP_PEERS_FILE=${UDP_PEERS_FILE:-udp_peers.txt}
-> +TCP_PEERS_FILE=${TCP_PEERS_FILE:-tcp_peers.txt}
-> +OVPN_CLI=${OVPN_CLI:-./ovpn-cli}
-> +ALG=${ALG:-aes}
-> +PROTO=${PROTO:-UDP}
-> +
-> +create_ns() {
-> +	ip netns add peer${1}
-> +}
-> +
-> +setup_ns() {
-> +	MODE="P2P"
-> +
-> +	if [ ${1} -eq 0 ]; then
-> +		MODE="MP"
-> +		for p in $(seq 1 ${NUM_PEERS}); do
-> +			ip link add veth${p} netns peer0 type veth peer name veth${p} netns peer${p}
-> +
-> +			ip -n peer0 addr add 10.10.${p}.1/24 dev veth${p}
-> +			ip -n peer0 link set veth${p} up
-> +
-> +			ip -n peer${p} addr add 10.10.${p}.2/24 dev veth${p}
-> +			ip -n peer${p} link set veth${p} up
-> +		done
-> +	fi
-> +
-> +	ip netns exec peer${1} ${OVPN_CLI} new_iface tun${1} $MODE
-> +	ip -n peer${1} addr add ${2} dev tun${1}
-> +	ip -n peer${1} link set tun${1} up
-> +}
-> +
-> +add_peer() {
-> +	if [ "${PROTO}" == "UDP" ]; then
-> +		if [ ${1} -eq 0 ]; then
-> +			ip netns exec peer0 ${OVPN_CLI} new_multi_peer tun0 1 ${UDP_PEERS_FILE}
-> +
-> +			for p in $(seq 1 ${NUM_PEERS}); do
-> +				ip netns exec peer0 ${OVPN_CLI} new_key tun0 ${p} 1 0 ${ALG} 0 \
-> +					data64.key
-> +			done
-> +		else
-> +			ip netns exec peer${1} ${OVPN_CLI} new_peer tun${1} 1 ${1} 10.10.${1}.1 1
-> +			ip netns exec peer${1} ${OVPN_CLI} new_key tun${1} ${1} 1 0 ${ALG} 1 \
-> +				data64.key
-> +		fi
-> +	else
-> +		if [ ${1} -eq 0 ]; then
-> +			(ip netns exec peer0 ${OVPN_CLI} listen tun0 1 ${TCP_PEERS_FILE} && {
-> +				for p in $(seq 1 ${NUM_PEERS}); do
-> +					ip netns exec peer0 ${OVPN_CLI} new_key tun0 ${p} 1 0 \
-> +						${ALG} 0 data64.key
-> +				done
-> +			}) &
-> +			sleep 5
-> +		else
-> +			ip netns exec peer${1} ${OVPN_CLI} connect tun${1} ${1} 10.10.${1}.1 1 \
-> +				data64.key
-> +		fi
-> +	fi
-> +}
-> +
-> +cleanup() {
-> +	for p in $(seq 1 10); do
-> +		ip -n peer0 link del veth${p} 2>/dev/null || true
-> +	done
-> +	for p in $(seq 0 10); do
-> +		ip netns exec peer${p} ${OVPN_CLI} del_iface tun${p} 2>/dev/null || true
-> +		ip netns del peer${p} 2>/dev/null || true
-> +	done
-> +}
-> +
-> +if [ "${PROTO}" == "UDP" ]; then
-> +	NUM_PEERS=${NUM_PEERS:-$(wc -l ${UDP_PEERS_FILE} | awk '{print $1}')}
-> +else
-> +	NUM_PEERS=${NUM_PEERS:-$(wc -l ${TCP_PEERS_FILE} | awk '{print $1}')}
-> +fi
-> +
-> +cleanup
-> +
-> +modprobe -q ovpn || true
-> +
-> +for p in $(seq 0 ${NUM_PEERS}); do
-> +	create_ns ${p}
-> +done
-> +
-> +for p in $(seq 0 ${NUM_PEERS}); do
-> +	setup_ns ${p} 5.5.5.$((${p} + 1))/24
-> +done
-> +
-> +for p in $(seq 0 ${NUM_PEERS}); do
-> +	add_peer ${p}
-> +done
-> +
-> +for p in $(seq 1 ${NUM_PEERS}); do
-> +	ip netns exec peer0 ${OVPN_CLI} set_peer tun0 ${p} 60 120
-> +	ip netns exec peer${p} ${OVPN_CLI} set_peer tun${p} ${p} 60 120
-> +done
-> +
-> +for p in $(seq 1 ${NUM_PEERS}); do
-> +	ip netns exec peer0 ping -qfc 1000 -w 5 5.5.5.$((${p} + 1))
-> +done
-> +
-> +ip netns exec peer0 iperf3 -1 -s &
-> +sleep 1
-> +ip netns exec peer1 iperf3 -Z -t 3 -c 5.5.5.1
-> +
-> +for p in $(seq 1 ${NUM_PEERS}); do
-> +	ip netns exec peer0 ${OVPN_CLI} new_key tun0 ${p} 2 1 ${ALG} 0 data64.key
-> +	ip netns exec peer${p} ${OVPN_CLI} new_key tun${p} ${p} 2 1 ${ALG} 1 data64.key
-> +	ip netns exec peer${p} ${OVPN_CLI} swap_keys tun${p} ${p}
-> +done
-> +
-> +sleep 1
-> +echo "Querying all peers:"
-> +ip netns exec peer0 ${OVPN_CLI} get_peer tun0
-> +ip netns exec peer1 ${OVPN_CLI} get_peer tun1
-> +
-> +echo "Querying peer 1:"
-> +ip netns exec peer0 ${OVPN_CLI} get_peer tun0 1
-> +
-> +echo "Querying non-existent peer 10:"
-> +ip netns exec peer0 ${OVPN_CLI} get_peer tun0 10 || true
-> +
-> +ip netns exec peer0 ${OVPN_CLI} del_peer tun0 1
-> +ip netns exec peer1 ${OVPN_CLI} del_peer tun1 1
-> +
-> +echo "Setting timeout to 10s MP:"
-> +# bring ifaces down to prevent traffic being sent
-> +for p in $(seq 0 ${NUM_PEERS}); do
-> +	ip -n peer${p} link set tun${p} down
-> +done
-> +# set short timeout
-> +for p in $(seq 2 ${NUM_PEERS}); do
-> +	ip netns exec peer0 ${OVPN_CLI} set_peer tun0 ${p} 10 10 || true
-> +	ip netns exec peer${p} ${OVPN_CLI} set_peer tun${p} ${p} 0 0
-> +done
-> +# wait for peers to timeout
-> +sleep 15
-> +
-> +echo "Setting timeout to 10s P2P:"
-> +for p in $(seq 2 ${NUM_PEERS}); do
-> +	ip netns exec peer${p} ${OVPN_CLI} set_peer tun${p} ${p} 10 10
-> +done
-> +sleep 15
-> +
-> +cleanup
-> +
-> +modprobe -r ovpn || true
-> diff --git a/tools/testing/selftests/net/ovpn/data64.key b/tools/testing/selftests/net/ovpn/data64.key
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a99e88c4e290f58b12f399b857b873f308d9ba09
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/data64.key
-> @@ -0,0 +1,5 @@
-> +jRqMACN7d7/aFQNT8S7jkrBD8uwrgHbG5OQZP2eu4R1Y7tfpS2bf5RHv06Vi163CGoaIiTX99R3B
-> +ia9ycAH8Wz1+9PWv51dnBLur9jbShlgZ2QHLtUc4a/gfT7zZwULXuuxdLnvR21DDeMBaTbkgbai9
-> +uvAa7ne1liIgGFzbv+Bas4HDVrygxIxuAnP5Qgc3648IJkZ0QEXPF+O9f0n5+QIvGCxkAUVx+5K6
-> +KIs+SoeWXnAopELmoGSjUpFtJbagXK82HfdqpuUxT2Tnuef0/14SzVE/vNleBNu2ZbyrSAaah8tE
-> +BofkPJUBFY+YQcfZNM5Dgrw3i+Bpmpq/gpdg5w==
-> diff --git a/tools/testing/selftests/net/ovpn/float-test.sh b/tools/testing/selftests/net/ovpn/float-test.sh
-> new file mode 100755
-> index 0000000000000000000000000000000000000000..704ecf72ad1fe4b8c49a93d33e6a88d0a315b42a
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/float-test.sh
-> @@ -0,0 +1,122 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2020-2024 OpenVPN, Inc.
-> +#
-> +#  Author:	Antonio Quartulli <antonio@openvpn.net>
-> +
-> +#set -x
-> +set -e
-> +
-> +UDP_PEERS_FILE=${UDP_PEERS_FILE:-udp_peers.txt}
-> +TCP_PEERS_FILE=${TCP_PEERS_FILE:-tcp_peers.txt}
-> +OVPN_CLI=${OVPN_CLI:-./ovpn-cli}
-> +ALG=${ALG:-aes}
-> +PROTO=${PROTO:-UDP}
-> +
-> +create_ns() {
-> +	ip netns add peer${1}
-> +}
-> +
-> +setup_ns() {
-> +	MODE="P2P"
-> +
-> +	if [ ${1} -eq 0 ]; then
-> +		MODE="MP"
-> +		for p in $(seq 1 ${NUM_PEERS}); do
-> +			ip link add veth${p} netns peer0 type veth peer name veth${p} netns peer${p}
-> +
-> +			ip -n peer0 addr add 10.10.${p}.1/24 dev veth${p}
-> +			ip -n peer0 link set veth${p} up
-> +
-> +			ip -n peer${p} addr add 10.10.${p}.2/24 dev veth${p}
-> +			ip -n peer${p} link set veth${p} up
-> +		done
-> +	fi
-> +
-> +	ip netns exec peer${1} ${OVPN_CLI} new_iface tun${1} $MODE
-> +	ip -n peer${1} addr add ${2} dev tun${1}
-> +	ip -n peer${1} link set tun${1} up
-> +}
-> +
-> +add_peer() {
-> +	if [ "${PROTO}" == "UDP" ]; then
-> +		if [ ${1} -eq 0 ]; then
-> +			ip netns exec peer0 ${OVPN_CLI} new_multi_peer tun0 1 ${UDP_PEERS_FILE}
-> +
-> +			for p in $(seq 1 ${NUM_PEERS}); do
-> +				ip netns exec peer0 ${OVPN_CLI} new_key tun0 ${p} 1 0 ${ALG} 0 \
-> +					data64.key
-> +			done
-> +		else
-> +			ip netns exec peer${1} ${OVPN_CLI} new_peer tun${1} 1 ${1} 10.10.${1}.1 1
-> +			ip netns exec peer${1} ${OVPN_CLI} new_key tun${1} ${1} 1 0 ${ALG} 1 \
-> +				data64.key
-> +		fi
-> +	else
-> +		if [ ${1} -eq 0 ]; then
-> +			(ip netns exec peer0 ${OVPN_CLI} listen tun0 1 ${TCP_PEERS_FILE} && {
-> +				for p in $(seq 1 ${NUM_PEERS}); do
-> +					ip netns exec peer0 ${OVPN_CLI} new_key tun0 ${p} 1 0 \
-> +						${ALG} 0 data64.key
-> +				done
-> +			}) &
-> +			sleep 5
-> +		else
-> +			ip netns exec peer${1} ${OVPN_CLI} connect tun${1} ${1} 10.10.${1}.1 1 \
-> +				5.5.5.1 data64.key
-> +		fi
-> +	fi
-> +}
-> +
-> +cleanup() {
-> +	for p in $(seq 1 10); do
-> +		ip -n peer0 link del veth${p} 2>/dev/null || true
-> +	done
-> +	for p in $(seq 0 10); do
-> +		ip netns exec peer${p} ${OVPN_CLI} del_iface tun${p} 2>/dev/null || true
-> +		ip netns del peer${p} 2>/dev/null || true
-> +	done
-> +}
-> +
-> +if [ "${PROTO}" == "UDP" ]; then
-> +	NUM_PEERS=${NUM_PEERS:-$(wc -l ${UDP_PEERS_FILE} | awk '{print $1}')}
-> +else
-> +	NUM_PEERS=${NUM_PEERS:-$(wc -l ${TCP_PEERS_FILE} | awk '{print $1}')}
-> +fi
-> +
-> +cleanup
-> +
-> +modprobe -q ovpn || true
-> +
-> +for p in $(seq 0 ${NUM_PEERS}); do
-> +	create_ns ${p}
-> +done
-> +
-> +for p in $(seq 0 ${NUM_PEERS}); do
-> +	setup_ns ${p} 5.5.5.$((${p} + 1))/24
-> +done
-> +
-> +for p in $(seq 0 ${NUM_PEERS}); do
-> +	add_peer ${p}
-> +done
-> +
-> +for p in $(seq 1 ${NUM_PEERS}); do
-> +	ip netns exec peer0 ${OVPN_CLI} set_peer tun0 ${p} 60 120
-> +	ip netns exec peer${p} ${OVPN_CLI} set_peer tun${p} ${p} 60 120
-> +done
-> +
-> +for p in $(seq 1 ${NUM_PEERS}); do
-> +	ip netns exec peer0 ping -qfc 1000 -w 5 5.5.5.$((${p} + 1))
-> +done
-> +# make clients float..
-> +for p in $(seq 1 ${NUM_PEERS}); do
-> +	ip -n peer${p} addr del 10.10.${p}.2/24 dev veth${p}
-> +	ip -n peer${p} addr add 10.10.${p}.3/24 dev veth${p}
-> +done
-> +for p in $(seq 1 ${NUM_PEERS}); do
-> +	ip netns exec peer${p} ping -qfc 1000 -w 5 5.5.5.1
-> +done
-> +
-> +cleanup
-> +
-> +modprobe -r ovpn || true
-> diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..546c7e345ce9fb9921ef4532f0756d9f8938232c
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
-> @@ -0,0 +1,2136 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*  OpenVPN data channel accelerator
-> + *
-> + *  Copyright (C) 2020-2024 OpenVPN, Inc.
-> + *
-> + *  Author:	Antonio Quartulli <antonio@openvpn.net>
-> + */
-> +
-> +#include <stdio.h>
-> +#include <inttypes.h>
-> +#include <stdbool.h>
-> +#include <string.h>
-> +#include <errno.h>
-> +#include <unistd.h>
-> +#include <arpa/inet.h>
-> +#include <net/if.h>
-> +#include <netinet/in.h>
-> +#include <time.h>
-> +
-> +#include <linux/ovpn.h>
-> +#include <linux/types.h>
-> +#include <linux/netlink.h>
-> +
-> +#include <netlink/socket.h>
-> +#include <netlink/netlink.h>
-> +#include <netlink/genl/genl.h>
-> +#include <netlink/genl/family.h>
-> +#include <netlink/genl/ctrl.h>
-> +
-> +#include <mbedtls/base64.h>
-> +#include <mbedtls/error.h>
-> +
-> +#include <sys/socket.h>
-> +
-> +/* defines to make checkpatch happy */
-> +#define strscpy strncpy
-> +#define __always_unused __attribute__((__unused__))
-> +
-> +/* libnl < 3.5.0 does not set the NLA_F_NESTED on its own, therefore we
-> + * have to explicitly do it to prevent the kernel from failing upon
-> + * parsing of the message
-> + */
-> +#define nla_nest_start(_msg, _type) \
-> +	nla_nest_start(_msg, (_type) | NLA_F_NESTED)
-> +
-> +uint64_t nla_get_uint(struct nlattr *attr)
-> +{
-> +	if (nla_len(attr) == sizeof(uint32_t))
-> +		return nla_get_u32(attr);
-> +	else
-> +		return nla_get_u64(attr);
-> +}
-> +
-> +typedef int (*ovpn_nl_cb)(struct nl_msg *msg, void *arg);
-> +
-> +enum ovpn_key_direction {
-> +	KEY_DIR_IN = 0,
-> +	KEY_DIR_OUT,
-> +};
-> +
-> +#define KEY_LEN (256 / 8)
-> +#define NONCE_LEN 8
-> +
-> +#define PEER_ID_UNDEF 0x00FFFFFF
-> +
-> +struct nl_ctx {
-> +	struct nl_sock *nl_sock;
-> +	struct nl_msg *nl_msg;
-> +	struct nl_cb *nl_cb;
-> +
-> +	int ovpn_dco_id;
-> +};
-> +
-> +struct ovpn_ctx {
-> +	__u8 key_enc[KEY_LEN];
-> +	__u8 key_dec[KEY_LEN];
-> +	__u8 nonce[NONCE_LEN];
-> +
-> +	enum ovpn_cipher_alg cipher;
-> +
-> +	sa_family_t sa_family;
-> +
-> +	__u32 peer_id;
-> +	__u16 lport;
-> +
-> +	union {
-> +		struct sockaddr_in in4;
-> +		struct sockaddr_in6 in6;
-> +	} remote;
-> +
-> +	union {
-> +		struct sockaddr_in in4;
-> +		struct sockaddr_in6 in6;
-> +	} peer_ip;
-> +
-> +	bool peer_ip_set;
-> +
-> +	unsigned int ifindex;
-> +	char ifname[IFNAMSIZ];
-> +	enum ovpn_mode mode;
-> +	bool mode_set;
-> +
-> +	int socket;
-> +	int cli_socket;
-> +
-> +	__u32 keepalive_interval;
-> +	__u32 keepalive_timeout;
-> +
-> +	enum ovpn_key_direction key_dir;
-> +	enum ovpn_key_slot key_slot;
-> +	int key_id;
-> +};
-> +
-> +static int ovpn_nl_recvmsgs(struct nl_ctx *ctx)
-> +{
-> +	int ret;
-> +
-> +	ret = nl_recvmsgs(ctx->nl_sock, ctx->nl_cb);
-> +
-> +	switch (ret) {
-> +	case -NLE_INTR:
-> +		fprintf(stderr,
-> +			"netlink received interrupt due to signal - ignoring\n");
-> +		break;
-> +	case -NLE_NOMEM:
-> +		fprintf(stderr, "netlink out of memory error\n");
-> +		break;
-> +	case -NLE_AGAIN:
-> +		fprintf(stderr,
-> +			"netlink reports blocking read - aborting wait\n");
-> +		break;
-> +	default:
-> +		if (ret)
-> +			fprintf(stderr, "netlink reports error (%d): %s\n",
-> +				ret, nl_geterror(-ret));
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static struct nl_ctx *nl_ctx_alloc_flags(struct ovpn_ctx *ovpn, int cmd,
-> +					 int flags)
-> +{
-> +	struct nl_ctx *ctx;
-> +	int err, ret;
-> +
-> +	ctx = calloc(1, sizeof(*ctx));
-> +	if (!ctx)
-> +		return NULL;
-> +
-> +	ctx->nl_sock = nl_socket_alloc();
-> +	if (!ctx->nl_sock) {
-> +		fprintf(stderr, "cannot allocate netlink socket\n");
-> +		goto err_free;
-> +	}
-> +
-> +	nl_socket_set_buffer_size(ctx->nl_sock, 8192, 8192);
-> +
-> +	ret = genl_connect(ctx->nl_sock);
-> +	if (ret) {
-> +		fprintf(stderr, "cannot connect to generic netlink: %s\n",
-> +			nl_geterror(ret));
-> +		goto err_sock;
-> +	}
-> +
-> +	/* enable Extended ACK for detailed error reporting */
-> +	err = 1;
-> +	setsockopt(nl_socket_get_fd(ctx->nl_sock), SOL_NETLINK, NETLINK_EXT_ACK,
-> +		   &err, sizeof(err));
-> +
-> +	ctx->ovpn_dco_id = genl_ctrl_resolve(ctx->nl_sock, OVPN_FAMILY_NAME);
-> +	if (ctx->ovpn_dco_id < 0) {
-> +		fprintf(stderr, "cannot find ovpn_dco netlink component: %d\n",
-> +			ctx->ovpn_dco_id);
-> +		goto err_free;
-> +	}
-> +
-> +	ctx->nl_msg = nlmsg_alloc();
-> +	if (!ctx->nl_msg) {
-> +		fprintf(stderr, "cannot allocate netlink message\n");
-> +		goto err_sock;
-> +	}
-> +
-> +	ctx->nl_cb = nl_cb_alloc(NL_CB_DEFAULT);
-> +	if (!ctx->nl_cb) {
-> +		fprintf(stderr, "failed to allocate netlink callback\n");
-> +		goto err_msg;
-> +	}
-> +
-> +	nl_socket_set_cb(ctx->nl_sock, ctx->nl_cb);
-> +
-> +	genlmsg_put(ctx->nl_msg, 0, 0, ctx->ovpn_dco_id, 0, flags, cmd, 0);
-> +
-> +	if (ovpn->ifindex > 0)
-> +		NLA_PUT_U32(ctx->nl_msg, OVPN_A_IFINDEX, ovpn->ifindex);
-> +
-> +	return ctx;
-> +nla_put_failure:
-> +err_msg:
-> +	nlmsg_free(ctx->nl_msg);
-> +err_sock:
-> +	nl_socket_free(ctx->nl_sock);
-> +err_free:
-> +	free(ctx);
-> +	return NULL;
-> +}
-> +
-> +static struct nl_ctx *nl_ctx_alloc(struct ovpn_ctx *ovpn, int cmd)
-> +{
-> +	return nl_ctx_alloc_flags(ovpn, cmd, 0);
-> +}
-> +
-> +static void nl_ctx_free(struct nl_ctx *ctx)
-> +{
-> +	if (!ctx)
-> +		return;
-> +
-> +	nl_socket_free(ctx->nl_sock);
-> +	nlmsg_free(ctx->nl_msg);
-> +	nl_cb_put(ctx->nl_cb);
-> +	free(ctx);
-> +}
-> +
-> +static int ovpn_nl_cb_error(struct sockaddr_nl (*nla)__always_unused,
-> +			    struct nlmsgerr *err, void *arg)
-> +{
-> +	struct nlmsghdr *nlh = (struct nlmsghdr *)err - 1;
-> +	struct nlattr *tb_msg[NLMSGERR_ATTR_MAX + 1];
-> +	int len = nlh->nlmsg_len;
-> +	struct nlattr *attrs;
-> +	int *ret = arg;
-> +	int ack_len = sizeof(*nlh) + sizeof(int) + sizeof(*nlh);
-> +
-> +	*ret = err->error;
-> +
-> +	if (!(nlh->nlmsg_flags & NLM_F_ACK_TLVS))
-> +		return NL_STOP;
-> +
-> +	if (!(nlh->nlmsg_flags & NLM_F_CAPPED))
-> +		ack_len += err->msg.nlmsg_len - sizeof(*nlh);
-> +
-> +	if (len <= ack_len)
-> +		return NL_STOP;
-> +
-> +	attrs = (void *)((unsigned char *)nlh + ack_len);
-> +	len -= ack_len;
-> +
-> +	nla_parse(tb_msg, NLMSGERR_ATTR_MAX, attrs, len, NULL);
-> +	if (tb_msg[NLMSGERR_ATTR_MSG]) {
-> +		len = strnlen((char *)nla_data(tb_msg[NLMSGERR_ATTR_MSG]),
-> +			      nla_len(tb_msg[NLMSGERR_ATTR_MSG]));
-> +		fprintf(stderr, "kernel error: %*s\n", len,
-> +			(char *)nla_data(tb_msg[NLMSGERR_ATTR_MSG]));
-> +	}
-> +
-> +	if (tb_msg[NLMSGERR_ATTR_MISS_NEST]) {
-> +		fprintf(stderr, "missing required nesting type %u\n",
-> +			nla_get_u32(tb_msg[NLMSGERR_ATTR_MISS_NEST]));
-> +	}
-> +
-> +	if (tb_msg[NLMSGERR_ATTR_MISS_TYPE]) {
-> +		fprintf(stderr, "missing required attribute type %u\n",
-> +			nla_get_u32(tb_msg[NLMSGERR_ATTR_MISS_TYPE]));
-> +	}
-> +
-> +	return NL_STOP;
-> +}
-> +
-> +static int ovpn_nl_cb_finish(struct nl_msg (*msg)__always_unused,
-> +			     void *arg)
-> +{
-> +	int *status = arg;
-> +
-> +	*status = 0;
-> +	return NL_SKIP;
-> +}
-> +
-> +static int ovpn_nl_cb_ack(struct nl_msg (*msg)__always_unused,
-> +			  void *arg)
-> +{
-> +	int *status = arg;
-> +
-> +	*status = 0;
-> +	return NL_STOP;
-> +}
-> +
-> +static int ovpn_nl_msg_send(struct nl_ctx *ctx, ovpn_nl_cb cb)
-> +{
-> +	int status = 1;
-> +
-> +	nl_cb_err(ctx->nl_cb, NL_CB_CUSTOM, ovpn_nl_cb_error, &status);
-> +	nl_cb_set(ctx->nl_cb, NL_CB_FINISH, NL_CB_CUSTOM, ovpn_nl_cb_finish,
-> +		  &status);
-> +	nl_cb_set(ctx->nl_cb, NL_CB_ACK, NL_CB_CUSTOM, ovpn_nl_cb_ack, &status);
-> +
-> +	if (cb)
-> +		nl_cb_set(ctx->nl_cb, NL_CB_VALID, NL_CB_CUSTOM, cb, ctx);
-> +
-> +	nl_send_auto_complete(ctx->nl_sock, ctx->nl_msg);
-> +
-> +	while (status == 1)
-> +		ovpn_nl_recvmsgs(ctx);
-> +
-> +	if (status < 0)
-> +		fprintf(stderr, "failed to send netlink message: %s (%d)\n",
-> +			strerror(-status), status);
-> +
-> +	return status;
-> +}
-> +
-> +static int ovpn_read_key(const char *file, struct ovpn_ctx *ctx)
-> +{
-> +	int idx_enc, idx_dec, ret = -1;
-> +	unsigned char *ckey = NULL;
-> +	__u8 *bkey = NULL;
-> +	size_t olen = 0;
-> +	long ckey_len;
-> +	FILE *fp;
-> +
-> +	fp = fopen(file, "r");
-> +	if (!fp) {
-> +		fprintf(stderr, "cannot open: %s\n", file);
-> +		return -1;
-> +	}
-> +
-> +	/* get file size */
-> +	fseek(fp, 0L, SEEK_END);
-> +	ckey_len = ftell(fp);
-> +	rewind(fp);
-> +
-> +	/* if the file is longer, let's just read a portion */
-> +	if (ckey_len > 256)
-> +		ckey_len = 256;
-> +
-> +	ckey = malloc(ckey_len);
-> +	if (!ckey)
-> +		goto err;
-> +
-> +	ret = fread(ckey, 1, ckey_len, fp);
-> +	if (ret != ckey_len) {
-> +		fprintf(stderr,
-> +			"couldn't read enough data from key file: %dbytes read\n",
-> +			ret);
-> +		goto err;
-> +	}
-> +
-> +	olen = 0;
-> +	ret = mbedtls_base64_decode(NULL, 0, &olen, ckey, ckey_len);
-> +	if (ret != MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL) {
-> +		char buf[256];
-> +
-> +		mbedtls_strerror(ret, buf, sizeof(buf));
-> +		fprintf(stderr, "unexpected base64 error1: %s (%d)\n", buf,
-> +			ret);
-> +
-> +		goto err;
-> +	}
-> +
-> +	bkey = malloc(olen);
-> +	if (!bkey) {
-> +		fprintf(stderr, "cannot allocate binary key buffer\n");
-> +		goto err;
-> +	}
-> +
-> +	ret = mbedtls_base64_decode(bkey, olen, &olen, ckey, ckey_len);
-> +	if (ret) {
-> +		char buf[256];
-> +
-> +		mbedtls_strerror(ret, buf, sizeof(buf));
-> +		fprintf(stderr, "unexpected base64 error2: %s (%d)\n", buf,
-> +			ret);
-> +
-> +		goto err;
-> +	}
-> +
-> +	if (olen < 2 * KEY_LEN + NONCE_LEN) {
-> +		fprintf(stderr,
-> +			"not enough data in key file, found %zdB but needs %dB\n",
-> +			olen, 2 * KEY_LEN + NONCE_LEN);
-> +		goto err;
-> +	}
-> +
-> +	switch (ctx->key_dir) {
-> +	case KEY_DIR_IN:
-> +		idx_enc = 0;
-> +		idx_dec = 1;
-> +		break;
-> +	case KEY_DIR_OUT:
-> +		idx_enc = 1;
-> +		idx_dec = 0;
-> +		break;
-> +	default:
-> +		goto err;
-> +	}
-> +
-> +	memcpy(ctx->key_enc, bkey + KEY_LEN * idx_enc, KEY_LEN);
-> +	memcpy(ctx->key_dec, bkey + KEY_LEN * idx_dec, KEY_LEN);
-> +	memcpy(ctx->nonce, bkey + 2 * KEY_LEN, NONCE_LEN);
-> +
-> +	ret = 0;
-> +
-> +err:
-> +	fclose(fp);
-> +	free(bkey);
-> +	free(ckey);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ovpn_read_cipher(const char *cipher, struct ovpn_ctx *ctx)
-> +{
-> +	if (strcmp(cipher, "aes") == 0)
-> +		ctx->cipher = OVPN_CIPHER_ALG_AES_GCM;
-> +	else if (strcmp(cipher, "chachapoly") == 0)
-> +		ctx->cipher = OVPN_CIPHER_ALG_CHACHA20_POLY1305;
-> +	else if (strcmp(cipher, "none") == 0)
-> +		ctx->cipher = OVPN_CIPHER_ALG_NONE;
-> +	else
-> +		return -ENOTSUP;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ovpn_read_key_direction(const char *dir, struct ovpn_ctx *ctx)
-> +{
-> +	int in_dir;
-> +
-> +	in_dir = strtoll(dir, NULL, 10);
-> +	switch (in_dir) {
-> +	case KEY_DIR_IN:
-> +	case KEY_DIR_OUT:
-> +		ctx->key_dir = in_dir;
-> +		break;
-> +	default:
-> +		fprintf(stderr,
-> +			"invalid key direction provided. Can be 0 or 1 only\n");
-> +		return -1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ovpn_socket(struct ovpn_ctx *ctx, sa_family_t family, int proto)
-> +{
-> +	struct sockaddr_storage local_sock;
-> +	struct sockaddr_in6 *in6;
-> +	struct sockaddr_in *in;
-> +	int ret, s, sock_type;
-> +	size_t sock_len;
-> +
-> +	if (proto == IPPROTO_UDP)
-> +		sock_type = SOCK_DGRAM;
-> +	else if (proto == IPPROTO_TCP)
-> +		sock_type = SOCK_STREAM;
-> +	else
-> +		return -EINVAL;
-> +
-> +	s = socket(family, sock_type, 0);
-> +	if (s < 0) {
-> +		perror("cannot create socket");
-> +		return -1;
-> +	}
-> +
-> +	memset((char *)&local_sock, 0, sizeof(local_sock));
-> +
-> +	switch (family) {
-> +	case AF_INET:
-> +		in = (struct sockaddr_in *)&local_sock;
-> +		in->sin_family = family;
-> +		in->sin_port = htons(ctx->lport);
-> +		in->sin_addr.s_addr = htonl(INADDR_ANY);
-> +		sock_len = sizeof(*in);
-> +		break;
-> +	case AF_INET6:
-> +		in6 = (struct sockaddr_in6 *)&local_sock;
-> +		in6->sin6_family = family;
-> +		in6->sin6_port = htons(ctx->lport);
-> +		in6->sin6_addr = in6addr_any;
-> +		sock_len = sizeof(*in6);
-> +		break;
-> +	default:
-> +		return -1;
-> +	}
-> +
-> +	int opt = 1;
-> +
-> +	ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-> +
-> +	if (ret < 0) {
-> +		perror("setsockopt for SO_REUSEADDR");
-> +		return ret;
-> +	}
-> +
-> +	ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-> +	if (ret < 0) {
-> +		perror("setsockopt for SO_REUSEPORT");
-> +		return ret;
-> +	}
-> +
-> +	if (family == AF_INET6) {
-> +		opt = 0;
-> +		if (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &opt,
-> +			       sizeof(opt))) {
-> +			perror("failed to set IPV6_V6ONLY");
-> +			return -1;
-> +		}
-> +	}
-> +
-> +	ret = bind(s, (struct sockaddr *)&local_sock, sock_len);
-> +	if (ret < 0) {
-> +		perror("cannot bind socket");
-> +		goto err_socket;
-> +	}
-> +
-> +	ctx->socket = s;
-> +	ctx->sa_family = family;
-> +	return 0;
-> +
-> +err_socket:
-> +	close(s);
-> +	return -1;
-> +}
-> +
-> +static int ovpn_udp_socket(struct ovpn_ctx *ctx, sa_family_t family)
-> +{
-> +	return ovpn_socket(ctx, family, IPPROTO_UDP);
-> +}
-> +
-> +static int ovpn_listen(struct ovpn_ctx *ctx, sa_family_t family)
-> +{
-> +	int ret;
-> +
-> +	ret = ovpn_socket(ctx, family, IPPROTO_TCP);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = listen(ctx->socket, 10);
-> +	if (ret < 0) {
-> +		perror("listen");
-> +		close(ctx->socket);
-> +		return -1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ovpn_accept(struct ovpn_ctx *ctx)
-> +{
-> +	socklen_t socklen;
-> +	int ret;
-> +
-> +	socklen = sizeof(ctx->remote);
-> +	ret = accept(ctx->socket, (struct sockaddr *)&ctx->remote, &socklen);
-> +	if (ret < 0) {
-> +		perror("accept");
-> +		goto err;
-> +	}
-> +
-> +	fprintf(stderr, "Connection received!\n");
-> +
-> +	switch (socklen) {
-> +	case sizeof(struct sockaddr_in):
-> +	case sizeof(struct sockaddr_in6):
-> +		break;
-> +	default:
-> +		fprintf(stderr, "error: expecting IPv4 or IPv6 connection\n");
-> +		close(ret);
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
-> +
-> +	return ret;
-> +err:
-> +	close(ctx->socket);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_connect(struct ovpn_ctx *ovpn)
-> +{
-> +	socklen_t socklen;
-> +	int s, ret;
-> +
-> +	s = socket(ovpn->remote.in4.sin_family, SOCK_STREAM, 0);
-> +	if (s < 0) {
-> +		perror("cannot create socket");
-> +		return -1;
-> +	}
-> +
-> +	switch (ovpn->remote.in4.sin_family) {
-> +	case AF_INET:
-> +		socklen = sizeof(struct sockaddr_in);
-> +		break;
-> +	case AF_INET6:
-> +		socklen = sizeof(struct sockaddr_in6);
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	ret = connect(s, (struct sockaddr *)&ovpn->remote, socklen);
-> +	if (ret < 0) {
-> +		perror("connect");
-> +		goto err;
-> +	}
-> +
-> +	fprintf(stderr, "connected\n");
-> +
-> +	ovpn->socket = s;
-> +
-> +	return 0;
-> +err:
-> +	close(s);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_new_peer(struct ovpn_ctx *ovpn, bool is_tcp)
-> +{
-> +	struct nlattr *attr;
-> +	struct nl_ctx *ctx;
-> +	int ret = -1;
-> +
-> +	ctx = nl_ctx_alloc(ovpn, OVPN_CMD_PEER_NEW);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	attr = nla_nest_start(ctx->nl_msg, OVPN_A_PEER);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_ID, ovpn->peer_id);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_SOCKET, ovpn->socket);
-> +
-> +	if (!is_tcp) {
-> +		switch (ovpn->remote.in4.sin_family) {
-> +		case AF_INET:
-> +			NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_REMOTE_IPV4,
-> +				    ovpn->remote.in4.sin_addr.s_addr);
-> +			NLA_PUT_U16(ctx->nl_msg, OVPN_A_PEER_REMOTE_PORT,
-> +				    ovpn->remote.in4.sin_port);
-> +			break;
-> +		case AF_INET6:
-> +			NLA_PUT(ctx->nl_msg, OVPN_A_PEER_REMOTE_IPV6,
-> +				sizeof(ovpn->remote.in6.sin6_addr),
-> +				&ovpn->remote.in6.sin6_addr);
-> +			NLA_PUT_U32(ctx->nl_msg,
-> +				    OVPN_A_PEER_REMOTE_IPV6_SCOPE_ID,
-> +				    ovpn->remote.in6.sin6_scope_id);
-> +			NLA_PUT_U16(ctx->nl_msg, OVPN_A_PEER_REMOTE_PORT,
-> +				    ovpn->remote.in6.sin6_port);
-> +			break;
-> +		default:
-> +			fprintf(stderr,
-> +				"Invalid family for remote socket address\n");
-> +			goto nla_put_failure;
-> +		}
-> +	}
-> +
-> +	if (ovpn->peer_ip_set) {
-> +		switch (ovpn->peer_ip.in4.sin_family) {
-> +		case AF_INET:
-> +			NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_VPN_IPV4,
-> +				    ovpn->peer_ip.in4.sin_addr.s_addr);
-> +			break;
-> +		case AF_INET6:
-> +			NLA_PUT(ctx->nl_msg, OVPN_A_PEER_VPN_IPV6,
-> +				sizeof(struct in6_addr),
-> +				&ovpn->peer_ip.in6.sin6_addr);
-> +			break;
-> +		default:
-> +			fprintf(stderr, "Invalid family for peer address\n");
-> +			goto nla_put_failure;
-> +		}
-> +	}
-> +
-> +	nla_nest_end(ctx->nl_msg, attr);
-> +
-> +	ret = ovpn_nl_msg_send(ctx, NULL);
-> +nla_put_failure:
-> +	nl_ctx_free(ctx);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_set_peer(struct ovpn_ctx *ovpn)
-> +{
-> +	struct nlattr *attr;
-> +	struct nl_ctx *ctx;
-> +	int ret = -1;
-> +
-> +	ctx = nl_ctx_alloc(ovpn, OVPN_CMD_PEER_SET);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	attr = nla_nest_start(ctx->nl_msg, OVPN_A_PEER);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_ID, ovpn->peer_id);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_KEEPALIVE_INTERVAL,
-> +		    ovpn->keepalive_interval);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_KEEPALIVE_TIMEOUT,
-> +		    ovpn->keepalive_timeout);
-> +	nla_nest_end(ctx->nl_msg, attr);
-> +
-> +	ret = ovpn_nl_msg_send(ctx, NULL);
-> +nla_put_failure:
-> +	nl_ctx_free(ctx);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_del_peer(struct ovpn_ctx *ovpn)
-> +{
-> +	struct nlattr *attr;
-> +	struct nl_ctx *ctx;
-> +	int ret = -1;
-> +
-> +	ctx = nl_ctx_alloc(ovpn, OVPN_CMD_PEER_DEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	attr = nla_nest_start(ctx->nl_msg, OVPN_A_PEER);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_ID, ovpn->peer_id);
-> +	nla_nest_end(ctx->nl_msg, attr);
-> +
-> +	ret = ovpn_nl_msg_send(ctx, NULL);
-> +nla_put_failure:
-> +	nl_ctx_free(ctx);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_handle_peer(struct nl_msg *msg, void *arg)
-> +{
-> +	struct nlattr *pattrs[OVPN_A_PEER_MAX + 1];
-> +	struct genlmsghdr *gnlh = nlmsg_data(nlmsg_hdr(msg));
-> +	struct nlattr *attrs[OVPN_A_MAX + 1];
-> +	__u16 rport = 0, lport = 0;
-> +
-> +	nla_parse(attrs, OVPN_A_MAX, genlmsg_attrdata(gnlh, 0),
-> +		  genlmsg_attrlen(gnlh, 0), NULL);
-> +
-> +	if (!attrs[OVPN_A_PEER]) {
-> +		fprintf(stderr, "no packet content in netlink message\n");
-> +		return NL_SKIP;
-> +	}
-> +
-> +	nla_parse(pattrs, OVPN_A_PEER_MAX, nla_data(attrs[OVPN_A_PEER]),
-> +		  nla_len(attrs[OVPN_A_PEER]), NULL);
-> +
-> +	if (pattrs[OVPN_A_PEER_ID])
-> +		fprintf(stderr, "* Peer %u\n",
-> +			nla_get_u32(pattrs[OVPN_A_PEER_ID]));
-> +
-> +	if (pattrs[OVPN_A_PEER_VPN_IPV4]) {
-> +		char buf[INET_ADDRSTRLEN];
-> +
-> +		inet_ntop(AF_INET, nla_data(pattrs[OVPN_A_PEER_VPN_IPV4]),
-> +			  buf, sizeof(buf));
-> +		fprintf(stderr, "\tVPN IPv4: %s\n", buf);
-> +	}
-> +
-> +	if (pattrs[OVPN_A_PEER_VPN_IPV6]) {
-> +		char buf[INET6_ADDRSTRLEN];
-> +
-> +		inet_ntop(AF_INET6, nla_data(pattrs[OVPN_A_PEER_VPN_IPV6]),
-> +			  buf, sizeof(buf));
-> +		fprintf(stderr, "\tVPN IPv6: %s\n", buf);
-> +	}
-> +
-> +	if (pattrs[OVPN_A_PEER_LOCAL_PORT])
-> +		lport = ntohs(nla_get_u16(pattrs[OVPN_A_PEER_LOCAL_PORT]));
-> +
-> +	if (pattrs[OVPN_A_PEER_REMOTE_PORT])
-> +		rport = ntohs(nla_get_u16(pattrs[OVPN_A_PEER_REMOTE_PORT]));
-> +
-> +	if (pattrs[OVPN_A_PEER_REMOTE_IPV6]) {
-> +		void *ip = pattrs[OVPN_A_PEER_REMOTE_IPV6];
-> +		char buf[INET6_ADDRSTRLEN];
-> +		int scope_id = -1;
-> +
-> +		if (pattrs[OVPN_A_PEER_REMOTE_IPV6_SCOPE_ID]) {
-> +			void *p = pattrs[OVPN_A_PEER_REMOTE_IPV6_SCOPE_ID];
-> +
-> +			scope_id = nla_get_u32(p);
-> +		}
-> +
-> +		inet_ntop(AF_INET6, nla_data(ip), buf, sizeof(buf));
-> +		fprintf(stderr, "\tRemote: %s:%hu (scope-id: %u)\n", buf, rport,
-> +			scope_id);
-> +
-> +		if (pattrs[OVPN_A_PEER_LOCAL_IPV6]) {
-> +			void *ip = pattrs[OVPN_A_PEER_LOCAL_IPV6];
-> +
-> +			inet_ntop(AF_INET6, nla_data(ip), buf, sizeof(buf));
-> +			fprintf(stderr, "\tLocal: %s:%hu\n", buf, lport);
-> +		}
-> +	}
-> +
-> +	if (pattrs[OVPN_A_PEER_REMOTE_IPV4]) {
-> +		void *ip = pattrs[OVPN_A_PEER_REMOTE_IPV4];
-> +		char buf[INET_ADDRSTRLEN];
-> +
-> +		inet_ntop(AF_INET, nla_data(ip), buf, sizeof(buf));
-> +		fprintf(stderr, "\tRemote: %s:%hu\n", buf, rport);
-> +
-> +		if (pattrs[OVPN_A_PEER_LOCAL_IPV4]) {
-> +			void *p = pattrs[OVPN_A_PEER_LOCAL_IPV4];
-> +
-> +			inet_ntop(AF_INET, nla_data(p), buf, sizeof(buf));
-> +			fprintf(stderr, "\tLocal: %s:%hu\n", buf, lport);
-> +		}
-> +	}
-> +
-> +	if (pattrs[OVPN_A_PEER_KEEPALIVE_INTERVAL]) {
-> +		void *p = pattrs[OVPN_A_PEER_KEEPALIVE_INTERVAL];
-> +
-> +		fprintf(stderr, "\tKeepalive interval: %u sec\n",
-> +			nla_get_u32(p));
-> +	}
-> +
-> +	if (pattrs[OVPN_A_PEER_KEEPALIVE_TIMEOUT])
-> +		fprintf(stderr, "\tKeepalive timeout: %u sec\n",
-> +			nla_get_u32(pattrs[OVPN_A_PEER_KEEPALIVE_TIMEOUT]));
-> +
-> +	if (pattrs[OVPN_A_PEER_VPN_RX_BYTES])
-> +		fprintf(stderr, "\tVPN RX bytes: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_VPN_RX_BYTES]));
-> +
-> +	if (pattrs[OVPN_A_PEER_VPN_TX_BYTES])
-> +		fprintf(stderr, "\tVPN TX bytes: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_VPN_TX_BYTES]));
-> +
-> +	if (pattrs[OVPN_A_PEER_VPN_RX_PACKETS])
-> +		fprintf(stderr, "\tVPN RX packets: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_VPN_RX_PACKETS]));
-> +
-> +	if (pattrs[OVPN_A_PEER_VPN_TX_PACKETS])
-> +		fprintf(stderr, "\tVPN TX packets: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_VPN_TX_PACKETS]));
-> +
-> +	if (pattrs[OVPN_A_PEER_LINK_RX_BYTES])
-> +		fprintf(stderr, "\tLINK RX bytes: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_LINK_RX_BYTES]));
-> +
-> +	if (pattrs[OVPN_A_PEER_LINK_TX_BYTES])
-> +		fprintf(stderr, "\tLINK TX bytes: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_LINK_TX_BYTES]));
-> +
-> +	if (pattrs[OVPN_A_PEER_LINK_RX_PACKETS])
-> +		fprintf(stderr, "\tLINK RX packets: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_LINK_RX_PACKETS]));
-> +
-> +	if (pattrs[OVPN_A_PEER_LINK_TX_PACKETS])
-> +		fprintf(stderr, "\tLINK TX packets: %" PRIu64 "\n",
-> +			nla_get_uint(pattrs[OVPN_A_PEER_LINK_TX_PACKETS]));
-> +
-> +	return NL_SKIP;
-> +}
-> +
-> +static int ovpn_get_peer(struct ovpn_ctx *ovpn)
-> +{
-> +	int flags = 0, ret = -1;
-> +	struct nlattr *attr;
-> +	struct nl_ctx *ctx;
-> +
-> +	if (ovpn->peer_id == PEER_ID_UNDEF)
-> +		flags = NLM_F_DUMP;
-> +
-> +	ctx = nl_ctx_alloc_flags(ovpn, OVPN_CMD_PEER_GET, flags);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	if (ovpn->peer_id != PEER_ID_UNDEF) {
-> +		attr = nla_nest_start(ctx->nl_msg, OVPN_A_PEER);
-> +		NLA_PUT_U32(ctx->nl_msg, OVPN_A_PEER_ID, ovpn->peer_id);
-> +		nla_nest_end(ctx->nl_msg, attr);
-> +	}
-> +
-> +	ret = ovpn_nl_msg_send(ctx, ovpn_handle_peer);
-> +nla_put_failure:
-> +	nl_ctx_free(ctx);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_new_key(struct ovpn_ctx *ovpn)
-> +{
-> +	struct nlattr *keyconf, *key_dir;
-> +	struct nl_ctx *ctx;
-> +	int ret = -1;
-> +
-> +	ctx = nl_ctx_alloc(ovpn, OVPN_CMD_KEY_NEW);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	keyconf = nla_nest_start(ctx->nl_msg, OVPN_A_KEYCONF);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_KEYCONF_PEER_ID, ovpn->peer_id);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_KEYCONF_SLOT, ovpn->key_slot);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_KEYCONF_KEY_ID, ovpn->key_id);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_KEYCONF_CIPHER_ALG, ovpn->cipher);
-> +
-> +	key_dir = nla_nest_start(ctx->nl_msg, OVPN_A_KEYCONF_ENCRYPT_DIR);
-> +	NLA_PUT(ctx->nl_msg, OVPN_A_KEYDIR_CIPHER_KEY, KEY_LEN, ovpn->key_enc);
-> +	NLA_PUT(ctx->nl_msg, OVPN_A_KEYDIR_NONCE_TAIL, NONCE_LEN, ovpn->nonce);
-> +	nla_nest_end(ctx->nl_msg, key_dir);
-> +
-> +	key_dir = nla_nest_start(ctx->nl_msg, OVPN_A_KEYCONF_DECRYPT_DIR);
-> +	NLA_PUT(ctx->nl_msg, OVPN_A_KEYDIR_CIPHER_KEY, KEY_LEN, ovpn->key_dec);
-> +	NLA_PUT(ctx->nl_msg, OVPN_A_KEYDIR_NONCE_TAIL, NONCE_LEN, ovpn->nonce);
-> +	nla_nest_end(ctx->nl_msg, key_dir);
-> +
-> +	nla_nest_end(ctx->nl_msg, keyconf);
-> +
-> +	ret = ovpn_nl_msg_send(ctx, NULL);
-> +nla_put_failure:
-> +	nl_ctx_free(ctx);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_del_key(struct ovpn_ctx *ovpn)
-> +{
-> +	struct nlattr *keyconf;
-> +	struct nl_ctx *ctx;
-> +	int ret = -1;
-> +
-> +	ctx = nl_ctx_alloc(ovpn, OVPN_CMD_KEY_DEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	keyconf = nla_nest_start(ctx->nl_msg, OVPN_A_KEYCONF);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_KEYCONF_PEER_ID, ovpn->peer_id);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_KEYCONF_SLOT, OVPN_KEY_SLOT_PRIMARY);
-> +	nla_nest_end(ctx->nl_msg, keyconf);
-> +
-> +	ret = ovpn_nl_msg_send(ctx, NULL);
-> +nla_put_failure:
-> +	nl_ctx_free(ctx);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_swap_keys(struct ovpn_ctx *ovpn)
-> +{
-> +	struct nl_ctx *ctx;
-> +	struct nlattr *kc;
-> +	int ret = -1;
-> +
-> +	ctx = nl_ctx_alloc(ovpn, OVPN_CMD_KEY_SWAP);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	kc = nla_nest_start(ctx->nl_msg, OVPN_A_KEYCONF);
-> +	NLA_PUT_U32(ctx->nl_msg, OVPN_A_KEYCONF_PEER_ID, ovpn->peer_id);
-> +	nla_nest_end(ctx->nl_msg, kc);
-> +
-> +	ret = ovpn_nl_msg_send(ctx, NULL);
-> +nla_put_failure:
-> +	nl_ctx_free(ctx);
-> +	return ret;
-> +}
-> +
-> +#define OVPN_ADDATTR(_msg, _max_size, _attr, _data, _size) {		\
-> +	if (ovpn_addattr(_msg, _max_size, _attr, _data, _size) < 0)	\
-> +		goto err;                                               \
-> +}
-> +
-> +#define NLMSG_TAIL(nmsg)					\
-> +	((struct rtattr *)(((uint8_t *)(nmsg)) +		\
-> +			   NLMSG_ALIGN((nmsg)->nlmsg_len)))
-> +
-> +#define OVPN_NEST(_msg, _max_size, _attr) ({		\
-> +	struct rtattr *_nest = NLMSG_TAIL(_msg);        \
-> +	OVPN_ADDATTR(_msg, _max_size, _attr, NULL, 0); \
-> +	_nest;                                          \
-> +})
-> +
-> +#define OVPN_NEST_END(_msg, _nest) {					\
-> +	_nest->rta_len = (void *)NLMSG_TAIL(_msg) - (void *)_nest;	\
-> +}
-> +
-> +/**
-> + * Helper function used to easily add attributes to a rtnl message
-> + */
-> +static int ovpn_addattr(struct nlmsghdr *n, int maxlen, int type,
-> +			const void *data, int alen)
-> +{
-> +	int len = RTA_LENGTH(alen);
-> +	struct rtattr *rta;
-> +
-> +	if ((int)(NLMSG_ALIGN(n->nlmsg_len) + RTA_ALIGN(len)) > maxlen)	{
-> +		fprintf(stderr, "%s: rtnl: message exceeded bound of %d",
-> +			__func__, maxlen);
-> +		return -EMSGSIZE;
-> +	}
-> +
-> +	rta = NLMSG_TAIL(n);
-> +	rta->rta_type = type;
-> +	rta->rta_len = len;
-> +
-> +	if (!data)
-> +		memset(RTA_DATA(rta), 0, alen);
-> +	else
-> +		memcpy(RTA_DATA(rta), data, alen);
-> +
-> +	n->nlmsg_len = NLMSG_ALIGN(n->nlmsg_len) + RTA_ALIGN(len);
-> +
-> +	return 0;
-> +}
-> +
-> +#define RT_SNDBUF_SIZE (1024 * 2)
-> +#define RT_RCVBUF_SIZE (1024 * 4)
-> +
-> +/**
-> + * Open RTNL socket
-> + */
-> +static int ovpn_rt_socket(void)
-> +{
-> +	int sndbuf = RT_SNDBUF_SIZE, rcvbuf = RT_RCVBUF_SIZE, fd;
-> +
-> +	fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
-> +	if (fd < 0) {
-> +		fprintf(stderr, "%s: cannot open netlink socket", __func__);
-> +		return fd;
-> +	}
-> +
-> +	if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &sndbuf,
-> +		       sizeof(sndbuf)) < 0) {
-> +		fprintf(stderr, "%s: SO_SNDBUF", __func__);
-> +		close(fd);
-> +		return -1;
-> +	}
-> +
-> +	if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &rcvbuf,
-> +		       sizeof(rcvbuf)) < 0) {
-> +		fprintf(stderr, "%s: SO_RCVBUF", __func__);
-> +		close(fd);
-> +		return -1;
-> +	}
-> +
-> +	return fd;
-> +}
-> +
-> +/**
-> + * Bind socket to Netlink subsystem
-> + */
-> +static int ovpn_rt_bind(int fd, uint32_t groups)
-> +{
-> +	struct sockaddr_nl local = { };
-> +	socklen_t addr_len;
-> +
-> +	local.nl_family = AF_NETLINK;
-> +	local.nl_groups = groups;
-> +
-> +	if (bind(fd, (struct sockaddr *)&local, sizeof(local)) < 0) {
-> +		fprintf(stderr, "%s: cannot bind netlink socket: %d", __func__,
-> +			errno);
-> +		return -errno;
-> +	}
-> +
-> +	addr_len = sizeof(local);
-> +	if (getsockname(fd, (struct sockaddr *)&local, &addr_len) < 0) {
-> +		fprintf(stderr, "%s: cannot getsockname: %d", __func__, errno);
-> +		return -errno;
-> +	}
-> +
-> +	if (addr_len != sizeof(local)) {
-> +		fprintf(stderr, "%s: wrong address length %d", __func__,
-> +			addr_len);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (local.nl_family != AF_NETLINK) {
-> +		fprintf(stderr, "%s: wrong address family %d", __func__,
-> +			local.nl_family);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +typedef int (*ovpn_parse_reply_cb)(struct nlmsghdr *msg, void *arg);
-> +
-> +/**
-> + * Send Netlink message and run callback on reply (if specified)
-> + */
-> +static int ovpn_rt_send(struct nlmsghdr *payload, pid_t peer,
-> +			unsigned int groups, ovpn_parse_reply_cb cb,
-> +			void *arg_cb)
-> +{
-> +	int len, rem_len, fd, ret, rcv_len;
-> +	struct sockaddr_nl nladdr = { };
-> +	struct nlmsgerr *err;
-> +	struct nlmsghdr *h;
-> +	char buf[1024 * 16];
-> +	struct iovec iov = {
-> +		.iov_base = payload,
-> +		.iov_len = payload->nlmsg_len,
-> +	};
-> +	struct msghdr nlmsg = {
-> +		.msg_name = &nladdr,
-> +		.msg_namelen = sizeof(nladdr),
-> +		.msg_iov = &iov,
-> +		.msg_iovlen = 1,
-> +	};
-> +
-> +	nladdr.nl_family = AF_NETLINK;
-> +	nladdr.nl_pid = peer;
-> +	nladdr.nl_groups = groups;
-> +
-> +	payload->nlmsg_seq = time(NULL);
-> +
-> +	/* no need to send reply */
-> +	if (!cb)
-> +		payload->nlmsg_flags |= NLM_F_ACK;
-> +
-> +	fd = ovpn_rt_socket();
-> +	if (fd < 0) {
-> +		fprintf(stderr, "%s: can't open rtnl socket", __func__);
-> +		return -errno;
-> +	}
-> +
-> +	ret = ovpn_rt_bind(fd, 0);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "%s: can't bind rtnl socket", __func__);
-> +		ret = -errno;
-> +		goto out;
-> +	}
-> +
-> +	ret = sendmsg(fd, &nlmsg, 0);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "%s: rtnl: error on sendmsg()", __func__);
-> +		ret = -errno;
-> +		goto out;
-> +	}
-> +
-> +	/* prepare buffer to store RTNL replies */
-> +	memset(buf, 0, sizeof(buf));
-> +	iov.iov_base = buf;
-> +
-> +	while (1) {
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 3e6b9f216e80..c27b107c1985 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -698,6 +698,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>  	char msg[BUFSIZ];
+>  	unsigned long long t0, t1;
+>  	struct evsel *counter;
+> +	struct bpf_stat_opts opts;
+>  	size_t l;
+>  	int status = 0;
+>  	const bool forks = (argc > 0);
+> @@ -725,7 +726,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>  
+>  	evlist__for_each_entry(evsel_list, counter) {
+>  		counter->reset_group = false;
+> -		if (bpf_counter__load(counter, &target)) {
+> +		opts.inherit = !stat_config.no_inherit;
+> +		if (bpf_counter__load(counter, &target, &opts)) {
+
+Maybe you can just add a boolean member in the struct target.
+
+
+>  			err = -1;
+>  			goto err_out;
+>  		}
+> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+> index 7a8af60e0f51..00afea6bde63 100644
+> --- a/tools/perf/util/bpf_counter.c
+> +++ b/tools/perf/util/bpf_counter.c
+> @@ -166,7 +166,9 @@ static int bpf_program_profiler_load_one(struct evsel *evsel, u32 prog_id)
+>  	return -1;
+>  }
+>  
+> -static int bpf_program_profiler__load(struct evsel *evsel, struct target *target)
+> +static int bpf_program_profiler__load(struct evsel *evsel,
+> +				      struct target *target,
+> +				      struct bpf_stat_opts *opts __maybe_unused)
+>  {
+>  	char *bpf_str, *bpf_str_, *tok, *saveptr = NULL, *p;
+>  	u32 prog_id;
+> @@ -364,6 +366,7 @@ static int bperf_lock_attr_map(struct target *target)
+>  
+>  static int bperf_check_target(struct evsel *evsel,
+>  			      struct target *target,
+> +			      struct bpf_stat_opts *opts,
+>  			      enum bperf_filter_type *filter_type,
+>  			      __u32 *filter_entry_cnt)
+>  {
+> @@ -383,7 +386,12 @@ static int bperf_check_target(struct evsel *evsel,
+>  		*filter_type = BPERF_FILTER_PID;
+>  		*filter_entry_cnt = perf_thread_map__nr(evsel->core.threads);
+>  	} else if (target->pid || evsel->evlist->workload.pid != -1) {
+> -		*filter_type = BPERF_FILTER_TGID;
 > +		/*
-> +		 * iov_len is modified by recvmsg(), therefore has to be initialized before
-> +		 * using it again
+> +		 * unlike the PID type, the TGID type implicitly enables
+> +		 * event inheritance within a single process.
 > +		 */
-> +		iov.iov_len = sizeof(buf);
-> +		rcv_len = recvmsg(fd, &nlmsg, 0);
-> +		if (rcv_len < 0) {
-> +			if (errno == EINTR || errno == EAGAIN) {
-> +				fprintf(stderr, "%s: interrupted call",
-> +					__func__);
-> +				continue;
-> +			}
-> +			fprintf(stderr, "%s: rtnl: error on recvmsg()",
-> +				__func__);
-> +			ret = -errno;
-> +			goto out;
-> +		}
+> +		*filter_type = opts->inherit ?
+> +				BPERF_FILTER_TGID : BPERF_FILTER_PID;
+
+I'm not sure if it's right.  You should be able to use PID type with
+inheritance.  In this case child processes or threads from the selected
+thread would be counted only.
+
+Thanks,
+Namhyung
+
+
+>  		*filter_entry_cnt = perf_thread_map__nr(evsel->core.threads);
+>  	} else {
+>  		pr_err("bpf managed perf events do not yet support these targets.\n");
+> @@ -394,6 +402,7 @@ static int bperf_check_target(struct evsel *evsel,
+>  }
+>  
+>  static	struct perf_cpu_map *all_cpu_map;
+> +static __u32 filter_entry_cnt;
+>  
+>  static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+>  				       struct perf_event_attr_map_entry *entry)
+> @@ -444,14 +453,36 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+>  	return err;
+>  }
+>  
+> -static int bperf__load(struct evsel *evsel, struct target *target)
+> +static int bperf_attach_follower_program(struct bperf_follower_bpf *skel,
+> +					 enum bperf_filter_type filter_type,
+> +					 bool inherit)
+> +{
+> +	struct bpf_link *link;
+> +	int err = 0;
 > +
-> +		if (rcv_len == 0) {
-> +			fprintf(stderr,
-> +				"%s: rtnl: socket reached unexpected EOF",
-> +				__func__);
-> +			ret = -EIO;
-> +			goto out;
-> +		}
-> +
-> +		if (nlmsg.msg_namelen != sizeof(nladdr)) {
-> +			fprintf(stderr,
-> +				"%s: sender address length: %u (expected %zu)",
-> +				__func__, nlmsg.msg_namelen, sizeof(nladdr));
-> +			ret = -EIO;
-> +			goto out;
-> +		}
-> +
-> +		h = (struct nlmsghdr *)buf;
-> +		while (rcv_len >= (int)sizeof(*h)) {
-> +			len = h->nlmsg_len;
-> +			rem_len = len - sizeof(*h);
-> +
-> +			if (rem_len < 0 || len > rcv_len) {
-> +				if (nlmsg.msg_flags & MSG_TRUNC) {
-> +					fprintf(stderr, "%s: truncated message",
-> +						__func__);
-> +					ret = -EIO;
-> +					goto out;
-> +				}
-> +				fprintf(stderr, "%s: malformed message: len=%d",
-> +					__func__, len);
-> +				ret = -EIO;
-> +				goto out;
-> +			}
-> +
-> +			if (h->nlmsg_type == NLMSG_DONE) {
-> +				ret = 0;
-> +				goto out;
-> +			}
-> +
-> +			if (h->nlmsg_type == NLMSG_ERROR) {
-> +				err = (struct nlmsgerr *)NLMSG_DATA(h);
-> +				if (rem_len < (int)sizeof(struct nlmsgerr)) {
-> +					fprintf(stderr, "%s: ERROR truncated",
-> +						__func__);
-> +					ret = -EIO;
-> +					goto out;
-> +				}
-> +				if (!err->error) {
-> +					ret = 0;
-> +					if (cb)	{
-> +						int r = cb(h, arg_cb);
-> +						if (r <= 0)
-> +							ret = r;
-> +					}
-> +				} else {
-> +					fprintf(stderr,
-> +						"%s: rtnl: generic error (%d): %s",
-> +						__func__, err->error,
-> +						strerror(-err->error));
-> +					ret = err->error;
-> +				}
-> +				goto out;
-> +			}
-> +
-> +			if (cb) {
-> +				int r = cb(h, arg_cb);
-> +
-> +				if (r <= 0) {
-> +					ret = r;
-> +					goto out;
-> +				}
-> +			} else {
-> +				fprintf(stderr, "%s: RTNL: unexpected reply",
-> +					__func__);
-> +			}
-> +
-> +			rcv_len -= NLMSG_ALIGN(len);
-> +			h = (struct nlmsghdr *)((char *)h + NLMSG_ALIGN(len));
-> +		}
-> +
-> +		if (nlmsg.msg_flags & MSG_TRUNC) {
-> +			fprintf(stderr, "%s: message truncated", __func__);
-> +			continue;
-> +		}
-> +
-> +		if (rcv_len) {
-> +			fprintf(stderr, "%s: rtnl: %d not parsed bytes",
-> +				__func__, rcv_len);
-> +			ret = -1;
-> +			goto out;
-> +		}
+> +	if ((filter_type == BPERF_FILTER_PID ||
+> +	    filter_type == BPERF_FILTER_TGID) && inherit)
+> +		/* attach all follower bpf progs to enable event inheritance */
+> +		err = bperf_follower_bpf__attach(skel);
+> +	else {
+> +		link = bpf_program__attach(skel->progs.fexit_XXX);
+> +		if (IS_ERR(link))
+> +			err = PTR_ERR(link);
 > +	}
-> +out:
-> +	close(fd);
 > +
-> +	return ret;
+> +	return err;
 > +}
 > +
-> +struct ovpn_link_req {
-> +	struct nlmsghdr n;
-> +	struct ifinfomsg i;
-> +	char buf[256];
+> +static int bperf__load(struct evsel *evsel, struct target *target,
+> +		       struct bpf_stat_opts *opts)
+>  {
+>  	struct perf_event_attr_map_entry entry = {0xffffffff, 0xffffffff};
+>  	int attr_map_fd, diff_map_fd = -1, err;
+>  	enum bperf_filter_type filter_type;
+> -	__u32 filter_entry_cnt, i;
+> +	__u32 i;
+>  
+> -	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
+> +	if (bperf_check_target(evsel, target, opts, &filter_type,
+> +			       &filter_entry_cnt))
+>  		return -1;
+>  
+>  	if (!all_cpu_map) {
+> @@ -529,9 +560,6 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>  	/* set up reading map */
+>  	bpf_map__set_max_entries(evsel->follower_skel->maps.accum_readings,
+>  				 filter_entry_cnt);
+> -	/* set up follower filter based on target */
+> -	bpf_map__set_max_entries(evsel->follower_skel->maps.filter,
+> -				 filter_entry_cnt);
+>  	err = bperf_follower_bpf__load(evsel->follower_skel);
+>  	if (err) {
+>  		pr_err("Failed to load follower skeleton\n");
+> @@ -543,6 +571,7 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>  	for (i = 0; i < filter_entry_cnt; i++) {
+>  		int filter_map_fd;
+>  		__u32 key;
+> +		struct bperf_filter_value fval = { i, 0 };
+>  
+>  		if (filter_type == BPERF_FILTER_PID ||
+>  		    filter_type == BPERF_FILTER_TGID)
+> @@ -553,12 +582,13 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>  			break;
+>  
+>  		filter_map_fd = bpf_map__fd(evsel->follower_skel->maps.filter);
+> -		bpf_map_update_elem(filter_map_fd, &key, &i, BPF_ANY);
+> +		bpf_map_update_elem(filter_map_fd, &key, &fval, BPF_ANY);
+>  	}
+>  
+>  	evsel->follower_skel->bss->type = filter_type;
+>  
+> -	err = bperf_follower_bpf__attach(evsel->follower_skel);
+> +	err = bperf_attach_follower_program(evsel->follower_skel, filter_type,
+> +					    opts->inherit);
+>  
+>  out:
+>  	if (err && evsel->bperf_leader_link_fd >= 0)
+> @@ -623,7 +653,7 @@ static int bperf__read(struct evsel *evsel)
+>  	bperf_sync_counters(evsel);
+>  	reading_map_fd = bpf_map__fd(skel->maps.accum_readings);
+>  
+> -	for (i = 0; i < bpf_map__max_entries(skel->maps.accum_readings); i++) {
+> +	for (i = 0; i < filter_entry_cnt; i++) {
+>  		struct perf_cpu entry;
+>  		__u32 cpu;
+>  
+> @@ -776,7 +806,8 @@ int bpf_counter__install_pe(struct evsel *evsel, int cpu_map_idx, int fd)
+>  	return evsel->bpf_counter_ops->install_pe(evsel, cpu_map_idx, fd);
+>  }
+>  
+> -int bpf_counter__load(struct evsel *evsel, struct target *target)
+> +int bpf_counter__load(struct evsel *evsel, struct target *target,
+> +		      struct bpf_stat_opts *opts)
+>  {
+>  	if (target->bpf_str)
+>  		evsel->bpf_counter_ops = &bpf_program_profiler_ops;
+> @@ -787,7 +818,7 @@ int bpf_counter__load(struct evsel *evsel, struct target *target)
+>  		evsel->bpf_counter_ops = &bperf_ops;
+>  
+>  	if (evsel->bpf_counter_ops)
+> -		return evsel->bpf_counter_ops->load(evsel, target);
+> +		return evsel->bpf_counter_ops->load(evsel, target, opts);
+>  	return 0;
+>  }
+>  
+> diff --git a/tools/perf/util/bpf_counter.h b/tools/perf/util/bpf_counter.h
+> index c6d21c07b14c..70d7869c0cd6 100644
+> --- a/tools/perf/util/bpf_counter.h
+> +++ b/tools/perf/util/bpf_counter.h
+> @@ -15,9 +15,14 @@ struct evsel;
+>  struct target;
+>  struct bpf_counter;
+>  
+> +struct bpf_stat_opts {
+> +	bool inherit;
 > +};
 > +
-> +static int ovpn_new_iface(struct ovpn_ctx *ovpn)
+>  typedef int (*bpf_counter_evsel_op)(struct evsel *evsel);
+>  typedef int (*bpf_counter_evsel_target_op)(struct evsel *evsel,
+> -					   struct target *target);
+> +					   struct target *target,
+> +					   struct bpf_stat_opts *opts);
+>  typedef int (*bpf_counter_evsel_install_pe_op)(struct evsel *evsel,
+>  					       int cpu_map_idx,
+>  					       int fd);
+> @@ -38,7 +43,8 @@ struct bpf_counter {
+>  
+>  #ifdef HAVE_BPF_SKEL
+>  
+> -int bpf_counter__load(struct evsel *evsel, struct target *target);
+> +int bpf_counter__load(struct evsel *evsel, struct target *target,
+> +		      struct bpf_stat_opts *opts);
+>  int bpf_counter__enable(struct evsel *evsel);
+>  int bpf_counter__disable(struct evsel *evsel);
+>  int bpf_counter__read(struct evsel *evsel);
+> @@ -50,7 +56,8 @@ int bpf_counter__install_pe(struct evsel *evsel, int cpu_map_idx, int fd);
+>  #include <linux/err.h>
+>  
+>  static inline int bpf_counter__load(struct evsel *evsel __maybe_unused,
+> -				    struct target *target __maybe_unused)
+> +				    struct target *target __maybe_unused,
+> +				    struct bpf_stat_opts *opts __maybe_unused)
+>  {
+>  	return 0;
+>  }
+> diff --git a/tools/perf/util/bpf_counter_cgroup.c b/tools/perf/util/bpf_counter_cgroup.c
+> index 6ff42619de12..755f12a6703c 100644
+> --- a/tools/perf/util/bpf_counter_cgroup.c
+> +++ b/tools/perf/util/bpf_counter_cgroup.c
+> @@ -167,7 +167,8 @@ static int bperf_load_program(struct evlist *evlist)
+>  }
+>  
+>  static int bperf_cgrp__load(struct evsel *evsel,
+> -			    struct target *target __maybe_unused)
+> +			    struct target *target __maybe_unused,
+> +			    struct bpf_stat_opts *opts __maybe_unused)
+>  {
+>  	static bool bperf_loaded = false;
+>  
+> diff --git a/tools/perf/util/bpf_skel/bperf_follower.bpf.c b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+> index f193998530d4..e804b2a9d0a6 100644
+> --- a/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+> +++ b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+> @@ -5,6 +5,8 @@
+>  #include <bpf/bpf_tracing.h>
+>  #include "bperf_u.h"
+>  
+> +#define MAX_ENTRIES 102400
+> +
+>  struct {
+>  	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+>  	__uint(key_size, sizeof(__u32));
+> @@ -22,7 +24,9 @@ struct {
+>  struct {
+>  	__uint(type, BPF_MAP_TYPE_HASH);
+>  	__uint(key_size, sizeof(__u32));
+> -	__uint(value_size, sizeof(__u32));
+> +	__uint(value_size, sizeof(struct bperf_filter_value));
+> +	__uint(max_entries, MAX_ENTRIES);
+> +	__uint(map_flags, BPF_F_NO_PREALLOC);
+>  } filter SEC(".maps");
+>  
+>  enum bperf_filter_type type = 0;
+> @@ -33,14 +37,15 @@ int BPF_PROG(fexit_XXX)
+>  {
+>  	struct bpf_perf_event_value *diff_val, *accum_val;
+>  	__u32 filter_key, zero = 0;
+> -	__u32 *accum_key;
+> +	__u32 accum_key;
+> +	struct bperf_filter_value *fval;
+>  
+>  	if (!enabled)
+>  		return 0;
+>  
+>  	switch (type) {
+>  	case BPERF_FILTER_GLOBAL:
+> -		accum_key = &zero;
+> +		accum_key = zero;
+>  		goto do_add;
+>  	case BPERF_FILTER_CPU:
+>  		filter_key = bpf_get_smp_processor_id();
+> @@ -55,16 +60,20 @@ int BPF_PROG(fexit_XXX)
+>  		return 0;
+>  	}
+>  
+> -	accum_key = bpf_map_lookup_elem(&filter, &filter_key);
+> -	if (!accum_key)
+> +	fval = bpf_map_lookup_elem(&filter, &filter_key);
+> +	if (!fval)
+>  		return 0;
+>  
+> +	accum_key = fval->accum_key;
+> +	if (fval->exited)
+> +		bpf_map_delete_elem(&filter, &filter_key);
+> +
+>  do_add:
+>  	diff_val = bpf_map_lookup_elem(&diff_readings, &zero);
+>  	if (!diff_val)
+>  		return 0;
+>  
+> -	accum_val = bpf_map_lookup_elem(&accum_readings, accum_key);
+> +	accum_val = bpf_map_lookup_elem(&accum_readings, &accum_key);
+>  	if (!accum_val)
+>  		return 0;
+>  
+> @@ -75,4 +84,70 @@ int BPF_PROG(fexit_XXX)
+>  	return 0;
+>  }
+>  
+> +/* The program is only used for PID or TGID filter types. */
+> +SEC("tp_btf/task_newtask")
+> +int BPF_PROG(on_newtask, struct task_struct *task, __u64 clone_flags)
 > +{
-> +	struct rtattr *linkinfo, *data;
-> +	struct ovpn_link_req req = { };
-> +	int ret = -1;
+> +	__u32 parent_key, child_key;
+> +	struct bperf_filter_value *parent_fval;
+> +	struct bperf_filter_value child_fval = { 0 };
 > +
-> +	fprintf(stdout, "Creating interface %s with mode %u\n", ovpn->ifname,
-> +		ovpn->mode);
+> +	if (!enabled)
+> +		return 0;
 > +
-> +	req.n.nlmsg_len = NLMSG_LENGTH(sizeof(req.i));
-> +	req.n.nlmsg_flags = NLM_F_REQUEST | NLM_F_CREATE | NLM_F_EXCL;
-> +	req.n.nlmsg_type = RTM_NEWLINK;
-> +
-> +	OVPN_ADDATTR(&req.n, sizeof(req), IFLA_IFNAME, ovpn->ifname,
-> +		     strlen(ovpn->ifname) + 1);
-> +
-> +	linkinfo = OVPN_NEST(&req.n, sizeof(req), IFLA_LINKINFO);
-> +	OVPN_ADDATTR(&req.n, sizeof(req), IFLA_INFO_KIND, OVPN_FAMILY_NAME,
-> +		     strlen(OVPN_FAMILY_NAME) + 1);
-> +
-> +	if (ovpn->mode_set) {
-> +		data = OVPN_NEST(&req.n, sizeof(req), IFLA_INFO_DATA);
-> +		OVPN_ADDATTR(&req.n, sizeof(req), IFLA_OVPN_MODE, &ovpn->mode,
-> +			     sizeof(uint8_t));
-> +		OVPN_NEST_END(&req.n, data);
-> +	}
-> +
-> +	OVPN_NEST_END(&req.n, linkinfo);
-> +
-> +	req.i.ifi_family = AF_PACKET;
-> +
-> +	ret = ovpn_rt_send(&req.n, 0, 0, NULL, NULL);
-> +err:
-> +	return ret;
-> +}
-> +
-> +static int ovpn_del_iface(struct ovpn_ctx *ovpn)
-> +{
-> +	struct ovpn_link_req req = { };
-> +
-> +	fprintf(stdout, "Deleting interface %s ifindex %u\n", ovpn->ifname,
-> +		ovpn->ifindex);
-> +
-> +	req.n.nlmsg_len = NLMSG_LENGTH(sizeof(req.i));
-> +	req.n.nlmsg_flags = NLM_F_REQUEST;
-> +	req.n.nlmsg_type = RTM_DELLINK;
-> +
-> +	req.i.ifi_family = AF_PACKET;
-> +	req.i.ifi_index = ovpn->ifindex;
-> +
-> +	return ovpn_rt_send(&req.n, 0, 0, NULL, NULL);
-> +}
-> +
-> +static int nl_seq_check(struct nl_msg *msg, void *arg)
-> +{
-> +	return NL_OK;
-> +}
-> +
-> +struct mcast_handler_args {
-> +	const char *group;
-> +	int id;
-> +};
-> +
-> +static int mcast_family_handler(struct nl_msg *msg, void *arg)
-> +{
-> +	struct mcast_handler_args *grp = arg;
-> +	struct nlattr *tb[CTRL_ATTR_MAX + 1];
-> +	struct genlmsghdr *gnlh = nlmsg_data(nlmsg_hdr(msg));
-> +	struct nlattr *mcgrp;
-> +	int rem_mcgrp;
-> +
-> +	nla_parse(tb, CTRL_ATTR_MAX, genlmsg_attrdata(gnlh, 0),
-> +		  genlmsg_attrlen(gnlh, 0), NULL);
-> +
-> +	if (!tb[CTRL_ATTR_MCAST_GROUPS])
-> +		return NL_SKIP;
-> +
-> +	nla_for_each_nested(mcgrp, tb[CTRL_ATTR_MCAST_GROUPS], rem_mcgrp) {
-> +		struct nlattr *tb_mcgrp[CTRL_ATTR_MCAST_GRP_MAX + 1];
-> +
-> +		nla_parse(tb_mcgrp, CTRL_ATTR_MCAST_GRP_MAX,
-> +			  nla_data(mcgrp), nla_len(mcgrp), NULL);
-> +
-> +		if (!tb_mcgrp[CTRL_ATTR_MCAST_GRP_NAME] ||
-> +		    !tb_mcgrp[CTRL_ATTR_MCAST_GRP_ID])
-> +			continue;
-> +		if (strncmp(nla_data(tb_mcgrp[CTRL_ATTR_MCAST_GRP_NAME]),
-> +			    grp->group, nla_len(tb_mcgrp[CTRL_ATTR_MCAST_GRP_NAME])))
-> +			continue;
-> +		grp->id = nla_get_u32(tb_mcgrp[CTRL_ATTR_MCAST_GRP_ID]);
+> +	switch (type) {
+> +	case BPERF_FILTER_PID:
+> +		parent_key = bpf_get_current_pid_tgid() & 0xffffffff;
+> +		child_key = task->pid;
 > +		break;
-> +	}
-> +
-> +	return NL_SKIP;
-> +}
-> +
-> +static int mcast_error_handler(struct sockaddr_nl *nla, struct nlmsgerr *err,
-> +			       void *arg)
-> +{
-> +	int *ret = arg;
-> +
-> +	*ret = err->error;
-> +	return NL_STOP;
-> +}
-> +
-> +static int mcast_ack_handler(struct nl_msg *msg, void *arg)
-> +{
-> +	int *ret = arg;
-> +
-> +	*ret = 0;
-> +	return NL_STOP;
-> +}
-> +
-> +static int ovpn_handle_msg(struct nl_msg *msg, void *arg)
-> +{
-> +	struct genlmsghdr *gnlh = nlmsg_data(nlmsg_hdr(msg));
-> +	struct nlattr *attrs[OVPN_A_MAX + 1];
-> +	struct nlmsghdr *nlh = nlmsg_hdr(msg);
-> +	//enum ovpn_del_peer_reason reason;
-> +	char ifname[IF_NAMESIZE];
-> +	int *ret = arg;
-> +	__u32 ifindex;
-> +
-> +	fprintf(stderr, "received message from ovpn-dco\n");
-> +
-> +	*ret = -1;
-> +
-> +	if (!genlmsg_valid_hdr(nlh, 0)) {
-> +		fprintf(stderr, "invalid header\n");
-> +		return NL_STOP;
-> +	}
-> +
-> +	if (nla_parse(attrs, OVPN_A_MAX, genlmsg_attrdata(gnlh, 0),
-> +		      genlmsg_attrlen(gnlh, 0), NULL)) {
-> +		fprintf(stderr, "received bogus data from ovpn-dco\n");
-> +		return NL_STOP;
-> +	}
-> +
-> +	if (!attrs[OVPN_A_IFINDEX]) {
-> +		fprintf(stderr, "no ifindex in this message\n");
-> +		return NL_STOP;
-> +	}
-> +
-> +	ifindex = nla_get_u32(attrs[OVPN_A_IFINDEX]);
-> +	if (!if_indextoname(ifindex, ifname)) {
-> +		fprintf(stderr, "cannot resolve ifname for ifindex: %u\n",
-> +			ifindex);
-> +		return NL_STOP;
-> +	}
-> +
-> +	switch (gnlh->cmd) {
-> +	case OVPN_CMD_PEER_DEL_NTF:
-> +		/*if (!attrs[OVPN_A_DEL_PEER_REASON]) {
-> +		 *	fprintf(stderr, "no reason in DEL_PEER message\n");
-> +		 *	return NL_STOP;
-> +		 *}
-> +		 *
-> +		 *reason = nla_get_u8(attrs[OVPN_A_DEL_PEER_REASON]);
-> +		 *fprintf(stderr,
-> +		 *	"received CMD_DEL_PEER, ifname: %s reason: %d\n",
-> +		 *	ifname, reason);
-> +		 */
-> +		fprintf(stdout, "received CMD_PEER_DEL_NTF\n");
-> +		break;
-> +	case OVPN_CMD_KEY_SWAP_NTF:
-> +		fprintf(stdout, "received CMD_KEY_SWAP_NTF\n");
+> +	case BPERF_FILTER_TGID:
+> +		parent_key = bpf_get_current_pid_tgid() >> 32;
+> +		child_key = task->tgid;
+> +		if (child_key == parent_key)
+> +			return 0;
 > +		break;
 > +	default:
-> +		fprintf(stderr, "received unknown command: %d\n", gnlh->cmd);
-> +		return NL_STOP;
+> +		return 0;
 > +	}
 > +
-> +	*ret = 0;
-> +	return NL_OK;
-> +}
+> +	/* Check if the current task is one of the target tasks to be counted */
+> +	parent_fval = bpf_map_lookup_elem(&filter, &parent_key);
+> +	if (!parent_fval)
+> +		return 0;
 > +
-> +static int ovpn_get_mcast_id(struct nl_sock *sock, const char *family,
-> +			     const char *group)
-> +{
-> +	struct nl_msg *msg;
-> +	struct nl_cb *cb;
-> +	int ret, ctrlid;
-> +	struct mcast_handler_args grp = {
-> +		.group = group,
-> +		.id = -ENOENT,
-> +	};
-> +
-> +	msg = nlmsg_alloc();
-> +	if (!msg)
-> +		return -ENOMEM;
-> +
-> +	cb = nl_cb_alloc(NL_CB_DEFAULT);
-> +	if (!cb) {
-> +		ret = -ENOMEM;
-> +		goto out_fail_cb;
-> +	}
-> +
-> +	ctrlid = genl_ctrl_resolve(sock, "nlctrl");
-> +
-> +	genlmsg_put(msg, 0, 0, ctrlid, 0, 0, CTRL_CMD_GETFAMILY, 0);
-> +
-> +	ret = -ENOBUFS;
-> +	NLA_PUT_STRING(msg, CTRL_ATTR_FAMILY_NAME, family);
-> +
-> +	ret = nl_send_auto_complete(sock, msg);
-> +	if (ret < 0)
-> +		goto nla_put_failure;
-> +
-> +	ret = 1;
-> +
-> +	nl_cb_err(cb, NL_CB_CUSTOM, mcast_error_handler, &ret);
-> +	nl_cb_set(cb, NL_CB_ACK, NL_CB_CUSTOM, mcast_ack_handler, &ret);
-> +	nl_cb_set(cb, NL_CB_VALID, NL_CB_CUSTOM, mcast_family_handler, &grp);
-> +
-> +	while (ret > 0)
-> +		nl_recvmsgs(sock, cb);
-> +
-> +	if (ret == 0)
-> +		ret = grp.id;
-> + nla_put_failure:
-> +	nl_cb_put(cb);
-> + out_fail_cb:
-> +	nlmsg_free(msg);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_listen_mcast(void)
-> +{
-> +	struct nl_sock *sock;
-> +	struct nl_cb *cb;
-> +	int mcid, ret;
-> +
-> +	sock = nl_socket_alloc();
-> +	if (!sock) {
-> +		fprintf(stderr, "cannot allocate netlink socket\n");
-> +		goto err_free;
-> +	}
-> +
-> +	nl_socket_set_buffer_size(sock, 8192, 8192);
-> +
-> +	ret = genl_connect(sock);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "cannot connect to generic netlink: %s\n",
-> +			nl_geterror(ret));
-> +		goto err_free;
-> +	}
-> +
-> +	mcid = ovpn_get_mcast_id(sock, OVPN_FAMILY_NAME, OVPN_MCGRP_PEERS);
-> +	if (mcid < 0) {
-> +		fprintf(stderr, "cannot get mcast group: %s\n",
-> +			nl_geterror(mcid));
-> +		goto err_free;
-> +	}
-> +
-> +	ret = nl_socket_add_membership(sock, mcid);
-> +	if (ret) {
-> +		fprintf(stderr, "failed to join mcast group: %d\n", ret);
-> +		goto err_free;
-> +	}
-> +
-> +	ret = 1;
-> +	cb = nl_cb_alloc(NL_CB_DEFAULT);
-> +	nl_cb_set(cb, NL_CB_SEQ_CHECK, NL_CB_CUSTOM, nl_seq_check, NULL);
-> +	nl_cb_set(cb, NL_CB_VALID, NL_CB_CUSTOM, ovpn_handle_msg, &ret);
-> +	nl_cb_err(cb, NL_CB_CUSTOM, ovpn_nl_cb_error, &ret);
-> +
-> +	while (ret == 1) {
-> +		int err = nl_recvmsgs(sock, cb);
-> +
-> +		if (err < 0) {
-> +			fprintf(stderr,
-> +				"cannot receive netlink message: (%d) %s\n",
-> +				err, nl_geterror(-err));
-> +			ret = -1;
-> +			break;
-> +		}
-> +	}
-> +
-> +	nl_cb_put(cb);
-> +err_free:
-> +	nl_socket_free(sock);
-> +	return ret;
-> +}
-> +
-> +static void usage(const char *cmd)
-> +{
-> +	fprintf(stderr, "Error: invalid arguments.\n\n");
-> +	fprintf(stderr,
-> +		"Usage %s <iface> <connect|listen|new_peer|new_multi_peer|set_peer|del_peer|new_key|del_key|recv|send|listen_mcast> [arguments..]\n",
-> +		cmd);
-> +	fprintf(stderr, "\tiface: tun interface name\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* connect <peer_id> <raddr> <rport> <key file>: start connecting peer of TCP-based VPN session\n");
-> +	fprintf(stderr, "\tpeer-id: peer ID of the connecting peer\n");
-> +	fprintf(stderr, "\tremote-addr: peer IP address\n");
-> +	fprintf(stderr, "\tremote-port: peer TCP port\n");
-> +
-> +	fprintf(stderr,
-> +		"* listen <lport> <peers_file>: listen for incoming peer TCP connections\n");
-> +	fprintf(stderr, "\tlport: src TCP port\n");
-> +	fprintf(stderr,
-> +		"\tpeers_file: file containing one peer per line: Line format:\n");
-> +	fprintf(stderr, "\t\t<peer_id> <vpnaddr>\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* new_peer <lport> <peer-id> <raddr> <rport> [vpnaddr]: add new peer\n");
-> +	fprintf(stderr,
-> +		"\tpeer-id: peer ID to be used in data packets to/from this peer\n");
-> +	fprintf(stderr, "\tlocal-port: local UDP port\n");
-> +	fprintf(stderr, "\tremote-addr: peer IP address\n");
-> +	fprintf(stderr, "\tremote-port: peer UDP port\n");
-> +	fprintf(stderr, "\tvpnaddr: peer VPN IP\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* new_multi_peer <lport> <file>: add multiple peers as listed in the file\n");
-> +	fprintf(stderr, "\tlport: local UDP port to bind to\n");
-> +	fprintf(stderr,
-> +		"\tfile: text file containing one peer per line. Line format:\n");
-> +	fprintf(stderr, "\t\t<peer-id> <raddr> <rport> <vpnaddr>\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* set_peer <peer-id> <keepalive_interval> <keepalive_timeout>: set peer attributes\n");
-> +	fprintf(stderr, "\tpeer-id: peer ID of the peer to modify\n");
-> +	fprintf(stderr,
-> +		"\tkeepalive_interval: interval for sending ping messages\n");
-> +	fprintf(stderr,
-> +		"\tkeepalive_timeout: time after which a peer is timed out\n\n");
-> +
-> +	fprintf(stderr, "* del_peer <peer-id>: delete peer\n");
-> +	fprintf(stderr, "\tpeer-id: peer ID of the peer to delete\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* new_key <peer-id> <slot> <key_id> <cipher> <key_dir> <key_file>: set data channel key\n");
-> +	fprintf(stderr,
-> +		"\tpeer-id: peer ID of the peer to configure the key for\n");
-> +	fprintf(stderr,
-> +		"\tcipher: cipher to use, supported: aes (AES-GCM), chachapoly (CHACHA20POLY1305), none\n");
-> +	fprintf(stderr,
-> +		"\tkey_dir: key direction, must 0 on one host and 1 on the other\n");
-> +	fprintf(stderr, "\tkey_file: file containing the pre-shared key\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* del_key <peer-id>: erase existing data channel key\n");
-> +	fprintf(stderr, "\tpeer-id: peer ID of the peer to modify\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* swap_keys <peer-id>: swap primary and secondary key slots\n");
-> +	fprintf(stderr, "\tpeer-id: peer ID of the peer to modify\n\n");
-> +
-> +	fprintf(stderr,
-> +		"* listen_mcast: listen to ovpn-dco netlink multicast messages\n");
-> +}
-> +
-> +static int ovpn_parse_remote(struct ovpn_ctx *ovpn, const char *host,
-> +			     const char *service, const char *vpnip)
-> +{
-> +	int ret;
-> +	struct addrinfo *result;
-> +	struct addrinfo hints = {
-> +		.ai_family = ovpn->sa_family,
-> +		.ai_socktype = SOCK_DGRAM,
-> +		.ai_protocol = IPPROTO_UDP
-> +	};
-> +
-> +	if (host) {
-> +		ret = getaddrinfo(host, service, &hints, &result);
-> +		if (ret == EAI_NONAME || ret == EAI_FAIL)
-> +			return -1;
-> +
-> +		if (!(result->ai_family == AF_INET &&
-> +		      result->ai_addrlen == sizeof(struct sockaddr_in)) &&
-> +		    !(result->ai_family == AF_INET6 &&
-> +		      result->ai_addrlen == sizeof(struct sockaddr_in6))) {
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		memcpy(&ovpn->remote, result->ai_addr, result->ai_addrlen);
-> +	}
-> +
-> +	if (vpnip) {
-> +		ret = getaddrinfo(vpnip, NULL, &hints, &result);
-> +		if (ret == EAI_NONAME || ret == EAI_FAIL)
-> +			return -1;
-> +
-> +		if (!(result->ai_family == AF_INET &&
-> +		      result->ai_addrlen == sizeof(struct sockaddr_in)) &&
-> +		    !(result->ai_family == AF_INET6 &&
-> +		      result->ai_addrlen == sizeof(struct sockaddr_in6))) {
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		memcpy(&ovpn->peer_ip, result->ai_addr, result->ai_addrlen);
-> +		ovpn->sa_family = result->ai_family;
-> +
-> +		ovpn->peer_ip_set = true;
-> +	}
-> +
-> +	ret = 0;
-> +out:
-> +	freeaddrinfo(result);
-> +	return ret;
-> +}
-> +
-> +static int ovpn_parse_new_peer(struct ovpn_ctx *ovpn, const char *peer_id,
-> +			       const char *raddr, const char *rport,
-> +			       const char *vpnip)
-> +{
-> +	ovpn->peer_id = strtoul(peer_id, NULL, 10);
-> +	if (errno == ERANGE) {
-> +		fprintf(stderr, "peer ID value out of range\n");
-> +		return -1;
-> +	}
-> +
-> +	return ovpn_parse_remote(ovpn, raddr, rport, vpnip);
-> +}
-> +
-> +static void ovpn_send_tcp_data(int socket)
-> +{
-> +	uint16_t len = htons(1000);
-> +	uint8_t buf[1002];
-> +	int ret;
-> +
-> +	memcpy(buf, &len, sizeof(len));
-> +	memset(buf + sizeof(len), 0x86, sizeof(buf) - sizeof(len));
-> +
-> +	ret = send(socket, buf, sizeof(buf), 0);
-> +
-> +	fprintf(stdout, "Sent %u bytes over TCP socket\n", ret);
-> +}
-> +
-> +static void ovpn_recv_tcp_data(int socket)
-> +{
-> +	uint8_t buf[1002];
-> +	uint16_t len;
-> +	int ret;
-> +
-> +	ret = recv(socket, buf, sizeof(buf), 0);
-> +
-> +	if (ret < 2) {
-> +		fprintf(stderr, ">>>> Error while reading TCP data: %d\n", ret);
-> +		return;
-> +	}
-> +
-> +	memcpy(&len, buf, sizeof(len));
-> +	len = ntohs(len);
-> +
-> +	fprintf(stdout, ">>>> Received %u bytes over TCP socket, header: %u\n",
-> +		ret, len);
-> +
-> +/*	int i;
-> + *	for (i = 2; i < ret; i++) {
-> + *		fprintf(stdout, "0x%.2x ", buf[i]);
-> + *		if (i && !((i - 2) % 16))
-> + *			fprintf(stdout, "\n");
-> + *	}
-> + *	fprintf(stdout, "\n");
-> + */
-> +}
-> +
-> +static int ovpn_parse_set_peer(struct ovpn_ctx *ovpn, int argc, char *argv[])
-> +{
-> +	if (argc < 5) {
-> +		usage(argv[0]);
-> +		return -1;
-> +	}
-> +
-> +	ovpn->keepalive_interval = strtoul(argv[3], NULL, 10);
-> +	if (errno == ERANGE) {
-> +		fprintf(stderr, "keepalive interval value out of range\n");
-> +		return -1;
-> +	}
-> +
-> +	ovpn->keepalive_timeout = strtoul(argv[4], NULL, 10);
-> +	if (errno == ERANGE) {
-> +		fprintf(stderr, "keepalive interval value out of range\n");
-> +		return -1;
-> +	}
+> +	/* Start counting for the new task by adding it into filter map,
+> +	 * inherit the accum key of its parent task so that they can be
+> +	 * counted together.
+> +	 */
+> +	child_fval.accum_key = parent_fval->accum_key;
+> +	child_fval.exited = 0;
+> +	bpf_map_update_elem(&filter, &child_key, &child_fval, BPF_NOEXIST);
 > +
 > +	return 0;
 > +}
 > +
-> +int main(int argc, char *argv[])
+> +/* The program is only used for PID or TGID filter types. */
+> +SEC("tp_btf/sched_process_exit")
+> +int BPF_PROG(on_exittask, struct task_struct *task)
 > +{
-> +	struct ovpn_ctx ovpn;
-> +	int ret;
+> +	__u32 pid;
+> +	struct bperf_filter_value *fval;
 > +
-> +	if (argc < 2) {
-> +		usage(argv[0]);
-> +		return -1;
-> +	}
+> +	if (!enabled)
+> +		return 0;
 > +
-> +	memset(&ovpn, 0, sizeof(ovpn));
-> +	ovpn.sa_family = AF_INET;
-> +	ovpn.cli_socket = -1;
+> +	/* Stop counting for this task by removing it from filter map.
+> +	 * For TGID type, if the pid can be found in the map, it means that
+> +	 * this pid belongs to the leader task. After the task exits, the
+> +	 * tgid of its child tasks (if any) will be 1, so the pid can be
+> +	 * safely removed.
+> +	 */
+> +	pid = task->pid;
+> +	fval = bpf_map_lookup_elem(&filter, &pid);
+> +	if (fval)
+> +		fval->exited = 1;
 > +
-> +	if (argc > 2) {
-> +		strscpy(ovpn.ifname, argv[2], IFNAMSIZ - 1);
-> +		ovpn.ifname[IFNAMSIZ - 1] = '\0';
-> +	}
-> +
-> +	/* all commands except new_iface expect a valid ifindex */
-> +	if (strcmp(argv[1], "new_iface")) {
-> +		/* in this case a ifname MUST be defined */
-> +		if (argc < 3) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.ifindex = if_nametoindex(ovpn.ifname);
-> +		if (!ovpn.ifindex) {
-> +			fprintf(stderr, "cannot find interface: %s\n",
-> +				strerror(errno));
-> +			return -1;
-> +		}
-> +	}
-> +
-> +	if (!strcmp(argv[1], "new_iface")) {
-> +		if (argc > 3) {
-> +			if (!strcmp(argv[3], "P2P")) {
-> +				ovpn.mode = OVPN_MODE_P2P;
-> +			} else if (!strcmp(argv[3], "MP")) {
-> +				ovpn.mode = OVPN_MODE_MP;
-> +			} else {
-> +				fprintf(stderr, "Cannot parse iface mode: %s\n",
-> +					argv[3]);
-> +				return -1;
-> +			}
-> +			ovpn.mode_set = true;
-> +		}
-> +
-> +		ret = ovpn_new_iface(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "Cannot create interface %s: %d\n",
-> +				ovpn.ifname, ret);
-> +			return -1;
-> +		}
-> +	} else if (!strcmp(argv[1], "del_iface")) {
-> +		ret = ovpn_del_iface(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "Cannot delete interface %s: %d\n",
-> +				ovpn.ifname, ret);
-> +			return -1;
-> +		}
-> +	} else if (!strcmp(argv[1], "listen")) {
-> +		char peer_id[10], vpnip[100];
-> +		int n;
-> +		FILE *fp;
-> +
-> +		if (argc < 4) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.lport = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE || ovpn.lport > 65535) {
-> +			fprintf(stderr, "lport value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		if (argc > 4 && !strcmp(argv[4], "ipv6"))
-> +			ovpn.sa_family = AF_INET6;
-> +
-> +		ret = ovpn_listen(&ovpn, ovpn.sa_family);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot listen on TCP socket\n");
-> +			return ret;
-> +		}
-> +
-> +		fp = fopen(argv[4], "r");
-> +		if (!fp) {
-> +			fprintf(stderr, "cannot open file: %s\n", argv[4]);
-> +			return -1;
-> +		}
-> +
-> +		while ((n = fscanf(fp, "%s %s\n", peer_id, vpnip)) == 2) {
-> +			struct ovpn_ctx peer_ctx = { 0 };
-> +
-> +			peer_ctx.ifindex = ovpn.ifindex;
-> +			peer_ctx.sa_family = ovpn.sa_family;
-> +
-> +			peer_ctx.socket = ovpn_accept(&ovpn);
-> +			if (peer_ctx.socket < 0) {
-> +				fprintf(stderr, "cannot accept connection!\n");
-> +				return -1;
-> +			}
-> +
-> +			/* store the socket of the first peer to test TCP I/O */
-> +			if (ovpn.cli_socket < 0)
-> +				ovpn.cli_socket = peer_ctx.socket;
-> +
-> +			ret = ovpn_parse_new_peer(&peer_ctx, peer_id, NULL,
-> +						  NULL, vpnip);
-> +			if (ret < 0) {
-> +				fprintf(stderr, "error while parsing line\n");
-> +				return -1;
-> +			}
-> +
-> +			ret = ovpn_new_peer(&peer_ctx, true);
-> +			if (ret < 0) {
-> +				fprintf(stderr,
-> +					"cannot add peer to VPN: %s %s\n",
-> +					peer_id, vpnip);
-> +				return ret;
-> +			}
-> +		}
-> +
-> +		if (ovpn.cli_socket >= 0)
-> +			ovpn_recv_tcp_data(ovpn.cli_socket);
-> +	} else if (!strcmp(argv[1], "connect")) {
-> +		if (argc < 5) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.sa_family = AF_INET;
-> +
-> +		ret = ovpn_parse_new_peer(&ovpn, argv[3], argv[4], argv[5],
-> +					  NULL);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "Cannot parse remote peer data\n");
-> +			return ret;
-> +		}
-> +
-> +		ret = ovpn_connect(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot connect TCP socket\n");
-> +			return ret;
-> +		}
-> +
-> +		ret = ovpn_new_peer(&ovpn, true);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot add peer to VPN\n");
-> +			close(ovpn.socket);
-> +			return ret;
-> +		}
-> +
-> +		if (argc > 6) {
-> +			ovpn.key_slot = OVPN_KEY_SLOT_PRIMARY;
-> +			ovpn.key_id = 0;
-> +			ovpn.cipher = OVPN_CIPHER_ALG_AES_GCM;
-> +			ovpn.key_dir = KEY_DIR_OUT;
-> +
-> +			ret = ovpn_read_key(argv[6], &ovpn);
-> +			if (ret)
-> +				return ret;
-> +
-> +			ret = ovpn_new_key(&ovpn);
-> +			if (ret < 0) {
-> +				fprintf(stderr, "cannot set key\n");
-> +				return ret;
-> +			}
-> +
-> +			ovpn_send_tcp_data(ovpn.socket);
-> +		}
-> +	} else if (!strcmp(argv[1], "new_peer")) {
-> +		if (argc < 7) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.lport = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE || ovpn.lport > 65535) {
-> +			fprintf(stderr, "lport value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		const char *vpnip = (argc > 7) ? argv[7] : NULL;
-> +
-> +		ret = ovpn_parse_new_peer(&ovpn, argv[4], argv[5], argv[6],
-> +					  vpnip);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = ovpn_udp_socket(&ovpn, AF_INET6); //ovpn.sa_family ?
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = ovpn_new_peer(&ovpn, false);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot add peer to VPN\n");
-> +			return ret;
-> +		}
-> +	} else if (!strcmp(argv[1], "new_multi_peer")) {
-> +		char peer_id[10], raddr[128], rport[10], vpnip[100];
-> +		FILE *fp;
-> +		int n;
-> +
-> +		if (argc < 5) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.lport = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE || ovpn.lport > 65535) {
-> +			fprintf(stderr, "lport value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		fp = fopen(argv[4], "r");
-> +		if (!fp) {
-> +			fprintf(stderr, "cannot open file: %s\n", argv[4]);
-> +			return -1;
-> +		}
-> +
-> +		ret = ovpn_udp_socket(&ovpn, AF_INET6);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		while ((n = fscanf(fp, "%s %s %s %s\n", peer_id, raddr, rport,
-> +				   vpnip)) == 4) {
-> +			struct ovpn_ctx peer_ctx = { 0 };
-> +
-> +			peer_ctx.ifindex = ovpn.ifindex;
-> +			peer_ctx.socket = ovpn.socket;
-> +			peer_ctx.sa_family = AF_UNSPEC;
-> +
-> +			ret = ovpn_parse_new_peer(&peer_ctx, peer_id, raddr,
-> +						  rport, vpnip);
-> +			if (ret < 0) {
-> +				fprintf(stderr, "error while parsing line\n");
-> +				return -1;
-> +			}
-> +
-> +			ret = ovpn_new_peer(&peer_ctx, false);
-> +			if (ret < 0) {
-> +				fprintf(stderr,
-> +					"cannot add peer to VPN: %s %s %s %s\n",
-> +					peer_id, raddr, rport, vpnip);
-> +				return ret;
-> +			}
-> +		}
-> +	} else if (!strcmp(argv[1], "set_peer")) {
-> +		ovpn.peer_id = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE) {
-> +			fprintf(stderr, "peer ID value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		argv++;
-> +		argc--;
-> +
-> +		ret = ovpn_parse_set_peer(&ovpn, argc, argv);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = ovpn_set_peer(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot set peer to VPN\n");
-> +			return ret;
-> +		}
-> +	} else if (!strcmp(argv[1], "del_peer")) {
-> +		if (argc < 4) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.peer_id = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE) {
-> +			fprintf(stderr, "peer ID value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		ret = ovpn_del_peer(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot delete peer to VPN\n");
-> +			return ret;
-> +		}
-> +	} else if (!strcmp(argv[1], "get_peer")) {
-> +		ovpn.peer_id = PEER_ID_UNDEF;
-> +		if (argc > 3)
-> +			ovpn.peer_id = strtoul(argv[3], NULL, 10);
-> +
-> +		fprintf(stderr, "List of peers connected to: %s\n",
-> +			ovpn.ifname);
-> +
-> +		ret = ovpn_get_peer(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot get peer(s): %d\n", ret);
-> +			return ret;
-> +		}
-> +	} else if (!strcmp(argv[1], "new_key")) {
-> +		if (argc < 8) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.peer_id = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE) {
-> +			fprintf(stderr, "peer ID value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		int slot = strtoul(argv[4], NULL, 10);
-> +
-> +		if (errno == ERANGE || slot < 1 || slot > 2) {
-> +			fprintf(stderr, "key slot out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		switch (slot) {
-> +		case 1:
-> +			ovpn.key_slot = OVPN_KEY_SLOT_PRIMARY;
-> +			break;
-> +		case 2:
-> +			ovpn.key_slot = OVPN_KEY_SLOT_SECONDARY;
-> +			break;
-> +		}
-> +
-> +		ovpn.key_id = strtoul(argv[5], NULL, 10);
-> +		if (errno == ERANGE || ovpn.key_id > 2) {
-> +			fprintf(stderr, "key ID out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		ret = ovpn_read_cipher(argv[6], &ovpn);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = ovpn_read_key_direction(argv[7], &ovpn);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = ovpn_read_key(argv[8], &ovpn);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = ovpn_new_key(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot set key\n");
-> +			return ret;
-> +		}
-> +	} else if (!strcmp(argv[1], "del_key")) {
-> +		if (argc < 3) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.peer_id = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE) {
-> +			fprintf(stderr, "peer ID value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		argv++;
-> +		argc--;
-> +
-> +		ret = ovpn_del_key(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot delete key\n");
-> +			return ret;
-> +		}
-> +	} else if (!strcmp(argv[1], "swap_keys")) {
-> +		if (argc < 3) {
-> +			usage(argv[0]);
-> +			return -1;
-> +		}
-> +
-> +		ovpn.peer_id = strtoul(argv[3], NULL, 10);
-> +		if (errno == ERANGE) {
-> +			fprintf(stderr, "peer ID value out of range\n");
-> +			return -1;
-> +		}
-> +
-> +		argv++;
-> +		argc--;
-> +
-> +		ret = ovpn_swap_keys(&ovpn);
-> +		if (ret < 0) {
-> +			fprintf(stderr, "cannot swap keys\n");
-> +			return ret;
-> +		}
-> +	} else if (!strcmp(argv[1], "listen_mcast")) {
-> +		ret = ovpn_listen_mcast();
-> +	} else {
-> +		usage(argv[0]);
-> +		return -1;
-
-This is loooong arguments parsing. What's the reason to not use getopt()
-Doesn't it simplify all ofthie logic?
-
-I would like to see it simplified for maintainability.
-
-> +	}
-> +
-> +	return ret;
+> +	return 0;
 > +}
-> diff --git a/tools/testing/selftests/net/ovpn/tcp_peers.txt b/tools/testing/selftests/net/ovpn/tcp_peers.txt
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d753eebe8716ed3588334ad766981e883ed2469a
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/tcp_peers.txt
-> @@ -0,0 +1,5 @@
-> +1 5.5.5.2
-> +2 5.5.5.3
-> +3 5.5.5.4
-> +4 5.5.5.5
-> +5 5.5.5.6
-> diff --git a/tools/testing/selftests/net/ovpn/udp_peers.txt b/tools/testing/selftests/net/ovpn/udp_peers.txt
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..32f14bd9347a63e58438311b6d880b9fef768aa2
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/ovpn/udp_peers.txt
-> @@ -0,0 +1,5 @@
-> +1 10.10.1.2 1 5.5.5.2
-> +2 10.10.2.2 1 5.5.5.3
-> +3 10.10.3.2 1 5.5.5.4
-> +4 10.10.4.2 1 5.5.5.5
-> +5 10.10.5.2 1 5.5.5.6
+> +
+>  char LICENSE[] SEC("license") = "Dual BSD/GPL";
+> diff --git a/tools/perf/util/bpf_skel/bperf_u.h b/tools/perf/util/bpf_skel/bperf_u.h
+> index 1ce0c2c905c1..4a4a753980be 100644
+> --- a/tools/perf/util/bpf_skel/bperf_u.h
+> +++ b/tools/perf/util/bpf_skel/bperf_u.h
+> @@ -11,4 +11,9 @@ enum bperf_filter_type {
+>  	BPERF_FILTER_TGID,
+>  };
+>  
+> +struct bperf_filter_value {
+> +	__u32 accum_key;
+> +	__u8 exited;
+> +};
+> +
+>  #endif /* __BPERF_STAT_U_H */
+> -- 
+> 2.34.1
 > 
-
-thanks,
--- Shuah
-
 
