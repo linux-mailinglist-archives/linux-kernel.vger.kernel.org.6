@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-367896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2079A0814
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:09:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2059A0817
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50F08B23261
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986C7288DF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C583A207A00;
-	Wed, 16 Oct 2024 11:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD62076AB;
+	Wed, 16 Oct 2024 11:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ST9F9vra"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSklbpKG"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2EC2076A6;
-	Wed, 16 Oct 2024 11:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6648418C33F;
+	Wed, 16 Oct 2024 11:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076934; cv=none; b=DEZZ9fxSr8+5Tzu/it3xoOoIOh2LkcQH2cLhZRjcZAnsC14GuicTkDiWD0iL7rdzz+IKNiIOvf8pTNH514pMYfJIybqDNUMLFHFow9P7BDbfNlwcb64Dc0/NUqjaDXhiSan5cGA0R3mA2C2ldHa9nm+PyOndVNkDSsMeutfrnmQ=
+	t=1729076985; cv=none; b=UBTtfT9cT52uzCB+LWz/Sn+1KAyIBOm2OINrWm0P29IoZHZPHB8BuYwIYTE5LmZU9R4iWP2dZvD3/cCNfv9r4joPTZEnZ2TKRTmRzRJVRrSPDXoM9xhHB0VA9sDXNAMkBCp7m6IxnAsRuGMlRqiqq9eINxCw3ypZc62iNgMSt/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076934; c=relaxed/simple;
-	bh=serKe8tHlOrXNXs54i3kenw7XTJg+lTNjLS5V05yv/s=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMfQKPSNvQPiFai5ce/TYgLnhSgG4rtiwCW7i25H+KcT4V7qmWp9/P5gXS3sAMFdE98plN0IcdrxZHPyoLfm+e0gAyI7rtt+1OLjSlbWpUWltraYe/amTofFE2rgB932X3Hnk8Dpg4bqIppqoaE2beKQvFWPyIodWGpMcnRtd9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ST9F9vra; arc=none smtp.client-ip=209.85.208.181
+	s=arc-20240116; t=1729076985; c=relaxed/simple;
+	bh=SLcPoBGdRC9UOLWq3AO2q4XKPPr0ypIEKylqHD0nJc4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=b9/Zcy6NP1u/RpGD3Jt8Y1bTouc85ilzKZeY8DaN4PxGt6yMN4z+jhVkxU7yqmgRnMtCajhDxF4vSYlGTSnrHzI1DM9XRbaOi8qPNdrPx9tD/b3gusNcj/zOHtwUw74ydrLQPqa88PdiCZL/eGa4K6jzGyXiIj3V+sU4lyBU0VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSklbpKG; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb561f273eso27936181fa.2;
-        Wed, 16 Oct 2024 04:08:52 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e13375d3so5387939e87.3;
+        Wed, 16 Oct 2024 04:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729076931; x=1729681731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgR2+WDRyuZp5/EA3TzWdSDdm1lah41Q0kcqmp7FNNY=;
-        b=ST9F9vraVIONjZ3PNKxa8T1vDyFU643f8LoW3rqjQblbFueJGiQYTUDUntERg0U5LS
-         H4cCUn/ja6SviIW0o+QCuJ+8c2p7ymm0CXYSuPmgPOM/76zp8RqlMpiWsi3PqE+XeKNf
-         b1cDa+sDMefDZ41soTz62THEQMIJPCHu3Nf5ogFDhnyWTBaBMs76PLCtymf4dr7apdPn
-         3dDOKfIIlBteadrWB5wTdIvf6lLcKbgDbz34AHd++Gernqmzud6mts7W+4Et+7YG7YNv
-         y2OzRgNywSBfPrkXOjF8y1JwGOk1NQe2nvdaFRZrMgyNOC4kMRAHJSmWbZuSZFOgDGJ+
-         Friw==
+        d=gmail.com; s=20230601; t=1729076981; x=1729681781; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JmxNFT1MumQs5zr5JY45ZMTsB54enVuUrCy+urpfilo=;
+        b=hSklbpKGUFp6jEI6S4FM5AqmQbKVrhPZtw6QS9I/eMRkcOfa+fcAvn72sqDNp9nGTs
+         0/+c4Uqd/LrG8rZiiipnmv7jCVWL9DPeLHvH0/F7bz8UKtDKAAz9SjsofXBm5BoP2C+h
+         LfFwZS+WjZe1nvpQsx9Yg2nqxDfsQcgBNYzyH9wnOMyhsuQwuWUAcvHpU23jjeqrv/Kt
+         sBNGrsLBoXCQWCpjRnqxJuR7CKy3dw7sdSRnlALmI5mYMsN4yG+raWUfkjIISGm8Fcyt
+         lw/Gbq7Z0bJlM4qxbfR3ch/w7epdYm1QpECfUFhDubf4cKfVM7CuvufY+9AWl2bIYZwo
+         zBLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729076931; x=1729681731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hgR2+WDRyuZp5/EA3TzWdSDdm1lah41Q0kcqmp7FNNY=;
-        b=Cm9RaszUdJvajHOGgMnLNGkGfdFob2O4p6JYj3vAm/sFp+RpsQq8DKLwpAMbhrWXSb
-         xkSegD87WOi1YZ2gDtotRaExkgWc+5zFIByus9dSF/3jR7aZEZO1G6sg5UgFgOlE591i
-         n5OB6QC+Zzq7Sh6+ETByfQgzZ2brloAVX7lpMnQWUx4sXWzUvk7ZpQGCFKpJk6ANMMp2
-         kT2hcbRJdKHaxaQI+83LYxdlkMUFpdiNZY57zjdeUJ6KV9euKUHUwoFed0uxNkxmsFo0
-         7lwuQyTTPVj7Ng2QM4uxUjku8JKM9wQ209E/fFucaPC8Huv9JzCl7gbpbEF2drC+aqa0
-         WxXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5IAX4AlyCHG47dgESRGJlTIabAsKIizLCMAV9C1+lx4wOCpsDpdxSZ5Z2W1Eg2/GdAq6/UGfasHOr7roFfko=@vger.kernel.org, AJvYcCUxSjTc0rhSQ/tPwmF5JtBWDkkclJtc8OZwUGeAKQePLjVHh/Lii4VYZ/S9RZWL2rCmhEYjz8hhZx2amNmC@vger.kernel.org, AJvYcCXqB/dx1eh4MiLqrO80drd/cVFtfc0edjVQ9HstMulxogpffxsTNyq0cI+fqW453V7e4RKlxxUEiSNHaN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnvKNQiG8S5L3rtH72/5BRjcJrZD5QhQJV0cFWLVpUq9snjE3O
-	Qs9La4XVui5hfTk0LSbAFobGCXooGTwp9a/cXTAQhdb78Zta8r9n
-X-Google-Smtp-Source: AGHT+IFjjfpeb7i91SIRpG3vpwFOV9VHQnoo1Etn6OxAQdEDHy7vguM7RDwkvRepnzmSP1K0JGJJEQ==
-X-Received: by 2002:a2e:4c09:0:b0:2fa:d978:a6a2 with SMTP id 38308e7fff4ca-2fb327813b8mr61302781fa.27.1729076930577;
-        Wed, 16 Oct 2024 04:08:50 -0700 (PDT)
-Received: from pc636 (host-95-203-1-67.mobileonline.telia.com. [95.203.1.67])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb5d122023sm4019741fa.29.2024.10.16.04.08.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 04:08:50 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 16 Oct 2024 13:08:47 +0200
-To: Julia Lawall <Julia.Lawall@inria.fr>, Jens Axboe <axboe@kernel.dk>
-Cc: Jens Axboe <axboe@kernel.dk>, kernel-janitors@vger.kernel.org,
-	vbabka@suse.cz, paulmck@kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/17] block: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <Zw-ev-t7G6X4RX8Z@pc636>
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
- <20241013201704.49576-10-Julia.Lawall@inria.fr>
+        d=1e100.net; s=20230601; t=1729076981; x=1729681781;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JmxNFT1MumQs5zr5JY45ZMTsB54enVuUrCy+urpfilo=;
+        b=NorvMaBoorZtH9TyWRg2AajuRIkPHsweoDQuVqVVW3HfM0ZRIFru7rLwGq4Y8rtfho
+         eXC71/R/cyxQ25AJ/W+lJnIlG/cKZlYXc4+kHhHuDRlVgmY7Ye8lj2IfAzIGV77U80HH
+         uVvlyOOwP+45CkINKDCK4KTraua5VXWDb+3uDH/Jx/bR0y63kzleA/c0518XSK+1LwzU
+         DAkEeeiSfECkHCxOdpkbvr3AFPBQKy1+3wQPuX9VFJOA1CkOK1DSufUkGcMt54GPS86Z
+         ckyS8bVEUo4JZAZgLqy6Fv50ANndel4jh+rBEUi66qg04CcFtqkTTYwyskNarwfx+ZHg
+         KZCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkFoBEWgdp321oJtlkvXAVyZZGr+ZP1BPXztb8fbdkFNuEJ1NWUyyHj0gRl4LrlbMmy62d0hTo/nQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa2i11W698vfReH4OO4x2t72bnjL/B26CpZZ6tUQpnULPkmE6o
+	AfoyJKnCTSLFZvGvPE0ttYaOlJcWtpE9eaVzK8q3/LFiNX/kB9nEG05v1w34CcwPyLxkvkawIrP
+	CMo71uY7BIlpxGZhhGYh/iIbkSqJKn3E=
+X-Google-Smtp-Source: AGHT+IHf+WOTS37RhxhEr/sgmuPjCld0APshHwWOoYDfE6FJO7cym/sNDlTzDn2/vPTzQj1X5QbM5iP5skJIoS/uP90=
+X-Received: by 2002:a05:6512:3b26:b0:53a:423:6eac with SMTP id
+ 2adb3069b0e04-53a04237046mr2023256e87.0.1729076981238; Wed, 16 Oct 2024
+ 04:09:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013201704.49576-10-Julia.Lawall@inria.fr>
+From: Xiongwei Song <sxwbruce@gmail.com>
+Date: Wed, 16 Oct 2024 19:09:29 +0800
+Message-ID: <CALy5rjUMnocsh80gPB+4UgaFS-Gsz5KAFnAN8Nj7m_oyohFfvg@mail.gmail.com>
+Subject: XFS performance degradation during running cp command with big test file
+To: cem@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 13, 2024 at 10:16:56PM +0200, Julia Lawall wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
-> 
-> The changes were made using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  block/blk-ioc.c |    9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
-> index 25dd4db11121..ce82770c72ab 100644
-> --- a/block/blk-ioc.c
-> +++ b/block/blk-ioc.c
-> @@ -32,13 +32,6 @@ static void get_io_context(struct io_context *ioc)
->  	atomic_long_inc(&ioc->refcount);
->  }
->  
-> -static void icq_free_icq_rcu(struct rcu_head *head)
-> -{
-> -	struct io_cq *icq = container_of(head, struct io_cq, __rcu_head);
-> -
-> -	kmem_cache_free(icq->__rcu_icq_cache, icq);
-> -}
-> -
->  /*
->   * Exit an icq. Called with ioc locked for blk-mq, and with both ioc
->   * and queue locked for legacy.
-> @@ -102,7 +95,7 @@ static void ioc_destroy_icq(struct io_cq *icq)
->  	 */
->  	icq->__rcu_icq_cache = et->icq_cache;
->  	icq->flags |= ICQ_DESTROYED;
-> -	call_rcu(&icq->__rcu_head, icq_free_icq_rcu);
-> +	kfree_rcu(icq, __rcu_head);
->  }
->  
->  /*
-> 
-> 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Dear Experts,
 
---
-Uladzislau Rezki
+We are facing a performance degradation on the XFS partition. We
+was trying to copy a big file(200GB ~ 250GB) from a path to /dev/null,
+when performing cp command to 60s ~ 90s, the reading speed was
+suddenly down. At the beginning, the reading speed was around
+1080MB/s, 60s later the speed was down to around 350MB/s. This
+problem  is only found with XFS + Thick LUN.
 
+The test environment:
+Storage Model: Dell unity XT 380 Think/Thin LUN
+Linux Version: 4.12.14
+
+The steps to run test:
+1) Create a xfs partition with following commands
+   parted -a opt /dev/sdb mklabel gpt mkpart sdb xfs 0% 100%
+   mkfs.xfs /dev/sdbx
+   mount /dev/sdbx /xfs
+2) Create a ~200GB file named fileA in the partition.
+3) Run cp command to copy the file created in step 2. Meanwhile,
+   run iostat vmstat and blktrace to capture logs.
+   cp /xfs/fileA /dev/null
+
+To narrow down this issue, we also did some experiments
+below to compare:
+1) Run the test with dd command with XFS + Thick LUN
+   dd if=/xfs/fileA of=/dev/null bs=32k status=progress
+   Result: also meet performance degradation
+   Speed: around 650MB/S
+   Speed has changed to around 350MB/S since the 60s ~ 90s of cp run.
+
+2) Run the test with dd command with raw device with XFS + Thick LUN
+   dd if=/dev/sdbx of=/dev/null bs=32k status=progress
+   Results: No performance degradation
+   Speed: around 520MB/s
+
+3) Run run test with ext4 + Think LUN
+   cp /xfs/fileA /dev/null
+   Results: No performance degradation
+   Speed: around 1080MB/s
+
+4) Run the test with cp with XFS + Thin LUN
+   cp /xfs/fileA /dev/null
+   Result: No performance degradation
+   Speed: around 500MB/s
+
+5) Run the test with dd with XFS + Thin LUN
+   dd if=/xfs/fileA of=/dev/null bs=32k status=progress
+   Result: No performance degradation
+   Speed: around 500MB/s
+
+It seems the issue only can be triggered with XFS + Thick LUN,
+no matter dd or cp to read the test file. We would like to learn
+if there is something special with XFS in this test situation?
+Is it known?
+
+Do you have any thoughts or suggestions? Also, do you need vmstat
+or iostat logs or blktrace or any other logs to address this issue?
+
+Thank you in advance.
+
+Regards,
+Bruce
 
