@@ -1,171 +1,132 @@
-Return-Path: <linux-kernel+bounces-367753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A509A064B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:59:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97DA9A0650
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9261C2248B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:59:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F09B2189E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F6520606E;
-	Wed, 16 Oct 2024 09:59:30 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07F0206069;
+	Wed, 16 Oct 2024 09:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="glgvlEd7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E46206041
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A177F20606A
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072770; cv=none; b=DdVsZ2spXJdphc3x5YO+bxJGh52Js/GOP5BFCXRI8DrSUE5asq2S/u/dQVcioEFWCjfDOq2smWvJAAW3bF9FQCuzOi4quF/JtSfgopWWoPowX79VgApEsz3RGEA5HdyfiF7MD4UiLnOmhrNjggwgtOOD2sIx1zo2aHT1UOdf+1I=
+	t=1729072794; cv=none; b=uC1kDlQRjzwLOblF3XtzO/TqNF5pzFCeKjEo9MCISO3r4dQvRbX8dh1Tqf53eAf5CAeuKq+B3/Fttf27JXvqgEzvd4zYj8AIrMbHCCbHQbXJVhkOKTU6FRW9AxU+lVVm335qf9escxjB2n57QY/ww0SD2dRhkawt+ffHbCtrlvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072770; c=relaxed/simple;
-	bh=CsaAuW/c+r+49Zy9BNSxKxc3Q2WsQboJgPMl0jfwOzc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FuaPM13YHJ1K76gcwVpLFe7vH+2reNBflf+1536Z+aB1Ym+RPU3pI5O9w9ZcUHDA/xiNNLh4FdSuQg2mzQdKrcjiyf8RTnwyEpkaCeZGh+DXSR9nRGJOaa9mGDciMTTbS9rzUbUiVTtY6BzPHCPu5u7LonXWJe7lbZRuwUQMYp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso51159075ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:59:28 -0700 (PDT)
+	s=arc-20240116; t=1729072794; c=relaxed/simple;
+	bh=2XC6R4guj5S2LQ3efLjxy0pDXaC+7A8Y4fP4r0jXNJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CI8XX13mSHfDTt3w1vg2z4kDn3oU/UR0GBoruJW0rZqL02+xyXb0vN/9FIABsJ8hD4mHkIKPBKJ17i7+WRc1Kt5a9X2WXZge0Lo7uIuBUS7/dlgKXHZ3a/DWCHQvvZxIltq03lAJFcb/XO/JTOQYphSgmEA9u3lfsmY+XtgEo14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=glgvlEd7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729072791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=klkIURfPfIeZWqtniUUVslo0WqVi18vzVEHDUiCNehs=;
+	b=glgvlEd7Vqk1eMYdCXBQKlO9mLPRfWCe8+C/5mvC8XYZskxmsxNWfDFV8LDwlUvaeIjYml
+	sdi/HAKv+PwUU++6q9ziR3kDeOQ09CcL312IAtD5O28tatuyXQAdbgX5ix6IAcEjdFcjdP
+	G3arFFLug+t9uHvjwziDPf1viPa6O0Y=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-47-LLDyAnyGOYWihZggmpGeFQ-1; Wed, 16 Oct 2024 05:59:50 -0400
+X-MC-Unique: LLDyAnyGOYWihZggmpGeFQ-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-539f7abe2e6so2710959e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:59:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729072768; x=1729677568;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/mcL+Ha40smPG0e5OGzEdRegaD2j1e3PUR7489d5OBo=;
-        b=h+bStw/+gFFuTIX0KDzae+aESdvkXMWqOA0CXwcXnAgjuMoqLyQSshOOX2iNWEj/2B
-         t0tPp8oQ+G5uORyiD9S299LffQbA09hAyTXBY4LdCcKUQ/VJ/7dKJHjtIWLVzclxarMG
-         XV8KcfAuHxOE2HEjqkj6L8zX6/1HGHrRyZ0MGyuITCqI9Z9dCHc4gilUSVY9k4t8GU/N
-         isLdKSc5GcP8+zcq+y2EFsq0yMtqI6yKVU/rV+RUkxMIJ0P0g6RFsNqZz+lTwVAmkuC8
-         Y822kjZWU+I7nz8xblFJ4nv7lfjAyVjAqVf2J0jd9ljhRZLETQFTnO4v5eGIYYBuSRvB
-         ILkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCmNZSVmfZls7T7MoIqwCN2KVmjWhPZcVEUV2JvQfwtWdZcs0AVacDUucA66Y1bMT60a2FqSvC2vSKQ6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaxZBQZ/bPRK5ifH8j1S7LzAra0C08ANe73d8cJwxHin+jEygF
-	4L64iOSJLqBHXJdVYlC2C8IF08HalbOoj+tHRBXyb2rumnmHmls8iqiXJlDA2GwBnVcpVxTtwLt
-	yNWA9qSRFhYSshzUpJ1IVlmok/TACvmLfQwvZB9SGyWX1fqws8BsMM8Q=
-X-Google-Smtp-Source: AGHT+IHoQ1SfCXoFHherlmdA4cX3q47lXXWbvVjw59Xca+H2T/EL59OOq8i/X6K89HxatG2i5A6SUHsFrGDt3ct7Y1HUTlf0Yj9u
+        d=1e100.net; s=20230601; t=1729072789; x=1729677589;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=klkIURfPfIeZWqtniUUVslo0WqVi18vzVEHDUiCNehs=;
+        b=O2Clk3ToqZ+dgzeESRkzAxxhiArd6xcTkw5eDIOPgxMLGvbtU94dBynSIvnQGkrVqm
+         zJpbCghT/CvtTI6ZMyUKogA0tBJ0D7Z7HRQdKbtiqCC/4OLZdQapTnseCgs7OTNgJ8Ua
+         J9b29bElE24UeQ9G7IFDncmcJLUoXMc2r9y4nIqMzWxUDelhOjUxFCAhVtt47X7+m8Ar
+         VwEyIUeJ4IIievPl6lHIf18Ymnot1cEwT/h8Doj7iviLpMScbL2G84yBACeXWcbKqdjt
+         +xx79AtQsjjveMGtvuS07dSBfbfHHlPTkZW8FVm8y93s7ZKCeez/mxEyOLnWbUtvnxa9
+         PQyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUT7uClJe8jNySXYh9xiaSzkTb+wxJuUKej2avwUesMuK+yizGXuwzxPvvF+u+BM3wPRHJX8TN+Mi6kOXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPOHOStVUsV/G74evgtvEoPlIrLt/NDiNudbw0AZaYxvwHLmt0
+	q2SL4AQGA4v7YOccNDn5zDnx+SXh8WRY8ki9pTzyUV8iuX+7SSVi2/flBTSg2L35Pqj2BW1GlSK
+	tfcJQfnaB7iPSSgdXrg0J2xq6KU8fNE+gmqXA7PvfeBF6xptXUIT/P6qSoNkumQ==
+X-Received: by 2002:a05:6512:2245:b0:539:f7de:df6a with SMTP id 2adb3069b0e04-539f7dee23amr5447502e87.52.1729072787293;
+        Wed, 16 Oct 2024 02:59:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFekB89aRCErYZDVnkCQyydN+Q4Cis1HQZOYg9npYTESVjqq1XcbpghIXt6aIaMbsNL8W0r7Q==
+X-Received: by 2002:a05:6512:2245:b0:539:f7de:df6a with SMTP id 2adb3069b0e04-539f7dee23amr5447479e87.52.1729072786837;
+        Wed, 16 Oct 2024 02:59:46 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4d710csm1545673a12.10.2024.10.16.02.59.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 02:59:45 -0700 (PDT)
+Message-ID: <e385eea0-694d-47d7-9eab-0c2dcda9b0f4@redhat.com>
+Date: Wed, 16 Oct 2024 11:59:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1562:b0:3a0:4250:165f with SMTP id
- e9e14a558f8ab-3a3dc3ce0a4mr35824085ab.0.1729072768209; Wed, 16 Oct 2024
- 02:59:28 -0700 (PDT)
-Date: Wed, 16 Oct 2024 02:59:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670f8e80.050a0220.d9b66.0163.GAE@google.com>
-Subject: [syzbot] [nilfs?] kernel BUG in __block_write_begin_int (3)
-From: syzbot <syzbot+d6ca2daf692c7a82f959@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/13] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+References: <20241010193705.10362-1-mario.limonciello@amd.com>
+ <20241010193705.10362-6-mario.limonciello@amd.com>
+ <4gcjfysohl7qxdfgmxm6j4yd5ps67qpnnwgt776xondsfdwnri@7mde6vfyfiah>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <4gcjfysohl7qxdfgmxm6j4yd5ps67qpnnwgt776xondsfdwnri@7mde6vfyfiah>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+On 16-Oct-24 11:36 AM, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Thu, Oct 10, 2024 at 02:36:57PM -0500, Mario Limonciello wrote:
+>> +static struct platform_driver amd_hfi_driver = {
+>> +	.driver = {
+>> +		.name = AMD_HFI_DRIVER,
+>> +		.owner = THIS_MODULE,
+>> +		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
+>> +	},
+>> +	.probe = amd_hfi_probe,
+>> +	.remove_new = amd_hfi_remove,
+>> +};
+> 
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers. Please just drop "_new".
 
-HEAD commit:    2f87d0916ce0 Merge tag 'trace-ringbuffer-v6.12-rc3' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1425d887980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6ca2daf692c7a82f959
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a2245f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13295030580000
+Note there is a "[v3,05/14] platform/x86: hfi: Introduce AMD Hardware
+Feedback Interface Driver" patch superseding this one now; and that one
+has the same issue.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2f87d091.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2704ba6867a8/vmlinux-2f87d091.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9f7121fd532b/bzImage-2f87d091.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/b4825b2e2eaa/mount_0.gz
+Regards,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d6ca2daf692c7a82f959@syzkaller.appspotmail.com
+Hans
 
-NILFS (loop0): mounting fs with errors
-------------[ cut here ]------------
-kernel BUG at fs/buffer.c:2099!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5098 Comm: syz-executor902 Not tainted 6.12.0-rc3-syzkaller-00044-g2f87d0916ce0 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__block_write_begin_int+0x19a7/0x1a70 fs/buffer.c:2099
-Code: 31 ff e8 cc 58 71 ff 48 89 d8 48 25 ff 0f 00 00 74 27 e8 dc 53 71 ff e9 c6 e7 ff ff e8 d2 53 71 ff 90 0f 0b e8 ca 53 71 ff 90 <0f> 0b e8 c2 53 71 ff 90 0f 0b e8 6a b2 a2 09 48 8b 5c 24 08 48 89
-RSP: 0018:ffffc9000179f9e0 EFLAGS: 00010293
-RAX: ffffffff82239386 RBX: 0000000000007372 RCX: ffff8880008ec880
-RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000007372
-RBP: ffffc9000179fb50 R08: ffffffff82237bb3 R09: 1ffffd400021e7b8
-R10: dffffc0000000000 R11: fffff9400021e7b9 R12: 04fff5000000462d
-R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000007372
-FS:  000055558bc8f380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005597207fdc30 CR3: 00000000404c2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nilfs_prepare_chunk fs/nilfs2/dir.c:86 [inline]
- nilfs_add_link+0x66e/0xb50 fs/nilfs2/dir.c:486
- nilfs_mkdir+0x1f9/0x340 fs/nilfs2/namei.c:233
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdir fs/namei.c:4300 [inline]
- __se_sys_mkdir fs/namei.c:4298 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6018852427
-Code: 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdfca7e2b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f6018852427
-RDX: 0000000000000004 RSI: 00000000000001ff RDI: 0000000020000780
-RBP: 0000000020000780 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffdfca7e350 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__block_write_begin_int+0x19a7/0x1a70 fs/buffer.c:2099
-Code: 31 ff e8 cc 58 71 ff 48 89 d8 48 25 ff 0f 00 00 74 27 e8 dc 53 71 ff e9 c6 e7 ff ff e8 d2 53 71 ff 90 0f 0b e8 ca 53 71 ff 90 <0f> 0b e8 c2 53 71 ff 90 0f 0b e8 6a b2 a2 09 48 8b 5c 24 08 48 89
-RSP: 0018:ffffc9000179f9e0 EFLAGS: 00010293
-RAX: ffffffff82239386 RBX: 0000000000007372 RCX: ffff8880008ec880
-RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000007372
-RBP: ffffc9000179fb50 R08: ffffffff82237bb3 R09: 1ffffd400021e7b8
-R10: dffffc0000000000 R11: fffff9400021e7b9 R12: 04fff5000000462d
-R13: 0000000000000000 R14: 0000000000001000 R15: 0000000000007372
-FS:  000055558bc8f380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005597207fdc30 CR3: 00000000404c2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
