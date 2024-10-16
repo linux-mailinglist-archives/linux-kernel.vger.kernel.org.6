@@ -1,121 +1,185 @@
-Return-Path: <linux-kernel+bounces-368241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEB49A0D24
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:46:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5730D9A0D27
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34433288452
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:46:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9126B29327
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B183F20C02C;
-	Wed, 16 Oct 2024 14:46:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12782107A0;
-	Wed, 16 Oct 2024 14:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36B820CCC3;
+	Wed, 16 Oct 2024 14:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIdv5kx5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C809107A0;
+	Wed, 16 Oct 2024 14:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089981; cv=none; b=fPOj2sADqdmPV9nvJK1HR2NAK1SUGxO3bLlrLJ92HX0ZC8n1i9b1VR5984J8DQDZ+azU/jtizbzTi927D0TX4TP/zWcWRN45Z2h3Ulgz3GEfqsq0c60DxrFRnl5zIdPUM7jEZ/oad3I4UxcU1NABa9/+fr2zS7XO8MZgMrxN1Oc=
+	t=1729089998; cv=none; b=sLNmRzZ1Fs643vT33+rXWbmWP97aL6Ox+/7/JZ3NpqwbTqqtB+DSwtTayt4giuMHIlyxLw0aQw7GAxjDDP1JfkTjrj0VCq36V8+P2OVXm6rM9BYZhuG9+0HapGxeWINVg8EQUSpUB/m5rCyJUQb8n4c2PVAWA26zUV6pubBLvHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089981; c=relaxed/simple;
-	bh=o49heouaeT3i9ORpupFQSWE9JQcRD6siSGczRW4Iiy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X/JoLG7LbjlBSxivp5SMB/5o22CzkErN6sLlKYI2LNU5/XXPZNFfCkK8upQyXaBEogLzpTXzRk6Us7iXxicrw+ZI8sF14qtY7np3lpUYk0TtLz6lky11R0aandzb6Cy6j8Eavz6V1TYBKMkQiBVmdfXCIb+2q9lOejW75gNJuB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 273EA1007;
-	Wed, 16 Oct 2024 07:46:49 -0700 (PDT)
-Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C949F3F71E;
-	Wed, 16 Oct 2024 07:46:16 -0700 (PDT)
-Message-ID: <1bd243ce-12d6-46d7-89d3-816fb58a4c95@arm.com>
-Date: Wed, 16 Oct 2024 15:46:15 +0100
+	s=arc-20240116; t=1729089998; c=relaxed/simple;
+	bh=mljYCOrfn5VQtElax+itf5albGe4NataoyAA9ei5XS0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=oUTZRCOJ2IVtylNk2rEGMScadddQxgx09X8eWVEIA5nD1Tf6Z3bVpqOWUY3ZIk8Komcaah3iDAkQHMhs4xu/5FqwDaYguCqLB6kN/lZvhpv45eX10ffrlVhkhlhnMbDLqr7joulDAOjBu/pA2mdCGpcncfhWrgQvsy0YF+Y9qdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIdv5kx5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CEA2C4CEC5;
+	Wed, 16 Oct 2024 14:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729089997;
+	bh=mljYCOrfn5VQtElax+itf5albGe4NataoyAA9ei5XS0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qIdv5kx5nL1uiUMFTWI4/g1kr2RmcIUz2PWR2nPj5ad9+BcYPT7FFYjgrplSiTegr
+	 uDlQmEFKE4fB0/2dM1exBAkFhNxEFqJuefV5ak9q9//SjvXC71Ftc47f255bdLeaFI
+	 /FDhrTCCXPJNtt6sWam8Ub0lknZDrpWmt9inpfqypdT4kcQZvdmmdtqhO7Qs/n/2Sl
+	 3c0OvvYyTp8VFqN6PdbwWzjgIuNkRLaxD+RlpVULp+uCtmWU6o0eO6pFe6OEoXATtz
+	 vhc2500888Fsi//9NZI/NyNGDrlyfZjtIhFS9jm6xdruRLUqXTTWuzX6EEjfg7jpNl
+	 9gx958sT8Jqig==
+Date: Wed, 16 Oct 2024 23:46:28 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Sven Schnelle <svens@linux.ibm.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen
+ N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew
+ Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph
+ tracer
+Message-Id: <20241016234628.b7eba1db0db39d2197a2ea4f@kernel.org>
+In-Reply-To: <yt9ded4gfdz0.fsf@linux.ibm.com>
+References: <172904026427.36809.516716204730117800.stgit@devnote2>
+	<172904040206.36809.2263909331707439743.stgit@devnote2>
+	<yt9ded4gfdz0.fsf@linux.ibm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 31/57] edac: Remove PAGE_SIZE compile-time constant
- assumption
-Content-Language: en-GB
-To: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-31-ryan.roberts@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241014105912.3207374-31-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-+ Borislav Petkov, Tony Luck
+On Wed, 16 Oct 2024 14:07:31 +0200
+Sven Schnelle <svens@linux.ibm.com> wrote:
 
-This was a rather tricky series to get the recipients correct for and my script
-did not realize that "supporter" was a pseudonym for "maintainer" so you were
-missed off the original post. Appologies!
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> writes:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> >
+> > Rewrite fprobe implementation on function-graph tracer.
+> > Major API changes are:
+> >  -  'nr_maxactive' field is deprecated.
+> >  -  This depends on CONFIG_DYNAMIC_FTRACE_WITH_ARGS or
+> >     !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS, and
+> >     CONFIG_HAVE_FUNCTION_GRAPH_FREGS. So currently works only
+> >     on x86_64.
+> >  -  Currently the entry size is limited in 15 * sizeof(long).
+> >  -  If there is too many fprobe exit handler set on the same
+> >     function, it will fail to probe.
+> >
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Huacai Chen <chenhuacai@kernel.org>
+> > Cc: WANG Xuerui <kernel@xen0n.name>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > Cc: Naveen N Rao <naveen@kernel.org>
+> > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> > Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> > Cc: Albert Ou <aou@eecs.berkeley.edu>
+> > Cc: Heiko Carstens <hca@linux.ibm.com>
+> > Cc: Vasily Gorbik <gor@linux.ibm.com>
+> > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> > Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> > Cc: Sven Schnelle <svens@linux.ibm.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: x86@kernel.org
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> >
+> [..]
+> 
+> > diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
+> > index ef609bcca0f9..2d06bbd99601 100644
+> > --- a/include/linux/fprobe.h
+> > +++ b/include/linux/fprobe.h
+> > @@ -5,10 +5,11 @@
+> [..]
+> > +static inline unsigned long encode_fprobe_header(struct fprobe *fp, int size_words)
+> > +{
+> > +	if (WARN_ON_ONCE(size_words > MAX_FPROBE_DATA_SIZE_WORD ||
+> > +	    ((unsigned long)fp & ~FPROBE_HEADER_PTR_MASK) !=
+> > +	    ~FPROBE_HEADER_PTR_MASK)) {
+> > +		return 0;
+> >  	}
+> > +	return ((unsigned long)size_words << FPROBE_HEADER_PTR_BITS) |
+> > +		((unsigned long)fp & FPROBE_HEADER_PTR_MASK);
+> > +}
+> > +
+> > +/* Return reserved data size in words */
+> > +static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
+> > +{
+> > +	unsigned long ptr;
+> > +
+> > +	ptr = (val & FPROBE_HEADER_PTR_MASK) | ~FPROBE_HEADER_PTR_MASK;
+> > +	if (fp)
+> > +		*fp = (struct fprobe *)ptr;
+> > +	return val >> FPROBE_HEADER_PTR_BITS;
+> > +}
+> 
+> I think that still has the issue that the size is encoded in the
+> leftmost fields of the pointer, which doesn't work on all
+> architectures. I reported this already in v15
+> (https://lore.kernel.org/all/yt9dmsjyx067.fsf@linux.ibm.com/)
 
-More context in cover letter:
-https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+Oops, thanks for reporting. I should missed that.
 
+> I haven't yet fully understood why this logic is needed, but the
+> WARN_ON_ONCE triggers on s390. I'm assuming this fails because fp always
+> has the upper bits of the address set on x86 (and likely others). As an
+> example, in my test setup, fp is 0x8feec218 on s390, while it is
+> 0xffff888100add118 in x86-kvm.
 
-On 14/10/2024 11:58, Ryan Roberts wrote:
-> To prepare for supporting boot-time page size selection, refactor code
-> to remove assumptions about PAGE_SIZE being compile-time constant. Code
-> intended to be equivalent when compile-time page size is active.
-> 
-> Convert PAGES_TO_MiB() and MiB_TO_PAGES() to use the ternary operator so
-> that they continue to work with boot-time page size; Boot-time page size
-> can't be used with CPP because it's value is not known at compile time.
-> For compile-time page size builds, the compiler will dead code strip for
-> the same result.
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
-> 
-> ***NOTE***
-> Any confused maintainers may want to read the cover note here for context:
-> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> 
->  drivers/edac/edac_mc.h | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/edac/edac_mc.h b/drivers/edac/edac_mc.h
-> index 881b00eadf7a5..22132ee86e953 100644
-> --- a/drivers/edac/edac_mc.h
-> +++ b/drivers/edac/edac_mc.h
-> @@ -37,13 +37,12 @@
->  #include <linux/workqueue.h>
->  #include <linux/edac.h>
->  
-> -#if PAGE_SHIFT < 20
-> -#define PAGES_TO_MiB(pages)	((pages) >> (20 - PAGE_SHIFT))
-> -#define MiB_TO_PAGES(mb)	((mb) << (20 - PAGE_SHIFT))
-> -#else				/* PAGE_SHIFT > 20 */
-> -#define PAGES_TO_MiB(pages)	((pages) << (PAGE_SHIFT - 20))
-> -#define MiB_TO_PAGES(mb)	((mb) >> (PAGE_SHIFT - 20))
-> -#endif
-> +#define PAGES_TO_MiB(pages)	(PAGE_SHIFT < 20 ?			\
-> +					((pages) >> (20 - PAGE_SHIFT)) :\
-> +					((pages) << (PAGE_SHIFT - 20)))
-> +#define MiB_TO_PAGES(mb)	(PAGE_SHIFT < 20 ?			\
-> +					((mb) << (20 - PAGE_SHIFT)) :	\
-> +					((mb) >> (PAGE_SHIFT - 20)))
->  
->  #define edac_printk(level, prefix, fmt, arg...) \
->  	printk(level "EDAC " prefix ": " fmt, ##arg)
+Ah, so s390 kernel/user memory layout is something like 4G/4G?
+Hmm, this encode expects the leftmost 4bit is filled. For the
+architecture which has 32bit address space, we may be possible to
+use "unsigned long long" for 'val' on shadow stack (and use the
+first 32bit for fp and another 32bit for size).
 
+Anyway, I need to redesign it depending on architecture.
+
+Thank you!
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
