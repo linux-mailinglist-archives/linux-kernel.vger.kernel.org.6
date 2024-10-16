@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-367971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EC09A08F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:01:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD5C9A08F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7441F261DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B2A1F24ECC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196E420896A;
-	Wed, 16 Oct 2024 12:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3B8207A25;
+	Wed, 16 Oct 2024 12:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AO1Pgs59"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VCNTazhX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7757207A35
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1D72071E7;
+	Wed, 16 Oct 2024 12:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729080063; cv=none; b=qTnc1bgcWBLEabDqTAojJkMPS7o42sqxEBCsWG+jXlYiEHmlxyDhHR6nHl9chPHuq51ZJ+pVn7FbzQeuA6OF2Cg39aB8CgklEr2NwHXtHgDgu9X6jZpE5jSdW0tz8A78YUFBlJQwHDpcCaRm8ATuRkGeSGTg2hiJ3tAsSktcy1c=
+	t=1729080059; cv=none; b=fJJXRpvf1ObAKZyt3KVymaj3yMSTSZfpjV0PXs9loujyAelG6J3v8VgFUgbLaq+a+fv9TnaDyfcJdid3obwwZojyxwN5/YoIfT4Yfr9slMZPy18h3yE1ferJ9eweqlpjFC8Aa3d2CwW2cXeR9y/rfxPp64mHBnaI/YNHoQzH+5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729080063; c=relaxed/simple;
-	bh=0Lw+Eq66P7NfS44Lso7KYw34p/OzXMsJYc26nL52TW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ASXpz/4NAv6QugKP6oZQvF5ecQA65lgmXGWqbSLTMtm3uqacN17vRcLfzyPhhiTIDvH1cx1Tc7J5FP1sGvkD81UkBixnCjfXdgZGktvHR6e6bwDef2jWT6tAhmPfuevjLDzOV7TseQ2q1np2B1fb7X4EFBerUqfq2pbaVAWf+JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AO1Pgs59; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so4221658f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729080059; x=1729684859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Lw+Eq66P7NfS44Lso7KYw34p/OzXMsJYc26nL52TW8=;
-        b=AO1Pgs59rIKTTpvzLJLwZhhPZngoD4fv1iuB5Ftnwppsm5zNvEmMBkz2lKdzwAUpHm
-         OgNqyYS1Mt8UkHWJy5VIxh3i83LKO8KEkVdsPRj93c25epvGG2CPg3liMWVZLcBzYb4T
-         uOm/jFq+xS4RRm2dPExTDMAaP/hJbxahuw3EMHmQWv9z0Y7PRVmz4HcO/PaNHMHT7I9g
-         XTn1lNd5/h/5FHRdj5H0csYFKgcBlVV2/1sr+L0JDbAFBqGj9t7NPqGZBdiP7xNSChNg
-         Q8hpGGkzEJ9zZakz8IUY9Lp20OHAMeVbkX2U/IDac/ocX0Ri+USy5YkuBkZkWBYwS8Jm
-         7iSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729080059; x=1729684859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Lw+Eq66P7NfS44Lso7KYw34p/OzXMsJYc26nL52TW8=;
-        b=ZSl/FtM40/jE7iVO6dmDiv2ewlUNUvA7I8AP5CQ4IVG05jHEd1hLGMg/PEgFp+pIFb
-         oIbJFbgQqeq90xpA20dBGZNQjirLUAVvvC0tcqGV1DZKfGTtZpTc1aXKDqIAb+1/fJ3O
-         v+a14v3LlB/oODkLXjD0SmWETANe+6wy4Dt2iAgyqZyCwyBDUxnOaSVA+ao7gS8VNeTK
-         EyS+JynGULUqE429U42o1VBxGuBsXURp6B2nkQ9bskIYW9izCkyTLiTCE2LgdQyOkS5V
-         bhut1EEAjtnNjP12RxReYTFHvmj54xFiLII+DPjJuHI0Q5c0Ni+kMVd7bZf+9qkgKvwc
-         0/9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWZkCsH1IswzBZOhYA4yD1zdisapyzKKccRfam2NbL5RA46l/7PxZuI9SFpuAvt+XSRNQ5uah6C1BX70sI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw72kZIE77YSDrRdYhSwsek8wAUG5Og/o03466dBBniWAnrliAr
-	Wztm3DzMVRVjNXZ8eo2A2bdh0BWCvNX1q9fWMQfvIX5bxAx5wE2vvHnF/H4SY2KM8FZ8oN0vOxn
-	st8B1UHxIcCeSsDg+uaDS3pwQhEWOirGL6D4l
-X-Google-Smtp-Source: AGHT+IG++/cNgr19EfMpH6beYBtK6fUiWPKsTgxPAigPR59gCZR0fTXiXujH2g2pJV49ZkvbJ74JnUmFlRl5KtJgjRk=
-X-Received: by 2002:adf:e54e:0:b0:37d:45f0:b33 with SMTP id
- ffacd0b85a97d-37d55184ae1mr12139641f8f.9.1729080058727; Wed, 16 Oct 2024
- 05:00:58 -0700 (PDT)
+	s=arc-20240116; t=1729080059; c=relaxed/simple;
+	bh=WxvWqUHf+WmlKFB9owh4yalNmZYY1tal6KAd5WcG/+Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FNXyG9qLP1WMy074NLg/7Cn5i7xfJxGWAt4de9AWAxI1K6dFKmIOAHLfs1wGQFLFqxyBrcQ0MuO14tzLSj8HKbwxosAtIVkxlMQG5IR3tU22OjkHu6eBm+vcSqPgDbjQPuKeYUWO++uYmNn5T0x37BAXr1ZUisgo+LLuZuxHtMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VCNTazhX; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729080058; x=1760616058;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WxvWqUHf+WmlKFB9owh4yalNmZYY1tal6KAd5WcG/+Q=;
+  b=VCNTazhXJZebaN0bo/wzZbh5u46TLYD5FUgYQrpVHKEDNamRNrf5lobz
+   s7rbb4uJaXvn70eOuwMyQ6yj2995Nsym5A26FutqgEwgWLYKikIprDYjZ
+   J75T5qv5SVdoS0Z/XY+Wpdh/2QZX1gMHd5lkKAbOKZswuZQSkVaWBxhvc
+   Hgb7j+fbgItaJFuSk+FwHqVPX3XBRZD/5F4LuJN1PaRMAErLfygraWEo7
+   2JrU3vLcmxpqLc/vo7LlJZzEHhb9RzOuT84ywKbX50r85mylqAgU9M9qm
+   wfsd1djYutMLpdX60Ml8dAgp8FArrYNQxSCqjsMAUELRIS3dt5fGFhPyS
+   w==;
+X-CSE-ConnectionGUID: SQ94f4yyRc+St+/YJayTIA==
+X-CSE-MsgGUID: QVMlmLxzS3KzMftio1jRjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="53937092"
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="53937092"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:00:57 -0700
+X-CSE-ConnectionGUID: x5CGuv+WQbSyDt2dMEhO3A==
+X-CSE-MsgGUID: P9nCAo0aQESP4VXMTYiiBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="82169798"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.221])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:00:55 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 1/1] PCI: Convert pdev_sort_resources() to use resource name helper
+Date: Wed, 16 Oct 2024 15:00:48 +0300
+Message-Id: <20241016120048.1355-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com> <20241016035214.2229-9-fujita.tomonori@gmail.com>
-In-Reply-To: <20241016035214.2229-9-fujita.tomonori@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 16 Oct 2024 14:00:45 +0200
-Message-ID: <CAH5fLgiuZf2jzhtnJLVUHjDMLsj+xXcME4Co=hH30u-nXeQDEg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 8/8] net: phy: qt2025: Wait until PHY becomes ready
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, anna-maria@linutronix.de, 
-	frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de, jstultz@google.com, 
-	sboyd@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 5:54=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> Wait until a PHY becomes ready in the probe callback by
-> using readx_poll_timeout function.
->
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Use pci_resource_name() helper in pdev_sort_resources() to print
+resources in user-friendly format.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/setup-bus.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 23082bc0ca37..071c5436b4a5 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
+ 	int i;
+ 
+ 	pci_dev_for_each_resource(dev, r, i) {
++		const char *r_name = pci_resource_name(dev, i);
+ 		struct pci_dev_resource *dev_res, *tmp;
+ 		resource_size_t r_align;
+ 		struct list_head *n;
+@@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
+ 
+ 		r_align = pci_resource_alignment(dev, r);
+ 		if (!r_align) {
+-			pci_warn(dev, "BAR %d: %pR has bogus alignment\n",
+-				 i, r);
++			pci_warn(dev, "%s: %pR has bogus alignment\n",
++				 r_name, r);
+ 			continue;
+ 		}
+ 
+-- 
+2.39.5
+
 
