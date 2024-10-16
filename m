@@ -1,240 +1,167 @@
-Return-Path: <linux-kernel+bounces-367744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D7B9A062A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:55:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F9B9A062D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913A82852D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:55:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB5E0B23625
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350E2206065;
-	Wed, 16 Oct 2024 09:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E4C206061;
+	Wed, 16 Oct 2024 09:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lt78s6ht";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RC4jeOYk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BW3YTrGz"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A70E1B78F3;
-	Wed, 16 Oct 2024 09:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61B320605A;
+	Wed, 16 Oct 2024 09:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072516; cv=none; b=JsPNRRvJLcaQT3Rc0vxR6s5w/Fa/dAfr/O73OB57wtDAgIPkHP2qJjdeTuZVwOu0i+5oKKI4ZJmN8+QCYm6YEZwW17P92fkCmB186hEIFnRIX6l2RNQGd0hiFBKVmO6FeOgtOOAf0hT1bDCLA2q8vTwAplW3PDcE6iDyeXq46l0=
+	t=1729072567; cv=none; b=QmGmT9Yvu7dQrNR/8aMjUL3yOFgXBz7ucZV8PrMSjtnapML4t/kEF/U7kbShW9CazcZDIMYQQS4Yf+4biRiqyVU9O/zAPU8ltoHnB/ObCpMKVNKob9dVIcBS/2IsmDftXSgPOfof0WOrJn72WzX4bOKMtONR11PSOucjOBzzHpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072516; c=relaxed/simple;
-	bh=ZKIz2nwtQVcX7IrHAIw7TJ8vmQ30BHAIpL39n66xL2c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l0AWUAHpZqAKXyneuh5fzu28NWQBX2ivqkTAYXMToOd6f/lQcTVPoJPFsYimhDOz4uJtz1gUJemyEUDrryheF3rVpBb1NUeZF4HinSrzJmmTIY07/NCtqe3Mbw5UtfnK2i3Emj8q/bVniWBpbqI6HTX1+UhMFGBSUrcH/AZTMXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lt78s6ht; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RC4jeOYk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729072511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2YWJkMNI+8Sb/EzEOMqVgOhTaGyPPyCS7yi0OpGrZ/s=;
-	b=lt78s6ht20q70sOlCNV6MS1I3u/dPyEBo9zs/FT0Y3UVVwBODwRpdFJo7Gzc7icAbyrAPr
-	eS39QKoxFe9koeTEzY1GUwTut1dD8+9ZrOAjZ4bc52PagZz0wr4FOIc4HirbE9Ka4bIDIL
-	v5GwT8ldW7VmpV35zWiY+cCBbi1z2GGKs1b49KhbyGx3k25gjiIsCuMsZTA0ILs4lnvS+B
-	pU6Akkr5QooCjVRom3YKeESQ95H7d/bQlVQuR8cxu9V7Kh0paaTyacCjhW+Ek37qIQXNQu
-	9SQ5l6wLwrW2+orGw6TnPKS9Zmxkk9nR4XidQIDaUntbX8b9VZM5KsMMH+ajhQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729072511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2YWJkMNI+8Sb/EzEOMqVgOhTaGyPPyCS7yi0OpGrZ/s=;
-	b=RC4jeOYkZKhiou3Q1jSrj2Bh8pnFJFBh+ZYGamf4kSR7oy0CArY/SoadkQoDzPHQYJGfOu
-	uQnuynjqdba0utDg==
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, rust-for-linux@vger.kernel.org, Alice Ryhl
- <aliceryhl@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>,
- Andrew Lunn <andrew@lunn.ch>, Miguel Ojeda <ojeda@kernel.org>, Andy
- Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Dwaipayan
- Ray <dwaipayanray1@gmail.com>
-Subject: Re: [PATCH v3 16/16] checkpatch: Remove broken sleep/delay related
- checks
-In-Reply-To: <Zw56n9P0Io1bMb0y@localhost.localdomain>
-References: <20241014-devel-anna-maria-b4-timers-flseep-v3-0-dc8b907cb62f@linutronix.de>
- <20241014-devel-anna-maria-b4-timers-flseep-v3-16-dc8b907cb62f@linutronix.de>
- <Zw56n9P0Io1bMb0y@localhost.localdomain>
-Date: Wed, 16 Oct 2024 11:55:11 +0200
-Message-ID: <87y12ocqyo.fsf@somnus>
+	s=arc-20240116; t=1729072567; c=relaxed/simple;
+	bh=OyaDcQWeWDMNXD4XJ0lliYzzd5Widg/W6p5haR+rPnM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tkQBg5k4TrrwAhFqOiAOUyexg/S4TTz0GIxljxmOBjUXiI8QwXs67AFex13Ws4sLa2qAUB2zYvpqhzRGC89RHaofmdux+A5GFsqYHVN5VI64B6Y6ium0G4BHa2vggXussx3k7EYRZlQrSRfgtX8F/+SfhhI2Ow1wkfPMb4Trr0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BW3YTrGz; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso287563266b.1;
+        Wed, 16 Oct 2024 02:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729072564; x=1729677364; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=I9Dk398NJFynNgEuEoYMoZMW+PxuCplcELYFZehVVxQ=;
+        b=BW3YTrGzUjwvtu08x7aeb6WiM3vWDk+qUgk3XHpliFrxA8KdMDQlwSeMDX4zv3NDQR
+         BwbECAQu9Co3ZedPvoZofBaLTFuTJ4sW2RmoC98wiQ/A+KXDosiF8+QdwYB42tn83lCt
+         clftJot0WZSo4NTKZTwmAJR6rs/Q40YSEbf9RXD7QNRdyqFdu7J1Sn084Q/lFJAFiUFJ
+         TnvDOyza0NOzVHaW8sBrY86xPIjKiefDUPuy9xllnP/U7yzV8cJyD+JkwGA08JbN1axM
+         hXW0UCjSb1gV7fOIybYVrXJme4tL9J6kbghe4HQ04+RQutajk8B7+Zp+QNFNQXfYZOLF
+         R6ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729072564; x=1729677364;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I9Dk398NJFynNgEuEoYMoZMW+PxuCplcELYFZehVVxQ=;
+        b=Spy6GfE3P2K0bjudODQNmyIImMhh9zNjPHdocnMtjaDjxv3uzHbj+s6nLFw3cJt30S
+         IZNt3wudqFW5zMQ9SqLnaf0hr6r83Xr2txIHJi3wUeMZ6RU+IXAIIsy7F8QzKVQfE0gx
+         8Yvvn7gf+WbZ/zZfKUtljyeRrGSsENP1lVIVr+bOoRpgSjz6lt0aGHMbLt+exzXixuoo
+         LtdyM3A1DsGYI4K8O/hchc0SwUKCyZG32Xd3m/qTvHq2kfhP+g3BWMFknig0trKgGte+
+         5INs125rYPqaO7LRbYxqk4uctJgVYdLW1/ggB2bSDfnEn5OuI93Y95TEihCO8YdOg79z
+         sB1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW94HzOEQadSpW81pgSq3bkfACKoBwa8lNnvB79vR0gGlz6VIogiobUzk/BO6Feba8T4n6pg74TOkD6l1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyABrvvVj+nY7oCjnD7CuAEJFvZHF+XIlICx6qWqU27VFnriA7P
+	x5BAu/5UMJn9QGKVnd7BEtm7pzjcm7VbXtkPwLJU6hnv5Ep4vyDZInvKt4Jef9O326q/9cbWhou
+	OiusBMyk01S0LjMZ8Gs8/B9Ceo9bCFqy7y5s=
+X-Google-Smtp-Source: AGHT+IH1DBOS0TpZDMFlnMjSSySR0I4oWJRyhNUfYKtNOpBAC9JSpyG+cJdwsn71m55gNBxDbDesiZ55p6k8DfTcAS0=
+X-Received: by 2002:a17:907:26c2:b0:a99:40e3:23e8 with SMTP id
+ a640c23a62f3a-a99e3e4c342mr1426169866b.51.1729072563860; Wed, 16 Oct 2024
+ 02:56:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Adam Green <greena88@gmail.com>
+Date: Wed, 16 Oct 2024 10:55:53 +0100
+Message-ID: <CAC8uq=Ppnmv98mpa1CrWLawWoPnu5abtU69v-=G-P7ysATQ2Pw@mail.gmail.com>
+Subject: Unable to handle kernel paging request at virtual address ffffffc08058e000
+To: linux-mmc@vger.kernel.org
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, 
+	"shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>, sydarn@proton.me
+Content-Type: text/plain; charset="UTF-8"
 
-Frederic Weisbecker <frederic@kernel.org> writes:
+Good morning,
 
-> Le Mon, Oct 14, 2024 at 10:22:33AM +0200, Anna-Maria Behnsen a =C3=A9crit=
- :
->> checkpatch.pl checks for several things related to sleep and delay
->> functions. In all warnings the outdated documentation is referenced. All
->> broken parts are listed one by one in the following with an explanation =
-why
->> this check is broken. For a basic background of those functions please a=
-lso
->> refere to the updated function descriptions of udelay(), nsleep_range() =
-and
->> msleep().
->>=20
->> Be aware: The change is done with a perl knowledge of the level "I'm able
->> to spell perl".
->>=20
->> The following checks are broken:
->>=20
->> - Check: (! ($delay < 10) )
->>   Message: "usleep_range is preferred over udelay;
->>             see Documentation/timers/timers-howto.rst\n"
->>   Why is the check broken: When it is an atomic context, udelay() is
->>                            mandatory.
->>=20
->> - Check: ($min eq $max)
->>   Message:  "usleep_range should not use min =3D=3D max args;
->>              see Documentation/timers/timers-howto.rst\n"
->>   Why is the check broken: When the requested accuracy for the sleep
->>                            duration requires it, it is also valid to use
->>                            min =3D=3D max.
->>=20
->> - Check: ($delay > 2000)
->>   Message: "long udelay - prefer mdelay;
->>             see arch/arm/include/asm/delay.h\n"
->>   Why is the check broken: The threshold when to start using mdelay() to
->>                            prevent an overflow depends on
->>                            MAX_UDELAY_MS. This value is architecture
->>                            dependent. The used value for the check and
->>                            reference is arm specific. Generic would be 5=
-ms,
->>                            but this would "break" arm, loongarch and mips
->>                            and also the arm value might "break" mips and
->>                            loongarch in some configurations.
->>=20
->> - Check: ($1 < 20)
->>   Message: "msleep < 20ms can sleep for up to 20ms;
->>             see Documentation/timers/timers-howto.rst\n"
->>   Why is the check broken: msleep(1) might sleep up to 20ms but only on a
->>                            HZ=3D100 system. On a HZ=3D1000 system this w=
-ill be
->>                            2ms. This means, the threshold cannot be hard
->>                            coded as it depends on HZ (jiffy granularity =
-and
->>                            timer wheel bucket/level granularity) and also
->>                            on the required accuracy of the callsite. See
->>                            msleep() and also the USLEEP_RANGE_UPPER_BOUND
->>                            value.
->>=20
->> Remove all broken checks. Update checkpatch documentation accordingly.
->>=20
->> Cc: Andy Whitcroft <apw@canonical.com>
->> Cc: Joe Perches <joe@perches.com>
->> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
->> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
->> ---
->> v3: Move it to the end of the queue and adapt it to the new patch which
->>     removes the link to the outdated documentation before.
->> v2: Rephrase commit message
->> ---
->>  Documentation/dev-tools/checkpatch.rst |  4 ----
->>  scripts/checkpatch.pl                  | 38 ---------------------------=
--------
->>  2 files changed, 42 deletions(-)
->>=20
->> diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-=
-tools/checkpatch.rst
->> index abb3ff682076..f5c27be9e673 100644
->> --- a/Documentation/dev-tools/checkpatch.rst
->> +++ b/Documentation/dev-tools/checkpatch.rst
->> @@ -466,10 +466,6 @@ API usage
->>    **UAPI_INCLUDE**
->>      No #include statements in include/uapi should use a uapi/ path.
->>=20=20
->> -  **USLEEP_RANGE**
->> -    usleep_range() should be preferred over udelay(). The proper way of
->> -    using usleep_range() is mentioned in the kernel docs.
->> -
->>=20=20
->>  Comments
->>  --------
->> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
->> index 98790fe5115d..34d4b5beda29 100755
->> --- a/scripts/checkpatch.pl
->> +++ b/scripts/checkpatch.pl
->> @@ -6591,28 +6591,6 @@ sub process {
->>  			}
->>  		}
->>=20=20
->> -# prefer usleep_range over udelay
->> -		if ($line =3D~ /\budelay\s*\(\s*(\d+)\s*\)/) {
->> -			my $delay =3D $1;
->> -			# ignore udelay's < 10, however
->> -			if (! ($delay < 10) ) {
->> -				CHK("USLEEP_RANGE",
->> -				    "usleep_range is preferred over udelay; see function descriptio=
-n of usleep_range() and udelay().\n" . $herecurr);
->> -			}
->> -			if ($delay > 2000) {
->> -				WARN("LONG_UDELAY",
->> -				     "long udelay - prefer mdelay; see function description of mdel=
-ay().\n" . $herecurr);
->> -			}
->> -		}
->> -
->> -# warn about unexpectedly long msleep's
->> -		if ($line =3D~ /\bmsleep\s*\((\d+)\);/) {
->> -			if ($1 < 20) {
->> -				WARN("MSLEEP",
->> -				     "msleep < 20ms can sleep for up to 20ms; see function descript=
-ion of msleep().\n" . $herecurr);
->> -			}
->> -		}
->> -
->>  # check for comparisons of jiffies
->>  		if ($line =3D~ /\bjiffies\s*$Compare|$Compare\s*jiffies\b/) {
->>  			WARN("JIFFIES_COMPARISON",
->> @@ -7069,22 +7047,6 @@ sub process {
->>  			}
->>  		}
->>=20=20
->> -# check usleep_range arguments
->> -		if ($perl_version_ok &&
->> -		    defined $stat &&
->> -		    $stat =3D~ /^\+(?:.*?)\busleep_range\s*\(\s*($FuncArg)\s*,\s*($Fu=
-ncArg)\s*\)/) {
->> -			my $min =3D $1;
->> -			my $max =3D $7;
->> -			if ($min eq $max) {
->> -				WARN("USLEEP_RANGE",
->> -				     "usleep_range should not use min =3D=3D max args;  see functio=
-n description of usleep_range().\n" . "$here\n$stat\n");
->> -			} elsif ($min =3D~ /^\d+$/ && $max =3D~ /^\d+$/ &&
->> -				 $min > $max) {
->> -				WARN("USLEEP_RANGE",
->> -				     "usleep_range args reversed, use min then max;  see function d=
-escription of usleep_range().\n" . "$here\n$stat\n");
->
-> Why not keep the min > max static check?
+I would like to report a regression that appears to have been
+introduced into the linux kernel since v6.9.
 
-I removed it accidentially... It was my plan to keep the min > max
-static check.
+My device is currently experiencing a panic booting the kernel/rootfs
+from an SD card.
 
-I'll send a v4 for this patch.
+The device is a Powkiddy RGB30 which is a portable handheld gaming
+console with a Rockchip RK3566 SoC (arm64).
 
-Thanks,
+I have tested a variety of devices from a couple of manufacturers with
+the same SoC and they all have the same issue,
+I have also tested, 6.12-rc3 and linux-next and the same issue appears present.
 
-	Anna-Maria
+A full UART dump can be found here: https://clbin.com/zLZAW
 
+[   41.547983] Unable to handle kernel paging request at virtual
+address ffffffc08058e000
+[   41.553426] Mem abort info:
+[   41.558231]   ESR = 0x0000000096000007
+[   41.563115]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   41.568135]   SET = 0, FnV = 0
+[   41.572882]   EA = 0, S1PTW = 0
+[   41.577575]   FSC = 0x07: level 3 translation fault
+[   41.582404] Data abort info:
+[   41.586995]   ISV = 0, ISS = 0x00000007, ISS2 = 0x00000000
+[   41.591848]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[   41.596664]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[   41.601457] swapper pgtable: 4k pages, 39-bit VAs, pgdp=000000000363e000
+[   41.606359] [ffffffc08058e000] pgd=1000000000225003,
+p4d=1000000000225003, pud=1000000000225003, pmd=1000000000c8c003,
+pte=0000000000000000
+[   41.616442] Internal error: Oops: 0000000096000007 [#1] PREEMPT SMP
+[   41.621544] Modules linked in: hci_uart btrtl bluetooth rfkill
+[   41.626678] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-rc2 #1
+[   41.631922] Hardware name: Powkiddy RGB30 (DT)
+[   41.636951] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   41.642330] pc : dw_mci_idmac_start_dma+0xa0/0x358
+[   41.647585] lr : __dw_mci_start_request+0x21c/0x6a0
+[   41.652827] sp : ffffffc080003da0
+[   41.657882] x29: ffffffc080003da0 x28: ffffff8001f06d80 x27: ffffffc08058d000
+[   41.663399] x26: ffffffc08058e000 x25: 0000000000002711 x24: 0000000000002000
+[   41.668864] x23: ffffff800167dc80 x22: 0000000080000012 x21: 0000000000001000
+[   41.674257] x20: 000000003b5d1000 x19: 0000000000001000 x18: 0000000972073a81
+[   41.679654] x17: ffffff9c39b47000 x16: ffffffc080000000 x15: 0000000000000001
+[   41.685074] x14: 0000000000000004 x13: 000001ba5087c8e8 x12: 00000000000001a8
+[   41.690506] x11: 0000000000000040 x10: ffffffe40628d890 x9 : 0000000000000000
+[   41.695972] x8 : ffffff803fd44080 x7 : 0000000008f0d180 x6 : 000000003b9ac9ff
+[   41.701495] x5 : 0000000000fffffe x4 : ffffffc08058de80 x3 : 00000000b2d05e00
+[   41.707073] x2 : ffffffe40546ab08 x1 : ffffffc08058e000 x0 : 0000000000001000
+[   41.712686] Call trace:
+[   41.717857]  dw_mci_idmac_start_dma+0xa0/0x358
+[   41.723266]  __dw_mci_start_request+0x21c/0x6a0
+[   41.728719]  dw_mci_work_func+0x4c8/0x4d8
+[   41.734144]  process_one_work+0x148/0x284
+[   41.739587]  bh_worker+0x224/0x278
+[   41.744985]  workqueue_softirq_action+0x78/0x88
+[   41.750545]  tasklet_action+0x14/0x3c
+[   41.756023]  handle_softirqs+0x100/0x23c
+[   41.761506]  __do_softirq+0x14/0x20
+[   41.766917]  ____do_softirq+0x10/0x20
+[   41.772301]  call_on_irq_stack+0x24/0x54
+[   41.777689]  do_softirq_own_stack+0x1c/0x40
+[   41.783106]  irq_exit_rcu+0x94/0xd0
+[   41.788455]  el1_interrupt+0x38/0x68
+[   41.793799]  el1h_64_irq_handler+0x18/0x24
+[   41.799200]  el1h_64_irq+0x68/0x6c
+[   41.804532]  default_idle_call+0x28/0x58
+[   41.809931]  do_idle+0x1fc/0x260
+[   41.815152]  cpu_startup_entry+0x34/0x40
+[   41.820346]  kernel_init+0x0/0x140
+[   41.825437]  console_on_rootfs+0x0/0x6c
+[   41.830477]  __primary_switched+0x80/0x88
+[   41.835501] Code: 54000280 d294f8c0 940e1f8c d503203f (b9400340)
+[   41.840748] ---[ end trace 0000000000000000 ]---
+[   41.845896] Kernel panic - not syncing: Oops: Fatal exception in interrupt
+[   41.851321] SMP: stopping secondary CPUs
+[   41.856502] Kernel Offset: 0x2384800000 from 0xffffffc080000000
+[   41.861840] PHYS_OFFSET: 0x0
+[   41.866814] CPU features: 0x0c,00000014,00280928,4201720b
+[   41.872087] Memory Limit: none
+[   41.877119] Rebooting in 1 seconds..
+
+Best regards,
+
+Adam Green
 
