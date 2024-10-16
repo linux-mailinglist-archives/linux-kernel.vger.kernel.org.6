@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-367823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1B59A0740
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:27:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A6F9A0741
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EC011C24BE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0E41C2611D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F0B208205;
-	Wed, 16 Oct 2024 10:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFDC208213;
+	Wed, 16 Oct 2024 10:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OawZXEiU"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MxPLIuzH"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7689D207A2C;
-	Wed, 16 Oct 2024 10:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144AA208208;
+	Wed, 16 Oct 2024 10:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074236; cv=none; b=gK0K1VyBsE2Xj9U4mP7PYRGvxyZS/PZ9ylNC53gB6bm7Nn7708NU1509B8PjPrihXYRJLwUgpUQCZTZPXHa1fhoS6sH4Zr+r7CjRPKV1rHWANtNNMk3l3qBzQH826kshaEElSmpgLJBQTpY/Cn7GFVDJ9+VYCAm44jxwYCPKQMc=
+	t=1729074240; cv=none; b=YAw3eU0DVircNLWqVBmMAx2/nIZw1PvNyxBBlaNxF2YI5m5Dyt2ZxzZgZw70RoE70njhJPf91brrDdqVahc0gD4TTFxnB8yYKHpQdoLNa3BH42Cg07lfe247uQ0CGoexhH5x+NL/cx1W0IZeB6w+vzHDk9BScYm0OFdtq5KlB9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074236; c=relaxed/simple;
-	bh=w+/f4EEiwvS2DsYowjzczU9v3DyZ+l0kFaSro8GL824=;
+	s=arc-20240116; t=1729074240; c=relaxed/simple;
+	bh=diJ36RLK/l5o56cnGDl0UJM9WiHgarjAT0U7fl+VFWE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CUBEQVzB9/wIlIt1f1OLWcN34U/fAJarhKGT91XQqrD5I2TJY99Y1TdMS+bCC5sCbid1TFmFRO4YuNuebVhR1myTxE3apJ/K68Ye9uMNF/bM6iP0xmhoougOxDgWn70nc8TrL32nJLe1X7yCg86RUBpAw/cFk6AMe0sqi6cvOv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OawZXEiU; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version:Content-Type; b=LL5rMM/j1/Vegq8RvOve5mzQTeK8HD3dgMEOc2FIW5JKF0QyLs2QE6NQIVnlqkG2juncOg8S2MJWEGoWF8z6ATOHCWeqrM4VXBQoJWbgt1VrTtV58UNvOWAeqDaKNmlyBeKqifEak9iNtJybXB4Gd6WoMZJW2WhzovYVKySteaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MxPLIuzH; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729074235; x=1760610235;
+  t=1729074238; x=1760610238;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=w+/f4EEiwvS2DsYowjzczU9v3DyZ+l0kFaSro8GL824=;
-  b=OawZXEiUJugM2sWzkf6IBgLnLfh0R6T+Kz8fhS2GGExEzRS5sSVSgV2f
-   rWKIF9t7vLAojnlyZOJTuywgFgRifZt4HU1C4BkDKjNe2yzSy+yABto5B
-   h88f+6ZnVwuu3xf0Oo3W+d0big1A7OZ0Su5b2Rp7qV64fzIl2xE3vh9SW
-   pbCEnXf3NMRFmo2MP6GinxyU5wEydW63KHJA2GbJMCYzpooy5DK2XJxDh
-   3Bdbi4yrSzsOaWxSjnAUA0yFIl2Ipat/Z8ecoCSqLQpIg6Pd1mlmkR297
-   vx09mG9At2Sgf4pzx17IRIOtbJ4UkNmaY+tp62baWSUBPMUZqzypECa+C
+  bh=diJ36RLK/l5o56cnGDl0UJM9WiHgarjAT0U7fl+VFWE=;
+  b=MxPLIuzHpDRvbTqkLX7SvzvABGUgHMdu6Upb9RJw1ao1qx5Y7+Mo+0GP
+   IosTddHfEkWB2nNqlHy05ok+RlcvIc4hUIryLQLFLVw132ZlrB0Nf0TtZ
+   nwiQCqjpb4pyxFpvMvh1GUI40j4Po8GkS7jX++NOquKB4O/Bv5McgxQ2e
+   6hOFoCDIoY/AvxAgFPCKLHWWJ8eiucViMHFZhKMejC1xp4Vzz8N+9nPLQ
+   vB7vogeSq/WLNhmJJMp9VoRuCn6pFyqEPECsSitzHk2mQXUJu4A0miH/M
+   HJeoJdpt9VUB+Jor/FVEki3pUxljQNcyyMAH8Ov/UCmBZT8abCh4XtSga
    w==;
-X-CSE-ConnectionGUID: L8ZMEuk0Ry+cVHUL7FwWLA==
-X-CSE-MsgGUID: O2k3H/f0SSSrrcsQVbXodA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="27985873"
+X-CSE-ConnectionGUID: jMt3/VvvT3aOSbK09T7G+w==
+X-CSE-MsgGUID: kMYg/sW8RymryOcUYscxLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="27985883"
 X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="27985873"
+   d="scan'208";a="27985883"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:23:54 -0700
-X-CSE-ConnectionGUID: ELUNtIPNSOGobDxsLEcWdg==
-X-CSE-MsgGUID: 097grx1TRv+h5MiJ6oCzFQ==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:23:58 -0700
+X-CSE-ConnectionGUID: ktrH/MDzS9ySZe40e5gIIA==
+X-CSE-MsgGUID: /Fnt1euGRLWYdX9VbEMqcg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="82960831"
+   d="scan'208";a="82960847"
 Received: from cvapit-mobl1.ger.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.236])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:23:51 -0700
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:23:55 -0700
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: broonie@kernel.org,
 	tiwai@suse.de,
@@ -66,9 +66,9 @@ Cc: vinod.koul@linaro.org,
 	linux-sound@vger.kernel.org,
 	pierre-louis.bossart@linux.dev,
 	bard.liao@intel.com
-Subject: [PATCH 02/11] ASoC/soundwire: remove sdw_slave_extended_id
-Date: Wed, 16 Oct 2024 18:23:24 +0800
-Message-ID: <20241016102333.294448-3-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH 03/11] ASoC: SDCA: add initial module
+Date: Wed, 16 Oct 2024 18:23:25 +0800
+Message-ID: <20241016102333.294448-4-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
 References: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
@@ -83,344 +83,490 @@ Content-Transfer-Encoding: 8bit
 
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-This structure is used to copy information from the 'sdw_slave'
-structures, it's better to create a flexible array of 'sdw_slave'
-pointers and directly access the information. This will also help
-access additional information stored in the 'sdw_slave' structure,
-such as an SDCA context.
+Add new module for SDCA (SoundWire Device Class for Audio) support.
+For now just add a parser to identify the SDCA revision and the
+function mask.
 
-This patch does not add new functionality, it only modified how the
-information is retrieved.
+Note that the SDCA definitions and related MIPI DisCo properties are
+defined only for ACPI platforms and extracted with _DSD helpers. There
+is currently no support for Device Tree in the specification, the
+'depends on ACPI' reflects this design limitation. This might change
+in a future revision of the specification but for SDCA 1.0 ACPI is the
+only supported type of platform firmware.
+
+The SDCA library is defined with static inline fallbacks, which will
+allow for unconditional addition of SDCA support in common parts of
+the code.
+
+The design follows a four-step process:
+
+1) Basic information related to Functions is extracted from MIPI DisCo
+tables and stored in the 'struct sdw_slave'. Devm_ based memory
+allocation is not allowed at this point prior to a driver probe, so we only
+store the function node, address and type.
+
+2) When a codec driver probes, it will register subdevices for each
+Function identified in phase 1)
+
+3) a driver will probe for each subdevice and addition parsing/memory
+allocation takes place at this level. devm_ based allocation is highly
+encouraged to make error handling manageable.
+
+4) Before the peripheral device becomes physically attached, register
+access is not permitted and the regmaps are cache-only. When
+peripheral device is enumerated, the bus level uses the
+'update_status' notification; after optional device-level
+initialization, the codec driver will notify each of the subdevices so
+that they can start interacting with the hardware.
+
+Note that the context extracted in 1) should be arguably be handled
+completely in the codec driver probe. That would however make it
+difficult to use the ACPI information for machine quirks, and
+e.g. select different machine driver and topologies as done for the
+RT712_VB handling later in the series. To make the implementation of
+quirks simpler, this patchset extracts a minimal amount of context
+(interface revision and number/type of Functions) before the codec
+driver probe, and stores this context in the scope of the 'struct
+sdw_slave'.
+
+The SDCA library can also be used in a vendor-specific driver without
+creating subdevices, e.g. to retrieve the 'initialization-table'
+values to write platform-specific values as needed.
+
+For more technical details, the SDCA specification is available for
+public downloads at https://www.mipi.org/mipi-sdca-v1-0-download
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 ---
- drivers/soundwire/amd_init.c        | 12 ++++++------
- drivers/soundwire/intel_init.c      | 13 ++++++-------
- include/linux/soundwire/sdw.h       |  6 +++---
- include/linux/soundwire/sdw_amd.h   |  7 ++-----
- include/linux/soundwire/sdw_intel.h |  7 ++-----
- include/sound/soc-acpi.h            |  3 +--
- sound/soc/amd/ps/pci-ps.c           |  3 +--
- sound/soc/soc-acpi.c                | 30 +++++++++++++++--------------
- sound/soc/sof/amd/acp-common.c      |  3 +--
- sound/soc/sof/intel/hda.c           | 16 ++++++++-------
- 10 files changed, 47 insertions(+), 53 deletions(-)
+ include/linux/soundwire/sdw.h   |   3 +
+ include/sound/sdca.h            |  54 ++++++++++
+ include/sound/sdca_function.h   |  55 ++++++++++
+ sound/soc/Kconfig               |   1 +
+ sound/soc/Makefile              |   1 +
+ sound/soc/sdca/Kconfig          |  11 ++
+ sound/soc/sdca/Makefile         |   5 +
+ sound/soc/sdca/sdca_device.c    |  24 +++++
+ sound/soc/sdca/sdca_functions.c | 173 ++++++++++++++++++++++++++++++++
+ 9 files changed, 327 insertions(+)
+ create mode 100644 include/sound/sdca.h
+ create mode 100644 include/sound/sdca_function.h
+ create mode 100644 sound/soc/sdca/Kconfig
+ create mode 100644 sound/soc/sdca/Makefile
+ create mode 100644 sound/soc/sdca/sdca_device.c
+ create mode 100644 sound/soc/sdca/sdca_functions.c
 
-diff --git a/drivers/soundwire/amd_init.c b/drivers/soundwire/amd_init.c
-index db040f435059..53d1d707ca1a 100644
---- a/drivers/soundwire/amd_init.c
-+++ b/drivers/soundwire/amd_init.c
-@@ -177,7 +177,7 @@ EXPORT_SYMBOL_NS(sdw_amd_probe, SOUNDWIRE_AMD_INIT);
- void sdw_amd_exit(struct sdw_amd_ctx *ctx)
- {
- 	sdw_amd_cleanup(ctx);
--	kfree(ctx->ids);
-+	kfree(ctx->peripherals);
- 	kfree(ctx);
- }
- EXPORT_SYMBOL_NS(sdw_amd_exit, SOUNDWIRE_AMD_INIT);
-@@ -204,10 +204,11 @@ int sdw_amd_get_slave_info(struct sdw_amd_ctx *ctx)
- 			num_slaves++;
- 	}
- 
--	ctx->ids = kcalloc(num_slaves, sizeof(*ctx->ids), GFP_KERNEL);
--	if (!ctx->ids)
-+	ctx->peripherals = kmalloc(struct_size(ctx->peripherals, array, num_slaves),
-+				   GFP_KERNEL);
-+	if (!ctx->peripherals)
- 		return -ENOMEM;
--	ctx->num_slaves = num_slaves;
-+	ctx->peripherals->num_peripherals = num_slaves;
- 	for (index = 0; index < ctx->count; index++) {
- 		if (!(ctx->link_mask & BIT(index)))
- 			continue;
-@@ -215,8 +216,7 @@ int sdw_amd_get_slave_info(struct sdw_amd_ctx *ctx)
- 		if (amd_manager) {
- 			bus = &amd_manager->bus;
- 			list_for_each_entry(slave, &bus->slaves, node) {
--				ctx->ids[i].id = slave->id;
--				ctx->ids[i].link_id = bus->link_id;
-+				ctx->peripherals->array[i] = slave;
- 				i++;
- 			}
- 		}
-diff --git a/drivers/soundwire/intel_init.c b/drivers/soundwire/intel_init.c
-index a09134b97cd6..12e7a98f319f 100644
---- a/drivers/soundwire/intel_init.c
-+++ b/drivers/soundwire/intel_init.c
-@@ -252,17 +252,16 @@ static struct sdw_intel_ctx
- 			num_slaves++;
- 	}
- 
--	ctx->ids = kcalloc(num_slaves, sizeof(*ctx->ids), GFP_KERNEL);
--	if (!ctx->ids)
-+	ctx->peripherals = kmalloc(struct_size(ctx->peripherals, array, num_slaves),
-+				   GFP_KERNEL);
-+	if (!ctx->peripherals)
- 		goto err;
--
--	ctx->num_slaves = num_slaves;
-+	ctx->peripherals->num_peripherals = num_slaves;
- 	i = 0;
- 	list_for_each_entry(link, &ctx->link_list, list) {
- 		bus = &link->cdns->bus;
- 		list_for_each_entry(slave, &bus->slaves, node) {
--			ctx->ids[i].id = slave->id;
--			ctx->ids[i].link_id = bus->link_id;
-+			ctx->peripherals->array[i] = slave;
- 			i++;
- 		}
- 	}
-@@ -371,7 +370,7 @@ void sdw_intel_exit(struct sdw_intel_ctx *ctx)
- 	}
- 
- 	sdw_intel_cleanup(ctx);
--	kfree(ctx->ids);
-+	kfree(ctx->peripherals);
- 	kfree(ctx->ldev);
- 	kfree(ctx);
- }
 diff --git a/include/linux/soundwire/sdw.h b/include/linux/soundwire/sdw.h
-index 5e0dd47a0412..283c8bfdde49 100644
+index 283c8bfdde49..49d690f3d29a 100644
 --- a/include/linux/soundwire/sdw.h
 +++ b/include/linux/soundwire/sdw.h
-@@ -488,9 +488,9 @@ struct sdw_slave_id {
- 	__u8 sdw_version:4;
- };
+@@ -10,6 +10,7 @@
+ #include <linux/irqdomain.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/bitfield.h>
++#include <sound/sdca.h>
  
--struct sdw_extended_slave_id {
--	int link_id;
--	struct sdw_slave_id id;
-+struct sdw_peripherals {
-+	int num_peripherals;
-+	struct sdw_slave *array[];
- };
- 
- /*
-diff --git a/include/linux/soundwire/sdw_amd.h b/include/linux/soundwire/sdw_amd.h
-index 28a4eb77717f..585b4c58a8a6 100644
---- a/include/linux/soundwire/sdw_amd.h
-+++ b/include/linux/soundwire/sdw_amd.h
-@@ -115,19 +115,16 @@ struct sdw_amd_acpi_info {
-  * struct sdw_amd_ctx - context allocated by the controller driver probe
-  *
-  * @count: link count
-- * @num_slaves: total number of devices exposed across all enabled links
-  * @link_mask: bit-wise mask listing SoundWire links reported by the
-  * Controller
-- * @ids: array of slave_id, representing Slaves exposed across all enabled
-- * links
-  * @pdev: platform device structure
-+ * @peripherals: array representing Peripherals exposed across all enabled links
+ struct sdw_bus;
+ struct sdw_slave;
+@@ -663,6 +664,7 @@ struct sdw_slave_ops {
+  * @is_mockup_device: status flag used to squelch errors in the command/control
+  * protocol for SoundWire mockup devices
+  * @sdw_dev_lock: mutex used to protect callbacks/remove races
++ * @sdca_data: structure containing all device data for SDCA helpers
   */
- struct sdw_amd_ctx {
- 	int count;
--	int num_slaves;
- 	u32 link_mask;
--	struct sdw_extended_slave_id *ids;
- 	struct platform_device *pdev[AMD_SDW_MAX_MANAGER_COUNT];
-+	struct sdw_peripherals *peripherals;
+ struct sdw_slave {
+ 	struct sdw_slave_id id;
+@@ -686,6 +688,7 @@ struct sdw_slave {
+ 	bool first_interrupt_done;
+ 	bool is_mockup_device;
+ 	struct mutex sdw_dev_lock; /* protect callbacks/remove races */
++	struct sdca_device_data sdca_data;
  };
  
- /**
-diff --git a/include/linux/soundwire/sdw_intel.h b/include/linux/soundwire/sdw_intel.h
-index fae345987b8c..491ddd27270f 100644
---- a/include/linux/soundwire/sdw_intel.h
-+++ b/include/linux/soundwire/sdw_intel.h
-@@ -287,31 +287,28 @@ struct hdac_bus;
-  * hardware capabilities after all power dependencies are settled.
-  * @link_mask: bit-wise mask listing SoundWire links reported by the
-  * Controller
-- * @num_slaves: total number of devices exposed across all enabled links
-  * @handle: ACPI parent handle
-  * @ldev: information for each link (controller-specific and kept
-  * opaque here)
-- * @ids: array of slave_id, representing Slaves exposed across all enabled
-- * links
-  * @link_list: list to handle interrupts across all links
-  * @shim_lock: mutex to handle concurrent rmw access to shared SHIM registers.
-  * @shim_mask: flags to track initialization of SHIM shared registers
-  * @shim_base: sdw shim base.
-  * @alh_base: sdw alh base.
-+ * @peripherals: array representing Peripherals exposed across all enabled links
-  */
- struct sdw_intel_ctx {
- 	int count;
- 	void __iomem *mmio_base;
- 	u32 link_mask;
--	int num_slaves;
- 	acpi_handle handle;
- 	struct sdw_intel_link_dev **ldev;
--	struct sdw_extended_slave_id *ids;
- 	struct list_head link_list;
- 	struct mutex shim_lock; /* lock for access to shared SHIM registers */
- 	u32 shim_mask;
- 	u32 shim_base;
- 	u32 alh_base;
-+	struct sdw_peripherals *peripherals;
- };
- 
- /**
-diff --git a/include/sound/soc-acpi.h b/include/sound/soc-acpi.h
-index 60d3b86a4660..ac7f9e791ee1 100644
---- a/include/sound/soc-acpi.h
-+++ b/include/sound/soc-acpi.h
-@@ -233,7 +233,6 @@ static inline bool snd_soc_acpi_sof_parent(struct device *dev)
- 
- bool snd_soc_acpi_sdw_link_slaves_found(struct device *dev,
- 					const struct snd_soc_acpi_link_adr *link,
--					struct sdw_extended_slave_id *ids,
--					int num_slaves);
-+					struct sdw_peripherals *peripherals);
- 
- #endif
-diff --git a/sound/soc/amd/ps/pci-ps.c b/sound/soc/amd/ps/pci-ps.c
-index c72d666d51bd..4365499c8f82 100644
---- a/sound/soc/amd/ps/pci-ps.c
-+++ b/sound/soc/amd/ps/pci-ps.c
-@@ -302,8 +302,7 @@ static struct snd_soc_acpi_mach *acp63_sdw_machine_select(struct device *dev)
- 			link = mach->links;
- 			for (i = 0; i < acp_data->info.count && link->num_adr; link++, i++) {
- 				if (!snd_soc_acpi_sdw_link_slaves_found(dev, link,
--									acp_data->sdw->ids,
--									acp_data->sdw->num_slaves))
-+									acp_data->sdw->peripherals))
- 					break;
- 			}
- 			if (i == acp_data->info.count || !link->num_adr)
-diff --git a/sound/soc/soc-acpi.c b/sound/soc/soc-acpi.c
-index 6d693b2ad5a3..270f9777942f 100644
---- a/sound/soc/soc-acpi.c
-+++ b/sound/soc/soc-acpi.c
-@@ -131,8 +131,7 @@ EXPORT_SYMBOL_GPL(snd_soc_acpi_codec_list);
- /* Check if all Slaves defined on the link can be found */
- bool snd_soc_acpi_sdw_link_slaves_found(struct device *dev,
- 					const struct snd_soc_acpi_link_adr *link,
--					struct sdw_extended_slave_id *ids,
--					int num_slaves)
-+					struct sdw_peripherals *peripherals)
- {
- 	unsigned int part_id, link_id, unique_id, mfg_id, version;
- 	int i, j, k;
-@@ -146,22 +145,25 @@ bool snd_soc_acpi_sdw_link_slaves_found(struct device *dev,
- 		link_id = SDW_DISCO_LINK_ID(adr);
- 		version = SDW_VERSION(adr);
- 
--		for (j = 0; j < num_slaves; j++) {
-+		for (j = 0; j < peripherals->num_peripherals; j++) {
-+			struct sdw_slave *peripheral = peripherals->array[j];
+ #define dev_to_sdw_dev(_dev) container_of(_dev, struct sdw_slave, dev)
+diff --git a/include/sound/sdca.h b/include/sound/sdca.h
+new file mode 100644
+index 000000000000..34473ca4c789
+--- /dev/null
++++ b/include/sound/sdca.h
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
++/*
++ * The MIPI SDCA specification is available for public downloads at
++ * https://www.mipi.org/mipi-sdca-v1-0-download
++ *
++ * Copyright(c) 2024 Intel Corporation
++ */
 +
- 			/* find out how many identical parts were reported on that link */
--			if (ids[j].link_id == link_id &&
--			    ids[j].id.part_id == part_id &&
--			    ids[j].id.mfg_id == mfg_id &&
--			    ids[j].id.sdw_version == version)
-+			if (peripheral->bus->link_id == link_id &&
-+			    peripheral->id.part_id == part_id &&
-+			    peripheral->id.mfg_id == mfg_id &&
-+			    peripheral->id.sdw_version == version)
- 				reported_part_count++;
- 		}
- 
--		for (j = 0; j < num_slaves; j++) {
-+		for (j = 0; j < peripherals->num_peripherals; j++) {
-+			struct sdw_slave *peripheral = peripherals->array[j];
- 			int expected_part_count = 0;
- 
--			if (ids[j].link_id != link_id ||
--			    ids[j].id.part_id != part_id ||
--			    ids[j].id.mfg_id != mfg_id ||
--			    ids[j].id.sdw_version != version)
-+			if (peripheral->bus->link_id != link_id ||
-+			    peripheral->id.part_id != part_id ||
-+			    peripheral->id.mfg_id != mfg_id ||
-+			    peripheral->id.sdw_version != version)
- 				continue;
- 
- 			/* find out how many identical parts are expected */
-@@ -180,7 +182,7 @@ bool snd_soc_acpi_sdw_link_slaves_found(struct device *dev,
- 				 */
- 				unique_id = SDW_UNIQUE_ID(adr);
- 				if (reported_part_count == 1 ||
--				    ids[j].id.unique_id == unique_id) {
-+				    peripheral->id.unique_id == unique_id) {
- 					dev_dbg(dev, "found part_id %#x at link %d\n", part_id, link_id);
- 					break;
- 				}
-@@ -189,7 +191,7 @@ bool snd_soc_acpi_sdw_link_slaves_found(struct device *dev,
- 					part_id, reported_part_count, expected_part_count, link_id);
- 			}
- 		}
--		if (j == num_slaves) {
-+		if (j == peripherals->num_peripherals) {
- 			dev_dbg(dev, "Slave part_id %#x not found\n", part_id);
- 			return false;
- 		}
-diff --git a/sound/soc/sof/amd/acp-common.c b/sound/soc/sof/amd/acp-common.c
-index dbcaac84cb73..fc792956bb97 100644
---- a/sound/soc/sof/amd/acp-common.c
-+++ b/sound/soc/sof/amd/acp-common.c
-@@ -145,8 +145,7 @@ static struct snd_soc_acpi_mach *amd_sof_sdw_machine_select(struct snd_sof_dev *
- 			link = mach->links;
- 			for (i = 0; i < acp_data->info.count && link->num_adr; link++, i++) {
- 				if (!snd_soc_acpi_sdw_link_slaves_found(sdev->dev, link,
--									acp_data->sdw->ids,
--									acp_data->sdw->num_slaves))
-+									acp_data->sdw->peripherals))
- 					break;
- 			}
- 			if (i == acp_data->info.count || !link->num_adr)
-diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-index e4cb4ffc7270..9abc4c071ae5 100644
---- a/sound/soc/sof/intel/hda.c
-+++ b/sound/soc/sof/intel/hda.c
-@@ -1064,7 +1064,7 @@ static struct snd_soc_acpi_mach *hda_sdw_machine_select(struct snd_sof_dev *sdev
- {
- 	struct snd_sof_pdata *pdata = sdev->pdata;
- 	const struct snd_soc_acpi_link_adr *link;
--	struct sdw_extended_slave_id *ids;
-+	struct sdw_peripherals *peripherals;
- 	struct snd_soc_acpi_mach *mach;
- 	struct sof_intel_hda_dev *hdev;
- 	u32 link_mask;
-@@ -1083,7 +1083,7 @@ static struct snd_soc_acpi_mach *hda_sdw_machine_select(struct snd_sof_dev *sdev
- 		return NULL;
- 	}
- 
--	if (!hdev->sdw->num_slaves) {
-+	if (!hdev->sdw->peripherals || !hdev->sdw->peripherals->num_peripherals) {
- 		dev_warn(sdev->dev, "No SoundWire peripheral detected in ACPI tables\n");
- 		return NULL;
- 	}
-@@ -1119,8 +1119,7 @@ static struct snd_soc_acpi_mach *hda_sdw_machine_select(struct snd_sof_dev *sdev
- 			 * are not found on this link.
- 			 */
- 			if (!snd_soc_acpi_sdw_link_slaves_found(sdev->dev, link,
--								hdev->sdw->ids,
--								hdev->sdw->num_slaves))
-+								hdev->sdw->peripherals))
- 				break;
- 		}
- 		/* Found if all Slaves are checked */
-@@ -1136,10 +1135,13 @@ static struct snd_soc_acpi_mach *hda_sdw_machine_select(struct snd_sof_dev *sdev
- 	}
- 
- 	dev_info(sdev->dev, "No SoundWire machine driver found for the ACPI-reported configuration:\n");
--	ids = hdev->sdw->ids;
--	for (i = 0; i < hdev->sdw->num_slaves; i++)
-+	peripherals = hdev->sdw->peripherals;
-+	for (i = 0; i < peripherals->num_peripherals; i++)
- 		dev_info(sdev->dev, "link %d mfg_id 0x%04x part_id 0x%04x version %#x\n",
--			 ids[i].link_id, ids[i].id.mfg_id, ids[i].id.part_id, ids[i].id.sdw_version);
-+			 peripherals->array[i]->bus->link_id,
-+			 peripherals->array[i]->id.mfg_id,
-+			 peripherals->array[i]->id.part_id,
-+			 peripherals->array[i]->id.sdw_version);
- 
- 	return NULL;
- }
++#ifndef __SDCA_H__
++#define __SDCA_H__
++
++struct sdw_slave;
++
++#define SDCA_MAX_FUNCTION_COUNT 8
++
++/**
++ * sdca_device_desc - short descriptor for an SDCA Function
++ * @adr: ACPI address (used for SDCA register access)
++ * @type: Function topology type
++ * @name: human-readable string
++ */
++struct sdca_function_desc {
++	u64 adr;
++	u32 type;
++	const char *name;
++};
++
++/**
++ * sdca_device_data - structure containing all SDCA related information
++ * @sdca_interface_revision: value read from _DSD property, mainly to check
++ * for changes between silicon versions
++ * @num_functions: total number of supported SDCA functions. Invalid/unsupported
++ * functions will be skipped.
++ * @sdca_func: array of function descriptors
++ */
++struct sdca_device_data {
++	u32 interface_revision;
++	int num_functions;
++	struct sdca_function_desc sdca_func[SDCA_MAX_FUNCTION_COUNT];
++};
++
++#if IS_ENABLED(CONFIG_ACPI) && IS_ENABLED(CONFIG_SND_SOC_SDCA)
++
++void sdca_lookup_functions(struct sdw_slave *slave);
++void sdca_lookup_interface_revision(struct sdw_slave *slave);
++
++#else
++
++static inline void sdca_lookup_functions(struct sdw_slave *slave) {}
++static inline void sdca_lookup_interface_revision(struct sdw_slave *slave) {}
++
++#endif
++
++#endif
+diff --git a/include/sound/sdca_function.h b/include/sound/sdca_function.h
+new file mode 100644
+index 000000000000..a01eec86b9a6
+--- /dev/null
++++ b/include/sound/sdca_function.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
++/*
++ * The MIPI SDCA specification is available for public downloads at
++ * https://www.mipi.org/mipi-sdca-v1-0-download
++ *
++ * Copyright(c) 2024 Intel Corporation
++ */
++
++#ifndef __SDCA_FUNCTION_H__
++#define __SDCA_FUNCTION_H__
++
++/*
++ * SDCA Function Types from SDCA specification v1.0a Section 5.1.2
++ * all Function types not described are reserved
++ * Note that SIMPLE_AMP, SIMPLE_MIC and SIMPLE_JACK Function Types
++ * are NOT defined in SDCA 1.0a, but they were defined in earlier
++ * drafts and are planned for 1.1.
++ */
++
++enum sdca_function_type {
++	SDCA_FUNCTION_TYPE_SMART_AMP	= 0x01,	/* Amplifier with protection features */
++	SDCA_FUNCTION_TYPE_SIMPLE_AMP	= 0x02,	/* subset of SmartAmp */
++	SDCA_FUNCTION_TYPE_SMART_MIC	= 0x03,	/* Smart microphone with acoustic triggers */
++	SDCA_FUNCTION_TYPE_SIMPLE_MIC	= 0x04,	/* subset of SmartMic */
++	SDCA_FUNCTION_TYPE_SPEAKER_MIC	= 0x05,	/* Combination of SmartMic and SmartAmp */
++	SDCA_FUNCTION_TYPE_UAJ		= 0x06,	/* 3.5mm Universal Audio jack */
++	SDCA_FUNCTION_TYPE_RJ		= 0x07,	/* Retaskable jack */
++	SDCA_FUNCTION_TYPE_SIMPLE_JACK	= 0x08,	/* Subset of UAJ */
++	SDCA_FUNCTION_TYPE_HID		= 0x0A,	/* Human Interface Device, for e.g. buttons */
++	SDCA_FUNCTION_TYPE_IMP_DEF	= 0x1F,	/* Implementation-defined function */
++};
++
++/* Human-readable names used for kernel logs and Function device registration/bind */
++#define	SDCA_FUNCTION_TYPE_SMART_AMP_NAME	"SmartAmp"
++#define	SDCA_FUNCTION_TYPE_SIMPLE_AMP_NAME	"SimpleAmp"
++#define	SDCA_FUNCTION_TYPE_SMART_MIC_NAME	"SmartMic"
++#define	SDCA_FUNCTION_TYPE_SIMPLE_MIC_NAME	"SimpleMic"
++#define	SDCA_FUNCTION_TYPE_SPEAKER_MIC_NAME	"SpeakerMic"
++#define	SDCA_FUNCTION_TYPE_UAJ_NAME		"UAJ"
++#define	SDCA_FUNCTION_TYPE_RJ_NAME		"RJ"
++#define	SDCA_FUNCTION_TYPE_SIMPLE_NAME		"SimpleJack"
++#define	SDCA_FUNCTION_TYPE_HID_NAME		"HID"
++
++enum sdca_entity0_controls {
++	SDCA_CONTROL_ENTITY_0_COMMIT_GROUP_MASK		= 0x01,
++	SDCA_CONTROL_ENTITY_0_INTSTAT_CLEAR		= 0x02,
++	SDCA_CONTROL_ENTITY_0_INT_ENABLE		= 0x03,
++	SDCA_CONTROL_ENTITY_0_FUNCTION_SDCA_VERSION	= 0x04,
++	SDCA_CONTROL_ENTITY_0_FUNCTION_TOPOLOGY		= 0x05,
++	SDCA_CONTROL_ENTITY_0_FUNCTION_MANUFACTURER_ID	= 0x06,
++	SDCA_CONTROL_ENTITY_0_FUNCTION_ID		= 0x07,
++	SDCA_CONTROL_ENTITY_0_FUNCTION_VERSION		= 0x08
++};
++
++#endif
+diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
+index e87bd15a8b43..8e01b421fe8d 100644
+--- a/sound/soc/Kconfig
++++ b/sound/soc/Kconfig
+@@ -108,6 +108,7 @@ source "sound/soc/pxa/Kconfig"
+ source "sound/soc/qcom/Kconfig"
+ source "sound/soc/rockchip/Kconfig"
+ source "sound/soc/samsung/Kconfig"
++source "sound/soc/sdca/Kconfig"
+ source "sound/soc/sh/Kconfig"
+ source "sound/soc/sof/Kconfig"
+ source "sound/soc/spear/Kconfig"
+diff --git a/sound/soc/Makefile b/sound/soc/Makefile
+index 775bb38c2ed4..5307b0b62a93 100644
+--- a/sound/soc/Makefile
++++ b/sound/soc/Makefile
+@@ -61,6 +61,7 @@ obj-$(CONFIG_SND_SOC)	+= pxa/
+ obj-$(CONFIG_SND_SOC)	+= qcom/
+ obj-$(CONFIG_SND_SOC)	+= rockchip/
+ obj-$(CONFIG_SND_SOC)	+= samsung/
++obj-$(CONFIG_SND_SOC)	+= sdca/
+ obj-$(CONFIG_SND_SOC)	+= sh/
+ obj-$(CONFIG_SND_SOC)	+= sof/
+ obj-$(CONFIG_SND_SOC)	+= spear/
+diff --git a/sound/soc/sdca/Kconfig b/sound/soc/sdca/Kconfig
+new file mode 100644
+index 000000000000..07f6822fa614
+--- /dev/null
++++ b/sound/soc/sdca/Kconfig
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config SND_SOC_SDCA
++	tristate "ASoC SDCA library"
++	depends on ACPI
++	help
++	  This option enables support for the MIPI SoundWire Device
++	  Class for Audio (SDCA).
++
++config SND_SOC_SDCA_OPTIONAL
++	def_tristate SND_SOC_SDCA || !SND_SOC_SDCA
+diff --git a/sound/soc/sdca/Makefile b/sound/soc/sdca/Makefile
+new file mode 100644
+index 000000000000..c296bd5a0a7c
+--- /dev/null
++++ b/sound/soc/sdca/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++snd-soc-sdca-objs	:= sdca_functions.o sdca_device.o
++
++obj-$(CONFIG_SND_SOC_SDCA)	+= snd-soc-sdca.o
+diff --git a/sound/soc/sdca/sdca_device.c b/sound/soc/sdca/sdca_device.c
+new file mode 100644
+index 000000000000..58f5f6f0f723
+--- /dev/null
++++ b/sound/soc/sdca/sdca_device.c
+@@ -0,0 +1,24 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2024 Intel Corporation
++
++/*
++ * The MIPI SDCA specification is available for public downloads at
++ * https://www.mipi.org/mipi-sdca-v1-0-download
++ */
++
++#include <linux/acpi.h>
++#include <linux/soundwire/sdw.h>
++#include <sound/sdca.h>
++
++void sdca_lookup_interface_revision(struct sdw_slave *slave)
++{
++	struct fwnode_handle *fwnode = slave->dev.fwnode;
++
++	/*
++	 * if this property is not present, then the sdca_interface_revision will
++	 * remain zero, which will be considered as 'not defined' or 'invalid'.
++	 */
++	fwnode_property_read_u32(fwnode, "mipi-sdw-sdca-interface-revision",
++				 &slave->sdca_data.interface_revision);
++}
++EXPORT_SYMBOL_NS(sdca_lookup_interface_revision, SND_SOC_SDCA);
+diff --git a/sound/soc/sdca/sdca_functions.c b/sound/soc/sdca/sdca_functions.c
+new file mode 100644
+index 000000000000..a6ad57430dd4
+--- /dev/null
++++ b/sound/soc/sdca/sdca_functions.c
+@@ -0,0 +1,173 @@
++// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
++// Copyright(c) 2024 Intel Corporation
++
++/*
++ * The MIPI SDCA specification is available for public downloads at
++ * https://www.mipi.org/mipi-sdca-v1-0-download
++ */
++
++#include <linux/acpi.h>
++#include <linux/soundwire/sdw.h>
++#include <sound/sdca.h>
++#include <sound/sdca_function.h>
++
++static int patch_sdca_function_type(struct device *dev,
++				    u32 interface_revision,
++				    u32 *function_type,
++				    const char **function_name)
++{
++	unsigned long function_type_patch = 0;
++
++	/*
++	 * Unfortunately early SDCA specifications used different indices for Functions,
++	 * for backwards compatibility we have to reorder the values found
++	 */
++	if (interface_revision >= 0x0801)
++		goto skip_early_draft_order;
++
++	switch (*function_type) {
++	case 1:
++		function_type_patch = SDCA_FUNCTION_TYPE_SMART_AMP;
++		break;
++	case 2:
++		function_type_patch = SDCA_FUNCTION_TYPE_SMART_MIC;
++		break;
++	case 3:
++		function_type_patch = SDCA_FUNCTION_TYPE_SPEAKER_MIC;
++		break;
++	case 4:
++		function_type_patch = SDCA_FUNCTION_TYPE_UAJ;
++		break;
++	case 5:
++		function_type_patch = SDCA_FUNCTION_TYPE_RJ;
++		break;
++	case 6:
++		function_type_patch = SDCA_FUNCTION_TYPE_HID;
++		break;
++	default:
++		dev_warn(dev, "%s: SDCA version %#x unsupported function type %d, skipped\n",
++			 __func__, interface_revision, *function_type);
++		return -EINVAL;
++	}
++
++skip_early_draft_order:
++	if (function_type_patch)
++		*function_type = function_type_patch;
++
++	/* now double-check the values */
++	switch (*function_type) {
++	case SDCA_FUNCTION_TYPE_SMART_AMP:
++		*function_name = SDCA_FUNCTION_TYPE_SMART_AMP_NAME;
++		break;
++	case SDCA_FUNCTION_TYPE_SMART_MIC:
++		*function_name = SDCA_FUNCTION_TYPE_SMART_MIC_NAME;
++		break;
++	case SDCA_FUNCTION_TYPE_UAJ:
++		*function_name = SDCA_FUNCTION_TYPE_UAJ_NAME;
++		break;
++	case SDCA_FUNCTION_TYPE_HID:
++		*function_name = SDCA_FUNCTION_TYPE_HID_NAME;
++		break;
++	case SDCA_FUNCTION_TYPE_SIMPLE_AMP:
++	case SDCA_FUNCTION_TYPE_SIMPLE_MIC:
++	case SDCA_FUNCTION_TYPE_SPEAKER_MIC:
++	case SDCA_FUNCTION_TYPE_RJ:
++	case SDCA_FUNCTION_TYPE_IMP_DEF:
++		dev_warn(dev, "%s: found unsupported SDCA function type %d, skipped\n",
++			 __func__, *function_type);
++		return -EINVAL;
++	default:
++		dev_err(dev, "%s: found invalid SDCA function type %d, skipped\n",
++			__func__, *function_type);
++		return -EINVAL;
++	}
++
++	dev_info(dev, "%s: found SDCA function %s (type %d)\n",
++		 __func__, *function_name, *function_type);
++
++	return 0;
++}
++
++static int find_sdca_function(struct acpi_device *adev, void *data)
++{
++	struct fwnode_handle *function_node = acpi_fwnode_handle(adev);
++	struct sdca_device_data *sdca_data = data;
++	struct device *dev = &adev->dev;
++	struct fwnode_handle *control5; /* used to identify function type */
++	const char *function_name;
++	u32 function_type;
++	int func_index;
++	u64 addr;
++	int ret;
++
++	if (sdca_data->num_functions >= SDCA_MAX_FUNCTION_COUNT) {
++		dev_err(dev, "%s: maximum number of functions exceeded\n", __func__);
++		return -EINVAL;
++	}
++
++	/*
++	 * The number of functions cannot exceed 8, we could use
++	 * acpi_get_local_address() but the value is stored as u64 so
++	 * we might as well avoid casts and intermediate levels
++	 */
++	ret = acpi_get_local_u64_address(adev->handle, &addr);
++	if (ret < 0)
++		return ret;
++
++	if (!addr) {
++		dev_err(dev, "%s: no addr\n", __func__);
++		return -ENODEV;
++	}
++
++	/*
++	 * Extracting the topology type for an SDCA function is a
++	 * convoluted process.
++	 * The Function type is only visible as a result of a read
++	 * from a control. In theory this would mean reading from the hardware,
++	 * but the SDCA/DisCo specs defined the notion of "DC value" - a constant
++	 * represented with a DSD subproperty.
++	 * Drivers have to query the properties for the control
++	 * SDCA_CONTROL_ENTITY_0_FUNCTION_TOPOLOGY (0x05)
++	 */
++	control5 = fwnode_get_named_child_node(function_node,
++					       "mipi-sdca-control-0x5-subproperties");
++	if (!control5)
++		return -ENODEV;
++
++	ret = fwnode_property_read_u32(control5, "mipi-sdca-control-dc-value",
++				       &function_type);
++
++	fwnode_handle_put(control5);
++
++	if (ret < 0) {
++		dev_err(dev, "%s: the function type can only be determined from ACPI information\n",
++			__func__);
++		return ret;
++	}
++
++	ret = patch_sdca_function_type(dev, sdca_data->interface_revision,
++				       &function_type, &function_name);
++	if (ret < 0)
++		return ret;
++
++	/* store results */
++	func_index = sdca_data->num_functions;
++	sdca_data->sdca_func[func_index].adr = addr;
++	sdca_data->sdca_func[func_index].type = function_type;
++	sdca_data->sdca_func[func_index].name = function_name;
++	sdca_data->num_functions++;
++
++	return 0;
++}
++
++void sdca_lookup_functions(struct sdw_slave *slave)
++{
++	struct device *dev = &slave->dev;
++	struct acpi_device *adev = to_acpi_device_node(dev->fwnode);
++
++	acpi_dev_for_each_child(adev, find_sdca_function, &slave->sdca_data);
++}
++EXPORT_SYMBOL_NS(sdca_lookup_functions, SND_SOC_SDCA);
++
++MODULE_LICENSE("Dual BSD/GPL");
++MODULE_DESCRIPTION("SDCA library");
 -- 
 2.43.0
 
