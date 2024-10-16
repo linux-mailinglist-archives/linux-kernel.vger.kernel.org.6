@@ -1,222 +1,122 @@
-Return-Path: <linux-kernel+bounces-367978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8D89A0909
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:08:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1419A090B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6303E284B5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0134A1F24A90
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05602208203;
-	Wed, 16 Oct 2024 12:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201DD207A26;
+	Wed, 16 Oct 2024 12:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mcBrTKfn"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S5DFeUER"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23021207A00;
-	Wed, 16 Oct 2024 12:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BED9206E71
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729080503; cv=none; b=VccVFXblYvi4isA24gQ0c8Gp455aLEXdURhURxMYzfkmF6VZyKkXOu4S78/N4020BwE6km4gDITjzYXfnL905vDbOqNkfqYDGK7yF0rvRUZ/QLk5HQo9fBcN5iYglV7OYm6qUTw3YDk2ssmRVPQJOtkE0dJaWHS7znFVxqvTyRA=
+	t=1729080622; cv=none; b=PqzXNocl2G0uA5R1i8wDXCqqoWzpRwk6i7U7+gLKpkl1rCUq6zlGN+bgeTcLk+U6g6f5LxW5ifDMEvTx8ftuYf0JNEJdg9LSKpwQyoQov8yTAlEBtE1kAOU0QWa6tETvZDCR8qHkNPaqVHm/hCQn480Z3wbHY8CcDwO4WiYIdsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729080503; c=relaxed/simple;
-	bh=iFXajJ+uhfYq77bvE0Buox5UIoutriZs/rZUrV1WcJE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=HVzdpHssi58uZPBZSZzHBv/BsZfU71o0n4w/soF9z7b6NZis689xs0BGRf6a7iNsrKmi0N4GTu9kboV7oEd9c35C+FoOUHG9CkprwHSIi3YnY5XNcgn3Glm+GVY514jEic02ojjiiEiheiZVx+iWd9kNmKYzd0vNV6MunS86lEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mcBrTKfn; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G9Opr9023504;
-	Wed, 16 Oct 2024 12:07:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=xXHOa8a4oOvBDuDElF/1n1rWwz2Wq3
-	Ens1cHOmyVqx0=; b=mcBrTKfn2i0h/drhPN35CziaXV98CKI83nlMjqQ43nftoq
-	/K5lZK3RPQicu0YfwNX8CSQ6Vwqo59Ex6Npk9YF5C5JVdyKXm3+M4bSHFhtr3hlu
-	YuxDBDGez+lum788WlIPwGUlORYi31Lsa34pnrEjNScejjn1FTSGmMH56CjHSons
-	uEc5hpGJlY7RZLe2uwP0G6mke/KAR9qdBJeSboI6FXDQq2p/BbzZEZJ1q+Lv0nRA
-	0E7X85r7ZhXxkODZxPL74LS93J2v34M0thnZ59iV8gzK6MVf33EyM9i62PIBNGYT
-	gpM58swIwB7CiLvM5epYl+R5K4fGNQexqmGstYRw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aau5rtqn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 12:07:38 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GC06Db015836;
-	Wed, 16 Oct 2024 12:07:38 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aau5rtqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 12:07:38 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GB8oG9005936;
-	Wed, 16 Oct 2024 12:07:36 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4286510vkq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 12:07:36 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GC7XV051773778
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 12:07:33 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 13B2F20040;
-	Wed, 16 Oct 2024 12:07:33 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 17A0420043;
-	Wed, 16 Oct 2024 12:07:32 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 12:07:32 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt
- <rostedt@goodmis.org>,
-        Florent Revest <revest@chromium.org>,
-        linux-trace-kernel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Alan
- Maguire <alan.maguire@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy
- <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Paul Walmsley
- <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert
- Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov
- <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph tracer
-In-Reply-To: <172904040206.36809.2263909331707439743.stgit@devnote2> (Masami
-	Hiramatsu's message of "Wed, 16 Oct 2024 10:00:02 +0900")
-References: <172904026427.36809.516716204730117800.stgit@devnote2>
-	<172904040206.36809.2263909331707439743.stgit@devnote2>
-Date: Wed, 16 Oct 2024 14:07:31 +0200
-Message-ID: <yt9ded4gfdz0.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: N9NVG4Sz2Y7MUsH0Cajp52m2PEkNu3Cv
-X-Proofpoint-GUID: dysTsyCVI-T_V3s46P20Mv-6vHqlE6mY
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729080622; c=relaxed/simple;
+	bh=pJPwxwox4Uc6jHqFn9IB/05FJM7LR5bmM+2gC3Stu+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GYVj/e6S7UFDeGPqNymNfdWxuPBCqmEAd75N7URPiJC9RB6Y7LWp4MJj3jZ5+tq9DG2JKwmnLfpPFyHZQQA6B6oPf8mU7dWb2dXAdw4CtLd9jVEQLeJc2ghOKJFvj7ba/Gm9dFG5W82uEV69oGfoT7oRZp8eN1YWXsvF2NTf4NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S5DFeUER; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Wbct+3rFhIfACUcxTULDM1G6g7itqtXhTaevGD/k18w=; b=S5DFeUERiCRLpkKsR2oZM/tloK
+	aN6pky/TOfDdyDHCqvVyIWvERo7OyCnMcN44X+VWWxGkqOQFaawdLFhGE+52jhSTE9TdnUnzXnFEX
+	fIxINE2DScTMCQ1LxUEyErpGk5rMvf89O8O1Wl0taRv4Cr7B8i2Pj0GNd6eptsATsdZmz2xXUgaqq
+	+7VkdFpBrtQK3JY1m9xu+l3nqtud177oWbCWRQvuydHIe8VldhCGAlls7tsMua+3lBeaV+mt0JAsi
+	qZhqdXdMzkZZc6OgM+Hb8rHm7ZxjH1i3O9c3x0KGndiAt6ufxL01qFOmv2kaN95FzIc2xQ78m+HqW
+	y6zrobCw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t12qz-00000007rRW-1YJX;
+	Wed, 16 Oct 2024 12:10:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9A9E5300777; Wed, 16 Oct 2024 14:10:13 +0200 (CEST)
+Date: Wed, 16 Oct 2024 14:10:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: lizhe.67@bytedance.com
+Cc: akpm@linux-foundation.org, boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	longman@redhat.com, mingo@redhat.com, will@kernel.org
+Subject: Re: [RFC 0/2] rwsem: introduce upgrade_read interface
+Message-ID: <20241016121013.GS16066@noisy.programming.kicks-ass.net>
+References: <20241016080955.GR16066@noisy.programming.kicks-ass.net>
+ <20241016085345.46956-1-lizhe.67@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=436
- priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410160074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016085345.46956-1-lizhe.67@bytedance.com>
 
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> writes:
+On Wed, Oct 16, 2024 at 04:53:45PM +0800, lizhe.67@bytedance.com wrote:
+> On Wed, 16 Oct 2024 10:09:55 +0200, peterz@infradead.org wrote:
+> 
+> > On Wed, Oct 16, 2024 at 12:35:58PM +0800, lizhe.67@bytedance.com wrote:
+> > > From: Li Zhe <lizhe.67@bytedance.com>
+> > > 
+> > > In the current kernel rwsem implementation, there is an interface to
+> > > downgrade write lock to read lock, but there is no interface to upgrade
+> > > a read lock to write lock. This means that in order to acquire write
+> > > lock while holding read lock, we have to release the read lock first and
+> > > then acquire the write lock, which will introduce some troubles in
+> > > concurrent programming. This patch set provides the 'upgrade_read' interface
+> > > to solve this problem. This interface can change a read lock to a write
+> > > lock.
+> > 
+> > upgrade-read is fundamentally prone to deadlocks. Imagine two concurrent
+> > invocations, each waiting for all readers to go away before proceeding
+> > to upgrade to a writer.
+> >
+> > Any solution to fixing that will end up being semantically similar to
+> > dropping the read lock and acquiring a write lock -- there will not be a
+> > single continuous critical section.
+> 
+> According to the implementation of this patch, one of the invocation will
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
-> Rewrite fprobe implementation on function-graph tracer.
-> Major API changes are:
->  -  'nr_maxactive' field is deprecated.
->  -  This depends on CONFIG_DYNAMIC_FTRACE_WITH_ARGS or
->     !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS, and
->     CONFIG_HAVE_FUNCTION_GRAPH_FREGS. So currently works only
->     on x86_64.
->  -  Currently the entry size is limited in 15 * sizeof(long).
->  -  If there is too many fprobe exit handler set on the same
->     function, it will fail to probe.
->
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Naveen N Rao <naveen@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: x86@kernel.org
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
->
-[..]
+Since the premise as described here is utter nonsense, I didn't get to
+actually reading the implementation -- why continue to waste time etc.
 
-> diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-> index ef609bcca0f9..2d06bbd99601 100644
-> --- a/include/linux/fprobe.h
-> +++ b/include/linux/fprobe.h
-> @@ -5,10 +5,11 @@
-[..]
-> +static inline unsigned long encode_fprobe_header(struct fprobe *fp, int size_words)
-> +{
-> +	if (WARN_ON_ONCE(size_words > MAX_FPROBE_DATA_SIZE_WORD ||
-> +	    ((unsigned long)fp & ~FPROBE_HEADER_PTR_MASK) !=
-> +	    ~FPROBE_HEADER_PTR_MASK)) {
-> +		return 0;
->  	}
-> +	return ((unsigned long)size_words << FPROBE_HEADER_PTR_BITS) |
-> +		((unsigned long)fp & FPROBE_HEADER_PTR_MASK);
-> +}
-> +
-> +/* Return reserved data size in words */
-> +static inline int decode_fprobe_header(unsigned long val, struct fprobe **fp)
-> +{
-> +	unsigned long ptr;
-> +
-> +	ptr = (val & FPROBE_HEADER_PTR_MASK) | ~FPROBE_HEADER_PTR_MASK;
-> +	if (fp)
-> +		*fp = (struct fprobe *)ptr;
-> +	return val >> FPROBE_HEADER_PTR_BITS;
-> +}
+> get '-EBUSY' in this case. If -EBUSY is obtained and the invocation thread
+> continues to retry instead of dropping the read lock and acquiring a write lock,
+> it may cause problems.
 
-I think that still has the issue that the size is encoded in the
-leftmost fields of the pointer, which doesn't work on all
-architectures. I reported this already in v15
-(https://lore.kernel.org/all/yt9dmsjyx067.fsf@linux.ibm.com/)
+Failure should drop the read lock, otherwise it is too easy to mess
+things up.
+
+> Of course, this patchset only try it's best to achieve a
+> single continuous critical section as much as possible, and there is no guarantee.
+
+As already stated, nothing like that was mentioned.
+
+> > As such, this interface makes no sense.
+> 
+> This interface is just trying to reduce the overhead caused by the
+> additional checks, which is caused by non-continuous critical
+> sections, as much as possible.  Rather than eliminating it in all
+> scenarios. So would it be better to change the error code to something
+> else? So that the caller will not retry this interface?
+
+You fail to quantify the gains. How am I supposed to know if the
+(significant?) increase in complexity is worth it?
+
+Why should I accept this increase in complexity for the sake of
+khugepaged, something which I care very little about?
 
