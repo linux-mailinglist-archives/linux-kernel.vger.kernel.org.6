@@ -1,123 +1,102 @@
-Return-Path: <linux-kernel+bounces-368073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E679A0AE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:57:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B759A0AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5918D2811EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4699B24A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB7520969E;
-	Wed, 16 Oct 2024 12:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A57207A33;
+	Wed, 16 Oct 2024 13:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7rh8kBz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJAqrnzK"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5E8208980;
-	Wed, 16 Oct 2024 12:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E421B0F38
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729083458; cv=none; b=NvWHIso76lk49wNB/Of40r/tzuTPqKcPwVGzvfrUpiy4zvRKTduPMzu2lbenZAjnlfghdTpTBFiMFNK+dFaVYNdk1Nq92kiUQG3nTj5H+CfMkbVbZV9noDcq/K30LfR7yhbGOOlfcezZH/4TF0J0IGWJAZRgLtaMMV7KHcvn/zQ=
+	t=1729083642; cv=none; b=Qf8ZjvtlXWcl4GxkJo9HBybYr3EafgpKP8/jz3p7uuLirrthWUtPMYzEYoRyvvmp4Wv2lxirjo1GQZUkB9xGqUWlLcoTQsWEQJVRz8dWfoFKZAgLBQNxEEqz5A+49LCvG5BhUbMYlq8Uzvw+9LwYRNV05W29TsswjlJ60vRcRWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729083458; c=relaxed/simple;
-	bh=LvLMHQGJAvYO/dKqTYLk5f3spffzr3oHEXbV5qyztso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmXmUtMUr64B5orf3oXTD+c5FNWZEJacPKWKPBIes6z9T99tb4UW9kusL+RlpZXkW+U5c86C0a0/6D449Q8c6/Lnqiy7fZlpGQNi1hBkKhzUTyq/HO8RVpzPxtRf2Zk7FmU8gGUXuNJXW7EcQU8kgCtsKg5sCAlQpT02veT2//o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7rh8kBz; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1729083642; c=relaxed/simple;
+	bh=j9A7iwVyOfRyusYOYuJqFvkGtA0n/BFyyeDhs/pqDdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JwIOTeK8FXp42U7CfjHepKmlKOXI9UvSI0FOobZYyEY4C6VhxufVwc45JAhkDxK0jwA94uKt0MeVTp3iUEDygp7KRKLoOTQHPmjQCihCLWKBela2A6tw+3odQqq5y9m/p48+Fd4wspbUJJfNLmf3UtaGvE7aEHupVqYet4elhCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJAqrnzK; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729083457; x=1760619457;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LvLMHQGJAvYO/dKqTYLk5f3spffzr3oHEXbV5qyztso=;
-  b=U7rh8kBzMkAN9bhHhB7UB97fcmfFcqSb0JeeCB4you+qdShIudSpvBH8
-   us3IZjK9QoDXv0sUeXVO20raNzt9yriTYSdy7ygl+QKjspTHOgXK56MAx
-   h2+bgj6Antv8yZmISMKD3f5MMNJptG70JoZXwC/hiU1CyRB3+/bIrM9g1
-   ZqCZtqeXKRMNAThzMjK6kSFrkZIIp3EoHdOic9efUeOsk8QsIbNr43du2
-   lIMWN33ZojneM03UNzjEfLOPTSjOQWyVbnETAIh1Xssuzwu9iGwAa9bQy
-   bXe3hwvXRISwZOgha8ipekdR3N00iZGXj4KlJ0ScL055GuGPLJLxqI8IA
-   A==;
-X-CSE-ConnectionGUID: b54Fh8RaSi2a1miMBK0i1Q==
-X-CSE-MsgGUID: P7GfvZlRRsCdvjRdT8V22w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51064199"
+  t=1729083641; x=1760619641;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=j9A7iwVyOfRyusYOYuJqFvkGtA0n/BFyyeDhs/pqDdA=;
+  b=UJAqrnzK/oGkJpZVZbeayEdczIxG4KeITHjRnwd+aHqHNn35SBlbSKOe
+   xHwDNPZO0SZUx8rMauDzjcE2LxxG+lAQtQNT25Ky6Zgz8EFbnrN00ifKw
+   i+bilX32lFKwFD9QpzFoF7LW/ebgb9Ldg4Go1a1ZfQoXGQ2RNhdiQFmt3
+   n0q9oapZ6ijOCT2tO/o50HJ49lwpw9Gvkxw9KByovD9eoqfs777kdIcIo
+   kiIKF2KmLnJHawzSx3gX5b+Shp7kPH/Mqt9sB1Y/LLWdMm/l6H5X8byoL
+   rwqjoMiRYcr2luj47ezpG8BqD1eR8xYHC5amTTLejAPuke4o2RRjuxqmI
+   g==;
+X-CSE-ConnectionGUID: KKeWvA2xRJe7fWeKukLsyQ==
+X-CSE-MsgGUID: 9BmjHTkURBSVxMfKXFjWig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51065142"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="51064199"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:57:35 -0700
-X-CSE-ConnectionGUID: g7vC8qJ4RoKmAQd7+mpBng==
-X-CSE-MsgGUID: M/AeNeg+R++xL0Olth51ng==
+   d="scan'208";a="51065142"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:00:41 -0700
+X-CSE-ConnectionGUID: 5pw8LOyFSVOI3P9cA6+IIw==
+X-CSE-MsgGUID: 2imdZRkOSriZkc70Xs7pew==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="82761945"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:57:32 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 923F111F7E7;
-	Wed, 16 Oct 2024 15:57:29 +0300 (EEST)
-Date: Wed, 16 Oct 2024 12:57:29 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 08/13] media: ar0521: don't overflow when checking PLL
- values
-Message-ID: <Zw-4OVuTCE13H-Yl@kekkonen.localdomain>
-References: <cover.1729074076.git.mchehab+huawei@kernel.org>
- <39b23d468eea2714a24a94cb6c20aef5aff492e6.1729074076.git.mchehab+huawei@kernel.org>
+   d="scan'208";a="82181202"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 16 Oct 2024 06:00:39 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 5AA45165; Wed, 16 Oct 2024 16:00:38 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>
+Subject: [PATCH v1 1/1] mfd: ipaq-micro: Add missing break for the default case
+Date: Wed, 16 Oct 2024 16:00:23 +0300
+Message-ID: <20241016130023.872277-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39b23d468eea2714a24a94cb6c20aef5aff492e6.1729074076.git.mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Mauro,
+Even default case should have a break statement to make code robust
+against changes (e.g., adding a case after the default one).
 
-On Wed, Oct 16, 2024 at 12:22:24PM +0200, Mauro Carvalho Chehab wrote:
-> The PLL checks are comparing 64 bit integers with 32 bit
-> ones. Depending on the values of the variables, this may
-> underflow.
-> 
-> Fix it ensuring that both sides of the expression are u64.
-> 
-> Fixes: 852b50aeed15 ("media: On Semi AR0521 sensor driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  drivers/media/i2c/ar0521.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ar0521.c b/drivers/media/i2c/ar0521.c
-> index fc27238dd4d3..24873149096c 100644
-> --- a/drivers/media/i2c/ar0521.c
-> +++ b/drivers/media/i2c/ar0521.c
-> @@ -255,10 +255,10 @@ static u32 calc_pll(struct ar0521_dev *sensor, u32 freq, u16 *pre_ptr, u16 *mult
->  			continue; /* Minimum value */
->  		if (new_mult > 254)
->  			break; /* Maximum, larger pre won't work either */
-> -		if (sensor->extclk_freq * (u64)new_mult < AR0521_PLL_MIN *
-> +		if (sensor->extclk_freq * (u64)new_mult < (u64)AR0521_PLL_MIN *
->  		    new_pre)
->  			continue;
-> -		if (sensor->extclk_freq * (u64)new_mult > AR0521_PLL_MAX *
-> +		if (sensor->extclk_freq * (u64)new_mult > (u64)AR0521_PLL_MAX *
->  		    new_pre)
->  			break; /* Larger pre won't work either */
->  		new_pll = div64_round_up(sensor->extclk_freq * (u64)new_mult,
+Add missing break for the default case.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/mfd/ipaq-micro.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/mfd/ipaq-micro.c b/drivers/mfd/ipaq-micro.c
+index c964ea6539aa..2370b44e2214 100644
+--- a/drivers/mfd/ipaq-micro.c
++++ b/drivers/mfd/ipaq-micro.c
+@@ -130,6 +130,7 @@ static void micro_rx_msg(struct ipaq_micro *micro, u8 id, int len, u8 *data)
+ 	default:
+ 		dev_err(micro->dev,
+ 			"unknown msg %d [%d] %*ph\n", id, len, len, data);
++		break;
+ 	}
+ 	spin_unlock(&micro->lock);
+ }
 -- 
-Sakari Ailus
+2.43.0.rc1.1336.g36b5255a03ac
+
 
