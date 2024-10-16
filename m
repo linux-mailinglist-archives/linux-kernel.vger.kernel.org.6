@@ -1,313 +1,169 @@
-Return-Path: <linux-kernel+bounces-368104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FC19A0B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:18:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9CF9A0B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417571F26B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1216F1C22F5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF50C20C006;
-	Wed, 16 Oct 2024 13:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF49A20966C;
+	Wed, 16 Oct 2024 13:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8fmnS7X"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mycDx9OT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496B1209F48;
-	Wed, 16 Oct 2024 13:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24018208D7D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729084706; cv=none; b=lmyHGwNXwoU3v1JqHqTTdahTb8+s6Y7Orye24G/RBCC/T48HzM61XmCZKJbFcdi1yz/U+E6/NTG3G3pXQWz+cZ85fTZJkDV3HLMjLLXGYDmYF/wiyf6amebv4mAsHcDgxpfC0fzrwlhiuUo6cgkuDVl/2AEoS3kcpHA0PyO4Cg8=
+	t=1729084716; cv=none; b=pA5c8bnU2pW/iHQFlkmGpZ2SWnMmr4hMS6JV7N1IfHdkvGSZiaFsh5GFiledjv+pBRFXQEIEKcAJhJkoKgDWoA5lkyvuJsIrxxuZJcn031tvB5jCjd0KOP9pU9e6bW2RB4lY0DKEY89Uz+XutDqhGkumW33wnzXQFXNLjKYEpTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729084706; c=relaxed/simple;
-	bh=j4lwfqIfhg3o9c/qxDv63TOPSlOrzp7Cd7ov8oxJkXc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HNiduwbD943yAafM/f8aFHEeo3QLLewLLjllpYebKgGk3V5o2pDYeljdbqNHrQf4cQO3S9PQ0OKrqsJj7PGdoQ0lFf5xRddjI9uR1T9pldLVV0rnmNRtsnpwMZt/6cClPCxzigf7TgdILHRBSu7ehufLz5IAqM6CT7wB22tLOdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R8fmnS7X; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so4287940f8f.0;
-        Wed, 16 Oct 2024 06:18:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729084702; x=1729689502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JGMf0QveJLuqNVGuhCQVRHmO+zBayTHS2lF5VIrEUbY=;
-        b=R8fmnS7XknkpD//IQLFeW5MACYzmuiF5nOWxid4BDY3YR3FEVKqDf0YJe0nYxaHgL9
-         YjwdbaU/WilKdv0oDPrnuKFHoxyiT188Q5RguePMqGqEqeR409LEvLPCmsMQLpKeN5a3
-         LniW1FdbwIedKJdbdnqKRFl3bueGy8fpudZwHwLYMkJ9hWM+uTC5yYe7gTWdd0dLVC1x
-         4fRGisBDpp8Ql3//W3jlZu0n7CtB7aDYO9xE6gO66e7fs17JroSYvscWks8gHyv64+gr
-         ao7ZD6qWZvtrYWdzo7kEjdJJ43PMIW7NQMM5yTx6ny+MCtpIXOj3Rpw6om46uVuDsf+w
-         DvpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729084702; x=1729689502;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JGMf0QveJLuqNVGuhCQVRHmO+zBayTHS2lF5VIrEUbY=;
-        b=PzMIgx2UzYePa+++HBSyRYGAe5Nt79FhM8/gIoer269h6UDMU5quqhdXKzo3gPmVqy
-         +aBISR7gPs+L9TMdECt4MH6V3U1dNPLbYtwkv970BRboYRCFXg59ooQnm78N7kTps20N
-         jd6D7OnbFkMQ6iWDe25Q3Arsi/DQMt7/s1pd6RYJtrzrnbSmQnjOl6H9U2a2lcmCJApm
-         ql+F8LREnqlj4a2t0bDMDdL9b46n6bmMq5ZjnjM8qMl5uPTB85C8ENZz6wqKQlNbs0e2
-         lDNt6Chbf9FVAfUKTLEQDcBHm6Aatr2mVbfBEobxE8lcMfJFbQ4OOz46oC+hd3szzPC+
-         X8jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJlhvu4nvnvMe38Fic1cXMUKJm0SrJBiDgEdYMODjqtlyZVHGf1dWb3PdY9SX7BB5TVdVqmNbu7zw=@vger.kernel.org, AJvYcCWq7J5CwYyn9Sievr/dH7HhwkFd4cLzTQfRR2/U6Sm80w+hxiCkWnefZtxPCmJkXuMP4gmypWsbc/Y+@vger.kernel.org, AJvYcCX4K78JgRKtcbhIt0GNLLhZrZMxsQ2xiEeJIQMopf08dgeQ//oPKGi4PKOc8ZoyU2AuQ5xlAtTCxmA5yLFS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+xDRyck8vxKagVZjNNfhvPvO0OOgHwgj66XibZHnTc2+UkquK
-	3rXKoi2hbim2kLwJW4pk2FDBWsi3BL6LFxFF0K5UfNURjwr1Gw5m
-X-Google-Smtp-Source: AGHT+IEnqE33zAEZ4Osvb5YV0WmK6TiqgW5ppvcNvuX+PIESYEVsFYkFYZLCq1hdV0OqDyWWM/vbiw==
-X-Received: by 2002:a5d:6109:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-37d5519cbb6mr11646512f8f.17.1729084702303;
-        Wed, 16 Oct 2024 06:18:22 -0700 (PDT)
-Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f5698aesm49612825e9.11.2024.10.16.06.18.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 06:18:21 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: andreyknvl@gmail.com
-Cc: 2023002089@link.tyut.edu.cn,
-	akpm@linux-foundation.org,
-	alexs@kernel.org,
-	corbet@lwn.net,
-	dvyukov@google.com,
-	elver@google.com,
-	glider@google.com,
-	kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryabinin.a.a@gmail.com,
-	siyanteng@loongson.cn,
-	snovitoll@gmail.com,
-	vincenzo.frascino@arm.com,
-	workflows@vger.kernel.org
-Subject: [PATCH v4 3/3] kasan: delete CONFIG_KASAN_MODULE_TEST
-Date: Wed, 16 Oct 2024 18:18:02 +0500
-Message-Id: <20241016131802.3115788-4-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241016131802.3115788-1-snovitoll@gmail.com>
-References: <CA+fCnZf8YRH=gkmwU8enMLnGi7hHfVP4DSE2TLrmmVsHT10wRQ@mail.gmail.com>
- <20241016131802.3115788-1-snovitoll@gmail.com>
+	s=arc-20240116; t=1729084716; c=relaxed/simple;
+	bh=Ei04/y7E+9GEINyDxafGA/mkjtrWrbFV5lAkYjh0DQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEsBIUqmvSrr3Dnr/YQzP4qjH3xYYe8MIqbEHRx7Z/2q3g3/WTyoJd+SZl8ITF7iWNaihcmP51TLTqTCo9rR1E7LXejxTqPzOX4wzM3bjId5iq7jdGjv4kV3B1vFPncshVeCskFoOZdrvpt6Y8R/AjFNpvsDMo/sgQbsUf4dgHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mycDx9OT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93BDC4CEC5;
+	Wed, 16 Oct 2024 13:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729084715;
+	bh=Ei04/y7E+9GEINyDxafGA/mkjtrWrbFV5lAkYjh0DQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mycDx9OTDHRJ5FvjAxCOhWlYOC+2328tkRSCNO1lqE/9UBf4R+IFRiw/K0GHwl9ON
+	 JPTrUR17Rf5OT8KSpdWY1vPlkNiinEG0KKdeai7cuKyH1b3yVI/qKL1Q33ELUsT3uC
+	 E5awGRa62YfkZKdrOQlbnf3rDrR6PZvCNBAmArIJk/ccnQj6I6vgR236LYr7/2YwW2
+	 hbpBRB2msDZR99L7Wbsb0QpW1QTkjxFk290WEQOYLwJnhI9TGDummXNJut2IyBjkbR
+	 OWTPxLQnSA4JniqVfjCTfxcIFfqDujCB1wd62UIw0sYaQvBnp7etM5XL/v8+tu7C6Y
+	 F8TDvHPty0ZXA==
+Date: Wed, 16 Oct 2024 14:18:32 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>
+Subject: Re: [PATCH v4 5/5] mfd: tqmx86: add I2C IRQ support
+Message-ID: <20241016131832.GC1152434@google.com>
+References: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
+ <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
+ <20241015113841.GH8348@google.com>
+ <8fbae19e7e85a8fc8d6f9738155ec8fe44e63061.camel@ew.tq-group.com>
+ <20241016130715.GA1152434@google.com>
+ <e2842ba1ea0f5dfa818e4cbb9aefe343f48c1e53.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e2842ba1ea0f5dfa818e4cbb9aefe343f48c1e53.camel@ew.tq-group.com>
 
-Since we've migrated all tests to the KUnit framework,
-we can delete CONFIG_KASAN_MODULE_TEST and mentioning of it in the
-documentation as well.
+On Wed, 16 Oct 2024, Matthias Schiffer wrote:
 
-I've used the online translator to modify the non-English documentation.
+> On Wed, 2024-10-16 at 14:07 +0100, Lee Jones wrote:
+> > 
+> > On Wed, 16 Oct 2024, Matthias Schiffer wrote:
+> > 
+> > > On Tue, 2024-10-15 at 12:38 +0100, Lee Jones wrote:
+> > > > 
+> > > > On Mon, 07 Oct 2024, Matthias Schiffer wrote:
+> > > > 
+> > > > > From: Gregor Herburger <gregor.herburger@tq-group.com>
+> > > > > 
+> > > > > The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
+> > > > > Add module parameter to allow configuring the IRQ number, similar to the
+> > > > > handling of the GPIO IRQ.
+> > > > > 
+> > > > > Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
+> > > > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > > > > ---
+> > > > > 
+> > > > > v2: improve module parameter description (was patch 4/4)
+> > > > > v3: replace IRQ 0 resource with an empty placeholder to simplify error handling
+> > > > > v4: no changes
+> > > > > 
+> > > > >  drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
+> > > > >  1 file changed, 19 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> > > > > index e444fcd2a3e9d..057d035b71d33 100644
+> > > > > --- a/drivers/mfd/tqmx86.c
+> > > > > +++ b/drivers/mfd/tqmx86.c
+> > > > > @@ -50,6 +50,7 @@
+> > > > >  #define TQMX86_REG_IO_EXT_INT_9			2
+> > > > >  #define TQMX86_REG_IO_EXT_INT_12		3
+> > > > >  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
+> > > > > +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
+> > > > >  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
+> > > > >  #define TQMX86_REG_SAUC		0x17
+> > > > >  
+> > > > > @@ -60,7 +61,16 @@ static uint gpio_irq;
+> > > > >  module_param(gpio_irq, uint, 0);
+> > > > >  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
+> > > > >  
+> > > > > -static const struct resource tqmx_i2c_soft_resources[] = {
+> > > > > +static uint i2c_irq;
+> > > > > +module_param(i2c_irq, uint, 0);
+> > > > > +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)");
+> > > > > +
+> > > > > +static struct resource tqmx_i2c_soft_resources[] = {
+> > > > > +	/*
+> > > > > +	 * Placeholder for IRQ resource - must come first to be filled in by the
+> > > > > +	 * probe function.
+> > > > > +	 */
+> > > > > +	{},
+> > > > 
+> > > > Having a NULLed entry in the first slot doesn't sit well with me at all.
+> > > > 
+> > > > In order for us to avoid wasting memory, it would be better to place the
+> > > > entry at the end of the array with a blank entry:
+> > > > 
+> > > >   DEFINE_RES_IRQ(0),
+> > > > 
+> > > > Later comes the matching code which updates the 0 value to something sane.
+> > > > 
+> > > > Before you call to the add the devices, check to see if the value has
+> > > > changed.  If it hasn't, deprecate num_resources, effectively masking the
+> > > > last entry in the array.  Then when platform_device_add_resources()
+> > > > comes to duplicate the array, it will only copy the relevant entries.
+> > > 
+> > > I chose my current solution because it resulted in more simple and maintainable code:
+> > > 
+> > > - No dynamic array access, the IRQ resource is always written to index 0
+> > 
+> > Which is fragile (even with the comment).  If you're going to directly
+> > index array elements, please do so with a unique identifier rather than
+> > relying on it happening to reside in the first.
+> > 
+> > > - No surprises regarding num_resources, it is always equal to ARRAY_SIZE(resources)
+> > 
+> > No surprises, but sometimes it's incorrect.
+> > 
+> > > It also allowed to make all mfd_cell const; to make num_resources modifyable, either the const would
+> > > need to be removed, or each mfd_cell would need to be copied to a stack variable in the probe
+> > > function.
+> > > 
+> > > In my opinion, these benefits outweigh the 2*64 bytes saved for the additional resources allocated
+> > > by platform_device_add_resources() - and 128 bytes doesn't seem significant at all, in particular
+> > > considering that this driver is used on x86_64 only.
+> > 
+> > But doesn't outweigh my disliking for placing a NULL element at the
+> > start of the array.  If you _must_ do something like this, please place
+> > it at the end of the array.
+> > 
+> 
+> Ok, will move the placeholder to the end, and access it using a defined index instead of 0. I would
+> still prefer to keep num_resources constant instead of adjusting it. Does this sound acceptable to
+> you?
 
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
----
-Changes v2 -> v3:
-- applied Andrey's patch to modify further kasan.rst.
----
- Documentation/dev-tools/kasan.rst             | 23 ++++++++-----------
- .../translations/zh_CN/dev-tools/kasan.rst    | 20 +++++++---------
- .../translations/zh_TW/dev-tools/kasan.rst    | 21 ++++++++---------
- lib/Kconfig.kasan                             |  7 ------
- mm/kasan/kasan.h                              |  2 +-
- mm/kasan/report.c                             |  2 +-
- 6 files changed, 28 insertions(+), 47 deletions(-)
+It would allow me to sleep at night, yes. :)
 
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index d7de44f5339..0a1418ab72f 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -511,19 +511,14 @@ Tests
- ~~~~~
- 
- There are KASAN tests that allow verifying that KASAN works and can detect
--certain types of memory corruptions. The tests consist of two parts:
-+certain types of memory corruptions.
- 
--1. Tests that are integrated with the KUnit Test Framework. Enabled with
--``CONFIG_KASAN_KUNIT_TEST``. These tests can be run and partially verified
-+All KASAN tests are integrated with the KUnit Test Framework and can be enabled
-+via ``CONFIG_KASAN_KUNIT_TEST``. The tests can be run and partially verified
- automatically in a few different ways; see the instructions below.
- 
--2. Tests that are currently incompatible with KUnit. Enabled with
--``CONFIG_KASAN_MODULE_TEST`` and can only be run as a module. These tests can
--only be verified manually by loading the kernel module and inspecting the
--kernel log for KASAN reports.
--
--Each KUnit-compatible KASAN test prints one of multiple KASAN reports if an
--error is detected. Then the test prints its number and status.
-+Each KASAN test prints one of multiple KASAN reports if an error is detected.
-+Then the test prints its number and status.
- 
- When a test passes::
- 
-@@ -550,16 +545,16 @@ Or, if one of the tests failed::
- 
-         not ok 1 - kasan
- 
--There are a few ways to run KUnit-compatible KASAN tests.
-+There are a few ways to run the KASAN tests.
- 
- 1. Loadable module
- 
--   With ``CONFIG_KUNIT`` enabled, KASAN-KUnit tests can be built as a loadable
--   module and run by loading ``kasan_test.ko`` with ``insmod`` or ``modprobe``.
-+   With ``CONFIG_KUNIT`` enabled, the tests can be built as a loadable module
-+   and run by loading ``kasan_test.ko`` with ``insmod`` or ``modprobe``.
- 
- 2. Built-In
- 
--   With ``CONFIG_KUNIT`` built-in, KASAN-KUnit tests can be built-in as well.
-+   With ``CONFIG_KUNIT`` built-in, the tests can be built-in as well.
-    In this case, the tests will run at boot as a late-init call.
- 
- 3. Using kunit_tool
-diff --git a/Documentation/translations/zh_CN/dev-tools/kasan.rst b/Documentation/translations/zh_CN/dev-tools/kasan.rst
-index 4491ad2830e..fd2e3afbdfa 100644
---- a/Documentation/translations/zh_CN/dev-tools/kasan.rst
-+++ b/Documentation/translations/zh_CN/dev-tools/kasan.rst
-@@ -422,16 +422,12 @@ KASAN连接到vmap基础架构以懒清理未使用的影子内存。
- ~~~~
- 
- 有一些KASAN测试可以验证KASAN是否正常工作并可以检测某些类型的内存损坏。
--测试由两部分组成:
- 
--1. 与KUnit测试框架集成的测试。使用 ``CONFIG_KASAN_KUNIT_TEST`` 启用。
--这些测试可以通过几种不同的方式自动运行和部分验证；请参阅下面的说明。
-+所有 KASAN 测试都与 KUnit 测试框架集成，可通过 ``CONFIG_KASAN_KUNIT_TEST`` 启用。
-+测试可以通过几种不同的方式自动运行和部分验证；请参阅以下说明。
- 
--2. 与KUnit不兼容的测试。使用 ``CONFIG_KASAN_MODULE_TEST`` 启用并且只能作为模块
--运行。这些测试只能通过加载内核模块并检查内核日志以获取KASAN报告来手动验证。
--
--如果检测到错误，每个KUnit兼容的KASAN测试都会打印多个KASAN报告之一，然后测试打印
--其编号和状态。
-+如果检测到错误，每个 KASAN 测试都会打印多份 KASAN 报告中的一份。
-+然后测试会打印其编号和状态。
- 
- 当测试通过::
- 
-@@ -458,16 +454,16 @@ KASAN连接到vmap基础架构以懒清理未使用的影子内存。
- 
-         not ok 1 - kasan
- 
--有几种方法可以运行与KUnit兼容的KASAN测试。
-+有几种方法可以运行 KASAN 测试。
- 
- 1. 可加载模块
- 
--   启用 ``CONFIG_KUNIT`` 后，KASAN-KUnit测试可以构建为可加载模块，并通过使用
--   ``insmod`` 或 ``modprobe`` 加载 ``kasan_test.ko`` 来运行。
-+   启用 ``CONFIG_KUNIT`` 后，可以将测试构建为可加载模块
-+   并通过使用 ``insmod`` 或 ``modprobe`` 加载 ``kasan_test.ko`` 来运行。
- 
- 2. 内置
- 
--   通过内置 ``CONFIG_KUNIT`` ，也可以内置KASAN-KUnit测试。在这种情况下，
-+   通过内置 ``CONFIG_KUNIT``，测试也可以内置。
-    测试将在启动时作为后期初始化调用运行。
- 
- 3. 使用kunit_tool
-diff --git a/Documentation/translations/zh_TW/dev-tools/kasan.rst b/Documentation/translations/zh_TW/dev-tools/kasan.rst
-index ed342e67d8e..35b7fd18aa4 100644
---- a/Documentation/translations/zh_TW/dev-tools/kasan.rst
-+++ b/Documentation/translations/zh_TW/dev-tools/kasan.rst
-@@ -404,16 +404,13 @@ KASAN連接到vmap基礎架構以懶清理未使用的影子內存。
- ~~~~
- 
- 有一些KASAN測試可以驗證KASAN是否正常工作並可以檢測某些類型的內存損壞。
--測試由兩部分組成:
- 
--1. 與KUnit測試框架集成的測試。使用 ``CONFIG_KASAN_KUNIT_TEST`` 啓用。
--這些測試可以通過幾種不同的方式自動運行和部分驗證；請參閱下面的說明。
-+所有 KASAN 測試均與 KUnit 測試框架集成，並且可以啟用
-+透過 ``CONFIG_KASAN_KUNIT_TEST``。可以運行測試並進行部分驗證
-+ 以幾種不同的方式自動進行；請參閱下面的說明。
- 
--2. 與KUnit不兼容的測試。使用 ``CONFIG_KASAN_MODULE_TEST`` 啓用並且只能作爲模塊
--運行。這些測試只能通過加載內核模塊並檢查內核日誌以獲取KASAN報告來手動驗證。
--
--如果檢測到錯誤，每個KUnit兼容的KASAN測試都會打印多個KASAN報告之一，然後測試打印
--其編號和狀態。
-+如果偵測到錯誤，每個 KASAN 測試都會列印多個 KASAN 報告之一。
-+然後測試列印其編號和狀態。
- 
- 當測試通過::
- 
-@@ -440,16 +437,16 @@ KASAN連接到vmap基礎架構以懶清理未使用的影子內存。
- 
-         not ok 1 - kasan
- 
--有幾種方法可以運行與KUnit兼容的KASAN測試。
-+有幾種方法可以執行 KASAN 測試。
- 
- 1. 可加載模塊
- 
--   啓用 ``CONFIG_KUNIT`` 後，KASAN-KUnit測試可以構建爲可加載模塊，並通過使用
--   ``insmod`` 或 ``modprobe`` 加載 ``kasan_test.ko`` 來運行。
-+   啟用 ``CONFIG_KUNIT`` 後，測試可以建置為可載入模組
-+   並且透過使用 ``insmod`` 或 ``modprobe`` 來載入 ``kasan_test.ko`` 來運作。
- 
- 2. 內置
- 
--   通過內置 ``CONFIG_KUNIT`` ，也可以內置KASAN-KUnit測試。在這種情況下，
-+   透過內建 ``CONFIG_KUNIT``，測試也可以內建。
-    測試將在啓動時作爲後期初始化調用運行。
- 
- 3. 使用kunit_tool
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index 98016e137b7..f82889a830f 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -195,13 +195,6 @@ config KASAN_KUNIT_TEST
- 	  For more information on KUnit and unit tests in general, please refer
- 	  to the KUnit documentation in Documentation/dev-tools/kunit/.
- 
--config KASAN_MODULE_TEST
--	tristate "KUnit-incompatible tests of KASAN bug detection capabilities"
--	depends on m && KASAN && !KASAN_HW_TAGS
--	help
--	  A part of the KASAN test suite that is not integrated with KUnit.
--	  Incompatible with Hardware Tag-Based KASAN.
--
- config KASAN_EXTRA_INFO
- 	bool "Record and report more information"
- 	depends on KASAN
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index f438a6cdc96..b7e4b81421b 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -568,7 +568,7 @@ static inline void kasan_kunit_test_suite_end(void) { }
- 
- #endif /* CONFIG_KASAN_KUNIT_TEST */
- 
--#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST) || IS_ENABLED(CONFIG_KASAN_MODULE_TEST)
-+#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
- 
- bool kasan_save_enable_multi_shot(void);
- void kasan_restore_multi_shot(bool enabled);
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index b48c768acc8..3e48668c3e4 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -132,7 +132,7 @@ static bool report_enabled(void)
- 	return !test_and_set_bit(KASAN_BIT_REPORTED, &kasan_flags);
- }
- 
--#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST) || IS_ENABLED(CONFIG_KASAN_MODULE_TEST)
-+#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
- 
- bool kasan_save_enable_multi_shot(void)
- {
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
 
