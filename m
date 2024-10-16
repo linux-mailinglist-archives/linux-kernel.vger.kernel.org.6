@@ -1,87 +1,162 @@
-Return-Path: <linux-kernel+bounces-367274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7E79A0064
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:59:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66DB9A0068
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB57D1F260A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:59:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96E52849C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FECE189F3F;
-	Wed, 16 Oct 2024 04:59:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F28D18A95F;
+	Wed, 16 Oct 2024 05:06:13 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E81021E3BA
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0722E14EC47;
+	Wed, 16 Oct 2024 05:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729054746; cv=none; b=FKoLfn0jlQmqrM2wCRim67ZoOKrEREtegfbN/J4r4u47xk5ljCoa7Ak671D2ui8ruq8Q+zTtCGL+mT01ySKXjyy+Id1UBS3uV21wkZ0cDdiGRY5girbgGJ0Zd9j7hlN887VPdbbkujw58fone0CjKWcOnqf3ILRedP8JfINzBws=
+	t=1729055173; cv=none; b=kX7fzd4DHzxD8c57dPW1MTx3H1/ZYIYecLxDJfjwfzEjGE3QNOt9hUAdQ2e0M65MD0Zl+GuXqla0owafsMchIUCEvDUgk7MsNXq3ZZiYER0J00wbq2Iyf6Oh7JQToW5h3UfoQBmXX4zsCNwEmj6FdFfZCqpMGbH2AlIBigCgsI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729054746; c=relaxed/simple;
-	bh=kMHTYsZkQXqBnWXHB0heoL7X17wRSsDRSTdq7M3hZ4I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WMk6lNTe5Z9aBMFdUtDbhbsyEzdkc1cyUc3rJM0E3SQjfSKgnjbY+Dwvg2b54xCQWd/PjkJuyMN9eApr7ccTEURKybKL8Lqh8XvucZQb2uUdFvPjzO7Elo2SeBF68Xi307JG3sNN+BGNLxKZX8GkL9HthClHUiDK3TjsxcxjA40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b7d1e8a0so35197005ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 21:59:05 -0700 (PDT)
+	s=arc-20240116; t=1729055173; c=relaxed/simple;
+	bh=HKQvGwPYr1inwgwgCF3hWMFzy3rV5u7emolGbmj55I4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4QbawLEtgsmFSl1xA7jmFZmV27nuH/Olkg1x8C2eHS62unGdFmu8SNpCnzOXg9efproxV4+fJjYFr5sHhcsO+YuNQHzgXR31QMczwerTK95k2hQlQPwV82i8fLzZuwbDHDxx45oRoj5+9ly3ZThmIh78vLlAx+iB66EkgRpMic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99cc265e0aso654479866b.3;
+        Tue, 15 Oct 2024 22:06:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729054744; x=1729659544;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3794WB3k/1cVxmaJ0FD9ncVo/7iFu/UEHf4D+BVrjAU=;
-        b=qre+6W8dQzs3GV6zjeysBEOA8tkpvwdYhM/DUuvqYW5+MLoZbrbe+G2B71VQw0aTix
-         EmftV1t/1sBZs2zqXVQNbx25fhy3pUEg2sJpb3pDTQh/aS2cctUtSHHbPS9Y+mFdGT+L
-         7ZbEcgxfi4ZmGX+pQflRIq2nTjPz9fmdvCxCfcPcWnYXZFzf+4HWyMgF4hQhs/jheXJU
-         mWpPOfWF8EPyxR6FLISCEn5eSsQTuuvjpcod+GG8giP6bGm+7Qf12hCWST6rfeKhwYRa
-         6hOf0c8GFPFmFWw0g2ScIT8mvfDCpjqMaqUnReym/05pGlCd0W43SURjEfDgLDb9gR+5
-         CJ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCW05F0hxHFfmW0uiR4mo5UPsJv1y673upf22FMn5ZICy0cUksKho9IudDAUfCCVWnpsBBkSLopvx3iO7Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy76Cg8TTjojmCzk+BKoOyFLQy3/zAO4bQRSVI+2TqY6Kc/IqoX
-	UTKzlQopQ8acfxSFt8jzVTFcIl4QbW7LMKfbDW81uC9D2MJNQ0soag9ptEeMExDQjErbFan3s3e
-	QEpOkrSERNkhjNaG5ZQ8NXxYN2bKhXuigtsfh9pAfOdJsfVjs9cptFfs=
-X-Google-Smtp-Source: AGHT+IF3UI/Nnr6qb5ZAzYtTWxCYw8THoFk0YqsPQrbQguLumDv6IBji6tmUpxqT7GGFcAaDlWRQASe7igGPKo+NimlmBKx31uow
+        d=1e100.net; s=20230601; t=1729055169; x=1729659969;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aJpmoZDHNXOCQ0hPtAG85Btn1S/XrnkL2QxgMJLjgU0=;
+        b=a/oMt7MoIsK8G3ahbTGmmbP+W15lj58WpYx63xhSFO6rVykKE5Ak0z7vRTAgQUi49/
+         6evokxNjleyXKfB+qKpsa0wJKXDUdZApLpgfXHqO7ZOM8eIP/b2+BRDhdKdVHONW0Ayz
+         k+hEirEqSZv7Tmaa78VyauZMhdgRKMqZI9ChB5NQlls2cJSMHc1Fc67Sz7gbSMAR6bll
+         iglcA++MMO3kDXWB3totRt8uWRR1aNFGM46ui1M/UusITxdaaNltSAW/Ijk09Biwcie4
+         uDw0dNIEAJDPDb+axoBQEtI3mIS1zLRbk5bspT8zCZAiCVxTQR0fzCjKRaOl/47MBi/F
+         lXKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYcVSDbtsTRM2i69ZCJCQbOp6xoBTuS6l5GhyICgEn5LQBa+tAbOeh4YBJXkYvkAAqCdspnXAx@vger.kernel.org, AJvYcCUy93uismFbHVCmOMjvcQ0vr14ysQYfYJV6G/ZWrzk2kiuzg5S5g0bqt53M8s6kZ6Q+P9q7FRFTCIEU@vger.kernel.org, AJvYcCVo+BcqV9fQKO99MYBd/2pQDw6vRFFxOsrmI1sFhd4jXT4ee2whkd0NuoRUx9S6xkY+MAkZ91rexZuQ@vger.kernel.org, AJvYcCX3te1Q2aIFoWCC0zUbysKa/drQRaFQarfvvriuaovIVjxgW+IJoZqbwivrQJfEY5MnGupYpGiRe5C+UDKn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuG7sn1wE4eFY4TllGfc6EU8ohzBQq+twsjuojSM3YcCDVdDRs
+	h17BQoJYp3w7xXfT/PtUYg56hLeJy8Vl6ybI0gTrhPNOmY8xkAZnB77Q/+0F2ufJSFZvJz7wjPi
+	dzeTHNxMaUjUwUBxvum+RdZto7oU=
+X-Google-Smtp-Source: AGHT+IH74YJJx49nsFhkFyT1RiTJLRloxAcb38iBw6/nz//HY/ZNyBiPGvMCwwwDAg2enWh0s8igaco8Z4E7VnmPpHo=
+X-Received: by 2002:a17:907:e216:b0:a99:7c14:9197 with SMTP id
+ a640c23a62f3a-a9a34e9b0a6mr190098066b.64.1729055169080; Tue, 15 Oct 2024
+ 22:06:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178b:b0:39f:36f3:1957 with SMTP id
- e9e14a558f8ab-3a3bcd9575fmr105304805ab.3.1729054744530; Tue, 15 Oct 2024
- 21:59:04 -0700 (PDT)
-Date: Tue, 15 Oct 2024 21:59:04 -0700
-In-Reply-To: <tencent_696EDEEECD8C8067C286EC12EB4651899506@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670f4818.050a0220.d5849.0011.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_inline
-From: syzbot <syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240922145151.130999-1-hal.feng@starfivetech.com>
+ <20240922145151.130999-4-hal.feng@starfivetech.com> <CAMZ6Rq+EM37Gvx8bLEwvhn+kUC9yGDiapwD0KX31-x-e-Rm3yQ@mail.gmail.com>
+ <EAC60558E0B6E4BB+e5384c3c-ba45-48f5-a86f-a74e84309a14@linux.starfivetech.com>
+In-Reply-To: <EAC60558E0B6E4BB+e5384c3c-ba45-48f5-a86f-a74e84309a14@linux.starfivetech.com>
+From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
+Date: Wed, 16 Oct 2024 14:05:57 +0900
+Message-ID: <CAMZ6RqLvzvttbCMFbZiY9v=nGcH+O3EV91c+x7GxTbkKhdTcwg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
+To: Hal Feng <hal.feng@linux.starfivetech.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	William Qiu <william.qiu@starfivetech.com>, devicetree@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Hal Feng <hal.feng@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Tue. 15 Oct. 2024 at 18:33, Hal Feng <hal.feng@linux.starfivetech.com> wrote:
+> On 9/23/2024 11:41 AM, Vincent MAILHOL wrote:
+> > Hi Hal,
+> >
+> > A few more comments on top of what Andrew already wrote.
+> >
+> > On Mon. 23 Sep. 2024 at 00:09, Hal Feng <hal.feng@starfivetech.com> wrote:
+> >> From: William Qiu <william.qiu@starfivetech.com>
+> >>
+> >> Add driver for CAST CAN Bus Controller used on
+> >> StarFive JH7110 SoC.
+> >>
+> >> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> >> Co-developed-by: Hal Feng <hal.feng@starfivetech.com>
+> >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> >> ---
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+(...)
 
-Reported-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
-Tested-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
+> >> +       stats->rx_packets++;
+> >> +       netif_receive_skb(skb);
+> >> +
+> >> +       return 1;
+> >
+> > Why return 1 on success and 0 on failure? The convention in the kernel
+> > is that 0 means success. If you really want to keep 0 for failure, at
+> > least make this return boolean true or boolean false, but overall, try
+> > to follow the return conventions.
+>
+> The return value here represents the number of successfully received packets.
+> It is used in ccan_rx_poll() for counting the number of successfully
+> received packets.
 
-Tested on:
+Ack. I guess this will become more clear after you implement the queue logic.
 
-commit:         2f87d091 Merge tag 'trace-ringbuffer-v6.12-rc3' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1256b727980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
-dashboard link: https://syzkaller.appspot.com/bug?extid=81092778aac03460d6b7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1770d887980000
+(...)
 
-Note: testing is done by a robot and is best-effort only.
+> >> +
+> >> +       if (priv->cantype == CAST_CAN_TYPE_CANFD) {
+> >> +               priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_FD;
+> >> +               priv->can.data_bittiming_const = &ccan_data_bittiming_const_canfd;
+> >> +       } else {
+> >> +               priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK;
+> >> +       }
+> >
+> > Nitpick, consider doing this:
+> >
+> >   priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK;
+> >   if (priv->cantype == CAST_CAN_TYPE_CANFD) {
+> >           priv->can.ctrlmode_supported |= CAN_CTRLMODE_FD;
+> >           priv->can.data_bittiming_const = &ccan_data_bittiming_const_canfd;
+> >   }
+>
+> OK.
+>
+> >
+> > Also, does you hardware support dlc greater than 8 (c.f.
+> > CAN_CTRLMODE_CC_LEN8_DLC)?
+>
+> The class CAN (CC) mode does not support, but the CAN FD mode supports.
+
+So, CAN_CTRLMODE_CC_LEN8_DLC is a Classical CAN feature. Strictly
+speaking, this does not exist in CAN FD. Do you mean that only the
+CAST_CAN_TYPE_CANFD supports sending Classical CAN frames with a DLC
+greater than 8?
+
+If none of the Classical CAN or CAN FD variants of your device is able
+to send Classical CAN frames with a DLC greater than 8, then this is
+just not supported by your device.
+
+Could you share the datasheet so that I can double check this?
+
+(...)
+
+> Sorry for the late reply. Thank you for your detailed review.
+
+No problem, take your time!
+
+
+Yours sincerely,
+Vincent Mailhol
 
