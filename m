@@ -1,79 +1,173 @@
-Return-Path: <linux-kernel+bounces-367389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187469A01A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE4E9A01AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF6D2289274
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DADB1C23399
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D6F1AF0DE;
-	Wed, 16 Oct 2024 06:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709C519340B;
+	Wed, 16 Oct 2024 06:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gH6y+fQE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAu+fXzN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7584198856;
-	Wed, 16 Oct 2024 06:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CBB190073;
+	Wed, 16 Oct 2024 06:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729060943; cv=none; b=BDJMJsLkcVYh7Tv9Q9MAreTIyNEuRp6HYL7MWmLKKNdcTCEKmYpYU047WTVSHiJGNIv6RACLROS7eZL978diCbplskb+gFJXwO05isriHaeOH0gfZraOh1mfK/Wv/S0eiBzr31klxtDg3fTrOzdrmqPVD19ueJ+dWRPh6jHMgFI=
+	t=1729060960; cv=none; b=ZDvH58sAaMz7BM5ejm7e22aGXcXF+cp2hOZdBZ483lawOo0Iuy3qUF+Pgcyiy91N8cqMp6Nib0tLWhC+2p1dUo0mSIylfsovTSdbDFCEMCmvjpanndGJ+HeYgrskrnXGKuXuGt4JTS/YyJYlw4rYIjeCXSllVqziDME4eO0E2e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729060943; c=relaxed/simple;
-	bh=4Ex82LlFgpHyaw4FgxltJEPSWklCxg+DLUOAI+TxEWE=;
+	s=arc-20240116; t=1729060960; c=relaxed/simple;
+	bh=SodGRJK6SdKaiOHwTixQxzX5Vp7/ZcsL2J0q86kEjOI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+VK+L8XTZKkdWATqiS2RbNEfHlXUmn9DPWdLG+dsOlhEREoyftMXTQfPxgMlDOg22KmImoqshQGWqiiyEdVs/yhb0dY6fGHDeYYpCm5fklB0DWLD8EtmW9sY+b5k9UY4NRw64BIntTWrPgqkIKKxsqV8v80TZneO10iYpJXrYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gH6y+fQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA827C4CEC5;
-	Wed, 16 Oct 2024 06:42:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQlrTwcp/But2+MMiTIkfImRhPSz6fiShgK0rX0z7+7Q2e3fjErk2XO6EFas8cFnvMu4C1AVOhylkFl0tuNBLr/wBOmOZYmKTuh+gqVv5ohJfR5KCo2sJZVY9mz/yenXzaTZN4uUcEDtqurHEnITNdLzmfzysNAiAnPzIFRb0G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAu+fXzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409FBC4CEC5;
+	Wed, 16 Oct 2024 06:42:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729060943;
-	bh=4Ex82LlFgpHyaw4FgxltJEPSWklCxg+DLUOAI+TxEWE=;
+	s=k20201202; t=1729060960;
+	bh=SodGRJK6SdKaiOHwTixQxzX5Vp7/ZcsL2J0q86kEjOI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gH6y+fQElXa+XnBopH0jeB8dffUgUFd9q/QDMSkWN8IF20rrsUmRMBTlzvMrIIMl3
-	 f8oT5G47KFpsLq8yfdGJv7MBTwgwjfqpKjkJyDipb4PD6a5yE3b/2SKFbuGt3DWnTo
-	 Z4x2Gw888PWdUkSABQvVD9e8P/LPNA3bgzbTdTwVZfzbM66cPb+FbgLQmqyqMuArjh
-	 hbg3LOtikCf8Jovy8R7yP6J1TBbFar6aXIOSuxSWZulWmm1xBPnHlShwXVFOkNN/fq
-	 7b/uPjt+ZYOrmpeL+GMbqhS1yvhN/eqWv6fGZq/zUKGBiRckPc+FlROIL8sg5dB9+D
-	 CgYM6526P43bA==
-Date: Wed, 16 Oct 2024 08:42:19 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, tsbogend@alpha.franken.de, markus.stockhausen@gmx.de, 
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: spi: Add realtek,rtl9301-snand
-Message-ID: <3pps6ayndngfvc2jflkozhdvga74fjblmfjhmmdpvxx2mpmnwv@sp4s7hgt56eo>
-References: <20241015225434.3970360-1-chris.packham@alliedtelesis.co.nz>
- <20241015225434.3970360-2-chris.packham@alliedtelesis.co.nz>
+	b=nAu+fXzNo/4J58eTjlJvWwgg1LcCUch4gsRi8eWWo/QqieaARhDEenGBptNjRK8Q7
+	 UF3UrHHl3i+LHFpZQU/Qd1o70QDQWnhZKzJjXqK7wzbDHHfEIzm4U+vlpYEENNUlFF
+	 B+N8rdbfYB7Jo+WbeLMS3Vs0pDk3MrwAicDUopeF1g8BEARKKEK1lBcNhaz0nxgsEN
+	 cUC4m7oF+Erk0LYna+3hHsGztpzlVvCVnVIBchRkLIEarllmNfRXAxNE7cg5uLGHHC
+	 WU53Rta3jJDDSFHQh2ufZASF3kkkF5Uy8v/gH5zrv0ciCDJYIE82JNzwqsBw8CvjZm
+	 bYyDiGLwm0ZAQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t0xk6-000000004nI-36Dv;
+	Wed, 16 Oct 2024 08:42:46 +0200
+Date: Wed, 16 Oct 2024 08:42:46 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Jonathan Marek <jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] rtc: pm8xxx: implement qcom,no-alarm flag for
+ non-HLOS owned alarm
+Message-ID: <Zw9gZkLPMB9ZBQlh@hovoldconsulting.com>
+References: <20241015004945.3676-1-jonathan@marek.ca>
+ <20241015004945.3676-2-jonathan@marek.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015225434.3970360-2-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20241015004945.3676-2-jonathan@marek.ca>
 
-On Wed, Oct 16, 2024 at 11:54:32AM +1300, Chris Packham wrote:
-> Add a dtschema for the SPI-NAND controller on the RTL9300 SoCs. The
-> controller supports
->  * Serial/Dual/Quad data with
->  * PIO and DMA data read/write operation
->  * Configurable flash access timing
+On Mon, Oct 14, 2024 at 08:47:26PM -0400, Jonathan Marek wrote:
+> Qualcomm x1e80100 firmware sets the ownership of the RTC alarm to ADSP.
+> Thus writing to RTC alarm registers and receiving alarm interrupts is not
+> possible.
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Add a qcom,no-alarm flag to support RTC on this platform.
+
+An alternative may be to drop the alarm interrupt from DT and use that
+as an indicator.
+
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 > ---
+>  drivers/rtc/rtc-pm8xxx.c | 44 +++++++++++++++++++++++++++-------------
+>  1 file changed, 30 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+> index c32fba550c8e0..1e78939625622 100644
+> --- a/drivers/rtc/rtc-pm8xxx.c
+> +++ b/drivers/rtc/rtc-pm8xxx.c
+> @@ -61,6 +61,7 @@ struct pm8xxx_rtc {
+>  	struct rtc_device *rtc;
+>  	struct regmap *regmap;
+>  	bool allow_set_time;
+> +	bool no_alarm;
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+How about inverting this one and naming it has_alarm or similar to avoid
+the double negation in your conditionals (!no_alarm)?
 
-Best regards,
-Krzysztof
+>  	int alarm_irq;
+>  	const struct pm8xxx_rtc_regs *regs;
+>  	struct device *dev;
+> @@ -473,9 +474,14 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+>  	if (!rtc_dd->regmap)
+>  		return -ENXIO;
+>  
+> -	rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
+> -	if (rtc_dd->alarm_irq < 0)
+> -		return -ENXIO;
+> +	rtc_dd->no_alarm = of_property_read_bool(pdev->dev.of_node,
+> +						 "qcom,no-alarm");
+> +
 
+Stray newline.
+
+> +	if (!rtc_dd->no_alarm) {
+> +		rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
+> +		if (rtc_dd->alarm_irq < 0)
+> +			return -ENXIO;
+> +	}
+>  
+>  	rtc_dd->allow_set_time = of_property_read_bool(pdev->dev.of_node,
+>  						      "allow-set-time");
+> @@ -503,7 +509,8 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, rtc_dd);
+>  
+> -	device_init_wakeup(&pdev->dev, 1);
+> +	if (!rtc_dd->no_alarm)
+> +		device_init_wakeup(&pdev->dev, 1);
+>  
+>  	rtc_dd->rtc = devm_rtc_allocate_device(&pdev->dev);
+>  	if (IS_ERR(rtc_dd->rtc))
+> @@ -512,27 +519,36 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+>  	rtc_dd->rtc->ops = &pm8xxx_rtc_ops;
+>  	rtc_dd->rtc->range_max = U32_MAX;
+>  
+> -	rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
+> -					  pm8xxx_alarm_trigger,
+> -					  IRQF_TRIGGER_RISING,
+> -					  "pm8xxx_rtc_alarm", rtc_dd);
+> -	if (rc < 0)
+> -		return rc;
+> +	if (!rtc_dd->no_alarm) {
+> +		rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
+> +						  pm8xxx_alarm_trigger,
+> +						  IRQF_TRIGGER_RISING,
+> +						  "pm8xxx_rtc_alarm", rtc_dd);
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+>  
+>  	rc = devm_rtc_register_device(rtc_dd->rtc);
+>  	if (rc)
+>  		return rc;
+>  
+> -	rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
+> -	if (rc)
+> -		return rc;
+> +	if (!rtc_dd->no_alarm) {
+> +		rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
+> +		if (rc)
+> +			return rc;
+> +	} else {
+> +		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
+
+I assume that you should be clearing the feature bit before registering
+the RTC.
+
+> +	}
+>  
+>  	return 0;
+>  }
+
+Johan
 
