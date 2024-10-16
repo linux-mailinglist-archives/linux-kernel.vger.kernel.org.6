@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-368573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892D49A1183
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:26:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8067F9A1184
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB0861C223BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:26:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453DC28839E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C252139CD;
-	Wed, 16 Oct 2024 18:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68CC2144A5;
+	Wed, 16 Oct 2024 18:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GxUHknkj"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PxKECxz0"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA56212630
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C017B212F19
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729103206; cv=none; b=kA/rezqkkGJwAB2aMFxSLcaZyMSq6Dp7rOEzKSKBLEwgkIwV6NpXGLpWc/8zrqD42lVV97YbDhQNmBk1Ubx9g5fyrCAPde/FGMBBvGU+4HPpSlGWQpstRo9+1+6iwfCFpSiR86T1WIJqF/am1a7pr6Ije6ZfOuX0Fh/XHTHd9uA=
+	t=1729103208; cv=none; b=OJF2OfhQjUxmVxqPulJv/k7wVs2l4T8pS0xKOxZJ4FK4XtpCxi2ZiJFVO+1aumUAV7iZxwrA/k8SYISHo5Fzrjru4MkGfJCkxuzlkd8ufuP/H5ireaeETQz4b1HpOqcPHp6RwOV5mbMFYTc7KdFV2upmAkTYKFxzWsw5qrztb+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729103206; c=relaxed/simple;
-	bh=4HekPE8cbLenPjWbqTnnBFTPRSsWRW6m0uSnu07h+hA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bVctHYqw+vu/NWMnZBLX0Htg0VNcDKo8Mg+FXWxD6C2mMTtSPaP+xEwvBaR/xIdnnK3DiCj7U/hTCPdi7OUW/g8w98zTwulY2rWjy2zbj8gUZhgkH9EBK3XI9hBqJycQjE5uxfHVOI4fRypROMV1BLpxPLIa2k7ndB5yBIxS0WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GxUHknkj; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1729103208; c=relaxed/simple;
+	bh=Y1pvPzSz6TtO0NwNOIptufkDVrOTI5EKhsiPz7J6yYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NOBurDxQL3+aE1KHZExVs15uq8qYzCZlf8ZEBkEXi9fsfCmEJAAmRypSJmMEhAM7yFdwBIovJ3u78ndIoKUxoRnVxtz1l0bqtCUm/XAnTdMaCM66j37uayTHe3I2tVtBp9o1T8w7wQliNwsHBvabVBYjDl18esULLrrSKooMwIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PxKECxz0; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729103205; x=1760639205;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4HekPE8cbLenPjWbqTnnBFTPRSsWRW6m0uSnu07h+hA=;
-  b=GxUHknkjIr4+KvdTpzTH46XPNShEy8LtzOPCz61gUJgBR33hHcJe1Th6
-   7qcrGdipfrEsuAf2ahZrAybyl0mKDc5N//z9qj+nfeHg5N4s3XWnQQxPB
-   Cq6eHyevIDoe25LgMF7DpWyiqJi0w5QMTgwg5a2ENLWf8BNrOZjVoNmTY
-   Pgwd9O+R7GmUaG6RRGid6R111V6843d0/aSL+9j8/f59MM5/B6mdOUCTe
-   HR36OW9zYT3OTXowQ8t0jK/DF0uqg0n5VtcBhCmn//9EGVLu81hhjLgYV
-   QxfTDovRGMzW8z8AiSZYwFqKT/2A+MEU+2j4S/GukZphLWxWCVC8FjY3B
+  t=1729103207; x=1760639207;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Y1pvPzSz6TtO0NwNOIptufkDVrOTI5EKhsiPz7J6yYM=;
+  b=PxKECxz0GFG5PpDCa/nmVkhyFViFn5QIt8MJYwYGRP4Xu1UVWKy4i+ld
+   Aof4HhiHVsJRW3UQ2JfRSq02i1ow30B+jTZHAfDkJAy2TMz8CrLwXcwG+
+   /MxHzMDZ6oDHvaoTAaXOFaKluqyvjfUKDb+k3zfJ4C/U2/TXYGCR+0iv6
+   U4q/BG8tccHGVEkxIlh+O0DEDQONKrS1N+uXfU6IsdW7E8JDFI3IW4/iS
+   ye37t/lGfbip/o3jsttlEC7txE3i+fxGqhQ8XkfEbApL0ib0jXfLuO44j
+   5T3OiDH52N+0MdwkGpEUrwGrVoil/vZ5UYl1CI4OreaINnPj5G48EdcDm
    A==;
-X-CSE-ConnectionGUID: +HnXDZqnRGyN0NDhlepLNA==
-X-CSE-MsgGUID: 2B2vtopBQ5m9VTctCOoBZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39685995"
+X-CSE-ConnectionGUID: 2un4l6/NS063sYYi2k3vuA==
+X-CSE-MsgGUID: +nutd58cRP+fB31f3qD3ig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39686006"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39685995"
+   d="scan'208";a="39686006"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
   by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 11:26:43 -0700
-X-CSE-ConnectionGUID: Rvnt9MjySWG6GJbtjONehw==
-X-CSE-MsgGUID: VWEnb3zNQ3+WVZFatWM2pg==
+X-CSE-ConnectionGUID: MK97uBo5Tn+tcSA03kCSRw==
+X-CSE-MsgGUID: gIKrOOOwSb2pvAmcsBYolw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="78269521"
+   d="scan'208";a="78269523"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa010.jf.intel.com with ESMTP; 16 Oct 2024 11:26:40 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5E55A165; Wed, 16 Oct 2024 21:26:38 +0300 (EEST)
+	id 6A6CE159; Wed, 16 Oct 2024 21:26:38 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Ingo Molnar <mingo@kernel.org>,
 	Uros Bizjak <ubizjak@gmail.com>,
@@ -74,10 +75,12 @@ Cc: Dennis Zhou <dennis@kernel.org>,
 	x86@kernel.org,
 	"H. Peter Anvin" <hpa@zytor.com>,
 	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 0/2] percpu: Add a test case and fix for clang
-Date: Wed, 16 Oct 2024 21:23:50 +0300
-Message-ID: <20241016182635.1156168-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/2] x86/percpu: Fix clang warning when dealing with unsigned types
+Date: Wed, 16 Oct 2024 21:23:51 +0300
+Message-ID: <20241016182635.1156168-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20241016182635.1156168-1-andriy.shevchenko@linux.intel.com>
+References: <20241016182635.1156168-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,25 +89,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a test case to percpu to check a corner case with the specific
-64-bit unsigned value. This test case shows why the first patch is
-done in the way it's done.
+When percpu_add_op() is used with an unsigned argument, it prevents
+kernel builds with clang, `make W=1` and CONFIG_WERROR=y:
 
-The before and after has been tested with binary comparison of
-the percpu_test module and runnig it on the real Intel system.
+net/ipv4/tcp_output.c:187:3: error: result of comparison of constant -1 with expression of type 'u8' (aka 'unsigned char') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
+  187 |                 NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPACKCOMPRESSED,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  188 |                               tp->compressed_ack);
+      |                               ~~~~~~~~~~~~~~~~~~~
+...
+arch/x86/include/asm/percpu.h:238:31: note: expanded from macro 'percpu_add_op'
+  238 |                               ((val) == 1 || (val) == -1)) ?            \
+      |                                              ~~~~~ ^  ~~
 
-v2:
-- updated Subject (Dave)
-- added test case
+Fix this by casting -1 to the type of the parameter and then compare.
 
-Andy Shevchenko (2):
-  x86/percpu: Fix clang warning when dealing with unsigned types
-  percpu: Add a test case for the specific 64-bit value addition
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/include/asm/percpu.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
- arch/x86/include/asm/percpu.h |  7 ++++---
- lib/percpu_test.c             | 11 ++++++++++-
- 2 files changed, 14 insertions(+), 4 deletions(-)
-
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index c55a79d5feae..e525cd85f999 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -234,9 +234,10 @@ do {									\
+  */
+ #define percpu_add_op(size, qual, var, val)				\
+ do {									\
+-	const int pao_ID__ = (__builtin_constant_p(val) &&		\
+-			      ((val) == 1 || (val) == -1)) ?		\
+-				(int)(val) : 0;				\
++	const int pao_ID__ =						\
++		(__builtin_constant_p(val) &&				\
++			((val) == 1 ||					\
++			 (val) == (typeof(val))-1)) ? (int)(val) : 0;	\
+ 									\
+ 	if (0) {							\
+ 		typeof(var) pao_tmp__;					\
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
