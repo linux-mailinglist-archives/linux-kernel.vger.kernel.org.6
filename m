@@ -1,77 +1,122 @@
-Return-Path: <linux-kernel+bounces-367199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1541E99FFBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACDB99FFBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 966B8B23302
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56E96285603
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D0717D896;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30FD186287;
 	Wed, 16 Oct 2024 03:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="nlWN4ORL"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7921304BA;
-	Wed, 16 Oct 2024 03:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="vAcWlVyk"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EF1157494;
+	Wed, 16 Oct 2024 03:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729050727; cv=none; b=IKfHHJOsw1fq44syxEHnobP/X2WBb54MkB/bRQPVuUOTlIHMj6khKMxRowsMXzCJfAaQ8dd3HEP7qqTNPG8ntfMiUAWCAGNxcm3VCrN42Wf3lXLmF2Uccg5rng1TksHtcZ/AKxvbqFVnbhICFe3LMc7STJDZUo6lv3JlxR66iDw=
+	t=1729050728; cv=none; b=Ztt3NGMl//8RgmCHrKnbRvQK9AHxwzeP97+xHaTxQn2Q/c0fcP7+9GALzR1MhUnVP/Xw+2TAP/NEcO+yxfGPbnhqn5oFgAuYn45e/LU4e+KdVxPXrfL/ZTvMf6/hb+jHZzHTV5Bsz3ioSCI5qBdzYsVIGRpbQuShrkYdZHhk9JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729050727; c=relaxed/simple;
-	bh=i0oyF3S1jAQPmVHT/yiLKVxqroap7/90JcQ7zu3JOWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAvSMCq0lrjcWQn+SMHy5t0z2f91vdDgNyKhp9ice8FIgn8Vo7Zz9CCpT7gx2/m0QTs5cnLp4dHknOXt6Rm2yBFyMe0VK3u45LX3L7TsFSexSWj4GSRhiLKI/HA2zeRH5Flkh/BtLkwaG7BmqH6kZ42mvo975iYcRXRgh9FL1I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=nlWN4ORL; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=jmFozbLWgaQflNtxAhxn4cd9iiQsaZAwFfFa3MgoSxs=;
-	b=nlWN4ORLR38AmQbvEj7YsgVRs9qD+jHkac4N/1xLqkv8OJ0C+vk2J8QUGOsc+k
-	eoDdCxqZar81ZoDEy8e8G+speyNbLWG8Gt0TdGPixxSIKix1HeBvQR0T8z1SlelA
-	t77DAR5AFS7VCNACVqejKaseK8A5CR1CfDERXxnyFesRo=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBHk_1BOA9nTY4VAA--.259S3;
-	Wed, 16 Oct 2024 11:51:31 +0800 (CST)
-Date: Wed, 16 Oct 2024 11:51:29 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] arm64: dts: imx93-11x11-evk: add io-expander
- adi,adp5585-01
-Message-ID: <Zw84QZlvEqKa4PKv@dragon>
-References: <20240903185450.1486505-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1729050728; c=relaxed/simple;
+	bh=ziDJPavYcVsD1cgAGpvgxWlLcnRPyclAPryccHXqWhU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rKr3dswJJs/+mRJePNH+wFRVAyBhYvYP1W7Nu8ngJ5jVWThGvdntVOOUlXbPrH/sKDf/RWzVHAMxhzIY4ydIyDuLWkEEvG33PpemiN6xeEewVN33/jDtds2WUKtGAmlZCcCh/OCflBJfg1V/ZhUgp0UfqnXhJaM4eN0l1FdW+vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=vAcWlVyk; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1729050727; x=1760586727;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3DstIncm6J0HFT7bC1fzVupVBQQzm9pdIktli+aHGoc=;
+  b=vAcWlVyk+wAZtmpHe8v0tP6r7GOpE6twfMxuowcHXuBsX+Lonf5mV+Q7
+   Z1JcH4BC6vMu+KdzUluWwiDxG6iEM36+/PQD4QTaqC4PemUaS2ASqHwDP
+   AUvyUHcrX3z8IvpPQ9ggL6gjizPdVj029Ynr2Cl9OqD1JrwgOdFUt7N3Z
+   k=;
+X-IronPort-AV: E=Sophos;i="6.11,207,1725321600"; 
+   d="scan'208";a="687905674"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 03:52:03 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:13756]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.7.250:2525] with esmtp (Farcaster)
+ id 1c03cd7e-98db-4ed9-bf6a-a790882ad3a4; Wed, 16 Oct 2024 03:52:02 +0000 (UTC)
+X-Farcaster-Flow-ID: 1c03cd7e-98db-4ed9-bf6a-a790882ad3a4
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 16 Oct 2024 03:52:02 +0000
+Received: from 6c7e67c6786f.amazon.com (10.106.100.36) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 16 Oct 2024 03:51:59 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <gustavoars@kernel.org>
+CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kees@kernel.org>, <kuba@kernel.org>, <linux-hardening@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Subject: Re: [PATCH 5/5][next] uapi: net: Avoid -Wflex-array-member-not-at-end warnings
+Date: Tue, 15 Oct 2024 20:51:54 -0700
+Message-ID: <20241016035154.91327-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <d64af418459145b7d8eb94cd300fb4b7d2659a3c.1729037131.git.gustavoars@kernel.org>
+References: <d64af418459145b7d8eb94cd300fb4b7d2659a3c.1729037131.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903185450.1486505-1-Frank.Li@nxp.com>
-X-CM-TRANSID:Mc8vCgBHk_1BOA9nTY4VAA--.259S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUxCJmUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCx96ZWcPLTgmEgAAsC
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D036UWB003.ant.amazon.com (10.13.139.172) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Tue, Sep 03, 2024 at 02:54:47PM -0400, Frank Li wrote:
-> Add io-expander adi,adp5585 under lpi2c3.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Date: Tue, 15 Oct 2024 18:33:23 -0600
+> diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+> index b068651984fe..aac82a4af36f 100644
+> --- a/net/appletalk/ddp.c
+> +++ b/net/appletalk/ddp.c
+> @@ -1832,7 +1832,7 @@ static int atalk_compat_routing_ioctl(struct sock *sk, unsigned int cmd,
+>  	struct rtentry rt;
+>  
+>  	if (copy_from_user(&rt.rt_dst, &ur->rt_dst,
+> -			3 * sizeof(struct sockaddr)) ||
+> +			3 * sizeof(struct sockaddr_legacy)) ||
 
-Applied all, thanks!
+While at it, please fix the indent.
 
+
+>  	    get_user(rt.rt_flags, &ur->rt_flags) ||
+>  	    get_user(rt.rt_metric, &ur->rt_metric) ||
+>  	    get_user(rt.rt_mtu, &ur->rt_mtu) ||
+> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+> index b24d74616637..75bd15d884e3 100644
+> --- a/net/ipv4/af_inet.c
+> +++ b/net/ipv4/af_inet.c
+> @@ -1021,7 +1021,7 @@ static int inet_compat_routing_ioctl(struct sock *sk, unsigned int cmd,
+>  	struct rtentry rt;
+>  
+>  	if (copy_from_user(&rt.rt_dst, &ur->rt_dst,
+> -			3 * sizeof(struct sockaddr)) ||
+> +			3 * sizeof(struct sockaddr_legacy)) ||
+
+Same here.
+
+Otherwise looks good to me.
+
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+
+
+>  	    get_user(rt.rt_flags, &ur->rt_flags) ||
+>  	    get_user(rt.rt_metric, &ur->rt_metric) ||
+>  	    get_user(rt.rt_mtu, &ur->rt_mtu) ||
 
