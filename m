@@ -1,171 +1,285 @@
-Return-Path: <linux-kernel+bounces-368867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52429A15D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:37:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D90F9A15DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2E11C208DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:37:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96168B22B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E911D45EF;
-	Wed, 16 Oct 2024 22:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE4D1D47A3;
+	Wed, 16 Oct 2024 22:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BN0Ikvoq"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC251D279F;
-	Wed, 16 Oct 2024 22:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ES5D5lL4"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F471D4161
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729118257; cv=none; b=Eo1SjaaRPSwHHMcT/dH/AVPxuT656AkKOjn1P4bh9EdM+dQ8ijc/ukDJSoqNK4HEuSilqGCWBfC6W8LHcLZHvc2jIhDHRyY4jqneCIFbQmKm0e5vGbrmY298BaurU+9lA70+zm/5S+qeaXB3kaPkuEwiFpXxey1xa3FO7D5RGpQ=
+	t=1729118335; cv=none; b=aNh1gMW5q/I489eC4VHGH/6zEEof4zTqmD7O0LJS+gNCuF6ER2dG3YEtHH6fIVoYoUcONzdqWrnEnBGhYtpIvIFNSVoxDGMjrzQzOm0sYhaBd5gJalnnOl7fmmTPI0sna9QMYUJ6qSajdDVZ3N5PNF8SkNkGrh8pzhexqy41Vn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729118257; c=relaxed/simple;
-	bh=EQ4ml+O4TX3BjSDvRSV0hoFCLWMb87Ys4GS55Jll2xs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P42rOlrRKk6KGCZS9L8kLhfUdMUTMYDxjK/LPsCGWEGAYWptn/XSvD4C88gNOTm66wuNssKfTxCfVrrFekFUrAv6ZwRMg1lCxbpKPEJFA7H/0CQueKzM9tbsHt7sHowZzOIFNn8qkz5okmccVtC7DpHlKyuzJK8dsGJJypbgHzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BN0Ikvoq; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from rrs24-12-35.corp.microsoft.com (unknown [131.107.159.201])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3836D20E1AAE;
-	Wed, 16 Oct 2024 15:37:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3836D20E1AAE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1729118255;
-	bh=NWGATxjJC59rbkT0n4WXCatYd0kHKSQicgKPOVfHyH8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BN0Ikvoq0ZxCI0swOSjhsZKZUuYFNh1fd6t9j8zIqpLj2+1fZVIy/L2a73tOrjzWJ
-	 nugcNpwOxxEyUbbf1G0g9/l1mga2EjdAjPeFoP8wJDNK2k4ldbgt7jGhGj5O0MKB/P
-	 uf0zjCxKJ8LUQYoBg7hOUTwcON/kpN+4xxnMKdVc=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-To: lkp@intel.com,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	linux-hyperv@vger.kernel.org (open list:Hyper-V/Azure CORE AND DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Naman Jain <namjain@linux.microsoft.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>
-Subject: [RFC PATCH] drivers: hv: Convert open-coded timeouts to msecs_to_jiffies()
-Date: Wed, 16 Oct 2024 22:37:27 +0000
-Message-ID: <20241016223730.531861-1-eahariha@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729118335; c=relaxed/simple;
+	bh=NbnNRvmjZJubvyTcaKg6ILzesZLmfD5iMvU3AWzbVyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u+gdRSRcbTmeApW1aHnZ0n4TBAHEq2GkzP1+tKmIT+yFB4eqLtQJye52i6k2yZuN8Bej4Uwe3608D6Kv/zcL9AlP6C7lw4QsDFqfgSWTtr/8ANBoD+pDeDiLx3xk5HW1D5PlEjVAIl9xmSqKiLeCcqdUm1RjADIeInMms4/eiJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ES5D5lL4; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3b0247d67so1531755ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729118332; x=1729723132; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pQRRRq47/Hw9MX6ZtToVorakNDyg07L0TFDDDji46Mo=;
+        b=ES5D5lL4AwPZ8yvkNaLWYQDxf67wOqUkmVxkEl/UQS/wn2b0Oar3tPuxpyHDhqe28T
+         VBQEkCMcDQf2F70/D4SeyBApNmTtCXlXqy4PCRJy1+F9T+qNHSIRxEqNW/sTm1hRqFy/
+         CX1DhyqQMTWkLgH/4Yer3Re6NvbS1kAabZC2Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729118332; x=1729723132;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pQRRRq47/Hw9MX6ZtToVorakNDyg07L0TFDDDji46Mo=;
+        b=BdBDBl62VI1hFxaeDmq/6yaqH1E7Sfgs08Hwg+U80L2zn1q1TILmEFuFCR+zaNLqef
+         NB9xv057VGXLGbIxHqAQlxvvRr/eDvEbbMuEKNsR6ZWpfqv4HsciAa3+ibdJ9hBQni+E
+         i06S6CPqSXgc2dGi5sBn3+BX5VuYm5p7LMqDM6Z8+zsBHvHDnI9eeLlQWjyShhoi/c/Q
+         hsf/rdm0D7NafkojaG6CKv/avADN/z3OSIr7m3/rEPWHkeIVErAjYb0DjPioMaYUSErB
+         PZxiiWO5sHghF7aAZLPe+4gMp0+8+eTPH6MIZqCGYJ3ucPE0AhuorNVji6wcERaPsNGZ
+         wuFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4SWyAaUgK+7MEAVmjxPqL1RJd9HG+qOH+faf4qGc2OkegTj4bqQphdAfBZAz7qQhDXZg3uHvNeX6FU9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyXnJQgtwXqt1s4RZB7W8hdRPJyg2a4OyOOOlZO95aQkc2jpWi
+	7bI+EV0pfOCRS49l9Zw7dZXp4zwNKoZLWLDBoy4Z++jQyep8G4Fmv4ioKGe2yAg=
+X-Google-Smtp-Source: AGHT+IFivQcgqrz4+LdP/xfhfGNmIqN1nL/+KVDlxQRCS03LTC4/8hYkEZhoL+4u2csjPmdOw2hZKA==
+X-Received: by 2002:a05:6e02:3cc2:b0:3a3:a307:6851 with SMTP id e9e14a558f8ab-3a3bce0858dmr137968295ab.22.1729118331696;
+        Wed, 16 Oct 2024 15:38:51 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec9632cbsm1058985173.20.2024.10.16.15.38.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 15:38:51 -0700 (PDT)
+Message-ID: <84c0de17-899e-46fd-8b72-534d8a02c259@linuxfoundation.org>
+Date: Wed, 16 Oct 2024 16:38:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Oliver Sang <oliver.sang@intel.com>, Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
+ <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
+ <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
+ <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-We have several places where timeouts are open-coded as N (seconds) * HZ,
-but best practice is to use msecs_to_jiffies(). Convert the timeouts to
-make them HZ invariant.
+On 10/16/24 16:06, Lorenzo Stoakes wrote:
+> On Wed, Oct 16, 2024 at 02:00:27PM -0600, Shuah Khan wrote:
+>> On 10/16/24 04:20, Lorenzo Stoakes wrote:
+>>> Add tests to assert that PIDFD_SELF_* correctly refers to the current
+>>> thread and process.
+>>>
+>>> This is only practically meaningful to pidfd_send_signal() and
+>>> pidfd_getfd(), but also explicitly test that we disallow this feature for
+>>> setns() where it would make no sense.
+>>>
+>>> We cannot reasonably wait on ourself using waitid(P_PIDFD, ...) so while in
+>>> theory PIDFD_SELF_* would work here, we'd be left blocked if we tried it.
+>>>
+>>> We defer testing of mm-specific functionality which uses pidfd, namely
+>>> process_madvise() and process_mrelease() to mm testing (though note the
+>>> latter can not be sensibly tested as it would require the testing process
+>>> to be dying).
+>>>
+>>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> ---
+>>>    tools/testing/selftests/pidfd/pidfd.h         |   8 +
+>>>    .../selftests/pidfd/pidfd_getfd_test.c        | 141 ++++++++++++++++++
+>>>    .../selftests/pidfd/pidfd_setns_test.c        |  11 ++
+>>>    tools/testing/selftests/pidfd/pidfd_test.c    |  76 ++++++++--
+>>>    4 files changed, 224 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
+>>> index 88d6830ee004..1640b711889b 100644
+>>> --- a/tools/testing/selftests/pidfd/pidfd.h
+>>> +++ b/tools/testing/selftests/pidfd/pidfd.h
+>>> @@ -50,6 +50,14 @@
+>>>    #define PIDFD_NONBLOCK O_NONBLOCK
+>>>    #endif
+>>> +/* System header file may not have this available. */
+>>> +#ifndef PIDFD_SELF_THREAD
+>>> +#define PIDFD_SELF_THREAD -100
+>>> +#endif
+>>> +#ifndef PIDFD_SELF_THREAD_GROUP
+>>> +#define PIDFD_SELF_THREAD_GROUP -200
+>>> +#endif
+>>> +
+>>
+>> As mentioned in my response to v1 patch:
+>>
+>> kselftest has dependency on "make headers" and tests include
+>> headers from linux/ directory
+> 
+> Right but that assumes you install the kernel headers on the build system,
+> which is quite a painful thing to have to do when you are quickly iterating
+> on a qemu setup.
 
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
----
- drivers/hv/hv_balloon.c  | 9 +++++----
- drivers/hv/hv_kvp.c      | 4 ++--
- drivers/hv/hv_snapshot.c | 6 ++++--
- drivers/hv/vmbus_drv.c   | 2 +-
- 4 files changed, 12 insertions(+), 9 deletions(-)
+Yes that is exactly what we do. kselftest build depends on headers
+install. The way it works for qemu is either using vitme-ng or
+building tests and installing them in your vm.. This is what CIs do.
 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index c38dcdfcb914d..3017d41f12681 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -756,7 +756,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
- 		 * adding succeeded, it is ok to proceed even if the memory was
- 		 * not onlined in time.
- 		 */
--		wait_for_completion_timeout(&dm_device.ol_waitevent, 5 * HZ);
-+		wait_for_completion_timeout(&dm_device.ol_waitevent, msecs_to_jiffies(5 * 1000));
- 		post_status(&dm_device);
- 	}
- }
-@@ -1373,7 +1373,8 @@ static int dm_thread_func(void *dm_dev)
- 	struct hv_dynmem_device *dm = dm_dev;
- 
- 	while (!kthread_should_stop()) {
--		wait_for_completion_interruptible_timeout(&dm_device.config_event, 1 * HZ);
-+		wait_for_completion_interruptible_timeout(&dm_device.config_event,
-+							  msecs_to_jiffies(1 * 1000));
- 		/*
- 		 * The host expects us to post information on the memory
- 		 * pressure every second.
-@@ -1748,7 +1749,7 @@ static int balloon_connect_vsp(struct hv_device *dev)
- 	if (ret)
- 		goto out;
- 
--	t = wait_for_completion_timeout(&dm_device.host_event, 5 * HZ);
-+	t = wait_for_completion_timeout(&dm_device.host_event, msecs_to_jiffies(5 * 1000));
- 	if (t == 0) {
- 		ret = -ETIMEDOUT;
- 		goto out;
-@@ -1806,7 +1807,7 @@ static int balloon_connect_vsp(struct hv_device *dev)
- 	if (ret)
- 		goto out;
- 
--	t = wait_for_completion_timeout(&dm_device.host_event, 5 * HZ);
-+	t = wait_for_completion_timeout(&dm_device.host_event, msecs_to_jiffies(5 * 1000));
- 	if (t == 0) {
- 		ret = -ETIMEDOUT;
- 		goto out;
-diff --git a/drivers/hv/hv_kvp.c b/drivers/hv/hv_kvp.c
-index d35b60c061148..8d9ae1b0e8788 100644
---- a/drivers/hv/hv_kvp.c
-+++ b/drivers/hv/hv_kvp.c
-@@ -655,7 +655,7 @@ void hv_kvp_onchannelcallback(void *context)
- 		if (host_negotiatied == NEGO_NOT_STARTED) {
- 			host_negotiatied = NEGO_IN_PROGRESS;
- 			schedule_delayed_work(&kvp_host_handshake_work,
--				      HV_UTIL_NEGO_TIMEOUT * HZ);
-+						msecs_to_jiffies(HV_UTIL_NEGO_TIMEOUT * 1000));
- 		}
- 		return;
- 	}
-@@ -724,7 +724,7 @@ void hv_kvp_onchannelcallback(void *context)
- 		 */
- 		schedule_work(&kvp_sendkey_work);
- 		schedule_delayed_work(&kvp_timeout_work,
--					HV_UTIL_TIMEOUT * HZ);
-+				      msecs_to_jiffies(HV_UTIL_TIMEOUT * 1000));
- 
- 		return;
- 
-diff --git a/drivers/hv/hv_snapshot.c b/drivers/hv/hv_snapshot.c
-index 0d2184be16912..be4955613db35 100644
---- a/drivers/hv/hv_snapshot.c
-+++ b/drivers/hv/hv_snapshot.c
-@@ -192,8 +192,10 @@ static void vss_send_op(void)
- 
- 	vss_transaction.state = HVUTIL_USERSPACE_REQ;
- 
--	schedule_delayed_work(&vss_timeout_work, op == VSS_OP_FREEZE ?
--			VSS_FREEZE_TIMEOUT * HZ : HV_UTIL_TIMEOUT * HZ);
-+	schedule_delayed_work(&vss_timeout_work,
-+				op == VSS_OP_FREEZE ?
-+				msecs_to_jiffies(VSS_FREEZE_TIMEOUT * 1000) :
-+				msecs_to_jiffies(HV_UTIL_TIMEOUT * 1000));
- 
- 	rc = hvutil_transport_send(hvt, vss_msg, sizeof(*vss_msg), NULL);
- 	if (rc) {
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 9b15f7daf5059..e35e0a615cb58 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -2507,7 +2507,7 @@ static int vmbus_bus_resume(struct device *dev)
- 	vmbus_request_offers();
- 
- 	if (wait_for_completion_timeout(
--		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
-+		&vmbus_connection.ready_for_resume_event, msecs_to_jiffies(10 * 1000)) == 0)
- 		pr_err("Some vmbus device is missing after suspending?\n");
- 
- 	/* Reset the event for the next suspend. */
--- 
-2.43.0
+> 
+> This is a use case I use all the time so not at all theoretical.
+
+This is what CIs do. Yes - it works for them to build and install
+headers. You don't have to install them on the build system. You
+run "make headers" in your repo. You could use O= option for
+relocatable build.
+
+> 
+> Unfortunately this seems broken on my system anyway :( - see below.
+> 
+>>
+>> These local make it difficult to maintain these tests in the
+>> longer term. Somebody has to go clean these up later.
+> 
+> I don't agree, tests have to be maintained alongside the core code, and if
+> these values change (seems unlikely) then the tests will fail and can
+> easily be updated.
+> 
+> This was the approach already taken in this file with other linux
+> header-defined values, so we'll also be breaking the precendence.
+
+Some of these defines were added a while back. Often these defines
+need cleaning up. I would rather not see new ones added unless it is
+absolutely necessary.
+
+> 
+>>
+>> The import will be fine and you can control that with -I flag in
+>> the makefile. Remove these and try to get including linux/pidfd.h
+>> working.
+> 
+> I just tried this and it's not fine :) it immediately broke the build as
+> pidfd.h imports linux/fcntl.h which conflicts horribly with system headers
+> on my machine.
+> 
+> For instance f_owner_ex gets redefined among others and fails the build e..g:
+> 
+> /usr/include/asm-generic/fcntl.h:155:8: error: redefinition of ‘struct f_owner_ex’
+>    155 | struct f_owner_ex {
+>        |        ^~~~~~~~~~
+> In file included from /usr/include/bits/fcntl.h:61,
+>                   from /usr/include/fcntl.h:35,
+>                   from pidfd_test.c:6:
+> /usr/include/bits/fcntl-linux.h:274:8: note: originally defined here
+>    274 | struct f_owner_ex
+>        |        ^~~~~~~~~~
+> 
+> It seems only one other test tries to do this as far as I can tell (I only
+> did a quick grep), so it's not at all standard it seems.
+> 
+> This issue occurred even when I used make headers_install to create
+> sanitised user headers and added them to the include path.
+> 
+> A quick google suggests linux/fcntl.h (imported by this pidfd.h uapi
+> header) and system fcntl.h is a known thing. Slightly bizarre...
+> 
+> I tried removing the <fcntl.h> include and that resulted in <sys/mount.h>
+> conflicting:
+> 
+> In file included from /usr/include/fcntl.h:35,
+>                   from /usr/include/sys/mount.h:24,
+>                   from pidfd.h:17,
+>                   from pidfd_test.c:22:
+> /usr/include/bits/fcntl.h:35:8: error: redefinition of ‘struct flock’
+>     35 | struct flock
+>        |        ^~~~~
+> In file included from /tmp/hdr/include/asm/fcntl.h:1,
+>                   from /tmp/hdr/include/linux/fcntl.h:5,
+>                   from /tmp/hdr/include/linux/pidfd.h:7,
+>                   from pidfd.h:6:
+> /usr/include/asm-generic/fcntl.h:195:8: note: originally defined here
+>    195 | struct flock {
+>        |        ^~~~~
+> 
+> So I don't think I can actually work around this, at least on my system,
+> and I can't really sensibly submit a patch that I can't run on my own
+> machine :)
+> 
+> I may be missing something here.
+> 
+>>
+>> Please revise this patch to include the header file and remove
+>> these local defines.
+> 
+> I'm a little stuck because of the above, but I _could_ do the following in
+> the test pidfd.h header.:
+> 
+> #define _LINUX_FCNTL_H
+> #include "../../../../include/uapi/linux/pidfd.h"
+> #undef _LINUX_FCNTL_H
+> 
+
+Does this test really need fcntl.h is another question.
+This is another problem with too many includes. The test
+built just fine on my system on 6.12-rc3 with
+
++/* #include <fcntl.h> */
+
+> Which prevents the problematic linux/fcntl.h header from being included and
+> includes the right header.
+> 
+> But I'm not sure this is hugely better than what we already have
+> maintinability-wise? Either way if something changes to break it it'll
+> break the test build.
+> 
+
+If these defines are in a header file - tests include them. Part
+of test development is figuring out these problems.
+
+> Let me know if this is what you want me to do. Otherwise I'm not sure how
+> to proceed - this header just seems broken at least on my system (arch
+> linux at 6.11.1).
+> 
+> An aside:
+> 
+> The existing code already taken the approach I take (this is partly why I
+> did it), I think it'd be out of the scope of my series to change that, for
+> instance in pidfd.h:
+> 
+> #ifndef PIDFD_NONBLOCK
+> #define PIDFD_NONBLOCK O_NONBLOCK
+> #endif
+> 
+> Alongside a number of other defines. So those will have to stay at least
+> for now for being out of scope, but obviously if people would prefer to
+> move the whole thing that can be followed up later.
+> 
+>>
+
+I would like us to explore before giving up and saying these will
+stay.
+
+thanks,
+-- Shuah
 
 
