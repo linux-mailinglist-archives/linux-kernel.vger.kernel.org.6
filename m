@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-367299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614899A0096
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:28:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B609A009C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9316D1C240C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A84481C23C2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552F918BC31;
-	Wed, 16 Oct 2024 05:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFRGkUgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D1518BC10;
+	Wed, 16 Oct 2024 05:28:38 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610418BBB7
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4471418BBB7
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729056476; cv=none; b=h+hksVGyi6SpnIo7vTEF9u9MGCVpAKes0SJCf7d7qWK7CsQ1WDNqhdVDVQ+dFBQ/dhMG7Q+ew62TJCwvnBnMbQ5GYljbf9VTQ9cix2vk+WHIa7pQWFIZCu+O6X8LhOzX7pqrdvvsz05bZSPT0t7ojTFkews+qah00HEqWWYTKC0=
+	t=1729056517; cv=none; b=jI85tCjyoSAPmH8YCBavYgfbR8fAYCpwyPYXeS89ozUzOgJ5h8XzWqfquv59kca1T4RVoXDuZ1HGRG2dmXPIThvUsH+KN1F7Hqc2SCQ2lK77502u8MPS1F8imna2ocmUbWIqFuT02suqJ/TaJwW8guZXnYfxmjVbERy31t0ZSbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729056476; c=relaxed/simple;
-	bh=//4Cx99p5jogEeFkicaoyIn2GOAS1p2Dbd+QLByWjhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MP5bBWxI9t3+ubG1O4eClpaATiR/xKYz2kA8RXltWZyPw+dR9L9eUxaiySaYa90v7FOf+dD6cHEjRO3TF8ytVSOY19JS6n7S+uww4xraM5DDF6qXayS1uuOS5pbwSEmdV2GuzG0pLhv7WPAJp9mgXUYjpUBJQ50tFS9yOxAnZ2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFRGkUgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A100C4CED1;
-	Wed, 16 Oct 2024 05:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729056476;
-	bh=//4Cx99p5jogEeFkicaoyIn2GOAS1p2Dbd+QLByWjhY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CFRGkUgYtZNKeG774KNogSUIWZp4KHQZzO3bZCW27MX+I3d3Ohz08BJshkQB/TNor
-	 vFV/AygFwrhh6QsxyXjQgK27CT11YlX7xRWwC7vN8AaOF2jr6kX39EPDQZClVZ3sz0
-	 5F16BFDbmLvDaUFYc4yjtsgUM2FjtWaKpZ4o+63IJ4gd8hcu3CHuUOYTv1fZb25UnY
-	 F+5nuoMNs8H7wN2reW6UQgtZ5D8N23Px5gLkTUzvCuk4IOJMzPwagsOx8FlZ0RDyqb
-	 n5lnZpxNElVXny3hvRBJjxMRSaeAi9/JgNIv2iDb8VTc3WA6zsUFFciGGYgAxjhYwN
-	 zW+Xv43o1DV7A==
-From: Vineet Gupta <vgupta@kernel.org>
-To: linux-snps-arc@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	Vineet Gupta <vgupta@kernel.org>
-Subject: [PATCH 3/3] ARC: build: Use __force to suppress per-CPU cmpxchg warnings
-Date: Tue, 15 Oct 2024 22:27:49 -0700
-Message-ID: <20241016052749.1640081-4-vgupta@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241016052749.1640081-1-vgupta@kernel.org>
-References: <20241016052749.1640081-1-vgupta@kernel.org>
+	s=arc-20240116; t=1729056517; c=relaxed/simple;
+	bh=2FK4Ilowp8FtEBuwE+I4CP0OstUGKRN+a4IOkivpdio=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dbWfhWeTUvVx52rx3l+F/oIFt50o+yX5p1unIuIJWhtCT6hmA8YyriXHXvc8tZn8Qs6vjhB7GE+Wq55sAP/J+cR5q9qlb0+56wVnUJ4EPAZZlzDBraAwNu2z6jCX1RbnB5c9NuntWVvfUDkl0HpVvf5nW66KMXUgPLb098roivA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 49G5S3G0033818;
+	Wed, 16 Oct 2024 13:28:03 +0800 (+08)
+	(envelope-from Yi.Sun@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XSzy16Q0Wz2SW4QH;
+	Wed, 16 Oct 2024 13:27:53 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 16 Oct 2024 13:28:00 +0800
+From: Yi Sun <yi.sun@unisoc.com>
+To: <chao@kernel.org>
+CC: <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <yi.sun@unisoc.com>,
+        <sunyibuaa@gmail.com>, <niuzhiguo84@gmail.com>,
+        <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>
+Subject: [RFC PATCH 0/2] Speed up f2fs truncate
+Date: Wed, 16 Oct 2024 13:27:56 +0800
+Message-ID: <20241016052758.3400359-1-yi.sun@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,39 +54,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 49G5S3G0033818
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+Deleting large files is time-consuming, and a large part
+of the time is spent in f2fs_invalidate_blocks()
+->down_write(sit_info->sentry_lock) and up_write().
 
-Currently, the cast of the first argument to cmpxchg_emu_u8() drops the
-__percpu address-space designator, which results in sparse complaints
-when applying cmpxchg() to per-CPU variables in ARC.  Therefore, use
-__force to suppress these complaints, given that this does not pertain
-to cmpxchg() semantics, which are plently well-defined on variables in
-general, whether per-CPU or otherwise.
+If some blocks are continuous and belong to the same segment,
+we can process these blocks at the same time. This can reduce
+the number of calls to the down_write() and the up_write(),
+thereby improving the overall speed of doing truncate.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409251336.ToC0TvWB-lkp@intel.com/
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: <linux-snps-arc@lists.infradead.org>
-Signed-off-by: Vineet Gupta <vgupta@kernel.org>
----
- arch/arc/include/asm/cmpxchg.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Test steps:
+Set the CPU and DDR frequencies to the maximum.
+dd if=/dev/random of=./test.txt bs=1M count=100000
+sync
+rm test.txt
 
-diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
-index 58045c898340..76f43db0890f 100644
---- a/arch/arc/include/asm/cmpxchg.h
-+++ b/arch/arc/include/asm/cmpxchg.h
-@@ -48,7 +48,7 @@
- 									\
- 	switch(sizeof((_p_))) {						\
- 	case 1:								\
--		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
-+		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *__force)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
- 		break;							\
- 	case 4:								\
- 		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
+Time Comparison of rm:
+original        optimization            ratio
+7.17s		3.27s			54.39%
+
+Hi, currently I have only optimized the f2fs doing truncate route,
+and other functions using f2fs_invalidate_blocks() are not taken
+into consideration. So new function
+f2fs_invalidate_compress_pages_range() and
+check_f2fs_invalidate_consecutive_blocks() are not general functions.
+Is this modification acceptable?
+
+Yi Sun (2):
+  f2fs: introduce update_sit_entry_for_release()
+  f2fs: introduce f2fs_invalidate_consecutive_blocks() for truncate
+
+ fs/f2fs/compress.c |  14 ++++++
+ fs/f2fs/f2fs.h     |   5 ++
+ fs/f2fs/file.c     |  34 ++++++++++++-
+ fs/f2fs/segment.c  | 116 +++++++++++++++++++++++++++++++--------------
+ 4 files changed, 133 insertions(+), 36 deletions(-)
+
 -- 
-2.43.0
+2.25.1
 
 
