@@ -1,325 +1,308 @@
-Return-Path: <linux-kernel+bounces-368280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824A59A0DA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906769A0DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C9C1C20B5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C31284C76
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD47920E02A;
-	Wed, 16 Oct 2024 15:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A55220E000;
+	Wed, 16 Oct 2024 15:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgZRHaya"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jymln88U"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8911EB27;
-	Wed, 16 Oct 2024 15:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AF754F95
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729091170; cv=none; b=KCRw94iJT79O1rO+Dhv0wLzod8jWo/wicAm/StE9Sjvzg/CjRbcGdpbhohhsqFlzQBc9Qbl+O1xblN21F16hfdhyGkk3AKE8m3wFj2zGA6/Vl+4c3SAfEGhBsM/dMCtdK9y0Cc01ewTXi4XUOkxfxTieFASF+LfnvxefMsfnqTM=
+	t=1729091286; cv=none; b=LyGik8P2tBriT5BIrrKS+GI9q324Tw/iR+lN3NflE2lde+WFmn9LFtDJceEcSPfHrOY+SVhkiK5r2hzw0p25aOmvNftKcAWhyx0V9bQ06ohDDNROMgIo1N7KyOl5UI0YxSnI33mrJ02WZ9klz59fQmcL7ou8HpEeLPKsUWWj6g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729091170; c=relaxed/simple;
-	bh=EXkQTy+esDkHCy1HoIdQHjQpp+JpP3wE0dYye/s4/Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwMOwuFubzr5DGsPu15DpuliUgmACWwHTiWHTk2V3233x4/Gul126yTqVimGXZdnCuG4vtCD7gIJoDcshhBrJXuG2M6vcbTqaUHvNl354ZTbyYawv/fe6ONKDVWoDy7SMDgcYv0VcFJhSvRaD0Yx5b9YIv8Fia7tv7ZYkLCcXWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgZRHaya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BE4C4CEC5;
-	Wed, 16 Oct 2024 15:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729091169;
-	bh=EXkQTy+esDkHCy1HoIdQHjQpp+JpP3wE0dYye/s4/Yg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NgZRHayaM+JGLjWE2uwLdCnxLb0IuXMIcOv0PxCYNb9zcxlce5A7OsX3LfYIJDvqn
-	 WpnjbBu19txBaOA7MlWwCn3uG6MBIN2uquksFcQXJzpGA83AmObrUxAKjok8nYfUh5
-	 c0YHbG5h2R+dyNzdmkoFUSSP8M9jvDE6MdJzJAWzGSOJWVLcsJjjBoje9vcKN7mDeM
-	 Z0y1gG03/NjWiSmsu7/Mrck0ESs4Vzs70hX9E09n8hegY2Y1gsNtItSS9kef2+bICB
-	 HfPafuM/2TWUZfjuuKT+iUr6IDVsfwyXGAJDVw6vFk2oUBENBDu40getSvQRJ7wRo0
-	 78/yYvzAgH7hw==
-Date: Wed, 16 Oct 2024 17:06:03 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v1 5/5] i2c: i2c-qcom-geni: Add Block event interrupt
- support
-Message-ID: <d2kffhvai5syxolobrk4g27w3f35p7v5azdy4tyvryfqnd4ohz@jxfgsubojysg>
-References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
- <20241015120750.21217-6-quic_jseerapu@quicinc.com>
+	s=arc-20240116; t=1729091286; c=relaxed/simple;
+	bh=Z+aAA1YVFXtBl05pU5c/121QeHDESV8r/TbdfNXoPb8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ivATq5h0fuoSVk/gOu3zLju3IaXA7hqoYPukpcnRHlW516/4QVUklGYD9d8jkiQY/zXuxNZZ4GqacX08xVnacSzmu6ykXnaXe3qb1ZaWu10T6mg5Vy0SN+5PCavQovJJO06PSYsx/XcLxI//EbE/mqo2JdL5sA2Kk3XcuHerqOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jymln88U; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e681ba70so16220e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729091283; x=1729696083; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1PslRAyiixMy05hfv+pu0elRVVKFMTwH/kHV4AZcAZs=;
+        b=Jymln88USYwl28zGRe/qK4hSYcbSyLt7vef0DFQJOrwbBxSAQNcgXfoG6pQm4zulCj
+         EYrdKu4qFl4E5EWcwSHQXvHDK14ap62y6skSM3fW8sKuccSbTG9rySSBMDPnwO7nInwL
+         rb+lB78hppi9QPqCqxOC0zab5kZlxVt961NL71qeDGGj4pPoVUqzgy/9q9j/TD3ucphG
+         +tWmqbPt5neh9LlUpZJPQQvqiRhWW6LsnOYbRLFEmur9IUzmvt9dO8lp58Ug5F1db2YX
+         qPtjkw8R0X1CIWC4Pk3g6mprmtq4dkrGOLra4NEYW4fIxQwDfGtNNbZoO6St2E5ZjwzW
+         RyQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729091283; x=1729696083;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1PslRAyiixMy05hfv+pu0elRVVKFMTwH/kHV4AZcAZs=;
+        b=Iyok86bcAZxO5EPdbhhaWfM1pLZW3FDTvEXiE3jAEFt+lFt/tDKyHoy4lU1+Ks2gKJ
+         JPTWUTccbMttLpBqsj1C3BoBNs0/oxSptCDtEWM6X6A0nTzrl5Abxb7P3ERIEEExn2xi
+         znRXaK73ZZ4AaCVGZur/AJp/bgiOjz7oITbBV7ZP2CT9V2sGGj4s/38fGyfytlcwZ+Px
+         DTPoU01rDzMhvq1s0jHKFRZz3ipVSSgyZG2fHL5rieZ0gIsYe7ERnOb/WID+XfRL+z4z
+         5sNzq7BwagTlyK1LQvTqJCpZRTcdh7Loxy4Y3r1ahiAYu1k9NKOIbrY6iRu5UCEAis1t
+         ASRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWx8y1UTHXHj7GFfFNG8Cpwit0ne/rw4j1gx6XQbWL4BBlfOChifU9XkSVfCS3YpT2rZMZVGJQhKVkv4+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoF6+T2//W5vHXBp/bMEOrGQM/q1rKykjgBQeLcQdcSjNsRBFl
+	HGa+YkW9OjGxB2pFuzMhq2Qn4YuOPcjD6GV8VnV3WkJeqEt0zQioyUm5Wx+SYwgElhwBZ9laQ0m
+	RKubv
+X-Google-Smtp-Source: AGHT+IE8qTbydoevA3YP8CtQdUFEfTyV1QlrGPTvMKHOFRvsY7d+9Jz+6u+5/v+W/grEx7Z43cy5Wg==
+X-Received: by 2002:a05:6512:1092:b0:539:d0c4:5b53 with SMTP id 2adb3069b0e04-53a04d026a5mr642432e87.4.1729091282178;
+        Wed, 16 Oct 2024 08:08:02 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:a496:e3cd:3667:2787])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c767csm52155285e9.48.2024.10.16.08.07.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 08:08:00 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Wed, 16 Oct 2024 17:07:53 +0200
+Subject: [PATCH fix 6.12] mm: mark mas allocation in vms_abort_munmap_vmas
+ as __GFP_NOFAIL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015120750.21217-6-quic_jseerapu@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241016-fix-munmap-abort-v1-1-601c94b2240d@google.com>
+X-B4-Tracking: v=1; b=H4sIAMjWD2cC/x2MQQ6DMAwEvxL5XKPYqXLgK6gH05riAwElLaqE+
+ HstbjPS7B7QtJo26MMBVXdrthYXugV4zlLeivZyB458p0gZJ/vh8i2LbCjjWj/IKcUxU0osAj7
+ bqnpzXQ7gFHJHDI/z/AO5lIbdbAAAAA==
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729091278; l=6984;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=Z+aAA1YVFXtBl05pU5c/121QeHDESV8r/TbdfNXoPb8=;
+ b=qOgRxn5GRAhrrVyL6Of2U5YlGDeq3PvmgjTLpJnUdsaVm1Mv/uWaa0L7e7IRhHGHA2+O2jMEA
+ CnDYlXRiESIAh0wpolV7ehPyIeM3AfZcdn8XGhZ+LlBi4c8JS88iXzl
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-Hi Jyothi,
+vms_abort_munmap_vmas() is a recovery path where, on entry, some VMAs
+have already been torn down halfway (in a way we can't undo) but are
+still present in the maple tree.
 
-...
+At this point, we *must* remove the VMAs from the VMA tree, otherwise
+we get UAF.
 
-> @@ -523,26 +576,49 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  	enum dma_transfer_direction dma_dirn;
->  	struct dma_async_tx_descriptor *desc;
->  	int ret;
-> +	struct gpi_multi_xfer *gi2c_gpi_xfer;
-> +	dma_cookie_t cookie;
->  
->  	peripheral = config->peripheral_config;
-> -
-> -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 1);
-> -	if (!dma_buf)
-> +	gi2c_gpi_xfer = &peripheral->multi_xfer;
-> +	gi2c_gpi_xfer->msg_idx_cnt = cur_msg_idx;
-> +	dma_buf = gi2c_gpi_xfer->dma_buf[gi2c_gpi_xfer->buf_idx];
-> +	addr = gi2c_gpi_xfer->dma_addr[gi2c_gpi_xfer->buf_idx];
-> +
-> +	dma_buf = i2c_get_dma_safe_msg_buf(&msgs[gi2c_gpi_xfer->msg_idx_cnt], 1);
-> +	if (!dma_buf) {
-> +		gi2c->err = -ENOMEM;
->  		return -ENOMEM;
-> +	}
->  
->  	if (op == I2C_WRITE)
->  		map_dirn = DMA_TO_DEVICE;
->  	else
->  		map_dirn = DMA_FROM_DEVICE;
->  
-> -	addr = dma_map_single(gi2c->se.dev->parent, dma_buf, msg->len, map_dirn);
-> +	addr = dma_map_single(gi2c->se.dev->parent,
-> +			      dma_buf, msgs[gi2c_gpi_xfer->msg_idx_cnt].len,
+Because removing VMA tree nodes can require memory allocation, the
+existing code has an error path which tries to handle this by
+reattaching the VMAs; but that can't be done safely.
 
-You could save msgs[gi2c_gpi_xfer->msg_idx_cnt] in a separate
-variable to avoid this extra indexing.
+A nicer way to fix it would probably be to preallocate enough maple
+tree nodes for the removal before the point of no return, or something
+like that; but for now, fix it the easy and kinda ugly way, by marking
+this allocation __GFP_NOFAIL.
 
-> +			      map_dirn);
->  	if (dma_mapping_error(gi2c->se.dev->parent, addr)) {
-> -		i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
-> +		i2c_put_dma_safe_msg_buf(dma_buf, &msgs[gi2c_gpi_xfer->msg_idx_cnt],
-> +					 false);
-> +		gi2c->err = -ENOMEM;
->  		return -ENOMEM;
->  	}
->  
-> +	if (gi2c->is_tx_multi_xfer) {
-> +		if (((gi2c_gpi_xfer->msg_idx_cnt + 1) % NUM_MSGS_PER_IRQ))
-> +			peripheral->flags |= QCOM_GPI_BLOCK_EVENT_IRQ;
-> +		else
-> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
-> +
-> +		/* BEI bit to be cleared for last TRE */
-> +		if (gi2c_gpi_xfer->msg_idx_cnt == gi2c->num_msgs - 1)
-> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
-> +	}
-> +
->  	/* set the length as message for rx txn */
-> -	peripheral->rx_len = msg->len;
-> +	peripheral->rx_len = msgs[gi2c_gpi_xfer->msg_idx_cnt].len;
->  	peripheral->op = op;
->  
->  	ret = dmaengine_slave_config(dma_chan, config);
-> @@ -560,25 +636,56 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->  	else
->  		dma_dirn = DMA_DEV_TO_MEM;
->  
-> -	desc = dmaengine_prep_slave_single(dma_chan, addr, msg->len, dma_dirn, flags);
-> +	desc = dmaengine_prep_slave_single(dma_chan, addr,
-> +					   msgs[gi2c_gpi_xfer->msg_idx_cnt].len,
-> +					   dma_dirn, flags);
->  	if (!desc) {
->  		dev_err(gi2c->se.dev, "prep_slave_sg failed\n");
-> -		ret = -EIO;
-> +		gi2c->err = -EIO;
->  		goto err_config;
->  	}
->  
->  	desc->callback_result = i2c_gpi_cb_result;
->  	desc->callback_param = gi2c;
->  
-> -	dmaengine_submit(desc);
-> -	*buf = dma_buf;
-> -	*dma_addr_p = addr;
-> +	if (!((msgs[cur_msg_idx].flags & I2C_M_RD) && op == I2C_WRITE)) {
-> +		gi2c_gpi_xfer->msg_idx_cnt++;
-> +		gi2c_gpi_xfer->buf_idx = (cur_msg_idx + 1) % QCOM_GPI_MAX_NUM_MSGS;
-> +	}
-> +	cookie = dmaengine_submit(desc);
-> +	if (dma_submit_error(cookie)) {
-> +		dev_err(gi2c->se.dev,
-> +			"%s: dmaengine_submit failed (%d)\n", __func__, cookie);
-> +		return -EINVAL;
+Fixes: 4f87153e82c4 ("mm: change failure of MAP_FIXED to restoring the gap on failure")
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+This can be tested with the following reproducer (on a kernel built with
+CONFIG_KASAN=y, CONFIG_FAILSLAB=y, CONFIG_FAULT_INJECTION_DEBUG_FS=y,
+with the reproducer running as root):
 
-goto err_config?
+```
 
-> +	}
->  
-> +	if (gi2c->is_tx_multi_xfer) {
-> +		dma_async_issue_pending(gi2c->tx_c);
-> +		if ((cur_msg_idx == (gi2c->num_msgs - 1)) ||
-> +		    (gi2c_gpi_xfer->msg_idx_cnt >=
-> +		     QCOM_GPI_MAX_NUM_MSGS + gi2c_gpi_xfer->freed_msg_cnt)) {
-> +			ret = gpi_multi_desc_process(gi2c->se.dev, gi2c_gpi_xfer,
-> +						     gi2c->num_msgs, XFER_TIMEOUT,
-> +						     &gi2c->done);
-> +			if (ret) {
-> +				dev_dbg(gi2c->se.dev,
-> +					"I2C multi write msg transfer timeout: %d\n",
-> +					ret);
+  typeof(x) __res = (x);      \
+  if (__res == (typeof(x))-1) \
+    err(1, "SYSCHK(" #x ")"); \
+  __res;                      \
+})
 
-if you are returning an error, then print an error.
+static void write_file(char *name, char *buf) {
+  int fd = open(name, O_WRONLY);
+  if (fd == -1)
+    err(1, "unable to open for writing: %s", name);
+  if (SYSCHK(write(fd, buf, strlen(buf))) != strlen(buf))
+    errx(1, "write %s", name);
+  SYSCHK(close(fd));
+}
 
-> +				gi2c->err = -ETIMEDOUT;
+int main(void) {
+  // make a large area with a bunch of VMAs
+  char *area = SYSCHK(mmap(NULL, AREA_SIZE, PROT_NONE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0));
+  for (int off=0; off<AREA_SIZE; off += 0x2000)
+    SYSCHK(mmap(area+off, 0x1000, PROT_READ, MAP_FIXED|MAP_PRIVATE|MAP_ANONYMOUS, -1, 0));
 
-gi2c->err = ret?
+  // open a file whose mappings use usbdev_vm_ops, and map it in part of this area
+  int map_fd = SYSCHK(open("/dev/bus/usb/001/001", O_RDONLY));
+  void *map = SYSCHK(mmap(area, 0x1000, PROT_READ, MAP_SHARED|MAP_FIXED, map_fd, 0));
+  close(map_fd);
 
-> +				goto err_config;
-> +			}
-> +		}
-> +	} else {
-> +		/* Non multi descriptor message transfer */
-> +		*buf = dma_buf;
-> +		*dma_addr_p = addr;
-> +	}
->  	return 0;
->  
->  err_config:
-> -	dma_unmap_single(gi2c->se.dev->parent, addr, msg->len, map_dirn);
-> -	i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
-> +	dma_unmap_single(gi2c->se.dev->parent, addr,
-> +			 msgs[cur_msg_idx].len, map_dirn);
-> +	i2c_put_dma_safe_msg_buf(dma_buf, &msgs[cur_msg_idx], false);
->  	return ret;
+  // make RWX mapping request fail late
+  SYSCHK(prctl(65/*PR_SET_MDWE*/, 1/*PR_MDWE_REFUSE_EXEC_GAIN*/, 0, 0, 0));
 
-I would have one more label here:
+  // some random other file
+  int fd = SYSCHK(open("/etc/passwd", O_RDONLY));
 
-   out:
-	gi2c->err = ret;
+  /* disarm for now */
+  write_file("/sys/kernel/debug/failslab/probability", "0");
 
-	return ret;
+  /* fail allocations of maple_node... */
+  write_file("/sys/kernel/debug/failslab/cache-filter", "Y");
+  write_file("/sys/kernel/slab/maple_node/failslab", "1");
+  /* ... even though it's a sleepable allocation... */
+  write_file("/sys/kernel/debug/failslab/ignore-gfp-wait", "N");
+  /* ... in this task... */
+  write_file("/sys/kernel/debug/failslab/task-filter", "Y");
+  write_file("/proc/self/make-it-fail", "1");
+  /* ... every time... */
+  write_file("/sys/kernel/debug/failslab/times", "-1");
+  /* ... after 8 successful allocations (value chosen experimentally)... */
+  write_file("/sys/kernel/debug/failslab/space", "2048"); // one object is 256
+  /* ... and print where the allocations actually failed... */
+  write_file("/sys/kernel/debug/failslab/verbose", "2");
+  /* ... and that's it, arm it */
+  write_file("/sys/kernel/debug/failslab/probability", "100");
 
-in order to avoid always assigning twice
+  // This mmap request will fail late due to MDWE.
+  // The error recovery path will attempt to clear out the VMA pointers with a
+  // spanning_store (which will be blocked by error injection).
+  mmap(area, AREA_SIZE, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_FIXED, fd, 0);
 
->  }
->  
-> @@ -590,6 +697,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  	unsigned long time_left;
->  	dma_addr_t tx_addr, rx_addr;
->  	void *tx_buf = NULL, *rx_buf = NULL;
-> +	struct gpi_multi_xfer *tx_multi_xfer;
->  	const struct geni_i2c_clk_fld *itr = gi2c->clk_fld;
->  
->  	config.peripheral_config = &peripheral;
-> @@ -603,6 +711,39 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  	peripheral.set_config = 1;
->  	peripheral.multi_msg = false;
->  
-> +	gi2c->gpi_config = &peripheral;
-> +	gi2c->num_msgs = num;
-> +	gi2c->is_tx_multi_xfer = false;
-> +	gi2c->tx_irq_cnt = 0;
-> +
-> +	tx_multi_xfer = &peripheral.multi_xfer;
-> +	tx_multi_xfer->msg_idx_cnt = 0;
-> +	tx_multi_xfer->buf_idx = 0;
-> +	tx_multi_xfer->unmap_msg_cnt = 0;
-> +	tx_multi_xfer->freed_msg_cnt = 0;
-> +	tx_multi_xfer->irq_msg_cnt = 0;
-> +	tx_multi_xfer->irq_cnt = 0;
+  /* disarm */
+  write_file("/sys/kernel/debug/failslab/probability", "0");
 
-you can initialize tx_multi_xfer to "{ };" to avoid all these
-" = 0"
+  SYSCHK(munmap(map, 0x1000)); // UAF expected here
+  system("cat /proc/$PPID/maps");
+}
+```
 
-> +
-> +	/*
-> +	 * If number of write messages are four and higher then
-> +	 * configure hardware for multi descriptor transfers with BEI.
-> +	 */
-> +	if (num >= MIN_NUM_OF_MSGS_MULTI_DESC) {
-> +		gi2c->is_tx_multi_xfer = true;
-> +		for (i = 0; i < num; i++) {
-> +			if (msgs[i].flags & I2C_M_RD) {
-> +				/*
-> +				 * Multi descriptor transfer with BEI
-> +				 * support is enabled for write transfers.
-> +				 * Add BEI optimization support for read
-> +				 * transfers later.
-> +				 */
-> +				gi2c->is_tx_multi_xfer = false;
-> +				break;
-> +			}
-> +		}
-> +	}
-> +
->  	for (i = 0; i < num; i++) {
->  		gi2c->cur = &msgs[i];
->  		gi2c->err = 0;
-> @@ -613,14 +754,16 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  			peripheral.stretch = 1;
->  
->  		peripheral.addr = msgs[i].addr;
-> +		if (i > 0 && (!(msgs[i].flags & I2C_M_RD)))
-> +			peripheral.multi_msg = false;
->  
-> -		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
-> +		ret =  geni_i2c_gpi(gi2c, msgs, i, &config,
+Result:
+```
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 100, space 256, times -1
+CPU: 3 UID: 0 PID: 607 Comm: unmap-fail Not tainted 6.12.0-rc3-00013-geca631b8fe80 #518
+[...]
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x80/0xa0
+ should_fail_ex+0x4d3/0x5c0
+[...]
+ should_failslab+0xc7/0x130
+ kmem_cache_alloc_noprof+0x73/0x3a0
+[...]
+ mas_alloc_nodes+0x3a3/0x690
+ mas_nomem+0xaa/0x1d0
+ mas_store_gfp+0x515/0xa80
+[...]
+ mmap_region+0xa96/0x2590
+[...]
+ do_mmap+0x71e/0xfe0
+[...]
+ vm_mmap_pgoff+0x17a/0x2f0
+[...]
+ ksys_mmap_pgoff+0x2ee/0x460
+ do_syscall_64+0x68/0x140
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[...]
+ </TASK>
+mmap: unmap-fail: (607) Unable to abort munmap() operation
+==================================================================
+BUG: KASAN: slab-use-after-free in dec_usb_memory_use_count+0x365/0x430
+Read of size 8 at addr ffff88810e9ba8b8 by task unmap-fail/607
 
-what is the point of passing 'i' if you always refer to msgs[i]
-in geni_i2c_gpi()?
+CPU: 3 UID: 0 PID: 607 Comm: unmap-fail Not tainted 6.12.0-rc3-00013-geca631b8fe80 #518
+[...]
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x66/0xa0
+ print_report+0xce/0x670
+[...]
+ kasan_report+0xf7/0x130
+[...]
+ dec_usb_memory_use_count+0x365/0x430
+ remove_vma+0x76/0x120
+ vms_complete_munmap_vmas+0x447/0x750
+ do_vmi_align_munmap+0x4b9/0x700
+[...]
+ do_vmi_munmap+0x164/0x2e0
+ __vm_munmap+0x128/0x2a0
+[...]
+ __x64_sys_munmap+0x59/0x80
+ do_syscall_64+0x68/0x140
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[...]
+ </TASK>
 
->  				    &tx_addr, &tx_buf, I2C_WRITE, gi2c->tx_c);
->  		if (ret)
->  			goto err;
->  
->  		if (msgs[i].flags & I2C_M_RD) {
-> -			ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
-> +			ret =  geni_i2c_gpi(gi2c, msgs, i, &config,
->  					    &rx_addr, &rx_buf, I2C_READ, gi2c->rx_c);
->  			if (ret)
->  				goto err;
-> @@ -628,18 +771,28 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->  			dma_async_issue_pending(gi2c->rx_c);
->  		}
->  
-> -		dma_async_issue_pending(gi2c->tx_c);
-> -
-> -		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-> -		if (!time_left)
-> -			gi2c->err = -ETIMEDOUT;
-> +		if (!gi2c->is_tx_multi_xfer) {
-> +			dma_async_issue_pending(gi2c->tx_c);
-> +			time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-> +			if (!time_left) {
-> +				dev_err(gi2c->se.dev, "%s:I2C timeout\n", __func__);
-> +				gi2c->err = -ETIMEDOUT;
-> +			}
-> +		}
->  
->  		if (gi2c->err) {
->  			ret = gi2c->err;
->  			goto err;
->  		}
->  
-> -		geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
-> +		if (!gi2c->is_tx_multi_xfer) {
-> +			geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
-> +		} else {
-> +			if (gi2c->tx_irq_cnt != tx_multi_xfer->irq_cnt) {
+Allocated by task 607:
+ kasan_save_stack+0x33/0x60
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0xaa/0xb0
+ usbdev_mmap+0x1a0/0xaf0
+ mmap_region+0xf6e/0x2590
+ do_mmap+0x71e/0xfe0
+ vm_mmap_pgoff+0x17a/0x2f0
+ ksys_mmap_pgoff+0x2ee/0x460
+ do_syscall_64+0x68/0x140
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-   else if (...) {
-   	...
-   }
+Freed by task 607:
+ kasan_save_stack+0x33/0x60
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x4f/0x70
+ kfree+0x148/0x450
+ vms_clean_up_area+0x188/0x220
+ mmap_region+0xf1b/0x2590
+ do_mmap+0x71e/0xfe0
+ vm_mmap_pgoff+0x17a/0x2f0
+ ksys_mmap_pgoff+0x2ee/0x460
+ do_syscall_64+0x68/0x140
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[...]
+==================================================================
+```
+---
+ mm/vma.h | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-Andi
+diff --git a/mm/vma.h b/mm/vma.h
+index 819f994cf727..ebd78f1577f3 100644
+--- a/mm/vma.h
++++ b/mm/vma.h
+@@ -241,15 +241,9 @@ static inline void vms_abort_munmap_vmas(struct vma_munmap_struct *vms,
+ 	 * failure method of leaving a gap where the MAP_FIXED mapping failed.
+ 	 */
+ 	mas_set_range(mas, vms->start, vms->end - 1);
+-	if (unlikely(mas_store_gfp(mas, NULL, GFP_KERNEL))) {
+-		pr_warn_once("%s: (%d) Unable to abort munmap() operation\n",
+-			     current->comm, current->pid);
+-		/* Leaving vmas detached and in-tree may hamper recovery */
+-		reattach_vmas(mas_detach);
+-	} else {
+-		/* Clean up the insertion of the unfortunate gap */
+-		vms_complete_munmap_vmas(vms, mas_detach);
+-	}
++	mas_store_gfp(mas, NULL, GFP_KERNEL|__GFP_NOFAIL);
++	/* Clean up the insertion of the unfortunate gap */
++	vms_complete_munmap_vmas(vms, mas_detach);
+ }
+ 
+ int
+
+---
+base-commit: eca631b8fe808748d7585059c4307005ca5c5820
+change-id: 20241016-fix-munmap-abort-2330b61332aa
+-- 
+Jann Horn <jannh@google.com>
+
 
