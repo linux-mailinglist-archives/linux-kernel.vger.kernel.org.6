@@ -1,117 +1,96 @@
-Return-Path: <linux-kernel+bounces-368250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F70E9A0D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:49:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B4B9A0D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4913C1F2747E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:49:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1706A1F2626C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D6520CCF8;
-	Wed, 16 Oct 2024 14:49:19 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92E014A4E2;
-	Wed, 16 Oct 2024 14:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4232020F5BE;
+	Wed, 16 Oct 2024 14:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyGXtRR3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C6A208D95;
+	Wed, 16 Oct 2024 14:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729090159; cv=none; b=Yd+hcDMx7/WbbzO+rmLr/w4arHmrncCYGLzdp/T8JtPbqKJYBkCzDTdor4DSb4XOaM65Sos8ADPmlUtAlhaVzsn75Q5KLy1trl2fJNG6I/QMTeoFgonl0jgMhYjjI4n2SaLbX2phsHMYYGcKieLtvYpylqR19teLjdm/tjFG9TA=
+	t=1729090362; cv=none; b=Eu0A7RnDe481qeGRylvqUX/qqPNU6cdTZdzRfklwY3aNbE710hPA4IyDywMYBuFi2mzPwyq4YXBHNMb9zGGOKJ6S5gfYXlHTNsrtS68z6ywRHnHBweBLMASBFKz3vmOalxZ9H81sXtURO0IdI7fWbKRLi2O1INDO1Y0FoEiwJ+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729090159; c=relaxed/simple;
-	bh=BRLkgOoXP0ReLybVRqT4/mfy3F+qbEOdkaefS2a66Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1dKrEvWkXC8kG/oog/2HsqAckZ/8Qi16glzQvfXh3jLj3XFfI+b/mZqJxFTvoDm5hUeMhJ2i/T0jW8DdK/gLxINftypoYBX58saZBsDYWwm/fbuftjsYBOpVlmOCSSL09bI9kXT+CLGzVCcSmciIEFpXiQl6klEJQhTrg/hbJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by mail.home.local (8.17.1/8.17.1/Submit) id 49GEn9m9020915;
-	Wed, 16 Oct 2024 16:49:09 +0200
-Date: Wed, 16 Oct 2024 16:49:09 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] tools/nolibc/stdlib: fix getenv() with empty environment
-Message-ID: <Zw/SZad0QR8eyNnI@1wt.eu>
-References: <20241016-nolibc-getenv-v1-1-8bc11abd486d@linutronix.de>
- <Zw+uxLIklMHSSxTu@1wt.eu>
- <20241016143300-a80ab677-e0bc-444e-9bfa-1670069b7a77@linutronix.de>
+	s=arc-20240116; t=1729090362; c=relaxed/simple;
+	bh=v103hbZX+LZolw2kD4hSjZ3f8P/BTbFXIqM97aLiLHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jXPVuUHkW877LcVAKb707sjXVa0T5ieJgjO5dMtCsmN0/4oQK983MCsWT6Q3fwz3S2/34104f//j4rI+1k2rcXCwcgn5yVliMe0kCCj5PfFyR14YRV2kRZeyCwtx+0kmlTgHVW8SOY0oz8mavQmKJozz6FG2tonLxFFsp41HHJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyGXtRR3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 133DBC4CEC7;
+	Wed, 16 Oct 2024 14:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729090362;
+	bh=v103hbZX+LZolw2kD4hSjZ3f8P/BTbFXIqM97aLiLHc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HyGXtRR3E6+Ats5x51UiGjhsbcrEpR8bMviJhznypKbD7XvU+ij8JHI83BKWebZIT
+	 OonZKrO59GuXMlKJGpZNKyNX84NyVlbRkJ/bvHQaMEgkYSPPEnoDIPo9ro/uT2Y6m1
+	 StNkJsVtjr/R9pQfN5oDGvgmvlgqk8sFlo4cscW7A5AlDJSX5pZTb+4eHCAc3SOA/X
+	 orB8g5YTaG29iQ91RuendWoOOnrmBSYjHkWrgosVRvo39i5birIKoalu554Mm6XUIL
+	 YViIWl3YjUUqCa8wIjcb8ZR8X5YCBO+nxpjKroyvM8JWfeMTK7gLLgTn/BPBEUTpfj
+	 iImX2WxNiW8Kw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1t15OK-000000006UF-3kYl;
+	Wed, 16 Oct 2024 16:52:49 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 0/6] arm64: dts: qcom: x1e80100: fix nvme regulator boot glitch
+Date: Wed, 16 Oct 2024 16:51:06 +0200
+Message-ID: <20241016145112.24785-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241016143300-a80ab677-e0bc-444e-9bfa-1670069b7a77@linutronix.de>
 
-On Wed, Oct 16, 2024 at 03:01:08PM +0200, Thomas Weißschuh wrote:
-> Ah, environ being assignable is something I did not consider.
+The NVMe regulator has been left enabled by the boot firmware. Mark it
+as such to avoid disabling the regulator temporarily during boot.
 
-Yes, it is. Long ago, in nolibc when there were no global variables,
-I used to have this in my programs:
+Johan
 
-  char **environ;
-  int main(int argc, char **argv, char **envp)
-  {
-      environ = envp;
-      ...
-  }
 
-And it used to work pretty well with any libc.
+Johan Hovold (6):
+  arm64: dts: qcom: x1e78100-t14s: fix nvme regulator boot glitch
+  arm64: dts: qcom: x1e80100-crd: fix nvme regulator boot glitch
+  arm64: dts: qcom: x1e80100-vivobook-s15: fix nvme regulator boot
+    glitch
+  arm64: dts: qcom: x1e80100-yoga-slim7x: fix nvme regulator boot glitch
+  arm64: dts: qcom: x1e80100-microsoft-romulus: fix nvme regulator boot
+    glitch
+  arm64: dts: qcom: x1e80100-qcp: fix nvme regulator boot glitch
 
-> > >  	int idx, i;
-> > >  
-> > > -	if (environ) {
-> > > +	if (*environ) {
-> > >  		for (idx = 0; environ[idx]; idx++) {
-> > >  			for (i = 0; name[i] && name[i] == environ[idx][i];)
-> > >  				i++;
-> > 
-> > However as a quick note, if we decide we don't care about environ being
-> > NULL, and since this is essentially a cleanup, why not even get rid of
-> > the whole "if" condition, since the loop takes care of it ?
-> 
-> It's not only a cleanup.
+ arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts | 2 ++
+ arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts    | 2 ++
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts                  | 2 ++
+ arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 2 ++
+ arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi   | 2 ++
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                  | 2 ++
+ 6 files changed, 12 insertions(+)
 
-OK.
+-- 
+2.45.2
 
-> Without this patch I see crashes due to illegal memory accesses.
-> Not reliably, only under special conditions and only on s390, but
-> crashes nevertheless.
-
-But I don't understand how the patch could make them disappear, as it
-removes an extra check. So if environ was bad before, and was not null,
-it remains bad and continues to be dereferenced. And if it was null,
-it wouldn't enter the block but will now.
-
-> It's the same binary with the same kernel that sometimes works and
-> sometimes crashes.
-> The proposed fix makes the issue go away.
-
-Maybe it's related to the size of the executable or code optimization
-with some offending parts that could be eliminated by the compiler in
-fact.
-
-It's also possible we've subtly broke something in the s390 init code
-in a way that slightly violates the official ABI (stack alignment etc)
-and that could explain the randomness.
-
-> But my original analysis looks wrong, I'll investigate some more.
-
-OK!
-
-> User process fault: interruption code 0010 ilc:2 in test_nanosleep[43c4,1000000+8000]
-> Failing address: 0000000000000000 TEID: 0000000000000800
-(...)
-
-Unfortunately I'm not fluent in s390 :-/
-
-Willy
 
