@@ -1,76 +1,151 @@
-Return-Path: <linux-kernel+bounces-368608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300989A1233
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:01:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B729A1239
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5F41B23287
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A951F23209
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3EC210195;
-	Wed, 16 Oct 2024 19:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8AC2141A1;
+	Wed, 16 Oct 2024 19:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kM0dDbt2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="R3JkJPB4"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8317412E75;
-	Wed, 16 Oct 2024 19:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D70218B498
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729105251; cv=none; b=sU+0V82KE8yWwUkmOgGGmC1z63i21QRBXlQ78cwnr+MzkRNcojnO76JXkKesSJUqE0dWrUAzsQXk74MM7rgdA6y7r5Ggrx03vewToq5xtjZdyvTLJV8+Eu6E6VnhfW7U2mwwXTfEg4ES23JhLxdSfRlft4sUEyJJPjXGcDN3aIc=
+	t=1729105437; cv=none; b=sqZra9RFmiN/v6tTJzy3vExkj1QpmL1HrIwSr+96kWJWW8pBD7h0Rr3giXP3H7AZxot4HO7BmKBHD/bpqclscAPZUnvjiX/YMxDAOYhxFGeAeZlEMKOWLs6leHax/UZDRvIC6W7IdqzJdTc7pIzebtRxpAhKNLIoadwVak9zeYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729105251; c=relaxed/simple;
-	bh=2vHhwmlrazGFWY252vI+p1h6I8ahjtXaTN0s3tlNPvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIO10CmZQtwM+6bFglgtW9ECfwORwUNiG6++5hvjH68CU030g+8IB0CsFGImzf5V/sz/bjhr9Y5urG8GbacKpABH9HSBa6u98xaMJrvqco+YJ9aArZ7u93UhQfIwa46utWo0r11weAdJ22xhetP4Wj78GGURBrUlUtZdQ4LiIiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kM0dDbt2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC14C4CEC5;
-	Wed, 16 Oct 2024 19:00:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729105251;
-	bh=2vHhwmlrazGFWY252vI+p1h6I8ahjtXaTN0s3tlNPvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kM0dDbt2RnsUPlhBMnvWYBJaxGqEPZ4OF7LesfYIcFiTq4QjcUW7jzQcwEB0yAqdy
-	 tMjxoc1Kc2cIHyg0nTj4aS6Scmml44GN5XeylIfQOwee2wGC8FV2BNXPRcruh+Cx76
-	 J/vOlUx8Wbm1+/QpCkIGt996g25qUmHl7DYFGCR+YBc4zkfiTBI+/7SCSawGglLAd/
-	 WwjUQgjiUel0gmX2tbFO/kBHV3+eVgi8snQYdVFNIxsb8fggVx89sqlP8x/UfhaYsi
-	 5BhEK1V+k6kMr2i+QFTS4daz7X8XMoH7/5b4FH5DFMqtKFTjhGlkDSQYaKTyzrTAJO
-	 sYTZqlDNv7f0A==
-Date: Wed, 16 Oct 2024 20:00:46 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wang Hai <wanghai38@huawei.com>
-Cc: ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
-	somnath.kotur@broadcom.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	VenkatKumar.Duvvuru@emulex.com, zhangxiaoxu5@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net] be2net: fix potential memory leak in be_xmit()
-Message-ID: <20241016190046.GO2162@kernel.org>
-References: <20241015144802.12150-1-wanghai38@huawei.com>
+	s=arc-20240116; t=1729105437; c=relaxed/simple;
+	bh=IdGPXBYuC+gFWtEcqOsuKc1VFFYBfDflbDi3vzbNnYk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tt6Vnm4ImU9pNJJrw8689i3q/Hnm2LTWySSeXUe4MUsa9m/X8b53Z+6AHpLAPNwTqn88CxNAhGWK5fR0k6q4/xhBMQrWdICjHXWN9Pq8xdT1bijILVz024mhk48VoQ4W0RAyrqqPMuuf8FD3lS1RmDmDAVPKyQm8U0ZnFOBHC64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=R3JkJPB4; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a3b450320aso855705ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1729105433; x=1729710233; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CxyFXAuH+mgf3dl67t38IiOCtsPnCcipqPsettp6piQ=;
+        b=R3JkJPB4pNIN4SIXZGpVy8KAk/U2/3+wcfCfjeBT4pUb4yeHnPfrtaPmumrof7m+jd
+         R6i4g2nth/WJYVWLNdKm3E7QgTPdNzmfYeDCRgKy9Kis2Nr7u1UeOY/B+djl0adNc724
+         4DU5B6/qRqaiskPDuoQN1ZDTdWeLvTZBEECuLuVwRVZuPJQj3MN4Xra/9Hn8s/Zl/3qh
+         NG+bOR8uZYrGsiRBOxz1UAtdvToXPYzzLimM89eOpcAlbvIge46uh8Sgl9bLl3h2NXvO
+         ntuLjS7XvvGMsFf+DWlyeevYdo0KAnRNm8c+rmExXsrummjaYVjiDMRuU0KTyCPfHv8R
+         I1DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729105433; x=1729710233;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CxyFXAuH+mgf3dl67t38IiOCtsPnCcipqPsettp6piQ=;
+        b=cWUj4g6P88SLnGZuSdY597CR/Jcotxob413MOOSWJowJmINFo7LfLWo/bOqS0Nj4lF
+         OylteGuTT+g/PHpLSpU6v2NyRZAZze9ZCHfZSvOiGtFHuIsbrHNMIdlUb66paV9+qiCI
+         PxPk2VycKvoCq87MFr1Da5v6LyrMyP1vDTxO+4F8Un7AlwWST59imejuNqigTznENnHz
+         iBmI9MO1XgRO9sikLsgFPgHYK+cqcjvHZDAwZHUMBQf0awzQaovpXbrAJh3Ufjn5NqYA
+         yErqZjTY6fsIPdNtkmDPhkiJ6ptiNfH/IvOz+0etmDoLyNM5yzFi5HwKNsu4/ByH2NGv
+         jTjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtCObbV45Encymb7TS7xxpWlWCi/COZOt1hNuemmvsGjeCP9Y6a8nIT6zffleS/UFKz+ujzGh+oHWcgUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3CK2KWOKCTG0sImYWtuBvCxfjPewR8T0MUnJcP6xhjP+79yYz
+	0luVmqm93T0hPTngr+xVicneMweY3D4mZWzUdpiOLLPcxVLIdw//cpdboXXcg5A=
+X-Google-Smtp-Source: AGHT+IFN4BQomLzr5kcRH/fIUJNMPAHP7KDnpJqCP2efyNjSfr3q1aTjpUQkcj+hd8dhGj91RZQEZw==
+X-Received: by 2002:a05:6e02:1c21:b0:3a0:bc39:2d72 with SMTP id e9e14a558f8ab-3a3dc4cc8a8mr49777475ab.12.1729105433066;
+        Wed, 16 Oct 2024 12:03:53 -0700 (PDT)
+Received: from atishp.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6c403csm3651632a12.35.2024.10.16.12.03.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 12:03:52 -0700 (PDT)
+From: Atish Patra <atishp@rivosinc.com>
+To: apatel@ventanamicro.com
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Atish Patra <atishp@rivosinc.com>
+Subject: Re: [01/13] RISC-V: KVM: Order the object files alphabetically
+Date: Wed, 16 Oct 2024 12:03:49 -0700
+Message-Id: <20241016190349.640640-1-atishp@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240719160913.342027-2-apatel@ventanamicro.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015144802.12150-1-wanghai38@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 15, 2024 at 10:48:02PM +0800, Wang Hai wrote:
-> The be_xmit() returns NETDEV_TX_OK without freeing skb
-> in case of be_xmit_enqueue() fails, add dev_kfree_skb_any() to fix it.
+> Order the object files alphabetically in the Makefile so that
+> it is very predictable inserting new object files in the future.
 > 
-> Fixes: 760c295e0e8d ("be2net: Support for OS2BMC.")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 > ---
-> v1->v2: Add label drop_skb for dev_kfree_skb_any()
+>  arch/riscv/kvm/Makefile | 26 ++++++++++++++------------
+>  1 file changed, 14 insertions(+), 12 deletions(-)
+> diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
+> index c2cacfbc06a0..c1eac0d093de 100644
+> --- a/arch/riscv/kvm/Makefile
+> +++ b/arch/riscv/kvm/Makefile
+> @@ -9,27 +9,29 @@ include $(srctree)/virt/kvm/Makefile.kvm
+>  
+>  obj-$(CONFIG_KVM) += kvm.o
+>  
+> +# Ordered alphabetically
+> +kvm-y += aia.o
+> +kvm-y += aia_aplic.o
+> +kvm-y += aia_device.o
+> +kvm-y += aia_imsic.o
+>  kvm-y += main.o
+> -kvm-y += vm.o
+> -kvm-y += vmid.o
+> -kvm-y += tlb.o
+>  kvm-y += mmu.o
+> +kvm-y += tlb.o
+>  kvm-y += vcpu.o
+>  kvm-y += vcpu_exit.o
+>  kvm-y += vcpu_fp.o
+> -kvm-y += vcpu_vector.o
+>  kvm-y += vcpu_insn.o
+>  kvm-y += vcpu_onereg.o
+> -kvm-y += vcpu_switch.o
+> +kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o
+>  kvm-y += vcpu_sbi.o
+> -kvm-$(CONFIG_RISCV_SBI_V01) += vcpu_sbi_v01.o
+>  kvm-y += vcpu_sbi_base.o
+> -kvm-y += vcpu_sbi_replace.o
+>  kvm-y += vcpu_sbi_hsm.o
+> +kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_sbi_pmu.o
+> +kvm-y += vcpu_sbi_replace.o
+>  kvm-y += vcpu_sbi_sta.o
+> +kvm-$(CONFIG_RISCV_SBI_V01) += vcpu_sbi_v01.o
+> +kvm-y += vcpu_switch.o
+>  kvm-y += vcpu_timer.o
+> -kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o vcpu_sbi_pmu.o
+> -kvm-y += aia.o
+> -kvm-y += aia_device.o
+> -kvm-y += aia_aplic.o
+> -kvm-y += aia_imsic.o
+> +kvm-y += vcpu_vector.o
+> +kvm-y += vm.o
+> +kvm-y += vmid.o
+>
 
-Thanks for the update.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
