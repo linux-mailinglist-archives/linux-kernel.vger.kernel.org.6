@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-367743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788A39A0627
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:55:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548C39A0625
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB1C284D9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:55:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE25AB2133C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14ED206961;
-	Wed, 16 Oct 2024 09:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Je2FlEoG"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20C6206066;
+	Wed, 16 Oct 2024 09:55:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA9F1FAF17;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4A0205E31;
 	Wed, 16 Oct 2024 09:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072505; cv=none; b=nb7i2TXof2t71O0oyUfZQCOpiozFmuqyh1D1DDphtNWWDIknNEWSgT+II2grXdQXU30I1iuErc6j1MUhNdIaksVumo6+A87KRRsNZ8kpcwo/nGOAFZPxSoilIOc2hVDBMUsBGoDEpYngU0mT4Qh5OKEeBEXvBUb/hqgs2I0cSzs=
+	t=1729072503; cv=none; b=h8iKaoIT2nZ0Ubi3v6pPYQhrbBN2NCmNn0UO41dF+1a6DwcxGYb6LRYB9lQiD16ERtyOOJDTtevLKFFDdzrERnfcYXCkrhuBEl0hlVzAkMtj7zsNsRmHe+D2pXbWALri4vZ3CRzIs5/d+exyyuP1nnvaWs/DES3aVcqSSAEq+DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072505; c=relaxed/simple;
-	bh=B33N9NCktEKQzY6gUrpC2zYWEtyfJKfOrZV2IutPllQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SfMEX2myv9oE3BWzNybQghbw64hRq+nVfOV8pcqPATn4J/W8bDm22qYWzqbROepabEbBKfK0VxK1Fsk30Rt4W+kst17rqInH+nscp9CCH7KWO5Zd47TwU4waWAz9QKRjtMCV/mqW52+M/dx0gfLI/nUs2ZrG8AmcYMsyY2vItbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Je2FlEoG; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729072459; x=1729677259; i=markus.elfring@web.de;
-	bh=B33N9NCktEKQzY6gUrpC2zYWEtyfJKfOrZV2IutPllQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Je2FlEoG1wn1fI2boLzaSCHA9EUoNF+dLrvNmQVKhwvyLQaab6SDfCTOC7HeVHmh
-	 nhYKmAi5n/f1lkTKGFmbMuck4ek6ag7oyTa+dgjf+Ek/v5tJM36FMXypYT8lqokBM
-	 J91tjrKBcnlxetSDpRYbGDMAiD6+hOtgmGW03ADO3jbvoYeN2M5LcUf8E09Zobutg
-	 jJqZtAqssIzuEvLcT06PUQZmJ+T/NazeSZIxtFovPF0m7prsfhhGWy/m/PkODpuWs
-	 Ke8Zd4UuO0N7xca3w7dHvEIaLQBUk1He+8RaAhGyjz3HoJ/6BO8lX1jSJTPwk6Z/q
-	 DE0enNNycmOFXgIr1w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgNS-1tDiK90UFO-00Dmjj; Wed, 16
- Oct 2024 11:54:19 +0200
-Message-ID: <42c7dfe1-451b-4f70-8358-725cf3eed549@web.de>
-Date: Wed, 16 Oct 2024 11:54:14 +0200
+	s=arc-20240116; t=1729072503; c=relaxed/simple;
+	bh=8M58HS/R4VvqGI6hFuODSqEOAwlVkg+xTN/g/Q6zmBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCyDEGnv5s95+AZrojMy0sP1nz1BAJMZnlXWzAlvtGRwOLBN+yGgV02QOfFk7dHxTul7P99mptq+ayh4wktf8b8p1kYjgrPPbu/6A6i2eTC8tGoMTzVytjOu+rfyIsDzFX3c9lVTIpYMQSyS+8Zi8NVNMh7s6OauUZDroCqTf/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC7F1C4CEC5;
+	Wed, 16 Oct 2024 09:54:57 +0000 (UTC)
+Date: Wed, 16 Oct 2024 10:54:55 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-pm@vger.kernel.org,
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com,
+	wanpengli@tencent.com, vkuznets@redhat.com, rafael@kernel.org,
+	daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de,
+	lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com,
+	mtosatti@redhat.com, sudeep.holla@arm.com,
+	misono.tomohiro@fujitsu.com, maobibo@loongson.cn,
+	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+Message-ID: <Zw-Nb-o76JeHw30G@arm.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+ <20240925232425.2763385-2-ankur.a.arora@oracle.com>
+ <Zw5aPAuVi5sxdN5-@arm.com>
+ <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org>
+ <Zw6dZ7HxvcHJaDgm@arm.com>
+ <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
+ <Zw6o_OyhzYd6hfjZ@arm.com>
+ <87jze9rq15.fsf@oracle.com>
+ <95ba9d4a-b90c-c8e8-57f7-31d82722f39e@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
-To: Thomas Gleixner <tglx@linutronix.de>,
- Kevin Chen <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
- <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de> <874j5ddow1.ffs@tglx>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <874j5ddow1.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:5PdP4OeLPruXhve1TsYeyQlvYAJ06iKJriezhlJsCtBxNnKyTNx
- tNA77FMgapaBdZdjEsYh5tNukeEBponwO2/mdM2WRXYPipqo6efWLIslsPF/dmaBgTgIIHG
- 9blNFdTKuFT41sDFmnDzkCWjPZDuGGIFPMhj00W4i5aTQxEaNeisM5aBtn3C3aDSAHnMT03
- 5T/ms4ppv03+sfNzkZBWA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GDpmqTIObF8=;P+X0BK25UKhmiTH5Wz/6TTqcklE
- C/eBsj8x2ZwmC5cHvXLA49jMiMcLY12hG2naqPWceqI67SY/+2ao69O+zfdvI6GyL5qdgFNKa
- LTgbjkxJ0ViOaR9AhJE3ImYx/Peh7TArul5Gwsmtziopxz/OsXTjTUgLQMUirnBJ3oC041jW9
- 5cwMh2+qy/PK3AMzdWI5z9MAiGv1jywQDeoSjVO2MCqmo7mi86XIe2yPUCQ3BT5eYLTPM/Izh
- L53gJC5EG6dSRPnEuoanGBLnVPgBVEYd2Xyhi5TeUtXzW+zA6qlJwzdr2bjRheOcfpAnYBxnZ
- rmbnI3qUxbV2LK9C0iA3uqO14ASDbLnzZf184D9bSuIRysOwf5Kt8Ge+qBUtyqfB+8Uwt0/RT
- EY6AzoCI9idnxpm6tdLdWucU0vp6b5BaAtXKFH9gszMLuxa5h+9lsZbmJISl6BWhz1Pri6Nxl
- MdkBSew4sMwG8l/JB+GTlLlGYjbjCaBWwb6DxIfN/uxoGVgrm1aN3euOwZxkBh+p+AWORUOKC
- svcwtVudNFGDc7q+1qQXRhEvj/VITCbs95AeQrTjQNSGFjVGTOaH6k7717UuKb1S/SaHVknrK
- yjU4Re6IsAGhWDmBjJWXLNevczVm9dHuZgKTu24WK508oyp3uH8FbV6H5uMxzhv7+/BY36exo
- JwvR7ytBkatPki8VqYeuvnVd8v7dZ7+FKWp67ZvcWclXsJ/jO5eTIeiAkkTH188V5vfFmT0Nu
- HUIlA69XcqeZT8c0ZpIMEy2c/KV3HhH/2N8060jNdHqUJI0F2u5fJdaCYSrk8nc3Zdx82sE0M
- FANtqddy42xjvhpS1AWw92nw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95ba9d4a-b90c-c8e8-57f7-31d82722f39e@gentwo.org>
 
-> Making a guard variant of chained_irq_enter/exit needs some thought and
-> a general plan for cleaning the whole chained irq usage up. It's on the
-> cleanup list already with quite some other items.
+On Tue, Oct 15, 2024 at 03:40:33PM -0700, Christoph Lameter (Ampere) wrote:
+> Index: linux/arch/arm64/lib/delay.c
+> ===================================================================
+> --- linux.orig/arch/arm64/lib/delay.c
+> +++ linux/arch/arm64/lib/delay.c
+> @@ -12,6 +12,8 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/timex.h>
+> +#include <linux/sched/clock.h>
+> +#include <linux/cpuidle.h>
+> 
+>  #include <clocksource/arm_arch_timer.h>
+> 
+> @@ -67,3 +69,27 @@ void __ndelay(unsigned long nsecs)
+>  	__const_udelay(nsecs * 0x5UL); /* 2**32 / 1000000000 (rounded up) */
+>  }
+>  EXPORT_SYMBOL(__ndelay);
+> +
+> +void cpuidle_wait_for_resched_with_timeout(u64 end)
+> +{
+> +	u64 start;
+> +
+> +	while (!need_resched() && (start = local_clock_noinstr()) < end) {
+> +
+> +		if (alternative_has_cap_unlikely(ARM64_HAS_WFXT)) {
+> +
+> +			/* Processor supports waiting for a specified period */
+> +			wfet(xloops_to_cycles((end - start) * 0x5UL));
+> +
+> +		} else
+> +		if (arch_timer_evtstrm_available() && start + ARCH_TIMER_EVT_STREAM_PERIOD_US * 1000 < end) {
+> +
+> +			/* We can wait until a periodic event occurs */
+> +			wfe();
+> +
+> +		} else
+> +			/* Need to spin until the end */
+> +			cpu_relax();
+> +	}
+> +}
 
-I became also curious how API usage will evolve further here.
+The behaviour above is slightly different from the current poll_idle()
+implementation. The above is more like poll every timeout period rather
+than continuously poll until either the need_resched() condition is true
+_or_ the timeout expired. From Ankur's email, an IPI may not happen so
+we don't have any guarantee that WFET will wake up before the timeout.
+The only way for WFE/WFET to wake up on need_resched() is to use LDXR to
+arm the exclusive monitor. That's what smp_cond_load_relaxed() does.
 
+If you only need the behaviour proposed above, you might as well go for
+udelay() directly. Otherwise I think we need to revisit Ankur's
+smp_cond_load_timeout() proposal from earlier this year.
 
-> We are not adhoc adding a guard variant because guards are hip right now.
-
-Application interests are growing, aren't they?
-
-
-> And no this does not need a scoped variant ever.
-
-There are subsystems which seem to prefer such a programming interface occasionally.
-
-
-> guards are not the panacea for everything.
-Their usage might become more popular.
-
-Regards,
-Markus
+-- 
+Catalin
 
