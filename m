@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-368904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5559A164C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:56:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFFF9A164D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A6D28113F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1CFFB2199E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B50A1D5CC7;
-	Wed, 16 Oct 2024 23:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB6D1D54EE;
+	Wed, 16 Oct 2024 23:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w7btLC9q"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HRElqKO/"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CC81D5AA6
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E90D1D5CC6
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729122993; cv=none; b=LRXdrhWvrvKXoBoFYpFMBqqXR8z8fNr5Cn1SGOCMwIu6An6iAE3fYTMyxdFMZ7WtIr4W66tU2XSAwVaf3FBn5KBtUnS+HRLUqa8SgFs2/1iQT+XCCSdsqb9EwNFvWfFh/I/1cu7TeEa082ziNXpJ7xeMY8d2zE8l2vOzjTLlimw=
+	t=1729122995; cv=none; b=pfAAq0IncoV0NCKJ2Zn/Ed3K/xyOnYU3JDdP4PxHQ85mZGJTl4j56xLntzEL3d2OxWp08KaF+ODeOReGTKnTRKqKnLYDNiA5hl2LtzPhzhryqLVlko0rlRXFvoTRfoTogP8T+EKxV7It/A9QQeOflV3GmEgh1+dpe1pIzlNEq1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729122993; c=relaxed/simple;
-	bh=q0aVGZHkRF3gGqrnfUfdn795vPhfLHAqdzFkqawlaiI=;
+	s=arc-20240116; t=1729122995; c=relaxed/simple;
+	bh=omcWxiXpXpDDa4ZVpdZVs6jD5U2YVU0SYavMpap6ToY=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=ozJQta8p2E8SkK3jZyE8prvrct7ay0hdk/vkODa5afKvP92p4ObO7M8chcpf+FdzibXQUfm1cTV5g8MmuhV5gUJ9dqMTg6HFFCDpx3QM3iFMr5Z8fzRFqZcXh73RG4EDn9XtImZafS6UwtA+yNoqjMNHPsTDzxZaWtvxpyXM/Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w7btLC9q; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=cUqSUEisaKaq45AeV9nDSNB4+Y5l/XSQoNTasrwNUZVJDDtm2TlQmibTjalv8qyj//wi4QETOTI3PqQODJQgf5yX0F26xeGE5CFNXboztuOhzuaeeAjlg8vyC1Lc/hwHeIB/FK30QWK460tyDhri3veMK1YJZ3pFmL4fW0ZIyS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HRElqKO/; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2939e25402so585849276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:56:32 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3d660a1afso9564317b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:56:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729122991; x=1729727791; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729122993; x=1729727793; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LSFHT2nx5Dy93k/WYJeKcczC9L+HDPym6LZPWSj1SxE=;
-        b=w7btLC9qL+A7fT2Ox6Brb4QuwKwJVOxyyM1wNsNgxNKDzW7JExPvM4rUB8ouaulhUw
-         MLzj/1T6uWsySqMeRFWW7sKlpNADxD5f2tfc+sf0TH14paDvKuW51XQKJZkl/OJ8f007
-         5ncSZz6bQnnzl+4g2nwZuYfNC0jtTPeKlbSSPBhmOB3z42Rlb4jJ8WdbFLlIP/GPgbl/
-         QY3If2Qp5iuhIgJDIj1pLcbjO8Qcvcwsisx4cmcC/SyGXnh7EEipOzzUBCq/CFqCsx7x
-         WSCOP1HoKU12q1hV5BwRbbNIldP/YNO9p3NZqp+TH5xdTvs95rLx4KcVwPzeROVhzIXC
-         fpLw==
+        bh=wabyl6vUPXQ1+YQSrgl1FkBvVcBQXCA4B1RUIse2h6U=;
+        b=HRElqKO/PUYfs0Xx+DgmaS2QqL/S0iCBZIpFc48TMQ89TN451krrXoMT64HiV/2k1O
+         +Rykt8NjRkJ/1teMOrD8xEvPWAl/FY7Cqcp/W5tpN2OlzWBwJr/sTMZ3ifYkOmSn1Tsk
+         DT1Rd8rb3ZOby+d6yXUXraUulWFsHhh6uB+RZQNzQ4CruozRUhxz9OBYuAK2vEEkqRD3
+         WkZD8IqxYFM8+9yTyKLxTOeQVHjJiVf6kDCkMHDVUIHEQbEGbo15ER+DFuVKKyhSu3qS
+         of3CVXJdybbG4D1HgMVY8z5LyIKVrfk7WcA54/7T6OiA9AsQdujAjIazX/70z7JFUP42
+         yKBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729122991; x=1729727791;
+        d=1e100.net; s=20230601; t=1729122993; x=1729727793;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSFHT2nx5Dy93k/WYJeKcczC9L+HDPym6LZPWSj1SxE=;
-        b=Px05PY9zgrR2MizezR0kNCi0QNe1wfUFnn5YKhgNtjshICpBNxNSdmjDu5imRh7dZz
-         T36YsH1+gLghJdhXtNXd6B5xHZRX3vv7w2F9RRAEE72DtRT561bw2UMC1+vq9sYMwRm0
-         pn1wjw0oufhhs5YBpKbas/6sMKXP+zI9nWBSYXG97g0E5v5u40lN/BTq6glkK1/qJxc6
-         JSxKqHB/yKpuXcFbxh+6WGEAbwUGD73HNsSaNRvzUEsh3AWPEJlckVcNQ8X5HjOwkK93
-         qUxb+b/SF/bhE8YkGzGLF3r/eibSGkmMGtqBdSI86RG0yQtpeOMMBs6HkI8DkOMLDz8V
-         LIxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsfvAm1y3sCiD0MZbHuV79ly1KahML2Afr6nJgNPnLU6OkwKe+YOvq64RAsXBGZS2zgIZRiHwLCJKCLtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDOIGXX1NevkEi4F2lVXgN+RC/q0UBmX7LE+YVRDwXtqXyNQcU
-	csWE2/fs4RAxHsl0wU2Vyk+G5VNP996bdhL5EEp3juPx23pnlQKSDhvepLgxOrU/J6jyv7z5NCt
-	Oi9LOiw==
-X-Google-Smtp-Source: AGHT+IHK2vKtVHqXB+biJn4Sn9ZwQIhFZwk1XPmEiMSuixpaE2V3uVxlb+PavH3nTc4PlRYrlQXQG7ej9nLE
+        bh=wabyl6vUPXQ1+YQSrgl1FkBvVcBQXCA4B1RUIse2h6U=;
+        b=RXEQE8AbQdfI01tCjV5fm2wYg4+JtrezAs0BZAjWfMuOaggsaygeozZTDfwkpM5rQY
+         RcTVVZ3JLRRQbXvilHb9mmLSpnm2fhdwKucwD6GkVJkAJxmqasNXaWI2d3vmzIi5ady0
+         y1DDk5CH1KOMIFPo1z/3hOwfnMhiHtfQ0036TvKXAIUkPIiZzumj7ielXMuDv5coJrPW
+         jd8UKYil+0QMKYJodx3AIU3XpDfAlNrvnubfVp1rHUH/rc9hTFWXevzoB/W9sfRCZen9
+         bhRJyl6gprh09DYXO1bDigJVM8tO1meHWySsKnGnV4xkvlzv49zjjtsa7l+Z/aUwDxf7
+         dziw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDETCI4y4ocnoeN9mXrgYDY0IyHmEk1Z5HWMQ+AP6rX+EdGSuT96v4xKGdi/NVkAtV8UjfJUAvQvDqn/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvHeWE4WPAhYQtoWS1KHflnuQnsVT7Sps9Mpsen4SSF64bh+31
+	SdrHUmctnTrQCXyP6o2EFnadjYfcFceW6dgA48M8bXtF0PieL7+2qs/GPYtrU9eMNRMzElefDfu
+	w0KR48Q==
+X-Google-Smtp-Source: AGHT+IEc9gz97uCSiFecHFVOHpY1dtbfP8iNOaE7ecAshb1/kQg9gQzEYtMNAJhhFL7iChcFMwUXc0CDZ/mR
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:a00a:f237:9bc0:79c])
- (user=irogers job=sendgmr) by 2002:a25:947:0:b0:e29:76b7:ed37 with SMTP id
- 3f1490d57ef6-e2978585cc5mr5263276.9.1729122990853; Wed, 16 Oct 2024 16:56:30
- -0700 (PDT)
-Date: Wed, 16 Oct 2024 16:56:21 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:74c7:b0:6e3:39e5:f0e8 with SMTP
+ id 00721157ae682-6e3d41c6eacmr1682517b3.6.1729122993551; Wed, 16 Oct 2024
+ 16:56:33 -0700 (PDT)
+Date: Wed, 16 Oct 2024 16:56:22 -0700
 In-Reply-To: <20241016235622.52166-1-irogers@google.com>
-Message-Id: <20241016235622.52166-2-irogers@google.com>
+Message-Id: <20241016235622.52166-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241016235622.52166-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v2 1/2] perf disasm: Fix capstone memory leak
+Subject: [PATCH v2 2/2] perf probe: Fix libdw memory leak
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -88,56 +88,53 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-The insn argument passed to cs_disasm needs freeing. To support
-accurately having count, add an additional free_count variable.
+Add missing dwarf_cfi_end to free memory associated with probe_finder
+cfi_eh which is allocated and owned via a call to
+dwarf_getcfi_elf. Confusingly cfi_dbg shouldn't be freed as its memory
+is owned by the passed in debuginfo struct. Add comments to highlight
+this.
 
-Fixes: c5d60de1813a ("perf annotate: Add support to use libcapstone in powerpc")
+This addresses leak sanitizer issues seen in:
+tools/perf/tests/shell/test_uprobe_from_different_cu.sh
+
+Fixes: 270bde1e76f4 ("perf probe: Search both .eh_frame and .debug_frame sections for probe location")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/disasm.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ tools/perf/util/probe-finder.c | 4 ++++
+ tools/perf/util/probe-finder.h | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index f05ba7739c1e..2c8063660f2e 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -1627,12 +1627,12 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
- 	u64 start = map__rip_2objdump(map, sym->start);
- 	u64 len;
- 	u64 offset;
--	int i, count;
-+	int i, count, free_count;
- 	bool is_64bit = false;
- 	bool needs_cs_close = false;
- 	u8 *buf = NULL;
- 	csh handle;
--	cs_insn *insn;
-+	cs_insn *insn = NULL;
- 	char disasm_buf[512];
- 	struct disasm_line *dl;
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index 630e16c54ed5..d6b902899940 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -1379,6 +1379,10 @@ int debuginfo__find_trace_events(struct debuginfo *dbg,
+ 	if (ret >= 0 && tf.pf.skip_empty_arg)
+ 		ret = fill_empty_trace_arg(pev, tf.tevs, tf.ntevs);
  
-@@ -1664,7 +1664,7 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
++#if _ELFUTILS_PREREQ(0, 142)
++	dwarf_cfi_end(tf.pf.cfi_eh);
++#endif
++
+ 	if (ret < 0 || tf.ntevs == 0) {
+ 		for (i = 0; i < tf.ntevs; i++)
+ 			clear_probe_trace_event(&tf.tevs[i]);
+diff --git a/tools/perf/util/probe-finder.h b/tools/perf/util/probe-finder.h
+index 3add5ff516e1..724db829b49e 100644
+--- a/tools/perf/util/probe-finder.h
++++ b/tools/perf/util/probe-finder.h
+@@ -64,9 +64,9 @@ struct probe_finder {
  
- 	needs_cs_close = true;
- 
--	count = cs_disasm(handle, buf, len, start, len, &insn);
-+	free_count = count = cs_disasm(handle, buf, len, start, len, &insn);
- 	for (i = 0, offset = 0; i < count; i++) {
- 		int printed;
- 
-@@ -1702,8 +1702,11 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
- 	}
- 
- out:
--	if (needs_cs_close)
-+	if (needs_cs_close) {
- 		cs_close(&handle);
-+		if (free_count > 0)
-+			cs_free(insn, free_count);
-+	}
- 	free(buf);
- 	return count < 0 ? count : 0;
- 
+ 	/* For variable searching */
+ #if _ELFUTILS_PREREQ(0, 142)
+-	/* Call Frame Information from .eh_frame */
++	/* Call Frame Information from .eh_frame. Owned by this struct. */
+ 	Dwarf_CFI		*cfi_eh;
+-	/* Call Frame Information from .debug_frame */
++	/* Call Frame Information from .debug_frame. Not owned. */
+ 	Dwarf_CFI		*cfi_dbg;
+ #endif
+ 	Dwarf_Op		*fb_ops;	/* Frame base attribute */
 -- 
 2.47.0.105.g07ac214952-goog
 
