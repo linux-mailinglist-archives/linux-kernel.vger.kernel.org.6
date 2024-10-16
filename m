@@ -1,265 +1,229 @@
-Return-Path: <linux-kernel+bounces-367072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8041799FE44
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:28:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467FE99FE40
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046051F269A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:28:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F9DAB26253
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8349713B2A9;
-	Wed, 16 Oct 2024 01:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563FE136672;
+	Wed, 16 Oct 2024 01:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Ft2CjACz"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1357A136326
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BUB0J35f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F4F42AA4;
+	Wed, 16 Oct 2024 01:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729042071; cv=none; b=QqgTBsRGWd4l9V0LMwZ/T6J9AB6h40CA+wnZY54n4wmYudyRJ9//juCj1e3AltYMuFcxutSRC0WtOfgnsOtybBIumCmCVYpiLBoTvWrgVtErXf5YsV4rksUcRcv/hw4Ok9Shot8c4oB+ZQX8U6jvVpWdxB7O7zn08302zmUtB+I=
+	t=1729042029; cv=none; b=Y/scmAyhFT4hgCgV0kfM2gcN+QlRQv1IFtZ3cRSwZ73OhGVLpVFh84j7BD6NmnGx7GUGv2bFdTfDiHJh2qU5WGOKy67xRO47T5BjJQ0mz8PK2tVB9M44eTw1WzMJWfE59W4V0Fs0FTIEQm1YoBmErRqI+fkRVbQ6k6IKER6rigU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729042071; c=relaxed/simple;
-	bh=BdnsitOZSIXwI5RQlS7tzQcQf+aOzHgtMAr6yMvPm+o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=sGk1NALgqgqp22ojByP1Lz5ItMUyem4xonyqlzkLtSryt8eHjq8BusSOwx3JnU4A5IvyVwpU7K7xiOZDTckJHAIjBNqg2PqpxPb8A3iAafKaSZ+2gmZtJWdlnmzGQn8u0ivfT+u9HstepoDEmVVSsUB7xmho4Lqx/9+hGnpwqVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Ft2CjACz reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=P0ekQvQ+dPoIFA6wGxuRLazrhmw8eTenDFS4dndW1uM=; b=F
-	t2CjACzuv4kdQE+evu2GDrf/Sc5A+RuOfsOv1al6gcwt0FBez/GylMtLs8NVmtNv
-	5jt8gareIlVg0YoaqSDoGLnMP/7SqmFuVppShtcE6dL29bBdMbGN5qvTXwcn3xrd
-	R0aRoulShTgmw6dJ0266sZ7LKtbad/5DrMuj6IOgvE=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-105 (Coremail) ; Wed, 16 Oct 2024 09:26:14 +0800
- (CST)
-Date: Wed, 16 Oct 2024 09:26:14 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Piotr Zalewski" <pZ010001011111@proton.me>
-Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, "Daniel Stone" <daniel@fooishbar.org>, 
-	"Dragan Simic" <dsimic@manjaro.org>, 
-	"Diederik de Haas" <didi.debian@cknow.org>
-Subject: Re:[PATCH v5] rockchip/drm: vop2: add support for gamma LUT
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20241014222022.571819-4-pZ010001011111@proton.me>
-References: <20241014222022.571819-4-pZ010001011111@proton.me>
-X-NTES-SC: AL_Qu2ZC/yfvkEs4iCRZekXn0kXhec2W8Czvvgg34JRP5k0tyTsxzgGbW9cHXjP+s6ULwOhoAi6XyNfxM5FYqxheYf70yWZ7UbNR57PtvYxrm1k
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1729042029; c=relaxed/simple;
+	bh=HJMAzk6TCzSstS6gquuELWdF1vJtpUiAEcwM2yjG5D4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dk1WnDWhOK5v84iWtylsdMQah3bzXHBh3To2OfReDW9VHTrWVyGcI01nwq0GskYpe0yxqhYC7iGEVuzQ2xU8Sc2/fSqJHbKezTlcGU/v+g+1cHOtBAW26AbrzHLRQl7x5Jj7v8EVyhc2tKr+INnFxRtbV7RZ5es/vA5QJMoDu5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BUB0J35f; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729042028; x=1760578028;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HJMAzk6TCzSstS6gquuELWdF1vJtpUiAEcwM2yjG5D4=;
+  b=BUB0J35f/efXv4ABG84A5wEz2oMoo8v+76mTrJB/c5PqPWHmOhqrdf6U
+   TBl40cSPhPXpCANMQs4NAB81rWlHPfCWHY0WdlPGwcO1EdvtvwZTY0FLK
+   m1qSoQOxr/zWAVwI1/13Rta1mn5jd9oxpS04TxwTkchzCG8/0xf194dNg
+   UdlMtpFjdBZwiXfm/htV8+fH8+yZ5B5cdtSvO0lhuMSCc1RWdmT624XTI
+   2H2n3/ofcZkp0640HuFh4rxX5vOv79uIVyWYVrnug/OasGLOkGxwObgLK
+   66F6XPHE+ULRXPbamMMvElsjSKX1YcNPVk5OB4jsvqDmmy7tZIK7Cfx9Z
+   A==;
+X-CSE-ConnectionGUID: AYkFe8QeS1+mJKxqJJeCcA==
+X-CSE-MsgGUID: DbM7t1o6TK+JijdUTgOj0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32162213"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="32162213"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 18:27:07 -0700
+X-CSE-ConnectionGUID: BVwuHcGoTxCUU1FcOHQXCg==
+X-CSE-MsgGUID: HOxmxGeSQRSaZ/fhM05eCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="78084569"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 15 Oct 2024 18:27:03 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0soX-000K7q-0o;
+	Wed, 16 Oct 2024 01:27:01 +0000
+Date: Wed, 16 Oct 2024 09:26:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian dos Santos de Lima <christiansantoslima21@gmail.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	~lkcamp/patches@lists.sr.ht
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2] rust: transmute: Add implementation for FromBytes
+ trait
+Message-ID: <202410160946.XR7mVFjR-lkp@intel.com>
+References: <20241012070121.110481-1-christiansantoslima21@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <13fc0084.1321.19292eec34e.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aSgvCgDnb0w2Fg9nfJ8OAA--.31367W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMx16XmcPEuY48gACse
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012070121.110481-1-christiansantoslima21@gmail.com>
 
-SGkgUGlvdHIsCgpBdCAyMDI0LTEwLTE1IDA2OjMwOjI3LCAiUGlvdHIgWmFsZXdza2kiIDxwWjAx
-MDAwMTAxMTExMUBwcm90b24ubWU+IHdyb3RlOgo+QWRkIHN1cHBvcnQgZm9yIGdhbW1hIExVVCBp
-biBWT1AyIGRyaXZlci4gVGhlIGltcGxlbWVudGF0aW9uIHdhcyBpbnNwaXJlZAo+Ynkgb25lIGZv
-dW5kIGluIFZPUDEgZHJpdmVyLiBCbHVlIGFuZCByZWQgY2hhbm5lbHMgaW4gZ2FtbWEgTFVUIHJl
-Z2lzdGVyCj53cml0ZSB3ZXJlIHN3YXBwZWQgd2l0aCByZXNwZWN0IHRvIGhvdyBnYW1tYSBMVVQg
-dmFsdWVzIGFyZSB3cml0dGVuIGluCj5WT1AxLiBHYW1tYSBMVVQgcG9ydCBzZWxlY3Rpb24gd2Fz
-IGFkZGVkIGJlZm9yZSB0aGUgd3JpdGUgb2YgbmV3IGdhbW1hIExVVCAKPnRhYmxlLiBJZiB0aGUg
-Y3VycmVudCBTb0MgaXMgUkszNTg4LCAic2VhbWxlc3MiIGdhbW1hIGx1dCB1cGRhdGUgaXMgCj5w
-ZXJmb3JtZWQgc2ltaWxhcmx5IHRvIGhvdyBpdCB3YXMgZG9uZSBpbiB0aGUgY2FzZSBvZiBSSzMz
-OTkgaW4gVk9QMVsxXS4gSW4KPnNlYW1sZXNzIHVwZGF0ZSBnYW1tYSBMVVQgZGlzYWJsZSBiZWZv
-cmUgdGhlIHdyaXRlIGlzbid0IG5lY2Vzc2FyeSwgCj5kaWZmZXJlbnQgcmVnaXN0ZXIgaXMgYmVp
-bmcgdXNlZCB0byBzZWxlY3QgZ2FtbWEgTFVUIHBvcnRbMl0gYW5kIGFmdGVyIAo+c2V0dGluZyBE
-U1BfTFVUX0VOIGJpdCwgR0FNTUFfVVBEQVRFX0VOIGJpdCBpcyBzZXRbM10uIEdhbW1hIHNpemUg
-aXMgc2V0IAo+YW5kIGRybSBjb2xvciBtYW5hZ2VtZW50IGlzIGVuYWJsZWQgZm9yIGVhY2ggdmlk
-ZW8gcG9ydCdzIENSVEMgZXhjZXB0IG9uZXMgCj53aGljaCBoYXZlIG5vIGFzc29jaWF0ZWQgZGV2
-aWNlLiAKPgo+U29sdXRpb24gd2FzIHRlc3RlZCBvbiBSSzM1NjYgKFBpbmV0YWIyKS4gV2hlbiB1
-c2luZyB1c2Vyc3BhY2UgdG9vbHMKPndoaWNoIHNldCBlZy4gY29uc3RhbnQgY29sb3IgdGVtcGVy
-YXR1cmUgbm8gaXNzdWVzIHdlcmUgbm90aWNlZC4gV2hlbgo+dXNpbmcgdXNlcnNwYWNlIHRvb2xz
-IHdoaWNoIGFkanVzdCBlZy4gY29sb3IgdGVtcGVyYXR1cmUgdGhlIHNsaWdodCBzY3JlZW4KPmZs
-aWNrZXIgaXMgdmlzaWJsZSBwcm9iYWJseSBiZWNhdXNlIG9mIGdhbW1hIExVVCBkaXNhYmxlLgo+
-Cj5Db21wYXJlIGJlaGF2aW91ciBvZiBlZy46Cj5gYGAKPmdhbW1hc3RlcCAtTyAzMDAwCj5gYGAK
-Pgo+VG8gZWcuOgo+YGBgCj5nYW1tYXN0ZXAgLWwgNTM6MjMgLXQgNjAwMDozMDAwCj5gYGAKPgo+
-SW4gbGF0dGVyIGNhc2UgY29sb3IgdGVtcGVyYXR1cmUgaXMgc2xvd2x5IGFkanVzdGVkIGF0IHRo
-ZSBiZWdpbm5pbmcgd2hpY2gKPmNhdXNlcyBzY3JlZW4gdG8gc2xpZ2hseSBmbGlja2VyLiBUaGVu
-IGl0IGFkanVzdHMgZXZlcnkgZmV3IHNlY29uZHMgd2hpY2ggCj5hbHNvIGNhdXNlcyBzbGlnaHQg
-c2NyZWVuIGZsaWNrZXIuCj4KPlsxXSBodHRwczovL2xpc3RzLmluZnJhZGVhZC5vcmcvcGlwZXJt
-YWlsL2xpbnV4LXJvY2tjaGlwLzIwMjEtT2N0b2Jlci8wMjgxMzIuaHRtbAo+WzJdIGh0dHBzOi8v
-bG9yZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwLzQ4MjQ5NzA4LThjMDUtNDBkMi1hNWQ4LTIz
-ZGU5NjBjNWE3N0Byb2NrLWNoaXBzLmNvbS8KPlszXSBodHRwczovL2dpdGh1Yi5jb20vcmFkeGEv
-a2VybmVsL2Jsb2IvbGludXgtNi4xLXN0YW4tcmtyMS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-cm9ja2NoaXBfZHJtX3ZvcDIuYyNMMzQzNwo+Cj5IZWxwZWQtYnk6IERhbmllbCBTdG9uZSA8ZGFu
-aWVsQGZvb2lzaGJhci5vcmc+Cj5IZWxwZWQtYnk6IERyYWdhbiBTaW1pYyA8ZHNpbWljQG1hbmph
-cm8ub3JnPgo+SGVscGVkLWJ5OiBEaWVkZXJpayBkZSBIYWFzIDxkaWRpLmRlYmlhbkBja25vdy5v
-cmc+Cj5IZWxwZWQtYnk6IEFuZHkgWWFuIDxhbmR5LnlhbkByb2NrLWNoaXBzLmNvbT4KPlNpZ25l
-ZC1vZmYtYnk6IFBpb3RyIFphbGV3c2tpIDxwWjAxMDAwMTAxMTExMUBwcm90b24ubWU+Cj4tLS0K
-Pgo+Tm90ZXM6Cj4gICAgQ2hhbmdlcyBpbiB2NToKPiAgICAgICAgLSBEbyBub3QgdHJpZ2dlciBm
-dWxsIG1vZGVzZXQgaW4gY2FzZSBzZWFtbGVzcyBnYW1tYSBsdXQgdXBkYXRlCj4JCSAgaXNuJ3Qg
-cG9zc2libGUgKGVnLiByazM1NnggY2FzZSkuIEl0IHdhcyBkaXNjb3ZlcmVkIHRoYXQgd2l0aCAK
-PgkJICBmdWxsIG1vZGVzZXQsIHVzZXJzcGFjZSB0b29scyB3aGljaCBhZGp1c3QgY29sb3IgdGVt
-cGVyYXR1cmUgd2l0aAo+ICAgICAgICAgIGhpZ2ggZnJlcXVlbmN5IGNhdXNlIHNjcmVlbiB0byBn
-byBibGFjayBhbmQgcmVkdWNlIG92ZXJhbGwKPiAgICAgICAgICBwZXJmb3JtYW5jZS4gSW5zdGVh
-ZCwgcmV2ZXJ0IHRvIHByZXZpb3VzIGJlaGF2aW91ciBvZiBsdXQgdXBkYXRlCj4JCSAgaGFwcGVu
-aW5nIGluIGF0b21pY19iZWdpbiBvciAoaW4gY2FzZSB0aGVyZSBpcyBhIG1vZGVzZXQpIGluCj4J
-CSAgYXRvbWljX2VuYWJsZS4gQWxzbywgYWRkIHVucmVsYXRlZCB0byBtb2Rlc2V0IHRyaWdnZXIK
-PgkJICBjaGFuZ2VzL2ltcHJvdmVtZW50cyBmcm9tIHY0IG9uIHRvcC4gSW1wcm92ZSBjb2RlIHJl
-YWRhYmlsaXR5Cj4JCSAgdG9vLgo+Cj4gICAgQ2hhbmdlcyBpbiB2NDoKPiAgICAgICAgLSByZXdv
-cmsgdGhlIGltcGxlbWVudGF0aW9uIHRvIGJldHRlciB1dGlsaXplIERSTSBhdG9taWMgdXBkYXRl
-c1syXQo+ICAgICAgICAtIGhhbmRsZSB0aGUgUkszNTg4IGNhc2VbMl1bM10KPiAgICAKPiAgICBD
-aGFuZ2VzIGluIHYzOgo+ICAgICAgICAtIHYzIGlzIHBhdGNoIHYyICJyZXNlbmQiLCBieSBtaXN0
-YWtlIHRoZSBpbmNyZW1lbnRhbCBwYXRjaCB3YXMKPiAgICAgICAgc2VudCBpbiB2Mgo+ICAgIAo+
-ICAgIENoYW5nZXMgaW4gdjI6Cj4gICAgICAgIC0gQXBwbHkgY29kZSBzdHlsaW5nIGNvcnJlY3Rp
-b25zWzFdCj4gICAgICAgIC0gTW92ZSBnYW1tYSBMVVQgd3JpdGUgaW5zaWRlIHRoZSB2b3AyIGxv
-Y2sKPgkKPglMaW5rIHRvIHY0OiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hp
-cC8yMDI0MDgxNTEyNDMwNi4xODkyODItMi1wWjAxMDAwMTAxMTExMUBwcm90b24ubWUvCj4gICAg
-TGluayB0byB2MzogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2NoaXAvVGtnS1Zp
-dnVhTEZMSUxQWS1uM2lab184S0YtZGFLZHFkdS0wX2UwSFAtNUFyXzhEQUxEZU5Xb2cyc3V3V0tq
-WDdlb21jYkdFVDBLWmU3RGx6ZGhLMllNNkNiTGJlS2VGWnItTUp6Sk10dzA9QHByb3Rvbi5tZS8K
-PiAgICBMaW5rIHRvIHYyOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC9I
-azAzSERiNndTU0hXdEVGWkhVeWUwNkhSMC05WXpQNW5DSHg5QThfa0h6V1NaYXdEclUxbzFwakVH
-a0NPSkZvUmcwblRCNEJXRXY2VjBYQk9qRjQtME1qNDRscDJUcmphUWZueXR6cC1Qaz1AcHJvdG9u
-Lm1lL1QvI3UKPiAgICBMaW5rIHRvIHYxOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1y
-b2NrY2hpcC85NzM2ZWFkZjZhOWQ4ZTk3ZWVmOTE5YzZiM2Q4ODgyOEBtYW5qYXJvLm9yZy9ULyN0
-Cj4gICAgCj4gICAgWzFdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwL2Qw
-MTk3NjE1MDRiNTQwNjAwZDlmYzdhNTg1ZDZmOTVmQG1hbmphcm8ub3JnCj4gICAgWzJdIGh0dHBz
-Oi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwL0NBUGo4N3JPTT1qMHptdVdMOWZyR0tW
-MXh6UGJKcms9UTlpcDdGX0hBUFluYkNxUG91d0BtYWlsLmdtYWlsLmNvbQo+ICAgIFszXSBodHRw
-czovL2xvcmUua2VybmVsLm9yZy9saW51eC1yb2NrY2hpcC83ZDk5OGU0Yy1lMWQzLTRlOGItYWY3
-Ni1jNWJjODNiNDM2NDdAcm9jay1jaGlwcy5jb20KPgo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
-cC9yb2NrY2hpcF9kcm1fdm9wMi5jIHwgMTYxICsrKysrKysrKysrKysrKysrKysKPiBkcml2ZXJz
-L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuaCB8ICAgNSArCj4gMiBmaWxlcyBj
-aGFuZ2VkLCAxNjYgaW5zZXJ0aW9ucygrKQo+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-cm9ja2NoaXBfZHJtX3ZvcDIuYwo+aW5kZXggOTg3MzE3MmUzZmQzLi5hNmEyZDdkZjVlY2MgMTAw
-NjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYwo+
-KysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMKPkBAIC0y
-NzgsNiArMjc4LDE1IEBAIHN0YXRpYyB1MzIgdm9wMl9yZWFkbChzdHJ1Y3Qgdm9wMiAqdm9wMiwg
-dTMyIG9mZnNldCkKPiAJcmV0dXJuIHZhbDsKPiB9Cj4gCj4rc3RhdGljIHUzMiB2b3AyX3ZwX3Jl
-YWQoc3RydWN0IHZvcDJfdmlkZW9fcG9ydCAqdnAsIHUzMiBvZmZzZXQpCj4rewo+Kwl1MzIgdmFs
-Owo+Kwo+KwlyZWdtYXBfcmVhZCh2cC0+dm9wMi0+bWFwLCB2cC0+ZGF0YS0+b2Zmc2V0ICsgb2Zm
-c2V0LCAmdmFsKTsKPisKPisJcmV0dXJuIHZhbDsKPit9Cj4rCj4gc3RhdGljIHZvaWQgdm9wMl93
-aW5fd3JpdGUoY29uc3Qgc3RydWN0IHZvcDJfd2luICp3aW4sIHVuc2lnbmVkIGludCByZWcsIHUz
-MiB2KQo+IHsKPiAJcmVnbWFwX2ZpZWxkX3dyaXRlKHdpbi0+cmVnW3JlZ10sIHYpOwo+QEAgLTk5
-OCw2ICsxMDA3LDU1IEBAIHN0YXRpYyB2b2lkIHZvcDJfZGlzYWJsZShzdHJ1Y3Qgdm9wMiAqdm9w
-MikKPiAJY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHZvcDItPmhjbGspOwo+IH0KPiAKPitzdGF0aWMg
-Ym9vbCB2b3AyX3ZwX2RzcF9sdXRfaXNfZW5hYmxlZChzdHJ1Y3Qgdm9wMl92aWRlb19wb3J0ICp2
-cCkKPit7Cj4rCXJldHVybiAodTMyKSAodm9wMl92cF9yZWFkKHZwLCBSSzM1NjhfVlBfRFNQX0NU
-UkwpICYgUkszNTY4X1ZQX0RTUF9DVFJMX19EU1BfTFVUX0VOKSA+Cj4rCSAgICAwOwo+K30KPisK
-PitzdGF0aWMgdm9pZCB2b3AyX3ZwX2RzcF9sdXRfZGlzYWJsZShzdHJ1Y3Qgdm9wMl92aWRlb19w
-b3J0ICp2cCkKPit7Cj4rCXUzMiBkc3BfY3RybCA9IHZvcDJfdnBfcmVhZCh2cCwgUkszNTY4X1ZQ
-X0RTUF9DVFJMKTsKPisKPisJZHNwX2N0cmwgJj0gflJLMzU2OF9WUF9EU1BfQ1RSTF9fRFNQX0xV
-VF9FTjsKPisJdm9wMl92cF93cml0ZSh2cCwgUkszNTY4X1ZQX0RTUF9DVFJMLCBkc3BfY3RybCk7
-Cj4rfQo+Kwo+K3N0YXRpYyBib29sIHZvcDJfdnBfZHNwX2x1dF9wb2xsX2Rpc2FibGUoc3RydWN0
-IHZvcDJfdmlkZW9fcG9ydCAqdnApCj4rewo+Kwl1MzIgZHNwX2N0cmw7Cj4rCWludCByZXQgPSBy
-ZWFkeF9wb2xsX3RpbWVvdXQodm9wMl92cF9kc3BfbHV0X2lzX2VuYWJsZWQsIHZwLCBkc3BfY3Ry
-bCwKPisJCQkJIWRzcF9jdHJsLCA1LCAzMCAqIDEwMDApOwo+KwlpZiAocmV0KSB7Cj4rCQlkcm1f
-ZXJyKHZwLT52b3AyLT5kcm0sICJkaXNwbGF5IExVVCBSQU0gZW5hYmxlIHRpbWVvdXQhXG4iKTsK
-PisJCXJldHVybiBmYWxzZTsKPisJfQo+Kwo+KwlyZXR1cm4gdHJ1ZTsKPit9Cj4rCj4rc3RhdGlj
-IHZvaWQgdm9wMl92cF9kc3BfbHV0X2VuYWJsZShzdHJ1Y3Qgdm9wMl92aWRlb19wb3J0ICp2cCkK
-Pit7Cj4rCXUzMiBkc3BfY3RybCA9IHZvcDJfdnBfcmVhZCh2cCwgUkszNTY4X1ZQX0RTUF9DVFJM
-KTsKPisKPisJZHNwX2N0cmwgfD0gUkszNTY4X1ZQX0RTUF9DVFJMX19EU1BfTFVUX0VOOwo+Kwl2
-b3AyX3ZwX3dyaXRlKHZwLCBSSzM1NjhfVlBfRFNQX0NUUkwsIGRzcF9jdHJsKTsKPit9Cj4rCj4r
-c3RhdGljIHZvaWQgdm9wMl92cF9kc3BfbHV0X3VwZGF0ZV9lbmFibGUoc3RydWN0IHZvcDJfdmlk
-ZW9fcG9ydCAqdnApCj4rewo+Kwl1MzIgZHNwX2N0cmwgPSB2b3AyX3ZwX3JlYWQodnAsIFJLMzU2
-OF9WUF9EU1BfQ1RSTCk7Cj4rCj4rCWRzcF9jdHJsIHw9IFJLMzU4OF9WUF9EU1BfQ1RSTF9fR0FN
-TUFfVVBEQVRFX0VOOwo+Kwl2b3AyX3ZwX3dyaXRlKHZwLCBSSzM1NjhfVlBfRFNQX0NUUkwsIGRz
-cF9jdHJsKTsKPit9Cj4rCj4rc3RhdGljIGlubGluZSBib29sIHZvcDJfc3VwcG9ydHNfc2VhbWxl
-c3NfZ2FtbWFfbHV0X3VwZGF0ZShzdHJ1Y3Qgdm9wMiAqdm9wMikKPit7Cj4rCXJldHVybiAodm9w
-Mi0+ZGF0YS0+c29jX2lkID09IDM1ODgpOwo+K30KPisKPisKPiBzdGF0aWMgdm9pZCB2b3AyX2Ny
-dGNfYXRvbWljX2Rpc2FibGUoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+IAkJCQkgICAgIHN0cnVj
-dCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKPiB7Cj5AQCAtMTQ4Miw2ICsxNTQwLDY2IEBAIHN0
-YXRpYyBib29sIHZvcDJfY3J0Y19tb2RlX2ZpeHVwKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAJ
-cmV0dXJuIHRydWU7Cj4gfQo+IAo+K3N0YXRpYyB2b2lkIHZvcDJfY3J0Y193cml0ZV9nYW1tYV9s
-dXQoc3RydWN0IHZvcDIgKnZvcDIsIHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPit7Cj4rCWNvbnN0
-IHN0cnVjdCB2b3AyX3ZpZGVvX3BvcnQgKnZwID0gdG9fdm9wMl92aWRlb19wb3J0KGNydGMpOwo+
-Kwljb25zdCBzdHJ1Y3Qgdm9wMl92aWRlb19wb3J0X2RhdGEgKnZwX2RhdGEgPSAmdm9wMi0+ZGF0
-YS0+dnBbdnAtPmlkXTsKPisKPisJc3RydWN0IGRybV9jb2xvcl9sdXQgKmx1dCA9IGNydGMtPnN0
-YXRlLT5nYW1tYV9sdXQtPmRhdGE7Cj4rCXVuc2lnbmVkIGludCBpLCBicGMgPSBpbG9nMih2cF9k
-YXRhLT5nYW1tYV9sdXRfbGVuKTsKPisJdTMyIHdvcmQ7Cj4rCj4rCWZvciAoaSA9IDA7IGkgPCBj
-cnRjLT5nYW1tYV9zaXplOyBpKyspIHsKPisJCXdvcmQgPSAoZHJtX2NvbG9yX2x1dF9leHRyYWN0
-KGx1dFtpXS5ibHVlLCBicGMpIDw8ICgyICogYnBjKSkgfAo+KwkJICAgIChkcm1fY29sb3JfbHV0
-X2V4dHJhY3QobHV0W2ldLmdyZWVuLCBicGMpIDw8IGJwYykgfAo+KwkJICAgIGRybV9jb2xvcl9s
-dXRfZXh0cmFjdChsdXRbaV0ucmVkLCBicGMpOwo+Kwo+KwkJd3JpdGVsKHdvcmQsIHZvcDItPmx1
-dF9yZWdzICsgaSAqIDQpOwo+Kwl9Cj4rfQo+Kwo+K3N0YXRpYyB2b2lkIHZvcDJfY3J0Y19hdG9t
-aWNfdHJ5X3NldF9nYW1tYShzdHJ1Y3Qgdm9wMiAqdm9wMiwKPisJCQkJCXN0cnVjdCB2b3AyX3Zp
-ZGVvX3BvcnQgKnZwLAo+KwkJCQkJc3RydWN0IGRybV9jcnRjICpjcnRjLAo+KwkJCQkJc3RydWN0
-IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlKQo+K3sKPisKPisJaWYgKHZvcDItPmx1dF9yZWdz
-ICYmIGNydGNfc3RhdGUtPmNvbG9yX21nbXRfY2hhbmdlZCkgewo+KwkJaWYgKCFjcnRjX3N0YXRl
-LT5nYW1tYV9sdXQpIHsKPisJCQl2b3AyX3ZwX2RzcF9sdXRfZGlzYWJsZSh2cCk7Cj4rCQkJcmV0
-dXJuOwo+KwkJfQo+Kwo+KwkJaWYgKHZvcDJfc3VwcG9ydHNfc2VhbWxlc3NfZ2FtbWFfbHV0X3Vw
-ZGF0ZSh2b3AyKSkgewo+KwkJCXZvcDJfd3JpdGVsKHZvcDIsIFJLMzU2OF9MVVRfUE9SVF9TRUws
-IEZJRUxEX1BSRVAoCj4rCQkJCVJLMzU4OF9MVVRfUE9SVF9TRUxfX0dBTU1BX0FIQl9XUklURV9T
-RUwsCj4rCQkJCXZwLT5pZCkpOwo+KwkJCXZvcDJfY3J0Y193cml0ZV9nYW1tYV9sdXQodm9wMiwg
-Y3J0Yyk7Cj4rCQkJdm9wMl92cF9kc3BfbHV0X2VuYWJsZSh2cCk7Cj4rCQkJdm9wMl92cF9kc3Bf
-bHV0X3VwZGF0ZV9lbmFibGUodnApOwo+KwkJfSBlbHNlIHsKPisJCQl2b3AyX3ZwX2RzcF9sdXRf
-ZGlzYWJsZSh2cCk7Cj4rCQkJdm9wMl9jZmdfZG9uZSh2cCk7Cj4rCQkJaWYgKCF2b3AyX3ZwX2Rz
-cF9sdXRfcG9sbF9kaXNhYmxlKHZwKSkKPisJCQkJcmV0dXJuOwo+Kwo+KwkJCXZvcDJfd3JpdGVs
-KHZvcDIsIFJLMzU2OF9MVVRfUE9SVF9TRUwsIHZwLT5pZCk7Cj4rCQkJdm9wMl9jcnRjX3dyaXRl
-X2dhbW1hX2x1dCh2b3AyLCBjcnRjKTsKPisJCQl2b3AyX3ZwX2RzcF9sdXRfZW5hYmxlKHZwKTsK
-PisJCX0KPisJfQo+K30KPisKPitzdGF0aWMgaW5saW5lIHZvaWQgdm9wMl9jcnRjX2F0b21pY190
-cnlfc2V0X2dhbW1hX2xvY2tlZChzdHJ1Y3Qgdm9wMiAqdm9wMiwKPisJCQkJCXN0cnVjdCB2b3Ay
-X3ZpZGVvX3BvcnQgKnZwLAo+KwkJCQkJc3RydWN0IGRybV9jcnRjICpjcnRjLAo+KwkJCQkJc3Ry
-dWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0YXRlKQo+K3sKPisJdm9wMl9sb2NrKHZvcDIpOwo+
-Kwl2b3AyX2NydGNfYXRvbWljX3RyeV9zZXRfZ2FtbWEodm9wMiwgdnAsIGNydGMsIGNydGNfc3Rh
-dGUpOwo+Kwl2b3AyX3VubG9jayh2b3AyKTsKPit9Cj4rCj4gc3RhdGljIHZvaWQgdm9wMl9kaXRo
-ZXJfc2V0dXAoc3RydWN0IGRybV9jcnRjICpjcnRjLCB1MzIgKmRzcF9jdHJsKQo+IHsKPiAJc3Ry
-dWN0IHJvY2tjaGlwX2NydGNfc3RhdGUgKnZjc3RhdGUgPSB0b19yb2NrY2hpcF9jcnRjX3N0YXRl
-KGNydGMtPnN0YXRlKTsKPkBAIC0yMDU3LDExICsyMTc1LDM1IEBAIHN0YXRpYyB2b2lkIHZvcDJf
-Y3J0Y19hdG9taWNfZW5hYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAKPiAJdm9wMl92cF93
-cml0ZSh2cCwgUkszNTY4X1ZQX0RTUF9DVFJMLCBkc3BfY3RybCk7Cj4gCj4rCXZvcDJfY3J0Y19h
-dG9taWNfdHJ5X3NldF9nYW1tYSh2b3AyLCB2cCwgY3J0YywgY3J0Y19zdGF0ZSk7Cj4rCj4gCWRy
-bV9jcnRjX3ZibGFua19vbihjcnRjKTsKPiAKPiAJdm9wMl91bmxvY2sodm9wMik7Cj4gfQo+IAo+
-K3N0YXRpYyBpbnQgdm9wMl9jcnRjX2F0b21pY19jaGVja19nYW1tYShzdHJ1Y3Qgdm9wMl92aWRl
-b19wb3J0ICp2cCwKPisJCQkJCXN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPisJCQkJCXN0cnVjdCBk
-cm1fYXRvbWljX3N0YXRlICpzdGF0ZSwKPisJCQkJCXN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0
-Y19zdGF0ZSkKPit7Cj4rCXN0cnVjdCB2b3AyICp2b3AyID0gdnAtPnZvcDI7Cj4rCXVuc2lnbmVk
-IGludCBsZW47Cj4rCj4rCWlmICghdnAtPnZvcDItPmx1dF9yZWdzIHx8ICFjcnRjX3N0YXRlLT5j
-b2xvcl9tZ210X2NoYW5nZWQgfHwKPisJICAgICFjcnRjX3N0YXRlLT5nYW1tYV9sdXQpCj4rCQly
-ZXR1cm4gMDsKPisKPisJbGVuID0gZHJtX2NvbG9yX2x1dF9zaXplKGNydGNfc3RhdGUtPmdhbW1h
-X2x1dCk7Cj4rCWlmIChsZW4gIT0gY3J0Yy0+Z2FtbWFfc2l6ZSkgewo+KwkJZHJtX2RiZyh2b3Ay
-LT5kcm0sICJJbnZhbGlkIExVVCBzaXplOyBnb3QgJWQsIGV4cGVjdGVkICVkXG4iLAo+KwkJCQkg
-ICAgICBsZW4sIGNydGMtPmdhbW1hX3NpemUpOwo+KwkJcmV0dXJuIC1FSU5WQUw7Cj4rCX0KPisK
-PisJcmV0dXJuIDA7Cj4rfQo+Kwo+IHN0YXRpYyBpbnQgdm9wMl9jcnRjX2F0b21pY19jaGVjayhz
-dHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gCQkJCSAgc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0
-YXRlKQo+IHsKPkBAIC0yMDY5LDYgKzIyMTEsMTEgQEAgc3RhdGljIGludCB2b3AyX2NydGNfYXRv
-bWljX2NoZWNrKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPiAJc3RydWN0IGRybV9wbGFuZSAqcGxh
-bmU7Cj4gCWludCBucGxhbmVzID0gMDsKPiAJc3RydWN0IGRybV9jcnRjX3N0YXRlICpjcnRjX3N0
-YXRlID0gZHJtX2F0b21pY19nZXRfbmV3X2NydGNfc3RhdGUoc3RhdGUsIGNydGMpOwo+KwlpbnQg
-cmV0Owo+Kwo+KwlyZXQgPSB2b3AyX2NydGNfYXRvbWljX2NoZWNrX2dhbW1hKHZwLCBjcnRjLCBz
-dGF0ZSwgY3J0Y19zdGF0ZSk7Cj4rCWlmIChyZXQpCj4rCQlyZXR1cm4gcmV0Owo+IAo+IAlkcm1f
-YXRvbWljX2NydGNfc3RhdGVfZm9yX2VhY2hfcGxhbmUocGxhbmUsIGNydGNfc3RhdGUpCj4gCQlu
-cGxhbmVzKys7Cj5AQCAtMjQ1Niw5ICsyNjAzLDEyIEBAIHN0YXRpYyB2b2lkIHZvcDJfc2V0dXBf
-ZGx5X2Zvcl93aW5kb3dzKHN0cnVjdCB2b3AyICp2b3AyKQo+IAl2b3AyX3dyaXRlbCh2b3AyLCBS
-SzM1NjhfU01BUlRfRExZX05VTSwgc2RseSk7Cj4gfQo+IAo+Kwo+IHN0YXRpYyB2b2lkIHZvcDJf
-Y3J0Y19hdG9taWNfYmVnaW4oc3RydWN0IGRybV9jcnRjICpjcnRjLAo+IAkJCQkgICBzdHJ1Y3Qg
-ZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpCj4gewo+KwlzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKmNy
-dGNfc3RhdGUgPQo+KwkJZHJtX2F0b21pY19nZXRfbmV3X2NydGNfc3RhdGUoc3RhdGUsIGNydGMp
-Owo+IAlzdHJ1Y3Qgdm9wMl92aWRlb19wb3J0ICp2cCA9IHRvX3ZvcDJfdmlkZW9fcG9ydChjcnRj
-KTsKPiAJc3RydWN0IHZvcDIgKnZvcDIgPSB2cC0+dm9wMjsKPiAJc3RydWN0IGRybV9wbGFuZSAq
-cGxhbmU7Cj5AQCAtMjQ4Miw2ICsyNjMyLDExIEBAIHN0YXRpYyB2b2lkIHZvcDJfY3J0Y19hdG9t
-aWNfYmVnaW4oc3RydWN0IGRybV9jcnRjICpjcnRjLAo+IAl2b3AyX3NldHVwX2xheWVyX21peGVy
-KHZwKTsKPiAJdm9wMl9zZXR1cF9hbHBoYSh2cCk7Cj4gCXZvcDJfc2V0dXBfZGx5X2Zvcl93aW5k
-b3dzKHZvcDIpOwo+Kwo+KwkvLyBOT1RFOiBpbiBjYXNlIG9mIG1vZGVzZXQgZ2FtbWEgbHV0IHVw
-ZGF0ZQo+KwkvLyBhbHJlYWR5IGhhcHBlbmVkIGluIGF0b21pYyBlbmFibGUKPisJaWYgKCFkcm1f
-YXRvbWljX2NydGNfbmVlZHNfbW9kZXNldChjcnRjX3N0YXRlKSkKPisJCXZvcDJfY3J0Y19hdG9t
-aWNfdHJ5X3NldF9nYW1tYV9sb2NrZWQodm9wMiwgdnAsIGNydGMsIGNydGNfc3RhdGUpOwo+IH0K
-PiAKPiBzdGF0aWMgdm9pZCB2b3AyX2NydGNfYXRvbWljX2ZsdXNoKHN0cnVjdCBkcm1fY3J0YyAq
-Y3J0YywKPkBAIC0yNzkwLDcgKzI5NDUsMTMgQEAgc3RhdGljIGludCB2b3AyX2NyZWF0ZV9jcnRj
-cyhzdHJ1Y3Qgdm9wMiAqdm9wMikKPiAJCX0KPiAKPiAJCWRybV9jcnRjX2hlbHBlcl9hZGQoJnZw
-LT5jcnRjLCAmdm9wMl9jcnRjX2hlbHBlcl9mdW5jcyk7Cj4rCQlpZiAodm9wMi0+bHV0X3JlZ3Mg
-JiYgdnAtPmNydGMuZGV2ICE9IE5VTEwpIHsKCgpUaGVyZSBpcyBubyBuZWVkIHRvIGNoZWNrIHZw
-LT5jcnRjLmRldiBoZXJlLCAgc2V0IGhhcyBiZWVuIHNldCBpbiBkcm1fY3J0Y19pbml0X3dpdGhf
-cGxhbmVzIC4KIAo=
+Hi Christian,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on rust/rust-next]
+[also build test ERROR on next-20241015]
+[cannot apply to linus/master v6.12-rc3]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-dos-Santos-de-Lima/rust-transmute-Add-implementation-for-FromBytes-trait/20241012-150333
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/20241012070121.110481-1-christiansantoslima21%40gmail.com
+patch subject: [PATCH v2] rust: transmute: Add implementation for FromBytes trait
+config: um-randconfig-002-20241015 (https://download.01.org/0day-ci/archive/20241016/202410160946.XR7mVFjR-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410160946.XR7mVFjR-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410160946.XR7mVFjR-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   |                                                   ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+   |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+   35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+   |                                                   ^
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   585 |         __raw_writeb(value, PCI_IOBASE + addr);
+   |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+   |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+   |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   693 |         readsb(PCI_IOBASE + addr, buffer, count);
+   |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   701 |         readsw(PCI_IOBASE + addr, buffer, count);
+   |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   709 |         readsl(PCI_IOBASE + addr, buffer, count);
+   |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   718 |         writesb(PCI_IOBASE + addr, buffer, count);
+   |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   727 |         writesw(PCI_IOBASE + addr, buffer, count);
+   |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   736 |         writesl(PCI_IOBASE + addr, buffer, count);
+   |                 ~~~~~~~~~~ ^
+   13 warnings generated.
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   clang diag: include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+>> error[E0432]: unresolved import `crate::transmute::AsBytes`
+   --> rust/kernel/uaccess.rs:12:17
+   |
+   12 |     transmute::{AsBytes, FromBytes},
+   |                 ^^^^^^^
+   |                 |
+   |                 no `AsBytes` in `transmute`
+   |                 help: a similar name exists in the module: `ToBytes`
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
