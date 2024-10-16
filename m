@@ -1,83 +1,81 @@
-Return-Path: <linux-kernel+bounces-367833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6314B9A074E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:29:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35689A0752
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E691C25B2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F188B25AE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AF5208D60;
-	Wed, 16 Oct 2024 10:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2059208D7F;
+	Wed, 16 Oct 2024 10:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ciwYdosW"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uG+eRd7r"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF73E208989
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0BE208D81
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074280; cv=none; b=Nt0gzfjGW3yD9z0qe2BbKFMI1oR50J30UV2m53KY/QKjHw840NEU6IFTToTrQ14S2x0jZFBdhkeuny6Ilaoe4g7ZCHfyBXs6LS+bDoPLn1pBQ5SkycrAKJUG1xUHx8fgJpwaaRB28WPRsp7sy186cyoGAoJFRHSgIEVuoPvLjEg=
+	t=1729074294; cv=none; b=o/y1DzSsVDeGDDdXvJQWc29kjU2b17qO4zqoDfSnoIZ8UwIILmO5cEdHuWU+TNzPsXYdtaGDBJeat4WymlZdhyh6Gf9h75hQTWx8/VCCaxb9VAHZsrvWeLRW1iXMtriOiZRPESUJlA5aTnqfZ4jKrQ1bgDGWl9tOyWP2TrakkgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074280; c=relaxed/simple;
-	bh=rd8lV8xcyybj14ozti1TTWcm7mZH/T9eRtu97bQ2Y9I=;
+	s=arc-20240116; t=1729074294; c=relaxed/simple;
+	bh=FaLjqtCZJOohqyEbSxz8TefACGemR3EzFd99ab6BNDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrOehaM3B8r+iJNudXNCxESp7DIZO71HV052+LBRuePqwZSouzYjllVQ6Ms2Sk7A3qJCXbs7MiOYSyYH+N7qqtMXLSOMlao3Ky9H9UmVrDQW3ITwR9YXleqNQrdwFmjkwj4XJAwiGltPS6YgeVvho+0sCokY9557CeyrQeycF0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ciwYdosW; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so3835710f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:24:38 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3AakMySFzGIg4b/6odTwTZ8wLEU3DACxEseEyZef2jsCtXe/POMtbj+Tm1Kg44XR8tadsR/a6vV7sVCKYumAdVwc7eqQPVcx17KERg4e08tpSgoLylKDl2ushcCZdM5CgVDaV1Aomzm6UK76QmKhfAl33NCHcMs1rYoKa9DaW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uG+eRd7r; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so2804996e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:24:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729074277; x=1729679077; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729074291; x=1729679091; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K7D7ZvOJaezogmPTDAjDT9QfTx99YDW2toHDAD7luHo=;
-        b=ciwYdosWe474FGjpzYObLD3LYsW9pObj1L+8+V65egzeD40Kp49em5SzMg7wrYbIt5
-         +IayKpWRNnonE/l4bx4xrzYfGNw6Q4lrltEjpuLmeqabXYoPPHP6kH2lXYbKF3G42afU
-         kVDF2NujmvcFA7CO8dSzgaEp+/LmOchyFQ/qKuXeR4bz36fwLnspJSwuex1R03iqFdXw
-         HW6VMTd8BgOaRvERmULAFhvLgRvU0qd8z9dU92QjtOobMWzdKQSgMqpjTUmfSYD2VkCn
-         WiEj3lL5Grq+pNcJec1oOGsXgesuYToDWhyg5Mu2ESnvkKPYCV0tSLbjeXVmTJFm2/Se
-         ArKg==
+        bh=pOErvY0XEl/tfIkNnoyyFwxd/COTHVSJLHwn2YjQu58=;
+        b=uG+eRd7r3HIhXvYpSjc/wBlWtzLnsTY7eU3O8FCH4vAtcbNmtu43vjcoNPLfbGxBmy
+         MHsbUADRr3n8E7c2ImYMst9Gz56hoyIfXQS845DDbkRqMJIANEJ+k8KTIBV9hSk7Pig0
+         ZgBTYtXI0tp2VBvWKlepEvrLJnPUlmkh+SAGi0q90RJ4qN38erse3hygZ8VGAyPB7HKV
+         hSdNnbApDtCi3qVRHn1IkTs1OVYbgq4yWavi/MYT2sg4oYnAzP4k3Xw+oTPunLbMpVai
+         U+DSfVnE/mb9u9zvrkcO0i41v0Oyiodd81MONDB+susVKsm/ods56HccTyzRyirCD/AG
+         Y1vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729074277; x=1729679077;
+        d=1e100.net; s=20230601; t=1729074291; x=1729679091;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=K7D7ZvOJaezogmPTDAjDT9QfTx99YDW2toHDAD7luHo=;
-        b=TmetplPjAudzHIThY5jE4/oyTXsxdfM3aDGi9Xw8tXamWrlGNrswYRVKLvNfcjqXAv
-         a33Bc58ZPbei87E4SpXxkXCL7v7eWTcryfrUbcUhqd1t/tGyBLEGOnbP82de6iVusv0w
-         zF3GIx6GBoSQtyNHQflrZBiXOzZV6aWviO7+SxgX7ltODUnGyJg3yPIhEJvAhjuBd9zc
-         XR9vLP0jS1uxRofoSY0v66bJQlQl/iQTVma5jssx+iLoNbUbKgKCOu7g2rvGuTq6uXBS
-         fOBRCA6Gug3GH8Wl2ymuHWDURVd7j8CJkGJpVOo6GPsJpN6R1tFAkCl2j8cef6SoWFou
-         1izA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/LyvovZb1gr6NeX75+xq9XPTykxKP0jjMgAlQg4HNisgD9op+6AiuMq6YwgHwSB4CddGuMgAHMnxgbuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD+ajOq1sqFz/faUoaS8NnkW9y7lsHoAgXlOiF9bI8a9UrPrtk
-	ipNuL/1duiqyNGumE5UXmAC1e+NeF02L/YK216htwb0UwXW9PhSYPITiA0WLUW8=
-X-Google-Smtp-Source: AGHT+IECfAeDsAHx70YRZ+3//F9leahyUqpv+lP8UUeInzpfWQ7trt68orsQg6DrKKWRbQoo9ssGvg==
-X-Received: by 2002:adf:fcd1:0:b0:37d:51a2:accd with SMTP id ffacd0b85a97d-37d5fd4603bmr10330076f8f.0.1729074276968;
-        Wed, 16 Oct 2024 03:24:36 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa92741sm3956872f8f.60.2024.10.16.03.24.36
+        bh=pOErvY0XEl/tfIkNnoyyFwxd/COTHVSJLHwn2YjQu58=;
+        b=UT0xx5RPVZjq06e1ykyUyvO4Q4d0w0r+/0Y4FNSJrKT4h2T/UJ9W0CreRb1/M/ANf5
+         lPo3Hwr3DTJwIoILNGhryvy/tYPwp6bAZAvBUBAz8XprB5TEP5IPzL61ttnNEAOlyzcz
+         ww5QtG8R6RrB12BpSn7q+wOZaz1eAZ8jln2U9jvUZr9/fnFqrNu08VieN6NoYOCyh7xs
+         PzQIPtfjoF5k3RJaD3sfJfgcx0VnG35J4hiDzgfChnlAfUsnbmLr0pYrPdGPLd84iE9O
+         NkMNffgW4o3r+E+aZMjE1xlTxvdwQ0dfTtN4Px7KEg+FVxqI9zhXkjAfLKAx6Ud7yaE/
+         hy/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoA1mTDxRsAGoQ2CMgpKWiRI1ubTu6QpjRSmdlMmyqwwa5pluIORZ1pY15FcZtkfIiOwVDixdQQnaXez0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4JNgYZLw0lSIRNLGB1m2oxwVGoU2nokPXCJSsmz06P3Rtjwsw
+	Mli8hTxO8xSMctCJBHTi2VDifyZMB+/tHSzshxxorsFYaSC/uHqbYOu0VTZ1Tgc=
+X-Google-Smtp-Source: AGHT+IE7EGXTF2XFh+wfkCP05g5kYyOkDLkoTu8El4kj5A+EicBu40bFWwJftS6S+G+lSct7l+Q/BQ==
+X-Received: by 2002:a05:6512:2385:b0:530:ad7d:8957 with SMTP id 2adb3069b0e04-53a03f929a6mr2371364e87.49.1729074290576;
+        Wed, 16 Oct 2024 03:24:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fffb1e21sm410499e87.84.2024.10.16.03.24.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 03:24:36 -0700 (PDT)
-Date: Wed, 16 Oct 2024 12:24:35 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Isaac Manjarres <isaacmanjarres@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>, surenb@google.com,
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] printk: Improve memory usage logging during boot
-Message-ID: <Zw-USn7PUHwCIGfL@pathway.suse.cz>
-References: <20240930184826.3595221-1-isaacmanjarres@google.com>
- <ZvwZV5MDlQYGJv9N@pathway.suse.cz>
- <Zv2LQLsIC1y0bCDL@google.com>
- <Zw5ke11y4TkRQJQ2@google.com>
+        Wed, 16 Oct 2024 03:24:50 -0700 (PDT)
+Date: Wed, 16 Oct 2024 13:24:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rakesh Kota <quic_kotarake@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kamalw@quicinc.com, 
+	quic_jprakash@quicinc.com
+Subject: Re: [PATCH V3] arm64: dts: qcom: qcm6490-idp: Allow UFS regulators
+ load/mode setting
+Message-ID: <2tunyupop2w7brm6adkdsrytvxbr4g3ixpbmuuqljedeaehze5@se3qsbf6tb6t>
+References: <20241016100511.2890983-1-quic_kotarake@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,51 +84,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zw5ke11y4TkRQJQ2@google.com>
+In-Reply-To: <20241016100511.2890983-1-quic_kotarake@quicinc.com>
 
-On Tue 2024-10-15 05:47:55, Isaac Manjarres wrote:
-> On Wed, Oct 02, 2024 at 11:04:48AM -0700, Isaac Manjarres wrote:
-> > On Tue, Oct 01, 2024 at 05:46:31PM +0200, Petr Mladek wrote:
-> > > On Mon 2024-09-30 11:48:24, Isaac J. Manjarres wrote:
-> > > > With the new logs, it is much easier to see exactly why the memory
-> > > > increased by 2304 KB:
-> > > > 
-> > > Note need to send v3. I could update the commit message when committing
-> > > the patch.
+On Wed, Oct 16, 2024 at 03:35:11PM +0530, Rakesh Kota wrote:
+> The UFS driver expects to be able to set load (and by extension, mode)
+> on its supply regulators. Add the necessary properties to make that
+> possible.
 > 
-> I just wanted to follow up to see if there was anything else left
-> for this patch? Otherwise, would it be possible to please merge this?
+> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> ---
+> Changes V3:
+>  - Somehow after fixing the compilation in last patch, i have missed to
+>    do git  --amend the change. apology for that, in this change i have
+>    fixed that compilation issue.
 
-I am sorry for the delay and thanks for the reminder. Last weeks were
-a bit hectic...
+What actually was changed? The --amend doesn't describe changes. Nor
+does "fixed that compilation issue".
 
-Anyway, I have just comitted the patch into printk/linux.git,
-branch for-6.13.
+>  - Link V2 : https://lore.kernel.org/all/20241015132049.2037500-1-quic_kotarake@quicinc.com/
 
-Note:
+Where are changes between v1 and v2?
 
-I have updated the sample messages in the commit message as suggested
-earlier.
+Where is the tag that was given to you for the v2?
 
-Also I double checked the patch and simplified the comment
-in the following hunk. The original one was a bit cryptic.
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> index 5f3d4807ac43..bfb1cdc238cc 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> @@ -258,6 +258,8 @@ vreg_l6b_1p2: ldo6 {
+>  			regulator-name = "vreg_l6b_1p2";
+>  			regulator-min-microvolt = <1140000>;
+>  			regulator-max-microvolt = <1260000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> @@ -265,6 +267,8 @@ vreg_l7b_2p952: ldo7 {
+>  			regulator-name = "vreg_l7b_2p952";
+>  			regulator-min-microvolt = <2400000>;
+>  			regulator-max-microvolt = <3544000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> @@ -279,6 +283,8 @@ vreg_l9b_1p2: ldo9 {
+>  			regulator-name = "vreg_l9b_1p2";
+>  			regulator-min-microvolt = <1200000>;
+>  			regulator-max-microvolt = <1304000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> @@ -467,6 +473,8 @@ vreg_l10c_0p88: ldo10 {
+>  			regulator-name = "vreg_l10c_0p88";
+>  			regulator-min-microvolt = <720000>;
+>  			regulator-max-microvolt = <1050000>;
+> +			regulator-allow-set-load;
+> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM RPMH_REGULATOR_MODE_HPM>;
+>  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>  		};
+>  
+> -- 
+> 2.34.1
+> 
 
-@@ -1185,20 +1196,25 @@ void __init setup_log_buf(int early)
- 	if (!early && !new_log_buf_len)
- 		log_buf_add_cpu();
- 
--	if (!new_log_buf_len)
-+	if (!new_log_buf_len) {
-+		/* Show the memory stats only once. */
-+		if (!early)
-+			goto out;
-+
- 		return;
-+	}
-
-, see also
-https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.13&id=a961ec4e2860af4933e8c1763fe4f038c2d6ac80
-
-Best Regards,
-Petr
+-- 
+With best wishes
+Dmitry
 
