@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-368127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1CB9A0B7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:34:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317989A0B84
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9EE61F25E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6357A1C23BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAF93A8F0;
-	Wed, 16 Oct 2024 13:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F52208D87;
+	Wed, 16 Oct 2024 13:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="H+4Bd0ah"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="au8nXXnO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B8F1D8E1D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB711D8E1D;
+	Wed, 16 Oct 2024 13:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729085652; cv=none; b=g21zinjvk+t58fczWSCYyVcHlzBo56P+3tlRgOaV6M1BWGotvY0qzvRJNgdtLoavoNaaqM2zjXviw8bgWQRZYlMptUPvmLQSHhezpqIHWzVqJCoD5QAaGER6fz1jrbIPonS4SK0J00Ti5+SlVZWilkHYCKukB9HR0d3iTvC/23U=
+	t=1729085699; cv=none; b=pJ0GlOmKar8Zpn9u3eytq/3RjRSHr/eA8T9nNsFjgwWWQg97R17vYODbum/IHXxE2TQmYRMhulQZ2ObCsoXvmJcajDOBl/8uKxWGFO9yKP2Be2LfXfJthWrxitqvn/ejD360JutPrZuVjXqMszLI0wkJHBwUEpu7fu3PsA3jBlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729085652; c=relaxed/simple;
-	bh=Wm6j0HHXHr6rZrgJv9XtSE7kyw4KMDFQKc6FGm2m+C0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VBMjbdMEx1fHFQEFzhn6t60g+bFCqWNMbJ2hMgi6BuLGhXkMDnMspMlG8Dq4GeuoYgIYTmBqJZoS7/MM/c0Jbm21vGFkw/h0R6CktO0/6YwVBHls9+lQgVpbvwxKs2G1MqC2sfE+XyycKEJwx8yyx6VVDw/SSCmwKoqi9ylDozo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=H+4Bd0ah; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1729085649; x=1729344849;
-	bh=Wm6j0HHXHr6rZrgJv9XtSE7kyw4KMDFQKc6FGm2m+C0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=H+4Bd0ahESOKUsvwcjZf2E7HUqPfEvb+dzskyu50OGVSduieOznONkKb72qNivKZW
-	 Q8GcWbmqioajaH98BLz2tHhtOTOey50VIuRxjBdhUOqXc0DhbdBJasxDS/d82jKfeX
-	 254jBfhAHwvNvQg1wbeCFf80Md7l9MVnyiwA4T2WRbDqZl5QrFJVJ7p01XfGTHrGDu
-	 4Xw3UkEOh53QMsYnYB4rPDEmKn6vF+pSw11cAJ+L20KCu/rH6vjMIndrz6+lkCYWP8
-	 hTSRAnehXzleSsojRVjiseVNEdDBEgxELUM74haoLODapNNI6MPuujOQV8t+FI1Nq9
-	 jCSZ2oHvGwkkA==
-Date: Wed, 16 Oct 2024 13:34:07 +0000
-To: Greg KH <gregkh@linuxfoundation.org>
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: dpenkler@gmail.com, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2] staging: gpib: Add TODO file
-Message-ID: <B28HXaYBd4-AP7g9jMpXgQEcJIzAQUsaUqMerdy_Hk0tR2Q9RKTAmcYbtq3LR06X3yHj0R6D4bLJHEHCYsszgjvnfhgZ7K5QwOzx5JLNI_A=@protonmail.com>
-In-Reply-To: <2024101609-getaway-appendage-1f88@gregkh>
-References: <20241015192838.16740-1-dominik.karol.piatkowski@protonmail.com> <2024101609-getaway-appendage-1f88@gregkh>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: 5c17d14c4951bdc73c9970c4d97f82f5b669eed7
+	s=arc-20240116; t=1729085699; c=relaxed/simple;
+	bh=OY0qvxYgqynwJ+VveG5PA3n7LpCIo4LJHrj6PoUVQec=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=k4MTkcCIHkX043f6jqW6PzZVqH2yIMq2gmsJHkhIzHSLf5MwGOO9y0Y/1uJw1SY3UFXSPJvVXPhA2bl5yQcEEb5wBvzsHvYIxdM7m8AhR9M4WpXfQVuvINpAyIu/zATGBO5FLOUnb2prZqNZUpliLxN4Fdj+GZpvAsp5QFhDhJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=au8nXXnO; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729085698; x=1760621698;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=OY0qvxYgqynwJ+VveG5PA3n7LpCIo4LJHrj6PoUVQec=;
+  b=au8nXXnO0Jzt6Ps5StvMeug0CWHTFV96nMnbrF7yUhTMDFRoepilKhhf
+   3B3OgqQQC4JwWkKpx/QMM6r/jXaNZ05VL/nEn7Bo40RiTMCv6SmaRPVLK
+   7MJDD2gyfW9Rza+0jND2pa4ufWO7QO34CC2HEB/BlpIzoS9TF09Mts7LA
+   CV8x0AAP0c276lTrAW2ev9NElXIM1yaMW9scqpU0BX28QHPhfVwLaS8PC
+   HMWeN2cM7XmHoCvTpxGRoqFa09ZD7L0V3PNQiEPrdJLqXcUgqtZrJjJP9
+   TY30+6G0VryvN1UHuPDiqmpe785TfMlKOhrwh5hJicOrpnkVPLhp3XhNN
+   g==;
+X-CSE-ConnectionGUID: l2NTsIu3QhuDkquUaNctOQ==
+X-CSE-MsgGUID: ABjFQtLMRoWItwBkrxcXtg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28628968"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28628968"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:34:57 -0700
+X-CSE-ConnectionGUID: pUHmFB6fR36iIR/wkEo+Sg==
+X-CSE-MsgGUID: 2grDQqx5T8es3DQ1CQnzkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="78121898"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.221])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:34:55 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 16 Oct 2024 16:34:51 +0300 (EEST)
+To: Philipp Stanner <pstanner@redhat.com>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] PCI: Convert pdev_sort_resources() to use resource
+ name helper
+In-Reply-To: <ac50d7cf2a2071f196552fa4dc4109f9a551c7e7.camel@redhat.com>
+Message-ID: <d1202665-1fb7-0a10-7c27-1a9bb0b2ecc4@linux.intel.com>
+References: <20241016120048.1355-1-ilpo.jarvinen@linux.intel.com>  <1cf314b3e91779e3353bbcaf8ad13516a00642e3.camel@redhat.com>  <fc0649b5-d065-2627-f475-d61f0594d0e5@linux.intel.com> <ac50d7cf2a2071f196552fa4dc4109f9a551c7e7.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-381602611-1729085691=:1010"
 
-On Wednesday, October 16th, 2024 at 07:33, Greg KH <gregkh@linuxfoundation.=
-org> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
->=20
->=20
-> On Tue, Oct 15, 2024 at 07:28:57PM +0000, Dominik Karol Pi=C4=85tkowski w=
-rote:
->=20
-> > Add a TODO file stub for the gpib driver.
+--8323328-381602611-1729085691=:1010
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Wed, 16 Oct 2024, Philipp Stanner wrote:
+
+> On Wed, 2024-10-16 at 16:15 +0300, Ilpo J=C3=A4rvinen wrote:
+> > On Wed, 16 Oct 2024, Philipp Stanner wrote:
 > >=20
-> > Signed-off-by: Dominik Karol Pi=C4=85tkowski dominik.karol.piatkowski@p=
-rotonmail.com
-> > ---
-> > v2: Remove maintainers from TODO, as they can be found in MAINTAINERS f=
-ile
-> > drivers/staging/gpib/TODO | 2 ++
-> > 1 file changed, 2 insertions(+)
-> > create mode 100644 drivers/staging/gpib/TODO
+> > > On Wed, 2024-10-16 at 15:00 +0300, Ilpo J=C3=A4rvinen wrote:
+> > > > Use pci_resource_name() helper in pdev_sort_resources() to print
+> > > > resources in user-friendly format.
+> > > >=20
+> > > > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > > > ---
+> > > > =C2=A0drivers/pci/setup-bus.c | 5 +++--
+> > > > =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > > > index 23082bc0ca37..071c5436b4a5 100644
+> > > > --- a/drivers/pci/setup-bus.c
+> > > > +++ b/drivers/pci/setup-bus.c
+> > > > @@ -134,6 +134,7 @@ static void pdev_sort_resources(struct
+> > > > pci_dev
+> > > > *dev, struct list_head *head)
+> > > > =C2=A0=09int i;
+> > > > =C2=A0
+> > > > =C2=A0=09pci_dev_for_each_resource(dev, r, i) {
+> > > > +=09=09const char *r_name =3D pci_resource_name(dev, i);
+> > > > =C2=A0=09=09struct pci_dev_resource *dev_res, *tmp;
+> > > > =C2=A0=09=09resource_size_t r_align;
+> > > > =C2=A0=09=09struct list_head *n;
+> > > > @@ -146,8 +147,8 @@ static void pdev_sort_resources(struct
+> > > > pci_dev
+> > > > *dev, struct list_head *head)
+> > > > =C2=A0
+> > > > =C2=A0=09=09r_align =3D pci_resource_alignment(dev, r);
+> > > > =C2=A0=09=09if (!r_align) {
+> > > > -=09=09=09pci_warn(dev, "BAR %d: %pR has bogus
+> > > > alignment\n",
+> > > > -=09=09=09=09 i, r);
+> > > > +=09=09=09pci_warn(dev, "%s: %pR has bogus
+> > > > alignment\n",
+> > > > +=09=09=09=09 r_name, r);
+> > >=20
+> > > Why do you remove the BAR index number, don't you think this
+> > > information is also useful?
 > >=20
-> > diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
-> > new file mode 100644
-> > index 000000000000..850dc1102e54
-> > --- /dev/null
-> > +++ b/drivers/staging/gpib/TODO
-> > @@ -0,0 +1,2 @@
-> > +TODO:
-> > +- checkpatch.pl fixes
-> > --
-> > 2.34.1
+> > That's because of how pci_resource_name() works. The number will be=20
+> > included in the returned string and it won't be always same as i.
+> > So that change is done on purpose.
+> >=20
+> > > One could also consider printing r_align, would that be useful?
+> >=20
+> > As per the preceeding condition, it's known to be zero so it's not=20
+> > that useful for any developer looking at these code lines.
 >=20
+> Ah, right. Would it then make sense then to do:
 >=20
-> Hi,
+> pci_warn(dev, "%s: %pR: Alignment must not be zero.\n", ...);
 >=20
-> This is the friendly patch-bot of Greg Kroah-Hartman. You have sent him
-> a patch that has triggered this response. He used to manually respond
-> to these common problems, but in order to save his sanity (he kept
-> writing the same thing over and over, yet to different people), I was
-> created. Hopefully you will not take offence and will fix the problem
-> in your patch and resubmit it so that it can be accepted into the Linux
-> kernel tree.
+> Would tell then exactly what the problem is. Unless the devs know that
+> a bogus alignment is definitely always 0.
 >=20
-> You are receiving this message because of the following common error(s)
-> as indicated below:
->=20
-> - This looks like a new version of a previously submitted patch, but you
-> did not list below the --- line any changes from the previous version.
-> Please read the section entitled "The canonical patch format" in the
-> kernel file, Documentation/process/submitting-patches.rst for what
-> needs to be done here to properly describe this.
->=20
-> If you wish to discuss this problem further, or you have questions about
-> how to resolve this issue, please feel free to respond to this email and
-> Greg will reply once he has dug out from the pending patches received
-> from other developers.
->=20
-> thanks,
->=20
-> greg k-h's patch email bot
+> ?
 
-Hi Greg,
+While I personally don't need that given the surrounding code, I can=20
+change the string to be more precise. Thanks.
 
-I listed the changes below the --- line. Probably I should have added extra
-newline, or maybe even another --- line below the changes in order to not
-trigger the patch-bot message and make it more readable. Maybe I should als=
-o
-explicitly use "V1 -> V2" instead of "v2" when listing changes? I am trying
-to understand the filtering rules that are in use, in order to avoid this
-situation in the future.
+--=20
+ i.
 
-I see that in Documentation/process/submitting-patches.rst there is an extr=
-a
-newline after listed changes, would it be enough?
-
-Thanks,
-
-Dominik Karol
+--8323328-381602611-1729085691=:1010--
 
