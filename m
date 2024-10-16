@@ -1,78 +1,144 @@
-Return-Path: <linux-kernel+bounces-367688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D89A0565
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:24:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5D29A056B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB831F26851
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26352819D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5668A205E23;
-	Wed, 16 Oct 2024 09:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4DF205158;
+	Wed, 16 Oct 2024 09:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="G6UOLutS"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ksZDjeMo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582521C07E7
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CB8204F93;
+	Wed, 16 Oct 2024 09:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729070673; cv=none; b=XECZRecIVBHIqfa0jmsy0iHQdFZ5O7lyDwJGcdi4ba5SaYHV6VKYrIHLwVd84buGPMpd/0RyT80Ed7hRSRZ+C3Ca+wRmkBB1LvoxdZjYemtJ91yfJmYQE++R2HowWfyzOiniFX4OzDl5kaf0HzlOvpbNpijlXDIs4SFRvlb9DSc=
+	t=1729070766; cv=none; b=fWbOrr/v527Fhf/V+X8Ddlu9I3bnr6VypPvuYgacz86a3KRZ16TRyTUR7SKgy8dHysNasCdvWAzAn/i8KTdv2i9L/VF1vcXvqHVibOK+ESRHf4sDH8KssquMqzy2cxNhF5YVv770whQpsZRytaO3OzaDbcNNk+EgvGEaFDeRssY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729070673; c=relaxed/simple;
-	bh=1hC389bUY1zoJGbXCZyplZ6rSSoOY8vZaU70geZtI5E=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nAbXAn0aQXsU1iZWC4eZKTMRRAlcQBCfBLtpbbN4/wKCB/NaeUTCQUA+mnO3L6tDxNVkDZgX70bfNC1QlHuspEaKcGO7Xu50V0eyGcghzJEwMRv/7hvRrDqxXclJ0fRmQfW2/zrUuHi2kHfT4bGOvksX0C/1jdEEE3OYBVg8alg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=G6UOLutS; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1729070670; x=1729329870;
-	bh=1hC389bUY1zoJGbXCZyplZ6rSSoOY8vZaU70geZtI5E=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=G6UOLutSrDKqnGdNsoLaiXdsF4OkKPTcXhxvKoGpCceWHV3n2yUPvT8Axmez6STra
-	 fJUbwP/J8j5zEwRIc0pDDpsDyHpfD64BgPB29D14Cg+LnZshdSaOPteeJzEB1nkiW8
-	 ffD1m1N+uD55hR8UQh99vB6+fMm7eOzsorFacjGJekBTvhwVjCzOy7IWJAUOQ8fuJj
-	 v3X04SWmc6A/QwyBOABQRWTGZ9YqRx5dotvwVzaRafNWHuconc634u/WhxRBVhg+yr
-	 zHaPuMqQU6XXx2MyJidx+1UB0t6pUTb+t3EvHz4ymzhTd5e1le8i4ZOLy7CynkjFLO
-	 dfOam5eHGQM1Q==
-Date: Wed, 16 Oct 2024 09:24:24 +0000
-To: Diederik de Haas <didi.debian@cknow.org>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Andy Yan <andyshrk@163.com>, hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>
-Subject: Re: [PATCH v5] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <BeXoC3pECSSWt03s_nNVohvTHHdML_K2_kGtlaGpyWHOyHiC-7rmdkADP1eN-PH01n7e29wVcMhEtW4MT50OL2dXEZzdCKdeZw3NPhQZx_A=@proton.me>
-In-Reply-To: <D4X4BE9PTJ1Q.2TDYBLWRFYMYA@cknow.org>
-References: <20241014222022.571819-4-pZ010001011111@proton.me> <7b45f190.452f.1928e41b746.Coremail.andyshrk@163.com> <o_Cyz_ARcHj4zNlovv75MBwslIRhn3YWlscoNrlpLVobh7eWIMEQR5bNv0yhHx2KEx_gbYi_gH-8Y-CdvRZs9lZscz3-lhAbM50GXUdtSKY=@proton.me> <30940542.b36d.19290215124.Coremail.andyshrk@163.com> <1974DYrs9gLrQrZ5VwCglFgKDDK686iyqnS_g6uPB-s9wZ_4CqfZXPjmYWihLgrkRu7ptNjpkFeqB0uTt73RFId6cL8FowQ8LFltPmaKCoI=@proton.me> <1ae9f15d.e52.19292e05e73.Coremail.andyshrk@163.com> <QvjHFQ4xeCu-8Isrm_jtNRWLowVNFzC8qnHJ6LUGI2iFTTJoEK8fBrXjG9LUrn5Wt9fJ9F04ukEf-koifwCR0uH9nr0AelyiWI85KASNkOQ=@proton.me> <D4X4BE9PTJ1Q.2TDYBLWRFYMYA@cknow.org>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 0f9ab51e7de25b031eaa1a4bf04c70848cb633ff
+	s=arc-20240116; t=1729070766; c=relaxed/simple;
+	bh=qyCXe2hrEH83VZR4dKcRgeax49jUrWrEglhG4Tz7Ujk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZ4my8gdFjyuzUh1kEIH6P+lB+X3vL3kLYRCmPKYV4WxRDoKcIxN+2pQuPbZhmY56uEr5dOYO3nuhjC4PeavRF3oW7tUTLjH09wS97OlftuJqX8CefXf2PVAFxvZMfdNW4Y+BSarLicX457mekr1Mvy0tj8o+liVin7aCrefoY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ksZDjeMo; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729070764; x=1760606764;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qyCXe2hrEH83VZR4dKcRgeax49jUrWrEglhG4Tz7Ujk=;
+  b=ksZDjeMoDffA6gtrdVVH6o4llS+XH404a9bL2FTlNoG4qiqyhk70c/g9
+   Ep9z73bzuxRF7GXO9Tw4b+efQB/AbtD5Hrng4yR6DmaPYFknoZwVms30G
+   B1RPc5qdASODiwkxz3sBN8cly59XytqJsidg/WKUA4pNC/o6aP1GEOMUs
+   v4Gy8kwE1ahNjuFXJU+PfSMfE5zZzK4c8+G32euXbUlFcn0YrIq2OvbWN
+   /SFSWee9sshVGABcU8DXwB8r4NBNkIteNhMhT7AFjktbR3GHMx7lPAvxF
+   qEed8TcNd+5LqSvCGRicyYbMpNOs8My6InGcAHL/sLCCbeeTXsAEWPdSs
+   g==;
+X-CSE-ConnectionGUID: tik4OI1fQLqGAHekU9z4ww==
+X-CSE-MsgGUID: OruD/VsKT0+wIMmwHI8qcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28708640"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="28708640"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 02:26:04 -0700
+X-CSE-ConnectionGUID: 5qc4yB+uQYi8YgDxFCC7zw==
+X-CSE-MsgGUID: mKQQVIpGRYaPeF+mDpSpQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="78518811"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 16 Oct 2024 02:26:02 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t10I4-000KgV-0c;
+	Wed, 16 Oct 2024 09:26:00 +0000
+Date: Wed, 16 Oct 2024 17:25:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	jic23@kernel.org, jmaneyrol@invensense.com, lars@metafoo.de
+Cc: oe-kbuild-all@lists.linux.dev,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: inv_icm42600: Enable Pedometer Functionality
+Message-ID: <202410161606.EbqeKmdm-lkp@intel.com>
+References: <20241015092035.10482-1-hardevsinh.palaniya@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015092035.10482-1-hardevsinh.palaniya@siliconsignals.io>
 
-Hi Diederik
+Hi Hardevsinh,
 
-On Wednesday, October 16th, 2024 at 11:20 AM, Diederik de Haas <didi.debian=
-@cknow.org> wrote:
+kernel test robot noticed the following build warnings:
 
-> On Wed Oct 16, 2024 at 11:16 AM CEST, Piotr Zalewski wrote:
->=20
-> > I will rework it to[1] and test it. (Have to check if hdmi out on pt2 w=
-orks).
->=20
->=20
-> Last time I tried it, hdmi out did work.
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.12-rc3 next-20241016]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Nice, thanks for the info :)
+url:    https://github.com/intel-lab-lkp/linux/commits/Hardevsinh-Palaniya/iio-imu-inv_icm42600-Enable-Pedometer-Functionality/20241015-172227
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20241015092035.10482-1-hardevsinh.palaniya%40siliconsignals.io
+patch subject: [PATCH] iio: imu: inv_icm42600: Enable Pedometer Functionality
+config: i386-randconfig-062-20241016 (https://download.01.org/0day-ci/archive/20241016/202410161606.EbqeKmdm-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410161606.EbqeKmdm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410161606.EbqeKmdm-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c:704:21: sparse: sparse: incorrect type in assignment (different base types) @@     expected int @@     got restricted __le16 [addressable] [usertype] steps @@
+   drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c:704:21: sparse:     expected int
+   drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c:704:21: sparse:     got restricted __le16 [addressable] [usertype] steps
+
+vim +704 drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
+
+   685	
+   686	static int inv_icm42600_steps_read_raw(struct iio_dev *indio_dev,
+   687	                               struct iio_chan_spec const *chan,
+   688	                               int *val, int *val2, long mask)
+   689	{
+   690	       struct inv_icm42600_state *st = iio_device_get_drvdata(indio_dev);
+   691	       __le16 steps;
+   692	       int ret;
+   693	
+   694	       if (mask == IIO_CHAN_INFO_PROCESSED) {
+   695	               ret = iio_device_claim_direct_mode(indio_dev);
+   696	               if (ret)
+   697	                       return ret;
+   698	               ret = regmap_bulk_read(st->map, INV_ICM42600_REG_APEX_DATA, &steps, sizeof(steps));
+   699	               if (ret)
+   700	                       return ret;
+   701	               iio_device_release_direct_mode(indio_dev);
+   702	               if (ret)
+   703	                       return ret;
+ > 704	               *val = steps;
+   705	               return IIO_VAL_INT;
+   706	       }
+   707	
+   708	       return -EINVAL;
+   709	}
+   710	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
