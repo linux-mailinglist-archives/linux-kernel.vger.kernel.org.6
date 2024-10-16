@@ -1,69 +1,64 @@
-Return-Path: <linux-kernel+bounces-367373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9069A0161
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:25:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0919A0163
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DEFC1C23295
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:25:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B925DB25B0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8A31C7274;
-	Wed, 16 Oct 2024 06:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C7D18E362;
+	Wed, 16 Oct 2024 06:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAWZmH8j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERwkFU4Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E78E1C233A;
-	Wed, 16 Oct 2024 06:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D050E18D655;
+	Wed, 16 Oct 2024 06:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059848; cv=none; b=lFU/VGR2qSSXKVjzBNtwHoLQayXdxOYMrXObqFAnSlBeKC99r0MdAtO+3fHL+d/xFrt95xgVuJSZYRKqU5DJ9UesXwqyPHagrHfedWPUDbV15BBO30mTJo6v2Gcidn6LETkVRXfwWobJSqkl+wNAwiJ+L6LV7dqQFGRzKOUzHpw=
+	t=1729059856; cv=none; b=IkZz6PAyuQG1NhNaS5EmcFBqIdx4pUE+WISrZUg89vWE+gnFhJ6yYHGWAaMPDNmZBlM0HhwzNcP/+WU6P6nIwSyUETs4rEkANCTH1DQ5IYoB/UV4+uFFFNBHGHKWmmiYI5VZmP2EvAhg5eabdXJ8gMrCuKXrDsqob9b0BW//+bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059848; c=relaxed/simple;
-	bh=OEMIX3Py57TTYZipJctDBI2XnKZ9J1B9wCuvXhKmHuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zjo2nJ4eG+MxhwCVTEosX3pKKC1pGNIsg3/vr4OCYAO81JrJJVM7XNKiCLCzsMB+250wjQ0rdt5wkHnJYQOqwlJIZXpgWVQezQSDg7iGZfC1h9qNPOnbKEpV9PoqZSL5ks7S/BWWYSrGA3I33+VmzY87kKYCEtwaxH1C6Eg7iCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAWZmH8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33846C4AF0E;
-	Wed, 16 Oct 2024 06:24:07 +0000 (UTC)
+	s=arc-20240116; t=1729059856; c=relaxed/simple;
+	bh=GoiUt5t70hi75J47RBegx6CmkNJuNYszg5HcetA7zeQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y91YWaPveEXbpqsh+WAsMJcpWcOBgDwk+xSYvjSQd0w3HDkYMnYa5pQb++WpLEbZxTT5HKxj783ujQiLGTkL5jP6gd6BnxlAU+Bi/YxVhJLyslNWMYIezJEN4htux/y0c+RXKbRlr+3xATyg12kbhs/J8NWS6+zvELq5U3+2iI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERwkFU4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D140C4CEC5;
+	Wed, 16 Oct 2024 06:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729059847;
-	bh=OEMIX3Py57TTYZipJctDBI2XnKZ9J1B9wCuvXhKmHuM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hAWZmH8jjihHsVx/4phlnScWheuIoYmDZi/Gp6pXjgpcll8V8i4k5JwL6l6fqdmMW
-	 qkjXlqWI56Ezk5Y1sM3IiHmfwpNzKMSsD3DgzytwW+pBu9Y2hbUvP5eW2HqumvuG0f
-	 JGp3lUw1vJjziWEpKfu36ytZziNnlBi0wJKT2A5H5tqDWWpK5Y+jNRj4Vlc6IGwak/
-	 AWQmPH221Ck1XYLedMBbMLHw4VkT5kHOw4f0VPxdGDg9m6rNe9Urv96QZ576yVsi2B
-	 0klvJFxdba5W3sZkZU8QgD2w8tB5/8uhRJko1qBL+3/vIl4CV7XJyY2gRKJj/m6NkA
-	 4hG01j+7q2pPA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: [PATCH v5 9/9] perf test: Add precise_max subtest to the perf record shell test
-Date: Tue, 15 Oct 2024 23:23:59 -0700
-Message-ID: <20241016062359.264929-10-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-In-Reply-To: <20241016062359.264929-1-namhyung@kernel.org>
-References: <20241016062359.264929-1-namhyung@kernel.org>
+	s=k20201202; t=1729059856;
+	bh=GoiUt5t70hi75J47RBegx6CmkNJuNYszg5HcetA7zeQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ERwkFU4QUpU8Prrl3pqtKZBNR2D2+3KbdoevDqSXWIrjo5I7dFZfxJN7IgKlM6hl/
+	 ml4RLYNRWDEB/J2IpF4xzthyXfa0zWewpJR5d6pqDUDa/YB9LXT0Lw8WN5LYToc2gA
+	 EyRW0Z2ntVrTly1Du/jWPOLzX0W0wSPNbGLwRWNmwq5eMsc/MBHXX+MARE54m871wv
+	 YWekq08zuZPEWBJZujkKpfFDB7cXxhfq2HE7v24XIHq373YjC3BKLeqeItNa8OGtvW
+	 Ujug0wfHS+Uo+XB1ZOck6YK7Fi/ksYX4nTpDRSjPTvlGQgqs2YtrKSh6O0vIiE2sWo
+	 lUaXBhHYZ09VA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: Constify pci_register_io_range stub fwnode_handle
+Date: Wed, 16 Oct 2024 06:24:04 +0000
+Message-Id: <20241016062410.2581152-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,58 +67,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It's a very simply test just to run with cycles:P and instructions:P
-events.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+The patch to change the argument types for pci_register_io_range()
+only caught one of the two implementations, but missed the empty
+version:
+
+drivers/of/address.c: In function 'of_pci_range_to_resource':
+drivers/of/address.c:244:45: error: passing argument 1 of 'pci_register_io_range' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+  244 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
+      |                                             ^~~~~~~~~~~
+In file included from drivers/of/address.c:12:
+include/linux/pci.h:1559:49: note: expected 'struct fwnode_handle *' but argument is of type 'const struct fwnode_handle *'
+ 1559 | int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
+      |                           ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+
+Change this the same way.
+
+Fixes: 6ad99a07e6d2 ("PCI: Constify pci_register_io_range() fwnode_handle")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/perf/tests/shell/record.sh | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+If possible, please fold this fixup into the original patch
+---
+ include/linux/pci.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-index 8d6366d96883edb3..b23e83a099f84a65 100755
---- a/tools/perf/tests/shell/record.sh
-+++ b/tools/perf/tests/shell/record.sh
-@@ -271,6 +271,30 @@ test_topdown_leader_sampling() {
-   echo "Topdown leader sampling test [Success]"
- }
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 11421ae5c558..733ff6570e2d 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2019,7 +2019,7 @@ static inline int pci_request_regions(struct pci_dev *dev, const char *res_name)
+ { return -EIO; }
+ static inline void pci_release_regions(struct pci_dev *dev) { }
  
-+test_precise_max() {
-+  echo "precise_max attribute test"
-+  if ! perf stat -e "cycles,instructions" true 2> /dev/null
-+  then
-+    echo "precise_max attribute [Skipped no hardware events]"
-+    return
-+  fi
-+  # Just to make sure it doesn't fail
-+  if ! perf record -o "${perfdata}" -e "cycles:P" true 2> /dev/null
-+  then
-+    echo "precise_max attribute [Failed cycles:P event]"
-+    err=1
-+    return
-+  fi
-+  # On AMD, cycles and instructions events are treated differently
-+  if ! perf record -o "${perfdata}" -e "instructions:P" true 2> /dev/null
-+  then
-+    echo "precise_max attribute [Failed instructions:P event]"
-+    err=1
-+    return
-+  fi
-+  echo "precise_max attribute test [Success]"
-+}
-+
- # raise the limit of file descriptors to minimum
- if [[ $default_fd_limit -lt $min_fd_limit ]]; then
-        ulimit -Sn $min_fd_limit
-@@ -284,6 +308,7 @@ test_branch_counter
- test_cgroup
- test_leader_sampling
- test_topdown_leader_sampling
-+test_precise_max
+-static inline int pci_register_io_range(struct fwnode_handle *fwnode,
++static inline int pci_register_io_range(const struct fwnode_handle *fwnode,
+ 					phys_addr_t addr, resource_size_t size)
+ { return -EINVAL; }
  
- # restore the default value
- ulimit -Sn $default_fd_limit
 -- 
-2.47.0.rc1.288.g06298d1525-goog
+2.39.5
 
 
