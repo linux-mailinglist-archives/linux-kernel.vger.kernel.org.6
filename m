@@ -1,95 +1,262 @@
-Return-Path: <linux-kernel+bounces-367452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEA99A0294
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:30:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66409A0121
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF8D1F26967
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:30:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35B1282BAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7721B6D16;
-	Wed, 16 Oct 2024 07:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58BD18C915;
+	Wed, 16 Oct 2024 06:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.b="GR3lrzCY"
-Received: from mo-csw-fb.securemx.jp (mo-csw-fb1802.securemx.jp [210.130.202.161])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="W5VyPNR+"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070601C07F9
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0023218B48D
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063781; cv=none; b=cWKJ9ztAvqSnBh4V93bn8RpLgBnhncEG7mHbd+Km5scHfpIZCI0wUROimJAFHZAIMXnaY6N5DEq7AFbRTZdixpOCtPP17Kp4F//WloLZLDmYPIjhnZGB9X3PRrmylyjpE4QazaZNplXNIJkD3BnnVbTPEoDIMTHdYBF1JYlqlAk=
+	t=1729059192; cv=none; b=rSdIADNbsRfKAslKSY3Dq1BPwtIt50YZBYGzP7oY0UjAa+5zfjSc5ZYwPNIbQ/U98SsW91ByKYeBSPZKKWjbf/65w/RbkXSbLq9NcppeAyW7TCbi/9l8bZBdaHKwsxN6/Syg4+6tCRTQv7WP9jg8K6ghu+jm6dP0L5LyFVTcE94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063781; c=relaxed/simple;
-	bh=IJqFbMl21b/RVLRiQT27dPMDBeuJTsKV7i1Cv3+IhJo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Xkkvk6baIXSkOxHjqnwU5TM9e8O1q8R7J/zch9LtF4sazUQo/VmeUB6rdvzhXEwifsegfjS1urosBgi0fyfybUmp64GHULWG2KrW7nw5Jd8XX2CzhxJaxHDoQR9R3L97zxCIhi3rsGevhf9YHrmrTNDi/Rpn8vFAaU0fdbNb+FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp; spf=pass smtp.mailfrom=toshiba.co.jp; dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.b=GR3lrzCY; arc=none smtp.client-ip=210.130.202.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toshiba.co.jp
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1802) id 49G5bsPe672665; Wed, 16 Oct 2024 14:37:54 +0900
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
-	:Subject:Date:Message-Id;i=nobuhiro1.iwamatsu@toshiba.co.jp;s=key2.smx;t=
-	1729057047;x=1730266647;bh=IJqFbMl21b/RVLRiQT27dPMDBeuJTsKV7i1Cv3+IhJo=;b=GR3
-	lrzCYW5J3hMvrSD2mBwUH0gfCviWal6XccoHYfejMqEsiSY8pl+aGzsIf2A6KTZTaJlkIHpMsTQXS
-	sDKm/PQKMx9yihd8EKuoNODSiXkmSs2x0qujjNnrLBnQG8HElAz1/lD9lOr8g5FdRPBRncilr9e+b
-	5I8FGJGUsbVrZbHxY0A3X3oL3s7EtPp5byJtZSmJ60xg32u6yA/8ICXWz0Oan0BOrY8vNzbCoNE2c
-	z87PYaq9QV6MKPFLXHje6abnzxx3lLim+LuteGwuf2hW6LOOTG10KgEO8QgzFCsUDOGysKkMRaRIY
-	uinoxBrjJU5KSPd68voSnn5c6f8a/rw==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 49G5bRR83032571; Wed, 16 Oct 2024 14:37:27 +0900
-X-Iguazu-Qid: 2yAacTOYEzPWnkLEg6
-X-Iguazu-QSIG: v=2; s=0; t=1729057047; q=2yAacTOYEzPWnkLEg6; m=QCwC1FNAq8f4EUqZraX48VWMIYM9QXjxgerjrrR7UzA=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1803) id 49G5bPFN1579837
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 14:37:26 +0900
-From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, yuji2.ishikawa@toshiba.co.jp,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Mike Rapoport <rppt@kernel.org>
-Subject: [PATCH RFC] mm: numa_clear_kernel_node_hotplug: Add NUMA_NO_NODE check for node id
-Date: Wed, 16 Oct 2024 14:37:10 +0900
-X-TSB-HOP2: ON
-Message-Id: <1729057030-4625-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1729059192; c=relaxed/simple;
+	bh=QgrKkY/QPYrM4Vei26iciDuQHDrG/O1TPl9SCa5hIHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pWKZ0ixHmtr/hTggBbcT0JQTjaxDIUr8Ql1f1piisY2OearxiOu/sYp7k5O0v9SurRp/41JDO1YI5MbHFD6zlNOhYzgRDu3xC2qFprj+pL+YsLq7QgEsdu4Sgre3Ymlgs7prZDMIT6B/rPnDyUUNfp8WzkgOe+TCH+xOWKQHrks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=W5VyPNR+; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e6c754bdso3411238e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:13:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1729059188; x=1729663988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eNakn2lh4coir6wXgnAEYR67LhROU5Z5DBHvfE4imvQ=;
+        b=W5VyPNR+B2Fh3n35aCDPDbZFZ94/MPHENiYhMHNQwEYT06n7R/DASp6eyfHN0Y5nOP
+         0Mmx0mkHjCF/gdMUbVmJMzJjYWmqpUDxhCA9Aaord8hJsd5l5SKUX1dDMuOcx45E3gUg
+         V+mC52ul7qAVQsUkSZbHjXy3gbe/w5SPuLYWAtUzKb+LWyqhTsmq+O5Ogy0lIoOlUeRP
+         BNyoq1oh4K2PdLMW+iQ1wmnQOWOx2r9xBlGgZTN6YIXTFn5SQEd5JnUBzr8TCIeB3PDM
+         I0RvHvybCjieOG6NrSgyPZ2o6+iB/3Bj2kLph9qOiWPgM/2uE/EtOLJTfbZ7kEkU2qmE
+         CWJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729059188; x=1729663988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eNakn2lh4coir6wXgnAEYR67LhROU5Z5DBHvfE4imvQ=;
+        b=Fc/N+AsVrlp0wbFbu39KFR222HeasMfatHABnQymi4Jwu6qvi2nUXMXGXlyhHUiomA
+         S23KJNCxP6l7x50whcX0JX5dlO5cWv63H/SeyYc23Ae2qiRSycRFg15xbaQj438TDxTi
+         UvV43+75aoQBmRaWykegtDBkRp516kf/Abma4Ey1u37Vuc5y+FHXOOU/3HRRVrOPnd8c
+         uUo54gGwBXWjX9ppVF9CWkPbPXH7Yl9Q6EOmO8p+md0ZZ0Cy0KRzgSad7MPkLBW/NFC2
+         gTJtZdfmp0fKc4aWLuY2pxdjrbPmlNqmSM/w+Oa84szxzU91wGLwHmWqEFkBVq/Td9yy
+         6wMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXntQ8PajI7TCXTP38Uwvi5xA8vctOxt0cjxDUTgJ1Ur3T3KhUqY6OB/3Pqp9qrfuzRpR1mXQP8WkpdZlg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW0TtwZBiUIGg8O3CeKHXb+FaiTytu1GBdQ4/CCAu047gqvq3f
+	VPN3HkjzCSKs46WwaJtIkSHCXu9hD5X+IzQUqwjXIiIX8IrpTyQn2HRAIHnwZ+s=
+X-Google-Smtp-Source: AGHT+IFL+DCgrunm1Qno3hjePicExyxGqhkUCeUivIxQm0GhlVFf43jqSehM6+DCWNXx42jVNiJznw==
+X-Received: by 2002:ac2:4e11:0:b0:535:699b:b076 with SMTP id 2adb3069b0e04-539da3c7da1mr8093014e87.16.1729059187891;
+        Tue, 15 Oct 2024 23:13:07 -0700 (PDT)
+Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2981702bsm141743466b.112.2024.10.15.23.13.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 23:13:07 -0700 (PDT)
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
+To: u-boot@lists.denx.de,
+	linux-kernel@vger.kernel.org
+Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Simon Glass <sjg@chromium.org>,
+	Tom Rini <trini@konsulko.com>
+Subject: [PATCH v9 18/37] drivers/cpu: Add generic armv8 cpu driver
+Date: Wed, 16 Oct 2024 08:04:04 +0200
+Message-ID: <20241016060523.888804-19-patrick.rudolph@9elements.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241016060523.888804-1-patrick.rudolph@9elements.com>
+References: <20241016060523.888804-1-patrick.rudolph@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The acquired memory blocks for reserved may include blocks outside of
-memory management. In this case, the nid variable is set to NUMA_NO_NODE
-(-1), so an error occurs in node_set().
-This adds a check to numa_clear_kernel_node_hotplug that skips node_set
-when nid is set to NUMA_NO_NODE.
+Add a generic driver that binds to armv8 CPU nodes. The generic driver allows
+- to enumerate CPUs present in a system, even when no other driver binds it
+- generates ACPI SSDT code for each CPU
+- Fill the ACPI MADT table (implemented in a follow up patch)
 
-Fixes: 87482708210f ("mm: introduce numa_memblks")
-Suggested-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: Mike Rapoport (Microsoft) <rppt@kernel.org>
+The newly introduced code could also be reused on other CPU drivers that are
+compatible with armv8.
+
+TEST: Booted on QEMU sbsa and verify the driver binds to CPU nodes.
+      Confirmed with FWTS that all ACPI processor devices are present.
+
+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+Reviewed-by: Simon Glass <sjg@chromium.org>
+Cc: Tom Rini <trini@konsulko.com>
+Cc: Simon Glass <sjg@chromium.org>
 ---
- mm/numa_memblks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog v4:
+- Export armv8_cpu_fill_ssdt to use it in other CPU drivers
+Changelog v6:
+- Update header order
+---
+ drivers/cpu/Kconfig     |  6 ++++
+ drivers/cpu/Makefile    |  2 ++
+ drivers/cpu/armv8_cpu.c | 73 +++++++++++++++++++++++++++++++++++++++++
+ drivers/cpu/armv8_cpu.h | 21 ++++++++++++
+ 4 files changed, 102 insertions(+)
+ create mode 100644 drivers/cpu/armv8_cpu.c
+ create mode 100644 drivers/cpu/armv8_cpu.h
 
-diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-index be52b93a9c58..b982f9260872 100644
---- a/mm/numa_memblks.c
-+++ b/mm/numa_memblks.c
-@@ -349,7 +349,7 @@ static void __init numa_clear_kernel_node_hotplug(void)
- 	for_each_reserved_mem_region(mb_region) {
- 		int nid = memblock_get_region_node(mb_region);
+diff --git a/drivers/cpu/Kconfig b/drivers/cpu/Kconfig
+index 5c06cd9f60..9c0df331d7 100644
+--- a/drivers/cpu/Kconfig
++++ b/drivers/cpu/Kconfig
+@@ -26,6 +26,12 @@ config CPU_RISCV
+ 	help
+ 	  Support CPU cores for RISC-V architecture.
  
--		if (nid != MAX_NUMNODES)
-+		if (nid != NUMA_NO_NODE && nid != MAX_NUMNODES)
- 			node_set(nid, reserved_nodemask);
- 	}
++config CPU_ARMV8
++	bool "Enable generic ARMv8 CPU driver"
++	depends on CPU && ARM64
++	help
++	  Support CPU cores for armv8 architecture.
++
+ config CPU_MICROBLAZE
+ 	bool "Enable Microblaze CPU driver"
+ 	depends on CPU && MICROBLAZE
+diff --git a/drivers/cpu/Makefile b/drivers/cpu/Makefile
+index bc75d9b974..773395693a 100644
+--- a/drivers/cpu/Makefile
++++ b/drivers/cpu/Makefile
+@@ -6,10 +6,12 @@
  
+ obj-$(CONFIG_CPU) += cpu-uclass.o
+ 
++
+ obj-$(CONFIG_ARCH_BMIPS) += bmips_cpu.o
+ obj-$(CONFIG_ARCH_IMX8) += imx8_cpu.o
+ obj-$(CONFIG_ARCH_AT91) += at91_cpu.o
+ obj-$(CONFIG_ARCH_MEDIATEK) += mtk_cpu.o
++obj-$(CONFIG_CPU_ARMV8) += armv8_cpu.o
+ obj-$(CONFIG_CPU_IMX) += imx8_cpu.o
+ obj-$(CONFIG_CPU_MPC83XX) += mpc83xx_cpu.o
+ obj-$(CONFIG_CPU_RISCV) += riscv_cpu.o
+diff --git a/drivers/cpu/armv8_cpu.c b/drivers/cpu/armv8_cpu.c
+new file mode 100644
+index 0000000000..19f072be43
+--- /dev/null
++++ b/drivers/cpu/armv8_cpu.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 9elements GmbH
++ */
++#include <cpu.h>
++#include <dm.h>
++#include <acpi/acpigen.h>
++#include <asm/armv8/cpu.h>
++#include <dm/acpi.h>
++#include <asm/io.h>
++#include <linux/bitops.h>
++#include <linux/printk.h>
++#include <linux/sizes.h>
++
++static int armv8_cpu_get_desc(const struct udevice *dev, char *buf, int size)
++{
++	int cpuid;
++
++	cpuid = (read_midr() & MIDR_PARTNUM_MASK) >> MIDR_PARTNUM_SHIFT;
++
++	snprintf(buf, size, "CPU MIDR %04x", cpuid);
++
++	return 0;
++}
++
++static int armv8_cpu_get_info(const struct udevice *dev,
++			      struct cpu_info *info)
++{
++	info->cpu_freq = 0;
++	info->features = BIT(CPU_FEAT_L1_CACHE) | BIT(CPU_FEAT_MMU);
++
++	return 0;
++}
++
++static int armv8_cpu_get_count(const struct udevice *dev)
++{
++	return uclass_id_count(UCLASS_CPU);
++}
++
++#ifdef CONFIG_ACPIGEN
++int armv8_cpu_fill_ssdt(const struct udevice *dev, struct acpi_ctx *ctx)
++{
++	uint core_id = dev_seq(dev);
++
++	acpigen_write_processor_device(ctx, core_id);
++
++	return 0;
++}
++
++struct acpi_ops armv8_cpu_acpi_ops = {
++	.fill_ssdt	= armv8_cpu_fill_ssdt,
++};
++#endif
++
++static const struct cpu_ops cpu_ops = {
++	.get_count = armv8_cpu_get_count,
++	.get_desc  = armv8_cpu_get_desc,
++	.get_info  = armv8_cpu_get_info,
++};
++
++static const struct udevice_id cpu_ids[] = {
++	{ .compatible = "arm,armv8" },
++	{}
++};
++
++U_BOOT_DRIVER(arm_cpu) = {
++	.name		= "arm-cpu",
++	.id		= UCLASS_CPU,
++	.of_match	= cpu_ids,
++	.ops		= &cpu_ops,
++	.flags		= DM_FLAG_PRE_RELOC,
++	ACPI_OPS_PTR(&armv8_cpu_acpi_ops)
++};
+diff --git a/drivers/cpu/armv8_cpu.h b/drivers/cpu/armv8_cpu.h
+new file mode 100644
+index 0000000000..2c4b0252cf
+--- /dev/null
++++ b/drivers/cpu/armv8_cpu.h
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 9elements GmbH
++ */
++#include <dm/acpi.h>
++#include <dm/device.h>
++
++#ifndef _ARMV8_CPU_H_
++#define _ARMV8_CPU_H_
++
++/**
++ * armv8_cpu_fill_ssdt() - Fill the SSDT
++ * Parses the FDT and writes the SSDT nodes.
++ *
++ * @dev: cpu device to generate ACPI tables for
++ * @ctx: ACPI context pointer
++ * @return:	0 if OK, or a negative error code.
++ */
++int armv8_cpu_fill_ssdt(const struct udevice *dev, struct acpi_ctx *ctx);
++
++#endif
+\ No newline at end of file
 -- 
-2.45.2
-
+2.46.2
 
 
