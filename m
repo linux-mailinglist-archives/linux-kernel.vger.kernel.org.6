@@ -1,62 +1,78 @@
-Return-Path: <linux-kernel+bounces-367641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29199A04CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:55:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5819A04CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94014286F01
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 018341F26B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605A22036FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0E9204F86;
+	Wed, 16 Oct 2024 08:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iqhy/7mI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF27B204959;
 	Wed, 16 Oct 2024 08:55:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E42156665
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729068952; cv=none; b=UJbZ6cC/eb0M+jeQVVPfqUYZwpfe8KW7gQ31m79j66Dfym0xFnJliejV6VIXrAzzA1NThGTv2yvxkmJzQRUX2SxHPhvCS7ApYwwQnj4eA9arRyoIH5DgwL/mGsbv4fjfHrMetrJx1FaI8KERs66bgxSvymKtsROXBk5aPdLu20A=
+	t=1729068954; cv=none; b=Fl1I6jOk+i0BwRVmQH6gq4wce0rhlwtvqxIP465zRBDPoKZyCuDs68i+F1toZBTOCdbxt0SKF4ip9tKQVei/Pym7ToMiPGNdPV53Qwzy6nqHa1fSRLluMa+AHJ0x4ouHdWSOvnoywx/7L2gxVVV83LXIWR+pQnEPPc2dcLJ2v14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729068952; c=relaxed/simple;
-	bh=2IXlqIJksTMhL5iFuI9VLfULEEsS/whZT0PZwVg6O9s=;
+	s=arc-20240116; t=1729068954; c=relaxed/simple;
+	bh=4Djsh/XKHn1ysqUqOiytXqTEGO8sI6c/hzSMgetUGcs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuY6ipNT6IjvlZ05llHzcGE/l6UBlVP36QWnzvTB5Lrk9//TA5ouULmhCj2fx8YAGFGILgXBYFB9q2eUshYuXYvJIGZOJNpV4MhsvDFvs9i6wkI5Bf/V4Ag3faLXnEh4OwAoFOuB5tCe8TVh8aKApGhL3XFY4hF8KstBXxVF1QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 465ADFEC;
-	Wed, 16 Oct 2024 01:56:19 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04EAC3F528;
-	Wed, 16 Oct 2024 01:55:47 -0700 (PDT)
-Date: Wed, 16 Oct 2024 09:55:38 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Clement LE GOFFIC <clement.legoffic@foss.st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Kees Cook <kees@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Antonio Borneo <antonio.borneo@foss.st.com>
-Subject: Re: Crash on armv7-a using KASAN
-Message-ID: <Zw9_imsl2KLf7_GY@J2N7QTR9R3>
-References: <Zw5D2aTkkUVOK89g@J2N7QTR9R3>
- <CACRpkdY79nbBoaHe6ijuyJS9dDduNw_sv1J90pz121YDgCvC3Q@mail.gmail.com>
- <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com>
- <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
- <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com>
- <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
- <Zw6Jk74-d0mhR0jx@J2N7QTR9R3.cambridge.arm.com>
- <CAMj1kXG3bwMGpArYNUm-qMO7PPgb3--wy5kp-3Ks2Uv9M479xg@mail.gmail.com>
- <Zw6X9KQT0-z7r7SY@J2N7QTR9R3.cambridge.arm.com>
- <CAMj1kXGGmsWs2XpM7zLURjKp67Uz2ePi1pSV1=rPCMgviLVUgw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hiS70Fv4GbYaXCX+4GOpRs76Uf59V4jQC4CMKzhXqyZkRwR6X3S9WpDbvk5IScqh2gGKpjQrbMl3CIFDu+U8A1WWqjzzF1dYYt2P7Q743N+6ZttWg+LoUvIdGF3DZ9tYUeKPgYn47100dOEDNgYLX/JCNzkFwag0AsftQX+Ustw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iqhy/7mI; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729068953; x=1760604953;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4Djsh/XKHn1ysqUqOiytXqTEGO8sI6c/hzSMgetUGcs=;
+  b=iqhy/7mI79SMFSvf/aAVLapQzrPhIgj2YPMLeUS2CATamLeKkvb1MiM+
+   VwqP0H23Wcp3nHjV2PTAZygBgGqy0HOJjBAJzW43QC6OfB2EQh0e/NtSx
+   WR+uxb0Tt5FwAZAZrBap5QsOSFqWL3JV3Uxk4hn3hQily+uYELb9nQB2E
+   ayG21boNsElkJD8tBewzDgCbm+zNJ2kk07W9RdhRNdNvD4Y03/b6eQhqQ
+   xTqUVH+Z20ruQUlfX4CDtxDmJQ0yE6Jl+LpTHe/zl29vkh5oeZ+FZhBxb
+   TZ62TdW5BLvCEZdyUJGF1MH4kDB2D6GJWkXi+P/GEbbmlZhcoiPUiASqm
+   Q==;
+X-CSE-ConnectionGUID: VwjCpZ60Q5OdXjeJOqSYjg==
+X-CSE-MsgGUID: jgdRF/GKRPChgs2h1aLocQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="39893813"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="39893813"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 01:55:52 -0700
+X-CSE-ConnectionGUID: dUhHDUN1SvSt8subDfpfWw==
+X-CSE-MsgGUID: 39KKPkUnQnub3BYDZ5vfEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="78618168"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 01:55:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t0zop-00000003hJ6-2Ws1;
+	Wed, 16 Oct 2024 11:55:47 +0300
+Date: Wed, 16 Oct 2024 11:55:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Michael Chan <mchan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net-next v1 1/1] tg3: Increase buffer size for IRQ label
+Message-ID: <Zw9_kzsxy5npUNXk@smile.fi.intel.com>
+References: <20241014103810.4015718-1-andriy.shevchenko@linux.intel.com>
+ <20241015081621.7bea8cd7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,78 +81,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGGmsWs2XpM7zLURjKp67Uz2ePi1pSV1=rPCMgviLVUgw@mail.gmail.com>
+In-Reply-To: <20241015081621.7bea8cd7@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Oct 15, 2024 at 07:28:06PM +0200, Ard Biesheuvel wrote:
-> On Tue, 15 Oct 2024 at 18:27, Mark Rutland <mark.rutland@arm.com> wrote:
-> >
-> > On Tue, Oct 15, 2024 at 06:07:00PM +0200, Ard Biesheuvel wrote:
-> > > On Tue, 15 Oct 2024 at 17:26, Mark Rutland <mark.rutland@arm.com> wrote:
-> > > > Looking some more, I don't see how VMAP_STACK guarantees that the
-> > > > old/active stack is mapped in the new mm when switching from the old mm
-> > > > to the new mm (which happens before __switch_to()).
-> > > >
-> > > > Either I'm missing something, or we have a latent bug. Maybe we have
-> > > > some explicit copying/prefaulting elsewhere I'm missing?
-> > >
-> > > We bump the vmalloc_seq counter for that. Given that the top-level
-> > > page table can only gain entries covering the kernel space, this
-> > > should be sufficient for the old task's stack to be mapped in the new
-> > > task's page tables.
-> >
-> > Ah, yep -- I had missed that. Thanks for the pointer!
-> >
-> > From a superficial look, it sounds like it should be possible to extend
-> > that to also handle the KASAN shadow of the vmalloc area (which
-> > __check_vmalloc_seq() currently doesn't copy), but I'm not sure of
-> > exactly when we initialise the shadow for a vmalloc allocation relative
-> > to updating vmalloc_seq.
-> >
+On Tue, Oct 15, 2024 at 08:16:21AM -0700, Jakub Kicinski wrote:
+> On Mon, 14 Oct 2024 13:38:10 +0300 Andy Shevchenko wrote:
+> > While at it, move the respective buffer out from the structure as
+> > it's used only in one caller. This also improves memory footprint
+> > of struct tg3_napi.
 > 
-> Indeed. It appears both vmalloc_seq() and arch_sync_kernel_mappings()
-> need to take the vmalloc shadow into account specifically. And we may
-> also need the dummy read from the stack's shadow in __switch_to - I am
-> pretty sure I added that for a reason.
+> It's passed to request_irq(), I thought request_irq() dups the string
+> but I can't see it now. So please include in the commit message a
+> reference to the function where the strdup (or such) of name happens 
+> in the request_irq() internals.
 
-I believe that's necessary for the lazy TLB switch, at least for SMP:
+Hmm... you are right, the name should be kept as long as device instance alive
+(more precisely till calling free_irq() for the IRQ handler in question).
 
-	// CPU 0			// CPU 1
+I will redo this part (currently I'm choosing between leaving the name in the
+structure or using devm_kasprintf()for it, I'll check which one looks better
+at the end).
 
-	<< switches to task X's mm >>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-					<< creates kthread task Y >>
-					<< maps task Y's new stack >>
-					<< maps task Y's new shadow >>
 
-					// Y switched out
-					context_switch(..., Y, ..., ...);
-
-	// Switch from X to Y
-	context_switch(..., X, Y, ...) {
-		// prev = X
-		// next = Y
-
-		if (!next->mm) { 
-			// Y has no mm
-			// No switch_mm() here
-			// ... so no check_vmalloc_seq()
-		} else {
-			// not taken
-		}
-
-		...
-
-		// X's mm still lacks Y's stack + shadow here
-
-		switch_to(prev, next, prev);
-	}
-
-... so probably worth a comment that we're faulting in the new
-stack+shadow for for lazy tlb when switching to a task with no mm?
-
-In the lazy tlb case the current/old mappings don't disappear from the
-active mm, and so we don't need to go add those to the new mm, which is what
-we need check_vmalloc_seq() for.
-
-Mark.
 
