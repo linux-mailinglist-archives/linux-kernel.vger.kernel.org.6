@@ -1,186 +1,179 @@
-Return-Path: <linux-kernel+bounces-368652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E07F9A12F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:50:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866B59A12F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C876A286B63
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65EB286E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA6C215030;
-	Wed, 16 Oct 2024 19:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2976F215F4B;
+	Wed, 16 Oct 2024 19:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="qDBer67J"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPmfD9IZ"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90DB18C332
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8F518BC33;
+	Wed, 16 Oct 2024 19:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108241; cv=none; b=lZbeNXFNI8LzadotyneNz/OHCIdLx+jcUneQsXx0wWdUguHnpo7htw+xKkJ2AJH7ouapCb6Ao+Xaoc1zjKZmcGMy3Acq12LX3QCB4wXPZblV5pK1MXBXIdPZ5xcR7XvO/yVdxpRiI0BG1MAWcp/O8GqNC5ZgqL/o3EiwzPnjPTQ=
+	t=1729108452; cv=none; b=uegqbYUJ8qYyekGN+5fyDydUocaW7boD1lY9kNyBmgnntYk1JzwvHXS4Lz23LOlr79r92t5HIdIjEBTngrdm2+ln/8PmkDyXQsi7m+Of3t3EWoA9i84CsgIftkhcHI3OtIoD4AB5y8Oput72b2wcKPq9ERvKSh37SpB3lRacwCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108241; c=relaxed/simple;
-	bh=lYz8N4/jMLsog3BqxBrS71EX/CtVo4jT6H/piDci1DA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pNRbdMFXgamgUNhDQWAYcryfa6EPhELvbSBhMQ1A5Rr8wpyfP/S1V2WNl9jp7DgA6OTNYcCZ2CMwjReW+srVOXBc1O9O6bQKY/ksGcy8VDQcfLVn/t8YbfvpimRxHV8ySVwQQiueIP4+u61LJmcaI8E7P/MM9Q6KQZ31CVKCuDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=qDBer67J; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C74222C0517;
-	Thu, 17 Oct 2024 08:50:36 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1729108236;
-	bh=lYz8N4/jMLsog3BqxBrS71EX/CtVo4jT6H/piDci1DA=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=qDBer67JzySQkTBCQ8XoqKIhvQJgJd485Sohr5p5f0XfqfQKvgXl8WeWuXqfH/73a
-	 v3VW6K7Megr4rtqAFAAHjFuF0ZOdswSHEXpn1Da0+1XaFUfGc2g7HsGTBVrwSk8k6V
-	 6Q6p69CPbK99ktHcq19ybEBdEIkiOMUSG5K0kypZdKZSVLNJDet1iLi6Jlc5MuXb5k
-	 QeuzGAoOYV7NETGuGDM4pf96JaUEWlHpzz/thP3iwJvbfQacZAwxb7tA8mnLJfLMxt
-	 PWbAVoKndB+85uDm/xMRDZe9twMHw0q4o2Ymhf1Hq3hwgFrjFQFW2EqXLAYuFurZMc
-	 WzyceGIcQ319A==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6710190c0002>; Thu, 17 Oct 2024 08:50:36 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 17 Oct 2024 08:50:36 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.48; Thu, 17 Oct 2024 08:50:36 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 17 Oct 2024 08:50:36 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "lee@kernel.org"
-	<lee@kernel.org>, "sre@kernel.org" <sre@kernel.org>,
-	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v6 3/6] dt-bindings: mfd: Add Realtek RTL9300 switch
- peripherals
-Thread-Topic: [PATCH v6 3/6] dt-bindings: mfd: Add Realtek RTL9300 switch
- peripherals
-Thread-Index: AQHbH1XyRCVZAOY+h0G2xpDtEx4lKrKIFFgAgADcY4A=
-Date: Wed, 16 Oct 2024 19:50:36 +0000
-Message-ID: <1c7abf59-588b-4679-8638-7e9985f133d1@alliedtelesis.co.nz>
-References: <20241015225948.3971924-1-chris.packham@alliedtelesis.co.nz>
- <20241015225948.3971924-4-chris.packham@alliedtelesis.co.nz>
- <5o77wkohvujnfnm4xm73b65gpx5by7chhyhdbuw3dkpota53us@5x6jlcabjoes>
-In-Reply-To: <5o77wkohvujnfnm4xm73b65gpx5by7chhyhdbuw3dkpota53us@5x6jlcabjoes>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <820BFB81548DA04F856E2B30779A14C3@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1729108452; c=relaxed/simple;
+	bh=7oRThQztznlHAqI2vr89tVK4VbB3UwzOlwWA8WmLv+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7v6X29PmB3z6kfxjgjA4QTQKegr63HQMCO4w9hU+idxE1tnCFzCUOqOwQMxcpt67edTYozMfmfFu/Iy2qv6+BySLJC98b4vzgLYiEPNeaoL4v7lrsIWjuJ4LP6Kb1zqrwvvwnFNhtk6snqLBnMat0//aZ6HOj4EDnHMvu9qD5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MPmfD9IZ; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4609e784352so166681cf.0;
+        Wed, 16 Oct 2024 12:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729108450; x=1729713250; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7v7wjKIhhww48sdwRipURJWTfa87g1A1lt2lXIVhn9U=;
+        b=MPmfD9IZGA8nKoRvLgjMoBvMIKWm4YBTjvxQxghJadhJID+mJCQB75NU+0Q1Zc5Mm7
+         4BsuMRs+I9pDgIUoJiFrzE9PNjgV3LkoXRXK7MFhjH7UopOf4KWNchRlcpHVm9caLqdY
+         rb5afj8IsEhD+8iPkIwdLIUf9nqPChBxjZmCj8ey4oEy9nj837Phrc7xJBhNb33E9nc/
+         jcYgXJcC/LIuV4AiYKbr52jo4/WHKCfEvsr09840MgYwI7J50u9OAJ4sIVUGCG9EOpPZ
+         JI7kvHD0DNZm/gk1XXPn0TaoUOLLvKM9wIOwj3dug8RLD2X/rMVo1SymopJuNKixJsSd
+         jTsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729108450; x=1729713250;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7v7wjKIhhww48sdwRipURJWTfa87g1A1lt2lXIVhn9U=;
+        b=bpPzv798n6oQ/nomRnRmYQXn321qcQQ9he7Lje9KRWcuCWL9/SeCiPrku4EVAnx/Af
+         5H9H9Zx4U5QDxu1v0bXu0fKWAg7SWkiwtrcjXXtsjR7iIt8WA9us3H41ib7Oj9HLduNu
+         Y9uEU17gurEh27DHjZ+PznaEQYPdZGhaUBuhHuOadXxiTeoSKVWvtoDoWOorGgJVOGCv
+         xeTbTCsJYzuTMEJ+8KWv/SrGsIXxnrEwR2PtNxuMbtAkjwSGkWj1ejcPzyhOdLtSkfez
+         EFjdkDiBoyxymJy+4G4nlWYz9a0ZIzTGiEGan5QkSr/+KALWyeya11u35qWjx+1826qj
+         VQtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWxRFfUhX69xpy+c5XbB6Fj1uE4yXcGObbLNu3Fm4ASJTD5VY6TZzcftHxuJNIaKfdcnOYfYab+5yfLJ8JyIw=@vger.kernel.org, AJvYcCVxoD0m1il/B2o6dSLuEf/vmfCEROnWSD7CpxslVNhwRRIQbKLpCe4d9AV3ihQhNcSQHMuyMB/gPJQ6Wbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOVEpPEfuWZWg3jStP17EXF1A1WIZDCf9ZqUqgBRFOOt8ByjH9
+	st+KPNokJ+8Ltsal2TxtgzVh6ZKQKxuzy0mVZkCwSEKbjZllk7rh
+X-Google-Smtp-Source: AGHT+IHMBRpIGzPwXimPcca6m7ja273HIRtLtg3iMKOM7E0L5yRcxDWLHr45gMtgLpuux+wQJAnLBA==
+X-Received: by 2002:a05:622a:11:b0:460:8559:e5bc with SMTP id d75a77b69052e-4608559e74amr72717081cf.4.1729108449806;
+        Wed, 16 Oct 2024 12:54:09 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b123e13sm21032561cf.44.2024.10.16.12.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 12:54:09 -0700 (PDT)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id EF9C21200071;
+	Wed, 16 Oct 2024 15:54:08 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Wed, 16 Oct 2024 15:54:08 -0400
+X-ME-Sender: <xms:4BkQZ8xHsD6h9WzYayhGa0jRoiusgbTp0I8_QyHGpotHEa2PUK7qUA>
+    <xme:4BkQZwT2lXFVxRaE1r5piVN9pe_ZkAfsyX7hRPNLsud9KYMV7I1IsiDtxO2Yb1tfD
+    iWWCpTvEGh6lcIIwg>
+X-ME-Received: <xmr:4BkQZ-Wv8VKq-fK-00_FaX0F8E6chueXThLV8QnOyctEuGXun89jaoqwvMs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledgudeggecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
+    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvuddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhnohhrihesgh
+    hmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthho
+    pehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehtmhhgrhhosh
+    hssehumhhitghhrdgvughupdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtth
+    hopehgrghrhiesghgrrhihghhuohdrnhgvth
+X-ME-Proxy: <xmx:4BkQZ6gO73bXQ1zjHmAOOZXzlJnvow51wt9VhvjMvvgfXd9rP0ox6g>
+    <xmx:4BkQZ-DxF9qq_5oX1MwyxNqJnvAapC_ZQjhmuERXP4sSqtXYtkslJQ>
+    <xmx:4BkQZ7LY5xrdeSndBn5NKsQwhnNxN-IBMj-_-sQCOB8zKv-wjZMNQA>
+    <xmx:4BkQZ1DBHFQMbT7biQM9PCAGtp5p_JSndupIDAWbp-cjGMsOBZMYng>
+    <xmx:4BkQZ-z7XETN6l66igh91EPAf2oskEPzEKZJmCg5H-aPeYbvGrsZTNvG>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Oct 2024 15:54:08 -0400 (EDT)
+Date: Wed, 16 Oct 2024 12:54:07 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch,
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
+	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com,
+	sboyd@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 4/8] rust: time: Implement addition of Ktime
+ and Delta
+Message-ID: <ZxAZ36EUKapnp-Fk@Boquns-Mac-mini.local>
+References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
+ <20241016035214.2229-5-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=6710190c a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=gEfo2CItAAAA:8 a=PZBvVurBh3LiFW73o5MA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016035214.2229-5-fujita.tomonori@gmail.com>
 
-DQpPbiAxNi8xMC8yNCAxOTo0MSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gV2Vk
-LCBPY3QgMTYsIDIwMjQgYXQgMTE6NTk6NDVBTSArMTMwMCwgQ2hyaXMgUGFja2hhbSB3cm90ZToN
-Cj4+ICtwcm9wZXJ0aWVzOg0KPj4gKyAgY29tcGF0aWJsZToNCj4+ICsgICAgb25lT2Y6DQo+PiAr
-ICAgICAgLSBpdGVtczoNCj4+ICsgICAgICAgICAgLSBlbnVtOg0KPj4gKyAgICAgICAgICAgICAg
-LSByZWFsdGVrLHJ0bDkzMDJiLWkyYw0KPj4gKyAgICAgICAgICAgICAgLSByZWFsdGVrLHJ0bDkz
-MDJjLWkyYw0KPj4gKyAgICAgICAgICAgICAgLSByZWFsdGVrLHJ0bDkzMDMtaTJjDQo+PiArICAg
-ICAgICAgIC0gY29uc3Q6IHJlYWx0ZWsscnRsOTMwMS1pMmMNCj4+ICsgICAgICAtIGNvbnN0OiBy
-ZWFsdGVrLHJ0bDkzMDEtaTJjDQo+PiArDQo+PiArICByZWc6DQo+PiArICAgIGRlc2NyaXB0aW9u
-OiBSZWdpc3RlciBvZmZzZXQgYW5kIHNpemUgdGhpcyBJMkMgY29udHJvbGxlci4NCj4+ICsNCj4+
-ICsgICIjYWRkcmVzcy1jZWxscyI6DQo+PiArICAgIGNvbnN0OiAxDQo+PiArDQo+PiArICAiI3Np
-emUtY2VsbHMiOg0KPj4gKyAgICBjb25zdDogMA0KPj4gKw0KPj4gK3BhdHRlcm5Qcm9wZXJ0aWVz
-Og0KPj4gKyAgJ15pMmNAWzAtN10kJzoNCj4+ICsgICAgJHJlZjogL3NjaGVtYXMvaTJjL2kyYy1j
-b250cm9sbGVyLnlhbWwNCj4+ICsgICAgdW5ldmFsdWF0ZWRQcm9wZXJ0aWVzOiBmYWxzZQ0KPj4g
-Kw0KPj4gKyAgICBwcm9wZXJ0aWVzOg0KPj4gKyAgICAgIHJlZzoNCj4+ICsgICAgICAgIGRlc2Ny
-aXB0aW9uOiBUaGUgU0RBIHBpbiBhc3NvY2lhdGVkIHdpdGggdGhlIEkyQyBidXMuDQo+PiArICAg
-ICAgICBtYXhJdGVtczogMQ0KPj4gKw0KPj4gKyAgICByZXF1aXJlZDoNCj4+ICsgICAgICAtIHJl
-Zw0KPj4gKw0KPj4gK3JlcXVpcmVkOg0KPj4gKyAgLSBjb21wYXRpYmxlDQo+PiArICAtIHJlZw0K
-Pj4gKw0KPj4gK3VuZXZhbHVhdGVkUHJvcGVydGllczogZmFsc2UNCj4gVGhpcyBoYXMgdG8gYmU6
-IGFkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQ0KDQpIbW0sIHdoZW4gSSBkbyB0aGF0IHRoZSBk
-dF9iaW5kaW5nX2NoZWNrIGNvbXBsYWlucw0KDQpEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMS1zd2l0Y2guZXhhbXBsZS5kdGI6IA0KZXRoZXJuZXQt
-c3dpdGNoQDFiMDAwMDAwOiBpMmNAMzZjOmkyY0AwOiAnI2FkZHJlc3MtY2VsbHMnLCANCicjc2l6
-ZS1jZWxscycsICdncGlvQDIwJyBkbyBub3QgbWF0Y2ggYW55IG9mIHRoZSByZWdleGVzOiAncGlu
-Y3RybC1bMC05XSsnDQogwqDCoMKgwqDCoMKgwqAgZnJvbSBzY2hlbWEgJGlkOiANCmh0dHA6Ly9k
-ZXZpY2V0cmVlLm9yZy9zY2hlbWFzL21mZC9yZWFsdGVrLHJ0bDkzMDEtc3dpdGNoLnlhbWwjDQpE
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMS1zd2l0
-Y2guZXhhbXBsZS5kdGI6IA0KZXRoZXJuZXQtc3dpdGNoQDFiMDAwMDAwOiBpMmNAMzZjOmkyY0Ay
-OiAnI2FkZHJlc3MtY2VsbHMnLCANCicjc2l6ZS1jZWxscycsICdncGlvQDIwJyBkbyBub3QgbWF0
-Y2ggYW55IG9mIHRoZSByZWdleGVzOiAncGluY3RybC1bMC05XSsnDQogwqDCoMKgwqDCoMKgwqAg
-ZnJvbSBzY2hlbWEgJGlkOiANCmh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL21mZC9yZWFs
-dGVrLHJ0bDkzMDEtc3dpdGNoLnlhbWwjDQpEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvbWZkL3JlYWx0ZWsscnRsOTMwMS1zd2l0Y2guZXhhbXBsZS5kdGI6IA0KZXRoZXJuZXQtc3dp
-dGNoQDFiMDAwMDAwOiBpMmNAMzg4OmkyY0A3OiAnI2FkZHJlc3MtY2VsbHMnLCANCicjc2l6ZS1j
-ZWxscycsICdncGlvQDIwJyBkbyBub3QgbWF0Y2ggYW55IG9mIHRoZSByZWdleGVzOiAncGluY3Ry
-bC1bMC05XSsnDQogwqDCoMKgwqDCoMKgwqAgZnJvbSBzY2hlbWEgJGlkOiANCmh0dHA6Ly9kZXZp
-Y2V0cmVlLm9yZy9zY2hlbWFzL21mZC9yZWFsdGVrLHJ0bDkzMDEtc3dpdGNoLnlhbWwjDQpEb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMS1zd2l0Y2gu
-ZXhhbXBsZS5kdGI6IA0KaTJjQDM2YzogaTJjQDA6ICcjYWRkcmVzcy1jZWxscycsICcjc2l6ZS1j
-ZWxscycsICdncGlvQDIwJyBkbyBub3QgbWF0Y2ggDQphbnkgb2YgdGhlIHJlZ2V4ZXM6ICdwaW5j
-dHJsLVswLTldKycNCiDCoMKgwqDCoMKgwqDCoCBmcm9tIHNjaGVtYSAkaWQ6IA0KaHR0cDovL2Rl
-dmljZXRyZWUub3JnL3NjaGVtYXMvaTJjL3JlYWx0ZWsscnRsOTMwMS1pMmMueWFtbCMNCkRvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvcmVhbHRlayxydGw5MzAxLXN3aXRjaC5l
-eGFtcGxlLmR0YjogDQppMmNAMzZjOiBpMmNAMjogJyNhZGRyZXNzLWNlbGxzJywgJyNzaXplLWNl
-bGxzJywgJ2dwaW9AMjAnIGRvIG5vdCBtYXRjaCANCmFueSBvZiB0aGUgcmVnZXhlczogJ3BpbmN0
-cmwtWzAtOV0rJw0KIMKgwqDCoMKgwqDCoMKgIGZyb20gc2NoZW1hICRpZDogDQpodHRwOi8vZGV2
-aWNldHJlZS5vcmcvc2NoZW1hcy9pMmMvcmVhbHRlayxydGw5MzAxLWkyYy55YW1sIw0KRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9yZWFsdGVrLHJ0bDkzMDEtc3dpdGNoLmV4
-YW1wbGUuZHRiOiANCmkyY0AzODg6IGkyY0A3OiAnI2FkZHJlc3MtY2VsbHMnLCAnI3NpemUtY2Vs
-bHMnLCAnZ3Bpb0AyMCcgZG8gbm90IG1hdGNoIA0KYW55IG9mIHRoZSByZWdleGVzOiAncGluY3Ry
-bC1bMC05XSsnDQogwqDCoMKgwqDCoMKgwqAgZnJvbSBzY2hlbWEgJGlkOiANCmh0dHA6Ly9kZXZp
-Y2V0cmVlLm9yZy9zY2hlbWFzL2kyYy9yZWFsdGVrLHJ0bDkzMDEtaTJjLnlhbWwjDQoNClRob3Nl
-IHByb3BlcnRpZXMgc2hvdWxkIGJlIGdldHRpbmcgZGVmaW5lZCB2aWEgdGhlIGkyYy1jb250cm9s
-bGVyLnlhbWwgDQpzY2hlbWEgc28gSSBtdXN0IGJlIG1pc3Npbmcgc29tZXRoaW5nLCBJJ20ganVz
-dCBub3Qgc3VyZSB3aGF0Lg0KDQo+DQo+PiArDQo+PiArZXhhbXBsZXM6DQo+PiArICAtIHwNCj4+
-ICsgICAgaTJjQDM2YyB7DQo+PiArICAgICAgY29tcGF0aWJsZSA9ICJyZWFsdGVrLHJ0bDkzMDEt
-aTJjIjsNCj4+ICsgICAgICByZWcgPSA8MHgzNmMgMHgxND47DQo+PiArICAgICAgI2FkZHJlc3Mt
-Y2VsbHMgPSA8MT47DQo+PiArICAgICAgI3NpemUtY2VsbHMgPSA8MD47DQo+PiArDQo+PiArICAg
-ICAgaTJjQDAgew0KPj4gKyAgICAgICAgcmVnID0gPDA+Ow0KPj4gKyAgICAgICAgI2FkZHJlc3Mt
-Y2VsbHMgPSA8MT47DQo+PiArICAgICAgICAjc2l6ZS1jZWxscyA9IDwwPjsNCj4+ICsgICAgICAg
-IGdwaW9AMjAgew0KPj4gKyAgICAgICAgICBjb21wYXRpYmxlID0gIm54cCxwY2E5NTU1IjsNCj4+
-ICsgICAgICAgICAgZ3Bpby1jb250cm9sbGVyOw0KPj4gKyAgICAgICAgICAjZ3Bpby1jZWxscyA9
-IDwyPjsNCj4+ICsgICAgICAgICAgcmVnID0gPDB4MjA+Ow0KPj4gKyAgICAgICAgfTsNCj4+ICsg
-ICAgICB9Ow0KPj4gKw0KPj4gKyAgICAgIGkyY0AyIHsNCj4+ICsgICAgICAgIHJlZyA9IDwyPjsN
-Cj4+ICsgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPj4gKyAgICAgICAgI3NpemUtY2Vs
-bHMgPSA8MD47DQo+PiArICAgICAgICBncGlvQDIwIHsNCj4+ICsgICAgICAgICAgY29tcGF0aWJs
-ZSA9ICJueHAscGNhOTU1NSI7DQo+PiArICAgICAgICAgIGdwaW8tY29udHJvbGxlcjsNCj4+ICsg
-ICAgICAgICAgI2dwaW8tY2VsbHMgPSA8Mj47DQo+PiArICAgICAgICAgIHJlZyA9IDwweDIwPjsN
-Cj4+ICsgICAgICAgIH07DQo+PiArICAgICAgfTsNCj4+ICsgICAgfTsNCj4+ICsgICAgaTJjQDM4
-OCB7DQo+PiArICAgICAgY29tcGF0aWJsZSA9ICJyZWFsdGVrLHJ0bDkzMDEtaTJjIjsNCj4+ICsg
-ICAgICByZWcgPSA8MHgzODggMHgxND47DQo+PiArICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8MT47
-DQo+PiArICAgICAgI3NpemUtY2VsbHMgPSA8MD47DQo+PiArDQo+PiArICAgICAgaTJjQDcgew0K
-Pj4gKyAgICAgICAgcmVnID0gPDc+Ow0KPj4gKyAgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8MT47
-DQo+PiArICAgICAgICAjc2l6ZS1jZWxscyA9IDwwPjsNCj4+ICsgICAgICB9Ow0KPj4gKyAgICB9
-Ow0KPiBZb3kgaGF2ZSBub3cgbXVsdGlwbGUgc2FtZSBleGFtcGxlcy4gS2VlcCBvbmx5IG9uZSwg
-Y29tcGxldGUgaW4gdGhlIHBhcmVudA0KPiBzY2hlbWEuDQoNCk9LLiBJJ2xsIGtlZXAgb25lIGV4
-YW1wbGUgb2YgYSBjb250cm9sbGVyIHdpdGggYSBub24temVybyBjaGFubmVsIGluIHRoZSANCmky
-YyBiaW5kaW5nIGFuZCBsZWF2ZSBhIG1vcmUgY29tcGxldGUgZXhhbXBsZSBpbiB0aGUgbWZkLg0K
-DQo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9y
-ZWFsdGVrLHJ0bDkzMDEtc3dpdGNoLnlhbWwgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMS1zd2l0Y2gueWFtbA0KPj4gbmV3IGZpbGUgbW9kZSAx
-MDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZjA1MzMwM2FiMWU2DQo+PiAtLS0gL2Rldi9u
-dWxsDQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3JlYWx0
-ZWsscnRsOTMwMS1zd2l0Y2gueWFtbA0KPj4gQEAgLTAsMCArMSwxMTQgQEANCj4+ICsjIFNQRFgt
-TGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9SIEJTRC0yLUNsYXVzZSkNCj4+ICsl
-WUFNTCAxLjINCj4gQmVzdCByZWdhcmRzLA0KPiBLcnp5c3p0b2YNCj4=
+On Wed, Oct 16, 2024 at 12:52:09PM +0900, FUJITA Tomonori wrote:
+> Implement Add<Delta> for Ktime to support the operation:
+> 
+> Ktime = Ktime + Delta
+> 
+> This is typically used to calculate the future time when the timeout
+> will occur.
+> 
+> timeout Ktime = current Ktime (via ktime_get()) + Delta;
+> // do something
+> if (ktime_get() > timeout Ktime) {
+>     // timed out
+> }
+> 
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> ---
+>  rust/kernel/time.rs | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 8c00854db58c..9b0537b63cf7 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -155,3 +155,14 @@ pub fn as_secs(self) -> i64 {
+>          self.nanos / NSEC_PER_SEC
+>      }
+>  }
+> +
+> +impl core::ops::Add<Delta> for Ktime {
+> +    type Output = Ktime;
+> +
+> +    #[inline]
+> +    fn add(self, delta: Delta) -> Ktime {
+> +        Ktime {
+> +            inner: self.inner + delta.as_nanos(),
+
+What if overflow happens in this addition? Is the expectation that user
+should avoid overflows? I asked because we have ktime_add_safe() which
+saturate at KTIME_SEC_MAX.
+
+Regards,
+Boqun
+
+> +        }
+> +    }
+> +}
+> -- 
+> 2.43.0
+> 
+> 
 
