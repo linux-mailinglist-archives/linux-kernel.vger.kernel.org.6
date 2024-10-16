@@ -1,163 +1,173 @@
-Return-Path: <linux-kernel+bounces-367839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE289A076A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8E59A0769
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C321F27913
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB791F26CF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31C1207A03;
-	Wed, 16 Oct 2024 10:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4989E2076BA;
+	Wed, 16 Oct 2024 10:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="KUC3FfL6"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2yf4lTx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A5E2076BB
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6802076AB;
+	Wed, 16 Oct 2024 10:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074552; cv=none; b=s01HVOC2xRGey4GvQjbjYjiWB5nb62uDOHqDcVVpJQ9+Rb1qEymlGFbzQM3vrZ/i+ckhi88FEX+6QQVpq5/RgqSBs0g9W1O44m2QHtRyx5sXSmJUBGW17Q5oFbGJLAa07Sdx01ZU8DEnR3u7U4NfH5suW/yhajsn1sNqseCxC7w=
+	t=1729074548; cv=none; b=JMXRpb8QJvXZCUDqhOgbCKHLx7wwOoO2i1bGK3OgT/4vKHwPHinWGG1gSgstQbmgdv+oDft3CTHfICmVublXzXym2PGASBSIPF9NQm3Wn0oNhnCe9/v9HTwTR0kvicRjko6Jy5sLSeoxfJWhukAyQVsH2ALKvaMhuSR/SPuboMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074552; c=relaxed/simple;
-	bh=RbU0+0DOnMsXLLdR7n0L5xhF+PhyrXNs05EJ7xUTn6c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=byH/KFlXgYtv718p1lZOWBWYzSKzNSskvidrrUyygAlgNxr7hwNyGOhlwIxMzAX7bCoteJeBCyTAC9gu3POt3RT8c5BStD6w3YwMF41oP3DekZN9/SSZBipMtGU01SFXmWm00zZGUBW1qq0G/yaYFLun2JmB5zrn8ILne3IuOv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=KUC3FfL6; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729074533; x=1729679333; i=spasswolf@web.de;
-	bh=zDfoqgLtdwSDhWCua6b4bat7DM5huFT3TSNkpfKFdmI=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=KUC3FfL6dK6gP6kI6GXycVa0x70gOVgaKh+25C8contPSveEB3P15bslPKON5/I2
-	 k93a2+vhMxZanuLL13Cp2ScGu+F6zCY2JkvqakTa0yxwdRoXtx4/wjT6XAsSzloUa
-	 duhxSR0uuyA3ZCEPsaCQOivo+2aOphmq/fCLz1MjLljB2s2PJz8T2+0iSXgqqcgYC
-	 tUQJtFFbxhyppO8aQcyznOc0nfs53amjHDXthhLpGDCIazl6oGro8HH6ELmiahfK8
-	 DWkgHAJbDEKYcDosdWlyLol97GUdqQGUdFubJgTLmKQKd3PLjE+1EeJuPPQ3/wNti
-	 Aasjj2tLGRgRmDOQUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjgXH-1tftnC1lSl-00lDOA; Wed, 16
- Oct 2024 12:28:53 +0200
-Message-ID: <3b4dccf8dfbfb5a9d7c07a745c48a96164fbf19a.camel@web.de>
-Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in
- mmap_region()
-From: Bert Karwatzki <spasswolf@web.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Andrew Morton	
- <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 16 Oct 2024 12:28:51 +0200
-In-Reply-To: <02217d08-bc08-4ffe-8e63-07878561f9b7@lucifer.local>
-References: <20241013223601.3823-1-spasswolf@web.de>
-	 <02217d08-bc08-4ffe-8e63-07878561f9b7@lucifer.local>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.54.0-1+b1 
+	s=arc-20240116; t=1729074548; c=relaxed/simple;
+	bh=pg7UYaMPx4mTb52bLj7hgV55+1gGge6GzAJdln6ov9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTSJfT4oOCeoOzrpu9Hyl8DogxEKgYiXVuHEl7VFHu3KIf3nVflypmOWCJybCHSTHBq9qzfbryyDe+QQZt7adlxvleS8qvXG4qROcQobFFECCu3QYx7mALFmaNSTCiN1JPAfX17B8500O9HfuV+AVy7fE4lHR0qMgJqzKfOyXDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2yf4lTx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD37C4CECF;
+	Wed, 16 Oct 2024 10:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729074548;
+	bh=pg7UYaMPx4mTb52bLj7hgV55+1gGge6GzAJdln6ov9c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b2yf4lTx8ojmaCj5oBgFI44qnJKC5wieTTwoGMja4nTY6AiQoxiYgyEUvOgdFEM7q
+	 bXxyuRZ/LirXoOcJSfOKuO8+KWJJo/qIgTxUlehM2AUjxKpu2XHwOdcC/BVXLQ8wUM
+	 ZYIXRSxoPONaAsPDvg/FoiVNVK8MSHr+kXzcMp3rlG+VAtFApYOKOcA5o7/RkB/cuW
+	 eOOmjf7chYKDaPRIEHIz+pfla4DE4cDTrxOZSaehnHPCVibyBHK1Qp6fssXWEAQ8XV
+	 kTC5ggwOXEh6heECxbBz8/BZyo7eXll3sjtb1LBudmPZ/2wx67n1g22dYaMpcK9AZl
+	 lCTcoL2gr+GwA==
+Date: Wed, 16 Oct 2024 11:29:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, Lewis Hanly <lewis.hanly@microchip.com>
+Subject: Re: [RFC v7 4/6] gpio: mpfs: add polarfire soc gpio support
+Message-ID: <20241016-dandelion-hypnosis-9d989bb2fdd1@spud>
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+ <20240723-underage-wheat-7dd65c2158e7@wendy>
+ <CACRpkdbRE695f-+do1HYpOZ6e4qxgUBWJzEPO2hTCuZ3xxYHQg@mail.gmail.com>
+ <20241016-shallot-nerd-51eeba039ba0@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CmBUU6+EmCtmkoM0"
+Content-Disposition: inline
+In-Reply-To: <20241016-shallot-nerd-51eeba039ba0@spud>
+
+
+--CmBUU6+EmCtmkoM0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8OCwwgktF/amC+f5zXUZ+R89/j0D+sZHnTcr/ZGlt4DG6simpol
- Q3cnErJh2PlMnPvjE1eL/C6IMjvDuN0x1rE4whu2jJ2x38D/vEGlI3jlPq7GgCfaB7FjK9/
- /+Lhvawy48050kb7CIVvCwHpelHJnTiARORPI/bl9CyBaMuaqDqeSvK+20sN6ZUN/kUFtfu
- sSuOnGQa664j920oD8AQw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:V8RVBPwwDvs=;BYNRIfGXRdhkTugF6vDLmmDgIE+
- eHOJQAErC/UKXJt+03PyiuKXapMvVz5WUgRsMW38Mx/SF1nr69l5fgiw8KERJOFKiIeav0Ev3
- 0eoyy0h1Zdp48P8nWbr7drsYhvY3lyV8FsOikrMqPcjd4qbW0dnEW4KZBYUkdhs/OyWtt9/XI
- gPAukiFxMjFgeO259jJZfGVjkCPe7RLViHKNN172hd/dQ7YuZKz+Z6dPlasp1tbLkqsGf+Xn9
- mOQu0+yFNcRYlBLrG0BD3sSgSmcrJggwLXQHh/wo0TamKihOLNSZ1zgGypHfnffbGMzpQbfmx
- zUg8GyWO7PCq3WjmnQwfcXhHbSNIxFYz1RuJfUzI54RVHQ8udLlD3wFglI5s9pmfYHJQJx+q7
- Lgxi6GLc3Hn4ES7cL8KbEUmQhZhriF+YuoZkBIJ3nKt3nf9DXJ1guGFaauxYlrrj8b1Xuk2zf
- jaii/TJ6ygWnLz4FuSBTf1Fs96nfJLqymPbZFjlEBTyIi7cNWwuz4AzOzsyBxYiRwqK9lXWMa
- 7vOr9HJ1yRQCclA3zg0BpUIArPEs75HKLOoQDGOwo83zOmf+iBrbKEaoOOWoCffxi97IqAAhp
- qPA46V+7TiHGvtP/mz8HHa+1CFzbQ3OoZMGdl2e9SP6nz9wDMhLhVsQ34KnYLZV3xi9z1KDHG
- 69iKj0Na3kjtgELlI3GFQ1z4ciU/a6e1DWvq5dj+7kdcyCYC+/qbhHHBPQClP6y98ULFjuxzl
- UycOwMkVWjtJZPAO4MVix0bWP63Vm1kDQdWXqV2irfznX6V/yjZ5g6RN5ny8SyxUB9a0tDl1Y
- FrO7F/eq6cAcAbTdUSnKqheA==
 
-Am Montag, dem 14.10.2024 um 10:46 +0100 schrieb Lorenzo Stoakes:
-> On Mon, Oct 14, 2024 at 12:35:59AM +0200, Bert Karwatzki wrote:
-> > I created a program which can trigger the bug on newer kernel (after t=
-he
-> > "Avoid zeroing vma tree in mmap_region()" patch and before the fix).
-> > My original goal was to trigger the bug on older kernels,
-> > but that does not work, yet.
-> >
-> > Bert Karwatzki
->
-> Thanks, that's great!
->
-> For older kernels the problem should still be present, the fundamental
-> thing that changed from the point of view of this bug is that merge won'=
-t
-> contribute to the number of VMAs being overwritten at once.
->
-> To trigger prior to commit f8d112a4e657 ("mm/mmap: avoid zeroing vma tre=
-e
-> in mmap_region()") you would need to create a situation where the _clear=
-_
-> triggers the bug, i.e. you must consistute all the VMAs that are being
-> overwritten by the store from existing VMAs you are overwriting with a
-> MAP_FIXED.
->
-> So some tweaks should get you there...
-> >
+On Wed, Oct 16, 2024 at 10:56:32AM +0100, Conor Dooley wrote:
+> On Mon, Aug 05, 2024 at 10:04:53AM +0200, Linus Walleij wrote:
+> > On Tue, Jul 23, 2024 at 1:28=E2=80=AFPM Conor Dooley <conor.dooley@micr=
+ochip.com> wrote:
+> >=20
+> >=20
+> > > From: Lewis Hanly <lewis.hanly@microchip.com>
+> > >
+> > > Add a driver to support the Polarfire SoC gpio controller
+> > >
+> > > Signed-off-by: Lewis Hanly <lewis.hanly@microchip.com>
+> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Just a comment on second thought:
+> >=20
+> > > +config GPIO_POLARFIRE_SOC
+> > > +       bool "Microchip FPGA GPIO support"
+> > > +       depends on OF_GPIO
+> > > +       select GPIOLIB_IRQCHIP
+> >=20
+> > select GPIO_GENERIC?
+> >=20
+> > > +static int mpfs_gpio_direction_input(struct gpio_chip *gc, unsigned =
+int gpio_index)
+> > > +{
+> > > +       struct mpfs_gpio_chip *mpfs_gpio =3D gpiochip_get_data(gc);
+> > > +       u32 gpio_cfg;
+> > > +       unsigned long flags;
+> > > +
+> > > +       raw_spin_lock_irqsave(&mpfs_gpio->lock, flags);
+> > > +
+> > > +       gpio_cfg =3D readl(mpfs_gpio->base + MPFS_GPIO_CTRL(gpio_inde=
+x));
+> > > +       gpio_cfg |=3D MPFS_GPIO_EN_IN;
+> > > +       gpio_cfg &=3D ~(MPFS_GPIO_EN_OUT | MPFS_GPIO_EN_OUT_BUF);
+> >=20
+> > OK this part is unique...
+> >=20
+> > > +static int mpfs_gpio_direction_output(struct gpio_chip *gc, unsigned=
+ int gpio_index, int value)
+> > > +{
+> > > +       struct mpfs_gpio_chip *mpfs_gpio =3D gpiochip_get_data(gc);
+> > > +       u32 gpio_cfg;
+> > > +       unsigned long flags;
+> > > +
+> > > +       raw_spin_lock_irqsave(&mpfs_gpio->lock, flags);
+> > > +
+> > > +       gpio_cfg =3D readl(mpfs_gpio->base + MPFS_GPIO_CTRL(gpio_inde=
+x));
+> > > +       gpio_cfg |=3D MPFS_GPIO_EN_OUT | MPFS_GPIO_EN_OUT_BUF;
+> >=20
+> > Also here
+> >=20
+> > > +static int mpfs_gpio_get_direction(struct gpio_chip *gc,
+> > > +                                  unsigned int gpio_index)
+> > > +static int mpfs_gpio_get(struct gpio_chip *gc,
+> > > +                        unsigned int gpio_index)
+> > > +static void mpfs_gpio_set(struct gpio_chip *gc, unsigned int gpio_in=
+dex, int value)
+> >=20
+> > But these are just MMIO functions.
+> >=20
+> > Is it possible to use augmented generic MMIO, i.e just override these
+> > two functions that
+> > need special handling?
+>=20
+> So, I've been looking into this again (finally), with an eye to stripping
+> the interrupt handling bits out, and trying to upstream this in pieces.
+> I dunno if I'm making a mistake here, but I don't know if there's much
+> value in implementing this suggestion - as far as I can tell only the
+> get()/set() functions can be replaced by what's provided by gpio-mmio.c.
+> There are no controller wide registers that control direction and so
+> bgpio_get_dir() can't be used - direction is read from the same
+> mpfs_gpio->base + MPFS_GPIO_CTRL(gpio_index) registers that it is set
+> using. Adding bgpio stuff, to just go ahead and overwrite it, to save on
+> trivial get()/set() implementations seems to me like adding complication
+> rather than removing it. What am I missing here?
 
-I don't think triggering the bug on a clear works, because a write of a %N=
-ULL
-that will cause a node to end with a %NULL becomes a spanning write into t=
-he
-next node:
+What does bring a nice simplification though, IMO, is regmap. I am
+pretty sure that using it was one of the suggestions made last time
+Lewis submitted this - so I think I'm going to do that instead.
 
-/*
- * mas_is_span_wr() - Check if the write needs to be treated as a write th=
-at
- * spans the node.
- * @mas: The maple state
- * @piv: The pivot value being written
- * @type: The maple node type
- * @entry: The data to write
- *
- * Spanning writes are writes that start in one node and end in another OR=
- if
- * the write of a %NULL will cause the node to end with a %NULL.
- *
- * Return: True if this is a spanning write, false otherwise.
- */
-static bool mas_is_span_wr(struct ma_wr_state *wr_mas)
-{
+--CmBUU6+EmCtmkoM0
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-I think the could would trigger in this situation
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZw+VbgAKCRB4tDGHoIJi
+0lJSAP4z+obM5BYOKqwKB2PbdE1VqVeBD3ETy6L0njmh6AlwGwD+Py5sBR753oNR
+tRfAkzrBjAI+sykx7zgTzwgeYg8adQg=
+=wRDg
+-----END PGP SIGNATURE-----
 
-              Node_0
-	     /
-            /
-	 Node_1
-         /    \
-        /      \
-     Node_2    Node_3
-
-but only if Node_3 contained only two ranges, one empty range and one norm=
-al
-range, and if the mmap into empty range of Node_3 would merge with the las=
-t
-range of Node_2 and the last range of Node_3. But I think the rebalancing =
-of the
-tree will make it very hard if not impossible to create such a node.
-
-
-Bert Karwatzki
+--CmBUU6+EmCtmkoM0--
 
