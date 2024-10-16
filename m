@@ -1,119 +1,147 @@
-Return-Path: <linux-kernel+bounces-367554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE80D9A03C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:08:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26AB19A03B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EBA9288ED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23821F210B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A381D47A8;
-	Wed, 16 Oct 2024 08:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130851D31B6;
+	Wed, 16 Oct 2024 08:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSIN7/l0"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKwYCLZx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6025F1CB9E0;
-	Wed, 16 Oct 2024 08:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C991D27A6;
+	Wed, 16 Oct 2024 08:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066009; cv=none; b=bHo0R/YS6edrBJC2WDB8QU80P0HErlfKg3Zwqp1B9YBpWAvWqbnPAaWPCPchQTEtVkQrdmWdSaZcDfaaaGL3M1X7bZtHhqYMvu4PDeNPXQDHNFpW8Tr0duT3Bjbq/tWX8s3qeMBjNeMPde5sYxpl9MMrKw2RwCOELOwjKod9tMs=
+	t=1729065984; cv=none; b=o4bDEEhOLpurE1BnD2wpcqyN9rUiTNzpnB7qTjgFaylRXnexrVElQz7GCOa7DYq/DnCekn4IT82IS4mGHfGyCl3SZcxW8XJdgVNJwDyTIGYK4RUZBUUzFjCSLmselNrJbpfJW6tQb8eGq4iodCI5cvyHy/aASn0wVmlzajFdaIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066009; c=relaxed/simple;
-	bh=PT4Vtun/BbMcllI5J6eSVCHRLB1s1MTkKtm9vhNHMKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQVru79JFa1TE50X4Ocy3z5XiiYv8N8ehbgcy/oproldEgzAQFR0uqr5Jb7g3osFB+cYTli0xoBdjohFBHT9xZJyurNYtweeC/5+tcG/TlatR+s6F7Y+YTMMSmrbmnZnsFgnRsIa6vMDaYSNolXndiV3BaYwybV4mmlbsvYGffw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSIN7/l0; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so1308580a12.0;
-        Wed, 16 Oct 2024 01:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729066006; x=1729670806; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZ+Pwy0sO7KTFjfQbkx5Q5BjDMCnpAj1lw8a8QHrCPU=;
-        b=KSIN7/l0MX1hgYGGPUn3Rwl6M1liBAvyF/QqsAQhmnD8hlMcUmDfI1LNYlk95PCFMY
-         8hw3h4v6nps1bGDvFub1YgVB86xUE/SuOFttFVhwC46747c2Yf7H/sE3RQ5iF8ZzSLD7
-         uAYVp9ZxR47xuSNF718Oobho+r9JG0BGc7nh5Z5Eyur62pziDbIPVcGrPNmAtI99KX8u
-         0dWpQKvNMeEjFjd3Y4bTbyR2Q8BCypxuZA4kjzXHyIzVc6bPhWWCiIHAb+g/ZsYbfr8z
-         74+du1a4gwQkJYoYpfuaiDIwjdtKFM5Q0t3txQLaiKWcuB6BKS4rAWDrLzI+ZS7RVkb2
-         6d+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729066006; x=1729670806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IZ+Pwy0sO7KTFjfQbkx5Q5BjDMCnpAj1lw8a8QHrCPU=;
-        b=ZtR5cx2joR1kw5efTDYgxKwrpYhLX4jptLuey71wwaQYUSD/JF+Pi+LqNDWM25JTgt
-         YNePG+PrTZJnm63Y5Noiku8ihrqiKWYA+MWUd+AgWWQOq9ZKGvZk+hd6sjsx1qoZUVUy
-         vaR5/i2nGsMx/917HFuW5KBjh0wzI4VFZjAyCBmU7o41kkji2GqXxxMFx5XNvMbZ9JJq
-         2NGuQgI/wsmRdMDKI9DMoWIPsFP2dMj0tXaY6vwgKw79Gjw4bWRbQ7CqUMbqwnj6bwoN
-         0cI/Fe3z8Cx2n240qctrZXbKwHw0QXen9HQ+v7J4tSFKH17k919QzblJfbmOFs90Gj7n
-         0Jyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWP6k+YdFj/IV6T3R/Mt7xFJZRPaahkBE+8ZRTVT8SqabR59KRF7C3MzUjxg8UVkdRVlUY52RIwbmRk4dk=@vger.kernel.org, AJvYcCX6FhmTOKMyFSCrpm77a28v5U5qJyQC8PjB14MxqeNILjFCPX8jsjqsnNvRcBI1I6IziOYFpxmlXgFB@vger.kernel.org, AJvYcCXJfEj3sA14IBQW1LP4GvzpCeIXRuZs/p8y5/W5zK+QYHruc4Am8r0pPNRHR8BUOrysWc2hRXvh5th35mWW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeOexn2KoxWuQgPzkkbJAAMP1h217VwGJ4TX+4INDW+YuH+EDY
-	NFbhBgk/TvQ3hQlRPZj0HM4urLZvPBryjeCmyWMnt+XDAxHL0Cy1/jWADePIYZMI5zGkLrgi8o2
-	jCbdcee9lkwwfruJgE4XmTk+aBEg=
-X-Google-Smtp-Source: AGHT+IELHAX1Zdgya2iptNDYcVweVOP5k9eiqHiaYUUTND9YWXi3LqGeoL60P6fovY+AORNzpYwtKnigCag2iUcXFao=
-X-Received: by 2002:a05:6402:84d:b0:5c2:5f31:8888 with SMTP id
- 4fb4d7f45d1cf-5c99498135amr3427379a12.15.1729066005384; Wed, 16 Oct 2024
- 01:06:45 -0700 (PDT)
+	s=arc-20240116; t=1729065984; c=relaxed/simple;
+	bh=pzArP/VpObOqR91KFoBIcmgbhgqoCPFChRvzLj7s5PI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbXK6HeQPZfhRPpF6EFhFcYbMhBKasUUBQjdahtKBSdAQHMBgOJI6kaKqRPStF7qArcxyUa0I1gj41IZC2I9cZswyL3GVmTDExCjSg0POIFQJDjgR0fJ16qiqKvEU7cI0EIcVGar0gUzZEjv3FosX5H+FUyEG94gcm7WDEiojek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKwYCLZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A378C4CEC5;
+	Wed, 16 Oct 2024 08:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729065984;
+	bh=pzArP/VpObOqR91KFoBIcmgbhgqoCPFChRvzLj7s5PI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OKwYCLZxWggsUl2VB4ZIUyCJ9iPgO1K+3Mrm5baY+5MfmdlX8erQ/F86Nn+PbDdDj
+	 vft51Y8MeOA+7EJyEYpClrHf/eQWofWyW7EGFtSPAj5akOK9CThjfkbY9Qd6J205D9
+	 Ml+VFBo8C+mWHOcNGP3nOjxssg1Bn71pqavMJOdFtpSlrZJo4QsHk24xJAUCd4Poro
+	 QdLPFvCVnPpb64A3JOjINz+WE4IKgxaGs1sUjhAn9nEovBMLt3EK4n7cngWlZUHfQD
+	 jSGnCySBXRNTezaJZRMYb0VvU2lpsWg2Yfn6cvmeMRDT2I0Ja0pi3/7yEUa4kxjT+1
+	 cgpY/EiGYmvlw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t0z38-000000006gZ-12xk;
+	Wed, 16 Oct 2024 10:06:30 +0200
+Date: Wed, 16 Oct 2024 10:06:30 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Enable external DP
+ support
+Message-ID: <Zw90BlPCopp-Tp49@hovoldconsulting.com>
+References: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
+ <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-loongson1-nand-v10-0-17162eff80e2@gmail.com>
- <20241002-loongson1-nand-v10-1-17162eff80e2@gmail.com> <20241007161027.386e7409@xps-13>
-In-Reply-To: <20241007161027.386e7409@xps-13>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Wed, 16 Oct 2024 16:06:09 +0800
-Message-ID: <CAJhJPsW+cRY13in41NpTrEB4VP7jYLFdgrt8+9EJSwgkvXZR=g@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] dt-bindings: mtd: Add Loongson-1 NAND Controller
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
 
-On Mon, Oct 7, 2024 at 10:10=E2=80=AFPM Miquel Raynal <miquel.raynal@bootli=
-n.com> wrote:
->
-> Hi Keguang,
->
-> > +patternProperties:
-> > +  "^nand@[0-3]$":
-> > +    type: object
-> > +    $ref: raw-nand-chip.yaml
-> > +
-> > +    required:
-> > +      - nand-use-soft-ecc-engine
-> > +      - nand-ecc-algo
->
-> Actually I told you a mistake. The no-ecc-engine case should remain
-> valid, so we cannot require these properties in the bindings.
->
-Then, remove this section, right?
+On Mon, Sep 02, 2024 at 06:01:35PM +0300, Abel Vesa wrote:
+> The Qualcomm Snapdragon X Elite CRD board has 3 USB Type-C ports,
+> all of them supporting external DP altmode. Between each QMP
+> combo PHY and the corresponding Type-C port, sits one Parade PS8830
+> retimer which handles both orientation and SBU muxing. Add nodes for
+> each retimer, fix the graphs between connectors and the PHYs accordingly,
+> add the voltage regulators needed by each retimer and then enable all
+> 3 remaining DPUs.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+ 
+> +	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_RTMR0_1P15";
+> +		regulator-min-microvolt = <1150000>;
+> +		regulator-max-microvolt = <1150000>;
+> +
+> +		gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
 
-> My fault, sorry about that.
->
-> Thanks,
-> Miqu=C3=A8l
+When reviewing the schematics yesterday, I noticed that this is wrong
+and that this enable GPIO comes from pmc8380_5_gpios.
 
+Fortunately the above gpio is unused, but please double check the other
+as well (I think the rest are correct).
 
+You need to fix the pincfg as well.
 
---=20
-Best regards,
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&rtmr0_1p15_reg_en>;
 
-Keguang Zhang
+Please rename the enable pins according to the schematics too (e.g.
+"usb0_pwr_1p15_en").
+
+> +		pinctrl-names = "default";
+> +	};
+
+> +&i2c1 {
+> +	clock-frequency = <400000>;
+> +
+> +	status = "okay";
+> +
+> +	typec-mux@8 {
+> +		compatible = "parade,ps8830";
+> +		reg = <0x08>;
+> +
+> +		clocks = <&rpmhcc RPMH_RF_CLK5>;
+> +		clock-names = "xo";
+> +
+> +		vdd15-supply = <&vreg_rtmr2_1p15>;
+> +		vdd18-supply = <&vreg_rtmr2_1p8>;
+> +		vdd33-supply = <&vreg_rtmr2_3p3>;
+> +
+> +		reset-gpios = <&tlmm 185 GPIO_ACTIVE_HIGH>;
+
+As I mentioned elsewhere, the reset lines are active low.
+
+> +&pm8550_gpios {
+> +	rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
+> +		pins = "gpio11";
+> +		function = "func1";
+
+And this should be "normal" for gpio function, right? Same below.
+
+> +		input-disable;
+> +		output-enable;
+
+And I don't think you need to provide these.
+
+> +	};
+> +};
+
+Johan
 
