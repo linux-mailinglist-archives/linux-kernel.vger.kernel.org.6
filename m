@@ -1,296 +1,152 @@
-Return-Path: <linux-kernel+bounces-367857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBE29A07A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:42:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DD49A079E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C81461C27116
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:42:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31D5B20FB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192D42076A6;
-	Wed, 16 Oct 2024 10:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6E4206E7E;
+	Wed, 16 Oct 2024 10:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtEQm8JZ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k5Thxby6"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F9D2071EF;
-	Wed, 16 Oct 2024 10:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57691DE3C9;
+	Wed, 16 Oct 2024 10:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729075345; cv=none; b=ftHJVp/wrGB5eit0FIYosJQAahhvvb5jcO2wAetf/lthBkm7zWQwgospj7/0JQk/9J5pfSYuaIq3pI9BCIlgi8m/YQy7ZLkQ8g3lmY2ZMLBAnTg/vlz6bWp6+SGP+mNStSiT1Qm6yO4wjampV/sMM/eXw/vCc6H42UVhReQgWcA=
+	t=1729075307; cv=none; b=KCBjuIygowRA0bZW0ZmeNmEyWWynaDVru4D5CkQzcvIzS6Lre8kzjlqjsbHNN0VnwxzGepMT9xzPJbjK713DOz6eQ1swR7QEHdm4LMa/HUyjNUGdl6hvEbbe9v/Pe0r6cVjEIiZcyIJ7cL6/z+QkIWpljNvtC187z0TbvFuAIqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729075345; c=relaxed/simple;
-	bh=DxM55qAuJVLJ56rkaMYQvYFQ1y/6QKJEizLQtDgKJD4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LmXo7QLNYxbbP4r/MWzi6F5OW53vgbrlJm7JbGeL4u2ia1J+yjsL9U3TIV0lJ2TiDkDpeSq+ZdCt3vA61ttxoe4jV2KOxzV6M7ucYtwh9SapvYSPedSBFZLn0hM7MpaBruYpxwFzf4fUAjoa3LNsmqeUFY5wFeP5Liu06zs91JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZtEQm8JZ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso46705995ad.2;
-        Wed, 16 Oct 2024 03:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729075343; x=1729680143; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gWFXTKeTH7RgE3F6l0NRgDfeJ3cSqKL3g04gUQ1u1OQ=;
-        b=ZtEQm8JZ1yhr7QyfOsnDEaI8Acbbhe09DiSJIgrMbUJQkQQ3hccwwTvh85WboVXgkl
-         kieQH2vR41Oy3Gwi1PcZjTL3reyieK7Mdn22vhQP3VFa1/DzXDVyiNPwQoy+Znj+nxQR
-         +jicgDjjP63MJBw02yniw86tGHyD2s0W1YxfIQKJHjGKC5ckkjbJLMEFYlwq9tDKk1iG
-         nmerMSeqQUBrSUZGs91ogIszm376bBjXDneMSFcKV9nNn6ulsH3bOPokogu2XCNZ3nU5
-         UGLk2v+o1w/wPexTQ3c/hWGhiH9qtuAbQf13pm9LI1zY0qqQBDJfHnJaAkSUMcAReFKr
-         whOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729075343; x=1729680143;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gWFXTKeTH7RgE3F6l0NRgDfeJ3cSqKL3g04gUQ1u1OQ=;
-        b=uMY8lnMasVDu4e68uBaGoKzFrlX2F9XuYZHpWV9WDcB/kd7cd7AbkQR6ExweoDtch4
-         DJC8gGhPZy6NeYvrcC53nauWi1Q9Ck3sm6MYpPvN4fN4V3l5GAcFngf8w+9ON/mWqdOC
-         IbQ862tYuEu7UcdsO+Z0oBTb7oUK7LtcndHP2cyjHRJ1Q7mTAuvwK1PlQXrxkh955J05
-         iU87DLKDwboHTcf+RKu1/6fL8TY39Du/tJHb9kQb2rLiMqBL7MOBj8LHX/knmr3l4k7D
-         gPCzgTk2JM/kORX826JjIHkCR5K7YZjqVjZAJnNcNA9RDPOIfFUzN2ve/bLKGIbes9X0
-         l1nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZtQc9INAZY7BUBcg9mJ582eU7kY91/mHYRP/cXEUqAqpodAfE+wyj4RWAJsXigF9t+jbylUhZm3Cxcffq@vger.kernel.org, AJvYcCUbrIpJzXhhfGk7ElLbP7pboX9v9BMrMI1lQWvMpEpccvkhef1Y9Ok2+C7Ibw71Qv/i46GD0me5FcQQ@vger.kernel.org, AJvYcCVu9ORWqs75Q//51GWqIwfqz/zvfC5XBgNP6qYTVv8+dbsg0MZoSu86YcXLgzx0IBazJqDlfZ+oIiTjymg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8QNTGgsoV2ZeuikfILKXdg2dUH4ktDVPy6YAh2wPNDLCgFAgh
-	LMRrFeJtF1fNpQ1pHNhhvugebOF52iAHpi1zFTPWj6WqSnsrsOpC
-X-Google-Smtp-Source: AGHT+IErQ5tKfU2htn0tUHC4Jifcww5wToA5v9tphD4rJTGKDd2vhRKlq2gdzwjSgsuFu3IAYiWVwQ==
-X-Received: by 2002:a17:902:ecc6:b0:20c:83e7:ca51 with SMTP id d9443c01a7336-20d27ebb734mr49525465ad.26.1729075343000;
-        Wed, 16 Oct 2024 03:42:23 -0700 (PDT)
-Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804b2e4sm26319645ad.182.2024.10.16.03.42.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 03:42:22 -0700 (PDT)
-From: James Calligeros <jcalligeros99@gmail.com>
-Date: Wed, 16 Oct 2024 20:41:02 +1000
-Subject: [PATCH 3/3] ASoC: cs42l84: leverage ring sense IRQs to correctly
- detect headsets
+	s=arc-20240116; t=1729075307; c=relaxed/simple;
+	bh=heW2gSjWmQF9M4ji5o3r7Gfvxeg1F4J8kCossJjMnSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MgTdTITEciQhM9/vWHwWC/SdYEyVzqFSnQx1A9ow/CHWFxT9YK+nLf2ZYql1zjN332WNGBdGGWuET8C/hw+AQFu3d/htCJVcVjV5LL8oJQAP8Dd94hIUQDYoonYR3LZb68/Kpbtyfi32WCULlphLEPeWGcWJVFsCoFpfsFHvzik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k5Thxby6; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729075304;
+	bh=heW2gSjWmQF9M4ji5o3r7Gfvxeg1F4J8kCossJjMnSw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k5Thxby6dFoix1wv0Vi/LR5UCYus34KMbreWE84je5yfyimTaBFBccyUA4fpDjI8j
+	 k0uGuas2YCbC5bUwLyKrQCKFgnzmNajtih74LiQTAl6kIINfs3Aaa5sA5KsaqC7Ixg
+	 mi4gc1zU8IdptodAWw0mojB8xYkDDkRMGxH6Veh9eyAtjIy8p6AZV+093BYr1bwgwx
+	 ZElAaM9OITqwcAwslN9SafT/yLQxakn1415Iea84Ai1N4vBTvZ8uQZv3X6RdVqZUAe
+	 uErS7owM/BG1r1LQX1FIpoMaJ4npffCuIt4rgnt/UqfECkxvIRumjcMxd0ePHlNDWt
+	 J71ydL0Z3jCpg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 43AE817E139E;
+	Wed, 16 Oct 2024 12:41:43 +0200 (CEST)
+Message-ID: <85f0b520-95dd-4ad3-a1a9-544e00089533@collabora.com>
+Date: Wed, 16 Oct 2024 12:41:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-cs42l84-v1-3-8d7e9d437d2d@gmail.com>
-References: <20241016-cs42l84-v1-0-8d7e9d437d2d@gmail.com>
-In-Reply-To: <20241016-cs42l84-v1-0-8d7e9d437d2d@gmail.com>
-To: =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
- James Calligeros <jcalligeros99@gmail.com>, 
- David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: asahi@lists.linux.dev, linux-sound@vger.kernel.org, 
- patches@opensource.cirrus.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6541;
- i=jcalligeros99@gmail.com; h=from:subject:message-id;
- bh=DxM55qAuJVLJ56rkaMYQvYFQ1y/6QKJEizLQtDgKJD4=;
- b=owGbwMvMwCV2xczoYuD3ygTG02pJDOn8M8p5mVrvF13uP7/18rSq945H9WuPBJe78ntu1hU6n
- nKk5JJRRykLgxgXg6yYIsuGJiGP2UZsN/tFKvfCzGFlAhnCwMUpABM59IGR4elBdyW/l3EymZee
- u5wWiG2tPjmB+aqW587Ojl5miZvc4owMu/qkNJ/lt3V/v3zo++8HmyyWt3Q7TGl4J/F8r4XLfFd
- /JgA=
-X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
- fpr=B08212489B3206D98F1479BDD43632D151F77960
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
+ ethernet
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Richard Cochran <richardcochran@gmail.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+ Jianguo Zhang <jianguo.zhang@mediatek.com>,
+ Macpaul Lin <macpaul.lin@mediatek.com>,
+ Hsuan-Yu Lin <shane.lin@canonical.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ fanyi zhang <fanyi.zhang@mediatek.com>
+References: <20241015-genio700-eth-v1-0-16a1c9738cf4@collabora.com>
+ <20241015-genio700-eth-v1-2-16a1c9738cf4@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241015-genio700-eth-v1-2-16a1c9738cf4@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Some jacks integrated on devices with this codec, such as certain
-Apple Silicon Macs, have quite trigger-happy tip sense switches that
-cause a tip sense IRQ before the plug is fully seated. If users are
-unfortunate with their timing, this can lead to headsets being detected
-as mic-less headphones among other issues with the codec's device
-detection routines.
+Il 15/10/24 20:15, Nícolas F. R. A. Prado ha scritto:
+> Enable ethernet on the Genio 700 EVK board. It has been tested to work
+> with speeds up to 1000Gbps.
+> 
+> Signed-off-by: Jianguo Zhang <jianguo.zhang@mediatek.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Signed-off-by: Hsuan-Yu Lin <shane.lin@canonical.com>
+> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+> Signed-off-by: fanyi zhang <fanyi.zhang@mediatek.com>
+> [Cleaned up to pass dtbs_check, follow DTS style guidelines, and split
+> between mt8188 and genio700 commits]
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>   .../boot/dts/mediatek/mt8390-genio-700-evk.dts     | 25 ++++++++++++++++++++++
+>   1 file changed, 25 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
+> index 0a6c9871b41e5f913740e68853aea78bc33d02aa..73e34e98726d36785e8b2cef73f532b6bb07c97f 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts
+> @@ -24,6 +24,7 @@ / {
+>   
+>   	aliases {
+>   		serial0 = &uart0;
+> +		ethernet0 = &eth;
+>   	};
+>   
+>   	chosen {
+> @@ -845,6 +846,30 @@ pins-wifi-enable {
+>   	};
+>   };
+>   
+> +&eth {
+> +	phy-mode ="rgmii-rxid";
+> +	phy-handle = <&ethernet_phy0>;
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&eth_default_pins>;
+> +	pinctrl-1 = <&eth_sleep_pins>;
 
-Introduce some rudimentary ring sense interrupt handling so that we
-can re-trigger the codec's detection routines when we are certain
-that the plug is fully seated.
+> +	snps,reset-gpio = <&pio 147 GPIO_ACTIVE_HIGH>;
+> +	snps,reset-delays-us = <0 10000 10000>;
+> +	mediatek,tx-delay-ps = <2030>;
+> +	mediatek,mac-wol;
 
-This seems to differ from what other Cirrus drivers do, but is
-necessary for devices to be reliably detected properly here.
+	mediatek,mac-wol;
+	mediatek,tx-delay-ps = <2030>;
+	snps,reset-delays-us = <0 10000 10000>;
+	snps,reset-gpio = <&pio 147 GPIO_ACTIVE_HIGH>;
 
-Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
----
- sound/soc/codecs/cs42l84.c | 89 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------------------------------
- 1 file changed, 59 insertions(+), 30 deletions(-)
+Cheers,
+Angelo
 
-diff --git a/sound/soc/codecs/cs42l84.c b/sound/soc/codecs/cs42l84.c
-index dbbc76f41ccb958b068848426d1891b16aa84866..8711968a38e24de221e32066739cc4d60964fdef 100644
---- a/sound/soc/codecs/cs42l84.c
-+++ b/sound/soc/codecs/cs42l84.c
-@@ -44,7 +44,8 @@ struct cs42l84_private {
- 	struct gpio_desc *reset_gpio;
- 	struct snd_soc_jack *jack;
- 	struct mutex irq_lock;
--	u8 plug_state;
-+	u8 tip_state;
-+	u8 ring_state;
- 	int pll_config;
- 	int bclk;
- 	u8 pll_mclk_f;
-@@ -797,13 +798,23 @@ static void cs42l84_revert_hs(struct cs42l84_private *cs42l84)
- 		FIELD_PREP(CS42L84_HS_DET_CTL2_SET, 2));
- }
- 
-+static void cs42l84_set_interrupt_masks(struct cs42l84_private *cs42l84,
-+					unsigned int val)
-+{
-+	regmap_update_bits(cs42l84->regmap, CS42L84_TSRS_PLUG_INT_MASK,
-+			CS42L84_RS_PLUG | CS42L84_RS_UNPLUG |
-+			CS42L84_TS_PLUG | CS42L84_TS_UNPLUG,
-+			val);
-+}
-+
- static irqreturn_t cs42l84_irq_thread(int irq, void *data)
- {
- 	struct cs42l84_private *cs42l84 = (struct cs42l84_private *)data;
- 	unsigned int stickies[1];
- 	unsigned int masks[1];
- 	unsigned int reg;
--	u8 current_plug_status;
-+	u8 current_tip_state;
-+	u8 current_ring_state;
- 	int i;
- 
- 	mutex_lock(&cs42l84->irq_lock);
-@@ -817,16 +828,24 @@ static irqreturn_t cs42l84_irq_thread(int irq, void *data)
- 				irq_params_table[i].mask;
- 	}
- 
-+	/* When handling plug sene IRQs, we only care about EITHER tip OR ring.
-+	 * Ring is useless on remove, and is only useful on insert for
-+	 * detecting if the plug state has changed AFTER we have handled the
-+	 * tip sense IRQ, e.g. if the plug was not fully seated within the tip
-+	 * sense debounce time.
-+	 */
-+
- 	if ((~masks[0]) & irq_params_table[0].mask) {
- 		regmap_read(cs42l84->regmap, CS42L84_TSRS_PLUG_STATUS, &reg);
--		current_plug_status = (((char) reg) &
-+
-+		current_tip_state = (((char) reg) &
- 		      (CS42L84_TS_PLUG | CS42L84_TS_UNPLUG)) >>
- 		      CS42L84_TS_PLUG_SHIFT;
- 
--		switch (current_plug_status) {
--		case CS42L84_PLUG:
--			if (cs42l84->plug_state != CS42L84_PLUG) {
--				cs42l84->plug_state = CS42L84_PLUG;
-+		if (current_tip_state != cs42l84->tip_state) {
-+			cs42l84->tip_state = current_tip_state;
-+			switch (current_tip_state) {
-+			case CS42L84_PLUG:
- 				dev_dbg(cs42l84->dev, "Plug event\n");
- 
- 				cs42l84_detect_hs(cs42l84);
-@@ -839,47 +858,57 @@ static irqreturn_t cs42l84_irq_thread(int irq, void *data)
- 				 * was disconnected at any point during the detection procedure.
- 				 */
- 				regmap_read(cs42l84->regmap, CS42L84_TSRS_PLUG_STATUS, &reg);
--				current_plug_status = (((char) reg) &
-+				current_tip_state = (((char) reg) &
- 				      (CS42L84_TS_PLUG | CS42L84_TS_UNPLUG)) >>
- 				      CS42L84_TS_PLUG_SHIFT;
--				if (current_plug_status != CS42L84_PLUG) {
-+				if (current_tip_state != CS42L84_PLUG) {
- 					dev_dbg(cs42l84->dev, "Wobbly connection, detection invalidated\n");
--					cs42l84->plug_state = CS42L84_UNPLUG;
-+					cs42l84->tip_state = CS42L84_UNPLUG;
- 					cs42l84_revert_hs(cs42l84);
- 				}
--			}
--			break;
- 
--		case CS42L84_UNPLUG:
--			if (cs42l84->plug_state != CS42L84_UNPLUG) {
--				cs42l84->plug_state = CS42L84_UNPLUG;
-+				/* Unmask ring sense interrupts */
-+				cs42l84_set_interrupt_masks(cs42l84, 0);
-+				break;
-+			case CS42L84_UNPLUG:
-+				cs42l84->ring_state = CS42L84_UNPLUG;
- 				dev_dbg(cs42l84->dev, "Unplug event\n");
- 
- 				cs42l84_revert_hs(cs42l84);
- 				cs42l84->hs_type = 0;
- 				snd_soc_jack_report(cs42l84->jack, 0,
- 						    SND_JACK_HEADSET);
-+
-+				/* Mask ring sense interrupts */
-+				cs42l84_set_interrupt_masks(cs42l84,
-+							    CS42L84_RS_PLUG | CS42L84_RS_UNPLUG);
-+				break;
-+			default:
-+				cs42l84->ring_state = CS42L84_TRANS;
- 			}
--			break;
- 
--		default:
--			if (cs42l84->plug_state != CS42L84_TRANS)
--				cs42l84->plug_state = CS42L84_TRANS;
-+			mutex_unlock(&cs42l84->irq_lock);
-+
-+			return IRQ_HANDLED;
-+		}
-+
-+		/* Tip state didn't change, we must've got a ring sense IRQ */
-+		current_ring_state = (((char) reg) &
-+		      (CS42L84_RS_PLUG | CS42L84_RS_UNPLUG)) >>
-+		      CS42L84_RS_PLUG_SHIFT;
-+
-+		if (current_ring_state != cs42l84->ring_state) {
-+			cs42l84->ring_state = current_ring_state;
-+			if (current_ring_state == CS42L84_PLUG)
-+				cs42l84_detect_hs(cs42l84);
- 		}
- 	}
-+
- 	mutex_unlock(&cs42l84->irq_lock);
- 
- 	return IRQ_HANDLED;
- }
- 
--static void cs42l84_set_interrupt_masks(struct cs42l84_private *cs42l84)
--{
--	regmap_update_bits(cs42l84->regmap, CS42L84_TSRS_PLUG_INT_MASK,
--			CS42L84_RS_PLUG | CS42L84_RS_UNPLUG |
--			CS42L84_TS_PLUG | CS42L84_TS_UNPLUG,
--			CS42L84_RS_PLUG | CS42L84_RS_UNPLUG);
--}
--
- static void cs42l84_setup_plug_detect(struct cs42l84_private *cs42l84)
- {
- 	unsigned int reg;
-@@ -909,7 +938,7 @@ static void cs42l84_setup_plug_detect(struct cs42l84_private *cs42l84)
- 
- 	/* Save the initial status of the tip sense */
- 	regmap_read(cs42l84->regmap, CS42L84_TSRS_PLUG_STATUS, &reg);
--	cs42l84->plug_state = (((char) reg) &
-+	cs42l84->tip_state = (((char) reg) &
- 		      (CS42L84_TS_PLUG | CS42L84_TS_UNPLUG)) >>
- 		      CS42L84_TS_PLUG_SHIFT;
- 
-@@ -1016,8 +1045,8 @@ static int cs42l84_i2c_probe(struct i2c_client *i2c_client)
- 	/* Setup plug detection */
- 	cs42l84_setup_plug_detect(cs42l84);
- 
--	/* Mask/Unmask Interrupts */
--	cs42l84_set_interrupt_masks(cs42l84);
-+	/* Mask ring sense interrupts */
-+	cs42l84_set_interrupt_masks(cs42l84, CS42L84_RS_PLUG | CS42L84_RS_UNPLUG);
- 
- 	/* Register codec for machine driver */
- 	ret = devm_snd_soc_register_component(&i2c_client->dev,
+> +	status = "okay";
+> +
+> +	mdio {
+> +		compatible = "snps,dwmac-mdio";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ethernet_phy0: ethernet-phy@1 {
+> +			compatible = "ethernet-phy-id001c.c916";
+> +			reg = <0x1>;
+> +		};
+> +	};
+> +};
+> +
+>   &pmic {
+>   	interrupt-parent = <&pio>;
+>   	interrupts = <222 IRQ_TYPE_LEVEL_HIGH>;
+> 
 
--- 
-2.47.0
 
 
