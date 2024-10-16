@@ -1,83 +1,152 @@
-Return-Path: <linux-kernel+bounces-368521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E8F9A10C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:36:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B739A10CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1241F22FB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC42C283D58
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2D521263F;
-	Wed, 16 Oct 2024 17:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB542139D3;
+	Wed, 16 Oct 2024 17:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifQW81H1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmkyrmWv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B0618660A;
-	Wed, 16 Oct 2024 17:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B60814A4E2;
+	Wed, 16 Oct 2024 17:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729100188; cv=none; b=m8T8EMrsbVsWraA4TKcQGGusVzxhP8tI3xzgBg0kjs+ktCvlLbCQ91cZACC1+7t2ebmTDMh2DrVLLfLyKe8h41mR6mtUxw/ujtKmd/R4GXTMjdmOgFPh7C+nndn0Fr/jAysn7R20ZglBZ59F/cGbuBHio39p3OEqqa78KU8S6GU=
+	t=1729100267; cv=none; b=ETYfOq4FSPiNBclYzIxktZNPpe9TLqg8AkNmG36gIGa7RRknBPYC8J65d8v6nUeZfDFamfpbcKDykJoNxVv3onPasus27KIHwBQee25ldk7NXgzE8FtWpFad1jY+tVd7JF3lP7nFOWKMIjSMsyMlHYsvCOtRimixokTZs5VtBo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729100188; c=relaxed/simple;
-	bh=TmZJhCmtgNQ+uSiCm3N2f3DBsrSeO/fYVybPVkWjOEA=;
+	s=arc-20240116; t=1729100267; c=relaxed/simple;
+	bh=bPem/LaYBRG3WHofkM1ry3bPYXsGByy3Spwfo1SRxbw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sto+3YApkQp9yiawm6OKaKP9Cop8Jq5+6PmamWgti6ph5EOAL8H3926ZESabrFJ6wkWZnqqjORQ8Q4/iqhpd4a+APrgK9r97eXvo6glM+tQJhzsyPgd4vp8On4E8DM/3VkXkXrfa8ZiGn/BDeo6Yi+j44LXEZLBztP3O29i/HKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ifQW81H1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D87C4CEC5;
-	Wed, 16 Oct 2024 17:36:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GVCOW2FewBe5vF/7qw24kKbEeHthDFrgvItB+++mhWPrkUiOQWZ1HeVbxWDHdPY4XzOrvRcXAk37QQszExQAdLcC3cKw0iIQ/7N4FdSv0Nvp3cLBqrkqaSBdAjwb26+wHq6bp3ZTaKRiRzsmxCLv+z65uPtolBTBZDps6CkGUDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmkyrmWv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B390EC4CEC5;
+	Wed, 16 Oct 2024 17:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729100188;
-	bh=TmZJhCmtgNQ+uSiCm3N2f3DBsrSeO/fYVybPVkWjOEA=;
+	s=k20201202; t=1729100267;
+	bh=bPem/LaYBRG3WHofkM1ry3bPYXsGByy3Spwfo1SRxbw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ifQW81H1EDbOT9aP1RMxDoUm/+Kek9KD9sZz17eKEzmpj2/Q7q7UhlWFT2s9yJNnC
-	 KbJn0VorpIAbJdgnAK3yD+tUT8g0ShVGMOwftfw+uZ8dtL/F5SoO05+tDFIQU/mmba
-	 aGKxTSZ73rDERcLN+WP3tJzK4TE5SbUJI3+NxftAusMYDPSbo3tnNvkHeIENcECAP8
-	 5+dLifNhE5D80K6DAEYluIarhLEswwZr2ks3A3OCcs/CpQjxJN7sxEqz4+q7mieG0T
-	 lqe5Y0bFG0I6DJ36grOpcjUoLvzypr7fB1RqyB0ZvmVlrmv/9LoD5x3UXjtKu0z+Q7
-	 XNTw47yBYhmHw==
-Date: Wed, 16 Oct 2024 12:36:27 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	devicetree@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: thermal: Add support for Airoha EN7581
- thermal sensor
-Message-ID: <172910018648.2080954.3683531984930036070.robh@kernel.org>
-References: <20241016153613.25501-1-ansuelsmth@gmail.com>
+	b=VmkyrmWvpLf4kpPqV8qo8eL/AfTd317NnNwXpPp1ffq4MtNlisEABigA2lUkICTTG
+	 MVDNKmh7qoJ15i9CRK6ublwALR275AqAazOwDWZ3WWV6BLwa6/pewmqbhRbKdmfHuT
+	 RSpAoEkBYmQJvQEUvgZhLDlKzfbw37qRmfv4OFcDbhPYwQ4bKZhqEPUBpRy6eZGKC0
+	 3c04K/lCo/nlT6bHPXGq7BpgOeopObQfXMiyKRY9uEKvUU7QCsD0YWtzslgDa4FBSl
+	 +x8zvYifFPb1WNlCvwkUGX8z8IswYDWkFhekYD3QOxwqtbYyqgSA3iz8mK6cgBj4QF
+	 cg9lP3g15ElFA==
+Date: Wed, 16 Oct 2024 10:37:45 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [PATCH 2/2] perf x86/topdown: Refine helper
+ arch_is_topdown_metrics()
+Message-ID: <Zw_56b61Ik7UFekS@google.com>
+References: <20241011110207.1032235-1-dapeng1.mi@linux.intel.com>
+ <20241011110207.1032235-2-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241016153613.25501-1-ansuelsmth@gmail.com>
+In-Reply-To: <20241011110207.1032235-2-dapeng1.mi@linux.intel.com>
 
+Hi Ian,
 
-On Wed, 16 Oct 2024 17:35:48 +0200, Christian Marangi wrote:
-> Add support for Airoha EN7581 thermal sensor and monitor. This is a
-> simple sensor for the CPU or SoC Package that provide thermal sensor and
-> trip point for hot low and critical condition to fire interrupt and
-> react on the abnormal state.
+On Fri, Oct 11, 2024 at 11:02:07AM +0000, Dapeng Mi wrote:
+> Leverage the existed function perf_pmu__name_from_config() to check if
+> an event is topdown metrics event. perf_pmu__name_from_config() goes
+> through the defined formats and figures out the config of pre-defined
+> topdown events.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> This avoids to figure out the config of topdown pre-defined events with
+> hard-coded format strings "event=" and "umask=" and provides more
+> flexibility.
+> 
+> Suggested-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+
+Are you ok with this now?
+
+Thanks,
+Namhyung
+
 > ---
->  .../thermal/airoha,en7581-thermal.yaml        | 48 +++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/airoha,en7581-thermal.yaml
+>  tools/perf/arch/x86/util/topdown.c | 39 +++++++-----------------------
+>  1 file changed, 9 insertions(+), 30 deletions(-)
 > 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+> index cb2c64928bc4..f63747d0abdf 100644
+> --- a/tools/perf/arch/x86/util/topdown.c
+> +++ b/tools/perf/arch/x86/util/topdown.c
+> @@ -41,43 +41,22 @@ bool arch_is_topdown_slots(const struct evsel *evsel)
+>  	return false;
+>  }
+>  
+> -static int compare_topdown_event(void *vstate, struct pmu_event_info *info)
+> -{
+> -	int *config = vstate;
+> -	int event = 0;
+> -	int umask = 0;
+> -	char *str;
+> -
+> -	if (!strcasestr(info->name, "topdown"))
+> -		return 0;
+> -
+> -	str = strcasestr(info->str, "event=");
+> -	if (str)
+> -		sscanf(str, "event=%x", &event);
+> -
+> -	str = strcasestr(info->str, "umask=");
+> -	if (str)
+> -		sscanf(str, "umask=%x", &umask);
+> -
+> -	if (event == 0 && *config == (event | umask << 8))
+> -		return 1;
+> -
+> -	return 0;
+> -}
+> -
+>  bool arch_is_topdown_metrics(const struct evsel *evsel)
+>  {
+> -	struct perf_pmu *pmu = evsel__find_pmu(evsel);
+>  	int config = evsel->core.attr.config;
+> +	const char *name_from_config;
+> +	struct perf_pmu *pmu;
+>  
+> -	if (!pmu || !pmu->is_core)
+> +	/* All topdown events have an event code of 0. */
+> +	if ((config & 0xFF) != 0)
+>  		return false;
+>  
+> -	if (perf_pmu__for_each_event(pmu, false, &config,
+> -				     compare_topdown_event))
+> -		return true;
+> +	pmu = evsel__find_pmu(evsel);
+> +	if (!pmu || !pmu->is_core)
+> +		return false;
+>  
+> -	return false;
+> +	name_from_config = perf_pmu__name_from_config(pmu, config);
+> +	return name_from_config && strcasestr(name_from_config, "topdown");
+>  }
+>  
+>  /*
+> -- 
+> 2.40.1
+> 
 
