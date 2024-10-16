@@ -1,364 +1,346 @@
-Return-Path: <linux-kernel+bounces-367179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375F999FF86
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C8299FF88
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523E01C24651
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D171C24733
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09418158A2E;
-	Wed, 16 Oct 2024 03:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF99918732B;
+	Wed, 16 Oct 2024 03:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGc69wH1"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lh7/TKdO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0BE17CA1D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729049446; cv=none; b=KeBb2zc/MGVk2gMKjn7vcPjAqxxLoX/awd1fQ+5zzru6R8iiAUSZV/rrAN8vCpymSsXcOh+6QJPF+qxNG6i6hpHqS3hRECxiN8dJuEvo0ZSd2AhPDz8Gb2o4tq3VgjyQRhZxMW/sc8uwEmWpFsV+GzPxw3ZdsEaLKJjVvEW/qLA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729049446; c=relaxed/simple;
-	bh=N10cKXLfo1cce58z7d8u0/EH2jJL3q0RbRB7OALJ0CM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S+QfVNv/+DAB4qTakoDOquEfaoGMYtRZBAhFdP2boQlam27g9yy+UK/nVtI7cSnCG3KM5J8O50e5RAUUX96e8kSyKxamdIyN8DGSlUpuwxD64H+Rk+ZbxrAOeKHkDYvl4RDW16st67iiZLrpShpI/+DxDxO/x2+n/PkgCotynVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGc69wH1; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cb7139d9dso33802435ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 20:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729049444; x=1729654244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SQ36mmbSu0pf/cAbG7e4iK4xKL9jwKjnD5CjIn/Qois=;
-        b=FGc69wH1nhnUDp1tdBSciKPiuBurTgsoBRkj8OTQLTyt4KOWKH0THtG4u7aDgj6xvs
-         yGStK+PiR38Aoe4L2pP3VTFp2GGpr+l7/lv8bGHwJRxBLCuq42kxOvDXB7G8ATGXyG3d
-         cV+uaeYNBo4FG8nDR8puE4Iul9v5lZFJ2H6ydfgDQKA42uKujime0wPtm7ve67yOxvbS
-         aLuLfHIZwOrx/09maV1/+ZUUY7Bnt81vR5Y9hE9Kmxv5qh/xWjLzdCt/denfNvC8osHU
-         z4I5f3piRZV5t0wiUiFROdGiQbY7qZcAOAUzQRJMGqIXPprzM4/V4qiiV/L6fB7xNy1L
-         gRBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729049444; x=1729654244;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SQ36mmbSu0pf/cAbG7e4iK4xKL9jwKjnD5CjIn/Qois=;
-        b=bMm+osh7sIC9bvYld2ew5U0o3DFiDXqMlvSOBSs3IR19JiyM8SlUxgQsq6RAw/z8M+
-         BhteHNcQGC9eYtm75RkKnynbRIvYSF5jTyPcBFSK3ByVOJrDTnDPSm5JgJQiaIRs4EUV
-         dxM9V/JGHXmOpU3yHNQFcooUAOimLdKT5weR+cakGoLtGeZ9E9pbRTT3roknSjnqD7sh
-         W/DgOXL/WdbHOUbAgG8yVq/98EN6YhpSdgrg+ETlbhWzG/uLBKEr1XV44wVo3U10GzLU
-         wsSHIZnU9gjfvpeHASEXDFPF0QaVzCUp1utCxP4GwU44I2AnMQGE3R0WSKTU4al3d3WG
-         QZWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWM5sQsa3U9wAYMs5Ntc+lzK6BY8H4LYjQ36akyKZ6TWVTJOUN6MF8p587IIdLsrJlFRNq3EC1GtZi0Qqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjrkQQGFdtc06JgnGECV+xDSMDdsJXoJ6L64rEDvbhuJXiVS3M
-	NBQot+XjgTlrAvc3MovHN/jkIEs8YGZikB+6d9WxJUTfF3rfIgxr
-X-Google-Smtp-Source: AGHT+IG5j8BN+C4OIH3m7G6bs8K3FsD2Iw/4x2nxnpvQ1c/F7F9oLeUB3otrh4oYnCo6/hjow8Sh/Q==
-X-Received: by 2002:a17:902:e80c:b0:20b:7e0d:8f with SMTP id d9443c01a7336-20d27e46a2fmr34283895ad.3.1729049443517;
-        Tue, 15 Oct 2024 20:30:43 -0700 (PDT)
-Received: from Barrys-MBP.hub ([2407:7000:8942:5500:e037:6314:f5c6:369b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805da3fsm19603485ad.243.2024.10.15.20.30.36
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 15 Oct 2024 20:30:43 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: david@redhat.com,
-	fengbaopeng@honor.com,
-	gaoxu2@honor.com,
-	hailong.liu@oppo.com,
-	kaleshsingh@google.com,
-	linux-kernel@vger.kernel.org,
-	lokeshgidra@google.com,
-	mhocko@suse.com,
-	minchan@kernel.org,
-	ngeoffray@google.com,
-	shli@fb.com,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	yipengxiang@honor.com,
-	yuzhao@google.com,
-	Gao Xu <gaoxu2@hihonor.com>
-Subject: [PATCH v2] mm: mglru: provide a separate list for lazyfree anon folios
-Date: Wed, 16 Oct 2024 16:30:30 +1300
-Message-Id: <20241016033030.36990-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37195184549;
+	Wed, 16 Oct 2024 03:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729049449; cv=fail; b=Iz8XvzPSprwLlLsEQqyEj7A/2Shg5bdlAd9w8x17xhntdJ1QDgphnG/CMp5JK6xZCd4/8KzUZkWP9eACxELCgw4nV7wX5111VeuT9XYovcNGByIdSGJchb3AxVnvc0T4C7YWqZsWCVEAnzTo5cKaJmtel/c+OdqBJFtOSl+ZFSQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729049449; c=relaxed/simple;
+	bh=tyVIXzxXgvlz3U+k2TJlLldJW3Uf8DnOEGGsok1f2ks=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Tj4pu0MRz2RiiykFiWIk2EazjLN0VBusKlizQFr+wq35OXn3glrOVsaq6K+Pa2ldMD2sWAorYGziUxc570pAkjWFZ6/9VJxAe/IgSxoRsZEBOqES6e1vbqtfPjVKKrx+TEVD5sWdf6AvgVyOqyRjNVla4tM9vhD726062g6HvEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lh7/TKdO; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729049448; x=1760585448;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=tyVIXzxXgvlz3U+k2TJlLldJW3Uf8DnOEGGsok1f2ks=;
+  b=Lh7/TKdOMXkTR3BK1gzEFz1dpyWgJbuN5RD2XpT0xXGMW+O1wykRsmbx
+   i4WruBYwRQLFRyb5REl/8u0B3ACFNVxgOymrfwsFC5Qp7XxAs+8Q9IRpJ
+   MQvUhFRJTzCgZ/KE8TvBIxxvKeMq15sLaZ9vMb4Oyt7tSUyp25QxuPKZT
+   yi07dUvIKuMW6eUkFb7WWxNrOarPvH823R6mDPpDXXi97n94kDLwyZxG6
+   nlq5+mknKO/zoe/K4qCSY/w2ARUlCUH6B09eaj+uQMsBkxCE+JF/ukQOe
+   QqcTp9SF66OILNIT5ti66ytg3m/4F8V04gIpz00aG2UdHEKmVRAzHhVLY
+   A==;
+X-CSE-ConnectionGUID: eI546J2hRDCxC5aPwNlYJA==
+X-CSE-MsgGUID: ir1877GJQ/ywViMAome2ZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="28611347"
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="28611347"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 20:30:47 -0700
+X-CSE-ConnectionGUID: wf+sBPo5TMeONau1J7HQvQ==
+X-CSE-MsgGUID: pYVP2N8gS7ymgXEAqMpjYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="78268805"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Oct 2024 20:30:47 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 15 Oct 2024 20:30:46 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 15 Oct 2024 20:30:46 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.172)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 15 Oct 2024 20:30:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wb1wOnW2XkAvLO8kUQFeAsGml0+0VdegqEAuVgtuq/vlul6DBWr7uzPBvikRH+xaFEawcgeexQC8UFB3GNQN3WgJF9I1w2pJwatHIKWO+tbJaxBAn3YEA+NXoDjGggRGKpRD362ZYHzG9A8o9kLwM+ONOgHpDQscP1F9ryGf9Jxxu0gU/b7Dxr/BaD3O0wRYCoF/q5nj+b0pcN78CvbY77fVovINP7KBBSs8xmr85tHitRI0xu/tYckSE5gO6qpT+ePdxnu+QkJFidDSkLJRAtNGXdDZbBk3YFuxTB56ZMSH+uOgTCIr63nChwIqSBFLF3NjYtg1s7hLSJGPKkYKCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+kLGuZYCbtq2LBllURNBB1Tlb1ZsOLMa3CnyPpzEARY=;
+ b=UfbzlRbyAoz6+9l8SSWDnYR3qOJVLkBwGhsPr/zIBQjfAmLzHZiiDjDNCiQSHtL4yiWXVqAaTLD5KF11ED+UOagZXDKQPNTg6url4mq3lrtXhuCEiyhtsR+AplFfMhSMONG1hWjW4iGMec6ync6g9nw/1mj6K8vASNTpfChKSWxbzUEWG2E+tflyJCEO53YnUP7Hy4KYTeihWUg86UWuxq1By9ihN6Nppoz5h3M2iLCjVEL5zUIzZmcMm1nw+IT0942aTHWyCsL+0OZFi5eT5Jru8pN4i13YOYVvtjPwfnL3rr9o0TLz5HPbr05PO4YYrE5RA9D2YHKYLQKA+fkJ/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DM6PR11MB4723.namprd11.prod.outlook.com (2603:10b6:5:2a0::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Wed, 16 Oct
+ 2024 03:30:40 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
+ 03:30:40 +0000
+Message-ID: <6c2a4904-af6f-49ac-b05e-65cba54f81ea@intel.com>
+Date: Tue, 15 Oct 2024 20:30:36 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 19/25] x86/resctrl: Auto assign/unassign counters when
+ mbm_cntr_assign is enabled
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
+	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
+	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
+	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
+	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
+	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
+	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
+	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
+	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<eranian@google.com>, <james.morse@arm.com>
+References: <cover.1728495588.git.babu.moger@amd.com>
+ <ce07d802260f537b24b3affec57c2d2e65023709.1728495588.git.babu.moger@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <ce07d802260f537b24b3affec57c2d2e65023709.1728495588.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW3PR05CA0019.namprd05.prod.outlook.com
+ (2603:10b6:303:2b::24) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM6PR11MB4723:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6d612de-033d-4e61-1ba6-08dced92e848
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SXA5MmhLYUkwSGtQWUpKRU5YU1Jwb0pSQkxKUTc4ZnplN2lxN0U5SUdPdjN3?=
+ =?utf-8?B?eVVKODJpdTlGU3M1eHkvbXB2RWpNQ1ordDBHb3R0NzVUaEV6WS92bGRSN3or?=
+ =?utf-8?B?L0FUaVFjOTlCMnJFdXpDbWNRNE1jMllncnhxbDNaRGZtaFpmT01xbTJXNUh3?=
+ =?utf-8?B?bzlua0EvVEtlUkF1VkJIZ2FtZ0tHM2lyUTljMVFMbXZtMU1URTZMcmRobzRl?=
+ =?utf-8?B?UnU4bkREdk04dWFmMmtpSWc5TUZpdUhrSXkwVUVMaW96cXB6UE14N2g0QVpW?=
+ =?utf-8?B?N2NKMk81WkY1Q3JET3h6emwvYkdNZXVXN0Y3ekl4RjdGWkFWYTZEZkdQUkM4?=
+ =?utf-8?B?VGVFaG9FN243VTlaeENTUlExNHdZZzFUYThUU3BMUUlTYUhocGlmWWtPSnN1?=
+ =?utf-8?B?R2ZNSWZLRGRXbDNTYk54L0p4aktLdXVxVGtSa3ZEbkpMaFdDTGhVaGtGOGIr?=
+ =?utf-8?B?Qzk1MzhhSFh0M1crYUZwcTZYbWpQSDR3Qi9DN2ZnRTdkUHZOTHkxVCtPOU05?=
+ =?utf-8?B?RnIyc3p5bEowUVh0MDZpalRhOGdVem41YlVNRXRtVXVBcVQwbVZKaHJDbHNo?=
+ =?utf-8?B?d0lJRThKbkFlR0M5NkduSkJTT0UyMlVnZzQ5VDE4SVdGSFIxRlNRS29KczUr?=
+ =?utf-8?B?ZWRUaityZm9YTUZCOGVTOTdKcldTT2I3SnlBQS9PaEc1WFNwdUJ3Sm83ckg4?=
+ =?utf-8?B?MkFtVHFKOGNIcThFeXRQYkl4VWwycXV0UXpySktJL1FLakNESmZPRFllN0VI?=
+ =?utf-8?B?aEU5NW9RbHAyN2VYMCs0WXJmVmxqb1ArWE1QZGlFQVpBMkxORU9vczlQRzhF?=
+ =?utf-8?B?bmNGa0FtOW1TNUxWa0FILzBML0ZLRk52SjNsQnBCRmdzSEdJcEpaSkdZRUZw?=
+ =?utf-8?B?ZzUzU3plRG5PTGdBajlNVEFmZHRWdit0ZFZNdndEWkJ2bEdJdStGT2QraEJH?=
+ =?utf-8?B?ci9YR0U4cE9id2NQNkFrLzdiNXNKOEhESXIveFZoUnd3bGVaRTJSUFE5dHVU?=
+ =?utf-8?B?Wk5pOExiMklLaVFrR1JnVUF5bXFZSzFqenlDWEdwMmVUdFRqckpBK2ZtVFVi?=
+ =?utf-8?B?VFNOQ3R0WVI3VDZ0RERHcDE3MUZrWndDMjkyS3JFSEFzVTQ3YzUrM0RjRlpi?=
+ =?utf-8?B?K2Zwb0hidExMLzg1VWZER1RkTVVGY2hzclVrVUcyRmNTaTd6enZiVlJYZlV3?=
+ =?utf-8?B?RFJlckN4bVZMYUc2UDFEMGFnc0V4cmpEWWNiK1BQSWFlaWZYclB2SWNmNTdh?=
+ =?utf-8?B?YkVTSk05YkJNalVDTkY2NE1TOUlzWHZMT2g1Z015NjFqVDdOdXhDV2tSREM1?=
+ =?utf-8?B?c29QVXF4V3V6RHU4TjhRdENPbWY4UzZMWkJPb1NHcnZlQlFac0x1a3JJOFVs?=
+ =?utf-8?B?SVJlWWRsTjF6VDZjRHZTUmdiMHc4bFh6U2hZMDNxUVV6MVc1bzd0MFFGSzhh?=
+ =?utf-8?B?OXQzN0Z2ZkxIaW8rR1JFanRocUtVOE5KRXZYUHYvZTFlaTEwMGtGTG5VS0xY?=
+ =?utf-8?B?Ry8xLzlMTzJkQkdrSGYrdnZISDNCVEQxQTVFcUp3ZFIvRjk3eDBucXN5eWo1?=
+ =?utf-8?B?VlFsQmI1WHB5NHNUMjdVTkZTV3RGdS9BK2ZWemhnN3gzb2dPT2NWUnhFSFJQ?=
+ =?utf-8?B?NFZTWUNDRGV2d0MyeHQ2ekRYYlBvTTJtcExlMHg2VEdsU0xDUzcrVVk0enVu?=
+ =?utf-8?B?TEpaakNrQS8vZ3ZYRm1PMncrT2hxY3VDRmo5R2NxRzdrUGxpYWYwVW5RPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bjVickxTMnJtc251TnZXVWxDMFkrN3ZqdUhpNGswRGhWelJXMEhNVzlqRG9O?=
+ =?utf-8?B?RTJrVklBdVBzeTNvN0Y3QTkzUlBZeW1YRERxNU4wZjk1OXlwSENNTlZCLzVG?=
+ =?utf-8?B?Q1I5TEJubVJhdUoybXV2YS8vRmcvWStvY0NrdGNQRmNpK0FBUEFhTjhiVlpH?=
+ =?utf-8?B?eVdWV20ya0JTZVkwN3YyZmNZeGJNVTdNOGVOTngySFlGK1dOTmVOWUs0T0Ry?=
+ =?utf-8?B?dFZ1ak9lNGZvQnU3YkszTmtJcTFNWndCZzk1VUFRRVZoMlVFTmxrQkw3R0Rw?=
+ =?utf-8?B?S2pISTh6eWpOVkI3MkpEV3l0Z3Vocm5JNXFvd05yUVNNOW5ZbFloZmVBNjRq?=
+ =?utf-8?B?Y2FITlUrMzZlWDF2M25OQ0wzcUd4bmF6WUgxenk5WGs1R21pWnRIZWI4OEM2?=
+ =?utf-8?B?dGhYYmZzWnNuK1FLajFhWXFVR1pvL3FBekJOZ0pqR3JRNEZCajBJSE83bzBj?=
+ =?utf-8?B?K2dpQWpIcFFNODdORXptVkR4U0wySS9ROFdpckQ4aHIyMGZVckRBTlh6eHVO?=
+ =?utf-8?B?Z1A5L0dta3JTNXBiZFNNdm9nZmlYd1FxOVIvelNYMisybmF0aDg1VkhYWFBN?=
+ =?utf-8?B?aGhBYXV2RTY0NTMvRmZvMVZDMnp5bEEvbDhINDdrTkVnTFgrZEtVYWRVQm5y?=
+ =?utf-8?B?eS9KUURzYTBwQUgvWXdvN0NPSmdMU3FUSDdLVTh4MG9wRDRZZ3ZlSjJweWxw?=
+ =?utf-8?B?TVFjUDR1Z2JVblNNVUJnWlZOU05PdHMrVHp5VnpKam5jUklaZXRXQVJxSGt3?=
+ =?utf-8?B?YWhEM1Rtc1cySzNkbmVnN3RLRkVxZmNYcEQ5cGc2cjFMRXhhTllZd21Ga2h3?=
+ =?utf-8?B?UWtFSVVERXpQZzhiV3VUSi9QRytiQktVb24wcGRvZ3ZJMXpMdkNPWWN4QnpK?=
+ =?utf-8?B?RWcxK3ZkOXo2Zmw1Ym5pVVgyZ3owdFdSL3ZveE9yKzVvemwwM0VJZ29ON0Ey?=
+ =?utf-8?B?SllPZ0pHMERxVkozTklZRDFVdmdOcnJOZHZwL2JNUmV3eExZaGY4NzRJMGZ3?=
+ =?utf-8?B?akdhL3Y2V0dPY2dWSzFjNllCZnFlUjJ6Z2ZXKzZrWVg2Z0thTHV6QkxGZ1hR?=
+ =?utf-8?B?SnpwRnkraEhPcHdhcVBNNWhIc2dwUTRKODR2bEVvYUhxMHcwMnVmc1gvcWpj?=
+ =?utf-8?B?eUxVcmJNNkxwUmNEajZJY011elIzc0tTQWlCUFhYM01kakVPSjhhcXBLb0tY?=
+ =?utf-8?B?MjFYdHBFNmpVYXZGWW5XdTFTZFhiejdYOGxBRDYwODRDKzJ5S3h0aGR0RHBi?=
+ =?utf-8?B?cldCd1ZJcmpyQVJGalB3b2k2M1BjS2tYY2IyUGJIUjl5L1JzMllEMldaL0Y1?=
+ =?utf-8?B?Y3hpQ2g3eDlWazZjTTByRkV6OWxEcFlmRjR0NWNDYU0zd0p1Qy9CNm1GWUNm?=
+ =?utf-8?B?SzM3TkFub3dYNGNVSUgrUTJzQ3RKNG9EendZSlAyNU9tZm5yaHJEcHRXNkFF?=
+ =?utf-8?B?Yk1zNVFpeXRDTmFta29hNndrVGpLK2wrN2YzZ1ByeFk3Q0ZTQ1Y0TG1NVkFy?=
+ =?utf-8?B?YlBsSm1CTkhmZzFDbFA4MTVzcHF6YXZBdkduYUsyT2E1YVExVzFkZlExSXlp?=
+ =?utf-8?B?ZWdTWXlveVJoVDArVVhpM3pPa2ZmdmpzTlRNaEY5RFR0cWVtemI4SzdERmF5?=
+ =?utf-8?B?THk2WDhpMHRvQVFVV0NoU2NUUzRPSWhUSjhZQ2hFTjF4NTRUNzF0d0J1NXFy?=
+ =?utf-8?B?VDNSc3pzUVlqSExmUGlFWGFuUjBINXVKS2pNc0RQNDJWWGhlT1NPWXdNSDR5?=
+ =?utf-8?B?cWhqWGhoM0pKNWVQSE1kcFF2TnN3SFlQbnZRODQrQTBZZVFuRGhnOHRLY1or?=
+ =?utf-8?B?Z09vQytCRHhpbWZSN2p1VnpvSjBCVnFscEcwWUJNOU5IUGVGc2hiUXRkanN3?=
+ =?utf-8?B?a25uUFBYZ0d0S0NvSUtzNTVCemxadkJTUHpDOWdXZU5NWVMrbDV3eStTelpP?=
+ =?utf-8?B?VEpYb2hqcWp6TVluL2hkU0Y1SGZIOHEzSWIvTUI4SktiYldpSFh3cjQzMjdE?=
+ =?utf-8?B?YmM3cTlVRGhPcFljeHIwQTE1dkN4UCtublc4VkY5U01LWHBDZTI2dE16cWt6?=
+ =?utf-8?B?bnlkUDZHNmUxd3NYNVBzY2RQd1lCbTAzdTB0UHRGZ2VUTHM1WjhheEVMZzVm?=
+ =?utf-8?B?Yk8vU0tYMDNLSnpuV1RmemxvQjNrUTFhWkNpcWduTG1nSWpSVi9KdS83U0dw?=
+ =?utf-8?B?YUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6d612de-033d-4e61-1ba6-08dced92e848
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 03:30:39.9040
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PzLuf9jedU+hs6bF4GBRDMs4oX0QYM6a09Yt6QNu4o5ic8hwNeDqqaMEWzQGokZ5fnj8BGn5ohM8Pg8aBEkwv0N4nuAEoRT/JTLu1zN4FKw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4723
+X-OriginatorOrg: intel.com
 
-From: Barry Song <v-songbaohua@oppo.com>
+Hi Babu,
 
-This builds on the discussion about Gaoxu's work[1]. Significant
-file refaults may occur when userspace makes extensive use of
-MADV_FREE on anonymous folios, as these folios are not
-positioned in an easily reclaimable area within the LRU.
+On 10/9/24 10:39 AM, Babu Moger wrote:
+> Assign/unassign counters on resctrl group creation/deletion. Two counters
+> are required per group, one for MBM total event and one for MBM local
+> event.
+> 
+> There are a limited number of counters available for assignment. If these
+> counters are exhausted, the kernel will display the error message: "Out of
+> MBM assignable counters". However, it is not necessary to fail the
+> creation of a group due to assignment failures. Users have the flexibility
+> to modify the assignments at a later time.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+...
 
-According to Lokesh, MADV_FREE'd anon folios are expected to be
-released earlier than file folios. One option, as implemented
-by Gao Xu, is to place lazyfree anon folios at the tail of the
-file's `min_seq` generation[1]. However, this approach results in
-lazyfree folios being released in a LIFO manner, which conflicts
-with LRU behavior, as noted by Michal.
+> ---
+>  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 64 ++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> index 791258adcbda..cb2c60c0319e 100644
+> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 
-To address this, this patch proposes maintaining a separate list
-for lazyfree anon folios while keeping them classified under the
-"file" LRU type to minimize code changes. These lazyfree anon
-folios will still be counted as file folios and share the same
-generation with regular files. In the eviction path, the lazyfree
-list will be prioritized for scanning before the actual file
-LRU list.
+...
 
-Thanks to Gao Xu for the test results, which look quite promising:
+>  static int rdt_get_tree(struct fs_context *fc)
+>  {
+>  	struct rdt_fs_context *ctx = rdt_fc2context(fc);
+> @@ -2934,6 +2980,8 @@ static int rdt_get_tree(struct fs_context *fc)
+>  		if (ret < 0)
+>  			goto out_mongrp;
+>  		rdtgroup_default.mon.mon_data_kn = kn_mondata;
+> +
+> +		rdtgroup_assign_cntrs(&rdtgroup_default);
+>  	}
+>  
+>  	ret = rdt_pseudo_lock_init();
+> @@ -2964,6 +3012,7 @@ static int rdt_get_tree(struct fs_context *fc)
+>  out_psl:
+>  	rdt_pseudo_lock_release();
+>  out_mondata:
+> +	rdtgroup_unassign_cntrs(&rdtgroup_default);
+>  	if (resctrl_arch_mon_capable())
+>  		kernfs_remove(kn_mondata);
 
-Base version：android V (enable Android ART use MADV_FREE)
-Test cases: 60 apps repeatedly restarted, tested for 8 hours;
-The test results are as follows:
-        workingset_refault_anon   workingset_refault_file
-base        42016805                92010542
-patch       19834873                49383572
-% diff       -52.79%                  -46.33%
+I think I mentioned this before ... this addition belongs within the
+"if (resctrl_arch_mon_capable())" to be symmetrical with where it was called from.
 
-A comparative test was also performed on approach [1], with the
-following results:
-               workingset_refault_anon   workingset_refault_file
-lazyfree-tail     20313395                 52203061
-patch             19834873                 49383572
-% diff              -2.36%                  -5.40%
+>  out_mongrp:
+> @@ -3144,6 +3193,7 @@ static void free_all_child_rdtgrp(struct rdtgroup *rdtgrp)
+>  
+>  	head = &rdtgrp->mon.crdtgrp_list;
+>  	list_for_each_entry_safe(sentry, stmp, head, mon.crdtgrp_list) {
+> +		rdtgroup_unassign_cntrs(sentry);
+>  		free_rmid(sentry->closid, sentry->mon.rmid);
+>  		list_del(&sentry->mon.crdtgrp_list);
+>  
+> @@ -3184,6 +3234,8 @@ static void rmdir_all_sub(void)
+>  		cpumask_or(&rdtgroup_default.cpu_mask,
+>  			   &rdtgroup_default.cpu_mask, &rdtgrp->cpu_mask);
+>  
+> +		rdtgroup_unassign_cntrs(rdtgrp);
+> +
+>  		free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+>  
+>  		kernfs_remove(rdtgrp->kn);
+> @@ -3223,6 +3275,8 @@ static void rdt_kill_sb(struct super_block *sb)
+>  		resctrl_arch_disable_alloc();
+>  	if (resctrl_arch_mon_capable())
+>  		resctrl_arch_disable_mon();
+> +
+> +	rdtgroup_unassign_cntrs(&rdtgroup_default);
 
-[1] https://lore.kernel.org/linux-mm/f29f64e29c08427b95e3df30a5770056@honor.com/
+Unassigning counters after monitoring is completely disabled seems late. I
+think this can be moved earlier to be right after the counters of all the
+other groups are unassigned.
 
-Tested-by: Gao Xu <gaoxu2@hihonor.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- -v2:
- collect Gao Xu's test results and tested-by tag, thanks!
+>  	resctrl_mounted = false;
+>  	kernfs_kill_sb(sb);
+>  	mutex_unlock(&rdtgroup_mutex);
+> @@ -3814,6 +3868,8 @@ static int rdtgroup_mkdir_mon(struct kernfs_node *parent_kn,
+>  		goto out_unlock;
+>  	}
+>  
+> +	rdtgroup_assign_cntrs(rdtgrp);
+> +
+>  	kernfs_activate(rdtgrp->kn);
+>  
+>  	/*
+> @@ -3858,6 +3914,8 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+>  	if (ret)
+>  		goto out_closid_free;
+>  
+> +	rdtgroup_assign_cntrs(rdtgrp);
+> +
+>  	kernfs_activate(rdtgrp->kn);
+>  
+>  	ret = rdtgroup_init_alloc(rdtgrp);
+> @@ -3883,6 +3941,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+>  out_del_list:
+>  	list_del(&rdtgrp->rdtgroup_list);
+>  out_rmid_free:
+> +	rdtgroup_unassign_cntrs(rdtgrp);
+>  	mkdir_rdt_prepare_rmid_free(rdtgrp);
+>  out_closid_free:
+>  	closid_free(closid);
+> @@ -3953,6 +4012,9 @@ static int rdtgroup_rmdir_mon(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+>  	update_closid_rmid(tmpmask, NULL);
+>  
+>  	rdtgrp->flags = RDT_DELETED;
+> +
+> +	rdtgroup_unassign_cntrs(rdtgrp);
+> +
+>  	free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+>  
+>  	/*
+> @@ -3999,6 +4061,8 @@ static int rdtgroup_rmdir_ctrl(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+>  	cpumask_or(tmpmask, tmpmask, &rdtgrp->cpu_mask);
+>  	update_closid_rmid(tmpmask, NULL);
+>  
+> +	rdtgroup_unassign_cntrs(rdtgrp);
+> +
+>  	free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+>  	closid_free(rdtgrp->closid);
+>  
 
- include/linux/mm_inline.h |  5 +-
- include/linux/mmzone.h    |  2 +-
- mm/vmscan.c               | 97 +++++++++++++++++++++++----------------
- 3 files changed, 61 insertions(+), 43 deletions(-)
-
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 87580e8363ef..615fe80d73d0 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -226,6 +226,7 @@ static inline bool lru_gen_add_folio(struct lruvec *lruvec, struct folio *folio,
- 	int gen = folio_lru_gen(folio);
- 	int type = folio_is_file_lru(folio);
- 	int zone = folio_zonenum(folio);
-+	int lazyfree = type ? folio_test_anon(folio) : 0;
- 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
- 
- 	VM_WARN_ON_ONCE_FOLIO(gen != -1, folio);
-@@ -265,9 +266,9 @@ static inline bool lru_gen_add_folio(struct lruvec *lruvec, struct folio *folio,
- 	lru_gen_update_size(lruvec, folio, -1, gen);
- 	/* for folio_rotate_reclaimable() */
- 	if (reclaiming)
--		list_add_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_add_tail(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 	else
--		list_add(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_add(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 
- 	return true;
- }
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 96dea31fb211..5cb86ea324be 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -436,7 +436,7 @@ struct lru_gen_folio {
- 	/* the birth time of each generation in jiffies */
- 	unsigned long timestamps[MAX_NR_GENS];
- 	/* the multi-gen LRU lists, lazily sorted on eviction */
--	struct list_head folios[MAX_NR_GENS][ANON_AND_FILE][MAX_NR_ZONES];
-+	struct list_head folios[MAX_NR_GENS][ANON_AND_FILE + 1][MAX_NR_ZONES];
- 	/* the multi-gen LRU sizes, eventually consistent */
- 	long nr_pages[MAX_NR_GENS][ANON_AND_FILE][MAX_NR_ZONES];
- 	/* the exponential moving average of refaulted */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index fd3908d43b07..e2f13a9b50da 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3736,21 +3736,25 @@ static bool inc_min_seq(struct lruvec *lruvec, int type, bool can_swap)
- 
- 	/* prevent cold/hot inversion if force_scan is true */
- 	for (zone = 0; zone < MAX_NR_ZONES; zone++) {
--		struct list_head *head = &lrugen->folios[old_gen][type][zone];
-+		int list_num = type ? 2 : 1;
-+		struct list_head *head;
- 
--		while (!list_empty(head)) {
--			struct folio *folio = lru_to_folio(head);
-+		for (int i = list_num - 1; i >= 0; i--) {
-+			head = &lrugen->folios[old_gen][type + i][zone];
-+			while (!list_empty(head)) {
-+				struct folio *folio = lru_to_folio(head);
- 
--			VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
- 
--			new_gen = folio_inc_gen(lruvec, folio, false);
--			list_move_tail(&folio->lru, &lrugen->folios[new_gen][type][zone]);
-+				new_gen = folio_inc_gen(lruvec, folio, false);
-+				list_move_tail(&folio->lru, &lrugen->folios[new_gen][type + i][zone]);
- 
--			if (!--remaining)
--				return false;
-+				if (!--remaining)
-+					return false;
-+			}
- 		}
- 	}
- done:
-@@ -4302,6 +4306,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	int refs = folio_lru_refs(folio);
- 	int tier = lru_tier_from_refs(refs);
- 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
-+	int lazyfree = type ? folio_test_anon(folio) : 0;
- 
- 	VM_WARN_ON_ONCE_FOLIO(gen >= MAX_NR_GENS, folio);
- 
-@@ -4317,7 +4322,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 
- 	/* promoted */
- 	if (gen != lru_gen_from_seq(lrugen->min_seq[type])) {
--		list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 		return true;
- 	}
- 
-@@ -4326,7 +4331,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 		int hist = lru_hist_from_seq(lrugen->min_seq[type]);
- 
- 		gen = folio_inc_gen(lruvec, folio, false);
--		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move_tail(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 
- 		WRITE_ONCE(lrugen->protected[hist][type][tier - 1],
- 			   lrugen->protected[hist][type][tier - 1] + delta);
-@@ -4336,7 +4341,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	/* ineligible */
- 	if (!folio_test_lru(folio) || zone > sc->reclaim_idx) {
- 		gen = folio_inc_gen(lruvec, folio, false);
--		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move_tail(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 		return true;
- 	}
- 
-@@ -4344,7 +4349,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	if (folio_test_locked(folio) || folio_test_writeback(folio) ||
- 	    (type == LRU_GEN_FILE && folio_test_dirty(folio))) {
- 		gen = folio_inc_gen(lruvec, folio, true);
--		list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
-+		list_move(&folio->lru, &lrugen->folios[gen][type + lazyfree][zone]);
- 		return true;
- 	}
- 
-@@ -4388,7 +4393,7 @@ static bool isolate_folio(struct lruvec *lruvec, struct folio *folio, struct sca
- static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
- 		       int type, int tier, struct list_head *list)
- {
--	int i;
-+	int i, j;
- 	int gen;
- 	enum vm_event_item item;
- 	int sorted = 0;
-@@ -4410,33 +4415,38 @@ static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
- 		LIST_HEAD(moved);
- 		int skipped_zone = 0;
- 		int zone = (sc->reclaim_idx + i) % MAX_NR_ZONES;
--		struct list_head *head = &lrugen->folios[gen][type][zone];
--
--		while (!list_empty(head)) {
--			struct folio *folio = lru_to_folio(head);
--			int delta = folio_nr_pages(folio);
--
--			VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
--			VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
--
--			scanned += delta;
-+		int list_num = type ? 2 : 1;
-+		struct list_head *head;
-+
-+		for (j = list_num - 1; j >= 0; j--) {
-+			head = &lrugen->folios[gen][type + j][zone];
-+			while (!list_empty(head)) {
-+				struct folio *folio = lru_to_folio(head);
-+				int delta = folio_nr_pages(folio);
-+
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_is_file_lru(folio) != type, folio);
-+				VM_WARN_ON_ONCE_FOLIO(folio_zonenum(folio) != zone, folio);
-+
-+				scanned += delta;
-+
-+				if (sort_folio(lruvec, folio, sc, tier))
-+					sorted += delta;
-+				else if (isolate_folio(lruvec, folio, sc)) {
-+					list_add(&folio->lru, list);
-+					isolated += delta;
-+				} else {
-+					list_move(&folio->lru, &moved);
-+					skipped_zone += delta;
-+				}
- 
--			if (sort_folio(lruvec, folio, sc, tier))
--				sorted += delta;
--			else if (isolate_folio(lruvec, folio, sc)) {
--				list_add(&folio->lru, list);
--				isolated += delta;
--			} else {
--				list_move(&folio->lru, &moved);
--				skipped_zone += delta;
-+				if (!--remaining || max(isolated, skipped_zone) >= MIN_LRU_BATCH)
-+					goto isolate_done;
- 			}
--
--			if (!--remaining || max(isolated, skipped_zone) >= MIN_LRU_BATCH)
--				break;
- 		}
- 
-+isolate_done:
- 		if (skipped_zone) {
- 			list_splice(&moved, head);
- 			__count_zid_vm_events(PGSCAN_SKIP, zone, skipped_zone);
-@@ -5588,8 +5598,15 @@ void lru_gen_init_lruvec(struct lruvec *lruvec)
- 	for (i = 0; i <= MIN_NR_GENS + 1; i++)
- 		lrugen->timestamps[i] = jiffies;
- 
--	for_each_gen_type_zone(gen, type, zone)
-+	for_each_gen_type_zone(gen, type, zone) {
- 		INIT_LIST_HEAD(&lrugen->folios[gen][type][zone]);
-+		/*
-+		 * lazyfree anon folios have a separate list while using
-+		 * file as type
-+		 */
-+		if (type)
-+			INIT_LIST_HEAD(&lrugen->folios[gen][type + 1][zone]);
-+	}
- 
- 	if (mm_state)
- 		mm_state->seq = MIN_NR_GENS;
--- 
-2.39.3 (Apple Git-146)
-
+Reinette
 
