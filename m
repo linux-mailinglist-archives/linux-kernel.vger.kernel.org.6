@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-368507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C213D9A109B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:28:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4886D9A10A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777421F21D90
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29DB1F216FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABEE2101AC;
-	Wed, 16 Oct 2024 17:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F132F210C2F;
+	Wed, 16 Oct 2024 17:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0abOOeb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/a6bKwS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7800B14F135;
-	Wed, 16 Oct 2024 17:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BF14F135;
+	Wed, 16 Oct 2024 17:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729099700; cv=none; b=urPbKoE+QMkyEIVD8r0stGIuOMEcHylc/p4xl5m1pePKEwpN+yab0Dlsk2/FOvYOHQkUxHXShFKd4BR5Fi25l1q6Q7Q7cKj/uFIb7SABlEg/sLFah4ocQuN8Vr3/eeNLFbvd49RU0LApxZgmsyaZUwOTxrKk6Y5NlkaXSwdXKfE=
+	t=1729099747; cv=none; b=FCJr6JhuT05JPzHjZlayLvTz2rzbOMfpa2oFPg41YMgGn5bl3YcA67HbmW8h2SeQdhc43ecZkCe7xlsGJmYYfAeY2/gm0Ky997hKKl05ptZjQON6/V9MzJc3O+tjgPd5DR9qRkRZzW4E/SEp3Rn3CGC1QsJkXgrIZPwprNpulcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729099700; c=relaxed/simple;
-	bh=LjDcX667/F9Hi+2Io56Vk5FjxxOv458dsz9pGrGc0d8=;
+	s=arc-20240116; t=1729099747; c=relaxed/simple;
+	bh=BW13X3BVPZ8dJHNzenWTM18AmsI72wIJFWJRFxPbA0w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+osu4Cjp0AEGumzzZN32mwrz1XrgrZ72JA6BhuiojoAmmyafSn+kZMaXgMT12Q5EccxioPafyLVF85wtJBYTkBqr7y/uRp7AYVTBHjqSCJvh3NKLV7O+W5aMfY2ggvfcpvfpbGx/STgohlYQJ5UhJrGr8tvXsZWXEYiNJIBVek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0abOOeb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CDD2C4CECE;
-	Wed, 16 Oct 2024 17:28:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFTb8n5t6uSlUZnLpTPZwb/VzgmpaN6+SHnNJ12zONPSNCfc0LE6in1j77wxcvYzHezevOhk/6Mg9OMqkiO3ngvkJo3Pv7ZZEuRKvMxp8r/65AvalLDur8Gf34jizUn+DHPu4dZT6fyrvKVC4JQdI+m8JabGU8v6va6BCKffnq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/a6bKwS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF607C4CEC5;
+	Wed, 16 Oct 2024 17:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729099700;
-	bh=LjDcX667/F9Hi+2Io56Vk5FjxxOv458dsz9pGrGc0d8=;
+	s=k20201202; t=1729099746;
+	bh=BW13X3BVPZ8dJHNzenWTM18AmsI72wIJFWJRFxPbA0w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T0abOOeb75W+adAf3te2gfQWfgHXvgw9M6rDuHYd1w8O669wIlY1JIULTC0fyiJw1
-	 RolzVYSpQXzlnwaY5Kgcs69+ZAfL00by4ByPDcZeEFxrBJ2hc+fFu3YHswoUBHZIId
-	 O32DMc/m2qNUpDZnRI5qY2J96fV0xEjr9NhRDS6fQ2IMv1kH8C9WG2KiHKapwBVeWA
-	 IFasGt/yWuceRLy7a78f+pprMDOZ+rZTrTS4aX9YJPRjEKhpYt1XJiYewC9O3NyTlD
-	 I3cVYo1MPMyjsRh/Y4MizUvBtiU+a8Yr2pxZ/ObB2YibKB+G/FEC25tVzhgjFnpyV4
-	 EELVvOElIUUOA==
-Date: Wed, 16 Oct 2024 12:28:19 -0500
+	b=N/a6bKwSdQt80+PgmhqSCXpEJlLy1Kt/p6ix2RBJIjIjzLrBVYeNAdeL8JivXMyWz
+	 G2lSzWlDR9whzWNn9f+uPWy96Ht2iPsPt1sfoZfQlEjSXrJakazkI3je8ttJtX06Hc
+	 5iargpPCCPjnpkL6mwyeygX+e0d9Svw7ui7eqyFDnNwY2oqpUEykj541iT/W79Ms7v
+	 8Ew1J4NNk8FWNuhslTqE233QgI/jwVmXVQ58DCHq814IA4tvSwDkslqNW+wrnTL28k
+	 iTC/lIYGsK/s959v2qteA8TrDJzysBrZhH1CIPZcKVBBY05Nqit0pEoXYGK9pooGol
+	 E6SQen2iKafZw==
+Date: Wed, 16 Oct 2024 12:29:05 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Wang <frawang.cn@gmail.com>
-Cc: linux-phy@lists.infradead.org, krzk+dt@kernel.org, kishon@kernel.org,
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, vkoul@kernel.org,
-	devicetree@vger.kernel.org, Frank Wang <frank.wang@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org, william.wu@rock-chips.com,
-	heiko@sntech.de, tim.chen@rock-chips.com
-Subject: Re: [PATCH v6 2/4] dt-bindings: soc: rockchip: add rk3576 usb2phy
- syscon
-Message-ID: <172909969920.2069526.212963099055166502.robh@kernel.org>
-References: <20241016073713.14133-1-frawang.cn@gmail.com>
- <20241016073713.14133-2-frawang.cn@gmail.com>
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	linux-crypto@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	devicetree@vger.kernel.org, marex@denx.de,
+	Olivia Mackall <olivia@selenic.com>,
+	Lionel Debieve <lionel.debieve@foss.st.com>,
+	linux-kernel@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: rng: add st,stm32mp25-rng support
+Message-ID: <172909974498.2070654.12815494490287458504.robh@kernel.org>
+References: <20241016-rng-mp25-v2-v4-0-5dca590cb092@foss.st.com>
+ <20241016-rng-mp25-v2-v4-1-5dca590cb092@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,28 +67,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016073713.14133-2-frawang.cn@gmail.com>
+In-Reply-To: <20241016-rng-mp25-v2-v4-1-5dca590cb092@foss.st.com>
 
 
-On Wed, 16 Oct 2024 15:37:11 +0800, Frank Wang wrote:
-> From: Frank Wang <frank.wang@rock-chips.com>
+On Wed, 16 Oct 2024 10:04:18 +0200, Gatien Chevallier wrote:
+> Add RNG STM32MP25x platforms compatible. Update the clock
+> properties management to support all versions.
 > 
-> The usb2phy is accessible via a syscon registers on RK3576, similar
-> to RK3588.
-> 
-> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
 > ---
-> Changelog:
-> v6:
->  - This is a new patch adds rk3576-usb2phy-grf syscon.
+> Changes in V4:
+> 	- Changed the restrictions on clock-names per compatible
+> 	- Removed a useless constraint on clocks Items
 > 
-> v1-v5:
->  - none
+> Changes in V3:
+> 	- Add constraint on clock-names for st,stm32mp25-rng compatible
 > 
->  Documentation/devicetree/bindings/soc/rockchip/grf.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> Changes in V2
+> 	-Fix missing min/maxItems
+> 	-Removed MP25 RNG example
+> 	-Renamed RNG clocks for mp25 to "core" and "bus"
+> ---
+>  .../devicetree/bindings/rng/st,stm32-rng.yaml      | 28 +++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
