@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-368590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEEA49A11C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:38:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488949A11CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87386286D12
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9BB1F251A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35AD215030;
-	Wed, 16 Oct 2024 18:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270E8215F7B;
+	Wed, 16 Oct 2024 18:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPpfLtNg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sT9hNur+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094262139A1;
-	Wed, 16 Oct 2024 18:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DAF20E03F;
+	Wed, 16 Oct 2024 18:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729103844; cv=none; b=X/V+5rISkRfbijUx/eaR/97+ACuXsj/I+UwerhgpmWETvHuYwXCSOrGzxUXWbDDjFeoVISXDkTXsyXOiJicncvSzSHeob3mAzhAK/0iS8hnh3QkQaTKUTskeyIF0ZuVCMt03OYzSB5QJSmR1uf1H3sUozlL4T3WvHpI4clAuDe8=
+	t=1729103880; cv=none; b=irFoTemG3LLVFjKbpIAphXwiL7fl2ETGRg7+lkB7PFCUbPO8krWLwxiiqOxk/hJdfLv21D2PZk300AI0h/Uq8Mav2416QbEM5FjnagfzN/vf6UWVB/7AEPSJkQwgsfVJHPlmz9PZqRLQMDM/4fh3/QBa4FiqQKaZo+VytZW1wj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729103844; c=relaxed/simple;
-	bh=dVD/78WBe1bYdeVZ5uGtzNpfOZo8qj/W0AE0OeUqkoE=;
+	s=arc-20240116; t=1729103880; c=relaxed/simple;
+	bh=Ps8lfftrHz+eYH6LZ19tvlTQRIFQTkgYYQKUnOg+GN4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+fv+hjANAZrlElW2tiAr7osmVMfY3kU95fZ5CE+lnvsWff3P5UxoBhjk9tLEqDixfBw/X62Pyv0Atzzs0smOhFz76fKaCe649dXeS8dyxwMS94fzfYM1+fijux6QxxjZVZj5RfxQAnH7Bwih2T6vpxaWgHr+NkXF1GgFRym9hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPpfLtNg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4B8C4CEC5;
-	Wed, 16 Oct 2024 18:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729103843;
-	bh=dVD/78WBe1bYdeVZ5uGtzNpfOZo8qj/W0AE0OeUqkoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XPpfLtNgtjyxWDWq1zMCRwy55+nkRnY8F6ndRUH0LQjNnoY0BjtUnLxUU15NktmN+
-	 6gWH1VcL7J2M4CG+VAGJYJ/dJUPoS4Fdu0QGl1IMpPrges99HsICrOR+km3j4khE30
-	 rm2d0ZZqS68R3uS9wCnobpV8TZnMmudJqvqSaWnrzy2C62ykCxZgMEmvdfhqtUIS+o
-	 OsEZxh+aHsy2L33pRBdr4p1Q3pIMgVdkKPPJwjCM87CwoaBBu/iUd3plSBMSxjup1h
-	 Fv1hZfft1C5IPPlN40yesHo/nKEnuJCo5FnGcBeaqWAm9vVDggwLW8bC9+QgeMllrn
-	 Jj1pil4gDWukg==
-Date: Wed, 16 Oct 2024 19:37:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 0/3] ASoC: Rename "sh" to "renesas"
-Message-ID: <242a31a6-8a0c-4db9-97a5-8a9c9f5c29b4@sirena.org.uk>
-References: <20241015113757.152548-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8u8bkCjL-YSyMOiKOtfZC8upBwGzhrJ0o+EmZ9S3z5hGA@mail.gmail.com>
- <87h69cevrt.wl-kuninori.morimoto.gx@renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7MeVFrcNjblzi0Sd6ljfgv18T0eaRnGK/LSBabrcm5fVHXSe8HWlpxAhVTHUgbykqLA1TGOkK0TGkmhp5mFB/Fyuyxe+ZIenh12KZmsYfXqVDr5cl0bkZ/9eFOIp5h67mVymydlUKwxMWAZV+tV+FR9aN30ueKqATUdSj8u3Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sT9hNur+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GIKaiw014368;
+	Wed, 16 Oct 2024 18:37:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=n/vzuDg8dd2cQXoLxVrojumWNLu2WM
+	5B0RoY9HpaMGo=; b=sT9hNur+tyId4zny3HFv9EI7qrEzLyi0aT91FIBs3if2Yi
+	o/syahTpiqPzsSeJZ9H9RQEUJjuoUaOU1dfPRpwribkx+uUlV0l9TcJ88kIUXiGy
+	KXRBdCUe/RBzrSjbRBohw9/Epd9sLk/Ut6J+7233zI+u7zbYv46mPrVwbGMm/lsO
+	B3wLxjQOSxG+snc1iLK7D80RcUdNISsRtdud38l/pX4u13BWWTMQbUB/Qn86MjDN
+	d5EqPK2IpF2FHzFceC1T1BEMRD6HD1XGSGI0l5PCzzy9fuJYjppuD+Lg9pGpsJz/
+	iCdQorV7onPm6XrxVSt9Pilj16j0ZT2wyedo25+A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ajpc838e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:37:53 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GIbqUP020563;
+	Wed, 16 Oct 2024 18:37:52 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ajpc838b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:37:52 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GFb4LE006666;
+	Wed, 16 Oct 2024 18:37:51 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283es3569-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:37:51 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GIbmuL29950600
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 18:37:48 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CC6C20043;
+	Wed, 16 Oct 2024 18:37:48 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B2D7920040;
+	Wed, 16 Oct 2024 18:37:47 +0000 (GMT)
+Received: from osiris (unknown [9.171.30.171])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 16 Oct 2024 18:37:47 +0000 (GMT)
+Date: Wed, 16 Oct 2024 20:37:46 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Sven Schnelle <svens@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "Ricardo B. Marliere" <ricardo@marliere.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] s390/time: Add PtP driver
+Message-ID: <20241016183746.25478-A-hca@linux.ibm.com>
+References: <20241016115300.2657771-1-svens@linux.ibm.com>
+ <20241016115300.2657771-3-svens@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="47EfpzAZQNSZ/aR2"
-Content-Disposition: inline
-In-Reply-To: <87h69cevrt.wl-kuninori.morimoto.gx@renesas.com>
-X-Cookie: Snow Day -- stay home.
-
-
---47EfpzAZQNSZ/aR2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241016115300.2657771-3-svens@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pVzF-2odreVl0wqk0ooc8vlnTOrWZ2ms
+X-Proofpoint-GUID: z1uE51r3gkr-F93r8IkbMaxIuhnvP6MY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
+ malwarescore=0 clxscore=1015 spamscore=0 mlxlogscore=544 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410160118
 
-On Wed, Oct 16, 2024 at 12:28:22AM +0000, Kuninori Morimoto wrote:
+On Wed, Oct 16, 2024 at 01:53:00PM +0200, Sven Schnelle wrote:
+> Add a small PtP driver which allows user space to get
+> the values of the physical and tod clock. This allows
+> programs like chrony to use STP as clock source and
+> steer the kernel clock. The physical clock can be used
+> as a debugging aid to get the clock without any additional
+> offsets like STP steering or LPAR offset.
+> 
+> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+> ---
+>  MAINTAINERS                   |   6 ++
+>  arch/s390/include/asm/stp.h   |   1 +
+>  arch/s390/include/asm/timex.h |   6 ++
+>  arch/s390/kernel/time.c       |   6 ++
+>  drivers/ptp/Kconfig           |  11 +++
+>  drivers/ptp/Makefile          |   1 +
+>  drivers/ptp/ptp_s390.c        | 129 ++++++++++++++++++++++++++++++++++
+>  7 files changed, 160 insertions(+)
+>  create mode 100644 drivers/ptp/ptp_s390.c
 
-> > I was intending to add the below entry to MAINTAINERS file, but wanted
-> > to make sure you are happy with below (I can send it as a follow up
-> > patch),
+...
 
-> I can review / comment for Renesas driver, but can you agree that
-> you continue to pick the patch instead of sending request-pull from me ?
+> +static __always_inline unsigned long eitod_to_ns(u128 todval)
+> +{
+> +	return (todval * 125) >> 9;
+> +}
 
-Yes, there's no need to send pull requests.
+This should return u128 so the caller gets a non-truncated return value.
 
-> In addition, I wonder should I be for simple-card/audio-graph, too ?
+> +static struct timespec64 eitod_to_timespec64(union tod_clock *clk)
+> +{
+> +	return ns_to_timespec64(eitod_to_ns(clk->eitod) - TOD_UNIX_EPOCH);
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Yes, you should be a maintainer/reviewer there.
+Misplaced braces. I guess you want:
 
-> Please add/remove
+	return ns_to_timespec64(eitod_to_ns(clk->eitod - TOD_UNIX_EPOCH));
 
-> + L: alsa-devel@alsa-project.org
-> - F: Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+> +static struct ptp_clock_info ptp_s390_stcke_info = {
+> +	.owner		= THIS_MODULE,
+> +	.name		= "IBM s390 STCKE Clock",
 
-Should that be linux-sound@vger.kernel.org instead?
+Please, as written before make this simply "s390 STCKE Clock".
 
---47EfpzAZQNSZ/aR2
-Content-Type: application/pgp-signature; name="signature.asc"
+> +static struct ptp_clock_info ptp_s390_qpt_info = {
+> +	.owner		= THIS_MODULE,
+> +	.name		= "IBM s390 Physical Clock",
 
------BEGIN PGP SIGNATURE-----
+"s390 Physical Clock"
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcQB90ACgkQJNaLcl1U
-h9DYbAf+NqKn+CXp41DFHgGpFeUexB+xp4tTVrdnNjx5ApqvL+cfxx2SMoGJpURk
-QbQTY3lTlnPTTpDxHtttGNP66E+beQl6z2GvtXTekF8Z+aT/+4kPqo2oyjttRrLW
-x6zsMbyRG+J23CAizKQC9RFdSueuOxG1+l5dK4jujaLcs4rxvGCVemn19SojOyGO
-zygmuPOpbd7Gfc1XIvzOm4slPtGfP+eOdgtnZWPpO2Jep6+WK1jjDfuK4hXXr8c4
-3E07UpzK3LWB5lEb+oz0lskfg4+orYuudVtW9UfJAfvs9kerPkxvl3D42/PIXbM0
-GZB3lsHH0UbIMlbShFDkIQuNuRSIZQ==
-=uHkG
------END PGP SIGNATURE-----
+> +MODULE_AUTHOR("Sven Schnelle <svens@linux.ibm.com>");
+> +MODULE_DESCRIPTION("S390 Physical/STCKE Clock PtP Driver");
 
---47EfpzAZQNSZ/aR2--
+"s390 Physical/STCKE Clock PtP Driver"
 
