@@ -1,121 +1,64 @@
-Return-Path: <linux-kernel+bounces-368653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866B59A12F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5309A12F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65EB286E07
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28E3286DF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2976F215F4B;
-	Wed, 16 Oct 2024 19:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28663215030;
+	Wed, 16 Oct 2024 19:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPmfD9IZ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWYIaCGq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8F518BC33;
-	Wed, 16 Oct 2024 19:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8655120605A;
+	Wed, 16 Oct 2024 19:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108452; cv=none; b=uegqbYUJ8qYyekGN+5fyDydUocaW7boD1lY9kNyBmgnntYk1JzwvHXS4Lz23LOlr79r92t5HIdIjEBTngrdm2+ln/8PmkDyXQsi7m+Of3t3EWoA9i84CsgIftkhcHI3OtIoD4AB5y8Oput72b2wcKPq9ERvKSh37SpB3lRacwCc=
+	t=1729108522; cv=none; b=DeN6jUnNLySlW15CSRreqJ+4Ciiyttq2A8RimA2nJHwORUrX0oYJCpc5rwEn1WMnPX9fgPacSYFaL4iq2E4mNiDwGnuTbqZffl7tIgtG5T4TkjKlsLfUOemd9Xd5+3UjxjJFQIs5VPG29L0p//ApKTtbX0v1Y2fVK+WEM9ljREk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108452; c=relaxed/simple;
-	bh=7oRThQztznlHAqI2vr89tVK4VbB3UwzOlwWA8WmLv+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7v6X29PmB3z6kfxjgjA4QTQKegr63HQMCO4w9hU+idxE1tnCFzCUOqOwQMxcpt67edTYozMfmfFu/Iy2qv6+BySLJC98b4vzgLYiEPNeaoL4v7lrsIWjuJ4LP6Kb1zqrwvvwnFNhtk6snqLBnMat0//aZ6HOj4EDnHMvu9qD5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MPmfD9IZ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4609e784352so166681cf.0;
-        Wed, 16 Oct 2024 12:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729108450; x=1729713250; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7v7wjKIhhww48sdwRipURJWTfa87g1A1lt2lXIVhn9U=;
-        b=MPmfD9IZGA8nKoRvLgjMoBvMIKWm4YBTjvxQxghJadhJID+mJCQB75NU+0Q1Zc5Mm7
-         4BsuMRs+I9pDgIUoJiFrzE9PNjgV3LkoXRXK7MFhjH7UopOf4KWNchRlcpHVm9caLqdY
-         rb5afj8IsEhD+8iPkIwdLIUf9nqPChBxjZmCj8ey4oEy9nj837Phrc7xJBhNb33E9nc/
-         jcYgXJcC/LIuV4AiYKbr52jo4/WHKCfEvsr09840MgYwI7J50u9OAJ4sIVUGCG9EOpPZ
-         JI7kvHD0DNZm/gk1XXPn0TaoUOLLvKM9wIOwj3dug8RLD2X/rMVo1SymopJuNKixJsSd
-         jTsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729108450; x=1729713250;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7v7wjKIhhww48sdwRipURJWTfa87g1A1lt2lXIVhn9U=;
-        b=bpPzv798n6oQ/nomRnRmYQXn321qcQQ9he7Lje9KRWcuCWL9/SeCiPrku4EVAnx/Af
-         5H9H9Zx4U5QDxu1v0bXu0fKWAg7SWkiwtrcjXXtsjR7iIt8WA9us3H41ib7Oj9HLduNu
-         Y9uEU17gurEh27DHjZ+PznaEQYPdZGhaUBuhHuOadXxiTeoSKVWvtoDoWOorGgJVOGCv
-         xeTbTCsJYzuTMEJ+8KWv/SrGsIXxnrEwR2PtNxuMbtAkjwSGkWj1ejcPzyhOdLtSkfez
-         EFjdkDiBoyxymJy+4G4nlWYz9a0ZIzTGiEGan5QkSr/+KALWyeya11u35qWjx+1826qj
-         VQtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWxRFfUhX69xpy+c5XbB6Fj1uE4yXcGObbLNu3Fm4ASJTD5VY6TZzcftHxuJNIaKfdcnOYfYab+5yfLJ8JyIw=@vger.kernel.org, AJvYcCVxoD0m1il/B2o6dSLuEf/vmfCEROnWSD7CpxslVNhwRRIQbKLpCe4d9AV3ihQhNcSQHMuyMB/gPJQ6Wbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOVEpPEfuWZWg3jStP17EXF1A1WIZDCf9ZqUqgBRFOOt8ByjH9
-	st+KPNokJ+8Ltsal2TxtgzVh6ZKQKxuzy0mVZkCwSEKbjZllk7rh
-X-Google-Smtp-Source: AGHT+IHMBRpIGzPwXimPcca6m7ja273HIRtLtg3iMKOM7E0L5yRcxDWLHr45gMtgLpuux+wQJAnLBA==
-X-Received: by 2002:a05:622a:11:b0:460:8559:e5bc with SMTP id d75a77b69052e-4608559e74amr72717081cf.4.1729108449806;
-        Wed, 16 Oct 2024 12:54:09 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b123e13sm21032561cf.44.2024.10.16.12.54.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 12:54:09 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id EF9C21200071;
-	Wed, 16 Oct 2024 15:54:08 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Wed, 16 Oct 2024 15:54:08 -0400
-X-ME-Sender: <xms:4BkQZ8xHsD6h9WzYayhGa0jRoiusgbTp0I8_QyHGpotHEa2PUK7qUA>
-    <xme:4BkQZwT2lXFVxRaE1r5piVN9pe_ZkAfsyX7hRPNLsud9KYMV7I1IsiDtxO2Yb1tfD
-    iWWCpTvEGh6lcIIwg>
-X-ME-Received: <xmr:4BkQZ-Wv8VKq-fK-00_FaX0F8E6chueXThLV8QnOyctEuGXun89jaoqwvMs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledgudeggecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhnohhrihesgh
-    hmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthho
-    pehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehtmhhgrhhosh
-    hssehumhhitghhrdgvughupdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtth
-    hopehgrghrhiesghgrrhihghhuohdrnhgvth
-X-ME-Proxy: <xmx:4BkQZ6gO73bXQ1zjHmAOOZXzlJnvow51wt9VhvjMvvgfXd9rP0ox6g>
-    <xmx:4BkQZ-DxF9qq_5oX1MwyxNqJnvAapC_ZQjhmuERXP4sSqtXYtkslJQ>
-    <xmx:4BkQZ7LY5xrdeSndBn5NKsQwhnNxN-IBMj-_-sQCOB8zKv-wjZMNQA>
-    <xmx:4BkQZ1DBHFQMbT7biQM9PCAGtp5p_JSndupIDAWbp-cjGMsOBZMYng>
-    <xmx:4BkQZ-z7XETN6l66igh91EPAf2oskEPzEKZJmCg5H-aPeYbvGrsZTNvG>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Oct 2024 15:54:08 -0400 (EDT)
-Date: Wed, 16 Oct 2024 12:54:07 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch,
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
-	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com,
-	sboyd@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 4/8] rust: time: Implement addition of Ktime
- and Delta
-Message-ID: <ZxAZ36EUKapnp-Fk@Boquns-Mac-mini.local>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-5-fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1729108522; c=relaxed/simple;
+	bh=ZiwDKcccpmSvuqWCu6YQOcI9Jl8IlIIZv33czqaIoj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=BElqzmXKiF2UQDeA1REKUJGQY+dRDwR1CyaS5fpl6y7NzCtP9GxzDxsXPCGm4pBR5TM0lqlbhj4MkPurS14g8QyWntvMHelEef++N4dY6zPlhHPYn0UDZ4xQioSda2KDHSZqGBHyrZ+/Da2+3ve+38oJbOkbotpyX3sRQl6Yyso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWYIaCGq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4815C4CEC5;
+	Wed, 16 Oct 2024 19:55:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729108522;
+	bh=ZiwDKcccpmSvuqWCu6YQOcI9Jl8IlIIZv33czqaIoj0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IWYIaCGqroH5yIR/0mJGOFtj4UZeicBHalefzbDbF/fjw+/nZwSLTl++SRgLuAL26
+	 M/hNjRzEBHWoxQ5xP10w1WZHUpKOzkWRPU3Jt2zAgF4KQHYvn5uhGVLfPgbFrfUfsq
+	 FQeOjFE+meLgRkV032V3fVSjvNCQatn7k+dtujbuaPYJlxskCXiIPDlROwTKKNgB5B
+	 T1Nx8e1TkEqjXv7jJk5ynHskF/Siabc5kDerOGleVTfqE71m7mCqJDO5QKr3MbNK1o
+	 GSHEPFz/muUt+7WxV9jAotsFuBbSjUqieDjK9Lf5S3g1NuoLwNvuLWT4sysYdogTjV
+	 E1ZSyFO37ygOg==
+Date: Wed, 16 Oct 2024 14:55:20 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Constify pci_register_io_range stub fwnode_handle
+Message-ID: <20241016195520.GA647036@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -124,56 +67,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016035214.2229-5-fujita.tomonori@gmail.com>
+In-Reply-To: <20241016062410.2581152-1-arnd@kernel.org>
 
-On Wed, Oct 16, 2024 at 12:52:09PM +0900, FUJITA Tomonori wrote:
-> Implement Add<Delta> for Ktime to support the operation:
+On Wed, Oct 16, 2024 at 06:24:04AM +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Ktime = Ktime + Delta
+> The patch to change the argument types for pci_register_io_range()
+> only caught one of the two implementations, but missed the empty
+> version:
 > 
-> This is typically used to calculate the future time when the timeout
-> will occur.
+> drivers/of/address.c: In function 'of_pci_range_to_resource':
+> drivers/of/address.c:244:45: error: passing argument 1 of 'pci_register_io_range' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+>   244 |                 err = pci_register_io_range(&np->fwnode, range->cpu_addr,
+>       |                                             ^~~~~~~~~~~
+> In file included from drivers/of/address.c:12:
+> include/linux/pci.h:1559:49: note: expected 'struct fwnode_handle *' but argument is of type 'const struct fwnode_handle *'
+>  1559 | int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
+>       |                           ~~~~~~~~~~~~~~~~~~~~~~^~~~~~
 > 
-> timeout Ktime = current Ktime (via ktime_get()) + Delta;
-> // do something
-> if (ktime_get() > timeout Ktime) {
->     // timed out
-> }
+> Change this the same way.
 > 
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> Fixes: 6ad99a07e6d2 ("PCI: Constify pci_register_io_range() fwnode_handle")
+
+I assume Rob took the original and will take care of this as well:
+
+  https://lore.kernel.org/all/20241010220747.GA579765@bhelgaas/
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  rust/kernel/time.rs | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> If possible, please fold this fixup into the original patch
+> ---
+>  include/linux/pci.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> index 8c00854db58c..9b0537b63cf7 100644
-> --- a/rust/kernel/time.rs
-> +++ b/rust/kernel/time.rs
-> @@ -155,3 +155,14 @@ pub fn as_secs(self) -> i64 {
->          self.nanos / NSEC_PER_SEC
->      }
->  }
-> +
-> +impl core::ops::Add<Delta> for Ktime {
-> +    type Output = Ktime;
-> +
-> +    #[inline]
-> +    fn add(self, delta: Delta) -> Ktime {
-> +        Ktime {
-> +            inner: self.inner + delta.as_nanos(),
-
-What if overflow happens in this addition? Is the expectation that user
-should avoid overflows? I asked because we have ktime_add_safe() which
-saturate at KTIME_SEC_MAX.
-
-Regards,
-Boqun
-
-> +        }
-> +    }
-> +}
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 11421ae5c558..733ff6570e2d 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -2019,7 +2019,7 @@ static inline int pci_request_regions(struct pci_dev *dev, const char *res_name)
+>  { return -EIO; }
+>  static inline void pci_release_regions(struct pci_dev *dev) { }
+>  
+> -static inline int pci_register_io_range(struct fwnode_handle *fwnode,
+> +static inline int pci_register_io_range(const struct fwnode_handle *fwnode,
+>  					phys_addr_t addr, resource_size_t size)
+>  { return -EINVAL; }
+>  
 > -- 
-> 2.43.0
-> 
+> 2.39.5
 > 
 
