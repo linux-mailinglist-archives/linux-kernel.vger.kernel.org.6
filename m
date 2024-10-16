@@ -1,217 +1,234 @@
-Return-Path: <linux-kernel+bounces-368144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17889A0BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:47:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF8F19A0BD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5051F22D11
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA422846FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64CC20ADDA;
-	Wed, 16 Oct 2024 13:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A033120ADDE;
+	Wed, 16 Oct 2024 13:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y9gJhE2c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="sUnmBJAo"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94661208D7D;
-	Wed, 16 Oct 2024 13:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086455; cv=fail; b=dGcGJlJIdl/sIeNL8AokWu1GsWFGYsn+0UhueI4hZrdvQoFJfmsJ8OwobVaAYwK8eXBuwTe+67gkOERD4VINqIM0j9EyiYNoJBeW1bGFJ3gckysbl/aF7cjniuJj7vd78fnPtLCD0/DqVyCFzt65KRZkhuL21/bSUA3HrlrwZVM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086455; c=relaxed/simple;
-	bh=rpCvK9ibzk1g/KvnWelLQLNhdg9QKcMc4Z5ehi5chww=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DZIj889I2owNDscXOqfk52A1sXKom1C0aFIe1z62a9WGGfgqmD8N4zXm+Y8aWp7o6DsdZiQSVETImdgxH90gfskx6dBLPBIYmBqM73wisr+y3Cc6WUaZrCreykYcLRpt8epihPIKOH48IrQBqK8ciyR4IcshmRgosAP7/kRYrsI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y9gJhE2c; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729086453; x=1760622453;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   mime-version;
-  bh=rpCvK9ibzk1g/KvnWelLQLNhdg9QKcMc4Z5ehi5chww=;
-  b=Y9gJhE2cnmLij5eVCa9sfoAu3OxbN/742AjlAoBh4NWB9OpEL4okR4z4
-   SLJRQn2wjAZvri3kE1/MyhV32tnSb5Yz+Eu0h/11DJp8fKu0GItcN4W1V
-   81BlCbUmXhKloTt+W4YUSx5slXrEiyr+HzLQw5ZwE9QfttxB6qacEKQcN
-   Zy6de8ASBctNf5hDRwp4ArkjaW4AFAI7ySBnVj4BO9fhv7OgJWbdhCPG8
-   et5pYbT531hL+Z/Um3w9vUNQ511bIHAtCCyH8ImRXHkueGYCaDWtXbpL9
-   wYFvoxkb0qnKaUgJ7lGr3RdmiVQ4imIAInQa+tBU0Xuv4s+yIfAC6HrFL
-   A==;
-X-CSE-ConnectionGUID: w6KBf5gkQDG64a94pA6oaQ==
-X-CSE-MsgGUID: pnh4Xln1Qz2mtIh9FE6MXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28682011"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28682011"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 06:47:32 -0700
-X-CSE-ConnectionGUID: HVGHE5imQDy+H8JQjlRyow==
-X-CSE-MsgGUID: gtbdPEj3REi+AwMBmspVmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="82193154"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Oct 2024 06:47:32 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 16 Oct 2024 06:47:31 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 16 Oct 2024 06:47:31 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 16 Oct 2024 06:47:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qy18uKe4pFF5+8rjypW2zkdHqnJVUczMczlzdbZ4w6jIn1liT3GUUyNxgnecubq60aR2LNDJzGaUxzTMw5ewTR6QveDKDkL1QJtC/C7wfqrT/lcoYKU/4WjeQZscZn/pwbk8tXXP9nvEwmySOPfURBRyX3jqiOrdhOKPFoqUHUQ6IPPS3P9xDGkf0lZyxWO4RdCLbr6YGXpviJLKoemmCnxWGMXjwSWZMo884qNEyP8esj4dTsXlao2F93fIt9qcVx+LwVY6aqXzatpZrzqFvA17lIZh+XWGDLMCZs7lNSceVFEe7e/38w1Av7btQksd5MQrPahyqPOt0IKkkyONtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r+sb3NWiFXXpgBoAzpSdXUWMdg5cs1e5qZIKdBJ4GpY=;
- b=UeIwRj8dnAWteRAqTEfZknoJHKxO/0Kj9kUUArTC8KO0rUqOqYlMTjb4DKe7ESLqtG6BCw+PRCj4HlPqVcBKWkLCeGObzWsDUDUiGNcu/X15BKFuYPUl5HXibWya6D45cdMbskXNY+X7kXdCrX7s5z4X7p/vTNwmE7ZX/WsJQt4WwOmXlgen1hf0iTeaA38LNm+Ulnl3EAplVDULGhUGDRnTD4pKICcqgszPNgeYzEk2pUOKFUuzATGLb/AkCBn5RLo8yD1s3U9upnv11ZWfD/fiweX6qHO+XFzCvvDUGWxv4XsA8krhHZcIK7ahDQ1/bWwbGs1FHFj4lHYP5ADLog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
- by PH8PR11MB7967.namprd11.prod.outlook.com (2603:10b6:510:25e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Wed, 16 Oct
- 2024 13:47:28 +0000
-Received: from DM4PR11MB5423.namprd11.prod.outlook.com
- ([fe80::dffa:e0c8:dbf1:c82e]) by DM4PR11MB5423.namprd11.prod.outlook.com
- ([fe80::dffa:e0c8:dbf1:c82e%3]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
- 13:47:28 +0000
-Date: Wed, 16 Oct 2024 21:47:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, <masahiroy@kernel.org>,
-	<nathan@kernel.org>, <nicolas@fjasle.eu>
-CC: <oe-kbuild-all@lists.linux.dev>, <linux-kbuild@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Chris Packham
-	<chris.packham@alliedtelesis.co.nz>
-Subject: Re: [PATCH] kbuild: Restore the ability to build out of tree dtbs
-Message-ID: <Zw/D48L9VWeBR+pb@rli9-mobl>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241015212830.3899891-1-chris.packham@alliedtelesis.co.nz>
-X-ClientProxiedBy: SG2PR04CA0172.apcprd04.prod.outlook.com (2603:1096:4::34)
- To DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C0120C003;
+	Wed, 16 Oct 2024 13:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729086462; cv=none; b=bUb2ldL2oHOHLtft0ljVUtAmZyGgomwKLGyqJ+bfH4k97RySp7kcaPZk0sE5I8cz50P56MorhebMhVOVjLViWgudCXNzGpdaLxJmFpXG/WMOi4yjw0n1Dm4QTt5EkcX03zmFKKc+9Ic1rA7knMQ1ImyfW6/mwDSlEYGBpnxvCAc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729086462; c=relaxed/simple;
+	bh=4jiV6lpA6LvFkUarGHlDbMdC5GD5N9KNRE6ueUWGNdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i3uEEWRm5m+QX062uj9DheBgm26hfhkP4Vj/ndoPGyHK7CyM6SaXOByWrvyqwv/aBpbBMFUpoqmU+6KhPuYM/bGjLyyHp4uB1xg0lVx6A1HHDfaibJFDgn/Xg5wsjVh1a09+k41RnBoryrFOXQO3njB7vkalNRj4k5+i0MO7bzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=sUnmBJAo; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.178.76] (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
+	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 2341C2FC0055;
+	Wed, 16 Oct 2024 15:47:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1729086451;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=da0JNUrP1qIGABH3kMBOZwZSqcHhtN/AW8nltr5aWI0=;
+	b=sUnmBJAoE2jWtStyphrIQ/hHIATnvL45dsL7yfhPDHgA9QbECnJJI/akkCIX+6q5oSYHj+
+	yGzdHbWLBPwFX0gVDcSz6q+IJcs9fzpM8XS3K5T4+eAbYnIPHjGdN6BSjlNb6d/ayIZ0Ry
+	T1tAzIQPU9MLTx/Hjs6Lwncn4mTw5i4=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=ggo@tuxedocomputers.com
+Message-ID: <943124f6-b896-49bb-b77b-e7d78146753f@tuxedocomputers.com>
+Date: Wed, 16 Oct 2024 15:47:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5423:EE_|PH8PR11MB7967:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23e04a54-06b4-47a5-a136-08dcede912ce
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5g2/uRy7WdaylIwL/r1WnSd9o8V2KMPETKv5+JWJjZqVu3dcUwHQTA1j58xe?=
- =?us-ascii?Q?w2uRFhakivzsea+vDTEfCS+LEzmOfOHjqWKIOuaP+WZ7kIoTG7gr2YdHpMVC?=
- =?us-ascii?Q?dM/ly8hFPVhxRgT7PpnDmO4be9Qm7D2ro9BpDWNqMI0kLeDcpeXOna7JPljE?=
- =?us-ascii?Q?ZUDEPxS1TKOVhFkTqdYPzbIin2N7AxQML0zJyFxC8fiHvur84II3UaQUEYOd?=
- =?us-ascii?Q?UDnDSLJjMfiwMtjJcI9vOcWmG1QGjaZY9kwnxQ0+EuxQHJbMejnJb7ofsthe?=
- =?us-ascii?Q?iQ166QdR9ufUsbh8h5NHFw29TsEHgH9qhH+hFxeztJbGEgOpXrQHin2rMyEJ?=
- =?us-ascii?Q?lVWiRcYErXD4/aQflWNkIhzcWJ196zWGGID4HVfLy8iqd2I6ykc7OtNWOJ7T?=
- =?us-ascii?Q?Q9gh4tlvo3Ezq+tOpH+VUJ6e3VGtfsPTQRXFfzp6K2sDzarhZz/OjRsWjxL4?=
- =?us-ascii?Q?QXxaHFnZTBs22uJD3LSPf1cGvOZ1qFtl+4MR4kpK2R/qLanSOI+cm63qcyZ3?=
- =?us-ascii?Q?RsLHgzNXsuK3Z4dT9IeOKBmpA+uHXDl+Q1sZtbAB3/ScAUTSYY6N0PyoU0MP?=
- =?us-ascii?Q?z1Zx9yIU/6p4f6WiWz5ONL6Ww7VhEGEvAZ+GQUNtDhpw6YziCGjtYPcQWcvf?=
- =?us-ascii?Q?hIKXSxxPjfV/hp94kyVXaZdatz1t1iVSNz0/3wePNB+f7T9KNLRB+AFGT0+p?=
- =?us-ascii?Q?melLA4rQr/xT+lT7FiUV4He0YQF26OjZ3FcIHB3Da3lS4de/TP2CY1TDAZNm?=
- =?us-ascii?Q?9N/F6s0Pl3Q7YF1QtyETDVDCwN93iSzlvFrXQ47bDGppzhSu3kntFEG9KCtk?=
- =?us-ascii?Q?sQZ/qgYZgkZpIwb81XSV+JwoqejY0Wa4Y6P+exyvmCOxRj+CbV1yRWBSWx7F?=
- =?us-ascii?Q?G1CfjzAsSHfoEif+Pb8EfMDiby4eIZss+/23SMLMFatkgffMCkoCgXKHcoOK?=
- =?us-ascii?Q?3+ip/wILDWFRKPpT1FmE9vqiysQkNs91QxcoBBJCrFaFYuXzEWGFqCDoPXZD?=
- =?us-ascii?Q?2Debr2c/DkSPwD+u0BuAfSvfSBFjm+yOh/woLWkxqV7Hkfa2b4eKbvjbxRxu?=
- =?us-ascii?Q?dNinJI+Yx00svp3JO6EniLUatEbmClmDAnzPAnawBYW+klsJzQ+YOuurM/Tj?=
- =?us-ascii?Q?Yvamyu95JtNunyXzR595CK/WSFU8lO7qLBe3Ghk8AE2123EPBZBoEkEc8hen?=
- =?us-ascii?Q?BUBN47RMz8YnpwZjX7qWKatEdR5cnDwmwfLehw+S2fXuuUZGCrhpES8zIVs?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5423.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7EakwKZZ0kiWmeb6Pd/JB01eCRrKrJBgPTu+OUICpLkhXcoU6+odBUwt1Tnm?=
- =?us-ascii?Q?d+u68GDNvwE+vzsm1tZOOPvWSp23tiUynwWGPct7TKamOygWglBnDccVsaYJ?=
- =?us-ascii?Q?eHHKRC0R/OaRkj6PVeFTVYYUeoOOUlhSsqS8kUOcX1EHnOJVdrJSrHgAwJMA?=
- =?us-ascii?Q?t37Fbzz0cOV9bC7JHRrKpLugA/gHnHe6XjzWquUmUduZlHLXvs7KGsGMdmAJ?=
- =?us-ascii?Q?oKl3OfQf5hn613tOFJR+P81mzZAnRgIQAzZFC1OvP6Rqqv21qwAELmU+4FbE?=
- =?us-ascii?Q?/ff9hy0cUrCPvXSM2td+ozMw3VovYDzELVY9pRvtUcmS1V8y9bAMNCInFC5s?=
- =?us-ascii?Q?5XwsvLiCVXBVI/sEQ9G1rdq0KHKVP1+X+hP6U4saGDFHh93ehDSF2q1lpSIM?=
- =?us-ascii?Q?RrPv/bxVEN7sp4zJmSms35omDO1yKexJ3NjZyLiOui/J6kMEx+QR0i4iDzU4?=
- =?us-ascii?Q?VZu5CtAJQjWc5EZa1l+Vp6igAjnEpy7Z8o0cbvqnrDP7xFQJT4g9zw8Q+2Fx?=
- =?us-ascii?Q?8DIYUdHCo/GU7Nnh0f+F0uMOqc9WMsxghHnBe0u+m7JKUq0tDhz2qSd/MzFv?=
- =?us-ascii?Q?xNxSPK5piRjf97rd3UZZphT/1++rn5VCfqU17B7K1+UsC1DPVIr+Wv8v3/tD?=
- =?us-ascii?Q?amHzm52uap8BZ+jp9gegs0hUYOs35vwTsL2ka88Oh01mhPoyG9DO9nvbZ0bi?=
- =?us-ascii?Q?DjLnBCpK/pR6Gvl5rJnJpGK982TCEMIoV8o4patzb+TF5TF9yFiyJ6d7M8fu?=
- =?us-ascii?Q?3qK8QfBQTXpzOWRNm6062JtZi0Pzd07N/DUyukLRi1Ht54e/0oc/seNK/JoM?=
- =?us-ascii?Q?MyXOJzcMbBN3i6c2ZWbkxu/8iBjZqHluSD5BLMS+6V7ppOv5bNyUNFFCpww/?=
- =?us-ascii?Q?elfccxpGQBfoJzbIxeUKH9rRomvbtQunuPobNRrNUxr9l1CvJ09gySbFd8z+?=
- =?us-ascii?Q?PPuy+3nIYVUTL6FNuJgsOy1dq9AcWl2kxIgJsyEaFRrKW/36t8WslKk4i2a0?=
- =?us-ascii?Q?1IpmytAhkXqC+9xwUNk5d4cH8LeJZcss/FKuQJBFsKX3IS09tyutAXwyKmVO?=
- =?us-ascii?Q?LQAK0bM/L1WTf0hvPjGht3U/no7sEF+UCoLOcapHZedBR2qRxNQqwMYyjAAg?=
- =?us-ascii?Q?3O0HptJojrITWsCs1AADazvTQMZeUWrn8D29PYpBxhdwXB+95fy+MRh4ysMx?=
- =?us-ascii?Q?FicNFKFOuls89UXzH9kIYZQ5RZzXcWX1WrqYbPQjORAqOUXLCTQ96b2VAm4L?=
- =?us-ascii?Q?1sUCox1RJXwtGolHHRbGUpcIAgLwR78VuEp4eYkszYZ3s88TSmxU7qaFmRqz?=
- =?us-ascii?Q?9bKYf4hYCV0eod3tL6/Bw6jynFwYejzBMmdMn2lpT2yQCxjZ6BL2YzSSEDVG?=
- =?us-ascii?Q?G1LuxU+bR8cDCHIhUUjkdohRfLZDdpUfGd462YHeWVCDApoIU2ia8gbT/W5z?=
- =?us-ascii?Q?cB4P+JgaNbRzoBJioFgwxCh/kIt/R3+m9rd5Nk0NByLTET483OAer+JpujHd?=
- =?us-ascii?Q?sKrghk2DcYucieKGyXA3JtXXovCBEo7tdRHhXky80a7nJ00gLHV2JltX91Vi?=
- =?us-ascii?Q?d5kqLXKszj/L+FrH3sfvUjp3GhIlIG1kOl5xhLC8?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23e04a54-06b4-47a5-a136-08dcede912ce
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5423.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 13:47:28.2795
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XnXQkcUkZt9nTe85nHPbwahe+qdm1duJfUIylDur2lU3+2HhfbebXS0IhQD11an9jOYwebkMSoS4fN5tgLI+gA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7967
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] mmc: sdhci-pci-gli: fix x86/S0ix SoCs suspend for
+ GL9767
+To: Ben Chuang <benchuanggli@gmail.com>
+Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+ victor.shih@genesyslogic.com.tw, Lucas.Lai@genesyslogic.com.tw,
+ Greg.tu@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ben.chuang@genesyslogic.com.tw, ggo@tuxedocomputers.com, cs@tuxedo.de
+References: <20241016023947.134179-4-benchuanggli@gmail.com>
+Content-Language: en-US
+From: Georg Gottleuber <ggo@tuxedocomputers.com>
+In-Reply-To: <20241016023947.134179-4-benchuanggli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Chris,
+Hi Ben,
 
-kernel test robot noticed the following build errors:
+thank you for the quick reply.
 
-[auto build test ERROR on masahiroy-kbuild/for-next]
-[also build test ERROR on masahiroy-kbuild/fixes linus/master v6.12-rc3 next-20241016]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Am 16.10.24 um 04:39 schrieb Ben Chuang:
+> From: benchuanggli@gmail.com
+> 
+> [Resend email format, Sorry.]
+> 
+> Hi Georg and Christoffer,
+> 
+> On Tue, Oct 15, 2024 at 8:47 PM Georg Gottleuber <g.gottleuber@tuxedocomputers.com> wrote:
+>>
+>> Adapt commit 1202d617e3d04c ("mmc: sdhci-pci-gli: fix LPM negotiation
+>> so x86/S0ix SoCs can suspend") also for GL9767 card reader.
+>>
+>> This patch was written without specs or deeper knowledge of PCI sleep
+>> states. Tests show that S0ix is reached and a lower power consumption
+>> when suspended (6 watts vs 1.2 watts for TUXEDO InfinityBook Pro Gen9
+>> Intel).
+>>
+>> The function of the card reader appears to be normal.
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219284
+>> Co-developed-by: Christoffer Sandberg <cs@tuxedo.de>
+>> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+>> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
+> Maybe need a Fixes: f3a5b56c1286 ("mmc: sdhci-pci-gli: Add Genesys Logic GL9767 support")
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/kbuild-Restore-the-ability-to-build-out-of-tree-dtbs/20241016-053034
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
-patch link:    https://lore.kernel.org/r/20241015212830.3899891-1-chris.packham%40alliedtelesis.co.nz
-patch subject: [PATCH] kbuild: Restore the ability to build out of tree dtbs
-:::::: branch date: 14 hours ago
-:::::: commit date: 14 hours ago
-config: openrisc-defconfig (https://download.01.org/0day-ci/archive/20241016/202410161857.7osnf6AX-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241016/202410161857.7osnf6AX-lkp@intel.com/reproduce)
+I was perhaps too cautious here.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/r/202410161857.7osnf6AX-lkp@intel.com/
+>> ---
+>>  drivers/mmc/host/sdhci-pci-gli.c | 65 +++++++++++++++++++++++++++++++-
+>>  1 file changed, 64 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-pci-gli.c
+>> b/drivers/mmc/host/sdhci-pci-gli.c
+>> index 0f81586a19df..40f43f5cd5c7 100644
+>> --- a/drivers/mmc/host/sdhci-pci-gli.c
+>> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+>> @@ -1205,6 +1205,32 @@ static void
+>> gl9763e_set_low_power_negotiation(struct sdhci_pci_slot *slot,
+>>         pci_write_config_dword(pdev, PCIE_GLI_9763E_VHS, value);
+>>  }
+>>
+>> +static void gl9767_set_low_power_negotiation(struct sdhci_pci_slot *slot,
+>> +                                            bool enable)
+>> +{
+>> +       struct pci_dev *pdev = slot->chip->pdev;
+>> +       u32 value;
+>> +
+>> +       pci_read_config_dword(pdev, PCIE_GLI_9767_VHS, &value);
+>> +       value &= ~GLI_9767_VHS_REV;
+>> +       value |= FIELD_PREP(GLI_9767_VHS_REV, GLI_9767_VHS_REV_W);
+>> +       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
+> Maybe replace it with gl9767_vhs_write().
+> There are two functions gl9767_vhs_write()/gl9767_vhs_read() and they should be
+> meant to be Vendor Header Space (VHS) writable/readable.
 
-All errors (new ones prefixed by >>):
+Yes. Will fix it in v2.
 
->> make[5]: *** No rule to make target 'arch/openrisc/boot/dts/or1ksim.dtb.o', needed by 'arch/openrisc/boot/dts/built-in.a'.
-   make[5]: Target 'arch/openrisc/boot/dts/' not remade because of errors.
+>> +
+>> +       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+>> +
+>> +       if (enable)
+>> +               value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+>> +       else
+>> +               value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+>> +
+>> +       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+>> +
+>> +       pci_read_config_dword(pdev, PCIE_GLI_9767_VHS, &value);
+>> +       value &= ~GLI_9767_VHS_REV;
+>> +       value |= FIELD_PREP(GLI_9767_VHS_REV, GLI_9767_VHS_REV_R);
+>> +       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
+> Maybe replace it with gl9767_vhs_read().
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yes. Will fix it in v2.
+
+> 
+>> +}
+>> +
+>>  static void sdhci_set_gl9763e_signaling(struct sdhci_host *host,
+>>                                         unsigned int timing)
+>>  {
+>> @@ -1470,6 +1496,42 @@ static int gl9763e_suspend(struct sdhci_pci_chip
+>> *chip)
+>>         gl9763e_set_low_power_negotiation(slot, false);
+>>         return ret;
+>>  }
+>> +
+>> +static int gl9767_resume(struct sdhci_pci_chip *chip)
+>> +{
+>> +       struct sdhci_pci_slot *slot = chip->slots[0];
+>> +       int ret;
+>> +
+>> +       ret = sdhci_pci_gli_resume(chip);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       gl9767_set_low_power_negotiation(slot, false);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int gl9767_suspend(struct sdhci_pci_chip *chip)
+>> +{
+>> +       struct sdhci_pci_slot *slot = chip->slots[0];
+>> +       int ret;
+>> +
+>> +       /*
+>> +        * Certain SoCs can suspend only with the bus in low-
+>> +        * power state, notably x86 SoCs when using S0ix.
+>> +        * Re-enable LPM negotiation to allow entering L1 state
+>> +        * and entering system suspend.
+>> +        */
+>> +       gl9767_set_low_power_negotiation(slot, true);
+>> +
+>> +       ret = sdhci_suspend_host(slot->host);
+>> +       if (ret) {
+>> +               gl9767_set_low_power_negotiation(slot, false);
+>> +               return ret;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>>  #endif
+>>
+>>  static int gli_probe_slot_gl9763e(struct sdhci_pci_slot *slot)
+>> @@ -1605,6 +1667,7 @@ const struct sdhci_pci_fixes sdhci_gl9767 = {
+>>         .probe_slot     = gli_probe_slot_gl9767,
+>>         .ops            = &sdhci_gl9767_ops,
+>>  #ifdef CONFIG_PM_SLEEP
+>> -       .resume         = sdhci_pci_gli_resume,
+>> +       .resume         = gl9767_resume,
+>> +       .suspend        = gl9767_suspend,
+>>  #endif
+>>  };
+>> --
+>> 2.34.1
+>>
+> Bugzilla wrote that this issue only happens on Intel models, right? 
+> How do you confirm the status of L1/L1SS, measuring PCIe link state via hardware or software?
+> Thanks.
+
+Yes, high power suspend only happens with (this single) Intel model. AMD
+version sleeps well. (We only have these two models with GL9767.)
+
+Unfortunately, we do not have a logic analyzer available. Our test
+script reads following files and calculates percentage in relation to
+sleep time:
+
+/sys/devices/system/cpu/cpuidle/low_power_idle_cpu_residency_us
+/sys/devices/system/cpu/cpuidle/low_power_idle_system_residency_us
+
+Additionally I measure during suspend with the battery disconnected and
+USB-C measuring adapter.
+
+Kind regards,
+Georg Gottleuber
 
 
