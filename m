@@ -1,127 +1,151 @@
-Return-Path: <linux-kernel+bounces-367522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042E29A0366
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:59:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9129A0364
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BE43B242A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21CF282279
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054171CBA16;
-	Wed, 16 Oct 2024 07:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785DE1CBA1B;
+	Wed, 16 Oct 2024 07:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="SQEze3JY"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h58LQTSX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46C21B2193;
-	Wed, 16 Oct 2024 07:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB411C8FB4;
+	Wed, 16 Oct 2024 07:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065549; cv=none; b=B52nm3fs6xT4ZBe4ZgohiqIWYuCLGYkOBI5yWkWnwBEU0zotdmLen8M35CbebXeF3WP8Cq1jh1IAGsE30a1PLz9wZ2fmTayqjV69Ln8HB+3xUMj5FvxoEhWQlN/UEjjoXZaUb4pD18jRO3E1gMxuh24R2qK/bKCGXeZFOV5vUgI=
+	t=1729065538; cv=none; b=L4gZvAhnLVDbKhIV/nl5z+6SkhzkKJd10480LLyz/uCuhKvJSEE2WpwJXlYPtqD5KUr3zjvy/AKPI4f83Oa4x70kVcfFqo06bQeYh/CCX8cdTagb4QUfzz1pvbKIMtfV002QPGvaMbrtyi5GCKGLjLpxZCPYK56+SoZsYjIqDr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065549; c=relaxed/simple;
-	bh=IFGp3OJ05WhcLD4qS+zh1HFrpAUMaxtwBRrpvE2rOu4=;
+	s=arc-20240116; t=1729065538; c=relaxed/simple;
+	bh=n0pe026KdxnnfOE+FlZrG1ssjrpyt5lw8jYLE7L82Oo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZXlFMD7MMLcnC+UdRuAiFFJovi84yqbeZS5ZbYmmAfoccfdMe+sCLzwBrPnpYNGlR0NyscBX2CXVow3dKday8/x+r4fS0pRtz4MGRzc5YbeUfjU3ja8QurALsARq5fHG+ZuSLAAswV740rCvyEygxZ/T7RTpjIGLrHfqJ2fBDAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=SQEze3JY; arc=none smtp.client-ip=159.100.248.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.119.157])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id E2B8826761;
-	Wed, 16 Oct 2024 07:59:05 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay3.mymailcheap.com (Postfix) with ESMTPS id 175473E8D7;
-	Wed, 16 Oct 2024 09:58:58 +0200 (CEST)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 2E0B6400AD;
-	Wed, 16 Oct 2024 07:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1729065536; bh=IFGp3OJ05WhcLD4qS+zh1HFrpAUMaxtwBRrpvE2rOu4=;
+	 In-Reply-To:Content-Type; b=j7vPQy7hAjd9PcsRasCE972cyC5K347YOgS8RHQ7HSvWtfLq29Y/ivE9tCKu2uGXzUOCeAta9NKnE8v4zQJtTh6rrWS2AZJkobag4wFAzppmqW0PLIlOGzJo3nYhMs1GI1M7QZ3kFglR2uW0GaV/kbzcV2+wnwHTefMxwNAOw+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h58LQTSX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F161CC4CEC5;
+	Wed, 16 Oct 2024 07:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729065538;
+	bh=n0pe026KdxnnfOE+FlZrG1ssjrpyt5lw8jYLE7L82Oo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SQEze3JYLCmgfxwMvoSQWHON6U8bwpZoUPAu5NKgVO4F4qsW7E0OTxJEzXvXFj/HK
-	 u8JzMW88FZwyZUOcKYimMdMVjfcnvrDj6O+51w5ce/1scAyIo4gcnUVcM84wa9PzlJ
-	 YoGmaZyTfuV8GBFOtfRPzxcjWozFD0V/kGBwUYyA=
-Received: from [198.18.0.1] (unknown [58.32.43.121])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 1A15140F81;
-	Wed, 16 Oct 2024 07:58:50 +0000 (UTC)
-Message-ID: <cdad74ac-5b86-49fb-a6dc-8d5392e7bc6f@aosc.io>
-Date: Wed, 16 Oct 2024 15:58:48 +0800
+	b=h58LQTSXBO7TFxIcRIxyn7tPMldlpPkmAwe+whwRpjOWojf8K+wfGusrnQtpH8sUe
+	 efMlfgbA0UAMKqzMvCbkJvw36TbPC/yOFWsLgakqS+C1/oFmtuxkhcUYDJ5Rxe/wXF
+	 D1u0W6M0yJ+QpWgM0bn6p1+ou8fEoIsbSuUXEeoBlPTrd6pGN79JUaX6FLaR03J+wZ
+	 gnsuPHLVRPu8H5Qody9TwHMVm6/D+3Iqk95vK3BUeEAmb6bzwA2v6uPh6urPHg4dRh
+	 z+QL5I09eeChS5xImkWZVXJGu16lUVnbTcoiydISkG3GS7OmB3pJvGd6mgVBsK8xWP
+	 Ow1FFgnVgzCQA==
+Message-ID: <d4ba554d-213a-4961-a9f2-6582b38fc082@kernel.org>
+Date: Wed, 16 Oct 2024 09:58:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Thunderbird Daily
-Subject: Re: [PATCH 6.6 000/211] 6.6.57-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241015112327.341300635@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nfc/nci: Fix uninit-value issue in nci_ntf_packet
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com,
+ syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
+References: <ZwqEijEvP7tGGZtW@fedora>
+ <670ab923.050a0220.3e960.0029.GAE@google.com> <ZwrENfTGYG9wnap0@fedora>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Kexy Biscuit <kexybiscuit@aosc.io>
-In-Reply-To: <20241015112327.341300635@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <ZwrENfTGYG9wnap0@fedora>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Rspamd-Queue-Id: 2E0B6400AD
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [1.41 / 10.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	TO_DN_SOME(0.00)[]
 
-On 10/15/2024 7:25 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.57 release.
-> There are 211 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 12/10/2024 20:47, Qianqiang Liu wrote:
+> When an unsupported rf_tech_and_mode (0xe6) occurs in nci_rf_discover_ntf_packet,
+> the ntf.ntf_type may be assigned an uninitialized value.
 > 
-> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
-> Anything received after that time might be too late.
+> To resolve this, use the __GFP_ZERO flag when calling alloc_skb(),
+> ensuring that skb->data is properly initialized.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.57-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-Building passed on amd64, arm64, loongarch64, ppc64el, and riscv64. 
-Smoke testing passed on 8 amd64 and 1 arm64 test systems.
+> Reported-by: syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
+> Tested-by: syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
 
-Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets.
 
-https://github.com/AOSC-Dev/aosc-os-abbs/pull/8304
--- 
-Best Regards,
-Kexy Biscuit
+> ---
+>  drivers/nfc/virtual_ncidev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
+> index 6b89d596ba9a..31da26287327 100644
+> --- a/drivers/nfc/virtual_ncidev.c
+> +++ b/drivers/nfc/virtual_ncidev.c
+> @@ -117,7 +117,7 @@ static ssize_t virtual_ncidev_write(struct file *file,
+>  	struct virtual_nci_dev *vdev = file->private_data;
+>  	struct sk_buff *skb;
+>  
+> -	skb = alloc_skb(count, GFP_KERNEL);
+> +	skb = alloc_skb(count, GFP_KERNEL | __GFP_ZERO);
+>  	if (!skb)
+>  		return -ENOMEM;
+
+Same comments as before:
+
+https://lore.kernel.org/all/20240803121817.383567-1-zhanghao1@kylinos.cn/
+
+Respond to existing feedback, please.
+
+Best regards,
+Krzysztof
+
 
