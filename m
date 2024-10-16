@@ -1,70 +1,68 @@
-Return-Path: <linux-kernel+bounces-367970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD5C9A08F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:01:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 436D19A08F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B2A1F24ECC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55E931C23B21
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3B8207A25;
-	Wed, 16 Oct 2024 12:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7723208213;
+	Wed, 16 Oct 2024 12:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VCNTazhX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GiHCUWum"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1D72071E7;
-	Wed, 16 Oct 2024 12:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA57207A23;
+	Wed, 16 Oct 2024 12:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729080059; cv=none; b=fJJXRpvf1ObAKZyt3KVymaj3yMSTSZfpjV0PXs9loujyAelG6J3v8VgFUgbLaq+a+fv9TnaDyfcJdid3obwwZojyxwN5/YoIfT4Yfr9slMZPy18h3yE1ferJ9eweqlpjFC8Aa3d2CwW2cXeR9y/rfxPp64mHBnaI/YNHoQzH+5M=
+	t=1729080073; cv=none; b=slLFEVWWgdTnjDla7VkcsOHGThzRNXBllUGb//3g7xFbxiNFHAL9RgEMkQicq+0ZM6WyU+zF8dr7KhhhnNyM7IoXw2dfVe7lUsXlSwl8QwhviYwaAHgrpbyjtc2sbUvrH/sXWUFH+DfKs9Aigz4Ah99ncdxOIuyJ+iQjKKgfGR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729080059; c=relaxed/simple;
-	bh=WxvWqUHf+WmlKFB9owh4yalNmZYY1tal6KAd5WcG/+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FNXyG9qLP1WMy074NLg/7Cn5i7xfJxGWAt4de9AWAxI1K6dFKmIOAHLfs1wGQFLFqxyBrcQ0MuO14tzLSj8HKbwxosAtIVkxlMQG5IR3tU22OjkHu6eBm+vcSqPgDbjQPuKeYUWO++uYmNn5T0x37BAXr1ZUisgo+LLuZuxHtMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VCNTazhX; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729080058; x=1760616058;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=WxvWqUHf+WmlKFB9owh4yalNmZYY1tal6KAd5WcG/+Q=;
-  b=VCNTazhXJZebaN0bo/wzZbh5u46TLYD5FUgYQrpVHKEDNamRNrf5lobz
-   s7rbb4uJaXvn70eOuwMyQ6yj2995Nsym5A26FutqgEwgWLYKikIprDYjZ
-   J75T5qv5SVdoS0Z/XY+Wpdh/2QZX1gMHd5lkKAbOKZswuZQSkVaWBxhvc
-   Hgb7j+fbgItaJFuSk+FwHqVPX3XBRZD/5F4LuJN1PaRMAErLfygraWEo7
-   2JrU3vLcmxpqLc/vo7LlJZzEHhb9RzOuT84ywKbX50r85mylqAgU9M9qm
-   wfsd1djYutMLpdX60Ml8dAgp8FArrYNQxSCqjsMAUELRIS3dt5fGFhPyS
-   w==;
-X-CSE-ConnectionGUID: SQ94f4yyRc+St+/YJayTIA==
-X-CSE-MsgGUID: QVMlmLxzS3KzMftio1jRjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="53937092"
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="53937092"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:00:57 -0700
-X-CSE-ConnectionGUID: x5CGuv+WQbSyDt2dMEhO3A==
-X-CSE-MsgGUID: P9nCAo0aQESP4VXMTYiiBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
-   d="scan'208";a="82169798"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.221])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 05:00:55 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] PCI: Convert pdev_sort_resources() to use resource name helper
-Date: Wed, 16 Oct 2024 15:00:48 +0300
-Message-Id: <20241016120048.1355-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729080073; c=relaxed/simple;
+	bh=oCRosoj8nbgeHNC1GlrQd/Tc8gWDhFi2n75m7T/lzLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r+S65aXuDmX3MqG6MU5owoPwza/tFN3QyHBBaKKwsenTy+RTrnhcpWCiz2ipGz+bARcKSHhMvDyzUwe5C2uDagUmmltehgjMbfg/xvxDL7L8mcCymAM85gzxQykj5QuihXBzmEHxt4uq2UOx8fQcpGcJb6WLuKzZIx4Ya8oFRMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GiHCUWum; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E19181C000E;
+	Wed, 16 Oct 2024 12:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729080069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8krP1VYwxBLXUznJQJXAi4O+kQ5+/JlOE4x1ZUEOX5Q=;
+	b=GiHCUWumFVs/jO1YMHSG7rA16gQjs6pbBAiCcd4D2BnG68yciTjh4sr3vI4BbD9wRFLIXZ
+	ywhlWbF+mgFQwXe8c1SIWmQNHhsrjT6sGcDurP5aun4v/ivL8cPFVvZyLItnCUQ7XewBtN
+	c5gqEnGoTBWStvdi7oiwdUi14SRLV2TW6k4UiWI+VFbCQB27jBALEMzf4IiFcy4PnGkkXV
+	GDfhB1mXcf04qYRnZXW28xbwqJU7EJy070PC6YGk4VKniMql09sBrx5GtrSLl51wXLInSc
+	w/j8sZE2guTIgfjVs1SL84HeOdp94leXtZtxTRIu5hSOOecqNhrnL139Ra9YRA==
+Date: Wed, 16 Oct 2024 14:01:08 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v10 1/2] dt-bindings: mtd: Add Loongson-1 NAND
+ Controller
+Message-ID: <20241016140108.00273712@xps-13>
+In-Reply-To: <CAJhJPsW+cRY13in41NpTrEB4VP7jYLFdgrt8+9EJSwgkvXZR=g@mail.gmail.com>
+References: <20241002-loongson1-nand-v10-0-17162eff80e2@gmail.com>
+	<20241002-loongson1-nand-v10-1-17162eff80e2@gmail.com>
+	<20241007161027.386e7409@xps-13>
+	<CAJhJPsW+cRY13in41NpTrEB4VP7jYLFdgrt8+9EJSwgkvXZR=g@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,40 +70,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Use pci_resource_name() helper in pdev_sort_resources() to print
-resources in user-friendly format.
+Hi Keguang,
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/setup-bus.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+keguang.zhang@gmail.com wrote on Wed, 16 Oct 2024 16:06:09 +0800:
 
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 23082bc0ca37..071c5436b4a5 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
- 	int i;
- 
- 	pci_dev_for_each_resource(dev, r, i) {
-+		const char *r_name = pci_resource_name(dev, i);
- 		struct pci_dev_resource *dev_res, *tmp;
- 		resource_size_t r_align;
- 		struct list_head *n;
-@@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
- 
- 		r_align = pci_resource_alignment(dev, r);
- 		if (!r_align) {
--			pci_warn(dev, "BAR %d: %pR has bogus alignment\n",
--				 i, r);
-+			pci_warn(dev, "%s: %pR has bogus alignment\n",
-+				 r_name, r);
- 			continue;
- 		}
- 
--- 
-2.39.5
+> On Mon, Oct 7, 2024 at 10:10=E2=80=AFPM Miquel Raynal <miquel.raynal@boot=
+lin.com> wrote:
+> >
+> > Hi Keguang,
+> > =20
+> > > +patternProperties:
+> > > +  "^nand@[0-3]$":
+> > > +    type: object
+> > > +    $ref: raw-nand-chip.yaml
+> > > +
+> > > +    required:
+> > > +      - nand-use-soft-ecc-engine
+> > > +      - nand-ecc-algo =20
+> >
+> > Actually I told you a mistake. The no-ecc-engine case should remain
+> > valid, so we cannot require these properties in the bindings.
+> > =20
+> Then, remove this section, right?
 
+Yes, please.
+
+Thanks,
+Miqu=C3=A8l
 
