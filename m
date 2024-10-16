@@ -1,155 +1,117 @@
-Return-Path: <linux-kernel+bounces-368611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BCB9A1240
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3831B9A1246
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E58B2B24297
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D38282C7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DB8213ECA;
-	Wed, 16 Oct 2024 19:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD492144D8;
+	Wed, 16 Oct 2024 19:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0GWx5zV"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFoSTARP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728BF1885BB
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336641885BB;
+	Wed, 16 Oct 2024 19:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729105545; cv=none; b=NB4UYRvX8BySl7f9zamz1YixsU7qIxlqo5YkWkeySc4B/i9ghgdGQS12NHzI6Bl9+NTvjS81wcRjpiOLFrZhVBWmnSyqQzkobgSZesplmX5A+NtSn85nfFcxe/JCIp1btk5VVkyazjN9me1Vpmg6/eqFbYOM1iArgLCJ3FI0U5Q=
+	t=1729105552; cv=none; b=bI6vQaLmWEATM64umhcde7vWVTsVtXwN9i02JCTzdjjtrl7EE62JTvnvEyLTzYFyNnYALmW2IO9h5hk3m1T6ZC52Jrkv1A4ntyraV6iCBodB/G1eNEhHAXGtBv8WwWEFeclj5dPxibGY9hbZ5IQ1S+3gJ3fsEudLYVIVhoym3gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729105545; c=relaxed/simple;
-	bh=8AJc7nnOVnEcgZoFHh8+qQ064B2g1njgKpyNk4S+kxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eo4yPszRmKxx0mWQWHEfgUAqmGOJSveQ9WhDGIoqMAJQZVXcoZQsCE43tk9xdc2XEYw8ANDHAinxynjWu7qMmiutmz9fr5MOuuuiKdA+P2ouO8KHAOFNWcjMj/XdAvUFR+KpGElUasTssFvt5etCvqLrROHaQE2mGvHjVeeQ2zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D0GWx5zV; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4608dddaa35so51451cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729105542; x=1729710342; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4fS3U7sZSvRVdJyoUhS3TF3Nb+W11QQ+SMyGO80/sw=;
-        b=D0GWx5zVsXJGXrLVN3Z1PKbfrK559qbciGomzq51fZ5A11ObhY3KPZqPmeVSV+9zIs
-         PdHjAf/+lSNAfegGle1b/wTRvCc1oNsFSbqim4SpsOFoyl900/8s/AtNw3dQ9RJUQXTo
-         OQBYCGxDib+WQhcdE9RAvLXvuWfnirC00vcmkaaOTPj8n9K4sbSY8tMf+kQhwOGm+fet
-         SnEyk3Z9Xc7CWUWgugt/AHXRV3HgD+vkaLdZbv12eCQ11IOUL0rmowMwkhLPLsdyOukT
-         E5sLyS24p2mkioOfMrpFKoYKmDLr8HpLQRTdfmQ/nT/nWZaxKF4+5mdDYQe75jRvhWOM
-         059Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729105542; x=1729710342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4fS3U7sZSvRVdJyoUhS3TF3Nb+W11QQ+SMyGO80/sw=;
-        b=UsRrtjjfz3k1IWlHuo62RIlflCFNhqIREbMM9oS70OD6UhVFN4MGnJnV9CyAa8fOCO
-         VLo4jumZr8xJozpnQLCYpPsjsGnxcCLQWnSkAl/yYufoFgpdiW4icmePVI0aOkdaga2b
-         I8vz31a96S4fG/74y6povlZDigsoBJHrM7rUhSbHcqQ/dL0rmuC9Q/7R4pAfhIqTfUCz
-         HVeqhXuL2Z3EIIW/YZ+pkw3dEUevCX+tmH7/MU5Xnoy37KMl3JBsyG90IC7rLEMQyed4
-         Lk0TKgNGFI350CWS7VtqVtyAdXbZT0E7VvqHoSvzHZJDKubvvXydja2IkZv4V1Aj7V8a
-         YT2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUyY5gsT4LX+o3v0kbogWiPdQj1c1MnY8Cl6whcZz9Sv0yHMND3cB0mCfep6sT+BShNX2wJAM9em4hbYP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHYr1n2toQkvt4ZfTnNkv0rlUIxwGUB9T1k8oNCoxKVXBgBu1S
-	iZA4OnOuTQWO/REH9DkVAA8uIp78XpWhuqE29s9V6vUe+qbe1xtIc5e9qaA9VQ==
-X-Google-Smtp-Source: AGHT+IE5vMu8b7tn/Vo4Stb0Ua1CGr54lW9KQb9aB0aHmUEk+fl1QrOBTLpAkMbB5h460JEQLGsq5A==
-X-Received: by 2002:a05:622a:a313:b0:453:5b5a:e77c with SMTP id d75a77b69052e-4609c7856e5mr528301cf.10.1729105542146;
-        Wed, 16 Oct 2024 12:05:42 -0700 (PDT)
-Received: from google.com (131.65.194.35.bc.googleusercontent.com. [35.194.65.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc229245fcsm20946876d6.58.2024.10.16.12.05.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 12:05:41 -0700 (PDT)
-Date: Wed, 16 Oct 2024 15:05:38 -0400
-From: Brian Geffon <bgeffon@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, jack@suse.cz,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	cmllamas@google.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-	jing.xia@unisoc.com, xuewen.yan94@gmail.com,
-	viro@zeniv.linux.org.uk, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	Brian Geffon <bgeffon@google.com>, stable@vger.kernel.org,
-	lizeb@google.com
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
- ep_poll_callback
-Message-ID: <ZxAOgj9RWm4NTl9d@google.com>
-References: <20240426080548.8203-1-xuewen.yan@unisoc.com>
- <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
+	s=arc-20240116; t=1729105552; c=relaxed/simple;
+	bh=lvCb56UnR5pRjqe5TG9ljMZbuEmhXsqkTAb3zD0uLx8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=BibfNUsIRamIDY9yCX6NrqiwVwKHIqmwSTm5TlUmJCNwMvj6wkwCDXJloNaZi1EM5c71BrReprGs9MEP+vkFDMOIP6wWjwcmYvQ/34oGm+nqKWwT493HqdCw10w0/dI6oeZZMP3j9/bR/G4EBc0Up8xz6rXwyrsQjjGxbP9/PSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFoSTARP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF11C4CEC5;
+	Wed, 16 Oct 2024 19:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729105551;
+	bh=lvCb56UnR5pRjqe5TG9ljMZbuEmhXsqkTAb3zD0uLx8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=gFoSTARPvZQShPPI1fd+vmCOdfM9bN3VpGoasCfrj1ClSDnrS+AJ87YxwuH4GQFIx
+	 7ZwBDdU+FTVJBwA84UUhchQsUVqPxbO4vW1HfR+08A3ZvGzAU16sxVSLwv5q9WFsSx
+	 d/qe58DNnHEi9/2yxGY+/vXsEfAhk8f/lRBAs0AlmdkPIwI6lOPE7xj06sUUrI8Ufc
+	 eXYl0RKryMSzq3hFRUck6YWqnmN5DUnXRlGi6u6saz4wW4MNNR17zyUnMzc+Yrqeym
+	 mmobozTlgXUYMGD4W5V++0i6c+P3+6Q9mGPwMR/mzg3TTLi2vMkjHzQPXWa+vsO6dn
+	 E1uB9yJ5lMY8g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E383822D30;
+	Wed, 16 Oct 2024 19:05:58 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/9] do not leave dangling sk pointers in
+ pf->create functions
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <172910555679.1899946.4586742822023966255.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Oct 2024 19:05:56 +0000
+References: <20241014153808.51894-1-ignat@cloudflare.com>
+In-Reply-To: <20241014153808.51894-1-ignat@cloudflare.com>
+To: Ignat Korchagin <ignat@cloudflare.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ socketcan@hartkopp.net, mkl@pengutronix.de, alex.aring@gmail.com,
+ stefan@datenfreihafen.org, miquel.raynal@bootlin.com, dsahern@kernel.org,
+ willemdebruijn.kernel@gmail.com, linux-bluetooth@vger.kernel.org,
+ linux-can@vger.kernel.org, linux-wpan@vger.kernel.org,
+ kernel-team@cloudflare.com, kuniyu@amazon.com, alibuda@linux.alibaba.com
 
-On Wed, Oct 16, 2024 at 03:10:34PM +0200, Christian Brauner wrote:
-> On Fri, 26 Apr 2024 16:05:48 +0800, Xuewen Yan wrote:
-> > Now, the epoll only use wake_up() interface to wake up task.
-> > However, sometimes, there are epoll users which want to use
-> > the synchronous wakeup flag to hint the scheduler, such as
-> > Android binder driver.
-> > So add a wake_up_sync() define, and use the wake_up_sync()
-> > when the sync is true in ep_poll_callback().
-> > 
-> > [...]
+Hello:
+
+This series was applied to bluetooth/bluetooth-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 14 Oct 2024 16:37:59 +0100 you wrote:
+> Some protocol family create() implementations have an error path after
+> allocating the sk object and calling sock_init_data(). sock_init_data()
+> attaches the allocated sk object to the sock object, provided by the
+> caller.
 > 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
+> If the create() implementation errors out after calling sock_init_data(),
+> it releases the allocated sk object, but the caller ends up having a
+> dangling sk pointer in its sock object on return. Subsequent manipulations
+> on this sock object may try to access the sk pointer, because it is not
+> NULL thus creating a use-after-free scenario.
 > 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.misc
+> [...]
 
-This is a bug that's been present for all of time, so I think we should:
+Here is the summary with links:
+  - [net-next,v3,1/9] af_packet: avoid erroring out after sock_init_data() in packet_create()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/46f2a11cb82b
+  - [net-next,v3,2/9] Bluetooth: L2CAP: do not leave dangling sk pointer on error in l2cap_sock_create()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/7c4f78cdb8e7
+  - [net-next,v3,3/9] Bluetooth: RFCOMM: avoid leaving dangling sk pointer in rfcomm_sock_alloc()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/3945c799f12b
+  - [net-next,v3,4/9] net: af_can: do not leave a dangling sk pointer in can_create()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/811a7ca7320c
+  - [net-next,v3,5/9] net: ieee802154: do not leave a dangling sk pointer in ieee802154_create()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/b4fcd63f6ef7
+  - [net-next,v3,6/9] net: inet: do not leave a dangling sk pointer in inet_create()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/9365fa510c6f
+  - [net-next,v3,7/9] net: inet6: do not leave a dangling sk pointer in inet6_create()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/9df99c395d0f
+  - [net-next,v3,8/9] net: warn, if pf->create does not clear sock->sk on error
+    https://git.kernel.org/bluetooth/bluetooth-next/c/48156296a08c
+  - [net-next,v3,9/9] Revert "net: do not leave a dangling sk pointer, when socket creation fails"
+    https://git.kernel.org/bluetooth/bluetooth-next/c/18429e6e0c2a
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2") 
-Cc: stable@vger.kernel.org
-
-I sent a patch which adds a benchmark for nonblocking pipes using epoll:
-https://lore.kernel.org/lkml/20241016190009.866615-1-bgeffon@google.com/
-
-Using this new benchmark I get the following results without this fix
-and with this fix:
-
-$ tools/perf/perf bench sched pipe -n
-# Running 'sched/pipe' benchmark:
-# Executed 1000000 pipe operations between two processes
-
-     Total time: 12.194 [sec]
-
-      12.194376 usecs/op
-          82005 ops/sec
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-$ tools/perf/perf bench sched pipe -n
-# Running 'sched/pipe' benchmark:
-# Executed 1000000 pipe operations between two processes
-
-     Total time: 9.229 [sec]
-
-       9.229738 usecs/op
-         108345 ops/sec
-
-> 
-> [1/1] epoll: Add synchronous wakeup support for ep_poll_callback
->       https://git.kernel.org/vfs/vfs/c/2ce0e17660a7
 
