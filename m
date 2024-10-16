@@ -1,159 +1,111 @@
-Return-Path: <linux-kernel+bounces-367408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E7989A01D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:56:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031119A01D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC221F25982
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2261C20CFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D1F198E81;
-	Wed, 16 Oct 2024 06:56:44 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83760170A37;
-	Wed, 16 Oct 2024 06:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89732193072;
+	Wed, 16 Oct 2024 06:57:10 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6D9170A37
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 06:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729061803; cv=none; b=i/lBfo8Ah+/q58YFORx6KBvY6gHlaYRGncB3MtrmGDOEzWW9ZtHvVsFBgUr/ThCW5mc/yY3zsg3XReY682MVq9MdvZQQWzTIVHRrR37pZI78JRT4HgZfwjT4d1N8xkzSI/x2oM/xrzlDHXTUa8xsIJscQIyW81iN3fIgspdBAAs=
+	t=1729061830; cv=none; b=QUaHmGMWgpTzWzyPRIfEI58HWljXK0p9cjxxp+Oo52IZVxWvCnxO0i8AvSnTepHz2hTLx18wnWLsGbywl24D7pIEwF+L3vws5fNq4hhkZs1nElfporMhF41sioLm1quXR4pxl3wHFkuFdF3e1qNvHrb8vHhfpBCE5GqjUjDa6V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729061803; c=relaxed/simple;
-	bh=SUtkFaU7RS9ieQKjmJVvtK5q+JcvxASO+kPsiyL23Xg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=LvAPqNEFvPX+TNMijMHQKE6G792sDi1Yii+5IgeeDldRu1PtOFsn/c2rhEDeoc5fnewIHO410Zn47KQ4A6lrCA5KP26FJ2WzoovZunoIQOOfTJmVpPpRKMnhYmAzB9OTXRtZaZ+P+9O7MM9aKwSj/f0w6oGnISMSSPniRRS9BZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.38])
-	by gateway (Coremail) with SMTP id _____8DxNOmlYw9nXZsfAA--.45597S3;
-	Wed, 16 Oct 2024 14:56:37 +0800 (CST)
-Received: from zhoubinbin$loongson.cn ( [223.64.68.38] ) by
- ajax-webmail-front2 (Coremail) ; Wed, 16 Oct 2024 14:56:32 +0800
- (GMT+08:00)
-Date: Wed, 16 Oct 2024 14:56:32 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5ZGo5b2s5b2s?= <zhoubinbin@loongson.cn>
-To: "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
-	"Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
-	"Arnd Bergmann" <arnd@arndb.de>,
-	tangbin <tangbin@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, zhoubb.aaron@gmail.com
-Subject: Re: [PATCH] ASoC: loongson: make loongson-i2s.o a separate module
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT6 build
- 20240729(6d2960c6) Copyright (c) 2002-2024 www.mailtech.cn loongson
-In-Reply-To: <20241015150958.2294155-1-arnd@kernel.org>
-References: <20241015150958.2294155-1-arnd@kernel.org>
-Content-Transfer-Encoding: base64
-X-CM-CTRLDATA: H2VyAmZvb3Rlcl90eHQ9MzM5Njo2MTg=
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1729061830; c=relaxed/simple;
+	bh=/Pw7Lk19rpr5qs/y7YRHB+eljjtpGRyvbk/W8F7QdUU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U1qGIsoyj4U2M5ae1X8cb45rJERV4MSZajZUfmiJAp4DyxJ8OOiBDtlFph8sTkH22GU6B1KZFm6G2Jb64gW2uQkk6q7qvE0s9wKFUa8JHV2YFCFoDOXsw/fOWsnjdECfHWn10/7H/AfIng3DQ5gVuqZGr778Bn0tPkCCJpaXbN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2e41bd08bso65885667b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:57:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729061826; x=1729666626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ULg06Dva0WoBj0m6VE1kEFmhnHFLA053b6bZA0CjUQ=;
+        b=VTnqaMFyUp6ripROLjMWVZNwBp9n2uHGnUVbw2h0IxIGSzN88Imb8GXFO7b/ifw3EU
+         2mgKxz+2n6LyQ52BYymn3fKrNQkVoK2SfMhaqynS9QcJyhFFuP1U7gbslIN4m1Gfw/OS
+         Cy0ypfo/4rjz4vfFFcGb4SJ1gaoWjonC7AjklV0qduJq9xtfWv7ysQBk8qUe7p+EfRqU
+         LMKJvkikp9wQU+aca0iURzTOhEt13p5KsBVuRvdwUZ1RR0Magkif1xN1sCuDFklc2aHX
+         Evd56SlvOG531nCGdpqdSH2Ga/vN76TYSohlIh6wGIycjUxgGq+aQlbJfb8nGtQHF1Au
+         CJkA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2pkUmuHJleIlqSNmrTXXJdvnS8xKfdtRBQlZoOKHVzEFX94sWItmRl6R1f0HGymrCIABcWCOGFs8gKaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/dUegDfm1my2hmyX/QGVkY2SuDGYeQIxa0gJQCIyMF6M/MJYf
+	WkGlc7k+dJSsQp96lt5Dt5HNax5L9Dkzb3upGLkN+uMkED+SAO2CbXkSiLOF
+X-Google-Smtp-Source: AGHT+IF/owlHOK8PNBgPDWJ6bQ9y3LIURU770QsPHRdPRdZHY6JNWdkpBY98Lk1Hpf4arS6dFcuu4A==
+X-Received: by 2002:a05:690c:3381:b0:6e2:12e5:35b4 with SMTP id 00721157ae682-6e363f17f9cmr119939587b3.0.1729061826337;
+        Tue, 15 Oct 2024 23:57:06 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e3c5d25fbfsm5940497b3.124.2024.10.15.23.57.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 23:57:05 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e214c3d045so46369137b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 23:57:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXdOcygtYTXSq2KuWOYPQn3FtAdtJkAQZX8L0hkj6Go5l5o8z5TuUeIZXADuw4NRpv8MrM7du2ggHZmDzY=@vger.kernel.org
+X-Received: by 2002:a05:690c:6305:b0:6e3:3a22:7205 with SMTP id
+ 00721157ae682-6e3644c0082mr125754047b3.44.1729061825389; Tue, 15 Oct 2024
+ 23:57:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <52c7e318.434f.192941d2bee.Coremail.zhoubinbin@loongson.cn>
-X-Coremail-Locale: en_US
-X-CM-TRANSID:qciowMCxyMWgYw9nS6ovAA--.1538W
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/1tbiAgEMCGcOWyIO1gAAsP
-X-Coremail-Antispam: 1Uk129KBj93XoWxGFWrAryDWrWDCw4kAry5Awc_yoWrJrWDpF
-	n3C3ykWFyrZr4avFZIyrW8GFyUZryfCrZxWF43J34UGrZrJw17ur9rtF15ZFW7CryUGa40
-	qFykGrW8GFs8G3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUl2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAa7VCE64xvF2IEb7IF0Fy264xvF2IEb7IF0Fy264
-	kE64k0F2IE7I0Y6sxI4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2
-	zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7V
-	C2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4xv
-	F2IEb7IF0Fy264kE64k0F24lFcxC0VAYjxAxZF0Ex2IqxwCY1x0262kKe7AKxVWUAVWUtw
-	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWU
-	twC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1V
-	AFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xII
-	jxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4
-	A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_Gr1l6VACY4xI67k04243
-	AbIYCTnIWIevJa73UjIFyTuYvjxU55l1UUUUU
+References: <20241016-fix-m5441x-gpio-v1-1-0a29befd4b8d@yoseli.org>
+In-Reply-To: <20241016-fix-m5441x-gpio-v1-1-0a29befd4b8d@yoseli.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Oct 2024 08:56:52 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVktMFfPQZqvB6cdMOmxwBuG7CW9rqm1kU+p9MnrF1SWA@mail.gmail.com>
+Message-ID: <CAMuHMdVktMFfPQZqvB6cdMOmxwBuG7CW9rqm1kU+p9MnrF1SWA@mail.gmail.com>
+Subject: Re: [PATCH] m68k: mcfgpio: Fix incorrect register offset for CONFIG_M5441x
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: Greg Ungerer <gerg@uclinux.org>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQXJuZDoKClRoYW5rcyBmb3IgeW91ciBwYXRjaC4KCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdl
-cy0tLS0tCj4gRnJvbTogIkFybmQgQmVyZ21hbm4iIDxhcm5kQGtlcm5lbC5vcmc+Cj4gU2VuZCB0
-aW1lOlR1ZXNkYXksIDEwLzE1LzIwMjQgMjM6MDk6NTQKPiBUbzogIkxpYW0gR2lyZHdvb2QiIDxs
-Z2lyZHdvb2RAZ21haWwuY29tPiwgIk1hcmsgQnJvd24iIDxicm9vbmllQGtlcm5lbC5vcmc+LCAi
-SmFyb3NsYXYgS3lzZWxhIiA8cGVyZXhAcGVyZXguY3o+LCAiVGFrYXNoaSBJd2FpIiA8dGl3YWlA
-c3VzZS5jb20+LCAiQmluYmluIFpob3UiIDx6aG91YmluYmluQGxvb25nc29uLmNuPgo+IENjOiAi
-QXJuZCBCZXJnbWFubiIgPGFybmRAYXJuZGIuZGU+LCB0YW5nYmluIDx0YW5nYmluQGNtc3MuY2hp
-bmFtb2JpbGUuY29tPiwgbGludXgtc291bmRAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxA
-dmdlci5rZXJuZWwub3JnCj4gU3ViamVjdDogW1BBVENIXSBBU29DOiBsb29uZ3NvbjogbWFrZSBs
-b29uZ3Nvbi1pMnMubyBhIHNlcGFyYXRlIG1vZHVsZQo+IAo+IEZyb206IEFybmQgQmVyZ21hbm4g
-PGFybmRAYXJuZGIuZGU+Cj4gCj4gQW4gb2JqZWN0IGZpbGUgc2hvdWxkIG5vdCBiZSBsaW5rZWQg
-aW50byBtdWx0aXBsZSBtb2R1bGVzIGFuZC9vcgo+IHZtbGludXg6Cj4gCj4gc2NyaXB0cy9NYWtl
-ZmlsZS5idWlsZDoyMjE6IC9ob21lL2FybmQvYXJtLXNvYy9zb3VuZC9zb2MvbG9vbmdzb24vTWFr
-ZWZpbGU6IGxvb25nc29uX2kycy5vIGlzIGFkZGVkIHRvIG11bHRpcGxlIG1vZHVsZXM6IHNuZC1z
-b2MtbG9vbmdzb24taTJzLXBjaSBzbmQtc29jLWxvb25nc29uLWkycy1wbGF0CgpJIHdvdWxkIGxp
-a2UgdG8gYXNrIGZvciBzb21lIGFkdmljZS4KSSBkaWRuJ3Qgbm90aWNlIHRoaXMgd2FybmluZyBi
-ZWZvcmUgd2hlbiBJIHN1Ym1pdHRlZCB0aGUgcGF0Y2gsIGlzIHRoZXJlIHNvbWUgc3BlY2lmaWMg
-Y29tcGlsYXRpb24gb3B0aW9uIHRoYXQgbmVlZHMgdG8gYmUgdHVybmVkIG9uPwoKIwojIFNvQyBB
-dWRpbyBmb3IgTG9vbmdzb24gQ1BVcwojCkNPTkZJR19TTkRfU09DX0xPT05HU09OX0NBUkQ9bQpD
-T05GSUdfU05EX1NPQ19MT09OR1NPTl9JMlNfUENJPW0KQ09ORklHX1NORF9TT0NfTE9PTkdTT05f
-STJTX1BMQVRGT1JNPW0KIyBlbmQgb2YgU29DIEF1ZGlvIGZvciBMb29uZ3NvbiBDUFVzCgpUaGFu
-a3MuCkJpbmJpbgo+IAo+IENoYW5nZSB0aGlzIG9uZSB0byBtYWtlIGl0IGEgbGlicmFyeSBtb2R1
-bGUgd2l0aCB0d28gZXhwb3J0ZWQgc3ltYm9scwo+IHRoYXQgd2lsbCB3b3JrIGluIGFueSBjb25m
-aWd1cmF0aW9uLgo+IAo+IEZpeGVzOiBiYTRjNWZhZDU5OGMgKCJBU29DOiBsb29uZ3NvbjogQWRk
-IEkyUyBjb250cm9sbGVyIGRyaXZlciBhcyBwbGF0Zm9ybSBkZXZpY2UiKQo+IFNpZ25lZC1vZmYt
-Ynk6IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+Cj4gLS0tCj4gIHNvdW5kL3NvYy9sb29u
-Z3Nvbi9NYWtlZmlsZSAgICAgICB8IDEwICsrKysrKy0tLS0KPiAgc291bmQvc29jL2xvb25nc29u
-L2xvb25nc29uX2kycy5jIHwgIDUgKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMSBpbnNlcnRp
-b25zKCspLCA0IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2MvbG9vbmdz
-b24vTWFrZWZpbGUgYi9zb3VuZC9zb2MvbG9vbmdzb24vTWFrZWZpbGUKPiBpbmRleCBmMzk2MjU5
-MjQ0YTMuLmMwY2IxYWNiMzZlMyAxMDA2NDQKPiAtLS0gYS9zb3VuZC9zb2MvbG9vbmdzb24vTWFr
-ZWZpbGUKPiArKysgYi9zb3VuZC9zb2MvbG9vbmdzb24vTWFrZWZpbGUKPiBAQCAtMSwxMCArMSwx
-MiBAQAo+ICAjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wCj4gICNQbGF0Zm9ybSBT
-dXBwb3J0Cj4gLXNuZC1zb2MtbG9vbmdzb24taTJzLXBjaS15IDo9IGxvb25nc29uX2kyc19wY2ku
-byBsb29uZ3Nvbl9pMnMubyBsb29uZ3Nvbl9kbWEubwo+IC1vYmotJChDT05GSUdfU05EX1NPQ19M
-T09OR1NPTl9JMlNfUENJKSArPSBzbmQtc29jLWxvb25nc29uLWkycy1wY2kubwo+ICtzbmQtc29j
-LWxvb25nc29uLWkycy1wY2kteSA6PSBsb29uZ3Nvbl9pMnNfcGNpLm8gbG9vbmdzb25fZG1hLm8K
-PiArb2JqLSQoQ09ORklHX1NORF9TT0NfTE9PTkdTT05fSTJTX1BDSSkgKz0gc25kLXNvYy1sb29u
-Z3Nvbi1pMnMtcGNpLm8gc25kLXNvYy1sb29uZ3Nvbi1pMnMubwo+ICAKPiAtc25kLXNvYy1sb29u
-Z3Nvbi1pMnMtcGxhdC15IDo9IGxvb25nc29uX2kyc19wbGF0Lm8gbG9vbmdzb25faTJzLm8KPiAt
-b2JqLSQoQ09ORklHX1NORF9TT0NfTE9PTkdTT05fSTJTX1BMQVRGT1JNKSArPSBzbmQtc29jLWxv
-b25nc29uLWkycy1wbGF0Lm8KPiArc25kLXNvYy1sb29uZ3Nvbi1pMnMtcGxhdC15IDo9IGxvb25n
-c29uX2kyc19wbGF0Lm8KPiArb2JqLSQoQ09ORklHX1NORF9TT0NfTE9PTkdTT05fSTJTX1BMQVRG
-T1JNKSArPSBzbmQtc29jLWxvb25nc29uLWkycy1wbGF0Lm8gc25kLXNvYy1sb29uZ3Nvbi1pMnMu
-bwo+ICsKPiArc25kLXNvYy1sb29uZ3Nvbi1pMnMteSA6PSBsb29uZ3Nvbl9pMnMubwo+ICAKPiAg
-I01hY2hpbmUgU3VwcG9ydAo+ICBzbmQtc29jLWxvb25nc29uLWNhcmQteSA6PSBsb29uZ3Nvbl9j
-YXJkLm8KPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL2xvb25nc29uL2xvb25nc29uX2kycy5jIGIv
-c291bmQvc29jL2xvb25nc29uL2xvb25nc29uX2kycy5jCj4gaW5kZXggNDBiYmYzMjA1MzkxLi5l
-ODg1MmEzMGYyMTMgMTAwNjQ0Cj4gLS0tIGEvc291bmQvc29jL2xvb25nc29uL2xvb25nc29uX2ky
-cy5jCj4gKysrIGIvc291bmQvc29jL2xvb25nc29uL2xvb25nc29uX2kycy5jCj4gQEAgLTI0Niw2
-ICsyNDYsNyBAQCBzdHJ1Y3Qgc25kX3NvY19kYWlfZHJpdmVyIGxvb25nc29uX2kyc19kYWkgPSB7
-Cj4gIAkub3BzID0gJmxvb25nc29uX2kyc19kYWlfb3BzLAo+ICAJLnN5bW1ldHJpY19yYXRlID0g
-MSwKPiAgfTsKPiArRVhQT1JUX1NZTUJPTF9HUEwobG9vbmdzb25faTJzX2RhaSk7Cj4gIAo+ICBz
-dGF0aWMgaW50IGkyc19zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPiAgewo+IEBAIC0yNjgs
-MyArMjY5LDcgQEAgc3RhdGljIGludCBpMnNfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKPiAg
-Y29uc3Qgc3RydWN0IGRldl9wbV9vcHMgbG9vbmdzb25faTJzX3BtID0gewo+ICAJU1lTVEVNX1NM
-RUVQX1BNX09QUyhpMnNfc3VzcGVuZCwgaTJzX3Jlc3VtZSkKPiAgfTsKPiArRVhQT1JUX1NZTUJP
-TF9HUEwobG9vbmdzb25faTJzX3BtKTsKPiArCj4gK01PRFVMRV9MSUNFTlNFKCJHUEwiKTsKPiAr
-TU9EVUxFX0RFU0NSSVBUSU9OKCJDb21tb24gZnVuY3Rpb25zIGZvciBsb29uZ3NvbiBJMlMgY29u
-dHJvbGxlciBkcml2ZXIiKTsKPiAtLSAKPiAyLjM5LjUKDQoNCuacrOmCruS7tuWPiuWFtumZhOS7
-tuWQq+aciem+meiKr+S4reenkeeahOWVhuS4muenmOWvhuS/oeaBr++8jOS7hemZkOS6juWPkemA
-gee7meS4iumdouWcsOWdgOS4reWIl+WHuueahOS4quS6uuaIlue+pOe7hOOAguemgeatouS7u+S9
-leWFtuS7luS6uuS7peS7u+S9leW9ouW8j+S9v+eUqO+8iOWMheaLrOS9huS4jemZkOS6juWFqOmD
-qOaIlumDqOWIhuWcsOazhOmcsuOAgeWkjeWItuaIluaVo+WPke+8ieacrOmCruS7tuWPiuWFtumZ
-hOS7tuS4reeahOS/oeaBr+OAguWmguaenOaCqOmUmeaUtuacrOmCruS7tu+8jOivt+aCqOeri+WN
-s+eUteivneaIlumCruS7tumAmuefpeWPkeS7tuS6uuW5tuWIoOmZpOacrOmCruS7tuOAgiANClRo
-aXMgZW1haWwgYW5kIGl0cyBhdHRhY2htZW50cyBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1h
-dGlvbiBmcm9tIExvb25nc29uIFRlY2hub2xvZ3kgLCB3aGljaCBpcyBpbnRlbmRlZCBvbmx5IGZv
-ciB0aGUgcGVyc29uIG9yIGVudGl0eSB3aG9zZSBhZGRyZXNzIGlzIGxpc3RlZCBhYm92ZS4gQW55
-IHVzZSBvZiB0aGUgaW5mb3JtYXRpb24gY29udGFpbmVkIGhlcmVpbiBpbiBhbnkgd2F5IChpbmNs
-dWRpbmcsIGJ1dCBub3QgbGltaXRlZCB0bywgdG90YWwgb3IgcGFydGlhbCBkaXNjbG9zdXJlLCBy
-ZXByb2R1Y3Rpb24gb3IgZGlzc2VtaW5hdGlvbikgYnkgcGVyc29ucyBvdGhlciB0aGFuIHRoZSBp
-bnRlbmRlZCByZWNpcGllbnQocykgaXMgcHJvaGliaXRlZC4gSWYgeW91IHJlY2VpdmUgdGhpcyBl
-bWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGJ5IHBob25lIG9yIGVtYWls
-IGltbWVkaWF0ZWx5IGFuZCBkZWxldGUgaXQuIA0KDQoNCg==
+Hi Jean-Michel,
 
+Thanks for your patch!
+
+On Wed, Oct 16, 2024 at 8:45=E2=80=AFAM Jean-Michel Hautbois
+<jeanmichel.hautbois@yoseli.org> wrote:
+> Fix a typo in the CONFIG_M5441x preprocessor condition, where the GPIO
+> register offset was incorrectly set to 8 instead of 0. This prevented
+> proper GPIO configuration for m5441x targets.
+>
+> Fixes: 83c6bdb827c9 ("m68knommu: Implement gpio support for m54xx.")
+
+The typo was introduced in a different commit, so the correct tag would be
+Fixes: bea8bcb12da09bd3 ("m68knommu: Add support for the Coldfire m5441x.")
+
+> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
