@@ -1,75 +1,91 @@
-Return-Path: <linux-kernel+bounces-368597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1824E9A11E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:51:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568949A1207
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD59BB220C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCC80B2382B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3421B4F2F;
-	Wed, 16 Oct 2024 18:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B1E2144AE;
+	Wed, 16 Oct 2024 18:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj0y9r4p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWmGtJLB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182316E86F;
-	Wed, 16 Oct 2024 18:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75B618DF97;
+	Wed, 16 Oct 2024 18:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729104692; cv=none; b=t0T6kevo0ezRjZYNra+H2OLT8Sg49O+5e+/mNXKNQ1rXe7hVKUP2gGTZ0+TxXVYNrP5gc5m0XIpI3f7neJVQUN7LuBRLsWo7tT6ykwjJrnHmltcB112Qm8znu7h2sk4R2HbGBewki4CBhYlvSBBpF6Mqg3NLLZNCmj1XipPf/sY=
+	t=1729104819; cv=none; b=TMR4FgjM45W1NXkf8qf2Bp8kIBKz5ER8MoKFLNmXe7pDu9PwTzK0szyd8uBGTaGEnJvWxNQXm66XJ5WtymecJQ3l2Vi4jzsFhSM9fWksGAeKXCCqRfS50VEkI4/VNjOEU5e578EMtg3t0FM9+rfSaix8dwBgFJ+qqZvlpC56K3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729104692; c=relaxed/simple;
-	bh=MN1HRH02DeXpotThFBo9SNUk9jLPl86YgdWUzF8+UdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VMWhJxuyxgBw4rSRIgtWVthHXCfKKXBl5W8vBrPk7hzTaLNUZPgPq1ohD3FO4nk7hnQ0KWCwe3bMxT47PIKNaIZa1IK0jEMx0NfiFukDeB4Su99N8xtZk4PyFUIpro2Vn2AOeiI5V8fHvqbQ4SfbyO8f6uDTlQzgHz/d10ibWaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj0y9r4p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AABC4CEC5;
-	Wed, 16 Oct 2024 18:51:28 +0000 (UTC)
+	s=arc-20240116; t=1729104819; c=relaxed/simple;
+	bh=Y/Vqjn7AS4QmH95MO8AvZCxoQ6XG93780zk6JPh7v0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjo6SV5QwZXd0OmOwH8AK68Uf/0PsZm8nVJr2kWPNCYREGP6hOkJFNWlQiBarr4tVI+mzzogyv2GTsB5Cn+8olXgsICyDnHNAhmS0s6p0EaD3QlcpxLm4+k7+p+0DT6kMV3cC7gA+ISVEuPgHGqLPh7qt5UwTuzcmpd0Bi8kpDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWmGtJLB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97651C4CEC5;
+	Wed, 16 Oct 2024 18:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729104692;
-	bh=MN1HRH02DeXpotThFBo9SNUk9jLPl86YgdWUzF8+UdM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=dj0y9r4pDeIkUGOWJ64wqYfCuLAi70so7iZDPHZPXs4FAzEVGvLG1u0AqeL6tkpJ7
-	 GD8RJlJVXkec3HoAp8qvkTD3MkY6MmgoCmpOJ8HvP5WyfIL9jUhKQTOAzLvxEc2tv2
-	 eITupwkCwS+/4RDHeYoNGAHZHxpOqBjfujmCGXLUt/PDQvQ1R0xyCPC8ZK/6b9rfIt
-	 tjaB6B6mU/4nKa/wCD32yjZ0ias2pH4XIYywObTyKbIlq115ivut989q/SqDaph6mD
-	 Pdsq44OgANCzKhmoqgGEp//k1Q09wZsAHF6U4Dv5rfmkLTrfeV+z4DMzHflTo1k6I5
-	 kgRjSXOcHSRlA==
-Message-ID: <800c377d-1ba4-4831-9c32-939d640e13dd@kernel.org>
-Date: Wed, 16 Oct 2024 21:51:24 +0300
+	s=k20201202; t=1729104819;
+	bh=Y/Vqjn7AS4QmH95MO8AvZCxoQ6XG93780zk6JPh7v0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aWmGtJLBhHBuC2eGL/nM5trZ/bmISrffOYX6BavdrXMmlINXDYuD7mD1Tc6pesfvQ
+	 dsATNy1gjXju1TWzmTfXDRxjUHZCBmo2c8I2CrNi1KwaA6Awlzvbdl8MXH1iHoPPEX
+	 BBaZOkz0l6JoFNo24aP9x5NjSLK8NirkDhEboWCIMzDgam8Hby11CTM4OYB/00+bp3
+	 L4K4o6ibNgOA8v40bJYnnZJi5mJoZ6hjL20Uv6vboGNcBA+J1CNiU/E12sVnejkNKC
+	 1mox9Ytacs1U8LlFVAcPtAF1qEfUReXUV42WYuqkRIxugf0FoC1nScQToQ2jrZT48i
+	 aHEuW0W9yHvFQ==
+Date: Wed, 16 Oct 2024 19:53:33 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
+	hawk@kernel.org, john.fastabend@gmail.com, vedang.patel@intel.com,
+	andre.guedes@intel.com, maciej.fijalkowski@intel.com,
+	jithu.joseph@intel.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH net] igc: Fix passing 0 to ERR_PTR in igc_xdp_run_prog()
+Message-ID: <20241016185333.GL2162@kernel.org>
+References: <20241016105310.3500279-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] clk: twl: add TWL6030 support
-To: Andreas Kemnade <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>,
- linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Lee Jones <lee@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-References: <20241014161109.2222-1-andreas@kemnade.info>
- <20241014161109.2222-4-andreas@kemnade.info>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241014161109.2222-4-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016105310.3500279-1-yuehaibing@huawei.com>
 
-
-
-On 14/10/2024 19:11, Andreas Kemnade wrote:
-> The TWL6030 has similar clocks, so add support for it. Take care of the
-> resource grouping handling needed.
+On Wed, Oct 16, 2024 at 06:53:10PM +0800, Yue Haibing wrote:
+> Return NULL instead of passing to ERR_PTR while res is IGC_XDP_PASS,
+> which is zero, this fix smatch warnings:
+> drivers/net/ethernet/intel/igc/igc_main.c:2533
+>  igc_xdp_run_prog() warn: passing zero to 'ERR_PTR'
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Fixes: 26575105d6ed ("igc: Add initial XDP support")
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/ethernet/intel/igc/igc_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+> index 6e70bca15db1..c3d6e20c0be0 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> @@ -2530,7 +2530,7 @@ static struct sk_buff *igc_xdp_run_prog(struct igc_adapter *adapter,
+>  	res = __igc_xdp_run_prog(adapter, prog, xdp);
+>  
+>  out:
+> -	return ERR_PTR(-res);
+> +	return res ? ERR_PTR(-res) : NULL;
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+I think this is what PTR_ERR_OR_ZERO() is for.
 
