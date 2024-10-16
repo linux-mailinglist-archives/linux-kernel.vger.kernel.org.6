@@ -1,121 +1,110 @@
-Return-Path: <linux-kernel+bounces-368253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D699A0D47
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:51:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7829A0D49
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A286282892
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36630B22BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086D620E005;
-	Wed, 16 Oct 2024 14:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B6C20E001;
+	Wed, 16 Oct 2024 14:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ne/K0iNO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EKKKBTcF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="10MRcRyK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6083020ADEA;
-	Wed, 16 Oct 2024 14:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2652B14F114;
+	Wed, 16 Oct 2024 14:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729090304; cv=none; b=rLEyHGnalnMPJ4Rxkl/6e+DwXh6NfQqv96NEbcHfLP+bF9CGIz9Ipc9xa3k9dhMt3WSq08V3s2IX1BT95l+rxKpZi1wI/9Z4QIshVL6WPiqoEg7zdtjkZ9o55X8Fdfalry4R9+U09FSdi+5wUV63fIu1an9Y004ksdIHViQvn94=
+	t=1729090342; cv=none; b=Deli5/9xqkUI9vOqlFdJlY5ZyxyugcGdQEXzmw2jtQdwn5/vYbSwh61h6ZlZpAo2Qi0F9MjwhqsSHGHIRFGYh/SWgfIP5vAYf3v3qHlX8rSAYoVZGh4iYKJ4AQz2NgHsNLFfYjgt4z5KzguCMtfytjpzEi0TxpwXmU0BzZTnhQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729090304; c=relaxed/simple;
-	bh=bUJhhQ8g376NHKbQ6j9vlx1OTk2JcxGmdHodaX8yHcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AFoFAFDrRLgAWJJJOkF6VkZLQh7QQQvA0QV8hHLsXCjjzEGrCFQlz85L3VwuMeUf0kdYZMZINiZJEvuLq/6Q41x1JSJIveY2xrQpFcvtpGwVADdhRdMsEyxCQnHQ0CJFBwS97qOMD4Rt2kdGePUwpOeXqaafoclfvFhUQGcLuws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ne/K0iNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D38FC4CEC5;
-	Wed, 16 Oct 2024 14:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729090304;
-	bh=bUJhhQ8g376NHKbQ6j9vlx1OTk2JcxGmdHodaX8yHcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ne/K0iNOJ5pP7VzyBUN9yTYkxawvs0hYx8fsjY0aMEY+GJg1moxPZL+EmcAVp+2Yr
-	 KW5pPQtcNhwIy2MSK6Y8B5GGbcJFJpjjp88J6t3vgPtwPv12prtthKuQpZHsHEH8LU
-	 CzBNUpslMZ2aF2MmZit/BZuwTM/t4zzy/rQVoB3ieu3jO5y1V8sg0284OnAyzUG1UZ
-	 LdntCHimIjojMlHlT2FiEKPjLXbsKz9PpKzqils72ViCZdW8TBAx9iCOkvEamI5v5v
-	 A1uN1xR0NWC+qiFvNCq79+DfX82hLRfSyYXZVWTngadRA/7aH4GiyIgbrFFpqr56vJ
-	 kdxWeFx9wb9QQ==
-Date: Wed, 16 Oct 2024 16:51:37 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Song Liu <songliubraving@meta.com>, 
-	Christoph Hellwig <hch@infradead.org>, Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Al Viro <viro@zeniv.linux.org.uk>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
- cover security.bpf xattr names
-Message-ID: <20241016-luxus-winkt-4676cfdf25ff@brauner>
-References: <20241002214637.3625277-1-song@kernel.org>
- <20241002214637.3625277-3-song@kernel.org>
- <Zw34dAaqA5tR6mHN@infradead.org>
- <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
- <Zw384bed3yVgZpoc@infradead.org>
- <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
- <20241016135155.otibqwcyqczxt26f@quack3>
+	s=arc-20240116; t=1729090342; c=relaxed/simple;
+	bh=jheGUNQp3jvmRMEIsYqXlubhRBxYkRt6CAwDq2F8TF0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OXpPwFycxHwr+oGb529djKhAdrLebavEdjMLyWxkwmLUsyJsI1m9LcUXJCHm4YV92vhEveqUuUdXk9lWRSNVD7dhXhGvornBvFTzKSAoSCjiHmAAIW4CHukD8v6buoUa2jH1zeSggeM0Xqwpm1KMX73KMWVu2zczGw3EvCVXZLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EKKKBTcF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=10MRcRyK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729090338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nQFpIFRQ+pVFsLZBaGtgYJvYAa5CdSGNPAeItWvRYvM=;
+	b=EKKKBTcFLZ+C71M7W+roVrj3cbDM4ysJVOm2W1ad04Zvs/ixRYtXchmlT7tJBOhi9WzLcB
+	D1jSzdJmsT9TZWKNlf5VV8UxEk7hnyd/oLJsV2L+d3XVGiDxr6TUDfNhRfc/OkOUyiU9iu
+	gQ5kLmSRsnH1gzpPD4+9/VCmJmSR9nYLgBttoKyH9rDpIKBDnU7j5Y2sQkApYsU6Z2r8KF
+	VOW1th59jxN+5kflshlqDzJ4ITS7y6XzSZlH6D4IDAj5IULF0OrtUBiyvnLcgVP3DvmIsT
+	HZD+Eded7xpObpFZrsUZ7K9b6UDsLEs7xld/wGririYGDIq+5jLDi43fDPnBQw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729090338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nQFpIFRQ+pVFsLZBaGtgYJvYAa5CdSGNPAeItWvRYvM=;
+	b=10MRcRyKWUIcuypO0VhFvsnizU44PXSmLWC5xVarwisKqZdpF+e3GNNL67VbL5ifxOy7wv
+	6Kt1/5oOOTZ+QVAw==
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, bryan.whitehead@microchip.com,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ anna-maria@linutronix.de, frederic@kernel.org, richardcochran@gmail.com,
+ johnstul@us.ibm.com, UNGLinuxDriver@microchip.com, jstultz@google.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 RESEND 1/2] posix-clock: Fix missing timespec64 check
+ in pc_clock_settime()
+In-Reply-To: <20241015162227.4265d7b2@kernel.org>
+References: <20241009072302.1754567-1-ruanjinjie@huawei.com>
+ <20241009072302.1754567-2-ruanjinjie@huawei.com>
+ <20241011125726.62c5dde7@kernel.org> <87v7xtc7z5.ffs@tglx>
+ <20241015162227.4265d7b2@kernel.org>
+Date: Wed, 16 Oct 2024 16:52:17 +0200
+Message-ID: <87frowcd7i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241016135155.otibqwcyqczxt26f@quack3>
+Content-Type: text/plain
 
-On Wed, Oct 16, 2024 at 03:51:55PM +0200, Jan Kara wrote:
-> On Tue 15-10-24 05:52:02, Song Liu wrote:
-> > > On Oct 14, 2024, at 10:25 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> > > On Tue, Oct 15, 2024 at 05:21:48AM +0000, Song Liu wrote:
-> > >>>> Extend test_progs fs_kfuncs to cover different xattr names. Specifically:
-> > >>>> xattr name "user.kfuncs", "security.bpf", and "security.bpf.xxx" can be
-> > >>>> read from BPF program with kfuncs bpf_get_[file|dentry]_xattr(); while
-> > >>>> "security.bpfxxx" and "security.selinux" cannot be read.
-> > >>> 
-> > >>> So you read code from untrusted user.* xattrs?  How can you carve out
-> > >>> that space and not known any pre-existing userspace cod uses kfuncs
-> > >>> for it's own purpose?
-> > >> 
-> > >> I don't quite follow the comment here. 
-> > >> 
-> > >> Do you mean user.* xattrs are untrusted (any user can set it), so we 
-> > >> should not allow BPF programs to read them? Or do you mean xattr 
-> > >> name "user.kfuncs" might be taken by some use space?
-> > > 
-> > > All of the above.
-> > 
-> > This is a selftest, "user.kfunc" is picked for this test. The kfuncs
-> > (bpf_get_[file|dentry]_xattr) can read any user.* xattrs. 
-> > 
-> > Reading untrusted xattrs from trust BPF LSM program can be useful. 
-> > For example, we can sign a binary with private key, and save the
-> > signature in the xattr. Then the kernel can verify the signature
-> > and the binary matches the public key. If the xattr is modified by
-> > untrusted user space, the BPF program will just deny the access. 
-> 
-> So I tend to agree with Christoph that e.g. for the above LSM usecase you
-> mention, using user. xattr space is a poor design choice because you have
-> to very carefully validate any xattr contents (anybody can provide
-> malicious content) and more importantly as different similar usecases
-> proliferate the chances of name collisions and resulting funcionality
-> issues increase. It is similar as if you decided to store some information
-> in a specially named file in each directory. If you choose special enough
-> name, it will likely work but long-term someone is going to break you :)
-> 
-> I think that getting user.* xattrs from bpf hooks can still be useful for
-> introspection and other tasks so I'm not convinced we should revert that
-> functionality but maybe it is too easy to misuse? I'm not really decided.
+On Tue, Oct 15 2024 at 16:22, Jakub Kicinski wrote:
+> On Wed, 16 Oct 2024 00:33:02 +0200 Thomas Gleixner wrote:
+>> > I'm guessing we can push this into 6.12-rc and the other patch into
+>> > net-next. I'll toss it into net on Monday unless someone objects.  
+>> 
+>> Can you folks please at least wait until the maintainers of the code in
+>> question had a look ?
+>
+> You are literally quoting the text where I say I will wait 3 more days.
+> Unfortunately "until the maintainers respond" leads to waiting forever
+> 50% of the time, and even when we cap at 3 working days we have 300
+> patches in the queue (292 right now, and I already spent 2 hours
+> reviewing today). Hope you understand.
 
-Reading user.* xattr is fine. If an LSM decides to built a security
-model around it then imho that's their business and since that happens
-in out-of-tree LSM programs: shrug.
+I understand very well, but _I_ spent the time to review the earlier
+variants of these patches and to debate with the submitter up to rev
+5.
+
+Now you go and apply a patch to a subsystem you do not even maintain just
+because I did not have the bandwidth to look at it within the time
+limit you defined? Seriously?
+
+This problem is there for years, so a few days +/- are absolutely not
+relevant.
+
+> Sorry if we applied too early, please review, I'll revert if it's no
+> good.
+
+I assume you route it to Linus before 6.12 final. So let it applied.
+
+Thanks,
+
+        tglx
 
