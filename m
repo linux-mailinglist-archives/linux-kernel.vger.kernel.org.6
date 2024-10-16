@@ -1,156 +1,110 @@
-Return-Path: <linux-kernel+bounces-367722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6279A05D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:42:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6D09A05D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7CF1C20ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:42:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96AFAB2523C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C3F206062;
-	Wed, 16 Oct 2024 09:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0A420606C;
+	Wed, 16 Oct 2024 09:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="Kdoh349s"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5ZIfUVy"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749E9206059;
-	Wed, 16 Oct 2024 09:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD24205E20;
+	Wed, 16 Oct 2024 09:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071709; cv=none; b=FtJLyPMzkLC6JMvWmp5svLEJMW48+E2qrlm+JhTEgGtHW0tUCxZizffkuqjwDHlWvCfjgBbgZ6Iuj7jDMC5/Mrn23ETz/F7g3SHtca4bbR9/YasmV5ss1zwdgmjy7/cEoBhjWiekEYvYgSgRWucgNUwBuoyQU+Sqixk0tkJi2tI=
+	t=1729071742; cv=none; b=NU8hqXGTdxYUuwy76XDyLE4rhRIZ1FHL7MX6B7u1PiIFCiPWBWqLGmTeWc5+2+BYK79W+VVKP+cHYA0fRQhIqgBeKGk+MQ25iF7fJso6MZ/8pQdeM4CZmXvWbF4IUIJUwisGm4fGSd3quDY0hMmCG6m/mcvA1MYzBk2f/p6evi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729071709; c=relaxed/simple;
-	bh=66ay4QtP9Kc+ykJWW3cFhTy2uuEZqIUly6G7N57ci9U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=dUFBiuVQYcXmCw6WJ7RTA6wh2F9GTvwI5NFaWgd6/8zBCorJFO3jJwIdO4jsVObk+Xfg72f7l7TmsNjH+39WSGCXNnK3CLZ2h95Q6XL6M0h7WfdQjazSbQvFd/Yn3BVEvSVK6QpSnp3ot/+Ri40pR/99lPFEXP4RBr4H9q0fLuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=Kdoh349s; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1729071742; c=relaxed/simple;
+	bh=0ROIun9+2bA4UZLe9ILmjg9JaR1lCe7+bRu/u/vnsPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cM6Rw/qzgswpUdvdFcT8SNw40i76hxi/rZpj7gBXlWn0UC4DWmz1zPcWYURkwd5itZYEcBI7cJ2HxW+/mZqAa70GOncQ28++KiLFwRAWmt9CVc4lK5H8ywhRUfDQk9nrAg4pQvbaTSEtSHrykv3t9T92DboiKGGcRD69igTaEIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5ZIfUVy; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso414831a12.1;
+        Wed, 16 Oct 2024 02:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729071740; x=1729676540; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ROIun9+2bA4UZLe9ILmjg9JaR1lCe7+bRu/u/vnsPw=;
+        b=C5ZIfUVynL2ub+WCGXjhpHT9Enb5jBw/5DpuFOszL09mEf108Dhxv/ki6Y7M0O5sAz
+         Pg8qY79VegIMuzleH7NGADqbPH5zHYMc8QQoHMZiCuAZFkgYcHjUHq5Pa7rEzHZvy314
+         K8oQswOn+IOcunvmi55QvVO+MPZQHlATtBcTC+S9Nzoq2zR9r9Qa516XTTL+UjvORkBZ
+         L5MHmMiNrtSbzH6DTLyklQ0Hu7H55aQNwTvw6W+OYFVQjO1Jm/0XHsGX+Ed9uW20kRuI
+         a3WetXZH0Hwbprwyu6NZtqDhf5ym/pw9CGkIDbtyspX9iW/sFklZTX2K/h0w4oLg/Ji2
+         3AIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729071740; x=1729676540;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0ROIun9+2bA4UZLe9ILmjg9JaR1lCe7+bRu/u/vnsPw=;
+        b=vpIkEiFuiFeNUON7nQEaHWaxB8+heeYQI0pL5aNekbwCjVulj0tjs9aoRRe2BDDgsi
+         L8K5ofulr6pb2GXctz2jhfIWv7JtCAEE4qWhmA2pEZyHasIueWYn8Axo1yFmx9vWsVO2
+         otkNVlShk4tMQaTws1fdg8rKdQRPOVxMqtcznWxuukoZANWCZbKQScRiNlmFSOuv9bbe
+         cCfsJ1NC3iNaVX13+6S1ByADRHw+3CldkVzxAgYl0KHrNKZMp255koPjoHMyPgwwXVLS
+         okR0pEBv8IBmwawkOr4SN/mdIHvGWPqie29XdSgYamU7zazWXlRsk08yRiOzRAolZCi9
+         34Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4JRWrv++k7ZN3AhDPOvW+stge+kS+5VG1dL9amjT7kwj6Ppwa5lML3j5WObMv4EioE314hCvkY9nUJTTGWyw=@vger.kernel.org, AJvYcCVOnUhZ5T+2PH9q1dgX6qeI/VbGQZOp2cedEU7LUx5SBwVPHp/xt+jMyOUmWmLOAbtoFSptMJYv@vger.kernel.org, AJvYcCWru1AcE7j9CZGG0rd2FsoXrdg0XVZWyEHYyXLX5afOZKAcrPv5XeV5D1MpI44aEQL9LNzIf2IxhyJZS4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3SZ6YhNtc1RajsRdFjABgfTxgXHCnsulxrhQPjtib8gA6eqH3
+	1buGgTIHULCdloZhacfdxtHm1dWuOxA5RtwequYYblMtmUnRz2YJhOzvH0W0Nx+ep6w59v4Q4Rd
+	mz2gJBhnU2yJqSaLLG45aETrzips=
+X-Google-Smtp-Source: AGHT+IHi0A8/PV6E9lyeXG/3wVsU9tT7kuHybNSxajW9mmWYQ7zdVM067KZbEGHzCY1n7J1Vvlg+DTAGazeQKOvFmUY=
+X-Received: by 2002:a17:902:da84:b0:20b:642c:222b with SMTP id
+ d9443c01a7336-20d2fe58acdmr9802325ad.15.1729071740219; Wed, 16 Oct 2024
+ 02:42:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1729071705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+G7yTuYEAXeIa8//sVKc2le4Wa/PTI7ahlJZN0gv2IE=;
-	b=Kdoh349s00o3RtuPRonP7fb2sxvK01XJjgBydUPeuemDro+f5fqaJ1qZO2sZlxd0+gq1Qn
-	8UiKvqUnLa7P9hO8/1vqKY//+737tiUadRBKdbXhcuxzCD3Jdc9KSwvyKq714dUHzT3DBs
-	22mUU8K4tu5grXv+Qio7j2Pfry79RuVjScFO83vTuZOTAVTMdDqU3gea/AGz3aApQwaPpt
-	fIkLcbMecTIQWmDZsXr4ydKY7bt0+/yn/FPFt+vtR51V/eplDzbFsV/d0ZblJih3FGcEM2
-	8Q3nNCXIh6S3SbwgyD77jhg+DrRatRGb70Qye49WMWwN7edkiYkWHrg/Vr6aTg==
-Content-Type: multipart/signed;
- boundary=faeb94c4c6c54e37cbfcce4f20fd5406a08769967964b4ca64d2ba0e7639;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Wed, 16 Oct 2024 11:41:25 +0200
-Message-Id: <D4X4RACGCRRH.39SMPGMZZ2GK4@cknow.org>
-Subject: Re: (subset) [PATCH v2 0/4] rockchip: Fix several DT validation
- errors
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Heiko Stuebner" <heiko@sntech.de>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Rob Herring" <robh@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>
-Cc: <linux-rockchip@lists.infradead.org>, "Samuel Holland"
- <samuel@sholland.org>, "Dragan Simic" <dsimic@manjaro.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Michael
- Riesch" <michael.riesch@wolfvision.net>,
- <linux-arm-kernel@lists.infradead.org>, "Diederik de Haas"
- <didi.debian@cknow.org>
-References: <20241008113344.23957-1-didi.debian@cknow.org>
- <172841572989.2562611.18254512768409976284.b4-ty@sntech.de>
-In-Reply-To: <172841572989.2562611.18254512768409976284.b4-ty@sntech.de>
-X-Migadu-Flow: FLOW_OUT
-
---faeb94c4c6c54e37cbfcce4f20fd5406a08769967964b4ca64d2ba0e7639
+MIME-Version: 1.0
+References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
+ <20241016035214.2229-6-fujita.tomonori@gmail.com> <CAH5fLgjTGmD0=9wJRP+aNtHC2ab7e9tuRwnPZZt8RN3wpmZHBg@mail.gmail.com>
+In-Reply-To: <CAH5fLgjTGmD0=9wJRP+aNtHC2ab7e9tuRwnPZZt8RN3wpmZHBg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 16 Oct 2024 11:42:07 +0200
+Message-ID: <CANiq72mKJuCdB2kCwBj5M04bw2O+7L9=yPiGJQeyMjWEsCxAMA@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 5/8] rust: time: Add wrapper for fsleep function
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com, 
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
+	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
+	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Heiko,
-
-On Tue Oct 8, 2024 at 9:28 PM CEST, Heiko Stuebner wrote:
-> On Tue, 8 Oct 2024 13:15:35 +0200, Diederik de Haas wrote:
-> > This is a set of 4 small device-tree validation fixes.
-> >=20
-> > Patch 1 adds the power-domains property to the csi dphy node on rk356x.
-> > Patch 2 removes the 2nd interrupt from the hdmi node on rk3328.
-> > Patch 3 replaces 'wake' with 'wakeup' on PineNote BT node.
-> > Patch 4 replaces 'reset-gpios' with 'shutdown-gpios' on brcm BT nodes.
+On Wed, Oct 16, 2024 at 10:29=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
 >
-> Applied, thanks!
+> You probably want this:
 >
-> [2/4] arm64: dts: rockchip: Remove hdmi's 2nd interrupt on rk3328
->       commit: de50a7e3681771c6b990238af82bf1dea9b11b21
-> [3/4] arm64: dts: rockchip: Fix wakeup prop names on PineNote BT node
->       commit: 87299d6ee95a37d2d576dd8077ea6860f77ad8e2
-> [4/4] arm64: dts: rockchip: Fix reset-gpios property on brcm BT nodes
->       commit: 2b6a3f857550e52b1cd4872ebb13cb3e3cf12f5f
+> delta.as_nanos().saturating_add(time::NSEC_PER_USEC - 1) / time::NSEC_PER=
+_USEC
+>
+> This would avoid a crash if someone passes i64::MAX nanoseconds and
+> CONFIG_RUST_OVERFLOW_CHECKS is enabled.
 
-Please revert the 4th patch.
+I think we should document whether `fsleep` is expected to be usable
+for "forever" values.
 
-I must have messed up my testing previously, but BT does not work on the
-PineNote with the 4th patch applied and does work with it reverted.
+It sounds like that, given "too large" values in `msecs_to_jiffies`
+mean "infinite timeout".
 
-With the 4th patch applied I get this:
-[   20.298465] Bluetooth: hci0: command 0x0c03 tx timeout
-[   20.299036] Bluetooth: hci0: BCM: Reset failed (-110)
-
-And then running the `list` command in `bluetoothctl` returns no
-controllers and `hciconfig -a hci0` reports `DOWN` and when trying to
-reset hci0, I get that timeout error again.
-
-With the 4th patch reverted, the controller does work.
-
-I also get a HUGE amount of 'spam' when running `bluetoothctl` like:
-
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 0000110e-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 0000112d-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 00001200-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 0000111f-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 0000110c-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 00001800-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 00001801-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 0000180a-0000-1000-8=
-000-00805f9b34fb
-[bluetooth]# [CHG] Controller 90:E8:68:B9:60:46 UUIDs: 03b80e5a-ede8-4b33-a=
-751-6ce34ec4c700
-
-and this is only a tiny fraction. So there's definitely room for
-improvement there, but at least it does work.
-
-Dunno yet what to make of it as this will re-introduce the DT validation
-error, but working hardware seems still be preferable to non-working HW.
-
-Sorry about this.
-
-Regards,
-  Diederik
-
---faeb94c4c6c54e37cbfcce4f20fd5406a08769967964b4ca64d2ba0e7639
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZw+KUQAKCRDXblvOeH7b
-bhnxAP9n+rlPuUutF7F77uY3BcDFisDJkTklvco4RH+AzVaO/QD/foEQc21La4tM
-T9BfqGjcYGN2XKJ9U/7D3koBQyOXCAQ=
-=xqKK
------END PGP SIGNATURE-----
-
---faeb94c4c6c54e37cbfcce4f20fd5406a08769967964b4ca64d2ba0e7639--
+Cheers,
+Miguel
 
