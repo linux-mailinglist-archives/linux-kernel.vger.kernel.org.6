@@ -1,173 +1,131 @@
-Return-Path: <linux-kernel+bounces-368563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79AA89A115E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:16:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE399A1159
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390DA282A61
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:16:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452E71F24CF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2E4212EF5;
-	Wed, 16 Oct 2024 18:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C9A2139C1;
+	Wed, 16 Oct 2024 18:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XWzifagy"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="INR2+jAJ"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD81F185939;
-	Wed, 16 Oct 2024 18:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07EE185939
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729102553; cv=none; b=BZWctEm+bIw1gHTSZ+XHHglx2Bl368yu5S3COnRkQxTMc0OW1xKCasfTumgwVUcwLp3u1IXirrlCXdmxsIDML9Xqn0bRliha3XAaacj1erQX8JIY8AH5PmAJHvL6fxDSEnUJKbmLVXsQ9SSDDayadLejLaj+NMy8P29QmD7gvvw=
+	t=1729102514; cv=none; b=pLRGqBLBhe7pEd3o0sJHKqimmFGF1HnTtA+ZXNdNR1D75p+kXblcehkBjhAxf8tAFv++t9KR6M4S4q6HXQeodxCz1mSqEstl4khcZ71WFGvVJ8tGQKPBxvOsTfvD3MW6198WbDdnVbMAAYd05K8zZm8E4XR/9t3+4rQ0DtMgs+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729102553; c=relaxed/simple;
-	bh=JufLHtMSuGaTzBKJg/6VeV666klq+gVXM9Gg7iqlmoo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=odzQT4IsD+bKrRtyD4DOrFU0ifoszAvECB2Tbx0bYFPYWntP0N/g/62UWQ/MpyiE3mATiZ5E2Pulna9ByMZkOWGtf5M9KWh2s7QyRsjTIrdbP6xlOABLCtDtUChEkDGIll6iu7w5MMZjkw7oFBwS17yGjoZI7UEADjj7mbNNBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XWzifagy; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GHxvak008364;
-	Wed, 16 Oct 2024 18:15:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=JufLHtMSuGaTzBKJg/6VeV666klq+g
-	VXM9Gg7iqlmoo=; b=XWzifagydH7B4bw0tHvnm/lB+4FgXIAfy4lEglWfPwncrU
-	oQx+wYIUVZ+woEv/bEUzosB+AxFswJ4X9hpV3Kkr6vv78PrPMlCHi6DPzOxqBoty
-	0GaKfAfyWDs4W7Gwp/M1wFkoFlqTJd7jdnvamjthyu71uiJtq0vhnhGSUomlD1Fi
-	mNsQf8XowSQZIgLorYX0dEdmUN4QEJQNjKxJ9+tKAS6JOdZTTs1E3iJ7SDzhgg6n
-	7NmP//l8vUjm41MgZiw1wQWYvV7SgyIl5Fx9PY6ZuKxcEy875PW0fxUxJUmo3vSQ
-	i16jW4/xPBmFKhq/ppxlkSf1uLAD6ZB2bGMeEVIA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ajcjr1tv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 18:15:01 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GIF1EK005111;
-	Wed, 16 Oct 2024 18:15:01 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ajcjr1tq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 18:15:01 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GF0iJY005946;
-	Wed, 16 Oct 2024 18:14:59 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4286512f5v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 18:14:59 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GIEuOR27001366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 18:14:56 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 02FBE20043;
-	Wed, 16 Oct 2024 18:14:56 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 32E4320040;
-	Wed, 16 Oct 2024 18:14:55 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 18:14:55 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt
- <rostedt@goodmis.org>,
-        Florent Revest <revest@chromium.org>,
-        linux-trace-kernel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Alan
- Maguire <alan.maguire@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy
- <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Paul Walmsley
- <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert
- Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov
- <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH v17 11/16] fprobe: Rewrite fprobe on function-graph tracer
-In-Reply-To: <20241016234628.b7eba1db0db39d2197a2ea4f@kernel.org> (Masami
-	Hiramatsu's message of "Wed, 16 Oct 2024 23:46:28 +0900")
-References: <172904026427.36809.516716204730117800.stgit@devnote2>
-	<172904040206.36809.2263909331707439743.stgit@devnote2>
-	<yt9ded4gfdz0.fsf@linux.ibm.com>
-	<20241016234628.b7eba1db0db39d2197a2ea4f@kernel.org>
-Date: Wed, 16 Oct 2024 20:14:54 +0200
-Message-ID: <yt9d5xprgbj5.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: aVgmt4uBhiNvRvAHxsRA41t7dXjhThcz
-X-Proofpoint-ORIG-GUID: BHPv_kPDWrWmiNA2N_cY_1A-wk1t9MVb
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729102514; c=relaxed/simple;
+	bh=mAq4AoMlxKysGb+Itk7iEnVK5aXThmWxihuz2MsOgLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mwiL5FZ7/91KUkfICiXdtvhcnCsZnPt1XD1g6CRU04IqscT+NWqEK1I3sHJMuuur6TruT25RnLSk6k8Qj78HKWNSvY1aZ7SNuDLQNftDzMtKJHuwnA/wVCAdia6lwdyxua6CtmRlHZUP/uHqHxy/1tOiX01NmC4ejU+HbchyPOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=INR2+jAJ; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e06acff261so65888a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:15:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1729102512; x=1729707312; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fkgg/XiYmuwxuU0YWtVe0AMhNojrUfbhQVkInOv4lBU=;
+        b=INR2+jAJbEwk/lqh9HxvjvDKHVEst9SoQW9s8r6q1l9gNdRlwMt7lB0U8Rv4Ce/VKh
+         bbMUgunkwVNGIuPffvvG272pEFNuHhPcY2xNY1KAyh2z+IzA3n/iK01CoE2BZlZdfMve
+         OWDJtiEJAV2GyvgZKIqV7xV3uMfVH7xM8S9QOrGGHK7feucyBKHpQRG/GhZvBoVSra1N
+         pHNXqM+J8oI4q1sd8rZ0hEZVxgulCT/WSk7QI9oPfHs35nM8hk/0BmolQETnjpZklpA5
+         zkTVRe0I5IsUI+Hh7d2jGcdWzaKkv+aYI7Fl/oMFXaxzTj4shtYW9IePVYaOp8d6y4ex
+         qhZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729102512; x=1729707312;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fkgg/XiYmuwxuU0YWtVe0AMhNojrUfbhQVkInOv4lBU=;
+        b=q+zWwQqUwVMiIgXZ9ZnNpcJ/0TP18Rg+krD5oAmWWoNajjWqdu0YoK75MrlvhMomF7
+         ESGqwzs3y7QoV3WkQGFtSLUA9wtDsJ0DyrgnyS8E/ieGgpMo8fxc14/BIl/ThkyAIn89
+         R2GRtncAJURHgkArFEWBnNJWydcyM+t6bLUT4xXB4sjP56EWBUFpJaT0jj1QAGLWOjHl
+         pGEovcocuI7r2vFTeCu0ispY4ulNfMhJfIQWsuwEQzWWh3lS/0eIbHqolJhQQd8xMWdQ
+         T8pMIgqNJdYkdOt+uB9vsbTkJM5hU5BFe+8C2gUPmEFKusHuyEaq4UWFuYwCAGeooPEf
+         9UsA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7wUlAGJPAxFSTtNPYhGOc8QZOsudHQkquCYQHBV2dZhqcYYgg5MLU9aNjPPGEydiPf4s0vXDtUjNAntM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7M1Tmu8LoLmW5mmhlvKOMKcIqNHpzuB4HmJI1jxc4D+yrE3l5
+	XHElIjPSQCl2B9kDjsC+lNIw0NaRaX07G6M7UvnECl66O14/Rjp5Q6wO3KNgBuY=
+X-Google-Smtp-Source: AGHT+IFPs/1VOYlgs8ynT/CESZBXXAGDk0R6M8OaJ6CAurUUdtWENPzhZVi9D9E3OSJvDP5dBev+bQ==
+X-Received: by 2002:a17:90a:5647:b0:2e1:682b:361a with SMTP id 98e67ed59e1d1-2e3ab8bb22bmr5177503a91.28.1729102512217;
+        Wed, 16 Oct 2024 11:15:12 -0700 (PDT)
+Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e08d082dsm79600a91.23.2024.10.16.11.15.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 11:15:11 -0700 (PDT)
+Date: Wed, 16 Oct 2024 11:15:10 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] pinctrl: th1520: Fix potential null pointer
+ dereference on func
+Message-ID: <ZxACrl/0hUE62eGN@x1>
+References: <20241016155655.334518-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- impostorscore=0 mlxlogscore=626 mlxscore=0 priorityscore=1501 spamscore=0
- phishscore=0 adultscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410160115
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016155655.334518-1-colin.i.king@gmail.com>
 
-Masami Hiramatsu (Google) <mhiramat@kernel.org> writes:
+On Wed, Oct 16, 2024 at 04:56:55PM +0100, Colin Ian King wrote:
+> The initialization of muxtype deferences pointer func before func
+> is sanity checked with a null pointer check, hence we have a null
+> pointer deference issue. Fix this by only deferencing func with
+> the assignment to muxtype after func has been null pointer checked.
+> 
+> Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/pinctrl/pinctrl-th1520.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
+> index 7474d8da32f9..e641bad6728c 100644
+> --- a/drivers/pinctrl/pinctrl-th1520.c
+> +++ b/drivers/pinctrl/pinctrl-th1520.c
+> @@ -803,11 +803,12 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>  {
+>  	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
+>  	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
+> -	enum th1520_muxtype muxtype = (uintptr_t)func->data;
+> +	enum th1520_muxtype muxtype;
+>  
+>  	if (!func)
+>  		return -EINVAL;
+>  
+> +	muxtype = (uintptr_t)func->data;
+>  	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
+>  				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
+>  				 muxtype);
+> -- 
+> 2.39.5
+> 
 
-> On Wed, 16 Oct 2024 14:07:31 +0200
-> Sven Schnelle <svens@linux.ibm.com> wrote:
->> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> writes:
->> I think that still has the issue that the size is encoded in the
->> leftmost fields of the pointer, which doesn't work on all
->> architectures. I reported this already in v15
->> (https://lore.kernel.org/all/yt9dmsjyx067.fsf@linux.ibm.com/)
->
-> Oops, thanks for reporting. I should missed that.
->
->> I haven't yet fully understood why this logic is needed, but the
->> WARN_ON_ONCE triggers on s390. I'm assuming this fails because fp always
->> has the upper bits of the address set on x86 (and likely others). As an
->> example, in my test setup, fp is 0x8feec218 on s390, while it is
->> 0xffff888100add118 in x86-kvm.
->
-> Ah, so s390 kernel/user memory layout is something like 4G/4G?
-> Hmm, this encode expects the leftmost 4bit is filled. For the
-> architecture which has 32bit address space, we may be possible to
-> use "unsigned long long" for 'val' on shadow stack (and use the
-> first 32bit for fp and another 32bit for size).
->
-> Anyway, I need to redesign it depending on architecture.
+Acked-by: Drew Fustini <dfustini@tenstorrent.com>
 
-Could you explain a bit more what redesign means? Thanks!
+I've tested this on top of next-20241016 on the BeagleV Ahead and
+LicheePi 4A.
+
+thanks,
+drew
 
