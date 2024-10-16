@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-367486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4DB9A02E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:44:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C1D9A02EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E87B21A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB0B2882FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363C7165F1A;
-	Wed, 16 Oct 2024 07:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFCF1C32E4;
+	Wed, 16 Oct 2024 07:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0LTPmln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MnU20OOP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895F7176AB6;
-	Wed, 16 Oct 2024 07:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B3C18B478
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729064646; cv=none; b=KxXPE1q8PJBmzbVsARzhcbHMtwscgMbQJbO0fvuYhimC3TyZTn0DeVyF++GH2QhPBTrDe10G1t5r+t5UD2CoLSCrFAKrnX2XR+fQXE4o+YhL/QA76PBUZY3pQZvy3OwbtuYT99Ff7SAXpQPgvp/ii+TzmTP8dL3r7DFya0DZPpY=
+	t=1729064738; cv=none; b=e08ngnFXRti3tyC9VcTtqILW9LEDwyfl/f01IsIaG1DamR+CIgfNvbY/ttgthTBPoETF2Xm7rRWZzkeAzJizliTLT+5RtaPqDvpqSrYjlIWWfGVtfHINbtJrg3xhppekaVSRgxM6DxO4Hgk1toFuuR/toqwZcGM6pl9DvcNnmsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729064646; c=relaxed/simple;
-	bh=yb1ub7mMrEqTa7+DsZBQGy2D7A1QC9WUrYcZyOwsHUM=;
+	s=arc-20240116; t=1729064738; c=relaxed/simple;
+	bh=hvpn7Zq0g7b19gkei2vMe8mTUwIxVVWTIW3821uGK8o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QGA671GkZlbs24MXfweqEWHePHGowtnqZ7OrjRjdmRtGvXVBC4tf1+1KjuNtYAz0q5spHL3NolM6VSuPo0c9FW056QuWdsBJW94AS+QQDJzFc8ikNqMbLgohWv+vdLlux6h8cghqN6EbTX1+RcZQs4ejMBORuNkJPDiJdP0ielM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0LTPmln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D06C4CEC5;
-	Wed, 16 Oct 2024 07:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729064646;
-	bh=yb1ub7mMrEqTa7+DsZBQGy2D7A1QC9WUrYcZyOwsHUM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I0LTPmlneA0LAj9eayLwKItVCt/Uo1o3r3smGuPcX5PaFIJxT5cc6SYgPI6WEszpM
-	 r7y8y8BnhIoldLgwUyfWkYbn44tlwOP8LMWhuwkUEq5Rr6ERuL37JCxe4nK9zp6oZU
-	 qmuqMyFSd/dZ5n/XafTf+rFeyPrgNzxnHX/KQDykbAVltaK8DhN/lGEhzHJBG1rkVC
-	 vm/49Ed88nLOqEEt0wW44NBbjHYxKjTwSocFSEbZ80mvGHFBeDWAUSF9lwkak7QOOP
-	 4FuArWeQfc/Gprd0T+xC7j4cEtT5xI9QqBH4zeTwhY0W+ThOIR9i/L9HrXKvoj19Fs
-	 ABbyfJyeZauvQ==
-Message-ID: <91422bb7-9faa-4a82-9813-91a4b2191938@kernel.org>
-Date: Wed, 16 Oct 2024 09:44:00 +0200
+	 In-Reply-To:Content-Type; b=l/qLuumzjvBDnp8XTS9/Nb59WeLAsFqBI76oXuaSLMtpeqy6UEdhGsnhvT/H0av8S1VewvJb5j3qSSVeE9cpmOl3bOm1v59pUlj3Q3QZgoPUbcjB0cDH1N7eawxs2m/4EYXzeGL9zFHyCWb0EsHHajSp3iP8xHVFEnxSbbvDQSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MnU20OOP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729064736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oZMNDygscP0ApBl6B4+OOT2D1feT61VkI6S/fm7lJGw=;
+	b=MnU20OOPJFRnG82c3s1t1x1Srv8emy25akJGHUK4T7Ngl3Y7gebpH4OkoT28dzfZOLSGEn
+	yygNh5xtKvAnCxSJ8M2ohTqw1k3Zk+cBihxhwaGWBehDDQ36S2RPGZ5FTtMNaIj828z+la
+	zMRcY01gHhzUpz72e3hQRSocMoHg4Tg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-l7lMipOjOi6iq-NnniAiyw-1; Wed, 16 Oct 2024 03:45:34 -0400
+X-MC-Unique: l7lMipOjOi6iq-NnniAiyw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43113dab986so54994455e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 00:45:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729064733; x=1729669533;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oZMNDygscP0ApBl6B4+OOT2D1feT61VkI6S/fm7lJGw=;
+        b=EMTL94uYp22gcsnDeTlcYHd539cr77libt4esPkvF9sDoe5rfZbbubNKBkM8XRV5J/
+         gCk4C5pl8S7N83WRIWZT3aKLwD/MW7DC4eq9dSiUC5wPmALgaHfy56+Oed035GVr5lUD
+         FusnKHHI9ckJ1W+YpwcsMPtYFt0aKsE/roo1UdKX+evrthk3+QrAsG2RlveWySaJIp20
+         oqfL7P36M4hgyvvH/tl9henT2P+K4u+omLZrKNj1MwqB68BaSKCuyMkzbQyBnRhRrY9D
+         0+C/aw0LylHacTlxHVROyyTZSLft0LyePwiRvlzfw3cT8sH34jp0h1yi3xjmRYh5muIo
+         tJQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVr0SALM5967LA5a+e94Q0vN+KP0cdGRKKPGhe72aMqEQgRzE8Zq1W2yhZ5CXu08rgUZ/53DYhr1BiW+zE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1p0FnQCnZAifZAJ5n31ty8oqGhLDEof2ZTW5/w21W4mwdXgv7
+	zN1b/Nf/bG3zlwQYmMmUjd9IsbSp223oqqBRT7W3Ic9H3XIjbqEgPGhomrxX8uiVKdts4Itmdj6
+	ab7aJvYgX2JVgWnIaETfahyM8kKYbXZ9mYEIe/iE/TlvTvmaZeuneitfXPRLCtg==
+X-Received: by 2002:a05:600c:5023:b0:431:542d:2599 with SMTP id 5b1f17b1804b1-431542d2d76mr4845485e9.22.1729064732931;
+        Wed, 16 Oct 2024 00:45:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9Grh0K1mhOgL5THYcEeem6rs7BDOGHqVGRx69/tRSiiZTYxkPx1ztq3HHC3X/R3P+Tvm3mw==
+X-Received: by 2002:a05:600c:5023:b0:431:542d:2599 with SMTP id 5b1f17b1804b1-431542d2d76mr4845205e9.22.1729064732519;
+        Wed, 16 Oct 2024 00:45:32 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-22-245.dyn.eolo.it. [146.241.22.245])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4315067a6f7sm13323655e9.0.2024.10.16.00.45.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 00:45:31 -0700 (PDT)
+Message-ID: <7dde23ec-e813-4495-a0ca-6ed0f1276aa6@redhat.com>
+Date: Wed, 16 Oct 2024 09:45:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,103 +81,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-To: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241015075134.1449458-1-TroyMitchell988@gmail.com>
- <20241015075134.1449458-2-TroyMitchell988@gmail.com>
- <1524dbc2-2c9a-476f-a06a-0d998c29534d@kernel.org>
- <611273f9-db44-48a1-a665-6180bed196a9@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 net-next 2/3] net/udp: Add 4-tuple hash list basis
+To: Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, dsahern@kernel.org,
+ antony.antony@secunet.com, steffen.klassert@secunet.com,
+ linux-kernel@vger.kernel.org, dust.li@linux.alibaba.com,
+ jakub@cloudflare.com, fred.cc@alibaba-inc.com,
+ yubing.qiuyubing@alibaba-inc.com
+References: <20241012012918.70888-1-lulie@linux.alibaba.com>
+ <20241012012918.70888-3-lulie@linux.alibaba.com>
+ <9d611cbc-3728-463d-ba8a-5732e28b8cf4@redhat.com>
+ <2888bb8f-1ee4-4342-968f-82573d583709@linux.alibaba.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <611273f9-db44-48a1-a665-6180bed196a9@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <2888bb8f-1ee4-4342-968f-82573d583709@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 16/10/2024 04:45, Troy Mitchell wrote:
->>> +
->>> +  clock-frequency:
->>> +    description:
->>> +      Desired I2C bus clock frequency in Hz. As only fast and high-speed
->>> +      modes are supported by hardware, possible values are 100000 and 400000.
->>> +    enum: [100000, 400000]
->>> +    default: 100000
->>> +
->>> +  fifo-disable:
+On 10/16/24 08:30, Philo Lu wrote:
+> On 2024/10/14 18:07, Paolo Abeni wrote:
+>> It would be great if you could please share some benchmark showing the
+>> raw max receive PPS performances for unconnected sockets, with and
+>> without this series applied, to ensure this does not cause any real
+>> regression for such workloads.
 >>
->> Why is this a property of a board?
-
-
-Here, this ^^^^^^
-
-
->>
->> Also, missing vendor prefix.
->>
->>
->>> +    type: boolean
->>> +    description:
->>> +      Whether to disable FIFO. If FIFO is turned on, it will be interrupted
->>> +      only when the FIFO depth is reached, which can reduce the frequency
->>> +      of interruption.
->>> +    default: false
->>
->> Drop
 > 
-> It's a hardware FIFO instead of software.
-> Is it unnecessary in this file?
-> If is, why dma can be written in dt-binding.
+> Tested using sockperf tp with default msgsize (14B), 3 times for w/ and
+> w/o the patch set, and results show no obvious difference:
+> 
+> [msg/sec]  test1    test2    test3    mean
+> w/o patch  514,664  519,040  527,115  520.3k
+> w/  patch  516,863  526,337  527,195  523.5k (+0.6%)
+> 
+> Thank you for review, Paolo.
 
-Because of what I asked earlier. Which 'dma' property are you asking
-about? 'use-dma'? There was rationale provided in favor. I would be more
-than happy to see similar rationale here.
+Are the value in packet per seconds, or bytes per seconds? Are you doing 
+a loopback test or over the wire? The most important question is: is the 
+receiver side keeping (at least) 1 CPU fully busy? Otherwise the test is 
+not very relevant.
 
-Best regards,
-Krzysztof
+It looks like you have some setup issue, or you are using a relatively 
+low end H/W: the expected packet rate for reasonable server H/W is well 
+above 1M (possibly much more than that, but I can't put my hands on 
+recent H/W, so I can't provide a more accurate figure).
+
+A single socket, user-space, UDP sender is usually unable to reach such 
+tput without USO, and even with USO you likely need to do an 
+over-the-wire test to really be able to keep the receiver fully busy. 
+AFAICS sockperf does not support USO for the sender.
+
+You could use the udpgso_bench_tx/udpgso_bench_rx pair from the net 
+selftests directory instead.
+
+Or you could use pktgen as traffic generator.
+
+Thanks,
+
+Paolo
 
 
