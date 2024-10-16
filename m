@@ -1,247 +1,147 @@
-Return-Path: <linux-kernel+bounces-368355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D9C9A0EDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D16B9A0EE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C588281888
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 523DF28260C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAF320E021;
-	Wed, 16 Oct 2024 15:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DC020823B;
+	Wed, 16 Oct 2024 15:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/NpD7Ky"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="QB+pov86"
+Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A2D20C002
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BDB209687;
+	Wed, 16 Oct 2024 15:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093668; cv=none; b=HJ37iBsYPSU4mUWbMWXdi7Dn2YhypJ6J/bxMcA+4WCmvqU+aIIMjoFht0oLS5IohlVpqdRBwGH+S9A+xsQu1OLCV4DmBeI1uawCcGbYRGQhjzL7rzTDGaqUEMHSzT33bAOLAvO+UoJuMxBHhEoi0Tzacv9h1ZMFxXWXU3QI7wVM=
+	t=1729093694; cv=none; b=W86NMQP0ttXo4XVW8F7XQUpDUSELizMbMQYlewa0dv5Uaplb8lijDKOo1KR20YXN170ze4nslCjxyatxxIiQMq+SiZw3zTcGbuv7de36Vq6IZy1QLtxi0RBoV4VA5zTmICjqJgAMaIyw/sSKApDlqkkDXxFQm91keM8udstzT2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093668; c=relaxed/simple;
-	bh=bWT0jZQi2gTGU5Bd8og0Hyl0LagtMrLPaQKxohyIPwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X3fs0doI7KRacOE8Bp6I+F0Vtdt/ihYY93ctI115lgbf36tWLpXTv/JfDBB9DeD/As7uEMSgD/kij75KlgDbon/zR7RgyDCfVZrECjA5sUWoeq9MBOY1QzCxx3cd7oBl4gzxQTgpbZ+V060mJT+iLtyXRTkjMZ6JWAxH3ZgtKr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/NpD7Ky; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729093665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VIzfBQnPXM1p+cHUAfPvEKZFWEw7tRlCE5XfNpemY2E=;
-	b=J/NpD7KyhLJnE51SBwRGTSll16PmZ1gX5JY1UhVF4CGGDsNOqagIVtvq4M2n4gFlXQPGD3
-	Tfgu8+DjQ+Vz30aTxcKYhUMqu8dd/JSefg1EPdjzXBMPfD1WB2YcXHZwbWLJvnxfDLGf54
-	zhGWF8lX2ePluYb6C6Ze+bKs0EU4Sic=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-_H7uoNphOKGwBX8CwRQJzw-1; Wed, 16 Oct 2024 11:47:43 -0400
-X-MC-Unique: _H7uoNphOKGwBX8CwRQJzw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43157e3521dso752495e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:47:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729093662; x=1729698462;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VIzfBQnPXM1p+cHUAfPvEKZFWEw7tRlCE5XfNpemY2E=;
-        b=PbdLMKCpXIFUjr/TWBrnasSiwJgLTTm7lw1D+T6GhwkGHk9DJR0BdFf+yDBUHYSFQ3
-         lIWXEIr+IloJUbuJcWTkL9b3vJupBpkqM9CFFzmICrDbvEAi4AlAXd2qRSCIIgM3VYWw
-         KSuBkMEXwHsm2E0U7b67wLJhy1Ty00sbPO3b8HrwvwySFmcyg3NcxUPqRqvNqUl3UGi4
-         /iPYx9kvUSp8BIqNGFYxr2aq5Kl3UPzKAuya0NrR7lRsMZCyad8LozxVV4gufbVZJbIY
-         4irQKgV8ypLcbIHm2/ojFl9cVulPl+Gg62Jp8ppAdYivzcWzSP8t5qzH2UOPhb+s1jgT
-         zIGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpGR3riKhzR/AFrPNYbIN1GZu2RYDQMiCUmv7lGK9dqLkVU8vilxSGV/9WTQoTGCvxoIKWXYa2sq1Cyhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyINdyKHHdvm9/uCBx71sqoaPVKT4A/9u/jUbM2unpGwf63o++M
-	PA9A5ooBPc7WahIHDNDFC9bSuq7K/mNP1Hc0ixGn8mFQOdFxtwF6mogwi/J3J7L9rDmWYXV6WYr
-	N1UzRjVxeK9MlfjTC0dH3TQZv+95D/k3PGgdqNn4SrSpc1hmXafmS2mTNSiLF7Q==
-X-Received: by 2002:a05:600c:4711:b0:430:54a4:5b02 with SMTP id 5b1f17b1804b1-43125619e8fmr121331215e9.34.1729093662302;
-        Wed, 16 Oct 2024 08:47:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/bW0hLobbLXjaDGKyq9Ar43ysgaBvBnKudmwOIGvXULooHv87b61qCzy2T1b+NaF7gXinDw==
-X-Received: by 2002:a05:600c:4711:b0:430:54a4:5b02 with SMTP id 5b1f17b1804b1-43125619e8fmr121330835e9.34.1729093661825;
-        Wed, 16 Oct 2024 08:47:41 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3? (p200300cbc74bd00003a9de5c9ae6ccb3.dip0.t-ipconnect.de. [2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4315069032asm25144845e9.0.2024.10.16.08.47.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 08:47:41 -0700 (PDT)
-Message-ID: <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
-Date: Wed, 16 Oct 2024 17:47:39 +0200
+	s=arc-20240116; t=1729093694; c=relaxed/simple;
+	bh=UzReICUwjuiKmaYcPXjeBNBkJrLCOu3fJf7hC55t7gA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FtbzYfn2+MQ7u+VJTBzp3qVfr8Iz/+SlN7rFLl4NxGeECsZ2V/nyLtgWzb9FkjgLBGAxJvj15Z7eOicxgKRTSyizaix5MizTXsaByPR62VI8MFTKXd4RiIP24SjJWCjX5LoAmIaocNrrDAsPEJG+tjQy4Y5DIiaRarBFfETJOI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=QB+pov86; arc=none smtp.client-ip=63.250.43.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4XTFjk5W3jzGpQ7;
+	Wed, 16 Oct 2024 15:48:10 +0000 (UTC)
+Received: from igor-systemproductname.lan (83.8.245.91.ipv4.supernova.orange.pl [83.8.245.91])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4XTFjb5XBwz8sWQ;
+	Wed, 16 Oct 2024 15:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1729093685;
+	bh=UzReICUwjuiKmaYcPXjeBNBkJrLCOu3fJf7hC55t7gA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QB+pov86J65XfMneAp09XeIRJd1E3+l+zmjICsAMWFrmppQ0/smimKMK1cwiPOKop
+	 uBxPG/qtVfOWPCgl23lounrxpiVjBT3UFm/3MwZ+7DEcT23g5lN3xeWbJ6OKus2WnW
+	 0dYtio+uL6wo56Jl/fCOsiCqFVTKupdvTnsYQC1g0hvwtCQpjVJXkulZDf1e1ssZK0
+	 wNm/wdAMdPMPiQKb3lcnCbnmnzv0QSKpuYoGmMm9f6yuwh1LEu9+5sa4NxBQJSdeW1
+	 3S0cwvuRFnkhiuvmRxyC3Jjjfq7Fn6Bwq7hm7I8oRdvHtUK9eFSSGi7JZ1LCcY4/3W
+	 26Zu2OkN/rlnQ==
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 0/6] Add minimal Exynos990 SoC and SM-N981B support
+Date: Wed, 16 Oct 2024 17:47:41 +0200
+Message-ID: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
-To: Alexander Egorenkov <egorenar@linux.ibm.com>
-Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
- borntraeger@linux.ibm.com, cohuck@redhat.com, corbet@lwn.net,
- eperezma@redhat.com, frankja@linux.ibm.com, gor@linux.ibm.com,
- hca@linux.ibm.com, imbrenda@linux.ibm.com, jasowang@redhat.com,
- kvm@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
- svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
- xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
-References: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
->>
->> When I wrote that code I was rather convinced that the variant in this patch
->> is the right thing to do.
-> 
-> A short explanation about what a stand-alone kdump is.
-> 
-> * First, it's not really a _regular_ kdump activated with kexec-tools and
->    executed by Linux itself but a regular stand-alone dump (SCSI) from the
->    FW's perspective (one has to use HMC or dumpconf to execute it and not
->    with kexec-tools like for the _regular_ kdump).
+Hi folks,
 
-Ah, that makes sense.
+This series adds initial support for the Exynos 990 SoC and also
+initial board support for the Samsung Galaxy Note20 5G (SM-N981B)
+codenamed c1s.
 
-> * One has to reserve crashkernel memory region in the old crashed kernel
->    even if it remains unused until the dump starts.
-> * zipl uses regular kdump kernel and initramfs to create stand-alone
->    dumper images and to write them to a dump disk which is used for
->    IPLIng the stand-alone dumper.
-> * The zipl bootloader takes care of transferring the old kernel memory
->    saved in HSA by the FW to the crashkernel memory region reserved by the old
->    crashed kernel before it enters the dumper. The HSA memory is released
->    by the zipl bootloader _before_ the dumper image is entered,
->    therefore, we cannot use HSA to read old kernel memory, and instead
->    use memory from crashkernel region, just like the regular kdump.
-> * is_ipl_type_dump() will be true for a stand-alone kdump because we IPL
->    the dumper like a regular stand-alone dump (e.g. zfcpdump).
-> * Summarized, zipl bootloader prepares an environment which is expected by
->    the regular kdump for a stand-alone kdump dumper before it is entered.
+The Exynos 990 SoC is also used in the S20 series, as well as in the
+Note 20 Ultra phones. Currently the device trees added are for the
+Exynos 990 SoC and c1s. The device tree has been tested with 
+dtbs_check W=1 and results in no warnings.
 
-Thanks for the details!
+This initial bringup consists of:
+ * cpus
+ * pinctrl
+ * gpio-keys
+ * simple-framebuffer
+ 
+This is enough to reach a shell in an initramfs. More platform support
+will be added in the future.
 
-> 
-> In my opinion, the correct version of is_kdump_kernel() would be
-> 
-> bool is_kdump_kernel(void)
-> {
->          return oldmem_data.start;
-> }
-> 
-> because Linux kernel doesn't differentiate between both the regular
-> and the stand-alone kdump where it matters while performing dumper
-> operations (e.g. reading saved old kernel memory from crashkernel memory region).
-> 
+The preferred way to boot the upstream kernel is by using a shim
+bootloader, called uniLoader [1], which works around some issues with
+the stock, non-replacable Samsung S-LK bootloader. For example, the
+stock bootloader leaves the decon trigger control unset, which causes
+the framebuffer not to refresh.
 
-Right, but if we consider "/proc/vmcore is available", a better version 
-would IMHO be:
+Device functionality depends on the 2nd patch series:
+"Add Exynos990 pinctrl and chipid drivers"
 
-bool is_kdump_kernel(void)
-{
-           return dump_available();
-}
+[1] https://github.com/ivoszbg/uniLoader
 
-Because that is mostly (not completely) how is_kdump_kernel() would have 
-worked right now *after* we had the elfcorehdr_alloc() during the 
-fs_init call.
+Changes in v3:
+ - Move pinctrl DT nodes from the 2nd patch series
+ - Resend patches to the correct lists.
 
+Changes in v2:
+ - Added acked-by tag by Rob Herring
+ - Fixed two stray newlines in SoC and device DTs
+ - Fixed commit message for the c1s device tree
+ - Changed osc-clock to clock-osc and ordered nodes in SoC DT
+ - Fixed ordering in the gic node in SoC DT
+ - Fixed memory node unit address
+ - Fixed memory node reg properties, to map all available RAM
+ - Moved pinctrl binding commits to the 2nd patch series.
 
-> Furthermore, if i'm not mistaken then the purpose of is_kdump_kernel()
-> is to tell us whether Linux kernel runs in a kdump like environment and not
-> whether the current mode is identical to the proper and true kdump,
-> right ? And if stand-alone kdump swims like a duck, quacks like one, then it
-> is one, regardless how it was started, by kexecing or IPLing
-> from a disk.
+Kind regards,
+Igor
 
-Same thinking here.
+Igor Belwon (6):
+  dt-bindings: arm: cpus: Add Samsung Mongoose M5
+  dt-bindings: hwinfo: exynos-chipid: Add compatible for Exynos 990
+    chipid
+  dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990
+    boards
+  soc: samsung: exynos-chipid: Add support for Exynos 990 chipid
+  arm64: dts: exynos: Add initial support for the Exynos 990 SoC
+  arm64: dts: exynos: Add initial support for Samsung Galaxy Note20 5G
+    (c1s)
 
-> 
-> The stand-alone kdump has a very special use case which most users will
-> never encounter. And usually, one just takes zfcpdump instead which is
-> more robust and much smaller considering how big kdump initrd can get.
-> stand-alone kdump dumper images cannot exceed HSA memory limit on a Z machine.
-
-Makes sense, so it boils down to either
-
-bool is_kdump_kernel(void)
-{
-          return oldmem_data.start;
-}
-
-Which means is_kdump_kernel() can be "false" even though /proc/vmcore is 
-available or
-
-bool is_kdump_kernel(void)
-{
-          return dump_available();
-}
-
-Which means is_kdump_kernel() can never be "false" if /proc/vmcore is 
-available. There is the chance of is_kdump_kernel() being "true" if 
-"elfcorehdr_alloc()" fails with -ENODEV.
-
-
-You're call :) Thanks!
+ .../devicetree/bindings/arm/cpus.yaml         |    1 +
+ .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
+ .../hwinfo/samsung,exynos-chipid.yaml         |    1 +
+ arch/arm64/boot/dts/exynos/Makefile           |    1 +
+ arch/arm64/boot/dts/exynos/exynos990-c1s.dts  |  115 +
+ .../boot/dts/exynos/exynos990-pinctrl.dtsi    | 2195 +++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos990.dtsi     |  251 ++
+ drivers/soc/samsung/exynos-chipid.c           |    1 +
+ 8 files changed, 2571 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-c1s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990.dtsi
 
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
