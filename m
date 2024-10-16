@@ -1,173 +1,313 @@
-Return-Path: <linux-kernel+bounces-368380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A374D9A0F33
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:00:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7449A0F38
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB581F25134
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4122863D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AE120F5C6;
-	Wed, 16 Oct 2024 15:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0299D3FBA5;
+	Wed, 16 Oct 2024 16:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Og2f0W1q"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rmdaho1r"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D085C1384B3;
-	Wed, 16 Oct 2024 15:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576B054F95
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094396; cv=none; b=Ole9FQ3IqpT+m2RC5xR7Ym7MdshDCWDoG7ufjhpBk9NsQ1UdbFEoAKxhqGVkXsyqDENMd32ws0PR0Zd2/PZ2usOJu3t4bTiLpoTwGTk864AZs/caPWjfWXcaVOWuiUkSDTGQB//5qDxmi+Ce7kkbM7XiJavLLMv+piLYWkwdnhg=
+	t=1729094442; cv=none; b=Cs2mmAsikEnCnZakykx/SE03xhoJgqiHLEd6h/NX9OfxLSLg/CE5iiUYWqFzyX0dCP17Bz+zVdm42MMCrj/GlmPrKB4E7LculC1gzcooNvYoAjtqiJXcOJXLOStuQNP4YbRflvnluH/Bjs2fvOGyeBnkOM60ZxVJQVvypprH4zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094396; c=relaxed/simple;
-	bh=t9Pj6Lytp3o2TRKmx2LFg2KV8jy16bK0bFqodVcoKE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jTVbJ4+zwGG/8lijbgp0pAqy4KVWIbm9NTno3xNlLAZhKgCq9+PBVuWi9pTkSy1IOZoVBzH6K28HRRORYwIQsVdKPSdK5sGAthl5CHt13FU8dqZ5GDNSuJcsXm7Xzh+VYyyQdyPQfiFBba3ok47fECJomJPKQSdQN6Vbfhdfty4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Og2f0W1q; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99eb8b607aso563473066b.2;
-        Wed, 16 Oct 2024 08:59:54 -0700 (PDT)
+	s=arc-20240116; t=1729094442; c=relaxed/simple;
+	bh=7PTo7ATdJKBztulMVqdU/OaPxvIkBpBkKwX871nJqVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=gNGC9+dFe3AtSKf3UfbJ6JnPrerM2yGdep8O7I1jNAL6R4k3FuO4u2MRz+7atqVeEr5wQEwgchywqmTacXYPzNubbt4ZzN+CtH3X1vs+Kxuq8ZcdLtTfnc641V+7MmR2h91cgAevgOmCIsmAfF1HWIHmXfrSAyf+qWzp4ZHe/ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rmdaho1r; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c93e9e701fso17842a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:00:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729094393; x=1729699193; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mmj3m26uAVevKrLVIw7nRomm2+bj6OhZczGFx03aqgs=;
-        b=Og2f0W1qs4TMkFNEKbLXV+DI3JiGza0svZ0DjYQ4KpUHyS1yN6HAsCPdYGolglGfvx
-         ooMjL3fcFOuphi0EPF69OC20uY2J1YcNtWokK7KtR7i7Ngrd9QJgtSGdQrS442ozLI8r
-         u2BVWG87W0vaeSR86xuuw8Vr0XcjvHy3bXssKOYWQOFbttP0r6G/Kx6yaqypJDbztjsM
-         sPoePytuA3nIW86CnPId4vv+bmUWcV4hSqCiUu6LK9lbho6NWAGdHM0SGSxnPZbjGCN2
-         SRcYix2veq2slmxmy0trd85wx8IKUyVbGVJNbkn7Mx/E6n7VeLIE5aLbZ+GokWXd8FSX
-         FWHw==
+        d=google.com; s=20230601; t=1729094439; x=1729699239; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qa8NFpxmV2KKMPMWE09yZK0j+QN5oO3iXzDey8XQmBI=;
+        b=Rmdaho1r/0W8OzDBGy5ZJ10BFwJsyvwGylvoqBrw6u1RRuaNgnX8Mp/gRMb8/jsi6o
+         oOd1B8c5hIJHBznWie+gM6tVcPpzFGsR4aaKYNVSCtBzFXvMUs74qM5815UdXh0m8vaO
+         /C1HCPXEmFy21+qIglu6kZTRPZxAOVBFWFtQT+dcTLl2FAThRrDVuXVg7CIORzaR7x4t
+         aAAcmHcfdME0Xy6DgVw7IE+z6s98HOBL4YjpDSB0p9f7jDHsmnO0qsgvdhsH6ehLKgrg
+         SA76VBpW1peqD05SgKd0FYYt85KboG1TY4iwEhaca4yN/36nZUOgkc7vH7FgA1bdJROd
+         ToXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729094393; x=1729699193;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mmj3m26uAVevKrLVIw7nRomm2+bj6OhZczGFx03aqgs=;
-        b=lgTtCxo9CLux3mTUsnlHe7vE1tLHN3zNmOSJ2xrNYa5G5HtyNXiAByAxXbajsalW1Q
-         u6qU6VF+NILUaSyrPK7AVwOrk2cXaxZRFNCiSkWufavHOlhdzEk6N78CsMK2oC3R4kyL
-         vn9qqNJUzRRNsj/U4P+XgoAcG62IrYDg4+VnbvoAnLpxloQyMP6+vHZrhMCjYRSBkD4y
-         TI+CJfceDo84RIc0lgwA+EbO2ZIq/1RatQWhOeMkD+QG2RjIPZcRKoch8faGB6LUSO+L
-         VxFtDa3rOpi3p00gkHrFiy58KJBoxzUnBW966LCoEmLN9aprYuNzdjNkyBksLRqe0i34
-         hEcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjz7xJo/QmFechWVoTMRi+k+OvRgQuwG8szzOQXO98oosIz/fMDrZxu3YZ0Xwccvg7/72b/gEb2qUcL91XeOb8@vger.kernel.org, AJvYcCXX/E2TQM6JVUD6iKPC9vRRPw6PTfaQBKcnyi+UCFtvK7xb28ZGHptY75ctBU2WX0kIPBZ08/eIBIAZ7rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzplMfs6WIj5r6bsao3YGiVUKP6UM13/Q7UHYhPWQPXFeDX3Ddk
-	O+i5OnZ0mEuHtZCfxb1doFU/sM2wl6y0k2M6G+y53g49/P1ecUyt
-X-Google-Smtp-Source: AGHT+IEXjAEvk5CdHrK8htzjtcfYfdp/XWOG5TaTbOL8TmX4lMucUTmZkpPTZn1+9nd/fPfsH42SKg==
-X-Received: by 2002:a17:907:868d:b0:a99:4aa7:4d77 with SMTP id a640c23a62f3a-a9a34c83718mr303503266b.3.1729094392957;
-        Wed, 16 Oct 2024 08:59:52 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:20d:1300:1b1c:4449:176a:89ea? (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2989797fsm196863666b.196.2024.10.16.08.59.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 08:59:52 -0700 (PDT)
-Message-ID: <d7d48102-4c52-4161-a21c-4d5b42539fbb@gmail.com>
-Date: Wed, 16 Oct 2024 17:59:50 +0200
+        d=1e100.net; s=20230601; t=1729094439; x=1729699239;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qa8NFpxmV2KKMPMWE09yZK0j+QN5oO3iXzDey8XQmBI=;
+        b=bNPJGm9VxZ0nr/T8sccnAZsu1DoqWKR1muvGK0zskqydxVZnLZqfL/x2mtW9J0f+5X
+         S83BA41X+92SMlu4m9kzr+r4fJMlyAotJ+fxwaCM2Sq0UmzqbCb45lsqao5/T3LTBwui
+         udp1brdHQl31E9Fmgam2liFYr2ckte+PjPXPlzvyNZqIDRC6+QXn01I6l81MEYeIS25v
+         E2okY+SjHNRVthNdxqc9kUZ+0sm/Da+foo2sXgF+raODWWLSWQeKQ/a2oQVr/10reDVK
+         i/izyD/PpFoB9cPDKZvJHQ/KJCnf4dBXR2vM8PAVHLvM1VJ3y5lDgiaLY4CbiW3GbAdW
+         oitQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUURAjDcT4ILeS8zrrEDVylPGi8AlYeHe8f1Q2xeXWhLs+GVXFj/wa7b9thj3cx4G3Cxm3TV+9GnN2Mz0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8c8FLFVa99KqARnndhdM3ZJkiJfMvueOYtxBWYeKklID2oNHt
+	rVV2biXhCyru/VY1+oC76VV9Vupb9WUDvb+VlbvMmLMW7F+XkNuEolBSS8wrrUxEezyn8iRzPGt
+	KV3pNwztYyT2zA6VCi//rcdjqyNPJwtvdYs4U
+X-Google-Smtp-Source: AGHT+IGTFrv2alUePOetWLW0RF+CqiSAQBuYFWA0NuJoz5ABIgUEJXZEmQ0VzCf+TPqF152AaBDGNyuugEy4WKrUbyQ=
+X-Received: by 2002:a05:6402:2681:b0:5c2:5641:af79 with SMTP id
+ 4fb4d7f45d1cf-5c997539f25mr556341a12.0.1729094437912; Wed, 16 Oct 2024
+ 09:00:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 net-next 00/12] bridge-fastpath and related
- improvements
-To: Felix Fietkau <nbd@nbd.name>, Nikolay Aleksandrov <razor@blackwall.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241013185509.4430-1-ericwouds@gmail.com>
- <9f9f3cf0-7a78-40f1-b8d5-f06a2d428210@blackwall.org>
- <a07cadd3-a8ff-4d1c-9dca-27a5dba907c3@gmail.com>
- <0b0a92f2-2e80-429c-8fcd-d4dc162e6e1f@nbd.name>
- <137aa23a-db21-43c2-8fb0-608cfe221356@gmail.com>
- <a7ab80d5-ff49-4277-ba73-db46547a8a8e@nbd.name>
-From: Eric Woudstra <ericwouds@gmail.com>
-Content-Language: en-US
-In-Reply-To: <a7ab80d5-ff49-4277-ba73-db46547a8a8e@nbd.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241016-fix-munmap-abort-v1-1-601c94b2240d@google.com> <3lixuwepwvc6zqy57k2zcw4dntd7cc5cwlx7xxoieuo3pvaajy@e2p5zf5mdzon>
+In-Reply-To: <3lixuwepwvc6zqy57k2zcw4dntd7cc5cwlx7xxoieuo3pvaajy@e2p5zf5mdzon>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 16 Oct 2024 17:59:59 +0200
+Message-ID: <CAG48ez02xVZzOwfx869pEh+UhRvbpq5Z4RVz_Y-S-i6Hm21Jdw@mail.gmail.com>
+Subject: Re: [PATCH fix 6.12] mm: mark mas allocation in vms_abort_munmap_vmas
+ as __GFP_NOFAIL
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 16, 2024 at 5:40=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+> * Jann Horn <jannh@google.com> [241016 11:08]:
+> > vms_abort_munmap_vmas() is a recovery path where, on entry, some VMAs
+> > have already been torn down halfway (in a way we can't undo) but are
+> > still present in the maple tree.
+> >
+> > At this point, we *must* remove the VMAs from the VMA tree, otherwise
+> > we get UAF.
+>
+> Wait, the vma should be re-attached without PTEs and files closed in
+> this case.  I don't see how we are hitting the UAF in your example - we
+> shouldn't unless there is something with the driver itself and the file
+> close?
+>
+> My concern is that I am missing an error scenario.
 
+Where are the files supposed to be closed? vms_clean_up_area() unlinks
+the VMA from the file and calls ->close() but doesn't unlink the file,
+right?
 
-On 10/15/24 9:44 PM, Felix Fietkau wrote:
-> On 15.10.24 15:32, Eric Woudstra wrote:
->>
->>
->> On 10/15/24 2:16 PM, Felix Fietkau wrote:
->>> Hi Eric,
->>>
->>> On 14.10.24 20:29, Eric Woudstra wrote:
->>>> It would be no problem for me to change the subject and body, if you
->>>> think that is better.
->>>>
->>>> The thing is, these patches actually make it possible to set up a fully
->>>> functional software fastpath between bridged interfaces. Only after the
->>>> software fastpath is set up and functional, it can be offloaded, which
->>>> happens to by my personal motivation to write this patch-set.
->>>>
->>>> If the offload flag is set in the flowtable, the software fastpath will
->>>> be offloaded. But in this patch-set, there is nothing that changes
->>>> anything there, the existing code is used unchanged.
->>>
->>> FWIW, a while back, I also wanted to add a software fast path for the
->>> bridge layer to the kernel, also with the intention of using it for
->>> hardware offload. It wasn't accepted back then, because (if I remember
->>> correctly) people didn't want any extra complexity in the network stack
->>> to make the bridge layer faster.
->>
->> Hello Felix,
->>
->> I think this patch-set is a clear showcase it is not very complex at
->> all. The core of making it possible only consists a few patches. Half of
->> this patch-set involves improvements that also apply to the
->> forward-fastpath.
-> 
-> It's definitely an interesting approach. How does it deal with devices
-> roaming from one bridge port to another? I couldn't find that in the code.
+FWIW, I tested on commit eca631b8fe80 (current mainline head), I
+didn't check whether anything in the MM tree already addresses this.
+(I probably should have...)
 
-It is handled in the same manner when dealing with the forward-fastpath,
-with the aid of conntrack. If roaming is problematic, then it would be
-for both the forward-fastpath and the bridge-fastpath. I have a topic on
-the banana-pi forum about this patch-set, so I think long discussions
-about additional details we could have there, keeping the mailing list
-more clean.
+> But since this is under a lock that allows sleeping, shouldn't the
+> shrinker kick in?
 
->>> Because of that, I created this piece of software:
->>> https://github.com/nbd168/bridger
->>>
->>> It uses an eBPF TC classifier for discovering flows and handling the
->>> software fast path, and also creates hardware offload rules for flows.
->>> With that, hardware offloading for bridged LAN->WLAN flows is fully
->>> supported on MediaTek hardware with upstream kernels.
->>>
->>> - Felix
->>
->> Thanks, I've seen that already. Nice piece of software, but I'm not
->> running openwrt. I would like to see a solution implemented in the
->> kernel, so any operating system can use it.
-> 
-> Makes sense. By the way, bridger can easily be built for non-OpenWrt
-> systems too. The only library that's actually needed is libubox - that
-> one is small and can be linked in statically. ubus support is fully
-> optional and not necessary for standard cases.
-> 
-> - Felix
+Yeah, I think without error injection, you'd basically only fail this
+allocation if the OOM killer has already decided to kill your task and
+the system is entirely out of memory.
+
+OOM kills IIRC have two effects on the page allocator:
+
+1. they allow allocating with no watermarks (ALLOC_OOM) (based on the
+theory that you might need to allocate some memory in order to be able
+to exit and free more memory)
+2. they allow giving up on GFP_KERNEL allocations (see the "/* Avoid
+allocations with no watermarks from looping endlessly */" part of
+__alloc_pages_slowpath())
+
+> Should we just use __GFP_NOFAIL for the first store
+> instead of the error path?
+
+Which first store? Do you mean get rid of vms_abort_munmap_vmas()
+entirely somehow?
+
+> > Fixes: 4f87153e82c4 ("mm: change failure of MAP_FIXED to restoring the =
+gap on failure")
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > ---
+> > This can be tested with the following reproducer (on a kernel built wit=
+h
+> > CONFIG_KASAN=3Dy, CONFIG_FAILSLAB=3Dy, CONFIG_FAULT_INJECTION_DEBUG_FS=
+=3Dy,
+> > with the reproducer running as root):
+> >
+> > ```
+> >
+> >   typeof(x) __res =3D (x);      \
+> >   if (__res =3D=3D (typeof(x))-1) \
+> >     err(1, "SYSCHK(" #x ")"); \
+> >   __res;                      \
+> > })
+> >
+> > static void write_file(char *name, char *buf) {
+> >   int fd =3D open(name, O_WRONLY);
+> >   if (fd =3D=3D -1)
+> >     err(1, "unable to open for writing: %s", name);
+> >   if (SYSCHK(write(fd, buf, strlen(buf))) !=3D strlen(buf))
+> >     errx(1, "write %s", name);
+> >   SYSCHK(close(fd));
+> > }
+> >
+> > int main(void) {
+> >   // make a large area with a bunch of VMAs
+> >   char *area =3D SYSCHK(mmap(NULL, AREA_SIZE, PROT_NONE, MAP_PRIVATE|MA=
+P_ANONYMOUS, -1, 0));
+> >   for (int off=3D0; off<AREA_SIZE; off +=3D 0x2000)
+> >     SYSCHK(mmap(area+off, 0x1000, PROT_READ, MAP_FIXED|MAP_PRIVATE|MAP_=
+ANONYMOUS, -1, 0));
+> >
+> >   // open a file whose mappings use usbdev_vm_ops, and map it in part o=
+f this area
+> >   int map_fd =3D SYSCHK(open("/dev/bus/usb/001/001", O_RDONLY));
+> >   void *map =3D SYSCHK(mmap(area, 0x1000, PROT_READ, MAP_SHARED|MAP_FIX=
+ED, map_fd, 0));
+> >   close(map_fd);
+> >
+> >   // make RWX mapping request fail late
+> >   SYSCHK(prctl(65/*PR_SET_MDWE*/, 1/*PR_MDWE_REFUSE_EXEC_GAIN*/, 0, 0, =
+0));
+> >
+> >   // some random other file
+> >   int fd =3D SYSCHK(open("/etc/passwd", O_RDONLY));
+> >
+> >   /* disarm for now */
+> >   write_file("/sys/kernel/debug/failslab/probability", "0");
+> >
+> >   /* fail allocations of maple_node... */
+> >   write_file("/sys/kernel/debug/failslab/cache-filter", "Y");
+> >   write_file("/sys/kernel/slab/maple_node/failslab", "1");
+> >   /* ... even though it's a sleepable allocation... */
+> >   write_file("/sys/kernel/debug/failslab/ignore-gfp-wait", "N");
+> >   /* ... in this task... */
+> >   write_file("/sys/kernel/debug/failslab/task-filter", "Y");
+> >   write_file("/proc/self/make-it-fail", "1");
+> >   /* ... every time... */
+> >   write_file("/sys/kernel/debug/failslab/times", "-1");
+> >   /* ... after 8 successful allocations (value chosen experimentally)..=
+. */
+> >   write_file("/sys/kernel/debug/failslab/space", "2048"); // one object=
+ is 256
+> >   /* ... and print where the allocations actually failed... */
+> >   write_file("/sys/kernel/debug/failslab/verbose", "2");
+> >   /* ... and that's it, arm it */
+> >   write_file("/sys/kernel/debug/failslab/probability", "100");
+> >
+> >   // This mmap request will fail late due to MDWE.
+> >   // The error recovery path will attempt to clear out the VMA pointers=
+ with a
+> >   // spanning_store (which will be blocked by error injection).
+> >   mmap(area, AREA_SIZE, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP=
+_FIXED, fd, 0);
+> >
+> >   /* disarm */
+> >   write_file("/sys/kernel/debug/failslab/probability", "0");
+> >
+> >   SYSCHK(munmap(map, 0x1000)); // UAF expected here
+> >   system("cat /proc/$PPID/maps");
+> > }
+> > ```
+> >
+> > Result:
+> > ```
+> > FAULT_INJECTION: forcing a failure.
+> > name failslab, interval 1, probability 100, space 256, times -1
+> > CPU: 3 UID: 0 PID: 607 Comm: unmap-fail Not tainted 6.12.0-rc3-00013-ge=
+ca631b8fe80 #518
+> > [...]
+> > Call Trace:
+> >  <TASK>
+> >  dump_stack_lvl+0x80/0xa0
+> >  should_fail_ex+0x4d3/0x5c0
+> > [...]
+> >  should_failslab+0xc7/0x130
+> >  kmem_cache_alloc_noprof+0x73/0x3a0
+> > [...]
+> >  mas_alloc_nodes+0x3a3/0x690
+> >  mas_nomem+0xaa/0x1d0
+> >  mas_store_gfp+0x515/0xa80
+> > [...]
+> >  mmap_region+0xa96/0x2590
+> > [...]
+> >  do_mmap+0x71e/0xfe0
+> > [...]
+> >  vm_mmap_pgoff+0x17a/0x2f0
+> > [...]
+> >  ksys_mmap_pgoff+0x2ee/0x460
+> >  do_syscall_64+0x68/0x140
+> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [...]
+> >  </TASK>
+> > mmap: unmap-fail: (607) Unable to abort munmap() operation
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KASAN: slab-use-after-free in dec_usb_memory_use_count+0x365/0x430
+> > Read of size 8 at addr ffff88810e9ba8b8 by task unmap-fail/607
+>
+> What was this pointer?
+
+Should be the "struct usb_memory *usbm".
+
+> >
+> > CPU: 3 UID: 0 PID: 607 Comm: unmap-fail Not tainted 6.12.0-rc3-00013-ge=
+ca631b8fe80 #518
+> > [...]
+> > Call Trace:
+> >  <TASK>
+> >  dump_stack_lvl+0x66/0xa0
+> >  print_report+0xce/0x670
+> > [...]
+> >  kasan_report+0xf7/0x130
+> > [...]
+> >  dec_usb_memory_use_count+0x365/0x430
+> >  remove_vma+0x76/0x120
+> >  vms_complete_munmap_vmas+0x447/0x750
+> >  do_vmi_align_munmap+0x4b9/0x700
+> > [...]
+> >  do_vmi_munmap+0x164/0x2e0
+> >  __vm_munmap+0x128/0x2a0
+> > [...]
+> >  __x64_sys_munmap+0x59/0x80
+> >  do_syscall_64+0x68/0x140
+> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [...]
+> >  </TASK>
+> >
+> > Allocated by task 607:
+> >  kasan_save_stack+0x33/0x60
+> >  kasan_save_track+0x14/0x30
+> >  __kasan_kmalloc+0xaa/0xb0
+> >  usbdev_mmap+0x1a0/0xaf0
+> >  mmap_region+0xf6e/0x2590
+> >  do_mmap+0x71e/0xfe0
+> >  vm_mmap_pgoff+0x17a/0x2f0
+> >  ksys_mmap_pgoff+0x2ee/0x460
+> >  do_syscall_64+0x68/0x140
+> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> >
+> > Freed by task 607:
+> >  kasan_save_stack+0x33/0x60
+> >  kasan_save_track+0x14/0x30
+> >  kasan_save_free_info+0x3b/0x60
+> >  __kasan_slab_free+0x4f/0x70
+> >  kfree+0x148/0x450
+> >  vms_clean_up_area+0x188/0x220
+>
+> What line is this?
+
+Should be the vma->vm_ops->close(vma) call. (That would call
+dec_usb_memory_use_count(), which tail-calls kfree(), so the
+dec_usb_memory_use_count() wouldn't show up in a stack trace.)
+
+I don't have this kernel build anymore though, sorry. If you want I'll
+rebuild and get a properly symbolized trace.
 
