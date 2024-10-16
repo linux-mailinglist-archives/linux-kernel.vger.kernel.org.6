@@ -1,111 +1,148 @@
-Return-Path: <linux-kernel+bounces-368644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A439A12CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0042B9A12CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDD61F24310
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320EF1C23331
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1DE2144D2;
-	Wed, 16 Oct 2024 19:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138F1215F44;
+	Wed, 16 Oct 2024 19:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4iLvASZ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0NMHJxKd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC27F1885BB;
-	Wed, 16 Oct 2024 19:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7096D2144CE;
+	Wed, 16 Oct 2024 19:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107777; cv=none; b=boMAqebTJtni7RoMfiFaSEls1UZ/fmtW68SDpBkabNgGdqFCRML9sGdQrwBuLC61UCSABM2Ay5wD7yzJ1roRUHhTiyFTS1fwUMdGU6mPI/fx49r12Vth0NkIZVegtLUuVjzib5UxqHuX9ihPPNNWONEJwXsTksqcD3Rx3aHHviI=
+	t=1729107777; cv=none; b=ap+xgehOjxuXqKEsDr+0cOroUyhJYZkWSDzcyIsOEWgYFKhUJ0QUZ+qYteDJwkTbHbyA9V9sY4aPnHMiUdogJA38X3019XuhEh2CYsPt3ZcL49PBlMyNnWkbI2zBMYqVxoeR3KYqm2+gD0tqodDHUs7oZfg7KxcoEs6raju7g2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729107777; c=relaxed/simple;
-	bh=mZzMcn9MbCczzX11J8+TKZRX7Uh7hjxyr0xf7rLHKQI=;
+	bh=LLzFnTpTL1+XFRq4+TKXAgrc///vCyQPUGO2IHwl6Ro=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NVWkqe/rZHsIkdaFM4dndtgyI8uaskqHIQerA8Bcdb0GzeKTHESOSKx+tk8nskm9IKeJ2o79Y6BFr1eT7UbR7jdNaN/iWTvoiosoEOrRxF/ItDSj+YTH8pxCEUrErJvj2dBxZv3tWHRC0y3Hc0NW3i4NWgiO6AVAiUsuWhOgnm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4iLvASZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91584C4CEC5;
-	Wed, 16 Oct 2024 19:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729107776;
-	bh=mZzMcn9MbCczzX11J8+TKZRX7Uh7hjxyr0xf7rLHKQI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+086pJyNtyuJEwqZXnzbYxLWQJEj32i/fRBoOp5YGmRj2nCVMdc4xfT8+vro+LB+9DsCfmTOe2Jg2vlrKAeBjUB3q3PBD+ewvmAytuz0RUc2/gO3RcDMf0QE1pBe1t1zvTbPiF4VOvKwCN/V4uESnY80TwiEIuW/wvri+0CgAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0NMHJxKd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E39CC4CECD;
+	Wed, 16 Oct 2024 19:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729107777;
+	bh=LLzFnTpTL1+XFRq4+TKXAgrc///vCyQPUGO2IHwl6Ro=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4iLvASZXoBveFjv8+9epyZ3FYoC2LL6NapNNmpAOzXB1KJ3kRDc54jMETDXw5YHS
-	 cmetoNHDqC83Ujklx02sR7d6YPdtEsJX5sMGdATx+U3+cDPwfgAc1gvl+PuSAe9njh
-	 ELlGAyeUVVU/xGLXeFmsssQFPdtGat14Jmru1f4Orr/1vhi/vSCXXIo6Zr8SS2d000
-	 Mva4ajJUqiYHsHTXMc1ZpThEAbr50ZKVBF+yNXLzB7rlofSfQFnRQf6CGVPcw7AKWK
-	 NKj+a23iHPnKFXmQU5SZoI1K1zw+scRrPeY6seTsFfRxCbuLA35vvQJe6Q1R7Ma1ls
-	 gen+M4eGWLaaQ==
-Date: Wed, 16 Oct 2024 20:42:51 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, Lewis Hanly <lewis.hanly@microchip.com>
-Subject: Re: [RFC v7 4/6] gpio: mpfs: add polarfire soc gpio support
-Message-ID: <20241016-cobbler-connector-9b17ec158e3a@spud>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
- <20240723-underage-wheat-7dd65c2158e7@wendy>
- <CACRpkdbRE695f-+do1HYpOZ6e4qxgUBWJzEPO2hTCuZ3xxYHQg@mail.gmail.com>
- <20241016-shallot-nerd-51eeba039ba0@spud>
- <20241016-dandelion-hypnosis-9d989bb2fdd1@spud>
- <CACRpkdbJKWcjBG5ejwsNEgnnGWj69TAtKbgaHP3NiPM5GbiGQw@mail.gmail.com>
+	b=0NMHJxKdPXrNVTJJELxvcjP6EXndmZPKY/cVa8r0jrIipsik5JX8iDyHowdWGprVf
+	 9/NrWwBchzPp3veG3nCJTj5bZtgrghrA/UrbB3NhfiaDta1rG+G1i1KcQYazyRbnHr
+	 tYnYkPICnlWj/mOfQIIsaTXRNwNGrRy9DzO3sJQI=
+Date: Wed, 16 Oct 2024 21:42:53 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Yuanchu Xie <yuanchu@google.com>
+Cc: Wei Liu <liuwe@microsoft.com>, Rob Bradford <rbradford@rivosinc.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	virtualization@lists.linux.dev, dev@lists.cloudhypervisor.org
+Subject: Re: [PATCH v3 1/2] virt: pvmemcontrol: control guest physical memory
+ properties
+Message-ID: <2024101628-audibly-maverick-e1fe@gregkh>
+References: <20241016193947.48534-1-yuanchu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="A7dnOTkzHLL/fEWQ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbJKWcjBG5ejwsNEgnnGWj69TAtKbgaHP3NiPM5GbiGQw@mail.gmail.com>
+In-Reply-To: <20241016193947.48534-1-yuanchu@google.com>
 
+On Wed, Oct 16, 2024 at 12:39:46PM -0700, Yuanchu Xie wrote:
+> Pvmemcontrol provides a way for the guest to control its physical memory
+> properties and enables optimizations and security features. For example,
+> the guest can provide information to the host where parts of a hugepage
+> may be unbacked, or sensitive data may not be swapped out, etc.
+> 
+> Pvmemcontrol allows guests to manipulate its gPTE entries in the SLAT,
+> and also some other properties of the memory mapping on the host.
+> This is achieved by using the KVM_CAP_SYNC_MMU capability. When this
+> capability is available, the changes in the backing of the memory region
+> on the host are automatically reflected into the guest. For example, an
+> mmap() or madvise() that affects the region will be made visible
+> immediately.
+> 
+> There are two components of the implementation: the guest Linux driver
+> and Virtual Machine Monitor (VMM) device. A guest-allocated shared
+> buffer is negotiated per-cpu through a few PCI MMIO registers; the VMM
+> device assigns a unique command for each per-cpu buffer. The guest
+> writes its pvmemcontrol request in the per-cpu buffer, then writes the
+> corresponding command into the command register, calling into the VMM
+> device to perform the pvmemcontrol request.
+> 
+> The synchronous per-cpu shared buffer approach avoids the kick and busy
+> waiting that the guest would have to do with virtio virtqueue transport.
+> 
+> User API
+> >From the userland, the pvmemcontrol guest driver is controlled via the
+> ioctl(2) call. It requires CAP_SYS_ADMIN.
+> 
+> ioctl(fd, PVMEMCONTROL_IOCTL, struct pvmemcontrol_buf *buf);
+> 
+> Guest userland applications can tag VMAs and guest hugepages, or advise
+> the host on how to handle sensitive guest pages.
+> 
+> Supported function codes and their use cases:
+> PVMEMCONTROL_FREE/REMOVE/DONTNEED/PAGEOUT. For the guest. One can reduce
+> the struct page and page table lookup overhead by using hugepages backed
+> by smaller pages on the host. These pvmemcontrol commands can allow for
+> partial freeing of private guest hugepages to save memory. They also
+> allow kernel memory, such as kernel stacks and task_structs to be
+> paravirtualized if we expose kernel APIs.
+> 
+> PVMEMCONTROL_MERGEABLE can inform the host KSM to deduplicate VM pages.
+> 
+> PVMEMCONTROL_UNMERGEABLE is useful for security, when the VM does not
+> want to share its backing pages.
+> The same with PVMEMCONTROL_DONTDUMP, so sensitive pages are not included
+> in a dump.
+> MLOCK/UNLOCK can advise the host that sensitive information is not
+> swapped out on the host.
+> 
+> PVMEMCONTROL_MPROTECT_NONE/R/W/RW. For guest stacks backed by hugepages,
+> stack guard pages can be handled in the host and memory can be saved in
+> the hugepage.
+> 
+> PVMEMCONTROL_SET_VMA_ANON_NAME is useful for observability and debugging
+> how guest memory is being mapped on the host.
+> 
+> Sample program making use of PVMEMCONTROL_DONTNEED:
+> https://github.com/Dummyc0m/pvmemcontrol-user
+> 
+> The VMM implementation is part of Cloud Hypervisor, the feature
+> pvmemcontrol can be enabled and the VMM can then provide the device to a
+> supporting guest.
+> https://github.com/cloud-hypervisor/cloud-hypervisor
+> 
+> -
+> Changelog
+> PATCH v2 -> v3
+> - added PVMEMCONTROL_MERGEABLE for memory dedupe.
+> - updated link to the upstream Cloud Hypervisor repo, and specify the
+>   feature required to enable the device.
+> PATCH v1 -> v2
+> - fixed byte order sparse warning. ioread/write already does
+>   little-endian.
+> - add include for linux/percpu.h
+> RFC v1 -> PATCH v1
+> - renamed memctl to pvmemcontrol
+> - defined device endianness as little endian
 
---A7dnOTkzHLL/fEWQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As per the kernel documentation, this changelog is in the wrong place.
+Please put it in the correct location.
 
-On Wed, Oct 16, 2024 at 09:26:13PM +0200, Linus Walleij wrote:
-> On Wed, Oct 16, 2024 at 12:29=E2=80=AFPM Conor Dooley <conor@kernel.org> =
-wrote:
->=20
-> > What does bring a nice simplification though, IMO, is regmap. I am
-> > pretty sure that using it was one of the suggestions made last time
-> > Lewis submitted this - so I think I'm going to do that instead.
->=20
-> If you have the time. Using GPIO_REGMAP for MMIO is not that
-> common and I think the driver is pretty neat as it stands.
+thanks,
 
-As with using the common MMIO stuff, I don't think GPIO_REGMAP provides
-that much value as I cannot use the direction stuff from it. I was
-thinking of using regmap directly, like:
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
-=3Dgpio-no-irq&id=3Dc8933e1e3600e3fa29efe28fbb2e343e133f9d67
-which I think reduces how ugly the two direction functions look.
-
---A7dnOTkzHLL/fEWQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxAXOwAKCRB4tDGHoIJi
-0nzLAP97X5rdMU9SMZrBe1Wh3xgBP+5nGo+g7+4bYyVhUFNghQD9HYvVX4AGihOk
-4WFF1ruWtm4KhgoJOTAXVyYdsz6M4Ak=
-=uvpR
------END PGP SIGNATURE-----
-
---A7dnOTkzHLL/fEWQ--
+greg k-h
 
