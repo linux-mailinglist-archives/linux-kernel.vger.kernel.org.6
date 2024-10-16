@@ -1,211 +1,235 @@
-Return-Path: <linux-kernel+bounces-368628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A789A1283
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:27:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FEC9A1285
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863ED286408
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448591C213DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C61D2144B4;
-	Wed, 16 Oct 2024 19:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD06E2141C0;
+	Wed, 16 Oct 2024 19:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="CYJCk7jp"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BgDxISaN"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74AD2141C3
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A7E165EE6
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729106863; cv=none; b=BVDtvKeQpXN97GCVrgn2ESQcw48ovzZ/q4vIOe35ykGpc/OeW1tuTE7dMwkYngnB8euG0xSRXhhtvVdoyTrlF5p/bI6VBttdRFdtyE0pbLb4ZnJUooPaSQk0SLsC1D0+zrq5BSo4mO3SJAIDUQymrxhy8JsmQya91R0WVrW7McI=
+	t=1729106884; cv=none; b=fpBepIZ0AmvTmvG49+CxVSzo7AP/lG1ut3STsIaPsgHSlfEzBLq3/krjff1wsZCtmprCEmM97aF2708MUq5f1XnokU8ldIXzh7YdA/RUq3GbrDjx3J4+Dxe3hxn5tKjQ/wzCQCecuz8ha5S9RH4tGxGPif2atCsp9G+f8pNS5Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729106863; c=relaxed/simple;
-	bh=QL8AAyq4okBa56/NxbA+hTLKq+aPTQdX4Mx2OAVqfV0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ph928piRP9mA+3qgbEQqaT3NZDkXHAojz/t48WP4dCQPfgz6VRK7nk++48+ST0YVQjKeOTsqKpToygzd96laSgGK+SPpE4KT7Mzz4Q3rMiA2C3teofzlFNYB8813fyEQeSvBFxTIi+0apuPWXtkUhDpN7ffuk9KgRgKBsy81X8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=CYJCk7jp; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20ce65c8e13so1736985ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:27:41 -0700 (PDT)
+	s=arc-20240116; t=1729106884; c=relaxed/simple;
+	bh=kgnqpdKkc/l7Qu2ygVy3RP3nHEyLe2cZrbhYsgl6YD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G/tpN4S971XbMAF+XW3QE2Pw8EkAxQKXmWUyphN8P30QCnzWOoHc7aWDb/4YW4+p+4F43B8kt5wbDQCRTQjBHdlJRUggyoL5R27XnbpfOOvFMJUcCnEh93EWwB6U2rHyI/U9qcmwBVvMBNp1c0LW0DOTVeka2u9YFu56hd92Kfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BgDxISaN; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so1365ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:28:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1729106861; x=1729711661; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1729106882; x=1729711682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qd1CmdA3yqF27op1lfKzX3+JmGDdwdfJqTWrLKRMg8E=;
-        b=CYJCk7jpJfe1aI6O7BAntz2/7I2JslwdQtBwwRvq/+o+GwPJB0v3ur2aPADd/GxMux
-         7giwGBsrnQzq0qgNULCYRLrVz+YJ4s23Omj8UhBvJKTZQpa0oo+Zj5qt4SwFP75N37Sv
-         3tKzZ0k0yVUoSQq79DfrbIxm+fzdk8igjEspXmOxfm4JXk3FIr9RTpnuX6xfWwC/ujEU
-         6JsYZXrN8YNxeYt6b58TRIpRlEPkJo6JPDT0ofpDPWYhVgo9fT+Py8vhlVWHOguksJgF
-         9lNd3sX9my91jb7XrFtaYeNNM43D9ftJ1jiiRhdPJz98fxDtqccDKScapArXbk52oDaR
-         qfzA==
+        bh=d0xFVkJStAPxCfaCemrTY4BomoxBEHGl8j5YbuyJ6Tc=;
+        b=BgDxISaNRG4qhuw3ExwHy4gfhDoepcy9PxHUwTnQbS0hQ9xOmR41W5dy7VIUGOSqcC
+         ZnhFbcveHo0sYM3w9gosJ39kz/NSJDyeaagPxkWkX4Nqf21e07DBiu2d7EtGnHumRW7n
+         fb+MwL/HsHQTgSkw9oLYtWWpZhyvn4CabBwpXT+xLrAmHrRP+QtWJxHle59L6lR35uaz
+         hqtPk5lI6xJEqiuvO5pVTJBG0BTZnK3LguAihdjvJrGTLAGRmyNmwv8Ngin2M4Myhmtc
+         yM78LngqWeu1pNgy0W2v/CQgd4sQgggEcq8mFEKTGg8mcXsQj7OLlfYkDqwj54rUzn66
+         mslw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729106861; x=1729711661;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729106882; x=1729711682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qd1CmdA3yqF27op1lfKzX3+JmGDdwdfJqTWrLKRMg8E=;
-        b=vWnlpdvLzLKHoE/jAo8n91vXPNwp4aR6vbXjzNJRz9ViO0+Ta6eqYtJdPxzlMpbnFN
-         eOmgLiWy1N02SbPgnhwDYHqIiNBJNNwUgk1zX6BJ7Dj0fHkAGtwtqzWtO1cNO9d3xkH3
-         0sBBVdR5Ji0oycBfoSgz0KPM1MFVd6xQg4Uzsmm+oSgRi1S38pChw1Vtwd8iiLVrqbps
-         i1FDVd4ro3VQE4fS2bELD/QdfvgsrnfDglHFjaqZMDWUtowhR653kdv8O/FrmKP6w7Lv
-         oJ94SZ9CVS7S0TE2nL4uZFtuqz+un68opPGzOssLAYMwTOWrO+ZW8quvtVYQsPF7k9Ge
-         7Gfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZLRmkMbRohlAXrYJuvxlewP4i5L0QMA9dqzCxwuwdFVB8WpPj6To8VL7H1S3vbsLMPM9sB3C3WGH7/Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwigGZJVULsBRZSUTfMKllAVQrprxP0sz7LSe0T34AFJ+K1pKJv
-	FLtJPCx/DfK9GOgapfpxdH34Zk3iwxNoU21BXvcQCU6XmR5CHYiYxZsIYT/T+b8=
-X-Google-Smtp-Source: AGHT+IFoxV0OBJ2pPBa3JaF0UAh0T+UygwcrRunJT3pLxQjb5MJyphkUDSDvZdgExNMyuDU4htwPIQ==
-X-Received: by 2002:a17:902:d490:b0:20c:f3cf:50eb with SMTP id d9443c01a7336-20cf3cf5379mr121875075ad.44.1729106861266;
-        Wed, 16 Oct 2024 12:27:41 -0700 (PDT)
-Received: from atishp.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805ca60sm31993675ad.239.2024.10.16.12.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 12:27:41 -0700 (PDT)
-From: Atish Patra <atishp@rivosinc.com>
-To: apatel@ventanamicro.com
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Atish Patra <atishp@rivosinc.com>
-Subject: Re: [02/13] RISC-V: KVM: Save/restore HSTATUS in C source
-Date: Wed, 16 Oct 2024 12:27:38 -0700
-Message-Id: <20241016192738.646447-1-atishp@rivosinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240719160913.342027-3-apatel@ventanamicro.com>
-References: 
+        bh=d0xFVkJStAPxCfaCemrTY4BomoxBEHGl8j5YbuyJ6Tc=;
+        b=Y6e9qIFZQ6/v4xB71qwrT9RbhKSwZ4xGnzS0gtIE61+5OXLz365ZPgk/SGFQLOlP94
+         ZSJYiqJ9Iaov54QshAR5v+Y0Yxfts5uRU/gYpve4LEz6/4rmF4w/gMP6uj2qUTnHfDe5
+         Na6MGMm4pUkPr25MjgG0pWcjpYei1GFV4PhxWo7b6uCUT/qd/aIG/Y0CedOdsBOI/7n9
+         7c0Kg+rQxG3ft3qKfc5wKcEv5GPpWX7mP7XxJ6JQUGpH9X2iErjtNrcHiFvXS0+JSLz4
+         vaGAzVVNBDr/rdQ5SzS7vAYHjq5ugKyK+KKvKz21judo+U3Z46vEtK9BaPPkuXbvHHyX
+         0yvw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/OQcq+MweU+7cV/LRvpmK23x9jvYbUNuO2a3ST7jSj0IKxvgbYMXOSqYRPttwolaN480EATDC4m5GJrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysdcNnsuHrw331k2/0oInqv33/Qs7mLFiTx0ZM4xUhyZggKs+L
+	amMFPE11X0cLtidf2DvjrX9xlPsazNrfI5DfSW9uzMI1gOsGzSN8crdH/ud9Tsw3lEB0ZOmS22h
+	7AEFOR7To2JkDEZBHmRBByAamt0txAApDuhJE
+X-Google-Smtp-Source: AGHT+IG5weUPZ8RB6PaxtT/ZgYfk37msbb5rdpaXmMg2MUFpnJ7Hg14FZtyDabvRZAmUFO68QI7w/w/ShcCtt7VhaUs=
+X-Received: by 2002:a05:6e02:1d8a:b0:3a0:be64:a351 with SMTP id
+ e9e14a558f8ab-3a3e58ef5d2mr673165ab.10.1729106881679; Wed, 16 Oct 2024
+ 12:28:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241016190009.866615-1-bgeffon@google.com>
+In-Reply-To: <20241016190009.866615-1-bgeffon@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 16 Oct 2024 12:27:50 -0700
+Message-ID: <CAP-5=fWy7geJGM-T3XPjbbmdYg4spj4H9s+jE_+aqCSEUJeSFQ@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: sched-pipe bench: add (-n) nonblocking benchmark
+To: Brian Geffon <bgeffon@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> We will be optimizing HSTATUS CSR access via shared memory setup
-> using the SBI nested acceleration extension. To facilitate this,
-> we first move HSTATUS save/restore in kvm_riscv_vcpu_enter_exit().
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/kvm/vcpu.c        |  9 +++++++++
->  arch/riscv/kvm/vcpu_switch.S | 36 +++++++++++++-----------------------
->  2 files changed, 22 insertions(+), 23 deletions(-)
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index 449e5bb948c2..93b1ce043482 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -720,9 +720,18 @@ static __always_inline void kvm_riscv_vcpu_swap_in_host_state(struct kvm_vcpu *v
->   */
->  static void noinstr kvm_riscv_vcpu_enter_exit(struct kvm_vcpu *vcpu)
->  {
-> +	struct kvm_cpu_context *gcntx = &vcpu->arch.guest_context;
-> +	struct kvm_cpu_context *hcntx = &vcpu->arch.host_context;
-> +
->  	kvm_riscv_vcpu_swap_in_guest_state(vcpu);
->  	guest_state_enter_irqoff();
-> +
-> +	hcntx->hstatus = csr_swap(CSR_HSTATUS, gcntx->hstatus);
-> +
->  	__kvm_riscv_switch_to(&vcpu->arch);
-> +
-> +	gcntx->hstatus = csr_swap(CSR_HSTATUS, hcntx->hstatus);
-> +
->  	vcpu->arch.last_exit_cpu = vcpu->cpu;
->  	guest_state_exit_irqoff();
->  	kvm_riscv_vcpu_swap_in_host_state(vcpu);
-> diff --git a/arch/riscv/kvm/vcpu_switch.S b/arch/riscv/kvm/vcpu_switch.S
-> index 0c26189aa01c..f83643c4fdb9 100644
-> --- a/arch/riscv/kvm/vcpu_switch.S
-> +++ b/arch/riscv/kvm/vcpu_switch.S
-> @@ -43,35 +43,30 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->  
->  	/* Load Guest CSR values */
->  	REG_L	t0, (KVM_ARCH_GUEST_SSTATUS)(a0)
-> -	REG_L	t1, (KVM_ARCH_GUEST_HSTATUS)(a0)
-> -	REG_L	t2, (KVM_ARCH_GUEST_SCOUNTEREN)(a0)
-> -	la	t4, .Lkvm_switch_return
-> -	REG_L	t5, (KVM_ARCH_GUEST_SEPC)(a0)
-> +	REG_L	t1, (KVM_ARCH_GUEST_SCOUNTEREN)(a0)
-> +	la	t3, .Lkvm_switch_return
-> +	REG_L	t4, (KVM_ARCH_GUEST_SEPC)(a0)
->  
->  	/* Save Host and Restore Guest SSTATUS */
->  	csrrw	t0, CSR_SSTATUS, t0
->  
-> -	/* Save Host and Restore Guest HSTATUS */
-> -	csrrw	t1, CSR_HSTATUS, t1
-> -
->  	/* Save Host and Restore Guest SCOUNTEREN */
-> -	csrrw	t2, CSR_SCOUNTEREN, t2
-> +	csrrw	t1, CSR_SCOUNTEREN, t1
->  
->  	/* Save Host STVEC and change it to return path */
-> -	csrrw	t4, CSR_STVEC, t4
-> +	csrrw	t3, CSR_STVEC, t3
->  
->  	/* Save Host SSCRATCH and change it to struct kvm_vcpu_arch pointer */
-> -	csrrw	t3, CSR_SSCRATCH, a0
-> +	csrrw	t2, CSR_SSCRATCH, a0
->  
->  	/* Restore Guest SEPC */
-> -	csrw	CSR_SEPC, t5
-> +	csrw	CSR_SEPC, t4
->  
->  	/* Store Host CSR values */
->  	REG_S	t0, (KVM_ARCH_HOST_SSTATUS)(a0)
-> -	REG_S	t1, (KVM_ARCH_HOST_HSTATUS)(a0)
-> -	REG_S	t2, (KVM_ARCH_HOST_SCOUNTEREN)(a0)
-> -	REG_S	t3, (KVM_ARCH_HOST_SSCRATCH)(a0)
-> -	REG_S	t4, (KVM_ARCH_HOST_STVEC)(a0)
-> +	REG_S	t1, (KVM_ARCH_HOST_SCOUNTEREN)(a0)
-> +	REG_S	t2, (KVM_ARCH_HOST_SSCRATCH)(a0)
-> +	REG_S	t3, (KVM_ARCH_HOST_STVEC)(a0)
->  
->  	/* Restore Guest GPRs (except A0) */
->  	REG_L	ra, (KVM_ARCH_GUEST_RA)(a0)
-> @@ -153,8 +148,7 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->  	REG_L	t1, (KVM_ARCH_HOST_STVEC)(a0)
->  	REG_L	t2, (KVM_ARCH_HOST_SSCRATCH)(a0)
->  	REG_L	t3, (KVM_ARCH_HOST_SCOUNTEREN)(a0)
-> -	REG_L	t4, (KVM_ARCH_HOST_HSTATUS)(a0)
-> -	REG_L	t5, (KVM_ARCH_HOST_SSTATUS)(a0)
-> +	REG_L	t4, (KVM_ARCH_HOST_SSTATUS)(a0)
->  
->  	/* Save Guest SEPC */
->  	csrr	t0, CSR_SEPC
-> @@ -168,18 +162,14 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
->  	/* Save Guest and Restore Host SCOUNTEREN */
->  	csrrw	t3, CSR_SCOUNTEREN, t3
->  
-> -	/* Save Guest and Restore Host HSTATUS */
-> -	csrrw	t4, CSR_HSTATUS, t4
-> -
->  	/* Save Guest and Restore Host SSTATUS */
-> -	csrrw	t5, CSR_SSTATUS, t5
-> +	csrrw	t4, CSR_SSTATUS, t4
->  
->  	/* Store Guest CSR values */
->  	REG_S	t0, (KVM_ARCH_GUEST_SEPC)(a0)
->  	REG_S	t2, (KVM_ARCH_GUEST_A0)(a0)
->  	REG_S	t3, (KVM_ARCH_GUEST_SCOUNTEREN)(a0)
-> -	REG_S	t4, (KVM_ARCH_GUEST_HSTATUS)(a0)
-> -	REG_S	t5, (KVM_ARCH_GUEST_SSTATUS)(a0)
-> +	REG_S	t4, (KVM_ARCH_GUEST_SSTATUS)(a0)
->  
->  	/* Restore Host GPRs (except A0 and T0-T6) */
->  	REG_L	ra, (KVM_ARCH_HOST_RA)(a0)
+On Wed, Oct 16, 2024 at 12:00=E2=80=AFPM Brian Geffon <bgeffon@google.com> =
+wrote:
 >
+> The -n mode will benchmark pipes in a non-blocking mode using
+> epoll_wait.
+>
+> This specific mode was added to demonstrate the broken sync nature
+> of epoll: https://lore.kernel.org/lkml/20240426-zupfen-jahrzehnt-5be786bc=
+df04@brauner
+>
+> Signed-off-by: Brian Geffon <bgeffon@google.com>
 
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+I liked the commentary in:
+https://lore.kernel.org/lkml/ZxAOgj9RWm4NTl9d@google.com/
+
+Thanks,
+Ian
+
+> ---
+>  tools/perf/bench/sched-pipe.c | 43 +++++++++++++++++++++++++++++------
+>  1 file changed, 36 insertions(+), 7 deletions(-)
+>
+> diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sched-pipe.=
+c
+> index 3af6d3c55aba..e2562677df96 100644
+> --- a/tools/perf/bench/sched-pipe.c
+> +++ b/tools/perf/bench/sched-pipe.c
+> @@ -23,6 +23,7 @@
+>  #include <errno.h>
+>  #include <fcntl.h>
+>  #include <assert.h>
+> +#include <sys/epoll.h>
+>  #include <sys/time.h>
+>  #include <sys/types.h>
+>  #include <sys/syscall.h>
+> @@ -34,6 +35,8 @@ struct thread_data {
+>         int                     nr;
+>         int                     pipe_read;
+>         int                     pipe_write;
+> +       struct epoll_event      epoll_ev;
+> +       int                     epoll_fd;
+>         bool                    cgroup_failed;
+>         pthread_t               pthread;
+>  };
+> @@ -44,6 +47,7 @@ static        int                     loops =3D LOOPS_D=
+EFAULT;
+>  /* Use processes by default: */
+>  static bool                    threaded;
+>
+> +static bool                    nonblocking;
+>  static char                    *cgrp_names[2];
+>  static struct cgroup           *cgrps[2];
+>
+> @@ -81,6 +85,7 @@ static int parse_two_cgroups(const struct option *opt _=
+_maybe_unused,
+>  }
+>
+>  static const struct option options[] =3D {
+> +       OPT_BOOLEAN('n', "nonblocking", &nonblocking,   "Use non-blocking=
+ operations"),
+>         OPT_INTEGER('l', "loop",        &loops,         "Specify number o=
+f loops"),
+>         OPT_BOOLEAN('T', "threaded",    &threaded,      "Specify threads/=
+process based task setup"),
+>         OPT_CALLBACK('G', "cgroups", NULL, "SEND,RECV",
+> @@ -165,11 +170,25 @@ static void exit_cgroup(int nr)
+>         free(cgrp_names[nr]);
+>  }
+>
+> +static inline int read_pipe(struct thread_data *td)
+> +{
+> +       int ret, m;
+> +retry:
+> +       if (nonblocking) {
+> +               ret =3D epoll_wait(td->epoll_fd, &td->epoll_ev, 1, -1);
+> +               if (ret < 0)
+> +                       return ret;
+> +       }
+> +       ret =3D read(td->pipe_read, &m, sizeof(int));
+> +       if (nonblocking && ret < 0 && errno =3D=3D EWOULDBLOCK)
+> +               goto retry;
+> +       return ret;
+> +}
+> +
+>  static void *worker_thread(void *__tdata)
+>  {
+>         struct thread_data *td =3D __tdata;
+> -       int m =3D 0, i;
+> -       int ret;
+> +       int i, ret, m =3D 0;
+>
+>         ret =3D enter_cgroup(td->nr);
+>         if (ret < 0) {
+> @@ -177,16 +196,23 @@ static void *worker_thread(void *__tdata)
+>                 return NULL;
+>         }
+>
+> +       if (nonblocking) {
+> +               td->epoll_ev.events =3D EPOLLIN;
+> +               td->epoll_fd =3D epoll_create(1);
+> +               BUG_ON(td->epoll_fd < 0);
+> +               BUG_ON(epoll_ctl(td->epoll_fd, EPOLL_CTL_ADD, td->pipe_re=
+ad, &td->epoll_ev) < 0);
+> +       }
+> +
+>         for (i =3D 0; i < loops; i++) {
+>                 if (!td->nr) {
+> -                       ret =3D read(td->pipe_read, &m, sizeof(int));
+> +                       ret =3D read_pipe(td);
+>                         BUG_ON(ret !=3D sizeof(int));
+>                         ret =3D write(td->pipe_write, &m, sizeof(int));
+>                         BUG_ON(ret !=3D sizeof(int));
+>                 } else {
+>                         ret =3D write(td->pipe_write, &m, sizeof(int));
+>                         BUG_ON(ret !=3D sizeof(int));
+> -                       ret =3D read(td->pipe_read, &m, sizeof(int));
+> +                       ret =3D read_pipe(td);
+>                         BUG_ON(ret !=3D sizeof(int));
+>                 }
+>         }
+> @@ -209,13 +235,16 @@ int bench_sched_pipe(int argc, const char **argv)
+>          * discarding returned value of read(), write()
+>          * causes error in building environment for perf
+>          */
+> -       int __maybe_unused ret, wait_stat;
+> +       int __maybe_unused ret, wait_stat, flags =3D 0;
+>         pid_t pid, retpid __maybe_unused;
+>
+>         argc =3D parse_options(argc, argv, options, bench_sched_pipe_usag=
+e, 0);
+>
+> -       BUG_ON(pipe(pipe_1));
+> -       BUG_ON(pipe(pipe_2));
+> +       if (nonblocking)
+> +               flags |=3D O_NONBLOCK;
+> +
+> +       BUG_ON(pipe2(pipe_1, flags));
+> +       BUG_ON(pipe2(pipe_2, flags));
+>
+>         gettimeofday(&start, NULL);
+>
+> --
+> 2.47.0.rc1.288.g06298d1525-goog
+>
+>
 
