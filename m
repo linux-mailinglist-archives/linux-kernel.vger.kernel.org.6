@@ -1,83 +1,77 @@
-Return-Path: <linux-kernel+bounces-367444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B3C9A0271
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:24:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD069A026E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E14D5B22FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D428C1C2625A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE791C07DA;
-	Wed, 16 Oct 2024 07:23:48 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276C51B395F;
+	Wed, 16 Oct 2024 07:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qjeUi238"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632DC1B218C;
-	Wed, 16 Oct 2024 07:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBFB1B0F3E;
+	Wed, 16 Oct 2024 07:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063427; cv=none; b=bv0NlKv71CTuTGT//bsX/8CN0alvcP+FiEMhH3sGExMba1bvd48oVPEgVIak5ZSqtWbDZLt4mkF0qb8pVOr79WaTm9L1GdHFC57FWcpNHGb254vmqnrmMvdyGJptCspf9RXPm/+neNtFlvxB3P9mlxeezobzKcEDgXQ35CNli4E=
+	t=1729063425; cv=none; b=uY+KAmnk8nkjkY+4u6aRhdam65rzxaADAeGJmmDkPXlql0wVCOhJ4/O42dwyAdMB9gR4zJerUU5Pn9ny5oGspVBCYH+RhIPYeliSCG5b0SNNm4ohg7TCHESntsZoN7TVcociPrkbDOU1PJqDt+gG6KchnAxJm9NJMzxUSObifSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063427; c=relaxed/simple;
-	bh=3mhhQeRZzFy93M6QNqG7MjgsAGWHBt3NIGOYnoFlqWo=;
+	s=arc-20240116; t=1729063425; c=relaxed/simple;
+	bh=LUeb2SKQJR0n6dTUezlJNS57bki8wJKroOxh+PGIkbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ulNUBv3PnpSRCn5Vovc+mSNROvygC39QS61lydSOrl0ZIlC/0olXSh9+JEfGFJnNNQHJCBkC0mvaqLkp4/h1C9HqyCXW68s0R5GntcfBFANGDJYNN59D6hBzlbEAAoUK5k5DhnKdOH6F/LR3aE5WFHJO3OH8g8sUuY7l6hvF3r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=54080 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t0yNV-00BKfy-BP; Wed, 16 Oct 2024 09:23:31 +0200
-Date: Wed, 16 Oct 2024 09:23:27 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Simon Horman <horms@verge.net.au>,
-	NetFilter <netfilter-devel@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the ipvs-next tree
-Message-ID: <Zw9p7_31EESN64RQ@calendula>
-References: <20241016115741.785992f1@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HNhmu1prvF8Cszgfb0qTYoKauUXIr3w+6sHm5Ugy/q7I/qjTejws5wECNBxK99fSvwT3uo2gxr0mDpsdyH70/PGpCgExLBaIjuhnFAc6r4jhjp3m5CydEVnDeiTQ1bqXaLogIuilej8eC9HQM4JckQxKThd+gTlkOx96Skj4Mlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qjeUi238; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 901EBC4CEC5;
+	Wed, 16 Oct 2024 07:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729063425;
+	bh=LUeb2SKQJR0n6dTUezlJNS57bki8wJKroOxh+PGIkbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qjeUi238qRNIAPJ4zSi8jfApPfs44wdjQxsvfcg80qZ7QETRTRXXjMQryWEUm9J74
+	 RXsmxGJNsZfN+B5rLbgoh9pVgfGU/pdr6qR/9DUESta1I5bie6Z0RJbJXvybJ6EPRh
+	 LG680LHnw/lY+/GBP56EaTMlYLFqVybdszJh9psM=
+Date: Wed, 16 Oct 2024 09:23:41 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rohit Chavan <roheetchavan@gmail.com>
+Cc: Dave Penkler <dpenkler@gmail.com>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: gpib: Remove unneeded semicolon.
+Message-ID: <2024101657-osmosis-fading-4380@gregkh>
+References: <20241016071941.1615135-1-roheetchavan@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241016115741.785992f1@canb.auug.org.au>
-X-Spam-Score: -1.8 (-)
+In-Reply-To: <20241016071941.1615135-1-roheetchavan@gmail.com>
 
-On Wed, Oct 16, 2024 at 11:57:41AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commits are also in the netfilter-next tree as different
-> commits (but the same patches):
-> 
->   3478b99fc515 ("netfilter: nf_tables: prefer nft_trans_elem_alloc helper")
->   73e467915aab ("netfilter: nf_tables: replace deprecated strncpy with strscpy_pad")
->   0398cffb7459 ("netfilter: nf_tables: Fix percpu address space issues in nf_tables_api.c")
->   cb3d289366b0 ("netfilter: Make legacy configs user selectable")
-> 
-> These are commits
-> 
->   08e52cccae11 ("netfilter: nf_tables: prefer nft_trans_elem_alloc helper")
->   544dded8cb63 ("netfilter: nf_tables: replace deprecated strncpy with strscpy_pad")
->   0741f5559354 ("netfilter: nf_tables: Fix percpu address space issues in nf_tables_api.c")
->   6c959fd5e173 ("netfilter: Make legacy configs user selectable")
-> 
-> in the netfilter-next tree.
-> 
-> These have already caused an unnecessary conflict due to further commits
-> in the ipvs-next tree.  Maybe you could share a stable branch?
+On Wed, Oct 16, 2024 at 12:49:41PM +0530, Rohit Chavan wrote:
+> This patch cleans up the GPIB driver code by removing
+> unneeded semicolons.
 
-That was the result of a rebase, moving forward I will keep PR in a
-separated branch until they are merged upstream to avoid this
-situation.
+Nit, you can use all 72 columns.
+
+> 
+> Files modified:
+> drivers/staging/gpib/tms9914/tms9914.c
+> drivers/staging/gpib/tnt4882/mite.c
+
+Why are these lines needed?  We know what files are modified by looking
+at the diff :)
+
+Please fix up and send a v2.
+
+thanks,
+
+greg k-
 
