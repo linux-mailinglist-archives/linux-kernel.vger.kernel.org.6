@@ -1,100 +1,218 @@
-Return-Path: <linux-kernel+bounces-368783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F60A9A14E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:37:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A749A14E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E794F1F22795
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A341F23C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65071D2B2F;
-	Wed, 16 Oct 2024 21:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB161D2F72;
+	Wed, 16 Oct 2024 21:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1Ch8fcqS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="DLZbzp2E"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0282C1865E2
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCDD1D2B03
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114665; cv=none; b=efvzJnZFSB5zkzxLdoxFZ1EO+EAnFqUbuSJnHwzNiCE0KQdsLANBXsyRHSlJzwnbmz3F0+GkMOQNrsc8cqSlkPPtPs+LUbGSZ6h/K+aUN7OT6sgwjee5GdVy+B94M2BgeZgZFVVJFdH+KdQAsRRYd+Ig5FHzbvewRQlU594j020=
+	t=1729114680; cv=none; b=IZBEm/52DkJTxN/4bOXhlVH3J5SCu/r8rquzYePelpJ7ysSP22k1G73cr2HvluGHJhzWl+t8mz38vwg3ny6aMKYGG8FBrp0DJmTI4gxwZvGyO+NBGpHZWPw1jFgEvmXhOp9LBChOa7FkJ7lbKX4DLn1eCsuLUlAIr8ziQfonIqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729114665; c=relaxed/simple;
-	bh=GC31XweGRffDUqbHOabMA23kCtlRwpz279XuOqaDFVw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dnR3lUqlEw20ZdgVp/4R9d+ZBS7sR9HbpSU5Xd6JNtrJZXwlSlh0H3KHhzvjA7Uj6kdsm0kyAPRKPgwJi0piIZNWA5207wmKDCFmOLathJLPQ/gp/Uk3bG5XC1v1xGtel6mrWBEqJCVAD2rK+GevBqbGakg5dIeEtj6aaFUqdLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1Ch8fcqS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86988C4CEC5;
-	Wed, 16 Oct 2024 21:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729114664;
-	bh=GC31XweGRffDUqbHOabMA23kCtlRwpz279XuOqaDFVw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=1Ch8fcqS1DE1m975qHMKe6ECoXdyCLsUKuzhRmVZZnZ0j4bxALkD1dRmGn1tdfjrP
-	 uNUjjUUoZSqoRtZXgnR2TF6aRAOTs+ZxW3NVDDMqnjp1wmhCp/SMgz5xWvb7YXc6wC
-	 ZZjzsPHSW6ZgbHV+hIprW5jDYRXZYHIwEL3Nn7lk=
-Date: Wed, 16 Oct 2024 14:37:43 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: syzbot <syzbot+30eac43568e2b3d65728@syzkaller.appspotmail.com>,
- linmiaohe@huawei.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- syzkaller-bugs@googlegroups.com, vitaly.wool@konsulko.com
-Subject: Re: [syzbot] [mm?] BUG: corrupted list in add_to_unbuddied
-Message-Id: <20241016143743.675996b564d269419c129d29@linux-foundation.org>
-In-Reply-To: <CANp29Y6czU3c-9FhdcyjfJtWrnaHJZ4o3WyY6TUeGo7TnP0KtQ@mail.gmail.com>
-References: <000000000000c6b91e0621a312f4@google.com>
-	<670e81a9.050a0220.d9b66.0153.GAE@google.com>
-	<20241015153958.df4e735274e389999de60d2e@linux-foundation.org>
-	<CANp29Y6czU3c-9FhdcyjfJtWrnaHJZ4o3WyY6TUeGo7TnP0KtQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729114680; c=relaxed/simple;
+	bh=0ftiz8/PJ2BXnKXN6KtR+nBUTcWtl/DbJJX/Z6yLX5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZNmg+Amt+DtxLHwy/lfy88mNX/T+IUxDVBRxjS4yN4u9hMrOn58erYPwQLhP21e8a6d6VBsr2Dso3gW/kKgx6b86xdnBC9pX0GiMRZH+mPBk/wRMLfEFtVZLa41ge8DfHNenSNL7SbgiJyDLfB9Y1h2AfhMU2LwNcMFAiRjQ8/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=DLZbzp2E; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e4b7409fso291862e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:37:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atishpatra.org; s=google; t=1729114677; x=1729719477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2YznlNfPmglMUg5tZFDFUIFHN41LFVDmI36C4tGvTFk=;
+        b=DLZbzp2E1VAmpLQiuGykjBJDklC+r7B3t2M3c93roMJg/VWHKlj6xncOomPinD17Gr
+         nTJYyZFNNXZ71nhjW0+2SHvVhFWt5mw2GMdpsrkDDhhCFB/EvoBkzmaIeyhZYTwib5bX
+         Qkv2QVuW8n4PF4QMvihvBmoP1w4jXa9elmFFk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729114677; x=1729719477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2YznlNfPmglMUg5tZFDFUIFHN41LFVDmI36C4tGvTFk=;
+        b=gp5rIXFfJW0C6Z1oPa3Fue9JLdL3rG/2hA44VziMSdXkAft126XLbUDMalVu0vPzTX
+         +L6r2FIO8WzQzUs94UW4FrsyS5nPpk9N7LHSkPPkeSXf8i2RJ5wYkjVvHPn9eVAcu0+P
+         y4zrvL4vzwJS7zpHQWk+bPa8enbNlGiYQ/Ah9TMdiLxCr0EDUHAPsMBskK+iiNZRfVRO
+         mpItrnyEj7j/DHygUe1lFPfo4sprXthi0OXkZG0CTAO8OeGpQ1qO8UuKHY5EvEa6xlEE
+         SnY07xay0rCsXGM7pVR14LwQsrxGXy5E1X0QG1foBEP2uh/CRvb8Ox5si5jZMVmjTCDX
+         oSnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQmpJvrWimu9B3XlETpX+0oDsc2hEICvr0PEZ8pCXiJ65H0MHb//Ezw3G+taV5w76f1sm397H5QKTymeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP/3lNCuXsekd9haaC/NvA9IqJ5P12ZnXtdkRZDdgYbLeceeK4
+	q8BZ8Jal+S69pAXN+zp11OfLFOf+EnKQdfhT97qf2FiYLtDVdvV1H0T7vyZ6KAKTsK0iaCOUmxc
+	tnwkjC908B7pqq+g3ffwbo2+vnHQu/6iX9wzr
+X-Google-Smtp-Source: AGHT+IFj9tyESsCJ6J96tM8hMvteUTyEpM92Iaw4llEr3qWo3ylAwmBp3kDxxSD8nRDRtkcl2BXGiAgd+cAwfJXLyIQ=
+X-Received: by 2002:a05:6512:3c81:b0:53a:41a:69bb with SMTP id
+ 2adb3069b0e04-53a0c709c49mr241179e87.28.1729114677218; Wed, 16 Oct 2024
+ 14:37:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-5-apatel@ventanamicro.com>
+In-Reply-To: <20240719160913.342027-5-apatel@ventanamicro.com>
+From: Atish Patra <atishp@atishpatra.org>
+Date: Wed, 16 Oct 2024 14:37:45 -0700
+Message-ID: <CAOnJCU+4qNAsqDO4bvL9OdRdFBDavpTiLEEYSaYpHG4R=1W0Og@mail.gmail.com>
+Subject: Re: [PATCH 04/13] RISC-V: KVM: Break down the __kvm_riscv_switch_to()
+ into macros
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Oct 2024 08:19:25 +0200 Aleksandr Nogikh <nogikh@google.com> wrote:
+On Fri, Jul 19, 2024 at 9:09=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
+> wrote:
+>
+> Break down the __kvm_riscv_switch_to() function into macros so that
+> these macros can be later re-used by SBI NACL extension based low-level
+> switch function.
+>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  arch/riscv/kvm/vcpu_switch.S | 52 +++++++++++++++++++++++++++---------
+>  1 file changed, 40 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/riscv/kvm/vcpu_switch.S b/arch/riscv/kvm/vcpu_switch.S
+> index 3f8cbc21a644..9f13e5ce6a18 100644
+> --- a/arch/riscv/kvm/vcpu_switch.S
+> +++ b/arch/riscv/kvm/vcpu_switch.S
+> @@ -11,11 +11,7 @@
+>  #include <asm/asm-offsets.h>
+>  #include <asm/csr.h>
+>
+> -       .text
+> -       .altmacro
+> -       .option norelax
+> -
+> -SYM_FUNC_START(__kvm_riscv_switch_to)
+> +.macro SAVE_HOST_GPRS
+>         /* Save Host GPRs (except A0 and T0-T6) */
+>         REG_S   ra, (KVM_ARCH_HOST_RA)(a0)
+>         REG_S   sp, (KVM_ARCH_HOST_SP)(a0)
+> @@ -40,10 +36,12 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
+>         REG_S   s9, (KVM_ARCH_HOST_S9)(a0)
+>         REG_S   s10, (KVM_ARCH_HOST_S10)(a0)
+>         REG_S   s11, (KVM_ARCH_HOST_S11)(a0)
+> +.endm
+>
+> +.macro SAVE_HOST_AND_RESTORE_GUEST_CSRS __resume_addr
+>         /* Load Guest CSR values */
+>         REG_L   t0, (KVM_ARCH_GUEST_SSTATUS)(a0)
+> -       la      t1, .Lkvm_switch_return
+> +       la      t1, \__resume_addr
+>         REG_L   t2, (KVM_ARCH_GUEST_SEPC)(a0)
+>
+>         /* Save Host and Restore Guest SSTATUS */
+> @@ -62,7 +60,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
+>         REG_S   t0, (KVM_ARCH_HOST_SSTATUS)(a0)
+>         REG_S   t1, (KVM_ARCH_HOST_STVEC)(a0)
+>         REG_S   t3, (KVM_ARCH_HOST_SSCRATCH)(a0)
+> +.endm
+>
+> +.macro RESTORE_GUEST_GPRS
+>         /* Restore Guest GPRs (except A0) */
+>         REG_L   ra, (KVM_ARCH_GUEST_RA)(a0)
+>         REG_L   sp, (KVM_ARCH_GUEST_SP)(a0)
+> @@ -97,13 +97,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
+>
+>         /* Restore Guest A0 */
+>         REG_L   a0, (KVM_ARCH_GUEST_A0)(a0)
+> +.endm
+>
+> -       /* Resume Guest */
+> -       sret
+> -
+> -       /* Back to Host */
+> -       .align 2
+> -.Lkvm_switch_return:
+> +.macro SAVE_GUEST_GPRS
+>         /* Swap Guest A0 with SSCRATCH */
+>         csrrw   a0, CSR_SSCRATCH, a0
+>
+> @@ -138,7 +134,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
+>         REG_S   t4, (KVM_ARCH_GUEST_T4)(a0)
+>         REG_S   t5, (KVM_ARCH_GUEST_T5)(a0)
+>         REG_S   t6, (KVM_ARCH_GUEST_T6)(a0)
+> +.endm
+>
+> +.macro SAVE_GUEST_AND_RESTORE_HOST_CSRS
+>         /* Load Host CSR values */
+>         REG_L   t0, (KVM_ARCH_HOST_STVEC)(a0)
+>         REG_L   t1, (KVM_ARCH_HOST_SSCRATCH)(a0)
+> @@ -160,7 +158,9 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
+>         REG_S   t1, (KVM_ARCH_GUEST_A0)(a0)
+>         REG_S   t2, (KVM_ARCH_GUEST_SSTATUS)(a0)
+>         REG_S   t3, (KVM_ARCH_GUEST_SEPC)(a0)
+> +.endm
+>
+> +.macro RESTORE_HOST_GPRS
+>         /* Restore Host GPRs (except A0 and T0-T6) */
+>         REG_L   ra, (KVM_ARCH_HOST_RA)(a0)
+>         REG_L   sp, (KVM_ARCH_HOST_SP)(a0)
+> @@ -185,6 +185,34 @@ SYM_FUNC_START(__kvm_riscv_switch_to)
+>         REG_L   s9, (KVM_ARCH_HOST_S9)(a0)
+>         REG_L   s10, (KVM_ARCH_HOST_S10)(a0)
+>         REG_L   s11, (KVM_ARCH_HOST_S11)(a0)
+> +.endm
+> +
+> +       .text
+> +       .altmacro
+> +       .option norelax
+> +
+> +       /*
+> +        * Parameters:
+> +        * A0 <=3D Pointer to struct kvm_vcpu_arch
+> +        */
+> +SYM_FUNC_START(__kvm_riscv_switch_to)
+> +       SAVE_HOST_GPRS
+> +
+> +       SAVE_HOST_AND_RESTORE_GUEST_CSRS .Lkvm_switch_return
+> +
+> +       RESTORE_GUEST_GPRS
+> +
+> +       /* Resume Guest using SRET */
+> +       sret
+> +
+> +       /* Back to Host */
+> +       .align 2
+> +.Lkvm_switch_return:
+> +       SAVE_GUEST_GPRS
+> +
+> +       SAVE_GUEST_AND_RESTORE_HOST_CSRS
+> +
+> +       RESTORE_HOST_GPRS
+>
+>         /* Return to C code */
+>         ret
+> --
+> 2.34.1
+>
 
-> Hi Andrew,
-> 
-> On Wed, Oct 16, 2024 at 12:40 AM Andrew Morton
-> <akpm@linux-foundation.org> wrote:
-> >
-> > On Tue, 15 Oct 2024 07:52:25 -0700 syzbot <syzbot+30eac43568e2b3d65728@syzkaller.appspotmail.com> wrote:
-> >
-> > > syzbot has found a reproducer for the following issue on:
-> > >
-> > > HEAD commit:    eca631b8fe80 Merge tag 'f2fs-6.12-rc4' of git://git.kernel..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14d0845f980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=30eac43568e2b3d65728
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16df4c40580000
-> >
-> > Something seems rather wrong with the "syz repro" page.
-> >
-> >
-> 
-> What exactly looks wrong? :)
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
-I click on the link
-(https://syzkaller.appspot.com/x/repro.syz?x=16df4c40580000) and I get
-the below garbage:
-
-> >
-> > # https://syzkaller.appspot.com/bug?id=6b5f76b3a3783e6b1876d25b2d7a981ac0e0131f
-> > # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-> > #{"threaded":true,"repeat":true,"procs":6,"slowdown":1,"sandbox":"none","sandbox_arg":0,"tun":true,"netdev":true,"resetnet":true,"cgroups":true,"binfmt_misc":true,"close_fds":true,"usb":true,"vhci":true,"wifi":true,"ieee802154":true,"sysctl":true,"swap":true,"tmpdir":true,"segv":true}
-> > syz_mount_image$ntfs3(&(0x7f0000000000), &(0x7f0000000140)='./bus\x00', 0x19c6038, &(0x7f0000000180)=ANY=[], 0x1, 0x1f231, &(0x7f000003e780)="$eJzs3QmYTeUfB/D37Pu+XLvBWEO2RLLvsm+pZAvZyRalGhJRSSWpFElCQqhUEklEsi8JSZKQVEIS/2fu3JlmufOvadf7/TyPOfeee877nnu+94z5ne0ebz25edsGbRISEhKIzZAU50gGSSSJXIq9xsfGXYoNmdi/EZ3nV9ttftQreZxZcOVtoxYUXjVUa7/MfEsim+xOx09VOLwp3JT7+MW2vXoPSeg9JGHAwKEJXRO6DRw4tGu3fj0Suvce0rdsQst+PboO6ZHQe8CQHoMzvNyz38BBg0YmdB3Q3VAHDe4xZEhC1wEjE/r2GJkwdGDC0MEjE7re2rX3gISyZcsmGCqB36jd/H96CQAAAAAAAAAAAAAAAAAA4M9x6VLaoX0AAAAAAAAAAAAAAAAAAAC4TDVo3LR+OaKkPWcIQxoRhsxlCCH2L9OlXvfPZdNO8qRdoo9yRX82Sn10um/5fuf
-> > <and a huge amount more>
-> >
-
+--=20
+Regards,
+Atish
 
