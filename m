@@ -1,318 +1,144 @@
-Return-Path: <linux-kernel+bounces-368553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A459A113F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:08:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB0B9A113D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C431D1F27390
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:08:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A93EB233ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEA5210C20;
-	Wed, 16 Oct 2024 18:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CF920F5C0;
+	Wed, 16 Oct 2024 18:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZJIi5jVt"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="WS1yf97p"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DABC18C030;
-	Wed, 16 Oct 2024 18:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAED318C028
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729102123; cv=none; b=FhQvDBgS9KBXiHNQG1ZLg3TRgBRAyJ+hwW5sigY9UDwg2yAeizRlDjGQ1bot2rU0tjvbXOoCkcWjb+mD+9XqVv2hs5EaYULUgZ9L3I3Dy7RnW/TgK+vME764rHRhHJLDSlMTboQEm0QonrmrJwEmNFhdC2UB8avZSegymnYm+hk=
+	t=1729102092; cv=none; b=lQbNPvZeUskZV/qKVK0TKnUZ2jQYa+Ku6nT44P3WsLezbK0GLNkpMwg7kjfaYVKP25ioPHUOiAW2e0y4TpWKAbTQs3pQ4BmV+durTXRtxoh8fnA91Ik3ezyj6Zua/CiPsDMoj3yBTEguPbwSH9Utq6sodZkmGfVhnXPUyHdCoFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729102123; c=relaxed/simple;
-	bh=B/sGpEq00bwshiw68X7r01udrXD+3gSGCJ2yzLTShb0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CPA9bJhaIhC/h//XtfOPz2yJyYPY+KqvDfYoPcjvmImhLeCpdW2ACEnGqHgOkPlSPifPmR2ZRDo1ijUUukIj3i5AB5dyUP4zCaiAZz6EcojW8bcqYvdMqgEl92a3Q/UxarwjETYJN2kkkneG45345bxVj02liJZz02/GvXUjz00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZJIi5jVt; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGniMh026979;
-	Wed, 16 Oct 2024 18:08:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=dAPbA/
-	oOxlwGEOrT4GfnpP1j6I5yc9/VypAv3KCsGy0=; b=ZJIi5jVtjKqF3PtDZHf84q
-	tQmLZ+D8AwGmO2ZcN138zH3dIHu+jrgNCt3bi1Tby0in9Lz+AoIefOpR1xf8qLkQ
-	CE4ueVrGcceTqBXnIvAW4PX9tzrn72LJGp4o9J0P7mcOA9PbTC+MMdiw+mo2vAWY
-	ES1ewcP2VxKF+s0MW+DMUu9cHQLufrRiqvCtIezBtPpoIi4sNo+ZIfFRDr/j1c5x
-	NQJk2K/opEUx+kiHRtNmuOPgmKL5U63Nb9H21GdI5UvFYPF5dV1MCBOtTe5gJkmo
-	VQjfYVZZOKGpu3ud5ncE8Hq73k3gWjukUQ//3fgbeakqhuigE+4KIVSbq8x+71qA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ahbr0ab3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 18:08:30 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GI8TR7031888;
-	Wed, 16 Oct 2024 18:08:29 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ahbr0ab2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 18:08:29 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGXJrO027432;
-	Wed, 16 Oct 2024 18:08:29 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txtvr6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 18:08:28 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GI8Pwk50528670
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 18:08:25 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0533220040;
-	Wed, 16 Oct 2024 18:08:25 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A4B3420043;
-	Wed, 16 Oct 2024 18:08:17 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.242.239])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 18:08:17 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1729102092; c=relaxed/simple;
+	bh=uc/Y4bZmRuHb/CI+f7vhlsxz3SmdwdaHRBs+BAXIP+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S7Rmq+V3zm3j/Xb6y7aeLWdzmTcaiiQy+LcTTDN5Cc5rWJz0LN/81MtCdkWeMTeTUzgugtRT4o8J/VUgUUotobMbgZ7WAU89KnjUoD0p55xD4yKD7ForcmsGa6AqcYnqQn94d2wS4YYuc2NN4+/JIDkdSmLVnBqq8kmk5HtsHlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=WS1yf97p; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c693b68f5so1094565ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1729102090; x=1729706890; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Do5NZzoXtrPkRCkHPB7RbxDjXCyCXzT+J3lpLdQhsU=;
+        b=WS1yf97p5Q+o9w/K11zrBdp0jgx0wm/C/H/vdCsm8plaYFDk0j8jgLatirTdGIm1HC
+         wGVB8RfR8o0xyzOo6kBWelmTTsME/3ToAOVpnVe/EY1CvIosj4i5VEL0QqMWrDJtCL38
+         BOW2DaNqodRO9OwZzL7nolkAsY6KRLV1pw4ncu7az1RBg/oR4p9liPx3BNVwUG6MJacY
+         EQAYifMfD8wL7PcLj4JeAEjM5raN3o5yBEr36+8b89ErGl1B/PhnH5C+xB2XT9GWLKdu
+         iEmxU5LbaZcWT3rTr/29WACXJ3oxIsbaXZYb7D18tXFW9kOlzkvagwqOdcBtCw9zVJLz
+         wtQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729102090; x=1729706890;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Do5NZzoXtrPkRCkHPB7RbxDjXCyCXzT+J3lpLdQhsU=;
+        b=ksvfsl59CIxJ5lcyhugkxa069lB90eMhIQ+N5eWlye/n3G7/7jyJGxmdJuf0xMNaLU
+         WzThlT+zDqvDjA1VLbcczlnGLzF/FUocRa+ZuVHMTx4lb5zbcOJmWcTADuHsjsVF/kL6
+         yyo0IsECJs8bT6BkeqxlZa/1cbtUknTddnZAqKBOFszkee5bHUr/VZm6533q3O+kYIQ7
+         EPk3tQ99ibkxkluJSdHdohaxdAEuZLLl82r8WsSXhaOlKtZ1a2ti37AygwwuoScUTrnt
+         DAUN3x134JGFsX6QuwsZbsGy33PBGrtyDd6lMeeFD2o8WHCXbaKTCrWrSETJ4xrSRZKN
+         TThg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeSMnkzh8dRmrhTeTCETAZa3hvn+BP0Gl8Pm5NQC1mnS+pD36GXDSVwNK+tHKJcYs4HUdZz++nn8ndgH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfm7SirGEkPtNlyGQ98dV4G1+CVD1h/vs3GmTR92dwue69bwBa
+	sMqeXEVpmikByShvBXOVaOCV2WHgZDKhik67KCDOhl5qGhy8ZrDRBARJjueCvwU=
+X-Google-Smtp-Source: AGHT+IHk7EqhzNNVg4OZzagkiI9u/M85Rdln26E/pLQmb1Zz13C4O48RJDEyeV5O9x9KbH9fTQkQcg==
+X-Received: by 2002:a17:903:41c5:b0:20c:c482:1d66 with SMTP id d9443c01a7336-20cc4821f85mr213342205ad.35.1729102090025;
+        Wed, 16 Oct 2024 11:08:10 -0700 (PDT)
+Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d18036714sm31306885ad.152.2024.10.16.11.08.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 11:08:09 -0700 (PDT)
+Date: Wed, 16 Oct 2024 11:08:08 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
+	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, m.szyprowski@samsung.com,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Introduce support for T-head TH1520 Mailbox
+Message-ID: <ZxABCCJcoTmxiRXB@x1>
+References: <CGME20241014123409eucas1p2a3a3f085c0630073326ca299a870f3ee@eucas1p2.samsung.com>
+ <20241014123314.1231517-1-m.wilczynski@samsung.com>
+ <Zw1jdl64f5l8N+Km@x1>
+ <431e98cd-6c53-4478-86a6-e532be4ed58e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH V2 1/2] tools/perf/pmu-events/powerpc: Add support for
- compat events in json
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <Zw_5OLkwefdGOnA3@google.com>
-Date: Wed, 16 Oct 2024 23:38:02 +0530
-Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        irogers@google.com, hbathini@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-        maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <99F59594-A65B-48B6-9252-29EDA1AF2DA3@linux.vnet.ibm.com>
-References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
- <Zw_5OLkwefdGOnA3@google.com>
-To: Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rFV3FUdG9IL4168xZhgsmUCJw1ydwLQ9
-X-Proofpoint-ORIG-GUID: uYRwyQ604yNdSO9BNViKUsbLuRGBy_1P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- clxscore=1015 adultscore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160115
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <431e98cd-6c53-4478-86a6-e532be4ed58e@samsung.com>
 
+On Wed, Oct 16, 2024 at 12:03:05AM +0200, Michal Wilczynski wrote:
+> 
+> 
+> On 10/14/24 20:31, Drew Fustini wrote:
+> > On Mon, Oct 14, 2024 at 02:33:11PM +0200, Michal Wilczynski wrote:
+> >> The T-head TH1520 SoC supports a hardware mailbox that enables two cores
+> >> within the SoC to communicate and coordinate [1]. One example of such
+> >> coordination would be cooperation with the T-Head E902 core, which is
+> >> responsible for power, clock, and resource management. For example, in
+> >> the specific case of the BXM-4-64 GPU, it needs to be powered on by the
+> >> E902 core, and the kernel running on the E910 needs to 'ask' the
+> >> firmware running on the E902 core to enable power to the GPU island.
+> >> Given recent advancements in work on the upstream GPU driver [2], there
+> >> is an emerging need to get this code in the mainline kernel.
+> >>
+> >> Link: https://protect2.fireeye.com/v1/url?k=2021d256-7fbdfb7c-20205919-000babe598f7-ca654d1a9bc866ac&q=1&e=11e97355-e6e9-4aac-a996-cc475156b3c8&u=https%3A%2F%2Fopenbeagle.org%2Fbeaglev-ahead%2Fbeaglev-ahead%2F-%2Fblob%2Fmain%2Fdocs%2FTH1520%2520System%2520User%2520Manual.pdf [1]
+> >> Link: https://gitlab.freedesktop.org/imagination/linux-firmware/-/issues/1 [2]
+> >>
+> >> Thanks, Krzysztof and Rob, for your review! Since this series is gaining
+> >> some interest, I've dropped the RFC prefix with the v3 update.
+> > 
+> > I've applied this series and booted okay. I see the driver loaded:
+> > 
+> >  /sys/devices/platform/soc/ffffc38000.mailbox/driver points to
+> >  /sys/bus/platform/drivers/th1520-mbox
+> > 
+> > How do you test that the communication with the E902 is working
+> > correctly?
+> 
+> Thank you for your interest. To test this, I've prepared a diff that
+> includes the missing drivers utilizing the mailbox and enabled the GPU
+> node in the device tree to use the drm/imagination driver.
+> 
+> I've observed that when the power was turned off through the E902 core
+> using the mailbox, the drm/imagination driver would hang in
+> pvr_load_gpu_id() while attempting to read its BVNC from the register.
+> However, when the GPU was turned on via the mailbox, the BVNC could be
+> read correctly. Still, the firmware fails to boot due to some missing
+> programming in the drm/imagination driver, which is currently being
+> worked on. I've briefly explained this in the first commit of this
+> series.
+> 
+> If you'd like to try this yourself, I'd be happy to push these setups to
+> a GitHub repository and provide you with a link, so you can see the
+> setup in action.
 
+I think that would be helpful for myself and others to be able to see
+the interaction.
 
-> On 16 Oct 2024, at 11:04=E2=80=AFPM, Namhyung Kim =
-<namhyung@kernel.org> wrote:
->=20
-> Hello Athira,
->=20
-> On Thu, Oct 10, 2024 at 08:21:06PM +0530, Athira Rajeev wrote:
->> perf list picks the events supported for specific platform
->> from pmu-events/arch/powerpc/<platform>. Example power10 events
->> are in pmu-events/arch/powerpc/power10, power9 events are part
->> of pmu-events/arch/powerpc/power9. The decision of which
->> platform to pick is determined based on PVR value in powerpc.
->> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
->>=20
->> Example:
->>=20
->> Format:
->>        PVR,Version,JSON/file/pathname,Type
->>=20
->> 0x004[bcd][[:xdigit:]]{4},1,power8,core
->> 0x0066[[:xdigit:]]{4},1,power8,core
->> 0x004e[[:xdigit:]]{4},1,power9,core
->> 0x0080[[:xdigit:]]{4},1,power10,core
->> 0x0082[[:xdigit:]]{4},1,power10,core
->>=20
->> The code gets the PVR from system using get_cpuid_str function
->> in arch/powerpc/util/headers.c ( from SPRN_PVR ) and compares
->> with value from mapfile.csv
->>=20
->> In case of compat mode, say when partition is booted in a power9
->> mode when the system is a power10, add an entry to pick the
->> ISA architected events from "pmu-events/arch/powerpc/compat".
->> Add json file generic-events.json which will contain these
->> events which is supported in compat mode.
->>=20
->> Suggested-by: Madhavan Srinivasan <maddy@linux.ibm.com>
->> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->=20
-> Is this the latest version?
->=20
-> Thanks,
-> Namhyung
-
-Hi Namhyung
-
-Yes, this is the latest version=20
-
-Thanks
-Athira
->=20
->> ---
->>=20
->> .../arch/powerpc/compat/generic-events.json   | 117 =
-++++++++++++++++++
->> .../perf/pmu-events/arch/powerpc/mapfile.csv  |   1 +
->> 2 files changed, 118 insertions(+)
->> create mode 100644 =
-tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
->>=20
->> diff --git =
-a/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json =
-b/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
->> new file mode 100644
->> index 000000000000..6f5e8efcb098
->> --- /dev/null
->> +++ b/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
->> @@ -0,0 +1,117 @@
->> +[
->> +  {
->> +    "EventCode": "0x600F4",
->> +    "EventName": "PM_CYC",
->> +    "BriefDescription": "Processor cycles."
->> +  },
->> +  {
->> +    "EventCode": "0x100F2",
->> +    "EventName": "PM_CYC_INST_CMPL",
->> +    "BriefDescription": "1 or more ppc insts finished"
->> +  },
->> +  {
->> +    "EventCode": "0x100f4",
->> +    "EventName": "PM_FLOP_CMPL",
->> +    "BriefDescription": "Floating Point Operations Finished."
->> +  },
->> +  {
->> +    "EventCode": "0x100F6",
->> +    "EventName": "PM_L1_ITLB_MISS",
->> +    "BriefDescription": "Number of I-ERAT reloads."
->> +  },
->> +  {
->> +    "EventCode": "0x100F8",
->> +    "EventName": "PM_NO_INST_AVAIL",
->> +    "BriefDescription": "Number of cycles the ICT has no itags =
-assigned to this thread."
->> +  },
->> +  {
->> +    "EventCode": "0x100fc",
->> +    "EventName": "PM_LD_CMPL",
->> +    "BriefDescription": "Load instruction completed."
->> +  },
->> +  {
->> +    "EventCode": "0x200F0",
->> +    "EventName": "PM_ST_CMPL",
->> +    "BriefDescription": "Stores completed from S2Q (2nd-level store =
-queue)."
->> +  },
->> +  {
->> +    "EventCode": "0x200F2",
->> +    "EventName": "PM_INST_DISP",
->> +    "BriefDescription": "PowerPC instruction dispatched."
->> +  },
->> +  {
->> +    "EventCode": "0x200F4",
->> +    "EventName": "PM_RUN_CYC",
->> +    "BriefDescription": "Processor cycles gated by the run latch."
->> +  },
->> +  {
->> +    "EventCode": "0x200F6",
->> +    "EventName": "PM_L1_DTLB_RELOAD",
->> +    "BriefDescription": "DERAT Reloaded due to a DERAT miss."
->> +  },
->> +  {
->> +    "EventCode": "0x200FA",
->> +    "EventName": "PM_BR_TAKEN_CMPL",
->> +    "BriefDescription": "Branch Taken instruction completed."
->> +  },
->> +  {
->> +    "EventCode": "0x200FC",
->> +    "EventName": "PM_L1_ICACHE_MISS",
->> +    "BriefDescription": "Demand instruction cache miss."
->> +  },
->> +  {
->> +    "EventCode": "0x200FE",
->> +    "EventName": "PM_L1_RELOAD_FROM_MEM",
->> +    "BriefDescription": "L1 Dcache reload from memory"
->> +  },
->> +  {
->> +    "EventCode": "0x300F0",
->> +    "EventName": "PM_ST_MISS_L1",
->> +    "BriefDescription": "Store Missed L1"
->> +  },
->> +  {
->> +    "EventCode": "0x300FC",
->> +    "EventName": "PM_DTLB_MISS",
->> +    "BriefDescription": "Data PTEG reload"
->> +  },
->> +  {
->> +    "EventCode": "0x300FE",
->> +    "EventName": "PM_DATA_FROM_L3MISS",
->> +    "BriefDescription": "Demand LD - L3 Miss (not L2 hit and not L3 =
-hit)"
->> +  },
->> +  {
->> +    "EventCode": "0x400F0",
->> +    "EventName": "PM_LD_MISS_L1",
->> +    "BriefDescription": "L1 Dcache load miss"
->> +  },
->> +  {
->> +    "EventCode": "0x400F2",
->> +    "EventName": "PM_CYC_INST_DISP",
->> +    "BriefDescription": "Cycle when instruction(s) dispatched."
->> +  },
->> +  {
->> +    "EventCode": "0x400F6",
->> +    "EventName": "PM_BR_MPRED_CMPL",
->> +    "BriefDescription": "A mispredicted branch completed. Includes =
-direction and target."
->> +  },
->> +  {
->> +    "EventCode": "0x400FA",
->> +    "EventName": "PM_RUN_INST_CMPL",
->> +    "BriefDescription": "PowerPC instruction completed while the run =
-latch is set."
->> +  },
->> +  {
->> +    "EventCode": "0x400FC",
->> +    "EventName": "PM_ITLB_MISS",
->> +    "BriefDescription": "Instruction TLB reload (after a miss), all =
-page sizes. Includes only demand misses."
->> +  },
->> +  {
->> +    "EventCode": "0x400fe",
->> +    "EventName": "PM_LD_NOT_CACHED",
->> +    "BriefDescription": "Load data not cached."
->> +  },
->> +  {
->> +    "EventCode": "0x500fa",
->> +    "EventName": "PM_INST_CMPL",
->> +    "BriefDescription": "Instructions."
->> +  }
->> +]
->> diff --git a/tools/perf/pmu-events/arch/powerpc/mapfile.csv =
-b/tools/perf/pmu-events/arch/powerpc/mapfile.csv
->> index 4d5e9138d4cc..cbd3cb443784 100644
->> --- a/tools/perf/pmu-events/arch/powerpc/mapfile.csv
->> +++ b/tools/perf/pmu-events/arch/powerpc/mapfile.csv
->> @@ -16,3 +16,4 @@
->> 0x004e[[:xdigit:]]{4},1,power9,core
->> 0x0080[[:xdigit:]]{4},1,power10,core
->> 0x0082[[:xdigit:]]{4},1,power10,core
->> +0x00ffffff,1,compat,core
->> --=20
->> 2.27.0
-
-
+Thanks,
+Drew
 
