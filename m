@@ -1,170 +1,291 @@
-Return-Path: <linux-kernel+bounces-367879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC9B9A07E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BF29A07F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D140B22663
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7C5283E6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CF220720B;
-	Wed, 16 Oct 2024 10:57:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281B62076C0;
+	Wed, 16 Oct 2024 10:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FCrxX8Yo"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05631CC14C;
-	Wed, 16 Oct 2024 10:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B061C07F9;
+	Wed, 16 Oct 2024 10:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076276; cv=none; b=ghp7FB+i/kSrbKQ/dlpUeZWyMTCXbE9oMt9DVJlD8UEB2JYcKqTdaxraEIKRh5s+aW+S4SKkP6LcKWgENpCftF5nK2hrn+CQCJ7nSpfw0IpvF9XnyALJoU85uq2OZ226FDS1tAGwPkLwR3TyHVXEsIQsTmw++68+j/cxJ1Bzkcc=
+	t=1729076375; cv=none; b=fytCDZvXu6Si/UyDizwyJPfzlVLqLuqyOWCgpfzNh48adgEMFo9TbE6S1H8CHwI76plUnRLCqp3tuvsCeX3tv/ACLX9az3OkboHzKhvo6d1Ucxq4viELZ2NMAynLzLhVMUOt1BDy5KKqbhweg+obJpQFKdau4pIMqS3PY84Oae0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076276; c=relaxed/simple;
-	bh=k9e4fjda90o5EA5Z0Af+v/eRFcfzY6lzhbhsuWf7++Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KOTtP0opcsa1dSjebUb7E1PXIhi+u1jCgQbFm3hj4o44pX4jJIpEzoxxFsFC04a4wcxnIJ1rCZHGiH4SWh6LO/w5OzIGMRsW84MMg6LMCQDKuB0PhcgIWykawQFrAj00Q90qSqhKsdhJB077I67b5ewzyxVORghh87VAb2xaHQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B95C4CECD;
-	Wed, 16 Oct 2024 10:57:55 +0000 (UTC)
-Message-ID: <e591ffa7-4214-4ec0-91f3-65c809aedce9@xs4all.nl>
-Date: Wed, 16 Oct 2024 12:57:53 +0200
+	s=arc-20240116; t=1729076375; c=relaxed/simple;
+	bh=z6QRm0J2I++VLMK4orPSe4kHg6UZzQ44XST8c0Wy+aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+DNENOyolJZHdruhpD9ZEbEv0Xg0aleqTjjUTrYN5b4cOzx2ctwdWd1ghrmBXlP+w9asexMFUa1ySa3/BKLnbXoF1RNwgyhaOEkXhR4IzJH22Ksp56jTDB7lhRPaV8iPtjN2bcvGjPaGq8hgQOafoJ9E6/1+RXnRTHxsY+ZSRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FCrxX8Yo reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6A8AE40E0198;
+	Wed, 16 Oct 2024 10:59:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id H-8ABRph_QdB; Wed, 16 Oct 2024 10:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729076361; bh=zv5a7UXvwk4zGhwGx+Twn4ugNezq5/Up+qwxz+Hta1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCrxX8YoQ/0ZHFOf4iWtfypQOEK/v75QEQqJ4SCZSvzWZ6ndsHmWNi5BSVB3wDZsH
+	 ghUpOMJMJU0c7Lk59YRlV8HC+kKwfmzEkLDx9ShZgxBS/wSkiAkc1fo+s0dEL+qgBI
+	 Ft6c7lrtmoWtqZyksnii6gHt0u6RrGxL5NfWtyeAk7wHSSFZb1PW1WN3IA0BaYiNSW
+	 ppG7DJp6ZCsJ/SJySvir3y4W4nIQJx0+QDMC142tXw8u4WifNm/coXUNYyPWiMEtS2
+	 v6geuGqyprz5T3/yD1ymW+QS4/Us0w9DZ6507bTKISm81TyhbMbfwNG5l+sr6BD2sV
+	 lNw7XDM7eCV+Ka6zhbJmZFtty7T1DnBZQRJyaqwPP1y4CDOz/5ehRWJ8lMgqH8bGK/
+	 5CE8GXtjuoBKQNbJZ9cvpKeAmhGAQoen6Nz38IJQwg0fBjcGKonYfrXUAjPb3SlqIN
+	 sPCcYWGsvpU03dWQTW0PtcWJkez3oCQ0m5UlwrDqvhzM48ikXuUQpmlrxQwDztE5P8
+	 tfrGwtyJiAT7QUSbX0HXPJxj7hqg5WmPQ/8lvYOJKm61S2P1zmF7CPPZXzvyOO11/m
+	 GFCt+qosgfObsqGmYBn/tX69pJ5KGO+z3b42BcfTb6kgmY/M5vz5sMO6N5Ga/Pw1ZY
+	 QbIE8Eew44X1U944NxCePlIs=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4D10C40E021A;
+	Wed, 16 Oct 2024 10:58:38 +0000 (UTC)
+Date: Wed, 16 Oct 2024 12:58:32 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH v13 01/18] EDAC: Add support for EDAC device features
+ control
+Message-ID: <20241016105832.GSZw-cWDOFweQMWRgZ@fat_crate.local>
+References: <20241009124120.1124-1-shiju.jose@huawei.com>
+ <20241009124120.1124-2-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/13] media: adv7604 prevent underflow condition when
- reporting colorspace
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- stable@vger.kernel.org
-References: <cover.1729074076.git.mchehab+huawei@kernel.org>
- <41d12c1afd6571f9cc56c1b920df6ba558d0b927.1729074076.git.mchehab+huawei@kernel.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <41d12c1afd6571f9cc56c1b920df6ba558d0b927.1729074076.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241009124120.1124-2-shiju.jose@huawei.com>
+Content-Transfer-Encoding: quoted-printable
 
-On 16/10/2024 12:22, Mauro Carvalho Chehab wrote:
-> Currently, adv76xx_log_status() reads some date using
-> io_read() which may return negative values. The current logi
-> doesn't check such errors, causing colorspace to be reported
-> on a wrong way at adv76xx_log_status().
-> 
-> If I/O error happens there, print a different message, instead
-> of reporting bogus messages to userspace.
-> 
-> Fixes: 54450f591c99 ("[media] adv7604: driver for the Analog Devices ADV7604 video decoder")
-> Cc: stable@vger.kernel.org
+On Wed, Oct 09, 2024 at 01:41:02PM +0100, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+>=20
+> Add generic EDAC device features control supports registering
+> RAS features supported in the system. Driver exposes features
+> control attributes to userspace in
+> /sys/bus/edac/devices/<dev-name>/<ras-feature>/
 
-Not really a fix since this would just affect logging for debugging
-purposes. I would personally just drop the Fixes and Cc tag.
+Chatgpt prompt:
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+| Please check the grammar in this English text: "Add generic EDAC device
+| features control supports registering RAS features supported in the sys=
+tem.
+| Driver exposes features control attributes to userspace in
+| /sys/bus/edac/devices/<dev-name>/<ras-"feature>/
 
-Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+Response:
 
-Regards,
+| Here=E2=80=99s a corrected version of the text:
+|=20
+| "Add generic EDAC device feature control support for registering RAS fe=
+atures
+| supported in the system. The driver exposes feature control attributes =
+to
+| userspace in /sys/bus/edac/devices/<dev-name>/<ras-feature>/."
+|=20
+| Changes made:
+|=20
+| * "features control" was changed to "feature control" for consistency a=
+nd
+| clarity.
+|=20
+| * "supports registering" was changed to "support for registering" to ma=
+tch the
+| structure of the sentence.
+|=20
+| * Added "The" at the beginning of the second sentence for better flow.
+|=20
+| * Corrected the syntax around the file path to ensure clarity and prope=
+r
+| * punctuation.
 
-	Hans
-
+Please run all your commit text through some LLM AI as they're apparently=
+ good
+enough now to help me in correcting grammar.
+=20
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 > ---
->  drivers/media/i2c/adv7604.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-> index 48230d5109f0..272945a878b3 100644
-> --- a/drivers/media/i2c/adv7604.c
-> +++ b/drivers/media/i2c/adv7604.c
-> @@ -2519,10 +2519,10 @@ static int adv76xx_log_status(struct v4l2_subdev *sd)
->  	const struct adv76xx_chip_info *info = state->info;
->  	struct v4l2_dv_timings timings;
->  	struct stdi_readback stdi;
-> -	u8 reg_io_0x02 = io_read(sd, 0x02);
-> +	int ret;
-> +	u8 reg_io_0x02;
->  	u8 edid_enabled;
->  	u8 cable_det;
-> -
->  	static const char * const csc_coeff_sel_rb[16] = {
->  		"bypassed", "YPbPr601 -> RGB", "reserved", "YPbPr709 -> RGB",
->  		"reserved", "RGB -> YPbPr601", "reserved", "RGB -> YPbPr709",
-> @@ -2621,13 +2621,21 @@ static int adv76xx_log_status(struct v4l2_subdev *sd)
->  	v4l2_info(sd, "-----Color space-----\n");
->  	v4l2_info(sd, "RGB quantization range ctrl: %s\n",
->  			rgb_quantization_range_txt[state->rgb_quantization_range]);
-> -	v4l2_info(sd, "Input color space: %s\n",
-> -			input_color_space_txt[reg_io_0x02 >> 4]);
-> -	v4l2_info(sd, "Output color space: %s %s, alt-gamma %s\n",
-> -			(reg_io_0x02 & 0x02) ? "RGB" : "YCbCr",
-> -			(((reg_io_0x02 >> 2) & 0x01) ^ (reg_io_0x02 & 0x01)) ?
-> -				"(16-235)" : "(0-255)",
-> -			(reg_io_0x02 & 0x08) ? "enabled" : "disabled");
+>  drivers/edac/edac_device.c | 105 +++++++++++++++++++++++++++++++++++++
+>  include/linux/edac.h       |  32 +++++++++++
+>  2 files changed, 137 insertions(+)
+>=20
+> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
+> index 621dc2a5d034..0b8aa8150239 100644
+> --- a/drivers/edac/edac_device.c
+> +++ b/drivers/edac/edac_device.c
+> @@ -570,3 +570,108 @@ void edac_device_handle_ue_count(struct edac_devi=
+ce_ctl_info *edac_dev,
+>  		      block ? block->name : "N/A", count, msg);
+>  }
+>  EXPORT_SYMBOL_GPL(edac_device_handle_ue_count);
 > +
-> +	ret = io_read(sd, 0x02);
-> +	if (ret < 0) {
-> +		v4l2_info(sd, "Can't read Input/Output color space\n");
-> +	} else {
-> +		reg_io_0x02 = ret;
+> +/* EDAC device feature */
+> +static void edac_dev_release(struct device *dev)
+> +{
+> +	struct edac_dev_feat_ctx *ctx =3D container_of(dev, struct edac_dev_f=
+eat_ctx, dev);
 > +
-> +		v4l2_info(sd, "Input color space: %s\n",
-> +				input_color_space_txt[reg_io_0x02 >> 4]);
-> +		v4l2_info(sd, "Output color space: %s %s, alt-gamma %s\n",
-> +				(reg_io_0x02 & 0x02) ? "RGB" : "YCbCr",
-> +				(((reg_io_0x02 >> 2) & 0x01) ^ (reg_io_0x02 & 0x01)) ?
-> +					"(16-235)" : "(0-255)",
-> +				(reg_io_0x02 & 0x08) ? "enabled" : "disabled");
-> +	}
->  	v4l2_info(sd, "Color space conversion: %s\n",
->  			csc_coeff_sel_rb[cp_read(sd, info->cp_csc) >> 4]);
->  
+> +	kfree(ctx->dev.groups);
+> +	kfree(ctx);
+> +}
+> +
+> +const struct device_type edac_dev_type =3D {
+> +	.name =3D "edac_dev",
+> +	.release =3D edac_dev_release,
+> +};
+> +
+> +static void edac_dev_unreg(void *data)
+> +{
+> +	device_unregister(data);
+> +}
+> +
+> +/**
+> + * edac_dev_register - register device for RAS features with EDAC
+> + * @parent: client device.
 
+If this is a client device, why is the variable called "parent" and not
+"client"?
+
+I.e.,
+
+	struct device *client;
+
+For clarity and simplicity.
+
+Or call it "parent" because you do:
+
+	ctx->dev.parent =3D parent;
+
+and forget "client" altogether.
+
+> + * @name: client device's name.
+> + * @private: parent driver's data to store in the context if any.
+> + * @num_features: number of RAS features to register.
+> + * @ras_features: list of RAS features to register.
+> + *
+> + * Return:
+> + *  * %0       - Success.
+> + *  * %-EINVAL - Invalid parameters passed.
+> + *  * %-ENOMEM - Dynamic memory allocation failed.
+> + *
+> + * The new edac_dev_feat_ctx would be freed automatically.
+
+Why is this important to call out here?
+
+It is a common coding pattern of freeing resources in the release functio=
+n...
+
+> + */
+> +int edac_dev_register(struct device *parent, char *name,
+> +		      void *private, int num_features,
+> +		      const struct edac_dev_feature *ras_features)
+> +{
+> +	const struct attribute_group **ras_attr_groups;
+> +	struct edac_dev_feat_ctx *ctx;
+> +	int attr_gcnt =3D 0;
+> +	int ret, feat;
+> +
+> +	if (!parent || !name || !num_features || !ras_features)
+> +		return -EINVAL;
+> +
+> +	/* Double parse to make space for attributes */
+> +	for (feat =3D 0; feat < num_features; feat++) {
+> +		switch (ras_features[feat].ft_type) {
+> +		/* Add feature specific code */
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ctx->dev.parent =3D parent;
+> +	ctx->private =3D private;
+> +
+> +	ras_attr_groups =3D kcalloc(attr_gcnt + 1, sizeof(*ras_attr_groups), =
+GFP_KERNEL);
+> +	if (!ras_attr_groups) {
+> +		ret =3D -ENOMEM;
+> +		goto ctx_free;
+> +	}
+> +
+> +	attr_gcnt =3D 0;
+> +	for (feat =3D 0; feat < num_features; feat++, ras_features++) {
+> +		switch (ras_features->ft_type) {
+> +		/* Add feature specific code */
+> +		default:
+> +			ret =3D -EINVAL;
+> +			goto groups_free;
+> +		}
+> +	}
+> +
+> +	ras_attr_groups[attr_gcnt] =3D NULL;
+> +	ctx->dev.bus =3D edac_get_sysfs_subsys();
+> +	ctx->dev.type =3D &edac_dev_type;
+> +	ctx->dev.groups =3D ras_attr_groups;
+> +	dev_set_drvdata(&ctx->dev, ctx);
+> +
+> +	ret =3D dev_set_name(&ctx->dev, name);
+> +	if (ret)
+> +		goto groups_free;
+> +
+> +	ret =3D device_register(&ctx->dev);
+> +	if (ret) {
+> +		put_device(&ctx->dev);
+> +		goto groups_free;
+> +		return ret;
+		^^^^^^^^^^
+
+Come again?!
+
+There's code after a "goto"?
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
