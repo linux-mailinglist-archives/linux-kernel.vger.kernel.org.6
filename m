@@ -1,162 +1,113 @@
-Return-Path: <linux-kernel+bounces-368481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4519A1047
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:04:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1EA9A1043
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0478DB219A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F118281B81
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80240212EE9;
-	Wed, 16 Oct 2024 17:03:33 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507A0210C25;
+	Wed, 16 Oct 2024 17:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A4rQ4n+3"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E04212634;
-	Wed, 16 Oct 2024 17:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4406F143744
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729098213; cv=none; b=GYnOAy/n/w77Y9XxVt6KCuD0NYFKPFBdc4R3ZUiFevyjUUpTpVkAQRyVsIe04w5gQ3l/PEtx2Ex0UAzPDavRqcBVmGusHUolsWXe0d1eQa0qOW+zzAtCrnGE3iIkSjfuJatiAdBsNQbf2+6qUMi6RJ14ulFMzGJVdhhVjmixRDE=
+	t=1729098207; cv=none; b=ifWfY4Ct69c8XJTaSN4noEEgpZi2FVPALX3sjWBezYt47Quzw6WEg574R3lYaBaH8Gfu0/YbUFLNtZnCc+jmUNnc3ru3N10r2jYtzdGUa2uztJxN0lxeTuv/Ey3v7kr2BFMqcpvDhNPvhHNQDmUD+PsmHRE2ef9q9zYCi9KV6nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729098213; c=relaxed/simple;
-	bh=F/aU2sHXwjZHWO3m/bFKodRBVQZGao3dZspIyBubxII=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AjPl9BbUisRY3xrP0LI0RCtV6m7nIItJwRAhTcllSJqJTwnCFnejj49Ad7dpSH8L/bqp6tZfKzEvWEtBHb+tIdMQ66XO/vZ9NtamrazwfH3om2iWfCYkZREuJYGJqehZxz846eSBXWy5P4XSVmwqNiBKQl/RD81bRQuJ6q1Px/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B979421EE1;
-	Wed, 16 Oct 2024 17:03:29 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3FC9513433;
-	Wed, 16 Oct 2024 17:03:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9e6QAeHxD2dyTQAAD6G6ig
-	(envelope-from <mpdesouza@suse.com>); Wed, 16 Oct 2024 17:03:29 +0000
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Wed, 16 Oct 2024 14:03:02 -0300
-Subject: [PATCH 2/2] tty: sysrq: Use printk_loud_console context on
- __handle_sysrq
+	s=arc-20240116; t=1729098207; c=relaxed/simple;
+	bh=f/ummaRRuCG9uUiZCZDzKV9LYoJWA6E413cWfBgrgkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DQwchp8M0HgKocs/U87IEnMm6zKYSMNtXC58eHLGUu8A33RGk6sby44Rf/olTYP151i6xO03Aoa2NwwNrUUMV9bbUEi0WDXwfYar9DWFT68dVAm9omYbwVgpZpqP5VLJVSPgotZt1AxSDWbJ8M/yirKYlmsEe7oyik5LPd5nId4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A4rQ4n+3; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4fd00574so29194f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729098205; x=1729703005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l6NQw3g/UfWLYCW0OnmDDAfoLvAyPJ8Gwf5pyCdbD+M=;
+        b=A4rQ4n+32LXTFOXengormNRcuHQwH0mduk0XWL4Lb9IHxM+y8q4SnTFfUS1+JIcrco
+         ft2dG+9DRDpvgMHdQ2Mc+sDkTcKNEx6rg6+g4j3+zcgC0YheonB6Gh6ncxJANJH2h5vl
+         dnNX4wmVn0SYdcH7cfMlYghtpIcygktb6gCFlWfXjUotZD+NEdGo4R+kdzkfTTDiJCiu
+         HKp/dVxIz4YqVk7eui7mYgeMl9zFREMJv26+DSpFiheaZdUbcnepwHVnKhOq56EpeDvM
+         DymW6i6oPs9Xn4ROqFIHSUzOsF4SNrUQ+t75gRcg4xy/6qe6jKuZw6Vlgt6bUd8KFbV2
+         wMfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729098205; x=1729703005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l6NQw3g/UfWLYCW0OnmDDAfoLvAyPJ8Gwf5pyCdbD+M=;
+        b=Boo8kzyLXjzrX84ksfx/8Q8CfFRE3HZ4GmKkcTOOn591aEDOoounN/cVEXRPa4k9HK
+         okgeIXcvNbcwGJZ0CIEWj9uYRw8OppkNv7iUKUsiY66pqYayyWS0bm0iA6GHu6zHRfEu
+         V5Sc1/fGzXlVMWFo9Vu2spelsv95hSy6qbJZY8YQUoq7csj/19b1OP8UIUCxz5+5XGOC
+         XXmK00QCVNnLziRk86Nnh2ty/kkB6OyE6o/cRKpfiokN/a2M9xn4CSvp9NJc+cHSqQJ1
+         8CgOflJSi72Tu9QS+fB91TSymZyITs2DmJbWYKyimgS1UhpwfuBhy/s9cLWJ3NEmDHWh
+         fw6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUj7qgAW0i+Wt6a5UwTayQLxdt3uWzZ+U98RXjCmRkZo9AVPlze3a7WLrzB5n8jafGyHB0caFjEoCoB7JM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL54PCIa11iEc2wuJ2VJ0Nm6vfoY/7LtlNQK1SUzMyf5l8Ma9e
+	vsjIneQaoq5zQNJsBouwR5YkUIbM4MWMZEY+SOlU+7f7rQO5K3oqH4hRaBQ/Jj+gkCuBxAg9zCm
+	yffiEMUnV7nPB41UPW1cV9S8t0G5n7p1mGGX8TG5g6XsavRrgfglt
+X-Google-Smtp-Source: AGHT+IEqeiZSkbrI4YnBSZrXg2BTTyC1pkP7ycvQB0JOgIEkg8lTnedO3VPHI70vDkeusHVa0f75pXN3IJk45GFNGq8=
+X-Received: by 2002:adf:fa87:0:b0:37c:c4c0:4545 with SMTP id
+ ffacd0b85a97d-37d93df72e3mr185806f8f.10.1729098204259; Wed, 16 Oct 2024
+ 10:03:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-printk-loud-con-v1-2-065e4dad6632@suse.com>
-References: <20241016-printk-loud-con-v1-0-065e4dad6632@suse.com>
-In-Reply-To: <20241016-printk-loud-con-v1-0-065e4dad6632@suse.com>
-To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- Marcos Paulo de Souza <mpdesouza@suse.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729098195; l=2232;
- i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=F/aU2sHXwjZHWO3m/bFKodRBVQZGao3dZspIyBubxII=;
- b=IuIKzjlkdpQ6PhHDrZvZO+AXN3E0QXYqHX1yuTLlWDk5Q7q65QT4o6CK+uA8/zhhJgfRIAGP7
- Va1Wk5NWACXDk/8lnj3DtYp6a2xX55sZeK3uogVc0ptegCZR25EJAWf
-X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
- pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: B979421EE1
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+References: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com> <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
+In-Reply-To: <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Wed, 16 Oct 2024 10:03:10 -0700
+Message-ID: <CAKwvOd=m7bMWLVNRcr6BA_gBaqKmZ1NOd0=Sa5322FZZ4jAmqg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when
+ comparing in percpu_add_op()
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, 
+	Uros Bizjak <ubizjak@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-By using the printk_loud_console the loglevel workaround can be removed.
-The workaround existed to always send the sysrq header message to all
-consoles not matter what was the current loglevel.
+On Wed, Oct 16, 2024 at 8:45=E2=80=AFAM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
+> Since I'm making comments, I would have really appreciated some extra
+> info here like why you are hitting this and nobody else is.  This is bog
+> standard code that everybody compiles.  Is clang use _that_ unusual?  Or
+> do most clang users just ignore all the warnings?  Or are you using a
+> bleeding edge version of clang that spits out new warnings that other
+> clang users aren't seeing?
 
-Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
----
- drivers/tty/sysrq.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Note the W=3D1 part in the commit message.  That's the part people
+generally don't test with, but the bots do.
 
-diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-index 930b04e3d148..1ff11cf6275a 100644
---- a/drivers/tty/sysrq.c
-+++ b/drivers/tty/sysrq.c
-@@ -583,7 +583,6 @@ static void __sysrq_put_key_op(u8 key, const struct sysrq_key_op *op_p)
- void __handle_sysrq(u8 key, bool check_mask)
- {
- 	const struct sysrq_key_op *op_p;
--	int orig_log_level;
- 	int orig_suppress_printk;
- 	int i;
- 
-@@ -593,13 +592,12 @@ void __handle_sysrq(u8 key, bool check_mask)
- 	rcu_sysrq_start();
- 	rcu_read_lock();
- 	/*
--	 * Raise the apparent loglevel to maximum so that the sysrq header
--	 * is shown to provide the user with positive feedback.  We do not
--	 * simply emit this at KERN_EMERG as that would change message
--	 * routing in the consumers of /proc/kmsg.
-+	 * Enter in the console_loud context so that sysrq header is shown to
-+	 * provide the user with positive feedback.  We do not simply emit this
-+	 * at KERN_EMERG as that would change message routing in the consumers
-+	 * of /proc/kmsg.
- 	 */
--	orig_log_level = console_loglevel;
--	console_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
-+	printk_loud_console_enter();
- 
- 	op_p = __sysrq_get_key_op(key);
- 	if (op_p) {
-@@ -609,11 +607,11 @@ void __handle_sysrq(u8 key, bool check_mask)
- 		 */
- 		if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
- 			pr_info("%s\n", op_p->action_msg);
--			console_loglevel = orig_log_level;
-+			printk_loud_console_exit();
- 			op_p->handler(key);
- 		} else {
- 			pr_info("This sysrq operation is disabled.\n");
--			console_loglevel = orig_log_level;
-+			printk_loud_console_exit();
- 		}
- 	} else {
- 		pr_info("HELP : ");
-@@ -631,7 +629,7 @@ void __handle_sysrq(u8 key, bool check_mask)
- 			}
- 		}
- 		pr_cont("\n");
--		console_loglevel = orig_log_level;
-+		printk_loud_console_exit();
- 	}
- 	rcu_read_unlock();
- 	rcu_sysrq_end();
+On Thu, Sep 5, 2024 at 10:04=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> When percpu_add_op() is used with unsigned argument, it prevents kernel b=
+uilds
+> with clang, `make W=3D1` and CONFIG_WERROR=3Dy:
 
--- 
-2.46.1
-
+--=20
+Thanks,
+~Nick Desaulniers
 
