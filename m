@@ -1,147 +1,165 @@
-Return-Path: <linux-kernel+bounces-368293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E559A0DC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:13:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E199A0DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A80E28663C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:13:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B961C23BA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABD620E03E;
-	Wed, 16 Oct 2024 15:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E70C20F5CB;
+	Wed, 16 Oct 2024 15:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="HrSI/L49"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="V4xFNbMf"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A82920C479;
-	Wed, 16 Oct 2024 15:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3975120E01E;
+	Wed, 16 Oct 2024 15:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729091612; cv=none; b=p+SHscH6TS6jux4mgAWqqArRxn0eglkwDl5/ldE3GGoaMhCk8YKEpTjhdVkdpeuh3zDqHhlkJlRWGzNKmLxNvefoX6MRVLglm83eIMqUZZunwG+/mO3N9DiWhmRFe1aSyy0I4CjS9Y2b9tItFzIy2wpO+FjBMApahYL3QtdqM9s=
+	t=1729091619; cv=none; b=Ps186gYUk9cGD/3wdNyvy+F+TsmribsblcNKNPi1uVrDMKWlWMA5OF59+yfFQIjR7KwDS8N+QDthwLibuFo2pSw8pnleujyF5xgCutNolwK3QtzWXkVQSVk/sw+1DchWmOCRL5dN911Adrhd9qsLSmEfMen0+ZBMv3tmMYApZEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729091612; c=relaxed/simple;
-	bh=UJ8ggy/guPk5ODfha+LUtcLHzrigURFvCoMg2PaOcwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LVZNaXw7xNpeNUZxmHKESi8kQn7K9mRL5RcXDaME6qPrAYxliOh6+FAJRIaTCvBCjnGZ7A/xLrPMNlOpF8/U9ETZxe0utYG22Ns7lGlMSqB913XnycHLUBihTuwL+Ymz58tzXAVArTTjEFujpdh/BIGeHTgNYMtNWwFfFZcpgpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=HrSI/L49; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=w+uVtfX6FHu96yZ2QZMN3UF9JXqrGlcCqEZWZLQTEY4=; b=HrSI/L49ZnZic/T9HN4H0WWr/H
-	GfKtbDHUemNbX4DgLfxmn5yHQapjAZTwTtVdA/zj/4gIP6XHSbko4CPqc86/+vdL8yRGTz9ua7DLD
-	ZpcfiEZ6sBP90XVIi3keHYCoApx39hD1SZhUGteUQF7cxMU+M1TvkQiE8IukuvXl4EBy3mOWhz+84
-	V38xLTXKZ83McTO4XsnNYujI9hT9zFNUfYTvfcgZwQmKxP9U1raDAABAkqu0adLhVT4TpNJYAU9oA
-	Wkvi/Buildn6OZOE4DzHbE49ZoMma0SKh6CjEsAjfPhdySj5+HEheAREkH6Z8LSB2YS0pcQtpBuiw
-	uJyvQOZA==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t15iH-0009nE-Ai; Wed, 16 Oct 2024 17:13:25 +0200
-Received: from [178.197.248.44] (helo=[192.168.1.114])
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1t15iF-00074n-2b;
-	Wed, 16 Oct 2024 17:13:23 +0200
-Message-ID: <6383a2fe-e18e-46c0-86d7-eec597d5ef9e@iogearbox.net>
-Date: Wed, 16 Oct 2024 17:13:22 +0200
+	s=arc-20240116; t=1729091619; c=relaxed/simple;
+	bh=RbNoppU1jJEGR3Vd1Y0PaSScVe5f5fou0RTSnQVa8/M=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PagRik3FkeWlRAk9/VB9sDwsewxXPkY6VrP99CaioYei3KnijVoWz6fh48IxLIrvKzQCtIgZUANyvoRIOOZvc5gPCrY0g6qrB9TKXg0qkASL6BNBOzxhu/pTJpVc5XiMcldQ+fStwUAN6ReSzKyKydLd2FMwxxvxKiSGKciE7+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=V4xFNbMf; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1729091618; x=1760627618;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=RbNoppU1jJEGR3Vd1Y0PaSScVe5f5fou0RTSnQVa8/M=;
+  b=V4xFNbMfElfix0SDo2+HaEJDgXYviaSbCsM1FOl5fof/6Cr2LdmGHgM8
+   nCklzKtmzUdSenryKb8uTe6kcfiaiZ/zXju11MLmmrtlC96LwTnng58SK
+   9S772VxWW7Z1OaHlMBWi9SYJK1YxWzvimve1cXSVdyM9ktvizPPn4Zpid
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.11,208,1725321600"; 
+   d="scan'208";a="33725006"
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via smp_cond_load_relaxed()
+Thread-Topic: [PATCH v8 01/11] cpuidle/poll_state: poll via smp_cond_load_relaxed()
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 15:13:35 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:30986]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.107:2525] with esmtp (Farcaster)
+ id 6f9f4824-dc53-49cb-9ebc-0b9ca29d87dc; Wed, 16 Oct 2024 15:13:33 +0000 (UTC)
+X-Farcaster-Flow-ID: 6f9f4824-dc53-49cb-9ebc-0b9ca29d87dc
+Received: from EX19D001UWA004.ant.amazon.com (10.13.138.251) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 16 Oct 2024 15:13:33 +0000
+Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
+ EX19D001UWA004.ant.amazon.com (10.13.138.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 16 Oct 2024 15:13:33 +0000
+Received: from EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2]) by
+ EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2%7]) with mapi id
+ 15.02.1258.035; Wed, 16 Oct 2024 15:13:33 +0000
+From: "Okanovic, Haris" <harisokn@amazon.com>
+To: "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rafael@kernel.org"
+	<rafael@kernel.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>, "wanpengli@tencent.com"
+	<wanpengli@tencent.com>, "cl@gentwo.org" <cl@gentwo.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "maobibo@loongson.cn"
+	<maobibo@loongson.cn>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "misono.tomohiro@fujitsu.com"
+	<misono.tomohiro@fujitsu.com>, "daniel.lezcano@linaro.org"
+	<daniel.lezcano@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
+	"lenb@kernel.org" <lenb@kernel.org>, "will@kernel.org" <will@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "boris.ostrovsky@oracle.com"
+	<boris.ostrovsky@oracle.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "Okanovic, Haris"
+	<harisokn@amazon.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>, "mtosatti@redhat.com" <mtosatti@redhat.com>,
+	"x86@kernel.org" <x86@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>
+Thread-Index: AQHbD6IrafcYoukOUEmO4vkMpFXSV7KH1W0AgAHHPIA=
+Date: Wed, 16 Oct 2024 15:13:33 +0000
+Message-ID: <7f7ffdcdb79eee0e8a545f544120495477832cd5.camel@amazon.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+	 <20240925232425.2763385-2-ankur.a.arora@oracle.com>
+	 <Zw5aPAuVi5sxdN5-@arm.com>
+In-Reply-To: <Zw5aPAuVi5sxdN5-@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <33D05FD08416A74EA8AC33C9DA3B4688@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf v1 1/2] bpf: fix link info netfilter flags to populate
- defrag flag
-To: Florian Westphal <fw@strlen.de>, Tyrone Wu <wudevelops@gmail.com>
-Cc: bpf@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com,
- ast@kernel.org, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- riel@surriel.com, shakeel.butt@linux.dev, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-patches-bot@fb.com
-References: <20241011193252.178997-1-wudevelops@gmail.com>
- <Zw6JYuga41DyoVjt@strlen.de>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <Zw6JYuga41DyoVjt@strlen.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27429/Wed Oct 16 10:34:11 2024)
 
-On 10/15/24 5:25 PM, Florian Westphal wrote:
-> Tyrone Wu <wudevelops@gmail.com> wrote:
->> This patch correctly populates the `bpf_link_info.netfilter.flags` field
->> when user passes the `BPF_F_NETFILTER_IP_DEFRAG` flag.
-> 
-> Indeed, thanks for fixing this.
-> Patch and testcase look good, but one nit:
-> 
->> Fixes: 84601d6ee68a ("bpf: add bpf_link support for BPF_NETFILTER programs")
-> 
-> BPF_F_NETFILTER_IP_DEFRAG flag was added in
-> 91721c2d02d3 ("netfilter: bpf: Support BPF_F_NETFILTER_IP_DEFRAG in netfilter link"), that was a bit later than the initial support.
-> 
-> Other than that,
-> Acked-by: Florian Westphal <fw@strlen.de>
-
-Thanks Florian & Tyrone, fixed up Fixes tag while applying.
+T24gVHVlLCAyMDI0LTEwLTE1IGF0IDEzOjA0ICswMTAwLCBDYXRhbGluIE1hcmluYXMgd3JvdGU6
+DQo+IENBVVRJT046IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUgb2YgdGhlIG9y
+Z2FuaXphdGlvbi4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNz
+IHlvdSBjYW4gY29uZmlybSB0aGUgc2VuZGVyIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUu
+DQo+IA0KPiANCj4gDQo+IE9uIFdlZCwgU2VwIDI1LCAyMDI0IGF0IDA0OjI0OjE1UE0gLTA3MDAs
+IEFua3VyIEFyb3JhIHdyb3RlOg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NwdWlkbGUvcG9s
+bF9zdGF0ZS5jIGIvZHJpdmVycy9jcHVpZGxlL3BvbGxfc3RhdGUuYw0KPiA+IGluZGV4IDliNmQ5
+MGE3MjYwMS4uZmMxMjA0NDI2MTU4IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY3B1aWRsZS9w
+b2xsX3N0YXRlLmMNCj4gPiArKysgYi9kcml2ZXJzL2NwdWlkbGUvcG9sbF9zdGF0ZS5jDQo+ID4g
+QEAgLTIxLDIxICsyMSwyMCBAQCBzdGF0aWMgaW50IF9fY3B1aWRsZSBwb2xsX2lkbGUoc3RydWN0
+IGNwdWlkbGVfZGV2aWNlICpkZXYsDQo+ID4gDQo+ID4gICAgICAgcmF3X2xvY2FsX2lycV9lbmFi
+bGUoKTsNCj4gPiAgICAgICBpZiAoIWN1cnJlbnRfc2V0X3BvbGxpbmdfYW5kX3Rlc3QoKSkgew0K
+PiA+IC0gICAgICAgICAgICAgdW5zaWduZWQgaW50IGxvb3BfY291bnQgPSAwOw0KPiA+ICAgICAg
+ICAgICAgICAgdTY0IGxpbWl0Ow0KPiA+IA0KPiA+ICAgICAgICAgICAgICAgbGltaXQgPSBjcHVp
+ZGxlX3BvbGxfdGltZShkcnYsIGRldik7DQo+ID4gDQo+ID4gICAgICAgICAgICAgICB3aGlsZSAo
+IW5lZWRfcmVzY2hlZCgpKSB7DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgIGNwdV9yZWxheCgp
+Ow0KPiA+IC0gICAgICAgICAgICAgICAgICAgICBpZiAobG9vcF9jb3VudCsrIDwgUE9MTF9JRExF
+X1JFTEFYX0NPVU5UKQ0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVl
+Ow0KPiA+IC0NCj4gPiAtICAgICAgICAgICAgICAgICAgICAgbG9vcF9jb3VudCA9IDA7DQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBsb29wX2NvdW50ID0gMDsNCj4gPiAg
+ICAgICAgICAgICAgICAgICAgICAgaWYgKGxvY2FsX2Nsb2NrX25vaW5zdHIoKSAtIHRpbWVfc3Rh
+cnQgPiBsaW1pdCkgew0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRldi0+cG9s
+bF90aW1lX2xpbWl0ID0gdHJ1ZTsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBi
+cmVhazsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgc21wX2NvbmRfbG9hZF9yZWxheGVkKCZjdXJyZW50X3RocmVhZF9pbmZvKCkt
+PmZsYWdzLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+VkFMICYgX1RJRl9ORUVEX1JFU0NIRUQgfHwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGxvb3BfY291bnQrKyA+PSBQT0xMX0lETEVfUkVMQVhfQ09VTlQp
+Ow0KPiANCj4gVGhlIGFib3ZlIGlzIG5vdCBndWFyYW50ZWVkIHRvIG1ha2UgcHJvZ3Jlc3MgaWYg
+X1RJRl9ORUVEX1JFU0NIRUQgaXMNCj4gbmV2ZXIgc2V0LiBXaXRoIHRoZSBldmVudCBzdHJlYW0g
+ZW5hYmxlZCBvbiBhcm02NCwgdGhlIFdGRSB3aWxsDQo+IGV2ZW50dWFsbHkgYmUgd29rZW4gdXAs
+IGxvb3BfY291bnQgaW5jcmVtZW50ZWQgYW5kIHRoZSBjb25kaXRpb24gd291bGQNCj4gYmVjb21l
+IHRydWUuIEhvd2V2ZXIsIHRoZSBzbXBfY29uZF9sb2FkX3JlbGF4ZWQoKSBzZW1hbnRpY3MgcmVx
+dWlyZSB0aGF0DQo+IGEgZGlmZmVyZW50IGFnZW50IHVwZGF0ZXMgdGhlIHZhcmlhYmxlIGJlaW5n
+IHdhaXRlZCBvbiwgbm90IHRoZSB3YWl0aW5nDQo+IENQVSB1cGRhdGluZyBpdCBpdHNlbGYuIEFs
+c28gbm90ZSB0aGF0IHRoZSBldmVudCBzdHJlYW0gY2FuIGJlIGRpc2FibGVkDQo+IG9uIGFybTY0
+IG9uIHRoZSBrZXJuZWwgY29tbWFuZCBsaW5lLg0KDQpBbHRlcm5hdGVseSBjb3VsZCB3ZSBjb25k
+aXRpb24gYXJjaF9oYWx0cG9sbF93YW50KCkgb24NCmFyY2hfdGltZXJfZXZ0c3RybV9hdmFpbGFi
+bGUoKSwgbGlrZSB2Nz8NCg0KPiANCj4gRG9lcyB0aGUgY29kZSBhYm92ZSBicmVhayBhbnkgb3Ro
+ZXIgYXJjaGl0ZWN0dXJlPyBJJ2Qgc2F5IGlmIHlvdSB3YW50DQo+IHNvbWV0aGluZyBsaWtlIHRo
+aXMsIGJldHRlciBpbnRyb2R1Y2UgYSBuZXcgc21wX2NvbmRfbG9hZF90aW1lb3V0KCkNCj4gQVBJ
+LiBUaGUgYWJvdmUgbG9va3MgbGlrZSBhIGhhY2sgdGhhdCBtYXkgb25seSB3b3JrIG9uIGFybTY0
+IHdoZW4gdGhlDQo+IGV2ZW50IHN0cmVhbSBpcyBlbmFibGVkLg0KPiANCj4gQSBnZW5lcmljIG9w
+dGlvbiBpcyB1ZGVsYXkoKSAob24gYXJtNjQgaXQgd291bGQgdXNlIFdGRS9XRkVUIGJ5DQo+IGRl
+ZmF1bHQpLiBOb3Qgc3VyZSBob3cgaW1wb3J0YW50IGl0IGlzIGZvciBwb2xsX2lkbGUoKSBidXQg
+dGhlIGRvd25zaWRlDQo+IG9mIHVkZWxheSgpIHRoYXQgaXQgd29uJ3QgYmUgYWJsZSB0byBhbHNv
+IHBvbGwgbmVlZF9yZXNjaGVkKCkgd2hpbGUNCj4gd2FpdGluZyBmb3IgdGhlIHRpbWVvdXQuIElm
+IHRoaXMgbWF0dGVycywgeW91IGNvdWxkIGluc3RlYWQgbWFrZSBzbWFsbGVyDQo+IHVkZWxheSgp
+IGNhbGxzLiBZZXQgYW5vdGhlciBwcm9ibGVtLCBJIGRvbid0IGtub3cgaG93IGVuZXJneSBlZmZp
+Y2llbnQNCj4gdWRlbGF5KCkgaXMgb24geDg2IHZzIGNwdV9yZWxheCgpLg0KPiANCj4gU28gbWF5
+YmUgYW4gc21wX2NvbmRfbG9hZF90aW1lb3V0KCkgd291bGQgYmUgYmV0dGVyLCBpbXBsZW1lbnRl
+ZCB3aXRoDQo+IGNwdV9yZWxheCgpIGdlbmVyaWNhbGx5IGFuZCB0aGUgYXJtNjQgd291bGQgdXNl
+IExEWFIsIFdGRSBhbmQgcmVseSBvbg0KPiB0aGUgZXZlbnQgc3RyZWFtIChvciBmYWxsIGJhY2sg
+dG8gY3B1X3JlbGF4KCkgaWYgdGhlIGV2ZW50IHN0cmVhbSBpcw0KPiBkaXNhYmxlZCkuDQo+IA0K
+PiAtLQ0KPiBDYXRhbGluDQoNCg==
 
