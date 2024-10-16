@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-368192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AF69A0C6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:19:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F699A0C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F8791F2451D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:19:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25886B2846B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FA6209F25;
-	Wed, 16 Oct 2024 14:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4675B20B201;
+	Wed, 16 Oct 2024 14:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3WG0IhT"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtSG6KY2"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CE920E007;
-	Wed, 16 Oct 2024 14:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703A120E021;
+	Wed, 16 Oct 2024 14:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729088310; cv=none; b=rh6TDG5rHro5E3w6L81OYlJddGyY1tyrIr24LShoGDtR78XUoIw+I8+tpfukzYGpQR5Xy7sKYKFDpf1URKQXFbrRxP+UYU4E0S/pDz1MQ3LqGhnzWP90Y3pQc0niJK0Ejb6AuNGVTUlmYK7dRxh//Y0jEO815GmYeszWL5/PwV4=
+	t=1729088314; cv=none; b=OPdCHpdmAOvLKj3+70QRRIqOlCoubKszvzQeOd3MBb0ck5QF1aJYZaZirdSI1EkS+a+BAKjqiUrPIWMrObFv5aw05OsU+Sy3FnwQvX5dMhpUYhFCPsoJyQB6j6/ONnf1Pt60P/OS7ajGMfg5ARomiYK1Nh3WTap8ZCp4cDv3WSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729088310; c=relaxed/simple;
-	bh=bW/5USlzxQSQRe1vRIFyfk9oRfm1AzJH2gOiS1ib34Q=;
+	s=arc-20240116; t=1729088314; c=relaxed/simple;
+	bh=pwZ1SFatElpp7QliBGqRdyP6wxmrfZVJ8uvKAQDUdVY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=avd567mMJW35ZUh+VjJNZwAMO6S3CrsIU8SJ89Zlccoiy0voPkEzpcFCzL0feDfj2N9bruhp23GQTpPMUzKDLyrZmCdaQ3mV4IA7k8YKX4KijH4P2wnwZQXDcOwsp5Jf5/tZOQ0TscnIAMk9cU7qtDDlsLtTfux+8s6iJAUeGJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3WG0IhT; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version:Content-Type; b=Nl5T9APPTJxt/zEYqdNKpqqw/QfeqvmyPTb1uPhnsvvQ0ycRnWlfSB8LjBRaptBw3ekhUsZHLUspHKp+BbUtzL63oMeGhhoOnLKkpxq7fTfnt/Syx5BT20hcEJSzY+EKdGrZxJqS0rJT7k6zI9g+Ob/XXmdxuIyntX07DioNtx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KtSG6KY2; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cb14ed25fso3187895ad.1;
-        Wed, 16 Oct 2024 07:18:29 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c804409b0so3984185ad.2;
+        Wed, 16 Oct 2024 07:18:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729088308; x=1729693108; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729088312; x=1729693112; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TzbKH9K4OSmznApbZG3tMFshW4lu/LSxQy6YojeRnGs=;
-        b=d3WG0IhTc1Hn14N8K+3P1XUC9qfEx7rO7mx36r9gIhUgvoXzsAutUFVE+WbI636J0A
-         xrhck/ETdx9kovhBn1C+/yOv1AK5mSJJJ41X7IZpGRbuWrHTMEhNyd3UUugvXg2MeCoq
-         LMywdGHsI2Y9MzMlRI9o/CknXsqj6cDo6S1cNsX++XMRIj4Myje+j8JT9/m70F0y7FJ2
-         Usjvx4Gs1iFm3OYaoM+p/uoUmUVIOTqCcFd4D1oYislKEFCcSyeQ05QFoHuxuI3kt9cG
-         UjgEgmcvZGGQc+Nw2KYHvvfYxIttaWnooZxfO/WMlwjB7pRaUoaJuKeuDrKpPU7zLsSL
-         UUmw==
+        bh=Af30M0prT6OlrSQUfOsmAdCrPRcP2Y7IveJfSJnIm2o=;
+        b=KtSG6KY2RFgFL4N3dPIVgDmcjJD7zyNlTdN7mQv6HV4/OMVTTNUwpOWJeoehEXeg8S
+         3OAIETUoMCRF2CAz/+/P0Vrmy0U6K/uXOC0huBn7133/ltEhb0mGuD12r7M6s4CYOXzu
+         kz3U5uThc3wiy4ZBQYH2ezI7iuZESxkUniyTdvVFdm9VpP8cIFTnXCiC1KW16qyNsh0T
+         aJ2YirOZAon0GQEE7kX+Qv6RGXAk5e2Zqwfsp3Tjs4OVkGPg+VgjmNxMEcUKKoStHGsc
+         39v6Fyi35PO4g2rQemY3T9yDaZ1+ToZziDuQvz2I5GMDQLSK7LdUaQ3KWdXnsJ3DQ0uN
+         aUdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729088308; x=1729693108;
+        d=1e100.net; s=20230601; t=1729088312; x=1729693112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TzbKH9K4OSmznApbZG3tMFshW4lu/LSxQy6YojeRnGs=;
-        b=F10aaybV+8TOLwK8FHogqy3eMngVxqPDFLTy6QBHwiWZTTHZb8k1PNyL5dMeqcyuaY
-         RRGBmcplxPw5Ui1XmjqeAYcwWosB9C2VMtMEe9O8pWVUkkQ9wNYZruNsHey7sysBwDx9
-         mBr1EIKU+mx+4lXcvVsyjUMnSW3chXqy3NddlsOvbOXcyvxh7uYhFmUDbQKsTq4q1nfr
-         p4BpD06b4JyKT+3BuQyn3EFDZm8RzkErZSC1Hkx07lnYkNFhN/6XRJ85uWkQ963cq/WX
-         wE2KbWS2XKduK4Wx1p+zuxNY8FwDDUBbpVpo3EgZSHkt9f61MaI9OMdPriixvSOLdIGF
-         tkUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXashsLT5fcApzl4MuSZRxG7DkDB1IW5n1g0Dlie6oKUVw/MCstwO37awqWE27RAUchpnuK4UZ6aQ84nlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ6Zo228w8yfhbEfT6Bd0mPUTGtmnyW0AHeYTcHIMGfKVhVSgf
-	JaXSb90MuCuhwdta/XvNJmV6dgIUHKvv9Voo/FiyvxjW7paVKASA
-X-Google-Smtp-Source: AGHT+IH+KZm9Pe6ua0+iqyKqFal5/hjF+XCqnPEf2HZCDDAoRiklbZBRRsx0CnrvJQpUvicWceYr8g==
-X-Received: by 2002:a17:902:ecc6:b0:20c:e250:d4e with SMTP id d9443c01a7336-20ce2500e58mr69899305ad.9.1729088308547;
-        Wed, 16 Oct 2024 07:18:28 -0700 (PDT)
+        bh=Af30M0prT6OlrSQUfOsmAdCrPRcP2Y7IveJfSJnIm2o=;
+        b=PJpvx/xa6+tvBrVjCd01WIpc9BjMXrAeNDgwISNVJJnyJn3FQUg2Bd4uHQMr0B7+j+
+         i6lx2kUwqJpSUKgw0YrrZjV3KzlPIqRe0IbOurT9koyflWug9ZxFmfEiafL4M73Z95o3
+         MLfd2leRb+DpcBi9B8sxRiZOb8v0rGHQPQ9X1//8dtFe16a3OuayrmWO20Wux2hlVJjG
+         YiTj2njZY3u1/AWijuN4GR7hkCs2HJ+RB2OGmtdMgKii/e2SQMoG1hp4R+lAec88cSWU
+         weqfqIFkUcL1hwTWcK4s23g9lhLSMxk32FiXEGyaR+fdqUrRsXZL7TEjMG0mzYg4X/GO
+         Tdvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoIYbcv/PhOLX3bdmf6o/joh13XGD0I8p7vdMEr7KeDFzX/7fySZC8kGV7ub/135kP0V3JjUpMcgB6X5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlR6k3eAw/yX0LFTDSOzRE4slLfdqR50GQzVpBZfYnhdWAWo+O
+	miXTgVoT1ejnl8Jyjidzy1ue1s7SZjNMqYj1Su+QdhQ/p1pOCliZ
+X-Google-Smtp-Source: AGHT+IH9iVpK7A3qTUiEYoH8V+v/cwF0JsTQ+fDSk9MrrZCyfJJb0NjDrrwRBpJHK36Eb3Hs/HrL0g==
+X-Received: by 2002:a17:902:d2ce:b0:20c:ee32:7595 with SMTP id d9443c01a7336-20d2fd09bd4mr16204325ad.2.1729088312512;
+        Wed, 16 Oct 2024 07:18:32 -0700 (PDT)
 Received: from aizome.localdomain ([36.170.32.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804c033sm29057045ad.214.2024.10.16.07.18.25
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804c033sm29057045ad.214.2024.10.16.07.18.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 07:18:28 -0700 (PDT)
+        Wed, 16 Oct 2024 07:18:32 -0700 (PDT)
 From: Pengyu Zhang <zpenya1314@gmail.com>
 To: alexs@kernel.org,
 	siyanteng@loongson.cn,
@@ -77,9 +77,9 @@ Cc: linux-doc@vger.kernel.org,
 	yaxin_wang_uestc@163.com,
 	zenghui.yu@linux.dev,
 	Pengyu Zhang <zpenya1314@gmail.com>
-Subject: [PATCH v6 3/4] Docs/zh_CN: Fix the pfn calculation error in page_tables.rst
-Date: Wed, 16 Oct 2024 22:18:00 +0800
-Message-Id: <20241016141801.25487-4-zpenya1314@gmail.com>
+Subject: [PATCH v6 4/4] docs/zh_CN: Add a entry in Chinese glossary
+Date: Wed, 16 Oct 2024 22:18:01 +0800
+Message-Id: <20241016141801.25487-5-zpenya1314@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241016141801.25487-1-zpenya1314@gmail.com>
 References: <20241016141801.25487-1-zpenya1314@gmail.com>
@@ -92,28 +92,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Synchronize the changes of origin document to fix the pfn value.
+To avoid confusion with the term "entry," the glossary stipulates
+that in contexts related to page tables, "page table entry" will be
+translated as "页表项," while "entry" will be translated as "表项."
 
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
 ---
-v5->v6:no changed
- Documentation/translations/zh_CN/mm/page_tables.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/translations/zh_CN/glossary.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/translations/zh_CN/mm/page_tables.rst b/Documentation/translations/zh_CN/mm/page_tables.rst
-index eac0f93070d9..c9f750fc5298 100644
---- a/Documentation/translations/zh_CN/mm/page_tables.rst
-+++ b/Documentation/translations/zh_CN/mm/page_tables.rst
-@@ -32,7 +32,7 @@ Linux 将页表定义为一个分级结构，目前有五级。对于支持的
- 在页粒度为 4KB 且地址范围为32位的情况下，pfn 0 对应地址0x00000000，pfn 1 对应
- 地址0x00001000，pfn 2 对应地址 0x00002000，以此类推，直到 pfn 0xfffff 对应
- 0xfffff000。如果页粒度为 16KB，则 pfn 分别对应地址 0x00004000、0x00008000
--... 0xffffc000，pfn 的范围从 0 到 0x3fffff。
-+... 0xffffc000，pfn 的范围从 0 到 0x3ffff。
- 
- 如你所见，对于 4KB 页面粒度，页基址使用地址的 12-31 位，这就是为什么在这种情况下
- `PAGE_SHIFT` 被定义为 12，并且 `PAGE_SIZE` 通常由页偏移定义，为 `(1 << PAGE_SHIFT)`。
+diff --git a/Documentation/translations/zh_CN/glossary.rst b/Documentation/translations/zh_CN/glossary.rst
+index 24f094df97cd..5975b0426f3d 100644
+--- a/Documentation/translations/zh_CN/glossary.rst
++++ b/Documentation/translations/zh_CN/glossary.rst
+@@ -34,3 +34,4 @@
+ * semaphores: 信号量。
+ * spinlock: 自旋锁。
+ * watermark: 水位，一般指页表的消耗水平。
++* PTE: 页表项。（Page Table Entry）
 -- 
 2.25.1
 
