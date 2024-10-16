@@ -1,98 +1,208 @@
-Return-Path: <linux-kernel+bounces-368605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987479A122A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:58:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454EA9A122F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB5DB25C0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:58:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A788DB21249
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5F62141C0;
-	Wed, 16 Oct 2024 18:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6EE1925B0;
+	Wed, 16 Oct 2024 19:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FaLFxaRB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pFojFKTT"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3504A212627;
-	Wed, 16 Oct 2024 18:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E7D2141A1
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729105098; cv=none; b=bksv9yZP5jcjFV7TInIqyEa/FfckZfaAxNjuTdm4ZLDLN4GP6gjSlT6/NCbeAKAzjZAhySGPj44TTDHR+6XEK9Y6Zg5Zck2Q/CZDrwzqGNOQRwDa9zRQeoid8L7YURdIGcOqaqOINxwqt9wtDbepiCclHyYl8jIqXflIb5swCis=
+	t=1729105216; cv=none; b=sl3vM3BGZPdmRNmZan3gvbP6lLPiBU4X7SFZlt6DGQ67Wz8OhssvTZBHAofmfWoiy/EJRlmaKAf3RPim/lqHGP034GkDqF5GsgllF7KBMzLiEBX8Vd4QTM0OC4axYwvudFZ4lxWHgxOoWdUMyYhKaLZAngHtY9oGzX84XM6cXCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729105098; c=relaxed/simple;
-	bh=DI3vXOs2FhFrx3JN5uzYaOYxEOMRWbXlYRHowN6BJ1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PWedph5MHiO9bxD8TTKs6Ml/p+tiroZ/8ez5XIJzQuhIibE77d0asS98ocDYSw5cBXplFY64QMfziPpJ7FXAi27j0JgNscT43wfmLMoqiknu/n0gQkdemooHT4U9KJGMQaJeoLN4vjRItTN1dn/QjXIprCrIEkcAbM3V04We/hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FaLFxaRB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84A48C4CEC5;
-	Wed, 16 Oct 2024 18:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729105097;
-	bh=DI3vXOs2FhFrx3JN5uzYaOYxEOMRWbXlYRHowN6BJ1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FaLFxaRBwMouJqTGwQCi8Yd5NnSQSDeodJdyqNVUIn0NJp/d46McB2rselzO9Laze
-	 m99l/Icwlm2YZho4RVZrZYGmwfmM38H6kNCGE6CfTWP3iCqVx9AiByZ4iBB5ykm/nU
-	 wP9dkP0rAieddfzfLpRSY/kcaf+dJvnMbP2T8ALSlFrjl3IpuGzQ9QWxY9EWIAhRhl
-	 9B/vlic1SnNh+Flbvyq0gwKBNb00AT2+zPRhhJ2okrs4uC2OHL0Dtg95UC/UOL6z7O
-	 UdGXY8i6IjOaGQJoiLjcYUhkvgy4DagbBTMgXkEZXzoYkEkHgcqDlJJAbkTqAVbEqr
-	 tJ4X+A0B4RaaQ==
-Date: Wed, 16 Oct 2024 19:58:12 +0100
-From: Simon Horman <horms@kernel.org>
-To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
-Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dqfext@gmail.com" <dqfext@gmail.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"daniel@makrotopia.org" <daniel@makrotopia.org>
-Subject: Re: [PATCH net-next 1/1] net: phy: Refactor mediatek-ge-soc.c for
- clarity and correctness
-Message-ID: <20241016185812.GN2162@kernel.org>
-References: <20241014040521.24949-1-SkyLake.Huang@mediatek.com>
- <20241014081823.GL77519@kernel.org>
- <d2c24d063bea99be5380203ec4fafe3e4f0f9043.camel@mediatek.com>
- <20241016143431.GJ2162@kernel.org>
- <a498aca1ac932d66d38282fbfe614d927691ec01.camel@mediatek.com>
+	s=arc-20240116; t=1729105216; c=relaxed/simple;
+	bh=YiUPcFzffWyNLYA+8FWdtxkS29XrLMr0gAQw3As/6sc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YEylGs8qHVXavvpLo8f/j4a1OkcuVn5pAXGS5MgkvQwXuYL8W1Xoxm1ScKgjV+apuK0fctch7rlyg+OQcB13d1ZJ6YB8929VY342uJvnNSdkE3AOGHLADP8kpY7VOKcPdKile1EqUqU+ktW7mFhZrY81VdVd9jpzENwiAJYri+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pFojFKTT; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bgeffon.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e35d1d8c82so4037267b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729105212; x=1729710012; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h4jjSM+ORlT3LjodZYnx5ObwICh1BMY0UwPD2hawNIk=;
+        b=pFojFKTTXijq4Cv1novJi9+ajpcR+H8Q1syFh7BcYKD0kpBGcASVYetmSTgWUZwJgl
+         oifsmX/18lQEwRiZkamqbAjCdQrHGDZMHHN3dKzkilXYvtomn+myL1hQm+E6HFstaBLh
+         YEnEWMub59SSFuQifds/hmgHEW73aIvmHouUq4aMWBdmjtYDjem7WQ06qQwwkBjAv3Y4
+         3z/+QGMqbFf+z3xQeFWHGd93pqHSqr2XzZBpZszuHD4pGo+AJ4CRVe7rnI565qWMFtpw
+         Db2EgAfOcMMQOBcasNZuT7BRxC/fTFa34WcwiG7UVZeBPG45R8DNhbF7bzTyT9etd2tT
+         LpsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729105212; x=1729710012;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h4jjSM+ORlT3LjodZYnx5ObwICh1BMY0UwPD2hawNIk=;
+        b=YQ/M4pCSBaJlktUtS966ftisl9t1c1fP3N/1WFWKYewykraCo9reTK87rohcK/MQcx
+         v8AMaU6Z0FH6egImPdwgoqW739GOvLL65CK+JYufaCCBlJptJVvI4wtdkoMQV5BnDFqb
+         QbjpqCcpPHgOZ91MTZnx20MOWNtJisALBdAjlVl3HsDtaOBlcaDxd6+c0WBoXw8N8Ci7
+         aB38OzSqQaairB+TZ//sDiGB+ijwWzOGE1ron+H6sjaIkB1QajpPLWlFNk+kmr7XGG/j
+         pVpSiGBxmB+GDKMfFw5DY3AcYmzKjd4OL9quRxQ1Cl62ncsiCrFz9b5Q995pwzmj8Awa
+         /2Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUBtLmOE9msRKEUfFYJ8JAFLBspaSb7kMt8Na51utRTqMsRozL7FYrHhHx0mcyCslQidl9g0ILKCY/GLhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya6toD849cIFNB0TnhT3TsS1V2m6pFTS4E7kugN8BqA7aJiHVo
+	nsbwI6ApIozLBQn/SZPXbL+roE9fOa27Kh0OUnBfn3ZVWtJc2sd/RnNFb0ld9Sc8f/LQTx4TA0m
+	CFHWQFw==
+X-Google-Smtp-Source: AGHT+IEOPZW7aXJcAd9af4VdSY0ecDTuw98miWo2+E7cKeDPdGZBkIG1FmVZ2rfbL34eNz+ajcIcTDq5okT5
+X-Received: from bjg.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:415])
+ (user=bgeffon job=sendgmr) by 2002:a05:690c:2b08:b0:6d5:df94:b7ec with SMTP
+ id 00721157ae682-6e3d3f787ddmr550497b3.1.1729105212629; Wed, 16 Oct 2024
+ 12:00:12 -0700 (PDT)
+Date: Wed, 16 Oct 2024 15:00:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a498aca1ac932d66d38282fbfe614d927691ec01.camel@mediatek.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241016190009.866615-1-bgeffon@google.com>
+Subject: [PATCH] perf tools: sched-pipe bench: add (-n) nonblocking benchmark
+From: Brian Geffon <bgeffon@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Brian Geffon <bgeffon@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 16, 2024 at 04:25:14PM +0000, SkyLake Huang (黃啟澤) wrote:
-> > I do think that would be best.
-> > But if you strongly think otherwise I can try to review it as-is.
-> 
-> Hi Simon,
->   If this does cause trouble for reviewing, I can split it into a few
-> patches:
-> Patch 1: Fix spelling errors + reverse Xmas tree + remove unnecessary
-> parens
-> Patch 2: Shrink mtk-ge-soc.c line wrapping to 80 characters.
-> Patch 3: Propagate error code correctly in cal_cycle() + FIELD_GET()
-> change
-> Patch 4: Fix multi functions with FIELD_PREP().
-> 
->   Is this okay for you? Do I need to split them into more patches?
+The -n mode will benchmark pipes in a non-blocking mode using
+epoll_wait.
 
-Yes, I think that is a good way to split things up.
+This specific mode was added to demonstrate the broken sync nature
+of epoll: https://lore.kernel.org/lkml/20240426-zupfen-jahrzehnt-5be786bcdf04@brauner
+
+Signed-off-by: Brian Geffon <bgeffon@google.com>
+---
+ tools/perf/bench/sched-pipe.c | 43 +++++++++++++++++++++++++++++------
+ 1 file changed, 36 insertions(+), 7 deletions(-)
+
+diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sched-pipe.c
+index 3af6d3c55aba..e2562677df96 100644
+--- a/tools/perf/bench/sched-pipe.c
++++ b/tools/perf/bench/sched-pipe.c
+@@ -23,6 +23,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <assert.h>
++#include <sys/epoll.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <sys/syscall.h>
+@@ -34,6 +35,8 @@ struct thread_data {
+ 	int			nr;
+ 	int			pipe_read;
+ 	int			pipe_write;
++	struct epoll_event      epoll_ev;
++	int			epoll_fd;
+ 	bool			cgroup_failed;
+ 	pthread_t		pthread;
+ };
+@@ -44,6 +47,7 @@ static	int			loops = LOOPS_DEFAULT;
+ /* Use processes by default: */
+ static bool			threaded;
+ 
++static bool			nonblocking;
+ static char			*cgrp_names[2];
+ static struct cgroup		*cgrps[2];
+ 
+@@ -81,6 +85,7 @@ static int parse_two_cgroups(const struct option *opt __maybe_unused,
+ }
+ 
+ static const struct option options[] = {
++	OPT_BOOLEAN('n', "nonblocking",	&nonblocking,	"Use non-blocking operations"),
+ 	OPT_INTEGER('l', "loop",	&loops,		"Specify number of loops"),
+ 	OPT_BOOLEAN('T', "threaded",	&threaded,	"Specify threads/process based task setup"),
+ 	OPT_CALLBACK('G', "cgroups", NULL, "SEND,RECV",
+@@ -165,11 +170,25 @@ static void exit_cgroup(int nr)
+ 	free(cgrp_names[nr]);
+ }
+ 
++static inline int read_pipe(struct thread_data *td)
++{
++	int ret, m;
++retry:
++	if (nonblocking) {
++		ret = epoll_wait(td->epoll_fd, &td->epoll_ev, 1, -1);
++		if (ret < 0)
++			return ret;
++	}
++	ret = read(td->pipe_read, &m, sizeof(int));
++	if (nonblocking && ret < 0 && errno == EWOULDBLOCK)
++		goto retry;
++	return ret;
++}
++
+ static void *worker_thread(void *__tdata)
+ {
+ 	struct thread_data *td = __tdata;
+-	int m = 0, i;
+-	int ret;
++	int i, ret, m = 0;
+ 
+ 	ret = enter_cgroup(td->nr);
+ 	if (ret < 0) {
+@@ -177,16 +196,23 @@ static void *worker_thread(void *__tdata)
+ 		return NULL;
+ 	}
+ 
++	if (nonblocking) {
++		td->epoll_ev.events = EPOLLIN;
++		td->epoll_fd = epoll_create(1);
++		BUG_ON(td->epoll_fd < 0);
++		BUG_ON(epoll_ctl(td->epoll_fd, EPOLL_CTL_ADD, td->pipe_read, &td->epoll_ev) < 0);
++	}
++
+ 	for (i = 0; i < loops; i++) {
+ 		if (!td->nr) {
+-			ret = read(td->pipe_read, &m, sizeof(int));
++			ret = read_pipe(td);
+ 			BUG_ON(ret != sizeof(int));
+ 			ret = write(td->pipe_write, &m, sizeof(int));
+ 			BUG_ON(ret != sizeof(int));
+ 		} else {
+ 			ret = write(td->pipe_write, &m, sizeof(int));
+ 			BUG_ON(ret != sizeof(int));
+-			ret = read(td->pipe_read, &m, sizeof(int));
++			ret = read_pipe(td);
+ 			BUG_ON(ret != sizeof(int));
+ 		}
+ 	}
+@@ -209,13 +235,16 @@ int bench_sched_pipe(int argc, const char **argv)
+ 	 * discarding returned value of read(), write()
+ 	 * causes error in building environment for perf
+ 	 */
+-	int __maybe_unused ret, wait_stat;
++	int __maybe_unused ret, wait_stat, flags = 0;
+ 	pid_t pid, retpid __maybe_unused;
+ 
+ 	argc = parse_options(argc, argv, options, bench_sched_pipe_usage, 0);
+ 
+-	BUG_ON(pipe(pipe_1));
+-	BUG_ON(pipe(pipe_2));
++	if (nonblocking)
++		flags |= O_NONBLOCK;
++
++	BUG_ON(pipe2(pipe_1, flags));
++	BUG_ON(pipe2(pipe_2, flags));
+ 
+ 	gettimeofday(&start, NULL);
+ 
+-- 
+2.47.0.rc1.288.g06298d1525-goog
+
 
