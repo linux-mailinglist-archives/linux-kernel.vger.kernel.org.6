@@ -1,136 +1,147 @@
-Return-Path: <linux-kernel+bounces-367922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BD59A087E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5FF9A0874
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740C01F23F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D657C1F251B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAEE207A13;
-	Wed, 16 Oct 2024 11:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF3A2076C4;
+	Wed, 16 Oct 2024 11:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="WzqzqSl3"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jXCKUER7"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2395C15C147;
-	Wed, 16 Oct 2024 11:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FEB15C147
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 11:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729078630; cv=none; b=iOVatQ1v7L5a9IkU/q3DG6sAzBGsLPiM9yIJpxlXgAgZKJ7tcVv2UcEG5x+6Q+otsM5Aobb4Hh56sGrUyJ89XIHUYM9XsGmBQrHI2X/S8DSB5rGSJWNoVtQQl6lMgMsNT41vRlWaYr8NCywo0TJR88JtWdwDnwbQlh2ye3tqvf0=
+	t=1729078486; cv=none; b=BkGajJb6+q7nF53QdLHNDJm5OUFQsUg5Vl9nnBGRrfcViOTp/dmbGYGcuG3iRX4W7hM3k/mSHCf0el/KFqMPPk1MRtzdiEey4Tza6KZ4z44IFBjtW9j2FSL2vZEqW+uNmAyne80+aEkf308deEoJlmeblf7TXOBoW88ErnaH1C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729078630; c=relaxed/simple;
-	bh=qCU084GYS1VrCYFQf8e+tB+oEPIBJ40QscA3anRgR9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=un0x40cYBifN0x/0i3pKiFUfKkU8YoKPVtNo9b03Uw6j8jcXwf9+UQvXKcX1fL2lvYer6CnsHiBQI48sZNbrSJfIdQwmWPzzzM8YIog+i6bY+f/7sKWe1E3ZmaQiBNHJRBuRzPKKyBGvq6uyAMYGrTYABbkHgaLjAt10IFietGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=WzqzqSl3; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id b85c8fbfce650e62; Wed, 16 Oct 2024 13:37:00 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 52667A93969;
-	Wed, 16 Oct 2024 13:37:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1729078620;
-	bh=qCU084GYS1VrCYFQf8e+tB+oEPIBJ40QscA3anRgR9c=;
-	h=From:Subject:Date;
-	b=WzqzqSl3v1ByVcNUmSCYPx+VsCAjD07uZoCB2ToEigMPe6izdumN5cohdzJZYPSll
-	 9b37oCgnJ4pusOfraRJr1drIljiRZuGXzjdDJTGfKTIJcoERRoaoFQEiy4VxZJhDza
-	 s1fWNHpFxPf+QfGT6y2u65oErp0/u/RzHwoBukeps92TeA4VPiCj5bfRDA1v05nL9a
-	 VJwTib9jnuWEAGyONh4aBt+sE8/zPta2CsR/CYYsIyece15zAm2TXYee+HqcfmIpej
-	 IXBM7QvsRanTaAAPOhiw5ju9vgmysbYd6MJUwhrriF3SPEJ/Fz/jNPVGan9ZN0CHZg
-	 6T1VEggW/0JnA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v1 08/10] thermal: core: Eliminate thermal_zone_trip_down()
-Date: Wed, 16 Oct 2024 13:33:43 +0200
-Message-ID: <1807510.VLH7GnMWUR@rjwysocki.net>
-In-Reply-To: <4958885.31r3eYUQgx@rjwysocki.net>
-References: <4958885.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1729078486; c=relaxed/simple;
+	bh=FASyUf1saphfaZbw5HzqQHkzRL2v/xQtO8LX2AzMsdU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rDsN6mrJVYd99si0hNHPVWM+7uMo5jDQJXqfjRgTbpac3tLRAUanNVZy3RhDjUxES1k8lzgtLkH+Bmv9KWp1MxYyOU4jFcWVJt1/krvJbdEJhQQ1lbNdnPYb/cJQ2mYPyoJ65MpMWPgPxp9YGJ8WqtNUCFOAryzVQX4faUYrs7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jXCKUER7; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e29142c79d6so7105040276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 04:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729078481; x=1729683281; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MALXvk2pH8I2k2u/nrpnO/yJTvhOpCgZg6TPQyQ9Tdg=;
+        b=jXCKUER7sMuJpsjFPjGfNXpmnnilcD81k5aLo9hE1EU92QL7UPZkjlv+YSZgpY/XZL
+         yaJr3a9TiGqYSEM5ECgOFMH/w0JxxxxwwwMcODJll1hytk4BLX0FRsHw4UlFxZxOmIoq
+         qu3xygr+Gl7w4yCkADzIyrDkYXI63KIm+t4I2DtbdtBRhLYcoSdTn1nVO402rwYgmLI2
+         9TJoy+3Rn446bXq2oCSznRrwcy4BvRXvJlWQSOZTAmwi0dFUeI+WxBXxdOC/paXaj4do
+         VlgT+64KXsq0+26GG+wEQQZCNVw4drzyS81b3rhYhVPaBrkh3dtv4voWLxTVJDY8K40y
+         E2EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729078481; x=1729683281;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MALXvk2pH8I2k2u/nrpnO/yJTvhOpCgZg6TPQyQ9Tdg=;
+        b=cCZKxeYvjHlZP0+aTc8PJdRjmmFLjXZaExHiToGzwKWL+oK58zQgxRi/5wVTWoMmHL
+         fRWy+1C+aLH95VyMxeMeioLXH2dbWsqi4zbeIFYI0MbuwqZx4vSUm4tcWnnCi2XHn8Mh
+         js6CWZv5EGEuXI+L6eqvJzjCArNwDzcqlFTu2MTxYnml31420n3dCt/TQyXCj7WlLskw
+         6iQoZjCKnxf2qxgmNzIfGYga8Vf4GItrmzanEmsLyp2/tj+52rSRVk1x1Q3VPvDABybc
+         vvcz6SYGcwqL0xjMgsSggqFI8xEDMqvpxbkEXAoRnhypQQJJj4VLO6gCAyvfjhnxHVw6
+         IlfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWeasL0AJ8CtZNBEvoOewzC2QpybGfoz9bUz+zU44+k0GSXFz3Vvk85pxKRlK435zDm07+QGGdijUtmpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypHchbo4YxR6LiuIS/yXhhn5pPKlrCmf4rVeZPsxpCz3nMXSow
+	pNhwt/uUz//Y0uT1Tr/CzEn8Z/IUfUFkvLxsZaH7iNrQTpX0KpE8t/VQlskNZIqM9oLxFDxEg4e
+	wZHOeohHJIg1mIg==
+X-Google-Smtp-Source: AGHT+IGfRBqsOD2gGU0Q/tMktiVo9//GJQ0UbhR+dW9OD/x0wD05SndfGUmQvGwGLXuBq1JNpcneuDfyEmwqT64=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a5b:546:0:b0:e28:f19d:ed4d with SMTP id
+ 3f1490d57ef6-e297856f63fmr2163276.6.1729078481439; Wed, 16 Oct 2024 04:34:41
+ -0700 (PDT)
+Date: Wed, 16 Oct 2024 11:34:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAMCkD2cC/22MywrDIBAAfyXsuRZX8qKn/kfJwehqFtIYtEhL8
+ N9rc+5xBmYOSBSZEtyaAyJlThy2CurSgFn05kmwrQxKqhYldmLX1emV/SYG6pxuzdDhTFCDPZL j9zl7TJUXTq8QP+c748/+3WQUKPrRzXace4vS3H0IfqWrCU+YSilfqC4cwaUAAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1520; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=FASyUf1saphfaZbw5HzqQHkzRL2v/xQtO8LX2AzMsdU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnD6TDRlj6OCtorsbkl4Zx1Ncki8FT20tIyymhr
+ t0bMM3J99OJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZw+kwwAKCRAEWL7uWMY5
+ RjzsD/9MGtoHTc3tWy/FcEwTs19PhkvgcFc4rA9v2okPpqYrHx+wNdDavdQuuxysi7X/oi/Kw9N
+ Tah4eilyoGLrxKSzQ+/kA3p9haCeodxjLtzf7sK8JVhpq7Pwd0Aa5cGv4kvFch3Zu9y9Q7etpOg
+ 8sqgNXLswBGwFZoYaYOup1erzww1h6uajLSoaYK4zVQxXow240EKaqLgZIrgIBIBe7/fUg1U0xq
+ 4iYCczcu+kPnoomPiT6lCCYUedEUa+lQejHmXcVE+Qc5J+cAKk0wcz2y5/VjXG4l0UaaEGKyG5D
+ LXHYh+ZBb22eQSRWsKXAkvI7X4z9LP8RqzcQxEqrsJPFcLqePfJ6yDLg9H8GCy/F8VSgHLoK+Ru
+ bSSNENSd6kBEyNyXWPlRQIxByzx3QOhc/KYExoIa1WSG4GhIyCBns120U5GC2waj675Jj9XDqYw
+ v6TGLRbTcfyoSf5XwFdhYC0Fbk4lBYOv806NoFhWYPwPlzKKth9xC+pwSo5ZEpLcCi+GoxSfjMY
+ GX1Wg4+7p1ma+0dTDAjA2Dz0zhjOihmF4ye/AOyaSBSIFLfD6R8VzLTw3MqKza8z6Y3PfQYhWcw
+ iOYVnvJgZeFgpe96jDP/4sPiga272g0ey+Ep4swWlbrd/glIXe70FCOYeHP87BXOnRAvAASAjiR NC+MM5j4FhDPoEA==
+X-Mailer: b4 0.13.0
+Message-ID: <20241016-page-align-v2-1-e0afe85fc4b4@google.com>
+Subject: [PATCH v2] rust: page: add Rust version of PAGE_ALIGN
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This is a useful for helper for working with indices into buffers that
+consist of several pages. I forgot to include it when I added PAGE_SIZE
+and PAGE_MASK for the same purpose in commit fc6e66f4696b ("rust: add
+abstraction for `struct page`").
 
-Since thermal_zone_set_trip_temp() is not located in the same file
-as thermal_trip_crossed(), it can invoke the latter directly without
-using the thermal_zone_trip_down() wrapper that has no other users.
-
-Update thermal_zone_set_trip_temp() accordingly and drop
-thermal_zone_trip_down().
-
-No functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- drivers/thermal/thermal_core.c |    8 +-------
- drivers/thermal/thermal_core.h |    2 --
- 2 files changed, 1 insertion(+), 9 deletions(-)
+Changes in v2:
+- Make the function const.
+- Address integer overflow in docs.
+- Link to v1: https://lore.kernel.org/r/20241015-page-align-v1-1-68fbd8b6d10c@google.com
+---
+ rust/kernel/page.rs | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -565,7 +565,7 @@ void thermal_zone_set_trip_temp(struct t
- 		 * are needed to compensate for the lack of it going forward.
- 		 */
- 		if (tz->temperature >= td->threshold)
--			thermal_zone_trip_down(tz, td);
-+			thermal_trip_crossed(tz, td, thermal_get_tz_governor(tz), false);
+diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
+index 208a006d587c..9ef01929e7d0 100644
+--- a/rust/kernel/page.rs
++++ b/rust/kernel/page.rs
+@@ -20,6 +20,15 @@
+ /// A bitmask that gives the page containing a given address.
+ pub const PAGE_MASK: usize = !(PAGE_SIZE - 1);
  
- 		/*
- 		 * Invalidate the threshold to avoid triggering a spurious
-@@ -699,12 +699,6 @@ void thermal_zone_device_update(struct t
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device_update);
- 
--void thermal_zone_trip_down(struct thermal_zone_device *tz,
--			    struct thermal_trip_desc *td)
--{
--	thermal_trip_crossed(tz, td, thermal_get_tz_governor(tz), false);
--}
--
- int for_each_thermal_governor(int (*cb)(struct thermal_governor *, void *),
- 			      void *data)
- {
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -273,8 +273,6 @@ void thermal_zone_set_trips(struct therm
- int thermal_zone_trip_id(const struct thermal_zone_device *tz,
- 			 const struct thermal_trip *trip);
- int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
--void thermal_zone_trip_down(struct thermal_zone_device *tz,
--			    struct thermal_trip_desc *td);
- void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
- 				struct thermal_trip *trip, int hyst);
- 
++/// Round up the given number to the next multiple of `PAGE_SIZE`.
++///
++/// It is incorrect to pass an address where the next multiple of `PAGE_SIZE` doesn't fit in a
++/// `usize`.
++pub const fn page_align(addr: usize) -> usize {
++    // Brackets around PAGE_SIZE-1 to avoid triggering overflow sanitizers in the wrong cases.
++    (addr + (PAGE_SIZE - 1)) & PAGE_MASK
++}
++
+ /// A pointer to a page that owns the page allocation.
+ ///
+ /// # Invariants
 
+---
+base-commit: 8d8f785ceb21b9a0de11e05b811cc52d6fa79318
+change-id: 20241015-page-align-7e5fa4c751be
 
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
