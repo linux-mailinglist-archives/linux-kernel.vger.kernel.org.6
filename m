@@ -1,131 +1,166 @@
-Return-Path: <linux-kernel+bounces-368019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106299A09DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C149A09EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 880DAB25A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:35:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F02FB28957
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0779F207A2C;
-	Wed, 16 Oct 2024 12:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="x/b20hD0"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48416208981;
+	Wed, 16 Oct 2024 12:36:40 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89CF207A09
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8491DFF5
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729082143; cv=none; b=YDlY3zutec8bHWAhK3W4fwTfhbeP6aAGYkZZ1M1iEN5m3niBwiadg9p8WSAfuiV6ifm0COpkxHbP+X8DvuQZpSs5i8EnJ3RQlfA63HICETpawhh+GjONLMa2KHp94YrPAQg6XzqGQhdAYQq8HBfy2pS9cOhkU2IZg+/nIvgGyAk=
+	t=1729082199; cv=none; b=dFJnUCcwzPSzCFb41tnx1GHnzBS6LghzxJgeFDSt9s9gz/AFyfIAaesroJVdllF8OSinxnSXyrjbkpVm+p2WD5uVArDdfoMFx5qYc7AcDq+Q5lRMUhk2ulf7yyMbavml1iP179S++/ojTFNv0HJ01XueLZ6UpYVeRlZzQdDMziw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729082143; c=relaxed/simple;
-	bh=Nr9lCqkNcOu3fRseyBeKQRrWQLUNT7ErK7fuiN6xt0o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bHslvTFlUN/rn6ok9PegZdHxprASUW2jDbuST4GukhqSGmmcxd4KrVIXZM0zm0FTFYCY1zd4jXnj5x6iklLq37Clscs6dnCH/LkcbXzHbROfmMD5OYRgU4alxpMn/asDQ/drlhyzBlZtKQRzOCwlgWHWK3ob7giuX+uxwlD+pfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=x/b20hD0; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1729082199; c=relaxed/simple;
+	bh=sn+afpJl8UZcj3Gch6hsgDwKOuLAGyp9Gn8unJVmkho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YfL0QrQROU2N4w1BMU/SHbZSqCJGNbXg+J1leqIyajzD2wqLwif2rqZ0nOayk4x9orOHyUBZN4Q5NpttpjXq0tTF7pOK5GmsmaUAyFx7wlPnJqPsEDabhjrUA1NpmwPHHNFyVQ78VYvhQ0vzBM22mpITDDgVvuYs4ibnjkzZFN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XT9R30ZfbzyTGW;
+	Wed, 16 Oct 2024 20:35:11 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 15E231403D2;
+	Wed, 16 Oct 2024 20:36:35 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 16 Oct 2024 20:36:34 +0800
+Message-ID: <1cb50014-8678-40de-bca3-8a33555ec70e@huawei.com>
+Date: Wed, 16 Oct 2024 20:36:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1729082138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nTaj8AXpVBWrhNSy1JcE6EXS2SykZrY/1WbUR5yvdpw=;
-	b=x/b20hD0hEvfaBAi+hWs8pUvE/sfpOeqDCYrktpK1t2O/NFekaKGmAlokw5DPD4fUtDNnv
-	Fx0dArSexcydEYCoBeTElusQR4SnX1iKaqgCHb0M3yNVY+3/sAN8T536FPY7Aih3b56T4r
-	myylYYmiNBVVZ3pnsBqBYtbNdVF+JwiOhVEXTqZHhfmuUnNYIyOPVsKEnRTx7zL15tWAQN
-	hK6beHJbnnLPJEV//altlD6g9l7cX9KPnmc4igsF/Ebz+lOB9Mqrryi6AG7xgEnQBIBlNZ
-	MASHvglPFFD3DpSAq+OSa5Uwz19/h9uuwVbe4XDdGvIkxJAr328zL8qh4cO8ag==
-Content-Type: multipart/signed;
- boundary=420a352999a5f0637b0a389b86766f09be8702651d3ea0d2c89ab02af30c;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Wed, 16 Oct 2024 14:35:28 +0200
-Message-Id: <D4X8GJV0W6JL.32E469JSATFEP@cknow.org>
-Cc: <linux-rockchip@lists.infradead.org>, "Diederik de Haas"
- <didi.debian@cknow.org>, "Samuel Holland" <samuel@sholland.org>, "Dragan
- Simic" <dsimic@manjaro.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Michael Riesch"
- <michael.riesch@wolfvision.net>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: (subset) [PATCH v2 0/4] rockchip: Fix several DT validation
- errors
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Heiko Stuebner" <heiko@sntech.de>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Rob Herring" <robh@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>
-References: <20241008113344.23957-1-didi.debian@cknow.org>
- <172841572989.2562611.18254512768409976284.b4-ty@sntech.de>
- <D4X4RACGCRRH.39SMPGMZZ2GK4@cknow.org>
-In-Reply-To: <D4X4RACGCRRH.39SMPGMZZ2GK4@cknow.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read
+ performance
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, <akpm@linux-foundation.org>,
+	<hughd@google.com>
+CC: <willy@infradead.org>, <david@redhat.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
+ <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
+Content-Language: en-US
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
---420a352999a5f0637b0a389b86766f09be8702651d3ea0d2c89ab02af30c
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Heiko,
 
-On Wed Oct 16, 2024 at 11:41 AM CEST, Diederik de Haas wrote:
-> On Tue Oct 8, 2024 at 9:28 PM CEST, Heiko Stuebner wrote:
-> > On Tue, 8 Oct 2024 13:15:35 +0200, Diederik de Haas wrote:
-> > > This is a set of 4 small device-tree validation fixes.
-> > >=20
-> > > Patch 1 adds the power-domains property to the csi dphy node on rk356=
-x.
-> > > Patch 2 removes the 2nd interrupt from the hdmi node on rk3328.
-> > > Patch 3 replaces 'wake' with 'wakeup' on PineNote BT node.
-> > > Patch 4 replaces 'reset-gpios' with 'shutdown-gpios' on brcm BT nodes=
-.
-> >
-> > Applied, thanks!
-> >
-> > [2/4] arm64: dts: rockchip: Remove hdmi's 2nd interrupt on rk3328
-> >       commit: de50a7e3681771c6b990238af82bf1dea9b11b21
-> > [3/4] arm64: dts: rockchip: Fix wakeup prop names on PineNote BT node
-> >       commit: 87299d6ee95a37d2d576dd8077ea6860f77ad8e2
-> > [4/4] arm64: dts: rockchip: Fix reset-gpios property on brcm BT nodes
-> >       commit: 2b6a3f857550e52b1cd4872ebb13cb3e3cf12f5f
->
-> Please revert the 4th patch.
->
-> I must have messed up my testing previously, but BT does not work on the
-> PineNote with the 4th patch applied and does work with it reverted.
+On 2024/10/16 18:09, Baolin Wang wrote:
+> The tmpfs has already supported the PMD-sized large folios, but the tmpfs
+> read operation still performs copying at the PAGE SIZE granularity, which
+> is unreasonable. This patch changes to copy data at the folio granularity,
+> which can improve the read performance, as well as changing to use folio
+> related functions.
+> 
+> Use 'fio bs=64k' to read a 1G tmpfs file populated with 2M THPs, and I can
+> see about 20% performance improvement, and no regression with bs=4k.
+> Before the patch:
+> READ: bw=10.0GiB/s
+> 
+> After the patch:
+> READ: bw=12.0GiB/s
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>   mm/shmem.c | 22 ++++++++++++----------
+>   1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index edab02a26aac..7e79b6a96da0 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3108,13 +3108,12 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   	ssize_t retval = 0;
+>   
+>   	index = iocb->ki_pos >> PAGE_SHIFT;
+> -	offset = iocb->ki_pos & ~PAGE_MASK;
+>   
+>   	for (;;) {
+>   		struct folio *folio = NULL;
+> -		struct page *page = NULL;
+>   		unsigned long nr, ret;
+>   		loff_t end_offset, i_size = i_size_read(inode);
+> +		size_t fsize;
+>   
+>   		if (unlikely(iocb->ki_pos >= i_size))
+>   			break;
+> @@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   		if (folio) {
+>   			folio_unlock(folio);
+>   
+> -			page = folio_file_page(folio, index);
+> -			if (PageHWPoison(page)) {
+> +			if (folio_test_hwpoison(folio) ||
+> +			    (folio_test_large(folio) &&
+> +			     folio_test_has_hwpoisoned(folio))) {
+>   				folio_put(folio);
+>   				error = -EIO;
+>   				break;
+> @@ -3147,7 +3147,12 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   			break;
+>   		}
+>   		end_offset = min_t(loff_t, i_size, iocb->ki_pos + to->count);
+> -		nr = min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE - offset);
+> +		if (folio)
+> +			fsize = folio_size(folio);
+> +		else
+> +			fsize = PAGE_SIZE;
+> +		offset = iocb->ki_pos & (fsize - 1);
+> +		nr = min_t(loff_t, end_offset - iocb->ki_pos, fsize - offset);
+>   
+>   		if (folio) {
+>   			/*
+> @@ -3156,7 +3161,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   			 * before reading the page on the kernel side.
+>   			 */
 
-FWIW, I figured out what went wrong.
-My testing was correct, but redo-ing the implementation to make it ready
-for submission wasn't very smart.
+We'd better to update all the comment from page to folio.
 
-With ``shutdown-gpios =3D <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;``
-it does work correctly, but I forgot to change GPIO_ACTIVE_LOW to
-GPIO_ACTIVE_HIGH before submitting.
+>   			if (mapping_writably_mapped(mapping))
+> -				flush_dcache_page(page);
+> +				flush_dcache_folio(folio);
+>   			/*
+>   			 * Mark the page accessed if we read the beginning.
+>   			 */
+> @@ -3166,9 +3171,8 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   			 * Ok, we have the page, and it's up-to-date, so
+>   			 * now we can copy it to user space...
+>   			 */
+> -			ret = copy_page_to_iter(page, offset, nr, to);
+> +			ret = copy_folio_to_iter(folio, offset, nr, to);
+>   			folio_put(folio);
+> -
+>   		} else if (user_backed_iter(to)) {
+>   			/*
+>   			 * Copy to user tends to be so well optimized, but
+> @@ -3186,8 +3190,6 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>   		}
+>   
+>   		retval += ret;
+> -		offset += ret;
+> -		offset &= ~PAGE_MASK;
+>   		iocb->ki_pos += ret;
+>   		index = iocb->ki_pos >> PAGE_SHIFT;
+>   
 
-I'll first figure out a better procedure before making a new submission,
-so the revert is still the best approach IMO.
-
-Cheers,
-  Diederik
-
---420a352999a5f0637b0a389b86766f09be8702651d3ea0d2c89ab02af30c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZw+zEwAKCRDXblvOeH7b
-bjbgAP9YbTBY27TFko/D2mKhNunoxZyzGN1Ss/H9noU7e6dOtQEAkqQg/YHMODFT
-3YTB0Lngl+UqeAUuasytSAUgJxyAhQ8=
-=QZhM
------END PGP SIGNATURE-----
-
---420a352999a5f0637b0a389b86766f09be8702651d3ea0d2c89ab02af30c--
 
