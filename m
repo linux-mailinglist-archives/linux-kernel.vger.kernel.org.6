@@ -1,373 +1,318 @@
-Return-Path: <linux-kernel+bounces-368551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F3E9A113B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A459A113F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB7B1F26FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:07:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C431D1F27390
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889B2210C29;
-	Wed, 16 Oct 2024 18:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEA5210C20;
+	Wed, 16 Oct 2024 18:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qcArPhKc"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZJIi5jVt"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B965F14A09E;
-	Wed, 16 Oct 2024 18:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729102064; cv=fail; b=r7ZZZCsp4Jers39bAtwXNm6JS17nQS1Ti6myPxpK04XhSVH7kb2EYmIySGaCZy/ut/bu6rSvb79L68sqcPeZzOOrtXCGv2sqaernKY55Ne0DlZ7LSL4IEUiFC81QgXgAf2y8brjFUK03LKvTU14GWPuvIy2O8tnfECaU6+pe4Bg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729102064; c=relaxed/simple;
-	bh=Y+ZqjkgfQqFwvhaxqJNE7mTfn4uJwn6Yo1xtN/6MUcw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nXWhUtvGfAsWb+SmdU0wzTV3hzvM73JhqNzCtubSGRlUiU0PRQ1pCzvgTmQdX0Q4RB5eXsYOefcHv7f0la0mIAKxzi7uTpQIegNhi/yphO/3OMmLab5h5RLOYRwefnNSaW6v0fGtwhQ0inO3zD7llCzI2v2eNHsvLRfqu31IFbo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qcArPhKc; arc=fail smtp.client-ip=40.107.92.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sdfGd4ZLGMiHpXso3lFvOyEJaG+lUHMvnWa96BdMeJkof0wN6ktVw6+sBx2C2Q6riy0oBCZQv3lYaVf6qqGyuV06ENMPnh/0UO4Mq2gR8NfNuuhEMBOVISLeUk6HZPOVDlx/R6BLNazn5JVbrU+W4nyTZu0EHMA0PNt0ipazdaRkGaGNTnDoRC2zlEffvxykCJ+ZgKfdwvgV6azGnopiiAbAKKwhYBYoxoPFDKy7sq1lu0FqZbFnPCWLLuCgjhfOD1z+GEOvsSPg5y8d1I3gebrh5JmpDtfbON38R2RNQ9qzpAHXViJhGC/uxdLdAk59yYFqNX2p6UgrVdYvToeCGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pzbvv4FBt7e41u5jlBOSUq1jEgvV/jW/zYV/xAzS3eA=;
- b=trnEf6Z4JwBl03C5yFI3Oi+MXGfgX6RyHbMmwMxWYmF+T8yPxIDznLOvCm8ScDXElulTAeoszozZOfvgpboToMVFOvKfMWOiowB0nYExXLDN3dfgOb5efT9V3ec+KNA6JW2u0EZrOFlC6J5k+maaU2xvU2ZmJyJelFNws6lbsXhW63XJB66tGqDS7r8QDkDWh3NO2DPLZGyz7jL2ozEfpJAtWIlBCm83lmw6Thru6SNPaZ3TJq2kKi+PZDnNC0bBMuysVf8f7g/+jSBaX8/96BF4aXNB/aJTwlKbbnPL40iCYZX1rvjqr0EX2WWJBBYwZwVmIOmRVZ05toxUxDms9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pzbvv4FBt7e41u5jlBOSUq1jEgvV/jW/zYV/xAzS3eA=;
- b=qcArPhKc2mwlQscpV1gcXpTSkQq4hIvGQOVICzTiI1/4gYCBWxE7L2klnjNKKszkYcRUxXvl7iduv955KNt9kE2oDRHLZ+1zHJDfQi8zh8uWL3d3FkcC8id8m2HZlCu2B+LguYR0n2YXkylLxA5W9z9ZrMswkH6T6YNZ+j3pz5I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- DM6PR12MB4236.namprd12.prod.outlook.com (2603:10b6:5:212::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.18; Wed, 16 Oct 2024 18:07:39 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%6]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 18:07:39 +0000
-Message-ID: <ac5f05ec-5017-4ac7-b238-b90585e7a5bc@amd.com>
-Date: Wed, 16 Oct 2024 13:07:37 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/15] cxl/aer/pci: Add CXL PCIe port uncorrectable error
- recovery in AER service driver
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, dave@stgolabs.net,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
- nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
- <20241008221657.1130181-8-terry.bowman@amd.com>
- <20241016175426.0000411e@Huawei.com>
-From: Terry Bowman <Terry.Bowman@amd.com>
-In-Reply-To: <20241016175426.0000411e@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0207.namprd11.prod.outlook.com
- (2603:10b6:806:1bc::32) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DABC18C030;
+	Wed, 16 Oct 2024 18:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729102123; cv=none; b=FhQvDBgS9KBXiHNQG1ZLg3TRgBRAyJ+hwW5sigY9UDwg2yAeizRlDjGQ1bot2rU0tjvbXOoCkcWjb+mD+9XqVv2hs5EaYULUgZ9L3I3Dy7RnW/TgK+vME764rHRhHJLDSlMTboQEm0QonrmrJwEmNFhdC2UB8avZSegymnYm+hk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729102123; c=relaxed/simple;
+	bh=B/sGpEq00bwshiw68X7r01udrXD+3gSGCJ2yzLTShb0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CPA9bJhaIhC/h//XtfOPz2yJyYPY+KqvDfYoPcjvmImhLeCpdW2ACEnGqHgOkPlSPifPmR2ZRDo1ijUUukIj3i5AB5dyUP4zCaiAZz6EcojW8bcqYvdMqgEl92a3Q/UxarwjETYJN2kkkneG45345bxVj02liJZz02/GvXUjz00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZJIi5jVt; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGniMh026979;
+	Wed, 16 Oct 2024 18:08:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dAPbA/
+	oOxlwGEOrT4GfnpP1j6I5yc9/VypAv3KCsGy0=; b=ZJIi5jVtjKqF3PtDZHf84q
+	tQmLZ+D8AwGmO2ZcN138zH3dIHu+jrgNCt3bi1Tby0in9Lz+AoIefOpR1xf8qLkQ
+	CE4ueVrGcceTqBXnIvAW4PX9tzrn72LJGp4o9J0P7mcOA9PbTC+MMdiw+mo2vAWY
+	ES1ewcP2VxKF+s0MW+DMUu9cHQLufrRiqvCtIezBtPpoIi4sNo+ZIfFRDr/j1c5x
+	NQJk2K/opEUx+kiHRtNmuOPgmKL5U63Nb9H21GdI5UvFYPF5dV1MCBOtTe5gJkmo
+	VQjfYVZZOKGpu3ud5ncE8Hq73k3gWjukUQ//3fgbeakqhuigE+4KIVSbq8x+71qA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ahbr0ab3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:08:30 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GI8TR7031888;
+	Wed, 16 Oct 2024 18:08:29 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ahbr0ab2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:08:29 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGXJrO027432;
+	Wed, 16 Oct 2024 18:08:29 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txtvr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 18:08:28 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GI8Pwk50528670
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 18:08:25 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0533220040;
+	Wed, 16 Oct 2024 18:08:25 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A4B3420043;
+	Wed, 16 Oct 2024 18:08:17 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.242.239])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 16 Oct 2024 18:08:17 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|DM6PR12MB4236:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8b4c610-66bc-41fe-50e8-08dcee0d6bdd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WC9saVN4NzRrTE1GYTRRQ0pqUTl4Y0pJUlI1RFZZbEtCcU1HUkFKRGlUOWp0?=
- =?utf-8?B?YXlWRDJtLzFWekswQWlBcDloc0poOFZMYXplS0RJUFIwQ3c2R1J2M0RpUDJ5?=
- =?utf-8?B?Z2dSeU40akZzazJ1cGxwczhjM0RKOEtrTzdBeFg4dExtM2QzanlJOFhBOUlD?=
- =?utf-8?B?ZElaTHYxQVFKWitnQjRhZVRkcHhuWUxQQ25IWmlUNVBnUG0xWk9VWVpheGVz?=
- =?utf-8?B?enBqWHl2dllNbjN6aTJKV2o5MkZtaXM5SDBnNUpralIyZ2VYZ3FObE1WZ3E5?=
- =?utf-8?B?YTUyUWcybitEbzNhVndSZWxDcU4rY3k2UFpSQ2dUNUEycUVzTWE3cDR5OS81?=
- =?utf-8?B?aWJKT1hKeWNIVmhJdGRVTFRrN05QWWdVUEk0VFNVRUhEcTg0anFNUEkraDV6?=
- =?utf-8?B?bDFFSDRqRWE3aHJYWEVrU21pUThwRGJwMTI5bXFpbUV3RXBwVHdLTGpscCtL?=
- =?utf-8?B?TWRsZ3ZnclJRN3NESkMvVGlicVN6Ui9aVjFlZzErRFdUTzJFUnVKRExoMVJ1?=
- =?utf-8?B?UC9zTDQxWGJMYlhVeWsxZ0ZLSkE4d05mWXU4ZjVEaVJ6THpCdGhFc3ZTS20x?=
- =?utf-8?B?bG1FbmQzWVNRTjdqc0d0T3Z2dG5uYlpYcVJ6dFNZMmZ5KzNOL2V1ZGhScVBz?=
- =?utf-8?B?aHQ1SlJlNGFVcU9zNjZrYkplNWhVaXZmdjVhV3hhT1dHcHpQNHljL2xsUUtn?=
- =?utf-8?B?eG9ZQmpHZngxVEd5VUFwS3pWQ0xkU1RyU2tlZm1tWUtOcThnSVIvY0I5WFV2?=
- =?utf-8?B?Zm9nbDVPa1hEb2RuTitEZVBzb1VtaFl5U05ZVUpmb3I0K2JQVVhYY3N3NUMx?=
- =?utf-8?B?eFAvaXJzcFg4RUhIREUwK0I3eTJPb0k5M09KTDVvTUVFNWdPbng0K0h4V0RL?=
- =?utf-8?B?ZVo0aG0xeldOMjZaUFZuMFV5N1V1aUlHMTlvYWNrWHNHdGx5djQ3V0NXUzI5?=
- =?utf-8?B?N1FKL1lGd0ZXS1NkUFFSK2pNWkhSNlI0cjVvRUJwK2RudURlMVR3RmpuOUZa?=
- =?utf-8?B?cFpMdXpscjFhTFlCUHdRUGp5Q21Kb1NjWUFXRDVCaHFzK0Evc0puN2IrSy85?=
- =?utf-8?B?MkZoYjEvSTJ2NWhTZVBOKytPOHRCZENDdHQxWFUrN25iS2E4ZkxIc3FJOFc5?=
- =?utf-8?B?VmxKc1JGVU41akYyT1VQVmd6eUNJa2RRTlRaMDQxNXFuSzdRWnk5ekhUa3Bs?=
- =?utf-8?B?dDlUczkyeko1UnJwSjBVQjc1WXYzSlFMT09WYXljVUVGaXdUcG9BSFU5WlZK?=
- =?utf-8?B?ZitqMlVxQjNyUHU3cUViSnFFWFJQNnNveUZ5MlUxbDh3VU4zZ01MV2xIamZm?=
- =?utf-8?B?VWd0NXRNM25ZMjI5b0JjQ3JHQ3NXWkRFMm9Uc1NydzRSWlNVSHhoT0gxWDZw?=
- =?utf-8?B?M2dpZlFPSG1uUUk0OUtCeEdkbHdVMWdLQUN4QjlUUVZZQ0c3L3N1MGorSFlL?=
- =?utf-8?B?dndtRXQrQmJPbllQaTYxRUt5Qk1WZ2djV1V2OERaWHJuY1A5eGVXaE1rTGZ4?=
- =?utf-8?B?aEVZVlQxQ0ErbXJ5WUhib2dZM3FZZ2EwNUVVNlNyVUQ4TnJ5N0FzQUZvaklI?=
- =?utf-8?B?NVI0MjBmTkhMaXVkbVBGcnE3ZnJUTUp5Z05Ld2lqV21FNlpBbll2dnNPOXg5?=
- =?utf-8?B?VFFoeHo1bzJNM08zSk1DOWQ0Z0ZoTVRvaC96cmxkaDhHc0xsVWIyWktIL3F3?=
- =?utf-8?B?ZDRqVmpkT2pNblVWbHpyN096eFc4K3JPRzdrRklQYWE2VlN2d0FVTDhRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cEVxN1NicmI3YmlrWTRjYTAxMUtDUWdkU0lVb0ltc1JzdkZMakNFTHpiSi9x?=
- =?utf-8?B?N1BnYWFRZDJXVHM1K2I1VitncUtTSlFDdjlnUXBBdVdZTjh0cnFTOGZTNWk0?=
- =?utf-8?B?UnFEMmZVd1lFSWg2REY4UVZXQkNEY0srdTc3bTVYaWdXMjdPT1dXbmRhc1FF?=
- =?utf-8?B?Z3NaREo5NzBvTkl5cldmc0xaZnhHbXF1REJuZ0NISmRIaGZYd3VPMjJPdmZ6?=
- =?utf-8?B?K0ZXbFBsZDdrbGRYd0ZtejYwNjd5bE9jeFg0aWJYdEd5a1JoemJzcDdVNytZ?=
- =?utf-8?B?ajh6a0JCYzdCamh5SjMxYW1iQ1Z2UmtKR0Ixa0hHSUxQNUduUlpuRDg0eHp6?=
- =?utf-8?B?NGFKSFBUc0RNQ1Z0c3AxeWpZQ09BQnBCVU45eHpEVU85WEFNMU96ekpJZmFH?=
- =?utf-8?B?MG5FRmc1dGNTcHFrWm1BZVZZcFVvN201TUlFNnYzR3lGei9rYTRZRWpnYmU2?=
- =?utf-8?B?cjJHNnY0c1RBZVdFeTdmUExKK3RUN1ZFR1QvZnNscE5rdGw1dHE2eVVVRGN4?=
- =?utf-8?B?NWdocDhyTkpYTFRpRUlVSmloUzRndkM5cVpvQWRNcWNLR1RwbW9yTU1KUEVF?=
- =?utf-8?B?cnRGNjQzQXZxRmtaVGlFcUttUmZEbGVsZGtGMmY1TDdLbUtmQzZleDYvVUtG?=
- =?utf-8?B?Q1dCWUZEcU8wclZmajNWQ0dOSlVyZTFsMmIyamRDNnU5NVJVaFJtZXFEUCtK?=
- =?utf-8?B?cXZZZ2F6ekFxYTRsTWVvMkU4WjhkaXdUNkZmNFNBQktuU0FZWThaYXdteTRj?=
- =?utf-8?B?OTVrNHc4MG1LTkxhcFFRTXlDeTVqUXducXc4RXRTa09ZOVkvRnpjeURNNDcy?=
- =?utf-8?B?TzNkYzJSQUZ0ekw4SUUxRlFPTjB2SUpqdXk3WXVWbm9yM1RsYS91U0hkeUVq?=
- =?utf-8?B?VVIwcUZ3a1hZbUZNVlZTRHNJNVQvdU9BdWJGQ1hIL3FlV2tlbytnQlovbnVQ?=
- =?utf-8?B?Z0NNTnRWQWFqR2xhalp2VXJ1dkVWeDFVQnNsdlNGZFpiYjhadnJ4RmhudlBq?=
- =?utf-8?B?QlluVVlQR1piSGxPVTFrclZNcmdPRVlRTHhPMTZQNnZZcTJvdDhKVWdud0Iw?=
- =?utf-8?B?TDBWeG52TVgrOENxNnozdEVML3d2bUpkL2d6S0xpd0hpSFNqa1dmMEtrTUpk?=
- =?utf-8?B?c0lvQzl6dCtqN2RnK0ZYWGEyR1kxM3liQ1hlWmZFbU95VFNSR0pIbDJlc2xk?=
- =?utf-8?B?ZkxGcW11QlR3bHpleFowSzlyaE9SUE8vMFlrczVaREFxTHRhSVZ0RnkxaXdm?=
- =?utf-8?B?NEhJYTBXWlVwOTVIaG0yTWxPYUxmSjVrT003c0huSG85Rk1nRFpZbXFMd2lD?=
- =?utf-8?B?bTFzRlFLNWJFUlNaV3dOalF6bEM5eFYwclFvR1JwTEllSUpxdEhxeHR5ckRr?=
- =?utf-8?B?ckJxWCtsT1pZQklxWVRKOHQzbkJLaFNISjJsYzhQRklKeGJVTTdoS3U3MzZv?=
- =?utf-8?B?MkR5Uk51NGhhU0ZTcDB6WGFDaFA3ZzFoSS9XTWpSYVhEY3YySkIwMWhNdDhi?=
- =?utf-8?B?eEp4am1VdG1uTzV4NnYwOXZvMzZvRHNmWkg0ZEhwUC9DRVpmVER2V1RhNUtj?=
- =?utf-8?B?YTB5TUIyNy9Uczhhd1FZbW5NMkZBSStaekVZRlA0UDRjMm5SNnhFdHZIOVhr?=
- =?utf-8?B?TlZ4cDBuL3ozTnJZaVBFVXhRemN0ZUFPa29OVWV1UzQ0cEZPdFA5VkZZeDBp?=
- =?utf-8?B?Syt5VDZILzRCQkZBOElQYzhyZWYxa3hvOXNWYnFnZFdrLzlpVkEvWVFJM2wy?=
- =?utf-8?B?Y1pZUitXWlJYMHdIZmJOcTEvWHhBMVlCb1Z2aHU5bjlYZ0ZjOFNoekE4eWxn?=
- =?utf-8?B?YzlmSFFUZklGTEZLSkFpU0pHV0xKT2RPT1ovc0FZdE8yVzRLU1JEcTBWTSs4?=
- =?utf-8?B?aTB3a0tsUk1sU3VFeXM1MDg4dkNESUhTVU15NjlzWlFrR3kwKys5Y0xPN0Ev?=
- =?utf-8?B?VTVDVGN5M3QvWGNVQStsd1hTaExNYWxId05vVzV2MEZEb0RhRi9zTUd1dTRN?=
- =?utf-8?B?cGhHVUNMVnVMSWhQeVNLWmtMZkprV2R2U2FwdFhnZnhGWVpYUnVvbkxsTFAx?=
- =?utf-8?B?anFyUzVCMlR6eGpFUWtxSDB1aHhqQnBDTDlHSEVHWVJjMW9SM3BENWE4dFd0?=
- =?utf-8?Q?a/UDNLBhw17dFQ4AoU9uRld98?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8b4c610-66bc-41fe-50e8-08dcee0d6bdd
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 18:07:39.3034
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4vgj+3HOaiGnkL7D////TASB/hrT5fn+skCJz0YJePVGZE5DqnfvCPagYauxGVjC6uid8I+uMj/UiMdgGpxdsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4236
-
-Hi Jonathan,
-
-On 10/16/24 11:54, Jonathan Cameron wrote:
-> On Tue, 8 Oct 2024 17:16:49 -0500
-> Terry Bowman <terry.bowman@amd.com> wrote:
-> 
->> The current pcie_do_recovery() handles device recovery as result of
->> uncorrectable errors (UCE). But, CXL port devices require unique
->> recovery handling.
->>
->> Create a cxl_do_recovery() function parallel to pcie_do_recovery(). Add CXL
->> specific handling to the new recovery function.
->>
->> The CXL port UCE recovery must invoke the AER service driver's CXL port
->> UCE callback. This is different than the standard pcie_do_recovery()
->> recovery that calls the pci_driver::err_handler UCE handler instead.
->>
->> Treat all CXL PCIe port UCE errors as fatal and call kernel panic to
->> "recover" the error. A panic is called instead of attempting recovery
->> to avoid potential system corruption.
->>
->> The uncorrectable support added here will be used to complete CXL PCIe
->> port error handling in the future.
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> 
-> Hi Terry,
-> 
-> I'm a little bothered by the subtle difference in the bus walks
-> in here vs the existing cases. If we need them, comments needed
-> to explain why.
-> 
-
-Yes, I will add more details in the commit message about "why".
-I added explanation following your below comment.
-
-> If we are going to have separate handling, see if you can share
-> a lot more of the code by factoring out common functions for
-> the pci and cxl handling with callbacks to handle the differences.
-> 
-
-Dan requested separate paths for the PCIe and CXL recovery. The intent,
-as I understand, is to isolate the handling of PCIe and CXL protocol 
-errors. This is to create 2 different classes of protocol errors.
-
-> I've managed to get my head around this code a few times in the past
-> (I think!) and really don't fancy having two subtle variants to
-> consider next time we get a bug :( The RC_EC additions hurt my head.
-> 
-> Jonathan
-
-Right, the UCE recovery logic is not straightforward. The code can  be 
-refactored to take advantage of reuse. I'm interested in your thoughts 
-after I have provided some responses here.
-
-> 
->>  static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
->> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
->> index 31090770fffc..de12f2eb19ef 100644
->> --- a/drivers/pci/pcie/err.c
->> +++ b/drivers/pci/pcie/err.c
->> @@ -86,6 +86,63 @@ static int report_error_detected(struct pci_dev *dev,
->>  	return 0;
->>  }
->>  
->> +static int cxl_report_error_detected(struct pci_dev *dev,
->> +				     pci_channel_state_t state,
->> +				     enum pci_ers_result *result)
->> +{
->> +	struct cxl_port_err_hndlrs *cxl_port_hndlrs;
->> +	struct pci_driver *pdrv;
->> +	pci_ers_result_t vote;
->> +
->> +	device_lock(&dev->dev);
->> +	cxl_port_hndlrs = find_cxl_port_hndlrs();
-> 
-> Can we refactor to have a common function under this and report_error_detected()?
-> 
-
-Sure, this can be refactored. 
-
-The difference between cxl_report_error_detected() and report_error_detected() is the 
-handlers that are called.
-
-cxl_report_error_detected() calls the CXL driver's registered port error handler. 
-
-report_error_recovery() calls the pcie_dev::err_handlers.
-
-Let me know if I should refactor for common code here?
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH V2 1/2] tools/perf/pmu-events/powerpc: Add support for
+ compat events in json
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <Zw_5OLkwefdGOnA3@google.com>
+Date: Wed, 16 Oct 2024 23:38:02 +0530
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, hbathini@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <99F59594-A65B-48B6-9252-29EDA1AF2DA3@linux.vnet.ibm.com>
+References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
+ <Zw_5OLkwefdGOnA3@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rFV3FUdG9IL4168xZhgsmUCJw1ydwLQ9
+X-Proofpoint-ORIG-GUID: uYRwyQ604yNdSO9BNViKUsbLuRGBy_1P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ clxscore=1015 adultscore=0 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 phishscore=0 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160115
 
 
->> +	pdrv = dev->driver;
->> +	if (pci_dev_is_disconnected(dev)) {
->> +		vote = PCI_ERS_RESULT_DISCONNECT;
->> +	} else if (!pci_dev_set_io_state(dev, state)) {
->> +		pci_info(dev, "can't recover (state transition %u -> %u invalid)\n",
->> +			dev->error_state, state);
->> +		vote = PCI_ERS_RESULT_NONE;
->> +	} else if (!cxl_port_hndlrs || !cxl_port_hndlrs->error_detected) {
->> +		if (dev->hdr_type != PCI_HEADER_TYPE_BRIDGE) {
->> +			vote = PCI_ERS_RESULT_NO_AER_DRIVER;
->> +			pci_info(dev, "can't recover (no error_detected callback)\n");
->> +		} else {
->> +			vote = PCI_ERS_RESULT_NONE;
->> +		}
->> +	} else {
->> +		vote = cxl_port_hndlrs->error_detected(dev, state);
->> +	}
->> +	pci_uevent_ers(dev, vote);
->> +	*result = merge_result(*result, vote);
->> +	device_unlock(&dev->dev);
->> +	return 0;
->> +}
-> 
->>  static int pci_pm_runtime_get_sync(struct pci_dev *pdev, void *data)
->>  {
->>  	pm_runtime_get_sync(&pdev->dev);
->> @@ -188,6 +245,28 @@ static void pci_walk_bridge(struct pci_dev *bridge,
->>  		cb(bridge, userdata);
->>  }
->>  
->> +/**
->> + * cxl_walk_bridge - walk bridges potentially AER affected
->> + * @bridge:	bridge which may be a Port, an RCEC, or an RCiEP
->> + * @cb:		callback to be called for each device found
->> + * @userdata:	arbitrary pointer to be passed to callback
->> + *
->> + * If the device provided is a bridge, walk the subordinate bus, including
->> + * the device itself and any bridged devices on buses under this bus.  Call
->> + * the provided callback on each device found.
->> + *
->> + * If the device provided has no subordinate bus, e.g., an RCEC or RCiEP,
->> + * call the callback on the device itself.
-> only call the callback on the device itself.
-> 
-> (as you call it as stated above either way).
-> 
 
-Thanks. I will update the function header to include "only".
+> On 16 Oct 2024, at 11:04=E2=80=AFPM, Namhyung Kim =
+<namhyung@kernel.org> wrote:
+>=20
+> Hello Athira,
+>=20
+> On Thu, Oct 10, 2024 at 08:21:06PM +0530, Athira Rajeev wrote:
+>> perf list picks the events supported for specific platform
+>> from pmu-events/arch/powerpc/<platform>. Example power10 events
+>> are in pmu-events/arch/powerpc/power10, power9 events are part
+>> of pmu-events/arch/powerpc/power9. The decision of which
+>> platform to pick is determined based on PVR value in powerpc.
+>> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
+>>=20
+>> Example:
+>>=20
+>> Format:
+>>        PVR,Version,JSON/file/pathname,Type
+>>=20
+>> 0x004[bcd][[:xdigit:]]{4},1,power8,core
+>> 0x0066[[:xdigit:]]{4},1,power8,core
+>> 0x004e[[:xdigit:]]{4},1,power9,core
+>> 0x0080[[:xdigit:]]{4},1,power10,core
+>> 0x0082[[:xdigit:]]{4},1,power10,core
+>>=20
+>> The code gets the PVR from system using get_cpuid_str function
+>> in arch/powerpc/util/headers.c ( from SPRN_PVR ) and compares
+>> with value from mapfile.csv
+>>=20
+>> In case of compat mode, say when partition is booted in a power9
+>> mode when the system is a power10, add an entry to pick the
+>> ISA architected events from "pmu-events/arch/powerpc/compat".
+>> Add json file generic-events.json which will contain these
+>> events which is supported in compat mode.
+>>=20
+>> Suggested-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>=20
+> Is this the latest version?
+>=20
+> Thanks,
+> Namhyung
 
->> + */
->> +static void cxl_walk_bridge(struct pci_dev *bridge,
->> +			    int (*cb)(struct pci_dev *, void *),
->> +			    void *userdata)
->> +{
->> +	cb(bridge, userdata);
->> +	if (bridge->subordinate)
->> +		pci_walk_bus(bridge->subordinate, cb, userdata);
-> The difference between this and pci_walk_bridge() is subtle and
-> I'd like to avoid having both if we can.
-> 
+Hi Namhyung
 
-The cxl_walk_bridge() was added because pci_walk_bridge() does not report
-CXL errors as needed. If the erroring device is a bridge then pci_walk_bridge() 
-does not call report_error_detected() for the root port itself. If the bridge 
-is a CXL root port then the CXL port error handler is not called. This has 2 
-problems: 1. Error logging is not provided, 2. A result vote is not provided 
-by the root port's CXL port handler.
+Yes, this is the latest version=20
 
->> +}
->> +
->>  pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->>  		pci_channel_state_t state,
->>  		pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev))
->> @@ -276,3 +355,74 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->>  
->>  	return status;
->>  }
->> +
->> +pci_ers_result_t cxl_do_recovery(struct pci_dev *bridge,
->> +				 pci_channel_state_t state,
->> +				 pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev))
->> +{
->> +	struct pci_host_bridge *host = pci_find_host_bridge(bridge->bus);
->> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
->> +	int type = pci_pcie_type(bridge);
->> +
->> +	if ((type != PCI_EXP_TYPE_ROOT_PORT) &&
->> +	    (type != PCI_EXP_TYPE_RC_EC) &&
->> +	    (type != PCI_EXP_TYPE_DOWNSTREAM) &&
->> +	    (type != PCI_EXP_TYPE_UPSTREAM)) {
->> +		pci_dbg(bridge, "Unsupported device type (%x)\n", type);
->> +		return status;
->> +	}
->> +
-> 
-> Would similar trick to in pcie_do_recovery work here for the upstream
-> and downstream ports use pci_upstream_bridge() and for the others pass the dev into
-> pci_walk_bridge()?
-> 
+Thanks
+Athira
+>=20
+>> ---
+>>=20
+>> .../arch/powerpc/compat/generic-events.json   | 117 =
+++++++++++++++++++
+>> .../perf/pmu-events/arch/powerpc/mapfile.csv  |   1 +
+>> 2 files changed, 118 insertions(+)
+>> create mode 100644 =
+tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
+>>=20
+>> diff --git =
+a/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json =
+b/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
+>> new file mode 100644
+>> index 000000000000..6f5e8efcb098
+>> --- /dev/null
+>> +++ b/tools/perf/pmu-events/arch/powerpc/compat/generic-events.json
+>> @@ -0,0 +1,117 @@
+>> +[
+>> +  {
+>> +    "EventCode": "0x600F4",
+>> +    "EventName": "PM_CYC",
+>> +    "BriefDescription": "Processor cycles."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x100F2",
+>> +    "EventName": "PM_CYC_INST_CMPL",
+>> +    "BriefDescription": "1 or more ppc insts finished"
+>> +  },
+>> +  {
+>> +    "EventCode": "0x100f4",
+>> +    "EventName": "PM_FLOP_CMPL",
+>> +    "BriefDescription": "Floating Point Operations Finished."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x100F6",
+>> +    "EventName": "PM_L1_ITLB_MISS",
+>> +    "BriefDescription": "Number of I-ERAT reloads."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x100F8",
+>> +    "EventName": "PM_NO_INST_AVAIL",
+>> +    "BriefDescription": "Number of cycles the ICT has no itags =
+assigned to this thread."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x100fc",
+>> +    "EventName": "PM_LD_CMPL",
+>> +    "BriefDescription": "Load instruction completed."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x200F0",
+>> +    "EventName": "PM_ST_CMPL",
+>> +    "BriefDescription": "Stores completed from S2Q (2nd-level store =
+queue)."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x200F2",
+>> +    "EventName": "PM_INST_DISP",
+>> +    "BriefDescription": "PowerPC instruction dispatched."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x200F4",
+>> +    "EventName": "PM_RUN_CYC",
+>> +    "BriefDescription": "Processor cycles gated by the run latch."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x200F6",
+>> +    "EventName": "PM_L1_DTLB_RELOAD",
+>> +    "BriefDescription": "DERAT Reloaded due to a DERAT miss."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x200FA",
+>> +    "EventName": "PM_BR_TAKEN_CMPL",
+>> +    "BriefDescription": "Branch Taken instruction completed."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x200FC",
+>> +    "EventName": "PM_L1_ICACHE_MISS",
+>> +    "BriefDescription": "Demand instruction cache miss."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x200FE",
+>> +    "EventName": "PM_L1_RELOAD_FROM_MEM",
+>> +    "BriefDescription": "L1 Dcache reload from memory"
+>> +  },
+>> +  {
+>> +    "EventCode": "0x300F0",
+>> +    "EventName": "PM_ST_MISS_L1",
+>> +    "BriefDescription": "Store Missed L1"
+>> +  },
+>> +  {
+>> +    "EventCode": "0x300FC",
+>> +    "EventName": "PM_DTLB_MISS",
+>> +    "BriefDescription": "Data PTEG reload"
+>> +  },
+>> +  {
+>> +    "EventCode": "0x300FE",
+>> +    "EventName": "PM_DATA_FROM_L3MISS",
+>> +    "BriefDescription": "Demand LD - L3 Miss (not L2 hit and not L3 =
+hit)"
+>> +  },
+>> +  {
+>> +    "EventCode": "0x400F0",
+>> +    "EventName": "PM_LD_MISS_L1",
+>> +    "BriefDescription": "L1 Dcache load miss"
+>> +  },
+>> +  {
+>> +    "EventCode": "0x400F2",
+>> +    "EventName": "PM_CYC_INST_DISP",
+>> +    "BriefDescription": "Cycle when instruction(s) dispatched."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x400F6",
+>> +    "EventName": "PM_BR_MPRED_CMPL",
+>> +    "BriefDescription": "A mispredicted branch completed. Includes =
+direction and target."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x400FA",
+>> +    "EventName": "PM_RUN_INST_CMPL",
+>> +    "BriefDescription": "PowerPC instruction completed while the run =
+latch is set."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x400FC",
+>> +    "EventName": "PM_ITLB_MISS",
+>> +    "BriefDescription": "Instruction TLB reload (after a miss), all =
+page sizes. Includes only demand misses."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x400fe",
+>> +    "EventName": "PM_LD_NOT_CACHED",
+>> +    "BriefDescription": "Load data not cached."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x500fa",
+>> +    "EventName": "PM_INST_CMPL",
+>> +    "BriefDescription": "Instructions."
+>> +  }
+>> +]
+>> diff --git a/tools/perf/pmu-events/arch/powerpc/mapfile.csv =
+b/tools/perf/pmu-events/arch/powerpc/mapfile.csv
+>> index 4d5e9138d4cc..cbd3cb443784 100644
+>> --- a/tools/perf/pmu-events/arch/powerpc/mapfile.csv
+>> +++ b/tools/perf/pmu-events/arch/powerpc/mapfile.csv
+>> @@ -16,3 +16,4 @@
+>> 0x004e[[:xdigit:]]{4},1,power9,core
+>> 0x0080[[:xdigit:]]{4},1,power10,core
+>> 0x0082[[:xdigit:]]{4},1,power10,core
+>> +0x00ffffff,1,compat,core
+>> --=20
+>> 2.27.0
 
-Yes, that would be a good starting point to begin reuse refactoring.
-I'm interested in getting yours and others feedback on the separation of the 
-PCI and CXL protocol errors and how much separation is or not needed.
-
-
-Regards,
-Terry
 
 
