@@ -1,331 +1,276 @@
-Return-Path: <linux-kernel+bounces-368447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607CF9A0FD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:37:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4929A0FDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D09CB23CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:37:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B8081F21C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CF620F5C9;
-	Wed, 16 Oct 2024 16:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2BB20FAAB;
+	Wed, 16 Oct 2024 16:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNpB+Yza"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Ad9Rqwzy"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1E9186E54;
-	Wed, 16 Oct 2024 16:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096646; cv=none; b=cWYYMdUcnX/Vv1l2AWNS1YJRBNnNuOEo8FIYOPwSITTHWzdDhx0J46HemIdQAEcuCWZeAV1R+jJ1HZbmALAbA+F2PxEJiqDVtkxqTzTWaIpUfRwCA6EHDOUPmb5Q06xRBNLpPVmqMaoqcdsuH/GcfjSgR1U1Vz7RF00U/e+P4sg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096646; c=relaxed/simple;
-	bh=bVoWUf5JIeW58zUB1s8zMcbCML5/BH6VBU8jAl7/MG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hh4lMZOYllMQ9Bn0yfcojf6UH+ibL1LizX3lQ2VAqL23DJ4d6oa04170WZ/3bufRAE1jP2QvMFZtPWscdcLYAm00dos8/EbGS3s+D8Px0d1YsSSRDfDW+UQbL/6fTa6Fl9C1vltp1LGpz/gdTyQ6BDtQmHXjA9ShA0l5XGQMcP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNpB+Yza; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f7606199so19252e87.0;
-        Wed, 16 Oct 2024 09:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729096643; x=1729701443; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=luQKTNxR6ATZZds0S4gxL4eIwnavQ16i9lpfXcg6qJA=;
-        b=LNpB+Yza0Dljpe0/N5NCTFo1h+op8Ae7ZePWgPNiMA4TL/UHBjtIO6CPewTgdNNZ7t
-         0r08z1L96xI3Gn0gUK0yL7L18Vihflx/s/JELAmEkWJTLWnEGtBMCNuj4D6Oevg+bmgm
-         w1psx7p5tUzEWhiR6V1Nyyhyig5gHh/D6sOupGmlMEywZnWggSHclwN7Qfr0Zw6mSgcP
-         oT9jlnX+DndUa+tw79/lqCzxNSG2DKWpPUfVx5PJYS1ByPeVQUebQ5y0bRMwG6DrYCd5
-         7DcvfO8lT7kC/iEeYwWrfJ9KEZCfZFWtIDdmhW/55BholqYHdmEYX75feYfevfotGJqF
-         pqHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729096643; x=1729701443;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=luQKTNxR6ATZZds0S4gxL4eIwnavQ16i9lpfXcg6qJA=;
-        b=l1EYAGjjS1Ne/wCZr9S8paiNbpQh+K0sji85yZ6JJdIwBuzsbsnPR9yBFLRE9/PQvM
-         +tWq4qkGwWqYOLHEO74w4DM/vJ4N64CXdGfEbNih2m8PgLZ6RCypmVjMTeGqfyIOP5GU
-         GYcqaTdf4yfFZcDj4eRlS4l1hn1r1KqdhhjEc+e8JfxHBwSUW5j2V6VJO31KHS6tAxsq
-         iIDPr8Z+316SXqlW/byvovntnXuKF59X57aP1HZWmL8In1ssSEKrl9rplENrZeSUvTsy
-         REQ6K2kEMBmoWqNwBOip2FPBuh03da+DPhNAEWPvT0OmEUJ6i1qQdtgD/o69yp9yE53d
-         tXUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWx26/4IDbFeyyoLm3/39xkgWtO7VNPcRvU/A4Hk583vWHIkunbvirDEirRVlBTDysPnU2bDCRLhnLUDg==@vger.kernel.org, AJvYcCXgx+z6kX0VonsZ8R7hznoLSH1BwUBJlze7OyqMVm5fcuw7Blvhe8RM4MA9lGQCQYS5JcBcesSnjMOhYXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKPd5dwz7th9cGtSFdYGP9xp9oZVBXm9h4NHbIiYGTIX83Gj4i
-	dmnxohiqHwj5J54G7EXVjxiyFMDwJOoRk/537FebHJ6GUAEME/fAqEboHqngWnQCtuAF57BwdkM
-	KSoUCZznT73clor37qfeIc4lGQCEVksdlc4U=
-X-Google-Smtp-Source: AGHT+IEnXpt9R2H4LAqyJIeLeBvmT6mKxXZzTR9N81dMq9nN7xB97LNUDsl5AB9GUvelMBjWfgrYC4Xst52VRlshyJA=
-X-Received: by 2002:a05:6512:3c95:b0:537:a745:3e with SMTP id
- 2adb3069b0e04-539da5939a5mr9870158e87.45.1729096642783; Wed, 16 Oct 2024
- 09:37:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6425016FF5F;
+	Wed, 16 Oct 2024 16:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729096690; cv=fail; b=AOGx699Z/PhEiW6BanWRZxFKM3ppaaa7no34shak0tkkHTZNuDXUgJh1It/zHvUGKis4lIEnh5IaIDaeQSQ6sBvokRpBb2kL0yu/X/DpLJuhPTmgjp35Zf85st0lY+vuc1T7wlo6l1XSxLXXcUAmVc0wC3e0cWglFGuBA7/jeOc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729096690; c=relaxed/simple;
+	bh=+0PZGbzJCdKlZ0kSUWxhat3WrK4DBA53m5i0NCZ636k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=d9crrflen080poJDDcPT+wHkEUfQMUGtFmDQcluRzR5ntxMv0GBVx+ckn1B3qrvL+cq3NF8Z8ZanpUrpvuSbtjvnEk+AQNdpCuKURlpV9sNHdEYtK6A3K2wVq9ICTNbFiV8ZWBrQ24nV7IhFkuEcDAzNLR9VHgC4TdnWL+6ymTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Ad9Rqwzy; arc=fail smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGHHo5011229;
+	Wed, 16 Oct 2024 09:38:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	s2048-2021-q4; bh=+0PZGbzJCdKlZ0kSUWxhat3WrK4DBA53m5i0NCZ636k=; b=
+	Ad9RqwzyWJ0cUkP564EsHekaUkyovAfGcB8hAPlQsdIHXBa0NM2fmoXUpwmaHA4P
+	hrugjuqI0HglUA+QveP8J9tf8tDn0LA91TM4ecSjLpws4cE3ngPPLAnaZuhbh4rF
+	2AMOCYVXLWRHdE/+7potVK0l1RwVwJU76i8NqWF7HEx6ViB/gQH7dH5hZPbTdJEN
+	Tqr+GpXk86m4v5x2542hjXRGR5VNrnyc7H3Q1fqScJ6TQNHrA+TOIEwbTT7NOZcO
+	TDz+FQSqLzezrU6Jh6f08ZuBt3BqTASpVOTxI0MLuyT6yUqTOirY61z9LuYFsw0H
+	VRHrWbCKgBilyXBFJB5HJw==
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2049.outbound.protection.outlook.com [104.47.56.49])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4291qkame7-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 09:38:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LmsZ6h5O1QGYq6skKgKE7T3cUYcfAYEYAviupLbvk0DEtoV/eJWH/3E9KU/mTlmstL8VywZ2mX8Q+qqZKDVDWzc87qjBqzounqh6u8q2DVaYWZprLw4XfEb1Q8K7stQrdtuHx3dy0J10rSLaZSz5aQYUbckTruK9qMXCnpIKpotl57VWhuQulQRkVnR7O0kXmtHccoIb3CqZmbtYSNaH8jv+sxSwVsoTCb1Ver3mDoMg+jsU9lnEyBlvxmkKfgMdAQwBqGaeK1pnFfHX7g3EziUg1KJ7sC0VzqxTDlGyY247H10UNQZDlr6P83JP0KbgJT0vlG1vN/i2KrtHHvHRwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+0PZGbzJCdKlZ0kSUWxhat3WrK4DBA53m5i0NCZ636k=;
+ b=n/vwvDEEgPgepI297UBW2KNEuqSiyuEtsn/SdnWD9cUvUSGflu0kH3VwZWdmdEHwh6eQI7dfQNyxXLHUtQtu2YNc4coiRX+9g3hJzSzQQmHO7PFPONXpZhNTUPeJKoHodaXCrYfRJqZcVMNX0JRwwnUZpkq8CwFUA5wcG0fRGghN0DHXak3L5RaBob25MpJPc2YF+LJBv6tk/xwG6ZeN9usnGh+nxQ9UBFW/kP2zA6fVonRvYjOI2rdYmS4UGreqMJzL4tVTfebxNKvtdWTw/CmizfK8hHxm24D/FbOHVpfsA/8XbC+AZGnevuTmOJp25ioQ9s+UqjyTkPjbySX4ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
+ by SJ2PR15MB5836.namprd15.prod.outlook.com (2603:10b6:a03:4f2::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Wed, 16 Oct
+ 2024 16:38:03 +0000
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610%4]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
+ 16:38:03 +0000
+From: Song Liu <songliubraving@meta.com>
+To: Christian Brauner <brauner@kernel.org>
+CC: Jan Kara <jack@suse.cz>, Song Liu <songliubraving@meta.com>,
+        Christoph
+ Hellwig <hch@infradead.org>, Song Liu <song@kernel.org>,
+        bpf
+	<bpf@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML
+	<linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@meta.com>,
+        Andrii
+ Nakryiko <andrii@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>,
+        Alexei
+ Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin
+ KaFai Lau <martin.lau@linux.dev>,
+        Al Viro <viro@zeniv.linux.org.uk>, KP Singh
+	<kpsingh@kernel.org>,
+        Matt Bobrowski <mattbobrowski@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
+ cover security.bpf xattr names
+Thread-Topic: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
+ cover security.bpf xattr names
+Thread-Index:
+ AQHbFRSqQ+6V3A7WhE2nOTZ+DtSM+rKHVfgAgAAEFACAAAEygIAAB0MAgAIYdICAABCugIAAHbGA
+Date: Wed, 16 Oct 2024 16:38:03 +0000
+Message-ID: <E80730DC-9389-41F7-A46D-136495C1E82D@fb.com>
+References: <20241002214637.3625277-1-song@kernel.org>
+ <20241002214637.3625277-3-song@kernel.org> <Zw34dAaqA5tR6mHN@infradead.org>
+ <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
+ <Zw384bed3yVgZpoc@infradead.org>
+ <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
+ <20241016135155.otibqwcyqczxt26f@quack3>
+ <20241016-luxus-winkt-4676cfdf25ff@brauner>
+In-Reply-To: <20241016-luxus-winkt-4676cfdf25ff@brauner>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3776.700.51)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|SJ2PR15MB5836:EE_
+x-ms-office365-filtering-correlation-id: 23e61b83-86d2-4db1-a6a3-08dcee00e7be
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?c2FvU2ZVK1NkQW11bElPQXdZVm5LVjRrRVI0WmhUUUhhVnI4QWNlUExibTVn?=
+ =?utf-8?B?VjJYYjh3d01hWUNlZ3JIa2JFYUxzbXliTlJXU291NmVaN2hZbXJuNHhXUTU3?=
+ =?utf-8?B?Z0svdzQ5eDdELzdDRmZwWFNxR2FkaGVuczllRy9mbE5jZEdDQU5RV2ltQW5r?=
+ =?utf-8?B?Q0ttZUFja0toWlI1TDZKTk1VUEVIdUtTdkZqVEJUN1dBTWRMaVlSWEN6NTBr?=
+ =?utf-8?B?STA2bDJVM1J2U1ZaekxQYXUyRjNUVUlWVVEvVVh1dExHVUMyMDdWV1huZm5q?=
+ =?utf-8?B?eHpDV21ERk5OT0JEazRwWFMxaHM2dTdCWXlpajhTdjJUTy8xRUQ0cnJJYWVW?=
+ =?utf-8?B?S1BsMG9sM0JJUm5pR2pGcGtMZDdRcU1IVzBQZ3pudTIzWUVrbnBWTVhWUHpC?=
+ =?utf-8?B?QTFBTWdTUk01L1p0bnpuQ0RDZWJ6WDJYMlBPdFA4b2NnMS8vaURFZkNGWlVl?=
+ =?utf-8?B?Zmc2TEZlcVFVcitjc0NsVGNGdExrVVdyb0gwaVgwSkNkcVI2MTQ1enNXTG9F?=
+ =?utf-8?B?UW41VFhOSGlUR1VqV1NjZHord1VBY0FLaFRLYnlYdS9Kc2NTZU8zbGlOK3U0?=
+ =?utf-8?B?REJCa1FYdFdnNStLZDZ5ZXlEckRGcVJYQzBBdEo4Z0p2Qzd1RldNVDQxZWd5?=
+ =?utf-8?B?K25PWC8ydDdYKzFNWk4wUnVlUmkwbWk5a0hFMzBVcmhKeHpGVmhpVDBRZ3cr?=
+ =?utf-8?B?VGljQ0dpQjNiaUNKcGRwZjZIY1liRTNSYnAxdVJZOXZYZlAzMUY5L0RYK242?=
+ =?utf-8?B?UStrak41aUxWcnVPVGFPU0hnd3pZKzRkWmY5eXMvMU5IVHNMejRFZ1gwOUll?=
+ =?utf-8?B?eGpJRzJ4ZW1DRFcyZUY0Wit5TFZZYjREZEFzRDRyV21DMkNmVTJYNFltUVM3?=
+ =?utf-8?B?YVAxbjFObXo0TmF3OS9TOEdYNU11MkY4YldUVTgzTEk5bkhGU1d4cHFWL204?=
+ =?utf-8?B?WlhuZXRyR1FyTGRLQTJva05MUi9DbVE4Rm81cUNkd3ZsTE1qcjdpU1lOdXE4?=
+ =?utf-8?B?Rk8zSHdocGNpYVJRTjhwaWFINEhWTnFFUFR1T3BjZHVtSXNxcW5VbEhuWUNI?=
+ =?utf-8?B?WUg3NEhSSCt1U3hEVGsySnB4dDhxc0xlTlNVRUNzcEFjYmZGL1VaRHRLWGpM?=
+ =?utf-8?B?aFVkQjIvL25kT0JHL2hseUVQWnVYWW0zcUQ3Unl0OWVySzhyaFRWZ2UrdUJR?=
+ =?utf-8?B?Y0FvSG1IdWY2b0JkcHZ5UlZPcVlSQVhTeFVBUnM3YTFLOW11NThQWjVidlVk?=
+ =?utf-8?B?TUlialJtV0lxZ3Z2cko0cGRkWTBuRnJlT0s1NkFpbDZoY1Y3UEdjK1dKcWJu?=
+ =?utf-8?B?SGNSakFDT09pSzZRYzJ4RGQrZlF0YlFtWUZoTVRRQXF3S3Z4ZmNNNEVwRDk3?=
+ =?utf-8?B?TzhTa0tNRUxiWS9qa3JaN1h4NGVDTmYzM1BQWlJodGpEUWxpcW9vcDBUQnA2?=
+ =?utf-8?B?b0l1M2llS3dJcFdEQmFqczYvRU1JdERJMWZRVmNxRzEvMlA5bVBtNElHRHVw?=
+ =?utf-8?B?cGdtSklRTmkvVzB1YUd4SzJUclJYb3piYXVmN2ZtVXVkOExMS3hXQjNGSXJ3?=
+ =?utf-8?B?bDNnQzl1Y21PdTdvcmxuN1U1eXhkTlhVQVJvYmlGZ3YrUzZzNkh3dUZMWWdO?=
+ =?utf-8?B?a2RMaDM5TDd2c0lBRlg4UmJ0MWloWWZFSTMraHdxVmV5QmdZalVvM2c1bi9v?=
+ =?utf-8?B?YUo2RUhacDRhdGhxcmxQQS9yaUphNTMwbHZueFRrQXA0MnNKMVNyUDRHZlZR?=
+ =?utf-8?B?UlY4dzU5ZDY5ZVBOM1JySHZFVkg0VE0wallZUmIrYVZIOWNmVktpaGJTOFZn?=
+ =?utf-8?B?R2RLL3M1NzIxUHdyS25YUT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?V041cXhRdjZhVmdwUVVTcjA1ZS9pWTlwWHpPRnd0NXFKVnc2bXM5RWczbC9a?=
+ =?utf-8?B?bG9ZT25iZVBGKzBSNVg3VnlEVUJ2MXBZMUN4QnROMkFQQ1hQYzFsN2RQeEdO?=
+ =?utf-8?B?NTQ3VHU5VnI3YkthUzdsZWhZeXNSNkduUHI4TytDRTVkOHIybXJERDVZbHpq?=
+ =?utf-8?B?V1ZkbFVkbUdkMTMvaHdWeHY1NXBmYkVMTTRUeUZHc05jTVFQZ1lIbEh5WTFa?=
+ =?utf-8?B?TzBCTVZ5emZidXlJQjlDTSsyMWpnZmN0UVczSmtLbUNIL29YR2FMWFVQMGhP?=
+ =?utf-8?B?Ykp3eXhUNVdUYW1CQVZKQW1ESkkvTm9zdW1XUVp0bDJPdlk3NVMzYktLVVlv?=
+ =?utf-8?B?ekZRUjNmaUdzUWZSYTJFS2Z5WjFYY0M1MXZjS3VYbU5sTHlvSE1VeEdXdUNz?=
+ =?utf-8?B?NERxTFB4dDFjNTlaekdITE42dFRZMVVURC9aeFpSYlU5ZVFtdTdRbWpPQnNh?=
+ =?utf-8?B?UDI3TWIzN1lxZXBYenJTRFc3WXVlb3Rkcmd3TUVUbTdvb1lNU09qOVUyTjBi?=
+ =?utf-8?B?UEpRL2RMNFQvY3lTR0hnNU8zSUZHRitqVzMyZzhXZ045c1p3RnJ1R2dCbUZ3?=
+ =?utf-8?B?TzVGdEJTVEIrYlNrZ1FxZEJyQm90VXd3ZzlBK29XWm1PczZRNGtjd0tvalFP?=
+ =?utf-8?B?eEZrVUJiWGUyVkdXZGlrcGtvWTE2TSsrand4bERyYXh2VERmMW5LMWllUUJy?=
+ =?utf-8?B?L0hoc0kxMkxiQUE5Nm5VVjlxQW9kQlF3bDBSOWNWSyt0RGNmYkJvMTVsTWYx?=
+ =?utf-8?B?TjBMdzNsMHJySlpvcDl4SlRUTElQM2xvRnphL0RTUDlJMy9yTlNRc3M0VzZa?=
+ =?utf-8?B?ZSszYTJNVWtZMURUL0NQUDliUTdEektqQnBvK3Q2SXFwV0JlWGMyT1dMVVh6?=
+ =?utf-8?B?QkNKODZtTmRlZ0grSngwZzI2Z2pwZmhtL3QvQzNueUIwK052NG1CdS9GSHZ3?=
+ =?utf-8?B?SGJDWlVKbERuclk1RGRWNGM2RTVFTXk4Ky9IZWk2Zk14T3VmeEt0ZU9ZMUhS?=
+ =?utf-8?B?SEdlR0RvclVaTEF3TzBHZGtjT01BN3lrR3hYckd5Vis5MGVycUJKSCtBelFN?=
+ =?utf-8?B?UkNTNE9TNTB6am5DMFJaNU9ISWphS1laVVJmaktQa2lxWU5tdy8weXY2NnY3?=
+ =?utf-8?B?NXF4K0Y0L20vZEFMcGJ3S2dMcHhmYUtmVWV5VkVHc1V1bVFKeXJxdjl6cHhO?=
+ =?utf-8?B?OFNZMXlZbDMyTXg1SVUrWVJUcDNtNktKUUc4QVVJZ1Fuenk5YklaZXFheDZz?=
+ =?utf-8?B?ajMvREJBWHpwZlJlMGxOb0FPTk8vSnAwcnMyT1VHOG03Q0U1Q3Z0Y2l5RFhM?=
+ =?utf-8?B?YTVFMzVGVFJKbU5OVjlCVFI2cU5KZGFRV0JHeGFmcFZ6a2hrK1IrQlA3U1hx?=
+ =?utf-8?B?bzRQaG52aVhlRlpkTW1SLzBBaDNwUGxLRVV6L2RRVzV4aGJTL1QxNU0xTEVj?=
+ =?utf-8?B?b2NueFp1YTQ0cjQzK0o2TWxQMzJySGRzMkI5Y1NXekR0SWptMnN1Unp3L1hj?=
+ =?utf-8?B?WHlyVEdNTFc0RUp4UElpODI2U2gyWE9aN3I0WmM0OGV0Rk5UMFVZeGg0MEQz?=
+ =?utf-8?B?V2pySmxwbThhOEM3YnJQUSsyaDcrL2w3cldjOFYxdnVzeVV3RUJsaU9pVmJ4?=
+ =?utf-8?B?amppSE9GbHJ5N2F4eFV3U1ZOZFlqQVllYkNkUmhSZWpXeXkyN1pQMHd6QlJ0?=
+ =?utf-8?B?b2pFNEJiRklLTkNXTkg4NHZ4UWV5QThOdjBpMjZNb285Y2M3djUxcW9NajIy?=
+ =?utf-8?B?Tm4rdDQ4aUF2LzBZUitFcTVVMjNPMkRwY3hUK3ZhQkxSeVZtLzJxUldPNUxV?=
+ =?utf-8?B?c3pHbER4YlhUNXdGQjZJWjdRallmRWYvcVZqL1B3REMzMlJPUzBYZ2dSb0Vi?=
+ =?utf-8?B?cTNqTldHWUp4aHdGRkdoVm9kNTdUOHVHK0xTV2lHVGNNN1BXai96dkNjb1p0?=
+ =?utf-8?B?NFVhV3hyT1dmcWRKZmhXTEFYUlRwbElRa3lVTnUwdm9Bd0cxRmNPOEtrbHhL?=
+ =?utf-8?B?N1BQaTBmYnB5V0R6Y0ExUXJ3cjB4ZEtVMzZLMEFvSEpESnJKNmRTM1NsYWM3?=
+ =?utf-8?B?QWEwb3V1dXh2Mk9YcWZ1bWtGK1lzNzc3TldJNWdtRFN4SWZiRXNNN3pWVEJ4?=
+ =?utf-8?B?Yjgrd1g1eE5JZ2FyQkt1ZXkwYUhqK2tsMXFNajJ1TnRjS3d6S1EvcVp6b0d4?=
+ =?utf-8?Q?VWpbDMSeGDDFEVQzCbaEwNk=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5394EE9716FAB54790E7385BDC34967B@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015162532.2292871-1-quic_mojha@quicinc.com>
- <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
- <Zw7COXsvJsWq4db9@hu-mojha-hyd.qualcomm.com> <CABCoZhCDJfiRtUvQ-4ypaQsiktC3b22r4=TCy5V+RVeOb4wP+A@mail.gmail.com>
- <Zw9S7LYZ1Sb/eMXe@hu-mojha-hyd.qualcomm.com>
-In-Reply-To: <Zw9S7LYZ1Sb/eMXe@hu-mojha-hyd.qualcomm.com>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Wed, 16 Oct 2024 09:37:10 -0700
-Message-ID: <CABCoZhBVEDKaaH36C+r4uMYo_08uRne9jikFCz8-yRuChR8JSw@mail.gmail.com>
-Subject: Re: [PATCH] leds: class: Protect brightness_show() with
- led_cdev->led_access mutex
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23e61b83-86d2-4db1-a6a3-08dcee00e7be
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2024 16:38:03.5085
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: O3h+0QhL4YbOXq587D5933lqoPv94K/RmutC3LJsVgs9h9Up+s6Lexd0fayrylADWj238S6numjCveJJ6K2h8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR15MB5836
+X-Proofpoint-ORIG-GUID: PkSSU3q_U-5Iww-N-lVVj7OiX0Hk4Jkk
+X-Proofpoint-GUID: PkSSU3q_U-5Iww-N-lVVj7OiX0Hk4Jkk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
 
-On Tue, Oct 15, 2024 at 10:45=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.co=
-m> wrote:
->
-> On Tue, Oct 15, 2024 at 03:28:08PM -0700, anish kumar wrote:
-> > On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mukesh Ojha <quic_mojha@quicin=
-c.com> wrote:
-> > >
-> > > On Tue, Oct 15, 2024 at 10:59:12AM -0700, anish kumar wrote:
-> > > > On Tue, Oct 15, 2024 at 9:26=E2=80=AFAM Mukesh Ojha <quic_mojha@qui=
-cinc.com> wrote:
-> > > > >
-> > > > > There is NULL pointer issue observed if from Process A where hid =
-device
-> > > > > being added which results in adding a led_cdev addition and later=
- a
-> > > > > another call to access of led_cdev attribute from Process B can r=
-esult
-> > > > > in NULL pointer issue.
-> > > >
-> > > > Which pointer is NULL? Call stack shows that dualshock4_led_get_bri=
-ghtness
-> > > > function could be culprit?
-> > >
-> > > in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [2]
-> > > is not yet completed.
-> > >
-> > > [1]
-> > >  struct hid_device *hdev =3D to_hid_device(led->dev->parent);
-> > >
-> > > [2]
-> > > led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0,
-> > >                   led_cdev, led_cdev->groups, "%s", final_name);
-> > >
-> > > >
-> > > > >
-> > > > > Use mutex led_cdev->led_access to protect access to led->cdev and=
- its
-> > > > > attribute inside brightness_show().
-> > > >
-> > > > I don't think it is needed here because it is just calling the led =
-driver
-> > > > callback and updating the brightness. So, why would we need to seri=
-alize
-> > > > that using mutex? Maybe the callback needs some debugging.
-> > > > I'm curious if it is ready by the time the callback is invoked.
-> > >
-> > > Because, we should not be allowed to access led_cdev->dev as it is no=
-t
-> > > completed and since, brightness_store() has this lock brightness_show=
-()
-> > > should also have this as we are seeing the issue without it.
-> > >
-> > > I hope, above might have answered your question.
-> > >
-> > > -Mukesh
-> > > >
-> > > > >
-> > > > >         Process A                               Process B
-> > > > >
-> > > > >  kthread+0x114
-> > > > >  worker_thread+0x244
-> > > > >  process_scheduled_works+0x248
-> > > > >  uhid_device_add_worker+0x24
-> > > > >  hid_add_device+0x120
-> > > > >  device_add+0x268
-> > > > >  bus_probe_device+0x94
-> > > > >  device_initial_probe+0x14
-> > > > >  __device_attach+0xfc
-> > > > >  bus_for_each_drv+0x10c
-> > > > >  __device_attach_driver+0x14c
-> > > > >  driver_probe_device+0x3c
-> > > > >  __driver_probe_device+0xa0
-> > > > >  really_probe+0x190
-> > > > >  hid_device_probe+0x130
-> > > > >  ps_probe+0x990
-> > > > >  ps_led_register+0x94
-> > > > >  devm_led_classdev_register_ext+0x58
-> > > > >  led_classdev_register_ext+0x1f8
-> > > > >  device_create_with_groups+0x48
-> > > > >  device_create_groups_vargs+0xc8
-> > > > >  device_add+0x244
-> > > > >  kobject_uevent+0x14
-> > > > >  kobject_uevent_env[jt]+0x224
-> > > > >  mutex_unlock[jt]+0xc4
-> > > > >  __mutex_unlock_slowpath+0xd4
-> > > > >  wake_up_q+0x70
-> > > > >  try_to_wake_up[jt]+0x48c
-> > > > >  preempt_schedule_common+0x28
-> > > > >  __schedule+0x628
-> > > > >  __switch_to+0x174
-> > > > >                                                 el0t_64_sync+0x1a=
-8/0x1ac
-> > > > >                                                 el0t_64_sync_hand=
-ler+0x68/0xbc
-> > > > >                                                 el0_svc+0x38/0x68
-> > > > >                                                 do_el0_svc+0x1c/0=
-x28
-> > > > >                                                 el0_svc_common+0x=
-80/0xe0
-> > > > >                                                 invoke_syscall+0x=
-58/0x114
-> > > > >                                                 __arm64_sys_read+=
-0x1c/0x2c
-> > > > >                                                 ksys_read+0x78/0x=
-e8
-> > > > >                                                 vfs_read+0x1e0/0x=
-2c8
-> > > > >                                                 kernfs_fop_read_i=
-ter+0x68/0x1b4
-> > > > >                                                 seq_read_iter+0x1=
-58/0x4ec
-> > > > >                                                 kernfs_seq_show+0=
-x44/0x54
-> > > > >                                                 sysfs_kf_seq_show=
-+0xb4/0x130
-> > > > >                                                 dev_attr_show+0x3=
-8/0x74
-> > > > >                                                 brightness_show+0=
-x20/0x4c
-> > > > >                                                 dualshock4_led_ge=
-t_brightness+0xc/0x74
-> > > > >
-> > > > > [ 3313.874295][ T4013] Unable to handle kernel NULL pointer deref=
-erence at virtual address 0000000000000060
-> > > > > [ 3313.874301][ T4013] Mem abort info:
-> > > > > [ 3313.874303][ T4013]   ESR =3D 0x0000000096000006
-> > > > > [ 3313.874305][ T4013]   EC =3D 0x25: DABT (current EL), IL =3D 3=
-2 bits
-> > > > > [ 3313.874307][ T4013]   SET =3D 0, FnV =3D 0
-> > > > > [ 3313.874309][ T4013]   EA =3D 0, S1PTW =3D 0
-> > > > > [ 3313.874311][ T4013]   FSC =3D 0x06: level 2 translation fault
-> > > > > [ 3313.874313][ T4013] Data abort info:
-> > > > > [ 3313.874314][ T4013]   ISV =3D 0, ISS =3D 0x00000006, ISS2 =3D =
-0x00000000
-> > > > > [ 3313.874316][ T4013]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAcces=
-s =3D 0
-> > > > > [ 3313.874318][ T4013]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0=
-, Xs =3D 0
-> > > > > [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=
-=3D00000008f2b0a000
-> > > > > ..
-> > > > >
-> > > > > [ 3313.874332][ T4013] Dumping ftrace buffer:
-> > > > > [ 3313.874334][ T4013]    (ftrace buffer empty)
-> > > > > ..
-> > > > > ..
-> > > > > [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
-> > > > > [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x7=
-4
-> > > > > [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
-> > > > > [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
-> > > > > ..
-> > > > > ..
-> > > > > [ 3313.874685][ T4013] Call trace:
-> > > > > [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
-> > > > > [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
-> > > > > [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
-> > > > > [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
-> > > > > [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
-> > > > > [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
-> > > > > [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
-> > > > > [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
-> > > > > [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
-> > > > > [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
-> > > > > [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
-> > > > > [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
-> > > > > [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
-> > > > > [ 3313.874727][ T4013]  el0_svc+0x38/0x68
-> > > > > [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
-> > > > > [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
-> > > > >
-> > > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > > > > ---
-> > > > >  drivers/leds/led-class.c | 3 ++-
-> > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > > > > index 06b97fd49ad9..e3cb93f19c06 100644
-> > > > > --- a/drivers/leds/led-class.c
-> > > > > +++ b/drivers/leds/led-class.c
-> > > > > @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *d=
-ev,
-> > > > >  {
-> > > > >         struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-> > > > >
-> > > > > -       /* no lock needed for this */
-> >
-> > just get rid of the above comment then.
->
-> If you notice, it is already removed (-) .
->
-> >
-> > Also, the comment below in file leds.h
-> > needs an update as originally the idea for this mutex lock was to
-> > provide quick feedback to userspace based on this commit
-> > https://github.com/torvalds/linux/commit/acd899e4f3066b6662f6047da5b795=
-cc762093cb
-> >
-> > Basically a comment somewhere so that when a new attribute
-> > gets added, it doesn't make the same mistake of not using the mutex
-> > and run into the same issue.
-> >
-> > /* Ensures consistent access to the LED Flash Class device */
-> > struct mutex led_access;
->
-> Thanks for accepting that it is an issue.
-> I think, comment is very obvious actually the patch you mentioned should
-> be in fixes tag as it introduced the lock but did not protect the show
-> while it does it for store.
-
-Yes, but that patch was added for supporting flash class
-device and wasn't explicitly to take care of the scenario that you
-are trying to handle and the above comment in leds.h states the same.
-
-I think we should modify that comment and state clearly that
-the aforementioned mutex is also to handle access to led_cdev->dev.
-Either here in this .h or where attributes are defined, so that new attribu=
-tes
-that get added doesn't suffer from the same bug.
-
-led_trigger_set also this function also suffers from the same bug so you
-need to handle it the same way.
-
->
-> Fixes: acd899e4f306 ("leds: implement sysfs interface locking mechanism")
->
-> -Mukesh
-> >
-> >
-> > > >
-> > > > >> also you missed this.
-> > > >
-> > > > > +       mutex_lock(&led_cdev->led_access);
-> > > > >         led_update_brightness(led_cdev);
-> > > > > +       mutex_unlock(&led_cdev->led_access);
-> > > > >
-> > > > >         return sprintf(buf, "%u\n", led_cdev->brightness);
-> > > > >  }
-> > > > > --
-> > > > > 2.34.1
-> > > > >
-> > > > >
+DQoNCj4gT24gT2N0IDE2LCAyMDI0LCBhdCA3OjUx4oCvQU0sIENocmlzdGlhbiBCcmF1bmVyIDxi
+cmF1bmVyQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiANCj4gT24gV2VkLCBPY3QgMTYsIDIwMjQgYXQg
+MDM6NTE6NTVQTSArMDIwMCwgSmFuIEthcmEgd3JvdGU6DQo+PiBPbiBUdWUgMTUtMTAtMjQgMDU6
+NTI6MDIsIFNvbmcgTGl1IHdyb3RlOg0KPj4+PiBPbiBPY3QgMTQsIDIwMjQsIGF0IDEwOjI14oCv
+UE0sIENocmlzdG9waCBIZWxsd2lnIDxoY2hAaW5mcmFkZWFkLm9yZz4gd3JvdGU6DQo+Pj4+IE9u
+IFR1ZSwgT2N0IDE1LCAyMDI0IGF0IDA1OjIxOjQ4QU0gKzAwMDAsIFNvbmcgTGl1IHdyb3RlOg0K
+Pj4+Pj4+PiBFeHRlbmQgdGVzdF9wcm9ncyBmc19rZnVuY3MgdG8gY292ZXIgZGlmZmVyZW50IHhh
+dHRyIG5hbWVzLiBTcGVjaWZpY2FsbHk6DQo+Pj4+Pj4+IHhhdHRyIG5hbWUgInVzZXIua2Z1bmNz
+IiwgInNlY3VyaXR5LmJwZiIsIGFuZCAic2VjdXJpdHkuYnBmLnh4eCIgY2FuIGJlDQo+Pj4+Pj4+
+IHJlYWQgZnJvbSBCUEYgcHJvZ3JhbSB3aXRoIGtmdW5jcyBicGZfZ2V0X1tmaWxlfGRlbnRyeV1f
+eGF0dHIoKTsgd2hpbGUNCj4+Pj4+Pj4gInNlY3VyaXR5LmJwZnh4eCIgYW5kICJzZWN1cml0eS5z
+ZWxpbnV4IiBjYW5ub3QgYmUgcmVhZC4NCj4+Pj4+PiANCj4+Pj4+PiBTbyB5b3UgcmVhZCBjb2Rl
+IGZyb20gdW50cnVzdGVkIHVzZXIuKiB4YXR0cnM/ICBIb3cgY2FuIHlvdSBjYXJ2ZSBvdXQNCj4+
+Pj4+PiB0aGF0IHNwYWNlIGFuZCBub3Qga25vd24gYW55IHByZS1leGlzdGluZyB1c2Vyc3BhY2Ug
+Y29kIHVzZXMga2Z1bmNzDQo+Pj4+Pj4gZm9yIGl0J3Mgb3duIHB1cnBvc2U/DQo+Pj4+PiANCj4+
+Pj4+IEkgZG9uJ3QgcXVpdGUgZm9sbG93IHRoZSBjb21tZW50IGhlcmUuIA0KPj4+Pj4gDQo+Pj4+
+PiBEbyB5b3UgbWVhbiB1c2VyLiogeGF0dHJzIGFyZSB1bnRydXN0ZWQgKGFueSB1c2VyIGNhbiBz
+ZXQgaXQpLCBzbyB3ZSANCj4+Pj4+IHNob3VsZCBub3QgYWxsb3cgQlBGIHByb2dyYW1zIHRvIHJl
+YWQgdGhlbT8gT3IgZG8geW91IG1lYW4geGF0dHIgDQo+Pj4+PiBuYW1lICJ1c2VyLmtmdW5jcyIg
+bWlnaHQgYmUgdGFrZW4gYnkgc29tZSB1c2Ugc3BhY2U/DQo+Pj4+IA0KPj4+PiBBbGwgb2YgdGhl
+IGFib3ZlLg0KPj4+IA0KPj4+IFRoaXMgaXMgYSBzZWxmdGVzdCwgInVzZXIua2Z1bmMiIGlzIHBp
+Y2tlZCBmb3IgdGhpcyB0ZXN0LiBUaGUga2Z1bmNzDQo+Pj4gKGJwZl9nZXRfW2ZpbGV8ZGVudHJ5
+XV94YXR0cikgY2FuIHJlYWQgYW55IHVzZXIuKiB4YXR0cnMuIA0KPj4+IA0KPj4+IFJlYWRpbmcg
+dW50cnVzdGVkIHhhdHRycyBmcm9tIHRydXN0IEJQRiBMU00gcHJvZ3JhbSBjYW4gYmUgdXNlZnVs
+LiANCj4+PiBGb3IgZXhhbXBsZSwgd2UgY2FuIHNpZ24gYSBiaW5hcnkgd2l0aCBwcml2YXRlIGtl
+eSwgYW5kIHNhdmUgdGhlDQo+Pj4gc2lnbmF0dXJlIGluIHRoZSB4YXR0ci4gVGhlbiB0aGUga2Vy
+bmVsIGNhbiB2ZXJpZnkgdGhlIHNpZ25hdHVyZQ0KPj4+IGFuZCB0aGUgYmluYXJ5IG1hdGNoZXMg
+dGhlIHB1YmxpYyBrZXkuIElmIHRoZSB4YXR0ciBpcyBtb2RpZmllZCBieQ0KPj4+IHVudHJ1c3Rl
+ZCB1c2VyIHNwYWNlLCB0aGUgQlBGIHByb2dyYW0gd2lsbCBqdXN0IGRlbnkgdGhlIGFjY2Vzcy4N
+Cj4+IA0KPj4gU28gSSB0ZW5kIHRvIGFncmVlIHdpdGggQ2hyaXN0b3BoIHRoYXQgZS5nLiBmb3Ig
+dGhlIGFib3ZlIExTTSB1c2VjYXNlIHlvdQ0KPj4gbWVudGlvbiwgdXNpbmcgdXNlci4geGF0dHIg
+c3BhY2UgaXMgYSBwb29yIGRlc2lnbiBjaG9pY2UgYmVjYXVzZSB5b3UgaGF2ZQ0KPj4gdG8gdmVy
+eSBjYXJlZnVsbHkgdmFsaWRhdGUgYW55IHhhdHRyIGNvbnRlbnRzIChhbnlib2R5IGNhbiBwcm92
+aWRlDQo+PiBtYWxpY2lvdXMgY29udGVudCkgYW5kIG1vcmUgaW1wb3J0YW50bHkgYXMgZGlmZmVy
+ZW50IHNpbWlsYXIgdXNlY2FzZXMNCj4+IHByb2xpZmVyYXRlIHRoZSBjaGFuY2VzIG9mIG5hbWUg
+Y29sbGlzaW9ucyBhbmQgcmVzdWx0aW5nIGZ1bmNpb25hbGl0eQ0KPj4gaXNzdWVzIGluY3JlYXNl
+LiBJdCBpcyBzaW1pbGFyIGFzIGlmIHlvdSBkZWNpZGVkIHRvIHN0b3JlIHNvbWUgaW5mb3JtYXRp
+b24NCj4+IGluIGEgc3BlY2lhbGx5IG5hbWVkIGZpbGUgaW4gZWFjaCBkaXJlY3RvcnkuIElmIHlv
+dSBjaG9vc2Ugc3BlY2lhbCBlbm91Z2gNCj4+IG5hbWUsIGl0IHdpbGwgbGlrZWx5IHdvcmsgYnV0
+IGxvbmctdGVybSBzb21lb25lIGlzIGdvaW5nIHRvIGJyZWFrIHlvdSA6KQ0KDQpZZXMsIHdpdGgg
+dXNlci4qIHhhdHRyLCBuYW1lIGNvbmZsaWN0cyBpcyBhbHdheXMgYW4gaXNzdWUuIFRoYXQncyB3
+aHkgd2UgDQphcmUgYWRkaW5nIHRoZSBzZWN1cml0eS5icGYgcHJlZml4IGluIHRoaXMgc2V0LiAN
+Cg0KSG93ZXZlciwgYmVzaWRlcyBuYW1lIGNvbmZsaWN0cywgSSBkb24ndCB0aGluayB0aGVyZSBh
+cmUgbWFueSBtb3JlIGlzc3Vlcw0Kd2l0aCB1c2luZyB1c2VyLiB4YXR0cnMuIFZGUyBjb2RlIGRv
+ZXMgbm90IGJsb2NrIGFueSBhY2Nlc3MgdG8gdGhlDQpzZWN1cml0eS4qIHhhdHRycy4gSXQgaXMg
+dXAgdG8gdGhlIExTTXMgdG8gYmxvY2sgcmVhZC93cml0ZSBvZiBjZXJ0YWluDQp4YXR0cnMuIElP
+VywgaWYgdGhlIExTTSB3cml0ZXIgZGVjaWRlIHRvIHVzZSB1c2VyLnh4eCBmb3Igc29tZSB1c2Ug
+Y2FzZXMsIA0KaXQgaXMgdXAgdG8gTFNNIHdyaXRlciB0byBwcm90ZWN0IHRoaXMgeGF0dHIgZnJv
+bSB1bmF1dGhvcml6ZWQgYWNjZXNzIA0KKHZpYSBzZWN1cml0eV9pbm9kZV9zZXR4YXR0ciBob29r
+KS4gDQoNCj4+IA0KPj4gSSB0aGluayB0aGF0IGdldHRpbmcgdXNlci4qIHhhdHRycyBmcm9tIGJw
+ZiBob29rcyBjYW4gc3RpbGwgYmUgdXNlZnVsIGZvcg0KPj4gaW50cm9zcGVjdGlvbiBhbmQgb3Ro
+ZXIgdGFza3Mgc28gSSdtIG5vdCBjb252aW5jZWQgd2Ugc2hvdWxkIHJldmVydCB0aGF0DQo+PiBm
+dW5jdGlvbmFsaXR5IGJ1dCBtYXliZSBpdCBpcyB0b28gZWFzeSB0byBtaXN1c2U/IEknbSBub3Qg
+cmVhbGx5IGRlY2lkZWQuDQo+IA0KPiBSZWFkaW5nIHVzZXIuKiB4YXR0ciBpcyBmaW5lLiBJZiBh
+biBMU00gZGVjaWRlcyB0byBidWlsdCBhIHNlY3VyaXR5DQo+IG1vZGVsIGFyb3VuZCBpdCB0aGVu
+IGltaG8gdGhhdCdzIHRoZWlyIGJ1c2luZXNzIGFuZCBzaW5jZSB0aGF0IGhhcHBlbnMNCj4gaW4g
+b3V0LW9mLXRyZWUgTFNNIHByb2dyYW1zOiBzaHJ1Zy4NCg0KVGhhbmtzLA0KU29uZw0KDQo=
 
