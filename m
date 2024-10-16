@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-367868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6FE9A07CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:51:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66829A07D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2751C27924
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:51:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 982AD285F60
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B402071EB;
-	Wed, 16 Oct 2024 10:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4742A20720B;
+	Wed, 16 Oct 2024 10:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="izftSFn+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m6+rhatk"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3679D1CACDB;
-	Wed, 16 Oct 2024 10:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE422071EE;
+	Wed, 16 Oct 2024 10:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729075889; cv=none; b=ccQf2srg7zLvsOZHcT/Pws3/0C4pdEypg2tAz/2uClrr3PQwx9zejFBsRMGLmM6ej7WYGLFmyX6ZgKW2keleqlCOkyDIwjrjott/RpNUmo6FVuVSh8kgHZxHzJVUmDZwtjtYBkZT8ndLVJ/v1U7OEGRsWOyEH9rDPgKkEjDf9E8=
+	t=1729075974; cv=none; b=VN5JWZyw4Atw7PInrpQ1g+Fh/W+RkPt0gHj9pVDn3TsTR0fHfUyKlnkSxIiciFr+QqCuGJ2EU3hJKW4x7PG+i2/mz3Lo4siK0LHLVbO3qa9ep1BUtV7NwCSfP+ibFEVn2tMDx3214pPNx2z2lZl5s7WIgL1zNwRKtKaZAUN4AgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729075889; c=relaxed/simple;
-	bh=LMM7TuS5hAf1w8ZzZUH0GziAYhZkQvCa7eayiPmWRx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I79PCITOWDd5UPiCwRovK/qqxNxW2c+QVs96y2FzYRdWf123oWFUYnPOiNAgFlswf7yN3TRYd+2eRgNlO7ouK0mf6xEWGsQJ4gx1BSHP8FpbRgJAmp1ZF2BzQCXtBmLgXBJw2GVDwDSKilAk9qJEl6Ds5a3brEMJ3UsXxZPiaao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=izftSFn+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274CDC4CEC5;
-	Wed, 16 Oct 2024 10:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729075888;
-	bh=LMM7TuS5hAf1w8ZzZUH0GziAYhZkQvCa7eayiPmWRx0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=izftSFn+DzJ0u7ZAB59+401gzH3muVUYFWXej5WX+zcWVFEmk6sljhutT6vWFT/yH
-	 mURlO3+LonYgltU/xL1LYIeHDcC9qXTc/RJW7PaHkPbq9gGGmQfONErihYvLtEmczx
-	 Y6ztULXRiUfUUvb2hK/t7xKazYn443ndL06lZ+zU=
-Date: Wed, 16 Oct 2024 12:51:25 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Alvaro Karsz <alvaro.karsz@solid-run.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH RESEND] vdpa: solidrun: Fix UB bug with devres
-Message-ID: <2024101627-tacking-foothill-cdf9@gregkh>
-References: <20241016072553.8891-2-pstanner@redhat.com>
- <Zw-CqayFcWzOwci_@smile.fi.intel.com>
- <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
+	s=arc-20240116; t=1729075974; c=relaxed/simple;
+	bh=Mcip5Kx6I/TZnEO16HfE6x3mJQievwxkLL2RftHqPKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mQgBgwNL00efuYYJvwiRqn2FEV7REG8+fUsrymFs39QaQoEA5m9rrBfzR0wqLXCfn6NQVpoR3PCnriNVJ65oZS/BWe4mbIOEk3M84+asCMkImVRbuRJLCiu2q43UwWdWp+/IL6IbYFoEymaAjp+NKgp8vC7DozPveTF0gckDYvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m6+rhatk; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729075971;
+	bh=Mcip5Kx6I/TZnEO16HfE6x3mJQievwxkLL2RftHqPKk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m6+rhatk3ym6roLIghMdE6YlIB4cpCEqsL7OTebXgMEMlVtwwAmU9na0VY2eDGeZn
+	 yYcngAECMKOv43li7ASMN5NZG+4TQbfsv/ERifiBUkrBBTpOESfWBqfyUAZWPZewEb
+	 utux2BWotQz1Uzs/8grjtC24WZUfbv4EcZpF6lr6kXjNdXdZIHM06ouCBeDjkb73Z6
+	 kS01ddCgoxfJLMZNKXNMOapo5QuEb3SXXZ2UqifgxR/nI1K1txrms1UdgvH3G43AST
+	 tnr+Zh118aNqtKQ7CZs+yW2Bx0kLDBRejEKao4AEje4HNNoPKzr8sHvz/C2MYu9fDJ
+	 KwVYlwu+7FgBA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6B6E717E10B5;
+	Wed, 16 Oct 2024 12:52:50 +0200 (CEST)
+Message-ID: <7865e7ee-d894-4ef4-89c4-5ea3a90ac6f1@collabora.com>
+Date: Wed, 16 Oct 2024 12:52:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17b0528bb7e7c31a89913b0d53cc174ba0c26ea4.camel@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: usb: mtu3: add mediatek,usb3-drd property
+To: Rob Herring <robh@kernel.org>, Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ ChiYuan Huang <cy_huang@richtek.com>, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ Chris-qj chen <chris-qj.chen@mediatek.com>
+References: <20241015172100.15150-1-macpaul.lin@mediatek.com>
+ <20241015222046.GA2164669-robh@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241015222046.GA2164669-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 11:22:48AM +0200, Philipp Stanner wrote:
-> On Wed, 2024-10-16 at 12:08 +0300, Andy Shevchenko wrote:
-> > On Wed, Oct 16, 2024 at 09:25:54AM +0200, Philipp Stanner wrote:
-> > > In psnet_open_pf_bar() and snet_open_vf_bar() a string later passed
-> > > to
-> > > pcim_iomap_regions() is placed on the stack. Neither
-> > > pcim_iomap_regions() nor the functions it calls copy that string.
-> > > 
-> > > Should the string later ever be used, this, consequently, causes
-> > > undefined behavior since the stack frame will by then have
-> > > disappeared.
-> > > 
-> > > Fix the bug by allocating the strings on the heap through
-> > > devm_kasprintf().
-> > 
-> > > ---
-> > 
-> > I haven't found the reason for resending. Can you elaborate here?
+Il 16/10/24 00:20, Rob Herring ha scritto:
+> On Wed, Oct 16, 2024 at 01:21:00AM +0800, Macpaul Lin wrote:
+>> Add optional 'mediatek,usb3-drd' property to MediaTek MTU3 DT Schema.
+>> This flag specify whether it is a USB3 Dual-role device hardware.
+>>
+>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>> ---
+>>   Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+>> index d4e187c78a0b..1e70af0dac82 100644
+>> --- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+>> +++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+>> @@ -155,6 +155,12 @@ properties:
+>>         property is used. See graph.txt
+>>       $ref: /schemas/graph.yaml#/properties/port
+>>   
+>> +  mediatek,usb3-drd:
+>> +    $ref: /schemas/types.yaml#/definitions/flag
+>> +    description:
+>> +      Specify whether it is a USB3 Dual-role device hardware.
+>> +    type: boolean
+>> +
 > 
-> Impatience ;p
+> Don't the standard properties such as usb-role-switch or dr_mode work
+> for you?
 > 
-> This is not a v2.
-> 
-> I mean, it's a bug, easy to fix and merge [and it's blocking my other
-> PCI work, *cough*]. Should contributors wait longer than 8 days until
-> resending in your opinion?
 
-2 weeks is normally the expected response time, but each subsystem might
-have other time limites, the documentation should show those that do.
+They do - and in fact, the upstream MTU3 driver doesn't even support parsing
+the proposed property because it does parse the standard usb-role-switch property.
 
-While you wait, take the time to review other pending patches for that
-maintainer, that will ensure that your patches move to the top as they
-will be the only ones remaining.
+This means that this commit is not needed at all.
 
-thanks,
+Cheers,
+Angelo
 
-greg k-h
+>>     enable-manual-drd:
+>>       $ref: /schemas/types.yaml#/definitions/flag
+>>       description:
+>> -- 
+>> 2.45.2
+>>
+
+
 
