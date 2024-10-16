@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-367350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BBF9A0133
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:16:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A939A0138
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1761F22E59
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBCF282F1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 06:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C512F18CC02;
-	Wed, 16 Oct 2024 06:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698E418C347;
+	Wed, 16 Oct 2024 06:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRm1ipzP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaFxcZdN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4F060B8A;
-	Wed, 16 Oct 2024 06:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1F518BC05;
+	Wed, 16 Oct 2024 06:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729059293; cv=none; b=RcCRceoo6gcy5YAoVpVVnxxDpKIF1q9N/fmEuJ5oWl8VtvspAsgDaApsZcK1zwHYxNd+Np/AHLk2xnYAopb+NM2OSZPchamWDL32+O6F1wTTRujKAyIF4aR0hPYUq/kooA8p++dabpGMxBUs4YV25WSsYFBbPPk7IGSXFEEur+4=
+	t=1729059443; cv=none; b=uRHza+CXYVhMKYsF4zwtj9gx3VM2GrRmBfwNjTaCfeLVMr1PZ26ewRXLRw6JnUBsbZkMcG1JcNOqcGWcIQdWlq4E3EjTRb3PSKKomRzn9Gm3oCvSgoH3EjQ1ZmcvVUW52OX3RHzEeZqFn006sNWofVic3RhHvS0vypAml94tsU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729059293; c=relaxed/simple;
-	bh=/4e7XaluwgC/GjWMrTOSyyoL07pAfyL0HoFBTP7nhGQ=;
+	s=arc-20240116; t=1729059443; c=relaxed/simple;
+	bh=j2o1JI5+4KDVVJgJMPrHXFuEh6+VO0eeG8uZGayDRPE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nijXa5fJ8drb94Nuj3nFGgq4qCMfvrSzjpJI7SLab3FEuGugEb+SuC6r/ivEBTw2lhSm7bgp1DGAB/NYowHBbW3y4J7c4u5tPrCZxxqYe6bAEpu854sxRzE8BJo0mzfbkwjxR9tZWWCMqdN/zj1LJOE1VgaW+TJDrrq3UCuxWMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRm1ipzP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A85C4CEC5;
-	Wed, 16 Oct 2024 06:14:50 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Gh7x2/TP/8D5qil0Pvs4K7ehskuBP7N9O5MlCqNwTDSxOALpAeehkbDURHVHtDir13bu95WAbvgTHsTChdAbYJvu7hA5++rOl92DhMIts2YkKGzmjiGj9q7jmVjHeQFtl7gqgGE8Z8dT3j2LYKfaYalj4uENveMesZpxNIRloQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaFxcZdN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFEAC4CEC5;
+	Wed, 16 Oct 2024 06:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729059292;
-	bh=/4e7XaluwgC/GjWMrTOSyyoL07pAfyL0HoFBTP7nhGQ=;
+	s=k20201202; t=1729059443;
+	bh=j2o1JI5+4KDVVJgJMPrHXFuEh6+VO0eeG8uZGayDRPE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mRm1ipzPVDTed75P46fsuOo/cHyiwrAa7XOUf1DS76A/KYWzsy0JdwYps3IEItePK
-	 om4BfkkQNNcGK9RZWXIkHz7p3cPuMtjf88z1qyCxl0ZyioKWZIr6xhls7D7JZsoime
-	 YAORQGe6AYBBhcgKcbMOJayTQ9Tbh8ynBoS5wBXiFJPl1av7FQSxCoWt5kgm8RTmvL
-	 b/N2VAk1X1uq3SNubuTENUpsGp6CQgS0ssSbPFlK7Nw/wkuEqXm+RV1Cq6T20cBdI8
-	 jgab4MLbi0JTVfS6CRG/Qxa2QeNA+CzE3wG6onkNtntkKXiSLK+iiG6iWlQy4pGQNX
-	 c9mgQ4WJJ516w==
-Message-ID: <d64cba44-db6a-4c44-9a92-10dc4e669a1e@kernel.org>
-Date: Wed, 16 Oct 2024 08:14:48 +0200
+	b=iaFxcZdNmXgjJPhp9mJJT4gtNgJtamcDnzVR7GUTBI7F593gPsBW4HE/uAydBO10w
+	 oudm+CTy//YR3ozfbcdWATjyuuPgb4FSY7aqr6FLwmFk4g3/s1uQpZhYaYO/BiHj1x
+	 /dLmXLtKhgQ/dTyXM8hq96UyVfPuCWyDbxabpnkaf2yyGnxHmA/cN0PcO3L/z7wPCy
+	 YGxo6wKqbGczQluhQ1EjPh6CQpxbDAbXtBb0+UGG0k1UwT6SrFL5MV6XHNbJKitTK7
+	 eBVvIwSaIEstt25PoXbP5Y/YbG77S7LajpM90/zuGr6t+qGYltWnZvawEcQOWumTJB
+	 cZ/d4n4qfXa/g==
+Message-ID: <b5267106-27a3-48e5-9fd3-912b4c62155c@kernel.org>
+Date: Wed, 16 Oct 2024 08:17:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rtc: add prefix modalias for rtc modules
-To: huanglei <huanglei814@163.com>, alexandre.belloni@bootlin.com
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
- huanglei <huanglei@kylinos.cn>
-References: <20241015024322.15272-1-huanglei814@163.com>
- <c6b289f9-e5e5-4be3-8d87-f594cb15c61c@kernel.org>
- <49a7b611-f6d4-3002-c3f7-e3da221efc7b@163.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: arm: cpus: Add Samsung Mongoose M5
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ David Wronek <davidwronek@gmail.com>, Sibi Sankar <quic_sibis@quicinc.com>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241015210205.963931-1-igor.belwon@mentallysanemainliners.org>
+ <20241015210205.963931-2-igor.belwon@mentallysanemainliners.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,76 +104,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <49a7b611-f6d4-3002-c3f7-e3da221efc7b@163.com>
+In-Reply-To: <20241015210205.963931-2-igor.belwon@mentallysanemainliners.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 16/10/2024 08:07, huanglei wrote:
-> Thank you for your reply.
+On 15/10/2024 23:02, Igor Belwon wrote:
+> Add a compatible for the Samsung Mongoose M5 cores, found in
+> the Exynos 990.
 > 
-> However, Most other drivers have already set MODULE_ALIAS,  such as 
-> rtc-efi.c have set MODULE_ALIAS("platform:rtc-efi");
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-That driver might need, but this not. It's not an argument in favor.
+I am not going to review untested code, sorry.
 
-> 
-> So I think this is necessary. If loaded automatically is required, 
-> sometimes it is necessary to match through this alias.
-> 
-> MODULE_ALIAS adds some more info for the userspace programs. In 
-> /lib/modules/VERSION/modules.alias you can see the aliases that were 
-> parsed from the modules.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Don't explain what mod alias is. We know.
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-> 
-> In this case running  'modprobe spi:rtc-ds1302' would insert the ds1302 
-> module.
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
-Which is wrong. There is proper alias already.
-
-> 
-> Now , you can see the difference between applying this patch and not 
-> applying it.
-> 
-> This is not applying this patch,  part of  the modules.alias related to 
-> rtc_ds1302/ds1347 rtc：
-> 
-> alias platform:rtc-ds1286 rtc_ds1286
-> alias spi:rtc-ds1305 rtc_ds1305
-> alias spi:rtc-ds1390 rtc_ds1390
-> alias platform:ds1511 rtc_ds1511
-> alias platform:rtc-ds1553 rtc_ds1553
-> alias platform:rtc-ds1685 rtc_ds1685
-> alias platform:rtc-ds1742 rtc_ds1742
-> alias platform:ds2404 rtc_ds2404
-> alias platform:rtc-efi rtc_efi
-> 
-> And this is applying this patch,  part of  the modules.alias related to 
-> rtc_ds1302/ds1347 rtc：
-> 
-> alias platform:rtc-ds1286 rtc_ds1286
-> alias spi:rtc-ds1302 rtc_ds1302
-> alias spi:rtc-ds1305 rtc_ds1305
-> alias spi:ds1347 rtc_ds1347
-> alias spi:rtc-ds1390 rtc_ds1390
-> alias platform:ds1511 rtc_ds1511
-> alias platform:rtc-ds1553 rtc_ds1553
-> alias platform:rtc-ds1685 rtc_ds1685
-> alias platform:rtc-ds1742 rtc_ds1742
-> alias platform:ds2404 rtc_ds2404
-> alias platform:rtc-efi rtc_efi
-> 
-> So, if not applying this patch, use modprobe rtc-ds1302/ds1347 may be 
-> not  to load automatically.
-> 
-> Therefore, it is strongly recommended applying this patch.
-
-
-NAK. You do not understand aliases and you do not understand what is
-already in the driver.
-
-Also, don't top post next time.
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
 Best regards,
 Krzysztof
