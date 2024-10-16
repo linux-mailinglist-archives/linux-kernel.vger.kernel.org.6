@@ -1,283 +1,175 @@
-Return-Path: <linux-kernel+bounces-367109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC9D99FEAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA3599FEB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E931F25798
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA742867E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6669C1494DA;
-	Wed, 16 Oct 2024 02:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3396D158D93;
+	Wed, 16 Oct 2024 02:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="ouCOuyuz"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="fCiLcc8z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cgMiPPYM"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A9313B298
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A8621E3BF;
+	Wed, 16 Oct 2024 02:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729044725; cv=none; b=eh5bggzAf+2EdrDd2aQ2p0UYxp6WGWxvXXjKlzJwSkhKhPC+dBn6LTTY7mHi50Jdc4fmK/npVNHNvXsbBIOsA9ttL98UfiNLhHLI9nG2OrIgSQ2OAjSBByYJ9g44u5dDPjkVwOatNNYo3OsTiL2c+EtbFtMjTo5rD3zyjI4wQMA=
+	t=1729045105; cv=none; b=pigJuWJAMx5rSJgAqnTc7KZxtpC2g4rloNQC44CpWABqLitk2E7vnPSX2Hefd1h08LNjYI1c6Mo+P2L80MVfX/6kOIiyxrZZsKr+JJR6XqxvWNBTO5mRIUoPPxSRwLAVXdgHErnial1mI86bRrYFrqNSpqPlZJAWZz69CVO/MBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729044725; c=relaxed/simple;
-	bh=sBr9mMufHOqabBw+2rcaP+omYCJQO27prKEQqYG3GNc=;
+	s=arc-20240116; t=1729045105; c=relaxed/simple;
+	bh=5LE6tYu+X0uch1HLayLKo3gSu2cuTkosIXol167hqB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FsFr8oNwjiHqt+ZdkqMV4quFhyOQS26dY0wKNrWKhYQ9AxByd4R2G0ipu80XI6iGA3GE+Nd6t36s1Bl542Q7OAJX1kX6eZn9jPzaC3Wl4kjMYSOdN9yYb+ZJ27hJuuyGdzpHQKGXLeGmD+vjvz8xw8AMurNZ836QnR7hZJbErfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=ouCOuyuz; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46090640f0cso1245001cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 19:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1729044723; x=1729649523; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yUwdGX+2zTOjv5egzdPBTldhbh46MHE7qcc4wOB3EH8=;
-        b=ouCOuyuzKXC0ihyGOzlbLMkw+sUI7P9r0Epu1ZsHhla0bA72L/7wvEb6B25pmXfV0e
-         5cd3CwLrDR2JFjlh6G3d/Pu/yFj7TxZIbIEXomIt/ue4PtRlt0YnwkONk9imBTEQAxXu
-         G7UEWEpOUcCjafO97S1HRrmTYb7iqJW1BGSJy1q9N0W9OR11khJFgbfFOzOULNm0XxhS
-         5jBPMotk6M/n1qCGc2EiDZdRL+lLGErsxYLFc0CwviFay15rQswnHjL1fV1LXIKxsIw7
-         OlgiLGc8VAD3PA45qVKfDVWfG272zaTz/67UtEZsPizU9QFnOLt0mKZZFx+HRJ2EBVGw
-         bR8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729044723; x=1729649523;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yUwdGX+2zTOjv5egzdPBTldhbh46MHE7qcc4wOB3EH8=;
-        b=rxbWz2w2LXF2+Y5++4sSOBisyf1rHre+PCsqvaj8eV7/1h1VFTzGy6E4KX2kNcbYoK
-         yQdq7gsA2OJMXSqUfXo3zG6F9LJCABCS5kL2BfmX4ZMKIyfkD1T+GdbJghxGkuocmdRY
-         gSBaRrww4ZrCfK4Ni7yA0IsqLtGHFtG/oBgk3E0VZ6Wdn7sX9wqo6p8mswd4z1x5aCcZ
-         nwsXahffPha5w/H0iE8enK4LWjC4gLGuUaPMW8Z21+Hwf2/EvxyrEkGRsXJRJF2fVpJd
-         00gViK34AperIjOAAkhkV3RBzoXoTp1hBTFRPAUnSLK7KdriOEQjpUusX+MhPHShnOXK
-         Leag==
-X-Gm-Message-State: AOJu0YwhxIemKGsNpH9iBRsXT8oqULHrn7o7hjWYzFsp3XggHJCNt2wq
-	/lY4PEnVT7WzHzP7p0LqJ73ls0PowW/WqrISqSdC5j4iuaKFubPV1LsSl7ZYsg==
-X-Google-Smtp-Source: AGHT+IEa7TbxaGMxYHmqzc/KoTaiC1VvxjL1wqGDerWp9AXtA9NxfUbCb7FxDboKmdQJNRLw74JwkQ==
-X-Received: by 2002:ac8:5852:0:b0:45f:bc9e:c69b with SMTP id d75a77b69052e-460583e8752mr245676111cf.1.1729044722847;
-        Tue, 15 Oct 2024 19:12:02 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::7dde])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4607b38b505sm12324371cf.83.2024.10.15.19.12.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 19:12:01 -0700 (PDT)
-Date: Tue, 15 Oct 2024 22:11:57 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Message-ID: <fdf5d7f1-6037-4b55-9253-06a264641624@rowland.harvard.edu>
-References: <8b9352a4-ce86-4313-b5a7-cc6ba987b506@rowland.harvard.edu>
- <670f1cba.050a0220.d9b66.015a.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMC+Mr0YFOn9EHZy7mHqARoZmYFsKhYj3XdYk0pEU4iQxY4jkUPDUuH0J5yYtroBdT+EX2duE+p7mEr7anzOqUdFxllIDHS7g1DxVAqEn5zzkivQjHfpRVHmziraX1hylQPYLjnN3bQ1oCEg22nhXcojupY9pWO5NPcLkpl7kLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=fCiLcc8z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cgMiPPYM; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 6CCDF114011F;
+	Tue, 15 Oct 2024 22:18:22 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Tue, 15 Oct 2024 22:18:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1729045102;
+	 x=1729131502; bh=Swj7Lbo7ejzQtiVKGVdpJ37CtLEPIJTGJDsXZZH7qAM=; b=
+	fCiLcc8zGKgFcHJu2nHi9P/4MvEC6iSQRyOg1zWRHxlmBlb/PEUd69Ab8RvIzNLU
+	qk/k5JpPP8lhdbGFbCmPwqltHbLcfhV2fLSY7gbukO3895g2ZeoZy7taOak1WYTp
+	XcbpXU0JmAA3oUSOY5lYJokEK04rwChni5aAcAnIQgkobDV0wTa1bnvvs80YcFRw
+	FpVWLpZX7xJKay7LKbRI2mxK4FFMapBc44KJYGysnwStjelKJxvzUrYHewgUujbE
+	95be9f4VL95xbyamWSIOCq0dpm6fdBxoKhdr/sPzJmTGGcMF+vq8wd8vaCg2mhIA
+	7Ds5BYqbz3LCBbZtQxwyqw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729045102; x=
+	1729131502; bh=Swj7Lbo7ejzQtiVKGVdpJ37CtLEPIJTGJDsXZZH7qAM=; b=c
+	gMiPPYMv0RLdRoOUNfHkKWyHCbbG07EQteWLMXjwTfNHqktzDiqoCo/6zAQ5oLLe
+	MV7UwXMgCPS/CTDC/WZ+sElfRClY6UT6w5o6AymFtwD5+N1Z7F4lk/XiQtWDs9pN
+	H2/orPowjHUrmgRAHDLvY0153E4wxgHHwpt94pKcBJC+IryFtCS2UJNUbECuyIoc
+	tSVwjolcIf7OTTMzK3hEqB1SX8Dyn0EMusbDxPwB8YCwQXeAkDKrWV6/BukZK48r
+	iI/B+3hVXtUH5GHXzND7gGe/nWWVOZ/B5uM4qXl2wPc8Zd1OOf0b+8bA22je7oDD
+	NnGBUfm8QcNaC1X+Mlnkw==
+X-ME-Sender: <xms:biIPZ1K5mGn6iSrkQOmv7Bht6iwnRXQlREiPC7JeEWsSy1rC3LBweA>
+    <xme:biIPZxKwFGiPNTzsmB-nSCgrblf9HAdeqrcawZP_-piQlI54vq8htizgp7cr4rIeV
+    US7Q78E5OBwKbFDvIA>
+X-ME-Received: <xmr:biIPZ9t798r88r_Q5RBLbm2IPAN7zsqV0wyeSajgTjEVT2Iu1RZnzHf3bkuCG0E6zhMaFxOwV9ZiKyaVEZYbEAhEpjvT>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegkedgheekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
+    gggtugfgjgesthekredttddtjeenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
+    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepfeejieet
+    gfegiedtkeeigffgkeelvddtfedttddtleelffdtudevjedvleelvdelnecuffhomhgrih
+    hnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttg
+    dpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhho
+    rhgsohesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhhohhrshhtvghnrdgslhhumh
+    esthhosghluhigrdgtohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtg
+    hpthhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgt
+    phhtthhopehlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:biIPZ2bqbSG_ZKiiniCLN2xTw2tQM9Jebh1v_uTj3u1ANSdSOIeocw>
+    <xmx:biIPZ8Y1sML6Y9Np6n6-rukq6jmAtHQ8Sw-Or2HkEsYe8VgNkJjiUg>
+    <xmx:biIPZ6BlxfwAF5tUSY_zFv98wV1dT9sAcNsTZHHininsI5oiFsdt0g>
+    <xmx:biIPZ6aWd9v7SCb9LJS30-Pw-8wDn_Q9iBupsJdyVBGFbA8AT9kYtA>
+    <xmx:biIPZ6lwCux1FjsC7-KX_rLYlF0oHU4qRn9e9rmJXe64zadIMvuzB0K4>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Oct 2024 22:18:20 -0400 (EDT)
+Date: Wed, 16 Oct 2024 04:18:19 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Bill Wendling <morbo@google.com>
+Cc: Thorsten Blum <thorsten.blum@toblux.com>, Kees Cook <kees@kernel.org>,
+	kent.overstreet@linux.dev, regressions@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ardb@kernel.org
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <Zw8iawAF5W2uzGuh@archlinux>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux>
+ <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <CAGG=3QVecaZfoRrjToToq8=Azh8M0vQ5Q=V8dfhdBnDR8GWy5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <670f1cba.050a0220.d9b66.015a.GAE@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGG=3QVecaZfoRrjToToq8=Azh8M0vQ5Q=V8dfhdBnDR8GWy5A@mail.gmail.com>
 
-On Tue, Oct 15, 2024 at 06:54:02PM -0700, syzbot wrote:
-> Hello,
+On 15 18:22:50, Bill Wendling wrote:
+> On Thu, Oct 3, 2024 at 4:33 AM Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > On 02 11:18:57, Thorsten Blum wrote:
+> > > On 28. Sep 2024, at 22:34, Kees Cook <kees@kernel.org> wrote:
+> > > > [...]
+> > > >
+> > > > Sorry, I've been out of commission with covid. Globally disabling this
+> > > > macro for clang is not the right solution (way too big a hammer).
+> > > >
+> > > > Until Bill has a fix, we can revert commit
+> > > > 86e92eeeb23741a072fe7532db663250ff2e726a, as the problem is limited to
+> > > > certain situations where 'counted_by' is in use.
+> > >
+> > > I already encountered two other related __counted_by() issues [1][2]
+> > > that are now being reverted. Would it be an option to disable it
+> > > globally, but only for Clang < v19 (where it looks like it'll be fixed)?
+> > >
+> > > Otherwise adding __counted_by() might be a slippery slope for a long
+> > > time and the edge cases don't seem to be that rare anymore.
+> > >
+> > > Thanks,
+> > > Thorsten
+> > >
+> > > [1] https://lore.kernel.org/all/20240909162725.1805-2-thorsten.blum@toblux.com/
+> > > [2] https://lore.kernel.org/all/20240923213809.235128-2-thorsten.blum@linux.dev/
+> >
+> > This issue is now fixed on the llvm main branch:
+> > https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf769fc9a93e8a
+> >
+> > So presumably this will go into 19.1.2, not sure what this means for
+> > distros that ship clang 18. Will they have to be notified to backport
+> > this?
+> >
+> FYI, Clang 19.1.2 shipped with your fix in it.
 > 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
 
-The console log shows that an URB must have been submitted at a time
-that doesn't show.  Better add another debug tracer for submissions.
+Thx for the info.
 
-I'm getting there (slowly)...
+How should we continue with the "off by 4" issue? The way I see it either
+the kernel has to change struct_size (lots of work) or clang has to get
+an option to follow the kernels behavior. I'm in favor of adding an
+option to clang.
 
-Alan Stern
+Ideally I think it shouldn't be a global option but one that you can
+make per __bdos invocation. So either inlcude it in type or create a
+separate builtin for it.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git v6.12-rc3
+What are your thoughts on this?
 
-Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
-+++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -50,7 +50,7 @@
- #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
- #define POWER_BUDGET_3	900	/* in mA */
- 
--#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
-+#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
- 
- static const char	driver_name[] = "dummy_hcd";
- static const char	driver_desc[] = "USB Host+Gadget Emulator";
-@@ -239,6 +239,12 @@ enum dummy_rh_state {
- 	DUMMY_RH_RUNNING
- };
- 
-+struct alaninfo {
-+	const char *		str;
-+	int			starts, stops;
-+};
-+#define MAX_INFO	16
-+
- struct dummy_hcd {
- 	struct dummy			*dum;
- 	enum dummy_rh_state		rh_state;
-@@ -257,6 +263,10 @@ struct dummy_hcd {
- 	unsigned			active:1;
- 	unsigned			old_active:1;
- 	unsigned			resuming:1;
-+
-+	struct alaninfo			alaninfo[MAX_INFO];
-+	int				alanindex;
-+	int				starts, stops;
- };
- 
- struct dummy {
-@@ -323,6 +333,44 @@ static inline struct dummy *gadget_dev_t
- 	return container_of(dev, struct dummy, gadget.dev);
- }
- 
-+void alandbg(struct dummy_hcd *dum_hcd, const char *str, int type);
-+void alandbg(struct dummy_hcd *dum_hcd, const char *str, int type)
-+{
-+	int			i = dum_hcd->alanindex;
-+	struct alaninfo		*info = &dum_hcd->alaninfo[i];
-+
-+	if (type == 1)
-+		++dum_hcd->starts;
-+	else if (type == 2)
-+		++dum_hcd->stops;
-+	info->str = str;
-+	info->starts = dum_hcd->starts;
-+	info->stops = dum_hcd->stops;
-+
-+	if (++i >= MAX_INFO)
-+		i = 0;
-+	dum_hcd->alanindex = i;
-+}
-+
-+void alandump(struct dummy_hcd *dum_hcd);
-+void alandump(struct dummy_hcd *dum_hcd)
-+{
-+	int			i = dum_hcd->alanindex;
-+	int			j;
-+	struct alaninfo		*info = &dum_hcd->alaninfo[i];
-+	char			*p, buf[4 * 24];
-+
-+	p = buf;
-+	for (j = 0; j < 4; ++j) {
-+		if (--i < 0)
-+			i = MAX_INFO - 1;
-+		info = &dum_hcd->alaninfo[i];
-+		p += sprintf(p, "%s %d %d  ",
-+				info->str, info->starts, info->stops);
-+	}
-+	dev_info(dummy_dev(dum_hcd), "%s\n", buf);
-+}
-+
- /*-------------------------------------------------------------------------*/
- 
- /* DEVICE/GADGET SIDE UTILITY ROUTINES */
-@@ -1303,9 +1351,12 @@ static int dummy_urb_enqueue(
- 		urb->error_count = 1;		/* mark as a new urb */
- 
- 	/* kick the scheduler, it'll do the rest */
--	if (!hrtimer_active(&dum_hcd->timer))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+	if (!hrtimer_active(&dum_hcd->timer)) {
-+		alandbg(dum_hcd, "start1", 1);
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
-+	} else
-+		alandbg(dum_hcd, "submit", 0);
- 
-  done:
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
-@@ -1325,9 +1376,20 @@ static int dummy_urb_dequeue(struct usb_
- 
- 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
- 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
--			!list_empty(&dum_hcd->urbp_list))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
--
-+			!list_empty(&dum_hcd->urbp_list)) {
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+				HRTIMER_MODE_REL_SOFT);
-+		alandbg(dum_hcd, "start2", 1);
-+	} else {
-+		int active = hrtimer_active(&dum_hcd->timer);
-+		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %d active %d\n",
-+				rc, list_empty(&dum_hcd->urbp_list), active);
-+		if (rc == 0) {
-+			if (!active)
-+				alandump(dum_hcd);
-+			alandbg(dum_hcd, "unlink", 0);
-+		}
-+	}
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
- 	return rc;
- }
-@@ -1813,10 +1875,12 @@ static enum hrtimer_restart dummy_timer(
- 
- 	/* look at each urb queued by the host side driver */
- 	spin_lock_irqsave(&dum->lock, flags);
-+	alandbg(dum_hcd, "handler1", 0);
- 
- 	if (!dum_hcd->udev) {
- 		dev_err(dummy_dev(dum_hcd),
- 				"timer fired with no URBs pending?\n");
-+		alandbg(dum_hcd, "handler2", 2);
- 		spin_unlock_irqrestore(&dum->lock, flags);
- 		return HRTIMER_NORESTART;
- 	}
-@@ -1994,10 +2058,13 @@ return_urb:
- 	if (list_empty(&dum_hcd->urbp_list)) {
- 		usb_put_dev(dum_hcd->udev);
- 		dum_hcd->udev = NULL;
-+		alandbg(dum_hcd, "handler3", 2);
- 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
--		/* want a 1 msec delay here */
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+		alandbg(dum_hcd, "handler-start", 1);
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
-+	} else {
-+		alandbg(dum_hcd, "handler4", 2);
- 	}
- 
- 	spin_unlock_irqrestore(&dum->lock, flags);
-@@ -2390,8 +2457,11 @@ static int dummy_bus_resume(struct usb_h
- 	} else {
- 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 		set_link_state(dum_hcd);
--		if (!list_empty(&dum_hcd->urbp_list))
--			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
-+		if (!list_empty(&dum_hcd->urbp_list)) {
-+			alandbg(dum_hcd, "start3", 1);
-+			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+					HRTIMER_MODE_REL_SOFT);
-+			}
- 		hcd->state = HC_STATE_RUNNING;
- 	}
- 	spin_unlock_irq(&dum_hcd->dum->lock);
-@@ -2490,6 +2560,10 @@ static int dummy_start(struct usb_hcd *h
- {
- 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
- 
-+	int i;
-+	for (i = 0; i < MAX_INFO; ++i)
-+		dum_hcd->alaninfo[i].str = "";
-+
- 	/*
- 	 * HOST side init ... we emulate a root hub that'll only ever
- 	 * talk to one device (the gadget side).  Also appears in sysfs,
-@@ -2521,6 +2595,7 @@ static void dummy_stop(struct usb_hcd *h
- {
- 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
- 
-+	alandbg(dum_hcd, "cancel", 0);
- 	hrtimer_cancel(&dum_hcd->timer);
- 	device_remove_file(dummy_dev(dum_hcd), &dev_attr_urbs);
- 	dev_info(dummy_dev(dum_hcd), "stopped\n");
+
+Best Regards
+Jan
+
 
