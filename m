@@ -1,112 +1,157 @@
-Return-Path: <linux-kernel+bounces-368785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3221B9A14EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:39:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F7D9A14ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC9F1F22779
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D06A1F22746
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B821D2F4E;
-	Wed, 16 Oct 2024 21:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25121D2F5F;
+	Wed, 16 Oct 2024 21:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="ysyGKW3J"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="ne1h/poO"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B971D2B03
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9222A1D2B35
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114756; cv=none; b=Fd+wVgzo7Yd3hcd/267f2JI4i2AVDyUt7jH1f/9VGmOJ3okAuZfoz1XgR7OqpVq1rkT0OEBYkk7SPMaPAHIslkChKGuz1KqhWMRTSHyFboNGB3XQJjjm++ncdPph9nZj2deijRi8dF1nDR1hzymWmVivIzM35MUON/ikxsa+B0Q=
+	t=1729114777; cv=none; b=kE4zyMu5iZYGOgR4iILMZadjY+l01AiveMgXUL7DHT0UFZMVT17ZBP4NxUHL+Bn4xoC6oypB3eosCbPSWh/eQhdk7o49lzWhSzKkfyQHKG/TCEw+/ESd2CHnaxmM7zhqVTYKmF5IhYql0EllzfBJRhwNe1MfqIt4NkTlPOmYhV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729114756; c=relaxed/simple;
-	bh=k7GxTv21vlnA+IKy5RrAYAcCA8X9XxHW0ySsY+Tvi3k=;
+	s=arc-20240116; t=1729114777; c=relaxed/simple;
+	bh=VKoJF2wAux6Ijj2yS1b73ggopyQUstk7miqBG6XFbgg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WnLcQn83OmZfgHrrOJ02cb+cbvdyBRAq+D+NG+HIBBJZ3ZuQ5rJGgzpp5aYt/zsIyb0LKvUFH3wpAcwDKOU+N1IPMdYIhRHi6iMo8j5n0u5qlStpg8E5WYfFLGjbxLGdEnB2ntYUWP0Yvszlw3x3tSN5lwKXY+ev5H4Fjf0U5OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=ysyGKW3J; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c973697b52so400180a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:39:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=ajzR7R5h1WcxKOT40mXDp14XVl7QGtwwvGMvxHzTniez9cmWQt2TS9BPqdSX1ZO4ndjtU38eUS5xigjqtoNXI0wltj+HcjMuKYBYnPEuQXl45j89g+BCYQXTOEj1H2JpCdv1hBWqUgvOC1enaOEsJC7oo2bYxEGfpkGIKOpnX/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=ne1h/poO; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f7606199so358177e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:39:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729114752; x=1729719552; darn=vger.kernel.org;
+        d=atishpatra.org; s=google; t=1729114774; x=1729719574; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sGbTpYZZEZP+mGuvzqT9GIg1Bljms7cSdFODzrCOUm4=;
-        b=ysyGKW3JYSClX/KxZX/QZpz1IRfsZnUcsas9RzzdWZ6ZFg91cuyPMT5aofgZUDiiOu
-         /+wXqwPFI86iSCNkxmdVpJe7f0Q41oSl6wK+UWHvsDAub4WWdZkh59G2GvC7WdBMTLan
-         F3g/08Ly1V02LMhvGSlXnnq4OYnVAE29fL093cgB3D/yhRI4buWY2PvhSjid1n6RPyCm
-         611Y/WcWOrhJVsguctvm2gA+QTDF6agjEzzRJ5dvhsMG3vj4BiKQ4PuxTJQzhLLagSgf
-         bYEiG/ey4VyWTHOg+xgv2jFhCyxtjvqcqc8jDoJKSOoesdR6auhOgRWQeNUtWZn4FeKR
-         tcBg==
+        bh=6H8Y7/ZzORONU1hyN/i6yVrHJ4H/bODv43/WrBP0n1k=;
+        b=ne1h/poO3Cefk71q9TpgGtshVM/2SXVfaPyHAokj9YzKR59V2lhqPVxeTx1FZQTSk+
+         k9Kxo0rtzmV+XK7nwIdfnMXTVEWXGZhL4MljsKAnMa3efMFxhYYA3zfBYB09fTQai5Nd
+         n7E99w6GPfL7tCkpFj+CgyIr5/htHL/QX9o6o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729114752; x=1729719552;
+        d=1e100.net; s=20230601; t=1729114774; x=1729719574;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sGbTpYZZEZP+mGuvzqT9GIg1Bljms7cSdFODzrCOUm4=;
-        b=Y+sLYjurz7fNwKwncrkR4R6MO9e7Wqr8KtJFU3SNDlLSs+HZfWOPsFYd7GLsi5oI7G
-         aWy7/CeLRAhkL14BGv/epKBuzyi8SvKCAy+Kg739Aohj36E4Pitb05KX0g+5FwSWiryn
-         wq12anWZXLV167W+AcCRWLSiJUvD5qRRnMH+DlmPRj7munj4QzQDfV4IMbAhCz5HDRui
-         U6UOAZhMuqFiciqh8FTHJmtdMT/cBRdp4Aza3zaCIAjhadda43L8ZzpfNlLL5VESWQ92
-         1wZljZn2bcieIrMa179gMHPGBiNpRz5ilSXNoD16FPpjHIq9fZ4MfW10DM/gdUlsb9/B
-         zhxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvNwMeyW8JvNDhb/uRaKEhtb9DUCjhf9zilBKIx1z9k+pp1Y9s1gQbjEO37gFa3BwPTW28Sn6uc2ovC/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPTZUUlTY9QmVJ4UFZPAr2+uCD0q7K6YV+Xz3DXxGOWH7IfkO2
-	vFGaQ5/K7VXIwa6a64IUuntniu4ZoWwpHeKPMc9wbKrrPcbmrk5fIMMikXAjlVN652ZYN8deLEg
-	0EIXYUw3RJtKTGM82E/zsGliHMfynvQzzWQY5Zw==
-X-Google-Smtp-Source: AGHT+IGfXrUOPkq3mI2TubA4yiUF56RfE+/zlumUxASWgWuC+eB9Q8NPP8mccdlaABo7RMO5uJK/NoWjyHvR/RsH+kI=
-X-Received: by 2002:a05:6402:5247:b0:5c9:6b39:d9e5 with SMTP id
- 4fb4d7f45d1cf-5c96b39dad8mr13701812a12.20.1729114751823; Wed, 16 Oct 2024
- 14:39:11 -0700 (PDT)
+        bh=6H8Y7/ZzORONU1hyN/i6yVrHJ4H/bODv43/WrBP0n1k=;
+        b=R8wjg9U2mtTYfxqBj2KZzhAW+JxqBGQTITLGhCSnm3n7iRygM+qFg/qd/6kmhoUwuv
+         q2cAeJsKOkVgnEBY7lLDDF0XSYKY4DmzSWBb68ex6rY/+4vGy5YXgW9ZS1oE5P5Kj78Y
+         gu/XknVCFMKOwnQZGPvb4ej34NB7V3a4HO2hxsqj3MFCufRq9bMJLh+81/XNCw4elVDE
+         OWkczJuAKtPJXgY01b//xaXRlelWSGwVM8dpWBYVZDL1MyryL2mreh/Ay+3fCkNB2Vwj
+         IOyjcgollyZNXeCyP22hVnj37hxc4l5YckFEPVooNIAJI0/wNyURtyqjAOeGGfDgF1rF
+         VTNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUf0aXmqFPY4+KTe99UFmcEckFRvlfnN5RA9IUyQqSGEwQaAHq3RhpnZ0PEP9MvKtnorvQNuJbPxpGy4LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4rzKJQTufLCqfiqox1sfL1QpSrq9jF4qQf57CDZ0/naPhNdQ1
+	iZ8J4RnDR3jFseRDpBd1saCpE9ireA21g9KtCxXrqiS8JlZy12CSaGjyk/+K0Bq72rQjcxbDI75
+	AtVnsbEPvm4eIFxgMRUW24UjREptfYrS33bH/
+X-Google-Smtp-Source: AGHT+IFPP+peTAUAy0oiDSlqRo1dFfekSIv/GJho/24l6zoVqW/NQcaXYqDCBv05acUPzYaLU4twAhJ7d34uSv62lyk=
+X-Received: by 2002:a05:6512:ad6:b0:539:ff5a:7ea5 with SMTP id
+ 2adb3069b0e04-539ff5a8042mr4811318e87.15.1729114773775; Wed, 16 Oct 2024
+ 14:39:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015232212.19242-1-everestkc@everestkc.com.np> <e22aebb2-0961-459c-bc02-3165c364115b@stanley.mountain>
-In-Reply-To: <e22aebb2-0961-459c-bc02-3165c364115b@stanley.mountain>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Wed, 16 Oct 2024 15:39:00 -0600
-Message-ID: <CAEO-vhGc9A5NfRDng1j43czdWo7=DO0wahC1Y5mQrF4w6kZRpg@mail.gmail.com>
-Subject: Re: [PATCH V4][next] Bluetooth: btintel_pcie: Remove structrually deadcode
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, skhan@linuxfoundation.org, 
-	kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-6-apatel@ventanamicro.com>
+In-Reply-To: <20240719160913.342027-6-apatel@ventanamicro.com>
+From: Atish Patra <atishp@atishpatra.org>
+Date: Wed, 16 Oct 2024 14:39:22 -0700
+Message-ID: <CAOnJCUKD_LFrzr+KN=F1mZ3=eJqw73XjrkhVDt=7W6=eEo=4Pg@mail.gmail.com>
+Subject: Re: [PATCH 05/13] RISC-V: KVM: Replace aia_set_hvictl() with aia_hvictl_value()
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 8:42=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+On Fri, Jul 19, 2024 at 9:09=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
+> wrote:
 >
-> On Tue, Oct 15, 2024 at 05:22:05PM -0600, Everest K.C. wrote:
-> > The switch case statement has a default branch. Thus, the return
-> > statement at the end of the function can never be reached.
-> > Fix it by removing the return statement at the end of the
-> > function.
-> >
-> > This issue was reported by Coverity Scan.
-> >
-> > Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between dr=
-iver and firmware")
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> > ---
-> > V3 -> V4: - Fixed typo in the subject
+> The aia_set_hvictl() internally writes the HVICTL CSR which makes
+> it difficult optimize the CSR write using SBI NACL extension for
+> kvm_riscv_vcpu_aia_update_hvip() function so replace aia_set_hvictl()
+> with new aia_hvictl_value() which only computes the HVICTL value.
 >
-> I don't like to be the typo police but, no, you didn't fix the typo.  :P
-No, using the correct spelling helps in searching the patches in lore.
-Thank you, will send a V5.
-> regards,
-> dan carpenter
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  arch/riscv/kvm/aia.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 >
-Thanks,
-Everest K.C.
+> diff --git a/arch/riscv/kvm/aia.c b/arch/riscv/kvm/aia.c
+> index 2967d305c442..17ae4a7c0e94 100644
+> --- a/arch/riscv/kvm/aia.c
+> +++ b/arch/riscv/kvm/aia.c
+> @@ -51,7 +51,7 @@ static int aia_find_hgei(struct kvm_vcpu *owner)
+>         return hgei;
+>  }
+>
+> -static void aia_set_hvictl(bool ext_irq_pending)
+> +static inline unsigned long aia_hvictl_value(bool ext_irq_pending)
+>  {
+>         unsigned long hvictl;
+>
+> @@ -62,7 +62,7 @@ static void aia_set_hvictl(bool ext_irq_pending)
+>
+>         hvictl =3D (IRQ_S_EXT << HVICTL_IID_SHIFT) & HVICTL_IID;
+>         hvictl |=3D ext_irq_pending;
+> -       csr_write(CSR_HVICTL, hvictl);
+> +       return hvictl;
+>  }
+>
+>  #ifdef CONFIG_32BIT
+> @@ -130,7 +130,7 @@ void kvm_riscv_vcpu_aia_update_hvip(struct kvm_vcpu *=
+vcpu)
+>  #ifdef CONFIG_32BIT
+>         csr_write(CSR_HVIPH, vcpu->arch.aia_context.guest_csr.hviph);
+>  #endif
+> -       aia_set_hvictl(!!(csr->hvip & BIT(IRQ_VS_EXT)));
+> +       csr_write(CSR_HVICTL, aia_hvictl_value(!!(csr->hvip & BIT(IRQ_VS_=
+EXT))));
+>  }
+>
+>  void kvm_riscv_vcpu_aia_load(struct kvm_vcpu *vcpu, int cpu)
+> @@ -536,7 +536,7 @@ void kvm_riscv_aia_enable(void)
+>         if (!kvm_riscv_aia_available())
+>                 return;
+>
+> -       aia_set_hvictl(false);
+> +       csr_write(CSR_HVICTL, aia_hvictl_value(false));
+>         csr_write(CSR_HVIPRIO1, 0x0);
+>         csr_write(CSR_HVIPRIO2, 0x0);
+>  #ifdef CONFIG_32BIT
+> @@ -572,7 +572,7 @@ void kvm_riscv_aia_disable(void)
+>         csr_clear(CSR_HIE, BIT(IRQ_S_GEXT));
+>         disable_percpu_irq(hgei_parent_irq);
+>
+> -       aia_set_hvictl(false);
+> +       csr_write(CSR_HVICTL, aia_hvictl_value(false));
+>
+>         raw_spin_lock_irqsave(&hgctrl->lock, flags);
+>
+> --
+> 2.34.1
+>
+
+
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
+--=20
+Regards,
+Atish
 
