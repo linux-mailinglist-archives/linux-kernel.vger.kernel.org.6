@@ -1,116 +1,150 @@
-Return-Path: <linux-kernel+bounces-368211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADEE9A0CAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:32:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AEB9A0CB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0CB4B2687F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5FC283080
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D034420C008;
-	Wed, 16 Oct 2024 14:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWmZmRtE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5447820C020;
+	Wed, 16 Oct 2024 14:32:12 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372891586D3;
-	Wed, 16 Oct 2024 14:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E079208D7A;
+	Wed, 16 Oct 2024 14:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729089105; cv=none; b=t1SJfUBvQ8pV8QAkTcxLAMf0uWcWE2046QzoZLDyPITh22YZcMP+1vTY1jfDV4+HCs8Aseg82EySjfY5HgQOZGu5C0P1drBCp0glcylAbSKGUxiLDVhCFGyljbOjQ5lhnQoV1ngJDCo8PXLfl+UL7zjke63gljt+PFBtVqTHHC0=
+	t=1729089132; cv=none; b=jCZNl9Qr7s7V9vX2AJMt+6EEB4rFfph8tiFnpWogz0rHjHOJN109EdzvRGOzLMoWl1854vWt9d2ujcurw2ypbsdFPn8EPy25tkSpuY0/kFvKonLK1r+WYViqy75yBwgYBoTfw0B/8jxHkn4MRYvoImNeSFeT35WwHVLVGh/a/Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729089105; c=relaxed/simple;
-	bh=0xfOv0zgOtoH74E1+U5BolLrIHlK5WA+900nCd8/6m4=;
+	s=arc-20240116; t=1729089132; c=relaxed/simple;
+	bh=MUBjfKfvAsRsCJe+7h2NNv4bqINVdYqmH7t/ggr/tQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMoHHbF6BN34TPTcCC7Z+NU2LuZmylFLirP5RmGYK2afso2GsVfdGAoqKF6LS/wSw+REjRKIGVzQZGcGs+1wczlrxKiWibQdjVGXW64VM93hidTCVM8huft2L+WkX4KRhuAe9+M//qzFGQvxkMMmyZtAVhOF7jj0QrFLfIzhzaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWmZmRtE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7F2C4CEC5;
-	Wed, 16 Oct 2024 14:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729089104;
-	bh=0xfOv0zgOtoH74E1+U5BolLrIHlK5WA+900nCd8/6m4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rWmZmRtEujt9bn1Vj7YsfEbqJeqaGr714tAtBsxFk787oKc27oN+6ZcdozKJ6ZGkK
-	 +Kjb9oDhnth5XW2Tbs2RVEza0EntRZDOKkBsxmXaKTqo1VF5arrCA1Rymj1a+h7kpb
-	 4NWtM68v3HhsnJwPW+2jSjf8s4MI8PtITJSl3BsStHeAI1wP0WJKfppR37VmRM//Yi
-	 PYcmZnsJgkvt1p0EL/YIQXURNouH/5ebfLGJCZio9cAm/Xo++xnZa4oZ60v0A0TBSh
-	 AgT6SRhvxy/qvlGQ8uTWJR5cqvHUNDJydIU/B+gdS44zmw/Dnmw3jKUeL2zFbzoKHM
-	 YiWvBv/q3eucw==
-Date: Wed, 16 Oct 2024 09:31:50 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Maya Matuszczyk <maccraft123mc@gmail.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jos Dehaes <jos.dehaes@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: Rename "Twitter" to "Tweeter"
-Message-ID: <423uciiaksxtyqua6w22wzdms4a53jp7v6rbvhfpfxr2uot7hd@mkb4uqehgz23>
-References: <20241015170157.2959-1-maccraft123mc@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCsvBbJm1TuaDu9k5nMwnq/IAIH/a60q7V9JddOsnTmyw8gfui8PslG1wf2bPDOqWPq1Hl3FJ3HyjGL6VRLcIh+gyZaVwhd93KANFKH8l7kVSu2wmJ9IxH8Kb6SZ5PfOxXCtsata8/pm/dVCoMGkhXJvKDgMOZCZX6YeAlfZmaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=44964 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1t154B-00CEWL-NE; Wed, 16 Oct 2024 16:32:01 +0200
+Date: Wed, 16 Oct 2024 16:31:59 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Rongguang Wei <clementwei90@163.com>
+Cc: netfilter-devel@vger.kernel.org, kadlec@netfilter.org,
+	coreteam@netfilter.org, linux-kernel@vger.kernel.org,
+	Rongguang Wei <weirongguang@kylinos.cn>
+Subject: Re: [PATCH v1] netfilter: x_tables: fix ordering of get and update
+ table private
+Message-ID: <Zw_OXzBgfFULaEzs@calendula>
+References: <20241016030909.64932-1-clementwei90@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015170157.2959-1-maccraft123mc@gmail.com>
+In-Reply-To: <20241016030909.64932-1-clementwei90@163.com>
+X-Spam-Score: -1.9 (-)
 
-On Tue, Oct 15, 2024 at 07:01:56PM GMT, Maya Matuszczyk wrote:
-> This makes the name consistent with both other x1e80100 devices and the
-> dictionary. A UCM fix was merged already.
+On Wed, Oct 16, 2024 at 11:09:09AM +0800, Rongguang Wei wrote:
+> From: Rongguang Wei <weirongguang@kylinos.cn>
 > 
+> Meet a kernel panic in ipt_do_table:
+> PANIC: "Unable to handle kernel paging request at virtual address 00706f746b736564"
 
-Please, as you update the commit message, make sure that the subject
-prefix matches other changes in the particular file.
+This patch is no correct.
 
-Regards,
-Bjorn
+> and the stack is:
+>      PC: ffff5e1dbecf0750  [ipt_do_table+1432]
+>      LR: ffff5e1dbecf04e4  [ipt_do_table+812]
+>      SP: ffff8021f7643370  PSTATE: 20400009
+>     X29: ffff8021f7643390  X28: ffff802900c3990c  X27: ffffa0405245a000
+>     X26: ffff80400ad645a8  X25: ffffa0201c4d8000  X24: ffff5e1dbed00228
+>     X23: ffff80400ad64738  X22: 0000000000000000  X21: ffff80400ad64000
+>     X20: ffff802114980ae8  X19: ffff8021f7643570  X18: 00000007ea9ec175
+>     X17: 0000fffde7b52460  X16: ffff5e1e181e8f20  X15: 0000fffd9a0ae078
+>     X14: 610d273b56961dbc  X13: 0a08010100007ecb  X12: f5011880fd874f59
+>     X11: ffff5e1dbed10600  X10: ffffa0405245a000   X9: 569b063f004015d5
+>      X8: ffff80400ad64738   X7: 0000000000010002   X6: 0000000000000000
+>      X5: 0000000000000000   X4: 0000000000000000   X3: 0000000000000000
+>      X2: 0000000000000000   X1: 2e706f746b736564   X0: ffff80400ad65850
+> [ffff8021f7643390] ipt_do_table at ffff5e1dbecf074c [ip_tables]
+> [ffff8021f76434d0] iptable_filter_hook at ffff5e1dbfe700a4 [iptable_filter]
+> [ffff8021f76434f0] nf_hook_slow at ffff5e1e18c31c2c
+> [ffff8021f7643530] ip_forward at ffff5e1e18c41924
+> [ffff8021f76435a0] ip_rcv_finish at ffff5e1e18c3fddc
+> [ffff8021f76435d0] ip_rcv at ffff5e1e18c40214
+> [ffff8021f7643630] __netif_receive_skb_one_core at ffff5e1e18bbbed4
+> [ffff8021f7643670] __netif_receive_skb at ffff5e1e18bbbf3c
+> [ffff8021f7643690] process_backlog at ffff5e1e18bbd52c
+> [ffff8021f76436f0] __napi_poll at ffff5e1e18bbc464
+> [ffff8021f7643730] net_rx_action at ffff5e1e18bbc9a8
+> 
+> The panic happend in ipt_do_table function:
+> 
+> 	private = READ_ONCE(table->private);
+> 	jumpstack  = (struct ipt_entry **)private->jumpstack[cpu];
+> 	[...]
+> 	jumpstack[stackid++] = e;	// panic here
+> 
+> In vmcore, the cpu is 4, I read the private->jumpstack[cpu] is 007365325f6b6365,
+> this address between user and kernel address ranges which caused kernel panic.
+> Also the kmem shows that the private->jumpstack address is free.
+> It looks like we get a UAF address here.
+> 
+> But in xt_replace_table function:
+> 
+> 	private = table->private;
+> 	[...]
+> 	smp_wmb();
+> 	table->private = newtable_info;
+> 	smp_mb();
+> 
+> It seems no chance to get a free private member in ipt_do_table.
+> May have a ordering error which looks impossible:
+> 
+> 	smp_wmb();
+> 	table->private = newtable_info;
+> 	private = table->private;
+> 	smp_mb();
 
-> Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
+Makes no sense to me.
+
+> we get table->private after we set new table->private. After that, the
+> private was free in xt_free_table_info and also used in ipt_do_table.
+> Here use READ_ONCE to ensure we get private before we set the new one.
+
+You better enable CONFIG_KASAN there and similar instrumentation to
+check what really is going on there.
+
+> Signed-off-by: Rongguang Wei <weirongguang@kylinos.cn>
 > ---
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  net/netfilter/x_tables.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> index 10b28d870f08..004353220dc5 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> @@ -177,9 +177,9 @@ sound {
->  		compatible = "qcom,x1e80100-sndcard";
->  		model = "X1E80100-CRD";
->  		audio-routing = "WooferLeft IN", "WSA WSA_SPK1 OUT",
-> -				"TwitterLeft IN", "WSA WSA_SPK2 OUT",
-> +				"TweeterLeft IN", "WSA WSA_SPK2 OUT",
->  				"WooferRight IN", "WSA2 WSA_SPK2 OUT",
-> -				"TwitterRight IN", "WSA2 WSA_SPK2 OUT",
-> +				"TweeterRight IN", "WSA2 WSA_SPK2 OUT",
->  				"IN1_HPHL", "HPHL_OUT",
->  				"IN2_HPHR", "HPHR_OUT",
->  				"AMIC2", "MIC BIAS2",
-> @@ -933,7 +933,7 @@ left_tweeter: speaker@0,1 {
->  		reg = <0 1>;
->  		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
->  		#sound-dai-cells = <0>;
-> -		sound-name-prefix = "TwitterLeft";
-> +		sound-name-prefix = "TweeterLeft";
->  		vdd-1p8-supply = <&vreg_l15b_1p8>;
->  		vdd-io-supply = <&vreg_l12b_1p2>;
->  		qcom,port-mapping = <4 5 6 7 11 13>;
-> @@ -986,7 +986,7 @@ right_tweeter: speaker@0,1 {
->  		reg = <0 1>;
->  		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
->  		#sound-dai-cells = <0>;
-> -		sound-name-prefix = "TwitterRight";
-> +		sound-name-prefix = "TweeterRight";
->  		vdd-1p8-supply = <&vreg_l15b_1p8>;
->  		vdd-io-supply = <&vreg_l12b_1p2>;
->  		qcom,port-mapping = <4 5 6 7 11 13>;
+> diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+> index da5d929c7c85..1ce7a4f268d6 100644
+> --- a/net/netfilter/x_tables.c
+> +++ b/net/netfilter/x_tables.c
+> @@ -1399,7 +1399,7 @@ xt_replace_table(struct xt_table *table,
+>  
+>  	/* Do the substitution. */
+>  	local_bh_disable();
+> -	private = table->private;
+> +	private = READ_ONCE(table->private);
+>  
+>  	/* Check inside lock: is the old number correct? */
+>  	if (num_counters != private->number) {
 > -- 
-> 2.45.2
+> 2.25.1
+> 
 > 
 
