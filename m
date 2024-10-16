@@ -1,72 +1,70 @@
-Return-Path: <linux-kernel+bounces-367321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61FB9A00E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:45:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387DE9A00E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428401F21721
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:45:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8227BB23519
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 05:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDD4189F3F;
-	Wed, 16 Oct 2024 05:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87911885A0;
+	Wed, 16 Oct 2024 05:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n2pl7rlz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OWfp7QNn"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA61B67E;
-	Wed, 16 Oct 2024 05:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3760E14D2B1
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 05:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729057531; cv=none; b=t3iZMg/HvMrWwfI1AcRXpr5EHR4N84T9/G0Qf5dzW9ReIaST2DGNzaZx04fFHRM00aLm2yEyYXT3MBPz4/B8uOYhsrMF1bF8c1csIiE65YxzvibFBcdIQGchXOj8dJLHvjnRKt/KATi1LI0YdYpuWU9DVVqum4unkDeh3lVdUd4=
+	t=1729057555; cv=none; b=ujgJeciLATCDRrEzTszNBiiyoAnbd3tfCvqKyn4i+GHn+vvrfa+ozaggr+iqY6w0RUf3suW2nVwWR3NHfDYMKqRVK/w3VKzIQe5XSrmIPZ0V0zygO2SCIKhrl4iQQzyXeFz3jQnuYflnTvgR3eMCWr4+6VA+g11R7xv059BOQio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729057531; c=relaxed/simple;
-	bh=KZ6PKs8bg12YTg1rk2CKGBRBphPkrA3i0NDDl6+/Njk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ik35L2Kinumk0y/B67gR210s8CsEEbM2S5atQeFOkbs2GSwt1E+kEiIXflu4Ro6Rd+wDH6cHrByyoB9NQBYZDkZ3xh9q1k4fRfq2QNQAhUTucyRIXSEZ8uIgGvzztiYL2RYBcblIVE05IMuhcNX2GPB0QufkSS+gC/nCfOdTw3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n2pl7rlz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G4xnG0027069;
-	Wed, 16 Oct 2024 05:45:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5eeAcInrR4OFlOpEQmMdGyhlwUqd7exGhe1x8dxhBFQ=; b=n2pl7rlz/OkkOBuh
-	+/xtsN4Myle5uJUxyrxWFnRN9yR0BmaFPKr+Tb4EigO11nrctKy2M2dmNH5K1o5U
-	Pb7A3jr8Ebch4jRd547jx995o60snvC6mirwnRsdxvw/1dMqF3g8/1bbasKXtMw+
-	4mL2/gFomUCVTaPSOu65imYc2T2TN5K6kJdfLh1PdCKjMWjet3I3RMyExV2pSD1Z
-	UE2MGY7Ux2Ks7GpRDVph9XD79QHWy88a+ebhx+vdHjIWPVLWduMOOU7X1zAAV4K9
-	lT9kgACus1h+N19kq1YK9Ea9P114wDDTgn2DG589OqYjCZo1IqfrbLEikdMfwB00
-	rLJXJA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429m0fbeve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 05:45:23 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49G5jMrX016142
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 05:45:22 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 15 Oct 2024 22:45:20 -0700
-Date: Wed, 16 Oct 2024 11:15:16 +0530
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: anish kumar <yesanishhere@gmail.com>
-CC: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] leds: class: Protect brightness_show() with
- led_cdev->led_access mutex
-Message-ID: <Zw9S7LYZ1Sb/eMXe@hu-mojha-hyd.qualcomm.com>
-References: <20241015162532.2292871-1-quic_mojha@quicinc.com>
- <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
- <Zw7COXsvJsWq4db9@hu-mojha-hyd.qualcomm.com>
- <CABCoZhCDJfiRtUvQ-4ypaQsiktC3b22r4=TCy5V+RVeOb4wP+A@mail.gmail.com>
+	s=arc-20240116; t=1729057555; c=relaxed/simple;
+	bh=1qivdgPzhiPmx8coSkwgmE5FSvW0jIi1boUu/nZ5AZ8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=avGFQh2+wJmrtYruY4z9J8nv7TyXsZgJWWkwyb4I3EEpXAYT5bxhOAA0A2JCZW9kNrPMowXu+sIl6ZoNZM+dTHPPkvUeyw4ujWzGbhKL5lCaGMpDmQHXFPIg179Hhtle6xIj82eWw698hYt9BzF5/9KcRyX/epXCz8VxrjM8YEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OWfp7QNn; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cb89a4e4cso29039415ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Oct 2024 22:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729057552; x=1729662352; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cwJJmP/ZXKEl//vPqzZxNk4JrFy3Wy0nARrCJ7oJJlA=;
+        b=OWfp7QNnzo3CaFVj8Ff7yHNQUSAK0dRPq6qYl2PShOnkGYi1key/rht+la2RVezY6e
+         U81ppxGESWUyGiZG/2YdGgYzYdD1LbL+sGgoVKCZXrN7xvK9mDNZMPbeBqS89k6noYxG
+         ZXK7tDYaTXjCXss3PPOMOsz5hEJ1EVPBF+hWM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729057552; x=1729662352;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cwJJmP/ZXKEl//vPqzZxNk4JrFy3Wy0nARrCJ7oJJlA=;
+        b=VpLpeYYadrsleCEEC+A28CwvjK0O9lDOvOwmpc/cRBQdGZZvN3c4Layc+HI09zZrmh
+         qJ3NBFy4vQG+KescQPwXscS4I6aFcEN4SPLO9l+5BbWcLVVvBQOLTOkW91HvUdvoEaSf
+         jP34G3ALMiBbUgMuCLW+5yDGVwCdWgrtQytEYsOUC3n0J5MWUGeOL6LSOnOI55hMpyRG
+         Qfqt5hiZyPpc5LVceRHQQ2OkopAO3Y2zuxbgV3hdgW9aOXoTrMvg4346/7fsakCJDdFT
+         5BalG6AjisBgK0dXNukldjvgstj6nfO3vsB7EQmFPrWgrUZcbLA3RswD2VU9Hklnoi+K
+         +pbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSnjcQGMeCkwnqdeM0gKFUm3dep809v1cvPUBigWepymLKVWdXZSvNpWfujRvuOarEUkBP6M0U8owY6bc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/9JETNmV+98IOVbN2RBtDIL4QlchYMWqA/iDnZOK5Em6Fu4XW
+	bTol4vMvmaIPIJoI8wLZXhz0Cjb5OTyJqm0oLjtEWVBFKrBLk1iQ/ql3HvMuAA==
+X-Google-Smtp-Source: AGHT+IH3whYd/baJm6rc+ZppTWb+JBSQWjk0NVYypdzoLrAlYYZJ3ieGQmoMLJmDKyJB4k56J9jq5g==
+X-Received: by 2002:a17:903:1211:b0:20c:f648:e3a7 with SMTP id d9443c01a7336-20d27f20cf6mr33038135ad.50.1729057552365;
+        Tue, 15 Oct 2024 22:45:52 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1805ba92sm21449385ad.255.2024.10.15.22.45.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 22:45:51 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Wed, 16 Oct 2024 05:45:46 +0000
+Subject: [PATCH RESEND v12] thermal/drivers/mediatek: add another get_temp
+ ops for thermal sensors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,212 +72,247 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCoZhCDJfiRtUvQ-4ypaQsiktC3b22r4=TCy5V+RVeOb4wP+A@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7pdaFnJaCtemy2ePTOzcbRl3p7Rsrwp8
-X-Proofpoint-ORIG-GUID: 7pdaFnJaCtemy2ePTOzcbRl3p7Rsrwp8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015 phishscore=0
- spamscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160035
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241016-auxadc_thermal-v12-1-c0433e9f61af@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAAlTD2cC/3XNvQ6CMBQF4Fchna3pXxCcHGR10NEYUy4tbSLUt
+ EAwhHe36eCgcbzn5Hx3QUF5qwLaZwvyarLBuj4elG0yBEb2rcK2iQFihAlSkBLLcZYN3AejfCc
+ fuKwV54WCoqaA4ujplbZzEq/oXF2q0xHdYm5sGJx/pUcTpan+Z8YeUyw1zwF2QnPJD2C86+zYb
+ Z1vkzdR9jEoIfTXYNFgdZEDKYXWIv8y1nV9A8Tjfan+AAAA
+X-Change-ID: 20240809-auxadc_thermal-9be338ec8b1c
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ James Lo <james.lo@mediatek.com>, Michael Kao <michael.kao@mediatek.com>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>, Ben Tseng <ben.tseng@mediatek.com>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-7be4f
 
-On Tue, Oct 15, 2024 at 03:28:08PM -0700, anish kumar wrote:
-> On Tue, Oct 15, 2024 at 12:28 PM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
-> >
-> > On Tue, Oct 15, 2024 at 10:59:12AM -0700, anish kumar wrote:
-> > > On Tue, Oct 15, 2024 at 9:26 AM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
-> > > >
-> > > > There is NULL pointer issue observed if from Process A where hid device
-> > > > being added which results in adding a led_cdev addition and later a
-> > > > another call to access of led_cdev attribute from Process B can result
-> > > > in NULL pointer issue.
-> > >
-> > > Which pointer is NULL? Call stack shows that dualshock4_led_get_brightness
-> > > function could be culprit?
-> >
-> > in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [2]
-> > is not yet completed.
-> >
-> > [1]
-> >  struct hid_device *hdev = to_hid_device(led->dev->parent);
-> >
-> > [2]
-> > led_cdev->dev = device_create_with_groups(&leds_class, parent, 0,
-> >                   led_cdev, led_cdev->groups, "%s", final_name);
-> >
-> > >
-> > > >
-> > > > Use mutex led_cdev->led_access to protect access to led->cdev and its
-> > > > attribute inside brightness_show().
-> > >
-> > > I don't think it is needed here because it is just calling the led driver
-> > > callback and updating the brightness. So, why would we need to serialize
-> > > that using mutex? Maybe the callback needs some debugging.
-> > > I'm curious if it is ready by the time the callback is invoked.
-> >
-> > Because, we should not be allowed to access led_cdev->dev as it is not
-> > completed and since, brightness_store() has this lock brightness_show()
-> > should also have this as we are seeing the issue without it.
-> >
-> > I hope, above might have answered your question.
-> >
-> > -Mukesh
-> > >
-> > > >
-> > > >         Process A                               Process B
-> > > >
-> > > >  kthread+0x114
-> > > >  worker_thread+0x244
-> > > >  process_scheduled_works+0x248
-> > > >  uhid_device_add_worker+0x24
-> > > >  hid_add_device+0x120
-> > > >  device_add+0x268
-> > > >  bus_probe_device+0x94
-> > > >  device_initial_probe+0x14
-> > > >  __device_attach+0xfc
-> > > >  bus_for_each_drv+0x10c
-> > > >  __device_attach_driver+0x14c
-> > > >  driver_probe_device+0x3c
-> > > >  __driver_probe_device+0xa0
-> > > >  really_probe+0x190
-> > > >  hid_device_probe+0x130
-> > > >  ps_probe+0x990
-> > > >  ps_led_register+0x94
-> > > >  devm_led_classdev_register_ext+0x58
-> > > >  led_classdev_register_ext+0x1f8
-> > > >  device_create_with_groups+0x48
-> > > >  device_create_groups_vargs+0xc8
-> > > >  device_add+0x244
-> > > >  kobject_uevent+0x14
-> > > >  kobject_uevent_env[jt]+0x224
-> > > >  mutex_unlock[jt]+0xc4
-> > > >  __mutex_unlock_slowpath+0xd4
-> > > >  wake_up_q+0x70
-> > > >  try_to_wake_up[jt]+0x48c
-> > > >  preempt_schedule_common+0x28
-> > > >  __schedule+0x628
-> > > >  __switch_to+0x174
-> > > >                                                 el0t_64_sync+0x1a8/0x1ac
-> > > >                                                 el0t_64_sync_handler+0x68/0xbc
-> > > >                                                 el0_svc+0x38/0x68
-> > > >                                                 do_el0_svc+0x1c/0x28
-> > > >                                                 el0_svc_common+0x80/0xe0
-> > > >                                                 invoke_syscall+0x58/0x114
-> > > >                                                 __arm64_sys_read+0x1c/0x2c
-> > > >                                                 ksys_read+0x78/0xe8
-> > > >                                                 vfs_read+0x1e0/0x2c8
-> > > >                                                 kernfs_fop_read_iter+0x68/0x1b4
-> > > >                                                 seq_read_iter+0x158/0x4ec
-> > > >                                                 kernfs_seq_show+0x44/0x54
-> > > >                                                 sysfs_kf_seq_show+0xb4/0x130
-> > > >                                                 dev_attr_show+0x38/0x74
-> > > >                                                 brightness_show+0x20/0x4c
-> > > >                                                 dualshock4_led_get_brightness+0xc/0x74
-> > > >
-> > > > [ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
-> > > > [ 3313.874301][ T4013] Mem abort info:
-> > > > [ 3313.874303][ T4013]   ESR = 0x0000000096000006
-> > > > [ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > > > [ 3313.874307][ T4013]   SET = 0, FnV = 0
-> > > > [ 3313.874309][ T4013]   EA = 0, S1PTW = 0
-> > > > [ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
-> > > > [ 3313.874313][ T4013] Data abort info:
-> > > > [ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-> > > > [ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > > > [ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > > > [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
-> > > > ..
-> > > >
-> > > > [ 3313.874332][ T4013] Dumping ftrace buffer:
-> > > > [ 3313.874334][ T4013]    (ftrace buffer empty)
-> > > > ..
-> > > > ..
-> > > > [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
-> > > > [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
-> > > > [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
-> > > > [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
-> > > > ..
-> > > > ..
-> > > > [ 3313.874685][ T4013] Call trace:
-> > > > [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
-> > > > [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
-> > > > [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
-> > > > [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
-> > > > [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
-> > > > [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
-> > > > [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
-> > > > [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
-> > > > [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
-> > > > [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
-> > > > [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
-> > > > [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
-> > > > [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
-> > > > [ 3313.874727][ T4013]  el0_svc+0x38/0x68
-> > > > [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
-> > > > [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
-> > > >
-> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > > > ---
-> > > >  drivers/leds/led-class.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > > > index 06b97fd49ad9..e3cb93f19c06 100644
-> > > > --- a/drivers/leds/led-class.c
-> > > > +++ b/drivers/leds/led-class.c
-> > > > @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
-> > > >  {
-> > > >         struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> > > >
-> > > > -       /* no lock needed for this */
-> 
-> just get rid of the above comment then.
+From: James Lo <james.lo@mediatek.com>
 
-If you notice, it is already removed (-) .
+Previously, the driver only supported reading the temperature from all
+sensors and returning the maximum value. This updatea adds another
+get_temp ops to support reading the temperature from each sensor
+separately.
 
-> 
-> Also, the comment below in file leds.h
-> needs an update as originally the idea for this mutex lock was to
-> provide quick feedback to userspace based on this commit
-> https://github.com/torvalds/linux/commit/acd899e4f3066b6662f6047da5b795cc762093cb
-> 
-> Basically a comment somewhere so that when a new attribute
-> gets added, it doesn't make the same mistake of not using the mutex
-> and run into the same issue.
-> 
-> /* Ensures consistent access to the LED Flash Class device */
-> struct mutex led_access;
+This feature provides the ability to read all thermal sensor values in
+the SoC through the node /sys/class/thermal.
 
-Thanks for accepting that it is an issue.
-I think, comment is very obvious actually the patch you mentioned should
-be in fixes tag as it introduced the lock but did not protect the show
-while it does it for store.
+Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Signed-off-by: Ben Tseng <ben.tseng@mediatek.com>
+Signed-off-by: James Lo <james.lo@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+Changes in v12:
+- Remove unnecessary check and unused variable assignment in mtk_read_sensor_temp.
+- Add more about what this patch achieves in the commit message.
+- Link to v11: https://lore.kernel.org/r/20240809-auxadc_thermal-v11-1-af36cc74f3a3@chromium.org
 
-Fixes: acd899e4f306 ("leds: implement sysfs interface locking mechanism")
+Changes in V11:
+    - Rebase on kernel v6.11-rc2
+    - Use mtk_thermal_temp_is_valid in mtk_read_sensor_temp just like
+      mtk_thermal_bank_temperature
+    - Change the error handling of devm_thermal_of_zone_register return
+      value
+    - link to V10: https://lore.kernel.org/lkml/20220519101044.16765-1-james.lo@mediatek.com/
 
--Mukesh
-> 
-> 
-> > >
-> > > >> also you missed this.
-> > >
-> > > > +       mutex_lock(&led_cdev->led_access);
-> > > >         led_update_brightness(led_cdev);
-> > > > +       mutex_unlock(&led_cdev->led_access);
-> > > >
-> > > >         return sprintf(buf, "%u\n", led_cdev->brightness);
-> > > >  }
-> > > > --
-> > > > 2.34.1
-> > > >
-> > > >
+Changes in V10:
+    - Rebase to kernel-v5.18-rc7
+    - Resend
+
+Changes in V9:
+    - Rebase to kernel-v5.14-rc1
+    - Bind raw_to_mcelsius_v1 or raw_to_mcelsius_v2 to compatible
+      data of struct mtk_thermal_data
+    - Remove duplicate struct 'mtk_thermal_bank'
+    - Remove unnecessary if condition check
+    - Return error if any thermal zone fail to register
+
+Changes in V8:
+    - Rebase to kernel-v5.13-rc1
+    - Resend
+
+Changes in v7:
+    - Fix build error in v6.
+
+Changes in v6:
+    - Rebase to kernel-5.11-rc1.
+    - [1/3]
+        - add interrupts property.
+    - [2/3]
+        - add the Tested-by in the commit message.
+    - [3/3]
+        - use the mt->conf->msr[id] instead of conf->msr[id] in the
+          _get_sensor_temp and mtk_thermal_bank_temperature.
+        - remove the redundant space in _get_sensor_temp and
+          mtk_read_sensor_temp.
+        - change kmalloc to dev_kmalloc in mtk_thermal_probe.
+
+Changes in v5:
+    - Rebase to kernel-5.9-rc1.
+    - Revise the title of cover letter.
+    - Drop "[v4,7/7] thermal: mediatek: use spinlock to protect PTPCORESEL"
+    - [2/2]
+        -  Add the judgement to the version of raw_to_mcelsius.
+
+Changes in v4:
+    - Rebase to kernel-5.6-rc1.
+    - [1/7]
+        - Squash thermal zone settings in the dtsi from [v3,5/8]
+          arm64: dts: mt8183: Increase polling frequency for CPU thermal zone.
+        - Remove the property of interrupts and mediatek,hw-reset-temp.
+    - [2/7]
+        - Correct commit message.
+    - [4/7]
+        - Change the target temperature to the 80C and change the commit message.
+    - [6/7]
+        - Adjust newline alignment.
+        - Fix the judgement on the return value of registering thermal zone.
+
+Changes in v3:
+    - Rebase to kernel-5.5-rc1.
+    - [1/8]
+        - Update sustainable power of cpu, tzts1~5 and tztsABB.
+    - [7/8]
+        - Bypass the failure that non cpu_thermal sensor is not find in thermal-zones
+          in dts, which is normal for mt8173, so prompt a warning here instead of
+          failing.
+
+    Return -EAGAIN instead of -EACCESS on the first read of sensor that
+        often are bogus values. This can avoid following warning on boot:
+
+          thermal thermal_zone6: failed to read out thermal zone (-13)
+
+Changes in v2:
+    - [1/8]
+        - Add the sustainable-power,trips,cooling-maps to the tzts1~tztsABB.
+    - [4/8]
+        - Add the min opp of cpu throttle.
+---
+
+---
+ drivers/thermal/mediatek/auxadc_thermal.c | 70 +++++++++++++++++++++++++++----
+ 1 file changed, 62 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/thermal/mediatek/auxadc_thermal.c b/drivers/thermal/mediatek/auxadc_thermal.c
+index 9ee2e7283435acfcbb1a956303b6122a08affecc..10938be2e5545fba2fff7d5cc5a0269d42e5d44d 100644
+--- a/drivers/thermal/mediatek/auxadc_thermal.c
++++ b/drivers/thermal/mediatek/auxadc_thermal.c
+@@ -847,7 +847,8 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
+ 
+ static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
+ {
+-	struct mtk_thermal *mt = thermal_zone_device_priv(tz);
++	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
++	struct mtk_thermal *mt = bank->mt;
+ 	int i;
+ 	int tempmax = INT_MIN;
+ 
+@@ -866,10 +867,41 @@ static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
+ 	return 0;
+ }
+ 
++static int mtk_read_sensor_temp(struct thermal_zone_device *tz, int *temperature)
++{
++	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
++	struct mtk_thermal *mt = bank->mt;
++	const struct mtk_thermal_data *conf = mt->conf;
++	int id = bank->id - 1;
++	int temp = INT_MIN;
++	u32 raw;
++
++	raw = readl(mt->thermal_base + conf->msr[id]);
++
++	temp = mt->raw_to_mcelsius(mt, id, raw);
++
++	/*
++	 * The first read of a sensor often contains very high bogus
++	 * temperature value. Filter these out so that the system does
++	 * not immediately shut down.
++	 */
++
++	if (unlikely(!mtk_thermal_temp_is_valid(temp)))
++		return -EAGAIN;
++
++	*temperature = temp;
++
++	return 0;
++}
++
+ static const struct thermal_zone_device_ops mtk_thermal_ops = {
+ 	.get_temp = mtk_read_temp,
+ };
+ 
++static const struct thermal_zone_device_ops mtk_thermal_sensor_ops = {
++	.get_temp = mtk_read_sensor_temp,
++};
++
+ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+ 				  u32 apmixed_phys_base, u32 auxadc_phys_base,
+ 				  int ctrl_id)
+@@ -1199,6 +1231,7 @@ static int mtk_thermal_probe(struct platform_device *pdev)
+ 	u64 auxadc_phys_base, apmixed_phys_base;
+ 	struct thermal_zone_device *tzdev;
+ 	void __iomem *apmixed_base, *auxadc_base;
++	struct mtk_thermal_bank *tz;
+ 
+ 	mt = devm_kzalloc(&pdev->dev, sizeof(*mt), GFP_KERNEL);
+ 	if (!mt)
+@@ -1285,14 +1318,35 @@ static int mtk_thermal_probe(struct platform_device *pdev)
+ 			mtk_thermal_init_bank(mt, i, apmixed_phys_base,
+ 					      auxadc_phys_base, ctrl_id);
+ 
+-	tzdev = devm_thermal_of_zone_register(&pdev->dev, 0, mt,
+-					      &mtk_thermal_ops);
+-	if (IS_ERR(tzdev))
+-		return PTR_ERR(tzdev);
++	for (i = 0; i <= mt->conf->num_sensors; i++) {
++		tz = devm_kmalloc(&pdev->dev, sizeof(*tz), GFP_KERNEL);
++		if (!tz)
++			return -ENOMEM;
++
++		tz->mt = mt;
++		tz->id = i;
++
++		tzdev = devm_thermal_of_zone_register(&pdev->dev, i,
++						      tz, (i == 0) ?
++						      &mtk_thermal_ops
++						      : &mtk_thermal_sensor_ops);
++
++		if (IS_ERR(tzdev)) {
++			ret = PTR_ERR(tzdev);
++			if (ret == -ENODEV) {
++				dev_warn(&pdev->dev, "can't find thermal sensor %d\n", i);
++				continue;
++			}
++			dev_err(&pdev->dev,
++				"Error: Failed to register thermal zone %d, ret = %d\n",
++				i, ret);
++			return ret;
++		}
+ 
+-	ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
+-	if (ret)
+-		dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs");
++		ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
++		if (ret)
++			dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs: %d\n", ret);
++	}
+ 
+ 	return 0;
+ }
+
+---
+base-commit: b589839414be04b2b37e4bf6f84af576c99faf64
+change-id: 20240809-auxadc_thermal-9be338ec8b1c
+
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
+
 
