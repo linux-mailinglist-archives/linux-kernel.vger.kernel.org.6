@@ -1,205 +1,213 @@
-Return-Path: <linux-kernel+bounces-368656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1039A12FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:57:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF939A1304
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9C51C21E7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0942818E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B693A215F61;
-	Wed, 16 Oct 2024 19:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0772216A0F;
+	Wed, 16 Oct 2024 19:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOAotM9k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="vwQXbj2A"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2139.outbound.protection.outlook.com [40.107.237.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C87720605A;
-	Wed, 16 Oct 2024 19:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729108626; cv=none; b=dZu7C1UY85xLMJWAyOdWzAbpVHk7NhQiG3hg0NAlrmkfL15Zh8TZwseoPlrmuDRFjKgNHAWzGo2GoyZZZr0G9xNrOUkK/iPG/OVFC0Y2RIz/EqisSFOGXRh0fRoVyFZdJihR8utFTz7iUpT10X3zD1jyd4EFJ8jq/NnRdBik4Zk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729108626; c=relaxed/simple;
-	bh=XK0vsHUoYE5TeMTdnMkvGDa3GmUtnqn/BbD5ef1Q8W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNcpYUtIQXrqmCgV3GhFZRxrDwh46NQVgc00u2roQYXfsHPRT22LHxZr9urSGRsFsB1wO++FvF5prPcpiNooseDzvX8TaBi1PP4Zf5c3kCsL3VSHcIAaAE3PQcz//VzulKRDMVCesoyq/nu2B5iPnv+1Obn9qdyRNwsXJnr2dFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOAotM9k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EEBC4CEC5;
-	Wed, 16 Oct 2024 19:57:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729108625;
-	bh=XK0vsHUoYE5TeMTdnMkvGDa3GmUtnqn/BbD5ef1Q8W4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gOAotM9kVMO0qxulzQX32MRw4u7Qkvyke2ydb3RqqR7793BGtG6Kqkk+iVbwdKhJz
-	 y37f3HZGuk2iFKjFePm5+cZkcvDAit0hTAfmObxjtxmnnDMp1AqAwCnt5lOxeeqwwD
-	 OP3QXqLSdDD/Fcb90re8jfm/9ZTMKZ8UxjnzahR90C+cCQOJ6FHbqIPjSwwxfAk6Kw
-	 aBlIC1kx8zmt4L7PXYUOb9mWRl4CLQxxpQXuJHSPYxWhHXKvY8jbacFxyNjjb2zvdj
-	 uWZUM4UWqxb8B12YsfXjsvdHuoZs8AGq4CNEK74lqhvL17RNEIqMbMksNkzNuxWAAF
-	 kBMyRbcHGFK1Q==
-Date: Wed, 16 Oct 2024 12:57:05 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, martin.petersen@oracle.com,
-	catherine.hoang@oracle.com, mcgrof@kernel.org,
-	ritesh.list@gmail.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH v9 2/8] fs/block: Check for IOCB_DIRECT in
- generic_atomic_write_valid()
-Message-ID: <20241016195705.GN21853@frogsfrogsfrogs>
-References: <20241016100325.3534494-1-john.g.garry@oracle.com>
- <20241016100325.3534494-3-john.g.garry@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A830E2144D7
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.139
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729108704; cv=fail; b=cBQRzfo/S0GJ2WVGiLE/OEeAGBfpBpz1j7Ho3yNx5vf+JdnitQa9/MuXFhtxcCfx6N9aRSuPK6bHV7ojg0pqXQiA8BRAlXPYDIT33EwPT1xY7c+A5xcbVL1FBAC15IUNgQuO1vqj8Hhuz9KaQmOvXdhXym7DztWuGVRA4OTvusI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729108704; c=relaxed/simple;
+	bh=AGyqDZ8FM+ZR5fYr+ElNTTT+yhF2s7+/Bq9cje014dM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=uR73b241RF1XGEAfMJCo7vKjJvcG6SeWt/AQGQlhei/+rz9a8LyUTeAlC97Fghy9tpOSbGFXxXY1PewZKbLTlhi6HjxFyo24kinrToRiYPLRawpgKa11ad3cs7exylzS7f2iiLVGQDsCOopbU6nFBxtJHqjDu7CNY5kCte8EAfI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=vwQXbj2A; arc=fail smtp.client-ip=40.107.237.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZzVnRdKya+PBYyEBxqfNk4U9yU7AbKYHG6Ui3SVDlQATIvQN8JUFsQv72BzeFUwfho5qmj8LCCXsT2Idd7i1FYfO8yV7XoxqQRhyv8GpyO/0P9aiApYHkp/tn6RftccwpcRLVDJOXHJkHuC7tow3ednIVrK7Zn2mkw103XWxyKLNfFsQWZsW1cdfwkD8aNZpAqZ+J9HXgShPooOjh/xofgnb0t8D3IPcIzB62Y85aGHMCd2R1ztzpxDxwS/LGb3C9GzjbcPoIICVLoexPTNcy9N5Gj9D+m1Xj8aLMVN+JjZDc3NmMIR6rbKhZIPuEfFXCpD95RtZU10p0R4JkFCkYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S41wHjcTCIAk1TLxhGlH6wA7VNHrMPT43qwSHHS9sr8=;
+ b=Dt1f/5r41DBTA4VVMQB2EyZs7iB85BttpMcXuF5v88Gw1s28BdObrgExc/WakTE3W6+dY2+NkcPFchEcdOJ5aqU31h6jBlgm7lhij6mLMuG+X5YaZgF1rLZBBNgxXOh1hDOfLbsM26ICgFiQg1Sond/PvJpx175jbt5ZY8SMP/tis4nMQRd8diRjJAMgDP7A2nP5SBvlY0KQoF77mBhg2q36qwbA51zwReNcv98M8E0rdTBsaSo0VZ4A7TFFNDUcs0GuD55/ZT8lLtzzu1V1Z9jcYqnd+pvmaZevdpfbnG5aL3e/qhgBLWFp0WQn/Px9RfBkgnz49FbewFW2iVXtVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S41wHjcTCIAk1TLxhGlH6wA7VNHrMPT43qwSHHS9sr8=;
+ b=vwQXbj2AxNAdYxey1/KMV0o+huzME83qM0pKiSXBUqV08upasP184eIMrGDHHNz8Th2npJYvkoM+KEcDTCeOZsreTfapaSB2BIFU/l8q1hfTB/KC/cfIXr79oxDiABEw5xb8e4DAYCHpQnxWjbrcNivbAgbmr0VVNcS7beFoEU0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ LV8PR01MB8551.prod.exchangelabs.com (2603:10b6:408:193::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.27; Wed, 16 Oct 2024 19:58:19 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%7]) with mapi id 15.20.7982.033; Wed, 16 Oct 2024
+ 19:58:19 +0000
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Subject: [PATCH] KVM: arm64: Fix shift-out-of-bounds bug
+Date: Wed, 16 Oct 2024 12:57:55 -0700
+Message-Id: <20241016195755.65011-1-ilkka@os.amperecomputing.com>
+X-Mailer: git-send-email 2.40.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH0PR03CA0413.namprd03.prod.outlook.com
+ (2603:10b6:610:11b::11) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016100325.3534494-3-john.g.garry@oracle.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|LV8PR01MB8551:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36b9d30e-3ad5-49bb-f109-08dcee1ce197
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?svK/Gb5H6l/sR7wGSgXZeOW40wJsfPMm1PilPtk8Mutwxeyt1FOtoqsHb9VS?=
+ =?us-ascii?Q?/M3/xH3g3KZM3DPCZFGFppA1QqFGSTo8jsQYTKh+vxVH9OtItMkW/CFD+6Sz?=
+ =?us-ascii?Q?uJnGU/CC3yPsDz4BKAEh+sOa13UJG9lo2I6YyDG6OdyZl5CsWy0oZDO0b6zX?=
+ =?us-ascii?Q?+ORnJB/eGqazB3Kagzl4X+xLWjw/WvqwpPPyJttCgp+U8Ew6UEgFAstW2yRg?=
+ =?us-ascii?Q?PxdEqP/OzIaFNQOpYq6uwl5+j/7WQivdEub8vbfBrCQ5E2sGYR9wfmKrjlt0?=
+ =?us-ascii?Q?O8tvGYa4xal8tE5F+uEiPKdvmBHjpunuS9TEn1TdgVMb/5q5x2CU6gMc6zCL?=
+ =?us-ascii?Q?lmzXrseWf6QUipeXLH1LFeB/cR4PufgWa3mgfcseTDmIrpd9NMPwPUzwJmSq?=
+ =?us-ascii?Q?U4hnVC/zeOsnXTPAHraQw/KqnavYjlTyV/wCFuGQpgiYmBPUNZdaEADkl/hY?=
+ =?us-ascii?Q?zCaO3cl6V5Mzkl2ActAvhjfGwlE07e5iiuoMFjN7U3FpvTvTYgwUB3ZHsGCM?=
+ =?us-ascii?Q?5lz0gvFA9EL8GRcitBE+UmVV3pf2Idm+V/uGG+tWA4hyLDC/PgB8xrcdLKc/?=
+ =?us-ascii?Q?kUxSKQfHcDO5uy29ccSAumfJ3nXwXu2sAg373ZiN/SoqMW4Xm+agwLodIB5d?=
+ =?us-ascii?Q?BYir2qBgGEgTBaM7BZgX4Owkt8WNOX2S5WGgTqu/6+OK9qhhIXf2EpXKiz0G?=
+ =?us-ascii?Q?im1QYluFL7ih08CovzwA7yluMP24eJehWjhE3lMwkOjoi7ujVCJWHd7nJaUh?=
+ =?us-ascii?Q?l3CNFOfuUP47MvtqHwlyD2YeRr5a+bNH6yfNMIX8TGWWZLFDINEHThH6PoJO?=
+ =?us-ascii?Q?03BdQf0pZcUsmSKx0RzDzzQSoBL+sHDNf6tHhF0P9jQGp4J0lngoR/L0NWXP?=
+ =?us-ascii?Q?uqiC8dNaL7twRRa6/QSDAoAaFWLZ6xn7T/M0tg+4ENJ6bWIEszatYJOcf2me?=
+ =?us-ascii?Q?3IYfEZrAiA541qXr1gzEFYVxosuRyvWyZ+TfJkirflHhnFsTBiaMZm/QFpwa?=
+ =?us-ascii?Q?eBHEMXhFNxxlwB9KMUuSNuIa6ad8sVVh4vndiAxCihhlvBsDMTONf0NoBXdU?=
+ =?us-ascii?Q?vVcijXAOZuTwbESjaEXGZW+6VFQeoeSFyq4+7r26BastOtdKL/rGkTzc/0wk?=
+ =?us-ascii?Q?6WmXo5fN3gHqFYd0oT4mslL/j/BTEz92bOZmmEWt34kEB3Gq9xjiE6XSjwKv?=
+ =?us-ascii?Q?J1FMq7qeja3KWAv3LTn3BwKaNlT/xUsDCgurftU9mNNziT9Ov0iJZDWjccYR?=
+ =?us-ascii?Q?eeHKGViFvaipc8Onn2AiNDpCZzGaelnyDkr1AXxcqOdQXUaH+gYkVrRNB94F?=
+ =?us-ascii?Q?mztUT8u/DC3/OKnoWoxeM2Pm511zxNerTRHzxtTCeUVOhQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iBoi9KrIVP+30P9CvLrTTqz+ypoCw+11+TZaHWYhrMLRb7VjKapCcuNZgvF+?=
+ =?us-ascii?Q?xjB2+Jor/CY96lsV6VDebOfGDSWJO5Nd33/ahR2ub6yZPhjmP7diaChFH/jr?=
+ =?us-ascii?Q?UKYp0eMedOIwQXH5u3CxETm7HxbW4NsDuvDP+r330lX4QUA4ZeUJ/1G9Rsxw?=
+ =?us-ascii?Q?MqBSQ6phb2Y+S0dUxGy2Gm8nam6GPxkJlEiZlD2NSUKfaRHGOUwEjytAbUFY?=
+ =?us-ascii?Q?ZhpLyWwmdOyDyX1HT3DIRu/q8zZxxcB+TxI0+LERuuDzmtSw8zAe8BbVzCEv?=
+ =?us-ascii?Q?za2P2dQLd9eXE8MFYFsceOw22xs2QC8chI4/Z/6h5pb1AUx3OijbOFL1x1Vr?=
+ =?us-ascii?Q?HFOqLqvndcM0EBLJrQ9q40dITd5ru6Pt89drL3QL7PzYC9FFI7tsa6Fr3mOf?=
+ =?us-ascii?Q?ZvU92QRfrAk48Ba5e0BPCCQEuOww5PSxpooog1odxStRTDBcNd51rP/Q3Pvk?=
+ =?us-ascii?Q?qpjN/IqwK4FDMreIJIU6wCoNhLCwSaZ2mvgz9s4sXd6+ADrx6kRZZWD2+vbd?=
+ =?us-ascii?Q?UNXddnRZTNngW5BUmbTiDnOoQdeOGNk6ucGR9zPBgDuQZREQuw0WGg3wlbhz?=
+ =?us-ascii?Q?3P2S9fVPCJQ0g9kxaz0ztpDaCv6edo5Kt4Qj3+3fvsAm3XKwnbNgNfp3mlaa?=
+ =?us-ascii?Q?cg25pO4VCB444gT7toMM+sNFCDK5dpBBam6X4Go6kgixbljSOykwQx7CCVJw?=
+ =?us-ascii?Q?IIHAJ48O7JK8oLPglDXaLL7szAkY/Xs25SiDiRi2hzXC30U1rOePRXLx1ZxW?=
+ =?us-ascii?Q?sikozlPSoR3vAjRBIvOqPCv67e3fXShFptET98LFfU+l6UkhOiOLbbfRY/5h?=
+ =?us-ascii?Q?5APO+p3UwjI9phDDdUeQNqMjGKLAcYR3yk/9FchDhPYD17Xg5y3XawftEgiC?=
+ =?us-ascii?Q?0Dl8Dig/3pdFcbSnFqkDNqW5IfaBR/Eqm/ZmQvNOKd0THdtzxMak9mhUm2uq?=
+ =?us-ascii?Q?LqcUtj+pdEvTyyh9B/jqhClvzyvK416pfgYX0znIO/P1HiRO68phU71CH56d?=
+ =?us-ascii?Q?2/D/J0GGhqUNd7LvC3PCeJyvPcUtrvI5AB+6JITXo5Z2br8KIfwnKHqnTXjP?=
+ =?us-ascii?Q?BBF5UqmT1rZ3bj1phGPVJ44Q0HPCIsEtJcu3bnAqbFa3Rn2bibr+XvXiy2pj?=
+ =?us-ascii?Q?/hLLvb1crM9DC6QxjFBXWJNFsJTsrE2IPOqVcH/HhIZeg3H/9E45poog46qp?=
+ =?us-ascii?Q?i020NE0YX3iaPmycx30GlX3dceibmJ7ZSZU95qCRj3oaSaTY4xg3EVB82jjb?=
+ =?us-ascii?Q?RyUPDGPpeaS3ue6XsDp5Ped4B40sBlDbEhPRZl3/bNuKmRjtrHzqmFer8Z59?=
+ =?us-ascii?Q?4KI0bMmLLItj4GyyuWPgS2LK6HxFIMcYH08XMRt5tR6Cv1l2kkAhyZkErdml?=
+ =?us-ascii?Q?f+zx08t3pkFT6Cf+YU2itEQwMVX3zednRXd9u1aeDUxe0TqXKTx8ereZE2Aq?=
+ =?us-ascii?Q?hpQZe4KHQ60b7qpfHnmJPm2uObz9JPXGtDlf0Lr9cl07d870i7WANvgYPx47?=
+ =?us-ascii?Q?eamUwV/DK1lHecGMkWq0XAj2UbPx1NcsTZo5RmkIKtWOVz2rILewB76jc5eQ?=
+ =?us-ascii?Q?X9o3P1oOLXD7ST03XZ7sYwRqdb1qiLwfXGFDjb1T8nkRTLa31hR9Zay470tV?=
+ =?us-ascii?Q?NhyYntKMUG3PHaS61Cnvz7Y=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36b9d30e-3ad5-49bb-f109-08dcee1ce197
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 19:58:19.2604
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xkbpZurQ2jaxq0ArM53iME24JXbIwI4AN5e1bam+r8wL6zuIeFWqa1RPGKz4bOcqEKPYRXo2pw88V1yrY+OJtg9emDtwWziyqlKgpD62EHCnpF0YQqueXtDK9UIoaEed
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR01MB8551
 
-On Wed, Oct 16, 2024 at 10:03:19AM +0000, John Garry wrote:
-> Currently FMODE_CAN_ATOMIC_WRITE is set if the bdev can atomic write and
-> the file is open for direct IO. This does not work if the file is not
-> opened for direct IO, yet fcntl(O_DIRECT) is used on the fd later.
-> 
-> Change to check for direct IO on a per-IO basis in
-> generic_atomic_write_valid(). Since we want to report -EOPNOTSUPP for
-> non-direct IO for an atomic write, change to return an error code.
-> 
-> Relocate the block fops atomic write checks to the common write path, as to
-> catch non-direct IO.
-> 
-> Fixes: c34fc6f26ab8 ("fs: Initial atomic write support")
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+Fix a shift-out-of-bounds bug reported by UBSAN when running
+VM with MTE enabled host kernel.
 
-Looks good to me,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+UBSAN: shift-out-of-bounds in arch/arm64/kvm/sys_regs.c:1988:14
+shift exponent 33 is too large for 32-bit type 'int'
+CPU: 26 UID: 0 PID: 7629 Comm: qemu-kvm Not tainted 6.12.0-rc2 #34
+Hardware name: IEI NF5280R7/Mitchell MB, BIOS 00.00. 2024-10-12 09:28:54 10/14/2024
+Call trace:
+ dump_backtrace+0xa0/0x128
+ show_stack+0x20/0x38
+ dump_stack_lvl+0x74/0x90
+ dump_stack+0x18/0x28
+ __ubsan_handle_shift_out_of_bounds+0xf8/0x1e0
+ reset_clidr+0x10c/0x1c8
+ kvm_reset_sys_regs+0x50/0x1c8
+ kvm_reset_vcpu+0xec/0x2b0
+ __kvm_vcpu_set_target+0x84/0x158
+ kvm_vcpu_set_target+0x138/0x168
+ kvm_arch_vcpu_ioctl_vcpu_init+0x40/0x2b0
+ kvm_arch_vcpu_ioctl+0x28c/0x4b8
+ kvm_vcpu_ioctl+0x4bc/0x7a8
+ __arm64_sys_ioctl+0xb4/0x100
+ invoke_syscall+0x70/0x100
+ el0_svc_common.constprop.0+0x48/0xf0
+ do_el0_svc+0x24/0x38
+ el0_svc+0x3c/0x158
+ el0t_64_sync_handler+0x120/0x130
+ el0t_64_sync+0x194/0x198
 
---D
+Fixes: 7af0c2534f4c ("KVM: arm64: Normalize cache configuration")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+---
+ arch/arm64/kvm/sys_regs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  block/fops.c       | 18 ++++++++++--------
->  fs/read_write.c    | 13 ++++++++-----
->  include/linux/fs.h |  2 +-
->  3 files changed, 19 insertions(+), 14 deletions(-)
-> 
-> diff --git a/block/fops.c b/block/fops.c
-> index 968b47b615c4..2d01c9007681 100644
-> --- a/block/fops.c
-> +++ b/block/fops.c
-> @@ -36,11 +36,8 @@ static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
->  }
->  
->  static bool blkdev_dio_invalid(struct block_device *bdev, struct kiocb *iocb,
-> -				struct iov_iter *iter, bool is_atomic)
-> +				struct iov_iter *iter)
->  {
-> -	if (is_atomic && !generic_atomic_write_valid(iocb, iter))
-> -		return true;
-> -
->  	return iocb->ki_pos & (bdev_logical_block_size(bdev) - 1) ||
->  		!bdev_iter_is_aligned(bdev, iter);
->  }
-> @@ -368,13 +365,12 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
->  static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct block_device *bdev = I_BDEV(iocb->ki_filp->f_mapping->host);
-> -	bool is_atomic = iocb->ki_flags & IOCB_ATOMIC;
->  	unsigned int nr_pages;
->  
->  	if (!iov_iter_count(iter))
->  		return 0;
->  
-> -	if (blkdev_dio_invalid(bdev, iocb, iter, is_atomic))
-> +	if (blkdev_dio_invalid(bdev, iocb, iter))
->  		return -EINVAL;
->  
->  	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
-> @@ -383,7 +379,7 @@ static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  			return __blkdev_direct_IO_simple(iocb, iter, bdev,
->  							nr_pages);
->  		return __blkdev_direct_IO_async(iocb, iter, bdev, nr_pages);
-> -	} else if (is_atomic) {
-> +	} else if (iocb->ki_flags & IOCB_ATOMIC) {
->  		return -EINVAL;
->  	}
->  	return __blkdev_direct_IO(iocb, iter, bdev, bio_max_segs(nr_pages));
-> @@ -625,7 +621,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
->  	if (!bdev)
->  		return -ENXIO;
->  
-> -	if (bdev_can_atomic_write(bdev) && filp->f_flags & O_DIRECT)
-> +	if (bdev_can_atomic_write(bdev))
->  		filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
->  
->  	ret = bdev_open(bdev, mode, filp->private_data, NULL, filp);
-> @@ -700,6 +696,12 @@ static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) == IOCB_NOWAIT)
->  		return -EOPNOTSUPP;
->  
-> +	if (iocb->ki_flags & IOCB_ATOMIC) {
-> +		ret = generic_atomic_write_valid(iocb, from);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	size -= iocb->ki_pos;
->  	if (iov_iter_count(from) > size) {
->  		shorted = iov_iter_count(from) - size;
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 2c3263530828..befec0b5c537 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1830,18 +1830,21 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
->  	return 0;
->  }
->  
-> -bool generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter)
-> +int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	size_t len = iov_iter_count(iter);
->  
->  	if (!iter_is_ubuf(iter))
-> -		return false;
-> +		return -EINVAL;
->  
->  	if (!is_power_of_2(len))
-> -		return false;
-> +		return -EINVAL;
->  
->  	if (!IS_ALIGNED(iocb->ki_pos, len))
-> -		return false;
-> +		return -EINVAL;
->  
-> -	return true;
-> +	if (!(iocb->ki_flags & IOCB_DIRECT))
-> +		return -EOPNOTSUPP;
-> +
-> +	return 0;
->  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fbfa032d1d90..ba47fb283730 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3721,6 +3721,6 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
->  	return !c;
->  }
->  
-> -bool generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
-> +int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
->  
->  #endif /* _LINUX_FS_H */
-> -- 
-> 2.31.1
-> 
-> 
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index 375052d8cd22..665c576faba3 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -1994,7 +1994,7 @@ static u64 reset_clidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
+ 	 * one cache line.
+ 	 */
+ 	if (kvm_has_mte(vcpu->kvm))
+-		clidr |= 2 << CLIDR_TTYPE_SHIFT(loc);
++		clidr |= 2UL << CLIDR_TTYPE_SHIFT(loc);
+ 
+ 	__vcpu_sys_reg(vcpu, r->reg) = clidr;
+ 
+-- 
+2.40.1
+
 
