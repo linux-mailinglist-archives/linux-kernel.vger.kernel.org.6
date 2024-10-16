@@ -1,178 +1,229 @@
-Return-Path: <linux-kernel+bounces-368108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768199A0B4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0A49A0B4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1B21F26AFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BB11F26B9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 13:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35032207A35;
-	Wed, 16 Oct 2024 13:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32588209F3E;
+	Wed, 16 Oct 2024 13:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjofVzqG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nyIG2n/M"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2074.outbound.protection.outlook.com [40.107.94.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E69C1EB5B
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729084835; cv=none; b=eAMqnDiJRp/Tzjyt5z9RRwHolyJiCDAk5Uoa50fpejbn307gl2n1iw1NjShfe7XzBDsjTEJ1Vu4AWSZKr5hU55vq5SuLKbk07ZMcsaIt7sDVzAJYguFIfju9hJwQJBbVwMJgnu8AjBp+c1NCDfLo1EdC+BNVW6FLA0ZN3BT47Xk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729084835; c=relaxed/simple;
-	bh=5o/PNdwqbAYuqE9gFljqmHpGaggXOYQkQ5hjQx/jUWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WC0vtPkVdHFAfI7NUH1dypbo3GtTjNGNLPTLhckSaAwN3iRqtQQENlwhNlBB97MV8Fmi9tJRw46veHKL0m5GyKUh9hCftc41j3jpWjaBjNU1mYSnkwibvSvAlgGp4OHQt8phTj02NG/aMY/fAw7nJgXgBOGa5o87HesQy9vykCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjofVzqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4F4C4CEC5;
-	Wed, 16 Oct 2024 13:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729084835;
-	bh=5o/PNdwqbAYuqE9gFljqmHpGaggXOYQkQ5hjQx/jUWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LjofVzqGWKfCbkYtLw2UvVl91Yx7ANrBR9j4mSDwO7VnSEuCwBTEYkFFPMILJJvsX
-	 ZmvtQcsLPX+gHJ8L77DHccoFyxfu/rn7gMC8g0GRVxJc3+4Rr8rZKIN2w48C7SdVze
-	 07FNCeRzrdFFfYaDjtV26HpJe+sM2G7gAueBu6QyCVHwp9mEMyZw0p7OIC9nOiLiIA
-	 rKrkyR+7chsRzqyWZ16byF+o+v7wESxJGtPQRfdVvo2KJi+NCS2klvyYuhTuUsrMNV
-	 3EUW5vs2Jj2cPuq4cLsrFJ3f/Is41/9tZ/x3HjJMdXlRQ/D6fFsHPpHUAqOjGZMLAG
-	 ClIBrWTpZeSUQ==
-Date: Wed, 16 Oct 2024 14:20:31 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org,
-	Gregor Herburger <gregor.herburger@tq-group.com>
-Subject: Re: [PATCH v4 5/5] mfd: tqmx86: add I2C IRQ support
-Message-ID: <20241016132031.GD1152434@google.com>
-References: <cover.1728286453.git.matthias.schiffer@ew.tq-group.com>
- <e44098d2e496fda8220f9965f7a6021c1026eb18.1728286453.git.matthias.schiffer@ew.tq-group.com>
- <20241015113841.GH8348@google.com>
- <8fbae19e7e85a8fc8d6f9738155ec8fe44e63061.camel@ew.tq-group.com>
- <20241016130715.GA1152434@google.com>
- <e2842ba1ea0f5dfa818e4cbb9aefe343f48c1e53.camel@ew.tq-group.com>
- <20241016131832.GC1152434@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8231E531
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 13:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729084870; cv=fail; b=J2Au3yJa8izSCZHeEbETwioF20yKa7mdyFrEq8OAsdc5dJbpDkRG3ths5tdGlHv1NOgx1wzrTtuF0MsovcuPMmennejjzu5RTdrYQEmf7AQd3ziLw21Aw6RPGab34UVdQ9FoPl6Lw1IJjs1n0STADXvWGX8jaLUYOLYK73VoHCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729084870; c=relaxed/simple;
+	bh=0p67fuAtVtz2X9vsSrS2/sIW5qHl74+l9BkAv86zfGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LyW5kLn0/DKu9xeYX93pRqOUjmLwAmkyIV82ZlSrH4iwXoHkS8pcOO8S5iV14E8ZO5fZ9xpPZNa/sezwh1HTowCtqtxjgd4XGSNRImo6I26ywfaBTVDFz+Wmqxv7RNwnUqJ8xFDT1/BvQsCOtpzpaxGLL/VZy6fdtymvxLqtCPo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nyIG2n/M; arc=fail smtp.client-ip=40.107.94.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eXGLLJYxFRbwUqAAWMCE8vHe8WM0QQE7IO1UacxnEUfrmbvgq3qiFBJbgza7ZgckpLCIrGby4ARptYweLEKEZO10S3vdEFRaygdY//BjYdb83mWKtKOeN108Yq+SQQo/ojyunr59FmcsS3sdsYxNBH0eSFKpI6B0CLg9St1qJ4Wn9nXb32emvAvl2uNB+QLgPNZvIVMEE5ZROw5Mu5/1NBpiqqI7j2blHYIqcV3rR+Lc2c8+Dw3T2UYX4ErXYqK6VyvKOcG6LXDbdJ44DF8vrzOdsLX66snmYd+Ka6Yxacy90DJwnSM7VEPGTbY3RqLAtxjSTPmxin0s7V2lcbklww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wSrnQZY3L1ADJOZq8Y+hqwbiSAYRsRCg6qWUaIj2AXA=;
+ b=BzmV7athCXqyI67LiElOuW+/9DjvUmM0erW8EVtl1cRULgpB/Z9saXbZgR2EzjCugc3SX8e37hEiZVjVwNzPkXytNgXL0HY2utaqFjIizNkyLg0iSbZveSBYvIKOTcbwf7LM6O0S+lSiR/F36Zh/tsnS3hmfEx+Yj2KJbUPG+bpQ6vcj1gt2YIPz0qtI0Gy496dr52ST4LztRESp753eOjrRprAZzcsksd84TUJWycaATq+aKcBVRw59zkFyvL/SUp/k3OC+mNALsZ26vnZt7HBRgnQSeXF5QLkAYAjZSXB7UAhs/z90R9pq0GnwUr41fOBbSC69rF4sOnAalYWX1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wSrnQZY3L1ADJOZq8Y+hqwbiSAYRsRCg6qWUaIj2AXA=;
+ b=nyIG2n/MYMAXzRwBE2jIiI2Kz+JUrX8dhyEmD3rTYZ7NbImiUOYsvbF0Cg9wKkkZXRsMN8BPW6aVP7QO0U2h+T0RckQS0URPuD5KacCv6K4xEMHW3eM6g4ILDhfTS+TwQzaEQ52bF1OllVbuY0UG+uwJxBmMMnhpHs9SR/xF7HlYBf9ZtzI/elPh6L11534LCpY2SH1OdZgpnQ8i3GC93s7vtDxVxDt9bEOalc1/dovn02LYdk1Qah/PuucA9ltsIZq2mG6j2Ct0jK4UbSUh1WI48h7ncE7Wu7l8G/dKLVu5bjQCx1WJSd/KLGAswyg4FXKL+IcwXV6JVFXYAOQ3gQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by PH8PR12MB6676.namprd12.prod.outlook.com (2603:10b6:510:1c3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Wed, 16 Oct
+ 2024 13:21:05 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
+ 13:21:05 +0000
+Date: Wed, 16 Oct 2024 10:21:04 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
+	kumaranand@google.com
+Subject: Re: [PATCH v6 4/9] iommu/amd: Introduce per-device DTE cache to
+ store persistent bits
+Message-ID: <20241016132104.GK3559746@nvidia.com>
+References: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
+ <20241016051756.4317-5-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016051756.4317-5-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: BN1PR13CA0022.namprd13.prod.outlook.com
+ (2603:10b6:408:e2::27) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241016131832.GC1152434@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH8PR12MB6676:EE_
+X-MS-Office365-Filtering-Correlation-Id: acbd2bb4-e465-42c8-38cc-08dcede56399
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?a2cY9QaCiHs+/bG1AnWkkwtu5Q4nSvTCvlUTbtvawsSHssH1i2MJkq8Clnh/?=
+ =?us-ascii?Q?nbXmZ9gWDO4tZk5dp9MbP4np4Bs1VYkotgFu5dXss4ts/eY6eHiYcoEZmpJH?=
+ =?us-ascii?Q?HPTakNgISq/L9Db6NGGXPHY1BuHXwO9wMzcbwkPVrSIl1KV+0tdW0o3Aci1s?=
+ =?us-ascii?Q?n9ap4dCCwlHbExlrn1BfFJAZEF9U0EHNtpRpVSNMfs04dWcz3cTgH+n3OnQS?=
+ =?us-ascii?Q?qFWvq8IQRcSmvknoGSTMVpsDzstuFgpsRxWV2F91w2A1u644/RtSW/Imp8za?=
+ =?us-ascii?Q?uWK+HbKtKCJdbyZyHqC2xIKMqots5uuDtKToJawe/a8dVJyZSZvIRqP0oWGD?=
+ =?us-ascii?Q?bQzV3CfDRQ693n1wV0xr8odTcqvYaaz93w7ulHM5hRpUAfjGfJACswM+XB9S?=
+ =?us-ascii?Q?C7l10iDDru5oiGoXm3gwGuN1RPZiALUU7rJZ6tgcBYto5e/qIuLS6zwi3ZFe?=
+ =?us-ascii?Q?N3FGaW+1CAk6/9fANQnzKpbCoJmBUJUBvHOmM6vvsDQ/ya9+ZCVPKIpqJ0gN?=
+ =?us-ascii?Q?aEBJFljdTodQ8awYoqRAvr3/S7xJvwsYQVVAT36BxrZ2wJ8/pNxCW2EZR+15?=
+ =?us-ascii?Q?+BDXrEZznZ8gTzJn4KLxHDWYkwwRuwPjeNy8MLcgRKfvwU6oFHSiCbkOTxJ1?=
+ =?us-ascii?Q?rJaShnb8xEKSqkX+n+RHKzRwTREFR5XhvTBgkj39xvtzu2Q0LBNx3YGBlAZv?=
+ =?us-ascii?Q?WlbkcSHiY6f7HHDMtt4zN3RybE1tD0cESYBhp6bNxOMfF/ecdczSNBqD8NRr?=
+ =?us-ascii?Q?Bj1I+JbJAKrYk2D8o9UTDLpitGY/fc4923jDFBJz1/6j0GRqr3ADKAhUKoYo?=
+ =?us-ascii?Q?I2UVLG2RwUCtyprW/S8V2j/zn8cotA6IBLJmM5LbcP8fygMTAz2adqujMO5p?=
+ =?us-ascii?Q?3UDHEI+O2CxqQg9fl2TZrQSWffSz3oauliRx4ni5TmDIZyuVVmLqMck8waxU?=
+ =?us-ascii?Q?1wDw2Q+Z+3BXLIdnAwSmiBNtKlGcPwLOCJ+6ZGafdKjafVoSsbG5u/B6kzkd?=
+ =?us-ascii?Q?rmITl8CoXKuKO2QtuG8VdcHK5Gn3UK8wNNauwHNg7ptooIUVmXxnm2h3Kxke?=
+ =?us-ascii?Q?qC7Ku/LNqIqsie+2GBabjNwwInnmdcxRtrF938B6XxvEkc62E1MV7U2vd9b3?=
+ =?us-ascii?Q?4kpQPZFO2Uj4ztXTJJwNOvL22uEyWGrlt8KhQgzCOJGwCrX7cfxg+F5WjBzI?=
+ =?us-ascii?Q?lVX32BjvE8kaAVVn3hTyG8tjeHdhhUTY/Qth5xiT8dZSt2cU7JV15ZFLxPD6?=
+ =?us-ascii?Q?HUTWCEp8mmfRJah5BrTWw3m9r80Ouc5vflwQik163g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OqxAbDILu+K1CxabLYMPHi2AeVR08yprjiqAVoSHCQ4pMTGRk+y9rwxRMBDN?=
+ =?us-ascii?Q?HizAqUsoea5439AWD4IY9W1nu+yr5G2vpDGh1lFVJhISjg6+1Io8Pxek15eG?=
+ =?us-ascii?Q?CWGMVFKyJwMXpDTp1lufXIT4CZmQTUZi9kNb3Q408BfKl5c1400pDtpz5nYV?=
+ =?us-ascii?Q?cJyo3nFojMe8762aNAtq0jZxpTjh6cikqgdCaX551ChQ951EtVFgDmUyyJr3?=
+ =?us-ascii?Q?btKp+2UDjc9Tw4LG/ccjF4vt0UnIodIgXCHfAgn7KFNzrGsOt/IpP7oY8x3Y?=
+ =?us-ascii?Q?dW1FNWmH129EdfAd+2f07LfhQTRtmge+Bq5ObubP8E14ZkO/D3c5I/tSHMcq?=
+ =?us-ascii?Q?Q8K/KFOodZiqF4wrLp7odRK3AWi39ila1dsDQTHC1b9ChHpKP8OBZujsEeim?=
+ =?us-ascii?Q?hZBcakZ30UOOfMosD3RTjDH+0rrFF02VTAqsKmZ0WhpvxrFfgbnJW2E3YWdN?=
+ =?us-ascii?Q?z+ehb0BHnKpe1qd1GSfqrgPOve1EioPSP0zpfVgThGXdQWbtDMN4R4mfflEt?=
+ =?us-ascii?Q?RCUWnf5thNJi2iSIDhWjCW9fvp3UcPAxELKAea7o0ZrR6Xu/fvqqHHvSQ8zr?=
+ =?us-ascii?Q?He66R2HuqGTDL1Mt7eRw4aSGH1L8KMyEx6c5t2o5eDF0V6Y16oX4v/c4vUcv?=
+ =?us-ascii?Q?0hZ6MeexOoCkTTlOI+8bRm+j8Rtk22YZrPnVJFjGxuM6Jj/5W8FniEOBJLCb?=
+ =?us-ascii?Q?0MI5Z9lTASgbJ2aw82YuVsqztN460Vsfwm78YsShG8f9jToEP3tPg4ka3qde?=
+ =?us-ascii?Q?YyRvWu4O1+jLdPve97E02R5Et6LIPG5Lr12Pofc3xYB8Rd4/mhtsxs4NfMBl?=
+ =?us-ascii?Q?lHEzlE3sEcyGFXddyBujg0RM2tsRGtBp7ypWuV/l8U0Ck6p/ZM/EysLlWxGd?=
+ =?us-ascii?Q?4JdTsV7y69DnnhNJPxEKnxYlCHC5cafrQgjsvQbauz5vS7fW2NfWiAJX5pIy?=
+ =?us-ascii?Q?Z/+zedEq2FohtlTRbZVGaaplYRYwczvVsq7UxXlyW8y3mF0QI5br659veZXM?=
+ =?us-ascii?Q?De6VFXcJRotVJZxzZJEkoCs+wjwbWkPp8B/PfwXKbZNTBzWoUoPpfOOB/KD8?=
+ =?us-ascii?Q?jaHcf5bBMbJ0TIUUAWYutFqAWGfdPNtGE1ie1pyF09HzgX8TBd7+HEqZY1ST?=
+ =?us-ascii?Q?A49C12/h7o7l5gdjuFfrTyQHiBqXoJS0ei2wglWGeCUEGJJCPncF2fqZy/Ae?=
+ =?us-ascii?Q?AqVC9fsV0xsCA9xSQlhzjprCDmQeD4U5dtLCwDJ2E69yIPgMFdX/RpXErrmL?=
+ =?us-ascii?Q?gh4thGSOjnWk6X7S/jDJugOqByco4AYkZ8wCQpvG0EVuZC88dLPR8Xi77n2p?=
+ =?us-ascii?Q?Om+yh9JKj5o4LwVk/IMzDzZ0aWO+/diYWufPBWxmiAXgUe2+zNIxAx3rKq9g?=
+ =?us-ascii?Q?uMH8sVMbtjeI8BH6xNkiqj3NlEIZ03Qip1iAjsAHvfpZGm2AwWNIo0QyjHrL?=
+ =?us-ascii?Q?169W9ufn2HBX9a2icAMz9kF78qIimYqoNihQKG4AYpNeHwI4nNQCN4X0dDXx?=
+ =?us-ascii?Q?wtj0brKIKdgQIpRZ0g0ckRx0zwuX2rEp+5TS+ZpsDOo9jwTXVkyjxWoCf2xz?=
+ =?us-ascii?Q?ky5gk4nxpG3brKYN7MI=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acbd2bb4-e465-42c8-38cc-08dcede56399
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 13:21:05.6067
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bga5RLaVnPuZWWJ00BN0VWbqBzZrGboEMiSIid5CREmAU+PBgMedPSXspCG6U7rG
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6676
 
-On Wed, 16 Oct 2024, Lee Jones wrote:
+On Wed, Oct 16, 2024 at 05:17:51AM +0000, Suravee Suthikulpanit wrote:
+> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
+> index f537b264f118..3f53d3bc79cb 100644
+> --- a/drivers/iommu/amd/amd_iommu_types.h
+> +++ b/drivers/iommu/amd/amd_iommu_types.h
+> @@ -830,6 +830,16 @@ struct devid_map {
+>  /* Device may request super-user privileges */
+>  #define AMD_IOMMU_DEVICE_FLAG_PRIV_SUP   0x10
+>  
+> +/*
+> + * Structure defining one entry in the device table
+> + */
+> +struct dev_table_entry {
+> +	union {
+> +		u64 data[4];
+> +		u128 data128[2];
+> +	};
+> +};
 
-> On Wed, 16 Oct 2024, Matthias Schiffer wrote:
-> 
-> > On Wed, 2024-10-16 at 14:07 +0100, Lee Jones wrote:
-> > > 
-> > > On Wed, 16 Oct 2024, Matthias Schiffer wrote:
-> > > 
-> > > > On Tue, 2024-10-15 at 12:38 +0100, Lee Jones wrote:
-> > > > > 
-> > > > > On Mon, 07 Oct 2024, Matthias Schiffer wrote:
-> > > > > 
-> > > > > > From: Gregor Herburger <gregor.herburger@tq-group.com>
-> > > > > > 
-> > > > > > The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
-> > > > > > Add module parameter to allow configuring the IRQ number, similar to the
-> > > > > > handling of the GPIO IRQ.
-> > > > > > 
-> > > > > > Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
-> > > > > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> > > > > > ---
-> > > > > > 
-> > > > > > v2: improve module parameter description (was patch 4/4)
-> > > > > > v3: replace IRQ 0 resource with an empty placeholder to simplify error handling
-> > > > > > v4: no changes
-> > > > > > 
-> > > > > >  drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
-> > > > > >  1 file changed, 19 insertions(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-> > > > > > index e444fcd2a3e9d..057d035b71d33 100644
-> > > > > > --- a/drivers/mfd/tqmx86.c
-> > > > > > +++ b/drivers/mfd/tqmx86.c
-> > > > > > @@ -50,6 +50,7 @@
-> > > > > >  #define TQMX86_REG_IO_EXT_INT_9			2
-> > > > > >  #define TQMX86_REG_IO_EXT_INT_12		3
-> > > > > >  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
-> > > > > > +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
-> > > > > >  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
-> > > > > >  #define TQMX86_REG_SAUC		0x17
-> > > > > >  
-> > > > > > @@ -60,7 +61,16 @@ static uint gpio_irq;
-> > > > > >  module_param(gpio_irq, uint, 0);
-> > > > > >  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
-> > > > > >  
-> > > > > > -static const struct resource tqmx_i2c_soft_resources[] = {
-> > > > > > +static uint i2c_irq;
-> > > > > > +module_param(i2c_irq, uint, 0);
-> > > > > > +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (valid parameters: 7, 9, 12)");
-> > > > > > +
-> > > > > > +static struct resource tqmx_i2c_soft_resources[] = {
-> > > > > > +	/*
-> > > > > > +	 * Placeholder for IRQ resource - must come first to be filled in by the
-> > > > > > +	 * probe function.
-> > > > > > +	 */
-> > > > > > +	{},
-> > > > > 
-> > > > > Having a NULLed entry in the first slot doesn't sit well with me at all.
-> > > > > 
-> > > > > In order for us to avoid wasting memory, it would be better to place the
-> > > > > entry at the end of the array with a blank entry:
-> > > > > 
-> > > > >   DEFINE_RES_IRQ(0),
-> > > > > 
-> > > > > Later comes the matching code which updates the 0 value to something sane.
-> > > > > 
-> > > > > Before you call to the add the devices, check to see if the value has
-> > > > > changed.  If it hasn't, deprecate num_resources, effectively masking the
-> > > > > last entry in the array.  Then when platform_device_add_resources()
-> > > > > comes to duplicate the array, it will only copy the relevant entries.
-> > > > 
-> > > > I chose my current solution because it resulted in more simple and maintainable code:
-> > > > 
-> > > > - No dynamic array access, the IRQ resource is always written to index 0
-> > > 
-> > > Which is fragile (even with the comment).  If you're going to directly
-> > > index array elements, please do so with a unique identifier rather than
-> > > relying on it happening to reside in the first.
-> > > 
-> > > > - No surprises regarding num_resources, it is always equal to ARRAY_SIZE(resources)
-> > > 
-> > > No surprises, but sometimes it's incorrect.
-> > > 
-> > > > It also allowed to make all mfd_cell const; to make num_resources modifyable, either the const would
-> > > > need to be removed, or each mfd_cell would need to be copied to a stack variable in the probe
-> > > > function.
-> > > > 
-> > > > In my opinion, these benefits outweigh the 2*64 bytes saved for the additional resources allocated
-> > > > by platform_device_add_resources() - and 128 bytes doesn't seem significant at all, in particular
-> > > > considering that this driver is used on x86_64 only.
-> > > 
-> > > But doesn't outweigh my disliking for placing a NULL element at the
-> > > start of the array.  If you _must_ do something like this, please place
-> > > it at the end of the array.
-> > > 
-> > 
-> > Ok, will move the placeholder to the end, and access it using a defined index instead of 0. I would
-> > still prefer to keep num_resources constant instead of adjusting it. Does this sound acceptable to
-> > you?
-> 
-> It would allow me to sleep at night, yes. :)
+It would be appropriate to put this hunk into the prior patch so your
+series does not move code it just added..
 
-Place a neat, succinct single line comment on the same line please.
+>  /*
+>   * This struct contains device specific data for the IOMMU
+>   */
+> @@ -858,6 +868,7 @@ struct iommu_dev_data {
+>  	bool defer_attach;
+>  
+>  	struct ratelimit_state rs;        /* Ratelimit IOPF messages */
+> +	struct dev_table_entry dte_cache;
+>  };
 
-For example - not verbatim:
+I would call this initial_dte or something, it isn't a cache, it is
+the recoding of the ACPI data into a DTE format.
 
-	[IRQ] = {}, /* Placeholder */
+ /* Stores INIT/EINT,NMIm SYSMGTx,LINTx values from ACPI */
+ struct dev_tabl_entry initial_dte;
 
--- 
-Lee Jones [李琼斯]
+> @@ -1159,19 +1171,19 @@ static void __init set_dev_entry_from_acpi(struct amd_iommu *iommu,
+>  					   u16 devid, u32 flags, u32 ext_flags)
+>  {
+>  	if (flags & ACPI_DEVFLAG_INITPASS)
+> -		set_dev_entry_bit(iommu, devid, DEV_ENTRY_INIT_PASS);
+> +		set_dte_cache_bit(iommu, devid, DEV_ENTRY_INIT_PASS);
+>  	if (flags & ACPI_DEVFLAG_EXTINT)
+> -		set_dev_entry_bit(iommu, devid, DEV_ENTRY_EINT_PASS);
+> +		set_dte_cache_bit(iommu, devid, DEV_ENTRY_EINT_PASS);
+>  	if (flags & ACPI_DEVFLAG_NMI)
+> -		set_dev_entry_bit(iommu, devid, DEV_ENTRY_NMI_PASS);
+> +		set_dte_cache_bit(iommu, devid, DEV_ENTRY_NMI_PASS);
+>  	if (flags & ACPI_DEVFLAG_SYSMGT1)
+> -		set_dev_entry_bit(iommu, devid, DEV_ENTRY_SYSMGT1);
+> +		set_dte_cache_bit(iommu, devid, DEV_ENTRY_SYSMGT1);
+>  	if (flags & ACPI_DEVFLAG_SYSMGT2)
+> -		set_dev_entry_bit(iommu, devid, DEV_ENTRY_SYSMGT2);
+> +		set_dte_cache_bit(iommu, devid, DEV_ENTRY_SYSMGT2);
+>  	if (flags & ACPI_DEVFLAG_LINT0)
+> -		set_dev_entry_bit(iommu, devid, DEV_ENTRY_LINT0_PASS);
+> +		set_dte_cache_bit(iommu, devid, DEV_ENTRY_LINT0_PASS);
+>  	if (flags & ACPI_DEVFLAG_LINT1)
+> -		set_dev_entry_bit(iommu, devid, DEV_ENTRY_LINT1_PASS);
+> +		set_dte_cache_bit(iommu, devid, DEV_ENTRY_LINT1_PASS);
+
+Doesn't this break the driver at this patch? Nothing reads from the
+dte_cache at this point in the series so the real DTE never got these
+bits?
+
+Maybe just add a temporary line here to copy the entire dte_cache to
+the real dte? The next patch fixes it I think?
+
+But I like the idea, I think this is the a much more understandable
+direction to go.
+
+Jason
 
