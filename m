@@ -1,116 +1,159 @@
-Return-Path: <linux-kernel+bounces-367782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FE69A06C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:12:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E529A06C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACD23B282AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B0C1C219F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C603320697C;
-	Wed, 16 Oct 2024 10:11:52 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E62520697C;
+	Wed, 16 Oct 2024 10:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KWGW3GNm"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ABC20694A;
-	Wed, 16 Oct 2024 10:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1490206066
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729073512; cv=none; b=OwZZjmiN9fWq4AmW34LStBWxTgnyel/iY8jdA9N0eOyM8lUkZ+ccVz7ZKHf+0cCYm6M/4Vyt54EtHWk3tQdO17HAKBrsGEJQoiX5FhdL44Gq+do9kMMhwAjIghcuYRpIxlDA5tf7lhCwY6HtP5bqaiR0nytnnuvR16CdqVQNHPs=
+	t=1729073545; cv=none; b=lOptjYyHFDm7VTliUO6AucMeK5NhFY/TAH+brMlPw0wBrAmazDxdxdKqHTfVsLJABYYFY8PNb5TYJJUrr3yuNkGJGoxIAieigU1e0Jiw/Z5xQgYcP//IXtK+BrDpQPo3ynmkhRSeqW7g9sp/wMpUa8k8q5txpR6Y5hR+evMxxWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729073512; c=relaxed/simple;
-	bh=XgjoL1JGKiRYyCSWTxkTF2OWBUtB9joLuVL77iOB5jk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJncaPafDdNlFN205YEqH0uXT7gPyg5vA7nMqaRwG3a2yHxji5xu8srZTs2XUxRPFQaJWVReV2WkIQLFkQU5dRv2SXLlqydnZiXK/lzBOF05jkk3akwRSNCZvBhmsL0gkU2EDAEkKXr3whlo8FyodaZNHd+9k42+019+Udg+8yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 37C6A201F78;
-	Wed, 16 Oct 2024 12:11:49 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 27BD7201F6F;
-	Wed, 16 Oct 2024 12:11:49 +0200 (CEST)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 53259203E0;
-	Wed, 16 Oct 2024 12:11:49 +0200 (CEST)
-Date: Wed, 16 Oct 2024 12:11:49 +0200
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v3 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
- glue driver
-Message-ID: <Zw+RZQDt4lopPqFW@lsv051416.swis.nl-cdc01.nxp.com>
-References: <20241013-upstream_s32cc_gmac-v3-0-d84b5a67b930@oss.nxp.com>
- <20241013-upstream_s32cc_gmac-v3-14-d84b5a67b930@oss.nxp.com>
- <urxfash5qmvahjubhk5knrt53j2tw7hje35qyst3x3ltg4mpgo@dw73m73o36b3>
+	s=arc-20240116; t=1729073545; c=relaxed/simple;
+	bh=zNrP9j9uVAG9nM7uuZ6C2wSdq5A+kxhs93370x0OZl4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rDKwc2PBgzbLOeH5GOk+Bde/4SNuJTdpuMxsYh2Kh5UxzCWAtk9O4+iYqd1iYwMaPCPa5D6TguNG1e0K/Tp+Ji0x1tEm12/ULalavc1d6R47UyBfAQ4NKRCEzyPt15Kd0Nub+AgfmI3oRC0HVTeBwTDgkn4cetBvpk4h7wvtAZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KWGW3GNm; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb5f647538so8486991fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729073542; x=1729678342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M2tDtQwvxm5ZzaqsJM6mS1tonN7kpGKQPVQymXD95Ns=;
+        b=KWGW3GNmbIU3NNZDT6SJ3+WZfFP5u7aHprW8OhlMHuckqF2RIUXUY+sR+RDJdcwUFC
+         Xccha0NrtvUJswcxxlw7E1J/hv1WxT/fL08ZwdwU0coXY84oNzNh7yh2hxgCGx1w1VA9
+         4jIUHRulBykuK+3VM54XITtDvx5lvrM0GRdKyC02GV22yci/unAkejJJldH6SkIDNzpX
+         yHsPHYR3EBoUE28eJRKdOWM9gEKhEjS5W9UGxkwGBrhXfiz+EKebjv2qcmter3uz8/ZG
+         iFbid2bzI/5MfvozgxgPNF+DJKVKrR//9zR4GyQ33rXiM5pwc683yS+8qdXV8CM3umdb
+         kFQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729073542; x=1729678342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M2tDtQwvxm5ZzaqsJM6mS1tonN7kpGKQPVQymXD95Ns=;
+        b=T7rDb3FdBekOO6mb8AgusFf7SBYngrQPOTdALjqu54hQ28jkCmCRs7YSV7DeqYoE50
+         sBH80rzH1Pf+qUI6RSyx9qT9L6u3+s/prkP1FCPoAE57FaxmApJANVlR0/foehWh/nAm
+         1uHW2+RlqcxxxhkIKIsnIqQWPaorMcK59w+ipB5AQdcvj2fYTr5iEJ9T1Ry1VvGpFzvD
+         t9yIazgxT3QELVr65Z/NKeekoNozTUczbWe8tsuqmfLzqJJS7yHkxeZ6qd4BrL8AIQZe
+         qEqt5LT9YRPTGa9FSIWqo6DMlBhOeDwAO0XygWnvMWZQaWU4v6ynvb7cNJnc153YSv/5
+         NNTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUqC/ks778DYc1CXU3zdFPt3L7LPAZoOj5C457CaKMeVWDpKnFDn16Ib8eXMmgMKTpwiEJ1X/Ln1ZkVQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfBHVmeUsqgjAfr8i6Af58h/Gky0Tb09rNdVyThVStYwshalfS
+	zouBgPCaHb2sBLkWLM3mtDtAH/eDTAFlpnvBUELcPO8rmLlSQEcUMzExr3eM4ewTY5oAFeLlBzT
+	X4+ELJHzRF49DQc7mueVzhrwfXJaisDb3/lFlNg==
+X-Google-Smtp-Source: AGHT+IF2f19nAIL1qtT1AzVtZQA8ogjWQ8uNBArnGNoX0+KP2m9opxEa1sZAL5I9xjviWoaZz7LAGr0/vu9wxIV9diQ=
+X-Received: by 2002:a05:651c:98d:b0:2fa:d464:32d3 with SMTP id
+ 38308e7fff4ca-2fb61bb193amr11892801fa.20.1729073541734; Wed, 16 Oct 2024
+ 03:12:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <urxfash5qmvahjubhk5knrt53j2tw7hje35qyst3x3ltg4mpgo@dw73m73o36b3>
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org>
+ <20241015-gpio-notify-in-kernel-events-v3-6-9edf05802271@linaro.org>
+ <20241016051944.GA42100@rigel> <20241016072730.GA120095@rigel>
+ <20241016083747.GB120095@rigel> <CAMRc=McR_eMizF6r30NqbgK4mE5ErzR=wbkD4O-Czn=+Oj4AXQ@mail.gmail.com>
+ <20241016091714.GA207325@rigel> <CAMRc=MdoeyXwKuLmrmJ8zRCtVDNzEd34zgZ5Autye0TNv_OLhg@mail.gmail.com>
+ <20241016094311.GA210746@rigel>
+In-Reply-To: <20241016094311.GA210746@rigel>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 16 Oct 2024 12:12:10 +0200
+Message-ID: <CAMRc=Mefz=EBd6us-eK8kqk8zL0=LsEWUkP3JB7a0M7xcT8z8Q@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] gpiolib: notify user-space about in-kernel line
+ state changes
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 11:37:27AM +0200, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Sun, Oct 13, 2024 at 11:27:49PM +0200, Jan Petrous via B4 Relay wrote:
-> > +static struct platform_driver s32_dwmac_driver = {
-> > +	.probe		= s32_dwmac_probe,
-> > +	.remove_new	= stmmac_pltfr_remove,
-> > +	.driver		= {
-> > +			    .name		= "s32-dwmac",
-> > +			    .pm		= &stmmac_pltfr_pm_ops,
-> > +			    .of_match_table = s32_dwmac_match,
-> > +	},
-> > +};
-> > +module_platform_driver(s32_dwmac_driver);
-> 
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers. Please just drop "_new".
-> 
+On Wed, Oct 16, 2024 at 11:43=E2=80=AFAM Kent Gibson <warthog618@gmail.com>=
+ wrote:
+>
+> On Wed, Oct 16, 2024 at 11:22:07AM +0200, Bartosz Golaszewski wrote:
+> > On Wed, Oct 16, 2024 at 11:17=E2=80=AFAM Kent Gibson <warthog618@gmail.=
+com> wrote:
+> > >
+> > > > >
+> > > >
+> > > > You mean, you get a CHANGED_CONFIG event but the debounce value is =
+not
+> > > > in the associated line info?
+> > > >
+> > >
+> > > Correct.
+> > >
+> >
+> > Ok, let me see.
+> >
+>
+> When setting from userspace the issue is that linereq_set_config() settin=
+g the
+> direction will emit, quite possibly before the debounce has been set.  Th=
+e
+> edge_detector_setup() that does set it can also emit, though only if the
+> hardware supports debounce.  And then there could be a race between the
+> notifier being called and the period being set in the supinfo.
+> (the set will probably win that one)
+>
+> Debounce set from the kernel side is going to be an issue as cdev
+> catches and stores the value from userspace to report in the supinfo - th=
+at
+> isn't the case for kernel calls to gpiod_set_config().
+>
+> Seems moving the debounce value out of the desc and into cdev, which seem=
+ed a
+> good idea at the time, might come back and bite now if it is no longer
+> restricted to being cdev specific.  Now there is an actual reason to
+> store it in the desc :(.
+>
 
-Thank you, I was not aware of it. Will be included in v4.
+I'm seeing commit:
 
-/Jan
+commit 9344e34e7992fec95ce6210d95ac01437dd327ab
+Author: Kent Gibson <warthog618@gmail.com>
+Date:   Tue Dec 19 08:41:54 2023 +0800
 
+    gpiolib: cdev: relocate debounce_period_us from struct gpio_desc
+
+    Store the debounce period for a requested line locally, rather than in
+    the debounce_period_us field in the gpiolib struct gpio_desc.
+
+    Add a global tree of lines containing supplemental line information
+    to make the debounce period available to be reported by the
+    GPIO_V2_GET_LINEINFO_IOCTL and the line change notifier.
+
+    Signed-off-by: Kent Gibson <warthog618@gmail.com>
+    Reviewed-by: Andy Shevchenko <andy@kernel.org>
+    Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+But it doesn't explain *why* we did this and I don't remember the
+story behind this change.
+
+How bad would it be to go back to storing the debounce setting in the
+descriptor?
+
+Bart
 
