@@ -1,95 +1,65 @@
-Return-Path: <linux-kernel+bounces-367575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0F59A0405
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4402A9A040A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 688FFB296ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:18:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4D8CB27C66
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2401D14EC;
-	Wed, 16 Oct 2024 08:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E27318C01B;
+	Wed, 16 Oct 2024 08:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POXDQra0"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/QZHYEt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A7718B473;
-	Wed, 16 Oct 2024 08:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF6B18B473;
+	Wed, 16 Oct 2024 08:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729066682; cv=none; b=fjxXv8SaTQf+A8PETi4LLIORHF7CNlYBQlJUnjLVf6b9/EjKU1VAr56svYSWwEQbEDMKknLdN15qPFOuIXSJJzorsUNvbLKJfMjfRtjvcj3Ts6LCjZX9fbfRuxRrZFFZ37mTlQ/aowMja0xNQrG/yGm3hps8IBv0i1qFD5Twa8E=
+	t=1729066730; cv=none; b=mS1kPYnG9LMKZMt7Vc52dPARU2CMEFyVdr6m6wNQ1NuDD+HgEgGqs1HCh0Xcu9GI3d6Tvb24U8IFP8R69zigWggRWXolWvtK74lk5lBsUADnWafn672MhuwxBJUJ6aegt5f9WgFmsD86cyXCaCVcoojht1UZD3LpvSQM2kivouU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729066682; c=relaxed/simple;
-	bh=3Uo4v+DhY1rytKo/d2qT4xDi/EGMFOqYzxgD/ykmqt8=;
+	s=arc-20240116; t=1729066730; c=relaxed/simple;
+	bh=tBH2x36STqh9cmakWrafMF1EITxMLNBKUgffxuWsGkQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boOx3yQ/q2YWYEIL76Og8y6Dd/NrPxBli+SUZio4n/EJ+nhKYhGyqMpfndet+w58KLsZf/I3TymvE+Ezrf6iwS9/qGg6AFplyjuraYkINSO4i9LJU2dSjBXRtYgYC3aWrNDuyaOWrrDiuTgJBmJnwRKQg434SuE0s+BqnuEw8Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=POXDQra0; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbb1cf324so38111965ad.0;
-        Wed, 16 Oct 2024 01:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729066680; x=1729671480; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O+aFwqqe3bKe3QaDd2umFSDmDQHhmD3ojzrekfvViq0=;
-        b=POXDQra00mmrkSMcxHYM7szJRML9Vx5FGc2mi95zGrGPql4EJR2ECrL5hfXqn8OPaT
-         tjjX4+r8nG9i85rKUPAucrDo1r2wyBhBtbZTninCMI3+5EVOWPvZuK5EBKu4hjUXEgdd
-         NhC7arzt9eFVoN4RiTIlwUvYyul/hMMjYhYzyboo3WExACU70ftLhW+NlYnRugJnCOvX
-         XM2xPrDjI5tTbVNeY3dB7YdyK63DQKsiAPDWsWKL8FhSWLhSH+3e1QCZPcvdOqUXG22I
-         CJgpeMMU3aXhtxDCBAabLhQXafmcD+u6jwMmpNuXFM5lmtoYDzixPkb0Fa9qWGnXPjj3
-         IiTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729066680; x=1729671480;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O+aFwqqe3bKe3QaDd2umFSDmDQHhmD3ojzrekfvViq0=;
-        b=dU7cL7LRyOl3s8i9cpBktsrfKO8hpdq1ydKgDDSE6RO5xXBagt8o5r9j+h0sP0xqFY
-         bu+eSH7xiCbSZ6/lIa1wdRsNkJmu8o/aUqaO0k56jdMwkQYSf5dmqFUR0ELz/jpKdkjc
-         Pj5IutEPlACxZCITX5y+9K+93vEmPgn4H0aJIBs1mnWic29TDC0Z8GRBtbj41voBmXdD
-         DzXmDbswEPsoZGN26AdreMXx6TG3sgsBqu9EuZPSvYqPmtTllhr7mWn6YhiDyRixrTDi
-         moVdydKWdqt8C3HOM4t3P83ueQmoBsUUV+jokouQSVcjvD2IB19YAFeC3EVWsd5uXkrV
-         RI9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlQIZgZwC8nGo5Ee6yQ5gCfoYJg1D51G26gsfXSNFXvyYpI4x2R4KfTGBubtGCgrSGwcvWgNPBgVWsxS9U@vger.kernel.org, AJvYcCUutf24a1WGg/iREtLCTlIDYwjSvReP35rw9s8b2twxkboSR41lvFVrzilBy+W5GYzMwvs=@vger.kernel.org, AJvYcCXs28rWcm/2W9nijl1Sa20vuJREtAuS2xGPQFTjlzwK0T/ROYHHApvPLcT7rS8D9fmDLGf8J/lbro/U@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCuXXMdRfgneSrljDo+4Zr+xXufEIalkttkeNEeP4gtv/FMcsb
-	YXB0Uvj/kTcLuMGFTK/CFqlr2EBycJyaTW3quSGssmWBjR5XXtg8
-X-Google-Smtp-Source: AGHT+IF2m0+T57hEwmVg2D9hXBXfDI7JhyTccIZn9PK6qkXOBNr29tA7C0vJEGQQE0XsBYfU2h6thQ==
-X-Received: by 2002:a17:903:228b:b0:20c:be0e:d47e with SMTP id d9443c01a7336-20d27f42066mr42039665ad.56.1729066680493;
-        Wed, 16 Oct 2024 01:18:00 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d18036251sm24008565ad.172.2024.10.16.01.17.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 01:18:00 -0700 (PDT)
-Date: Wed, 16 Oct 2024 08:17:51 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>
-Subject: Re: [PATCH net-next 1/3] bonding: return detailed error when loading
- native XDP fails
-Message-ID: <Zw92r9UUBexrm1Oa@fedora>
-References: <20241016031649.880-1-liuhangbin@gmail.com>
- <20241016031649.880-2-liuhangbin@gmail.com>
- <b223add3-169a-4753-bdac-9f4cfc95eb97@iogearbox.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHinS7yUeUJick+oHMh4lbMm2whRwsH3FYSzNWhPfCuDJOUb36QwLefsHzsZVlwa9wJ7xvCRZPEqv4FXUjldAstu5EzVdM0aKf36DkgITqi8ArW7xCR907zPqovv+Pmc+xZiXyqbEq6sHem7VrRVROInEAWaDteS1kpzAf0UZDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/QZHYEt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E682C4CEC5;
+	Wed, 16 Oct 2024 08:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729066729;
+	bh=tBH2x36STqh9cmakWrafMF1EITxMLNBKUgffxuWsGkQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H/QZHYEt9gBF2rRTw3hPx8i9KLizmSxKmONfbw5yTvd2vwpg7tC4bae8nybvRltku
+	 Kwnj7GheKAL+VnCCEw7nv8tde37YQ1UzcF168cSPnkdeNZeOBsQ+d8McQjbiuMhXT3
+	 EPxFBziWcfUdbR+A+whmfOM59g8kWOCXe0B+11vOW2HkPk6GOoRvFke6U2gXIPnULf
+	 3HhyjcIVdQDgH56NfeDLRHMx3bStDmYhsrVT1xTy84RkBi9hLX38HlllORntiZVgEg
+	 53Bj4TxTRe5xRjCotL9rUHjQOely+3r3pwirgj28Od/RfinZgAK1SCZWhYdbWWBuHK
+	 kX8hIZQS3RMqA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t0zF9-000000008Qe-3ZGc;
+	Wed, 16 Oct 2024 10:18:55 +0200
+Date: Wed, 16 Oct 2024 10:18:55 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Enable external DP
+ support
+Message-ID: <Zw927-1-0xFm7xRi@hovoldconsulting.com>
+References: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
+ <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,36 +68,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b223add3-169a-4753-bdac-9f4cfc95eb97@iogearbox.net>
+In-Reply-To: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
 
-On Wed, Oct 16, 2024 at 09:59:01AM +0200, Daniel Borkmann wrote:
-> > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> > index b1bffd8e9a95..f0f76b6ac8be 100644
-> > --- a/drivers/net/bonding/bond_main.c
-> > +++ b/drivers/net/bonding/bond_main.c
-> > @@ -5676,8 +5676,11 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
-> >   	ASSERT_RTNL();
-> > -	if (!bond_xdp_check(bond))
-> > +	if (!bond_xdp_check(bond)) {
-> > +		BOND_NL_ERR(dev, extack,
-> > +			    "No native XDP support for the current bonding mode");
-> >   		return -EOPNOTSUPP;
-> > +	}
-> >   	old_prog = bond->xdp_prog;
-> >   	bond->xdp_prog = prog;
-> 
-> LGTM, but independent of these I was more thinking whether something like this
-> could do the trick (only compile tested). That way you also get the fallback
-> without changing anything in the core XDP code.
+On Mon, Sep 02, 2024 at 06:01:35PM +0300, Abel Vesa wrote:
+> The Qualcomm Snapdragon X Elite CRD board has 3 USB Type-C ports,
+> all of them supporting external DP altmode. Between each QMP
+> combo PHY and the corresponding Type-C port, sits one Parade PS8830
+> retimer which handles both orientation and SBU muxing. Add nodes for
+> each retimer, fix the graphs between connectors and the PHYs accordingly,
+> add the voltage regulators needed by each retimer and then enable all
+> 3 remaining DPUs.
 
-Yes, I also thought about do fallback on bonding. But Nikolay suggested
-just use extack msg[1], and Jakub think this is report by QE rather than
-a real user. So I think we can use extack first, and convert to auto
-fallback on bonding if a real user complains. What do you think?
+> +&i2c1 {
+> +	clock-frequency = <400000>;
+> +
+> +	status = "okay";
+> +
+> +	typec-mux@8 {
+> +		compatible = "parade,ps8830";
+> +		reg = <0x08>;
+> +
+> +		clocks = <&rpmhcc RPMH_RF_CLK5>;
+> +		clock-names = "xo";
+> +
+> +		vdd15-supply = <&vreg_rtmr2_1p15>;
+> +		vdd18-supply = <&vreg_rtmr2_1p8>;
+> +		vdd33-supply = <&vreg_rtmr2_3p3>;
+> +
+> +		reset-gpios = <&tlmm 185 GPIO_ACTIVE_HIGH>;
 
-[1] https://lore.kernel.org/netdev/8088f2a7-3ab1-4a1e-996d-c15703da13cc@blackwall.org/
-[2] https://lore.kernel.org/netdev/20241015085121.5f22e96f@kernel.org/
+pincfg missing
 
-Thanks
-Hangbin
+> +&i2c3 {
+> +	clock-frequency = <400000>;
+> +
+> +	status = "okay";
+> +
+> +	typec-mux@8 {
+> +		compatible = "parade,ps8830";
+> +		reg = <0x08>;
+> +
+> +		clocks = <&rpmhcc RPMH_RF_CLK3>;
+> +		clock-names = "xo";
+> +
+> +		vdd15-supply = <&vreg_rtmr0_1p15>;
+> +		vdd18-supply = <&vreg_rtmr0_1p8>;
+> +		vdd33-supply = <&vreg_rtmr0_3p3>;
+> +
+> +		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_HIGH>;
+
+Same here.
+
+> +&i2c7 {
+> +	clock-frequency = <400000>;
+> +
+> +	status = "okay";
+> +
+> +	typec-mux@8 {
+> +		compatible = "parade,ps8830";
+> +		reg = <0x8>;
+> +
+> +		clocks = <&rpmhcc RPMH_RF_CLK4>;
+> +		clock-names = "xo";
+> +
+> +		vdd15-supply = <&vreg_rtmr1_1p15>;
+> +		vdd18-supply = <&vreg_rtmr1_1p8>;
+> +		vdd33-supply = <&vreg_rtmr1_3p3>;
+> +
+> +		reset-gpios = <&tlmm 176 GPIO_ACTIVE_HIGH>;
+
+And here.
+
+Johan
 
