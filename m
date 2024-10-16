@@ -1,97 +1,162 @@
-Return-Path: <linux-kernel+bounces-368508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4886D9A10A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894779A10A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 19:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29DB1F216FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2AE1C220FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F132F210C2F;
-	Wed, 16 Oct 2024 17:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/a6bKwS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790F4210C2C;
+	Wed, 16 Oct 2024 17:29:41 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BF14F135;
-	Wed, 16 Oct 2024 17:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE09714F135;
+	Wed, 16 Oct 2024 17:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729099747; cv=none; b=FCJr6JhuT05JPzHjZlayLvTz2rzbOMfpa2oFPg41YMgGn5bl3YcA67HbmW8h2SeQdhc43ecZkCe7xlsGJmYYfAeY2/gm0Ky997hKKl05ptZjQON6/V9MzJc3O+tjgPd5DR9qRkRZzW4E/SEp3Rn3CGC1QsJkXgrIZPwprNpulcA=
+	t=1729099781; cv=none; b=XW+LT0QaxC4OHkxv+f1Ev7v7b5fZvQ8viab/D6951GucnxbO3LeTeXN3U9zVeY0WUdLuKgpSy6vmL8qbSrpz5GIlIakNCn3ElF7DZLEnBbCRETnbJg9ZAzzGexfyFrdFe0/Y+dL3Vf/4P3uGEB4CQAL1j2oMZYc2XeHtMxYPhYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729099747; c=relaxed/simple;
-	bh=BW13X3BVPZ8dJHNzenWTM18AmsI72wIJFWJRFxPbA0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFTb8n5t6uSlUZnLpTPZwb/VzgmpaN6+SHnNJ12zONPSNCfc0LE6in1j77wxcvYzHezevOhk/6Mg9OMqkiO3ngvkJo3Pv7ZZEuRKvMxp8r/65AvalLDur8Gf34jizUn+DHPu4dZT6fyrvKVC4JQdI+m8JabGU8v6va6BCKffnq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/a6bKwS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF607C4CEC5;
-	Wed, 16 Oct 2024 17:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729099746;
-	bh=BW13X3BVPZ8dJHNzenWTM18AmsI72wIJFWJRFxPbA0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N/a6bKwSdQt80+PgmhqSCXpEJlLy1Kt/p6ix2RBJIjIjzLrBVYeNAdeL8JivXMyWz
-	 G2lSzWlDR9whzWNn9f+uPWy96Ht2iPsPt1sfoZfQlEjSXrJakazkI3je8ttJtX06Hc
-	 5iargpPCCPjnpkL6mwyeygX+e0d9Svw7ui7eqyFDnNwY2oqpUEykj541iT/W79Ms7v
-	 8Ew1J4NNk8FWNuhslTqE233QgI/jwVmXVQ58DCHq814IA4tvSwDkslqNW+wrnTL28k
-	 iTC/lIYGsK/s959v2qteA8TrDJzysBrZhH1CIPZcKVBBY05Nqit0pEoXYGK9pooGol
-	 E6SQen2iKafZw==
-Date: Wed, 16 Oct 2024 12:29:05 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	linux-crypto@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	devicetree@vger.kernel.org, marex@denx.de,
-	Olivia Mackall <olivia@selenic.com>,
-	Lionel Debieve <lionel.debieve@foss.st.com>,
-	linux-kernel@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: rng: add st,stm32mp25-rng support
-Message-ID: <172909974498.2070654.12815494490287458504.robh@kernel.org>
-References: <20241016-rng-mp25-v2-v4-0-5dca590cb092@foss.st.com>
- <20241016-rng-mp25-v2-v4-1-5dca590cb092@foss.st.com>
+	s=arc-20240116; t=1729099781; c=relaxed/simple;
+	bh=FBa78B8HNDpDY7veGaTsGLTQWiz/8xfW3Laic6zUQeE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AC9WalcDMEclkMBxWA3EEmKwZB+yjK8kG3m36IxhM46SoovT7qOxcSe8HVTNFUHsVUBaspbUMnSxI6VuiRRWX0L8nk92C53nY4AFh/EtrF0BWh6tnZIzxDuBD/xR6sBO91Y/1+m6FT/o4zDmp6xLB97Hm4Ogs8zEwbRDmWziJNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTHsW6rVhz6LDL2;
+	Thu, 17 Oct 2024 01:25:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 392FC140A86;
+	Thu, 17 Oct 2024 01:29:34 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
+ 2024 19:29:33 +0200
+Date: Wed, 16 Oct 2024 18:29:31 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <Terry.Bowman@amd.com>
+CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
+	<Benjamin.Cheatham@amd.com>, <rrichter@amd.com>, <nathan.fontenot@amd.com>,
+	<smita.koralahallichannabasappa@amd.com>
+Subject: Re: [PATCH 04/15] cxl/aer/pci: Add CXL PCIe port correctable error
+ support in AER service driver
+Message-ID: <20241016182931.0000519f@Huawei.com>
+In-Reply-To: <b7e89c01-72c9-4e26-bd88-6cfcfdc78033@amd.com>
+References: <20241008221657.1130181-1-terry.bowman@amd.com>
+	<20241008221657.1130181-5-terry.bowman@amd.com>
+	<20241016172235.00001e65@Huawei.com>
+	<b7e89c01-72c9-4e26-bd88-6cfcfdc78033@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-rng-mp25-v2-v4-1-5dca590cb092@foss.st.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Wed, 16 Oct 2024 12:18:06 -0500
+Terry Bowman <Terry.Bowman@amd.com> wrote:
 
-On Wed, 16 Oct 2024 10:04:18 +0200, Gatien Chevallier wrote:
-> Add RNG STM32MP25x platforms compatible. Update the clock
-> properties management to support all versions.
+> Hi Jonathan,
 > 
-> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
-> ---
-> Changes in V4:
-> 	- Changed the restrictions on clock-names per compatible
-> 	- Removed a useless constraint on clocks Items
+> On 10/16/24 11:22, Jonathan Cameron wrote:
+> > On Tue, 8 Oct 2024 17:16:46 -0500
+> > Terry Bowman <terry.bowman@amd.com> wrote:
+> >   
+> >> The AER service driver currently does not manage CXL PCIe port
+> >> protocol errors reported by CXL root ports, CXL upstream switch ports,
+> >> and CXL downstream switch ports. Consequently, RAS protocol errors
+> >> from CXL PCIe port devices are not properly logged or handled.
+> >>
+> >> These errors are reported to the OS via the root port's AER correctable
+> >> and uncorrectable internal error fields. While the AER driver supports
+> >> handling downstream port protocol errors in restricted CXL host (RCH)
+> >> mode also known as CXL1.1, it lacks the same functionality for CXL
+> >> PCIe ports operating in virtual hierarchy (VH) mode, introduced in
+> >> CXL2.0.
+> >>
+> >> To address this gap, update the AER driver to handle CXL PCIe port
+> >> device protocol correctable errors (CE).
+> >>
+> >> The uncorrectable error handling (UCE) will be added in a future
+> >> patch.
+> >>
+> >> Make this update alongside the existing downstream port RCH error
+> >> handling logic, extending support to CXL PCIe ports in VH.
+> >>
+> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>  
+> > Minor comments inline.
+> > 
+> > J  
+> >> ---
+> >>  drivers/pci/pcie/aer.c | 54 +++++++++++++++++++++++++++++++++---------
+> >>  1 file changed, 43 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> >> index dc8b17999001..1c996287d4ce 100644
+> >> --- a/drivers/pci/pcie/aer.c
+> >> +++ b/drivers/pci/pcie/aer.c
+> >> @@ -40,6 +40,8 @@
+> >>  #define AER_MAX_TYPEOF_COR_ERRS		16	/* as per PCI_ERR_COR_STATUS */
+> >>  #define AER_MAX_TYPEOF_UNCOR_ERRS	27	/* as per PCI_ERR_UNCOR_STATUS*/
+> >>  
+> >> +#define CXL_DVSEC_PORT_EXTENSIONS	3  
+> > 
+> > Duplicate of definition in drivers/cxl/cxlpci.h
+> > 
+> > Maybe wrap it up in an is_cxl_port() or similar? Or just 
+> > move that to a header both places can exercise.
+> > 
+> >   
 > 
-> Changes in V3:
-> 	- Add constraint on clock-names for st,stm32mp25-rng compatible
-> 
-> Changes in V2
-> 	-Fix missing min/maxItems
-> 	-Removed MP25 RNG example
-> 	-Renamed RNG clocks for mp25 to "core" and "bus"
-> ---
->  .../devicetree/bindings/rng/st,stm32-rng.yaml      | 28 +++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
+> Ok. I'll move the value '3' into the function call rather than use a #define.
+Not that's worse!
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Find a way to have just one definition.
+
+> 
+> >> +
+> >>  struct aer_err_source {
+> >>  	u32 status;			/* PCI_ERR_ROOT_STATUS */
+> >>  	u32 id;				/* PCI_ERR_ROOT_ERR_SRC */
+> >> @@ -941,6 +943,17 @@ static bool find_source_device(struct pci_dev *parent,
+> >>  	return true;
+> >>  }
+> >>  
+> >> +static bool is_pcie_cxl_port(struct pci_dev *dev)
+> >> +{
+> >> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT) &&
+> >> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM) &&
+> >> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_DOWNSTREAM))
+> >> +		return false;
+> >> +
+> >> +	return (!!pci_find_dvsec_capability(dev, PCI_VENDOR_ID_CXL,
+> >> +					    CXL_DVSEC_PORT_EXTENSIONS));  
+> > 
+> > No need for the !! it will return the same without that clamping to 1/0
+> > because any non 0 value is true.
+> >   
+> 
+> Ok
+> 
+> Regards,
+> Terry
+> >> +}
+> >> +  
 
 
