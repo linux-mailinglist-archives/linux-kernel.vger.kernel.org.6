@@ -1,161 +1,192 @@
-Return-Path: <linux-kernel+bounces-367771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05DB99A068F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:07:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E0D9A0691
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DF61B26AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA62E1F20F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122A4206960;
-	Wed, 16 Oct 2024 10:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF5B206E74;
+	Wed, 16 Oct 2024 10:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gMYSf2I8"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="F3MlgKfK";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="IwYeL9N/"
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4A621E3DC;
-	Wed, 16 Oct 2024 10:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729073124; cv=none; b=hOYURwBxAjali7XaNWM3PzfGWCpmWsz2rKCm5/ix3uPxUVSSrttugAANZcks/EGRaHNKqms244ovnFjQZjR3N/Q1IrsoOvTZk8u0UHgHTHm9OzwW9a2pguKA+4qOyMJunMumxWm7QOZdYhLyzl9ch4pY7wM6HgLJp4SANYl6uJo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729073124; c=relaxed/simple;
-	bh=1a3YbKxKN8xZ4R280960LWXYvm1GuJ7vvD01BJ4IeGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbbA3dLNcFPoLe5irIY+8QUAekVrzvCVepy4zc14CqNVnQj3gEC85iGBYh+s6ErwDRriXu04fa8wm6H8Lmojxx3lVZ+wDA8RiwxvqqwqDqjMxkeSCmMNkp9Z4eJG9xAPtYAW38IwOD2apfKq0lKo6/AQmdifSdH2KPEuYiVKFdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gMYSf2I8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G8OhF0031609;
-	Wed, 16 Oct 2024 10:05:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=HOc3lwyAJWdnbQuXAehqH3n4qi0/6t
-	M7GRfqEH5I4GQ=; b=gMYSf2I8PP/y/I9a3e6j+FDr8TwxMENmgppdrogY0AvyvH
-	FPV4G43aUUs1iQ9Z4EmLjZHcGgttHTQMI5cQL88YwVV09MHEnmDO+AiNCSCYIFdk
-	oStDRK9+gWMca6vL0SZxgzx/hgr+3uHJhBxC0voeQVhCbqEEfsRFTVinfp5Qu0qU
-	d2HoiaJ71K5CXM+BZdLiLLUmESi3hGTrwAHtROu0daYQnzSPsQ+CzwFhPdr1EkgF
-	ZDwhbJ+eOTyNaYVbxY6dx3zkvigOQjej2ZAZz1FPeswgwztPV2vtwfXamBnQ07o1
-	MvwHLnyGPfme4Mxs4QcRJdoWoZNfoBaY3pI3V+aQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42a9xt0hex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 10:05:21 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49G9UZmc006674;
-	Wed, 16 Oct 2024 10:05:20 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283es0w75-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 10:05:20 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GA5GR019399076
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 16 Oct 2024 10:05:16 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 72A322006A;
-	Wed, 16 Oct 2024 10:05:16 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CCC6820065;
-	Wed, 16 Oct 2024 10:05:15 +0000 (GMT)
-Received: from osiris (unknown [9.179.27.227])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 16 Oct 2024 10:05:15 +0000 (GMT)
-Date: Wed, 16 Oct 2024 12:05:14 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, borntraeger@de.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com,
-        gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 05/11] s390/mm/fault: Handle guest-related program
- interrupts in KVM
-Message-ID: <20241016100514.16801-B-hca@linux.ibm.com>
-References: <20241015164326.124987-1-imbrenda@linux.ibm.com>
- <20241015164326.124987-6-imbrenda@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF281206063;
+	Wed, 16 Oct 2024 10:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.143.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729073126; cv=fail; b=j8vRUV70Xsn+Q9TjqBWbu4lJ4JW+z35d+auGB/fv0CB4l2z5Ai6+5krjSfpVYgdigt4ZDXQMX+89oS2v+/kvmAjiBRp1lSCVdj7IWe0wlSmKY1s+KlMVRYz2SamGTX9NUsa7NX2/u9IF9TzfOtzp2pyvw/5cA6FhDXar5jW32wY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729073126; c=relaxed/simple;
+	bh=YtFMm+pelBfxGzkEb7x1v1j9q5ugzmiPEPBuisuY/Ww=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LBgh25MLnZsdYa7RDh2UTyJgGnJxlWnGYP5ENnZoSw53mYdHdrLDcBsi3dOcPjJ/+AZMMtwjXa9U1o6i1Dztfsq+RukVrqJt0LGYNf5pjPeU75D6dJtjSZmXwWmeX6EJSqi8I+J6CKcXsDC3g3hLaanIuEgpUpcu3uRI2cZy3+E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=F3MlgKfK; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=IwYeL9N/; arc=fail smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1729073124; x=1760609124;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=YtFMm+pelBfxGzkEb7x1v1j9q5ugzmiPEPBuisuY/Ww=;
+  b=F3MlgKfK+zRFzjpFntMPsF/lLj1uVoJDVdtuSfYRp4eg8d5kETkiAd05
+   QZJhpvzCMLoXhU2jDQ7e35sNtWvqclo7a0857dSr6tN91iw4muQYh19g5
+   U+dexIN46KjdRthNMKBqI5Bh5X3M1NWOaHPhAojQ2P0c5g3l3FUh/CjPd
+   y+Vs8Tjhv+VJaaEZHrYb1RhHBYBd3tWMMGmDzU3FTxu0biO4Va38bH26h
+   LdTr54oXUeDKZkgx23VM67XXUOt3OE5RO9lNbhSow8RjqWm4AKfKnW+hX
+   xJI8ZjrPWBTuxsVr6pzieBPe4KxR/RsJornaPc0/bRutmjV88FtheG/Xa
+   w==;
+X-CSE-ConnectionGUID: raDxPHUkQGiMDAiu3WCyxg==
+X-CSE-MsgGUID: D4zHxIAOQ+yj1wsvyLhB8Q==
+X-IronPort-AV: E=Sophos;i="6.11,207,1725292800"; 
+   d="scan'208";a="29535063"
+Received: from mail-westcentralusazlp17011028.outbound.protection.outlook.com (HELO CY4PR02CU008.outbound.protection.outlook.com) ([40.93.6.28])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Oct 2024 18:05:23 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oW+Si3Y01jlkG8pY+KcHBu7J/HDJZ954r2h+lAqaBu3fHpAHVa7Z748E8tH/CBpReAMxR8HMew59DfON2yB+KqZ+hPY/5SUPca1ndTSeJnweiAWr5zmCvY2g0H76nw3FrrriHyk99hIR0e3Z8FsDbK7F6KY/PpancFk7mkLc4oWZ7SmXu2p8pHFYpfSljPjX0Iolhc0UynlUzCA7zaqFnsLKppnBtNoaozcgln/A5qCDn9gSPsbRHEqgp/PhVcuN9lWoeU4vXn4WGUQT4e9WzFIcxdLGhIMLRTcdqJykvGo6BjUOvislQNit9zn6+2SdVleQLls1e2XPRuiLu3bC7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YtFMm+pelBfxGzkEb7x1v1j9q5ugzmiPEPBuisuY/Ww=;
+ b=M2Chqua65MFaYdzQ2vAbAb9Rla1cDr6dj8Dqb2c2CHNy2UlUPUyxhgEQ6RFTHETLf3M0LHkuUJLPMt27DwlAU3CJX/ZFXps9ZR539o9HztmIfU5wnxFooO/rsm9a2mfcEvz0leZta4Wi6Z+StvSye11DlPhcfmrNwzKrBbuyejHe2WFTtSsoGDclsMk5fE+yIOFDgLUMWRwna7iNDwpytywTTIqo2ywkUCrd+hE9SkS4WBVc2w8BXWF0cZNupRm/0TsFY866RrFpE6Q7sD98BjY+fuqTc6mNXJOoRMG+j9q7NHkwaP8+awbMEPTy9RzLks65b310wTF6UcjokpEbsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YtFMm+pelBfxGzkEb7x1v1j9q5ugzmiPEPBuisuY/Ww=;
+ b=IwYeL9N/428dfGflymg+x9LYiCdD/Yw3+Mn6Cylwp2DOHs0Bm1Zpz18vC78qpW24A+cGWlIBH/W2q5rHeQ+UOtcjvhNkMbQRcBr8Et+5ZxGC6nTje7pJmMf1jw2uO/RryenmTEDWOyTL5D5DkS2x+rUoTHhc4yZ/N7VWEW8cGfo=
+Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
+ DM8PR04MB7829.namprd04.prod.outlook.com (2603:10b6:8:3b::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.19; Wed, 16 Oct 2024 10:05:22 +0000
+Received: from DM6PR04MB6575.namprd04.prod.outlook.com
+ ([fe80::bf16:5bed:e63:588f]) by DM6PR04MB6575.namprd04.prod.outlook.com
+ ([fe80::bf16:5bed:e63:588f%7]) with mapi id 15.20.8069.016; Wed, 16 Oct 2024
+ 10:05:21 +0000
+From: Avri Altman <Avri.Altman@wdc.com>
+To: Avri Altman <Avri.Altman@wdc.com>, "Martin K . Petersen"
+	<martin.petersen@oracle.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bart Van
+ Assche <bvanassche@acm.org>
+Subject: RE: [PATCH v2] scsi: ufs: Use wait-for-reg in HCE init
+Thread-Topic: [PATCH v2] scsi: ufs: Use wait-for-reg in HCE init
+Thread-Index: AQHbH5aKHDEJWDbK0kCQP7Hfq0mA+LKJJnWQ
+Date: Wed, 16 Oct 2024 10:05:21 +0000
+Message-ID:
+ <DM6PR04MB657532E184397A331B4250A9FC462@DM6PR04MB6575.namprd04.prod.outlook.com>
+References: <20241016063950.436190-1-avri.altman@wdc.com>
+In-Reply-To: <20241016063950.436190-1-avri.altman@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|DM8PR04MB7829:EE_
+x-ms-office365-filtering-correlation-id: 91cd12e3-3c00-48be-b2ac-08dcedca0bee
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|10070799003|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?D1AZZQfL1B4529vt36yPHR6lxc2BAYDkjPkfA5yFGFiL6GlaFGacVWIJ36sm?=
+ =?us-ascii?Q?36tr/vWw465hNRpvbLv3IXb+mTJXWczue3uEb9PcjVXHNZYhwyhpW1qAAE+K?=
+ =?us-ascii?Q?yXSNeUGZbrfxkQhGk9C9nXrLwt3oTObVolgvVlCUAEMgQY3i5R9VF+/+UMTI?=
+ =?us-ascii?Q?Moqrr4wottjBIApprRBp4KkJOAI8erIJFhyE3kgu+p/JOvpvddpKKwDGhI9i?=
+ =?us-ascii?Q?pGnjJERQW8MhHY7Um3HTRb0Dw1emU34vCAEMfnLNCwSbWaZvCDcZGEKHBWT6?=
+ =?us-ascii?Q?1zMSzh1ivQIXFoJa1j8ZZCwEjDmNBE0mk91L/UL4BMt5c/5U0pFATTx6v6ci?=
+ =?us-ascii?Q?N8UGMTeKWV5melj/Mjy+Tu34LA1lp4eNL6LzaTleqZU4T08q+zAr1zJTDavS?=
+ =?us-ascii?Q?K9SYSGZvrcasgJIPTR9vzYj6b0Igr7YyPx+JVw93081SuTaQ3QhbJKY4K6Gn?=
+ =?us-ascii?Q?cJoEoAAT98/kSegO8pfFly/tz6gbaWOpd6Nc5dzL9/pgq857C3yYprALMOma?=
+ =?us-ascii?Q?4V76TEEc71cLywiwW+Mr+BKhEN+b2lJ8aNHcb+LuPrNAUp6SM5txRfdPoNJp?=
+ =?us-ascii?Q?Jo1ypXXZa4GqSIUE1ZjNHItp6uTER/Whb/kYCQkZB0XkYSIxEV9eoVZMVjBY?=
+ =?us-ascii?Q?41EVCiLYPutNEHBNAIgedvk7WT8DW2v0rVPTxkisD8iPgPq50UWviCZLhuCg?=
+ =?us-ascii?Q?5fW+1Xbtq8KRbarHbprB0TMhoBQ/vltUbN0GTK5nT+v3hm0EOfG0r0pcuxWN?=
+ =?us-ascii?Q?6lT2eyL7yCbl03iK88UcYj2tmJmS28MMKU776xd2396u//ysvfxtmGrPMm8j?=
+ =?us-ascii?Q?t87/VoRY9FCzB8dugdtY2bGfsyizvpApnUbdJbb6M1PGIoI5AdwXwdd1LZWw?=
+ =?us-ascii?Q?1zhJQgPQq62Wm4/KZqCPDL8aPyn0Rn66ZYA2YtBXZUsR7+eAavmpuYbgE+OX?=
+ =?us-ascii?Q?R6XH59E30jqRZ9V0I4qCUsZT0c7NwrgbIjVSXBojlzmjof7jRO1qWHdleFnE?=
+ =?us-ascii?Q?m0kGZ7qPrSz7wEN//IVCzc6KxtlSFjkvWNqyrm9SVQTYgth2DjXDIkLv/2oa?=
+ =?us-ascii?Q?40LyRYfp2ZdBLh/7ovAoQj1piOeSzyGjfI0fwxK3zDpx1lJdcOlT/eJLjjRW?=
+ =?us-ascii?Q?1ehsOcZf6WvIhOGhpjNPCoHUQ/9ZWf7za7dy6bqm+nKrwvhEllsjhGHtZx5O?=
+ =?us-ascii?Q?nPxlpyQFJNndgxBvfhYJE1Ko4siG/hMILZ9EQ5EDM+AGHtBlBhzjS9KgPNAW?=
+ =?us-ascii?Q?yPZ01GwradVuKGuzOA52J3oFKdeNpa/sUUiUnY1tvbCq1FUeOkFVpLV82ljQ?=
+ =?us-ascii?Q?Kt0SZ4EXD1rqdLt7TthV9TWjb8ZD5CndxgTJONs+3tYAMQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?tuqyvrOxuKBagtpSh95+JJq8CKUElggE6PMz/u896KHYJ28ApDVJXg96AFDq?=
+ =?us-ascii?Q?pn3i4fYCOxTpytftQd1QRAU+7Jrt9k4lelBPOUhZuztKly4GeC+cngi8iMTu?=
+ =?us-ascii?Q?h/EOSLoLwe2EpUZXZEebJ7aNVd3gfA2ijT3xWOsmdr7IeszaTePoTaRhr6bS?=
+ =?us-ascii?Q?8nFIuBhdACLSCSUhrJr7vTIm4W4oYme1y1WIlMv1vbLc7YJALbp+xyaWso7D?=
+ =?us-ascii?Q?cBHrFinnLYqq915/WeOOVLcQRg2lPK9nU4VtTHICIuKLW0MlN/wE7wMwzsgJ?=
+ =?us-ascii?Q?Xthn2F+h80BMiTZgi8tTS60wyDK9WEsy/BCchwiqvMugrM/T/e/eNj/2/ulx?=
+ =?us-ascii?Q?LVR1bY+17UisrAbRhFL5VczULW+yY0HTIjOGh+JxOqgREJ/GyXGLobbZNyZx?=
+ =?us-ascii?Q?NWiRbaayqKCibuJt7tae4yHUh9GFzizb1gaNIVEhAcgEpczy1xqAFGpumE/9?=
+ =?us-ascii?Q?YPFfHU/pblOJD6yBCYEQHR0UdAC1QVoaOuDwZen+9Dzwpofo++KTvN3c4QRg?=
+ =?us-ascii?Q?BVsmqLTtapWXE0v/oHzfj05L7sFZXQdE9jg7X+ZA3BFhV4280wORAb7wQZ2+?=
+ =?us-ascii?Q?RFem3EliCG1MMjgvnG4fMRB64cCfIn6Yi9IC9FanKBheE0FrszJwDy90gLDw?=
+ =?us-ascii?Q?77oN6lRKzDm2I8HjYagh5/Erson503vZJT5xbSR6uZTsuDNVjYW953mPlHlQ?=
+ =?us-ascii?Q?XzQMPJ3Ly/FKtsBQlabTDSTSF+ii0KdZvOTQCB8iuf0MssOJ5o+qka0sFd6W?=
+ =?us-ascii?Q?1E6apOf80dsXk773ybr6od2f7yuLTjmH9gyRermwPkBT834rRtMYM0vucL0i?=
+ =?us-ascii?Q?swFFW6ggXoA1FnVxhL3MabHT3votUQILVJJF9+D0RBWTKRt57glW5t2k53Tt?=
+ =?us-ascii?Q?GMy0djMSC2XlwO/TQhOgVX6PCbR7tej3KsdIPiJAnrWwsJjFuFR3CD9j2ojz?=
+ =?us-ascii?Q?XEIACUl9ZdMma4HLBgVzbgn97lZHWJtlV4mnTLEHtJF3mEQ84Mg2Gi/nHyi/?=
+ =?us-ascii?Q?Z6YAuI3W77K6K4I89kWzNDATHwlb96QgLbwMJF3A+givuqdv4Szy9PYGSiXB?=
+ =?us-ascii?Q?Ygn1XqGbSxL5Erg0ASAJddNDm7hw+1f9GpsQ7fa7+76/+Kpvv8LSgi72fdV9?=
+ =?us-ascii?Q?RC2QJ9XlqWG/NndksE2H6ikIJiaDiYkPsYpDDkuUx3L0M1Q12EOJXiOBQjAx?=
+ =?us-ascii?Q?v0z6L8DaAUOJEkn7dzV/0HRBHDBA00NfIEIAQiQ4CA0i1p11ordFAdQyeYim?=
+ =?us-ascii?Q?Ur6do3DwW7SI0N0Pn5aHpABam+CFwpdIOCmhGqkD/z0ENXFDXWX1TZNBLYYX?=
+ =?us-ascii?Q?sHfnSSIlzdkTuq2Huk1jNNcq9n/60GMKmJaNBPubV+8ImQ4DJ7NeV1c9emR9?=
+ =?us-ascii?Q?mdsVN3qrxmXYeVOxRZmCec7ojjaV9Fr5m7wD6FnvwFGZWxe0z+BTaUZ9Hmom?=
+ =?us-ascii?Q?NYN+d8zaBZYRLiqLYNZYdV8J6ngQYM9EtKECkiaRUc5ph/62BUoc9kLbPWi4?=
+ =?us-ascii?Q?pATDVnfgzizybEu8Zrycld5VR8uHTHj76/oj47AD5uC6sOU+wAWHb1zezzps?=
+ =?us-ascii?Q?SWD16Nfi2sppxixxlZTF0uiBUk55YyhD792ZCbWiYt9XoZtO0J6K89KphyUy?=
+ =?us-ascii?Q?g1RNENmDPAQEMRoMDtjNrsrHPwbgw5uMjL+DBY55YAVE?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015164326.124987-6-imbrenda@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: feadpziJOXHdwTnQjoRkx69PpfrEMUhP
-X-Proofpoint-GUID: feadpziJOXHdwTnQjoRkx69PpfrEMUhP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 clxscore=1015 suspectscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 mlxscore=0
- mlxlogscore=604 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410160063
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ua+rj3TdA2Lw96uFbrKQDr/CudDJladBsnCHN5zYC1F7CP9efSOtsfuGd0VRGsQs4LGRwM2H+EAyjlJ+OVHHMYoJLqKrp5/aps/7SgEtyQBOjWao266TsKlP25HVqyTpXoGlzJcO8IsmQPzeMBqFX3Hw1ExQvzobst/QgerMIPH87NTKSng+GwEw+hDqSsFCo5C1+zG0It25Eujp29dnoh0Zzr8/xh9J2zU1ErDovS63UpOZPXs0zDuV/aZUL8rUJ1YK+acGnYKfyE49NaxFmMMcGQJQQVWVOD3fTPyJG2gL8NY8G9laRY4Pbe5FRKWuA63cyfXD6cVwIaw+9JQddSiPUU7U9FX9lW9kJRkRhOVJK/DMdNK5Kd/rBCeqBjbF/R+dK53ClhLjs5Sc2zVgAeiXgIOrKjb7ZUOt1biROAuP/w9Ro7KTfMd8ZqQ9oK/PuB9CbnhKYZntBeXXexerYH+ZCE7iHOJP24KLtUx6zyYxLu3uuhv9z5YH3h9CqCH1uwEJGUW96auAcmghU8FqS0uajLqDh4bIGA5hPw3jvqArkES5yjgegCaU6/o7wan6nXj+zt/5wLNizb0olF2yqr4lY+VTBb59cSGSwu9cw0Il9KSk4oOJhV7Ktqs1afjY
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91cd12e3-3c00-48be-b2ac-08dcedca0bee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2024 10:05:21.9027
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OfOnB6mdSa3ZYmHl+U0zEv8PkvoAn+8h8W8dFx7raTsNP3U7nn9WnmF0jK0PzOtw+AXSa+lxnr7ww/kyGUOKvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR04MB7829
 
-On Tue, Oct 15, 2024 at 06:43:20PM +0200, Claudio Imbrenda wrote:
-> Any program interrupt that happens in the host during the execution of
-> a KVM guest will now short circuit the fault handler and return to KVM
-> immediately. Guest fault handling (including pfault) will happen
-> entirely inside KVM.
-> 
-> When sie64a() returns zero, current->thread.gmap_int_code will contain
-> the program interrupt number that caused the exit, or zero if the exit
-> was not caused by a host program interrupt.
-> 
-> KVM will now take care of handling all guest faults in vcpu_post_run().
-> 
-> Since gmap faults will not be visible by the rest of the kernel, remove
-> GMAP_FAULT, the linux fault handlers for secure execution faults, the
-> exception table entries for the sie instruction, the nop padding after
-> the sie instruction, and all other references to guest faults from the
-> s390 code.
+> The current so called "inner loop" in ufshcd_hba_execute_hce() is open
+> coding ufshcd_wait_for_register. Replace it by ufshcd_wait_for_register.
+> This is a code simplification - no functional change.
+>=20
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+Please ignore this version - will resend soon.
 
-...
-
-> diff --git a/arch/s390/kernel/traps.c b/arch/s390/kernel/traps.c
-...
-> @@ -317,9 +318,23 @@ void noinstr __do_pgm_check(struct pt_regs *regs)
->  	struct lowcore *lc = get_lowcore();
->  	irqentry_state_t state;
->  	unsigned int trapnr;
-> +	union teid teid = { .val = lc->trans_exc_code };
->  
->  	regs->int_code = lc->pgm_int_code;
-> -	regs->int_parm_long = lc->trans_exc_code;
-> +	regs->int_parm_long = teid.val;
-> +
-> +	/*
-> +	 * In case of a guest fault, short-circuit the fault handler and return.
-> +	 * This way the sie64a() function will return 0; fault address and
-> +	 * other relevant bits are saved in current->thread.gmap_teid, and
-> +	 * the fault number in current->thread.gmap_int_code. KVM will be
-> +	 * able to use this information to handle the fault.
-> +	 */
-> +	if (test_pt_regs_flag(regs, PIF_GUEST_FAULT) && (teid.as == PSW_BITS_AS_PRIMARY)) {
-> +		current->thread.gmap_teid.val = regs->int_parm_long;
-> +		current->thread.gmap_int_code = regs->int_code & 0xffff;
-> +		return;
-> +	}
-
-This check looks suboptimal to me for two reasons:
-
-- if PIF_GUEST_FAULT is set it should never happen that the normal
-  exception handling code is executed; it is clearly a bug if that
-  would happen, and with the above check this may or may not be
-  recognized with a kernel crash, if I'm not mistaken.
-
-- __do_pgm_check() is executed for all program interruptions. This
-  includes those interruptions which do not write a teid. Therefore
-  the above check may do something unexpected depending on what teid a
-  previous program interruption wrote. I think the teid.as check
-  should be moved to kvm as well, and only be done for those cases
-  where it is known that the teid contains a valid value.
+Thanks,
+Avri
 
