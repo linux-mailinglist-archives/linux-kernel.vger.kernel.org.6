@@ -1,136 +1,160 @@
-Return-Path: <linux-kernel+bounces-367603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C629A0450
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202839A0461
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495691C24A75
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A231A286AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3636D1F81B5;
-	Wed, 16 Oct 2024 08:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4039A1F8902;
+	Wed, 16 Oct 2024 08:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmpPJjX7"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d6XodqGe"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC221D88D1;
-	Wed, 16 Oct 2024 08:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97DF1BE871;
+	Wed, 16 Oct 2024 08:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729067553; cv=none; b=bhwKNRcHPbT6+g0hnUEbtNl+fSv2hJ5ZKmEuFzlbOel5s2dNMcNZ9ev6VXSb4HHeL/va/HTos8LqMu6RZc764NBYJq+ChVSNsl+mBvZnTGneRZmTkZYHmfWsoL9Sl8wRJAadGkwyC7E1Q/QLvnGflPh07imHeoBeh5d5tSGEgRo=
+	t=1729067657; cv=none; b=amsI4IAzZzCeYwTBD4YNf6VlScB8YmvxibQLs+FO+niHxOc2bg8upsQurABCDTIlMruePXzO4nejxD1T4FMoKlb4EpgTNv19cA5SfFAeMuC5SX6n+uXf8n5JZlMyrKQ3aw31iiLcJsccTIJWpTfpG7nafN1BwfwqX/VWN5pXOsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729067553; c=relaxed/simple;
-	bh=UpxHjGlwptIY6hb1ciOY6vnYQldv+ntwJPaiFY74vc4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J5QMqNQm6NGtqqu27yGaWO6SDwx6aBkLdHoYwWalReqiTPY0gTpwdhkfkEuZDQB+JnvUROaxpWneN1m9p87Wy2nzfRPc4sZig5o91iCZmC8c1TPJvOX80ZoooriHAj8l1nSSN1b7ewFpNiaEIWDGj5u0h0ycr1JMm1ZPizUAz2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmpPJjX7; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso404627a12.1;
-        Wed, 16 Oct 2024 01:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729067552; x=1729672352; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AkvqRkXMu0WbwdlNBbyi9/KgHkkN3Ncs5otSFtEzCg0=;
-        b=MmpPJjX7mWtRsezGZmWL0eXlv8qpxFdlxmCsrIse2rFApGyVW654goNtQATve6BWKV
-         p8yWEm0SNtcthaLqmScETUv4dFON1R+7sLeyT5mxo3EtMuC2jV5cq3aX2RRUPu0neW/F
-         gzvt9CUD/Bw3/q6cChRSo08/CLE7nYVJeRw+IDizNrBQKCMKLdzYIM92u//APZayINQZ
-         w8m5oDiHP3Qr2P3IPQZ2UGJ9+VfaGKgisXZXqASnU+2Ta60IGsK7SBuYKMKzrKygWWcb
-         EHUOlw4A29mj+McIGa2io3e1OtPlWF33qCZowiYp6rMij2uEUUk5a09zIGDW/QwUd2Oa
-         8tSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729067552; x=1729672352;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AkvqRkXMu0WbwdlNBbyi9/KgHkkN3Ncs5otSFtEzCg0=;
-        b=S64tS2HqtqcHFap7e2iGmDdjIXmPfpvPScVplVzQWf91Y7WjimFNQgMYrYxEDi8OEo
-         8sglXgZcATa22o8Pn46TzdEyH+CvRqMJrIMsLBEC2JAmsgCrRrxeQQ19QNzStvRvVMAD
-         bC290W8kXh7X9Jz15VZ/kBDQ+HYBj0obbHoKNMAzOk/LvUA8TESF4vJM+ya8yuaiOT0m
-         GnNY54uMWrtlVPn2lRnYwYzhfLwyPWKEK2/aUizCEtzgxqhGErJtgU2xeJ3eQSrymO3B
-         hWQZxoNanhgdhNY9dF8EneW9uM6quCEV5rwBUvgJk1NMEvFbAthY3ZJ6GUQhIZrmCCD4
-         v62A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrsRWepc76vczdXDHWTWs29Dn2XDe4Lz9IrqAepRZklIbDhQFexSLGyx90Usosizh7QFDDxcRnqcmd@vger.kernel.org, AJvYcCVFyf6kK6V41XuEsKKEFxxWRHiWtYUXpGzdY8rgB8rbPprRDoKBi2oxaMsh3PPfLVxHUHSyAqQeG+eMPDsn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq6hBf/isxpPI0fuRZiIGIpAeMg5KXgkajerx7ggJxbYlBnCPB
-	ijMCnTZ74zs+FCLHfUM3WobNCba3Xrr50GgoDyAScYPAc14Mqk6b
-X-Google-Smtp-Source: AGHT+IFMDyRo+nhzjKM0ITHKuIUCT/fwiSYJItDfy7iC/4cEBwIZYTdSwUQo1SZUUDlkKEHKATkTMg==
-X-Received: by 2002:a17:903:191:b0:20b:80e6:bce6 with SMTP id d9443c01a7336-20d2fd34a58mr10929065ad.4.1729067551670;
-        Wed, 16 Oct 2024 01:32:31 -0700 (PDT)
-Received: from localhost.localdomain ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804eccdsm24067755ad.223.2024.10.16.01.32.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 01:32:31 -0700 (PDT)
-From: Frank Wang <frawang.cn@gmail.com>
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de
-Cc: linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	william.wu@rock-chips.com,
-	tim.chen@rock-chips.com,
-	Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH] dt-bindings: usb: add rk3576 compatible to rockchip,dwc3
-Date: Wed, 16 Oct 2024 16:32:24 +0800
-Message-Id: <20241016083224.14839-1-frawang.cn@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729067657; c=relaxed/simple;
+	bh=3ixjSPj57/3HkHGg+1AgHR7Q4xBBgsWAjhtgab4RGGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HQcBba1EN8JiTmmstF8gQvXIIf2qJt71egDVBuGAJhWBlY2kCmDK31jDagzsxQ7PxDOJPwXfnA6RvGkYWmSYjejQQXeXbaMsrqCxmBAArJgrUKZMDFbbCzkvbJthtNYGMNFQtSX6k+czNpIPDPf06u613WJCsRVjKW9q9yON5UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d6XodqGe; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G4tSLM013571;
+	Wed, 16 Oct 2024 08:33:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=s1ClHwECgAqvw8fo7bgayDaexlCa/k
+	jzSj/hte/BsI0=; b=d6XodqGefVZ2Oo3pY6raHP+3dLv8SsY/LOAnt0i62dmXK1
+	hU5uCifU8RLSuMzcw7Q5Pk/rHp5A54/luTfmeDzJ2Wkz12ODQ63nc+5m/oH/W6Vr
+	sZIYpxscfjlLGMYYEQVAeqTgFPU9gMTsvQxLIfDzfn5cunyKXwh3VQn7xStqQlOn
+	qvpQc26z8BAlzizP4VlTtu57IeBeShr4sg4Um3MgVhCERbYdvT5aZwUNFPsreabI
+	nS9u9vdoZYwPRgtF9QOgD5ms1OclAbjK8+2feiPWyyN9A06TnXWk45+hGe1rV6IT
+	cUgNSaTJY9MVuirzexgTvfqg9/zz8BOOYPSmL6Gw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42a6vm0x57-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 08:33:32 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49G8XVG1020697;
+	Wed, 16 Oct 2024 08:33:31 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42a6vm0x54-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 08:33:31 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49G7Y1Ui006761;
+	Wed, 16 Oct 2024 08:33:30 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk85e8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 08:33:30 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49G8XQlq54198614
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 08:33:26 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7003720040;
+	Wed, 16 Oct 2024 08:33:26 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E7DB2004B;
+	Wed, 16 Oct 2024 08:33:25 +0000 (GMT)
+Received: from osiris (unknown [9.179.27.227])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 16 Oct 2024 08:33:25 +0000 (GMT)
+Date: Wed, 16 Oct 2024 10:33:23 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Florent Revest <revest@chromium.org>,
+        linux-trace-kernel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v16 04/18] function_graph: Replace fgraph_ret_regs with
+ ftrace_regs
+Message-ID: <20241016083323.16801-A-hca@linux.ibm.com>
+References: <172895571278.107311.14000164546881236558.stgit@devnote2>
+ <172895575716.107311.6784997045170009035.stgit@devnote2>
+ <20241015183906.19678-B-hca@linux.ibm.com>
+ <20241016084720.828fefb791af4bcf386aac91@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016084720.828fefb791af4bcf386aac91@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: THvSImdZT7cNTKydum66qvZm3KuHppMe
+X-Proofpoint-GUID: Ti8WhGAnHe5v38r1fomyzE9dHOz0LqKQ
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=539 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160056
 
-From: Frank Wang <frank.wang@rock-chips.com>
+On Wed, Oct 16, 2024 at 08:47:20AM +0900, Masami Hiramatsu wrote:
+> On Tue, 15 Oct 2024 20:39:06 +0200
+> Heiko Carstens <hca@linux.ibm.com> wrote:
+> 
+> > That would make things much simpler... e.g. your new patch is also
+> > writing r3 to fregs, why? 
+> 
+> BTW, according to the document [1], r3 is for "return value 1", isn't it
+> used usually?
+> 
+> [1] https://www.kernel.org/doc/Documentation/s390/Debugging390.txt
 
-Add the compatible for the Rockchip RK3576 variant.
+That is true for the 32 bit ABI, but not for the 64 bit ABI which we
+care about. Besides other this is also the reason why I removed the
+above file five years ago: f62f7dcbf023 ("Documentation/s390: remove
+outdated debugging390 documentation").
 
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
----
- Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+If you really want to understand the 64 bit s390 ABI then you need to
+look at https://github.com/IBM/s390x-abi .
 
-diff --git a/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml b/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml
-index c4924113f9bde..a21cc098542d7 100644
---- a/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml
-@@ -27,6 +27,7 @@ select:
-         enum:
-           - rockchip,rk3328-dwc3
-           - rockchip,rk3568-dwc3
-+          - rockchip,rk3576-dwc3
-           - rockchip,rk3588-dwc3
-   required:
-     - compatible
-@@ -37,6 +38,7 @@ properties:
-       - enum:
-           - rockchip,rk3328-dwc3
-           - rockchip,rk3568-dwc3
-+          - rockchip,rk3576-dwc3
-           - rockchip,rk3588-dwc3
-       - const: snps,dwc3
- 
-@@ -113,7 +115,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: rockchip,rk3568-dwc3
-+            enum:
-+              - rockchip,rk3568-dwc3
-+              - rockchip,rk3576-dwc3
-     then:
-       properties:
-         clocks:
--- 
-2.25.1
+A PDF file of the latest release is available at
+https://github.com/IBM/s390x-abi/releases/download/v1.6.1/lzsabi_s390x.pdf
 
+See section "1.2.5. Return Values" for return value handling.
+
+All of that said, I would appreciate if you would just merge the
+provided patch, unless there is a reason for not doing that. Chances
+are that I missed something with all the recent fregs vs ptregs
+changes.
 
