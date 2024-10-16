@@ -1,158 +1,152 @@
-Return-Path: <linux-kernel+bounces-367877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A349A07E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:56:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FB09A07E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F692879E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4882877A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DAC207205;
-	Wed, 16 Oct 2024 10:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=synaptics.com header.i=@synaptics.com header.b="AS+gAO+O"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020081.outbound.protection.outlook.com [52.101.193.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCFD2076B1;
+	Wed, 16 Oct 2024 10:56:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C881CC14C;
-	Wed, 16 Oct 2024 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076159; cv=fail; b=a1TwikdJ6NzL5klUen/0LiPGTtZ9stg1W93JYeCeKpXqmQfZV3VcyGN30MEFrsooxCI2kuMO4R0K3LdXb0Xz41P7TXwJuieluB6Zyw78d8tZSp6kQsxcl7opt6CZeDuODxMuYZvrmSEno+25UMQb5js8QUyxGPCShuRajJZ5LC8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076159; c=relaxed/simple;
-	bh=4FaxxgYDbnoLkPiQihb7k7+62uIjkRq39aDdHaYKaCc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ae6xS1yODE26lEnIBMFISflvL0syVmIB59gfUbyzVqbm1qEDdsAnt0pw6aO0fDHduaFzAzWTu5nT93tGGwD0aszTa3D59tWIzTqhANKuYmcnEhIuj8lWFs4HZSdJLvi4m1X03HAN8WU5j4jUYKINP1NIMSpVkwKFvF3sU6KxrBU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=synaptics.com; spf=pass smtp.mailfrom=tw.synaptics.com; dkim=pass (1024-bit key) header.d=synaptics.com header.i=@synaptics.com header.b=AS+gAO+O; arc=fail smtp.client-ip=52.101.193.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=synaptics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tw.synaptics.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uWrozu1dUCWmXI9arR8QxtbZDGWckBP2UcJOhIPx1pusW3WdiFhDkv/H89i5ffz3eT/e2gHXUFCCkZY3eqwAz4XfHNVJDe00mH4ZTNUgnXJxeuGswIgPud8CEiEuH/DMTC0vrr0rHlhLGrU+/UpKI7V43/N8jZbr8pgWAxWfpsZvqOhzicD+GjftqGCXlAUngnXNQL//ezRj4bxFytPcdbFt1RuRz/t2rhmPDnuinQ5nlkA2L29tvsWQV7J9r5/o8bROeMsWYLiey5PNPEUiBRkFAH1O9cevG9apuJ1LM4tpvGe3rcGsE9PNedvEOIK1VK1A47LQXetLSS/AmzOE6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H5LaKSvtPJG7Dsp+N5IJ6pO92lZmaW2aytVhXK8nuL8=;
- b=WvpRVIVLLBLJK+uwjKnok3e+q90s/SaII3G9yEW5SfLCQ7GkhVVZUglw+htq18W/i0iLVuBApKgjmInpgy+76aQBz76fxCAqKdgjWVPUXNU+aUouIDDIa0DmvAYlRr8MohMa65xtlTgRdFus63RK39rrTpNtXTbTitCkvfvG5qiWP8qRZB0UFiQKy7rB6F+MfYsc0do36ei25hQW5/T4gr7yQrEFj3iyLkxO+gGILuykea9jhRg1B7E6u1/XEXQ1CVY+YlP7IQel1PnJwpf0PDHCux+KiUtxnlNjb2QSZp0ptxe/wNHyPqhQDxgN4dJoDsUV+Wq8pMFxbFXHbSx+jw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.147.44.87) smtp.rcpttodomain=kernel.org smtp.mailfrom=synaptics.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=synaptics.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synaptics.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H5LaKSvtPJG7Dsp+N5IJ6pO92lZmaW2aytVhXK8nuL8=;
- b=AS+gAO+O56gokb7r8A4+kIMh3C16kc49keR1EGVKWheIWhOrE6hVbpd/75BeeQRFuNmOQMS73GiYui5KdM9qen1mKnUbbuCbhKolzgPlE8ciUtwJaj/bCSHUDKyODKfAWAJ8KetvYl2OKsz3WPYVC2dWstd7l8p/Bijmp1r5Rgs=
-Received: from BYAPR02CA0047.namprd02.prod.outlook.com (2603:10b6:a03:54::24)
- by SJ0PR03MB6518.namprd03.prod.outlook.com (2603:10b6:a03:38e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 10:55:55 +0000
-Received: from SJ5PEPF0000020A.namprd05.prod.outlook.com
- (2603:10b6:a03:54:cafe::7c) by BYAPR02CA0047.outlook.office365.com
- (2603:10b6:a03:54::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18 via Frontend
- Transport; Wed, 16 Oct 2024 10:55:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.147.44.87)
- smtp.mailfrom=synaptics.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=synaptics.com;
-Received-SPF: Pass (protection.outlook.com: domain of synaptics.com designates
- 192.147.44.87 as permitted sender) receiver=protection.outlook.com;
- client-ip=192.147.44.87; helo=sjc1uvd-bld04.synaptics.com; pr=C
-Received: from sjc1uvd-bld04.synaptics.com (192.147.44.87) by
- SJ5PEPF0000020A.mail.protection.outlook.com (10.167.244.43) with Microsoft
- SMTP Server id 15.20.8069.17 via Frontend Transport; Wed, 16 Oct 2024
- 10:55:53 +0000
-From: Vincent Huang <vincenth@synaptics.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marge Yang <marge.yang@tw.synaptics.com>,
-	Vincent Huang <vincenth@synaptics.com>
-Subject: [PATCH] HID: rmi: Add select RMI4_F3A in Kconfig
-Date: Wed, 16 Oct 2024 10:55:49 +0000
-Message-Id: <20241016105549.250515-1-vincenth@synaptics.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCD6207204;
+	Wed, 16 Oct 2024 10:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729076165; cv=none; b=j5IC9o4aMCvq6HyRzkOg/cpVEaykNRnIqIO5nUEB570/9Hqw4sxQ6K+5gtl2CQImrRDA4oysAGynIM24OVQhwOh9FTxxLvj2o1dkpbvrSzGfAM4wqFeRNRgkK/v3iz0XprWItdgi/zLLKiW0t3L6egfgQZNtiJz7A5KsaWGf/II=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729076165; c=relaxed/simple;
+	bh=uO/FLVjQm0aP9k0+5tJzAAwwzeXFoUGespn4lDhPlTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DxuruPufrHKNNa1VEtfPRqxCv5lbB37XTI+c/8ArtUEYsNkTmhOCEQAnebTbjyK6aS5QvmygBYwZhnbxmLfRQnQTo+vMLKBI23ezD8KNA8RGNa7jbaGWVfNPG6X+692RXmdStCy0OMM2TP4nXXHxDKbRDEmaJMA7r9i++166pEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09314C4CECF;
+	Wed, 16 Oct 2024 10:56:03 +0000 (UTC)
+Message-ID: <dcb89d4c-72e0-42a3-8923-51cd18e05968@xs4all.nl>
+Date: Wed, 16 Oct 2024 12:56:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF0000020A:EE_|SJ0PR03MB6518:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: da476475-2aa1-446f-7287-08dcedd11b15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7CPl2jkFrxY9CQX3UnN/eyTLTdMR0BWmjthFhrFAl8Q0zEM0vgG6QvFE1Hpb?=
- =?us-ascii?Q?4Da8jlBZgG+8q/91iZ7s+QVOY5O2g0W1l4YV7jQHI772rmFwp+ux8oqzOkBa?=
- =?us-ascii?Q?bLwHLfrgfeOvkHR0z4egJUnem+Xw/lBZ4SnLWtNKswjfoRrhTZA/P3nwtmoQ?=
- =?us-ascii?Q?pcISOPlPZa8R67qWzMrQKnxuDBYRo00mDtDlzzWvSgbKgZ7tvXpfratJqd0C?=
- =?us-ascii?Q?OSpcT+HnkTS4bSpiaWxftlQoInNAWdG00vH9G9PawwEy568x7njCSc1jf+nj?=
- =?us-ascii?Q?UJkigzddd7Tdjy0dXaAdD97ygAbUovcBjktU+pRrVNIZwWb5Ik+gOb9fEWpb?=
- =?us-ascii?Q?AnCs/HXhpo8A2W/GYtoFlAs9/It3yYWlMLhm/en1gbMH4JIAAViQeVSQBrFw?=
- =?us-ascii?Q?+xECoLoUcgZlPvDxYK4lbGXNcdniQGW1TIBi6WNHrZJKu/xCgH5ZVTGUyXh8?=
- =?us-ascii?Q?jwouv76864TPt31VveBinw5XgvEhTgbV/qza2iWbtYwawDMV2SkXnN+YLWuf?=
- =?us-ascii?Q?lR7RTVLdJa7mr52ndjhWCMCDzhYBLfeBS1u7btnl8YPdGXlYnbnk19dgBwHT?=
- =?us-ascii?Q?/Dk+1sZ7YJj37csYla31DHgJFlrxZE27r0sc2EGHfmX3JzZ3GHng7HCp8ufR?=
- =?us-ascii?Q?g3npr6yAyTSny96dkp3o1S+UfqoFUduBgSARoKmn8h0P6aKXJYTWkSoxZLXZ?=
- =?us-ascii?Q?LovQi7fSdcuiMrq6lrn0YensE1g4KfV2bne5sNDY5wRiyYk8eZtYUmoU8l94?=
- =?us-ascii?Q?Bkurie2lkVDxx1rUARVNi5LJsCKcdSHsZdExymuIN9Kdk8m5e6MYa3yY1e4t?=
- =?us-ascii?Q?DE2sRQ56K407GnKU76w6vqB9UAgFl6xVV0fJskLJGRJykRCHqyfY+SFw0TmG?=
- =?us-ascii?Q?RE5uo1tqBAxttxYvgp9m9yb4wDoVCHw7pllzqkvabS2hG1VR0uZmte68UOD9?=
- =?us-ascii?Q?8Tk+Gd2V284Px+uOW8DgLdmN4KlVZzmCXCXwbyypFZ4n8Vqe//nGFOHp0rZJ?=
- =?us-ascii?Q?D/hz39MAwlQq0wVnp7oVaqTRWj6hIHp9UxBkwPNkxqqw6C7yiAtQZxo5Sjdp?=
- =?us-ascii?Q?+SLcDOKvHUGYmr/+KIE82O7U+Zqb6iY4VUf1CbaWbwEKcdoNIOWJe2a2lIby?=
- =?us-ascii?Q?qipRDP6a5mxfnjjY3xuvjekxN6jQ18Obar9A1P46EAvg67W1+1TicNSszicE?=
- =?us-ascii?Q?NMfeqswrSVy7pJPPqT67lN7aovY0op/9MurzvdAzrHdoC1dDbLTMuX/3w2k6?=
- =?us-ascii?Q?oMSy3SUGkaPlw+Ah1SoXDi2sM6thFEF75d9n/JOD2UsJEQbho94cUJ7Ruouj?=
- =?us-ascii?Q?YseDPk86HaFlK/O6VOZ7iCTbawaAwkWYNGkIVAox/kpeai6vEDRjnYEB2OPE?=
- =?us-ascii?Q?kfkX/Gb4HbpaYS6KeJgZAWvdRknY?=
-X-Forefront-Antispam-Report:
-	CIP:192.147.44.87;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:sjc1uvd-bld04.synaptics.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 10:55:53.7481
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: da476475-2aa1-446f-7287-08dcedd11b15
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=335d1fbc-2124-4173-9863-17e7051a2a0e;Ip=[192.147.44.87];Helo=[sjc1uvd-bld04.synaptics.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF0000020A.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB6518
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/13] media: v4l2-ctrls-api: fix error handling for
+ v4l2_g_ctrl()
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, stable@vger.kernel.org
+References: <cover.1729074076.git.mchehab+huawei@kernel.org>
+ <f7cff5c05f950ab28532f71d5ac7a4a8efed38fb.1729074076.git.mchehab+huawei@kernel.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <f7cff5c05f950ab28532f71d5ac7a4a8efed38fb.1729074076.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add `select RMI4_F3A` under `HID_RMI` in Kconfig to support buttons and GPIOs
-on newer Synaptics HID RMI devices. Future devices will use F3A instead of F30,
-but F30 is still selected for backward compatibility.
+On 16/10/2024 12:22, Mauro Carvalho Chehab wrote:
+> The error check logic at get_ctrl() is broken: if ptr_to_user()
+> fails to fill a control due to an error, no errors are returned
+> and v4l2_g_ctrl() returns success on a failed operation, which
+> may cause applications to fail.
+> 
+> Add an error check at get_ctrl() and ensure that it will
+> be returned to userspace without filling the control value if
+> get_ctrl() fails.
+> 
+> Fixes: 71c689dc2e73 ("media: v4l2-ctrls: split up into four source files")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  drivers/media/v4l2-core/v4l2-ctrls-api.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-api.c b/drivers/media/v4l2-core/v4l2-ctrls-api.c
+> index e5a364efd5e6..be32dccf9830 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls-api.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls-api.c
+> @@ -753,9 +753,10 @@ static int get_ctrl(struct v4l2_ctrl *ctrl, struct v4l2_ext_control *c)
+>  		for (i = 0; i < master->ncontrols; i++)
+>  			cur_to_new(master->cluster[i]);
+>  		ret = call_op(master, g_volatile_ctrl);
+> -		new_to_user(c, ctrl);
+> +		if (!ret)
+> +			ret = new_to_user(c, ctrl);
+>  	} else {
+> -		cur_to_user(c, ctrl);
+> +		ret = cur_to_user(c, ctrl);
+>  	}
+>  	v4l2_ctrl_unlock(master);
+>  	return ret;
+> @@ -770,7 +771,10 @@ int v4l2_g_ctrl(struct v4l2_ctrl_handler *hdl, struct v4l2_control *control)
+>  	if (!ctrl || !ctrl->is_int)
+>  		return -EINVAL;
+>  	ret = get_ctrl(ctrl, &c);
+> -	control->value = c.value;
+> +
+> +	if (!ret)
+> +		control->value = c.value;
+> +
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(v4l2_g_ctrl);
 
-Signed-off-by: Vincent Huang <vincenth@synaptics.com>
----
- drivers/hid/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Yeah, that's better.
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index f8a56d631242..f2c4f9e89cac 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -1096,6 +1096,7 @@ config HID_RMI
- 	select RMI4_F11
- 	select RMI4_F12
- 	select RMI4_F30
-+	select RMI4_F3A
- 	help
- 	Support for Synaptics RMI4 touchpads.
- 	Say Y here if you have a Synaptics RMI4 touchpads over i2c-hid or usbhid
--- 
-2.25.1
+There are also unchecked calls to cur_to_user() and user_to_new() in set_ctrl_lock().
 
+Can you fix that as well?
+
+Regards,
+
+	Hans
 
