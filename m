@@ -1,188 +1,133 @@
-Return-Path: <linux-kernel+bounces-368665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867599A1324
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595E09A1329
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF1F8B22451
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F15B01F22D76
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C0B216A31;
-	Wed, 16 Oct 2024 20:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1892A206E86;
+	Wed, 16 Oct 2024 20:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnzZfGxY"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YO5Fsjha";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cIo1ks9J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B80216A05;
-	Wed, 16 Oct 2024 20:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAED199FD3;
+	Wed, 16 Oct 2024 20:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729109033; cv=none; b=ik8tZCpym5rSMWKJvEpduLp+jMvUUxB/fwXil7SB5Hp+zsaJA6gMFHSUTbxCGIW0yvt7V2uIeTCyhXhsITOkN/tPJ2TFwkl+tv0Gs4BpDK8bgIHKWb6Jqvo8KibZ4k6T3HFXWKbplMgFdWNGcMNo1dJuJol03ZYSFG/fu0mHBac=
+	t=1729109049; cv=none; b=aXPtJuxboybkwBa98LiaKv00/RCVG2iey3UhF5Ufo6nt5oKJytGk2I8R9GuIs6c4wwqNh/kdYarUh2tjNo++b4s0n0pbRs1d7eprmseBa1CFs3J5r0ps8+dmq+FDebgnnGFCCpGxQCOU3V+Rz18uGeZo3gCLjw323iFsXsiwRMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729109033; c=relaxed/simple;
-	bh=CUNpf0RpAGHCLSfPqwWQmkrOcmeJg5FOd6ztGlwkkw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWVQxt388PW/nRCColoG5Pb651AuZK8ILndCfihPBvZQlHVA4Q38pxdEv4rKjnEppNSaWPlOMhzlnDRd6U5mlhmgbbPH0L/6Bvf+NtPApeA9OssKt6G/El8RXHbZpfWIWEFTcEzBjZdOcLX8yu9qvXwDgJNKZnwbV4IMhH7BnXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnzZfGxY; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b117fab020so18326785a.1;
-        Wed, 16 Oct 2024 13:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729109031; x=1729713831; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ksybH0l9PJyMJv7G8Na7PkJpM36rh/jZxYG4yRhyeUo=;
-        b=lnzZfGxYCXwjcc7w1GjA82JvDcdFH6w8AQIPRNEoy8XHhuSZBWKJAsumy3D738NdIP
-         H7hc/5SlfndyX6yyYyjJXXda+UIw1OSrf2unVabA55iunKGDZFVceTvO5kVTgbhJNfa4
-         BJWdEz4dd7bx0hlwCY8WuY6OAOj7Pqi8mjwjtchEGi3yIc0N5dnueKQYVECMwb61nkBi
-         9mZ8hwGEBF51vGtTZIeMK0yQwmoT8KkCJqzDFgXNqhxmIuRG/+hlVjRpMBNeRhFWXOOp
-         fv7YDB80whgIbZrFz47SnmZMm8s3vxjfW96wdXn5b7wqcRA95iMHTFeq2unudrNi81GV
-         nIlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729109031; x=1729713831;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ksybH0l9PJyMJv7G8Na7PkJpM36rh/jZxYG4yRhyeUo=;
-        b=LjXq9M1YgF+LRi++qIDW9EKYbXlZ13KBGGh+Ra1mD3W2XICXJCRHIFD4m+k1TARBtP
-         sLERqvXihHHFnxyMR/MgoRQNmR2PlEeDBlooPDS1PPZ3xnAFscphscl7H6304ZV8pQo5
-         EjqDXXEg198b/U2hxo8Igsy3nK5t7B9cB03EogV4CBTTR/ZYA4thavljBElgWuL9t0UG
-         l1uRR1gMp6JvWMqeWaAhpxbZkOg+m8E/W+kysgt7pP+74YKqxETh3MMrBPuoyO2ux35K
-         uonqsRSA3jGxhZG6gU3BbTyvB2Oq0HfFN558igl0Uvx01B6xSPtvYADBpLoVzUOovltE
-         QLxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Wg2br4KNdg5PdOT0GqOCuVGoeMkvW3C4ieW5c7MiheBy2a2thQFv7oyuTmpEEiyn26io9dn+XYx1WOc=@vger.kernel.org, AJvYcCU6GyIM5uOeETcISzwzaDyoGKVsYVhcAam1ZlQkxekFcQPTiljVVYbLqZ1WgCBApZKtHx/NNwaAgxJe/HCw8m0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynE4skY/0uaWKFX8o919R3kGzeNj2UUAI5J6xRZXFUzIGKckZL
-	U6IOsUCLmUzbfUElJ3S0XWdJI2PLQ+U/dGqcGiZLntVKu0AvtGH7
-X-Google-Smtp-Source: AGHT+IHY5oftsiP3O/r6+VQ/Yam9sjeFXHYqHuEeL0Wif0tfDCWFwYNjaNOzsSMrdJ3mLolYfgFf2A==
-X-Received: by 2002:a05:620a:27ce:b0:7b1:447f:d6f0 with SMTP id af79cd13be357-7b1447fd8e4mr559029385a.23.1729109030642;
-        Wed, 16 Oct 2024 13:03:50 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1363b471dsm221625185a.105.2024.10.16.13.03.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 13:03:50 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D291A120006C;
-	Wed, 16 Oct 2024 16:03:49 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Wed, 16 Oct 2024 16:03:49 -0400
-X-ME-Sender: <xms:JRwQZ5cu_NbI3KFDeUWnUrsUM1HSfC4kNzLgzTNKfNXrJo2MWlC3Ow>
-    <xme:JRwQZ3OcZUgYxqjcnUiXEJbC8E4vCob-6_cHVTWeUwfccw-FwRRqa5OJdCD3dJnTA
-    7pT5lIgnNpzSX-BFg>
-X-ME-Received: <xmr:JRwQZyhHNwklddnOHAYKgyYlY5TAmk6gs_99qaLGE8vfXYkT5vhPhIjRE8E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegledgudeghecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhnohhrihesgh
-    hmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthho
-    pehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehtmhhgrhhosh
-    hssehumhhitghhrdgvughupdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtth
-    hopehgrghrhiesghgrrhihghhuohdrnhgvth
-X-ME-Proxy: <xmx:JRwQZy-oOiR6aRHDpXGAgqJQV6-0TtCOiEd-XmAZJqOae-fhRs31RA>
-    <xmx:JRwQZ1uaqylUn2u6kmtY8wcQg3f7I3b2KvmVJWCBaV8POhSsY21djg>
-    <xmx:JRwQZxEXiaEz7gM9G2lHZdZFzyeOSpk31S3B_gzFGh0kqBK5bB800w>
-    <xmx:JRwQZ8OpYWb1fr1IXW0Pb-eJ4iQnavPbz60rbruu7_cr7oG_rYCw-A>
-    <xmx:JRwQZ-NGj_hgPxQ6896BPphXkMbKvt021BxUutocFrTxYxK6dMFsuP56>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Oct 2024 16:03:49 -0400 (EDT)
-Date: Wed, 16 Oct 2024 13:03:48 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch,
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
-	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com,
-	sboyd@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 3/8] rust: time: Change output of Ktime's sub
- operation to Delta
-Message-ID: <ZxAcJEDFQ-n64mnd@Boquns-Mac-mini.local>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-4-fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1729109049; c=relaxed/simple;
+	bh=TazvZvfMGw3d6iUgf0oFLct4QIA5z8XABPM2Bl4Nnto=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=AOMU1ixmWhrJk3xpJtRONtL0/lZx26v0pw2UqJZsAa7NRmARFRZBNfPr5LWdLoB/UfoGiKUf93IeVIHLMuarVrDJPeU6IWqH06i2Jj+9mruYjlxvYkUp3OB40MgtX9XYFl3wih73kPfyEbDLv9OmfdCPxQ5k8XFUPnkFP8wtp98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YO5Fsjha; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cIo1ks9J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 16 Oct 2024 20:04:02 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729109046;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+o6OhBhcVnvBVZUoowoVL1Op2DvNzlYhBK47boldl0=;
+	b=YO5Fsjha/DiTxzaZ0E7zE2jNPd3Yui8P3gn7QPjDx0DodqHGQLbutc8yWunV3fC5yU2hog
+	2axo1sHFYEg5PUxVeMK1SxDdGKbhotzSqu7MCTLhjQYN81noNRmrYvdbLu5sNR2SysGvZA
+	LMMxmpAKwcLIdsfGQrbL9Y2kBvjLwQql06D440kRhVRCwYb1z2LjOd5nPHO3o8pxK20Jnu
+	4eV4GIa/BMsdf1DyEw33qEGoQVR7gYmqlGdRLJYZmCXvvK5+z7dZC/Es9ek7bHtijNQje6
+	S7k/BN/fbSEO+a0EXbGhcpvDRtyAKKWD8uOD8zpT3B3d6Tdp9HJ7k6N7dBJqnw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729109046;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z+o6OhBhcVnvBVZUoowoVL1Op2DvNzlYhBK47boldl0=;
+	b=cIo1ks9J0QmgkRzTn9HPHXWO+/2UO4Zu4CtDf6fgCJd2PzyFmvOdYRmiRgpOj0MxEK5FQa
+	MAo+ZJv4KMeySVCQ==
+From: "tip-bot2 for Bart Van Assche" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq: Unexport nr_irqs
+Cc: Bart Van Assche <bvanassche@acm.org>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20241015190953.1266194-23-bvanassche@acm.org>
+References: <20241015190953.1266194-23-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016035214.2229-4-fujita.tomonori@gmail.com>
+Message-ID: <172910904260.1442.9062571062865319567.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 12:52:08PM +0900, FUJITA Tomonori wrote:
-> Change the output type of Ktime's subtraction operation from Ktime to
-> Delta. Currently, the output is Ktime:
-> 
-> Ktime = Ktime - Ktime
-> 
-> It means that Ktime is used to represent timedelta. Delta is
-> introduced so use it. A typical example is calculating the elapsed
-> time:
-> 
-> Delta = current Ktime - past Ktime;
-> 
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> ---
->  rust/kernel/time.rs | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> index 38a70dc98083..8c00854db58c 100644
-> --- a/rust/kernel/time.rs
-> +++ b/rust/kernel/time.rs
-> @@ -74,16 +74,16 @@ pub fn to_ms(self) -> i64 {
->  /// Returns the number of milliseconds between two ktimes.
->  #[inline]
->  pub fn ktime_ms_delta(later: Ktime, earlier: Ktime) -> i64 {
-> -    (later - earlier).to_ms()
-> +    (later - earlier).as_millis()
->  }
->  
->  impl core::ops::Sub for Ktime {
-> -    type Output = Ktime;
-> +    type Output = Delta;
->  
->      #[inline]
-> -    fn sub(self, other: Ktime) -> Ktime {
-> -        Self {
-> -            inner: self.inner - other.inner,
-> +    fn sub(self, other: Ktime) -> Delta {
-> +        Delta {
-> +            nanos: self.inner - other.inner,
+The following commit has been merged into the irq/core branch of tip:
 
-My understanding is that ktime_t, when used as a timestamp, can only
-have a value in range [0, i64::MAX], so this substraction here never
-overflows, maybe we want add a comment here?
+Commit-ID:     ef4c675dc2961ee533bdc1ea20390761df0af5be
+Gitweb:        https://git.kernel.org/tip/ef4c675dc2961ee533bdc1ea20390761df0af5be
+Author:        Bart Van Assche <bvanassche@acm.org>
+AuthorDate:    Tue, 15 Oct 2024 12:09:53 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 16 Oct 2024 21:56:59 +02:00
 
-We should really differ two cases: 1) user inputs may cause overflow vs
-2) implementation errors or unexpected hardware errors cause overflow, I
-think.
+genirq: Unexport nr_irqs
 
-Regards,
-Boqun
+Unexport nr_irqs and declare it static now that all code that reads or
+modifies nr_irqs has been converted to number_of_interrupts() /
+set_number_of_interrupts(). Change the type of 'nr_irqs' from 'int' into
+'unsigned int' to match the return type and argument type of the
+irq_get_nr_iqs() / irq_set_nr_irqs() functions.
 
->          }
->      }
->  }
-> -- 
-> 2.43.0
-> 
-> 
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20241015190953.1266194-23-bvanassche@acm.org
+
+---
+ include/linux/irqnr.h | 1 -
+ kernel/irq/irqdesc.c  | 3 +--
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/include/linux/irqnr.h b/include/linux/irqnr.h
+index a33088d..e97206c 100644
+--- a/include/linux/irqnr.h
++++ b/include/linux/irqnr.h
+@@ -5,7 +5,6 @@
+ #include <uapi/linux/irqnr.h>
+ 
+ 
+-extern int nr_irqs;
+ unsigned int irq_get_nr_irqs(void) __pure;
+ unsigned int irq_set_nr_irqs(unsigned int nr);
+ extern struct irq_desc *irq_to_desc(unsigned int irq);
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index b073395..479cf1c 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -138,8 +138,7 @@ static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node,
+ 	desc_smp_init(desc, node, affinity);
+ }
+ 
+-int nr_irqs = NR_IRQS;
+-EXPORT_SYMBOL_GPL(nr_irqs);
++static unsigned int nr_irqs = NR_IRQS;
+ 
+ /**
+  * irq_get_nr_irqs() - Number of interrupts supported by the system.
 
