@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-368836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302099A1579
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:01:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335779A157F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D9BAB24C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED4DE28226E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D75A1D415D;
-	Wed, 16 Oct 2024 21:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4651D3584;
+	Wed, 16 Oct 2024 22:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHYxRThH"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="S1ID1XUI"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFD11D4171
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDF714EC47;
+	Wed, 16 Oct 2024 22:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729115975; cv=none; b=ZApr2YybAKnhOR5ocIhLXdtoHYGTAErziuaVyqorcHZR7dBbz/yFZ5kqKk8q6pCdPr1wzGe89L2fKetGI0GyaAHEgVam1fJb1b3GDuEv7MWsKqfsANGKvgy9VJy74KVMNMkxk5UU2TJomHoe+kPrfEZM6PKMA8yoPGMrW91tze0=
+	t=1729116049; cv=none; b=agPyRkpQbnh0f1hAxfIHtf9H78j8Z9WRb1o/bwssx6FF+3J8kskBToJSQVC9fY45CrklGUK0eUf7LBk3QnJXHLu9n1RoWZB/uXIC17sevlsR93V3fdMvPU50T3qo6LqK04ESu6YrArLFSl2CjvC3JLqAi6dUr/wnBiEP7T8OZyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729115975; c=relaxed/simple;
-	bh=gZ85YJG7vfi8u4FQ8plCpOZj3X/b0SrmcIPg3BAgSxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qvXW15ygyweP/11tq6dhbnbh82FiJmG99alkEk+aHORlkIydrE7lKVKnRIeGjR4nbKb0E7+fkL6yJeItzngEMztgq49pCIajUuYMUGITwNbW7wIrBkPhvd4bnIrrVLa8aXAbmq+jVYBKk3rXB9mRVQbwQb5LzsKJ2sdIQLkhkFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHYxRThH; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4311420b675so3025535e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729115972; x=1729720772; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ki1tK0lXvAt5fjPsKWDnYQ8CptODlSuCyrJG5QK7fGU=;
-        b=hHYxRThHAgoGtSA91y52A02RTY1T6zy7MbeZ74hLr6fiJHHWHsNG522tZU96JksAHa
-         uqtvP0qR88MHrXl6CbB4vWar5+bO/VqLkkYJVtM7hd2DwaRHQO4XgutDc51CQUp9JiAb
-         aBsosPaek2XT7mOWSg8yTdgKGqOPw7g5T5sKbbCqAzac9PE75fL/qwQbygguMADCdkaH
-         AdrBE2/4AeimC9r7PW0eCnIkIeypQaYbxo2DM66WqkLDRQSQJ2HiPt593z7iFvJ10SBp
-         mRyw7fVaEV175SBMhQoBvXMWyXinBTOIg5BLY9o1G9hwfJFmRh8LK7e3zFSPgehG1HIP
-         oFwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729115972; x=1729720772;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ki1tK0lXvAt5fjPsKWDnYQ8CptODlSuCyrJG5QK7fGU=;
-        b=bMn9vBcwMsVuZQhd9sCgHG5wxs+2pkzFO/gHt/x60NuN3NsuLGUthjcA8jt1MzSkHG
-         wxZ+oEQZrVQ2YnnyvFzBvt6kleHTsoIp+KKjCWqkRCfR3pRTmuLsEwYzc2o8EQ3TfL/i
-         3VHrd5+M8+nn/UMnm6DGf6LnOsQjs0AnYZ1QswAsLZUht1nsM7Y5ZPsJJp/KZqzESgHQ
-         lm2kM29yV941SeIdLiBwWKmSZonOPE6RzpEv7xPVadmj5T4/vbFZtQ5gb0U8GGOWqZ/2
-         RO8lASj6IpM/cY9xNmGH8xzQVHZK4Ze4rcuMY++NBRZManjxTQFwKtZ3uytJHqagR3bL
-         mqNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPS5fXl26okq4zdwtLc/NEd0bH/a09wkRiZY1a9CJZztSrYEgKurv/cY+T9xTbdAJazEvj++iMmuUriKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1HyFzxIXdItHfj1LGRENWgJ+RjUsH9UiiJoJfKIMdaObyeWdU
-	5bzxXf48FFodxwOocxiW29REvvEIQ4icw58uVsvGxXr+e23xYaLJreTV3wU05UI=
-X-Google-Smtp-Source: AGHT+IFioaXXZK1Tmi+xpk2KBU077R3Z41+bL9fy1kfiTTA6z5vvkSfT0PCGZlciKZoWGT4OuQ40rA==
-X-Received: by 2002:a05:600c:6745:b0:431:40ca:ce6e with SMTP id 5b1f17b1804b1-4314a3acc32mr45668755e9.31.1729115972185;
-        Wed, 16 Oct 2024 14:59:32 -0700 (PDT)
-Received: from localhost.localdomain ([2.125.184.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c3bc75sm5888255e9.12.2024.10.16.14.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 14:59:31 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: linux-sound@vger.kernel.org,
-	srinivas.kandagatla@linaro.org,
-	broonie@kernel.org
-Cc: lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-arm-msm@vger.kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: codecs: tx-macro: correct tx_macro_component_drv name
-Date: Wed, 16 Oct 2024 22:59:30 +0100
-Message-ID: <20241016215930.1144527-1-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729116049; c=relaxed/simple;
+	bh=xwyCusH+SopIhC3oIPu4xYN2h6QDfJpgc3rvG/upU7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5FkFkMjGspcrQxn7LOSkfy33yJK1y9rUMPp51X88NmY5Y+uFkNU4PrBmTdBftWcunZqfeo/SdteqNQ2uNn31pk+zKr4UgGAphlQDgwe9j4h9n90oP5bIAtGyUOT9+MB5ec8lo//eTBlhp8rD0JGnyOyz8wUyvQwHj/x5cgl7rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=S1ID1XUI; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=x/5rC1xxa1L+8foNZ96vhDMYxXts5+xHlK0v36f7pTo=; b=S1ID1XUIpYRZxd95Lq9A6uoH8N
+	8IDRXXr9OBR+TBeJNazOHCmmP5yAu522EddTdoOekBTXwTX2aevD5aLUmdKdWVJoMkKh+2DTIoKpf
+	LysiBhB2jRJ9QwoPxRLuzpLqzgtWVCc2Y8RbvQG6xyoqxop0a1bVBNsxJcbnBX+SXcVxsxCfWqXrO
+	EOYKiVsqLkjIjklOuESs1Z9eiT3EXkWPuV8ElRSgBnkHybZgeJfzynqdaR1HcAM4AhQOCHD3iHZev
+	2f2L/IeQaBmoRao4h1dyPp4+y1OmWMAkajPsx/R+Anp4vFiLV3FzJhd+wL/cinLl3DwsT2vskX+vu
+	4XLAwGVg==;
+Received: from [179.118.186.49] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t1C3r-00BMoD-HR; Thu, 17 Oct 2024 00:00:07 +0200
+Message-ID: <a26db27a-85ca-46e4-9669-d885db2dd4ae@igalia.com>
+Date: Wed, 16 Oct 2024 18:59:58 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 01/10] libfs: Create the helper function
+ generic_ci_validate_strict_name()
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com, kernel-dev@igalia.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org
+References: <20241010-tonyk-tmpfs-v6-0-79f0ae02e4c8@igalia.com>
+ <20241010-tonyk-tmpfs-v6-1-79f0ae02e4c8@igalia.com>
+ <87bjzls6ff.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <87bjzls6ff.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-It should be actually TX-MACRO rather than RX-MACRO.
-Rx_macro_component_drv name is RX-MACRO.
+Em 15/10/2024 12:59, Gabriel Krisman Bertazi escreveu:
+> André Almeida <andrealmeid@igalia.com> writes:
+> 
+>> +static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
+>> +{
+>> +	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
+>> +		return true;
+>> +
+>> +	/*
+>> +	 * A casefold dir must have a encoding set, unless the filesystem
+>> +	 * is corrupted
+>> +	 */
+>> +	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
+>> +		return true;
+>> +
+>> +	return utf8_validate(dir->i_sb->s_encoding, name);
+> 
+> There is something fishy here.  Concerningly, the fstests test doesn't
+> catch it.
+> 
+> utf8_validate is defined as:
+> 
+>    int utf8_validate(const struct unicode_map *um, const struct qstr *str)
+> 
+> Which returns 0 on success and !0 on error. Thus, when casting to bool,
+> the return code should be negated.
+> 
+> But generic/556 doesn't fail. That's because we are over cautious, and
+> also check the string at the end of generic_ci_d_hash.  So we never
+> really reach utf8_validate in the tested case.
+> 
+> But if you comment the final if in generic_ci_d_hash, you'll see this
+> patchset regresses the fstests case generic/556 over ext4.
+> 
+> We really need the check in both places, though.  We don't want to rely
+> on the behavior of generic_ci_d_hash to block invalid filenames, as that
+> might change.
+> 
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- sound/soc/codecs/lpass-tx-macro.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks Krisman! Nice catch. I fixed this for the next version. Testing 
+with the modified generic_ci_d_hash(), I also realized that the 
+validation was in the wrong place and leaving an inode behind, this fixed:
 
-diff --git a/sound/soc/codecs/lpass-tx-macro.c b/sound/soc/codecs/lpass-tx-macro.c
-index a134584acf90..74e69572796b 100644
---- a/sound/soc/codecs/lpass-tx-macro.c
-+++ b/sound/soc/codecs/lpass-tx-macro.c
-@@ -2230,7 +2230,7 @@ static int tx_macro_register_mclk_output(struct tx_macro *tx)
- }
- 
- static const struct snd_soc_component_driver tx_macro_component_drv = {
--	.name = "RX-MACRO",
-+	.name = "TX-MACRO",
- 	.probe = tx_macro_component_probe,
- 	.controls = tx_macro_snd_controls,
- 	.num_controls = ARRAY_SIZE(tx_macro_snd_controls),
--- 
-2.45.2
+diff --git a/mm/shmem.c b/mm/shmem.c
+index eb1ea1f3b37c..7bd7ca5777af 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3624,13 +3624,13 @@ shmem_mknod(struct mnt_idmap *idmap, struct 
+inode *dir,
+         struct inode *inode;
+         int error;
+
++       if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
++               return -EINVAL;
++
+         inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev, 
+VM_NORESERVE);
+         if (IS_ERR(inode))
+                 return PTR_ERR(inode);
+
+-       if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
+-               return -EINVAL;
+-
 
 
