@@ -1,385 +1,266 @@
-Return-Path: <linux-kernel+bounces-368402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66B39A0F73
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:14:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220719A0F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BAEB281CF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B8B1C214DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DD720FAA3;
-	Wed, 16 Oct 2024 16:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA7320F5DC;
+	Wed, 16 Oct 2024 16:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bb4OWziB"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2057.outbound.protection.outlook.com [40.107.105.57])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZI6MpBSg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1534C205E23;
-	Wed, 16 Oct 2024 16:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729095286; cv=fail; b=G1r38oBN5Jrpu1sjyLltjTfkM7NbK+rcTsBIaIY++FGz5/SQ1/bYiV9f31t9vun2GR2G/fr+2YVGldNpwZd5MnogFBUMIfZyf1xWOcPM3tftHQwPxpgzvPyOw+k19bwriAEtSqgvp0X2qY/IDr1dMv6Zf7fvLvh1FpBnGJdSvUs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729095286; c=relaxed/simple;
-	bh=GSaepaRPCDq0recSF1sw5xFfHkMG6JrdVod6Ki/mLU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=T87MYUXV7fwoKYPBy8BZS3XllQ1NPDFLqwHLadw4FJjY5z2HFoeRYpCJliFFr5fXPoM0m/v8HLg3oy0HmDKXV8LqT/Kv/Ld9nNRPKMfz0jLyHZOA/p5gEIvRqevC/jvfk0feu721mY9qGd6WJzk62xEx+BNynOctd4GgsafqCj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bb4OWziB reason="signature verification failed"; arc=fail smtp.client-ip=40.107.105.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N7Myvqjkq2fED4PKW62ubgmDbqX+ExU+fhR2sgHR1HmPanMAqynxv/uRZHm6SaPYRiTNQZNR9copTQL8V/nKlWLeILTo9DZiXG4zFwOnF05b07jynXiBAeUS6jvL32oSzWgsfdxRMrQVvPRrZoXG4iWJYArjcFPjdcney0oraSF82yBqoWiUJLeHbVFy0ZbHF932OWceeS/c9QlhFa+bMwNXRoVAgAvCzQeAGon76olKH8POO69OYlP9urQP3xTlpd2trbfwbrbHuNjlpmDOrzD0cvd39fU8g8SMs3BaFsoV2C03BrzlxX04gNod/NASuFNf0rTAWyfMyXKK44vJIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NR11Krs1qF147+lPZWp1lLCmio0aekXuZsRy9XrcQTM=;
- b=kNwgCRk6thvtiV1tbrhjBT0+5aHNfDXtr/HqjnjL21MPfSnXMrKC/8VWcGXcxi2i1Vt9d7zo9x3SnwUsJ6ndVcyLqS78m5hK6cOaO0oKIyDC+4N1FQkoUJcpwwOSfXHvGBafKFP2M+XR2UZ9g+xo5j8pffB+3WjRV1Ocxy0BAlyaobpJ+dv9EkSZkhg2Y2cZ68ssZwysf1UPuPPZ/IMMmQj5zN7A2tj9TRAGjLXsBGJSgREkmp1LuWyTnaqYw4ICMMVByK251o438NdSngOgEq+SgWSq5GuYrbX/nMg/BQR7L91aGjIwuwIZPoryKQWoF8mI0vvgTf8JuQIe72p2nA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NR11Krs1qF147+lPZWp1lLCmio0aekXuZsRy9XrcQTM=;
- b=bb4OWziBzQbBOC5l/CMnRT/NR94lLePHAgK+R7IlCcZzh2vwj1muASZ3tO6OyxwdWWQ6SrxllheVCDk647sVcBceUcUfrE16BhFiEGaYCJOgT6PVQLrRr9B89XvG5m19qPfEx32GvJdPiac4SVNjFcLCKAHcVToKibW4EZ+yEiqFSNH0ESO9ZEw98EJNDnXP7tLnDQTi/TyBBRjNlYETBFbl1CGlV2PuoYgvZ0f2tK3yzON9+q/LHTAIVgM1Vn3CuIGjnFXySgspI8PJtvGFEyG+MgTDNH0RrKqBuF6aNPNBR781hFoUwRcXUFgypLZqxV/8Jxz7MvJzteEU+QEhTg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM9PR04MB8556.eurprd04.prod.outlook.com (2603:10a6:20b:437::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Wed, 16 Oct
- 2024 16:14:40 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%3]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 16:14:40 +0000
-Date: Wed, 16 Oct 2024 12:14:32 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: u.kleine-koenig@baylibre.com
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
-	francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
-	kernel@pengutronix.de, krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, marex@denx.de, p.zabel@pengutronix.de,
-	pratikmanvar09@gmail.com, robh@kernel.org, s.hauer@pengutronix.de,
-	shawnguo@kernel.org, xiaoning.wang@nxp.com
-Subject: Re: [PATCH v8 1/1] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-Message-ID: <Zw/maOfa12uoJlO6@lizhi-Precision-Tower-5810>
-References: <20241008194123.1943141-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241008194123.1943141-1-Frank.Li@nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0135.namprd03.prod.outlook.com
- (2603:10b6:a03:33c::20) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E09E12DD8A;
+	Wed, 16 Oct 2024 16:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729095358; cv=none; b=NU0MxKm7x2/u+ULYAwrvMHnSrmt6hLj3siBA/Nmb1F3YHFrKBXK6BCxwFUZVgftZZ9Ugol1NbHK+NL1USub9on3+wp5tiof6tDN7bPZcN8VNUGcFVSxHZH2hk+wQdcnHKWGDLkmtTSrJvWsoDljTdl+F+u7Q3cMNjk1sUwejrWU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729095358; c=relaxed/simple;
+	bh=nDW8GbEo268Zo2f7hNl1SIe4aRSaD6SbOrUXtyjJPYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+OmG6seVdiG5X9Ds9uapVdPXe+ejKQ4zS/+ekgxiVdUaCfi/1PiNunLUOZy19sLrtQp02K+rlTQgL92GY/+0SP/VRgbMlp4410Ex8Wk+IpbNXHxMzUUJZurj4ZpF4sEbCk/iKC6s9FMg3lVBX4O9EcuJkUe9ojMxiZzkDewY5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZI6MpBSg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B6EC4CEC5;
+	Wed, 16 Oct 2024 16:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729095357;
+	bh=nDW8GbEo268Zo2f7hNl1SIe4aRSaD6SbOrUXtyjJPYk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZI6MpBSgspSf4nZyHAYVCUdlokiydyiaBQ+oA4Lw4/LXHZqJpXJGGycdvRYeer07s
+	 Sq4Ucg1vT3mgNexN4t+uriAvNfZOwGHIuj2DNg000fiZCts5L37xmNTPOMklaoBdl1
+	 WgtfTxLMogELdQWCcj9xPXS23wX1v1eBWnJNYZ/QYzUVr/ivJcMhjS1rmgvgWdpmpq
+	 I0sWi6FY7tSRZ4+Fh+fA5VLA/8jcMJbxt6xu2BNoDCo5aeaeTtVhKUVYzZS79fpSzU
+	 1Ckew8u7ZbpEjAaBtc4YI2PMHPHS4N99KPFg2BTA2AXuRBAvjv3HG/r2SZekJFWAr2
+	 t8LiB4efHksrw==
+Date: Wed, 16 Oct 2024 13:15:54 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: vmolnaro@redhat.com
+Cc: linux-perf-users@vger.kernel.org, acme@redhat.com, mpetlan@redhat.com,
+	peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf test: Handle perftool-testsuite_probe failure due
+ to broken DWARF
+Message-ID: <Zw_mutl867MINXPi@x1>
+References: <20241016091930.191761-1-vmolnaro@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM9PR04MB8556:EE_
-X-MS-Office365-Filtering-Correlation-Id: be05e0ea-9f25-4e97-e4d6-08dcedfda393
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|7416014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?mZPMHX3y/yGYOBQhYWvU67SFW4oWB7HPcWcrZCsChRqWyHjnAVYZAl0U3e?=
- =?iso-8859-1?Q?0++WAue73DJ85QYpvFWSu/YPjLMgT7hw1RE+ppadU79rbry2J+eHYzs2Qh?=
- =?iso-8859-1?Q?YkEcwzZ3hWdZ+Cs2+gHJ28iTl8ewocYM64XBy/nE9kV0cZhGe5+FMBsUEK?=
- =?iso-8859-1?Q?wV4p01IFcblZxcC5PwhUm5zM2cEgkJVDMy0VKiiyN7gGy/ubUeNW24PmTc?=
- =?iso-8859-1?Q?sTboiEXozyJsbnHCtYz48zXctFQFAg2CGN0Y8m1WBJt4oRzz+YU7oJcJoC?=
- =?iso-8859-1?Q?VC+UpxxF7fLUG05CCxbk+t1Kzu1fejqJExp8aaHBltelrGrA2WDbK1kXFZ?=
- =?iso-8859-1?Q?UV+1blnkWicU/W07zxOi4JpL9GiaYQE+1/C9VVgFiWs9rfhIEnU54xKSFB?=
- =?iso-8859-1?Q?WHS8ZMoSdMqHNGXkD3m69+3rRVenCi11KzTNeDbHsS8abcCi+SpERRGc1w?=
- =?iso-8859-1?Q?6D8Ppcn3DEa6he4DyijtQDE7f+r7I10vT7Cpb0NUDaXZPpwrmIg89Ztjll?=
- =?iso-8859-1?Q?sGrxMthNml93W3g7KC6xjlHytsVCT1ecf0NjDbqxtGcgQ+m2UKoe4yUlTy?=
- =?iso-8859-1?Q?qoHK9ukIeDQ8A+OAxm1iXLbbncGpLMOviMDHQWAfH5RcCOm7yWang45SzN?=
- =?iso-8859-1?Q?1efM7pQrNgb/crVgHivoIxrYAhNlnf8yoqUhoOF8jnqq6ekGcYQonAk9EX?=
- =?iso-8859-1?Q?d/DCs8tdePEjNkmU1RO2gMXNF51cuk22524n+KTdjSVV2G6p1M9rFZKr17?=
- =?iso-8859-1?Q?aDak/tHkb2KXmVFoJQytxmzjDZ9c/rzQGhWNkmHmzQi+/f6vK/ermtPuPS?=
- =?iso-8859-1?Q?wcy7VLPIs1RdWmfPd/dqCyDaaookRKm2i8SUyktothqgBRpv89HojcUV0v?=
- =?iso-8859-1?Q?iVoXka60sciqkkn6Fr8rhTVFurbN0ySrZXU69qeDpV3m8l8UU2EHcRTtWR?=
- =?iso-8859-1?Q?taTlsZHk27MIZAQwhBUvfvFuPHydDeMs4KMKLKeCV7KHmZ7v28riUjBIQQ?=
- =?iso-8859-1?Q?N3TmMoAMuEoJnAYSCAlTUjudTi9D16x4jFbBPyGT3U4WuZpKmNfL/T3Gl1?=
- =?iso-8859-1?Q?zZhp8iZWzk2SGHHM/cev7XZJi0YGqbT3aA/y3JuBGGgymWNt0z3FOSjqPx?=
- =?iso-8859-1?Q?aNiSOnCY0auHrlHyVmboh9PId1gIAKKRJle/kFKLNvRIcpF+9i4oes/OCt?=
- =?iso-8859-1?Q?OIvRfWqwVhYNtILr1HQHWJTJr39ogxzXyNwPyd8oR3QZ2jvvxnvzMzSSX8?=
- =?iso-8859-1?Q?OfeHISWItU5qiL0BgXja+Qj6WvJu5DMPg6uN+FXG/eeXWRmZoppU8KrJCr?=
- =?iso-8859-1?Q?YgASsyC0cz6gOaJTAWvP8YIsLuxSZfPYJLU0Z8eGHqW3jO6CbLm57p9Xo1?=
- =?iso-8859-1?Q?qSWIndYjG0HBdSrJHJjWXDjp83+VB9gw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?rCJKYKKu6fbn5AxubH1X1hDkq+QygQ7lXROTicEDOMeI3vQPI7yM9Mp1YE?=
- =?iso-8859-1?Q?Gw97y0VRwu9F2ZZi3JA6rx0TRrIDyO1oWEc4vi36Bp6a5JINe/PiYakEJS?=
- =?iso-8859-1?Q?KiwlDmZwSvvVWC4zqcppCZhWeXfdyd9Oc5S/uOMUs1mvDIfhB3Tnhj4r2v?=
- =?iso-8859-1?Q?9H7ni0Kl32xL/7KIh/NlWWWdRAOKJhz0G1tCNvy2F3fHj9NJhpyS6yN/jU?=
- =?iso-8859-1?Q?VVytsMo472/wov3V1aGOFml1FBBr5PZH4yZ6fqhfUCmzyK9U61Fb2V/Tke?=
- =?iso-8859-1?Q?37oFZR+2tc6fz2pcnD3DcDcWBCHZzaeyVATXUs03Zqy9Vd/3RgCxw0rfIH?=
- =?iso-8859-1?Q?a0Yl975Z1E4IE/Tm5E0eeCVeU2OPJJzBXmrpzOEPI5ws71APiCaa25TURu?=
- =?iso-8859-1?Q?QQBUlQ+AFIu1sEUhKRXyY+1q0Zb9EmM5tj6OfkfBlGCYGeKPyGkQmLwk8e?=
- =?iso-8859-1?Q?9KnaLWe14lqTPN8lcwdo+dhAcENEAGv8CLNVtgy6f8baWFgTg/xki3acRo?=
- =?iso-8859-1?Q?TKDbzFHyPzLuPkj17pvaw2/dbcUTdpCV8nxgVCF1MQukt4lLvgDoe/2weX?=
- =?iso-8859-1?Q?bjW/6Lf3xehMfR7WZZBKrcYrdBHZNfXQczuyr8E5V87WnAgSELhMpjt8t5?=
- =?iso-8859-1?Q?WNT0Jx7pG6MGnQ8PdapJSvjA/HUNvvdWgBYJfGjmF77EudHBeGXI7Xe8CE?=
- =?iso-8859-1?Q?3U6mCYapfB6zWdIPn2oH2vQyfHDZ/26ph+iK9qmBgVMs9xFKWJCK4eHPzg?=
- =?iso-8859-1?Q?LR8DBYUjDrnat7apj6+CdDPmRChL4RocSZisBCHjTWSSx+xalJA6SGS8fI?=
- =?iso-8859-1?Q?xm2zaWFimXZVI2fk4loInM2X+qSNjgCNv3Pd7p8AZvJsYqSYiVK8WVwwUl?=
- =?iso-8859-1?Q?jSpVFt5E65cNlk5R/tZBd3TSSKsBOm85Ek/yLhKHrhOP1KNIfL3r+o4tCP?=
- =?iso-8859-1?Q?+Zcebh7/Fplcscf0Ct7dxB4iQIGNtafxhNWdcJbtL2pYfXpW0JZHsgEHWp?=
- =?iso-8859-1?Q?4w+n9HYbUuCaI+PMLc43z7xA0Ac0wZAE+KEWceiiDNX30uNzEInpHCONkb?=
- =?iso-8859-1?Q?aBNN0OoTS4ThAH4GRAU91gtI33V+3djAi/kAFbcADlqScLWowu29FVT2pP?=
- =?iso-8859-1?Q?DJI9LToqrL0BeQS4rAYogqixu+vn1bHcK4lhoLV26y821BUyIInOBrYKlp?=
- =?iso-8859-1?Q?SAjpg1qN2wUI2rZxpL0VGCYs2CwqnPs+w+pdV9wq2meu3a1sEhTVp6g0J/?=
- =?iso-8859-1?Q?T8HznqXKfuy2mQ7YUpUWYxtUz89d63xn22YwFt7vKcXv/nfiyC7Q2Sz65i?=
- =?iso-8859-1?Q?923hN5IZqzty02sCnC9V4xl0+wf5SjkoHvzeobTbMs36dWgWaZawuJCABo?=
- =?iso-8859-1?Q?4KPWKZtv3DeoBz7qjbHYxZBo1geqBJAuZ0jUdnv9twrqBrRT8Yn1Q3WTsk?=
- =?iso-8859-1?Q?5cGf9d5bjNdtc9tYihV8vvLjsOwk4IA2amducYC6fwra0RcigQYQTeTmDg?=
- =?iso-8859-1?Q?6klCzMEJjcZadlS9dhRpKEgmVopi3HuvsOQCnh+1P/x59eQ/ntCS1UVPxT?=
- =?iso-8859-1?Q?arLRm+820crbGs97y7X6e7ahCobICFdhQbEn/ZkboUkop+S0AaeFF5tLwO?=
- =?iso-8859-1?Q?0qd2zYgpzUKac=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be05e0ea-9f25-4e97-e4d6-08dcedfda393
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 16:14:40.7769
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VCDAe+XVRMmk+gAmqx06UUQ8GI45ULIdXHM/8RiCM3cPiWQGhFLOhhNKyeexKR763vH6JpKzptIATMKS2UXyTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8556
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241016091930.191761-1-vmolnaro@redhat.com>
 
-On Tue, Oct 08, 2024 at 03:41:23PM -0400, Frank Li wrote:
-> From: Clark Wang <xiaoning.wang@nxp.com>
->
-> Implement workaround for ERR051198
-> (https://www.nxp.com/docs/en/errata/IMX8MN_0N14Y.pdf)
->
-> PWM output may not function correctly if the FIFO is empty when a new SAR
-> value is programmed
->
-> Description:
->   When the PWM FIFO is empty, a new value programmed to the PWM Sample
->   register (PWM_PWMSAR) will be directly applied even if the current timer
->   period has not expired. If the new SAMPLE value programmed in the
->   PWM_PWMSAR register is less than the previous value, and the PWM counter
->   register (PWM_PWMCNR) that contains the current COUNT value is greater
->   than the new programmed SAMPLE value, the current period will not flip
->   the level. This may result in an output pulse with a duty cycle of 100%.
->
-> Workaround:
->   Program the current SAMPLE value in the PWM_PWMSAR register before
->   updating the new duty cycle to the SAMPLE value in the PWM_PWMSAR
->   register. This will ensure that the new SAMPLE value is modified during
->   a non-empty FIFO, and can be successfully updated after the period
->   expires.
->
-> Write the old SAR value before updating the new duty cycle to SAR. This
-> avoids writing the new value into an empty FIFO.
->
-> This only resolves the issue when the PWM period is longer than 2us
-> (or <500kHz) because write register is not quick enough when PWM period is
-> very short.
->
-> Reproduce steps:
->   cd /sys/class/pwm/pwmchip1/pwm0
->   echo 2000000000 > period     # It is easy to observe by using long period
->   echo 1000000000 > duty_cycle
->   echo 1 > enable
->   echo       8000 > duty_cycle # One full high pulse will be seen by scope
->
-> Fixes: 166091b1894d ("[ARM] MXC: add pwm driver for i.MX SoCs")
-> Reviewed-by: Jun Li <jun.li@nxp.com>
-> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On Wed, Oct 16, 2024 at 11:19:30AM +0200, vmolnaro@redhat.com wrote:
+> From: Veronika Molnarova <vmolnaro@redhat.com>
+>=20
+> Test case test_adding_blacklisted ends in failure if the blacklisted
+> probe is of an assembler function with no DWARF available. At the same
+> time, probing the blacklisted function with ASM DWARF doesn't test the
+> blacklist itself as the failure is a result of the broken DWARF.
+>=20
+> When the broken DWARF output is encountered, check if the probed
+> function was compiled by the assembler. If so, the broken DWARF message
+> is expected and does not report a perf issue, else report a failure.
+> If the ASM DWARF affected the probe, try the next probe on the blacklist.
+> If the first 5 probes are defective due to broken DWARF, skip the test
+> case.
+>=20
+> Fixes: def5480d63c1e847 ("perf testsuite probe: Add test for blacklisted =
+kprobes handling")
+> Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
 > ---
+>  .../base_probe/test_adding_blacklisted.sh     | 74 +++++++++++++++----
+>  1 file changed, 59 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh=
+ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
+> index b5dc10b2a73810b3..f67b3b267ac55269 100755
+> --- a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
+> +++ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
+> @@ -19,35 +19,79 @@
+>  TEST_RESULT=3D0
+> =20
+>  # skip if not supported
+> -BLACKFUNC=3D`head -n 1 /sys/kernel/debug/kprobes/blacklist 2> /dev/null =
+| cut -f2`
+> -if [ -z "$BLACKFUNC" ]; then
+> +BLACKFUNC_LIST=3D`head -n 5 /sys/kernel/debug/kprobes/blacklist 2> /dev/=
+null | cut -f2`
+> +if [ -z "$BLACKFUNC_LIST" ]; then
+>  	print_overall_skipped
+>  	exit 0
+>  fi
+> =20
+> +# chceck if locate is present to find vmlinux with DWARF debug info
 
-Uwe Kleine-König:
+check
 
-	Do you satisfy for what my merged comments's results and do you
-have other comments about this workaround?
+> +locate --help 2&> /dev/null
+> +if [ $? -eq 0 ]; then
+> +	VMLINUX_FILE=3D$(locate -r '/vmlinux$' | xargs -I{} sh -c 'test -f "{}"=
+ && echo "{}"' | grep "$(uname -r)")
+> +fi
 
-best regards
-Frank
+And that matches the running kernel? Maybe its better to use 'perf
+probe' itself to find it:
 
-> Chagne from v7 to v8
-> - combine Uwe's diagram and errata document.
-> - use old period
-> - use udelay(3 * period / 1000)
-> - Only apply workaround when PWM enabled.
->
-> Change from v6 to v7
-> - Add continue write for < 500hz case to try best to workaround this
-> problem.
->
-> Change from v5 to v6
-> - KHz to KHz
-> - sar to SAR
-> - move comments above if
->
-> Change from v4 to v5
-> - fix typo PMW & If
-> - using imx->mmio_base + MX3_PWMSAR
->
-> Change from v3 to v4
-> - none, wrong bump version number
-> Change from v2 to v3
-> - simple workaround implement.
-> - add reproduce steps.
->
-> Change from v1 to v2
-> - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
->   About disable/enable pwm instead of disable/enable irq:
->   Some pmw periphal may sensitive to period. Disable/enable pwm will
-> increase period, althouhg it is okay for most case, such as LED backlight
-> or FAN speed. But some device such servo may require strict period.
->
-> - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
->   Using official errata number
->   fix typo 'filp'
->   add {} for else
->
-> I supposed fixed all previous issues, let me know if I missed one.
-> ---
->  drivers/pwm/pwm-imx27.c | 98 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 96 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-> index 9e2bbf5b4a8ce..0375987194318 100644
-> --- a/drivers/pwm/pwm-imx27.c
-> +++ b/drivers/pwm/pwm-imx27.c
-> @@ -26,6 +26,7 @@
->  #define MX3_PWMSR			0x04    /* PWM Status Register */
->  #define MX3_PWMSAR			0x0C    /* PWM Sample Register */
->  #define MX3_PWMPR			0x10    /* PWM Period Register */
-> +#define MX3_PWMCNR			0x14    /* PWM Counter Register */
->
->  #define MX3_PWMCR_FWM			GENMASK(27, 26)
->  #define MX3_PWMCR_STOPEN		BIT(25)
-> @@ -219,10 +220,12 @@ static void pwm_imx27_wait_fifo_slot(struct pwm_chip *chip,
->  static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->  			   const struct pwm_state *state)
->  {
-> -	unsigned long period_cycles, duty_cycles, prescale;
-> +	unsigned long period_cycles, duty_cycles, prescale, period_us, tmp;
->  	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
->  	unsigned long long c;
->  	unsigned long long clkrate;
-> +	unsigned long flags;
-> +	int val;
->  	int ret;
->  	u32 cr;
->
-> @@ -263,7 +266,98 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->  		pwm_imx27_sw_reset(chip);
->  	}
->
-> -	writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-> +	val = readl(imx->mmio_base + MX3_PWMPR);
-> +	val = val >= MX3_PWMPR_MAX ? MX3_PWMPR_MAX : val;
-> +	cr = readl(imx->mmio_base + MX3_PWMCR);
-> +	tmp = NSEC_PER_SEC * (u64)(val + 2) * MX3_PWMCR_PRESCALER_GET(cr);
-> +	tmp = DIV_ROUND_UP_ULL(tmp, clkrate);
-> +	period_us = DIV_ROUND_UP_ULL(tmp, 1000);
+  root@number:~# perf probe -V icmp_rcv
+  Available variables at icmp_rcv
+          @<icmp_rcv+0>
+                  struct sk_buff* skb
+  root@number:~# perf probe -v -V icmp_rcv |& grep "Using.*for symbols"
+  Using /usr/lib/debug/lib/modules/6.11.3-200.fc40.x86_64/vmlinux for symbo=
+ls
+  root@number:~# perf probe -v -V icmp_rcv |& grep "Using.*for symbols" | s=
+ed -r 's/^Using (.*) for symbols$/\1/'
+  /usr/lib/debug/lib/modules/6.11.3-200.fc40.x86_64/vmlinux
+  root@number:~#
+
+I'll probably add something like this to 'perf buildid-list':
+
+root@number:~# pahole --running_kernel_vmlinux
+/usr/lib/debug/lib/modules/6.11.3-200.fc40.x86_64/vmlinux
+root@number:~# readelf -wi `pahole --running_kernel_vmlinux` | head -12
+Contents of the .debug_info section:
+
+  Compilation Unit @ offset 0:
+   Length:        0x2b082 (32-bit)
+   Version:       5
+   Unit Type:     DW_UT_compile (1)
+   Abbrev Offset: 0
+   Pointer Size:  8
+ <0><c>: Abbrev Number: 246 (DW_TAG_compile_unit)
+    <e>   DW_AT_producer    : (indirect string, offset: 0x4eda9f): GNU C11 =
+14.2.1 20240912 (Red Hat 14.2.1-3) -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -=
+mno-avx -m64 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3D3 -=
+mskip-rax-setup -mtune=3Dgeneric -mno-red-zone -mcmodel=3Dkernel -mindirect=
+-branch=3Dthunk-extern -mindirect-branch-register -mindirect-branch-cs-pref=
+ix -mfunction-return=3Dthunk-extern -mharden-sls=3Dall -mrecord-mcount -mfe=
+ntry -march=3Dx86-64 -g -O2 -std=3Dgnu11 -p -fshort-wchar -funsigned-char -=
+fno-common -fno-PIE -fno-strict-aliasing -fcf-protection=3Dbranch -falign-j=
+umps=3D1 -falign-loops=3D1 -fno-asynchronous-unwind-tables -fno-jump-tables=
+ -fpatchable-function-entry=3D16,16 -fno-delete-null-pointer-checks -fno-al=
+low-store-data-races -fstack-protector-strong -ftrivial-auto-var-init=3Dzer=
+o -fno-stack-clash-protection -fmin-function-alignment=3D16 -fstrict-flex-a=
+rrays=3D3 -fno-strict-overflow -fstack-check=3Dno -fconserve-stack -fno-fun=
+ction-sections -fno-data-sections -fsanitize=3Dbounds-strict -fsanitize=3Ds=
+hift
+    <12>   DW_AT_language    : 29	(C11)
+    <13>   DW_AT_name        : (indirect line string, offset: 0xa546): init=
+/main.c
+root@number:~#
+
 > +
-> +	/*
-> +	 * ERR051198:
-> +	 * PWM: PWM output may not function correctly if the FIFO is empty when
-> +	 * a new SAR value is programmed
-> +	 *
-> +	 * Description:
-> +	 * When the PWM FIFO is empty, a new value programmed to the PWM Sample
-> +	 * register (PWM_PWMSAR) will be directly applied even if the current
-> +	 * timer period has not expired.
-> +	 *
-> +	 * If the new SAMPLE value programmed in the PWM_PWMSAR register is
-> +	 * less than the previous value, and the PWM counter register
-> +	 * (PWM_PWMCNR) that contains the current COUNT value is greater than
-> +	 * the new programmed SAMPLE value, the current period will not flip
-> +	 * the level. This may result in an output pulse with a duty cycle of
-> +	 * 100%.
-> +	 *
-> +	 * Consider a change from
-> +	 *     ________
-> +	 *    /        \______/
-> +	 *    ^      *        ^
-> +	 * to
-> +	 *     ____
-> +	 *    /    \__________/
-> +	 *    ^               ^
-> +	 * At the time marked by *, the new write value will be directly applied
-> +	 * to SAR even the current period is not over if FIFO is empty.
-> +	 *
-> +	 *     ________        ____________________
-> +	 *    /        \______/                    \__________/
-> +	 *    ^               ^      *        ^               ^
-> +	 *    |<-- old SAR -->|               |<-- new SAR -->|
-> +	 *
-> +	 * That is the output is active for a whole period.
-> +	 *
-> +	 * Workaround:
-> +	 * Check new SAR less than old SAR and current counter is in errata
-> +	 * windows, write extra old SAR into FIFO and new SAR will effect at
-> +	 * next period.
-> +	 *
-> +	 * Sometime period is quite long, such as over 1 second. If add old SAR
-> +	 * into FIFO unconditional, new SAR have to wait for next period. It
-> +	 * may be too long.
-> +	 *
-> +	 * Turn off the interrupt to ensure that not IRQ and schedule happen
-> +	 * during above operations. If any irq and schedule happen, counter
-> +	 * in PWM will be out of data and take wrong action.
-> +	 *
-> +	 * Add a safety margin 1.5us because it needs some time to complete
-> +	 * IO write.
-> +	 *
-> +	 * Use writel_relaxed() to minimize the interval between two writes to
-> +	 * the SAR register to increase the fastest PWM frequency supported.
-> +	 *
-> +	 * When the PWM period is longer than 2us(or <500kHz), this workaround
-> +	 * can solve this problem. No software workaround is available if PWM
-> +	 * period is shorter than IO write. Just try best to fill old data
-> +	 * into FIFO.
-> +	 */
-> +	c = clkrate * 1500;
-> +	do_div(c, NSEC_PER_SEC);
+>  # remove all previously added probes
+>  clear_all_probes
+> =20
+> =20
+>  ### adding blacklisted function
+> -
+> -# functions from blacklist should be skipped by perf probe
+> -! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOGS=
+_DIR/adding_blacklisted.err
+> -PERF_EXIT_CODE=3D$?
+> -
+>  REGEX_SCOPE_FAIL=3D"Failed to find scope of probe point"
+>  REGEX_SKIP_MESSAGE=3D" is blacklisted function, skip it\."
+> -REGEX_NOT_FOUND_MESSAGE=3D"Probe point \'$BLACKFUNC\' not found."
+> +REGEX_NOT_FOUND_MESSAGE=3D"Probe point \'$RE_EVENT\' not found."
+>  REGEX_ERROR_MESSAGE=3D"Error: Failed to add events."
+>  REGEX_INVALID_ARGUMENT=3D"Failed to write event: Invalid argument"
+>  REGEX_SYMBOL_FAIL=3D"Failed to find symbol at $RE_ADDRESS"
+> -REGEX_OUT_SECTION=3D"$BLACKFUNC is out of \.\w+, skip it"
+> -../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_F=
+OUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_AR=
+GUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blackl=
+isted.err
+> -CHECK_EXIT_CODE=3D$?
+> -
+> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted funct=
+ion $BLACKFUNC"
+> -(( TEST_RESULT +=3D $? ))
+> -
+> +REGEX_OUT_SECTION=3D"$RE_EVENT is out of \.\w+, skip it"
+> +REGEX_MISSING_DECL_LINE=3D"A function DIE doesn't have decl_line. Maybe =
+broken DWARF?"
 > +
-> +	local_irq_save(flags);
-> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+> +BLACKFUNC=3D""
+> +SKIP_DWARF=3D0
 > +
-> +	if (duty_cycles < imx->duty_cycle && (cr & MX3_PWMCR_EN)) {
-> +		if (period_us < 2) { /* 2us = 500 kHz */
-> +			/* Best effort attempt to fix up >500 kHz case */
-> +			udelay(3 * period_us);
-> +			writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-> +			writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-> +		} else if (val < MX3_PWMSR_FIFOAV_2WORDS) {
-> +			val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
-> +			/*
-> +			 * If counter is close to period, controller may roll over when
-> +			 * next IO write.
-> +			 */
-> +			if ((val + c >= duty_cycles && val < imx->duty_cycle) ||
-> +			    val + c >= period_cycles)
-> +				writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-> +		}
-> +	}
-> +	writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
-> +	local_irq_restore(flags);
+> +for BLACKFUNC in $BLACKFUNC_LIST; do
+> +	echo "Probing $BLACKFUNC"
 > +
->  	writel(period_cycles, imx->mmio_base + MX3_PWMPR);
->
->  	/*
-> --
-> 2.34.1
->
+> +	# functions from blacklist should be skipped by perf probe
+> +	! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOG=
+S_DIR/adding_blacklisted.err
+> +	PERF_EXIT_CODE=3D$?
+> +
+> +	# check for bad DWARF polluting the result
+> +	../common/check_all_patterns_found.pl "$REGEX_MISSING_DECL_LINE" >/dev/=
+null < $LOGS_DIR/adding_blacklisted.err
+> +
+> +	if [ $? -eq 0 ]; then
+> +		SKIP_DWARF=3D1
+> +
+> +		# confirm that the broken DWARF comes from assembler
+> +		if [ -n "$VMLINUX_FILE" ]; then
+> +			readelf -wi "$VMLINUX_FILE" |
+
+Can you cache the output of 'readelf -wi' for the whole vmlinux file so
+that we don't do it more than once?
+
+Doing it for each assembly function in the blacklist probably will add
+up on this test run time.
+
+> +			awk -v probe=3D"$BLACKFUNC" '/DW_AT_language/ { comp_lang =3D $0 }
+> +										$0 ~ probe { if (comp_lang) { print comp_lang }; exit }' |
+> +			grep -q "MIPS assembler"
+> +
+> +			CHECK_EXIT_CODE=3D$?
+> +			if [ $CHECK_EXIT_CODE -ne 0 ]; then
+> +				SKIP_DWARF=3D0 # broken DWARF while available
+> +				break
+> +			fi
+> +		else
+> +			echo "Result polluted by broken DWARF, trying another probe"
+> +		fi
+> +
+> +	else
+> +		../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT=
+_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_=
+ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blac=
+klisted.err
+> +		CHECK_EXIT_CODE=3D$?
+> +
+> +		SKIP_DWARF=3D0
+> +		break
+> +	fi
+> +done
+> +
+> +if [ $SKIP_DWARF -eq 1 ]; then
+> +	print_testcase_skipped "adding blacklisted function $BLACKFUNC"
+> +else
+> +	print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted func=
+tion $BLACKFUNC"
+> +	(( TEST_RESULT +=3D $? ))
+> +fi
+> =20
+>  ### listing not-added probe
+> =20
+> --=20
+> 2.43.0
+>=20
 
