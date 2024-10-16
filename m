@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-367717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61F49A05CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:41:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA949A05CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 245F11C217A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:41:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 376E0283F8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5DB205E31;
-	Wed, 16 Oct 2024 09:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE4D206046;
+	Wed, 16 Oct 2024 09:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FntViEVo"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="H2Wwdbe3"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A96B205E08
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04199205E11
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071692; cv=none; b=pcGtF4FoNuDSTDrebYVEWwASrUqNqau1LS6JB1o3VS6e1pe8R9aA1m/2riEaA4F/4IY6a/a8RWmCxD/rL2pMmITRXE6IkHDTqf7PF9y40Xf5nanO/fWek3JRiFjw1v1wSJnCHibOBKwQL9HuRTp0KMUcdpkw52j5viIK7eC97nE=
+	t=1729071692; cv=none; b=biIZkpvdX12/IFeH/PbU8iFTCouHfJPezfbOMmrRt9f8IlVho3nhLSsNPXaywHllak2O8FnoSAuNL/JS2hAP2kN7kmA7AvEQqbRicb3QdYo1swPiq+TQqLso4jbSM+0f1BbTPJbCgten3PeJky0bb3U0jr8liRt+TFJ8SuqDWzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729071692; c=relaxed/simple;
-	bh=sVZnqwpnk8S59BMYoaDVHb4o2JgmACO7+oCJTiW+8WI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oCg304dbbe61yDhA9HCnXwMDVyMJiEHROfRyd5Q+f3eNPLintMLrijRs0RKbnepDgNv0aXBrMDChyhgrTagnbqOTYjRkyV6e3m92rgZQwpYnecYQUekv/DqedyYGt5cA1tXbYRILojZ9p/VPsQTdngrV3u2eJGwaZwBpSgPhU5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FntViEVo; arc=none smtp.client-ip=209.85.128.46
+	bh=XaIM/rFjfd8OG16y/Nikmp9b2iW0zB8E8uS8AQG/h4g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=USJ1NKMZgFbJdl0EX3bQmexpmHt7Vn1DPQZgj0ndPeA9bvHY7cza6HZ6gDRPAq96P9VHdQRW9+BIhhjmR95BJfDEH5SqciBXqeWhtSigsaqST5pIQ1mkU/3C63SRscci+dV/4M6+4KbfP8DmfTgURz+tY+SOIjRiSw6qJ2FkegQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=H2Wwdbe3; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4314a26002bso10830155e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:41:29 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43111cff9d3so48130745e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:41:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729071688; x=1729676488; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n/eCP0XrWxjwVqv0id7P9/rEghAaXmJu6xIKtnmf1oA=;
-        b=FntViEVoX9o0RFBOat2NryN0C1vRCNUZfYUgbM/DiZfpVbb4Q0rAa0yYaR1NtkY8gC
-         R/z9aMnRHJ+utl630c0BDtUkN6w0ryjO3MlTCdG7kfhGhNgW86JkTK991SCoNxzmnmgr
-         6RgF17JWnG4AVVAOMsM1JgFDpwpZHjFpXV1Hf/ORFpUX3c2TBWDDKSF6T4NapvzYPxRX
-         HfAToAyfUxdD7f8RRy6j0oHbECxfoUUCff7cQCijTG5AdcMt113bhC8OmUqW9M2/zRew
-         RlXbHjig7qo29N+bQHK4JPKNs/wCfGAq5Ff2Us6ri7rzqMoJmHC6Rxj0TsnkmPNkDUfm
-         SJJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729071688; x=1729676488;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729071689; x=1729676489; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=n/eCP0XrWxjwVqv0id7P9/rEghAaXmJu6xIKtnmf1oA=;
-        b=inSt3RDOwcO8eJDl0h8+CORaD4O2AfBnlRMRjjwaUwQNX0HHM02U54b7WGXHtQyB7Q
-         Ed2TU+vNRkjpwum6lOexMhV+5x5Ad/+0RuRT3TLUGMpH1fplZt58oPxohLgTh9w7pRpx
-         1HSCspleOMuTIU0mtcYvGzvqym79R93O2F5X/MPjDzQBpIefB5ImEHQL0pZfJKZOI1HC
-         isE4CBtI3lphecz/cRN/OkDtPFpbuWhIXUMxs4oVhwnW8Is5pOaH0AUM6HjP/jevQXvo
-         xmaLVFByyN/nESWRn2vnlt/Rv0ZKFoqtnVXcf3CmkP+zVn4hG58J8g/0CZQQq84sSYYf
-         ymHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULoq+Wej7iJguJi+Dqr6y6Pe8aVtdyA4g3edA4RCekC5qkg/6DS15gh1fWeoUv5aUHmMRJsZGwALgLjPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytgdX1/CVgB1IfEH1EtEHo7e0Oz3vslI9gc8czEyzu1oWmjpaC
-	Y6lf+cQn8tVzqg/mZ8hJV4oUncFsGA41K9hGANWGp4llCj2UQQy1pMPdGdBGh8PWlNLPGpJ1Xr+
-	7
-X-Google-Smtp-Source: AGHT+IEYxpwMg04b4kVb9eSt7RVotoV1GH3NuOvLOI7E9t231bHLqlKRk0gJybhWsGhROLUbIc780Q==
-X-Received: by 2002:a05:600c:1c14:b0:431:450b:32d8 with SMTP id 5b1f17b1804b1-4314a381ef0mr30630985e9.22.1729071688088;
+        bh=f7lfgvZIb1YenbVpidy5yYoPzUObJFuBK63jpMu7KcE=;
+        b=H2Wwdbe3Wv/WmkqdzRWTvLHKevjeMqLePqkD3sTm2n1okhX7oAf9iuQIVfmVoUy+3I
+         6d4rauesf1Q4ufL+9Dfx7BUSKAygn7T6zNBT2qSFQisPtJQjxWhJtJgM1YyLxy/hTCvq
+         W8h+NTtvUG+jjgDAXTO0u7AwXIyUmcIo1MEn9K6hm8ey7nngNDCNDXwyPEl0SMsp8TGv
+         q8EEPAwPbNyqpCIlrj5BNbUd3+1sRxB0b/dHunCSz2KQlpFiGkyaZmWgR3Ll03yotUqu
+         y1HPYyx15uT1KVEfuGS5GSQtAl5MJeiqswcUy9NDGkhbn/cgt2PeyaxikCl8nqIGV8c3
+         Akxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729071689; x=1729676489;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f7lfgvZIb1YenbVpidy5yYoPzUObJFuBK63jpMu7KcE=;
+        b=a+yS8ewYM6/4QntPuyS/3BGwFJZUlWK7HT8dzj5O2SXAzNFvrfpsNrwofe0/bBp6AY
+         1y3aqSsJtqv6aKChCxuZuwAsDTRTXn08p97ZbTB4DejSqOoFkiBn/2v5TYf47ICsmSJT
+         DZTmI1Njah1wmt20FhYUbD/rT3WcKll1BO2/RduXJcbych2QhX+JG0JgEXKvPPhiIX0S
+         gMPvacC1VjL9JA5Ah3niTw3De/VCVwSMGuoDH2bQNH9PCv0YF+xslFizEvO79A0hChaU
+         Y5RVY5sO8uhhYh+sCBBJADcMUw6fOdksV/20ZRISIuFlxT2m+Tn/87yzrrbQeTJFUYex
+         6iYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuV7RM9nD/vbDD1wM9umYS0VmgKSApruFS1nHT6grNsM1EnBAAaPKBv44rCMtWONREplWMVF9uOjKUwXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqsIP0QfQqzPBOya4sgT7E0yf8VkQdN7fwbRABWaoM4fwB/WU1
+	4uQfvol96o5XDU3woowYEUmwSxtJa5Xxpm6SXnbqJV0c9ucKdJ17BnwOLgp4zwXREppRGwnmf89
+	p
+X-Google-Smtp-Source: AGHT+IHwFqtmKM8A0lRCwrdLulv4mevKVbMVD+7jZsLahbKkNMAMM/eN9mnfnqFlfRXJnm/u2LsGLA==
+X-Received: by 2002:a05:600c:4514:b0:426:60b8:d8ba with SMTP id 5b1f17b1804b1-4314a362525mr25267905e9.28.1729071688994;
         Wed, 16 Oct 2024 02:41:28 -0700 (PDT)
 Received: from [127.0.1.1] ([2a05:6e02:10a5:e010:472a:1760:2b0d:11e9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56998fsm43654735e9.16.2024.10.16.02.41.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56998fsm43654735e9.16.2024.10.16.02.41.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:41:27 -0700 (PDT)
+        Wed, 16 Oct 2024 02:41:28 -0700 (PDT)
 From: Guillaume La Roque <glaroque@baylibre.com>
-Subject: [PATCH v3 0/2] irqchip: Kconfig: Add module support for TI
- inta/intr
-Date: Wed, 16 Oct 2024 11:41:08 +0200
-Message-Id: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
+Date: Wed, 16 Oct 2024 11:41:09 +0200
+Subject: [PATCH v3 1/2] irqchip: Kconfig: module build support for the TI
+ interrupt router driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,9 +79,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADSKD2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
- vPSU3UzU4B8JSMDIxNDA0Mz3ZLM3PyU0pzUYl1DcxNzcwMjQ9OUFAsloPqCotS0zAqwWdGxtbU
- Aj+qR/FsAAAA=
+Message-Id: <20241016-timodules-v3-1-fa71091ade98@baylibre.com>
+References: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
+In-Reply-To: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
  Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
  Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
@@ -92,36 +93,58 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Nicolas Frayer <nfrayer@baylibre.com>
 X-Mailer: b4 0.14.1
 
-Added module support for TI interrupt aggregator and interrupt router
-drivers. Default value for both drivers is ARCH_K3 and the interrupt
-aggregator depends on ARCH_K3 as it contains 64 bit only ops.
-Tested allmodconfig builds with ARCH=arm and ARCH=arm64.
+From: Nicolas Frayer <nfrayer@baylibre.com>
 
-Changes in v3:
-- Add MODULE_LICENSE in drivers
+Added module build support in Kconfig for the TI SCI interrupt router
+driver
 
-Changes in v2:
-- Added depends on ARCH_K3 for the interrupt aggregator driver as it
-  uses
-64 bit ops
-
+Signed-off-by: Nicolas Frayer <nfrayer@baylibre.com>
 Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
 ---
-Nicolas Frayer (2):
-      irqchip: Kconfig: module build support for the TI interrupt router driver
-      irqchip: Kconfig: Added module build support for the TI interrupt aggregator
-
- arch/arm64/Kconfig.platforms      | 2 --
- drivers/irqchip/Kconfig           | 8 +++++---
- drivers/irqchip/irq-ti-sci-inta.c | 1 +
+ arch/arm64/Kconfig.platforms      | 1 -
+ drivers/irqchip/Kconfig           | 3 ++-
  drivers/irqchip/irq-ti-sci-intr.c | 1 +
- 4 files changed, 7 insertions(+), 5 deletions(-)
----
-base-commit: 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
-change-id: 20241016-timodules-174770215dd8
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 6c6d11536b42..393845a3ae5c 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -135,7 +135,6 @@ config ARCH_K3
+ 	select SOC_TI
+ 	select TI_MESSAGE_MANAGER
+ 	select TI_SCI_PROTOCOL
+-	select TI_SCI_INTR_IRQCHIP
+ 	select TI_SCI_INTA_IRQCHIP
+ 	select TI_K3_SOCINFO
+ 	help
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 341cd9ca5a05..a958731404e9 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -533,9 +533,10 @@ config LS1X_IRQ
+ 	  Support for the Loongson-1 platform Interrupt Controller.
+ 
+ config TI_SCI_INTR_IRQCHIP
+-	bool
++	tristate "TI SCI INTR Interrupt Controller"
+ 	depends on TI_SCI_PROTOCOL
+ 	select IRQ_DOMAIN_HIERARCHY
++	default ARCH_K3
+ 	help
+ 	  This enables the irqchip driver support for K3 Interrupt router
+ 	  over TI System Control Interface available on some new TI's SoCs.
+diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
+index c027cd9e4a69..b49a73106c69 100644
+--- a/drivers/irqchip/irq-ti-sci-intr.c
++++ b/drivers/irqchip/irq-ti-sci-intr.c
+@@ -303,3 +303,4 @@ module_platform_driver(ti_sci_intr_irq_domain_driver);
+ 
+ MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ticom>");
+ MODULE_DESCRIPTION("K3 Interrupt Router driver over TI SCI protocol");
++MODULE_LICENSE("GPL");
+
 -- 
-Guillaume La Roque <glaroque@baylibre.com>
+2.34.1
 
 
