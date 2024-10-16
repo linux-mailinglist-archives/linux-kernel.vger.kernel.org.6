@@ -1,98 +1,161 @@
-Return-Path: <linux-kernel+bounces-368556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FAC9A1144
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:10:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCF89A114A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 20:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1B4286262
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:10:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83A5AB24C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE97C210C29;
-	Wed, 16 Oct 2024 18:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76AB210195;
+	Wed, 16 Oct 2024 18:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="scsgIV7v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YwSKQ73I";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L8bYn70U"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26CD18870B;
-	Wed, 16 Oct 2024 18:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D5A18A933;
+	Wed, 16 Oct 2024 18:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729102221; cv=none; b=s9Ffbken3FqngEMFq04YrwBCPdYi95yDzZKNcWvJYQQnYLtgVzrGhb6vBt+yvahAkC0/wAFzzGBet43kaysGwaxeaX+Wzir/jkvov8iK+EaxBaYKzqzpkdFOSKo1cAykhuqqgaz/Ppin/WnnQ6gMlvWslqGNbW/2C1cZRYvR1A8=
+	t=1729102312; cv=none; b=Eh/4Devl0DyeBvLkZMIYc1AF2rS0jKHk25rBLmdSFWflrAjPEj3Dueptl2MLRGTMkzSX9CZoPkVIewFH094luL6sbrgT1J+7YFHYMlmm+aTe73APQKvNSoQCul/AypBmrO0AbaY0ttiACgmhFQYCcbqwL2WMcZucDxr17i4R6lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729102221; c=relaxed/simple;
-	bh=4ouiN0MYYhVbG6KDc/Tt5xYhAg2O11nhP+BMcc2vYAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PnikYVwIHn3bFh9ZzGYCP30ZLkhuQCoFyFlQVXsUzLlzvPM033iiyFfuvqW7COudXgJkPES8ydsVJobd8+t1Gd3daK3Jea4god7/owbwOxyyUX0PxLd9aWTQmotTMqAkjsBUh+LOaKVQvM1B4AIE5GALzGeNiBveSDL+Gue2zUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=scsgIV7v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24137C4CEC5;
-	Wed, 16 Oct 2024 18:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729102217;
-	bh=4ouiN0MYYhVbG6KDc/Tt5xYhAg2O11nhP+BMcc2vYAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=scsgIV7vhp6x1UneNN+lCqLog7fKjoFKyhRHLgxDgyyt2biVhAgiptLQXmMuJ6Glt
-	 gPiPUzfWTFvNX5najsk4jUyYpeuZ/zQhObnKXp2slSjgIDvpDQqxZksO9R4MMW/OTO
-	 mMXi8YWS377qu9ro6RKyUUqCRZgoUTU3115X+bJI=
-Date: Wed, 16 Oct 2024 20:10:14 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Yuanchu Xie <yuanchu@google.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	virtualization@lists.linux.dev, Wei Liu <liuwe@microsoft.com>,
-	Rob Bradford <rbradford@rivosinc.com>, Paul Turner <pjt@google.com>
-Subject: Re: [PATCH v2 1/2] virt: pvmemcontrol: control guest physical memory
- properties
-Message-ID: <2024101637-stretch-tweak-7dff@gregkh>
-References: <20241001011328.2806686-1-yuanchu@google.com>
- <CAJj2-QHKLHTPn-Qoih_=5RbOf3eyenKMmFn0jz6ALQ9KDAbisw@mail.gmail.com>
- <CAJj2-QEEk19yPp45U0fL1GhosRuhZKHxKFo_2O9vLSYjQ=g2RQ@mail.gmail.com>
+	s=arc-20240116; t=1729102312; c=relaxed/simple;
+	bh=+Wn+Zx7onK8xaH489hDkGOEs/OTWomDLOs5/E97dhOw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EHLzGqnEXM4VZoUNwTiiaVPntPxAhUjOH8Q0DmKCn5RXpWg5zbewnAIZe2H9c3CPMLF3uE19dPi7Gd2VJ8Edizq7ChQOLllDmB+jOl6KR2e3Z5gVsoZhDZFyY1UoIZYA5yQYn+15t+Lfwk7f+Ob7VOPXYaPtkVtaQTINavta2nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YwSKQ73I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L8bYn70U; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729102308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kvAgcpABznH0KWyxGhEZ8TIjmB/x70Rq0aMQaMrxErQ=;
+	b=YwSKQ73IfSIQOzsYw2Z8Xx+yQ0BHXvgHtCc5MDOW7dovN+Xw/arAqK/4iORFGhu9LDkVeM
+	PaN3OK05ha29Av82/GLcHiJiSe/N44wKBZBEVH8icElHpV6T6SnVd1Prqpus/3VOXVpjbo
+	+SBstJ3noe0FToeGKBTO/EfJFXSkzUIWlpFYq6mYjVjzJLnfUulR7/DKeoVrKm3xjfWhJd
+	WjVKx5WJvmSYodenqEsR90tSAu5dFCx/pSYY19zCpuwnaAE9NQrKJ1IzJSwvwcmiJ2O4w6
+	ff2giYNKoSuobVqK1MzRECYa/JCV0orkBz1G2fC3XhhB5KDPnUyZ1GNJTcx4Cg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729102308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kvAgcpABznH0KWyxGhEZ8TIjmB/x70Rq0aMQaMrxErQ=;
+	b=L8bYn70UqZcP2iKldhYHnVv7gh4R30TOJKkQc6AMBR/o63oLhDhYbyMRW9dnJusejiZIjT
+	Tv29b2ZaAATa0+Dg==
+To: Marcos Paulo de Souza <mpdesouza@suse.com>, Petr Mladek
+ <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Marcos Paulo
+ de Souza <mpdesouza@suse.com>
+Subject: Re: [PATCH 1/2] printk: Introduce LOUD_CON flag
+In-Reply-To: <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
+References: <20241016-printk-loud-con-v1-0-065e4dad6632@suse.com>
+ <20241016-printk-loud-con-v1-1-065e4dad6632@suse.com>
+Date: Wed, 16 Oct 2024 20:17:48 +0206
+Message-ID: <84plnz29zv.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJj2-QEEk19yPp45U0fL1GhosRuhZKHxKFo_2O9vLSYjQ=g2RQ@mail.gmail.com>
+Content-Type: text/plain
 
-A: http://en.wikipedia.org/wiki/Top_post
-Q: Were do I find info about this thing called top-posting?
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+Hi Marcus,
 
-A: No.
-Q: Should I include quotations after my reply?
+On 2024-10-16, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
+> Introduce LOUD_CON flag to printk.
 
-http://daringfireball.net/2007/07/on_top
+Generally speaking, I do not like the name "LOUD_CON". The flag is
+related to records, not consoles. Something like "NO_SUPPRESS" or
+"FORCE_PRINT" might be more appropriate. Note that naming is not my
+strength.
 
-On Wed, Oct 16, 2024 at 10:53:24AM -0700, Yuanchu Xie wrote:
-> Hi Greg,
-> 
-> Are there any other changes that you'd like to see with this driver
-> since your last comments [1]?
-> 
-> [1] https://lore.kernel.org/linux-mm/2024051414-untie-deviant-ed35@gregkh/
-> 
-> Thanks,
-> Yuanchu
-> 
-> On Mon, Sep 30, 2024 at 6:14 PM Yuanchu Xie <yuanchu@google.com> wrote:
-> >
-> > I made a mistake. This is supposed to be v3.
+> The new flag will make it possible to
+> create a context where printk messages will never be suppressed. This
+> new context information will be stored in the already existing
+> printk_context per-CPU variable. This variable was changed from 'int' to
+> 'unsigned int' to avoid issues with automatic casting.
+>
+> This mechanism will be used in the next patch to create a loud_console
+> context on sysrq handling, removing an existing workaround on the
+> loglevel global variable. The workaround existed to make sure that sysrq
+> header messages were sent to all consoles.
 
-I'd like to see a properly submitted patch series :)
+IMO the more interesting aspect is that the "loud" flag is stored in the
+ringbuffer so that the message is not suppressed, even if printed later
+(for example because it was deferred). This actually even fixes a bug
+since the current workaround will not perform as expected if the sysrq
+records are deferred (for example due to threaded printing or consoles
+that are registered later).
 
-this is long gone from my review queue for this reason alone.
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index beb808f4c367..b893825fe21d 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1321,6 +1321,7 @@ static void boot_delay_msec(int level)
+>  	unsigned long timeout;
+>  
+>  	if ((boot_delay == 0 || system_state >= SYSTEM_RUNNING)
+> +		|| is_printk_console_loud()
+>  		|| suppress_message_printing(level)) {
 
-thanks,
+I do not think "loud" should be a reason to skip the delays. The delays
+are there to slow down printing. I would think that for "loud" messages,
+this is even more important. I suppose this function (as well as
+printk_delay()) would need a new boolean parameter whether it is a
+"loud" message. Then:
 
-greg k-h
+	|| (!loud_con && suppress_message_printing(level))
+
+> @@ -2273,6 +2274,9 @@ int vprintk_store(int facility, int level,
+>  	if (dev_info)
+>  		flags |= LOG_NEWLINE;
+>  
+> +	if (is_printk_console_loud())
+> +		flags |= LOG_LOUD_CON;
+> +
+>  	if (flags & LOG_CONT) {
+>  		prb_rec_init_wr(&r, reserve_size);
+>  		if (prb_reserve_in_last(&e, prb, &r, caller_id, PRINTKRB_RECORD_MAX)) {
+
+I guess LOG_LOUD_CON should also be set in the LOG_CONT case (like
+LOG_NEWLINE does).
+
+> diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
+> index 2b35a9d3919d..4618988baeea 100644
+> --- a/kernel/printk/printk_safe.c
+> +++ b/kernel/printk/printk_safe.c
+> @@ -12,7 +12,30 @@
+>  
+>  #include "internal.h"
+>  
+> -static DEFINE_PER_CPU(int, printk_context);
+> +static DEFINE_PER_CPU(unsigned int, printk_context);
+> +
+> +#define PRINTK_SAFE_CONTEXT_MASK		0x0000ffffU
+> +#define PRINTK_LOUD_CONSOLE_CONTEXT_MASK	0xffff0000U
+> +#define PRINTK_LOUD_CONSOLE_CONTEXT_OFFSET	0x00010000U
+> +
+> +void noinstr printk_loud_console_enter(void)
+> +{
+> +	cant_migrate();
+> +	this_cpu_add(printk_context, PRINTK_LOUD_CONSOLE_CONTEXT_OFFSET);
+> +}
+
+Have you tested this with lockdep? AFAICT, the write_sysrq_trigger()
+path can migrate since it is only using rcu_read_lock() in
+__handle_sysrq().
+
+John Ogness
 
