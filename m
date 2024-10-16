@@ -1,98 +1,137 @@
-Return-Path: <linux-kernel+bounces-367545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FB59A03A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:06:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AAF9A03BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204981F216D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:06:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB321C28F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4ECB1D279F;
-	Wed, 16 Oct 2024 08:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5F61D4171;
+	Wed, 16 Oct 2024 08:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uljULS18"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="khrtD/Mm"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F31E1D1E7A;
-	Wed, 16 Oct 2024 08:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E14E1D1F7B;
+	Wed, 16 Oct 2024 08:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065865; cv=none; b=MUnM8IR2LOt4KyKZfZz3SjXHXppeCB8EHSA6FDtL1t/2WWKGy2lptQe2RF/L0cDDb7KAUTPft4Fi7v4lCXB1rFfbjKl83BlHtIHVQWD3CLu8+imSIttyPnumswZ6/hTpTJR4BW2pbX4kNzDk+rmJXN80JWCbFG67T17sXxlQDog=
+	t=1729066008; cv=none; b=Jw4CPiDcp1Xv6tv6fGzD2YuYUEneDgc1OUp8TWSYWtX1isYmZC/ha/9ILM3I9SSiPlDaw9F0CrGpu76G+i2jbnHJ+yzaWbzikix1+zBvXdBayiZaKO8IP17wzL6aNOTzcrnoLbVClyPWnEx5GVS+5fKNdm28p+eo/qZzR6o7n3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065865; c=relaxed/simple;
-	bh=7EFMniMnM4vFAxl54q7U5HgmZAXyzue7bpEMYWTS2JI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khXdETrBBKnNYKwaJ17vDmh2ou0afOdw4aaenYmO0YitLCch9EQDTybWC1fStjoY1Z+FTzs1Dg+9OT8QlITBLhosGOfH8V/cDgbE2F+9jG+upL1OAEAYGniL8UwPOil3iBjfaTto5WNf2yyXO5jJrZ+oH2++TAV3cBlSKsmR5RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uljULS18; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44ACCC4CEC5;
-	Wed, 16 Oct 2024 08:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729065864;
-	bh=7EFMniMnM4vFAxl54q7U5HgmZAXyzue7bpEMYWTS2JI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uljULS18j1xz+2gy4x+uTXUw7Fr7Jd1k3cyKk9bTh4mntAGfIzlY5EdEXiFyeVvc0
-	 CY8RHHtlQibLoMG89mOdENWbAWlsgZv+56EgfZFD9GtzhSMxD3rcl2IBUINq4HIZcH
-	 UZkxF+mO4p+EkL10+GpVTM3BXzHzTHQVTPo7WPbI=
+	s=arc-20240116; t=1729066008; c=relaxed/simple;
+	bh=OoWOGY/fJLZ3KKu0Dz/9OyTXJqtsYBG2qgsIrKosHHs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=pK5e41alYi9lkiIQjW6IKdoPRfDxlLYIlSEYN8qDJtFE+ygiUSW+IudRucqZhkhrIUNpIcVg9DLKjaCy14vQqXoB5W3vSdWjova/Nl/pgBO1G2Wx8YrsRYiUcAnSH/jJQcdI6YhEitk6fSmexPoMnDjRwLqyuLqHriP1lLdCUic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=khrtD/Mm; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G3xQ9L011471;
+	Wed, 16 Oct 2024 10:06:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ujwJiGYrgOTn+uhgNNQmIEEtl3sMpGZHZQWu+RiZjSY=; b=khrtD/Mm7Y83qsgZ
+	nO2AgP1P/1jvUN0Aig4IA70mJ8mKWH3sx9IHAR/ffZrB+cic9evP5DSRRYDInkt8
+	8fOr9LlHT/etBg3atLTOI85tM0RjeFrAaFdiGKZFmOMecffj6qRY7dEujiQhJZti
+	ws2q4C8jv5bmSsKQvT6dcHI6OPJi+tPJIqJGZiv0xFIruZ2RYstdgtaPOXPd81Uy
+	69gK3dBMNgoYmui3LSSJE9I+L0vqmXRa7v1JhOEhIf9VrV/UGOS4w7dW0FmNPUNR
+	HnwrX8cYhatCSd8amxvzXoEzXnQtTFU6qsUUqoKRazn7eCoyfardu/4vs7qdhWvU
+	RPsMqg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 429qybc30v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 10:06:26 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8113840056;
+	Wed, 16 Oct 2024 10:05:21 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 29CF92347CF;
+	Wed, 16 Oct 2024 10:04:35 +0200 (CEST)
+Received: from localhost (10.48.86.225) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 16 Oct
+ 2024 10:04:34 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
 Date: Wed, 16 Oct 2024 10:04:21 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: dpenkler@gmail.com, skhan@linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] staging: gpib: Remove a dead condition in if statement
-Message-ID: <2024101654-jasmine-ransack-7190@gregkh>
-References: <20241016075319.4092-1-everestkc@everestkc.com.np>
+Subject: [PATCH v4 4/4] arm64: dts: st: add RNG node on stm32mp251
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016075319.4092-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241016-rng-mp25-v2-v4-4-5dca590cb092@foss.st.com>
+References: <20241016-rng-mp25-v2-v4-0-5dca590cb092@foss.st.com>
+In-Reply-To: <20241016-rng-mp25-v2-v4-0-5dca590cb092@foss.st.com>
+To: Olivia Mackall <olivia@selenic.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>, <marex@denx.de>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Gatien Chevallier <gatien.chevallier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Wed, Oct 16, 2024 at 01:53:18AM -0600, Everest K.C. wrote:
-> The variable `residue` is an unsigned int, also the function
-> `fluke_get_dma_residue` returns an unsigned int. The value of
-> an unsigned int can only be 0 at minimum.
-> The less-than-zero comparison can never be true.
-> Fix it by removing the dead condition in the if statement.
-> 
-> This issue was reported by Coverity Scan.
-> Report:
-> CID 1600782: (#1 of 1): Macro compares unsigned to 0 (NO_EFFECT)
-> unsigned_compare: This less-than-zero comparison of an unsigned value
-> is never true. residue < 0U.
-> 
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
-> V1 -> V2: - Fixed typo of comparison in changelog
->           - Removed Fixes tag 
-> 
->  drivers/staging/gpib/eastwood/fluke_gpib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/staging/gpib/eastwood/fluke_gpib.c
-> index f9f149db222d..51b4f9891a34 100644
-> --- a/drivers/staging/gpib/eastwood/fluke_gpib.c
-> +++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
-> @@ -644,7 +644,7 @@ static int fluke_dma_read(gpib_board_t *board, uint8_t *buffer,
->  	 */
->  	usleep_range(10, 15);
->  	residue = fluke_get_dma_residue(e_priv->dma_channel, dma_cookie);
-> -	if (WARN_ON_ONCE(residue > length || residue < 0))
-> +	if (WARN_ON_ONCE(residue > length))
+Update the device-tree stm32mp251.dtsi by adding the Random Number
+Generator(RNG) node.
 
-No, this is incorrect, now we never notice is the call to
-fluke_get_dma_residue() has failed.  Please fix that bug instead (hint,
-Covertity is giving you a pointer to where something might be wrong, but
-this change is NOT how to fix it.)
+Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Reviewed-by: Marek Vasut <marex@denx.de>
+---
+Changes in V3
+	-Applied Marek tag
 
-thanks,
+Changes in V2
+	-Renamed RNG clocks to "core" and "bus"
+---
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-greg k-h
+diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+index 1167cf63d7e87aaa15c5c1ed70a9f6511fd818d4..273da5f62294422b587b13404b499b5ffe6c148e 100644
+--- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
++++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+@@ -493,6 +493,16 @@ uart8: serial@40380000 {
+ 				status = "disabled";
+ 			};
+ 
++			rng: rng@42020000 {
++				compatible = "st,stm32mp25-rng";
++				reg = <0x42020000 0x400>;
++				clocks = <&clk_rcbsec>, <&rcc CK_BUS_RNG>;
++				clock-names = "core", "bus";
++				resets = <&rcc RNG_R>;
++				access-controllers = <&rifsc 92>;
++				status = "disabled";
++			};
++
+ 			spi8: spi@46020000 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+
+-- 
+2.25.1
+
 
