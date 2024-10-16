@@ -1,175 +1,170 @@
-Return-Path: <linux-kernel+bounces-367111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA3599FEB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5117F99FEBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 04:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA742867E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BFE1286C0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 02:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3396D158D93;
-	Wed, 16 Oct 2024 02:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0126C15821A;
+	Wed, 16 Oct 2024 02:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="fCiLcc8z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cgMiPPYM"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ULTqGZWT"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A8621E3BF;
-	Wed, 16 Oct 2024 02:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BECA13B2A9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729045105; cv=none; b=pigJuWJAMx5rSJgAqnTc7KZxtpC2g4rloNQC44CpWABqLitk2E7vnPSX2Hefd1h08LNjYI1c6Mo+P2L80MVfX/6kOIiyxrZZsKr+JJR6XqxvWNBTO5mRIUoPPxSRwLAVXdgHErnial1mI86bRrYFrqNSpqPlZJAWZz69CVO/MBY=
+	t=1729045347; cv=none; b=XJxKx+1aIfIrAocZ0XxYwp82pFhKQVpQ+yYx6kE1a+auz57ZTBxOJ0T8lxd1FARBwko8VGU2xQQt+NzUuRAo2A/NlUDyQzgZT9RjFXI2dpJ6u8ZTOcaN3jgTB+7vkgdCzCVj25qgMUY9UGKG6cZ0FqIuffBo5hPngVzhSeJ1fmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729045105; c=relaxed/simple;
-	bh=5LE6tYu+X0uch1HLayLKo3gSu2cuTkosIXol167hqB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMC+Mr0YFOn9EHZy7mHqARoZmYFsKhYj3XdYk0pEU4iQxY4jkUPDUuH0J5yYtroBdT+EX2duE+p7mEr7anzOqUdFxllIDHS7g1DxVAqEn5zzkivQjHfpRVHmziraX1hylQPYLjnN3bQ1oCEg22nhXcojupY9pWO5NPcLkpl7kLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=fCiLcc8z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cgMiPPYM; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 6CCDF114011F;
-	Tue, 15 Oct 2024 22:18:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Tue, 15 Oct 2024 22:18:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729045102;
-	 x=1729131502; bh=Swj7Lbo7ejzQtiVKGVdpJ37CtLEPIJTGJDsXZZH7qAM=; b=
-	fCiLcc8zGKgFcHJu2nHi9P/4MvEC6iSQRyOg1zWRHxlmBlb/PEUd69Ab8RvIzNLU
-	qk/k5JpPP8lhdbGFbCmPwqltHbLcfhV2fLSY7gbukO3895g2ZeoZy7taOak1WYTp
-	XcbpXU0JmAA3oUSOY5lYJokEK04rwChni5aAcAnIQgkobDV0wTa1bnvvs80YcFRw
-	FpVWLpZX7xJKay7LKbRI2mxK4FFMapBc44KJYGysnwStjelKJxvzUrYHewgUujbE
-	95be9f4VL95xbyamWSIOCq0dpm6fdBxoKhdr/sPzJmTGGcMF+vq8wd8vaCg2mhIA
-	7Ds5BYqbz3LCBbZtQxwyqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729045102; x=
-	1729131502; bh=Swj7Lbo7ejzQtiVKGVdpJ37CtLEPIJTGJDsXZZH7qAM=; b=c
-	gMiPPYMv0RLdRoOUNfHkKWyHCbbG07EQteWLMXjwTfNHqktzDiqoCo/6zAQ5oLLe
-	MV7UwXMgCPS/CTDC/WZ+sElfRClY6UT6w5o6AymFtwD5+N1Z7F4lk/XiQtWDs9pN
-	H2/orPowjHUrmgRAHDLvY0153E4wxgHHwpt94pKcBJC+IryFtCS2UJNUbECuyIoc
-	tSVwjolcIf7OTTMzK3hEqB1SX8Dyn0EMusbDxPwB8YCwQXeAkDKrWV6/BukZK48r
-	iI/B+3hVXtUH5GHXzND7gGe/nWWVOZ/B5uM4qXl2wPc8Zd1OOf0b+8bA22je7oDD
-	NnGBUfm8QcNaC1X+Mlnkw==
-X-ME-Sender: <xms:biIPZ1K5mGn6iSrkQOmv7Bht6iwnRXQlREiPC7JeEWsSy1rC3LBweA>
-    <xme:biIPZxKwFGiPNTzsmB-nSCgrblf9HAdeqrcawZP_-piQlI54vq8htizgp7cr4rIeV
-    US7Q78E5OBwKbFDvIA>
-X-ME-Received: <xmr:biIPZ9t798r88r_Q5RBLbm2IPAN7zsqV0wyeSajgTjEVT2Iu1RZnzHf3bkuCG0E6zhMaFxOwV9ZiKyaVEZYbEAhEpjvT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegkedgheekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
-    gggtugfgjgesthekredttddtjeenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
-    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepfeejieet
-    gfegiedtkeeigffgkeelvddtfedttddtleelffdtudevjedvleelvdelnecuffhomhgrih
-    hnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttg
-    dpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhho
-    rhgsohesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhhohhrshhtvghnrdgslhhumh
-    esthhosghluhigrdgtohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtg
-    hpthhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgt
-    phhtthhopehlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:biIPZ2bqbSG_ZKiiniCLN2xTw2tQM9Jebh1v_uTj3u1ANSdSOIeocw>
-    <xmx:biIPZ8Y1sML6Y9Np6n6-rukq6jmAtHQ8Sw-Or2HkEsYe8VgNkJjiUg>
-    <xmx:biIPZ6BlxfwAF5tUSY_zFv98wV1dT9sAcNsTZHHininsI5oiFsdt0g>
-    <xmx:biIPZ6aWd9v7SCb9LJS30-Pw-8wDn_Q9iBupsJdyVBGFbA8AT9kYtA>
-    <xmx:biIPZ6lwCux1FjsC7-KX_rLYlF0oHU4qRn9e9rmJXe64zadIMvuzB0K4>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Oct 2024 22:18:20 -0400 (EDT)
-Date: Wed, 16 Oct 2024 04:18:19 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Bill Wendling <morbo@google.com>
-Cc: Thorsten Blum <thorsten.blum@toblux.com>, Kees Cook <kees@kernel.org>,
-	kent.overstreet@linux.dev, regressions@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ardb@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <Zw8iawAF5W2uzGuh@archlinux>
-References: <ZvV6X5FPBBW7CO1f@archlinux>
- <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
- <Zvg-mDsvvOueGpzs@archlinux>
- <202409281331.1F04259@keescook>
- <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
- <Zv6BEO-1Y0oJ3krr@archlinux>
- <CAGG=3QVecaZfoRrjToToq8=Azh8M0vQ5Q=V8dfhdBnDR8GWy5A@mail.gmail.com>
+	s=arc-20240116; t=1729045347; c=relaxed/simple;
+	bh=NOynqRfViNtUhFapJiYI60gq2G1E0ZSreychgvI/3bM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=W3Shyr3L4Q89WE2Wq7YzcxOdarWOzwYf6AK0pJlAy5qm7FpXhW8Z+jmQXPHPwe3NMCTMbv8a++CT/SMmDGfUIeJ5kmz5vl4rpPzGx1kYCGQiYqDNU0ETUaF4t2cAtciRtsqM/0D060MRM8+K9AriHvEWyEWAWeEmwtpBtGuHcg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ULTqGZWT; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729045340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EqMEPBv9cbTNi1dL6eZXF7Kd8dswrfA1mgY3e9zu5E4=;
+	b=ULTqGZWThzVRjIWzTix80c/Piy17H6duMu8563CHHIeupJaV4GSfC7AxlxVGVX+NBgTEtK
+	z0vpjt0Lx9eVYZQiLhM8Gvm/5mKCLaAUw+PulHntAgIcfglI8I2mDUr/uvPAqFUeveQAe2
+	aHzFN1dk53JF/pJwKn/LBaMZVfTFIBw=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGG=3QVecaZfoRrjToToq8=Azh8M0vQ5Q=V8dfhdBnDR8GWy5A@mail.gmail.com>
-
-On 15 18:22:50, Bill Wendling wrote:
-> On Thu, Oct 3, 2024 at 4:33 AM Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> > On 02 11:18:57, Thorsten Blum wrote:
-> > > On 28. Sep 2024, at 22:34, Kees Cook <kees@kernel.org> wrote:
-> > > > [...]
-> > > >
-> > > > Sorry, I've been out of commission with covid. Globally disabling this
-> > > > macro for clang is not the right solution (way too big a hammer).
-> > > >
-> > > > Until Bill has a fix, we can revert commit
-> > > > 86e92eeeb23741a072fe7532db663250ff2e726a, as the problem is limited to
-> > > > certain situations where 'counted_by' is in use.
-> > >
-> > > I already encountered two other related __counted_by() issues [1][2]
-> > > that are now being reverted. Would it be an option to disable it
-> > > globally, but only for Clang < v19 (where it looks like it'll be fixed)?
-> > >
-> > > Otherwise adding __counted_by() might be a slippery slope for a long
-> > > time and the edge cases don't seem to be that rare anymore.
-> > >
-> > > Thanks,
-> > > Thorsten
-> > >
-> > > [1] https://lore.kernel.org/all/20240909162725.1805-2-thorsten.blum@toblux.com/
-> > > [2] https://lore.kernel.org/all/20240923213809.235128-2-thorsten.blum@linux.dev/
-> >
-> > This issue is now fixed on the llvm main branch:
-> > https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf769fc9a93e8a
-> >
-> > So presumably this will go into 19.1.2, not sure what this means for
-> > distros that ship clang 18. Will they have to be notified to backport
-> > this?
-> >
-> FYI, Clang 19.1.2 shipped with your fix in it.
-> 
-
-Thx for the info.
-
-How should we continue with the "off by 4" issue? The way I see it either
-the kernel has to change struct_size (lots of work) or clang has to get
-an option to follow the kernels behavior. I'm in favor of adding an
-option to clang.
-
-Ideally I think it shouldn't be a global option but one that you can
-make per __bdos invocation. So either inlcude it in type or create a
-separate builtin for it.
-
-What are your thoughts on this?
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <4a18e997-3a94-4248-8923-c3764d12b0d6@huawei.com>
+Date: Wed, 16 Oct 2024 10:21:30 +0800
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>,
+ akpm@linux-foundation.org,
+ david@fromorbit.com,
+ zhengqi.arch@bytedance.com,
+ roman.gushchin@linux.dev,
+ linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ wangweiyang2@huawei.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FD2AA126-5885-41C7-ACFD-85C764170B9E@linux.dev>
+References: <20241014032336.482088-1-chenridong@huaweicloud.com>
+ <m3cjozicivz4ydv6ovzkupuzpcvc7uptlhjd3bndpsak3z7ill@6txhj7tpejir>
+ <cbf8475d-5c79-4fa4-b2a1-f553166b0afd@arm.com>
+ <4a18e997-3a94-4248-8923-c3764d12b0d6@huawei.com>
+To: chenridong <chenridong@huawei.com>
+X-Migadu-Flow: FLOW_OUT
 
 
-Best Regards
-Jan
+
+> On Oct 16, 2024, at 09:25, chenridong <chenridong@huawei.com> wrote:
+>=20
+>=20
+>=20
+> On 2024/10/15 14:55, Anshuman Khandual wrote:
+>> On 10/14/24 16:59, Kirill A. Shutemov wrote:
+>>> On Mon, Oct 14, 2024 at 03:23:36AM +0000, Chen Ridong wrote:
+>>>> From: Chen Ridong <chenridong@huawei.com>
+>>>>=20
+>>>> A memleak was found as bellow:
+>>>>=20
+>>>> unreferenced object 0xffff8881010d2a80 (size 32):
+>>>>   comm "mkdir", pid 1559, jiffies 4294932666
+>>>>   hex dump (first 32 bytes):
+>>>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  =
+................
+>>>>     40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  =
+@...............
+>>>>   backtrace (crc 2e7ef6fa):
+>>>>     [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>>>>     [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>>>>     [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>>>>     [<ffffffff81198dd9>] online_css+0x29/0xa0
+>>>>     [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>>>>     [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>>>>     [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>>>>     [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>>>>     [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>>>>     [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>>>>     [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>>>>     [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>>=20
+>>>> In the alloc_shrinker_info function, when shrinker_unit_alloc =
+return
+>>>> err, the info won't be freed. Just fix it.
+>>>>=20
+>>>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for =
+shrinker_info::{map, nr_deferred}")
+>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>> ---
+>>>>  mm/shrinker.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>=20
+>>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>>>> index dc5d2a6fcfc4..92270413190d 100644
+>>>> --- a/mm/shrinker.c
+>>>> +++ b/mm/shrinker.c
+>>>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>>>    err:
+>>>>   mutex_unlock(&shrinker_mutex);
+>>>> + kvfree(info);
+>>>>   free_shrinker_info(memcg);
+>>>>   return -ENOMEM;
+>>>>  }
+>>>=20
+>>> NAK. If in the future there going to one more error case after
+>>> rcu_assign_pointer() we will end up with double free.
+>>>=20
+>>> This should be safer:
+>>>=20
+>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>>> index dc5d2a6fcfc4..763fd556bc7d 100644
+>>> --- a/mm/shrinker.c
+>>> +++ b/mm/shrinker.c
+>>> @@ -87,8 +87,10 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>>   if (!info)
+>>>   goto err;
+>>>   info->map_nr_max =3D shrinker_nr_max;
+>>> - if (shrinker_unit_alloc(info, NULL, nid))
+>>> + if (shrinker_unit_alloc(info, NULL, nid)) {
+>>> + kvfree(info);
+>>>   goto err;
+>>> + }
+>>>   rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>>>   }
+>>>   mutex_unlock(&shrinker_mutex);
+>> Agreed, this is what I mentioned earlier as well.
+>> ------------------------------------------------------------------
+>> I guess kvfree() should be called just after shrinker_unit_alloc()
+>> fails but before calling into "goto err"
+>> ------------------------------------------------------------------
+>=20
+> After discussion, it seems that v1 is acceptable.
+> Hi, Muchun, do you have any other opinions?
+
+I insist on my opinion, not mixing two different approaches
+to do release resources.
+
+Thanks.
+
+>=20
+> Best regards,
+> Ridong
 
 
