@@ -1,144 +1,133 @@
-Return-Path: <linux-kernel+bounces-368307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863E49A0E15
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:25:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8629A9A0E1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B345282C0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB7A1C22878
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D5520E02C;
-	Wed, 16 Oct 2024 15:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E8220F5A1;
+	Wed, 16 Oct 2024 15:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BoQkJ0wG"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="lAJ8Llu2"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711BC20B201
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B07220E02E;
+	Wed, 16 Oct 2024 15:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729092308; cv=none; b=PUwRLoI3g47VWk7oZawT7LitkO1d353+xU9q+IGhmWDW7KmxJ7+oKXx0YmcQ1sijfrR7u4bXIuJ4/DSVFB34Um2BXnXUwHCviMB1kQL9fdiY9wHd2/0WZ6izQhAavVoG4tlx8K+h2OLAM+kzGfeLPOCRPTqKWzTNAk1L4Bsz4aw=
+	t=1729092372; cv=none; b=O/zhphboR+dVS1Fs0kNrcUCoQGA+2BBvNfKJv1vt0By1KYFppXJ2QFQ8p4I6pxgACoSgn1HMzWODorCf+7UNeeQIM7ZLYQCQuIYselTdgQLty0rzdL4jsIYYcN272+bjiVesqtM/hXKH+ChTK8bY3whh2daPQw6WS+9KyMELEsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729092308; c=relaxed/simple;
-	bh=Gxz5OaGC+Qadp7iG3WP91/k0Dd/+X8K1vvRHRws4en0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmetAobKvsaXWXXABU/iCiOgbOzD2XWp8EMp3alsFlwxjEObswkpGXKOxci85GMRvI1U/Lrlom9Ss7YEXa/r2vrq6aFd1+SFLng4Va9/bWW2KuUYJIE10Zx+UUh/E4Z9dYfVl8wjbALUGe4jU+kopJj8uDfrkrigDg1MznEgbAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=BoQkJ0wG; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-288a990b0abso1715826fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:25:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1729092305; x=1729697105; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CjWIdbx6fjNxmaESEdgFKPth3aWiGnOIhiVNj6cHD48=;
-        b=BoQkJ0wG9bqHtvg47LwF2n2J/SaN+RyZZz7yOXr1OgX1UfPtDeAF+psfCem6D7JDcd
-         ckrZFKUYWEP4tFo3HrYfK8Vao96sRY/i3CQ+AAezQZgI0w9hIfqacYLC8qAdlrrV/b6u
-         bwiWI5vsdlEaeuyo1rI+T9aJiVmkYoETd/iQje1BnreFF6cJPsvWDPhxIU379UicF2xC
-         OhtbaBusz7rh5Phb30TYERDHt6WIZ3OqqC1ZzT3stVp2sNEJY/qeAEMseSwL8M9w7W0i
-         ERDoZA46GckrW0xjIwiVEtCF/SFU/GN8Cw8byGFVtzKfNng7MOO1RX7fnwN/0AEva2If
-         u8qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729092305; x=1729697105;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CjWIdbx6fjNxmaESEdgFKPth3aWiGnOIhiVNj6cHD48=;
-        b=S7gG3KFygEjytuih+ZEMpjoupdt6FpjNap+fS6y2IwsOjATA9Xy2QkBRwrV+6fZm76
-         x01hZthPkiarCY/U103hq614ZTuvOeXuOL1Ug9HxGxZV4Cuc4PzbTLBBdH8zYacu1TsP
-         X9jNSqquFpuIkvA45FGyc2I7AUhxA8vYOCv6ABJEIuvJSoVGj6UV0700q8FHFciQGVAg
-         GFRAvJaXEunUHovJ5W1PusH74KpyUREy7Id1BaaUnOuFC2gJUUPo7Jd+k9EVW4lO4EKQ
-         imkYZQ4oTrMfMdkZU/D9JUMTKIi7YMz3nze9U5iXNkJb51YrPj3O0f43RgBMPgFRxo2Y
-         RQww==
-X-Forwarded-Encrypted: i=1; AJvYcCXmUbcDUycmhJnGCtO8o5ux5k6FJQEUfj0teZbJZr/vV+5aEyD5nbZBWxFXWkoe6//RVeg+GAGHMvQr8b4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe7iOwAGTyBlNEa00ULSU5yCBRzXLg+vV0Pa3zy7jllD06EgE8
-	B3O4l5bYNe8ZVqr8wDJ2WGBD7wWvhKHoEjoz0CvnrhwRmcpwNoZEhCOrjBJGU7w=
-X-Google-Smtp-Source: AGHT+IHTbCtN3v7MBgWhJfsSvvyCftMb1j2RJtvVwpHEyVewjlSFT6OguCcs+kE/GdHA1PbG7MjK2g==
-X-Received: by 2002:a05:6871:88a:b0:288:29ae:c981 with SMTP id 586e51a60fabf-288ee1146bcmr3961574fac.43.1729092305303;
-        Wed, 16 Oct 2024 08:25:05 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136395171sm197633985a.84.2024.10.16.08.25.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 08:25:04 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1t15tX-0008zC-Tq;
-	Wed, 16 Oct 2024 12:25:03 -0300
-Date: Wed, 16 Oct 2024 12:25:03 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt
- attach/detach/replace
-Message-ID: <20241016152503.GB4020792@ziepe.ca>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-8-baolu.lu@linux.intel.com>
- <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
- <20241015125420.GK1825128@ziepe.ca>
- <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
+	s=arc-20240116; t=1729092372; c=relaxed/simple;
+	bh=pzNNgDuxImqHyst/YyLSyIA38oXgv7b0NdN2+3YS/yw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NY/27QT9qV4orqAKl23Z8wtVb25klAMgwbBJWnHLwmY69h03vLbYYX1Q9hpkYVtJpw/IFB8bWAG94vU1J3v6vXUiajOBoHLQ9LM5Yx1UHqiS7Pn4U5P5x/4eq8MKZcPFTUpgv3YxzormC5fieeXz/QWZ2WFEguPYRxfAK9nWFt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=lAJ8Llu2; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id C10FD12001D;
+	Wed, 16 Oct 2024 18:26:00 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru C10FD12001D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1729092360;
+	bh=T3Q1msRaeqxF6VzybefXJBK+HzKQABZ1uZVeBIxYoFo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=lAJ8Llu23qIYlVS/UmkWoFAYtBOyPX3negL50vqIGE3ubb/+uiM+WYKeZiF+GWe61
+	 UabP+Dd1WH5CBPUi9PeJneUNhGmukkPtwCJmbQZykAT1x8OfOSEsxV2o1eK3fsuhsy
+	 cTb5FustcsfJyaWxgzhFA5nAdsTgqXFX0E1nBmHcQ6E/Z56MKbac2/3/B/9zy9lvOz
+	 w2RLO+fAidAuxQPMmAI5f9OlpLtPZbjaI4nV01/eFWquhAfyYklW/Umqh3tRUFjC45
+	 wLcycyua/k7TAopaNM7NUi0ZJ+WnpcBCM1arfJB1XHwaREb0WD2AEv8HSrUxp68OM3
+	 +HOayN/AukuQw==
+Received: from smtp.sberdevices.ru (unknown [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 16 Oct 2024 18:26:00 +0300 (MSK)
+From: George Stark <gnstark@salutedevices.com>
+To: <u.kleine-koenig@pengutronix.de>, <neil.armstrong@linaro.org>,
+	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@salutedevices.com>, George Stark <gnstark@salutedevices.com>
+Subject: [PATCH v2 0/4] pwm: meson: Support constant and polarity bits
+Date: Wed, 16 Oct 2024 18:25:49 +0300
+Message-ID: <20241016152553.2321992-1-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188483 [Oct 16 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;lore.kernel.org:7.1.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/10/16 12:29:00
+X-KSMG-LinksScanning: Clean, bases: 2024/10/16 12:30:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/16 12:08:00 #26762169
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Wed, Oct 16, 2024 at 09:58:36AM +0800, Zhangfei Gao wrote:
-> On Tue, 15 Oct 2024 at 20:54, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Tue, Oct 15, 2024 at 11:19:33AM +0800, Zhangfei Gao wrote:
-> > > > +static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
-> > > > +{
-> > > > +       struct device *dev = idev->dev;
-> > > > +       int ret;
-> > > > +
-> > > > +       /*
-> > > > +        * Once we turn on PCI/PRI support for VF, the response failure code
-> > > > +        * should not be forwarded to the hardware due to PRI being a shared
-> > > > +        * resource between PF and VFs. There is no coordination for this
-> > > > +        * shared capability. This waits for a vPRI reset to recover.
-> > > > +        */
-> > > > +       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
-> > > > +               return -EINVAL;
-> > >
-> > > I am using the SMMUv3 stall feature, and need to forward this to hardware,
-> > > And now I am hacking to comment this check.
-> > > Any suggestions?
-> >
-> > Are you using PCI SRIOV and stall together?
-> 
-> Only use smmuv3 stall feature.
+This patch series add support for amlogic's newer PWM IPs hardware features:
+constant and polarity bits.
 
-Then isn't to_pci_dev(dev)->is_virtfn == false?
+Using polarity bit for inverting output signal allows to identify inversion
+in .get_state() callback which can only rely on data read from registers.
 
-That should only be true with SRIOV
+Using constant bit allows to have steady output level when duty cycle is zero or
+equal to period. Without this bit there will always be single-clock spikes on output.
 
-> > FEAT_SVA needs to be deleted, not added too.
-> >
-> > smmu-v3 needs some more fixing to move that
-> > arm_smmu_master_enable_sva() logic into domain attachment.
-> 
-> Will think about this, Thanks Jason
+Those bits are supported in axg, g12 and newer SoC families like s4, a1 etc.
+Tested on g12, a1.
 
-Can you test it if a patch is made?
+Changes in v2:
+  pwm: meson: Support constant and polarity bits
+    - drop separate set_constant() and set_polarity() and move register writings
+      into enable() and disable()
+  pwm: meson: Simplify get_state() callback
+    - add new patch to make .get_state() callback consistent. Since I add new
+      fields to struct meson_pwm_channel either we should fill back all of them
+      from registers or not at all.
+  pwm: meson: Use separate device id data for axg and g12
+    - add splitting amlogic,meson8-pwm-v2 into amlogic,meson-axg-pwm-v2 and
+      amlogic,meson-g12-pwm-v2 with pwm_meson_axg_v2_data for both compatibles.
+    - update commit message
+    - add tag: Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+  pwm: meson: Enable constant and polarity features for g12, axg, s4
+    - add enabling const and polarity to pwm_meson_axg_v2_data
+    - add tag: Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+  link to v1: [1]
 
-Thanks,
-Jason
+[1] https://lore.kernel.org/linux-arm-kernel/20241007193203.1753326-4-gnstark@salutedevices.com/T/
+
+George Stark (4):
+  pwm: meson: Simplify get_state() callback
+  pwm: meson: Support constant and polarity bits
+  pwm: meson: Use separate device id data for axg and g12
+  pwm: meson: Enable constant and polarity features for g12, axg, s4
+
+ drivers/pwm/pwm-meson.c | 103 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 92 insertions(+), 11 deletions(-)
+
+--
+2.25.1
+
 
