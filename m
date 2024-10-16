@@ -1,151 +1,114 @@
-Return-Path: <linux-kernel+bounces-368770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20159A14C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:26:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5749A14C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2CC1F237E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 761471C221EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D1B1D270B;
-	Wed, 16 Oct 2024 21:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FED1D270B;
+	Wed, 16 Oct 2024 21:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4ZVdQXA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBgmZUeK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAFF13B298;
-	Wed, 16 Oct 2024 21:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B10F13B298;
+	Wed, 16 Oct 2024 21:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729113976; cv=none; b=FraUequn9kW845VijZ5plWiMbgQKpQ3oNE/FTOuEpSc172X8hcvjIPUkA6YGtd7SAuUS8mSoZ2RvcvVYJsCVlHYyMGrTu5kcrAvYOOV5qZnhI5P46KkFCA3Hw26piggbc96KBMexE9VjB666EHcQc+b17vP0v3P8MqwL4927MAQ=
+	t=1729114060; cv=none; b=o1CGhtk4maf8momyuK8DYgGOPdVnAM6b3d5Y6yQdQHk4JUcxyBRmnoHQYXYhZ0D4xs6ETUGCAsfdATRKgSSpTlelxksEm2M0zJF7HDy/yRfPYLG+Rv4UjxWBRPBJdE3817p4g0F8sEyoWved7opFQKQUatLvqdsJlGhHM4nkKeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729113976; c=relaxed/simple;
-	bh=w2AniAgKUA3iOAqj3cDVFxrqdHgqKwGWULpMr0zhr9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqSQrbDRZmknx7fuKQ2TH9MgpNj1mor+0gAXGvZn/IBZIo5FiUdjC63QzRKyUlvFgXbFcXS/mSgm0qP1TsdxiyAe+0vDgB8JYWCJkiT33q6N0A6Kw7tUXskuiQMePJumQQcP4R8kBjW6/bLf+9WDCgFbPtMAAog/ubDWWF+ZANQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4ZVdQXA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E26BC4CEC5;
-	Wed, 16 Oct 2024 21:26:16 +0000 (UTC)
+	s=arc-20240116; t=1729114060; c=relaxed/simple;
+	bh=X6QgoSZZJwiZ7FyB/Q/sbjO7mW4zKkNXk6i4bp9s/UI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iPcSHUcQ7OYdsUUWT//rAP+L7moqNWBybf2TwoEi/VvnySHb8wlyVQK04Wh/wTTaiN5zjft5L1nqm/LYklDUbQOl3JDyfaSehc0ugrtN0FNJpB3uELgAfxzI2bExDBxvPjB31q9i/EqVQd65Ae8ndhvNG7xpxlCyXXh9f/Rf6Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBgmZUeK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB8EC4CEC5;
+	Wed, 16 Oct 2024 21:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729113976;
-	bh=w2AniAgKUA3iOAqj3cDVFxrqdHgqKwGWULpMr0zhr9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E4ZVdQXAM5yf8VYAXJnchAT4o0+WSx0YVDSNkWnhXo25iJ56AiSQFc2RzAHjStxBR
-	 0+Mi9nWaMS0673bDbT9wAx4lBTKdyKBinZ9LTRw6gNG4LHtmHhCJ1y4GPtznvX9A7s
-	 pF0gmcOdle3eA9YC249VOGVVlvZ0rJ/XQNtzgUgPQhSlN+Zww4J5Esi30H3y3qMKU0
-	 QO6pL0a3abUM/5rJqiTCppVvS9kKtiQr/swm9IiImXhd0PsSeARBzXtQOyk0+XB0nV
-	 r6W+gxsmelg1cP8MBc8A3z2/D7bhkQzGbUtGz74L7fjR5+yw88oREwl7Qg5Cz/pPYE
-	 jFNzIpLJ4iL3A==
-Date: Wed, 16 Oct 2024 14:26:13 -0700
-From: Kees Cook <kees@kernel.org>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, jannh@google.com,
-	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org,
-	oleg@redhat.com, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	jorgelo@chromium.org, sroettger@google.com, ojeda@kernel.org,
-	adobriyan@gmail.com, anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, hch@lst.de,
-	peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com,
-	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
-	ardb@kernel.org, Liam.Howlett@oracle.com, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	lorenzo.stoakes@oracle.com
-Subject: Re: [RFC PATCH v2 1/1] exec: seal system mappings
-Message-ID: <202410161424.FA6DBA7D91@keescook>
-References: <20241014215022.68530-1-jeffxu@google.com>
- <20241014215022.68530-2-jeffxu@google.com>
+	s=k20201202; t=1729114059;
+	bh=X6QgoSZZJwiZ7FyB/Q/sbjO7mW4zKkNXk6i4bp9s/UI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iBgmZUeKzZ7yfDM2XjJBtDoEt7R1jZ23lE+DnonRgX9kEt/EhxsfIhO2QBqsaDElk
+	 9e1G15hDI6l2XCWQVV3lWP3SAWr1sOwEEoYxCCETUvD4yvy7z31GN1jLt2OmE9D/4n
+	 v4+AcZ+tFlqEUvKanLjFQtq2+0XRdft/VBqe1zM4n4RjZ+TYXyXmdqV8Yg049TA9Wk
+	 6DZuM/nwnHmDmhBHwuOzWtgH/e9jOyq64AVHElxJCDsqWld8cpQTg1zKKLVr3GszMk
+	 VC4x6bOX8FZ+7D1xPpukjGJRQk4gV/Q4xJSfdGnoP5wFBIFfSqWUNtKHIEOd5mLfDE
+	 S4c/q+PJzyKJg==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	patches@lists.linux.dev,
+	kunit-dev@googlegroups.com
+Subject: [PATCH] clk: Allow kunit tests to run without OF_OVERLAY enabled
+Date: Wed, 16 Oct 2024 14:27:37 -0700
+Message-ID: <20241016212738.897691-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014215022.68530-2-jeffxu@google.com>
+Content-Transfer-Encoding: 8bit
 
-(I don't think this needs "RFC" any more)
+Some configurations want to enable CONFIG_KUNIT without enabling
+CONFIG_OF_OVERLAY. The kunit overlay code already skips if
+CONFIG_OF_OVERLAY isn't enabled, so these selects here aren't really
+doing anything besides making it easier to run the tests without them
+skipping. Remove the select and move the config setting to the
+drivers/clk/.kunitconfig file so that the clk tests can be run with or
+without CONFIG_OF_OVERLAY set to test either behavior.
 
-On Mon, Oct 14, 2024 at 09:50:20PM +0000, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
-> 
-> Seal vdso, vvar, sigpage, uprobes and vsyscall.
-> 
-> Those mappings are readonly or executable only, sealing can protect
-> them from ever changing during the life time of the process. For
-> complete descriptions of memory sealing, please see mseal.rst [1].
-> 
-> System mappings such as vdso, vvar, and sigpage (for arm) are
-> generated by the kernel during program initialization. These mappings
-> are designated as non-writable, and sealing them will prevent them
-> from ever becoming writeable.
-> 
-> Unlike the aforementioned mappings, the uprobe mapping is not
-> established during program startup. However, its lifetime is the same
-> as the process's lifetime [2], thus sealable.
-> 
-> The vdso, vvar, sigpage, and uprobe mappings all invoke the
-> _install_special_mapping() function. As no other mappings utilize this
-> function, it is logical to incorporate sealing logic within
-> _install_special_mapping(). This approach avoids the necessity of
-> modifying code across various architecture-specific implementations.
-> 
-> The vsyscall mapping, which has its own initialization function, is
-> sealed in the XONLY case, it seems to be the most common and secure
-> case of using vsyscall.
-> 
-> It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
-> alter the mapping of vdso, vvar, and sigpage during restore
-> operations. Consequently, this feature cannot be universally enabled
-> across all systems. To address this, a kernel configuration option has
-> been introduced to enable or disable this functionality. Note, uprobe
-> is always sealed and not controlled by this kernel configuration.
-> 
-> [1] Documentation/userspace-api/mseal.rst
-> [2] https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com/
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> ---
->  .../admin-guide/kernel-parameters.txt         | 10 ++++
->  arch/x86/entry/vsyscall/vsyscall_64.c         |  9 +++-
->  fs/exec.c                                     | 53 +++++++++++++++++++
->  include/linux/fs.h                            |  1 +
->  kernel/events/uprobes.c                       |  2 +-
->  mm/mmap.c                                     |  1 +
->  security/Kconfig                              | 26 +++++++++
->  7 files changed, 99 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index e7bfe1bde49e..02e5eb23d76f 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1538,6 +1538,16 @@
->  			Permit 'security.evm' to be updated regardless of
->  			current integrity status.
->  
-> +	exec.seal_system_mappings = [KNL]
-> +			Format: { never | always }
-> +			Seal system mappings: vdso, vvar, sigpage, uprobes,
-> +			vsyscall.
-> +			This overwrites KCONFIG CONFIG_SEAL_SYSTEM_MAPPINGS_*
-> +			- 'never':  never seal system mappings.
-> +			- 'always': always seal system mappings.
-> +			If not specified or invalid, default is the KCONFIG value.
-> +			This option has no effect if CONFIG_64BIT=n
-> +
+Fixes: 5776526beb95 ("clk: Add KUnit tests for clk fixed rate basic type")
+Fixes: 274aff8711b2 ("clk: Add KUnit tests for clks registered with struct clk_parent_data")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/.kunitconfig | 1 +
+ drivers/clk/Kconfig      | 2 --
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-Any reason for "always"/"never" instead of the more traditional y/n
-enabled/disabled, etc?
+diff --git a/drivers/clk/.kunitconfig b/drivers/clk/.kunitconfig
+index 54ece9207055..08e26137f3d9 100644
+--- a/drivers/clk/.kunitconfig
++++ b/drivers/clk/.kunitconfig
+@@ -1,5 +1,6 @@
+ CONFIG_KUNIT=y
+ CONFIG_OF=y
++CONFIG_OF_OVERLAY=y
+ CONFIG_COMMON_CLK=y
+ CONFIG_CLK_KUNIT_TEST=y
+ CONFIG_CLK_FIXED_RATE_KUNIT_TEST=y
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 299bc678ed1b..0fe07a594b4e 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -517,7 +517,6 @@ config CLK_KUNIT_TEST
+ 	tristate "Basic Clock Framework Kunit Tests" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+ 	default KUNIT_ALL_TESTS
+-	select OF_OVERLAY if OF
+ 	select DTC
+ 	help
+ 	  Kunit tests for the common clock framework.
+@@ -526,7 +525,6 @@ config CLK_FIXED_RATE_KUNIT_TEST
+ 	tristate "Basic fixed rate clk type KUnit test" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+ 	default KUNIT_ALL_TESTS
+-	select OF_OVERLAY if OF
+ 	select DTC
+ 	help
+ 	  KUnit tests for the basic fixed rate clk type.
 
-Otherwise, this all makes sense to me.
-
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
 -- 
-Kees Cook
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
 
