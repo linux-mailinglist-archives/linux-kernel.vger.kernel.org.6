@@ -1,122 +1,240 @@
-Return-Path: <linux-kernel+bounces-368391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0AB9A0F52
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:08:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651C39A0F55
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68592285000
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4849D1C226DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B771220F5BF;
-	Wed, 16 Oct 2024 16:08:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF720E03D
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC4E20F5DB;
+	Wed, 16 Oct 2024 16:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YiV7boco"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699D920E026;
+	Wed, 16 Oct 2024 16:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729094888; cv=none; b=TqI/33ZHfzarPrrzazVYmKcSadVHSkCGQ/X9dbyxU2tzyrAHCYflPTUOQEXaKlRVXV5fGkdnCaMSkdWATTWBpU9E/l5jJXVIr7xwgMalHTV/M+6I9V1KbcKzS7PNjNRvDcsJ49Vim7ZxCVTfBYgWJFL02dyD798peejg32Yr9Io=
+	t=1729094915; cv=none; b=AQjIp8uY2GdG9i8+VBip/bMuIqpWolcSINchEzxu64XUl0AKI7ypse+FbMxMq6R3GR4Q/cqkZOmJ3caBYqx3oTAtix65hCiR5LX6P+pU+OCo+ZgpgkvHcN2NhD6sfIR+g1wPVxJfFOw/qA9DKbW8vIavUWyKxhmLYJ26G3W9d0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729094888; c=relaxed/simple;
-	bh=7OH6X9fld2kMyP6pTpcFyCrPl0K0mQXCFWEEjmoi7v4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A1pdqZdeLoc5yO2swNkkcsUAuJCQBC0FI0CODyHoJDzZ4HD/b4FWc+IqZG8NEgxBAFSsea5ChiUNMHOSLw3kUJCWpyBRsVx8BQ+9Mvu784vojeCZRfcQm02KKcuY6iguIlcNRQdDbGV6FihgEEPfIPgdXMzJohSBNxKI/Gv/SaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7CBCFEC;
-	Wed, 16 Oct 2024 09:08:34 -0700 (PDT)
-Received: from [10.1.28.177] (XHFQ2J9959.cambridge.arm.com [10.1.28.177])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5203F71E;
-	Wed, 16 Oct 2024 09:08:02 -0700 (PDT)
-Message-ID: <4fe2408b-7435-41c2-a6b8-82cefeea50ed@arm.com>
-Date: Wed, 16 Oct 2024 17:08:01 +0100
+	s=arc-20240116; t=1729094915; c=relaxed/simple;
+	bh=jBooSS2vXvH048MLHGPfi8vqD/KGcWJg1Ivuptbjel0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lLr5ijpMR9vFJkp7udtU/8tI/ItUwIEbsF+SNKvGccfGIq5KCE4KV7vmEzg+vrBY1NCrDyhqCX5myFjGOUgMW4BHq87XwLBrUhM4p1bHwJHiZ7FCh6U11XPvme23SNheLvchtSk7SqLIqO+DFk9gdoEqQ7dDJrmWROcE6T7Rjuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YiV7boco; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 862AFC0007;
+	Wed, 16 Oct 2024 16:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729094904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QoQSQVa/mheJjIZPZM0X9xv2P9atatHsLsTuLCYWfYw=;
+	b=YiV7bocoGYQLRsGJ590j1uk+okOPrc4k+LKlBohj0I3IvKJLwoXI7UuCcCfr5emncFwalc
+	fJS9Oc+rGFXmXCBWv41kzp/6ojER95OUlkDxehvoBY4S5fqdwvMxh/f5gEsJw3pvBH3yfh
+	hwqdvW1k01uZfcrN4JNH+WHitMqBx4zZrb07IAM6pJAU8WjkoE81lFbNnEBiTZ/Oc/h2S2
+	jqLYY/quEkyt3KGrBgS0V7dsNbX+qOfSYzsdfPIBXa5ZFKw2E1ydG4dHiAdyfRgoTCd69H
+	VlRz153F8NelpMa3VJ4S2fdzkQ28/QEGxi/8QUoP9fOqh6TKqgYAviWW8Ge1eg==
+Date: Wed, 16 Oct 2024 18:08:23 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
+ SoCs
+Message-ID: <20241016160823c22ccb22@mail.local>
+References: <20241015105133.656360-1-ciprianmarian.costea@oss.nxp.com>
+ <20241015105133.656360-2-ciprianmarian.costea@oss.nxp.com>
+ <20241015211540.GA1968867-robh@kernel.org>
+ <20241015212717.GA1983714-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- Donald Dutile <ddutile@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <1fd0dae8-b04a-42b9-9d6f-32100610ef76@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <1fd0dae8-b04a-42b9-9d6f-32100610ef76@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015212717.GA1983714-robh@kernel.org>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 16/10/2024 16:16, David Hildenbrand wrote:
->> Performance Testing
->> ===================
->>
->> I've run some limited performance benchmarks:
->>
->> First, a real-world benchmark that causes a lot of page table manipulation (and
->> therefore we would expect to see regression here if we are going to see it
->> anywhere); kernel compilation. It barely registers a change. Values are times,
->> so smaller is better. All relative to base-4k:
->>
->> |             |    kern |    kern |    user |    user |    real |    real |
->> | config      |    mean |   stdev |    mean |   stdev |    mean |   stdev |
->> |-------------|---------|---------|---------|---------|---------|---------|
->> | base-4k     |    0.0% |    1.1% |    0.0% |    0.3% |    0.0% |    0.3% |
->> | compile-4k  |   -0.2% |    1.1% |   -0.2% |    0.3% |   -0.1% |    0.3% |
->> | boot-4k     |    0.1% |    1.0% |   -0.3% |    0.2% |   -0.2% |    0.2% |
->>
->> The Speedometer JavaScript benchmark also shows no change. Values are runs per
->> min, so bigger is better. All relative to base-4k:
->>
->> | config      |    mean |   stdev |
->> |-------------|---------|---------|
->> | base-4k     |    0.0% |    0.8% |
->> | compile-4k  |    0.4% |    0.8% |
->> | boot-4k     |    0.0% |    0.9% |
->>
->> Finally, I've run some microbenchmarks known to stress page table manipulations
->> (originally from David Hildenbrand). The fork test maps/allocs 1G of anon
->> memory, then measures the cost of fork(). The munmap test maps/allocs 1G of anon
->> memory then measures the cost of munmap()ing it. The fork test is known to be
->> extremely sensitive to any changes that cause instructions to be aligned
->> differently in cachelines. When using this test for other changes, I've seen
->> double digit regressions for the slightest thing, so 12% regression on this test
->> is actually fairly good. This likely represents the extreme worst case for
->> regressions that will be observed across other microbenchmarks (famous last
->> words). Values are times, so smaller is better. All relative to base-4k:
->>
+On 15/10/2024 16:27:17-0500, Rob Herring wrote:
+> On Tue, Oct 15, 2024 at 04:15:40PM -0500, Rob Herring wrote:
+> > On Tue, Oct 15, 2024 at 01:51:30PM +0300, Ciprian Costea wrote:
+> > > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> > > 
+> > > This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
+> > > 
+> > > Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> > > Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> > > Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> > > ---
+> > >  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 102 ++++++++++++++++++
+> > >  1 file changed, 102 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> > > new file mode 100644
+> > > index 000000000000..3a77d4dd8f3d
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> > > @@ -0,0 +1,102 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NXP S32G2/S32G3 Real Time Clock (RTC)
+> > > +
+> > > +maintainers:
+> > > +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> > > +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - enum:
+> > > +          - nxp,s32g2-rtc
+> > > +      - items:
+> > > +          - const: nxp,s32g3-rtc
+> > > +          - const: nxp,s32g2-rtc
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  "#clock-cells":
+> > > +    const: 1
+> > > +
+> > > +  clocks:
+> > > +    items:
+> > > +      - description: ipg clock drives the access to the
+> > > +          RTC iomapped registers
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: ipg
+> > > +
+> > > +  assigned-clocks:
+> > > +    minItems: 1
+> > > +    items:
+> > > +      - description: Runtime clock source. It must be a clock
+> > > +            source for the RTC module. It will be disabled by hardware
+> > > +            during Standby/Suspend.
+> > > +      - description: Standby/Suspend clock source. It is optional
+> > > +            and can be used in case the RTC will continue ticking during
+> > > +            platform/system suspend. RTC hardware module contains a
+> > > +            hardware mux for clock source selection.
+> > 
+> > If the RTC h/w contains a mux, then your mux inputs should be listed in 
+> > 'clocks', not here.
+> > 
+> > > +
+> > > +  assigned-clock-parents:
+> > > +    description: List of phandles to each parent clock.
+> > > +
+> > > +  assigned-clock-rates:
+> > > +    description: List of frequencies for RTC clock sources.
+> > > +            RTC module contains 2 hardware divisors which can be
+> > > +            enabled or not. Hence, available frequencies are the following
+> > > +            parent_freq, parent_freq / 512, parent_freq / 32 or
+> > > +            parent_freq / (512 * 32)
+> > 
+> > In general, assigned-clocks* do not need to be documented and should 
+> > never be required.
+> > 
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - interrupts
+> > > +  - "#clock-cells"
+> > > +  - clocks
+> > > +  - clock-names
+> > > +  - assigned-clocks
+> > > +  - assigned-clock-parents
+> > > +  - assigned-clock-rates
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > > +
+> > > +    rtc0: rtc@40060000 {
+> > > +        compatible = "nxp,s32g3-rtc",
+> > > +                   "nxp,s32g2-rtc";
+> > > +        reg = <0x40060000 0x1000>;
+> > > +        interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+> > > +        #clock-cells = <1>;
+> > > +        clocks = <&clks 54>;
+> > > +        clock-names = "ipg";
+> > > +        /*
+> > > +         * Configuration of default parent clocks.
+> > > +         * 'assigned-clocks' 0-3 IDs are Runtime clock sources
+> > > +         * 4-7 IDs are Suspend/Standby clock sources.
+> > > +         */
+> > > +        assigned-clocks = <&rtc0 2>, <&rtc0 4>;
+> > 
+> > That's weird...
+> > 
+> > > +        assigned-clock-parents = <&clks 56>, <&clks 55>;
+> > 
+> > I'd expect these should be in 'clocks'. I don't think this node should 
+> > be a clock provider unless it provides a clock to something outside the 
+> > RTC.
+> > 
+> > Looks like you are just using assigned-clocks to configure the clock mux 
+> > in the RTC. That's way over complicated. Just define a vendor specific 
+> > property with the mux settings. 
 > 
-> ... and here I am, worrying about much smaller degradation in these micro-
-> benchmark ;) You're right, these are pure micro-benchmarks, and while 12% does
-> sound like "much", even stupid compiler code movement can result in such changes
-> in the fork() micro benchmark.
+> I just read v1 and got told use the clock framework...
 > 
-> So I think this is just fine, and actually "surprisingly" small. And, there is
-> even a way to statically compile a page size and not worry about that at all.
-> 
-> As discussed ahead of times, I consider this change very valuable. In RHEL, the
-> biggest issue is actually the test matrix, that cannot really be reduced
-> significantly ... but it will make shipping/packaging easier.
-> 
-> CCing Don, who did the separate 64k RHEL flavor kernel.
-> 
+> I disagree completely. Tons of h/w blocks have the ability to select 
+> (internal to the block) from multiple clock sources. Making the block a 
+> clock provider to itself is completely pointless and an overkill, and 
+> we *never* do that. Any display controller or audio interface has 
+> mutiple clock sources as just 2 examples.
 
-Thanks, David! I'm planning to investigate and see if I can improve even on that
-12%. I have a couple of ideas. But like you say, I don't think this should be a
-blocker to moving forwards.
+And in 6 months, we are going to learn that the rtc is used to clock the
+wifi chip or whatever and we are going to need to add everything in the
+CCF and we will have an unused property that we are going to have to
+support forever to avoid breaking the ABI. This already happened...
 
+> 
+> However, I don't see why you need the divider config in DT. Can't you 
+> figure out what divider you need based on input frequency? The output 
+> frequency should be fixed, right?
+> 
+> Rob
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
