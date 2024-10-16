@@ -1,123 +1,199 @@
-Return-Path: <linux-kernel+bounces-368854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D75A9A15AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:11:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288BF9A15AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5BE01F228DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:11:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2991C21542
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02B11D414F;
-	Wed, 16 Oct 2024 22:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A581D4359;
+	Wed, 16 Oct 2024 22:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ih7yTjLz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSWnKtOA"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9764314EC47;
-	Wed, 16 Oct 2024 22:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8516B1D4325
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729116651; cv=none; b=Qz+LX2kuMZuU+H8MwxGiv6oXppHtca+kkFauyecrx5pE7y5Xs4ezXlo614KHNzzm3BoES6diwfZizf+YEpl8vPyAH4CxI/6D2f2rQ9JYxL1PNaSokpO7ONCktiI2m7ua+OG/4BbLSLI41A30YlP8PuXhSH5xiLPykyHY+wF9f58=
+	t=1729116656; cv=none; b=pF1UALmYT9VmIMACjO1gTE8HPxjvTXNNUImabl/qDgrMNXit582TgmUMwPrWWNBqBMA1a6knw5iO/M0q3LkfYUdpJQTYiOYTEEqogddjF0aO5S+DU1qZ0F2dCL4y/C4unBwBB6V4yvsk86o4yAuMrcxWgw2yk5IOJ6WVViG/kSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729116651; c=relaxed/simple;
-	bh=2BgZtfKZf2x+57QEEEVp0Z+iLVJA2GU8FZXnbuwkYz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pu0+fnjEZETR7EuGcTPicz7m0mlgWcIfFqZ+6A0Tzur7LmuD5rEPpKt9ofLVSvPQnCu/KXgo9T1DFTok8QaqDjulla+xuiBD1lzrhbIOjUdt01CVhQjLqBPzK28C8QDXjYU1E5GjvYyu67ukESMAV2Vei2l57rsKb3wGpJ+QVtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ih7yTjLz; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729116650; x=1760652650;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2BgZtfKZf2x+57QEEEVp0Z+iLVJA2GU8FZXnbuwkYz0=;
-  b=Ih7yTjLzPNFVZvadL3PJbGRaHjC5/kTsXjEGoKfrJid0QePlF4yOdM5/
-   SZ3aFdy7olYVhLc2WH2WGxrf6eeaHMVH4UqdVRmbJmtQyzCzemOxzm0jz
-   mO8XcKJkBXLYSazQ4f35t82kCKEhOu5PnZOWbY+Bxjlj+km3SiR2F1BQN
-   kUFI5Nu9cCztS5kO7NGagYg48NdUrkmEA2ogLKukohzY+tvGp2+HJnxkZ
-   QDj1pJxCofNZcRfQ+G1xmWMPHc3UrshEJxsW1/jsLsGXckFkbpTHQzvq5
-   8p/jCA7CLGcTNBrZnfwM91wKO6nh95RI2HrvUVNpzAxfLU8yOfYVBa/Ln
-   Q==;
-X-CSE-ConnectionGUID: WaJuhtw7QeiGeWlb+CCh2A==
-X-CSE-MsgGUID: fmu/lbpQQ4OAzOuZPOZjwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="32514392"
-X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
-   d="scan'208";a="32514392"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 15:10:49 -0700
-X-CSE-ConnectionGUID: josMHNayRhqqGc/fpFMzrA==
-X-CSE-MsgGUID: /dxwmPuXTEiivmwyqEsFMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,209,1725346800"; 
-   d="scan'208";a="83423127"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 16 Oct 2024 15:10:46 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1CE7-000LTJ-17;
-	Wed, 16 Oct 2024 22:10:43 +0000
-Date: Thu, 17 Oct 2024 06:10:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	rickard.andersson@axis.com, kernel@axis.com,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>
-Subject: Re: [PATCH v3 2/2] iio: light: Add support for TI OPT4060 color
- sensor
-Message-ID: <202410170546.5rfqxnWM-lkp@intel.com>
-References: <20241015143713.2017626-3-perdaniel.olsson@axis.com>
+	s=arc-20240116; t=1729116656; c=relaxed/simple;
+	bh=DnqN0GYxTQTNhr1sTx2f2oTCRxAX06WOtWLVVwvY7mU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sdBAIJTnC5rHF4onGY7F4qMLg5xTwY3XKuOfyI7kCJMKKroA6RYYP/rmG3ZP/hrCJWYfTIKKQIGkM1JrAnIqpEC/vB9LadvdeBZpn/OtFmp3FmZYSJ1k8bnBXYRvcvsRO6y2YBFCOlf6TQLZtOnBD/rbT80Dk+9F2x4sYxhuN8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSWnKtOA; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315abed18aso269315e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729116652; x=1729721452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zkmU+TMQPcdZQQS44rLXxdRUirokbMiNxtTTnsu7A1M=;
+        b=dSWnKtOA7yw1Owg3mmik+FTQ90RHSGMwPHhQX0LG4gTZ/yg7nIu8ULx488nnf6Y/IG
+         NjeexXsnBp04pQ3pFtpZMvkaB2zs62TPvRJ1JDLlcAfDWNXs9Q+cjlaJJ0LanT/YQMNt
+         CbhBHxn4ySkZoDgUwHNvccqYNido4CrJO/XgCbL7Yn/QdMw9Og6OrGiMgbihq6cERPQZ
+         txt/uHMDQStlfdbOLuZT1LlyxFydyhErsL04yJ9+iGNxDuixOs5l8GFJNv5H5fIFXI5n
+         V4Tmf3JkqU387J0aeoMCN210+s2YOLW2kAqrm9vR+C5H12oiL3KW/xu4Qu/eehUCCMt2
+         aylg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729116652; x=1729721452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zkmU+TMQPcdZQQS44rLXxdRUirokbMiNxtTTnsu7A1M=;
+        b=Lj3+YRgv3DmCuqH7MSGVIytN9AdUb/FYV1ECZv1RF93rjc6uHROtH1t7jT51nuEOxf
+         OnRARoZOmmN8sefK8WlsYIReK6Jfrg+N06hk3uwlojVqwzGu/nZOcBo7RSNMcuuplYx0
+         Jm7/jt+8V8MEcbFZEATBIuVovybep6rWhVXUYG8skY7XmYXNeqXssrnywAyqaEmjVC3Q
+         ziRkZMAtGqJdtkiPhaFcApiC8eKrutKK4c/gHcNIFetMyYLljELPHOaxVpK5wh+VftJr
+         zoo/PUx1LzzHPNpVx2p1XqRaDiu0bWGJkjbgqjolBnXVOM6Gs3mC9Qu2mfh7BBtlLREg
+         7M/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWM8RSoWXlo2z26BT0upQ+Dh0FciVi8dNS2v9GLW3CgN79e27kbquEPxMG97byWdDT43Z1rroLR4DYiRSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/MhWQ4L/Bpa22lqnfyS7r0+rLBc2+77xrp2t/2L8MoQTKmjaO
+	5JEE0vekLkbMMrL1uzh9JBpKi52lMAgFu7RcgF+SrUlMtiBUKzc9Be1yro8I5D8=
+X-Google-Smtp-Source: AGHT+IE/7GB+laIBn4fQ2eRBjGrY2BLeDRMpZT3OgDpcIf9Rc1ybtQP6yIC4+eEfg4Ir/JeWq7i1xA==
+X-Received: by 2002:a05:600c:1d0b:b0:42f:8fcd:486c with SMTP id 5b1f17b1804b1-4312561a417mr140028865e9.33.1729116651788;
+        Wed, 16 Oct 2024 15:10:51 -0700 (PDT)
+Received: from localhost.localdomain ([2.125.184.148])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c38b39sm6267325e9.6.2024.10.16.15.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 15:10:50 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: srinivas.kandagatla@linaro.org,
+	a39.skl@gmail.com,
+	linux-sound@vger.kernel.org,
+	broonie@kernel.org,
+	dmitry.baryshkov@linaro.org
+Cc: lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	vkoul@kernel.org
+Subject: [PATCH v2] ASoC: codecs: lpass-rx-macro: fix RXn(rx,n) macro for DSM_CTL and SEC7 regs
+Date: Wed, 16 Oct 2024 23:10:49 +0100
+Message-ID: <20241016221049.1145101-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015143713.2017626-3-perdaniel.olsson@axis.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Per-Daniel,
+Turns out some registers of pre-2.5 version of rxmacro codecs are not
+located at the expected offsets but 0xc further away in memory. So far
+the detected registers are CDC_RX_RX2_RX_PATH_SEC7 and
+CDC_RX_RX2_RX_PATH_DSM_CTL.
 
-kernel test robot noticed the following build warnings:
+CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n) macro incorrectly generates the address
+0x540 for RX2 but it should be 0x54C and it also overwrites
+CDC_RX_RX2_RX_PATH_SEC7 which is located at 0x540.
+The same goes for CDC_RX_RXn_RX_PATH_SEC7(rx, n).
 
-[auto build test WARNING on eca631b8fe808748d7585059c4307005ca5c5820]
+Fix this by introducing additional rxn_reg_stride2 offset. For 2.5 version
+and above this offset will be equal to 0.
+With such change the corresponding RXn() macros will generate the same
+values for 2.5 codec version for all RX paths and the same old values
+for pre-2.5 version for RX0 and RX1. However for the latter case with
+RX2 path it will also add rxn_reg_stride2 on top.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Per-Daniel-Olsson/dt-bindings-iio-light-Document-TI-OPT4060-RGBW-sensor/20241015-224128
-base:   eca631b8fe808748d7585059c4307005ca5c5820
-patch link:    https://lore.kernel.org/r/20241015143713.2017626-3-perdaniel.olsson%40axis.com
-patch subject: [PATCH v3 2/2] iio: light: Add support for TI OPT4060 color sensor
-config: x86_64-randconfig-161-20241017 (https://download.01.org/0day-ci/archive/20241017/202410170546.5rfqxnWM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+While at this, also remove specific if-check for INTERP_AUX from
+rx_macro_digital_mute() and rx_macro_enable_interp_clk(). These if-check
+was used to handle such special offset for AUX interpolator but since
+CDC_RX_RXn_RX_PATH_SEC7(rx, n) and CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)
+macros will generate the correst addresses of dsm register, they are no
+longer needed.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410170546.5rfqxnWM-lkp@intel.com/
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
 
-smatch warnings:
-drivers/iio/light/opt4060.c:932 opt4060_volatile_reg() warn: always true condition '(reg >= 0) => (0-u32max >= 0)'
+Changes in v2:
+- updated macros as suggested by Mark and Dmitry;
+- removed INTERP_AUX if-check in two functions;
 
-vim +932 drivers/iio/light/opt4060.c
+Link to previous patch: https://lore.kernel.org/lkml/20240925043823.520218-1-alexey.klimov@linaro.org/
 
-   929	
-   930	static bool opt4060_volatile_reg(struct device *dev, unsigned int reg)
-   931	{
- > 932		return (reg >= OPT4060_RED_MSB && reg <= OPT4060_CLEAR_LSB) ||
-   933		       (reg == OPT4060_RES_CTRL);
-   934	}
-   935	
+ sound/soc/codecs/lpass-rx-macro.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
+diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
+index ef7a70fa6966..febbbe073962 100644
+--- a/sound/soc/codecs/lpass-rx-macro.c
++++ b/sound/soc/codecs/lpass-rx-macro.c
+@@ -202,12 +202,14 @@
+ #define CDC_RX_RXn_RX_PATH_SEC3(rx, n)	(0x042c  + rx->rxn_reg_stride * n)
+ #define CDC_RX_RX0_RX_PATH_SEC4		(0x0430)
+ #define CDC_RX_RX0_RX_PATH_SEC7		(0x0434)
+-#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)	(0x0434  + rx->rxn_reg_stride * n)
++#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)		\
++	(0x0434 + (rx->rxn_reg_stride * n) + ((n > 1) ? rx->rxn_reg_stride2 : 0))
+ #define CDC_RX_DSM_OUT_DELAY_SEL_MASK	GENMASK(2, 0)
+ #define CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE	0x2
+ #define CDC_RX_RX0_RX_PATH_MIX_SEC0	(0x0438)
+ #define CDC_RX_RX0_RX_PATH_MIX_SEC1	(0x043C)
+-#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	(0x0440  + rx->rxn_reg_stride * n)
++#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	\
++	(0x0440 + (rx->rxn_reg_stride * n) + ((n > 1) ? rx->rxn_reg_stride2 : 0))
+ #define CDC_RX_RXn_DSM_CLK_EN_MASK	BIT(0)
+ #define CDC_RX_RX0_RX_PATH_DSM_CTL	(0x0440)
+ #define CDC_RX_RX0_RX_PATH_DSM_DATA1	(0x0444)
+@@ -645,6 +647,7 @@ struct rx_macro {
+ 	int rx_mclk_cnt;
+ 	enum lpass_codec_version codec_version;
+ 	int rxn_reg_stride;
++	int rxn_reg_stride2;
+ 	bool is_ear_mode_on;
+ 	bool hph_pwr_mode;
+ 	bool hph_hd2_mode;
+@@ -1929,9 +1932,6 @@ static int rx_macro_digital_mute(struct snd_soc_dai *dai, int mute, int stream)
+ 							      CDC_RX_PATH_PGA_MUTE_MASK, 0x0);
+ 			}
+ 
+-			if (j == INTERP_AUX)
+-				dsm_reg = CDC_RX_RXn_RX_PATH_DSM_CTL(rx, 2);
+-
+ 			int_mux_cfg0 = CDC_RX_INP_MUX_RX_INT0_CFG0 + j * 8;
+ 			int_mux_cfg1 = int_mux_cfg0 + 4;
+ 			int_mux_cfg0_val = snd_soc_component_read(component, int_mux_cfg0);
+@@ -2702,9 +2702,6 @@ static int rx_macro_enable_interp_clk(struct snd_soc_component *component,
+ 
+ 	main_reg = CDC_RX_RXn_RX_PATH_CTL(rx, interp_idx);
+ 	dsm_reg = CDC_RX_RXn_RX_PATH_DSM_CTL(rx, interp_idx);
+-	if (interp_idx == INTERP_AUX)
+-		dsm_reg = CDC_RX_RXn_RX_PATH_DSM_CTL(rx, 2);
+-
+ 	rx_cfg2_reg = CDC_RX_RXn_RX_PATH_CFG2(rx, interp_idx);
+ 
+ 	if (SND_SOC_DAPM_EVENT_ON(event)) {
+@@ -3821,6 +3818,7 @@ static int rx_macro_probe(struct platform_device *pdev)
+ 	case LPASS_CODEC_VERSION_2_0:
+ 	case LPASS_CODEC_VERSION_2_1:
+ 		rx->rxn_reg_stride = 0x80;
++		rx->rxn_reg_stride2 = 0xc;
+ 		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_pre_2_5_defaults);
+ 		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
+ 		if (!reg_defaults)
+@@ -3834,6 +3832,7 @@ static int rx_macro_probe(struct platform_device *pdev)
+ 	case LPASS_CODEC_VERSION_2_7:
+ 	case LPASS_CODEC_VERSION_2_8:
+ 		rx->rxn_reg_stride = 0xc0;
++		rx->rxn_reg_stride2 = 0x0;
+ 		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_2_5_defaults);
+ 		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
+ 		if (!reg_defaults)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.2
+
 
