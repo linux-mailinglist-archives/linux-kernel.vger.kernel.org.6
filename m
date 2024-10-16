@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-367065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24BD99FE38
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:25:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A9299FE68
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FBA71C24528
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:25:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D53CB2326A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BBC12B143;
-	Wed, 16 Oct 2024 01:25:29 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335D361FCE;
+	Wed, 16 Oct 2024 01:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bjm+ASXF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE21828EA
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FAC1F5E6
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729041928; cv=none; b=u36ql3jZz4feHbfO/vh39dG2CTInGxRdxtrQq2VLEJ/uylzwMrSKkZNdNqjU6AHHpyL1t5utZaqUtjVnviuoSno3PQK7eRiL33d5L63e8teUGvnWudkzVAYBeDyA1GqVJ0ufkJjsKg82x6I/rxYxXK2Iopgb99yzrC0A37cURbk=
+	t=1729043206; cv=none; b=BWG0JI6+LegojAAC6VrFqOPF2GstK+JkORMwd9Qd5A4QI31MVY/opQ6d222x1ZHzP7iBqB8AyM6AucstQzjRRrwnGU6ItNDVDVkxt+hvi7/mN+L3sdKDiFZgNRKMhupjp7pxcn+Vwa1qhoO6HpdmGekcgqWyGeVNhT6iwplrEJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729041928; c=relaxed/simple;
-	bh=Waa6azyHClNCo+LV96c108RxeW+WZlMoUystoOV9iXA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nJx/K1QGeRodCkndgv6JBsb/rYlshAAH/Xkjky7H5YIVYr+gom4SIrdElpI+8KopEGK1QNOlIYM/oXqVaxe5F3JZK5c1/OZ3x5GIAtXFTmt4Ekirqyex3F5pV7kj5GkFgnJaCrS5za3kbtBMgWCtJjTXkvyzGpfDGR6s5aHw5ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XStWx4nkLzpX3B;
-	Wed, 16 Oct 2024 09:23:25 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 22DBC140157;
-	Wed, 16 Oct 2024 09:25:24 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 16 Oct
- 2024 09:25:23 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<bobo.shaobowang@huawei.com>
-Subject: [PATCH] firmware: ti_sci: Fix compilation failure when CONFIG_TI_SCI_PROTOCOL=m
-Date: Wed, 16 Oct 2024 09:39:22 +0800
-Message-ID: <20241016013922.1392290-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729043206; c=relaxed/simple;
+	bh=DtloS/fHtuUBmwVdwRaF49SRJd30EqKuOubdjGfKsMo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FN08wbTQAirguf6ZcEWa1owfwU1JA1ei+ceA3hd4q2DKfCInCD8g6B6JYMiOrjQufNk2DkYhAbWDFtToG5AFECC4E6HLygv1ud8gJCayy0eyeFq4vd5VyvE8dnVohbetu4JWzr9KREllOXSX9rK43glCkgCm+kyA61jz0ucOnuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bjm+ASXF; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729043205; x=1760579205;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DtloS/fHtuUBmwVdwRaF49SRJd30EqKuOubdjGfKsMo=;
+  b=bjm+ASXFI+PQykJ2uwt8JstniUrahGdGiHv2cvs6h5lxqCQsHQ8OX9at
+   tfq+NmLvN0sOvitMW/WZCAezehyioDbH7DRPNIQRV2vUvO4kuRofa9W6I
+   WGdsZn90WlmvFWKF6FkzPVou3s3eG24vQrfv6Lc0Zn9rE6aQjrIQMWOta
+   Q6ol482qylx3mazQEl8FoiL+8qZu4ri21BRCO90r921SGLOV+rVNAIy/H
+   bGpLbViNnDgzYjiIEl67GlR+EM+QnpX8uLcPQr/0ISIHxI4EcSQ2aB+jp
+   BRq4eRepZ2DXI55KbmJ5MVlKrnjF8u16ysnyU8wQdPaOM4Os5x7jBOlNI
+   A==;
+X-CSE-ConnectionGUID: odMxmJ7ZSLC1sU9Q12+fAw==
+X-CSE-MsgGUID: onCg9hZIRpm0jgL/kim7SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51011439"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51011439"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 18:46:44 -0700
+X-CSE-ConnectionGUID: E1RQSWoySm6NtqPMisF5cA==
+X-CSE-MsgGUID: 6vMwcNpMSrqU8Q1nEmkmMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,206,1725346800"; 
+   d="scan'208";a="78421309"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2024 18:46:42 -0700
+Message-ID: <b85a9fb0-f990-4e23-81e3-36546f62d5db@linux.intel.com>
+Date: Wed, 16 Oct 2024 09:46:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Yi Liu <yi.l.liu@intel.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] iommu/vt-d: Enhance compatibility check for paging
+ domain attach
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
+ <20241011042722.73930-4-baolu.lu@linux.intel.com>
+ <20241011162703.GL762027@ziepe.ca>
+ <7f829e9e-5db9-4861-8a58-27a57edbd9da@linux.intel.com>
+ <20241014192436.GD1825128@ziepe.ca>
+ <a95e8a10-6240-41db-b234-d9f29386694c@linux.intel.com>
+ <20241015124849.GJ1825128@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241015124849.GJ1825128@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When build with CONFIG_TI_SCI_PROTOCOL=m && CONFIG_TI_K3_M4_REMOTEPROC=y,
-compilation tool chain would throw the following error message:
+On 2024/10/15 20:48, Jason Gunthorpe wrote:
+> On Tue, Oct 15, 2024 at 10:52:19AM +0800, Baolu Lu wrote:
+>> On 2024/10/15 3:24, Jason Gunthorpe wrote:
+>>> On Mon, Oct 14, 2024 at 09:25:03AM +0800, Baolu Lu wrote:
+>>>>>> +	if (domain->type & __IOMMU_DOMAIN_PAGING) {
+>>>>> It looks like this entire function is already never called for
+>>>>> anything but paging?
+>>>>>
+>>>>> The only three callers are:
+>>>>>
+>>>>> 	.default_domain_ops = &(const struct iommu_domain_ops) {
+>>>>> 		.attach_dev		= intel_iommu_attach_device,
+>>>>> 		.set_dev_pasid		= intel_iommu_set_dev_pasid,
+>>>>>
+>>>>> and
+>>>>>
+>>>>> static const struct iommu_domain_ops intel_nested_domain_ops = {
+>>>>> 	.attach_dev		= intel_nested_attach_dev,
+>>>>>
+>>>>> And none of those cases can be anything except a paging domain by
+>>>>> definition.
+>>>> A nested domain is not a paging domain. It represents a user-space page
+>>>> table that nested on a parent paging domain. Perhaps I overlooked
+>>>> anything?
+>>> It only calls it on the s2_parent which is always a paging domain?
+>>>
+>>> 	ret = prepare_domain_attach_device(&dmar_domain->s2_domain->domain, dev);
+>> Yea, you are right. I overlooked that part.  I'll remove the 'if'
+>> statement and utilize a WARN_ON() function instead.
+>>
+>> And also, I will rename this function with a meaningful name,some like
+>> paging_domain_is_compatible()?
+> That sounds good too
+> 
+> Ultimately you want to try to structure the driver so that there is a
+> struct paging_domain that is always the paging domain type and
+> everything is easy to understand. Don't re-use the same struct for
+> identity/blocked/nested domains.
 
-   arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o:
-   in function `k3_m4_rproc_probe':
-   ti_k3_m4_remoteproc.c:(.text+0xc24):
-   undefined reference to `devm_ti_sci_get_by_phandle'
+Yes, agreed!
 
-This is because devm_ti_sci_get_by_phandle() is compiled into the driver
-module rather than compiled into kernel, it causes compilation couldn't
-find the reference of devm_ti_sci_get_by_phandle() when tool chain tries
-to link ti_k3_m4_remoteproc.o into kernel image.
-
-Replace IS_ENABLED with IS_REACHABLE to fix the problem.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/all/202410150837.FOGlkGvW-lkp@intel.com/
-Fixes: aa276781a64a ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- include/linux/soc/ti/ti_sci_protocol.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
-index bd0d11af76c5..cd44ee7f294b 100644
---- a/include/linux/soc/ti/ti_sci_protocol.h
-+++ b/include/linux/soc/ti/ti_sci_protocol.h
-@@ -572,7 +572,7 @@ struct ti_sci_resource {
- 	struct ti_sci_resource_desc *desc;
- };
- 
--#if IS_ENABLED(CONFIG_TI_SCI_PROTOCOL)
-+#if IS_REACHABLE(CONFIG_TI_SCI_PROTOCOL)
- const struct ti_sci_handle *ti_sci_get_handle(struct device *dev);
- int ti_sci_put_handle(const struct ti_sci_handle *handle);
- const struct ti_sci_handle *devm_ti_sci_get_handle(struct device *dev);
--- 
-2.25.1
-
+Thanks,
+baolu
 
