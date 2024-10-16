@@ -1,176 +1,196 @@
-Return-Path: <linux-kernel+bounces-367756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCE09A0657
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:01:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D34F9A065A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294801C22D65
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76081F23BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36651FCC79;
-	Wed, 16 Oct 2024 10:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4F6206063;
+	Wed, 16 Oct 2024 10:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFL5+1eU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mDuUtcx/"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985B21E3DC;
-	Wed, 16 Oct 2024 10:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072872; cv=none; b=OG2Vw/Z0LG2qoO/7/k2UQoeNu+OQmITtkVcwI1op5r1hESK3fUaVH9aZmCaMw6/fsc73wVp2pq4gTR8ZRH+u6XF6jaS0nw7Ed5/Fil4nkF/Q7I53Fbk8ak7ur3fUpw86YbE02a0uF8HeZOZXqnWXMcvIaMXHMBv1YiidORLhUdY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072872; c=relaxed/simple;
-	bh=D39NBDdVFY1jqqBfci4OkEy41KSDh8bapxuV2d7f1Ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHAM9smOPyXWDxw+420mNoZFyfpSY1FIBTbkKXicIKiWrJOcqOYEYCT843GvFcMYZwBARww9qxU9umVNb5OFzaUrUu45HM7NPFLrt7Z6YD+BKqoqH7FkdalXwtMHJmsNEcv/RWJfhQA43rTa91fPR7laS5hbeJk5Ka+G+KwrRBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFL5+1eU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B4CC4CEC5;
-	Wed, 16 Oct 2024 10:01:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729072871;
-	bh=D39NBDdVFY1jqqBfci4OkEy41KSDh8bapxuV2d7f1Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RFL5+1eUB/7QVL7nq53SyV6YL2Oz5Do7vcTbjSkcuZ6Re3Js90pykGY6b3OxJRdkr
-	 xJ+i+izBe0aBS8VOKfz6KWl5qEqh9xYcxg5VfIGJN4lLfyaV8LsM/oud5hx9p/f8KS
-	 Ypk4C1qsvB3dSX1dAZyFuLxgKjwtmEBpvw6hECSr/qcptdcbClqFXR9JQApm71FBgD
-	 n5FombtcGen+fWJS/8QGUtt3X29UdQmM0y20DP0XZiqVXAhkVkVaIi2sf0e+TNFYSd
-	 Vu8NvcvCGpGhnbB5ftgIkHn8zbwd6fsKzUnxAxxJgObO90hgAKlr+KELaagNPlvmfH
-	 Sm73QXNUsNu3A==
-Date: Wed, 16 Oct 2024 12:01:06 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Zheng Zengkai <zhengzengkai@huawei.com>
-Cc: guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
-	maz@kernel.org, rafael@kernel.org, lenb@kernel.org,
-	daniel.lezcano@linaro.org, tglx@linutronix.de,
-	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] ACPI: GTDT: Tighten the check for the array of
- platform timer structures
-Message-ID: <Zw+O4nZisbkdvNtz@lpieralisi>
-References: <20241016095458.34126-1-zhengzengkai@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23A021E3DC;
+	Wed, 16 Oct 2024 10:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729072894; cv=fail; b=G+CvrLVl+vGlQwcyvlFWldsH8jBPztWd8PCxeKkIDnQ2zoB6FiI0n5qsdyFf5w0lbntpAGYovDzY5oE4EDJC+3mAPQLEb5zkAPz63KklXYmbKhS4cPA1b4D8DK3cqJYDpcHysS+BBEH/kJSWAaicU6Lk7mF7Vkjw7/enNrY4iug=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729072894; c=relaxed/simple;
+	bh=lH9p/0bTi92YayosEdv7CoRG6ObB1kZQXLpgHEqpm3E=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=IccIc0DsTYFMW5+5GbZR3LanqHDSPvCICaxDGWALsmC2w/XqcwZ/3PgOks79oZJUircjMrsLb/vSQBUTwG7RHl6DoVOeDlcEZS8IzdgCRQ6a1uJhsBBOA0wyQWD7l834SoNKTuCPRQ9FRCZEqLW2TtFT6zarwQfMTwGS4+6Uymw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mDuUtcx/; arc=fail smtp.client-ip=40.107.220.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oDkO/JJYt89Ly+AC9Oxyi5qjkcdxoEEwHQw2id6YgnLJa+lgNddrSuvadezPmkxfOz5z2c0zuwrnJgJHkOIpzEJu6iq81vHvp8NE6wzqkjjwH6Qy1C2kNZKwwNaCRvELtXpOc+AvW0c2hcFfYaoVQRE+lo0T2HTVY9hOZSHZRMnXEodmb7UYIFq+PpaYOwNE6/Y/1y5iegK9hoTqEI1K21wzsk+7Ps1aZRHrAHY/1BSyeaYzOzAq5En/pOWatnhXLDsLyRmlfkmEy9UNoMTYRkOev5N8dVFmsqwD03I8qNoEN9Kh3Krtr40lR4ScDf6CZlgIbp71Tbs/BCjNFn31Eg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/d+41PXS2QXmbaH5/K7K4MnQ1JI1hGtT6DsivGcx7DA=;
+ b=UzaWvf56V7f9GjizybxJi+MAQT4kHscv9Y88T1778rM8e5h1ph4YoFi7/QIFKJRij7Ic1DDfJyWIbV9FqVh7b1cGVd2jZjXFJ50xj4Aaq0TZGwWbEZCthivc4r3s6exZLxND+ylf3zTFSmlcwx1uAQKd6sG6L8e7GsvkH0uYgu4p7/cPIMzTi5N0SgI4AyalFRsF9r7Y5C21lIF58YeAJ+j6a+tWggTOAmwU+G9tl/pgrSdYRDP1YdFpyWrLclydh0lRUesu6uE7SKTqi92hfEzwdjnndAdEGZfHG7o02f6KuQ+tzovhSPyEXGmlYMW39vTz3QaTNwA4hqzm4F3gbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/d+41PXS2QXmbaH5/K7K4MnQ1JI1hGtT6DsivGcx7DA=;
+ b=mDuUtcx/vnFO/zMlL+rFioeUC7Kk4td9wSeDvCyTLuz9xxRW4uEmovIYt3/KEIu7Vo2h5AZVJus7Aj6aZFCP8k0ct/enml4HP/2oeYxKh44cZwMjlRPz8k46zqNbAHqkgBUR8Z3VhuVkRDN/a7anZViIcLYNSyCITjweXaboMrTde7PteqGdcc16j0yH1ro3j1Ud+SpddMqclNTP6g04TXhZMrhKAIkHhfn8uR830zLZH9ytxe+qSkOcaBImCqPJasCfeXc2JdPatjNd8X8jUGVF1ZSpXYMOb3yNIVQPVYrLvUhmNyWO5Kb/ydZ7pY6y9U4BM6kw91jwOc9GyCFa+g==
+Received: from CH2PR18CA0012.namprd18.prod.outlook.com (2603:10b6:610:4f::22)
+ by MN2PR12MB4189.namprd12.prod.outlook.com (2603:10b6:208:1d8::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Wed, 16 Oct
+ 2024 10:01:27 +0000
+Received: from DS2PEPF00003444.namprd04.prod.outlook.com
+ (2603:10b6:610:4f:cafe::9c) by CH2PR18CA0012.outlook.office365.com
+ (2603:10b6:610:4f::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17 via Frontend
+ Transport; Wed, 16 Oct 2024 10:01:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS2PEPF00003444.mail.protection.outlook.com (10.167.17.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.17 via Frontend Transport; Wed, 16 Oct 2024 10:01:27 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Oct
+ 2024 03:01:10 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 16 Oct
+ 2024 03:01:10 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 16 Oct 2024 03:01:10 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/518] 5.10.227-rc1 review
+In-Reply-To: <20241015123916.821186887@linuxfoundation.org>
+References: <20241015123916.821186887@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016095458.34126-1-zhengzengkai@huawei.com>
+Message-ID: <f195a0ed-7c26-4e56-87a9-1fb7f7be0971@rnnvmail204.nvidia.com>
+Date: Wed, 16 Oct 2024 03:01:10 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003444:EE_|MN2PR12MB4189:EE_
+X-MS-Office365-Filtering-Correlation-Id: a38bf494-bf4b-4803-caf8-08dcedc9800d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aHA5KzdjMGhYdWEvTWJyVVFvd293OHhJNFFwUXZIR2Q3cUNhS055SUVYZ2xP?=
+ =?utf-8?B?dlhsQmk3WVlnby9TRzk1dzBleDQ4dmtLM05WZnZMN0ZaaWFrWThFbHU0TnFx?=
+ =?utf-8?B?RjZzS2xtelowNy9Sbzl6N3ZDcDRPRi9RelBZam53WCtWK1VjZnRvd3huZWtV?=
+ =?utf-8?B?dEt0T3dOUEM5QjRaV3BZRUQ3SENIaVFobjE0RWc3MWhwTWd4NXc2UmFoUnh4?=
+ =?utf-8?B?L3FhZ1pKbVpyUGgySURJeERRb2QwUTZrUnJHN3JEUUtZL2NYZ3oxcTJ4a2RB?=
+ =?utf-8?B?L1BtTC9TWkpWVkN6aVo5alBzb240MkFyWno3RVYxR2xLYzMwWDE0Y1lFWEZv?=
+ =?utf-8?B?QVdsb01WdXgzdHEwWEtYeHk0ZkwvRHFaWXBrV2ZMWFVsZVVVeVJTaU1lUjV1?=
+ =?utf-8?B?dGZna1UwV0UzVndTdy9vSW55dHRYNm9vVkM2dUs0czROMFJ3Y2NiVTlLQXZt?=
+ =?utf-8?B?V3VxR2NWdTV4Z2J2UVFyZjUyREV3bWdDYmlrZG5VYnBrbkxTamY3Y1oxK0Jn?=
+ =?utf-8?B?RTNkWjlIRDRqZENiUlFMSzc4MWgrOG4ybkdFcmdJS211MDMvSUplWnh6OEJu?=
+ =?utf-8?B?TGdaY0Erb3BMRTM5SmdUa0p3UVlkajFaRDlhYjdIbDhaRjhRSmt3dW5WTlhh?=
+ =?utf-8?B?MWFZbGlkQ2lkbk5IUmI3V3ZXdUlUMkNuV2twN0FhMUE2YkRMd2pvTnFIWHJ4?=
+ =?utf-8?B?am0zL3Zybk15WlFrTVBabW9MTUs4VE9oNnMrcTVhak54bU5WNEgyR0ZKZnQ1?=
+ =?utf-8?B?TG43SWo0enNTNVJ1ajBpbnpRZFY0VEh4Q1VnUEhvK3o5ZE1MRDV4b1cxQnFr?=
+ =?utf-8?B?ZTFqUjZadFZ3cVZ0QmIra29jUnd1S2YrVzZQSnRHZXMvbUtKZUtPeWVFWUJj?=
+ =?utf-8?B?SThzbGJYUVNhMkRrSXJZZjBvb3Nyam9lSlN4U1lSa2VTZHFxRGo3TkFFSUpl?=
+ =?utf-8?B?aVNIcnJ2VzMzU1FpaEIvWG9Jc0x5b2tVTEpDZEhlZlh3K3JPU1dsSk41TnEr?=
+ =?utf-8?B?UExLWVRqZjQyYUU2NlllNmQ5UDlDVGxQTHhodzRQd01NR2dWZ2RsK3RvekFW?=
+ =?utf-8?B?RXEwMC9IYlMxdGRJQ2ErelVram9CZnJhTzZYY3lZVC9LazN5ZXRvSyt4ckpW?=
+ =?utf-8?B?RHF2ZTk4SmsyWXVWMXBVdmxaWnRxdjVLMmY1REQrQ3FkYTgrTENRK0ZYTzQ3?=
+ =?utf-8?B?ZVlaekR0K0VpQTFLZjA4MERudFk1Wmc1ZlNwQjg2clJmaEtGTjhUOG12TU4y?=
+ =?utf-8?B?R0R3bEp4cGlnTUFsUFJoRzB2bVdPOEdkeUo1NXdETnloZ2RsWmF4NTlUc0Jn?=
+ =?utf-8?B?THFiblBPUjBxOTFEUmRnYVk0cmdqVkR0SmpWdzlEanZWUDFLTzRpZk9IeDBy?=
+ =?utf-8?B?RzVlSkFaYzF0ZFhRZlRzbXRXVW9RZnpnVjJORXMzUFBiRFpPUEtqNjlXZ1Nt?=
+ =?utf-8?B?Vmg2Zy9udE42cndQWnVuV1UrOERKR1VNVmd3WlY1Rmx3M0RCeC9SeFZ4S3pY?=
+ =?utf-8?B?Z3hDK09GSHNjMVVmT3dNdjBIRnROYXNjeThaTmQwSTdJOTUwUEtTTk5qS2Nz?=
+ =?utf-8?B?L2VlSjlMd04zaXhnUlFuYk5jdHZGWWZTbGs2eDZHTGw3SFZYNzlCYlhVeEJp?=
+ =?utf-8?B?U2VwdFJ6S1FMOHZDbnIxTG43Tk5ZKzdZY1dobk9PYkdpa3Q1S3IyWEVQak9C?=
+ =?utf-8?B?NmR6cnlITVRJb1l5K2EraGZXYjBoVjVNOGpweUJVZGp4bm10cTV3M1pkTVE1?=
+ =?utf-8?B?SU82R1ZRZ2VWQzh0YXUwUGhrYlRIVWZPWUt0bVMvbDludVBCWXI1M3drK00r?=
+ =?utf-8?B?TkVVOHBvall1cVpJOHU2QnNEWWZQaFpYTW5zUi91OUkxM09BZGRTUFhjVDk3?=
+ =?utf-8?Q?kSizBzWzHl66b?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 10:01:27.0489
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a38bf494-bf4b-4803-caf8-08dcedc9800d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003444.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4189
 
-On Wed, Oct 16, 2024 at 05:54:58PM +0800, Zheng Zengkai wrote:
-> As suggested by Marc and Lorenzo, first we need to check whether the
-> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
-> de-referencing what it points at to detect the length of the platform
-> timer struct and then check that the length of current platform_timer
-> struct is also valid, i.e. the length is not zero and within gtdt_end.
-> Now next_platform_timer() only checks against gtdt_end for the entry of
-> subsequent platform timer without checking the length of it and will
-> not report error if the check failed and the existing check in function
-> acpi_gtdt_init() is also not enough.
+On Tue, 15 Oct 2024 14:38:24 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.227 release.
+> There are 518 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Modify the for_each_platform_timer() iterator and use it combined with
-> a dedicated check function platform_timer_valid() to do the check
-> against table length (gtdt_end) for each element of platform timer
-> array in function acpi_gtdt_init(), making sure that both their entry
-> and length actually fit in the table.
+> Responses should be made by Thu, 17 Oct 2024 12:37:45 +0000.
+> Anything received after that time might be too late.
 > 
-> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Co-developed-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
-> ---
-> Changes in v4:
-> - remove the tmp pointer to make the code more concise.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.227-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> Changes in v3:
-> - based on Marc's patch and reuse the for_each_platform_timer() loop
-> Link to v3: https://lore.kernel.org/linux-arm-kernel/20241015152602.184108-1-zhengzengkai@huawei.com/
+> thanks,
 > 
-> Changes in v2:
-> - Check against gtdt_end for both entry and len of each array element
-> Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
-> 
-> Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
-> 
-> Link to previous related patches:
-> https://lore.kernel.org/all/20241008082429.33646-1-zhengzengkai@huawei.com/
-> https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
-> ---
->  drivers/acpi/arm64/gtdt.c | 29 ++++++++++++++++++++---------
->  1 file changed, 20 insertions(+), 9 deletions(-)
+> greg k-h
 
-Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+All tests passing for Tegra ...
 
-> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-> index c0e77c1c8e09..d7c4e1b9915b 100644
-> --- a/drivers/acpi/arm64/gtdt.c
-> +++ b/drivers/acpi/arm64/gtdt.c
-> @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
->  
->  static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
->  
-> -static inline __init void *next_platform_timer(void *platform_timer)
-> +static __init bool platform_timer_valid(void *platform_timer)
->  {
->  	struct acpi_gtdt_header *gh = platform_timer;
->  
-> -	platform_timer += gh->length;
-> -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
-> -		return platform_timer;
-> +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
-> +		platform_timer < acpi_gtdt_desc.gtdt_end &&
-> +		gh->length != 0 &&
-> +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
-> +}
-> +
-> +static __init void *next_platform_timer(void *platform_timer)
-> +{
-> +	struct acpi_gtdt_header *gh = platform_timer;
->  
-> -	return NULL;
-> +	return platform_timer + gh->length;
->  }
->  
->  #define for_each_platform_timer(_g)				\
-> -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
-> +	for (_g = acpi_gtdt_desc.platform_timer; platform_timer_valid(_g);\
->  	     _g = next_platform_timer(_g))
->  
->  static inline bool is_timer_block(void *platform_timer)
-> @@ -157,6 +163,7 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->  {
->  	void *platform_timer;
->  	struct acpi_table_gtdt *gtdt;
-> +	int cnt = 0;
->  
->  	gtdt = container_of(table, struct acpi_table_gtdt, header);
->  	acpi_gtdt_desc.gtdt = gtdt;
-> @@ -176,12 +183,16 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->  		return 0;
->  	}
->  
-> -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
-> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> +	for_each_platform_timer(platform_timer)
-> +		cnt++;
-> +
-> +	if (cnt != gtdt->platform_timer_count) {
-> +		acpi_gtdt_desc.platform_timer = NULL;
->  		pr_err(FW_BUG "invalid timer data.\n");
->  		return -EINVAL;
->  	}
-> -	acpi_gtdt_desc.platform_timer = platform_timer;
-> +
->  	if (platform_timer_count)
->  		*platform_timer_count = gtdt->platform_timer_count;
->  
-> -- 
-> 2.20.1
-> 
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    67 tests:	67 pass, 0 fail
+
+Linux version:	5.10.227-rc1-g5807510dd577
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
