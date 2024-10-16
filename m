@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-368414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE689A0F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:23:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0119A0F9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BBB1F2772C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:23:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649B828168B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5E420FA9B;
-	Wed, 16 Oct 2024 16:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEF7210C38;
+	Wed, 16 Oct 2024 16:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AuHKFKLE"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LI1p4dZ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FA112DD8A;
-	Wed, 16 Oct 2024 16:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B70920F5AB;
+	Wed, 16 Oct 2024 16:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729095807; cv=none; b=jmY9j2UHAn87rwZE+kqPGLmOTt8OJW+G33lMt1HvxD5SFWRNYcyE84U3+SuyuIgW8PTUcyTw9x2Se8ywvbr2Skqs4lrwnVqAClqRInbSBa8Jc4xgbktkfWXkXU5JR5AD0Njka1/lyFjc6wC4MCyAdzcwUf5h54BkQZHakafKJsg=
+	t=1729095853; cv=none; b=CJ51kU9YvLunYJP4GVzx/2kCsqtTKVkVSPA/X9LxEYw94ZnvPIL73s7NeD29MpR4CIswD5En1POmR1Lwaz4EzGCvfwZd48IL0ske/uOEdNsBEw9k6vED0PRbRuUuG6rjnitpY8N5S70qbmV/Y13qwe4MZYlXJfselUjVMp+2BwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729095807; c=relaxed/simple;
-	bh=1BQ2OjRpyiDw2g2stbTQFI+FzPWBKEQi93YUtJmVsbs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KkgJfXhgbXrn9MsESgwdIb9vSqkKEff9IdH29+Y0M591TVZaR5m3Ax7HNNACawyHUO4e1ixhTRqsejcMAjqjIZsABLXuJZ20T/ZXGLgrCsxCDSRJUmbXqOB0C7YPqgu3h1VwQUhgqQUqqg8kPHg2nsB4QyTWSdksbS8DrTSp8M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AuHKFKLE; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43140a2f7f7so168025e9.1;
-        Wed, 16 Oct 2024 09:23:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729095804; x=1729700604; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uHQi4sDcUkh4HrcchY9/4FMu7XZ+1dZcINfwy3wM6SI=;
-        b=AuHKFKLEfRB97YeaTjw1KX5Q5FFoNECrGYwxl06q+kBey5d7fBRt+ztw9A+nHRazDl
-         O4Pp7NHi5Lj/Z9qO2qcsgMTYJYLCSOlmpG/USKeBSFKvkw/0RoeZOkoh0nmZGWKHkJBB
-         JiDyiVFapqQf6qReuTz6Ss5H2z6Z1fZ5h/EfAIM4ugud0ZPpSqjDQZwRP3TcaALPhScu
-         CqzhrIfvjvQg26ZkcaKDIauUJVZMU16HrJfQGDOU1ZrJXGhsl5M1BY28jPJnjgy3EySk
-         YBTr5FrBjC/FZ0cYebknypKQFBpqYPF8qWam13r2TdAD3yJi+SOv/ygZI0OOWxoAZWdR
-         kE8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729095804; x=1729700604;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHQi4sDcUkh4HrcchY9/4FMu7XZ+1dZcINfwy3wM6SI=;
-        b=B9UgMG6O6QITvb2/jnAwAwHRPTPuz5d2Sd9m6YZGrBvmEmI5fSdyaokdwfJxPgNbMU
-         EryQiCbMdwHdgKhQyC4Q64p5JIMuc+DvEr6AlO62X3adF2pULDfzO6yNx3UDl3yPB6D3
-         yCJxtBficZmAvQgRT89hORz88b917r7Hy5xgqiRz8mbpCmHS0XYwgPDtLDxYj44/T2tC
-         TYFrZjFD27wuchSFIhjzSmkmkpEAlosgYWrWENN1XE7Sm7Pcm3l2FRBnTVCdN/VtbMhl
-         W0CJmbKyAlR0/7pPPZt45W1vpecri6cHJZssJLtyN2jKjj2k45mZyOXHTDYj0ctWmHIS
-         GxRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWh9CiF3WJxfjDl0cWoMCHrqTMc07qu8NjWPyiKiLo4bCrWaRr3KlHBdAK1AVm/OkUcXfXSP+aRM7PnBVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcK6khHyRV+OZGsaohe9nNJCvB/hsKmW7ttNuUR2dX/1kCpFQ4
-	U89VzSIAQyTomftEcfz0TipWrQdeF+D3SPY7B/4agxUjJYrIMB3EPKUKHw==
-X-Google-Smtp-Source: AGHT+IG0sUIYFY463O8t5Ty2rTEwo91mJXa/m5lTA+AfWloVFS9zJvnAeMcjLXsrrvP2xMJ1hXOr8g==
-X-Received: by 2002:adf:facf:0:b0:37c:c892:a98c with SMTP id ffacd0b85a97d-37d86d70bbemr3146554f8f.56.1729095802697;
-        Wed, 16 Oct 2024 09:23:22 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c5d7fsm53764965e9.42.2024.10.16.09.23.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 09:23:22 -0700 (PDT)
-Subject: Re: [PATCH net-next 1/2] ethtool: rss: prevent rss ctx deletion when
- in use
-To: Daniel Zahka <daniel.zahka@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241011183549.1581021-1-daniel.zahka@gmail.com>
- <20241011183549.1581021-2-daniel.zahka@gmail.com>
- <966a82d9-c835-e87e-2c54-90a9a2552a21@gmail.com>
- <43a98a99-4c79-4954-82f1-b634e4d1be82@gmail.com>
-From: Edward Cree <ecree.xilinx@gmail.com>
-Message-ID: <c32a876f-4d20-c975-5a2f-3fa0ab229f05@gmail.com>
-Date: Wed, 16 Oct 2024 17:23:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1729095853; c=relaxed/simple;
+	bh=ELkQCkvnvsqAkcqwDniUM4x92rERmqEI7Yu0ccyKwIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SyNYgz0KXyoy8i5Z86MK9OLD5qGnWyq6qpl0bCBmTD1Qc4cgAn7E6F1bPG9ze73reT5xV8TDOuY9K0VydN6TYBdMnSy0PRPwvoEcQM7Ee5/Sj+oCV6TgI5Su6Ta4DCwhC1TOrBVghPGNCNIFFaAoHkViqBJWwW69WBwd4UAYKMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LI1p4dZ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238EBC4CEC5;
+	Wed, 16 Oct 2024 16:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729095853;
+	bh=ELkQCkvnvsqAkcqwDniUM4x92rERmqEI7Yu0ccyKwIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LI1p4dZ0tqVMNN2oq8AWE3gnu4GavO7BVvIZE+MP92vuVOQ9b5kFaDnCJbr0k3l+j
+	 10CIWlynzgTSz9CnLiXHZROmYp8a040ZXnuDwnW6/CJDxq9DaZMNCYUOHtH95XaAqt
+	 PA6nn93gtOgH9k6lj1mmfoi0A2+pWKWoLJfgGVIa+19P5aEq/x2J/dWoPkajOVxORO
+	 XFfSRURIiS7A2ZSKdGgrgLUuE5T/vcD1Jrwip43/lERBW0IcTNSgIedKMZsM8uSVqp
+	 5gtLUO9F0KcGpRZ2UakmZd1ElpWWJQp26iZTSaS/TjVCykxE2tZ3pQDPIOV0p4Fo1q
+	 cAbjMnKQL33HA==
+Date: Wed, 16 Oct 2024 16:24:11 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
+	will@kernel.org, catalin.marinas@arm.com,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH 2/2] arm64/crc32: Implement 4-way interleave using PMULL
+Message-ID: <20241016162411.GA3228925@google.com>
+References: <20241015104138.2875879-4-ardb+git@google.com>
+ <20241015104138.2875879-6-ardb+git@google.com>
+ <20241016030349.GD1138@sol.localdomain>
+ <CAMj1kXHDqD29TzE=2cw55qeKrnybgkYFCdy4jU_4E=OaUOkZNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <43a98a99-4c79-4954-82f1-b634e4d1be82@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXHDqD29TzE=2cw55qeKrnybgkYFCdy4jU_4E=OaUOkZNg@mail.gmail.com>
 
-On 15/10/2024 17:31, Daniel Zahka wrote:
-> On 10/14/24 6:10 AM, Edward Cree wrote:
->> Imho it would make more sense to add core tracking of ntuple
->>   filters, along with a refcount on the rss context.  That way
->>   context deletion just has to check the count is zero.
->>
->> -ed
+On Wed, Oct 16, 2024 at 09:12:41AM +0200, Ard Biesheuvel wrote:
+> > I'd recommend calling the file crc32-4way.S and the functions
+> > crc32*_arm64_4way(), rather than crc32-pmull.S and crc32*_pmull().  This would
+> > avoid confusion with a CRC implementation that is actually based entirely on
+> > pmull (which is possible).
 > 
-> That sounds good to me. Is that something you are planning on sending patches for?
+> I'm well aware :-)
+> 
+> commit 8fefde90e90c9f5c2770e46ceb127813d3f20c34
+> Author: Ard Biesheuvel <ardb@kernel.org>
+> Date:   Mon Dec 5 18:42:27 2016 +0000
+> 
+>     crypto: arm64/crc32 - accelerated support based on x86 SSE implementation
+> 
+> commit 598b7d41e544322c8c4f3737ee8ddf905a44175e
+> Author: Ard Biesheuvel <ardb@kernel.org>
+> Date:   Mon Aug 27 13:02:45 2018 +0200
+> 
+>     crypto: arm64/crc32 - remove PMULL based CRC32 driver
+> 
+> I removed it because it wasn't actually faster, although that might be
+> different on modern cores.
 
-I'm afraid I don't have the bandwidth to do it any time soon.
-If you aren't able to take this on, I'm okay with your original
- approach to get the issue fixed; I just wanted to ensure the
- 'better' solution was considered if you do have the time for it.
+The PMULL-based code removed by commit 598b7d41e544 was only 4-wide.  On
+Apple M1, a 12-wide PMULL-based CRC32 is actually faster than 4-way CRC32,
+especially if the eor3 instruction from the sha3 extension is utilized.
+
+This was not the case on non-Apple CPUs I tested (in 2022), though.  12-wide is
+very wide and is a bit inconvenient, and IMO it's not worth doing in the kernel
+at this point.  It would be interesting to test the very latest CPUs, though.
+
+- Eric
 
