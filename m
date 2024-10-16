@@ -1,69 +1,84 @@
-Return-Path: <linux-kernel+bounces-368022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798139A0A0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C2B9A0A0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7F5B28FFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:38:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB22C1F232E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA45209F59;
-	Wed, 16 Oct 2024 12:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E068320C004;
+	Wed, 16 Oct 2024 12:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HJOO6d9i"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvRwxaON"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7BD208D96
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52F2209F22;
+	Wed, 16 Oct 2024 12:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729082256; cv=none; b=HWsuNzu70G3NMMf2ET+RslE5IlO56SHAvx6TWyLox10OznSz0XFEC+bIpJda9+QHVRGtwme8v+GPX2hMtv2U/es54sB4lXi4gIUt0K0X4Q9kKYyQn7XEWkyO5Wly9X+PCeUfss3ft5BjGeLvdU0rsRhzh0B1j5nlEy7Q3aA14lI=
+	t=1729082265; cv=none; b=kZI2yrUibrQ5+TyU7bGLaBImM2hspV0kevQUQwOu/ZdsXp72iLH3HKS6oUrgmI7PWOinGUPt4snK1EwzQD32g6M5XXc4Ee/7qTvVKBON4Zqb0KDuH+vRt1j2TN9qkuQ+YX+kpBheheGgBUTkmYWDizMUInnxCckpUmc6Xnxr2Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729082256; c=relaxed/simple;
-	bh=tTGhsjah+f9WtaGLpsR3Eyzrw378whclemuvyreFmyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U6itNKhAme5Q7CZoP4xS4lZa91q575j5H7UBumW02Lay8/DIiBh5cec93E3WSdFpDOswe8XWqiqLOlM69oUl4hIwWE65tkmP1KLIvy8zDbV1mXzI53/YpZIyDB98ED4Xs3iKmP1RaBIByjJmRexC5xNTXFKi2mbT7oRlkykDYiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HJOO6d9i; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729082253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dqcZpBnlzKxVZK79wFkMFqysmLriO48CqyrmKcg5i3s=;
-	b=HJOO6d9io5Tnb56NJlUj36GUipxnPhec/hFOPEgQHx79iaWcJY8YNra0GQhczlvEV0EBAb
-	paAItpumJn86jqjtxzLeWPfgcBbmzQtkfUzwBbtUXpW42NbgpUehx4Wztjz+DEKYe0OBKf
-	aWwB5vmX5ren90NSPbC8bEe3nzXFW1E=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-494-Wo2IrRjMPQ2U8L7oVkbFrg-1; Wed,
- 16 Oct 2024 08:37:30 -0400
-X-MC-Unique: Wo2IrRjMPQ2U8L7oVkbFrg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A667C19560BE;
-	Wed, 16 Oct 2024 12:37:29 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.76])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DD9623000198;
-	Wed, 16 Oct 2024 12:37:26 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: kvalo@kernel.org,
-	jjohnson@kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: jtornosm@redhat.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] wifi: ath12k: fix warning when unbinding
-Date: Wed, 16 Oct 2024 14:37:08 +0200
-Message-ID: <20241016123722.206899-1-jtornosm@redhat.com>
+	s=arc-20240116; t=1729082265; c=relaxed/simple;
+	bh=reVC//lWLhQwWUwrlUTJAAChV8fJgYqeuRzlYrrW9v4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k5FlsnDOJtglNb55zd8gjoTgb0JfAdGaKkTfNrMMjzsMOFECnE29HUdIrHBdgjMerXt4ksemFRbF8irE2+72vGv0qQTappFf/Ls5SJjIpgN00OYMZvUVhAG2Yp2i+yAVYRlWCfRN9ECkS8wgR++Q9DOCp+vRjCuD6/eyZ83zVwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvRwxaON; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431481433bdso13805245e9.3;
+        Wed, 16 Oct 2024 05:37:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729082262; x=1729687062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EoZbzXysvZ3pWlGw93loQoLyyRrPBICxEmq8tAhWyF8=;
+        b=HvRwxaONvqwaI9oWc1cKfEP9ms9iZMmRL3xX182FuIgFO4fy7mtum6x2zrY9nEwc+9
+         7cHJowNcpVCZ/BrC4fpY3GXISp+v7/CjlA+4dHORAvpiicSUeQCfuIur0B/WqWokhrYv
+         oYnGRF+dqhXMbcZ7v9MLfw+dtyaBdwAyn2S0Am4lcSZgtF/YxD7d7j6+OXpFmw577zDD
+         AiPccuyShAFgGJET6el+Z7ndy8hcVN21Mdp576JDg+l3CRQd1KOPpPy6N4YljEjKyCVq
+         x2XAPrs8C7SkFiYEh98xVTBKVIhZ6hJyZSwkUkqR9klqeUBzxHjgSITT5HrEL6shKzd/
+         TLmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729082262; x=1729687062;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EoZbzXysvZ3pWlGw93loQoLyyRrPBICxEmq8tAhWyF8=;
+        b=PcRKgWtt16UR39IPtpQXas4FqcikQv9l6r44wBihsOCA+vKjtnUyBQZ9neX1g5XS7f
+         F8QMfPRINM4Uy7jukjtxJGsL5mmFCVvWddZSGaSp4eOStzMBk+i5o1hpO47sXcq2Y++J
+         5npFoKNI8u37BOgVOYASkTEUJ94Tk3VIxrRZv4RXLBzRJId4EIXMgrfpyK5p4d/8ufSC
+         Ted1pjM/Nrbv/ZkBUi6o39dAL2hP8q+buRss7tHsVRB1c1HJ0X1DO3aWqIF4occudD8C
+         +qb9VmGfE0taHCtWVwC69NiVbSMMVneX899Pd0hCLw2B864wx5KLAfKRMOT0k0OuEMR5
+         n3PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHZ3S3WN+YksVwPCrEnO9XPLCIkFX1tD47+QkPGYRZiMscf2J/yjLLuYKMHsoijNSikrN3Y5GxXhlv7+Qx@vger.kernel.org, AJvYcCV7e1dri/6AEFnX/Gza3pvVAuXLDqr+mTDOGChA4UVZhizgqHyXTUH4YAcTTbf5mFeXp/uSVfN9zKt3apKm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJWPvJcEgjzJ0gU/SNSajeDGY1kvKmHwNNTVpi6XgDQLHU6lvB
+	dfyKy0B4RUyL6dzki/XkKyGuFZ/fetUo/xN4LJm1EtmUxzh//oYN
+X-Google-Smtp-Source: AGHT+IFRq39zSOFiRwgoV1pgdDvgMyo/X5fY9oGDr5ekyAZFJdFXBIT/GF8reJJwyMEv2MZBpm3KfQ==
+X-Received: by 2002:a05:600c:1ca4:b0:42c:de34:34c1 with SMTP id 5b1f17b1804b1-4311dea3b47mr155045765e9.2.1729082261655;
+        Wed, 16 Oct 2024 05:37:41 -0700 (PDT)
+Received: from alessandro-pc.station (net-2-44-97-22.cust.vodafonedsl.it. [2.44.97.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c53ddsm48835425e9.43.2024.10.16.05.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 05:37:40 -0700 (PDT)
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	alessandrozanni.dev@gmail.com,
+	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
+Subject: [PATCH] fs: Fix uninitialized value issue in from_kuid
+Date: Wed, 16 Oct 2024 14:37:19 +0200
+Message-ID: <20241016123723.171588-1-alessandro.zanni87@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,83 +86,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-If there is an error during some initialization realated to firmware,
-the buffers dp->tx_ring[i].tx_status are released.
-However this is released again when the device is unbinded (ath12k_pci),
-and we get:
-[   41.271233] WARNING: CPU: 0 PID: 2098 at mm/slub.c:4689 free_large_kmalloc+0x4d/0x80
-[   41.271246] Modules linked in: uinput snd_seq_dummy snd_hrtimer nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables nfnetlink sunrpc qrtr_mhi intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core intel_vsec pmt_telemetry pmt_class kvm_intel kvm rapl qrtr snd_hda_codec_generic ath12k qmi_helpers snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi iTCO_wdt intel_pmc_bxt mac80211 snd_hda_codec iTCO_vendor_support libarc4 snd_hda_core snd_hwdep snd_seq snd_seq_device cfg80211 snd_pcm pcspkr i2c_i801 snd_timer i2c_smbus snd rfkill soundcore lpc_ich mhi virtio_balloon joydev xfs crct10dif_pclmul crc32_pclmul crc32c_intel polyval_clmulni polyval_generic ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 virtio_net virtio_blk virtio_console virtio_gpu net_failover failover virtio_dma_buf serio_raw fuse qemu_fw_cfg
-[   41.271284] CPU: 0 UID: 0 PID: 2098 Comm: bash Kdump: loaded Not tainted 6.12.0-rc1+ #29
-[   41.271286] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
-[   41.271287] RIP: 0010:free_large_kmalloc+0x4d/0x80
-[   41.271289] Code: 00 10 00 00 48 d3 e0 f7 d8 81 e2 c0 00 00 00 75 2f 89 c6 48 89 df e8 82 ff ff ff f0 ff 4b 34 0f 85 59 0e ce 00 e9 5b 0e ce 00 <0f> 0b 80 3d c8 29 3c 02 00 0f 84 2d 0e ce 00 b8 00 f0 ff ff eb d1
-[   41.271290] RSP: 0018:ffffa40881a33c50 EFLAGS: 00010246
-[   41.271292] RAX: 000fffffc0000000 RBX: ffffe697c0278000 RCX: 0000000000000000
-[   41.271293] RDX: ffffe697c0b60008 RSI: ffff8d00c9e00000 RDI: ffffe697c0278000
-[   41.271294] RBP: ffff8d00c3af0000 R08: ffff8d00f215d0c0 R09: 0000000080400038
-[   41.271294] R10: 0000000080400038 R11: 0000000000000000 R12: 0000000000000001
-[   41.271295] R13: ffffffffc0ef8948 R14: ffffffffc0ef8948 R15: ffff8d00c1277560
-[   41.271296] FS:  00007fd31e556740(0000) GS:ffff8d011e400000(0000) knlGS:0000000000000000
-[   41.271297] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   41.271298] CR2: 00007f778d3ffb38 CR3: 00000000065dc000 CR4: 0000000000752ef0
-[   41.271301] PKRU: 55555554
-[   41.271302] Call Trace:
-[   41.271304]  <TASK>
-[   41.271304]  ? free_large_kmalloc+0x4d/0x80
-[   41.271306]  ? __warn.cold+0x93/0xfa
-[   41.271308]  ? free_large_kmalloc+0x4d/0x80
-[   41.271311]  ? report_bug+0xff/0x140
-[   41.271314]  ? handle_bug+0x58/0x90
-[   41.271316]  ? exc_invalid_op+0x17/0x70
-[   41.271317]  ? asm_exc_invalid_op+0x1a/0x20
-[   41.271321]  ? free_large_kmalloc+0x4d/0x80
-[   41.271323]  ath12k_dp_free+0xdc/0x110 [ath12k]
-[   41.271337]  ath12k_core_deinit+0x8d/0xb0 [ath12k]
-[   41.271345]  ath12k_pci_remove+0x50/0xf0 [ath12k]
-[   41.271354]  pci_device_remove+0x3f/0xb0
-[   41.271356]  device_release_driver_internal+0x19c/0x200
-[   41.271359]  unbind_store+0xa1/0xb0
-...
+Fix uninitialized value issue in from_kuid by initializing the newattrs
+structure in do_truncate() method.
 
-The issue is always reproducible from a VM because the MSI addressing
-initialization is failing.
-
-In order to fix the issue, just check if the buffers were already released
-and if they need to be released, in addition set to NULL for the checking.
-
-cc: stable@vger.kernel.org
-Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
-Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Fixes: uninit-value in from_kuid reported here
+ https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
+Reported-by: syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
 ---
-v2:
-  - Fix the commit size in Fixes
-v1: https://lore.kernel.org/linux-wireless/20241010175102.207324-3-jtornosm@redhat.com/
+ fs/open.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/net/wireless/ath/ath12k/dp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/dp.c b/drivers/net/wireless/ath/ath12k/dp.c
-index 789d430e4455..9d878d815f3c 100644
---- a/drivers/net/wireless/ath/ath12k/dp.c
-+++ b/drivers/net/wireless/ath/ath12k/dp.c
-@@ -1277,8 +1277,12 @@ void ath12k_dp_free(struct ath12k_base *ab)
+diff --git a/fs/open.c b/fs/open.c
+index acaeb3e25c88..57c298b1db2c 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -40,7 +40,7 @@ int do_truncate(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		loff_t length, unsigned int time_attrs, struct file *filp)
+ {
+ 	int ret;
+-	struct iattr newattrs;
++	struct iattr newattrs = {0};
  
- 	ath12k_dp_rx_reo_cmd_list_cleanup(ab);
- 
--	for (i = 0; i < ab->hw_params->max_tx_ring; i++)
--		kfree(dp->tx_ring[i].tx_status);
-+	for (i = 0; i < ab->hw_params->max_tx_ring; i++) {
-+		if (dp->tx_ring[i].tx_status) {
-+			kfree(dp->tx_ring[i].tx_status);
-+			dp->tx_ring[i].tx_status = NULL;
-+		}
-+	}
- 
- 	ath12k_dp_rx_free(ab);
- 	/* Deinit any SOC level resource */
+ 	/* Not pretty: "inode->i_size" shouldn't really be signed. But it is. */
+ 	if (length < 0)
 -- 
-2.46.2
+2.43.0
 
 
