@@ -1,53 +1,49 @@
-Return-Path: <linux-kernel+bounces-367091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F5E99FE85
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DA999FE7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36251F22753
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07FB1F22BDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72983142659;
-	Wed, 16 Oct 2024 01:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF91014884C;
+	Wed, 16 Oct 2024 01:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JAqJqFBC"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/m+Wkg0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A578FC0E
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493CA13C807;
+	Wed, 16 Oct 2024 01:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729043459; cv=none; b=q0awM+voz+hFMa+a1T6UMM8bWDD0vQI1wIfHA1U5HSjKeUKRfs3ZFmSSxXnrzUON/vsiVMJhkfp0XTyBVTswliqKH6NCSYWfyE/bQYhX67PHThY9JPTlU8Az1FOWEh/5LdUXxMRUXSRgXZzZw46BlAthvUJJnGpZprlTyti8ceg=
+	t=1729043425; cv=none; b=lci1IKzggD8osdLR7TWYj2os5sD4aA7jtxOdGZZUfu6MU6/Bl5osVJsLp8K6RdG3nCPnmKfTFMxT0ORq2194L2ViHJLAPecejAYpwCmCIf3Z+M2w7MkGSSY8nVLM1+zX1eQBMH4HuAUyHmw5gpPv9rQylqAkdiIHUxrtt0Ml1cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729043459; c=relaxed/simple;
-	bh=kNL8RZpAhOK3XSLOXGLgVKw10zRrZt3dI5opcDhHpkg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XOSgOusEd8xEIn0x43iQLXPz7mDflpwNBmK5GI9VeLK8kVhFkhHxe1rIwk2BiQaW3xgiyv+kZlX4C/b8dhE/OJUh63AFogIFogYMwpXSesX1kMknkw4fg9jhUgj+11y7w0r0anvkRKwGdXjFGcpX1VCH+ZXOLRhEe0NJoMjORek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JAqJqFBC; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729043455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KXQgibpwvhx7YUTtIm7mnFEXZ5fErMpg8ciGJfoRR2o=;
-	b=JAqJqFBCeP8sNDH4ITMUYLe9+IYCM1Xg2EpIrNGHFfL8yDi/qgVlAm5ZPHwJHMz9fGxOlJ
-	MaDfKMgIRNTnXoZ3ZEVTNSPVEES3lk8et6pNrjvwqtV9m5EqaBp95i5qJTvquRSKr/fD+S
-	EHKnfKkmF2srS/KlqNHMYA6aIMlw3Io=
-From: Youling Tang <youling.tang@linux.dev>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH] bcachefs: Correct the description of the '--bucket=size' options
-Date: Wed, 16 Oct 2024 09:50:26 +0800
-Message-Id: <20241016015026.1555670-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1729043425; c=relaxed/simple;
+	bh=8UA0Tl0wQhdOswULPln9SUBmj/N5QXE6fzUmbSJduVQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=msYKLU1bFYmLnCSiJAE8aSVnh8XRTWaTMLJGFfJXANMDHJGdWvCn9nssT+IqWGgxvTBQw75QBNE5OJzVxmJAE58/zVrsNHmxiIyAB7N9sWtdBDWUrrSLaVF+A04u2qZzHXCGssKwqL4s3dFdTVIpsi+1wCT9vxxqkUEMiswT3rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/m+Wkg0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8D1C4CEC6;
+	Wed, 16 Oct 2024 01:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729043424;
+	bh=8UA0Tl0wQhdOswULPln9SUBmj/N5QXE6fzUmbSJduVQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=l/m+Wkg0KlmbIYmXgFzBshJLXnaqg1DwTqrCqyVVGi9mYV3W6Ueai2hoHLfH1zhG9
+	 17XXwNCeImZD4Ma//cA+fV3PpubGA4gMw7WkH96F42hnH+DPoaSzDYfUrI/nIj/HQ0
+	 O/3K5kC9DzFFVtamv+BtdqepjAiypmB1ItY1oYDiu9onQuvL5bSh+9Tl2vSsV6lIS3
+	 kGerEWQLNF/wkMsNFKcU3UqSUs1z8clrmuSU7YG3gw0uIm9fmTd1sw0ahThgiRUsmg
+	 s75xqZsKkWXY9SnsQd5BMDgpLZ6nxR/WTo8CedR4UI+9HwoglB01pF+paCrUccsM8g
+	 CfyK/g3P6GDew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341A13809A8A;
+	Wed, 16 Oct 2024 01:50:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,29 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH v2 net] net: dsa: vsc73xx: fix reception from VLAN-unaware
+ bridges
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172904343002.1354363.8682202935797978740.git-patchwork-notify@kernel.org>
+Date: Wed, 16 Oct 2024 01:50:30 +0000
+References: <20241014153041.1110364-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20241014153041.1110364-1-vladimir.oltean@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, andrew@lunn.ch, f.fainelli@gmail.com,
+ paweldembicki@gmail.com, linus.walleij@linaro.org,
+ linux-kernel@vger.kernel.org
 
-From: Youling Tang <tangyouling@kylinos.cn>
+Hello:
 
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
----
- fs/bcachefs/opts.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/fs/bcachefs/opts.h b/fs/bcachefs/opts.h
-index cb2e244a2429..92eae5636f2b 100644
---- a/fs/bcachefs/opts.h
-+++ b/fs/bcachefs/opts.h
-@@ -487,7 +487,7 @@ enum fsck_err_opts {
- 	  OPT_DEVICE,							\
- 	  OPT_UINT(0, S64_MAX),						\
- 	  BCH2_NO_SB_OPT,		0,				\
--	  "size",	"Size of filesystem on device")			\
-+	  "size",	"Specifies the bucket size; must be greater than the btree node size")\
- 	x(durability,			u8,				\
- 	  OPT_DEVICE|OPT_SB_FIELD_ONE_BIAS,				\
- 	  OPT_UINT(0, BCH_REPLICAS_MAX),				\
+On Mon, 14 Oct 2024 18:30:41 +0300 you wrote:
+> Similar to the situation described for sja1105 in commit 1f9fc48fd302
+> ("net: dsa: sja1105: fix reception from VLAN-unaware bridges"), the
+> vsc73xx driver uses tag_8021q and doesn't need the ds->untag_bridge_pvid
+> request. In fact, this option breaks packet reception.
+> 
+> The ds->untag_bridge_pvid option strips VLANs from packets received on
+> VLAN-unaware bridge ports. But those VLANs should already be stripped
+> by tag_vsc73xx_8021q.c as part of vsc73xx_rcv() - they are not VLANs in
+> VLAN-unaware mode, but DSA tags. Thus, dsa_software_vlan_untag() tries
+> to untag a VLAN that doesn't exist, corrupting the packet.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,net] net: dsa: vsc73xx: fix reception from VLAN-unaware bridges
+    https://git.kernel.org/netdev/net/c/11d06f0aaef8
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
