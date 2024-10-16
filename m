@@ -1,154 +1,2103 @@
-Return-Path: <linux-kernel+bounces-367720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578FD9A05CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0F79A05D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18102286194
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E921F21A09
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADEB206068;
-	Wed, 16 Oct 2024 09:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5185D206954;
+	Wed, 16 Oct 2024 09:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iEWdKaOJ"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LQzrdF5A"
 Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34502038A4
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA1D1F8199
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 09:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071693; cv=none; b=qCNVpeVdFdqCXfFUCafke1YwSqunQHvssx3m9kU00+Okb3Mfy7FhHVqS6MDmDtaAqjyVHfJtqya/PyjUW+AaHlOxJwesawfbXgAwPMjfV8UxzI0bcWULg7J/5RvmiMJx+r7R3oeLr77QjYAM6TH/hU4XE3pSAijLrXO27bYpubU=
+	t=1729071693; cv=none; b=CC6OyK05r68fdxSOamTepu/o8BNrY2bP3D1juy3+Fp70NxF6gpADRpuNPzzQj/NOgyTnd6vlZYLL7hAU0pPF7vxvAehBLtOW3/SxL64PG9npy0divS4xXJ1Bx7Wa9JMnWw/ZqJpvABtGQ/S+PzAZgypairecUBvXYNGdf/b8FzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729071693; c=relaxed/simple;
-	bh=3MQEJC8kUuER8WEddRsKIJSrVNbnBBkYTor5eJpk+x0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pHb7C1NqXukPs7yL+dhgnqmKKnYzOLoCmjd8OBY1LePqNa57HKX3pzutsUjX/77A8QZPoYP5+28NAqdeCwC7/UBvmNoWvABCfoLXqIId3FlTVPCgFRugCKSYb/DV64KPP3t5H5sv1dOsAu6/nD5cLKPf/V8HHTxKoCLs04LCg9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iEWdKaOJ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4311ae6426aso43503195e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:41:31 -0700 (PDT)
+	bh=OfNh4pZ+UpGWW0i8gWRuetnxv/+O4dSWwtimtAEy0Lc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X4W6+2/0xCdfWhmoDv3KgL08GFl0gagBj+lB8wY9Yb6Cb1KJv1D0O0OKMgqEx1Hbxy2qcDMest5NTgd1edpTCoi2aQfpHCpZQeHRPoyZUHsPp4BQAsMYp6dJ6sIUGSL6Fb1/bWfdKtkSuhtGGJ7AcBVUQh2pmonHv/4V3jaPKRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LQzrdF5A; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4311420b63fso48452405e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 02:41:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729071690; x=1729676490; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=riDwr2JJEmNVTbyqdrMB0sCoh2/8iNo6TFpm2lok36g=;
-        b=iEWdKaOJ6iuPh6Wt9je2loRr1pC2yBJn4mDzzth7w+LRVcTHu6EndWUjdg21c/5Y20
-         LeQBJlTTf/yBntS0++MXke2gmDbqbojGmmd4w69klHcDVO2lJDDaqo/TjLNsWsuEqd2B
-         mUbPho828tSqLmMWV0Jmr4s3P9YcpO9OtxeqqoboQMsNRqSRpA3wW+KrCgTh8hhGxJZO
-         mpaz7ayja6V8CTZrTWefpT66XW3nw2I17E3z12AEA1I5YMHzLgMiOmNtfftcsXRt9srq
-         3+An3eukJlA5hYShVsMWbE+mgnjmwaIxwFFCp3n8cguuUyzImKw1iKuyWJfiMAYNoXif
-         k1kg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729071688; x=1729676488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ujGXz1ACL3IAVLxqTifItbcH7jrdToTOBpmdeJOO+4=;
+        b=LQzrdF5AjtiMh36Sw3Dz6ZBA0JvIuq6qKpFoz5t8DmKvYOqyqWFo+2RcMXJ/zZwap4
+         T6s+kLkOHu4Weo/4gubcgpYVuNoLMmvfKFD2ZkJdgGUE+hdR8Ys0CQzW+g1CEyQlZkx7
+         mVsymK2uvRb4F0ekidQa/DymF28x6C9JfzibQBMcZasshy/i1VhHYyS/xdZdKNRrTbaN
+         Nj7GQsHru5fL2dz/6ChotfG+pzpUDemm2WqkG1PwFWs9wy5BP2j7+t3OTKEtG5U6D7L3
+         vJHf7hNmfhNW9+N4HdbyHyowOQvGxGwFxtpy8KR/8Z7WJS9qvXRqKxHfok6ijU4H392u
+         PYqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729071690; x=1729676490;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=riDwr2JJEmNVTbyqdrMB0sCoh2/8iNo6TFpm2lok36g=;
-        b=fshsgJlKP7igQUTC0uJ4ljd0u42EPavJy1Tzw1lg8WdUD5NwqLVBG6PmtUW2ggBBHu
-         GRuRfg3nTYEwybkOue7NyIfOYIBG5GzxN6qDSEhPEP0gpXVeatQ3xk2FCV4AK9wLM/Km
-         6VrvjbRGOOu5a6HSuZEPOZX8uuxJG1k44kL9EXc1M6dDgbEgh/wahfDCq54UAQpmojPi
-         I8kJwLURUIUOwypGqF7NIe+J2dwf8r2O3KNm/cdAL8ICSkUXDHYbuREVPu6yTtLI7O6t
-         7NmM3lDcH8wUBD2OmabzYXlQrEJpwBANFZ/MvAWzGwoBykleJTUkL+DVWAM211rMk9ml
-         O6/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWNWfRw0btGDV/rz0hdJLLoMB42UAhHl368Q56iqM+3p2deW94pQvAiUhOBP8imVUS/U4lJbWFffX73XB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG2dFk5T8hCA2d8JavYjtyUuqFySbeDt3booausMXT2me4S32f
-	B+vJd9QNYzc2BmFztxYWS+OqXH0SmQchd+g4jVQyhciYAbR7WC8p/VxFJDrgEzLVb1vZKLGXufC
-	8
-X-Google-Smtp-Source: AGHT+IHY1BwsiWUW9BTJw3ej/32B3c8IScpK2B6P5JrV+KdWHB8+oQRtl4NPq964yjdwwEBMyp1RjQ==
-X-Received: by 2002:a05:600c:3ca3:b0:42c:de2f:da27 with SMTP id 5b1f17b1804b1-4314a285160mr27627415e9.2.1729071690002;
-        Wed, 16 Oct 2024 02:41:30 -0700 (PDT)
-Received: from [127.0.1.1] ([2a05:6e02:10a5:e010:472a:1760:2b0d:11e9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f56998fsm43654735e9.16.2024.10.16.02.41.29
+        d=1e100.net; s=20230601; t=1729071688; x=1729676488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ujGXz1ACL3IAVLxqTifItbcH7jrdToTOBpmdeJOO+4=;
+        b=UP8vHsox78vmANVobOuxI9BkEKBtPU6m77g+88WZMROUD8HRKQT4QBtH/KZrKaCxpU
+         1ifGNHqpw6TN3B2IAnb3v4hqV47jLQwE68sWW2/XfXVBam4YyJFYb/GGxn70pw7HhGpi
+         uWQuhmzR/4Lo30JJXnEiofF59cGiRfX7jwsYn5KMGDZRtOaZntlx9P6SuzvoRz8WQ/Ne
+         d+EwFs1j71Ys+ylAT1PUklwazdtv1HhH5sF7rB+FQLC2/NPmvo9jj5IXLCGdrGf/xj/l
+         tkmYn4aZ8l2WJFYjP+/MUdBCFHf5nzo2D/h/vqqNfnepT5YfrEUDHN4ZX4Zy2IkwL/IX
+         dDFA==
+X-Gm-Message-State: AOJu0YxbZPqz5Sxi2BIUQV2IY4rikOc5hE4t8k6CPUUANVUm/15m13Fw
+	Y3m2KtonVt9siZ/7ze0gT7kn4412EUuVBseqizo4oa65ghGJxRhk9RiMLWceCHg=
+X-Google-Smtp-Source: AGHT+IGAz+nZHBjMzKWrrNLYKjLsYqg9cAxnVhUqzBCsIcV9U9U54B/gdXtHkb8QhGUbmT9rtmF23w==
+X-Received: by 2002:a05:600c:1e13:b0:431:5533:8f0c with SMTP id 5b1f17b1804b1-43155338fe7mr1983945e9.29.1729071687315;
+        Wed, 16 Oct 2024 02:41:27 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c3ca:7dbf:345b:d051])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6b31e3sm43629115e9.31.2024.10.16.02.41.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 02:41:29 -0700 (PDT)
-From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Wed, 16 Oct 2024 11:41:10 +0200
-Subject: [PATCH v3 2/2] irqchip: Kconfig: Added module build support for
- the TI interrupt aggregator
+        Wed, 16 Oct 2024 02:41:26 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tony Lindgren <tony@atomide.com>
+Cc: linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] misc: ti-st: st_kim: remove the driver
+Date: Wed, 16 Oct 2024 11:41:17 +0200
+Message-ID: <20241016094117.16654-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241016-timodules-v3-2-fa71091ade98@baylibre.com>
-References: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
-In-Reply-To: <20241016-timodules-v3-0-fa71091ade98@baylibre.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- vishalm@ti.com, Mattijs Korpershoek <mkorpershoek@baylibre.com>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Guillaume La Roque <glaroque@baylibre.com>, 
- Nicolas Frayer <nfrayer@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
 
-From: Nicolas Frayer <nfrayer@baylibre.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Added module build support in Kconfig for the TI SCI interrupt aggregator
-driver. The driver's default build is built-in and it also depends on
-ARCH_K3 as the driver uses some 64 bit ops and should only be built
-for 64 bit platforms.
+This driver has only ever been used by the omap4-panda board file. This
+file has been gone for over 10 years. Let it go.
 
-Signed-off-by: Nicolas Frayer <nfrayer@baylibre.com>
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/arm64/Kconfig.platforms      | 1 -
- drivers/irqchip/Kconfig           | 5 +++--
- drivers/irqchip/irq-ti-sci-inta.c | 1 +
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/misc/Kconfig         |   1 -
+ drivers/misc/Makefile        |   1 -
+ drivers/misc/ti-st/Kconfig   |  19 -
+ drivers/misc/ti-st/Makefile  |   7 -
+ drivers/misc/ti-st/st_core.c | 918 -----------------------------------
+ drivers/misc/ti-st/st_kim.c  | 839 --------------------------------
+ drivers/misc/ti-st/st_ll.c   | 156 ------
+ 7 files changed, 1941 deletions(-)
+ delete mode 100644 drivers/misc/ti-st/Kconfig
+ delete mode 100644 drivers/misc/ti-st/Makefile
+ delete mode 100644 drivers/misc/ti-st/st_core.c
+ delete mode 100644 drivers/misc/ti-st/st_kim.c
+ delete mode 100644 drivers/misc/ti-st/st_ll.c
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 393845a3ae5c..9dea47decfbd 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -135,7 +135,6 @@ config ARCH_K3
- 	select SOC_TI
- 	select TI_MESSAGE_MANAGER
- 	select TI_SCI_PROTOCOL
--	select TI_SCI_INTA_IRQCHIP
- 	select TI_K3_SOCINFO
- 	help
- 	  This enables support for Texas Instruments' K3 multicore SoC
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index a958731404e9..9646322345e4 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -544,10 +544,11 @@ config TI_SCI_INTR_IRQCHIP
- 	  TI System Controller, say Y here. Otherwise, say N.
- 
- config TI_SCI_INTA_IRQCHIP
--	bool
--	depends on TI_SCI_PROTOCOL
-+	tristate "TI SCI INTA Interrupt Controller"
-+	depends on ARCH_K3 && TI_SCI_PROTOCOL
- 	select IRQ_DOMAIN_HIERARCHY
- 	select TI_SCI_INTA_MSI_DOMAIN
-+	default ARCH_K3
- 	help
- 	  This enables the irqchip driver support for K3 Interrupt aggregator
- 	  over TI System Control Interface available on some new TI's SoCs.
-diff --git a/drivers/irqchip/irq-ti-sci-inta.c b/drivers/irqchip/irq-ti-sci-inta.c
-index b83f5cbab123..a887efba262c 100644
---- a/drivers/irqchip/irq-ti-sci-inta.c
-+++ b/drivers/irqchip/irq-ti-sci-inta.c
-@@ -743,3 +743,4 @@ module_platform_driver(ti_sci_inta_irq_domain_driver);
- 
- MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ti.com>");
- MODULE_DESCRIPTION("K3 Interrupt Aggregator driver over TI SCI protocol");
-+MODULE_LICENSE("GPL");
-
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 3fe7e2a9bd29..0d46b8388331 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -613,7 +613,6 @@ config MARVELL_CN10K_DPI
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+-source "drivers/misc/ti-st/Kconfig"
+ source "drivers/misc/lis3lv02d/Kconfig"
+ source "drivers/misc/altera-stapl/Kconfig"
+ source "drivers/misc/mei/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index a9f94525e181..d6e7c6d62db0 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -40,7 +40,6 @@ obj-y				+= eeprom/
+ obj-y				+= cb710/
+ obj-$(CONFIG_VMWARE_BALLOON)	+= vmw_balloon.o
+ obj-$(CONFIG_PCH_PHUB)		+= pch_phub.o
+-obj-y				+= ti-st/
+ obj-y				+= lis3lv02d/
+ obj-$(CONFIG_ALTERA_STAPL)	+=altera-stapl/
+ obj-$(CONFIG_INTEL_MEI)		+= mei/
+diff --git a/drivers/misc/ti-st/Kconfig b/drivers/misc/ti-st/Kconfig
+deleted file mode 100644
+index 1503a6496f63..000000000000
+--- a/drivers/misc/ti-st/Kconfig
++++ /dev/null
+@@ -1,19 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
+-#
+-# TI's shared transport line discipline and the protocol
+-# drivers (BT, FM and GPS)
+-#
+-menu "Texas Instruments shared transport line discipline"
+-config TI_ST
+-	tristate "Shared transport core driver"
+-	depends on NET && TTY
+-	depends on GPIOLIB || COMPILE_TEST
+-	select FW_LOADER
+-	help
+-	  This enables the shared transport core driver for TI
+-	  BT / FM and GPS combo chips. This enables protocol drivers
+-	  to register themselves with core and send data, the responses
+-	  are returned to relevant protocol drivers based on their
+-	  packet types.
+-
+-endmenu
+diff --git a/drivers/misc/ti-st/Makefile b/drivers/misc/ti-st/Makefile
+deleted file mode 100644
+index 93393100952e..000000000000
+--- a/drivers/misc/ti-st/Makefile
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
+-#
+-# Makefile for TI's shared transport line discipline
+-# and its protocol drivers (BT, FM, GPS)
+-#
+-obj-$(CONFIG_TI_ST) 		+= st_drv.o
+-st_drv-objs			:= st_core.o st_kim.o st_ll.o
+diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
+deleted file mode 100644
+index b878431553ab..000000000000
+--- a/drivers/misc/ti-st/st_core.c
++++ /dev/null
+@@ -1,918 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- *  Shared Transport Line discipline driver Core
+- *	This hooks up ST KIM driver and ST LL driver
+- *  Copyright (C) 2009-2010 Texas Instruments
+- *  Author: Pavan Savoy <pavan_savoy@ti.com>
+- */
+-
+-#define pr_fmt(fmt)	"(stc): " fmt
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/tty.h>
+-
+-#include <linux/seq_file.h>
+-#include <linux/skbuff.h>
+-
+-#include <linux/ti_wilink_st.h>
+-#include <linux/netdevice.h>
+-
+-/*
+- * function pointer pointing to either,
+- * st_kim_recv during registration to receive fw download responses
+- * st_int_recv after registration to receive proto stack responses
+- */
+-static void (*st_recv)(void *disc_data, const u8 *ptr, size_t count);
+-
+-/********************************************************************/
+-static void add_channel_to_table(struct st_data_s *st_gdata,
+-		struct st_proto_s *new_proto)
+-{
+-	pr_info("%s: id %d\n", __func__, new_proto->chnl_id);
+-	/* list now has the channel id as index itself */
+-	st_gdata->list[new_proto->chnl_id] = new_proto;
+-	st_gdata->is_registered[new_proto->chnl_id] = true;
+-}
+-
+-static void remove_channel_from_table(struct st_data_s *st_gdata,
+-		struct st_proto_s *proto)
+-{
+-	pr_info("%s: id %d\n", __func__, proto->chnl_id);
+-/*	st_gdata->list[proto->chnl_id] = NULL; */
+-	st_gdata->is_registered[proto->chnl_id] = false;
+-}
+-
+-/*
+- * called from KIM during firmware download.
+- *
+- * This is a wrapper function to tty->ops->write_room.
+- * It returns number of free space available in
+- * uart tx buffer.
+- */
+-int st_get_uart_wr_room(struct st_data_s *st_gdata)
+-{
+-	if (unlikely(st_gdata == NULL || st_gdata->tty == NULL)) {
+-		pr_err("tty unavailable to perform write");
+-		return -1;
+-	}
+-
+-	return tty_write_room(st_gdata->tty);
+-}
+-
+-/*
+- * can be called in from
+- * -- KIM (during fw download)
+- * -- ST Core (during st_write)
+- *
+- *  This is the internal write function - a wrapper
+- *  to tty->ops->write
+- */
+-int st_int_write(struct st_data_s *st_gdata,
+-	const unsigned char *data, int count)
+-{
+-	struct tty_struct *tty;
+-	if (unlikely(st_gdata == NULL || st_gdata->tty == NULL)) {
+-		pr_err("tty unavailable to perform write");
+-		return -EINVAL;
+-	}
+-	tty = st_gdata->tty;
+-#ifdef VERBOSE
+-	print_hex_dump(KERN_DEBUG, "<out<", DUMP_PREFIX_NONE,
+-		16, 1, data, count, 0);
+-#endif
+-	return tty->ops->write(tty, data, count);
+-
+-}
+-
+-/*
+- * push the skb received to relevant
+- * protocol stacks
+- */
+-static void st_send_frame(unsigned char chnl_id, struct st_data_s *st_gdata)
+-{
+-	pr_debug(" %s(prot:%d) ", __func__, chnl_id);
+-
+-	if (unlikely
+-	    (st_gdata == NULL || st_gdata->rx_skb == NULL
+-	     || st_gdata->is_registered[chnl_id] == false)) {
+-		pr_err("chnl_id %d not registered, no data to send?",
+-			   chnl_id);
+-		kfree_skb(st_gdata->rx_skb);
+-		return;
+-	}
+-	/*
+-	 * this cannot fail
+-	 * this shouldn't take long
+-	 * - should be just skb_queue_tail for the
+-	 *   protocol stack driver
+-	 */
+-	if (likely(st_gdata->list[chnl_id]->recv != NULL)) {
+-		if (unlikely
+-			(st_gdata->list[chnl_id]->recv
+-			(st_gdata->list[chnl_id]->priv_data, st_gdata->rx_skb)
+-			     != 0)) {
+-			pr_err(" proto stack %d's ->recv failed", chnl_id);
+-			kfree_skb(st_gdata->rx_skb);
+-			return;
+-		}
+-	} else {
+-		pr_err(" proto stack %d's ->recv null", chnl_id);
+-		kfree_skb(st_gdata->rx_skb);
+-	}
+-	return;
+-}
+-
+-/*
+- * st_reg_complete - to call registration complete callbacks
+- * of all protocol stack drivers
+- * This function is being called with spin lock held, protocol drivers are
+- * only expected to complete their waits and do nothing more than that.
+- */
+-static void st_reg_complete(struct st_data_s *st_gdata, int err)
+-{
+-	unsigned char i = 0;
+-	pr_info(" %s ", __func__);
+-	for (i = 0; i < ST_MAX_CHANNELS; i++) {
+-		if (likely(st_gdata != NULL &&
+-			st_gdata->is_registered[i] == true &&
+-				st_gdata->list[i]->reg_complete_cb != NULL)) {
+-			st_gdata->list[i]->reg_complete_cb
+-				(st_gdata->list[i]->priv_data, err);
+-			pr_info("protocol %d's cb sent %d\n", i, err);
+-			if (err) { /* cleanup registered protocol */
+-				st_gdata->is_registered[i] = false;
+-				if (st_gdata->protos_registered)
+-					st_gdata->protos_registered--;
+-			}
+-		}
+-	}
+-}
+-
+-static inline int st_check_data_len(struct st_data_s *st_gdata,
+-	unsigned char chnl_id, int len)
+-{
+-	int room = skb_tailroom(st_gdata->rx_skb);
+-
+-	pr_debug("len %d room %d", len, room);
+-
+-	if (!len) {
+-		/*
+-		 * Received packet has only packet header and
+-		 * has zero length payload. So, ask ST CORE to
+-		 * forward the packet to protocol driver (BT/FM/GPS)
+-		 */
+-		st_send_frame(chnl_id, st_gdata);
+-
+-	} else if (len > room) {
+-		/*
+-		 * Received packet's payload length is larger.
+-		 * We can't accommodate it in created skb.
+-		 */
+-		pr_err("Data length is too large len %d room %d", len,
+-			   room);
+-		kfree_skb(st_gdata->rx_skb);
+-	} else {
+-		/*
+-		 * Packet header has non-zero payload length and
+-		 * we have enough space in created skb. Lets read
+-		 * payload data */
+-		st_gdata->rx_state = ST_W4_DATA;
+-		st_gdata->rx_count = len;
+-		return len;
+-	}
+-
+-	/* Change ST state to continue to process next packet */
+-	st_gdata->rx_state = ST_W4_PACKET_TYPE;
+-	st_gdata->rx_skb = NULL;
+-	st_gdata->rx_count = 0;
+-	st_gdata->rx_chnl = 0;
+-
+-	return 0;
+-}
+-
+-/*
+- * st_wakeup_ack - internal function for action when wake-up ack
+- *	received
+- */
+-static inline void st_wakeup_ack(struct st_data_s *st_gdata,
+-	unsigned char cmd)
+-{
+-	struct sk_buff *waiting_skb;
+-	unsigned long flags = 0;
+-
+-	spin_lock_irqsave(&st_gdata->lock, flags);
+-	/*
+-	 * de-Q from waitQ and Q in txQ now that the
+-	 * chip is awake
+-	 */
+-	while ((waiting_skb = skb_dequeue(&st_gdata->tx_waitq)))
+-		skb_queue_tail(&st_gdata->txq, waiting_skb);
+-
+-	/* state forwarded to ST LL */
+-	st_ll_sleep_state(st_gdata, (unsigned long)cmd);
+-	spin_unlock_irqrestore(&st_gdata->lock, flags);
+-
+-	/* wake up to send the recently copied skbs from waitQ */
+-	st_tx_wakeup(st_gdata);
+-}
+-
+-/*
+- * st_int_recv - ST's internal receive function.
+- *	Decodes received RAW data and forwards to corresponding
+- *	client drivers (Bluetooth,FM,GPS..etc).
+- *	This can receive various types of packets,
+- *	HCI-Events, ACL, SCO, 4 types of HCI-LL PM packets
+- *	CH-8 packets from FM, CH-9 packets from GPS cores.
+- */
+-static void st_int_recv(void *disc_data, const u8 *ptr, size_t count)
+-{
+-	struct st_proto_s *proto;
+-	unsigned short payload_len = 0;
+-	int len = 0;
+-	unsigned char type = 0;
+-	unsigned char *plen;
+-	struct st_data_s *st_gdata = (struct st_data_s *)disc_data;
+-	unsigned long flags;
+-
+-	if (st_gdata == NULL) {
+-		pr_err(" received null from TTY ");
+-		return;
+-	}
+-
+-	pr_debug("count %zu rx_state %ld"
+-		   "rx_count %ld", count, st_gdata->rx_state,
+-		   st_gdata->rx_count);
+-
+-	spin_lock_irqsave(&st_gdata->lock, flags);
+-	/* Decode received bytes here */
+-	while (count) {
+-		if (st_gdata->rx_count) {
+-			len = min_t(unsigned int, st_gdata->rx_count, count);
+-			skb_put_data(st_gdata->rx_skb, ptr, len);
+-			st_gdata->rx_count -= len;
+-			count -= len;
+-			ptr += len;
+-
+-			if (st_gdata->rx_count)
+-				continue;
+-
+-			/* Check ST RX state machine , where are we? */
+-			switch (st_gdata->rx_state) {
+-			/* Waiting for complete packet ? */
+-			case ST_W4_DATA:
+-				pr_debug("Complete pkt received");
+-				/*
+-				 * Ask ST CORE to forward
+-				 * the packet to protocol driver
+-				 */
+-				st_send_frame(st_gdata->rx_chnl, st_gdata);
+-
+-				st_gdata->rx_state = ST_W4_PACKET_TYPE;
+-				st_gdata->rx_skb = NULL;
+-				continue;
+-			/* parse the header to know details */
+-			case ST_W4_HEADER:
+-				proto = st_gdata->list[st_gdata->rx_chnl];
+-				plen =
+-				&st_gdata->rx_skb->data
+-				[proto->offset_len_in_hdr];
+-				pr_debug("plen pointing to %x\n", *plen);
+-				if (proto->len_size == 1) /* 1 byte len field */
+-					payload_len = *(unsigned char *)plen;
+-				else if (proto->len_size == 2)
+-					payload_len =
+-					__le16_to_cpu(*(unsigned short *)plen);
+-				else
+-					pr_info("%s: invalid length "
+-					"for id %d\n",
+-					__func__, proto->chnl_id);
+-				st_check_data_len(st_gdata, proto->chnl_id,
+-						payload_len);
+-				pr_debug("off %d, pay len %d\n",
+-					proto->offset_len_in_hdr, payload_len);
+-				continue;
+-			}	/* end of switch rx_state */
+-		}
+-
+-		/* end of if rx_count */
+-
+-		/*
+-		 * Check first byte of packet and identify module
+-		 * owner (BT/FM/GPS)
+-		 */
+-		switch (*ptr) {
+-		case LL_SLEEP_IND:
+-		case LL_SLEEP_ACK:
+-		case LL_WAKE_UP_IND:
+-			pr_debug("PM packet");
+-			/*
+-			 * this takes appropriate action based on
+-			 * sleep state received --
+-			 */
+-			st_ll_sleep_state(st_gdata, *ptr);
+-			/*
+-			 * if WAKEUP_IND collides copy from waitq to txq
+-			 * and assume chip awake
+-			 */
+-			spin_unlock_irqrestore(&st_gdata->lock, flags);
+-			if (st_ll_getstate(st_gdata) == ST_LL_AWAKE)
+-				st_wakeup_ack(st_gdata, LL_WAKE_UP_ACK);
+-			spin_lock_irqsave(&st_gdata->lock, flags);
+-
+-			ptr++;
+-			count--;
+-			continue;
+-		case LL_WAKE_UP_ACK:
+-			pr_debug("PM packet");
+-
+-			spin_unlock_irqrestore(&st_gdata->lock, flags);
+-			/* wake up ack received */
+-			st_wakeup_ack(st_gdata, *ptr);
+-			spin_lock_irqsave(&st_gdata->lock, flags);
+-
+-			ptr++;
+-			count--;
+-			continue;
+-			/* Unknown packet? */
+-		default:
+-			type = *ptr;
+-
+-			/*
+-			 * Default case means non-HCILL packets,
+-			 * possibilities are packets for:
+-			 * (a) valid protocol -  Supported Protocols within
+-			 *     the ST_MAX_CHANNELS.
+-			 * (b) registered protocol - Checked by
+-			 *     "st_gdata->list[type] == NULL)" are supported
+-			 *     protocols only.
+-			 *  Rules out any invalid protocol and
+-			 *  unregistered protocols with channel ID < 16.
+-			 */
+-
+-			if ((type >= ST_MAX_CHANNELS) ||
+-					(st_gdata->list[type] == NULL)) {
+-				pr_err("chip/interface misbehavior: "
+-						"dropping frame starting "
+-						"with 0x%02x\n", type);
+-				goto done;
+-			}
+-
+-			st_gdata->rx_skb = alloc_skb(
+-					st_gdata->list[type]->max_frame_size,
+-					GFP_ATOMIC);
+-			if (st_gdata->rx_skb == NULL) {
+-				pr_err("out of memory: dropping\n");
+-				goto done;
+-			}
+-
+-			skb_reserve(st_gdata->rx_skb,
+-					st_gdata->list[type]->reserve);
+-			/* next 2 required for BT only */
+-			st_gdata->rx_skb->cb[0] = type; /*pkt_type*/
+-			st_gdata->rx_skb->cb[1] = 0; /*incoming*/
+-			st_gdata->rx_chnl = *ptr;
+-			st_gdata->rx_state = ST_W4_HEADER;
+-			st_gdata->rx_count = st_gdata->list[type]->hdr_len;
+-			pr_debug("rx_count %ld\n", st_gdata->rx_count);
+-		}
+-		ptr++;
+-		count--;
+-	}
+-done:
+-	spin_unlock_irqrestore(&st_gdata->lock, flags);
+-	pr_debug("done %s", __func__);
+-	return;
+-}
+-
+-/*
+- * st_int_dequeue - internal de-Q function.
+- *	If the previous data set was not written
+- *	completely, return that skb which has the pending data.
+- *	In normal cases, return top of txq.
+- */
+-static struct sk_buff *st_int_dequeue(struct st_data_s *st_gdata)
+-{
+-	struct sk_buff *returning_skb;
+-
+-	pr_debug("%s", __func__);
+-	if (st_gdata->tx_skb != NULL) {
+-		returning_skb = st_gdata->tx_skb;
+-		st_gdata->tx_skb = NULL;
+-		return returning_skb;
+-	}
+-	return skb_dequeue(&st_gdata->txq);
+-}
+-
+-/*
+- * st_int_enqueue - internal Q-ing function.
+- *	Will either Q the skb to txq or the tx_waitq
+- *	depending on the ST LL state.
+- *	If the chip is asleep, then Q it onto waitq and
+- *	wakeup the chip.
+- *	txq and waitq needs protection since the other contexts
+- *	may be sending data, waking up chip.
+- */
+-static void st_int_enqueue(struct st_data_s *st_gdata, struct sk_buff *skb)
+-{
+-	unsigned long flags = 0;
+-
+-	pr_debug("%s", __func__);
+-	spin_lock_irqsave(&st_gdata->lock, flags);
+-
+-	switch (st_ll_getstate(st_gdata)) {
+-	case ST_LL_AWAKE:
+-		pr_debug("ST LL is AWAKE, sending normally");
+-		skb_queue_tail(&st_gdata->txq, skb);
+-		break;
+-	case ST_LL_ASLEEP_TO_AWAKE:
+-		skb_queue_tail(&st_gdata->tx_waitq, skb);
+-		break;
+-	case ST_LL_AWAKE_TO_ASLEEP:
+-		pr_err("ST LL is illegal state(%ld),"
+-			   "purging received skb.", st_ll_getstate(st_gdata));
+-		dev_kfree_skb_irq(skb);
+-		break;
+-	case ST_LL_ASLEEP:
+-		skb_queue_tail(&st_gdata->tx_waitq, skb);
+-		st_ll_wakeup(st_gdata);
+-		break;
+-	default:
+-		pr_err("ST LL is illegal state(%ld),"
+-			   "purging received skb.", st_ll_getstate(st_gdata));
+-		dev_kfree_skb_irq(skb);
+-		break;
+-	}
+-
+-	spin_unlock_irqrestore(&st_gdata->lock, flags);
+-	pr_debug("done %s", __func__);
+-	return;
+-}
+-
+-/*
+- * internal wakeup function
+- * called from either
+- * - TTY layer when write's finished
+- * - st_write (in context of the protocol stack)
+- */
+-static void work_fn_write_wakeup(struct work_struct *work)
+-{
+-	struct st_data_s *st_gdata = container_of(work, struct st_data_s,
+-			work_write_wakeup);
+-
+-	st_tx_wakeup((void *)st_gdata);
+-}
+-void st_tx_wakeup(struct st_data_s *st_data)
+-{
+-	struct sk_buff *skb;
+-	unsigned long flags;	/* for irq save flags */
+-	pr_debug("%s", __func__);
+-	/* check for sending & set flag sending here */
+-	if (test_and_set_bit(ST_TX_SENDING, &st_data->tx_state)) {
+-		pr_debug("ST already sending");
+-		/* keep sending */
+-		set_bit(ST_TX_WAKEUP, &st_data->tx_state);
+-		return;
+-		/* TX_WAKEUP will be checked in another
+-		 * context
+-		 */
+-	}
+-	do {			/* come back if st_tx_wakeup is set */
+-		/* woke-up to write */
+-		clear_bit(ST_TX_WAKEUP, &st_data->tx_state);
+-		while ((skb = st_int_dequeue(st_data))) {
+-			int len;
+-			spin_lock_irqsave(&st_data->lock, flags);
+-			/* enable wake-up from TTY */
+-			set_bit(TTY_DO_WRITE_WAKEUP, &st_data->tty->flags);
+-			len = st_int_write(st_data, skb->data, skb->len);
+-			skb_pull(skb, len);
+-			/* if skb->len = len as expected, skb->len=0 */
+-			if (skb->len) {
+-				/* would be the next skb to be sent */
+-				st_data->tx_skb = skb;
+-				spin_unlock_irqrestore(&st_data->lock, flags);
+-				break;
+-			}
+-			dev_kfree_skb_irq(skb);
+-			spin_unlock_irqrestore(&st_data->lock, flags);
+-		}
+-		/* if wake-up is set in another context- restart sending */
+-	} while (test_bit(ST_TX_WAKEUP, &st_data->tx_state));
+-
+-	/* clear flag sending */
+-	clear_bit(ST_TX_SENDING, &st_data->tx_state);
+-}
+-
+-/********************************************************************/
+-/* functions called from ST KIM
+-*/
+-void kim_st_list_protocols(struct st_data_s *st_gdata, void *buf)
+-{
+-	seq_printf(buf, "[%d]\nBT=%c\nFM=%c\nGPS=%c\n",
+-			st_gdata->protos_registered,
+-			st_gdata->is_registered[0x04] == true ? 'R' : 'U',
+-			st_gdata->is_registered[0x08] == true ? 'R' : 'U',
+-			st_gdata->is_registered[0x09] == true ? 'R' : 'U');
+-}
+-
+-/********************************************************************/
+-/*
+- * functions called from protocol stack drivers
+- * to be EXPORT-ed
+- */
+-long st_register(struct st_proto_s *new_proto)
+-{
+-	struct st_data_s	*st_gdata;
+-	long err = 0;
+-	unsigned long flags = 0;
+-
+-	st_kim_ref(&st_gdata, 0);
+-	if (st_gdata == NULL || new_proto == NULL || new_proto->recv == NULL
+-	    || new_proto->reg_complete_cb == NULL) {
+-		pr_err("gdata/new_proto/recv or reg_complete_cb not ready");
+-		return -EINVAL;
+-	}
+-
+-	if (new_proto->chnl_id >= ST_MAX_CHANNELS) {
+-		pr_err("chnl_id %d not supported", new_proto->chnl_id);
+-		return -EPROTONOSUPPORT;
+-	}
+-
+-	if (st_gdata->is_registered[new_proto->chnl_id] == true) {
+-		pr_err("chnl_id %d already registered", new_proto->chnl_id);
+-		return -EALREADY;
+-	}
+-
+-	/* can be from process context only */
+-	spin_lock_irqsave(&st_gdata->lock, flags);
+-
+-	if (test_bit(ST_REG_IN_PROGRESS, &st_gdata->st_state)) {
+-		pr_info(" ST_REG_IN_PROGRESS:%d ", new_proto->chnl_id);
+-		/* fw download in progress */
+-
+-		add_channel_to_table(st_gdata, new_proto);
+-		st_gdata->protos_registered++;
+-		new_proto->write = st_write;
+-
+-		set_bit(ST_REG_PENDING, &st_gdata->st_state);
+-		spin_unlock_irqrestore(&st_gdata->lock, flags);
+-		return -EINPROGRESS;
+-	} else if (st_gdata->protos_registered == ST_EMPTY) {
+-		pr_info(" chnl_id list empty :%d ", new_proto->chnl_id);
+-		set_bit(ST_REG_IN_PROGRESS, &st_gdata->st_state);
+-		st_recv = st_kim_recv;
+-
+-		/* enable the ST LL - to set default chip state */
+-		st_ll_enable(st_gdata);
+-
+-		/* release lock previously held - re-locked below */
+-		spin_unlock_irqrestore(&st_gdata->lock, flags);
+-
+-		/*
+-		 * this may take a while to complete
+-		 * since it involves BT fw download
+-		 */
+-		err = st_kim_start(st_gdata->kim_data);
+-		if (err != 0) {
+-			clear_bit(ST_REG_IN_PROGRESS, &st_gdata->st_state);
+-			if ((st_gdata->protos_registered != ST_EMPTY) &&
+-			    (test_bit(ST_REG_PENDING, &st_gdata->st_state))) {
+-				pr_err(" KIM failure complete callback ");
+-				spin_lock_irqsave(&st_gdata->lock, flags);
+-				st_reg_complete(st_gdata, err);
+-				spin_unlock_irqrestore(&st_gdata->lock, flags);
+-				clear_bit(ST_REG_PENDING, &st_gdata->st_state);
+-			}
+-			return -EINVAL;
+-		}
+-
+-		spin_lock_irqsave(&st_gdata->lock, flags);
+-
+-		clear_bit(ST_REG_IN_PROGRESS, &st_gdata->st_state);
+-		st_recv = st_int_recv;
+-
+-		/*
+-		 * this is where all pending registration
+-		 * are signalled to be complete by calling callback functions
+-		 */
+-		if ((st_gdata->protos_registered != ST_EMPTY) &&
+-		    (test_bit(ST_REG_PENDING, &st_gdata->st_state))) {
+-			pr_debug(" call reg complete callback ");
+-			st_reg_complete(st_gdata, 0);
+-		}
+-		clear_bit(ST_REG_PENDING, &st_gdata->st_state);
+-
+-		/*
+-		 * check for already registered once more,
+-		 * since the above check is old
+-		 */
+-		if (st_gdata->is_registered[new_proto->chnl_id] == true) {
+-			pr_err(" proto %d already registered ",
+-				   new_proto->chnl_id);
+-			spin_unlock_irqrestore(&st_gdata->lock, flags);
+-			return -EALREADY;
+-		}
+-
+-		add_channel_to_table(st_gdata, new_proto);
+-		st_gdata->protos_registered++;
+-		new_proto->write = st_write;
+-		spin_unlock_irqrestore(&st_gdata->lock, flags);
+-		return err;
+-	}
+-	/* if fw is already downloaded & new stack registers protocol */
+-	else {
+-		add_channel_to_table(st_gdata, new_proto);
+-		st_gdata->protos_registered++;
+-		new_proto->write = st_write;
+-
+-		/* lock already held before entering else */
+-		spin_unlock_irqrestore(&st_gdata->lock, flags);
+-		return err;
+-	}
+-}
+-EXPORT_SYMBOL_GPL(st_register);
+-
+-/*
+- * to unregister a protocol -
+- * to be called from protocol stack driver
+- */
+-long st_unregister(struct st_proto_s *proto)
+-{
+-	long err = 0;
+-	unsigned long flags = 0;
+-	struct st_data_s	*st_gdata;
+-
+-	pr_debug("%s: %d ", __func__, proto->chnl_id);
+-
+-	st_kim_ref(&st_gdata, 0);
+-	if (!st_gdata || proto->chnl_id >= ST_MAX_CHANNELS) {
+-		pr_err(" chnl_id %d not supported", proto->chnl_id);
+-		return -EPROTONOSUPPORT;
+-	}
+-
+-	spin_lock_irqsave(&st_gdata->lock, flags);
+-
+-	if (st_gdata->is_registered[proto->chnl_id] == false) {
+-		pr_err(" chnl_id %d not registered", proto->chnl_id);
+-		spin_unlock_irqrestore(&st_gdata->lock, flags);
+-		return -EPROTONOSUPPORT;
+-	}
+-
+-	if (st_gdata->protos_registered)
+-		st_gdata->protos_registered--;
+-
+-	remove_channel_from_table(st_gdata, proto);
+-	spin_unlock_irqrestore(&st_gdata->lock, flags);
+-
+-	if ((st_gdata->protos_registered == ST_EMPTY) &&
+-	    (!test_bit(ST_REG_PENDING, &st_gdata->st_state))) {
+-		pr_info(" all chnl_ids unregistered ");
+-
+-		/* stop traffic on tty */
+-		if (st_gdata->tty) {
+-			tty_ldisc_flush(st_gdata->tty);
+-			stop_tty(st_gdata->tty);
+-		}
+-
+-		/* all chnl_ids now unregistered */
+-		st_kim_stop(st_gdata->kim_data);
+-		/* disable ST LL */
+-		st_ll_disable(st_gdata);
+-	}
+-	return err;
+-}
+-
+-/*
+- * called in protocol stack drivers
+- * via the write function pointer
+- */
+-long st_write(struct sk_buff *skb)
+-{
+-	struct st_data_s *st_gdata;
+-	long len;
+-
+-	st_kim_ref(&st_gdata, 0);
+-	if (unlikely(skb == NULL || st_gdata == NULL
+-		|| st_gdata->tty == NULL)) {
+-		pr_err("data/tty unavailable to perform write");
+-		return -EINVAL;
+-	}
+-
+-	pr_debug("%d to be written", skb->len);
+-	len = skb->len;
+-
+-	/* st_ll to decide where to enqueue the skb */
+-	st_int_enqueue(st_gdata, skb);
+-	/* wake up */
+-	st_tx_wakeup(st_gdata);
+-
+-	/* return number of bytes written */
+-	return len;
+-}
+-
+-/* for protocols making use of shared transport */
+-EXPORT_SYMBOL_GPL(st_unregister);
+-
+-/********************************************************************/
+-/*
+- * functions called from TTY layer
+- */
+-static int st_tty_open(struct tty_struct *tty)
+-{
+-	struct st_data_s *st_gdata;
+-	pr_info("%s ", __func__);
+-
+-	st_kim_ref(&st_gdata, 0);
+-	st_gdata->tty = tty;
+-	tty->disc_data = st_gdata;
+-
+-	/* don't do an wakeup for now */
+-	clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+-
+-	/* mem already allocated
+-	 */
+-	tty->receive_room = 65536;
+-	/* Flush any pending characters in the driver and discipline. */
+-	tty_ldisc_flush(tty);
+-	tty_driver_flush_buffer(tty);
+-	/*
+-	 * signal to UIM via KIM that -
+-	 * installation of N_TI_WL ldisc is complete
+-	 */
+-	st_kim_complete(st_gdata->kim_data);
+-	pr_debug("done %s", __func__);
+-
+-	return 0;
+-}
+-
+-static void st_tty_close(struct tty_struct *tty)
+-{
+-	unsigned char i;
+-	unsigned long flags;
+-	struct	st_data_s *st_gdata = tty->disc_data;
+-
+-	pr_info("%s ", __func__);
+-
+-	/*
+-	 * TODO:
+-	 * if a protocol has been registered & line discipline
+-	 * un-installed for some reason - what should be done ?
+-	 */
+-	spin_lock_irqsave(&st_gdata->lock, flags);
+-	for (i = ST_BT; i < ST_MAX_CHANNELS; i++) {
+-		if (st_gdata->is_registered[i] == true)
+-			pr_err("%d not un-registered", i);
+-		st_gdata->list[i] = NULL;
+-		st_gdata->is_registered[i] = false;
+-	}
+-	st_gdata->protos_registered = 0;
+-	spin_unlock_irqrestore(&st_gdata->lock, flags);
+-	/*
+-	 * signal to UIM via KIM that -
+-	 * N_TI_WL ldisc is un-installed
+-	 */
+-	st_kim_complete(st_gdata->kim_data);
+-	st_gdata->tty = NULL;
+-	/* Flush any pending characters in the driver and discipline. */
+-	tty_ldisc_flush(tty);
+-	tty_driver_flush_buffer(tty);
+-
+-	spin_lock_irqsave(&st_gdata->lock, flags);
+-	/* empty out txq and tx_waitq */
+-	skb_queue_purge(&st_gdata->txq);
+-	skb_queue_purge(&st_gdata->tx_waitq);
+-	/* reset the TTY Rx states of ST */
+-	st_gdata->rx_count = 0;
+-	st_gdata->rx_state = ST_W4_PACKET_TYPE;
+-	kfree_skb(st_gdata->rx_skb);
+-	st_gdata->rx_skb = NULL;
+-	spin_unlock_irqrestore(&st_gdata->lock, flags);
+-
+-	pr_debug("%s: done ", __func__);
+-}
+-
+-static void st_tty_receive(struct tty_struct *tty, const u8 *data,
+-			   const u8 *tty_flags, size_t count)
+-{
+-#ifdef VERBOSE
+-	print_hex_dump(KERN_DEBUG, ">in>", DUMP_PREFIX_NONE,
+-		16, 1, data, count, 0);
+-#endif
+-
+-	/*
+-	 * if fw download is in progress then route incoming data
+-	 * to KIM for validation
+-	 */
+-	st_recv(tty->disc_data, data, count);
+-	pr_debug("done %s", __func__);
+-}
+-
+-/*
+- * wake-up function called in from the TTY layer
+- * inside the internal wakeup function will be called
+- */
+-static void st_tty_wakeup(struct tty_struct *tty)
+-{
+-	struct	st_data_s *st_gdata = tty->disc_data;
+-	pr_debug("%s ", __func__);
+-	/* don't do an wakeup for now */
+-	clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+-
+-	/*
+-	 * schedule the internal wakeup instead of calling directly to
+-	 * avoid lockup (port->lock needed in tty->ops->write is
+-	 * already taken here
+-	 */
+-	schedule_work(&st_gdata->work_write_wakeup);
+-}
+-
+-static void st_tty_flush_buffer(struct tty_struct *tty)
+-{
+-	struct	st_data_s *st_gdata = tty->disc_data;
+-	pr_debug("%s ", __func__);
+-
+-	kfree_skb(st_gdata->tx_skb);
+-	st_gdata->tx_skb = NULL;
+-
+-	tty_driver_flush_buffer(tty);
+-	return;
+-}
+-
+-static struct tty_ldisc_ops st_ldisc_ops = {
+-	.num = N_TI_WL,
+-	.name = "n_st",
+-	.open = st_tty_open,
+-	.close = st_tty_close,
+-	.receive_buf = st_tty_receive,
+-	.write_wakeup = st_tty_wakeup,
+-	.flush_buffer = st_tty_flush_buffer,
+-	.owner = THIS_MODULE
+-};
+-
+-/********************************************************************/
+-int st_core_init(struct st_data_s **core_data)
+-{
+-	struct st_data_s *st_gdata;
+-	long err;
+-
+-	err = tty_register_ldisc(&st_ldisc_ops);
+-	if (err) {
+-		pr_err("error registering %d line discipline %ld",
+-			   N_TI_WL, err);
+-		return err;
+-	}
+-	pr_debug("registered n_shared line discipline");
+-
+-	st_gdata = kzalloc(sizeof(struct st_data_s), GFP_KERNEL);
+-	if (!st_gdata) {
+-		pr_err("memory allocation failed");
+-		err = -ENOMEM;
+-		goto err_unreg_ldisc;
+-	}
+-
+-	/* Initialize ST TxQ and Tx waitQ queue head. All BT/FM/GPS module skb's
+-	 * will be pushed in this queue for actual transmission.
+-	 */
+-	skb_queue_head_init(&st_gdata->txq);
+-	skb_queue_head_init(&st_gdata->tx_waitq);
+-
+-	/* Locking used in st_int_enqueue() to avoid multiple execution */
+-	spin_lock_init(&st_gdata->lock);
+-
+-	err = st_ll_init(st_gdata);
+-	if (err) {
+-		pr_err("error during st_ll initialization(%ld)", err);
+-		goto err_free_gdata;
+-	}
+-
+-	INIT_WORK(&st_gdata->work_write_wakeup, work_fn_write_wakeup);
+-
+-	*core_data = st_gdata;
+-	return 0;
+-err_free_gdata:
+-	kfree(st_gdata);
+-err_unreg_ldisc:
+-	tty_unregister_ldisc(&st_ldisc_ops);
+-	return err;
+-}
+-
+-void st_core_exit(struct st_data_s *st_gdata)
+-{
+-	long err;
+-	/* internal module cleanup */
+-	err = st_ll_deinit(st_gdata);
+-	if (err)
+-		pr_err("error during deinit of ST LL %ld", err);
+-
+-	if (st_gdata != NULL) {
+-		/* Free ST Tx Qs and skbs */
+-		skb_queue_purge(&st_gdata->txq);
+-		skb_queue_purge(&st_gdata->tx_waitq);
+-		kfree_skb(st_gdata->rx_skb);
+-		kfree_skb(st_gdata->tx_skb);
+-		/* TTY ldisc cleanup */
+-		tty_unregister_ldisc(&st_ldisc_ops);
+-		/* free the global data pointer */
+-		kfree(st_gdata);
+-	}
+-}
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+deleted file mode 100644
+index ff172cf4614d..000000000000
+--- a/drivers/misc/ti-st/st_kim.c
++++ /dev/null
+@@ -1,839 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- *  Shared Transport Line discipline driver Core
+- *	Init Manager module responsible for GPIO control
+- *	and firmware download
+- *  Copyright (C) 2009-2010 Texas Instruments
+- *  Author: Pavan Savoy <pavan_savoy@ti.com>
+- */
+-
+-#define pr_fmt(fmt) "(stk) :" fmt
+-#include <linux/platform_device.h>
+-#include <linux/jiffies.h>
+-#include <linux/firmware.h>
+-#include <linux/delay.h>
+-#include <linux/wait.h>
+-#include <linux/gpio.h>
+-#include <linux/debugfs.h>
+-#include <linux/seq_file.h>
+-#include <linux/sched.h>
+-#include <linux/sysfs.h>
+-#include <linux/tty.h>
+-
+-#include <linux/skbuff.h>
+-#include <linux/ti_wilink_st.h>
+-#include <linux/module.h>
+-
+-#define MAX_ST_DEVICES	3	/* Imagine 1 on each UART for now */
+-static struct platform_device *st_kim_devices[MAX_ST_DEVICES];
+-
+-/**********************************************************************/
+-/* internal functions */
+-
+-/*
+- * st_get_plat_device -
+- *	function which returns the reference to the platform device
+- *	requested by id. As of now only 1 such device exists (id=0)
+- *	the context requesting for reference can get the id to be
+- *	requested by a. The protocol driver which is registering or
+- *	b. the tty device which is opened.
+- */
+-static struct platform_device *st_get_plat_device(int id)
+-{
+-	return st_kim_devices[id];
+-}
+-
+-/*
+- * validate_firmware_response -
+- *	function to return whether the firmware response was proper
+- *	in case of error don't complete so that waiting for proper
+- *	response times out
+- */
+-static void validate_firmware_response(struct kim_data_s *kim_gdata)
+-{
+-	struct sk_buff *skb = kim_gdata->rx_skb;
+-	if (!skb)
+-		return;
+-
+-	/*
+-	 * these magic numbers are the position in the response buffer which
+-	 * allows us to distinguish whether the response is for the read
+-	 * version info. command
+-	 */
+-	if (skb->data[2] == 0x01 && skb->data[3] == 0x01 &&
+-			skb->data[4] == 0x10 && skb->data[5] == 0x00) {
+-		/* fw version response */
+-		memcpy(kim_gdata->resp_buffer,
+-				kim_gdata->rx_skb->data,
+-				kim_gdata->rx_skb->len);
+-		kim_gdata->rx_state = ST_W4_PACKET_TYPE;
+-		kim_gdata->rx_skb = NULL;
+-		kim_gdata->rx_count = 0;
+-	} else if (unlikely(skb->data[5] != 0)) {
+-		pr_err("no proper response during fw download");
+-		pr_err("data6 %x", skb->data[5]);
+-		kfree_skb(skb);
+-		return;		/* keep waiting for the proper response */
+-	}
+-	/* becos of all the script being downloaded */
+-	complete_all(&kim_gdata->kim_rcvd);
+-	kfree_skb(skb);
+-}
+-
+-/*
+- * check for data len received inside kim_int_recv
+- * most often hit the last case to update state to waiting for data
+- */
+-static inline int kim_check_data_len(struct kim_data_s *kim_gdata, int len)
+-{
+-	register int room = skb_tailroom(kim_gdata->rx_skb);
+-
+-	pr_debug("len %d room %d", len, room);
+-
+-	if (!len) {
+-		validate_firmware_response(kim_gdata);
+-	} else if (len > room) {
+-		/*
+-		 * Received packet's payload length is larger.
+-		 * We can't accommodate it in created skb.
+-		 */
+-		pr_err("Data length is too large len %d room %d", len,
+-			   room);
+-		kfree_skb(kim_gdata->rx_skb);
+-	} else {
+-		/*
+-		 * Packet header has non-zero payload length and
+-		 * we have enough space in created skb. Lets read
+-		 * payload data */
+-		kim_gdata->rx_state = ST_W4_DATA;
+-		kim_gdata->rx_count = len;
+-		return len;
+-	}
+-
+-	/*
+-	 * Change ST LL state to continue to process next
+-	 * packet
+-	 */
+-	kim_gdata->rx_state = ST_W4_PACKET_TYPE;
+-	kim_gdata->rx_skb = NULL;
+-	kim_gdata->rx_count = 0;
+-
+-	return 0;
+-}
+-
+-/*
+- * kim_int_recv - receive function called during firmware download
+- *	firmware download responses on different UART drivers
+- *	have been observed to come in bursts of different
+- *	tty_receive and hence the logic
+- */
+-static void kim_int_recv(struct kim_data_s *kim_gdata, const u8 *ptr,
+-			 size_t count)
+-{
+-	int len = 0;
+-	unsigned char *plen;
+-
+-	pr_debug("%s", __func__);
+-	/* Decode received bytes here */
+-	while (count) {
+-		if (kim_gdata->rx_count) {
+-			len = min_t(unsigned int, kim_gdata->rx_count, count);
+-			skb_put_data(kim_gdata->rx_skb, ptr, len);
+-			kim_gdata->rx_count -= len;
+-			count -= len;
+-			ptr += len;
+-
+-			if (kim_gdata->rx_count)
+-				continue;
+-
+-			/* Check ST RX state machine , where are we? */
+-			switch (kim_gdata->rx_state) {
+-				/* Waiting for complete packet ? */
+-			case ST_W4_DATA:
+-				pr_debug("Complete pkt received");
+-				validate_firmware_response(kim_gdata);
+-				kim_gdata->rx_state = ST_W4_PACKET_TYPE;
+-				kim_gdata->rx_skb = NULL;
+-				continue;
+-				/* Waiting for Bluetooth event header ? */
+-			case ST_W4_HEADER:
+-				plen =
+-				(unsigned char *)&kim_gdata->rx_skb->data[1];
+-				pr_debug("event hdr: plen 0x%02x\n", *plen);
+-				kim_check_data_len(kim_gdata, *plen);
+-				continue;
+-			}	/* end of switch */
+-		}		/* end of if rx_state */
+-		switch (*ptr) {
+-			/* Bluetooth event packet? */
+-		case 0x04:
+-			kim_gdata->rx_state = ST_W4_HEADER;
+-			kim_gdata->rx_count = 2;
+-			break;
+-		default:
+-			pr_info("unknown packet");
+-			ptr++;
+-			count--;
+-			continue;
+-		}
+-		ptr++;
+-		count--;
+-		kim_gdata->rx_skb =
+-			alloc_skb(1024+8, GFP_ATOMIC);
+-		if (!kim_gdata->rx_skb) {
+-			pr_err("can't allocate mem for new packet");
+-			kim_gdata->rx_state = ST_W4_PACKET_TYPE;
+-			kim_gdata->rx_count = 0;
+-			return;
+-		}
+-		skb_reserve(kim_gdata->rx_skb, 8);
+-		kim_gdata->rx_skb->cb[0] = 4;
+-		kim_gdata->rx_skb->cb[1] = 0;
+-
+-	}
+-	return;
+-}
+-
+-static long read_local_version(struct kim_data_s *kim_gdata, char *bts_scr_name)
+-{
+-	unsigned short version = 0, chip = 0, min_ver = 0, maj_ver = 0;
+-	static const char read_ver_cmd[] = { 0x01, 0x01, 0x10, 0x00 };
+-	long time_left;
+-
+-	pr_debug("%s", __func__);
+-
+-	reinit_completion(&kim_gdata->kim_rcvd);
+-	if (4 != st_int_write(kim_gdata->core_data, read_ver_cmd, 4)) {
+-		pr_err("kim: couldn't write 4 bytes");
+-		return -EIO;
+-	}
+-
+-	time_left = wait_for_completion_interruptible_timeout(
+-		&kim_gdata->kim_rcvd, msecs_to_jiffies(CMD_RESP_TIME));
+-	if (time_left <= 0) {
+-		pr_err(" waiting for ver info- timed out or received signal");
+-		return time_left ? -ERESTARTSYS : -ETIMEDOUT;
+-	}
+-	reinit_completion(&kim_gdata->kim_rcvd);
+-	/*
+-	 * the positions 12 & 13 in the response buffer provide with the
+-	 * chip, major & minor numbers
+-	 */
+-
+-	version =
+-		MAKEWORD(kim_gdata->resp_buffer[12],
+-				kim_gdata->resp_buffer[13]);
+-	chip = (version & 0x7C00) >> 10;
+-	min_ver = (version & 0x007F);
+-	maj_ver = (version & 0x0380) >> 7;
+-
+-	if (version & 0x8000)
+-		maj_ver |= 0x0008;
+-
+-	sprintf(bts_scr_name, "ti-connectivity/TIInit_%d.%d.%d.bts",
+-		chip, maj_ver, min_ver);
+-
+-	/* to be accessed later via sysfs entry */
+-	kim_gdata->version.full = version;
+-	kim_gdata->version.chip = chip;
+-	kim_gdata->version.maj_ver = maj_ver;
+-	kim_gdata->version.min_ver = min_ver;
+-
+-	pr_info("%s", bts_scr_name);
+-	return 0;
+-}
+-
+-static void skip_change_remote_baud(unsigned char **ptr, long *len)
+-{
+-	unsigned char *nxt_action, *cur_action;
+-	cur_action = *ptr;
+-
+-	nxt_action = cur_action + sizeof(struct bts_action) +
+-		((struct bts_action *) cur_action)->size;
+-
+-	if (((struct bts_action *) nxt_action)->type != ACTION_WAIT_EVENT) {
+-		pr_err("invalid action after change remote baud command");
+-	} else {
+-		*ptr = *ptr + sizeof(struct bts_action) +
+-			((struct bts_action *)cur_action)->size;
+-		*len = *len - (sizeof(struct bts_action) +
+-				((struct bts_action *)cur_action)->size);
+-		/* warn user on not commenting these in firmware */
+-		pr_warn("skipping the wait event of change remote baud");
+-	}
+-}
+-
+-/*
+- * download_firmware -
+- *	internal function which parses through the .bts firmware
+- *	script file intreprets SEND, DELAY actions only as of now
+- */
+-static long download_firmware(struct kim_data_s *kim_gdata)
+-{
+-	long err = 0;
+-	long len = 0;
+-	unsigned char *ptr = NULL;
+-	unsigned char *action_ptr = NULL;
+-	unsigned char bts_scr_name[40] = { 0 };	/* 40 char long bts scr name? */
+-	int wr_room_space;
+-	int cmd_size;
+-	unsigned long timeout;
+-
+-	err = read_local_version(kim_gdata, bts_scr_name);
+-	if (err != 0) {
+-		pr_err("kim: failed to read local ver");
+-		return err;
+-	}
+-	err =
+-	    request_firmware(&kim_gdata->fw_entry, bts_scr_name,
+-			     &kim_gdata->kim_pdev->dev);
+-	if (unlikely((err != 0) || (kim_gdata->fw_entry->data == NULL) ||
+-		     (kim_gdata->fw_entry->size == 0))) {
+-		pr_err(" request_firmware failed(errno %ld) for %s", err,
+-			   bts_scr_name);
+-		return -EINVAL;
+-	}
+-	ptr = (void *)kim_gdata->fw_entry->data;
+-	len = kim_gdata->fw_entry->size;
+-	/*
+-	 * bts_header to remove out magic number and
+-	 * version
+-	 */
+-	ptr += sizeof(struct bts_header);
+-	len -= sizeof(struct bts_header);
+-
+-	while (len > 0 && ptr) {
+-		pr_debug(" action size %d, type %d ",
+-			   ((struct bts_action *)ptr)->size,
+-			   ((struct bts_action *)ptr)->type);
+-
+-		switch (((struct bts_action *)ptr)->type) {
+-		case ACTION_SEND_COMMAND:	/* action send */
+-			pr_debug("S");
+-			action_ptr = &(((struct bts_action *)ptr)->data[0]);
+-			if (unlikely
+-			    (((struct hci_command *)action_ptr)->opcode ==
+-			     0xFF36)) {
+-				/*
+-				 * ignore remote change
+-				 * baud rate HCI VS command
+-				 */
+-				pr_warn("change remote baud"
+-				    " rate command in firmware");
+-				skip_change_remote_baud(&ptr, &len);
+-				break;
+-			}
+-			/*
+-			 * Make sure we have enough free space in uart
+-			 * tx buffer to write current firmware command
+-			 */
+-			cmd_size = ((struct bts_action *)ptr)->size;
+-			timeout = jiffies + msecs_to_jiffies(CMD_WR_TIME);
+-			do {
+-				wr_room_space =
+-					st_get_uart_wr_room(kim_gdata->core_data);
+-				if (wr_room_space < 0) {
+-					pr_err("Unable to get free "
+-							"space info from uart tx buffer");
+-					release_firmware(kim_gdata->fw_entry);
+-					return wr_room_space;
+-				}
+-				mdelay(1); /* wait 1ms before checking room */
+-			} while ((wr_room_space < cmd_size) &&
+-					time_before(jiffies, timeout));
+-
+-			/* Timeout happened ? */
+-			if (time_after_eq(jiffies, timeout)) {
+-				pr_err("Timeout while waiting for free "
+-						"free space in uart tx buffer");
+-				release_firmware(kim_gdata->fw_entry);
+-				return -ETIMEDOUT;
+-			}
+-			/*
+-			 * reinit completion before sending for the
+-			 * relevant wait
+-			 */
+-			reinit_completion(&kim_gdata->kim_rcvd);
+-
+-			/*
+-			 * Free space found in uart buffer, call st_int_write
+-			 * to send current firmware command to the uart tx
+-			 * buffer.
+-			 */
+-			err = st_int_write(kim_gdata->core_data,
+-			((struct bts_action_send *)action_ptr)->data,
+-					   ((struct bts_action *)ptr)->size);
+-			if (unlikely(err < 0)) {
+-				release_firmware(kim_gdata->fw_entry);
+-				return err;
+-			}
+-			/*
+-			 * Check number of bytes written to the uart tx buffer
+-			 * and requested command write size
+-			 */
+-			if (err != cmd_size) {
+-				pr_err("Number of bytes written to uart "
+-						"tx buffer are not matching with "
+-						"requested cmd write size");
+-				release_firmware(kim_gdata->fw_entry);
+-				return -EIO;
+-			}
+-			break;
+-		case ACTION_WAIT_EVENT:  /* wait */
+-			pr_debug("W");
+-			err = wait_for_completion_interruptible_timeout(
+-					&kim_gdata->kim_rcvd,
+-					msecs_to_jiffies(CMD_RESP_TIME));
+-			if (err <= 0) {
+-				pr_err("response timeout/signaled during fw download ");
+-				/* timed out */
+-				release_firmware(kim_gdata->fw_entry);
+-				return err ? -ERESTARTSYS : -ETIMEDOUT;
+-			}
+-			reinit_completion(&kim_gdata->kim_rcvd);
+-			break;
+-		case ACTION_DELAY:	/* sleep */
+-			pr_info("sleep command in scr");
+-			action_ptr = &(((struct bts_action *)ptr)->data[0]);
+-			mdelay(((struct bts_action_delay *)action_ptr)->msec);
+-			break;
+-		}
+-		len =
+-		    len - (sizeof(struct bts_action) +
+-			   ((struct bts_action *)ptr)->size);
+-		ptr =
+-		    ptr + sizeof(struct bts_action) +
+-		    ((struct bts_action *)ptr)->size;
+-	}
+-	/* fw download complete */
+-	release_firmware(kim_gdata->fw_entry);
+-	return 0;
+-}
+-
+-/**********************************************************************/
+-/* functions called from ST core */
+-/* called from ST Core, when REG_IN_PROGRESS (registration in progress)
+- * can be because of
+- * 1. response to read local version
+- * 2. during send/recv's of firmware download
+- */
+-void st_kim_recv(void *disc_data, const u8 *data, size_t count)
+-{
+-	struct st_data_s	*st_gdata = (struct st_data_s *)disc_data;
+-	struct kim_data_s	*kim_gdata = st_gdata->kim_data;
+-
+-	/*
+-	 * proceed to gather all data and distinguish read fw version response
+-	 * from other fw responses when data gathering is complete
+-	 */
+-	kim_int_recv(kim_gdata, data, count);
+-	return;
+-}
+-
+-/*
+- * to signal completion of line discipline installation
+- * called from ST Core, upon tty_open
+- */
+-void st_kim_complete(void *kim_data)
+-{
+-	struct kim_data_s	*kim_gdata = (struct kim_data_s *)kim_data;
+-	complete(&kim_gdata->ldisc_installed);
+-}
+-
+-/*
+- * st_kim_start - called from ST Core upon 1st registration
+- *	This involves toggling the chip enable gpio, reading
+- *	the firmware version from chip, forming the fw file name
+- *	based on the chip version, requesting the fw, parsing it
+- *	and perform download(send/recv).
+- */
+-long st_kim_start(void *kim_data)
+-{
+-	long err = 0;
+-	long retry = POR_RETRY_COUNT;
+-	struct ti_st_plat_data	*pdata;
+-	struct kim_data_s	*kim_gdata = (struct kim_data_s *)kim_data;
+-
+-	pr_info(" %s", __func__);
+-	pdata = kim_gdata->kim_pdev->dev.platform_data;
+-
+-	do {
+-		/* platform specific enabling code here */
+-		if (pdata->chip_enable)
+-			pdata->chip_enable(kim_gdata);
+-
+-		/* Configure BT nShutdown to HIGH state */
+-		gpio_set_value_cansleep(kim_gdata->nshutdown, GPIO_LOW);
+-		mdelay(5);	/* FIXME: a proper toggle */
+-		gpio_set_value_cansleep(kim_gdata->nshutdown, GPIO_HIGH);
+-		mdelay(100);
+-		/* re-initialize the completion */
+-		reinit_completion(&kim_gdata->ldisc_installed);
+-		/* send notification to UIM */
+-		kim_gdata->ldisc_install = 1;
+-		pr_info("ldisc_install = 1");
+-		sysfs_notify(&kim_gdata->kim_pdev->dev.kobj,
+-				NULL, "install");
+-		/* wait for ldisc to be installed */
+-		err = wait_for_completion_interruptible_timeout(
+-			&kim_gdata->ldisc_installed, msecs_to_jiffies(LDISC_TIME));
+-		if (!err) {
+-			/*
+-			 * ldisc installation timeout,
+-			 * flush uart, power cycle BT_EN
+-			 */
+-			pr_err("ldisc installation timeout");
+-			err = st_kim_stop(kim_gdata);
+-			continue;
+-		} else {
+-			/* ldisc installed now */
+-			pr_info("line discipline installed");
+-			err = download_firmware(kim_gdata);
+-			if (err != 0) {
+-				/*
+-				 * ldisc installed but fw download failed,
+-				 * flush uart & power cycle BT_EN
+-				 */
+-				pr_err("download firmware failed");
+-				err = st_kim_stop(kim_gdata);
+-				continue;
+-			} else {	/* on success don't retry */
+-				break;
+-			}
+-		}
+-	} while (retry--);
+-	return err;
+-}
+-
+-/*
+- * st_kim_stop - stop communication with chip.
+- *	This can be called from ST Core/KIM, on the-
+- *	(a) last un-register when chip need not be powered there-after,
+- *	(b) upon failure to either install ldisc or download firmware.
+- *	The function is responsible to (a) notify UIM about un-installation,
+- *	(b) flush UART if the ldisc was installed.
+- *	(c) reset BT_EN - pull down nshutdown at the end.
+- *	(d) invoke platform's chip disabling routine.
+- */
+-long st_kim_stop(void *kim_data)
+-{
+-	long err = 0;
+-	struct kim_data_s	*kim_gdata = (struct kim_data_s *)kim_data;
+-	struct ti_st_plat_data	*pdata =
+-		kim_gdata->kim_pdev->dev.platform_data;
+-	struct tty_struct	*tty = kim_gdata->core_data->tty;
+-
+-	reinit_completion(&kim_gdata->ldisc_installed);
+-
+-	if (tty) {	/* can be called before ldisc is installed */
+-		/* Flush any pending characters in the driver and discipline. */
+-		tty_ldisc_flush(tty);
+-		tty_driver_flush_buffer(tty);
+-	}
+-
+-	/* send uninstall notification to UIM */
+-	pr_info("ldisc_install = 0");
+-	kim_gdata->ldisc_install = 0;
+-	sysfs_notify(&kim_gdata->kim_pdev->dev.kobj, NULL, "install");
+-
+-	/* wait for ldisc to be un-installed */
+-	err = wait_for_completion_interruptible_timeout(
+-		&kim_gdata->ldisc_installed, msecs_to_jiffies(LDISC_TIME));
+-	if (!err) {		/* timeout */
+-		pr_err(" timed out waiting for ldisc to be un-installed");
+-		err = -ETIMEDOUT;
+-	}
+-
+-	/* By default configure BT nShutdown to LOW state */
+-	gpio_set_value_cansleep(kim_gdata->nshutdown, GPIO_LOW);
+-	mdelay(1);
+-	gpio_set_value_cansleep(kim_gdata->nshutdown, GPIO_HIGH);
+-	mdelay(1);
+-	gpio_set_value_cansleep(kim_gdata->nshutdown, GPIO_LOW);
+-
+-	/* platform specific disable */
+-	if (pdata->chip_disable)
+-		pdata->chip_disable(kim_gdata);
+-	return err;
+-}
+-
+-/**********************************************************************/
+-/* functions called from subsystems */
+-/* called when debugfs entry is read from */
+-
+-static int version_show(struct seq_file *s, void *unused)
+-{
+-	struct kim_data_s *kim_gdata = s->private;
+-	seq_printf(s, "%04X %d.%d.%d\n", kim_gdata->version.full,
+-			kim_gdata->version.chip, kim_gdata->version.maj_ver,
+-			kim_gdata->version.min_ver);
+-	return 0;
+-}
+-
+-static int list_show(struct seq_file *s, void *unused)
+-{
+-	struct kim_data_s *kim_gdata = s->private;
+-	kim_st_list_protocols(kim_gdata->core_data, s);
+-	return 0;
+-}
+-
+-static ssize_t show_install(struct device *dev,
+-		struct device_attribute *attr, char *buf)
+-{
+-	struct kim_data_s *kim_data = dev_get_drvdata(dev);
+-	return sprintf(buf, "%d\n", kim_data->ldisc_install);
+-}
+-
+-#ifdef DEBUG
+-static ssize_t store_dev_name(struct device *dev,
+-		struct device_attribute *attr, const char *buf, size_t count)
+-{
+-	struct kim_data_s *kim_data = dev_get_drvdata(dev);
+-	pr_debug("storing dev name >%s<", buf);
+-	strscpy(kim_data->dev_name, buf, sizeof(kim_data->dev_name));
+-	pr_debug("stored dev name >%s<", kim_data->dev_name);
+-	return count;
+-}
+-
+-static ssize_t store_baud_rate(struct device *dev,
+-		struct device_attribute *attr, const char *buf, size_t count)
+-{
+-	struct kim_data_s *kim_data = dev_get_drvdata(dev);
+-	pr_debug("storing baud rate >%s<", buf);
+-	sscanf(buf, "%ld", &kim_data->baud_rate);
+-	pr_debug("stored baud rate >%ld<", kim_data->baud_rate);
+-	return count;
+-}
+-#endif	/* if DEBUG */
+-
+-static ssize_t show_dev_name(struct device *dev,
+-		struct device_attribute *attr, char *buf)
+-{
+-	struct kim_data_s *kim_data = dev_get_drvdata(dev);
+-	return sprintf(buf, "%s\n", kim_data->dev_name);
+-}
+-
+-static ssize_t show_baud_rate(struct device *dev,
+-		struct device_attribute *attr, char *buf)
+-{
+-	struct kim_data_s *kim_data = dev_get_drvdata(dev);
+-	return sprintf(buf, "%d\n", kim_data->baud_rate);
+-}
+-
+-static ssize_t show_flow_cntrl(struct device *dev,
+-		struct device_attribute *attr, char *buf)
+-{
+-	struct kim_data_s *kim_data = dev_get_drvdata(dev);
+-	return sprintf(buf, "%d\n", kim_data->flow_cntrl);
+-}
+-
+-/* structures specific for sysfs entries */
+-static struct kobj_attribute ldisc_install =
+-__ATTR(install, 0444, (void *)show_install, NULL);
+-
+-static struct kobj_attribute uart_dev_name =
+-#ifdef DEBUG	/* TODO: move this to debug-fs if possible */
+-__ATTR(dev_name, 0644, (void *)show_dev_name, (void *)store_dev_name);
+-#else
+-__ATTR(dev_name, 0444, (void *)show_dev_name, NULL);
+-#endif
+-
+-static struct kobj_attribute uart_baud_rate =
+-#ifdef DEBUG	/* TODO: move to debugfs */
+-__ATTR(baud_rate, 0644, (void *)show_baud_rate, (void *)store_baud_rate);
+-#else
+-__ATTR(baud_rate, 0444, (void *)show_baud_rate, NULL);
+-#endif
+-
+-static struct kobj_attribute uart_flow_cntrl =
+-__ATTR(flow_cntrl, 0444, (void *)show_flow_cntrl, NULL);
+-
+-static struct attribute *uim_attrs[] = {
+-	&ldisc_install.attr,
+-	&uart_dev_name.attr,
+-	&uart_baud_rate.attr,
+-	&uart_flow_cntrl.attr,
+-	NULL,
+-};
+-
+-static const struct attribute_group uim_attr_grp = {
+-	.attrs = uim_attrs,
+-};
+-
+-/*
+- * st_kim_ref - reference the core's data
+- *	This references the per-ST platform device in the arch/xx/
+- *	board-xx.c file.
+- *	This would enable multiple such platform devices to exist
+- *	on a given platform
+- */
+-void st_kim_ref(struct st_data_s **core_data, int id)
+-{
+-	struct platform_device	*pdev;
+-	struct kim_data_s	*kim_gdata;
+-	/* get kim_gdata reference from platform device */
+-	pdev = st_get_plat_device(id);
+-	if (!pdev)
+-		goto err;
+-	kim_gdata = platform_get_drvdata(pdev);
+-	if (!kim_gdata)
+-		goto err;
+-
+-	*core_data = kim_gdata->core_data;
+-	return;
+-err:
+-	*core_data = NULL;
+-}
+-
+-DEFINE_SHOW_ATTRIBUTE(version);
+-DEFINE_SHOW_ATTRIBUTE(list);
+-
+-/**********************************************************************/
+-/* functions called from platform device driver subsystem
+- * need to have a relevant platform device entry in the platform's
+- * board-*.c file
+- */
+-
+-static struct dentry *kim_debugfs_dir;
+-static int kim_probe(struct platform_device *pdev)
+-{
+-	struct kim_data_s	*kim_gdata;
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
+-	int err;
+-
+-	if ((pdev->id != -1) && (pdev->id < MAX_ST_DEVICES)) {
+-		/* multiple devices could exist */
+-		st_kim_devices[pdev->id] = pdev;
+-	} else {
+-		/* platform's sure about existence of 1 device */
+-		st_kim_devices[0] = pdev;
+-	}
+-
+-	kim_gdata = kzalloc(sizeof(struct kim_data_s), GFP_KERNEL);
+-	if (!kim_gdata) {
+-		pr_err("no mem to allocate");
+-		return -ENOMEM;
+-	}
+-	platform_set_drvdata(pdev, kim_gdata);
+-
+-	err = st_core_init(&kim_gdata->core_data);
+-	if (err != 0) {
+-		pr_err(" ST core init failed");
+-		err = -EIO;
+-		goto err_core_init;
+-	}
+-	/* refer to itself */
+-	kim_gdata->core_data->kim_data = kim_gdata;
+-
+-	/* Claim the chip enable nShutdown gpio from the system */
+-	kim_gdata->nshutdown = pdata->nshutdown_gpio;
+-	err = gpio_request(kim_gdata->nshutdown, "kim");
+-	if (unlikely(err)) {
+-		pr_err(" gpio %d request failed ", kim_gdata->nshutdown);
+-		goto err_sysfs_group;
+-	}
+-
+-	/* Configure nShutdown GPIO as output=0 */
+-	err = gpio_direction_output(kim_gdata->nshutdown, 0);
+-	if (unlikely(err)) {
+-		pr_err(" unable to configure gpio %d", kim_gdata->nshutdown);
+-		goto err_sysfs_group;
+-	}
+-	/* get reference of pdev for request_firmware */
+-	kim_gdata->kim_pdev = pdev;
+-	init_completion(&kim_gdata->kim_rcvd);
+-	init_completion(&kim_gdata->ldisc_installed);
+-
+-	err = sysfs_create_group(&pdev->dev.kobj, &uim_attr_grp);
+-	if (err) {
+-		pr_err("failed to create sysfs entries");
+-		goto err_sysfs_group;
+-	}
+-
+-	/* copying platform data */
+-	strscpy(kim_gdata->dev_name, pdata->dev_name,
+-		sizeof(kim_gdata->dev_name));
+-	kim_gdata->flow_cntrl = pdata->flow_cntrl;
+-	kim_gdata->baud_rate = pdata->baud_rate;
+-	pr_info("sysfs entries created\n");
+-
+-	kim_debugfs_dir = debugfs_create_dir("ti-st", NULL);
+-
+-	debugfs_create_file("version", S_IRUGO, kim_debugfs_dir,
+-				kim_gdata, &version_fops);
+-	debugfs_create_file("protocols", S_IRUGO, kim_debugfs_dir,
+-				kim_gdata, &list_fops);
+-	return 0;
+-
+-err_sysfs_group:
+-	st_core_exit(kim_gdata->core_data);
+-
+-err_core_init:
+-	kfree(kim_gdata);
+-
+-	return err;
+-}
+-
+-static void kim_remove(struct platform_device *pdev)
+-{
+-	/* free the GPIOs requested */
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
+-	struct kim_data_s	*kim_gdata;
+-
+-	kim_gdata = platform_get_drvdata(pdev);
+-
+-	/*
+-	 * Free the Bluetooth/FM/GPIO
+-	 * nShutdown gpio from the system
+-	 */
+-	gpio_free(pdata->nshutdown_gpio);
+-	pr_info("nshutdown GPIO Freed");
+-
+-	debugfs_remove_recursive(kim_debugfs_dir);
+-	sysfs_remove_group(&pdev->dev.kobj, &uim_attr_grp);
+-	pr_info("sysfs entries removed");
+-
+-	kim_gdata->kim_pdev = NULL;
+-	st_core_exit(kim_gdata->core_data);
+-
+-	kfree(kim_gdata);
+-	kim_gdata = NULL;
+-}
+-
+-static int kim_suspend(struct platform_device *pdev, pm_message_t state)
+-{
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
+-
+-	if (pdata->suspend)
+-		return pdata->suspend(pdev, state);
+-
+-	return 0;
+-}
+-
+-static int kim_resume(struct platform_device *pdev)
+-{
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
+-
+-	if (pdata->resume)
+-		return pdata->resume(pdev);
+-
+-	return 0;
+-}
+-
+-/**********************************************************************/
+-/* entry point for ST KIM module, called in from ST Core */
+-static struct platform_driver kim_platform_driver = {
+-	.probe = kim_probe,
+-	.remove_new = kim_remove,
+-	.suspend = kim_suspend,
+-	.resume = kim_resume,
+-	.driver = {
+-		.name = "kim",
+-	},
+-};
+-
+-module_platform_driver(kim_platform_driver);
+-
+-MODULE_AUTHOR("Pavan Savoy <pavan_savoy@ti.com>");
+-MODULE_DESCRIPTION("Shared Transport Driver for TI BT/FM/GPS combo chips ");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/misc/ti-st/st_ll.c b/drivers/misc/ti-st/st_ll.c
+deleted file mode 100644
+index 07406140d277..000000000000
+--- a/drivers/misc/ti-st/st_ll.c
++++ /dev/null
+@@ -1,156 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- *  Shared Transport driver
+- *	HCI-LL module responsible for TI proprietary HCI_LL protocol
+- *  Copyright (C) 2009-2010 Texas Instruments
+- *  Author: Pavan Savoy <pavan_savoy@ti.com>
+- */
+-
+-#define pr_fmt(fmt) "(stll) :" fmt
+-#include <linux/skbuff.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/ti_wilink_st.h>
+-
+-/**********************************************************************/
+-/* internal functions */
+-static void send_ll_cmd(struct st_data_s *st_data,
+-	unsigned char cmd)
+-{
+-
+-	pr_debug("%s: writing %x", __func__, cmd);
+-	st_int_write(st_data, &cmd, 1);
+-	return;
+-}
+-
+-static void ll_device_want_to_sleep(struct st_data_s *st_data)
+-{
+-	struct kim_data_s	*kim_data;
+-	struct ti_st_plat_data	*pdata;
+-
+-	pr_debug("%s", __func__);
+-	/* sanity check */
+-	if (st_data->ll_state != ST_LL_AWAKE)
+-		pr_err("ERR hcill: ST_LL_GO_TO_SLEEP_IND"
+-			  "in state %ld", st_data->ll_state);
+-
+-	send_ll_cmd(st_data, LL_SLEEP_ACK);
+-	/* update state */
+-	st_data->ll_state = ST_LL_ASLEEP;
+-
+-	/* communicate to platform about chip asleep */
+-	kim_data = st_data->kim_data;
+-	pdata = kim_data->kim_pdev->dev.platform_data;
+-	if (pdata->chip_asleep)
+-		pdata->chip_asleep(NULL);
+-}
+-
+-static void ll_device_want_to_wakeup(struct st_data_s *st_data)
+-{
+-	struct kim_data_s	*kim_data;
+-	struct ti_st_plat_data	*pdata;
+-
+-	/* diff actions in diff states */
+-	switch (st_data->ll_state) {
+-	case ST_LL_ASLEEP:
+-		send_ll_cmd(st_data, LL_WAKE_UP_ACK);	/* send wake_ack */
+-		break;
+-	case ST_LL_ASLEEP_TO_AWAKE:
+-		/* duplicate wake_ind */
+-		pr_err("duplicate wake_ind while waiting for Wake ack");
+-		break;
+-	case ST_LL_AWAKE:
+-		/* duplicate wake_ind */
+-		pr_err("duplicate wake_ind already AWAKE");
+-		break;
+-	case ST_LL_AWAKE_TO_ASLEEP:
+-		/* duplicate wake_ind */
+-		pr_err("duplicate wake_ind");
+-		break;
+-	}
+-	/* update state */
+-	st_data->ll_state = ST_LL_AWAKE;
+-
+-	/* communicate to platform about chip wakeup */
+-	kim_data = st_data->kim_data;
+-	pdata = kim_data->kim_pdev->dev.platform_data;
+-	if (pdata->chip_awake)
+-		pdata->chip_awake(NULL);
+-}
+-
+-/**********************************************************************/
+-/* functions invoked by ST Core */
+-
+-/* called when ST Core wants to
+- * enable ST LL */
+-void st_ll_enable(struct st_data_s *ll)
+-{
+-	ll->ll_state = ST_LL_AWAKE;
+-}
+-
+-/* called when ST Core /local module wants to
+- * disable ST LL */
+-void st_ll_disable(struct st_data_s *ll)
+-{
+-	ll->ll_state = ST_LL_INVALID;
+-}
+-
+-/* called when ST Core wants to update the state */
+-void st_ll_wakeup(struct st_data_s *ll)
+-{
+-	if (likely(ll->ll_state != ST_LL_AWAKE)) {
+-		send_ll_cmd(ll, LL_WAKE_UP_IND);	/* WAKE_IND */
+-		ll->ll_state = ST_LL_ASLEEP_TO_AWAKE;
+-	} else {
+-		/* don't send the duplicate wake_indication */
+-		pr_err(" Chip already AWAKE ");
+-	}
+-}
+-
+-/* called when ST Core wants the state */
+-unsigned long st_ll_getstate(struct st_data_s *ll)
+-{
+-	pr_debug(" returning state %ld", ll->ll_state);
+-	return ll->ll_state;
+-}
+-
+-/* called from ST Core, when a PM related packet arrives */
+-unsigned long st_ll_sleep_state(struct st_data_s *st_data,
+-	unsigned char cmd)
+-{
+-	switch (cmd) {
+-	case LL_SLEEP_IND:	/* sleep ind */
+-		pr_debug("sleep indication recvd");
+-		ll_device_want_to_sleep(st_data);
+-		break;
+-	case LL_SLEEP_ACK:	/* sleep ack */
+-		pr_err("sleep ack rcvd: host shouldn't");
+-		break;
+-	case LL_WAKE_UP_IND:	/* wake ind */
+-		pr_debug("wake indication recvd");
+-		ll_device_want_to_wakeup(st_data);
+-		break;
+-	case LL_WAKE_UP_ACK:	/* wake ack */
+-		pr_debug("wake ack rcvd");
+-		st_data->ll_state = ST_LL_AWAKE;
+-		break;
+-	default:
+-		pr_err(" unknown input/state ");
+-		return -EINVAL;
+-	}
+-	return 0;
+-}
+-
+-/* Called from ST CORE to initialize ST LL */
+-long st_ll_init(struct st_data_s *ll)
+-{
+-	/* set state to invalid */
+-	ll->ll_state = ST_LL_INVALID;
+-	return 0;
+-}
+-
+-/* Called from ST CORE to de-initialize ST LL */
+-long st_ll_deinit(struct st_data_s *ll)
+-{
+-	return 0;
+-}
 -- 
-2.34.1
+2.43.0
 
 
