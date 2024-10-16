@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-368891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045F39A162C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9AAA9A1633
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA091F23AAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 174B31C21DF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3035E1D54FD;
-	Wed, 16 Oct 2024 23:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D301D63DF;
+	Wed, 16 Oct 2024 23:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cpyl2Lrj"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ds0gdHEe"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8A61B2189;
-	Wed, 16 Oct 2024 23:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E011D5ABE;
+	Wed, 16 Oct 2024 23:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729121463; cv=none; b=iCIwj8qVchMr1/P3O4P8Lo5x7kV4sAquNQu4fRJxVrGJbs29v8yWLhrJ33NCVL/NrjepAFW6QDOo2os+IcEwkucdMR++MRiDEYfH6Cr1m+vkcBa/LbAV5ROfRPnHL64N/t8U/8OS2pOsTQXXwRZ0qBAxskhUZnDf7qDLBKwQLZg=
+	t=1729121466; cv=none; b=du80Uw/RXs8G6E3Gd9xMHbjzAOhE3bW91Ri0Y1XyTsY3q5DNLPauQdBd8PVZKuDOM4DWqDux9egQJm5UGG/wdHct04n79EpyU3TcMy9iz0A2++XYMa3T0S68DEnnP3h9LPzmsCirETlKnVhmfhf8S0D8vZ51DzaploJqkhfOUR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729121463; c=relaxed/simple;
-	bh=Bvd5/aDKVnBXSMgbh6YxppH/ko44fGCm0qPggmep0zo=;
+	s=arc-20240116; t=1729121466; c=relaxed/simple;
+	bh=nA0RE8tX12e28bYjQkkUvdt6eLsQzyRzH+TpAKmSYZI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NRslKr3IBZhlLxJttKeT5wYMX7CaZr6qhf7DAAcBfsbI/BnpCUGpxDNJRdI1TmhKi480MAJI0zAZD18/wClkIuKVCdJ/ioXBsRWFGl8qJuuje0bKwTjB1rNOvh0qv6F72pvdnqnWdDNRkMA2UFd4OlFZgb/yDY4jBWLS6M/IkDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cpyl2Lrj; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=lb0S9VuS9Z6L1XlmQgtKyblCbnz1Kco2Q/TZN1RfBD+73QjdU4XFNwIqwJewU1p3wQskFKJdWSzUpJS3ZrXww8AYVVtR6kkB49ZRa0lO5BeU0yBdKwLxewKdXLIAYL5KqML+1BfEkAb9sojRYYsZNgVzyTRL855BtGcVGxWOnJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ds0gdHEe; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GNUl3s095571;
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GNUlbM053750;
 	Wed, 16 Oct 2024 18:30:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1729121447;
-	bh=yJPRxcazgjxA07gw7TbK7yglPZYiEd2pkShwp68iM60=;
+	bh=v3vQxJMPxC/rFVD7hZcDs0KM4zN+9zW2SXYuhWcXwSs=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=cpyl2LrjGDyEgzwegVqdNcoZ4avD2NDyNlZ9BahOEazlxrXQ+A7OLcvq927eeCbq6
-	 7IXKxHMbIBK016VOgjeWHvGezx6Ldzpx0t9fDs6eG/iXJeu016TrmeaZZ5FI/y2LtW
-	 3cBjEpu7VgGjxalzyMvKsbQKdWsY194vuUirzTY0=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GNUlQ9011745
+	b=Ds0gdHEes7RPbfS+hiymtycqhcbwquo2jDhnk/DCnHD27thBPI099X5ud9zaPYf3s
+	 g9wPmeMkeCX1/PKP2QY81aWek6Uty8YPZnGGm/GdEPdNN8OnFOvEiS/eOcdyp47vZy
+	 bI/UfdciArl9O79Qg3h+l44Idp00ScZ9xMuwsZT8=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GNUlmE011750
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Wed, 16 Oct 2024 18:30:47 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
- Oct 2024 18:30:46 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2024 18:30:47 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 16 Oct 2024 18:30:46 -0500
+ Frontend Transport; Wed, 16 Oct 2024 18:30:47 -0500
 Received: from fllvsmtp7.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GNUj7k070988;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GNUj7l070988;
 	Wed, 16 Oct 2024 18:30:46 -0500
 From: Andrew Davis <afd@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
@@ -65,9 +65,9 @@ To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
 	<conor+dt@kernel.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 3/5] arm64: dts: ti: k3-j7200: Add PCIe ctrl node to scm_conf region
-Date: Wed, 16 Oct 2024 18:30:42 -0500
-Message-ID: <20241016233044.240699-4-afd@ti.com>
+Subject: [PATCH 4/5] arm64: dts: ti: k3-j721s2: Add PCIe ctrl node to scm_conf region
+Date: Wed, 16 Oct 2024 18:30:43 -0500
+Message-ID: <20241016233044.240699-5-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241016233044.240699-1-afd@ti.com>
 References: <20241016233044.240699-1-afd@ti.com>
@@ -87,34 +87,48 @@ the PCIe node.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-j7200-main.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/ti/k3-j721s2-evm-pcie1-ep.dtso | 2 +-
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi         | 7 ++++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-index 9386bf3ef9f68..45091aa0fb1b0 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-@@ -32,6 +32,11 @@ scm_conf: scm-conf@100000 {
- 		#size-cells = <1>;
- 		ranges = <0x00 0x00 0x00100000 0x1c000>;
+diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-evm-pcie1-ep.dtso b/arch/arm64/boot/dts/ti/k3-j721s2-evm-pcie1-ep.dtso
+index 5ff390915b75b..8c2cd99cf2b42 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721s2-evm-pcie1-ep.dtso
++++ b/arch/arm64/boot/dts/ti/k3-j721s2-evm-pcie1-ep.dtso
+@@ -38,7 +38,7 @@ pcie1_ep: pcie-ep@2910000 {
+ 		reg-names = "intd_cfg", "user_cfg", "reg", "mem";
+ 		interrupt-names = "link_state";
+ 		interrupts = <GIC_SPI 330 IRQ_TYPE_EDGE_RISING>;
+-		ti,syscon-pcie-ctrl = <&scm_conf 0x074>;
++		ti,syscon-pcie-ctrl = <&pcie1_ctrl 0x0>;
+ 		max-link-speed = <3>;
+ 		num-lanes = <1>;
+ 		power-domains = <&k3_pds 276 TI_SCI_PD_EXCLUSIVE>;
+diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+index 9ed6949b40e9d..b32b0ce8be462 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+@@ -57,6 +57,11 @@ phy_gmii_sel_cpsw: phy@34 {
+ 			#phy-cells = <1>;
+ 		};
  
-+		pcie1_ctrl: pcie-ctrl@4074 {
++		pcie1_ctrl: pcie-ctrl@74 {
 +			compatible = "ti,j784s4-pcie-ctrl", "syscon";
-+			reg = <0x4074 0x4>;
++			reg = <0x74 0x4>;
 +		};
 +
- 		serdes_ln_ctrl: mux-controller@4080 {
+ 		serdes_ln_ctrl: mux-controller@80 {
  			compatible = "reg-mux";
- 			reg = <0x4080 0x20>;
-@@ -745,7 +750,7 @@ pcie1_rc: pcie@2910000 {
+ 			reg = <0x80 0x10>;
+@@ -1398,7 +1403,7 @@ pcie1_rc: pcie@2910000 {
  		interrupt-names = "link_state";
  		interrupts = <GIC_SPI 330 IRQ_TYPE_EDGE_RISING>;
  		device_type = "pci";
--		ti,syscon-pcie-ctrl = <&scm_conf 0x4074>;
+-		ti,syscon-pcie-ctrl = <&scm_conf 0x074>;
 +		ti,syscon-pcie-ctrl = <&pcie1_ctrl 0x0>;
  		max-link-speed = <3>;
  		num-lanes = <4>;
- 		power-domains = <&k3_pds 240 TI_SCI_PD_EXCLUSIVE>;
+ 		power-domains = <&k3_pds 276 TI_SCI_PD_EXCLUSIVE>;
 -- 
 2.39.2
 
