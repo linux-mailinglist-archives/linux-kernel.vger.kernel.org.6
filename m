@@ -1,305 +1,145 @@
-Return-Path: <linux-kernel+bounces-368200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD25E9A0C84
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 141B79A0C85
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0AA280F32
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA5D28131A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8E8208D7A;
-	Wed, 16 Oct 2024 14:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B651208D7D;
+	Wed, 16 Oct 2024 14:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ldWWO6fO"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2064.outbound.protection.outlook.com [40.107.94.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RP0URcSH"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500311CB53F
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729088563; cv=fail; b=d6RuBibEApJFhb+48rL7SrvUfyEGPepVpQLGc6RdxKmUVJEM1d636SbBr4qQImKDcyO1kaEMTvl2zlo7PG92KosTG+EqXcG/7XOsrjc1Mlg36Vn6tHHlF5fsTaL7YUUNtZaAXBaEqOGhmTOZSYJL15gH0oGP4B8HjixNXWDXhO0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729088563; c=relaxed/simple;
-	bh=vyxaKdUM/iDQ9DxaMWfaIwghttEERoGQuQ4frAGj1MU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SMoZh39fs+7n4cK3ryWfRZf0tCUtk3vmO0dhDuucLjTaoTGDmdpIejb+/Vh1vLg1QiugEOsJ9mmzf0o6+H+ZnCM842qSDhfR8dqYD0ycWC/6ZExJbnNjms2SRbw1yj9VYOaEKuw9Dfk6HpDpbtr6KD6aAwhzHvsqWtxRtKaczeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ldWWO6fO; arc=fail smtp.client-ip=40.107.94.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IzHQ6Q065Ydufo3EATCOQQVUWrX9yf7VTlApQ32zCR6JcZU/sqUOqtkxrIVsb5PcrBoy+m6/M58uqkPWLa36zb7kb2SJwuX/T29SrlW9jTob4FfIH3yM3peZ9MQsHtkQW+3aC+eFqCYISxOI8xhbYYFYNexgF9Wv8+qvOs1uX5Si3e101/67KKeK6HH9hIe7VCf3EiWOpq88JA1OVpfYtq/eAS17KcACeGa3KWfknRiHL3cdXwtEN+XusV2ujyPLCgW70yIioZgC+W1bXcn+ZDS5lOuVwgNv+FF7pODXenQUVEVEhy3C9XhWTn0apoHCs2EasF6HUWXKtfc4eE9mbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MSExl1siaOrsvcH6Xk63qv1aVXvOxGZubPLU2umSNQs=;
- b=K3FPxXc/cB9/3+8Bnfu+rBm9J0ild+lXt5jFukF+AU6fXi2wRIEYSBeE4RtE8VjTSwjfzFlsFjoL4JdLXBldEL9IKLLsfLDwW/STH/XevthWT3AaLIQ9iSO35hCbZJbuIffRnoCi9Iq6L17EPEix/UkiyyIyJsUOqcU0fIm1mt7x7cV2VosihHbhT9DV/xGBbg0Ot9obX662OeyqT6s0diJAfe+VRdwhSwtxOesmY9DArpmGRSVjH8is120Ve/KuX4gtD5eoCkm0V+M/5yTqCWzAaDdaXLEKFArNSt/IHvDm5up35Wx+gykj253PHqFFz3uSkwmJWsFXhVgc0bl+6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MSExl1siaOrsvcH6Xk63qv1aVXvOxGZubPLU2umSNQs=;
- b=ldWWO6fO7PnZuDSYkzQCI6mqgbhwos4ZCG3LPyaipr0rnr70wu6o84hkNkANt/7a0u/SV9GhbFZ9NC3LRWIOXJH2BOxakLLN+9rCKPxpuSpo28xXsYYNZM2fTcAQV4xkd4UjpaWJbIGrtBtGW54injTacOOPZtDBq0uPrnT5R8PEAtiy4/0nBthrmcPlKD5qlXJh39sZknRTjXnwHtoV1CccP0Kat+h5QqQ5GEIKrGMQfO7suuM0+6o+W6QoA3Y0E5W6OjALjCG+wHOpVthMzi8DTPnYRVf6aKmsnEcMExmmD3y5FXSbvIuHJKpU3m9Wd48eaddvh5YeWHjNkfdQaw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SA1PR12MB7224.namprd12.prod.outlook.com (2603:10b6:806:2bb::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Wed, 16 Oct
- 2024 14:22:38 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 14:22:38 +0000
-Date: Wed, 16 Oct 2024 11:22:37 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
-	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
-	kumaranand@google.com
-Subject: Re: [PATCH v6 0/9] iommu/amd: Use 128-bit cmpxchg operation to
- update DTE
-Message-ID: <20241016142237.GP3559746@nvidia.com>
-References: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
-X-ClientProxiedBy: BLAP220CA0016.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:32c::21) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF36D20B201
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729088572; cv=none; b=aEEUSB0Nws5TJYG9iiNUgeFQGNFHq2iKoQSSHY0XmfFsgX96h0Kiw+z4KTqVQUhSZhb9aii7FgN3t7vSazgg/s/3lwA7W7fg3FzeIVDgXmPj5hexSQxuJqwYvGG7XMiQaE0KSQESYG/NhPNOXYkc3DEjWtRTH5qy0r29T1KhV4w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729088572; c=relaxed/simple;
+	bh=LA0pu8STWhrlwxF7SSn7+T4mjCyoOQVosi4K6YAntQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=odzHKOZeMdveqfWT7hfyYFmN0bG1aAhzEzUR4PQ8GQzeJrIEZGTBVLwJtdI22OSO6ZGmDGdWPfXyZ/zo4H5B74u7GbpHtpt+aVU0wCtyRl2rz6uat9XgOUlcJ5wlvs0Q4F28/knHX5L32JQIy1Mp0bxwTKuV6hsrWbjIX7mUXwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RP0URcSH; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99e3b3a411so168886266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729088569; x=1729693369; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/t0JkfDSzWWrRpinUGYcX097nCcgBj9fkWkXnOoM92Q=;
+        b=RP0URcSH6W4WcY8g2FVwfkL+Xk6Ud6w+LLkPEhtlDAxTDyyzfH5Db15GitaLoG+Dqt
+         zksTGIvgzCrU65jL8JsqnExenRqZ1WjDe1CndcNnOodKOrCa8MC3h2bluPeCMMRMe+OV
+         34YcY8akB8lx84wWCUoRQGJdlnDRuwVEQHAJ38kl1lMqBRs79sghAWC2is0JpkGC4Hdi
+         o9JJ196PUgopLOPrB5bpnmjpVR+TDnKMydNVBwhlJ2KAqbotqeeSAJyag07X3zQLBQNz
+         gvG5SlrQamH3JqKwjvV2v6PleXcbAk5jQY6Bhs7k/1VHKUWryOuUL0R1wkKO4nCWT0NK
+         rcoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729088569; x=1729693369;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/t0JkfDSzWWrRpinUGYcX097nCcgBj9fkWkXnOoM92Q=;
+        b=vAQG/JdAHBih5MO+rYn9L+h9lFOMwnttlEQOFi9FVtjw5EJxZKCdmnI3nGGdUYSo8L
+         Z7wkNd26MGQ2eGsFNadO79pu//S9TO89g6T8Uj+97GnOhuJJt5G243bZTcFiotnThFGW
+         tULsYHCmEb7TNzBQR/4GfeQyl4iGc1rvIT7s7S6aQfevVj2F+oNA+OtEU0gWqN5tT8y+
+         W/zGT1/g4vkWSXdzZREdsNKJncLdnLjjGABTUpp5A86/qPdn2ergew9M5wcgQCZlsN73
+         ia8mZ26pH/+Ga7pEh6xmdB1FUIEnGljQ8CpWaxE3hkNa/WUyRJx6dT1/IY+cY2/PCBns
+         HhXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGB6ubvqXtf/tOd+0hU71Uft4L5wR64LVXcV7MO44WZYt6wW/U3aW7mgtTS+70UkPp6wkzrJUXcFUx6L4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLotcflRfJu5h9ELzhGES78l9Mus/+xilT9M2ZotS7J90Ea5B9
+	PMyrJrpcxsdtFNya7OmqP8aojC3BTfFYHJfqEMy4OXhL+mE/zA7q24TCLuZJycQ=
+X-Google-Smtp-Source: AGHT+IFPtgPateumTcL4fx59JpiDJqrolmR5WA4S8dFYvswZfBVsUu8vANi78NaZCjg141Y1nAf4Mg==
+X-Received: by 2002:a17:907:a0c9:b0:a99:ee23:dfb8 with SMTP id a640c23a62f3a-a99ee23e019mr1266522566b.20.1729088569175;
+        Wed, 16 Oct 2024 07:22:49 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2971a48csm189681966b.6.2024.10.16.07.22.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 07:22:48 -0700 (PDT)
+Date: Wed, 16 Oct 2024 17:22:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Vimal Agrawal <avimalin@gmail.com>,
+	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+	arnd@arndb.de
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, avimalin@gmail.com,
+	vimal.agrawal@sophos.com
+Subject: Re: [PATCH] misc: misc_minor_alloc to allocate ids for all
+ dynamic/misc dynamic minors
+Message-ID: <f38e017e-40ef-4241-8701-fc56c5c2d06d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SA1PR12MB7224:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84664678-957a-4b07-c12a-08dcededfcc0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4pzGkQtrS51y0eTfDihhlUFfdssozjx+1Hf8K0TJVexXUulILBA2857SYVFI?=
- =?us-ascii?Q?8pIgUY1z3A5nZJhPHPlRpB1Cgf6soM0wGzp8D5Z0rhLqQwlBSWxnGJcOI9Jy?=
- =?us-ascii?Q?TeTcGTkRQMxrVfwA5vviptULr8AVtyWo1UbCUoqP71f3w5SYaIydGEzP8k+V?=
- =?us-ascii?Q?KcldyVUY7uvWp4wiEDQlysso7NesmPBpBCR05CE1/abLO8FhkDzgcXQFfaVS?=
- =?us-ascii?Q?7U74oSlDcrezJ/Xymttu6VO0orT7aCi3Dtobkf7O4D+KNNgpCU3gUXpoTusG?=
- =?us-ascii?Q?EFC5JTM1ZxZzU/jTePj3UuduI9o58NnLPy48RLMHnCVqqtuC1dCgp1iqXf7Y?=
- =?us-ascii?Q?ic/JoTE7tmQq0GBU1q1sgrZ4ZdWeO7zt1PS8x5ext5rfbUE68YySsE+vxp1S?=
- =?us-ascii?Q?YENlu7wG23VObvsejndGcXcHC7SVYPVXoK/ksnixq1I9Iom09rPqOEuAw7d+?=
- =?us-ascii?Q?v2vRDASPZBVXGljQdk1ehYMrZcaLSQlcmwSEFTMuy3qhJhyNdhzBVLW/7vhf?=
- =?us-ascii?Q?+vVR7eNPcQA7SAaTrLbmjNxw9a0XrH9HfIfQYMaMT4VTtXjmJlCix56reLiv?=
- =?us-ascii?Q?20hqbOJtnAFyaNvje+TiQ3fL2a7B3Uq0x2xlBHaifIUFw1ncuoRttucsCfvT?=
- =?us-ascii?Q?PZLp0KgvgR0JOWEclBncl9tSPS/7DW0kPrpphxhbihTuSWdRXLvyyHg5naG9?=
- =?us-ascii?Q?qAZAyeYmHvlZ1Z9zj5hOzOwhsyBq7bHY0GxhJCybZ+faXPhmPHZrRBHtI0WX?=
- =?us-ascii?Q?8iMezmVTJQiP82qt8PyDO9tDbcvZ3jAX0lW8aTGwL0rtBaCkXoe1pTU7hVTH?=
- =?us-ascii?Q?sKTYBtWt1+xum+fGQqxihOH7trrI3LRd6ruKozCmKaS4WJkGi6VHl0XVGYeM?=
- =?us-ascii?Q?2gCYPFdSes5W3JaHLX6XLAhYumNPR1GBZISSzRml1sUco3TvjtefOwXogJv2?=
- =?us-ascii?Q?JoheBn1b61svBQ88YH0rd5SOslsLzGRLEGY6YZSLd6bE0O/9aTsweDtizYIS?=
- =?us-ascii?Q?Dc+ksB1syiRjzZYg4lxPRNZuWpHgOgVfGwEHYp9TaWgAFO1q828GPO3CtaLc?=
- =?us-ascii?Q?WZDiIoRQRXVL7mZ5tv4PdntDUgKpUgQwyJGmVQRsG4rqj5ugDVxduTTHKKJB?=
- =?us-ascii?Q?Ln57mLcANylyeT+dlXFERTAFB630WwDPw9XsSqj1zAYZYiGalUNEDRaf3ZhH?=
- =?us-ascii?Q?cEZsaLMVs2AMopKILdhD2DaLGivVTSVQ7VkDU/V2R1LN5FtVsaj3Bl30mkuQ?=
- =?us-ascii?Q?k8/kyiituqF19ZpLmRcJY43o+etlweCysTH8jSAO0Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hAJYQO8w37CInaRZOmAKdly/KKNcat+sCHYliGgXJf2Bgz3GyJcNJ7WofF32?=
- =?us-ascii?Q?dpwX7oxY1ZIFUE/5siv4Ti5Qj9j+/PZE2QBi2Gz3dGSWjoL0DWgtPKZ4L6K+?=
- =?us-ascii?Q?T/L1Q6Wgtbv53gsw7VFeERX71mgjf2ss6b2HJMXiflfKU3IIb4pXsi4BnEUN?=
- =?us-ascii?Q?30J/IBKk+YzuwcuGRVdyy1rf7s/Od8JbrC2or3kdxOEveW+nkOCkOwsi4Lov?=
- =?us-ascii?Q?gXSbQe41yd8WeNHxniwpvG/+5QwS1go7W8pbxqD0geCL1W/HST9tP+5rudOn?=
- =?us-ascii?Q?AO4AfY2Dp759lgFPg/K0/kBkW9M/6KK+9qDM/pScXkLfw7YSc2D/byjQFpp7?=
- =?us-ascii?Q?iLPzxw6fxDzzWnnpZp1ZNASDyvm1wRlROBgyMzZ+KFK7m3zsy0nJGW3Kdr2S?=
- =?us-ascii?Q?MBHfOwlJQkfBCd3UJDlzq+377tAkuuhcnF7DPa0JpC2TpNjZ2kTc9gkUISiV?=
- =?us-ascii?Q?e0J/weRpssouAqT/fh4TldQcCDQslFl71GO4NgczCH5SwcA3Y7hD0mNy4+MZ?=
- =?us-ascii?Q?X95UAdRGbnndhBK9eXeUw3Pc+p/Ef5IFVDrc11obx8yXxPlt6JpBqIwwvwPY?=
- =?us-ascii?Q?k5oVdNoMeJw50a1xfLKptXBFU8jHDZs61WihxbQ3TaUdufRlHAf+hscN3v7B?=
- =?us-ascii?Q?+fwZ8SLTYN2VPxjAzbgkAjfUq3o6Pve51dT2rKUM90FUDN3BCnZRSrcPvrUB?=
- =?us-ascii?Q?v7Mc3/oLaCN9PoLyafY061VZFxyICmJR3UAc3cFUHCNDL31g/fUAvNLvUyRE?=
- =?us-ascii?Q?lri5EgFkA3F2Lz832ikcsNxdEllRKOGIiQqq9VDW+D/Yqwu+RrW8L9ThXWAF?=
- =?us-ascii?Q?KuqBk0aZEXYSYH7I4g1o9F/NReiiU21X3WWXSwuGaiCgF874U8Po+JVYbieq?=
- =?us-ascii?Q?oz5+StzogCCiXDtbm1TWACwX7SWFSezc8nK2XRUdagUapVElLG3WzLdXxmm1?=
- =?us-ascii?Q?32UIFC8Aa6oYHYukokDP2eCNGl/YN99zY3PTPxEVVa+ch8AwwfE/NK4EY5a2?=
- =?us-ascii?Q?Ov0l+HyjoHabITCXMX8las08k2MypBexETbN+Y5e4MwYyiVrbk3hPbf/VCo8?=
- =?us-ascii?Q?3J4fEWFMNkCTpZpRraJG+p/kK/1MftvP1cpHCQIbn4krpW2NCh7PPpAhEH5g?=
- =?us-ascii?Q?b/W1Oa5UQTFJ+ONh1tPSS38TOQ4kYgqPjp6wML7b8i41xDO/HIrF6ukIR+aG?=
- =?us-ascii?Q?hacsZ1oQZ64F1JPxBxV6w9dpM8ZYcmXb5KTtyGpjq7+whFCp85hsPVDL6KyB?=
- =?us-ascii?Q?qgkpNHL7Gcmq1uwZe0sFeXQvoAhCn8yDCLf6jBlFH6eQ5+mYgdxKIDlxDdEP?=
- =?us-ascii?Q?NKMwSHU+bo1dH7+0YDDasuIsso1OiNliGxWg1QLXFdGZZkJSet50Tqt4upfm?=
- =?us-ascii?Q?n4aw5Tx9IjwuXwU9SenIhYhAcfi0fkSNAjzgkeASGchAbZ/72662VeKaQ2Ry?=
- =?us-ascii?Q?ySAPC+HaWDircqeLQ39OtAO0+aoaa+yLqE/miPUTNgdsn0HBStjt6Y8UB9Ha?=
- =?us-ascii?Q?QXOTEJy9JaipftJ+mbXKL5FUDvNIuxL6v3vTl/ihugW12IzMYUQSnCJzZVks?=
- =?us-ascii?Q?rIx1m6ZLW31t16kBnoE=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84664678-957a-4b07-c12a-08dcededfcc0
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 14:22:38.4881
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w6lxPSGYjuxkLHRxjNGREVDBAAdBkuxYlJVrn1mUK4bjZ8yFQHisgwe8iKkuAtD6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7224
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014131416.27324-1-vimal.agrawal@sophos.com>
 
-On Wed, Oct 16, 2024 at 05:17:47AM +0000, Suravee Suthikulpanit wrote:
-> This series modifies current implementation to use 128-bit cmpxchg to
-> update DTE when needed as specified in the AMD I/O Virtualization
-> Techonology (IOMMU) Specification.
-> 
-> Please note that I have verified with the hardware designer, and they have
-> confirmed that the IOMMU hardware has always been implemented with 256-bit
-> read. The next revision of the IOMMU spec will be updated to correctly
-> describe this part.  Therefore, I have updated the implementation to avoid
-> unnecessary flushing.
-> 
-> Changes in v6:
-> 
-> * Patch 2, 4, 7: Newly add
-> 
-> * Patch 3, 5, 6, 7, 9: Add READ_ONCE() per Uros.
-> 
-> * Patch 3:
->   - Modify write_dte_[higher|lower]128() to avoid copying old DTE in the loop.
-> 
-> * Patch 5:
->   - Use dev_data->dte_cache to restore persistent DTE bits in set_dte_entry().
->   - Simplify make_clear_dte():
->     - Remove bit preservation logic.
->     - Remove non-SNP check for setting TV since it should not be needed.
-> 
-> * Patch 6:
->   - Use find_dev_data(..., alias) since the dev_data might not have been allocated.
->   - Move dev_iommu_priv_set() to before setup_aliases().
+Hi Vimal,
 
-I wanted to see how far this was to being split up neatly like ARM is,
-I came up with this, which seems pretty good to me. This would
-probably be the next step to get to, then you'd lift the individual
-set functions higher up the call chain into their respective attach
-functions.
+kernel test robot noticed the following build warnings:
 
-static void set_dte_identity(struct amd_iommu *iommu,
-			       struct iommu_dev_data *dev_data,
-			       struct dev_table_entry *target)
-{
-	/*
-	 * SNP does not support TV=1/Mode=1 in any case, and can't do IDENTITY
-	 */
-	if (WARN_ON(amd_iommu_snp_en))
-		return;
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-	/* mode is zero */
-	target->data[0] |= DTE_FLAG_TV | DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_V;
-	if (dev_data->ats_enabled)
-		target->data[1] |= DTE_FLAG_IOTLB;
-	/* ppr is not allowed for identity */
+url:    https://github.com/intel-lab-lkp/linux/commits/Vimal-Agrawal/misc-misc_minor_alloc-to-allocate-ids-for-all-dynamic-misc-dynamic-minors/20241014-211915
+base:   char-misc/char-misc-testing
+patch link:    https://lore.kernel.org/r/20241014131416.27324-1-vimal.agrawal%40sophos.com
+patch subject: [PATCH] misc: misc_minor_alloc to allocate ids for all dynamic/misc dynamic minors
+config: sparc64-randconfig-r072-20241015 (https://download.01.org/0day-ci/archive/20241016/202410161811.aIPEJHOt-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
 
-	target->data128[0] |= dev_data->dte_cache.data128[0];
-	target->data128[1] |= dev_data->dte_cache.data128[1];
-}
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202410161811.aIPEJHOt-lkp@intel.com/
 
-static void set_dte_gcr3_table(struct amd_iommu *iommu,
-			       struct iommu_dev_data *dev_data,
-			       struct dev_table_entry *target)
-{
-	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-	u64 gcr3;
+smatch warnings:
+drivers/char/misc.c:89 misc_minor_alloc() error: uninitialized symbol 'ret'.
 
-	if (!gcr3_info->gcr3_tbl)
-		return;
+vim +/ret +89 drivers/char/misc.c
 
-	pr_debug("%s: devid=%#x, glx=%#x, gcr3_tbl=%#llx\n",
-		 __func__, dev_data->devid, gcr3_info->glx,
-		 (unsigned long long)gcr3_info->gcr3_tbl);
+d52c84545e305b Vimal Agrawal    2024-10-14  66  static int misc_minor_alloc(int minor)
+ab760791c0cfbb D Scott Phillips 2022-11-14  67  {
+ab760791c0cfbb D Scott Phillips 2022-11-14  68  	int ret;
+ab760791c0cfbb D Scott Phillips 2022-11-14  69  
+d52c84545e305b Vimal Agrawal    2024-10-14  70  	if (minor == MISC_DYNAMIC_MINOR) {
+d52c84545e305b Vimal Agrawal    2024-10-14  71  		/* allocate free id */
+ab760791c0cfbb D Scott Phillips 2022-11-14  72  		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
+ab760791c0cfbb D Scott Phillips 2022-11-14  73  		if (ret >= 0) {
+ab760791c0cfbb D Scott Phillips 2022-11-14  74  			ret = DYNAMIC_MINORS - ret - 1;
+ab760791c0cfbb D Scott Phillips 2022-11-14  75  		} else {
+ab760791c0cfbb D Scott Phillips 2022-11-14  76  			ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
+ab760791c0cfbb D Scott Phillips 2022-11-14  77  				      MINORMASK, GFP_KERNEL);
+ab760791c0cfbb D Scott Phillips 2022-11-14  78  		}
+d52c84545e305b Vimal Agrawal    2024-10-14  79  	} else {
+d52c84545e305b Vimal Agrawal    2024-10-14  80  		/* specific minor, check if it is in dynamic or misc dynamic range  */
+d52c84545e305b Vimal Agrawal    2024-10-14  81  		if (minor < DYNAMIC_MINORS) {
+d52c84545e305b Vimal Agrawal    2024-10-14  82  			minor = DYNAMIC_MINORS - minor - 1;
+d52c84545e305b Vimal Agrawal    2024-10-14  83  			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
+d52c84545e305b Vimal Agrawal    2024-10-14  84  		}
+d52c84545e305b Vimal Agrawal    2024-10-14  85  
+d52c84545e305b Vimal Agrawal    2024-10-14  86  		if (minor > MISC_DYNAMIC_MINOR)
+d52c84545e305b Vimal Agrawal    2024-10-14  87  			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
 
-	gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
+What about if minor is >= DYNAMIC_MINORS (128) but <= MISC_DYNAMIC_MINOR (255)?
 
-	target->data[0] |= DTE_FLAG_GV | DTE_FLAG_TV | DTE_FLAG_IR |
-			   DTE_FLAG_IW | DTE_FLAG_V |
-			   FIELD_PREP(DTE_GLX, gcr3_info->glx) |
-			   FIELD_PREP(DTE_GCR3_14_12, gcr3 >> 12);
-	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
-		target->data[0] |= DTE_FLAG_GIOV;
+d52c84545e305b Vimal Agrawal    2024-10-14  88  	}
+ab760791c0cfbb D Scott Phillips 2022-11-14 @89  	return ret;
+ab760791c0cfbb D Scott Phillips 2022-11-14  90  }
 
-	target->data[1] |= FIELD_PREP(DTE_GCR3_30_15, gcr3 >> 15) |
-			   FIELD_PREP(DTE_GCR3_51_31, gcr3 >> 31);
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-	/* Guest page table can only support 4 and 5 levels  */
-	target->data[2] |= FIELD_PREP(
-		DTE_GPT_LEVEL_MASK, (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL ?
-					     GUEST_PGTABLE_5_LEVEL :
-					     GUEST_PGTABLE_4_LEVEL));
-
-	target->data[1] |= dev_data->gcr3_info.domid;
-	if (dev_data->ppr)
-		target->data[0] |= 1ULL << DEV_ENTRY_PPR;
-	if (dev_data->ats_enabled)
-		target->data[1] |= DTE_FLAG_IOTLB;
-
-	target->data128[0] |= dev_data->dte_cache.data128[0];
-	target->data128[1] |= dev_data->dte_cache.data128[1];
-}
-
-static void set_dte_paging(struct amd_iommu *iommu,
-			       struct iommu_dev_data *dev_data,
-			       struct dev_table_entry *target)
-{
-	struct protection_domain *domain = dev_data->domain;
-
-	target->data[0] |= DTE_FLAG_TV | DTE_FLAG_IR | DTE_FLAG_IW |
-			   iommu_virt_to_phys(domain->iop.root) |
-			   ((domain->iop.mode & DEV_ENTRY_MODE_MASK)
-			    << DEV_ENTRY_MODE_SHIFT) |
-			   DTE_FLAG_V;
-	if (dev_data->ppr)
-		target->data[0] |= 1ULL << DEV_ENTRY_PPR;
-	if (domain->dirty_tracking)
-		target->data[0] |= DTE_FLAG_HAD;
-
-	target->data[1] |= domain->id;
-	if (dev_data->ats_enabled)
-		target->data[1] |= DTE_FLAG_IOTLB;
-
-	target->data128[0] |= dev_data->dte_cache.data128[0];
-	target->data128[1] |= dev_data->dte_cache.data128[1];
-}
-
-static void set_dte_entry(struct amd_iommu *iommu,
-			  struct iommu_dev_data *dev_data)
-{
-	u32 old_domid;
-	struct dev_table_entry new = {};
-	struct protection_domain *domain = dev_data->domain;
-	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-	struct dev_table_entry *dte = &get_dev_table(iommu)[dev_data->devid];
-
-	make_clear_dte(dev_data, dte, &new);
-	if (gcr3_info && gcr3_info->gcr3_tbl)
-		set_dte_gcr3_table(iommu, dev_data, &new);
-	else if (domain->iop.mode == PAGE_MODE_NONE)
-		set_dte_identity(iommu, dev_data, &new);
-	else
-		set_dte_paging(iommu, dev_data, &new);
-
-	old_domid = READ_ONCE(dte->data[1]) & DEV_DOMID_MASK;
-	update_dte256(iommu, dev_data, &new);
-
-	/*
-	 * A kdump kernel might be replacing a domain ID that was copied from
-	 * the previous kernel--if so, it needs to flush the translation cache
-	 * entries for the old domain ID that is being overwritten
-	 */
-	if (old_domid) {
-		amd_iommu_flush_tlb_domid(iommu, old_domid);
-	}
-}
 
