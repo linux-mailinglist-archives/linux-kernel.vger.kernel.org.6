@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-368343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8139A0EA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:41:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2765A9A0EB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 17:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7544F1F239C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:41:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589821C21922
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 15:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E0620E03F;
-	Wed, 16 Oct 2024 15:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481B020E029;
+	Wed, 16 Oct 2024 15:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H8YYJSQS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lJGPCg2/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="daQwXQP/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCEC20E013;
-	Wed, 16 Oct 2024 15:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D913318C920
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 15:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093253; cv=none; b=X/w9KDJrSvt1H+0362FqXEjrWQMhu4Gh2ogNHzJiRRoHYbmSxMczyM26oelRSzlKVz5qD97/2htlIy3Vb/0nqfI5fM+P5X4xK1F9AMltwuSAkWmpJWlpZUA7Oq4Ivr8049V8lXLY0X0c0Hh/jNZ0qMaggW298iWNtb+vzqSGCBI=
+	t=1729093319; cv=none; b=rW8l/fJe9YmVZAgyyC8elGqAcUTDWDHtJpN6LstOO5NK6iTb72cHHWxIE914FJ2KMEpeUXUQ50w0h2geRvTKa4gMKKEdhepLMIZQhJ895ihFoipKeebuChujD+9H3bUGWkvlSsaceNq1h/DG5pOkRQT1foDJOxI755gbS86Bq0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093253; c=relaxed/simple;
-	bh=satqrR7kjHJ0pob7EWE5Jxz00e+N19hNhHs8VVSD5t8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fm6iF1yWfACVAvbKlxNr6NmNtEssm2/4kzt2/mI96hvEcEL4+Ens154nTMgQpk7UtZ71Rg9N2WFwxnkjcHP8r0LsTPDoYZPS72WhYXaeiNzHWj+BthcBWDGKb5YRyVr4FzQxINwlu/MnCSNdhwMVWnItUXZKo5krBCTyzhfhuTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H8YYJSQS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lJGPCg2/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 16 Oct 2024 17:40:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729093250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O6w6HVmg57NA0stD1XEyTQVlAkPaBhFNlecqvDS6xYA=;
-	b=H8YYJSQSAHSVrIYtKUPEm3HjPhOgwMQXuwBryMYQfLNfAG9x/dNAXSEX+4qNnhq0f/l/ul
-	IFaCnzaJeS++U+zHwm5S+9U8adJpuKS40mE1muaH3hhuDbsiLSTOPo1q2hXhFSzUOIfu2k
-	F6RlPJa6vVnNAqEXvUncm7+NB5CwMAVnvME8Jkzaopfz8TAnDW0MmeDRYDMW6VDB7FqJVS
-	9bqiK41v0LXsN+MuMimJsgHN70tnCUdGOFAu2VQh+4xvDAyywSRRQ768axAPMbQchO8qUR
-	fkQ8QPnMdccfg9Z94dg3eGb/QeaEmReZODboScg760Sy05GW+ufz+X5CWVnwdQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729093250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O6w6HVmg57NA0stD1XEyTQVlAkPaBhFNlecqvDS6xYA=;
-	b=lJGPCg2/YrEoBiaPcYBuESCXSWBubV7UsKpduIo7ZRwlaFyq2GC/UsJvxPQqGGbVqe9znG
-	XSwrOZ4uAJtAzrDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [peterz-queue:sched/lazy] [sched, x86]  74d850cd4c:
- WARNING:at_kernel/rcu/rcutorture.c:#rcu_torture_stats_print[rcutorture]
-Message-ID: <20241016154048.sdiJ85Zc@linutronix.de>
-References: <202410151544.7d2292c6-lkp@intel.com>
+	s=arc-20240116; t=1729093319; c=relaxed/simple;
+	bh=/grc185rxLSFdU+ikEexjliKOiRIJIi6ABacyFR+WqQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sF9GckcY2NEc9dxdxpZ5zUcBO2o2VwP0bhuLEaznVfAJL8ODhiAvR+SdsBquMBItiLeKGd+A1OSC6BCr+i6aS348YWCLEpezPx1E3JvsZnm5tXzERgdi+6Sk/8dHoABnRmB1hRBbpKj2VZTQndQl5atb0Do6qlu5fi18EAqg8kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=daQwXQP/; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729093318; x=1760629318;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/grc185rxLSFdU+ikEexjliKOiRIJIi6ABacyFR+WqQ=;
+  b=daQwXQP/f2Key1ypklz7/84Q00hohOBd/4kP7HDmBs57EBoYJ+X+71Ja
+   A40e1IDT46T1Qg9gTc1rRFBW93/LQJnHrEBZUHeM5YC343wY7/GrRjSTz
+   gX9nZaCeemPmsL/Nh2Or34iqgZTT19LILI2UP4KZlzwje3jnBUFlcQE0C
+   cPArndzwFcrm2ETQ8xMerqsCz6rFWotmPCprySgTd5cxRD6axHXQoGRjU
+   n1ezaT/J/RcoukyM9ErMSDG55E3J+IznF3fck1CufxywLuvDfawyPNkET
+   oArmqbTk7m8mzonz9dKeisqn5J1vNGgskZCX8gNd9LEYFQeK+4gSnHKAV
+   w==;
+X-CSE-ConnectionGUID: oGSZ8RhLRWWbE51YBgKlxA==
+X-CSE-MsgGUID: W0+JBSL2S1u7hkfoWaATCA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46021326"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46021326"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 08:41:57 -0700
+X-CSE-ConnectionGUID: Hg18HRddRDSTDV4mNZenXA==
+X-CSE-MsgGUID: Ej/vS7TOQlqpQHn2zNunUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,208,1725346800"; 
+   d="scan'208";a="109018894"
+Received: from feng-clx.sh.intel.com ([10.239.159.50])
+  by fmviesa001.fm.intel.com with ESMTP; 16 Oct 2024 08:41:53 -0700
+From: Feng Tang <feng.tang@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Narasimhan.V@amd.com
+Cc: linux-mm@kvack.org,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Feng Tang <feng.tang@intel.com>
+Subject: [PATCH v3 0/3] mm/slub: Improve data handling of krealloc() when orig_size is enabled  
+Date: Wed, 16 Oct 2024 23:41:49 +0800
+Message-Id: <20241016154152.1376492-1-feng.tang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <202410151544.7d2292c6-lkp@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-15 15:47:20 [+0800], kernel test robot wrote:
-> Hello,
-Hi,
+Danilo Krummrich's patch [1] raised one problem about krealloc() that
+its caller doesn't pass the old request size, say the object is 64
+bytes kmalloc one, but caller originally only requested 48 bytes. Then
+when krealloc() shrinks or grows in the same object, or allocate a new
+bigger object, it lacks this 'original size' information to do accurate
+data preserving or zeroing (when __GFP_ZERO is set).
 
-it took me a while to reproduce this because it does not trigger without
-the ltp userland and this is not downloaded properly so I had to
-workaround it. However=E2=80=A6
+Thus with slub debug redzone and object tracking enabled, parts of the
+object after krealloc() might contain redzone data instead of zeroes,
+which is violating the __GFP_ZERO guarantees. Good thing is in this
+case, kmalloc caches do have this 'orig_size' feature, which could be
+used to improve the situation here.
 
-> [   98.006999][  T543] busted-torture: rtc: 00000000639e821e ver: 6796 tf=
-le: 0 rta: 6796 rtaf: 0 rtf: 6787 rtmbe: 1 rtmbkf: 0/0 rtbe: 0 rtbke: 0 rtb=
-f: 0 rtb: 0 nt: 89 barrier: 0/0:0 read-exits: 64 nocb-toggles: 0:0
-> [   98.017386][  T543] busted-torture: !!!=20
-> [   98.017662][  T543] ------------[ cut here ]------------
-> [   98.019330][  T543] WARNING: CPU: 0 PID: 543 at kernel/rcu/rcutorture.=
-c:2258 rcu_torture_stats_print+0x24c/0x610 [rcutorture]
-> [   98.021831][  T543] Modules linked in: rcutorture torture
-=E2=80=A6
-> [   98.237025][  T543] ------------[ cut here ]------------
-> [   98.238052][  T543] WARNING: CPU: 0 PID: 543 at kernel/rcu/rcutorture.=
-c:2263 rcu_torture_stats_print+0x373/0x610 [rcutorture]
-> [   98.240000][  T543] Modules linked in: rcutorture torture
-=E2=80=A6
+To make the 'orig_size' accurate, we adjust some kasan/slub meta data
+handling. Also add a slub kunit test case for krealloc().
 
-It took me a while to figure out that this test is using
-rcu_busted_torture_deferred_free() which in turn invokes the callback
-before the grace period. Buh.
-So it looks like LAZY preempt triggers this more reliably than the
-normal preempt version=E2=80=A6
+Many thanks to syzbot and V, Narasimhan for detecting issues of the
+v2 patches.
 
-Sebastian
+This is again linux-slab tree's 'for-6.13/fixes' branch
+
+[1]. https://lore.kernel.org/lkml/20240812223707.32049-1-dakr@kernel.org/
+
+Thanks,
+Feng
+
+Changelog:
+
+  Since v2:
+  * Fix NULL pointer issue related to big kmalloc object which has
+    no associated slab (V, Narasimhan, syzbot)
+  * Fix issue related handling for kfence allocated object (syzbot,
+    Marco Elver)
+  * drop the 0001 and 0003 patch whch have been merged to slab tree
+
+  Since v1:
+  * Drop the patch changing generic kunit code from this patchset,
+    and will send it separately.
+  * Separate the krealloc moving form slab_common.c to slub.c to a 
+    new patch for better review (Danilo/Vlastimil)
+  * Improve commit log and comments (Vlastimil/Danilo) 
+  * Rework the kunit test case to remove its dependency over
+    slub_debug (which is incomplete in v1) (Vlastimil)
+  * Add ack and review tag from developers.
+
+
+
+Feng Tang (3):
+  mm/slub: Consider kfence case for get_orig_size()
+  mm/slub: Improve redzone check and zeroing for krealloc()
+  mm/slub, kunit: Add testcase for krealloc redzone and zeroing
+
+ lib/slub_kunit.c | 42 +++++++++++++++++++++++
+ mm/slub.c        | 87 +++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 105 insertions(+), 24 deletions(-)
+
+-- 
+2.27.0
+
 
