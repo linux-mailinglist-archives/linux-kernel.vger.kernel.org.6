@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-368413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7E89A0F86
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:22:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE689A0F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D7D0284A45
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BBB1F2772C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66BA20FA8B;
-	Wed, 16 Oct 2024 16:22:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5E420FA9B;
+	Wed, 16 Oct 2024 16:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AuHKFKLE"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E2145008;
-	Wed, 16 Oct 2024 16:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FA112DD8A;
+	Wed, 16 Oct 2024 16:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729095764; cv=none; b=NbZ+o/RfzsnK2YoKaX9biAuA+KCXroz1PuxSTTl1srBf7OcxO173L4MAuRo2IijkuQYUMkBhf6zlHqNh1ec/rV+zw3tMyJz+DULhL8OpjTy5fmElz4NSJva3YUS+xtGHminsDUhxcC4b6jILe3qbmbJ7u6yBYX0zDettlS7fCUg=
+	t=1729095807; cv=none; b=jmY9j2UHAn87rwZE+kqPGLmOTt8OJW+G33lMt1HvxD5SFWRNYcyE84U3+SuyuIgW8PTUcyTw9x2Se8ywvbr2Skqs4lrwnVqAClqRInbSBa8Jc4xgbktkfWXkXU5JR5AD0Njka1/lyFjc6wC4MCyAdzcwUf5h54BkQZHakafKJsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729095764; c=relaxed/simple;
-	bh=MvQA7IS7CGySYRfDQZKf2ZKM0e6XoSwsxyFBT+rE0GY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iTBy0TApgBWr5YT5XcfAGclerQmF7yPyjiAVKheL3HtLyYksvfjIZnMFQrLAs1WSPDkznGZ/PMHv1ag4WVHwzjTbZ78FkxmUQfkhqA66gI97JaaDPqOqhCPKi6V/VJeqvM6ZNq9EF9w36PALazqdylkfzyVPswvV0V0FKO0QjYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTGRX4hTvz6G9Mj;
-	Thu, 17 Oct 2024 00:20:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E06081400C9;
-	Thu, 17 Oct 2024 00:22:37 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 18:22:37 +0200
-Date: Wed, 16 Oct 2024 17:22:35 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
-	<Benjamin.Cheatham@amd.com>, <rrichter@amd.com>, <nathan.fontenot@amd.com>,
-	<smita.koralahallichannabasappa@amd.com>
-Subject: Re: [PATCH 04/15] cxl/aer/pci: Add CXL PCIe port correctable error
- support in AER service driver
-Message-ID: <20241016172235.00001e65@Huawei.com>
-In-Reply-To: <20241008221657.1130181-5-terry.bowman@amd.com>
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
-	<20241008221657.1130181-5-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729095807; c=relaxed/simple;
+	bh=1BQ2OjRpyiDw2g2stbTQFI+FzPWBKEQi93YUtJmVsbs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=KkgJfXhgbXrn9MsESgwdIb9vSqkKEff9IdH29+Y0M591TVZaR5m3Ax7HNNACawyHUO4e1ixhTRqsejcMAjqjIZsABLXuJZ20T/ZXGLgrCsxCDSRJUmbXqOB0C7YPqgu3h1VwQUhgqQUqqg8kPHg2nsB4QyTWSdksbS8DrTSp8M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AuHKFKLE; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43140a2f7f7so168025e9.1;
+        Wed, 16 Oct 2024 09:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729095804; x=1729700604; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uHQi4sDcUkh4HrcchY9/4FMu7XZ+1dZcINfwy3wM6SI=;
+        b=AuHKFKLEfRB97YeaTjw1KX5Q5FFoNECrGYwxl06q+kBey5d7fBRt+ztw9A+nHRazDl
+         O4Pp7NHi5Lj/Z9qO2qcsgMTYJYLCSOlmpG/USKeBSFKvkw/0RoeZOkoh0nmZGWKHkJBB
+         JiDyiVFapqQf6qReuTz6Ss5H2z6Z1fZ5h/EfAIM4ugud0ZPpSqjDQZwRP3TcaALPhScu
+         CqzhrIfvjvQg26ZkcaKDIauUJVZMU16HrJfQGDOU1ZrJXGhsl5M1BY28jPJnjgy3EySk
+         YBTr5FrBjC/FZ0cYebknypKQFBpqYPF8qWam13r2TdAD3yJi+SOv/ygZI0OOWxoAZWdR
+         kE8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729095804; x=1729700604;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHQi4sDcUkh4HrcchY9/4FMu7XZ+1dZcINfwy3wM6SI=;
+        b=B9UgMG6O6QITvb2/jnAwAwHRPTPuz5d2Sd9m6YZGrBvmEmI5fSdyaokdwfJxPgNbMU
+         EryQiCbMdwHdgKhQyC4Q64p5JIMuc+DvEr6AlO62X3adF2pULDfzO6yNx3UDl3yPB6D3
+         yCJxtBficZmAvQgRT89hORz88b917r7Hy5xgqiRz8mbpCmHS0XYwgPDtLDxYj44/T2tC
+         TYFrZjFD27wuchSFIhjzSmkmkpEAlosgYWrWENN1XE7Sm7Pcm3l2FRBnTVCdN/VtbMhl
+         W0CJmbKyAlR0/7pPPZt45W1vpecri6cHJZssJLtyN2jKjj2k45mZyOXHTDYj0ctWmHIS
+         GxRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWh9CiF3WJxfjDl0cWoMCHrqTMc07qu8NjWPyiKiLo4bCrWaRr3KlHBdAK1AVm/OkUcXfXSP+aRM7PnBVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcK6khHyRV+OZGsaohe9nNJCvB/hsKmW7ttNuUR2dX/1kCpFQ4
+	U89VzSIAQyTomftEcfz0TipWrQdeF+D3SPY7B/4agxUjJYrIMB3EPKUKHw==
+X-Google-Smtp-Source: AGHT+IG0sUIYFY463O8t5Ty2rTEwo91mJXa/m5lTA+AfWloVFS9zJvnAeMcjLXsrrvP2xMJ1hXOr8g==
+X-Received: by 2002:adf:facf:0:b0:37c:c892:a98c with SMTP id ffacd0b85a97d-37d86d70bbemr3146554f8f.56.1729095802697;
+        Wed, 16 Oct 2024 09:23:22 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c5d7fsm53764965e9.42.2024.10.16.09.23.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 09:23:22 -0700 (PDT)
+Subject: Re: [PATCH net-next 1/2] ethtool: rss: prevent rss ctx deletion when
+ in use
+To: Daniel Zahka <daniel.zahka@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241011183549.1581021-1-daniel.zahka@gmail.com>
+ <20241011183549.1581021-2-daniel.zahka@gmail.com>
+ <966a82d9-c835-e87e-2c54-90a9a2552a21@gmail.com>
+ <43a98a99-4c79-4954-82f1-b634e4d1be82@gmail.com>
+From: Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <c32a876f-4d20-c975-5a2f-3fa0ab229f05@gmail.com>
+Date: Wed, 16 Oct 2024 17:23:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+In-Reply-To: <43a98a99-4c79-4954-82f1-b634e4d1be82@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Oct 2024 17:16:46 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
-
-> The AER service driver currently does not manage CXL PCIe port
-> protocol errors reported by CXL root ports, CXL upstream switch ports,
-> and CXL downstream switch ports. Consequently, RAS protocol errors
-> from CXL PCIe port devices are not properly logged or handled.
+On 15/10/2024 17:31, Daniel Zahka wrote:
+> On 10/14/24 6:10 AM, Edward Cree wrote:
+>> Imho it would make more sense to add core tracking of ntuple
+>>   filters, along with a refcount on the rss context.  That way
+>>   context deletion just has to check the count is zero.
+>>
+>> -ed
 > 
-> These errors are reported to the OS via the root port's AER correctable
-> and uncorrectable internal error fields. While the AER driver supports
-> handling downstream port protocol errors in restricted CXL host (RCH)
-> mode also known as CXL1.1, it lacks the same functionality for CXL
-> PCIe ports operating in virtual hierarchy (VH) mode, introduced in
-> CXL2.0.
-> 
-> To address this gap, update the AER driver to handle CXL PCIe port
-> device protocol correctable errors (CE).
-> 
-> The uncorrectable error handling (UCE) will be added in a future
-> patch.
-> 
-> Make this update alongside the existing downstream port RCH error
-> handling logic, extending support to CXL PCIe ports in VH.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Minor comments inline.
+> That sounds good to me. Is that something you are planning on sending patches for?
 
-J
-> ---
->  drivers/pci/pcie/aer.c | 54 +++++++++++++++++++++++++++++++++---------
->  1 file changed, 43 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index dc8b17999001..1c996287d4ce 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -40,6 +40,8 @@
->  #define AER_MAX_TYPEOF_COR_ERRS		16	/* as per PCI_ERR_COR_STATUS */
->  #define AER_MAX_TYPEOF_UNCOR_ERRS	27	/* as per PCI_ERR_UNCOR_STATUS*/
->  
-> +#define CXL_DVSEC_PORT_EXTENSIONS	3
-
-Duplicate of definition in drivers/cxl/cxlpci.h
-
-Maybe wrap it up in an is_cxl_port() or similar? Or just 
-move that to a header both places can exercise.
-
-
-> +
->  struct aer_err_source {
->  	u32 status;			/* PCI_ERR_ROOT_STATUS */
->  	u32 id;				/* PCI_ERR_ROOT_ERR_SRC */
-> @@ -941,6 +943,17 @@ static bool find_source_device(struct pci_dev *parent,
->  	return true;
->  }
->  
-> +static bool is_pcie_cxl_port(struct pci_dev *dev)
-> +{
-> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT) &&
-> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM) &&
-> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_DOWNSTREAM))
-> +		return false;
-> +
-> +	return (!!pci_find_dvsec_capability(dev, PCI_VENDOR_ID_CXL,
-> +					    CXL_DVSEC_PORT_EXTENSIONS));
-
-No need for the !! it will return the same without that clamping to 1/0
-because any non 0 value is true.
-
-> +}
-> +
+I'm afraid I don't have the bandwidth to do it any time soon.
+If you aren't able to take this on, I'm okay with your original
+ approach to get the issue fixed; I just wanted to ensure the
+ 'better' solution was considered if you do have the time for it.
 
