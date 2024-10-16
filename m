@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-368454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E8C9A0FEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F999A0FE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72085B24670
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:42:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210551C2173C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C700212627;
-	Wed, 16 Oct 2024 16:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E8A210193;
+	Wed, 16 Oct 2024 16:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WcV+K+mO"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="o5zD6ueO"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1F520FAA3;
-	Wed, 16 Oct 2024 16:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F017333A;
+	Wed, 16 Oct 2024 16:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096914; cv=none; b=qdx6SX3/p4c6Q7cA5bG9Q+vLJf5B2pPRxgbjimd5BL7n3Xrn4QNUW2rCEkwAYAUpXfFbl0yuCkE4o0ujzNEjer4+ATFys21cX9Jml4NZyu8hiZo2OLY/sFX1mjyoN6SdBVuo9vxWz8bnXAX0Uk65aRkffbKb4JqKia1eVtIV3a0=
+	t=1729096910; cv=none; b=oy2jWShGLRdMjwQD35jfBVq8A+j/v2BiFlXgJH6/X2apY4JyTuJwrEsZm7DVuu3q7VT60PFPK10d+4IDXzHfgZ6WMT0FY9BCs+veo0snWF5td84gTKYYGFpv8KZmDmq7HAjmKcs2SWH7fV//soN3zAdLkB4TmOElvLZeS5/clGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096914; c=relaxed/simple;
-	bh=DpHtPfq04oiPZVx392+SDoWvf1uEXJ38XX3wKwUtOl0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CMqc+AKOIMXXzxR4yjeUAoAMgMRwHQfGcuIytkn8GnSK8OlYzTMR2vbVlySSIpqE2d7ZlYnX8ceyJNQ5ZmCm1DFJKUEOGhDQtir2XDO7st1SSk6atdfxilq8gRdhh9NHiTFwIEhO31LgNquCeX73SbeLAwcJjZKNLtdKQeZT2ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WcV+K+mO; arc=none smtp.client-ip=198.47.19.142
+	s=arc-20240116; t=1729096910; c=relaxed/simple;
+	bh=AyZPycljZTSVnfuog5VBbTUyoxo2Q3r8VWdevGLJEP8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rPzk6JMGw48AfnsOZYs71QA7gzpttT9eHlu+ww536S2TnXA6+OQldh0eCD6Zd1TNTGeEtybZynpa/K23cIWB8PvDNmOrSyyVvBrB+JiGsA3ND9wmTgmo/obsiFVXTSZ1aZgB2z25myfwej1MoT2DDqEDy7FXkFEAG6Wg7310NXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=o5zD6ueO; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfh9m050027;
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfhHw087888;
 	Wed, 16 Oct 2024 11:41:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1729096903;
-	bh=4L8V23/lFtOiQ9FZsGss0DJeQC13lVShPiCHSbWsSl8=;
-	h=From:To:CC:Subject:Date;
-	b=WcV+K+mOnvHTH0JAsaZsBzyNgOOxThNQKO9iSUF+LDMC+ChQDTZJ860facbL0bQMI
-	 xjdyHFGU+jg1qeUhMVrfg9L0HvHSOnFCw2P3vn17BlJa96p5KZGgisFVR3mNumHCXW
-	 8v7+5NRAjTgEUy5dCgNOIxODjo1aqMDRG27I5Opc=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GGfhjR011854
+	bh=oZ25tm78B0m9rjNNl/PmDHLGlO/bUG9O1S7GRxQ0Oc8=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=o5zD6ueOtmt6Of0ULmRDEjpMm1O/hkTqCp+YdA+WY9P6Hu4+a3Jnkh9/hK4JDOCtO
+	 1C6obDVYbD7CajtwxNPdkKDq01BVeXv8iEjuHCJmK32BSJh/HoBsNvIWmT5Z3YAg5P
+	 WYVz93JfSTgCbyAW+i6yw2wcpdwo060D/CDdHOfA=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49GGfhsZ034189
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Wed, 16 Oct 2024 11:41:43 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 16
  Oct 2024 11:41:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Wed, 16 Oct 2024 11:41:43 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgas109164;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49GGfgat109164;
 	Wed, 16 Oct 2024 11:41:42 -0500
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -61,10 +62,12 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH 0/2] Enable compile testing for K3 RemoteProc drivers
-Date: Wed, 16 Oct 2024 11:41:39 -0500
-Message-ID: <20241016164141.93401-1-afd@ti.com>
+Subject: [PATCH 1/2] remoteproc: k3-dsp: Add compile testing support
+Date: Wed, 16 Oct 2024 11:41:40 -0500
+Message-ID: <20241016164141.93401-2-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20241016164141.93401-1-afd@ti.com>
+References: <20241016164141.93401-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,23 +78,29 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello all,
+This driver can be compile tested on non-K3 architectures as long
+as TI_SCI_PROTOCOL is not compiled as a module. Enable this here
+to improve this driver's build coverage.
 
-This is a follow up to [0] that adds the same for the other two K3
-RemoteProc drivers. Series is based on rproc-next branch.
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/remoteproc/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Andrew
-
-[0] https://lore.kernel.org/lkml/20241007132441.2732215-1-arnd@kernel.org/
-
-Andrew Davis (2):
-  remoteproc: k3-dsp: Add compile testing support
-  remoteproc: k3-r5: Add compile testing support
-
- drivers/remoteproc/Kconfig | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 62f8548fb46a5..0ac1c8a6e4581 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -329,7 +329,8 @@ config STM32_RPROC
+ 
+ config TI_K3_DSP_REMOTEPROC
+ 	tristate "TI K3 DSP remoteproc support"
+-	depends on ARCH_K3
++	depends on ARCH_K3 || COMPILE_TEST
++	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
+ 	depends on OMAP2PLUS_MBOX
+ 	help
+ 	  Say m here to support TI's C66x and C71x DSP remote processor
 -- 
 2.39.2
 
