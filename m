@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-367441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F7C9A0250
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:20:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4979A0253
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADBE28220E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:20:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9559B23530
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C191B6D16;
-	Wed, 16 Oct 2024 07:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5FF1B3F3D;
+	Wed, 16 Oct 2024 07:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="l/Kw1U+R"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gBMq7vNl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F388118BB9A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 07:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CB81B218C;
+	Wed, 16 Oct 2024 07:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063236; cv=none; b=lUychXCd5vivf3Jenew1Mk0s7v6AN11eDBrUJi0xVpxTYQaWXvuD9284eW+6e3kFuv/tMrEUoUYVDgU/Ij0nt/oKGKDHC3zQV+BQxURvEADnhzNqb9rtshbWuZbsBeTbzObiNNgRd8DPfpmqq99T7Wq1q7AvgDLmn7uzUon9+SA=
+	t=1729063269; cv=none; b=N+dmVqVa6Z3p7qLdLh+86prKInJAUsMXFMaLnK1n5hFgrjEql+ys0Bvvb8F/W1f/pGx4zgGu15KTdhX0iGiW/SJnxtY8eA6/6mSHJQywYhkFCaw+b/HJWuln6fvvt8UXkUpPXG2dB+jkFDrtEHv40x7SNG44+Q3L+K4RugwO0lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063236; c=relaxed/simple;
-	bh=FVcKh/9qh1KiHOH7DargT844skEw+djKAYF1WaIWDuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MQAReEUgGH6Bz+l+Hd6jbNEoo1LJaam+tjGS2lsMrNoz3yAUEPtEs04I8rdR+BYJqwctp60W28pe1pbRfE63TyydwUJ0XC/WZFJ3RTNYEA4GJu8W5t9woh9EbHJ0XOC+86SwmUZYqpbpw1HsN8/fAXRlgV6/altcYpS5KAXaI44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=l/Kw1U+R; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 44824E0009;
-	Wed, 16 Oct 2024 07:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1729063233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xjN4xfU0Io0XErXj8reTbUTsT0dTnAimbreoO7PQ/TY=;
-	b=l/Kw1U+R0oqrzKj5LfpOUovsn+JGzu1CKDZGK9+HoHChS/Og2l4m7+n+ND6fmmOaCZftfU
-	S8WTQVyKk73HUHWI6u7fvFHHLF6/pXemwa1FQz3A6YwhHaDOs3T9WqWZ7OpzVLTHKWunJ+
-	2ykr5en90nnGySQXRln8dnRj9efrsVLnDJ5Ul7zF37QjynHyca4wTlNM3dz0JjKRdr8qgT
-	hIC2fISgtHcTowY5rbXL08jSZISS689cZBLH7xnXdqqlXf15SOuRmdprSOzL12GCWqnKMx
-	0EKY0GtUGyXOpOh82ZPAfzbY1L4GUXIxKjhEB2mwQF9yx1xCK+akCT7g8LiZwg==
-Message-ID: <ccae9246-1980-4f9a-a4b8-5eaf78de8e5d@yoseli.org>
-Date: Wed, 16 Oct 2024 09:20:32 +0200
+	s=arc-20240116; t=1729063269; c=relaxed/simple;
+	bh=tNLN0Hsi06h0KXDRSOvGs8YDS4+LPkihDOXR2+rrwcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2IU2ve7yIeS3lc5dCM3urQCsI9l7AhSCQDDbAmmf2rrbnuW+ZKC8leLa4HXKpIJBV5PH4Luji9vKNZRLuZLYWxYdeg6t5B8d4ubigHsIG6kEj/BK7CjCnMw1h+zE3Pa7ILnvxHAde5gO83CrDUX73GI6Ix7tfFTpe8a2w+AsZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gBMq7vNl; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729063267; x=1760599267;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tNLN0Hsi06h0KXDRSOvGs8YDS4+LPkihDOXR2+rrwcg=;
+  b=gBMq7vNl6qaQxlECDPTslBZ05W5h1xG1jUhen9pxoBKUlAVd/VDj8DK0
+   CmUXyKnNUz8CfMgYfoPRgDXjaHCv//WstiBjQGKVrvrueO7pFjK12zAnz
+   ak2q6L+ETwitAR0g46tVwsdYxuOTGyHekNZHQD3GXjm/+Gwm8OkBIXf5I
+   yMzEo9WY/1tu7A3OekxMCzO/qjS/NP93rresQe/cfIXYMS8vlnJk9fjYa
+   iBPwgWBJ5arlQk3Ce8PxTi1ODoXZeRZcfnS5FFphYsk4hsg4sRTRlJPJp
+   /Wx7BUShz2w2NRqFhhjeabW3XS0F3HyXCTn3VeMdQyIFmbGB81ojZ7vOe
+   w==;
+X-CSE-ConnectionGUID: oXGVVx0cTMijhEA+m8qB3A==
+X-CSE-MsgGUID: 4inUWa8DS+60AF1HPQ/Iog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11225"; a="32414800"
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="32414800"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 00:21:06 -0700
+X-CSE-ConnectionGUID: 7CFWPXKZTKKz3VQrwvcvWw==
+X-CSE-MsgGUID: nMIp9oLsROGRICCG5IcKfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
+   d="scan'208";a="83213005"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 16 Oct 2024 00:21:04 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t0yL7-000KUh-1L;
+	Wed, 16 Oct 2024 07:21:01 +0000
+Date: Wed, 16 Oct 2024 15:20:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: anish kumar <yesanishhere@gmail.com>, andersson@kernel.org,
+	mathieu.poirier@linaro.orgi, corbet@lwn.net
+Cc: oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anish kumar <yesanishhere@gmail.com>
+Subject: Re: [PATCH] remoteproc: Documentation: upgrade from staging.
+Message-ID: <202410161444.jOKMsoGS-lkp@intel.com>
+References: <20241015025831.65232-1-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] m68k: mcfgpio: Fix incorrect register offset for
- CONFIG_M5441x
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Ungerer <gerg@uclinux.org>, linux-m68k@lists.linux-m68k.org,
- linux-kernel@vger.kernel.org
-References: <20241016-fix-m5441x-gpio-v1-1-0a29befd4b8d@yoseli.org>
- <CAMuHMdVktMFfPQZqvB6cdMOmxwBuG7CW9rqm1kU+p9MnrF1SWA@mail.gmail.com>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <CAMuHMdVktMFfPQZqvB6cdMOmxwBuG7CW9rqm1kU+p9MnrF1SWA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015025831.65232-1-yesanishhere@gmail.com>
 
-Hi Geert,
+Hi anish,
 
-On 16/10/2024 08:56, Geert Uytterhoeven wrote:
-> Hi Jean-Michel,
-> 
-> Thanks for your patch!
-> 
-> On Wed, Oct 16, 2024 at 8:45 AM Jean-Michel Hautbois
-> <jeanmichel.hautbois@yoseli.org> wrote:
->> Fix a typo in the CONFIG_M5441x preprocessor condition, where the GPIO
->> register offset was incorrectly set to 8 instead of 0. This prevented
->> proper GPIO configuration for m5441x targets.
->>
->> Fixes: 83c6bdb827c9 ("m68knommu: Implement gpio support for m54xx.")
-> 
-> The typo was introduced in a different commit, so the correct tag would be
-> Fixes: bea8bcb12da09bd3 ("m68knommu: Add support for the Coldfire m5441x.")
+kernel test robot noticed the following build warnings:
 
-Oh gosh, sorry ! Do you want a v2 or would you amend it ?
+[auto build test WARNING on remoteproc/rpmsg-next]
+[also build test WARNING on remoteproc/rproc-next lwn/docs-next linus/master v6.12-rc3 next-20241015]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks for your fast review !
+url:    https://github.com/intel-lab-lkp/linux/commits/anish-kumar/remoteproc-Documentation-upgrade-from-staging/20241015-105957
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rpmsg-next
+patch link:    https://lore.kernel.org/r/20241015025831.65232-1-yesanishhere%40gmail.com
+patch subject: [PATCH] remoteproc: Documentation: upgrade from staging.
+reproduce: (https://download.01.org/0day-ci/archive/20241016/202410161444.jOKMsoGS-lkp@intel.com/reproduce)
 
-JM
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
 
-> 
->> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+All warnings (new ones prefixed by >>):
 
+   Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`rt_link<../../networking/netlink_spec/rt_link>`
+   Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../networking/netlink_spec/tc>`
+   Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../networking/netlink_spec/tc>`
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+>> Warning: Documentation/remoteproc/rproc-kernel-api.rst references a file that doesn't exist: Documentation/remotproc/remoteproc-api.rst
+   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/staging/remoteproc.rst
+   Using alabaster theme
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
