@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-368024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C2B9A0A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DB09A0A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB22C1F232E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151081C22188
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E068320C004;
-	Wed, 16 Oct 2024 12:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvRwxaON"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52F2209F22;
-	Wed, 16 Oct 2024 12:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55412209F3E;
+	Wed, 16 Oct 2024 12:37:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71826209695
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 12:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729082265; cv=none; b=kZI2yrUibrQ5+TyU7bGLaBImM2hspV0kevQUQwOu/ZdsXp72iLH3HKS6oUrgmI7PWOinGUPt4snK1EwzQD32g6M5XXc4Ee/7qTvVKBON4Zqb0KDuH+vRt1j2TN9qkuQ+YX+kpBheheGgBUTkmYWDizMUInnxCckpUmc6Xnxr2Ws=
+	t=1729082264; cv=none; b=jip7Bn6H2iqH0jsR4uHNlEhl/nBQ6SrLANoIApNDy7yMQPVoMO7/MmTh5eBXQFekA9rsfUwqeYSgby+saIV8b/WsAmvqRFcQh61t6My8c3Gv12AENFKG3XwQMaGbXMGz7S65kFQYn8sbKgzsxzoBV3h2bZgDXsN/4HZStqZSMvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729082265; c=relaxed/simple;
-	bh=reVC//lWLhQwWUwrlUTJAAChV8fJgYqeuRzlYrrW9v4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k5FlsnDOJtglNb55zd8gjoTgb0JfAdGaKkTfNrMMjzsMOFECnE29HUdIrHBdgjMerXt4ksemFRbF8irE2+72vGv0qQTappFf/Ls5SJjIpgN00OYMZvUVhAG2Yp2i+yAVYRlWCfRN9ECkS8wgR++Q9DOCp+vRjCuD6/eyZ83zVwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvRwxaON; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431481433bdso13805245e9.3;
-        Wed, 16 Oct 2024 05:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729082262; x=1729687062; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EoZbzXysvZ3pWlGw93loQoLyyRrPBICxEmq8tAhWyF8=;
-        b=HvRwxaONvqwaI9oWc1cKfEP9ms9iZMmRL3xX182FuIgFO4fy7mtum6x2zrY9nEwc+9
-         7cHJowNcpVCZ/BrC4fpY3GXISp+v7/CjlA+4dHORAvpiicSUeQCfuIur0B/WqWokhrYv
-         oYnGRF+dqhXMbcZ7v9MLfw+dtyaBdwAyn2S0Am4lcSZgtF/YxD7d7j6+OXpFmw577zDD
-         AiPccuyShAFgGJET6el+Z7ndy8hcVN21Mdp576JDg+l3CRQd1KOPpPy6N4YljEjKyCVq
-         x2XAPrs8C7SkFiYEh98xVTBKVIhZ6hJyZSwkUkqR9klqeUBzxHjgSITT5HrEL6shKzd/
-         TLmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729082262; x=1729687062;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EoZbzXysvZ3pWlGw93loQoLyyRrPBICxEmq8tAhWyF8=;
-        b=PcRKgWtt16UR39IPtpQXas4FqcikQv9l6r44wBihsOCA+vKjtnUyBQZ9neX1g5XS7f
-         F8QMfPRINM4Uy7jukjtxJGsL5mmFCVvWddZSGaSp4eOStzMBk+i5o1hpO47sXcq2Y++J
-         5npFoKNI8u37BOgVOYASkTEUJ94Tk3VIxrRZv4RXLBzRJId4EIXMgrfpyK5p4d/8ufSC
-         Ted1pjM/Nrbv/ZkBUi6o39dAL2hP8q+buRss7tHsVRB1c1HJ0X1DO3aWqIF4occudD8C
-         +qb9VmGfE0taHCtWVwC69NiVbSMMVneX899Pd0hCLw2B864wx5KLAfKRMOT0k0OuEMR5
-         n3PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHZ3S3WN+YksVwPCrEnO9XPLCIkFX1tD47+QkPGYRZiMscf2J/yjLLuYKMHsoijNSikrN3Y5GxXhlv7+Qx@vger.kernel.org, AJvYcCV7e1dri/6AEFnX/Gza3pvVAuXLDqr+mTDOGChA4UVZhizgqHyXTUH4YAcTTbf5mFeXp/uSVfN9zKt3apKm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJWPvJcEgjzJ0gU/SNSajeDGY1kvKmHwNNTVpi6XgDQLHU6lvB
-	dfyKy0B4RUyL6dzki/XkKyGuFZ/fetUo/xN4LJm1EtmUxzh//oYN
-X-Google-Smtp-Source: AGHT+IFRq39zSOFiRwgoV1pgdDvgMyo/X5fY9oGDr5ekyAZFJdFXBIT/GF8reJJwyMEv2MZBpm3KfQ==
-X-Received: by 2002:a05:600c:1ca4:b0:42c:de34:34c1 with SMTP id 5b1f17b1804b1-4311dea3b47mr155045765e9.2.1729082261655;
-        Wed, 16 Oct 2024 05:37:41 -0700 (PDT)
-Received: from alessandro-pc.station (net-2-44-97-22.cust.vodafonedsl.it. [2.44.97.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f6c53ddsm48835425e9.43.2024.10.16.05.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 05:37:40 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com,
-	alessandrozanni.dev@gmail.com,
-	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
-Subject: [PATCH] fs: Fix uninitialized value issue in from_kuid
-Date: Wed, 16 Oct 2024 14:37:19 +0200
-Message-ID: <20241016123723.171588-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729082264; c=relaxed/simple;
+	bh=Q/Uo4opeP72V0is0b5O0aSP69/Bj/BN6StF/fWqNNto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DkdofT/w4ww3FJeVkU6A9adeBVqvF8mBcD0TMIvsJbCUX8/t9BOQdtCwXNY/xp/dLBte0+WBKHjUdDBM7taR17Qancw0SNpmDS/0ovhAejZEZoABYI3pwLgyh+XmwUHxcokoDtIgP5nkPC9rfOb3C0GbqiJLQ723DMcSCAEnt34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B27AFEC;
+	Wed, 16 Oct 2024 05:38:10 -0700 (PDT)
+Received: from [10.163.39.8] (unknown [10.163.39.8])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC7783F528;
+	Wed, 16 Oct 2024 05:37:38 -0700 (PDT)
+Message-ID: <162ff655-0c55-4aa8-9ca2-3f818a1233cd@arm.com>
+Date: Wed, 16 Oct 2024 18:07:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: numa_clear_kernel_node_hotplug: Add NUMA_NO_NODE
+ check for node id
+To: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, yuji2.ishikawa@toshiba.co.jp,
+ Mike Rapoport <rppt@kernel.org>
+References: <1729070461-13576-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <1729070461-13576-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix uninitialized value issue in from_kuid by initializing the newattrs
-structure in do_truncate() method.
 
-Fixes: uninit-value in from_kuid reported here
- https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
-Reported-by: syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
- fs/open.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/open.c b/fs/open.c
-index acaeb3e25c88..57c298b1db2c 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -40,7 +40,7 @@ int do_truncate(struct mnt_idmap *idmap, struct dentry *dentry,
- 		loff_t length, unsigned int time_attrs, struct file *filp)
- {
- 	int ret;
--	struct iattr newattrs;
-+	struct iattr newattrs = {0};
- 
- 	/* Not pretty: "inode->i_size" shouldn't really be signed. But it is. */
- 	if (length < 0)
--- 
-2.43.0
+On 10/16/24 14:51, Nobuhiro Iwamatsu wrote:
+> The acquired memory blocks for reserved may include blocks outside of
+> memory management. In this case, the nid variable is set to NUMA_NO_NODE
+> (-1), so an error occurs in node_set().
+> This adds a check using numa_valid_node() to numa_clear_kernel_node_hotplug()
+> that skips node_set() when nid is set to NUMA_NO_NODE.
+> 
+> Fixes: 87482708210f ("mm: introduce numa_memblks")
+> Cc: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Suggested-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> ---
+>  mm/numa_memblks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> v2:
+>   - Use numa_valid_node() instead of check.
+>   - Add Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>   - Update description.
+>   - Drop RFC from subject.
+> 
+> diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
+> index be52b93a9c58..a3877e9bc878 100644
+> --- a/mm/numa_memblks.c
+> +++ b/mm/numa_memblks.c
+> @@ -349,7 +349,7 @@ static void __init numa_clear_kernel_node_hotplug(void)
+>  	for_each_reserved_mem_region(mb_region) {
+>  		int nid = memblock_get_region_node(mb_region);
+>  
+> -		if (nid != MAX_NUMNODES)
+> +		if (numa_valid_node(nid))
+>  			node_set(nid, reserved_nodemask);
+>  	}
+>  
 
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
