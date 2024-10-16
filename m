@@ -1,157 +1,137 @@
-Return-Path: <linux-kernel+bounces-368786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F7D9A14ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835959A14F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D06A1F22746
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4837428545A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 21:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25121D2F5F;
-	Wed, 16 Oct 2024 21:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FF31D2F6E;
+	Wed, 16 Oct 2024 21:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="ne1h/poO"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kg7dDesa"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9222A1D2B35
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514711D27B1;
+	Wed, 16 Oct 2024 21:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729114777; cv=none; b=kE4zyMu5iZYGOgR4iILMZadjY+l01AiveMgXUL7DHT0UFZMVT17ZBP4NxUHL+Bn4xoC6oypB3eosCbPSWh/eQhdk7o49lzWhSzKkfyQHKG/TCEw+/ESd2CHnaxmM7zhqVTYKmF5IhYql0EllzfBJRhwNe1MfqIt4NkTlPOmYhV0=
+	t=1729114787; cv=none; b=K5kjqGYugETRB10a2fTeCG4YFVxsdqVwStQkP2rflbxW1iT1ikBXpoW8txdsNzDVES/y5926F6qnR7QGAMAX9BBa3VCwbgwbCC2OBDiXer3xWe6yDGlHEAw+i9ji/BH2Q1XqkPasjZ74Z8xQ8xIy1DEPu1P3MrjkSabMymxsKBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729114777; c=relaxed/simple;
-	bh=VKoJF2wAux6Ijj2yS1b73ggopyQUstk7miqBG6XFbgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ajzR7R5h1WcxKOT40mXDp14XVl7QGtwwvGMvxHzTniez9cmWQt2TS9BPqdSX1ZO4ndjtU38eUS5xigjqtoNXI0wltj+HcjMuKYBYnPEuQXl45j89g+BCYQXTOEj1H2JpCdv1hBWqUgvOC1enaOEsJC7oo2bYxEGfpkGIKOpnX/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org; spf=pass smtp.mailfrom=atishpatra.org; dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b=ne1h/poO; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atishpatra.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atishpatra.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f7606199so358177e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:39:35 -0700 (PDT)
+	s=arc-20240116; t=1729114787; c=relaxed/simple;
+	bh=+ilbKW5/Izw+Tmnn15mQvwvMmPEp3T3X16iSSuJvEQU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qHQbLaqKqAOR2Wx0OaA8jNMurJyLgMPIhwEHcBqwzcMox83vwSlY8nnVrQmXG/nVTsLdWzDpZgYruB9PHXRjgw7akXS718rhfhhpomXjV94hwj8IYr2NoO7768R3que0DHaOIdCFnzA7xuYmciiuNhaNOMYUS5KItMMqZ1+oBrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kg7dDesa; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4314f38d274so3883165e9.1;
+        Wed, 16 Oct 2024 14:39:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atishpatra.org; s=google; t=1729114774; x=1729719574; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6H8Y7/ZzORONU1hyN/i6yVrHJ4H/bODv43/WrBP0n1k=;
-        b=ne1h/poO3Cefk71q9TpgGtshVM/2SXVfaPyHAokj9YzKR59V2lhqPVxeTx1FZQTSk+
-         k9Kxo0rtzmV+XK7nwIdfnMXTVEWXGZhL4MljsKAnMa3efMFxhYYA3zfBYB09fTQai5Nd
-         n7E99w6GPfL7tCkpFj+CgyIr5/htHL/QX9o6o=
+        d=gmail.com; s=20230601; t=1729114785; x=1729719585; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=27bU3p4hbLImM8qPVdk3fPQaa3aADWP46pmDCK9Bc1s=;
+        b=kg7dDesaVj5uLLLGixhHcLmbUMNUMuDvjX35BaB8+woyyPcCDhMBF6OIbPR0klGGxu
+         kf7eutNkx836Exzcu8bHOBt4K2kssLxlsvrkZXEthErq+sSB69BNB/HcB5suiWTX7q7c
+         tqnU+e+7SQn7xllJ8HfwlhFBbVqqGN9PvrEoaH69qMn9NRT6X7ZvtUW/ndddtmqcb8sq
+         J5Cj7EGTFAIxdlkkmUd5j/G/pcFoOR+HvCqI+Bd9Kaqw8VibI9qP5oZEGUQFDrBkdTIh
+         X17CrmhMgqaKzZX2/uLI3vD2QpHoN5FVTckrSIrnNGDPd/FqIN7OMHDvS8L9u6OP8gE/
+         iGEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729114774; x=1729719574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6H8Y7/ZzORONU1hyN/i6yVrHJ4H/bODv43/WrBP0n1k=;
-        b=R8wjg9U2mtTYfxqBj2KZzhAW+JxqBGQTITLGhCSnm3n7iRygM+qFg/qd/6kmhoUwuv
-         q2cAeJsKOkVgnEBY7lLDDF0XSYKY4DmzSWBb68ex6rY/+4vGy5YXgW9ZS1oE5P5Kj78Y
-         gu/XknVCFMKOwnQZGPvb4ej34NB7V3a4HO2hxsqj3MFCufRq9bMJLh+81/XNCw4elVDE
-         OWkczJuAKtPJXgY01b//xaXRlelWSGwVM8dpWBYVZDL1MyryL2mreh/Ay+3fCkNB2Vwj
-         IOyjcgollyZNXeCyP22hVnj37hxc4l5YckFEPVooNIAJI0/wNyURtyqjAOeGGfDgF1rF
-         VTNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUf0aXmqFPY4+KTe99UFmcEckFRvlfnN5RA9IUyQqSGEwQaAHq3RhpnZ0PEP9MvKtnorvQNuJbPxpGy4LE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4rzKJQTufLCqfiqox1sfL1QpSrq9jF4qQf57CDZ0/naPhNdQ1
-	iZ8J4RnDR3jFseRDpBd1saCpE9ireA21g9KtCxXrqiS8JlZy12CSaGjyk/+K0Bq72rQjcxbDI75
-	AtVnsbEPvm4eIFxgMRUW24UjREptfYrS33bH/
-X-Google-Smtp-Source: AGHT+IFPP+peTAUAy0oiDSlqRo1dFfekSIv/GJho/24l6zoVqW/NQcaXYqDCBv05acUPzYaLU4twAhJ7d34uSv62lyk=
-X-Received: by 2002:a05:6512:ad6:b0:539:ff5a:7ea5 with SMTP id
- 2adb3069b0e04-539ff5a8042mr4811318e87.15.1729114773775; Wed, 16 Oct 2024
- 14:39:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729114785; x=1729719585;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=27bU3p4hbLImM8qPVdk3fPQaa3aADWP46pmDCK9Bc1s=;
+        b=jnbY3uWEa1sz+gInBc43kfJWrNuRLxEOxit1T9M4Q9e8tjvdsefGa4OY+uoQ6nRDIK
+         qXQrayah912pfi709WwqvqBwLYPzBaOxy7BRs/uc7YPPXhiEUOkWBLeL0/dSltrb5a84
+         c+0uWnR5GgzoG17w23LIpjcyv7faFpv+abW/u36ms0AYunPRVnBcA3xDMREtEx/gvHT2
+         +rM/7mINAMU8ghqS6tAZWzQvnRIjtWGEnwClpKJBb7HV21WX4f0QYjfOb+UmFHmJ51cI
+         1ICRQr0+MCDgcEul0WgJcShCfPnSMxm2FSJ3TZqAUayH7ihDCSaqq/R9hmi8zW1oEipg
+         D0Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMefDjNH+rJK7UuyQeRzxCBMpaJKGCAFuhjE2BQ/uYD11TvnmFQ+98cpPp3t2dgY7OqAPmh8uWU3Rr@vger.kernel.org, AJvYcCVbqfVrsgfNTy1YbcGS0vtuRFDiLopm2V87XM6p2gGfFes4gcK1yuvinLqR+Rf18m+su2Dr4wK5p2JL8Tx6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDIr/M/LrP3laXNwIpVxVdvu03UnpYvdYzXrnrdI09olnbhgU3
+	3vl7x68mT7h09/i4EA8U1XezLoWbXTDkIiY7FK4YAVdKOsUCLBOr
+X-Google-Smtp-Source: AGHT+IFGKG8zdbvzgT1YY7YbW0uAm06Q8y4QnxhSnnJVWUzObETGUdA8ErF1Asc1Iap4bHPzZnDHYw==
+X-Received: by 2002:a05:600c:4f4f:b0:431:518a:6826 with SMTP id 5b1f17b1804b1-431518a6994mr30295085e9.19.1729114784386;
+        Wed, 16 Oct 2024 14:39:44 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-33e3-844f-063e-de99.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:33e3:844f:63e:de99])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c37f36sm5632715e9.7.2024.10.16.14.39.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 14:39:43 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] iio: light: add support for veml3235
+Date: Wed, 16 Oct 2024 23:39:30 +0200
+Message-Id: <20241016-veml3235-v1-0-b904f802daef@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719160913.342027-1-apatel@ventanamicro.com> <20240719160913.342027-6-apatel@ventanamicro.com>
-In-Reply-To: <20240719160913.342027-6-apatel@ventanamicro.com>
-From: Atish Patra <atishp@atishpatra.org>
-Date: Wed, 16 Oct 2024 14:39:22 -0700
-Message-ID: <CAOnJCUKD_LFrzr+KN=F1mZ3=eJqw73XjrkhVDt=7W6=eEo=4Pg@mail.gmail.com>
-Subject: Re: [PATCH 05/13] RISC-V: KVM: Replace aia_set_hvictl() with aia_hvictl_value()
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJIyEGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNz3bLU3BxjI2NTXYNEYwsjM9NUy6TEVCWg8oKi1LTMCrBR0bG1tQA
+ QaMEAWgAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729114783; l=1707;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=+ilbKW5/Izw+Tmnn15mQvwvMmPEp3T3X16iSSuJvEQU=;
+ b=Tk+beh3m8ShkbWr5Of5CL+Kd+ItVz/0vM0FOe8pZVQjtZPzDskyGkTYSHvXP94//erBG119hJ
+ 2c/6S0/4FfHBo8cE1Ah3u2i435/XGaSZwII7wSyqQ2lN0C2tM6MtooN
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Fri, Jul 19, 2024 at 9:09=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
-> wrote:
->
-> The aia_set_hvictl() internally writes the HVICTL CSR which makes
-> it difficult optimize the CSR write using SBI NACL extension for
-> kvm_riscv_vcpu_aia_update_hvip() function so replace aia_set_hvictl()
-> with new aia_hvictl_value() which only computes the HVICTL value.
->
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  arch/riscv/kvm/aia.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/riscv/kvm/aia.c b/arch/riscv/kvm/aia.c
-> index 2967d305c442..17ae4a7c0e94 100644
-> --- a/arch/riscv/kvm/aia.c
-> +++ b/arch/riscv/kvm/aia.c
-> @@ -51,7 +51,7 @@ static int aia_find_hgei(struct kvm_vcpu *owner)
->         return hgei;
->  }
->
-> -static void aia_set_hvictl(bool ext_irq_pending)
-> +static inline unsigned long aia_hvictl_value(bool ext_irq_pending)
->  {
->         unsigned long hvictl;
->
-> @@ -62,7 +62,7 @@ static void aia_set_hvictl(bool ext_irq_pending)
->
->         hvictl =3D (IRQ_S_EXT << HVICTL_IID_SHIFT) & HVICTL_IID;
->         hvictl |=3D ext_irq_pending;
-> -       csr_write(CSR_HVICTL, hvictl);
-> +       return hvictl;
->  }
->
->  #ifdef CONFIG_32BIT
-> @@ -130,7 +130,7 @@ void kvm_riscv_vcpu_aia_update_hvip(struct kvm_vcpu *=
-vcpu)
->  #ifdef CONFIG_32BIT
->         csr_write(CSR_HVIPH, vcpu->arch.aia_context.guest_csr.hviph);
->  #endif
-> -       aia_set_hvictl(!!(csr->hvip & BIT(IRQ_VS_EXT)));
-> +       csr_write(CSR_HVICTL, aia_hvictl_value(!!(csr->hvip & BIT(IRQ_VS_=
-EXT))));
->  }
->
->  void kvm_riscv_vcpu_aia_load(struct kvm_vcpu *vcpu, int cpu)
-> @@ -536,7 +536,7 @@ void kvm_riscv_aia_enable(void)
->         if (!kvm_riscv_aia_available())
->                 return;
->
-> -       aia_set_hvictl(false);
-> +       csr_write(CSR_HVICTL, aia_hvictl_value(false));
->         csr_write(CSR_HVIPRIO1, 0x0);
->         csr_write(CSR_HVIPRIO2, 0x0);
->  #ifdef CONFIG_32BIT
-> @@ -572,7 +572,7 @@ void kvm_riscv_aia_disable(void)
->         csr_clear(CSR_HIE, BIT(IRQ_S_GEXT));
->         disable_percpu_irq(hgei_parent_irq);
->
-> -       aia_set_hvictl(false);
-> +       csr_write(CSR_HVICTL, aia_hvictl_value(false));
->
->         raw_spin_lock_irqsave(&hgctrl->lock, flags);
->
-> --
-> 2.34.1
->
+This series adds support for the Vishay veml3235 ambient light sensor
+with I2C protocol interface.
 
+I attempted to add support for this device in the existing veml6030
+driver, as it shares some operating principles with the supported
+devices. But given that the veml3235 has different register addresses,
+bit arrangements, and limited functionality, it ended up making most of
+the driver kind of device-agnostic.
 
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
---=20
-Regards,
-Atish
+Instead, the proposed driver is based on the recently updated veml6030
+with multiple simplifications and a few clean ups (e.g. regfields,
+right definition of shared-by-all info masks, which can't be modified
+in veml6030 as it breaks the ABI).
+
+On the other hand, the dt-bindings can be recycled as there is no real
+reason to add new ones. From a dt-bindings point of view it resembles
+the already supported veml7700. But if for whatever reason new bindings
+would be preferred, I am willing to provide them in further versions.
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      dt-bindings: iio: light: veml6030: add veml3235
+      iio: light: add support for veml3235
+
+ .../bindings/iio/light/vishay,veml6030.yaml        |   5 +-
+ MAINTAINERS                                        |   6 +
+ drivers/iio/light/Kconfig                          |  11 +
+ drivers/iio/light/Makefile                         |   1 +
+ drivers/iio/light/veml3235.c                       | 534 +++++++++++++++++++++
+ 5 files changed, 556 insertions(+), 1 deletion(-)
+---
+base-commit: b852e1e7a0389ed6168ef1d38eb0bad71a6b11e8
+change-id: 20241007-veml3235-0a38265e9bae
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
