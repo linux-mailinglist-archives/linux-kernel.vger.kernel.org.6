@@ -1,146 +1,142 @@
-Return-Path: <linux-kernel+bounces-367659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020519A050A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4472B9A0500
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 11:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B2F1C23C6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7631C23610
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4330205E01;
-	Wed, 16 Oct 2024 09:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1700C204F98;
+	Wed, 16 Oct 2024 09:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bGlBx7qD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Hzl6zlbh"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60653134A8;
-	Wed, 16 Oct 2024 09:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AB9134A8;
+	Wed, 16 Oct 2024 09:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729069615; cv=none; b=JnNU9i7jr+w9BLjnipDBEC+9Olcvuwm/Za+38XDufmM4DdQisXRvDlmpam0KcpynALlIVPtcH/FPQkup/sC9L3JDnJJ6aycxNaJgeUcWopJrpDoqij2yeyD7262d7oC6Eqx8eB8QyQ931R9+lhwWPqBwnYmW3PBTSrm/Srbn1L4=
+	t=1729069590; cv=none; b=V5oV2mcmpVYzDfVWHhQdO5QNfVmAtvetbGWY724rOEuU6mxPJQgxxO3EfiEFX4zOzf8ZQpci4+zgosPECmiX2xbciedG1etQ8IwZKvNgaxDT21kFE/ihKIMr13HuA4w4Lu+NWs8WdDjKk8AqbpSo4Vp9XIYvZ1iqQkUHJNVoXNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729069615; c=relaxed/simple;
-	bh=7Pnq+kiE64Aw9F+Qui7sM7/+ztdkvVujPlNKG8hxS0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sWDrtUwdv0DZ2l7H5CC7SsSrDANEG89KyESzGtnAnPr34K3uzxo7rO5xtB2QqoPqt76XI0zjKeO4FIeil2Iztu2bgDun6atcVZdDB25A3qzapUlkm/7H5Tydy7hEKADtFXb1pIAuNcEdEfs2tRuSBmSNrsRFX2rWg1dtFtU5feg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bGlBx7qD; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729069614; x=1760605614;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=7Pnq+kiE64Aw9F+Qui7sM7/+ztdkvVujPlNKG8hxS0Q=;
-  b=bGlBx7qDVU0C5H7AxamRb1o5397adDoCdfis8Ylyufe+i+D/02LrleXQ
-   Nzgslpu0PNbnlIQBcn+lFZfXsPvKST/zQv8l+80gZG1HkzpeWuoHNnVIm
-   jyJKkLy0trn85+SxhE1YR36TXx0qyGZc1FZJVDm/0UKdwL/YMjG7Vmglp
-   tKDcEptvjuOyZhaV0tcaB5MzLYJNL5tZ17BLAKRZp7ghmKfmqoNOiDvmn
-   jUSGuuvPB9+Mfqpct36dTtSJ7fbtrtVW3YzOK5ZAjt3dRURW0AWCAU/Pv
-   CFHuOSbOJoTHyDrW6esY/UxBF5xM/UcmliRLXdBOm8UD3AaxHq4tbxh+S
-   w==;
-X-CSE-ConnectionGUID: /u9pSPFySmeT+ANKaJYraA==
-X-CSE-MsgGUID: +nXeylAORZWO+7Cr73DgZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45980194"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="45980194"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 02:06:53 -0700
-X-CSE-ConnectionGUID: tmpz67oQSiq56GVOlSGlJg==
-X-CSE-MsgGUID: UqJbcIVkTDio31EXlBVWSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,207,1725346800"; 
-   d="scan'208";a="82134420"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 16 Oct 2024 02:06:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3478A331; Wed, 16 Oct 2024 12:06:49 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH net-next v2 1/1] tg3: Increase buffer size for IRQ label
-Date: Wed, 16 Oct 2024 12:05:54 +0300
-Message-ID: <20241016090647.691022-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1729069590; c=relaxed/simple;
+	bh=u3hZhXCKokVw4XNtUv+yV7L4ef24D88dELzsCm5JZ3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aHllbe/X1ikYvgRkh066mf9RFmTvUgZHD1LVuguedpI04X7ggfLfLbrYsXBZkrNql3JfLwEweP4xaFOf72YvVTcuDA8+54kjKPQ2L0e+3pQLDQnIen43yFSZ2iQ28bb1ju+4jRJc8LMXjDMVBiqyM3ehwFiw5TrdLb0yT8g2iFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Hzl6zlbh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49G8t9gw031430;
+	Wed, 16 Oct 2024 09:06:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LYUajw
+	5H/Yn9/VR9NpmgamCBftzg66jeHRzXOKGbtdQ=; b=Hzl6zlbhMZH4xvTO04uRjx
+	4zahnixJysmJqL5ZWchQxjszYf1z5CS4hWywRmUNS9HGHah1JWCJZTo1wwHZ7NPV
+	F4wfnbgETpSPxflQPhQrjPVf3Mn+/EhtwVzIPqTPp12cM0SLisPCRfIEqxtK/ahE
+	/Pg25LVpxeCGVNuwX4exBxQ1pl39HuthLjcWFzbJPiUdjza1T3OCjJ1fiSP/rnku
+	jUIsei/RDkcClUuwoNlPBWkg2rq3UGkn1amFR09M4ZgBN9y9dXU8KBiq6LLnchdU
+	TgOLarQP3HyunCGl7YVryfjc8HbbK9VKImNveXWOonvnjcRzbkmIaEX6op/FKL6w
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42aad2g284-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 09:06:27 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49G7GajF006789;
+	Wed, 16 Oct 2024 09:06:26 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284xk8a2v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 09:06:26 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49G96PY060621238
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 09:06:25 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6575658059;
+	Wed, 16 Oct 2024 09:06:25 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81AC258055;
+	Wed, 16 Oct 2024 09:06:23 +0000 (GMT)
+Received: from [9.155.199.163] (unknown [9.155.199.163])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 16 Oct 2024 09:06:23 +0000 (GMT)
+Message-ID: <cdb1e714-a70f-4bb0-b7b7-c420c9322176@linux.ibm.com>
+Date: Wed, 16 Oct 2024 11:06:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] s390/uvdevice: Add List Secrets Ext IOCTL
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <20241015112859.3069210-1-seiden@linux.ibm.com>
+ <20241015112859.3069210-6-seiden@linux.ibm.com>
+ <20241015120109.7641-K-hca@linux.ibm.com>
+Content-Language: en-US
+From: Steffen Eiden <seiden@linux.ibm.com>
+In-Reply-To: <20241015120109.7641-K-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Wtbyx_WJ2TT6zuPdJBUI9d-XOnRQ6J5h
+X-Proofpoint-ORIG-GUID: Wtbyx_WJ2TT6zuPdJBUI9d-XOnRQ6J5h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 mlxlogscore=777
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160059
 
-GCC is not happy with the current code, e.g.:
 
-.../tg3.c:11313:37: error: ‘-txrx-’ directive output may be truncated writing 6 bytes into a region of size between 1 and 16 [-Werror=format-truncation=]
-11313 |                                  "%s-txrx-%d", tp->dev->name, irq_num);
-      |                                     ^~~~~~
-.../tg3.c:11313:34: note: using the range [-2147483648, 2147483647] for directive argument
-11313 |                                  "%s-txrx-%d", tp->dev->name, irq_num);
 
-When `make W=1` is supplied, this prevents kernel building. Fix it by
-increasing the buffer size for IRQ label and use sizeoF() instead of
-hard coded constants.
+On 10/15/24 2:01 PM, Heiko Carstens wrote:
+> On Tue, Oct 15, 2024 at 01:28:58PM +0200, Steffen Eiden wrote:
+>> Add an extended List Secrets IOCTL. In contrast to the first list IOCTL
+>> this accepts an index as the first two bytes of the provided page as an
+>> input. This index is then taken as the index offset for the list UVC to
+>> receive later entries for the list. While at it fix some kernel doc
+>> issues with the list function.
+>>
+>> Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+>> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+>> ---
+>>   arch/s390/include/uapi/asm/uvdevice.h |  4 ++
+>>   drivers/s390/char/uvdevice.c          | 96 +++++++++++++++++++--------
+>>   2 files changed, 72 insertions(+), 28 deletions(-)
+> 
+> ...
+> 
+>> +/**
+>> + * The actual list(_ext) IOCTL.
+>> + * If list_ext is true, the first two bytes of the user buffer set the starting
+>> + * index of the list-UVC.
+>> + */
+>> +static int list_secrets(struct uvio_ioctl_cb *uv_ioctl, bool list_ext)
+> 
+> This is not kernel-doc style :)
+Thanks, this should not be kernel doc anyways (nor part of an API). Removing the additional star.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: don't move the field to the stack (Jakub)
- drivers/net/ethernet/broadcom/tg3.c | 9 ++++-----
- drivers/net/ethernet/broadcom/tg3.h | 2 +-
- 2 files changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index 378815917741..675178ab77b8 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -11309,18 +11309,17 @@ static int tg3_request_irq(struct tg3 *tp, int irq_num)
- 	else {
- 		name = &tnapi->irq_lbl[0];
- 		if (tnapi->tx_buffers && tnapi->rx_rcb)
--			snprintf(name, IFNAMSIZ,
-+			snprintf(name, sizeof(tnapi->irq_lbl),
- 				 "%s-txrx-%d", tp->dev->name, irq_num);
- 		else if (tnapi->tx_buffers)
--			snprintf(name, IFNAMSIZ,
-+			snprintf(name, sizeof(tnapi->irq_lbl),
- 				 "%s-tx-%d", tp->dev->name, irq_num);
- 		else if (tnapi->rx_rcb)
--			snprintf(name, IFNAMSIZ,
-+			snprintf(name, sizeof(tnapi->irq_lbl),
- 				 "%s-rx-%d", tp->dev->name, irq_num);
- 		else
--			snprintf(name, IFNAMSIZ,
-+			snprintf(name, sizeof(tnapi->irq_lbl),
- 				 "%s-%d", tp->dev->name, irq_num);
--		name[IFNAMSIZ-1] = 0;
- 	}
- 
- 	if (tg3_flag(tp, USING_MSI) || tg3_flag(tp, USING_MSIX)) {
-diff --git a/drivers/net/ethernet/broadcom/tg3.h b/drivers/net/ethernet/broadcom/tg3.h
-index cf1b2b123c7e..b473f8014d9c 100644
---- a/drivers/net/ethernet/broadcom/tg3.h
-+++ b/drivers/net/ethernet/broadcom/tg3.h
-@@ -3033,7 +3033,7 @@ struct tg3_napi {
- 	dma_addr_t			rx_rcb_mapping;
- 	dma_addr_t			tx_desc_mapping;
- 
--	char				irq_lbl[IFNAMSIZ];
-+	char				irq_lbl[IFNAMSIZ + 6 + 10]; /* name + "-txrx-" + %d */
- 	unsigned int			irq_vec;
- };
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+> 
+>> +	free_pages((unsigned long)secrets, 0);
+>> +	return ret;
+> 
+> free_page() instead of free_pages()?
 
 
