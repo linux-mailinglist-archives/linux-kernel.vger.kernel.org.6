@@ -1,153 +1,165 @@
-Return-Path: <linux-kernel+bounces-367847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100299A0784
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:36:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FAC9A078A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363D528768C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6EB1C24E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E61206E92;
-	Wed, 16 Oct 2024 10:36:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50009206E76;
+	Wed, 16 Oct 2024 10:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q45K40cU"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865EE1F81A9;
-	Wed, 16 Oct 2024 10:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A06F206055;
+	Wed, 16 Oct 2024 10:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074988; cv=none; b=ZYHwnUymNpYTG9RVsGnCT+k7z7udDCdWcFjXX1G3OArE/zhKXMR4RwnpJbLDQYlS9ymwI0S2xcl0FMhTwFupH6Suxzlfz9ObpyF3rjXIYAPdQfUpSnIdyRFSkBcagiAoDh/6WCGkUUQMvTO3rPYpoFwyIsHTZptlhOKfammyHvQ=
+	t=1729075040; cv=none; b=URriE+SZM61k8IP2K0DXNy5ECFbATaaDHi/fUQB9+ElQI7P5o2ttp5NqsVuxW1B/I4t/OSHdgB8tLSyc/woKfsOjQoeG0prOphePMmu7BgaM/Uic/Jaw4B2BBtiQREguSWTrKSHxDlJsF8mrU2FEqhBN/J8FXePL9B+LK1SIVcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074988; c=relaxed/simple;
-	bh=WMetuwb8pAhfZt/JLmdZ6+4RKdpGwXb3KBOAjuHpmyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tU6SDkHau7myjCXLdESoIqAQtrCNRP39t10hGJUJ9QdNSjMPWy0P89m0Bh7M/MkMUNetTAXkM0qmLTnrZAuUqxOFYnCaKexzYPev3YgK6a4EYCD4fyjMpq0CkYmEdc908ztw58oN7MqRqTm2qnD5kDdREzACd4C27JkCuljB2Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 627F2C4CEC5;
-	Wed, 16 Oct 2024 10:36:26 +0000 (UTC)
-Message-ID: <6df9ffa7-a55e-4ae4-a863-eb64834aef48@xs4all.nl>
-Date: Wed, 16 Oct 2024 12:36:24 +0200
+	s=arc-20240116; t=1729075040; c=relaxed/simple;
+	bh=PotmV07TYsdzBCkgsXti5FhmuYzcIq8RKvfDe6ByBpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WyMqSWmDmQs4q32Fj2LHIIvBhpu7OXVM1XwYKzjhAxBCHnwu2OTtD/YclQp9DjeuSkiT1klSQHTY8PJyantYrmUtNepguWcmdpOuNM5ciR3zlYXkVo+GTwpFnYyYE0DfaQM9SQlKgY4mrLh3lfKqJNuMpTpXes4AjE0XOzOhZN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q45K40cU; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GAKEWI023035;
+	Wed, 16 Oct 2024 10:37:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=zMeyJS
+	0z7cn5JjFKCkgSbMvXgBCHzt6or6qpLiwiFAU=; b=Q45K40cUR2vLXWMfC1NfAw
+	3W9w4L+9Wmtz7d1DOvF7KIZrrQHVUkrrP+0zBcp16g34JBH++2G7ot7vQY++mQgS
+	5bWRJojDib/0i1n1YVPJ4WNZ8N74YLnQkZbKkhI5RsfLGPv4nO3XYMc0rzdBYyQA
+	tg53sJwG5m6bhZlm8C6OTIfm4bekpYXr0ZacrXcQC4HY0YPhBuuOacC8zNX/nqRg
+	dU+cppVGBrL7ApVDQdEBv2sxL9hNI1uZeOOmITYquvwWtXxVBxC/NR98bZgLT0fK
+	Xay0Mr+nrttKPuensrB4bqaX4PWWyyIzcHzNgBeNBWzSJLjN848iN8RO/5V8mBNg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42abn0g2wk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 10:37:10 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49GAbAcC030714;
+	Wed, 16 Oct 2024 10:37:10 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42abn0g2w6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 10:37:10 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49G81Lrc005215;
+	Wed, 16 Oct 2024 10:37:09 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nj8kqt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Oct 2024 10:37:09 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49GAb5vm54985128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 16 Oct 2024 10:37:05 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7ED8F20040;
+	Wed, 16 Oct 2024 10:37:05 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3953A2004D;
+	Wed, 16 Oct 2024 10:37:04 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.7.78])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Wed, 16 Oct 2024 10:37:04 +0000 (GMT)
+Date: Wed, 16 Oct 2024 12:37:02 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Eric Farman <farman@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>, David Hildenbrand
+ <david@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Vasily Gorbik
+ <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian
+ Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck
+ <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio
+ Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+        Andrew Morton
+ <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mario
+ Casquero <mcasquer@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT)
+ to support QEMU/KVM memory devices
+Message-ID: <20241016123702.04688e2d.pasic@linux.ibm.com>
+In-Reply-To: <8131b905c61a7baf4bd09ec4a08e1ace84d36754.camel@linux.ibm.com>
+References: <20241014144622.876731-1-david@redhat.com>
+	<20241014144622.876731-5-david@redhat.com>
+	<20241014184339.10447-E-hca@linux.ibm.com>
+	<8131b905c61a7baf4bd09ec4a08e1ace84d36754.camel@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: H5ULsniXk0Rfka_9RRyv3agVS3JiWal7
+X-Proofpoint-ORIG-GUID: FKcGPPcfDhFwjLM7_HrSq6Zn3U2EPmeB
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] media: cec: extron-da-hd-4k-plus: don't use -1 as
- an error code
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- stable@vger.kernel.org
-References: <cover.1729074076.git.mchehab+huawei@kernel.org>
- <21a4b368b49aaa46e9d78cccd855bb11b49ab39c.1729074076.git.mchehab+huawei@kernel.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <21a4b368b49aaa46e9d78cccd855bb11b49ab39c.1729074076.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ mlxscore=0 priorityscore=1501 mlxlogscore=919 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410160065
 
-On 16/10/2024 12:22, Mauro Carvalho Chehab wrote:
-> The logic at get_edid_tag_location() returns either an offset
-> or an error condition. However, the error condition uses a
-> non-standard "-1" value.
+On Tue, 15 Oct 2024 11:01:44 -0400
+Eric Farman <farman@linux.ibm.com> wrote:
+
+> > +		  [subcode] "i" (DIAG500_SC_STOR_LIMIT)
+> > +		: "memory", "1", "2");
+> > +	if (!storage_limit)
+> > +		return -EINVAL;
+> > +	/* Convert inclusive end to exclusive end */
+> > +	*max_physmem_end = storage_limit + 1;
+> >  	return 0;
+> >  }
+> >  
+> >   
 > 
-> Use instead -ENOENT to indicate that the tag was not found.
+> I like the idea of a defined constant here instead of hardcoded, but maybe it should be placed
+> somewhere in include/uapi so that QEMU can pick it up with update-linux-headers.sh and be in sync
+> with the kernel, instead of just an equivalent definition in [1] ?
 > 
-> Fixes: 056f2821b631 ("media: cec: extron-da-hd-4k-plus: add the Extron DA HD 4K Plus CEC driver")
+> [1] https://lore.kernel.org/qemu-devel/20241008105455.2302628-8-david@redhat.com/
 
-Not a fix, since it isn't broken. It is returning an offset, and -1 is used if it isn't
-found. It's fine to change it to -ENOENT since the code calling it just checks if the
-result > 0.
-
-So it is a slight improvement of the code, but not a fix.
-
-> Cc: stable@vger.kernel.org
-
-So this isn't needed either.
+I think it is fine to have equivalent definitions. This is more or less
+an ISA thing we are introducing here. And IMHO it would be fine to have
+such a definition even if the emulator was supposed to run on an OS that
+is not Linux and without without KVM.
 
 Regards,
-
-	Hans
-
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  .../cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c     | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c b/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
-> index a526464af88c..7d03a36df5cf 100644
-> --- a/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
-> +++ b/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
-> @@ -348,12 +348,12 @@ static int get_edid_tag_location(const u8 *edid, unsigned int size,
->  
->  	/* Return if not a CTA-861 extension block */
->  	if (size < 256 || edid[0] != 0x02 || edid[1] != 0x03)
-> -		return -1;
-> +		return -ENOENT;
->  
->  	/* search tag */
->  	d = edid[0x02] & 0x7f;
->  	if (d <= 4)
-> -		return -1;
-> +		return -ENOENT;
->  
->  	i = 0x04;
->  	end = 0x00 + d;
-> @@ -371,7 +371,7 @@ static int get_edid_tag_location(const u8 *edid, unsigned int size,
->  			return offset + i;
->  		i += len + 1;
->  	} while (i < end);
-> -	return -1;
-> +	return -ENOENT;
->  }
->  
->  static void extron_edid_crc(u8 *edid)
-
+Halil
 
