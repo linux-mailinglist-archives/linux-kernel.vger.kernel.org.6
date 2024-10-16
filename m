@@ -1,291 +1,193 @@
-Return-Path: <linux-kernel+bounces-367882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BF29A07F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:59:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFE49A07EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7C5283E6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E9A5B242C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281B62076C0;
-	Wed, 16 Oct 2024 10:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0503A207200;
+	Wed, 16 Oct 2024 10:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FCrxX8Yo"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Zfwsi6EC"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B061C07F9;
-	Wed, 16 Oct 2024 10:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DD81C07F9
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 10:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076375; cv=none; b=fytCDZvXu6Si/UyDizwyJPfzlVLqLuqyOWCgpfzNh48adgEMFo9TbE6S1H8CHwI76plUnRLCqp3tuvsCeX3tv/ACLX9az3OkboHzKhvo6d1Ucxq4viELZ2NMAynLzLhVMUOt1BDy5KKqbhweg+obJpQFKdau4pIMqS3PY84Oae0=
+	t=1729076323; cv=none; b=NPB0SzhsXi15qovOEGu0Wd3/sCbUX674bhvN3qpZZJglHID+CGlohEdp3m0x7X8iRp6z0x166TxWRB42il7Fd+UOC5lKqcmaCZqQ1g616v8D9mb4W/VgA+eFmzc9yZH6h9iSz9BA1z+LERWsA7FwON2GT756Ju7bZrcaxGDuMO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076375; c=relaxed/simple;
-	bh=z6QRm0J2I++VLMK4orPSe4kHg6UZzQ44XST8c0Wy+aQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+DNENOyolJZHdruhpD9ZEbEv0Xg0aleqTjjUTrYN5b4cOzx2ctwdWd1ghrmBXlP+w9asexMFUa1ySa3/BKLnbXoF1RNwgyhaOEkXhR4IzJH22Ksp56jTDB7lhRPaV8iPtjN2bcvGjPaGq8hgQOafoJ9E6/1+RXnRTHxsY+ZSRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FCrxX8Yo reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6A8AE40E0198;
-	Wed, 16 Oct 2024 10:59:27 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id H-8ABRph_QdB; Wed, 16 Oct 2024 10:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729076361; bh=zv5a7UXvwk4zGhwGx+Twn4ugNezq5/Up+qwxz+Hta1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FCrxX8YoQ/0ZHFOf4iWtfypQOEK/v75QEQqJ4SCZSvzWZ6ndsHmWNi5BSVB3wDZsH
-	 ghUpOMJMJU0c7Lk59YRlV8HC+kKwfmzEkLDx9ShZgxBS/wSkiAkc1fo+s0dEL+qgBI
-	 Ft6c7lrtmoWtqZyksnii6gHt0u6RrGxL5NfWtyeAk7wHSSFZb1PW1WN3IA0BaYiNSW
-	 ppG7DJp6ZCsJ/SJySvir3y4W4nIQJx0+QDMC142tXw8u4WifNm/coXUNYyPWiMEtS2
-	 v6geuGqyprz5T3/yD1ymW+QS4/Us0w9DZ6507bTKISm81TyhbMbfwNG5l+sr6BD2sV
-	 lNw7XDM7eCV+Ka6zhbJmZFtty7T1DnBZQRJyaqwPP1y4CDOz/5ehRWJ8lMgqH8bGK/
-	 5CE8GXtjuoBKQNbJZ9cvpKeAmhGAQoen6Nz38IJQwg0fBjcGKonYfrXUAjPb3SlqIN
-	 sPCcYWGsvpU03dWQTW0PtcWJkez3oCQ0m5UlwrDqvhzM48ikXuUQpmlrxQwDztE5P8
-	 tfrGwtyJiAT7QUSbX0HXPJxj7hqg5WmPQ/8lvYOJKm61S2P1zmF7CPPZXzvyOO11/m
-	 GFCt+qosgfObsqGmYBn/tX69pJ5KGO+z3b42BcfTb6kgmY/M5vz5sMO6N5Ga/Pw1ZY
-	 QbIE8Eew44X1U944NxCePlIs=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4D10C40E021A;
-	Wed, 16 Oct 2024 10:58:38 +0000 (UTC)
-Date: Wed, 16 Oct 2024 12:58:32 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: shiju.jose@huawei.com
-Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com,
-	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
-	dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
-	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
-	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
-	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
-	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
-	duenwen@google.com, gthelen@google.com,
-	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
-	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
-	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
-	wanghuiqiang@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH v13 01/18] EDAC: Add support for EDAC device features
- control
-Message-ID: <20241016105832.GSZw-cWDOFweQMWRgZ@fat_crate.local>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
- <20241009124120.1124-2-shiju.jose@huawei.com>
+	s=arc-20240116; t=1729076323; c=relaxed/simple;
+	bh=GpbVukWHXYkkOdk3d5eNxGPJZDJ1SPrgiM+sBmjQEn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qMODv5VtHgVHcFsWFiD3aAhOWEdUVEUNtbBHnwEgW99/cJIlqOTBIJQRyi1tv68+b0xwOgcfVMFY5HFdVzXMQW67u9cIkOndtQWgoMAwRdqEbltzJbPV7RPhd4lRwgsBVd7dugfAYOpOEV00twFOleBJZqnSsyly001L0aZe+V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Zfwsi6EC; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e5c8c28797so2885595b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 03:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1729076320; x=1729681120; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4V9uAkOemoBS+UOiRuVxaXC25eKKhe+qrnOqSnxMzh8=;
+        b=Zfwsi6ECNlxcPirnX3zU0IIm58A3u/vSf/PRk0QnKV2f5JzcCudgyEy53xof59bQFR
+         wzJMEPGX1X2y3Y3ut3jIy6Te1DutfNkHiyAfxXvzEir64MEGXmOTtoZ4sa29zjz0Bohu
+         tbSgqBxwg+8MDennWQ5HvezyBnUqSiENQ4HdnGbL7yrfBYAythqlFvTpFdh1KPNHM8O5
+         gfYUt777clSGb3+pbMlTHgmTjJljB+S7/xuAOyNI9Z6g69gHFMjLZQ7swT7mCQO83csC
+         mQhvEs/7aoKWBnJcxaKEVWYURVe8QCxQC4kMGFcaKyEvXj7OXh4lxdbCaE+HPSJt1vi9
+         iBPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729076320; x=1729681120;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4V9uAkOemoBS+UOiRuVxaXC25eKKhe+qrnOqSnxMzh8=;
+        b=dWr+JelRSnXDApsgqc4aWysgtC1hVQD4goJFeewKdzD6Z6jDJK0ZLdbwqU5HyYEjDz
+         Gck9egbkxuosWLTxVFanOyoPMbKT/Pv0t/y5GYBGsiAT6je5yI1vI1ylnwuGSTMzVD0Y
+         josdOKyli8U+yHaYa+gM9GQdQnkcEHb+2pZGv/hyEaUOapUilcst+rj9qNVMBcsTq+Se
+         UQ9GpQtrEtCgm1u082jcyHctam51NGz4edoXtH/wT3sEmWe1iVfs/pmL2RM1doLChb+X
+         754Ecgfehp8YETs/FoM4svNWEfInXuTQralk8gDtkFu422LloNjJ0lHNEmlRuV5+dFJ8
+         VPGw==
+X-Gm-Message-State: AOJu0YzH/jBKSAm7VJFqVp+oQ2egna/qI4o8Om1fZZc0FovaXM6T8Sks
+	zedFx7dX+RDUNmsZtn00zbZsTXTS5LFOeXOdKtIX4D0sJ7NczVY77m1qHuK4LZk=
+X-Google-Smtp-Source: AGHT+IE7gol+mLNQ2oP7eKHsCKiOCW9yBgEJ5GnKroOUWJxwrAQDQs0BVHFEzCeZsiuAQ7+RqmdoCg==
+X-Received: by 2002:a05:6808:2e4d:b0:3e5:f7bb:1ce7 with SMTP id 5614622812f47-3e5f7bb1effmr671655b6e.38.1729076319764;
+        Wed, 16 Oct 2024 03:58:39 -0700 (PDT)
+Received: from [10.84.149.95] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6bb02dsm3027512a12.4.2024.10.16.03.58.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 03:58:39 -0700 (PDT)
+Message-ID: <c364015e-ab37-411d-b2e9-4e7b10effdf5@bytedance.com>
+Date: Wed, 16 Oct 2024 18:58:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241009124120.1124-2-shiju.jose@huawei.com>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/pagewalk: fix usage of pmd_leaf()/pud_leaf()
+ without present check
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzbot+7d917f67c05066cec295@syzkaller.appspotmail.com,
+ Andrew Morton <akpm@linux-foundation.org>, Jann Horn <jannh@google.com>
+References: <20241015111236.1290921-1-david@redhat.com>
+ <4898fdf4-7c88-4697-9df4-64fd8a900e95@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+Content-Language: en-US
+In-Reply-To: <4898fdf4-7c88-4697-9df4-64fd8a900e95@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 01:41:02PM +0100, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
->=20
-> Add generic EDAC device features control supports registering
-> RAS features supported in the system. Driver exposes features
-> control attributes to userspace in
-> /sys/bus/edac/devices/<dev-name>/<ras-feature>/
 
-Chatgpt prompt:
 
-| Please check the grammar in this English text: "Add generic EDAC device
-| features control supports registering RAS features supported in the sys=
-tem.
-| Driver exposes features control attributes to userspace in
-| /sys/bus/edac/devices/<dev-name>/<ras-"feature>/
+On 2024/10/15 21:13, David Hildenbrand wrote:
+> On 15.10.24 13:12, David Hildenbrand wrote:
+>> pmd_leaf()/pud_leaf() only implies a pmd_present()/pud_present() check on
+>> some architectures. We really should check for
+>> pmd_present()/pud_present() first.
+>>
+>> This should explain the report we got on ppc64 (which has
+>> CONFIG_PGTABLE_HAS_HUGE_LEAVES set in the config) that triggered:
+>>     VM_WARN_ON_ONCE(pmd_leaf(pmdp_get_lockless(pmdp)));
+>>
+>> Likely we had a PMD migration entry for which pmd_leaf() did not
+>> trigger. We raced with restoring the PMD migration entry, and suddenly
+>> saw a pmd_leaf(). In this case, pte_offset_map_lock() saved us from more
+>> trouble, because it rechecks the PMD value, but we would not have 
+>> processed
+>> the migration entry -- which is not too bad because the only user of
+>> FW_MIGRATION is KSM for unsharing, and KSM only applies to small folios.
+>>
+>> Further, we shouldn't re-read the PMD/PUD value for our warning, the
+>> primary purpose of the VM_WARN_ON_ONCE() is to find spurious use of
+>> pmd_leaf()/pud_leaf() without CONFIG_PGTABLE_HAS_HUGE_LEAVES.
+>>
+>> As a side note, we are currently not implementing FW_MIGRATION support
+>> for PUD migration entries, which likely should exist due to hugetlb. Add
+>> a TODO so this won't fall through the cracks if more FW_MIGRATION users
+>> get added.
+>>
+>> Fixes: aa39ca6940f1 ("mm/pagewalk: introduce folio_walk_start() + 
+>> folio_walk_end()")
+>> Reported-by: syzbot+7d917f67c05066cec295@syzkaller.appspotmail.com
+>> Closes: 
+>> https://lkml.kernel.org/r/670d3248.050a0220.3e960.0064.GAE@google.com
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Jann Horn <jannh@google.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+> 
+> Was able to write a quick reproducer and verify that the issue no longer 
+> triggers with this fix.
+> 
+> https://gitlab.com/davidhildenbrand/scratchspace/-/blob/main/reproducers/move-pages-pmd-leaf.c
+> 
+> Without this fix after a couple of seconds in a VM with 2 NUMA nodes:
+> 
+> [   54.333753] ------------[ cut here ]------------
+> [   54.334901] WARNING: CPU: 20 PID: 1704 at mm/pagewalk.c:815 
+> folio_walk_start+0x48f/0x6e0
+> [   54.336455] Modules linked in: ...
+> [   54.345009] CPU: 20 UID: 0 PID: 1704 Comm: move-pages-pmd- Not 
+> tainted 6.12.0-rc2+ #81
+> [   54.346529] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+> 1.16.3-2.fc40 04/01/2014
+> [   54.348191] RIP: 0010:folio_walk_start+0x48f/0x6e0
+> [   54.349134] Code: b5 ad 48 8d 35 00 00 00 00 e8 6d 59 d7 ff e8 08 74 
+> da ff e9 9c fe ff ff 4c 8b 7c 24 08 4c 89 ff e8 26 2b be 00 e9 8a fe ff 
+> ff <0f> 0b e9 ec fe ff ff f7 c2 ff 0f 00 00 0f 85 81 fe ff ff 48 8b 02
+> [   54.352660] RSP: 0018:ffffb7e4c430bc78 EFLAGS: 00010282
+> [   54.353679] RAX: 80000002a3e008e7 RBX: ffff9946039aa580 RCX: 
+> ffff994380000000
+> [   54.355056] RDX: ffff994606aec000 RSI: 00007f004b000000 RDI: 
+> 0000000000000000
+> [   54.356440] RBP: 00007f004b000000 R08: 0000000000000591 R09: 
+> 0000000000000001
+> [   54.357820] R10: 0000000000000200 R11: 0000000000000001 R12: 
+> ffffb7e4c430bd10
+> [   54.359198] R13: ffff994606aec2c0 R14: 0000000000000002 R15: 
+> ffff994604a89b00
+> [   54.360564] FS:  00007f004ae006c0(0000) GS:ffff9947f7400000(0000) 
+> knlGS:0000000000000000
+> [   54.362111] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   54.363242] CR2: 00007f004adffe58 CR3: 0000000281e12005 CR4: 
+> 0000000000770ef0
+> [   54.364615] PKRU: 55555554
+> [   54.365153] Call Trace:
+> [   54.365646]  <TASK>
+> [   54.366073]  ? __warn.cold+0xb7/0x14d
+> [   54.366796]  ? folio_walk_start+0x48f/0x6e0
+> [   54.367628]  ? report_bug+0xff/0x140
+> [   54.368324]  ? handle_bug+0x58/0x90
+> [   54.369019]  ? exc_invalid_op+0x17/0x70
+> [   54.369771]  ? asm_exc_invalid_op+0x1a/0x20
+> [   54.370606]  ? folio_walk_start+0x48f/0x6e0
+> [   54.371415]  ? folio_walk_start+0x9e/0x6e0
+> [   54.372227]  do_pages_move+0x1c5/0x680
+> [   54.372972]  kernel_move_pages+0x1a1/0x2b0
+> [   54.373804]  __x64_sys_move_pages+0x25/0x30
 
-Response:
+It would be better to add this call stack to the commit message, which
+can help people find this fix patch when they encounter same problem. ;)
 
-| Here=E2=80=99s a corrected version of the text:
-|=20
-| "Add generic EDAC device feature control support for registering RAS fe=
-atures
-| supported in the system. The driver exposes feature control attributes =
-to
-| userspace in /sys/bus/edac/devices/<dev-name>/<ras-feature>/."
-|=20
-| Changes made:
-|=20
-| * "features control" was changed to "feature control" for consistency a=
-nd
-| clarity.
-|=20
-| * "supports registering" was changed to "support for registering" to ma=
-tch the
-| structure of the sentence.
-|=20
-| * Added "The" at the beginning of the second sentence for better flow.
-|=20
-| * Corrected the syntax around the file path to ensure clarity and prope=
-r
-| * punctuation.
+Otherwise, LGTM.
 
-Please run all your commit text through some LLM AI as they're apparently=
- good
-enough now to help me in correcting grammar.
-=20
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> ---
->  drivers/edac/edac_device.c | 105 +++++++++++++++++++++++++++++++++++++
->  include/linux/edac.h       |  32 +++++++++++
->  2 files changed, 137 insertions(+)
->=20
-> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
-> index 621dc2a5d034..0b8aa8150239 100644
-> --- a/drivers/edac/edac_device.c
-> +++ b/drivers/edac/edac_device.c
-> @@ -570,3 +570,108 @@ void edac_device_handle_ue_count(struct edac_devi=
-ce_ctl_info *edac_dev,
->  		      block ? block->name : "N/A", count, msg);
->  }
->  EXPORT_SYMBOL_GPL(edac_device_handle_ue_count);
-> +
-> +/* EDAC device feature */
-> +static void edac_dev_release(struct device *dev)
-> +{
-> +	struct edac_dev_feat_ctx *ctx =3D container_of(dev, struct edac_dev_f=
-eat_ctx, dev);
-> +
-> +	kfree(ctx->dev.groups);
-> +	kfree(ctx);
-> +}
-> +
-> +const struct device_type edac_dev_type =3D {
-> +	.name =3D "edac_dev",
-> +	.release =3D edac_dev_release,
-> +};
-> +
-> +static void edac_dev_unreg(void *data)
-> +{
-> +	device_unregister(data);
-> +}
-> +
-> +/**
-> + * edac_dev_register - register device for RAS features with EDAC
-> + * @parent: client device.
+Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-If this is a client device, why is the variable called "parent" and not
-"client"?
+Thanks!
 
-I.e.,
-
-	struct device *client;
-
-For clarity and simplicity.
-
-Or call it "parent" because you do:
-
-	ctx->dev.parent =3D parent;
-
-and forget "client" altogether.
-
-> + * @name: client device's name.
-> + * @private: parent driver's data to store in the context if any.
-> + * @num_features: number of RAS features to register.
-> + * @ras_features: list of RAS features to register.
-> + *
-> + * Return:
-> + *  * %0       - Success.
-> + *  * %-EINVAL - Invalid parameters passed.
-> + *  * %-ENOMEM - Dynamic memory allocation failed.
-> + *
-> + * The new edac_dev_feat_ctx would be freed automatically.
-
-Why is this important to call out here?
-
-It is a common coding pattern of freeing resources in the release functio=
-n...
-
-> + */
-> +int edac_dev_register(struct device *parent, char *name,
-> +		      void *private, int num_features,
-> +		      const struct edac_dev_feature *ras_features)
-> +{
-> +	const struct attribute_group **ras_attr_groups;
-> +	struct edac_dev_feat_ctx *ctx;
-> +	int attr_gcnt =3D 0;
-> +	int ret, feat;
-> +
-> +	if (!parent || !name || !num_features || !ras_features)
-> +		return -EINVAL;
-> +
-> +	/* Double parse to make space for attributes */
-> +	for (feat =3D 0; feat < num_features; feat++) {
-> +		switch (ras_features[feat].ft_type) {
-> +		/* Add feature specific code */
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	ctx->dev.parent =3D parent;
-> +	ctx->private =3D private;
-> +
-> +	ras_attr_groups =3D kcalloc(attr_gcnt + 1, sizeof(*ras_attr_groups), =
-GFP_KERNEL);
-> +	if (!ras_attr_groups) {
-> +		ret =3D -ENOMEM;
-> +		goto ctx_free;
-> +	}
-> +
-> +	attr_gcnt =3D 0;
-> +	for (feat =3D 0; feat < num_features; feat++, ras_features++) {
-> +		switch (ras_features->ft_type) {
-> +		/* Add feature specific code */
-> +		default:
-> +			ret =3D -EINVAL;
-> +			goto groups_free;
-> +		}
-> +	}
-> +
-> +	ras_attr_groups[attr_gcnt] =3D NULL;
-> +	ctx->dev.bus =3D edac_get_sysfs_subsys();
-> +	ctx->dev.type =3D &edac_dev_type;
-> +	ctx->dev.groups =3D ras_attr_groups;
-> +	dev_set_drvdata(&ctx->dev, ctx);
-> +
-> +	ret =3D dev_set_name(&ctx->dev, name);
-> +	if (ret)
-> +		goto groups_free;
-> +
-> +	ret =3D device_register(&ctx->dev);
-> +	if (ret) {
-> +		put_device(&ctx->dev);
-> +		goto groups_free;
-> +		return ret;
-		^^^^^^^^^^
-
-Come again?!
-
-There's code after a "goto"?
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> 
+> 
+> 
 
