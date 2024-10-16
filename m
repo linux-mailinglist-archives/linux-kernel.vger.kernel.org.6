@@ -1,91 +1,86 @@
-Return-Path: <linux-kernel+bounces-367490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44619A02F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:47:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217249A02FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123261C22A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:47:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 704B2B25FF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAF31C4A1C;
-	Wed, 16 Oct 2024 07:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B0C1C32E4;
+	Wed, 16 Oct 2024 07:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USO8bjom"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rsDF+/j8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA2618B478;
-	Wed, 16 Oct 2024 07:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D65A18B478;
+	Wed, 16 Oct 2024 07:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729064855; cv=none; b=WUOex/zgoY6vZd0oR2kTYMmzPv7jpG6V4gwGxuVX2ubqeSlSP4LGMSCrgr4f6TeJreMnoSXhv97WyWthXRLDfYa41qieAiGgXNHtY4pgKiX9q0Yu17G3/b3oREHxpWa9WBm2hVr0I9MsX8SgMEncZUDNTm6oRxNRsiJjcyH/74o=
+	t=1729064914; cv=none; b=o2aHVrIVdKD+jTEzVp8Jqr4Fh1k5/ZCYgPTAVjYCG7rfp+lSk2JxHoduY1HNcZcbTdXDW0fTTLa3ZjP4M/m5z+PyfsFX03TwjuXTHlSa92bipg0ESMWxrEUHxr3OAW6sntynTscI7mOUtA1HqKy5YT9pQvdPhv/Ka8kPBWXrElo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729064855; c=relaxed/simple;
-	bh=jf4OwaxHcdsO0QCgg9KFcZKV0Gr1jLc6IZPiKDRY5gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fBiBxw9+cmazF21SGTdsTU9h9V4l4VHCF66OksTVO3tnatPX2gkMyhBtx4K73QgVKhO3l5qvUD8n0VcA7vaSZS88PLfzX8XAGo0z7PPEF/BBJCO/Fh2labcH5JjIzfIuGrifrndIRT5wG/iG1kgoP/E1Ixcg+yFDAsUeSk58884=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USO8bjom; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DC3C4CEC5;
-	Wed, 16 Oct 2024 07:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729064854;
-	bh=jf4OwaxHcdsO0QCgg9KFcZKV0Gr1jLc6IZPiKDRY5gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USO8bjomVqGAS1r4X3ZCZqktD74PWGgdFNF2X40IJrMoV5L4zoHmcU3E3sFr0UcIl
-	 Q/j0r7WFdIj0Si350gu4yKbKomyq0dIZvn3k0YrxJ/vVEzMv1brjDfpTrZXyaiSJIw
-	 bCWtbtudVjbcz+27BegwIVEZvY8VExRZDCilpPYPQY3XHUI/GIfaGrQDJ/ac8k6H1B
-	 Cjza1EHwAnZXcKJ/T/UzeX5SKo9Ub/aUNGSwvXV3+naemhNXIGNopyCd54ql1808mn
-	 aVTUbp+9BrHWXOVGkcHQmvOMaI4MdmyEWgISvB0PZ1MGHwH5eiPRMohgPUevOgb6ft
-	 gtmYYOb3RZcSg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t0ykv-000000006Jl-10dx;
-	Wed, 16 Oct 2024 09:47:41 +0200
-Date: Wed, 16 Oct 2024 09:47:41 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: add
- missing x1e80100 pipediv2 clocks
-Message-ID: <Zw9vnXpzyzLmZA4k@hovoldconsulting.com>
-References: <20240916082307.29393-1-johan+linaro@kernel.org>
- <20240916082307.29393-2-johan+linaro@kernel.org>
+	s=arc-20240116; t=1729064914; c=relaxed/simple;
+	bh=bGu+QvRxT9xe7HGIdDLZTCZZ6sTH0lhSLgemm4Sx6lk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iR3BPFXkAe/CoVglO7GjAyy+dlwodrIHpPThKxlqBtCDgF9tNsaFJMRhaHEViU/E+9ShxQBpYQ2fNUFJCsO1y9guKdGHV5IBK6TfLE+yekYTgeBoS1lwsGh2xu960z4u7wpabKkXxSaESL/YA7pDTI6sO4Krn2ufq2O7FoSft64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rsDF+/j8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8B1BC4CEC5;
+	Wed, 16 Oct 2024 07:48:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729064914;
+	bh=bGu+QvRxT9xe7HGIdDLZTCZZ6sTH0lhSLgemm4Sx6lk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rsDF+/j8gDX8VmLrjSawOF3oaRmXxqI+Eo63H3tXKl58s2n1IYuNzy2k31bD7UKfy
+	 alddQF96WYkMfyDEpRb8d/F9Lb17hXVPMpwtCh6S4AMm7juMYTNd9BYj7RhbxNefKU
+	 LjKEyfVIhFRDoHHVJBs50zoBNE/1awCRqFh647Bs=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-staging@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Penkler <dpenkler@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] staging: gpib: mark FMH driver as broken
+Date: Wed, 16 Oct 2024 09:48:28 +0200
+Message-ID: <2024101628-jazz-radial-3400@gregkh>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916082307.29393-2-johan+linaro@kernel.org>
+Lines: 25
+X-Developer-Signature: v=1; a=openpgp-sha256; l=914; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=bGu+QvRxT9xe7HGIdDLZTCZZ6sTH0lhSLgemm4Sx6lk=; b=owGbwMvMwCRo6H6F97bub03G02pJDOn8+WfezpOQ78655PhsT2NPm9KOdTrXWOoYCrdm96jte PMwYV5vRywLgyATg6yYIsuXbTxH91ccUvQytD0NM4eVCWQIAxenAEwkRJBhwbJarXXrXn1PzFm6 9Ep0uRn31BVF9xkWHAnftfJkyeUJ1RtPTty8qIr/xP6QqwA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-Hi Vinod,
+When doing a 'make allyesconfig' things break in this driver due to
+duplicate symbols, so mark it broken for now until that can be fixed up.
 
-On Mon, Sep 16, 2024 at 10:23:05AM +0200, Johan Hovold wrote:
-> The x1e80100 QMP PCIe PHYs all have a pipediv2 clock that needs to be
-> described.
-> 
-> Fixes: e94b29f2bd73 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100 QMP PCIe PHYs")
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+Cc: Dave Penkler <dpenkler@gmail.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Link: https://lore.kernel.org/r/20241015165538.634707e5@canb.auug.org.au
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/staging/gpib/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Bjorn has now picked up the DT fixes for 6.12, but we need this binding
-change too to avoid checker warnings.
+diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
+index 9f337d57ce87..f41b56b66251 100644
+--- a/drivers/staging/gpib/Kconfig
++++ b/drivers/staging/gpib/Kconfig
+@@ -130,6 +130,7 @@ config GPIB_FMH
+        tristate "FMH FPGA based devices"
+        select GPIB_COMMON
+        select GPIB_NEC7210
++       depends on BROKEN
+        depends on OF && PCI
+        help
+          GPIB driver for fmhess FPGA based devices
+-- 
+2.47.0
 
-Could you pick this one up for 6.12-rc?
-
-Johan
 
