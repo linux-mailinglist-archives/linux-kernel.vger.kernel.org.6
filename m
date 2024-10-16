@@ -1,72 +1,140 @@
-Return-Path: <linux-kernel+bounces-368431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27179A0FBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2E59A0FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 18:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21E51C22D60
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:30:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0884D1F26E9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4612A20FAAB;
-	Wed, 16 Oct 2024 16:30:41 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B59212641;
+	Wed, 16 Oct 2024 16:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y6C0XCQb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qHeBuB60"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E289D187877
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 16:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA8121262D;
+	Wed, 16 Oct 2024 16:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729096240; cv=none; b=FctOhe5R+1uVS2Jfqrg/87zVGiktm1YDpCjv6l3bLnIQMEX6W5Ua8jdVX5rwt2sjEM/OTE2WooMbfAwSR5e7M+ilexZ6AuXYSVeTNZwOizsCmcdGXjL5gbLuno/+1qsrLsvXsTMzcR6+aI70B6SiNySWGSio7gRia18x1seYmTA=
+	t=1729096244; cv=none; b=uyV5EUu8iZPIJKJdC50JOfgNukXjSCN+DTAdMrk/sipGZu4trydXwz5JG9yNg5Wc9hlHrJNh5Xah/K+iD13W8TPRW38fK1YoYM5np+pvWPvBwZ2H2NRXvqxUZxJcBUQczm5+KWyhAydsyf9w+RPjnYPjIQYdbzj13VFlKIYZ6ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729096240; c=relaxed/simple;
-	bh=g0DQXNRWLrfbiFdwevDNe9hojE/VmR4mFgWxQJ0j3yQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M05ssTliUsf1TfimGOD+n8RAD+F0QR6UU/O6oEZPiUHg1FlmE9SA5tyLdW8/gX428S+3jZdGtjJXA+1MNcN1od+4PNdHZ3kOUeEW9ikhadJmFajQqzlTjb6tHzusjy3BdwcJqlK3ldWGCq37W5Dq+UFmCIvP456QA5HydeKYNkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B67BC4CEC5;
-	Wed, 16 Oct 2024 16:30:39 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH] arm64/mm: Change pgattr_change_is_safe() arguments as pteval_t
-Date: Wed, 16 Oct 2024 17:30:36 +0100
-Message-Id: <172909623125.3163685.2221495929826054136.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241001045804.1119881-1-anshuman.khandual@arm.com>
-References: <20241001045804.1119881-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1729096244; c=relaxed/simple;
+	bh=cDmL46+7Ku1CNJyK9Pw37iodZ7eTlrRbqtcHf6yfnVM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=a0B98CM6RMDIx5gBtF7uxvp2IfAN+zEyoUCEKOCclmlkg95frD7iEZxrnpiQj9E5NkJuh22zYsjKudxecTE5JfrezW0WK9aVqF3fhA3Ot6VAndexEbv6X2XRI+1nfXjmXGIxaRZdtVdsHZdvOIIly5SuO7g7B9SzbUQJkoLGhqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y6C0XCQb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qHeBuB60; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729096240;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SWyLDPM1si1whstwx/9ABSaUWaUgglk4Hprd/du6iYw=;
+	b=Y6C0XCQbnjXu9g+n7ipBQO4mi2O8D6Yj4e4zkTe6iEyN5gezy/VlLmZCJd3+lc570n/oTN
+	ObHrXxAE6/Q1Yk0QuLlNoo19QmId5Yv6nj3/PmWEhrGyTqz5/Gw3dmRoWCc6t5Quu8e1AR
+	qjIXbgatuF3iAbeKZxW2BTdp+gEDzfUYvef+bR4LFPn/8f/vgW1tiI4O2v1wRmKkjQ42Ol
+	saKriitcideFKMmPaVFr906BhCiMAd4rVH47eIyKLaLZyFyiUk/tmkQCRa4KKFH9sBBSwN
+	O0nSbblOSWl7/N5GvPY7phHDZONfp3S1sL0Kaoe2kNsfCUizgRTktHW1kazKfg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729096240;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SWyLDPM1si1whstwx/9ABSaUWaUgglk4Hprd/du6iYw=;
+	b=qHeBuB60aYAix5Z9uU78up425Aybm/bfCt6Zy73SAyWJWcD2rHExAaLg/mXZ9+EUM7daqn
+	/LA+K/BCsIz8hWDg==
+To: Frank Li <Frank.Li@nxp.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+ dlemoal@kernel.org, maz@kernel.org, jdmason@kudzu.us, Frank Li
+ <Frank.Li@nxp.com>
+Subject: Re: [PATCH v3 3/6] PCI: endpoint: Add RC-to-EP doorbell support
+ using platform MSI controller
+In-Reply-To: <20241015-ep-msi-v3-3-cedc89a16c1a@nxp.com>
+References: <20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com>
+ <20241015-ep-msi-v3-3-cedc89a16c1a@nxp.com>
+Date: Wed, 16 Oct 2024 18:30:40 +0200
+Message-ID: <87bjzkau33.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, 01 Oct 2024 10:28:04 +0530, Anshuman Khandual wrote:
-> pgattr_change_is_safe() processes two distinct page table entries that just
-> happen to be 64 bits for all levels. This changes both arguments to reflect
-> the actual data type being processed in the function.
-> 
-> This change is important when moving to FEAT_D128 based 128 bit page tables
-> because it makes it simple to change the entry size in one place.
-> 
-> [...]
+On Tue, Oct 15 2024 at 18:07, Frank Li wrote:
+> +static int pci_epc_alloc_doorbell(struct pci_epc *epc, u8 func_no, u8 vfunc_no, int num_db)
+> +{
+> +	struct msi_desc *desc, *failed_desc;
+> +	struct pci_epf *epf;
+> +	struct device *dev;
+> +	int i = 0;
+> +	int ret;
+> +
+> +	if (IS_ERR_OR_NULL(epc))
+> +		return -EINVAL;
+> +
+> +	/* Currently only support one func and one vfunc for doorbell */
+> +	if (func_no || vfunc_no)
+> +		return -EINVAL;
+> +
+> +	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
+> +	if (!epf)
+> +		return -EINVAL;
+> +
+> +	dev = epc->dev.parent;
+> +	ret = platform_device_msi_init_and_alloc_irqs(dev, num_db, pci_epc_write_msi_msg);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to allocate MSI\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	scoped_guard(msi_descs, dev)
+> +		msi_for_each_desc(desc, dev, MSI_DESC_ALL) {
 
-Applied to arm64 (for-next/misc), thanks!
+That's just wrong. Nothing in this code has to fiddle with MSI
+descriptors or the descriptor lock.
 
-[1/1] arm64/mm: Change pgattr_change_is_safe() arguments as pteval_t
-      https://git.kernel.org/arm64/c/8ef41786d88f
+        for (i = 0; i < num_db; i++) {
+            virq = msi_get_virq(dev, i);
 
--- 
-Catalin
+> +			ret = request_irq(desc->irq, pci_epf_doorbell_handler, 0,
+> +					  kasprintf(GFP_KERNEL, "pci-epc-doorbell%d", i++), epf);
+> +			if (ret) {
+> +				dev_err(dev, "Failed to request doorbell\n");
+> +				failed_desc = desc;
+> +				goto err_request_irq;
+> +			}
+> +		}
+> +
+> +	return 0;
+> +
+> +err_request_irq:
+> +	scoped_guard(msi_descs, dev)
+> +		msi_for_each_desc(desc, dev, MSI_DESC_ALL) {
+> +			if (desc == failed_desc)
+> +				break;
+> +			kfree(free_irq(desc->irq, epf));
 
+All instances of interrupts get 'epf' as device id. So if the third
+instance failed to be requested, you free 'epf' when freeing the first
+interrupt and then again when freeing the second one.
+
+Thanks,
+
+        tglx
 
