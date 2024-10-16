@@ -1,173 +1,114 @@
-Return-Path: <linux-kernel+bounces-367804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B689A070D
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E396A9A072E
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 12:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7CFCB26970
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:23:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC8A28C347
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F88206978;
-	Wed, 16 Oct 2024 10:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E60520B21D;
+	Wed, 16 Oct 2024 10:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsWYHOvh"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sM+4KM7g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1778220605A;
-	Wed, 16 Oct 2024 10:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512D42071E3;
+	Wed, 16 Oct 2024 10:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729074139; cv=none; b=XwdwGlvg/wGd0A3BMGwp/fcM7W3rdp7YExomBBDO0r1P3CtYoAuK4s6sezt05W7qXrP77AtOlmrw9Oap9ZuXci7TjL8yJxye4eS+4Mvyf274of3fyk1zxN7R7YRYf673gSh5sVDpGKb8UuH209sRB6HHQM4gigizCEOWO009q5M=
+	t=1729074158; cv=none; b=si2FfNrmDc5OluGW/sEm8bK0vZGodc5BH0Aihfg6vlv5YS5LXA3z8L6Sbvq3uqSli6FXBCKEHf8Jipwv4QHFPAcWcyNtLH6CtvriyTuTnhprmKvNSZmoihHuKlZsU3aNL/GaoybpwNww/DN0EuE3N7PMPArfjPNhA72LXWWRWYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729074139; c=relaxed/simple;
-	bh=QKT/WXdyszfDZAuBiFpIgRfqqgYlxDV3xAF2UERO4b8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bNU7His/4o38Qe8M/zDL1fjeiIAurFpNtQ5/I24C+bDUTExZW82q6ECU4WynZ7ZqZFrnVVX9VZzGzqZ6h/bqsjKK2mHgNtE/rpZcTrmBS/RrEGN4Q5b80GaqCK6X/mo1VzESjpZ760mgzlB0rE+52mk49jU0G9hw/8dQLirY97Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MsWYHOvh; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c805a0753so52243865ad.0;
-        Wed, 16 Oct 2024 03:22:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729074137; x=1729678937; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7hVbtChpMQWzTvbStouuEBhs655kBL7SbqySCr+6uXg=;
-        b=MsWYHOvhVM7L24ZaECYP8VUFz0mrwcxdbuBMKPvYJ4VEEJoVwhvrRElmVp0DkoJ0wx
-         tzJatAYyZn4sl2Tscjglu6ZdBAxZVu2hXfrAuCzR8MBUwaPWF4GBBtkAz3mCb20P3PNp
-         lHJF6M12pg7+EjpPJb5Q45xJLy6nrcpdxYSzDaQ45KaoKCTwTiDP+UzK50kA+bx7fhqy
-         uGQnliv3uz+7rrxFM0eaw2srO2cJ7rnJqQ+x2DTdY0T4TVGOqdueksZRYG/GWXn961HG
-         NSQH3JdB/Y+B4QXFvoU4sdnsV/T35lfcO6KYLUmvB3adyk6zIALtg42Qz/ckixFFNldc
-         M1QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729074137; x=1729678937;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hVbtChpMQWzTvbStouuEBhs655kBL7SbqySCr+6uXg=;
-        b=EuHVajG/kwRDyqZ9eXXOVA8h6+PRWGWqg2e39UYMsnBpRqIzWjhuyK7FXBy87vAWc6
-         Cw8qvHE05obJxQY+CWGAbn5ScKhBPVxSQzbM+uVO/Offn5MUlBVgI5mjh23WeIRVYZ0B
-         V5gpuase5wH5g0NekCPvT5NXcoP85pcGHYRGYEW8CpOze615xatckXf2rQRSDDwpCWuI
-         ux8pJWu2vHzvg5p/jjPItXVXrYVYQOUvhgGfT93oj+jiE3KK5gHuMyJGHEtQMWfwuzjJ
-         +iD4nWV4qqik4tFUyQKKTrNh5km05haA78AtyP3NjNEyvCxHMz8p/ZtClavQMbz5BdVb
-         8OlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyAENaHIx3lK8NQqICzb9rXy6mfeLGOp7Hagx7io6dken7BQj0z3R4OqJxwdsygZVIMN5ZL364B/Wz+Abw@vger.kernel.org, AJvYcCVPUq61+K+Ag7vsRxz3y5Y3lm0PGbnc0gFJ0lRGtFijjz6ZVLNPZtUCDPsxvTvO8FAztsg6DtFel1AA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyri5Xugu81SB6wcCYir8qQUondMq4M/Kvt1T2vcqQEdP3+tCxj
-	LJ/CJ8l+JhMMOWca/cZvKeY3RFHpY7aHj8yv6Q7kLf+Rbmn0d3uP
-X-Google-Smtp-Source: AGHT+IGwbEg2OVpmhjJFB/PceC4hTOBxNneYztJDXoHfuTwJ9C1n3PKfJvERipSCSvzynbZY4SvWmQ==
-X-Received: by 2002:a17:903:22cb:b0:20c:ccb7:df84 with SMTP id d9443c01a7336-20d27f0cf28mr42417215ad.42.1729074137311;
-        Wed, 16 Oct 2024 03:22:17 -0700 (PDT)
-Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c715fa0sm2976588a12.78.2024.10.16.03.22.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 03:22:16 -0700 (PDT)
-Date: Wed, 16 Oct 2024 18:22:12 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1729074158; c=relaxed/simple;
+	bh=M83xBFS9S663CxkeQb0fWjPDQTjOp02H0JrOmRYP17M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tKC4o44R89OX3rC+cPZgk14GFIibGa/eP7UYZAQkJRmA00Bvmdu2G6+fJf1GMAMBz0NVyEFZEWtqf8a8QC9RPxXYiQH38ZqgCAdQQB9Pi1HsR66kbmyQXKiHjjbsSw1mScWMJ62T2VZK74KQwjQ+T1v9AXSYG/2NpTtHJH+1P+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sM+4KM7g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E37E5C4AF09;
+	Wed, 16 Oct 2024 10:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729074157;
+	bh=M83xBFS9S663CxkeQb0fWjPDQTjOp02H0JrOmRYP17M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sM+4KM7gVF5iMzI05voPXTSJkOlxmHbMEwUYiUYMg6sUqysD5BQ6MFKG333XoQgcQ
+	 PGiBA65U98bcAzfoLIalv2rgp30FJcPHifkCyaU6u7QymhmQzm6rY5Wqt0vS4RYCYV
+	 bPDpTEOFFEw0/CNFdj+ZUBhoDBKfCZ+czOFOtgHG51/ykl6lPGbZNR0wkm6Gj4cHvc
+	 YRmSB8E5Wn9XYNmZIuuZcG4uXrdnxKVmyCWNnkHfrFMkI/YEVnDRWKK5xZ/+UHt3xP
+	 A4pb4KELC+Olp1JOW1FcLI78jbRMxNSOkqY4Er2MtUr9V92PxtlIrYOp1FhNyDHPB8
+	 vIXRCqR7Zl6bg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1t11Ap-00000004YmO-1gnd;
+	Wed, 16 Oct 2024 12:22:35 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: 
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Ha=C5=82asa?= <khalasa@piap.pl>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Martin Tuma <martin.tuma@digiteqautomotive.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 6/6] gpiolib: notify user-space about in-kernel line
- state changes
-Message-ID: <20241016102212.GA236073@rigel>
-References: <20241015-gpio-notify-in-kernel-events-v3-0-9edf05802271@linaro.org>
- <20241015-gpio-notify-in-kernel-events-v3-6-9edf05802271@linaro.org>
- <20241016051944.GA42100@rigel>
- <20241016072730.GA120095@rigel>
- <20241016083747.GB120095@rigel>
- <CAMRc=McR_eMizF6r30NqbgK4mE5ErzR=wbkD4O-Czn=+Oj4AXQ@mail.gmail.com>
- <20241016091714.GA207325@rigel>
- <CAMRc=MdoeyXwKuLmrmJ8zRCtVDNzEd34zgZ5Autye0TNv_OLhg@mail.gmail.com>
- <20241016094311.GA210746@rigel>
- <CAMRc=Mefz=EBd6us-eK8kqk8zL0=LsEWUkP3JB7a0M7xcT8z8Q@mail.gmail.com>
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH 00/13] Media: fix several issues on drivers
+Date: Wed, 16 Oct 2024 12:22:16 +0200
+Message-ID: <cover.1729074076.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mefz=EBd6us-eK8kqk8zL0=LsEWUkP3JB7a0M7xcT8z8Q@mail.gmail.com>
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Wed, Oct 16, 2024 at 12:12:10PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Oct 16, 2024 at 11:43 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Wed, Oct 16, 2024 at 11:22:07AM +0200, Bartosz Golaszewski wrote:
-> > > On Wed, Oct 16, 2024 at 11:17 AM Kent Gibson <warthog618@gmail.com> wrote:
-> > > >
-> > > > > >
-> > > > >
-> > > > > You mean, you get a CHANGED_CONFIG event but the debounce value is not
-> > > > > in the associated line info?
-> > > > >
-> > > >
-> > > > Correct.
-> > > >
-> > >
-> > > Ok, let me see.
-> > >
-> >
-> > When setting from userspace the issue is that linereq_set_config() setting the
-> > direction will emit, quite possibly before the debounce has been set.  The
-> > edge_detector_setup() that does set it can also emit, though only if the
-> > hardware supports debounce.  And then there could be a race between the
-> > notifier being called and the period being set in the supinfo.
-> > (the set will probably win that one)
-> >
-> > Debounce set from the kernel side is going to be an issue as cdev
-> > catches and stores the value from userspace to report in the supinfo - that
-> > isn't the case for kernel calls to gpiod_set_config().
-> >
-> > Seems moving the debounce value out of the desc and into cdev, which seemed a
-> > good idea at the time, might come back and bite now if it is no longer
-> > restricted to being cdev specific.  Now there is an actual reason to
-> > store it in the desc :(.
-> >
->
-> I'm seeing commit:
->
-> commit 9344e34e7992fec95ce6210d95ac01437dd327ab
-> Author: Kent Gibson <warthog618@gmail.com>
-> Date:   Tue Dec 19 08:41:54 2023 +0800
->
->     gpiolib: cdev: relocate debounce_period_us from struct gpio_desc
->
->     Store the debounce period for a requested line locally, rather than in
->     the debounce_period_us field in the gpiolib struct gpio_desc.
->
->     Add a global tree of lines containing supplemental line information
->     to make the debounce period available to be reported by the
->     GPIO_V2_GET_LINEINFO_IOCTL and the line change notifier.
->
->     Signed-off-by: Kent Gibson <warthog618@gmail.com>
->     Reviewed-by: Andy Shevchenko <andy@kernel.org>
->     Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> But it doesn't explain *why* we did this and I don't remember the
-> story behind this change.
->
-> How bad would it be to go back to storing the debounce setting in the
-> descriptor?
->
+There are a number of issues that aren't passing on some static analyzer
+checks.
 
-At the time it was only being used in cdev, and moving it into cdev was
-just about not exporting cdev specific stuff to the rest of the kernel.
-So it was just tidying up.
-But if cdev is now reporting the configuration of the line independent
-of whether it was set from userspace or the kernel then it actually
-makes more sense for that state to be stored in the desc.
+Address some of them.
 
-I don't have any objections to that commit being reverted.
+Mauro Carvalho Chehab (13):
+  media: v4l2-ctrls-api: fix error handling for v4l2_g_ctrl()
+  media: v4l2-tpg: prevent the risk of a division by zero
+  media: dvbdev: prevent the risk of out of memory access
+  media: dvb_frontend: don't play tricks with underflow values
+  media: mgb4: protect driver against spectre
+  media: av7110: fix a spectre vulnerability
+  media: s5p-jpeg: prevent buffer overflows
+  media: ar0521: don't overflow when checking PLL values
+  media: cx24116: prevent overflows on SNR calculus
+  media: adv7604 prevent underflow condition when reporting colorspace
+  media: stb0899_algo: initialize cfr before using it
+  media: cec: extron-da-hd-4k-plus: don't use -1 as an error code
+  media: pulse8-cec: fix data timestamp at pulse8_setup()
 
-Cheers,
-Kent.
+ .../extron-da-hd-4k-plus.c                    |  6 ++---
+ drivers/media/cec/usb/pulse8/pulse8-cec.c     |  2 +-
+ drivers/media/common/v4l2-tpg/v4l2-tpg-core.c |  3 +++
+ drivers/media/dvb-core/dvb_frontend.c         |  4 +--
+ drivers/media/dvb-core/dvbdev.c               | 17 ++++++++++--
+ drivers/media/dvb-frontends/cx24116.c         |  7 ++++-
+ drivers/media/dvb-frontends/stb0899_algo.c    |  2 +-
+ drivers/media/i2c/adv7604.c                   | 26 ++++++++++++-------
+ drivers/media/i2c/ar0521.c                    |  4 +--
+ drivers/media/pci/mgb4/mgb4_cmt.c             |  2 ++
+ .../platform/samsung/s5p-jpeg/jpeg-core.c     | 17 +++++++-----
+ drivers/media/v4l2-core/v4l2-ctrls-api.c      | 10 ++++---
+ drivers/staging/media/av7110/av7110.h         |  4 ++-
+ drivers/staging/media/av7110/av7110_ca.c      | 25 ++++++++++++------
+ 14 files changed, 90 insertions(+), 39 deletions(-)
+
+-- 
+2.47.0
 
 
 
