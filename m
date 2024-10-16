@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-367520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0161E9A0360
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:58:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042E29A0366
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 09:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A7D21C280F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BE43B242A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 07:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D483A1B2193;
-	Wed, 16 Oct 2024 07:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054171CBA16;
+	Wed, 16 Oct 2024 07:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fE1nfrPW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="SQEze3JY"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2168F189F3F;
-	Wed, 16 Oct 2024 07:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46C21B2193;
+	Wed, 16 Oct 2024 07:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065499; cv=none; b=Fv08HjI1GUYpEaxSy2LECth8nogkuMOV02AEhSSqc6gg7JM+Mdqlsf9pONuXNFVjWmJkgt89fUHjtIFEQ9fOC6kAq3Z3FTw51ObQFmeotIBj1yHT09X3v3KtS1yxEzPDgWxBZmgEpPT+ud9WVznGSnx2edak+pVHKI1FBw9DkpU=
+	t=1729065549; cv=none; b=B52nm3fs6xT4ZBe4ZgohiqIWYuCLGYkOBI5yWkWnwBEU0zotdmLen8M35CbebXeF3WP8Cq1jh1IAGsE30a1PLz9wZ2fmTayqjV69Ln8HB+3xUMj5FvxoEhWQlN/UEjjoXZaUb4pD18jRO3E1gMxuh24R2qK/bKCGXeZFOV5vUgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065499; c=relaxed/simple;
-	bh=nsM60+cNuES1C+fqTbnc5ooJ0hP520KLGK9VFBCBDGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drXepBJETda9u3LJedyxC6BqtTvNmAfhsSYOSPsjxAK99fQvg5ZNPqHEFYCgQ7XQe2Am7dcjou/AhHc/WrkaQLi5ShW4r/EQxpLckZ7YmVrsL2+ybbsSVeCx20UJGACV3TN+p7O4eDXe6V5E32Hw/VK8Kek8OGpjbIrvddYRheo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fE1nfrPW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D67C4CEC5;
-	Wed, 16 Oct 2024 07:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729065498;
-	bh=nsM60+cNuES1C+fqTbnc5ooJ0hP520KLGK9VFBCBDGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fE1nfrPWvmps83biOQkLKuOrEbyoX9F+oYZZR4MyCkhnTWXLfurI4YDDnEgp3i07b
-	 VRYqDkPXIU+qUtKDWJ717mNrRjaZqikw3+etM/jDuz+SlyxnvznHnDKrAlDX0CzJ7e
-	 fINBIZ+D9Zp09Ppusrp8Fb0ZqNgnLr3Jdt9Q8ncBHGtElLWB9ESeQ5b5BDNqyqrPHs
-	 CtV1sq/qM1ERfGyqIll+x8X3NR+ZGI4q/LTpO0Q+uyL0JEmPhyTYdi0Xyt3NDfgwb3
-	 N7NtwUeILsWm6XGFTmTz4KTjWwUil3aV5cQPTDvmG6RV280Yh47SXf5mfG97vA2mxx
-	 vkzZ51zg7DMLg==
-Date: Wed, 16 Oct 2024 08:58:08 +0100
-From: Lee Jones <lee@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Macpaul Lin <macpaul.lin@mediatek.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v8 3/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT
- schema format
-Message-ID: <20241016075808.GM8348@google.com>
-References: <20241001104145.24054-1-macpaul.lin@mediatek.com>
- <20241001104145.24054-3-macpaul.lin@mediatek.com>
- <5nvshurbpmjkqysphfrfxhekq3c6od6a2uqai4rfxns64mdvf7@ftjvgjnivr3k>
- <20241009155222.GB637580@google.com>
- <vb324yv7s7yew6m74lfvdv6wnuo6e4rxtiu2q7okypttw46ox2@lgfdkie6o3t2>
+	s=arc-20240116; t=1729065549; c=relaxed/simple;
+	bh=IFGp3OJ05WhcLD4qS+zh1HFrpAUMaxtwBRrpvE2rOu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZXlFMD7MMLcnC+UdRuAiFFJovi84yqbeZS5ZbYmmAfoccfdMe+sCLzwBrPnpYNGlR0NyscBX2CXVow3dKday8/x+r4fS0pRtz4MGRzc5YbeUfjU3ja8QurALsARq5fHG+ZuSLAAswV740rCvyEygxZ/T7RTpjIGLrHfqJ2fBDAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=SQEze3JY; arc=none smtp.client-ip=159.100.248.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.119.157])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id E2B8826761;
+	Wed, 16 Oct 2024 07:59:05 +0000 (UTC)
+Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
+	by relay3.mymailcheap.com (Postfix) with ESMTPS id 175473E8D7;
+	Wed, 16 Oct 2024 09:58:58 +0200 (CEST)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 2E0B6400AD;
+	Wed, 16 Oct 2024 07:58:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1729065536; bh=IFGp3OJ05WhcLD4qS+zh1HFrpAUMaxtwBRrpvE2rOu4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SQEze3JYLCmgfxwMvoSQWHON6U8bwpZoUPAu5NKgVO4F4qsW7E0OTxJEzXvXFj/HK
+	 u8JzMW88FZwyZUOcKYimMdMVjfcnvrDj6O+51w5ce/1scAyIo4gcnUVcM84wa9PzlJ
+	 YoGmaZyTfuV8GBFOtfRPzxcjWozFD0V/kGBwUYyA=
+Received: from [198.18.0.1] (unknown [58.32.43.121])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 1A15140F81;
+	Wed, 16 Oct 2024 07:58:50 +0000 (UTC)
+Message-ID: <cdad74ac-5b86-49fb-a6dc-8d5392e7bc6f@aosc.io>
+Date: Wed, 16 Oct 2024 15:58:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <vb324yv7s7yew6m74lfvdv6wnuo6e4rxtiu2q7okypttw46ox2@lgfdkie6o3t2>
+User-Agent: Thunderbird Daily
+Subject: Re: [PATCH 6.6 000/211] 6.6.57-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241015112327.341300635@linuxfoundation.org>
+Content-Language: en-US
+From: Kexy Biscuit <kexybiscuit@aosc.io>
+In-Reply-To: <20241015112327.341300635@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: nf2.mymailcheap.com
+X-Rspamd-Queue-Id: 2E0B6400AD
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [1.41 / 10.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	TO_DN_SOME(0.00)[]
 
-On Tue, 15 Oct 2024, Sebastian Reichel wrote:
-
-> Hi,
+On 10/15/2024 7:25 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.57 release.
+> There are 211 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Wed, Oct 09, 2024 at 04:52:22PM +0100, Lee Jones wrote:
-> > On Wed, 02 Oct 2024, Krzysztof Kozlowski wrote:
-> > 
-> > > On Tue, Oct 01, 2024 at 06:41:45PM +0800, Macpaul Lin wrote:
-> > > > Convert the mfd: mediatek: mt6397 binding to DT schema format.
-> > > > 
-> > > > MT6323, MT6358, and MT6397 are PMIC devices with multiple function
-> > > > subdevices. They share a common PMIC design but have variations in
-> > > > subdevice combinations.
-> > > > 
-> > > > Key updates in this conversion:
-> > > > 
-> > > > 1. RTC:
-> > > >    - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
-> > > 
-> > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > 
-> > Everyone okay with me taking this without a pull-request?
+> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> Anything received after that time might be too late.
 > 
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.57-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+Building passed on amd64, arm64, loongarch64, ppc64el, and riscv64. 
+Smoke testing passed on 8 amd64 and 1 arm64 test systems.
 
-Thanks Sebastian.
+Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
 
-I have a bunch of things that depend on this, so I'm going to whip it in.
-
+https://github.com/AOSC-Dev/aosc-os-abbs/pull/8304
 -- 
-Lee Jones [李琼斯]
+Best Regards,
+Kexy Biscuit
 
