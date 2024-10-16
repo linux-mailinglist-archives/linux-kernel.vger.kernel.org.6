@@ -1,54 +1,50 @@
-Return-Path: <linux-kernel+bounces-367066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE39C99FE39
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:25:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA8099FE3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 03:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19CE5B258A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12CF287653
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 01:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF5913632B;
-	Wed, 16 Oct 2024 01:25:34 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F146D1494DD;
+	Wed, 16 Oct 2024 01:25:38 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3B4139D1E;
-	Wed, 16 Oct 2024 01:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AA4148828;
+	Wed, 16 Oct 2024 01:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729041934; cv=none; b=BpEhuOKF2GYO+IxYfxO80ZvNstH31yKvYLtDwqhy/Tcb3zMFG6n29Mbe0zklwhVVqyTk3ZtKeBqs6Qsw5SlKHol9eVaS8cuecY68V5k9xjEtC5cy3Irxc4A0gEB7F0QGcRXL03pPfPU+8OCaSEBOuXik7ZAUkQbwTZg4hDuwJlw=
+	t=1729041938; cv=none; b=dqDmJLSnydbCYi1c1FaN+XVVWi0hWmmKe0yfOVU8mk4kw96/vkPtarb+atHTAm5nupE4c65QqZSwV41NzJE87VN63XBojQ+vt7+btQXO/oFCLxucgqgUDe6UqAUg30QrJPxsXwBW0hnzHrbjrzRYIwFLJv6DP8LhNSI4XnNVwLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729041934; c=relaxed/simple;
-	bh=/O0nwG5q+ZbZD8CHMfzcpNk/UC5lJTdQaq1FwDt8qMk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cbb3ndJcvE2vUHNmkH8RN/95cnRo3IfuVcwzSUnCOXkp/cHsatZuvy3uyopw12cyYCU7ArHkfPKe3SIu5QuRq1xHfDenKrsgfHkbvP+HNL4uxjmCzNbu8Lbwi2O00vGozbmU2ViaPtKr0qgMlRnz969aYUXJcBSnVIoQyH7elJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	s=arc-20240116; t=1729041938; c=relaxed/simple;
+	bh=A0yBaWk5j8WWpvcqYdJ5DZ3LZ3ZYiiORPRkuAsqLd+8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UXmZ61LrYuW+KiA48o1P1PeqcJF1fPjUAcyxc5thkoGPbvYRCgrgo2aGDq5I1ipG9462lR77DW/Ii4A8G+8hMc/yhY01sPycxFSEXIXN7jK4Df39HBR3B1QtbdiVPUow0/0f9QTxSBysVPPY80vkIrTFGGbRTJczjdabmlXBGMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XStTT0LZvz1HL2J;
-	Wed, 16 Oct 2024 09:21:17 +0800 (CST)
-Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
-	by mail.maildlp.com (Postfix) with ESMTPS id EB6FA1A0188;
-	Wed, 16 Oct 2024 09:25:29 +0800 (CST)
-Received: from huawei.com (10.50.165.33) by kwepemm600005.china.huawei.com
- (7.193.23.191) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 09:25:29 +0800
-From: Longfang Liu <liulongfang@huawei.com>
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
-Subject: [PATCH v10 4/4] Documentation: add debugfs description for hisi migration
-Date: Wed, 16 Oct 2024 09:23:08 +0800
-Message-ID: <20241016012308.14108-5-liulongfang@huawei.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20241016012308.14108-1-liulongfang@huawei.com>
-References: <20241016012308.14108-1-liulongfang@huawei.com>
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XStY058ZNz2Ddhn;
+	Wed, 16 Oct 2024 09:24:20 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6DC02140136;
+	Wed, 16 Oct 2024 09:25:34 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 16 Oct
+ 2024 09:25:33 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <mazziesaccount@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH v2] iio: gts-helper: Fix memory leaks for the error path of iio_gts_build_avail_scale_table()
+Date: Wed, 16 Oct 2024 09:24:53 +0800
+Message-ID: <20241016012453.2013302-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,53 +53,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600005.china.huawei.com (7.193.23.191)
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Add a debugfs document description file to help users understand
-how to use the hisilicon accelerator live migration driver's
-debugfs.
+If per_time_scales[i] or per_time_gains[i] kcalloc fails in the for loop
+of iio_gts_build_avail_scale_table(), the err_free_out will fail to call
+kfree() each time when i is reduced to 0, so all the per_time_scales[0]
+and per_time_gains[0] will not be freed, which will cause memory leaks.
 
-Update the file paths that need to be maintained in MAINTAINERS
+Fix it by checking if i >= 0.
 
-Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+Cc: stable@vger.kernel.org
+Fixes: 38416c28e168 ("iio: light: Add gain-time-scale helpers")
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- .../ABI/testing/debugfs-hisi-migration        | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-hisi-migration
+v2:
+- Update the commit message.
+- Add Reviewed-by.
+---
+ drivers/iio/industrialio-gts-helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/debugfs-hisi-migration b/Documentation/ABI/testing/debugfs-hisi-migration
-new file mode 100644
-index 000000000000..89e4fde5ec6a
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-hisi-migration
-@@ -0,0 +1,25 @@
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/dev_data
-+Date:		Oct 2024
-+KernelVersion:  6.12
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the configuration data and some status data
-+		required for device live migration. These data include device
-+		status data, queue configuration data, some task configuration
-+		data and device attribute data. The output format of the data
-+		is defined by the live migration driver.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/migf_data
-+Date:		Oct 2024
-+KernelVersion:  6.12
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the data from the last completed live migration.
-+		This data includes the same device status data as in "dev_data".
-+		The migf_data is the dev_data that is migrated.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/cmd_state
-+Date:		Oct 2024
-+KernelVersion:  6.12
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Used to obtain the device command sending and receiving
-+		channel status. Returns failure or success logs based on the
-+		results.
+diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
+index 7326c7949244..5f131bc1a01e 100644
+--- a/drivers/iio/industrialio-gts-helper.c
++++ b/drivers/iio/industrialio-gts-helper.c
+@@ -315,7 +315,7 @@ static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
+ 	return 0;
+ 
+ err_free_out:
+-	for (i--; i; i--) {
++	for (i--; i >= 0; i--) {
+ 		kfree(per_time_scales[i]);
+ 		kfree(per_time_gains[i]);
+ 	}
 -- 
-2.24.0
+2.34.1
 
 
