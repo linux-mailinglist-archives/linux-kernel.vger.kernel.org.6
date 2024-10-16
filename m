@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-368899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F599A163D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333779A163E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C204B22787
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6499C1C21B3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 23:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9911D5154;
-	Wed, 16 Oct 2024 23:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55F41D47D2;
+	Wed, 16 Oct 2024 23:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hloGVJNt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vs2FdFPi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A261D26E0
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E8B1D4326;
+	Wed, 16 Oct 2024 23:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729122515; cv=none; b=sk/pjXCXNJvcFVpSWzV+RIRfuJq/kVmdSIWKwbF9Tq1zDOowIv9Az2LmAYGMZJIM60ZQInFsMbDFKYUHk1gjZV44j9dquer6O1vW0Td6bnS6lUyiXyqtv5sdEpKljjIwMBG7CQzfMCE0zQZPkKTxXPNLKHRyyFbzjKmBojrm+x8=
+	t=1729122540; cv=none; b=KRcQ9yfpiktWv7GZO55pEBj0HPTFUrVV1f14HnEjS0wkZFUGQL0XXV59OOKdvbF+S9lhL3UEQa5+dkWaI2xqd3gi2Mh4C32OvjDViw35DguDjaW5UKy8dCaVNVRfJZM36g+ASskdJ153bltYF/fSAWXzEXKWNcxo40dDrOEWJeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729122515; c=relaxed/simple;
-	bh=PaGsx/p0g1rFIDlC9skbTCx5rM5FzER3gMJF5RCNy3k=;
+	s=arc-20240116; t=1729122540; c=relaxed/simple;
+	bh=OTwOkoWmfTn4F0dH9iJsnedRplKiFkYwk4xyDcdIE8c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k4kqHD1yTtgzHy34DXi+VnMnlG10N5KcjnM2eE1ZnGUuneyhIa3kP5fPHjsjnM4R5gN2IDQZs4OI9Ko0dxqKz52Em4yCTGMHYZ7Uz/PIVnQU5bP/381UNmVoLcnBEluR7wOTcsu/4jDZLvLoL/hIImoYa0+QR+yaPt/kIGhd6AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hloGVJNt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729122512;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w5zbNhf2ti3veBbqghgqqHYmZD0VaAPt+Z/wXzjXNA4=;
-	b=hloGVJNtPMc/kGKg21JoVWq0U1t5yNE+PRSgae5rXGbfARCZG8zy4dTiLS6kGavecfb56L
-	i/NUfaj7Es1pZwqyj59hPgkMTTqequ7qZXpD3VnCkltNxPaDbihhPafivKq1Tm6X4X5w8J
-	Fe4Zi/fonsvfWw7bxGoBTx7o/n9eIrE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-QXFk1vzHNKWcuwhiSxyKfQ-1; Wed,
- 16 Oct 2024 19:48:27 -0400
-X-MC-Unique: QXFk1vzHNKWcuwhiSxyKfQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3C67195608F;
-	Wed, 16 Oct 2024 23:48:25 +0000 (UTC)
-Received: from f39 (unknown [10.39.192.145])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8CC4D19560A3;
-	Wed, 16 Oct 2024 23:48:22 +0000 (UTC)
-Date: Thu, 17 Oct 2024 01:48:19 +0200
-From: Eder Zulian <ezulian@redhat.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	williams@redhat.com, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
-Subject: Re: [PATCH] rust: Fix build error
-Message-ID: <ZxBQw1X_OG26RO9o@f39>
-References: <20241014195253.1704625-1-ezulian@redhat.com>
- <Zw1_rXUyjTBOh0QH@boqun-archlinux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOjTqBqVjhvYbBhbunsayuVLuVIhVGSg3wfSMx2DCMp1bw0EEKxhWbYlAUBYUUeOAviEdTaZK20IX8R1u3Wcx7fLp2luPCFFdRfL73tpLws2Iob2N7WMKvFpE8Y9Itn8V5ikIOCvOXjqvXepS9mUIEmXemJ2elJCOmV+m2QD5Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vs2FdFPi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 059D4C4CEC5;
+	Wed, 16 Oct 2024 23:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729122539;
+	bh=OTwOkoWmfTn4F0dH9iJsnedRplKiFkYwk4xyDcdIE8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vs2FdFPi/ml057V1uZ/GMcyC8BPQpEXvAzu+LMqhPES4ha2Jz1BXFrWRuQXyZZ/4e
+	 EmX5O/Qw24ZdDeCKxHpEljE3vV6EDsf7+mwbAPKpfyr5pBJK7Lw3kqD8U3r6SjYAK7
+	 JnWRNhwNdtTRFqjjOgyv9FLWc3pnDsITCVRD/XEyAMbAiifCutrrZBLK6LP1keOC4O
+	 ySymYpJtnYl3QieW3fQY0na+WXRdKjxFlGucvFYgU8Ff/bakQS4wy8F1rsxgFX+AJP
+	 77+KqC7y7NSM1JmBoJ6J0BE2dLuCbtSFwKGzXSOSIgzpMYz2SJeCKjGmFIrD8gj5z1
+	 aEHuwA4BBVe6w==
+Date: Wed, 16 Oct 2024 16:48:57 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] Run tests in parallel showing number of tests
+ running
+Message-ID: <ZxBQ6Z2dvxmQ9Vi0@google.com>
+References: <20241011220354.756798-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,120 +74,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zw1_rXUyjTBOh0QH@boqun-archlinux>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20241011220354.756798-1-irogers@google.com>
 
-Hi Boqun,
-On Mon, Oct 14, 2024 at 01:31:41PM -0700, Boqun Feng wrote:
-> Hi Eder,
+On Fri, Oct 11, 2024 at 03:03:46PM -0700, Ian Rogers wrote:
+> Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
+> to read them for display. When running on a color terminal, display
+> the number of running tests (1 if sequential). To avoid previous
+> flicker, only delete and refresh the display line when it changes. An
+> earlier version of this code is here:
+> https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com/
 > 
-> Thanks for the patch!
-Sure, my pleasure.
+> Add a signal handler for perf tests so that unexpected signals are
+> displayed and test clean up is possible.
 > 
-> On Mon, Oct 14, 2024 at 09:52:53PM +0200, Eder Zulian wrote:
-> > When CONFIG_DEBUG_SPINLOCK=y and CONFIG_PREEMPT_RT=y the following build
-> > error occurs:
-> > 
-> >     In file included from rust/helpers/helpers.c:22:
-> >     rust/helpers/spinlock.c: In function ‘rust_helper___spin_lock_init’:
-> >     rust/helpers/spinlock.c:10:30: error: implicit declaration of function ‘spinlock_check’; did you mean ‘spin_lock_bh’? [-Wimplicit-function-declaration]
-> >        10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-> >           |                              ^~~~~~~~~~~~~~
-> >           |                              spin_lock_bh
-> >     rust/helpers/spinlock.c:10:30: error: passing argument 1 of ‘__raw_spin_lock_init’ makes pointer from integer without a cast [-Wint-conversion]
-> >        10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-> >           |                              ^~~~~~~~~~~~~~~~~~~~
-> >           |                              |
-> >           |                              int
-> >     In file included from ./include/linux/wait.h:9,
-> >                      from ./include/linux/wait_bit.h:8,
-> >                      from ./include/linux/fs.h:6,
-> >                      from ./include/linux/highmem.h:5,
-> >                      from ./include/linux/bvec.h:10,
-> >                      from ./include/linux/blk_types.h:10,
-> >                      from ./include/linux/blkdev.h:9,
-> >                      from ./include/linux/blk-mq.h:5,
-> >                      from rust/helpers/blk.c:3,
-> >                      from rust/helpers/helpers.c:10:
-> >     ./include/linux/spinlock.h:101:52: note: expected ‘raw_spinlock_t *’ {aka ‘struct raw_spinlock *’} but argument is of type ‘int’
-> >       101 |   extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char *name,
-> >           |                                    ~~~~~~~~~~~~~~~~^~~~
-> >     make[2]: *** [scripts/Makefile.build:229: rust/helpers/helpers.o] Error 1
-> > 
-> > Error observed while building a rt-debug kernel for aarch64.
-> > 
-> > On a PREEMPT_RT build, spin locks have been mapped to rt_mutex types, so
-> > avoid the raw_spinlock_init call for RT.
-> > 
+> In perf test add an "exclusive" flag that causes a test to be run with
+> no other test. Set this flag manually for C tests and via a
+> "(exclusive)" in the test description for shell tests. Add the flag to
+> shell tests that may fail when run with other tests.
 > 
-> This is true, but to keep lockdep working I think we need to open code
-> the PREEMPT_RT version of spin_lock_init(), please see below
+> Change the perf test loop to run in two passes. For parallel
+> execution, the first pass runs all tests that can be run in parallel
+> then the 2nd runs remaining tests sequentially. This causes the
+> "exclusive" tests to be run last and with test numbers moderately out
+> of alignment.
 > 
-> > Suggested-by: Clark Williams <williams@redhat.com>
-> > 
+> Change the default to be to run tests in parallel. Running tests in
+> parallel brings the execution time down to less than half.
 > 
-> ^ unnecessary emtpy line here.
-Thanks for pointing it out. Should I fix it and send a v2?
+> v2: Fix inaccurate remaining counts when running specific
+>     tests. Rename "remaining" to "active" to better reflect the
+>     testing behavior. Move the exclusive flag to test cases and not
+>     entire suites. Add more "(exclusive)" flags to test as
+>     suggested-by James Clark. Remove "(exclusive)" flag from test
+>     descriptions to keep the command line output more concise. Add
+>     James Clark's tested-by.
 > 
-> > Signed-off-by: Eder Zulian <ezulian@redhat.com>
-> > ---
-> >  rust/helpers/spinlock.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
-> > index acc1376b833c..924c1a380448 100644
-> > --- a/rust/helpers/spinlock.c
-> > +++ b/rust/helpers/spinlock.c
-> > @@ -6,7 +6,7 @@
-> >  void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
-> >  				  struct lock_class_key *key)
-> >  {
-> > -#ifdef CONFIG_DEBUG_SPINLOCK
-> > +#if defined(CONFIG_DEBUG_SPINLOCK) && !defined(CONFIG_PREEMPT_RT)
-> >  	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-> >  #else
-> >  	spin_lock_init(lock);
-> 
-> This should be:
-> 
-> void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
->  				  struct lock_class_key *key)
-> {
-> #ifdef CONFIG_DEBUG_SPINLOCK
-> # if defined(CONFIG_PREEMPT_RT)
-Even though I don't have a strong preference on this, in my opinion, there is no
-much difference here just a line break and inverted logic. Perhaps it would be
-better to write like this: 'if (IS_ENABLED(CONFIG_PREEMPT_RT && ... ) { this }
-else { that }', however, spinlock_check() is not declared for PREEMPT_RT
-kernels because its declaration is conditional to #ifndef CONFIG_PREEMPT_RT in
-'spinlock.h'. spinlock_check() as is does not make sense for PREEMPT_RT
-because spinlock is not mapped to raw_spinlock but to rt_mutex (cf.
-'spinlock_types.h')
-> 	rt_mutex_base_init(&(lock)->lock);
-> 	__rt_spin_lock_init(lock, name, key, false);
-Apparently, this ^ matches spin_lock_init() in 'spinlock_rt.h', if true, we could
-call spin_lock_init() for PREEMPT_RT kernels. However the debug version of
-__rt_spin_lock_init() (instrumented with lockdep in 'spinlock_rt.c') depends
-on CONFIG_DEBUG_LOCK_ALLOC. Luckily, in my opnion, the #ifdefs are already in
-place.
-> # else /* !CONFIG_PREEMPT_RT */
->   	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-> # endif /* CONFIG_PREEMPT_RT */
-> #else
-> 	spin_lock_init(lock);
-> #endif
-> }
-> 
-Please let me know what you think, and bear with me if I'm missing something.
-Thanks.
-> Regards,
-> Boqun
-> 
-> > -- 
-> > 2.46.2
-> > 
-> > 
-> 
+> Ian Rogers (8):
+>   tools subcmd: Add non-waitpid check_if_command_finished()
+>   perf test: Display number of active running tests
+>   perf test: Reduce scope of parallel variable
+>   perf test: Avoid list test blocking on writing to stdout
+>   perf test: Tag parallel failing shell tests with "(exclusive)"
+>   perf test: Add a signal handler around running a test
+>   perf test: Run parallel tests in two passes
+>   perf test: Make parallel testing the default
 
+Nice work!  It looks much better now.
+
+But I'm seeing more failures in parallel mode.  Maybe we want to
+keep the default serial mode for a little more.
+
+Thanks,
+Namhyung
+
+> 
+>  tools/lib/subcmd/run-command.c                |  33 +++
+>  tools/perf/tests/builtin-test.c               | 274 ++++++++++++------
+>  .../tests/shell/coresight/asm_pure_loop.sh    |   2 +-
+>  .../shell/coresight/memcpy_thread_16k_10.sh   |   2 +-
+>  .../coresight/thread_loop_check_tid_10.sh     |   2 +-
+>  .../coresight/thread_loop_check_tid_2.sh      |   2 +-
+>  .../shell/coresight/unroll_loop_thread_10.sh  |   2 +-
+>  tools/perf/tests/shell/list.sh                |   5 +-
+>  .../tests/shell/perftool-testsuite_report.sh  |   2 +-
+>  tools/perf/tests/shell/record.sh              |   2 +-
+>  tools/perf/tests/shell/record_lbr.sh          |   2 +-
+>  tools/perf/tests/shell/record_offcpu.sh       |   2 +-
+>  tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
+>  tools/perf/tests/shell/test_arm_coresight.sh  |   2 +-
+>  .../tests/shell/test_arm_coresight_disasm.sh  |   2 +-
+>  tools/perf/tests/shell/test_arm_spe.sh        |   2 +-
+>  tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
+>  .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
+>  tools/perf/tests/task-exit.c                  |   9 +-
+>  tools/perf/tests/tests-scripts.c              |   7 +-
+>  tools/perf/tests/tests.h                      |   9 +
+>  tools/perf/util/color.h                       |   1 +
+>  22 files changed, 258 insertions(+), 110 deletions(-)
+> 
+> -- 
+> 2.47.0.rc1.288.g06298d1525-goog
+> 
 
