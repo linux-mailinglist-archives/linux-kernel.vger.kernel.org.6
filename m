@@ -1,172 +1,199 @@
-Return-Path: <linux-kernel+bounces-368174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E969A0C40
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:07:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666379A0C45
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 16:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A095B24C88
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDDFD28633C
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 14:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC1F209F5E;
-	Wed, 16 Oct 2024 14:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F145920B1ED;
+	Wed, 16 Oct 2024 14:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W5O7KgOM"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2084.outbound.protection.outlook.com [40.107.212.84])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="No7MyOSG"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40F8208239
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729087656; cv=fail; b=JQvR2aTtWl9HkURGOd6ZNVFMGA266TREYz9IYM3eegkdPecIqyp7X3OmSYhp4TBBTbbgMQg3Ps74cY3amoGT9UrYip93+09A0yAMFhSGYV4shJ8HlC5hB+sexbfMmwoFALbZ4xXElqWAgjoCIrCsDxNshG3reEso6DWTlD1HrgU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729087656; c=relaxed/simple;
-	bh=AJK9k4gdS2mhz33u6MDztl49OoPIACfA+C/caVRfBLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Tdn4edHHiMB/YdPLJ9k72lWotxEQYJxIzrwjqnWcd++UROMsryPXtYf0aOiiJIi4aWhzzlaX6//2Sp2hhgOia8fQpEwTMke29yD0H9whaHwUG6dYn5zqF+gSGZSdya1G2lmQCp6qE0bw6F5JDJKAgEJTHgTpx/E06O2VJvDmARI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W5O7KgOM; arc=fail smtp.client-ip=40.107.212.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xgXNuYl35LygOH37tB4FuJMpK8tq7VtaupIl399qbOT/aVwfQrwzMVSCNJgkUlcfHM+M7iZLWptBNExH+fX4Ip72Ft4VDLGUn2m+F6ZM3nybYzR8nMdE3BAq8yxbUYNckOi2m3qxPj5/ijcISb6LiwDRWkGnOwDKsDHB5EVklWVjCHUPrYoruKw2/VFjnLgz0JQc7bpdoKpxstNrHlX2gUdEQRdOqXbg6X6bc67+KzFrm+BiNGxLL7O3tV+LZgzrMp/e9Qurkc1/UTK1LLh1fzIuPpkuM7QhTUyf4cF5HNfxSq1S7X+ioHov0BKkLSlTX0Ts0liuN4fvStV7biLL8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AWMoCD/6zSnaT6RzVAsmI1xRHXh2/Yxnn0favkFnqA8=;
- b=OwFP4smTKmkRs1XV8XeHh7trMtdmk8FHTgff3PfiS+JToRO+FjbYqS1b2mdH7Zi+NhiZ2yHkZ86tWzTPOv2cJoP+/MtQMffWOGOB5jTkor3r1ORHXeDkmbTv5lR3pOO7I3yBuHFZoQHpDnLN/5JEBcWK1/2LtbTHi03n9dqV07VwjHqzsjKgGbsipE6LVZJAJDrpiIpZZVAFe6oSYcHUDibtQso9XHkrLgPGn7fbDmbOIc3o47WLOwT8cSqTqZNOnVEotD8p4NnQsNRQGYkps/hqYSHpsn3OwYR7h+dMjEOVm3Bj7ePRTD8Spl6XfyugrdYH+DAG/y3oKASnxv+APw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AWMoCD/6zSnaT6RzVAsmI1xRHXh2/Yxnn0favkFnqA8=;
- b=W5O7KgOMY+P/glG5KLRFg4m47FjdviU4zi3nNkebOjX/yP79oF1aZutv+cNpuxn4mXyRwmcGW1Wd9T8adxZo/lYoBMDrWGKccy4KoROLaH0a2z5uNc+cevcO8keHg7JeTdcNNN73KesRKjSAr+tZfxIV6rQLQB1e9pvaLJGd2ROymswlTljFxVZbLO0Sj+y3gna1FjH1a973Md8oXpgWUAvLwhrknPHY3c+7jGNI1HGiitN5NkarNP0kt503Gk63cduZAk3jVPP/GISaaq71t5UhVVYD3e9y9GO/W6ES8TIXf7Gljs0yhmFKTi2ZsvUSYUa7CGjybUQ06kQFA7VQ7w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MN0PR12MB5905.namprd12.prod.outlook.com (2603:10b6:208:379::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Wed, 16 Oct
- 2024 14:07:29 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8048.020; Wed, 16 Oct 2024
- 14:07:29 +0000
-Date: Wed, 16 Oct 2024 11:07:28 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
-	robin.murphy@arm.com, vasant.hegde@amd.com, kevin.tian@intel.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, pandoh@google.com,
-	kumaranand@google.com
-Subject: Re: [PATCH v6 5/9] iommu/amd: Modify set_dte_entry() to use 256-bit
- DTE helpers
-Message-ID: <20241016140728.GN3559746@nvidia.com>
-References: <20241016051756.4317-1-suravee.suthikulpanit@amd.com>
- <20241016051756.4317-6-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016051756.4317-6-suravee.suthikulpanit@amd.com>
-X-ClientProxiedBy: BN9PR03CA0412.namprd03.prod.outlook.com
- (2603:10b6:408:111::27) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EEB1DAC9C
+	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 14:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729087750; cv=none; b=JKnp1DEwmsLGeuEF6v4hzz7N/plKr9/OpKqBU3062Of7qjUyx394N3Gsrozp0Q2llkg6M1QucoAQFzB0RDq0NSwaekVtNY/jhvGBZLRx53lNBT1yb+lHRvaXrA9Gn0/xnic128Qox3q3eeNDSoHKdXhZkcncYxhrKKaebaQzZhY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729087750; c=relaxed/simple;
+	bh=n1HYiTnuAzsJiAQJhhvZoIXYiG5MX6pocnZXnP3Qvyc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Cc:Date:
+	 Message-Id:References:To; b=F12ww62NuaGGEFq9Vxu0MVbxaRDH3eQ029Z2x7aKOMPDtAVi2l1u4arjDP8EkYdXYsGx/YfLlsl1nwboKHXD0sS+xHQn26bK52aywpOu3CiJox70tof/wxuaxJZWfH+Ub6/nzn8zfMY+4C2y9KoMuQdexW9s2zGhepHrv7wqgCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=No7MyOSG; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain; charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729087744;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojgkOxmba6luUa6VoA9Sj2MjbqaCDVvzM2a89m3TPgU=;
+	b=No7MyOSGAVb4uVMJj7v9si4kFKurj5C3b8pWkiGtGTw33yoZXH/u4+T4JB0xzxUjUKAMTI
+	aYlKYK1dwtHzdxY+cxuMOaRQ48jb9bAgjZcyKeQ39//KOxVfKW/9kFwOrrmpT67ZIo3J4P
+	YYhwEXYDDl9vpEUTHiL3eUHhKtOHZiI=
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN0PR12MB5905:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6bd9724e-d606-4e1e-d578-08dcedebdee6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6tus9M+ecR8T42U9rA17ns4o3JRtMl4VQ4C1GcWEDQp9nSsjDpfiS+d8IN3v?=
- =?us-ascii?Q?6WCikAp+FkyOxNwpYhiqegPuJ+kVjZ82vLm2z269mHNXB3b772dGpCRSgPdT?=
- =?us-ascii?Q?rBvqpzeHdZNXFUT+ZQHq8LR8id50YASUomftwGpXMEZyDBvSoTksvloql0uj?=
- =?us-ascii?Q?lPKFgZ4yLJiB+mrzXCmjjsRUJjhc3FODnM9ca50Hs/relVeAtnh9V5BOS7xB?=
- =?us-ascii?Q?95UmOy+l/q8EZrwhm2nVk3uplc2roy8ekrAxXyRMKAKIrwZo27UV9huFr/Jr?=
- =?us-ascii?Q?dZMrwG/jXtwdK0IVS1WlralYGLZEIbEyiM/6NLt+Khju34OwzPlO+seHk/Kh?=
- =?us-ascii?Q?DwPSvfhn/pqkhFdwSDUFQMWZ3o6rbssCrldF854SP+wZUUM2o++zVcl5d8id?=
- =?us-ascii?Q?hcjR5shBB7tyXTDzjUdG7RZcCiej9A2Fia9jhpbQkdpkDL+4N/8qgoOm/TQ3?=
- =?us-ascii?Q?RvgjIU+8QzeqjBLzLTxhB8ZIkCmC3leeRKOkRwOcpc6xV8//jePsPiV8AebE?=
- =?us-ascii?Q?pG2eEhiXxF874lbbf6kQ9VWXXHtXRMsuqVrXjkdur6xS3uonOY3jTf7cB8dQ?=
- =?us-ascii?Q?gMonEnDfZ3yl+2RhovAS5mK2aspunri0to5hj2FcpRwUwJMnqC5QzfzB4hCz?=
- =?us-ascii?Q?Kz39DP01VDPO0x/7eV6/S84huZ8Jg72dvsKldKy1QmUg1OMURe21XtCvXucQ?=
- =?us-ascii?Q?+WnpzhrHDkvDrO31+jBdwiACNGY6HzxcdloSkCDszm57bGue5a7QUpedEQ5Z?=
- =?us-ascii?Q?IWwj1vMkosNketih77P92cFr1/kfCBg80aDkSyLoDTsSLxvTX2v5h8feojKr?=
- =?us-ascii?Q?1mGd2d1aF+cFO6xaTBXYXfA49ZqrgGS93oUTvZjz01wmPja5/fVFKgucz5RO?=
- =?us-ascii?Q?tU/GpGsdxsgQ1SVpPNqgFqPCVrWelOJIUbtvm+QpuWAGwRSjm81l4Cuy6iDY?=
- =?us-ascii?Q?ho+NFqLwmuDFFGPY8WnoUAyCfYPbajOZeAgRrnq7+XFUaBl8kstxEMYHJ5Iv?=
- =?us-ascii?Q?jPpCvRpUJhdhCv65IxwUbVbDILDCq71i9X6V7S8xc1DeIYtfFLWjtY+fIexA?=
- =?us-ascii?Q?nQtXc8yqmt1T4J7+w3NDMdOM+fNElDS1On6WZqFpLyQhL2B6mWM0YdJ6c2fV?=
- =?us-ascii?Q?xXTYKtbdgceFU2umqBgfmwLBhdAQpmKRJZg78PeKhcq6nRkEvCXvihNfYubL?=
- =?us-ascii?Q?KQqkLdbegfA3oZbwdLef/+PS3LVqouJ6vKj7zXKkl/5EoR8eEbwQ/IQXhA4V?=
- =?us-ascii?Q?4CM+AvxJwOCHUnFgf6GchiRzGRuyydw1aNrX+MGRtA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DD8jpHhb2DgnEJDRicoMTdKv4HKwtYx6z8Piu+vTkYlVTsERD7xw5wE9FEG/?=
- =?us-ascii?Q?YOfwPNN/btDqSYbzBPS05X2MCsS7xI5zf3iBWGPDpWuSJKDE5XRQ0cm4HLb+?=
- =?us-ascii?Q?8UzFM2+q1ubZc7SVD7SVDtIZS3YPmRysDWsGq9tt4IQX9PkDzX6wWiacIa3w?=
- =?us-ascii?Q?/9bKLjagSpq1fsHj3oiZ6ezsO2LkLBxo0WwSPm0mGx0+rjA97/YlF3i0ZzLk?=
- =?us-ascii?Q?46EIy8iNBuR3SJeRg9yOqa2W7pwt5iXW2flEOa+hXeETeLKx3zdagSEuHc1Z?=
- =?us-ascii?Q?iYfHnTMaprKtszDjO4eWhjjvpnrrL642350Qnf9KM7QITc68ziIQwBrBkbhM?=
- =?us-ascii?Q?XeYmlHNNYZdqBx+gGDMRLJPDQiBGttlBB/qUIBcvtnTvx2SEZTCwq/IsXots?=
- =?us-ascii?Q?6PnzLomS3P4uiB8gKtGAMlOYtQyH6hf9OFd82xa9ueKKiBPRmdqoQNe8g5sz?=
- =?us-ascii?Q?VoKOIWFsTyIZedP5DCYehEjod6N8KrYLKh5VcwJNMMlvO0cOyCBVO5Gpy3vG?=
- =?us-ascii?Q?ps2mVT80A5Kg2GQ13uIpxHDm6n1xipV6qVR0f0QjwXy/v+xSRIROYD9NhrCx?=
- =?us-ascii?Q?TvDYjCqs9hmA2KvxEXrVVNJak3AaqgPsO5jU3xenYTOvAvdcKUMWJDbR3I3w?=
- =?us-ascii?Q?H6llOdUlFRg6x5XXplqNcmoqCzRcqHpYGgsYTRdmYsSXxXFKvmsLpIUZjatE?=
- =?us-ascii?Q?wJ1rYimtUObsIqMnskoKew+J47HZ7ac8ERXROvs4Jld4TnzraC80FJ6wLwp6?=
- =?us-ascii?Q?rqcH0LyURraD143PzFFNz3zcx2q85C1b/4BDCssNSmhh/kAmsDhnbADJQor4?=
- =?us-ascii?Q?CMcnzHYbe015Ir55sCAa2TfmGDM24k7QAwSW1OuR2JXIgThrIDLwreRXHuGj?=
- =?us-ascii?Q?NQXxGyD7vphmeZLD4g7bRCB50SwaD4yYYxyWpHZbr5aNws9TUMTQSvrMQIEF?=
- =?us-ascii?Q?2zFN5QMhFHW3SjURa3dp74Kk3WhEnUrWA7BrftZ1XrkfaAniZNVrkdYKoOuH?=
- =?us-ascii?Q?np1fzZzZN8GNQLzCdZhTU5fVNYGO8NkWoWwLBtl7mVI1crrvPY1SckmiWsj0?=
- =?us-ascii?Q?XPwud/5cAI3v4legYvKa81peoMJOl7+qiVPK+/e37Q9GwlQSPafSeMuhPeu1?=
- =?us-ascii?Q?gpA2KcYACAduiiXoUZJleH5cgGASIa8ja9eg5zaq3lsQjEhENzplkLjPLFY7?=
- =?us-ascii?Q?BzbmTq9EzrhYMxfhQSqEFFRRND9YYGhDjofAVceeS7pPmhdvyFZOXC8rUwnk?=
- =?us-ascii?Q?azCmoZrwHt9NoPYANMDl4LnboDAylmbEHmxns0KLAxMGS6qz+URB+BC+vZSO?=
- =?us-ascii?Q?i3ctjxq7Wsx5V9QhnGQnrbEPKzvY+C86d3MJap2c/z7wc7ZmBCs/RDMfgS1j?=
- =?us-ascii?Q?Gj7eHJNFTdjsgyClYvOBJnJ+Qb35QAMDh0veTWfLJ6HlHcmg67iR5kJ8yI8e?=
- =?us-ascii?Q?sb0YlIXT+/n4YHhJf7J2Anp737Exacs5oaTQPfQjrK5XJclgWxczZA4QBTH4?=
- =?us-ascii?Q?IWpvaab1whO5hKQ1Y+iJO1ay0XD2dx5nNhSlQob+9ycphQ2x3flcLNTf2a53?=
- =?us-ascii?Q?VmACw116NLwoGM17Lww=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bd9724e-d606-4e1e-d578-08dcedebdee6
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2024 14:07:29.4127
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gtZcf0r4SYPS8N+8PyHmTPcjP3rOjl/dA19/+yAi6A1AOH5gqEy0mtWdd3/NIPt9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5905
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <fff87be9-fdc8-4c27-8335-17b0c7e16413@suse.cz>
+Cc: chenridong <chenridong@huawei.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, akpm@linux-foundation.org,
+ david@fromorbit.com, zhengqi.arch@bytedance.com, roman.gushchin@linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, wangweiyang2@huawei.com
+Date: Wed, 16 Oct 2024 22:08:27 +0800
+Message-Id: <1BD74B20-879A-4159-B957-1223553217C1@linux.dev>
+References: <fff87be9-fdc8-4c27-8335-17b0c7e16413@suse.cz>
+To: Vlastimil Babka <vbabka@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 16, 2024 at 05:17:52AM +0000, Suravee Suthikulpanit wrote:
-> +	if (dev_data->ats_enabled)
-> +		new.data[1] |= DTE_FLAG_IOTLB;
-> +	else
-> +		new.data[1] &= ~DTE_FLAG_IOTLB;
 
-No need to clear, it is already 0
 
-> -		tmp = DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
-> -		flags    |= tmp;
-> +	old_domid = READ_ONCE(dte->data[1]) & DEV_DOMID_MASK;
-> +	new.data[1] &= ~DEV_DOMID_MASK;
-> +	new.data[1] |= domid;
+> On Oct 16, 2024, at 19:43, Vlastimil Babka <vbabka@suse.cz> wrote:
+> =EF=BB=BFOn 10/16/24 04:21, Muchun Song wrote:
+>>=20
+>>=20
+>>> On Oct 16, 2024, at 09:25, chenridong <chenridong@huawei.com> wrote:
+>>> On 2024/10/15 14:55, Anshuman Khandual wrote:
+>>>> On 10/14/24 16:59, Kirill A. Shutemov wrote:
+>>>>> On Mon, Oct 14, 2024 at 03:23:36AM +0000, Chen Ridong wrote:
+>>>>>> From: Chen Ridong <chenridong@huawei.com>
+>>>>>> A memleak was found as bellow:
+>>>>>> unreferenced object 0xffff8881010d2a80 (size 32):
+>>>>>>  comm "mkdir", pid 1559, jiffies 4294932666
+>>>>>>  hex dump (first 32 bytes):
+>>>>>>    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>>>>>    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+>>>>>>  backtrace (crc 2e7ef6fa):
+>>>>>>    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>>>>>>    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>>>>>>    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>>>>>>    [<ffffffff81198dd9>] online_css+0x29/0xa0
+>>>>>>    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>>>>>>    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>>>>>>    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>>>>>>    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>>>>>>    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>>>>>>    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>>>>>>    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>>>>>>    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>>>> In the alloc_shrinker_info function, when shrinker_unit_alloc return
+>>>>>> err, the info won't be freed. Just fix it.
+>>>>>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinke=
+r_info::{map, nr_deferred}")
+>>>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>>>> ---
+>>>>>> mm/shrinker.c | 1 +
+>>>>>> 1 file changed, 1 insertion(+)
+>>>>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>>>>>> index dc5d2a6fcfc4..92270413190d 100644
+>>>>>> --- a/mm/shrinker.c
+>>>>>> +++ b/mm/shrinker.c
+>>>>>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>>>>>   err:
+>>>>>>  mutex_unlock(&shrinker_mutex);
+>>>>>> + kvfree(info);
+>>>>>>  free_shrinker_info(memcg);
+>>>>>>  return -ENOMEM;
+>>>>>> }
+>>>>> NAK. If in the future there going to one more error case after
+>>>>> rcu_assign_pointer() we will end up with double free.
+>>>>> This should be safer:
+>>>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>>>>> index dc5d2a6fcfc4..763fd556bc7d 100644
+>>>>> --- a/mm/shrinker.c
+>>>>> +++ b/mm/shrinker.c
+>>>>> @@ -87,8 +87,10 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>>>>>  if (!info)
+>>>>>  goto err;
+>>>>>  info->map_nr_max =3D shrinker_nr_max;
+>>>>> - if (shrinker_unit_alloc(info, NULL, nid))
+>>>>> + if (shrinker_unit_alloc(info, NULL, nid)) {
+>>>>> + kvfree(info);
+>>>>>  goto err;
+>>>>> + }
+>>>>>  rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>>>>>  }
+>>>>>  mutex_unlock(&shrinker_mutex);
+>>>> Agreed, this is what I mentioned earlier as well.
+>>>> ------------------------------------------------------------------
+>>>> I guess kvfree() should be called just after shrinker_unit_alloc()
+>>>> fails but before calling into "goto err"
+>>>> ------------------------------------------------------------------
+>>> After discussion, it seems that v1 is acceptable.
+>>> Hi, Muchun, do you have any other opinions?
+>>=20
+>> I insist on my opinion, not mixing two different approaches
+>> to do release resources.
+>=20
+> So instead we mix the cleanup of the whole function with the cleanup of wh=
+at
+> is effectively a per-iteration temporary variable?
+>=20
+> The fact there was already a confusion in this thread about whether it's
+> safe and relies on kvfree(NULL) to be a no-op, should be a hint.
 
-Also no need to clear, it is already zero.
+Yes. I think someone is confused about my opinion.
+I don=E2=80=99t care about whether we should apply this hit.
+If we think the hint is tricky, we could add another
+label to fix it like I suggested previously. Because
+we already use goto-based approaches to
+cleanup the resources, why not keeping
+consistent? It will be easier for us to add a new
+"if" statement and handle the failure case in the future.
+For example, if we use his v1 proposal, we should do
+the cleanups again for info. But for goto-based
+version, we just add another label to do the
+cleanups and go to the new label for failure case. goto-based fix is what I i=
+nsisted on. I copied my previous suggested fix here to clarify my opinion.
 
-Jason
+--- a/mm/shrinker.c
++++ b/mm/shrinker.c
+@@ -88,13 +88,14 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+                      goto err;
+              info->map_nr_max =3D shrinker_nr_max;
+              if (shrinker_unit_alloc(info, NULL, nid))
+-                       goto err;
++                       goto free;
+              rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);=
+
+      }
+      mutex_unlock(&shrinker_mutex);
+
+      return ret;
+-
++free:
++       kvfree(info);
+err:
+      mutex_unlock(&shrinker_mutex);
+      free_shrinker_info(memcg);
+
+Muchun,
+Thanks.
+
+>=20
+> So no, I a gree with Kirill and others. Ideally the fix would also move th=
+e
+> declaration of info into the for loop to make its scope more obvious.
+>=20
+>> Thanks.
+>>=20
+>>> Best regards,
+>>> Ridong
 
