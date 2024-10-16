@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-368838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335779A157F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:01:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76FF9A157C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED4DE28226E
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:01:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011271C23583
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 22:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4651D3584;
-	Wed, 16 Oct 2024 22:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A771D47A6;
+	Wed, 16 Oct 2024 22:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="S1ID1XUI"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C+p5po82";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aGfZF+uW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDF714EC47;
-	Wed, 16 Oct 2024 22:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E4F14EC47;
+	Wed, 16 Oct 2024 22:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729116049; cv=none; b=agPyRkpQbnh0f1hAxfIHtf9H78j8Z9WRb1o/bwssx6FF+3J8kskBToJSQVC9fY45CrklGUK0eUf7LBk3QnJXHLu9n1RoWZB/uXIC17sevlsR93V3fdMvPU50T3qo6LqK04ESu6YrArLFSl2CjvC3JLqAi6dUr/wnBiEP7T8OZyM=
+	t=1729116034; cv=none; b=hKXOJ9nrx/KahvhI0VOGtpm4ovVE8kxJchmGYH01uyQKSQ8Axl04pbgfyZ62zpl4yNMMzgI0siJc2SeiiiVY9Zx4UAV7SJJUGe0tvAqqdDEw6khDX7GMbRXvMy7hJGE4MZ6hfcHqbyd5w7hVScZt2TUovvDQmT7MoI3GRvXdkZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729116049; c=relaxed/simple;
-	bh=xwyCusH+SopIhC3oIPu4xYN2h6QDfJpgc3rvG/upU7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5FkFkMjGspcrQxn7LOSkfy33yJK1y9rUMPp51X88NmY5Y+uFkNU4PrBmTdBftWcunZqfeo/SdteqNQ2uNn31pk+zKr4UgGAphlQDgwe9j4h9n90oP5bIAtGyUOT9+MB5ec8lo//eTBlhp8rD0JGnyOyz8wUyvQwHj/x5cgl7rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=S1ID1XUI; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=x/5rC1xxa1L+8foNZ96vhDMYxXts5+xHlK0v36f7pTo=; b=S1ID1XUIpYRZxd95Lq9A6uoH8N
-	8IDRXXr9OBR+TBeJNazOHCmmP5yAu522EddTdoOekBTXwTX2aevD5aLUmdKdWVJoMkKh+2DTIoKpf
-	LysiBhB2jRJ9QwoPxRLuzpLqzgtWVCc2Y8RbvQG6xyoqxop0a1bVBNsxJcbnBX+SXcVxsxCfWqXrO
-	EOYKiVsqLkjIjklOuESs1Z9eiT3EXkWPuV8ElRSgBnkHybZgeJfzynqdaR1HcAM4AhQOCHD3iHZev
-	2f2L/IeQaBmoRao4h1dyPp4+y1OmWMAkajPsx/R+Anp4vFiLV3FzJhd+wL/cinLl3DwsT2vskX+vu
-	4XLAwGVg==;
-Received: from [179.118.186.49] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t1C3r-00BMoD-HR; Thu, 17 Oct 2024 00:00:07 +0200
-Message-ID: <a26db27a-85ca-46e4-9669-d885db2dd4ae@igalia.com>
-Date: Wed, 16 Oct 2024 18:59:58 -0300
+	s=arc-20240116; t=1729116034; c=relaxed/simple;
+	bh=yl1F6BzOPZEQ03ekfz6crqlH1mqvRN6+fW0z4mNfXEM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ljHSCrFTQvbwP4imaKr74hXjo7ECmWmnHsfYvn8baMbYnVfZY7e2Qs5JsMuu/BTSxFECV//lZ2oqERoyg27qPArrOJO40gOQgcie5we0oORsiejXXLPG4OU2gfnWHUFFKz+1AcnNaU5NDV6WxuqwooIA8TOPsQe7jNXuYanpAuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C+p5po82; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aGfZF+uW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729116031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vhf8iOfPlNIrpxB6coA1JKEPQMoCR9lDm2Uzc0nNue0=;
+	b=C+p5po82ZftR+wAkoYIxfhg4jmOwez76sav0tQzEYqcZ5kLC39vUHWtZ3UKztF+p10fuDU
+	0yI1DFlAboaJuO0Jma7f1E6ib1rP0LOaPPVf6vh33oyzuqW+muKp1hiisKHba+GZcny9h7
+	iY4wzrvEeCHGhNv9ql18Xdv3G/0/DWC3wbLXx6LZkMVKVc5H4hN6TSs9RNtcF1ykHrJfjk
+	WiIsHw/Mg8hccDrTTihb687jVNkRu5DPROFJ4xSByLc7sXSbjZjmqR6y7jLwvZvZz0EONN
+	eOq/ReI5WOyG37MO2nB6YuRzNFS8+gBorNcJTCM4APCbAf6ApCMKLQxrGDgedA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729116031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vhf8iOfPlNIrpxB6coA1JKEPQMoCR9lDm2Uzc0nNue0=;
+	b=aGfZF+uWID7vnA57nFHlYeeyWNm7Fq823AmcaWQv593ZJmCTk9SUou2i+/ST1P3bK1VIBJ
+	jsmX+MNJdKtW5lAg==
+To: Markus Elfring <Markus.Elfring@web.de>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, linux-renesas-soc@vger.kernel.org, Geert
+ Uytterhoeven <geert+renesas@glider.be>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>, Chris Paterson
+ <Chris.Paterson2@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Marc Zyngier <maz@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [v4] irqchip/renesas-rzg2l: Fix missing put_device
+In-Reply-To: <692cabd4-038b-403a-b21e-69a2b0492e57@web.de>
+References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
+ <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de> <871q0hdofq.ffs@tglx>
+ <692cabd4-038b-403a-b21e-69a2b0492e57@web.de>
+Date: Thu, 17 Oct 2024 00:00:30 +0200
+Message-ID: <87cyjzaetd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/10] libfs: Create the helper function
- generic_ci_validate_strict_name()
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com, kernel-dev@igalia.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org
-References: <20241010-tonyk-tmpfs-v6-0-79f0ae02e4c8@igalia.com>
- <20241010-tonyk-tmpfs-v6-1-79f0ae02e4c8@igalia.com>
- <87bjzls6ff.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <87bjzls6ff.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Em 15/10/2024 12:59, Gabriel Krisman Bertazi escreveu:
-> André Almeida <andrealmeid@igalia.com> writes:
-> 
->> +static inline bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *name)
->> +{
->> +	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
->> +		return true;
->> +
->> +	/*
->> +	 * A casefold dir must have a encoding set, unless the filesystem
->> +	 * is corrupted
->> +	 */
->> +	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
->> +		return true;
->> +
->> +	return utf8_validate(dir->i_sb->s_encoding, name);
-> 
-> There is something fishy here.  Concerningly, the fstests test doesn't
-> catch it.
-> 
-> utf8_validate is defined as:
-> 
->    int utf8_validate(const struct unicode_map *um, const struct qstr *str)
-> 
-> Which returns 0 on success and !0 on error. Thus, when casting to bool,
-> the return code should be negated.
-> 
-> But generic/556 doesn't fail. That's because we are over cautious, and
-> also check the string at the end of generic_ci_d_hash.  So we never
-> really reach utf8_validate in the tested case.
-> 
-> But if you comment the final if in generic_ci_d_hash, you'll see this
-> patchset regresses the fstests case generic/556 over ext4.
-> 
-> We really need the check in both places, though.  We don't want to rely
-> on the behavior of generic_ci_d_hash to block invalid filenames, as that
-> might change.
-> 
+On Wed, Oct 16 2024 at 11:38, Markus Elfring wrote:
+>> But this change fixes a bug and that's it.
+>
+> Maybe.
 
-Thanks Krisman! Nice catch. I fixed this for the next version. Testing 
-with the modified generic_ci_d_hash(), I also realized that the 
-validation was in the wrong place and leaving an inode behind, this fixed:
+Maybe?
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index eb1ea1f3b37c..7bd7ca5777af 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3624,13 +3624,13 @@ shmem_mknod(struct mnt_idmap *idmap, struct 
-inode *dir,
-         struct inode *inode;
-         int error;
+There is no maybe. You clearly failed to read and understand the
+documentation I asked you to read and understand.
 
-+       if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
-+               return -EINVAL;
-+
-         inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev, 
-VM_NORESERVE);
-         if (IS_ERR(inode))
-                 return PTR_ERR(inode);
+Either you are impersonating a badly implemented LLM or you are actually
+living in the delusion that you can teach people who are actually doing
+work based on your particular flavor of hubris.
 
--       if (!generic_ci_validate_strict_name(dir, &dentry->d_name))
--               return -EINVAL;
--
+Your answer to this mail will clearly tell me into which category you
+fall into, but neither of them are in any way useful to the Linux kernel
+community.
 
+Whatever the answer is, I don't care because your input is completely
+irrelevant. You have proven that over the years.
+
+Thanks,
+
+        tglx
 
