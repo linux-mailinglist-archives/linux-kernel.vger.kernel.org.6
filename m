@@ -1,111 +1,103 @@
-Return-Path: <linux-kernel+bounces-367526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-367527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8EC9A036F
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:01:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C139A9A0376
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 10:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5511F22754
-	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F06280C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 16 Oct 2024 08:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AEE1AF0AE;
-	Wed, 16 Oct 2024 08:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E001D14FA;
+	Wed, 16 Oct 2024 08:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QSO+h8Fm"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1xcPC1F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65338165F1A
-	for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 08:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1553F165F1A;
+	Wed, 16 Oct 2024 08:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729065667; cv=none; b=lWQiGRvWuu5Ns3c0nF02jmTNoQjPV8yDCa/7uurRq1mUyDz8oVHTNxS47kh30OgdAtmLCdsQZypyoMUvfdX15Dej6VGYjxhWHhtjW8G2N/bbA2uWvmvuJOH/ZwV5al0eNJUR0YAC7y0JM4uo6CNqGnRKoZPAkMl3UCedU78KAiw=
+	t=1729065705; cv=none; b=quVMVq/37/z/nGyYbr7Q7X6SBmYN40Tr6zqTju8PCt52X3Kv3lITxSxzKE68SO+dsLX+OJuCooblAdlbfuHN4ou0oiYdL1HuYHeTefQk4ZX12fDtfgtGPmrYefhKUv9HmHPKXm1k8coQ7WHERaHfVvmpqef75cZZ2gUJ9vEVJ6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729065667; c=relaxed/simple;
-	bh=Ofgeqz/T5iVUr1qT6y/00HLBUoBrcmyVunPvwLZIyiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KntIsRfkqg9k/3kfWRDfPykzW0oR7pMwQL6p2k+zAyHCm8OFn8HxfCCofxIZmzoM4GVlHqHuItmtLsiOonrT2iz9NPO+Xdy0laMdYRI40/bmsfKIA8Pn79yTbBr9n3O4L4x/XxcENgzF83BDqr1HKwLa+ubm874UVzhsFxPW798=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QSO+h8Fm; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-71806621d42so329224a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 01:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1729065664; x=1729670464; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6M21h/dt7Iy1clPFZAf1njDI7NLprN4WDvOrcQEo2uM=;
-        b=QSO+h8FmhFrSYrWI07vwaWbO9KD1zmGGS/UqwyRjjKUlvk90YVYMQzzBXjuVFLMQby
-         j4S8WvC2g+21EgMtBdNlBPsmoMISM/80DYiGXQJzj3slZduRaKu9u33QJl+jT63zSAoJ
-         vOSgkEoo2h34DH0H0Nybi8fNrVquw5mJNvzMYw1MusoYd1lFD+bMlvKhm/XV8yMgRooy
-         gv58K+O6Coqps+PWADlMz+IOJvolimQn80FIVaVP+GgnkVXGuNK/lYA0u4X9P69+vNDC
-         Z/xr3ZgK0asSv1IshSBbKH1lTpkKDVVe67mZdYrj5Tij3i6p/cZgNnXCDNO7D77SSAcP
-         d+1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729065664; x=1729670464;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6M21h/dt7Iy1clPFZAf1njDI7NLprN4WDvOrcQEo2uM=;
-        b=Dyhsty+QRQUNGlUJPzlIzuRWIJ2Ap8lQ8HyzmywU/Zr8c/bXsZqFOuo4e5agWwVlcw
-         JJhuTkd6BJOuI2b8X6BzvGQ8UW7UWPmMP4OXjCWIBXuMifTrU5wIDhrrSu/EWcUI5iN3
-         qi1RYAZYz54EkP4ax6o7ZUq2fymiuSbP84Ce/hSL4y2eaksEDVFh2F2o4gu7ylXTymN2
-         vEt8Qjak6kDi69bBrcb0F6VHT2mDUxQyz6V9wv4euAPhwP2vHTNCkjYoTDNEWvtJlqp8
-         hUs4rA19Qc2GBZA5ciwgsMNUf24aVu7pFeYtu0dvJaEMzUmuy52nAw+eQlehBPqdklCO
-         zZFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUr2MIWGD4CHU3EuUCCZ9lX/KfHnJsQ0MkxO8jUL5x6z3qp8dbVgbasNroPEhgedWKbRcSeduDzvsXGQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXrEyLk13I+w5xIEikwtAXt165JKQAfyRzj2ZpO2joCWw1psMK
-	CCIP16lIBIiskCFOdcgfAfaKfFUH4KLlhNc5mCIPUMRWi6w0bEVSLWOU0PXBmWA=
-X-Google-Smtp-Source: AGHT+IEU0iiZWXAVlkZdbgM2jqbTULI7bF82PQoDahkKYTLIu4dgObxdkg1xqbqWZWjo+hb6vHoGMw==
-X-Received: by 2002:a05:6359:5c21:b0:1c3:6e2f:fc03 with SMTP id e5c5f4694b2df-1c36e300a76mr369097955d.18.1729065664354;
-        Wed, 16 Oct 2024 01:01:04 -0700 (PDT)
-Received: from GQ6QX3JCW2.bytedance.net ([203.208.189.11])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c728767sm2675079a12.93.2024.10.16.01.01.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 16 Oct 2024 01:01:04 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: hch@infradead.org
-Cc: akpm@linux-foundation.org,
-	boqun.feng@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com,
-	longman@redhat.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	will@kernel.org
-Subject: Re: [RFC 1/2] rwsem: introduce upgrade_read interface
-Date: Wed, 16 Oct 2024 16:00:57 +0800
-Message-ID: <20241016080057.43997-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <Zw9s86K0Dv2FZvt2@infradead.org>
-References: <Zw9s86K0Dv2FZvt2@infradead.org>
+	s=arc-20240116; t=1729065705; c=relaxed/simple;
+	bh=pgnglVAzXGWeon4rHJ4Kx6rcYL2QifFuXYmp+TSwhZE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Kzlj7Lou4BtJdWfo1YUkixzeIMp/+/wirCdMw5I7EpOKkDe3hafsLxznRKCTnoMHUFkZrdJ/kpJ26z/QfuehpQDgGAblkvGaXfNzvy4o7DVJmd+Msx0fPK/0vWZF7ZhqweKAktUI64dnBl9sd90IIx47h//dWDGQKejVjNbbpCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1xcPC1F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F72C4CEC5;
+	Wed, 16 Oct 2024 08:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729065704;
+	bh=pgnglVAzXGWeon4rHJ4Kx6rcYL2QifFuXYmp+TSwhZE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=i1xcPC1FYoDnq2vDB6Dn8+VXcxT6fsXr3uXUs6SupvmWvwUHhEinGQfkNJ/y8V/Cl
+	 SeAkmvm0WMnu0rUpBLsazdxlxraBnjvVCq3a1gtxFBnuIsT2sre1xyukHqBaoBPmij
+	 qelxExb1jKt4xXvNjZZkm5s3D+WRcZD4Rv1aVJnuoEULMbfO90G0XfytM9ONOsqCJp
+	 FmIyYoiHVGvWa8G3k5Ba7QzE/BCdPlrTY3g6rfqwQE3XVK2dKFsRcN59/Z50vMK+vo
+	 uLJgO+AsxsIzQHWqq5hUNvFJttccJfWdEMcjyjl+WsqUis6PMuuhPnnlhN78o54fVs
+	 q5q+ZbigrgHVg==
+From: Lee Jones <lee@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+ Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, 
+ "David S . Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Sebastian Reichel <sre@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-pm@vger.kernel.org, netdev@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ linux-sound@vger.kernel.org, Alexandre Mergnat <amergnat@baylibre.com>, 
+ Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>, 
+ Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, 
+ MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+ Chen-Yu Tsai <wenst@chromium.org>
+In-Reply-To: <20241001104145.24054-3-macpaul.lin@mediatek.com>
+References: <20241001104145.24054-1-macpaul.lin@mediatek.com>
+ <20241001104145.24054-3-macpaul.lin@mediatek.com>
+Subject: Re: (subset) [PATCH v8 3/3] dt-bindings: mfd: mediatek: mt6397:
+ Convert to DT schema format
+Message-Id: <172906569700.1146121.13634550536849127452.b4-ty@kernel.org>
+Date: Wed, 16 Oct 2024 09:01:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Wed, 16 Oct 2024 00:36:19 -0700, hch@infradead.org wrote:
+On Tue, 01 Oct 2024 18:41:45 +0800, Macpaul Lin wrote:
+> Convert the mfd: mediatek: mt6397 binding to DT schema format.
+> 
+> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
+> subdevices. They share a common PMIC design but have variations in
+> subdevice combinations.
+> 
+> Key updates in this conversion:
+> 
+> [...]
 
->> >> +extern int upgrade_read(struct rw_semaphore *sem);
->> >
->> >No need for the extern.  Also please make any new advanced funtionality
->>
->> Sorry I don't understand why extern is not needed. If we remove it,
->> we will encounter the following compilation error:
->
->That sounds like you dropped the entire line above, and not just the
->"extern ".
+Applied, thanks!
 
-OK I know what you mean. It is indeed OK to remove "extern", but all function
-declarations in the rwsem.h have the "extern" prefix. I think it would be
-better to keep it consistent.
+[3/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT schema format
+      commit: 6e357f572638547e9c9e8d8abb7dc572c12032f3
 
-Thanks!
+--
+Lee Jones [李琼斯]
+
 
