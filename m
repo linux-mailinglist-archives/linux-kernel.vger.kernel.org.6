@@ -1,212 +1,181 @@
-Return-Path: <linux-kernel+bounces-369945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BCE9A24B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:14:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B329A24B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879492854AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:14:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59FD8B282E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C2D1DE8AD;
-	Thu, 17 Oct 2024 14:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36A11DE4C0;
+	Thu, 17 Oct 2024 14:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xg7MCsby"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fWs+Kga+"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2060.outbound.protection.outlook.com [40.107.236.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C601DE8A0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729174431; cv=none; b=Qox4nuzCRSuAEvusuHDb6CvAVMnH7SGwKnLH5piNubKBiDg7a2aNZ+pSnF4aoUFU9joB/fs0dY78rIVYNu0MXnNoyvIvajZ16CTXXHncITuRsopidbb46LjTgOhFS/2b3AMxLRVFtJS2oLwZi6vudsRhlsFMdB6MTBFef7x6p14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729174431; c=relaxed/simple;
-	bh=uhxh3JUCG0oQRwCOMgKyOtV3TGDTfiLNPFLXOAtoaTk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=C/k/rmtFbxNbdI8Jd+VS92vbv8+bgRpwDF5taYDA8E9klj18r5N2GZ2TiOiuRCVGQhFPWFOIu4lAblHf01C28LTJ0URqlEVr4Qrczgy9yhOmFecfUorVqalVsr1fWXMCG8dTczzp9+M1ls5Mikv6zxHqwONEJL0/ZjO4VswfvDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xg7MCsby; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6c5acb785f2so5483416d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729174429; x=1729779229; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+jO1c0kb/AbwFJdjaltlnmUBq08FYTcvMJpLmtEWhT0=;
-        b=Xg7MCsbyj2HgKmceq5CBJpBOB+F1UuhQ1HkFHs6SwGa3LtxwAEQ9dCoOkRLtF/HHC4
-         NpHV0v91aFtWo/5eHY+1rmsFuW9jnt5poFbDll0kdpXfAtztcR7nJMRmGy/FXixX3F4Y
-         xrLpGkYCP/qry7ST2AXipMEtbUie8xHQ3c5kmBCQi7zU+eQMnera2PzVVcvQGWyRdodQ
-         L21+qduiCxSYpwX4NfeCIZhC5JBsM1ixjvO+nXGAx8MBfDE9D5ftFeWPkIwZwKsn87n5
-         DZh51jnqyGf4fN4IeeC2rSeicYu/o8zCwbevoBrel3eC5uWdd64ItuvPh1MIgeqgKmXj
-         my/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729174429; x=1729779229;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+jO1c0kb/AbwFJdjaltlnmUBq08FYTcvMJpLmtEWhT0=;
-        b=H2qqmDWOqRKMr29mM6cKOkdnsr3dJgBwpo5RjUiCu2LEFF/r3LRf/vEPUlL27AjTS2
-         deeSpESVPKZ1dFLacS6bLCs8nj90WMCDn1hGsAvcd40/N73KsSrRZDzyynV8/3OSTSjO
-         h1db6Ej8OOOzGsGoQQFHdR2ImGFKZfgLBUZiSyd281R1+MUHp+5sbo//YOLCwp77CZlG
-         TTB863zgBnrqswUKNwRbkf3qfXB4ap746u4R+zeDaIhKQgTFvv7JwRGlrsYGUI2dTy6o
-         EYookzI6nGtvzJnY6ohyOBxkYBiptOB2Dtujgc2+l7qfUm8pEhgG9eZsV59r4xWE/BoK
-         FJow==
-X-Gm-Message-State: AOJu0YzueBQuhifymYPz5KljczOCI2cKkegu2eoW4joBHbIXq/X/I41b
-	V783JA8SnI+k/jNQTGhmrbA1pzoAh2aXlZlgiMUZOO05Dfcu93vTGsp6fHCf
-X-Google-Smtp-Source: AGHT+IFF/dyWOdfBZjL8Vrtad48yEgJ/2bWR7J9EGmLqOFSlO5DBm85tHXXOBnLoq7Xj12nDZ/9p4A==
-X-Received: by 2002:a05:6214:3d98:b0:6cb:e947:2d12 with SMTP id 6a1803df08f44-6cc2b8d714bmr120292956d6.25.1729174428626;
-        Thu, 17 Oct 2024 07:13:48 -0700 (PDT)
-Received: from localhost.localdomain ([66.198.16.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc229654c4sm28549916d6.128.2024.10.17.07.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 07:13:48 -0700 (PDT)
-From: Vimal Agrawal <avimalin@gmail.com>
-X-Google-Original-From: Vimal Agrawal <vimal.agrawal@sophos.com>
-To: linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	quic_jjohnson@quicinc.com,
-	dan.carpenter@linaro.org
-Cc: avimalin@gmail.com,
-	vimal.agrawal@sophos.com
-Subject: [PATCH v4 2/2] misc:minor basic kunit tests
-Date: Thu, 17 Oct 2024 14:13:29 +0000
-Message-Id: <20241017141329.95508-1-vimal.agrawal@sophos.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <2024101722-uncharted-wages-5759@gregkh>
-References: <2024101722-uncharted-wages-5759@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F12F1DDC17;
+	Thu, 17 Oct 2024 14:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729174470; cv=fail; b=ZD0bIBjELjebeSCr0invaaOoICVK4iNsKdMQKkxyWZn2FMXF4R2M6L2wUx/mA2TsTIge/6zp5L94vCUsPeaBXJazlWlMkC/HEgfd3zecwyW1DOtL0Tq+HVq7Tn7ClxmGqfsmFohuDzGf6Vp7lcqH32ayqQclrLfuL0C7oYaDczI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729174470; c=relaxed/simple;
+	bh=oBEJlRNTEh23HWRbsezHjdUvWvnVMosjrCIs7b2q1us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=H87mIYVRsRAL7H1ik1qo5KvYwqz2bLy01yH94uCkTSW9Qt8UrG8DwcfiNW652HHwAG3oHfN+ZrjVMU25KYdGDXeMBtj3N5uq3OF4xZEqIy4DPC5CGpFe+mLzzQ+BZi7HpwEDqhwCsuC6XeOPxj1Dj/PryI48n1bLfQqWlO1CnRU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fWs+Kga+; arc=fail smtp.client-ip=40.107.236.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H3vy07FeUGqy+EtEPJUFXD+Uri3PARBJrF7L5W5NyCaRHrUA0JhJJn04AqcqQiRfXR6HhJwPh5BNl0j0fx9qorJwWseUrZCVd6ULXjDLYwXIJI2vII8xm8H7Gh8EkJ9ta6oVmsZs923YxUaB7XikKJGn/SZYup4oid2RxV+HbMORpV6WZm3B2JVbPjS/hwLNqZPFv1pIDFrIi3/2FnXdiAnfKmWkJULrkZqhZRzM0aU8f+Dr+ip4tyWbnT1qAJwlMgnaisgEWLmU3O3mh+9l3r4dzmAf0mVT+eMYoCTBvGPsX5/G48+rYUaViHz5A4NehYRRQ6tHXd5pAjPYLzWyeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HteckkG29hxdMShrKLr2ahb7DX7qmarYrGc+ytAjjRo=;
+ b=nNZufTbPmO6J8C23ZR8qHmJQZ/eLiBHkNimivmn4Z9Cf/79s4g8qhBE5Nv0tmPRbNb6Bb46eiSo3ip5HrGMuIEh81HXKq4VtZDX1fp/kdHpdmzideVUQjNCgt2L5kwYcvDun/Eq2QspfPTjfXJ2vLthV2AixDZuKl12jQMzHQytb53EH8SCR8uOcdwzq5pvI6sXNf7e+JhiYQgn9FbVz61A/Dp3JJX543gE7Cq1NFnqdOegHoXGQpFzXefk2LVZ9t2zrwUtlO6j/pJgB50DAdNXN9isFgcgucKvUUwSJW9WiLMNvO0mG1sl8LHzfzYBb+T6hZpc0NZ74ZjeISWZicg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HteckkG29hxdMShrKLr2ahb7DX7qmarYrGc+ytAjjRo=;
+ b=fWs+Kga+RYKKg5vqGD44OXyGNz5H2/vuGTmrg3CTq0XncZwGxIj0tWTal14SiSaX1GainoByNL/V6D6bMD3wL86e0R96x/AojBes+y7r6q07dS4CvthqiblSK6ztpIKQYKNqMBvxeEbdg56Zj+QpeRjr1GB78n3h6Cy5Lkfp3qItJlWK7IBL57y9EoLEGsVboi1XbDfD3caNzrqKS9ZJCsxG+oOg4/BSeVOsf46me9WmBGtI1NCQZHNHf1I7ytD8OETxTsk35EiwTrqoKp2mEDwyM5VLbcQFX7N5LsiiDrwM3+Vkk7v6hER1nsdFRgmgGHgbhPkwvDLR6FMPcNwyIg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DM4PR12MB5723.namprd12.prod.outlook.com (2603:10b6:8:5e::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.18; Thu, 17 Oct 2024 14:14:18 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
+ 14:14:18 +0000
+Date: Thu, 17 Oct 2024 11:14:16 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, patches@lists.linux.dev
+Subject: Re: [PATCH v3 02/11] iommufd: Rename _iommufd_object_alloc to
+ iommufd_object_alloc_elm
+Message-ID: <20241017141416.GZ3559746@nvidia.com>
+References: <cover.1728491453.git.nicolinc@nvidia.com>
+ <dbfc718cd3200071765007c7ca0a2ba242181d05.1728491453.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbfc718cd3200071765007c7ca0a2ba242181d05.1728491453.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BN0PR04CA0106.namprd04.prod.outlook.com
+ (2603:10b6:408:ec::21) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM4PR12MB5723:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2310efa-fabc-4981-c49f-08dceeb5fca3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?totkhgc/WU67lZbxN9vdWHcpltg9lKWfBoXud+RHKCX7ubxO878El0BcouSf?=
+ =?us-ascii?Q?3sBOCCI+HneGCgJ93OyVayBoO3PGqMSF/ErFbsV/GDXCi9PAKxZp2OvUfY2A?=
+ =?us-ascii?Q?8cxTWZPRZ3Fol0W3qtMGsmZu4qU94fqbnsPMk2lx3eue84hFNSEhUruG4oP3?=
+ =?us-ascii?Q?HpUNc68eeJFlexEVpqi/FHLgQiSaiKVpOFiKm9chIapMkF9V0PXMHPssKFHo?=
+ =?us-ascii?Q?QmtA2rwhVEQcX+1PwyWDM1Hd7UShLMjKMkCdQXVlA7DikvvZlNxvmqHif5IG?=
+ =?us-ascii?Q?WSV6L2duB/NYbwFR56tBE5llWMkXqYrWSHEfWrv6ojUGfh7Vk6LlInGiQ7+8?=
+ =?us-ascii?Q?suamfRof4EwKarc2hg50X2hPRQcfBgpf0CWf4y+SxkqpUVzX2jHrB2d8WAAk?=
+ =?us-ascii?Q?kw1yBst6yvQyomxrvX+X5vyEDiduPC+TwHGw5kyT5IJnIKzdwUmi471fFuM7?=
+ =?us-ascii?Q?y0esybDK997DccQvaVMeHerinu6dXarxqh7s2nMeih/zV3JCqpL5IYfPRQ8U?=
+ =?us-ascii?Q?MB5pVg3U5uaATKWuJWOCZ+UdfI0i5HdxulMqc0c128CUQWcj2Mkj4K/a7TnK?=
+ =?us-ascii?Q?njrGZyX2cs80onKrxMT3i156PlpQ+TAd2rsKcXD9MZY6DaBZyE5lfJeQHdae?=
+ =?us-ascii?Q?3/FNoaXDS7USRb950EOFBVLGIJqrUSQmnG6H/kF2EADmGuymvDGAPFbzv4rn?=
+ =?us-ascii?Q?SqyQ+lSzlI4J1JqQe3aX/ovyLRTTrqTO1OYmCxdRy7zCghxEnWqED3PvuwTA?=
+ =?us-ascii?Q?q5eAcHj3zwkEzWU1wPqUlse4E0SCJOqY2vde88wvVxdxGhMiXaF/cwvnbiLu?=
+ =?us-ascii?Q?9TDcobLllUsslaTeQNq6+v4Cu5XXJRJ/DlQhl1i9A3MMX50upfvZQHwtNxkl?=
+ =?us-ascii?Q?XmzbJ9kl5WAqZALJK8riEYvYljlNZ13XMQHi0ih+ycoIlZaWhr1XP+6Qx4xj?=
+ =?us-ascii?Q?4ollrgQy1kXOni1m+IViLDh8AnpMWw2HS8wgK8XrtNiY3CM5QB2X9NdFNqnp?=
+ =?us-ascii?Q?bkhQ8JGgMO+HGLBu/KzmVz2jschQHpKn83uDYhKcxQSGGfBLkt1WNWu+3FZ/?=
+ =?us-ascii?Q?zN0ttMFOb9sIkjjNXN86xB6MxkfZjDk6RD+FP/C9zzvKAwd5GGNAIpizT63J?=
+ =?us-ascii?Q?yZnPCeuMmUVH2Wi72mQSwUdOoDnQcTECdEsDFAR8M7R9RKSftCXdlmmcLtIe?=
+ =?us-ascii?Q?IYwxzo8Y5kxHgOiaO6EHgeiFRm36HW9hiafxiLrIuu3ON7xkDYxMbbr9KALm?=
+ =?us-ascii?Q?R94WVZE7lfaLo4l1P0uZquZukFZMknvYhPFBldKoFWm9sERkLSPZ4QFclXEY?=
+ =?us-ascii?Q?edk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?dfjr5m61iJ/sxyxg9Fvqrs8KUNzTjz/N6/06y2Qdc5utJpzCIrZt4KMPy84u?=
+ =?us-ascii?Q?9dVES9tNygVHlvgKIJW88ctPSLbVEiU7cFJ8Az9Mkq+jMaAV/7D2FgoJPmwj?=
+ =?us-ascii?Q?TCSWF2hUHfNAWSeXBFfT45cVRVAPuOrwVSPc0wjByWuzlSWO0QqENQvOoPIG?=
+ =?us-ascii?Q?Va6Q6FgFD2b8vFDfYX6gTd2zpnhhkMeHdp0yn0CRpL6m0ptSkHBqKoNdx9f9?=
+ =?us-ascii?Q?VgVadvna3UBnc+YxYOHFvM6UTcZBwdVtwK4hqCqhWiLkLqD70KP3IMAhC4tq?=
+ =?us-ascii?Q?qHR4/5qMsXiLVdnPZmfL+4KMb7oqEJ+IuOTY5/oRG5sm+SW9Sa7U3IiSqfzW?=
+ =?us-ascii?Q?jzzxSqZ9Vf4V0hQ6GexXcyE4q08A95q5ycZxL3QwVTjmqxZ8vYDBj5GyAZtC?=
+ =?us-ascii?Q?8Mjv144xzQiGNS+lWq4MUhiIsCu+1tQZSwj9yb9igA8btfLQjZpwseR6LRBT?=
+ =?us-ascii?Q?a/A219dPBHM7JufHFCKpSLetG0zxLlRcRIyrGUZmqpD5tqUuipZ2t2kKceDs?=
+ =?us-ascii?Q?el7TlGwMQ5SOiIM2wpH9WzHlwktUqOHKLfnmOeHOb5K92I9j75dR63eVNaHa?=
+ =?us-ascii?Q?ijqKbGNQ4Ebd07cZpCPlGNQSkT+GuOHp6192gG5HUw0NVc/+JOZCPmoDUzub?=
+ =?us-ascii?Q?L9mAtyck8leyIU2RHxVGODoqdOU0gbExY3oE6kVqGhC1ksjBqdPF9hd+Uetz?=
+ =?us-ascii?Q?92zwkOlYykC6LLTjeD+TNLxyspaphJQQ1b1UW2+2gd03iYG1gTGEgGdOFfhv?=
+ =?us-ascii?Q?0EIe14LU4uLdCuUH/F/Z/GLEn7LJGW+gWBrs+JT4z4HIItRoMtDRVBLHDhzU?=
+ =?us-ascii?Q?Hn/T6ZzDrUVBKjZeBGRYa+yuZBeADQV4zPoeyDx2dWFh6NZ7XmFh2Typ6xlk?=
+ =?us-ascii?Q?bSAuqkVrzvQTjboxBw6RBShzI/UmVV+7bGlOWRpG1tRWpRUvREpulh/RWZ7o?=
+ =?us-ascii?Q?edCk41uR4uf7f2OYXCvg7toFSFeqGyRjdP69mPK3yKqb0ut2+K6kG1JlMIsS?=
+ =?us-ascii?Q?BMbxyeDWioo+Tz4NUYTURzhhJVCsUTmbWOxk76C/ZEDjgl2JBrVvQrcuSQN1?=
+ =?us-ascii?Q?R8O7E0+m74Psd4mJrC+BO7Dzlmvy26rorEZXJeESKRdb5T7J/ndygzbgZGbO?=
+ =?us-ascii?Q?ctVC1QoLM6nh9/HvwxjwedWv8qsOF2X2oTlvG0JunervAfhqurLOA5lKb7x4?=
+ =?us-ascii?Q?PA1gmtbJuAAYLsKLhNhXQkPGrG0JzgTrKczeA0ZZuBGl72bo+Yy8yRE8iugJ?=
+ =?us-ascii?Q?/zBtFivMDdzn0MNQmx0vpQS2vaWjsLvcXqPMPoNYQ/5ivJbCLC8j0D4e+M5O?=
+ =?us-ascii?Q?oI8Z6icCWvwC8fbfu6HAxT1hwZ63wW+qf7TDUwdN53+O1kKOZSvAa46wV+jz?=
+ =?us-ascii?Q?1Kaq40cwyQ0hTFoJPUuw323DLCYNF5rXjXSnqSiQoWUZ78FP8bbHV5p2FvuD?=
+ =?us-ascii?Q?UaXWblsDMajKtf7wDY4lhzWCfH5rnKwhn5q7d22G6Pc2R/+9yATrUme4Swci?=
+ =?us-ascii?Q?nwvv3FJCCgbkmV9CqyK9K3cS+Sa1BmrG5vVOBFqM6Ay/o7rTOk7YYX1VWUJX?=
+ =?us-ascii?Q?dadeY/vcQwYPHC5HGts=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2310efa-fabc-4981-c49f-08dceeb5fca3
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 14:14:18.2201
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uPadZehil5guNE+AIhNHAS3hg1LzYmNbgieXeSScHIN7teqr8bBaPTGyhIPm86HV
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5723
 
-basic kunit tests for misc minor
+On Wed, Oct 09, 2024 at 09:38:02AM -0700, Nicolin Chen wrote:
 
-Signed-off-by: Vimal Agrawal <avimalin@gmail.com>
----
-v2: Split from previous patch
-v3:
-v4: Match patch version for whole patch series
+> @@ -217,12 +217,12 @@ iommufd_object_put_and_try_destroy(struct iommufd_ctx *ictx,
+>  	iommufd_object_remove(ictx, obj, obj->id, 0);
+>  }
+>  
+> -struct iommufd_object *_iommufd_object_alloc(struct iommufd_ctx *ictx,
+> -					     size_t size,
+> -					     enum iommufd_object_type type);
+> +struct iommufd_object *iommufd_object_alloc_elm(struct iommufd_ctx *ictx,
+> +						size_t size,
+> +						enum iommufd_object_type type);
 
- lib/Kconfig.debug     | 11 +++++++
- lib/Makefile          |  1 +
- lib/test_misc_minor.c | 69 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+)
- create mode 100644 lib/test_misc_minor.c
+Maybe call it raw instead of elm? elm suggests it is an item in an
+array or likewise
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7315f643817a..5a5d27284e0a 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2488,6 +2488,17 @@ config TEST_RHASHTABLE
- config TEST_IDA
- 	tristate "Perform selftest on IDA functions"
- 
-+config TEST_MISC_MINOR
-+	tristate "Basic misc minor Kunit test" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Kunit test for the misc minor.
-+	  It tests misc minor functions for dynamic and misc dynamic minor.
-+	  This include misc_xxx functions
-+
-+	  If unsure, say N.
-+
- config TEST_PARMAN
- 	tristate "Perform selftest on priority array manager"
- 	depends on PARMAN
-diff --git a/lib/Makefile b/lib/Makefile
-index 773adf88af41..631d73f96f76 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
- obj-$(CONFIG_TEST_IOV_ITER) += kunit_iov_iter.o
- obj-$(CONFIG_HASH_KUNIT_TEST) += test_hash.o
- obj-$(CONFIG_TEST_IDA) += test_ida.o
-+obj-$(CONFIG_TEST_MISC_MINOR) += test_misc_minor.o
- obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
- CFLAGS_test_ubsan.o += $(call cc-disable-warning, vla)
- CFLAGS_test_ubsan.o += $(call cc-disable-warning, unused-but-set-variable)
-diff --git a/lib/test_misc_minor.c b/lib/test_misc_minor.c
-new file mode 100644
-index 000000000000..293e0fb7e43e
---- /dev/null
-+++ b/lib/test_misc_minor.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <kunit/test.h>
-+#include <kunit/test-bug.h>
-+#include <linux/module.h>
-+#include <linux/miscdevice.h>
-+
-+/* dynamic minor (2) */
-+static struct miscdevice dev_dynamic_minor = {
-+	.minor  = 2,
-+	.name   = "dev_dynamic_minor",
-+};
-+
-+/* static minor (LCD_MINOR) */
-+static struct miscdevice dev_static_minor = {
-+	.minor  = LCD_MINOR,
-+	.name   = "dev_static_minor",
-+};
-+
-+/* misc dynamic minor */
-+static struct miscdevice dev_misc_dynamic_minor = {
-+	.minor  = MISC_DYNAMIC_MINOR,
-+	.name   = "dev_misc_dynamic_minor",
-+};
-+
-+static void kunit_dynamic_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_dynamic_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, 2, dev_dynamic_minor.minor);
-+	misc_deregister(&dev_dynamic_minor);
-+}
-+
-+static void kunit_static_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_static_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, LCD_MINOR, dev_static_minor.minor);
-+	misc_deregister(&dev_static_minor);
-+}
-+
-+static void kunit_misc_dynamic_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_misc_dynamic_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	misc_deregister(&dev_misc_dynamic_minor);
-+}
-+
-+static struct kunit_case test_cases[] = {
-+	KUNIT_CASE(kunit_dynamic_minor),
-+	KUNIT_CASE(kunit_static_minor),
-+	KUNIT_CASE(kunit_misc_dynamic_minor),
-+	{}
-+};
-+
-+static struct kunit_suite test_suite = {
-+	.name = "misc_minor_test",
-+	.test_cases = test_cases,
-+};
-+kunit_test_suite(test_suite);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Vimal Agrawal");
-+MODULE_DESCRIPTION("misc minor testing");
--- 
-2.17.1
+Naming aside
 
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
