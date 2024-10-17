@@ -1,241 +1,138 @@
-Return-Path: <linux-kernel+bounces-369452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825E79A1D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:44:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6A09A1D74
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B481C24943
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB3411C23F90
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E901D54EF;
-	Thu, 17 Oct 2024 08:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726B81D5ABD;
+	Thu, 17 Oct 2024 08:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ZhE2YfRk"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KT8YBcyd"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931E11D6191;
-	Thu, 17 Oct 2024 08:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892251C232B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729154606; cv=none; b=VM6989OpnXzJ5S8Dnt54c+EUitV3M2BzK5UfwNxI5WKYnG+jgdQo9UNDYApZ1lQye6fpK7Zjn9mFTAik5Iy+nFzWv80Z65JE0/ic/cttlRuuK1Og8cIBQcRD5HS9oJ7ee/3LiZWQdfjcAfwj/AyXEiC8fLbLAd8J1IGv9/qH0oI=
+	t=1729154594; cv=none; b=swQaKSEOSoskuZ8BMDzLsjfClXjyaK94vXYZyQJ/WeSDXPL+/8d5iQ77lBlzai+Gump7TORZJ3eXMreVxmBNG/5+tGMq3aXQiwSajOE78AFQ21FJY1cTSRgqe8bph9vZDGMvT5pZzDjnOC5jNtp3+NCUEbZgJD+p3V+AGeBTh68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729154606; c=relaxed/simple;
-	bh=2OsSJ9LAAFvDtnkXOIDUpvSUKmdKq1+WHCr0KxZLn2w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E2Dv8hTA7ppQGM+/xZ4kavY4MnXou6+Qi71BAHqEWtXDErPV1MGRybYTQU0ICZqgkwXtrh93rugHrITjAMT+TzELlEzQt9Zych5/dDCYAFFvmOwN0j0IVwl0HYbn5SHhrtT1p63jZdeo+CwVzB5q2Jeri62dG/Cpm8gM0Inufq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ZhE2YfRk; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GKOPai013083;
-	Thu, 17 Oct 2024 01:43:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
-	+cWXGdDGjfssp7KqM2ge5CH2qMNuaHWniXG50U9EVs=; b=ZhE2YfRkAMnr66DyP
-	Hcq4PriDUJnlGJVkBUXGD4T650/Bb6l3pnVrIrI6zXxXkewT+C5frGDNEC07Y7BX
-	HYOQFPmvmKXCmSbmtfX0M0/Yk9/8kzL6RVEd22KUx17aLEzOfwVnumjxOnQ6fe4d
-	bPTtHMOvuTY1EDOkvfhVMPkailO4jxaFoZstW4ccU9jgZXLYHGHM3oBNQNrLu28n
-	9ToYZzJgeCCcRBjC4OuDk42E2NmRVfrANJJDHpVL5LJ77GiJOjvIKSI50Sszwfni
-	g1dUnyAOjx56EYDDFha5gAOZr/6Nfs6YciZ1BQke8/EQLa589ql3ixczky0L/5jf
-	eXWxg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42aanf2p4f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 01:43:03 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 17 Oct 2024 01:43:01 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 17 Oct 2024 01:43:01 -0700
-Received: from virtx40.. (unknown [10.28.34.196])
-	by maili.marvell.com (Postfix) with ESMTP id 459223F7040;
-	Thu, 17 Oct 2024 01:42:57 -0700 (PDT)
-From: Linu Cherian <lcherian@marvell.com>
-To: <davem@davemloft.net>, <sgoutham@marvell.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <gakula@marvell.com>, <hkelam@marvell.com>, <sbhatta@marvell.com>,
-        <jerinj@marvell.com>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, Linu Cherian <lcherian@marvell.com>
-Subject: [PATCH v3 net-next 2/2] octeontx2-af: Knobs for NPC default rule counters
-Date: Thu, 17 Oct 2024 14:12:44 +0530
-Message-ID: <20241017084244.1654907-3-lcherian@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241017084244.1654907-1-lcherian@marvell.com>
-References: <20241017084244.1654907-1-lcherian@marvell.com>
+	s=arc-20240116; t=1729154594; c=relaxed/simple;
+	bh=xbkNK59K3kQpdDXqiDhpWqCXaS93vbxGn76+AvW6fIQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Wxb4bjr7OaDZBlH5ly/cccB7wI0Uqbxedhl1ip8zwyzQIGUDgWfTYyJvD3hmnDbtsdc/fPVo9oZ9qUi3MroUNhIx5oxBpVvnUgK7JQfGPwzXtl+cw2pL0ykGOOEeNxogoBCaEagdXEQqjdGkx5wENAvRocxAa3LXQEUViKpSTNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KT8YBcyd; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so33546a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729154593; x=1729759393; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yQAB3nnQ+Mdlc/tt0eBAd1ec+dzX44ggYry/kZq7/hI=;
+        b=KT8YBcydjF3sXZcOQ/2r+xoP/SR2oGoDvIa9OZnPey1vFQhS4tChy3wec8yQ6sBc2s
+         FXCV5dBPGjKvFR6G+58O4fC3tbwZRABWBnYnTXbizBf93fS+t/usg/qOyVc+cilL6rb9
+         rLGA73geXsJUGrTe15+L1MQRtBPXdRJIjElMLDzkXFK8FjjZU9AOVAmQOGXVZPCkrpGU
+         AukX+NwmCl7dhC7Ei0vieCdhHmKlOElT3YvcfbEPPZAjJ180qOaldH2uUhrlZ1hfuhW9
+         UMwIQ3OMh8MYvMh9OcgWyx6kNfDzcyaPNMm3wh65lgp94IwRPbg76apdnB+vhuDoIkAz
+         uldw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729154593; x=1729759393;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yQAB3nnQ+Mdlc/tt0eBAd1ec+dzX44ggYry/kZq7/hI=;
+        b=sYzVYJrMhc1kK+PFFN4g/c8ENG/abZv3k4E5cAl7s0Ix7LklnwKB+llieWHVmeedpC
+         54djgJwLXiZ68OnP1O0VDLq3nnf6UkZeC2ZK5w+c8YJlB1CirArpLyfWeCDJg8fj4MFg
+         KMi+Mgob9nznwfWHqW2vFKm53B3y8aUbsF6GHkojRggzv4eXRegb+PXkFn1u9dPFsQnt
+         33ve2UfWacWYcX/xtjBbQNAblnOiJh0atFdKXoanIZghtiixLgdLLdPiTWd9/Hy3bfyA
+         9u5Hs9Wn7id7EFHrz8uSJVHYVJGnBjS8LEVMZUbee8GSXaioY8hq52mDYoFnoWCAVUxf
+         lTgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVni1Y4QwpY/g+dEpoOsBg5nyuyBl1qG0POLS6btTAZB2BgSb1a5o7riiQgcAe86jX8eRK2CWhHBMpmuEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd7e1EClFn7Jznh0GPTHkxKntbV6aaWDK5hxgvTSmOukyFjEEQ
+	GUiI7I4Pv2dlqec+NsL53TzTBm5TOv8KhI6wDXZ5DUSMTVkwRJlA
+X-Google-Smtp-Source: AGHT+IGyP031j7KiczoaeT0zkXTCu6uPPcWuYBfUrEHy6wZ3NZAs2wt8XjaAOno4+gv2ZLCwzZsYcA==
+X-Received: by 2002:a17:90a:d808:b0:2e2:d74f:65b5 with SMTP id 98e67ed59e1d1-2e2f0ad1729mr23181386a91.16.1729154592825;
+        Thu, 17 Oct 2024 01:43:12 -0700 (PDT)
+Received: from [192.168.1.101] (14-202-215-216.tpgi.com.au. [14.202.215.216])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e090756bsm1280567a91.50.2024.10.17.01.43.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 01:43:12 -0700 (PDT)
+Message-ID: <65fe0dd4-e7bb-40d1-9b89-7b330984268a@gmail.com>
+Date: Thu, 17 Oct 2024 16:43:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: xT1B7pYfooinX0eqTBrdwuK2EcveZ38_
-X-Proofpoint-GUID: xT1B7pYfooinX0eqTBrdwuK2EcveZ38_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Tuo Li <islituo@gmail.com>
+Subject: [BUG] drm/amd/display: possible null-pointer dereference or redundant
+ null check in amdgpu_dm.c
+To: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
+ alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
+ airlied@gmail.com, simona@ffwll.ch, alex.hung@amd.com,
+ hamza.mahfooz@amd.com, Roman.Li@amd.com, chiahsuan.chung@amd.com,
+ aurabindo.pillai@amd.com, Wayne.Lin@amd.com, hersenxs.wu@amd.com
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add devlink knobs to enable/disable counters on NPC
-default rule entries.
+Hello,
 
-Sample command to enable default rule counters:
-devlink dev param set <dev> name npc_def_rule_cntr value true cmode runtime
+Our static analysis tool has identified a potential null-pointer dereference or
+redundant null check related to the wait-completion synchronization mechanism in
+amdgpu_dm.c in Linux 6.11.
 
-Sample command to read the counter:
-cat /sys/kernel/debug/cn10k/npc/mcam_rules
+Consider the following execution scenario:
 
-Signed-off-by: Linu Cherian <lcherian@marvell.com>
----
-Changelog from v2:
-Moved out the refactoring into separate patch. 
+  dmub_aux_setconfig_callback()      //731
+    if (adev->dm.dmub_notify)        //734
+    complete(&adev->dm.dmub_aux_transfer_done);  //737
 
- .../net/ethernet/marvell/octeontx2/af/rvu.h   |  2 +
- .../marvell/octeontx2/af/rvu_devlink.c        | 32 +++++++++++++
- .../ethernet/marvell/octeontx2/af/rvu_npc.c   | 45 +++++++++++++++++++
- 3 files changed, 79 insertions(+)
+The variable adev->dm.dmub_notify is checked by an if statement at Line 734,
+which indicates that adev->dm.dmub_notify can NULL. Then, complete() is called
+at Line 737 which wakes up the wait_for_completion().
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-index d92a5f47a476..e8c6a6fe9bd5 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-@@ -525,6 +525,7 @@ struct rvu {
- 	struct mutex		alias_lock; /* Serialize bar2 alias access */
- 	int			vfs; /* Number of VFs attached to RVU */
- 	u16			vf_devid; /* VF devices id */
-+	bool			def_rule_cntr_en;
- 	int			nix_blkaddr[MAX_NIX_BLKS];
- 
- 	/* Mbox */
-@@ -989,6 +990,7 @@ void npc_set_mcam_action(struct rvu *rvu, struct npc_mcam *mcam,
- void npc_read_mcam_entry(struct rvu *rvu, struct npc_mcam *mcam,
- 			 int blkaddr, u16 src, struct mcam_entry *entry,
- 			 u8 *intf, u8 *ena);
-+int npc_config_cntr_default_entries(struct rvu *rvu, bool enable);
- bool is_cgx_config_permitted(struct rvu *rvu, u16 pcifunc);
- bool is_mac_feature_supported(struct rvu *rvu, int pf, int feature);
- u32  rvu_cgx_get_fifolen(struct rvu *rvu);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-index 7498ab429963..9c26e19a860b 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-@@ -1238,6 +1238,7 @@ enum rvu_af_dl_param_id {
- 	RVU_AF_DEVLINK_PARAM_ID_DWRR_MTU,
- 	RVU_AF_DEVLINK_PARAM_ID_NPC_MCAM_ZONE_PERCENT,
- 	RVU_AF_DEVLINK_PARAM_ID_NPC_EXACT_FEATURE_DISABLE,
-+	RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
- 	RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
- };
- 
-@@ -1358,6 +1359,32 @@ static int rvu_af_dl_npc_mcam_high_zone_percent_validate(struct devlink *devlink
- 	return 0;
- }
- 
-+static int rvu_af_dl_npc_def_rule_cntr_get(struct devlink *devlink, u32 id,
-+					   struct devlink_param_gset_ctx *ctx)
-+{
-+	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
-+	struct rvu *rvu = rvu_dl->rvu;
-+
-+	ctx->val.vbool = rvu->def_rule_cntr_en;
-+
-+	return 0;
-+}
-+
-+static int rvu_af_dl_npc_def_rule_cntr_set(struct devlink *devlink, u32 id,
-+					   struct devlink_param_gset_ctx *ctx,
-+					   struct netlink_ext_ack *extack)
-+{
-+	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
-+	struct rvu *rvu = rvu_dl->rvu;
-+	int err;
-+
-+	err = npc_config_cntr_default_entries(rvu, ctx->val.vbool);
-+	if (!err)
-+		rvu->def_rule_cntr_en = ctx->val.vbool;
-+
-+	return err;
-+}
-+
- static int rvu_af_dl_nix_maxlf_get(struct devlink *devlink, u32 id,
- 				   struct devlink_param_gset_ctx *ctx)
- {
-@@ -1444,6 +1471,11 @@ static const struct devlink_param rvu_af_dl_params[] = {
- 			     rvu_af_dl_npc_mcam_high_zone_percent_get,
- 			     rvu_af_dl_npc_mcam_high_zone_percent_set,
- 			     rvu_af_dl_npc_mcam_high_zone_percent_validate),
-+	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
-+			     "npc_def_rule_cntr", DEVLINK_PARAM_TYPE_BOOL,
-+			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
-+			     rvu_af_dl_npc_def_rule_cntr_get,
-+			     rvu_af_dl_npc_def_rule_cntr_set, NULL),
- 	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
- 			     "nix_maxlf", DEVLINK_PARAM_TYPE_U16,
- 			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-index c4ef1e83cc46..9e39c3149a4f 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-@@ -2691,6 +2691,51 @@ void npc_mcam_rsrcs_reserve(struct rvu *rvu, int blkaddr, int entry_idx)
- 	npc_mcam_set_bit(mcam, entry_idx);
- }
- 
-+int npc_config_cntr_default_entries(struct rvu *rvu, bool enable)
-+{
-+	struct npc_install_flow_rsp rsp = { 0 };
-+	struct npc_mcam *mcam = &rvu->hw->mcam;
-+	struct rvu_npc_mcam_rule *rule;
-+	int blkaddr;
-+
-+	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
-+	if (blkaddr < 0)
-+		return -EINVAL;
-+
-+	mutex_lock(&mcam->lock);
-+	list_for_each_entry(rule, &mcam->mcam_rules, list) {
-+		if (!is_mcam_entry_enabled(rvu, mcam, blkaddr, rule->entry))
-+			continue;
-+		if (!rule->default_rule)
-+			continue;
-+		if (enable && !rule->has_cntr) { /* Alloc and map new counter */
-+			__rvu_mcam_add_counter_to_rule(rvu, rule->owner,
-+						       rule, &rsp);
-+			if (rsp.counter < 0) {
-+				dev_err(rvu->dev, "%s: Err to allocate cntr for default rule (err=%d)\n",
-+					__func__, rsp.counter);
-+				break;
-+			}
-+			npc_map_mcam_entry_and_cntr(rvu, mcam, blkaddr,
-+						    rule->entry, rsp.counter);
-+		}
-+
-+		if (enable && rule->has_cntr) /* Reset counter before use */ {
-+			rvu_write64(rvu, blkaddr,
-+				    NPC_AF_MATCH_STATX(rule->cntr), 0x0);
-+			continue;
-+		}
-+
-+		if (!enable && rule->has_cntr) /* Free and unmap counter */ {
-+			__rvu_mcam_remove_counter_from_rule(rvu, rule->owner,
-+							    rule);
-+		}
-+	}
-+	mutex_unlock(&mcam->lock);
-+
-+	return 0;
-+}
-+
- int rvu_mbox_handler_npc_mcam_alloc_entry(struct rvu *rvu,
- 					  struct npc_mcam_alloc_entry_req *req,
- 					  struct npc_mcam_alloc_entry_rsp *rsp)
--- 
-2.34.1
+Consider the wait_for_completion()
+
+  amdgpu_dm_process_dmub_aux_transfer_sync()    //12271
+    p_notify = adev->dm.dmub_notify;            //12278
+    wait_for_completion_timeout(&adev->dm.dmub_aux_transfer_done, ...); // 12287
+    if (p_notify->result != AUX_RET_SUCCESS)    //12293
+
+The value of adev->dm.dmub_notify is assigned to p_notify at Line 12278. If
+adev->dm.dmub_notify at Line 734 is checked to be NULL, the value p_notify after
+the wait_for_completion_timeout() at Line 12278 can also be NULL. However, it is
+dereferenced at Line 12293 without rechecking, causing a possible null dereference.
+
+In fact, dmub_aux_setconfig_callback() is registered only if
+adev->dm.dmub_notify is checked to be not NULL:
+
+  adev->dm.dmub_notify = kzalloc(...);    //2006
+  if (!adev->dm.dmub_notify) {            //2007
+    ......
+    goto error;                           //2009
+  }                                       //2010
+  ......
+  register_dmub_notify_callback(..., dmub_aux_setconfig_callback, ...)  //2019
+
+I am not sure if adev->dm.dmub_notify is assigned with NULL elsewhere. If not,
+the if check at Line 734 can be redundant.
+Any feedback would be appreciated, thanks!
+
+Sincerely,
+Tuo Li
+
 
 
