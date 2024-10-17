@@ -1,154 +1,110 @@
-Return-Path: <linux-kernel+bounces-370658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C219A3040
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2289A3043
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B292F1F235DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0838B1F23652
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9D11D7984;
-	Thu, 17 Oct 2024 22:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlJS8hRx"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CC81D798B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F781D6DD4;
+	Thu, 17 Oct 2024 22:00:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA631D54E9;
+	Thu, 17 Oct 2024 22:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729202416; cv=none; b=UgGMe5rNcVtLNuciqaoiS3hEFWAvpSSWWw8yXgWCpzxh3UIVejYzDH69KpFvqps8fmzTo/zcnTdndrfojJup6XCZoRw2bo8VdilFffye1SaNOf1hpr3iXHt39UQWbrn7/T0uzeLrWoDtYmysTznug8aXmvv5YSnr5/lFa9n/IN4=
+	t=1729202443; cv=none; b=CRkeVelkdHUaxFyiIMRxrf7zMSUQS9A5hoM4Vm3gY2SXFfGe41w5HFErVF3du/2BonCsQa64XyYjD5nhov9J08yURL1zOmnKJKpxDPP3hAd4Peimao6jLE7nnLO3aFTDGKQSW/2MpKqWP79EoYxYv1L8jXNppx49a0GTwxlQGjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729202416; c=relaxed/simple;
-	bh=xFORzQkJL/WcWdKZ3DVfQDkKa0jdZA97QDeet1sttTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FC1rlXPAQOOWlmgS9GnaAYAlok3KqMP+A2ZlYTlN+whtg/q0q46v5PVqlq6S/Cfbq8/Ki2Kzudi6ZoxB9maOy3Lxm1FRnrqfOd3Jif9++zPV5xSVJq9SF7ZCA5iJvlhxXVbXptNfKgW0jWErA2+CnAxl+EQ2Ym7Oc1WQFo8shzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NlJS8hRx; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5f647538so14963261fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729202409; x=1729807209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Isw4TLSYBoy+yI8Luh4Hi+u78l3bLfiSrZ6IrpPiuvU=;
-        b=NlJS8hRx9XqJqrvYo51fBH9ruarluzpG69Ly3VxN14Hs9m9bIBsh2pHcAKoyBYkWDz
-         72TuGKefbmw7dPfYXCuyZYkZ2dJDyLnCP8364geY3MlyLNRSeEkk2868gFTq4K20JTBW
-         xtBl8ve9xZxfun5MoHGdXNNsrTwItrdhr+qEjhyb2pXWrNl2xGkP+7+mGc4OW95fjQEO
-         32T+Keol4OoWinF14DEJhkEdsto/3ZtBNo1j0Og0JB7XfBnZrQnlAh5XTa45Gjn2MHog
-         qM5Tmjz8nrfHPhKxdh2WFQTPxiau1rpCze6hBW68p3/8+6wSaJJlkoV6eGSVAIp0XXYI
-         U0Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729202409; x=1729807209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Isw4TLSYBoy+yI8Luh4Hi+u78l3bLfiSrZ6IrpPiuvU=;
-        b=Qbxublb/EKU1ZqfbvT6NeoXCYP63IhL0U5/mbauOKQNr2UoHjBJO9jxph0hQugYrz6
-         vNGs8hXX1saIIV49JutFCiYSBxSD3M29dOaEnSgmoFdkRbGgO2QVxYZF8Sc2rD5s51l5
-         aTKdmPj3qq37rFk3dYMwlkpTXK0vuvlevWb/HgTrb/ViDi8TTxvRnUG4Q3ZQZ3DBRA6D
-         jltyC6G6Hsv2U8G7l43x2/5BLuHe0zW+sUHWql9sSfCfbMGIqCkft5jXnMkRbsV6/kUY
-         zqfy9TpTgKMpIP6mxLEyyeJFRhqbw1SYcFkuSoseH1BNkB5clqHnNzS8j7/FVsEcvF6z
-         QQyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYtonvNO+n69wA4ueEo3B02hnRSMmdbT2xhFU7Pl98OT2BUZD4QnR9SUF5/MRCh1rrwk9xle3I8wr0RSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN1kHjhJl5AtoNbdB/HuhMsJAWGzaYWXzPYsBTPa1O9G97aNZg
-	O6lXnifJ6tcgN6ElIkG9MvreShH749Q1jYmDS+SQdUhEE12+B2HRJlRtpFeGa9Q=
-X-Google-Smtp-Source: AGHT+IGUX5FxPYm63QjEX8QSYjKY0R76CkWqYGuUb5gIaDo5gBTDkoQZABdj7YlxIwd/k53oj6Qswg==
-X-Received: by 2002:a05:651c:b1f:b0:2fb:597e:28f5 with SMTP id 38308e7fff4ca-2fb6d9ad52amr14615841fa.2.1729202409216;
-        Thu, 17 Oct 2024 15:00:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809f9ad0sm426951fa.82.2024.10.17.15.00.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 15:00:06 -0700 (PDT)
-Date: Fri, 18 Oct 2024 01:00:03 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
- ops
-Message-ID: <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
-References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
- <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
- <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
+	s=arc-20240116; t=1729202443; c=relaxed/simple;
+	bh=/D3cAtxwwBDlyTGCeFoGVi0eLVxzYY9k+S5c5thfVs8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=iOWntM2F9pcFURarJvI5jyz/6hiWWCtMdZUxZQpUQ709AWPhNaF6OaTd+6alqHcg520bfFjSMTe7X3TgOGQqg1W5FvoEPOmLYeT+dyxoXppC1meLDJI2flhiweFafkiNDXR2S0EqXg2efue5bUTdG5Dm6neJhpfTx7VCU5tD+IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BD1FFEC;
+	Thu, 17 Oct 2024 15:01:06 -0700 (PDT)
+Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 728083F58B;
+	Thu, 17 Oct 2024 15:00:35 -0700 (PDT)
+Message-ID: <46853b6e-bad5-4ace-9b23-ff157f234ae3@arm.com>
+Date: Thu, 17 Oct 2024 23:00:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Qais Yousef <qyousef@layalina.io>, Viresh Kumar
+ <viresh.kumar@linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-pm <linux-pm@vger.kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+From: Christian Loehle <christian.loehle@arm.com>
+Subject: [PATCH] cpufreq: docs: Reflect latency changes in docs
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
-> > From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-> > 
-> > Add support for SREG branch ops. This is for the clocks which require
-> 
-> What is SREG? Can you spell it out?
+There were two changes related to transition latency recently.
+Namely commit e13aa799c2a6 ("cpufreq: Change default transition delay
+to 2ms") and
+commit 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER").
 
-Unfortunately, no idea. This is the only register name I know.
+Both changed the defaults / maximums so let the documentation
+reflect that.
 
-> 
-> > additional register operations with the SREG register as a part of
-> > enable / disable operations.
-> > 
-> > Signed-off-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> [...]
-> > diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-> > index 47bf59a671c3c8516a57c283fce548a6e5f16619..149d04bae25d1a54999e0f938c4fce175a7c3e42 100644
-> > --- a/drivers/clk/qcom/clk-branch.h
-> > +++ b/drivers/clk/qcom/clk-branch.h
-> > @@ -24,8 +24,11 @@
-> >  struct clk_branch {
-> >         u32     hwcg_reg;
-> >         u32     halt_reg;
-> > +       u32     sreg_enable_reg;
-> >         u8      hwcg_bit;
-> >         u8      halt_bit;
-> > +       u32     sreg_core_ack_bit;
-> > +       u32     sreg_periph_ack_bit;
-> 
-> Are these bits? Should be u8 then. Or are they a mask?
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+---
+ Documentation/admin-guide/pm/cpufreq.rst | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-masks, will rename.
-
-> 
-> >         u8      halt_check;
-> 
-> Instead of adding these new members can you wrap the struct in another
-> struct? There are usually a lot of branches in the system and this
-> bloats those structures when the members are never used.
-> 
-> 	struct clk_sreg_branch {
-> 		u32 sreg_enable_reg;
-> 		u32 sreg_core_ack_bit;
-> 		u32 sreg_periph_ack_bit;
-> 		struct clk_branch branch;
-> 	};
-> 
-> But I'm not even sure that is needed vs. just putting a clk_regmap
-> inside because the clk_ops don't seem to use any of these other members?
-
-Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
-rename it dropping the _branch (and move to another source file while we
-are at it)?
-
-
+diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
+index fe1be4ad88cb..a21369eba034 100644
+--- a/Documentation/admin-guide/pm/cpufreq.rst
++++ b/Documentation/admin-guide/pm/cpufreq.rst
+@@ -425,8 +425,8 @@ This governor exposes only one tunable:
+ 
+ ``rate_limit_us``
+ 	Minimum time (in microseconds) that has to pass between two consecutive
+-	runs of governor computations (default: 1000 times the scaling driver's
+-	transition latency).
++	runs of governor computations (default: 1.5 times the scaling driver's
++	transition latency or the maximum 2ms).
+ 
+ 	The purpose of this tunable is to reduce the scheduler context overhead
+ 	of the governor which might be excessive without it.
+@@ -474,17 +474,17 @@ This governor exposes the following tunables:
+ 	This is how often the governor's worker routine should run, in
+ 	microseconds.
+ 
+-	Typically, it is set to values of the order of 10000 (10 ms).  Its
+-	default value is equal to the value of ``cpuinfo_transition_latency``
+-	for each policy this governor is attached to (but since the unit here
+-	is greater by 1000, this means that the time represented by
+-	``sampling_rate`` is 1000 times greater than the transition latency by
+-	default).
++	Typically, it is set to values of the order of 2000 (2 ms).  Its
++	default value is to add a 50% breathing room
++	to ``cpuinfo_transition_latency`` on each policy this governor is
++	attached to. The minimum is typically the length of two scheduler
++	ticks.
+ 
+ 	If this tunable is per-policy, the following shell command sets the time
+-	represented by it to be 750 times as high as the transition latency::
++	represented by it to be 1.5 times as high as the transition latency
++	(the default)::
+ 
+-	# echo `$(($(cat cpuinfo_transition_latency) * 750 / 1000)) > ondemand/sampling_rate
++	# echo `$(($(cat cpuinfo_transition_latency) * 3 / 2)) > ondemand/sampling_rate
+ 
+ ``up_threshold``
+ 	If the estimated CPU load is above this value (in percent), the governor
 -- 
-With best wishes
-Dmitry
+2.34.1
 
