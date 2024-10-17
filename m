@@ -1,119 +1,92 @@
-Return-Path: <linux-kernel+bounces-369240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23179A1ABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDBD9A1AAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57288B253D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:33:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4111C22408
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465D019308E;
-	Thu, 17 Oct 2024 06:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CEA18BC3B;
+	Thu, 17 Oct 2024 06:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MOP4ZkqG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="JXUVfMP8"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B3B190663;
-	Thu, 17 Oct 2024 06:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CE713D24C;
+	Thu, 17 Oct 2024 06:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729146768; cv=none; b=o04ntsd9lSsTDZV2PvEW1IMsKaLmtczjdjEZ2cWMcQroDUagVeTeeLFv9Hi+dz8fu1kTIrC+9JJIVeyh0mF9NGwJksGTHJPYCxJe0DEhlWjkHdLd9CmLwemSpuKoCmg1Q+j6ajAIQ6mluj/ixjVoGw5XHNPQSEPXrSuJ3F6n4aU=
+	t=1729146568; cv=none; b=ZEdAo6VppGJ+SF6UvMXJD6j6Q2B/ikgckrjaPCtqtaHiBM3EQxOeT+/Xy6R9+X/qLoljiRPHcAmZ8Ktx7CloapRyC6MaNWionhCY6TToQDe4vd4ZF5wC/sFhzxL2UfvbB4P3/fYL/DCUS3Y4mfTZoKg5CpafYVFCnF4cLRKCOes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729146768; c=relaxed/simple;
-	bh=AU3canff2bgumgXQ4yKpv4UIhuEquhiwX0SDqsXzeC8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K0ZEQ40dLX4qKrqIAtoFI3z6Nq3yjh0S97WNNYlIrfZPPuDKKSawEWZY9kgir+cvc/63ejpAEpzS/U1QwfpJWphQBMRGHHpy2sgiWIdd0FI/9lKG48iehmP2FUiuF2E4p+PrkBLd6bSy5ITxrgOif/6OF5Hjx7UODeJLyXlBO3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MOP4ZkqG; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729146766; x=1760682766;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=AU3canff2bgumgXQ4yKpv4UIhuEquhiwX0SDqsXzeC8=;
-  b=MOP4ZkqGpfUfytky0SophCYj9dxSHVdKyJhuGjT2HLUF2ND8HwSoVP74
-   7rXfQT6qZFAT0FrUEYXcHJsc5IesIlC453Fz4DH0zCx6KczxVGjdoi9y5
-   8DHnbKyBIlzTFhZ6rKANU+MPfv0/VNph6ixy+FSkb7Ekd/ncp/0GLqAU/
-   UoBOlOjtBeTWIRBPbXSRIEnex5VUCaZCAcqRI94qlDS5TN2cM9mJFOxIO
-   tXolDWzt9f71wZpG80Fdg6e7de7zaibSGMkZ4EeMdybPlGayN6Md4PUuV
-   UzkDQsfPy8T225OduFQnS/p+ceofnnOhcm/ykiYjhprFOyUuFvgnvQNm/
-   g==;
-X-CSE-ConnectionGUID: AUv94k2eROW+4T0KfyI9Eg==
-X-CSE-MsgGUID: ezJJSrHGQreVpYLbgcmN3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="28709075"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="28709075"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 23:32:44 -0700
-X-CSE-ConnectionGUID: JsnFeipfSCic5h1rzlEEvQ==
-X-CSE-MsgGUID: rD4x1GDtSfKARj7HBXz5Zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="83229180"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 23:32:41 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Alejandro Lucero Palau <alucerop@amd.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,  Dave Jiang
- <dave.jiang@intel.com>,  <linux-cxl@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  Gregory Price <gourry@gourry.net>,
-  Davidlohr Bueso <dave@stgolabs.net>,  Jonathan Cameron
- <jonathan.cameron@huawei.com>,  Alison Schofield
- <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
-  Ira Weiny <ira.weiny@intel.com>,  "Ben Cheatham"
- <benjamin.cheatham@amd.com>
-Subject: Re: [PATCH 5/5] cxl: Avoid to create dax regions for type2
- accelerators
-In-Reply-To: <d5233135-9d70-9080-c7eb-0906f07e5104@amd.com> (Alejandro Lucero
-	Palau's message of "Tue, 15 Oct 2024 09:51:17 +0100")
-References: <20241015065713.308671-1-ying.huang@intel.com>
-	<20241015065713.308671-6-ying.huang@intel.com>
-	<d5233135-9d70-9080-c7eb-0906f07e5104@amd.com>
-Date: Thu, 17 Oct 2024 14:29:08 +0800
-Message-ID: <87jze76y4r.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729146568; c=relaxed/simple;
+	bh=s4nhpDsm0T9hY1XZ+ZmlcuwoPC7+usKDApntGAfXH/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hn813DKWyMXxcOETsEAtnmrcfj+sx19M4S/5MEJLS9uea38nRVAiZq/8eGsY3cKLy8tNSAgkjo0x8CfeT84er++LXqedmS47zGocbX+iDFGaZJc0Plb5uLoMMxpWTgWjuMteWZlRVQu74IgrlOAxN6vScEOjarWWO+sn7wtc6Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=JXUVfMP8; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DBBDC1484F3D;
+	Thu, 17 Oct 2024 08:29:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1729146563; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=1jroyLa3IOkny/YPUFBr1HHAZoT/a5l4o8j/iFhQogo=;
+	b=JXUVfMP8Bv46MjY1Ljd2/FloLUgnQ6F36eU82RxJE7iVgi1mLtRIr9C0IjgFUe3rrYRWKR
+	LGvMJdS2btBPeLiVeKy2pEVuvDMiZhpeRndmcohaxEGAbZzP4s8QgUV+UOkn2IOQHG1zIe
+	9uE0w+bY/DU5sPiCAOQ3U4dkDo+sn8IFP5ruOK60PgQ16xX4jpFZVUxruakPMq3LzKvuZa
+	/INMcjZFR4diWO56wOi9SFgkvRvfY2vSWyxvokpA8mal9FDQ3fFjQKK41DZx8LJK4E0euv
+	A6tRMB46rjUlzJUBXKmf4uU1qlGGwfCvn/UfzAk35uNbHAnceR7+aiTFZuQqTA==
+Date: Thu, 17 Oct 2024 08:29:17 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: micrel ksz8081 RMII phy and clause-22 broadcast
+Message-ID: <20241017-skirmish-various-4e334907784c@thorsis.com>
+Mail-Followup-To: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20241016-kissing-baffle-da66ca25d14a@thorsis.com>
+ <8bbe2e1a-3ff0-4cf2-8d46-5f806f112925@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8bbe2e1a-3ff0-4cf2-8d46-5f806f112925@lunn.ch>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi, Alejandro,
+Hello Andrew,
 
-Alejandro Lucero Palau <alucerop@amd.com> writes:
+Am Wed, Oct 16, 2024 at 11:43:31PM +0200 schrieb Andrew Lunn:
+> > Would be happy if anyone could suggest a path forward here?
+> 
+> The hardware is different, so have a different dts file. You can then
+> list the PHY at is real address, which will stop the phantom broadcast
+> address PHY being created, and use a phy-handle to point to the real
+> PHYs, so when the phantom broadcast PHY is disabled, it does not
+> matter.
 
-> I did comment on this some time ago and I'm doing it again.
->
->
-> This is originally part of the type2 patchset, and I'm keeping it in
-> V4. I do not understand why you pick code changes (you explicitly said
-> that in the first RFC) from there and use it here, and without
-> previous discussion about this necessity in the list. I do not think
-> this is usual, at least in other kernel subsystems I'm more familiar
-> with, so I will raise this in today's cxl open source collaboration
-> sync.
+Yes, I think separate dts is a clean solution, creating those files is
+no problem.  I just wanted to avoid the additional work for
+integrating this into build, bootstrapping scripts, firmware upgrade
+etc.  O:-)
 
-No.  I picked this change from Dan's series as follows,
+Thanks for confirming, seriously appreciated. :-)
 
-https://eclists.intel.com/sympa//arc/linux-bkc/2024-10/msg00018.html
+> I would say that listing multiple PHYS is just an opportunistic hack,
+> which might work for simple cases, but soon leads to difficulties as
+> the situation gets complex.
 
-So, I added co-developed-by and signed-off-by of Dan.
+Right.  Thank you for taking the time to read.
 
-IIUC, your picked this change from Dan's series too?
+Greets
+Alex
 
-Feel free to include this change in your series.  If your patchset is
-merged firstly, I will rebase on yours and drop this change.
-
-[snip]
-
---
-Best Regards,
-Huang, Ying
 
