@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-369741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5742F9A21FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:17:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B394D9A2203
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC373B256CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:17:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786BF2853A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8391DD0E0;
-	Thu, 17 Oct 2024 12:17:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFEF1DD520;
+	Thu, 17 Oct 2024 12:18:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD75314D2B1;
-	Thu, 17 Oct 2024 12:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A1E1C695;
+	Thu, 17 Oct 2024 12:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167429; cv=none; b=aJNlOE7nRQD+w/AwYnntU6baFgMbfcRLDovyfmTmJDJ8GGQz+dwgp7I1BlslbJKsVvs8NJ4pUXl+SPkf36T4isZZLmO2uvnV2t91fnmxGfbYJe/28d5zzcEH6aAkzpnXx/wW77xmwDsCRQbG9YUr7JgPto8B/LH/4cMNbG8O8r8=
+	t=1729167494; cv=none; b=IwvPUTpAmgY9a3ioxLoYEcVwEpfUc/M5ujMeFPbXGPYzQqeq8/1Sjj1iznZRatg94zhLx+xG0pAbW6jt6Ceoe79H316IoviHdKSjkpGLODNFKr71M4qO+l6UKfkupFFnUs3uDnCcMjE0fOJtanTsXKRchEWEt3g0y3D2Yn47aUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167429; c=relaxed/simple;
-	bh=Yf61FvcfH5nCZ/c6o860G2My1JoTfHPOgJis45+GQbg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g6Q7luSXg7v1ZjtTLwtMZIW+/3d+a+EC6DjP8yCISYMZ8GyNUE7pW4cwzIh778jyiQdHFkNDIscrQN7qHcOk0PH5CmhUgSU05/SuBlwvEylrAXfvwAWCeB3fxAqfUFbGtWfgY7WnLzoI78hcW/Q3btb4fL9Ecg7cR8Zx337aX/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTmtQ3BFjz6LDDD;
-	Thu, 17 Oct 2024 20:12:30 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id F0C20140119;
-	Thu, 17 Oct 2024 20:17:01 +0800 (CST)
-Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
- 2024 14:17:01 +0200
-Date: Thu, 17 Oct 2024 13:16:59 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Shiju Jose <shiju.jose@huawei.com>
-CC: Alison Schofield <alison.schofield@intel.com>, "dave.jiang@intel.com"
-	<dave.jiang@intel.com>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: Re: [RFC PATCH 0/4] Updates for CXL Event Records
-Message-ID: <20241017131659.00000224@Huawei.com>
-In-Reply-To: <9e221493ff4a456cbdd1b773c670d1c7@huawei.com>
-References: <20241016163349.1210-1-shiju.jose@huawei.com>
-	<ZxAppnCBf4wFgcQ0@aschofie-mobl2.lan>
-	<9e221493ff4a456cbdd1b773c670d1c7@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729167494; c=relaxed/simple;
+	bh=8xOP+fyn8S9TsJvLes6SdW4DK+kDiUgc2CPyz+uilZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qN3QgLrnzhRGXCDmihUhFlCkITz1y9SxdIKlbuziLIx2e9hiwOp/Yl0RCUtHmlnCHjyWGzbai14qr5NktjVR4mhJlY2ehfhSM9oD8ZioYA34ScRKoPiuY52DTEQTRiY7QAaeVd3A6DW7EfhZeBnK5bqhOmY27FJSgVFJr+gRZFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XTn0X3WzBz4f3lXV;
+	Thu, 17 Oct 2024 20:17:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 901B81A08DC;
+	Thu, 17 Oct 2024 20:18:00 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgB3q8d3ABFnPJpjEQ--.54302S2;
+	Thu, 17 Oct 2024 20:18:00 +0800 (CST)
+Message-ID: <12f57831-6b88-49db-bfb6-eabfc5e1d40c@huaweicloud.com>
+Date: Thu, 17 Oct 2024 20:17:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cgroup/bpf: fix NULL pointer dereference at
+ cgroup_bpf_offline
+To: Tejun Heo <tj@kernel.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: Chen Ridong <chenridong@huaweicloud.com>, lizefan.x@bytedance.com,
+ hannes@cmpxchg.org, longman@redhat.com, john.fastabend@gmail.com,
+ roman.gushchin@linux.dev, quanyang.wang@windriver.com, ast@kernel.org,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ wangweiyang2@huawei.com
+References: <20241016093633.670555-1-chenridong@huaweicloud.com>
+ <bidpqhgxflkaj6wzhkqj5fqoc2zumf3vcyidspz4mqm4erq3bu@r4mzs45sbe7g>
+ <Zw_yHEJCBwtYFJoR@slm.duckdns.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <Zw_yHEJCBwtYFJoR@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3q8d3ABFnPJpjEQ--.54302S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFWrGr1DurWrJw4UJw4kXrb_yoW8ZF15pr
+	savFnFk3Z5GrZ0yryvva4FvF15CF4Iq34UXrWUJry3AFnrWrWUtry2kFy5CF98AFn7Kr13
+	JrWYvrySk3yq93DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Thu, 17 Oct 2024 10:39:58 +0100
-Shiju Jose <shiju.jose@huawei.com> wrote:
 
-> >-----Original Message-----
-> >From: Alison Schofield <alison.schofield@intel.com>
-> >Sent: 16 October 2024 22:01
-> >To: Shiju Jose <shiju.jose@huawei.com>
-> >Cc: dave.jiang@intel.com; dan.j.williams@intel.com; Jonathan Cameron
-> ><jonathan.cameron@huawei.com>; vishal.l.verma@intel.com;
-> >ira.weiny@intel.com; dave@stgolabs.net; linux-cxl@vger.kernel.org; linux-
-> >kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; tanxiaofei
-> ><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>
-> >Subject: Re: [RFC PATCH 0/4] Updates for CXL Event Records
-> >
-> >On Wed, Oct 16, 2024 at 05:33:45PM +0100, shiju.jose@huawei.com wrote:  
-> >> From: Shiju Jose <shiju.jose@huawei.com>
-> >>
-> >> CXL spec rev 3.1 CXL Event Records has updated w.r.t CXL spec rev 3.0.
-> >> Add updates for the above spec changes in the CXL events records and
-> >> CXL trace events implementation.
-> >>
-> >> Note: Please apply following fix patch first if not present.
-> >> https://patchwork.kernel.org/project/cxl/patch/20241014143003.1170-1-s
-> >> hiju.jose@huawei.com/
-> >>
-> >> Shiju Jose (4):
-> >>   cxl/events: Updates for CXL Common Event Record Format
-> >>   cxl/events: Updates for CXL General Media Event Record
-> >>   cxl/events: Updates for CXL DRAM Event Record
-> >>   cxl/events: Updates for CXL Memory Module Event Record  
-> >
-> >Thanks, this looks useful! I didn't review line by line but do have some feedback
-> >before for a v1:  
-> Hi Alison,
-> Thanks for the feedbacks.
+
+On 2024/10/17 1:04, Tejun Heo wrote:
+> On Wed, Oct 16, 2024 at 03:13:52PM +0200, Michal Koutný wrote:
+>> Hello.
+>>
+>> On Wed, Oct 16, 2024 at 09:36:33AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>> As mentioned above, when cgroup_bpf_inherit returns an error in
+>>> cgroup_setup_root, cgrp->bpf.refcnt has been exited. If cgrp->bpf.refcnt is
+>>> killed again in the cgroup_kill_sb function, the data of cgrp->bpf.refcnt
+>>> may have become NULL, leading to NULL pointer dereference.
+>>>
+>>> To fix this issue, goto err when cgroup_bpf_inherit returns an error.
+>>> Additionally, if cgroup_bpf_inherit returns an error after rebinding
+>>> subsystems, the root_cgrp->self.refcnt is exited, which leads to
+>>> cgroup1_root_to_use return 1 (restart) when subsystems is  mounted next.
+>>> This is due to a failure trying to get the refcnt(the root is root_cgrp,
+>>> without rebinding back to cgrp_dfl_root). So move the call to
+>>> cgroup_bpf_inherit above rebind_subsystems in the cgroup_setup_root.
+>>>
+>>> Fixes: 04f8ef5643bc ("cgroup: Fix memory leak caused by missing cgroup_bpf_offline")
+>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>
+>> Hm, I always thought that BPF progs can only be attached to the default
+>> hierarchy (cgroup_bpf_prog_attach/cgroup_get_from_fd should prevent
+>> that).
+>>
+>> Thus I wonder whether cgroup_bpf_inherit (which is more like
+>> cgroup_bpf_init in this case) needs to be called no v1 roots at all (and
+>> with such a change, 04f8ef5643bc could be effectively reverted too).
+>>
+>> Or can bpf data be used on v1 hierarchies somehow?
 > 
-> >
-> >- Suggest being more explicit in the commit msg(s). Something like:
-> >cxl/events: Update Common Event Record to CXL spec 3.1  
-> Sure. Will add.
+> We relaxed some of the usages (see cgroup_v1v2_get_from_fd()) but cgroup BPF
+> progs can only be attached to v2.
 > 
-> >
-> >- I was a bit surprised that this doesn't simply append new fields to the
-> >TP_printk() output. Is there some reason for that?  
-> Will do. Thought print new fields before region_name and region_uuid. 
+> Thanks.
 > 
-Worth calling out that the other change is that 3.1 added the option
-of a spec defined format for the component ID (various PLDM defined
-fields)
 
-I don't think we need to maintain ABI compatibility to TP_printk so to me it
-makes sense to print that formatted version if that is what is provide instead
-of (rather than as well as) the component IDs.
+So, should commit 04f8ef5643bc ("cgroup: Fix memory leak caused by 
+missing cgroup_bpf_offline") be reverted, and should cgroup_bpf_inherit 
+be only called in v2?
+Have I understood this correctly?
 
-For RAS Daemon etc, that can be figured out in userspace if needed
-so no point in changing the trace point, but the print being the
-subfields is nice to have.
-
-Jonathan
-
-> >
-> >- How about updating the mock of these events to include these new fields. I
-> >don't think this introduces any new formats, but I would certainly eyeball all 3:
-> >dmesg tp_printk, trace file, and monitor output because all 3 (sadly) present a
-> >bit differently.
-> >  
-> I will update the CXL mock test for these new fields.
->  
-> >-- Alison
-> >  
-> >>
-> >>  drivers/cxl/core/trace.h | 201 +++++++++++++++++++++++++++++++++------
-> >>  include/cxl/event.h      |  20 +++-
-> >>  2 files changed, 190 insertions(+), 31 deletions(-)
-> >>
-> >> --
-> >> 2.34.1
-> >>  
-> >  
-> Thanks,
-> Shiju
+Best regards,
+Ridong
 
 
