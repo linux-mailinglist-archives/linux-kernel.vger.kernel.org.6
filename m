@@ -1,245 +1,172 @@
-Return-Path: <linux-kernel+bounces-370156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1AC9A28BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:27:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E802F9A28C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20261F233B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A91C211C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E801DEFC9;
-	Thu, 17 Oct 2024 16:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4091DF73D;
+	Thu, 17 Oct 2024 16:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xb/EWgt1"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2069.outbound.protection.outlook.com [40.107.93.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JxURDOBP"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC711DED75;
-	Thu, 17 Oct 2024 16:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729182415; cv=fail; b=gnLFFMK9Lk9BwZR1l/hC46FdEn/R0QD6nJpBUfwMtsl1mA6/H6BLhZXAmVRlYvrDIvT2CURr1Z/VYmMNu60+cINPVNLNOv6ST8czHELV0O3Eyc+ER2mSdBX5mSt/wyeQ3WAVSdb2a2tdkOG0LID/qOI6x/Sn3swnGr4iaJVbfGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729182415; c=relaxed/simple;
-	bh=18SD88F0MWc4jNlx2ZqbqniM4oWY2CXdt8tKXU7aEDk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RthawvwYbbJwvBvswkUx1QXqn4YOm3UK3nedeF9Ps/wLs7Sz5iM9NRU9F5Jiv8Sjwa/+vtPFXRGSbBZIknRhI3o0+QAgy53wC7DWZqrpq1Dh2TrCFmpxUnfdyENKFGozJ5vc6tXYAzvt1FqfvYPmS8psm+4m46Adq0qOGLG445k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xb/EWgt1; arc=fail smtp.client-ip=40.107.93.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IIuUEenyUl5a/crHRw5CrN1nNR79MyTYVFkTo3IcwuYwrnDYwMymXtP+NP4C/lYdGnVoSd3tnzLAwWrew8X3y8fINKjTk5M3sDHlYjGFShwaWJK9/UWLN2YVV0P9T3XFBTpOwckunrqWpQK/BDwaNSjwlbO5u0TCl4MGI8OmqzRKu6Dxp+RnVYYSv3wUaHNHWCREk8hws2UB0NhWJpTYbIX0hZDfQliWs2rO1iK1L9p1ckntV7xyRW9TMjuf4fQ0UlCUh7nY+nBXfkDl8GsGY9FLlRWSnmgPEC7sx4ysS9rbaIAVisK3gT2qCt7tXnHczp7bdLQ8yS7Ll8TnlsvWWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n4KUU2khQNdFl+E2fwoGkot3U4xPB2cfdacT6YvIggA=;
- b=pTxHVsR4THRvQqwPJ1opEEn0i6zpw1OU1aNRLgL5y7jAL+7Kp/fPJaFoe8jtrrnaGAng1usZyfZsm+gj8VBqqrRcKAXdaQ3F+UbJMYLEKSWoFz5ff4yJ+lXIfVjdXIz69O+M1mye6qQVn87LMyEkhiZhn25ItUlfo50LqLrp+Iyduix1vJpB4xlqKQ7gjxbtlDVjSGZ9VMdx1jGQQailefSskuy/PPD3oH9oAt8H+a467J8S6xGNz6MZGYAeEQY4EWpvF6gLD+hNVuiOZAiduBx8LOQhoSvzOlUBuKhFZsd2e/hbX3CnzSQIfnxWvapX2/a3kSZRoe8is5tnbdnMHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n4KUU2khQNdFl+E2fwoGkot3U4xPB2cfdacT6YvIggA=;
- b=xb/EWgt1gwZmZLYW37xjuB0k7PewlGyxuLNDgjBleyFmSOogr85ibnrodLfWDlFhUaABJLft+8UgyLWPw0qHvvTNaP03d+xuLNjKjAZoWEU3eQ5HjA/HYyh8kel/KY5Nzbfa16N0aevj/RBix8rirVUmn9kmwpr6qFRZ3Gnz9KU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- DM4PR12MB5796.namprd12.prod.outlook.com (2603:10b6:8:63::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.27; Thu, 17 Oct 2024 16:26:47 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%6]) with mapi id 15.20.8069.018; Thu, 17 Oct 2024
- 16:26:47 +0000
-Message-ID: <20ccf961-606d-4247-a4bf-b53d5ea4a05a@amd.com>
-Date: Thu, 17 Oct 2024 11:26:45 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/15] cxl/pci: Map CXL PCIe downstream port RAS registers
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Terry Bowman <Terry.Bowman@amd.com>
-Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, dave@stgolabs.net,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
- nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
- <20241008221657.1130181-10-terry.bowman@amd.com>
- <20241016181459.00000b71@Huawei.com>
- <4a298643-28f0-4aac-be2d-32b8ff835e2a@amd.com>
- <20241017145025.00002fd3@Huawei.com>
-Content-Language: en-US
-From: "Bowman, Terry" <kibowman@amd.com>
-In-Reply-To: <20241017145025.00002fd3@Huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR12CA0014.namprd12.prod.outlook.com
- (2603:10b6:806:6f::19) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452C51DF96A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729182429; cv=none; b=s/vDAe4gnA6a6b1ARvYCusS8vE3sP9kmoI7WROo8e5u9pts47JC2A3RTPQDb85tOzBAFW7iWza91oEEYZlD/lyzUCfTMSELZHn1Vq78cl7yTwkGyWfrFOwGK5xgFThEABjsw/BzkAKDUZgzf3MYt27wSDAYPbAToC04fVMvIlFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729182429; c=relaxed/simple;
+	bh=7RObRM0z6nR9DWrq0r5Bujm7WrPO0gXOnXZjPf3UXpk=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=WPvHpNux+CLczKS4tqkAgqhxJ/kicBop/+l52dqjkobItwh/geJ7AWMdcwS+WkJkPqxqvbDl6FGPZYh0Y9XJSs/Ld6FSaogORA8L9X/7/JhJ1c0xXGz/adokJ+9TGCADEPvM98lR1X0DcTZ7T75Ojxs4Gr0nxefvUddIUJi9/ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JxURDOBP; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35bdb6a31so23047477b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729182423; x=1729787223; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B4IAnzQZVBr6W615fwR+39NWeMnDjMPSHLvl/Wce2vU=;
+        b=JxURDOBPAoKBzbtxxi2UmR4w4JQQoayUSWgJOcyypZEyTDcgHdsIunsg7sTTKv1qff
+         Bh5mDaCkCYdmuoV4KoWEO9YLi3MF+Zll/eLKnLzb5rPeQrkiqohizE0AclI1OaXhkxcF
+         5aCDm+M/iGVbet3gKv+hdHiTQJPcRTSLt7ScYDSeOonS/JeqAyKhP/R8bardIwgjCFuR
+         aBiaZccROsTA5VtNDLCSRL3ulNCZS52+vUn36/Vlx4/StnrX+y0FugU8O6erKdrvdLIL
+         WGWIDIANYvL7eS653V/tbQZ2MNAEIwcrNloJNVS7xVTjg2Zr0OCUEITJWkTDZLoVZyl2
+         Ax4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729182423; x=1729787223;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B4IAnzQZVBr6W615fwR+39NWeMnDjMPSHLvl/Wce2vU=;
+        b=Ex6w6sylGWqZGtqDpS795IUcuWK8jdxBVOPWptXMyJrNwNqUYdGVmn84VoRx4/o9GZ
+         FsTeboY8n8MU0HdIo1Hh4cBgUCNXxQEpODITrngM/ztqNNwIs6UAlMGfa31QOzYoaz4G
+         4mbdml/3Ea+kpDS3lqIp35GWhLAyQVJOWMibaEtH4bRjpJpkHMx+4zxoU0JLDt+0YSaS
+         FO2/1ip+MSkTJYE8a1ytkdAnXFg4Yq6pepfMEYsFsYzKBvdBPKjZb1TzScGuO+XwTnPk
+         VHzYvYzElDH2T/SAlk5W5X5CGOQ+GysaBsl+lJwDT/EkCzGOC61MSrfY70h2ptphAeXL
+         Lv/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXDdIfrzf7ATbIl77K6j9NnZjatZctTgbQcXcDpo0oLjSpSWbXM13um9oZ+rFwK0ItiJnkXHSwEklUi6Xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeM0g0A2B1DWhUh8PNj6ZBQr23c3M0zd3W1pNeJrb4At/Y0b1W
+	+X6WaP/vmLRqM98bq6tV7Gq3O84IO/V6+4KglCr6jIy1IOHCXIl0Y1TWHMMRozkpvNPx6hRtbdT
+	lO1yamg==
+X-Google-Smtp-Source: AGHT+IFG7sCOdONyNi5sV1QifTeVlHob7eJx347MgZjZvcxyocfpiupcKBob93e0kzghzcj2bHUGdDdpRE70
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:98a5:142e:8c2e:e9e5])
+ (user=irogers job=sendgmr) by 2002:a05:6902:1824:b0:e28:fba4:8b6e with SMTP
+ id 3f1490d57ef6-e2979482a97mr4636276.7.1729182422876; Thu, 17 Oct 2024
+ 09:27:02 -0700 (PDT)
+Date: Thu, 17 Oct 2024 09:26:49 -0700
+Message-Id: <20241017162649.724851-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|DM4PR12MB5796:EE_
-X-MS-Office365-Filtering-Correlation-Id: 797558ee-beed-4689-ce35-08dceec87f23
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZDM3TGJVazRVU01HcWNqbGRNbHBBd3FreTdNa1Jtak90YklUcnN4b3pEaVRv?=
- =?utf-8?B?ZFpiSGk4VDZkUlZvNDhQbE5oUzRveFFjL21wem50SU9Mc1RjYjZHT01KSzQ5?=
- =?utf-8?B?ekZjSDZ5S1pzUG1udVRXanp4SXNnWTVnK3ZvWCtoSmtCUjdKQXIxQ3dVdGw0?=
- =?utf-8?B?M0Z1aHBCdCtualV4SnV6S3FzS1JPVDNBMWJycDZCSGJIeFZ6LzJkY1UzSmMw?=
- =?utf-8?B?cnNZZmNzdEJYelErS1JWbW1ld3c0RUhPTkYxTGNuVGFscXRWV3JCd25DRktk?=
- =?utf-8?B?L2xqM3oyckFrRjFGa0xmYWI2ZjNHNEpaeCtib3BhMHVQSUlRZ2ttdXBjUXZP?=
- =?utf-8?B?MS9tMFBmemZ3R2V6dGRvclczTE1hOWNrRDV1NUU5SDIzdHgvMkdTR003dENt?=
- =?utf-8?B?Vm1qTHlnSUdrL01qakJTZEhyaHM2SW5xdTlXU2JPUG5lVmNnZnZzLzE4TTJG?=
- =?utf-8?B?NVF0djdNRzZacDc1b1dlV3Q0TldtU0RaNk1FRDJ1SDZSQlNFTm1XY3ZoTFBr?=
- =?utf-8?B?enZ6V2FLNzBaZXp0RUdWd1lqOFduRnJUOWI2SWhLbUhJODFkN28vNFZ1VzJj?=
- =?utf-8?B?cGFZcDRXK0NLd0VZQVZlbk1SSVkxSEdUZTE3NzMyRHBCUk0wOHN4d0JRbG9P?=
- =?utf-8?B?bjFEUkg5ZTJlQlNiV0d4REs3S1F3UlV6NHIwR3ZKQWhRY0xBRWd2OW00MlRh?=
- =?utf-8?B?d3o3NTdkTERHSDc1T0pmRGNwamdhanJrUFRuVUR6a1ZNYTlGNUtoZUxrZk1Q?=
- =?utf-8?B?Q05WaGFTNmpEcCszeVk1RkdFazBIRG5EVHBvNEJVOTZvalJHc3lpTktFVWpk?=
- =?utf-8?B?dDY1QW14TmtuWklPMko1SFZ1VHNQUVovcFljbi9XZDJjS1lleGZVckx0VGtq?=
- =?utf-8?B?UUZFQklwSXgrcW5zZ3Bjd2N3VUNKb0V0NzVvczR1N1hnY1NydGNZcUJzZnNO?=
- =?utf-8?B?WkRCbFh4dC9sN0UzUlM5OEZ4TTVpOUpHMVlnQ1pyR2tJUDh5WWFiNEZ2N0wz?=
- =?utf-8?B?Q1V5K0RNb25WMTd6WWZvbFRpTEZMaEFWL3RZOTRzT1M3c0RtcmFhOXM3RTNZ?=
- =?utf-8?B?N0xsV3JZNTQwQWN6T3dFV2lBamc1eGVJVnNOMVo2Z0gzMDZ2N2pvc05LeitN?=
- =?utf-8?B?K0xSL294TmtBc0FiM3pqQWVrd2FNdEo5QURwTUZrUVFsV1JhRXRZQVJrVWs2?=
- =?utf-8?B?d0xWcUVXWktIU0xkZ1dtMnVjNExBN2VsZ3UwTHNwaVFXYng2MFl3VDdDVXpX?=
- =?utf-8?B?MGU2MlBnbXRJVXAzV2lVcTJLT2JCZ0RCdzRGZEk2dXl0VjJwWklsclB5RVlL?=
- =?utf-8?B?VWdhdU1DUjdWbXZTR1pUY1NtZlRTS0xPVVQrZEJkbGNzVWliWlJ3WXBNT2d3?=
- =?utf-8?B?S2Y0L2tQRlo1U1FRRDNTVTBzMWMvMlcwU0pKd0dSY09ISFBGSGZUVGF2THZj?=
- =?utf-8?B?d3pXUC9kTXdVRTBWVms4Vm9iYmtDREZ4VEZBUnlPNWxVUkhnNzdHUyswV1NO?=
- =?utf-8?B?cUt2U01VcHdmaFRVOCtyd1FvclBUVTNOODNRc1J2SWVlQ1ZwM1VGVFhTSEwr?=
- =?utf-8?B?Q1hpQytmd2M0VVVVUUVDMkVZOW12aUVNWHNsVmhKeGhPdWFDN1UxeFVOUWIx?=
- =?utf-8?B?STVtMjg5Z2kzNkJ0M0dVRXM5K3ZmbVpGTUFLeFk5cUM5QitPVzQxNWxqemhz?=
- =?utf-8?B?VTZ6ZUFnbUVhYzlDdFQvUnBoQzVRWURnU3RRUTBpQWg1RnBQRWlsbGMvRWRG?=
- =?utf-8?Q?RYjEad4tvHU1jWstYxmMFxV91/qNRV/6hPquL1D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NHVGd3RQQk5DS3JGckt4bWZrSmxuS3l1Wi9EaWhKQk93dWRkZkdFb0UvVzZw?=
- =?utf-8?B?UHFQcm9GNW52QkVVakp2TURyTUVWdk1pV1hwZnp0dW1XWEpDalNJOFpOSXh2?=
- =?utf-8?B?cjh6MDNaZXRCKzBxUHFsK2VtR013bUdrLzYxczdRSmNUdU1CMU1iLzQ3NFMw?=
- =?utf-8?B?aFI0R2JtYWt3eVJXVDRlV2RwMU83VGIyMzcyWEg4QkRuNUlGSWpTZEphUjRU?=
- =?utf-8?B?ZWtsYzhoeUJjR3FmWDZLeXQ1VUV4Y29GVFVvYnh2M0ptZHBvaWlWLzNBMUJ1?=
- =?utf-8?B?bWlWUWFEcTE3azF4ZDJCTEo3NUJ1OXJMajMwTGxSekt0dkpzemJGbWJadFhQ?=
- =?utf-8?B?SVNwVlB1SHhCdzFITzNLa3JYVlZVcGZLL3hoVVkxcUNUaTVSQVNWQU1kOHlz?=
- =?utf-8?B?N1BvMEt3cGFOUXVvMkIvclVKVGI4cnZkWXhyWmNXZkd3RFBrWFYydWN6REcw?=
- =?utf-8?B?a05CcytOL2NqS1JoS242REhDblN5RVI1OTVUUnVMcXJNSFJvN2Y3enJ2QURl?=
- =?utf-8?B?cENFMGwxdDJWTmlsUXozTnZQUDYwYmdMVkxjV1dvR2hxYWdYODkvb0ppeHJi?=
- =?utf-8?B?c3NPR2dWWDljd3RhalNXMFphMTNWdGpJcjVZQVlPQzBkeUUwRk1QNzcvUEl4?=
- =?utf-8?B?aHFXdDJOWVFLZFJ0R2EvcG9Fek5kaEp4M0JNcW9Na25CQnNPRjVacXBNaFVR?=
- =?utf-8?B?VkpqSGhPWDRnaG1XM2RrNGtPaFFCaTU4Z3I3c3UwcjF0b3BKZ0V1WmhpVmd4?=
- =?utf-8?B?MnRYQjR6b1QzalhZOGxiV2grS1lUUVNTZ3VCSW9UeWxGV2ZKSzFPbXliaFVL?=
- =?utf-8?B?QXdXdUpMOEFZZFNjeFVPUFlUQXg0dThJOWlQbFl5c2g1TWhnaFVSUW5iRlFW?=
- =?utf-8?B?cUdmcktjRGI4NHR6MFZqUU9adVprdGpLN21aS1NyRmZ6bnFtMWJRMCtGWEk4?=
- =?utf-8?B?UHVoYldGdGNHWXZ2VTRPdlpGQ3c0eEQyM0c0MHdRQ1M2ZkptMVJWSmxYclA0?=
- =?utf-8?B?SUNmSVZaTE0yeTUxcndYMGNVS2Ewa01vR3JMdHVyUG9MOXQ3MWRrUjhkQ1RI?=
- =?utf-8?B?cnNqOGhXaWNDMkZ4ZzNNdFdhNXZPYmN6eS83cVU3bVczcEVMYURFYmZmUFZN?=
- =?utf-8?B?K0xLZ1Fhbm1DNk9zNy9aUVlyZGEvK0R0OEo5dmNSQldUVlV3L1haeDdDdkNE?=
- =?utf-8?B?eVUzN3VNZUZVQktZWiswa25Tclo1cThuV3IxeE9qMGZvZTE1SENPQ1hFeldj?=
- =?utf-8?B?TVYvaW5vUEJFajRPYWppcGU3NmFKZDVMM2VKZVV2ci93cW45SHUxSFFXaEZa?=
- =?utf-8?B?dUovdU9qNWVNN1BsTjZkTE8yN3FpUkpCS0RpaExGR3J2SVJ4cUlGVEc4bnNS?=
- =?utf-8?B?S2VBZnZId2I2QnYvZXA2L2tFQ28xUkxwei9aVUhYMVVlSGF2bHBQNG9VcGls?=
- =?utf-8?B?RVJNSzdtS0pQcWNZLzlmL3BvYmNDT2xLMHRrM0lvNkJiWkIwK3lJMklPdW5M?=
- =?utf-8?B?bytVbk8xNGwySWhVTGlPcFYzY0lxNXpEeXRyU1hjeldlaFlVK0lRc2dHWDds?=
- =?utf-8?B?aGxHM1luTTRXM1JXS0ZPblViSmFydkQxRXNIelFZM1UrRmNCVXlWTjR6RnRu?=
- =?utf-8?B?UGN3MUJlME92Q3FiZGltZkp1YVBSU2owekZ0L0FSV1dQcFZlYW14bzVZWUN4?=
- =?utf-8?B?NCtmQUh1dEc4WUFCWnYvRDU1dWdWamtVcDJtN3hDUlNQV25URDR4ajgxZmg4?=
- =?utf-8?B?ZWpWWFFDTjUrNGw4OGpCcDgrQmxtNE1MT01wMlMza0VEcGY1c0E4MTNlbG1J?=
- =?utf-8?B?ZVVHUHpOSmFvZEhTZkRYQW1SbUhhZnE0R3h4RWQ0d0YrdVQ3NEUzdS9WWnZu?=
- =?utf-8?B?djY3UVlnNlZiTHJVSnUvN0pEcXE2Sml3bmFlRkgwWmcrVFAzbWQ4bUh0N1Z5?=
- =?utf-8?B?d0FNeU8xa1hqZDg1QTh5S3d0L1FVNG1oZ3hsc1IrYWhuMW56YzNqVG9tcVQx?=
- =?utf-8?B?Uk5yUGM3dnpiV0ZNdG5ZemZRVlJDZHFFeFB5TGVvQ2xNL1dpazFCSllmdVdy?=
- =?utf-8?B?b0tMQktHT1hrQXp0VHB3Zy9HZnNwdTVJUktMdEgzTE1WSWxyR2pONTRqYXhl?=
- =?utf-8?Q?VJ7z9Oo+je+zi8Nn+9vg5DSHa?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 797558ee-beed-4689-ce35-08dceec87f23
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:26:47.5524
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iQ9DmZG8WCC2Fex2px8CZR6YsTlTEJ9/abZ8dtPm7vby/+hwDGqtbY0jFEd9TRIzp4+4yqz0809gcHdc8KD6Xg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5796
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Subject: [PATCH v1] perf check: Add sanitizer feature and use to avoid test failure
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jonathan,
+Sanitizer builds can break expectations for test disassembly,
+particularly in the annotate test. Add features for the different
+sanitizer options seen in the source tree. Use the added sanitizer
+feature to skip the annotate test when sanitizers are in use.
 
-On 10/17/2024 8:50 AM, Jonathan Cameron wrote:
-> On Wed, 16 Oct 2024 13:16:34 -0500
-> Terry Bowman <Terry.Bowman@amd.com> wrote:
-> 
->> Hi Jonathan,
->>
->> On 10/16/24 12:14, Jonathan Cameron wrote:
->>> On Tue, 8 Oct 2024 17:16:51 -0500
->>> Terry Bowman <terry.bowman@amd.com> wrote:
->>>    
->>>> RAS registers are not mapped for CXL root ports, CXL downstream switch
->>>> ports, or CXL upstream switch ports. To prepare for future RAS logging
->>>> and handling, the driver needs updating to map PCIe port RAS registers.
->>>
->>> Give the upstream port is in next patch, I'd just mention that you
->>> are adding mapping of RP and DSP here (This confused me before I noticed
->>> the next patch).
->>
->> Ok. Good point,
->>
->>>>
->>>> Refactor and rename cxl_setup_parent_dport() to be cxl_init_ep_ports_aer().
->>>> Update the function such that it will iterate an endpoint's dports to map
->>>> the RAS registers.
->>>>
->>>> Rename cxl_dport_map_regs() to be cxl_dport_init_aer(). The new
->>>> function name is a more accurate description of the function's work.
->>>>
->>>> This update should also include checking for previously mapped registers
->>>> within the topology, particularly with CXL switches. Endpoints under a
->>>> CXL switch may share a common downstream and upstream port, ensure that
->>>> the registers are only mapped once.
->>>
->>> I don't understand why we need to do this for the ras registers but
->>> it doesn't apply for HDM decoders for instance?  Why can't
->>> we map these registers in cxl_port_probe()?
->>>    
->>
->> We have seen downstream root ports with DVSECs that are not fully populated
->> immediately after booting. The plan here was to push out the RAS register
->> block mapping until as late as possible, in the memdev driver.
-> 
-> That needs debugging because simply pushing it later like this is
-> only going to make the race harder to hit unless we understand the
-> 'why' of that.   If there is a reason to delay, my gut feeling would
-> be to delay the cxl_port_probe() until things are stable rather
-> than just trying this a bit later.
-> 
-> This might be the whole link must train before CXL registers are
-> presented thing (a less than ideal corner of the CXL spec) but not
-> sure it would mean they weren't available in cxl_port_probe()
-> 
-> Jonathan
-> 
-> 
-> 
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/builtin-check.c         | 37 ++++++++++++++++++++++++++++++
+ tools/perf/tests/shell/annotate.sh |  6 +++++
+ 2 files changed, 43 insertions(+)
 
-My understanding is there is no spec defined expectation for when CXL
-config registers are ready.
-
-We need Dan's feedback. He has asked several times for this to be located after
-adding the endpoint in the memdev driver.
-
-Regards,
-Terry
+diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+index 0b76b6e42b78..5779df5e35ec 100644
+--- a/tools/perf/builtin-check.c
++++ b/tools/perf/builtin-check.c
+@@ -9,6 +9,37 @@
+ #include <string.h>
+ #include <subcmd/parse-options.h>
+ 
++#if defined(__has_feature)
++#define HAS_COMPILER_FEATURE(feature) __has_feature(feature)
++#else
++#define HAS_COMPILER_FEATURE(feature) 0
++#endif
++
++#if defined(__SANITIZE_ADDRESS__) || defined(ADDRESS_SANITIZER) || \
++	HAS_COMPILER_FEATURE(address_sanitizer)
++#define HAVE_SANITIZER_ADDRESS 1
++#define HAVE_SANITIZER_LEAK 1
++#elif defined(LEAK_SANITIZER) || HAS_COMPILER_FEATURE(leak_sanitizer)
++#define HAVE_SANITIZER_LEAK 1
++#endif
++
++#if defined(MEMORY_SANITIZER) || HAS_COMPILER_FEATURE(memory_sanitizer)
++#define HAVE_SANITIZER_MEMORY 1
++#endif
++
++#if defined(THREAD_SANITIZER) || HAS_COMPILER_FEATURE(thread_sanitizer)
++#define HAVE_SANITIZER_THREAD 1
++#endif
++
++#if defined(UNDEFINED_SANITIZER) || HAS_COMPILER_FEATURE(undefined_sanitizer)
++#define HAVE_SANITIZER_UNDEFINED 1
++#endif
++
++#if HAVE_SANITIZER_ADDRESS || HAVE_SANITIZER_LEAK || HAVE_SANITIZER_MEMORY || \
++	HAVE_SANITIZER_THREAD || HAVE_SANITIZER_UNDEFINED
++#define HAVE_SANITIZER 1
++#endif
++
+ static const char * const check_subcommands[] = { "feature", NULL };
+ static struct option check_options[] = {
+ 	OPT_BOOLEAN('q', "quiet", &quiet, "do not show any warnings or messages"),
+@@ -47,6 +78,12 @@ struct feature_status supported_features[] = {
+ 	FEATURE_STATUS("libunwind", HAVE_LIBUNWIND_SUPPORT),
+ 	FEATURE_STATUS("lzma", HAVE_LZMA_SUPPORT),
+ 	FEATURE_STATUS("numa_num_possible_cpus", HAVE_LIBNUMA_SUPPORT),
++	FEATURE_STATUS("sanitizer", HAVE_SANITIZER),
++	FEATURE_STATUS("sanitizer_address", HAVE_SANITIZER_ADDRESS),
++	FEATURE_STATUS("sanitizer_leak", HAVE_SANITIZER_LEAK),
++	FEATURE_STATUS("sanitizer_memory", HAVE_SANITIZER_MEMORY),
++	FEATURE_STATUS("sanitizer_thread", HAVE_SANITIZER_THREAD),
++	FEATURE_STATUS("sanitizer_undefined", HAVE_SANITIZER_UNDEFINED),
+ 	FEATURE_STATUS("syscall_table", HAVE_SYSCALL_TABLE_SUPPORT),
+ 	FEATURE_STATUS("zlib", HAVE_ZLIB_SUPPORT),
+ 	FEATURE_STATUS("zstd", HAVE_ZSTD_SUPPORT),
+diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
+index 1590a37363de..199f547e656d 100755
+--- a/tools/perf/tests/shell/annotate.sh
++++ b/tools/perf/tests/shell/annotate.sh
+@@ -4,6 +4,12 @@
+ 
+ set -e
+ 
++if perf check feature -q sanitizer
++then
++  echo "Skip test with sanitizers due to differing assembly code"
++  exit 2
++fi
++
+ shelldir=$(dirname "$0")
+ 
+ # shellcheck source=lib/perf_has_symbol.sh
+-- 
+2.47.0.105.g07ac214952-goog
 
 
