@@ -1,111 +1,160 @@
-Return-Path: <linux-kernel+bounces-369526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6E49A1E69
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E559A1E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CEA31F2107F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291F1283025
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B7A1D90AD;
-	Thu, 17 Oct 2024 09:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963531D88D7;
+	Thu, 17 Oct 2024 09:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="LPz78v5t"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bApJLpo8"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FBD1D95A3;
-	Thu, 17 Oct 2024 09:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45CA1D88C2
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729157407; cv=none; b=CeZsfwPGqzfVfL2QENEDBHKAvJB+r5hd1SqKGysSumqi6aO7M5PkbTwhTj0tqBx1uSMco01lu29agLtNe4wH407PkzWn0mjWrnO6sOn0W9QTn+FJ+CqstpuCg/PMYWHjSo8xVtxtRQspw1qU5BgGWNTSQVaRcJdRX/eCTUra/Js=
+	t=1729157316; cv=none; b=u4iJCLew/g79iQ1Ywv2bT20ZUtKaFYjX8sVO4WXQQzfIKyP9BtcyaOpUjWCjjt7i51TWFUXO8irYJfOvAb34oD7G52rRs0jybCDXYJCLvlUC6GTi48a79oVUzU1qeL6KIPuyaj1748ESfD73JakWF7FC2bEIQw49ldSfVvjdYAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729157407; c=relaxed/simple;
-	bh=CiKI26DyWW7yOyJWlbrQZ+gnYmg3VknZUz7iulNtGac=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RCJXEtx0drZcq+wOY/RLZ0LIczhR5I3guqJzDfcOAZ5ctHPIaxAGzoZp+/rIjJSJvSxz0PSswFiyPBw6SaUFbX13cJL23aBI7MmAPf3TNUV0iUmR+DXditnVhBVRz5BQZ1QmECswW0iJNXr3GGsMk/mxsj7mBc7Pnv9kz8hFZ7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=LPz78v5t; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1729157286;
-	bh=jYTOHrj7aBtDItZ26HLq1w3w9vmtPKusjwSiZztpTr4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=LPz78v5tNtaLl10p5bTsljqc8qQ9PmSaRWg43Vc7+fg385rgqMJGiO2MGn89IRRLS
-	 0iyKjdXz+ZwDzZY9/q5vUXB6o6mrav33ObEzuQSJHc60wtimAXg5ZC+26jXeuuINTK
-	 gGkk7gtu7xf4YYNQy8UlLWDPffw6gOf8DCd53ZhA=
-X-QQ-mid: bizesmtp88t1729157271t76k14au
-X-QQ-Originating-IP: bDbm0qGdMtkGbRUmorBNBko1orLdgiAYxcE0c6ujLRQ=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 17 Oct 2024 17:27:49 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10282491274136237762
-From: WangYuli <wangyuli@uniontech.com>
-To: michael.chan@broadcom.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] eth: bnxt: Fix typo "accelaration"
-Date: Thu, 17 Oct 2024 17:27:47 +0800
-Message-ID: <68544638693B0D11+20241017092747.366918-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729157316; c=relaxed/simple;
+	bh=3JxCbA3plKuWlzh3DdAcu/EpWlbWdGPeJJNsgc/8v/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IUo0TCNmJtQI8COtAeNuEsacG+XZJ1M8MUUVXJlSUJT2U79GpMa2mgcWYgoy2YTeMBl+XSxC/aLBAjtndj7RgypsZJ28odxGq5BHYb5C1HqBMeVpp5d5q0Q+Wyck60DGVInXsYpUqxFZ/W4UEVCNpUJimBMYSVK5DJpQFag88kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bApJLpo8; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso10878141fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729157311; x=1729762111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ujlKFoZAU3IuBC3XvqlZ9TW01zV3UE3c49sjcx7h6Tk=;
+        b=bApJLpo8stG+PnxoVQN9Z7UXxBGGKiZTkZ1Bfpy7uBPmV0OfvFeB9IY2BHK4G5zByh
+         gFBL51KFptJKtkcPuwC6VmsO8RN+3yg8NHqA4WzPtKyMz8t2AjM6kNAuYCqcEVDP8bHy
+         4tTtK8v+fzIzFbU8v32AyQABCacE8jNur5qCnLkg4OcDVvTqQ23TWVE8HdEEK4G0wAL5
+         A0/ytuo+IcKu0IH1FK+J1WjKiOdsOrIBY/7LQT7LGirKINtuGGeC0apjS7x0NZ72VgpS
+         kO5CXxZ4sR0yB024/SrHlMgxdCb5bX4pdWedf2yw8zaXBt6AtkVoCXNuffTmAaUzYakb
+         q/qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729157311; x=1729762111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ujlKFoZAU3IuBC3XvqlZ9TW01zV3UE3c49sjcx7h6Tk=;
+        b=kODr/+SaXZ9uCOUDMnb88elWO2Wc/5Xhz7NNxuGgvadm2n6h2NcAF7ZcsF3utDwyyc
+         4yhIyeRmMD/6m98NHBk0ZYyKpQurntwECRHEtsXFRL2D5r2vG/R19xqpnFAPX9ajmTGQ
+         Ml7ogDqs/7X7rXGicpElcRiR+M4wBd3LxUBlt51xiR5dTuTa80J55d480LXH1F0vZ2nR
+         AoWdq/klQnjDLqN87Oo84/yFNjaQu8LBRBuHU1YgiqHh8mf5wQNAfTfuTxMxCH64VMHV
+         kedpi9pXOp9FU/tynCXBZo2ctp5Rw/QEdUrZQ2WPhIsvUlg67LXKE0WI7cOJBYcnRSuf
+         kC0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVU0FFfTZtMhBIOio4FGXUepocqsfLIj6TrBwmNp5b9QwyNq+eFXq1JmbnUVtv6oW4MnmHK4G9OXfWbYPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOmXTGT3iQwr2x5GtLcbqYQRm+nMqMftDjvs8AQ+U55wXPas4Z
+	26DHWQ2ST5HbzvsWvx54Chbh37+9aGK4/zc9cZoj5caf4Dw4XX3gW4qS/dbqaaVnQDUeFZ6C6m2
+	Kcr5j3/d9WmSI+uG3g+7s7BOzbxU7n5oonwjJFg==
+X-Google-Smtp-Source: AGHT+IEY+3SV+hBJUgIpM1mrD/VMIPjwYqeTMMlR7fhnpB2nNrdPkRRvzY3JDQvwDcgUwUgOg9XphlUR4GGduZiSn9o=
+X-Received: by 2002:a05:6512:e9d:b0:535:6a34:b8c3 with SMTP id
+ 2adb3069b0e04-539e54d772bmr13956584e87.5.1729157310716; Thu, 17 Oct 2024
+ 02:28:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M4K5nIxZYv59tPOdUFgiRkjkEQ/prZtc3vE4dk/9nDswoSEi34cTFlFj
-	EZAnwpJEzIZUEzaIg1yWhVUMYOpIIpoyQ72ji8ICrMRKKF162DeEqniIWd4JpMWLv+OthBw
-	cbzrZlVoNGQJsFn1YN/iOugV7M/Qx7SVjJg/TSzPoUTUD22wh/r8aFCkxbCwgM/SJ93yrZW
-	7OR2C8lwLNGX147/gAGAICTtsuMNlQftmy4g9INgJ0xOKKuJoCEgJ9J5Eyx5uRfv496QFXN
-	vGmNsj3F8El++W0mXiaf9XOt81bN9VZ2tOtAoki+JZy3qF0JvXDnLHL+bADaUmAPvX9TgJW
-	31ZG1gvUFN2ibXtH6PP5urr5kuKKZE9t2EpXwF5j2q4gHiJXVaZRZdLosc3Sov7jjxEfd7Z
-	DYEIZCAJv3V1K3L8IgJyEgBtsaWsqYkatVQI8I7jVGsboIlqV+JE6rcHmmLwfhCvprdKPR5
-	g/7Wr7Xo4gJ9jBOzozwgN/gdS0tO1Ig5s7VheGwj+JtcmPShCzIRcX4UioOukFT5iZ3Y/fu
-	eri78VgSQsp6/Sy+gLPqnD8/cJnypF2Hj8/aiqjg+rV0Yvc4vlr0dqUBwBG8LTXyQcDV94X
-	cd36VHOdC8j3nxBwzj35K2yrnyasSnybeOkhInWPqYLHTlVPRDc1IJgwt9uC7j9GzTFX+lu
-	lwlW5kzNh5Ai5ct1qXIVRhcwAnuR81c6vb4GsPsrFCZtY0lFDzAeB+XfiDBZc2DKShsYAfK
-	KTEFQMtC0yRgw2jxQtdKghHTZzPx2ifqpYYzzzyhw1LqNTj7Lsny8jPoVvGzqLNGjfmw+BS
-	MosHIDwVStCiypa0yxQGq1/F1+YDQ5fs/A3BJQkP9tjYU6EDuPUCghU6w/VMElPcSJ3WJtT
-	1AiNrlG3kcyRkLLnvTcpViPR4g9cWrzFioOIMfkpGF7piwQck/edvklJVmzO1GcCpD28Xhi
-	W522EEDvxMfwK4P/REKpSNsEQi33o2ek5MkGSrofjX4R/+yq9Kec4dfsi
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
+ <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
+ <ZweftESPrJNEsqGE@hovoldconsulting.com> <Zwj539cN2DJ7nd3A@linaro.org>
+ <Zw5fzNZ_xCwPyw4G@hovoldconsulting.com> <Zw_dE1rQ-Ljsh-sY@linaro.org>
+In-Reply-To: <Zw_dE1rQ-Ljsh-sY@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 17 Oct 2024 11:28:18 +0200
+Message-ID: <CAMRc=MfUEfKHkAVvtGODxvJ-BdL+kX7uDgW+1y4QW3Kc5mpX+w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
+To: Stephan Gerhold <stephan.gerhold@linaro.org>, Mark Brown <broonie@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake of 'accelaration' in comments which
-should be 'acceleration'.
+On Wed, Oct 16, 2024 at 5:34=E2=80=AFPM Stephan Gerhold
+<stephan.gerhold@linaro.org> wrote:
+>
+> On Tue, Oct 15, 2024 at 02:27:56PM +0200, Johan Hovold wrote:
+> > On Fri, Oct 11, 2024 at 12:11:43PM +0200, Stephan Gerhold wrote:
+> > > On Thu, Oct 10, 2024 at 11:34:44AM +0200, Johan Hovold wrote:
+> >
+> > > > Based on our discussions it seems we do not really need to describe=
+ the
+> > > > internal PMU at all for WCN7850 (as the bluetooth and wlan blocks c=
+an be
+> > > > enabled indepdendently) so perhaps we can just restore the old bind=
+ing
+> > > > and drop most of this boilerplate for all boards.
+> > > >
+> > >
+> > > I think there is no clear conclusion on that yet. The old bindings
+> > > didn't describe any power supplies for WiFi at all. The pwrseq bindin=
+gs
+> > > are currently the only way to do that.
+> > >
+> > > We could potentially move all the "PMU supplies" to the WiFi/BT nodes
+> > > and rely on reference counting to handle them. But I think it's bette=
+r
+> > > to wait how the M.2/generic PCI power control discussion turns out
+> > > before investing any time to refactor the current solution.
+> > >
+> > > There are existing users of qcom,wcn7850-pmu already in 6.11, so I th=
+ink
+> > > it does not hurt to take this patch as-is for now. We can clean them =
+up
+> > > together later if needed.
+> >
+> > Sounds good.
+> >
+> > But can you please address the following warning that I see with this
+> > series:
+> >
+> >       pwrseq-qcom_wcn wcn7850-pmu: supply vddio1p2 not found, using dum=
+my regulator
+> >
+> > Not sure if it's the dtsi that's missing a supply if it's the driver
+> > that needs fixing.
+> >
+>
+> It's the driver, the DT should be correct. This supply exists on the
+> WCN7850 chip, but nothing is connected there on the QCP.
+>
+> Unfortunately, it's not entirely straightforward to drop the warning
+> since the pwrseq-qcom-wcn driver uses the bulk regulator APIs and
+> (AFAIK) there is no good way to make only one of the regulators optional
+> there.
+>
+> @Bartosz: Any thoughts on this? sm8550-qrd and sm8550-hdk are also
+> missing the vddio1p2-supply, so they probably have the same warning in
+> latest mainline.
+>
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How do others deal with it? I'm asking because I've been seeing these
+warnings for years on many platforms which makes me think they are not
+a high priority for anyone.
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index f5da2dace982..0093f581088b 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -12881,7 +12881,7 @@ static netdev_features_t bnxt_fix_features(struct net_device *dev,
- 	if (features & NETIF_F_GRO_HW)
- 		features &= ~NETIF_F_LRO;
- 
--	/* Both CTAG and STAG VLAN accelaration on the RX side have to be
-+	/* Both CTAG and STAG VLAN acceleration on the RX side have to be
- 	 * turned on or off together.
- 	 */
- 	vlan_features = features & BNXT_HW_FEATURE_VLAN_ALL_RX;
--- 
-2.45.2
+The best approach would be to provide an optional bulk get for the
+regulator API. Or extend struct regulator_bulk_data with bool optional
+and take this into account.
 
+Mark: Any thoughts on this?
+
+Bart
 
