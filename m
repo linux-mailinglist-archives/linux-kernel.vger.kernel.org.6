@@ -1,104 +1,115 @@
-Return-Path: <linux-kernel+bounces-370727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EFF9A3151
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:19:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D799A3155
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8902828E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:19:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E811F226C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558061FCF4A;
-	Thu, 17 Oct 2024 23:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7672B3DABE3;
+	Thu, 17 Oct 2024 23:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GE1NalVr"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a8ExjZa7"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535A1FCF42
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 23:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDCA1FF5F5;
+	Thu, 17 Oct 2024 23:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729207109; cv=none; b=huvfPOsYWL4dhdnGhRhwgzKvMDF0rHLGtq+kc35yjN65yg0Hn76snw4MNTY9TkWt31qGR6aLU2pHFijLJjQVmM96nWjzDEbtUeq6csbRuYHWktdDqs3dbuVaNToapO/RkstOfeJu+N3NgtdrmF54s66Hexjm5FjGnMRqEkCq+dc=
+	t=1729207444; cv=none; b=HWHjKLNgNbpo9Gknxqj8u5JG7B1um8Y5pJ3dOltRFUWbTDrgLbENugWRmsr8XralseW2VVXmrefXIE3mAki1wDvasZ0CDPjs02TDPa9mz+RtMKiPy0TCML7oc5XsW3zWbM5HTOV17dCceCTlY6pPG532oWvhwb7go6+HJZ3XUCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729207109; c=relaxed/simple;
-	bh=1YJKLaDzXZJBGszdCWaBM9BXlp4oLn2Qp1cIPCql4+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BeRQ+EyXmRB21FWQ70xLyEmHTAj108iAPnIEGzctnSSv9CWlfEmVE7uhcIGVCTux1PoC4xTyBKY91vrwj+odDsK/JxR1EptkEVoMfpbyGQAGfnXSslrU+m4MuMMDxwzjqcycpApWBCOGmx+qGV/1hGuru6aL2LHRHxplYxqsTDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GE1NalVr; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460464090d5so12519051cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729207106; x=1729811906; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FDSzJ8bhsF8vdcDCL94rN1SI/To9xp299yFHn5dIsI=;
-        b=GE1NalVrFxg5Jqj0mCxRulNBO2wyL/ppkuvZY1T/sc4tjfC1Tv4AAn8s5ptUsJ+l7f
-         ycfTEp8sHMlsLykeeXUTlL4PYJtdw9X977VuQBg7ePHYv7RcMDeYs3UTRiCfQfEjlHOx
-         yEX/ZEq0N6jrue0HC0bcpnBhHQ+yhrW1uHd7I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729207106; x=1729811906;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6FDSzJ8bhsF8vdcDCL94rN1SI/To9xp299yFHn5dIsI=;
-        b=SAD9I7BjCYFmOa/P9cGcPCWm3TpqVuZeQwZSSm5k09CW5VHZrOYNX306DPguFMRAGa
-         /Mzot6e00rbAsRfmSD/vLwdSAtRZBC7HWFNn5WjyDXUzJ5+TMr4YR2AvFIYHHa5iY5kk
-         thtEGtBn8WIizCsInGuYIc+WbFqsC8zdyRZ6iHeicQr8XWDA6R6AoC+0hJmPeYyMSPgy
-         yTLnAGazFaZpPZfCFRN9AvTtwmUso7yt6qSjR81HGy45EBsqrC+5uGeuAyqq6CA4cxxq
-         oevPTxSQPPEMOUmj1T6tEa2RMi1QOdWOcNPcLnu3/XCjtsAhW35yZ0zpakRP/f2U2fc2
-         mXSA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6bWVfzoRZ8N1+Z1m7SW5ugz2fHoEWbUDjgsA4KTALlHRCtB3F/oWlmmHz01ecbmELePyiMu7ES93NiIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTCBut/Abo0ga91+2NYByDCjqtOBi5epRS/Tv++FRKBrnhKvNw
-	yh7xUMuL3roHPFLsWXHtam7VHiAG88YVJDUn6Vdc46BHq8vwO6zxeo+NdGKEpZAsESi26KSEtaZ
-	Zr0or0VJ16qHRq81oEPN6W1HnsgBxSd9EwZBa
-X-Google-Smtp-Source: AGHT+IGfp5gAE5G4KXGJWAqhtTz9SCjd92YYOnHa8m+fbXN9Ki68pFCs7qSpp+M8wRW+2iIS00tS/Yjx7pckeE5onug=
-X-Received: by 2002:a05:6214:4808:b0:6cb:99db:bdbf with SMTP id
- 6a1803df08f44-6cde160f1bdmr9758756d6.43.1729207106060; Thu, 17 Oct 2024
- 16:18:26 -0700 (PDT)
+	s=arc-20240116; t=1729207444; c=relaxed/simple;
+	bh=stynPAKb67QZa/lU7ZIP8zDcPVSvZM4VE/kuZgRvW68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=be5cl8euHWNeV+qq4quHN+6ny3hep+ym5EUWwu8O0O7RLbGtRLgG9PFXBBp2P7ERM4FsOGFxJY27KHTW50y9Ts1uWFfM2u+44HghYkAinE6YnOvv7XCf2KX+6kmBfcaECi6qpbfTtviMqixL3NMvb6lkKzd4FBE7Y2dIzcFDnSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a8ExjZa7; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729207441;
+	bh=stynPAKb67QZa/lU7ZIP8zDcPVSvZM4VE/kuZgRvW68=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a8ExjZa7BXve8hN7bF41EjrnBaIRjB1DZGyLFYJFg5m3YcIb8+01SRWT4XOuSnd1g
+	 951q26phmb2PPL+3JnRQbyvLhpoHdGOKwtJIFiIAj0UaCR1uSIVU4LMo/RKPMlC16b
+	 zoYykMa8grW3NO3hvmHH3U/PIa6K3YRAhsKQntX4yAnXJr24bMMyBx29558glxL2uZ
+	 kdky/hm5Tr3xB3CThNHTnDJtDvSu3MkYd1powH5Xrhaw4tEWzh5QSo8+JJAjuJED7P
+	 67Ykrw+4TGTsg9Vh41NW9DjkPofMi25k8i7cDnvFWZ/gKCFbIQMyjQxIjvlTLidC7Y
+	 6N1rL2y+qSwTw==
+Received: from [192.168.1.90] (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7079317E0ED2;
+	Fri, 18 Oct 2024 01:24:00 +0200 (CEST)
+Message-ID: <6acaeefe-54f1-4a7f-9e07-bc8b1bfbab08@collabora.com>
+Date: Fri, 18 Oct 2024 02:23:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016060523.888804-1-patrick.rudolph@9elements.com> <20241016060523.888804-25-patrick.rudolph@9elements.com>
-In-Reply-To: <20241016060523.888804-25-patrick.rudolph@9elements.com>
-From: Simon Glass <sjg@chromium.org>
-Date: Thu, 17 Oct 2024 17:18:15 -0600
-Message-ID: <CAFLszTh4Z8p-8d8ASrpUTnNdDhmijDm8fcct-wDWR1nRFxs5JA@mail.gmail.com>
-Subject: Re: [PATCH v9 24/37] common: Enable BLOBLIST_TABLES on arm
-To: Patrick Rudolph <patrick.rudolph@9elements.com>
-Cc: u-boot@lists.denx.de, linux-kernel@vger.kernel.org, 
-	Tom Rini <trini@konsulko.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] clk: Provide devm_clk_bulk_get_all_enabled()
+ helper
+To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Russell King <linux@armlinux.org.uk>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
+ <20240926-clk_bulk_ena_fix-v2-1-9c767510fbb5@collabora.com>
+ <347771679b3ac765de3f79c26f3d3595.sboyd@kernel.org>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <347771679b3ac765de3f79c26f3d3595.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Patrick,
+On 10/17/24 10:45 PM, Stephen Boyd wrote:
+> Quoting Cristian Ciocaltea (2024-09-26 03:43:20)
+>> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+>> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+>> return the number of clocks stored in the clk_bulk_data table referenced
+>> by the clks argument.  Without knowing the number, it's not possible to
+>> iterate these clocks when needed, hence the argument is useless and
+>> could have been simply removed.
+>>
+>> Introduce devm_clk_bulk_get_all_enabled() variant, which is consistent
+>> with devm_clk_bulk_get_all() in terms of the returned value:
+>>
+>>  > 0 if one or more clocks have been stored
+>>  = 0 if there are no clocks
+>>  < 0 if an error occurred
+>>
+>> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+>> the past form of 'enable'.
 
-On Wed, 16 Oct 2024 at 00:16, Patrick Rudolph
-<patrick.rudolph@9elements.com> wrote:
->
-> Allow to use BLOBLIST_TABLES on arm to store ACPI or other tables.
->
-> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-> Cc: Tom Rini <trini@konsulko.com>
-> ---
-> Changelog v9:
-> - default to BLOBLIST_ALLOC on arm
-> - Move default for BLOBLIST_SIZE_RELOC up
-> ---
->  common/Kconfig |  2 ++
->  lib/Kconfig    | 15 +++++++++------
->  2 files changed, 11 insertions(+), 6 deletions(-)
->
+[...]
 
-This is fine, but please disable it for snow since it needs the FIXED
-option for now.
+> Instead of duplicating can you make devm_clk_bulk_get_all_enable() use
+> the devm_clk_bulk_get_all_enabled() function but not return the number
+> of clks all in this patch? It will make the diff much more readable that
+> way.
 
-Regards,
-Simon
+Done in v3 [1].
+
+Thanks for reviewing,
+Cristian
+
+[1] https://lore.kernel.org/all/20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com/
 
