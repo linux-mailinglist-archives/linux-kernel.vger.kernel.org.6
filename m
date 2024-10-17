@@ -1,158 +1,109 @@
-Return-Path: <linux-kernel+bounces-369023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA829A17E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:27:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517439A17EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBF1CB2505F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:27:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04A31F2391B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D611225A8;
-	Thu, 17 Oct 2024 01:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87CB38DF2;
+	Thu, 17 Oct 2024 01:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="F3CutST/"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="2IVnqOvP"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15271BF37;
-	Thu, 17 Oct 2024 01:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A0B208B8
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729128126; cv=none; b=d1C/MaHDYNWBSalQV+4LUZn1rf5S7BScpZazdAaOsR3UdrDMHeO2reqOgZbLfSbWVIFe2ReRmNVqzprxZKQvgKTRS5lPAouWK7paZE9Xyo+7pbVpX4Lc1QsXy2BdfU/ZksSMbz8Lwd0aNEQob6Ye3xIOgsOPTJR3UwsbKlLFVow=
+	t=1729128399; cv=none; b=O9p7HVihpAAW/OiEQCNII+Wl90WnepW+mZxdscYLcaYwfi6fGXFMPV2q/OHqoKooKlZ7Glh2B/LFCvZPZVDiGLwi70k9DkDJ19pewUrehjGFzbC56qZs0vBug/p29g+xn7lBxrllbWM8pmVH7pfFhHCi9gs3JtBXyGx+G0rzEHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729128126; c=relaxed/simple;
-	bh=I1NKDZJkPOOTvvqsSWxUshi93ZcySyT610+Knx4s2jc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WC8B3FbLJ/xepHnTkbmvSAz6cAyV9lQAEq3vgsf4sYk6SmUE/T8MkPBg877wUrCIP+9ZVVuGUbm7E2YSNRV4PqG4jGn0ARRBLXiAL2liNB1NH3uoGMevehPquuni0CKQaDdAu/fhBrPSfMqeyB0ywJ06gfRlpwmASnwmk9kGEwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=F3CutST/; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49H1LtI423838934, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1729128115; bh=I1NKDZJkPOOTvvqsSWxUshi93ZcySyT610+Knx4s2jc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=F3CutST/SLvaPV5es11bRUtGhdVJl8YIAi4k18T1/H85naLGT/LPPUfHXWa019l7B
-	 RkgE9SrIjBz3l4unElvX4DdL7ulJGM0Gvc+kdPxyO1EAffJRDAMYZyP1ks00nwUkJp
-	 BsLofuADn94IQm9hFGBl4+2kCplx9B96RHNmfwhYPPTqskU5++Yb22OAQLHul7LrQS
-	 05M5WRG5wMo6qiOWwiOkIsbRxwCh+8OB5e+ZfuADbC/ixZqADJxqMP7P0q+VOKw6VJ
-	 5ZcZ7ykEYKfENdxo7Vaqxd2xqxcWt8bgQqX1hi0kOkbFMcV5Ek65sBtrE+4fdtDItI
-	 iW77VZ7SVJYtw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49H1LtI423838934
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 09:21:55 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 17 Oct 2024 09:21:55 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 17 Oct 2024 09:21:54 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Thu, 17 Oct 2024 09:21:54 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Kalle Valo <kvalo@kernel.org>
-Subject: RE: [PATCH] wifi: rtw88: Refactor looping in rtw_phy_store_tx_power_by_rate
-Thread-Topic: [PATCH] wifi: rtw88: Refactor looping in
- rtw_phy_store_tx_power_by_rate
-Thread-Index: AQHbH5G7zMXB5WLj7UST4uYO5eihKrKKJAjA
-Date: Thu, 17 Oct 2024 01:21:54 +0000
-Message-ID: <c0f6c6c3b87c4d048ad9f42dc1dfaed9@realtek.com>
-References: <20241016060605.11359-1-pvmohammedanees2003@gmail.com>
-In-Reply-To: <20241016060605.11359-1-pvmohammedanees2003@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1729128399; c=relaxed/simple;
+	bh=syDeYdswZ1nqEcLbBS8Gr/cgwasqBdpO5kvggc+aC24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JT3ZE+t4LGG1GPDqkOkkR/cwHOM0MsQjw1iotuc6hq2EZhKkkSMXVOF7dUSfIA5wGpB5g7tLXkYmVE4VzLgzdibI94KTjTw5TSxlU2jtXiAst6LeRKJffBBqDh1RqI4NMyHVJjQmfZDnCFLP4Ym31o0n7WXeo/llMSXfkLFSRnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=2IVnqOvP; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso49348666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:26:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1729128395; x=1729733195; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=za4Wo2XnfAAnoxtIT6vqzShAynxd89kmxit532DGMfc=;
+        b=2IVnqOvPDnc+eXhMo4pwMyhEkQtuOSoFSkWxd8biuGz0O1SRTz/6Rfox/k4qq1iQz7
+         1AgLUp/s3KHcgqMfZcXfKWVK6cwU+Xolvr0xM33CzjBEner4wikIlZanHNJAIpXqtqqH
+         S+aFKR2mHuAQB8WcF/k+afsU4loXOFmiGRR4TlCftoUM+Z1wMzbnmRtN2Yj4JxzHxEQY
+         cOEivqSZyzouC24xT6mNvElnDLtiuJPnn0CcY8pdXrPAFbxJ1+V+bdCVVQjC5XRI8mE8
+         fwFY5U9ujGBkC+JzjumJmgd0b5aGSB+Bh/JMkApZRKRSQ9J8PfcnjSqAeW2HLmlKvQ/u
+         BVGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729128395; x=1729733195;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=za4Wo2XnfAAnoxtIT6vqzShAynxd89kmxit532DGMfc=;
+        b=bDd+CytBxcxe+dLxQI0YmG4DYS+anpObCTpbOMDTkB1AZlWDMllCmEFZqZx7zR05I+
+         y8jTr863nqVTNaXvIq9igZf7u9Z3IbqrQbZVFQq3Lr569AG0T2MiJiGYDZTBDbtzOzpG
+         tS0xehzxlAX8a+ihObKvCc1gMBe0ASHE8NhjuUlVbF8tZx+0qIdz294OEI8kM7ib+4UB
+         q2gyUj8XSusyMhzyJsWgxMJJrrJIEsR9kbPYhjePA4i7fQXXKAQ3QYWvSa64bHbIcBNj
+         CODKBX3rUw/x45aqc97NXWJSr9AAoBmSHxTMEnbHQkWMH9AvViKWf8C81gQwBCLuC9+G
+         OL4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWc5C3XDfCSL/IMHwargEAP+BlmZqPvO96OS3PiVZa/hLWj/zIFFbbIEGgKC/kOEVhBfIu7jkW7vPiNaQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYM+MTG59eOimQ4XED1hMXhpdmiKWIfzTPQZd++6ptQdyR6sTT
+	J/Jxvl32dAfjFL9QQ4j4KQl7x/8E5/FtFxYcrwIurLt1vVsGEOpzRRPu6EkAw6k=
+X-Google-Smtp-Source: AGHT+IEWipWWI+w17zBRsvJ2a1SVUFVwULgiFjGs2lqP9zfHlHZrgmKYspeYgKe8crsh+sSoe9SBJg==
+X-Received: by 2002:a17:907:efd3:b0:a9a:421:720 with SMTP id a640c23a62f3a-a9a34dfb311mr463599066b.46.1729128395453;
+        Wed, 16 Oct 2024 18:26:35 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a298443b9sm233768166b.170.2024.10.16.18.26.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 18:26:34 -0700 (PDT)
+Message-ID: <cde3f0e8-7098-43ee-a0f6-6b7dd9a9abfb@nexus-software.ie>
+Date: Thu, 17 Oct 2024 02:26:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/28] Qualcomm iris video decoder driver
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+In-Reply-To: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
->=20
-> The previous implementation performs check for the band
-> in each iteration, which is unnecessary and further more
-> there is a else condition which will never get triggered,
+On 14/10/2024 10:07, Dikshita Agarwal wrote:
+> Introduce support for Qualcomm new video acceleration hardware i.e.
+> iris, used for video stream decoding.
 
-I feel compilers can optimize the check for the band, and we can just remov=
-e
-the else condition. Or=20
-   if (2ghz)
-      foo_2g();
-   else
-      foo_5g();
+Its a nit-pick but I'd suggest good practice is to email everybody 
+directly whom you call out in your log as having given and received 
+action on previous review comments.
 
+i.e. you should email me, Dmitry, Krzysztof, Neil, Nicholas and Hans.
 
-> since a check is done to see if the band is either 2G or
-> 5G earlier and the band either be any of those 2. We can
-> refactor this by assigning a pointer to the appropriate
-> power offset array based on the band before the loop and
-> updating this.
->=20
-> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-> ---
->  drivers/net/wireless/realtek/rtw88/phy.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtw88/phy.c b/drivers/net/wirel=
-ess/realtek/rtw88/phy.c
-> index 37ef80c9091d..17d61f1d9257 100644
-> --- a/drivers/net/wireless/realtek/rtw88/phy.c
-> +++ b/drivers/net/wireless/realtek/rtw88/phy.c
-> @@ -1465,15 +1465,14 @@ static void rtw_phy_store_tx_power_by_rate(struct=
- rtw_dev *rtwdev,
->                     rate_num > RTW_RF_PATH_MAX))
->                 return;
->=20
-> +       s8 (*tx_pwr_by_rate_offset) =3D (band =3D=3D PHY_BANK_2G)
-> +                                               ? hal->tx_pwr_by_rate_off=
-set_2g[rfpath]
-> +                                               : hal->tx_pwr_by_rate_off=
-set_5g[rfpath];
-> +
-
-Though -Wdeclaration-after-statement was dropped, still recommend to place
-declarations at the beginning of function.
-
-The operands ? and : should place at the end of statement.=20
-
-x =3D y ?
-    z0 :
-    z1;
-
-
->         for (i =3D 0; i < rate_num; i++) {
->                 offset =3D pwr_by_rate[i];
->                 rate =3D rates[i];
-> -               if (band =3D=3D PHY_BAND_2G)
-> -                       hal->tx_pwr_by_rate_offset_2g[rfpath][rate] =3D o=
-ffset;
-> -               else if (band =3D=3D PHY_BAND_5G)
-> -                       hal->tx_pwr_by_rate_offset_5g[rfpath][rate] =3D o=
-ffset;
-> -               else
-> -                       continue;
-> +               tx_pwr_by_rate_offset[rate] =3D offset;
->         }
->  }
->=20
-> --
-> 2.47.0
-
+---
+bod
 
