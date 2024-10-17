@@ -1,161 +1,84 @@
-Return-Path: <linux-kernel+bounces-369743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD28C9A2205
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:18:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363F09A220A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29CF5B255B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32051F234FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D60C1DD0FE;
-	Thu, 17 Oct 2024 12:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="q74oSr2O"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E4F1DD0E0;
+	Thu, 17 Oct 2024 12:19:59 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B13E1DA619;
-	Thu, 17 Oct 2024 12:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A2A1DA0E3;
+	Thu, 17 Oct 2024 12:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167505; cv=none; b=jpe5y+DC279GTBW5SJkfIVAWTLImhIYnWhy3iP1Gzw/juyE34LFCeYpRRC7NWACO2En8gXjx54d0yaCOLTZaDkUArG4+I7l2MEObUkC2FYCB4xJZEDfGzaA90uMKs+Ugs1s1XJBS6dLQxvJQdeu5Ewdolha+q8g6WzGpUrEXh08=
+	t=1729167598; cv=none; b=cbWsnEZiPLE1ek+Aklc2buwSoT21crCqSTncHt8KY6teBcm5HgO+WpKnnRMb3ThEYyWzY7xDmDe0rpw1PSiutfP+cNxZIng1VQaWEcjMAHpRjA0DNKDa1MaMeS9EmhhBqJx/gdtxScmaTHvYRdbSMPJZ+5owBf48z39m8wkDcZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167505; c=relaxed/simple;
-	bh=gt8gvpe6J2AdHwJ+LUNpkrX8JWv+1a66G9T6SpCOtLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gdmh8vOlhq9CRN+95/XNVzzHRzFh82MnARTtUuhc5B9FXQg1oOylvkPvGX4zAKCn5W2Ao89x/azofaZmJDINSFMSxmaYy3rBCgW6dTCgn1hTirOeJr2u4kddMttM++7nUEkNlIRqJti8Lq4w0H7yO/xcWTxwY/Hy72zEUm1MHNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=q74oSr2O; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id DEEC288B0C;
-	Thu, 17 Oct 2024 14:18:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729167500;
-	bh=pVUgWkPelntpCEb7Gok5hnVy4nS3JZLLW/8rBG0KN2I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q74oSr2OPreCTa+OV9WA3F1v4onZTttSfbgIuzwylZRRdDkFpXYw2no75iEuMs2ZN
-	 6mBoYNmLP/tn6SAmATsJv7KfGXQF0x2pAGB+Q0rWVS99YU4/FmpFBBDdhyIOFy1pe/
-	 x1pra9iI57+Gkn0OPTKDtEwUCXYs0B7ojs318dRTk1xtOvVCXmK1hRs0N/znVLgUuZ
-	 o/JZwZGiD9ffzqfCfl/Qt9IVTIYDG1JRzfu4uuHu+37bIdK7dVvMkHZvncZXVr/N8c
-	 Wp46fVG/IpqzakpfsPm7he3HXoClJ4DmlQmUUmfBWHzYQuwFzzvDjUeFCAYeIMfYYd
-	 SC1P+5j0M6Mlg==
-Date: Thu, 17 Oct 2024 14:18:18 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Stefan Wahren <wahrenst@gmx.net>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/2] ARM: dts: mxs: Add descriptions for imx287 based
- btt3-[012] devices
-Message-ID: <20241017141818.2cf462ce@wsk>
-In-Reply-To: <CAOMZO5DkmU4C0YQoVwCbHTBo=DTRGcz+9K1qHY=3V29eWAfEKQ@mail.gmail.com>
-References: <20241010081719.2993296-1-lukma@denx.de>
-	<20241010081719.2993296-2-lukma@denx.de>
-	<20241017103534.259584f6@wsk>
-	<CAOMZO5DkmU4C0YQoVwCbHTBo=DTRGcz+9K1qHY=3V29eWAfEKQ@mail.gmail.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729167598; c=relaxed/simple;
+	bh=0Se45DuEVrsFgKoH8uzrFQSCHVbtaNYIrqCbSaxd/z0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OS56CsXbUbeQqJUECt2C0AKac7nZDdZCRyYbnWiBjOk7NmZeaYCGFAjvLsXDN4B/sZfVqahV5RPUdQXidFE3wG7p7SZNO5Gy0+k6MFwBtKqSH9VimM2Xew7ZC7nWBTJ9RIC9CZ3i9+h/pv4QinhNk/O9PlaZthd/FAqsHaSAc9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTn0w0YMcz6FH3x;
+	Thu, 17 Oct 2024 20:18:08 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4CA51140119;
+	Thu, 17 Oct 2024 20:19:52 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 14:19:51 +0200
+Date: Thu, 17 Oct 2024 13:19:49 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
+Subject: Re: [RFC PATCH 1/4] cxl/events: Updates for CXL Common Event Record
+ Format
+Message-ID: <20241017131949.000047f6@Huawei.com>
+In-Reply-To: <20241016163349.1210-2-shiju.jose@huawei.com>
+References: <20241016163349.1210-1-shiju.jose@huawei.com>
+	<20241016163349.1210-2-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/JwpjArDAe6QUo9hHvQoT_3b";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
---Sig_/JwpjArDAe6QUo9hHvQoT_3b
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Wed, 16 Oct 2024 17:33:46 +0100
+<shiju.jose@huawei.com> wrote:
 
-Hi Fabio,
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> CXL spec 3.1 section 8.2.9.2.1 Table 8-42, Common Event Record format has
+> updated with Maintenance Operation Subclass information.
+> 
+> Add updates for the above spec change in the CXL events record and CXL
+> common trace event implementations.
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 
-> Hi Lukasz,
->=20
-> On Thu, Oct 17, 2024 at 5:35=E2=80=AFAM Lukasz Majewski <lukma@denx.de> w=
-rote:
->=20
-> > Stefan, do you have comments for this version? =20
->=20
-> Rob's bot reported new warnings after applying your series:
->=20
->         from schema $id:
-> http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
-> arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dtb: panel: compatible:
-> ['panel-dpi'] is too short
->         from schema $id:
-> http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
-> arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dtb: panel: compatible:
-> ['panel-dpi'] is too short
->         from schema $id:
-> http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
->=20
-> Please address it.
+LGTM
 
-The problem is that I don't know the name of the display itself
-(different vendors) [*].
-
-Schema requires following syntax:
-arch/arm/boot/dts/ti/omap/am437x-gp-evm.dts:89:         compatible =3D
-"osddisplays,osd070t1718-19ts", "panel-dpi";
-
-arch/arm/boot/dts/ti/omap/omap3-thunder.dts:86:         compatible =3D
-"samsung,lte430wq-f0c", "panel-dpi";
-
-which require two compatible entries - one specific type of the display
-(e.g. "samsung,lte430wq-f0c") and the second one generic ("panel-dpi").
-
-As I don't know what is the manufacturer of it - I can add:
-
- compatible =3D "foo", "panel-dpi";
-
-and then Schema and Rob's scripts would be happy...
-
-
-Another option is to adjust the
-Documentation/devicetree/bindings/display/panel/panel-dpi.yaml to allow
-only single entry.
-
-
-[*] maybe I can obtain the info regarding at least one vendor ...
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/JwpjArDAe6QUo9hHvQoT_3b
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmcRAIoACgkQAR8vZIA0
-zr1NHwf9EZhOkrZrNMYoRDxZ9kwVP/qQ8IcrI4dlPE+B2zHqZNUIecNWsoTdeasW
-83zprstpywZTQvmkC5Np4qFQTNvFsdDPFXK9IgEnoJnHGlqFWF2YETLRFmE73cCK
-wzXpipCZcM9N14gByMrctugXelTRPos6Wxfg5JTBCqi/6MZKVM4I0kf4xlbxWqO6
-68uqCSF7eAfzsWrkC8+JRQm5GNuJ8mnMWrsbaq82i4t6wmYFyMByobXPO3D9LAZj
-7i7jEknC1TrGAvF9x2c6/I/5X1oCUylWKe85xnHr0MAokKV91TWOiJHEv13y+DOj
-lTDYew5AUH05crsTgunWSE8645E07A==
-=x9MY
------END PGP SIGNATURE-----
-
---Sig_/JwpjArDAe6QUo9hHvQoT_3b--
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
