@@ -1,193 +1,189 @@
-Return-Path: <linux-kernel+bounces-370006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DD99A25AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8C49A25B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B878C1C23BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4E01F22955
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDC11DE8B6;
-	Thu, 17 Oct 2024 14:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CD41DE8A4;
+	Thu, 17 Oct 2024 14:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PNFCdwZk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H4maT4JG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2D05FDA7
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D441DE894
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729177000; cv=none; b=tNekwcsSYoxE2CX3krN1uaExRPFW7rlR+Oud956ZSxXG9CITniK5B2lYlwBMjd9E2cN7lJOIdPghNGVZcQ1EETN9ufOeRS8bOUGYHSnZt2DzQccMKL7p1bP0sxRQXMnjMZB80IwrY7sUhH3q24AyfV0cXStzJrqp85QB59aKcdg=
+	t=1729177051; cv=none; b=MRsWKjA9c3k4ttzWq7rMN8Bk34a9k3BQpoZP2IW47atOoJm296qH4UcrxqZ0snlZmHl2NxNFFagYeLOP0Cwoba7/P6Z36EgYKA0WMttGUvfTFL/G1WnaAKbFwICLfu12R7vnagCjdTVdGEbLzwMkjRqGUlo7aEK54zhrOFBtuyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729177000; c=relaxed/simple;
-	bh=ahaN8/bn/1F79tSZ8q5oj15hHgim7szJYjJbuWXiP9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KOk14b6wJ60KV4wnxmGJqAG4vWgCSEHqgXzrz4T9ywxRjpcC7euh8iQGg42MVtNYX0JaD/BapBPkv2NnyYMgQWWRR539j8R64aMZttKIDxtPT1CWe/+wo9P1cjvMIuxNFOoaNCXMqjWqlsdpJbsXSPqtT+cN8gyTCeahVe//NTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PNFCdwZk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729176997;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Lkrny24ugYkx/dzeS4nu76fI2FwDJlgQ1Q4zPnIoh/E=;
-	b=PNFCdwZkdpQQyiNc9OzfhFr9ikKASwlHjMRrAjoScf77ooq3eAtkEXyUTHYiWBy64swiVT
-	c0z5cwnyi8FZvIK33otWeJFc0BIg13tqGctBtspIxKWJTGvkqrapGDFYox+AJnFmEgoGvT
-	ckDl8Y5IpsZMWHUl9RCRlL4lhVfRFkg=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-SsEh6DkJPxGS_g9HV2mBxQ-1; Thu, 17 Oct 2024 10:56:36 -0400
-X-MC-Unique: SsEh6DkJPxGS_g9HV2mBxQ-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d47fdbbd6so527371f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:56:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729176995; x=1729781795;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Lkrny24ugYkx/dzeS4nu76fI2FwDJlgQ1Q4zPnIoh/E=;
-        b=Vw97pbM1gsVYAVKR/RSZlmtWusDDheMFqevpWDtkfXROXx7fMxsLl6JU1t2CITtpB/
-         81THZsr2icQj7S1Zu6P9ikTOVO+VcGBcSFnD6LZYdMlkWVA+BU/hAIONVJwC+CzLCkQT
-         /TMptPLCMvQqVlHewgN26XiqrirOWnGIEa2jMG1qKwYy9Z9Pg47JmI0R29HAgdjPxQgX
-         olb1sAdCzFQrNxvsHRP5wG4z4eCZi3QD3uEEvffRuA/r3nb3uGvQ2ckicBCVVd3gmOva
-         DPLtLzfzCb2tsBFShDKwisZgVHHY4Rywb/W0GM4K89Mve1d7wgisGzHCY8yq4Ho2cYoV
-         VxYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQp7S3MgvapZoEBqDE/OM7dMhclpWCDx6ugD3H3Ry8zsqMhJbd5EfeARix9mZCirM+hhVL+Ec0Wm3eGZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTzT5QyPzQzS44AdGLsyJzh9ctFZv0G/FyzP38p0AG/WHfWAW4
-	BsVZ+tzjB6MFRU5Tm9NBeFjYqQot81P3fT1VFqahp3HCVR97to6Px/66IdyZdUXFkCWcBQPnli2
-	s4rWOIV7+N/pFVo5yWXVPGqAEDP719L23ulHnKp0roAtmIbhA4ecVrzSScmiJhA==
-X-Received: by 2002:a5d:6703:0:b0:37d:4dd5:220f with SMTP id ffacd0b85a97d-37d551fba84mr14757510f8f.26.1729176994186;
-        Thu, 17 Oct 2024 07:56:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGyVCqXnlZdEr4Aqw5wezq88XLLTgNCm3TbjQGwcJzfHdNW5KvChf5Wlg2cdODPFlHtUexjTQ==
-X-Received: by 2002:a5d:6703:0:b0:37d:4dd5:220f with SMTP id ffacd0b85a97d-37d551fba84mr14757426f8f.26.1729176992283;
-        Thu, 17 Oct 2024 07:56:32 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf82b1sm7554576f8f.72.2024.10.17.07.56.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 07:56:31 -0700 (PDT)
-Message-ID: <98eacabd-3465-4f5d-b045-8e8595d68676@redhat.com>
-Date: Thu, 17 Oct 2024 16:56:30 +0200
+	s=arc-20240116; t=1729177051; c=relaxed/simple;
+	bh=p+vHUuiBWNtygenf7Gg+ffIbR+B+f5e2WNiqdmrh7hk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=IxKr63CvSBAdyxS1/v0haKKk6RAqi/Q0WhdImvb0mo7t7ogVTKc7BEinWiWgopY+FddcVRmIZXQdW5mua1ts0HWU1L8/3toqIZ2qHAx/XF7FL/v/RDhVC5O50uP1bJK5wyEOMtEQyP4xH4anBc+xSS5yuWQpmTs7SbmVVnZBzkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H4maT4JG; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729177049; x=1760713049;
+  h=date:from:to:cc:subject:message-id;
+  bh=p+vHUuiBWNtygenf7Gg+ffIbR+B+f5e2WNiqdmrh7hk=;
+  b=H4maT4JGzRbrhgAgvWBfcXMPUc1A9RNYfSsyRzD0N2MuLEln8ZduivYJ
+   30vI4H5skeflq+22VyY/XmZpTOnwxVHxgRXs8mhk3Vl8QBSaRtmnAuPfo
+   wnsRu0vwN5lru4GJXxopwQKrzpA0cIu++svd2jnm2qtNbW6d74OnN6f1d
+   mNVqQlZUfgpPvWFWsmQWIYdnhgoM1O4IR/iSRVzjtciblh8UjjbrvwFL+
+   n8yUmLsmbw7qaImj3Z/wiIUSDeOZde3+mNRx56KUwVTPu28qyRpltYMfG
+   Z5kGuhB3IbysUv/0eQXg6tz7++LuRQ2YR8eb9HUFr9Wi4yANoFMMPfNJx
+   w==;
+X-CSE-ConnectionGUID: L/ABNIDHQjCvDSqePJRjlA==
+X-CSE-MsgGUID: FrDdQiA9QR28WhKMt2oLdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39790249"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39790249"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 07:57:29 -0700
+X-CSE-ConnectionGUID: IzORX6iGQGOvrgTXzSXqvw==
+X-CSE-MsgGUID: AYsiI5IxSYqbH5RtNeCLZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="109374400"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 17 Oct 2024 07:57:28 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1RwL-000MUR-2f;
+	Thu, 17 Oct 2024 14:57:25 +0000
+Date: Thu, 17 Oct 2024 22:56:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/core] BUILD SUCCESS
+ ef4c675dc2961ee533bdc1ea20390761df0af5be
+Message-ID: <202410172225.v04FfK7v-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
- struct kvm_gmem_private
-To: Peter Xu <peterx@redhat.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, tabba@google.com,
- quic_eberman@quicinc.com, roypat@amazon.co.uk, rientjes@google.com,
- fvdl@google.com, jthoughton@google.com, seanjc@google.com,
- pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com,
- jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev,
- erdemaktas@google.com, vannapurve@google.com, qperret@google.com,
- jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org,
- brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev,
- pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com,
- anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com,
- vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com,
- oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1726009989.git.ackerleytng@google.com>
- <bd163de3118b626d1005aa88e71ef2fb72f0be0f.1726009989.git.ackerleytng@google.com>
- <Zwf7k1wmPqEEaRxz@x1n> <diqz8quunrlw.fsf@ackerleytng-ctop.c.googlers.com>
- <Zw7f3YrzqnH-iWwf@x1n> <diqz1q0hndb3.fsf@ackerleytng-ctop.c.googlers.com>
- <1d243dde-2ddf-4875-890d-e6bb47931e40@redhat.com> <ZxAfET87vwVwuUfJ@x1n>
- <20241016225157.GQ3559746@nvidia.com> <ZxBRC-v9w7xS0xgk@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZxBRC-v9w7xS0xgk@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 17.10.24 01:49, Peter Xu wrote:
-> On Wed, Oct 16, 2024 at 07:51:57PM -0300, Jason Gunthorpe wrote:
->> On Wed, Oct 16, 2024 at 04:16:17PM -0400, Peter Xu wrote:
->>>
->>> Is there chance that when !CoCo will be supported, then external modules
->>> (e.g. VFIO) can reuse the old user mappings, just like before gmemfd?
->>>
->>> To support CoCo, I understand gmem+offset is required all over the places.
->>> However in a non-CoCo context, I wonder whether the other modules are
->>> required to stick with gmem+offset, or they can reuse the old VA ways,
->>> because how it works can fundamentally be the same as before, except that
->>> the folios now will be managed by gmemfd.
->>
->> My intention with iommufd was to see fd + offest as the "new" way
->> to refer to all guest memory and discourage people from using VMA
->> handles.
-> 
-> Does it mean anonymous memory guests will not be supported at all for
-> iommufd?
-> 
-> Indeed it's very rare now, lose quite some flexibility (v.s. fd based), and
-> I can't think of a lot besides some default configs or KSM users (which I
-> would expect rare), but still I wonder there're other use cases that people
-> would still need to stick with anon, hence fd isn't around.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+branch HEAD: ef4c675dc2961ee533bdc1ea20390761df0af5be  genirq: Unexport nr_irqs
 
-Not sure I completely understand the question, but for most VMs out 
-there I expect an anonymous memory to remain the default memory backing.
+elapsed time: 1093m
 
-Regarding users of iommufd, I have absolutely no clue :)
+configs tested: 97
+configs skipped: 4
 
--- 
-Cheers,
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-David / dhildenb
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                           tb10x_defconfig    clang-20
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                         bcm2835_defconfig    clang-20
+arm                      integrator_defconfig    clang-20
+arm                   milbeaut_m10v_defconfig    clang-20
+arm                        mvebu_v5_defconfig    clang-20
+arm                        spear3xx_defconfig    clang-20
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+i386                             allmodconfig    clang-18
+i386                              allnoconfig    clang-18
+i386                             allyesconfig    clang-18
+i386        buildonly-randconfig-001-20241017    clang-18
+i386        buildonly-randconfig-002-20241017    clang-18
+i386        buildonly-randconfig-003-20241017    clang-18
+i386        buildonly-randconfig-004-20241017    clang-18
+i386        buildonly-randconfig-005-20241017    clang-18
+i386        buildonly-randconfig-006-20241017    clang-18
+i386                                defconfig    clang-18
+i386                  randconfig-001-20241017    clang-18
+i386                  randconfig-002-20241017    clang-18
+i386                  randconfig-003-20241017    clang-18
+i386                  randconfig-004-20241017    clang-18
+i386                  randconfig-005-20241017    clang-18
+i386                  randconfig-006-20241017    clang-18
+i386                  randconfig-011-20241017    clang-18
+i386                  randconfig-012-20241017    clang-18
+i386                  randconfig-013-20241017    clang-18
+i386                  randconfig-014-20241017    clang-18
+i386                  randconfig-015-20241017    clang-18
+i386                  randconfig-016-20241017    clang-18
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+mips                           mtx1_defconfig    clang-20
+nios2                             allnoconfig    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+powerpc                       maple_defconfig    clang-20
+powerpc                      mgcoge_defconfig    clang-20
+powerpc                     taishan_defconfig    clang-20
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                          debug_defconfig    clang-20
+s390                                defconfig    gcc-12
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sh                             espt_defconfig    clang-20
+sh                            migor_defconfig    clang-20
+sh                   sh7770_generic_defconfig    clang-20
+sparc                            allmodconfig    gcc-14.1.0
+sparc                       sparc32_defconfig    clang-20
+sparc64                             defconfig    gcc-12
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64                              defconfig    clang-18
+x86_64                                  kexec    gcc-12
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.1.0
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
