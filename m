@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-369237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE7E9A1AB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:32:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41D19A1ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA0CF283C91
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61581C23387
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1EE191F97;
-	Thu, 17 Oct 2024 06:32:22 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64B6192B8B;
+	Thu, 17 Oct 2024 06:32:27 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69594770FE
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5B91B6D09
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729146742; cv=none; b=NxzT7TOoRMY0r1yUjD4wUsWNBQHdbW5G2WHjTlEu9L2i7RvTetBMWjo4f1R3X1N5B63RXFenlTH/bGNf5FpvBygsx0Z5KQ7yIuaQuotMYywqkzTQwgGMA2SWIFk8YAkSMBK/vqtskYJhhEXlaWKIxA1KF3xYVZOGGmHO4VPfQ9A=
+	t=1729146747; cv=none; b=q3aJdkJHSsHetqmtciAdEFbi+rvku31d/m3IwUm3qotCiDO3fxOipnFzV5cR3pT3YQPFlunXc7wqLV2sY2QMaL+xwx7jkKAXrnzr3uuW9iThMzzb9fAZ13MOOrxXF/A1AfFTjfSm/neJIIWC6GjDlOZE292dvDN08mosW5nFQb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729146742; c=relaxed/simple;
-	bh=0hZlqEhR7nJ33Q9ezfhN9rUbE4E/bxTRVRVNjn3qkDk=;
+	s=arc-20240116; t=1729146747; c=relaxed/simple;
+	bh=azXntv+UyVFnf1m8MaiGbtyNsBRlg6UhTczO4U4Ra4I=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YRioeqKhM2NMj1Xtt2GgFBxKIPJHUfQn22csFWNkkpjEWS/Li3GKoe3jBTX/sarUXHqcLixmQfL3gJqN0RAxHcphO2mb3ea38JZ6GTf8ibdBUgkrcGbyjbD666xq8/KBUsf6TTcHFX6+MouHymI6VZaXQN42PjGIYuh5a94sD2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	 MIME-Version:Content-Type; b=J28B4UVbaJ+ep6EOkcm940YWYtXOi5B6fnA8P+XB1PJkJUs1pZZUwnGNx3m5EIdirtWwlZRaaw2WJXqnYrieV6PkeNleyrzqXsxRnLFfZJ4AF81DR2zKFjpOlUL+FzytWi+lQ7bCjg5g7nZWuhtQC8hMQaoaBpIn1BVaUMzqCQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XTdJx6dftzQrld;
-	Thu, 17 Oct 2024 14:31:29 +0800 (CST)
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XTdHY0PyPzcpQH;
+	Thu, 17 Oct 2024 14:30:17 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id B7E6A180AEA;
-	Thu, 17 Oct 2024 14:32:09 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 3F3A81800D2;
+	Thu, 17 Oct 2024 14:32:15 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 17 Oct
- 2024 14:32:08 +0800
+ 2024 14:32:09 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
 	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
@@ -48,9 +48,9 @@ To: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
 	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
 	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
 	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 3/4] drm/ttm/tests: Fix memory leak in ttm_tt_simple_create()
-Date: Thu, 17 Oct 2024 14:31:24 +0800
-Message-ID: <20241017063125.3080347-4-ruanjinjie@huawei.com>
+Subject: [PATCH v3 4/4] drm/tests: hdmi: Fix memory leaks in drm_display_mode_from_cea_vic()
+Date: Thu, 17 Oct 2024 14:31:25 +0800
+Message-ID: <20241017063125.3080347-5-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241017063125.3080347-1-ruanjinjie@huawei.com>
 References: <20241017063125.3080347-1-ruanjinjie@huawei.com>
@@ -65,55 +65,87 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  kwepemh500013.china.huawei.com (7.202.181.146)
 
-modprobe ttm_device_test and then rmmod ttm_device_test, the following
-memory leaks occurs:
+modprobe drm_hdmi_state_helper_test and then rmmod it, the following
+memory leak occurs.
 
-The ttm->pages allocated in ttm_tt_init() is not freed after calling
-ttm_tt_simple_create(), which cause the memory leak:
+The `mode` allocated in drm_mode_duplicate() called by
+drm_display_mode_from_cea_vic() is not freed, which cause the memory leak:
 
-	unreferenced object 0xffffff80caf27750 (size 8):
-	  comm "kunit_try_catch", pid 2242, jiffies 4295055735
-	  hex dump (first 8 bytes):
-	    c0 1e 3d c3 fe ff ff ff                          ..=.....
-	  backtrace (crc 3d11615a):
-	    [<000000007f57312a>] kmemleak_alloc+0x34/0x40
-	    [<000000008c6c4c7e>] __kmalloc_node_noprof+0x304/0x3e4
-	    [<00000000679c1182>] __kvmalloc_node_noprof+0x1c/0x144
-	    [<000000006aed0a3d>] ttm_tt_init+0x138/0x28c [ttm]
-	    [<000000005c331998>] drm_gem_shmem_free+0x60/0x534 [drm_shmem_helper]
-	    [<0000000022b4f375>] kunit_try_run_case+0x13c/0x3ac
-	    [<00000000c525d725>] kunit_generic_run_threadfn_adapter+0x80/0xec
-	    [<000000002db94a1f>] kthread+0x2e8/0x374
-	    [<000000002c457ad7>] ret_from_fork+0x10/0x20
+	unreferenced object 0xffffff80ccd18100 (size 128):
+	  comm "kunit_try_catch", pid 1851, jiffies 4295059695
+	  hex dump (first 32 bytes):
+	    57 62 00 00 80 02 90 02 f0 02 20 03 00 00 e0 01  Wb........ .....
+	    ea 01 ec 01 0d 02 00 00 0a 00 00 00 00 00 00 00  ................
+	  backtrace (crc c2f1aa95):
+	    [<000000000f10b11b>] kmemleak_alloc+0x34/0x40
+	    [<000000001cd4cf73>] __kmalloc_cache_noprof+0x26c/0x2f4
+	    [<00000000f1f3cffa>] drm_mode_duplicate+0x44/0x19c
+	    [<000000008cbeef13>] drm_display_mode_from_cea_vic+0x88/0x98
+	    [<0000000019daaacf>] 0xffffffedc11ae69c
+	    [<000000000aad0f85>] kunit_try_run_case+0x13c/0x3ac
+	    [<00000000a9210bac>] kunit_generic_run_threadfn_adapter+0x80/0xec
+	    [<000000000a0b2e9e>] kthread+0x2e8/0x374
+	    [<00000000bd668858>] ret_from_fork+0x10/0x20
 	......
 
-Fix it by calling ttm_tt_fini() in the exit function.
+Free `mode` by using drm_kunit_display_mode_from_cea_vic()
+to fix it.
 
 Cc: stable@vger.kernel.org
-Fixes: e6f7c641fae3 ("drm/ttm/tests: Add tests for ttm_tt")
-Reviewed-by: Nirmoy Das <nirmoy.das@intel.com>
+Fixes: 4af70f19e559 ("drm/tests: Add RGB Quantization tests")
+Acked-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
 v3:
-- s/fllowing/following/
+- Update the commit message.
+- Add Acked-by.
 v2:
-- Add Reviewed-by.
+- Fix it with new introduced helper instead of drm_mode_destroy().
+- Update the commit message.
 ---
- drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-index b91c13f46225..9ff216ec58ef 100644
---- a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-+++ b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-@@ -54,6 +54,7 @@ static struct ttm_tt *ttm_tt_simple_create(struct ttm_buffer_object *bo, u32 pag
+diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+index 34ee95d41f29..294773342e71 100644
+--- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+@@ -441,7 +441,7 @@ static void drm_test_check_broadcast_rgb_auto_cea_mode_vic_1(struct kunit *test)
+ 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
  
- static void ttm_tt_simple_destroy(struct ttm_device *bdev, struct ttm_tt *ttm)
- {
-+	ttm_tt_fini(ttm);
- 	kfree(ttm);
- }
+-	mode = drm_display_mode_from_cea_vic(drm, 1);
++	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
+ 	KUNIT_ASSERT_NOT_NULL(test, mode);
  
+ 	drm = &priv->drm;
+@@ -555,7 +555,7 @@ static void drm_test_check_broadcast_rgb_full_cea_mode_vic_1(struct kunit *test)
+ 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+ 
+-	mode = drm_display_mode_from_cea_vic(drm, 1);
++	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
+ 	KUNIT_ASSERT_NOT_NULL(test, mode);
+ 
+ 	drm = &priv->drm;
+@@ -671,7 +671,7 @@ static void drm_test_check_broadcast_rgb_limited_cea_mode_vic_1(struct kunit *te
+ 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+ 
+-	mode = drm_display_mode_from_cea_vic(drm, 1);
++	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
+ 	KUNIT_ASSERT_NOT_NULL(test, mode);
+ 
+ 	drm = &priv->drm;
+@@ -1263,7 +1263,7 @@ static void drm_test_check_output_bpc_format_vic_1(struct kunit *test)
+ 	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+ 
+-	mode = drm_display_mode_from_cea_vic(drm, 1);
++	mode = drm_kunit_display_mode_from_cea_vic(test, drm, 1);
+ 	KUNIT_ASSERT_NOT_NULL(test, mode);
+ 
+ 	/*
 -- 
 2.34.1
 
