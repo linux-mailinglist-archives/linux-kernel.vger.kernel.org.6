@@ -1,104 +1,98 @@
-Return-Path: <linux-kernel+bounces-369964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351F69A2506
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:31:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A119A2508
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A66ABB25281
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:31:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF5C31F2182D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFE41DE2D6;
-	Thu, 17 Oct 2024 14:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3751DE3D7;
+	Thu, 17 Oct 2024 14:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7QqYDS9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TtF7f8CQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1DB10F2;
-	Thu, 17 Oct 2024 14:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F691DDA24;
+	Thu, 17 Oct 2024 14:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729175464; cv=none; b=LGSJoTkGCUfwNotLS6wXSqkiMv4l7VpIVg7HANDDYl/G8FgukE8SL5mv2q6tvIdEj4N0G6derbXazk/tcOCVVBo6xSHYq0wTzXBSHZSvEJCm28/q+yy4CerMHHvgq23iUg1BYITPedMdKdIezW/JEijLnLw0JwHSOyf6WR31gTk=
+	t=1729175502; cv=none; b=czfT45bcadsnGeoL4Ub6bmkPWaGQF5W26qCfaCi4WjQqk1sipNXj3UPQFOM50/RYW0BLE0ofJDqJMm6ozfhmlwDmQ0nXopXV0LX70N20Yb9rpKNjYTJLxSiSVI3Ud0Nc/DYWhrtdpVEpT6XXRT6998OjA519M6/CxP56z1+3uQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729175464; c=relaxed/simple;
-	bh=6UufKdmFAaPHOMthzmMqIm4AhJNWurr7EeT+mEyvhbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1pP7VCL4i68b5OotAV5gpdjLQVrbTCz6vI8fydzQqUb3IT4d4vQOgWWPbl72CM1/nX5Hn//2qQ7njJOLxyE0zwYx2ce2MP4TXyPvLAlqszZPeTN26SLs6Dc2/UzWRLJ/n2xmLWXXASahsMS2Hw9ej1+i/4jvIXPNO0ASp/5YXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7QqYDS9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A337BC4CEC3;
-	Thu, 17 Oct 2024 14:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729175464;
-	bh=6UufKdmFAaPHOMthzmMqIm4AhJNWurr7EeT+mEyvhbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G7QqYDS98+RNBTT8+wxwSLCvqxCPxErdQ9HoJ1W7UJOu9d+FmwiIyPa8dCi91DKnW
-	 pXNHwGaL6xwDUbC1PaZvjSbRmNMDcSF8lzrVMweWoL/NSw5HjcNvk65h+eEnMOz+yE
-	 WldD5wxOo0b+T3bhwT6REndZSUhQXRg2ornLLYp+QtbstWPtW0ru5piedlJkTt1vdU
-	 ynhSup7thSLhuhwd4Bjw7YSIClYfiVIXd3PH7TVtzhyNdITLOq4+ONhrWgyQKJNe0K
-	 29VD2z0tGuH6AUQyze5Gen0s3x4f6wzEKg7ZjW6haVkYOdkgr8mbMhmLnKi22piOld
-	 eSQNCJMepX4jA==
-Date: Thu, 17 Oct 2024 16:31:01 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, quic_abhinavk@quicinc.com, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Simona Vetter <simona@ffwll.ch>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v3 00/23] drm/msm/dpu: Add Concurrent Writeback Support
- for DPU 10.x+
-Message-ID: <20241017-didactic-hornet-of-glory-14fcce@houat>
-References: <20241016-concurrent-wb-v3-0-a33cf9b93835@quicinc.com>
+	s=arc-20240116; t=1729175502; c=relaxed/simple;
+	bh=A6I+1Mo0s9rf0efecXbUhyVTUK5/MgyC4EDlCrCN0wc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TqoEJh9OaVPbX3B/Vy+FcrZHgUc1SsUv+I9gH8fFX1a03tfpatpMENqPaL/opr27iwcWh9EMBbU4RoWpA6W9CIR53f9FolmW6rb960CIZywb3vBKIzrEoyExlciVY6vk94ICnU+IcBJBW2glLrWHp1UCfYX9SfQ8Iumt4ov7wkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TtF7f8CQ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729175500; x=1760711500;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=A6I+1Mo0s9rf0efecXbUhyVTUK5/MgyC4EDlCrCN0wc=;
+  b=TtF7f8CQ5TDc4FCN/RAqyxBfsKY3ir1jIe1SYfSiLR79CZMai9xfzhyC
+   jjDWczJT6a9vJtnYLwM/jjfW5srdYsnpHg2iZ3daEGQZ8LZXPihhQEG4v
+   T6ttFTKE5zygIXfvz+o3QkJf/f7IDPx8WKCgbumUU/zS+tnxdF9k0p5Vz
+   Ad+jMFgsISNkw6gOEavGqbJRueXpSKFHnnS+m50Q/cXxC5LppgTsfqo0N
+   a7KfLtKHER+Y0VCff3CdB1eHSDR6/Q0Wqij8YikghvDsSEK2D4FKDMKl+
+   g6GH4Bk/4Ml1FteyEyOEMKhONvNeiffcKhSmV4RjuFwgmNAtMaIjImlsr
+   g==;
+X-CSE-ConnectionGUID: phAkrVRYTuiMtHOkVpca5w==
+X-CSE-MsgGUID: 3OpRkGZmSW2QzUsEV+EbOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="16281354"
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="16281354"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 07:31:39 -0700
+X-CSE-ConnectionGUID: lkBNolF6SH2OYt3uGRxK2g==
+X-CSE-MsgGUID: 3pNpCI13QP+cFx3G2FW6+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="83394683"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.91])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 07:31:38 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 0/4] PCI: cpqphp: Fix and cleanups
+Date: Thu, 17 Oct 2024 17:31:27 +0300
+Message-Id: <20241017143131.46163-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="mna2pfiquhuwbp5i"
-Content-Disposition: inline
-In-Reply-To: <20241016-concurrent-wb-v3-0-a33cf9b93835@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Fix one PCIBIOS_* return value confusion in cpqphp and cleanup a few
+other things.
 
---mna2pfiquhuwbp5i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+As for the last patch, I'm not entire sure if it's a step forward or
+backward. I guess alternatively it would be possible to add the missing
+recursion too if that's preferred but I cannot test the code (and it's
+somewhat unclear what that code even attempts to do when considering
+all possible topologies).
 
-On Wed, Oct 16, 2024 at 06:21:06PM GMT, Jessica Zhang wrote:
-> Changes in v3:
-> - Dropped support for CWB on DP connectors for now
-> - Dropped unnecessary PINGPONG array in *_setup_cwb()
-> - Add a check to make sure CWB and CDM aren't supported simultaneously
->   (Dmitry)
-> - Document cwb_enabled checks in dpu_crtc_get_topology() (Dmitry)
-> - Moved implementation of drm_crtc_in_clone_mode() to drm_crtc.c (Jani)
-> - Dropped duplicate error message for reserving CWB resources (Dmitry)
-> - Added notes in framework changes about posting a separate series to
->   add proper KUnit tests (Maxime)
+Ilpo Järvinen (4):
+  PCI: cpqphp: Fix PCIBIOS_* return value confusions
+  PCI: cpqphp: Use pci_bus_read_dev_vendor_id() to detect presence
+  PCI: cpqphp: Use define to read class/revision dword
+  PCI: cpqphp: Simplify PCI_ScanBusForNonBridge()
 
-I mean, I asked for kunit tests, not for a note that is going to be
-dropped when applying.
+ drivers/pci/hotplug/cpqphp_pci.c | 43 +++++++++++---------------------
+ 1 file changed, 15 insertions(+), 28 deletions(-)
 
-Maxime
+-- 
+2.39.5
 
---mna2pfiquhuwbp5i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxEfpQAKCRAnX84Zoj2+
-dt09AYCudzOjIU8min87jZcaPuELHHOnPZG6jhTh5dZH5K8Oe9EURIc14NX99aCc
-tpYOeSUBewbLNSeA+CbKa1xstbwsaBZH7imXMUy/5oQkeNNNc0iwd7Uvwsip5rkS
-aQBrPzpRxQ==
-=Yh5a
------END PGP SIGNATURE-----
-
---mna2pfiquhuwbp5i--
 
