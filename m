@@ -1,85 +1,70 @@
-Return-Path: <linux-kernel+bounces-369468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18609A1DA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:57:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBB29A1DAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0ADCB24AA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3424D2837F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD5C1D63E6;
-	Thu, 17 Oct 2024 08:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44981D6DAD;
+	Thu, 17 Oct 2024 08:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVuJiih0"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1eXAmKN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482521D63F8
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA6F762EB;
+	Thu, 17 Oct 2024 08:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729155438; cv=none; b=kNIMo30vYwffnDxiql5L/WVWNF34hZsMbFFnf9haR24Nqod9AoOmUwlQbItV/jRFyGvTY/QwtUYxzYU5TgFrckmpTrdKXH3xYZqOca0RBQIUoLCMkbArT4zZ5lYRpBr0u8ZZ6l2d6wOfpAdCrMLnQd4jJ0k/0Evd1D68C9jQ0iQ=
+	t=1729155487; cv=none; b=kte7PirOzsg/6dagLWIo7hHiKrzAF0Ygq7hW80gQyiD70v3F6kTrcyVRkdVbv6PxLPGfOCi8LFetX0Rgm144Q3YQdnPtd6cQAM+cAzoFbkwAJ5O0psrUH7g+cDxI+lIIPWfFbTVPebJ0B96ln1OLQqbpkO1eywP0sHTXvY6HHW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729155438; c=relaxed/simple;
-	bh=iFSLKi+JqbE5QIXS1t+TmqgxzgU2rhTSmgEUGjgHdvs=;
+	s=arc-20240116; t=1729155487; c=relaxed/simple;
+	bh=492DZi2xWFhOAumNcACKXQaQl1yah9Ahp5T4snk6DbU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZyM7MfqhOhEZ9aYP0B2jPETTH0ogLhTm/IsU6u0XwiHjl+ot/+utWguK9hHIwFWIhxSHdtVNjWZHfrYCb2GGl5C1sHKgcsvOVETawRNnjMYXuIxXDwoY3xZiAVrEvbP2cNyCcPVz39Ij0gmXnK+1/VdIG568pj7ZiCNfArFBE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CVuJiih0; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso3148721a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:57:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729155435; x=1729760235; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=71u/2ImVUSG6tRSALKKCPqTPCxFY1jTTM2tTLu1wUA0=;
-        b=CVuJiih0AV+QNOg20M84HWc1D6Qg8Qbp6RnfLwcnNyCCnml700FIog2+QQxmVLA9A1
-         RQnpEf5aQukcTvuEKCTCBm+pOqDnaLJVnxE3Bsui/OCpBRXW9Hu+caQdbcn3d4K5YNUM
-         hUVD58XxbwBt5V2Phkgv5bTX72ADoqe0ZuYogtT/C11dmRcFoiYhJgrAYhglLkd4pDEs
-         OO+exGwF19yxR0G7QRKtTCQGGTUVGuHcyuxPX2W3XOHVPpTHLDtfhU7UWAdAy/1EfG1u
-         JqZAYlutiouwgOV2Kgyu+ETmFwdPFXfdpDJyDWmIBiFrgTTWPTTudPaYzdyXlIHjsLaN
-         4lfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729155435; x=1729760235;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=71u/2ImVUSG6tRSALKKCPqTPCxFY1jTTM2tTLu1wUA0=;
-        b=OdJ1kIwXnuGHxVGHeJCyykUsLWyQtnZybxJ68MleMlXgqSlbGXdTUSqvNBa+94kGQn
-         lspYgLUEgLxdKlgwT3OLHksc+UylBWmCOGjqHmRs7SeC9t4Em3s1FFMuAvB6NTX8ejNq
-         3fyMsF0mFMZHCVnEt+L/XdlaFeC1jXfSIKt29oVyZXmPSf1PQUrek7aes4XsKdQk9y83
-         n5w/D5OQ4vT7xhulUt/ChCHoDg7T24X9K1aerJTKQ6CpoJZ574PuqqsDowo9S8YD66iL
-         xjnw5vXh3zEPq8vc+AI6R5NUGh0QcGyujkAt4J36vYijM314UgiNrr6oK77U7Cyijztt
-         IBGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7C5A+50gxQwFYrUa81LLaF/m9Gu5XhE122aWUV0F1t2ekuF/KInIgH2m9pix5r8GWV6PnoIr/ibWObGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoGOfJZlO/X2ziHz/7GC/ahNujBH1YmdbsOFYqBj4WEQ2PyZO6
-	ZpJArfAszXJLIuFRlwXFvnVcYWAmvD4+mmYW7qVw9wgUtKiWjYkS6bFTuHdC6JPtEq3a1NDz/mE
-	I
-X-Google-Smtp-Source: AGHT+IGYYEqktdQg4/62lwG+WcVcV3tKvLYkXGKPRL6l8VihPBEL2cH/36Xj6ngD8Ie71PGXZIKeJQ==
-X-Received: by 2002:a17:907:3fa5:b0:a99:fcbe:c96b with SMTP id a640c23a62f3a-a9a4cc3aaacmr224024166b.25.1729155434615;
-        Thu, 17 Oct 2024 01:57:14 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a298173c8sm268786266b.123.2024.10.17.01.57.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 01:57:13 -0700 (PDT)
-Date: Thu, 17 Oct 2024 11:57:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] scsi: scsi_debug: remove a redundant assignment to
- variable ret
-Message-ID: <a2515a3d-1dbb-48b6-a489-25aba3358068@stanley.mountain>
-References: <20241002135043.942327-1-colin.i.king@gmail.com>
- <2be706cc-0944-4413-b1b0-52d34fbdadf8@stanley.mountain>
- <9151ca6d-7153-4a97-aaa2-7277fc5ffa84@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddvD//+w5zRIOkXbHIny5dqymjzH650jmj8tJq3e7Y5rRS2FJMklJu7TkxwVJEGGMsfmTv8iL0MU1obI4BuO20Ml5UPZFXZKmWbpoXxG2E+nmF1Q5SPjmavki3po9O9f26YugGJaiCvAVZLmzAm+5udDE+ZSjXRQC3Vrepkq4nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1eXAmKN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F32C4CEC3;
+	Thu, 17 Oct 2024 08:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729155486;
+	bh=492DZi2xWFhOAumNcACKXQaQl1yah9Ahp5T4snk6DbU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X1eXAmKNLWNBi9dB2rkATO6IgpxV3/0wJ3CY2gbjLSU/c3d3nPKaxTVd27TQzYshn
+	 MDnaUTQg15T+NSOLud69ksX7/LniFvo9tK04QgEfKU/n3TgnWYz4ATr6BuPAmncc2z
+	 kxKNtjGp7FMt5eF0q2D6Ouca1ma7pDr31LrZJp4RY+tmQPUHBn1IL2JG91mEa72lDq
+	 XBhcKaYmulNY0AaJ12XDozF2OPoapZaR0i8+Six9AzQolX2/JBJa/6wrfuigrsRdWU
+	 9TPgOobYtfUZGicjWq8qLEtBShShtgejp8FBTjhXpt3DG4yVqmTIckPgcrdM/BHYB2
+	 qrscq2e9GQmVg==
+Date: Thu, 17 Oct 2024 09:58:00 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kurt Kanzenbach <kurt@linutronix.de>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	"maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER" <UNGLinuxDriver@microchip.com>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	George McCollister <george.mccollister@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Breno Leitao <leitao@debian.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCHv7 net-next 2/6] net: ibm: emac: remove custom init/exit
+ functions
+Message-ID: <20241017085800.GP2162@kernel.org>
+References: <20241015200222.12452-1-rosenp@gmail.com>
+ <20241015200222.12452-4-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,83 +73,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9151ca6d-7153-4a97-aaa2-7277fc5ffa84@oracle.com>
+In-Reply-To: <20241015200222.12452-4-rosenp@gmail.com>
 
-On Wed, Oct 16, 2024 at 08:16:16AM +0100, John Garry wrote:
-> On 02/10/2024 16:10, Dan Carpenter wrote:
-> > On Wed, Oct 02, 2024 at 02:50:43PM +0100, Colin Ian King wrote:
-> > > The variable ret is being assigned a value that is never read, the
-> > > following break statement exits the loop where ret is being re-assigned
-> > > a new value. Remove the redundant assignment.
-> > > 
-> > > Signed-off-by: Colin Ian King<colin.i.king@gmail.com>
-> > > ---
-> > >   drivers/scsi/scsi_debug.c | 4 +---
-> > >   1 file changed, 1 insertion(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-> > > index d95f417e24c0..7c60f5acc4a3 100644
-> > > --- a/drivers/scsi/scsi_debug.c
-> > > +++ b/drivers/scsi/scsi_debug.c
-> > > @@ -3686,14 +3686,12 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
-> > >   		sdeb_data_sector_lock(sip, do_write);
-> > >   		ret = sg_copy_buffer(sdb->table.sgl, sdb->table.nents,
-> > You would think there would be a:
-> > 
-> > 	total += ret;
-> > 
-> > here.
-> > 
-> > >   		   fsp + (block * sdebug_sector_size),
-> > >   		   sdebug_sector_size, sg_skip, do_write);T
-> > >   		sdeb_data_sector_unlock(sip, do_write);
-> > > -		if (ret != sdebug_sector_size) {
-> > > -			ret += (i * sdebug_sector_size);
-> > > +		if (ret != sdebug_sector_size)
-> > >   			break;
-> > > -		}
-> > >   		sg_skip += sdebug_sector_size;
-> > >   		if (++block >= sdebug_store_sectors)
-> > >   			block = 0;
-> > >   	}
-> > >   	ret = num * sdebug_sector_size;
-> >          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > And that this would be a "return total;"
+On Tue, Oct 15, 2024 at 01:02:17PM -0700, Rosen Penev wrote:
+> commit c092d0be38f4 ("net: ibm: emac: remove all waiting code")
+> introduced EPROBE_DEFER support. Because of that, we can defer
+> initialization until all modules are ready instead of handling it
+> explicitly with custom init/exit functions.
 > 
-> Right, the function is currently a little messy as there is no variable for
-> "total", and we re-assign ret per loop.
+> As a consequence of removing explicit module initialization and
+> deferring probe until everything is ready, there's no need for custom
+> init and exit functions.
 > 
-> So I think that we can either:
-> a. introduce a variable to hold "total"
-> b. this change:
+> There are now module_init and module_exit calls but no real change in
+> functionality as these init and exit functions are no longer directly
+> called by core.
 > 
-> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-> index af5e3a7f47a9..39218ffc6a31 100644
-> --- a/drivers/scsi/scsi_debug.c
-> +++ b/drivers/scsi/scsi_debug.c
-> @@ -3690,13 +3690,14 @@ static int do_device_access(struct
-> sdeb_store_info *sip, struct scsi_cmnd *scp,
->                sdeb_data_sector_unlock(sip, do_write);
->                if (ret != sdebug_sector_size) {
->                        ret += (i * sdebug_sector_size);
-> -                       break;
-> +                       goto out_unlock;
->                }
->                sg_skip += sdebug_sector_size;
->                if (++block >= sdebug_store_sectors)
->                        block = 0;
->        }
->        ret = num * sdebug_sector_size;
-> +out_unlock:
->        sdeb_data_unlock(sip, atomic);
-> 
-> 
-> Maybe a. is better, as b. is maintaining some messiness.
-> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-I'm happy with option a.
-
-regards,
-dan carpenter
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
