@@ -1,336 +1,776 @@
-Return-Path: <linux-kernel+bounces-369020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458739A17E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:25:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4B99A17E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017A6281528
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:25:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50DCC1C226A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD091C2339;
-	Thu, 17 Oct 2024 01:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8EF19409C;
+	Thu, 17 Oct 2024 01:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="CSbYxalr";
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="GU0EJHFX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="rOtrpj+I"
-Received: from mx0a-00230701.pphosted.com (mx0a-00230701.pphosted.com [148.163.156.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pQIbmi+H"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8338373501;
-	Thu, 17 Oct 2024 01:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729128102; cv=fail; b=RseaT+px3ZGkLthTFZO5vadOsgkheiyRPa4WM3KhknoMYXHwn0OBO1R9Ydld3xUF4phsgZOLpWBDxRRCVxj5bxyGdyhyvbs/JDirSnvJ5Y4eWjYP1PWI/9U3CJhPvPSo3zC92nf71POFrDv5tuv4ovLeDYykKQdIWD3Fh6lwO9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729128102; c=relaxed/simple;
-	bh=ZAV9S8fp1i/39giiZKPEHkct9UTdO+SY/mIIotfKAeE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=muMv1hFA9kluKa4gNp3A4d4hrmGYlfTu8aATycLcgGaqA3Rif0j9uN0Kz5J1OGRdGF8Rk5kWc8l8mwWyAcZUbCpUi0rJZ6X55rdfbkTXQjpvaIrIJvjDO6iW4/S8aDPNhZlB5ggf9kRpt6Ob6I9FzbPmc9Od9hrunxsUmYfcN0Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com; spf=pass smtp.mailfrom=synopsys.com; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=CSbYxalr; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=GU0EJHFX; dkim=fail (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=rOtrpj+I reason="signature verification failed"; arc=fail smtp.client-ip=148.163.156.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synopsys.com
-Received: from pps.filterd (m0297266.ppops.net [127.0.0.1])
-	by mx0a-00230701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GJQL2O015688;
-	Wed, 16 Oct 2024 18:21:19 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pfptdkimsnps; bh=ZAV9S8fp1i/39giiZKPEHkct9UTdO+SY/mIIotfKAeE=; b=
-	CSbYxalrFhZNwUORWN6UcBL73W5CMgK8NkP0SA8Yj8Ip9LJ5Wki8rBOhLu+AHJHn
-	3cZ//QoEW6oOGGbCdtXRf7yTGhfPe1NnZaQCMPLcdCXwgW+CZoE2uuILdRG3Fh98
-	idFKZwZQ8WMui3HygoUoKvEy1EGvzOA7DLZrcFkj/YruomBgveYzA2e5IHf3n1vc
-	f/endRZOLC23juLkFGhfhWXL1g7ZMOcDTDhu+LtOflRkNSi//jMhtkyPnh7NA3UK
-	Ai8Uv/OMHSImFTZiKFxbAmX8jDNM/uHtLHc+jD2x/XzK+pnZs1Uvc05TjgH6P69j
-	Y4oCoDWBCaeaPMIjWdSwUQ==
-Received: from smtprelay-out1.synopsys.com (smtprelay-out1.synopsys.com [149.117.87.133])
-	by mx0a-00230701.pphosted.com (PPS) with ESMTPS id 42a8hy5ay1-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A00A1DFE8;
+	Thu, 17 Oct 2024 01:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729128100; cv=none; b=F/87s3hu0B/gsyJb3Hrk71aAr9itIuytcG1hBeQ2AnU/6+j4VHPxkYLnYXz1qrAgOQVay8CCYKpOst1OzP+olc3YcxaWxHr4BkMWK35yjMKqtmT8VNO8arpd5RK5m2qxcvV74RTP3llOEuJZMG4RWO4B3zLE90eqBWA6aLMfujs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729128100; c=relaxed/simple;
+	bh=43kjEUB2LDCEQr0/RQoqwfnpPEJb4Kl2beY87vU+thI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=it4I2VPLIe9VLlJOQKpOtQo2sbZoiHdVpNg2f9aZBk84MYuSKLAW2tCq7AWb7rPHWn3K2nQmpByMKO9X+MvrtCxzFzSXxBSCkypgRGHlLczs5nVyX4ccxfg6kWN09KZsxq4xN4+LIUz9I0/4GUvpA0e54i6lsKqCPE7BRJzrNiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pQIbmi+H; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGcnQw014341;
+	Thu, 17 Oct 2024 01:21:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dqgwMVtAIp6b+5Mxf5n45uaZLZuNPaP8CrHL08EFjOQ=; b=pQIbmi+HHi6kkNNn
+	ymqNyWnXjBMIWpUJOD7EeNRyTvSp6Ir/b4qdwjOsnsyAAqz3Dm1dAkXnBzk6QQxn
+	h7riEXpOVM3AIaldtc1dPLFhgCqfY2+9nps0okcvZKFhJ8yeUHkrpHM7Zd1caXu9
+	KYBwkF4iZr6O8+z64oGHkB8cDIJR60/d0iZb0HDYXDM7KY2sy0LWEddOvVoC43bu
+	/2xIipXbqdvjvj1lQuW7ZctZMVyihIsesjsPKyugH46g0avne8EoF80QRJF3hWhM
+	Ymn8r0lHtEqc+KC8Di7EpODAePTQ/WzhmYcOT1NOWZM+jFchvL08v8KmarT7YJ2t
+	Aun8jA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a79hb3mu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 16 Oct 2024 18:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-	t=1729128078; bh=ZAV9S8fp1i/39giiZKPEHkct9UTdO+SY/mIIotfKAeE=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=GU0EJHFX2VygWXgZC0kFGbPc5aCXxb206N5hxIdHwekbWuur6Vndulk88NX3PNvJ1
-	 DWnZcbGRLHPzrg8lV6rfERIyw/GphbQJOloRot0YymdiIekseIifXOgD6vPgnvm2/+
-	 n/9g0YMw+YhgHY1vhTnr86a2VIrQc2lGJcHx/c0cHwfTL5dZsxDPQQiDXrUnQ894z9
-	 Kvg3ES130cNKzhZ9xwR2cwDxpr6y1ezPHUbWUSF3y8Yac5reZIc6zb1XYCpifsPsbz
-	 dhH8VoHMujdBKw0AsgZiwrVm2PWL9bvPvdjvVsF29x4iXHnQVBspjeE96ti2cUHQ8N
-	 FW8+oH/DKgB3g==
-Received: from mailhost.synopsys.com (badc-mailhost4.synopsys.com [10.192.0.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits)
-	 client-signature RSA-PSS (2048 bits))
-	(Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
-	by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id C49E740353;
-	Thu, 17 Oct 2024 01:21:17 +0000 (UTC)
-Received: from o365relay-in.synopsys.com (us03-o365relay1.synopsys.com [10.4.161.137])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(Client CN "o365relay-in.synopsys.com", Issuer "Entrust Certification Authority - L1K" (verified OK))
-	by mailhost.synopsys.com (Postfix) with ESMTPS id 67281A0099;
-	Thu, 17 Oct 2024 01:21:17 +0000 (UTC)
-Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com;
-	dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.a=rsa-sha256 header.s=selector1 header.b=rOtrpj+I;
-	dkim-atps=neutral
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256
-	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
-	(Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
-	by o365relay-in.synopsys.com (Postfix) with ESMTPS id 4C07A4011F;
-	Thu, 17 Oct 2024 01:21:16 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hELGK96CshJBmW8tQYlodgfnu5EGLVIdT32YEa7DNzIv33k/CIQ0+E3qhqPPGIkmyblajNd51Dk+U1B3FtGFEQAKY2PgdYp1KVW4y7IdrmEC1iEDuG4nreewuTkO1unYKyCCdwMkatVCSDja9CwMyMcvHph+aYD0oWJCiOhpaECRX+rVDbNEQnzbpdA7ukonA3+/XSlRuXC9JFGyd7/AWzXa5tP5q5Ane8TKmCTh3Z/6KqQ2Z4f4WlovqZudZTwChqZ74NTsiXEamrrXRloMNiBibH2GMrFmBFpabTA6dLSNrgL4WTYV521gfVBUKDvjwpOyBJZqPLdxnqhVvEriGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZAV9S8fp1i/39giiZKPEHkct9UTdO+SY/mIIotfKAeE=;
- b=bpxfsfoYllYHLhZ3RPbWOLXA5pTqo4PZaqFRuG7/LsTYIf6KlcGJnBiNJPs6M95EexWtPHPWmjI+xo27dRlgbP5pfC/IMdWVXv2fHGla/JQa5I+SX+SnTnYGcMHxi8J3PfGW6FmJ8s0cC2qS484CWmV5VJWNchJ+vdoX3J9G/EzBdSHzazqlj9Bc83OW66rRFnBgXM8b+uf+mtkKpmQpVaoU03q/ADKnOLkD0TXqDhIjA3cZI3axklW0mMrbzwFMyayp3HmPmT1i5zYNr5t2hF6gUzR1bvxaHAzSGk/E0W8a32dk944KzjmUCGQ1Jjw+DlOEZIMSN/79h8mQYU+mqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZAV9S8fp1i/39giiZKPEHkct9UTdO+SY/mIIotfKAeE=;
- b=rOtrpj+IcxkyW57OFvU6ZCvZ81bUekyYzXyKfFmltQ1gwCQD5JkWjKnjyZT3cO7vAqtsqwYPo5SDE+48DN6sLw4wI/fT4Rmfd5ZNFbpCgzLD947XsxuR6u+9RpC8gR8Ek6WcqvkMiauTyF8qDwTgCv6m1n/N2B872xhfa08fOTU=
-Received: from DS7PR12MB5984.namprd12.prod.outlook.com (2603:10b6:8:7f::18) by
- SN7PR12MB7178.namprd12.prod.outlook.com (2603:10b6:806:2a6::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Thu, 17 Oct
- 2024 01:21:10 +0000
-Received: from DS7PR12MB5984.namprd12.prod.outlook.com
- ([fe80::e2e0:bc6d:711f:eeb]) by DS7PR12MB5984.namprd12.prod.outlook.com
- ([fe80::e2e0:bc6d:711f:eeb%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 01:21:10 +0000
-X-SNPS-Relay: synopsys.com
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To: Akash Kumar <quic_akakum@quicinc.com>
-CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jing Leng <jleng@ambarella.com>, Felipe Balbi <balbi@kernel.org>,
-        Jack Pham <quic_jackp@quicinc.com>,
-        "kernel@quicinc.com" <kernel@quicinc.com>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Daniel Scally <dan.scally@ideasonboard.com>,
-        Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6] usb: dwc3: gadget: Refine the logic for resizing Tx
- FIFOs
-Thread-Topic: [PATCH v6] usb: dwc3: gadget: Refine the logic for resizing Tx
- FIFOs
-Thread-Index: AQHbH71LyQooZFLKk0yLUIx5/AmBV7KKJjAA
-Date: Thu, 17 Oct 2024 01:21:10 +0000
-Message-ID: <20241017012104.cfk2drajdc52tp47@synopsys.com>
-References: <20241016111904.11375-1-quic_akakum@quicinc.com>
-In-Reply-To: <20241016111904.11375-1-quic_akakum@quicinc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS7PR12MB5984:EE_|SN7PR12MB7178:EE_
-x-ms-office365-filtering-correlation-id: 0cfdb017-3bf5-4a69-22bb-08dcee49fba9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?d3ZCeG5hdXpYODBvdTM0dVk4NGYxVk9ObWo4aWVhS2IxYWR4NWdXd3E4RUJp?=
- =?utf-8?B?KytiYmdpcVRYVlJZenVWY3NrNzVvZDNTUDlSSkRURDA2a0cwR1lrQ3RsekUr?=
- =?utf-8?B?ZWY0S2NqWDlTM3BFZ3dxcjIwQVZKME1YVkZpSW5mK29CTEwra2ZpcWxaZ0E5?=
- =?utf-8?B?dDhqdDIydkMwMGtER3VhcTZIQXNDaTBrK0JwZ0tKc3RMb2NPamNXY1dVbDlG?=
- =?utf-8?B?Z2liK2QxbkljTjFMQUhjQzZNQTBRNEZHSDg4THA1b3g0YVhYd3kwRFJJTG90?=
- =?utf-8?B?ajFXVTB4enJoVG1JdFVxTlVyVUswTkc0SjlHdlZrdkV4RUVtUVUwLzVsSER6?=
- =?utf-8?B?Zng0ZDlXU1NjQyt5WTc5NGI4Q0VnVGVqZkpLUFhIL3NzVzM1YmNCbnVSZ3BS?=
- =?utf-8?B?SUk2bURrcFN5M1ZCaUluMXVjUzhTY2I0QXdiVk9yNEEzcnZpQ01peXF4K0hj?=
- =?utf-8?B?N2pEMHh3ZituQm1KMkpMRGt3ZkptemJZaDMwcDIzc2Z6SXUwQkdONVZtUS9n?=
- =?utf-8?B?WWZyV2M4YjZtcEFVeDE2Y2hqRXhGbFhEK3BLMGhDQzlqUkxuZjdBL0d6TUc2?=
- =?utf-8?B?c2Vuc2svaVlHOVJxazh0Nkh2VXE1OHMxU3FHYkhjYTBzaWMvWUxUTkNCVzkx?=
- =?utf-8?B?QU52Tko3bGdxSUo1S1p1aUc5UHMwQS9xSjJWQTBaR0ZtOUw2Tmx6NDBkbnVr?=
- =?utf-8?B?cHJrNnNHWmJpdzdSSWxpYWxKbnQ2Z2ZZZDc1a2RxaTZrZkl6eGo0WEhiejFM?=
- =?utf-8?B?ZzFkRXgrazdIaEtJM2xiZlpZdzBkQ08zUk1MZ3FkMUVMaFlJUVlXSUNDdyt4?=
- =?utf-8?B?azFXNExzMVdSSTVCMFdxTEQ0WEFJNnhPRTlnRU1CSy9sc3ZJSExqdmEvZ3NF?=
- =?utf-8?B?cW0vV2hlZnE1cy9rb3VyeHY1eDdvZityV0cxRjk5TG5mZ2lLNXlQVVhmSVdM?=
- =?utf-8?B?Sy8xOTV1MmsrL3F1SEl2TlYyTEV5OXdhazNnNDE1alVlMnUwQVBsU1E2a0dX?=
- =?utf-8?B?RDc1em9ibkJVREVzMXZMRUxnTGpLM0M5eXg4ZlNuL3d1N2RadVNIczFrcURH?=
- =?utf-8?B?RFBSQWxTMEJnTFVrMFkxYW4rWVo0RDR6V1ovMlE4RkRGSW1JZ0xYeUxhck9T?=
- =?utf-8?B?VGRtRklsc2J4ZzYrNXVQZ2Jtb3U5UDVvVU9uZmxDdGJlRHMwdTM2MzBvNm55?=
- =?utf-8?B?amIvTmVISnhpRThIZmUzbVdUdzlsWDlQL0hJRkIyQWEvNmlLbXpFTUZhRUFK?=
- =?utf-8?B?djBEZkR2MmpKTi9yUWlRN0FtbFZ5dUczMTdIQVBzOFcvRHJPczRLMkMvTzdD?=
- =?utf-8?B?eVJ5N2xTcFRkMWRPaXFXNGFMYWJKVzVOYlNBakZjZmVzcWlGVFpKL2VIeStV?=
- =?utf-8?B?eUhsRmdmeGdzNU43c1VnOU5rYnFReUc1anh5U0l5bzdHenBMdWJhZjFWWkxm?=
- =?utf-8?B?TjF6eWJ4VXZsZmlidjVSb2xEcE5kOWxFb2J0TnA5Q3ltVlRHTFltTmplalpK?=
- =?utf-8?B?YUlJTmRoK0ZVY3Y4N2RydVZtbVBnQTZlcUdpcDEzbjFWZ1RxVXhtWWRuZ3l6?=
- =?utf-8?B?M3RwSGZ0dVJJaCtabElodzFFNnFPeDlVdFpZbVJFaGNjWHVvMXRVSkNablRW?=
- =?utf-8?B?M0ptY0h3R0xHYVprazRXeXlOVk1PVWRxdkF2MGpHRGN6eXAwZVhFRWZUdDhq?=
- =?utf-8?B?NFNzQ01nR1kzeS84elp6U1Z3T2VWUHVOeEtvUmxvaFNwajV0Rk1IbUg4Z3RS?=
- =?utf-8?B?eWVBKzgzWm8yM09vRC8wSzJCOGJUQnIxWjZ0ZmNMLzhBeTg3NXA4ZWp4OXVt?=
- =?utf-8?Q?Uq7S1F/PNyKj2rp53ZCEwtf/8m5z2afYjWsHw=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5984.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UHV2S2lIb01NUWFwNTRiVzdPa09VSS81RGRpdGNmK01ncExDbVkwTEo1ajZi?=
- =?utf-8?B?N3p2eGoxNjNxWng2QmNmWFplaThPL3NQZkFseFI0dUQwOWRTMHVCMkc5YkdN?=
- =?utf-8?B?anF1Vy80UXNSTGEzUHlBU0JlOHloQVdhZWNwSU8yaENrdFpBUTZ5SUlNcTZN?=
- =?utf-8?B?dkJyZ2JaakE2M09EQmRyM1dCV1dwOTBSWkZUT1psb2hVSG1NdWlUVEt2aHcy?=
- =?utf-8?B?a25qNzhjL3g4dWJ6aWNjMEo5bzBLQ25zOERoaGliczkwcnpXZkpGMmFPRE80?=
- =?utf-8?B?NmcwZVErY3AwdWFsUmhkL2Q3QUg0RTRJRWhPaVBwRlQxeHRmTFRuWXRwbzZi?=
- =?utf-8?B?QjdqcHNFRkhlNDJyWUtENlNmTk5lZmFKdUxzc0dYelpFWElxb3RVeWtoRklP?=
- =?utf-8?B?VmRVU09LU0RsejZzdGtIQlJ1UUR3bGhjNktUeW5wSTMxUGdOazFwV1FPQ2JS?=
- =?utf-8?B?MGFOWjd5NlhEMXZTKzMwNzJ0d1lNU1BEUW1OUitWWnZzUHRYL3pTV1A4UmI1?=
- =?utf-8?B?RTFXYk8xcVFibllHSWhNZ3IxWXdLRmluUCtzSkNRZFZzNVAyazQ2ZmNvUkRq?=
- =?utf-8?B?TnMwUnF4MWthcDhWVGxYbkdrbjNlQmI0QWdPb2JHdEUyR1kreGpCT2dPYlRP?=
- =?utf-8?B?Z3pTdTA3blYyMmZSQzgyRHY4MUhKNVpKRFIvaWJndmY1Q1JJVkQrdmRpQ2R4?=
- =?utf-8?B?dmx5VEVCU2ZzR2NWT0lTRDN6TWZ5YktXNzFNMzNENWJMNHhuVUdIZHN4L2o3?=
- =?utf-8?B?UWVnQ2txYTRDV3owNVp2djlqeFp4MHNJSGhjRGJPMlE0Zm5wZFlORnhjSEdE?=
- =?utf-8?B?L0ZzMzNwU1N1RHR3bU1JL25Ucm9ub2s0L0NvZzd3V0syTkJiWHUvMDlmWnIr?=
- =?utf-8?B?Si9yM1Fua01LczRxVUx0RWNjbkVHd05mK2ZJSGwxbE1PSGVYUWhoVXdhcnJp?=
- =?utf-8?B?b0ppdlFiSHpWRTVsaDNKZUtidE1GU3RvRUNJTjQ0UnZiR0pWUGlQK1VacVFt?=
- =?utf-8?B?cm1zODd5MFQrdnNwVUpwQjNtQ0tUVHNMVzBrL2kxcGRqcElFZWFtQmdaQkJi?=
- =?utf-8?B?VGkzV25NbGpPUkFCUXZnRmhsZ3FTQXJ3alRXcFFlaCtOQ0tGVVA0aVZsdXIz?=
- =?utf-8?B?a3NOdktvdXhYYmlGSkJEMnpFMFcvSlBtakowRWpjRWhMRFozWm9SMWdGQTFh?=
- =?utf-8?B?Qm8zS2QvVFBTdk5oTWFyNU1tZk1KYVIza0NVcmxMdTNYY2QvdWZTSG9ZSCsy?=
- =?utf-8?B?QmlHaEVhRjFvS2VzSC9XQ084bXNacFp6UGVXK29GUDNjSHZ5bThwQlBtbUpl?=
- =?utf-8?B?azBWdWpueS9jRVVlbzJSeDk4Vm5UMWZVaTVNTGQxTThKbzRxb3JHT0wraTNG?=
- =?utf-8?B?eGpuWWJQcERyR0pGKzhxM25CNEs0RjdLaEUvMGVwWmFHWS8xNkVjUWJBbGNx?=
- =?utf-8?B?WkpKUXYxaTV1dWdiL04vTTlKd1h4KzU2QUFrNXdqSzFpN2pTVVdzOS96TFNm?=
- =?utf-8?B?a20xcGRGZVRCVkNGMGtUWUs3S1B1cWFPSHFjRkh0VWRCTUtkay9wZm1Dd3Jt?=
- =?utf-8?B?Mkg4ZnIzZFlkK1NwZFhta0hFbmlwSjZRNFo1OGVXc3pzdnhoU3FrT3ZXa1k5?=
- =?utf-8?B?a2t6QnlHeS9qN0JuQkFKaFl5UzBYeC9yZ01xeno2Tm5CTTQxSmRUZ1pGR1RX?=
- =?utf-8?B?aXJ3RXpUeUtTZ1pCcVh2UklrRmxtTmgzTjRaRHB2UHVaUHh4L3ZvR2RRRlpW?=
- =?utf-8?B?Ly9OS0d5cnBLSlBuM2JFaVZvZE81UUtnNU1zdWw0YmxLeXkvTU9DVmVSVHlZ?=
- =?utf-8?B?eXA4T0JYQWFlbmFkMk9NZXlpenRzbVJYSDMvQjBzUnQ4Y2k2UGZmUHh1K3pC?=
- =?utf-8?B?ZUJPSG9CelBHaUVJempZYmtqNlRkSzgvaTJIRGFFeUhSY1U2MHR3TXFmVmxR?=
- =?utf-8?B?aFoySFJaWGxYR1czemo0UzRTQWZJWUJQVjdlTmhndFVrak8vcVZDUnc5Wm1O?=
- =?utf-8?B?Z0JKa1JiMVdHdXM4Vk9HZDZGRW9KMWhWVCtUcGR2MDg3NGpBbFZVelJGK2Qy?=
- =?utf-8?B?QXJBSGhPdGZ0RXBNQ2JIM3NKN3VMdE82QnduaytETUNjQ2R5M1FMZWRTd2NF?=
- =?utf-8?Q?aWKnVk+WQZbRNqaZucw6eHerx?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <23A63D2A743DDB448344D07F51BF2F36@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	Thu, 17 Oct 2024 01:21:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49H1LHVx022719
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 01:21:17 GMT
+Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 16 Oct 2024 18:21:17 -0700
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Date: Wed, 16 Oct 2024 18:21:10 -0700
+Subject: [PATCH v3 04/23] drm/msm/dpu: switch RM to use crtc_id rather than
+ enc_id for allocation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	4tbPmgqyZxwlhBp9VlG14VqBqBZZRiRgd/s3Phrtrqb0EuwwiPaComZTSs66jps4Fy0zQP9yuzEzb1yb4GS11/etGdelKZdq4SbT2q0IgeglKMf7k2/qH8rXEtRJZUzjsmuQ2Cr1frw4LGgz3ChK/V7X3BRxRh7HPE0H9+A37F6DFkwpOLL7XGN2H5rFVMir5/bDypTN0UGoWwVdQXsCTCbxatgMM/DOzVrou6llulx2o4FEWUb6UtSY+2liv5HASJctgiIDz88Q2bBqmgc8cISYp4QU6ZZIeWN8ObI9RF8C0WSoPQLsAp4a4CKeldKk9rZHcHhIuH+LACeJOJ/VdGIQGXyUfvU0Ex5XF3ZS+MaE1/34njDkapBS+j46ZuoGow/MGtG7KN6qt8m2PO8WQFMOt7CenbssaN1jUuU+o+yxygsOLOCnEx3KLAvDKpiWOwX13/rWV9HX1muflOJDvVp5Cgt/wtx2OetUGAb1mlKxMmtKCwCRb2GqpXJ2Sbh4f/7QZVLURdSp/Pgg3Beots68ruH+jLR1WJ0lgCTnlEJfMQxq0ILCdzo249czpvYFiTNfu1uC6fWC9LNbrLfNHeWXxlW7PvHFSfZiNlj1hXO3HTYMj5IsgptkuWbE/8cGKj1zGV2/wa+Mdu0JRFRVQg==
-X-OriginatorOrg: synopsys.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5984.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cfdb017-3bf5-4a69-22bb-08dcee49fba9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2024 01:21:10.1338
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VXA5JlrE5uBPmUtQU3M1dVaJHb4cyJzNF/enuPqW4p1yehWD7rgndQzxAOc6KCVEZ/LNokkc072dwNPFzcWCjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7178
-X-Proofpoint-ORIG-GUID: -G6k9if35mKyY3TWffxhEV_Ai1HhoNHl
-X-Proofpoint-GUID: -G6k9if35mKyY3TWffxhEV_Ai1HhoNHl
-X-Authority-Analysis: v=2.4 cv=KKwID0Fo c=1 sm=1 tr=0 ts=6710668f cx=c_pps a=t4gDRyhI9k+KZ5gXRQysFQ==:117 a=t4gDRyhI9k+KZ5gXRQysFQ==:17 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=nEwiWwFL_bsA:10
- a=qPHU084jO2kA:10 a=COk6AnOGAAAA:8 a=Fw8nr6mc_DSmYoaB-Y0A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241016-concurrent-wb-v3-4-a33cf9b93835@quicinc.com>
+References: <20241016-concurrent-wb-v3-0-a33cf9b93835@quicinc.com>
+In-Reply-To: <20241016-concurrent-wb-v3-0-a33cf9b93835@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        <quic_abhinavk@quicinc.com>, Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Simona Vetter <simona@ffwll.ch>,
+        Simona Vetter <simona.vetter@ffwll.ch>
+CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
+        =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+        "Jessica
+ Zhang" <quic_jesszhan@quicinc.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729128075; l=24237;
+ i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
+ bh=V1kt6Q0uqXqs7XTahBYpPCkFXR7Siqy4bhkghakCwbo=;
+ b=0rUluafaVRv71h4UnJzQkBHYado5l4KeokYitrYk+di9oxYLuCvS4jzzikBp43QxifISZdYAv
+ Xeq+vBagCVhBMO+JZL7dK+Z9vfZeve5ndSW5Hjo5hohtqzIF9ZOAt6Q
+X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
+ pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: z-t_91mRR60mJfypI3rgs8HYaqP08jxr
+X-Proofpoint-ORIG-GUID: z-t_91mRR60mJfypI3rgs8HYaqP08jxr
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_active_cloned_notspam policy=outbound_active_cloned score=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
- priorityscore=1501 bulkscore=0 mlxscore=0 suspectscore=0 impostorscore=0
- adultscore=0 phishscore=0 clxscore=1011 classifier=spam authscore=0
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410170008
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410170008
 
-T24gV2VkLCBPY3QgMTYsIDIwMjQsIEFrYXNoIEt1bWFyIHdyb3RlOg0KPiBUaGUgY3VycmVudCBs
-b2dpYyBpcyByaWdpZCwgc2V0dGluZyBudW1fZmlmb3MgdG8gZml4ZWQgdmFsdWVzLg0KPiAzIGZv
-ciBhbnkgbWF4YnVyc3QgZ3JlYXRlciB0aGFuIDEuDQo+IHR4X2ZpZm9fcmVzaXplX21heF9udW0g
-Zm9yIG1heGJ1cnN0IGdyZWF0ZXIgdGhhbiA2Lg0KPiBBZGRpdGlvbmFsbHksIGl0IGRpZCBub3Qg
-ZGlmZmVyZW50aWF0ZSBtdWNoIGJldHdlZW4gYnVsayBhbmQNCj4gaXNvY2hyb25vdXMgdHJhbnNm
-ZXJzLCBhcHBseWluZyBzaW1pbGFyIGxvZ2ljIHRvIGJvdGguDQo+IA0KPiBUaGUgdXBkYXRlZCBs
-b2dpYyBpcyBtb3JlIGZsZXhpYmxlIGFuZCBzcGVjaWZpY2FsbHkgZGVzaWduZWQgdG8gbWVldA0K
-PiB0aGUgdW5pcXVlIHJlcXVpcmVtZW50cyBvZiBib3RoIGJ1bGsgYW5kIGlzb2Nocm9ub3VzIHRy
-YW5zZmVycy4gV2UNCj4gaGF2ZSBtYWRlIGV2ZXJ5IGVmZm9ydCB0byBzYXRpc2Z5IGFsbCBuZWVk
-cyBhbmQgcmVxdWlyZW1lbnRzLCB2ZXJpZmllZA0KPiBvbiBvdXIgc3BlY2lmaWMgcGxhdGZvcm0g
-YW5kIGFwcGxpY2F0aW9uLg0KPiANCj4gQnVsayBUcmFuc2ZlcnM6IEVuc3VyZXMgdGhhdCBudW1f
-Zmlmb3MgaXMgb3B0aW1pemVkIGJ5IGNvbnNpZGVyaW5nIGJvdGgNCj4gdGhlIG1heGJ1cnN0IGFu
-ZCBEVCBwcm9wZXJ0eSAidHgtZmlmby1tYXgtbnVtIiBmb3Igc3VwZXIgc3BlZWQgYW5kDQo+IGFi
-b3ZlLiBGb3IgaGlnaC1zcGVlZCBhbmQgYmVsb3cgYnVsayBlbmRwb2ludHMsIGEgMksgVHhGSUZP
-IGFsbG9jYXRpb24NCj4gaXMgdXNlZCB0byBtZWV0IGVmZmljaWVudCBkYXRhIHRyYW5zZmVyIG5l
-ZWRzLCBjb25zaWRlcmluZw0KPiBGSUZPLWNvbnN0cmFpbmVkIHBsYXRmb3Jtcy4NCj4gDQo+IElz
-b2Nocm9ub3VzIFRyYW5zZmVyczogRW5zdXJlcyB0aGF0IG51bV9maWZvcyBpcyBzdWZmaWNpZW50
-IGJ5DQo+IGNvbnNpZGVyaW5nIHRoZSBtYXhpbXVtIHBhY2tldCBtdWx0aXBsaWVyIGZvciBIUyBh
-bmQgYmVsb3cgYW5kIG1heGJ1cnN0DQo+IGZvciBTdXBlci1zcGVlZCBhbmQgYWJvdmUgZXBzLCBh
-bG9uZyB3aXRoIGEgY29uc3RyYWludCB3aXRoIHRoZSBEVA0KPiBwcm9wZXJ0eSAidHgtZmlmby1t
-YXgtbnVtIi4NCj4gDQo+IFRoaXMgY2hhbmdlIGFpbXMgdG8gb3B0aW1pemUgdGhlIGFsbG9jYXRp
-b24gb2YgVHggRklGT3MgZm9yIGJvdGggYnVsaw0KPiBhbmQgaXNvY2hyb25vdXMgZW5kcG9pbnRz
-LCBwb3RlbnRpYWxseSBpbXByb3ZpbmcgZGF0YSB0cmFuc2ZlciBlZmZpY2llbmN5DQo+IGFuZCBv
-dmVyYWxsIHBlcmZvcm1hbmNlLiBJdCBhbHNvIGVuaGFuY2VzIHN1cHBvcnQgZm9yIGFsbCB1c2Ug
-Y2FzZXMsDQo+IHdoaWNoIGNhbiBiZSB0d2Vha2VkIHdpdGggRFQgcGFyYW1ldGVycyBhbmQgdGhl
-IGVuZHBvaW504oCZcyBtYXhidXJzdCBhbmQNCj4gbWF4cGFja2V0LiBUaGlzIHN0cnVjdHVyZWQg
-YXBwcm9hY2ggZW5zdXJlcyB0aGF0IHRoZSBhcHByb3ByaWF0ZSBudW1iZXINCj4gb2YgRklGT3Mg
-aXMgYWxsb2NhdGVkIGJhc2VkIG9uIHRoZSBlbmRwb2ludCB0eXBlIGFuZCBVU0Igc3BlZWQuDQo+
-IA0KPiBTaWduZWQtb2ZmLWJ5OiBBa2FzaCBLdW1hciA8cXVpY19ha2FrdW1AcXVpY2luYy5jb20+
-DQo+IC0tLQ0KPiBDaGFuZ2VzIGZvciB2NjoNCj4gVGhlIGNvZGUgaGFzIGJlZW4gcmVmYWN0b3Jl
-ZCB0byByZXBsYWNlIG11bHRpcGxlIGlmIGNoZWNrcyB3aXRoIGENCj4gc3dpdGNoLWNhc2Ugc3Ry
-dWN0dXJlIGJhc2VkIG9uIHRoZSBVU0Igc3BlZWQuIFRoaXMgY2hhbmdlIGltcHJvdmVzDQo+IHJl
-YWRhYmlsaXR5IGFuZCBtYWludGFpbmFiaWxpdHkgYnkgY2xlYXJseSBkZWZpbmluZyBiZWhhdmlv
-ciBmb3INCj4gZGlmZmVyZW50IFVTQiBzcGVlZHMuIFRoaXMgc3RydWN0dXJlZCBhcHByb2FjaCBl
-bnN1cmVzIHRoYXQgdGhlDQo+IGFwcHJvcHJpYXRlIG51bWJlciBvZiBGSUZPcyBpcyBhbGxvY2F0
-ZWQgYmFzZWQgb24gdGhlIGVuZHBvaW50IHR5cGUNCj4gYW5kIFVTQiBzcGVlZC4NCj4gDQo+IENo
-YW5nZXMgZm9yIHY1Og0KPiBVcGRhdGUgQ2FsY3VsYXRpb24gZm9yIEhTIGFuZCBiZWxvdyBidWxr
-IGFuZCBpc29jIGVwcyBiYXNlZCBvbg0KPiBzdWdnZXN0aW9uIGFuZCBmaXhlZCBhdCAyayBmb3Ig
-YnVsayBlcHMgY29uc2lkZXJpbmcgZmlmbyBjb25zdHJhaW5lZA0KPiBwbGF0Zm9ybXMuDQo+IA0K
-PiBDaGFuZ2VzIGZvciB2NDoNCj4gVXBkYXRlZCBjb21taXQgbWVzc2FnZSBhcyBwZXIgcmV2aWV3
-IGNvbW1lbnRzIHRvIGNsYXJpZnkgdGhhdCBpdCBoYXMNCj4gYmVlbiB0ZXN0ZWQgb24gc3BlY2lm
-aWMgcGxhdGZvcm1zIG9ubHkgYW5kIHRyaWVkIGJlc3QgdG8gbWF0Y2ggYWxsDQo+IGV4cGVjdGF0
-aW9ucy4NCj4gDQo+IENoYW5nZXMgZm9yIHYzOg0KPiBSZWRlZmluZSBsb2dpYyBmb3IgcmVzaXpp
-bmcgdHggZmlmb3MsYWRkZWQgY2hlY2sgYmFzZWQgb24gIG9wZXJhdGluZw0KPiBzcGVlZCBhbmQg
-dXNlZCBtYXhwIGZvciBIUyBhbmQgbWF4YnVyc3QgZm9yIFNTICBhbmQgZGVmaW5lZCBtYXgNCj4g
-YWxsb2NhdGlvbiBiYXNlZCBvbiBkdCBwcm9wZXJ0eS4NCj4gDQo+IENoYW5nZXMgZm9yIHYyOg0K
-PiBSZWRlZmluZSBsb2dpYyBmb3IgcmVzaXppbmcgdHggZmlmb3MsIGhhbmRsZWQgZmlmbyBiYXNl
-ZCBvbiAgbWluaW11bQ0KPiBvZiBtYXhwIGFuZCBtYXhidXJ0cy4NCj4gDQo+IENoYW5nZXMgZm9y
-IHYxOg0KPiBBZGRlZCBhZGRpdGlvbmFsIGNvbmRpdGlvbiB0byBhbGxvY2F0ZSB0eCBmaWZvIGZv
-ciBocyBpc29jICBlcHMsDQo+IGtlZXBpbmcgdGhlIG90aGVyIHJlc2l6ZSBsb2dpYyBzYW1lDQo+
-IC0tLQ0KPiAgZHJpdmVycy91c2IvZHdjMy9nYWRnZXQuYyB8IDMxICsrKysrKysrKysrKysrKysr
-KysrKysrLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspLCA4IGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2R3YzMvZ2FkZ2V0LmMg
-Yi9kcml2ZXJzL3VzYi9kd2MzL2dhZGdldC5jDQo+IGluZGV4IDEwMTc4ZTVlZGE1YS4uZGM2MmQw
-NjI2ZTUzIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3VzYi9kd2MzL2dhZGdldC5jDQo+ICsrKyBi
-L2RyaXZlcnMvdXNiL2R3YzMvZ2FkZ2V0LmMNCj4gQEAgLTc3MSwxNSArNzcxLDMwIEBAIHN0YXRp
-YyBpbnQgZHdjM19nYWRnZXRfcmVzaXplX3R4X2ZpZm9zKHN0cnVjdCBkd2MzX2VwICpkZXApDQo+
-ICANCj4gIAlyYW0xX2RlcHRoID0gRFdDM19SQU0xX0RFUFRIKGR3Yy0+aHdwYXJhbXMuaHdwYXJh
-bXM3KTsNCj4gIA0KPiAtCWlmICgoZGVwLT5lbmRwb2ludC5tYXhidXJzdCA+IDEgJiYNCj4gLQkg
-ICAgIHVzYl9lbmRwb2ludF94ZmVyX2J1bGsoZGVwLT5lbmRwb2ludC5kZXNjKSkgfHwNCj4gKwlz
-d2l0Y2ggKGR3Yy0+Z2FkZ2V0LT5zcGVlZCkgew0KPiArCWNhc2UgVVNCX1NQRUVEX1NVUEVSX1BM
-VVM6DQo+ICsJY2FzZSBVU0JfU1BFRURfU1VQRVI6DQoNCkNhbiB5b3UgZml4IHRoZSBpbmRlbnRh
-dGlvbnM/DQoNClNob3VsZCBiZSBzb21ldGhpbmcgbGlrZSB0aGlzOg0KDQoJc3dpdGNoIChzcGVl
-ZCkgew0KCWNhc2UgU1NQOg0KCWNhc2UgU1M6DQoJCWlmICguLi4pDQoJCQl4eHg7DQoJCWJyZWFr
-Ow0KCWNhc2UgSFM6DQoJCWlmICguLi4pDQoJCQkuLi47DQoJZGVmYXVsdDoNCgkJYnJlYWs7DQoJ
-fQ0KDQpUaGFua3MsDQpUaGluaA0KDQo+ICsJaWYgKHVzYl9lbmRwb2ludF94ZmVyX2J1bGsoZGVw
-LT5lbmRwb2ludC5kZXNjKSB8fA0KPiAgCSAgICB1c2JfZW5kcG9pbnRfeGZlcl9pc29jKGRlcC0+
-ZW5kcG9pbnQuZGVzYykpDQo+IC0JCW51bV9maWZvcyA9IDM7DQo+IC0NCj4gLQlpZiAoZGVwLT5l
-bmRwb2ludC5tYXhidXJzdCA+IDYgJiYNCj4gLQkgICAgKHVzYl9lbmRwb2ludF94ZmVyX2J1bGso
-ZGVwLT5lbmRwb2ludC5kZXNjKSB8fA0KPiAtCSAgICAgdXNiX2VuZHBvaW50X3hmZXJfaXNvYyhk
-ZXAtPmVuZHBvaW50LmRlc2MpKSAmJiBEV0MzX0lQX0lTKERXQzMxKSkNCj4gLQkJbnVtX2ZpZm9z
-ID0gZHdjLT50eF9maWZvX3Jlc2l6ZV9tYXhfbnVtOw0KPiArCQludW1fZmlmb3MgPSBtaW5fdCh1
-bnNpZ25lZCBpbnQsDQo+ICsJCQkJICBkZXAtPmVuZHBvaW50Lm1heGJ1cnN0LA0KPiArCQkJCSAg
-ZHdjLT50eF9maWZvX3Jlc2l6ZV9tYXhfbnVtKTsNCj4gKwkJYnJlYWs7DQo+ICsJY2FzZSBVU0Jf
-U1BFRURfSElHSDoNCj4gKwlpZiAodXNiX2VuZHBvaW50X3hmZXJfaXNvYyhkZXAtPmVuZHBvaW50
-LmRlc2MpKSB7DQo+ICsJCW51bV9maWZvcyA9IG1pbl90KHVuc2lnbmVkIGludCwNCj4gKwkJCQkg
-IHVzYl9lbmRwb2ludF9tYXhwX211bHQoZGVwLT5lbmRwb2ludC5kZXNjKSArIDEsDQo+ICsJCQkJ
-ICBkd2MtPnR4X2ZpZm9fcmVzaXplX21heF9udW0pOw0KPiArCQlicmVhazsNCj4gKwl9DQo+ICsJ
-CWZhbGx0aHJvdWdoOw0KPiArCWNhc2UgVVNCX1NQRUVEX0ZVTEw6DQo+ICsJaWYgKHVzYl9lbmRw
-b2ludF94ZmVyX2J1bGsoZGVwLT5lbmRwb2ludC5kZXNjKSkNCj4gKwkJbnVtX2ZpZm9zID0gMjsN
-Cj4gKwkJYnJlYWs7DQo+ICsJZGVmYXVsdDoNCj4gKwkJYnJlYWs7DQo+ICsJfQ0KPiAgDQo+ICAJ
-LyogRklGTyBzaXplIGZvciBhIHNpbmdsZSBidWZmZXIgKi8NCj4gIAlmaWZvID0gZHdjM19nYWRn
-ZXRfY2FsY190eF9maWZvX3NpemUoZHdjLCAxKTsNCj4gLS0gDQo+IDIuMTcuMQ0KPiA=
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Up to now the driver has been using encoder to allocate hardware
+resources. Switch it to use CRTC id in preparation for the next step.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  18 +--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h     |  12 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 182 ++++++++++++++--------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h      |  12 +-
+ 4 files changed, 108 insertions(+), 116 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 6293e716a1c3ae8ba07c0ee76f61766fdaab0710..4a9edcfbcaae67eaaa161e8fe410d4927b10fc8a 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -687,11 +687,11 @@ static int dpu_encoder_virt_atomic_check(
+ 	 * Dont allocate when active is false.
+ 	 */
+ 	if (drm_atomic_crtc_needs_modeset(crtc_state)) {
+-		dpu_rm_release(global_state, drm_enc);
++		dpu_rm_release(global_state, crtc_state->crtc);
+ 
+ 		if (!crtc_state->active_changed || crtc_state->enable)
+ 			ret = dpu_rm_reserve(&dpu_kms->rm, global_state,
+-					drm_enc, crtc_state, &topology);
++					crtc_state->crtc, &topology);
+ 	}
+ 
+ 	trace_dpu_enc_atomic_check_flags(DRMID(drm_enc), adj_mode->flags);
+@@ -1125,14 +1125,14 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 
+ 	/* Query resource that have been reserved in atomic check step. */
+ 	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+-		drm_enc->base.id, DPU_HW_BLK_PINGPONG, hw_pp,
++		drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
+ 		ARRAY_SIZE(hw_pp));
+ 	num_ctl = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+-		drm_enc->base.id, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
++		drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
+ 	num_lm = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+-		drm_enc->base.id, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
++		drm_enc->crtc, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
+ 	dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+-		drm_enc->base.id, DPU_HW_BLK_DSPP, hw_dspp,
++		drm_enc->crtc, DPU_HW_BLK_DSPP, hw_dspp,
+ 		ARRAY_SIZE(hw_dspp));
+ 
+ 	for (i = 0; i < MAX_CHANNELS_PER_ENC; i++)
+@@ -1140,7 +1140,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 						: NULL;
+ 
+ 	num_dsc = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+-						drm_enc->base.id, DPU_HW_BLK_DSC,
++						drm_enc->crtc, DPU_HW_BLK_DSC,
+ 						hw_dsc, ARRAY_SIZE(hw_dsc));
+ 	for (i = 0; i < num_dsc; i++) {
+ 		dpu_enc->hw_dsc[i] = to_dpu_hw_dsc(hw_dsc[i]);
+@@ -1154,7 +1154,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 		struct dpu_hw_blk *hw_cdm = NULL;
+ 
+ 		dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+-					      drm_enc->base.id, DPU_HW_BLK_CDM,
++					      drm_enc->crtc, DPU_HW_BLK_CDM,
+ 					      &hw_cdm, 1);
+ 		dpu_enc->cur_master->hw_cdm = hw_cdm ? to_dpu_hw_cdm(hw_cdm) : NULL;
+ 	}
+@@ -2021,7 +2021,7 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
+ 	global_state = dpu_kms_get_existing_global_state(phys_enc->dpu_kms);
+ 
+ 	num_lm = dpu_rm_get_assigned_resources(&phys_enc->dpu_kms->rm, global_state,
+-		phys_enc->parent->base.id, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
++		phys_enc->parent->crtc, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
+ 
+ 	for (i = 0; i < num_lm; i++) {
+ 		hw_mixer[i] = to_dpu_hw_mixer(hw_lm[i]);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+index 935ff6fd172c41a2f2c719f3479294214e512aad..4fdc5f9332610385b3642c6965f526c8442a226b 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+@@ -122,12 +122,12 @@ struct dpu_global_state {
+ 
+ 	struct dpu_rm *rm;
+ 
+-	uint32_t pingpong_to_enc_id[PINGPONG_MAX - PINGPONG_0];
+-	uint32_t mixer_to_enc_id[LM_MAX - LM_0];
+-	uint32_t ctl_to_enc_id[CTL_MAX - CTL_0];
+-	uint32_t dspp_to_enc_id[DSPP_MAX - DSPP_0];
+-	uint32_t dsc_to_enc_id[DSC_MAX - DSC_0];
+-	uint32_t cdm_to_enc_id;
++	uint32_t pingpong_to_crtc_id[PINGPONG_MAX - PINGPONG_0];
++	uint32_t mixer_to_crtc_id[LM_MAX - LM_0];
++	uint32_t ctl_to_crtc_id[CTL_MAX - CTL_0];
++	uint32_t dspp_to_crtc_id[DSPP_MAX - DSPP_0];
++	uint32_t dsc_to_crtc_id[DSC_MAX - DSC_0];
++	uint32_t cdm_to_crtc_id;
+ };
+ 
+ struct dpu_global_state
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+index 8193c3d579dfc86b0fb8395ba60b7b1f5137413f..bc99b04eae3a5dd3182e1e49ecbe0e31e80c60fe 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+@@ -22,9 +22,9 @@
+ 
+ 
+ static inline bool reserved_by_other(uint32_t *res_map, int idx,
+-				     uint32_t enc_id)
++				     uint32_t crtc_id)
+ {
+-	return res_map[idx] && res_map[idx] != enc_id;
++	return res_map[idx] && res_map[idx] != crtc_id;
+ }
+ 
+ int dpu_rm_init(struct drm_device *dev,
+@@ -216,7 +216,7 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
+  *	pingpong
+  * @rm: dpu resource manager handle
+  * @global_state: resources shared across multiple kms objects
+- * @enc_id: encoder id requesting for allocation
++ * @crtc_id: encoder id requesting for allocation
+  * @lm_idx: index of proposed layer mixer in rm->mixer_blks[], function checks
+  *      if lm, and all other hardwired blocks connected to the lm (pp) is
+  *      available and appropriate
+@@ -229,14 +229,14 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
+  */
+ static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
+ 		struct dpu_global_state *global_state,
+-		uint32_t enc_id, int lm_idx, int *pp_idx, int *dspp_idx,
++		uint32_t crtc_id, int lm_idx, int *pp_idx, int *dspp_idx,
+ 		struct msm_display_topology *topology)
+ {
+ 	const struct dpu_lm_cfg *lm_cfg;
+ 	int idx;
+ 
+ 	/* Already reserved? */
+-	if (reserved_by_other(global_state->mixer_to_enc_id, lm_idx, enc_id)) {
++	if (reserved_by_other(global_state->mixer_to_crtc_id, lm_idx, crtc_id)) {
+ 		DPU_DEBUG("lm %d already reserved\n", lm_idx + LM_0);
+ 		return false;
+ 	}
+@@ -248,7 +248,7 @@ static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
+ 		return false;
+ 	}
+ 
+-	if (reserved_by_other(global_state->pingpong_to_enc_id, idx, enc_id)) {
++	if (reserved_by_other(global_state->pingpong_to_crtc_id, idx, crtc_id)) {
+ 		DPU_DEBUG("lm %d pp %d already reserved\n", lm_cfg->id,
+ 				lm_cfg->pingpong);
+ 		return false;
+@@ -264,7 +264,7 @@ static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
+ 		return false;
+ 	}
+ 
+-	if (reserved_by_other(global_state->dspp_to_enc_id, idx, enc_id)) {
++	if (reserved_by_other(global_state->dspp_to_crtc_id, idx, crtc_id)) {
+ 		DPU_DEBUG("lm %d dspp %d already reserved\n", lm_cfg->id,
+ 				lm_cfg->dspp);
+ 		return false;
+@@ -276,7 +276,7 @@ static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
+ 
+ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
+ 			       struct dpu_global_state *global_state,
+-			       uint32_t enc_id,
++			       uint32_t crtc_id,
+ 			       struct msm_display_topology *topology)
+ 
+ {
+@@ -300,7 +300,7 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
+ 		lm_idx[lm_count] = i;
+ 
+ 		if (!_dpu_rm_check_lm_and_get_connected_blks(rm, global_state,
+-				enc_id, i, &pp_idx[lm_count],
++				crtc_id, i, &pp_idx[lm_count],
+ 				&dspp_idx[lm_count], topology)) {
+ 			continue;
+ 		}
+@@ -319,7 +319,7 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
+ 				continue;
+ 
+ 			if (!_dpu_rm_check_lm_and_get_connected_blks(rm,
+-					global_state, enc_id, j,
++					global_state, crtc_id, j,
+ 					&pp_idx[lm_count], &dspp_idx[lm_count],
+ 					topology)) {
+ 				continue;
+@@ -336,12 +336,12 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
+ 	}
+ 
+ 	for (i = 0; i < lm_count; i++) {
+-		global_state->mixer_to_enc_id[lm_idx[i]] = enc_id;
+-		global_state->pingpong_to_enc_id[pp_idx[i]] = enc_id;
+-		global_state->dspp_to_enc_id[dspp_idx[i]] =
+-			topology->num_dspp ? enc_id : 0;
++		global_state->mixer_to_crtc_id[lm_idx[i]] = crtc_id;
++		global_state->pingpong_to_crtc_id[pp_idx[i]] = crtc_id;
++		global_state->dspp_to_crtc_id[dspp_idx[i]] =
++			topology->num_dspp ? crtc_id : 0;
+ 
+-		trace_dpu_rm_reserve_lms(lm_idx[i] + LM_0, enc_id,
++		trace_dpu_rm_reserve_lms(lm_idx[i] + LM_0, crtc_id,
+ 					 pp_idx[i] + PINGPONG_0);
+ 	}
+ 
+@@ -351,7 +351,7 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
+ static int _dpu_rm_reserve_ctls(
+ 		struct dpu_rm *rm,
+ 		struct dpu_global_state *global_state,
+-		uint32_t enc_id,
++		uint32_t crtc_id,
+ 		const struct msm_display_topology *top)
+ {
+ 	int ctl_idx[MAX_BLOCKS];
+@@ -370,7 +370,7 @@ static int _dpu_rm_reserve_ctls(
+ 
+ 		if (!rm->ctl_blks[j])
+ 			continue;
+-		if (reserved_by_other(global_state->ctl_to_enc_id, j, enc_id))
++		if (reserved_by_other(global_state->ctl_to_crtc_id, j, crtc_id))
+ 			continue;
+ 
+ 		ctl = to_dpu_hw_ctl(rm->ctl_blks[j]);
+@@ -394,8 +394,8 @@ static int _dpu_rm_reserve_ctls(
+ 		return -ENAVAIL;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ctl_idx) && i < num_ctls; i++) {
+-		global_state->ctl_to_enc_id[ctl_idx[i]] = enc_id;
+-		trace_dpu_rm_reserve_ctls(i + CTL_0, enc_id);
++		global_state->ctl_to_crtc_id[ctl_idx[i]] = crtc_id;
++		trace_dpu_rm_reserve_ctls(i + CTL_0, crtc_id);
+ 	}
+ 
+ 	return 0;
+@@ -403,12 +403,12 @@ static int _dpu_rm_reserve_ctls(
+ 
+ static int _dpu_rm_pingpong_next_index(struct dpu_global_state *global_state,
+ 				       int start,
+-				       uint32_t enc_id)
++				       uint32_t crtc_id)
+ {
+ 	int i;
+ 
+ 	for (i = start; i < (PINGPONG_MAX - PINGPONG_0); i++) {
+-		if (global_state->pingpong_to_enc_id[i] == enc_id)
++		if (global_state->pingpong_to_crtc_id[i] == crtc_id)
+ 			return i;
+ 	}
+ 
+@@ -429,7 +429,7 @@ static int _dpu_rm_pingpong_dsc_check(int dsc_idx, int pp_idx)
+ 
+ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
+ 			     struct dpu_global_state *global_state,
+-			     uint32_t enc_id,
++			     uint32_t crtc_id,
+ 			     const struct msm_display_topology *top)
+ {
+ 	int num_dsc = 0;
+@@ -442,10 +442,10 @@ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
+ 		if (!rm->dsc_blks[dsc_idx])
+ 			continue;
+ 
+-		if (reserved_by_other(global_state->dsc_to_enc_id, dsc_idx, enc_id))
++		if (reserved_by_other(global_state->dsc_to_crtc_id, dsc_idx, crtc_id))
+ 			continue;
+ 
+-		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, enc_id);
++		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, crtc_id);
+ 		if (pp_idx < 0)
+ 			return -ENAVAIL;
+ 
+@@ -453,7 +453,7 @@ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
+ 		if (ret)
+ 			return -ENAVAIL;
+ 
+-		global_state->dsc_to_enc_id[dsc_idx] = enc_id;
++		global_state->dsc_to_crtc_id[dsc_idx] = crtc_id;
+ 		num_dsc++;
+ 		pp_idx++;
+ 	}
+@@ -469,7 +469,7 @@ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
+ 
+ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
+ 				  struct dpu_global_state *global_state,
+-				  uint32_t enc_id,
++				  uint32_t crtc_id,
+ 				  const struct msm_display_topology *top)
+ {
+ 	int num_dsc = 0;
+@@ -484,11 +484,11 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
+ 			continue;
+ 
+ 		/* consective dsc index to be paired */
+-		if (reserved_by_other(global_state->dsc_to_enc_id, dsc_idx, enc_id) ||
+-		    reserved_by_other(global_state->dsc_to_enc_id, dsc_idx + 1, enc_id))
++		if (reserved_by_other(global_state->dsc_to_crtc_id, dsc_idx, crtc_id) ||
++		    reserved_by_other(global_state->dsc_to_crtc_id, dsc_idx + 1, crtc_id))
+ 			continue;
+ 
+-		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, enc_id);
++		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, crtc_id);
+ 		if (pp_idx < 0)
+ 			return -ENAVAIL;
+ 
+@@ -498,7 +498,7 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
+ 			continue;
+ 		}
+ 
+-		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx + 1, enc_id);
++		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx + 1, crtc_id);
+ 		if (pp_idx < 0)
+ 			return -ENAVAIL;
+ 
+@@ -508,8 +508,8 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
+ 			continue;
+ 		}
+ 
+-		global_state->dsc_to_enc_id[dsc_idx] = enc_id;
+-		global_state->dsc_to_enc_id[dsc_idx + 1] = enc_id;
++		global_state->dsc_to_crtc_id[dsc_idx] = crtc_id;
++		global_state->dsc_to_crtc_id[dsc_idx + 1] = crtc_id;
+ 		num_dsc += 2;
+ 		pp_idx++;	/* start for next pair */
+ 	}
+@@ -525,11 +525,9 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
+ 
+ static int _dpu_rm_reserve_dsc(struct dpu_rm *rm,
+ 			       struct dpu_global_state *global_state,
+-			       struct drm_encoder *enc,
++			       uint32_t crtc_id,
+ 			       const struct msm_display_topology *top)
+ {
+-	uint32_t enc_id = enc->base.id;
+-
+ 	if (!top->num_dsc || !top->num_intf)
+ 		return 0;
+ 
+@@ -545,16 +543,16 @@ static int _dpu_rm_reserve_dsc(struct dpu_rm *rm,
+ 
+ 	/* num_dsc should be either 1, 2 or 4 */
+ 	if (top->num_dsc > top->num_intf)	/* merge mode */
+-		return _dpu_rm_dsc_alloc_pair(rm, global_state, enc_id, top);
++		return _dpu_rm_dsc_alloc_pair(rm, global_state, crtc_id, top);
+ 	else
+-		return _dpu_rm_dsc_alloc(rm, global_state, enc_id, top);
++		return _dpu_rm_dsc_alloc(rm, global_state, crtc_id, top);
+ 
+ 	return 0;
+ }
+ 
+ static int _dpu_rm_reserve_cdm(struct dpu_rm *rm,
+ 			       struct dpu_global_state *global_state,
+-			       struct drm_encoder *enc)
++			       uint32_t crtc_id)
+ {
+ 	/* try allocating only one CDM block */
+ 	if (!rm->cdm_blk) {
+@@ -562,12 +560,12 @@ static int _dpu_rm_reserve_cdm(struct dpu_rm *rm,
+ 		return -EIO;
+ 	}
+ 
+-	if (global_state->cdm_to_enc_id) {
++	if (global_state->cdm_to_crtc_id) {
+ 		DPU_ERROR("CDM_0 is already allocated\n");
+ 		return -EIO;
+ 	}
+ 
+-	global_state->cdm_to_enc_id = enc->base.id;
++	global_state->cdm_to_crtc_id = crtc_id;
+ 
+ 	return 0;
+ }
+@@ -575,30 +573,31 @@ static int _dpu_rm_reserve_cdm(struct dpu_rm *rm,
+ static int _dpu_rm_make_reservation(
+ 		struct dpu_rm *rm,
+ 		struct dpu_global_state *global_state,
+-		struct drm_encoder *enc,
++		uint32_t crtc_id,
+ 		struct msm_display_topology *topology)
+ {
+ 	int ret;
+ 
+-	ret = _dpu_rm_reserve_lms(rm, global_state, enc->base.id, topology);
++	ret = _dpu_rm_reserve_lms(rm, global_state, crtc_id, topology);
+ 	if (ret) {
+ 		DPU_ERROR("unable to find appropriate mixers\n");
+ 		return ret;
+ 	}
+ 
+-	ret = _dpu_rm_reserve_ctls(rm, global_state, enc->base.id,
++
++	ret = _dpu_rm_reserve_ctls(rm, global_state, crtc_id,
+ 			topology);
+ 	if (ret) {
+ 		DPU_ERROR("unable to find appropriate CTL\n");
+ 		return ret;
+ 	}
+ 
+-	ret  = _dpu_rm_reserve_dsc(rm, global_state, enc, topology);
++	ret  = _dpu_rm_reserve_dsc(rm, global_state, crtc_id, topology);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (topology->needs_cdm) {
+-		ret = _dpu_rm_reserve_cdm(rm, global_state, enc);
++		ret = _dpu_rm_reserve_cdm(rm, global_state, crtc_id);
+ 		if (ret) {
+ 			DPU_ERROR("unable to find CDM blk\n");
+ 			return ret;
+@@ -609,103 +608,98 @@ static int _dpu_rm_make_reservation(
+ }
+ 
+ static void _dpu_rm_clear_mapping(uint32_t *res_mapping, int cnt,
+-				  uint32_t enc_id)
++				  uint32_t crtc_id)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < cnt; i++) {
+-		if (res_mapping[i] == enc_id)
++		if (res_mapping[i] == crtc_id)
+ 			res_mapping[i] = 0;
+ 	}
+ }
+ 
+ void dpu_rm_release(struct dpu_global_state *global_state,
+-		    struct drm_encoder *enc)
++		    struct drm_crtc *crtc)
+ {
+-	_dpu_rm_clear_mapping(global_state->pingpong_to_enc_id,
+-		ARRAY_SIZE(global_state->pingpong_to_enc_id), enc->base.id);
+-	_dpu_rm_clear_mapping(global_state->mixer_to_enc_id,
+-		ARRAY_SIZE(global_state->mixer_to_enc_id), enc->base.id);
+-	_dpu_rm_clear_mapping(global_state->ctl_to_enc_id,
+-		ARRAY_SIZE(global_state->ctl_to_enc_id), enc->base.id);
+-	_dpu_rm_clear_mapping(global_state->dsc_to_enc_id,
+-		ARRAY_SIZE(global_state->dsc_to_enc_id), enc->base.id);
+-	_dpu_rm_clear_mapping(global_state->dspp_to_enc_id,
+-		ARRAY_SIZE(global_state->dspp_to_enc_id), enc->base.id);
+-	_dpu_rm_clear_mapping(&global_state->cdm_to_enc_id, 1, enc->base.id);
++	uint32_t crtc_id = crtc->base.id;
++
++	_dpu_rm_clear_mapping(global_state->pingpong_to_crtc_id,
++			ARRAY_SIZE(global_state->pingpong_to_crtc_id), crtc_id);
++	_dpu_rm_clear_mapping(global_state->mixer_to_crtc_id,
++			ARRAY_SIZE(global_state->mixer_to_crtc_id), crtc_id);
++	_dpu_rm_clear_mapping(global_state->ctl_to_crtc_id,
++			ARRAY_SIZE(global_state->ctl_to_crtc_id), crtc_id);
++	_dpu_rm_clear_mapping(global_state->dsc_to_crtc_id,
++			ARRAY_SIZE(global_state->dsc_to_crtc_id), crtc_id);
++	_dpu_rm_clear_mapping(global_state->dspp_to_crtc_id,
++			ARRAY_SIZE(global_state->dspp_to_crtc_id), crtc_id);
++	_dpu_rm_clear_mapping(&global_state->cdm_to_crtc_id, 1, crtc_id);
+ }
+ 
+ int dpu_rm_reserve(
+ 		struct dpu_rm *rm,
+ 		struct dpu_global_state *global_state,
+-		struct drm_encoder *enc,
+-		struct drm_crtc_state *crtc_state,
++		struct drm_crtc *crtc,
+ 		struct msm_display_topology *topology)
+ {
+ 	int ret;
+ 
+-	/* Check if this is just a page-flip */
+-	if (!drm_atomic_crtc_needs_modeset(crtc_state))
+-		return 0;
+-
+ 	if (IS_ERR(global_state)) {
+ 		DPU_ERROR("failed to global state\n");
+ 		return PTR_ERR(global_state);
+ 	}
+ 
+-	DRM_DEBUG_KMS("reserving hw for enc %d crtc %d\n",
+-		      enc->base.id, crtc_state->crtc->base.id);
++	DRM_DEBUG_KMS("reserving hw for crtc %d\n", crtc->base.id);
+ 
+ 	DRM_DEBUG_KMS("num_lm: %d num_dsc: %d num_intf: %d\n",
+ 		      topology->num_lm, topology->num_dsc,
+ 		      topology->num_intf);
+ 
+-	ret = _dpu_rm_make_reservation(rm, global_state, enc, topology);
++	ret = _dpu_rm_make_reservation(rm, global_state, crtc->base.id, topology);
+ 	if (ret)
+ 		DPU_ERROR("failed to reserve hw resources: %d\n", ret);
+ 
+-
+-
+ 	return ret;
+ }
+ 
+ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
+-	struct dpu_global_state *global_state, uint32_t enc_id,
++	struct dpu_global_state *global_state, struct drm_crtc *crtc,
+ 	enum dpu_hw_blk_type type, struct dpu_hw_blk **blks, int blks_size)
+ {
++	uint32_t crtc_id = crtc->base.id;
+ 	struct dpu_hw_blk **hw_blks;
+-	uint32_t *hw_to_enc_id;
++	uint32_t *hw_to_crtc_id;
+ 	int i, num_blks, max_blks;
+ 
+ 	switch (type) {
+ 	case DPU_HW_BLK_PINGPONG:
+ 		hw_blks = rm->pingpong_blks;
+-		hw_to_enc_id = global_state->pingpong_to_enc_id;
++		hw_to_crtc_id = global_state->pingpong_to_crtc_id;
+ 		max_blks = ARRAY_SIZE(rm->pingpong_blks);
+ 		break;
+ 	case DPU_HW_BLK_LM:
+ 		hw_blks = rm->mixer_blks;
+-		hw_to_enc_id = global_state->mixer_to_enc_id;
++		hw_to_crtc_id = global_state->mixer_to_crtc_id;
+ 		max_blks = ARRAY_SIZE(rm->mixer_blks);
+ 		break;
+ 	case DPU_HW_BLK_CTL:
+ 		hw_blks = rm->ctl_blks;
+-		hw_to_enc_id = global_state->ctl_to_enc_id;
++		hw_to_crtc_id = global_state->ctl_to_crtc_id;
+ 		max_blks = ARRAY_SIZE(rm->ctl_blks);
+ 		break;
+ 	case DPU_HW_BLK_DSPP:
+ 		hw_blks = rm->dspp_blks;
+-		hw_to_enc_id = global_state->dspp_to_enc_id;
++		hw_to_crtc_id = global_state->dspp_to_crtc_id;
+ 		max_blks = ARRAY_SIZE(rm->dspp_blks);
+ 		break;
+ 	case DPU_HW_BLK_DSC:
+ 		hw_blks = rm->dsc_blks;
+-		hw_to_enc_id = global_state->dsc_to_enc_id;
++		hw_to_crtc_id = global_state->dsc_to_crtc_id;
+ 		max_blks = ARRAY_SIZE(rm->dsc_blks);
+ 		break;
+ 	case DPU_HW_BLK_CDM:
+ 		hw_blks = &rm->cdm_blk;
+-		hw_to_enc_id = &global_state->cdm_to_enc_id;
++		hw_to_crtc_id = &global_state->cdm_to_crtc_id;
+ 		max_blks = 1;
+ 		break;
+ 	default:
+@@ -715,17 +709,17 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
+ 
+ 	num_blks = 0;
+ 	for (i = 0; i < max_blks; i++) {
+-		if (hw_to_enc_id[i] != enc_id)
++		if (hw_to_crtc_id[i] != crtc_id)
+ 			continue;
+ 
+ 		if (num_blks == blks_size) {
+-			DPU_ERROR("More than %d resources assigned to enc %d\n",
+-				  blks_size, enc_id);
++			DPU_ERROR("More than %d resources assigned to crtc %d\n",
++				  blks_size, crtc_id);
+ 			break;
+ 		}
+ 		if (!hw_blks[i]) {
+-			DPU_ERROR("Allocated resource %d unavailable to assign to enc %d\n",
+-				  type, enc_id);
++			DPU_ERROR("Allocated resource %d unavailable to assign to crtc %d\n",
++				  type, crtc_id);
+ 			break;
+ 		}
+ 		blks[num_blks++] = hw_blks[i];
+@@ -755,37 +749,37 @@ void dpu_rm_print_state(struct drm_printer *p,
+ 
+ 	drm_puts(p, "resource mapping:\n");
+ 	drm_puts(p, "\tpingpong=");
+-	for (i = 0; i < ARRAY_SIZE(global_state->pingpong_to_enc_id); i++)
++	for (i = 0; i < ARRAY_SIZE(global_state->pingpong_to_crtc_id); i++)
+ 		dpu_rm_print_state_helper(p, rm->pingpong_blks[i],
+-					  global_state->pingpong_to_enc_id[i]);
++					  global_state->pingpong_to_crtc_id[i]);
+ 	drm_puts(p, "\n");
+ 
+ 	drm_puts(p, "\tmixer=");
+-	for (i = 0; i < ARRAY_SIZE(global_state->mixer_to_enc_id); i++)
++	for (i = 0; i < ARRAY_SIZE(global_state->mixer_to_crtc_id); i++)
+ 		dpu_rm_print_state_helper(p, rm->mixer_blks[i],
+-					  global_state->mixer_to_enc_id[i]);
++					  global_state->mixer_to_crtc_id[i]);
+ 	drm_puts(p, "\n");
+ 
+ 	drm_puts(p, "\tctl=");
+-	for (i = 0; i < ARRAY_SIZE(global_state->ctl_to_enc_id); i++)
++	for (i = 0; i < ARRAY_SIZE(global_state->ctl_to_crtc_id); i++)
+ 		dpu_rm_print_state_helper(p, rm->ctl_blks[i],
+-					  global_state->ctl_to_enc_id[i]);
++					  global_state->ctl_to_crtc_id[i]);
+ 	drm_puts(p, "\n");
+ 
+ 	drm_puts(p, "\tdspp=");
+-	for (i = 0; i < ARRAY_SIZE(global_state->dspp_to_enc_id); i++)
++	for (i = 0; i < ARRAY_SIZE(global_state->dspp_to_crtc_id); i++)
+ 		dpu_rm_print_state_helper(p, rm->dspp_blks[i],
+-					  global_state->dspp_to_enc_id[i]);
++					  global_state->dspp_to_crtc_id[i]);
+ 	drm_puts(p, "\n");
+ 
+ 	drm_puts(p, "\tdsc=");
+-	for (i = 0; i < ARRAY_SIZE(global_state->dsc_to_enc_id); i++)
++	for (i = 0; i < ARRAY_SIZE(global_state->dsc_to_crtc_id); i++)
+ 		dpu_rm_print_state_helper(p, rm->dsc_blks[i],
+-					  global_state->dsc_to_enc_id[i]);
++					  global_state->dsc_to_crtc_id[i]);
+ 	drm_puts(p, "\n");
+ 
+ 	drm_puts(p, "\tcdm=");
+ 	dpu_rm_print_state_helper(p, rm->cdm_blk,
+-				  global_state->cdm_to_enc_id);
++				  global_state->cdm_to_crtc_id);
+ 	drm_puts(p, "\n");
+ }
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+index 62cc2edd2ee03f4acdba99c65ac94c8ac7b7fbf7..36a0b6ed628d72c892e5cc9116e1907499cc15e2 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+@@ -61,32 +61,30 @@ int dpu_rm_init(struct drm_device *dev,
+  *	HW blocks can then be accessed through dpu_rm_get_* functions.
+  *	HW Reservations should be released via dpu_rm_release_hw.
+  * @rm: DPU Resource Manager handle
+- * @drm_enc: DRM Encoder handle
+- * @crtc_state: Proposed Atomic DRM CRTC State handle
++ * @crtc: DRM CRTC handle
+  * @topology: Pointer to topology info for the display
+  * @Return: 0 on Success otherwise -ERROR
+  */
+ int dpu_rm_reserve(struct dpu_rm *rm,
+ 		struct dpu_global_state *global_state,
+-		struct drm_encoder *drm_enc,
+-		struct drm_crtc_state *crtc_state,
++		struct drm_crtc *crtc,
+ 		struct msm_display_topology *topology);
+ 
+ /**
+  * dpu_rm_reserve - Given the encoder for the display chain, release any
+  *	HW blocks previously reserved for that use case.
+  * @rm: DPU Resource Manager handle
+- * @enc: DRM Encoder handle
++ * @crtc: DRM CRTC handle
+  * @Return: 0 on Success otherwise -ERROR
+  */
+ void dpu_rm_release(struct dpu_global_state *global_state,
+-		struct drm_encoder *enc);
++		struct drm_crtc *crtc);
+ 
+ /**
+  * Get hw resources of the given type that are assigned to this encoder.
+  */
+ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
+-	struct dpu_global_state *global_state, uint32_t enc_id,
++	struct dpu_global_state *global_state, struct drm_crtc *crtc,
+ 	enum dpu_hw_blk_type type, struct dpu_hw_blk **blks, int blks_size);
+ 
+ /**
+
+-- 
+2.34.1
+
 
