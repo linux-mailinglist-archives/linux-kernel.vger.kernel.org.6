@@ -1,112 +1,165 @@
-Return-Path: <linux-kernel+bounces-369331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F249A1BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:42:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0066F9A1BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17DA91F22E1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321101C21292
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8163B1CF297;
-	Thu, 17 Oct 2024 07:42:31 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3DB1CF5E7;
+	Thu, 17 Oct 2024 07:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IbOHHlT/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E54539FE5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BA939FE5;
+	Thu, 17 Oct 2024 07:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729150951; cv=none; b=EaiYqXehIcNTtfdGoZxZ1J2C27ubAWmsGYzakTFoIwZT0t3jUTXP+K8MAlGhTeh53yHa7D67453J/sUP3nNr+wHVSf6trTxaPPcpynDXpon5INWgULeYp3pGS3iLffINuTj1G9+j0Hj+NbVtyU3w57jlGxeNUCePx55MtxDelqQ=
+	t=1729150992; cv=none; b=IHBRbfaqFldavPMpU4wmLNOx0Uj1YQOE4sbdq6r83mdNAo/3JaU8atzD33T4QxqETlD5Q33815P6ucAm518y5S6t6yJGwQ2wHkqqLViiN0wymIKXdQT+LckbnF0Au85pm/oi/J9hRqyW6LtH8P2wCu/59mkZyxmVwQCodfKm7EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729150951; c=relaxed/simple;
-	bh=BuLD5+x5cbfPYKBV0CyeM3VPh5IxCkZ8CyRxJBKEA3Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=coxAFBUPifCeg2ew1ShqyvhPawcVJjUQ504eq9HXehxk+FbWAIeTYOEYGzbPW6tM0yEUUgQp0qDX0OnzGev2rwRcA3dOHFjQ8AqLFjlJlp+yO4LkUm9mqxoZRYFXfkYgtQlf+hl6S4YZhcbTudafA+m3K5zrzQgGuc2xvVQmcMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-835470703c9so62740039f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:42:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729150947; x=1729755747;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5BzJ2W3lFQm5FDwVXLvrOI3VN1AWvCrkY1Q3HXDhIBY=;
-        b=QfJO5lYj5d1wW7hvCOCmL4a/QVxdLr8F2WKeEKOrPhYoU84RS6Hb7aFxyP13O8ahVD
-         hV+zOmjJaBxKBagILyrhCv6twesfpsN2gNYGCA6r9sLVQVX9ZEyxe2uU5QbhzPP7ewAQ
-         AgiIATg4T1rG58zDdAERgegL+RUwdiEZQJ5/NWelDNQ7ganC1GrVW9FXotgwH2aXO2eK
-         8dFWbqRi0ShHV/1ImEoX4J2Au7KiOBMEru03VT54ucD7gziFxjj/5kiSY8J2xkPrp+Cj
-         GHrEX7LQ37+HXEXa4hc6c2J5FL5ge8lHDWgV+GIMyEsmzA6vrqz1IDBYA6O5DvmXiCW5
-         L/Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6M7TAGLyMJP8nVlEexP5pFWYHlhywe3xsTsZpL0/YiJ2MTneTSUu2MiIg8OpQdJzbI922JKuu+41jBcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5SjeJCnnvQ+qVcePCX7+7BjyZa5bs4Xi+lVWTExYy/y1hM+7v
-	sutW2CU1/jioLnw6Hyy5VvVgEHzAm/oNb2AINds+jyKO8Apjj6oeKH4EbR1IgNs1yVJSpzacrB2
-	xzcVBnIl2USxOUGUJ5COppahUh7PnxKcWrINACDgvcWfxLYlYGs+DNXA=
-X-Google-Smtp-Source: AGHT+IGAaAAdvjOgJ/FeOgagqORvoc2aHAdnrSHjMDAL8KpAjBfVkhP2U9FD3RtlRdicmRb0w/3FX3qBqdaRQLKqos/FFjDfTZPo
+	s=arc-20240116; t=1729150992; c=relaxed/simple;
+	bh=zjXOnpVg3YO/v5WC1ZRoTmp2lFkP/tJ10tDZqUyYkdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1lm+KHZqTFygc1CangzogycfeaUleiwHq3kdmYQ/2FpznCVYbj8Yl8uZyFFAI50y0dqdsH8YS7i1kBoriGDkXIls/Pp16zGkjX30DuRSrxtpf7V1ugKx/3t9AE3riC1SAWKcNmWSxC5sxgUmqZJM9ejMYN7IDXjOKdSxc4t9Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IbOHHlT/; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729150989; x=1760686989;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zjXOnpVg3YO/v5WC1ZRoTmp2lFkP/tJ10tDZqUyYkdw=;
+  b=IbOHHlT/29FqA5nwUvJCEeMEhFqHXTof5EUKVcbanzHcav98L9zUSg9U
+   R/nRG89uImbpv41Fj2gIz7TYFhc2pTCw8Cg2kXDfD+peoGB5bDm9Nt8op
+   1F0jz21h0MNi7W5FLxX99fboCrbAfRZ2fFbshYIDqm2bdSV605FUtZ/i9
+   XZ4fMPFP1CEXagfWPaUdW7FxoegSVEoZ4WJ+4fu38jkKgC5vAk8WNj49n
+   EKV4Pod6h75QTJWVUsSvYLOp5tWy8O07PV3Qq/gGl290RrLaCk4BjZYqg
+   6uSd/BC3blZWNaorS4mmv4BABT6WaNGCqnuXOjmAscmpW19x03gT4HG63
+   g==;
+X-CSE-ConnectionGUID: CJgKQlxlR4WLW8GDjHqpOg==
+X-CSE-MsgGUID: VuhoU10ES46aKNWqq848ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="40022686"
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="40022686"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 00:43:09 -0700
+X-CSE-ConnectionGUID: acJPe0JVSauLn/nltG7qEA==
+X-CSE-MsgGUID: 8N/QpAneSeedgmoZd+I7Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="109271908"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 17 Oct 2024 00:43:05 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1L9y-000Ltf-1K;
+	Thu, 17 Oct 2024 07:43:02 +0000
+Date: Thu, 17 Oct 2024 15:42:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org,
+	kvm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com, nikunj@amd.com
+Subject: Re: [PATCH v12 07/19] x86/sev: Carve out and export SNP guest
+ messaging init routines
+Message-ID: <202410171505.gZbmXuo2-lkp@intel.com>
+References: <20241009092850.197575-8-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:154e:b0:835:3ffe:fe31 with SMTP id
- ca18e2360f4ac-83a9468dd86mr714049739f.8.1729150947412; Thu, 17 Oct 2024
- 00:42:27 -0700 (PDT)
-Date: Thu, 17 Oct 2024 00:42:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6710bfe3.050a0220.d5849.0024.GAE@google.com>
-Subject: [syzbot] Monthly ext4 report (Oct 2024)
-From: syzbot <syzbot+list7024578d089e5b0fc702@syzkaller.appspotmail.com>
-To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009092850.197575-8-nikunj@amd.com>
 
-Hello ext4 maintainers/developers,
+Hi Nikunj,
 
-This is a 31-day syzbot report for the ext4 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ext4
+kernel test robot noticed the following build warnings:
 
-During the period, 8 new issues were detected and 0 were fixed.
-In total, 39 issues are still open and 145 have been fixed so far.
+[auto build test WARNING on 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b]
 
-Some of the still happening issues:
+url:    https://github.com/intel-lab-lkp/linux/commits/Nikunj-A-Dadhania/virt-sev-guest-Use-AES-GCM-crypto-library/20241009-173734
+base:   8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+patch link:    https://lore.kernel.org/r/20241009092850.197575-8-nikunj%40amd.com
+patch subject: [PATCH v12 07/19] x86/sev: Carve out and export SNP guest messaging init routines
+config: x86_64-randconfig-121-20241017 (https://download.01.org/0day-ci/archive/20241017/202410171505.gZbmXuo2-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410171505.gZbmXuo2-lkp@intel.com/reproduce)
 
-Ref  Crashes Repro Title
-<1>  11585   Yes   WARNING: locking bug in ext4_move_extents
-                   https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
-<2>  3767    Yes   possible deadlock in dqget
-                   https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
-<3>  1711    Yes   INFO: task hung in sync_inodes_sb (5)
-                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
-<4>  1444    Yes   kernel BUG in ext4_do_writepages
-                   https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
-<5>  1354    Yes   INFO: task hung in jbd2_journal_commit_transaction (5)
-                   https://syzkaller.appspot.com/bug?extid=3071bdd0a9953bc0d177
-<6>  847     Yes   WARNING: locking bug in ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a3c8e9ac9f9d77240afd
-<7>  816     Yes   WARNING: locking bug in __ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a537ff48a9cb940d314c
-<8>  516     No    INFO: task hung in sb_start_write
-                   https://syzkaller.appspot.com/bug?extid=fb3ada58a6c0a3208821
-<9>  128     No    WARNING in ext4_write_inode (2)
-                   https://syzkaller.appspot.com/bug?extid=748cc361874fca7d33cc
-<10> 102     Yes   INFO: rcu detected stall in sys_clock_adjtime
-                   https://syzkaller.appspot.com/bug?extid=25b7addb06e92c482190
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410171505.gZbmXuo2-lkp@intel.com/
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+sparse warnings: (new ones prefixed by >>)
+>> arch/x86/coco/sev/core.c:2663:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct snp_secrets_page *secrets @@     got void [noderef] __iomem * @@
+   arch/x86/coco/sev/core.c:2663:24: sparse:     expected struct snp_secrets_page *secrets
+   arch/x86/coco/sev/core.c:2663:24: sparse:     got void [noderef] __iomem *
+>> arch/x86/coco/sev/core.c:2694:22: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got struct snp_secrets_page *secrets @@
+   arch/x86/coco/sev/core.c:2694:22: sparse:     expected void volatile [noderef] __iomem *addr
+   arch/x86/coco/sev/core.c:2694:22: sparse:     got struct snp_secrets_page *secrets
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+vim +2663 arch/x86/coco/sev/core.c
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+  2649	
+  2650	struct snp_msg_desc *snp_msg_alloc(void)
+  2651	{
+  2652		struct snp_msg_desc *mdesc;
+  2653	
+  2654		BUILD_BUG_ON(sizeof(struct snp_guest_msg) > PAGE_SIZE);
+  2655	
+  2656		if (snp_mdesc)
+  2657			return snp_mdesc;
+  2658	
+  2659		mdesc = kzalloc(sizeof(struct snp_msg_desc), GFP_KERNEL);
+  2660		if (!mdesc)
+  2661			return ERR_PTR(-ENOMEM);
+  2662	
+> 2663		mdesc->secrets = ioremap_encrypted(secrets_pa, PAGE_SIZE);
+  2664		if (!mdesc->secrets)
+  2665			return ERR_PTR(-ENODEV);
+  2666	
+  2667		/* Allocate the shared page used for the request and response message. */
+  2668		mdesc->request = alloc_shared_pages(sizeof(struct snp_guest_msg));
+  2669		if (!mdesc->request)
+  2670			goto e_unmap;
+  2671	
+  2672		mdesc->response = alloc_shared_pages(sizeof(struct snp_guest_msg));
+  2673		if (!mdesc->response)
+  2674			goto e_free_request;
+  2675	
+  2676		mdesc->certs_data = alloc_shared_pages(SEV_FW_BLOB_MAX_SIZE);
+  2677		if (!mdesc->certs_data)
+  2678			goto e_free_response;
+  2679	
+  2680		/* initial the input address for guest request */
+  2681		mdesc->input.req_gpa = __pa(mdesc->request);
+  2682		mdesc->input.resp_gpa = __pa(mdesc->response);
+  2683		mdesc->input.data_gpa = __pa(mdesc->certs_data);
+  2684	
+  2685		snp_mdesc = mdesc;
+  2686	
+  2687		return mdesc;
+  2688	
+  2689	e_free_response:
+  2690		free_shared_pages(mdesc->response, sizeof(struct snp_guest_msg));
+  2691	e_free_request:
+  2692		free_shared_pages(mdesc->request, sizeof(struct snp_guest_msg));
+  2693	e_unmap:
+> 2694		iounmap(mdesc->secrets);
 
-You may send multiple commands in a single email message.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
