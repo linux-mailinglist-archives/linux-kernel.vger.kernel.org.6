@@ -1,217 +1,189 @@
-Return-Path: <linux-kernel+bounces-370217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2249A2999
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33CFA9A2984
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41266B25A9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7C91F298CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189451DF744;
-	Thu, 17 Oct 2024 16:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2411DF97B;
+	Thu, 17 Oct 2024 16:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUDGmctc"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ozGWtMcC"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED151DED5B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183718; cv=none; b=PmxOHxTxDwqMgtCjsmYbU3kP106zdKDgBKFOYqVTQWRKB6dJFP6oxhu+nS343QNnGs3sYoVTTvX9vIALLEIjfzQep9u1f+FKM+4XOL+nfmextbQ4kRrTu/rHsKFNFnpwFLxSJsgHH/gTTXOAy0QuGUDLpEiJmeIKYYFbDMhNZzY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183718; c=relaxed/simple;
-	bh=WbfX/WWn6YqaqAQEqZQwDN8MBV7HVQ4mGkVrDyEGXGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bFBKcw/pbupEP8CnP+xjxMku4KFMMI4dkAfAZi+XE+iHWDqNg/7ef3rGQpGrDoWXz0GAzkyB0xk9H7BXTwsUDRJCVsEpWJm2C8TG3cp2M1lYVeFnfNbsvxwwWfM3UeTWQ0jbFPGSdEJFTSvfHXvtdYv924mh8wMoeZsrmRmFWEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUDGmctc; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so12589891fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:48:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729183711; x=1729788511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNBXnF8EkGs9XWZGSpqQKc9Q7hAXIsj1MCkuRykAZ18=;
-        b=OUDGmctc3hosNOLxkICsTKqWEZS2kmB9aRAT1EBt+nUktAF97imZ18gw0PwU/LamIQ
-         4hfhHH34GsQGYfqOVbXBrGbQcwBFBwZgezA+bZ45JRW8MrVxW3VLLXr/0JbRKloJhG5f
-         Ejl4sy+wFfsf1i74nY2FqW003CLhk7Cv4l2PPJcvgKr2kVXpftg7eg47h0irFbapo+Au
-         7xROjpeqKha3re+hs+GblRSGTbS0PRL5A3zHgPrpwBtTazaUu3LPr2xAGkYRDpk0MZsA
-         /kuQtnmHTMENxi92Vwrs+9BTBud2lm4FcpiX9FQ4q7INWKKIE+zKzGcAgHtPMWW1Qudf
-         KoVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729183711; x=1729788511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UNBXnF8EkGs9XWZGSpqQKc9Q7hAXIsj1MCkuRykAZ18=;
-        b=uxI0mezgwdeVuLi70ja00jt4sXgJ8IJpGbRkyClsy+6fex4ar42TEeW1s1IjmRKV+p
-         hRyoHKdSef+xmboNFMeFk/zdKixKf0AtLy6pZfAOzCNwldzFELNCf4XO7D+Mh/zbuout
-         LjwI2fLErq4eFjlkVdR1ydYhcqlHIbMDT1pauQ+ddhqmRf6ZacXpdO3hv9eWpGbuCytK
-         9Nf6AS6HM9qS7QMJUotTrthqO9fB1PIKxuZbIwISU2BXrc5eUKQkz1ujvz6f1Mm1V07w
-         M6NzgfD0bMDxE3N8Fn9ye2mSrMgGMDgkH2uniIWa3W2Lkq4Ko9YOU2LzMeT9jxgnKOgT
-         L4yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmnefRPmZW4Xnx0nigUidlreiCj8M/w+QZ/wy6rNrTr5kFqsRu6EBTIdgBtIVkbr4RzoTgPnA/ohOskAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpd7DHLQtgpiRl/nbovLUXkgHT5gPm65KN6GKy+E0WgCJImh8H
-	Bocdg+iZTiFlXjPWSeUaMgclRrRxn5YckKxyklJknn1OYXzLILK5mMdwuYzOkCtW7uIbZmfuzsu
-	EBOSsAWP4jmw6ZV6VFxESfthdHpaXlQ==
-X-Google-Smtp-Source: AGHT+IEJsS4W5f1GczZB+/LvZjg6YfvKNdugAQyCCU/NTwLHwhbwS6l83b1W/j4XP1p9dBB5Y5YkawAzZ2DFHu7MyNw=
-X-Received: by 2002:a2e:b88b:0:b0:2fa:de52:f03c with SMTP id
- 38308e7fff4ca-2fb61b3e705mr58631141fa.5.1729183710963; Thu, 17 Oct 2024
- 09:48:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFB81DF723;
+	Thu, 17 Oct 2024 16:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729183727; cv=fail; b=U6+AYuplI8m4Or0K5zNolRQmSS+ylE+dEBYPD/MQhIjcuDzwAtPrdehPXJ1KT/UwPZ/1MxaTU6bltwCGMIZKB8cp/QuW4wChjluX+4/H6VDu4m75u6cHjk/GZTIfpQMrgAJW/El3LaClMSPXDvErLrvbNg6tFy2Nw/ZMpxRQsfE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729183727; c=relaxed/simple;
+	bh=ge53cTVKjGQ7lNLNmn5opQhFbvXR6jW10QKYyi9DBL4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BoUynN672TRj3hS0K506fCLEjMEH9EXumMPRQwWd5V2aUzzRPjpE8kmHe5p3tC3BlGGefmc7CAqKD0CyZrPVjqCOabRW6XOSTIFO2yAxqocy2hY/lOMRMzboV4kFAFe0ciDVnES5MjFdbnRwY74/DUOO7LfN/Hr/IdHtx4ESghk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ozGWtMcC; arc=fail smtp.client-ip=40.107.220.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PRyroLVHcOgH1MNQO99xhwZxmhb1ktKrornnRsijhjACOszfIzN4p59YcfZsZuUp4DIJbWNnRm9mv7O9fct5ULniaDN62ncVO3AdJlr2ModriNxWxvokLjKxLQTVj4tZBOHVprhQD7EPy9etlbt+V1ceoMoXntKNqrmQzh22/5RDuuhUIoG/uiB5n27ecA7CTQFHn4iU/s4jEhnupqaoGH6UZQHD/Pr7A3eftld0FlfTNl83LA/9DA1yz/gdb0kPAK4g/g8bs+8K8vzitJF9QtgQqGGigG8b53r33cxQ8p1knbPoSJwlluWxzIj2riaT69SZ92Vy2CcB2n926oIthA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y7jRaz87u+3UHHkX3f2TYygRKWgQGJMXvoAs9WJFmzE=;
+ b=K4dviptUS8vRCs3vokVaoDi/2yiamXu2ekY1s8OXbf4fMsvQErQGLWGYP44V0HMIysEiGVLD4N+1ZfvyYQVhtmOKYHkvste6Ke5hBFGUxSCnsx0yrUbux71/TpN9DpJEINWR8+hPv8n6Dcxo5lOLUxCHU+ZrTYhHUx1HtzdvstngL9aWGnlSu7k9Js643gHcay71mMvi2OzmwR9KYDfgjnI47c1Ru25WZz0SBtamNf/RjvNRLZHRKFyak1dvFrItJRBpv3m1WOGEvoeCQxYKx2b3LdJRYKhARkczA0Q4jiuEDCfGChyHFHQ9rzixvpE5SInYDakei0qoXpA7u7kLRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y7jRaz87u+3UHHkX3f2TYygRKWgQGJMXvoAs9WJFmzE=;
+ b=ozGWtMcCrA7/agEguckWbBKQ0hELMa2TC0BVEpZ5uzPe4fywQksEhu4gLycDhxlXc4VbJws8H1hDzwVKv8zrEsTK6/LKgGRrbanUurH3XMtkEJqcNtFdz0Ht42iDPTK6UQRbnOn3HCrSjtsON3WwV85wbazyPfjoc1vO+6hrZaimICPZvFav6NvGkJDVgaOg3rR0Fn2K3w1xA0HEimeHChQwqUmhjkewiQ1cLWoY80IOmNuWS3CW+l5iasIdwhMJ646D+4fDF5KBP5zwRKUvqRijShNwW90nWUp8W38mHZ8QmvnaDq9wmcHnQRmQlSGvHYDkLw7+/LCE15nwuwALJQ==
+Received: from BN8PR07CA0030.namprd07.prod.outlook.com (2603:10b6:408:ac::43)
+ by CY8PR12MB7587.namprd12.prod.outlook.com (2603:10b6:930:9a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
+ 2024 16:48:41 +0000
+Received: from BL6PEPF0001AB57.namprd02.prod.outlook.com
+ (2603:10b6:408:ac:cafe::4a) by BN8PR07CA0030.outlook.office365.com
+ (2603:10b6:408:ac::43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.20 via Frontend
+ Transport; Thu, 17 Oct 2024 16:48:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF0001AB57.mail.protection.outlook.com (10.167.241.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8069.17 via Frontend Transport; Thu, 17 Oct 2024 16:48:40 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 17 Oct
+ 2024 09:48:26 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 17 Oct 2024 09:48:26 -0700
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 17 Oct 2024 09:48:25 -0700
+Date: Thu, 17 Oct 2024 09:48:23 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <will@kernel.org>, <joro@8bytes.org>,
+	<suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
+	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<smostafa@google.com>, <yi.l.liu@intel.com>, <aik@amd.com>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v3 02/11] iommufd: Rename _iommufd_object_alloc to
+ iommufd_object_alloc_elm
+Message-ID: <ZxE/1+Pe82Rrjd8N@Asurada-Nvidia>
+References: <cover.1728491453.git.nicolinc@nvidia.com>
+ <dbfc718cd3200071765007c7ca0a2ba242181d05.1728491453.git.nicolinc@nvidia.com>
+ <20241017141416.GZ3559746@nvidia.com>
+ <20241017153749.GA3559746@nvidia.com>
+ <ZxE3U+9lUXwDEBx5@Asurada-Nvidia>
+ <20241017163507.GC3559746@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
- <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
- <Zw_d0EVAJkpNJEbA@casper.infradead.org> <CAHbLzkogrubD_rPH7zf1T454r-BsxL951YH=rGAfNqPZJSCGow@mail.gmail.com>
- <2b3572e1-a618-4f86-979d-87f59282fe8f@linux.alibaba.com>
-In-Reply-To: <2b3572e1-a618-4f86-979d-87f59282fe8f@linux.alibaba.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Thu, 17 Oct 2024 09:48:19 -0700
-Message-ID: <CAHbLzkooj5JPbxkgFNWrxkpjaEzYH++DAFRGr87b7jc_WphYQQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read performance
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, hughd@google.com, 
-	david@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241017163507.GC3559746@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB57:EE_|CY8PR12MB7587:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4fa1ad08-6e81-4ee7-da49-08dceecb8e01
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tGXmscu3gSRKWO3iq6VIk98XpdMfvYBLf/6qlNavIhlwFbTb0A+D0qeMElcX?=
+ =?us-ascii?Q?Mf9UFkVS0rXnERPsbfpriQ7alwkZGDx0kKlA+rUR3TG45oe8PFWp0lk5VwpI?=
+ =?us-ascii?Q?0GSyWc5kiRiJohpRtPOUW1HNbXhUtCNaPN1kgG2KFj6xPtpLaVlJwvBmV786?=
+ =?us-ascii?Q?8t86LGwVvR9liwywQ3vMqI5CtfbwK9lc7LNRWcfx5LvRG2B4jH2hM76PqoEp?=
+ =?us-ascii?Q?lGUoBYIfdVAYj1sBtNGYGD4+lWEr5IDRU+1nXv+RMQYCQddIEMcZIc3zqWb6?=
+ =?us-ascii?Q?+HrdTtfoabHAkutiPdqdGCtpx6m6f90MIPFSxEDkmbwXi1XE5s1/v1ULJXwH?=
+ =?us-ascii?Q?2kFTYJ6dpk6upEhGK5kgGKYdMo7zH0OZV/06u2u+zQLABd8IWvaHAm1NBk5w?=
+ =?us-ascii?Q?kTUPJ5BRm6TkEVjQKK1q1eAeeYCh9EObmbC0mrj/JydAjesQ4MtYfjo+mkhp?=
+ =?us-ascii?Q?qHkSdO6NJO3Fbs/LZLyFG25ywZQxo2ijPA1qYtAL3VxBzBsrEU7FIS4Ui9nK?=
+ =?us-ascii?Q?cNzuU25SEuTU6hWqeFd3tggu/O+R7rKHLTOj4ikX79NFOEvdNGWVjyJrUDj9?=
+ =?us-ascii?Q?I5RWMh9SC/GTnRkz9q0+cEac9nPAplobbGZ3KTaNtWlJtp1ojTn0y7++9spo?=
+ =?us-ascii?Q?Wz7D6dyZmplqCBenO/1omfj1k+4IC3xyYXIqol/3MYa14br/UHvXXlsiTw3q?=
+ =?us-ascii?Q?lgxW1XmDD5MhZu9EvvkfN9JaBO5bU9wFtBrYUULTT4JvfkMsgMCuUbDStAq2?=
+ =?us-ascii?Q?/VUAnZx1o4/xdd6imS/WlrYWsJAPkVV1zVLM0WVfXA1+48/tLlLEEcoY1+B0?=
+ =?us-ascii?Q?pyFS2xJeb2Xny+pgtZZZzqiWJbg1tp6tA7zqk4UJhE7ySxkWqOmYUbYgETgJ?=
+ =?us-ascii?Q?jG5JEspB5Qd+GYdQ+DvSLRWD/eR3Csa7o3k4CSO14A5CKZo2Pm4U+rW6dIMw?=
+ =?us-ascii?Q?N8hoRBqs8M8VHsqjVSDvvjxPfCs4z7ORgkQNGivzGlf2RJDUZ5u9OVjNt5St?=
+ =?us-ascii?Q?RjJOpbGpNd6W1HGFkdFbUtVbYR1gxNHPgQiGj4Fef5/TXNsJW94Y/uttjcQz?=
+ =?us-ascii?Q?E2s/IwzebHemwBRkk8CiB+zxSnlv3U9pNwJIJ+QU1aQjnrXHCgFJFsVWJcxQ?=
+ =?us-ascii?Q?/DivQGRmHGe0V3Vh4YLT2+cGZavIs8InR+7guG8XqS1Y28s/iOovkvREV53+?=
+ =?us-ascii?Q?HbxtgbhS9I3e5fOWQrUgJczmMx/w1aMPa6ozWSxi/i7oxIy6mBtC3qRpRCT+?=
+ =?us-ascii?Q?muoOeAizfTuPuYgiGLPtapK9vB0HsdJJwlBPxbz167P9glx8Twb+icyzryxc?=
+ =?us-ascii?Q?RAGn9ATISQ6EtSdSwTG+u7F85gRAj4nP2s/TGyfGZUpEOnKll3E7pp2MScIt?=
+ =?us-ascii?Q?VCyO/sY0p8wJU6G1FPoju+scoTk9+XIIJpT8cx64UQHg+tIsJw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:48:40.6150
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fa1ad08-6e81-4ee7-da49-08dceecb8e01
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB57.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7587
 
-On Wed, Oct 16, 2024 at 8:25=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
->
->
-> On 2024/10/17 01:33, Yang Shi wrote:
-> > On Wed, Oct 16, 2024 at 8:38=E2=80=AFAM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> >>
-> >> On Wed, Oct 16, 2024 at 06:09:30PM +0800, Baolin Wang wrote:
-> >>> @@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kioc=
-b *iocb, struct iov_iter *to)
-> >>>                if (folio) {
-> >>>                        folio_unlock(folio);
-> >>>
-> >>> -                     page =3D folio_file_page(folio, index);
-> >>> -                     if (PageHWPoison(page)) {
-> >>> +                     if (folio_test_hwpoison(folio) ||
-> >>> +                         (folio_test_large(folio) &&
-> >>> +                          folio_test_has_hwpoisoned(folio))) {
-> >>
-> >> Hm, so if we have hwpoison set on one page in a folio, we now can't re=
-ad
-> >> bytes from any page in the folio?  That seems like we've made a bad
-> >> situation worse.
-> >
-> > Yeah, I agree. I think we can fallback to page copy if
-> > folio_test_has_hwpoisoned is true. The PG_hwpoison flag is per page.
-> >
-> > The folio_test_has_hwpoisoned is kept set if the folio split is failed
-> > in memory failure handler.
->
-> Right. I can still keep the page size copy if
-> folio_test_has_hwpoisoned() is true. Some sample changes are as follow.
->
-> Moreover, I noticed shmem splice_read() and write() also simply return
-> an error if the folio_test_has_hwpoisoned() is true, without any
-> fallback to page granularity. I wonder if it is worth adding page
-> granularity support as well?
+On Thu, Oct 17, 2024 at 01:35:07PM -0300, Jason Gunthorpe wrote:
+> On Thu, Oct 17, 2024 at 09:12:03AM -0700, Nicolin Chen wrote:
+> 
+> > > Then you can keep the pattern of _ being the allocation function of
+> > > the macro
+> > 
+> > If I get it correctly, the change would be
+> > [From]
+> > level-0: iommufd_object_alloc()
+> > level-1:     __iommufd_object_alloc()
+> > level-2:         _iommufd_object_alloc()
+> > [To]
+> > level-0: iommufd_object_alloc()
+> > level-1:     iommufd_object_alloc_elm()
+> > level-2:         _iommufd_object_alloc()
+> > 
+> > i.e. change the level-1 only.
+> 
+> You could also call it _iommufd_object_alloc_elm() to keep the pattern
+> 
+> Maymbe "member" is a better word here than elm
 
-I think you should do the same.
+Ack.
 
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 7e79b6a96da0..f30e24e529b9 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -3111,9 +3111,11 @@ static ssize_t shmem_file_read_iter(struct kiocb
-> *iocb, struct iov_iter *to)
->
->          for (;;) {
->                  struct folio *folio =3D NULL;
-> +               struct page *page =3D NULL;
->                  unsigned long nr, ret;
->                  loff_t end_offset, i_size =3D i_size_read(inode);
->                  size_t fsize;
-> +               bool fallback_page_copy =3D false;
->
->                  if (unlikely(iocb->ki_pos >=3D i_size))
->                          break;
-> @@ -3127,13 +3129,16 @@ static ssize_t shmem_file_read_iter(struct kiocb
-> *iocb, struct iov_iter *to)
->                  if (folio) {
->                          folio_unlock(folio);
->
-> -                       if (folio_test_hwpoison(folio) ||
-> -                           (folio_test_large(folio) &&
-> -                            folio_test_has_hwpoisoned(folio))) {
-> +                       page =3D folio_file_page(folio, index);
-> +                       if (PageHWPoison(page)) {
->                                  folio_put(folio);
->                                  error =3D -EIO;
->                                  break;
->                          }
-> +
-> +                       if (folio_test_large(folio) &&
-> +                           folio_test_has_hwpoisoned(folio))
-> +                               fallback_page_copy =3D true;
->                  }
->
->                  /*
-> @@ -3147,7 +3152,7 @@ static ssize_t shmem_file_read_iter(struct kiocb
-> *iocb, struct iov_iter *to)
->                          break;
->                  }
->                  end_offset =3D min_t(loff_t, i_size, iocb->ki_pos +
-> to->count);
-> -               if (folio)
-> +               if (folio && likely(!fallback_page_copy))
->                          fsize =3D folio_size(folio);
->                  else
->                          fsize =3D PAGE_SIZE;
-> @@ -3160,8 +3165,13 @@ static ssize_t shmem_file_read_iter(struct kiocb
-> *iocb, struct iov_iter *to)
->                           * virtual addresses, take care about potential
-> aliasing
->                           * before reading the page on the kernel side.
->                           */
-> -                       if (mapping_writably_mapped(mapping))
-> -                               flush_dcache_folio(folio);
-> +                       if (mapping_writably_mapped(mapping)) {
-> +                               if (unlikely(fallback_page_copy))
-> +                                       flush_dcache_page(page);
-> +                               else
-> +                                       flush_dcache_folio(folio);
-> +                       }
-> +
->                          /*
->                           * Mark the page accessed if we read the beginni=
-ng.
->                           */
-> @@ -3171,7 +3181,10 @@ static ssize_t shmem_file_read_iter(struct kiocb
-> *iocb, struct iov_iter *to)
->                           * Ok, we have the page, and it's up-to-date, so
->                           * now we can copy it to user space...
->                           */
-> -                       ret =3D copy_folio_to_iter(folio, offset, nr, to)=
-;
-> +                       if (unlikely(fallback_page_copy))
-> +                               ret =3D copy_page_to_iter(page, offset,
-> nr, to);
-> +                       else
-> +                               ret =3D copy_folio_to_iter(folio, offset,
-> nr, to);
->                          folio_put(folio);
->                  } else if (user_backed_iter(to)) {
->                          /*
+level-0: iommufd_object_alloc()
+level-1:     _iommufd_object_alloc_member()
+level-2:         _iommufd_object_alloc()
 
-The change seems fine to me.
+Thanks
+Nicolin
 
