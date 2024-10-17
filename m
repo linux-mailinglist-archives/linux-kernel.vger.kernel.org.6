@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-369457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A15D9A1D8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:49:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9BC9A1D88
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AE11C249BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:49:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BF7EB20E1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246301D47A2;
-	Thu, 17 Oct 2024 08:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64451D3560;
+	Thu, 17 Oct 2024 08:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1jQSif/"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkBEW1IQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930F61C07C7;
-	Thu, 17 Oct 2024 08:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5B6154454;
+	Thu, 17 Oct 2024 08:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729154941; cv=none; b=KFxZgnvGzQ/8J5WyOFmf6oyKg3Hk1Ira4xr6E0rV7o7I/lALqZRSWj2rD+826eSpucdsidyiDd1mRRF4cJvAr5fwkbjmekWCAO2t1+4ZwZTHegDoh8Uur2ijmGnp4/YeCJVW918vvvJF3RTkMnuZ9ws3kOk34oV/dQ068uKAkrs=
+	t=1729154934; cv=none; b=pqpsFl+vcepzNCR12Ybs85KMKCqNL/RyCOtvLw1gr0KLILG/aWlHApumy9C01Cli6fc9gQuHJzwjdmBs8CPv0fIZAe8Mc1vjxXhybXaCdBCtbKlUxV3gq0n9VEdTzXD2saITHr2Y2LjTcddi4drQpb5yqEy9ZJwHXzya8FFCN9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729154941; c=relaxed/simple;
-	bh=z3rc0arNo6EoJheplPvlJnqac7TJz2LgVFDCyu24lb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bz+3Rmqwu4hfny1BGGgWB35BrCOj0qNfVEVe8x/EJxB166pcA51kMLAoLVGNDcs5G4hmwIRsCqjsAUDWI2a0Mqs0dZQn1SrJgtS9AGe07JWfauj9wgLdMDgEp+Gq0BTDYN+j8Od+ZP3eQgnhaZrmM/IWl9K6vvvwgIgjro2rFcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1jQSif/; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-50d479aef64so262496e0c.0;
-        Thu, 17 Oct 2024 01:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729154937; x=1729759737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z3rc0arNo6EoJheplPvlJnqac7TJz2LgVFDCyu24lb0=;
-        b=F1jQSif/PorVcM8qz8W3jEj9OSCqxRrxRbIDgkdlfWTJ9K1rivuL5CdqZoV2OgfqGD
-         puHXVFBCH3aO7Pd0dX/eXFLqzHR32Erkpclb3mcpCVupuVel+wqwuVskPwBujtc2IlI6
-         5zjsY7DHxxn1kqAGkBdqkF6cCVFjkTAEqxHEX3j+moO/TVHVe4BNHelMfxkx0dnGul4J
-         tSSt1bI+2ekuAKm8J90fN0IyxMqXql22nA8Kcz+vwStSxtLRaNonRvcbkOgHZM5VNerf
-         Kq/fOVvLT98l1/DDYoZ8tv4XCkznFRhYuuNx6gddvmbCigV2nJ8Ux6YjWrl4BIeDFlUt
-         Bv7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729154937; x=1729759737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z3rc0arNo6EoJheplPvlJnqac7TJz2LgVFDCyu24lb0=;
-        b=HwvfkP+mN5r1/9WrTard+YjzruLU1af+2nLyIo77oiUWt8Z5MCIVseZHUz1lY89xUy
-         Ot2EYm/lB8r/wHDQxsgtZjA3gEsQa0HjQVIePADizI187BREvkjBzcG7B2578L/AjREm
-         feTexumLwodqhF0JXR4GbClo1qBBjDwOBxVYSSXHoDfrwNH5qajhhfBk63dXR3dfB5sX
-         /d/SujnticjuGsjephGnp243FqLGwRImRNQT2U6/9kW5/hIr83ok98SJELFK3Dx1Bau9
-         xUcQeU5oTIkoPdfuxZmT+m2eVZiDFEo13OkGgIz17AZL9rdoPHFApB2WEST19suBrSKE
-         cqcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfSBL+rhGievsL/dDJ0sgYNsY/XUIRBFeMROJTwD0rtcnFmD5/46+YHNJYg2q80qbosLDWnQ9OooqQN+o=@vger.kernel.org, AJvYcCUsEoNJqmmM7G0y5Qn2FOj5EFln5TjsLxzOvO+K+Clg8aodzybZgnDvkTUYjFKptrXnGv+qR9rHcXwB+MuNTED8jYc=@vger.kernel.org, AJvYcCXe5zSFZtGu7iSD0qYD7yF/jOST0Py9QGNgc0FgU330Wfzvz74L1/DPAxSdCgHQ6UhH1oKTcTE/h6a1MSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy/lc5c4j0KORWCKVS64t9bN7qb+AAgrKiV7+0ECSuyURlN66+
-	JaGOQOMMpGTWmpgtWowf0WPCwe1zJ1RzUMujYbBueA5RVFjhLEXkkY+DX6pTyuKTzLvPeRCw9g3
-	Zw+FfXyEV4kJiiLW+4lO4bNN6LHc=
-X-Google-Smtp-Source: AGHT+IFtyKrJSCNfwFStA5EwcEd8+DtS1sM+dWFb+sLU4WBReDHJuaCxlsmX327ZyihKEI7heGUwyhJteVcUDG0S0PE=
-X-Received: by 2002:a05:6122:caa:b0:50d:bfd3:c834 with SMTP id
- 71dfb90a1353d-50dbfd3d605mr506422e0c.4.1729154937443; Thu, 17 Oct 2024
- 01:48:57 -0700 (PDT)
+	s=arc-20240116; t=1729154934; c=relaxed/simple;
+	bh=PJyxRc6nxDx4VlnALY+M8iW9wjUH/fxDQdCVMXnvySI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ht7kaCCvH3MlX/1vPz3QkehXMO/F0t67OGorMW8YbYMrRYeMamMPpj+VZaIaRq9MyPQnT10EFRYl2wD8MhBV9mmbmofCrFL6zwVu4iAco0Owuwtz5EBWoBR0YpYzRz83gh58zBjHjaDEX45Ars1LpekCC9iyNpYgHlIRKnOLAck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkBEW1IQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A11C9C4CEC3;
+	Thu, 17 Oct 2024 08:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729154933;
+	bh=PJyxRc6nxDx4VlnALY+M8iW9wjUH/fxDQdCVMXnvySI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HkBEW1IQV53k6BL/MW0bE/vNcPz9rjlzgbXvTD5c+n53jVWn3RfJtw1EXnOoTosJw
+	 pl/DQVzMc/9EhIqipqCHDIzUmERC07BsFf2KM3tRzdpaoI0FtNe/FOC848zBh9uaNh
+	 dPBLRC46j+VxossSE7Nwu0ijJ7yJgdmDv5EWDXIlqdd2D9r04+pjHiuK0by+hjK4HU
+	 xs972LukBvjTPFoT7HHxVktCSq1SbROKPJTBU+q/cwC+IPwBgt20H8DAJDEmf7ygh2
+	 3/z1R8cGjjsEWbrOUiLu5zmjUncsoidQOK7GRtGjKSQNSyhKyXVLMZ5KLjtf3vAqhW
+	 GwGmpxBteMmnA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t1MBf-004NY8-Ds;
+	Thu, 17 Oct 2024 09:48:51 +0100
+Date: Thu, 17 Oct 2024 09:48:50 +0100
+Message-ID: <86r08f3yj1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>,	Bjorn Helgaas <helgaas@kernel.org>,
+	Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,	Johan Hovold
+ <johan+linaro@kernel.org>,	Kishon Vijay Abraham I <kishon@ti.com>,	Xiaowei
+ Song <songxiaowei@hisilicon.com>,	Binghui Wang <wangbinghui@hisilicon.com>,
+	Thierry Reding <thierry.reding@gmail.com>,	Ryder Lee
+ <ryder.lee@mediatek.com>,	Jianjun Wang <jianjun.wang@mediatek.com>,
+	linux-pci@vger.kernel.org,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>,	Ley Foon Tan <ley.foon.tan@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: Why set .suppress_bind_attrs even though .remove() implemented?
+In-Reply-To: <20241017082526.ppoz7ynxas5nlht5@thinkpad>
+References: <Yt+6azfwd/LuMzoG@hovoldconsulting.com>
+	<20220727195716.GA220011@bhelgaas>
+	<YuJ+PZIhg8mDrdlX@hovoldconsulting.com>
+	<20241017052335.iue4jhvk5q4efigv@thinkpad>
+	<86v7xr418s.wl-maz@kernel.org>
+	<20241017082526.ppoz7ynxas5nlht5@thinkpad>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241015113757.152548-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8u8bkCjL-YSyMOiKOtfZC8upBwGzhrJ0o+EmZ9S3z5hGA@mail.gmail.com>
- <87h69cevrt.wl-kuninori.morimoto.gx@renesas.com> <242a31a6-8a0c-4db9-97a5-8a9c9f5c29b4@sirena.org.uk>
- <87r08fshm6.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87r08fshm6.wl-kuninori.morimoto.gx@renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 17 Oct 2024 09:48:31 +0100
-Message-ID: <CA+V-a8vTprj8qRVzJBHHF3_D2XbKBOJpVp=3n2Ke1FX+Rgyggg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ASoC: Rename "sh" to "renesas"
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, johan@kernel.org, helgaas@kernel.org, pali@kernel.org, johan+linaro@kernel.org, kishon@ti.com, songxiaowei@hisilicon.com, wangbinghui@hisilicon.com, thierry.reding@gmail.com, ryder.lee@mediatek.com, jianjun.wang@mediatek.com, linux-pci@vger.kernel.org, kw@linux.com, ley.foon.tan@intel.com, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Morimoto-san,
+On Thu, 17 Oct 2024 09:25:26 +0100,
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> 
+> On Thu, Oct 17, 2024 at 08:50:11AM +0100, Marc Zyngier wrote:
+> > On Thu, 17 Oct 2024 06:23:35 +0100,
+> > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> > > 
+> > > So can we proceed with the series making Qcom driver modular?
+> > 
+> > Who is volunteering to fix the drivers that will invariably explode
+> > once we allow this?
+> > 
+> 
+> Why should anyone volunteer first up? If the issue gets reported for a driver
+> blowing up, then the driver has to be fixed by the maintainer or someone, just
+> like any other bug.
 
-On Thu, Oct 17, 2024 at 1:22=E2=80=AFAM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
->
->
-> Hi Mark, Prabhakar
->
-> > > I can review / comment for Renesas driver, but can you agree that
-> > > you continue to pick the patch instead of sending request-pull from m=
-e ?
-> >
-> > Yes, there's no need to send pull requests.
->
-> Thanks
->
-> Prabhakar, could you please continue for Renesas Audio Driver ?
->
-Sure, I will do that.
+You are introducing a new behaviour, and decide that it is fair game
+to delegate the problems *you* introduced to someone else?
 
-Cheers,
-Prabhakar
+Maybe you should reconsider what it means to be a *responsible*
+maintainer.
+
+> From reading the thread, the major concern was disposing the IRQs before
+> removing the domain and that is now taken care of. If you are worrying about a
+> specific issue, please say so.
+
+That concern still exists, and I haven't seen a *consistent* approach
+encompassing all of the PCI controllers. What I've seen is a bunch of
+point hacks addressing a local issue on a particular implementation.
+
+I don't think that's the correct approach, but hey, what do I
+understand about interrupts and kernel maintenance?
+
+> 
+> As a Qcom PCIe driver maintainer, I'd like to provide users/developers the
+> flexibility to remove the driver for development purposes.
+
+Sure, whatever.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
