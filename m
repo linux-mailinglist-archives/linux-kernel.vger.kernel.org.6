@@ -1,162 +1,138 @@
-Return-Path: <linux-kernel+bounces-369125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903CB9A1944
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0773F9A1940
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0281EB2580A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B681F226E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E984613C9DE;
-	Thu, 17 Oct 2024 03:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k28sRFDO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A077E0E8;
+	Thu, 17 Oct 2024 03:19:43 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11399137C35;
-	Thu, 17 Oct 2024 03:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FD71CF8B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729135201; cv=none; b=oRB+P86b/v0TwOLh3TZNioJyB+TLbIG+IBhwgf5VhXpuHfPxNnlhYfxg1OIqX4lzloQtFQuSr1ft4LjFoMjDSPgON4S6YV9EAwYlsH7hfS6NQvhnYkBNsIbdEGEqeuZ/cgzvJ8kjFnu5aZ97otCGd1AKdPPy/RZieozA2OTJIjo=
+	t=1729135182; cv=none; b=JeX5giiAE/f8P2U3wwuJK47wJFm+5mIcC6vIkqR0Gx0b2Mg96Wclq+Rjd+yaxXBFna4v5nmvgmjuGT+Mxc4f597K232076x/9FqgWei2pi91RGHzBG9DML5v0c0moMtlikl2shQzVmQ2sotsZU4OAnsAcqFOtKImHoBbEXc5oFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729135201; c=relaxed/simple;
-	bh=QpR4Zii1U6m84VnWdsjB3ejPAaWaCvzFThm/qYtJfJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scZrIORFu/haEnRy5pf9Ui1vxSBgx4wOF/J/2WlUkipe1sdzHgekKj6ySS60Wxvq9w9CPDLeKytXW7P9fasPn/xL0qyBX6eeLS+DmDeeuEvW1wSdKuMjUrOEPnn8+rs00rbcea2eIVnaGl4V44R5lTpoNFhvidE3xN4R+T9YpBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k28sRFDO; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729135197; x=1760671197;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QpR4Zii1U6m84VnWdsjB3ejPAaWaCvzFThm/qYtJfJA=;
-  b=k28sRFDOR7YipLcSmUFD6kAgW6YpSd6JTvvARRVbL13pGpsUlwFYwBwd
-   9NdGw/W8nfj1Y9LDwRAblx2H3ehIFg0nu4A4okjFhWwpKn060zca/jyVR
-   ygJs53LVxTzCedHNkFe4aSGgNkt7SNkh3VdewTGiFhECB3xQlz+STNjEH
-   DLVPhyb72hzVE1eaVfcWp8MpFpIYkHrWwT4+fnClB92+T+SGNo+RkYEOZ
-   5xvbsIpoWwd3TXiOvp8fquDzlgj5T/w2c1pzt/e3FiG7S89Jw8jDlr7wt
-   T+9el/3qoavY3lm9i2S3Xmol1natxAeQi2CpHe4FzVBGKKMxQbKwjdh8p
-   Q==;
-X-CSE-ConnectionGUID: IS9y5SNjTK2LjJ0EVs/RqA==
-X-CSE-MsgGUID: i/nJF/UqTG6lQw3yVwNhzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11226"; a="28812369"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="28812369"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 20:19:56 -0700
-X-CSE-ConnectionGUID: YY2xbBM1S3K678gWyrx5OA==
-X-CSE-MsgGUID: C3+yYf8ORZ27m3kiyqkrrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="79230898"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 16 Oct 2024 20:19:55 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1H3I-000LgR-0g;
-	Thu, 17 Oct 2024 03:19:52 +0000
-Date: Thu, 17 Oct 2024 11:19:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Ping-Ke Shih <pkshih@realtek.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>
-Subject: Re: [PATCH] wifi: rtw88: Refactor looping in
- rtw_phy_store_tx_power_by_rate
-Message-ID: <202410171143.OnFlgIwK-lkp@intel.com>
-References: <20241016060605.11359-1-pvmohammedanees2003@gmail.com>
+	s=arc-20240116; t=1729135182; c=relaxed/simple;
+	bh=pEFaM97afNzULAYiluxoNlgaJJ06koZ0S7CK4P52qEY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qdPiGMjFQHWZXSw9MUvtE5FyRF8Vo0peOZb+daESm+0FrSfIiYYAJYg3Koy1e4vt8TxEGJdIJH4SjfjDnX4OybKdLvphOFxj7TpRN98HaBEcud7qIlRS29Zf66vlfNCnj/XOddRHKXpAJP3qMZ4ya/VJENsdK3AHXF/reGn0TtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3bcae85a5so4429995ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:19:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729135179; x=1729739979;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2dZry56vZJetXz2Zs/FuQOg+kt73JmFgpKQdqTEL0wI=;
+        b=kn+bC7Qc3BwwB+CvsnP3lY3E0g/IhYvpZ3e8nLwwRpjoJVMQbYsiOrMzEfbf9Jic+A
+         OZ9n42cjumGtgdFJGNn6K/18McQHXfIElVObdYs3xMz8g/1Wgip2AR0HBtiV7Rc3ptyr
+         cRapIBMxF8fJjMz8ZSu3UMGFO8UhM0ZCzX29XIGXEjH13n4jUQFDzRMlTLzoeafg9BhO
+         FmN4ckZZ3xxxXB4HZhtBi1mT8RBv5v4jiG21Mng0750EV5fFYU0DFoTh5QjDIZGZCbr8
+         iso896hA44xq282Gzco8L/lfVUTV1V9RJ1bcV7dCsw0jtBHDlCbJuJx/KKdE0FQwDpIf
+         LvrA==
+X-Gm-Message-State: AOJu0YxXBHGoMEwjKtwAS+3UvCNLl2re4h3NogMJuwSFHVY08Bs8+4K8
+	Zc+L4fprxGAd7W03g7Hxt/C0mVfn312a8D4HgnumZN1Kl5c6pFQrjXtTHokjjrN+g8AKkfX6u+q
+	dN4UyRSmddr4HUXDgYPPUnmxovZDSuVgnd9p99ubiXIaoJJqCQoepzzg=
+X-Google-Smtp-Source: AGHT+IFLWsE6w6XEmdNdxqFL4ynwOoxhsfe5PHMH8BpHlVtoeFeeOLtpd60S1zDtiKEte76JocAhpvqozocCelAzkweNm/UnfOHj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016060605.11359-1-pvmohammedanees2003@gmail.com>
+X-Received: by 2002:a92:8703:0:b0:3a0:9c04:8047 with SMTP id
+ e9e14a558f8ab-3a3e52ad87dmr11926745ab.6.1729135178980; Wed, 16 Oct 2024
+ 20:19:38 -0700 (PDT)
+Date: Wed, 16 Oct 2024 20:19:38 -0700
+In-Reply-To: <000000000000cb688206213d1bda@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6710824a.050a0220.d9b66.0179.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_fiemap
+From: syzbot <syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mohammed,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-kernel test robot noticed the following build errors:
+***
 
-[auto build test ERROR on wireless-next/main]
-[also build test ERROR on wireless/main linus/master v6.12-rc3 next-20241016]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_fiemap
+Author: lizhi.xu@windriver.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mohammed-Anees/wifi-rtw88-Refactor-looping-in-rtw_phy_store_tx_power_by_rate/20241016-140811
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-patch link:    https://lore.kernel.org/r/20241016060605.11359-1-pvmohammedanees2003%40gmail.com
-patch subject: [PATCH] wifi: rtw88: Refactor looping in rtw_phy_store_tx_power_by_rate
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241017/202410171143.OnFlgIwK-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410171143.OnFlgIwK-lkp@intel.com/reproduce)
+#syz test
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410171143.OnFlgIwK-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/net/wireless/realtek/rtw88/phy.c: In function 'rtw_phy_store_tx_power_by_rate':
->> drivers/net/wireless/realtek/rtw88/phy.c:1468:48: error: 'PHY_BANK_2G' undeclared (first use in this function); did you mean 'PHY_BAND_2G'?
-    1468 |         s8 (*tx_pwr_by_rate_offset) = (band == PHY_BANK_2G)
-         |                                                ^~~~~~~~~~~
-         |                                                PHY_BAND_2G
-   drivers/net/wireless/realtek/rtw88/phy.c:1468:48: note: each undeclared identifier is reported only once for each function it appears in
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +1468 drivers/net/wireless/realtek/rtw88/phy.c
-
-  1447	
-  1448	static void rtw_phy_store_tx_power_by_rate(struct rtw_dev *rtwdev,
-  1449						   u32 band, u32 rfpath, u32 txnum,
-  1450						   u32 regaddr, u32 bitmask, u32 data)
-  1451	{
-  1452		struct rtw_hal *hal = &rtwdev->hal;
-  1453		u8 rate_num = 0;
-  1454		u8 rate;
-  1455		u8 rates[RTW_RF_PATH_MAX] = {0};
-  1456		s8 offset;
-  1457		s8 pwr_by_rate[RTW_RF_PATH_MAX] = {0};
-  1458		int i;
-  1459	
-  1460		rtw_phy_get_rate_values_of_txpwr_by_rate(rtwdev, regaddr, bitmask, data,
-  1461							 rates, pwr_by_rate, &rate_num);
-  1462	
-  1463		if (WARN_ON(rfpath >= RTW_RF_PATH_MAX ||
-  1464			    (band != PHY_BAND_2G && band != PHY_BAND_5G) ||
-  1465			    rate_num > RTW_RF_PATH_MAX))
-  1466			return;
-  1467	
-> 1468		s8 (*tx_pwr_by_rate_offset) = (band == PHY_BANK_2G)
-  1469							? hal->tx_pwr_by_rate_offset_2g[rfpath]
-  1470							: hal->tx_pwr_by_rate_offset_5g[rfpath];
-  1471	
-  1472		for (i = 0; i < rate_num; i++) {
-  1473			offset = pwr_by_rate[i];
-  1474			rate = rates[i];
-  1475			tx_pwr_by_rate_offset[rate] = offset;
-  1476		}
-  1477	}
-  1478	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+index f7672472fa82..6d5ffa803b31 100644
+--- a/fs/ocfs2/extent_map.c
++++ b/fs/ocfs2/extent_map.c
+@@ -793,8 +793,10 @@ int ocfs2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		phys_bytes = le64_to_cpu(rec.e_blkno) << osb->sb->s_blocksize_bits;
+ 		virt_bytes = (u64)le32_to_cpu(rec.e_cpos) << osb->s_clustersize_bits;
+ 
++		up_read(&OCFS2_I(inode)->ip_alloc_sem);
+ 		ret = fiemap_fill_next_extent(fieinfo, virt_bytes, phys_bytes,
+ 					      len_bytes, fe_flags);
++		down_read(&OCFS2_I(inode)->ip_alloc_sem);
+ 		if (ret)
+ 			break;
+ 
+diff --git a/fs/ocfs2/mmap.c b/fs/ocfs2/mmap.c
+index 6ef4cb045ccd..f7863f7fb4a1 100644
+--- a/fs/ocfs2/mmap.c
++++ b/fs/ocfs2/mmap.c
+@@ -119,9 +119,6 @@ static vm_fault_t ocfs2_page_mkwrite(struct vm_fault *vmf)
+ 	int err;
+ 	vm_fault_t ret;
+ 
+-	sb_start_pagefault(inode->i_sb);
+-	ocfs2_block_signals(&oldset);
+-
+ 	/*
+ 	 * The cluster locks taken will block a truncate from another
+ 	 * node. Taking the data lock will also ensure that we don't
+@@ -131,7 +128,7 @@ static vm_fault_t ocfs2_page_mkwrite(struct vm_fault *vmf)
+ 	if (err < 0) {
+ 		mlog_errno(err);
+ 		ret = vmf_error(err);
+-		goto out;
++		return ret;
+ 	}
+ 
+ 	/*
+@@ -141,16 +138,19 @@ static vm_fault_t ocfs2_page_mkwrite(struct vm_fault *vmf)
+ 	 */
+ 	down_write(&OCFS2_I(inode)->ip_alloc_sem);
+ 
++	sb_start_pagefault(inode->i_sb);
++	ocfs2_block_signals(&oldset);
++
+ 	ret = __ocfs2_page_mkwrite(vmf->vma->vm_file, di_bh, page);
+ 
++	ocfs2_unblock_signals(&oldset);
++	sb_end_pagefault(inode->i_sb);
++
+ 	up_write(&OCFS2_I(inode)->ip_alloc_sem);
+ 
+ 	brelse(di_bh);
+ 	ocfs2_inode_unlock(inode, 1);
+ 
+-out:
+-	ocfs2_unblock_signals(&oldset);
+-	sb_end_pagefault(inode->i_sb);
+ 	return ret;
+ }
+ 
 
