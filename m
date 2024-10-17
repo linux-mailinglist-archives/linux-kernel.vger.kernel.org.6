@@ -1,302 +1,144 @@
-Return-Path: <linux-kernel+bounces-370288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034E59A2A65
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:11:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E359A2A6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86DBD1F2936F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6F1288407
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4922C1DF969;
-	Thu, 17 Oct 2024 17:08:22 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479111DFE18;
+	Thu, 17 Oct 2024 17:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pua+mYqJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438841DE2C8;
-	Thu, 17 Oct 2024 17:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981291DFE06;
+	Thu, 17 Oct 2024 17:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729184901; cv=none; b=qMTf1rDh/XYomYWldWXQrc8YThJuHqTzYOm76nEnMMmBE8RbG6Q3+1uzsBx5BnEYwmql/f2g3Tjm1BfmQiM+YEEbHghhvE/LzHL8azQJuehh44Y1UnZSwQC43nXA3mq5KVGRIUencCzr2AWtftx6ueh02hVaiRI3DIbEgSVzf5s=
+	t=1729184968; cv=none; b=Gv66/nZNxWxAlDQtyywZ3g/c45JrSB64AK/ZO/njOvaryNZVvcYtjXKMFOx6IqzyxS1TXWnzoumQqZfe3QCdrlcz1Veu7ZRESs0BR+htl44tX4yYzs6FS6XoMjO9TbeK/XBx0pOpCcuRZMj2W65OSJ1JNE1jY0kFH/FAR0a2pGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729184901; c=relaxed/simple;
-	bh=j93455ZXaGgpi6kTTtELZ3GhwIidte/wJbX20pcw7TY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QrZkkEez8w5D3SB5pD0YTafdA0stRarL9EbrPGT55/rN/z0eg0EPDcznKwrVwM/RAetOCmdaL6yAfzpI/3UgHe0SfigqjasDPyUPye7jgXwPk+Ld3u1CNiIKL4yB1l1qTNq/93ZH2h9k9eahoPVfPqk7ITJFwdelyqib0K07JyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTvLQ2bRPz6D9K8;
-	Fri, 18 Oct 2024 01:03:42 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 31D9D14011A;
-	Fri, 18 Oct 2024 01:08:14 +0800 (CST)
-Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
- 2024 19:08:13 +0200
-Date: Thu, 17 Oct 2024 18:08:11 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Bowman, Terry" <kibowman@amd.com>
-CC: Terry Bowman <Terry.Bowman@amd.com>, <ming4.li@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <mahesh@linux.ibm.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <smita.koralahallichannabasappa@amd.com>
-Subject: Re: [PATCH 07/15] cxl/aer/pci: Add CXL PCIe port uncorrectable
- error recovery in AER service driver
-Message-ID: <20241017180811.0000306a@Huawei.com>
-In-Reply-To: <c756f2e4-2fa8-413a-b6b8-2f3ca8ec27a5@amd.com>
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
-	<20241008221657.1130181-8-terry.bowman@amd.com>
-	<20241016175426.0000411e@Huawei.com>
-	<ac5f05ec-5017-4ac7-b238-b90585e7a5bc@amd.com>
-	<20241017144315.0000074c@Huawei.com>
-	<c756f2e4-2fa8-413a-b6b8-2f3ca8ec27a5@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729184968; c=relaxed/simple;
+	bh=m/EkYw2s59ro8v1uZNnuDskZpSm80+cYs5IMSQ2weqM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YYY77m22uRjJRwfPrCkrxe/Vuks2Z6euMSBYimQotuqqiMVULX2n9D+5ziQnXbs5JSHsBYmemVSiic++RJFyjsVFXuOOw2Xp2KuGuOidDawk1XiIPQ7NfhgV8QKc2Dw6dPSe4gkqbpBoKfk0cQsXnhHPjTAt/IvLiUxXkFfkhd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pua+mYqJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E892C4CECD;
+	Thu, 17 Oct 2024 17:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729184968;
+	bh=m/EkYw2s59ro8v1uZNnuDskZpSm80+cYs5IMSQ2weqM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Pua+mYqJLoNh+RDMls9nHh47VkCBtx0Z6qNwUxJRFavT/4z3wW4udsyzim87WtxR0
+	 MopPUu+rsQ5I5h35/UoD4GFtg/WD7DNLDW0UP2UKAV3ZM4PLFZD5nMWJtcIFGXSbKi
+	 g6X+oxFN/JyehtYm8rymAZ7kGjw5FyHbQcbQqVbXEcDt+JUxykg+9YgMHsl25yqoXo
+	 mWM3aj5QR0E92SuuHd1s/Hqbg2mAEUSf60uxU+30dAWduGtq0gnNss1oJnz1N1n/sd
+	 jCdoxThuJaEEpJWq90GMP12T5jEoy5/TcH0CKj/0gUuFQJHIykEPRIpOufxe7hWKHC
+	 /ucwMxjONORZQ==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 17 Oct 2024 10:09:22 -0700
+Subject: [PATCH v2] kbuild: Move -Wenum-enum-conversion to W=2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Message-Id: <20241017-disable-two-clang-enum-warnings-v2-1-163ac04346ae@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMFEEWcC/42NQQ6CMBBFr0Jm7RjaNEBdeQ/DotIRJmJrpggaw
+ t2tnMDl+/l5b4VEwpTgVKwgNHPiGDLoQwHd4EJPyD4z6FIbVaoKPSd3HQmnJWI35gdSeD1wcRI
+ 49AmpttZ4Y27WNJAtT6Ebv/fCpc08cJqifPbgrH7r/+5ZoUJHTVP52pW6suc7SaDxGKWHdtu2L
+ 5iU4GXPAAAA
+X-Change-ID: 20241016-disable-two-clang-enum-warnings-e7994d44f948
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nicolas Schier <nicolas@fjasle.eu>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Aleksei Vetrov <vvvvvv@google.com>, 
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, patches@lists.linux.dev, stable@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2857; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=m/EkYw2s59ro8v1uZNnuDskZpSm80+cYs5IMSQ2weqM=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDOmCLsc1Q+du8D5w+Vl7NoeOedrz8lO6juJzsu9rfNU/5
+ WoWdqaho5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAExkvgYjw9eT/9m+/1nAdpSn
+ +WzLtTdvdNSm/CiftlahejmbF+/BB6oMfzi7ZT3WLpuYGXzqSvS/LIVzmooRLvnS/oz/H+8MDA0
+ S5gMA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Thu, 17 Oct 2024 11:21:36 -0500
-"Bowman, Terry" <kibowman@amd.com> wrote:
+-Wenum-enum-conversion was strengthened in clang-19 to warn for C, which
+caused the kernel to move it to W=1 in commit 75b5ab134bb5 ("kbuild:
+Move -Wenum-{compare-conditional,enum-conversion} into W=1") because
+there were numerous instances that would break builds with -Werror.
+Unfortunately, this is not a full solution, as more and more developers,
+subsystems, and distributors are building with W=1 as well, so they
+continue to see the numerous instances of this warning.
 
-> Hi Jonathan,
-> 
-> On 10/17/2024 8:43 AM, Jonathan Cameron wrote:
-> > On Wed, 16 Oct 2024 13:07:37 -0500
-> > Terry Bowman <Terry.Bowman@amd.com> wrote:
-> >   
-> >> Hi Jonathan,
-> >>
-> >> On 10/16/24 11:54, Jonathan Cameron wrote:  
-> >>> On Tue, 8 Oct 2024 17:16:49 -0500
-> >>> Terry Bowman <terry.bowman@amd.com> wrote:
-> >>>      
-> >>>> The current pcie_do_recovery() handles device recovery as result of
-> >>>> uncorrectable errors (UCE). But, CXL port devices require unique
-> >>>> recovery handling.
-> >>>>
-> >>>> Create a cxl_do_recovery() function parallel to pcie_do_recovery(). Add CXL
-> >>>> specific handling to the new recovery function.
-> >>>>
-> >>>> The CXL port UCE recovery must invoke the AER service driver's CXL port
-> >>>> UCE callback. This is different than the standard pcie_do_recovery()
-> >>>> recovery that calls the pci_driver::err_handler UCE handler instead.
-> >>>>
-> >>>> Treat all CXL PCIe port UCE errors as fatal and call kernel panic to
-> >>>> "recover" the error. A panic is called instead of attempting recovery
-> >>>> to avoid potential system corruption.
-> >>>>
-> >>>> The uncorrectable support added here will be used to complete CXL PCIe
-> >>>> port error handling in the future.
-> >>>>
-> >>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>  
-> >>>
-> >>> Hi Terry,
-> >>>
-> >>> I'm a little bothered by the subtle difference in the bus walks
-> >>> in here vs the existing cases. If we need them, comments needed
-> >>> to explain why.
-> >>>      
-> >>
-> >> Yes, I will add more details in the commit message about "why".
-> >> I added explanation following your below comment.
-> >>  
-> >>> If we are going to have separate handling, see if you can share
-> >>> a lot more of the code by factoring out common functions for
-> >>> the pci and cxl handling with callbacks to handle the differences.
-> >>>      
-> >>
-> >> Dan requested separate paths for the PCIe and CXL recovery. The intent,
-> >> as I understand, is to isolate the handling of PCIe and CXL protocol
-> >> errors. This is to create 2 different classes of protocol errors.  
-> > Function call chain wise I'm reasonably convinced that might be a good
-> > idea.  But not code wise if it means we end up with more hard to review
-> > code.
-> >   
-> >>  
-> >>> I've managed to get my head around this code a few times in the past
-> >>> (I think!) and really don't fancy having two subtle variants to
-> >>> consider next time we get a bug :( The RC_EC additions hurt my head.
-> >>>
-> >>> Jonathan  
-> >>
-> >> Right, the UCE recovery logic is not straightforward. The code can  be
-> >> refactored to take advantage of reuse. I'm interested in your thoughts
-> >> after I have provided some responses here.
-> >>  
-> >>>      
-> >>>>   static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
-> >>>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> >>>> index 31090770fffc..de12f2eb19ef 100644
-> >>>> --- a/drivers/pci/pcie/err.c
-> >>>> +++ b/drivers/pci/pcie/err.c
-> >>>> @@ -86,6 +86,63 @@ static int report_error_detected(struct pci_dev *dev,
-> >>>>   	return 0;
-> >>>>   }
-> >>>>   
-> >>>> +static int cxl_report_error_detected(struct pci_dev *dev,
-> >>>> +				     pci_channel_state_t state,
-> >>>> +				     enum pci_ers_result *result)
-> >>>> +{
-> >>>> +	struct cxl_port_err_hndlrs *cxl_port_hndlrs;
-> >>>> +	struct pci_driver *pdrv;
-> >>>> +	pci_ers_result_t vote;
-> >>>> +
-> >>>> +	device_lock(&dev->dev);
-> >>>> +	cxl_port_hndlrs = find_cxl_port_hndlrs();  
-> >>>
-> >>> Can we refactor to have a common function under this and report_error_detected()?
-> >>>      
-> >>
-> >> Sure, this can be refactored.
-> >>
-> >> The difference between cxl_report_error_detected() and report_error_detected() is the
-> >> handlers that are called.
-> >>
-> >> cxl_report_error_detected() calls the CXL driver's registered port error handler.
-> >>
-> >> report_error_recovery() calls the pcie_dev::err_handlers.
-> >>
-> >> Let me know if I should refactor for common code here?  
-> > 
-> > It certainly makes sense to do that somewhere in here.  Just have light
-> > wrappers that provide callbacks so the bulk of the code is shared.
-> >   
-> 
-> Ok, Ill start on that. I have a v2 ready to-go without the reuse changes.
-> You want me to wait on sending v2 till it has reuse refactoring?
+Since the move to W=1, there have not been many new instances that have
+appeared through various build reports and the ones that have appeared
+seem to be following similar existing patterns, suggesting that most
+instances of this warning will not be real issues. The only alternatives
+for silencing this warning are adding casts (which is generally seen as
+an ugly practice) or refactoring the enums to macro defines or a unified
+enum (which may be undesirable because of type safety in other parts of
+the code).
 
-I'd imagine we might have some time after v2, so go ahead - experiments
-with refactoring can come later.
+Move the warning to W=2, where warnings that occur frequently but may be
+relevant should reside.
 
+Cc: stable@vger.kernel.org
+Fixes: 75b5ab134bb5 ("kbuild: Move -Wenum-{compare-conditional,enum-conversion} into W=1")
+Link: https://lore.kernel.org/ZwRA9SOcOjjLJcpi@google.com/
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+Changes in v2:
+- Move -Wenum-enum-conversion to W=2, instead of disabling it
+  outright (Arnd)
+- Leave -Wenum-compare-conditional in W=1, as there are not that
+  many instances, so it can be turned on fully at some point (Arnd)
+- Link to v1: https://lore.kernel.org/r/20241016-disable-two-clang-enum-warnings-v1-1-ae886d7a0269@kernel.org
+---
+ scripts/Makefile.extrawarn | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> >>>> + */
-> >>>> +static void cxl_walk_bridge(struct pci_dev *bridge,
-> >>>> +			    int (*cb)(struct pci_dev *, void *),
-> >>>> +			    void *userdata)
-> >>>> +{
-> >>>> +	cb(bridge, userdata);
-> >>>> +	if (bridge->subordinate)
-> >>>> +		pci_walk_bus(bridge->subordinate, cb, userdata);  
-> >>> The difference between this and pci_walk_bridge() is subtle and
-> >>> I'd like to avoid having both if we can.
-> >>>      
-> >>
-> >> The cxl_walk_bridge() was added because pci_walk_bridge() does not report
-> >> CXL errors as needed. If the erroring device is a bridge then pci_walk_bridge()
-> >> does not call report_error_detected() for the root port itself. If the bridge
-> >> is a CXL root port then the CXL port error handler is not called. This has 2
-> >> problems: 1. Error logging is not provided, 2. A result vote is not provided
-> >> by the root port's CXL port handler.  
-> > 
-> > So what happens for PCIe errors on the root port?  How are they reported?
-> > What I'm failing to understand is why these should be different.
-> > Maybe there is something missing on the PCIe side though!
-> > That code plays a game with what bridge and I thought that was there to handle
-> > this case.
-> >   
-> 
-> PCIe errors (not CXL errors) on a root port will be processed as they are today.
-Sure, I was just failing to understand why the code didn't need to check
-for error_detected on the root port, but the CXL code does.
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index 1d13cecc7cc7808610e635ddc03476cf92b3a8c1..04faf15ed316a9c291dc952b6cc40fb6c8c330cf 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -130,7 +130,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-enum-cast)
+ KBUILD_CFLAGS += -Wno-tautological-constant-out-of-range-compare
+ KBUILD_CFLAGS += $(call cc-disable-warning, unaligned-access)
+ KBUILD_CFLAGS += -Wno-enum-compare-conditional
+-KBUILD_CFLAGS += -Wno-enum-enum-conversion
+ endif
+ 
+ endif
+@@ -154,6 +153,10 @@ KBUILD_CFLAGS += -Wno-missing-field-initializers
+ KBUILD_CFLAGS += -Wno-type-limits
+ KBUILD_CFLAGS += -Wno-shift-negative-value
+ 
++ifdef CONFIG_CC_IS_CLANG
++KBUILD_CFLAGS += -Wno-enum-enum-conversion
++endif
++
+ ifdef CONFIG_CC_IS_GCC
+ KBUILD_CFLAGS += -Wno-maybe-uninitialized
+ endif
 
-> 
-> An AER error is treated as a CXL error if *all* of the following are met:
-> - The AER error is not an internal error
->     - Check is in AER's is_internal_error(info) function.
-> - The device is not a CXL device
->     - Check is in AER's handles_cxl_errors() function.
-> 
-> Root port device PCIe error processing will not call the the pci_dev::err_handlers::error_detected().
-> because of the walk_bridge() implementation. The result vote to direct handling
-> is determined by downstream devices. This has probably been Ok until now because ports have been
-> fairly vanilla and standard until CXL.
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241016-disable-two-clang-enum-warnings-e7994d44f948
 
-Ah. Got it - Root ports didn't have the handler.
-So is there any harm in making them run it? (well not as they don't have it -
-actually they do.  There is one in portdrv)
-That way the two codes look more similar.  Also, does this mean there were
-runtime pm and other calls that didn't hit the root port for PCIe that should have
-done?
-
-Comes back to I don't want too complex bits of code.  I'm fine with changing
-the PCIe one to add new handling needed for CXL.
-
-Just to be clear I'm fine with totally separate call paths just with lots
-of code reuse.   That may mean a few precursor patches touching only the
-PCIe code to make it fit for reuse.
-
-Jonathan
-
-
-
-> 
-> 
-> >>  
-> >>>> +}
-> >>>> +
-> >>>>   pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
-> >>>>   		pci_channel_state_t state,
-> >>>>   		pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev))
-> >>>> @@ -276,3 +355,74 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
-> >>>>   
-> >>>>   	return status;
-> >>>>   }
-> >>>> +
-> >>>> +pci_ers_result_t cxl_do_recovery(struct pci_dev *bridge,
-> >>>> +				 pci_channel_state_t state,
-> >>>> +				 pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev))
-> >>>> +{
-> >>>> +	struct pci_host_bridge *host = pci_find_host_bridge(bridge->bus);
-> >>>> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
-> >>>> +	int type = pci_pcie_type(bridge);
-> >>>> +
-> >>>> +	if ((type != PCI_EXP_TYPE_ROOT_PORT) &&
-> >>>> +	    (type != PCI_EXP_TYPE_RC_EC) &&
-> >>>> +	    (type != PCI_EXP_TYPE_DOWNSTREAM) &&
-> >>>> +	    (type != PCI_EXP_TYPE_UPSTREAM)) {
-> >>>> +		pci_dbg(bridge, "Unsupported device type (%x)\n", type);
-> >>>> +		return status;
-> >>>> +	}
-> >>>> +  
-> >>>
-> >>> Would similar trick to in pcie_do_recovery work here for the upstream
-> >>> and downstream ports use pci_upstream_bridge() and for the others pass the dev into
-> >>> pci_walk_bridge()?
-> >>>      
-> >>
-> >> Yes, that would be a good starting point to begin reuse refactoring.
-> >> I'm interested in getting yours and others feedback on the separation of the
-> >> PCI and CXL protocol errors and how much separation is or not needed.  
-> > 
-> > Separation may make sense (I'm still thinking about it) for separate passes
-> > through the topology and separate callbacks / handling when an error is seen.
-> > What I don't want to see is two horribly complex separate walking codes if
-> > we can possibly avoid it.  Long term to me that just means two sets of bugs
-> > and problem corners instead of one.
-> > 
-> > Jonathan
-> >   
-> 
-> I understand. I will look to make changes here for reuse.
-> 
-> Regards,
-> Terry
-> 
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
 
