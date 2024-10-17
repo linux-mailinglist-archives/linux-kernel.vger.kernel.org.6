@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-370149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8F19A2880
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:23:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D025D9A2885
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E483286186
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:23:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8DCB25D61
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A461DF263;
-	Thu, 17 Oct 2024 16:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49F71DF253;
+	Thu, 17 Oct 2024 16:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="co0vJGKO"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2079.outbound.protection.outlook.com [40.107.241.79])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hZpx7TVB"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061951DE2DD;
-	Thu, 17 Oct 2024 16:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B05FDA7
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729182204; cv=fail; b=UsnCc5mBKNSVqldo3qwHQZ0TOVNytMGbpXDBmBPc9B12Pr9nJXHK5Vs+c7Ag3ATM26YnoY5fPFOqxDvqDf+lLOo3U5u2qnEwiSsx441Qz9wvbA2g8ptIUt27r08Hmv92O6jaZvk/GfjZ+3JNYbfEK+lCe+WZcMexgYxpMLxlMAM=
+	t=1729182252; cv=fail; b=eUlVRmHcC/AQRM7Ss6cuLGwIITKs7lmtwkL1CkbwAI3WgMV75IJ3BldTIJeVC9P6v9W9P0xYGKjxpoBvVetInYUk0GsC+s8Hf7qANEv/lOsj+8NisKYlMmoL/DmoYRvt0Sbiqcm2KaseRMwLNQzHeEfbLLAIcxlGRR0F0lMXg+c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729182204; c=relaxed/simple;
-	bh=BaW15bBUS3lIzKlhHRMdeGzlr5WcVQ1b5fsyPh4JaaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uKR4oKgPgCpi9ZuYmVY9DBHPfpmSxkuwO+c7a7mqDAO+UuzWudmxxheyRWaOTQA9wOMRK3Ub4q2eVwpt1K6Y0Va5U5QMNfAsprkQcXYPSNb8PC+STPyjEx7l2hCaUEKCDwhPgJVYVI05AZvzrc2smMAHvNq4unT+JDPQOLEAH/Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=co0vJGKO; arc=fail smtp.client-ip=40.107.241.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1729182252; c=relaxed/simple;
+	bh=S1w4/8cHikJGsscMmdrfoRJXfiDo+9BnScR6Kuf2Hc4=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=eqUiqW7Pnb4FjF7ZJrhb0rgniXmkcqFMXVozte8dx9l4y6vgddetb8OBAoiu0jc1Um1NhwkXVuo6bWk/3Hz1WNr5Xc2vRMNjTrIeC/yQeZI/V3z/RH/TyUO0vm6Zzj90522xf1OrTm1lbXDBs1Jgr5VrDMAa0Uk6gwaKQJ0fEaU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hZpx7TVB; arc=fail smtp.client-ip=40.107.244.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XVdavAVOfQ1pn4+o25NG7DZA0Xe4GSwawMyBQSh2JDULtOr22F0G7vMcPIx3Ca4vaUqPVyCqqUvZlYIqx8fdt724QrduuQg5YAqqR0ICuHKBuMzuhQcb9LtBFprjyW8pv+YYFp4N40vWFdeMLk+79f+ndXo56pb+LlB3/UpZ72gn2vQVGguGSvf7AXas5LSGwrx5bQz1vgoEYw02noWkejEbVEn72+RK/jUfY0rEMRFb+0Q3ofJrC96YRXFqj9kkfLmHYQQsScYA0QX76rujVAOPa98W8DG8xJIW2bwZa7yvNEcGIIPs1y8O7y+JuIjLyX/4tQQRXDdBx8smwYtPlw==
+ b=hBiBLv1EY+inPjR2VTILRETZy0Z+l0VXFblbgrw3FmmttDuzyNY3GjB2/4r4N+/6C+7SzIYYdXhWHYLtU24XEshlvn+IjwJ89654vrQyhickNMua0l9rXGCYrgJ7/Q5KEZL2bqSSTCz6qbMfVo3EbnYQYaN2KSz+sigHBkTxZSFvLjg02w7+iDaTOMNp41BZoNg+mzswxKKds2yQpEoE/RwMIZgliyr4+t5NcT4JImC/qjlmW8zXd03sbBl2T+v4iVXNUralwV1US3dnO7jqBVF8Nd5a3Lmm+YmkgMQTVAGsHME2yxcuzi/Q/25zDj8Wx256HmknGA5xCq3y0qzIIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ua9zTRDP7ycjMF7YsiM8GVTqJLA8bhkLno929VYtXrI=;
- b=Ua2eYn+Lz72xqvJHges5hd5LRnT4eJ3crydykxYuUVvOKaEZrBUaaj+oe1mPrHWlDNFPqMgP2rbbb/OdRFJafUgJMqjNIN3xWNOlVVXOvw5x5cl0LEkBDcVhfEosDF1Hs2PgqjVcFq3u7LE1qVKGTTdk85dOMjzzafycsBNiZ8GhnzZSwmwWnLC/feEIL9pF0XHIBeJ1vkGRWmlJxttOU/B5HE+JSkjWDRjkXu2i960EnpRy0HmPDdebfqe/c9ydkMkInOKPwJ7RQz3WWz1u/Ie72SUTctCmjlW173RXRNmMoKTU1aTwV4z+LidKydiTJchpryY+mimZ6wZ3yAeGPA==
+ bh=LwObs9KqIlC1Edv3JjkbykS2XzuU/tDuiIegjYOekGo=;
+ b=Z+2lT8Nymx6JnSaL2F1SjYs2PkYhKv0uPW4M1TQt5nb9TSZwb2JfHKOZQMRsqwClBw8HIeHmNkfKC2TpJeZByJOuL+QGKsNj/zHOK7bem+5W7o0x4toblJPT3HMB6XavqEt4SiPzEwnEpYZuWrlUholW3HnLZFew9GhuaX/nf2O9WnyQA/jWWYFBuThrJ8KtPA7nn+f4pM3UyRaR1J7aia50wvhUJK2COl6B/D+8JvY6MHB2BTtUNXISannflgZ8tvcLKjxnow6ZTx6MEWRu31x14H0xfHkllS4fdOGs8waO/qPNRF2ZJqTZzGA1enLWWH94dDiKm+xoMh+1STzZXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ua9zTRDP7ycjMF7YsiM8GVTqJLA8bhkLno929VYtXrI=;
- b=co0vJGKOgbDvJYJaDOjv9/l4DvPtXfWc4xevuoD7jPSnFxzRq4JqdfbPWBdcYQiv3IsVAd1kQmCsp4eZBWEwP5b5WSUkOtITINbNrbEDCu+YZrgzL83zKPo6ykC7CEznXi/hxLBOyMVzxcp3BKoOq9jyAK8dYjb/04qH0o1euSxTfIV+Z6S6jF01tbN/dhe5uCFoMOm/mkS8bpsq9NtZ/hWACLKkcbKFQ/oZHK+zDxrOc07xll3GXdXnHQKjgdn5pUbJ45BuxGnT5b8ApBhH/u9aomPiXCHT5WPr0WuV3hIMtHsGjC9vaQv6kqnUlw/APh7Qq/GaNmm0ayx/8gbuMg==
+ bh=LwObs9KqIlC1Edv3JjkbykS2XzuU/tDuiIegjYOekGo=;
+ b=hZpx7TVBwat7iHWtXMmyy689/Z9YIQcN8V22H1G6kOMqxlu8dhptpv1FSR3MsRR9CEVYIpfBzqmuiQD0xd4O9+6wjOVerH1s2cdLebGTqg4MGFQeXdU1O3c7kTDlBXg75PfO8JK/SSviC216c2871r9HYmUX7d89yx5tdFtKw9c=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAWPR04MB9815.eurprd04.prod.outlook.com (2603:10a6:102:381::19) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by MN6PR12MB8492.namprd12.prod.outlook.com (2603:10b6:208:472::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 16:23:15 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 16:23:15 +0000
-Date: Thu, 17 Oct 2024 12:23:05 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, vladimir.oltean@nxp.com,
-	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com,
-	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
-	bhelgaas@google.com, horms@kernel.org, imx@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3 net-next 02/13] dt-bindings: net: add i.MX95 ENETC
- support
-Message-ID: <ZxE56eMyN791RsgK@lizhi-Precision-Tower-5810>
-References: <20241017074637.1265584-1-wei.fang@nxp.com>
- <20241017074637.1265584-3-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017074637.1265584-3-wei.fang@nxp.com>
-X-ClientProxiedBy: SJ0PR13CA0124.namprd13.prod.outlook.com
- (2603:10b6:a03:2c6::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ 2024 16:24:08 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
+ 16:24:08 +0000
+Message-ID: <f5383cb1-0c0e-eb8a-e3b5-bb7d5a80fcbd@amd.com>
+Date: Thu, 17 Oct 2024 11:24:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
+References: <cover.1727709735.git.thomas.lendacky@amd.com>
+ <4f9d9eac997784cd11f4243d545dd05e670b2e4c.1727709735.git.thomas.lendacky@amd.com>
+ <20241017152601.GAZxEsid01FYKqwnPA@fat_crate.local>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v3 2/8] x86/sev: Add support for the RMPREAD instruction
+In-Reply-To: <20241017152601.GAZxEsid01FYKqwnPA@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR03CA0006.namprd03.prod.outlook.com
+ (2603:10b6:806:20::11) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,147 +83,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAWPR04MB9815:EE_
-X-MS-Office365-Filtering-Correlation-Id: be808ee7-0203-4175-04ab-08dceec800c7
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|MN6PR12MB8492:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1bae622c-0e54-40bf-164d-08dceec82017
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|7416014|366016|1800799024|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+pnc2uAyUVDLOCTe2RjvW4TUPBvH2KtWNTBVklD3xCUxlbnPlhA8jXTCSYsa?=
- =?us-ascii?Q?6OZ/mHXlMDJqAE8fDT8rAIC1w+DZ7gHE5HA1dW/9sSDhtavSRhueKtsJ3vrY?=
- =?us-ascii?Q?HMzx8QfbGKyk+BQKm4jzDtGECv6pOpEfnQTqu3PhGbuJeUfk+/2zaHsXYCzo?=
- =?us-ascii?Q?g6d0t+UtXKD2xUkw85nOAQ88aDjmt6rblj15v3p8oGsJTXDGfmo3QgyNtbTW?=
- =?us-ascii?Q?bZzgv6WP20nw+QDgQ5iVXb6bk7qnRU6Bj+i+93qdtFO3giQQX0p/lgVppmtA?=
- =?us-ascii?Q?ScYVOIAGylmDkJ3Z8WC1ovaTT2xHfffL1ivdcrgBE0fJ/Wv28QC35Ehmnqjl?=
- =?us-ascii?Q?GphWXnLMPY1TJWEtqs/JvRYPgc2i2j3cA0Yhe4oGYLVOd2+4trCP1zy8rjR2?=
- =?us-ascii?Q?BtbXzr/5hW0ukPIRudcb/kfca2L0o3xmzuC0t9yBefq2X9K8toyFyvgwcvXc?=
- =?us-ascii?Q?0fAjc8JzqMbGcaQ5d2vVHL31IADHV+N7DsPHAUnvGr8n6h/rrIBvFcthuxqw?=
- =?us-ascii?Q?A57yFiR6CeBay0avx4wIFc1lPirxSIzPosutKt6AHJ8vdOv1VT19MBjPg0+q?=
- =?us-ascii?Q?hd+EQgghNhS3d3CDAZdtwHaoryYa9dzV1bjui/VBJ4cmuAqgo09ZRvhuuLtP?=
- =?us-ascii?Q?RKhQGMt4mzgxYC/WVzA76KOTBx8hubr1O3VcgSzE+B9BohkNRM5JYFq9XVOW?=
- =?us-ascii?Q?rlgGGjvUXy8SpZw3SPCSvsB2np23fwqz0uQ47BzAepF0QVHoMM5RxOSi/9qS?=
- =?us-ascii?Q?pMiPygnsZFNBjELUjWIzao7GPCDNwnQewk9WMXzTvHtLLfbGajAWJtMM176J?=
- =?us-ascii?Q?hUvxwz5dGlajTQBlJekoTQCoFXLYkjLOJWL9n6+MqpNr1PRtPtPJ8FldaTF4?=
- =?us-ascii?Q?TnQ4VvpiS0wS1+s1S3mh6caOhP9zkWZ0AalwC1DIrE2ti9zm6MjENCtItiTe?=
- =?us-ascii?Q?uDPb3o+b9kLqanvCHU0dy29wmIUomXrgjDpu+ASPdl3KVl3fUusdAH97+erj?=
- =?us-ascii?Q?5tZLQFQsEDB7S6Ecmf3D5xNN/w1SLbLRdlNg8pgQAvs+sBdJIWjXp7m0IbWC?=
- =?us-ascii?Q?C/Z9SWHt6pvwHwRyHA3Ms5urtpfMNI8q4I6Ok80EBusmai8QhG58UfKDnI/C?=
- =?us-ascii?Q?WfnlT+SKfMUCW/U349OJ2EaSdFhrGlpF9ISjl8vQxtlLrFUQaJ6oIQaJKNQl?=
- =?us-ascii?Q?VevtEtiguRC/rn/xLsj6sayHPZovp/QR90lhegQ+pPdzsRKa55RM7xEFozQ9?=
- =?us-ascii?Q?Pw/Bck0RDx/Ld5EqutiWUI9yi1wfGxKCaQwuaonDiasZp1QYTFs2R8f7gt7q?=
- =?us-ascii?Q?R5fs9KTZxQrFW36XJlbIZ7heggRSH4v8afhGoqqDBPXHeU17AtdTotZEQfhk?=
- =?us-ascii?Q?YWQpiBc=3D?=
+	=?utf-8?B?V05MUWgzd0g4YU9zR284TTlYNXh1blZNVTV2V1VZai8rWGlQNVdHZ1dYQXdH?=
+ =?utf-8?B?cVUrb2ttcEJBMTk4ZExURmszOTUray85eFZMUUxWYllnQXJVaWp6TG1CeVBH?=
+ =?utf-8?B?SktkU2RoU05mZ3pLcVFUUFY1UGJNbnVDMmVhZGJmVWUrd2c3aGxJMHhTVUs2?=
+ =?utf-8?B?aWEvdDVEOWNFNUZ3bUllZTBaV2FoYkVQUGZEa0dSaE9EVDV5TVNrc3cyQVVh?=
+ =?utf-8?B?cjFFRzBjN1Y0KzVVMElGbFMrdHVPcHhwbWM3N3U4S1pqVm9LaHdUd2h3RE5R?=
+ =?utf-8?B?NUxkdzRjcUFGREtmTnNQNTZPdUMyKzhvUSt0ZXhZTHpOdVM1ZHBxL3NSelo1?=
+ =?utf-8?B?U0t3VE9XVVljeUxldzRIT1dlVlhMT2t4WWJJNnB5bHhCenFISDRNYUtVUUZX?=
+ =?utf-8?B?VllaZFl1azFZdndiNjgwTUJWRER6OGhUL0dSQmZhcTJ1TFI5OS9yS0lhdFdS?=
+ =?utf-8?B?amorOVVMdHZFZnppMTFSZzRxaEl6cGR5MFpKSTJlc0VOUmdoTWZqL3lJM3BE?=
+ =?utf-8?B?SlJkM3I4U0RoaEFTai9KRDFUN3FDR29zOXJHZm1OS0x0Y0FmMFhTY09TWCsx?=
+ =?utf-8?B?NXhMR1duakN4MUF5WjlVNVF3OTJaK0s3bXJkQzcyU1MzQ0w4T0V5RWdXUU9x?=
+ =?utf-8?B?WHRYd1lDcW9FRzdZbTZhV09OZ2NIdTIxZm1vV3NoNGJhTGpYWjhsbHlhRWFQ?=
+ =?utf-8?B?QzFzTHNNMU5xeHA2aXM2eDY0ZDg1WG54QU1aSVdBbEVRVjNVOElzQkpqZW40?=
+ =?utf-8?B?czhQeDYxN3B0SGdMQzJaWDZUalBEdFVPd0doYWZVMXJzdG8xTDBGdGhjQVMz?=
+ =?utf-8?B?RkJBUm9EL0tnTnZxbUxzOWJmVko4b0NMbXhtbEdQbDI1RGFlZDZVTXVwN0Vy?=
+ =?utf-8?B?TUY1dk5ReEFNbXNPQmVpTzN4bnBQNDNIVk02bER4Ujl3ZU9TQ2E0MnpDMHRW?=
+ =?utf-8?B?Q2NabW9TVDlzSUtPaXJoZndLSjJERWZma05ld2t3K25TMDdoUmhBWlozd09V?=
+ =?utf-8?B?NElUb2pCNmF2SFBpTk9BdWMvZUh1bWZFOEE1UVp4QVNDQ3d5b2JMcHdLMjlr?=
+ =?utf-8?B?b2NweXorL2JrQzFiVFlrdGp5a3VqaXJmOWpxSnluLzRjYWRsNUlyU29UQ09s?=
+ =?utf-8?B?dUxtSFBMSTNxR1RZdlVydlYzMXRkVlI4dlRJU1FKcWJtQ0VHeVJROWd4MW9C?=
+ =?utf-8?B?dlkrRllSdFlIbkNvRmV4a0g3T3Zwb0ZGZElBUVVWUVprTDlMNVFKcStJSDEx?=
+ =?utf-8?B?Mzc0K3VpTFlTbElYWWVCZlJmMVB1VTRDSWVma1ZCUk5FcERaYnVRbmNKWWNL?=
+ =?utf-8?B?Sy9BbVlJZGdBVzZwNXdzR0FIdUUrZ1lpMXUvREEzRjhKdFlRQU83ekhWWWhn?=
+ =?utf-8?B?bGxMVWtYc2d2TTlPVmJrRElpMGJPdm8xMzVGSHcxNWc3bzlQa0FCclovN3JV?=
+ =?utf-8?B?czlVZk5kYmFqMkVBVHp4L1BLQ0dNakZLalZkamVCdlNqYk5GdnFUZEVLVlJU?=
+ =?utf-8?B?Um5WMHM1UUZBYjFNK0RVYXVzZmcyOFdXU1ZMZTNDNTZNbk9hMzJTUzJCeEZM?=
+ =?utf-8?B?L2I4MGhZOFVFUlZGZTFjTHBSVmdndW9JWDlFcUpXdFpwR2JIcUIvVm1hdjhZ?=
+ =?utf-8?B?ZitBUmxPZnV5WWxoRHU3VG1FbXVUZUJUS25IbDRWUnZzZEc3YkZ1S0Q0OEVr?=
+ =?utf-8?B?bTd1T3NmRWdMUkJ6eGxTK3VnYWE5alJUaWdxby9QOVhTQUNRb0hMRk9zWHVR?=
+ =?utf-8?Q?QxmFY7PS1gd8umDKiecJjdHgvITSrfHMQpRaL8D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nE+i1XHWprJgVB3Sv58GgXyjs63uw1ZLDLnpEsKo5abOVGIBiC1/2uzKQld7?=
- =?us-ascii?Q?oYxdjp8YK26BCskBNlWHW8fOQBdP59/78AQfJwMLmu2/U8YHafyERlHIwFYl?=
- =?us-ascii?Q?X3zBuY7S1yE667nMgK57YLSbzd0975ORYeyDe3pMaWUs4EmFQBKOMmvkOiAo?=
- =?us-ascii?Q?x1r18FO/j3E6WfUpF+1ooBkp4yuukNMNssGE9r9btheudXhmazhWsc4isbSa?=
- =?us-ascii?Q?g6JXcoB1EfeKpqzgm2iZVw8HU73jjjKyYEVjWAnAT9HajDcBaCefVeh8Z/LE?=
- =?us-ascii?Q?IfeOQCd/tbibqDW3p2jWNd74zZW2vSTyeHqPUDFiKjsDSUH3duGXCz7vvmXU?=
- =?us-ascii?Q?jy2VSIJabPH6i9xIU9ROkn9I+1wPo3tQLf9YWLynYaA59iW8I6lQp6gQBTuQ?=
- =?us-ascii?Q?Ru5Y/JwtzuH9+17NMwCI93TyRG+96aVBXlTHG560YvumOKSc15IO67IdG2xv?=
- =?us-ascii?Q?evntP8GA3PYgemwLfFEfS/meGAR6x9qJSSYyn5nOnKpAh8Ha4Ek4sH0EFE4S?=
- =?us-ascii?Q?ijSkHbkjE6YDfEJOqtZQxTgjxd6FDKQyrqUpZBiJW29NRoKd9AIrE+aSLsj/?=
- =?us-ascii?Q?tCq6b/4iMxHiu8/RgX2sM6luuVjqf8j2CX1SZcy3bBuTeDeLgJ3Gt5zCkGIx?=
- =?us-ascii?Q?ojC3xuyv5L3mT8x2AfcJ6sBAK5w8UkL/3852YJ3I3ZYqoB5BLpMCK7vWp0+i?=
- =?us-ascii?Q?NnbQyiEA/mTxJVM2t123zONN6DUOkTuS34/bvs4pyIRGjed95JPHeQpenXiQ?=
- =?us-ascii?Q?AlWyGY0PgUlgfwjQCFTOI+2ckXRHI+JiFj5V7L+6B0FLYnBIk2bu18oBsOfm?=
- =?us-ascii?Q?+pty9fuQTQnDmlLcnXHajPuKeL4ScJzHpF94pq+LGLrVtRQvyegNEJRdGh5j?=
- =?us-ascii?Q?fSRiChawDHRyU7sDHfm9V88y+K+6wdz3AFsId2TZ3GHC53njO+eGGFTRPSGL?=
- =?us-ascii?Q?LFbx26lCAoEddWbPqXy8V57lRhg+vqL2c5CFbCXIdYcBg/T3gBnVtuI7Apv6?=
- =?us-ascii?Q?SP/d7+CEvt3FioIcc4FW1sD0WGQ4g0JYvmQtEPdp1gY6U8ChCCbfVnnRithV?=
- =?us-ascii?Q?3HvCJlgmunLngbkGfeYnAZEXfVGZXX9VNPpIC93QxqzxWPNjuW1TvmIT/66t?=
- =?us-ascii?Q?Li7T4BOr+Wr4FiHFJV0b9a4BS0nsZI89e7CtGJf8VnGI9mfmMqx8pfzVn8h9?=
- =?us-ascii?Q?IlHxm3Ia9U9YWkTsaVjxzmqvotBdQZSLfZBfLj2ulafzw9yHQ0qwiKW4DjAD?=
- =?us-ascii?Q?1vBB/6vIsyLER3e7Fkh1PG+Njnxf+QkQS9DNnaRZI2leHcT4dJ/LTU/gzT1N?=
- =?us-ascii?Q?AqahbKDNHeb19Uu5ujHE6BCC0tpkWItXHJvIMQxPhJGN2hM6s5WEyOWg05CK?=
- =?us-ascii?Q?wc5vyGxLh7HZjwdjCTmCkyl5v6xOIu1t4MYqrbUwvFKh2InOPZuS7GUZKIgG?=
- =?us-ascii?Q?Q+DFbdDaTGe7uqbu4rCaQEZ68Bt8JgFp5BNoAhPF5qV/77Xtc9icF40gl6xY?=
- =?us-ascii?Q?dDhfGor6Vmme1P4JBpzbb6+1qnoTXPKss6ZsRB+bXXbMzHaQAQhF2seI9LE+?=
- =?us-ascii?Q?ZpBt3MDyzl9WN8b6mwwXHkgnCtNhTb65ItHncwM0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be808ee7-0203-4175-04ab-08dceec800c7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+	=?utf-8?B?YXNBWlNFczZuM0ZFY1hDRTU1NitxYVlJZUlzMHVyK0RUbEhBY2gvZmFmRzdt?=
+ =?utf-8?B?L0RPL3VtS2t6aTFHNk5RSUl1eThVSjFQTnJwTFk4R0cwemZoUm5hWUZIRDE3?=
+ =?utf-8?B?NTNJb055Sys1N1BDc2VCR3QzK3UyL2VQLzJtWFpzc1VsOW9sTXpNVWxTV1lU?=
+ =?utf-8?B?cnJaa2QrZFlYdkpPQU9rQmwwSVRuc0dLTnRkeUdoODkrbjE0MVhuZFVrTTZy?=
+ =?utf-8?B?ZUlsRHpKZGFyOVI4TjFrUHNqSU4vZFpiTElBeG8wWjhSby9pU3ZONHo2U1M2?=
+ =?utf-8?B?Z3ZLOHRPQ2lJRFl3c2JtNE9JNFo3WEVpVkwxMVNyMGJqWXYzVWpEcm5EQWQx?=
+ =?utf-8?B?YjdoVUpvTkNNVWxCMlFncTcza2hNOTdDRG01WXk3Rnc5bTdSU053MkF3Z3Rl?=
+ =?utf-8?B?YmErcTVSM1FHZ2tWc0FpV2MwTTByWGZQYWlnTyttRW1OWHBpb0prVU50UlA3?=
+ =?utf-8?B?R2FMbUl3bmZlQ0UzTUJVLzNJWnNqWUllVlZmalBtdmtkMVQvcVE5UFlreW5x?=
+ =?utf-8?B?aERSVlB2bDNLR211TTlnejNZaEJvblYxNlFBbTFnRThzU3lKMHc0a2lSSUo4?=
+ =?utf-8?B?N04xYURuYnkxYnJ5NHJtRmZlWUlvcCtnSGtmWUowTmx6TUREdHo3N1BOcE9p?=
+ =?utf-8?B?eEliRGY2NTNuWjZoOXJrbWl2bk1wN0ZuaWJCVWUzMHFWRy9sMXhxRm9raXZB?=
+ =?utf-8?B?T1RnM1hQaDNhdkFRbDRubE1ucWlFbWhlaU1Ca0psNXdoa01MUGcxYVBDRlBl?=
+ =?utf-8?B?SFUvWEpkeGsyeWhYSlRQMEcrdkNkTVpidWxXblMwd0U1YmRyYTQvYmEyWmVi?=
+ =?utf-8?B?RFlaWEw2TjREckpZdDYwZE42L0NvYUpVVzJxZ2dLZjhobEpkd1JJUTFOaU53?=
+ =?utf-8?B?Z1d5UmRMSndZYmR0bThRZVN6TmpYOWtoR3cvKzJramlHdm5zNlZka2hZWnhR?=
+ =?utf-8?B?dncvTFh2TllIRWVqNWpSaFRyTXJGTUNNSHpSTUhVYkkwZ0IzaDZnTVR6ZStW?=
+ =?utf-8?B?RHgybzZZZEVRcmxrTklBWGN6SFN1RkpQbDA5WUdzRTEvZHdiVEhKcmtDUG1E?=
+ =?utf-8?B?R1d1RU82b0xUbzFlVlMrOFZySjJtZHY2TzViaWw1OTgvdDJJZytob0pMR252?=
+ =?utf-8?B?YUlzbnNXUnBDeHhPSDlrcHg1cmdBYmpPYkNUWFNsaUozbjduUXVaQms0V0lU?=
+ =?utf-8?B?bFZtZlJvZithUUJyRHdnU0xxTE8wU3hTNVE1R014bmVkZXB6ajJHTEJNWjlh?=
+ =?utf-8?B?dUVwN09GMVlxaEtaUGFHY1JuaGhrMm5KTE5yRFhubGpON0c2RElXZ3JHMVU1?=
+ =?utf-8?B?U3RSei9jMEpvTUxxZlFrQVZZcDRCdXpwR0VCK2RlTWsxK3REWG91SWxHQmN5?=
+ =?utf-8?B?UzRLTWU1Z2xWemp5VmhxU1FOQW9Vb1hydU5NdHBhMjJXTm9jeEZrclJCSUh6?=
+ =?utf-8?B?eGR5dVRvMXNwYXFWUWZINmdON0Y1SXcwOUV5Yy9HRTNMOE1FeThlUTB4OFpP?=
+ =?utf-8?B?MGswbG5XbzhSYzRJTzRsR1FYclBBVENCb0dkMTZRZmlSUmx4Zm1mbmJPalJV?=
+ =?utf-8?B?M2x1cGUvaUF5enhIaEZoc1plVG4wOENJekdrSjRoVFdyN0V0enA0RXNiYldm?=
+ =?utf-8?B?ayt1THBYV0VzU2NIWlhaVHh6Z1hSM2FMa3NnSDZpZ2l4R0N3b05IbXdiRmlk?=
+ =?utf-8?B?T3hwc3RreTNKRGxpZ2xrdExXN3o3UThtaStXWGVvOFdsV1ZNTUJndGcvbDZ3?=
+ =?utf-8?B?MTNoNmhKZU8zeWF4T05GNEJyUmNQS01ET2ZZbGVwejIzNURJQkZ1VFZ2RXZj?=
+ =?utf-8?B?MndpTVVpUEp0NTByTkJXR3FKN2pWSndaeE1CemZvbTJhYjdxa3YyaVFuOExx?=
+ =?utf-8?B?Y2h6dzhqcDlxRDBvZkt6akRQZkZaUVlhbTYvTWhPdE1QeU50M2NOSmFiTklQ?=
+ =?utf-8?B?RmFhR3J0SU1mQW5OU2hIZmlSUmZCWDY4UHo3RzJTRHVCeS92Z2ZqWmZ3emF6?=
+ =?utf-8?B?c1J0U2Yyd1dWYlhKU1pOQTZ0UHhFeGdWWHFJbEZCUG9KTUhFR1ZabitoS0R0?=
+ =?utf-8?B?YWVIY1FWWEM0WEJCbGZnaGNJSno1alk1NjdhbFY5QmcxZ3VMNW5udEROSGdx?=
+ =?utf-8?Q?HSIuG0bSCLB3DItC1Y1GoWMUR?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bae622c-0e54-40bf-164d-08dceec82017
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:23:15.5163
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:24:08.1691
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XMUxxVft71Y3ha9ktdpVKvLUPRvi39Sflr5HwRhVGoqvTbiXtsL/u5lkqfNPgc5iWRoiOleWdO526P1ztUAsTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9815
+X-MS-Exchange-CrossTenant-UserPrincipalName: svYsasxQjBxjUn/FTMlIyT4azbFQDRw0eRmWfeBR5qLOly3pY/VKIA2lKZNdqrT41P4QJY6QqEUoWkiS1bLiOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8492
 
-On Thu, Oct 17, 2024 at 03:46:26PM +0800, Wei Fang wrote:
-> The ENETC of i.MX95 has been upgraded to revision 4.1, and the vendor
-> ID and device ID have also changed, so add the new compatible strings
-> for i.MX95 ENETC. In addition, i.MX95 supports configuration of RGMII
-> or RMII reference clock.
->
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
-> v2: Remove "nxp,imx95-enetc" compatible string.
-> v3:
-> 1. Add restriction to "clcoks" and "clock-names" properties and rename
-> the clock, also remove the items from these two properties.
-> 2. Remove unnecessary items for "pci1131,e101" compatible string.
-> ---
->  .../devicetree/bindings/net/fsl,enetc.yaml    | 22 ++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> index e152c93998fe..e418c3e6e6b1 100644
-> --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> @@ -20,10 +20,13 @@ maintainers:
->
->  properties:
->    compatible:
-> -    items:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - pci1957,e100
-> +          - const: fsl,enetc
->        - enum:
-> -          - pci1957,e100
-> -      - const: fsl,enetc
-> +          - pci1131,e101
->
->    reg:
->      maxItems: 1
-> @@ -40,6 +43,19 @@ required:
->  allOf:
->    - $ref: /schemas/pci/pci-device.yaml
->    - $ref: ethernet-controller.yaml
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - pci1131,e101
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +          description: MAC transmit/receiver reference clock
-> +        clock-names:
-> +          const: ref
+On 10/17/24 10:26, Borislav Petkov wrote:
+> On Mon, Sep 30, 2024 at 10:22:10AM -0500, Tom Lendacky wrote:
+>> +	if (cpu_feature_enabled(X86_FEATURE_RMPREAD)) {
+>> +		int ret;
+>> +
+>> +		asm volatile(".byte 0xf2, 0x0f, 0x01, 0xfd"
+>> +			     : "=a" (ret)
+>> +			     : "a" (pfn << PAGE_SHIFT), "c" (entry)
+>> +			     : "memory", "cc");
+>> +
+>> +		return ret;
+>> +	}
+>> +
+>>  	e = __get_rmpentry(pfn);
+> 
+> So dump_rmpentry() still calls this but it doesn't require the newly added
+> services of RMPREAD and so this is looking to be disambiguated: a function
+> which gives you the entry coming from RMPREAD, I guess the architectural one,
+> and the other one.
 
-Did you run CHECK_DTBS for your dts file? clocks\clock-names should be
-under top 'properties" firstly. Then use 'if' restrict it. But I am not
-sure for that. only dt_binding_check is not enough because your example
-have not use clocks and clok-names.
+Right, because for debugging purposes we want to dump the raw RMP entry
+that is in the RMP table, not just the information returned by RMPREAD
+(since RMPREAD doesn't return everything defined in the RMP entry).
 
-Frank
+This is why dump_rmpentry() merely prints out the RMP entry as two u64
+values.
 
->
->  unevaluatedProperties: false
->
-> --
-> 2.34.1
->
+> 
+> IOW, I am still unclear on the nomenclature:
+> 
+> The _raw* entries do not come from the insn but then what's the raw-ness about
+> them?
+
+The raw-ness is that it is the actual data in the RMP table. The reason
+for RMPREAD is because there is no guarantee that the raw data won't be
+reformatted in a future program, which is why we only allow access to
+the RMP entry for Milan and Genoa, where the format is known and the same.
+
+Thanks,
+Tom
+
+> 
+> This convention sounds weird as it is now, I'd say.
+> 
+> Thx.
+> 
 
