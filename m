@@ -1,136 +1,89 @@
-Return-Path: <linux-kernel+bounces-369160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED6C9A1992
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:59:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1529A1995
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6358B288BA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B71811C217CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59D313B58C;
-	Thu, 17 Oct 2024 03:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447D51304B0;
+	Thu, 17 Oct 2024 04:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tldWFWjm"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MaFRQ/4q"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B3213AA4E
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B452820E3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729137591; cv=none; b=DzSK7vBumZLRZ8Y1t01sSM/L13jlynuq44WNYSDeDIhpxDCGDEp0JL4xOyfMAH3UmV0qC0e6xWvFOHfQeCuHhPf5Yyl6tOCkbTuPElQXs2wjdiFrjaqecVPpArmPre8lP5m2+zmGCLlIjsnWKnL5SpXR2ZXtb9aG04tyJWf6ByY=
+	t=1729138026; cv=none; b=RVqGTeIrINEnRRqHaD+/FFcnrtZWy/RWVDQ6X4yiiGM52zY4gOfbnnmP/HggCnT2N9OVjJA78UWI87UlmWuNqGYZRaCDGODdojSgq5nYhOsYsbIeznZMCvZsVG4IAMKj4Yi4flV8ZbDvHgxKs7BwjOH2C871WqdV9Bg3SEbBgm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729137591; c=relaxed/simple;
-	bh=lwQbaNOegyMOvN5drTipZFuQYCvB1JIapRyY8eQtWow=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Qf/p+RxW0t5JarC28BqjmHrXPg/hst7w+uJXJab02bLhpdygqe/3RFns6EnxSV/InRmLi+dwcT6sa5Ew8Ww8dGS9lA8SkWo2v3t7dncEvIrjyBgAvMAnexrV7bzrfpCQ2Pa7eatyn+nR5hOTyqrXd09DspX4AFRPy/WPBhlu2oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--payamm.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tldWFWjm; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--payamm.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35199eb2bso10632747b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729137588; x=1729742388; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Rn57h/Z9euT7CjXdZC6FH0+XKPxh/r1i9c2H7ox3Ihg=;
-        b=tldWFWjmbWjF2LEE71mQT7eEA8zKBss/h77KjHuQOnuZsXdd8YgO1L6I0D9ZLEnYY+
-         tmr4cHDzdnKHhSeGbFZ/gKmX8aceiFzrU++wd3Fb0pxTCNBpE0wCqDCel4+Ha8lXr/GF
-         aJWrxtuWchxqylRI+rZ81Vh8cAejFGysO6M+8wBiaAymx4/1Gbbhqd1lUKlR/17/o1Rd
-         rHyWFJWtxqIg1JISWru07zCTjPi2idkDCdBonq1CrXG78xljlGpZqC17fGjTuuvkw4gX
-         YvxcckdyvyMuMJFNbXmFheU+0DD3JiL4ppZMkEoyG7aToCW2fOMzAwO0DHxfbgTc54BH
-         6ztQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729137588; x=1729742388;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rn57h/Z9euT7CjXdZC6FH0+XKPxh/r1i9c2H7ox3Ihg=;
-        b=Um7O7cOgzVZZUaqn11dHw980WtgKXO/SMqfrb/oL1VYuNJ3a13lJppl5g2jF3PeUe3
-         m7lalSpS46YzBMSM2uXNNdaEwcGsK6y3Oo890UFqSk0DQ4TjDseXFDts1RAHwOeyCenZ
-         jb/O2UFgMs5OSPPHC+9ZxLcI5CzRnxcVl9gfnkuVPgQikXxscLUlhycLnIghHg6Ny1M8
-         0KNeJd3bHyJ/HowuAR4JViHJzB16mZMjE4j+RRRVC+jO9IN91pRxxBO0gAlcqYe4WAdT
-         H07XFDuBp0Sypx0QQRKN8xUi3KMvI1KGLAvw/FnOpSNPM7uhue6jrYvqrObukvMnfXaF
-         oCjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQAQTgESrL2rGB1ArtugdRdbMImONZDSC75YOstoQVminN+ZsXBxZ/b57SnRtbevfKC2MWgBWh48IqaHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqrQit2Na5hejMN5FH2oDwQbYgXZMn0VC0DDcg/O8D5ohyvfVM
-	EFoOzQ/ieUtZlZ1HW35vqYy5grt+0STzo/Pc92huxbG6oGpyJe2etkshA/c+1V+LPH9LHhzCTEL
-	8Sw==
-X-Google-Smtp-Source: AGHT+IGpV3AhUhHi9z/xru6WW/aDXLeVgTNJbaKCTWNDG/EMBeliw4xUO/FS19voj9mJuqDjFiK0z0ouoRc=
-X-Received: from payamm.svl.corp.google.com ([2620:15c:2c3:11:e5a7:e66d:af5f:9fe3])
- (user=payamm job=sendgmr) by 2002:a05:690c:6a08:b0:6e2:b263:103f with SMTP id
- 00721157ae682-6e3d3be9258mr1536467b3.0.1729137588592; Wed, 16 Oct 2024
- 20:59:48 -0700 (PDT)
-Date: Wed, 16 Oct 2024 20:59:40 -0700
+	s=arc-20240116; t=1729138026; c=relaxed/simple;
+	bh=KxORnFS9bRVA6Iaczczd/vV70i3CutftsO13elv+Drw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TgnYnIReRe1m5mqG82JaNdfffM45dG9N3/nM2bEmeQrlV2Y1kxQ0E7j082YbHxGYF/8SzvlbcI77JPFCYwI2w4jMafWqR72Y0xmuYx56b15UcN8bfup9VI3ZwvoguYHvHhfp3VhGM9FCgNqEX4HJDiX7Q01FL33jslqUM1sWYj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MaFRQ/4q; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729138020; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=Iwz05P1p61sVpu5xupITnxxL612xYYGx4kkmJtzWbM8=;
+	b=MaFRQ/4qlciqS3ELGqQnLYDhVCTLSkghW1OX3BD2I5G/UKaI/09kg7BBYvh09CB27d0oRVzmnbYAT2F3Jk1F3T+Mqu1p18PonyaAGE5+wDgkIEFV4poS6COqivNVw//z2wMCdj6NQmfPll1nOnTEx+JZtnsote2C38oZe32pnlw=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WHJR90w_1729138018 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Oct 2024 12:06:59 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: christian.bruel@foss.st.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com
+Cc: linux-phy@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] phy: stm32: Remove unneeded semicolon
+Date: Thu, 17 Oct 2024 12:06:57 +0800
+Message-Id: <20241017040657.33992-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241017035940.4067922-1-payamm@google.com>
-Subject: [PATCH] acpi: zero-initialize acpi_object union structure
-From: Payam Moradshahi <payamm@google.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Payam Moradshahi <payamm@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The way in which acpi_object union is being initialized varies based on
-compiler type, version and flags used. Some will zero-initialize the
-entire union structure and some will only initialize the first N-bytes
-of the union structure. This could lead to uninitialized union members.
+This patch removes an unneeded semicolon after a switch statement.
 
-This bug was confirmed by observing non-zero value for object->processor
-structure variables.
+./drivers/phy/st/phy-stm32-combophy.c:226:2-3: Unneeded semicolon
 
-non-zero initialized members of acpi_object union structure causes
-incorrect error reporting by the driver.
-
-If a BIOS is using "Device" statement as opposed to "Processor"
-statement, object variable may contain uninitialized members causing the
-driver to report "Invalid PBLK length" incorrectly.
-
-Using memset to zero-initialize the union structure fixes this issue and
-also removes the dependency of this function on compiler versions and
-flags being used.
-
-Tested: Tested on ARM64 hardware that was printing this error and
-confirmed the prints were gone.
-
-Also confirmed this does not cause regression on ARM64 and X86
-machines.
-
-Signed-off-by: Payam Moradshahi <payamm@google.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11403
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 ---
- drivers/acpi/acpi_processor.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/phy/st/phy-stm32-combophy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
-index 7cf6101cb4c73..6696ad4937d21 100644
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -275,7 +275,7 @@ static inline int acpi_processor_hotadd_init(struct acpi_processor *pr,
+diff --git a/drivers/phy/st/phy-stm32-combophy.c b/drivers/phy/st/phy-stm32-combophy.c
+index e1e7083ccb5f..765bb34fe358 100644
+--- a/drivers/phy/st/phy-stm32-combophy.c
++++ b/drivers/phy/st/phy-stm32-combophy.c
+@@ -223,7 +223,7 @@ static int stm32_combophy_pll_init(struct stm32_combophy *combophy)
+ 	default:
+ 		dev_err(combophy->dev, "Invalid rate 0x%x\n", clk_rate);
+ 		return -EINVAL;
+-	};
++	}
  
- static int acpi_processor_get_info(struct acpi_device *device)
- {
--	union acpi_object object = { 0 };
-+	union acpi_object object;
- 	struct acpi_buffer buffer = { sizeof(union acpi_object), &object };
- 	struct acpi_processor *pr = acpi_driver_data(device);
- 	int device_declaration = 0;
-@@ -284,6 +284,8 @@ static int acpi_processor_get_info(struct acpi_device *device)
- 	unsigned long long value;
- 	int ret;
- 
-+	memset(&object, 0, sizeof(union acpi_object));
-+
- 	acpi_processor_errata();
- 
- 	/*
+ 	cr1_mask |= SYSCFG_COMBOPHY_CR1_REFCLKDIV2;
+ 	cr1_val |= REFCLDIV_0;
 -- 
-2.47.0.rc1.288.g06298d1525-goog
+2.32.0.3.g01195cf9f
 
 
