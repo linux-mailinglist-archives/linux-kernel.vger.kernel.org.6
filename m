@@ -1,113 +1,141 @@
-Return-Path: <linux-kernel+bounces-369207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEA69A1A4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:59:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C21B9A1A53
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1E71F239B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944BC2887C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3313416F851;
-	Thu, 17 Oct 2024 05:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8831779BA;
+	Thu, 17 Oct 2024 06:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRBRf1ro"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hL74wgQT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC45316BE2A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD23417580;
+	Thu, 17 Oct 2024 06:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729144765; cv=none; b=ZVhlKx3Tjuw30Q0Z69/J7eJqeg6tFpxnfgPLniOgcc1j+HyO4ZiHgMNlNoypPT52Qo49s+oSdVJ2gkPjyxTIXHgMMFa5NEYSbkcUpvI2Qp884Sl0WmAUNyLJyDYCg5g7KRwMFzeQ3t0w7XlYiaWZI7GpoGeAaUGPmWdzR+i//KA=
+	t=1729144838; cv=none; b=Rel9g0zgrkAxkCZFkToaY0QgXPf4dmrUM1RpW6MeACnmQoaEPuU4l9vfDxp+LR0TzTLpC9jf49oj26lsp+SSl1lYm0J05HnoOVK7IMiQrXKlGUD8aJVgozBT8Ra0AaEk5xeTOKkHOJkg82W2BflWIyhd84zb2VeBBNYvHcJMIwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729144765; c=relaxed/simple;
-	bh=gMO4ouJDcLvZo5+Ri/4bIGTYR4lb7nXDs7PhNSJwBU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oYJ7G1tVIWz7dMEMH72HkLMmgcGb+c4eMwwYxtv9G8h+7XFCdbj+qfbOuDxpj8FkfaoxUgpOt3XXJfkxzQGnHf+IvECEjxlKYEWj14oJvaXnUVKOmze5aEaKWvFtxqZ3bWhkqYWiMNFzozZJPj2OSi48mjyH1k9mm3i7y3mwVns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRBRf1ro; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-84fc0209e87so219393241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:59:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729144761; x=1729749561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pnCXZCXqb9fRxrqslG34b8/GDW8gVXLfoyZxzqouwKs=;
-        b=cRBRf1ro8MOJmOuDsS5cj6gy6xdOqueTYsyyKeVhlh0kIpIbE+KahedWdui7qN8BS1
-         bGj0YV5rE3J0zjonOeIetY7j5ieFWS3m+2/jW+vkUIFELB67Hjxv+icWD1B7vJOo6cZm
-         DcvjWo3lRcm4tsuqXCDBXbAZMEXOoukyatu0/VlQtlEE+KIaBCvUYb63g+nMHrn9i12l
-         WBttkEC5f74kcPyzeqFv9gqGBWKju+PIqmCoJnae08Pbl6B+GRG1aKtP9OibEgS4Lfzt
-         1l/UmB3MUO+I30oK13rxZyBoOP9lkX80YPkY9D7F1917qfIZIqcJdNSZBqOwK6AvnoP2
-         n8rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729144761; x=1729749561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pnCXZCXqb9fRxrqslG34b8/GDW8gVXLfoyZxzqouwKs=;
-        b=WPU2Ph5+10Ua6UtcY42QDAj6AvlQHLrOYugnNXH5wj7yMa0JkhgBXPGeDWDT6DDQYE
-         7UPuRyRK90mMiM20nh/1t8aHgnYwg7lQX9C1ErF3sV474c+K7qKMYA7qCaS4fEtfXcyH
-         OjgUoBArYNRTBoHgJfoMDBIhhql19ooCvL8uBx/ZR8oxJAzFdLWQGtKWZgBnZ7mL+7TE
-         DZ/5NmtuJhngrbshp7lxestENepgtqYZ6sJVCvzitN53Zfbw2PlPIYeoZMCEw/u6oL+R
-         FgO+TnNenD/9dIL0hhAliJJ+aYRsN8IBYZ4jbOW8CyCo4/LX6zPI6K4o/mdXrjTvm9qu
-         K1rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtuw7Vt5Dmys4/hKYmiaQU5jk41UoVLAywXV0R39pWAfgtoypqfhonb0ma3NUQt1HDuWAie47SkgIWcy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2CyA5lUxKzCmmNDwTQa649SaRzH2QlrkqCQVirp/FpiOOcWQ3
-	PgTy04P/Q3wirwCNWvPI7XCGWv+F3E+GvXQ1ARmFo2+mAd4v3q7iuFbAjh1CeWuy01h9Z7pdWA8
-	aZCZB9Kq7Li0Bne/xWUfjPuyZFK8=
-X-Google-Smtp-Source: AGHT+IGsxv5pSIKTsf3MASQY17mk9YOkB6v2Mlq4rhqx6If7uW3Mw47W0zY2HUDPdaBMDy5UKpo0iJa7SdE7FoglO1g=
-X-Received: by 2002:a05:6102:d8c:b0:4a4:8a29:a8ff with SMTP id
- ada2fe7eead31-4a48a29aed9mr10974003137.17.1729144761390; Wed, 16 Oct 2024
- 22:59:21 -0700 (PDT)
+	s=arc-20240116; t=1729144838; c=relaxed/simple;
+	bh=eH0roS1khsA70ziZR99hznP8FF+8FEjV5oNAOCAzT38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GEwEiXgwgj+Px3cIVgOhkq9UztswIuVWEJtbH+vNFgZVVfmNwjDxGp7np6166XATUTsrvFOze6f4hZf5n5bKgO/r1wvedHqHH0lO687vUrKTcshwZr3PoYr16CSE0sSKYfqaU/iengjKDXaijztjyDpg9vpbxM1iujikxM0BxJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hL74wgQT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B2DC4CEC3;
+	Thu, 17 Oct 2024 06:00:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729144838;
+	bh=eH0roS1khsA70ziZR99hznP8FF+8FEjV5oNAOCAzT38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hL74wgQTkQges5hIhvMoqJ4Qe3rtwJUNZ38d2EkO4dIZxeJpAmNH9C/gaQU4Uek7h
+	 kRxStacZuRKMSOTpND4iA4d7Lp3e7MNrgTi7kuJCyL+plSgt9P1d+grDkDXReRxjjA
+	 7kR9W1YgQQUwsfrFTV4c0NqK32p0WTgaeTm7IZxNgPT2dbm2Oe+o9LyELU+iUABQ7E
+	 9G7MBarw/OKmWLMyFe01YlDr915H1b4D6vCDyE8X0jQxCMQGmUB+Bdlc8VKYZ/3NM7
+	 GqmExqgcgNyuXclNSIgVRFC4hw7D9yrZ2fPxjmgagXK9INs+AJ0lzvLgZz8ULQZaC7
+	 jlcSjbxdsfBRg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t1JYy-000000002SE-2l3r;
+	Thu, 17 Oct 2024 08:00:45 +0200
+Date: Thu, 17 Oct 2024 08:00:44 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] usb: typec: Add new driver for Parade PS8830
+ Type-C Retimer
+Message-ID: <ZxCoDHq871x_0Nbm@hovoldconsulting.com>
+References: <20241004-x1e80100-ps8830-v2-0-5cd8008c8c40@linaro.org>
+ <Zw5i9dcSMOG4n3PW@hovoldconsulting.com>
+ <Zw5oOUeN/v+tz+SY@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016033030.36990-1-21cnbao@gmail.com> <20241016155835.8fadc58d913d9df14099514b@linux-foundation.org>
-In-Reply-To: <20241016155835.8fadc58d913d9df14099514b@linux-foundation.org>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 17 Oct 2024 18:59:09 +1300
-Message-ID: <CAGsJ_4xYqSSUE_zq+2UWLT7UsF_ovH=+QE_va+_dcMq4fnz0rg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: mglru: provide a separate list for lazyfree anon folios
-To: Andrew Morton <akpm@linux-foundation.org>, minchan@kernel.org, yuzhao@google.com
-Cc: linux-mm@kvack.org, david@redhat.com, fengbaopeng@honor.com, 
-	gaoxu2@honor.com, hailong.liu@oppo.com, kaleshsingh@google.com, 
-	linux-kernel@vger.kernel.org, lokeshgidra@google.com, mhocko@suse.com, 
-	ngeoffray@google.com, shli@fb.com, surenb@google.com, v-songbaohua@oppo.com, 
-	yipengxiang@honor.com, Gao Xu <gaoxu2@hihonor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw5oOUeN/v+tz+SY@linaro.org>
 
-On Thu, Oct 17, 2024 at 11:58=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Wed, 16 Oct 2024 16:30:30 +1300 Barry Song <21cnbao@gmail.com> wrote:
->
-> > To address this, this patch proposes maintaining a separate list
-> > for lazyfree anon folios while keeping them classified under the
-> > "file" LRU type to minimize code changes.
->
-> Thanks.  I'll await input from other MGLRU developers before adding
-> this for testing.
+On Tue, Oct 15, 2024 at 04:03:53PM +0300, Abel Vesa wrote:
+> On 24-10-15 14:41:25, Johan Hovold wrote:
+> > On Fri, Oct 04, 2024 at 04:57:36PM +0300, Abel Vesa wrote:
+> > > The Parade PS8830 is a Type-C multi-protocol retimer that is controlled
+> > > via I2C. It provides altmode and orientation handling and usually sits
+> > > between the Type-C port and the PHY.
 
-Thanks!
+> > > This retimer is a LTTPR (Link-Training Tunable PHY Repeater) which means
+> > > it can support link training from source to itself. This means that the
+> > > DP driver needs to be aware of the repeater presence and to handle
+> > > the link training accordingly. This is currently missing from msm dp
+> > > driver, but there is already effort going on to add it. Once done,
+> > > full external DP will be working on all X1E laptops that make use of
+> > > this retimer.
+> > 
+> > I was gonna ask you to include the devicetree changes that enables the
+> > retimers as part of this series (to facilitate review and testing), but
+> > perhaps you should indeed not post them again until LTTPR support is in
+> > place.
+> 
+> I was thinking maybe we should not wait for LTTPR support as this series
+> brings orientation support as is. I still need to figure out how to
+> strip out the DP parts of it in such a way that orientation should still
+> be working but DP should not (until LTTPR is in).
 
-Hi Minchan, Yu,
+Yeah, possible, or you can at least include the DT patches here but mark
+them as do-not-merge-yet or similar.
 
-Any comments? I understand that Minchan may have a broader plan
-to "enable the system to maintain a quickly reclaimable memory
-pool and provide a knob for admins to control its size." While I
-have no objection to that plan, I believe improving MADV_FREE
-performance is a more urgent priority and a low-hanging fruit at this
-stage.
+> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > > ---
+> > > Changes in v2:
 
-Thanks
-Barry
+> > > - Fixed coldplug (on boot) orientation detection.
+> > 
+> > Coldplug orientation detection still does not work here with this series
+> > applied.
+> > 
+> > I'm not entirely sure this whether worked better with v1, but with v2
+> > my SuperSpeed ethernet device shows up as a HighSpeed device in one
+> > orientation. It is also not disconnected an re-enumerated as SS as is
+> > the case on the X13s (and possibly with v1):
+> > 
+> > 	usb 1-1: new high-speed USB device number 2 using xhci-hcd
+> 
+> For coldplug, this series does the right thing as it leaves the retimer
+> initialized if it was left enabled at boot. There is a second part
+> needed for the coldplug to work. That is the regulator-boot-on property
+> in retimer's vregs nodes. That will ensure that the regulator is not
+> disabled until retimer driver probes and will keep the retimer initialized
+> until USB device is enumerated.
+
+I can confirm that marking the regulators as having been left on by the
+bootloader so that they are not disabled temporarily during boot indeed
+fixes the coldplug issue here.
+
+That however makes me wonder whether something is missing in the driver
+so that it still relies on setup having been done by the boot firmware.
+
+Have you tried actually asserting reset during probe to verify that
+driver can configure the retimers itself without relying on the boot
+firmware?
+
+Johan
 
