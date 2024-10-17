@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-369671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DED29A20C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A04979A20CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF5B1C225AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21FC1C25507
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AEA1DB929;
-	Thu, 17 Oct 2024 11:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFEB1DC730;
+	Thu, 17 Oct 2024 11:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfRjnLix"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="hA98FVAK"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C191CEE90;
-	Thu, 17 Oct 2024 11:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC9D1DB928;
+	Thu, 17 Oct 2024 11:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729163771; cv=none; b=DVta+IiN45j8IQxLMU5pTn+C1XFylezuBn7VfInjA49LY7soq5vwOE30UgadLzkk0Ja/ViD7ZYZIXTkyVuKjKzEvGYHIXscjtoHDTVtfCKMkA4ivDkkbNBKcwSdVxunI2L2ytsEOQsfZoMxcHYc60jcBYK7Y5rmcjWGBK/6+B3Y=
+	t=1729163823; cv=none; b=COh27maJOfH4H4VCazN8fEdCofeua/pT41hbjDwFnJ2/XY9Fo/Iw+hent9Iv0cn4HNsF/FBxGZuwfK9fFz2DAgWSCoXiE15yPbz+l2G0eGs1qJ/hsIYp8I/ZjEgRVW0qsCv1N0SZ/AqXRPm4AjUQi4E/4evfi9q5TBkRArMTnrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729163771; c=relaxed/simple;
-	bh=UYWPzydg2E8UcOHWEc6lOrN1ND+VRK/cDeoluSIgwD0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lW5EkM54mv0TBa9mX6WmumQoWie2/+XosEXQKC2RzTRvLRvaSeULhwNcoWRL1sr+Qxa93xaEDI6MfqucIBa/u75STq54T+1GBiqrxogVWvDkZ20w45giC1005h4VtAIOARGpuCuP0QdfJy1/TEclG6VaZO1MB6S2uRxd4bStz2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfRjnLix; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-207115e3056so6262385ad.2;
-        Thu, 17 Oct 2024 04:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729163769; x=1729768569; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RVUL7dQ6PzateBMGk+EEDOg6w+vM1+RFUuL+tHlvvhk=;
-        b=kfRjnLixSrBqfLEe/nDd8fc5mtwg65m4VULrn3L+LrWrEbItOIy/MLb4QvOEXKYaSh
-         cKuu0mWYJq+IGpNmhWU/X5OoPAF12vuJU7cPIwn2cSHDK9Iujk9B/vykmu0jyFqTmlt7
-         i/WqjO/p4rAirCgg+5AsUGvjXHscPwi6X3e2De6qlHoPy7g29uKNY+FmlqklIu7E8lxm
-         hzVaG3TxUaUO3Gzc0eIvcY7ct4fk4tcZg4RLWoz76NWTeZr76D2p5Dspo7CZFQ9lZaww
-         s3szgf7NwIrUMXwfWe0uWxQujf2pjLievuh0qjkC1zi1JpnfcyqknvDIhgrtvZApRtwE
-         aM0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729163769; x=1729768569;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RVUL7dQ6PzateBMGk+EEDOg6w+vM1+RFUuL+tHlvvhk=;
-        b=vKwbPYnk6ql8w2OA4u0wRWLp1O0s8Pjlho8ow+I9OdD7j1i6fFpTSes1WV1MqcBCSX
-         KadWmB29Zly3JnStjVRU94dOgZWK8kdlBMZKJ6jh1OPQyyNWuNjMuR9rRs/6+/1E0cjp
-         m4+0oVXlC71mrUxO3sEuWTpHcfvYVI+8P7TSivnSZwNHllHiyYjc3l5X3iYciysf5Sbm
-         jOeC1t6DeuoZOcPBZWKvYNM6mEfOKKH/ar2nsaNZGa7UBvfYWfLnB3zfr0xPZbsopxrp
-         0SnJ9wi6ku1CXe2DTuyVveuWnvnX9OEK94ipEdidv12GPMo81X/EoBpNLUGEjpdqILB0
-         VMHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSiYchoma1RjqI+Ep9fck55rTLeSf9gpakhU4e3wAFUqC+QmbnkQ5e2TbvkTH/jb1VOsYVb6y1V+dydfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEJss36BKWAHmYzh3aCPjOx2IRm/hJgnH5yVXXwyIbAl4jYq9q
-	hbP9RChOQ7XLpZEa7F0+1yma3xQHcg3omB3TnqgHBrYwWTmo0lRZc2oFDTqVI7o=
-X-Google-Smtp-Source: AGHT+IGEktGisaDPut7+7iNdWQ/ySD2tN6A4+16NGoS6XkRcEsxLZ3yZBsALiI0Z3fNmrXfFKJBSEQ==
-X-Received: by 2002:a17:902:dacc:b0:20b:c1e4:2d6c with SMTP id d9443c01a7336-20d27f30a2cmr81371595ad.57.1729163769288;
-        Thu, 17 Oct 2024 04:16:09 -0700 (PDT)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d180614e6sm42111555ad.289.2024.10.17.04.16.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 04:16:09 -0700 (PDT)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kevin Hao <haokexin@gmail.com>,
-	Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	Antoine Tenart <atenart@kernel.org>
-Subject: [PATCH net-next] MAINTAINERS: add samples/pktgen to NETWORKING [GENERAL]
-Date: Thu, 17 Oct 2024 11:16:01 +0000
-Message-ID: <20241017111601.9292-1-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1729163823; c=relaxed/simple;
+	bh=0yaoLxJbOxWyLtPANIsfLD1xW9iR9qHzQjahbw5tjtg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p00S3wqxVzzcI1U3ok6/HInYVje5U/qMcX2m7vqVtrOhunK9Lm9mj9fdXtB4UnpD3uoVlAk6ij/Mev7tFDq0Um6wRuu0u0zMM1CpZmlHNqVZfAnke3nGsx2c2myXq5rVj7JSMHt/NjjDN+MniC1+8f0ZfMTcCUQLqxTQqvxKNTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=hA98FVAK; arc=none smtp.client-ip=212.227.126.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1729163799; x=1729768599; i=christian@heusel.eu;
+	bh=b4RFWUlG95a7zzsAjfo+11QIK8fFjg8ifanQBIduRjQ=;
+	h=X-UI-Sender-Class:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hA98FVAKBN3Gp4rtXfiKutwYuROAFoZhenm3pOZp7g8uPq/60MBBFw9a+tpoi0Uu
+	 5ujSstECBlp0bV2rIjsDoFJQSS6/UbQdexJUt4aJoLA89jmyR4iqi+9g9XnjLlgpM
+	 OL8I19n8SGQ4RsO4rmrV2YZNYnSI2VYlxIV3moK/tYU4aepU06VRR7qb+/irZdy8K
+	 6yrCdS2L1sNEPOKWFTdQERBfBsrwhWV5Jrj80b/5xmp7aDztmbd27L7davE/Ig5/a
+	 XNOd8DMuCpGxuWkuPpjpW4Cb2zaD+WhG/Y9urd0XkjNuIsr5iDxNmg+vLNUWX0Sfn
+	 K/4nt0f8lIp5+Kva5A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from meterpeter.localdomain ([141.70.80.5]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MFJfN-1t8E7r3Ak5-009h76; Thu, 17 Oct 2024 13:16:39 +0200
+From: Christian Heusel <christian@heusel.eu>
+Date: Thu, 17 Oct 2024 13:16:26 +0200
+Subject: [PATCH v2] ACPI: resource: Add LG 16T90SP to
+ irq1_level_low_skip_override[]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20241017-lg-gram-pro-keyboard-v2-1-7c8fbf6ff718@heusel.eu>
+X-B4-Tracking: v=1; b=H4sIAAnyEGcC/4WNQQ6CMBBFr0Jm7ZhOISiuuIdhUWRoG5GSqRAJ4
+ e5WLuDyveS/v0Fk8Rzhlm0gvPjow5hAnzJ4ODNaRt8lBq10QYpKHCxaMS+cJOCT1zYY6bAyVXd
+ tK2PK4gJpOgn3/nNk701i5+M7yHq8LPSzf4ILIWFe5KoknZPSfe14jjyceYZm3/cvcqF/a7gAA
+ AA=
+X-Change-ID: 20241016-lg-gram-pro-keyboard-9a9d8b9aa647
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dirk Holten <dirk.holten@gmx.de>, stable@vger.kernel.org, 
+ Christian Heusel <christian@heusel.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1662; i=christian@heusel.eu;
+ h=from:subject:message-id; bh=rZN8elJMVtQyGlS6orsu87BDGXA7zxYzT7zBW/Dz9VQ=;
+ b=owEBbQKS/ZANAwAIAcBH1PMotSWFAcsmYgBnEPIV+QDlBBuBK4fORkG9/uE4mHysS8/bIBjmB
+ d+PUI+otx2JAjMEAAEIAB0WIQRvd5reJHprig9yzBPAR9TzKLUlhQUCZxDyFQAKCRDAR9TzKLUl
+ hYXqEAC/trxyBAnvxmYa+r6axrbmcXsknvXkyUOsRMrdMzx8WPR+q7bqzoI0L64pKgpPnEtZd6f
+ EH9kUdFcNcSqCYgKWU+/XQMQmipsCN/cklG9bk65zlzRmoLITUDshrJSQA+IHWRKyB+e7bbRbXt
+ yNmA3eAKU5AUZoyBlXZJJ8x1D+szcxeRM/yhBJ44vjTObRS39SKtYyw6CeK9BS5T9T9oCvhDqYQ
+ OMAzVKx3dLP05yuBEqVdJl5iJsIjqEFmP3AZBffDtU48E+SwyPSe9zkOR5vDrKIFRolzxrk8UVo
+ n9jF8RZ+whFkbnG5LwuTWSt39ge8IUOkjOULmDknds79KEX4J1KCLQsSPsa4siKnBesFEaKeOgF
+ cjkRnqHZzYCRWH+IX1LW6OlBEcY/QQNx8jaQXZh5v9mD1/UELn5zaEkS0ip8NbkRwE8teewytRW
+ gkniwd3yO+Jo6xa4/v0xLqd4NFuloGJQfpOgEzZzV6AbN8FspxjkWhRpobDs+tOHwYw38IEWYJi
+ HqVoQCY/90vhpvQcG0hSzMj0EyW5nMYz2s+jQKPs22YnZli5zGExXbYnAUZvHb+OKEtS0X16Laz
+ C7bSb6dbmgQjCba61bTnhNkiIFNhEoTuAt4KH+9cGISrBt0e2G7WcCWNbKFmi5GyQIFpH/Qkgor
+ XQnPhq+eK8nf85Q==
+X-Developer-Key: i=christian@heusel.eu; a=openpgp;
+ fpr=6F779ADE247A6B8A0F72CC13C047D4F328B52585
+X-Provags-ID: V03:K1:8m5gqzHmb8w/7qAya6krWjEb94H5jQZUUaEuDTdlJugTx5FSnDf
+ vNyMgYADKegCEh3K76sgbqezR5VHAA7Sjbbq60fiy9B/iS0KmBlQ3j3+Q/g278M70y/pNrg
+ FcqD7F0i90vrLV16//nVbLynn7zZv9NfVu6IKQ4sdT55GaOCj2S36Xex866byvv9ZORWggS
+ v8GyC2i7FdluZBQ/Fq0ZQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:36TsXbwSJXw=;xmDtvzDO4PqqmMpo7yFIQUWFmSa
+ 6p87oVTMLhjmCS7KbFKgAT7BsWomWma0b7l7bP1MWh2spVa4dC+67Dn0n57CARrlyFz0cbatG
+ 2Hv0TFVFvs+lrEl8V06O2XzMSc8fNG9cVz220iCE4apyBwdsYe+WIO+tZC/NzUyktDRqz3Itx
+ 9+hzHmyRKdWBycZKHM9pOkUO5d7ZfmuW9eKhC4yyBvhnU6DxYM/XxkKv+8acNyS7vs0soiVA8
+ lWAR4h5Om/sBXCAu26AziGB1EBxPG7x80nJObHe7M2uEmrYChtA/MOy1YEIYj1WjR1uXSgaqA
+ 4NhNpgUIbQDyfMsGW2M6PLu4lzhAET6MWIikXuE62aAhKpUF3+XfungWhCcmQr4iF1Q5FZFXo
+ BaI8lRVjc9fW4tWyImLDNU+Cb/PojXCsqqGzkq62dD1ZqigP80mI0Hw76Pb0n3niFunZeDHeA
+ nqZCEvffvrhFhKY1sIhh/YS7GxHhMRFc74detyMWrCPjzWQ8IvfFzTPIW9/cUequ2NOSxUtqy
+ JE45neqJG/bBQ38fqHWuCJ1isseHH3bc2ROGoI/rPVfJoKtM/PQbYFAfORD20tGsR/+uDbDzz
+ EMDJ/kXdzz9jI15fQL4Y3UDuCntyU3xScOn02aYt4OkT8FX3xKOlWSd+VftaxXHp04vl7QDel
+ WoUKbQAVIRc0YTkLDgx3iRz/zGFWA/yJbxoCM7OpyPw+bA/JtC28HJfOcJ3x4GS+6pLFMc492
+ 9nyK0ce5Qbvxz8LRbfZpGrILV6+U7neeA==
 
-samples/pktgen is missing in the MAINTAINERS file.
+The LG Gram Pro 16 2-in-1 (2024) the 16T90SP has its keybopard IRQ (1)
+described as ActiveLow in the DSDT, which the kernel overrides to EdgeHigh
+which breaks the keyboard.
 
-Suggested-by: Antoine Tenart <atenart@kernel.org>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Add the 16T90SP to the irq1_level_low_skip_override[] quirk table to fix
+this.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 44d599651690..3b11a2aa2861 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16202,6 +16202,7 @@ F:	lib/random32.c
- F:	net/
- F:	tools/net/
- F:	tools/testing/selftests/net/
-+F:	samples/pktgen/
- X:	Documentation/networking/mac80211-injection.rst
- X:	Documentation/networking/mac80211_hwsim/
- X:	Documentation/networking/regulatory.rst
--- 
-2.46.0
+Reported-by: Dirk Holten <dirk.holten@gmx.de>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219382
+Cc: stable@vger.kernel.org
+Suggested-by: Dirk Holten <dirk.holten@gmx.de>
+Signed-off-by: Christian Heusel <christian@heusel.eu>
+=2D--
+Note that I do not have the relevant hardware since I'm sending in this
+quirk at the request of someone else.
+=2D--
+Changes in v2:
+- fix the double initialization warning reported by the kernel test
+  robot, which accidentially overwrote another quirk
+- Link to v1: https://lore.kernel.org/r/20241016-lg-gram-pro-keyboard-v1-1=
+-34306123102f@heusel.eu
+=2D--
+ drivers/acpi/resource.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
+index 129bceb1f4a27df93439bcefdb27fd9c91258028..7fe842dae1ec05ce6726af2ae4=
+fcc8eff3698dcb 100644
+=2D-- a/drivers/acpi/resource.c
++++ b/drivers/acpi/resource.c
+@@ -503,6 +503,13 @@ static const struct dmi_system_id irq1_level_low_skip=
+_override[] =3D {
+ 			DMI_MATCH(DMI_BOARD_NAME, "17U70P"),
+ 		},
+ 	},
++	{
++		/* LG Electronics 16T90SP */
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
++			DMI_MATCH(DMI_BOARD_NAME, "16T90SP"),
++		},
++	},
+ 	{ }
+ };
+
+
+=2D--
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241016-lg-gram-pro-keyboard-9a9d8b9aa647
+
+Best regards,
+=2D-
+Christian Heusel <christian@heusel.eu>
 
 
