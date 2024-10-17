@@ -1,69 +1,91 @@
-Return-Path: <linux-kernel+bounces-369835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8CB9A2342
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 422B39A2345
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3D56B213CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:14:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1B7EB21D91
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C251DE4F9;
-	Thu, 17 Oct 2024 13:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B60D1DE2A4;
+	Thu, 17 Oct 2024 13:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f9E1BCSU"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/xByAKp"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6411DDC3C;
-	Thu, 17 Oct 2024 13:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2042D1DDC0F;
+	Thu, 17 Oct 2024 13:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729170779; cv=none; b=s5a3kRGQiwsFktgWG+p+EG3NV1zT0wdQVg8LcLtMqhu2aM6CqQto3r7RyOI8xlIrIXazw7SDSqFFeRgFarJWNTaYHz4457DFatzyZdTLviKMQRwpHMGv1w5ryB1E0g5WgyGBFtyQ9gGAhuSE23avjYWfy5+bwcwb2incno7Rnq0=
+	t=1729170824; cv=none; b=DVXmc3xG4m6lY9OalJEeIdUOhV0IStY9ZurWQ7q3/y5Q62Jhrujh+6eSWe4mrFXNzKHzK/ZKWi9l8Rzjl/pqg1TNVLXl8Y/2MS+S2HKitfho3UC5R0Vso5vPth1ATOvjblVVqEFs5TLxP+wXcoTL1R/Dag+UQDlUhSoAiBP6/ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729170779; c=relaxed/simple;
-	bh=YmPKHblmykCYSpTXM4GbHkuG2YVDdbnNCpiO2NiFhRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plKf46HW3m6pWRIyAGxnDKq6fZG2AGYzojcwBZCQuPOAoX9P82JDJElHZ5MlJBfrazks/S0hNQ21dgD8WcdOjFaQPSDqVMc5SP++XfbYqIGuUwuyCfxF4Ufjwe/ESUZZAzD9AFBNBxr2O/OH7kZ/r62itqfxr6wtRe8/XC3mGyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f9E1BCSU; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YmPKHblmykCYSpTXM4GbHkuG2YVDdbnNCpiO2NiFhRY=; b=f9E1BCSULnSugS1EghEBwHw0l6
-	zQ3Gk6pTRx0UFUwvhS7/QVjlX0Hf2PrR3WtDAuc0WJtV5BrIMKHFQ6poJj068iXE5HPhablrFUo67
-	MGkkhQ8qf0FJ6PLrTdLSBf5j2R3pEgurLlaVeDox3ljUsYGxbDYygYPWcLv+25D+sELMvGtdjquA0
-	bZd/APhOUz3Pby05vHrYJODgTtxhpASNztVy/ApfHKosY+NMBHrlC6cx7rXcM7lZToV3hgRBrTs+I
-	TZ95IZLqPyXabFZg1Oq+H1xdllas7yBhvJ92uhWJBHxdyeUyBYfn1Q69UDb+LevK1JuB1EX6oSp9t
-	Mzge6k3Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1QJD-0000000EtT8-3yia;
-	Thu, 17 Oct 2024 13:12:55 +0000
-Date: Thu, 17 Oct 2024 06:12:55 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
-	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
-	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
-	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
-	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
-Message-ID: <ZxENV_EppCYIXfOW@infradead.org>
-References: <20241015152348.3055360-1-ymaman@nvidia.com>
- <20241015152348.3055360-2-ymaman@nvidia.com>
- <Zw9F2uiq6-znYmTk@infradead.org>
- <20241016154428.GD4020792@ziepe.ca>
- <Zw_sn_DdZRUw5oxq@infradead.org>
- <20241016174445.GF4020792@ziepe.ca>
- <ZxD71D66qLI0qHpW@infradead.org>
- <20241017130539.GA897978@ziepe.ca>
+	s=arc-20240116; t=1729170824; c=relaxed/simple;
+	bh=ks38cldXQ+qom2/nXAIS7rVVbG3reoQ/rayAxCuAne0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0cgpA5PkwgH3OrjDvI4y5BL4HEly7l5qCxakqXUwEArvZfoQ04gJ3xmHmoUVYzrcSOzBB9n0LJr+zSGHv+Kf0atuY0JaS2x3AS1QZcZGd8QR/rabRU8MnP6FPUhNaO1zVdObJVmrGyjw8j79o1ZsQWnjyDMdlmnHrBFS87L4DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/xByAKp; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431137d12a5so9892515e9.1;
+        Thu, 17 Oct 2024 06:13:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729170821; x=1729775621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=O9UUCFR2zTOfml+UbZqKlXZwimpmJqPwLWgyjJXS5Ec=;
+        b=L/xByAKpwvSowdW1dF0OuSeC8K+I9wVGFv1Ik1uLzwIm52NymYWZJ0qLA0oBhrGq7b
+         2o6sGKVTKSNmN2R8MjfeptIBNtHCnXt36s8Q9l44YOoHGVTMKXuLMeuz5SIENbyCi7kb
+         fmsl6W0DEbiqiZ3KQ/du9gckMa6VEowUOP2F+HfM3oSA6TkI6jm/Ama+DT4gDtA88VLT
+         EdQwc3ghGaRFRNeQCRSQk/WafbkcjDe7JFLkuMsXcMTdqwH8k2gh+rzMMrEk1HW89lLn
+         CXe5JFfrVVpP1G3vzO5z8MYXnFwJickUwOPsU7XPDyo6l/TrdviA8gCreiN2fsGYAZ/7
+         VJWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729170821; x=1729775621;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O9UUCFR2zTOfml+UbZqKlXZwimpmJqPwLWgyjJXS5Ec=;
+        b=XHh4XJm6h2Fa9l6NXhNTLZv9l/D9vU2oZRPY59YGlBs2S6T56fLk2vdqfnCQTbIZTp
+         8d/bUS2iOREmLM242G7R7xAlhEnOtWbAuMyyDC++QYjdBNIox6zPBAuAVo4c+Pm4lo6J
+         V0Z2I4llLXnEgCbqBRZ1TCFQ3DxmKgbMSMiT+5PjIMhVozxhiGlt1JhQL1bSbQENe20Z
+         c+GJ0BYKEnWLsk8yjeMH9Y1v0mg94Yk/9muYGhGae+iC8ZYumX+dJtrh67h9NzNzoAnQ
+         eu2moE+A/3qxFLrewBSpupi3IisWHZHT6t5ae9Z5g39kYMcYesOz8uDSOSgG+wgCniQ0
+         k1ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVTPpaFe3mNKaLzEVEV9fLBaWMNKIdZa4K9rYjjpIeWuFaVEuxktsqeTMZlnBBQPVs2W9kBtKCl/GQS@vger.kernel.org, AJvYcCW2y1emc+IFyn8HCO1f445AQs/F/m4l1bl/kqWyepYipGAx1gpi17nF984y+T/kAruK5KWr2Bq0opcWjPDe@vger.kernel.org, AJvYcCXbDvIhhl9ttNtxYDRT5wlVZg7Z6+cN4EgfbMDq+HZK2k+kMyucN9fiJGnVO7Va5XLnk4IAhAB5qrI6cT7w@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZGm4qpEEdbdeIjVz+PxV4u9fxxxyGY2SGt3/dpXKLPD+aeiv7
+	POlGbK0hMzcoJ0uD7wM7LPFeE6QwVytpAyRC7Z16jFVsn+LzV8R/
+X-Google-Smtp-Source: AGHT+IEs09lD8CfbNSSrtQl7fd7pmaGnM9ILsqzV0s0TBi3C13Vg21fjUqJBxbIJdouRegNNPNKPsA==
+X-Received: by 2002:a05:600c:3c9a:b0:431:51e5:2316 with SMTP id 5b1f17b1804b1-43151e52855mr43998635e9.34.1729170821217;
+        Thu, 17 Oct 2024 06:13:41 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c620c5sm25791185e9.48.2024.10.17.06.13.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 06:13:40 -0700 (PDT)
+Message-ID: <67110d84.050a0220.2ae4bd.8910@mx.google.com>
+X-Google-Original-Message-ID: <ZxENgbSfBzEIrgdJ@Ansuel-XPS.>
+Date: Thu, 17 Oct 2024 15:13:37 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: Re: [PATCH 2/2] hwrng: add support for Airoha EN7581 TRNG
+References: <20241016151845.23712-1-ansuelsmth@gmail.com>
+ <20241016151845.23712-2-ansuelsmth@gmail.com>
+ <20241017131112.GA28955@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,13 +94,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017130539.GA897978@ziepe.ca>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20241017131112.GA28955@francesco-nb>
 
-On Thu, Oct 17, 2024 at 10:05:39AM -0300, Jason Gunthorpe wrote:
-> Broadly I think whatever flow NVMe uses for P2P will apply to ODP as
-> well.
+On Thu, Oct 17, 2024 at 03:11:12PM +0200, Francesco Dolcini wrote:
+> On Wed, Oct 16, 2024 at 05:18:42PM +0200, Christian Marangi wrote:
+> > Add support for Airoha TRNG. The Airoha SoC provide a True RNG module
+> > that can output 4 bytes of raw data at times.
+> > 
+> > The module makes use of various noise source to provide True Random
+> > Number Generation.
+> > 
+> > On probe the module is reset to operate Health Test and verify correct
+> > execution of it.
+> > 
+> > The module can also provide DRBG function but the execution mode is
+> > mutually exclusive, running as TRNG doesn't permit to also run it as
+> > DRBG.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  drivers/char/hw_random/Kconfig       |  13 ++
+> >  drivers/char/hw_random/Makefile      |   1 +
+> >  drivers/char/hw_random/airoha-trng.c | 243 +++++++++++++++++++++++++++
+> >  3 files changed, 257 insertions(+)
+> >  create mode 100644 drivers/char/hw_random/airoha-trng.c
+> > 
+> > diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+> > index 5912c2dd6398..bda283f290bc 100644
+> > --- a/drivers/char/hw_random/Kconfig
+> > +++ b/drivers/char/hw_random/Kconfig
+> > @@ -62,6 +62,19 @@ config HW_RANDOM_AMD
+> >  
+> >  	  If unsure, say Y.
+> >  
+> > +config HW_RANDOM_AIROHA
+> > +	tristate "Airoha True HW Random Number Generator support"
+> > +	depends on ARCH_AIROHA || COMPILE_TEST
+> 
+> > +	default HW_RANDOM
+> This should not be always enabled when HW_RANDOM is enabled. Enabling
+> driver should be a opt-in.
 
-ODP is a lot simpler than NVMe for P2P actually :(
+Was following the pattern with other HW_RANDOM config. Ok will drop.
 
+-- 
+	Ansuel
 
