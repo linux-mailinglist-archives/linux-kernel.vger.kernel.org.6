@@ -1,186 +1,111 @@
-Return-Path: <linux-kernel+bounces-369760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC789A223E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:30:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E8F9A2247
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D29B2B25A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165021C21228
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF71E1DB548;
-	Thu, 17 Oct 2024 12:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059A81DD535;
+	Thu, 17 Oct 2024 12:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IqpeNyfx"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPi2UEvM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C770F1D45F2
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6340A1D45F2;
+	Thu, 17 Oct 2024 12:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729168251; cv=none; b=fdH/E67MrI++2RmPDIKf6FZGTR3bo1HhF8ObXE7G6mLQnY2V5S7Dywa1nxGPPg6dghpi63VNsHt2zrKaLwvVXQJCHwiKVl+oiq1X7hgKIoqgfbpOiqOetfkLjf1f1ihmg8Ha+Qq1i0OBUC0bSwjMHvBwpzVO6WBW+C4dmDpF0Tk=
+	t=1729168363; cv=none; b=e8qf5e5oR2EHuiwz63IB5XVvz2q3NU1Km18u3EXCbHOyo5biFFKoq2ctE/c/twYP3EZXETZxrmniLjrgVLyIUtPq5brANyau8TplKrXc2jsiDhpKtrPMZ9tMHK5LKOEeIRNnIXhoIpO0RT5qezUiZH4dAWLGRHtI9zA3HqJmrDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729168251; c=relaxed/simple;
-	bh=UdvLwSkfZ9p4NNUx5rMxw9zV2Cpa0aatuHLhwHXEqEk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TVljx7y5BZN3furoYqe2IFo7WVVBUkSQjpFSY9NWF6bURu3rIK/5IoZChMjGOMFfTmE8dUn6N0KNjrEeI/RLTgzLHyrKvGR04oQFLW/Xuf8JrWAjS5HxN6chE5I0YRQ1QOWT07OlPEGon5JMx/jwdb2hasWQmHwkGBfFQD8w7hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IqpeNyfx; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so574468f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729168246; x=1729773046; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XhzanmcrrqCmOUOIjhfdf9j/E7IJw7OdqnOHDW8wxMs=;
-        b=IqpeNyfxRtMhIzdPH2q2t5JOhzMRuW3kmxF5Ak6Etu9alY7lWxrCcoJA2RgfN9Df2N
-         kBynfyCbzdG4Di9B2h26qjowzWfNmmdWye1sxmJsLNQ6W+bBv0HF2PmmGLor+0mNOIhU
-         VTXEpHqHaMhP3TplgosnlZp291+0g/Zzp7zXI+dtnsNZhul4kl41EgWBMBVnIbxrZTAK
-         g15lUrqVnvSFMjMGWhLOGzCBA24mcZ4nXaHaabpPkl1lzqlIkyVDvqFfSthnPK490TKR
-         dRROfj5geevZFtA+dY1tkPDUA13B04Frf1mYQl5nmEiqX4kMIADXYGvo4dXjpU7fcFwJ
-         MxWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729168246; x=1729773046;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XhzanmcrrqCmOUOIjhfdf9j/E7IJw7OdqnOHDW8wxMs=;
-        b=xMQr1PXuDRfCcXoUfJo0vC8UM3UOgjpRk333/24L8jkgt/wGtbjWJBzd4UaCsaL2nX
-         EGyE94DyMKiATNF3+ejQ1Qoov6nlZtO51u5gId4eLOM37cHKf4gFGcA0CWBCCoo6CysH
-         Nr4OkQXSVklpnqbq43fTH5D5LaOQz2FRinzcu7JOcER5NEGvhI5bW6cpxLrScL9Q6mid
-         6bZd5BrwdfW7OTD/ExCZePw2oHRWaaUA+cDfIWbRPRoIKpx+3GMMsiWNphwdAfeKU9nv
-         vtrH+IsVlxGGM8Vr9AnUssHbyyLkuSWdIvgfHWroxxbn3dWYOv4h0iv5tLhByCpbhIj+
-         C8DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjbljL5NVzczKtEWIBQ1EH1zL00aDGzyxCkitAi8I9odT4upL3GxlTLYeC8q1oXhTVatNraA9Ct4FkBug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTgxejcI/8FANUtHfvg49H4QKtz7+BRDVWgru3dLXkVCQoyEl2
-	ZVbJif210KHQBqI+aYLxBP3x1G6YThawaBb0Qv+ii29/FHIGeXTxaXc1/rcUpAg=
-X-Google-Smtp-Source: AGHT+IHl2iz81YfEltEl94AbYNgHsNH8XtOiMOH9EiputxO8ytXKdqEJeRa3kLv9+oRtfO52o+RAqw==
-X-Received: by 2002:a05:6000:1104:b0:37c:d1bc:2666 with SMTP id ffacd0b85a97d-37d5fe954e9mr11651391f8f.4.1729168245926;
-        Thu, 17 Oct 2024 05:30:45 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3831:fc61:16eb:d0df])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc11ff7sm7105638f8f.92.2024.10.17.05.30.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 05:30:45 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: ftgpio010: shrink code
-Date: Thu, 17 Oct 2024 14:30:44 +0200
-Message-ID: <20241017123044.75531-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729168363; c=relaxed/simple;
+	bh=MmyhBPsP7B+6alUpYyICBc30T8TUU8WROQq2/A+3FNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7X+Zf26Nr/p+dLk+qUbZaIo/k2/TQUqLkYidr+z7po7hlNM4FtXBXibvWUwqwIV2VI6snQaGO28ZDEcvCIFrJ7IYoRKHB8us+2BQ1zQOdNlIiIUbhaTGApnEJlo3Q5Tw3LvFxSdEhP8rHQM5cCMO7cL7nSXg3H2fL0POC3bB4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPi2UEvM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43EB1C4CEC3;
+	Thu, 17 Oct 2024 12:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729168363;
+	bh=MmyhBPsP7B+6alUpYyICBc30T8TUU8WROQq2/A+3FNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YPi2UEvMqb0/ynZUDJIHHD9oAbOmsP4g5VFQslhCB2IXZKdlhN18w4et2EpEFqUhF
+	 4peAeTabZNv3/VD7yiojC+RgVoHOwvqnt3oa7FTQjP6kC+9HWAa4QLTloUYgGljSWP
+	 OCFYKmE7FOYD28OWoI4O2V3yBgfK7axRKzqzvYnR+68PGCKSYbfwAN5TGHzJj9cRTn
+	 PxvjSpudzfuFNHPozL1UVSFCrqZPOpHP/hDWJQZ5ZO4hvcTUc9d4dfAEBJo7AYBJ56
+	 eIs8ODhNAQamkfIlScKD5upub//qchQs/boqoYExo6Oiwo8Uwzs0hQjk5RCvDNjfJE
+	 FDsjTZkhzcMEw==
+Date: Thu, 17 Oct 2024 18:02:39 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: kishon@kernel.org, krzysztof.kozlowski@linaro.org,
+	alim.akhtar@samsung.com, tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org, kernel-team@android.com,
+	willmcvicker@google.com, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] phy: Add UFS phy hibernate modes
+Message-ID: <ZxED5/HdlBLWqesE@vaman>
+References: <20241002201555.3332138-1-peter.griffin@linaro.org>
+ <20241002201555.3332138-2-peter.griffin@linaro.org>
+ <ZwN/d8l7Mk6x2GHP@vaman>
+ <CADrjBPrRrwEyg0p+6kfVoZGbPdvW6K3fa9paUoLyg_bHHScgHg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADrjBPrRrwEyg0p+6kfVoZGbPdvW6K3fa9paUoLyg_bHHScgHg@mail.gmail.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 08-10-24, 11:30, Peter Griffin wrote:
 
-Use devm_clk_get_enabled() to drop the goto label from probe() and the
-entire remove() callback. Drop platform_set_drvdata() as it's no longer
-needed. Drop log noise on success.
+> > > +     PHY_MODE_DP,
+> > > +     PHY_MODE_UFS_HIBERN8_ENTER,
+> > > +     PHY_MODE_UFS_HIBERN8_EXIT,
+> >
+> > I am not sure I like this. why should this be the model? Phy drivers
+> > should listen to pm events and handle this in pm_suspend/resume calls,
+> > why do we need this special mode here...
+> 
+> There are a couple of reasons I added it here:
+> 
+> 1) Whilst link hibern8 mode can be used as part of runtime PM and
+> system PM, it is also used outside of those contexts by ufshcd.c. The
+> host controller can enable UFSHCD_CAP_HIBERN8_WITH_CLK_GATING (which
+> will be the case for gs101 / Pixel 6) and the UFS clocks are gated and
+> link put into hibern8 mode for periods of inactivity. When that
+> happens the rest of the system isn't entering any sort of sleep state.
+> 
+> 2) From looking at the existing code upstream ufs-qcom.c and
+> phy-qcom-qmp-ufs.c look to have similar requirements in that it needs
+> to program a set of specific register values depending on the UFS
+> gear. To achieve that they added PHY_MODE_UFS_HS_B and
+> PHY_MODE_UFS_HS_A modes here and then use phy_set_mode_ext() API in
+> ufs_qcom_power_up_sequence() to signal to the phy driver the UFS gear,
+> which is then used to choose which set of values to program to the
+> phy.
+> 
+> The two new UFS phy modes added here for hibern8 are for a very
+> similar purpose (to choose a bunch of register values to program), so
+> I considered it consistent with what was already being done upstream
+> to signal between UFS host drivers and UFS phy drivers. Arguably I
+> guess we could have one "mode" PHY_MODE_UFS_HIBERN8 and use the
+> submode parameter to indicate whether we are entering (1) or exiting
+> (0) from it. I wasn't really sure what the rules/guidelines for the
+> submode parameter were though.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-ftgpio010.c | 45 +++++++----------------------------
- 1 file changed, 9 insertions(+), 36 deletions(-)
+Yes but not exactly. The HIBERN8_ENTER|EXIT sound like PM events rather
+than a PHY mode. If this is resultant from inactivity, then we should
+hook this up to runtime pm ?
 
-diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
-index 5b07749dbdff..c35eaa2851d8 100644
---- a/drivers/gpio/gpio-ftgpio010.c
-+++ b/drivers/gpio/gpio-ftgpio010.c
-@@ -253,18 +253,13 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
- 
--	g->clk = devm_clk_get(dev, NULL);
--	if (!IS_ERR(g->clk)) {
--		ret = clk_prepare_enable(g->clk);
--		if (ret)
--			return ret;
--	} else if (PTR_ERR(g->clk) == -EPROBE_DEFER) {
-+	g->clk = devm_clk_get_enabled(dev, NULL);
-+	if (IS_ERR(g->clk) && PTR_ERR(g->clk) == -EPROBE_DEFER)
- 		/*
- 		 * Percolate deferrals, for anything else,
- 		 * just live without the clocking.
- 		 */
- 		return PTR_ERR(g->clk);
--	}
- 
- 	ret = bgpio_init(&g->gc, dev, 4,
- 			 g->base + GPIO_DATA_IN,
-@@ -273,10 +268,9 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 			 g->base + GPIO_DIR,
- 			 NULL,
- 			 0);
--	if (ret) {
--		dev_err(dev, "unable to init generic GPIO\n");
--		goto dis_clk;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "unable to init generic GPIO\n");
-+
- 	g->gc.label = dev_name(dev);
- 	g->gc.base = -1;
- 	g->gc.parent = dev;
-@@ -293,10 +287,9 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 	girq->num_parents = 1;
- 	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
- 				     GFP_KERNEL);
--	if (!girq->parents) {
--		ret = -ENOMEM;
--		goto dis_clk;
--	}
-+	if (!girq->parents)
-+		return -ENOMEM;
-+
- 	girq->default_type = IRQ_TYPE_NONE;
- 	girq->handler = handle_bad_irq;
- 	girq->parents[0] = irq;
-@@ -309,26 +302,7 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 	/* Clear any use of debounce */
- 	writel(0x0, g->base + GPIO_DEBOUNCE_EN);
- 
--	ret = devm_gpiochip_add_data(dev, &g->gc, g);
--	if (ret)
--		goto dis_clk;
--
--	platform_set_drvdata(pdev, g);
--	dev_info(dev, "FTGPIO010 @%p registered\n", g->base);
--
--	return 0;
--
--dis_clk:
--	clk_disable_unprepare(g->clk);
--
--	return ret;
--}
--
--static void ftgpio_gpio_remove(struct platform_device *pdev)
--{
--	struct ftgpio_gpio *g = platform_get_drvdata(pdev);
--
--	clk_disable_unprepare(g->clk);
-+	return devm_gpiochip_add_data(dev, &g->gc, g);
- }
- 
- static const struct of_device_id ftgpio_gpio_of_match[] = {
-@@ -350,6 +324,5 @@ static struct platform_driver ftgpio_gpio_driver = {
- 		.of_match_table = ftgpio_gpio_of_match,
- 	},
- 	.probe = ftgpio_gpio_probe,
--	.remove = ftgpio_gpio_remove,
- };
- builtin_platform_driver(ftgpio_gpio_driver);
 -- 
-2.43.0
-
+~Vinod
 
