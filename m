@@ -1,150 +1,156 @@
-Return-Path: <linux-kernel+bounces-369200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B019A1A3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2562B9A1A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2751F26D35
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:48:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF931F2522B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBCC178CF6;
-	Thu, 17 Oct 2024 05:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VneZFFVR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ECD16DEB4;
+	Thu, 17 Oct 2024 05:50:04 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2126.outbound.protection.partner.outlook.cn [139.219.146.126])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B664213633F
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729144087; cv=none; b=duVRBCceUrWP9CPmTcvHf62QwQl3BecFkPoTpLBY1jFf6MjnwOuEm8Dw5hsRqvBl8jQQoflPY3UUDe3RhqAqTBYzqqoY727NLEM1YaePA2dPGyI/PZdnVJwZPwY+sHO64OIJ3rSm0V2K7xLZZ0TEj3RmSvACJPc/sKB25LOEWs8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729144087; c=relaxed/simple;
-	bh=I7O2eNRZGkkiLwxy4ytjDtPMAWCrSov9b2lDhnRfiD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tvwyl5+Ur1Ra1F2jgC86L4qbDUe5F78V0X/Gr5fXVcrCBda5SikpJMiRXL8zwyafBLPb2GkuHyAdhhb3ca1dKZ252wqU+y7hNssTQWarGbmgVm0Xqzuqa3PAZSKleMibPDbcf2jClMoK5zDA25zOLLhzLerMHK17tDbP300yNNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VneZFFVR; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729144083; x=1760680083;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=I7O2eNRZGkkiLwxy4ytjDtPMAWCrSov9b2lDhnRfiD4=;
-  b=VneZFFVRse4hy7I6GwfhqdKc4GHqKfqVB1p19/XhZeCWmGGXqoUu9+Mm
-   FsAxemeOD5pi2riKvmdiQ5VJPNUkNTeC1SgDGIUtPUtTS6+zHJgN8MfMz
-   kNa/QWq+eBy9JduqJwmg7Z1V7rSSZZoa07DqEtVcJHKqtrX9fje5HzVRO
-   E0pWKxbgIVdTYxDvmXasJS9wplhFFYgk2iqX/zByEVztIW94vziPz79JP
-   G/bvnBv+5OhyAmiAVhd3v/zPRCHrselsi6yxUwf+/NLAJX/i0oBS5RmNs
-   KvXvWCBznHmjYSPZsJQlksYUBVwyoT2uWFkGRDHfYfs7LU9vSIPdO/Eko
-   w==;
-X-CSE-ConnectionGUID: MfYF1Rr8Ria2ZgsLBE8x9A==
-X-CSE-MsgGUID: shG4mooYTZKYcmcxbcikeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="40011756"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="40011756"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 22:47:59 -0700
-X-CSE-ConnectionGUID: JGpB/aceQyOjjOSy4n0F/Q==
-X-CSE-MsgGUID: 52UCTdBDROib4nhGt9Yx4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="78473234"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 16 Oct 2024 22:47:58 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1JMa-000LmH-0V;
-	Thu, 17 Oct 2024 05:47:56 +0000
-Date: Thu, 17 Oct 2024 13:46:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241015-2 5/18]
- include/linux/build_bug.h:78:41: error: static assertion failed: "struct
- member likely outside of struct_group_tagged()"
-Message-ID: <202410171308.VlSadp8v-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAEF1388;
+	Thu, 17 Oct 2024 05:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.126
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729144204; cv=fail; b=AHZP7ag9WCtfeJHiVn2ysVSLGaxonJUqrADkf0jtsKEGA58t6HgTD9/uek/Y45c/p3diB2xXuy3iCW5Z627z1WvaTO1rRXdy/rzK04EezhnRzqU88Pl6BkonmHpRtiF4U8DRqzYjGOW5Pr2ZBUQm+r/vXn34hPPiqeE7/nBreRc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729144204; c=relaxed/simple;
+	bh=61UnXYdKhoXtrfRJvUckrBT4nw7iBxV3lYqvsE1aSdg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=mUWdAUr0iT4Ip5KQI42lVa3SfIw2N6LH5+4IU3gt4UTj9biRs6ZkZbcYjA+rXyOg+t8Lok6E/Cr2gzAiptx3/uEk+GkHDTHqAzu+ZzoZTUd2HdENhr6kA63cjE2MzhqK1HeMhzA3pfnU9V+Hpy4Tui5QWDj218ymQO83t0HzKyQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FcecbOkJawIYe/ZUr5yPCm8I+yEKW4nVvymuSaSqDkzVWip1Z8zp7v6irdAQBfvoB2+A8/9nGhL7PkljRM9tzIMD0+v+rngPOvozxnBYl9V2ISPYQfjTht5cr211+fm49pTaIpdZn9zQdMd86nqTTgOMaggqGbu4YqshhsENG/RYngPWbP0Elsua0ca9qMjUNgDlRb3kTKZK3vTqul87JO3OrXWE+n2toc9M325FzYvJ49l13Ix6Y138UhoQ13etb0QJF3gWeUWGQZsClfghwGM30tlSa46rfzDxxCuMF5KiIQDxm1RVdanLm7YhYq5nbQLEm1C3BYGitIDMtxtXEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=61UnXYdKhoXtrfRJvUckrBT4nw7iBxV3lYqvsE1aSdg=;
+ b=kUBeMM/HmOw55o3udueRJPUTNLFoJ7Xr3/0OmTgbhb6pxw9CvyEtwTdnMyIrjgAMpJP0elD1B/FZXk9vTlBTZrRxSi5xxYg7m0OiZonozzMeEtSSTR+yOrhmOkiPcPtsQc9r1GAqjA0C5Xnwb7RZNaB294VicWGIw11ALv6ILpqZNpBHTosOIKjM8nw/n0TVo7dJiYV+dbQfl/Zwf9zugxE9WT/qoLgQMrnT1CFFNK1EilxFQKM6oXkwg+NcUBcbMz38G6np7+0oR6Pd0fxr0ZWUO68lgylw+nZU0a6GNNdEeusttQRLkYZISloNNGL+pPNaBkie3oI1qfytV5r58A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::9) by ZQ0PR01MB1143.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1c::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Thu, 17 Oct
+ 2024 05:49:56 +0000
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ ([fe80::64c5:50d8:4f2c:59aa]) by
+ ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%5])
+ with mapi id 15.20.8069.016; Thu, 17 Oct 2024 05:49:56 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>
+CC: Conor Dooley <conor.dooley@microchip.com>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, Aurelien Jarno <aurelien@aurel32.net>, Emil Renner
+ Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject:
+ =?gb2312?B?u9i4tDogW1BBVENIIHYxXSByaXNjdjogZHRzOiBzdGFyZml2ZTogZGlzYWJs?=
+ =?gb2312?Q?e_unused_csi/camss_nodes?=
+Thread-Index: AQHbIAerDCyRJ1WJg0mmvQeCtV44grKKI3cggABMoZA=
+Date: Thu, 17 Oct 2024 05:49:56 +0000
+Message-ID:
+ <ZQ0PR01MB130298186E09DA19CC1F7736F2472@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1143:EE_
+x-ms-office365-filtering-correlation-id: c72a0a12-766e-4dfc-6e12-08dcee6f8769
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|41320700013|366016|38070700018;
+x-microsoft-antispam-message-info:
+ rAG/GuyFxBLHk8gMSgQ31671qZU2LdX/PF0AQSpfO7keQmOPmw+QC5ZDuedxbfxg91oL3JQ3nCy+MruwFg2K9O7sQix04t6qqQ8CDZYFIY3+f17JIWMuaRW7FFdZ3xzfb3MCC0z2NrWnHHqkslOHldVlAzQjEQ7RKSy/v9nDJ2hz2Lg3Nmq/UMCU9M18QN2XZwbR9Dy/JnD39hWXXwa6MBfpTFmjBWOyWJrxSLmrTMGgexxRDIyyHwI5lnJbN79BjFYrHPoijPBTLCaYaNU1QnNvfF3iPiQEi0zb1UWryzXjtk/A9aObC7LLseskwmpwnzpCU+P55K6xaVPCnVTs01kkzqanjMNlASBFdOPFTIv9OdYF7cO7I0C/5uWDxQQFMv5TyA17It46kWa81mI0UiJL7wy9pFrl6gEyrlwbu3qgFYPSWm/UmMHQkzgXRUJjvZ5Vg4vUwiW+bsohYG9Rc9wHE2VRHSAWRKQ7+caCdciCcCoA/v2Jt02PArN3z20kuGvDH1QJySUP7hVhGEROt2GblXdqHN+IiUA5g7bOYvAsO/bm3d1Xa+H1T888fNg7JmhKONwNC5UhDvQ/ojVlxtXaj3d/brHzjpvXhUXXwommh9CrGXSYjLFM5LQPde9J
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(41320700013)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?ZXF0Y1RGa2l1cXJLTTNhVmg4cG1HN1BGWUc5V29BNmM4OTdSd1Nzc3RxaW15?=
+ =?gb2312?B?czZFQ2xZcEZ1QzdOWmxaOCtEVnBLVkN1NCtISHFvaVo2R0ZVc0xiZUFNaDVW?=
+ =?gb2312?B?NnlpZmJ4SFdnSTV5N0xjaGdNamh3S1JLU0lpRXVvUmpHajg2TE9IUE5UZFFv?=
+ =?gb2312?B?Z0xOQjdadEFwTS9yaGx3VU9MQk1jU1ZqckROdzVSUHJsNWdFZzNhYmpLajNY?=
+ =?gb2312?B?UC9QcUdkekdMVExUY25nUkpDSWpVeU1DNTJEUzhtRVJvbVdIcisxVTdYSXho?=
+ =?gb2312?B?cm4yaTBBTU95ZmtRK05kYnBrOEFuS2d0dDJSa1NpNDJneEVFeWhFQ2pjZFRY?=
+ =?gb2312?B?UHVXVmU2UFp6cW5rajdTSCtzeE9vc1ZDSXY4MWYyMXBQSDZ2Z1BDc3lNSjYr?=
+ =?gb2312?B?QmlUZmRsb3JOK0ZTMWlVYnFRRysxd0dVWVhSV1h4Tmk3WjZRYTVsSjJkY0k3?=
+ =?gb2312?B?SjRhN0VsZmM5cEJraUY3VjcrUy9rUHRVQUNWZ1cwbzFkcmI3T1FabGNlRFNa?=
+ =?gb2312?B?ck1BcCtWWDhway8wTGp0UmdQY0VWbzF3Zm5tRDRFRGlDRERGQkZ6SnVDSE9G?=
+ =?gb2312?B?dWtEVFoxb2czVDVYL0Q1R3pwNnVzaHVvbndENFJDYm9mZ29sYkI3TXVhUXRy?=
+ =?gb2312?B?YkdDT2NlOTZzYm96RyttUVpRS0ord1pvOUZuUWF2NnlKOGlqdzg1QUQwRVFY?=
+ =?gb2312?B?VktrNVBBdURJTWpKcW5iQXBBckpleWduUmprM3lnSUpTSnZkTjBPckhNcFRC?=
+ =?gb2312?B?a216eUhmRnAwb1lUcGppSXhlYmp6SkxQdG9OY2pSRGNFOUpnbThwbHAyZE94?=
+ =?gb2312?B?eUI4eGV5bzhoaHZ6VnJZNndIUFhEZFFYQmIxVnJURkNMdEtvL0pZNkFGMEx2?=
+ =?gb2312?B?djFGQTlDNGFEL2JLOUl1U0hqb3F1ZG1pTmhvcktYYUtJS1AxOFdLSUNhdEda?=
+ =?gb2312?B?ZkVxc3dBUWIvV3p6d1h6V2wyck9ZU0ZhU3V2MjFoM1NTUndYYzk5MnVxVnN2?=
+ =?gb2312?B?TUtBMjBQak9XVDRGa3l5YVBxWjZuM0FtMmZZdGg4ZWtVTys4WUd2VHAvMFlx?=
+ =?gb2312?B?cGdHTTlIRjlicjFDM29ZeG91Zk9SVFFsOG9wM1JwS25Ub3VQSUNtMGZqSDBC?=
+ =?gb2312?B?ajc0aDd0cDdQR3hjZTM1ZzFXVGxWZ0xJeFJXMGk4ZTBEZVRuM09OSFljalpG?=
+ =?gb2312?B?QXdHN284UUxLZjgwZm9WRXNKQUhKNXROeXZHcFFackkzNCtQOEgzYzFOUG54?=
+ =?gb2312?B?ZEE5WkhHaVNDS3VHV0NOTFRFNS9hZTc4YkpnN3JiZFJyczZMMVR2dVQ1aWk1?=
+ =?gb2312?B?cUp5NzZOd2YzbVZpd01ESDZCQ0U1THlQZUpPWlcrbGdweTBhTWdrbVJsaEho?=
+ =?gb2312?B?UFhwRnBoYWtyMTIvbWhjRkZoeWhVRjVBODhqbEkxdlRDaDkzbVJaV1A5NWk5?=
+ =?gb2312?B?bEJkZGhkbDUxaHdlYVg5S2NVeTcvekdWYmxIdlRXLzNPVGtJeklsU2RkRUJh?=
+ =?gb2312?B?d0xhZnRJWmVkTnZKcjVqR2MwZ0RZQ3BxWlhkTGpZd3p4ZjkwUGtqTmVYaUpa?=
+ =?gb2312?B?NkF4eTJNVXhMcEcxNWFJTG0xeWczSzB1SnVOK0IrclB6eGRqR1Y1eEdqMWZl?=
+ =?gb2312?B?RFJEUjBxOUI1QVV1KzZkUnR3YjEyRkdHOG8xMWN0ZW9yaVp5bjJyODFQeXJW?=
+ =?gb2312?B?RHhLL1ZlMDdLSnlpQm5WRTlraDlKTUZKcnZSUjNEenp5N0ZDWWNoeDhBTWZ0?=
+ =?gb2312?B?U25zekRVa2hBWk8wKzZLYlVVMHlBdzhkSm9UdmF6QmFDUjZxbER0Mm1OZU9X?=
+ =?gb2312?B?NlZPVHZzVnlrWjNkUys2SER5aDdKM3VuZlhJVnBJVFpmTk16YllxR2YzOTNP?=
+ =?gb2312?B?R1I0Y1F2clZoRkxydUJURG9Rai9MOGx0Wng3aEs5SmZvbGphZUhLcDVvVm1s?=
+ =?gb2312?B?ZEdMZHR5MFNFNmJlL0ZGVm5oNlEyTkxYc1d4QVdScEdLbzRnajlZZm9Cb1Nz?=
+ =?gb2312?B?Nk5aR3Q3OFNpOXJ5ZldVRGZwZTNsUHJDUXozeUVuZ1BpU2Z6ZU9oenRJNkxW?=
+ =?gb2312?B?aUxVdGQ3UzF1akhBVTNRTTNXLytMSFZnbzJoUTgxQyt6ckJFT3dZYUdoZjdj?=
+ =?gb2312?B?TDlkMGxkZE1TUCtOOHEzMzh4MjJxbUFUaGtUZENVUElQN3lKV04rNklqdEd1?=
+ =?gb2312?B?SUE9PQ==?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: c72a0a12-766e-4dfc-6e12-08dcee6f8769
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2024 05:49:56.0190
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dE0fm7YPRvNcwEO1rxZsUl9cm0cWtPLTZHPBhf4+amwJhWz+Nymh+ovs8pG1gg3T47tm8J3NPC+0H7EnI4a7XJrtO2WF1M9lYkhgeK25kDl4q5Qg+CdugAxGCnZNz6iL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1143
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241015-2
-head:   41fe8a04339b3781dca5a8ba323ba77022acc441
-commit: 0057fa5576ef7f95f1e88ff06bc3445a15ba5338 [5/18] RDMA/uverbs: Use static_assert() to check struct sizes
-config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20241017/202410171308.VlSadp8v-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410171308.VlSadp8v-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410171308.VlSadp8v-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/module.h:12,
-                    from drivers/infiniband/core/nldev.c:33:
->> include/linux/build_bug.h:78:41: error: static assertion failed: "struct member likely outside of struct_group_tagged()"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   include/rdma/uverbs_ioctl.h:643:1: note: in expansion of macro 'static_assert'
-     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-         | ^~~~~~~~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +78 include/linux/build_bug.h
-
-bc6245e5efd70c Ian Abbott       2017-07-10  60  
-6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
-6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
-6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
-6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
-6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
-6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
-6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
-6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
-6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
-6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
-6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
-6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
-6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
-6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-6bab69c65013be Rasmus Villemoes 2019-03-07  79  
-07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
-
-:::::: The code at line 78 was first introduced by commit
-:::::: 6bab69c65013bed5fce9f101a64a84d0385b3946 build_bug.h: add wrapper for _Static_assert
-
-:::::: TO: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+SGksIENvbm9yLA0KDQo+IEhpLCBDb25vcg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoLg0K
+PiANCj4gPiBGcm9tOiBDb25vciBEb29sZXkgPGNvbm9yLmRvb2xleUBtaWNyb2NoaXAuY29tPg0K
+PiA+DQo+ID4gQXVyZWxpZW4gcmVwb3J0ZWQgcHJvYmUgZmFpbHVyZXMgZHVlIHRvIHRoZSBjc2kg
+bm9kZSBiZWluZyBlbmFibGVkDQo+ID4gd2l0aG91dCBoYXZpbmcgYSBjYW1lcmEgYXR0YWNoZWQg
+dG8gaXQuIEEgY2FtZXJhIHdhcyBpbiB0aGUgaW5pdGlhbA0KPiA+IHN1Ym1pc3Npb25zLCBidXQg
+d2FzIHJlbW92ZWQgZnJvbSB0aGUgZHRzLCBhcyBpdCBoYWQgbm90IGFjdHVhbGx5IGJlZW4NCj4g
+PiBwcmVzZW50IG9uIHRoZSBib2FyZCwgYnV0IHdhcyBmcm9tIGFuIGFkZG9uIGJvYXJkIHVzZWQg
+YnkgdGhlIGRldmVsb3Blcg0KPiBvZiB0aGUgcmVsZXZhbnQgZHJpdmVycy4NCj4gPiBUaGUgbm9u
+LWNhbWVyYSBwaXBlbGluZSBub2RlcyB3ZXJlIG5vdCBkaXNhYmxlZCB3aGVuIHRoaXMgaGFwcGVu
+ZWQgYW5kDQo+ID4gdGhlIHByb2JlIGZhaWx1cmVzIGFyZSBwcm9ibGVtYXRpYyBmb3IgRGViaWFu
+LiBEaXNhYmxlIHRoZW0uDQo+ID4NCj4gPiBDQzogc3RhYmxlQHZnZXIua2VybmVsLm9yZw0KPiA+
+IEZpeGVzOiAyOGVjYWFhNWFmMTkyICgicmlzY3Y6IGR0czogc3RhcmZpdmU6IGpoNzExMDogQWRk
+IGNhbWVyYQ0KPiA+IHN1YnN5c3RlbQ0KPiA+IG5vZGVzIikNCj4gDQo+IEhlcmUgeW91IHdyaXRl
+IGl0IGluIDEzIGNoYXJhY3RlcnMsIHNob3VsZCBiZSAiRml4ZXM6IDI4ZWNhYWE1YWYxOSAuLi4i
+DQo+IA0KDQpBZnRlciBmaXhpbmcgdGhpczoNClJldmlld2VkLWJ5OiBDaGFuZ2h1YW5nIExpYW5n
+IDxjaGFuZ2h1YW5nLmxpYW5nQHN0YXJmaXZldGVjaC5jb20+DQoNCg0K
 
