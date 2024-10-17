@@ -1,54 +1,83 @@
-Return-Path: <linux-kernel+bounces-369922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173099A2485
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:07:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295379A2488
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A73B253BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:06:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45DC28A38D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A771DE4C4;
-	Thu, 17 Oct 2024 14:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3021DE4E5;
+	Thu, 17 Oct 2024 14:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o4pO3N10"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="juMTZLP0"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291731DE3C4;
-	Thu, 17 Oct 2024 14:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098261DE2D7;
+	Thu, 17 Oct 2024 14:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729174007; cv=none; b=ZCae5K6ZIsObCm8JcEvMb319qOCEMv52f/3Ciazwr45Mtrvb7APvUvp24244L0ALVQvHL5XvEi1Lg51IEP4DL7ifE/d/pkhLfEkzKJUi2BUNBx4cXKMbGEWeL9yfw+1DdkuALkAgJ6QBqwRrZOyqRSNh6ChvnSUm2zqWVqSt67I=
+	t=1729174008; cv=none; b=qKdZ2Avwp7X5D9Gd5p+D+Sbol+Gxut/08BGqvOvebW/kmzoiVNkqzDdbFu/gT0L65IJiq9ysGmIzI1BKgOU+MlzRXct1ewRKhi71ftIioT59i/xllXc1QxPr9wOUV3KJQ7atqWIS+xx8KCX4ztJRPh8SxD6NTFwIfA02hCGrDSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729174007; c=relaxed/simple;
-	bh=hZCoXQsVjJgdy7BIPN0W3U1cPX3GJPfRlR7ZS+yt2tA=;
+	s=arc-20240116; t=1729174008; c=relaxed/simple;
+	bh=WX1AoS3d5If/wj1YU6S8DtGrKd076jNdTMfVeiprVUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RoU7fHylWxF7zd94OeL4Kaj9ue3QodoF64k90q+b3olyrLZQmjwsgc+xk23VEQX+4f5bkLzlLTP3HBSzT8JXqA+z3NwjNVPSdeHDH/r7c34odo1GzrIunqmNUljj0IAB/ceOteQcFlhV/cIdgqCrFF3uT0XaWFGR1XuxUCWVmWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o4pO3N10; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F02EC4CECD;
-	Thu, 17 Oct 2024 14:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729174006;
-	bh=hZCoXQsVjJgdy7BIPN0W3U1cPX3GJPfRlR7ZS+yt2tA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o4pO3N10VGpb0DEWrd9vOW3mo6KGSnEuioKaCNXorxJX2pKRxVQaSbQBwBuEVGr8l
-	 5Iijk/m/WYoGutti6X3/EOkZpPpl99hYZxcg6meJXKQq5vzofrah2bRFnrPtD1PORY
-	 nTa0r5wa3T2ouwab99aBjkGm4hv3+S8nA9aGvktU=
-Date: Thu, 17 Oct 2024 16:06:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vimal Agrawal <avimalin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, quic_jjohnson@quicinc.com,
-	dan.carpenter@linaro.org, vimal.agrawal@sophos.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] misc: misc_minor_alloc to use ida for all
- dynamic/misc dynamic minors
-Message-ID: <2024101725-opal-quarters-b4b7@gregkh>
-References: <2024101722-uncharted-wages-5759@gregkh>
- <20241017133532.94509-1-vimal.agrawal@sophos.com>
- <2024101715-flounder-delusion-8edb@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZghoP2ANfYvX9MhlgVz5InFXWzBQuG2ajn78LYkUwW968ZCTLwb3YctPkbkzO7lUVt9jrAH/8SuxGnXaEOfuNARcGC0EloQcswlSz/IeqZP2/qgahZaRhjB719FTYleyQkz5WGFrcwJawaqCEu8+UiNOt6BmTr/jJHPNjMj21bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=juMTZLP0; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-208cf673b8dso10705875ad.3;
+        Thu, 17 Oct 2024 07:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729174005; x=1729778805; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6gQdWouXs827SNDWHd0ds2A8+zPo3SHvKW2FhzP8Dss=;
+        b=juMTZLP02edC7yFMl/ZFCCiw0A1k/if9FDx0fzTkhBcq+p2FRh388F3edVDFKbulZO
+         cViWc2uTXkcAkFxDNNSPYZq0llgy4Q+wqbLdMzJZOH7FRCfHN+Rv8ccOHmnc4CO10DXf
+         oTjymzqSTGsEIL0OJKW7RJNfGQoLkg5WnxcdnxO6vq3o5L1MKL33442VfFmB0gldHGjU
+         u0f5YNVSzt/R4PeRzwNXh69X/OhGv2TdmlVkgrbHi/NKo6oaqYcu/xjF86kFN0fKb3dq
+         8gnhPHm6P4J/OAGnFO2e3Uuvk4vv72PpQUHLJOcdXcoAJ3g0v3pNKmRf9GiAqJNrJIwp
+         KgQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729174005; x=1729778805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6gQdWouXs827SNDWHd0ds2A8+zPo3SHvKW2FhzP8Dss=;
+        b=Z++c2lSW9sSX97Yr7BV5OwTmsNPNGiEnSDHgfHg6J6Psny1W9velx2RmrfWAFkxXpi
+         IQZh7hCeQXxlGKBbp1Mh2E45jkpWBmkXyNv+gyz+GGyeJBfGTNkO4zulvkb4vs9U6PBV
+         M9BR4dw8Sr7KIOlTaRATK8fn3mMqdtcvTmJ57LZ4kj85LYjXkK22jK39SuoKxMVb7GHa
+         1sQPkznubjCZJyOcI+jnLFwbSMsvGRIuejMJKMKg1VsN4gatE1hxBnIkZQFrM5x4gxCD
+         L6rRBodqxvOEhf004sakmPiJ34DpQlhnzPgjMb5X16y+uDefw9DUxRfq47Tv+5QMbWp+
+         Ny8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUeeTN3TZe0J8YWpwS6U8Uw0QehdIupSEJJ48IgM7wqqao15WsT4BCzj2R9GzaUeVmZVpZY5r2P@vger.kernel.org, AJvYcCUfCEXcIGeyrdRgMhjYArdaiQRMdKkmjNK4apkB2hUViszAthEi9NOuAmptVeDpG6FF2rxEc+Ji0UcESD8=@vger.kernel.org, AJvYcCUiCRIVWuBN7b2wxW29ue1pDq84aMblM2bLW3YYRxYmjftgP2TzfsapdK1muxJ9w/R7tJFg2688fHzPzA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YznovT8zRGHhBOywjC2sgGK2/ZRH4Gi6e4JGrNBrMoO9qxO0zNt
+	p9RbinNbNQ6JlkJ279bQU9HzkShaVKgT4PytGIIUfQ2CtD7d9b7Adn0RpYWv
+X-Google-Smtp-Source: AGHT+IGSc2kVhRP9r0cXbDlgeaG302x+d6kUWor6x8foYTNrGEaT9uZnOKGyAbkXPfOfqnyPxksO/Q==
+X-Received: by 2002:a17:902:ce8f:b0:20c:9c09:8280 with SMTP id d9443c01a7336-20d27f404admr123437015ad.54.1729174005288;
+        Thu, 17 Oct 2024 07:06:45 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804b2e4sm44933655ad.182.2024.10.17.07.06.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 07:06:44 -0700 (PDT)
+Date: Thu, 17 Oct 2024 07:06:42 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Sven Schnelle <svens@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] PtP driver for s390 clocks
+Message-ID: <ZxEZ8n23MIc0tv5K@hoboy.vegasvil.org>
+References: <20241017060749.3893793-1-svens@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,37 +86,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024101715-flounder-delusion-8edb@gregkh>
+In-Reply-To: <20241017060749.3893793-1-svens@linux.ibm.com>
 
-On Thu, Oct 17, 2024 at 03:39:06PM +0200, Greg KH wrote:
-> On Thu, Oct 17, 2024 at 01:35:32PM +0000, Vimal Agrawal wrote:
-> > misc_minor_alloc was allocating id using ida for minor only in case of
-> > MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
-> > using ida_free causing a mismatch and following warn:
-> > > > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
-> > > > ida_free called for id=127 which is not allocated.
-> > > > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-> > ...
-> > > > [<60941eb4>] ida_free+0x3e0/0x41f
-> > > > [<605ac993>] misc_minor_free+0x3e/0xbc
-> > > > [<605acb82>] misc_deregister+0x171/0x1b3
-> > 
-> > misc_minor_alloc is changed to allocate id from ida for all minors
-> > falling in the range of dynamic/ misc dynamic minors
-> > 
-> > Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
-> > Signed-off-by: Vimal Agrawal <avimalin@gmail.com>
+On Thu, Oct 17, 2024 at 08:07:47AM +0200, Sven Schnelle wrote:
+> Hi,
 > 
-> Sorry, but no, do not hide behind a gmail.com address.  Either fix your
-> corporate email system to be able to send patches out, or use the other
-> method of sending from a different address as documented in the kernel
-> documentation.
-> 
-> As it is, I can't take this, sorry.
+> these patches add support for using the s390 physical and TOD clock as ptp
+> clock. To do so, the first patch adds a clock id to the s390 TOD clock,
+> while the second patch adds the PtP driver itself.
 
-Also, only patch 1/2 showed up, what happened to patch 2/2?
+For the series:
 
-thanks,
-
-greg k-h
+Acked-by: Richard Cochran <richardcochran@gmail.com>
 
