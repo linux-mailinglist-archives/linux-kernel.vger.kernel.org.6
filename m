@@ -1,109 +1,126 @@
-Return-Path: <linux-kernel+bounces-369214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2649A1A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCB69A1A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B26B24C22
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:04:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F2B7B2522F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96304178CF6;
-	Thu, 17 Oct 2024 06:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D09817084F;
+	Thu, 17 Oct 2024 06:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iHBVP/+L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6E59cY7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EB814A0B8;
-	Thu, 17 Oct 2024 06:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69F920E3;
+	Thu, 17 Oct 2024 06:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729145042; cv=none; b=lPjlfBmVuTi0KgSJ1MVRiZ4zpMQwg0Cxi1+/KKwuhMNKKheD1X5IGnPm/T8Rmon+UR3naloO+4eFaUuXlbK90CoA8ak6F8LgxBoF5G2mqCXE5uYaK/IjFYzEbEu6ATaYwVv+yT5OwM7W08I8kLSSi0k0RHlOgNrMS2MjEem4h3Y=
+	t=1729145102; cv=none; b=YjrTctQzX9/JmkwzNxfMEQ9RCFP3sddOHCFQcFdCHRRz7CWpLSVhRw8jPtJLhKA+jBOHdm8Y4eRtQfz4HcdMzto+7RANJ38n1tPocxyWhFLSEBOoJH78G8SEtA1c5bwOMtBpB3nFszV3BJq/fGcpQPYRBgE+7KRchjOF5ZblO9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729145042; c=relaxed/simple;
-	bh=X2+GJH0HSRuttevd7H/GoUXpL9DzliRti/5gVBqOrmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SyGQpgnPHVjmlcTtwI1H1n7fn09pq27ib0JQLtcg+2NM+/9YJiY694JGV1y/e546aVtKt2cU+NEsCRVhU7MuvMt+LYuxECH0f+vLfqFkLBvfsPrwb2tqe774skPCJdAj7rv1gSIGRv25xaGYbyvDG40MpB8t143NF3S0HMwMLYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iHBVP/+L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B107C4CEC3;
-	Thu, 17 Oct 2024 06:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729145041;
-	bh=X2+GJH0HSRuttevd7H/GoUXpL9DzliRti/5gVBqOrmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iHBVP/+L6v//F10lcFEdWtmIk7VaT9jpaMl/sjhNG7bGRxv7jSyy7qgQwZ28o1LZM
-	 A65P5MKddi2jx3K6WTUAlcumnMS2b87yQ6m2hpNBpBynvCxp/cQMtGpW7W1WaHO3jg
-	 gsllQKRbKQEP03AH0CGQkhI43/HOLTqa4Q6QzFyw=
-Date: Thu, 17 Oct 2024 08:03:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org,
-	torvalds@linux-foundation.org, usama.anjum@collabora.com,
-	corbet@lwn.net, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
-	jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, jannh@google.com, sroettger@google.com,
-	pedro.falcato@gmail.com, linux-hardening@vger.kernel.org,
-	willy@infradead.org, deraadt@openbsd.org, surenb@google.com,
-	merimus@google.com, rdunlap@infradead.org
-Subject: Re: [PATCH] munmap sealed memory cause memory to split (bug)
-Message-ID: <2024101722-diligent-baritone-b211@gregkh>
-References: <20241017022627.3112811-1-jeffxu@chromium.org>
+	s=arc-20240116; t=1729145102; c=relaxed/simple;
+	bh=t1HnCydS0atSYI/AGcOQFR+eukRX/dfYhPbg8mMxkOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SecwDDtGsC5uL86q/TlI7E/SbNNjM8Ppe3cfHMCYoqqb7b9m0LkK2nfLGM03aQuGGSSVvlNs7KsFv3bobCwiUiCjMXccJxzVV/ewWHuvLI94QFk3eSnNVQFSbPi4iZscT1xbrCIKipAlcxv6VwRkrdq1aU/r3Uyhi5994DyXLm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6E59cY7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5B4C4CEC3;
+	Thu, 17 Oct 2024 06:05:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729145102;
+	bh=t1HnCydS0atSYI/AGcOQFR+eukRX/dfYhPbg8mMxkOg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=h6E59cY7HtIXuLhOF5NPKvzWs8TyfwU49D0uYv4Uo7rO8jlkoVuzKsXChW5PE559d
+	 B7NJLAFbE3ZwhqAfcYrGvA6yrCHaoTt0x7S6TvT/jmC6JoMK4gwDmo2uYFz24iH+NG
+	 t4kF4L8umcwrQZ4vysQuSkZHsERht0eT+PmHSzT16w5c27WZUUCC7KXGFNliFn4X7w
+	 ICnU+uGc4G/vOIBJJ0NqJeCm+0FMyGNpEtzh8aJxkAeEaUJTVtYLF2ua80ui/ZXcLv
+	 TsS1nX202kpEZkrl+/WxYMWduhHIiQsb7UX6BOJw13tmvbVBoH+ZHutnYjKkyEWmlg
+	 zJsbrPzJbHLVg==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c96df52c52so695164a12.1;
+        Wed, 16 Oct 2024 23:05:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUoz16WgJRi9s0dkISg4+laanzb+T7FGo+nH27Or7fOW9f52idn1Afel2Oy5CjCA2Rnv4VRRVBBVZcsV+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm2qPyaxHsVAtytyHd8L+NzwLty3b9DJuP3zQFNvDxsH3r4fVb
+	82CHgu+WUDoKSbbeuPtuAa3D1VzsltxE1X0TpvjTE50lr4atsoBSsObbqZ5pzhd86i9H9AjcDDD
+	Vbk0A9Fm0qYHkJR5Tb58b0FywaF8=
+X-Google-Smtp-Source: AGHT+IFy9ktPvvSG7d7EbKwJZdWQWk4IaHwQ/GuH/sYXtfkd2At0LwgewwZ53gH+DCidLAld2f1Q0TR2Ufq61untAYA=
+X-Received: by 2002:a05:6402:13c3:b0:5c9:218d:7071 with SMTP id
+ 4fb4d7f45d1cf-5c95ac1776cmr14288236a12.20.1729145100724; Wed, 16 Oct 2024
+ 23:05:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017022627.3112811-1-jeffxu@chromium.org>
+References: <20241008054615.43062-1-yang.li85200@gmail.com> <20241016095626.8162-1-yang.li85200@gmail.com>
+In-Reply-To: <20241016095626.8162-1-yang.li85200@gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 17 Oct 2024 14:04:49 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQ5D8fU9rSs7V28S9c5+ZPuQSJW7inQtoFsM6X6gBgOKg@mail.gmail.com>
+Message-ID: <CAJF2gTQ5D8fU9rSs7V28S9c5+ZPuQSJW7inQtoFsM6X6gBgOKg@mail.gmail.com>
+Subject: Re: [PATCH v2] csky: fix csky_cmpxchg_fixup not working
+To: Yang Li <yang.li85200@gmail.com>
+Cc: linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 02:26:27AM +0000, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@google.com>
-> 
-> It appears there is a regression on the latest mm,
-> when munmap sealed memory, it can cause unexpected VMA split.
-> E.g. repro use this test.
+On Wed, Oct 16, 2024 at 5:56=E2=80=AFPM Yang Li <yang.li85200@gmail.com> wr=
+ote:
+>
+> In the csky_cmpxchg_fixup function, it is incorrect to use the global
+>  variable csky_cmpxchg_stw to determine the address where the exception
+>  occurred.The global variable csky_cmpxchg_stw stores the opcode at the
+>  time of the exception, while &csky_cmpxchg_stw shows the address where
+>  the exception occurred.
+>
+> Signed-off-by: Yang Li <yang.li85200@gmail.com>
 > ---
->  tools/testing/selftests/mm/mseal_test.c | 76 +++++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
-> 
+> V1 -> V2:Eliminate compilation warnings
+>
+>  arch/csky/mm/fault.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/csky/mm/fault.c b/arch/csky/mm/fault.c
+> index a885518ce1dd..5226bc08c336 100644
+> --- a/arch/csky/mm/fault.c
+> +++ b/arch/csky/mm/fault.c
+> @@ -45,8 +45,8 @@ static inline void csky_cmpxchg_fixup(struct pt_regs *r=
+egs)
+>         if (trap_no(regs) !=3D VEC_TLBMODIFIED)
+>                 return;
+>
+> -       if (instruction_pointer(regs) =3D=3D csky_cmpxchg_stw)
+> -               instruction_pointer_set(regs, csky_cmpxchg_ldw);
+> +       if (instruction_pointer(regs) =3D=3D (unsigned long)&csky_cmpxchg=
+_stw)
+> +               instruction_pointer_set(regs, (unsigned long)&csky_cmpxch=
+g_ldw);
+csky_cmpxchg_ldw(stw) is a label symbol, not a variable.
 
-Hi,
+arch/csky/kernel/atomic.S:
+GLOBAL(csky_cmpxchg_ldw)
+GLOBAL(csky_cmpxchg_stw)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Your modification does not affect the ASM output.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+(gdb) p main
+$1 =3D {void (void)} 0x5fa <main>
+(gdb) p &main
+$2 =3D (void (*)(void)) 0x5fa <main>
 
-- Your patch does not have a Signed-off-by: line.  Please read the
-  kernel file, Documentation/process/submitting-patches.rst and resend
-  it after adding that line.  Note, the line needs to be in the body of
-  the email, before the patch, not at the bottom of the patch or in the
-  email signature.
+>         return;
+>  }
+>  #endif
+> --
+> 2.34.1
+>
 
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what a proper
-  Subject: line should look like.
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+--=20
+Best Regards
+ Guo Ren
 
