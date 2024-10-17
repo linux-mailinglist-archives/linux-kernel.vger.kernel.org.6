@@ -1,285 +1,255 @@
-Return-Path: <linux-kernel+bounces-369462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3E79A1D98
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:52:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242579A1D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87DC11C24939
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:52:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B5E8B21AA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D581D61A5;
-	Thu, 17 Oct 2024 08:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B159D1D3185;
+	Thu, 17 Oct 2024 08:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuXI4RuY"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJVwJwQv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861FF1D5AD4;
-	Thu, 17 Oct 2024 08:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F051D154454
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729155125; cv=none; b=QAtnun0cuECk7iPi4RW4e2lflLdhbAfwjjMK3w69F0XC6s/Le5z/N0NZr9K90JMMewzHCGCBViI+JD7tv5LxPkSpmpioBpQzcxP+Cvx4Svb+uMIZkPJ4+FasJDuudyFu7Xr5jmyLCRQ1Hoq2mNWXCN9oVgAqUCbyDGMX8a529Cg=
+	t=1729155243; cv=none; b=eVjhNwSW8uV8YoC1scV5x4Vxdc3pFUo/PuT72Q/8NOBkKDQ00agl3JH9nh2lb0bKZGQGCAgjktEfJK5qfKc9cpNMUUuAt9niOIb0DRKLmnRTVsKePDdU/gL1EPf+kSaoPuGzpUCP2kRPyIKV5ZAdNLIEnXR3niVP1xuLTLHHN6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729155125; c=relaxed/simple;
-	bh=gEvb6Lvc7GI3LGcawTs2HtCBndRHTWo+uYHTSmyA5Ro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CGuc5XoStSy348x1K8TfLftGirL0GjMp1DZmEuvkOa+L015ZFCQ7uE9ZFMsJgL+QRxRR7pmu1CWfg6XjzcCLDORZzwM5mwlOr9GI/p2bDZ4JiPpdcV0fC8yBScmwJE/7rMDGktyENUyUOnZFRenB+Wg/1ZJIAleeUsqOOnySu3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuXI4RuY; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb50e84ec7so6329211fa.1;
-        Thu, 17 Oct 2024 01:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729155120; x=1729759920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RIKQOSn+OzCMfWxjDnYu4Cj5q8Asx6TloHeXxyGjmj8=;
-        b=kuXI4RuYnWOyb6TEdcxEfCpU3dLUdz+dlcX9a1yeB12KNyrL+OdyPIQJ7oUXQKTSJK
-         T+cp4hdWaX78aqC/FO/N1jPBK8Lc3njuAQtQhfOvKhtDhD/XdeL7hDK4F0/MeqL64LhN
-         4UildAcD4xYD1aCluUHWCFe1mkkyJ+CMTaHoTmdENl5Sb10cjfUdLEUWbKT4pl1i9zaB
-         rUmmO+aVwBSyPsOvImxAGLKgz5NsFowxVNO1Nk2fqD/DfwCPbvgecfofoL9JekwWjZOM
-         YeJ92ktmeJNHsjKkpYgDouQF447YUmzHE5mC2WBg7HIO6yO+DTvBs6J0C3/Mc8yToz/o
-         HZZw==
+	s=arc-20240116; t=1729155243; c=relaxed/simple;
+	bh=MVHtnlUWiueQAghNzxxjZf5Gxr1uysJuOix5xjnQHXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RlmBmADeolaoXQaLpFpqvQBusUqxMRu0yv81g8vFUlkCvPHOQjF6rX42nuizwnIZZGO+ZARF3VEMFjR4Z2eNLwyGJ8TXf0Fctz1VhlVXpA1o3xpX6SNyis0P82jUP+zKMRcIewvKbGbB4tPvAqm2EFz63a8sPt8lrmp/HDndPNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJVwJwQv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729155239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RhHvad1LxaNZJ3rIkHXtXZ9pysxt/xOSqmMs4CSuxbU=;
+	b=DJVwJwQvFRPDoMx1ZUkY/6YNhxVt4G08/BA21KyUl8fxyhH/Kt1tPt5X4ua1xwdfPIm4Ph
+	aX9bVqPCHMN9Dx/h9V+9qjorYZNIZYqa482Tf3alpbLMi6Hf8FyQGxGdb+mDt2+bJYYROU
+	b/uDU/UeFfzTgF5iH/jJwUhIFGyLvPI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-374-hmUPQOxNNxuhRhm5ytwnbQ-1; Thu, 17 Oct 2024 04:53:57 -0400
+X-MC-Unique: hmUPQOxNNxuhRhm5ytwnbQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d537292d7so449749f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:53:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729155120; x=1729759920;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RIKQOSn+OzCMfWxjDnYu4Cj5q8Asx6TloHeXxyGjmj8=;
-        b=YBGx3GsoP992sjUWm3gej2Ne6/Bqw/fs2nQx0vo/wijEcB/7ju6w99M0ZWP+EguSoL
-         t+1Oj8luN8iNn2HTzZbfaBbRy5MgqjbVfuVeYUDY+UQe4AyniV398w0t/yc4/7vu+eec
-         ODiy/2nCy0xlGOEGLqQiorzXWQuCHZgDNC52gYr4LTgOqRW0Sy3QEh0nmLoQvutplInF
-         quwMQl0GkP90OkKrc94k2O/JaqMIYLW9CY/E5JkKLaslKHN4uKR+d0t5aruasqChoVjO
-         zlxrMngzWzKBNR1q5jqmBB5LO96i9h7aHacCVKEmslCwr6fcMKECLm4tzjr0jF8JizYP
-         o7uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUemRSw6x42O64kl02N+MOUC/YaGZBa7zO/OTfvX+2aPsGlS3TEXDv/cDoWK6PUcN50dsd/pDWqseOh@vger.kernel.org, AJvYcCUqK53F487c8zCYiDTT90DjO5wAwczqvYKdh5zbrp0+VOrkTHDR3XWWn9tJI0i7MZVzK5kYgjcKzQE=@vger.kernel.org, AJvYcCVPz9kE7SJltIi53xdKLN94pNmCfUrKY8yAiWC6gbsXnLWsdbUZc+5T7dFc/YDLNNIBYTjWGxAHAYQyO2Zf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDG3HHmwb0v4ia7wyPNSkKX1pfu5vNAz0ME9WyDP468RNdgx0w
-	BffLrECt11DvVnBvkd56qZVlBFGd7Xxq0VqGdgV5XqmGdov5HezQ
-X-Google-Smtp-Source: AGHT+IFa05Tw/OxDuv2XAa8AxBAc26dQ4PJSNT2cz40KikvUKyt7MVPDkF5xJw0vAU4W5HtGJocRug==
-X-Received: by 2002:a05:6512:3994:b0:539:f2b9:c4d0 with SMTP id 2adb3069b0e04-53a03f8865amr4887610e87.52.1729155119163;
-        Thu, 17 Oct 2024 01:51:59 -0700 (PDT)
-Received: from zenbook.agu.edu.tr ([95.183.227.32])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29816c24sm267045266b.110.2024.10.17.01.51.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 01:51:58 -0700 (PDT)
-From: Yassine Oudjana <yassine.oudjana@gmail.com>
-X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Fabien Parent <fparent@baylibre.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	Alexandre Bailon <abailon@baylibre.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Eugen Hristev <eugen.hristev@collabora.com>,
-	MandyJH Liu <mandyjh.liu@mediatek.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
-	Yassine Oudjana <yassine.oudjana@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 2/2] soc: mediatek: pm-domains: Add support for MT6735
-Date: Thu, 17 Oct 2024 11:51:35 +0300
-Message-ID: <20241017085136.68053-3-y.oudjana@protonmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241017085136.68053-1-y.oudjana@protonmail.com>
-References: <20241017085136.68053-1-y.oudjana@protonmail.com>
+        d=1e100.net; s=20230601; t=1729155236; x=1729760036;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RhHvad1LxaNZJ3rIkHXtXZ9pysxt/xOSqmMs4CSuxbU=;
+        b=KZfbb5aNvQtLOsbS+QaseMAjrVHAFD4uej//I/xiIkRsW3WF5sMNzeHOo4KAkaD0Mm
+         hP4rQkqZ7+7cSF/dIkB2PUciDAw2UZwqCIsAsETOAFAgIGpAsFsJ6DhSKYGDWvnG3ZjL
+         xNU9ATHV18+7rWdpN5q7FC6wNiOSsiD0/AHmJBzCejoGSceV1kNCBgz45WAopjAAKBzR
+         mluHu/iTtPZPQRPM6myF+csG0xyL1tYKWcZEaj1ZK4OQcFlJ2qcLZiiPv/imrYC5h1bw
+         KlVKTmW+y4vBggT859zNQRoNE9vy9Xv2UO7u/bCPD+G5IrJ+PA4k28bvWrswcJ/OF1dS
+         mY8A==
+X-Gm-Message-State: AOJu0YzBgGLoWmA5LeY/zaaAFlZwmGqqjFskkV/QQsmm11MEgCzvT1sg
+	Jkktc0U+XZYmMBPj5MT1rAONS3BrjMWxzoXgTGdyMGKIC1T+V1TKHWlMVIBkXkCNhPBRSZfmF7H
+	ZJGEoS3awOvplp+qekJhweVZDTJPR93NQlfl367/qRCifd3Vmgyad0g7hVdIrHA==
+X-Received: by 2002:a5d:448e:0:b0:37c:d1fb:82f4 with SMTP id ffacd0b85a97d-37d600d2fe3mr16330274f8f.36.1729155236163;
+        Thu, 17 Oct 2024 01:53:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvHn0Vofr0WyvBEJ1HbH94rbq4bVzIkK3s886iKqHFHVP5aW+CDmGv8c5YWjjkE0+qmegO7A==
+X-Received: by 2002:a5d:448e:0:b0:37c:d1fb:82f4 with SMTP id ffacd0b85a97d-37d600d2fe3mr16330255f8f.36.1729155235749;
+        Thu, 17 Oct 2024 01:53:55 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa87b5dsm6554293f8f.40.2024.10.17.01.53.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 01:53:55 -0700 (PDT)
+Message-ID: <9a2232d6-74c4-426f-bfab-668c5c5ad143@redhat.com>
+Date: Thu, 17 Oct 2024 10:53:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/gup: stop leaking pinned pages in low memory
+ conditions
+From: David Hildenbrand <david@redhat.com>
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+ Alistair Popple <apopple@nvidia.com>, Shigeru Yoshida <syoshida@redhat.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Minchan Kim <minchan@kernel.org>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>
+References: <20241016202242.456953-1-jhubbard@nvidia.com>
+ <1f8dcae1-416e-43cf-8dda-5440e0db4c00@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1f8dcae1-416e-43cf-8dda-5440e0db4c00@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Yassine Oudjana <y.oudjana@protonmail.com>
+On 17.10.24 10:51, David Hildenbrand wrote:
+> On 16.10.24 22:22, John Hubbard wrote:
+>> If a driver tries to call any of the pin_user_pages*(FOLL_LONGTERM)
+>> family of functions, and requests "too many" pages, then the call will
+>> erroneously leave pages pinned. This is visible in user space as an
+>> actual memory leak.
+>>
+>> Repro is trivial: just make enough pin_user_pages(FOLL_LONGTERM) calls
+>> to exhaust memory.
+>>
+>> The root cause of the problem is this sequence, within
+>> __gup_longterm_locked():
+>>
+>>       __get_user_pages_locked()
+>>       rc = check_and_migrate_movable_pages()
+>>
+>> ...which gets retried in a loop. The loop error handling is incomplete,
+>> clearly due to a somewhat unusual and complicated tri-state error API.
+>> But anyway, if -ENOMEM, or in fact, any unexpected error is returned
+>> from check_and_migrate_movable_pages(), then __gup_longterm_locked()
+>> happily returns the error, while leaving the pages pinned.
+>>
+>> In the failed case, which is an app that requests (via a device driver)
+>> 30720000000 bytes to be pinned, and then exits, I see this:
+>>
+>>       $ grep foll /proc/vmstat
+>>           nr_foll_pin_acquired 7502048
+>>           nr_foll_pin_released 2048
+>>
+>> And after applying this patch, it returns to balanced pins:
+>>
+>>       $ grep foll /proc/vmstat
+>>           nr_foll_pin_acquired 7502048
+>>           nr_foll_pin_released 7502048
+>>
+>> Fix this by unpinning the pages that __get_user_pages_locked() has
+>> pinned, in such error cases.
+>>
+>> Fixes: 24a95998e9ba ("mm/gup.c: simplify and fix check_and_migrate_movable_pages() return codes")
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Shigeru Yoshida <syoshida@redhat.com>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Jason Gunthorpe <jgg@nvidia.com>
+>> Cc: Minchan Kim <minchan@kernel.org>
+>> Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>> ---
+>>    mm/gup.c | 11 +++++++++++
+>>    1 file changed, 11 insertions(+)
+>>
+>> diff --git a/mm/gup.c b/mm/gup.c
+>> index a82890b46a36..24acf53c8294 100644
+>> --- a/mm/gup.c
+>> +++ b/mm/gup.c
+>> @@ -2492,6 +2492,17 @@ static long __gup_longterm_locked(struct mm_struct *mm,
+>>    
+>>    		/* FOLL_LONGTERM implies FOLL_PIN */
+>>    		rc = check_and_migrate_movable_pages(nr_pinned_pages, pages);
+>> +
+>> +		/*
+>> +		 * The __get_user_pages_locked() call happens before we know
+>> +		 * that whether it's possible to successfully complete the whole
+>> +		 * operation. To compensate for this, if we get an unexpected
+>> +		 * error (such as -ENOMEM) then we must unpin everything, before
+>> +		 * erroring out.
+>> +		 */
+>> +		if (rc != -EAGAIN && rc != 0)
+>> +			unpin_user_pages(pages, nr_pinned_pages);
+>> +
+>>    	} while (rc == -EAGAIN);
+> 
+> Wouldn't it be cleaner to simply have here after the loop (possibly even
+> after the memalloc_pin_restore())
+> 
+> if (rc)
+> 	unpin_user_pages(pages, nr_pinned_pages);
+> 
+> But maybe I am missing something.
 
-Add support for SCPSYS power domains of MT6735. All non-CPU power domains
-are added except for MD2 (C2K modem), which is left out due to issues
-with powering it on.
+And staring at memfd_pin_folios(), don't we have the same issue there if
+check_and_migrate_movable_folios() fails?
 
-Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/pmdomain/mediatek/mt6735-pm-domains.h | 96 +++++++++++++++++++
- drivers/pmdomain/mediatek/mtk-pm-domains.c    |  5 +
- drivers/pmdomain/mediatek/mtk-pm-domains.h    |  2 +
- include/linux/soc/mediatek/infracfg.h         |  5 +
- 4 files changed, 108 insertions(+)
- create mode 100644 drivers/pmdomain/mediatek/mt6735-pm-domains.h
 
-diff --git a/drivers/pmdomain/mediatek/mt6735-pm-domains.h b/drivers/pmdomain/mediatek/mt6735-pm-domains.h
-new file mode 100644
-index 0000000000000..71896be68e227
---- /dev/null
-+++ b/drivers/pmdomain/mediatek/mt6735-pm-domains.h
-@@ -0,0 +1,96 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef __SOC_MEDIATEK_MT6735_PM_DOMAINS_H
-+#define __SOC_MEDIATEK_MT6735_PM_DOMAINS_H
-+
-+#include "mtk-pm-domains.h"
-+#include <dt-bindings/power/mediatek,mt6735-power-controller.h>
-+
-+/*
-+ * MT6735 power domain support
-+ */
-+
-+static const struct scpsys_domain_data scpsys_domain_data_mt6735[] = {
-+	[MT6735_POWER_DOMAIN_MD1] = {
-+		.name = "md1",
-+		.sta_mask = PWR_STATUS_MD1,
-+		.ctl_offs = SPM_MD1_PWR_CON,
-+		.pwr_sta_offs = SPM_PWR_STATUS,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = 0,
-+		.bp_cfg = {
-+			BUS_PROT_INFRA_UPDATE_TOPAXI(MT6735_TOP_AXI_PROT_EN_MD1),
-+		},
-+	},
-+	[MT6735_POWER_DOMAIN_CONN] = {
-+		.name = "conn",
-+		.sta_mask = PWR_STATUS_CONN,
-+		.ctl_offs = SPM_CONN_PWR_CON,
-+		.pwr_sta_offs = SPM_PWR_STATUS,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = 0,
-+		.bp_cfg = {
-+			BUS_PROT_INFRA_UPDATE_TOPAXI(MT6735_TOP_AXI_PROT_EN_CONN),
-+		},
-+	},
-+	[MT6735_POWER_DOMAIN_DIS] = {
-+		.name = "dis",
-+		.sta_mask = PWR_STATUS_DISP,
-+		.ctl_offs = SPM_DIS_PWR_CON,
-+		.pwr_sta_offs = SPM_PWR_STATUS,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.bp_cfg = {
-+			BUS_PROT_INFRA_UPDATE_TOPAXI(MT8173_TOP_AXI_PROT_EN_MM_M0),
-+		},
-+	},
-+	[MT6735_POWER_DOMAIN_MFG] = {
-+		.name = "mfg",
-+		.sta_mask = PWR_STATUS_MFG,
-+		.ctl_offs = SPM_MFG_PWR_CON,
-+		.pwr_sta_offs = SPM_PWR_STATUS,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.bp_cfg = {
-+			BUS_PROT_INFRA_UPDATE_TOPAXI(MT8173_TOP_AXI_PROT_EN_MFG_S),
-+		},
-+	},
-+	[MT6735_POWER_DOMAIN_ISP] = {
-+		.name = "isp",
-+		.sta_mask = PWR_STATUS_ISP,
-+		.ctl_offs = SPM_ISP_PWR_CON,
-+		.pwr_sta_offs = SPM_PWR_STATUS,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+	},
-+	[MT6735_POWER_DOMAIN_VDE] = {
-+		.name = "vde",
-+		.sta_mask = PWR_STATUS_VDEC,
-+		.ctl_offs = SPM_VDE_PWR_CON,
-+		.pwr_sta_offs = SPM_PWR_STATUS,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT6735_POWER_DOMAIN_VEN] = {
-+		.name = "ven",
-+		.sta_mask = BIT(8),
-+		.ctl_offs = SPM_VEN_PWR_CON,
-+		.pwr_sta_offs = SPM_PWR_STATUS,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+	},
-+};
-+
-+static const struct scpsys_soc_data mt6735_scpsys_data = {
-+	.domains_data = scpsys_domain_data_mt6735,
-+	.num_domains = ARRAY_SIZE(scpsys_domain_data_mt6735),
-+};
-+
-+#endif /* __SOC_MEDIATEK_MT6735_PM_DOMAINS_H */
-diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.c b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-index 3580913f25d39..b866b006af699 100644
---- a/drivers/pmdomain/mediatek/mtk-pm-domains.c
-+++ b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-@@ -16,6 +16,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/soc/mediatek/infracfg.h>
- 
-+#include "mt6735-pm-domains.h"
- #include "mt6795-pm-domains.h"
- #include "mt8167-pm-domains.h"
- #include "mt8173-pm-domains.h"
-@@ -608,6 +609,10 @@ static void scpsys_domain_cleanup(struct scpsys *scpsys)
- }
- 
- static const struct of_device_id scpsys_of_match[] = {
-+	{
-+		.compatible = "mediatek,mt6735-power-controller",
-+		.data = &mt6735_scpsys_data,
-+	},
- 	{
- 		.compatible = "mediatek,mt6795-power-controller",
- 		.data = &mt6795_scpsys_data,
-diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.h b/drivers/pmdomain/mediatek/mtk-pm-domains.h
-index aaba5e6b0536f..2ac96804b9853 100644
---- a/drivers/pmdomain/mediatek/mtk-pm-domains.h
-+++ b/drivers/pmdomain/mediatek/mtk-pm-domains.h
-@@ -21,6 +21,7 @@
- #define SPM_ISP_PWR_CON			0x0238
- #define SPM_DIS_PWR_CON			0x023c
- #define SPM_CONN_PWR_CON		0x0280
-+#define SPM_MD1_PWR_CON			0x0284
- #define SPM_VEN2_PWR_CON		0x0298
- #define SPM_AUDIO_PWR_CON		0x029c
- #define SPM_MFG_2D_PWR_CON		0x02c0
-@@ -30,6 +31,7 @@
- #define SPM_PWR_STATUS			0x060c
- #define SPM_PWR_STATUS_2ND		0x0610
- 
-+#define PWR_STATUS_MD1			BIT(0)
- #define PWR_STATUS_CONN			BIT(1)
- #define PWR_STATUS_DISP			BIT(3)
- #define PWR_STATUS_MFG			BIT(4)
-diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-index 6c6cccc848f48..9956e18c5ffa9 100644
---- a/include/linux/soc/mediatek/infracfg.h
-+++ b/include/linux/soc/mediatek/infracfg.h
-@@ -434,6 +434,11 @@
- #define MT7622_TOP_AXI_PROT_EN_WB		(BIT(2) | BIT(6) | \
- 						 BIT(7) | BIT(8))
- 
-+#define MT6735_TOP_AXI_PROT_EN_CONN		(BIT(2) | BIT(8))
-+#define MT6735_TOP_AXI_PROT_EN_MD1		(BIT(24) | BIT(25) | \
-+						 BIT(26) | BIT(27) | \
-+						 BIT(28))
-+
- #define INFRA_TOPAXI_PROTECTEN			0x0220
- #define INFRA_TOPAXI_PROTECTSTA1		0x0228
- #define INFRA_TOPAXI_PROTECTEN_SET		0x0260
+diff --git a/mm/gup.c b/mm/gup.c
+index a82890b46a36..f79974d38608 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -3708,12 +3708,10 @@ long memfd_pin_folios(struct file *memfd, loff_t start, loff_t end,
+                 ret = check_and_migrate_movable_folios(nr_folios, folios);
+         } while (ret == -EAGAIN);
+  
+-       memalloc_pin_restore(flags);
+-       return ret ? ret : nr_folios;
+  err:
+         memalloc_pin_restore(flags);
+-       unpin_folios(folios, nr_folios);
+-
+-       return ret;
++       if (ret)
++               unpin_folios(folios, nr_folios);
++       return ret ? ret : nr_folios;
+  }
+  EXPORT_SYMBOL_GPL(memfd_pin_folios);
+
+
 -- 
-2.47.0
+Cheers,
+
+David / dhildenb
 
 
