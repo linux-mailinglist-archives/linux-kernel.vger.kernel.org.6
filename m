@@ -1,182 +1,398 @@
-Return-Path: <linux-kernel+bounces-370038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF079A2647
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 381829A2674
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A1B1F21DFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD1D1F23692
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE2A1DED46;
-	Thu, 17 Oct 2024 15:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AA51DED4D;
+	Thu, 17 Oct 2024 15:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kN4rlgt7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ibn5A+bP"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B3F111AD;
-	Thu, 17 Oct 2024 15:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2C4111AD;
+	Thu, 17 Oct 2024 15:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729178219; cv=none; b=p/ahMqgBKSsQEScMRmUoghz157dx06EP/jkUT/U2U1FgFlvoLz9kW2+VSOreoAfalyfeQCVzvXFUtsJW016mkfuaApfgHMkU7jeTnpIrDQCfYIHMfROZoxufntXoutzAjw/dPZOD/5RmpPKkZ0qOdhLyzDeaaBSCNQYbV5GuczA=
+	t=1729178585; cv=none; b=ECyUCPs9s016JP5/fhFuSL0aTi94ATsCvoADI/gljSS+pm2NCM6KDe2cf5XWvCahf/dezUSMRHh3dMyu5eH89svdm9h81eE5R1yovPboopAOaGW+iRgw0GDlEBL38vCPyF92bByLNAOKb21Q3agLhTkNQUU5NksUXogLDo/Uwss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729178219; c=relaxed/simple;
-	bh=gd20f80yTEmwu2bmB1AQUde4L01fBQKHuNSU5h8gwbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=puIoyI5ncecFhnCibvuE0I3i63lGpPaP1H2++4VICyQn5LBsz6N4rdfFVlZJWhJy7fcRF0jNfy59WnqrRyG4GN1TPymUAlqmuzo9r8z1arteDm7aP0VMIGkQfZPOtkgU3peHNue2kuxGYsQ9nvrLOc9cuJQstopD8JuBkg64OX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kN4rlgt7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729178215;
-	bh=gd20f80yTEmwu2bmB1AQUde4L01fBQKHuNSU5h8gwbM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kN4rlgt7X0KurSY+FfEzXB95IEYtLCwFJrQI2P4UxQM7h2nJp4cVsxAd7GYJCaJlI
-	 VTsknOmbJhQ+ff7UC1hegJ/2sWRdGOpbfXkfnSm0Xjqb2GmF+uBfrAQ65IRe922k5K
-	 sBo7bgxehaQOK+WehqVl4aFsPMFUEYxpEtmELuv9t7g+gsZW5OSz4NCWYtShuzDTpI
-	 kdF+U3Kc78DisiKd62YueytiQ3WsO1o+NKStOIUcvDNr15OTDDXlB+//ogPkgEtPoi
-	 0i2b5A7eQ48Lk1oukRT00GUa1tJZhstNboFN8VCSfsTbns6ZUY5yWkvsXOcIMHrnTK
-	 21CcnXXnqE53g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9A8D917E3621;
-	Thu, 17 Oct 2024 17:16:54 +0200 (CEST)
-Message-ID: <ccacc376-8494-4941-a4b8-dbb4d09914ee@collabora.com>
-Date: Thu, 17 Oct 2024 17:16:54 +0200
+	s=arc-20240116; t=1729178585; c=relaxed/simple;
+	bh=AXi5igniqIyyxheg5Sm6cUTvM1gIi0arptG6VmBgsSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IOlTyjeFCFZgyh2hTwwloNe2SLhKqwWb0nogHaMChf63p4LSTtITuV5KHxBT2YrBjYYPwyoG9Kt1V0pw4g2LGYMl/Njh4EfjJsJPGvaRPZFm7S+pk+imlgcas8bfoKxlHbiHGQdE81tbZa30mEBu3avFuNB2TvJ9cwnC+dzvfKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ibn5A+bP; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20caea61132so9238375ad.2;
+        Thu, 17 Oct 2024 08:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729178583; x=1729783383; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Y6FZkjAZKlqXCaat751gW9GqgonUGNmyuVtlRf/h9Hw=;
+        b=Ibn5A+bPVED3s5v6bojOeiRj5W9mkjCzvHUcQ9MRDGGVfFzvp1AwWSxUt41RWdrKwR
+         3Hx6s//VgY2xGOG6g81Hj3TkIG5WpX3SmGsZ9OhFmDS/Mw3CELZlc3RSbMo8Zrpj9/o0
+         Hn69FvUAdItGPzG37Gy16y/455Qos7YIHR6L0jk/bGLbfKsXiFs4L4fxuOqiu+1ijqFn
+         MLQcQOO1cGA+GbPmsyg60qgn1J8ivBLyPcY26UBY0JugN/fLjIcZw4K/2vRnOgzHPkDe
+         TqaASWaNk9uEG7hSC+NYBZ+cF4bJwHZqRStw84NPunLeZm1TPnfKa4OWASXuCUA4iy8G
+         MG7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729178583; x=1729783383;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y6FZkjAZKlqXCaat751gW9GqgonUGNmyuVtlRf/h9Hw=;
+        b=YULlULmh+8ykbofkpniZD7L2WHd914ngIdZ/BERqgilGyB8GxjYYUfDFe0Cxeappwj
+         a33Lc7RhbiUS+D1d78Uy23smAiuGD9VvlngdtMBnO6Vm55N/ZswWZZzgQ7wlB079bcm9
+         ov49Jjp3G/ZHZFiISs72lp107abqlKlLE3MwqSbC7MzCVwixgWV2MOPVn+O9ul4zPHfx
+         VADMhkn9WnnCVF7iiX/uasNJLJWQZI1tmJ2MzSLcOGQRUc7sUt498ktCXOTqSLhtMGQw
+         8AuEzxZ7sSn49HjSrbZDSK8xMgJTnEbL6HKksOs92Te1aTETVyZQF4BYKDUQOjhQQhIp
+         rP5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUsVWJVaugfUB0nXBf1gcZwMoL1rB5jsICJNSRXnrL7OqulbI2CWT9IsuogMVDEpui8xGhOuXGT@vger.kernel.org, AJvYcCXt/xdg8ztn3nUyKunrFqBbNh3bZW3I5cDKpAKll4MySv6Zz0uadzTXhDKyt4GjcC/5ATNVQV1ZuKSzDy4=@vger.kernel.org, AJvYcCXzljt/1Gk//7S7od1UKrO+dyJ0y6xv7UzrH9uETIQ5UY958zJi6gPQLfq+oGLgYUHS1eX4DzbyeDtxQREa1CoW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVfsX6+f4vUamJ1ZKayhFR5qNr0nmZRHBZ06rImpLeOofiy1bV
+	mQsjJj2WD5HfNdej769glF7tMuasycaeucdAFGMTUT/Pzv2pSok=
+X-Google-Smtp-Source: AGHT+IExXHPKnYSDWMEgRJP20/f6vWMT7kFHZNvMTyCGgqUUivo4QAww7v47Uv3ylRvVv7SEOiRVFw==
+X-Received: by 2002:a17:902:e5c7:b0:20c:7796:5e47 with SMTP id d9443c01a7336-20cbb1a94f3mr355593165ad.4.1729178583110;
+        Thu, 17 Oct 2024 08:23:03 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d180361f0sm45666805ad.181.2024.10.17.08.23.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 08:23:02 -0700 (PDT)
+Date: Thu, 17 Oct 2024 08:23:01 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
+Cc: davem@davemloft.net, Liam.Howlett@oracle.com, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, jiri@resnulli.us, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, akpm@linux-foundation.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, peili.io@oracle.com
+Subject: Re: [PATCH net-next v3 1/3] connector/cn_proc: Add hash table for
+ threads
+Message-ID: <ZxEr1TOg4ddoAm7y@mini-arch>
+References: <20241016220634.1469153-1-anjali.k.kulkarni@oracle.com>
+ <20241016220634.1469153-2-anjali.k.kulkarni@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] watchdog: mtk_wdt: Add support for MT6735 WDT
-To: Guenter Roeck <linux@roeck-us.net>, yassine.oudjana@gmail.com
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Yassine Oudjana <y.oudjana@protonmail.com>, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20230302124015.75546-1-y.oudjana@protonmail.com>
- <20230302124015.75546-3-y.oudjana@protonmail.com>
- <0398e95e-dbb8-2e41-7b36-12e36b8729f0@collabora.com>
- <f9b09f59-a222-4b75-a6ef-c7fb7c2cff9e@gmail.com>
- <9bd327fb-5f67-453d-947d-4742134b32b1@collabora.com>
- <WOMHLS.HLNVQWWVER5T1@gmail.com>
- <4e3545ce-5740-48b6-8c10-666548d31908@roeck-us.net>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <4e3545ce-5740-48b6-8c10-666548d31908@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241016220634.1469153-2-anjali.k.kulkarni@oracle.com>
 
-Il 17/10/24 16:09, Guenter Roeck ha scritto:
-> On 10/16/24 23:43, yassine.oudjana@gmail.com wrote:
-> ...
->>>>
->>>> Say I don't want to use the watchdog (which I don't, all I need from TOPRGU is 
->>>> the resets, I don't care about the watchdog). Not starting the watchdog means 
->>>> I can't reset the system because all mtk_wdt_restart will do is make TOPRGU 
->>>> send me an IRQ that I have no use for.
->>>
->>> If you don't want to use the watchdog, then you don't need to care about bark
->>> interrupts and you don't need any mtk_wdt_restart() functionality at all :-)
->>
->> I need mtk_wdt_restart to restart my system. I shouldn't need to take off my 
->> phone's back cover and remove the battery every time :)
->>
->>>
->> I think what Guenter said makes sense. We should make sure the watchdog is 
->> started when calling mtk_wdt_restart or at least configured in such a way that we 
->> are sure it will issue a system reset.
->>
+On 10/16, Anjali Kulkarni wrote:
+> Add a new type PROC_CN_MCAST_NOTIFY to proc connector API, which allows a
+> thread to notify the kernel that is going to exit with a non-zero exit
+> code and specify the exit code in it. When thread exits in the kernel,
+> it will send this exit code as a proc filter notification to any
+> listening process.
+> Exiting thread can call this either when it wants to call pthread_exit()
+> with non-zero value or from signal handler.
 > 
-> It is more than that. There is no limitation in the watchdog API that says
-> "you must only use the watchdog kernel driver to reset the system if the
-> watchdog has been activated from userspace". Such a limitation would be
-> completely arbitrary and not make any sense. It is perfectly fine to enable
-> the watchdog from the restart callback if needed. Actually, all restart
-> handlers in watchdog drivers have to do that if they indeed use a watchdog
-> to reset the system.
+> Add a new file cn_hash.c which implements a hash table storing the exit
+> codes of abnormally exiting threads, received by the system call above.
+> The key used for the hash table is the pid of the thread, so when the
+> thread actually exits, we lookup it's pid in the hash table and retrieve
+> the exit code sent by user. If the exit code in struct task is 0, we
+> then replace it with the user supplied non-zero exit code.
 > 
-> Actually, I am not entirely sure I understand what we are arguing about.
+> cn_hash.c implements the hash table add, delete, lookup operations.
+> mutex_lock() and mutex_unlock() operations are used to safeguard the
+> integrity of the hash table while adding or deleting elements.
+> connector.c has the API calls, called from cn_proc.c, as well as calls
+> to allocate, initialize and free the hash table.
 > 
+> Add a new flag in PF_* flags of task_struct - EXIT_NOTIFY. This flag is
+> set when user sends the exit code via PROC_CN_MCAST_NOTIFY. While
+> exiting, this flag is checked and the hash table add or delete calls
+> are only made if this flag is set.
+> 
+> A refcount field hrefcnt is added in struct cn_hash_dev, to keep track
+> of number of threads which have added an entry in hash table. Before
+> freeing the struct cn_hash_dev, this value must be 0.
+> This refcnt check is added in case CONFIG_CONNECTOR is compiled as a
+> module. In that case, when unloading the module, we need to make sure
+> no hash entries are still present in the hdev table.
+> 
+> Copy the task's name (task->comm) into the exit event notification.
+> This will allow applications to filter on the name further using
+> userspace filtering like ebpf.
+> 
+> Signed-off-by: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
+> ---
+>  drivers/connector/Makefile    |   2 +-
+>  drivers/connector/cn_hash.c   | 181 ++++++++++++++++++++++++++++++++++
+>  drivers/connector/cn_proc.c   |  62 +++++++++++-
+>  drivers/connector/connector.c |  63 +++++++++++-
+>  include/linux/connector.h     |  31 ++++++
+>  include/linux/sched.h         |   2 +-
+>  include/uapi/linux/cn_proc.h  |   5 +-
+>  7 files changed, 338 insertions(+), 8 deletions(-)
+>  create mode 100644 drivers/connector/cn_hash.c
+> 
+> diff --git a/drivers/connector/Makefile b/drivers/connector/Makefile
+> index 1bf67d3df97d..cb1dcdf067ad 100644
+> --- a/drivers/connector/Makefile
+> +++ b/drivers/connector/Makefile
+> @@ -2,4 +2,4 @@
+>  obj-$(CONFIG_CONNECTOR)		+= cn.o
+>  obj-$(CONFIG_PROC_EVENTS)	+= cn_proc.o
+>  
+> -cn-y				+= cn_queue.o connector.o
+> +cn-y				+= cn_hash.o cn_queue.o connector.o
+> diff --git a/drivers/connector/cn_hash.c b/drivers/connector/cn_hash.c
+> new file mode 100644
+> index 000000000000..a079e9bcea6d
+> --- /dev/null
+> +++ b/drivers/connector/cn_hash.c
+> @@ -0,0 +1,181 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Author: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
+> + *
+> + * Copyright (c) 2024 Oracle and/or its affiliates.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/connector.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pid_namespace.h>
+> +
+> +#include <linux/cn_proc.h>
+> +
+> +struct cn_hash_dev *cn_hash_alloc_dev(const char *name)
+> +{
+> +	struct cn_hash_dev *hdev;
+> +
+> +	hdev = kzalloc(sizeof(*hdev), GFP_KERNEL);
+> +	if (!hdev)
+> +		return NULL;
+> +
+> +	snprintf(hdev->name, sizeof(hdev->name), "%s", name);
+> +	atomic_set(&hdev->hrefcnt, 0);
+> +	mutex_init(&hdev->uexit_hash_lock);
+> +	hash_init(hdev->uexit_pid_htable);
+> +	return hdev;
+> +}
+> +
+> +void cn_hash_free_dev(struct cn_hash_dev *hdev)
+> +{
+> +	struct uexit_pid_hnode *hnode;
+> +	struct hlist_node *tmp;
+> +	int bucket;
+> +
+> +	pr_debug("%s: Freeing entire hdev %p\n", __func__, hdev);
+> +
+> +	mutex_lock(&hdev->uexit_hash_lock);
+> +	hash_for_each_safe(hdev->uexit_pid_htable, bucket, tmp,
+> +			hnode, uexit_pid_hlist) {
+> +		hash_del(&hnode->uexit_pid_hlist);
+> +		pr_debug("%s: Freeing node for pid %d\n",
+> +				__func__, hnode->pid);
+> +		kfree(hnode);
+> +	}
+> +
+> +	mutex_unlock(&hdev->uexit_hash_lock);
+> +	mutex_destroy(&hdev->uexit_hash_lock);
+> +
+> +	/*
+> +	 * This refcnt check is added in case CONFIG_CONNECTOR is
+> +	 * compiled with =m as a module. In that case, when unloading
+> +	 * the module, we need to make sure no hash entries are still
+> +	 * present in the hdev table.
+> +	 */
+> +	while (atomic_read(&hdev->hrefcnt)) {
+> +		pr_info("Waiting for %s to become free: refcnt=%d\n",
+> +				hdev->name, atomic_read(&hdev->hrefcnt));
+> +		msleep(1000);
+> +	}
+> +
+> +	kfree(hdev);
+> +	hdev = NULL;
+> +}
+> +
+> +static struct uexit_pid_hnode *cn_hash_alloc_elem(__u32 uexit_code, pid_t pid)
+> +{
+> +	struct uexit_pid_hnode *elem;
+> +
+> +	elem = kzalloc(sizeof(*elem), GFP_KERNEL);
+> +	if (!elem)
+> +		return NULL;
+> +
+> +	INIT_HLIST_NODE(&elem->uexit_pid_hlist);
+> +	elem->uexit_code = uexit_code;
+> +	elem->pid = pid;
+> +	return elem;
+> +}
+> +
+> +static inline void cn_hash_free_elem(struct uexit_pid_hnode *elem)
+> +{
+> +	kfree(elem);
+> +}
+> +
+> +int cn_hash_add_elem(struct cn_hash_dev *hdev, __u32 uexit_code, pid_t pid)
+> +{
+> +	struct uexit_pid_hnode *elem, *hnode;
+> +
+> +	elem = cn_hash_alloc_elem(uexit_code, pid);
+> +	if (!elem) {
+> +		pr_err("%s: cn_hash_alloc_elem() returned NULL pid %d\n",
+> +				__func__, pid);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	mutex_lock(&hdev->uexit_hash_lock);
+> +	/*
+> +	 * Check if an entry for the same pid already exists
+> +	 */
+> +	hash_for_each_possible(hdev->uexit_pid_htable,
+> +				hnode, uexit_pid_hlist, pid) {
+> +		if (hnode->pid == pid) {
+> +			mutex_unlock(&hdev->uexit_hash_lock);
+> +			cn_hash_free_elem(elem);
+> +			pr_debug("%s: pid %d already exists in hash table\n",
+> +				__func__, pid);
+> +			return -EEXIST;
+> +		}
+> +	}
+> +
+> +	hash_add(hdev->uexit_pid_htable, &elem->uexit_pid_hlist, pid);
+> +	mutex_unlock(&hdev->uexit_hash_lock);
+> +
+> +	atomic_inc(&hdev->hrefcnt);
+> +
+> +	pr_debug("%s: After hash_add of pid %d elem %p hrefcnt %d\n",
+> +			__func__, pid, elem, atomic_read(&hdev->hrefcnt));
+> +	return 0;
+> +}
+> +
+> +int cn_hash_del_get_exval(struct cn_hash_dev *hdev, pid_t pid)
+> +{
+> +	struct uexit_pid_hnode *hnode;
+> +	struct hlist_node *tmp;
+> +	int excde;
+> +
+> +	mutex_lock(&hdev->uexit_hash_lock);
+> +	hash_for_each_possible_safe(hdev->uexit_pid_htable,
+> +				hnode, tmp, uexit_pid_hlist, pid) {
+> +		if (hnode->pid == pid) {
+> +			excde = hnode->uexit_code;
+> +			hash_del(&hnode->uexit_pid_hlist);
+> +			mutex_unlock(&hdev->uexit_hash_lock);
+> +			kfree(hnode);
+> +			atomic_dec(&hdev->hrefcnt);
+> +			pr_debug("%s: After hash_del of pid %d, found exit code %u hrefcnt %d\n",
+> +					__func__, pid, excde,
+> +					atomic_read(&hdev->hrefcnt));
+> +			return excde;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&hdev->uexit_hash_lock);
+> +	pr_err("%s: pid %d not found in hash table\n",
+> +			__func__, pid);
+> +	return -EINVAL;
+> +}
+> +
+> +int cn_hash_get_exval(struct cn_hash_dev *hdev, pid_t pid)
+> +{
+> +	struct uexit_pid_hnode *hnode;
+> +	__u32 excde;
+> +
+> +	mutex_lock(&hdev->uexit_hash_lock);
+> +	hash_for_each_possible(hdev->uexit_pid_htable,
+> +				hnode, uexit_pid_hlist, pid) {
+> +		if (hnode->pid == pid) {
+> +			excde = hnode->uexit_code;
+> +			mutex_unlock(&hdev->uexit_hash_lock);
+> +			pr_debug("%s: Found exit code %u for pid %d\n",
+> +					__func__, excde, pid);
+> +			return excde;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&hdev->uexit_hash_lock);
+> +	pr_debug("%s: pid %d not found in hash table\n",
+> +			__func__, pid);
+> +	return -EINVAL;
+> +}
+> +
+> +bool cn_hash_table_empty(struct cn_hash_dev *hdev)
+> +{
+> +	bool is_empty;
+> +
+> +	is_empty = hash_empty(hdev->uexit_pid_htable);
+> +	pr_debug("Hash table is %s\n", (is_empty ? "empty" : "not empty"));
+> +
+> +	return is_empty;
+> +}
+> diff --git a/drivers/connector/cn_proc.c b/drivers/connector/cn_proc.c
+> index 44b19e696176..0632a70a89a0 100644
+> --- a/drivers/connector/cn_proc.c
+> +++ b/drivers/connector/cn_proc.c
+> @@ -69,6 +69,8 @@ static int cn_filter(struct sock *dsk, struct sk_buff *skb, void *data)
+>  	if ((__u32)val == PROC_EVENT_ALL)
+>  		return 0;
+>  
+> +	pr_debug("%s: val %lx, what %x\n", __func__, val, what);
+> +
+>  	/*
+>  	 * Drop packet if we have to report only non-zero exit status
+>  	 * (PROC_EVENT_NONZERO_EXIT) and exit status is 0
+> @@ -326,9 +328,15 @@ void proc_exit_connector(struct task_struct *task)
+>  	struct proc_event *ev;
+>  	struct task_struct *parent;
+>  	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+> +	int uexit_code;
+>  
+> -	if (atomic_read(&proc_event_num_listeners) < 1)
+> +	if (atomic_read(&proc_event_num_listeners) < 1) {
+> +		if (likely(!(task->flags & PF_EXIT_NOTIFY)))
+> +			return;
+> +
+> +		cn_del_get_exval(task->pid);
+>  		return;
+> +	}
+>  
+>  	msg = buffer_to_cn_msg(buffer);
+>  	ev = (struct proc_event *)msg->data;
+> @@ -337,7 +345,26 @@ void proc_exit_connector(struct task_struct *task)
+>  	ev->what = PROC_EVENT_EXIT;
+>  	ev->event_data.exit.process_pid = task->pid;
+>  	ev->event_data.exit.process_tgid = task->tgid;
+> -	ev->event_data.exit.exit_code = task->exit_code;
+> +	if (unlikely(task->flags & PF_EXIT_NOTIFY)) {
+> +		task->flags &= ~PF_EXIT_NOTIFY;
+> +
+> +		uexit_code = cn_del_get_exval(task->pid);
+> +		if (uexit_code <= 0) {
+> +			pr_debug("%s: err %d returning task's exit code %u\n",
+> +					uexit_code, __func__,
+> +					task->exit_code);
 
-Guenter:
-We're arguing about bad configuration and lots of misunderstanding.
+The compiler complains about the format string:
 
-Regarding WDT_MODE_EXRST_EN: when enabled, it enables an external output
-reset signal - meaning that it's going to flip the state of a GPIO to active
-(high in Yassine's case - as that's configured through WDT_MODE BIT(1) and
-his 0x5c means that it's flipped on), signaling to another chip (usually,
-the PMIC...!) that we want to reset the system.
+In file included from ./include/linux/kernel.h:31,
+                 from drivers/connector/cn_proc.c:11:
+drivers/connector/cn_proc.c: In function ‘proc_exit_connector’:
+drivers/connector/cn_proc.c:353:34: error: format ‘%s’ expects argument of type ‘char *’, but argument 3 has type ‘int’ [-Werror=format=]
+  353 |                         pr_debug("%s: err %d returning task's exit code %u\n",
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Explaining what Yassine is doing with this commit: he is flipping the IRQ_EN
-bit [BIT(5)] in WDT_MODE.
-
-When bit 5 *is set*, the watchdog bark event will only raise an interrupt and
-will not reset the system (that's left to be done to an interrupt handler in
-the driver).
-
-When bit 5 *is NOT set*, the watchdog bark event will trigger a CPU reset.
-
-Now, my confusion came from the fact that he's trying to fix a watchdog bark
-event so that it triggers system reset, but I didn't understand the actual
-reason why he wants to do that - which is powering off the system!
-
-
-Yassine:
-
-You don't *have to* rely on the watchdog to reset the system, and if you use
-only that - especially on a smartphone - I'm mostly sure that you'll get
-power leakage.
-
-Before you read the following - please note that this is platform dependent
-so, take this with a grain of salt: it is the PMIC that should get configured
-to take your system down! I have a hunch that this works for you only because
-the platform will reboot, and then the bootloader will decide to turn off the
-system for you by default (that, unless you send a warm reboot indication).
-
-That flow looks more like a hack than a solution for an actual problem.
-
-
-Now - whether you want to fix your platform or not, this is out of the scope
-of this commit, which is - in the end - still fixing something that is wrong.
-
-Effectively, as Guenter said, if the watchdog is never started, the restart
-function is not going to reboot the system, so yes this problem needs to be
-fixed.
-
-There are two problems in this driver that can be solved with:
-  1. Disable IRQ generation when *no irq* is found in DT; and
-  2. Implement support for reboot in mtk_wdt_isr() by reading the WDT_STA
-     register and by then taking appropriate actions.
-
-Of course my preference would be N.2 because:
-  - The pretimeout way is already supported in the driver, and if you specify
-    a pretimeout, then the watchdog will never trigger SYSRST->XRST: this
-    is actually a bug (IMO!!), as declaring an IRQ in DT means losing reset (!);
-  - The WDT_STA register tells you more than just "SW/HW watchdog reset asserted"
-    and that can be extended in the future to support more than that.
-
-However, I recognize that this may be too much work for you, so, if there's no
-way for you to properly add support for N.2 - I can chime in.
-
-As for N.1, the solution is simple: check if platform_get_irq_optional fails
-and - if it does - force unsetting (WDT_MODE_IRQ_EN | WDT_MODE_DUAL_EN) in
-WDT_MODE, if and only if WDT_EN is not set.. but that, in the probe function!
-
-
-Cheers,
-Angelo
-
+---
+pw-bot: cr
 
