@@ -1,154 +1,122 @@
-Return-Path: <linux-kernel+bounces-369414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067599A1CFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C009A1D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BECFC284082
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005622891D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95921D3639;
-	Thu, 17 Oct 2024 08:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0801D1CF7C7;
+	Thu, 17 Oct 2024 08:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCa8o7M5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="AcaCYQ5p"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFE5199944;
-	Thu, 17 Oct 2024 08:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6910C42AB1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729153193; cv=none; b=tEUcq9xjF876EcGjMsbX9eP22zYBlhKqWHAKicYL1ghXt8qV3dXLEAnNpme/hgqkUZBX/1fnX8I8HOSJE06aFJ0CCR1/ZhSX2JYLS/a2xSQeONfibmx2xbRDtyTww5D8nShb2kf0ORd+28txbznG+FpEEnlOlKVwvpggLiRPO6c=
+	t=1729153293; cv=none; b=a3ZZTbPXOzs/DNuJpZbZobTs+lig8iBC3oVEGnI5bSJFN2R+GTaVAAW+ELLfYiewDcufSMilG4XKp/GT0pv3uzfCtrjrjZtRZLG/2LTnbc6Ni3EcHli9I04Yw1IMMr+NaHOAt7uRpf9LiMgtQ4r9f3HLDzGEXS66DxVNgZgGOqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729153193; c=relaxed/simple;
-	bh=GInnBn+NilFxTVvAPhppcfdBhV7v8zyNPgMLAjfhsQo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VJN/b1RqvqsHCBtaTNO7eoGamQwV6pecs8LgoMOwRB5/WzXdXXOvABdhE9JK29Sd6ycjqN6raUkqmI40ai6DAd7jQrcZvVZggDa+BTNT72X0G1qq5ED1/p/TLlOTMNgCgGgqh9GJs8dBvy+wvi+ic4+nYs28QwHo+xDfZR817+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCa8o7M5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08C0C4CEC3;
-	Thu, 17 Oct 2024 08:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729153192;
-	bh=GInnBn+NilFxTVvAPhppcfdBhV7v8zyNPgMLAjfhsQo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NCa8o7M5nHa+FK/+KHfno1zUrcmbPZJE0vROcSMmvepPJnZpDXPlyoDNxM4wN2xkL
-	 gQZjPMmC3otKdK68P+T/C11hStPc9YiF5mo6vr2THaENJ/c1+XHM2NSD8Tc4Rc1yuq
-	 D8GFv69HBeFOw7O5CK5QLFJh1fX6wyS5Bk4LBBoEsxJe4nmmavI7zbh6MbFZNtteip
-	 kV/ZKgKaPlkRsl8zuRgclmOGg1qVrvSCaui3FXpBemsXzz9NwZPFXrxj/8kv8Ac/yT
-	 QicNm+C1wv59fIrZYpQzMEQCe8JlSb5mGvPHVY+XdrqndiXvWYOFoMtu6Yb5tFETJI
-	 MUniEkXjrdmmA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t1LjZ-004M2D-TO;
-	Thu, 17 Oct 2024 09:19:50 +0100
-Date: Thu, 17 Oct 2024 09:19:48 +0100
-Message-ID: <86sesv3zvf.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-pm@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	pbonzini@redhat.com,
-	wanpengli@tencent.com,
-	vkuznets@redhat.com,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	peterz@infradead.org,
-	arnd@arndb.de,
-	lenb@kernel.org,
-	mark.rutland@arm.com,
-	harisokn@amazon.com,
-	mtosatti@redhat.com,
-	sudeep.holla@arm.com,
-	cl@gentwo.org,
-	misono.tomohiro@fujitsu.com,
-	maobibo@loongson.cn,
-	joao.m.martins@oracle.com,
-	boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 00/11] Enable haltpoll on arm64
-In-Reply-To: <87plnzpvb6.fsf@oracle.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
-	<8634kx5yqd.wl-maz@kernel.org>
-	<87plnzpvb6.fsf@oracle.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1729153293; c=relaxed/simple;
+	bh=Qt71jqomeTiOsHtOT1TI7YwwvbCbhkMchZi7rxHHJeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KdmSQhHaW9SMxJ0hCU9C9U50fffI7I2AacpF+Ko/g6R4gOd8UMV3cYkBbHAkRTbXMuDh6Q1MG9VsfvgjHzO0mqHMCr/Ns81D2gkp0ilJPiUXFytF3qJldBNzW9Xq5W2HuzVw6OT0Iyxmlp3ZoDDV1Ganue6vTU35RUm0PEX1fEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=AcaCYQ5p; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cbcd71012so6361185ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729153290; x=1729758090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=21r4KjxS04aljSd/Fon09UcC72cpkOJeqlG20Lhe7Ck=;
+        b=AcaCYQ5pNxcgSKRrkGU2n1XcDkwx+QwT8h9n/BWFSKEsWOMUsBAaEdg42J7gxHbys7
+         tpGvXbBmyN9kDD1Q99YEzWlBcsztuN04V9hBDbiInEKBLqUPfhmojMK1eEj3BkBgv0XQ
+         6TpMVm4IIMYh0nVVrFrSSNxpopyz4aPuyuyIlRL9H43J7CDY6yQcWDf9TL8BxwhhADbn
+         qrJpl0c6sPdTGPDXjgeCE/o7e2ybxWRh7aIJhZfj5Ppy2d/ca9Lg5lxq4vi6Tsbf/RLK
+         YRDXJESdoJudnOcH2vdWJOSA8k2YVI3qdtNm0mCugEx/qKo0i7tRHTC13VsPOgR7+q8h
+         1Vcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729153290; x=1729758090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=21r4KjxS04aljSd/Fon09UcC72cpkOJeqlG20Lhe7Ck=;
+        b=gp64X7xBI5f4Fx+hjtNhC6voSXm9Lp8PgriPGhzlB8IeVDiDgtKhwNYjb27h9V4apR
+         cNxVipcTaDLDU63TxOIfXRLhI/XQGN3fSax6NKVa2pkAif+THNjvrmBH7XBnj1vCUvaz
+         CHJQkwVy+rODSOOVaggLSMTgusTEPNoe709/EoDveWpTKVVW8ZDgMuEqKIrta/vRoyxF
+         mBg8eJGqEQsz1imnkby2AkmzRCjGelrDjR4hnr/XgwtVLRX/784cThoFkYIFgtlA7vz+
+         SbCZxzsfxzJLHE+akMsyEheFGA4LLjeao6uZAS5OMKwCnscqdhwEQlBIsMujhC2DfGja
+         gZeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYPoKSrQtkH76qS69ymhXa4+pIff0N0Rbk080EgvU84aEG99+74efNH9gaAvWHprmsd7F6MIHOZgXDcnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyigP7im5t3sEG9z7gkIqhNCiHqXeoxfch7R+6VIydOmTb6cn9d
+	sIVh4mTcIW1E+HOKhXsmx7Cihn1mnmgsdEJy/cPaHvLu2SCKho6whQRsF5y8ZVc=
+X-Google-Smtp-Source: AGHT+IEuPQNkBkf35mPaDfmPHqCgle48oyoM55cMhfMh+5dWLMsLpkcpas8peZNquQZKLveCOM3Skg==
+X-Received: by 2002:a17:902:e887:b0:20b:b40b:3454 with SMTP id d9443c01a7336-20cba9ebb29mr248199755ad.0.1729153289656;
+        Thu, 17 Oct 2024 01:21:29 -0700 (PDT)
+Received: from localhost.localdomain ([132.178.238.28])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20d17f9e234sm39690655ad.114.2024.10.17.01.21.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 01:21:29 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: dpenkler@gmail.com,
+	gregkh@linuxfoundation.org
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: gpib: Change return type and error code of fluke_get_dma_residue
+Date: Thu, 17 Oct 2024 02:20:22 -0600
+Message-ID: <20241017082022.16874-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ankur.a.arora@oracle.com, linux-pm@vger.kernel.org, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, cl@gentwo.org, misono.tomohiro@fujitsu.com, maobibo@loongson.cn, joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 16 Oct 2024 22:55:09 +0100,
-Ankur Arora <ankur.a.arora@oracle.com> wrote:
-> 
-> 
-> Marc Zyngier <maz@kernel.org> writes:
-> 
-> > On Thu, 26 Sep 2024 00:24:14 +0100,
-> > Ankur Arora <ankur.a.arora@oracle.com> wrote:
-> >>
-> >> This patchset enables the cpuidle-haltpoll driver and its namesake
-> >> governor on arm64. This is specifically interesting for KVM guests by
-> >> reducing IPC latencies.
-> >>
-> >> Comparing idle switching latencies on an arm64 KVM guest with
-> >> perf bench sched pipe:
-> >>
-> >>                                      usecs/op       %stdev
-> >>
-> >>   no haltpoll (baseline)               13.48       +-  5.19%
-> >>   with haltpoll                         6.84       +- 22.07%
-> >>
-> >>
-> >> No change in performance for a similar test on x86:
-> >>
-> >>                                      usecs/op        %stdev
-> >>
-> >>   haltpoll w/ cpu_relax() (baseline)     4.75      +-  1.76%
-> >>   haltpoll w/ smp_cond_load_relaxed()    4.78      +-  2.31%
-> >>
-> >> Both sets of tests were on otherwise idle systems with guest VCPUs
-> >> pinned to specific PCPUs. One reason for the higher stdev on arm64
-> >> is that trapping of the WFE instruction by the host KVM is contingent
-> >> on the number of tasks on the runqueue.
-> >
-> > Sorry to state the obvious, but if that's the variable trapping of
-> > WFI/WFE is the cause of your trouble, why don't you simply turn it off
-> > (see 0b5afe05377d for the details)? Given that you pin your vcpus to
-> > physical CPUs, there is no need for any trapping.
-> 
-> Good point. Thanks. That should help reduce the guessing games around
-> the variance in these tests.
+fluke_get_dma_residue() returns unsigned int with -1 as error code.
+This error cannot be caught.
+Fix this by changing the return type of the function to int and 
+returning the error code, that was captured.
 
-I'd be interested to find out whether there is still some benefit in
-this series once you disable the WFx trapping heuristics.
+Fixes: 55936779f496 ("staging: gpib: Add Fluke cda based cards GPIB driver")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+ drivers/staging/gpib/eastwood/fluke_gpib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-
-	M.
-
+diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/staging/gpib/eastwood/fluke_gpib.c
+index f9f149db222d..54fdbef20d84 100644
+--- a/drivers/staging/gpib/eastwood/fluke_gpib.c
++++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
+@@ -536,7 +536,7 @@ static int fluke_accel_write(gpib_board_t *board, uint8_t *buffer, size_t length
+ 	return 0;
+ }
+ 
+-static unsigned int fluke_get_dma_residue(struct dma_chan *chan, dma_cookie_t cookie)
++static int fluke_get_dma_residue(struct dma_chan *chan, dma_cookie_t cookie)
+ {
+ 	struct dma_tx_state state;
+ 	int result;
+@@ -544,7 +544,7 @@ static unsigned int fluke_get_dma_residue(struct dma_chan *chan, dma_cookie_t co
+ 	result = dmaengine_pause(chan);
+ 	if (result < 0) {
+ 		pr_err("fluke_gpib: dma pause failed?\n");
+-		return -1;
++		return result;
+ 	}
+ 	dmaengine_tx_status(chan, cookie, &state);
+ 	// hardware doesn't support resume, so dont call this
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
