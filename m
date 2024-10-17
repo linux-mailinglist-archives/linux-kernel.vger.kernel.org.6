@@ -1,61 +1,52 @@
-Return-Path: <linux-kernel+bounces-370430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AEA9A2C51
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC479A2C55
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296B81F2245B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17B1D1F2188D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F3B1F9ED3;
-	Thu, 17 Oct 2024 18:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E381FC7DA;
+	Thu, 17 Oct 2024 18:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BC0M9aL7"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="N5VrXGkg"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C401F9437;
-	Thu, 17 Oct 2024 18:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315451FBC89;
+	Thu, 17 Oct 2024 18:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729190340; cv=none; b=lqKvT1mV+6Dvwfv8nt8WgCuT2KpHs23j86B+LbdBuRMOMkP6buv6/GkQOAjXNJTANmjSgmCG+PgcGWJj2sDH+2mCsTzD0akCI1JRzyON1RY9HhfDd1DvWPDdRMhZagXPyWVz87Ve1Z0PJYOYg4jL5l0hWgS7ZkSh+dt0l11VqRw=
+	t=1729190376; cv=none; b=VvNvuRyfa53aaWGWuFJoZNAP7o0QPCgsj50YzPsrRssF8dJyvP4+kdDgGP9QRiAmOGf6g5eW2zKk3zOtqAcQYI2wUKP5+Vtgnjjqhlk81zQUAijadWMdKHZ5B3GTvXNv98/cCtWFeV8iBTJvWzOT6fiz7587T58A72mNyxtHCPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729190340; c=relaxed/simple;
-	bh=S4eVTtnVClCRlSR/KXv134cWAToD9EOj3njuGsmO7y0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mmctRRdGepWIGTkQ9/7BWBYsib2/nRS41ZqM9/zwkBqRfqpIY3XSJjfQ/zrmfDZNx6JG24Qc2cKWxNfY/EQu+cyDYwqQzBCgWYgOOzExbiP8ZDBFtbyrtM81pY8MbU9Klov695EjQKx0q9fSNDS64mggysOZEe3FAf4VITtKRBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BC0M9aL7; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49HIcl3f092734;
-	Thu, 17 Oct 2024 13:38:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729190327;
-	bh=QUPRWlSJCMr94gHz5yh8kxX5CDhtzNHWQ/fPn8iI5eY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BC0M9aL75uRaHnkLTUVJv9M5ZVkP0fTUHT4LA3sZMSih659fzRD9OcA89TTs10p0C
-	 ZxpGm/DVA6nnR8xNY8b37WgHBiGwncG8ABn52z0H87nAlKexiGIup1UFdrh1bKbM3k
-	 pwmdBMVPI+X5TXHCKgaJjxuX3a2XEOH2PjeY9Xfo=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49HIclZ5015867;
-	Thu, 17 Oct 2024 13:38:47 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
- Oct 2024 13:38:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 17 Oct 2024 13:38:46 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49HIck2N023002;
-	Thu, 17 Oct 2024 13:38:46 -0500
-Message-ID: <53d989ec-06b6-4337-aef7-81e651fab3e1@ti.com>
-Date: Thu, 17 Oct 2024 13:38:46 -0500
+	s=arc-20240116; t=1729190376; c=relaxed/simple;
+	bh=FxmywgkNUlS99u+UKR5DQby5kzi44L1odyhv89Zm1SU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aemz0/NQCOEMW16h2YaGaJfkv4o6JgP6ffaJOE5O7B7mZsGOs7QdOLXavJm2nGfXDFC+LiMcRPFGr3su81UErRSo8adnyd35pBwN9/5V7mX8cOgdQRj+1YXTUdP3z2QCAG6y8d/tos8/ZPdqh1hDgF1qFh0uK8Um8DGCxNSArqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=N5VrXGkg; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pXm+8IBFvz1ujYC5/BdUieoeB4O8UBo9KmKYceLh5ts=; b=N5VrXGkgAWFovrbKgWzKyOBDom
+	d46SQYNLOSfMSOWuHmaIHAObkvJwCWdni6bSN1N8KpOLojafzKd21+7Ys++FKchnkzKicr/jZeVOE
+	AB5cuhC6sIIQGfik6tREtlG4yFK3VUEAilMGd9OUAz7A0au20F+kOiUsxFf7OBUtPyU4=;
+Received: from p4ff13b65.dip0.t-ipconnect.de ([79.241.59.101] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1t1VP4-00AwP2-1f;
+	Thu, 17 Oct 2024 20:39:18 +0200
+Message-ID: <b78b8659-d89d-4fd4-b922-f3c24b705deb@nbd.name>
+Date: Thu, 17 Oct 2024 20:39:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,111 +54,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/2] gpio: omap: Add omap_gpio_disable/enable_irq
- calls
-To: Andrew Davis <afd@ti.com>
-CC: <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bin Liu <b-liu@ti.com>,
-        <linux-serial@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-References: <20241011173356.870883-1-jm@ti.com>
- <20241011173356.870883-2-jm@ti.com>
- <89091165-74d1-442a-ab34-8e70f1a2d65b@ti.com>
+Subject: Re: [PATCH RFC v1 net-next 00/12] bridge-fastpath and related
+ improvements
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Eric Woudstra <ericwouds@gmail.com>,
+ Nikolay Aleksandrov <razor@blackwall.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, bridge@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <9f9f3cf0-7a78-40f1-b8d5-f06a2d428210@blackwall.org>
+ <a07cadd3-a8ff-4d1c-9dca-27a5dba907c3@gmail.com>
+ <0b0a92f2-2e80-429c-8fcd-d4dc162e6e1f@nbd.name>
+ <137aa23a-db21-43c2-8fb0-608cfe221356@gmail.com>
+ <a7ab80d5-ff49-4277-ba73-db46547a8a8e@nbd.name>
+ <d7d48102-4c52-4161-a21c-4d5b42539fbb@gmail.com>
+ <b5739f78-9cd5-4fd0-ae63-d80a5a37aaf0@nbd.name> <ZxEFdX1uoBYSFhBF@calendula>
+ <eb9006ae-4ded-4249-ad0e-cf5b3d97a4cb@nbd.name> <ZxFS7XBgFXsqUlkO@calendula>
+From: Felix Fietkau <nbd@nbd.name>
 Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <89091165-74d1-442a-ab34-8e70f1a2d65b@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <ZxFS7XBgFXsqUlkO@calendula>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
-
-On 10/11/24 2:07 PM, Andrew Davis wrote:
-> On 10/11/24 12:33 PM, Judith Mendez wrote:
->> Add omap_gpio_disable_irq and omap_gpio_enable_irq
->> calls in gpio-omap.
->>
->> Currently, kernel cannot disable gpio interrupts in
->> case of a irq storm, so add omap_gpio_disable_irq
->> so that interrupts can be disabled/enabled.
->>
->> Signed-off-by: Bin Liu <b-liu@ti.com>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->>   drivers/gpio/gpio-omap.c | 29 +++++++++++++++++++++++++++++
->>   1 file changed, 29 insertions(+)
->>
->> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
->> index 76d5d87e9681..913e6ece1238 100644
->> --- a/drivers/gpio/gpio-omap.c
->> +++ b/drivers/gpio/gpio-omap.c
->> @@ -711,6 +711,31 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
->>       raw_spin_unlock_irqrestore(&bank->lock, flags);
->>   }
->> +static void omap_gpio_set_irq(struct irq_data *d, bool enable)
->> +{
->> +    struct gpio_bank *bank = omap_irq_data_get_bank(d);
->> +    unsigned int offset = d->hwirq;
->> +    unsigned long flags;
->> +
->> +    raw_spin_lock_irqsave(&bank->lock, flags);
->> +    omap_set_gpio_irqenable(bank, offset, enable);
->> +    raw_spin_unlock_irqrestore(&bank->lock, flags);
->> +}
->> +
->> +static void omap_gpio_disable_irq(struct irq_data *d)
->> +{
->> +    bool enable = 1;
->> +
->> +    omap_gpio_set_irq(d, !enable);
+On 17.10.24 20:09, Pablo Neira Ayuso wrote:
+> On Thu, Oct 17, 2024 at 07:06:51PM +0200, Felix Fietkau wrote:
+>> On 17.10.24 14:39, Pablo Neira Ayuso wrote:
+>> > On Thu, Oct 17, 2024 at 11:17:09AM +0200, Felix Fietkau wrote:
+>> > [...]
+>> > > By the way, based on some reports that I received, I do believe that the
+>> > > existing forwarding fastpath also doesn't handle roaming properly.
+>> > > I just didn't have the time to properly look into that yet.
+>> > 
+>> > I think it should work for the existing forwarding fastpath.
+>> > 
+>> > - If computer roams from different port, packets follow classic path,
+>> >    then new flow entry is created. The flow old entry expires after 30
+>> >    seconds.
+>> > - If route is stale, flow entry is also removed.
+>> > 
+>> > Maybe I am missing another possible scenario?
+>> 
+>> I'm mainly talking about the scenario where a computer moves to a different
+>> switch port on L2 only, so all routes remain the same.
+>> 
+>> I haven't fully analyzed the issue, but I did find a few potential issues
+>> with what you're describing.
+>> 
+>> 1. Since one direction remains the same when a computer roams, a new flow
+>> entry would probably fail to be added because of an existing entry in the
+>> flow hash table.
 > 
-> Seems like an odd way to make "false", why not:
-> 
-> omap_gpio_set_irq(d, false);
+> I don't think so, hash includes iifidx.
 
-Thanks for your review, you are right, but I will
-be reverting to the original patch format. Where we do
-not used wrappers function around omap_gpio_set_irq().
+I'm talking about the side where the input ifindex remains the same, but 
+the output interface doesn't.
 
-~ Judith
+>> 2. Even with that out of the way, the MTK hardware offload currently does
+>> not support matching the incoming switch/ethernet port.
+>> So even if we manage to add an updated entry, the old entry could still be
+>> kept alive by the hardware.
+> 
+> OK, that means probably driver needs to address the lack of iifidx in
+> the matching by dealling with more than one single flow entry to point
+> to one single hardware entry (refcounting?).
 
+If we have multiple colliding entries, I think a more reasonable 
+behavior would be allowing the newer flow to override the older one.
+
+>> The issues I found probably wouldn't cause connection hangs in pure L3
+>> software flow offload, since it will use the bridge device for xmit instead
+>> of its members. But since hardware offload needs to redirect traffic to
+>> individual bridge ports, it could cause connection hangs with stale flow
+>> entries.
 > 
-> Andrew
-> 
->> +}
->> +
->> +static void omap_gpio_enable_irq(struct irq_data *d)
->> +{
->> +    bool enable = 1;
->> +
->> +    omap_gpio_set_irq(d, enable);
->> +}
->> +
->>   static void omap_gpio_irq_print_chip(struct irq_data *d, struct 
->> seq_file *p)
->>   {
->>       struct gpio_bank *bank = omap_irq_data_get_bank(d);
->> @@ -723,6 +748,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
->>       .irq_shutdown = omap_gpio_irq_shutdown,
->>       .irq_mask = omap_gpio_mask_irq,
->>       .irq_unmask = omap_gpio_unmask_irq,
->> +    .irq_disable = omap_gpio_disable_irq,
->> +    .irq_enable = omap_gpio_enable_irq,
->>       .irq_set_type = omap_gpio_irq_type,
->>       .irq_set_wake = omap_gpio_wake_enable,
->>       .irq_bus_lock = omap_gpio_irq_bus_lock,
->> @@ -737,6 +764,8 @@ static const struct irq_chip 
->> omap_gpio_irq_chip_nowake = {
->>       .irq_shutdown = omap_gpio_irq_shutdown,
->>       .irq_mask = omap_gpio_mask_irq,
->>       .irq_unmask = omap_gpio_unmask_irq,
->> +    .irq_disable = omap_gpio_disable_irq,
->> +    .irq_enable = omap_gpio_enable_irq,
->>       .irq_set_type = omap_gpio_irq_type,
->>       .irq_bus_lock = omap_gpio_irq_bus_lock,
->>       .irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
+> I would not expect a hang, packets will just flow over classic path
+> for a little while for the computer that is roaming until the new flow
+> entry is added.
+
+If the hardware still handles traffic, but redirects it to the wrong 
+destination port, the connection will hang.
+
+- Felix
 
 
