@@ -1,134 +1,108 @@
-Return-Path: <linux-kernel+bounces-369785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C37B9A22A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:44:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90769A22A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B75101F21FB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F241C21D52
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6231DD55F;
-	Thu, 17 Oct 2024 12:44:26 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AC01DDC0E;
+	Thu, 17 Oct 2024 12:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PujDGkMD"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DE81D357B;
-	Thu, 17 Oct 2024 12:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701061DA61E;
+	Thu, 17 Oct 2024 12:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729169066; cv=none; b=f/NRORCcuwLt4HmFzHckuND4rmh9FhM9L/dND+xmbMFhLHcqookYPX90hGCjNew/8ZDzbleQWTHVCq15opOWZSGOP4iBd5AI63A34POlmrrvyxPqJKmMlM65Qk+4VBGsTE6nsGPWqlpP3Vc/JsHWD2XZX/Ra5/EWSV2u+H+J7Hw=
+	t=1729169068; cv=none; b=ezZXjmztnZanV5pfSMX6VRLFXuF+WVZjZSg9wuvM2HGsu6lLm+1ttznBcsJkwS7I1ekt2wLQM3E+2n6xR7gYKwHWebZxlzZ8UkVNj7xgjP7vdOzeaMcDql+2VOmAZR0utqt07ySRks+tl1oJBviRogBeYUhIHYNxnNd0LGKixrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729169066; c=relaxed/simple;
-	bh=7iUccDjyB3lkNOhVwRrikKnAz/dNha05D/XKS62LNTM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m7gWmlxzoPu+H9seH9MZWJFtV0b5jp4KaUU6trrdILBGIrrGsYGHcOs1pAFmaEGt0DgjmoEf3RcbokGZiVab2NuI7U0Nau9ve7LkWbn6wSicEoIFT2W1RLAdXuzMPIFtRhjAETzI+Gycg36aI25ECYj9R1cjko5FytgVA3sesb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTnZN2WtVz6J9yF;
-	Thu, 17 Oct 2024 20:43:40 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 974591400F4;
-	Thu, 17 Oct 2024 20:44:20 +0800 (CST)
-Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
- 2024 14:44:19 +0200
-Date: Thu, 17 Oct 2024 13:44:17 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
-Subject: Re: [RFC PATCH 4/4] cxl/events: Updates for CXL Memory Module Event
- Record
-Message-ID: <20241017134417.00005c6b@Huawei.com>
-In-Reply-To: <20241016163349.1210-5-shiju.jose@huawei.com>
-References: <20241016163349.1210-1-shiju.jose@huawei.com>
-	<20241016163349.1210-5-shiju.jose@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729169068; c=relaxed/simple;
+	bh=mt+NMi86sJ1rLYGBTXhYvaYo5i3bjNobHS95VseAgrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aw2eBHCXNECXHkU5Wi/RccIY9n1Z3BTby34FYgY281xjG1igF9a2C+Ydx0UQKxhXv10VIMvr6xb7L4DsCu66/UHwHVdDKkVOinRu2TOdzlHm6oh5xOaOIGKSvDFubBxKbeh/5woqMqYJEQ9kX/v/40WaSsPUkmNXb4Ttzpdli3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PujDGkMD; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20ca96a155cso7166505ad.2;
+        Thu, 17 Oct 2024 05:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729169065; x=1729773865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zG9PeUqDzbG1kAQW7q4YeEudloX5/VsCl0lOklorYQ8=;
+        b=PujDGkMDX75XZDDUxXBOAwHj1nCZdibgDBOsZu2o1VeXUPe0g5FwGchL3sQn7verfX
+         ofr5SOK26PipmW16yGtVpGAtCuEnxRyfljUouN+0VorVJnb75fMDOIJMaa/oGl78fOJk
+         3LJhv/2m+USuJMU9y1strvbmK31th325Wyaf54t4jEujKPB9V5XGENJAaUihjLGlifiU
+         x6APEIIVfT+8Q/V02rLniGPTXl0YDVq0cB36kUnZoh/rsnU/nZX405zLMMyThojvdJtR
+         3tEkY9fJK+dYrhScO3jAQUa3KfYe5VpnYZsAGtW81S3W2j2ecNhdkNnX86JKfFOSOvJh
+         t1Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729169065; x=1729773865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zG9PeUqDzbG1kAQW7q4YeEudloX5/VsCl0lOklorYQ8=;
+        b=p5blAwf/s6oEEIaZ6Bs0e+BpvAF4jstXfFzu50DuDtYA/jV+r0ars1UTtZpgyn4PrZ
+         4Xjz4y3andgfadeFUPaRONQm52TwL9mn3UwLUunYkzJ0/V3nzFHZ1gulf7SlVZlRGHM2
+         9Ovr5RXce51iuZPF1DT7XSj4MFDizG/oC7COQ6+Db2+WvFHTKGgAmvZemrEQB+j5ZZ1q
+         N1m9wBKcXJUfkItdaKbtMC1shRjsKh0L7yFUjumvJ7FUgBxhn8Bb32jd6akfj+QF2FqZ
+         r+/GXaqal5uaCzu9Q8QoCvGMQjZ1kRpWh4BQIoIDbU9iUefODzHzn1H776xUfA2wE1UO
+         VXqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBs57QlE3gh1DiVHIS7pxQNqrR8+7W2P69ZX9gAEp4BBRnhjR7E9vrbpOaWLpZ02I7+ku0ONpc9MrT@vger.kernel.org, AJvYcCUyPkCkZHLZMBclcA3YdFcOJT+AHWwQgaforKtrNFj+uqpOgYr3UEIhGCevCqlvrnJRHuz67rvQUXOkoDLO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXf7as+L7LiPpozVQdUg6fYmiiftZ+8Ip/RkrfNuww/q3YJA0e
+	vy1LvbcL0x9KbcolhDUAajE/0BiF4MlYMnpVB/0t/nm1sSMs4BjYZONPuQ==
+X-Google-Smtp-Source: AGHT+IHemkWCQ54g5WrKwCPeyXkVHn9NcKAl7pt7qfoFIfhj6jAERRXEGucwBhionrRwXiUYWpqr6g==
+X-Received: by 2002:a17:90a:c708:b0:2e2:b64e:f501 with SMTP id 98e67ed59e1d1-2e2f0d7f1fbmr24811067a91.30.1729169064577;
+        Thu, 17 Oct 2024 05:44:24 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e0949f51sm1785686a91.48.2024.10.17.05.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 05:44:24 -0700 (PDT)
+Date: Thu, 17 Oct 2024 20:44:18 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v4 3/8] gpio: cdev: go back to storing debounce period in
+ the GPIO descriptor
+Message-ID: <20241017124418.GA221864@rigel>
+References: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
+ <20241017-gpio-notify-in-kernel-events-v4-3-64bc05f3be0c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017-gpio-notify-in-kernel-events-v4-3-64bc05f3be0c@linaro.org>
 
-On Wed, 16 Oct 2024 17:33:49 +0100
-<shiju.jose@huawei.com> wrote:
+On Thu, Oct 17, 2024 at 10:14:11AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> @@ -1047,7 +925,7 @@ static int debounce_setup(struct line *line, unsigned int debounce_period_us)
+>  	/* try hardware */
+>  	ret = gpiod_set_debounce(line->desc, debounce_period_us);
+>  	if (!ret) {
+> -		line_set_debounce_period(line, debounce_period_us);
+> +		WRITE_ONCE(line->desc->debounce_period_us, debounce_period_us);
+>  		return ret;
+>  	}
 
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> CXL spec 3.1 section 8.2.9.2.1.3 Table 8-47, Memory Module Event Record
-> has updated with following new fields and new info for Device Event Type
-> and Device Health Information fields.
-> 1. Validity Flags
-> 2. Component Identifier
-> 3. Device Event Sub-Type
-> 
-> Add updates for the above spec changes in the CXL events record and CXL
-> Memory Module trace event implementations.
-> 
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Not related to this change, but this check looks redundant to me - the same
+is performed where debounce_setup() is called.
 
-A few minor things inline, but with the event_sub_type naming feel
-free to add
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Want a patch to remove it?
 
->  
->  	CXL_EVT_TP_printk("event_type='%s' health_status='%s' media_status='%s' " \
->  		"as_life_used=%s as_dev_temp=%s as_cor_vol_err_cnt=%s " \
->  		"as_cor_per_err_cnt=%s life_used=%u device_temp=%d " \
-> -		"dirty_shutdown_cnt=%u cor_vol_err_cnt=%u cor_per_err_cnt=%u",
-> +		"dirty_shutdown_cnt=%u cor_vol_err_cnt=%u cor_per_err_cnt=%u " \
-> +		"validity_flags='%s' comp_id=%s sub_type='%s'",
->  		show_dev_evt_type(__entry->event_type),
->  		show_health_status_flags(__entry->health_status),
->  		show_media_status(__entry->media_status),
-> @@ -750,7 +782,11 @@ TRACE_EVENT(cxl_memory_module,
->  		show_one_bit_status(CXL_DHI_AS_COR_PER_ERR_CNT(__entry->add_status)),
->  		__entry->life_used, __entry->device_temp,
->  		__entry->dirty_shutdown_cnt, __entry->cor_vol_err_cnt,
-> -		__entry->cor_per_err_cnt
-> +		__entry->cor_per_err_cnt,
-> +		show_mem_module_valid_flags(__entry->validity_flags),
-> +		cxl_print_component_id(__entry->validity_flags, CXL_MMER_VALID_COMPONENT,
-> +				       CXL_MMER_VALID_COMPONENT_ID_FORMAT, __entry->comp_id),
-> +		show_dev_event_sub_type(__entry->sub_type)
-If we are going to reorganize for the other patches, why not move this next to the event type
-field?  There isn't a validity flag for this (0 means not specified)
-so fine to move it earlier I think.
->  	)
->  );
->  
-> diff --git a/include/cxl/event.h b/include/cxl/event.h
-> index 7e98492c85df..18b7f96dea77 100644
-> --- a/include/cxl/event.h
-> +++ b/include/cxl/event.h
-> @@ -102,7 +102,10 @@ struct cxl_event_mem_module {
->  	struct cxl_event_record_hdr hdr;
->  	u8 event_type;
->  	struct cxl_get_health_info info;
-> -	u8 reserved[0x3d];
-> +	u8 validity_flags[2];
-> +	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
-> +	u8 sub_type;
-maybe event_sub_type to match spec naming?
-
-> +	u8 reserved[0x2a];
->  } __packed;
->  
->  union cxl_event {
-
+Cheers,
+Kent.
 
