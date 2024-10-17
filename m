@@ -1,132 +1,129 @@
-Return-Path: <linux-kernel+bounces-370420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16B79A2C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:27:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CA09A2C28
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01491F21989
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:27:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717481F21FAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D074A1E00AD;
-	Thu, 17 Oct 2024 18:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1968E1E0B63;
+	Thu, 17 Oct 2024 18:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D6gljklG"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TKXSEj/A"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ECD1E0088
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86A71E00A3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729189600; cv=none; b=C2rmY6K8GBV4zrCYa+QMPBAz6SpKzylS3OGFU0t6H10nQTIpJ2/ERTs0GU4i3xmRFKl7vIhqKV4m5Ut2FmQEITfXXkjbAsFd7hDP8wTfo3VJZ5vDzlBe13sKc2r1Hndkayoaht8eCY3zQQKuzE1gZsCMJ8/6DvoATWpmXwN2OcM=
+	t=1729189637; cv=none; b=OmqOWU3Em98Rb5XKuVkVwm73EROzGKavFntG3CSWJN6RpqzI9D/XXrCqxOGhJAy4R/4VgQ2JcYwoa0Nv2eP+pKApf4jAAaJv0XK2AbgSGaVRbavsNvng0YkR+lox+ooBve60teWz9PEYGwTI6U/zLuGhV8XYeOH8t1Ej+M9RLY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729189600; c=relaxed/simple;
-	bh=haisNRIvKp7U74tfiCQRdN/EMuS4wJwswZUPjMFaKDo=;
+	s=arc-20240116; t=1729189637; c=relaxed/simple;
+	bh=hb7ga30lPrrAOxRByClB2ldtT2Wkqy4TGWkBSn5WR44=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L0WqHgR3F5X5qDcYVE06esrUDZEBtNbuRSbT6Re07v9HFkaydOP1VuhS5S3o/tl5VY+FCcEF36aK04INB9bzjGAUjaCoP4nl5gtN8C7i9kTkqLDnmYR3dXGHtiudRywrVTBu5mzMMUpLL5Qnk5/83mtCMl0tpcnnF5ohsPmzZi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D6gljklG; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e66ba398so3889e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:26:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=a0mZfM+tgvWklIxYNzOC5R2Gs57XCgTBWk7Xfi1QwR+kgYdHRRh62IJmVU/AXhqEnXuvxNbrwCzPpTHovTY+7muAEi+ApX6WehzlW/J62Rd/LJ4hWoATBk3WAfMAAOCt10T4X9W0PNSkFrmtlhYmWa2dAYbIWXYlDlaJOPApPFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TKXSEj/A; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e0d9b70455so1016939a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:27:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729189593; x=1729794393; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=haisNRIvKp7U74tfiCQRdN/EMuS4wJwswZUPjMFaKDo=;
-        b=D6gljklGBHopPRhkeGDbVisFgp6Y6D0Np/KrkgtfinDIMMtsPSZV4sdQFiDyLYXnJJ
-         eUtM1KkidY/eQwg7skAClF2F47W7HEDRJTUh98KeNIugK1naWmykWnxUfM6QsYQN3dlq
-         GenzsUW8pApTf+0VMGvkAANypma4VYBGWKS1MATsPlbnHEVbM4QOf78iH6WyLK7IYkot
-         XfWJh2NZPNNH2bjE0KLgkBAPZL7yaSKcqdMx1PTfnXWJTR6VJsOqqtcooY8s4PGk3wca
-         P0t/kYH+aquWbAMRpqU7lyTf8cQdIkXkL01C5cbDxO6wYtKnVxqoh4Ft5A4S15jQwQ2U
-         i2bg==
+        d=linaro.org; s=google; t=1729189632; x=1729794432; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lcOVFkyx88H+mC/bq0EZCpI9upDma/Jw5+qbBpyx8bU=;
+        b=TKXSEj/AGcWIlhUScc08S5qFpo6/K2wBUA5pdwy5nNWUDvGvQgC0hszIm3b0naSEMq
+         0/UY2YN6QiUhtxHsMY1C5Nau048X/haOzMHyWNiPJNDoz3r5XmsFRVDpM06n2bDwm5VT
+         c87F3+aDqYBLfwblLzlZofEHgMUUyzFPJyKLISTRXjrg5Gn1v5+UAM756MK7FN7qQOGK
+         HPbnLFIsPFyW3HrqCldgEWp40fMVBPNtALnqWRPNMKT+HHlNl1APc76YwJ5PYTEI1I+k
+         u+spmr5jhSc6dZPHufP1b0nFia+X2NS3M6ooC8DHQw1yrpY08hi+JaK4ZZlo8v/QWRev
+         NwVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729189593; x=1729794393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=haisNRIvKp7U74tfiCQRdN/EMuS4wJwswZUPjMFaKDo=;
-        b=v2rapHBDYcIMe9LwuOoT4vRfHaIS0JgGf28s5/Y+uuYKNN0Jwv+AZ73FPimbUkvwRS
-         dWnd7f32BXExQ3Q2W3L0n+EX3J+K8eJ0/jwmh8Tf3Mq68LtjNukzR97MTlEPz3Z1VbTA
-         BPi/M3Ebx5VuT86M5Ia5z9Np9P43J8+nYafhj/0IQfCuxATnmKI1TpqIxSgsK6v5Zeee
-         i3utvegquLJIGIPAy7ZkgTfUTZ9Or1VZJjXhPe90j+vMKKJJNKYOYY2VKvzhhRTXlGPU
-         NBPAv+v4wJBWxIz7MpFlAYyG7m/U4wC6D5brV1RPqX9qyu2wYHiuCTO5YB0j9pEfuSGW
-         UoZg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1FeRgBAyhYdU/jgrc35apRdkNTmU0bomU921EFobGa2ue0yGI0V73iO7aMxaIZUQoJOP56RGJH/MID+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFVhyMOAyWr3JDb81dNWXTKbLNJWVVtCJctzb+5b6SJMhBxh4i
-	Do62/NFrunPDGZERvBHK/3sTIGhphYLAkrQcaRG1ShubpKj7UuNs38LJ7bDyThRVxvGD9tKAVPy
-	XOgVjwoKywyBWp6vkek0PVNMBKg2WsRlTzEXT
-X-Google-Smtp-Source: AGHT+IGWKDDFm8a8fBCBsG2Y6cToQ+gN2kgFUiQJyVN3BtGBkj0D5sLim/0yEM3t9pwIBqy2Wfftr8DQHh7XIKriiLA=
-X-Received: by 2002:a05:6512:282b:b0:535:3d14:1313 with SMTP id
- 2adb3069b0e04-53a14c82458mr25866e87.0.1729189593089; Thu, 17 Oct 2024
- 11:26:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729189632; x=1729794432;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lcOVFkyx88H+mC/bq0EZCpI9upDma/Jw5+qbBpyx8bU=;
+        b=cMpndbGOouL9uVn9ezj5hrg7/b6DPoB6ic0KEc9fRYMKkcxF/3O7CvDQkEzotbgAB5
+         3mpDdIql9DQLxGkc5fEahwEqShEjXzOkfH0m0yk7XQrSOPEt7sK+WKwQVaIIe+I/aEQy
+         CFKtotPCzSBiZTjIVFyA3kMIxKlLyaZNcKvzd0ymLD5XMsafpxs2ufv+pAvCKoXbpG49
+         222XZKGJL5siqtp4chCvejZuh6q1pYlcveADbF0vIVJGHHqKNZyY/1F1lgruTjowb72U
+         rImZRwpUNPjR/QsfqjWZY4DWLrnInp3zQ+AhVWn495IxgpUCuYb27d40uK/FnG3Ov0XO
+         UHTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEw6EgQ+UKlDzJh+i6ZNUsxeNRpjJb2DyWms3WJQ7GNMoxrylKy2wSTOk2i3mJjZBoUFbsyveg/O1l1I0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzviv/qfz6Btfi7HFOlH5Px5XEC5CjmJobeaprMqMrCH8jdnH4Y
+	WmR7I8XVufSBP7EJAoURGjHtRnjvM5l/MJLrANwQvntyIZxfdUXlWdL4J2BHl8DT0qP2bFmLaqx
+	+mDyWvLAR6/cRUaRGO+bQGFFg2Y4UHKnVqljbUQ==
+X-Google-Smtp-Source: AGHT+IHq42uS45Aa2zsUDZ2QLKAl8iW2NZgItryZE9nh9Tm5rzwutObVfbkmZNaI/67kuCJcXJFjr+dtin3hgfaxKyk=
+X-Received: by 2002:a17:90b:1241:b0:2e2:857e:fcfb with SMTP id
+ 98e67ed59e1d1-2e2f0b09d89mr24643105a91.19.1729189632162; Thu, 17 Oct 2024
+ 11:27:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zw7f3YrzqnH-iWwf@x1n> <diqz1q0hndb3.fsf@ackerleytng-ctop.c.googlers.com>
- <1d243dde-2ddf-4875-890d-e6bb47931e40@redhat.com> <ZxAfET87vwVwuUfJ@x1n>
- <20241016225157.GQ3559746@nvidia.com> <ZxBRC-v9w7xS0xgk@x1n>
- <20241016235424.GU3559746@nvidia.com> <ZxEmFY1FcrRtylJW@x1n>
- <20241017164713.GF3559746@nvidia.com> <a63f0f7a-e367-4f0e-8d8e-ca7b632712df@redhat.com>
- <20241017171639.GN3559746@nvidia.com>
-In-Reply-To: <20241017171639.GN3559746@nvidia.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Thu, 17 Oct 2024 23:56:19 +0530
-Message-ID: <CAGtprH-xdXCMSwnE9umz1CHgT2A83AM+w-GJxPp4y99FKpgVtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
- struct kvm_gmem_private
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
-	Ackerley Tng <ackerleytng@google.com>, tabba@google.com, quic_eberman@quicinc.com, 
-	roypat@amazon.co.uk, rientjes@google.com, fvdl@google.com, 
-	jthoughton@google.com, seanjc@google.com, pbonzini@redhat.com, 
-	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
-	isaku.yamahata@intel.com, muchun.song@linux.dev, erdemaktas@google.com, 
-	qperret@google.com, jhubbard@nvidia.com, willy@infradead.org, 
-	shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com, 
-	kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org, 
-	richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com, 
-	ajones@ventanamicro.com, vkuznets@redhat.com, maciej.wieczor-retman@intel.com, 
-	pgonda@google.com, oliver.upton@linux.dev, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241017130701.3301785-1-quic_kriskura@quicinc.com> <20241017130701.3301785-6-quic_kriskura@quicinc.com>
+In-Reply-To: <20241017130701.3301785-6-quic_kriskura@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 17 Oct 2024 21:27:00 +0300
+Message-ID: <CAA8EJprcOU6qeJvHH+MVoPnQ+mGcos=pDOVBSeSUfBGw-KR6tA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] phy: qcom: qmp-usbc: Add qmp configuration for QCS615
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-phy@lists.infradead.org, 
+	quic_ppratap@quicinc.com, quic_jackp@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 10:46=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> w=
-rote:
+On Thu, 17 Oct 2024 at 16:07, Krishna Kurapati
+<quic_kriskura@quicinc.com> wrote:
 >
-> On Thu, Oct 17, 2024 at 07:11:46PM +0200, David Hildenbrand wrote:
-> > On 17.10.24 18:47, Jason Gunthorpe wrote:
-> > > On Thu, Oct 17, 2024 at 10:58:29AM -0400, Peter Xu wrote:
-> > >
-> > > > My question was more torwards whether gmemfd could still expose the
-> > > > possibility to be used in VA forms to other modules that may not su=
-pport
-> > > > fd+offsets yet.
-> > >
-> > > I keep hearing they don't want to support page pinning on a guestmemf=
-d
-> > > mapping, so VA based paths could not work.
-> >
-> > For shared pages it absolutely must work. That's what I keep hearing :)
+> Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
 >
-> Oh that's confusing. I assume non longterm pins desired on shared
-> pages though??
->
-> Jason
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-For hugepage support to work, longterm pins on guest private pages
-need to be avoided [1], If this somehow was the cause of any confusion
-here.
+After checking platform details,
 
-[1] https://lpc.events/event/18/contributions/1764/attachments/1409/3182/LP=
-C%202024_%201G%20page%20support%20for%20guest_memfd.pdf
-(slide 12)
+Unreviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Please perform global s/QCS615/SM6150/ and s/qcs615/sm6150/
+
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> index d4fa1063ea61..c56ba8468538 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+> @@ -1123,6 +1123,9 @@ static const struct of_device_id qmp_usbc_of_match_table[] = {
+>         }, {
+>                 .compatible = "qcom,qcm2290-qmp-usb3-phy",
+>                 .data = &qcm2290_usb3phy_cfg,
+> +       }, {
+> +               .compatible = "qcom,qcs615-qmp-usb3-phy",
+> +               .data = &qcm2290_usb3phy_cfg,
+>         }, {
+>                 .compatible = "qcom,sdm660-qmp-usb3-phy",
+>                 .data = &sdm660_usb3phy_cfg,
+> --
+> 2.34.1
+>
+
+
+-- 
+With best wishes
+Dmitry
 
