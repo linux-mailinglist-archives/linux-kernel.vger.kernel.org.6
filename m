@@ -1,422 +1,484 @@
-Return-Path: <linux-kernel+bounces-369404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AEB9A1CDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:16:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C529A1CD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BFF2B21ADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:16:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BBAFB26F04
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E47E1D172E;
-	Thu, 17 Oct 2024 08:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CEA1D619E;
+	Thu, 17 Oct 2024 08:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CH8HFPBQ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCqGWlBo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05A31D63DC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36661D5CD1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152880; cv=none; b=g9U5gVQ4SvNp6smJQ1pF52dFkopSRHDRDYx0NxD56haytFUxuTSv3Hu9vMurpf78gtM+QK+WxyEceuuSLlGVEl0a9dtvP/9PLtPPBIVICrWz7ID5eh1f+DEkdU/rDCFLY9odsw/D5QZVTQEFMBf2CMQ4y58Qufg44bbTPCrYV/A=
+	t=1729152873; cv=none; b=GuqNK2qwP1q1HbkWrPlLrsUNMNUeIob79RYMD250KnadGR/M3azyad9q7Yeoa5bPdYsij8p5yl5eAXmzLsJv8CAyGMk9Cj7D0HpL1VR9shrkeCQ1wXhdbyO95B48F7a5O0Bp5988Va+JwGITixWlulYzHi1N+psD075BsV0Nv+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152880; c=relaxed/simple;
-	bh=c4J/UnmFeTC8BBvqpEPvj+zBWvdybelwThrbdTexxsU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OIup6cNXcOPdSw+ocIi8GXFpLFzkZoFX127bsbcCxsoflgTaR1qdPKXo5iZD6IuuJYni21FVl9ocbRpf/D5QqevgZLQy7kq2Eigiba8/uwzkdxTcO5PQtnrpmdxM81+AfJlny+6DT6IB4MOTd27u+nSyVgkyBlbEE7Okomq5Txw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CH8HFPBQ; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539d9fffea1so665493e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:14:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729152874; x=1729757674; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PbuZ78Ln+IyEolb1HzZUdx3L9NhHInxuuhSiBS2bsdw=;
-        b=CH8HFPBQVmkyWkDTH/4eJo81QL9e7vg4lcoOu9rFPKRjDBA68WGrGrnUH6h+gDHBTg
-         eLctkTgKN+921NEix6e4TTO2VVKP1euj9tM5odybdxTHVSkC4xnsjODps7zOlKErbIk8
-         6F8G9oZlZqgfahpHSN9hujle1vt02zlcnl70VKGPqmQ344ExDvVszPV0pTIo/IQoz4Ft
-         LxEgEgKdzb6+zaNv23SgdHRsRT/9acshjuH8nUf7JR/KY3D2Yz1Jz9MnWed6MeP4ubgy
-         IIdrNeRG2hiAj6Az1K8xhkOurrr+RGZ+ipUWPWGEQXawyCSq7QpzmrsHMfkVEGT2E2W6
-         zhaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729152874; x=1729757674;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PbuZ78Ln+IyEolb1HzZUdx3L9NhHInxuuhSiBS2bsdw=;
-        b=DKDX9anU45I+rbZyPo38hGUQ4LXMzxVGwX99cVLQe/G2lQuJmvl3tRCbRU/CiWsNgw
-         iS6996S1iVrnkv99IY1aCvVHwalM2tqbehBKJOIqxobThLUYXdIHQy9kUL6sOfLTpW2w
-         NnMNEbEmnrJPDNkNrYrM1nqoLi2Km1Kd9K3evJsLq8AsrgvOSH4TG4cRAX+LXSm4FGSl
-         qz6d739eTFrD9kRT8gfM6Qx7qMDcOZEBAAm9dosCGFwu22H1aqAeW4DvIdd4fDA8fXo1
-         D4dORsz1FsPJ/V50HJBnE3HEKrOzm1H9gC4KY6DJ0BHBO/FdkPUYeArgzYdc1VdM0d8E
-         78Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBV5hok9lRXHixFilN6EGQLI/I2HFVCMrem/WVgQEqwAQp3d8oJh5ocxxUTEiQQ4C2bQoUpDpH15Y4nuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4K3j7KG5BBUUspzMsSsYOgTxNCtXz6ytIZbMqCW1Eda2pCnIS
-	l9moQcKeWkHOiods+QprCJPZzYyew7/Dhlp2nW0AULSj0QbM09xOJU0ak7bXf4I=
-X-Google-Smtp-Source: AGHT+IFsdnLfre4VUn+fGt/EEvLeGGxoNYWlklN1Qtb26Tpi/U+IR84E/vYlf3U3mKqtTAVgkVhvhQ==
-X-Received: by 2002:a05:6512:15a3:b0:53a:16b:f14f with SMTP id 2adb3069b0e04-53a03f18f73mr4462551e87.19.1729152873677;
-        Thu, 17 Oct 2024 01:14:33 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:3831:fc61:16eb:d0df])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c61ae2sm17855695e9.46.2024.10.17.01.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 01:14:32 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 17 Oct 2024 10:14:16 +0200
-Subject: [PATCH v4 8/8] gpiolib: notify user-space about in-kernel line
- state changes
+	s=arc-20240116; t=1729152873; c=relaxed/simple;
+	bh=sWgP/2B+OYSlDR1XEbrf9ZWW7htOr2yr/DagxqWGRbo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UE0jFvULCE+XndAvO/22QAup9szAsUxKuYZ8L9rSNboV/ZXX+nD98ok6PHPgLsF5MiasQbbb8AB2G6o/4E4k724ixZz1hNflw6csKG68Anfnii849W9I2hGqYYCm5q8jpiIgs80O51ztY9/SAyrNdSD++puys2DvnL70fY+jhbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCqGWlBo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46626C4CECE;
+	Thu, 17 Oct 2024 08:14:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729152873;
+	bh=sWgP/2B+OYSlDR1XEbrf9ZWW7htOr2yr/DagxqWGRbo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uCqGWlBoGyElsuX8ZQfD4rkgaOGmmfytinsSzk9LW6fz2aFXGAJ0BSGxyr3v3IB2W
+	 uKHAkO+hgVn3UxMDEXTQ8jZOIzkFzxnna7CH8kPBBgZ9c9a8tcgKqM+zYcmdNA5iXi
+	 3rl1gIewKY3i+9IIdBjeaUD9tfKQf/doU2yR7v0UE2UXbLb3XyN1qIZwU1RQ5ggrS3
+	 rNJ+ZQkKxDKR3g4J91tbBv4B5jQrgMda1Qo+EUmA+Mm9Vot9PYCYS9w7/FaQ4azr5s
+	 9tNMdDs2EjjzLPRCSA4kLzUw/b5qGMbBiKXVLuiLESksNst26DJawRfuTjuKYC0Spx
+	 ichWu2lKXNrSg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daeho Jeong <daeho43@gmail.com>,
+	Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH v7] f2fs: zone: don't block IO if there is remained open zone
+Date: Thu, 17 Oct 2024 16:14:21 +0800
+Message-Id: <20241017081421.2213743-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241017-gpio-notify-in-kernel-events-v4-8-64bc05f3be0c@linaro.org>
-References: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
-In-Reply-To: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10442;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=e8xh0s9h71X8kX5zh7fMViHQeVImY96zS9zoeZtXFFg=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnEMde5h3fbG0F5bR5wB6hqFmrmugKR8hatvfTW
- ImLhmD4jROJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxDHXgAKCRARpy6gFHHX
- cu1WD/0byuH1vtfPfxy8vKHI0EqW1fnYIKCuV9zjvzpBPDv1TuCbpApKU+m2VQA0xvhvq5Z5vkz
- gfH6KotfOh6elx4t7sysCx8+GRzKcTfWWhLEyX2HQxlqifm4H1xzIWjqS217DVyS7UJDUE3CD3a
- +6ibFRuvJVywrQw9bP0X1gyXPh8W5KOPn+8G/2e7YrgW/wKgLoJEHdLtueq78+77V90q1LidYVA
- CjGMsS3id1Kt8H00djDbQsd11dRVoe+yaQ5B/5Hpwh9PHUhsEoH7s5YHBhWHThRUptNF/4RAcg/
- FHZj2qCBPnp7OrP1ineysuHjpHlztYGJiwIxlGNW5dhEp8uYM89QZDC5ZFh9m8S6pV/J1bWd7ha
- XAO6gcVF/8nqMvDHkYSBA0UDIg1mK8/fyn+hhLJ9Lq2zBYmVcLQGcV7syW2WWRsKYA/h+n/aiY+
- 6he8yXw6U3vByRo/G7E4q/iNlggzXd3TOqzn7JGUSmpMh8nRhp9M6BxCfS55dr4Xh7Fjr/BHkBp
- OgFrxTKfYQAHrO21J+vM8+/QlsGMPbCVwg0WiIWZkwLPmVPp0+R/AJ9xzKD7azSNsEt5UTUe+V0
- 5Ixzrel8t1VAzguKU12dUL1mH2GElQlyIuIA8ujfKlylEAuBzCWoFX//1lVGRxKMKmF6EA74A8S
- Fz5vQoX7gG2C3FQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+max open zone may be larger than log header number of f2fs, for
+such case, it doesn't need to wait last IO in previous zone, let's
+introduce available_open_zone semaphore, and reduce it once we
+submit first write IO in a zone, and increase it after completion
+of last IO in the zone.
 
-We currently only notify user-space about line config changes that are
-made from user-space. Any kernel config changes are not signalled.
-
-Let's improve the situation by emitting the events closer to the source.
-To that end let's call the relevant notifier chain from the functions
-setting direction, gpiod_set_config(), gpiod_set_consumer_name() and
-gpiod_toggle_active_low(). This covers all the options that we can
-inform the user-space about. We ignore events which don't have
-corresponding flags exported to user-space on purpose - otherwise the
-user would see a config-changed event but the associated line-info would
-remain unchanged.
-
-gpiod_direction_output/input() can be called from any context.
-Fortunately, we now emit line state events using an atomic notifier
-chain, so it's no longer an issue.
-
-Let's also add non-notifying wrappers around the direction setters in
-order to not emit superfluous reconfigure events when requesting the
-lines as the initial config should be part of the request notification.
-
-Use gpio_do_set_config() instead of gpiod_set_debounce() for configuring
-debouncing via hardware from the character device code to avoid multiple
-reconfigure events.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Daeho Jeong <daeho43@gmail.com>
+Reviewed-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- drivers/gpio/gpiolib-cdev.c | 21 ++++++-----
- drivers/gpio/gpiolib.c      | 89 ++++++++++++++++++++++++++++++++++++++-------
- drivers/gpio/gpiolib.h      |  3 ++
- 3 files changed, 90 insertions(+), 23 deletions(-)
+v7:
+- export f2fs_is_blkaddr_zone_boundary()
+- adapt to f2fs_get_segment_temp() change
+- avoid null pointer dereference in destroy_curseg()
+ fs/f2fs/data.c    | 107 ++++++++++++++++++++++++++++++----------------
+ fs/f2fs/f2fs.h    |  37 +++++++++++++---
+ fs/f2fs/iostat.c  |   7 +++
+ fs/f2fs/iostat.h  |   2 +
+ fs/f2fs/segment.c |  42 +++++++++++++++++-
+ fs/f2fs/segment.h |   3 +-
+ fs/f2fs/super.c   |   2 +
+ 7 files changed, 157 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index cb4fb55e2696..e5b15d96e952 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -195,8 +195,6 @@ static long linehandle_set_config(struct linehandle_state *lh,
- 			if (ret)
- 				return ret;
- 		}
--
--		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- 	}
- 	return 0;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 90fa8ab85194..949b6bb957c7 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -372,11 +372,10 @@ static void f2fs_write_end_io(struct bio *bio)
+ #ifdef CONFIG_BLK_DEV_ZONED
+ static void f2fs_zone_write_end_io(struct bio *bio)
+ {
+-	struct f2fs_bio_info *io = (struct f2fs_bio_info *)bio->bi_private;
++	struct f2fs_sb_info *sbi = iostat_get_bio_private(bio);
+ 
+-	bio->bi_private = io->bi_private;
+-	complete(&io->zone_wait);
+ 	f2fs_write_end_io(bio);
++	up(&sbi->available_open_zones);
  }
-@@ -362,11 +360,11 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 		if (lflags & GPIOHANDLE_REQUEST_OUTPUT) {
- 			int val = !!handlereq.default_values[i];
+ #endif
  
--			ret = gpiod_direction_output(desc, val);
-+			ret = gpiod_direction_output_nonotify(desc, val);
- 			if (ret)
- 				goto out_free_lh;
- 		} else if (lflags & GPIOHANDLE_REQUEST_INPUT) {
--			ret = gpiod_direction_input(desc);
-+			ret = gpiod_direction_input_nonotify(desc);
- 			if (ret)
- 				goto out_free_lh;
- 		}
-@@ -922,8 +920,13 @@ static int debounce_setup(struct line *line, unsigned int debounce_period_us)
- 	int ret, level, irq;
- 	char *label;
+@@ -532,6 +531,24 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	if (!io->bio)
+ 		return;
  
--	/* try hardware */
--	ret = gpiod_set_debounce(line->desc, debounce_period_us);
-+	/*
-+	 * Try hardware. Skip gpiod_set_config() to avoid emitting two
-+	 * CHANGED_CONFIG line state events.
-+	 */
-+	ret = gpio_do_set_config(line->desc,
-+			pinconf_to_config_packed(PIN_CONFIG_INPUT_DEBOUNCE,
-+						 debounce_period_us));
- 	if (!ret) {
- 		WRITE_ONCE(line->desc->debounce_period_us, debounce_period_us);
- 		return ret;
-@@ -1447,8 +1450,6 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
- 		}
- 
- 		WRITE_ONCE(line->edflags, edflags);
--
--		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- 	}
- 	return 0;
- }
-@@ -1700,11 +1701,11 @@ static int linereq_create(struct gpio_device *gdev, void __user *ip)
- 		if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
- 			int val = gpio_v2_line_config_output_value(lc, i);
- 
--			ret = gpiod_direction_output(desc, val);
-+			ret = gpiod_direction_output_nonotify(desc, val);
- 			if (ret)
- 				goto out_free_linereq;
- 		} else if (flags & GPIO_V2_LINE_FLAG_INPUT) {
--			ret = gpiod_direction_input(desc);
-+			ret = gpiod_direction_input_nonotify(desc);
- 			if (ret)
- 				goto out_free_linereq;
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 83e85dbfdeed..ae758ba6dc3d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2564,7 +2564,7 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
-  * rely on gpio_request() having been called beforehand.
-  */
- 
--static int gpio_do_set_config(struct gpio_desc *desc, unsigned long config)
-+int gpio_do_set_config(struct gpio_desc *desc, unsigned long config)
- {
- 	int ret;
- 
-@@ -2670,9 +2670,15 @@ static int gpio_set_bias(struct gpio_desc *desc)
-  */
- int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce)
- {
--	return gpio_set_config_with_argument_optional(desc,
--						      PIN_CONFIG_INPUT_DEBOUNCE,
--						      debounce);
-+	int ret;
-+
-+	ret = gpio_set_config_with_argument_optional(desc,
-+						     PIN_CONFIG_INPUT_DEBOUNCE,
-+						     debounce);
-+	if (!ret)
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
-+	return ret;
- }
- 
- /**
-@@ -2686,6 +2692,18 @@ int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce)
-  * 0 on success, or negative errno on failure.
-  */
- int gpiod_direction_input(struct gpio_desc *desc)
-+{
-+	int ret;
-+
-+	ret = gpiod_direction_input_nonotify(desc);
-+	if (ret == 0)
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_direction_input);
-+
-+int gpiod_direction_input_nonotify(struct gpio_desc *desc)
- {
- 	int ret = 0;
- 
-@@ -2733,7 +2751,6 @@ int gpiod_direction_input(struct gpio_desc *desc)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(gpiod_direction_input);
- 
- static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- {
-@@ -2795,8 +2812,15 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
-  */
- int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
- {
-+	int ret;
-+
- 	VALIDATE_DESC(desc);
--	return gpiod_direction_output_raw_commit(desc, value);
-+
-+	ret = gpiod_direction_output_raw_commit(desc, value);
-+	if (ret == 0)
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
- 
-@@ -2814,6 +2838,18 @@ EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
-  * 0 on success, or negative errno on failure.
-  */
- int gpiod_direction_output(struct gpio_desc *desc, int value)
-+{
-+	int ret;
-+
-+	ret = gpiod_direction_output_nonotify(desc, value);
-+	if (ret == 0)
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_direction_output);
-+
-+int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value)
- {
- 	unsigned long flags;
- 	int ret;
-@@ -2843,7 +2879,7 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- 			goto set_output_value;
- 		/* Emulate open drain by not actively driving the line high */
- 		if (value) {
--			ret = gpiod_direction_input(desc);
-+			ret = gpiod_direction_input_nonotify(desc);
- 			goto set_output_flag;
- 		}
- 	} else if (test_bit(FLAG_OPEN_SOURCE, &flags)) {
-@@ -2852,7 +2888,7 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- 			goto set_output_value;
- 		/* Emulate open source by not actively driving the line low */
- 		if (!value) {
--			ret = gpiod_direction_input(desc);
-+			ret = gpiod_direction_input_nonotify(desc);
- 			goto set_output_flag;
- 		}
- 	} else {
-@@ -2876,7 +2912,6 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
- 		set_bit(FLAG_IS_OUT, &desc->flags);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(gpiod_direction_output);
- 
- /**
-  * gpiod_enable_hw_timestamp_ns - Enable hardware timestamp in nanoseconds.
-@@ -2955,9 +2990,30 @@ EXPORT_SYMBOL_GPL(gpiod_disable_hw_timestamp_ns);
-  */
- int gpiod_set_config(struct gpio_desc *desc, unsigned long config)
- {
-+	int ret;
-+
- 	VALIDATE_DESC(desc);
- 
--	return gpio_do_set_config(desc, config);
-+	ret = gpio_do_set_config(desc, config);
-+	if (!ret) {
-+		/* These are the only options we notify the userspace about. */
-+		switch (pinconf_to_config_param(config)) {
-+		case PIN_CONFIG_BIAS_DISABLE:
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		case PIN_CONFIG_DRIVE_OPEN_SOURCE:
-+		case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		case PIN_CONFIG_INPUT_DEBOUNCE:
-+			gpiod_line_state_notify(desc,
-+						GPIO_V2_LINE_CHANGED_CONFIG);
-+			break;
-+		default:
-+			break;
-+		}
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (io->open_zone) {
++		/*
++		 * if there is no open zone, it will wait for last IO in
++		 * previous zone before submitting new IO.
++		 */
++		down(&fio->sbi->available_open_zones);
++		io->open_zone = false;
++		io->zone_opened = true;
 +	}
 +
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(gpiod_set_config);
- 
-@@ -3024,6 +3080,7 @@ void gpiod_toggle_active_low(struct gpio_desc *desc)
- {
- 	VALIDATE_DESC_VOID(desc);
- 	change_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+	gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
- }
- EXPORT_SYMBOL_GPL(gpiod_toggle_active_low);
- 
-@@ -3668,9 +3725,15 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
-  */
- int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
- {
-+	int ret;
++	if (io->close_zone) {
++		io->bio->bi_end_io = f2fs_zone_write_end_io;
++		io->zone_opened = false;
++		io->close_zone = false;
++	}
++#endif
 +
- 	VALIDATE_DESC(desc);
+ 	if (is_read_io(fio->op)) {
+ 		trace_f2fs_prepare_read_bio(io->sbi->sb, fio->type, io->bio);
+ 		f2fs_submit_read_bio(io->sbi, io->bio, fio->type);
+@@ -605,9 +622,9 @@ int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi)
+ 			INIT_LIST_HEAD(&io->bio_list);
+ 			init_f2fs_rwsem(&io->bio_list_lock);
+ #ifdef CONFIG_BLK_DEV_ZONED
+-			init_completion(&io->zone_wait);
+-			io->zone_pending_bio = NULL;
+-			io->bi_private = NULL;
++			io->open_zone = false;
++			io->zone_opened = false;
++			io->close_zone = false;
+ #endif
+ 		}
+ 	}
+@@ -638,6 +655,31 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ 	f2fs_up_write(&io->io_rwsem);
+ }
  
--	return desc_set_label(desc, name);
-+	ret = desc_set_label(desc, name);
-+	if (ret == 0)
-+		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
++void f2fs_blkzoned_submit_merged_write(struct f2fs_sb_info *sbi, int type)
++{
++#ifdef CONFIG_BLK_DEV_ZONED
++	struct f2fs_bio_info *io;
 +
-+	return ret;
++	if (!f2fs_sb_has_blkzoned(sbi))
++		return;
++
++	io = sbi->write_io[PAGE_TYPE(type)] + f2fs_get_segment_temp(sbi, type);
++
++	f2fs_down_write(&io->io_rwsem);
++	if (io->zone_opened) {
++		if (io->bio) {
++			io->close_zone = true;
++			__submit_merged_bio(io);
++		} else {
++			up(&sbi->available_open_zones);
++			io->zone_opened = false;
++		}
++	}
++	f2fs_up_write(&io->io_rwsem);
++#endif
++
++}
++
+ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				struct inode *inode, struct page *page,
+ 				nid_t ino, enum page_type type, bool force)
+@@ -922,24 +964,21 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
  }
- EXPORT_SYMBOL_GPL(gpiod_set_consumer_name);
  
-@@ -4548,10 +4611,10 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
++bool f2fs_is_blkaddr_zone_boundary(struct f2fs_sb_info *sbi,
++					block_t blkaddr, bool start)
+ {
+-	struct block_device *bdev = sbi->sb->s_bdev;
+-	int devi = 0;
++	if (!f2fs_blkaddr_in_seqzone(sbi, blkaddr))
++		return false;
  
- 	/* Process flags */
- 	if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
--		ret = gpiod_direction_output(desc,
-+		ret = gpiod_direction_output_nonotify(desc,
- 				!!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
- 	else
--		ret = gpiod_direction_input(desc);
-+		ret = gpiod_direction_input_nonotify(desc);
- 
- 	return ret;
+ 	if (f2fs_is_multi_device(sbi)) {
+-		devi = f2fs_target_device_index(sbi, blkaddr);
+-		if (blkaddr < FDEV(devi).start_blk ||
+-		    blkaddr > FDEV(devi).end_blk) {
+-			f2fs_err(sbi, "Invalid block %x", blkaddr);
+-			return false;
+-		}
++		int devi = f2fs_target_device_index(sbi, blkaddr);
++
+ 		blkaddr -= FDEV(devi).start_blk;
+-		bdev = FDEV(devi).bdev;
+ 	}
+-	return bdev_is_zoned(bdev) &&
+-		f2fs_blkz_is_seq(sbi, devi, blkaddr) &&
+-		(blkaddr % sbi->blocks_per_blkz == sbi->blocks_per_blkz - 1);
++
++	if (start)
++		return (blkaddr % sbi->blocks_per_blkz) == 0;
++	return (blkaddr % sbi->blocks_per_blkz == sbi->blocks_per_blkz - 1);
  }
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index a54be597d21a..83690f72f7e5 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -155,6 +155,8 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
+ #endif
  
- void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action);
-+int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value);
-+int gpiod_direction_input_nonotify(struct gpio_desc *desc);
+@@ -950,20 +989,14 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
+ 	struct page *bio_page;
+ 	enum count_type type;
++#ifdef CONFIG_BLK_DEV_ZONED
++	bool blkzoned = f2fs_sb_has_blkzoned(sbi) && btype < META;
++#endif
  
- struct gpio_desc_label {
- 	struct rcu_head rh;
-@@ -258,6 +260,7 @@ struct gpio_desc *gpiod_find_and_request(struct device *consumer,
- 					 const char *label,
- 					 bool platform_lookup_allowed);
+ 	f2fs_bug_on(sbi, is_read_io(fio->op));
  
-+int gpio_do_set_config(struct gpio_desc *desc, unsigned long config);
- int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
- 		unsigned long lflags, enum gpiod_flags dflags);
- int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce);
-
+ 	f2fs_down_write(&io->io_rwsem);
+ next:
+-#ifdef CONFIG_BLK_DEV_ZONED
+-	if (f2fs_sb_has_blkzoned(sbi) && btype < META && io->zone_pending_bio) {
+-		wait_for_completion_io(&io->zone_wait);
+-		bio_put(io->zone_pending_bio);
+-		io->zone_pending_bio = NULL;
+-		io->bi_private = NULL;
+-	}
+-#endif
+-
+ 	if (fio->in_list) {
+ 		spin_lock(&io->io_lock);
+ 		if (list_empty(&io->io_list)) {
+@@ -991,6 +1024,12 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	type = WB_DATA_TYPE(bio_page, fio->compressed_page);
+ 	inc_page_count(sbi, type);
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (blkzoned &&
++		f2fs_is_blkaddr_zone_boundary(sbi, fio->new_blkaddr, true))
++		io->open_zone = true;
++#endif
++
+ 	if (io->bio &&
+ 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+ 			      fio->new_blkaddr) ||
+@@ -1016,15 +1055,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	io->last_block_in_bio = fio->new_blkaddr;
+ 
+ 	trace_f2fs_submit_page_write(fio->page, fio);
++
+ #ifdef CONFIG_BLK_DEV_ZONED
+-	if (f2fs_sb_has_blkzoned(sbi) && btype < META &&
+-			is_end_zone_blkaddr(sbi, fio->new_blkaddr)) {
+-		bio_get(io->bio);
+-		reinit_completion(&io->zone_wait);
+-		io->bi_private = io->bio->bi_private;
+-		io->bio->bi_private = io;
+-		io->bio->bi_end_io = f2fs_zone_write_end_io;
+-		io->zone_pending_bio = io->bio;
++	if (blkzoned &&
++		f2fs_is_blkaddr_zone_boundary(sbi, fio->new_blkaddr, false)) {
++		io->close_zone = true;
+ 		__submit_merged_bio(io);
+ 	}
+ #endif
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 56797f8e6659..0ff7f2812312 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1241,16 +1241,16 @@ struct f2fs_bio_info {
+ 	struct bio *bio;		/* bios to merge */
+ 	sector_t last_block_in_bio;	/* last block number */
+ 	struct f2fs_io_info fio;	/* store buffered io info. */
+-#ifdef CONFIG_BLK_DEV_ZONED
+-	struct completion zone_wait;	/* condition value for the previous open zone to close */
+-	struct bio *zone_pending_bio;	/* pending bio for the previous zone */
+-	void *bi_private;		/* previous bi_private for pending bio */
+-#endif
+ 	struct f2fs_rwsem io_rwsem;	/* blocking op for bio */
+ 	spinlock_t io_lock;		/* serialize DATA/NODE IOs */
+ 	struct list_head io_list;	/* track fios */
+ 	struct list_head bio_list;	/* bio entry list head */
+ 	struct f2fs_rwsem bio_list_lock;	/* lock to protect bio entry list */
++#ifdef CONFIG_BLK_DEV_ZONED
++	bool open_zone;			/* open a zone */
++	bool zone_opened;		/* zone has been opened */
++	bool close_zone;		/* close a zone */
++#endif
+ };
+ 
+ #define FDEV(i)				(sbi->devs[i])
+@@ -1572,6 +1572,7 @@ struct f2fs_sb_info {
+ 	unsigned int max_open_zones;		/* max open zone resources of the zoned device */
+ 	/* For adjust the priority writing position of data in zone UFS */
+ 	unsigned int blkzone_alloc_policy;
++	struct semaphore available_open_zones;	/* available open zones */
+ #endif
+ 
+ 	/* for node-related operations */
+@@ -3861,6 +3862,7 @@ void f2fs_destroy_bio_entry_cache(void);
+ void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
+ 			  enum page_type type);
+ int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi);
++void f2fs_blkzoned_submit_merged_write(struct f2fs_sb_info *sbi, int type);
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				struct inode *inode, struct page *page,
+@@ -3870,6 +3872,10 @@ void f2fs_submit_merged_ipu_write(struct f2fs_sb_info *sbi,
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+ int f2fs_submit_page_bio(struct f2fs_io_info *fio);
+ int f2fs_merge_page_bio(struct f2fs_io_info *fio);
++#ifdef CONFIG_BLK_DEV_ZONED
++bool f2fs_is_blkaddr_zone_boundary(struct f2fs_sb_info *sbi,
++					block_t blkaddr, bool start);
++#endif
+ void f2fs_submit_page_write(struct f2fs_io_info *fio);
+ struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+ 		block_t blk_addr, sector_t *sector);
+@@ -4541,6 +4547,27 @@ static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+ 
+ 	return test_bit(zno, FDEV(devi).blkz_seq);
+ }
++
++static inline bool f2fs_blkaddr_in_seqzone(struct f2fs_sb_info *sbi,
++							block_t blkaddr)
++{
++	struct block_device *bdev = sbi->sb->s_bdev;
++	int devi = 0;
++
++	if (f2fs_is_multi_device(sbi)) {
++		devi = f2fs_target_device_index(sbi, blkaddr);
++		if (blkaddr < FDEV(devi).start_blk ||
++		    blkaddr > FDEV(devi).end_blk) {
++			f2fs_err(sbi, "Invalid block %x", blkaddr);
++			return false;
++		}
++		blkaddr -= FDEV(devi).start_blk;
++		bdev = FDEV(devi).bdev;
++	}
++
++	return bdev_is_zoned(bdev) &&
++		f2fs_blkz_is_seq(sbi, devi, blkaddr);
++}
+ #endif
+ 
+ static inline int f2fs_bdev_index(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/iostat.c b/fs/f2fs/iostat.c
+index f8703038e1d8..a8626e297876 100644
+--- a/fs/f2fs/iostat.c
++++ b/fs/f2fs/iostat.c
+@@ -237,6 +237,13 @@ static inline void __update_iostat_latency(struct bio_iostat_ctx *iostat_ctx,
+ 	spin_unlock_irqrestore(&sbi->iostat_lat_lock, flags);
+ }
+ 
++void *iostat_get_bio_private(struct bio *bio)
++{
++	struct bio_iostat_ctx *iostat_ctx = bio->bi_private;
++
++	return iostat_ctx->sbi;
++}
++
+ void iostat_update_and_unbind_ctx(struct bio *bio)
+ {
+ 	struct bio_iostat_ctx *iostat_ctx = bio->bi_private;
+diff --git a/fs/f2fs/iostat.h b/fs/f2fs/iostat.h
+index eb99d05cf272..9006c3d41590 100644
+--- a/fs/f2fs/iostat.h
++++ b/fs/f2fs/iostat.h
+@@ -58,6 +58,7 @@ static inline struct bio_post_read_ctx *get_post_read_ctx(struct bio *bio)
+ 	return iostat_ctx->post_read_ctx;
+ }
+ 
++extern void *iostat_get_bio_private(struct bio *bio);
+ extern void iostat_update_and_unbind_ctx(struct bio *bio);
+ extern void iostat_alloc_and_bind_ctx(struct f2fs_sb_info *sbi,
+ 		struct bio *bio, struct bio_post_read_ctx *ctx);
+@@ -68,6 +69,7 @@ extern void f2fs_destroy_iostat(struct f2fs_sb_info *sbi);
+ #else
+ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		enum iostat_type type, unsigned long long io_bytes) {}
++static inline void *iostat_get_bio_private(struct bio *bio) { return bio->bi_private; }
+ static inline void iostat_update_and_unbind_ctx(struct bio *bio) {}
+ static inline void iostat_alloc_and_bind_ctx(struct f2fs_sb_info *sbi,
+ 		struct bio *bio, struct bio_post_read_ctx *ctx) {}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8e80e6620854..e1003e262184 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3230,6 +3230,10 @@ static int __allocate_new_segment(struct f2fs_sb_info *sbi, int type,
+ 		return err;
+ 	stat_inc_seg_type(sbi, curseg);
+ 	locate_dirty_segment(sbi, old_segno);
++
++	if (new_sec)
++		f2fs_blkzoned_submit_merged_write(sbi, type);
++
+ 	return 0;
+ }
+ 
+@@ -4316,6 +4320,30 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
+ 		return -EINVAL;
+ 	}
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (f2fs_sb_has_blkzoned(sbi)) {
++		for (type = 0; type < NR_PERSISTENT_LOG; type++) {
++			struct curseg_info *curseg = CURSEG_I(sbi, type);
++			enum page_type ptype;
++			enum temp_type temp;
++
++			/* current segment locates in non-seqzone */
++			if (!f2fs_blkaddr_in_seqzone(sbi,
++					START_BLOCK(sbi, curseg->segno)))
++				continue;
++
++			/* write pointer of zone is zero */
++			if (f2fs_is_blkaddr_zone_boundary(sbi,
++				NEXT_FREE_BLKADDR(sbi, curseg), true))
++				continue;
++
++			ptype = PAGE_TYPE(type);
++			temp = f2fs_get_segment_temp(sbi, type);
++			down(&sbi->available_open_zones);
++			sbi->write_io[ptype][temp].zone_opened = true;
++		}
++	}
++#endif
+ 	return 0;
+ }
+ 
+@@ -5645,11 +5673,23 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
+ 
+ 	if (!array)
+ 		return;
+-	SM_I(sbi)->curseg_array = NULL;
+ 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+ 		kfree(array[i].sum_blk);
+ 		kfree(array[i].journal);
++
++#ifdef CONFIG_BLK_DEV_ZONED
++		if (f2fs_sb_has_blkzoned(sbi) && i < NR_PERSISTENT_LOG) {
++			enum page_type ptype = PAGE_TYPE(i);
++			enum temp_type temp = f2fs_get_segment_temp(sbi, i);
++
++			if (sbi->write_io[ptype][temp].zone_opened) {
++				up(&sbi->available_open_zones);
++				sbi->write_io[ptype][temp].zone_opened = false;
++			}
++		}
++#endif
+ 	}
++	SM_I(sbi)->curseg_array = NULL;
+ 	kfree(array);
+ }
+ 
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 6a23bb1d16a2..cd6325f3b9ca 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -26,7 +26,8 @@
+ 
+ #define IS_DATASEG(t)	((t) <= CURSEG_COLD_DATA)
+ #define IS_NODESEG(t)	((t) >= CURSEG_HOT_NODE && (t) <= CURSEG_COLD_NODE)
+-#define SE_PAGETYPE(se)	((IS_NODESEG((se)->type) ? NODE : DATA))
++#define PAGE_TYPE(t)	(IS_NODESEG(t) ? NODE : DATA)
++#define SE_PAGETYPE(se)	(PAGE_TYPE((se)->type))
+ 
+ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
+ 						unsigned short seg_type)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index aa14c8fce7d9..0d96e352b4ac 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3923,6 +3923,8 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ 				sbi->max_open_zones, F2FS_OPTION(sbi).active_logs);
+ 			return -EINVAL;
+ 		}
++
++		sema_init(&sbi->available_open_zones, sbi->max_open_zones);
+ 	}
+ 
+ 	zone_sectors = bdev_zone_sectors(bdev);
 -- 
-2.43.0
+2.40.1
 
 
