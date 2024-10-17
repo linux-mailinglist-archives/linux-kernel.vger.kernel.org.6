@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-370186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940579A2926
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1669A2929
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C520B1C20C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C3391C21542
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10F41DF75E;
-	Thu, 17 Oct 2024 16:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27241DF99F;
+	Thu, 17 Oct 2024 16:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQh9wuNQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipguhI9e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176891DF73A;
-	Thu, 17 Oct 2024 16:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E0F1DF96E;
+	Thu, 17 Oct 2024 16:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183161; cv=none; b=UQGscK6MMlujZDYSp9OeUM4ueHFbuEQCIMS+uPaVscZ7rYN0fIbALu2mqeDUk0eTwuK2ueBcRJWmE0iyFf8gtF3b93pv/ZH8P+4mGKZvwqjydw3eIz5+CI2u36Av0nAsAyq39aPwCGxy83e+u4cK13lDg7EcB+9ggyNxPYBk86w=
+	t=1729183162; cv=none; b=JWuEkTVl7wjxp/efZ+31MrAeSp+HgapXQpjfzIsWY7KiyXuMIKJpFZmD7s/jv/a52EXkBeJbJURY6/L2QJwcGc6j/hr91lruFeKtTYr4II1tXEFDRRcfU+T+/31YNNBwjam43+/liGIw1730DbuYhhfI6sWm1vEMsjvhtV+0LY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183161; c=relaxed/simple;
-	bh=sQmjhkW1sVHwavY1/+k1svK1lnupAJBrdjjQaarKm6I=;
+	s=arc-20240116; t=1729183162; c=relaxed/simple;
+	bh=tb8dQv7yx10S84kB5tKyG8Quvbrc86dllNNk0OqOzWM=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NNGNyp1zLGbRdXtItgoS/s0myWb6a/fPia5VfZXVY4yO/Y8ECMT7ufVgLkn7NzD+X557vVcZ4z0tvwy34SUdTt7j7r1o/8tYD2Y92cyeb9G7SPKiAjP9vmUpT1cP1EbNFXbRo6K9c19kLOJyKyEj8yEbXXPz5P7k02zlnU4jHaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQh9wuNQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573C1C4CECE;
-	Thu, 17 Oct 2024 16:39:20 +0000 (UTC)
+	 MIME-Version:Content-Type; b=chFKmcIH0WxZoaGUJ/n3pgs+/DshkOm9pmqP+pCnze3ZZ8M1oCkk+VUCHVuuBStvXSiU9f6zlqQIYKOFWZvvxafoDX6IigsBSYrCdpvDKSUAy51W8Fo8fsiGh1ZuPB7ykjdhuQFJPuvfWW2W0NKNRg2RsqoVCZ3BwQiheTFMVk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipguhI9e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 980DCC4CED2;
+	Thu, 17 Oct 2024 16:39:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729183160;
-	bh=sQmjhkW1sVHwavY1/+k1svK1lnupAJBrdjjQaarKm6I=;
+	s=k20201202; t=1729183161;
+	bh=tb8dQv7yx10S84kB5tKyG8Quvbrc86dllNNk0OqOzWM=;
 	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=rQh9wuNQRpbtWPiTzJb2H4B0GSvr9T0v0zkF73raMagLHakbncXKsfJiL5d2dckpy
-	 lNIU2il0q+uP2hhx9fltJEvqm/zMkoDHq6J3dSJ2cllrx6H+TTCOOQV9mYCtK33I9F
-	 c/3Zf7hCHkiMNeQm/tWfviJLfN+I9jbTC07SyKcoMDqrY5SnzX9sJpmZRepirGrpyK
-	 3dxbImaNM5fDS/6Jd93c/f9Otc7zlCgJy3+01JqS7ggyjLwignW4YgRXARFua8Lz8O
-	 +YiSRXjyKAOkgrtXDnV8FTwdkLso/r7wsISZwZ6TDp4B8T/2/bv4MO2BPy7zWmwnV6
-	 1DS3/7ZgUJyGA==
+	b=ipguhI9e6EFYQ00lg1LtXzijlZrcbs65oWkf8UwJ1feSiMAKrz84T2iC9LX04yVV4
+	 xCQPp6MPGnS6hZNdVp7cStKD6caLv0NJVk2apnDGP6CiS20jm94h9EfTOQ/ccywevK
+	 p3QWiOFtcjKsTeYdIngQXHQxICf7O9FWZT+nWAyR82GG0N/7qXWxLZZflXAqlOewb4
+	 0nfhmn4RwUK34feH+CjzRzYtJvVlTLGn77nqpHkzn2CxU4C4hWqMC6OKQgpq/EIWnO
+	 GfyZYjXCEaAbohr5uQtcsA34yhIxhjckkxFospLnyOrl1oZVQvD7Nc90PGu2H+vvDX
+	 cf+HsCdunf9IQ==
 From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
  Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
- Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
- Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
- Yicong Yang <yangyicong@hisilicon.com>, Weilin Wang <weilin.wang@intel.com>, 
- Tim Chen <tim.c.chen@linux.intel.com>, 
- Thomas Richter <tmricht@linux.ibm.com>, 
- Sumanth Korikkar <sumanthk@linux.ibm.com>, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-In-Reply-To: <20241016175350.116227-1-irogers@google.com>
-References: <20241016175350.116227-1-irogers@google.com>
-Subject: Re: [PATCH v3 0/8] CSV/JSON metric thresholds, fix printf
- modifiers
-Message-Id: <172918316032.639809.5792146702013848062.b4-ty@kernel.org>
-Date: Thu, 17 Oct 2024 09:39:20 -0700
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20241012204725.928794-1-leo.yan@arm.com>
+References: <20241012204725.928794-1-leo.yan@arm.com>
+Subject: Re: [PATCH v3 0/3] perf probe: Improve logs for long name string
+Message-Id: <172918316158.639809.15313412336355889892.b4-ty@kernel.org>
+Date: Thu, 17 Oct 2024 09:39:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,15 +63,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 16 Oct 2024 10:53:42 -0700, Ian Rogers wrote:
+On Sat, 12 Oct 2024 21:47:22 +0100, Leo Yan wrote:
 
-> Metric thresholds are being computed for CSV and JSON output but not
-> displayed. Rename the color that encodes the threshold as enum values
-> and use to generate string constants in a CSV column or json
-> dictionary value.
+> The series [1] tries to use hashed symbol names for event names. This
+> can avoid failures due to long symbol names. Somehow, it is preferred to
+> specify a distinct event name when adding a probe.
 > 
-> Add printf attribute to functions in color.h that could support
-> it. Fix bad printf format strings that this detected.
+> This series follows up on the comment to improve the logs for long event
+> strings.
 > 
 > [...]
 
