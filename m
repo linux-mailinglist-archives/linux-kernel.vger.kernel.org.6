@@ -1,182 +1,165 @@
-Return-Path: <linux-kernel+bounces-369205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227AA9A1A47
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:55:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8F49A1A4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5381C22E3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:55:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71FF0B24BAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDFF16DEB4;
-	Thu, 17 Oct 2024 05:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B0816FF26;
+	Thu, 17 Oct 2024 05:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="ZZm8pGdo"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011024.outbound.protection.outlook.com [40.107.74.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fFeBewxO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470221388;
-	Thu, 17 Oct 2024 05:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729144518; cv=fail; b=pRBB744fv8k6VYychuaeg6I92vV70UDB5u/lSlfwF33LvZyri97Oest31sZw1wzVrqUjp9Z+giK06EDLqAe+kMwugVMn+m3LZsSGvjhzl7+LPGMn/YuMpNZ7/gnjKqHVGd6eEawayEhMjBYuHAmd3YN7MjcHOb1vza8/57ioyew=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729144518; c=relaxed/simple;
-	bh=ehBk1JzjesCKUG3Fr0DyhVANHOXpNxNR1kB/d3Q7o50=;
-	h=Message-ID:From:Subject:To:Cc:Content-Type:Date:MIME-Version; b=TMlZOEPQICvLHqalF3X2dFYAvxvqfmrKGjaXhlVAOqddKC9ldZxNlp7lWu+KLZv8eZEnTc3GmCOOJIshqup2yd8e8vC+qJ5pDt1S/KmxHQFKGYDkF+i4Rym0nM60KWQaqCrdnX/TPL2YydRNWoYsEejBSZT1hJM0zNAi0blaJsE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=ZZm8pGdo; arc=fail smtp.client-ip=40.107.74.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AOEZQUk2m6OC7/wcB8B7cdTNj/odKlN8mDi2bJuiJVVR5Vv1uzGKS3drv/QHbwGlMjyT+PMCVFGBqEFsXc6Q4Bd93MYWaW+UktqW3cK+BW0ActIrov3zbxVtJHyxUaa7xeO0C7Qgm1ZyttAeCcPoPU1JxdQG1VV4abvXMX+bHjFeczdCenjhwpvUEfAxRhU48WOo8pk3iINcyCpVU6/hS9uw9u0gzmtmmg0M5agMcNpNGV4ryeu0a/RXo6ip3NEAV6qHPeVPfukPXSQPVM+KBcqsmb4IHfPROXA67fVcQirV30DygBX3el+q6LiBWPnr/Iy9/2dFmeHtWM04og3fpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/NLBqTtHqfYUr/MtP1x+YTI6sXXbwsxCzCWo+YblGH8=;
- b=QqOWkVCheg+NkoL/G50P3LT0Xm/HjG+j6bfMRVGFPX5SpCZtd8azLKijq5XEiKbK5Ox9K2YllHPF++FPtH3KD1AHg9ymTW2xJps2wM389qXDNj4V8bX5I4Wg0YRgMl8VX9k+/u3Rl6XAwJ+WwiGgRIjuvlZb2llrJZUjrGUrkCTZKi1J1T8jTyo58wUeDZx4X5NEIGbDkVxz0Xlitewyd8YaksPnlZt2J7vK/vuRPRwMuxegmGBGEoQgFtFHu3G8j+4pnkslGcQrcwshL0Lw2kZBH0OL89H296j2/eZG42/eWnzDFC+o1jT+bizDuGvdzS9q1/Edb79j5XE5hC8j/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/NLBqTtHqfYUr/MtP1x+YTI6sXXbwsxCzCWo+YblGH8=;
- b=ZZm8pGdolfr+qhDjyYr+yx0Va5gvrF2qfkFXimE+0N9iVryFnWx1jATNOOvJUxrYXkgDd0fVwYICHoctAhkNpWWzBKNBWkBGX8LkR5MQr1pATMr9ggV7O5HWETq6ZqR+2zjwKC/zUROg7YRjiSPElsuTj3z0NKwX6lHc+2B/AeI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYTPR01MB11091.jpnprd01.prod.outlook.com
- (2603:1096:400:39a::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 05:55:10 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%5]) with mapi id 15.20.8069.018; Thu, 17 Oct 2024
- 05:55:10 +0000
-Message-ID: <878quns282.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH] MAINTAINERS: Generic Sound Card section
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 17 Oct 2024 05:55:10 +0000
-X-ClientProxiedBy: TYCP286CA0276.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c9::13) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E5716DC28
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729144684; cv=none; b=YpJ7ezaCCMrdEZrY6y3hdT3lSlC5qgaVOg1s70fCdlchnOyP/IRT22Ir3yzQTkgPJSRsdQ9mdhLfwQ6chuES5puOvYwsEm1Fc/2dhaZG8zEX28PtCVOyHrv9oTczDcomCcystVVU+bflGXYWlIu1uq5/MdOc9kpu4VrXNMBXc8c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729144684; c=relaxed/simple;
+	bh=7WGbA3PFXNlP2WRPHXjStDQq4aIrBsORJow5PEnGhaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=L/7knNz0oQGlwQ5uN8B0dKgY1hxmzptGgFlqdNmZjdQhiNNopAP7C6oJoWyDXlWw40KOpazYSC4TvKmKbl5uxGVhtwzRMPbbEQ95H6W+LKCceZPzV/yE4egZfiV119zEm+orZ+pQnuBBfiKqfC3iYfjrBfIU3eQjG1EVuD1Ost4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fFeBewxO; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729144681; x=1760680681;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=7WGbA3PFXNlP2WRPHXjStDQq4aIrBsORJow5PEnGhaA=;
+  b=fFeBewxOYGQ1bOpZ7+0uV0e//bP5QbmEWz5cT3rFNffEf2T7KS1VBKD9
+   WupHyPRWqwcbzUiqpt6FqoI05P3uTTL8iGuWyfCKkfAUxKBZbyU55SoS6
+   8TPzOcPLU/MRgHZbQu8gHAprpo8apFJHuv4i38B0UKr5Dl7FWOaPjcokz
+   AdI+8ip63F1TwINUHUlQ9pFRnZ0o63EzQIZt4ey+eSLcqhi82B07hICwS
+   Rvw85Ni7msSpaQcIgjzq8uee4CqnEX76xixzBdDSUin526dxYY6IpVrLM
+   rkRK/1rfob2VmcIEVuJEeoPh8h4cHKIE52FpspEloVZHNBnEQN1mSrnle
+   w==;
+X-CSE-ConnectionGUID: LXGZ63bWRqOIPmRD24j6VQ==
+X-CSE-MsgGUID: ++7+LDn3Qn+CZqfhffaBHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="28821008"
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="28821008"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 22:58:00 -0700
+X-CSE-ConnectionGUID: BCUVYuMwQXGv0hG4Z/JSFA==
+X-CSE-MsgGUID: Ccyra/gyTyy9G5H5pNQBgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="83273201"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 16 Oct 2024 22:57:59 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1JWG-000Lmf-1E;
+	Thu, 17 Oct 2024 05:57:56 +0000
+Date: Thu, 17 Oct 2024 13:57:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20241015-2 6/18]
+ include/linux/compiler_types.h:517:45: error: call to
+ '__compiletime_assert_854' declared with attribute error: BUILD_BUG_ON
+ failed: conf->keylen < WLAN_KEY_LEN_CCMP
+Message-ID: <202410171314.IhaS4oSI-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYTPR01MB11091:EE_
-X-MS-Office365-Filtering-Correlation-Id: 183b1326-4a11-4e59-b4c7-08dcee7042b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3NvW7LafmGqOOA8+vtmKUzdsm6hX4RoOXqL0ck9XK8WbJc4egQvjX6qq7YWV?=
- =?us-ascii?Q?FDgdRyhxzS3BzGFfGoI0CFSaK2xi4cvGb2KRoCwUM7msecAXt12o9iCL6uWP?=
- =?us-ascii?Q?q5ohg5Vh9CdKyT5Dup8vj24tXCdJXRemO3sAhRkxZbsXRMrk6n6IMmye+y6J?=
- =?us-ascii?Q?uvIElP9QhSw3A8MUhQx4yAlanDIPZNxcQGbbgZRbtgu4Ovpa9RoI+2CQkamJ?=
- =?us-ascii?Q?ER4/3Fo/foJ3yigUYxGmpO0Yvw/T9d02F17Hg78+tZ1uhWv1bFdaFrqHpq3J?=
- =?us-ascii?Q?mdIaWPF2R/MIHWU/BcPpWMJSK1RkeblNwGfoEiMOCcpse0cuPKEPE1DQuN9b?=
- =?us-ascii?Q?NC8zAnpVcZTUNECqlq8M2gy3z2GaV1wM83RoldTY0shREMd+2gYA7GihCLEO?=
- =?us-ascii?Q?/Rntj4KkV0H7MjS3tiwkuqozucgWaBIu306r960wyIoBjqab90u3c+dwHgY2?=
- =?us-ascii?Q?6gStAks3209wPlIXsdFXK9//H74I7kZye8RmsDPNx/Y07zXi1YtKzSW9bYRU?=
- =?us-ascii?Q?+yjkpQWQ2QJFR94XgiTkQvriDdLEjDOk4Gwgksc4f+uDLRlQ2wh0UYpWD0d6?=
- =?us-ascii?Q?rPaUr6R4N03UYcSdGaWHIeiMqsmlXBQSqDfetSmOO1tsfRAG2K+RjWOnpCzS?=
- =?us-ascii?Q?VzEFN/Ft36Xz0kVft7imYHpjzNlTOnBP+z4HN1ytX3XxnQdMvsEUpyXjXdVk?=
- =?us-ascii?Q?QyihaCjrxeJUWU4T3HPzxcULcQ/QMyC4QAT0iPNxeNFhfMmzOPGkLwDTfLJ8?=
- =?us-ascii?Q?oflOuRkdiiRydq8iY37rtwUw/TrmCygxpEEkiap7C1FYRbwDlSq9vgR9VhDk?=
- =?us-ascii?Q?zqNTRZLiuC53CJn8+YAMMhPDiZsXpR6T2N1U8bhQk3ArNYpsgP+KQQeZryXn?=
- =?us-ascii?Q?vNnaXS+z3/iXd4lDwOUp8tktRIxCnUEt4Md52yW0MoDRP90UleuTlVS38Sdl?=
- =?us-ascii?Q?iQInnj96Zu+prZtpygZy+Fzw5qkXEewfyKBETuRqIxF1TxE6/fwnswd2rRPl?=
- =?us-ascii?Q?vBumn9Wb3PeqVql3T/vOBpjCQf/dKMwXbHoZzSiAwYA0ZHJOyyyrG2OoMWVR?=
- =?us-ascii?Q?NjXiAxe+DQwr8BsJ5mApUYA/Nu82a57SLS4MD0E+GBe9ofK4JkhLTXzVj5RY?=
- =?us-ascii?Q?9DRcWiVH3MsMPAo9rqk00g3AhogyRX4KPFRtUjs3HvcMH4095RXoailG8QNB?=
- =?us-ascii?Q?OwOIY6ZHadwpI8TAUEhGkwXrQ+Etaz1MaFkA0Uqfh5OdiUZUy9xY6NtjXM3V?=
- =?us-ascii?Q?4EC31XVEVvNyBMXJsiW5IVcHM8PAlZmsWODMsfP/VO5I+YWnn2zVqxfhwWqW?=
- =?us-ascii?Q?dTG9upyr+QB6kMfoiD7DO0AvlfuH+NC/xAfz6x5aYq0fNwy1gfav7fl97NPh?=
- =?us-ascii?Q?AmOvosOc+wYNHEcG0jZE5k2F/E0x?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sPJthS4Lqp+ylamleR/Mk6IsaietxR8IjVz0u2AZg+gdNxStxIgx5fScX9Uj?=
- =?us-ascii?Q?gzQH/uqftNVNmHcYNkfrApvgvzUm7dl2a9Cn0x0ke0rhm1BSrKgFAJmQCfgV?=
- =?us-ascii?Q?DId+Ie/Vle5zLNM35ftqsF3cbHPs1zZk97qysel7BgNTwlFXyQRzhYQPVIiD?=
- =?us-ascii?Q?fuwOSzi1meCGmtcVsr+E2NVRxPCMnI1KVuqDVMLAZ3BzAdIqDn2GABIZgEGI?=
- =?us-ascii?Q?cq9+N+J1Pyy5RZihaYQyyxkPrymLC8xl/lU3PoYNBIDzPOlX01PYdFe71rES?=
- =?us-ascii?Q?OX6w+W5BSYcUvgEqyTbcbIkGndXYEocWIwewNh1hYCSUCDhrxrggeHSPjvbW?=
- =?us-ascii?Q?cFoVks9Qh2pFQC2Kz+ZJ7lO0dlfQYMcHJZVnnz2AGDs+8oHiSCai2HHlF+Hb?=
- =?us-ascii?Q?XgcECyBzJQ1BwYG4kuNYwf6hHyMGXvaWXfM5BiqCsvoIUlBOGc4TS64vKJKx?=
- =?us-ascii?Q?ykUbLwuxnvjIlci5MH6B1z4rcMhzDUfzGAKpXtKTze/DTSkOHJSUWdNHXvPG?=
- =?us-ascii?Q?2pNLFHffCnAhWpPSzp4NXQfXnsoGOkNhc2mZbDIOwwHettk2ipVWv2zNVbKH?=
- =?us-ascii?Q?d0zDNr5SyO03fcBsatAGA7DLhKcLpL/sf+5ms6gw8wj46J/y3Vnn0mpBfebD?=
- =?us-ascii?Q?/7V7rhtXJMJ9L3dloMQr7qmxA++H84MNzaIpIEBZpaJgvQ+sUj4cHiXJB/y/?=
- =?us-ascii?Q?acyQsUsPLF6Mg9njpmaV+IuTvoTUHJYdDw+qP02DkHZ9Rl0sfu9ZgaYdKser?=
- =?us-ascii?Q?R7sRc/F350PtOMJVwDTdWoblMD3sLl3QW5H3Cid72/0KjiFSILgRmGSERCFS?=
- =?us-ascii?Q?9AzQ6G9kIx8FdY+cB9UAUeIWrq8Kpwv38yjfRKGq1vJSwPAlHG2wZ2ENeGkE?=
- =?us-ascii?Q?/HWwPrVbg1AtjIq5JgFebEBng6yXdu8v+Rfu6/t0CQd36XXmfmhge0yY3SYp?=
- =?us-ascii?Q?NgxK+1ZCfrCUhlgzC3INEAMz51OLQbCOfNNzXCBoxM96HVi2IkTnIXS9Isbr?=
- =?us-ascii?Q?GNzwFAAE0PL0UjzQGiGIXaCrrsZ05qq5CAIGNfpkYwkVlZo5fnYQ4UWrOQLn?=
- =?us-ascii?Q?m/BWPZWMQcuI0N3nOIym1AUJizA3Vw+ZPjgnAUnw4lM5Tq1rfpvJH+JHxZAw?=
- =?us-ascii?Q?o8Um2lPVV3tMaYA4f7fhzYbYsTQf+hhKb+oCEB/ZZPphDtmx4qZ4R/CUboJT?=
- =?us-ascii?Q?c9hpt8WQ3WljvvgP+Pt7DYnyNCDefoo45NVn1KM45iuJ95Q5FkiapAMBs4IU?=
- =?us-ascii?Q?EVos3fyJ5DM8IsUcxoQWR7LvHtpibJbrNgBpz+f9Gp1amzfNW24VUgyGBv6p?=
- =?us-ascii?Q?RGQYxny7gVErBMzJrcbtObcYZ8LxrAkhMNyJ5RoY5lAXydADXDROC/Fo+9Ud?=
- =?us-ascii?Q?NVyFD5ikLTOGO7LGM57XPwlgdCHK9L9hrMLuXl9mP0gNf7RnHscnHRUUPYOm?=
- =?us-ascii?Q?vzNblV/evQuFsA4SeP69ZXRHxpL965qTMxfXz9cG9XtViEE2ag1r/8HVELVn?=
- =?us-ascii?Q?qNFuCrIS34iPpVFBstrBZElhezyBkE52KiU+kgkqpbAC6/qBftE7piNyTief?=
- =?us-ascii?Q?BeYGHAEsuycEyrI0edzF+JGMFE9rGgmnGLwNa1xqs8NK7ynXmClCg+NV0sWK?=
- =?us-ascii?Q?Np9z36atLqvb7FvOQx155Sc=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 183b1326-4a11-4e59-b4c7-08dcee7042b2
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 05:55:10.3386
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ichraqcEeII2IUz4l7oXa3NNXqAH8zuQzafi7sJjWRxqxQKBbB1pOlvtu/NCgYKGMLrfwz61LqQskbI0DIACmKNWkgGb7NhVa3HnEagEQgq6FeH9BA5CDeVo4h8bVy4q
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYTPR01MB11091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-ALSA SoC Sound has Generic Sound Card (Simple-Card, Audio-Graph-Card,
-Audio-Graph-Card2). Adds its Maintainer/Reviewer.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241015-2
+head:   41fe8a04339b3781dca5a8ba323ba77022acc441
+commit: a1882510f2c31c9e3a9db8c138f5fa4b90eda0c8 [6/18] wifi: iwlwifi: mvm: Use __counted_by() and avoid -Wfamnae warnings
+config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20241017/202410171314.IhaS4oSI-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410171314.IhaS4oSI-lkp@intel.com/reproduce)
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410171314.IhaS4oSI-lkp@intel.com/
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a097afd76ded..878c23d58c9b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21694,6 +21694,15 @@ S:	Supported
- W:	https://github.com/thesofproject/linux/
- F:	sound/soc/sof/
- 
-+SOUND - GENERIC SOUND CARD (Simple-Audio-Card, Audio-Graph-Card)
-+M:	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-+S:	Supported
-+L:	linux-sound@vger.kernel.org
-+F:	sound/soc/generic/
-+F:	include/sound/simple_card*
-+F:	Documentation/devicetree/bindings/sound/simple-card.yaml
-+F:	Documentation/devicetree/bindings/sound/audio-graph*.yaml
-+
- SOUNDWIRE SUBSYSTEM
- M:	Vinod Koul <vkoul@kernel.org>
- M:	Bard Liao <yung-chuan.liao@linux.intel.com>
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+   drivers/net/wireless/intel/iwlwifi/mvm/d3.c: In function 'iwl_mvm_gtk_rekey':
+>> include/linux/compiler_types.h:517:45: error: call to '__compiletime_assert_854' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:498:25: note: in definition of macro '__compiletime_assert'
+     498 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:9: note: in expansion of macro 'BUILD_BUG_ON'
+    2148 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
+         |         ^~~~~~~~~~~~
+>> include/linux/compiler_types.h:517:45: error: call to '__compiletime_assert_855' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:498:25: note: in definition of macro '__compiletime_assert'
+     498 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:9: note: in expansion of macro 'BUILD_BUG_ON'
+    2149 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
+         |         ^~~~~~~~~~~~
+
+
+vim +/__compiletime_assert_854 +517 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  503  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  504  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  505  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  506  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  507  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  508   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  509   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  510   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  511   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  512   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  513   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  514   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  515   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  516  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @517  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  518  
+
+:::::: The code at line 517 was first introduced by commit
+:::::: eb5c2d4b45e3d2d5d052ea6b8f1463976b1020d5 compiler.h: Move compiletime_assert() macros into compiler_types.h
+
+:::::: TO: Will Deacon <will@kernel.org>
+:::::: CC: Will Deacon <will@kernel.org>
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
