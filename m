@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-370207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993499A2963
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9C39A2966
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 557BC2817AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:45:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D778B1C26882
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABA81DE3CB;
-	Thu, 17 Oct 2024 16:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D70D1DF991;
+	Thu, 17 Oct 2024 16:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fZumqqNE"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ApfjmDHQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53291DF755
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D0D1DF755;
+	Thu, 17 Oct 2024 16:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183464; cv=none; b=gyHCRKTyWRwlSvHQ4+1dCo9qv76vknaVX6uiueEBSKg+TvL3oi+l2urdfH7kLTCf8wU0qD77AZf5AaM0x9d0kjkz/7wjJ16isM2HmS3ZKzMCKHhAq7r5d/4giAGDvct730vt/A785IHpxTO4CWMWW28L2ds+tu8/dqbj0wROPOc=
+	t=1729183474; cv=none; b=sRS83MW2aatpiEaAqJ2jiEYM8lEEFiOwIGkvxdCziOT9i2uZJw6yJoNvcLg0iHaAe5w8FXt/Rcdgv1fYPX6I9RXkFb068WKP7haGnG2ne7JxEQ5ntSCwVNojU1qq0LMeJWS5bhTOl8ncnw+fwaTxXnGCwoA/znqF1slVZAbWsI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183464; c=relaxed/simple;
-	bh=qYmzlCRl1PVunQMKxtFza9iHD1OMsbq9k8HKpjfRrfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SuuAAtWm3e5y1kWcIaW4ZK3HSICtajKgQFzCl1wFPioMFsKI+pkO/xT/J5ejrx2nOsKYtke2ZcctlXWr5pXeyzR+EADS8C55UiZHfcUa0r/BkKfkQQGPMeWbDYmhyiG7pIZg8aibMOk+OyWJKpEk36E961oC7bFjob6hdQeYocw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fZumqqNE; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a3b3f4b599so3635ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729183462; x=1729788262; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qYmzlCRl1PVunQMKxtFza9iHD1OMsbq9k8HKpjfRrfg=;
-        b=fZumqqNE3MJ276zfoVOCYIRwCXkqQrtFN9s0dugHg9KGudwfc+U6vGOd08q78sPGir
-         M2ohdVaUwqboCoNMNmKYVZGNWW/GI1JEsUA96rZMCxckSZ09ljQN6CVetas+cnp08d2E
-         T1zsp0cEOR8F1gOvJLnzmnNHUJa60ITR7aUvnqyqKnwQZ2QD19VfXmZDb08R9r10Wplg
-         1tMf0Rm5Db0EQRt2+pTgDXTgsmpaBo7Hbp8M9CWsXkrmVAjkWdrxqVn7DMp8d2NZ2CZ/
-         WAQC6gXs/yOnTXKJObvfMJXjiocxh514M/rYTw595pt62ylt4vX9jopmUGS2AdTT6wkp
-         BkfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729183462; x=1729788262;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qYmzlCRl1PVunQMKxtFza9iHD1OMsbq9k8HKpjfRrfg=;
-        b=uMooTOjyMMngk7KHSNf8Ouinlux/Aab8KCzXhy4sK2Asyrkza7r1TZF6BzesPQAfck
-         hWKB3hgNBCMldVLWbb9HDJjMvmgtpClfXHOtW3iMhfhslD6b0/3/on4KHF4GIE6sUU79
-         dj6ym2OVzFm3yHD0vOrjCpRC1lgogMsyngS4nh0A+iV51iuIixVsksCH1q1PlKTBtnPY
-         M8tdCzN7Gg+xDyTLT9jHONi4+m9CWt0ycINg0H52SDxAxOsD9GKPz6dybMIYsNRBEn6a
-         JgIpHkS1XvB2RO+wyz2n7XGCkL5NmEl/SsPY50joRrfEnbWnY04R2YSR9jIhlJgXUatU
-         2sww==
-X-Forwarded-Encrypted: i=1; AJvYcCUaA50Fl8iZxKktzqBAfSrmLUBAkD/W/eojY/SCeeSO7uxKcNNMqf8aBx0LtbtdBFOjeUwCsA3/jAl6agg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgCIa0q3PKrgm3nMkjrntbTvbgY24Q+jU89cqwZ/VqePs9eZoz
-	xHcYT0P8c1L5A4NDVJOx2CFWaVMZjEMxsqiRfgYAwOUXQALXiHuW9MWWtKK5e8Mn5TS4VPeBWLJ
-	l0vCQYdmmnpOGdVQ3dGHC6cA/HRsUamCuE288
-X-Google-Smtp-Source: AGHT+IF2iP9+1oOcV8IGw97zuOm8z5d7mrOyrhGfJCa16rIeNXkwZW72QrTI3RPHM646dPWp51d/P/WO7EK51xoHgto=
-X-Received: by 2002:a05:6e02:144f:b0:3a0:aa15:3491 with SMTP id
- e9e14a558f8ab-3a3ea04c540mr4795615ab.23.1729183461837; Thu, 17 Oct 2024
- 09:44:21 -0700 (PDT)
+	s=arc-20240116; t=1729183474; c=relaxed/simple;
+	bh=0JHEWdi44CFocuk6SWRK/s7L704YIYj+qbPEBPZbByo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UF8BBNgLlbJgaqdZSG4G46DowWUwCp3uZBlq+ksgbhaBKb3NB7JzpNdtvBLiSj0w/YF3XNoS1MPm5tNn1H3XU9ltetdczavw5ITz1svIXXbPXzWde79r9I+V1mI4RyirAyKCaLP0sKScmzDdU5ha0nTsOlMl9vvHyVozGBcj0XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ApfjmDHQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H7xomQ020121;
+	Thu, 17 Oct 2024 16:44:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0JHEWdi44CFocuk6SWRK/s7L704YIYj+qbPEBPZbByo=; b=ApfjmDHQiOtV3Ey3
+	gsyyDIr90W86sx6x63rNtRGH916znzkYzM0riixU6PJ09bLM5vZSH2SOPXVNP5Oq
+	h90KmUY8PDqAdq6svd9oFSgbB/NbhwLWtMlphMKiruhwpI1xrJMea7spGBxMp7gd
+	BXxvOwpmEZbMRF3fr4CsWJ2xL6BWhI0GOTcxGDHTlwpSIGfGecc1gq+OtHfgB3Jb
+	cnqJfu/YlFU2ySXD+sYVfsb+JaEfpVDt8SOJVJ0TOfm70xVLOnUlpkiQ2cuU8Mql
+	mVdZbyU7vdgYMjlw/ePemCItQLw5Ar4a9SQ6dPyYCHog+TQfHvAsy69xYxvP7v98
+	pX/JYA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429m0fgxgj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 16:44:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49HGiJXV012299
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 16:44:19 GMT
+Received: from [10.48.241.64] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 17 Oct
+ 2024 09:44:19 -0700
+Message-ID: <f9013f01-a61b-4697-a85a-60d70b6596db@quicinc.com>
+Date: Thu, 17 Oct 2024 09:44:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016175350.116227-1-irogers@google.com> <172918316032.639809.5792146702013848062.b4-ty@kernel.org>
-In-Reply-To: <172918316032.639809.5792146702013848062.b4-ty@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 17 Oct 2024 09:44:08 -0700
-Message-ID: <CAP-5=fWMkF-z5t6-Oz8e8YRuW0rsMg7JXj4vSHqLZFe0y3=sUA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] CSV/JSON metric thresholds, fix printf modifiers
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] wifi: ath12k: fix crash when unbinding
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, <kvalo@kernel.org>,
+        <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <ath12k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241017074654.176678-1-jtornosm@redhat.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20241017074654.176678-1-jtornosm@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8GQXwUJsLhJOtHJGmV0To1O1fMklfJ0i
+X-Proofpoint-ORIG-GUID: 8GQXwUJsLhJOtHJGmV0To1O1fMklfJ0i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015 phishscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 mlxlogscore=502 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170114
 
-On Thu, Oct 17, 2024 at 9:39=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Wed, 16 Oct 2024 10:53:42 -0700, Ian Rogers wrote:
->
-> > Metric thresholds are being computed for CSV and JSON output but not
-> > displayed. Rename the color that encodes the threshold as enum values
-> > and use to generate string constants in a CSV column or json
-> > dictionary value.
-> >
-> > Add printf attribute to functions in color.h that could support
-> > it. Fix bad printf format strings that this detected.
-> >
-> > [...]
->
-> Applied to perf-tools-next, thanks!
+Your v3 patches look ok to me, however they are not showing up in Patchwork so
+I cannot act upon them. I suspect the issue is that you did not link them
+together (the 2/2 patch should References: the 1/2 patch). Better would have
+been to maintain a cover letter and have both the 1/1 and 1/2 patch reference
+that, just like you did in the "v1":
+https://msgid.link/20241010175102.207324-1-jtornosm@redhat.com
 
-Sorry for the trouble, could we switch to the v4 series due to issues
-on hypervisors with not counted events in CSV output missing a column:
-https://lore.kernel.org/lkml/20241016215139.212939-1-irogers@google.com/
-The patch set drops the CSV output metric threshold support.
+Can you submit a v4 that follows that original pattern?
 
-Thanks,
-Ian
+/jeff
 
