@@ -1,147 +1,148 @@
-Return-Path: <linux-kernel+bounces-369577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B239A1F12
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:54:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5F09A1F1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5ADA28A423
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:54:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3472B1F21AEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C7B1D9595;
-	Thu, 17 Oct 2024 09:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F36E1DB360;
+	Thu, 17 Oct 2024 09:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oKzyx59z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ft2mVXL4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D93165F08;
-	Thu, 17 Oct 2024 09:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EBD1D9327;
+	Thu, 17 Oct 2024 09:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158730; cv=none; b=rmB/hGvZ5QSTY86h7a8hboUw79CqPOskz17/Qp06zDv5PJB1kfkyDBY+XKENlDFZK+MGD9RpqmfqRiCHGQ0Q91u1yOoM/sXMKH8veCKngWnvzHVgkENG2nHTszVOiMBwbcC3Fm8R5klZaKnyLY3NcSKKhC7bJDt5b5oVi8MgMX8=
+	t=1729158839; cv=none; b=I4z3nSlzPE8d7CmPOMtmNspu3naw80DsAjAtWnXi+DjLiJsX27U2dlZisEHYAXQXiM23kOPCNVcYaiDyLvKG17lT3fPHGuoSG6A6Iypn02hsqsx2u5TKQNMbOsvB+5BTz4b43Hjz9U06lM7xLW0ldc/n7Dd4CVMms9N4I1hgosA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158730; c=relaxed/simple;
-	bh=qOkRZ7dA9PBpum+aq1ZRnwF90KyGgZL2XumS6gLtwOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BriFxHnhuxnVF+pk1z/xlGErBJWGXKgsp7opbopMsYGgvHBAdRDHd/rdVcbEfNsnZQ+P9w5LkjxgQMBRicEt0TmuaQUiYqL9h4gN1o8T2Z85j0FkDsvQIxQ4yR3LH6o+utB97bJxI3qt/4ElLWTtgIKTWvC/oV8OnUu0EiTSD7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oKzyx59z; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729158729; x=1760694729;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qOkRZ7dA9PBpum+aq1ZRnwF90KyGgZL2XumS6gLtwOI=;
-  b=oKzyx59zjxLRimDT1NUjNmATowc81BP6hxtIaVmVLbKgT7B1BxlCvSkv
-   ANzN+IVd3ncKyTGizNn8IO+u+ifUhdh61OZ/xYt0s9bq3KZoNehnWVRZj
-   jyIm+g9x63u/VJCV8+klt4eG3ec1RqryxgtrjI3kr5ebJo8RLUJLyjc6i
-   YIirX+ivb7LRFFJ50tqZL2Y8NxHYmtJxfIg4ltvfrAglT430Q1Swszr6t
-   RIChZBuQ6xx+jkwaH4KwcZtWKkZjwcMMMM0mTgs7aXgpoVW3uqvCrop3B
-   cSphtAp9MxeWTp2CCvU3wzqoPvfG5aM2w15R9m9zRmkSvrlL9JL50/o9s
-   A==;
-X-CSE-ConnectionGUID: Ef/UW/ykQ7SlewZj/URRhA==
-X-CSE-MsgGUID: KLgITmJ5QbOiSY5c9YIrLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="16254562"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="16254562"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 02:52:08 -0700
-X-CSE-ConnectionGUID: PFFFUSpWQdyCQtOZxuGdoA==
-X-CSE-MsgGUID: 2P9XLtXyRTCx1SyNHhTWHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="83567930"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 02:52:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t1NAn-000000044du-1N8X;
-	Thu, 17 Oct 2024 12:52:01 +0300
-Date: Thu, 17 Oct 2024 12:52:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v9 3/7] i2c: Introduce OF component probe function
-Message-ID: <ZxDeQcLVR1LK24Zr@smile.fi.intel.com>
-References: <20241017094222.1014936-1-wenst@chromium.org>
- <20241017094222.1014936-4-wenst@chromium.org>
+	s=arc-20240116; t=1729158839; c=relaxed/simple;
+	bh=xpLpgNh/Fcl1KHaTpUD2Ve3Qp0GVP7rZR2RA+cT5KXM=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=uRztYQQsYRC2K8XZHlpetrtmSlWURke5DtTyr+MJTti5vn3WGbXrfOPSk5JGVmrTCfcfRlYOtUmEnofFTLVM+DEka4qzwiB4aqTWP5yNHdanpG6rFXDJ9DMhV51GNC6RIJwcqXgw7Jz0DwpABAAOxN/UTb6VCBJOWQSmOUKmbtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ft2mVXL4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H7klgU007441;
+	Thu, 17 Oct 2024 09:53:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5sgKq7wBsg3T8XBzJ5p0rF
+	hEUSJeZMZlKeAEGpmwYgw=; b=ft2mVXL4H3qapLd76cvJeYooK+hWkuvquX/R5d
+	X7zzxpCSLYa7Y0Yg7560mNXd2AkbyVXyaxKruxrPFDlGKlb6xugCu77byVB8hzNj
+	yqJg9R9p5YD04P0Xett3XMPADFe5ZeDaC5VMeIRD6gIQfTm7rwVd+J91v2w3zM6C
+	+XSmQukZea1NdEmpfu3/sGAdNGdvGTv2C3JUIKlShjSTWsUvOrXk+xbsz/xyscXt
+	z8Ulq8O/ysCOZhZ6oToFwiSJjkKBMGtkln1Mm6dy8hnjtiZFG+GoCYWHHDILq5jv
+	sWypcTHpjHrWwkAXj1ftjw1e3YRVBYwArXOS1kesOAL2Mv7Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429mjy7q7f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 09:53:38 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49H9rbmA017959
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 09:53:37 GMT
+Received: from yijiyang-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 17 Oct 2024 02:53:31 -0700
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+Subject: [PATCH v2 0/3] Add ethernet dts schema for qcs615/qcs8300
+Date: Thu, 17 Oct 2024 17:52:36 +0800
+Message-ID: <20241017-schema-v2-0-2320f68dc126@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017094222.1014936-4-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGXeEGcC/2WNQZKDIBBFr2KxHlIN4hCzmnuksoCmGXqhZsBYS
+ aW8e1CXs/zd7//3FoUyUxGX5i0yLVx4GmvQX43A5MZfkhxqFhq0UaBAFkw0ONmBB2+tRX32osL
+ 3TJGf+9D1VrN3haTPbsS01WlOG5W4zFN+7bZFbey/4UVJkP3Z6wBOR+v0z9+DkUc84TSI23q4M
+ tVr4fkQHrb6H3i+NAYIsA9GmdjZYDqg1gVoUWn73ZHtbcQ2UqA6tn4ACciw9AABAAA=
+X-Change-ID: 20241010-schema-50b0b777c28b
+To: Vinod Koul <vkoul@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        "Paolo
+ Abeni" <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bhupesh
+ Sharma <bhupesh.sharma@linaro.org>,
+        Kishon Vijay Abraham I
+	<kishon@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+CC: <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, Yijie Yang <quic_yijiyang@quicinc.com>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729158811; l=1441;
+ i=quic_yijiyang@quicinc.com; s=20240408; h=from:subject:message-id;
+ bh=xpLpgNh/Fcl1KHaTpUD2Ve3Qp0GVP7rZR2RA+cT5KXM=;
+ b=qr4/PBeRt3CNFrPeHOvhH7hnImi56ebmoXuh3AePL4LXJFKaYEdryKotTdyAZLCmh3qMKbwFI
+ Uy3uAEnyiA0AhynONUf4azKBMtb9mtDG7k1EwdPt280OWt9+hgNtUIh
+X-Developer-Key: i=quic_yijiyang@quicinc.com; a=ed25519;
+ pk=XvMv0rxjrXLYFdBXoFjTdOdAwDT5SPbQ5uAKGESDihk=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jRfys1Oyqrehh5-5bQKgqzWzNONvb5qM
+X-Proofpoint-ORIG-GUID: jRfys1Oyqrehh5-5bQKgqzWzNONvb5qM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
+ mlxscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ impostorscore=0 clxscore=1011 spamscore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170067
 
-On Thu, Oct 17, 2024 at 05:34:38PM +0800, Chen-Yu Tsai wrote:
-> Some devices are designed and manufactured with some components having
-> multiple drop-in replacement options. These components are often
-> connected to the mainboard via ribbon cables, having the same signals
-> and pin assignments across all options. These may include the display
-> panel and touchscreen on laptops and tablets, and the trackpad on
-> laptops. Sometimes which component option is used in a particular device
-> can be detected by some firmware provided identifier, other times that
-> information is not available, and the kernel has to try to probe each
-> device.
-> 
-> This change attempts to make the "probe each device" case cleaner. The
-> current approach is to have all options added and enabled in the device
-> tree. The kernel would then bind each device and run each driver's probe
-> function. This works, but has been broken before due to the introduction
-> of asynchronous probing, causing multiple instances requesting "shared"
-> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> time, with only one instance succeeding. Work arounds for these include
-> moving the pinmux to the parent I2C controller, using GPIO hogs or
-> pinmux settings to keep the GPIO pins in some fixed configuration, and
-> requesting the interrupt line very late. Such configurations can be seen
-> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> Lenovo Thinkpad 13S.
-> 
-> Instead of this delicate dance between drivers and device tree quirks,
-> this change introduces a simple I2C component probe function. For a
-> given class of devices on the same I2C bus, it will go through all of
-> them, doing a simple I2C read transfer and see which one of them responds.
-> It will then enable the device that responds.
-> 
-> This requires some minor modifications in the existing device tree. The
-> status for all the device nodes for the component options must be set
-> to "fail-needs-probe". This makes it clear that some mechanism is
-> needed to enable one of them, and also prevents the prober and device
-> drivers running at the same time.
+Document the ethernet and SerDes compatible for qcs8300. This platform
+shares the same EMAC and SerDes as sa8775p, so the compatible fallback to
+it.
+Document the ethernet compatible for qcs615. This platform shares the
+same EMAC as sm8150, so the compatible fallback to it.
+Document the compatible for revision 2 of the qcs8300-ride board.
 
-...
+Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+---
+This patch series depends on below patch series:
+https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
+https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
 
-> +#include <linux/cleanup.h>
-> +#include <linux/device.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/i2c-of-prober.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/slab.h>
+Changes in v2:
+- Adjust the position of the EMAC compatible fallback for qcs8300 in the YAML file according to the order. 
+- Link to v1: https://lore.kernel.org/r/20241010-schema-v1-0-98b2d0a2f7a2@quicinc.com
 
-In case you need a new version, also add stddef.h for NULL definition.
+---
+Yijie Yang (3):
+      dt-bindings: net: qcom,ethqos: add description for qcs615
+      dt-bindings: phy: describe the Qualcomm SGMII PHY
+      dt-bindings: net: qcom,ethqos: add description for qcs8300
 
+ .../devicetree/bindings/net/qcom,ethqos.yaml          | 19 ++++++++++++++-----
+ .../bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml    |  7 ++++++-
+ 2 files changed, 20 insertions(+), 6 deletions(-)
+---
+base-commit: 40e0c9d414f57d450e3ad03c12765e797fc3fede
+change-id: 20241010-schema-50b0b777c28b
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Yijie Yang <quic_yijiyang@quicinc.com>
 
 
