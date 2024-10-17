@@ -1,453 +1,116 @@
-Return-Path: <linux-kernel+bounces-369717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74A99A21A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:58:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BD59A21AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2231F24C71
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06F231C23212
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D21DD549;
-	Thu, 17 Oct 2024 11:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470D01DC1AF;
+	Thu, 17 Oct 2024 11:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dyaHyWs4"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="w6k0JD7i"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B230F1DA113
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58041D365B;
+	Thu, 17 Oct 2024 11:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729166244; cv=none; b=tca3zCgdi8NkwNt8qvqqwniol9VNI52j38/cAOJBIspGoNQGll8ZDtaEYRD/24DhnsnpmVYjXEt+J1uaX0roknbZ1+33xHE9M/rNLBYRm4tcAoDJo4ZBJL/1SiBMT+yz1uCRQSxj0iMMQV7tlxcpVahC1rb6/yAu5Nx6JB/CAgI=
+	t=1729166295; cv=none; b=O+hw9g7ICEP+BAQWNaHkQXlAXuU3g5O1rEX9EKLk7qPjU4pIr5Z9vmKymd8jKHIaCRAb+q0SmECSk32QcY1MkZLB4uHkR9ndzLY6XiqZetB5uY69n3hxbEIDc6ZE1CUzD85XyZBYQMkgMEQHckG01oQ3+gk4kxvOqvtgE5SRpIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729166244; c=relaxed/simple;
-	bh=irvUpaBu5HAXVw694jdJimFMqREhvhkoFXgGAw0hATg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mHBHoLqvF/EAILdymyCtHYGgbpFuZFJGRmJws5MnF1zm16Si7lEYrZK7W8r9vcfh0NU0Vtjmn7BDEZxNiSVQNAouDi2ulywPdW1VF+t+qACXc7rVdufhj7Os0+0YpIeznav1Oja+XuIoLXUSoF1hhX6pV8alkowKw5iTu9S4SfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dyaHyWs4; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729166237; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=f5eH7wGuUi4PV14f9SED4wcswQY3AeRweCvDeAPPjIw=;
-	b=dyaHyWs4HoKrhZ7v9qIlILOlyUgYF+Qcdd66MB4WBm2qHiDd7LweBzXm0+veQZiNeTfFv/L9X48W7PY6f8ENzWf3FPvCdLMsv9+WvTc89NAQ/MM+iZyyRXnuEQQtrhhaL+GyIFSRcp2WNu1kqbzfbZFQj6XbDC8C/NKg780qy4g=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHKltE5_1729166235 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 17 Oct 2024 19:57:16 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Chunhai Guo <guochunhai@vivo.com>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH 3/3] erofs: sunset `struct erofs_workgroup`
-Date: Thu, 17 Oct 2024 19:57:05 +0800
-Message-ID: <20241017115705.877515-3-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241017115705.877515-1-hsiangkao@linux.alibaba.com>
-References: <20241017115705.877515-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1729166295; c=relaxed/simple;
+	bh=syO4Q8j73NSxChEE/Yr5+Lf2IfP7DEdL/cSY2QgVTtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qoJAdJwpQ76whzfwQh/PKtzg6uEx1Acu1A0JwekeqG+0BbeaAzLV8mkbwtNxQ9QbZllOkiwFUq86oyHElbO4i4jVaKzRNbup1QC/ycsa9rYMAt9EkoMopaN5xNYcjI9vO78HQl8HsEU+TRs1aBOonBIBbY4uw9LTIzu9iVs5eUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=w6k0JD7i; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EEDlW0Z+27Cz1a36GnGWzG69pvQQcfAeec1992co/rU=; b=w6k0JD7itqBz1TeMuMUHKr2szV
+	HdrbD5T6KpkzUq67echeUaMGiLU86Jhj67No8E02ULxoUSkbQFEG7QeJlA9i6jCbzVyHdhuhVrCm9
+	QEbjccVpvAry4xZVtmywe8TpIdwRgeQCAf04vKCPZdaH0ibPWuCoga7WOklEOu7G9flfeP3TOMDbj
+	PeQV3HJ2agNF9brsTbkzHmLHdvpuHq/vmfopnhKxf+H7kerzEqeNPCkgpGhg4A7F5abFkIj1VoBQt
+	8WiBq5FPcPVE4wxmfiUHJ0j0xYFX5ygiAo17X3gLbyq5MXBm5g5AmNIOBNOYG/WNS1rlPDNX1CXF/
+	NYo8NzBQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1P8u-0000000Ehiu-2ZiO;
+	Thu, 17 Oct 2024 11:58:12 +0000
+Date: Thu, 17 Oct 2024 04:58:12 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
+	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
+	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
+	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
+Message-ID: <ZxD71D66qLI0qHpW@infradead.org>
+References: <20241015152348.3055360-1-ymaman@nvidia.com>
+ <20241015152348.3055360-2-ymaman@nvidia.com>
+ <Zw9F2uiq6-znYmTk@infradead.org>
+ <20241016154428.GD4020792@ziepe.ca>
+ <Zw_sn_DdZRUw5oxq@infradead.org>
+ <20241016174445.GF4020792@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016174445.GF4020792@ziepe.ca>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-`struct erofs_workgroup` was introduced to provide a unique header
-for all physically indexed objects.  However, after big pclusters and
-shared pclusters are implemented upstream, it seems that all EROFS
-encoded data (which requires transformation) can be represented with
-`struct z_erofs_pcluster` directly.
+On Wed, Oct 16, 2024 at 02:44:45PM -0300, Jason Gunthorpe wrote:
+> > > FWIW, I've been expecting this series to be rebased on top of Leon's
+> > > new DMA API series so it doesn't have this issue..
+> > 
+> > That's not going to make a difference at this level.
+> 
+> I'm not sure what you are asking then.
+> 
+> Patch 2 does pci_p2pdma_add_resource() and so a valid struct page with
+> a P2P ZONE_DEVICE type exists, and that gets returned back to the
+> hmm/odp code.
+> 
+> Today odp calls dma_map_page() which only works by chance in limited
+> cases. With Leon's revision it will call hmm_dma_map_pfn() ->
+> dma_iova_link() which does call pci_p2pdma_map_type() and should do
+> the right thing.
 
-Move all members into `struct z_erofs_pcluster` for simplicity.
+Again none of this affects the code posted here.  It reshuffles the
+callers but has no direct affect on the patches posted here.
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/internal.h |   6 --
- fs/erofs/zdata.c    | 131 ++++++++++++++++++++------------------------
- 2 files changed, 60 insertions(+), 77 deletions(-)
+(and the current DMA series lacks P2P support, I'm trying to figure
+out how to properly handle it at the moment).
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 5fa7ac0575b2..3905d991c49b 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -208,12 +208,6 @@ enum {
- 	EROFS_ZIP_CACHE_READAROUND
- };
- 
--/* basic unit of the workstation of a super_block */
--struct erofs_workgroup {
--	pgoff_t index;
--	struct lockref lockref;
--};
--
- enum erofs_kmap_type {
- 	EROFS_NO_KMAP,		/* don't map the buffer */
- 	EROFS_KMAP,		/* use kmap_local_page() to map the buffer */
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index cd181bb837a4..d6431ab10528 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -44,12 +44,15 @@ __Z_EROFS_BVSET(z_erofs_bvset_inline, Z_EROFS_INLINE_BVECS);
-  * A: Field should be accessed / updated in atomic for parallelized code.
-  */
- struct z_erofs_pcluster {
--	struct erofs_workgroup obj;
- 	struct mutex lock;
-+	struct lockref lockref;
- 
- 	/* A: point to next chained pcluster or TAILs */
- 	z_erofs_next_pcluster_t next;
- 
-+	/* I: start block address of this pcluster */
-+	erofs_off_t index;
-+
- 	/* L: the maximum decompression size of this round */
- 	unsigned int length;
- 
-@@ -108,7 +111,7 @@ struct z_erofs_decompressqueue {
- 
- static inline bool z_erofs_is_inline_pcluster(struct z_erofs_pcluster *pcl)
- {
--	return !pcl->obj.index;
-+	return !pcl->index;
- }
- 
- static inline unsigned int z_erofs_pclusterpages(struct z_erofs_pcluster *pcl)
-@@ -548,7 +551,7 @@ static void z_erofs_bind_cache(struct z_erofs_decompress_frontend *fe)
- 		if (READ_ONCE(pcl->compressed_bvecs[i].page))
- 			continue;
- 
--		page = find_get_page(mc, pcl->obj.index + i);
-+		page = find_get_page(mc, pcl->index + i);
- 		if (!page) {
- 			/* I/O is needed, no possible to decompress directly */
- 			standalone = false;
-@@ -564,13 +567,13 @@ static void z_erofs_bind_cache(struct z_erofs_decompress_frontend *fe)
- 				continue;
- 			set_page_private(newpage, Z_EROFS_PREALLOCATED_PAGE);
- 		}
--		spin_lock(&pcl->obj.lockref.lock);
-+		spin_lock(&pcl->lockref.lock);
- 		if (!pcl->compressed_bvecs[i].page) {
- 			pcl->compressed_bvecs[i].page = page ? page : newpage;
--			spin_unlock(&pcl->obj.lockref.lock);
-+			spin_unlock(&pcl->lockref.lock);
- 			continue;
- 		}
--		spin_unlock(&pcl->obj.lockref.lock);
-+		spin_unlock(&pcl->lockref.lock);
- 
- 		if (page)
- 			put_page(page);
-@@ -588,10 +591,8 @@ static void z_erofs_bind_cache(struct z_erofs_decompress_frontend *fe)
- 
- /* (erofs_shrinker) disconnect cached encoded data with pclusters */
- static int erofs_try_to_free_all_cached_folios(struct erofs_sb_info *sbi,
--					       struct erofs_workgroup *grp)
-+					       struct z_erofs_pcluster *pcl)
- {
--	struct z_erofs_pcluster *const pcl =
--		container_of(grp, struct z_erofs_pcluster, obj);
- 	unsigned int pclusterpages = z_erofs_pclusterpages(pcl);
- 	struct folio *folio;
- 	int i;
-@@ -626,8 +627,8 @@ static bool z_erofs_cache_release_folio(struct folio *folio, gfp_t gfp)
- 		return true;
- 
- 	ret = false;
--	spin_lock(&pcl->obj.lockref.lock);
--	if (pcl->obj.lockref.count <= 0) {
-+	spin_lock(&pcl->lockref.lock);
-+	if (pcl->lockref.count <= 0) {
- 		DBG_BUGON(z_erofs_is_inline_pcluster(pcl));
- 		for (; bvec < end; ++bvec) {
- 			if (bvec->page && page_folio(bvec->page) == folio) {
-@@ -638,7 +639,7 @@ static bool z_erofs_cache_release_folio(struct folio *folio, gfp_t gfp)
- 			}
- 		}
- 	}
--	spin_unlock(&pcl->obj.lockref.lock);
-+	spin_unlock(&pcl->lockref.lock);
- 	return ret;
- }
- 
-@@ -689,15 +690,15 @@ static int z_erofs_attach_page(struct z_erofs_decompress_frontend *fe,
- 
- 	if (exclusive) {
- 		/* give priority for inplaceio to use file pages first */
--		spin_lock(&pcl->obj.lockref.lock);
-+		spin_lock(&pcl->lockref.lock);
- 		while (fe->icur > 0) {
- 			if (pcl->compressed_bvecs[--fe->icur].page)
- 				continue;
- 			pcl->compressed_bvecs[fe->icur] = *bvec;
--			spin_unlock(&pcl->obj.lockref.lock);
-+			spin_unlock(&pcl->lockref.lock);
- 			return 0;
- 		}
--		spin_unlock(&pcl->obj.lockref.lock);
-+		spin_unlock(&pcl->lockref.lock);
- 
- 		/* otherwise, check if it can be used as a bvpage */
- 		if (fe->mode >= Z_EROFS_PCLUSTER_FOLLOWED &&
-@@ -710,20 +711,20 @@ static int z_erofs_attach_page(struct z_erofs_decompress_frontend *fe,
- 	return ret;
- }
- 
--static bool z_erofs_get_pcluster(struct erofs_workgroup *grp)
-+static bool z_erofs_get_pcluster(struct z_erofs_pcluster *pcl)
- {
--	if (lockref_get_not_zero(&grp->lockref))
-+	if (lockref_get_not_zero(&pcl->lockref))
- 		return true;
- 
--	spin_lock(&grp->lockref.lock);
--	if (__lockref_is_dead(&grp->lockref)) {
--		spin_unlock(&grp->lockref.lock);
-+	spin_lock(&pcl->lockref.lock);
-+	if (__lockref_is_dead(&pcl->lockref)) {
-+		spin_unlock(&pcl->lockref.lock);
- 		return false;
- 	}
- 
--	if (!grp->lockref.count++)
-+	if (!pcl->lockref.count++)
- 		atomic_long_dec(&erofs_global_shrink_cnt);
--	spin_unlock(&grp->lockref.lock);
-+	spin_unlock(&pcl->lockref.lock);
- 	return true;
- }
- 
-@@ -733,8 +734,7 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
- 	struct super_block *sb = fe->inode->i_sb;
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
- 	bool ztailpacking = map->m_flags & EROFS_MAP_META;
--	struct z_erofs_pcluster *pcl;
--	struct erofs_workgroup *grp, *pre;
-+	struct z_erofs_pcluster *pcl, *pre;
- 	int err;
- 
- 	if (!(map->m_flags & EROFS_MAP_ENCODED) ||
-@@ -748,8 +748,8 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
- 	if (IS_ERR(pcl))
- 		return PTR_ERR(pcl);
- 
--	spin_lock_init(&pcl->obj.lockref.lock);
--	pcl->obj.lockref.count = 1;	/* one ref for this request */
-+	spin_lock_init(&pcl->lockref.lock);
-+	pcl->lockref.count = 1;		/* one ref for this request */
- 	pcl->algorithmformat = map->m_algorithmformat;
- 	pcl->length = 0;
- 	pcl->partial = true;
-@@ -767,13 +767,13 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
- 	DBG_BUGON(!mutex_trylock(&pcl->lock));
- 
- 	if (ztailpacking) {
--		pcl->obj.index = 0;	/* which indicates ztailpacking */
-+		pcl->index = 0;		/* which indicates ztailpacking */
- 	} else {
--		pcl->obj.index = erofs_blknr(sb, map->m_pa);
-+		pcl->index = erofs_blknr(sb, map->m_pa);
- 		while (1) {
- 			xa_lock(&sbi->managed_pslots);
--			pre = __xa_cmpxchg(&sbi->managed_pslots, grp->index,
--					   NULL, grp, GFP_KERNEL);
-+			pre = __xa_cmpxchg(&sbi->managed_pslots, pcl->index,
-+					   NULL, pcl, GFP_KERNEL);
- 			if (!pre || xa_is_err(pre) || z_erofs_get_pcluster(pre)) {
- 				xa_unlock(&sbi->managed_pslots);
- 				break;
-@@ -786,8 +786,7 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
- 			err = xa_err(pre);
- 			goto err_out;
- 		} else if (pre) {
--			fe->pcl = container_of(pre,
--					struct z_erofs_pcluster, obj);
-+			fe->pcl = pre;
- 			err = -EEXIST;
- 			goto err_out;
- 		}
-@@ -807,7 +806,7 @@ static int z_erofs_pcluster_begin(struct z_erofs_decompress_frontend *fe)
- 	struct erofs_map_blocks *map = &fe->map;
- 	struct super_block *sb = fe->inode->i_sb;
- 	erofs_blk_t blknr = erofs_blknr(sb, map->m_pa);
--	struct erofs_workgroup *grp = NULL;
-+	struct z_erofs_pcluster *pcl = NULL;
- 	int ret;
- 
- 	DBG_BUGON(fe->pcl);
-@@ -817,9 +816,9 @@ static int z_erofs_pcluster_begin(struct z_erofs_decompress_frontend *fe)
- 	if (!(map->m_flags & EROFS_MAP_META)) {
- 		while (1) {
- 			rcu_read_lock();
--			grp = xa_load(&EROFS_SB(sb)->managed_pslots, blknr);
--			if (z_erofs_get_pcluster(grp)) {
--				DBG_BUGON(blknr != grp->index);
-+			pcl = xa_load(&EROFS_SB(sb)->managed_pslots, blknr);
-+			if (z_erofs_get_pcluster(pcl)) {
-+				DBG_BUGON(blknr != pcl->index);
- 				rcu_read_unlock();
- 				break;
- 			}
-@@ -830,8 +829,8 @@ static int z_erofs_pcluster_begin(struct z_erofs_decompress_frontend *fe)
- 		return -EFSCORRUPTED;
- 	}
- 
--	if (grp) {
--		fe->pcl = container_of(grp, struct z_erofs_pcluster, obj);
-+	if (pcl) {
-+		fe->pcl = pcl;
- 		ret = -EEXIST;
- 	} else {
- 		ret = z_erofs_register_pcluster(fe);
-@@ -886,21 +885,13 @@ static void z_erofs_rcu_callback(struct rcu_head *head)
- 			struct z_erofs_pcluster, rcu));
- }
- 
--static void erofs_workgroup_free_rcu(struct erofs_workgroup *grp)
--{
--	struct z_erofs_pcluster *const pcl =
--		container_of(grp, struct z_erofs_pcluster, obj);
--
--	call_rcu(&pcl->rcu, z_erofs_rcu_callback);
--}
--
- static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
--					  struct erofs_workgroup *grp)
-+					  struct z_erofs_pcluster *pcl)
- {
- 	int free = false;
- 
--	spin_lock(&grp->lockref.lock);
--	if (grp->lockref.count)
-+	spin_lock(&pcl->lockref.lock);
-+	if (pcl->lockref.count)
- 		goto out;
- 
- 	/*
-@@ -908,22 +899,22 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
- 	 * the XArray.  Otherwise some folios could be still attached to the
- 	 * orphan old pcluster when the new one is available in the tree.
- 	 */
--	if (erofs_try_to_free_all_cached_folios(sbi, grp))
-+	if (erofs_try_to_free_all_cached_folios(sbi, pcl))
- 		goto out;
- 
- 	/*
- 	 * It's impossible to fail after the pcluster is freezed, but in order
- 	 * to avoid some race conditions, add a DBG_BUGON to observe this.
- 	 */
--	DBG_BUGON(__xa_erase(&sbi->managed_pslots, grp->index) != grp);
-+	DBG_BUGON(__xa_erase(&sbi->managed_pslots, pcl->index) != pcl);
- 
--	lockref_mark_dead(&grp->lockref);
-+	lockref_mark_dead(&pcl->lockref);
- 	free = true;
- out:
--	spin_unlock(&grp->lockref.lock);
-+	spin_unlock(&pcl->lockref.lock);
- 	if (free) {
- 		atomic_long_dec(&erofs_global_shrink_cnt);
--		erofs_workgroup_free_rcu(grp);
-+		call_rcu(&pcl->rcu, z_erofs_rcu_callback);
- 	}
- 	return free;
- }
-@@ -931,14 +922,14 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
- unsigned long z_erofs_shrink_scan(struct erofs_sb_info *sbi,
- 				  unsigned long nr_shrink)
- {
--	struct erofs_workgroup *grp;
-+	struct z_erofs_pcluster *pcl;
- 	unsigned int freed = 0;
- 	unsigned long index;
- 
- 	xa_lock(&sbi->managed_pslots);
--	xa_for_each(&sbi->managed_pslots, index, grp) {
-+	xa_for_each(&sbi->managed_pslots, index, pcl) {
- 		/* try to shrink each valid pcluster */
--		if (!erofs_try_to_release_pcluster(sbi, grp))
-+		if (!erofs_try_to_release_pcluster(sbi, pcl))
- 			continue;
- 		xa_unlock(&sbi->managed_pslots);
- 
-@@ -953,16 +944,14 @@ unsigned long z_erofs_shrink_scan(struct erofs_sb_info *sbi,
- 
- static void z_erofs_put_pcluster(struct z_erofs_pcluster *pcl)
- {
--	struct erofs_workgroup *grp = &pcl->obj;
--
--	if (lockref_put_or_lock(&grp->lockref))
-+	if (lockref_put_or_lock(&pcl->lockref))
- 		return;
- 
--	DBG_BUGON(__lockref_is_dead(&grp->lockref));
--	if (grp->lockref.count == 1)
-+	DBG_BUGON(__lockref_is_dead(&pcl->lockref));
-+	if (pcl->lockref.count == 1)
- 		atomic_long_inc(&erofs_global_shrink_cnt);
--	--grp->lockref.count;
--	spin_unlock(&grp->lockref.lock);
-+	--pcl->lockref.count;
-+	spin_unlock(&pcl->lockref.lock);
- }
- 
- static void z_erofs_pcluster_end(struct z_erofs_decompress_frontend *fe)
-@@ -1497,9 +1486,9 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 	bvec->bv_offset = 0;
- 	bvec->bv_len = PAGE_SIZE;
- repeat:
--	spin_lock(&pcl->obj.lockref.lock);
-+	spin_lock(&pcl->lockref.lock);
- 	zbv = pcl->compressed_bvecs[nr];
--	spin_unlock(&pcl->obj.lockref.lock);
-+	spin_unlock(&pcl->lockref.lock);
- 	if (!zbv.page)
- 		goto out_allocfolio;
- 
-@@ -1561,23 +1550,23 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 	folio_put(folio);
- out_allocfolio:
- 	page = __erofs_allocpage(&f->pagepool, gfp, true);
--	spin_lock(&pcl->obj.lockref.lock);
-+	spin_lock(&pcl->lockref.lock);
- 	if (unlikely(pcl->compressed_bvecs[nr].page != zbv.page)) {
- 		if (page)
- 			erofs_pagepool_add(&f->pagepool, page);
--		spin_unlock(&pcl->obj.lockref.lock);
-+		spin_unlock(&pcl->lockref.lock);
- 		cond_resched();
- 		goto repeat;
- 	}
- 	pcl->compressed_bvecs[nr].page = page ? page : ERR_PTR(-ENOMEM);
--	spin_unlock(&pcl->obj.lockref.lock);
-+	spin_unlock(&pcl->lockref.lock);
- 	bvec->bv_page = page;
- 	if (!page)
- 		return;
- 	folio = page_folio(page);
- out_tocache:
- 	if (!tocache || bs != PAGE_SIZE ||
--	    filemap_add_folio(mc, folio, pcl->obj.index + nr, gfp)) {
-+	    filemap_add_folio(mc, folio, pcl->index + nr, gfp)) {
- 		/* turn into a temporary shortlived folio (1 ref) */
- 		folio->private = (void *)Z_EROFS_SHORTLIVED_PAGE;
- 		return;
-@@ -1709,7 +1698,7 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
- 
- 		/* no device id here, thus it will always succeed */
- 		mdev = (struct erofs_map_dev) {
--			.m_pa = erofs_pos(sb, pcl->obj.index),
-+			.m_pa = erofs_pos(sb, pcl->index),
- 		};
- 		(void)erofs_map_dev(sb, &mdev);
- 
--- 
-2.43.5
+> > IOMMU or not doens't matter much for P2P.  The important difference is
+> > through the host bridge or through a switch.  dma_map_page will work
+> > for P2P through the host brige (assuming the host bridge even support
+> > it as it also lacks the error handling for when not), but it lacks the
+> > handling for P2P through a switch.
+> 
+> On most x86 systems the BAR/bus address of the P2P memory is the same
+> as the CPU address, so without an IOMMU translation dma_map_page()
+> will return the CPU/host physical address which is the same as the
+> BAR/bus address and that will take the P2P switch path for testing.
 
+Maybe.  Either way the use of dma_map_page is incorrect.
+
+
+> 
+> Jason
+---end quoted text---
 
