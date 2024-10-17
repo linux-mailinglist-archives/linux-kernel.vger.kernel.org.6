@@ -1,179 +1,95 @@
-Return-Path: <linux-kernel+bounces-369664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58159A20B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:09:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A4E9A20B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F64285BE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76C9A1F2440B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0583F1DBB13;
-	Thu, 17 Oct 2024 11:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwCoS6uo"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34991DBB32;
+	Thu, 17 Oct 2024 11:09:08 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FF01DB929
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDF7259C;
+	Thu, 17 Oct 2024 11:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729163356; cv=none; b=bGtSf7akoMCkdNiznxc6ADo2DcKNHE2pmu/nK715w0WwSMLadE+cAPgwDEZ6VfOF5mvduk60nSHdMCStjYFGeOMy8vObbUSiXUVYTiB+e5mfIal81TVG+pmQP8azPMOlIIw/RP8aw8L4Z2DoZ82fmbjjhhSjtkU4LiJqy9dcsmg=
+	t=1729163348; cv=none; b=O2oGGXWmdFfeq2NO2RgCKdkNPiFa4eHFhKvplJmJWynrQTuKT5s5rTS25+aSW7q9denDaUNW5ZNvLZRmBfgjpAB+zTGg5SI81luP3eJ2dQ4ST7iMhRAsm9IMwkwW4st9ayIXBYrC+04pO2+Uml+lXVb2fCCP8aGn8cwrFDuFQ1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729163356; c=relaxed/simple;
-	bh=2FNuYyeHMQ8JKGGNhq1qu5oZuY5ADJyF92IWL7xTkUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ndvvCpdcsgAqqpwOoFepw+Taz8KBXrpQfiMfuMVi9VRpdTZJ0S7llIRoDJe1xkJ6GTOUBRuPoytcQNQmJYu+YMa/Jm9quC6hX92Qrk8zGIrZU2FcHp0hTVl3nd3fy9/+8vrlguGlL5REKV94D8Wl6O9zhdmcverjQzeIln1/EXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwCoS6uo; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso956776a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729163350; x=1729768150; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3douvtpLsUx3AakEC5m5aR6A7p1Pr4kaWKKKD9KYE+Q=;
-        b=CwCoS6uoTrP1MYz/ATqIQxEsfDarIzz8rsgyzA+8hzObUozyfqumlSVl7NlzL3gucW
-         HDVRkDGi+BBjMrhwukNpXys4DMZMPj406hV11IWmWo/08tqkHvxQuaYif3zotRuo+ecb
-         WvK9oBY2MOD/sZAASLyPRpSlxlV2s9HGAD7xn/T6Ol4/3rIadTiY5PYBhcxOVA1h95b2
-         2UET+mLR8Tce/N51T25w/i8GhvwkjnDXFaRdEoEnPfoHvVKbkYjI2xPv9k/Pqu1AyRwJ
-         6jYXQv+RVx1t5W76CLEKrojMa/x0K7OnpJkWT6AoH0wsuR5chU5smFoJ0rpV4eC3ebJo
-         Cn/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729163350; x=1729768150;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3douvtpLsUx3AakEC5m5aR6A7p1Pr4kaWKKKD9KYE+Q=;
-        b=eLG57zxNvMOh8qquxxHgf/7Unza0Bvd5NCwAr+7vijKiKadvbK5pBFyWl/LkTF77CY
-         9xo3O9HFuU8rqkH/S15ZKjaohSsNciFk4QP6MP/aGKIn/PFghDPNWfV0H12Qr0ggkM3Y
-         VcMDNEss1yKDm94EVGGs0/6mbAy0mU7J+xb75v7on65aHEbeH+740Ld4wSPrtpoMzwG9
-         s4z52HJJTd9j32Atkk3i+MKd9hupM2nBxb8fPsbjC4LSh4LFB/N4c47KPLRiAG9tlcdb
-         YSqUrn+qMQ6SnON3/Y35p6h9V8g3nZhWyhR2NgALpm2ComPcWVIgjQhgEXW2gEoMer76
-         HcYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSO/S/dFNALSP/9Ve8b3Fq6St91t5wRb43mrWPn6au3DiL0YKrGOUWC8zPP1++6kK+JIHTCIAbFVDLf9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxevTkxfHbKR7JeN4IuoouTamQ4nL7fH+xX1Tq2JOjAYfEZQRgJ
-	cBq9U/lkQb709iz2bzyVUKU2F2shunyNW6Bd/0HXODvWP+sWir+Z3Evp5ORS3jsmk5metjkjCBj
-	5pBqZkDK4oWmoGkVJ5QiELLYummc=
-X-Google-Smtp-Source: AGHT+IHd22yNSgtHkexQd1qDKDJ44tq/+TpDvOZkbi+jKQMsmVZa3qkBv3TtbZgQcG7pUZABbm9JOkq2QMZ3n20X13o=
-X-Received: by 2002:a05:6402:520e:b0:5c8:9f81:43e4 with SMTP id
- 4fb4d7f45d1cf-5c99501c722mr6352803a12.7.1729163350172; Thu, 17 Oct 2024
- 04:09:10 -0700 (PDT)
+	s=arc-20240116; t=1729163348; c=relaxed/simple;
+	bh=es5VI+t01hTn1NxUuVB7/G5rBeJKoKX3s/hZxFeB5Ic=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pUucOTIISiwmzdS5gEleJ7WRtxpQF2M8myt2ydkH8W8njaDmQ5s7QEAnVB8lFbcQUrjiUQbL3ZXRfwoG49YmHrAIdJSupkPQAnHf3SfRZcIGOsFRaH7re7oWwqMBPgtysauU+XMjk+XtOqN/vLjyJ+eedvfOFfq2I/Oafg9OevY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTlSR1yC5z6K9DG;
+	Thu, 17 Oct 2024 19:08:23 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5538C1400C9;
+	Thu, 17 Oct 2024 19:09:03 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 13:09:02 +0200
+Date: Thu, 17 Oct 2024 12:08:59 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
+ Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, "Maciej W. Rozycki"
+	<macro@orcam.me.uk>, Lukas Wunner <lukas@wunner.de>, Alexandru Gagniuc
+	<mr.nuke.me@gmail.com>, Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>, Smita Koralahalli
+	<Smita.KoralahalliChannabasappa@amd.com>, Shuah Khan <shuah@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>, "Daniel
+ Lezcano" <daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, Zhang
+ Rui <rui.zhang@intel.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v8 8/8] selftests/pcie_bwctrl: Create selftests
+Message-ID: <20241017120859.00004713@Huawei.com>
+In-Reply-To: <20241009095223.7093-9-ilpo.jarvinen@linux.intel.com>
+References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
+	<20241009095223.7093-9-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014131416.27324-1-vimal.agrawal@sophos.com> <f38e017e-40ef-4241-8701-fc56c5c2d06d@stanley.mountain>
-In-Reply-To: <f38e017e-40ef-4241-8701-fc56c5c2d06d@stanley.mountain>
-From: Vimal Agrawal <avimalin@gmail.com>
-Date: Thu, 17 Oct 2024 16:38:58 +0530
-Message-ID: <CALkUMdSzeH-7=jXsGV1+ubzfqHVOC3z0RbN9BG08HTKwFoAWeg@mail.gmail.com>
-Subject: Re: [PATCH] misc: misc_minor_alloc to allocate ids for all
- dynamic/misc dynamic minors
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	gregkh@linuxfoundation.org, arnd@arndb.de, lkp@intel.com, 
-	oe-kbuild-all@lists.linux.dev, vimal.agrawal@sophos.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Dan,
+On Wed,  9 Oct 2024 12:52:23 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-Both warning and missed case for return from this function for static
-minor are already fixed in the v2 version of the patch. I will be
-sending out the v3 version shortly ( after splitting it from kunit
-changes).
-Thanks for pointing this out.
+> Create selftests for PCIe BW control through the PCIe cooling device
+> sysfs interface.
+>=20
+> First, the BW control selftest finds the PCIe Port to test with. By
+> default, the PCIe Port with the highest Link Speed is selected but
+> another PCIe Port can be provided with -d parameter.
+>=20
+> The actual test steps the cur_state of the cooling device one-by-one
+> from max_state to what the cur_state was initially. The speed change
+> is confirmed by observing the current_link_speed for the corresponding
+> PCIe Port.
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Vimal
+My bash is terrible, but as far as I can tell this looks reasonable.
+So with that in mind take this with a pinch of salt.
 
-On Wed, Oct 16, 2024 at 7:52=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Hi Vimal,
->
-> kernel test robot noticed the following build warnings:
->
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Vimal-Agrawal/misc=
--misc_minor_alloc-to-allocate-ids-for-all-dynamic-misc-dynamic-minors/20241=
-014-211915
-> base:   char-misc/char-misc-testing
-> patch link:    https://lore.kernel.org/r/20241014131416.27324-1-vimal.agr=
-awal%40sophos.com
-> patch subject: [PATCH] misc: misc_minor_alloc to allocate ids for all dyn=
-amic/misc dynamic minors
-> config: sparc64-randconfig-r072-20241015 (https://download.01.org/0day-ci=
-/archive/20241016/202410161811.aIPEJHOt-lkp@intel.com/config)
-> compiler: sparc64-linux-gcc (GCC) 14.1.0
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202410161811.aIPEJHOt-lkp@intel.com/
->
-> smatch warnings:
-> drivers/char/misc.c:89 misc_minor_alloc() error: uninitialized symbol 're=
-t'.
->
-> vim +/ret +89 drivers/char/misc.c
->
-> d52c84545e305b Vimal Agrawal    2024-10-14  66  static int misc_minor_all=
-oc(int minor)
-> ab760791c0cfbb D Scott Phillips 2022-11-14  67  {
-> ab760791c0cfbb D Scott Phillips 2022-11-14  68          int ret;
-> ab760791c0cfbb D Scott Phillips 2022-11-14  69
-> d52c84545e305b Vimal Agrawal    2024-10-14  70          if (minor =3D=3D =
-MISC_DYNAMIC_MINOR) {
-> d52c84545e305b Vimal Agrawal    2024-10-14  71                  /* alloca=
-te free id */
-> ab760791c0cfbb D Scott Phillips 2022-11-14  72                  ret =3D i=
-da_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
-> ab760791c0cfbb D Scott Phillips 2022-11-14  73                  if (ret >=
-=3D 0) {
-> ab760791c0cfbb D Scott Phillips 2022-11-14  74                          r=
-et =3D DYNAMIC_MINORS - ret - 1;
-> ab760791c0cfbb D Scott Phillips 2022-11-14  75                  } else {
-> ab760791c0cfbb D Scott Phillips 2022-11-14  76                          r=
-et =3D ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
-> ab760791c0cfbb D Scott Phillips 2022-11-14  77                           =
-             MINORMASK, GFP_KERNEL);
-> ab760791c0cfbb D Scott Phillips 2022-11-14  78                  }
-> d52c84545e305b Vimal Agrawal    2024-10-14  79          } else {
-> d52c84545e305b Vimal Agrawal    2024-10-14  80                  /* specif=
-ic minor, check if it is in dynamic or misc dynamic range  */
-> d52c84545e305b Vimal Agrawal    2024-10-14  81                  if (minor=
- < DYNAMIC_MINORS) {
-> d52c84545e305b Vimal Agrawal    2024-10-14  82                          m=
-inor =3D DYNAMIC_MINORS - minor - 1;
-> d52c84545e305b Vimal Agrawal    2024-10-14  83                          r=
-et =3D ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
-> d52c84545e305b Vimal Agrawal    2024-10-14  84                  }
-> d52c84545e305b Vimal Agrawal    2024-10-14  85
-> d52c84545e305b Vimal Agrawal    2024-10-14  86                  if (minor=
- > MISC_DYNAMIC_MINOR)
-> d52c84545e305b Vimal Agrawal    2024-10-14  87                          r=
-et =3D ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
->
-> What about if minor is >=3D DYNAMIC_MINORS (128) but <=3D MISC_DYNAMIC_MI=
-NOR (255)?
->
-> d52c84545e305b Vimal Agrawal    2024-10-14  88          }
-> ab760791c0cfbb D Scott Phillips 2022-11-14 @89          return ret;
-> ab760791c0cfbb D Scott Phillips 2022-11-14  90  }
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
 
