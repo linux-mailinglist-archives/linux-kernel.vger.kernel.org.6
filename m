@@ -1,122 +1,342 @@
-Return-Path: <linux-kernel+bounces-370544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB30F9A2E46
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:12:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4599A2E48
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF961F230FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5691F23032
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C21227BAB;
-	Thu, 17 Oct 2024 20:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB7D2281CA;
+	Thu, 17 Oct 2024 20:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mx0Izx+d"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0N1J/R/"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0B01791ED
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2335C219CAF;
+	Thu, 17 Oct 2024 20:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729195973; cv=none; b=Sforq+e5hPIIK2l7U+C+V8/0JT4cUraNbnnjJIo8q7EBfzl/71Vg4UhFSjXnuxHRanrpVTJ0Tt250mwK4wPsLnouEkpW4Ot7WF/91AzmAVCuyUBt+U8cWaetilrkYXP9JNQS2P5MxbO02f+AigUIN6KDu41/gvGL6UxniOiPcfY=
+	t=1729195992; cv=none; b=PzNx0xl6/BSh7qCDrYnypMyNL8moMtGJJUstxkvT7ubhkyi90iahsGj17MpExxCTxdThyyto0ESjlvaLHZrx4FaWumKuM3VsIBQZ5ga838On/tPshoGczm+naY5SAr9pwdrXxYxI6hL2FYTuQs6RKjRskYEnnNO8KqxM0WOeL6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729195973; c=relaxed/simple;
-	bh=NBozDxQInUDVX/+SAvu1SlyYGKkBJoWGPhOhoYJAyiw=;
+	s=arc-20240116; t=1729195992; c=relaxed/simple;
+	bh=KUuaRfcFiN6JnYO5+GesldgjncPM1A2jg50nVWwg760=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=US5MN3jLJ4vzonrwIuDVF1+kiVDWbIgugy9xnC3C35hWipEmi2JDwbQiojalYK63c4oyax/+6SEmcUjiczJl0x/nwUlhRaRuey4ykRC0J/Bs0gS3NSP9QshstsbWoHKMiLU1qU3fz0W5kDdXsrjzXEZKuy5zjTps6b1gSMsCmRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Mx0Izx+d; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c9404cef42so145547a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:12:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=fTgO3wN9KOpK0bPXLSmyZlyondKaDkrDZfuh2p9vd6f0GtqCC8YltCpnsJhXZXPml5yua4oWaFHCcFjIpN5MWJH9oBWIMgtJ7a7sVEo1wf39NOn51gak6Earrd0LCKKswwjFu2gEqWXyQIRnYB38AI8e0lANpM0XzOoUkf4aPjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q0N1J/R/; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e5130832aso960718b3a.0;
+        Thu, 17 Oct 2024 13:13:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729195970; x=1729800770; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729195986; x=1729800786; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NBozDxQInUDVX/+SAvu1SlyYGKkBJoWGPhOhoYJAyiw=;
-        b=Mx0Izx+dLcAQUBj1xLzvAffGpii7glWn3UX+QDziUfgkt89XO9p2bE2Qn2r8LHQGKP
-         6SkvkdsujNj2pwyq6qni9IZuEHn41gYNlcD76qz8t+NWMGbLvU0WK4YEKqIQmBvTZA1T
-         Zl9Ox1mm+I2c5TvYwzClaKanuv2MSh6FJB4Bg=
+        bh=ja6Fh9/kqcvQYixmRlkAxQv+Z2SX3C04BQvu9t30ons=;
+        b=Q0N1J/R/efZy5WBc5Wu8fR+I4Yi+IHaTs6etblDR6FF1qiAF+1CQd78wIDO7/H0YML
+         nM9oQsYrnSl7GqNApSsynZUlUmeZpMIBviHLclfPBEmV/xiyD7X4tfu8v+cdI0D/q/Ag
+         i/mEpqpO+Bt0nzYLet8eeRBEdCrTMZuOB0U1dyEHOYAYbG0I++bNLzSuh1+BQqEqkp8S
+         a7kC5PMnUVZ0ii8+AsuZzJyX7X/tQGJFb2yJ/extpyROI8mgabwshDnTTCjJsXognjgJ
+         tUsFM236WkqpGRFqDD6hnDjSNLzyrWSHYqKz2Plorp6VOl1L5WTYe+fZDKSDXtnbbmNb
+         EhlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729195970; x=1729800770;
+        d=1e100.net; s=20230601; t=1729195986; x=1729800786;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NBozDxQInUDVX/+SAvu1SlyYGKkBJoWGPhOhoYJAyiw=;
-        b=Qxd9kG0r9FDWqp4uxnMLAYhnIeWOVk5KWnt/e8ZnIhR5BcuvvMyj6C+hc8USwe19WB
-         n+B0SWsxx7E+t8OhotOEBJlV0rTy9wHeN1PlKvyWfQDPGB4IMlaHFzAnpWbWJEdkx61f
-         EW3hPta8WXKi7KmuD2JyMYrFPzc4C4ZsbW2Waib5vG47Au1HPt41khgzlnldaULZenGs
-         MvhheqPvewNjL30j1TJIZk5+5HxqN+j/fy3dPn2XOWnlMoHe26PhI0TnvfCw3TPbsTCR
-         lPXGb/xGUMuOycyOupaFxuQKOIWub5Dnu/7711vA83ynaMoVcQq5EW2R39RHbhVGIr9G
-         3jXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeiSYx09zIfPN3WktxUvfQQ/NHhnhmP/GCxwnoyqE6SCBdND08+kmusn4QqdLAAUo5i4Q2J5x4EQZVw1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYnfif5aV+6+fdUy930AlXVz9T0onXBeglXrlQTLcT4nv43wpu
-	xoF2Rq8IlL/i9BNPdHteE+A2e3enUSWlD4Olur4cKR9PFitZI2VtE8d+lfhGo4nbaNEfM+WPc0n
-	tuGqVrvqiYG91Vs8CMo9cGoCoNLYYCJugfZaM
-X-Google-Smtp-Source: AGHT+IHMKwVD92dy+ne41XM8ABFquxk2pbEXlPTudUpzl7Zpa7r8kMniYucLBIkvG/gwVEopvNNS96zlSIhybkKunA0=
-X-Received: by 2002:a05:6402:348a:b0:5c9:879e:6998 with SMTP id
- 4fb4d7f45d1cf-5ca0ac44384mr2981a12.1.1729195969744; Thu, 17 Oct 2024 13:12:49
- -0700 (PDT)
+        bh=ja6Fh9/kqcvQYixmRlkAxQv+Z2SX3C04BQvu9t30ons=;
+        b=gl+6dN7akE3LB95SL2GuIP9IqbaE7Xj6AC3c2G338UUjPVMpZaL1u2No/QA5eF74kh
+         WSCj9dMJrRNSpWdF8yEPpa/fFahG4DQFDp++Ro9Vf28o36NhCI6Cn6G2e3WPcbiTvD4i
+         ZkopeozXiD1rdkxjGEZfInhjI6ZmMPXenTwkvXq2BDiBFmApCApT5TRsboCSGQlfAxlU
+         JXGHCkqSJlk6zMlfMYxqNebimLHbVzmYb3+ID3dxwVb7vKfi2wBqjMp0rn7N7xjF0Krv
+         mJpKuip8e9dnxEigGr+LDn97dYX+Wdiv8/KexTYFq5CuAMtmOBloEBLL0Si1IaXb8uK4
+         4MXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKe2UqBnJQKeNVqcOQUwMBj8GbCCwOVUHszdXG6r4fXnMrh1AvAoqhmssO3a9P7lcabMu+QFtWRCFV2huP@vger.kernel.org, AJvYcCVScGeGVBDSJJoFq3UrZNNMFpYC3UzI7DeYEhxcZpOfF5FA4zi5g+TQ1kYsx2OJmcWs8Ns=@vger.kernel.org, AJvYcCWRXL/IHlUGeIrXdNw6ob0A72AxKowpKl8sEPtD1lKfRdlgQ7aLYRWni/ij6kGGwpp+VqYw7TBhhoyQzF69e8YzO2FA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDDAjGTqzMwCRHH68jxD7rJY39PzL5W9X56bB0x+XD1ZVNfoGM
+	pOBYu+LAy9NgxygEssW9bIRqqV6CkMFLf/MfmpkQdcBQm9+Qrx3QPXh8OeFSkQST3u/BDDLqOV7
+	LS4VcFMOrUFebVZ7caWA+rAk4WpA=
+X-Google-Smtp-Source: AGHT+IEuqSjPzyt42X54W6LXGj8i0fvc5Tl87DgX/uq7AMOSYMFpeKD+1oEd6pxVlSDusiJ6RH5KvAGANmecM7W8NS4=
+X-Received: by 2002:a05:6a00:4b14:b0:71e:e4f:3e58 with SMTP id
+ d2e1a72fcca58-71ea31e5553mr235117b3a.17.1729195986174; Thu, 17 Oct 2024
+ 13:13:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017022627.3112811-1-jeffxu@chromium.org> <3a1bbbdf-1281-4f44-857d-58cba583e3da@lucifer.local>
- <CABi2SkU2yX_Pbr6=6uEiQnro88O5Mhq3NLwOsy=A=Qa5xeC6Yw@mail.gmail.com> <zcizwa4wasrq5si6nsjvougg2lt2dklaujpshdmghwg7oejhlj@zxzqhyff4vba>
-In-Reply-To: <zcizwa4wasrq5si6nsjvougg2lt2dklaujpshdmghwg7oejhlj@zxzqhyff4vba>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 17 Oct 2024 13:12:36 -0700
-Message-ID: <CABi2SkWBFZkWxDPnc6g2odvvNuMQqL4wQcbQSN2cTow2JLMKJw@mail.gmail.com>
-Subject: Re: [PATCH] munmap sealed memory cause memory to split (bug)
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org, 
-	keescook@chromium.org, torvalds@linux-foundation.org, 
-	usama.anjum@collabora.com, corbet@lwn.net, Liam.Howlett@oracle.com, 
-	jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, jannh@google.com, sroettger@google.com, 
-	linux-hardening@vger.kernel.org, willy@infradead.org, 
-	gregkh@linuxfoundation.org, deraadt@openbsd.org, surenb@google.com, 
-	merimus@google.com, rdunlap@infradead.org
+References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-3-andrii@kernel.org>
+ <55hskn2iz5ixsl6wvupnhx7hkzcvx2u4muswvzi4wuqplmu2uo@rj72ypyeksjy>
+ <CAJuCfpFpPvBLgZNxwHuT-kLsvBABWyK9H6tFCmsTCtVpOxET6Q@mail.gmail.com>
+ <CAEf4BzbOXrbixQA=fpg17QPBv+4myAQrHvCX42hVye0Ww9W2Aw@mail.gmail.com> <CAJuCfpHGjkPXMGsttb7bMVr0R1Crv8J_zw5_suj+1nCaT=1fBw@mail.gmail.com>
+In-Reply-To: <CAJuCfpHGjkPXMGsttb7bMVr0R1Crv8J_zw5_suj+1nCaT=1fBw@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 17 Oct 2024 13:12:53 -0700
+Message-ID: <CAEf4BzatVr=70EH9AcHbEwSLy1asJ2x_NKZKsqiAYnkpFpihJg@mail.gmail.com>
+Subject: Re: [PATCH v3 tip/perf/core 2/4] mm: switch to 64-bit
+ mm_lock_seq/vm_lock_seq on 64-bit architectures
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, peterz@infradead.org, 
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org, willy@infradead.org, akpm@linux-foundation.org, 
+	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, mhocko@kernel.org, 
+	vbabka@suse.cz, hannes@cmpxchg.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 12:14=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail=
-.com> wrote:
+On Thu, Oct 17, 2024 at 12:42=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
+com> wrote:
 >
-> On Thu, Oct 17, 2024 at 09:20:20AM -0700, Jeff Xu wrote:
-> > On Thu, Oct 17, 2024 at 1:18=E2=80=AFAM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > NACK. Greg's bot got to it but...
-> > >
-> > > As per Greg's bot, no signed-off-by line.
-> > >
-> > Sorry for confusion, I wasn't meant to send this as a PATCH, but
-> > reporting the issue.
-> > The diff was just sent as reference to repro the bug, and I forgot to
-> > remove PATCH from the title. I apologize for the confusion.
+> On Thu, Oct 17, 2024 at 11:55=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
 > >
+> > On Wed, Oct 16, 2024 at 7:02=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
+le.com> wrote:
+> > >
+> > > On Sun, Oct 13, 2024 at 12:56=E2=80=AFAM Shakeel Butt <shakeel.butt@l=
+inux.dev> wrote:
+> > > >
+> > > > On Thu, Oct 10, 2024 at 01:56:42PM GMT, Andrii Nakryiko wrote:
+> > > > > To increase mm->mm_lock_seq robustness, switch it from int to lon=
+g, so
+> > > > > that it's a 64-bit counter on 64-bit systems and we can stop worr=
+ying
+> > > > > about it wrapping around in just ~4 billion iterations. Same goes=
+ for
+> > > > > VMA's matching vm_lock_seq, which is derived from mm_lock_seq.
+> > >
+> > > vm_lock_seq does not need to be long but for consistency I guess that
+> >
+> > How come, we literally assign vm_lock_seq from mm_lock_seq and do
+> > direct comparisons. They have to be exactly the same type, no?
 >
-> Can you explain what the issue is? I don't get it.
+> Not necessarily. vm_lock_seq is a snapshot of the mm_lock_seq but it
+> does not have to be a "complete" snapshot. Just something that has a
+> very high probability of identifying a match and a rare false positive
+> is not a problem (see comment in
+> https://elixir.bootlin.com/linux/v6.11.3/source/include/linux/mm.h#L678).
+> So, something like this for taking and comparing a snapshot would do:
 >
-The issue is there is one VMA that gets splitted after an unmap call fails.
-Two splitted VMA share the same attributes. e.g.
+> vma->vm_lock_seq =3D (unsigned int)mm->mm_lock_seq;
+> if (vma->vm_lock_seq =3D=3D (unsigned int)mm->mm_lock_seq)
 
-- Allocate 12 pages (0-11).
-- Seal middle 4 pages (4567)
-- munmap (2345) - this will fail due to 4567 being sealed.
+Ah, ok, I see what's the idea behind it, makes sense.
 
-The VMA for page (0123) is split as 2 VMAs (01)-(23), those 2 VMA
-have the same attribute, and should be merged as one.
+>
+> >
+> > > makes sense. While at it, can you please change these seq counters to
+> > > be unsigned?
+> >
+> > There is `vma->vm_lock_seq =3D -1;` in kernel/fork.c, should it be
+> > switched to ULONG_MAX then? In general, unless this is critical for
+> > correctness, I'd very much like stuff like this to be done in the mm
+> > tree afterwards, but it seems trivial enough, so if you insist I'll do
+> > it.
+>
+> Yeah, ULONG_MAX should work fine here. vma->vm_lock_seq is initialized
+> to -1 to avoid false initial match with mm->mm_lock_seq which is
+> initialized to 0. As I said, a false match is not a problem but if we
+> can avoid it, that's better.
 
+ok, ULONG_MAX and unsigned long it is, will update
 
-> --
-> Pedro
+>
+> >
+> > > Also, did you check with pahole if the vm_area_struct layout change
+> > > pushes some members into a difference cacheline or creates new gaps?
+> > >
+> >
+> > Just did. We had 3 byte hole after `bool detached;`, it now grew to 7
+> > bytes (so +4) and then vm_lock_seq itself is now 8 bytes (so +4),
+> > which now does push rb and rb_subtree_last into *THE SAME* cache line
+> > (which sounds like an improvement to me). vm_lock_seq and vm_lock stay
+> > in the same cache line. vm_pgoff and vm_file are now in the same cache
+> > line, and given they are probably always accessed together, seems like
+> > a good accidental change as well. See below pahole outputs before and
+> > after.
+>
+> Ok, sounds good to me. Looks like keeping both sequence numbers 64bit
+> is not an issue. Changing them to unsigned would be nice and trivial
+> but I don't insist. You can add:
+>
+> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+
+thanks, will switch to unsigned in the next revision (next week,
+probably, to let some of the pending patches land)
+
+>
+> >
+> > That singular detached bool looks like a complete waste, tbh. Maybe it
+> > would be better to roll it into vm_flags and save 8 bytes? (not that I
+> > want to do those mm changes in this patch set, of course...).
+> > vm_area_struct is otherwise nicely tightly packed.
+> >
+> > tl;dr, seems fine, and detached would be best to get rid of, if
+> > possible (but that's a completely separate thing)
+>
+> Yeah, I'll take a look at that. Thanks!
+>
+> >
+> > BEFORE
+> > =3D=3D=3D=3D=3D=3D
+> > struct vm_area_struct {
+> >         union {
+> >                 struct {
+> >                         long unsigned int vm_start;      /*     0     8=
+ */
+> >                         long unsigned int vm_end;        /*     8     8=
+ */
+> >                 };                                       /*     0    16=
+ */
+> >                 struct callback_head vm_rcu;             /*     0    16=
+ */
+> >         } __attribute__((__aligned__(8)));               /*     0    16=
+ */
+> >         struct mm_struct *         vm_mm;                /*    16     8=
+ */
+> >         pgprot_t                   vm_page_prot;         /*    24     8=
+ */
+> >         union {
+> >                 const vm_flags_t   vm_flags;             /*    32     8=
+ */
+> >                 vm_flags_t         __vm_flags;           /*    32     8=
+ */
+> >         };                                               /*    32     8=
+ */
+> >         bool                       detached;             /*    40     1=
+ */
+> >
+> >         /* XXX 3 bytes hole, try to pack */
+> >
+> >         int                        vm_lock_seq;          /*    44     4=
+ */
+> >         struct vma_lock *          vm_lock;              /*    48     8=
+ */
+> >         struct {
+> >                 struct rb_node     rb;                   /*    56    24=
+ */
+> >                 /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago=
+ --- */
+> >                 long unsigned int  rb_subtree_last;      /*    80     8=
+ */
+> >         }                                                /*    56    32=
+ */
+> >         struct list_head           anon_vma_chain;       /*    88    16=
+ */
+> >         struct anon_vma *          anon_vma;             /*   104     8=
+ */
+> >         const struct vm_operations_struct  * vm_ops;     /*   112     8=
+ */
+> >         long unsigned int          vm_pgoff;             /*   120     8=
+ */
+> >         /* --- cacheline 2 boundary (128 bytes) --- */
+> >         struct file *              vm_file;              /*   128     8=
+ */
+> >         void *                     vm_private_data;      /*   136     8=
+ */
+> >         atomic_long_t              swap_readahead_info;  /*   144     8=
+ */
+> >         struct mempolicy *         vm_policy;            /*   152     8=
+ */
+> >         struct vma_numab_state *   numab_state;          /*   160     8=
+ */
+> >         struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   168     8=
+ */
+> >
+> >         /* size: 176, cachelines: 3, members: 18 */
+> >         /* sum members: 173, holes: 1, sum holes: 3 */
+> >         /* forced alignments: 2 */
+> >         /* last cacheline: 48 bytes */
+> > } __attribute__((__aligned__(8)));
+> >
+> > AFTER
+> > =3D=3D=3D=3D=3D
+> > struct vm_area_struct {
+> >         union {
+> >                 struct {
+> >                         long unsigned int vm_start;      /*     0     8=
+ */
+> >                         long unsigned int vm_end;        /*     8     8=
+ */
+> >                 };                                       /*     0    16=
+ */
+> >                 struct callback_head vm_rcu;             /*     0    16=
+ */
+> >         } __attribute__((__aligned__(8)));               /*     0    16=
+ */
+> >         struct mm_struct *         vm_mm;                /*    16     8=
+ */
+> >         pgprot_t                   vm_page_prot;         /*    24     8=
+ */
+> >         union {
+> >                 const vm_flags_t   vm_flags;             /*    32     8=
+ */
+> >                 vm_flags_t         __vm_flags;           /*    32     8=
+ */
+> >         };                                               /*    32     8=
+ */
+> >         bool                       detached;             /*    40     1=
+ */
+> >
+> >         /* XXX 7 bytes hole, try to pack */
+> >
+> >         long int                   vm_lock_seq;          /*    48     8=
+ */
+> >         struct vma_lock *          vm_lock;              /*    56     8=
+ */
+> >         /* --- cacheline 1 boundary (64 bytes) --- */
+> >         struct {
+> >                 struct rb_node     rb;                   /*    64    24=
+ */
+> >                 long unsigned int  rb_subtree_last;      /*    88     8=
+ */
+> >         }                                                /*    64    32=
+ */
+> >         struct list_head           anon_vma_chain;       /*    96    16=
+ */
+> >         struct anon_vma *          anon_vma;             /*   112     8=
+ */
+> >         const struct vm_operations_struct  * vm_ops;     /*   120     8=
+ */
+> >         /* --- cacheline 2 boundary (128 bytes) --- */
+> >         long unsigned int          vm_pgoff;             /*   128     8=
+ */
+> >         struct file *              vm_file;              /*   136     8=
+ */
+> >         void *                     vm_private_data;      /*   144     8=
+ */
+> >         atomic_long_t              swap_readahead_info;  /*   152     8=
+ */
+> >         struct mempolicy *         vm_policy;            /*   160     8=
+ */
+> >         struct vma_numab_state *   numab_state;          /*   168     8=
+ */
+> >         struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   176     8=
+ */
+> >
+> >         /* size: 184, cachelines: 3, members: 18 */
+> >         /* sum members: 177, holes: 1, sum holes: 7 */
+> >         /* forced alignments: 2 */
+> >         /* last cacheline: 56 bytes */
+> > } __attribute__((__aligned__(8)));
+> >
+> >
+> > > > >
+> > > > > I didn't use __u64 outright to keep 32-bit architectures unaffect=
+ed, but
+> > > > > if it seems important enough, I have nothing against using __u64.
+> > > > >
+> > > > > Suggested-by: Jann Horn <jannh@google.com>
+> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > >
+> > > > Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > >
 
