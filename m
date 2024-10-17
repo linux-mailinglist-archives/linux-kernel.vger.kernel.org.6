@@ -1,144 +1,99 @@
-Return-Path: <linux-kernel+bounces-370549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40889A2E54
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9809A2E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D386B2270D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:20:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A6E9B224D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ECB2194BF;
-	Thu, 17 Oct 2024 20:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D902194BF;
+	Thu, 17 Oct 2024 20:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SYSRcHS5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="esjRwHfr"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGKUUnsD"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FA1144D21;
-	Thu, 17 Oct 2024 20:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6741DFE2A;
+	Thu, 17 Oct 2024 20:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729196423; cv=none; b=CkI7OX6uzWxQ9HVuEAkQLpZJ02VTf1Lfh953YCRMQfAyznIfzZ6HwzCmdxCWsP4n8yf9BJJC68Ygb/OISIv9gPUGjO2SbhLIgg271N2wy5/o+eXfkJmcA0DLHk1gMqHZGXUOZ4+V2Uv+F69jhnASnAVFtK7ix4MmvnujSGi6ufg=
+	t=1729196602; cv=none; b=egWztCjiuSIGfA94lzZlABAd8Ce/FOAYgp8DWyOjKaEhUj/vihQBNVasM5E7m0BWlVOiniDwitu+LEjzgw/VmZ+iDH++n8TTfEu23xbuTEdphuWSlQSiGeD1tPLodLzrAYLtnwuscBnR4/qJy6zb8L71N+eJCwXxZtspBdcPLZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729196423; c=relaxed/simple;
-	bh=XVVHSpwPe5HZHIHmXyXLtKocHLxVUhDN4zyjgfNLGBc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=u6rQzmWJ4i1heuO7XMQXXft1euX6GTWzIRq1Ebss7Ya2n8AdoZ/uEq/LHuk92T0sj9foixBJPw4GVJmpeI7Oiv8KFe9//uB30Ng0UI3n05wvN0wSLVBvcyhIrVV999u4ooC1VeHyf9hvh86vrvgXOurN5hMwQZ1HY/5KfJGcXWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SYSRcHS5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=esjRwHfr; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E3C2F114008E;
-	Thu, 17 Oct 2024 16:20:15 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 17 Oct 2024 16:20:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729196415;
-	 x=1729282815; bh=/elZsdY9jdfXA5CNoGnQjupWAHOxpp9CXjyZ+kdKV3U=; b=
-	SYSRcHS536J51tTNmu7p25c8eCeTwmReNsfcMZiUUFX3HerJXw2PCihWwZHywWGm
-	XtkRVqaf0bJUmpkEr0xel839tS3XZKe0Q7GrlVPy/KuOMsxVKWYaCXew3geWnrC/
-	2AEFRgONyP55oSc0QSDD5A+rtP38y+mK2Fw6zWyJ83U5DM3dCA+7Q7RGJxT3V3qK
-	PXJu6LX3+OCfkkQqFeAUqfiFuvsHdGemIYGzXF1Ja2J2o4FTrcpXI5uxtJpRMkIv
-	XhFTs7AtGEAXYvpVaDtpGH4eJAuwb4/Q6FiFaEtvfeq236LL7BLQ38NPRLeiZOIE
-	aanvzf71Rdt12wyTdJhEJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729196415; x=
-	1729282815; bh=/elZsdY9jdfXA5CNoGnQjupWAHOxpp9CXjyZ+kdKV3U=; b=e
-	sjRwHfrPQL/I7PGEXUrHIwKI9uBSCibtGL35CXJcreL1HM2WdOhwX9hJ+PDSM78Q
-	Ig1UZIXJvzm35koI59fUZ9ZX2QSjEld4Iw1Od2PVIcfq/dWuMgFt7c/quxQ5ONwy
-	eiUo4X7xzVfvb93XvPY9a56E4K9d3eXJq32kenGz7RhA3x71OpZR64CD6jMi3jwy
-	pbtKPBJFESt9sUAlo5oOmyjeqXAud3nrjZUce/MZsBnnNXNHM1MrRoXCLNar4yLp
-	Hk5naff+RPsXrx+1fOGHjUZ1mAi0FZUO49ifQRH75s31llKW4ZYfI3hJSZNt/3zX
-	4L9Mcr5c8LLxYcCTkmyyA==
-X-ME-Sender: <xms:f3ERZxp_Ga5mu0cJjb7aVzvymuknjw_5FzNpeIWT8fvF--o0ifQuMw>
-    <xme:f3ERZzqW-gjkWsKt8u4-NBxKeY8aWgxHLMxbHivCu_csd1FzacTkIdfr58rFcHaV2
-    Nhkk9DLtBu1303d_K4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehuddgudehudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeef
-    keekleffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
-    rhhnuggsrdguvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopehnihgtohhlrghssehfjhgrshhlvgdrvghupdhrtghpthhtohepjhhushht
-    ihhnshhtihhtthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhhorhgsohesghhooh
-    hglhgvrdgtohhmpdhrtghpthhtohepnhguvghsrghulhhnihgvrhhssehgohhoghhlvgdr
-    tghomhdprhgtphhtthhopehvvhhvvhhvvhesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
-    epmhgrshgrhhhirhhohieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghn
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehllhhvmheslhhishhtshdrlhhinhhugi
-    druggvvhdprhgtphhtthhopehprghttghhvghssehlihhsthhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:f3ERZ-NqgrYOAN4t_T3U9HhDYT3z9ZTa-_7sOybYYgyxU_LXhOoBug>
-    <xmx:f3ERZ87gtondBc9e_O9u301RZAiPLrHRd91WUdkF9RmeEX3YDeqP4w>
-    <xmx:f3ERZw6QAg_-99Hcc-GQ3pILjqgzkTd9-bUPX1s9_8yAJzNpAHiDTw>
-    <xmx:f3ERZ0iGUiPXLHw2MWllSX_rnjgWR--yQS_mLHBrM3SVOzC6qJyv4Q>
-    <xmx:f3ERZwi7NrQID7mZR1fAGrsOfdwTOygTsFkxqm8wvhiJUsxLKdp3gMSz>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 161932220072; Thu, 17 Oct 2024 16:20:15 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729196602; c=relaxed/simple;
+	bh=oTJIfT3oyqakJf9FHAZr6BaFyoh65Pq8PbKuBix5ynQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tAcNR31/FyNfqZiKTql4VI5h6rtgymlRHCjyxLn52Hm6aeTCXPY3xLoy4EdZOxapVx/2HtjRtwdJ7YFpNu51Lb6YRu3uKDPuHWJ28aXjiuDWMwMZiO/vStsV9UCCqsuykGaQcW+duen/TbnIWFcwukQik8ffJbL6ekscZ6DpCOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGKUUnsD; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so1084486a12.0;
+        Thu, 17 Oct 2024 13:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729196600; x=1729801400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=38u4+lvEP3MwxaW3jAQulStrKf3LnsiUKlHFBeOP4Rk=;
+        b=RGKUUnsDjrY5TBYBZY8lYFcghtgM92LBfAsfMWezX/aeh1Q8Lb/oy0JJGM0L0nkMvF
+         pXdvofCLVRZ1IkDde5fSDl3gYtHjBYkJo9GXkp44WHF2lwf9QjJ48TS7t2knWBfZohKp
+         kLLzMfHbLuIIkUJQ8HbbgRFuId54rzpZIa0cgCMm8jYopb3PH73iEr71AN5CcYd6vbei
+         xnne5bQCMDCjn+Gwsd1Pg+tKoB0awkArjy/wMeXhgaO9kOUJWi5W8GZl4hXjY+tDy0TG
+         pZhCKeIoAd00Ck/rWe8Eb//IEpjXf2C87SyEc6hktmc0Hrk94XwM7AZaA1HjEd/BnOMw
+         9dCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729196600; x=1729801400;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=38u4+lvEP3MwxaW3jAQulStrKf3LnsiUKlHFBeOP4Rk=;
+        b=esZqhPDSU7/kwvqC2GPvf7rbEwOKoHfq6wKunfbsltNX07zsh4+D4MHqa8WnOaUOwS
+         4uYJZ+rjs9BdA1Y8Hh4Vk+VIgB0fDA1IzqGhL5fOW52bXbIFSzoj3zIaU9YuZ+fJ1Ob1
+         14NLLuYw9dMMyoS0HFdDl582VnxDaCyu4WFxmz5B0X9+CVnz22Stp/CGZm4FQZw3/ga+
+         iMNdb9soRcsjXr+szYhtY1gcTuPD+sCaQmuWz4GnE0issHH9QiOZpVuayjq6i61bMU5b
+         881wYJh6XnXJVVVz27kFUSUAw8Febm2AJic4O2IjIMgK+y1e1+j91kXaS802u6WsAn52
+         xH3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUma59blz8jhXzVcImQbwdBf+6W3XhH7TtKt9U4QQqxArBcA/3kLzGLsoVc/335d2XTGluajL1U3UxtD1U=@vger.kernel.org, AJvYcCUmu64IMlmkixutgl10AaFpbS30jMCC9KhfV5MIue0ceseuHAx5632g4ELlNZvfEGDmdsiPpwTN8znth5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD8xTATTE5ny4lYRanfjVaPQh2p+fgUuBIzdga9EoleJL123so
+	Nt+Yg9EffFW6dC4GdF0b7YnREMbacD3qGPYrVuS0WdL0dJZpByuqbUxJ5c68
+X-Google-Smtp-Source: AGHT+IGMAWQD6p2HxyTayb3FsLXe59RkwnRVgQe15THThCv3iM/TQVQ9CJUSlYItiOMujnRF+Gx7RA==
+X-Received: by 2002:a17:90b:4c8f:b0:2e2:d82b:d144 with SMTP id 98e67ed59e1d1-2e561a3281cmr234135a91.37.1729196600158;
+        Thu, 17 Oct 2024 13:23:20 -0700 (PDT)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e55d216012sm232832a91.0.2024.10.17.13.23.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 13:23:19 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: angelogioacchino.delregno@collabora.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mchehab@kernel.org,
+	moudy.ho@mediatek.com,
+	pvmohammedanees2003@gmail.com,
+	ribalda@chromium.org,
+	sebastian.fricke@collabora.com
+Subject: Re: [PATCH] media: platform: mtk-mdp3: Remove unwanted else in mdp-cmdp-prepare()
+Date: Fri, 18 Oct 2024 01:51:27 +0530
+Message-ID: <20241017202127.2943-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <f771788c-bdcd-4378-a9c4-4bd6bbf93591@collabora.com>
+References: <f771788c-bdcd-4378-a9c4-4bd6bbf93591@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 17 Oct 2024 20:19:54 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nathan Chancellor" <nathan@kernel.org>,
- "Masahiro Yamada" <masahiroy@kernel.org>
-Cc: "Nicolas Schier" <nicolas@fjasle.eu>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- "Aleksei Vetrov" <vvvvvv@google.com>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, patches@lists.linux.dev,
- stable@vger.kernel.org
-Message-Id: <079876f3-19c6-41bf-8e70-8764fd4c62e4@app.fastmail.com>
-In-Reply-To: 
- <20241017-disable-two-clang-enum-warnings-v2-1-163ac04346ae@kernel.org>
-References: 
- <20241017-disable-two-clang-enum-warnings-v2-1-163ac04346ae@kernel.org>
-Subject: Re: [PATCH v2] kbuild: Move -Wenum-enum-conversion to W=2
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024, at 17:09, Nathan Chancellor wrote:
-> -Wenum-enum-conversion was strengthened in clang-19 to warn for C, which
-> caused the kernel to move it to W=1 in commit 75b5ab134bb5 ("kbuild:
-> Move -Wenum-{compare-conditional,enum-conversion} into W=1") because
-> there were numerous instances that would break builds with -Werror.
-> Unfortunately, this is not a full solution, as more and more developers,
-> subsystems, and distributors are building with W=1 as well, so they
-> continue to see the numerous instances of this warning.
->
-> Since the move to W=1, there have not been many new instances that have
-> appeared through various build reports and the ones that have appeared
-> seem to be following similar existing patterns, suggesting that most
-> instances of this warning will not be real issues. The only alternatives
-> for silencing this warning are adding casts (which is generally seen as
-> an ugly practice) or refactoring the enums to macro defines or a unified
-> enum (which may be undesirable because of type safety in other parts of
-> the code).
->
-> Move the warning to W=2, where warnings that occur frequently but may be
-> relevant should reside.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 75b5ab134bb5 ("kbuild: Move 
-> -Wenum-{compare-conditional,enum-conversion} into W=1")
-> Link: https://lore.kernel.org/ZwRA9SOcOjjLJcpi@google.com/
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Thank you for your feedback! I have made the 
+required changes and sent over the new one.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Thanks!
 
