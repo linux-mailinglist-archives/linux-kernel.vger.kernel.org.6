@@ -1,49 +1,61 @@
-Return-Path: <linux-kernel+bounces-370397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E99C9A2BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7C19A2BEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248DD1F2276D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D07286012
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83051E0B8B;
-	Thu, 17 Oct 2024 18:15:00 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1271E907D;
+	Thu, 17 Oct 2024 18:15:11 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C851E04AD;
-	Thu, 17 Oct 2024 18:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED601E6DEE;
+	Thu, 17 Oct 2024 18:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729188900; cv=none; b=XB9r0YyIlLLiR1hRPwkhXvHoKhbrxhY9rM3dT83+QYdHiDxfguA2eTBLhSQZd3slZNMUbPPZyz6rgLGaYXTVW1lF6EjhsaKHwtDcLUrQVKPg/rzPnZ1djmaHm16GvHegvRvk0xiQ8lADyLzLo3W8BBDitBymw7eIg87d52v8GVk=
+	t=1729188911; cv=none; b=JNoSmlRiyHG/aKsrjT3NZm2KhbBTAQakBet6xG57IxA9ph87GdqKp6BWJWEq+3uhFcApe4bVVrmaBOqp8gGkFEA2C4g4A6sQuQuFgGx4swtSmZOoU0cKiTwqYMRj8mgy5KRMvPD+zxns2sfMAt5KOnFd56W60rd9LhLT2FY6CzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729188900; c=relaxed/simple;
-	bh=mNis12xG71cOKii9S3wHPr+6uxx3urLZnrZSZdaSAEg=;
+	s=arc-20240116; t=1729188911; c=relaxed/simple;
+	bh=DWbh7o5fAItWiyCuJA1KUkrKPiQSchGKhClzB5QlL/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acDearKIREXBV0ypicRIKycvnaEQokySH+cI41LeXf9VxTC1szLsZVYazVYEdnWEV8I3KXCKYX5pbJaykL/mKOpNU7iLwU2vf+8TGgvJMnml9R5VccG2Exh8pcpHpx8cpxnN6um3U7IVxgGYpyNXI3AHC104/eDKt/RMTlRQBCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1t1V1K-00070j-3l; Thu, 17 Oct 2024 20:14:46 +0200
-Date: Thu, 17 Oct 2024 20:14:46 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Stefan Wiehler <stefan.wiehler@nokia.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v6 09/10] ip6mr: Lock RCU before ip6mr_get_table()
- call in ip6mr_rtm_getroute()
-Message-ID: <20241017181446.GC25857@breakpoint.cc>
-References: <20241017174109.85717-1-stefan.wiehler@nokia.com>
- <20241017174109.85717-10-stefan.wiehler@nokia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeadpiCJtp0VSxTlLZV8KxfbsbwxiSqdOMMqFoqzOuCdSx+emmnuPh5X1mguXS7Fakzo6Naq00jY3zSTHkQrsAAs9TV1MrSFiWQ98kLwnTs9vXFdoNooKfW333NtzjiErzSsUwLIlmrBxtFyYlNBvFEtUBTtJXlSKaBgpXcszOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8BA1C4CEC3;
+	Thu, 17 Oct 2024 18:15:05 +0000 (UTC)
+Date: Thu, 17 Oct 2024 19:15:03 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-pm@vger.kernel.org,
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com,
+	wanpengli@tencent.com, vkuznets@redhat.com, rafael@kernel.org,
+	daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de,
+	lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com,
+	mtosatti@redhat.com, sudeep.holla@arm.com,
+	misono.tomohiro@fujitsu.com, maobibo@loongson.cn,
+	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+Message-ID: <ZxFUJ05EYumCUUY3@arm.com>
+References: <20240925232425.2763385-2-ankur.a.arora@oracle.com>
+ <Zw5aPAuVi5sxdN5-@arm.com>
+ <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org>
+ <Zw6dZ7HxvcHJaDgm@arm.com>
+ <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
+ <Zw6o_OyhzYd6hfjZ@arm.com>
+ <87jze9rq15.fsf@oracle.com>
+ <95ba9d4a-b90c-c8e8-57f7-31d82722f39e@gentwo.org>
+ <Zw-Nb-o76JeHw30G@arm.com>
+ <53bf468b-1616-3915-f5bc-aa29130b672d@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,29 +64,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017174109.85717-10-stefan.wiehler@nokia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <53bf468b-1616-3915-f5bc-aa29130b672d@gentwo.org>
 
-Stefan Wiehler <stefan.wiehler@nokia.com> wrote:
-> When IPV6_MROUTE_MULTIPLE_TABLES is enabled, multicast routing tables
-> must be read under RCU or RTNL lock.
+On Thu, Oct 17, 2024 at 09:56:13AM -0700, Christoph Lameter (Ampere) wrote:
+> On Wed, 16 Oct 2024, Catalin Marinas wrote:
+> > The behaviour above is slightly different from the current poll_idle()
+> > implementation. The above is more like poll every timeout period rather
+> > than continuously poll until either the need_resched() condition is true
+> > _or_ the timeout expired. From Ankur's email, an IPI may not happen so
+> > we don't have any guarantee that WFET will wake up before the timeout.
+> > The only way for WFE/WFET to wake up on need_resched() is to use LDXR to
+> > arm the exclusive monitor. That's what smp_cond_load_relaxed() does.
 > 
-> Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
-> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
-> ---
->  net/ipv6/ip6mr.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-> index b169b27de7e1..39aac81a30f1 100644
-> --- a/net/ipv6/ip6mr.c
-> +++ b/net/ipv6/ip6mr.c
-> @@ -2633,27 +2633,31 @@ static int ip6mr_rtm_getroute(struct sk_buff *in_skb, struct nlmsghdr *nlh,
->  		grp = nla_get_in6_addr(tb[RTA_DST]);
->  	tableid = tb[RTA_TABLE] ? nla_get_u32(tb[RTA_TABLE]) : 0;
->  
-> +	rcu_read_lock();
+> Sorry no. The IPI will cause the WFE to continue immediately and not wait
+> till the end of the timeout period.
 
-AFAICS ip6mr_rtm_getroute() runs with RTNL held, so I don't see
-why this patch is needed.
+*If* there is an IPI. The scheduler is not really my area but some
+functions like wake_up_idle_cpu() seem to elide the IPI if
+TIF_NR_POLLING is set.
+
+But even if we had an IPI, it still feels like abusing the semantics of
+smp_cond_load_relaxed() when relying on it to increment a variable in
+the condition check as a result of some unrelated wake-up event. This
+API is meant to wait for a condition on a single variable. It cannot
+wait on multiple variables and especially not one it updates itself
+(even if it happens to work on arm64 under certain conditions).
+
+My strong preference would be to revive the smp_cond_load_timeout()
+proposal from Ankur earlier in the year.
+
+-- 
+Catalin
 
