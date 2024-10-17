@@ -1,282 +1,146 @@
-Return-Path: <linux-kernel+bounces-370533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251869A2E21
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F909A2E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71EF283743
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFCA2834F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE9022911B;
-	Thu, 17 Oct 2024 20:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C881DFDB6;
+	Thu, 17 Oct 2024 20:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ooAh9CGt";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ooAh9CGt"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xybTic05"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903AC17C230;
-	Thu, 17 Oct 2024 20:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E948219CA4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729195311; cv=none; b=CckBn6o2N5aDEkg70V9OzQk1diPFg8c/lOyCKyAekqP3hcWei0bkYNd8oe1D25NL6YYiHNaaZPG/uM5K3UD/BIFOdAOVwJrKUBbcxO9QUjuXYsrcxheuocUA3PJbSPHy+76BUBw+pyI95O7NAyPl2jLuOujCqtmlDCq9TG+Rne8=
+	t=1729195313; cv=none; b=fFv0wJM94ccJFcw9uG0A7BgsdpUB/HKIO4N2Ove913jQ0l9yQu6ndPBGjFpc9EjLmfShK/awqtvg4JbnKkcTQQOsm7OqOjnflBxh5ZPIhvJNlD/Lc/714nz9Jn03xl2Y+mjFEvg5X9ePIPEk9t7BHtSraWjBxOBP4IFqsOpmEkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729195311; c=relaxed/simple;
-	bh=F+5SIgDh7sx3OpogruobjRVcQAZu/VN4n+Yvvck/Ld4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WkOWF6L3GjMV4XLxPuzdVFYrnVPnlBcv000oSGv8vyrQqj20OfrfDqzsFsA6tfj83qe6NiLMcZZah4twU2Xz1A6TS8IfYzelEks0NUdBTZJWOBhB71vsOV0gvfdJcvoHe3Fscw1B+JPKEtqoy2ipfudN1eKNJmD+ZbI5xenpPM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ooAh9CGt; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ooAh9CGt; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B24EF1FD4D;
-	Thu, 17 Oct 2024 20:01:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1729195304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EgL0r7SWp454uJAbukTAw+YZKN8C7TvJfxFAcxCZ8hU=;
-	b=ooAh9CGtK00UC6+Zzm9M3VdjmJxevvm7mde7URyNWZQJyZTTtYdYnVuP5UyKA+qgm7Wa1U
-	TFwbNOnInag1Xh2VX+WKJfWJjBX+6ChKkp0s3Aud/u1+YII8nJPjkaqGJYQzOWFgznFdLC
-	ExYgWDnROGKgV1JMsZGl7JpKZJF5BH0=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1729195304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EgL0r7SWp454uJAbukTAw+YZKN8C7TvJfxFAcxCZ8hU=;
-	b=ooAh9CGtK00UC6+Zzm9M3VdjmJxevvm7mde7URyNWZQJyZTTtYdYnVuP5UyKA+qgm7Wa1U
-	TFwbNOnInag1Xh2VX+WKJfWJjBX+6ChKkp0s3Aud/u1+YII8nJPjkaqGJYQzOWFgznFdLC
-	ExYgWDnROGKgV1JMsZGl7JpKZJF5BH0=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 90B2213A9A;
-	Thu, 17 Oct 2024 20:01:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2LFJIihtEWf1AwAAD6G6ig
-	(envelope-from <mvetter@suse.com>); Thu, 17 Oct 2024 20:01:44 +0000
-From: Michael Vetter <mvetter@suse.com>
-To: linux-kselftest@vger.kernel.org,
-	live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Michael Vetter <mvetter@suse.com>
-Subject: [PATCH v5 3/3] selftests: livepatch: test livepatching a kprobed function
-Date: Thu, 17 Oct 2024 22:01:32 +0200
-Message-ID: <20241017200132.21946-4-mvetter@suse.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241017200132.21946-1-mvetter@suse.com>
-References: <20241017200132.21946-1-mvetter@suse.com>
+	s=arc-20240116; t=1729195313; c=relaxed/simple;
+	bh=7fNZThETAsZ+KPtAOmPafV1RUAaUrZ1Bk8Xp24nVtzA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cZ6WxgyRQPjtacjNRyfrtA0TJp1MO2YoLVrw78QGvwmsn7XXTk7r5rHiq4h4DBksGEGbTuWAiyJq08Zgq92iIOcOJb+O2lNfnCcNXKTskfflC/Pan4TW0au7x9zpqQLu/KkQRdISnU42S/KYm05YaB0iqO+apqq19/VVdXK4grI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xybTic05; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e3b9fc918fso1622334a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:01:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729195307; x=1729800107; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=N2Hn27ndmTHMGTAUOBpXV3hZypJtQOIDgriaf/PtSKg=;
+        b=xybTic05mcBYMA/QCpFZIPl0/Q2hFz33gAtmXdQsxxEiDs9IK1iLsQEnYeX+ESLsm4
+         9O4klBNViIrXNZFksKr+k+wmdopTcN6tuW++Zw6p7CA04rT85YEmm78Z9lvxgA9yITbz
+         Pb/yJ5uHgD1SlqZa0ibpF+opcF6MUCkQl/Ehz9Q3hIMp4Vu/tKUitoI26tUuMWfdMz5F
+         wzC31GEkLZ25JE03p8kDo+nGbsnTzTPsqLMIt7gNbKo/ndhCBxR2snLgzQn2fkfHWevt
+         FAYpQ+NH41bdltaSDeIpBhGTId7PreAGEYjfYt8S7m4AcJK+IspsKiQJdz14dPuA2Uky
+         Z6ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729195307; x=1729800107;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N2Hn27ndmTHMGTAUOBpXV3hZypJtQOIDgriaf/PtSKg=;
+        b=ccP1dRaixmfDgGht3Nqc9Jnh8BrNZfYj5uA36926l5Q99fsSZkGnRLm++J1tZ/6ncV
+         u6MCf/QnH5TMsBQvPqeLOgWFbeKTL7HHdqdcB2pbJ2Ap9kotnzJSzPw2WcF0m9CO1JML
+         0QNEFOEi2Vv0tR9eb8TL6+ISyDOB7jr++LOe/Aa9JDMddZQ0QGuQde6u2W0GSAOPiBh+
+         QnL8EJkoO+sgZ51nJKUHOOc1bhwVG4geBZYwvRzoWcg05ZyP/lUH2OtcvOLJV8lYpxxn
+         hWO40jEL4VX3xV84zwlWARoPXdibFVNq+Cz7uyOcH5BiMkrJco09mgXhd0i+29olVjjZ
+         5f2w==
+X-Forwarded-Encrypted: i=1; AJvYcCW74X8ore1Jh5iuSMbJK5tz55cTGGYFwWrcnaLoZ993OiDa+b0R6cYpO8nuIuEfeIv8L71T5pJ9vjhMyXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk09gGNWnz6KGWU3qPLjZwJWaPTXl8jICUUQZoU6iT8QjvRxWD
+	mdmu32u5bXswJDl/QTCnQyu5ahlOASVpWLuvYp4wgvCOMVQXGd0OLb0M5On5ZQ6k45o0RQ==
+X-Google-Smtp-Source: AGHT+IEZoNiAbxR8ZMQcEg5fAoa+Y+b1EFMFkPmdhu+1szTwmvS4oU3/Ap192vBsPH4qMGzvcfKWvGeH
+X-Received: from elsk.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:dbd])
+ (user=elsk job=sendgmr) by 2002:a17:90a:bf0d:b0:2e2:9546:591a with SMTP id
+ 98e67ed59e1d1-2e561a46746mr1025a91.7.1729195306587; Thu, 17 Oct 2024 13:01:46
+ -0700 (PDT)
+Date: Thu, 17 Oct 2024 20:01:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -6.80
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Message-ID: <20241017200138.2390077-2-elsk@google.com>
+Subject: [PATCH v1] rust: add PROCMACROLDFLAGS
+From: HONG Yifan <elsk@google.com>
+To: mmaurer@google.com, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Jonathan Corbet <corbet@lwn.net>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+Cc: HONG Yifan <elsk@google.com>, kernel-team@android.com, linux-kbuild@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The test proves that a function that is being kprobed and uses a
-post_handler cannot be livepatched.
+These are additional flags to be passed when linking proc macros for the
+Rust toolchain. If unset, it defaults to $(HOSTLDFLAGS).
 
-Only one ftrace_ops with FTRACE_OPS_FL_IPMODIFY set may be registered
-to any given function at a time.
+This is needed because the list of flags to link hostprogs is not
+necessarily the same as the list of flags used to link libmacros.so.
+When we build proc macros, we need the latter, not the
+former. To distinguish between the two, introduce this new variable
+to stand out from HOSTLDFLAGS used to link other host progs.
 
-Note that the conflicting kprobe could not be created using the
-tracefs interface, see Documentation/trace/kprobetrace.rst.
-This interface uses only the pre_handler(), see alloc_trace_kprobe().
-But FTRACE_OPS_FL_IPMODIFY is used only when the kprobe is using a
-post_handler, see arm_kprobe_ftrace().
-
-Signed-off-by: Michael Vetter <mvetter@suse.com>
+Signed-off-by: HONG Yifan <elsk@google.com>
 ---
- tools/testing/selftests/livepatch/Makefile    |  3 +-
- .../selftests/livepatch/test-kprobe.sh        | 62 +++++++++++++++++++
- .../selftests/livepatch/test_modules/Makefile |  3 +-
- .../livepatch/test_modules/test_klp_kprobe.c  | 38 ++++++++++++
- 4 files changed, 104 insertions(+), 2 deletions(-)
- create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
- create mode 100644 tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
+ Documentation/kbuild/kbuild.rst | 5 +++++
+ Makefile                        | 1 +
+ rust/Makefile                   | 2 +-
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/livepatch/Makefile b/tools/testing/selftests/livepatch/Makefile
-index 35418a4790be..a080eb54a215 100644
---- a/tools/testing/selftests/livepatch/Makefile
-+++ b/tools/testing/selftests/livepatch/Makefile
-@@ -10,7 +10,8 @@ TEST_PROGS := \
- 	test-state.sh \
- 	test-ftrace.sh \
- 	test-sysfs.sh \
--	test-syscall.sh
-+	test-syscall.sh \
-+	test-kprobe.sh
+diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuild.rst
+index 1796b3eba37b..d9866394bd98 100644
+--- a/Documentation/kbuild/kbuild.rst
++++ b/Documentation/kbuild/kbuild.rst
+@@ -91,6 +91,11 @@ HOSTRUSTFLAGS
+ -------------
+ Additional flags to be passed to $(HOSTRUSTC) when building host programs.
  
- TEST_FILES := settings
++PROCMACROLDFLAGS
++-------------
++Additional flags to be passed when linking proc macros for the Rust toolchain.
++If unset, it defaults to $(HOSTLDFLAGS).
++
+ HOSTLDFLAGS
+ -----------
+ Additional flags to be passed when linking host programs.
+diff --git a/Makefile b/Makefile
+index b77ac70f8be4..89cdf0eca7de 100644
+--- a/Makefile
++++ b/Makefile
+@@ -469,6 +469,7 @@ KBUILD_HOSTCXXFLAGS := -Wall -O2 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS) \
+ 		       -I $(srctree)/scripts/include
+ KBUILD_HOSTRUSTFLAGS := $(rust_common_flags) -O -Cstrip=debuginfo \
+ 			-Zallow-features= $(HOSTRUSTFLAGS)
++KBUILD_PROCMACROLDFLAGS := $(or $(PROCMACROLDFLAGS),$(HOSTLDFLAGS))
+ KBUILD_HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
+ KBUILD_HOSTLDLIBS   := $(HOST_LFS_LIBS) $(HOSTLDLIBS)
  
-diff --git a/tools/testing/selftests/livepatch/test-kprobe.sh b/tools/testing/selftests/livepatch/test-kprobe.sh
-new file mode 100755
-index 000000000000..115065156016
---- /dev/null
-+++ b/tools/testing/selftests/livepatch/test-kprobe.sh
-@@ -0,0 +1,62 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2024 SUSE
-+# Author: Michael Vetter <mvetter@suse.com>
-+
-+. $(dirname $0)/functions.sh
-+
-+MOD_LIVEPATCH=test_klp_livepatch
-+MOD_KPROBE=test_klp_kprobe
-+
-+setup_config
-+
-+# Kprobe a function and verify that we can't livepatch that same function
-+# when it uses a post_handler since only one IPMODIFY maybe be registered
-+# to any given function at a time.
-+
-+start_test "livepatch interaction with kprobed function with post_handler"
-+
-+echo 1 > "$SYSFS_KPROBES_DIR/enabled"
-+
-+load_mod $MOD_KPROBE has_post_handler=true
-+load_failing_mod $MOD_LIVEPATCH
-+unload_mod $MOD_KPROBE
-+
-+check_result "% insmod test_modules/test_klp_kprobe.ko has_post_handler=true
-+% insmod test_modules/$MOD_LIVEPATCH.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH'
-+livepatch: '$MOD_LIVEPATCH': initializing patching transition
-+livepatch: failed to register ftrace handler for function 'cmdline_proc_show' (-16)
-+livepatch: failed to patch object 'vmlinux'
-+livepatch: failed to enable patch '$MOD_LIVEPATCH'
-+livepatch: '$MOD_LIVEPATCH': canceling patching transition, going to unpatch
-+livepatch: '$MOD_LIVEPATCH': completing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': unpatching complete
-+insmod: ERROR: could not insert module test_modules/$MOD_LIVEPATCH.ko: Device or resource busy
-+% rmmod test_klp_kprobe"
-+
-+start_test "livepatch interaction with kprobed function without post_handler"
-+
-+load_mod $MOD_KPROBE has_post_handler=false
-+load_lp $MOD_LIVEPATCH
-+
-+unload_mod $MOD_KPROBE
-+disable_lp $MOD_LIVEPATCH
-+unload_lp $MOD_LIVEPATCH
-+
-+check_result "% insmod test_modules/test_klp_kprobe.ko has_post_handler=false
-+% insmod test_modules/$MOD_LIVEPATCH.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH'
-+livepatch: '$MOD_LIVEPATCH': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH': starting patching transition
-+livepatch: '$MOD_LIVEPATCH': completing patching transition
-+livepatch: '$MOD_LIVEPATCH': patching complete
-+% rmmod test_klp_kprobe
-+% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
-+livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': starting unpatching transition
-+livepatch: '$MOD_LIVEPATCH': completing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': unpatching complete
-+% rmmod $MOD_LIVEPATCH"
-+
-+exit 0
-diff --git a/tools/testing/selftests/livepatch/test_modules/Makefile b/tools/testing/selftests/livepatch/test_modules/Makefile
-index e6e638c4bcba..939230e571f5 100644
---- a/tools/testing/selftests/livepatch/test_modules/Makefile
-+++ b/tools/testing/selftests/livepatch/test_modules/Makefile
-@@ -6,11 +6,12 @@ obj-m += test_klp_atomic_replace.o \
- 	test_klp_callbacks_demo.o \
- 	test_klp_callbacks_demo2.o \
- 	test_klp_callbacks_mod.o \
-+	test_klp_kprobe.o \
- 	test_klp_livepatch.o \
-+	test_klp_shadow_vars.o \
- 	test_klp_state.o \
- 	test_klp_state2.o \
- 	test_klp_state3.o \
--	test_klp_shadow_vars.o \
- 	test_klp_syscall.o
- 
- # Ensure that KDIR exists, otherwise skip the compilation
-diff --git a/tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c b/tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
-new file mode 100644
-index 000000000000..67a8d29012f6
---- /dev/null
-+++ b/tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2024 Marcos Paulo de Souza <mpdesouza@suse.com>
-+// Copyright (C) 2024 Michael Vetter <mvetter@suse.com>
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/kprobes.h>
-+
-+static bool has_post_handler = true;
-+module_param(has_post_handler, bool, 0444);
-+
-+static void __kprobes post_handler(struct kprobe *p, struct pt_regs *regs,
-+				unsigned long flags)
-+{
-+}
-+
-+static struct kprobe kp = {
-+	.symbol_name = "cmdline_proc_show",
-+};
-+
-+static int __init kprobe_init(void)
-+{
-+	if (has_post_handler)
-+		kp.post_handler = post_handler;
-+
-+	return register_kprobe(&kp);
-+}
-+
-+static void __exit kprobe_exit(void)
-+{
-+	unregister_kprobe(&kp);
-+}
-+
-+module_init(kprobe_init)
-+module_exit(kprobe_exit)
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Michael Vetter <mvetter@suse.com>");
-+MODULE_DESCRIPTION("Livepatch test: kprobe function");
+diff --git a/rust/Makefile b/rust/Makefile
+index 3678e79317f1..95ceaba35975 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -322,7 +322,7 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
+       cmd_rustc_procmacro = \
+ 	$(RUSTC_OR_CLIPPY) $(rust_common_flags) \
+ 		-Clinker-flavor=gcc -Clinker=$(HOSTCC) \
+-		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
++		-Clink-args='$(call escsq,$(KBUILD_PROCMACROLDFLAGS))' \
+ 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
+ 		--crate-type proc-macro \
+ 		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
 -- 
-2.47.0
+2.47.0.rc1.288.g06298d1525-goog
 
 
