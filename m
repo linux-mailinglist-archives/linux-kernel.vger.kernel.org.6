@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-370058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAE89A26CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:35:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C6A9A26CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CB01F2698D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C9D1F2232B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11AA1DE880;
-	Thu, 17 Oct 2024 15:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Z22CHj4q"
-Received: from mr85p00im-ztdg06011201.me.com (mr85p00im-ztdg06011201.me.com [17.58.23.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63F71DED74;
+	Thu, 17 Oct 2024 15:34:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499261DDC14
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE421DDC1D;
+	Thu, 17 Oct 2024 15:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179311; cv=none; b=A3ArBJXJIP+c6fhL9W5nCqyNsuyVCeeJ1lhEmE61P7KZH/byPQTTd6y7cPGMIJNHsPzJN3wyeLic1NqXmo1i3RFALOmG/dZDTFdi6J/Md30wszwt4yghk8rHR8ZrMeYq8HCHaRUBXWxZthUlTKKvfJ8CEFIbCvBi6cdQJ5wgG/k=
+	t=1729179286; cv=none; b=gnkhFvfIsu1e3HXAQQ2xmPowsyDUcMGry6bQHA523GDl70ZhP9o0Lj/44tvt1x0gThEazKiMzor+JB6PxB87NjTNcVORw7nCOqyepIfheT86U/Mw/amFEhJBnVNjQmg+biQI3SNfNun/WAk+f9XLqJjwM7I5g0MPV3xOcTKixVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179311; c=relaxed/simple;
-	bh=Wgz89BkETBsknJ1bG4vgcyNpx9ZR5zoPyUv+MpPSScY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R0M7SyTVyDM7rvsTcnp5Wiiagfb/fiOl35JRxGxHOEob5l/FKnO3ddZpS+tjA8zzJgNiZZkgK+HCKY+2Q/gCR4Omoa9cLOdhVFCsJdlcQ10SDYieW7x9rnhOx/BtxCboHky9icjxHvQ+MroD5jhZHC1+yYvbordHAnfZ9BNXuDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Z22CHj4q; arc=none smtp.client-ip=17.58.23.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1729179305;
-	bh=NgwwknkJJpfTdCab9EonH5stt9SEBiaDmBUnx2avHas=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=Z22CHj4qy4K5pzQlckk2mMxF4CyM99qmrdT31PkhM7klomuX3EPTbQlV/a0Jl+X7K
-	 YVAVj+AXo40AJQSOdwgb1r6cZOyOqlpaN1VUulziSDAw2DTYxt+N0EXPK0xL9Znek1
-	 Pgmu58mZkaOB7hkBEoQ6X2O0nOh3kCFS2zQSsGqimpqaD+OUCUJoZn7OIT9Dbt4lqZ
-	 LpVTGrFtiFvPDiP5jxh8maisFUj8lMtS+C1pRX+FrIrHa/s8h7wu6tKqjnpe7RGMIo
-	 Duq+Fm+OzTnUeehCPgoRnfM/tARnFBPxPtGwhMvrmWk0dMzjJ7x1pUGa1TeM7ZLSQE
-	 Wr42jiPhc8JOw==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06011201.me.com (Postfix) with ESMTPSA id 8A5929604EF;
-	Thu, 17 Oct 2024 15:35:03 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 17 Oct 2024 23:34:49 +0800
-Subject: [PATCH] kernel/resource: Simplify API __devm_release_region()
- implementation
+	s=arc-20240116; t=1729179286; c=relaxed/simple;
+	bh=nzTlkeEckY4SDdkxVWF1AoJhGSXOvj0VWFdu9nVmTI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lfb0X/j8HiT1wP4TwY80yI0sauTal+b2h5MP3DYOhz4YMUghfURHMluSo+UQUrUs8cyaW7hkNWvzoobTjZIzK/9l+i3RNO8rsxPKDzIEp2a++sJy1ffu+wGM3YD0BbR+nZJLofsx+CSfUZT8ljG+uomntP+0pdczqk66dYeSdxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1027DC4CECD;
+	Thu, 17 Oct 2024 15:34:38 +0000 (UTC)
+Date: Thu, 17 Oct 2024 11:35:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Andreas
+ Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, Ard
+ Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Borislav
+ Petkov <bp@alien8.de>, Brian Cain <bcain@quicinc.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Christoph Hellwig <hch@infradead.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Dinh Nguyen <dinguyen@kernel.org>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, Helge
+ Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, John Paul
+ Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet
+ <kent.overstreet@linux.dev>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Matt Turner <mattst88@gmail.com>, Max Filippov
+ <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Simek
+ <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Richard Weinberger <richard@nod.at>, Russell King
+ <linux@armlinux.org.uk>, Song Liu <song@kernel.org>, Stafford Horne
+ <shorne@gmail.com>, Suren Baghdasaryan <surenb@google.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+ <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>, Vineet Gupta
+ <vgupta@kernel.org>, Will Deacon <will@kernel.org>, bpf@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+ linux-um@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v6 6/8] x86/module: prepare module loading for ROX
+ allocations of text
+Message-ID: <20241017113453.685ba175@gandalf.local.home>
+In-Reply-To: <ZxD0EVBoO-jcxEGE@kernel.org>
+References: <20241016122424.1655560-1-rppt@kernel.org>
+	<20241016122424.1655560-7-rppt@kernel.org>
+	<20241016170128.7afeb8b0@gandalf.local.home>
+	<20241017093515.GU16066@noisy.programming.kicks-ass.net>
+	<ZxD0EVBoO-jcxEGE@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241017-release_region_fix-v1-1-84a3e8441284@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJguEWcC/x2M7QpAQBBFX0Xz29Z+yMarSNq4mBKaLSl5d5Of5
- 3bueShDGJna4iHBxZmPXcGVBY1r2hcYnpTJW18566IRbEgZg2BRdZj5Nj6lODch1BGW9HgKdP6
- jXf++H3thKstkAAAA
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: UXufjuedCGInnPlTHJBjJcXuuGK9x5-k
-X-Proofpoint-GUID: UXufjuedCGInnPlTHJBjJcXuuGK9x5-k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-17_18,2024-10-17_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1011 adultscore=0
- mlxlogscore=950 suspectscore=0 malwarescore=0 phishscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410170107
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Thu, 17 Oct 2024 14:25:05 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-Simplify __devm_release_region() implementation by dedicated
-API devres_release() which have below advantages than current
-__release_region() + devres_destroy():
+> With this series the module text is allocated as ROX at the first place, so
+> the modifications ftrace does to module text have to either use text poking
+> even before complete_formation() or deal with a writable copy like I did
+> for relocations and alternatives.
+> 
+> I've been carrying the ftrace changes from a very old prototype and
+> didn't pay enough attention to them them until Steve's complaint.
+> 
+> I'll look into it.
 
-It is simpler if __devm_release_region() is undoing what
-__devm_request_region() did, otherwise, it can avoid wrong and
-undesired __release_region().
+I just posted a patch where you can see the effects of these changes with
+respect to ftrace patching times.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-linux-next tree has similar fixes as shown below:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=0ee4dcafda9576910559f0471a3d6891daf9ab92
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
----
- kernel/resource.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+  https://lore.kernel.org/all/20241017113105.1edfa943@gandalf.local.home/
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index b730bd28b422..8d619c449a73 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -1673,8 +1673,7 @@ void __devm_release_region(struct device *dev, struct resource *parent,
- {
- 	struct region_devres match_data = { parent, start, n };
- 
--	__release_region(parent, start, n);
--	WARN_ON(devres_destroy(dev, devm_region_release, devm_region_match,
-+	WARN_ON(devres_release(dev, devm_region_release, devm_region_match,
- 			       &match_data));
- }
- EXPORT_SYMBOL(__devm_release_region);
+I'll be adding this to the next merge window.
 
----
-base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
-change-id: 20241017-release_region_fix-2aa7f93367e0
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+-- Steve
 
