@@ -1,193 +1,468 @@
-Return-Path: <linux-kernel+bounces-369043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDA79A182A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:56:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005069A182B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2DBF1F271D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:56:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CC2CB25740
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700E228E37;
-	Thu, 17 Oct 2024 01:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D47623741;
+	Thu, 17 Oct 2024 01:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="icJxY02g"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2040.outbound.protection.outlook.com [40.107.21.40])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzeN5v2b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900091DFE8;
-	Thu, 17 Oct 2024 01:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729130187; cv=fail; b=BPRX+JK1SS1iidSUnYGwNdGhinppc7X7M4ZmivV9NhOEFwQv73+vL+xW0w5yoWomeiI5orgWW6rdBWC7pfmZikRamxaTjtQJXr0f64gnpHSGxogCmj77Aq0Iel3ZoNHQ63H7wLJW6pz1cHhwuZhmoCwlahPFTU3bwcR2GYy7O7k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729130187; c=relaxed/simple;
-	bh=IZutdEoSGhN6dbNR3wyWGzT5c7cqe8fuQwL2IAhJtQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eVvQLdntKBD8PrJVwmjvEC0c6YyqmKmoF53MKHA1PMBN5hICTVliBraYAsjJgqjoHmNIuvdcdMav+c3f6wXIQMpIaxPlDU1CRbemoS9CxuAL0F5QqlGoffz34ihXrY5uJWg3++lW41YZwBcYTADvmn/i5ABMgOFeQv3oqpMQ4q0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=icJxY02g; arc=fail smtp.client-ip=40.107.21.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lDZE/VvPRmcN6sI8746mNTTWPlPQNMVwuPU0YMjyuyXPlE7jrJkS/NkKd2xsSQUQQxhHsOXY1Aq7M50WYeZESbeuHtDT6P9U4lVwr6pQDPwDEUwdKxVBOk8akU9HB8TBbVI4Y0/bOYpk/4KdkILKxirzLAfvkNPmtTEEiwrN8mazIiiYfjlzdoRgYls259d/doF+GouYE2OxBuoB1YV3EiHe6dlcBR8Wumf/VDe7D1E0aIp4hQ4m6WOMRGg6rFdoJYAKfJKTYlsgJj4R4hm4tzkpPUoxcemraUNWSYNt87/2N1sVb9Fwm6CQc2KKcnC7kulgobGyaRpbkJJJSxBfxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+obRvOwQw1jtOIIaX7GVmP0JxY9IjjJ63VOSH/Gc4G8=;
- b=aKAQ/EJm1FZyPDc3snQ3pXJCXyTbgZi4OFpb1zi0VHQZBApwGeoe5S/672sbFeGaLTuBF6azDqlX2tjAUs0jCPND+YbCFjm00nDnMlJrx4VM0txLLckhHHnqeqI6cLElWYmWMTrwq3TZk1JRgjE/dAAGnH65C/4Kp60uIKit0qK/gGKYCseQi3q6c1RKFdH6rMuxnf639eB8BXfhs/XPk/D/WNc5d1rXO3nKUni8r4tuoS/kla1Z66h1u9N4nY5Exvwbi3uMCGud3mXU5iDJTA7wAAu5AzK8SMf+JVcs2BB6FwrnpM6hDdnWZtJaKKgqJSTfMQGXiSBWAlq70pWOrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+obRvOwQw1jtOIIaX7GVmP0JxY9IjjJ63VOSH/Gc4G8=;
- b=icJxY02gv1mwX2HL4PMwEcwzGzCQcKaYkvH9kt/Fo69sIDZahTAKm42dOyKLJnFNxiP/QJwADKfQkqcNNEwkHSAICQxz/6Yfbw9rNDgLhar2LcSQ468U2i34tQnlIOCOnwiV7FRq+i8JmanCwYWui2LtkrSs/l5zJrK7VcFaEJl8L6CnsWhwmquOUinTrDK7wueFr6KWOJq26xL7gfT1jnNqDFUabo8T2Fbt6fFXymnN/xgUi6vaLPL19io6o0nhhepg0sBYOHpgy3hIn2f7FtmfCUbxVJ3vuFj5/HnFgI+9EPit5K26neKUzxXM9vHYB7BfDUoqp3RR0nsPQ2iyFQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PR3PR04MB7481.eurprd04.prod.outlook.com (2603:10a6:102:87::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 01:56:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 01:56:21 +0000
-Date: Wed, 16 Oct 2024 21:56:13 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>, imx@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next 03/13] net: fec: add missing header files
-Message-ID: <ZxBuvUFfLsBVXKWO@lizhi-Precision-Tower-5810>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
- <20241016-fec-cleanups-v1-3-de783bd15e6a@pengutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-fec-cleanups-v1-3-de783bd15e6a@pengutronix.de>
-X-ClientProxiedBy: BY3PR03CA0022.namprd03.prod.outlook.com
- (2603:10b6:a03:39a::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB58182B4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729130198; cv=none; b=TuvxVgrRgCVK3dMLYrIHZc1WDhsksh2kUzfdW6YyY8CmYv1NDMVL7Kn8W8g7SnqZYcWcy+ZWf7pUdZLvKDRk45lW6lJL0k7i72j6fh7ydHvw38qf6PPEuWriZ/Fual3EmMig19feEycjsdAbDTSoEYMTrtNohQj9YMIJgKK9Gj4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729130198; c=relaxed/simple;
+	bh=JrtDpU4x9ub+GeD+pDTUa5MAJp4cPtJOFR9YJA5bx5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RkkOzBsFOvgDGowgpFQQBCEYoZ7uXqEVhmppr4JPkU1GoMSL8TW6tERG+arlgaOwKzvI84iybCPGOTHzHS4nIz/tXY/AhcvWiw4NLk12auxh4FlwBZRoixnDdQ7ob1v5RdIYojSJ9f4Qz94aQh2+R9YR4KEreWBwQmljEhZ2zCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzeN5v2b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CDFFC4CEC5;
+	Thu, 17 Oct 2024 01:56:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729130197;
+	bh=JrtDpU4x9ub+GeD+pDTUa5MAJp4cPtJOFR9YJA5bx5k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kzeN5v2bGDzEOcT4aa33efAhJ0EA6D9sYaiIr2qrcaamlNCTa1IHRUpmCYyx0MafZ
+	 GHBe4BO3wcbDSDzWE3WPo97tnvV9AGeaYrPvpi77ddgPAsDvP9sWriczvXyy++dnSN
+	 jGiE1rO0i032ZUMBYDCRkzddu1xENAieiaIi9ZMjDc9x5HR+rSqxThjG0FJJ0nzXbE
+	 MdpX8xJSAjTl2FAmMWVmcuIHVaXEm+NGTjbnGUJJnPnhAA1lLEYd010+5dkCjpHvlI
+	 BUz+qoEQxZ0635Z6I1g9/Equ9eJVs3EOt5iKxBWGKoAD5L7whKzC/GiaXd/HVEpKLw
+	 ou/ZZvDFXVaUQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daeho Jeong <daeho43@gmail.com>,
+	Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH v6] f2fs: zone: don't block IO if there is remained open zone
+Date: Thu, 17 Oct 2024 09:56:21 +0800
+Message-Id: <20241017015621.1590536-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PR3PR04MB7481:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a77dac4-3006-4e70-3900-08dcee4ee60f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VAQMcuC1PJD25KFaya02B6+RJjy1hgHG0Rdj+lIgw6rXSfJbmraw5ZIwriLR?=
- =?us-ascii?Q?dc1Vjk7PDRlApqEqLMtwCBfhzgHr6w8vYPkWfdR7IkFTt+2YbW18H5mcvwkT?=
- =?us-ascii?Q?zytic4MIO/zofVVYKszI1KGg70y8ZRT4ncBOZOAGLiQ1grQMK/uVMtni4JSI?=
- =?us-ascii?Q?jJvsX78YjXWAIq5afIKIaYHrn+s+yHfrj5dtv3endj/AVny/hZxrS0sy49Bv?=
- =?us-ascii?Q?zFnvIaLeHVUaddlo9GC50Wg+r0kgZZs5nrcTKg8MKsfS26GD4iVVwOSUPXDW?=
- =?us-ascii?Q?p2rwgzp4UHiJwQpwSDglOIoN7w6cfmcT0Bpy9A6nrzvYSZXpNlLKlq3+E1s+?=
- =?us-ascii?Q?1+ct1zhKiXV3fSSjI6hdhIo0rcKNhLUlRP7aAh1B0QR6CGaUij5rmBfJwJ4V?=
- =?us-ascii?Q?M0dLLkf38zzrz2eB27DqwjVOc4L8+kHHYbvxAXFkOZ5OJh5MdLywwYmvwS3o?=
- =?us-ascii?Q?SYIKBG1UAcs7r0guictihXQRbEUhMARRBwbqnG9opkzT6k4I/fdtUPqMnlwG?=
- =?us-ascii?Q?oUc1NOonMfQ333oeIK4EJG9zAVihyKhEhAqUlYcQQgAWe4tZ83DbHwkFR0BU?=
- =?us-ascii?Q?dYJAXSLTXlCUJ3UxKB/WIAkLNVXqSst73KOhY/W9mne1N1joSHRbgp0n4PB+?=
- =?us-ascii?Q?EpbCjg0o3jmLS+WxssYXEo5IOsX/iFZGrX+LnQ/NC3RSkwWYMYAe7Muh5saW?=
- =?us-ascii?Q?Wf81mlFhFjLS+vo1XIjq88HLhNZb2f6V04w/pc5TwYu1u7fTYSfp+bqT1Ru5?=
- =?us-ascii?Q?wqqNwvRD78CsMUjBS09fD3LnPogKKD7NfLCdZKY+UQFHDfNK1B5H/yOb1QHG?=
- =?us-ascii?Q?GMgMdawbJmX02mKSx8rZYKtOKd0kOkpSkKhxfPZghJV0VyAYmFQsqF4Ccsbi?=
- =?us-ascii?Q?+a2tXtLyOEHa/xpxg0fVaKjjbXlSR6vRxZVjFQ9rrKzy7jB2L7XLq5KnVD9C?=
- =?us-ascii?Q?Fcw6X6hFYyWfzWloocFgxlHHWh/iPaur6LT6z9vlQ83Yv1tesURN7awv2Fdq?=
- =?us-ascii?Q?h0jpYHRmYWZY15lgCfaMFSfEpKenk7d99ogHh34nSBQif/E3Q4VYGu21aFLk?=
- =?us-ascii?Q?0bO8wTdC81C+F0lk93ZovS9c8qmq49r0Vnj8Jz/cnRyyzmlwGibdiwvwFU7O?=
- =?us-ascii?Q?e4zUjXJXYVuKjMbnIRvaSyovtCfYKx4uKQ6vbtKtN498m03NABRIMcIdhcQc?=
- =?us-ascii?Q?QNEGqe1jKk9PLj6q3e961eHYuICelHtA3W8IOhJNaR8+oinW6s4POEhUNzxf?=
- =?us-ascii?Q?0HOAPebk2kt97kE5UYwARUTsXIUDz5aWDl2q1EhtxVvlVZGwP49XTnM0EYqX?=
- =?us-ascii?Q?ZuNkv2YaCA7L7Ks7ToP37Ou3AJXxEM+M9W7bJ486TvokxPSmsO9U4WCMapkw?=
- =?us-ascii?Q?f72tw3Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0tUb56Uwt4WM2csgnQtccriBqH/t0+3wbTZUziQiz+CGZbxtTGt0AgUVRZRe?=
- =?us-ascii?Q?zy6d0OifyqN4FZ7B1D51CCZZp9PctK8oLAkaHf6ebq+qtFo4ksJFUz+zlge2?=
- =?us-ascii?Q?w+7Xa5jPCPVTwcTYYgPzi7Qdus0uXSBnAhi3MxqPYmAY4lY7nF2Ftw+2I7sx?=
- =?us-ascii?Q?jEU+xQjVbPwwrxDpi4h/iDVgmlhB4B0NSq6CUypPzivafBqB926PKrDq3lzg?=
- =?us-ascii?Q?0VCaUTvfprc25E/bzHdz+dJsax7GruLFlCBfYAlY0rhBKGcS3wjGMfSuUuOO?=
- =?us-ascii?Q?yF3zGDUo2nytFz7RFq6epCCWWuKQd61N2RuJyThluXVI3hLoLd5m60rwZZ4z?=
- =?us-ascii?Q?Ny/OrbWPfkVi9h9QzDFvwobDJ8uQZV/2OYyoqh3i9T89QQYyAKeXXmYxo9/u?=
- =?us-ascii?Q?p9RdiYCYTiy3LlH+3FEVFYXuj33+EmuyzJEKnF1h9c2g3/WCu/6XQaQ6NYcg?=
- =?us-ascii?Q?QPzZJNNv3iqcqj9OhaN3fraBIdMzgoTr6/nBWjFDFAcX6zZk6roEgb6y+v2P?=
- =?us-ascii?Q?hJFY0yV4R7NtZVIffUahoA/5ptUbMH99m4yaHDo31YkFxg9gLDb/0QzFiN8t?=
- =?us-ascii?Q?S4P/1npXUxmTBnyaFPqApz74dvxrLIld/8TPD9YL7un3rRZEkyl5SzTD/WEm?=
- =?us-ascii?Q?1ZuPIVd0UezXF4kdUQzd1944XoLFQgjnI5T4wBBVbBoyniQwU1KuCTCAnmxY?=
- =?us-ascii?Q?NuAPjOkpIVyHZN+gdTM14joP9quLxkjfVSnEmLWGhcrAI+52MnLm6pmtM3gr?=
- =?us-ascii?Q?PVbaVQFklkTQzm767T/m7Lib8L7k0FkYAbn4X1dXzciGKfw8azGkdqVgUH92?=
- =?us-ascii?Q?96b2EUiD7M4xnvl2mmWoL1Kl3wve8oJ7nHsw5LKqd36F/ppjDEHD6bvqPJxo?=
- =?us-ascii?Q?p8Z6HIBWVOTy1HW6JLl/LuoTEh7z6T6tz7G35eNaePH6+k0V5bav0pmwBUpa?=
- =?us-ascii?Q?O2VGWJApytelgOcMAqTHMifeYlhT4nDQh1Za3hlWVtED0xoE9YKGQgbETZLM?=
- =?us-ascii?Q?Gr81l2i7gzcnXEEr9iVmOMzoZkQPahBzuVg0Z/wETAPR4sZZUw4ISSJ+K09w?=
- =?us-ascii?Q?CEpCRQRAU6QugI3WYMhorieVrJ7RWAptY1m5xSz+P4WoV9G9e0jLl8L8h0cv?=
- =?us-ascii?Q?EuoWvR/QtLMdqyUK6H7DhNbjo0IjYFD1/CrMIrH48oEcIVY4Y3y+zDhgjwVu?=
- =?us-ascii?Q?QiHCOjX00oC6Ty0Hx5KY1jOlDy3Gxtq2yBZxWRkInoDRL3XlDdYoPvguwAMG?=
- =?us-ascii?Q?2VT8LqycdwmrL+OTQBzvKnKuehILICo7+GtqUyeMbOmzFXG6EnoAusXHpc1F?=
- =?us-ascii?Q?34l10kbRiaNui9xEvgNLsKnRTwp3siukIar5/d+emwLt4KrbvDERmAKh3vU1?=
- =?us-ascii?Q?aVn5PZm5SkW2dD9Te1JsOMPf6WpNjotJWre6+4YBy2TVuOGIgbLcjA6iKdtm?=
- =?us-ascii?Q?uemIfJ6pwBo+ikljifot/HVP9rv2s7fH/9X96A0pqVJQNl7lj1cHqnnZ+DPG?=
- =?us-ascii?Q?GnKM087BTDbLzfaR+5+7q4LLXAAfUvNo9FqoK4b/r9EQShqDFtcNYnzc+pLo?=
- =?us-ascii?Q?R7AU1a5nMB7unsDkbAbkUX3E0xfUgkM3Qo5D5UZc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a77dac4-3006-4e70-3900-08dcee4ee60f
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 01:56:21.5482
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ak07PNRV0sTSMlnlqhy6kezCJnjzGFwKltll7Uy3uUYKu6QwZ+ey8/c1VAX6yhTMWbsONgrnX5xtrx9QMT42gA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7481
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 11:51:51PM +0200, Marc Kleine-Budde wrote:
-> The fec.h isn't self contained. Add missing header files, so that it
-> can be parsed by language servers without errors.
+max open zone may be larger than log header number of f2fs, for
+such case, it doesn't need to wait last IO in previous zone, let's
+introduce available_open_zone semaphore, and reduce it once we
+submit first write IO in a zone, and increase it after completion
+of last IO in the zone.
 
-nit: wrap at 75 char
+Cc: Daeho Jeong <daeho43@gmail.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+Reviewed-by: Daeho Jeong <daehojeong@google.com>
+---
+v6:
+- use per-device blkaddr instead of global one in
+is_blkaddr_zone_boundary()
+- check write pointer of log header correctly in
+restore_curseg_summaries()
+ fs/f2fs/data.c    | 106 ++++++++++++++++++++++++++++++----------------
+ fs/f2fs/f2fs.h    |  33 ++++++++++++---
+ fs/f2fs/iostat.c  |   7 +++
+ fs/f2fs/iostat.h  |   2 +
+ fs/f2fs/segment.c |  41 ++++++++++++++++++
+ fs/f2fs/segment.h |   3 +-
+ fs/f2fs/super.c   |   2 +
+ 7 files changed, 152 insertions(+), 42 deletions(-)
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 90fa8ab85194..0b2966e4ff00 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -372,11 +372,10 @@ static void f2fs_write_end_io(struct bio *bio)
+ #ifdef CONFIG_BLK_DEV_ZONED
+ static void f2fs_zone_write_end_io(struct bio *bio)
+ {
+-	struct f2fs_bio_info *io = (struct f2fs_bio_info *)bio->bi_private;
++	struct f2fs_sb_info *sbi = iostat_get_bio_private(bio);
+ 
+-	bio->bi_private = io->bi_private;
+-	complete(&io->zone_wait);
+ 	f2fs_write_end_io(bio);
++	up(&sbi->available_open_zones);
+ }
+ #endif
+ 
+@@ -532,6 +531,24 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	if (!io->bio)
+ 		return;
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (io->open_zone) {
++		/*
++		 * if there is no open zone, it will wait for last IO in
++		 * previous zone before submitting new IO.
++		 */
++		down(&fio->sbi->available_open_zones);
++		io->open_zone = false;
++		io->zone_opened = true;
++	}
++
++	if (io->close_zone) {
++		io->bio->bi_end_io = f2fs_zone_write_end_io;
++		io->zone_opened = false;
++		io->close_zone = false;
++	}
++#endif
++
+ 	if (is_read_io(fio->op)) {
+ 		trace_f2fs_prepare_read_bio(io->sbi->sb, fio->type, io->bio);
+ 		f2fs_submit_read_bio(io->sbi, io->bio, fio->type);
+@@ -605,9 +622,9 @@ int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi)
+ 			INIT_LIST_HEAD(&io->bio_list);
+ 			init_f2fs_rwsem(&io->bio_list_lock);
+ #ifdef CONFIG_BLK_DEV_ZONED
+-			init_completion(&io->zone_wait);
+-			io->zone_pending_bio = NULL;
+-			io->bi_private = NULL;
++			io->open_zone = false;
++			io->zone_opened = false;
++			io->close_zone = false;
+ #endif
+ 		}
+ 	}
+@@ -638,6 +655,31 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ 	f2fs_up_write(&io->io_rwsem);
+ }
+ 
++void f2fs_blkzoned_submit_merged_write(struct f2fs_sb_info *sbi, int type)
++{
++#ifdef CONFIG_BLK_DEV_ZONED
++	struct f2fs_bio_info *io;
++
++	if (!f2fs_sb_has_blkzoned(sbi))
++		return;
++
++	io = sbi->write_io[PAGE_TYPE(type)] + f2fs_get_segment_temp(type);
++
++	f2fs_down_write(&io->io_rwsem);
++	if (io->zone_opened) {
++		if (io->bio) {
++			io->close_zone = true;
++			__submit_merged_bio(io);
++		} else {
++			up(&sbi->available_open_zones);
++			io->zone_opened = false;
++		}
++	}
++	f2fs_up_write(&io->io_rwsem);
++#endif
++
++}
++
+ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				struct inode *inode, struct page *page,
+ 				nid_t ino, enum page_type type, bool force)
+@@ -922,24 +964,21 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static bool is_end_zone_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr)
++static bool is_blkaddr_zone_boundary(struct f2fs_sb_info *sbi,
++					block_t blkaddr, bool start)
+ {
+-	struct block_device *bdev = sbi->sb->s_bdev;
+-	int devi = 0;
++	if (!f2fs_blkaddr_in_seqzone(sbi, blkaddr))
++		return false;
+ 
+ 	if (f2fs_is_multi_device(sbi)) {
+-		devi = f2fs_target_device_index(sbi, blkaddr);
+-		if (blkaddr < FDEV(devi).start_blk ||
+-		    blkaddr > FDEV(devi).end_blk) {
+-			f2fs_err(sbi, "Invalid block %x", blkaddr);
+-			return false;
+-		}
++		int devi = f2fs_target_device_index(sbi, blkaddr);
++
+ 		blkaddr -= FDEV(devi).start_blk;
+-		bdev = FDEV(devi).bdev;
+ 	}
+-	return bdev_is_zoned(bdev) &&
+-		f2fs_blkz_is_seq(sbi, devi, blkaddr) &&
+-		(blkaddr % sbi->blocks_per_blkz == sbi->blocks_per_blkz - 1);
++
++	if (start)
++		return (blkaddr % sbi->blocks_per_blkz) == 0;
++	return (blkaddr % sbi->blocks_per_blkz == sbi->blocks_per_blkz - 1);
+ }
+ #endif
+ 
+@@ -950,20 +989,14 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
+ 	struct page *bio_page;
+ 	enum count_type type;
++#ifdef CONFIG_BLK_DEV_ZONED
++	bool blkzoned = f2fs_sb_has_blkzoned(sbi) && btype < META;
++#endif
+ 
+ 	f2fs_bug_on(sbi, is_read_io(fio->op));
+ 
+ 	f2fs_down_write(&io->io_rwsem);
+ next:
+-#ifdef CONFIG_BLK_DEV_ZONED
+-	if (f2fs_sb_has_blkzoned(sbi) && btype < META && io->zone_pending_bio) {
+-		wait_for_completion_io(&io->zone_wait);
+-		bio_put(io->zone_pending_bio);
+-		io->zone_pending_bio = NULL;
+-		io->bi_private = NULL;
+-	}
+-#endif
+-
+ 	if (fio->in_list) {
+ 		spin_lock(&io->io_lock);
+ 		if (list_empty(&io->io_list)) {
+@@ -991,6 +1024,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	type = WB_DATA_TYPE(bio_page, fio->compressed_page);
+ 	inc_page_count(sbi, type);
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (blkzoned && is_blkaddr_zone_boundary(sbi, fio->new_blkaddr, true))
++		io->open_zone = true;
++#endif
++
+ 	if (io->bio &&
+ 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+ 			      fio->new_blkaddr) ||
+@@ -1016,15 +1054,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	io->last_block_in_bio = fio->new_blkaddr;
+ 
+ 	trace_f2fs_submit_page_write(fio->page, fio);
++
+ #ifdef CONFIG_BLK_DEV_ZONED
+-	if (f2fs_sb_has_blkzoned(sbi) && btype < META &&
+-			is_end_zone_blkaddr(sbi, fio->new_blkaddr)) {
+-		bio_get(io->bio);
+-		reinit_completion(&io->zone_wait);
+-		io->bi_private = io->bio->bi_private;
+-		io->bio->bi_private = io;
+-		io->bio->bi_end_io = f2fs_zone_write_end_io;
+-		io->zone_pending_bio = io->bio;
++	if (blkzoned &&
++		is_blkaddr_zone_boundary(sbi, fio->new_blkaddr, false)) {
++		io->close_zone = true;
+ 		__submit_merged_bio(io);
+ 	}
+ #endif
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f3ef4dc50992..16e7bd0242fb 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1241,16 +1241,16 @@ struct f2fs_bio_info {
+ 	struct bio *bio;		/* bios to merge */
+ 	sector_t last_block_in_bio;	/* last block number */
+ 	struct f2fs_io_info fio;	/* store buffered io info. */
+-#ifdef CONFIG_BLK_DEV_ZONED
+-	struct completion zone_wait;	/* condition value for the previous open zone to close */
+-	struct bio *zone_pending_bio;	/* pending bio for the previous zone */
+-	void *bi_private;		/* previous bi_private for pending bio */
+-#endif
+ 	struct f2fs_rwsem io_rwsem;	/* blocking op for bio */
+ 	spinlock_t io_lock;		/* serialize DATA/NODE IOs */
+ 	struct list_head io_list;	/* track fios */
+ 	struct list_head bio_list;	/* bio entry list head */
+ 	struct f2fs_rwsem bio_list_lock;	/* lock to protect bio entry list */
++#ifdef CONFIG_BLK_DEV_ZONED
++	bool open_zone;			/* open a zone */
++	bool zone_opened;		/* zone has been opened */
++	bool close_zone;		/* close a zone */
++#endif
+ };
+ 
+ #define FDEV(i)				(sbi->devs[i])
+@@ -1572,6 +1572,7 @@ struct f2fs_sb_info {
+ 	unsigned int max_open_zones;		/* max open zone resources of the zoned device */
+ 	/* For adjust the priority writing position of data in zone UFS */
+ 	unsigned int blkzone_alloc_policy;
++	struct semaphore available_open_zones;	/* available open zones */
+ #endif
+ 
+ 	/* for node-related operations */
+@@ -3860,6 +3861,7 @@ void f2fs_destroy_bio_entry_cache(void);
+ void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
+ 			  enum page_type type);
+ int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi);
++void f2fs_blkzoned_submit_merged_write(struct f2fs_sb_info *sbi, int type);
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				struct inode *inode, struct page *page,
+@@ -4540,6 +4542,27 @@ static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+ 
+ 	return test_bit(zno, FDEV(devi).blkz_seq);
+ }
++
++static inline bool f2fs_blkaddr_in_seqzone(struct f2fs_sb_info *sbi,
++							block_t blkaddr)
++{
++	struct block_device *bdev = sbi->sb->s_bdev;
++	int devi = 0;
++
++	if (f2fs_is_multi_device(sbi)) {
++		devi = f2fs_target_device_index(sbi, blkaddr);
++		if (blkaddr < FDEV(devi).start_blk ||
++		    blkaddr > FDEV(devi).end_blk) {
++			f2fs_err(sbi, "Invalid block %x", blkaddr);
++			return false;
++		}
++		blkaddr -= FDEV(devi).start_blk;
++		bdev = FDEV(devi).bdev;
++	}
++
++	return bdev_is_zoned(bdev) &&
++		f2fs_blkz_is_seq(sbi, devi, blkaddr);
++}
+ #endif
+ 
+ static inline int f2fs_bdev_index(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/iostat.c b/fs/f2fs/iostat.c
+index f8703038e1d8..a8626e297876 100644
+--- a/fs/f2fs/iostat.c
++++ b/fs/f2fs/iostat.c
+@@ -237,6 +237,13 @@ static inline void __update_iostat_latency(struct bio_iostat_ctx *iostat_ctx,
+ 	spin_unlock_irqrestore(&sbi->iostat_lat_lock, flags);
+ }
+ 
++void *iostat_get_bio_private(struct bio *bio)
++{
++	struct bio_iostat_ctx *iostat_ctx = bio->bi_private;
++
++	return iostat_ctx->sbi;
++}
++
+ void iostat_update_and_unbind_ctx(struct bio *bio)
+ {
+ 	struct bio_iostat_ctx *iostat_ctx = bio->bi_private;
+diff --git a/fs/f2fs/iostat.h b/fs/f2fs/iostat.h
+index eb99d05cf272..9006c3d41590 100644
+--- a/fs/f2fs/iostat.h
++++ b/fs/f2fs/iostat.h
+@@ -58,6 +58,7 @@ static inline struct bio_post_read_ctx *get_post_read_ctx(struct bio *bio)
+ 	return iostat_ctx->post_read_ctx;
+ }
+ 
++extern void *iostat_get_bio_private(struct bio *bio);
+ extern void iostat_update_and_unbind_ctx(struct bio *bio);
+ extern void iostat_alloc_and_bind_ctx(struct f2fs_sb_info *sbi,
+ 		struct bio *bio, struct bio_post_read_ctx *ctx);
+@@ -68,6 +69,7 @@ extern void f2fs_destroy_iostat(struct f2fs_sb_info *sbi);
+ #else
+ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		enum iostat_type type, unsigned long long io_bytes) {}
++static inline void *iostat_get_bio_private(struct bio *bio) { return bio->bi_private; }
+ static inline void iostat_update_and_unbind_ctx(struct bio *bio) {}
+ static inline void iostat_alloc_and_bind_ctx(struct f2fs_sb_info *sbi,
+ 		struct bio *bio, struct bio_post_read_ctx *ctx) {}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0f4408fe2b19..6c68d3455048 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3230,6 +3230,10 @@ static int __allocate_new_segment(struct f2fs_sb_info *sbi, int type,
+ 		return err;
+ 	stat_inc_seg_type(sbi, curseg);
+ 	locate_dirty_segment(sbi, old_segno);
++
++	if (new_sec)
++		f2fs_blkzoned_submit_merged_write(sbi, type);
++
+ 	return 0;
+ }
+ 
+@@ -4299,6 +4303,30 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
+ 		return -EINVAL;
+ 	}
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (f2fs_sb_has_blkzoned(sbi)) {
++		for (type = 0; type < NR_PERSISTENT_LOG; type++) {
++			struct curseg_info *curseg = CURSEG_I(sbi, type);
++			enum page_type ptype;
++			enum temp_type temp;
++
++			/* current segment locates in non-seqzone */
++			if (!f2fs_blkaddr_in_seqzone(sbi,
++					START_BLOCK(sbi, curseg->segno)))
++				continue;
++
++			/* write pointer of zone is zero */
++			if (is_blkaddr_zone_boundary(sbi,
++				NEXT_FREE_BLKADDR(sbi, curseg), true))
++				continue;
++
++			ptype = PAGE_TYPE(type);
++			temp = f2fs_get_segment_temp(type);
++			down(&sbi->available_open_zones);
++			sbi->write_io[ptype][temp].zone_opened = true;
++		}
++	}
++#endif
+ 	return 0;
+ }
+ 
+@@ -5632,6 +5660,19 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+ 		kfree(array[i].sum_blk);
+ 		kfree(array[i].journal);
++		kfree(array[i].target_map);
++
++#ifdef CONFIG_BLK_DEV_ZONED
++		if (f2fs_sb_has_blkzoned(sbi)) {
++			enum page_type ptype = PAGE_TYPE(i);
++			enum temp_type temp = f2fs_get_segment_temp(i);
++
++			if (sbi->write_io[ptype][temp].zone_opened) {
++				up(&sbi->available_open_zones);
++				sbi->write_io[ptype][temp].zone_opened = false;
++			}
++		}
++#endif
+ 	}
+ 	kfree(array);
+ }
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 55a01da6c4be..728f56b65d77 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -26,7 +26,8 @@
+ 
+ #define IS_DATASEG(t)	((t) <= CURSEG_COLD_DATA)
+ #define IS_NODESEG(t)	((t) >= CURSEG_HOT_NODE && (t) <= CURSEG_COLD_NODE)
+-#define SE_PAGETYPE(se)	((IS_NODESEG((se)->type) ? NODE : DATA))
++#define PAGE_TYPE(t)	(IS_NODESEG(t) ? NODE : DATA)
++#define SE_PAGETYPE(se)	(PAGE_TYPE((se)->type))
+ 
+ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
+ 						unsigned short seg_type)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index aa14c8fce7d9..0d96e352b4ac 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3923,6 +3923,8 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ 				sbi->max_open_zones, F2FS_OPTION(sbi).active_logs);
+ 			return -EINVAL;
+ 		}
++
++		sema_init(&sbi->available_open_zones, sbi->max_open_zones);
+ 	}
+ 
+ 	zone_sectors = bdev_zone_sectors(bdev);
+-- 
+2.40.1
 
->
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> ---
->  drivers/net/ethernet/freescale/fec.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/freescale/fec.h
-> index e55c7ccad2ec39a9f3492135675d480a22f7032d..63744a86752540fcede7fc4c29865b2529492526 100644
-> --- a/drivers/net/ethernet/freescale/fec.h
-> +++ b/drivers/net/ethernet/freescale/fec.h
-> @@ -15,7 +15,9 @@
->  /****************************************************************************/
->
->  #include <linux/clocksource.h>
-> +#include <linux/ethtool.h>
->  #include <linux/net_tstamp.h>
-> +#include <linux/phy.h>
->  #include <linux/pm_qos.h>
->  #include <linux/bpf.h>
->  #include <linux/ptp_clock_kernel.h>
->
-> --
-> 2.45.2
->
->
 
