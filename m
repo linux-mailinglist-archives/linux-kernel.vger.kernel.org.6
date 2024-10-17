@@ -1,464 +1,186 @@
-Return-Path: <linux-kernel+bounces-370178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DC29A2915
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:36:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7BF9A291F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E487B1C21B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A10C4B28AB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5221DFD9F;
-	Thu, 17 Oct 2024 16:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0821DFDA8;
+	Thu, 17 Oct 2024 16:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3hL9cyo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IHofSX/l"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF21DFD87;
-	Thu, 17 Oct 2024 16:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729182914; cv=none; b=jU8vP/1QlKTozvyzytuqOpDoEH5SnYE62kpt0EHIjQnDc1NzZy7eNZGvLucTVDXiByAGSc/H01q9ljFuPbZaCtSr+g4e/e+HAAdxYBGdtEq3uqRG34ShKzarvcZ3QPKPB09TWaUxWhdEB5iTSqh6SUmwTQlLwvm+y073hB1Oa34=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729182914; c=relaxed/simple;
-	bh=wHjaUMUGTPQe/HkvJVYcvU/Y5QGKlkTwf/y/FC47rCA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SbRF/BPZ3Tp2K2TG36sPDIDJZmt1h86CTEk6nwaOKtIIVAXaoGFRrG+XhvT/+iqNbc14uyOPeg/JBz6horVQFslWSNjziPcfGMm8aEKXR5NX+GdfpBeiOd3y3Z71WfkhQganbD5Bz3EEH8+DsYOoVFqZFPJERyhOEJh9GuyR3+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3hL9cyo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE13CC4CED2;
-	Thu, 17 Oct 2024 16:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729182913;
-	bh=wHjaUMUGTPQe/HkvJVYcvU/Y5QGKlkTwf/y/FC47rCA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=e3hL9cyoQcDhcPoXJs2Ns+CsYRWvRpQtMVtdASWLRaxawwMTh5gq2P2G8QMvMO6xN
-	 Gw5hpnO3Nb9j3RVZLNndu/dx5eYeuwy+IYruVa1gtju8mv3tqMcisJuXxpEQBX2MBo
-	 vuysnwJK0H13w2cIb895CHqEIbbuYZRH1xMWM3qoY04yQBa55ORYkH1JR3sn6bw7GX
-	 cyK1ygoCzG2CXSsSWZH1UCJRhW8HGbpZ8kBR9lgRbVBpmMdb0cNYyosEP+DtuRiKEU
-	 5zcQLMKvoxCm8XYnNG628tZd6ZxrbEozdWSGLl4Hu7bP7mI2kzU+cnbQjPg43cZUNB
-	 z9p6CoVhW+3rg==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Thu, 17 Oct 2024 18:35:00 +0200
-Subject: [PATCH v2 3/3] HID: bpf: drop use of Logical|Physical|UsageRange
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC0E1DFD9A;
+	Thu, 17 Oct 2024 16:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729182916; cv=fail; b=GRNPyYEgjRwy22gBsUTpGpSo7Ggnht+G/LYQ9IJSPI2mO2kYd9YZCVh3Xm+T+j6dWhC3qlAGdBPLIPBZoK7r3+UU7CFYZm2B+PCnG8u0o8eTa+kbutzhMHOBLRBIYfFHelidv1wps5fMkxy/PO8Zid8G+bJN273oCyets9dPNrg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729182916; c=relaxed/simple;
+	bh=EngLTlQc37z6J5xLS2xmEGSK12eabnNZHfBDwpbuct4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tOyaqdupbEOLphbX+x7kdMgxNq0FV3lDLl3A8PBQs2Rl297GMjJSIp08sVGrMJSzX+PruJ68uie1Vk5nZEqV/i1G42CAzeAwUhI+l0d16FDTfwQGeIPNTI7ji01levLuZCe82EbZoqc/F2Ndun2yWVhRhvZV6KGpxTgc6E/VDHs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IHofSX/l; arc=fail smtp.client-ip=40.107.244.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Cxxup1s0aVkdtuW41476eDE5icbn35DkjPjpmDclgrDEDKvxj8xQzp6jlSz+QCkQdaMSFYQwdDEnI+/JrG8ZmZQx/TvkjM2bqYnXYX/w1+1go1uNom7ovzjE7QkZgW74NGTxoAszFx3U7Y7+PHRW7hkfM6364kiI4X82rS2qXf5WsLAVg73nQBEsWGiFiw4VMLHIupwF44eFXaEcHYJ36FPHDr48x0vWr8OGE80XhFNynCzU1tR4xJsEmFJqJubtIxjawh/OqVmauDej+y3BZLNov9m2QsYlZNRJ1U5hEC2zVIKRNAz89Tdbv+DlJiYCtw1RUjcyH1P+cfAWZO7ugA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tBg0YXFOMp239k9VBJb7SU2t9yBJcx5/6IKYdVT0gww=;
+ b=Sf8e9Tq/7t0iuyhHdk4BB0TxSTrmOhbzTQLWEdW/5xrKMgbywtK11J2Dzn6kgoz3jXj2hCVgKktJ62yeH+t3BEWadtLV4PI8Wg42OBYel6QokZksnZfPbfl+QaDN27w1BD/Xq4T4zIOlA49leaPTZ1kfHdAfVuksX3xX8TfMms57KnlMTNIkBcoJKDRZC+3NMwUKAh/JafsVTHguPtHik6tGfn5l9ac1BZvYDjKxQ1BsL5TpNtR5pSep95v5txBeXYUB4P1fspKLaUk3WKrkWNLLduxunNA96hvv7K3zoaCv+M9Dq6e6r3Td4SJFfNyhXxKeXiBssN+aSFCFGHG6Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tBg0YXFOMp239k9VBJb7SU2t9yBJcx5/6IKYdVT0gww=;
+ b=IHofSX/l96+fgiGeK1rJ7k0AU0wqx7rKTd4jXGEigfC6s/dZW9PejQsQODXigS6i36DIFFyNLXaEiUMdoFLtZXABwFgmn11ca2zyswrOsGBfrGpzeToKo4bIf8renJ82th9eH73UCyJnNrzf1FNAnHvoWnINVZVnGz2raoz4n8aGIHuXJSPRuoF81UEzLwd3KX/cBxnV1D2RKjdhQ1v0vB6faVwyrR/it/ihJ0jSsCFnbbOwYdLdx5iCqgresk5rukrGK0pTr9Tw0csdBssomsCqJSY5ze+1OjF2Kd1sCFVnR9hmHX20eaxBZVK1MJyUgh52m00Yfz27C0X2st4VsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS0PR12MB8574.namprd12.prod.outlook.com (2603:10b6:8:166::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
+ 2024 16:35:08 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
+ 16:35:07 +0000
+Date: Thu, 17 Oct 2024 13:35:07 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, patches@lists.linux.dev
+Subject: Re: [PATCH v3 02/11] iommufd: Rename _iommufd_object_alloc to
+ iommufd_object_alloc_elm
+Message-ID: <20241017163507.GC3559746@nvidia.com>
+References: <cover.1728491453.git.nicolinc@nvidia.com>
+ <dbfc718cd3200071765007c7ca0a2ba242181d05.1728491453.git.nicolinc@nvidia.com>
+ <20241017141416.GZ3559746@nvidia.com>
+ <20241017153749.GA3559746@nvidia.com>
+ <ZxE3U+9lUXwDEBx5@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxE3U+9lUXwDEBx5@Asurada-Nvidia>
+X-ClientProxiedBy: BL1PR13CA0364.namprd13.prod.outlook.com
+ (2603:10b6:208:2c0::9) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241017-import_bpf_6-13-v2-3-6a7acb89a97f@kernel.org>
-References: <20241017-import_bpf_6-13-v2-0-6a7acb89a97f@kernel.org>
-In-Reply-To: <20241017-import_bpf_6-13-v2-0-6a7acb89a97f@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- Benjamin Tissoires <bentiss@kernel.org>, 
- Peter Hutterer <peter.hutterer@who-t.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729182907; l=12580;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=wHjaUMUGTPQe/HkvJVYcvU/Y5QGKlkTwf/y/FC47rCA=;
- b=s0cjm6Gl+p4Da/TvFHVwsS4gR2azj40f2yaw5ASXcz1ejohmG/rxhMsSYKvWzV1+cYVFEdHzj
- c+QzfAWOr1aBMNCQpw3TQs03xCIaOA80GCyGOHvyOWilb5M91OmC65y
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB8574:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d1d3abf-b81f-4180-11e8-08dceec9a95e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ov0afFUf7k7G2dutHuXZvGT56nx4iu5HVYBXmx+FLv6niBhBEAxj/A09zddG?=
+ =?us-ascii?Q?XiTt/oJx9czjLpfMVYdxlTY3PRePZAiFMxPB716MMRAKhhaazfrbulomRtLg?=
+ =?us-ascii?Q?W7Xr5HimOoTnElLJ8g9hhcEoiNFQcckll2nOP7iVHFUEN4ESH7xNO3Kk2jsy?=
+ =?us-ascii?Q?DpwM2aO5VcRuhcyRt3sZxGYPpPeI8drCAvSkw6VbGy86sN3E6fpSMInVaBH7?=
+ =?us-ascii?Q?8r2zUW6GlFNK1qU9PYyXpnNgnq1VIfl2s4g17G19Ay1ALPT307MQptz7MO1O?=
+ =?us-ascii?Q?Kh5vbOIhhXd4ogv2DWqRSyQx12n3tq7oia26nrJ6SAy6/yTBnBPqMP0AMVC5?=
+ =?us-ascii?Q?MlIOjhKzT3iIJemFy/zrnGh1o3X4oFO2mHQPqk3TVI4b7r9+sz7gvfpWFbcZ?=
+ =?us-ascii?Q?hU3c5tXK/oDR3NZ8F6/EW4LkLDYfXegs5a3MeVYOMoGAx9/YSrwc5VO+D4HV?=
+ =?us-ascii?Q?15jYEJHWvqYhiLPFiVtIDM/+oSBSAMCZ/FWwwYi3VfO3LU97gR+cwpehcLyR?=
+ =?us-ascii?Q?JtCmNX8eRT0KWdiOMMva6uSjRf/zwBHlJty3ayrdsuSHVcbz8xsXMwxDZ00u?=
+ =?us-ascii?Q?/LmLdKmJCijGgMhvunZBBJmi9IRDZe7S21c5wZ84qiI51PlTieVEmCDj52Jw?=
+ =?us-ascii?Q?yy4XejI+/uulqxY82It2mhRPoHs9xGSoKZQQPbR+PSBoT5iuOvxvyz5hRbdK?=
+ =?us-ascii?Q?pS9LJSD83tFXViLWU0YhuS04XAKGSMD5St32xtbYCgooq/D/bB1SGX+Km1de?=
+ =?us-ascii?Q?5mljLEkqVK43rDOEOlFPA4lBY18LDSldy64WgCrOyXGGI6MzRuUKjnoIc8xL?=
+ =?us-ascii?Q?Oowbypn5gx203kLXKUU1b1C16Er0688OE9idnsNf2y8e8gDNhT515Ket039M?=
+ =?us-ascii?Q?yrBS5nFEqYyYu2vgimNJsJTgeyVtaMonQzAWKvL45qvozcyX2Qyp99hlQFqW?=
+ =?us-ascii?Q?AyaVpHR/eMm5IUE4Ffo8gpyeAC61P7Yhu85anR6VT2zRQHv4dyVgfXZNRSNv?=
+ =?us-ascii?Q?YqfmnmbcWOpUKPELf1+xcENkF4WR8aUSZWkFMb2jTNQInG+BfU/iD7WbKRNO?=
+ =?us-ascii?Q?ReCY1zJT9/++ttsWGvt4dBJzw3IfB0ONo/hHO2Il9l4Ny43GTqmuZMw3PVII?=
+ =?us-ascii?Q?bq+negCZlmD3smfnp5Amim3A3fJU/7EpHZ83CC+bJ2k6v3nU/GfHVLESnZDa?=
+ =?us-ascii?Q?pqKZykxFNG+L2fsYSgBCRBu4Fb6W7aNnU0pR8l1bJXtYfmYMNne6XKH/qG90?=
+ =?us-ascii?Q?hIpGeCOf+pkQBGL6eH+ufNHcH6rLaSkcV8OxWadYSQGs/Agx1Zv9o8Uigfu7?=
+ =?us-ascii?Q?4uSFCFYTHFFeiU7WT6dxpIk6?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+YjKrCHUQ4BeEV2guMyxBDbixsNs9KpwRvOuIIiByGzIfo+9xkNfy5iv59dI?=
+ =?us-ascii?Q?iYdBucoCluwV3z7Wtm/97MbpkOJRYvlKKl1TwY4RIXJQX7YYokzuuI1xmqvf?=
+ =?us-ascii?Q?TPpqJ5dMj3m9nxAftg8P4JKfnELdyrPnd8J9jUp+l2y131P5l3z4Zok2QmZ4?=
+ =?us-ascii?Q?EeT3GNGVIiHbOHf6lEPFk4GVHC86XG3rW3a1/GijQ73NPW1wrXvvNs3tbSui?=
+ =?us-ascii?Q?v3m8wnxu5dg1bYQu1FAck+OsNpwRChSTg9/uluiPztsZZVcl5vmRpiIRetOn?=
+ =?us-ascii?Q?vUlKJk/1JegSeTdvsRUml7JHxx/V3C6d6khZw2uhhFaB4cefzsK6ZYFinPUl?=
+ =?us-ascii?Q?A4zRf0DM7OhEjH8Q2Le7QH/ehkMZY7oATKUs48r1X4XA1cElhxWTKbzhIZks?=
+ =?us-ascii?Q?CnuWhLybn5ML614XbRf2GOBzpemZ8XCFOJRsyVf1SkQpsT/PWg9bf997iq/R?=
+ =?us-ascii?Q?JRi5cEz68L+unD1Zt8kK/IiyxXlRm+cgSDok92JwKHw4owTZTQkry0t4N4oe?=
+ =?us-ascii?Q?FDTxMDxvIt8EVo/5iEkrxy++p0rJWbI8YYkuxA++h43ArZNtvrktO+dert9G?=
+ =?us-ascii?Q?OTKiXjjRLTe/8n7t5j2aRZrfhv386WmKrQkXgGZbCtllMmu+qNWuOPlSPHNb?=
+ =?us-ascii?Q?9Or4/w54TIPmMzcCpgaaudV07vzdSQsTk7YpBNoAWEu1FWp7YEG6roZ0kNtu?=
+ =?us-ascii?Q?gD4s91Z6Tv/sFfG1oYQoNvpjwC1XLC5didGhvf/KWJXDdq+5N3N/Eo+wBjN3?=
+ =?us-ascii?Q?qgZAPlgLCWije8uyHvBb4G02CsA+7dDY2zq4sRgj5agLbjuHtVAY1k2DpV5P?=
+ =?us-ascii?Q?SbWOxvbRodwwXfo3An41UCrwjfcVGomeHrQyrEYvm7IGB1agjN38dwR8uCok?=
+ =?us-ascii?Q?4phAG747/m5wjwAXKrmpwnoTrNyJjDNFQPl0FBZq+EuX8M+GzIY2oq3jC/ff?=
+ =?us-ascii?Q?rJHwT3xr7UxCW8aesIBox5y6oe+e5ZMGmLeAzXMLNclgXnr/SSZTTyB9bPOd?=
+ =?us-ascii?Q?K686C7SC86TKil/Wtkv2nNqhbyWPPOJneba/u+yqfvma/FRrgBNCuiLaYwue?=
+ =?us-ascii?Q?LWuWYpA/i3VZclANhhvs4vzb0K8fhfUcnKWiFEQeyP1yRxlsNb73oInwB556?=
+ =?us-ascii?Q?s39C6Z23m9enyayA9cMstsTtfZlY4FZWtBbnonJbbdeS5bTJIwEKZfM44zB9?=
+ =?us-ascii?Q?xtzAV+L6shC0HeYsk6kM2xJB9KAfLACnD7MG60YLLmGoVOt+IZPEt4GqrH1V?=
+ =?us-ascii?Q?v2rBWr4mJv/60L7MMOuvjyTQM7SrTLMw6TCE9ewtWc8kPYsjG3cPU2HyWphO?=
+ =?us-ascii?Q?RlYw9hikO+81P2XqcsgBCH4zzUsd07iUYxK4GdrH/sLKbD0izs0xjzhC4rzF?=
+ =?us-ascii?Q?hDAbHKI7LlY7W6dIIbPSJPCuiAK4YqSJQP9ReC2JZlSWh6EYU/H+7DryAG2x?=
+ =?us-ascii?Q?fM/6TOz2xtRExEzblLuU4hrRZ6ErCbCRwE9YEoLAZrINb0HPS0Tj3EPjZ235?=
+ =?us-ascii?Q?h4xcthqSNYTrwCyNXgLJwrYEpAu3pYuGKECFPOsRKwDiSA2FsHsWBpu3z5od?=
+ =?us-ascii?Q?7vVLiLlSGlhxALtI0a0=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d1d3abf-b81f-4180-11e8-08dceec9a95e
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:35:07.8461
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QpVfMVPF5KEUrxz1+7Vr07hkmXBNhGvSsp3yMXEh4G7OAWFZ15zTHggwffqEAohC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8574
 
-Replace with individual Minimum/Maximum calls to match the HID report
-descriptor - HID doesn't have a Range field. Abstracting this is good
-for hand-written descriptors but almost all tools will output min/max
-instead so let's stick with that.
+On Thu, Oct 17, 2024 at 09:12:03AM -0700, Nicolin Chen wrote:
 
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> > Then you can keep the pattern of _ being the allocation function of
+> > the macro
+> 
+> If I get it correctly, the change would be
+> [From]
+> level-0: iommufd_object_alloc()
+> level-1:     __iommufd_object_alloc()
+> level-2:         _iommufd_object_alloc()
+> [To]
+> level-0: iommufd_object_alloc()
+> level-1:     iommufd_object_alloc_elm()
+> level-2:         _iommufd_object_alloc()
+> 
+> i.e. change the level-1 only.
 
----
+You could also call it _iommufd_object_alloc_elm() to keep the pattern
 
-new in v2
----
- drivers/hid/bpf/progs/Huion__Dial-2.bpf.c       | 66 ++++++++++++++++---------
- drivers/hid/bpf/progs/Huion__Inspiroy-2-S.bpf.c | 60 ++++++++++++++--------
- drivers/hid/bpf/progs/hid_report_helpers.h      | 36 ++++++++++----
- 3 files changed, 111 insertions(+), 51 deletions(-)
+Maymbe "member" is a better word here than elm
 
-diff --git a/drivers/hid/bpf/progs/Huion__Dial-2.bpf.c b/drivers/hid/bpf/progs/Huion__Dial-2.bpf.c
-index 2411dec6db08b684c6e24c73ab4d509300424768..9670e5ef8d54f0058260294ef99bc65e7e312472 100644
---- a/drivers/hid/bpf/progs/Huion__Dial-2.bpf.c
-+++ b/drivers/hid/bpf/progs/Huion__Dial-2.bpf.c
-@@ -214,7 +214,8 @@ static const __u8 fixed_rdesc_pad[] = {
- 	CollectionApplication(
- 		// -- Byte 0 in report
- 		ReportId(PAD_REPORT_ID)
--		LogicalRange_i8(0, 1)
-+		LogicalMaximum_i8(0)
-+		LogicalMaximum_i8(1)
- 		UsagePage_Digitizers
- 		Usage_Dig_TabletFunctionKeys
- 		CollectionPhysical(
-@@ -234,14 +235,17 @@ static const __u8 fixed_rdesc_pad[] = {
- 			Input(Var|Abs)
- 			// Byte 4 in report is the dial
- 			Usage_GD_Wheel
--			LogicalRange_i8(-1, 1)
-+			LogicalMinimum_i8(-1)
-+			LogicalMaximum_i8(1)
- 			ReportCount(1)
- 			ReportSize(8)
- 			Input(Var|Rel)
- 			// Byte 5 is the button state
- 			UsagePage_Button
--			UsageRange_i8(0x01, 0x8)
--			LogicalRange_i8(0x0, 0x1)
-+			UsageMinimum_i8(0x01)
-+			UsageMaximum_i8(0x08)
-+			LogicalMinimum_i8(0x0)
-+			LogicalMaximum_i8(0x1)
- 			ReportCount(7)
- 			ReportSize(1)
- 			Input(Var|Abs)
-@@ -265,7 +269,8 @@ static const __u8 fixed_rdesc_pen[] = {
- 			Usage_Dig_TipSwitch
- 			Usage_Dig_BarrelSwitch
- 			Usage_Dig_SecondaryBarrelSwitch // maps eraser to BTN_STYLUS2
--			LogicalRange_i8(0, 1)
-+			LogicalMinimum_i8(0)
-+			LogicalMaximum_i8(1)
- 			ReportSize(1)
- 			ReportCount(3)
- 			Input(Var|Abs)
-@@ -280,22 +285,28 @@ static const __u8 fixed_rdesc_pen[] = {
- 				UsagePage_GenericDesktop
- 				Unit(cm)
- 				UnitExponent(-1)
--				PhysicalRange_i16(0, 266)
--				LogicalRange_i16(0, 32767)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(266)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(32767)
- 				Usage_GD_X
- 				Input(Var|Abs) // Bytes 2+3
--				PhysicalRange_i16(0, 166)
--				LogicalRange_i16(0, 32767)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(166)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(32767)
- 				Usage_GD_Y
- 				Input(Var|Abs) // Bytes 4+5
- 			)
- 			UsagePage_Digitizers
- 			Usage_Dig_TipPressure
--			LogicalRange_i16(0, 8191)
-+			LogicalMinimum_i16(0)
-+			LogicalMaximum_i16(8191)
- 			Input(Var|Abs) // Byte 6+7
- 			ReportSize(8)
- 			ReportCount(2)
--			LogicalRange_i8(-60, 60)
-+			LogicalMinimum_i8(-60)
-+			LogicalMaximum_i8(60)
- 			Usage_Dig_XTilt
- 			Usage_Dig_YTilt
- 			Input(Var|Abs) // Byte 8+9
-@@ -313,7 +324,8 @@ static const __u8 fixed_rdesc_vendor[] = {
- 		Usage_Dig_Pen
- 		CollectionPhysical(
- 			// Byte 1 are the buttons
--			LogicalRange_i8(0, 1)
-+			LogicalMinimum_i8(0)
-+			LogicalMaximum_i8(1)
- 			ReportSize(1)
- 			Usage_Dig_TipSwitch
- 			Usage_Dig_BarrelSwitch
-@@ -333,25 +345,31 @@ static const __u8 fixed_rdesc_vendor[] = {
- 				UnitExponent(-1)
- 				// Note: reported logical range differs
- 				// from the pen report ID for x and y
--				LogicalRange_i16(0, 53340)
--				PhysicalRange_i16(0, 266)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(53340)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(266)
- 				// Bytes 2/3 in report
- 				Usage_GD_X
- 				Input(Var|Abs)
--				LogicalRange_i16(0, 33340)
--				PhysicalRange_i16(0, 166)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(33340)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(166)
- 				// Bytes 4/5 in report
- 				Usage_GD_Y
- 				Input(Var|Abs)
- 			)
- 			// Bytes 6/7 in report
--			LogicalRange_i16(0, 8191)
-+			LogicalMinimum_i16(0)
-+			LogicalMaximum_i16(8191)
- 			Usage_Dig_TipPressure
- 			Input(Var|Abs)
- 			// Bytes 8/9 in report
- 			ReportCount(1) // Padding
- 			Input(Const)
--			LogicalRange_i8(-60, 60)
-+			LogicalMinimum_i8(-60)
-+			LogicalMaximum_i8(60)
- 			// Byte 10 in report
- 			Usage_Dig_XTilt
- 			// Byte 11 in report
-@@ -366,7 +384,8 @@ static const __u8 fixed_rdesc_vendor[] = {
- 	CollectionApplication(
- 		// Byte 0
- 		ReportId(PAD_REPORT_ID)
--		LogicalRange_i8(0, 1)
-+		LogicalMinimum_i8(0)
-+		LogicalMaximum_i8(1)
- 		UsagePage_Digitizers
- 		Usage_Dig_TabletFunctionKeys
- 		CollectionPhysical(
-@@ -386,15 +405,18 @@ static const __u8 fixed_rdesc_vendor[] = {
- 			Input(Var|Abs)
- 			// Byte 4 is the button state
- 			UsagePage_Button
--			UsageRange_i8(0x01, 0x8)
--			LogicalRange_i8(0x0, 0x1)
-+			UsageMinimum_i8(0x1)
-+			UsageMaximum_i8(0x8)
-+			LogicalMinimum_i8(0x0)
-+			LogicalMaximum_i8(0x1)
- 			ReportCount(8)
- 			ReportSize(1)
- 			Input(Var|Abs)
- 			// Byte 5 is the top dial
- 			UsagePage_GenericDesktop
- 			Usage_GD_Wheel
--			LogicalRange_i8(-1, 1)
-+			LogicalMinimum_i8(-1)
-+			LogicalMaximum_i8(1)
- 			ReportCount(1)
- 			ReportSize(8)
- 			Input(Var|Rel)
-diff --git a/drivers/hid/bpf/progs/Huion__Inspiroy-2-S.bpf.c b/drivers/hid/bpf/progs/Huion__Inspiroy-2-S.bpf.c
-index b09b80132368b6c504a61e1965263bdaaac67fb0..13f64fb49800b16f6d4d48c378f065fcdf51202a 100644
---- a/drivers/hid/bpf/progs/Huion__Inspiroy-2-S.bpf.c
-+++ b/drivers/hid/bpf/progs/Huion__Inspiroy-2-S.bpf.c
-@@ -170,7 +170,8 @@ static const __u8 fixed_rdesc_pad[] = {
- 	CollectionApplication(
- 		// -- Byte 0 in report
- 		ReportId(PAD_REPORT_ID)
--		LogicalRange_i8(0, 1)
-+		LogicalMinimum_i8(0)
-+		LogicalMaximum_i8(1)
- 		UsagePage_Digitizers
- 		Usage_Dig_TabletFunctionKeys
- 		CollectionPhysical(
-@@ -190,14 +191,17 @@ static const __u8 fixed_rdesc_pad[] = {
- 			Input(Var|Abs)
- 			// Byte 4 in report is the wheel
- 			Usage_GD_Wheel
--			LogicalRange_i8(-1, 1)
-+			LogicalMinimum_i8(-1)
-+			LogicalMaximum_i8(1)
- 			ReportCount(1)
- 			ReportSize(8)
- 			Input(Var|Rel)
- 			// Byte 5 is the button state
- 			UsagePage_Button
--			UsageRange_i8(0x01, 0x6)
--			LogicalRange_i8(0x01, 0x6)
-+			UsageMinimum_i8(0x1)
-+			UsageMaximum_i8(0x6)
-+			LogicalMinimum_i8(0x1)
-+			LogicalMaximum_i8(0x6)
- 			ReportCount(1)
- 			ReportSize(8)
- 			Input(Arr|Abs)
-@@ -219,7 +223,8 @@ static const __u8 fixed_rdesc_pen[] = {
- 			Usage_Dig_TipSwitch
- 			Usage_Dig_BarrelSwitch
- 			Usage_Dig_SecondaryBarrelSwitch // maps eraser to BTN_STYLUS2
--			LogicalRange_i8(0, 1)
-+			LogicalMinimum_i8(0)
-+			LogicalMaximum_i8(1)
- 			ReportSize(1)
- 			ReportCount(3)
- 			Input(Var|Abs)
-@@ -234,18 +239,23 @@ static const __u8 fixed_rdesc_pen[] = {
- 				UsagePage_GenericDesktop
- 				Unit(cm)
- 				UnitExponent(-1)
--				PhysicalRange_i16(0, 160)
--				LogicalRange_i16(0, 32767)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(160)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(32767)
- 				Usage_GD_X
- 				Input(Var|Abs) // Bytes 2+3
--				PhysicalRange_i16(0, 100)
--				LogicalRange_i16(0, 32767)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(100)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(32767)
- 				Usage_GD_Y
- 				Input(Var|Abs) // Bytes 4+5
- 			)
- 			UsagePage_Digitizers
- 			Usage_Dig_TipPressure
--			LogicalRange_i16(0, 8191)
-+			LogicalMinimum_i16(0)
-+			LogicalMaximum_i16(8191)
- 			Input(Var|Abs) // Byte 6+7
- 			// Two bytes padding so we don't need to change the report at all
- 			ReportSize(8)
-@@ -265,7 +275,8 @@ static const __u8 fixed_rdesc_vendor[] = {
- 		Usage_Dig_Pen
- 		CollectionPhysical(
- 			// Byte 1 are the buttons
--			LogicalRange_i8(0, 1)
-+			LogicalMinimum_i8(0)
-+			LogicalMaximum_i8(1)
- 			ReportSize(1)
- 			Usage_Dig_TipSwitch
- 			Usage_Dig_BarrelSwitch
-@@ -285,19 +296,24 @@ static const __u8 fixed_rdesc_vendor[] = {
- 				UnitExponent(-1)
- 				// Note: reported logical range differs
- 				// from the pen report ID for x and y
--				LogicalRange_i16(0, 32000)
--				PhysicalRange_i16(0, 160)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(32000)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(160)
- 				// Bytes 2/3 in report
- 				Usage_GD_X
- 				Input(Var|Abs)
--				LogicalRange_i16(0, 20000)
--				PhysicalRange_i16(0, 100)
-+				LogicalMinimum_i16(0)
-+				LogicalMaximum_i16(20000)
-+				PhysicalMinimum_i16(0)
-+				PhysicalMaximum_i16(100)
- 				// Bytes 4/5 in report
- 				Usage_GD_Y
- 				Input(Var|Abs)
- 			)
- 			// Bytes 6/7 in report
--			LogicalRange_i16(0, 8192)
-+			LogicalMinimum_i16(0)
-+			LogicalMaximum_i16(8192)
- 			Usage_Dig_TipPressure
- 			Input(Var|Abs)
- 		)
-@@ -307,7 +323,8 @@ static const __u8 fixed_rdesc_vendor[] = {
- 	CollectionApplication(
- 		// Byte 0
- 		ReportId(PAD_REPORT_ID)
--		LogicalRange_i8(0, 1)
-+		LogicalMinimum_i8(0)
-+		LogicalMaximum_i8(1)
- 		UsagePage_Digitizers
- 		Usage_Dig_TabletFunctionKeys
- 		CollectionPhysical(
-@@ -327,8 +344,10 @@ static const __u8 fixed_rdesc_vendor[] = {
- 			Input(Var|Abs)
- 			// Byte 4 is the button state
- 			UsagePage_Button
--			UsageRange_i8(0x01, 0x6)
--			LogicalRange_i8(0x0, 0x1)
-+			UsageMinimum_i8(0x1)
-+			UsageMaximum_i8(0x6)
-+			LogicalMinimum_i8(0x0)
-+			LogicalMaximum_i8(0x1)
- 			ReportCount(6)
- 			ReportSize(1)
- 			Input(Var|Abs)
-@@ -337,7 +356,8 @@ static const __u8 fixed_rdesc_vendor[] = {
- 			// Byte 5 is the wheel
- 			UsagePage_GenericDesktop
- 			Usage_GD_Wheel
--			LogicalRange_i8(-1, 1)
-+			LogicalMinimum_i8(-1)
-+			LogicalMaximum_i8(1)
- 			ReportCount(1)
- 			ReportSize(8)
- 			Input(Var|Rel)
-diff --git a/drivers/hid/bpf/progs/hid_report_helpers.h b/drivers/hid/bpf/progs/hid_report_helpers.h
-index 0aa1df438eebac72a64cc3fa24aa2fd28b952d1d..9b2a48e4a311b39ca20e7d9819beef8fb70315a6 100644
---- a/drivers/hid/bpf/progs/hid_report_helpers.h
-+++ b/drivers/hid/bpf/progs/hid_report_helpers.h
-@@ -52,7 +52,8 @@
-  *     Usage_GD_Keyboard
-  *     CollectionApplication(     ← Open the collection
-  *         ReportId(3)
-- *         LogicalRange_i8(0, 1)
-+ *         LogicalMinimum_i8(0)
-+ *         LogicalMaximum_i8(1)
-  *         // other fields
-  *     )                          ← End EndCollection
-  *
-@@ -74,26 +75,43 @@
- #define Arr		0x0
- #define Abs		0x0
- #define Rel		0x4
-+#define Null		0x40
-+#define Buff		0x0100
- 
- /* Use like this: Input(Var|Abs) */
- #define Input(i_)			0x081, i8(i_),
- #define Output(i_)			0x091, i8(i_),
- #define Feature(i_)			0x0b1, i8(i_),
- 
-+#define Input_i16(i_)			0x082, LE16(i_),
-+#define Output_i16(i_)			0x092, LE16(i_),
-+#define Feature_i16(i_)			0x0b2, LE16(i_),
-+
- #define ReportId(id_)			0x85, i8(id_),
- #define ReportSize(sz_)		        0x75, i8(sz_),
- #define ReportCount(cnt_)		0x95, i8(cnt_),
- 
--#define LogicalRange_i8(min_, max_)	0x15, i8(min_), 0x25, i8(max_),
--#define LogicalRange_i16(min_, max_)	0x16, LE16(min_), 0x26, LE16(max_),
--#define LogicalRange_i32(min_, max_)	0x17, LE32(min_), 0x27, LE32(max_),
-+#define LogicalMinimum_i8(min_)		0x15, i8(min_),
-+#define LogicalMinimum_i16(min_)	0x16, LE16(min_),
-+#define LogicalMinimum_i32(min_)	0x17, LE32(min_),
-+
-+#define LogicalMaximum_i8(max_)		0x25, i8(max_),
-+#define LogicalMaximum_i16(max_)	0x26, LE16(max_),
-+#define LogicalMaximum_i32(max_)	0x27, LE32(max_),
-+
-+#define PhysicalMinimum_i8(min_)	0x35, i8(min_),
-+#define PhysicalMinimum_i16(min_)	0x36, LE16(min_),
-+#define PhysicalMinimum_i32(min_)	0x37, LE32(min_),
-+
-+#define PhysicalMaximum_i8(max_)	0x45, i8(max_),
-+#define PhysicalMaximum_i16(max_)	0x46, LE16(max_),
-+#define PhysicalMaximum_i32(max_)	0x47, LE32(max_),
- 
--#define PhysicalRange_i8(min_, max_)	0x35, i8(min_), 0x45, i8(max_),
--#define PhysicalRange_i16(min_, max_)	0x36, LE16(min_), 0x46, LE16(max_),
--#define PhysicalRange_i32(min_, max_)	0x37, LE32(min_), 0x47, LE32(max_),
-+#define UsageMinimum_i8(min_)		0x19, i8(min_),
-+#define UsageMinimum_i16(min_)		0x1a, LE16(min_),
- 
--#define UsageRange_i8(min_, max_)	0x19, i8(min_), 0x29, i8(max_),
--#define UsageRange_i16(min_, max_)	0x1a, LE16(min_), 0x2a, LE16(max_),
-+#define UsageMaximum_i8(max_)		0x29, i8(max_),
-+#define UsageMaximum_i16(max_)		0x2a, LE16(max_),
- 
- #define UsagePage_i8(p_)		0x05, i8(p_),
- #define UsagePage_i16(p_)		0x06, LE16(p_),
-
--- 
-2.47.0
-
+Jason
 
