@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-369326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E426A9A1BD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2767F9A1BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48436282FF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8631F2273B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085FF18784A;
-	Thu, 17 Oct 2024 07:39:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8D51D0149
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0E21C1ADA;
+	Thu, 17 Oct 2024 07:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NR7QYgU3"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E779517BB03
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729150778; cv=none; b=minHIZaaBsAoIOislnsnQLW2x92UaCqe7N9l/XQfkDRMuAwZOT6LephVEcc3p/+t+rl9bKmKYytYS8zXv8KKSHLPBrAroa2C4IuyvgKr/xHb2TeQZdpyB5RlX1lPfVi7++yXIAWNZxgjnx68KfDrmMVG1GAgnI3WkBqur57zNUI=
+	t=1729150869; cv=none; b=GIfYf8FzaSzsoj08EKxTrg2VhiP3h9hWPHfL6U7uOIjOKw5Y+OvrmWAeC/gbtxy5qmAUIGe2uPAxSqdML0nl9MjleU52upw3c5ipIRPb78RVQUFCBRvfkZXZfSsB0jJKLyKaadP7aTJ1FESBjVyFOGFPlbTilImS4gk3ONGmF8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729150778; c=relaxed/simple;
-	bh=L+C4Bds5aLEIoEIqYhxfeIvi49PTsh/+yEo1O4hrRw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JfvRotd0ObFD7j3uX5N56wz8arOQW/+bLDyD8hhtLg1zHpTcBXwtlDcM4UfVUPBQ+ddgZzwd+JZ1CQXoWPjLdbeVVN+/2o++VIP7nr+4fDl8AX9Mlx1qSVz7Ws5i/FGbMXDzjJbC4M2vYtd/wFEDYf8i7MP2pf0qnCmVNi6xyk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B25BBFEC;
-	Thu, 17 Oct 2024 00:40:04 -0700 (PDT)
-Received: from [10.163.39.37] (unknown [10.163.39.37])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A0773F528;
-	Thu, 17 Oct 2024 00:39:31 -0700 (PDT)
-Message-ID: <3bf1390c-3823-43cd-8b5c-9b0848450628@arm.com>
-Date: Thu, 17 Oct 2024 13:09:29 +0530
+	s=arc-20240116; t=1729150869; c=relaxed/simple;
+	bh=lxbhKpjIWxwh6qu8TuuaTXt/ctrJ8zonrWfRF9sT0NA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SL9sJsJa2R3gFhf5OOnZ/oNYAFKqgXgPV22TGAeEgpybKTxdbgmssfAay4f0Uq5Q4qDWcwpvipvbFvuPLzaSff8akFXfvDQIMPDZttH1SosgUC3lkvDM0guzD0//knM4cqcB5T+KaUEqhVQ1u5daTnxlMTeq8ljEsnUghk4f8xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NR7QYgU3; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BCF9C20004;
+	Thu, 17 Oct 2024 07:41:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729150864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f5XJitMQNSPDDFsYL9nvyuekdXE449S3Jl1KSVsNvJU=;
+	b=NR7QYgU36NuU0PcIfex/TStyG0H14UWJIdJ8/bARkJ53gVAZ7r7l2nt/M9/7bOBkW+N3Ah
+	CSqgBjw3lJ8YmTf+sbbKHsaOH6h8HEClBch/7KieOLmoTl/gAxhqej6BiiJLmurdSE/UFV
+	UXcnPzUy3RM7m0wZUOSd7OzoQXgpCgBYdLUOwqYk7/XC4JS6dMf5hL4yA+RVUC4heHVoJy
+	URi+mo60N49Uaoo8iAogijQxg7gDDoGVwV2g+CfhjJkc/m8hyAk+ep//IuSe7H2QRZ+xM5
+	hJRkz5B7uIeP6e3/PuiUqRR9D6yD0bTEGBBOHlg1D1E/fflupnZTI2HPxTTnFQ==
+Date: Thu, 17 Oct 2024 09:40:59 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+ bbrezillon@kernel.org, boris.brezillon@collabora.com,
+ conor.culhane@silvaco.com, gregkh@linuxfoundation.org, imx@lists.linux.dev,
+ pthombar@cadence.com, ravindra.yashvant.shinde@nxp.com
+Subject: Re: [PATCH v7 2/3] i3c: master: Extend address status bit to 4 and
+ add I3C_ADDR_SLOT_EXT_DESIRED
+Message-ID: <20241017094059.4e4ed56d@xps-13>
+In-Reply-To: <Zw/lH9pCrkFoXsbH@lizhi-Precision-Tower-5810>
+References: <20241008-i3c_dts_assign-v7-0-96ec93d1f34c@nxp.com>
+	<20241008-i3c_dts_assign-v7-2-96ec93d1f34c@nxp.com>
+	<Zw/lH9pCrkFoXsbH@lizhi-Precision-Tower-5810>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] KVM: arm64: Fix shift-out-of-bounds bug
-To: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20241017025701.67936-1-ilkka@os.amperecomputing.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20241017025701.67936-1-ilkka@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
+Hi Frank,
 
+Frank.li@nxp.com wrote on Wed, 16 Oct 2024 12:09:03 -0400:
 
-On 10/17/24 08:27, Ilkka Koskinen wrote:
-> Fix a shift-out-of-bounds bug reported by UBSAN when running
-> VM with MTE enabled host kernel.
-> 
-> UBSAN: shift-out-of-bounds in arch/arm64/kvm/sys_regs.c:1988:14
-> shift exponent 33 is too large for 32-bit type 'int'
-> CPU: 26 UID: 0 PID: 7629 Comm: qemu-kvm Not tainted 6.12.0-rc2 #34
-> Hardware name: IEI NF5280R7/Mitchell MB, BIOS 00.00. 2024-10-12 09:28:54 10/14/2024
-> Call trace:
->  dump_backtrace+0xa0/0x128
->  show_stack+0x20/0x38
->  dump_stack_lvl+0x74/0x90
->  dump_stack+0x18/0x28
->  __ubsan_handle_shift_out_of_bounds+0xf8/0x1e0
->  reset_clidr+0x10c/0x1c8
->  kvm_reset_sys_regs+0x50/0x1c8
->  kvm_reset_vcpu+0xec/0x2b0
->  __kvm_vcpu_set_target+0x84/0x158
->  kvm_vcpu_set_target+0x138/0x168
->  kvm_arch_vcpu_ioctl_vcpu_init+0x40/0x2b0
->  kvm_arch_vcpu_ioctl+0x28c/0x4b8
->  kvm_vcpu_ioctl+0x4bc/0x7a8
->  __arm64_sys_ioctl+0xb4/0x100
->  invoke_syscall+0x70/0x100
->  el0_svc_common.constprop.0+0x48/0xf0
->  do_el0_svc+0x24/0x38
->  el0_svc+0x3c/0x158
->  el0t_64_sync_handler+0x120/0x130
->  el0t_64_sync+0x194/0x198
-> 
-> Fixes: 7af0c2534f4c ("KVM: arm64: Normalize cache configuration")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-> ---
->  arch/arm64/kvm/sys_regs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 375052d8cd22..ff8c4e1b847e 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1994,7 +1994,7 @@ static u64 reset_clidr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
->  	 * one cache line.
->  	 */
->  	if (kvm_has_mte(vcpu->kvm))
-> -		clidr |= 2 << CLIDR_TTYPE_SHIFT(loc);
-> +		clidr |= 2ULL << CLIDR_TTYPE_SHIFT(loc);
->  
->  	__vcpu_sys_reg(vcpu, r->reg) = clidr;
->  
+> On Tue, Oct 08, 2024 at 11:18:25AM -0400, Frank Li wrote:
+> > Extend the address status bit to 4 and introduce the
+> > I3C_ADDR_SLOT_EXT_DESIRED macro to indicate that a device prefers a
+> > specific address. This is generally set by the 'assigned-address' in the
+> > device tree source (dts) file.
+> >
+> >  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> >  =E2=94=82S/Sr=E2=94=82 7'h7E RnW=3D0 =E2=94=82ACK=E2=94=82 ENTDAA  =E2=
+=94=82 T =E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> >  =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=98    =E2=94=82
+> >  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=98
+> >  =E2=94=82  =E2=94=8C=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> >  =E2=94=94=E2=94=80=E2=96=BA=E2=94=82Sr=E2=94=827'h7E RnW=3D1  =E2=94=
+=82ACK=E2=94=8248bit UID BCR DCR=E2=94=82Assign 7bit Addr=E2=94=82PAR=E2=94=
+=82 ACK/NACK=E2=94=82
+> >     =E2=94=94=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
+> >
+> > Some master controllers (such as HCI) need to prepare the entire above
+> > transaction before sending it out to the I3C bus. This means that a 7-b=
+it
+> > dynamic address needs to be allocated before knowing the target device's
+> > UID information.
+> >
+> > However, some I3C targets may request specific addresses (called as
+> > "init_dyn_addr"), which is typically specified by the DT-'s
+> > assigned-address property. Lower addresses having higher IBI priority. =
+If
+> > it is available, i3c_bus_get_free_addr() preferably return a free addre=
+ss
+> > that is not in the list of desired addresses (called as "init_dyn_addr"=
+).
+> > This allows the device with the "init_dyn_addr" to switch to its
+> > "init_dyn_addr" when it hot-joins the I3C bus. Otherwise, if the
+> > "init_dyn_addr" is already in use by another I3C device, the target dev=
+ice
+> > will not be able to switch to its desired address.
+> >
+> > If the previous step fails, fallback returning one of the remaining
+> > unassigned address, regardless of its state in the desired list.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > --- =20
+>=20
+> Miquel:
+>=20
+> 	Do you have a chance to check this patch again?
 
-clidr being u64, 2ULL is preferred over 2UL.
+No worries, it's in my todo list ;)
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Thanks,
+Miqu=C3=A8l
 
