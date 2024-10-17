@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-369714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850049A2194
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8D39A218E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157111F26183
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEBF51C2224D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC44D1DD53E;
-	Thu, 17 Oct 2024 11:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96141DC1B0;
+	Thu, 17 Oct 2024 11:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VCrTjuEL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gnive9Wh"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T+OpeJlV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OxMvhLmg"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0971E1DB527;
-	Thu, 17 Oct 2024 11:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0557E1DBB0C;
+	Thu, 17 Oct 2024 11:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729166194; cv=none; b=GpR0LDDOCEbfHVKFYSIADBamfTtP1VNdb+RLNhX/HN3K23dRF/h95WuuV0wY77rtVKxsLiVBnYWvU3ZZ79lnxljjW61Nplnb7aUgjEETCFPfAo8Sc9dKAHVbhuWDO2WQIs9QdUz8qJL5D61g8AluB9VrAwlcUaitlL/05WQRpIw=
+	t=1729166193; cv=none; b=fheWwudwOU/aOkCFrLe7ImAhrqInjSMV+2O0ijLfL5gIa1nKphQleqi5zV168m8+I3azT1jVBq32BM9bFg1TMXlNLd1t/s4fE2+tPLOFwZ02/AZRtWWMvpTFXvgF8n5sAX4RSkwta26Raqvld78v7xFsJzSoRK/6Brno5rD84Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729166194; c=relaxed/simple;
-	bh=DNrn2OjmuuOfiLcqcUeKUZ9rFY+cHgfotfBfmq5ktew=;
+	s=arc-20240116; t=1729166193; c=relaxed/simple;
+	bh=dG+US6b2B8ocGPJtsOn4zfkxxqzfqNh0JlrWQltji0o=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=WsTJ2pWH/AOgeT/tL4qS3ymUrtnNF+z7/tBfCafSaLZI8YP8tryTBryb9338Ux4gOw0xyMKYhZCEtHIlwpFtElBLiFDH2LMvUkEOsPNTGdKlD2o1/PPmohtWm92OmWRkmmaSEj0Iq28EtUVFNTSI0YWOltrfVOykZMqfmyHqJe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VCrTjuEL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gnive9Wh; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=MysR02lZSqJu3W7vmgo5tFK1l33a/EiwvLrHKKnbq2uhX64QqqMWGF31uU9ykD22DXKBxAq4iIta2A9S3h8EeUMJ0OMAX6E5eQABH3qzhsU3vXsz9zd88+TPaUMev7MPy9bqBIItqWZnSiPEZO5iTKEqmq5p8w3O0rRoZCnqGu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T+OpeJlV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OxMvhLmg; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 17 Oct 2024 11:56:27 -0000
+Date: Thu, 17 Oct 2024 11:56:28 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729166188;
+	s=2020; t=1729166189;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EZ/7faYS8H9FlIxqrb6us1u89riR6fF70G7FXHo4Dak=;
-	b=VCrTjuEL7RncmNFheHK8/F5HmP0Rs2nz5gR61PHSdAMB70fTcw8V3uBnTF1BabEJQCSwU/
-	A8g8wUDR3UBrz16QHJwjTE1DXdYY3kgS2q05gu6XXQkxIZQC2qe9didMXiZEzGBkKipJKl
-	+PJ3ePmSBCD4cfzxBfJXEEEoKRp4ZWebJ0tH4e3eW2K6X6oKp+ryjqG9ENGgFcER8Df0PS
-	clHJMCEFdSesUOZjW8G9mbPkLW3Sl7qO+3bTpeFdrJuh+/n1O6Hgsfog3FMsbJsC8lZvHC
-	ubOIVX+Mhxi1Yj5ELCB0gxjp63EPiegSeFQgNPPUltKbrceGKCHPky2I66LamQ==
+	bh=xPek6PBVuwSBDJCpykQBvX10926kpcUvkzjUDIP0SKg=;
+	b=T+OpeJlVwdDlTnHRXuyd57qfP6Pno346Fa7o2aB4EG7O7E/mSX0YLXZzQNfSv2wFnlUhL5
+	/dmIZcFBnsFvb9kPHDvbQYY0wihRQz/6+I4FSuEPbo+AzC/tWDwElfmGwb2U6rHgT3hrck
+	rJ97HQlwc1WmKyCAQ294dGLo1Ou7GSE/7hvBz9j+OoTx6hu5go3NuzICKiPljDtRKO1UbX
+	RLA7sicXyT/pw3g29j2oDOtT5YuttZ475iWtS2jm/4ljFH0zEjlUh657GkskQqYlt07u0z
+	t1VD/wZp2ZWkvpI/n9A/TZuWkgzpqiolkANvCfZTWg+0YztbA5bcHTwRrSnydQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729166188;
+	s=2020e; t=1729166189;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EZ/7faYS8H9FlIxqrb6us1u89riR6fF70G7FXHo4Dak=;
-	b=Gnive9Why8dyI/mVrb4G0XetYIrx/LspI5+zTIyn6dtxVC55ObtMr2Fx4zac1ia4z7iV8D
-	72afCKTGHKVgxVBA==
+	bh=xPek6PBVuwSBDJCpykQBvX10926kpcUvkzjUDIP0SKg=;
+	b=OxMvhLmgxfW+i1j9OWB922pf/Qars7KfuCZZuj1pZ+V1bKMD5n8gIfrgGkfBB/8+nTsE0s
+	dB4TiqnWAFfHYICw==
 From: "tip-bot2 for Nikunj A Dadhania" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] virt: sev-guest: Reduce the scope of SNP command mutex
+Subject: [tip: x86/sev] x86/sev: Cache the secrets page address
 Cc: Nikunj A Dadhania <nikunj@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
  Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241009092850.197575-6-nikunj@amd.com>
-References: <20241009092850.197575-6-nikunj@amd.com>
+In-Reply-To: <20241009092850.197575-4-nikunj@amd.com>
+References: <20241009092850.197575-4-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172916618748.1442.663318949309592421.tip-bot2@tip-bot2>
+Message-ID: <172916618880.1442.12413148301355675953.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,126 +81,118 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/sev branch of tip:
 
-Commit-ID:     ae596615d93dedbdfffbe383f821bea5c5289576
-Gitweb:        https://git.kernel.org/tip/ae596615d93dedbdfffbe383f821bea5c5289576
+Commit-ID:     6068754a4fff67654e87b37cdecd5275a372110f
+Gitweb:        https://git.kernel.org/tip/6068754a4fff67654e87b37cdecd5275a372110f
 Author:        Nikunj A Dadhania <nikunj@amd.com>
-AuthorDate:    Wed, 09 Oct 2024 14:58:36 +05:30
+AuthorDate:    Wed, 09 Oct 2024 14:58:34 +05:30
 Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 16 Oct 2024 18:35:28 +02:00
+CommitterDate: Wed, 16 Oct 2024 18:24:51 +02:00
 
-virt: sev-guest: Reduce the scope of SNP command mutex
+x86/sev: Cache the secrets page address
 
-The SNP command mutex is used to serialize access to the shared buffer,
-command handling, and message sequence number.
-
-All shared buffer, command handling, and message sequence updates are done
-within snp_send_guest_request(), so moving the mutex to this function is
-appropriate and maintains the critical section.
-
-Since the mutex is now taken at a later point in time, remove the lockdep
-checks that occur before taking the mutex.
+Instead of calling get_secrets_page(), which parses the CC blob every time
+to get the secrets page physical address (secrets_pa), save the secrets
+page physical address during snp_init() from the CC blob. Since
+get_secrets_page() is no longer used, remove the function.
 
 Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
 Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Link: https://lore.kernel.org/r/20241009092850.197575-6-nikunj@amd.com
+Link: https://lore.kernel.org/r/20241009092850.197575-4-nikunj@amd.com
 ---
- drivers/virt/coco/sev-guest/sev-guest.c | 35 +++++-------------------
- 1 file changed, 8 insertions(+), 27 deletions(-)
+ arch/x86/coco/sev/core.c | 51 ++++++++-------------------------------
+ 1 file changed, 11 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
-index 2a1b542..1bddef8 100644
---- a/drivers/virt/coco/sev-guest/sev-guest.c
-+++ b/drivers/virt/coco/sev-guest/sev-guest.c
-@@ -345,6 +345,14 @@ static int snp_send_guest_request(struct snp_guest_dev *snp_dev, struct snp_gues
- 	u64 seqno;
- 	int rc;
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index ff19e80..af50a38 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -92,6 +92,9 @@ static struct ghcb *boot_ghcb __section(".data");
+ /* Bitmap of SEV features supported by the hypervisor */
+ static u64 sev_hv_features __ro_after_init;
  
-+	guard(mutex)(&snp_cmd_mutex);
++/* Secrets page physical address from the CC blob */
++static u64 secrets_pa __ro_after_init;
 +
-+	/* Check if the VMPCK is not empty */
-+	if (is_vmpck_empty(snp_dev)) {
-+		dev_err_ratelimited(snp_dev->dev, "VMPCK is disabled\n");
-+		return -ENOTTY;
-+	}
+ /* #VC handler runtime per-CPU data */
+ struct sev_es_runtime_data {
+ 	struct ghcb ghcb_page;
+@@ -695,45 +698,13 @@ void noinstr __sev_es_nmi_complete(void)
+ 	__sev_put_ghcb(&state);
+ }
+ 
+-static u64 __init get_secrets_page(void)
+-{
+-	u64 pa_data = boot_params.cc_blob_address;
+-	struct cc_blob_sev_info info;
+-	void *map;
+-
+-	/*
+-	 * The CC blob contains the address of the secrets page, check if the
+-	 * blob is present.
+-	 */
+-	if (!pa_data)
+-		return 0;
+-
+-	map = early_memremap(pa_data, sizeof(info));
+-	if (!map) {
+-		pr_err("Unable to locate SNP secrets page: failed to map the Confidential Computing blob.\n");
+-		return 0;
+-	}
+-	memcpy(&info, map, sizeof(info));
+-	early_memunmap(map, sizeof(info));
+-
+-	/* smoke-test the secrets page passed */
+-	if (!info.secrets_phys || info.secrets_len != PAGE_SIZE)
+-		return 0;
+-
+-	return info.secrets_phys;
+-}
+-
+ static u64 __init get_snp_jump_table_addr(void)
+ {
+ 	struct snp_secrets_page *secrets;
+ 	void __iomem *mem;
+-	u64 pa, addr;
+-
+-	pa = get_secrets_page();
+-	if (!pa)
+-		return 0;
++	u64 addr;
+ 
+-	mem = ioremap_encrypted(pa, PAGE_SIZE);
++	mem = ioremap_encrypted(secrets_pa, PAGE_SIZE);
+ 	if (!mem) {
+ 		pr_err("Unable to locate AP jump table address: failed to map the SNP secrets page.\n");
+ 		return 0;
+@@ -2273,6 +2244,11 @@ bool __head snp_init(struct boot_params *bp)
+ 	if (!cc_info)
+ 		return false;
+ 
++	if (cc_info->secrets_phys && cc_info->secrets_len == PAGE_SIZE)
++		secrets_pa = cc_info->secrets_phys;
++	else
++		return false;
 +
- 	/* Get message sequence and verify that its a non-zero */
- 	seqno = snp_get_msg_seqno(snp_dev);
- 	if (!seqno)
-@@ -401,8 +409,6 @@ static int get_report(struct snp_guest_dev *snp_dev, struct snp_guest_request_io
- 	struct snp_guest_req req = {};
- 	int rc, resp_len;
+ 	setup_cpuid_table(cc_info);
  
--	lockdep_assert_held(&snp_cmd_mutex);
+ 	svsm_setup(cc_info);
+@@ -2469,16 +2445,11 @@ static struct platform_device sev_guest_device = {
+ static int __init snp_init_platform_device(void)
+ {
+ 	struct sev_guest_platform_data data;
+-	u64 gpa;
+ 
+ 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+ 		return -ENODEV;
+ 
+-	gpa = get_secrets_page();
+-	if (!gpa)
+-		return -ENODEV;
 -
- 	if (!arg->req_data || !arg->resp_data)
- 		return -EINVAL;
+-	data.secrets_gpa = gpa;
++	data.secrets_gpa = secrets_pa;
+ 	if (platform_device_add_data(&sev_guest_device, &data, sizeof(data)))
+ 		return -ENODEV;
  
-@@ -449,8 +455,6 @@ static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_reque
- 	/* Response data is 64 bytes and max authsize for GCM is 16 bytes. */
- 	u8 buf[64 + 16];
- 
--	lockdep_assert_held(&snp_cmd_mutex);
--
- 	if (!arg->req_data || !arg->resp_data)
- 		return -EINVAL;
- 
-@@ -501,8 +505,6 @@ static int get_ext_report(struct snp_guest_dev *snp_dev, struct snp_guest_reques
- 	int ret, npages = 0, resp_len;
- 	sockptr_t certs_address;
- 
--	lockdep_assert_held(&snp_cmd_mutex);
--
- 	if (sockptr_is_null(io->req_data) || sockptr_is_null(io->resp_data))
- 		return -EINVAL;
- 
-@@ -598,15 +600,6 @@ static long snp_guest_ioctl(struct file *file, unsigned int ioctl, unsigned long
- 	if (!input.msg_version)
- 		return -EINVAL;
- 
--	mutex_lock(&snp_cmd_mutex);
--
--	/* Check if the VMPCK is not empty */
--	if (is_vmpck_empty(snp_dev)) {
--		dev_err_ratelimited(snp_dev->dev, "VMPCK is disabled\n");
--		mutex_unlock(&snp_cmd_mutex);
--		return -ENOTTY;
--	}
--
- 	switch (ioctl) {
- 	case SNP_GET_REPORT:
- 		ret = get_report(snp_dev, &input);
-@@ -628,8 +621,6 @@ static long snp_guest_ioctl(struct file *file, unsigned int ioctl, unsigned long
- 		break;
- 	}
- 
--	mutex_unlock(&snp_cmd_mutex);
--
- 	if (input.exitinfo2 && copy_to_user(argp, &input, sizeof(input)))
- 		return -EFAULT;
- 
-@@ -744,8 +735,6 @@ static int sev_svsm_report_new(struct tsm_report *report, void *data)
- 	man_len = SZ_4K;
- 	certs_len = SEV_FW_BLOB_MAX_SIZE;
- 
--	guard(mutex)(&snp_cmd_mutex);
--
- 	if (guid_is_null(&desc->service_guid)) {
- 		call_id = SVSM_ATTEST_CALL(SVSM_ATTEST_SERVICES);
- 	} else {
-@@ -880,14 +869,6 @@ static int sev_report_new(struct tsm_report *report, void *data)
- 	if (!buf)
- 		return -ENOMEM;
- 
--	guard(mutex)(&snp_cmd_mutex);
--
--	/* Check if the VMPCK is not empty */
--	if (is_vmpck_empty(snp_dev)) {
--		dev_err_ratelimited(snp_dev->dev, "VMPCK is disabled\n");
--		return -ENOTTY;
--	}
--
- 	cert_table = buf + report_size;
- 	struct snp_ext_report_req ext_req = {
- 		.data = { .vmpl = desc->privlevel },
 
