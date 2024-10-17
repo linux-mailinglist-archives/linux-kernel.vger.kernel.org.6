@@ -1,130 +1,139 @@
-Return-Path: <linux-kernel+bounces-370387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864949A2BCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:12:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A049A2BBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF101C247CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B551628571F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB471E00AD;
-	Thu, 17 Oct 2024 18:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DRXonbA/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396EC1E009E;
+	Thu, 17 Oct 2024 18:10:06 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988E71E0DEF
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BD31DFE23;
+	Thu, 17 Oct 2024 18:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729188642; cv=none; b=JsnDcge5Hcjcz6zF5S9O09ZC8KhLwQj+bszDDgUgCsgSmqiwg/yGMUSnEYX1e85bq5UPLiXti+ZIEQ/7mXTaodxKg6vxEBoYjUlWKSPp1MSdTCiqbOXAOQGhhZgaxoYw/FpKw1dRCSRWe+bbBpXpBXg4wBIxgpPHEvm4XcFhsG4=
+	t=1729188605; cv=none; b=XmkLg7/JJ5gBXbzn0U1qnGs2QeU51PXAE5dK46lKhyTByZgdV6N8xnjwcvUuETs86o/+fA+FIIoiUabgtYsGjEeDgV7JhjvuGgPkD1U/RNUE2IJeM8vLeZCxOZ9ElDMdZqv9x8y5joJJjhTQj6qVCdh6830vw9cazUhZFyih5q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729188642; c=relaxed/simple;
-	bh=R+KscOvjFDI0PCMVGhY2RPbaHmheKsBbuIVMcFt7Kkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DEjn5jGhtuOtEGKVxhSeGFEYV0QqCMK27d3A37aaQC6abQDLJpsCgRA1GJb0SZXlQkSv8oxBOR1k94w7gIunpzV1R68mUT5/l46qUNuR0V0twPJZDnzIurmfhHP7V29PXqvt4U9xzrw8PN9udY+k4IuUQfMfTJMi9OogY4ABjBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DRXonbA/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729188639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=etn9n3K2FYwhUv/6MyZmlU07gUzECo4F0FGdO4UaRjs=;
-	b=DRXonbA/mz/tMExseTt94sIEoM8IHxxo5RjtR6y1L5ktMD+gEfIphIT9fQiiXZbBJue+cE
-	WuuejlGJEwXixfogNbGrZGlBZdAVuVe7WY7XhYyp+IQ2qV2T+eLpU8Ai+dBOKfthcizB4n
-	FW3/Lr8p7SY20S2bkNgFyJKX7PCv4Tc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-88-5VWHVNujMmSyb77wIBdAsg-1; Thu,
- 17 Oct 2024 14:10:36 -0400
-X-MC-Unique: 5VWHVNujMmSyb77wIBdAsg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3957619560B4;
-	Thu, 17 Oct 2024 18:10:35 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.106])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 890F71956086;
-	Thu, 17 Oct 2024 18:10:32 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: kvalo@kernel.org,
-	jjohnson@kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: jtornosm@redhat.com,
-	stable@vger.kernel.org
-Subject: [PATCH v4 2/2] wifi: ath12k: fix warning when unbinding
-Date: Thu, 17 Oct 2024 20:07:32 +0200
-Message-ID: <20241017181004.199589-3-jtornosm@redhat.com>
-In-Reply-To: <20241017181004.199589-1-jtornosm@redhat.com>
-References: <20241017181004.199589-1-jtornosm@redhat.com>
+	s=arc-20240116; t=1729188605; c=relaxed/simple;
+	bh=p6dDb527zKgJkfX6fy3fRt1iEqOKlslWlGhN2D6QVRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=empQ0WIVGWLuIQs+wp/NfSfoHxfmpyXV/vHz636wdyMCjmVR4jhViJJ7AfbFdYJlcO1aVjgTg3oqW0NtOCPx7J/3q21VjD11vqPtmA6g9209V6WnJzBPuU9AsB15QCnFGR9GnJTWA5to5EX4aVYlpceOVnkV4FPkFyWjqVggQwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=44420 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1t1UwZ-00FcEm-9a; Thu, 17 Oct 2024 20:09:53 +0200
+Date: Thu, 17 Oct 2024 20:09:49 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Felix Fietkau <nbd@nbd.name>
+Cc: Eric Woudstra <ericwouds@gmail.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, bridge@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH RFC v1 net-next 00/12] bridge-fastpath and related
+ improvements
+Message-ID: <ZxFS7XBgFXsqUlkO@calendula>
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <9f9f3cf0-7a78-40f1-b8d5-f06a2d428210@blackwall.org>
+ <a07cadd3-a8ff-4d1c-9dca-27a5dba907c3@gmail.com>
+ <0b0a92f2-2e80-429c-8fcd-d4dc162e6e1f@nbd.name>
+ <137aa23a-db21-43c2-8fb0-608cfe221356@gmail.com>
+ <a7ab80d5-ff49-4277-ba73-db46547a8a8e@nbd.name>
+ <d7d48102-4c52-4161-a21c-4d5b42539fbb@gmail.com>
+ <b5739f78-9cd5-4fd0-ae63-d80a5a37aaf0@nbd.name>
+ <ZxEFdX1uoBYSFhBF@calendula>
+ <eb9006ae-4ded-4249-ad0e-cf5b3d97a4cb@nbd.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <eb9006ae-4ded-4249-ad0e-cf5b3d97a4cb@nbd.name>
+X-Spam-Score: -1.9 (-)
 
-If there is an error during some initialization related to firmware,
-the buffers dp->tx_ring[i].tx_status are released.
-However this is released again when the device is unbinded (ath12k_pci),
-and we get:
-WARNING: CPU: 0 PID: 2098 at mm/slub.c:4689 free_large_kmalloc+0x4d/0x80
-Call Trace:
-free_large_kmalloc
-ath12k_dp_free
-ath12k_core_deinit
-ath12k_pci_remove
-...
+On Thu, Oct 17, 2024 at 07:06:51PM +0200, Felix Fietkau wrote:
+> On 17.10.24 14:39, Pablo Neira Ayuso wrote:
+> > On Thu, Oct 17, 2024 at 11:17:09AM +0200, Felix Fietkau wrote:
+> > [...]
+> > > By the way, based on some reports that I received, I do believe that the
+> > > existing forwarding fastpath also doesn't handle roaming properly.
+> > > I just didn't have the time to properly look into that yet.
+> > 
+> > I think it should work for the existing forwarding fastpath.
+> > 
+> > - If computer roams from different port, packets follow classic path,
+> >    then new flow entry is created. The flow old entry expires after 30
+> >    seconds.
+> > - If route is stale, flow entry is also removed.
+> > 
+> > Maybe I am missing another possible scenario?
+> 
+> I'm mainly talking about the scenario where a computer moves to a different
+> switch port on L2 only, so all routes remain the same.
+> 
+> I haven't fully analyzed the issue, but I did find a few potential issues
+> with what you're describing.
+> 
+> 1. Since one direction remains the same when a computer roams, a new flow
+> entry would probably fail to be added because of an existing entry in the
+> flow hash table.
 
-The issue is always reproducible from a VM because the MSI addressing
-initialization is failing.
+I don't think so, hash includes iifidx.
 
-In order to fix the issue, just set the buffers to NULL after releasing in
-order to avoid the double free.
+> 2. Even with that out of the way, the MTK hardware offload currently does
+> not support matching the incoming switch/ethernet port.
+> So even if we manage to add an updated entry, the old entry could still be
+> kept alive by the hardware.
 
-cc: stable@vger.kernel.org
-Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
-Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
----
-v4:
-  - Send with cover letter to get reference with 1/2
-v3: https://lore.kernel.org/linux-wireless/20241017074854.176765-1-jtornosm@redhat.com/
-v2: https://lore.kernel.org/linux-wireless/20241016123722.206899-1-jtornosm@redhat.com/
-v1: https://lore.kernel.org/linux-wireless/20241010175102.207324-3-jtornosm@redhat.com/
+OK, that means probably driver needs to address the lack of iifidx in
+the matching by dealling with more than one single flow entry to point
+to one single hardware entry (refcounting?).
 
- drivers/net/wireless/ath/ath12k/dp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> The issues I found probably wouldn't cause connection hangs in pure L3
+> software flow offload, since it will use the bridge device for xmit instead
+> of its members. But since hardware offload needs to redirect traffic to
+> individual bridge ports, it could cause connection hangs with stale flow
+> entries.
 
-diff --git a/drivers/net/wireless/ath/ath12k/dp.c b/drivers/net/wireless/ath/ath12k/dp.c
-index 789d430e4455..15061782a2df 100644
---- a/drivers/net/wireless/ath/ath12k/dp.c
-+++ b/drivers/net/wireless/ath/ath12k/dp.c
-@@ -1277,8 +1277,10 @@ void ath12k_dp_free(struct ath12k_base *ab)
- 
- 	ath12k_dp_rx_reo_cmd_list_cleanup(ab);
- 
--	for (i = 0; i < ab->hw_params->max_tx_ring; i++)
-+	for (i = 0; i < ab->hw_params->max_tx_ring; i++) {
- 		kfree(dp->tx_ring[i].tx_status);
-+		dp->tx_ring[i].tx_status = NULL;
-+	}
- 
- 	ath12k_dp_rx_free(ab);
- 	/* Deinit any SOC level resource */
--- 
-2.47.0
+I would not expect a hang, packets will just flow over classic path
+for a little while for the computer that is roaming until the new flow
+entry is added.
 
+> There might be other issues as well, but this is what I could come up with
+> on short notice. I think in order to properly address this, we should
+> probably monitor for FDB / neigh entry changes somehow and clear affected
+> flows.
+>
+> Routes do not become stale in my scenario, so something else is needed to
+> trigger flow entry removal.
+
+Yes. In case letting expire stale flow entries with old iifidx is not enough
+some other mechanism could be required.
 
