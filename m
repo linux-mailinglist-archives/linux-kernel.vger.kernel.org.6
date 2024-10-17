@@ -1,95 +1,111 @@
-Return-Path: <linux-kernel+bounces-370740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A83A9A317B
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:43:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADDF9A317E
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7B3284099
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64E71C22662
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6BC20E31F;
-	Thu, 17 Oct 2024 23:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F83200B87;
+	Thu, 17 Oct 2024 23:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GSM+OHL2"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="iuPnIaGl"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3237220E311;
-	Thu, 17 Oct 2024 23:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2927920E32B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 23:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729208611; cv=none; b=qqHlgUL4qEFf2MWmyBaNbXxTx5IAd5KiF6Qqjxnu06Ty54/JlQojvGJ2pu6r4HqihKzFZ8HijpHfvHPYE4hqHLllyjhkGk+Dnzi3tQcKlNDVSFIkaQyNKXfA6/1t73GDX9mzwlu4ZDVawYppqUMRE3i63LSuIYTMIdXxpuiJx5k=
+	t=1729209136; cv=none; b=tQFQ4nNogxN37Lpc8Nn3uceiZKIy4oGkFG1dDV1cFShyBybGoTn1EJ27UI9ShqUQvP07TnDGAoUA0F/G7CEv4vEEOw5y6vhQLOtjM8TDI2f7QN00eAX5YvmLQovV29Gr9ZlMc5ajO4SNhV2qTYoRPJR1pEIl442zXgmL2b/XMto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729208611; c=relaxed/simple;
-	bh=1X9PC7KoiVBI/mKYBP5pNpvUQKGfJI+roeb2GbxIyhw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OBUK16kYH37zaQLwGY15JV7XE1KQkmT/JF3Ru1mFLyBc9GUdhXzyNwvbXy/jPT7aHQ24g6OfXkmCuzgi0SAzORJgxh2VLuyzOFuXTe2604YpqUlomzckebPIyzBjrRbQHsNCmXcRxOPgvSPLvrR8to8O9oELABZdyeLyTshaJqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GSM+OHL2; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729208607; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=RDj4nTr6XNbe5Did2q3jGXNNdj/6CTLt9n7Mq4fQxEQ=;
-	b=GSM+OHL2S290XmoALP8KprFxJRgSmtM4DLWIDIvlRKub5eLg12cy1Lj1gpLkOayTK/vUGwbFnrXAor7gmswCQevjc0DC1mDrbpmRf4QJ8Fz/THt8j5xXKCZ4IgRaiEVhlXVYz8GDnhEvlm21e2K4H1bGj0t7YcgSHXVhGYWYtf0=
-Received: from 30.246.161.56(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WHLxoXR_1729208603 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 18 Oct 2024 07:43:25 +0800
-Message-ID: <9a66303e-f8fb-4c66-a7ab-d28e03982f32@linux.alibaba.com>
-Date: Fri, 18 Oct 2024 07:43:23 +0800
+	s=arc-20240116; t=1729209136; c=relaxed/simple;
+	bh=9AjUVLR8MvWk4PK7NdFZY960SUOBguDwGZJFV9WHZqE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jyS3vIG/VdmM916DSqNxSrTixQ/38za3B5RyTKropxiO1SULnnYovSGWFHnzJxPv1EX3REHwvetiwGbC7lb/s4ZrT9cSPyFPcjHNZyN155K1+ryMAzi3cs4eOuixaqqS93SYahP4ETW/NDfTIQ+bS/hv+1KEFs99EJ0YDOKBmyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=iuPnIaGl; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id AEAE82C04CE;
+	Fri, 18 Oct 2024 12:52:10 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1729209130;
+	bh=9AjUVLR8MvWk4PK7NdFZY960SUOBguDwGZJFV9WHZqE=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=iuPnIaGl464GVfK4j/dBfXXYJC821hE/zxSVSYwelbjQEy3xXolJ7qO0gTEdAtw9Q
+	 XRz79zBOzTgE+5V0UbY/I9xEZ6f5VwimEEksj9wLD5nBhnG2Iqy/igjD4pfJjcho7B
+	 v7eNnBq3x6/3wJAsH12F++ASaz49WPZWItidqoaVBA10thTEZgZVjDFhkuYXn9vM0J
+	 TDtEJY94UKLRLTANexUVRJAP20UWJ8pNduQduOOqijKXJFC2GZEAJ5gPv7zSfdv106
+	 6do3ZSozkp4sWr8ex/7ZdgMNT2kJxdG9Cc6p3u5wIpi+Pxx3+BQm04JDsXbuAmhDbC
+	 ZBlAHynrbAQaA==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6711a32a0001>; Fri, 18 Oct 2024 12:52:10 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 18 Oct 2024 12:52:10 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Fri, 18 Oct 2024 12:52:10 +1300
+From: Paul Davey <Paul.Davey@alliedtelesis.co.nz>
+To: "daniel@makrotopia.org" <daniel@makrotopia.org>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"andrew@lunn.ch" <andrew@lunn.ch>
+Subject: Re: [PATCH net-next] net: phy: aquantia: Add mdix config and
+ reporting
+Thread-Topic: [PATCH net-next] net: phy: aquantia: Add mdix config and
+ reporting
+Thread-Index: AQHbIDd1vnPqHtWCDUqpqXlBKr+obbKJ/EYAgADIhgA=
+Date: Thu, 17 Oct 2024 23:52:10 +0000
+Message-ID: <4e8d02f84d1ae996f6492f9c53bf90a6cc6ad32e.camel@alliedtelesis.co.nz>
+References: <20241017015407.256737-1-paul.davey@alliedtelesis.co.nz>
+	 <ZxD69GqiPcqOZK2w@makrotopia.org>
+In-Reply-To: <ZxD69GqiPcqOZK2w@makrotopia.org>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3DED75AD1D39864F8812A0CB2C79E165@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 2/3] mm: memory-failure: move return value
- documentation to function declaration
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
- robin.murphy@arm.com, bp@alien8.de, rafael@kernel.org,
- wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
- tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
- james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
- will@kernel.org, jarkko@kernel.org, linux-acpi@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20241014084240.18614-3-xueshuai@linux.alibaba.com>
- <20241017104156.00000f83@Huawei.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241017104156.00000f83@Huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=6711a32a a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=3pNRdvVr4ggA:10 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=qgHlcU04hhCE_JbFRl0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-
-
-在 2024/10/17 17:41, Jonathan Cameron 写道:
-> On Mon, 14 Oct 2024 16:42:39 +0800
-> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
-> 
->> Part of return value comments for memory_failure() were originally
->> documented at the call site. Move those comments to the function
->> declaration to improve code readability and to provide developers with
->> immediate access to function usage and return information.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Seems sensible.
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-
-Thanks.
-
-Best Regards,
-Shuai
+T24gVGh1LCAyMDI0LTEwLTE3IGF0IDEyOjU0ICswMTAwLCBEYW5pZWwgR29sbGUgd3JvdGU6DQo+
+IE9uIFRodSwgT2N0IDE3LCAyMDI0IGF0IDAyOjU0OjA3UE0gKzEzMDAsIFBhdWwgRGF2ZXkgd3Jv
+dGU6DQo+ID4gQWRkIHN1cHBvcnQgZm9yIGNvbmZpZ3VyaW5nIE1ESS1YIHN0YXRlIG9mIFBIWS4N
+Cj4gPiBBZGQgcmVwb3J0aW5nIG9mIHJlc29sdmVkIE1ESS1YIHN0YXRlIGluIHN0YXR1cyBpbmZv
+cm1hdGlvbi4NCj4gDQo+ID4gWy4uLl0NCj4gPiArc3RhdGljIGludCBhcXJfc2V0X3BvbGFyaXR5
+KHN0cnVjdCBwaHlfZGV2aWNlICpwaHlkZXYsIGludA0KPiA+IHBvbGFyaXR5KQ0KPiANCj4gInBv
+bGFyaXR5IiBpcyBub3QgdGhlIHJpZ2h0IHRlcm0gaGVyZS4gVGhpcyBpcyBub3QgYWJvdXQgdGhl
+IHBvbGFyaXR5DQo+IG9mIGNvcHBlciBwYWlycywgYnV0IHJhdGhlciBhYm91dCBwYWlycyBiZWlu
+ZyBzd2FwcGVkLg0KPiBQbGVhc2UgbmFtZSB0aGUgZnVuY3Rpb24gYWNjb3JkaW5nbHksIGVnLiBh
+cXJfc2V0X21kaXgoKS4NCg0KSSB3aWxsIGZpeCB0aGUgbmFtZSBpbiB0aGUgbmV4dCB2ZXJzaW9u
+Lg0KDQo+IFsuLi5dDQo+IEFjY29yZGluZyB0byB0aGUgZGF0YXNoZWV0IHRoZSBNREkvTURJLVgg
+aW5kaWNhdGlvbiBzaG91bGQgb25seSBiZQ0KPiBpbnRlcnByZXRlZCB3aGVuIGF1dG9uZWdvdGlh
+dGlvbiBoYXMgY29tcGxldGVkLg0KPiBIZW5jZSB0aGlzIGNhbGwgc2hvdWxkIGJlIHByb3RlY3Rl
+ZCBieSBnZW5waHlfYzQ1X2FuZWdfZG9uZShwaHlkZXYpDQo+IGFuZA0KPiBwaHlkZXYtPm1kaXgg
+c2V0IHRvIEVUSF9UUF9NRElfSU5WQUxJRCBpbiBjYXNlIGF1dG8tbmVnb3RpYXRpb24NCj4gaGFz
+bid0DQo+IGNvbXBsZXRlZC4NCg0KSSB3aWxsIGFkZCBhIGd1YXJkIGJ5IHRoaXMuICBJIGRpZCBz
+b21lIHRlc3RpbmcgYmVjYXVzZSBJIHdhcyBjb25jZXJuZWQNCndpdGggd2hhdCB0aGUgYmVoYXZp
+b3VyIGlzIHdoZW4gZGlzYWJsaW5nIGF1dG8tbmVnb3RpYXRpb24sIGFuZCBoYXZlDQpjb25jbHVk
+ZWQgdGhhdCBhdXRvIE1ESS9NREktWCBkZXRlY3Rpb24gZG9lcyBub3Qgb2NjdXIgaWYgYXV0by1u
+ZWdvdGlvbg0KaXMgZGlzYWJsZWQuDQoNCkR1ZSB0byB0aGlzIEkgd29uZGVyIHdoZXRoZXIgdGhl
+IG1kaXggY29uZmlndXJhdGlvbiBzaG91bGQgcmVqZWN0DQpFVEhfVFBfTURJX0FVVE8gaWYgYXV0
+by1uZWdvdGlhdGlvbiBpcyBkaXNhYmxlZD8NCg0KPiBbLi4uXQ0KPiA+IA0KDQo=
 
