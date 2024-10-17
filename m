@@ -1,136 +1,84 @@
-Return-Path: <linux-kernel+bounces-370559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB6C9A2E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:31:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0999A2E86
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19315283002
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60D31F23902
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2040D17C9F8;
-	Thu, 17 Oct 2024 20:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB6A227B83;
+	Thu, 17 Oct 2024 20:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FD02RFCz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7g0R1p1U"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S3AzDsum";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NLjcOdra"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9048E17BEC8;
-	Thu, 17 Oct 2024 20:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F59F17BEC8
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729197111; cv=none; b=udzY5c/zJzw/3PqdaZym7toFfsprAKtPmbEx+TaUHgoecQI17yvv2I233lhEgI+ub7h/2+ecjbDJNGpnXM26928Zw+u+GVofYyq1WC/FxwZlx1Y1zFRn8NXGASjRTFawztKf/ye7dffI48OD32+LHpp/yMVbiUFiyGpDMPniZyI=
+	t=1729197189; cv=none; b=cx040hJLRI0/TlBITAfnDK9/MnKBuWaF9euFHwsH72YR91DVHqk+WvjTsVM7MMbJpgVb3RDAoO5A03/HTKz1FSBi74F7N49uFcvkVzZmaLU6CnPTd2fqe5TnSvklzQSlF3UhBgTDlm4jBOKa7IC9Tk7xa3Duj2v+Vl1LQcv92/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729197111; c=relaxed/simple;
-	bh=BdoDePqd/76KbiMN5yIWSOPyuTWeVihx4HVEpxW4AsQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=HL+zqXYB3tdlERXZBJld2mw1/vAzbAnC/M2zFECfixF0BO+gfMqnm0DRRj4XOKWCgkuuWcnDGQF4UACxeKhYkt+Jw0UT1Pg6T1d9IGIFdTxK7rOISkkldMVYC3GlwYmhfMud5GSfg8peJGr/ZGN+YMfJTyYqsPbaSTV0IE0zqzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FD02RFCz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7g0R1p1U; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1729197189; c=relaxed/simple;
+	bh=JDCz4V69DXTr+Md5nBN360MplX4h1sd8ZElhnRZzVIg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PR6ziW8S7HYNEE838VbSaJW8Dl1dzyCjNhwXl67ga73cNMoWcbsL5mzAGo0w/edFLwLEsPoDDtBNSFOfW4J74tiVhcEVQh5hFmeCZaQWbpXO+234JsTcnvwwXSJZzFCK10o95AX0YE2bZ+iN4GVJnN98A5IynSqpwKOEyXp/w+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S3AzDsum; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NLjcOdra; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 17 Oct 2024 22:31:39 +0200 (GMT+02:00)
+From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729197103;
+	s=2020; t=1729197182;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BdoDePqd/76KbiMN5yIWSOPyuTWeVihx4HVEpxW4AsQ=;
-	b=FD02RFCzdm8a0+VmZu6N2ziW8VL+XtRquCFZKg0CX/jX1IOXVdIs+FiFWMEqYVJ9DOdxqI
-	2YHDsPMtrDcRlMs0qCt/cx+yqyhg9EWka+hCWYIefQVD63ncNBkdN42OVJN9lvzknAX48P
-	yGgZSmMwaDFEntIeCZHnbwU4IgJioSvlVJuRRb1v0k7koQ3s+6Wwz86SS41HhY58V2bJme
-	xPXuMuYshPK4dRxkPncVc6CAKss5+u8/ODVZgaqaFxQKYRx0A6nHCkXwB1dc7T0AdpAF1y
-	Afj7rgbTAdwTazncwJZnZlrfVjFrGfy9jrbsseg9bEo3GEsNSwrC4HCqtmE20Q==
+	bh=0fzNHxfo5C+op4LlDhECvnWdn7IDtTi4f0FYMN7PP2E=;
+	b=S3AzDsumvE0ST9d1k/dn1gg6LT+YHN/tv8zlpNvf620Mj8M71rRNKMZch1UJpR8I2yivko
+	B0e/BIqeyAQ9sMFxG2QIoqfsMI1tzTR/HKOCGijdiykZ+Lxq4URkrEu5xz8bHKpW1jclx+
+	3wmVAQBozZGrruqVnJ/aG3bTtoYkm1aIrhXTfyOUjQ65qx+d62tW8r+Ykw/mIP9xukU5Sz
+	FnXyN//ggzPl8kOqytnExm3mHF99sFMeC1TYKi3aHdD6bqkJcd9iFOjIhbgvuuH2kb7gVj
+	yZ7T4a65AKL2aaW72Mku24IkCnSMzX4hk37173OcoBicw8rYFvrU8nZkvqtzpQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729197103;
+	s=2020e; t=1729197182;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BdoDePqd/76KbiMN5yIWSOPyuTWeVihx4HVEpxW4AsQ=;
-	b=7g0R1p1U6RQw5dQCsv0tMx5NNC+WW4RxluVPeJiZIaYZVmTqJkjcYnR3UxDBhj7oqR31qw
-	IZ2vz4YQOE51dTCA==
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Message-ID: <3a49d3e2-2d76-458f-a0fd-fe52a413f376@linutronix.de>
-In-Reply-To: <878d5f26-ef05-44f4-93e8-01f66088c0cc@linuxfoundation.org>
-References: <20241014-kunit-loongarch-v1-0-1699b2ad6099@linutronix.de> <20241014-kunit-loongarch-v1-2-1699b2ad6099@linutronix.de> <878d5f26-ef05-44f4-93e8-01f66088c0cc@linuxfoundation.org>
-Subject: Re: [PATCH 2/4] kunit: qemu_configs: add LoongArch config
+	bh=0fzNHxfo5C+op4LlDhECvnWdn7IDtTi4f0FYMN7PP2E=;
+	b=NLjcOdraZkdwWae8G2SnkKfXT6hfZr9W9XImhuvGWoTe+28XhKnQ0i7P+Z+h6nSYxU9SJs
+	8aekMa4faPQcj+CA==
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, Zijun Hu
+ <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH] genirq/devres: Simplify API devm_free_irq() implementation
+In-Reply-To: <20241017-devres_kernel_fix-v1-1-4aa0d7c4fee4@quicinc.com>
+References: <20241017-devres_kernel_fix-v1-1-4aa0d7c4fee4@quicinc.com>
+Date: Thu, 17 Oct 2024 22:33:01 +0200
+Message-ID: <87y12m8o76.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <3a49d3e2-2d76-458f-a0fd-fe52a413f376@linutronix.de>
+Content-Type: text/plain
 
-Hi Shuah,
-
-Oct 17, 2024 22:27:29 Shuah Khan <skhan@linuxfoundation.org>:
-
-> On 10/14/24 05:36, Thomas Wei=C3=9Fschuh wrote:
->> Add a basic config to run kunit tests on LoongArch.
->> This requires QEMU 9.1.0 or later for the necessary direct kernel boot
->> support.
->> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->> ---
->> =C2=A0 tools/testing/kunit/qemu_configs/loongarch.py | 16 ++++++++++++++=
-++
->> =C2=A0 1 file changed, 16 insertions(+)
->> diff --git a/tools/testing/kunit/qemu_configs/loongarch.py b/tools/testi=
-ng/kunit/qemu_configs/loongarch.py
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..e7bb7c07819677dfdefac012=
-821a732555813cae
->> --- /dev/null
->> +++ b/tools/testing/kunit/qemu_configs/loongarch.py
+On Thu, Oct 17 2024 at 23:16, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 >
-> Missing SPDX-License-Identifier.
-
-Tue others configs don't have one either.
-
->> @@ -0,0 +1,16 @@
->> +from ..qemu_config import QemuArchParams
->> +
->> +QEMU_ARCH =3D QemuArchParams(linux_arch=3D'loongarch',
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 kconfig=3D'''
->> +CONFIG_EFI_STUB=3Dn
->> +CONFIG_PCI_HOST_GENERIC=3Dy
->> +CONFIG_SERIAL_8250=3Dy
->> +CONFIG_SERIAL_8250_CONSOLE=3Dy
->> +CONFIG_SERIAL_OF_PLATFORM=3Dy
->> +''',
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 qemu_arch=3D'loongarch64',
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 kernel_path=3D'arch/loongarch/boot/vmlinux.elf',
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 kernel_command_line=3D'console=3DttyS0',
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 extra_qemu_params=3D[
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 '-machine', 'virt=
-',
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 '-cpu', 'max',])
->>
+> Simplify devm_free_irq() implementation by dedicated API devres_release()
+> which have below advantages than current devres_destroy() + free_irq().
 >
-> Please send v2 with all the reviewed by tags. If there
-> is a resend 3.4 and 4/4 in this series, send them.
+> It is simpler if devm_free_irq() is undoing what any devm_request_irq()
+> variant did, otherwise, it can avoid wrong and undesired free_irq().
 
-I'll do that. But it will take some weeks, as I just went on vacation.
+This is confusing at best. What's the wrong an undesired free_irq()?
 
-Thomas
+Thanks,
+
+        tglx
 
