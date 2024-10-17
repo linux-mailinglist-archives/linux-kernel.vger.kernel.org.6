@@ -1,340 +1,228 @@
-Return-Path: <linux-kernel+bounces-369114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038679A1919
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:06:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6379A18F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654F1B23624
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A1B1C22529
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F097E575;
-	Thu, 17 Oct 2024 03:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9097E101;
+	Thu, 17 Oct 2024 03:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="et5cHCHT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="iXIvJ4Jy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L9Cg9s/D"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9F017E46E;
-	Thu, 17 Oct 2024 03:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E9D29405;
+	Thu, 17 Oct 2024 03:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729134282; cv=none; b=pJh01+RrB3D4NV1/lV86pGrrCYvBhvMK6P/YRxUbg/vIPW50UdZjU5WEGNLtO97NLdvyMpF9ZMZnc28NFhb8DGRxho+L78lgUztsejtfrdCJRrCBKUqaUTGMcHA6qyFSmEOCn0SoKuh7LwxjYqUthfc4SGkOL2ZuKRs+6P6YcCs=
+	t=1729134274; cv=none; b=Zss+EmuKrySFXrGZfuOr5buLtf/Bnwk+ksdFGKQzptfq3VovSr3IKuhFkSMFI2n7ZA68hCuw3FUkGf4A2/tESpCmDkskXj4VHkLFGdBj82D7Cp++JM6jYj155dxG80FHpi92/KcQ8MdiPtcDW/6u2/VHDh+pGv/QLcBRghv7IGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729134282; c=relaxed/simple;
-	bh=eBFW8CfQ3gEDPL7ZftKPyZ/FKbZzXRdT+yLK3E1jol0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vGd12qDeKvhO17urW9ry+d5C4vEiw6FloGNoTZ10UY2oStDqM1aHWewKFR0u7Q78ma+gtVfWphw5Et183ZEfE3nP5uU/XjUA2UL39JBKNL84dwfurNBLUUIHeY4u1MM407zFzWvYdSBrvujPVBg00VwKy6hmYQKsZLSkIlhrCHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=et5cHCHT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GIoWCe011837;
-	Thu, 17 Oct 2024 03:04:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=ksjmpu+gP6F
-	6t3NW+fwH7MutOFcoJ/x3YG3lGuhFixw=; b=et5cHCHTlBgcDQJG0TKTEjU74tW
-	hAoJwziJ2sk180Zz185Io7eYSyn5eTk1RM0OcB0p/mAnD/FvC9xeicmZNRHej0Cz
-	VRzmQqy/MeqTEe0Ew87R21PHCqhTsxPxF+94mz4MMfpllRZmlk5ZS938micUdQFm
-	x8vhfB8hhRN6NyE0D0iT979MCKeL2oCxdmfkciFY0AOKBTp+TlP9JQPIr0WClZW0
-	akwLSI93jVMT5kKgVGQF5eClpjiNf34atdChhZF/icaKMMmmJP0AOx3ULDa7bZnW
-	XvMySEPcwsLkrqd9zKMzZrPyt/FBSL16LaVXcpQp3YWO0+0GelnfUwd7DLw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42abm5jhqd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 03:04:22 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA05.qualcomm.com [127.0.0.1])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49H34JWW028360;
-	Thu, 17 Oct 2024 03:04:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 42aj55ku18-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 03:04:21 +0000
-Received: from NALASPPMTA05.qualcomm.com (NALASPPMTA05.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49H301hi021671;
-	Thu, 17 Oct 2024 03:04:21 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
-	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 49H34L1A028403
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 03:04:21 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
-	id 164CB650; Wed, 16 Oct 2024 20:04:21 -0700 (PDT)
-From: Qiang Yu <quic_qianyu@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-        quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, johan+linaro@kernel.org,
-        Qiang Yu <quic_qianyu@quicinc.com>
-Subject: [PATCH v7 7/7] arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
-Date: Wed, 16 Oct 2024 20:04:12 -0700
-Message-Id: <20241017030412.265000-8-quic_qianyu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241017030412.265000-1-quic_qianyu@quicinc.com>
-References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1729134274; c=relaxed/simple;
+	bh=f4PJRLR/2fRgB4+Uq05RONoLYT4kehQXApRxwEsEiHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7isiSIhKyOfliLn2Y1pjb9AYuHDuzAbtAJnEM/mVhanxl0jHDMLCze2tYgotR1f4WiJ9nUa2wcCyLxhKrB+GofumfubLtVIqc0chqT/N0BLFBwe4felCvvcPqs9Rak3cOfpN5NcSk110WJF2xAf5GNRgyRdjoyf29hS86cQ8vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=iXIvJ4Jy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L9Cg9s/D; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 207B2114017E;
+	Wed, 16 Oct 2024 23:04:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Wed, 16 Oct 2024 23:04:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1729134270;
+	 x=1729220670; bh=EFckjBgGmy34eVKuGSlvBNUk1hLb5Yr8WVXfUlVn8BU=; b=
+	iXIvJ4JyZVFzxcRvmifpF1tP0Wmy0LOzjlLJlaQaQAnDwqpzHVukzH82ijDt36lf
+	zZygntsKq4H0Jp3kVzxTW2UXwCBliRjrcYFq9hS1xgSMP1ra3w1Ha6mUPnx5nsT4
+	bksuZhnzEdG2KwriQfuGG1uFvS5bBA1LgdpVJ/l+wGrvhcl6BzbK/+F18TG1tkpq
+	MMO3D0dHliS9fliXQnOUdLI+xpnPC83QdYzOWDUSFE3GaNox1jIR7LCOmR9fQ+1O
+	soYOQVUsTOTJEF1uj2GlPpUNbqgrbIbdAhiAj2q3i0PpfSDUxxaS4B+JkHWIpWyw
+	53i3tOUe3L1d4bvOhiOFNQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729134270; x=
+	1729220670; bh=EFckjBgGmy34eVKuGSlvBNUk1hLb5Yr8WVXfUlVn8BU=; b=L
+	9Cg9s/DIcofGUVDtGjYlDVNAsecduxsOxQPFNVHW7wg2niw0LV1xux7Ui1GXIJqe
+	0jgAKY5c/KEcAOoMi9gh1ByrWbqPVPndkFFmmfBaUle3wwz3zc5oSRBQih2WaDP4
+	FphR1KGxSsDvh8l502r44R9dmpP+4vrGI4y+/Vbe97fSKi4IuENssIywO7o/2lYT
+	GT3fFuhNrSM76IhUw2riw4NF2ypQBqrX0RfGr99Bse9QtkBBr3CwU2sujFJRsVvq
+	MGeNjaxs/dwjQ5HnUwLpunW+GhkDwpCHpbHxuMPdwItvL3+SumV6MJEqrukvFf6W
+	fa2zOj0Y0L2L255HTh67g==
+X-ME-Sender: <xms:vX4QZ6rThT3hdFcDly4nSvNzqlQEcRZHLDHkAk23JT15WaWk6i6g3A>
+    <xme:vX4QZ4r300K0AtljHgxtqnQ-l7raqbGv6YyyJxp5pUmo0QW6HyZuDKpxr10J5e3aD
+    SOcc8vYZNBhq7ciGak>
+X-ME-Received: <xmr:vX4QZ_O5Pruv93vTqy-da-nRK7dycO0_m6xQpSDkpc_nhTdz-w6gaUoKi8UV-tcxdke3LLO-Xip6Oj-cVoIVtAezZUk2>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehtddgieeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
+    gggtugfgjgesthekredttddtjeenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
+    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepheeigeet
+    tdegvddvieejjeegiefgtddugfeiieekieegjedvtdehteevffelhedtnecuffhomhgrih
+    hnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpdhgnhhurdhorhhgnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlse
+    hjfhgrrhhrrdgttgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhgvvghsse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhorhhsthgvnhdrsghluhhmsehtohgs
+    lhhugidrtghomhdprhgtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuh
+    igrdguvghvpdhrtghpthhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhu
+    gidruggvvhdprhgtphhtthhopehlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhr
+    gh
+X-ME-Proxy: <xmx:vX4QZ57qrH_-8Js7q1bAfXkb5wm_jbFCBogrMVGpx7cHEddAfoyu1A>
+    <xmx:vX4QZ56dVUFy39TsqzQfGKKAtawlGg2T43JfRyKH7ohmXAt-priStw>
+    <xmx:vX4QZ5isno_GRzq_tyPWDwXxtup9agGHJD5eL-Hnl3pLAdWYKs_F2w>
+    <xmx:vX4QZz6eXRSFWOMEPD2cYbhl7TMo8ACo4yUkarKX3CybGE2O7GNsog>
+    <xmx:vn4QZ-HuaXHMa5Rit1UycTRV9V8nvCvNVLcpjLc1i8ii5G4K7hRxXSp7>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Oct 2024 23:04:28 -0400 (EDT)
+Date: Thu, 17 Oct 2024 05:04:26 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Bill Wendling <morbo@google.com>
+Cc: Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@toblux.com>,
+	kent.overstreet@linux.dev, regressions@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ardb@kernel.org
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <ZxB-uh1KzfD4ww2a@archlinux>
+References: <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
+ <Zv61dCaxScXuOjZg@archlinux>
+ <202410031424.45E5D19@keescook>
+ <Zv8RIs-htdc-PtXB@archlinux>
+ <202410040958.C19D3B9E48@keescook>
+ <ZwNb-_UPL9BPSg9N@archlinux>
+ <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
+ <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cTtxH9lpYaWT60EftiX-FzgVQLFh_two
-X-Proofpoint-GUID: cTtxH9lpYaWT60EftiX-FzgVQLFh_two
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1015 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170021
+In-Reply-To: <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
 
-Describe PCIe3 controller and PHY. Also add required system resources like
-regulators, clocks, interrupts and registers configuration for PCIe3.
+On 16 17:09:42, Bill Wendling wrote:
+> On Wed, Oct 16, 2024 at 4:41 PM Bill Wendling <morbo@google.com> wrote:
+> >
+> > On Sun, Oct 6, 2024 at 8:56 PM Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > > > I want to separate several easily confused issues. Instead of just
+> > > > saying __bdos, let's clearly refer to what calculation within bdos is
+> > > > being used. There are 3 choices currently:
+> > > > - alloc_size attribute
+> > > > - counted_by attribute
+> > > > - fallback to __bos (which is similar to sizeof(), except that FAMs are 0 sized)
+> > > >
+> > > > Additionally there are (for all intents and purposes) 2 size
+> > > > determinations to be made by __bos and __bdos, via argument 2:
+> > > > - containing object size (type 0) ("maximum size")
+> > > > - specific object size (type 1) ("minimum size")
+> > >
+> > > "maximum" vs "minimum" size would by type 0 vs type 2, but I think you
+> > > do mean type 0 and type 1 as those are the types currently used by
+> > > __struct_size and __member_size. Those are both "maximum" sizes.
+> > >
+> > > >
+> > > > For example, consider:
+> > > >
+> > > > struct posix_acl *acl = malloc(1024);
+> > > > acl->a_count = 1;
+> > > >
+> > > > what should these return:
+> > > >
+> > > >       __bos(acl, 0)
+> > > >       __bos(acl, 1)
+> > > >       __bdos(acl, 0)
+> > > >       __bdos(acl, 1)
+> > > >       __bos(acl->a_entries, 0)
+> > > >       __bos(acl->a_entries, 1)
+> > > >       __bdos(acl->a_entries, 0)
+> > > >       __bdos(acl->a_entries, 1)
+> > > >
+> > >
+> > Thank you for this detailed write-up! I'm sorry for my late response.
+> >
+> [snip]
+> >
+> > So in conclusion, if turning off the calculation for a pointer to the
+> > whole struct works, then I'm okay with it.
+> >
+> Here's a potential fix:
+> 
+>   https://github.com/llvm/llvm-project/pull/112636
 
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Here's the patch to disable __counted_by for clang < 19.1.3. I'll submit
+it properly when your PR is merged. I hope I got all the correct tags in
+there as there were multiple reports of these issues. Let me know if
+anything should be added, I'm new to the process.
+
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+Date: Thu, 17 Oct 2024 04:39:40 +0200
+Subject: [PATCH] Compiler Attributes: disable __counted_by for clang < 19.1.3
+
+This patch disables __counted_by for clang versions < 19.1.3 because of
+two issues.
+
+1. clang versions < 19.1.2 have a bug that can lead to __bdos returning 0:
+https://github.com/llvm/llvm-project/pull/110497
+
+2. clang versions < 19.1.3 have a bug that can lead to __bdos being off by 4:
+https://github.com/llvm/llvm-project/pull/112636
+
+Cc: stable@vger.kernel.org
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202409260949.a1254989-oliver.sang@intel.com
+Link: https://lore.kernel.org/all/Zw8iawAF5W2uzGuh@archlinux/T/#m204c09f63c076586a02d194b87dffc7e81b8de7b
+Signed-off-by: Jan Hendrik Farr <kernel@jfarr.cc>
 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 204 ++++++++++++++++++++++++-
- 1 file changed, 203 insertions(+), 1 deletion(-)
+ include/linux/compiler_attributes.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index a36076e3c56b..c615c930cf0c 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -744,7 +744,7 @@ gcc: clock-controller@100000 {
- 
- 			clocks = <&bi_tcxo_div2>,
- 				 <&sleep_clk>,
--				 <0>,
-+				 <&pcie3_phy>,
- 				 <&pcie4_phy>,
- 				 <&pcie5_phy>,
- 				 <&pcie6a_phy>,
-@@ -2907,6 +2907,208 @@ mmss_noc: interconnect@1780000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		pcie3: pcie@1bd0000 {
-+			device_type = "pci";
-+			compatible = "qcom,pcie-x1e80100";
-+			reg = <0x0 0x01bd0000 0x0 0x3000>,
-+			      <0x0 0x78000000 0x0 0xf1d>,
-+			      <0x0 0x78000f40 0x0 0xa8>,
-+			      <0x0 0x78001000 0x0 0x1000>,
-+			      <0x0 0x78100000 0x0 0x100000>,
-+			      <0x0 0x01bd3000 0x0 0x1000>;
-+			reg-names = "parf",
-+				    "dbi",
-+				    "elbi",
-+				    "atu",
-+				    "config",
-+				    "mhi";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 0x100000>,
-+				 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 0x3d00000>,
-+				 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 0x40000000>;
-+			bus-range = <0x00 0xff>;
-+
-+			dma-coherent;
-+
-+			linux,pci-domain = <3>;
-+			num-lanes = <8>;
-+
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi0",
-+					  "msi1",
-+					  "msi2",
-+					  "msi3",
-+					  "msi4",
-+					  "msi5",
-+					  "msi6",
-+					  "msi7",
-+					  "global";
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &intc 0 0 GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &intc 0 0 GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &intc 0 0 GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
-+				 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
-+				 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
-+			clock-names = "aux",
-+				      "cfg",
-+				      "bus_master",
-+				      "bus_slave",
-+				      "slave_q2a",
-+				      "noc_aggr",
-+				      "cnoc_sf_axi";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
-+			assigned-clock-rates = <19200000>;
-+
-+			interconnects = <&pcie_south_anoc MASTER_PCIE_3 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "pcie-mem",
-+					     "cpu-pcie";
-+
-+			resets = <&gcc GCC_PCIE_3_BCR>,
-+				 <&gcc GCC_PCIE_3_LINK_DOWN_BCR>;
-+			reset-names = "pci",
-+				      "link_down";
-+
-+			power-domains = <&gcc GCC_PCIE_3_GDSC>;
-+
-+			phys = <&pcie3_phy>;
-+			phy-names = "pciephy";
-+
-+			operating-points-v2 = <&pcie3_opp_table>;
-+
-+			status = "disabled";
-+
-+			pcie3_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				/* GEN 1 x1 */
-+				opp-2500000 {
-+					opp-hz = /bits/ 64 <2500000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <250000 1>;
-+				};
-+
-+				/* GEN 1 x2 and GEN 2 x1 */
-+				opp-5000000 {
-+					opp-hz = /bits/ 64 <5000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <500000 1>;
-+				};
-+
-+				/* GEN 1 x4 and GEN 2 x2 */
-+				opp-10000000 {
-+					opp-hz = /bits/ 64 <10000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <1000000 1>;
-+				};
-+
-+				/* GEN 1 x8 and GEN 2 x4 */
-+				opp-20000000 {
-+					opp-hz = /bits/ 64 <20000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <2000000 1>;
-+				};
-+
-+				/* GEN 2 x8 */
-+				opp-40000000 {
-+					opp-hz = /bits/ 64 <40000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <4000000 1>;
-+				};
-+
-+				/* GEN 3 x1 */
-+				opp-8000000 {
-+					opp-hz = /bits/ 64 <8000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <984500 1>;
-+				};
-+
-+				/* GEN 3 x2 and GEN 4 x1 */
-+				opp-16000000 {
-+					opp-hz = /bits/ 64 <16000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <1969000 1>;
-+				};
-+
-+				/* GEN 3 x4 and GEN 4 x2 */
-+				opp-32000000 {
-+					opp-hz = /bits/ 64 <32000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <3938000 1>;
-+				};
-+
-+				/* GEN 3 x8 and GEN 4 x4 */
-+				opp-64000000 {
-+					opp-hz = /bits/ 64 <64000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <7876000 1>;
-+				};
-+
-+				/* GEN 4 x8 */
-+				opp-128000000 {
-+					opp-hz = /bits/ 64 <128000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <15753000 1>;
-+				};
-+			};
-+		};
-+
-+		pcie3_phy: phy@1be0000 {
-+			compatible = "qcom,x1e80100-qmp-gen4x8-pcie-phy";
-+			reg = <0 0x01be0000 0 0x10000>;
-+
-+			clocks = <&gcc GCC_PCIE_3_PHY_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&tcsr TCSR_PCIE_8L_CLKREF_EN>,
-+				 <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPE_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPEDIV2_CLK>;
-+			clock-names = "aux",
-+				      "cfg_ahb",
-+				      "ref",
-+				      "rchng",
-+				      "pipe",
-+				      "pipediv2";
-+
-+			resets = <&gcc GCC_PCIE_3_PHY_BCR>,
-+				 <&gcc GCC_PCIE_3_NOCSR_COM_PHY_BCR>;
-+			reset-names = "phy",
-+				      "phy_nocsr";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>;
-+			assigned-clock-rates = <100000000>;
-+
-+			power-domains = <&gcc GCC_PCIE_3_PHY_GDSC>;
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "pcie3_pipe_clk";
-+
-+			#phy-cells = <0>;
-+
-+			status = "disabled";
-+		};
-+
- 		pcie6a: pci@1bf8000 {
- 			device_type = "pci";
- 			compatible = "qcom,pcie-x1e80100";
+diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+index 32284cd26d52..7966a533aaec 100644
+--- a/include/linux/compiler_attributes.h
++++ b/include/linux/compiler_attributes.h
+@@ -100,8 +100,17 @@
+  *
+  *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
+  * clang: https://github.com/llvm/llvm-project/pull/76348
++ *
++ * clang versions < 19.1.2 have a bug that can lead to __bdos returning 0:
++ * https://github.com/llvm/llvm-project/pull/110497
++ *
++ * clang versions < 19.1.3 have a bug that can lead to __bdos being off by 4:
++ * https://github.com/llvm/llvm-project/pull/112636
+  */
+-#if __has_attribute(__counted_by__)
++#if __has_attribute(__counted_by__) && \
++	(!defined(__clang__) || (__clang_major__ > 19) || \
++	(__clang_major__ == 19 && (__clang_minor__ > 1 || \
++	(__clang_minor__ == 1 && __clang_patchlevel__ >= 3))))
+ # define __counted_by(member)		__attribute__((__counted_by__(member)))
+ #else
+ # define __counted_by(member)
 -- 
-2.34.1
+2.47.0
 
 
