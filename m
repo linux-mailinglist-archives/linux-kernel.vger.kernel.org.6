@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-370074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98F69A2721
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56B69A2700
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3607B2A433
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAC1280F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB6E1DF24E;
-	Thu, 17 Oct 2024 15:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DE71DF250;
+	Thu, 17 Oct 2024 15:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mcySTMRW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3yYh84E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9A31DDC14;
-	Thu, 17 Oct 2024 15:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C941DF240
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179380; cv=none; b=IDfsKPtQxkic/5JiRcIpJTaNgwc3VRwVNE5u/KbKTsfOHh9hToyyxVl50JLpiA7pm67dtvR3z5zwAF5jsOEeCStMFQQCom3/FqW20QoiumaKrwaFBI/m1X32PFdWbhMLQh72buJ/WYBsbE2aozZEnceQBHdJJi2+R3rfFzbjqBg=
+	t=1729179383; cv=none; b=KsNDh7SncU7zSGdML/tTLBfZdq1JdbZdSe/HT6+hLX2MO00LtYKXa108YoVl/T959HqYq15QRi7dwRBKwR/3u+izn0pzjszdi+m2Eo0zg0UWqF0oHNtEqo/oYnqFWM7yirXzSAuBFjAEIUtGUtrFnY9CKj8K/185kmNMsL5e0IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179380; c=relaxed/simple;
-	bh=NfsiDZCdruACQ2h/ZlKOCEcp2Rm4sKuLxJgt6pCpxC8=;
+	s=arc-20240116; t=1729179383; c=relaxed/simple;
+	bh=VioDkU/PjFIM+BMA8JwIsGi2Honfh6sI28MlT1U/VzQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KKuFn4+W0e16/M4YDkJ9UnYDO6IZmGDyLP6unHJIV5dfTdE3DehqNBbOumCTJgxLhCROJEHX7XJG08FYC3eUb1bLX+veHEMIzGDjQ8eAOlVYz5Es950nPXYflPf6hTLb8CjGoMlzzwK1wwD+H1m5Go1wbc9nTXRhVfPTsOGUHi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mcySTMRW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC494C4CED0;
-	Thu, 17 Oct 2024 15:36:16 +0000 (UTC)
+	 MIME-Version:Content-Type; b=JyFEzffUhsRtLSquyUGhwhezFXZEXQX/XCz1/OmwEW979bi26Gh35Xrk4O8A2JMcTH9wVroOVPFazqBZU9UprhyFz09EY/50AFglGWN4rAhS0gr+rcwc/wM1Wl3oQBV1cIGpIbU/0tcMY0ryRBrGATc4gMrVtPnghaVnxmfRtbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3yYh84E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7364FC4CEC7;
+	Thu, 17 Oct 2024 15:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729179379;
-	bh=NfsiDZCdruACQ2h/ZlKOCEcp2Rm4sKuLxJgt6pCpxC8=;
+	s=k20201202; t=1729179382;
+	bh=VioDkU/PjFIM+BMA8JwIsGi2Honfh6sI28MlT1U/VzQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mcySTMRWCCeOzMzewoNtQoIPyP4dBZWRtec/7rLwk3CXE8Z8+OCKjBGL2ZYUWltcU
-	 9V4PFEKWudMrPaMg+zK00b5kMmZ7AsHBWK544Np6K2vqD7GpZeaSOxlhAP6yJ3FAZ7
-	 oggoJhinAFNVoyLzTUpo+v0iCKwJzdesl/6nN/a6p0bHHzT7gb8SSWjYDGgpfuZ3dJ
-	 y9svJdW6u3Ua0O6tplYjsqTgXJQx6gPnHqqYxwUgEzWk5CHAuOVKGoP8RmWu6bCX0m
-	 HsFv4D/CXJzjZ1G9dcF/o1UVarPF1duUjS0au6P94FGyAJAyBgVzGV9U1SQsg475UZ
-	 IVCVUIxqqY2QQ==
+	b=a3yYh84EIJkVc4LkfQrgFttPMy4LcrMZeL+aThKAki8gAlyv0vCxpmxQffQVkcU6F
+	 jFbUdnXJiqlRpUGYYumM6y9Ms34OxMfEXur0mifblC76BctDjlCsBMXh/m5koyIxPX
+	 9A3GXxEFnFfdSnBB2l214Rqq7Vt6CNs7UscpdnXF0/0aLXCXAaumdXsoKae3KgZGJa
+	 8/3Q3qjKT98Nr8G95ZqyjFzAJb484wNycwp6q0RNb23e73ykxQf+Fl8I8BGxcz2xNz
+	 Xy628wguvkQPPcf6xhEm5/s8ITlDX+uruGTq6hLc7ObAnnxIJUAZ1jRuUNdXyyIqe/
+	 ijtZ2mkuok5Zw==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-In-Reply-To: <20240830-nxp-ptn3222-v2-0-4c6d8535cf6c@linaro.org>
-References: <20240830-nxp-ptn3222-v2-0-4c6d8535cf6c@linaro.org>
-Subject: Re: [PATCH v2 0/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
-Message-Id: <172917937640.288841.14254055553308923025.b4-ty@kernel.org>
-Date: Thu, 17 Oct 2024 21:06:16 +0530
+To: Andy Yan <andyshrk@163.com>
+Cc: kishon@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, cristian.ciocaltea@collabora.com, 
+ Andy Yan <andy.yan@rock-chips.com>
+In-Reply-To: <20240920093629.7410-1-andyshrk@163.com>
+References: <20240920093629.7410-1-andyshrk@163.com>
+Subject: Re: [PATCH] phy: phy-rockchip-samsung-hdptx: Don't request
+ RST_PHY/RST_ROPLL/RST_LCPLL
+Message-Id: <172917938011.288841.10984149232863813080.b4-ty@kernel.org>
+Date: Thu, 17 Oct 2024 21:06:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,19 +63,17 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Fri, 30 Aug 2024 11:20:44 +0300, Dmitry Baryshkov wrote:
-> The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
-> translation between eUSB2 and USB2 signalling schemes. It supports all
-> three data rates: Low Speed, Full Speed and High Speed.
+On Fri, 20 Sep 2024 17:36:28 +0800, Andy Yan wrote:
+> RST_PHY/RST_ROPLL/RST_LCPLL are used for debug only on rk3588,
+> and they are not exported on rk3576, no need to request it in
+> driver.
 > 
 > 
 
 Applied, thanks!
 
-[1/2] dt-bindings: phy: add NXP PTN3222 eUSB2 to USB2 redriver
-      commit: 2df490e7374de8e940d353cfcafd3c91242841ea
-[2/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
-      commit: c9be539e11f0bf1665c03108d3b7881a5d67ae48
+[1/1] phy: phy-rockchip-samsung-hdptx: Don't request RST_PHY/RST_ROPLL/RST_LCPLL
+      commit: f2dbca169790ea1e436ffdd9ef37d7c3a4401c46
 
 Best regards,
 -- 
