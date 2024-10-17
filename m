@@ -1,302 +1,141 @@
-Return-Path: <linux-kernel+bounces-368934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D429A16B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:16:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7BF9A16B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268851F2369A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:16:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FBE71C220A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A0643165;
-	Thu, 17 Oct 2024 00:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B421E49E;
+	Thu, 17 Oct 2024 00:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N05sPLCx"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZALTsV6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04B7AD5A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D842168BE
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729124072; cv=none; b=F422jTPLn/pFoy0pP6hHx3bga4HhTh1AGJeY84FTfFEVzoG1I5VZdEqj6SOIS1zCKidKb4+fY7lDPtPkEa5zgJD+MWQlyiJ4Ry4Y6pbv3gu+F+yn9WlHXBx6DCnrHpuUjpAkNS9ntLMmnsy2cAKMMbhFa/2u3q+o4O/rq3E9xIQ=
+	t=1729124125; cv=none; b=kSiTgKQEFUYbGTBswY7sBtPyQFEjxhy7CRRGxzsWmpbQ6QcWjxWpq0p66Xh67R69p/D68LbEi+Dw3BIl6OgeE8H3ZL30KnDMn0EoXiKkWbZSaYcyYyf/KSj559v+IJRUwwTSAYBYN59je5U8di3l4JXiLd3/uilI0kA4+XHSPBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729124072; c=relaxed/simple;
-	bh=uTZGzDP2K1Gr+UdxyFj4+kEYNFidcL7ChzEuLmDixB8=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=lkRx55GvGpjLzAsptYj/XI1V3fGGVXQSBuIlOpEi9VDpXXdihjaoKY67ljX/BmwHYjF27NgSzkS57HLjGskDAlh664kwfAiVm78eIQOMefe2Lzgha5gRzIxanT9kZQ5SrZFO26qk4SLgu1SA/7ifY4iMgVXFy9dxgrTrKW/XNZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N05sPLCx; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3c638cc27so10014227b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:14:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729124070; x=1729728870; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdCPmUKkGrBwCDxgLym0jfSR0ZKu6+x5u848gg4O+mI=;
-        b=N05sPLCxImTKU5r4MDbFCUV0eRbeAr6P0ths/CfwORyHoXqxBnewwue5lNvoyFwXLq
-         84y6T6K/5vBkwSEnQSzMRazXwdPjp3ZoiqAzbd47eyOySEKN8AkBl3gZ7ZkPe+ruokH5
-         ZMqp3v98PxAYpw4Rq86f04chNuj2qxCmdX7TfaS7AW4WrtFXNO2Cj0laTmXnRZdMw47z
-         JEFsbAMnyY4rpkJqapsguHl6Ko1bkLTWwefKxE0GoXgPKv0P/Y5aFrCMwGn2XO77ZA31
-         ipZ6qDkA6QDYU2aEQP10eYsl3xXXLehuZWeCHkhAPjEadKs1tOjd7s1SFiSqle6bdk7H
-         mB7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729124070; x=1729728870;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdCPmUKkGrBwCDxgLym0jfSR0ZKu6+x5u848gg4O+mI=;
-        b=cGTHzvUWAEV4rkGXw0K8zPXSs43TGvUokTUamz5wQ6SFkUksyMAgYtrHwGBhdEnDKz
-         cP5oGEfEIliNiaaOgt/MHd2MCcdevVB1N+DL7mKG+LOhCTlJDaToS8puK3doSirw5Pxx
-         eDbb8TkxjzxisohAo1BYLhrXwWsF8+agKaVAlj0VjnthTuuajAag9qQTVthQ24oeET4W
-         mWmrRNdw/9F367G8/upfvMNpnq7ehbpr1YKYICwjWEweXFaUjpT/pfNhc2GpWwAnDx5S
-         YQGF4E2ze8ICIS9ZZH05K1vWvXTIKd+8wPWl2zm20aPK5S5y0yD6fIqOUQjru9KT3vF8
-         cW7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVy3n/3MwTdI2wQi1h5XsB21LTwhhAi5wc20QkrRFx52QhvLNukBdC/OuXJ+3Jz+G/1h4JpwY55K8UiOE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDxj1p42LHiBt2J3sHptLYBSDoUw/QVNovhdpgCwJDw18Dz1xP
-	DHF4M00uXG84BbS55FUU8H8aU0qzFVHD3X7myNKYNalV0xJ5WFt4ymGFf8hOh7AUzELuu7Y8sFy
-	W6zaTug==
-X-Google-Smtp-Source: AGHT+IGmCqxqV/cR4e1mDBCmPDGgT/SSooHjQkQC219R9juE6phrOXnwsqdvmP6ECvOzFqzwnY8OkCCPIcef
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:a00a:f237:9bc0:79c])
- (user=irogers job=sendgmr) by 2002:a05:690c:2502:b0:6e2:70e:e82e with SMTP id
- 00721157ae682-6e3d41cb4aamr1150577b3.6.1729124069686; Wed, 16 Oct 2024
- 17:14:29 -0700 (PDT)
-Date: Wed, 16 Oct 2024 17:13:54 -0700
-In-Reply-To: <20241017001354.56973-1-irogers@google.com>
-Message-Id: <20241017001354.56973-12-irogers@google.com>
+	s=arc-20240116; t=1729124125; c=relaxed/simple;
+	bh=FTkCwpCp/85EYo5SWqJaCWTup9Zd3Q50GpEe4JI0guY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XbSVArlCUzTx+UhgFbtlK9cOl1zmIt4v0KD1knQTHU/Tg/rA7fCBckHVKPnXAINNsZpJoCCpkDuAPGNCQorBs5+RUcIJwPh1jW2A/F/ORp0LMH61AfYvY8BwWYGLq7b5JuwyBkqKAz1X6ZKAA0MxJwVNypKQWvfrA1aqP61hFLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZALTsV6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729124122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R3IvdWoUm5mT+46GBWorpSOFyy5vanUssXIrq1EZYnM=;
+	b=OZALTsV6NzbcuhlXyTXRmW1uY9cFW4wiDvN/F8NqLDbH+xRb9pxQ9W1rBsAjqxP8AC85ro
+	Jrg76cXAKuvZkKAGJbpL1MU6PIezcFZJkBfQB/Fi5WyqdphAYjMJxLisK4UMcsOm6x2qUC
+	2+dWMrhxjiNGHl2dxrPASK9eHte24yE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-428-6cpvDtSJNcaNc2oBaJWdPA-1; Wed,
+ 16 Oct 2024 20:15:19 -0400
+X-MC-Unique: 6cpvDtSJNcaNc2oBaJWdPA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1EA019560B5;
+	Thu, 17 Oct 2024 00:15:16 +0000 (UTC)
+Received: from f39 (unknown [10.39.192.145])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3DD9B300018D;
+	Thu, 17 Oct 2024 00:15:13 +0000 (UTC)
+Date: Thu, 17 Oct 2024 02:15:10 +0200
+From: Eder Zulian <ezulian@redhat.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, williams@redhat.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
+Subject: Re: [PATCH] rust: Fix build error
+Message-ID: <ZxBXDhZXNgCwAHzN@f39>
+References: <20241014195253.1704625-1-ezulian@redhat.com>
+ <CANiq72n5cPxDORQad2_fJPHXaE2YDHW3enavjWyz1MZBU3oasQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241017001354.56973-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v3 11/11] perf build: Rename CONFIG_DWARF to CONFIG_LIBDW
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Kajol Jain <kjain@linux.ibm.com>, 
-	Atish Patra <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
-	Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Steinar H. Gunderson" <sesse@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72n5cPxDORQad2_fJPHXaE2YDHW3enavjWyz1MZBU3oasQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-In Makefile.config for unwinding the name dwarf implies either
-libunwind or libdw. Make it clearer that CONFIG_DWARF is really just
-defined when libdw is present by renaming to CONFIG_LIBDW.
-
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/Makefile.config           |  2 +-
- tools/perf/arch/arm/util/Build       |  2 +-
- tools/perf/arch/arm64/util/Build     |  2 +-
- tools/perf/arch/csky/util/Build      |  2 +-
- tools/perf/arch/loongarch/util/Build |  2 +-
- tools/perf/arch/mips/util/Build      |  2 +-
- tools/perf/arch/powerpc/util/Build   |  4 ++--
- tools/perf/arch/riscv/util/Build     |  2 +-
- tools/perf/arch/s390/util/Build      |  2 +-
- tools/perf/arch/sh/util/Build        |  2 +-
- tools/perf/arch/sparc/util/Build     |  2 +-
- tools/perf/arch/x86/util/Build       |  2 +-
- tools/perf/arch/xtensa/util/Build    |  2 +-
- tools/perf/util/Build                | 12 ++++++------
- 14 files changed, 20 insertions(+), 20 deletions(-)
-
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index d0ad2919983c..b93ed2b7623f 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -562,7 +562,7 @@ ifndef NO_LIBELF
-       CFLAGS += -DHAVE_LIBDW_SUPPORT $(LIBDW_CFLAGS)
-       LDFLAGS += $(LIBDW_LDFLAGS)
-       EXTLIBS += ${DWARFLIBS}
--      $(call detected,CONFIG_DWARF)
-+      $(call detected,CONFIG_LIBDW)
-     endif # PERF_HAVE_DWARF_REGS
-   endif # NO_LIBDW
- 
-diff --git a/tools/perf/arch/arm/util/Build b/tools/perf/arch/arm/util/Build
-index e6dd7cd79ebd..e06fea1ea8ff 100644
---- a/tools/perf/arch/arm/util/Build
-+++ b/tools/perf/arch/arm/util/Build
-@@ -1,6 +1,6 @@
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- 
- perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
-index 343ef7589a77..4387a6d6a6c3 100644
---- a/tools/perf/arch/arm64/util/Build
-+++ b/tools/perf/arch/arm64/util/Build
-@@ -4,7 +4,7 @@ perf-util-y += perf_regs.o
- perf-util-y += tsc.o
- perf-util-y += pmu.o
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
--perf-util-$(CONFIG_DWARF)     += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW)     += dwarf-regs.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
-diff --git a/tools/perf/arch/csky/util/Build b/tools/perf/arch/csky/util/Build
-index 99d83f41bf43..1325310cab6a 100644
---- a/tools/perf/arch/csky/util/Build
-+++ b/tools/perf/arch/csky/util/Build
-@@ -1,4 +1,4 @@
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/loongarch/util/Build b/tools/perf/arch/loongarch/util/Build
-index b6b97de48233..06ff95394921 100644
---- a/tools/perf/arch/loongarch/util/Build
-+++ b/tools/perf/arch/loongarch/util/Build
-@@ -1,7 +1,7 @@
- perf-util-y += header.o
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF)     += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW)     += dwarf-regs.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
-diff --git a/tools/perf/arch/mips/util/Build b/tools/perf/arch/mips/util/Build
-index e4644f1e68a0..b328109fc16c 100644
---- a/tools/perf/arch/mips/util/Build
-+++ b/tools/perf/arch/mips/util/Build
-@@ -1,3 +1,3 @@
- perf-util-y += perf_regs.o
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
-diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
-index 6c588ecdf3bd..3d979480a188 100644
---- a/tools/perf/arch/powerpc/util/Build
-+++ b/tools/perf/arch/powerpc/util/Build
-@@ -7,8 +7,8 @@ perf-util-y += sym-handling.o
- perf-util-y += evsel.o
- perf-util-y += event.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
--perf-util-$(CONFIG_DWARF) += skip-callchain-idx.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += skip-callchain-idx.o
- 
- perf-util-$(CONFIG_LIBUNWIND) += unwind-libunwind.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/riscv/util/Build b/tools/perf/arch/riscv/util/Build
-index f865cb0489ec..8f93091b8345 100644
---- a/tools/perf/arch/riscv/util/Build
-+++ b/tools/perf/arch/riscv/util/Build
-@@ -2,5 +2,5 @@ perf-util-y += perf_regs.o
- perf-util-y += header.o
- 
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/s390/util/Build b/tools/perf/arch/s390/util/Build
-index 1ac830030ff3..787410f99bb3 100644
---- a/tools/perf/arch/s390/util/Build
-+++ b/tools/perf/arch/s390/util/Build
-@@ -2,7 +2,7 @@ perf-util-y += header.o
- perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
- perf-util-y += perf_regs.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
- perf-util-y += machine.o
-diff --git a/tools/perf/arch/sh/util/Build b/tools/perf/arch/sh/util/Build
-index 32f44fc4ab98..2337a0b710a2 100644
---- a/tools/perf/arch/sh/util/Build
-+++ b/tools/perf/arch/sh/util/Build
-@@ -1 +1 @@
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-diff --git a/tools/perf/arch/sparc/util/Build b/tools/perf/arch/sparc/util/Build
-index 32f44fc4ab98..2337a0b710a2 100644
---- a/tools/perf/arch/sparc/util/Build
-+++ b/tools/perf/arch/sparc/util/Build
-@@ -1 +1 @@
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
-index 2607ed5c4296..9705cda4f240 100644
---- a/tools/perf/arch/x86/util/Build
-+++ b/tools/perf/arch/x86/util/Build
-@@ -12,7 +12,7 @@ perf-util-y += evsel.o
- perf-util-y += iostat.o
- perf-util-y += env.o
- 
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
- perf-util-$(CONFIG_BPF_PROLOGUE) += dwarf-regs.o
- 
- perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
-diff --git a/tools/perf/arch/xtensa/util/Build b/tools/perf/arch/xtensa/util/Build
-index e813e618954b..2d1a48696ad9 100644
---- a/tools/perf/arch/xtensa/util/Build
-+++ b/tools/perf/arch/xtensa/util/Build
-@@ -1 +1 @@
--perf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_LIBDW) += dwarf-regs.o
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index fa508e113dd0..1eedead5f2f2 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -200,11 +200,11 @@ ifndef CONFIG_SETNS
- perf-util-y += setns.o
- endif
- 
--perf-util-$(CONFIG_DWARF) += probe-finder.o
--perf-util-$(CONFIG_DWARF) += dwarf-aux.o
--perf-util-$(CONFIG_DWARF) += dwarf-regs.o
--perf-util-$(CONFIG_DWARF) += debuginfo.o
--perf-util-$(CONFIG_DWARF) += annotate-data.o
-+perf-util-$(CONFIG_LIBDW) += probe-finder.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-aux.o
-+perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-+perf-util-$(CONFIG_LIBDW) += debuginfo.o
-+perf-util-$(CONFIG_LIBDW) += annotate-data.o
- 
- perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind-local.o
-@@ -235,7 +235,7 @@ perf-util-$(CONFIG_LIBLLVM) += llvm-c-helpers.o
- ifdef CONFIG_JITDUMP
- perf-util-$(CONFIG_LIBELF) += jitdump.o
- perf-util-$(CONFIG_LIBELF) += genelf.o
--perf-util-$(CONFIG_DWARF) += genelf_debug.o
-+perf-util-$(CONFIG_LIBDW) += genelf_debug.o
- endif
- 
- perf-util-y += perf-hooks.o
--- 
-2.47.0.105.g07ac214952-goog
+Hi Miguel,
+On Mon, Oct 14, 2024 at 10:38:45PM +0200, Miguel Ojeda wrote:
+> On Mon, Oct 14, 2024 at 9:54 PM Eder Zulian <ezulian@redhat.com> wrote:
+> >
+> > Error observed while building a rt-debug kernel for aarch64.
+> 
+> Thanks for testing with Rust enabled!
+Sure, it's been fun!
+> 
+> > Suggested-by: Clark Williams <williams@redhat.com>
+> 
+> Do you mean `Reported-by`?
+Yes, my mistake.
+> 
+> Also, I am not sure which `Fixes:` tag would fit best here, since
+> `PREEMPT_RT` has been around for quite a while, but only enabled very
+> recently. Thomas: do you have a preference?
+> 
+I can try to find a culprit and add a 'Fixes:' tag. In my opnion, at first
+glance, it would be the patch that introduced the Rust helper for spinlocks.
+Not sure.
+> In addition (sorry, it was in my backlog):
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409251238.vetlgXE9-lkp@intel.com/
+> 
+I can fix it and send a v2 if that's ok. Is it valid to add two 'Reported-by'
+tags (Clark and kernel test robot)?
+> Finally, I think we should perhaps put a helper in `spinlock{_,rt}.h`
+> that takes the `key` (instead of having this `#ifdef` here) and then
+> just use that from the Rust helpers, because we don't want to
+> duplicate such logic (conditionals) in helpers. And with the RT init
+Agreed. We don't want code replicated. In my reply to Boqun I added some
+notes. If that makes sense, we could avoid even the helper in
+'spinlock{_,rt}.h'?
+> open coding that Boqun mentioned, even more. After all, helpers are
+> meant to be as straightforward as possible, and if we have this sort
+> of thing in helpers, it is harder for everyone to keep them in sync.
+Please correct me if I misunderstood. It seems that Rust doesn't have a
+pre-processor step to replace macros in the code and the Rust compiler works
+with 'objects/entities' created for functions and variables, but macros would
+be ignored (since they are string substitution.) Do you have pointers for good
+docs on this?
+> 
+> In other words, I see helpers as following the same "avoid `#ifdef`s"
+> rule that we prefer in C source files vs. headers.
+> 
+> What do you think, Thomas?
+> 
+> >
+> 
+> Spurious newline.
+Thanks, I'll fix the spurious new line.
+> 
+Thank you.
+> Cheers,
+> Miguel
+> 
 
 
