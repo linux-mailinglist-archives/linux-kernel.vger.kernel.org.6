@@ -1,158 +1,190 @@
-Return-Path: <linux-kernel+bounces-369588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F6919A1F3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:57:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C689A1F3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7BEC1C266C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:57:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B996A1F28CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F531DB93A;
-	Thu, 17 Oct 2024 09:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B0A1D9660;
+	Thu, 17 Oct 2024 09:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAFJ6PAI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T0f9Qkf/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gQxyNH32";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b1IOpBl7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NrAZ6Bof"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154DC1DA60D;
-	Thu, 17 Oct 2024 09:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8C2199E92;
+	Thu, 17 Oct 2024 09:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158992; cv=none; b=hDpSYEhVaqz7n503wEF7E90e5EKtE1Wrr9rBDtVQJEgRoZt586WGnaVnFCL4soZ+jX254gSOn64I5dVjxYMdYMfTTnEwYuujSoUqSkH9pGGAMCl6hSMszc2VlnzxWGPRDhtibGSLqK3+b5KKbj6b2db7k2LwxldRYCt62ZEqTeo=
+	t=1729159126; cv=none; b=afAoOO2vwR0TCrClo2QUzVTwI5AQWmkw5kBZh9x54HyHsySl/vuPMHQ3O68yJnaL5f3DxTIb4XmFd3EeuW0UaukYzpQrbLvpqgc6LO3FjborpOBbL2UOtOjPTDx5KG3KYySMYeoZYjbbsPNIjx+qvx2C22jm9OdrdDXmIp5U+Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158992; c=relaxed/simple;
-	bh=4q66nhbhtRB2E2NWPNRJ6n4igTeASGKwvtYUoBPLkCs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d1E5hpc91s2OQ5WgbO7+dlmIT5BFt5Dru6MUaIUDVrrJFEzYRstqDv+f5YV0c0XDoRZayz18XQEjtwMUOF6GhJoc+Gv/VNBzGIHJ+hRWNcgY6v+blCauP6x8p5aNzTOEGrHmhMQmOo8+6a4cndsrW+ITRI8YeACrSX3QA7B7UFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAFJ6PAI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814A1C4CEC5;
-	Thu, 17 Oct 2024 09:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729158991;
-	bh=4q66nhbhtRB2E2NWPNRJ6n4igTeASGKwvtYUoBPLkCs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vAFJ6PAIGpwErAX/6NNQIHWUCUhm6OCqIHrt1+rH0SEBETrbQLcj4QNyXuuRnLaVd
-	 d3Q9bk69Akh1f1w3FJCbAvAQHMt33cW15OjODfTYU0n+KqIh4VuyQKDN6BSvUpFquQ
-	 ok475/xZzE8OpDu3onODRouQJzqQ94Y8aY8X+gQcw+ql2LUFaFru/kxLyZ4aG2bZd9
-	 oA2xCZOsEu6ktNlN1kK2M690N7dvcW7Wnp08ia4dumEsMLme3vkOSh7+T49SdqKoc2
-	 YZXzHLcvCgn5hJ9dz9fTQy82TtrQsuJFBSve0sqx3gxhH4NZE2tOIu5773TsGVTWRd
-	 L44+77Ir7Dcgw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t1NF7-004PBo-Ck;
-	Thu, 17 Oct 2024 10:56:29 +0100
-Date: Thu, 17 Oct 2024 10:56:29 +0100
-Message-ID: <86o73j3vea.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>,	Bjorn Helgaas <helgaas@kernel.org>,
-	Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,	Johan Hovold
- <johan+linaro@kernel.org>,	Kishon Vijay Abraham I <kishon@ti.com>,	Xiaowei
- Song <songxiaowei@hisilicon.com>,	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,	Ryder Lee
- <ryder.lee@mediatek.com>,	Jianjun Wang <jianjun.wang@mediatek.com>,
-	linux-pci@vger.kernel.org,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>,	Ley Foon Tan <ley.foon.tan@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: Why set .suppress_bind_attrs even though .remove() implemented?
-In-Reply-To: <20241017093040.k6pefhmfdmw4nicz@thinkpad>
-References: <Yt+6azfwd/LuMzoG@hovoldconsulting.com>
-	<20220727195716.GA220011@bhelgaas>
-	<YuJ+PZIhg8mDrdlX@hovoldconsulting.com>
-	<20241017052335.iue4jhvk5q4efigv@thinkpad>
-	<86v7xr418s.wl-maz@kernel.org>
-	<20241017082526.ppoz7ynxas5nlht5@thinkpad>
-	<86r08f3yj1.wl-maz@kernel.org>
-	<20241017093040.k6pefhmfdmw4nicz@thinkpad>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1729159126; c=relaxed/simple;
+	bh=V9eeRUm0jZ/MTPGmK3OFVCtMJbZkpqSZA/9diiUC8GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHQgnorynNXEGkzZ2af8dXzhU6qWxE8igFsTbUqSYUaAJUvKASM5tM+/Q0rfcDtL+nbzLpURHoKMezVmWnpeAtYZ5tOoEpiJma3FKvWnyymqeOppLurcWt8ztVSXnZyAwmgtsou85fUmhfT+DwcPK7b6gM0aOACFRtpq4VAiCtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T0f9Qkf/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gQxyNH32; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b1IOpBl7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NrAZ6Bof; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7BB441FD12;
+	Thu, 17 Oct 2024 09:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729159121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pM5umWXI+jLD/3ESY5D0uj7lba9PavrHvD7DoNE7JZ8=;
+	b=T0f9Qkf/VcrVKtwTyAC/YVuWilQ7C+XJWmYSjSXAa3Q27CLK2NEr4XVxL7wTkzwpE3c2AL
+	6ZUxqanpz+se2/RuQAhvwVtMK/SDgyd+VfbM9pcuuZFePrT7fTTgFBGPpJ3SSaggOxwPEl
+	nhflJOp3Meg4L6ng9+n/YyiWqDWsbtA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729159121;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pM5umWXI+jLD/3ESY5D0uj7lba9PavrHvD7DoNE7JZ8=;
+	b=gQxyNH32lWvzJ4rCFUBKbYN2yUCx6t9NKSfpycBjjIwSPcDLW2aWM8J0IdRJ2+BU6MqWEx
+	wfsoEofpiicvxtBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=b1IOpBl7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NrAZ6Bof
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729159120; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pM5umWXI+jLD/3ESY5D0uj7lba9PavrHvD7DoNE7JZ8=;
+	b=b1IOpBl7h6oBBMhaPGneQQ6pMtMIyS/m31NLL2H+kxIJVlgtSEA8NiC0J4WDLUnVlfzFiX
+	6qvEOs2NKrLD340tLh6tstUc9rsamu+FIWnkE3MpH2zNwAGHhvxIhol0GHnkWDJvR3IgdN
+	Mq/C9qPZksBtWk7MmVcQvKSQ/O+YnXY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729159120;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pM5umWXI+jLD/3ESY5D0uj7lba9PavrHvD7DoNE7JZ8=;
+	b=NrAZ6Boft1OB4I6J9t7IwhkgVb+fiS/oz0rgcFj/c6DYBjTKvICMYWDpp3aCqBEiFZfYy/
+	q8KadKGvE5FVagDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 628C913A53;
+	Thu, 17 Oct 2024 09:58:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bNYMGNDfEGdRUwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 17 Oct 2024 09:58:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 118B9A07D0; Thu, 17 Oct 2024 11:58:36 +0200 (CEST)
+Date: Thu, 17 Oct 2024 11:58:36 +0200
+From: Jan Kara <jack@suse.cz>
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com, alessandrozanni.dev@gmail.com,
+	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
+Subject: Re: [PATCH] fs: Fix uninitialized value issue in from_kuid
+Message-ID: <20241017095836.ebrfj2323h4sn5xx@quack3>
+References: <20241016123723.171588-1-alessandro.zanni87@gmail.com>
+ <20241016132339.cq5qnklyblfxw4xl@quack3>
+ <20241016-einpacken-ebnen-bcd0924480e1@brauner>
+ <5lnqirv3cia7cqnjfjp4ypjlpppkx6do5ds5yexzxrtkoct5bm@zjdp32invihk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, johan@kernel.org, helgaas@kernel.org, pali@kernel.org, johan+linaro@kernel.org, kishon@ti.com, songxiaowei@hisilicon.com, wangbinghui@hisilicon.com, thierry.reding@gmail.com, ryder.lee@mediatek.com, jianjun.wang@mediatek.com, linux-pci@vger.kernel.org, kw@linux.com, ley.foon.tan@intel.com, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5lnqirv3cia7cqnjfjp4ypjlpppkx6do5ds5yexzxrtkoct5bm@zjdp32invihk>
+X-Rspamd-Queue-Id: 7BB441FD12
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[6c55f725d1bdc8c52058];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,zeniv.linux.org.uk,vger.kernel.org,linuxfoundation.org,gmail.com,syzkaller.appspotmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-On Thu, 17 Oct 2024 10:30:40 +0100,
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
-> 
-> On Thu, Oct 17, 2024 at 09:48:50AM +0100, Marc Zyngier wrote:
-> > On Thu, 17 Oct 2024 09:25:26 +0100,
-> > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
-> > > 
-> > > On Thu, Oct 17, 2024 at 08:50:11AM +0100, Marc Zyngier wrote:
-> > > > On Thu, 17 Oct 2024 06:23:35 +0100,
-> > > > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
-> > > > > 
-> > > > > So can we proceed with the series making Qcom driver modular?
-> > > > 
-> > > > Who is volunteering to fix the drivers that will invariably explode
-> > > > once we allow this?
-> > > > 
-> > > 
-> > > Why should anyone volunteer first up? If the issue gets reported for a driver
-> > > blowing up, then the driver has to be fixed by the maintainer or someone, just
-> > > like any other bug.
+On Thu 17-10-24 11:22:17, Alessandro Zanni wrote:
+> On 24/10/16 04:52, Christian Brauner wrote:
+> > On Wed, Oct 16, 2024 at 03:23:39PM +0200, Jan Kara wrote:
+> > > That being said there are many more places calling notify_change() and none
+> > > of them is doing the initialization so this patch only fixes that one
+> > > particular syzbot reproducer but doesn't really deal with the problem.
+> > > Looking at the bigger picture I think the right solution really is to fix
+> > > ocfs2_setattr() to not touch attr->ia_uid when ATTR_UID isn't set and
+> > > similarly for attr->ia_gid and ATTR_GID.
 > > 
-> > You are introducing a new behaviour, and decide that it is fair game
-> > to delegate the problems *you* introduced to someone else?
-> >
+> > Yes, that's what we did for similar bugs.
 > 
-> You are getting it completely wrong. I'm not delegating any issues. If the so
-> called *new* behavior in the controller driver uncovers the bug in a client
-> driver, then that is not called *delegating*.
+> Thanks for the valuable comments.
 > 
-> > Maybe you should reconsider what it means to be a *responsible*
-> > maintainer.
-> > 
+> I digged more into the code. I think the two possible fixes are: 
+> i) return 0 from ocfs2_setattr() if ATTR_UID/ATTR_GID are not set
+> ii) enter in trace_ocfs2_setattr() only if ATTR_UID/ATTR_GID are set
 > 
-> Sure, by not providing a development option useful to the users envisioning
-> issues that may not happen at all.
-> 
-> Even if any issue reported for the platform I'm maintaining, I am willing to put
-> in the efforts to fix them.
-> 
-> > > From reading the thread, the major concern was disposing the IRQs before
-> > > removing the domain and that is now taken care of. If you are worrying about a
-> > > specific issue, please say so.
-> > 
-> > That concern still exists, and I haven't seen a *consistent* approach
-> > encompassing all of the PCI controllers. What I've seen is a bunch of
-> > point hacks addressing a local issue on a particular implementation.
-> > 
-> 
-> Again, please be specific about your concern so that someone could try to
-> address them. Right now all I'm hearing is, "hey don't do this, else
-> something may blow up".
+> What do you think?
 
-You know what? Have it your way. After all, this sort of behaviour is
-exactly why I stopped dealing with this subsystem.
+I think the easiest fix is like:
 
-> 
-> > I don't think that's the correct approach, but hey, what do I
-> > understand about interrupts and kernel maintenance?
-> > 
-> 
-> I'd like to quote the message in your signature here: "Without deviation from
-> the norm, progress is not possible".
+        trace_ocfs2_setattr(inode, dentry,
+                            (unsigned long long)OCFS2_I(inode)->ip_blkno,
+                            dentry->d_name.len, dentry->d_name.name,
+-                           attr->ia_valid, attr->ia_mode,
+-                           from_kuid(&init_user_ns, attr->ia_uid),
+-                           from_kgid(&init_user_ns, attr->ia_gid));
++                           attr->ia_valid,
++			    attr->ia_valid & ATTR_MODE ? attr->ia_mode : 0,
++                           attr->ia_valid & ATTR_UID ? from_kuid(&init_user_ns, attr->ia_uid) : 0,
++                           attr->ia_valid & ATTR_GID ? from_kgid(&init_user_ns, attr->ia_gid) : 0);
 
-You should look up who wrote this, and appreciate *why* they wrote it,
-and what they meant by that. That should put some of the above in
-perspective.
+Bonus points for fixing up overly long lines I have in my proposal :)
 
-	M.
-
+								Honza
 -- 
-Without deviation from the norm, progress is not possible.
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
