@@ -1,174 +1,111 @@
-Return-Path: <linux-kernel+bounces-369226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B185E9A1A98
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDB19A1A9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE6B31C2155E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:16:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046FF1C22CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F49717335C;
-	Thu, 17 Oct 2024 06:16:28 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B81179204;
+	Thu, 17 Oct 2024 06:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ByC9XU/i"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B041CAA4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38F44084C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729145787; cv=none; b=S/Ck6nVQI5Rl15xXpZIs0DqkeAH1RX0jgXin0ayIaFCIYyPYsjESl7IlKzRqBskPtOWqkLV+q54NQeSDU9UEq1uFgS5Ah8qlXsIya/lrRkUtnMkU309saxPao6EuHtxsihignVvK+MnUxv4Ol1aOYcT/PO/UWhxWPcMxH3XH4tM=
+	t=1729145933; cv=none; b=t3LdVX1z7c7XOMStZVMr1kHbIxoFq8m8Uy3whojenk4PI93D6FiJL2/43Wfr906f3m9/JZCAoL7XBSQNAI+YEzknso/0qH8/l2T89LesF/Jxbnn7mICEKKxxmvl54g0VKMpGAvCp70Y2NB6Yv+XJUNLZaUL5yDpdOwQZ/TAlZZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729145787; c=relaxed/simple;
-	bh=Z7kq+zIa733AZAmh1HmJzT65CyO4RNRAFi6LCphCXJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XunPYJ9VVYDyexoAqlGzZpcBwDGEys2Dj42m+RO2CmNUQ5kPbhZ1oXK6nj26TN2aCmHzTv5IcMan5tFVTKbS2nPDauCFZhORnHha3pVt7YoFu0hZB+7NriSh4XCqYWZ3S7aOBGvIdGjAWFTiOzo1QKevFiVEvoeaS6mx6CtDnmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1Jnx-0005hj-2s; Thu, 17 Oct 2024 08:16:13 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1Jnw-002TsS-JY; Thu, 17 Oct 2024 08:16:12 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 3F3C4354D0D;
-	Thu, 17 Oct 2024 06:16:12 +0000 (UTC)
-Date: Thu, 17 Oct 2024 08:16:12 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: [PATCH net-next 07/13] net: fec: fec_probe(): update quirk:
- bring IRQs in correct order
-Message-ID: <20241017-affable-impartial-rhino-a422ec-mkl@pengutronix.de>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
- <20241016-fec-cleanups-v1-7-de783bd15e6a@pengutronix.de>
- <PAXPR04MB85103D3E433F3FBE5DDFA15C88472@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1729145933; c=relaxed/simple;
+	bh=OrvOI+5HalLgcSkXH2hhozrOBcNEIFwsHg4/xYLS9Vk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sT/pQS+EdvgPzkLIZ+cqnYk/XIGo4/VHuPJW2OpWspZxv74c0hant9/mTWcw4XkXvmodhd/aDOouLxn7En7DaSJn6tliuBVHJPFo4KTijof5VKDr3al9OgL05mLaGILB8z4aea8w7V28L+L0oAjyKK+M+KYCU4vrsSGNTIIfaa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ByC9XU/i; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-288d70788d6so269368fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:18:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1729145929; x=1729750729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7AMuJ7HqPV1JOGCg5tobowAHNkSY7nMnl7ipVjQvkNU=;
+        b=ByC9XU/iab4rUuadi6d2Lz0apWlg3Wbgbs4kPgairSh9LdiupWm9UrfukWd5ZZSsEX
+         vjceaI7nogVJcomuKXELNf7ibGl6vMRv3GTyf6IPjignUVZVj1kwBfvNfL+1mj6Ts4H7
+         d6MslgbPkEB1YAoG3sBuqs1BZBqEwQqVCSW+kRxUy+zmsjhpVupE7vmt6uXZo42r/Bmf
+         1btKIJyHIPWjrIIixk2Sovfjc3Wid9AaC/XN78QRew7fyXSeHQQmgxCXTmWDjSIpzRjG
+         dUnz8HCQ8L0pW7qbuCV+WLAVe6to51X7tTl/2HPq5u74bFmR+0A9zzCIeQgRadb8rZuw
+         4WJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729145929; x=1729750729;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7AMuJ7HqPV1JOGCg5tobowAHNkSY7nMnl7ipVjQvkNU=;
+        b=JwWfUZr49ZEQ+xjYCYnUpfXCYABOe67qHSQd0QOzcToNE5YbcKoKAjv2iHNryAIkp0
+         dXTU14lI9WyhGLs6jToQEqBxGMkuxcCFlyCDTJYT1rBBCUX4BuFC7u5llOVtLVKU50sl
+         FGtyFyDLlIXHdkQQ1D5YsnKtN61X1AZBipzpuXEfS3e/5n5i+8dHjwVsWAV5uZwdn2mm
+         d3kkqRTYF3gPTkOK/MMzEKCKQ3GVZeyZGDnhwUMutTGLk1E+7QfLBZhaI7gIr1Hz+gZB
+         qohAYc89O/dzSgWSVNQqCAnbqWG7GOwDTh6mNLl0FTZt9Pyk98AFSvEzkwUAoMIrxflA
+         Fbqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWfXgmVYywqBCwiJaFPZoNLEChh+9nkJsB+RQuAE4ZZFD/AgUlegu5bi+39+xlCUmK8aHpJ+3DlXZgFJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxngBZzkkEX+AXhPitNQE1VJ3TczcULSBT5uefCcseJxOUoHATU
+	Jb1TLPfdSt6cRszcqbZCKBBmurvBn89OQ2WhIRK6lmD4GX/lOEacIKCGXD3cryY=
+X-Google-Smtp-Source: AGHT+IGzYJOejjtuqJo0nJ1nynkWMnHU8ii7Rd3gZibJ6Lwzw36puDjCRZ94B0e+iKiVQIQOOVVwsA==
+X-Received: by 2002:a05:6870:80ce:b0:288:57fa:961d with SMTP id 586e51a60fabf-288edfb72femr5245852fac.38.1729145928950;
+        Wed, 16 Oct 2024 23:18:48 -0700 (PDT)
+Received: from GQ6QX3JCW2.bytedance.net ([203.208.189.10])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6c442bsm4259549a12.28.2024.10.16.23.18.45
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 16 Oct 2024 23:18:48 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: willy@infradead.org
+Cc: akpm@linux-foundation.org,
+	boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com,
+	longman@redhat.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	will@kernel.org
+Subject: Re: [RFC 2/2] khugepaged: use upgrade_read() to optimize collapse_huge_page
+Date: Thu, 17 Oct 2024 14:18:41 +0800
+Message-ID: <20241017061841.81240-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <Zw-pK_4wCvJHKfSi@casper.infradead.org>
+References: <Zw-pK_4wCvJHKfSi@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wi65hn3usen55a7x"
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB85103D3E433F3FBE5DDFA15C88472@PAXPR04MB8510.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+On Wed, 16 Oct 2024 12:53:15 +0100, willy@infradead.org wrote:
 
---wi65hn3usen55a7x
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>On Wed, Oct 16, 2024 at 12:36:00PM +0800, lizhe.67@bytedance.com wrote:
+>> From: Li Zhe <lizhe.67@bytedance.com>
+>> 
+>> In function collapse_huge_page(), we drop mmap read lock and get
+>> mmap write lock to prevent most accesses to pagetables. There is
+>> a small time window to allow other tasks to acquire the mmap lock.
+>> With the use of upgrade_read(), we don't need to check vma and pmd
+>> again in most cases.
+>
+>This is clearly a performance optimisation.  So you must have some
+>numebrs that justify this, please include them.
 
-On 17.10.2024 03:09:15, Wei Fang wrote:
-> > -----Original Message-----
-> > From: Marc Kleine-Budde <mkl@pengutronix.de>
-> > Sent: 2024=E5=B9=B410=E6=9C=8817=E6=97=A5 5:52
-> > To: Wei Fang <wei.fang@nxp.com>; Shenwei Wang <shenwei.wang@nxp.com>;
-> > Clark Wang <xiaoning.wang@nxp.com>; David S. Miller
-> > <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub
-> > Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; Richard
-> > Cochran <richardcochran@gmail.com>
-> > Cc: imx@lists.linux.dev; netdev@vger.kernel.org; linux-kernel@vger.kern=
-el.org;
-> > kernel@pengutronix.de; Marc Kleine-Budde <mkl@pengutronix.de>
-> > Subject: [PATCH net-next 07/13] net: fec: fec_probe(): update quirk: br=
-ing IRQs
-> > in correct order
-> >=20
-> > With i.MX8MQ and compatible SoCs, the order of the IRQs in the device
-> > tree is not optimal. The driver expects the first three IRQs to match
-> > their corresponding queue, while the last (fourth) IRQ is used for the
-> > PPS:
-> >=20
-> > - 1st IRQ: "int0": queue0 + other IRQs
-> > - 2nd IRQ: "int1": queue1
-> > - 3rd IRQ: "int2": queue2
-> > - 4th IRQ: "pps": pps
-> >=20
-> > However, the i.MX8MQ and compatible SoCs do not use the
-> > "interrupt-names" property and specify the IRQs in the wrong order:
-> >=20
-> > - 1st IRQ: queue1
-> > - 2nd IRQ: queue2
-> > - 3rd IRQ: queue0 + other IRQs
-> > - 4th IRQ: pps
-> >=20
-> > First rename the quirk from FEC_QUIRK_WAKEUP_FROM_INT2 to
-> > FEC_QUIRK_INT2_IS_MAIN_IRQ, to better reflect it's functionality.
-> >=20
-> > If the FEC_QUIRK_INT2_IS_MAIN_IRQ quirk is active, put the IRQs back
-> > in the correct order, this is done in fec_probe().
-> >=20
->=20
-> I think FEC_QUIRK_INT2_IS_MAIN_IRQ or FEC_QUIRK_WAKEUP_FROM_INT2
-> is *NO* needed anymore. Actually, INT2 is also the main IRQ for i.MX8QM a=
-nd
-> its compatible SoCs, but i.MX8QM uses a different solution. I don't know =
-why
-> there are two different ways of doing it, as I don't know the history. Bu=
-t you can
-> refer to the solution of i.MX8QM, which I think is more suitable.
->=20
-> See arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi, the IRQ 258 is
-> placed first.
+Yes, I will add the relevant data to v2 patch.
 
-Yes, that is IMHO the correct description of the IP core, but the
-i.MX8M/N/Q DTS have the wrong order of IRQs. And for compatibility
-reasons (fixed DTS with old driver) it's IMHO not possible to change the
-DTS.
-
-> fec1: ethernet@5b040000 {
-> 		reg =3D <0x5b040000 0x10000>;
-> 		interrupts =3D <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>,
-> 			     <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-> 			     <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
-> 			     <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>;
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---wi65hn3usen55a7x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcQq6kACgkQKDiiPnot
-vG/hxAf9EFOcg+9JNTCutVki4jjQfTWBDu93DOYJ45kqEF6Eu9yV8aR3M1fNOEIp
-B9jve6WxZ5E9eBN1/usQLvXgGruaP311uRm8wGVyCIu8+/L4FqOkUUbLlbm+l/iS
-lTZOCBwNxx13GpOo1wy48nVsOTxQjEF4bF17Sjdn/0OVwEgMdY2BoFr3pZTV6c8v
-+B8tialcIFGLWgoQ1YqCgi6guSWYre9RT8ieltJI8CBqBDkB3ShoinFIL0hzRxKP
-8zOpS7rVjdIuPC9yYPkQXH405JWfjDiNfoRYDBakKrJxjQ2LGWVz9KnW1Jc4s7qH
-Cq9j6y+us1x70O38Se7HTU3x5bIMow==
-=/2Ym
------END PGP SIGNATURE-----
-
---wi65hn3usen55a7x--
+Thanks!
 
