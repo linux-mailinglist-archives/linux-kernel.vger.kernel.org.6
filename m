@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-369415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7469A1D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3355F9A1D0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2BC41F2288A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:20:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F9E1C2154A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEBF1D043D;
-	Thu, 17 Oct 2024 08:20:35 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7701D3185;
+	Thu, 17 Oct 2024 08:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f6IL5xBw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA85199944
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E78A1C3F1C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729153234; cv=none; b=O3TQ9l/NXMNlQapoUTR4l9VTazrYay1Z77Ywb6ykryPOyKFuzP/ifpymZ3QdWOpClRtHRAJEvTmbOe5EUl/gc5/RXUZcGFbrvR9rYcvsq8t1xF6K/re4Ych3fDjNdWv9Zy6Z3u+fp877u8cWpN1EJY7ak7w5vGM7ojD5iOWTYFA=
+	t=1729153295; cv=none; b=c/bSw9np/8jNG4xMsLxV6rDa/ZsU+tzxVhevStVkZy+6iTOvMBUTg0OblFtGZgafmtleJ6/ZLUX/DSoUE7CiIYlVltTBT0taO87oEdeJ4cE10vT3u1QeAp/Qmy5vott+OYO7dWVVZGve1aue8cqEslPr25UgNqjeKJtoqNguEnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729153234; c=relaxed/simple;
-	bh=5JlZvbED4lSTM7df1+7Za8XN7cQ1XKt/zNPvoxdFwzo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KDzdz6/n7BzkaV6FGRjwqBSsxaytlCtCyVO46SGACHOkAs1+ntZb3ML9EpAvbfT91+8q9uU4orIgRqsMFoshBi00Gre0ByFFUcPORJKhMKa5vrYslT0yR8kznBqe/4od99AiRht9aR/YMipPf5tnOg89xpq8UBFE2+fiOoFG/hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8352a3cc8b5so70874239f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:20:31 -0700 (PDT)
+	s=arc-20240116; t=1729153295; c=relaxed/simple;
+	bh=mJdwseK+Ihydb0yrZWZ2xx7GAV8K0alZlK6rApkXMP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QNdPxgyRbC49REC0o9GFkyVl88mQLIUthO8qAQuoa389gTUtpmGlY0PBYhdlMAWg9O3LOt3YYs3U6sbrshFZdxvX4z74NZziLX1Ab6GdTAwZRmPPe1vwygjVRC+6BGHzZ13VlnjU53Ws4qVc+hebe1RvIUzlf7E2fJBD2N1F2cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f6IL5xBw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729153292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sv2elTq+1u5WAiRQ57i5MykcY8IctnIMTtGLiuNcRr8=;
+	b=f6IL5xBwGinTQAvqEBLDPlrzBQBvQEAu65AWUnsLBxYjDu+VHb50angknKa7kgNc5k1L3d
+	lPfnI2FzNTYvA6xZTNzuiQSG1bmqYNINGkakyhCEnKwzQTt/K+KbXvpsL53xD9muIMpZ7T
+	53h9cZQX+sHv2DHFLu4C33cBdW8H9UM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-404-3nKM2DMkPuOga3-_-YvHmQ-1; Thu, 17 Oct 2024 04:21:31 -0400
+X-MC-Unique: 3nKM2DMkPuOga3-_-YvHmQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d4a211177so354768f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:21:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729153231; x=1729758031;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oYTBiBShMWCNdAW6gCnUYtnHJmnerNIryV/kjjDV/uM=;
-        b=MLld1N0Zzmq4evfIWI8HTcmW7KDi1ekr34WB9G+4TzbD5KM6rUUfnNsE9iSWhqX/gs
-         k6MQAtPSpQFtb4us3divC49ztwsGFJPYpC70MvjzIP/+wnqIiRQLDoyfQPKr+zaDn9ru
-         tx7zQ+ywBYGnvrPhwRxDafeay0xhOd2bXq0L2TR7SJOGALmS7EM8tXow7Edz4HEbz/8L
-         xbFQCnUZRX+bJ2s/GiEKe7LB4+keM4ZqsjRU3JBule3KhjG5HqCZ4zbLVtb7UHd7HPow
-         XtqxBQf5Jft36vtX8bD3UWN5JojunnYzthHeYfmXfBNZKfMtISG5SofIsOxV8uyAiL6x
-         v13A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHYkZnnh7OPLDgjtzfNIMG81pazMHfc01ySc7qaonNjEZRQPKvwB32d1jcOreVv8OhwX9WUL45ix/CXtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYa0CV2dcnGIrsaDGh771xAcjA089B8hCVUQX176HXJA0eq3NN
-	po2Axbtf6lrth7TvEZk2qtMvCvzhaSdz2m10lWXvX88xVBG077wjXUFGGAMnPI1S/wKHOAZfS12
-	Hskq2nBzA4rnFIYzt2jVcZtfyjZzvSoFtKqyDLviSw7T4FsrDwC6n2Jk=
-X-Google-Smtp-Source: AGHT+IHyceELi0Dd4/3TJ97vd9SoTcwVXT4CrTeRM/ME3E1hzqaCB/8PkZGrnkR/aWUEVi5MmnP+0DYnEQ3d3pNQ71s5+dFmDgEO
+        d=1e100.net; s=20230601; t=1729153290; x=1729758090;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sv2elTq+1u5WAiRQ57i5MykcY8IctnIMTtGLiuNcRr8=;
+        b=fDHDyodPalyev8NgAGeITxnwkJ/g/Wobc21gKLEPBZWSEssLd3rZcFRoEgecER/4s5
+         4YImu4f7ehwsEZ+tT9Zop887ROvqsrpbmYsBUq1OiACluoZ0T//7cNzVPTBoDDDCRlNt
+         LtcsGJoCxCUotzMZmFZrUHNYfIhIOqS52cLrXPvs/XX+pDJVaoQkPR/VYwtqSFmILJhc
+         f3IwqBG69kaayFEKqJNEia4AE2aJ0QqZ1JMsz/djO0QfAy1k7VT6wgJoCw7VcAPDDfnZ
+         yp3gHKS+k2M7ZJwaR4ymAXE1jWCYVwzwhU7S50EvOInlTJ0pror39u/VQ4Ie+2G/u9uN
+         Tu3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXKxl45wNcWUv8Vi1tS6Wuo+u/d5GwaV/1VEOWl6nm+rxqxgmuPsdJnnMZLyrxpu3o6/Y9P6Ak67Y7Zt1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYGBwhRJqCRyO1cc9z51eY8584BAlHQbczxmSEJHhgAASHs4ln
+	XqpOQmfgKDRxysmLy/oQ1qqfg3pAKjaQZ/DekQLkBnHP74dCMQ34471u1Qj/BJ4FNoSwvwKIGhU
+	R1CBSX635bnmLdKBhUCIiJ83XKeSJL0QW61RBtv5f6O8NvmHRjBhNe+P1p9rGXQ==
+X-Received: by 2002:a5d:6182:0:b0:37d:4b07:606b with SMTP id ffacd0b85a97d-37d86d554fbmr4668949f8f.36.1729153289913;
+        Thu, 17 Oct 2024 01:21:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWbT67cXRNKHvT8bjUpe/1XYziYnHsjZYBLmjChrKd2b7so3VlC4Le6iaP/zZPAGC4Jfvqng==
+X-Received: by 2002:a5d:6182:0:b0:37d:4b07:606b with SMTP id ffacd0b85a97d-37d86d554fbmr4668926f8f.36.1729153289439;
+        Thu, 17 Oct 2024 01:21:29 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-22-245.dyn.eolo.it. [146.241.22.245])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf8313sm6450750f8f.66.2024.10.17.01.21.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 01:21:28 -0700 (PDT)
+Message-ID: <058bb30d-7d7c-4e4f-8b88-32e3ca99e548@redhat.com>
+Date: Thu, 17 Oct 2024 10:21:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1caf:b0:3a3:778e:45cd with SMTP id
- e9e14a558f8ab-3a3b5fbc20cmr203953495ab.21.1729153230987; Thu, 17 Oct 2024
- 01:20:30 -0700 (PDT)
-Date: Thu, 17 Oct 2024 01:20:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6710c8ce.050a0220.d5849.0026.GAE@google.com>
-Subject: [syzbot] [io-uring?] KCSAN: data-race in io_req_defer_failed /
- io_wq_free_work (3)
-From: syzbot <syzbot+2b8e48083b04a2e58fab@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    c964ced77262 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d3cf27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fd83253b74c9c570
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b8e48083b04a2e58fab
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/dc3d0edf69f7/disk-c964ced7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bb0052a85cf6/vmlinux-c964ced7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ec8def944d77/bzImage-c964ced7.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2b8e48083b04a2e58fab@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in io_req_defer_failed / io_wq_free_work
-
-write to 0xffff888117079648 of 8 bytes by task 3752 on cpu 1:
- io_req_defer_failed+0x73/0x440 io_uring/io_uring.c:935
- io_req_task_cancel+0x21/0x30 io_uring/io_uring.c:1361
- io_handle_tw_list+0x1b9/0x200 io_uring/io_uring.c:1063
- tctx_task_work_run+0x6c/0x1b0 io_uring/io_uring.c:1135
- tctx_task_work+0x40/0x80 io_uring/io_uring.c:1153
- task_work_run+0x13a/0x1a0 kernel/task_work.c:228
- get_signal+0xee9/0x1070 kernel/signal.c:2690
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff888117079648 of 8 bytes by task 3753 on cpu 0:
- req_ref_put_and_test io_uring/refs.h:22 [inline]
- io_wq_free_work+0x21/0x160 io_uring/io_uring.c:1779
- io_worker_handle_work+0x4cb/0x9d0 io_uring/io-wq.c:604
- io_wq_worker+0x286/0x820 io_uring/io-wq.c:655
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-value changed: 0x00000000802c2058 -> 0x00000000806c2118
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 3753 Comm: iou-wrk-3752 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-==================================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/2] ethtool: rss: prevent rss ctx deletion when
+ in use
+To: Daniel Zahka <daniel.zahka@gmail.com>,
+ Edward Cree <ecree.xilinx@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241011183549.1581021-1-daniel.zahka@gmail.com>
+ <20241011183549.1581021-2-daniel.zahka@gmail.com>
+ <966a82d9-c835-e87e-2c54-90a9a2552a21@gmail.com>
+ <43a98a99-4c79-4954-82f1-b634e4d1be82@gmail.com>
+ <c32a876f-4d20-c975-5a2f-3fa0ab229f05@gmail.com>
+ <e78915b0-aaf5-4c89-b2a2-a2622710563c@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <e78915b0-aaf5-4c89-b2a2-a2622710563c@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 10/16/24 18:50, Daniel Zahka wrote:
+> 
+> On 10/16/24 12:23 PM, Edward Cree wrote:
+>> On 15/10/2024 17:31, Daniel Zahka wrote:
+>>> On 10/14/24 6:10 AM, Edward Cree wrote:
+>>>> Imho it would make more sense to add core tracking of ntuple
+>>>>     filters, along with a refcount on the rss context.  That way
+>>>>     context deletion just has to check the count is zero.
+>>>>
+>>>> -ed
+>>> That sounds good to me. Is that something you are planning on sending patches for?
+>> I'm afraid I don't have the bandwidth to do it any time soon.
+>> If you aren't able to take this on, I'm okay with your original
+>>    approach to get the issue fixed; I just wanted to ensure the
+>>    'better' solution was considered if you do have the time for it.
+> Understood. I don't have enough bandwidth to commit to implementing it
+> soon either.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I understand the chances to have a refcount based implementation soon 
+are zero, and I could not find any obvious problem with the proposed 
+solution, I'm going to apply this series as-is.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Cheers,
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Paolo
 
-If you want to undo deduplication, reply with:
-#syz undup
 
