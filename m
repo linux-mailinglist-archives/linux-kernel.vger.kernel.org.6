@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-368983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B748E9A174B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:51:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992C09A174E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A0A1F22E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38061C21253
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCF3175A5;
-	Thu, 17 Oct 2024 00:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4891DFE8;
+	Thu, 17 Oct 2024 00:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MuzbC3gr"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YmcQoIeM"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8305521E3A4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037C21BF37
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729126270; cv=none; b=tCq/pchbVRTYqRbwBGPCnMUs2RI+E2dc+3cS6ol0tN2bEvsHyDDxH+gy+t/0nuVrujCWrtQqdJkvMgXlmKLoDGB8bgyaFMB9t30UZlUifVOchLty6NcJPM/QfDXZbjA7Z3HeiMqD1xLrB7TIJfnNKG9K8/N95IVDrgYo8iEaQ0Q=
+	t=1729126277; cv=none; b=bY12jjNVXV1r5AyfbGW1PB0dGboPrp70uNLeedcLzFHmGWR4ubovIrMRcXdzEPYyJ+4ix1L+528eEMRnMr5SPT+4fP3jLDE8pJaEl1HlBU+PgS2h0fhnxES+Xtr+oMc/s0Hw8MBBNK9CNEXWZEA4Es9xky229KmS/U1+ITEcxtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729126270; c=relaxed/simple;
-	bh=Jgnqihu6FbtNVoNoIj5vSy2Qh7tCgSEbPpKuBouotIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dDaTRvwSvyv0FKUQn/KhGoSdoZiT0RA4BXMOzmKxC/OKynjUs32DS+MfWNjwzgc6n04/UEcYc2WeHgXCo8rs5c4Vpn+nWsHvIyzKru6LzTWqAp7x5yeeEOIOGPlhEWeub9yEfc4ZEKl8pMyWdRHfJ47O1jKhPTc63xA8K6Kr7GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MuzbC3gr; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1729126277; c=relaxed/simple;
+	bh=IxD+p5GKEBnqW9bnHP0WW6feXUZp/DU4SEQgGZ6gu7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u5RAKCELGkJt6yUr/dn0ILZPS/LX9jPzwZKH3jOmiJGxqXjKkDSxR+x4bUWygU/v1qtsDnnxl328YoNavmksKfEMaZTDzpiMDkWAtaHnqhGpgSuivKRAPXwASj8FFVKZ/lLJTfxiDrCvodyEUj/w5fDo0KmLxCgY+xqFl7e0Uak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YmcQoIeM; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso47288a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:51:09 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e3c0d1ccc6so44434a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:51:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729126269; x=1729731069; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oNLnN/iucIUQy/y3ju6Adhzlqh5K8kEraoCv1/E/7vA=;
-        b=MuzbC3grzlnaYc1ya/ZU9GBziOQYwDwSs0qAmJycq8iE+ZXKcNxUwGx3NydIsI2lVE
-         Xu13dA4qlXJQzryyesoCvPiwwtVPb0UNl2wlsPZALPAdGetsZOeurbke5rPgRExu8nIK
-         dXBYqlMsNMaB0KQFLE6QpQyGNxSi08aHBsbEw=
+        d=chromium.org; s=google; t=1729126272; x=1729731072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qjKlw80hPOriNww9p0Da79oYC5cYurJRNqRcXEepGpg=;
+        b=YmcQoIeMX4SB/eIIlH/U0Do61TzJ88np1flWOZqqF7z1iMdH6pF+EV9EogNJt+duHF
+         rhr391nLukQ429h3dIysyitz0bbXnIovwknBf+5/vHQmIvxFblbuMlvJYFUiMr//hYP1
+         jlsQgSX2g61csAxjUR/xhmSGD9k9fSPg+KB5k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729126269; x=1729731069;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oNLnN/iucIUQy/y3ju6Adhzlqh5K8kEraoCv1/E/7vA=;
-        b=cXlLtjnLha70MhMuXIRo0iYmmaQ0GM/I6urK/cnfPJaBxrD9CL/UCeYz6QU4PLkW/V
-         v+zoB3BqQjQzRFFZHatghFZBxIhoSf+CjTb26Y1KZpdLoOmMIRpX8JwtmtACtdKgNlj5
-         1bhuEusJjxcJEsvIk/GUG5JTGtLMVc3D0XFxUvkbNdkVMgbvwTLhL+yAj6Pr24jKRBbj
-         gRbzYL/jWNKtKylrmeb2FrtrpwFoeGT8GWkwRr/VrQdkJSvI2POmwzgVDixd/AZrDTUg
-         P7URYWNdVA3hYl00cYAEwNIEdOlJ8iD+Uok5fPvoQe5PFBGwmIOMZr7gIHEQWRophBy9
-         33tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCHWRA8dt7ZBS6gAPNzVuT+L9KXgD+v38jPPLjEnIdQJjBTWslrQSL35tnGApfMkAjPJRlJyml04rhG6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztVi2ikKDrMBuSYYl3qJ2RryO1GN6tZX+tQjSzQSXox/pZnBfm
-	ig/1Dde9Naz9g+amfchR05ZiYSeuK6cCMZ2FYfZnQwCMqHu5sCUoQlsirou4/g==
-X-Google-Smtp-Source: AGHT+IE/KwJHBKXnkbyNA/+4lZaIr5QamZ24gPBpSlNBEOwhpQ1CTC7sgfsehGTCkqBVVE0FRU0pPw==
-X-Received: by 2002:a05:6a20:3944:b0:1d4:f5e4:6a9a with SMTP id adf61e73a8af0-1d90cc869ecmr2448743637.12.1729126268835;
-        Wed, 16 Oct 2024 17:51:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729126272; x=1729731072;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qjKlw80hPOriNww9p0Da79oYC5cYurJRNqRcXEepGpg=;
+        b=uoItH7X+079OmaBiGAKfh8kZY4FlA1RcTZxz7ps37cTufxHaLhy37gHO0nGw3AdSNH
+         8wLIkU7ZlNWt2Ub295s2V60ohJUjy+K79wDoEgtTVN7gBvddfAn63b0llTlyZ2O9SutV
+         Zfd42c3VLkLbrIxdUOtpYtYku1XyMvypICwHdQQ4jtzz7CU1c2p9LIj8SGv99+/aEjRE
+         ovFUlWVK1C/N7Nx/40J75MK8oRYgdLjSgFpPNbhEcWyMuJvoBqBvONKBkeNtfi3lmIj+
+         GAVNE/NcGU7NMPPr3fUHCO/HlQtkyopqo5OkT49jg2XgxF7dy3h48AY5pVS1tiTOYgig
+         PLtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkyzSNz2vGtxUKBk3imgaQ0gdXq4CwW8dPD+hWmAMGLxSRiEcPbJ66MJ0rj8e1sgnsxufYi4ol8uiULUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo8OCNhQYbcMOZWCjJi7pBdn3F7TJbHQz6PPnHx99R+jGlujrD
+	Fp3Sz5TdjDeJ08jP26jbWBIcSvtTdzeqsqw4LcN9rhvKtqsQvWynY2/8yM+MWQ==
+X-Google-Smtp-Source: AGHT+IG+nZEmIFxEMebL8zJk/ulSdARWGAMWNOvXhzs7CcDij4L3o5BGAmBhyFvsZhnXUwj/YuMYiQ==
+X-Received: by 2002:a17:903:32c4:b0:205:723f:23d4 with SMTP id d9443c01a7336-20d47e69b07mr7460455ad.5.1729126270776;
+        Wed, 16 Oct 2024 17:51:10 -0700 (PDT)
 Received: from localhost (56.4.82.34.bc.googleusercontent.com. [34.82.4.56])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-71e84982905sm1770554b3a.96.2024.10.16.17.51.08
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20d1804c050sm34102105ad.216.2024.10.16.17.51.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 17:51:08 -0700 (PDT)
+        Wed, 16 Oct 2024 17:51:10 -0700 (PDT)
 From: jeffxu@chromium.org
 To: akpm@linux-foundation.org,
 	keescook@chromium.org,
@@ -84,11 +86,15 @@ Cc: jeffxu@google.com,
 	deraadt@openbsd.org,
 	surenb@google.com,
 	merimus@google.com,
-	rdunlap@infradead.org
-Subject: [PATCH v1 0/2] mseal: fixing madvise for file-backed mapping and PROT_NONE
-Date: Thu, 17 Oct 2024 00:51:03 +0000
-Message-ID: <20241017005105.3047458-1-jeffxu@chromium.org>
+	rdunlap@infradead.org,
+	Jeff Xu <jeffxu@chromium.org>,
+	stable@vger.kernel.org
+Subject: [PATCH v1 1/2] mseal: Two fixes for madvise(MADV_DONTNEED) when sealed
+Date: Thu, 17 Oct 2024 00:51:04 +0000
+Message-ID: <20241017005105.3047458-2-jeffxu@chromium.org>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+In-Reply-To: <20241017005105.3047458-1-jeffxu@chromium.org>
+References: <20241017005105.3047458-1-jeffxu@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,7 +103,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jeff Xu <jeffxu@google.com>
+From: Jeff Xu <jeffxu@chromium.org>
 
 Two fixes for madvise(MADV_DONTNEED) when sealed.
 
@@ -114,16 +120,115 @@ failed to consider scenarios where a mapping is initially created as
 read-write, modified, and subsequently changed to read-only. The newly
 introduced VM_WASWRITE flag addresses this oversight.
 
-Jeff Xu (2):
-  mseal: Two fixes for madvise(MADV_DONTNEED) when sealed
-  selftest/mseal: Add tests for madvise
+Reported-by: Pedro Falcato <pedro.falcato@gmail.com>
+Link:https://lore.kernel.org/all/CABi2SkW2XzuZ2-TunWOVzTEX1qc29LhjfNQ3hD4Nym8U-_f+ug@mail.gmail.com/
+Fixes: 8be7258aad44 ("mseal: add mseal syscall")
+Cc: <stable@vger.kernel.org> # 6.11.y: 4d1b3416659b: mm: move can_modify_vma to mm/vma.h
+Cc: <stable@vger.kernel.org> # 6.11.y: 4a2dd02b0916: mm/mprotect: replace can_modify_mm with can_modify_vma
+Cc: <stable@vger.kernel.org> # 6.11.y: 23c57d1fa2b9: mseal: replace can_modify_mm_madv with a vma variant
+Cc: <stable@vger.kernel.org> # 6.11.y
+Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+---
+ include/linux/mm.h |  2 ++
+ mm/mprotect.c      |  3 +++
+ mm/mseal.c         | 42 ++++++++++++++++++++++++++++++++++++------
+ 3 files changed, 41 insertions(+), 6 deletions(-)
 
- include/linux/mm.h                      |   2 +
- mm/mprotect.c                           |   3 +
- mm/mseal.c                              |  42 +++++++--
- tools/testing/selftests/mm/mseal_test.c | 118 +++++++++++++++++++++++-
- 4 files changed, 157 insertions(+), 8 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 4c32003c8404..b402eca2565a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -430,6 +430,8 @@ extern unsigned int kobjsize(const void *objp);
+ #ifdef CONFIG_64BIT
+ /* VM is sealed, in vm_flags */
+ #define VM_SEALED	_BITUL(63)
++/* VM was writable */
++#define VM_WASWRITE	_BITUL(62)
+ #endif
+ 
+ /* Bits set in the VMA until the stack is in its final location */
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 0c5d6d06107d..6397135ca526 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -821,6 +821,9 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+ 			break;
+ 		}
+ 
++		if ((vma->vm_flags & VM_WRITE) && !(newflags & VM_WRITE))
++			newflags |= VM_WASWRITE;
++
+ 		error = security_file_mprotect(vma, reqprot, prot);
+ 		if (error)
+ 			break;
+diff --git a/mm/mseal.c b/mm/mseal.c
+index ece977bd21e1..28f28487be17 100644
+--- a/mm/mseal.c
++++ b/mm/mseal.c
+@@ -36,12 +36,8 @@ static bool is_madv_discard(int behavior)
+ 	return false;
+ }
+ 
+-static bool is_ro_anon(struct vm_area_struct *vma)
++static bool anon_is_ro(struct vm_area_struct *vma)
+ {
+-	/* check anonymous mapping. */
+-	if (vma->vm_file || vma->vm_flags & VM_SHARED)
+-		return false;
+-
+ 	/*
+ 	 * check for non-writable:
+ 	 * PROT=RO or PKRU is not writeable.
+@@ -53,6 +49,22 @@ static bool is_ro_anon(struct vm_area_struct *vma)
+ 	return false;
+ }
+ 
++static bool vma_is_prot_none(struct vm_area_struct *vma)
++{
++	if ((vma->vm_flags & VM_ACCESS_FLAGS) == VM_NONE)
++		return true;
++
++	return false;
++}
++
++static bool vma_was_writable_turn_readonly(struct vm_area_struct *vma)
++{
++	if (!(vma->vm_flags & VM_WRITE) && vma->vm_flags & VM_WASWRITE)
++		return true;
++
++	return false;
++}
++
+ /*
+  * Check if a vma is allowed to be modified by madvise.
+  */
+@@ -61,7 +73,25 @@ bool can_modify_vma_madv(struct vm_area_struct *vma, int behavior)
+ 	if (!is_madv_discard(behavior))
+ 		return true;
+ 
+-	if (unlikely(!can_modify_vma(vma) && is_ro_anon(vma)))
++	/* not sealed */
++	if (likely(can_modify_vma(vma)))
++		return true;
++
++	/* PROT_NONE mapping */
++	if (vma_is_prot_none(vma))
++		return true;
++
++	/* file-backed private mapping */
++	if (vma->vm_file) {
++		/* read-only but was writeable */
++		if (vma_was_writable_turn_readonly(vma))
++			return false;
++
++		return true;
++	}
++
++	/* anonymous mapping is read-only */
++	if (anon_is_ro(vma))
+ 		return false;
+ 
+ 	/* Allow by default. */
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
