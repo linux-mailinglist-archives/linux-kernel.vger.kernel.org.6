@@ -1,191 +1,166 @@
-Return-Path: <linux-kernel+bounces-369062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07319A1887
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:18:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596829A1889
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03FF1C2188E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:18:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F36F285E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E1F3EA6C;
-	Thu, 17 Oct 2024 02:18:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2B026AF3;
+	Thu, 17 Oct 2024 02:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3a+b3mf"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A246417580
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3023457333;
+	Thu, 17 Oct 2024 02:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729131487; cv=none; b=oixQtzbBmrQSbduJ3OHDdK1prqRn/zHu+hse+SvatUbwnwoZzZ029DnxZnh5HnyjGrO4f7TFG0c0A/CytueixPj35zEBxNWoeMBQw7Ig4wlaDvoZT0F53UHrpdUuYnnX/wJXFcdDIo+Qr6z3usACaBJCl9poeATFF8DSIf92eZ0=
+	t=1729131506; cv=none; b=SzM8Gd28hDqaTMojLnsJd5Vq8YR7WEcLIGC8HJ9i7DajFTDc6jdtuTyP7yiNLc8rNgLF1TCcHWNKyq7OeSCNCoLtH+O6RZ1cQ/1GQa9pVrlVu+ITzjEOcdRXSCyBuTRv6Bq53OvUpqHcgbodVTn/ei/PGjCwQdMcErWsnyscl+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729131487; c=relaxed/simple;
-	bh=iTJhuWTU5F6snIB24atb4F2rYWxzZy4FUo69IUx0iQ8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sEDVXhhJTyrHQlha9bpEolxkAbQjM0ocDkwq1YbJlSqaK8NYg6OJNNADqrjxMPV503JIwK0PaQcluoptLyACwR+r5JKcyJmXNFZIFLGWRzDOboVYOJgMKDyHx7Pq9ZM6qFRjSxekgmbgznGOdSwaX9aDpa1bD3dXvK4mW701EMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso4353465ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 19:18:04 -0700 (PDT)
+	s=arc-20240116; t=1729131506; c=relaxed/simple;
+	bh=/5sg5vucji/rkByxjQpJHVoRYiCdCgoRUS24G3Eys2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PoqE3n/tt03jwJGvNbqIr2MaFzKAvostcXU5YpeGbKmS0x4At3WyNc3g38EimAL+yX+dTwEiE4J+ERD+O3rtrUcWZtxJZJ/RJNQvJ8zP73Ciq+TczP9zsbjbS6UV2pSR3ciE7kSqBS54Jk4FlOWqY5EstlPjI5qnDdkuxAvKTso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3a+b3mf; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e4b7409fso466707e87.0;
+        Wed, 16 Oct 2024 19:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729131501; x=1729736301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KH9rJWQgPZ7rdx5HRfQh9P8MfA44P4DgqHmGgy1QEeM=;
+        b=e3a+b3mfeCY/7hoiVSCZ5bTY4VsjLusIWihFYopMkIcM9vpIRrrYLPsFsIcE/D9qTV
+         MtgifUwYd26m6kvgdHXCZz5jZA9g+5yoXcI5BVKMQGNcppb8gBlpVhOR7vx4V7d41YgC
+         7Qny1O9k2yswNWVhrPyAF0Hm0zXjymChSSF2MARJuJlwFo5nMWFHosrmcoNdGmeSpAXU
+         QEtcuHcohTc7dPC372/4mKB+wmSg5BcTVXNGjOAl1qoVRKhvlvczJtzBeRgifYQJf1ue
+         trCw4zpGnqWDR+tQfzIAGzK3Jl9YOKb4An1sr+BJ2/FkY/n1TwxiBNcX63ysCP2+hDBI
+         +OTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729131484; x=1729736284;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mqoaEixJpFtdYJcRuC99UMtplAQjxhkAotXGFWUQNe0=;
-        b=kUThn6hiSAKxGcfUOUKNwBCuj8vl6lHzqKcMSlhqrgGudNEpcqu3Z94A0EQrZwOa8M
-         YWSUxWJcYkSqbEJB9r8xDoTPB8Erk6gGNWUdule8vYWO9CxuzBVOOVbvG3/1f/vDTizO
-         45Jlp2NYBcWakOpoGvRWz0FfeQicbehGxjC1I3dF3ED+JxONyT0AHaC+pzxSfWEBBTPv
-         5qVaQMsirKh4ukd1f/twXb4GKpovWVURlLgx/yiPuv0mouFK0TKFAUtLNVJ0+DFhAecB
-         ljuGluyKIYjvJiv1Ttvfd9lXY0I/5Ok6XKM9pwEHNdO1od0maDClrX3ygnYpUXGcY12t
-         zObw==
-X-Gm-Message-State: AOJu0YxorPSFY4KDaXmaYIKjWNoEo4X4zGzW6tlkOyI6OMM7jWe9pD3C
-	fgCpLs2rG/ZE6gNV68FflzB6cYbEQY9V9SEdSVH7GQdLqzqpgH0EQxiMDJzGHADggQVrJ0TKJZm
-	YJ7lGUJoWfaeGh+pZ1kvOKohNSKOgJ1Czv7V5d4jQoSsNfPAzs1/13Xs=
-X-Google-Smtp-Source: AGHT+IHBQVBn3R7MpoRkIvTgMNESWBbLuMk4CRFvuQ0wtk9Y/wSUnxFSPTA451DJFEAFjtq5I8fqpN2yC/Aqfu8sCfx8FDA4E03W
+        d=1e100.net; s=20230601; t=1729131501; x=1729736301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KH9rJWQgPZ7rdx5HRfQh9P8MfA44P4DgqHmGgy1QEeM=;
+        b=OEqrsqsLn5HKrjD5Wdlk5IHUuYq3/zhsVz0D6evtYMFJIFOsj2TmFkSnN9aCc5dTjg
+         eSkgdmIWvqwGh3YI8U/hk5fKRV0G7i4rSkLftgolHc9bsFDKlgmWBT60ZUAfPnIpRBJ7
+         BPfIQNLcXoqwd4Je5fb5Zb3pTwfQRCkQ/xI110j0vE9QbkZ8hDRPMbkavGwsUF2s4/Rr
+         XycrICyXf3gAXqA1sNBBg7PXaeJhlMI2t3ozb5IKcQRa+OfuN0m1qTiEkFvKLHNUhSiG
+         Ll8n1yYPQYkrdc8nL6JgO46bHvIcx5V+MajzIKjJf0dzRBaolwnHN/bR8/gWA6pMSF8P
+         o5bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUY7XsAMQCNl4bXnruXPQcZhGEgyk1HsmY6MhFcc+S1r/XQemzYRJXG3pRlxKoBGjJhKIbiXp1/KHgZeqQ=@vger.kernel.org, AJvYcCVlp9HJhIBtvM5KECAKOMG0mGHH/N4FNdB/MQy2zwbqdUOE+2l/6WD5FcFPgtcUsIT4XBNuChZ8FdC0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8QmCsS2SNpQBsAmXSKsozeWbZq8vssvqRe8Zc2Xl5j9wEGqPQ
+	apfw863rOJOTKTpT9fEKRaAnaqvpqTgpN/4c+K+pKFCNp6DUWQ9StS4bq994HvRpg5dmLSt/udL
+	Hu84ze9ZkP2+qSXCf7d9o8DdolpHXS0fJ7Zft
+X-Google-Smtp-Source: AGHT+IF2ZPwuxxOR0vVJPQ3cxf5tMQ8nCEvK26fjQsJdaNVdj7ni1S9dQiLuNXaE1QiHM1sb+kv7E9wzMwwzbX5Pxgg=
+X-Received: by 2002:a05:6512:b8f:b0:539:fd75:2b6c with SMTP id
+ 2adb3069b0e04-53a0c732bbcmr436680e87.21.1729131500913; Wed, 16 Oct 2024
+ 19:18:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170a:b0:3a0:9aef:4d0 with SMTP id
- e9e14a558f8ab-3a3dc4a04f7mr61147675ab.5.1729131483777; Wed, 16 Oct 2024
- 19:18:03 -0700 (PDT)
-Date: Wed, 16 Oct 2024 19:18:03 -0700
-In-Reply-To: <20241017015210.3665821-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671073db.050a0220.d9b66.0177.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_fiemap
-From: syzbot <syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
+References: <CALy5rjUMnocsh80gPB+4UgaFS-Gsz5KAFnAN8Nj7m_oyohFfvg@mail.gmail.com>
+ <ZxBafdsU6ioeTBmQ@dread.disaster.area>
+In-Reply-To: <ZxBafdsU6ioeTBmQ@dread.disaster.area>
+From: Xiongwei Song <sxwbruce@gmail.com>
+Date: Thu, 17 Oct 2024 10:18:10 +0800
+Message-ID: <CALy5rjX4xU0UtuQUZxD56LMpX=pseWwE0OSR4J2JH_Ce3bqAVg@mail.gmail.com>
+Subject: Re: XFS performance degradation during running cp command with big
+ test file
+To: Dave Chinner <david@fromorbit.com>
+Cc: cem@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Dave,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in ocfs2_fiemap
+Thank you so much for the response.
 
-         option from the mount to silence this warning.
-=======================================================
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc3-syzkaller-00087-gc964ced77262-dirty #0 Not tainted
-------------------------------------------------------
-syz.0.15/6035 is trying to acquire lock:
-ffff88807a5ee098 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0xaa/0x120 mm/memory.c:6700
+On Thu, Oct 17, 2024 at 8:29=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Wed, Oct 16, 2024 at 07:09:29PM +0800, Xiongwei Song wrote:
+> > Dear Experts,
+> >
+> > We are facing a performance degradation on the XFS partition. We
+> > was trying to copy a big file(200GB ~ 250GB) from a path to /dev/null,
+> > when performing cp command to 60s ~ 90s, the reading speed was
+> > suddenly down. At the beginning, the reading speed was around
+> > 1080MB/s, 60s later the speed was down to around 350MB/s. This
+> > problem  is only found with XFS + Thick LUN.
+>
+> There are so many potential things that this could be caused by.
+>
+> > The test environment:
+> > Storage Model: Dell unity XT 380 Think/Thin LUN
+>
+> How many CPUS, RAM, etc does this have?  What disks and what is the
+> configuration of the fully provisioned LUN you are testing on?
+>
+> > Linux Version: 4.12.14
+>
+> You're running an ancient kernel, so the first thing to do is move
+> to a much more recent kernel (e.g. 6.11) and see if the same
+> behaviour occurs. If it does, then please answer all the other
+> questions I've asked and provide the information from running the
+> tests on the 6.11 kernel...
+Ok, sure. I will try to upgrade the kernel version and run the test again.
+But I don't own the test hardware. This issue can't be reproduced on any
+machines, so I might not reply to you very quickly.  The worst situation is
+I can't use the hardware any more. But once I get the test result I will ge=
+t
+back to you and answer all your questions as soon as possible.
 
-but task is already holding lock:
-ffff888071633f60 (&oi->ip_alloc_sem){++++}-{3:3}, at: ocfs2_fiemap+0x377/0xf80 fs/ocfs2/extent_map.c:755
+Thank you again.
 
-which lock already depends on the new lock.
+Regards,
+Bruce
 
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&oi->ip_alloc_sem){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       ocfs2_page_mkwrite+0x1e9/0xed0 fs/ocfs2/mmap.c:139
-       do_page_mkwrite+0x198/0x480 mm/memory.c:3162
-       do_shared_fault mm/memory.c:5358 [inline]
-       do_fault mm/memory.c:5420 [inline]
-       do_pte_missing mm/memory.c:3965 [inline]
-       handle_pte_fault+0x11fa/0x6800 mm/memory.c:5751
-       __handle_mm_fault mm/memory.c:5894 [inline]
-       handle_mm_fault+0x1053/0x1ad0 mm/memory.c:6062
-       do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
--> #0 (&mm->mmap_lock){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __might_fault+0xc6/0x120 mm/memory.c:6700
-       _inline_copy_to_user include/linux/uaccess.h:183 [inline]
-       _copy_to_user+0x2a/0xb0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:216 [inline]
-       fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
-       ocfs2_fiemap+0x9f1/0xf80 fs/ocfs2/extent_map.c:796
-       ioctl_fiemap fs/ioctl.c:220 [inline]
-       do_vfs_ioctl+0x1bf8/0x2e40 fs/ioctl.c:841
-       __do_sys_ioctl fs/ioctl.c:905 [inline]
-       __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&oi->ip_alloc_sem);
-                               lock(&mm->mmap_lock);
-                               lock(&oi->ip_alloc_sem);
-  rlock(&mm->mmap_lock);
-
- *** DEADLOCK ***
-
-1 lock held by syz.0.15/6035:
- #0: ffff888071633f60 (&oi->ip_alloc_sem){++++}-{3:3}, at: ocfs2_fiemap+0x377/0xf80 fs/ocfs2/extent_map.c:755
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 6035 Comm: syz.0.15 Not tainted 6.12.0-rc3-syzkaller-00087-gc964ced77262-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- __might_fault+0xc6/0x120 mm/memory.c:6700
- _inline_copy_to_user include/linux/uaccess.h:183 [inline]
- _copy_to_user+0x2a/0xb0 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:216 [inline]
- fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
- ocfs2_fiemap+0x9f1/0xf80 fs/ocfs2/extent_map.c:796
- ioctl_fiemap fs/ioctl.c:220 [inline]
- do_vfs_ioctl+0x1bf8/0x2e40 fs/ioctl.c:841
- __do_sys_ioctl fs/ioctl.c:905 [inline]
- __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f351397dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f35147e5038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f3513b35f80 RCX: 00007f351397dff9
-RDX: 00000000200001c0 RSI: 00000000c020660b RDI: 0000000000000005
-RBP: 00007f35139f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f3513b35f80 R15: 00007ffef5debf08
- </TASK>
-
-
-Tested on:
-
-commit:         c964ced7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14483030580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca440b457d21568f8021
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12bdf727980000
-
+>
+> > The steps to run test:
+> > 1) Create a xfs partition with following commands
+> >    parted -a opt /dev/sdb mklabel gpt mkpart sdb xfs 0% 100%
+> >    mkfs.xfs /dev/sdbx
+> >    mount /dev/sdbx /xfs
+>
+> What is the output of mkfs.xfs?
+>
+> Did you drop the page cache between the initial file create and
+> the measured copy?
+>
+> what is the layout of the file you are copying from (ie. xfs_bmap
+> -vvp <file> output)?
+>
+> > It seems the issue only can be triggered with XFS + Thick LUN,
+> > no matter dd or cp to read the test file. We would like to learn
+> > if there is something special with XFS in this test situation?
+> > Is it known?
+>
+> It smells like the difference in bandwidth between the outside edge
+> and the inside edge of a spinning disk, and XFS is switching
+> allocation location of the very big file from the outside to the
+> inside part way through the file (e.g. because the initial AG the
+> file is located in is full)...
+>
+> > Do you have any thoughts or suggestions? Also, do you need vmstat
+> > or iostat logs or blktrace or any other logs to address this issue?
+>
+> iostat and vmstat output in 1s increments would be useful.
+>
+> -Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
 
