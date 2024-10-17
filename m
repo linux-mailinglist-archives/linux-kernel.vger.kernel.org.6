@@ -1,175 +1,154 @@
-Return-Path: <linux-kernel+bounces-370657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE669A302E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:58:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C219A3040
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C2D1C22043
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B292F1F235DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968711D6DD8;
-	Thu, 17 Oct 2024 21:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9D11D7984;
+	Thu, 17 Oct 2024 22:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/5veJ3k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlJS8hRx"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA15E1D1F7E;
-	Thu, 17 Oct 2024 21:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CC81D798B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729202290; cv=none; b=COFOhMuOpFFXatnWiNBbP6YyWJGXGSG3JZsDomhNrZm1z+KekAyWOQlZ1tMGLEHoCNUJu+knSEc6IGTPNwtc86wOc+zTMP0dvjBnanTcLgxyRi+ERUiKsjEaDl8lzcWb7eY6P6rZQSZrl3Qva4yMcOt/baaYb3JIUXIMeohRpdc=
+	t=1729202416; cv=none; b=UgGMe5rNcVtLNuciqaoiS3hEFWAvpSSWWw8yXgWCpzxh3UIVejYzDH69KpFvqps8fmzTo/zcnTdndrfojJup6XCZoRw2bo8VdilFffye1SaNOf1hpr3iXHt39UQWbrn7/T0uzeLrWoDtYmysTznug8aXmvv5YSnr5/lFa9n/IN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729202290; c=relaxed/simple;
-	bh=KHR/VZNuK28wg96sxQVqQhjXxhUA5+d9A8qACNPCbYE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kUe9HUjmB4SImFMldCYoQCWgTZtikKV/WlZsHMWSlluR0g8mQAVT594LtSA0tHtCQnGulQ0Y39C+flCrSEf82G06vLl/BAyHha3Q8g/Sz1k2YkhWzug5hn142ILbkrH/BxTMdcRdC4e+kg/GK8Chblo2aWnnJ6CM4f+ryYeXUak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/5veJ3k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4594C4CEC3;
-	Thu, 17 Oct 2024 21:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729202289;
-	bh=KHR/VZNuK28wg96sxQVqQhjXxhUA5+d9A8qACNPCbYE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=b/5veJ3kqMVo6mmiuWbC7SkFWLN0qSDEjKc/PqmJahowPVC7Hyze6LqFvaQmnOy2x
-	 0bqGMeCkb7aPgiSWw4eyss6T7FMhWLrvt5pD8J32iXVWxVS+FU2uoJgm9sENSKaCPO
-	 Ufe0Ltm8+UDrof8dxoB0X9wqZTJU/VTgTNviMvcfQU/Ji960kvCMhTw6z0GbKa2K0S
-	 brMQ/lGX8V1peAfd0LFMULJnb4JngoJR4v+9frZcwx0DDPsZPpIGtr1gp+MoMe7zq+
-	 5e+q0JeFIKF9TYIbTQDboWI4Fws/tOIde2I/ZGkeDkEs/wdDnnlLnisnabLQRQMrri
-	 ZpRDZ42pwwALA==
-Message-ID: <2e696bea1657b6c1a9309be7aa0e217fec47b750.camel@kernel.org>
-Subject: Re: [RFC PATCH v3 04/13] keys: Add new verification type
- (VERIFYING_CLAVIS_SIGNATURE)
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
- David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>,
- "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
- "davem@davemloft.net" <davem@davemloft.net>,  Ard Biesheuvel
- <ardb@kernel.org>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar
- <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
- <mic@digikod.net>,  "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
- Stefan Berger <stefanb@linux.ibm.com>,  "ebiggers@kernel.org"
- <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, open list
- <linux-kernel@vger.kernel.org>, "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>, "linux-crypto@vger.kernel.org"
- <linux-crypto@vger.kernel.org>, "linux-efi@vger.kernel.org"
- <linux-efi@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>
-Date: Fri, 18 Oct 2024 00:58:05 +0300
-In-Reply-To: <46017A8E-88EB-4B8D-9FB2-643F9A5BF7F0@oracle.com>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <20241017155516.2582369-5-eric.snowberg@oracle.com>
-	 <24f4db65f9417b5a686b642bf5a8559236efafb9.camel@kernel.org>
-	 <46017A8E-88EB-4B8D-9FB2-643F9A5BF7F0@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729202416; c=relaxed/simple;
+	bh=xFORzQkJL/WcWdKZ3DVfQDkKa0jdZA97QDeet1sttTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FC1rlXPAQOOWlmgS9GnaAYAlok3KqMP+A2ZlYTlN+whtg/q0q46v5PVqlq6S/Cfbq8/Ki2Kzudi6ZoxB9maOy3Lxm1FRnrqfOd3Jif9++zPV5xSVJq9SF7ZCA5iJvlhxXVbXptNfKgW0jWErA2+CnAxl+EQ2Ym7Oc1WQFo8shzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NlJS8hRx; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5f647538so14963261fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:00:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729202409; x=1729807209; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Isw4TLSYBoy+yI8Luh4Hi+u78l3bLfiSrZ6IrpPiuvU=;
+        b=NlJS8hRx9XqJqrvYo51fBH9ruarluzpG69Ly3VxN14Hs9m9bIBsh2pHcAKoyBYkWDz
+         72TuGKefbmw7dPfYXCuyZYkZ2dJDyLnCP8364geY3MlyLNRSeEkk2868gFTq4K20JTBW
+         xtBl8ve9xZxfun5MoHGdXNNsrTwItrdhr+qEjhyb2pXWrNl2xGkP+7+mGc4OW95fjQEO
+         32T+Keol4OoWinF14DEJhkEdsto/3ZtBNo1j0Og0JB7XfBnZrQnlAh5XTa45Gjn2MHog
+         qM5Tmjz8nrfHPhKxdh2WFQTPxiau1rpCze6hBW68p3/8+6wSaJJlkoV6eGSVAIp0XXYI
+         U0Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729202409; x=1729807209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Isw4TLSYBoy+yI8Luh4Hi+u78l3bLfiSrZ6IrpPiuvU=;
+        b=Qbxublb/EKU1ZqfbvT6NeoXCYP63IhL0U5/mbauOKQNr2UoHjBJO9jxph0hQugYrz6
+         vNGs8hXX1saIIV49JutFCiYSBxSD3M29dOaEnSgmoFdkRbGgO2QVxYZF8Sc2rD5s51l5
+         aTKdmPj3qq37rFk3dYMwlkpTXK0vuvlevWb/HgTrb/ViDi8TTxvRnUG4Q3ZQZ3DBRA6D
+         jltyC6G6Hsv2U8G7l43x2/5BLuHe0zW+sUHWql9sSfCfbMGIqCkft5jXnMkRbsV6/kUY
+         zqfy9TpTgKMpIP6mxLEyyeJFRhqbw1SYcFkuSoseH1BNkB5clqHnNzS8j7/FVsEcvF6z
+         QQyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYtonvNO+n69wA4ueEo3B02hnRSMmdbT2xhFU7Pl98OT2BUZD4QnR9SUF5/MRCh1rrwk9xle3I8wr0RSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN1kHjhJl5AtoNbdB/HuhMsJAWGzaYWXzPYsBTPa1O9G97aNZg
+	O6lXnifJ6tcgN6ElIkG9MvreShH749Q1jYmDS+SQdUhEE12+B2HRJlRtpFeGa9Q=
+X-Google-Smtp-Source: AGHT+IGUX5FxPYm63QjEX8QSYjKY0R76CkWqYGuUb5gIaDo5gBTDkoQZABdj7YlxIwd/k53oj6Qswg==
+X-Received: by 2002:a05:651c:b1f:b0:2fb:597e:28f5 with SMTP id 38308e7fff4ca-2fb6d9ad52amr14615841fa.2.1729202409216;
+        Thu, 17 Oct 2024 15:00:09 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb809f9ad0sm426951fa.82.2024.10.17.15.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 15:00:06 -0700 (PDT)
+Date: Fri, 18 Oct 2024 01:00:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+Subject: Re: [PATCH 07/14] clk: qcom: clk-branch: Add support for SREG branch
+ ops
+Message-ID: <we4stuv7td5jmvicsvsjowqg76merg5lmlgqj6dvqvqecsw7xk@bfz2kdjnt6kb>
+References: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
+ <20241017-sar2130p-clocks-v1-7-f75e740f0a8d@linaro.org>
+ <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be8639d0add779bcac0314d3c433d01b.sboyd@kernel.org>
 
-On Thu, 2024-10-17 at 21:42 +0000, Eric Snowberg wrote:
->=20
->=20
-> > On Oct 17, 2024, at 1:20=E2=80=AFPM, Jarkko Sakkinen <jarkko@kernel.org=
->
-> > wrote:
-> >=20
-> > On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
-> > > Add a new verification type called VERIFYING_CLAVIS_SIGNATURE.=C2=A0
-> > > This
-> > > new
-> > > usage will be used for validating keys added to the new clavis
-> > > LSM
-> > > keyring.
-> > > This will be introduced in a follow-on patch.
-> > >=20
-> > > Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> > > ---
-> > > =C2=A0crypto/asymmetric_keys/asymmetric_type.c | 1 +
-> > > =C2=A0crypto/asymmetric_keys/pkcs7_verify.c=C2=A0=C2=A0=C2=A0 | 1 +
-> > > =C2=A0include/linux/verification.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 ++
-> > > =C2=A03 files changed, 4 insertions(+)
-> > >=20
-> > > diff --git a/crypto/asymmetric_keys/asymmetric_type.c
-> > > b/crypto/asymmetric_keys/asymmetric_type.c
-> > > index 43af5fa510c0..d7bf95c77f4a 100644
-> > > --- a/crypto/asymmetric_keys/asymmetric_type.c
-> > > +++ b/crypto/asymmetric_keys/asymmetric_type.c
-> > > @@ -25,6 +25,7 @@ const char *const
-> > > key_being_used_for[NR__KEY_BEING_USED_FOR] =3D {
-> > > =C2=A0 [VERIFYING_KEY_SIGNATURE] =3D "key sig",
-> > > =C2=A0 [VERIFYING_KEY_SELF_SIGNATURE] =3D "key self sig",
-> > > =C2=A0 [VERIFYING_UNSPECIFIED_SIGNATURE] =3D "unspec sig",
-> > > + [VERIFYING_CLAVIS_SIGNATURE] =3D "clavis sig",
-> > > =C2=A0};
-> > > =C2=A0EXPORT_SYMBOL_GPL(key_being_used_for);
-> > > =C2=A0
-> > > diff --git a/crypto/asymmetric_keys/pkcs7_verify.c
-> > > b/crypto/asymmetric_keys/pkcs7_verify.c
-> > > index f0d4ff3c20a8..1dc80e68ce96 100644
-> > > --- a/crypto/asymmetric_keys/pkcs7_verify.c
-> > > +++ b/crypto/asymmetric_keys/pkcs7_verify.c
-> > > @@ -428,6 +428,7 @@ int pkcs7_verify(struct pkcs7_message *pkcs7,
-> > > =C2=A0 }
-> > > =C2=A0 /* Authattr presence checked in parser */
-> > > =C2=A0 break;
-> > > + case VERIFYING_CLAVIS_SIGNATURE:
-> > > =C2=A0 case VERIFYING_UNSPECIFIED_SIGNATURE:
-> > > =C2=A0 if (pkcs7->data_type !=3D OID_data) {
-> > > =C2=A0 pr_warn("Invalid unspecified sig (not pkcs7-
-> > > data)\n");
-> > > diff --git a/include/linux/verification.h
-> > > b/include/linux/verification.h
-> > > index cb2d47f28091..02d2d70e2324 100644
-> > > --- a/include/linux/verification.h
-> > > +++ b/include/linux/verification.h
-> > > @@ -36,6 +36,8 @@ enum key_being_used_for {
-> > > =C2=A0 VERIFYING_KEY_SIGNATURE,
-> > > =C2=A0 VERIFYING_KEY_SELF_SIGNATURE,
-> > > =C2=A0 VERIFYING_UNSPECIFIED_SIGNATURE,
-> > > + /* Add new entries above, keep VERIFYING_CLAVIS_SIGNATURE at
-> > > the end. */
-> > > + VERIFYING_CLAVIS_SIGNATURE,
-> > > =C2=A0 NR__KEY_BEING_USED_FOR
-> > > =C2=A0};
-> > > =C2=A0extern const char *const
-> > > key_being_used_for[NR__KEY_BEING_USED_FOR];
-> >=20
-> > This looks as good as it can get. Just wondering that does this
-> > Clavis
-> > thing connect with the TPM2 asymmetric keys that I've been working
-> > on?
-> > I.e. can they be used in tandem. I should really update that patch
-> > set
-> > (latest from April).
->=20
-> With some changes, I think they could be used in tandem.=C2=A0 If I'm
-> looking at=20
-> the correct series, tpm2_key_rsa_describe would need to be changed to
-> return a unique identifier, instead of "TPM2/RSA".=C2=A0 This identifier
-> could be=20
-> used instead of the skid when creating a Clavis ACL.=C2=A0 There would
-> probably=20
-> also need to be a new system kernel keyring containing these TPM
-> keys.=20
-> Similar to the builtin, secondary, machine, etc.
+On Thu, Oct 17, 2024 at 11:10:20AM -0700, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2024-10-17 09:56:57)
+> > From: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> > 
+> > Add support for SREG branch ops. This is for the clocks which require
+> 
+> What is SREG? Can you spell it out?
 
-I think when I finally get into working on this again I focus on
-purely to get ECDSA right. Thanks for the tip, most likely this
-revamp will happen post your patch set. I'm still busy fixing
-corner cases with the bus encryption that James Bottomley
-contributed.
+Unfortunately, no idea. This is the only register name I know.
 
-BR, Jarkko
+> 
+> > additional register operations with the SREG register as a part of
+> > enable / disable operations.
+> > 
+> > Signed-off-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> [...]
+> > diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+> > index 47bf59a671c3c8516a57c283fce548a6e5f16619..149d04bae25d1a54999e0f938c4fce175a7c3e42 100644
+> > --- a/drivers/clk/qcom/clk-branch.h
+> > +++ b/drivers/clk/qcom/clk-branch.h
+> > @@ -24,8 +24,11 @@
+> >  struct clk_branch {
+> >         u32     hwcg_reg;
+> >         u32     halt_reg;
+> > +       u32     sreg_enable_reg;
+> >         u8      hwcg_bit;
+> >         u8      halt_bit;
+> > +       u32     sreg_core_ack_bit;
+> > +       u32     sreg_periph_ack_bit;
+> 
+> Are these bits? Should be u8 then. Or are they a mask?
+
+masks, will rename.
+
+> 
+> >         u8      halt_check;
+> 
+> Instead of adding these new members can you wrap the struct in another
+> struct? There are usually a lot of branches in the system and this
+> bloats those structures when the members are never used.
+> 
+> 	struct clk_sreg_branch {
+> 		u32 sreg_enable_reg;
+> 		u32 sreg_core_ack_bit;
+> 		u32 sreg_periph_ack_bit;
+> 		struct clk_branch branch;
+> 	};
+> 
+> But I'm not even sure that is needed vs. just putting a clk_regmap
+> inside because the clk_ops don't seem to use any of these other members?
+
+Yes, nice idea. Is it ok to keep the _branch suffix or we'd better
+rename it dropping the _branch (and move to another source file while we
+are at it)?
+
+
+-- 
+With best wishes
+Dmitry
 
