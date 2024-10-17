@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-370651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09869A301E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:55:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D239A3021
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E8A1C21AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:55:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30674B233EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B481D6DD4;
-	Thu, 17 Oct 2024 21:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862F51D7E33;
+	Thu, 17 Oct 2024 21:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAf3RJLG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwSRDs6W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5F01D63DA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE71B1D7999
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729202129; cv=none; b=SIVz/TB0HkZS71jc6HGfLxBg6g4EWwLOfZfiOPcEx/M6FU3AVYK+iGCUlue9LrLWYgBeElsV3MCryHRCP7Tter0celw6m3c+yk/8HSnPoxPvVtZvx73Z0LlmijwJWMkDLh+8MqYZS26BuQVrJIx26Sw7au1ZKwePze6x9CYi5MY=
+	t=1729202129; cv=none; b=CbIIlJ6ucvmR5+NsGgrVaj+6mwAW7ZQEf3xKYbIajzEiGxKRkHhFFbnpKchECvww13GeZNWAL02eStyYefBYmvX6YJEVL0QoQ2vvq0TGplb78T/EDPSok5+tTthzgU2lFpYvb6/aG3sR+ejvbjOjUHW5GDgmK7t7IKZp5tRtd5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729202129; c=relaxed/simple;
-	bh=xfgOc7lTaXmUYWAtPlY5EDc6fxKMFQn54g5tpKh/iYU=;
+	bh=+NVAfBL5XC4O3/+bvmSlB+aCF1KvxK5rqTMlDvFps8s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O/x6QgRYlATJtOuWK9mmCt68Ib/vDXNiI9hks0Q0p0GhbwG8N3u3f5Ifzs/SIhhMap2SFavx2y3za2wJD9H4ripXWyurG2d3APc/zDzT3o5KGPWRSVS7LruCnTfhK2OscegRFFhcdoDMrYc8C7UgwsmrENug+sAKR5UNy/M+HJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAf3RJLG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54825C4CED2;
+	 MIME-Version; b=uVnyMhoUpsXQBWMfSasx7VwUFgR2R/u6PJs8c3Zm5RwZGs5P99XAvD2R+e4v1jpm5njm/KB1I60zIRo/uDlPwl4A1Qb0bxPzmuCJLrYdPkT0vZblLS82gtrK1V19OXcaMkmc7Dw97awbHJzrx/uDNWOC/UDT4Ob51bBCVBVQrb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwSRDs6W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E136DC4CED0;
 	Thu, 17 Oct 2024 21:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729202128;
-	bh=xfgOc7lTaXmUYWAtPlY5EDc6fxKMFQn54g5tpKh/iYU=;
+	s=k20201202; t=1729202129;
+	bh=+NVAfBL5XC4O3/+bvmSlB+aCF1KvxK5rqTMlDvFps8s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tAf3RJLGarfzTLeMnQbadhPeskZRMtA2DGorwTgKO/UVRrLECKX9Jb53OUjyLQ5O+
-	 RkMS9uNs6oHcwAc5nf9SB5TTqo/0q+P++YVF9PieqhHBFsJ2Nn02Vc/zATf8WMNWcz
-	 6A3fk34YHGLyWGbMrzecfgFFgW+aaH/n3sO1DpZuPl71DDI7CTZA4NQnXre7u48w/+
-	 tHTjzHDN8gLnQBYjN1UK5+GwCyXFeWQcQKOC3DYKqu6iGxuqv2vsi+5ltcUxGlZi4K
-	 RqdTPM+H+IpoqnFYdA19gi+j6Oo8okTqCyrGJW6uWOuVKNAELOeDiY0xGGZ35JI8+2
-	 XXGaZkCCJuo+Q==
+	b=RwSRDs6W96PHO2LRpbnWJ0OAi+5QM78NCMgPnwsZ6OZ0V7sPQULC5WebYPZVd5d3l
+	 FEbxM2R0ClBXjbJm5zZ85m/WdRyqIGWUpJG/xqyxJHWhKORX+n8iGN4M6qwy7uf8s1
+	 /YDH9Ssdat0h9Zn+uKLHRCPkjKL0FtvgGVq0TvnDjm2Uy1Qpqp4d7T5E6kHkevZe2g
+	 E72VfcMW9JI8XGhLsRfh/X5RIhe9aMYhRvjmDchnYZg2OEwwYPL0YBiLJKd8BTVkBm
+	 r84u32waSE4V6iFBM1gjUKQTZ6gCjonbVPlRHOtWM6g8iJpjGXgSOKuqqbdAWwXPP6
+	 vbrG1Orde5mXw==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Andrew Cooper <andrew.cooper3@citrix.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	"Kirill A . Shutemov" <kirill@shutemov.name>
-Subject: [PATCH v2 2/6] x86/uaccess: Avoid barrier_nospec() in __get_user()
-Date: Thu, 17 Oct 2024 14:55:21 -0700
-Message-ID: <0777ac8e8c8d669fa56971dcba68b6f1c1980d39.1729201904.git.jpoimboe@kernel.org>
+Subject: [PATCH v2 3/6] x86/uaccess: Rearrange putuser.S
+Date: Thu, 17 Oct 2024 14:55:22 -0700
+Message-ID: <7818233ecd726628a3eb9cbb5ed0ba831e69af4b.1729201904.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <cover.1729201904.git.jpoimboe@kernel.org>
 References: <cover.1729201904.git.jpoimboe@kernel.org>
@@ -70,70 +70,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On 64-bit, the barrier_nospec() in __get_user() is overkill and
-painfully slow.  Instead, use pointer masking to force the user pointer
-to a non-kernel value in speculative paths.
-
-Doing so makes get_user() and __get_user() identical in behavior, so
-converge their implementations.
+Separate __put_user_*() from __put_user_nocheck_*() to make the layout
+similar to getuser.S.  This will also make it easier to do a subsequent
+change.  No functional changes.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/lib/getuser.S | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+ arch/x86/lib/putuser.S | 67 ++++++++++++++++++++++--------------------
+ 1 file changed, 35 insertions(+), 32 deletions(-)
 
-diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
-index 094224ec9dca..7c9bf8f0b3ac 100644
---- a/arch/x86/lib/getuser.S
-+++ b/arch/x86/lib/getuser.S
-@@ -105,6 +105,26 @@ SYM_FUNC_START(__get_user_8)
- SYM_FUNC_END(__get_user_8)
- EXPORT_SYMBOL(__get_user_8)
+diff --git a/arch/x86/lib/putuser.S b/arch/x86/lib/putuser.S
+index 09b7e37934ab..cb137e0286be 100644
+--- a/arch/x86/lib/putuser.S
++++ b/arch/x86/lib/putuser.S
+@@ -54,59 +54,32 @@ SYM_FUNC_START(__put_user_1)
+ SYM_FUNC_END(__put_user_1)
+ EXPORT_SYMBOL(__put_user_1)
  
-+#ifdef CONFIG_X86_64
-+
-+/*
-+ * On x86-64, get_user() does address masking rather than a conditional
-+ * bounds check so there's no functional difference with __get_user().
-+ */
-+SYM_FUNC_ALIAS(__get_user_nocheck_1, __get_user_1);
-+EXPORT_SYMBOL(__get_user_nocheck_1);
-+
-+SYM_FUNC_ALIAS(__get_user_nocheck_2, __get_user_2);
-+EXPORT_SYMBOL(__get_user_nocheck_2);
-+
-+SYM_FUNC_ALIAS(__get_user_nocheck_4, __get_user_4);
-+EXPORT_SYMBOL(__get_user_nocheck_4);
-+
-+SYM_FUNC_ALIAS(__get_user_nocheck_8, __get_user_8);
-+EXPORT_SYMBOL(__get_user_nocheck_8);
-+
-+#else /* CONFIG_X86_32 */
-+
- /* .. and the same for __get_user, just without the range checks */
- SYM_FUNC_START(__get_user_nocheck_1)
+-SYM_FUNC_START(__put_user_nocheck_1)
+-	ASM_STAC
+-2:	movb %al,(%_ASM_CX)
+-	xor %ecx,%ecx
+-	ASM_CLAC
+-	RET
+-SYM_FUNC_END(__put_user_nocheck_1)
+-EXPORT_SYMBOL(__put_user_nocheck_1)
+-
+ SYM_FUNC_START(__put_user_2)
+ 	check_range size=2
  	ASM_STAC
-@@ -139,19 +159,16 @@ EXPORT_SYMBOL(__get_user_nocheck_4)
- SYM_FUNC_START(__get_user_nocheck_8)
- 	ASM_STAC
- 	ASM_BARRIER_NOSPEC
--#ifdef CONFIG_X86_64
--	UACCESS movq (%_ASM_AX),%rdx
--#else
+-3:	movw %ax,(%_ASM_CX)
++2:	movw %ax,(%_ASM_CX)
  	xor %ecx,%ecx
- 	UACCESS movl (%_ASM_AX),%edx
- 	UACCESS movl 4(%_ASM_AX),%ecx
--#endif
- 	xor %eax,%eax
  	ASM_CLAC
  	RET
- SYM_FUNC_END(__get_user_nocheck_8)
- EXPORT_SYMBOL(__get_user_nocheck_8)
+ SYM_FUNC_END(__put_user_2)
+ EXPORT_SYMBOL(__put_user_2)
  
-+#endif /* CONFIG_X86_32 */
- 
- SYM_CODE_START_LOCAL(__get_user_handle_exception)
+-SYM_FUNC_START(__put_user_nocheck_2)
+-	ASM_STAC
+-4:	movw %ax,(%_ASM_CX)
+-	xor %ecx,%ecx
+-	ASM_CLAC
+-	RET
+-SYM_FUNC_END(__put_user_nocheck_2)
+-EXPORT_SYMBOL(__put_user_nocheck_2)
+-
+ SYM_FUNC_START(__put_user_4)
+ 	check_range size=4
+ 	ASM_STAC
+-5:	movl %eax,(%_ASM_CX)
++3:	movl %eax,(%_ASM_CX)
+ 	xor %ecx,%ecx
  	ASM_CLAC
+ 	RET
+ SYM_FUNC_END(__put_user_4)
+ EXPORT_SYMBOL(__put_user_4)
+ 
+-SYM_FUNC_START(__put_user_nocheck_4)
+-	ASM_STAC
+-6:	movl %eax,(%_ASM_CX)
+-	xor %ecx,%ecx
+-	ASM_CLAC
+-	RET
+-SYM_FUNC_END(__put_user_nocheck_4)
+-EXPORT_SYMBOL(__put_user_nocheck_4)
+-
+ SYM_FUNC_START(__put_user_8)
+ 	check_range size=8
+ 	ASM_STAC
+-7:	mov %_ASM_AX,(%_ASM_CX)
++4:	mov %_ASM_AX,(%_ASM_CX)
+ #ifdef CONFIG_X86_32
+-8:	movl %edx,4(%_ASM_CX)
++5:	movl %edx,4(%_ASM_CX)
+ #endif
+ 	xor %ecx,%ecx
+ 	ASM_CLAC
+@@ -114,6 +87,34 @@ SYM_FUNC_START(__put_user_8)
+ SYM_FUNC_END(__put_user_8)
+ EXPORT_SYMBOL(__put_user_8)
+ 
++/* .. and the same for __put_user, just without the range checks */
++SYM_FUNC_START(__put_user_nocheck_1)
++	ASM_STAC
++6:	movb %al,(%_ASM_CX)
++	xor %ecx,%ecx
++	ASM_CLAC
++	RET
++SYM_FUNC_END(__put_user_nocheck_1)
++EXPORT_SYMBOL(__put_user_nocheck_1)
++
++SYM_FUNC_START(__put_user_nocheck_2)
++	ASM_STAC
++7:	movw %ax,(%_ASM_CX)
++	xor %ecx,%ecx
++	ASM_CLAC
++	RET
++SYM_FUNC_END(__put_user_nocheck_2)
++EXPORT_SYMBOL(__put_user_nocheck_2)
++
++SYM_FUNC_START(__put_user_nocheck_4)
++	ASM_STAC
++8:	movl %eax,(%_ASM_CX)
++	xor %ecx,%ecx
++	ASM_CLAC
++	RET
++SYM_FUNC_END(__put_user_nocheck_4)
++EXPORT_SYMBOL(__put_user_nocheck_4)
++
+ SYM_FUNC_START(__put_user_nocheck_8)
+ 	ASM_STAC
+ 9:	mov %_ASM_AX,(%_ASM_CX)
+@@ -137,11 +138,13 @@ SYM_CODE_END(__put_user_handle_exception)
+ 	_ASM_EXTABLE_UA(2b, __put_user_handle_exception)
+ 	_ASM_EXTABLE_UA(3b, __put_user_handle_exception)
+ 	_ASM_EXTABLE_UA(4b, __put_user_handle_exception)
++#ifdef CONFIG_X86_32
+ 	_ASM_EXTABLE_UA(5b, __put_user_handle_exception)
++#endif
+ 	_ASM_EXTABLE_UA(6b, __put_user_handle_exception)
+ 	_ASM_EXTABLE_UA(7b, __put_user_handle_exception)
++	_ASM_EXTABLE_UA(8b, __put_user_handle_exception)
+ 	_ASM_EXTABLE_UA(9b, __put_user_handle_exception)
+ #ifdef CONFIG_X86_32
+-	_ASM_EXTABLE_UA(8b, __put_user_handle_exception)
+ 	_ASM_EXTABLE_UA(10b, __put_user_handle_exception)
+ #endif
 -- 
 2.47.0
 
