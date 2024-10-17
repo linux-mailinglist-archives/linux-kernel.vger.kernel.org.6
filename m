@@ -1,130 +1,180 @@
-Return-Path: <linux-kernel+bounces-368968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14E09A171B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBCE9A171E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA1B288075
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0691F26131
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8523C38DDB;
-	Thu, 17 Oct 2024 00:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1823E208B8;
+	Thu, 17 Oct 2024 00:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0kGHGmvk"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="c04r7fEf"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A731C139
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B937814F98;
+	Thu, 17 Oct 2024 00:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729124811; cv=none; b=l9a6Kp+fWt3yPUz0Af3Qp0ruOhW/ig0IGGRD84uxr1p7WoAAch/bc0s6mDwADTsPFeWE67XJ/mRw8ZeZWZvVETJXQadnyndBTq65DIFjFmm9CTfmZkwpFty0LkXl98pSq4uPkBcZDpSXvFPpwMydVBwwFrUcy4cpeqtl9HnGIC4=
+	t=1729124864; cv=none; b=BaXs8OPGxhGLyWaaPdhKqPIxpMh8Yq35/YgTG/89pGkFtuCpj6pJJfxoHH8QDCHOHDtrovPy426xGA6yf4zA3r5KeFezgFI9bvHYO1r5vAnc8BpgpB4xyH2HqH8pAceD+Y+Yer0fDe9PTonOIcRoaMTqZJas7OfTvbYupeoB9c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729124811; c=relaxed/simple;
-	bh=ke/U6M/R8mIq/tqiSoJRAHs0IFxG3jrmo50biIZXxwk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OiQpgXYLgNav8CxdqNcj4nR1IjsRA8eAcMYZYyVfWUhVcsyzKlttp05pIOy/Q4XglAwijcM+kcg9SnDftW5AZ4Pw0tR5ym4NYDewBSz7oBMB7B80uoLyt2XuCSlLPK1cbJuqFA7Kwet+HkZ9ydj4NvwQITDvL9KT2AvP1xvaDlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0kGHGmvk; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7db8197d431so483321a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:26:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729124810; x=1729729610; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PC4Hs0E5dBLkCnCinTPyvf/aLxRI0UAFEABy+KMCotw=;
-        b=0kGHGmvkTsMpbIrj+betRITdaHo8WJeRstWLoZwp2w72x8Igden3Mr4Y9O++fi+MJn
-         C+7w5yRuNXENi8g0vMAME6igLaAp87UXljTMye+ZI+c0KEKgEL0ebrW6GDyiopRQqDK+
-         IJZaeIjn2XHI6+dXj7KIhY27tEOWw4nm+rjaOoWEukhMVfWI/QqK7mViW7jTIeIYvH+q
-         R9BlLAj5w5AdPcTm3bAxZfN9wAIrBAlDdtkosqTubVDQRZs1UGZ5HmmV7dP/434I8gwA
-         M/mVZwEFLDVhRzUfaxb6PunPxQ4LqTZ+kvnspCDQBwN6lOm+WlpFQ+6tueGLWs41DIGF
-         Gf7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729124810; x=1729729610;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PC4Hs0E5dBLkCnCinTPyvf/aLxRI0UAFEABy+KMCotw=;
-        b=Q7N7Wr+sec31aGEDG3ppLESrb2qpfXMc3qxmymaXcaeZWdPE92GmOhw1BPhIL5IKwa
-         99v4mTDFOBhnLkGWd2ngF6BaC1RqSerbWtpuwRf3tfLA/PzRWgMJXCGOU9//RgC6s8nq
-         1SDJCcgJgjmq1r6OHZZvHtMT0ubT/r+EhG8Samq59yorxkJXhNXHxzOGHZrcFM6MzAAy
-         TGVpMTC46V08oTiRw09FbDBKVEIrzEcpXuXg9Tan7SuM2vBSngnPlfED2u6iF/n4XVSW
-         CpoLI5PX33xreI2JsedJnqO3RhGoI1sdJ1OhNUvhySQfWZOrGFroozf5V42CBl4ObhiP
-         xLiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXf7Gaf/VSmrN3EzjBI83tenYSpFaLAuqe5v2UQV8WLPKOFhIvTDaEZDPi9Ow3Y++4pQaFsYRDo1OhahzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywiip9CwNp/f7Nj0LXF+PpMeeIT0DJUPG8ZDa90aCtqC60G7F1Y
-	rv3ab8RRfAq/3Zb1t90uIldqxPbm9vZuCwr7wq/44W5xCLqCD02TJYV4qVogQA5RfXRftQ1z21N
-	F/g==
-X-Google-Smtp-Source: AGHT+IHcZEDYoFZqO9vMeq+B+EvG4lcuq/J99qdXry7nLvP1k/6cQ8eP6ZnNUNNOwC4IGrsVzTHyGmuCdRY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:ef50:0:b0:7ea:7907:7076 with SMTP id
- 41be03b00d2f7-7eaa6c965a9mr6883a12.6.1729124809640; Wed, 16 Oct 2024 17:26:49
- -0700 (PDT)
-Date: Wed, 16 Oct 2024 17:26:47 -0700
-In-Reply-To: <20241015152157.2955229-1-arnd@kernel.org>
+	s=arc-20240116; t=1729124864; c=relaxed/simple;
+	bh=7aMdOaVKt3zUrLgkHFQERTjmkDTm/+ILFnx/LuPYj8Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SVW680AKN4oT9Nh5htHTt75KMnampOTlAN6nzxgh4gdj06VEMgrJIGCVywzGNn+FdXTbrMZ07yjZC7+mESjVOox+gcgihzxcBkyUysVQXHFcXzLvrbnHCODgz4ZZAWRc7kG+DbazomuciYH4O51IrdgmM0m4ySZL6qKAf7W165E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=c04r7fEf; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GKthjI001239;
+	Thu, 17 Oct 2024 00:26:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=1POkC200/ke2im258VNhPla1zXqrb
+	+D628vnHkCzD8c=; b=c04r7fEfFBguOD8L1+GFi+scpEmheSeszNrEvC9nNdBZc
+	1E3W7xVdI/FlVj912tU5gKHEdjlBg+xNsHX/sjeNjL79UPIlOWdcnHhpLr96PVos
+	guaPGJhksZcyKbV+Ysl91g4ipMJDzNB7/Biw53EtdtapMqVzxfM7Nrzuah40bZXT
+	zFkvWGN0hNBUKVcRwEFF4C+NOV4ybuS+qLWOjhdgq5XmetCXUz2buoalD413lBjg
+	k/lh+GFZeCLxauuf3appV0CbHYuiqYdeWi1BfJc8FBkfOZ2U4XkFuQU/ftXRnOns
+	sxN1ImTVp3F5O/WIu+268+3hKC0xNHEtrJ/WwDeAQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427h09mknc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 00:26:57 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49GNedJo027269;
+	Thu, 17 Oct 2024 00:26:56 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 427fjg433w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 00:26:56 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49H0QtHW013579;
+	Thu, 17 Oct 2024 00:26:55 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 427fjg4337-1;
+	Thu, 17 Oct 2024 00:26:55 +0000
+From: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
+To: davem@davemloft.net, Liam.Howlett@Oracle.com
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mingo@redhat.com,
+        peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, jiri@resnulli.us, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, akpm@linux-foundation.org, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org, anjali.k.kulkarni@oracle.com,
+        peili.io@oracle.com
+Subject: [PATCH net-next v4 0/3] Threads support in proc connector
+Date: Wed, 16 Oct 2024 17:26:49 -0700
+Message-ID: <20241017002652.1474358-1-anjali.k.kulkarni@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241015152157.2955229-1-arnd@kernel.org>
-Message-ID: <ZxBZx5EUhJFjTcXP@google.com>
-Subject: Re: [PATCH] i915: fix DRM_I915_GVT_KVMGT dependencies
-From: Sean Christopherson <seanjc@google.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Maxime Ripard <mripard@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Imre Deak <imre.deak@intel.com>, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-16_18,2024-10-16_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ spamscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410170001
+X-Proofpoint-GUID: featopHk-On2DiJrxrzlQ0Y6HcHfx9ip
+X-Proofpoint-ORIG-GUID: featopHk-On2DiJrxrzlQ0Y6HcHfx9ip
 
-On Tue, Oct 15, 2024, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Depending on x86 and KVM is not enough, as the kvm helper functions
-> that get called here are controlled by CONFIG_KVM_X86, which is
-> disabled if both KVM_INTEL and KVM_AMD are turned off.
-> 
-> ERROR: modpost: "kvm_write_track_remove_gfn" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
-> ERROR: modpost: "kvm_page_track_register_notifier" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
-> ERROR: modpost: "kvm_page_track_unregister_notifier" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
-> ERROR: modpost: "kvm_write_track_add_gfn" [drivers/gpu/drm/i915/kvmgt.ko] undefined!
-> 
-> Change the dependency to CONFIG_KVM_X86 instead.
-> 
-> Fixes: ea4290d77bda ("KVM: x86: leave kvm.ko out of the build if no vendor module is requested")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/i915/Kconfig | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-> index 46301c06d18a..985cb78d8256 100644
-> --- a/drivers/gpu/drm/i915/Kconfig
-> +++ b/drivers/gpu/drm/i915/Kconfig
-> @@ -118,9 +118,8 @@ config DRM_I915_USERPTR
->  config DRM_I915_GVT_KVMGT
->  	tristate "Enable KVM host support Intel GVT-g graphics virtualization"
->  	depends on DRM_I915
-> -	depends on X86
-> +	depends on KVM_X86
+Recently we committed a fix to allow processes to receive notifications for
+non-zero exits via the process connector module. Commit is a4c9a56e6a2c.
 
-Can GVT-g even work on non-Intel CPUs?  I.e. would it make sense to take a
-dependency on KVM_INTEL?
+However, for threads, when it does a pthread_exit(&exit_status) call, the
+kernel is not aware of the exit status with which pthread_exit is called.
+It is sent by child thread to the parent process, if it is waiting in
+pthread_join(). Hence, for a thread exiting abnormally, kernel cannot
+send notifications to any listening processes.
 
->  	depends on 64BIT
-> -	depends on KVM
->  	depends on VFIO
->  	select DRM_I915_GVT
->  	select KVM_EXTERNAL_WRITE_TRACKING
-> -- 
-> 2.39.5
-> 
+The exception to this is if the thread is sent a signal which it has not
+handled, and dies along with it's process as a result; for eg. SIGSEGV or
+SIGKILL. In this case, kernel is aware of the non-zero exit and sends a
+notification for it.
+
+For our use case, we cannot have parent wait in pthread_join, one of the
+main reasons for this being that we do not want to track normal
+pthread_exit(), which could be a very large number. We only want to be
+notified of any abnormal exits. Hence, threads are created with
+pthread_attr_t set to PTHREAD_CREATE_DETACHED.
+
+To fix this problem, we add a new type PROC_CN_MCAST_NOTIFY to proc connector
+API, which allows a thread to send it's exit status to kernel either when
+it needs to call pthread_exit() with non-zero value to indicate some
+error or from signal handler before pthread_exit().
+
+We also need to filter packets with non-zero exit notifications futher
+based on instances, which can be identified by task names. Hence, added a
+comm field to the packet's struct proc_event, in which task->comm is
+stored.
+
+v3->v4 changes:
+- Reduce size of exit.log by removing unnecessary text.
+
+v2->v3 changes:
+- Handled comment by Liam Howlett to set hdev to NULL and add comment on
+  it
+- Handled comment by Liam Howlett to combine functions for deleting+get
+  and deleting into one.
+- Handled comment by Liam Howlett to remove extern in the functions
+  defined in cn_hash_test.h
+- Some nits by Liam Howlett fixed.
+- Made threads.c automated, by having an exit.log file created by
+  proc_filter.c, which threads.c checks to see if the values reported
+  for thread exits are correct. This was for a comment by Liam Howlett to
+  make the tests automated.
+- Added "comm" field to struct proc_event, to copy the task's name to
+  the packet to allow further filtering by packets.
+
+v1->v2 changes:
+- Handled comment by Peter Zijlstra to remove locking for PF_EXIT_NOTIFY
+  task->flags.
+- Added error handling in thread.c
+
+v->v1 changes:
+- Handled comment by Simon Horman to remove unused err in cn_proc.c
+- Handled comment by Simon Horman to make adata and key_display static
+  in cn_hash_test.c
+
+Anjali Kulkarni (3):
+  connector/cn_proc: Add hash table for threads
+  connector/cn_proc: Kunit tests for threads hash table
+  connector/cn_proc: Selftest for threads
+
+ drivers/connector/Makefile                    |   2 +-
+ drivers/connector/cn_hash.c                   | 221 ++++++++++++++++++
+ drivers/connector/cn_proc.c                   |  62 ++++-
+ drivers/connector/connector.c                 |  75 +++++-
+ include/linux/connector.h                     |  35 +++
+ include/linux/sched.h                         |   2 +-
+ include/uapi/linux/cn_proc.h                  |   5 +-
+ lib/Kconfig.debug                             |  17 ++
+ lib/Makefile                                  |   1 +
+ lib/cn_hash_test.c                            | 167 +++++++++++++
+ lib/cn_hash_test.h                            |  10 +
+ tools/testing/selftests/connector/Makefile    |  23 +-
+ .../testing/selftests/connector/proc_filter.c |  34 ++-
+ tools/testing/selftests/connector/thread.c    | 202 ++++++++++++++++
+ .../selftests/connector/thread_filter.c       |  96 ++++++++
+ 15 files changed, 937 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/connector/cn_hash.c
+ create mode 100644 lib/cn_hash_test.c
+ create mode 100644 lib/cn_hash_test.h
+ create mode 100644 tools/testing/selftests/connector/thread.c
+ create mode 100644 tools/testing/selftests/connector/thread_filter.c
+
+-- 
+2.46.0
+
 
