@@ -1,203 +1,346 @@
-Return-Path: <linux-kernel+bounces-370717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0829A312E
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:11:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5849A3130
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 429B91C21869
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:11:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6068D1C21BB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB95E1F429F;
-	Thu, 17 Oct 2024 23:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A05F1F429A;
+	Thu, 17 Oct 2024 23:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmBoWySJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Y61t3V00"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2045.outbound.protection.outlook.com [40.107.212.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FA41F4291;
-	Thu, 17 Oct 2024 23:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729206656; cv=none; b=OnXSMqdwrXDOPjjgrl7NES42kQyrd4dxQ4rrwhG4AOx9WLj/yKl7QOfThsSgaL34WzGgfr/gaYrNfN6LMj8EptNJr46oAlKGBdAtZs8S3RYtU66dxnCY5r1AXw1EXGADtE4ufisGeOdUnVVJalZhvcuKTyUdbWNbT5LFjdGNgJ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729206656; c=relaxed/simple;
-	bh=y3OGkvcrQ61QHk72F/iBT4MxYu9S1hYlJTm2WOze0Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZhPunPzaA4kTvePM0hJ39N+kk8cMh0+tGDf9nxW8mmrESdE4Kz1MZ4t4xWOnyzuErVJnhKfBFwS4f79feiw5gf6822Uoq1trlOGl7GfbpXZlPO1HGC3zO9BjQzFvcGwwkJcQswY9eM/OoeO6cNkzpyVoXnF939WXfAH/9wEAMXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmBoWySJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EA8C4CEC3;
-	Thu, 17 Oct 2024 23:10:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729206655;
-	bh=y3OGkvcrQ61QHk72F/iBT4MxYu9S1hYlJTm2WOze0Bg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qmBoWySJQPa7X7C+UMLw//JmJUyzeuIyt7mT4V/5rqdqlTPCuNomD3YfBlIyODdsk
-	 6/iBMbUTOP61DIQ+lZ9hqp7CKv9BzfMzfgfjQtdCYVWJmTyAP1sIXM4z3AhDCSaRUp
-	 tMpIJNQM0Hq20WusuiLvJilsFqVkFjITCsnQUqBVHlWXOFBPvz/lrYG5uTx0vVq0Fa
-	 1ntuNj6nOxA8pxJ158kUK6frFxhaIrvG+m4iX2EClLKi4l8Vzr7Z4Wj/Ut0szYSje4
-	 rU6pIKRtIaZe2QAxPwekU0yrP+CJT5VFx5VWLzuwomjSTHNWhATxpZTgno5OvXfutV
-	 ZL3TEzW4QnFNg==
-Date: Thu, 17 Oct 2024 16:10:54 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
-	acme@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] libperf: evlist: Fix --cpu argument on hybrid
- platform
-Message-ID: <ZxGZfoH6pMZwANou@google.com>
-References: <20241015145416.583690-1-james.clark@linaro.org>
- <20241015145416.583690-2-james.clark@linaro.org>
- <CAP-5=fW7aERe3KHtAoYX9UWsVWrhU95RcCgabgP+DNHi1whjsQ@mail.gmail.com>
- <d9a4bebe-dde1-438f-bcf7-70b7a5e21848@linaro.org>
- <CAP-5=fUi-Y408hZmPosfejOW=SkXZZTTvRm326fBz-9zrHk8ew@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06F31D5CE0;
+	Thu, 17 Oct 2024 23:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729206680; cv=fail; b=lM59BvPqgtlvU28+vuvJgrPFozh997mMg35mAoyzbWZDvHM341QCY5xrrUPP8U4xOA+m9EIzQ5FsErUwUFQtoK5ys6GgUPtUL+kqP93lnT4+6aMQreac5mTPCok3svVlACppNpm9Mqdn43HqrCBmeELQyI2Qakw8wwpzw+fbIUk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729206680; c=relaxed/simple;
+	bh=aR57NsBw/J1rV1QDIekWyQvvAPMrsofthjdgao5ks84=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BzW9rMvyMSaZ3ZiRNW69f/uEXrw82vi/Ke3Snw5dSpR6gtpTCUcPjem6o/8QkRQmpaqLB1+Hvu7gSreJSKTF5h0eEJOSqJr+vSmMsn+FI2HUceJr1TmbuALbLLyo3GcPklv21ncs4kHl+uHT2o2Vqaie2gYKfFI/rfQRlCejA1I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Y61t3V00; arc=fail smtp.client-ip=40.107.212.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GjZS0sCaEbB9bpMN6FOYVZDaHV9A+W/ihgR5u5xbJlR3xvLK4UkcQQ5vHHc2xL6BM0RiELv44dO8Y+Q5ttZXX91kFQ5zbl5WS9imfIIKUHsGPKKrvYf1xPNoplG79jdlzVSNt9TIJ4Dg60pRmhcVCTV/33VgqMVrwokVvEAdUcrdo3IqU/ieXW37Xhg37j81UJyB2QNwX0emtEgR4lrk1Tq2aC/Z3tXXCrzOZKhRQg0uzD0vY5IdVxVbqd7I1lk9si5alrMxLNBGyqtay3x5JciwljrJ1/aj9+vsPyU3WF308Nf7bJKWUeRJKIPk0Oi7dOOTae+9SQNX5XyYSvo4xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r/A22wy9ylhU+LagwrBDGqCiRbZlBA78Mh/VRhINing=;
+ b=SpKGa6d6oudgP85x0qsv3sC/7YxOPGmHM+IIWQk7y6RPcTc1c5M9Uo9ZemaTbOajylHxgLRa/yaYilJj38UolwqH0q2sTdO6hNLBNN3CSMwOIMz/guXLsNMnIDz5CmaNFRo7wxcr9QlZyZQl2c6kYCTAGfXENzsNtHMX1mgGUW4H+Qyu+hK0ZuUFCfn1w+Kcv2C5SLLCh7sZP9mY5XBqyXN+X17QxzNZMv3gS2Vn8ckTgvhcGEoa74epMp1zKTZCyYX7BpychPwdFX6j9qyjxjbuJic7/P/YM7mwGIpy3Fm2rJpPP9KhMrkeZDLCXMN2oo0k1tmSKo6e2vcHvANImA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r/A22wy9ylhU+LagwrBDGqCiRbZlBA78Mh/VRhINing=;
+ b=Y61t3V005QzXQiceMhilu2fu8d7uZOhnFoqyIoYf7AoNktsJ9dBwHuRADM5mi5syPp45h6FwCfCwnVYDv4NnqNUirXqBw8rXzt0G6lVZ8GRVwwBR25J4ZJYhjNK5zy14LjRoGBXkoIimD4phETYc5h51CX3Wrp4nrzCNYxCvDSQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by IA1PR12MB9524.namprd12.prod.outlook.com (2603:10b6:208:596::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.19; Thu, 17 Oct
+ 2024 23:11:15 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8069.018; Thu, 17 Oct 2024
+ 23:11:15 +0000
+Message-ID: <3172b5fe-5394-92ca-4d4a-d194b84e8364@amd.com>
+Date: Thu, 17 Oct 2024 18:11:08 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v8 18/25] x86/resctrl: Add the interface to unassign a MBM
+ counter
+Content-Language: en-US
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, corbet@lwn.net, fenghua.yu@intel.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1728495588.git.babu.moger@amd.com>
+ <a06e3f9b975bc3743ed8b8df04b6b52229d62bd9.1728495588.git.babu.moger@amd.com>
+ <a74315f3-9250-4e52-823b-dfadf87a6142@intel.com>
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <a74315f3-9250-4e52-823b-dfadf87a6142@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1P222CA0001.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c7::6) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUi-Y408hZmPosfejOW=SkXZZTTvRm326fBz-9zrHk8ew@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|IA1PR12MB9524:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b2fc001-7f1e-40ae-1f52-08dcef010013
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aFdCUmg3L3htQ2NJaGQ5VFZvcTNsV3BUS09vSWFCOGVwSmJidFBJMUQ4WnM1?=
+ =?utf-8?B?UHdoRy80OUVzOEhtbXVoOVo1aDdoNjB4WVd6SWdURGdNSGgzUjg4V09iWjNa?=
+ =?utf-8?B?NGJGeVBBdGdoMzB5SkdtN1NLTnJOdkdubDZXSG1QMjg1L29HWVRmaFR4SEcv?=
+ =?utf-8?B?T1JIYm81WDVLa0hRbmVvdVZ0cWhqdCtqVUpVM2NlaTdzbkVnNkRzVURnRm5i?=
+ =?utf-8?B?NzN5MTN3eHk3RVFjOUZFQnQ3Um9aUUtnaGN4bHhRRlJJWjA3NEdFZ3JRcjBa?=
+ =?utf-8?B?d0xVQUl4QkM2K21Ncjg4WHBkSVFpcWQwK1lpYlVPVDIyNStiTk9iclY2U3M4?=
+ =?utf-8?B?VTQ4TjRrWmgrWUY4SDU0QXpnNTh3OUdydmpGckhNYnFjSEhqMi92end2NVJv?=
+ =?utf-8?B?SjROWWpqbHpPNDlsUXUxdU1LWWRGTCtaVCttdFJ0akE2dnhZSFpKbkNicVoz?=
+ =?utf-8?B?cVVlUjhFQW40b1dQOTUwV3ZHaXQ4Y1puUTNKTHRzbG5EOVNxM3drM29FQXBs?=
+ =?utf-8?B?Y2UyRXNBMjAyclZlL28vdUQwZlBaOWVFZEZlNzdrMkJUa1p6YXUvcGxNZGd2?=
+ =?utf-8?B?a0ZjZjhCaVBicVNKQ3RrbWNkd3ArTnI5ZVpWaWhpdzNIWk1hZnE3bWFNS3pu?=
+ =?utf-8?B?M1hQQ09FcnJTYi9jcjd2dXlya3lqUVdNeVhPOVJVcEk3YVhHcURWTEllSkpS?=
+ =?utf-8?B?NXpFZ0ZPay9wUytDN0tWb2FveGx5WVo5REJIRmZIbXIrdzRrNkVhRmMvcFBE?=
+ =?utf-8?B?Wlg3aWFERjJFTkJWazFPdi9TekZSazcvV3ljSmZlQjQyS1BkK0hyOWo0M2xx?=
+ =?utf-8?B?Z0hWQlc2aXp3UTdySHJrTElWTTVzUzBoaE9ySHhVNFpZTVV6U0V1VTNqT1JF?=
+ =?utf-8?B?Q2JrM0dqUFErRzJTWWtESnZzdFJyMGVXTmE1MGV6L0U4T0J5TXkzZVlNZGNm?=
+ =?utf-8?B?VmlwZFpBRjdhdXB3ZURhcGllV3A2QVJMaU0xbXRjcW5uRGtKTmVyYUM4d0VQ?=
+ =?utf-8?B?bGJUREVYT2hrcVdaNWZUQ0FzZ0VsQzgvdk5vbnAvNVozUmJMc2JaejhveHB3?=
+ =?utf-8?B?RlFWWHZDVzFTMzRTTThWMDFFUW0wRzl0REZlZE9EVGVadS9zbEhPYnVtVGFq?=
+ =?utf-8?B?VjRBUCtkZ2FKdGs0d2J6VXZCMUl4K2ZxRG85aWxoWUNaYWpUcTFuZktqNits?=
+ =?utf-8?B?eXlISGdtTk00RXFwWHpOR2FuZmk3a0wyRGh4bW8xNWxESnc3aVdIUncwUkg2?=
+ =?utf-8?B?aFpKR1FHNytqZk5JZUdiV2xqSmR3YVZQSE9yY29tOW5HSHY0eWl1djBuM2pj?=
+ =?utf-8?B?MDU5VTFnYXdDSXJnMnV0UVkyRjVRdXVEMnFpOUowQU10OXI0MDRscVQ3SXdN?=
+ =?utf-8?B?VDBtamx5eDRBSXZjaHBBZkhoZVp3dFp5ODZmU2tSbGRpTVZPOWRackNGWXYv?=
+ =?utf-8?B?TnZ3S2luZlE4MG1Pa00vU1JmV3VLQVYzMjZwN1Q2QklSTUdybnJiNHNDeHpa?=
+ =?utf-8?B?TlQxWjNYU3J6Zk9iaW5rOWVUUEd6WkY5T1lvODduWEVDQ0xxWWFOdUZSWERy?=
+ =?utf-8?B?RHM1NnpCZUYrTld0VWdtOExpOHgrcmNQZ3VXR1I1YVQyMnlPK1hmR2FESCt1?=
+ =?utf-8?B?N0hWUnRmSk9vSlNvdVlSR1B4MEdzQnVQNXhYTmFJei9KQ3NnbitvNUxEcWYz?=
+ =?utf-8?B?T2pZU3VkTllET3dCK2ROa00xMHhud3laTWpLMyt1MVlncEVWOVFsNUs5MEdr?=
+ =?utf-8?Q?/BfCdSBGfPxA5k73Vuf31Qam6x8B475RlYATjRJ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aEtZbE5EcjJKdWgzbytWeHNIN2I4bTI3aEp6OVo4SmYyRXhlbXZSZTZZYVIr?=
+ =?utf-8?B?d0Z0SGhueWRkbUVJZ0RrT050Nmk1M3FJRlpPUnprUHZtMTZXNXY1bGlORVVP?=
+ =?utf-8?B?bHg2Zk5PMlJ2OWIzWXp4akh6aGk1OUM2emxxK0lLV2cyN2RVWWZuSzAzTnVG?=
+ =?utf-8?B?a04vZVNpUVJKaEtoMFhaOTZ4VHFoN1NtNG4zMm80NUFGRTExTDBlMW1pQkRx?=
+ =?utf-8?B?YW5helVXaEYvMHBVNTkwVjlMTmR1OXNJTG5velFWeHpvVFAvQmsyaDRPazVy?=
+ =?utf-8?B?RmVVV21MaEZCNmh1VUxBVlVUVWRCdXhXQzBPb0I4dDZnbnVSZGx2YTIrL0VF?=
+ =?utf-8?B?STh6QTUvbkhyQ3MrWkErNDdROWRCVjdxY3l3dDBSUE5waEZLdUlaQ0Q2NVJU?=
+ =?utf-8?B?aHhQVGpSTFdBZkNWSzZ5Qk5WQkphMi9iWCt1WTBsSlEwb3hyY3ViWkovSG5I?=
+ =?utf-8?B?dHgrYnAxQWVNcTU3NFVPL0c1QUdEVjR4TVR2bXEyTUlxRy82aVNad2FqTDJh?=
+ =?utf-8?B?RHRxVHhMME85a2FlR1FaQWNOT3JOaXpqOUtGb21PQ2EybGs3bEZJZ2prL2ly?=
+ =?utf-8?B?VFZDdkZ2Q1RqTm5MeE5sbUpqbFc4bTFRWTQ1eXFURzFqTU4yKzJqRnlDUE9T?=
+ =?utf-8?B?aHRlRW9FUWhyOUxtWXpXSjJPWkt0MDd2TzQ5cExxOFBUQlMzcHB2UnBzZ3hS?=
+ =?utf-8?B?d0hZOU51eEp4OWFnTWk2aVlmYk5TZWZ1VkZKdEVvbHhuQnRBR0xKajNMaVV1?=
+ =?utf-8?B?V21HRExEeWNaZmdNOExQeWphcjJoUFg1UXcrNTg5dm9sTjR1Yk1TNkNVTDBz?=
+ =?utf-8?B?elViWS9kM04vY3VDYS9tTjBUQjBjSnBiRmtjRUhvS1owdDA3bFBBV0JBdXRY?=
+ =?utf-8?B?dmFDWi9aWGF4cUdEWTJKMEhXYWR0dnZIQkVrdjBrY1NBdEo3dUQwcnFXVWg1?=
+ =?utf-8?B?cjIrc2lTYzBhc0QyMFVxVHkzV0tycFBBRUQ3L09XRmttOTA0eE9kbUNFQVlo?=
+ =?utf-8?B?VTl0YU5wcWZ6MUI4WG1pT2JNZWdLUUpzNWNUbC9NSWdGTUhpUENLTXcvaXRk?=
+ =?utf-8?B?TDMyemdqTG9Vd2ZZWlFmMjJrWmlUQlFTdTdJR2pzTzZDd0pTZWlKbSswUzIv?=
+ =?utf-8?B?U2c5VUZLbEJCd0FwRlcvU1N3RnY4YVd4NXhNYkx2eTZIMm5tZWxXeTZzRzFN?=
+ =?utf-8?B?WUd2cWV3akY5WW1pcWpPeGdpaG5SZEpZL2R6MllyeWRlVG5DNVovOFAwMkVU?=
+ =?utf-8?B?c3pDRndYbWdCbEhXQkJFUjBrMUdxSUtTYWVnTHFMMzQvL0RhNll6bVlsella?=
+ =?utf-8?B?TkM2Z0o1Ty9nQ0tlT1pDZkJKZ2tzaE1tRGpVbGY1cUY2NDFMa2F2QXFjSWlE?=
+ =?utf-8?B?V3ZFU0hOU1dTSkRGUEtzQVQvblhmd1VvUHJYYzl5dHJ5SEtJdVBBeiticUl6?=
+ =?utf-8?B?VW1ZcTFGT0U4TDhiK05zZ3BWc1F2RmFNcWVhbHF5R3BDL2ZzSkpBbmo1d1Bq?=
+ =?utf-8?B?YnEyTENRUGcrelVtQ3lGajZzczhHUi84aXJJOGdVQ0FNS3M1d0I5T2tEa2t0?=
+ =?utf-8?B?Y0ZGcTZNK3hnOStjeXFIMlM0Yjd0NEVUVjNhU054K3pxNnR0c3E5SzM4SnJn?=
+ =?utf-8?B?QURraXVibko5cjA4WW5Ta2lVeFM1YUtTUjNoS3FvMm9kSGFWMW9Ub3Y2dUo5?=
+ =?utf-8?B?d1hKaTFQUjJ2VkpmVCtNdDZSWFpaY1hxZkdxdGNMNE9FdWwvNmZNaVBqTWkx?=
+ =?utf-8?B?K2xqYi9RWE12SVJCTnR0VkcxUE82QUkrWlBtOUlvdGZ1V3FIOFNDN3ZnUzJl?=
+ =?utf-8?B?OUN3SEpWR3hqUi9UMmdxZTltSW5lWGsxMGJxcHp3bkxGMVdLZlFNSXl0OWE5?=
+ =?utf-8?B?dmVxbmZiNjRqQTVVa3lNVHhCOW93dXg5L0ZrNGc3eW1ES1hBZTQrUGVRYTB2?=
+ =?utf-8?B?UTVtRjBKaExoa3BMdFdiN1RxQ0QwOUV1NW1IaHJxYkk3VHo0REFGeENaUE1v?=
+ =?utf-8?B?S3lIcVlSa3ZUUG5EVFlrQkQxbTBMQjRQRzBYOHZGZXRvTFQ2R2d6U1BJZVRs?=
+ =?utf-8?B?QXp5UkdJblFRQ3NvcFBNQ2MvV0hnS1V4RjBDSE14VGI0UDA2NDlER0hIOW5T?=
+ =?utf-8?Q?VIWg=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b2fc001-7f1e-40ae-1f52-08dcef010013
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 23:11:15.7004
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pMYT4FCIHhb351TmXJYQG9ilJQ7dCV8pKKce3ZSMnjCqWs7/b6XENWqa8b95zocu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9524
 
-On Wed, Oct 16, 2024 at 08:01:21AM -0700, Ian Rogers wrote:
-> On Wed, Oct 16, 2024 at 1:29 AM James Clark <james.clark@linaro.org> wrote:
-> >
-> > On 15/10/2024 4:14 pm, Ian Rogers wrote:
-> > > On Tue, Oct 15, 2024 at 7:54 AM James Clark <james.clark@linaro.org> wrote:
-> > >>
-> > >> Since the linked fixes: commit, specifying a CPU on hybrid platforms
-> > >> results in an error because Perf tries to open an extended type event
-> > >> on "any" CPU which isn't valid. Extended type events can only be opened
-> > >> on CPUs that match the type.
-> > >>
-> > >> Before (working):
-> > >>
-> > >>    $ perf record --cpu 1 -- true
-> > >>    [ perf record: Woken up 1 times to write data ]
-> > >>    [ perf record: Captured and wrote 2.385 MB perf.data (7 samples) ]
-> > >>
-> > >> After (not working):
-> > >>
-> > >>    $ perf record -C 1 -- true
-> > >>    WARNING: A requested CPU in '1' is not supported by PMU 'cpu_atom' (CPUs 16-27) for event 'cycles:P'
-> > >>    Error:
-> > >>    The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (cpu_atom/cycles:P/).
-> > >>    /bin/dmesg | grep -i perf may provide additional information.
-> > >>
-> > >> (Ignore the warning message, that's expected and not particularly
-> > >> relevant to this issue).
-> > >>
-> > >> This is because perf_cpu_map__intersect() of the user specified CPU (1)
-> > >> and one of the PMU's CPUs (16-27) correctly results in an empty (NULL)
-> > >> CPU map. However for the purposes of opening an event, libperf converts
-> > >> empty CPU maps into an any CPU (-1) which the kernel rejects.
-> > >
-> > > Ugh. The cpumap API tries its best to confuse NULL == empty but empty
-> > > can give you dummy, dummy is also known as 'any' or -1, 'any' sounds a
-> > > lot like 'all' but sometimes 'all' is only online CPUs. I tried to
-> > > tidy up the naming a while ago, but there is still a mess.
-> > >
-> >
-> > I don't know if you think this is a good opportunity for me to have a go
-> > at finishing separating those? Or is it a dead end?
+Hi Reinette,
+
+On 10/15/2024 10:29 PM, Reinette Chatre wrote:
+> Hi Babu,
 > 
-> So cpumap (and threadmap) underpin a lot of things, we also used to
-> routinely confuse CPU numbers with cpumap indices that are used to
-> densely index xyarrays with file descriptors, etc. My thought was that
-> we may end up doing a proper Rust libperf that can be under a more
-> permissive license like libbpf - currently libperf is a source of GPL
-> infection. The rewrite would be a good time to clear these things up.
-> I believe someone at RedHat has looked at doing a Rust libperf.
+> On 10/9/24 10:39 AM, Babu Moger wrote:
+>> The mbm_cntr_assign mode provides a limited number of hardware counters
+>> that can be assigned to an RMID-event pair to monitor bandwidth while
+>> assigned. If all counters are in use, the kernel will show an error
+>> message: "Out of MBM assignable counters" when a new assignment is
+>> requested. To make space for a new assignment, users must unassign an
+>> already assigned counter.
+>>
+>> Introduce an interface that allows for the unassignment of counter IDs
+>> from both the group and the domain. Additionally, ensure that the global
+>> counter is released if it is no longer assigned to any domains.
+> 
+> Needs imperative tone ... "Release the global counter ..."
 
-I really want to rewrite CPU/thread map related code but didn't have
-time to work on it. :(
-
-It'd be great if we can rewrite it in Rust!  But current libperf API is
-pretty bad and it's not clearly separated from the tools code.  For
-example, accessing internals like evsel->core.xxx should be changed
-first.
+sure.
 
 > 
-> > >> Fix it by deleting evsels with empty CPU maps in the specific case where
-> > >> user requested CPU maps are evaluated.
-> > >
-> > > If we delete evsels than the indices can be broken for certain things.
-> > > I'm guessing asan testing is clean but the large number of side data
-> > > structures that are indexed by things in another data structure makes
-> > > the whole code base brittle and I am nervous around this change.
-> > >
-> > >> Fixes: 251aa040244a ("perf parse-events: Wildcard most "numeric" events")
-> > >> Signed-off-by: James Clark <james.clark@linaro.org>
-> > >
-> > > Reviewed-by: Ian Rogers <irogers@google.com>
-> > >
-> > > Thanks,
-> > > Ian
-> > >
-> >
-> > Ok if we're not completely opposed to doing it this way I will dig a bit
-> > more and double check everything is working.
+>>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> ...
 > 
-> I think it is okay to do it this way (hence the reviewed-by tag) as
-> propagate maps should happen before the xyarrays are set up, it'd be
-> nice if these things were checked at runtime, or by the compiler...
+>> ---
+>>   arch/x86/kernel/cpu/resctrl/internal.h |  2 +
+>>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 56 ++++++++++++++++++++++++++
+>>   2 files changed, 58 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+>> index 900e18aea2c4..6f388d20fb22 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+>> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+>> @@ -717,6 +717,8 @@ int resctrl_arch_config_cntr(struct rdt_resource *r, struct rdt_mon_domain *d,
+>>   			     u32 cntr_id, bool assign);
+>>   int rdtgroup_assign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
+>>   			       struct rdt_mon_domain *d, enum resctrl_event_id evtid);
+>> +int rdtgroup_unassign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
+>> +				 struct rdt_mon_domain *d, enum resctrl_event_id evtid);
+>>   void rdt_staged_configs_clear(void);
+>>   bool closid_allocated(unsigned int closid);
+>>   int resctrl_find_cleanest_closid(void);
+>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> index e4f628e6fe65..791258adcbda 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> @@ -1945,6 +1945,62 @@ int rdtgroup_assign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
+>>   	return ret;
+>>   }
+>>   
+>> +static bool mbm_cntr_assigned_to_domain(struct rdt_resource *r, u32 cntr_id)
+>> +{
+>> +	struct rdt_mon_domain *d;
+>> +
+>> +	list_for_each_entry(d, &r->mon_domains, hdr.list)
+>> +		if (test_bit(cntr_id, d->mbm_cntr_map))
+>> +			return 1;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * Unassign a hardware counter from the domain and the group.
+> 
+> Not sure ... maybe "Unassign a hardware counter associated with @evtid from
+> the domain and the group."?
 
-Right, evsel index is used some places probably we need to update it
-too.
-
-Thanks,
-Namhyung
+ok.
 
 > 
-> > >> ---
-> > >>   tools/lib/perf/evlist.c | 11 +++++++++--
-> > >>   1 file changed, 9 insertions(+), 2 deletions(-)
-> > >>
-> > >> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-> > >> index c6d67fc9e57e..8fae9a157a91 100644
-> > >> --- a/tools/lib/perf/evlist.c
-> > >> +++ b/tools/lib/perf/evlist.c
-> > >> @@ -47,6 +47,13 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
-> > >>                   */
-> > >>                  perf_cpu_map__put(evsel->cpus);
-> > >>                  evsel->cpus = perf_cpu_map__intersect(evlist->user_requested_cpus, evsel->own_cpus);
-> > >> +
-> > >> +               /*
-> > >> +                * Empty cpu lists would eventually get opened as "any" so remove
-> > >> +                * genuinely empty ones before they're opened in the wrong place.
-> > >> +                */
-> > >> +               if (perf_cpu_map__is_empty(evsel->cpus))
-> > >> +                       perf_evlist__remove(evlist, evsel);
-> > >>          } else if (!evsel->own_cpus || evlist->has_user_cpus ||
-> > >>                  (!evsel->requires_cpu && perf_cpu_map__has_any_cpu(evlist->user_requested_cpus))) {
-> > >>                  /*
-> > >> @@ -80,11 +87,11 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
-> > >>
-> > >>   static void perf_evlist__propagate_maps(struct perf_evlist *evlist)
-> > >>   {
-> > >> -       struct perf_evsel *evsel;
-> > >> +       struct perf_evsel *evsel, *n;
-> > >>
-> > >>          evlist->needs_map_propagation = true;
-> > >>
-> > >> -       perf_evlist__for_each_evsel(evlist, evsel)
-> > >> +       list_for_each_entry_safe(evsel, n, &evlist->entries, node)
-> > >>                  __perf_evlist__propagate_maps(evlist, evsel);
-> > >>   }
-> > >>
-> > >> --
-> > >> 2.34.1
-> > >>
-> >
+>> + * Counter will be unassigned in all the domains if rdt_mon_domain is NULL
+> 
+> Please use imperative tone: "Unassign the counter from all the domains ...."
+
+ok.
+
+> 
+>> + * else the counter will be assigned to specific domain.
+> 
+> copy&paste error?
+> "assigned to specific domain" -> "unassign from specific domain"?
+
+ok.
+
+> 
+>> + * Global counter will be freed once it is unassigned from all the domains.
+> 
+> Needs imperative tone.
+> 
+>> + */
+>> +int rdtgroup_unassign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
+>> +				 struct rdt_mon_domain *d, enum resctrl_event_id evtid)
+>> +{
+>> +	int index = MBM_EVENT_ARRAY_INDEX(evtid);
+>> +	int cntr_id = rdtgrp->mon.cntr_id[index];
+>> +	int ret;
+>> +
+>> +	/* Return early if the counter is unassigned already */
+>> +	if (cntr_id == MON_CNTR_UNSET)
+>> +		return 0;
+>> +
+>> +	if (!d) {
+>> +		list_for_each_entry(d, &r->mon_domains, hdr.list) {
+>> +			ret = resctrl_arch_config_cntr(r, d, evtid, rdtgrp->mon.rmid,
+>> +						       rdtgrp->closid, cntr_id, false);
+>> +			if (ret)
+>> +				goto out_done_unassign;
+>> +
+>> +			clear_bit(cntr_id, d->mbm_cntr_map);
+>> +		}
+>> +	} else {
+>> +		ret = resctrl_arch_config_cntr(r, d, evtid, rdtgrp->mon.rmid,
+>> +					       rdtgrp->closid, cntr_id, false);
+>> +		if (ret)
+>> +			goto out_done_unassign;
+>> +
+>> +		clear_bit(cntr_id, d->mbm_cntr_map);
+> 
+> Please see comment to previous patch about the duplicate snippets. Snippets can be
+> replaced with single function that also resets architectural state.
+
+Sure.
+
+will combine rdtgroup_assign_cntr_event() and
+rdtgroup_unassign_cntr_event().
+
+I need to rename the function. How about resctrl_configure_cntr_event()?
+
+
+> 
+>> +	}
+>> +
+>> +	/* Update the counter bitmap */
+> 
+> What is the update?
+
+Clear the counter bitmap.
+
+> 
+>> +	if (!mbm_cntr_assigned_to_domain(r, cntr_id)) {
+>> +		mbm_cntr_free(r, cntr_id);
+>> +		rdtgrp->mon.cntr_id[index] = MON_CNTR_UNSET;
+>> +	}
+>> +
+>> +out_done_unassign:
+>> +	return ret;
+>> +}
+>> +
+>>   /* rdtgroup information files for one cache resource. */
+>>   static struct rftype res_common_files[] = {
+>>   	{
+> 
+> 
+> Reinette
+> 
+
+-- 
+- Babu Moger
 
