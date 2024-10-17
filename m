@@ -1,91 +1,204 @@
-Return-Path: <linux-kernel+bounces-369644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC62B9A2046
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:46:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50069A2049
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551121F2384F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB7E1C24A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2221DACAA;
-	Thu, 17 Oct 2024 10:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94EB13B298;
+	Thu, 17 Oct 2024 10:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NyNYbsHD"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMbFW9Qg"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0513C1DA2E0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E5B1D9697
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729161985; cv=none; b=t7HqARIBoVhtvNk/yspqQQigjgc1uBrMnnMgsn3qMblecQrWVuCumaD4aSHUAYJGXD1++Mo9KdZ1Q0YNg29tKTSeCLrEX6RLOiknI6YKirGnJ+ka0zwmjXyJxhCYbS2z/QgW82O83c9oRGbM9SdlTXSnRqGxTVs2AX6tyUP/zBE=
+	t=1729161996; cv=none; b=Q2pMiSt0dwzO2A+/Al7LqoVvUg+Q1r6nQPl4TNy8F1iUjVa528GhYV6vQaCUVJvvDRORmybAMZ85SJGzLsdy5rAmJS/gHPsnAbmnIxIiyillYpEXzmvBaSp6wlN3F6hVT+XqjrYe2OgJRuOAIxHsB0SsSJuY/y5IMuedzN+M1cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729161985; c=relaxed/simple;
-	bh=ksJfOqZ0F+aqfgOXPTdsDbbytvSSQ9OVM/xbZDl3uy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=syvLsPVPugca8LqI3WwD+SIj0LyTlBCfWZrHCAtn6tgmWnZeID8eH2RZep0HCxp3TC+3BdJ/bJQRMmw/XiIkJgDRbquSnbxS7NnJ55gKbIjyAM6C6suvjPNNEDWE8wAxeqnjbyyOcQBR5/E2bdEbeAcZbS3IxeUxPmTXhwXucbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NyNYbsHD; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 17 Oct 2024 06:46:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729161981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TuEkyXRK4a+z24nUqtPTb40oaVXyvk6oaPG3UBwJUew=;
-	b=NyNYbsHDJQPkgXNY5JdRUA7Zh5I4863hzQEO7Dmv0Pc1JnNfmFBiE0GU89OHQ0JZkRtGAD
-	u74yRbmA1j782KQL4lIBEySIJKlhXPHoeEHDtPRxh/nDRf/7SYcgbI4bonoeLaDIGvDsQI
-	W9trTM7Iw3OYTp34mGWXyCqzAedPDsc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de, 
-	msakai@redhat.com, corbet@lwn.net, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, akpm@linux-foundation.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, 
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] lib/min_heap: Introduce non-inline versions of min
- heap API functions
-Message-ID: <zne3invtehte3ym34ufnydtggigxazdb2ltfa26ca4tykvprls@rcawukx5hhcn>
-References: <20241013184703.659652-1-visitorckw@gmail.com>
- <20241013184703.659652-2-visitorckw@gmail.com>
- <20241014081358.GS17263@noisy.programming.kicks-ass.net>
- <ZwznQzdZsg82KNT4@visitorckw-System-Product-Name>
- <xb2gihmastm3wjn2o2sufvtglvjkelhiiwhnlzoiz4qncywyga@txf4vvnyxhvu>
- <20241017095520.GV16066@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729161996; c=relaxed/simple;
+	bh=FxfJctS2+GCXh8kAlmoQ3toy0Gs0PnNzX6uu9kFmvzM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5SK1/BDDbGnmKVamgmepKBQx20rJAe/n2aLw+MF47IV7XDa/q3o3hQr8JdFn3n55kcXhGs1m7NBspAD720ForVzkiv53+ar4wV+mhs39stiOX0KmCxf8wYyKM3ke07bc+0jbdxvYNfqG+SxeScX5/FtpEmX7W3CLYUwKogdDeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YMbFW9Qg; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4a46eeb84a0so216396137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729161992; x=1729766792; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5iLc9AQWQ9bPZ9PdWCnYLRDGxR6aVrX6pCcUlaC2gXg=;
+        b=YMbFW9QgdOfhYNN5VZxo3Z8L114X8Xv3RZ5In3ojo2TnrB4AwQjksAWIC2GPqp/fHc
+         Pw3y3ukFWm6gUx4B7LpTusrIxnWxHXWaFqKcKGBsVLveghrEzzNglj/ipWC7I3oR9dQt
+         xAoQICQ9pfFqjxqKmCvzzY4rbVANZpe5RufqTnQ2BZ+VxIEHpCEe1GPehXkuk8c3lcIF
+         519bCUKRDdHHXmIodCTVgFB4vI6qe//7WBk4JC7pLxZ0l9xw/M7u/ZyW9OYOgucsl28g
+         ivo/Cs6PFPaDgvaoIJ3PJ/Lenrq8PjuL1pWeEdy3EYKwwh4c+EUFUG1KJqLT1Fo+Avno
+         z++A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729161992; x=1729766792;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5iLc9AQWQ9bPZ9PdWCnYLRDGxR6aVrX6pCcUlaC2gXg=;
+        b=cdXcgMwhsNWS/I74Ys9EFe+ib+5APrCfHmVBCEuEmhL5aY+OmdS7k/1V03WX8M7Thg
+         i5pJKMePp0jOsqefclIbBQsf35eIhPfg0l+2MwG6wxrmsvw+FSMwWO5Ao08TZty0I/lZ
+         iByGFUHxGTeUUDf3x2nxdGFgF8UiVlUSsjbtkP7g9h2BdafJN3h1PbQRX8wGfhltoJVM
+         Dg9chu0oPSPjRmBxSxW1SwooOh0RjrOvMTem3TCT/n8ONu2eKaX78/PWb1b+fYARfGiH
+         MHeNcj6lV1hlyR4pg8Ba87alGk7+BROg3uvhoXBYi2ulV2dRQtPWCT+MGNQ8SFxk/bOW
+         vcuQ==
+X-Gm-Message-State: AOJu0Yx/VHOuBkQyucNS6zfzrJXCxkj+A1t8j69qYU3HlVObqr1BSL9P
+	ZmWlbfqgyzp4Xg/cyABXppg8cdTa12CnboDZFLZOmzRVD/3a5IjoNPjLHDJ9KgMpPk4XygVBPke
+	3tWQQE2G/fGvpFvFFLwCqvbh+WD6AflMu/gDjuA==
+X-Google-Smtp-Source: AGHT+IEhuubEp1XFMcAt1Qdpoup5VxogAcu1pC1JHif0I5jEeCDESB436aTA1yUdhOINM3pMJD6rd6T5GIpOG8DyYOM=
+X-Received: by 2002:a05:6102:26c2:b0:4a4:8ef0:25ba with SMTP id
+ ada2fe7eead31-4a5b5a3f858mr5284146137.21.1729161991842; Thu, 17 Oct 2024
+ 03:46:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017095520.GV16066@noisy.programming.kicks-ass.net>
-X-Migadu-Flow: FLOW_OUT
+References: <20241015101716.740829-1-jens.wiklander@linaro.org>
+In-Reply-To: <20241015101716.740829-1-jens.wiklander@linaro.org>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Thu, 17 Oct 2024 16:16:20 +0530
+Message-ID: <CAFA6WYOCDf6RqHr7E9nN7DQdoq+ZDwFO=Y0yB+fzit2GwzDkGg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/2] TEE subsystem for restricted dma-buf allocations
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 17, 2024 at 11:55:20AM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 16, 2024 at 11:26:30PM -0400, Kent Overstreet wrote:
-> 
-> > yeah, I think we would prefer smaller codesize, by default.
-> > 
-> > it'd be well worth checking the code size difference on inlined vs. not,
-> > and then the really think to do would be to provide optional _inlined()
-> > helpers that we can switch to if/when a particular codepath shows up in
-> > a profile
-> 
-> Make sure to build with kCFI and IBT enabled when you do this and enjoy
-> seeing ec_stripes_heap_cmp turn into this:
+Hi Jens,
 
-I wouldn't worry too much about the stripes heap, I'm going to replace
-that with a persistent LRU.
+On Tue, 15 Oct 2024 at 15:47, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+>
+> Hi,
+>
+> This patch set allocates the restricted DMA-bufs via the TEE subsystem.
+> This a complete rewrite compared to the previous patch set [1], and other
+> earlier proposals [2] and [3] with a separate restricted heap.
+>
+> The TEE subsystem handles the DMA-buf allocations since it is the TEE
+> (OP-TEE, AMD-TEE, TS-TEE, or a future QTEE) which sets up the restrictions
+> for the memory used for the DMA-bufs.
 
-After that it looks like the only heap left in bcachefs will be in the
-clock code. Shame, they're one of my favorite data structures...
+Thanks for proposing this interface. IMHO, this solution will address
+many concerns raised for the prior vendor specific DMA heaps approach
+[1] as follows:
+
+1. User-space interacting with the TEE subsystem for restricted memory
+allocation makes it obvious that the returned DMA buf can't be
+directly mapped by the CPU.
+
+2. All the low level platform details gets abstracted out for
+user-space regarding how the platform specific memory restriction
+comes into play.
+
+3. User-space doesn't have to deal with holding 2 DMA buffer
+references, one after allocation from DMA heap and other for
+communication with the TEE subsystem.
+
+4. Allows for better co-ordination with other kernel subsystems
+dealing with restricted DMA-bufs.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240515112308.10171-1-yong.wu@mediatek.com/
+
+>
+> I've added a new IOCTL, TEE_IOC_RSTMEM_ALLOC, to allocate the restricted
+> DMA-bufs. This new IOCTL reaches the backend TEE driver, allowing it to
+> choose how to allocate the restricted physical memory.
+>
+> TEE_IOC_RSTMEM_ALLOC is quite similar to TEE_IOC_SHM_ALLOC so it's tempting
+> to extend TEE_IOC_SHM_ALLOC with two new flags
+> TEE_IOC_SHM_FLAG_SECURE_VIDEO and TEE_IOC_SHM_FLAG_SECURE_TRUSTED_UI for
+> the same feature. However, it might be a bit confusing since
+> TEE_IOC_SHM_ALLOC only returns an anonymous file descriptor, but
+> TEE_IOC_SHM_FLAG_SECURE_VIDEO and TEE_IOC_SHM_FLAG_SECURE_TRUSTED_UI would
+> return a DMA-buf file descriptor instead. What do others think?
+
+I think it's better to keep it as a separate IOCTL given the primary
+objective of buffer allocation and it's usage.
+
+-Sumit
+
+>
+> This can be tested on QEMU with the following steps:
+> repo init -u https://github.com/jenswi-linaro/manifest.git -m qemu_v8.xml \
+>         -b prototype/sdp-v2
+> repo sync -j8
+> cd build
+> make toolchains -j4
+> make all -j$(nproc)
+> make run-only
+> # login and at the prompt:
+> xtest --sdp-basic
+>
+> https://optee.readthedocs.io/en/latest/building/prerequisites.html
+> list dependencies needed to build the above.
+>
+> The tests are pretty basic, mostly checking that a Trusted Application in
+> the secure world can access and manipulate the memory. There are also some
+> negative tests for out of bounds buffers etc.
+>
+> Thanks,
+> Jens
+>
+> [1] https://lore.kernel.org/lkml/20240830070351.2855919-1-jens.wiklander@linaro.org/
+> [2] https://lore.kernel.org/dri-devel/20240515112308.10171-1-yong.wu@mediatek.com/
+> [3] https://lore.kernel.org/lkml/20220805135330.970-1-olivier.masse@nxp.com/
+>
+> Changes since the V1 RFC:
+> * Based on v6.11
+> * Complete rewrite, replacing the restricted heap with TEE_IOC_RSTMEM_ALLOC
+>
+> Changes since Olivier's post [2]:
+> * Based on Yong Wu's post [1] where much of dma-buf handling is done in
+>   the generic restricted heap
+> * Simplifications and cleanup
+> * New commit message for "dma-buf: heaps: add Linaro restricted dmabuf heap
+>   support"
+> * Replaced the word "secure" with "restricted" where applicable
+>
+> Jens Wiklander (2):
+>   tee: add restricted memory allocation
+>   optee: support restricted memory allocation
+>
+>  drivers/tee/Makefile              |   1 +
+>  drivers/tee/optee/core.c          |  21 ++++
+>  drivers/tee/optee/optee_private.h |   6 +
+>  drivers/tee/optee/optee_smc.h     |  35 ++++++
+>  drivers/tee/optee/smc_abi.c       |  45 ++++++-
+>  drivers/tee/tee_core.c            |  33 ++++-
+>  drivers/tee/tee_private.h         |   2 +
+>  drivers/tee/tee_rstmem.c          | 200 ++++++++++++++++++++++++++++++
+>  drivers/tee/tee_shm.c             |   2 +
+>  drivers/tee/tee_shm_pool.c        |  69 ++++++++++-
+>  include/linux/tee_core.h          |   6 +
+>  include/linux/tee_drv.h           |   9 ++
+>  include/uapi/linux/tee.h          |  33 ++++-
+>  13 files changed, 455 insertions(+), 7 deletions(-)
+>  create mode 100644 drivers/tee/tee_rstmem.c
+>
+> --
+> 2.43.0
+>
 
