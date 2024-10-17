@@ -1,79 +1,55 @@
-Return-Path: <linux-kernel+bounces-369729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2309A21DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:07:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9903A9A21E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2731F25078
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 233B0284DF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499571DD0F3;
-	Thu, 17 Oct 2024 12:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13631DD0FE;
+	Thu, 17 Oct 2024 12:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVhBv7ix"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="XFkC8cCs"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5901DCB36
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CF61DC18B;
+	Thu, 17 Oct 2024 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729166840; cv=none; b=WFR3U5aTzvO2UvgqTey5zKO/h8ayO8K3AgBVidKfi8n1YPYVcVVkxMqnSIv5ClYzdd9+tEJkSUK0ig0LfdmCQHt2jb3tWMtyxwVn+kFwS3FaeyGJ+GNaysuCSTWcJUZXWnUJ/EWvlsMKK7u9YC21rVi4j340BImPLvBsG01JD48=
+	t=1729166961; cv=none; b=QOBaWQnasedRTwmZvQdqNqUCByxwr3rDrq4Mr+wra2zPzIryLsZ7faq2lSmyUs22CTmbHxw+aU4LNFea9hiJ/2/woHNU+/xFw8eNPl3dyStwm/uk52Bx1LIuF+O0ocHRGcEINjQG7i26mXRG0Y+DmklZWFhg9KGs2Dfd77yawXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729166840; c=relaxed/simple;
-	bh=dXb6XyiXk/+aUp3Pwekw1+a/Oqt07DIe4NaNC6mAOSs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CjT0bozsP46GulicMKgJbLLcA2luZKzZV7TEnvGQJlGByMWzu2kqdqaqjE7famBVKKDVh2raL0Woc+DxkaOrvyLEdsW5WAtdX/kmwAbGgwcqtzmNK0nr90BWbawpN0B7pC2wiZFdH/6KZ1tHI+u3+OgnMA/RD4AlLaDaZW1ClCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVhBv7ix; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729166838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2/IGRRzIJv3DLfiog8MtLmqRn3GxBRWzG+PtYfHPlzU=;
-	b=iVhBv7ixOOQpRUdA6k9iB8/5iqY1a/w6E2WzWwVKNlSzjjK1E5n0vVYT7UQQZ/WgqQ+aMY
-	V8LzvGXcY/BC16nFEsYreOZ7F+Sp2gdilYxEKMhWix83S4pRyKc2Hyw28KA8EnmGE48X5Z
-	Lp2Xn1CnONlvrOsgTBit0hJ1TJaUnpU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-78-f3_UOXv6NYql4NtIFyd5kg-1; Thu, 17 Oct 2024 08:07:16 -0400
-X-MC-Unique: f3_UOXv6NYql4NtIFyd5kg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315afcae6cso3443365e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:07:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729166835; x=1729771635;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2/IGRRzIJv3DLfiog8MtLmqRn3GxBRWzG+PtYfHPlzU=;
-        b=r7PPPeyg791uBfiEcYTM/MfUI05cIthmxp2glIJ3vkCLqyjNv0TXJ6OLlIp1S4E4O+
-         DRZrGy74usU/ssaTsa3xuxCnLLfX9Ubk8FQ9E/KYu4s8bBTRui0q8NeqMCZcIwKymuH1
-         xEMrADZcYspi7boQYdNoEuCZLjqCK6MZmM+Ul3KyFCjjpkQKTfHG/HyH2+bvLiSW6+4b
-         i/RCAllupCzd4pGsURpanXamZc05kY9w13/cwesl2/VN1w5dNq47lO4G1wM4FffbKmM5
-         KfV/tGxT7vRTyuox5HGUQTFzvG2wR7htKMzIIwkcapTXpWuG4D4EYF+4KjCadnE5zQ5O
-         kdDQ==
-X-Gm-Message-State: AOJu0YwI1ZPaUrC0aN2luXs4nFtjrv13BBDS4rYj4S1ui8n700E+FQnQ
-	nuEHZ3epv34F1dIYnlp5fM+pim9H2ylKIeiBb9BeReezB9qMSt7WufdJARi6h5V5nm7PiVCyYTK
-	5RJCkW0cDw4Xwzukw05YMw4BY5+PVqdn2mEd+7cHgsYLEhPlv1hxhREJM2Y6FyQ==
-X-Received: by 2002:a05:600c:46c7:b0:431:5475:3cd1 with SMTP id 5b1f17b1804b1-4315875fb2fmr17727505e9.17.1729166834706;
-        Thu, 17 Oct 2024 05:07:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNtzUUQ7bQ+NpQeHrbKRpg9T0l3bVeZZHrV5Z5JZeh/ysPpsYqvaaR5yenVoFBRSIOrkr5Fw==
-X-Received: by 2002:a05:600c:46c7:b0:431:5475:3cd1 with SMTP id 5b1f17b1804b1-4315875fb2fmr17727205e9.17.1729166834226;
-        Thu, 17 Oct 2024 05:07:14 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a2a8sm7055378f8f.3.2024.10.17.05.07.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 05:07:13 -0700 (PDT)
-Message-ID: <45de474c-9af3-4d71-959f-6dbc223b432b@redhat.com>
-Date: Thu, 17 Oct 2024 14:07:12 +0200
+	s=arc-20240116; t=1729166961; c=relaxed/simple;
+	bh=hjBpea8/wMQQI3d0ZRKaAtolWXcziTvVFZ9oxhaMpZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hh56ljn6PgqxfG18SlYiWG2gEmOll/DFK/yTaHd/ncKnyzsR2atHAYcdvJTGW1/AvfOGSVkepZ4LniCnGeyqDwLIIiQax4Ka9Hs/v4U5fg/uRLT2V+F86y2YPsos9JIxDk+N+Iske3+1w0/iYLBoNYsE2EXUjykWVxEGOnhIq24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=XFkC8cCs; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729166905; x=1729771705; i=deller@gmx.de;
+	bh=vNH0O5JPq8gnedYAMITdB6u2Uzcfqi5XJHyWv5Rb8m0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=XFkC8cCsl7rxWhwyCFeIaiRDZA8p0uH9RX2Mn4jI/w2uPsQgSyLYhz/MQ9MpE4Q/
+	 V0au5wJ1sKhim9E2tKjKkKhTLifv9ppV9TXWl6rycxLlwX5x+963EkKnosaCu6DH6
+	 BbuqO5b2Oj/DHvBxuuYx8v7l3mNm4PA4ul5vA2QCxFH9+cfj9RKFlNNubny9pDObf
+	 3QQ+YCQVZPfaETezBUOq/i2QJX4x8+u1XoDBQoeUwG//UhAMxmXMJoGzbrJW6sYQE
+	 AVBVPn6Bq5R1GldlPtpN/2NXP43lxSNgi8FozWHWxPpAPGD5ONk5aDNGTxfiwJQTD
+	 SHUQwjBw4wNpOh0H2A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N1wq3-1u3ELw0gwr-00rxI1; Thu, 17
+ Oct 2024 14:08:25 +0200
+Message-ID: <9f3f6bd9-47d1-45fa-aa6b-9e0a80a5ebc6@gmx.de>
+Date: Thu, 17 Oct 2024 14:08:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,135 +57,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT) to
- support QEMU/KVM memory devices
-From: David Hildenbrand <david@redhat.com>
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
- Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-5-david@redhat.com>
- <ZxC+mr5PcGv4fBcY@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <04d5169f-3289-4aac-abca-90b20ad4e9c9@redhat.com>
- <ZxDetq73hETPMjln@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <1c7ef09e-9ba2-488e-a249-4db3f65e077d@redhat.com>
+Subject: Re: [PATCH v5 14/16] modules: Support extended MODVERSIONS info
+To: Luis Chamberlain <mcgrof@kernel.org>, Matthew Maurer
+ <mmaurer@google.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>
+Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
+ gary@garyguo.net, Michael Ellerman <mpe@ellerman.id.au>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, neal@gompa.dev,
+ marcan@marcan.st, j@jannau.net, asahi@lists.linux.dev,
+ linux-modules@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Boqun Feng
+ <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org
+References: <20240925233854.90072-1-mmaurer@google.com>
+ <20240925233854.90072-15-mmaurer@google.com>
+ <ZwmlEYdS0aPVF32k@bombadil.infradead.org>
+ <CAGSQo01o4fWYwSzZHX5dyTUKcaCSZ7z-hPQ8w63tgBPGbM_UCA@mail.gmail.com>
+ <ZwmnnMmqVWLaelvQ@bombadil.infradead.org>
+ <Zwm4lXdKB9RfPQ5M@bombadil.infradead.org>
+ <Zwm4v_1wh5RwuHxF@bombadil.infradead.org>
+ <CAGSQo03df-tnmwcz4nh3qtuQPKQ2zLHW0juQyKUXGsdeS7QkLA@mail.gmail.com>
+ <ZxBKkJu-XPOGs-NG@bombadil.infradead.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <1c7ef09e-9ba2-488e-a249-4db3f65e077d@redhat.com>
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <ZxBKkJu-XPOGs-NG@bombadil.infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1p/e1F7ttuQMGYqopn2AVUGUZu0cSHvDj1je+893fZhbGOowbgG
+ 5i2/oeoXvkVZFcqxeeGVcshUV+bPEyKpwh/R6+lxFTVQes/H2q6d24GRNoUfC/qEWdq5AmX
+ Y+VU1Qomtnmmtoi7cDYJKzqkC/+JaZaDZ6mcWbB1B4Vf7/vsZfnrBL0/fWx8fbpCjz5OYfE
+ BWGNMEPcCvO/TVqU6Q1PA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WsAm6YIyu1Y=;TVmdySOtqVVUrEvY6gGeOBWy5Zv
+ 55RIC3BP1W2gS4gwBWDOK8xth0SuXrw9Uar0o92Dq+5eHtWhGn1HR+QFA8x/uN67qj9Re9HLv
+ Q19ks49VUOMD5Em4MqbiPVDpnn+anlED9LEU2LP+x5plzDKtP5I5A23H5wHZHBrdDH1xpG9mn
+ EMngh5UUDO3EHodIT+u8oNj15qECfhTVqLF4Jj2rjpCaR8IofLuRbXF0RVhVgoA60Di/oMM9x
+ Ag344rqbGSNRQu29oZTT3xS/KaiFiybZXyrFfPoZ4/EDs5vdK2+8SZ1g8zmqH+6+jlqQYBsWp
+ KvW6iZ+uNVr7AlOvGMvFG6SPXL4fZVdHfUwF5vmfMFwbvLVPYmx1nJ7pw4NpVuymOpT+THjLS
+ BPw5U3UTv8AlCuaMl2XaVtENIapcW2lyFHLr9Btc8XEdhDUpff0dLEicdeHsdxepuvgww2Qco
+ FVAiefJsW3lQo7nNZMyVjiLHbTtbpVV3CkbzxlcqwAQjR9wBR6AtCUq2XoCBD7I5d5/WMFDbr
+ JUPLaUjrLsFEvX8u6+RNTtI8OcUJPS6mpuTeGtN4NCv2VlyJqqn+WykH2h35Vk5tOTn2Qwdov
+ iP1Ln8WR6asIZq1Kki6mLimqId3av5Q61R0IRoHBO2+yaESS3TkyRTiR0LF2z0CuD+yhi2kkG
+ mri5zTQNT2NzUeNzZzmcleV9GaFRjdmBWOg9PEbuHA5h50m4kHBHN4A8CeBuBtShtzWU1TMMg
+ GHz8KTEq5eXzWgfek79kXFnZLa9LhphcXG2sq/eMj0kDg7IUnsy/0c5LO+5qTYIs69JhAEr9u
+ qmbQ4fqYyIFEbjMUF6zVjV6+ybV623Tvj6Q8fo751+YdU=
 
-On 17.10.24 12:00, David Hildenbrand wrote:
-> On 17.10.24 11:53, Alexander Gordeev wrote:
->>>> Why search_mem_end() is not tried in case sclp_early_get_memsize() failed?
->>>
->>> Patch #3 documents that:
->>>
->>> +    The storage limit does not indicate currently usable storage, it may
->>> +    include holes, standby storage and areas reserved for other means, such
->>> +    as memory hotplug or virtio-mem devices. Other interfaces for detecting
->>> +    actually usable storage, such as SCLP, must be used in conjunction with
->>> +    this subfunction.
->>
->> Yes, I read this and that exactly what causes my confusion. In this wording it
->> sounds like SCLP *or* other methods are fine to use. But then you use SCLP or
->> DIAGNOSE 260, but not memory scanning. So I am still confused ;)
-> 
-> Well, DIAGNOSE 260 is z/VM only and DIAG 500 is KVM only. So there are
-> currently not really any other reasonable ways besides SCLP.
+Hi Luis,
 
-Correction: Staring at the code again, in detect_physmem_online_ranges()
-we will indeed try:
+On 10/17/24 01:21, Luis Chamberlain wrote:
+> That sounds great. Yeah, the above would be great to test. A while ago
+> I wrote a new modules selftests in order to test possible improvements
+> on find_symbol() but I also did this due to push the limits of the
+> numbers of symbols we could support. I wrote all this to also test the
+> possible 64-bit alignment benefits of __ksymtab_ sections on
+> architectures without CONFIG_HAVE_ARCH_PREL32_RELOCATIONS (e.g. ppc64,
+> ppc64le, parisc, s390x,...). [....]
+>
+> I forget what we concluded on Helge Deller's alignement patches, I think
+> there was an idea on how to address the alignment through other means.
+>
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log=
+/?h=3D20241016-modules-symtab
 
-a) sclp_early_read_storage_info()
-b) diag260()
+I stumbled upon the unaligned-memory-access.rst document [1].
+Please read it, as it is a really good document, and the section
+"Why unaligned access is bad" states:
+It should be obvious from the above that if your code causes unaligned
+memory accesses to happen, your code will not work correctly on certain
+platforms and will cause performance problems on others.
 
-But if neither works, we cannot blindly add all that memory, something is
-messed up. So we'll fallback to
+With this in mind, you really should apply both of my alignment
+patches which you currently carry in [0].
 
-c) sclp_early_get_memsize()
+For parisc I partly solved the issue by fixing the arch-specific kernel un=
+alignment
+handler, but every time module sections are stored unaligned, it triggers
+performance degregation on parisc (and other sensitive platforms).
 
-But if none of that works, something is seriously wrong.
+I suggest you apply them unconditionally.
 
+Helge
 
-I will squash the following:
-
-diff --git a/arch/s390/boot/physmem_info.c b/arch/s390/boot/physmem_info.c
-index 975fc478e0e3..6ad3ac2050eb 100644
---- a/arch/s390/boot/physmem_info.c
-+++ b/arch/s390/boot/physmem_info.c
-@@ -214,6 +214,12 @@ void detect_physmem_online_ranges(unsigned long max_physmem_end)
-                 return;
-         } else if (physmem_info.info_source == MEM_DETECT_DIAG500_STOR_LIMIT) {
-                 max_physmem_end = 0;
-+               /*
-+                * If we know the storage limit but do not find any other
-+                * indication of usable initial memory, something is messed
-+                * up. In that case, we'll not add any physical memory so
-+                * we'll run into die_oom() later.
-+                */
-                 if (!sclp_early_get_memsize(&max_physmem_end))
-                         physmem_info.info_source = MEM_DETECT_SCLP_READ_INFO;
-         }
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+[1]  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/Documentation/core-api/unaligned-memory-access.rst
 
