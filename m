@@ -1,224 +1,287 @@
-Return-Path: <linux-kernel+bounces-370256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A678B9A29EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:02:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F609A2A80
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAEDF1C208A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37789B2355D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0191E0B68;
-	Thu, 17 Oct 2024 16:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D15E1F4FA9;
+	Thu, 17 Oct 2024 16:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="k3aBH+Ou";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="h4Ej8pb/"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GDCItILA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEEC1DFE28
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729184221; cv=fail; b=iLX8sRaqQGCIf/AqqA15q81PTp3pHt0q8G4tO6sfhUVYF8NABivZ+m79tH5fEA352+nO0ai2yPtrphqcAq5Y7khQAc8cRtHx1/CXmxvVx5TUH1V9GuDydaiQZKbmHszIJbAUSkvBoZLCwojAEZNVfZ9YBUOtBIBd5+e3tzWrx9c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729184221; c=relaxed/simple;
-	bh=RjYVwPpXeWjW3s2+8CgMaVGGmbqvU05Iqe4NKbUOj30=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jh1BUNcYgF6JsSv2wgf6xEJOYJSvq1qa/UzL1Fvoghgx80HGhvSbxUhDM9P/fcsryFmr9skGhA0wmqa6njyPetNxXoIWUNQ+dpCdGhq3dT96JeVaJUOW1cxRvb9/fXoVV2bDkOYHWO2yNjzK0kRAP7BEhmVHgIsgY64YJmjXtbU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=k3aBH+Ou; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=h4Ej8pb/; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HFBv08017840;
-	Thu, 17 Oct 2024 16:56:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=5TZO9INgzw3HN2mx
-	usJi70XCnjg6P1ZrMP2Vpje9Qzo=; b=k3aBH+OuN8bNol+J+RMXWIkDgiVCtjGb
-	7Zqzv/1Xj/Vq1n6X1I+IN7gEOrASpPRwoJKwOt/iqWukjkH5CFa3oMc7bxsMOgAW
-	aDIXpA7LpnGPi4YNjCxS/AAyTMbnSKGEgIpahLQMylpNDK8QoL6LYaU/3DG0Vwd0
-	ynK7WA82rgWC6MiGqnne+iPPwgHaQgX31csVInZHlUTuIKFy2DBXopjvqSCMldIs
-	M9YMDJIVvA9udSYt8Wz8ak4c3oMeAL++lREOvzyWqYV9BZdbJ1QUHz5fXORTvNXS
-	5dxYByVjNJEgjI02/oNVDQI5V5rhf4Sdd3QrSbQQKLqYhwzX7f1gvg==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427hnteyje-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 16:56:46 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49HGYD9Z026232;
-	Thu, 17 Oct 2024 16:56:45 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fjah37n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 16:56:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oHJjTTsAnYorGsV+gMS3J+4/6PW4/yCsS/2agVoGNzwo/oOMFg7M1ybUa0eVkLqYy+sn2i28PCVz5gNEFsR3wWWx0GYYzCpA5Vx+RUR1Z+BabhQpM/GznlEg7koy2Je1TANP10nXo650sz9w0t55Hc41ozZKZsSCl8bIpDajwt+lHDWhd6KvTGK0PU9QS0x2x2c+V+TffdSH9Q/bdn+lDm9zJ1eXWmD/BJpQvVZ07ACR8XXTXhfRqUAxrz2gjcUDrcitv8j0MiduFkvHQevMvgwTuJ9VZvbY5q0yVNFBBeeJgOi4Eze6ckCZUcFm+m7FmgD5bQeAVz6wTa5A0AuZmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5TZO9INgzw3HN2mxusJi70XCnjg6P1ZrMP2Vpje9Qzo=;
- b=Yz5Z1fZCHLjXYAXzyIXmr+lj8xMSep9nkmLTKcm1Bad7r2IXNAtxypXhDRhpWCuOBrLazd2qjLVTU33XETEHpCWDJ4uLVTfnsm5HgizvquJf89DxuqHiUt40B2PlP532tZJdzQ/GZ3pr3yYICJchENAvvkmgKdI1DV9b5GqeUt/R7wOfE6/GO+5sWnd9ist5s4Xjklw47gMP35XnpNtiJM1Wb57LKP1pjms5g93N951ytv1WGOR/LHOJFWgLNx8rumKAtUIXKi9UPtHHBIGLRXYHyv+dvWi1BCUIDrD0yanCO01dGm74+gYcoLEZ2BSUdOMTidmhuwaKpyf9DHMgzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5TZO9INgzw3HN2mxusJi70XCnjg6P1ZrMP2Vpje9Qzo=;
- b=h4Ej8pb/tYtJmJoyIOpW7QIAfCwnfvtFam2Coqpf0j0vEOlk03qGkAueB1OPcnuJYeMWwpikX1rvTnWvgJhj+vJqC9kCL2E/6HXPQZM1f8F7/OgkwT1D2a8IC2NLD81SkiFcVfJQPpxKQNOck8zvgqI55CGYcCP95PEbi2sj9lU=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by BY5PR10MB4211.namprd10.prod.outlook.com (2603:10b6:a03:20c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 16:56:42 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 16:56:42 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tools: testing: fix phys_addr_t size on 64-bit systems
-Date: Thu, 17 Oct 2024 17:56:38 +0100
-Message-ID: <20241017165638.95602-1-lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.46.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0040.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::9) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DF31EF936;
+	Thu, 17 Oct 2024 16:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729184328; cv=none; b=lt+dfdIWYPw9fbuRjtyqAdihMGEsdm8GPd1Y8lBtu/CFjrBEDDXdRtbd7f4ubFut3NQFhd5cd8xSnWP+ihBHSz9DQW9pZCFwb5RE4HyWgz2RnwIVQpenhu5k1AAn1LolafK3dg98O5HyKNvYHIi48SxkcIcl/NR86k/bBT4bGV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729184328; c=relaxed/simple;
+	bh=KyRthnK/hRJVa0err0gjkBoaFHgWB/n7LsV5WDKmys8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FA+0mk7KN998p7QZpfv9VMVDiAwIsgrIqW1p7r4kq+Yr6SHsDudau0EU/EYWHMfX4nRvmJQ4VbUUzU0gPdQj0+6NWMCzETDDMhZoi1ZLL7khD/CDf+8/X6it9cHHnhcrJec+91w2ul7EmwAwlBVK5N0U1sLN+Q9m29rgoTLbLrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GDCItILA; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729184323; x=1760720323;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KyRthnK/hRJVa0err0gjkBoaFHgWB/n7LsV5WDKmys8=;
+  b=GDCItILAPkDgJOHYOXDzKNTtLEX1OMFlbftIhTSKsfiKN3AocInBb6st
+   HCN0L/GA59RzLXCmFX8upQ4IjRRs82qfRKgE3mcIgAaaEP8oGuzBSIhxt
+   OSNOqb6hNPzSu50S+xRyS38OCWBaKrKSLHovwOMp3/kGEEGHxS8BXHF/D
+   cE8NBvdtL5QeNt5RzswJuEEiV3szbsg75se/S7TCXNgT3rNVmRWdXmrlZ
+   oABsc2iXdDoDMYHiQOsQEUXVX3xd+wZ2Vd4QGWRMjj1UgQBT0cGOG8+rQ
+   70WTn5Hl3D4d3cXPfpqo/pEz+55i4uWsok1AhLsyI7j+0rg4iI4UTzLt0
+   w==;
+X-CSE-ConnectionGUID: etnyfPcOTJOG2AKwI3ZJZw==
+X-CSE-MsgGUID: wD9kNP8ISR6FccMRcz8g2g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="32616466"
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="32616466"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 09:57:39 -0700
+X-CSE-ConnectionGUID: f8FDYwqYQQepp9zW7OiYsA==
+X-CSE-MsgGUID: S+CawiarR6eQMwvFgCd/jA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
+   d="scan'208";a="109420965"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 17 Oct 2024 09:57:35 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1Toa-000Mct-0d;
+	Thu, 17 Oct 2024 16:57:32 +0000
+Date: Fri, 18 Oct 2024 00:56:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Christian Marangi <ansuelsmth@gmail.com>
+Subject: Re: [PATCH] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
+Message-ID: <202410180024.2NpHo5Z6-lkp@intel.com>
+References: <20241016161044.28745-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|BY5PR10MB4211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f904138-f494-4884-1c34-08dceeccad38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JeT9wBM+BJaB34devo2uAe/0pVsJHUbsCY1VdMkJkORCoq1xZksxvhnX+fhK?=
- =?us-ascii?Q?eQePkLrvkwIxM8VkkdQRGPvpjZp/d/67dwO4Bz5u3aCWRJ7KZhWUrUudzUis?=
- =?us-ascii?Q?77qvBadTfxHoutkKurWChxKkVPCAB14E8T23/e1e0Y/WlXAntr0P8FKS1ddW?=
- =?us-ascii?Q?Z6TnIzyneltlCZzPcDYErlC8inmGUVkM8GoFtr3VYm42r9IgP9M5bVbrfVpQ?=
- =?us-ascii?Q?5GG1XwidopfiTdyMAzg75MeL8EgFXbBTs42cd1oreecKJzLwcHxrwe6yEHEv?=
- =?us-ascii?Q?nd5a919hYDfE92lIQRJYImNWamZ52ifoyGX+bN07bl9V/4SNy8++RclMKGeo?=
- =?us-ascii?Q?G+LNz+gWxfEcySH2abeQeKZzYEo7LAeAUxuiPqpt7DPAAa+TA+dSdRu0G+Xw?=
- =?us-ascii?Q?k4n5pIned0S315DkfKw8cr2JVOmmUcWnhrurqF0c0SQhHZZBzUkSwnr++uw3?=
- =?us-ascii?Q?7G9kz6Qau8wEP3UFecQe5fVe2xe2l1qJxtgsZehg+lu8sBJ7PuUytH/TEO79?=
- =?us-ascii?Q?fzXevvyJCQaN/Hwpijp+ndgJTiKNKAgCE12r+fY1JvahCVE/gGhwrvZO2ln8?=
- =?us-ascii?Q?g/h9O9uwv6VQzF0XT5f18qUcvm4GGWmrxfdMQa0CcKLd+217vaXQC7gOVaiU?=
- =?us-ascii?Q?hGPbfIomjFwZ4yi8PWMEbp+2lAsnovTx60RJD6fv8TWIL1EGbHVm5OaNw3qm?=
- =?us-ascii?Q?ptFZyDMdlNOsqdYvvHxN6Jmhni7KkDfih4kc8pL/6ejE2QsZyWonHybIbaTW?=
- =?us-ascii?Q?WH2vp4CHBKXymWFGnyAmFWp31KGvyj1vbcqy5llHX216evoQk9eDhBgDcfNG?=
- =?us-ascii?Q?1bTHX0CqXqLzq4TchWDAWAMv0zX4uR8xSGafe2jSVLRX7zC/cV4ngWGTTDe+?=
- =?us-ascii?Q?3RZI7AtKGFbRUgAZwNU6Q3JV1jO/dME9CP0rfx8V/+oRUIHrIOy4/Kp40Ga9?=
- =?us-ascii?Q?rzEj1i/7HPPTJUuLQijLW5iJYeI71lhaxRMzp2MfuqkoYbUiOem+yksjhoFI?=
- =?us-ascii?Q?oixgG2opiCfqzhKgB7A192n4SxSbdCohOf5mNC+6tJqBZHhNR5VVvkgtt3Hb?=
- =?us-ascii?Q?e5jk9fj03R+UxF5Ts6ltU6BMYz+eZmNI1qiB8WsLy3fsXAR70r0u3AEy9A9r?=
- =?us-ascii?Q?U9XcEbiiFUzv/YWGhRa3F5aiKU3Bd6JDLcRlSrZiDZXTuni5LnaoSUqQwLTw?=
- =?us-ascii?Q?ANrp6XcMRS22crVSCxMr2CF3fsLIG3Hl/oBUGZoahJf4H8szBNEuGmlxs7F9?=
- =?us-ascii?Q?Ohfyg8zwRDwru7XPACxA0AB3eJmkqLTecxLHJ2EXaEEG4Mswq7YiIcMSr1AZ?=
- =?us-ascii?Q?Zu1aotFEm1ChRJI3YMMAe/Gz?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dc5LbfI7fczEFDwbnLamAPl8kYl+JteFNPo47G+rBrs4GRNdQHIe2ACd3kG4?=
- =?us-ascii?Q?UktM7swrnb/MjeuEE66DNRjQCJw+8kvWup9Hma6yl6+jeMHIH4lFPM1HcpE5?=
- =?us-ascii?Q?OQ5RvdF8R4OAeDE6he7UtiXlHRbPg5cDbyKyxgemmyn9pnNQb2HFbPLG8I/D?=
- =?us-ascii?Q?v8FWi0sZan79Q05K58IcIUyXpzPw9BTgVaE1L0FFw9Pa9SE2hpw8InVTMOsN?=
- =?us-ascii?Q?oGVaM/NF3u6Uh4oUJcDcH8P9GJqqWGCkspg5xu7+BepccN7PO3X9H+foOqiX?=
- =?us-ascii?Q?ZqWGVgL9Or0io19LJh6N+nErJsywoJLN60j12EuRnJFlSfuJWZbQvnOWpp/0?=
- =?us-ascii?Q?vgnahm8l9DCUIkas/dShKsJbLmIB+OG0bc2WHKkjBJmucoApITsc0IMV+Cen?=
- =?us-ascii?Q?lqgzOpe5CA6wOwWJuKtZWWMAh/vnB6Cslv2g+TR+yF++aREt9hwtI5kMtPC4?=
- =?us-ascii?Q?m+bfP3Fmz9zXEVX4/VoHy2m8Vsx6umlsvnV1D/Kjeijlm+2hL9J15li1FRWn?=
- =?us-ascii?Q?5CHO4SsEGhIq5t/OH5nHitDy5ItKhpIJ7BkcnE1KvpA5rs1pbMMBFdtKZlJI?=
- =?us-ascii?Q?q/buUSQzGuAc87vdYLY8VfNq+SPAfdiXiWWN7w0/UQlRDENmRjboVyV9IefW?=
- =?us-ascii?Q?caZgUSqcF5POBkljBjl8G/lkn8Ej0QuEhrfIYf52x/Pwt4YYt2c1smr+kpb5?=
- =?us-ascii?Q?7Wkb4mVwj9EEHaN06V/8PjxbWtxV6nlEOj5nVSGtqUEAihRjIMnqIK66CEn+?=
- =?us-ascii?Q?XQ+J3IXCZEmW8SFTjANm21my88/9RzIpGreqw06AUd0rzRfbv3MNlf2V6IFV?=
- =?us-ascii?Q?QwikDIALHMLecgURvNowKYc8ggkOSaRFTX3x2Frcm3hCWO/IA3TB0fLB7Yrt?=
- =?us-ascii?Q?sMMmRVi25S6ZnbRaa55+4KnBCp5nyOc9Kl+KvrCJ1CNjwfT33qiVtnaumLTC?=
- =?us-ascii?Q?wmdXrCl2/k7RqNn28Mz6bEB0FHmdypgUCiel7CUt5nVd27lJ+Zqhubvk49bj?=
- =?us-ascii?Q?fww7Ur/VtdSiI6dAINY+uNKd7V9gzBjXs2zM8F5pLzzCwqmhxNNfLaSzXWXM?=
- =?us-ascii?Q?DaYSnOytRRjoaI47t5e0SdeLI8tqJbGrn8T9AnaSFlqctxiquosCqTsGwY5E?=
- =?us-ascii?Q?KxW81AD1+1+zjCBUSfmObnOIWQ7w9pMszOGFGQUB6tF6LZp8xkbFTKtxBS20?=
- =?us-ascii?Q?N5PhKUUwrXiXBe1J3rgsN1u3PphniEp++hYA71+YXHFnYcKvQ2TITldKrxrJ?=
- =?us-ascii?Q?x7uBP4/I/E29XCBTizAxeEDeMM5aUW5nVXdMXZqS/Qlk48GskEUCpQ+juBaA?=
- =?us-ascii?Q?T3mKyvVV1fGlKL8+/O1q/GY8b7JawiKKpwei3mXbdyVgeZYDRTvCTJsqUqbl?=
- =?us-ascii?Q?0VtleD+S56bDBl7gl6RTzZFANjgjXcK35wGuMO3JR6936zKh3j3VVTM9++g7?=
- =?us-ascii?Q?iBGQApO7ELbqj1EuEWQvFhOjSIOMUmRHoLYZ+h4f4B3R1xY6d5QCwsR+0HVu?=
- =?us-ascii?Q?lcg8QZfg+cEJJYnHp3pjTg92MhU8b5lJTlrJ1FT1mJLv+/yjd77fsWafEojQ?=
- =?us-ascii?Q?WFsHbi+SR4UTf5IVtaZFIYwchDmdWyU6XS35c7Fxm8N+VNSw6zn2lAGR2om3?=
- =?us-ascii?Q?WA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	BFRq+684I6V7TQg/m1m7sPCkwPEvwJnycKAP5duQxw8WNb+C5yuHSJqxjubgukLMQBXUtlhiCQA6g5OsmvnLTgcOdWNMqT+9MR8pf5HKPRuSk6yGmEXOOhwwQrwJxZCNSEljL5HXHYVudzl9Q7bq0iDarlxLEQElLiD2WEbhsBzAWRsydOA34cMjdCnwbUMwWeQdSY7On5S0cBS6KCPePAOShb1+3uYE3I98jyAb1sC5zBgFJHDY7mo+Rhp3KG/Abi+HoTF8APrPs5xwHXNwCLZ/r9SLJWZaLEFSGxD0QoefuN6iv7KvW/RDKvD+J6oQ5qBjDeMVvoTFEaLu36m7+3i6U39zTscjDhMBtbESbBIzI8rk54Vw4Tddgy6zUDHrLlIwRqRrsqShMi6d4fiMYApbyo50rFOY8+hzP3GfZtV6hMRWEXP26uWcYqCYYcRYM3ulmUIJlYepI50wKsDgPKygLDnTunGxwa1dl72RXX6GaKfm6EJ8qK68vNnnEPFP9ybUcDgK2FBicxkF1fyFbd8upNFv3aQIN4qvcZT/MNOnh9iGhyHmS1k+XsceH5KyYoec+v6PM82FfpjLGZ7CUCaHEuGCt7pv7AuBvYIwv4c=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f904138-f494-4884-1c34-08dceeccad38
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:56:42.7816
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wzUQ21u2A1Nl5RiSnV7sGIQ6GoO8ZU5WV1AERkNn8f3PZ2Y7fS4ABQPhgWlDyQcILYtFrYuLQ56GMfdBGVFNlTIEPkpYuaYn4qJ1uaMUU/M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4211
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-17_19,2024-10-17_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410170115
-X-Proofpoint-ORIG-GUID: N0cVd-X68ZYTDWfYEmrvW96yy4G6_6Qs
-X-Proofpoint-GUID: N0cVd-X68ZYTDWfYEmrvW96yy4G6_6Qs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016161044.28745-1-ansuelsmth@gmail.com>
 
-The phys_addr_t size is predicated on whether CONFIG_PHYS_ADDR_T_64BIT is
-set or not.
+Hi Christian,
 
-In the VMA tests, virt_to_phys() from tools/include/linux casts a volatile
-void * pointer to phys_addr_t, if CONFIG_PHYS_ADDR_T_64BIT is not set, this
-will be 32-bit and trigger a warning.
+kernel test robot noticed the following build errors:
 
-Obviously this might also lead to truncation, which we would rather avoid.
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.12-rc3 next-20241017]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Fix this by adjusting the generation of generated/bit-length.h to generate
-a CONFIG_PHYS_ADDR_T{bits}BIT define.
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/cpufreq-airoha-Add-EN7581-Cpufreq-SMC-driver/20241017-001217
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241016161044.28745-1-ansuelsmth%40gmail.com
+patch subject: [PATCH] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20241018/202410180024.2NpHo5Z6-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410180024.2NpHo5Z6-lkp@intel.com/reproduce)
 
-This does result in the generation of the useless CONFIG_PHYS_ADDR_T_32BIT
-define for 32-bit systems, but this should have no effect, and makes
-implementation of this easier.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410180024.2NpHo5Z6-lkp@intel.com/
 
-This resolves the issue and the warning.
+All error/warnings (new ones prefixed by >>):
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- tools/testing/shared/shared.mk | 1 +
- 1 file changed, 1 insertion(+)
+   drivers/cpufreq/airoha-cpufreq.c:27:34: error: variable has incomplete type 'const struct arm_smccc_1_2_regs'
+           const struct arm_smccc_1_2_regs args = {
+                                           ^
+   drivers/cpufreq/airoha-cpufreq.c:27:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
+           const struct arm_smccc_1_2_regs args = {
+                        ^
+   drivers/cpufreq/airoha-cpufreq.c:31:28: error: variable has incomplete type 'struct arm_smccc_1_2_regs'
+           struct arm_smccc_1_2_regs res;
+                                     ^
+   drivers/cpufreq/airoha-cpufreq.c:27:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
+           const struct arm_smccc_1_2_regs args = {
+                        ^
+>> drivers/cpufreq/airoha-cpufreq.c:33:2: error: implicit declaration of function 'arm_smccc_1_2_smc' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+           arm_smccc_1_2_smc(&args, &res);
+           ^
+   drivers/cpufreq/airoha-cpufreq.c:40:34: error: variable has incomplete type 'const struct arm_smccc_1_2_regs'
+           const struct arm_smccc_1_2_regs args = {
+                                           ^
+   drivers/cpufreq/airoha-cpufreq.c:40:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
+           const struct arm_smccc_1_2_regs args = {
+                        ^
+   drivers/cpufreq/airoha-cpufreq.c:45:28: error: variable has incomplete type 'struct arm_smccc_1_2_regs'
+           struct arm_smccc_1_2_regs res;
+                                     ^
+   drivers/cpufreq/airoha-cpufreq.c:40:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
+           const struct arm_smccc_1_2_regs args = {
+                        ^
+   drivers/cpufreq/airoha-cpufreq.c:47:2: error: implicit declaration of function 'arm_smccc_1_2_smc' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+           arm_smccc_1_2_smc(&args, &res);
+           ^
+   drivers/cpufreq/airoha-cpufreq.c:68:17: warning: variable 'cpu_dev' set but not used [-Wunused-but-set-variable]
+           struct device *cpu_dev;
+                          ^
+>> drivers/cpufreq/airoha-cpufreq.c:103:9: error: implicit declaration of function 'kzalloc' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+           priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+                  ^
+>> drivers/cpufreq/airoha-cpufreq.c:103:7: warning: incompatible integer to pointer conversion assigning to 'struct airoha_cpufreq_priv *' from 'int' [-Wint-conversion]
+           priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+                ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/cpufreq/airoha-cpufreq.c:145:3: error: implicit declaration of function 'kfree' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+                   kfree(priv);
+                   ^
+   2 warnings and 8 errors generated.
 
-diff --git a/tools/testing/shared/shared.mk b/tools/testing/shared/shared.mk
-index a6bc51d0b0bf..b37362224a73 100644
---- a/tools/testing/shared/shared.mk
-+++ b/tools/testing/shared/shared.mk
-@@ -69,6 +69,7 @@ generated/bit-length.h: FORCE
- 	@if ! grep -qws CONFIG_$(LONG_BIT)BIT generated/bit-length.h; then   \
- 		echo "Generating $@";                                        \
- 		echo "#define CONFIG_$(LONG_BIT)BIT 1" > $@;                 \
-+		echo "#define CONFIG_PHYS_ADDR_T_$(LONG_BIT)BIT 1" > $@;     \
- 	fi
- 
- FORCE: ;
+
+vim +/arm_smccc_1_2_smc +33 drivers/cpufreq/airoha-cpufreq.c
+
+    24	
+    25	static unsigned int airoha_cpufreq_get(unsigned int cpu)
+    26	{
+    27		const struct arm_smccc_1_2_regs args = {
+    28			.a0 = AIROHA_SIP_AVS_HANDLE,
+    29			.a1 = AIROHA_AVS_OP_GET_FREQ,
+    30		};
+    31		struct arm_smccc_1_2_regs res;
+    32	
+  > 33		arm_smccc_1_2_smc(&args, &res);
+    34	
+    35		return (int)(res.a0 * 1000);
+    36	}
+    37	
+    38	static int airoha_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
+    39	{
+    40		const struct arm_smccc_1_2_regs args = {
+    41			.a0 = AIROHA_SIP_AVS_HANDLE,
+    42			.a1 = AIROHA_AVS_OP_FREQ_DYN_ADJ,
+    43			.a3 = index,
+    44		};
+    45		struct arm_smccc_1_2_regs res;
+    46	
+    47		arm_smccc_1_2_smc(&args, &res);
+    48	
+    49		/* SMC signal correct apply by unsetting BIT 0 */
+    50		return res.a0 & BIT(0) ? -EINVAL : 0;
+    51	}
+    52	
+    53	static struct airoha_cpufreq_priv *airoha_cpufreq_find_data(int cpu)
+    54	{
+    55		struct airoha_cpufreq_priv *priv;
+    56	
+    57		list_for_each_entry(priv, &priv_list, list) {
+    58			if (cpumask_test_cpu(cpu, priv->cpus))
+    59				return priv;
+    60		}
+    61	
+    62		return NULL;
+    63	}
+    64	
+    65	static int airoha_cpufreq_init(struct cpufreq_policy *policy)
+    66	{
+    67		struct airoha_cpufreq_priv *priv;
+    68		struct device *cpu_dev;
+    69	
+    70		priv = airoha_cpufreq_find_data(policy->cpu);
+    71		if (!priv)
+    72			return -ENODEV;
+    73	
+    74		cpu_dev = priv->cpu_dev;
+    75		cpumask_copy(policy->cpus, priv->cpus);
+    76		policy->driver_data = priv;
+    77		policy->freq_table = priv->freq_table;
+    78	
+    79		return 0;
+    80	}
+    81	
+    82	static struct cpufreq_driver airoha_cpufreq_driver = {
+    83		.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK |
+    84				  CPUFREQ_IS_COOLING_DEV,
+    85		.verify		= cpufreq_generic_frequency_table_verify,
+    86		.target_index	= airoha_cpufreq_set_target,
+    87		.get		= airoha_cpufreq_get,
+    88		.init		= airoha_cpufreq_init,
+    89		.attr		= cpufreq_generic_attr,
+    90		.name		= "airoha-cpufreq",
+    91	};
+    92	
+    93	static int airoha_cpufreq_driver_init_cpu(int cpu)
+    94	{
+    95		struct airoha_cpufreq_priv *priv;
+    96		struct device *cpu_dev;
+    97		int ret;
+    98	
+    99		cpu_dev = get_cpu_device(cpu);
+   100		if (!cpu_dev)
+   101			return -EPROBE_DEFER;
+   102	
+ > 103		priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+   104		if (!priv)
+   105			return -ENOMEM;
+   106	
+   107		if (!zalloc_cpumask_var(&priv->cpus, GFP_KERNEL))
+   108			return -ENOMEM;
+   109	
+   110		cpumask_set_cpu(cpu, priv->cpus);
+   111		priv->cpu_dev = cpu_dev;
+   112	
+   113		ret = dev_pm_opp_of_get_sharing_cpus(cpu_dev, priv->cpus);
+   114		if (ret)
+   115			goto err;
+   116	
+   117		ret = dev_pm_opp_of_cpumask_add_table(priv->cpus);
+   118		if (ret)
+   119			goto err;
+   120	
+   121		ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &priv->freq_table);
+   122		if (ret)
+   123			goto err;
+   124	
+   125		list_add(&priv->list, &priv_list);
+   126	
+   127		return 0;
+   128	
+   129	err:
+   130		dev_pm_opp_of_cpumask_remove_table(priv->cpus);
+   131		free_cpumask_var(priv->cpus);
+   132	
+   133		return ret;
+   134	}
+   135	
+   136	static void airoha_cpufreq_release(void)
+   137	{
+   138		struct airoha_cpufreq_priv *priv, *tmp;
+   139	
+   140		list_for_each_entry_safe(priv, tmp, &priv_list, list) {
+   141			dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &priv->freq_table);
+   142			dev_pm_opp_of_cpumask_remove_table(priv->cpus);
+   143			free_cpumask_var(priv->cpus);
+   144			list_del(&priv->list);
+ > 145			kfree(priv);
+   146		}
+   147	}
+   148	
+
 -- 
-2.46.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
