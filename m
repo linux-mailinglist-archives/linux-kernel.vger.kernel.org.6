@@ -1,85 +1,65 @@
-Return-Path: <linux-kernel+bounces-369604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817539A1F7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:09:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D38A9A1F78
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0533E1F2251C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7551F28BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB001DAC86;
-	Thu, 17 Oct 2024 10:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3441D9A63;
+	Thu, 17 Oct 2024 10:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0ZnRC/Tv"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2086.outbound.protection.outlook.com [40.107.237.86])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="V4jO9q3n"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEEE79FD;
-	Thu, 17 Oct 2024 10:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729159771; cv=fail; b=iWDM+1ujMuMm65hgyRKfFRTvL67hADWUbCemLw9PNb3wgevsEqolWNXsXiT8Q2jnNib6OnTKApAzT2Ok6M1iQVY0s3avMamLhrfZt+aKygE8H1CKgzXfY1rEXIZw6Om9Oe7uNeDTPw3khcaSxm6lT3W2rjldd5cFlE0B4mX4Axw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729159771; c=relaxed/simple;
-	bh=/nuaUoMskNbrRQLWZycWtEOezRWPa28W9kBl6b1PIsw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NvC3w9e+0PTRtpKmpvwyU1Z/eLIbc6D+EHRIM1E7GFbuegiLFozXoELs61qgVHh4xmnueAK/6YNt/HaFGI/iQ50teprhlmS/ElwD/zBKDaE2/d/fMQTAaIVCL/n+aCCf3bTX7KfEumWPhKN70j4RjqXDG0ghcYX1+1XflqTj+8s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0ZnRC/Tv; arc=fail smtp.client-ip=40.107.237.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tPUbzu/bWBU9DuO1GzsjQpn/lVgjiMJN/2m78qqd5+sqcJTgvXu1zQZuHFEeU6JrcVhAj6ljedmSRumb79EzWJWxftORxqt/CP2pDfZYzF2TKoGS4mKGIR8PZbYtowlyiPGtoQxm0Hbsr23b7sCVqWohHLO3Kigluw9uiyAjg4ielGx0AvV9havIau7AmBOGVpBtUKL9KNn3ghwCJysoBolQTm6bKRfkSAmtcb8SLfx/Fly0eDvQgucBIi3RYO65mOYVHD74VwYoDABA12uWk61U3Yj6ILuZkssQhIQog4nJnkV2nhdKblet78YQOfH+3nHwiqtvxnv0biDeH/IMTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QduDCaOD2bqDylcRhEFSnNr/GBlo5ezbhSFw0ZCMZ6I=;
- b=gspEDYCabqGd38PSVVgpA0loEVDmbYqWGLJ4zUBcm8uOuO3Vp1fCOszC5766J1lzhOvRLsDuAPVv8LJvnRgmLZnIXz3jh/vrMjj+2OxG913TG0RfKHUzZklBa3j+dc8ujn25mzSHTSDOrMIEnqEp5EP3gQg19TQ5qXt6P9b3r5ijmYxPk02gEWFDD9iptKq5DkTJLazN/F8uWD/IgvqQcdkG35h6I09FhzY6mV7y3PIsLBNsYjkSTJSOWGJ6m3qrKMuQVLm0/9eTBo+EYZYvkpboNc9bRWCmZY2191JcM4xFCJVw3oiF9fUIktff2VUaznFTzFXjAJ5aolFAfPZ2Dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QduDCaOD2bqDylcRhEFSnNr/GBlo5ezbhSFw0ZCMZ6I=;
- b=0ZnRC/TvhPN+58+pf1w3pImsxnZxuDYf22IAzO8weCW+CvI5yoQu5gmRmwxDgq1PPVtEmuJp3hsHsjtxWol5vzEWvBDLaH8EYf/011EGJc4iYB6DLJAWUrg2er5l64p3OfH0AO0iVXwAHSIVYgLD0bu42NJFV+sSzKvihNsiBtg=
-Received: from PH7P220CA0023.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:326::10)
- by CY5PR12MB6430.namprd12.prod.outlook.com (2603:10b6:930:3a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 10:09:25 +0000
-Received: from CY4PEPF0000EE3E.namprd03.prod.outlook.com
- (2603:10b6:510:326:cafe::2e) by PH7P220CA0023.outlook.office365.com
- (2603:10b6:510:326::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18 via Frontend
- Transport; Thu, 17 Oct 2024 10:09:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE3E.mail.protection.outlook.com (10.167.242.16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8069.17 via Frontend Transport; Thu, 17 Oct 2024 10:09:25 +0000
-Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 17 Oct
- 2024 05:09:21 -0500
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-To: <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
-	<perry.yuan@amd.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
- Ugwekar" <Dhananjay.Ugwekar@amd.com>
-Subject: [PATCH 4/4] cpufreq/amd-pstate: Remove the redundant amd_pstate_set_driver() call
-Date: Thu, 17 Oct 2024 10:05:33 +0000
-Message-ID: <20241017100528.300143-5-Dhananjay.Ugwekar@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241017100528.300143-1-Dhananjay.Ugwekar@amd.com>
-References: <20241017100528.300143-1-Dhananjay.Ugwekar@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909BF1D9679;
+	Thu, 17 Oct 2024 10:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729159738; cv=none; b=ojMAuuX7d2GyRc48mxz+7ufP8Z3Cg0HiPk/dCBa0FXXQ6SZ5nbWNfEwLbVExqJ1WDcY3hzfKZNepGGq1/mQQoTMTLwU5q4mHo5MkY5xpb44hIgnyNqeAoGCr+6ywrYI7wWCRPDyVvvQiU0FcNi2/nU16qGbBofk4LeQZj0K94CI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729159738; c=relaxed/simple;
+	bh=rQAs+hnd5HeHz+Z6Bf6n389taW0YbUDXDUqY1/hL4Ac=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GySPo4Mkvv3Xe84qRJpee5hxKkm6nxoLkTSo0Kgjk3QJfPWIFSAEDtlLO9iEGbZMMkwYbqweF0zdWhr0nltewyyKV5un6m2VdPQDLV4tJYukIiNkc15ICPLhNuAkTvk5rDzxxCforcDmotAi5oxbXHkJB2eoqcmAQelBdu2x7KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=V4jO9q3n; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id CF0A1100009;
+	Thu, 17 Oct 2024 13:08:29 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1729159709; bh=Ots18kRaARJ8Vrj5z8dkCDnKTp5gu4PSaNd30kbzQd4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=V4jO9q3nbBQ7fnoYQO4u+KXDD738R4a8Pq3RRL7NajPXkZiyR/hpA2r8REbZVw7zg
+	 2kVPF5TeUXx09zF0OjWVHbbg/7LlbScO7cb2D5v7sNzdQ5Fk3kYC2b6vnBpynqlY8H
+	 QjnGhNSjdybFoaTOEAsqY7nSOHVvhwo8jWrvdFAJqzfiKCeT+vnf0CWBcIN7YZrRwS
+	 galk5H0ItNBXpYn1jN5zJTiQ351AIkiCNa8dMHRrCrRLz9aSLZTnxXa/Jw2n0Et6c5
+	 QWJLxoB+mSH3BTFRT8sWzJlrEYnQ8tatHaoSH1ju+VjMXIyuBQAvWCVdOzHkf1fGDs
+	 tw4nPRzNkrJSQ==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Thu, 17 Oct 2024 13:07:24 +0300 (MSK)
+Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 17 Oct
+ 2024 13:07:03 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Veerasenareddy Burru <vburru@marvell.com>, Abhijit Ayarekar
+	<aayarekar@marvell.com>, Satananda Burla <sburla@marvell.com>, Sathesh Edara
+	<sedara@marvell.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH net v5 0/2] octeon_ep: Add SKB allocation failures handling in __octep_oq_process_rx()
+Date: Thu, 17 Oct 2024 13:06:49 +0300
+Message-ID: <20241017100651.15863-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,96 +68,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3E:EE_|CY5PR12MB6430:EE_
-X-MS-Office365-Filtering-Correlation-Id: c661a197-1843-429f-86c0-08dcee93c77d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dDm7EPigEf7Sfc5fX6f6G76gvXOFELlXoEEIpnVQo7qS4EFSa9bGada+pPgQ?=
- =?us-ascii?Q?ijSgWmDwC2IwZFPU/luYyY6bhhvnKjZo8HZuDw4x+8ANFvwyfR+t+Y6zY9HI?=
- =?us-ascii?Q?jQEqDPAr9vL1Vz4JFJ3Fc6ZKWG0hLtLvHn3lIaBn4p0u0P/J9q8M2KJTAQ8y?=
- =?us-ascii?Q?ddXFnthN/CU0XbJ9DJabzjWNSFZJNao1qm6ozL8q6nEMrjwNAquUPXczPpb9?=
- =?us-ascii?Q?l9dTL58n0OuMuQ4lDfdc+a734Ix8YSQZQO9FgUE2PJYgbTLxwG7uZ5IxnlM/?=
- =?us-ascii?Q?bmsDsgRqHSK+dG1iTx/diwbRFahda/yNiqHDDfAm8dCTJTCNNlWdJIbi4I9c?=
- =?us-ascii?Q?OZebGDhyCEBUeJsqVIISvUWLqwDhrZ0dpu5u+5tPq+/NnnEUwELl+H4mHSZJ?=
- =?us-ascii?Q?ry4Gf/Vx02l9BN0oZ4BEPnb/8Ts+Jd7EbGloFuXraF7Y7imvg1PWx3RlFXEp?=
- =?us-ascii?Q?IUpRMJm23K5zj7CucdCsTd5uv2ucdFtnsXxuu8xlpqZDwQkTHLyFnDP60DUF?=
- =?us-ascii?Q?9lNMUt14Fh9sDM/Yes1sylxuisWZqIEph4sMgM04zmfLRpQTityV0e6HDjeZ?=
- =?us-ascii?Q?4MoUQz25nuByP7RA04Fghmi/029mr3eaXnSAA7ouSYOyS5R/hxj6lthEH2A0?=
- =?us-ascii?Q?9byBbMNqG86r+YF5Z58pGaTJxygr/eA2Fr6tnvIl6d7pJ38FklGYweUFxwDM?=
- =?us-ascii?Q?K2QLWuueBPWKYHGBcIDAdp+nvlj56LkLUdZ+PXgx3A/6LIRsj7q/aiEwVf9V?=
- =?us-ascii?Q?Mt/0IbJE3UQ9ELcswuAvqRME7cWC+qlXHptagYpFeI0kldzn7xcpIROmudnU?=
- =?us-ascii?Q?Elq1EWTkh8aIHaSo3RneTapVxVwtGNhOG1T3gyzdMsZHAR7Uxk0/Zc9wOiOU?=
- =?us-ascii?Q?fcmXZplMKeCjuC5zUkHl4NpMsk/BB7Kvt/tM85G4t1UZieklmohJHEQS5VF2?=
- =?us-ascii?Q?cB+pZ+OEpMtFnB4iP9mF/yF6VoNAEYdgeD9jMbTgHkFQUqTZQltB6GJTjKNi?=
- =?us-ascii?Q?FBbfl8n4+R6pLvOQi+kUGD/zSkI8toMjVFoR1KklRNagTMCFL6Uw0rFvkb3+?=
- =?us-ascii?Q?sWXShe58zZa4JrEwdJpc3OAHms6bvSPUUCO7PpaLS2xywsdbU2qLpCHsd7cs?=
- =?us-ascii?Q?iwtEXdrKIURNCcZ1ka+AZ6ImqA/lbyE4pRLeg9s7LzE2SI0Q9pCrzbYhJqRH?=
- =?us-ascii?Q?cAkCQx4S8btl16PLct7IGHxlDRSF+DNnZPMw409+DUP8Dnzje7jTs9qhQzo8?=
- =?us-ascii?Q?bYmrIQgGZkfEPf9zaV2WBcqOM0sGgBGPDVSlrnnzPUO3DIJ5nprKw9jZj+PA?=
- =?us-ascii?Q?JdGENt/fJkXAmBUgmu3YkksbS2kmZIan9yZCkQ+4nDPcO/UnJTPkAl7vOa1g?=
- =?us-ascii?Q?y2u4O9q5CY7zYWN6SqYPO+rPUZsy2AUAR2+fL0Ogpr/gnbe77w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 10:09:25.2388
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c661a197-1843-429f-86c0-08dcee93c77d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3E.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6430
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188506 [Oct 17 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/10/17 09:58:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/10/17 05:21:00 #26765332
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-amd_pstate_set_driver() is called twice, once in amd_pstate_init() and once
-as part of amd_pstate_register_driver(). Move around code and eliminate
-the redundancy.
+__octep_oq_process_rx() is called during NAPI polling by the driver and
+calls build_skb() which may return NULL as skb pointer in case of memory
+allocation error. This pointer is dereferenced later without checking for
+NULL.
 
-Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+In this series, we introduce two helpers to make the fix more readable and
+avoid code duplication. Also we handle build_skb() errors inside
+__octep_oq_process_rx() to avoid NULL pointer dereference.
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 13ee5cac901d..6f6d961879cc 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1848,9 +1848,11 @@ static int __init amd_pstate_init(void)
- 		return -ENODEV;
- 	}
- 
--	ret = amd_pstate_set_driver(cppc_state);
--	if (ret)
-+	ret = amd_pstate_register_driver(cppc_state);
-+	if (ret) {
-+		pr_err("failed to register with return %d\n", ret);
- 		return ret;
-+	}
- 
- 	/* capability check */
- 	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
-@@ -1870,12 +1872,6 @@ static int __init amd_pstate_init(void)
- 			return ret;
- 	}
- 
--	ret = amd_pstate_register_driver(cppc_state);
--	if (ret) {
--		pr_err("failed to register with return %d\n", ret);
--		return ret;
--	}
--
- 	dev_root = bus_get_dev_root(&cpu_subsys);
- 	if (dev_root) {
- 		ret = sysfs_create_group(&dev_root->kobj, &amd_pstate_global_attr_group);
+A similar situation is present in the __octep_vf_oq_process_rx() of the
+Octeon VF driver. First we want to try the fix on __octep_oq_process_rx().
+
+Compile tested only.
+
+Changelog:
+v5:
+  - Unmap paged buffer before the skb creation as suggested by Paolo
+    (https://lore.kernel.org/all/cf656975-69b4-427e-8769-d16575774bba@redhat.com/)
+v4: https://lore.kernel.org/all/20241012094950.9438-1-amishin@t-argos.ru/
+  - Split patch up as suggested by Jakub
+    (https://lore.kernel.org/all/20241004073311.223efca4@kernel.org/)
+v3: https://lore.kernel.org/all/20240930053328.9618-1-amishin@t-argos.ru/
+  - Implement helper which frees current packet resources and increase
+    index and descriptor as suggested by Simon
+    (https://lore.kernel.org/all/20240919134812.GB1571683@kernel.org/)
+  - Optimize helper as suggested by Paolo
+    (https://lore.kernel.org/all/b9ae8575-f903-425f-aa42-0c2a7605aa94@redhat.com/)
+  - v3 has been reviewed-by Simon Horman
+    (https://lore.kernel.org/all/20240930162622.GF1310185@kernel.org/)
+v2: https://lore.kernel.org/all/20240916060212.12393-1-amishin@t-argos.ru/
+  - Implement helper instead of adding multiple checks for '!skb' and
+    remove 'rx_bytes' increasing in case of packet dropping as suggested
+    by Paolo
+    (https://lore.kernel.org/all/ba514498-3706-413b-a09f-f577861eef28@redhat.com/)
+v1: https://lore.kernel.org/all/20240906063907.9591-1-amishin@t-argos.ru/
+
+Aleksandr Mishin (2):
+  octeon_ep: Implement helper for iterating packets in Rx queue
+  octeon_ep: Add SKB allocation failures handling in
+    __octep_oq_process_rx()
+
+ .../net/ethernet/marvell/octeon_ep/octep_rx.c | 82 +++++++++++++------
+ 1 file changed, 59 insertions(+), 23 deletions(-)
+
 -- 
-2.34.1
+2.30.2
 
 
