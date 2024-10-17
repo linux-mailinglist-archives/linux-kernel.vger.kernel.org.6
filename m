@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-370460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DE69A2CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2709A2CFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3970284081
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B78B283EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7611221BAEB;
-	Thu, 17 Oct 2024 19:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB0221BB0A;
+	Thu, 17 Oct 2024 19:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NiExsrTU"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="WGuVT+SY"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD07221B451
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603D521B440
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729191637; cv=none; b=kw6kp23HLvT1TJhh1goVNFLb0MiT/I5VvJxd+ROBGHZy47y5MqBhVCRNhrttbiJhPkYcov7ILDsX4FKT6y4VBzLHsv1fBBn7ld2SZLinQbIhnY8E5dUPiByaY5D3blxD8p/xt7UE2m+qWZAUIrnFZvn9GWo0Tlnue+RVn9Di0g8=
+	t=1729191638; cv=none; b=i/MdjmwWe7HA/DHdjFneWp+z1UJQnQhYAnq8XjiQnsNuwO/BcngdzHKf3PZyMcnS/9VgwFzFnaY4+GFLOxnY4wdWlC1sZrzUb/ZrCSr64Mhdlc1Tk0Pb35TSxx8xyHtfJui5FUGtaI4gqGuHuQrz4OG2WbYlzwMUJ8bEItXQxew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729191637; c=relaxed/simple;
-	bh=viB41ymerrNs1V8lxnas3H8vFE72zXnqdr82GJQKPN4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AW7oEEFFlnB4XpRXrzV/t9vDB83cwPvBfzTKEXV2ogU7v803W8BUOWVBtUbVy2Gkc69Q2JuR76va0gRqrfWJ+qJvSClueF9IrLXr76gEnmVKi+jLraz3LWNf8nTU1DHldSs9nJyHtki2xPcbPOPF2tT7Lh/4IZUsNwsdWNeX9HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NiExsrTU; arc=none smtp.client-ip=209.85.215.174
+	s=arc-20240116; t=1729191638; c=relaxed/simple;
+	bh=27/0dKwk3yKqVSMdOHG8NoZYrfHKiQw+uf4n+l5+9Vk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MpPIHNOZpl+onRJ8fQBq2dcnpnFBSy7xQnp+deSjpIKxbR/zw2DI/n//XYQomQR7d0DzexBuqSAc76Ov+pfdB7hy/Oh7iNVCJelRloWjiGT8/HQHkKEJjwIXrKnxRhna/kTO/PoaxFgOm0fFQ+X2XXUzEHoV05tcIQ7X6KLgn7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=WGuVT+SY; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso1399265a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:00:32 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20ceb8bd22fso11517945ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1729191632; x=1729796432; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zxSczehEe035W5CU04y0FkOvPuUKpp9p7Yd16WBzeN8=;
-        b=NiExsrTUSaSmLTC3RwkQdRUJwJEVF8FDhgvsZp8pc3X2ejGoBUEw1udTPBWIy4MSgC
-         b4Ogb8HjcpjJxcpF37yHxR57uG+aOHlWxYRsGHVwU/SdKlUmRZMmylDqbRQrUyQMJ+vM
-         hJQv5TA5flUwK3gWaXtlfOU0G5XLV2PUMaSNmlSTsr7xIKGbKcfBwsaDrWE2l2ITo5rW
-         MrWDhZwEsZC4Y/L65XxqS0OvupgCwwq6Hgd1JFVJKbw6upGxe2tFSxj2Un4twKCjrupA
-         zM/YYoABK1dzSks6pZCtIgYYxIF9ELDjfXFySYVHZ3Mv4MyxlE9SfiaLJD0ojAP4r8o0
-         H1Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729191632; x=1729796432;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1729191634; x=1729796434; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zxSczehEe035W5CU04y0FkOvPuUKpp9p7Yd16WBzeN8=;
-        b=uYSb68bJqg2vpiftezU97s+KBk+8hLkw8HzT6F5VewJjgZgemeaZoQA7KRdqtpOpq8
-         1OgmnzgZJG4AcM8eF4clXwBqjmraWUU86EMHHUejlaAGEuIc0d8ZM6Oe7TAzMYoYUruL
-         LNiRC0Zk3ntTNThc9szlkAuFFLqZ0vMUcEj4lsgLSH+137hrbg0G/6LMVClzHbNZbJa/
-         MAIYYuY+6IFBixbjzt+xYAGpwQcqN9NV8+81lQtd3ffpFaAFFiTiyu/AwviSTMWBW62F
-         IIfzAPtayWd2eBKXx7R4rU8UvrCDF8l1nc31FDaE3dJNz0ZAbq4sv7h6Vz+USz4I0qB+
-         fyWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQRH5k1m2Fwkyub53b0nbNO/2eQpcReHi9SteYl4GGBj8fnRD67ZRXoQnvveL71Xdxl0RYW3bIr6PTgAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOHi+ZAFWp5gnXqDja63upRxOxHyIDo7AoHl7jPuVxc30jD/30
-	bqjUR2BJsH/8lIHHsQV0I7ROaJfjVS1Cz3+N7B2g+mq19jbbFn2FN6NKjCC7rt0=
-X-Google-Smtp-Source: AGHT+IGpwyQf2rcH+WzoDhFYXE176SHL014MFUoPQcIpoNd1sTNXjuIoM/j+GeIybPGawXZSP9zyHg==
-X-Received: by 2002:a05:6a21:a247:b0:1d9:275b:4ee2 with SMTP id adf61e73a8af0-1d9275b51f0mr2038031637.24.1729191632029;
-        Thu, 17 Oct 2024 12:00:32 -0700 (PDT)
+        bh=M6I92cOKev06L8Upue2XsTuPJ6ytpoCnoDu3MUioPhw=;
+        b=WGuVT+SY0aHS7ytytYmvIg3v1SseJeES8Q/pOdIOqWFLysZxNsSL59i8Mug87BNgFC
+         iCMFb83NVVolUlyrrfz0U9d5TtygsqGuQ6cTjZJ+Y8l6ocUrLovUQX4WM9RCt9ohwhYZ
+         kNqsLcx+eIeX+VX1xJDd4jZJS44FyXP4qJxAVZ7Dv63vlec69NxFoavsK05HPAJyn2TU
+         THcZ4hoSHlBK4bgdKY5Wq24o0CZyOFnjfFtfvSdbxmFk9jOpK+VR8Tda+RX1dZKGFH/y
+         FiQD2qwz1eREknSljMdvRPrgGXh+dXR1GUFQqIpCvfXo4/v3tX40Se6VCOy8OYdlP6HF
+         KmKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729191634; x=1729796434;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M6I92cOKev06L8Upue2XsTuPJ6ytpoCnoDu3MUioPhw=;
+        b=NEMzrKjq69ZzbRjH1IowFY7KSMS60v9zMewmU/Xi6BqRyEqkbv8kEmpOjoZlm/IK3c
+         mcmE8/g6wm5kfKFGwtLnXUbtq4glHLn7D9H/KxCtB+D6lGPluswinU+/w1TY772wDqLf
+         wiIe1hYAOTE9rATzf3/TK8eNwGZK3zXU9oaawSDNJA9S43zMLqNr6li/xDjSYFz2UeFW
+         /5z/vPYtSXbhkS8Et1gC8IcjNHWTMGvHWqry6LhDrpe1KjJm9gfnFGcCYuP2NHW4NQ3L
+         b/U36wPgXOAhWvKg/cAsmlh3svVenvM7NNYrtxvMFetlATrjs47XA4fgGolu68mjVVr4
+         34QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUc1+WQIGHMYUHro0v5pXtUUh47CsyMNGJf4DcfTvSduciAsOxkaRLOohc2fFN9KSV7ZhiQdwcS7M8Eus4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfQaN1S/dRocKNn07tcL2Uk1xuSPMOenGXvSlhV2Ptffo3AG9q
+	SyMPrujEbRtLz5JuacvdwgBp7uZGNkmPb5myR9//82qEAvAOwBj3gA0A46YDKcY=
+X-Google-Smtp-Source: AGHT+IEnqr/xLXrUjVnnlJHigy6Hyu2OOrtSPcsF/2JSHBJmAcPpsNh3cA82sUz5vfzl4azudhUS4g==
+X-Received: by 2002:a17:903:32c9:b0:20c:6ac0:f1f3 with SMTP id d9443c01a7336-20cbb1c2931mr253055085ad.34.1729191633582;
+        Thu, 17 Oct 2024 12:00:33 -0700 (PDT)
 Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55d7bf9a8sm217766a91.13.2024.10.17.12.00.30
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e55d7bf9a8sm217766a91.13.2024.10.17.12.00.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 12:00:31 -0700 (PDT)
+        Thu, 17 Oct 2024 12:00:32 -0700 (PDT)
 From: Charlie Jenkins <charlie@rivosinc.com>
-Subject: [PATCH v10 0/6] RISC-V: Detect and report speed of unaligned
- vector accesses
-Date: Thu, 17 Oct 2024 12:00:17 -0700
-Message-Id: <20241017-jesse_unaligned_vector-v10-0-5b33500160f8@rivosinc.com>
+Date: Thu, 17 Oct 2024 12:00:18 -0700
+Subject: [PATCH v10 1/6] RISC-V: Check scalar unaligned access on all CPUs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,9 +77,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMJeEWcC/x2MWQqEMBAFryL9baDNLC5XkUEkeWrLEIe0yoB4d
- 4OfVVB1kCIKlJrsoIhdVJaQoOA8Izf1YYQRnwRZtk+uLZsZqui20H9lDPDdDrcu0ZRcPQZvq/e
- rdpTiX8Qg//vcfs7zAtvOmnFpAAAA
+Message-Id: <20241017-jesse_unaligned_vector-v10-1-5b33500160f8@rivosinc.com>
+References: <20241017-jesse_unaligned_vector-v10-0-5b33500160f8@rivosinc.com>
+In-Reply-To: <20241017-jesse_unaligned_vector-v10-0-5b33500160f8@rivosinc.com>
 To: Paul Walmsley <paul.walmsley@sifive.com>, 
  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
  =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <cleger@rivosinc.com>, 
@@ -87,75 +87,107 @@ To: Paul Walmsley <paul.walmsley@sifive.com>,
 Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
  linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
  Charlie Jenkins <charlie@rivosinc.com>, Jesse Taube <jesse@rivosinc.com>, 
- stable@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+ stable@vger.kernel.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2567; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=viB41ymerrNs1V8lxnas3H8vFE72zXnqdr82GJQKPN4=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ7pg3JGG12euWlQy9DvKHBQ0nxMz8c6TL5anFe59fH1hW
- V3qk+ttHaUsDGIcDLJiiiw81xqYW+/olx0VLZsAM4eVCWQIAxenAEzEs5Lhn93O7isqHavDq15P
- rPI4ofHUflJP9NGucKUu2ZP8awIb0hgZJs58KLO8wStM+qeDwZsbfwP9hK+0SMa2r10j367AXnu
- bGQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3354; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=luXKoHMr90jWw4aZ0MlK8J4IV7I78iZ6mhaINZaU4mk=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ7pg3OmbLj8cdy1ct8gpf9/s2mSH22/866sX3b/jGXw0+
+ xpzY8v5jlIWBjEOBlkxRRaeaw3MrXf0y46Klk2AmcPKBDKEgYtTACaybCEjw/+8/9/MuS9uWbXc
+ kSXp3Jr5XUfffXW5sjd5pXmVmFys4kqG/ym5YZIX/zE2i4hMcrJvXWBYu8xF4orcvJIPpjOCxHc
+ +ZgQA
 X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
  fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-Adds support for detecting and reporting the speed of unaligned vector
-accesses on RISC-V CPUs. Adds vec_misaligned_speed key to the hwprobe
-adds Zicclsm to cpufeature and fixes the check for scalar unaligned
-emulated all CPUs. The vec_misaligned_speed key keeps the same format
-as the scalar unaligned access speed key.
+From: Jesse Taube <jesse@rivosinc.com>
 
-This set does not emulate unaligned vector accesses on CPUs that do not
-support them. Only reports if userspace can run them and speed of
-unaligned vector accesses if supported.
+Originally, the check_unaligned_access_emulated_all_cpus function
+only checked the boot hart. This fixes the function to check all
+harts.
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+Fixes: 71c54b3d169d ("riscv: report misaligned accesses emulation to hwprobe")
 Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Reviewed-by: Evan Green <evan@rivosinc.com>
+Cc: stable@vger.kernel.org
 ---
-Changes in V6:
- Added ("RISC-V: Scalar unaligned access emulated on hotplug CPUs")
+ arch/riscv/include/asm/cpufeature.h  |  2 ++
+ arch/riscv/kernel/traps_misaligned.c | 14 +++++++-------
+ 2 files changed, 9 insertions(+), 7 deletions(-)
 
-Changes in V8:
- Dropped Zicclsm
- s/RISCV_HWPROBE_VECTOR_MISALIGNED/RISCV_HWPROBE_MISALIGNED_VECTOR/g
-  to match RISCV_HWPROBE_MISALIGNED_SCALAR_*
- Rebased onto palmer/fixes (32d5f7add080a936e28ab4142bfeea6b06999789)
+diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
+index 45f9c1171a48..dfa5cdddd367 100644
+--- a/arch/riscv/include/asm/cpufeature.h
++++ b/arch/riscv/include/asm/cpufeature.h
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/bitmap.h>
+ #include <linux/jump_label.h>
++#include <linux/workqueue.h>
+ #include <asm/hwcap.h>
+ #include <asm/alternative-macros.h>
+ #include <asm/errno.h>
+@@ -60,6 +61,7 @@ void riscv_user_isa_enable(void);
+ 
+ #if defined(CONFIG_RISCV_MISALIGNED)
+ bool check_unaligned_access_emulated_all_cpus(void);
++void check_unaligned_access_emulated(struct work_struct *work __always_unused);
+ void unaligned_emulation_finish(void);
+ bool unaligned_ctl_available(void);
+ DECLARE_PER_CPU(long, misaligned_access_speed);
+diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
+index d4fd8af7aaf5..d076dde5ad20 100644
+--- a/arch/riscv/kernel/traps_misaligned.c
++++ b/arch/riscv/kernel/traps_misaligned.c
+@@ -526,11 +526,11 @@ int handle_misaligned_store(struct pt_regs *regs)
+ 	return 0;
+ }
+ 
+-static bool check_unaligned_access_emulated(int cpu)
++void check_unaligned_access_emulated(struct work_struct *work __always_unused)
+ {
++	int cpu = smp_processor_id();
+ 	long *mas_ptr = per_cpu_ptr(&misaligned_access_speed, cpu);
+ 	unsigned long tmp_var, tmp_val;
+-	bool misaligned_emu_detected;
+ 
+ 	*mas_ptr = RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN;
+ 
+@@ -538,19 +538,16 @@ static bool check_unaligned_access_emulated(int cpu)
+ 		"       "REG_L" %[tmp], 1(%[ptr])\n"
+ 		: [tmp] "=r" (tmp_val) : [ptr] "r" (&tmp_var) : "memory");
+ 
+-	misaligned_emu_detected = (*mas_ptr == RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED);
+ 	/*
+ 	 * If unaligned_ctl is already set, this means that we detected that all
+ 	 * CPUS uses emulated misaligned access at boot time. If that changed
+ 	 * when hotplugging the new cpu, this is something we don't handle.
+ 	 */
+-	if (unlikely(unaligned_ctl && !misaligned_emu_detected)) {
++	if (unlikely(unaligned_ctl && (*mas_ptr != RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED))) {
+ 		pr_crit("CPU misaligned accesses non homogeneous (expected all emulated)\n");
+ 		while (true)
+ 			cpu_relax();
+ 	}
+-
+-	return misaligned_emu_detected;
+ }
+ 
+ bool check_unaligned_access_emulated_all_cpus(void)
+@@ -562,8 +559,11 @@ bool check_unaligned_access_emulated_all_cpus(void)
+ 	 * accesses emulated since tasks requesting such control can run on any
+ 	 * CPU.
+ 	 */
++	schedule_on_each_cpu(check_unaligned_access_emulated);
++
+ 	for_each_online_cpu(cpu)
+-		if (!check_unaligned_access_emulated(cpu))
++		if (per_cpu(misaligned_access_speed, cpu)
++		    != RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED)
+ 			return false;
+ 
+ 	unaligned_ctl = true;
 
-Changes in V9:
- Missed a RISCV_HWPROBE_VECTOR_MISALIGNED...
-
-Changes in V10:
-- I sent on behalf of Jesse
-- Remove v0 from clobber args in inline asm and leave comment
-
----
-Jesse Taube (6):
-      RISC-V: Check scalar unaligned access on all CPUs
-      RISC-V: Scalar unaligned access emulated on hotplug CPUs
-      RISC-V: Replace RISCV_MISALIGNED with RISCV_SCALAR_MISALIGNED
-      RISC-V: Detect unaligned vector accesses supported
-      RISC-V: Report vector unaligned access speed hwprobe
-      RISC-V: hwprobe: Document unaligned vector perf key
-
- Documentation/arch/riscv/hwprobe.rst       |  16 +++
- arch/riscv/Kconfig                         |  58 ++++++++++-
- arch/riscv/include/asm/cpufeature.h        |  10 +-
- arch/riscv/include/asm/entry-common.h      |  11 --
- arch/riscv/include/asm/hwprobe.h           |   2 +-
- arch/riscv/include/asm/vector.h            |   2 +
- arch/riscv/include/uapi/asm/hwprobe.h      |   5 +
- arch/riscv/kernel/Makefile                 |   3 +-
- arch/riscv/kernel/copy-unaligned.h         |   5 +
- arch/riscv/kernel/fpu.S                    |   4 +-
- arch/riscv/kernel/sys_hwprobe.c            |  41 ++++++++
- arch/riscv/kernel/traps_misaligned.c       | 139 +++++++++++++++++++++++--
- arch/riscv/kernel/unaligned_access_speed.c | 156 +++++++++++++++++++++++++++--
- arch/riscv/kernel/vec-copy-unaligned.S     |  58 +++++++++++
- arch/riscv/kernel/vector.c                 |   2 +-
- 15 files changed, 474 insertions(+), 38 deletions(-)
----
-base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-change-id: 20240920-jesse_unaligned_vector-7083fd28659c
 -- 
-- Charlie
+2.45.0
 
 
