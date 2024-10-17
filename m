@@ -1,129 +1,141 @@
-Return-Path: <linux-kernel+bounces-370535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3916B9A2E2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:02:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B809A2E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45F81F22697
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A7B5B216C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400227E101;
-	Thu, 17 Oct 2024 20:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54ACA227BB7;
+	Thu, 17 Oct 2024 20:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U83eDifG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O4Ag2ZD7"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C7F17BB32
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C681DFE11
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729195363; cv=none; b=ChHjw6UniqftSa7YkNMwQidekxKLFKa0NX6yggeANaCsKvEJXEXGwPVYWpclK/5lKq+zXyjT4AbUOj6VkFVTcHeMNuPlQwgtweALKJR3OdClpmHmJ85ZsKnyf/D0aC4Wy4kk1P+b7abFnWcGMqjuzXPJwmNYjKY9OWJGqluM+YQ=
+	t=1729195495; cv=none; b=jTkBFtcE9yGILpUE87dYytSBaWdBfvdR8+AVDLRBxyQVI8JW7d6A1gyEPrpnh2ycEPI2819LxSWJJcnotkBB4TA0DMbWq/15bjtMy/D1SKyeOtCqczHt2RMJem7+aYIkRdPadhikQaLhCZozRiPPF3FWjMo/jzK2B7Ee8C9m3OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729195363; c=relaxed/simple;
-	bh=Kg3QRPbmeNJtHXlXfZaFf+HLIHFd5G/Sac3guGxhy94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uNpq6ZSkUTcTM0tWincRjnWjnycd2GqRO5ZGbmb6sJIBQbSGe67hb3zeQXt9ezSmDznbmdCkutGbeIGumQ5rT1FjT7dzM7Amij39AP0sPan9G0KGp91ClTKVJiFRwsBczkJyavpIR6BCG7RWC1KxZZpYhfbKUQMX+Pl9AkGTu7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U83eDifG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HJRsgj006561
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:02:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tBBYLBpMSbZIu3oYpFqjCl5s6XZNZ0gWSSPmXYNa/Rw=; b=U83eDifGyUJlKgg7
-	qnacO8zF4QiTmXyMMa5rtLTh6Fl5wYTjefofUcxnuAWnX6HcLll7Kh8a8CSTOskC
-	X9Bx82GaEHeibsSKseuLVHU+gb5h38uSfp0LVkSl/LMBxOITctqTkTUdxlal66Y1
-	fEu5EmD8H0oIFxJ6fdvdOrY8rDpe+GoVag0ZfLTOudhHgwnmWGXccB+9y7SBzdUv
-	PkW3Z3cIKiDKdP82WwZDwHI9Hn5zBygeEil00zDV6KQRvmvTsR0HDTdL24diiS3N
-	5tr5SUXSAi9O+XcsXBOznkOliCcVkIHVBoU7M74KOaya583WgvAeJoSsAztybwcn
-	OcQKUA==
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42b8rr025j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 20:02:37 +0000 (GMT)
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-718071a2128so216906a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:02:37 -0700 (PDT)
+	s=arc-20240116; t=1729195495; c=relaxed/simple;
+	bh=Qm1GMCj9s7ZVm/rHBsoEHDxu99TWbXF0jSckjQod4qQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=f6SiR9GFU+gd3GBpCJWCoLJfSsp8UwpmlQWv+uWnn/kG6zylLY4S3wsGYECjm+zbgU90rF6EdYb4nvT/GwPZ6EyYeFqK0Nwm0dDl6gONnsPRBkcCzqJ92YM5SpevbWLFvYcuU96bnzbc7b02v4LygbeJTcu5WJFIIKKNklUnsPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O4Ag2ZD7; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso982197a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:04:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729195490; x=1729800290; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDj09dc2QEIl6UR3qLj9hDrktF4mFMWl9OGSbmf86hk=;
+        b=O4Ag2ZD7D7Yf1F6Z8GOvbMde1aumRzULrbrAhWYK7rO4XoG6FXiJBpWpraXFBPYWLY
+         iOtxc0q4KiLN51uN7jkqH3v9968wv8nxvJBJNFF8MVtsW9VazYXd3zZ2GSwUl4lO9+SM
+         DdXTqCLHVAwvdr5w4/SYe45CUpzsLjeSNtgPk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729195356; x=1729800156;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tBBYLBpMSbZIu3oYpFqjCl5s6XZNZ0gWSSPmXYNa/Rw=;
-        b=B17hczi8G/ToMqJqvfWdRLS+dqVHwYGXnIcHF9q3TpS4YbZ/t8L7cj7xJdPYBOAg2g
-         mTie6iQVRq2Jiu27Ul7XP1J7AHRoIA/CKpcK3OxHkjittsav/P/MV+ZaN9WpcP6Wt2bg
-         qTRlFfpvvsOHsPQHbsRVCQkguGbHNpVIimZf8NoaJKxwsGrg+KjFbTca3N8WK+d2es8q
-         /CdKdod+1IzGwGPB/SlCCiGHysYUl3r3TIyWAw2eATD+YwZFKH+sF+Ju+OGeIkaSHR9M
-         6S7VZapIALnqhBeUxlLjTQ+DcpngOQUten6Ftalx6uk3gtpELc4/fHdHZrJ/m4b2E4HG
-         8ttw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1orkBdPmIJQrZpnP6VFCMYjOkSnKoW3qSGko5U8Zy+3qQLg42E6sia1kFwAlTJ8z3NMUQLhyTuvls3YA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ePB0E5RFNu53at1QczFcmwe1Urj5OXho8cLFubUhRrRPGXV8
-	oLz3Hmw6z+dPWhezSU+RdnXrJzwjvSwDJO6Pq73PHO51sL+59pKizvgduPjvCldH5dEKkPOb8Wn
-	cTwiyypekyJwAfsAJ17MIf+zrAVWja35oQpYgWr7tkcqDdeBwDjwB0oCtB0g5ly/7ctZ6Ltk=
-X-Received: by 2002:a05:6830:6f4c:b0:717:fe19:1b94 with SMTP id 46e09a7af769-7180e985a3amr1133105a34.0.1729195356302;
-        Thu, 17 Oct 2024 13:02:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMTn/UXyxPfIv+t6hw3F7DQQNUMxaL0gQ1Bb/kMvL77T94npKId332moX9F3DQ2jAqDtakzg==
-X-Received: by 2002:a05:6830:6f4c:b0:717:fe19:1b94 with SMTP id 46e09a7af769-7180e985a3amr1133094a34.0.1729195355931;
-        Thu, 17 Oct 2024 13:02:35 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68b14b2csm7271866b.95.2024.10.17.13.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 13:02:34 -0700 (PDT)
-Message-ID: <d69ae60d-c4ec-4c79-8131-b4abebc7fef1@oss.qualcomm.com>
-Date: Thu, 17 Oct 2024 22:02:32 +0200
+        d=1e100.net; s=20230601; t=1729195490; x=1729800290;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eDj09dc2QEIl6UR3qLj9hDrktF4mFMWl9OGSbmf86hk=;
+        b=pYHrBhSHbVXbUhp22VuowxRTDAFoQRK0mkVUoygfjU7/9ESk5PmowAsbqt8Y5AnadI
+         5Jmy3Jkh0lavKHQM7R2nyNXoKlDSL1GgeJQjXWr3PyxVwpNuPbbarlI8VmdMe8WZobqY
+         QR8CIp/5qPPb6WYeLX8Ob7Ut2Y82c65Ju1EucqeMd2RpBp3uiqkr5AGmiF7BD936iPO4
+         RRcoyDpH7KjFl/CoarNhNN0S93NHiY3k6iYbKWj6z1+GqewFF77q0Ek+Ou/stW8IwibN
+         QUlTLBDiJ1s9O3rq1rR2w0Khm5g7UAJ+qq9vf1So/n2+5e9/ZkrDERiQMIEGNwuO0sU1
+         UTlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVj24E4V/YlFMQtotDoBfdneMR3O58qB2ow+UlbvQsu8ubYfai+h723k/CGheuntgBx8VfwOQfLednlNYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwUZfYkp5Ja6nEeU2U3StgNYtAM9DpUCKL8tdV0koQ3+iWM0DK
+	jLjcBqIYPbsG/CgzjrRWR2ahp0Fj3mRdByFcWi03qsDD28xuGJpEv/UIy1mPFQ==
+X-Google-Smtp-Source: AGHT+IF6lVclQ4oXNY5WbZFpvFSBm9cqx/5zVposFBtyP7/LO00BgnrvSt/oAOgZRyinmAwy13hnxA==
+X-Received: by 2002:a17:90a:8d14:b0:2e2:c00c:cb79 with SMTP id 98e67ed59e1d1-2e5616db842mr175745a91.3.1729195490619;
+        Thu, 17 Oct 2024 13:04:50 -0700 (PDT)
+Received: from zipper.pdx.corp.google.com ([2a00:79e0:2e13:6:ab92:55d4:ae5d:528a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e56129dccesm110088a91.38.2024.10.17.13.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 13:04:50 -0700 (PDT)
+From: Fritz Koenig <frkoenig@chromium.org>
+Subject: [PATCH v4 0/2] media: venus: Add hierarchical h.264 controls
+Date: Thu, 17 Oct 2024 13:04:29 -0700
+Message-Id: <20241017-submit-v4-0-d852bc7f7fdc@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] soc: qcom: socinfo: fix revision check in
- qcom_socinfo_probe()
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, hanchunchao@inspur.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20241016144852.2888679-1-quic_mmanikan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241016144852.2888679-1-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: U55288aWBABZXmuudYvZtZ3pB-HpbH3d
-X-Proofpoint-ORIG-GUID: U55288aWBABZXmuudYvZtZ3pB-HpbH3d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 spamscore=0 mlxlogscore=898 clxscore=1011
- mlxscore=0 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170134
+X-B4-Tracking: v=1; b=H4sIAM5tEWcC/2XMQQ7CIBCF4as0sxYzFhDiynuYLmo7LbOgGGiJp
+ uHuYrcu/5eXb4dEkSnBrdkhUubEYamhTg0Mrl9mEjzWhhZbhfaiRNqenleB2lrs0ShpDNTzK9L
+ E7wN6dLUdpzXEz+Fm+Vv/iCwFismMqEmS1Ve8Dy4Gz5s/hzhDV0r5Apvr8FyfAAAA
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Nathan Hebert <nhebert@chromium.org>, linux-media@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Fritz Koenig <frkoenig@chromium.org>
+X-Mailer: b4 0.15-dev-37811
 
-On 16.10.2024 4:48 PM, Manikanta Mylavarapu wrote:
-> In success case, the revision holds a non-null pointer. The current
-> logic incorrectly returns an error for a non-null pointer, whereas
-> it should return an error for a null pointer.
-> 
-> The socinfo driver for IPQ9574 and IPQ5332 is currently broken,
-> resulting in the following error message
-> qcom-socinfo qcom-socinfo: probe with driver qcom-socinfo failed with
-> error -12
-> 
-> Add a null check for the revision to ensure it returns an error only in
-> failure case (null pointer).
-> 
-> Fixes: e694d2b5c58b ("soc: qcom: Add check devm_kasprintf() returned value")
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
+v4:
+- addressed feedback from Dikshita
+- included reviewed by for patch 1
+- Link to v3: https://lore.kernel.org/r/20240814-submit-v3-0-f7d05e3e8560@chromium.org
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+v3:
+- dropped reordering patch
+- updated cover letter
 
-Konrad
+v2:
+- cover letter
+- testing methodology
+- Signed-off-by
+
+V4L2 has support for encoding with hierarchical frames using the
+V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING* controls. This allows for
+specifing frame references needed for temporal scalability. Encoding a
+single stream with a single layer allows for the layer to be dropped and
+the stream to be decoded without artifacts.
+
+ChromeOS is planning to use this feature for the L1T2 web standard[1].
+This allows video conferencing apps to encode once for a clients with
+different performance/bandwidth capabilities. As the application is a
+real time encoder only P frame support is added.
+
+The ChromeOS test framework ("tast") was used to verify that no
+regressions are present. This was done on SC7180 ("trogdor"). These
+patches were also run on SC7280, but not with as an extensive test set.
+
+Verification of the added controls was done with a bitstream analyser to
+make sure that reference frame management is correct.
+
+[1]: https://www.w3.org/TR/webrtc-svc/#L1T2*
+
+Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
+---
+Fritz Koenig (2):
+      media: venus: Helper function for dynamically updating bitrate
+      media: venus: Enable h.264 hierarchical coding
+
+ drivers/media/platform/qcom/venus/core.h       |   4 +
+ drivers/media/platform/qcom/venus/venc.c       |  73 +++++++++-----
+ drivers/media/platform/qcom/venus/venc_ctrls.c | 126 ++++++++++++++++++++++---
+ 3 files changed, 165 insertions(+), 38 deletions(-)
+---
+base-commit: d07b43284ab356daf7ec5ae1858a16c1c7b6adab
+change-id: 20240814-submit-05880a074377
+
+Best regards,
+-- 
+Fritz Koenig <frkoenig@chromium.org>
+
 
