@@ -1,166 +1,232 @@
-Return-Path: <linux-kernel+bounces-369191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F879A1A23
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:22:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F679A1A25
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38993B225E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C485B22489
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2FE2905;
-	Thu, 17 Oct 2024 05:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACD4146013;
+	Thu, 17 Oct 2024 05:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YxrsrTsn"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpXY0Cuz"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3D721E3C1
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADFE13A257
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729142515; cv=none; b=fS4pDyI4WvPOh+vzmipkSr9a96rJJJ72WEP2xO+Lx34V1/8TFPk6cRM6t5ED31VU1QCGjZolEVJEK1D1KLJshaSpDYfXAkUqqBQr/fiESlr4ljYKJ9mthVMLSOr+rALeUE4GOzP1RwUMfVChRrQDsaV+TnTfb9hcIvcp3R6Z9Q4=
+	t=1729142622; cv=none; b=COmNSBn1zrKOmf9IavdPA2aoIysW2qgAtShaulpDIrTyd6xCAQrSMWLP68Qy4nN4hxhiUXlyNd1hb9odfLiDuMsepmU714cWuRGXOe8bGzHPo5mTFKJUcMGKQQiqHdfSq9QwLbdR7plvdCqlh6O7NbmM5sfpr0Wvhhb2s/bB25A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729142515; c=relaxed/simple;
-	bh=xkntsTyW214McUZOI4YK0PdX88OTCnH1vIdM2rrkYrU=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=FACA0z//y5RloXikPN5CnQo2RPD/JYdPVifqqMVdmH8Kyl2jfsmuEUoo4I7D6a97MioV8++md53pQ3fVXt2dn0l/9VVGPOK86NOrKwURpOCjYnTsw8M4+ltIG3F3+CdHC9beSQXdWpIl1jnc40DS9iiL+9fWSdecnf7nd5vuhnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YxrsrTsn; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6886cd07673so12738197b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:21:53 -0700 (PDT)
+	s=arc-20240116; t=1729142622; c=relaxed/simple;
+	bh=mExZyhdsMMf4gRVZCP39my2kunhL/jtzjTLIVTva+Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QcdQoNcLmRAOfpkA2yCFi5tY07kgLsrmDx1ZvlehwfFl+m4awPfbdtztpSd3UuYLZka/mvpIZwFWnqrxp7Dj4okWLV86+YZaWqr6DZHh+2kNC6GFxpXqYr3WO6HluEC5IkI6gi9avAGbIAB2z0YMsrO9/X3GkxALzfdPtHIe0ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RpXY0Cuz; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e0d9b70455so423666a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:23:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729142512; x=1729747312; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/pHJ2/jYB0ZkRftk8XT40WjO6Pb9plA13uzt50byz9E=;
-        b=YxrsrTsnKHtmKmWfKJx6z9ivdLISuC+n7g/szog5ctcOSkRWsNomgLtDemQcDiytvs
-         FI7byPPepDbFQjPM1bK9zjyXSKjWzj3IISfl/oekrCIrAsC7EoXoGw6OTpurLrDkTS3q
-         a1HuYZp8YLLtTzxevEhLvqg8mSVOq2i11LUyt9egSjbr7lQIMzO1FSXSXF9x1qkYvbuB
-         aJ39z+CgnpqAF9d6r868itWyUemDoW18iRr9u1m1qFFbdSzvl2i1Mh5TtepaIItkRwHs
-         PojEO4fTIZgv591CC/4t5SMUnp37WTt/fG17NseH4dhPMxFHkqrNmJ1BPVSAWwH+krrZ
-         gwyQ==
+        d=linaro.org; s=google; t=1729142620; x=1729747420; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OCa/2861obl9V5ckCTUYjogSBw7B5osjW4tVSSSNZes=;
+        b=RpXY0Cuztn0mbdhd4VlNGDDbtpy0yiKwfp6bKWe9iwmdjnJL4JcHvEKfu2WZuSO1KN
+         pspJVEGejkf/MkAi5sULZFcRyQxRZ00o8CZty1QgPHL+tBGPZyLgfndT9JRDxCQRwy7x
+         6m7RiQG3qpD8CtgaUrGLaoNNyqzJ0q/T7dXNfOjMib+dcPL7Iy6H+NM+B84ioLfbn8g0
+         LEjkco68VmPSe87G5H0pmBN4aBJCizh4TbZiHIrGDX+9UbgK50fYBkg8tx7hnu3leVua
+         USHVDDQs4Syko0vFmtcw7OLmTnOAPrue+lXSlG7KHYj+zsMEQ/PPzNler5t6F4bPPQRH
+         5kXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729142512; x=1729747312;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/pHJ2/jYB0ZkRftk8XT40WjO6Pb9plA13uzt50byz9E=;
-        b=s2Ifo04PaS+OarbSs4YbnvoRCoefbOzuqdFzbC2qjpLiYRQimKjUNjuJkp8oXA38a0
-         Gl45QYZetLpKBamo6/yT5QQuOBMaxQztMi+CyyUD45twPUCFQSy7vkOonruTqX8wW7Cx
-         lGO65/3wZXzhls2iVmMFj0POSsoTHHEVcAGsC6JYnAuzvHhZZ4LK4T044LHN2I80POP8
-         nKZhttlh+i8q1KTxBW7xihW/goYPhqRGcsNzoCbUfIQdpWnOjtXJZYq+x+TZwxy1mlvM
-         KqUFVfGAs9Jfx5FE/p8sdEpuLtYkmn0mJdulAJG1Fo2JyV9nzhciZLvRC4MGrSL6Xfv5
-         tarQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW22tUNOhbIRV2AJLn03WEu7pmdaXj69QsxiQdib91sJcjsbmRIa3Or84EE8gzUGpVD1EHiHbmp3hQA00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCWavuKHrTxWeTkylpbypPNaHKLzF9W+KtveRVngbom3eKIXD/
-	s+qe82BLY1qWFXhPpUQ7xAyKAIi8PEusfpfvYK+3J8l7UydiS+kFnrf2jwNxPeo4Wexye8pK4Sb
-	MXotjmg==
-X-Google-Smtp-Source: AGHT+IFx8038/Nn1GMMW99JA4rgv+GkI2D/hoWH0ohWCXwjlgYSNRt1ck55s/92JZpdrRJKxcd/rbvUywVcL
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:98a5:142e:8c2e:e9e5])
- (user=irogers job=sendgmr) by 2002:a05:690c:6906:b0:6db:c3b8:c4ce with SMTP
- id 00721157ae682-6e3d41e8dbdmr799607b3.7.1729142511774; Wed, 16 Oct 2024
- 22:21:51 -0700 (PDT)
-Date: Wed, 16 Oct 2024 22:21:37 -0700
-Message-Id: <20241017052137.225514-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1729142620; x=1729747420;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OCa/2861obl9V5ckCTUYjogSBw7B5osjW4tVSSSNZes=;
+        b=MW240qbBnq3fI8iUp+n1fQcbPXh+B20Bgly1G0wsdA0NxKfIjYliNuEhBCqFQ0D152
+         8KIvR/wrbEV2YLLsn/9GbafKy7VTpKRGb/Wfo1wWPGNCT5y6T/bsyU1UIlL3W2LMcm1j
+         caNsi1UchCksyjE2blWH9TtGAMAWaIJjTSpwQeI2SJ/waSReVXeCU+q34Iw94NPaneK6
+         LnrOzaajo/xo8/f5zSWdtyHCs+93wLWVuZUERSATbKjewfpeuWNJKBkT//INykLHD6VZ
+         Sn7idU8+yTZvZehISb1jU/hzcaHe26fBuyi5LTIb3NDNvRpHcpgJvHeE6wfS+gShjWzO
+         OD7g==
+X-Forwarded-Encrypted: i=1; AJvYcCV/s+wooOM/7l+NOYBipLkbpzdwGKZoE0io6RQo39DwUgJS1W49Lg9pgAAzetgHkG29sAB15ijYiP5XI28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhoTs22pRIKkhbgbyRVsvinTxaOk/zwgfpVEM78GSDBRtLiCiI
+	mVcIgstjuhohxT5wY2jtM5DXkUBwLr61g/8pzXkPs+CmO4MlIbf2u5iWq7SyRdfa+RULcc+oI2c
+	=
+X-Google-Smtp-Source: AGHT+IGjeBk2kioaY/kHyxT3q1nImWDtOTVlpOhMJRI/BFXigA3MIpzvfkBk1ObbO7BBS1NML8GqFg==
+X-Received: by 2002:a17:90b:1241:b0:2e2:857e:fcfb with SMTP id 98e67ed59e1d1-2e2f0b09d89mr22612829a91.19.1729142620475;
+        Wed, 16 Oct 2024 22:23:40 -0700 (PDT)
+Received: from thinkpad ([220.158.156.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e08ebf2asm865122a91.31.2024.10.16.22.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 22:23:40 -0700 (PDT)
+Date: Thu, 17 Oct 2024 10:53:35 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Johan Hovold <johan@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>, linux-pci@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Ley Foon Tan <ley.foon.tan@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: Why set .suppress_bind_attrs even though .remove() implemented?
+Message-ID: <20241017052335.iue4jhvk5q4efigv@thinkpad>
+References: <Yt+6azfwd/LuMzoG@hovoldconsulting.com>
+ <20220727195716.GA220011@bhelgaas>
+ <YuJ+PZIhg8mDrdlX@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v1] perf test: Add a signal handler to kill forked child processes
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Howard Chu <howardchu95@gmail.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YuJ+PZIhg8mDrdlX@hovoldconsulting.com>
 
-If the `perf test` process is killed the child tests continue running
-and may run indefinitely. Propagate SIGINT (ctrl-C) and SIGTERM (kill)
-signals to the running child processes so that they terminate when the
-parent is killed.
+On Thu, Jul 28, 2022 at 02:17:01PM +0200, Johan Hovold wrote:
+> On Wed, Jul 27, 2022 at 02:57:16PM -0500, Bjorn Helgaas wrote:
+> > On Tue, Jul 26, 2022 at 11:56:59AM +0200, Johan Hovold wrote:
+> > > On Mon, Jul 25, 2022 at 06:35:27PM +0100, Marc Zyngier wrote:
+> > > > On Mon, 25 Jul 2022 16:18:48 +0100,
+> > > > Johan Hovold <johan@kernel.org> wrote:
+> > > 
+> > > > > Since when is unloading modules something that is expected to
+> > > > > work perfectly? I keep hearing "well, don't do that then" when
+> > > > > someone complains about unloading this module while doing this
+> > > > > or that broke something. (And it's only root that can unload
+> > > > > modules in the first place.)
+> > > > 
+> > > > Well, maybe I have higher standards. For the stuff I maintain, I
+> > > > now point-blank refuse to support module unloading if this can
+> > > > result in a crash. Or worse.
+> > > 
+> > > That makes sense for regular interrupt controllers where its hard to
+> > > tell that all consumers are gone, but I don't think that should
+> > > limit the usefulness of having modular PCI controller drivers where
+> > > we know that the consumers are gone after deregistering the bus
+> > > (i.e. the consumers are descendants of the controller in the device
+> > > tree).
+> > 
+> > Those consumers are endpoint drivers, so I think this depends on those
+> > drivers correctly unmapping the interrupts they use, right?
+> 
+> Right. For MSI this means that pci_alloc_irq_vectors() in probe should
+> be matched by pci_free_irq_vectors() on remove.
+> 
+> For legacy interrupts, which can be shared, the mapping is created by
+> PCI core when binding to the first device and can only be disposed by
+> the host-bridge driver once all descendants have been removed.
+> 
+> The endpoint drivers still need to disable their interrupts of course.
+> 
+> Buggy endpoint-driver remove implementations can lead to all sorts of
+> crashes (e.g. after failing to deregister a class device), and if that's
+> a worry then don't unload modules (and possibly disable it completely
+> using CONFIG_MODULE_UNLOAD).
+> 
+> > > > > It's useful for developers, but use it at your own risk.
+> > > > > 
+> > > > > That said, I agree that if something is next to impossible to
+> > > > > get right, as may be the case with interrupt controllers
+> > > > > generally, then fine, let's disable module unloading for that
+> > > > > class of drivers.
+> > > > > 
+> > > > > And this would mean disabling driver unbind for the 20+ driver
+> > > > > PCI drivers that currently implement it to some degree.
+> > > > 
+> > > > That would be Bjorn's and Lorenzo's call.
+> > > 
+> > > Sure, but I think it would be the wrong decision here. Especially,
+> > > since the end result will likely just be that more drivers will
+> > > become always compiled-in.
+> > 
+> > Can you elaborate on this?  I think Marc is suggesting that these PCI
+> > controller drivers be modular but not removable.  Why would that cause
+> > more of them to be compiled-in?
+> 
+> As mentioned earlier in this thread, we only appear to have some 60
+> drivers in the entire tree that bother to try to implement that. I fear
+> that blocking the use of modules (including being able to unload them)
+> will just make people submit drivers that can only be built in.
+> 
+> Not everyone cares about Android's GKI, but being able to unload a
+> module during development is very useful (and keeping that out-of-tree
+> prevents sharing the implementation and make it susceptible to even
+> further bit rot).
+> 
+> So continuing to supporting modules properly is a win for everyone (e.g.
+> GKI and developers).
+>  
+> > > > > > > Turns out the pcie-qcom driver does not support legacy
+> > > > > > > interrupts so there's no risk of there being any lingering
+> > > > > > > mappings if I understand things correctly.
+> > > > > > 
+> > > > > > It still does MSIs, thanks to dw_pcie_host_init(). If you can
+> > > > > > remove the driver while devices are up and running with MSIs
+> > > > > > allocated, things may get ugly if things align the wrong way
+> > > > > > (if a driver still has a reference to an irq_desc or irq_data,
+> > > > > > for example).
+> > > > > 
+> > > > > That is precisely the way I've been testing it and everything
+> > > > > appears to be tore down as it should.
+> > > > >
+> > > > > And a PCI driver that has been unbound should have released its
+> > > > > resources, or that's a driver bug. Right?
+> > > > 
+> > > > But that's the thing: you can easily remove part of the
+> > > > infrastructure without the endpoint driver even noticing. It may
+> > > > not happen in your particular case if removing the RC driver will
+> > > > also nuke the endpoints in the process, but I can't see this is an
+> > > > absolute guarantee. The crash pointed to by an earlier email is
+> > > > symptomatic of it.
+> > > 
+> > > But that was arguably due to a driver bug, which we know how to fix.
+> > > For MSIs the endpoint driver will free its interrupts and all is
+> > > good.
+> > > 
+> > > The key observation is that the driver model will make sure that any
+> > > endpoint drivers have been unbound before the bus is deregistered.
+> > > 
+> > > That means there are no longer any consumers of the interrupts,
+> > > which can be disposed. For MSI this is handled by
+> > > pci_free_irq_vectors() when unbinding the endpoint drivers. For
+> > > legacy interrupts, which can be shared, the PCIe RC driver needs to
+> > > manage this itself after the consumers are gone.
+> > 
+> > The driver model ensures that endpoint drivers have been unbound. But
+> > doesn't the interrupt disposal depend on the correct functioning of
+> > those endpoint drivers?  So if a buggy endpoint driver failed to
+> > dispose of them, we're still vulnerable?
+> 
+> Just as you are if an endpoint-driver fails to clean up after itself in
+> some other way (e.g. leaves the interrupt enabled).
+> 
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
-This change is on top of the 8 patch parallel test series:
-https://lore.kernel.org/lkml/20241011220354.756798-1-irogers@google.com/
----
- tools/perf/tests/builtin-test.c | 34 +++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+The IRQ disposal issue should hopefully fixed by this series:
+https://lore.kernel.org/linux-pci/20240715114854.4792-3-kabel@kernel.org/
 
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 09afe884a987..5c93608e9a75 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -469,13 +469,22 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
- 	for (j = 0, k = 0; j < ARRAY_SIZE(tests); j++, k = 0)	\
- 		while ((t = tests[j][k++]) != NULL)
- 
-+/* State outside of __cmd_test for the sake of the signal handler. */
-+
-+static size_t num_tests;
-+static struct child_test **child_tests;
-+static jmp_buf cmd_test_jmp_buf;
-+
-+static void cmd_test_sig_handler(int sig)
-+{
-+	siglongjmp(cmd_test_jmp_buf, sig);
-+}
-+
- static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- {
- 	struct test_suite *t;
- 	int width = 0;
- 	unsigned int j, k;
--	size_t num_tests = 0;
--	struct child_test **child_tests;
- 	int err = 0;
- 
- 	for_each_test(j, k, t) {
-@@ -499,6 +508,25 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- 	if (!child_tests)
- 		return -ENOMEM;
- 
-+	err = sigsetjmp(cmd_test_jmp_buf, 1);
-+	if (err) {
-+		pr_err("Signal while running tests. Terminating tests with signal %d\n", err);
-+		for (size_t x = 0; x < num_tests; x++) {
-+			struct child_test *child_test = child_tests[x];
-+
-+			if (!child_test)
-+				continue;
-+
-+			pr_debug3("Killing %3d pid %d\n",
-+				  child_test->test_num + 1,
-+				  child_test->process.pid);
-+			kill(child_test->process.pid, SIGTERM);
-+		}
-+		goto err_out;
-+	}
-+	signal(SIGINT, cmd_test_sig_handler);
-+	signal(SIGTERM, cmd_test_sig_handler);
-+
- 	/*
- 	 * In parallel mode pass 1 runs non-exclusive tests in parallel, pass 2
- 	 * runs the exclusive tests sequentially. In other modes all tests are
-@@ -559,6 +587,8 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- 		}
- 	}
- err_out:
-+	signal(SIGINT, SIG_DFL);
-+	signal(SIGTERM, SIG_DFL);
- 	if (err) {
- 		pr_err("Internal test harness failure. Completing any started tests:\n:");
- 		for (size_t x = 0; x < num_tests; x++)
+Then if the dwc driver calls pci_remove_irq_domain() instead of
+irq_domain_remove(), we can be sure that all the IRQs are disposed during the
+driver remove.
+
+So can we proceed with the series making Qcom driver modular?
+
+- Mani
+
 -- 
-2.47.0.105.g07ac214952-goog
-
+மணிவண்ணன் சதாசிவம்
 
