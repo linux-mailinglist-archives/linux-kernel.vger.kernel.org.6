@@ -1,85 +1,102 @@
-Return-Path: <linux-kernel+bounces-369454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C929A1D7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BFA9A1D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E05280CC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAED61C25372
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7E21D54F2;
-	Thu, 17 Oct 2024 08:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7B31D5175;
+	Thu, 17 Oct 2024 08:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="O2IeVqA6"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0281C2447;
-	Thu, 17 Oct 2024 08:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D2DOIa9h"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAF61D416E;
+	Thu, 17 Oct 2024 08:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729154706; cv=none; b=Bq5RVAXBx5y3DG9FVGjrqt8pmgX/muccr/pUqa3BtQx+QXPBRXZ6iF10YjEPVPgqGxnKLJA2mvzWqehqdmcwbbfOt8cFb+v5TAHZa+zsodljb9XiJhq6pTQK3Kx1UUUTcRG1btwLehHbiD7sc8SSso40jyzaMEvHc5qoC2MC+GI=
+	t=1729154648; cv=none; b=fptT1rauB2Jyr8qp0vSUOvGTCqg4xLwyp49n2Iy1BzRSWQyoMc21rmfGnmi+Oc9QpRdRdpTMsJaQDKSRIMO0fTuRWeuJ/fiGTnVrT1L7SHAzcwdfWiXht149nG6DKj1njSGbmKwiMmvwUPZcSvtqlhBH3ncYXdopORDz5ppDjUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729154706; c=relaxed/simple;
-	bh=PBz7kQKc3l9H1T0Y9A9p7V37KYmmj65awrZeqNTRkpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZQ2+VlyKpt331G37h+R1LaSbPKO1Yh+qbYvGZkjDzk0U+bXqVEKqhnHjY4qh1ZfvDsNEZnL17mNFB2Z19Gv2f2IvyDtLLQYFSIHuwL0HrBGznQiXEoIhXNbpAMAdl5cnYupA/l51O7EZRfdQ0eV89ULpYugyzJLURsCzFUEb50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=O2IeVqA6; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=f/CE3M9tZlrKOkYsnQZ8XeAHkJLrZZohMbO9naRhDKE=;
-	b=O2IeVqA67qKl3mB3QSLg2pCgGT3gaZz9+PcaMgvEqLbh0hsqjhzKoO1ySeiJV0
-	WJzVLVAHiB0DQXNS3gWePARkUOc9yR/++TvxB7nJ9np/ofRgPvRpCfwXAn9FXbNC
-	bF0h3cyEP7oJ+JqRRTPy3jqKA5U3yGqvI7yhQNKtGRO74=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXPh5HzhBnoC0wAA--.1292S3;
-	Thu, 17 Oct 2024 16:43:53 +0800 (CST)
-Date: Thu, 17 Oct 2024 16:43:51 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com
-Subject: Re: [PATCH] arm64: dts: imx8mp-skov-revb-mi1010ait-1cp1: Assign
- "media_isp" clock rate
-Message-ID: <ZxDOR9VL0u6OB+jX@dragon>
-References: <20240924071218.3578402-1-victor.liu@nxp.com>
+	s=arc-20240116; t=1729154648; c=relaxed/simple;
+	bh=KJ+uKz7hiruQG6oPxtLuE/H+TdtGCVX7EL2n18iLCqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LtE5IQ/qgVz2DF5VQFtm1MxghPErzNre609djZgXcKzxgxnxMQB9btoWf3owvt+aXjfUHIcCyUatuhczLAQZa9x7d7Ylc1QFJzq+Njj4X6+OsjNR3WZkf8BqN1b1+mNnCBAQ3MN3FhSMKAQo6JiBILfbCQAVetgmXeft6+c4lNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=D2DOIa9h; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729154639;
+	bh=r5FVlLhQwRv2SNxi+j3A3LBRsD97d7qLUp0YYhGt7vw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=D2DOIa9hqQ/EEEg1neEL5tsUoWiLqYxGU9nuwL/+tJnz0yUUh7vwXJHCRazX9QAp7
+	 4wN8auZ1hqsVKehu8R54aEQRnaRZvE8KmhLLYnFuLK1FPpigNKjnVrbdtZhgXPw/+Z
+	 9nhQAGLr9A10fChNlnP8/DG/hvkrW0loCgO7WQTGDzPrQ/YitAY3vbMcy/OXZq2wAR
+	 41DJH5F+D9pGZh80eBg/Br8dI4T9IIQRiQLUCpr/Z1x4uUcgXKmEgPRRAUg1Qxnr2r
+	 jkUPRwzQB4bbEbn9TZnnqljhccRQgtOp7XOhyU+DFJXNPWwQrMsiwcx2WV075rIJA5
+	 kK+a8CVl0mCRQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XThFq0gx6z4wcL;
+	Thu, 17 Oct 2024 19:43:58 +1100 (AEDT)
+Date: Thu, 17 Oct 2024 19:43:58 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm tree
+Message-ID: <20241017194358.4e670183@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924071218.3578402-1-victor.liu@nxp.com>
-X-CM-TRANSID:Ms8vCgDXPh5HzhBnoC0wAA--.1292S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFykAr1rXF1UGFW8Ar1kKrg_yoWfCFg_ur
-	y2y3WkGws8XFn5KrnxGryjya4xtrWUAFyUXr9Fgws5trykZ345ZF1Sv34Fgr1UtF9av3s8
-	Was3Wayj9asxCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8qYLPUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiERB7ZWcQs3RUPwAAsE
+Content-Type: multipart/signed; boundary="Sig_/OioVi787eFYJPe1uscPK0a0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Sep 24, 2024 at 03:12:18PM +0800, Liu Ying wrote:
-> Commit 2d39b78e5716 ("arm64: dts: imx8mp: Add DT nodes for the two ISPs")
-> added a new phandle to the "assigned-clocks" property of media_blk_ctrl
-> node just before the phandle for "video_pll1" clock in i.MX8MP SoC device
-> tree so that "media_isp" clock rate is assigned to 500MHz by default.
-> However, it missed updating this relevant board device tree where the
-> relevant "assigned-clock-rates" property is changed to set a new rate
-> for "video_pll1" clock.  This causes the "media_isp" clock rate being
-> wrongly set to the "video_pll1" clock rate and the "video_pll1" clock
-> rate being untouched.  Fix this by assigning "media_isp" clock rate
-> explicitly to 500MHz in this board device tree.
-> 
-> Fixes: 2d39b78e5716 ("arm64: dts: imx8mp: Add DT nodes for the two ISPs")
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+--Sig_/OioVi787eFYJPe1uscPK0a0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+Hi all,
 
+After merging the mm tree, today's linux-next build (htmldocs) produced
+this warning:
+
+Documentation/translations/zh_TW/dev-tools/kasan.rst:410: ERROR: Unexpected=
+ indentation.
+
+Introduced by commit
+
+  e9e8f3f3eafd ("kasan: delete CONFIG_KASAN_MODULE_TEST")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/OioVi787eFYJPe1uscPK0a0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcQzk4ACgkQAVBC80lX
+0GyoywgAhmGFbkHHgS+HSApBKpGU9luwtxjEt0ThD2DjpFexiV5wEbBJQ8xeFdkR
+AuhuCp0JfluTGBOaRSke7Zanaor5x3Hd9JbT7thIV+FdRYsgveeanGVa0h5biSHr
+twforbYCBfZz7BY9OB2kYjB3itAgZl0UUfb0AvO92Ce8YdEqKZSCQfT1thUAc6Gy
+/YlhuKKsE2JE5Wbj//YPvgJNijXmeygyeKhK1lojcunLrhNbM6GZKvZbpXP8HMA7
+PPlnfhuEG3heOvNEyKy8KBZG5ZqhYpLRFdbIeeNaXlHLLMrlAAgTJ1zilwp30zvf
+v/qTbAABTSfY6WwNYnMMm5cJXIpjyQ==
+=8YYx
+-----END PGP SIGNATURE-----
+
+--Sig_/OioVi787eFYJPe1uscPK0a0--
 
