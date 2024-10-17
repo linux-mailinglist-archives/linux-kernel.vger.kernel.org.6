@@ -1,287 +1,170 @@
-Return-Path: <linux-kernel+bounces-370276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F609A2A80
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:15:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E91F9A29F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37789B2355D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 291A91C208A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D15E1F4FA9;
-	Thu, 17 Oct 2024 16:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60F31E200F;
+	Thu, 17 Oct 2024 16:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GDCItILA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UzsltYrL"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DF31EF936;
-	Thu, 17 Oct 2024 16:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35831E0DFE
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729184328; cv=none; b=lt+dfdIWYPw9fbuRjtyqAdihMGEsdm8GPd1Y8lBtu/CFjrBEDDXdRtbd7f4ubFut3NQFhd5cd8xSnWP+ihBHSz9DQW9pZCFwb5RE4HyWgz2RnwIVQpenhu5k1AAn1LolafK3dg98O5HyKNvYHIi48SxkcIcl/NR86k/bBT4bGV0=
+	t=1729184232; cv=none; b=MGLXzGwqPYVNNpoiVpoqZObZIih21npt+n4Evk56fBWr+W4k/5FfU1sYsAj16mKTf1kCiBIeAsTqJuvZqZ7trSFXJ75GmEwRjT70vIswF6jRYyUd95ZZRwk7zwXQoT2vAUl712cqV9EpXRoGO0wijXN0upPUkA8gzy06dsENGRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729184328; c=relaxed/simple;
-	bh=KyRthnK/hRJVa0err0gjkBoaFHgWB/n7LsV5WDKmys8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FA+0mk7KN998p7QZpfv9VMVDiAwIsgrIqW1p7r4kq+Yr6SHsDudau0EU/EYWHMfX4nRvmJQ4VbUUzU0gPdQj0+6NWMCzETDDMhZoi1ZLL7khD/CDf+8/X6it9cHHnhcrJec+91w2ul7EmwAwlBVK5N0U1sLN+Q9m29rgoTLbLrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GDCItILA; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729184323; x=1760720323;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KyRthnK/hRJVa0err0gjkBoaFHgWB/n7LsV5WDKmys8=;
-  b=GDCItILAPkDgJOHYOXDzKNTtLEX1OMFlbftIhTSKsfiKN3AocInBb6st
-   HCN0L/GA59RzLXCmFX8upQ4IjRRs82qfRKgE3mcIgAaaEP8oGuzBSIhxt
-   OSNOqb6hNPzSu50S+xRyS38OCWBaKrKSLHovwOMp3/kGEEGHxS8BXHF/D
-   cE8NBvdtL5QeNt5RzswJuEEiV3szbsg75se/S7TCXNgT3rNVmRWdXmrlZ
-   oABsc2iXdDoDMYHiQOsQEUXVX3xd+wZ2Vd4QGWRMjj1UgQBT0cGOG8+rQ
-   70WTn5Hl3D4d3cXPfpqo/pEz+55i4uWsok1AhLsyI7j+0rg4iI4UTzLt0
-   w==;
-X-CSE-ConnectionGUID: etnyfPcOTJOG2AKwI3ZJZw==
-X-CSE-MsgGUID: wD9kNP8ISR6FccMRcz8g2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="32616466"
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="32616466"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 09:57:39 -0700
-X-CSE-ConnectionGUID: f8FDYwqYQQepp9zW7OiYsA==
-X-CSE-MsgGUID: S+CawiarR6eQMwvFgCd/jA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="109420965"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 17 Oct 2024 09:57:35 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1Toa-000Mct-0d;
-	Thu, 17 Oct 2024 16:57:32 +0000
-Date: Fri, 18 Oct 2024 00:56:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
-Message-ID: <202410180024.2NpHo5Z6-lkp@intel.com>
-References: <20241016161044.28745-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1729184232; c=relaxed/simple;
+	bh=OAZejn9mCT0AFo77p3qhjE8gA31X50sk9TKnxj1/KOQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B0vfbdj+e+fOqGUX4NZQZWWuaGH3vZrIN41Vj/FklA4KoNSPQE3VniQNN2UPqUw+eOAXjowFlL3HjGWRrsi3ZwPL4FlQ6P0UGhSDVMz31NzwYlz8Ap0u3m9P+111erm1THXGXRAKDEX9ajm/VoF1cT70yC6YBwLXos8W3KbP11c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UzsltYrL; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so1918443e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:57:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729184224; x=1729789024; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EoqB7xn1sq/321TIs9/YxkzBFt+QUHBAyoVOc2ArVVs=;
+        b=UzsltYrL3ZPOM/4J4bfkPBusURmRMH0pgnhdfPLSUq/TTr0hs6/hlymr+zEnRGfv6p
+         KAiNvgkZVj/j0JfVDbLJ1BrMIG/0HBWXkZQ54KptWRXsn+G8eVVbY+I4fHYrTd9wT8xD
+         3I0z/Ln9nS7/jRLModxxvwZpXY6CGxEii8hvqQJy+PZsuRnbecz+53Sp6iI0nLXH069G
+         xs4Bz8Ibo4re6z3nnDx0Q424381DdVC99bZLzSAHXD4ntZKmi0PYq1z/gmZL6zX9ky/S
+         oN7tAn5XXfsnCTyohqmXwXpPurh3SYS5jKpVBz42kUCzcAmld2c9aHbJEJJ9ukFio+Rt
+         qocg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729184224; x=1729789024;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EoqB7xn1sq/321TIs9/YxkzBFt+QUHBAyoVOc2ArVVs=;
+        b=EyT6upwv2xOJDebyQCqwoP5nOnJrpvwGNbNdp9dw0tTxCrflVKm8pRHLOXymaFc9mD
+         70UVKAbbcfbXj2uzagfjxgrkrjVgZiE8Sezh/vSEJdQ/tleUYi5Hw+/fOOqMjtt/55/4
+         +BZ9Wucp6Dru9MYh8ghx9T+lvxE5w2aXpIVTzfNWMTHlIYT42iWetPX4nhtSgkOiAJlX
+         JdUvzcm5ZTE369c0SPV0Ccjf+ibxAzYqybtT2xn0myg60Fe5amgZNElxSyom9GYBZF2b
+         FJQ5B+ZdQpW+9BMFsqoEuYNhfTPhsjMSnKEV34xb1qQAT303Ua98+N14mcn0V6tJJo5V
+         5bpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXBiKXQ9tHxEC1rh3I2WFttyUjNABiJ9iRmwrOjwW4TRL2ay0XEs2qrBZTO6JBZ1zZ4ynbFXfgC4Ko39k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrLD+VJjOqxb/5A/oPjINOsWdWTH+yWYA6aqaUsUCwSMZHPWre
+	IOpVCnCjgPJweYZPh16XxTuxIADSqnrWvOHz5rXdy7JaGMLhra91ypirJrhVRgo=
+X-Google-Smtp-Source: AGHT+IFsRl7d5jySpCJR2pi4kgD5G4mJaVqnhOby46a2PJHokCrJ5kP+vSdv4P1Zdjyvlfk+yFgmLQ==
+X-Received: by 2002:a05:6512:138f:b0:533:e83:c414 with SMTP id 2adb3069b0e04-53a03f949ecmr6066547e87.59.1729184223695;
+        Thu, 17 Oct 2024 09:57:03 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a00007078sm821563e87.212.2024.10.17.09.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 09:57:03 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 00/14] clk: qcom: add support for clock controllers on the
+ SAR2130P platform
+Date: Thu, 17 Oct 2024 19:56:50 +0300
+Message-Id: <20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016161044.28745-1-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANJBEWcC/x3MTQqAIBBA4avErBPUjKirRAt/xhoKDQciiO6et
+ PwW7z3AWAgZpuaBghcx5VSh2gb8ZtOKgkI1aKmNkmoQbItWnTyFP7LfWfTRhTC6KA0i1OosGOn
+ +j/Pyvh8xlu7xYQAAAA==
+X-Change-ID: 20241017-sar2130p-clocks-5fbdd9bf04ee
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kalpak Kawadkar <quic_kkawadka@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2707;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=OAZejn9mCT0AFo77p3qhjE8gA31X50sk9TKnxj1/KOQ=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnEUHYFVQMVMHSbHTOAHD1NZ0f1npaoX8xSe/jX
+ dHtb1j+T1iJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxFB2AAKCRAU23LtvoBl
+ uHflD/oDv9yr4s6KsV+BENXK65lQFt1Bt2DFxk436NTmthVQwS32VFoq+gxnKUQzP5tSkfsOl/C
+ kmYcFTeyjAD+LraC9YAVoHrkZMWZWU+IzzSZe++Mnku1XS0B0KiL8JLOhRz41cs4zpJn0mExTqE
+ vAhiPMkVsCmK3sEzysjlrPhNZIwzRlLnERGukVZzfuQ78AWS7Dy+3U/jCLrpDPEV3ReF6bdMOj1
+ Op3u1kLNO5J3kNGX4M7C45ZnePfvVUMHVzSnDz7U611xAW8aSPIunkB6L9kO/6VFwQNX1WRC19E
+ q884PyTZcpQcyGfmyJzCY2gBxbHG22xkdWyDoj3/L8t0fuDYs6HKCnMsPNPY9EIusDzru3bHIJh
+ anskGw4iMzlksC7D/pZGQhHdb0Pq1mcMsb6qqcwrhDuA/VL1+dqLn2iOqjzf4IincE8GnqMETJY
+ Mwt0SuqTBAir9HZwjoDaCOA8oTMozKQDJ49M3poNst9r7pZYh8PZIilWPcc8N4tltbJRZzhfcJh
+ 20jBfR5NXp3lg1zxm9CVTEeh1p3hiuZWaSt1Krc5njvsxiq/cexFapu5ODNZdvjEsi3ehHCP3UI
+ S1v+qDxUhxNXHVV3ENcpJPeSmBwYLdMM3fwtewkg6Qjkmxn6ugoDasLfPX3AmtXfExd7tFsN4Xi
+ tBBBwwLynkNQuEg==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hi Christian,
+Add support for the RPMh, TCSR, Global, Display and GPU clock
+controllers as present on the Qualcomm SAR2130P platform.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (10):
+      dt-bindings: clock: qcom,rpmhcc: Add SAR2130P compatible
+      dt-bindings: clock: qcom: document SAR2130P Global Clock Controller
+      dt-bindings: clock: qcom,sm8550-tcsr: Add SAR2130P compatible
+      dt-bindings: clock: qcom,sm8550-dispcc: Add SAR2130P compatible
+      clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+      clk: qcom: gdsc: add separate sleep state collapse vote support
+      clk: qcom: rpmh: add support for SAR2130P
+      clk: qcom: add support for GCC on SAR2130P
+      clk: qcom: tcsrcc-sm8550: add SAR2130P support
+      clk: qcom: dispcc-sm8550: enable support for SAR2130P
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.12-rc3 next-20241017]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Kalpak Kawadkar (2):
+      clk: qcom: clk-branch: Add support for BRANCH_HALT_POLL flag
+      clk: qcom: clk-branch: Add support for SREG branch ops
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/cpufreq-airoha-Add-EN7581-Cpufreq-SMC-driver/20241017-001217
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20241016161044.28745-1-ansuelsmth%40gmail.com
-patch subject: [PATCH] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20241018/202410180024.2NpHo5Z6-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410180024.2NpHo5Z6-lkp@intel.com/reproduce)
+Konrad Dybcio (2):
+      dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P compatibles
+      clk: qcom: add SAR2130P GPU Clock Controller support
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410180024.2NpHo5Z6-lkp@intel.com/
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sar2130p-gcc.yaml          |   65 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
+ drivers/clk/qcom/Kconfig                           |   22 +-
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-branch.c                      |   39 +-
+ drivers/clk/qcom/clk-branch.h                      |    5 +
+ drivers/clk/qcom/clk-rcg.h                         |    1 +
+ drivers/clk/qcom/clk-rcg2.c                        |   48 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   11 +
+ drivers/clk/qcom/dispcc-sm8550.c                   |   18 +-
+ drivers/clk/qcom/gcc-sar2130p.c                    | 2463 ++++++++++++++++++++
+ drivers/clk/qcom/gdsc.c                            |    8 +
+ drivers/clk/qcom/gdsc.h                            |    2 +
+ drivers/clk/qcom/gpucc-sar2130p.c                  |  507 ++++
+ drivers/clk/qcom/tcsrcc-sm8550.c                   |   18 +-
+ include/dt-bindings/clock/qcom,sar2130p-gcc.h      |  181 ++
+ include/dt-bindings/clock/qcom,sar2130p-gpucc.h    |   33 +
+ include/dt-bindings/reset/qcom,sar2130p-gpucc.h    |   14 +
+ 21 files changed, 3430 insertions(+), 12 deletions(-)
+---
+base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee
 
-All error/warnings (new ones prefixed by >>):
-
-   drivers/cpufreq/airoha-cpufreq.c:27:34: error: variable has incomplete type 'const struct arm_smccc_1_2_regs'
-           const struct arm_smccc_1_2_regs args = {
-                                           ^
-   drivers/cpufreq/airoha-cpufreq.c:27:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
-           const struct arm_smccc_1_2_regs args = {
-                        ^
-   drivers/cpufreq/airoha-cpufreq.c:31:28: error: variable has incomplete type 'struct arm_smccc_1_2_regs'
-           struct arm_smccc_1_2_regs res;
-                                     ^
-   drivers/cpufreq/airoha-cpufreq.c:27:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
-           const struct arm_smccc_1_2_regs args = {
-                        ^
->> drivers/cpufreq/airoha-cpufreq.c:33:2: error: implicit declaration of function 'arm_smccc_1_2_smc' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           arm_smccc_1_2_smc(&args, &res);
-           ^
-   drivers/cpufreq/airoha-cpufreq.c:40:34: error: variable has incomplete type 'const struct arm_smccc_1_2_regs'
-           const struct arm_smccc_1_2_regs args = {
-                                           ^
-   drivers/cpufreq/airoha-cpufreq.c:40:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
-           const struct arm_smccc_1_2_regs args = {
-                        ^
-   drivers/cpufreq/airoha-cpufreq.c:45:28: error: variable has incomplete type 'struct arm_smccc_1_2_regs'
-           struct arm_smccc_1_2_regs res;
-                                     ^
-   drivers/cpufreq/airoha-cpufreq.c:40:15: note: forward declaration of 'struct arm_smccc_1_2_regs'
-           const struct arm_smccc_1_2_regs args = {
-                        ^
-   drivers/cpufreq/airoha-cpufreq.c:47:2: error: implicit declaration of function 'arm_smccc_1_2_smc' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           arm_smccc_1_2_smc(&args, &res);
-           ^
-   drivers/cpufreq/airoha-cpufreq.c:68:17: warning: variable 'cpu_dev' set but not used [-Wunused-but-set-variable]
-           struct device *cpu_dev;
-                          ^
->> drivers/cpufreq/airoha-cpufreq.c:103:9: error: implicit declaration of function 'kzalloc' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-           priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-                  ^
->> drivers/cpufreq/airoha-cpufreq.c:103:7: warning: incompatible integer to pointer conversion assigning to 'struct airoha_cpufreq_priv *' from 'int' [-Wint-conversion]
-           priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-                ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/cpufreq/airoha-cpufreq.c:145:3: error: implicit declaration of function 'kfree' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-                   kfree(priv);
-                   ^
-   2 warnings and 8 errors generated.
-
-
-vim +/arm_smccc_1_2_smc +33 drivers/cpufreq/airoha-cpufreq.c
-
-    24	
-    25	static unsigned int airoha_cpufreq_get(unsigned int cpu)
-    26	{
-    27		const struct arm_smccc_1_2_regs args = {
-    28			.a0 = AIROHA_SIP_AVS_HANDLE,
-    29			.a1 = AIROHA_AVS_OP_GET_FREQ,
-    30		};
-    31		struct arm_smccc_1_2_regs res;
-    32	
-  > 33		arm_smccc_1_2_smc(&args, &res);
-    34	
-    35		return (int)(res.a0 * 1000);
-    36	}
-    37	
-    38	static int airoha_cpufreq_set_target(struct cpufreq_policy *policy, unsigned int index)
-    39	{
-    40		const struct arm_smccc_1_2_regs args = {
-    41			.a0 = AIROHA_SIP_AVS_HANDLE,
-    42			.a1 = AIROHA_AVS_OP_FREQ_DYN_ADJ,
-    43			.a3 = index,
-    44		};
-    45		struct arm_smccc_1_2_regs res;
-    46	
-    47		arm_smccc_1_2_smc(&args, &res);
-    48	
-    49		/* SMC signal correct apply by unsetting BIT 0 */
-    50		return res.a0 & BIT(0) ? -EINVAL : 0;
-    51	}
-    52	
-    53	static struct airoha_cpufreq_priv *airoha_cpufreq_find_data(int cpu)
-    54	{
-    55		struct airoha_cpufreq_priv *priv;
-    56	
-    57		list_for_each_entry(priv, &priv_list, list) {
-    58			if (cpumask_test_cpu(cpu, priv->cpus))
-    59				return priv;
-    60		}
-    61	
-    62		return NULL;
-    63	}
-    64	
-    65	static int airoha_cpufreq_init(struct cpufreq_policy *policy)
-    66	{
-    67		struct airoha_cpufreq_priv *priv;
-    68		struct device *cpu_dev;
-    69	
-    70		priv = airoha_cpufreq_find_data(policy->cpu);
-    71		if (!priv)
-    72			return -ENODEV;
-    73	
-    74		cpu_dev = priv->cpu_dev;
-    75		cpumask_copy(policy->cpus, priv->cpus);
-    76		policy->driver_data = priv;
-    77		policy->freq_table = priv->freq_table;
-    78	
-    79		return 0;
-    80	}
-    81	
-    82	static struct cpufreq_driver airoha_cpufreq_driver = {
-    83		.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-    84				  CPUFREQ_IS_COOLING_DEV,
-    85		.verify		= cpufreq_generic_frequency_table_verify,
-    86		.target_index	= airoha_cpufreq_set_target,
-    87		.get		= airoha_cpufreq_get,
-    88		.init		= airoha_cpufreq_init,
-    89		.attr		= cpufreq_generic_attr,
-    90		.name		= "airoha-cpufreq",
-    91	};
-    92	
-    93	static int airoha_cpufreq_driver_init_cpu(int cpu)
-    94	{
-    95		struct airoha_cpufreq_priv *priv;
-    96		struct device *cpu_dev;
-    97		int ret;
-    98	
-    99		cpu_dev = get_cpu_device(cpu);
-   100		if (!cpu_dev)
-   101			return -EPROBE_DEFER;
-   102	
- > 103		priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-   104		if (!priv)
-   105			return -ENOMEM;
-   106	
-   107		if (!zalloc_cpumask_var(&priv->cpus, GFP_KERNEL))
-   108			return -ENOMEM;
-   109	
-   110		cpumask_set_cpu(cpu, priv->cpus);
-   111		priv->cpu_dev = cpu_dev;
-   112	
-   113		ret = dev_pm_opp_of_get_sharing_cpus(cpu_dev, priv->cpus);
-   114		if (ret)
-   115			goto err;
-   116	
-   117		ret = dev_pm_opp_of_cpumask_add_table(priv->cpus);
-   118		if (ret)
-   119			goto err;
-   120	
-   121		ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &priv->freq_table);
-   122		if (ret)
-   123			goto err;
-   124	
-   125		list_add(&priv->list, &priv_list);
-   126	
-   127		return 0;
-   128	
-   129	err:
-   130		dev_pm_opp_of_cpumask_remove_table(priv->cpus);
-   131		free_cpumask_var(priv->cpus);
-   132	
-   133		return ret;
-   134	}
-   135	
-   136	static void airoha_cpufreq_release(void)
-   137	{
-   138		struct airoha_cpufreq_priv *priv, *tmp;
-   139	
-   140		list_for_each_entry_safe(priv, tmp, &priv_list, list) {
-   141			dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &priv->freq_table);
-   142			dev_pm_opp_of_cpumask_remove_table(priv->cpus);
-   143			free_cpumask_var(priv->cpus);
-   144			list_del(&priv->list);
- > 145			kfree(priv);
-   146		}
-   147	}
-   148	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
