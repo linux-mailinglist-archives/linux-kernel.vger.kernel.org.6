@@ -1,92 +1,221 @@
-Return-Path: <linux-kernel+bounces-369431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F049A1D36
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 125039A1D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C421C23470
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368221C2548D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAD61D097C;
-	Thu, 17 Oct 2024 08:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD921D45FB;
+	Thu, 17 Oct 2024 08:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iY8kaXHY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tcGKeKIA"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1F11369B6;
-	Thu, 17 Oct 2024 08:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164EC3398B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729153824; cv=none; b=n5ZTgJCT5ZpB4hvI2olKWZs+Ufbp/jLorUwT+V3lLcAfgnuBJC5UG6CviPbv5TVBrn3AaR7vTkM5VvJMdtWsFMeunKMnavIx3YQCk2I8r4FG0jopC18AFq3FiRs23xlRetot30GAk2kIkIaHCEtIEKO0yRQK0rxqKbImcnVG4rg=
+	t=1729154001; cv=none; b=VYNK9pdPwtrGvYefLhmPrOOQcU6LRC9hRJy9vUFRTQa6tAqbU1A3GXoHd6KyEwTPL1JnK0abcCbQ/cc9xKu2j0UDn2j/0Y3ZDO2zobM3i+w+lxjdoV4uPqT8jOPqivTP5gXv5wy9xbv2hKdJHDbRjLPzZab+D6bMrPwxAz1Iu5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729153824; c=relaxed/simple;
-	bh=sMaTj67hu5LAEAQ/l/5pAEJDkPWMyEtcAQ5f9PTKvUk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=M5D9mkHo9jgxmch9T+dXgxxT19BX+fcyvpA29+wQm7owG6gwqr+yvv0L0sDocNwjbWqgVwt2QrAzIu1zkRRcQztvtgs4gzZV2M/tSnUfbFLpvZel5Jj5Qm19nBmjHontKimGavwIcWztyqRahhrlHiJHs0dhM1kFCrhLpqjpeHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iY8kaXHY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5877DC4CEC3;
-	Thu, 17 Oct 2024 08:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729153824;
-	bh=sMaTj67hu5LAEAQ/l/5pAEJDkPWMyEtcAQ5f9PTKvUk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=iY8kaXHYcE87/KxaArS1LeGPfo2PXfiJwVuFTQSYeHi8+6Cl1pjdiw6DU/TVhazu7
-	 M5skMMNp1QrnYMbk5PtIhx+rg0lYrlBr5zZvsedaeK0xxRyqI3OjLzxsCgMdqssx1i
-	 yo20aH1wgvXUy74EhGVhzsuKbCwalQRNG1TC9lOyalRp5RHxALoLJG0R8bfF7O3SAr
-	 ryfs/C0FXI9nhazALo5YOXS45YryrLfdHuAe9vlURjq1LEn6kFqOMNizQOglbrwtYX
-	 ke2Zh9w58PU8PIWjeMoFOXFhZMVtHMHeOH8o9yqHoRisKjc1lDjIopu+p5ou+ZVzph
-	 WRDIcfEarRqBA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6393822D30;
-	Thu, 17 Oct 2024 08:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729154001; c=relaxed/simple;
+	bh=tYzaV+t4hdUMisaWHKdNAiLRPs8+qNVmGMVH1Hu6WQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ucGNOKWSpiSmEdyfbB7/jWt8HEcaDWwsppmlmprtRMUA/HZYr603YTizTfbcm5ppHyygQhIT6rvrYPiwJ1fwHStTIiIVNDM65hDP9mklYoRF8/6485fJIa5za//2aDvS3XT2BIX9jxphrdVd2gAYjfl3kV2NRe3aLgo0bAqM1GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tcGKeKIA; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d4fd00574so431996f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729153995; x=1729758795; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vAFU0pvJfwgqkFuHC+eoVVqHGFmh3FiuyXQ3M35Whoc=;
+        b=tcGKeKIAYMGOtJzHwXx//P3jphhuD1IXQ4x0KGJE0/P4XeZ8aYQj+m7Q3yg5+28XzD
+         /lcbKIydBtSKTA0p4Us7z5F7HzEjUtMYpn5hslHmo3pOzdGlg4CwBNmrsjwNNP2gK6hm
+         FU0Gx3HUOtVWKZfbmq2XAJc5GhLKKws3g7q0oARRESNI5nglABjUvHuKNtPix4wXcR/E
+         f0Ra6P5TW8M0c0OfiDvmAt2dMkX8Bydxy/fyPSOqXRgE3I50WpMzXX/PmwqlqDQ+cNlA
+         WTyj/FXtggeIw+rXgarMraDeSW1hkQd6LN47IATYY5NR7Mmo7jPKIlWCRaH2uQbFCwdO
+         Bkng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729153995; x=1729758795;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vAFU0pvJfwgqkFuHC+eoVVqHGFmh3FiuyXQ3M35Whoc=;
+        b=Jbvy7HuO3cV4AiBNgD6Sm7LmgCSc4Vrk1j7dUjbsvbaKPCd99QmDCfDj//rbJL6meU
+         V1R0Zttm8oVIsGxBCNwwRihqG99DgsK5GH0/yCSOYiRFUGWO4YKtLSL1AuyikZdzOkN2
+         q8n+S5gBh43QPy0zDpLNYsfL3zZtQzbK+6IUTU9/gQFvfBWEga5ujF1DqUpzUmh21wAF
+         Jx1GpFsRvI1RCNTl1KJJKHPcxvNM+2w2On7o8YY+yMBwiCbtQJeKwinjxIuwzjg6ci+U
+         4oSp8FTuubK/6b7nlUD/A072Q9zUhZDI0693w5eDWmxSEOP4dhOGXI69NJkJ2AMrKDmI
+         p0Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVody1tXDa7zvfVPl3OyLKCmjCFUt3SRBL1cB4IGBk4HN/iv1+0KC0au9WZdKKgpbp6pvHJmCeylYr6A88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgEfNle/uRHH+3UWyzXk48Y+NDAwxeEID7iV6m4H+x/njKgk7u
+	GHnIq+fsh+gA/Nt92709OcA2L92XOeB8vyBRgveTjnC+8lh+b5zlkInJs+pCcGM=
+X-Google-Smtp-Source: AGHT+IEdHY+2yshgOOAQzRUlLz+Uv57aHwgpB+r3p87uv0fS8aen+djrnr2FAL0hQZ20nOCRG5y5jw==
+X-Received: by 2002:adf:e551:0:b0:374:c1ea:2d40 with SMTP id ffacd0b85a97d-37d93d43ab4mr1325294f8f.1.1729153995293;
+        Thu, 17 Oct 2024 01:33:15 -0700 (PDT)
+Received: from dfj (host-82-61-199-234.retail.telecomitalia.it. [82.61.199.234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c359casm18610585e9.8.2024.10.17.01.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 01:33:14 -0700 (PDT)
+Date: Thu, 17 Oct 2024 10:32:00 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 8/8] iio: dac: adi-axi-dac: add registering of child
+ fdt node
+Message-ID: <f7ocoaxapiq56iqutinmlyduuyrfbhbgspxfatgtnwlduaufek@ucj4ymciajqs>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+ <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-8-eeef0c1e0e56@baylibre.com>
+ <022be235-f028-4b6e-9589-b0066df5d459@baylibre.com>
+ <df1cdac2c954d9a95b9026a400e68697e177787f.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/2] ethtool: rss: track rss ctx busy from core
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172915382974.2091096.5892312350045915933.git-patchwork-notify@kernel.org>
-Date: Thu, 17 Oct 2024 08:30:29 +0000
-References: <20241011183549.1581021-1-daniel.zahka@gmail.com>
-In-Reply-To: <20241011183549.1581021-1-daniel.zahka@gmail.com>
-To: Daniel Zahka <daniel.zahka@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <df1cdac2c954d9a95b9026a400e68697e177787f.camel@gmail.com>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Fri, 11 Oct 2024 11:35:46 -0700 you wrote:
-> This series prevents deletion of rss contexts that are
-> in use by ntuple filters from ethtool core.
+On 15.10.2024 08:11, Nuno Sá wrote:
+> On Mon, 2024-10-14 at 16:16 -0500, David Lechner wrote:
+> > On 10/14/24 5:08 AM, Angelo Dureghello wrote:
+> > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > 
+> > > Change to obtain the fdt use case as reported in the
+> > > adi,ad3552r.yaml file in this patchset.
+> > > 
+> > > The DAC device is defined as a child node of the backend.
+> > > Registering the child fdt node as a platform devices.
+> > > 
+> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > ---
+> > >  drivers/iio/dac/adi-axi-dac.c | 53 +++++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 53 insertions(+)
+> > > 
+> > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
+> > > index b887c6343f96..f85e3138d428 100644
+> > > --- a/drivers/iio/dac/adi-axi-dac.c
+> > > +++ b/drivers/iio/dac/adi-axi-dac.c
+> > > @@ -29,6 +29,8 @@
+> > >  #include <linux/iio/buffer.h>
+> > >  #include <linux/iio/iio.h>
+> > >  
+> > > +#include "ad3552r-hs.h"
+> > > +
+> > >  /*
+> > >   * Register definitions:
+> > >   *   https://wiki.analog.com/resources/fpga/docs/axi_dac_ip#register_map
+> > > @@ -738,6 +740,39 @@ static int axi_dac_bus_reg_read(struct iio_backend *back,
+> > > u32 reg, u32 *val,
+> > >  	return regmap_read(st->regmap, AXI_DAC_CUSTOM_RD_REG, val);
+> > >  }
+> > >  
+> > > +static void axi_dac_child_remove(void *data)
+> > > +{
+> > > +	struct platform_device *pdev = data;
+> > > +
+> > > +	platform_device_unregister(pdev);
 > 
-> Daniel Zahka (2):
->   ethtool: rss: prevent rss ctx deletion when in use
->   selftests: drv-net: rss_ctx: add rss ctx busy testcase
+> Just do platform_device_unregister(data)... Or call the argument pdev for better
+> readability...
 > 
-> [...]
+> > > +}
+> > > +
+> > > +static int axi_dac_create_platform_device(struct axi_dac_state *st,
+> > > +					  struct fwnode_handle *child)
+> > > +{
+> > > +	struct ad3552r_hs_platform_data pdata = {
+> > > +		.bus_reg_read = axi_dac_bus_reg_read,
+> > > +		.bus_reg_write = axi_dac_bus_reg_write,
+> > > +	};
+> > > +	struct platform_device_info pi = {
+> > > +		.parent = st->dev,
+> > > +		.name = fwnode_get_name(child),
+> > > +		.id = PLATFORM_DEVID_AUTO,
+> > > +		.fwnode = child,
+> > > +		.data = &pdata,
+> > > +		.size_data = sizeof(pdata),
+> > > +	};
+> > > +	struct platform_device *pdev;
+> > > +
+> > > +	pdev = platform_device_register_full(&pi);
+> > > +	if (IS_ERR(pdev))
+> > > +		return PTR_ERR(pdev);
+> > > +
+> > > +	device_set_node(&pdev->dev, child);
+> > 
+> > Not sure why Nuno suggested adding device_set_node(). It is
+> > redundant since platform_device_register_full() already does
+> > the same thing.
+> > 
+> 
+> Indeed... I realized that yesterday when (actually) looking at
+> platform_device_register_full(). You just beat me in replying to the email. Sorry for
+> the noise...
+> 
+> > (And setting it after platform_device_register_full() would
+> > be too late anyway since drivers may have already probed.)
+> 
+> > > +
+> > > +	return devm_add_action_or_reset(st->dev, axi_dac_child_remove, pdev);
+> > > +}
+> > > +
+> > >  static const struct iio_backend_ops axi_dac_generic_ops = {
+> > >  	.enable = axi_dac_enable,
+> > >  	.disable = axi_dac_disable,
+> > > @@ -874,6 +909,24 @@ static int axi_dac_probe(struct platform_device *pdev)
+> > >  		return dev_err_probe(&pdev->dev, ret,
+> > >  				     "failed to register iio backend\n");
+> > >  
+> > > +	device_for_each_child_node_scoped(&pdev->dev, child) {
+> > > +		int val;
+> > > +
+> 
+> I'm starting to come around again if some sort of flag (bus_controller or an explicit
+> has_child) wouldn't make sense (since you may need to re-spin another version). So we
+> could error out in case someone comes up with child nodes on a device that does not
+> support them. 
+> 
 
-Here is the summary with links:
-  - [net-next,1/2] ethtool: rss: prevent rss ctx deletion when in use
-    https://git.kernel.org/netdev/net-next/c/42dc431f5d0e
-  - [net-next,2/2] selftests: drv-net: rss_ctx: add rss ctx busy testcase
-    https://git.kernel.org/netdev/net-next/c/1ec43493c94f
+For this, i added a check on io-backend here, that has been asked
+to be removed.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Without adding other flags, i may use has_dac_clk, could it be ok ?
 
-
+> Anyways, I'll leave this up to you and maybe others can also argue about this...
+> 
+> > > +		/* Processing only reg 0 node */
+> > > +		ret = fwnode_property_read_u32(child, "reg", &val);
+> > > +		if (ret)
+> > > +			return dev_err_probe(&pdev->dev, ret,
+> > > +						"child node missing.");
+> > 
+> > Shouldn't the error message say that there is a problem with the reg
+> > property? We already have a handle to the child node, so the child node
+> > isn't missing.
+> 
+> Makes sense... like "reg property missing" - something on those lines.
+> 
+> - Nuno Sá
+> 
+> 
+> 
 
