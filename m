@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-369241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A8F9A1ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:36:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5FE9A1ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E121F255DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F5002873DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DBA192586;
-	Thu, 17 Oct 2024 06:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065CE192D99;
+	Thu, 17 Oct 2024 06:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x1EkKi6y"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mYo/WKx7"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E737A1C683
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B62B2F36
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729146966; cv=none; b=OwgWdz6J1BgU7YshI7FkbrR+TcvOr+/PJymZUl8NCF5I4NamgoktWgwDyd3TiiOltHssw516EvLUrSPdyLlqcZKgl8hNXRoneqrPhxPVa4nNe5kmFIdE7yTHLaLovnHjGqjwsT/O3wEdVchRXcByOkcI+WK1yrD0LUgwMDu+bNQ=
+	t=1729146967; cv=none; b=VmDZCbaCSAY6FiHQ5cD/PNLmIAWuRNo3CRhVsIx6+8B1pKNiIEIpOEXlqocsCWH+1RG9B6M1hRlE0nr9HxnIPj5Bghq9Tg4XLPGJOImadtksZqFmbmudBzlK8OfvHApcxOYNOuxmR4zEWpfyzZAYFVCRBfpf78PYEOGYncgSkho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729146966; c=relaxed/simple;
-	bh=7J/m0cVLAJYE5mzoKbcHuAxM6Fkg0GwDOHT/ePSXW3I=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=TSmvJfuSccFNbXrPXEZYQyrZNorlXvb97zs/DsRqcXTKWXmdoWbmvhBfuqfLBMm6fpk3NKhfXUV3pAZBQTye6FBLmPO520GThSRTs7GVyR6We/rjPOmaW80vtnicpE53UNE868dYSag00e3hK6hkwcdxC435ftERJnHTkdbc5mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x1EkKi6y; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1729146967; c=relaxed/simple;
+	bh=UZxFlv7Wbh48yYOEZRihECZBjQeatmsIoMNyRLNwtEo=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=aQ0Hxyd0rMgJJxzQPni6a+UuXUjG/9v22/jrh1N8v82+mJ2GbPp5u+wEn/gwSm1quEqgDrnwJ8inkUD5iL0LPLzw5y4m6zuwEaqgMWf6ViI90pOLTFqspkUwk6nma0qN6WP3TmIX69FU8CUOB9RpkCnFrqtro7XsajYk5GeMYzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mYo/WKx7; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3529d80e5so11235597b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:36:03 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e390b164c7so11943117b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729146963; x=1729751763; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uuP62fKgSKaN5wKlRPCIOtPciYOVRGvenvpBJZ6RRKk=;
-        b=x1EkKi6yGcgXTkvCJyFbpfraP/+y3PYzQVilo4DH1tXrYH7QfDWa4f2/al+qJHBNob
-         sYhVYcllDNqWAogO5cSqbyiN3VAX1H/q1K3sxZlzcmjEkqNZCjwY8AxmKGZIvR9JKsG/
-         MKFPHd25vCOA3EBcbVcN379HUfXBywoUAKVJrtDw+rFjGEd7QS/WwTt71CWiO8tbjo1q
-         N0fabhCBiLfa5t/QfQ7aNQl3ZlchT2mdfEG4OdbVgXjPJF6up8nAr4jZWZgZG4MZ6FTF
-         YG3dr3//oeFsiAJXGNVZpVyUghbtupp1ZiYa85SPFi270Wr01n7vP+o7OhJT++EbV6v/
-         798w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729146963; x=1729751763;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=google.com; s=20230601; t=1729146965; x=1729751765; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uuP62fKgSKaN5wKlRPCIOtPciYOVRGvenvpBJZ6RRKk=;
-        b=GjSvAdy6wLnkZmai02uO9c4N+ctOOtM+b8qoWaKMV4W7xqGO5jufVaB6fxxyajgkon
-         4e4dN6sAML/cjk3q9tNouxtCRdpFv14MCySBfpHpCigJgr5+WQDAqZr2S2KznH4jlQD1
-         s4i5LrGOS0ngaeTdfgTixvscCnlKQ6yKRt7sare3gEHC3uwJ+ilB4PfGMzOLqZoBC67J
-         X9RUiH9yxcpZwY9FY5CUtj1sMBWKcjz+yPRhY5AvCDoA33tHZX0qbteAsIfWF0IrE7eL
-         ERXcZrrDhaNTJZXzkJiauTpS6U2U8S3sT86s5wRh4OHGPWgZp7jGsY0WLXH/Hj2aA6eZ
-         H30g==
-X-Forwarded-Encrypted: i=1; AJvYcCXq9MXzxAOEwACQg1zOVr+OuQJVquKDrk2rVNfi6KjYk1hcBXzBL5aRBcT/fu5/u+YaW1+NP70+vE2UHvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiCIyrRuP3PH6L+sv2Ia0/XsjQJlGxXiuu35XTIbH5fRMGP6t+
-	c2EWgeVDkmwVjTtRtDT3TWLmW5ItatQEuyTNmd7UPrM4w50AKajcg34JlosY2Z7AaDL2gXfeIOD
-	Rnd12dg==
-X-Google-Smtp-Source: AGHT+IH0c5c2+SOAZYYigGPsrUE5v5DUMsPFhy9hNP8ALMBXGZOLuW9zeqtpiBkyAAhD4EHptZu0Xkl5pbCi
+        bh=h7GW1eQklKySTp+dOjr8wiuaU6Yze5XmZBYV8OINt5I=;
+        b=mYo/WKx7YXoOaAGIdhUnOVoof7ry09ptdcGGpUs0jYddQR4m2NxuYZvh4laVCcBAqd
+         49v+y5KjsZNT7HCnh5E5airaE0X0kFL7BM8SI2Vsg+oJRAky/JNOVOpuUeZYQyy894oo
+         sWKl0A/lbWgji3WOZyo8cHr03vOe4IVU7+6dSFUz5KC2pJ+eUt7GTLKG3I0qoGsAT7cy
+         sLc8UXzQbUs7In8utZbNf6XAKwoYLGtMJeSQaM8WUsdHvqJKRVl7ZaXwYKAuLHBeqjV/
+         9goq2Y2vaVg7CclZlipI8jteob2hqXfWJ81pBBhB9n7rr+KU1FaXBEvQlsUNg3Gfj1PG
+         dGDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729146965; x=1729751765;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h7GW1eQklKySTp+dOjr8wiuaU6Yze5XmZBYV8OINt5I=;
+        b=QYWT084MJRVKZSRpTOfoXdokhjAmV+s8DrQ8MY0ohw1oPP9q5KOTc22skoOw00Y0uP
+         LPe1pKK+fxq1WJExwP49REsw9/gGmjDl9LH/vimV5h2SXaRA4r1i9dnDiDH/epWj7yW+
+         WsU1S42VWoSp2ogw/VA0TwLAxkT3AUHpjIZE2dQVTQNwpYJ1rp6qSMH+ZoEfTatvrkgc
+         6BajozGgFhuSaNczcXl6oKfF8mF9eH13PAfidL8n8gi4YNLHJq3RmEGZAV318JPpiT/n
+         MlV97CAFJVfMFLS2EOL/wGiQEZjNFCCalrDBvcI0Zg9c8uMX3xE/um4zr97omi3bE+5E
+         48Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPjpKlxKPVWjBLswVd+4boPhqBeFiHNFjUoS/92jR9CRCohEOLBno2rAhjj4a4zmz5vciCbQAW251FVDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5fq7N1XNnqHXK31hLF4ufh+u3mHzDTQDF4mKU6OC/2ksrGU5Y
+	HJjOR05hhUe+Ure0jBhhZIERndqzojpAee3ARcELQpPSs5ZWbvzGERXl5OYgX9TobozWKA7m04U
+	RgmjR6Q==
+X-Google-Smtp-Source: AGHT+IEcdJa5UVv1eVKpTFGesNHv9d2XL0B7hT3B0R31fQH+7/ATODeYafpxjIDzuui8OctpbTv9II/gNUkx
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:98a5:142e:8c2e:e9e5])
- (user=irogers job=sendgmr) by 2002:a05:690c:25c1:b0:6e3:6597:222f with SMTP
- id 00721157ae682-6e3d41c8379mr1193537b3.6.1729146962804; Wed, 16 Oct 2024
- 23:36:02 -0700 (PDT)
-Date: Wed, 16 Oct 2024 23:35:50 -0700
-Message-Id: <20241017063555.366065-1-irogers@google.com>
+ (user=irogers job=sendgmr) by 2002:a05:690c:6504:b0:6db:b2ed:7625 with SMTP
+ id 00721157ae682-6e3d3bdfc62mr1002657b3.0.1729146964829; Wed, 16 Oct 2024
+ 23:36:04 -0700 (PDT)
+Date: Wed, 16 Oct 2024 23:35:51 -0700
+In-Reply-To: <20241017063555.366065-1-irogers@google.com>
+Message-Id: <20241017063555.366065-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241017063555.366065-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v5 0/5] Hwmon PMUs
+Subject: [PATCH v5 1/5] tools api io: Ensure line_len_out is always initialized
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,67 +90,26 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Following the convention of the tool PMU, create a hwmon PMU that
-exposes hwmon data for reading. For example, the following shows
-reading the CPU temperature and 2 fan speeds alongside the uncore
-frequency:
-```
-$ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_online/ -M UNCORE_FREQ -I 1000
-     1.001153138              52.00 'C   temp_cpu
-     1.001153138              2,588 rpm  fan1
-     1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
-     1.001153138                  8      tool/num_cpus_online/
-     1.001153138      1,077,101,397      UNC_CLOCK.SOCKET                 #     1.08 UNCORE_FREQ
-     1.001153138      1,012,773,595      duration_time
-...
-```
+Ensure initialization to avoid compiler warnings about potential use
+of uninitialized variables.
 
-Additional data on the hwmon events is in perf list:
-```
-$ perf list
-...
-hwmon:
-...
-  temp_core_0 OR temp2
-       [Temperature in unit coretemp named Core 0. crit=100'C,max=100'C crit_alarm=0'C. Unit:
-        hwmon_coretemp]
-...
-```
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/lib/api/io.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-v5: Fix asan issue in parse_hwmon_filename caught by a TMA metric.
-v4: Drop merged patches 1 to 10. Separate adding the hwmon_pmu from
-    the update to perf_pmu to use it. Try to make source of literal
-    strings clearer via named #defines. Fix a number of GCC warnings.
-v3: Rebase, add Namhyung's acked-by to patches 1 to 10.
-v2: Address Namhyung's review feedback. Rebase dropping 4 patches
-    applied by Arnaldo, fix build breakage reported by Arnaldo.
-
-Ian Rogers (5):
-  tools api io: Ensure line_len_out is always initialized
-  perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs
-  perf pmu: Add calls enabling the hwmon_pmu
-  perf test: Add hwmon "PMU" test
-  perf docs: Document tool and hwmon events
-
- tools/lib/api/io.h                     |   1 +
- tools/perf/Documentation/perf-list.txt |  15 +
- tools/perf/tests/Build                 |   1 +
- tools/perf/tests/builtin-test.c        |   1 +
- tools/perf/tests/hwmon_pmu.c           | 243 ++++++++
- tools/perf/tests/tests.h               |   1 +
- tools/perf/util/Build                  |   1 +
- tools/perf/util/evsel.c                |   9 +
- tools/perf/util/hwmon_pmu.c            | 820 +++++++++++++++++++++++++
- tools/perf/util/hwmon_pmu.h            | 154 +++++
- tools/perf/util/pmu.c                  |  20 +
- tools/perf/util/pmu.h                  |   2 +
- tools/perf/util/pmus.c                 |   9 +
- tools/perf/util/pmus.h                 |   3 +
- 14 files changed, 1280 insertions(+)
- create mode 100644 tools/perf/tests/hwmon_pmu.c
- create mode 100644 tools/perf/util/hwmon_pmu.c
- create mode 100644 tools/perf/util/hwmon_pmu.h
-
+diff --git a/tools/lib/api/io.h b/tools/lib/api/io.h
+index d3eb04d1bc89..1731996b2c32 100644
+--- a/tools/lib/api/io.h
++++ b/tools/lib/api/io.h
+@@ -189,6 +189,7 @@ static inline ssize_t io__getdelim(struct io *io, char **line_out, size_t *line_
+ err_out:
+ 	free(line);
+ 	*line_out = NULL;
++	*line_len_out = 0;
+ 	return -ENOMEM;
+ }
+ 
 -- 
 2.47.0.105.g07ac214952-goog
 
