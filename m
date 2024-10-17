@@ -1,178 +1,188 @@
-Return-Path: <linux-kernel+bounces-369630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CFC9A2008
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F409A2010
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0CD2283FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:30:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B6F28438C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226F91D12EB;
-	Thu, 17 Oct 2024 10:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3D21D270B;
+	Thu, 17 Oct 2024 10:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HviEcUWR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfAG5xCM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC241DACA1;
-	Thu, 17 Oct 2024 10:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E172D21E3BB
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729161013; cv=none; b=n6zasb3tQITC3esnsBbIESh4Juj9BlfniENdC6lMkW+WVafgvjBuDCv0xoJ6N125HhOXdU/0l61ACqJHgmyLJJSJnABEsz6L6UtK5dIQucRPq61nrig+QMuBloWSkfBbaGu0Y70G7n+MSzwxEoYeOEII/DYlcnPD4bQwb+RtTZA=
+	t=1729161105; cv=none; b=R/D8ibPUHC6lf/2ch7GzUEpoH2P0DwCTLgHeHEhXGZaV2st2eyQI4UqFq3vZGwYjXx2DHcBbbQ9cyXrpMBAyWzl9jaQqR9yjwmlG7WQDO+7g38u7ECuFvbcjVsFQAy8+V6/7n7nYaGxD7AYiqbOnGlc1+gwwAwFNEj3AK4PLsxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729161013; c=relaxed/simple;
-	bh=kLwSQH57PEe5zVOlFBEwDTX0uJqJce5cR9UB+XSr2Zk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PBI6+EXlfPVyFFXp2b30bPYHS7LGIi0wgIi4NNn+W7949AY890i1Z5b6qmc98Ir3gaZWz7YR08K/6dlVFNYY63AutGa++UtPGgOiFpfBzK8j9Su5cmWAyFIO4yiERiAJP+9lwfm1I8L2AhDv5QlAUgOEfLNQ+Xa8zfIYsiD55zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HviEcUWR; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729161010; x=1760697010;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=kLwSQH57PEe5zVOlFBEwDTX0uJqJce5cR9UB+XSr2Zk=;
-  b=HviEcUWRsGOW6xrRrmGlaZcXXE6okRgYXrTm/5ryk+n/QlI2TXODds5c
-   oN/Yex8ND1Q9Gol+GlezAnJcHB0+Ka9qTjueJVD3sYtQtXtf9jyz4IOLD
-   NhmqR+pxReW2Qo+trkAaIEnA6JMoJAre/NnJInNXnGzlR2zOibz9dNOqV
-   JBGygco0KS/qOn5q4iQt08PIggtuTuENcPYMgql9jjuCjskHS+RiZ/ltn
-   nBw+d4sc4wm5nnr8Ud1IslrJDrpyMEizqyV2Z6ZIHx895WZGkAt7dX3CD
-   oN+i1aGFa9QUrm9Z8POuJpTn+aUALQGIjH00kkc7qlTOUDGZ03KXkP0gg
-   g==;
-X-CSE-ConnectionGUID: iLjTbjanTdiWxDI89aueIA==
-X-CSE-MsgGUID: sHiS3dG5Tn2UpZV0f7VfNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="28771519"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="28771519"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 03:30:09 -0700
-X-CSE-ConnectionGUID: fq/YAsdiTF2LsYUjOCgWwQ==
-X-CSE-MsgGUID: eDB9BRDOTKe9wcIiYvYmZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="78164890"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.91])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 03:30:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 17 Oct 2024 13:30:00 +0300 (EEST)
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-    Rob Herring <robh@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    "Maciej W. Rozycki" <macro@orcam.me.uk>, Lukas Wunner <lukas@wunner.de>, 
-    Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
-    Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
-    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-    Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, 
-    Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-    Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v8 1/8] PCI: Protect Link Control 2 Register with RMW
- locking
-In-Reply-To: <20241017111213.00005d4f@Huawei.com>
-Message-ID: <8b022694-ed39-5216-67ed-f532ecb576df@linux.intel.com>
-References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com> <20241009095223.7093-2-ilpo.jarvinen@linux.intel.com> <20241017111213.00005d4f@Huawei.com>
+	s=arc-20240116; t=1729161105; c=relaxed/simple;
+	bh=IzG5PSvcg1vpEWcQ5pdzWwgAf53vYWIA/ZY2d5FWYVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gwaXsclQNaAEN/AqkcclP8DxD6lTQO4pOeVErjD8uc5hBYF0/+kNii4ainAHls7efBojY+NUpu8amFETpYczja5mTow8Tz1kIcbGFzEY1HrzI0miU2/dz+wJcTTRSPMAGbkpbvp8xrgaMdhoogcIw0EnaWI37NzrWgQjTD5iG0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfAG5xCM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A277C4AF0B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:31:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729161104;
+	bh=IzG5PSvcg1vpEWcQ5pdzWwgAf53vYWIA/ZY2d5FWYVk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qfAG5xCMS+uLySyzuneiqKxlkYuKORVtpxAAHXFPYHp2oiKUGv+oLcx0Mdk0mtYVz
+	 ZdTNXN+z0WVNJ6V6/b+mWJNdvcC7HCWWp1B9r4nwsl+xv8rHAwloJjPBwxotbRizlJ
+	 IYwM6et9Am+0rfre6DDirMCG2wZi5C5UlduK1lpDXZQFJiQ1+oMJOsQCoJYNuS0Xfh
+	 78aeY6qcQSDtkCIkTuJfZnxE4cwtmcFtvjFNmtB5l6Y1gfaG2m6LWWAqe3rTfAi4pF
+	 AYYJjcHpx8EC7lbl21keBswGcAwEDe28M9XzZtDIh+vQMUmY0v2g0de17Tfr9BPBJ7
+	 l6dH4fbcjFORg==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5743074bso5965771fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:31:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1p5cX4Udi5HRsJgAiTyFB6ZVNQvgVHA40F6+fBFXadELvaDsLsVVuKPswlNmXJHQI3NhoF1r+/FDizhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGO4nffX4L/yjTiwZh1LRdcE0v1fiyBfLQ6Zj1nm7DshRzw6K9
+	HlWR6nu4JpVsWT2GGOs2KVSFG0QPkc+/r8ZBnKdRDTlUh72l0T+J268PKJZl8MU46BP+BH2Gv9A
+	jtRT95MnBtHRamj5yrNx/wnVSZmI=
+X-Google-Smtp-Source: AGHT+IG1iOVo01ioiJTuaWXBujUXqJA0F8wivCSNMdi49h9T8U1BFgLJAG603Xrkgr3FsDpqsimBwMI+O2ws1JJ6zW8=
+X-Received: by 2002:a2e:611:0:b0:2fa:ce0d:ec34 with SMTP id
+ 38308e7fff4ca-2fb6d9c6270mr7476021fa.2.1729161102830; Thu, 17 Oct 2024
+ 03:31:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1216660895-1729161000=:929"
+References: <Zw51fhCkmCYrTOeV@J2N7QTR9R3.cambridge.arm.com>
+ <CAMj1kXEcLD3PWd-9osjo9AOe5Jg-NMOmJ8afB_x7VeboueLoeQ@mail.gmail.com>
+ <Zw59x0LVS-kvs9Jv@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXEnhHkxywh8TH1i=fmyAR8cXZ8D-rvV43X-N7GpCf2Axw@mail.gmail.com>
+ <Zw6Jk74-d0mhR0jx@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXG3bwMGpArYNUm-qMO7PPgb3--wy5kp-3Ks2Uv9M479xg@mail.gmail.com>
+ <Zw6X9KQT0-z7r7SY@J2N7QTR9R3.cambridge.arm.com> <CAMj1kXGGmsWs2XpM7zLURjKp67Uz2ePi1pSV1=rPCMgviLVUgw@mail.gmail.com>
+ <Zw9_imsl2KLf7_GY@J2N7QTR9R3> <CACRpkda8tO=QLF_zznoNjdNfNZJVntY_3+247E=qK6zNqRnVSA@mail.gmail.com>
+ <ZxDh9biUbf9W8gNN@J2N7QTR9R3>
+In-Reply-To: <ZxDh9biUbf9W8gNN@J2N7QTR9R3>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 17 Oct 2024 12:31:31 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFn=pfJqTrMrnqT+OLi3UqAq0PieROQhbC2M3B2uAzyEQ@mail.gmail.com>
+Message-ID: <CAMj1kXFn=pfJqTrMrnqT+OLi3UqAq0PieROQhbC2M3B2uAzyEQ@mail.gmail.com>
+Subject: Re: Crash on armv7-a using KASAN
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Clement LE GOFFIC <clement.legoffic@foss.st.com>, Russell King <linux@armlinux.org.uk>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Kees Cook <kees@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Mark Brown <broonie@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	Antonio Borneo <antonio.borneo@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, 17 Oct 2024 at 12:10, Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> On Wed, Oct 16, 2024 at 09:00:22PM +0200, Linus Walleij wrote:
+> > On Wed, Oct 16, 2024 at 10:55=E2=80=AFAM Mark Rutland <mark.rutland@arm=
+.com> wrote:
+> >
+> > > I believe that's necessary for the lazy TLB switch, at least for SMP:
+> > >
+> > >         // CPU 0                        // CPU 1
+> > >
+> > >         << switches to task X's mm >>
+> > >
+> > >                                         << creates kthread task Y >>
+> > >                                         << maps task Y's new stack >>
+> > >                                         << maps task Y's new shadow >=
+>
+> > >
+> > >                                         // Y switched out
+> > >                                         context_switch(..., Y, ..., .=
+..);
+> > >
+> > >         // Switch from X to Y
+> > >         context_switch(..., X, Y, ...) {
+> > >                 // prev =3D X
+> > >                 // next =3D Y
+> > >
+> > >                 if (!next->mm) {
+> > >                         // Y has no mm
+> > >                         // No switch_mm() here
+> > >                         // ... so no check_vmalloc_seq()
+> > >                 } else {
+> > >                         // not taken
+> > >                 }
+> > >
+> > >                 ...
+> > >
+> > >                 // X's mm still lacks Y's stack + shadow here
+> > >
+> > >                 switch_to(prev, next, prev);
+> > >         }
+> > >
+> > > ... so probably worth a comment that we're faulting in the new
+> > > stack+shadow for for lazy tlb when switching to a task with no mm?
+> >
+> > Switching to a task with no mm =3D=3D switching to a kernel daemon.
+>
+> A common misconception, but not always true:
+>
+> * A kernel thread can have an mm: see kthread_use_mm() and
+>   kthread_unuse_mm().
+>
+> * A user thread can lose its mm while exiting: see how do_exit() calls
+>   exit_mm(), and how hte task remains preemptible for a while
+>   thereafter.
+>
+> ... so we really do just mean "a task with no mm".
+>
+> > And those only use the kernel memory and relies on that always
+> > being mapped in any previous mm context, right.
+>
+> A task with no mm only uses kernel memory. Anything it uses must be
+> mapped in init_mm, but *might* not have been copied into every other mm,
+> and hence might not be in the previous mm context as per the example
+> above.
+>
+> > But where do we put that comment? In kernel/sched/core.c
+> > context_switch()?
+>
+> I was trying to suggest we update the existing comment in switch_to() to
+> be more explicit. e.g. expand the existing comment:
+>
+>         @
+>         @ Do a dummy read from the new stack while running from the old o=
+ne so
+>         @ that we can rely on do_translation_fault() to fix up any stale =
+PMD
+>         @ entries covering the vmalloc region.
+>         @
+>
+> ... with:
+>
+>         @
+>         @ For a non-lazy mm switch, check_vmalloc_seq() has ensured that
+>         @ that the active mm's page tables have mappings for the prev
+>         @ task's stack and the next task's stack.
+>         @
+>         @ For a lazy mm switch the active mm's page tables have mappings
+>         @ for the prev task's stack but might not have mappings for the
+>         @ new taks stack. Do a dummy read from the new stack while
 
---8323328-1216660895-1729161000=:929
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+task
 
-On Thu, 17 Oct 2024, Jonathan Cameron wrote:
+>         @ running from the old stack so that we can rely on
+>         @ do_translation_fault() to fix up any stale PMD entries
+>         @ covering the vmalloc region.
 
-> On Wed,  9 Oct 2024 12:52:16 +0300
-> Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
->=20
-> > PCIe Bandwidth Controller performs RMW accesses the Link Control 2
-> > Register which can occur concurrently to other sources of Link Control
-> > 2 Register writes. Therefore, add Link Control 2 Register among the PCI
-> > Express Capability Registers that need RMW locking.
-> >=20
-> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> > Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> Totally trivial comment inline.
->=20
-> LGTM
->=20
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->=20
-> > ---
-> >  Documentation/PCI/pciebus-howto.rst | 14 +++++++++-----
-> >  include/linux/pci.h                 |  1 +
-> >  2 files changed, 10 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/Documentation/PCI/pciebus-howto.rst b/Documentation/PCI/pc=
-iebus-howto.rst
-> > index f344452651e1..375d9ce171f6 100644
-> > --- a/Documentation/PCI/pciebus-howto.rst
-> > +++ b/Documentation/PCI/pciebus-howto.rst
-> > @@ -217,8 +217,12 @@ capability structure except the PCI Express capabi=
-lity structure,
-> >  that is shared between many drivers including the service drivers.
-> >  RMW Capability accessors (pcie_capability_clear_and_set_word(),
-> >  pcie_capability_set_word(), and pcie_capability_clear_word()) protect
-> > -a selected set of PCI Express Capability Registers (Link Control
-> > -Register and Root Control Register). Any change to those registers
-> > -should be performed using RMW accessors to avoid problems due to
-> > -concurrent updates. For the up-to-date list of protected registers,
-> > -see pcie_capability_clear_and_set_word().
-> > +a selected set of PCI Express Capability Registers:
-> > +
-> > +* Link Control Register
-> > +* Root Control Register
-> > +* Link Control 2 Register
-> > +
-> > +Any change to those registers should be performed using RMW accessors =
-to
-> > +avoid problems due to concurrent updates. For the up-to-date list of
-> > +protected registers, see pcie_capability_clear_and_set_word().
->=20
-> If I were super fussy I'd ask for a precursor patch doing the reformat.
->=20
-> Meh - up to Bjorn, but for me this is small enough to not be worth
-> the effort.
+Might as well be more precise here, and say "populate missing PMD
+entries covering the new task's stack in the old task's page tables"
 
-Hi Jonathan,
+>         @
+>
+> Ard, does that sound good to you?
+>
 
-Thanks. Since you brought it up, I've no problem in splitting the=20
-reformatting into own patch, it won't take more than a minute
-anyway to do that change.
-
---=20
- i.
-
-> > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > index 573b4c4c2be6..be5ed534c39c 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -1274,6 +1274,7 @@ static inline int pcie_capability_clear_and_set_w=
-ord(struct pci_dev *dev,
-> >  {
-> >  =09switch (pos) {
-> >  =09case PCI_EXP_LNKCTL:
-> > +=09case PCI_EXP_LNKCTL2:
-> >  =09case PCI_EXP_RTCTL:
-> >  =09=09return pcie_capability_clear_and_set_word_locked(dev, pos,
-> >  =09=09=09=09=09=09=09=09 clear, set);
->=20
->=20
-
---8323328-1216660895-1729161000=:929--
+Yes.
 
