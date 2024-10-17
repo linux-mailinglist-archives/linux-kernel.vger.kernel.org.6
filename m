@@ -1,143 +1,184 @@
-Return-Path: <linux-kernel+bounces-369389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 379C59A1CB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4689A1CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F7BE1C27255
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:12:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65031F2202C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE24E1D54C1;
-	Thu, 17 Oct 2024 08:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58E11D31A0;
+	Thu, 17 Oct 2024 08:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urSYwt2r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="A3v8o0xO"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170F816EB76;
-	Thu, 17 Oct 2024 08:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15321D278C;
+	Thu, 17 Oct 2024 08:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152631; cv=none; b=pHT7Lhm97qBwxNGWcsYqLDCneO+22ADvyGb5AVwNREB4Pu6hNIX5SBfxkokA80KfnMYw+nJaFuFltXQCZatjyvHDCfbqszdwSTvU/otOeTbeCj/dsuRixA0fv4h4wk7u8QMgG6Z9dHIx2DBfopGuHxctQc5K+6qy6l0R9gZUWDM=
+	t=1729152688; cv=none; b=tSIVTsUpFMYkeL3fibkfvbvkK3NmHwpGbjJw5u/3y/CH7ugXOhscTlicj5gYkR1YzxUTXQpVo7t/R8uoc/4U7SC/AFVfydf0zJ50gLG0koGHNOz6N+8pWdOfRKM9Pmtc2zNgXnNA5Qb00XgGzz6VV3C+7CCT/WCJaA2Bead1SE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152631; c=relaxed/simple;
-	bh=64LvGzD9gEBjfxxxZ6qCqjt0JN7XE2w1oV67leFXXR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrLeAG/+pWB2HSEOYKUGUzdSwQYeNO+qzt2HMgIFnogCfsC+CySPD5ulvDBwyzESiMBa5j2hJPNQoO1J+QLMfc2jj9n2+SrUZ68qLb5jEdn7szeZNLsVXMDwhzUxDONrY88PwbGiuNT4K3+iuedwjZpD8hFFpbNNz+0fCFYqrms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urSYwt2r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5EB9C4CEC3;
-	Thu, 17 Oct 2024 08:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729152630;
-	bh=64LvGzD9gEBjfxxxZ6qCqjt0JN7XE2w1oV67leFXXR8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=urSYwt2rcpIEZ0P3n52AxQMQp9tKPKY8oD5uONoJtFBX0buMHyrYSbyUjpMchfrm1
-	 2Dvn0SooFeU3AGi1xy19BBaAzVA6qUaCwqrANCOPNu0woEKee0vww6FEUmZJCITb4g
-	 hFT+PF+9agwT22HtBtX71UxYyHa+smT+bq2JIrNmMxS/khZ8znpX/uyBAZ6iZ3q3TN
-	 tmi9bVoCNTGjQdj5A1QYSYqp5IrT7xRZl6AWObXa6Bi7oxRE0gXQwt4s7uiCVLzDFt
-	 hL6GfsxsL08rL+1os1+T1sYOwGNTHWjfq++Jf0cyfIe4dA9xXEmfl3eY5GG3rn/f2S
-	 cSwbSCo6k1m7w==
-Date: Thu, 17 Oct 2024 10:10:27 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
-	Anup <anupnewsmail@gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: spi: Convert to dtschema
-Message-ID: <m5pz23mlikndtntbdktkjecgh7jjhoyjcsv7uehugg4p4psgrm@yeckjpqu4tad>
-References: <ZxALy6p8m9eS9uIW@Emma>
+	s=arc-20240116; t=1729152688; c=relaxed/simple;
+	bh=L6LmrLd1QFSEntUWb7XQSEIeIbyw7jUSRFYRRWTV/ck=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=HtZSX9n7Q1AQxj/XZFXs+l6ajqAmlrY8zrjWmPKqj2B8tBiJ5n+c5CsRcV47qXorlq+Yxb5GyXTLt6nrBVwxAIdbrqYIqi5viztrzQQ5HQ8APlfvbelUyreN/X0F0VKtsKasmLAnuD73EJyNJrccNpgTeVwKtPOZsp7V1tFhYus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=A3v8o0xO; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.178.76] (host-212-18-30-247.customer.m-online.net [212.18.30.247])
+	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 97D2A2FC005F;
+	Thu, 17 Oct 2024 10:11:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1729152679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=68VuTC6Xxo1LxwhwBMk+4MMZAYXOcNtEil4dk7qsY3c=;
+	b=A3v8o0xO+EvK1zO00NHYtI+1uAsvLGHOhvFf8xSAxlmTcdW9Q6kXEbD0sf5nH9CTda4px0
+	QUe2eIY5ZXBZuqB2Q3SJ1uOCEJuXeGnIYZGz/2eZPGgsnmdA4Yc7xjt2//4MBd+seFgceH
+	1rIYMJP4wHIqJKl71rpwbG+46ppvsrg=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=ggo@tuxedocomputers.com
+Message-ID: <41c1c88a-b2c9-4c05-863a-467785027f49@tuxedocomputers.com>
+Date: Thu, 17 Oct 2024 10:11:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZxALy6p8m9eS9uIW@Emma>
+User-Agent: Mozilla Thunderbird
+To: Ben Chuang <benchuanggli@gmail.com>
+Content-Language: en-US
+From: Georg Gottleuber <ggo@tuxedocomputers.com>
+Subject: [RFC PATCH v2 1/1] mmc: sdhci-pci-gli: fix x86/S0ix SoCs suspend for
+ GL9767
+Cc: Ben Chuang <benchuanggli@gmail.com>, adrian.hunter@intel.com,
+ Ulf Hansson <ulf.hansson@linaro.org>, victor.shih@genesyslogic.com.tw,
+ Lucas.Lai@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw,
+ HL.Liu@genesyslogic.com.tw, cs@tuxedo.de,
+ Georg Gottleuber <ggo@tuxedocomputers.com>,
+ Ben Chuang <ben.chuang@genesyslogic.com.tw>, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 06:54:03PM +0000, Karan Sanghavi wrote:
-> Convert bcm2835-aux-spi binding to Dt schema
-> 
-> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+Adapt commit 1202d617e3d04c ("mmc: sdhci-pci-gli: fix LPM negotiation
+so x86/S0ix SoCs can suspend") also for GL9767 card reader.
 
-Thank you for your patch. There is something to discuss/improve.
+This patch was written without specs or deeper knowledge of PCI sleep
+states. Tests show that S0ix is reached and lower power consumption
+when suspended (6 watts vs 1.2 watts for TUXEDO InfinityBook Pro Gen9
+Intel).
 
+The function of the card reader appears to be OK.
 
-Subject misses device prefix and considering Mark's preference about
-spi: it should look like:
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219284
+Fixes: f3a5b56c1286 ("mmc: sdhci-pci-gli: Add Genesys Logic GL9767 support")
+Co-developed-by: Christoffer Sandberg <cs@tuxedo.de>
+Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
+---
+v1 -> v2:
+- use gl9767_vhs_read() and gl9767_vhs_write()
+- editorial changes to the commit message
 
-spi: dt-bindings: brcm,bcm2835-aux-spi: Convert to dtschema
+ drivers/mmc/host/sdhci-pci-gli.c | 61 +++++++++++++++++++++++++++++++-
+ 1 file changed, 60 insertions(+), 1 deletion(-)
 
-> ---
-> 
-> Changes since V2:
->  - Modified the Patch subject
->  - Removed unnecessary description and example
-> 
+diff --git a/drivers/mmc/host/sdhci-pci-gli.c
+b/drivers/mmc/host/sdhci-pci-gli.c
+index 0f81586a19df..bdccd74bacd2 100644
+--- a/drivers/mmc/host/sdhci-pci-gli.c
++++ b/drivers/mmc/host/sdhci-pci-gli.c
+@@ -1205,6 +1205,28 @@ static void
+gl9763e_set_low_power_negotiation(struct sdhci_pci_slot *slot,
+        pci_write_config_dword(pdev, PCIE_GLI_9763E_VHS, value);
+ }
 
-...
++static void gl9767_set_low_power_negotiation(struct sdhci_pci_slot *slot,
++                                            bool enable)
++{
++       struct pci_dev *pdev = slot->chip->pdev;
++       u32 value;
++
++       gl9767_vhs_write(pdev);
++
++       pci_write_config_dword(pdev, PCIE_GLI_9767_VHS, value);
++
++       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
++
++       if (enable)
++               value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
++       else
++               value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
++
++       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
++
++       gl9767_vhs_read(pdev);
++}
++
+ static void sdhci_set_gl9763e_signaling(struct sdhci_host *host,
+                                        unsigned int timing)
+ {
+@@ -1470,6 +1492,42 @@ static int gl9763e_suspend(struct sdhci_pci_chip
+*chip)
+        gl9763e_set_low_power_negotiation(slot, false);
+        return ret;
+ }
++
++static int gl9767_resume(struct sdhci_pci_chip *chip)
++{
++       struct sdhci_pci_slot *slot = chip->slots[0];
++       int ret;
++
++       ret = sdhci_pci_gli_resume(chip);
++       if (ret)
++               return ret;
++
++       gl9767_set_low_power_negotiation(slot, false);
++
++       return 0;
++}
++
++static int gl9767_suspend(struct sdhci_pci_chip *chip)
++{
++       struct sdhci_pci_slot *slot = chip->slots[0];
++       int ret;
++
++       /*
++        * Certain SoCs can suspend only with the bus in low-
++        * power state, notably x86 SoCs when using S0ix.
++        * Re-enable LPM negotiation to allow entering L1 state
++        * and entering system suspend.
++        */
++       gl9767_set_low_power_negotiation(slot, true);
++
++       ret = sdhci_suspend_host(slot->host);
++       if (ret) {
++               gl9767_set_low_power_negotiation(slot, false);
++               return ret;
++       }
++
++       return 0;
++}
+ #endif
 
-> diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-> new file mode 100644
-> index 000000000..351019d68
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/brcm,bcm2835-aux-spi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Broadcom BCM2835 Auxiliary SPI1/2 Controller
-> +
-> +maintainers:
-> +  - Karan Sanghavi <karansanghvi98@gmail.com>
-> +
-> +description: The BCM2835 contains two forms of SPI master controller. One is known simply as
-
-This feels loo long. Wrapping is according to coding style (not
-checkpatch), so at 80. You can also have line break after "description"
-keyword, so:
-
-description:
-  The BCM2835 contains ......
-
-Rest looks good, so please send v4 unless Mark could fix these up when
-applying.
-
-If sending v4, remember about tag (see explanation below):
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-Best regards,
-Krzysztof
-
+ static int gli_probe_slot_gl9763e(struct sdhci_pci_slot *slot)
+@@ -1605,6 +1663,7 @@ const struct sdhci_pci_fixes sdhci_gl9767 = {
+        .probe_slot     = gli_probe_slot_gl9767,
+        .ops            = &sdhci_gl9767_ops,
+ #ifdef CONFIG_PM_SLEEP
+-       .resume         = sdhci_pci_gli_resume,
++       .resume         = gl9767_resume,
++       .suspend        = gl9767_suspend,
+ #endif
+ };
+-- 
+2.34.1
 
