@@ -1,101 +1,49 @@
-Return-Path: <linux-kernel+bounces-370111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB93E9A27D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 350A99A27E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70D10B2B7F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:00:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB192B28F26
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6B11DBB2C;
-	Thu, 17 Oct 2024 15:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFEC1DF270;
+	Thu, 17 Oct 2024 16:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C0jMbSe+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YosQOlrJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411CF1DEFFB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D141DED54;
+	Thu, 17 Oct 2024 16:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729180628; cv=none; b=mxYZs+yGVeXrCj2mpFyTQGXQ9nk2gw1yl7+xe+9cWYVL4EhVvufmk1PU72R/4MKTKW2GjLUURN5vJlHcGe5IWbzZe2i9CXCX1T6vdK3mH+e6ZrHaRZD8l/PKcHHZ7ggOulcUYEovxYRUQfUyzJ8e9t+LEHLMlX2QKOQDKbQBdZ8=
+	t=1729180824; cv=none; b=OOmLfbvFA/EFogj5zshF6U3rmQN00LTyGvqQomAjuLP9DFzpovROahlHTKlwgX1wZIkZSlySCOc49XM671kRzaIa6aaqk7pngTtp/T8m17lxEJNC+MyetD1sFoyH4uzrLezYQEMlvI75uOLxQ2MPuhqmYaBG8cHW7qkoZo6YTdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729180628; c=relaxed/simple;
-	bh=/VD9JVIlRFWH9Bbc/DMmpRuCSyMrevX6I9tRJs6OSeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TOp8JxzJpE/LZfiRgHh+kEibT8SDrxneKUDY6RcFpxbzgwFbPPmonxSEjNmTyRrz1gdemSKAlR5VA8Nn1+gYIE8y/JxJNetBXmd2+ZUjjpPcyFWCL/EpIlfdXOg+OLQwcJQp9Uehi5T9UuOZDdfYJ77OyatjT4qe3sMU7ppMfV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C0jMbSe+; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729180624; x=1760716624;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/VD9JVIlRFWH9Bbc/DMmpRuCSyMrevX6I9tRJs6OSeA=;
-  b=C0jMbSe+pk2jNze4JcBzX+ftAcmVjVnCCYadf4qjW/OeitV2IKNj8svg
-   8X2IBthtJ35xFmXFC9yp6+IlLt39Z/sbKP4fFMDBpB44Cep90TGDIOe55
-   n9m/JMT7Hz98cAOdmvogdlzQlNNor6tUSQBlcYSggb1InUzM22NZI3v5S
-   KkbLjoTmFSROH6qTUfVIoGGzMcWy8yD0Q7veEuJHrhZk7jWqd65SFCAW1
-   BVNg68QceuXIwqIMBITJHnSO5B9Dqag9j8wCN8GfONpcJpS6nRUPhFTma
-   bIO1aOp+UP6L0+05S+lAFttlYyDpemhcb4h33o1mzyVED8AgbXaY0aEPJ
-   w==;
-X-CSE-ConnectionGUID: WMmCI3QzT3yPLriChcaNuA==
-X-CSE-MsgGUID: gWxLkcvgSg+CZ3w2yzKh2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="32471904"
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="32471904"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 08:57:03 -0700
-X-CSE-ConnectionGUID: vA5l5zXuT9yH2rdgTtEmzA==
-X-CSE-MsgGUID: 8Nvm5QWhT6KF+CcCuAQORA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="83233226"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 17 Oct 2024 08:56:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id D957036B; Thu, 17 Oct 2024 18:56:54 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Eric Chan <ericchancf@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kai Huang <kai.huang@intel.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: [PATCH 2/2] x86/mm: Make memremap(MEMREMAP_WB) map memory as encrypted by default
-Date: Thu, 17 Oct 2024 18:56:42 +0300
-Message-ID: <20241017155642.1942514-3-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241017155642.1942514-1-kirill.shutemov@linux.intel.com>
-References: <20241017155642.1942514-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1729180824; c=relaxed/simple;
+	bh=HWZ/+LpmEe+1A0we3KErLmK+BvF/9MtyVPilNRg8TTs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rLSZ6bmP3DhThhbOepuXL6ell22iecQpOROmYAZGDThYnV0Mb4z/VbMsa5n7hm9G7gJWag9gdMyGXrsiegpbW0ffwcm+GpJCXLsfZL+iHO3VsuryE+POHl8/yXfhisZD3xgNqx/TAX+u5OC2KlNs51h3jxpjnuS0s7AW6iCQ1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YosQOlrJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 490A0C4CEC3;
+	Thu, 17 Oct 2024 16:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729180824;
+	bh=HWZ/+LpmEe+1A0we3KErLmK+BvF/9MtyVPilNRg8TTs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YosQOlrJnzgfIBzM0XUJ5evn4SfuaI6xB7/S9V8XnC6REV0dSSHRcYPci+0gY7XUc
+	 hnCIdqGL4K8ccYqGYirzdS6/IGhbnvFxmDi87Om4tx6SEbn9q+BpZlcrxXZwaey9Sh
+	 TN7glTJ16i3+r5AZDwKTnu1FMq1O4v2CgZH+qCc7vKBbL3QBELv1IsFDUREn1eL2pO
+	 Zpp0APcemoWKJ8sWKf+XyiHq3CUAp+Jr59gBeuz9/IPdXtI3j8yWb9Gpw0ibj2Qa+E
+	 5JZsniqE6ja4tyz6w370ibMD14/aRmLWgDj9ImCjjG21Ml0ByO7Q586GFZK37DX7Wv
+	 AVnyLIkjEvQhw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD643809A8A;
+	Thu, 17 Oct 2024 16:00:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,70 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH V3][next] Bluetooth: btintel_pcie: Remove structually deadcode
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <172918082975.2518908.12349114260012492384.git-patchwork-notify@kernel.org>
+Date: Thu, 17 Oct 2024 16:00:29 +0000
+References: <20241015193013.16790-1-everestkc@everestkc.com.np>
+In-Reply-To: <20241015193013.16790-1-everestkc@everestkc.com.np>
+To: Everest K.C. <everestkc@everestkc.com.np>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, skhan@linuxfoundation.org,
+ kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Currently memremap(MEMREMAP_WB) produces decrypted/shared mapping:
+Hello:
 
-memremap(MEMREMAP_WB)
-  arch_memremap_wb()
-    ioremap_cache()
-      __ioremap_caller(.encrytped = false)
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-It is a bad default. On TDX guests, access via shared mapping can be
-destructive[1].
+On Tue, 15 Oct 2024 13:30:12 -0600 you wrote:
+> The switch case statement has a default branch. Thus, the return
+> statement at the end of the function can never be reached.
+> Fix it by removing the return statement at the end of the
+> function.
+> 
+> This issue was reported by Coverity Scan.
+> 
+> [...]
 
-Kernel already provides a way to request decrypted mapping explicitly
-via MEMREMAP_DEC flag.
+Here is the summary with links:
+  - [V3,next] Bluetooth: btintel_pcie: Remove structually deadcode
+    https://git.kernel.org/bluetooth/bluetooth-next/c/8f66f6498463
 
-Make memremap(MEMREMAP_WB) produce encrypted/private mapping by default
-unless MEMREMAP_DEC is specified.
-
-It fixes crash on kexec in TDX guests if CONFIG_EISA is enabled.
-
-[1] https://lore.kernel.org/all/20240822095122.736522-1-kirill.shutemov@linux.intel.com
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ashish Kalra <ashish.kalra@amd.com>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>
----
- arch/x86/include/asm/io.h | 3 +++
- arch/x86/mm/ioremap.c     | 8 ++++++++
- 2 files changed, 11 insertions(+)
-
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 1d60427379c9..1a3a34b40598 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -180,6 +180,9 @@ extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, un
- extern void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size);
- #define ioremap_encrypted ioremap_encrypted
- 
-+void *arch_memremap_wb(phys_addr_t phys_addr, size_t size, unsigned long flags);
-+#define arch_memremap_wb arch_memremap_wb
-+
- /**
-  * ioremap     -   map bus memory into CPU space
-  * @offset:    bus address of the memory
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 70b02fc61d93..fc65a81fd777 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -503,6 +503,14 @@ void iounmap(volatile void __iomem *addr)
- }
- EXPORT_SYMBOL(iounmap);
- 
-+void *arch_memremap_wb(phys_addr_t phys_addr, size_t size, unsigned long flags)
-+{
-+	if (flags & MEMREMAP_DEC)
-+		return ioremap_cache(phys_addr, size);
-+
-+	return ioremap_encrypted(phys_addr, size);
-+}
-+
- /*
-  * Convert a physical pointer to a virtual kernel pointer for /dev/mem
-  * access
+You are awesome, thank you!
 -- 
-2.45.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
