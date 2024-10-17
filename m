@@ -1,275 +1,193 @@
-Return-Path: <linux-kernel+bounces-370005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03D19A25AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DD99A25AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80693284F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B878C1C23BAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D591DE8AF;
-	Thu, 17 Oct 2024 14:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDC11DE8B6;
+	Thu, 17 Oct 2024 14:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMgeN5xT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PNFCdwZk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6215FDA7;
-	Thu, 17 Oct 2024 14:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2D05FDA7
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729176991; cv=none; b=CJrL0r3CjgJTe5VjJfy0O8Ae1qJ8XD5wTFcngU3LQnMi5ZCqNjNjxrRw756FUKgcdNmboMsB9/+yENn/eFOIOZtFiHcJJovsvhd/ddQOOcwVJkaLoEYcud5QCKk53w72bbfTJ95PtuQhfKVAl9CgzdEHfOphSwkZBaMHzqUmTBM=
+	t=1729177000; cv=none; b=tNekwcsSYoxE2CX3krN1uaExRPFW7rlR+Oud956ZSxXG9CITniK5B2lYlwBMjd9E2cN7lJOIdPghNGVZcQ1EETN9ufOeRS8bOUGYHSnZt2DzQccMKL7p1bP0sxRQXMnjMZB80IwrY7sUhH3q24AyfV0cXStzJrqp85QB59aKcdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729176991; c=relaxed/simple;
-	bh=kSDJbvRZM2zer66FVUrux01A1ru+NxMGvOFWZZj7jOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4o2sYJRECpfghO5M0FOBWBaBYCfcEhmrhh1qrTdt5DvRzQr1rTQ1dQ5x1Yrk7VzuJe1nWTV0kxP8bT5CTH9ilK7W6gkLLdDKzinZVWGdOiViZGIlDtlLgRTy+hzPBn1BiUDa+BwcN6WalNE1QmWb/EhbntHHPBZMWuGkI8oYPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMgeN5xT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95103C4CECD;
-	Thu, 17 Oct 2024 14:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729176990;
-	bh=kSDJbvRZM2zer66FVUrux01A1ru+NxMGvOFWZZj7jOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qMgeN5xTMCE9a5mVBGncegfDv02IqePCrfgme5JRWqKDwHtzdH2rzExn1iqdyzmt8
-	 er18+ql5WOaKn7y4vrZrh7AYyus1PCIbsbeciOJN+PfJcoLpIIHL9B7pNugUb6P+dq
-	 4sAiG/3azm59oH9cJpbh/szRZR406lUjwSodfg/NXa8+U6QsnT02mUHcQAYdeSuH85
-	 vBvrth9+05rACYOO1qqrNbdCVjET3T1CxLeUUW989fiVCM9hoT2BjLvNRimnce3Ios
-	 U8CbYNgymoKN49naZdEGytC+2XUsDuUEhoakzM+/uVcttdVgs3GXO9TTKax6Q0K6F0
-	 Sqo8TzamcnM7w==
-Date: Thu, 17 Oct 2024 07:56:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, dchinner@redhat.com,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Christoph Hellwig <hch@lst.de>, nirjhar@linux.ibm.com
-Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
- extsize
-Message-ID: <20241017145630.GU21853@frogsfrogsfrogs>
-References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
- <20241011163830.GX21853@frogsfrogsfrogs>
- <20241011164057.GY21853@frogsfrogsfrogs>
- <ZwzlPR6044V/Siph@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <20241014152856.GG21853@frogsfrogsfrogs>
- <Zw4RYapUKWH5u7yt@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <20241015162237.GX21853@frogsfrogsfrogs>
- <ZxC2xEdWGVXDIFqR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+	s=arc-20240116; t=1729177000; c=relaxed/simple;
+	bh=ahaN8/bn/1F79tSZ8q5oj15hHgim7szJYjJbuWXiP9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KOk14b6wJ60KV4wnxmGJqAG4vWgCSEHqgXzrz4T9ywxRjpcC7euh8iQGg42MVtNYX0JaD/BapBPkv2NnyYMgQWWRR539j8R64aMZttKIDxtPT1CWe/+wo9P1cjvMIuxNFOoaNCXMqjWqlsdpJbsXSPqtT+cN8gyTCeahVe//NTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PNFCdwZk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729176997;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Lkrny24ugYkx/dzeS4nu76fI2FwDJlgQ1Q4zPnIoh/E=;
+	b=PNFCdwZkdpQQyiNc9OzfhFr9ikKASwlHjMRrAjoScf77ooq3eAtkEXyUTHYiWBy64swiVT
+	c0z5cwnyi8FZvIK33otWeJFc0BIg13tqGctBtspIxKWJTGvkqrapGDFYox+AJnFmEgoGvT
+	ckDl8Y5IpsZMWHUl9RCRlL4lhVfRFkg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-561-SsEh6DkJPxGS_g9HV2mBxQ-1; Thu, 17 Oct 2024 10:56:36 -0400
+X-MC-Unique: SsEh6DkJPxGS_g9HV2mBxQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d47fdbbd6so527371f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:56:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729176995; x=1729781795;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lkrny24ugYkx/dzeS4nu76fI2FwDJlgQ1Q4zPnIoh/E=;
+        b=Vw97pbM1gsVYAVKR/RSZlmtWusDDheMFqevpWDtkfXROXx7fMxsLl6JU1t2CITtpB/
+         81THZsr2icQj7S1Zu6P9ikTOVO+VcGBcSFnD6LZYdMlkWVA+BU/hAIONVJwC+CzLCkQT
+         /TMptPLCMvQqVlHewgN26XiqrirOWnGIEa2jMG1qKwYy9Z9Pg47JmI0R29HAgdjPxQgX
+         olb1sAdCzFQrNxvsHRP5wG4z4eCZi3QD3uEEvffRuA/r3nb3uGvQ2ckicBCVVd3gmOva
+         DPLtLzfzCb2tsBFShDKwisZgVHHY4Rywb/W0GM4K89Mve1d7wgisGzHCY8yq4Ho2cYoV
+         VxYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQp7S3MgvapZoEBqDE/OM7dMhclpWCDx6ugD3H3Ry8zsqMhJbd5EfeARix9mZCirM+hhVL+Ec0Wm3eGZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTzT5QyPzQzS44AdGLsyJzh9ctFZv0G/FyzP38p0AG/WHfWAW4
+	BsVZ+tzjB6MFRU5Tm9NBeFjYqQot81P3fT1VFqahp3HCVR97to6Px/66IdyZdUXFkCWcBQPnli2
+	s4rWOIV7+N/pFVo5yWXVPGqAEDP719L23ulHnKp0roAtmIbhA4ecVrzSScmiJhA==
+X-Received: by 2002:a5d:6703:0:b0:37d:4dd5:220f with SMTP id ffacd0b85a97d-37d551fba84mr14757510f8f.26.1729176994186;
+        Thu, 17 Oct 2024 07:56:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyVCqXnlZdEr4Aqw5wezq88XLLTgNCm3TbjQGwcJzfHdNW5KvChf5Wlg2cdODPFlHtUexjTQ==
+X-Received: by 2002:a5d:6703:0:b0:37d:4dd5:220f with SMTP id ffacd0b85a97d-37d551fba84mr14757426f8f.26.1729176992283;
+        Thu, 17 Oct 2024 07:56:32 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf82b1sm7554576f8f.72.2024.10.17.07.56.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 07:56:31 -0700 (PDT)
+Message-ID: <98eacabd-3465-4f5d-b045-8e8595d68676@redhat.com>
+Date: Thu, 17 Oct 2024 16:56:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxC2xEdWGVXDIFqR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
+ struct kvm_gmem_private
+To: Peter Xu <peterx@redhat.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, tabba@google.com,
+ quic_eberman@quicinc.com, roypat@amazon.co.uk, rientjes@google.com,
+ fvdl@google.com, jthoughton@google.com, seanjc@google.com,
+ pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com,
+ jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev,
+ erdemaktas@google.com, vannapurve@google.com, qperret@google.com,
+ jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org,
+ brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev,
+ pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com,
+ anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com,
+ vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com,
+ oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1726009989.git.ackerleytng@google.com>
+ <bd163de3118b626d1005aa88e71ef2fb72f0be0f.1726009989.git.ackerleytng@google.com>
+ <Zwf7k1wmPqEEaRxz@x1n> <diqz8quunrlw.fsf@ackerleytng-ctop.c.googlers.com>
+ <Zw7f3YrzqnH-iWwf@x1n> <diqz1q0hndb3.fsf@ackerleytng-ctop.c.googlers.com>
+ <1d243dde-2ddf-4875-890d-e6bb47931e40@redhat.com> <ZxAfET87vwVwuUfJ@x1n>
+ <20241016225157.GQ3559746@nvidia.com> <ZxBRC-v9w7xS0xgk@x1n>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZxBRC-v9w7xS0xgk@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 12:33:32PM +0530, Ojaswin Mujoo wrote:
-> On Tue, Oct 15, 2024 at 09:22:37AM -0700, Darrick J. Wong wrote:
-> > On Tue, Oct 15, 2024 at 12:23:21PM +0530, Ojaswin Mujoo wrote:
-> > > On Mon, Oct 14, 2024 at 08:28:56AM -0700, Darrick J. Wong wrote:
-> > > > On Mon, Oct 14, 2024 at 03:02:45PM +0530, Ojaswin Mujoo wrote:
-> > > > > On Fri, Oct 11, 2024 at 09:40:57AM -0700, Darrick J. Wong wrote:
-> > > > > > On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
-> > > > > > > On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
-> > > > > > > > Extsize is allowed to be set on files with no data in it. For this,
-> > > > > > > > we were checking if the files have extents but missed to check if
-> > > > > > > > delayed extents were present. This patch adds that check.
-> > > > > > > > 
-> > > > > > > > While we are at it, also refactor this check into a helper since
-> > > > > > > > its used in some other places as well like xfs_inactive() or
-> > > > > > > > xfs_ioctl_setattr_xflags()
-> > > > > > > > 
-> > > > > > > > **Without the patch (SUCCEEDS)**
-> > > > > > > > 
-> > > > > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> > > > > > > > 
-> > > > > > > > wrote 1024/1024 bytes at offset 0
-> > > > > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> > > > > > > > 
-> > > > > > > > **With the patch (FAILS as expected)**
-> > > > > > > > 
-> > > > > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> > > > > > > > 
-> > > > > > > > wrote 1024/1024 bytes at offset 0
-> > > > > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> > > > > > > > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
-> > > > > > > > 
-> > > > > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > > > > > 
-> > > > > > > Looks good now,
-> > > > > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > > > > 
-> > > > > > That said, could you add a fixes tag for the xfs_ioctl_setattr_*
-> > > > > > changes, please?
-> > > > > 
-> > > > > Actually a small doubt Darrick regarding the Fixes commit (asked inline
-> > > > > below):
-> > > > > 
-> > > > > > 
-> > > > > > --D
-> > > > > > 
-> > > > > > > --D
-> > > > > > > 
-> > > > > > > > ---
-> > > > > > > >  fs/xfs/xfs_inode.c | 2 +-
-> > > > > > > >  fs/xfs/xfs_inode.h | 5 +++++
-> > > > > > > >  fs/xfs/xfs_ioctl.c | 4 ++--
-> > > > > > > >  3 files changed, 8 insertions(+), 3 deletions(-)
-> > > > > > > > 
-> > > > > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > > > > > > > index bcc277fc0a83..19dcb569a3e7 100644
-> > > > > > > > --- a/fs/xfs/xfs_inode.c
-> > > > > > > > +++ b/fs/xfs/xfs_inode.c
-> > > > > > > > @@ -1409,7 +1409,7 @@ xfs_inactive(
-> > > > > > > >  
-> > > > > > > >  	if (S_ISREG(VFS_I(ip)->i_mode) &&
-> > > > > > > >  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
-> > > > > > > > -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
-> > > > > > > > +	     xfs_inode_has_filedata(ip)))
-> > > > > > > >  		truncate = 1;
-> > > > > > > >  
-> > > > > > > >  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
-> > > > > > > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> > > > > > > > index 97ed912306fd..03944b6c5fba 100644
-> > > > > > > > --- a/fs/xfs/xfs_inode.h
-> > > > > > > > +++ b/fs/xfs/xfs_inode.h
-> > > > > > > > @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
-> > > > > > > >  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
-> > > > > > > >  }
-> > > > > > > >  
-> > > > > > > > +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
-> > > > > > > > +{
-> > > > > > > > +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > >  /*
-> > > > > > > >   * Check if an inode has any data in the COW fork.  This might be often false
-> > > > > > > >   * even for inodes with the reflink flag when there is no pending COW operation.
-> > > > > > > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > > > > > > > index a20d426ef021..2567fd2a0994 100644
-> > > > > > > > --- a/fs/xfs/xfs_ioctl.c
-> > > > > > > > +++ b/fs/xfs/xfs_ioctl.c
-> > > > > > > > @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
-> > > > > > > >  
-> > > > > > > >  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
-> > > > > > > >  		/* Can't change realtime flag if any extents are allocated. */
-> > > > > > > > -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
-> > > > > > > > +		if (xfs_inode_has_filedata(ip))
-> > > > > > > >  			return -EINVAL;
-> > > > > > > >  
-> > > > > > > >  		/*
-> > > > > > > > @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
-> > > > > > > >  	if (!fa->fsx_valid)
-> > > > > > > >  		return 0;
-> > > > > > > >  
-> > > > > > > > -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
-> > > > > > > > +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
-> > > > > 
-> > > > > So seems like there have been lots of changes to this particular line
-> > > > > mostly as a part of refactoring other areas but seems like the actual
-> > > > > commit that introduced it was:
-> > > > > 
-> > > > >   commit e94af02a9cd7b6590bec81df9d6ab857d6cf322f
-> > > > >   Author: Eric Sandeen <sandeen@sgi.com>
-> > > > >   Date:   Wed Nov 2 15:10:41 2005 +1100
-> > > > >   
-> > > > >       [XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not
-> > > > >       using xfs rt
-> > > > > 
-> > > > > Before this we were actually checking ip->i_delayed_blks correctly. So just wanted 
-> > > > > to confirm that the fixes would have the above commit right?
-> > > > > 
-> > > > > If this looks okay I'll send a revision with this above tags:
-> > > > > 
-> > > > > Fixes: e94af02a9cd7 ("[XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not using xfs rt")
-> > > > 
-> > > > Yeah, that sounds fine.  Want to write a quick fstest to bang on
-> > > > xfs_ioctl_setattr_check_extsize to force everyone to backport it? :)
-> > > 
-> > > Got it, thanks, I'll send a v4.
-> > > 
-> > > Regarding the tests, we were thinking of adding more comprehensive
-> > > generic tests for extsize now that ext4 is also implementing it. We
-> > > have a new team member Nirjhar (cc'd) who is interested in writing the 
-> > > xfstest and is working on it as we speak.
-> > 
-> > Heh, welcome! :)
-> > 
-> > > Since the area is new to him, it might take a bit of time to get that
-> > > out, hope that is okay?
-> > 
-> > Sounds good to me.  You might see how many of the tests/xfs/ stuff can
-> > be pulled up to tests/generic/ as a starting point.
+On 17.10.24 01:49, Peter Xu wrote:
+> On Wed, Oct 16, 2024 at 07:51:57PM -0300, Jason Gunthorpe wrote:
+>> On Wed, Oct 16, 2024 at 04:16:17PM -0400, Peter Xu wrote:
+>>>
+>>> Is there chance that when !CoCo will be supported, then external modules
+>>> (e.g. VFIO) can reuse the old user mappings, just like before gmemfd?
+>>>
+>>> To support CoCo, I understand gmem+offset is required all over the places.
+>>> However in a non-CoCo context, I wonder whether the other modules are
+>>> required to stick with gmem+offset, or they can reuse the old VA ways,
+>>> because how it works can fundamentally be the same as before, except that
+>>> the folios now will be managed by gmemfd.
+>>
+>> My intention with iommufd was to see fd + offest as the "new" way
+>> to refer to all guest memory and discourage people from using VMA
+>> handles.
 > 
-> Sure Darrick, I believe you mean how many of the extsize related tests
-> we can pull up right?
+> Does it mean anonymous memory guests will not be supported at all for
+> iommufd?
 > 
-> So I was checking this and I could find some relevant tests:
-> 
->  * Looking into existing tests around extsize:
->    * xfs/074
->      * Check some extent size hint boundary conditions that can result in
->        MAXEXTLEN overflows.
->      * This looks specific to xfs however
-> 
->    * xfs/208
->      * Testing interactinon b/w cowextsize and extsize but again seems xfs specific
-> 
->    * xfs/207
->      * basic test on setting and getting (cow)extsize on file with data or empty
->      * This is a subset of the features we are testing with our test, but only
->        for extsize not cowextsize.
->      * So we can probably remove the equivalent tests from here when we add the generic
->        one.
-> 
->    * xfs/419
->      * These are related to extsize inherit feature but with rtinherit.
->      * The current patchset in ext4 doesn't implement this extszinherit but it
->        might be something we might want to do in the future
->      * We can look into hoisting the extszinherit related tests at some point
-> 
->   * The other ones I looked into around extsize again seemed to be specific to
->     xfx but maybe i missed something.
-> 
-> Are there any other tests you had in mind Darrick?
+> Indeed it's very rare now, lose quite some flexibility (v.s. fd based), and
+> I can't think of a lot besides some default configs or KSM users (which I
+> would expect rare), but still I wonder there're other use cases that people
+> would still need to stick with anon, hence fd isn't around.
 
-Not really.  Most of my testing comes from setting up an entire vm
-config with extszinherit=X in the MKFS_OPTIONS.  I wonder if we need a
-single generic test to kick the tires on the functionality just to make
-sure that everyone runs it even if they only do an all-defaults testrun?
+Not sure I completely understand the question, but for most VMs out 
+there I expect an anonymous memory to remain the default memory backing.
 
---D
+Regarding users of iommufd, I have absolutely no clue :)
 
-> Regards,
-> ojaswin
-> 
-> > 
-> > --D
-> > 
-> > > Regards,
-> > > Ojaswin
-> > > 
-> > > > 
-> > > > --D
-> > > > 
-> > > > > Thanks,
-> > > > > Ojaswin
-> > > > > 
-> > > > > > > >  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
-> > > > > > > >  		return -EINVAL;
-> > > > > > > >  
-> > > > > > > > -- 
-> > > > > > > > 2.43.5
-> > > > > > > > 
-> > > > > > > > 
-> > > > > > > 
-> > > > > 
-> > > 
-> 
+-- 
+Cheers,
+
+David / dhildenb
+
 
