@@ -1,200 +1,118 @@
-Return-Path: <linux-kernel+bounces-369586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BD59A1F33
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:57:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5537C9A1F35
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1C61F22A49
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:57:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874B71C21B5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE691DA0E3;
-	Thu, 17 Oct 2024 09:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC7C1DB346;
+	Thu, 17 Oct 2024 09:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bka1yfHI"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bWj2D/Hm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADAC16EB76;
-	Thu, 17 Oct 2024 09:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2441DA113;
+	Thu, 17 Oct 2024 09:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158938; cv=none; b=gbmaxtSKNR8kSlArNwAFoU+zEZh4WJYUkbSxnjG8ePwfahgiRwna0Vgu8Ye5n0XOaZvF7NcMYUZZuIBmANIzYPYxRq+xX8dV6PFgr4fm1QF8/gMUefGIBtz52nOLs9CQotEEUeL+CDs/bdJtgIasBRs+x7aSUijSTKnybfigUqk=
+	t=1729158956; cv=none; b=jPVczPelUM5ZrCxp4Vpm2q7UvnnDt9GJLQhCZxLPwVrd5l2u8TY9whSmdFxr4Kr1tuZKl0x0ttRfdgdqpP0s+mje6OP5cRqdV5KL+RadAKJZuJ4zI1rNVp7ktSCYsvzCf7vFqINSSSmV2k37Kd1UZzABcMsqS5CDJDdHYPuHrBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158938; c=relaxed/simple;
-	bh=jDvtsPbcr0H75RQrCE+HeDm5nfsBOQOeboAG3Mzs84E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dsS/vzFNDaWo71Szy3Ks+QH0MPByO0fh4d8VWjRvsYIvuNgWTxYDXySvCy7x40R3oxgv6bQhbEX+no7JQfDscjJh9++Kg1rLveZUv9/1g+Y+BEG+YPRUyiXpueDuBkGvAJc8DQrUf8S5s8d6Me01E4aANlBkgd+TraKacRPUsVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bka1yfHI; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=y2W+oUfoBhBZaZIr2AfzfeDyPa8UlZnH7iYkbKqwcvY=; b=bka1yfHINVgrWdYd3h2GhG4X0s
-	3lAVad3sQ8+8xJ5skIdH0dlNPRaOoFVg/O7uzue+ZuxjBFEkUdj9FNcUi483B1YvQHund84pa2Ysn
-	fnR47qcxyvZy7AgPxDSLL1HPO4uTcjlsx8dPQxKEo/Cajv+kHGVgf23ziOkJN8ndgHSlN//m/D1GO
-	G37c0Iu6JZvAGaMPniPJBphVngE37jkpjMBJDetiDqNKa2LiJG7v8smCPdWr5JbilTR6hNQaTBWJl
-	W52YZOWKgBrE9FMiO91iw99zdEt1ykmgNH92WhulRZYmuSTeCALNMFXXt/z4GfhJ+P3jJ4XuiWVrz
-	4NKN8J0w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1NE0-0000000AhR2-3ED7;
-	Thu, 17 Oct 2024 09:55:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D4B483005AF; Thu, 17 Oct 2024 11:55:20 +0200 (CEST)
-Date: Thu, 17 Oct 2024 11:55:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de, msakai@redhat.com,
-	corbet@lwn.net, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, akpm@linux-foundation.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] lib/min_heap: Introduce non-inline versions of min
- heap API functions
-Message-ID: <20241017095520.GV16066@noisy.programming.kicks-ass.net>
-References: <20241013184703.659652-1-visitorckw@gmail.com>
- <20241013184703.659652-2-visitorckw@gmail.com>
- <20241014081358.GS17263@noisy.programming.kicks-ass.net>
- <ZwznQzdZsg82KNT4@visitorckw-System-Product-Name>
- <xb2gihmastm3wjn2o2sufvtglvjkelhiiwhnlzoiz4qncywyga@txf4vvnyxhvu>
+	s=arc-20240116; t=1729158956; c=relaxed/simple;
+	bh=wYiV3LayTuqB3bImr/dzDxL6xWUW5nltsyRpCARFUYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=j/GMuoKm7nmih6yUzB6o+6PeJS9JXt/0iYTRJd6K35fWFLf7rpY+T/CkZ70ot8spGvAx5pcB3+H49GIGTzdQpdqA2giSWjruEx4/KrPrHCN8DKqbX6rbqxSPNGeBWhzT/g7oryacpLSyDLZC7Oh5ZQKsD2DC4KI3hXVCQI5yios=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bWj2D/Hm; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729158954; x=1760694954;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wYiV3LayTuqB3bImr/dzDxL6xWUW5nltsyRpCARFUYU=;
+  b=bWj2D/Hm9Z+ijtLG1POVrvdSt5XQczZi/UuwqYMimnnT0GI80fiuQLNQ
+   82UcSflgL0Vf0/J3MHJeQXFGRUBuxtegwGfxJWD99S8e1kM3F9WVpFVrq
+   cb7FVHVnfcdQT2IafaN4nVZT1baB9fAocPfBx9iFOM1dw1FTFIsvKI01d
+   Uw3V9w6PvfhUXyre8LZwreYTXh+QkZshSsQfoGxjfykgGsKn5H2OzrtGU
+   fHhoFQxplE0syoX9nNBB1BRe/DbLYz7ms2q4sYJHyUCdZjnlKLQIc7BZy
+   6+mgw0ASqgF05OtaQg+VlAi21+HShbQL7QqDDuXXqYDMPQfSrQ4dKXGiB
+   A==;
+X-CSE-ConnectionGUID: VDQn3VtNQWaHYkmqdOQLsg==
+X-CSE-MsgGUID: FUkXbjPiQAqHTI+nJaGaqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46104319"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46104319"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 02:55:53 -0700
+X-CSE-ConnectionGUID: hucNkVR6QdS/TYUZRQ947g==
+X-CSE-MsgGUID: 7DnR3U6bQ2Gq0bzFZZ8geA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="83324502"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.91])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 02:55:52 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Philipp Stanner <pstanner@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v2 1/1] PCI: Improve printout in pdev_sort_resources()
+Date: Thu, 17 Oct 2024 12:55:45 +0300
+Message-Id: <20241017095545.1424-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xb2gihmastm3wjn2o2sufvtglvjkelhiiwhnlzoiz4qncywyga@txf4vvnyxhvu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 11:26:30PM -0400, Kent Overstreet wrote:
+Use pci_resource_name() helper in pdev_sort_resources() to print
+resources in user-friendly format. Also replace the vague "bogus
+alignment" with a more precise explanation of the problem.
 
-> yeah, I think we would prefer smaller codesize, by default.
-> 
-> it'd be well worth checking the code size difference on inlined vs. not,
-> and then the really think to do would be to provide optional _inlined()
-> helpers that we can switch to if/when a particular codepath shows up in
-> a profile
-
-Make sure to build with kCFI and IBT enabled when you do this and enjoy
-seeing ec_stripes_heap_cmp turn into this:
-
-00000000000027c0 <__cfi_ec_stripes_heap_cmp>:
-    27c0:       b8 01 88 88 07          mov    $0x7888801,%eax
-    27c5:       90                      nop
-    27c6:       90                      nop
-    27c7:       90                      nop
-    27c8:       90                      nop
-    27c9:       90                      nop
-    27ca:       90                      nop
-    27cb:       90                      nop
-    27cc:       90                      nop
-    27cd:       90                      nop
-    27ce:       90                      nop
-    27cf:       90                      nop
-
-00000000000027d0 <ec_stripes_heap_cmp>:
-    27d0:       f3 0f 1e fa             endbr64
-    27d4:       e8 00 00 00 00          call   27d9 <ec_stripes_heap_cmp+0x9>   27d5: R_X86_64_PLT32    __fentry__-0x4
-    27d9:       8b 47 08                mov    0x8(%rdi),%eax
-    27dc:       3b 46 08                cmp    0x8(%rsi),%eax
-    27df:       0f 92 c0                setb   %al
-    27e2:       2e e9 00 00 00 00       cs jmp 27e8 <ec_stripes_heap_cmp+0x18>  27e4: R_X86_64_PLT32    __x86_return_thunk-0x4
-    27e8:       0f 1f 84 00 00 00 00 00         nopl   0x0(%rax,%rax,1)
-    27f0:       90                      nop
-    27f1:       90                      nop
-    27f2:       90                      nop
-    27f3:       90                      nop
-    27f4:       90                      nop
-
-
-While I was there, you might want to do the below. It makes no sense
-duplicating that thing.
-
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 ---
 
-diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
-index 1587c6e1866a..3a6c34cf8a15 100644
---- a/fs/bcachefs/ec.c
-+++ b/fs/bcachefs/ec.c
-@@ -1048,6 +1048,11 @@ static inline void ec_stripes_heap_swap(void *l, void *r, void *h)
- 	ec_stripes_heap_set_backpointer(_h, j);
- }
+v2:
+- Place colon after %s %pR to be consistent with other printouts
+- Replace vague "bogus alignment" with the exact cause
+
+ drivers/pci/setup-bus.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 23082bc0ca37..0fd286f79674 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
+ 	int i;
  
-+static const struct min_heap_callbacks ec_stripes_callbacks = {
-+	.less = ec_stripes_heap_cmp,
-+	.swp = ec_stripes_heap_swap,
-+};
-+
- static void heap_verify_backpointer(struct bch_fs *c, size_t idx)
- {
- 	ec_stripes_heap *h = &c->ec_stripes_heap;
-@@ -1060,26 +1065,16 @@ static void heap_verify_backpointer(struct bch_fs *c, size_t idx)
- void bch2_stripes_heap_del(struct bch_fs *c,
- 			   struct stripe *m, size_t idx)
- {
--	const struct min_heap_callbacks callbacks = {
--		.less = ec_stripes_heap_cmp,
--		.swp = ec_stripes_heap_swap,
--	};
--
- 	mutex_lock(&c->ec_stripes_heap_lock);
- 	heap_verify_backpointer(c, idx);
+ 	pci_dev_for_each_resource(dev, r, i) {
++		const char *r_name = pci_resource_name(dev, i);
+ 		struct pci_dev_resource *dev_res, *tmp;
+ 		resource_size_t r_align;
+ 		struct list_head *n;
+@@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
  
--	min_heap_del(&c->ec_stripes_heap, m->heap_idx, &callbacks, &c->ec_stripes_heap);
-+	min_heap_del(&c->ec_stripes_heap, m->heap_idx, &ec_strips_callbacks, &c->ec_stripes_heap);
- 	mutex_unlock(&c->ec_stripes_heap_lock);
- }
+ 		r_align = pci_resource_alignment(dev, r);
+ 		if (!r_align) {
+-			pci_warn(dev, "BAR %d: %pR has bogus alignment\n",
+-				 i, r);
++			pci_warn(dev, "%s %pR: alignment must not be zero\n",
++				 r_name, r);
+ 			continue;
+ 		}
  
- void bch2_stripes_heap_insert(struct bch_fs *c,
- 			      struct stripe *m, size_t idx)
- {
--	const struct min_heap_callbacks callbacks = {
--		.less = ec_stripes_heap_cmp,
--		.swp = ec_stripes_heap_swap,
--	};
--
- 	mutex_lock(&c->ec_stripes_heap_lock);
- 	BUG_ON(min_heap_full(&c->ec_stripes_heap));
- 
-@@ -1088,7 +1083,7 @@ void bch2_stripes_heap_insert(struct bch_fs *c,
- 			.idx = idx,
- 			.blocks_nonempty = m->blocks_nonempty,
- 		}),
--		&callbacks,
-+		&ec_stripes_callbacks,
- 		&c->ec_stripes_heap);
- 
- 	heap_verify_backpointer(c, idx);
-@@ -1098,10 +1093,6 @@ void bch2_stripes_heap_insert(struct bch_fs *c,
- void bch2_stripes_heap_update(struct bch_fs *c,
- 			      struct stripe *m, size_t idx)
- {
--	const struct min_heap_callbacks callbacks = {
--		.less = ec_stripes_heap_cmp,
--		.swp = ec_stripes_heap_swap,
--	};
- 	ec_stripes_heap *h = &c->ec_stripes_heap;
- 	bool do_deletes;
- 	size_t i;
-@@ -1112,8 +1103,8 @@ void bch2_stripes_heap_update(struct bch_fs *c,
- 	h->data[m->heap_idx].blocks_nonempty = m->blocks_nonempty;
- 
- 	i = m->heap_idx;
--	min_heap_sift_up(h,	i, &callbacks, &c->ec_stripes_heap);
--	min_heap_sift_down(h, i, &callbacks, &c->ec_stripes_heap);
-+	min_heap_sift_up(  h, i, &ec_stripes_callbacks, &c->ec_stripes_heap);
-+	min_heap_sift_down(h, i, &ec_stripes_callbacks, &c->ec_stripes_heap);
- 
- 	heap_verify_backpointer(c, idx);
- 
+-- 
+2.39.5
+
 
