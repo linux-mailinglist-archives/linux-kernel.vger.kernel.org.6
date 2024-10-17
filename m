@@ -1,228 +1,234 @@
-Return-Path: <linux-kernel+bounces-369106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6379A18F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:04:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D579A191C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A1B1C22529
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:04:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 608AB1C25460
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9097E101;
-	Thu, 17 Oct 2024 03:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3757213AA4E;
+	Thu, 17 Oct 2024 03:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="iXIvJ4Jy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L9Cg9s/D"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iNw2b4xD"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010018.outbound.protection.outlook.com [52.101.69.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E9D29405;
-	Thu, 17 Oct 2024 03:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729134274; cv=none; b=Zss+EmuKrySFXrGZfuOr5buLtf/Bnwk+ksdFGKQzptfq3VovSr3IKuhFkSMFI2n7ZA68hCuw3FUkGf4A2/tESpCmDkskXj4VHkLFGdBj82D7Cp++JM6jYj155dxG80FHpi92/KcQ8MdiPtcDW/6u2/VHDh+pGv/QLcBRghv7IGM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729134274; c=relaxed/simple;
-	bh=f4PJRLR/2fRgB4+Uq05RONoLYT4kehQXApRxwEsEiHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7isiSIhKyOfliLn2Y1pjb9AYuHDuzAbtAJnEM/mVhanxl0jHDMLCze2tYgotR1f4WiJ9nUa2wcCyLxhKrB+GofumfubLtVIqc0chqT/N0BLFBwe4felCvvcPqs9Rak3cOfpN5NcSk110WJF2xAf5GNRgyRdjoyf29hS86cQ8vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=iXIvJ4Jy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L9Cg9s/D; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 207B2114017E;
-	Wed, 16 Oct 2024 23:04:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Wed, 16 Oct 2024 23:04:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729134270;
-	 x=1729220670; bh=EFckjBgGmy34eVKuGSlvBNUk1hLb5Yr8WVXfUlVn8BU=; b=
-	iXIvJ4JyZVFzxcRvmifpF1tP0Wmy0LOzjlLJlaQaQAnDwqpzHVukzH82ijDt36lf
-	zZygntsKq4H0Jp3kVzxTW2UXwCBliRjrcYFq9hS1xgSMP1ra3w1Ha6mUPnx5nsT4
-	bksuZhnzEdG2KwriQfuGG1uFvS5bBA1LgdpVJ/l+wGrvhcl6BzbK/+F18TG1tkpq
-	MMO3D0dHliS9fliXQnOUdLI+xpnPC83QdYzOWDUSFE3GaNox1jIR7LCOmR9fQ+1O
-	soYOQVUsTOTJEF1uj2GlPpUNbqgrbIbdAhiAj2q3i0PpfSDUxxaS4B+JkHWIpWyw
-	53i3tOUe3L1d4bvOhiOFNQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729134270; x=
-	1729220670; bh=EFckjBgGmy34eVKuGSlvBNUk1hLb5Yr8WVXfUlVn8BU=; b=L
-	9Cg9s/DIcofGUVDtGjYlDVNAsecduxsOxQPFNVHW7wg2niw0LV1xux7Ui1GXIJqe
-	0jgAKY5c/KEcAOoMi9gh1ByrWbqPVPndkFFmmfBaUle3wwz3zc5oSRBQih2WaDP4
-	FphR1KGxSsDvh8l502r44R9dmpP+4vrGI4y+/Vbe97fSKi4IuENssIywO7o/2lYT
-	GT3fFuhNrSM76IhUw2riw4NF2ypQBqrX0RfGr99Bse9QtkBBr3CwU2sujFJRsVvq
-	MGeNjaxs/dwjQ5HnUwLpunW+GhkDwpCHpbHxuMPdwItvL3+SumV6MJEqrukvFf6W
-	fa2zOj0Y0L2L255HTh67g==
-X-ME-Sender: <xms:vX4QZ6rThT3hdFcDly4nSvNzqlQEcRZHLDHkAk23JT15WaWk6i6g3A>
-    <xme:vX4QZ4r300K0AtljHgxtqnQ-l7raqbGv6YyyJxp5pUmo0QW6HyZuDKpxr10J5e3aD
-    SOcc8vYZNBhq7ciGak>
-X-ME-Received: <xmr:vX4QZ_O5Pruv93vTqy-da-nRK7dycO0_m6xQpSDkpc_nhTdz-w6gaUoKi8UV-tcxdke3LLO-Xip6Oj-cVoIVtAezZUk2>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehtddgieeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
-    gggtugfgjgesthekredttddtjeenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
-    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepheeigeet
-    tdegvddvieejjeegiefgtddugfeiieekieegjedvtdehteevffelhedtnecuffhomhgrih
-    hnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpdhgnhhurdhorhhgnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvghlse
-    hjfhgrrhhrrdgttgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhgvvghsse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhorhhsthgvnhdrsghluhhmsehtohgs
-    lhhugidrtghomhdprhgtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuh
-    igrdguvghvpdhrtghpthhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhu
-    gidruggvvhdprhgtphhtthhopehlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:vX4QZ57qrH_-8Js7q1bAfXkb5wm_jbFCBogrMVGpx7cHEddAfoyu1A>
-    <xmx:vX4QZ56dVUFy39TsqzQfGKKAtawlGg2T43JfRyKH7ohmXAt-priStw>
-    <xmx:vX4QZ5isno_GRzq_tyPWDwXxtup9agGHJD5eL-Hnl3pLAdWYKs_F2w>
-    <xmx:vX4QZz6eXRSFWOMEPD2cYbhl7TMo8ACo4yUkarKX3CybGE2O7GNsog>
-    <xmx:vn4QZ-HuaXHMa5Rit1UycTRV9V8nvCvNVLcpjLc1i8ii5G4K7hRxXSp7>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Oct 2024 23:04:28 -0400 (EDT)
-Date: Thu, 17 Oct 2024 05:04:26 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Bill Wendling <morbo@google.com>
-Cc: Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@toblux.com>,
-	kent.overstreet@linux.dev, regressions@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ardb@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <ZxB-uh1KzfD4ww2a@archlinux>
-References: <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
- <Zv6BEO-1Y0oJ3krr@archlinux>
- <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
- <Zv61dCaxScXuOjZg@archlinux>
- <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux>
- <202410040958.C19D3B9E48@keescook>
- <ZwNb-_UPL9BPSg9N@archlinux>
- <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
- <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1161C139587;
+	Thu, 17 Oct 2024 03:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729134342; cv=fail; b=U0vTr56w9Vwo1ExoMgyjA26FxYzHh8eCGE2WXWpfLqdHr3gCGV2FOBTMF5dKx7c0GF/eGoamzABuKlKajc7S8zR+OpOSYXXntajxSGd93nZ01i2nVYiJrPLgvCsIFMFFPzqREA5apAAPWR0ApXzZXGqF03fnHHNAGfs9vERMBqY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729134342; c=relaxed/simple;
+	bh=uQTsjZpGa9wX2TQQ9rBX1c3BVMGp/XrNpD4Z9jYIcBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HkK9CTWe+EqlR2DJlV/n1f1sE1Qu1vltuSLhzTc2Q/2zWSuvSk87GJkqLyERo02qVoRQ388Fd/lxPQSt/QjbBFPUlJ1b45cQ5biAXbrpyS9+V/tL91X5vnd96L3dKQxnuykDC49M/bKvXC4cnG4hOxDL1sg+c4yirUpT18O2AO4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iNw2b4xD; arc=fail smtp.client-ip=52.101.69.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UZedDJFLlBChDBQlGxBzSEkyMc8drXeheTckSmWpAFurWZo8PM+ig6b50x7dOYqi5Ohdx+wH5EIAEmUV1pcnFA3G/yV6VY1MnVgRUIaj3Ml9zHAfov5GjyQCgp/P1iWrWl4dmEingObUonZPApucE+6QbhTobwwo9B6NM50yQwev1FMNBvKg873T5VIPRcmOquyZ+YyloW4hCTjefo+FYIWGACkJRyD3Vybpsf8xz/7qAwBkYDmeFO5IRtcbpvQknJpwoWsQZPCt9aZvpxvswrmFqWt3Q53hfkx77bko+2RigIDpwEw9XFSqLCW3AvNJg0hoPPm5x+3Klk7UxBiF5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jJoKEN2ABDI9wMUjabBCOX2//QXqT1up5hjeGjSwGyA=;
+ b=MCRlisH5cI2oGNKJBY3E8wvilwrC4UzDQ28OzhOwwO6vxJ68WO60jdQk/Gp8dRRsqH5mMBckKdtZ8ioNamE5WbDho2sdZpdZmTr7mXnmX5ia7Z7DGrYGR8OjwEQ5nabiop8XGn5y4et6Cp55oVzctKcfZ7nJ9jA2/S8JwebSKWyBgpkVdvtxWhPR+TXqV42Qfjk1HHOWV9h8/DdkVu0NGp7QCI1uxZOdpXFjgakgOVdj+Agjfaz6MiKBj/UafhQE8zacPYHq8zPdc42DWCvZefDiraYed2csnn0Va3YbphtrExHEnuSXRynVLmJrnPtmM0OizJi/iSRQyE144xGZYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jJoKEN2ABDI9wMUjabBCOX2//QXqT1up5hjeGjSwGyA=;
+ b=iNw2b4xDweCEoi0Dugl5JEz133VEPIpiyEFi7tOeWcJGq5ceGj/G4n1kzjg/eMFXCOc/otx//QCUrS2mQIdnB41AK2IZ00CtaiZVnJoabazQpidoXKT3UE742gwrra2FSX83ZgA2RvmShWDjh0tNIQ9CRt4q3R798eCFMbB0hpf1U2aoevHlRPQQVUcn472sDM6MyEGs8lw32twTl14bTOWB7FzQgff8C9CyygA4+h2KsTbMYm12zWCLxIaHGCkjBpb91gv1A/NeVFqoUEILkDWVs+lXdgjh9rwK3obLHDxetm75pUvh7dIdyny6Ou9sz6tm6KNdYfYRRjqjQHgjag==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB7898.eurprd04.prod.outlook.com (2603:10a6:10:1ed::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
+ 2024 03:05:36 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
+ 03:05:35 +0000
+Date: Wed, 16 Oct 2024 23:05:27 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>, imx@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 12/13] net: fec: fec_enet_rx_queue(): move_call
+ to _vlan_hwaccel_put_tag()
+Message-ID: <ZxB+91w802LBgp9Q@lizhi-Precision-Tower-5810>
+References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
+ <20241016-fec-cleanups-v1-12-de783bd15e6a@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016-fec-cleanups-v1-12-de783bd15e6a@pengutronix.de>
+X-ClientProxiedBy: BY3PR05CA0039.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7898:EE_
+X-MS-Office365-Filtering-Correlation-Id: 709d4db8-e503-493c-f6c2-08dcee5891c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|376014|7416014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rQA+cuqIb0yb7O9bWIfIRLlFTuSG513IwhY4KAopDbDl7fLclnY0iOgQ2Ivo?=
+ =?us-ascii?Q?W2yVDgAJpaRDQgeS2AwmkrPuvS76zNnCI2BlsUXzXLe6u34aJEhVs6w22Jom?=
+ =?us-ascii?Q?ADFTn9GlnOkyGAhlq6H4MXUZ9lhfue2tSLthrIuk85DATgD64qQWh+LEUBex?=
+ =?us-ascii?Q?6D46aNMzZorPGyPSstsY3wwqEW4BtdP8P0L+r8djpDhg5rRlDlvTJxFYpllT?=
+ =?us-ascii?Q?HuAKWGyhyyQNFYAm2l8Rf4DZr2A2GsRH6GSSpeb43gqSg7WitGCdsXcMkEXG?=
+ =?us-ascii?Q?AtzxaAId5hnYVeyxt8EiOVKSBS/KoT/XeE5ARA1Eh6xcotVhlCnbXw+FiQgc?=
+ =?us-ascii?Q?5s7aUiEfkKe7MVSd3RZ1Mo3VYUGQh6OpShXyzzYiq+Hihp9eg2eRfvCYVbkh?=
+ =?us-ascii?Q?Cpc24XRMzWgKUpEf2/N/ElJQwKhMwUT/8Xj3CDz/0lhY4VS4rygBaIwr7fJP?=
+ =?us-ascii?Q?LW8pQFrjlCufPL/Ltft5USGF0uLruUT2ChRQpKKF35VKNH2Sj+7G8GLBoagF?=
+ =?us-ascii?Q?2TP/n+DdMJrc4fkk4rpY4sEykviPAPlKFTihnbp+lmyEhLiqZz/97SeEaO+w?=
+ =?us-ascii?Q?EhtK9mCzkT9csM5zyC6kmcPNNmv/icRBUVCp+nqYtQHNG/HxS6ha1o9Yt4HJ?=
+ =?us-ascii?Q?Y2aVmRk+BWZRE//nhN7LacEg7jeKI8A4QSnPVobazmbhe4O4KxyiJcigihWB?=
+ =?us-ascii?Q?bKotnzijdADWY0mN3uvjYJ7y6jgnJIGoScFSu+GLOtqVy/efTysy9daBsrss?=
+ =?us-ascii?Q?S/r+KV21sYkQQhe/7LVJkEyZyyu8ZqSxT7mQWM2JZTFwjna6Z98r9+9yDV2F?=
+ =?us-ascii?Q?ZEOwOdktH8J9UEOL85qjt5Mc26v0Xzz0ZqoPZ6AShUcUg3AMoXrH5sfV3ODX?=
+ =?us-ascii?Q?Ui/ZZc45JdRvF+8rOO7YY9Uigs+Ac7U+Stf+sVCEachCxBpFssHp8Skz83JA?=
+ =?us-ascii?Q?lpuZCzbFXDGTE4fmb3X0/WPZpMySvk3XB2tVCAJ8aaw63CdKnSV4dZdPkj61?=
+ =?us-ascii?Q?SYlF/ONGa81SwPyn/5pF32MnHt96pfVjtkeL9B0pECguSbGAs6CWlG1V6jLq?=
+ =?us-ascii?Q?W6B7/sPRXmC10Jx83O7e+CZV6WSvFaV+ppSaY2ixVPsr02eKPuhHE1NK+GTH?=
+ =?us-ascii?Q?YFjdPGy+ApgVXmlcE2nlxzD1qOe0ym7Pk6Av6lpKZ4Lo0RGRUhvE/trHAMLa?=
+ =?us-ascii?Q?rFNsA3wnHaOwxdHtbRV/pEf0oKdDzG7EW3tN1w6ZyIfQ110jKPmVQkfMbiuL?=
+ =?us-ascii?Q?q8aXfe7wYi0S7cm/1D3lXhnyFJa6bb1Qd8YZcTXtmy8mz3OPKKuDOm3eWkzk?=
+ =?us-ascii?Q?GE+yqeW2+98HiLFEsibLnM+Gnn40iXASEv7QvYrMaUf5ubO9p/nm28s08m8U?=
+ =?us-ascii?Q?O/4myi4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?60QzPRZ+l4JK5enIJUGPf2Y0YetFrhYtfXPaSYr8smRaWij7ONcqnF+NLoiw?=
+ =?us-ascii?Q?t0OrmI9rFue/MOMhap/4FwbOK/mm8QO9Xh1tQAAMybnvMyFJ+kv9qE4zMJgR?=
+ =?us-ascii?Q?1anvTZ1vKmBfxhvqVVoXFghdZq88ewUn+npGmi+QXawhpkiw/kEchxKl6/gZ?=
+ =?us-ascii?Q?x3CURN+YETUTtPOLyq0KVrgQI2Fx3L8TQOwjAPl9JHjJfFl7vmWilTe20juW?=
+ =?us-ascii?Q?l2BrwOxCL4FXiMM0e7fxKhTLaPwzRBjLPQHSD4VcUOrtMbYY3pC1pjqpm0o1?=
+ =?us-ascii?Q?rHF5QqVtqorWKzZhKe23N8igA8QXU2eHExIfBQlLr/7/nq1qc8x2tzbbP/cR?=
+ =?us-ascii?Q?220PxwC650pJCtIzrAtrN0AQpS0QrMq4F0HaLgDVvevG71+noeQrtBK/9CV+?=
+ =?us-ascii?Q?4LjCIxMOY9SrLMXDypwl2V+0cz8mDUeWtabkDeGVYbCuhwXqPBAGIPFvB6q3?=
+ =?us-ascii?Q?qSQhIgECdHhSGA0qzVM08Yr3HyZrTXpiohESY454UcQFw0BvIZIyM5APwrgm?=
+ =?us-ascii?Q?prpUVKJb1acPeDvKTBk6Msq/JUaXmgPI/16rmE4kEqDjH51x03oAmbI+UjYW?=
+ =?us-ascii?Q?COCDSSrBmFPw5cp1JvTYLxv8Bp+H0fa9IyDKqRf8I2b8LHSlHVemHHBFsdvi?=
+ =?us-ascii?Q?6zn7CZlDI6s/KAjL4XhDK5YKHlL1LL2b7qXqz6I6tr08pllZRi7m6ktw7JbO?=
+ =?us-ascii?Q?ACA0MkcOkRctNTBH8jEl1BEXf1aFKRp1tq0oeE61NoqG7t8KoeAw8N6t5reb?=
+ =?us-ascii?Q?GXWwT6C+KP3BgptNmzwI7mWUb95/WOdj+dVaA8gcaiBDBSMYz6r1c721LQO5?=
+ =?us-ascii?Q?9ooHQBR1HKhW4aV6r7oG1vv+Mkrnx4AgFaKvda46sy7Ff2fcdTduH1wKpLPE?=
+ =?us-ascii?Q?y1MhBpuUOokwm7e4zTG6Jx6hVwykyoTrGFmwVs1HsQCZaQ+JVCfc3nRqU//v?=
+ =?us-ascii?Q?4JEX/B7IZuxozEn082HzTzsSRVjuqW+V79cTN3p9fWz39u0R1yO6fBd2Mfno?=
+ =?us-ascii?Q?B5dy1ue5dPFxvZ0uLdkjy0RGodQFu1HIyb/QJqAjlhmMk6UNvMwJlrxZVnLM?=
+ =?us-ascii?Q?4UvgWqDROzifpqNLRt4N51KTc0YfpD9GcdODbGpfdWVnv0xqNmD/fZbWPlxv?=
+ =?us-ascii?Q?dYi3Ey3GsLod/DU1fW/G8MaZMFaMyGDq7heFI5u9nvmmkMA8cciOvY6wxVoO?=
+ =?us-ascii?Q?SfOJefxOBd66G9++e8pPHfq33PPEiY9EiJ7+lrtCEpau7yuS8ZQwGLqA9jGY?=
+ =?us-ascii?Q?xkxMiDRR+dlJXw7NVkhJbiDqAfVZfUcuvA9de0f+BjHqB4bDNaZa02cuNQkW?=
+ =?us-ascii?Q?MHD2BgpA1IqW2uZGQ8nAvygQCXPVPpdoJ3iBhH04vZ6pk/oblBAkqmLikUVJ?=
+ =?us-ascii?Q?Obzg9VF2vZVmQJzm7BP2pDeyDpv/1SXwa5m80mCeWh9kcGxiowvryoOFUUOY?=
+ =?us-ascii?Q?7qyxNCRhPqsvMeOpMEo6pe97s6UMo4xX7nJRZihWrXQ8E4UqA32wJG1Rkuhi?=
+ =?us-ascii?Q?ZLO6NcxB74V4jdC0uHG/3gYG1IRxgeohV6UJhG1YaTTnwr6F8QoJSAY/vYFE?=
+ =?us-ascii?Q?VPQ5B1Dk1pIygTANxPvmhln3bo4NQ3T6FyJyqtH4?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 709d4db8-e503-493c-f6c2-08dcee5891c5
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 03:05:35.8291
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WGXHQ/KIJil6LXoiu0Oa6gg621ypOFeunQtLzsVGCktCeaeSKeq4O0kzh4nyShFXegDQ/N2XTNxdzqlvox2RTQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7898
 
-On 16 17:09:42, Bill Wendling wrote:
-> On Wed, Oct 16, 2024 at 4:41 PM Bill Wendling <morbo@google.com> wrote:
-> >
-> > On Sun, Oct 6, 2024 at 8:56 PM Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> > > > I want to separate several easily confused issues. Instead of just
-> > > > saying __bdos, let's clearly refer to what calculation within bdos is
-> > > > being used. There are 3 choices currently:
-> > > > - alloc_size attribute
-> > > > - counted_by attribute
-> > > > - fallback to __bos (which is similar to sizeof(), except that FAMs are 0 sized)
-> > > >
-> > > > Additionally there are (for all intents and purposes) 2 size
-> > > > determinations to be made by __bos and __bdos, via argument 2:
-> > > > - containing object size (type 0) ("maximum size")
-> > > > - specific object size (type 1) ("minimum size")
-> > >
-> > > "maximum" vs "minimum" size would by type 0 vs type 2, but I think you
-> > > do mean type 0 and type 1 as those are the types currently used by
-> > > __struct_size and __member_size. Those are both "maximum" sizes.
-> > >
-> > > >
-> > > > For example, consider:
-> > > >
-> > > > struct posix_acl *acl = malloc(1024);
-> > > > acl->a_count = 1;
-> > > >
-> > > > what should these return:
-> > > >
-> > > >       __bos(acl, 0)
-> > > >       __bos(acl, 1)
-> > > >       __bdos(acl, 0)
-> > > >       __bdos(acl, 1)
-> > > >       __bos(acl->a_entries, 0)
-> > > >       __bos(acl->a_entries, 1)
-> > > >       __bdos(acl->a_entries, 0)
-> > > >       __bdos(acl->a_entries, 1)
-> > > >
-> > >
-> > Thank you for this detailed write-up! I'm sorry for my late response.
-> >
-> [snip]
-> >
-> > So in conclusion, if turning off the calculation for a pointer to the
-> > whole struct works, then I'm okay with it.
-> >
-> Here's a potential fix:
-> 
->   https://github.com/llvm/llvm-project/pull/112636
+On Wed, Oct 16, 2024 at 11:52:00PM +0200, Marc Kleine-Budde wrote:
+> To clean up the VLAN handling, move the call to
+> __vlan_hwaccel_put_tag() into the body of the if statement, which
+> checks for VLAN handling in the first place.
+>
+> This allows to remove vlan_packet_rcvd and reduce the scope of
+> vlan_tag.
 
-Here's the patch to disable __counted_by for clang < 19.1.3. I'll submit
-it properly when your PR is merged. I hope I got all the correct tags in
-there as there were multiple reports of these issues. Let me know if
-anything should be added, I'm new to the process.
+Move __vlan_hwaccel_put_tag() into the if statement that sets
+vlan_packet_rcvd=true. This change eliminates the unnecessary
+vlan_packet_rcvd variable, simplifying the code and improving clarity.
 
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-Date: Thu, 17 Oct 2024 04:39:40 +0200
-Subject: [PATCH] Compiler Attributes: disable __counted_by for clang < 19.1.3
-
-This patch disables __counted_by for clang versions < 19.1.3 because of
-two issues.
-
-1. clang versions < 19.1.2 have a bug that can lead to __bdos returning 0:
-https://github.com/llvm/llvm-project/pull/110497
-
-2. clang versions < 19.1.3 have a bug that can lead to __bdos being off by 4:
-https://github.com/llvm/llvm-project/pull/112636
-
-Cc: stable@vger.kernel.org
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409260949.a1254989-oliver.sang@intel.com
-Link: https://lore.kernel.org/all/Zw8iawAF5W2uzGuh@archlinux/T/#m204c09f63c076586a02d194b87dffc7e81b8de7b
-Signed-off-by: Jan Hendrik Farr <kernel@jfarr.cc>
----
- include/linux/compiler_attributes.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
-index 32284cd26d52..7966a533aaec 100644
---- a/include/linux/compiler_attributes.h
-+++ b/include/linux/compiler_attributes.h
-@@ -100,8 +100,17 @@
-  *
-  *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
-  * clang: https://github.com/llvm/llvm-project/pull/76348
-+ *
-+ * clang versions < 19.1.2 have a bug that can lead to __bdos returning 0:
-+ * https://github.com/llvm/llvm-project/pull/110497
-+ *
-+ * clang versions < 19.1.3 have a bug that can lead to __bdos being off by 4:
-+ * https://github.com/llvm/llvm-project/pull/112636
-  */
--#if __has_attribute(__counted_by__)
-+#if __has_attribute(__counted_by__) && \
-+	(!defined(__clang__) || (__clang_major__ > 19) || \
-+	(__clang_major__ == 19 && (__clang_minor__ > 1 || \
-+	(__clang_minor__ == 1 && __clang_patchlevel__ >= 3))))
- # define __counted_by(member)		__attribute__((__counted_by__(member)))
- #else
- # define __counted_by(member)
--- 
-2.47.0
-
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> ---
+>  drivers/net/ethernet/freescale/fec_main.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+> index 640fbde10861005e7e2eb23358bfeaac49ec1792..d9415c7c16cea3fc3d91e198c21af9fe9e21747e 100644
+> --- a/drivers/net/ethernet/freescale/fec_main.c
+> +++ b/drivers/net/ethernet/freescale/fec_main.c
+> @@ -1688,8 +1688,6 @@ fec_enet_rx_queue(struct net_device *ndev, u16 queue_id, int budget)
+>  	ushort	pkt_len;
+>  	int	pkt_received = 0;
+>  	struct	bufdesc_ex *ebdp = NULL;
+> -	bool	vlan_packet_rcvd = false;
+> -	u16	vlan_tag;
+>  	int	index = 0;
+>  	bool	need_swap = fep->quirks & FEC_QUIRK_SWAP_FRAME;
+>  	struct bpf_prog *xdp_prog = READ_ONCE(fep->xdp_prog);
+> @@ -1814,18 +1812,18 @@ fec_enet_rx_queue(struct net_device *ndev, u16 queue_id, int budget)
+>  			ebdp = (struct bufdesc_ex *)bdp;
+>
+>  		/* If this is a VLAN packet remove the VLAN Tag */
+> -		vlan_packet_rcvd = false;
+>  		if ((ndev->features & NETIF_F_HW_VLAN_CTAG_RX) &&
+>  		    fep->bufdesc_ex &&
+>  		    (ebdp->cbd_esc & cpu_to_fec32(BD_ENET_RX_VLAN))) {
+>  			/* Push and remove the vlan tag */
+>  			struct vlan_ethhdr *vlan_header = skb_vlan_eth_hdr(skb);
+> -			vlan_tag = ntohs(vlan_header->h_vlan_TCI);
+> -
+> -			vlan_packet_rcvd = true;
+> +			u16 vlan_tag = ntohs(vlan_header->h_vlan_TCI);
+>
+>  			memmove(skb->data + VLAN_HLEN, skb->data, ETH_ALEN * 2);
+>  			skb_pull(skb, VLAN_HLEN);
+> +			__vlan_hwaccel_put_tag(skb,
+> +					       htons(ETH_P_8021Q),
+> +					       vlan_tag);
+>  		}
+>
+>  		skb->protocol = eth_type_trans(skb, ndev);
+> @@ -1845,12 +1843,6 @@ fec_enet_rx_queue(struct net_device *ndev, u16 queue_id, int budget)
+>  			}
+>  		}
+>
+> -		/* Handle received VLAN packets */
+> -		if (vlan_packet_rcvd)
+> -			__vlan_hwaccel_put_tag(skb,
+> -					       htons(ETH_P_8021Q),
+> -					       vlan_tag);
+> -
+>  		skb_record_rx_queue(skb, queue_id);
+>  		napi_gro_receive(&fep->napi, skb);
+>
+>
+> --
+> 2.45.2
+>
+>
 
