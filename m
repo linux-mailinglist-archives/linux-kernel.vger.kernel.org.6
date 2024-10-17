@@ -1,165 +1,154 @@
-Return-Path: <linux-kernel+bounces-369332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0066F9A1BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:43:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5900E9A1BE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321101C21292
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCB551F23804
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3DB1CF5E7;
-	Thu, 17 Oct 2024 07:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF151D0DCE;
+	Thu, 17 Oct 2024 07:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IbOHHlT/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSjODoTO"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BA939FE5;
-	Thu, 17 Oct 2024 07:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1C21D097C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729150992; cv=none; b=IHBRbfaqFldavPMpU4wmLNOx0Uj1YQOE4sbdq6r83mdNAo/3JaU8atzD33T4QxqETlD5Q33815P6ucAm518y5S6t6yJGwQ2wHkqqLViiN0wymIKXdQT+LckbnF0Au85pm/oi/J9hRqyW6LtH8P2wCu/59mkZyxmVwQCodfKm7EA=
+	t=1729151048; cv=none; b=AbiK4Hb3cNzjgji+i4Y0uT6D/DzeAQ391sdWdDaweAx0WdOfvFgP9qRD6LOJxKS49U4DYmRd8IeYfKdRFZxtnO6OPjxWMs9IOlC7jZRJ1AuXH2kI9W1dtw1nIR0LRJ6tWLmLvOUs4IiTeUXamd6KGARNEI0WmnX7DbB98sPkhEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729150992; c=relaxed/simple;
-	bh=zjXOnpVg3YO/v5WC1ZRoTmp2lFkP/tJ10tDZqUyYkdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1lm+KHZqTFygc1CangzogycfeaUleiwHq3kdmYQ/2FpznCVYbj8Yl8uZyFFAI50y0dqdsH8YS7i1kBoriGDkXIls/Pp16zGkjX30DuRSrxtpf7V1ugKx/3t9AE3riC1SAWKcNmWSxC5sxgUmqZJM9ejMYN7IDXjOKdSxc4t9Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IbOHHlT/; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729150989; x=1760686989;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zjXOnpVg3YO/v5WC1ZRoTmp2lFkP/tJ10tDZqUyYkdw=;
-  b=IbOHHlT/29FqA5nwUvJCEeMEhFqHXTof5EUKVcbanzHcav98L9zUSg9U
-   R/nRG89uImbpv41Fj2gIz7TYFhc2pTCw8Cg2kXDfD+peoGB5bDm9Nt8op
-   1F0jz21h0MNi7W5FLxX99fboCrbAfRZ2fFbshYIDqm2bdSV605FUtZ/i9
-   XZ4fMPFP1CEXagfWPaUdW7FxoegSVEoZ4WJ+4fu38jkKgC5vAk8WNj49n
-   EKV4Pod6h75QTJWVUsSvYLOp5tWy8O07PV3Qq/gGl290RrLaCk4BjZYqg
-   6uSd/BC3blZWNaorS4mmv4BABT6WaNGCqnuXOjmAscmpW19x03gT4HG63
-   g==;
-X-CSE-ConnectionGUID: CJgKQlxlR4WLW8GDjHqpOg==
-X-CSE-MsgGUID: VuhoU10ES46aKNWqq848ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="40022686"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="40022686"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 00:43:09 -0700
-X-CSE-ConnectionGUID: acJPe0JVSauLn/nltG7qEA==
-X-CSE-MsgGUID: 8N/QpAneSeedgmoZd+I7Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="109271908"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 17 Oct 2024 00:43:05 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1L9y-000Ltf-1K;
-	Thu, 17 Oct 2024 07:43:02 +0000
-Date: Thu, 17 Oct 2024 15:42:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org,
-	kvm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com, nikunj@amd.com
-Subject: Re: [PATCH v12 07/19] x86/sev: Carve out and export SNP guest
- messaging init routines
-Message-ID: <202410171505.gZbmXuo2-lkp@intel.com>
-References: <20241009092850.197575-8-nikunj@amd.com>
+	s=arc-20240116; t=1729151048; c=relaxed/simple;
+	bh=HWKIORT8+W09Waw7flyNktUO1G3IW0avG0+KftjZrCY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WbG7OoXK3qKrEdNQAER0G8vOxHDoPGNvvqRQqCG2kqBzsTXUeRyEF9FvPEVAcIks0wN0z+XaFEg9fUzT1fhx0iVNiiuxNSmccPDhXtnGGEeT+Fs8E3yUI0qZbpwF0We9AY8oZd8eciB9lZtX0zZJ9maZbJJROzt74OzUwH4FIEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSjODoTO; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e580256c2so483357b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729151045; x=1729755845; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XhT6uxKP9Uae+hLZ9BtprRmoqKINvKXGmZwujbe2LRc=;
+        b=QSjODoTOm6tRthoMPo9uZVgD81fz8y39heMW3H/pJmpY//EjuF8a6wWDyzfSl7LvzU
+         DRpIePVldoI9YnfjNWUA1Os4nuBdRjH8tNSo9hrO4/YURrtxBRIMQn9T7ZvhWQxSrZjy
+         ELAHC5TBurLC2kyhpOzcmQ3Jm2WjLeopog79qMmV/DwMrBywVAmlM27IQ/jiU4XBAAS3
+         +O0y4RG53PKFOJobP1T+p9HZF3CuqSHeWmDO9Ks8S1AT356h3QYf7CdcHUE/S+N3hHe6
+         jkzgn4G4XlfGod6TOPh5Mf1IyNmu8eccXWinW4yXSpwSeOXXChuIn26ORRVYQ6mqODet
+         YRvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729151045; x=1729755845;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XhT6uxKP9Uae+hLZ9BtprRmoqKINvKXGmZwujbe2LRc=;
+        b=Qz/cc1FWxVPTlLlaw8OgG5j7v9iZ1VGKP0EYIIrrO54syx23l66s8KMbQ/wttIwM/L
+         res+kUyv0Qluq4umZwWfPH0UElfggVqBXG8NndHsmY0Wan1DHMUcaDK25ZIZ5H0wVv5P
+         f485h8k0rrX9FkXrWNQSzvRrk//qGR2+mBrd9kpeX2b2ia7lP5wDesDqRl1aH271OoaG
+         40dyeZ7sqace9nJ+qCOD31XoaGhaBLwrI+xyUjV6rE9EtO+tETJIU2mtN7BD9uN3ZmMn
+         QdZM2DyGDHOqbs9pKx7eCYnHcE9orWgYc2KzVCxY0PWTq6Fu0GH3Jap4/gt0rTd4k4Zv
+         CXag==
+X-Forwarded-Encrypted: i=1; AJvYcCXiJQ8l497QVAUR0hyuWh0tWtRQj8QpvLF4buyEhkcmIahnSCfK+xKw3ShDVJYCfwGGln1IZ+0UUW1yZ5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcYXgYqZu0x8qfopR8UocOaahUOOXEEjQwzbdfP8wWKo3eN4qi
+	AU1aL5QiRsxLqhQydgEtbBp40X/8nstWH/cWqBDuFxlUaJb1GmKM
+X-Google-Smtp-Source: AGHT+IHeoK+fdmwnCvRuEF5gFuBt4IZPo4cdR0NzysiFxpQdaMBkJiTW+YU5+JLubqS0oIucWGhNOg==
+X-Received: by 2002:a05:6a00:1892:b0:71e:7636:3323 with SMTP id d2e1a72fcca58-71e76363525mr13079868b3a.7.1729151045116;
+        Thu, 17 Oct 2024 00:44:05 -0700 (PDT)
+Received: from Barrys-MBP.hub ([2407:7000:8942:5500:e8b7:1946:b2b3:ca4a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77371186sm4168695b3a.35.2024.10.17.00.44.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 17 Oct 2024 00:44:04 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: xiang@kernel.org,
+	chao@kernel.org,
+	linux-erofs@lists.ozlabs.org
+Cc: huyue2@coolpad.com,
+	jefflexu@linux.alibaba.com,
+	dhavale@google.com,
+	linux-kernel@vger.kernel.org,
+	Barry Song <v-songbaohua@oppo.com>
+Subject: [PATCH RFC] fs: erofs: support PG_mappedtodisk flag for folios with zero-filled
+Date: Thu, 17 Oct 2024 20:43:46 +1300
+Message-Id: <20241017074346.35284-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009092850.197575-8-nikunj@amd.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Nikunj,
+From: Barry Song <v-songbaohua@oppo.com>
 
-kernel test robot noticed the following build warnings:
+When a folio has never been zero-filled, mark it as mappedtodisk
+to allow other software components to recognize and utilize the
+flag.
 
-[auto build test WARNING on 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b]
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
+ fs/erofs/fileio.c | 2 ++
+ fs/erofs/zdata.c  | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nikunj-A-Dadhania/virt-sev-guest-Use-AES-GCM-crypto-library/20241009-173734
-base:   8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-patch link:    https://lore.kernel.org/r/20241009092850.197575-8-nikunj%40amd.com
-patch subject: [PATCH v12 07/19] x86/sev: Carve out and export SNP guest messaging init routines
-config: x86_64-randconfig-121-20241017 (https://download.01.org/0day-ci/archive/20241017/202410171505.gZbmXuo2-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410171505.gZbmXuo2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410171505.gZbmXuo2-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> arch/x86/coco/sev/core.c:2663:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct snp_secrets_page *secrets @@     got void [noderef] __iomem * @@
-   arch/x86/coco/sev/core.c:2663:24: sparse:     expected struct snp_secrets_page *secrets
-   arch/x86/coco/sev/core.c:2663:24: sparse:     got void [noderef] __iomem *
->> arch/x86/coco/sev/core.c:2694:22: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got struct snp_secrets_page *secrets @@
-   arch/x86/coco/sev/core.c:2694:22: sparse:     expected void volatile [noderef] __iomem *addr
-   arch/x86/coco/sev/core.c:2694:22: sparse:     got struct snp_secrets_page *secrets
-
-vim +2663 arch/x86/coco/sev/core.c
-
-  2649	
-  2650	struct snp_msg_desc *snp_msg_alloc(void)
-  2651	{
-  2652		struct snp_msg_desc *mdesc;
-  2653	
-  2654		BUILD_BUG_ON(sizeof(struct snp_guest_msg) > PAGE_SIZE);
-  2655	
-  2656		if (snp_mdesc)
-  2657			return snp_mdesc;
-  2658	
-  2659		mdesc = kzalloc(sizeof(struct snp_msg_desc), GFP_KERNEL);
-  2660		if (!mdesc)
-  2661			return ERR_PTR(-ENOMEM);
-  2662	
-> 2663		mdesc->secrets = ioremap_encrypted(secrets_pa, PAGE_SIZE);
-  2664		if (!mdesc->secrets)
-  2665			return ERR_PTR(-ENODEV);
-  2666	
-  2667		/* Allocate the shared page used for the request and response message. */
-  2668		mdesc->request = alloc_shared_pages(sizeof(struct snp_guest_msg));
-  2669		if (!mdesc->request)
-  2670			goto e_unmap;
-  2671	
-  2672		mdesc->response = alloc_shared_pages(sizeof(struct snp_guest_msg));
-  2673		if (!mdesc->response)
-  2674			goto e_free_request;
-  2675	
-  2676		mdesc->certs_data = alloc_shared_pages(SEV_FW_BLOB_MAX_SIZE);
-  2677		if (!mdesc->certs_data)
-  2678			goto e_free_response;
-  2679	
-  2680		/* initial the input address for guest request */
-  2681		mdesc->input.req_gpa = __pa(mdesc->request);
-  2682		mdesc->input.resp_gpa = __pa(mdesc->response);
-  2683		mdesc->input.data_gpa = __pa(mdesc->certs_data);
-  2684	
-  2685		snp_mdesc = mdesc;
-  2686	
-  2687		return mdesc;
-  2688	
-  2689	e_free_response:
-  2690		free_shared_pages(mdesc->response, sizeof(struct snp_guest_msg));
-  2691	e_free_request:
-  2692		free_shared_pages(mdesc->request, sizeof(struct snp_guest_msg));
-  2693	e_unmap:
-> 2694		iounmap(mdesc->secrets);
-
+diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+index 3af96b1e2c2a..aa4cb438ea95 100644
+--- a/fs/erofs/fileio.c
++++ b/fs/erofs/fileio.c
+@@ -88,6 +88,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+ 	struct erofs_map_blocks *map = &io->map;
+ 	unsigned int cur = 0, end = folio_size(folio), len, attached = 0;
+ 	loff_t pos = folio_pos(folio), ofs;
++	bool fully_mapped = true;
+ 	struct iov_iter iter;
+ 	struct bio_vec bv;
+ 	int err = 0;
+@@ -124,6 +125,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+ 			erofs_put_metabuf(&buf);
+ 		} else if (!(map->m_flags & EROFS_MAP_MAPPED)) {
+ 			folio_zero_segment(folio, cur, cur + len);
++			fully_mapped = false;
+ 			attached = 0;
+ 		} else {
+ 			if (io->rq && (map->m_pa + ofs != io->dev.m_pa ||
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 8936790618c6..0158de4f3d95 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -926,7 +926,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 	const loff_t offset = folio_pos(folio);
+ 	const unsigned int bs = i_blocksize(inode);
+ 	unsigned int end = folio_size(folio), split = 0, cur, pgs;
+-	bool tight, excl;
++	bool tight, excl, fully_mapped = true;
+ 	int err = 0;
+ 
+ 	tight = (bs == PAGE_SIZE);
+@@ -949,6 +949,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 
+ 		if (!(map->m_flags & EROFS_MAP_MAPPED)) {
+ 			folio_zero_segment(folio, cur, end);
++			fully_mapped = false;
+ 			tight = false;
+ 		} else if (map->m_flags & EROFS_MAP_FRAGMENT) {
+ 			erofs_off_t fpos = offset + cur - map->m_la;
+@@ -1009,6 +1010,9 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 			tight = (bs == PAGE_SIZE);
+ 		}
+ 	} while ((end = cur) > 0);
++
++	if (fully_mapped)
++		folio_set_mappedtodisk(folio);
+ 	erofs_onlinefolio_end(folio, err);
+ 	return err;
+ }
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.3 (Apple Git-146)
+
 
