@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-369703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB669A215F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:44:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068879A2163
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 927B11C20754
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98662889B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5051D4173;
-	Thu, 17 Oct 2024 11:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDC81DCB06;
+	Thu, 17 Oct 2024 11:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDgrc3sa"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGddNEgd"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9331D365B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E711D365B;
+	Thu, 17 Oct 2024 11:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729165488; cv=none; b=fQ+DmlshyuqBRzNcobgTce2iDYRf61UMl+9wufFnbwFydMfXlxI7onO9zd941KKVCyojxjFr7+Ju/cqU3J5/c02ThRT9TUKxTkePQQ0xyBsuPzl1P2Y7CoEtbA7KLthr1Cv1+xDbxrGUfo6dU4jY0urvpAwcksGLUTXjzbWvAZQ=
+	t=1729165500; cv=none; b=Gwij3zEKKeb5IR79bdaCSUu/J41ZCzimHidfbWa1AlPNWxNnTFkyBDB+/VHGg3JnKcXqa/fSeCkdNX5DVv/6MrHkLaTjmibxlF+qxfTENIyQdTBm30FxJiZZURmE24Y6nJK+AoqLcPXH9ylDDNUaFfVY99S31Befsc18bWwELvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729165488; c=relaxed/simple;
-	bh=K1UBw59nAZFfL+69V4aH8rqa9eIt0v0Z6bBihXpf7Fs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=QGtBUbXiXaYLRnADLEolw+2GfD8kiyFg7buHX82jpFQSfcGKfeby219D5M37JMoXFN9uxXrTouuJ/0GoerSPZNOENWcAPmBPDTVEGzu2WLMbMDVxmIN/Pd7/y3XrLuvYuQVev7wy3tcdM6o8p7LkXKO0yv7GlSWL5Gk/M2MFqMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDgrc3sa; arc=none smtp.client-ip=209.85.222.175
+	s=arc-20240116; t=1729165500; c=relaxed/simple;
+	bh=BDrLAoYk78DuFKycHy6PJuwIencOiI6AZC8wRXXtIGw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=iZibZzM4T/WVMvmuoy/wosYlVlDvwe2KK97tTnTMq9US8W/pMTTjOEwQV/wV2ip3y3Dhni1dVJvf6hTliHHK2ZXKZVKUQHD/xFkZcPWEro6fp+Tpwo3xgX/UBOgxPFaxwEpYi5vHw65detkQOuTZAxRDweXpzpPPnVcR0EGh6Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aGddNEgd; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b150dc7bc0so36507685a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:44:44 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b13bf566c0so51393385a.3;
+        Thu, 17 Oct 2024 04:44:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729165483; x=1729770283; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729165495; x=1729770295; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=Kd6DFKsFGyCeOTpexQNILtoJAiJcykx9DeZVNUWkaxc=;
-        b=iDgrc3sa7kiOuX9xIo3X/Ikml0msoCocpGdcSuVp3cgID+yJmuKoT8gBRHuQbnX5o2
-         Yf2L2V/WYaZJZH/oY+JuECF5rqB1yNhigUrkJeILGH/CseAZBDH/oX2XEQsyUd7hoI2D
-         JvdAIniKtio1qeFZneK5KkKLMzPQTgXdD61smISyfTzB47W5uSy4p8XiZSLy9N817oYk
-         m2ugnHw+gsQFT+7l6eiL+P9ZdRS4o1LaBueSeolYWnjsNv/cp5d8Xr6Hb/KbkgbeBZxe
-         2wxFTWHYD+YulnxNSXyuGNckuz0kBy/+fhS2+KgC2T+yCDG2yv1gDbDpCGo4pdNJ/5UX
-         JLkA==
+        bh=T0gij7O8vtIgOEZIkJrRtW3eNqnKO7oPYnchc+vKsZQ=;
+        b=aGddNEgd6GuMltMjXCIc6ocGr9nnDJrYe71ioNADiNZ1TsSSDPXJWU/ksuYokjNH6L
+         v8dOh38JmvzsCtI1Td/9OqoOQZua0iMjWgC41iYfWd8cXMKoW62A9uEZ3LtbNkbvHPc5
+         0U8PWsYZkz7eSLU7a+1zjfnAy3QltMvkkCE10gLkLxteZrojxPxRxseI2nqJ8F1UcqQv
+         Fb5uCXiFZ0stP5dxFrrtsButsDbnzftnFMmozGD5zN9v95vOlpmHo4KDpo1kWaXp1YpS
+         J8ugmCwmQUJGTAyLOOYk5BYQC3mQjHjpA0E+0A34GSC+r5tZ/F1DFucHEceuRz2yE7Mr
+         +CmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729165483; x=1729770283;
+        d=1e100.net; s=20230601; t=1729165495; x=1729770295;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kd6DFKsFGyCeOTpexQNILtoJAiJcykx9DeZVNUWkaxc=;
-        b=WPbov1mgs3lkJ/s6lSLc9FWZyObizKfcf8C1+JURqMuAUz3Evz45ioA+bQH4xirnuU
-         ntlesZON/s6SowoOUCw/fxbnQVgWJcP6E6acZ5Ad/EvtuTJIuBZCoZpay843ivkbRlCP
-         gMw39gubgrBcyBt303CS14zJr4DoGbEgcQbXrqmQgPzih/sJAXYOsIvbN41O8dXbXpwl
-         hPhJyhsfeVdQ2ygaJYzZpQYskquEG0jDNU5cc9qhxTlhcgmpoElwvWoU46l4Eh2YjRPa
-         hWZQ41M/pKZvehz4dVKAwUc3QD1sO5b/y1YP4PyNAoXkOf7k6CBx/GG6ILhl892bcPJ0
-         aY7w==
-X-Gm-Message-State: AOJu0YxKavr6uM0aX9EOqxROmXbJPNvlGamkFeAnqp4xNVQNYU1xzxgG
-	LnoYMwXdLpW145HFSn570Y8OHfu0cIXE73C2injCkr/z4RHrAe8Ukz3DPGb8
-X-Google-Smtp-Source: AGHT+IEJwWB2u3yoJiSAY3HZFLS5N0tecVfuRaWpjp/mpm5YGXTBl45a1XYdkpjdgaLbCJ6b51732w==
-X-Received: by 2002:a05:620a:1a9f:b0:7b1:1184:a6b6 with SMTP id af79cd13be357-7b120fa91c6mr2991586985a.4.1729165483118;
-        Thu, 17 Oct 2024 04:44:43 -0700 (PDT)
+        bh=T0gij7O8vtIgOEZIkJrRtW3eNqnKO7oPYnchc+vKsZQ=;
+        b=bz6corYZwEWfGeEgGff7c7V7Aivgf+UYNBv0+mglicOt8pXXeLagzNoMXz7fTQ9AAN
+         cLSINDUUMvEPJfdYIY6J/N1SLB5ny1wB2fKEI3uAunSTQyY0AFn3M9NVHwF7pm+QKWxQ
+         drLvuW0y8jw+lOOjLcZsAh9l+v8fwNUY2wQp3UBGpdPtauLRlF7Y4sRuKu1kkH9VkXbm
+         927bA5Rt7qATaC8kk+Yq7AHjaRXrZ7KPjI/6ar8gxSnqNUdk93ChHhqdVGRJpLeovn8v
+         3tgm3e2ZzzWw4sVKBP8SnBYqVzWZzpdyygsfiLGzjsb93q5WdSe9NRCcZ7m6Ch9leENl
+         DzCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxbh055QqCq7Bo+8zfq45CDRk+bPXqSHsH6W3P2iCC/XfQmo4TuoT+PLtlExHPU6tqMdSt9PA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxraF4kEitXBFph7SpLeWpNfa1JkdVVSPiVQOM0mgReHrpVRqjw
+	1cTVXdWTWIoGO/iZUnLFePQzlJyS3dILOCy4rPfZ8R9TgFeMyNWYsdq8MVMk
+X-Google-Smtp-Source: AGHT+IGOVpfENdHUvZfa88a/CpAR85h9UtlEt/EralxbrJ/14qVsSERYblgWpbk6Mo4h+zBCPIX9fA==
+X-Received: by 2002:a05:620a:4015:b0:7b1:4783:b7b1 with SMTP id af79cd13be357-7b14783b92bmr594140585a.64.1729165494986;
+        Thu, 17 Oct 2024 04:44:54 -0700 (PDT)
 Received: from localhost.localdomain ([4.15.194.220])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1540f9075sm14070185a.78.2024.10.17.04.44.41
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1540f9075sm14070185a.78.2024.10.17.04.44.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 04:44:42 -0700 (PDT)
+        Thu, 17 Oct 2024 04:44:54 -0700 (PDT)
 From: Vimal Agrawal <avimalin@gmail.com>
 X-Google-Original-From: Vimal Agrawal <vimal.agrawal@sophos.com>
 To: linux-kernel@vger.kernel.org,
@@ -70,138 +71,117 @@ To: linux-kernel@vger.kernel.org,
 	quic_jjohnson@quicinc.com,
 	dan.carpenter@linaro.org
 Cc: avimalin@gmail.com,
-	vimal.agrawal@sophos.com
-Subject: [PATCH v1 2/2] misc:minor basic kunit tests
-Date: Thu, 17 Oct 2024 11:43:28 +0000
-Message-Id: <20241017114329.22351-1-vimal.agrawal@sophos.com>
+	vimal.agrawal@sophos.com,
+	stable@vger.kernel.org
+Subject: [PATCH v3 1/2] misc: misc_minor_alloc to use ida for all dynamic/misc dynamic minors
+Date: Thu, 17 Oct 2024 11:43:29 +0000
+Message-Id: <20241017114329.22351-2-vimal.agrawal@sophos.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CALkUMdS3wEuSi5SGqsRKt3nSb4mHue1bJTJm8=QL3OLYU2GWig@mail.gmail.com>
+In-Reply-To: <20241017114329.22351-1-vimal.agrawal@sophos.com>
 References: <CALkUMdS3wEuSi5SGqsRKt3nSb4mHue1bJTJm8=QL3OLYU2GWig@mail.gmail.com>
+ <20241017114329.22351-1-vimal.agrawal@sophos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-basic kunit tests for misc minor
+misc_minor_alloc was allocating id using ida for minor only in case of
+MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
+using ida_free causing a mismatch and following warn:
+> > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
+> > ida_free called for id=127 which is not allocated.
+> > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+...
+> > [<60941eb4>] ida_free+0x3e0/0x41f
+> > [<605ac993>] misc_minor_free+0x3e/0xbc
+> > [<605acb82>] misc_deregister+0x171/0x1b3
 
+misc_minor_alloc is changed to allocate id from ida for all minors
+falling in the range of dynamic/ misc dynamic minors
+
+Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
 Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
+Cc: stable@vger.kernel.org
 ---
- lib/Kconfig.debug     | 11 +++++++
- lib/Makefile          |  1 +
- lib/test_misc_minor.c | 69 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+)
- create mode 100644 lib/test_misc_minor.c
+v2: Added Fixes:
+    added missed case for static minor in misc_minor_alloc
+v3: removed kunit changes as that will be added as second patch in this two patch series
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7315f643817a..5a5d27284e0a 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2488,6 +2488,17 @@ config TEST_RHASHTABLE
- config TEST_IDA
- 	tristate "Perform selftest on IDA functions"
+ drivers/char/misc.c | 35 ++++++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+index 541edc26ec89..9d0cd3459b4f 100644
+--- a/drivers/char/misc.c
++++ b/drivers/char/misc.c
+@@ -63,16 +63,30 @@ static DEFINE_MUTEX(misc_mtx);
+ #define DYNAMIC_MINORS 128 /* like dynamic majors */
+ static DEFINE_IDA(misc_minors_ida);
  
-+config TEST_MISC_MINOR
-+	tristate "Basic misc minor Kunit test" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Kunit test for the misc minor.
-+	  It tests misc minor functions for dynamic and misc dynamic minor.
-+	  This include misc_xxx functions
+-static int misc_minor_alloc(void)
++static int misc_minor_alloc(int minor)
+ {
+ 	int ret = 0;
+ 
+-	ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
+-	if (ret >= 0) {
+-		ret = DYNAMIC_MINORS - ret - 1;
+-	} else {
+-		ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
++	if (minor == MISC_DYNAMIC_MINOR) {
++		/* allocate free id */
++		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
++		if (ret >= 0) {
++			ret = DYNAMIC_MINORS - ret - 1;
++		} else {
++			ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
+ 				      MINORMASK, GFP_KERNEL);
++		}
++	} else {
++		/* specific minor, check if it is in dynamic or misc dynamic range  */
++		if (minor < DYNAMIC_MINORS) {
++			minor = DYNAMIC_MINORS - minor - 1;
++			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
++		} else if (minor > MISC_DYNAMIC_MINOR) {
++			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
++		} else {
++			/* case of non-dynamic minors, no need to allocate id */
++			ret = 0;
++		}
+ 	}
+ 	return ret;
+ }
+@@ -219,7 +233,7 @@ int misc_register(struct miscdevice *misc)
+ 	mutex_lock(&misc_mtx);
+ 
+ 	if (is_dynamic) {
+-		int i = misc_minor_alloc();
++		int i = misc_minor_alloc(misc->minor);
+ 
+ 		if (i < 0) {
+ 			err = -EBUSY;
+@@ -228,6 +242,7 @@ int misc_register(struct miscdevice *misc)
+ 		misc->minor = i;
+ 	} else {
+ 		struct miscdevice *c;
++		int i;
+ 
+ 		list_for_each_entry(c, &misc_list, list) {
+ 			if (c->minor == misc->minor) {
+@@ -235,6 +250,12 @@ int misc_register(struct miscdevice *misc)
+ 				goto out;
+ 			}
+ 		}
 +
-+	  If unsure, say N.
-+
- config TEST_PARMAN
- 	tristate "Perform selftest on priority array manager"
- 	depends on PARMAN
-diff --git a/lib/Makefile b/lib/Makefile
-index 773adf88af41..631d73f96f76 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
- obj-$(CONFIG_TEST_IOV_ITER) += kunit_iov_iter.o
- obj-$(CONFIG_HASH_KUNIT_TEST) += test_hash.o
- obj-$(CONFIG_TEST_IDA) += test_ida.o
-+obj-$(CONFIG_TEST_MISC_MINOR) += test_misc_minor.o
- obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
- CFLAGS_test_ubsan.o += $(call cc-disable-warning, vla)
- CFLAGS_test_ubsan.o += $(call cc-disable-warning, unused-but-set-variable)
-diff --git a/lib/test_misc_minor.c b/lib/test_misc_minor.c
-new file mode 100644
-index 000000000000..293e0fb7e43e
---- /dev/null
-+++ b/lib/test_misc_minor.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <kunit/test.h>
-+#include <kunit/test-bug.h>
-+#include <linux/module.h>
-+#include <linux/miscdevice.h>
-+
-+/* dynamic minor (2) */
-+static struct miscdevice dev_dynamic_minor = {
-+	.minor  = 2,
-+	.name   = "dev_dynamic_minor",
-+};
-+
-+/* static minor (LCD_MINOR) */
-+static struct miscdevice dev_static_minor = {
-+	.minor  = LCD_MINOR,
-+	.name   = "dev_static_minor",
-+};
-+
-+/* misc dynamic minor */
-+static struct miscdevice dev_misc_dynamic_minor = {
-+	.minor  = MISC_DYNAMIC_MINOR,
-+	.name   = "dev_misc_dynamic_minor",
-+};
-+
-+static void kunit_dynamic_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_dynamic_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, 2, dev_dynamic_minor.minor);
-+	misc_deregister(&dev_dynamic_minor);
-+}
-+
-+static void kunit_static_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_static_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	KUNIT_EXPECT_EQ(test, LCD_MINOR, dev_static_minor.minor);
-+	misc_deregister(&dev_static_minor);
-+}
-+
-+static void kunit_misc_dynamic_minor(struct kunit *test)
-+{
-+	int ret;
-+
-+	ret = misc_register(&dev_misc_dynamic_minor);
-+	KUNIT_EXPECT_EQ(test, 0, ret);
-+	misc_deregister(&dev_misc_dynamic_minor);
-+}
-+
-+static struct kunit_case test_cases[] = {
-+	KUNIT_CASE(kunit_dynamic_minor),
-+	KUNIT_CASE(kunit_static_minor),
-+	KUNIT_CASE(kunit_misc_dynamic_minor),
-+	{}
-+};
-+
-+static struct kunit_suite test_suite = {
-+	.name = "misc_minor_test",
-+	.test_cases = test_cases,
-+};
-+kunit_test_suite(test_suite);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Vimal Agrawal");
-+MODULE_DESCRIPTION("misc minor testing");
++		i = misc_minor_alloc(misc->minor);
++		if (i < 0) {
++			err = -EBUSY;
++			goto out;
++		}
+ 	}
+ 
+ 	dev = MKDEV(MISC_MAJOR, misc->minor);
 -- 
 2.17.1
 
