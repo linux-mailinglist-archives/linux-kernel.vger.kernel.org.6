@@ -1,150 +1,154 @@
-Return-Path: <linux-kernel+bounces-369725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F029A21D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:04:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE12A9A21D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C5161F2474D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:04:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2751F2659F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC471DCB31;
-	Thu, 17 Oct 2024 12:04:10 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4231DCB31;
+	Thu, 17 Oct 2024 12:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="KijUx08A"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924E01D5153
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6EA1DC1B0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729166650; cv=none; b=j2jrzoZ8PcbSulEQ1pT6hnROI2CVyfItOGVoGfDXL6BqqRBZWOEtN8tqG/6x6zK4wj2I1L+EZ5UffkSI3RwzkUzdVqymG7uH2FYuNn2NI4UhheDoX6SRkgXI48gBrXWF67q17ym6dj+K7CmzkqdWC2We3pVt+mtuErI71D3FnjA=
+	t=1729166723; cv=none; b=OkHJixu9yRJX/YrffcY88tricR0D/yH18CuBx9oqTVsAsKdkGgzncaqSmib4+4h9rEykcimSEl+K8i+5iVQegDGGU5evi3d2c8MdxM0jki543o77Z1vzCWoudr1op1FR0eXtbIBgJSaBZZ+KTsngPEo7F7S4vKERnsly2elpcEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729166650; c=relaxed/simple;
-	bh=bakgIPnGSt0zmwzGXHqruV/nGgL9llOjBfRDodkCIyg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kLipCgNhpS9M/S3S5N0MaU8Jun3ow0uuGcgriF4X2B/ARtosKfC+UjLaf7bzkFlod8yFKedFHKSuN+v7xwN0AdZ5KOFNWuLTTpWfQgeNIKzpZYFnlcGCga6hLKKWkJqCxP21ZQ8FWHcwuDWdBB3SIUSC8FDSQvg6wSQV0X3VZXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so4895605ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:04:07 -0700 (PDT)
+	s=arc-20240116; t=1729166723; c=relaxed/simple;
+	bh=9Ou2IPV+fUYVUZFwDwpHsxjEEQ10P3Z4LAfWFwq7vtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hG6WeqHtBMVLAAF6AZTKex4laeWpaT2vWL1ge7V3UghjSxMv0xRkgFZPF6hrC8OMG3P+fPCpkAN1k1hXP8KzZVzoEXb8S53k3kTRXktVWM0lfW5yzcXIuVTFFnz6B4XDIVG4nLbAucLRRvXzHlkuSg2yFBqqwMfwKZJ4FY67svk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=KijUx08A; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b1343e8042so91248885a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:05:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1729166719; x=1729771519; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WqYmbfPGoH8bApHw169OlytcN5sSb6v9X/QNj/xnHLY=;
+        b=KijUx08AlHYtHrA2jgOdifSWEYiLQFzyY36aeC4rTOpydkvadY+Cz0WdivVZZXRGdD
+         XhDdBduzP5EiezyHilXhun2+QX6fQ6C38zgyovR4CpWqd7lgpse0lztR95Hs7Ziz0zgP
+         Of1ue2F55X8DtoB4lS3BnYZSw4/Zyu0/zYEdFz1Bc3xmOm06j6C5+jN7IDO596y3Ezpt
+         WOEOsMKmuncHYprqDM6SCTNS30FHx1PVqt3TMX2kBRH9bpKMO/Ur/5TEwG8nUwG6CRb1
+         XiUNuEXp+8D/fWjLwhWPQPkzh1bmUnlHgEzmrzIT9Q/+one2so1zKdrchSe3uI8EM4JE
+         j+3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729166647; x=1729771447;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLx0XEr7QIW+dFoLAnWAGHywpe7yftQFdub9+rRTRSI=;
-        b=SWF17teWv06YW/4mKPITTMkJYFRP/UlFNIAtY6HJetAVm9A7NsAj5Qt+GCWtBRix2L
-         k+nnbY6bLm4o22785yydk3pLYOCRuL1Nec1mIYThAq8QWJSP4piv2Aklw7iovG5c8zBG
-         lhaUVR6XrXGXC95DaGGwVPpBTJ+WGkU7Gz5FAtv3iXVKFRlUm+TydcY5x1Bybit9k4NS
-         iWNDdeDhAYXXxUPK+KoBMGCRSWoaMnvRHMipIYfe/Qc+S+fUpeRElPWhOXE6erXUUHgo
-         IdhyUeoYEkNkWV5WCaPWAKHij8KnFRxKH8VJ7rDpljEeTp96hGYwH5AtpjN6PDU57vmD
-         FrAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU280zisnZYEFK6fi4meHsf11Tp6GpLaCHiUHeQex0NlaFFypYvikFdr3tfDbveZa3tjB/WN5kq7Ax2jlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5GxfwB1/vNMATYLaX8ipHB436rVqk5TsdBD9tbsF5c3SEGefY
-	EyligQU0kSSehVjuWT8gGfYeaPlb+QehqXECdjY9cNTctVmczuBv5VXPBbVej/S8uWNxRMEdrRF
-	sadD36ePhbVdCY643qQk9VInl4Rf5UB6aOZumZ9ihEUQPhZ0/+cpaanM=
-X-Google-Smtp-Source: AGHT+IEFFmAFVvVOxt9QPhnFVyYk1onWQEXrfxtZHaf+o0YiZSZJKL3xQudZGEbfq3FFcT8FqFXNjIWH44OmUpnJsENXqsoftLt6
+        d=1e100.net; s=20230601; t=1729166719; x=1729771519;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WqYmbfPGoH8bApHw169OlytcN5sSb6v9X/QNj/xnHLY=;
+        b=kB9qLr8jgVnwn+fxQUEeexcNPtSdj71IGqN6mXXxy0BANGYkcAif5sFPeAhn8WNEzp
+         DW+ajHbHhfpW/iYV/EITSnd9Mt3J0eRuOXZ5Yb+mkU5QQtIyYPf/zC3/L/FY/1EUOSvR
+         MfOLG3QazS6K/d5rITEQHp7HHgkYUfsBdm9DA4M+49w3hRI4NsnApoCnrcVbC0JGbhwz
+         NgogrhxJeq8M6OWi96e1/KTip/9HAeL8itTsErzDpxA0pQqvOG+EiKDmrLA0ytDlCxhi
+         5hyI1DAZVih8LVSQD5m5ljymvh5V9lfMu4wHhvNU41mzLxcnAjGwlSis5T1e1QbE3sxx
+         mopw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlKlWoix/qeQoGEMon1c/JE9i62p8xSVfw6dGb9jW1Zcv0dvhkOEhTlr8TmIc60Y0nd/I8dnaACSztJQw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo2D4RpXSkCa9kn48witgHZSuCdqCrrp6CTEeyisvnXT6q/O6P
+	7cRPKNRvCnzTFHSo5jMb60gJ99BzLbfnyGQjzIKceg6AqjTVRhdiuX5+Z93332U=
+X-Google-Smtp-Source: AGHT+IEPtt04l70kN6bicB55lZv2cm4Yf4rIE4G65war3hf5YJH+Qt48rYAG8z4yCn6t9Q2qUjjXgg==
+X-Received: by 2002:a05:620a:44c5:b0:7a9:ab71:f820 with SMTP id af79cd13be357-7b1417a24ddmr959080985a.4.1729166719151;
+        Thu, 17 Oct 2024 05:05:19 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1424ba332sm223436285a.81.2024.10.17.05.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 05:05:18 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t1PFm-003iH2-4Y;
+	Thu, 17 Oct 2024 09:05:18 -0300
+Date: Thu, 17 Oct 2024 09:05:18 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt
+ attach/detach/replace
+Message-ID: <20241017120518.GI4020792@ziepe.ca>
+References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
+ <20240702063444.105814-8-baolu.lu@linux.intel.com>
+ <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
+ <20241015125420.GK1825128@ziepe.ca>
+ <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
+ <20241016152503.GB4020792@ziepe.ca>
+ <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164c:b0:3a3:b254:ca2a with SMTP id
- e9e14a558f8ab-3a3bcdbdb6amr138597105ab.9.1729166646597; Thu, 17 Oct 2024
- 05:04:06 -0700 (PDT)
-Date: Thu, 17 Oct 2024 05:04:06 -0700
-In-Reply-To: <20241017113915.2052-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6710fd36.050a0220.d5849.0028.GAE@google.com>
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in seq_read_iter (2)
-From: syzbot <syzbot+c4cf28ed38d86d6b549d@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
 
-Hello,
+On Thu, Oct 17, 2024 at 09:44:18AM +0800, Zhangfei Gao wrote:
+> On Wed, 16 Oct 2024 at 23:25, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Wed, Oct 16, 2024 at 09:58:36AM +0800, Zhangfei Gao wrote:
+> > > On Tue, 15 Oct 2024 at 20:54, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > >
+> > > > On Tue, Oct 15, 2024 at 11:19:33AM +0800, Zhangfei Gao wrote:
+> > > > > > +static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+> > > > > > +{
+> > > > > > +       struct device *dev = idev->dev;
+> > > > > > +       int ret;
+> > > > > > +
+> > > > > > +       /*
+> > > > > > +        * Once we turn on PCI/PRI support for VF, the response failure code
+> > > > > > +        * should not be forwarded to the hardware due to PRI being a shared
+> > > > > > +        * resource between PF and VFs. There is no coordination for this
+> > > > > > +        * shared capability. This waits for a vPRI reset to recover.
+> > > > > > +        */
+> > > > > > +       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+> > > > > > +               return -EINVAL;
+> > > > >
+> > > > > I am using the SMMUv3 stall feature, and need to forward this to hardware,
+> > > > > And now I am hacking to comment this check.
+> > > > > Any suggestions?
+> > > >
+> > > > Are you using PCI SRIOV and stall together?
+> > >
+> > > Only use smmuv3 stall feature.
+> >
+> > Then isn't to_pci_dev(dev)->is_virtfn == false?
+> >
+> > That should only be true with SRIOV
+> 
+> Do you mean
+> if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn == false)
+>     return -EINVAL;
+>
+> This is fine
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in corrupted
+No, I mean on your test system you are not using SRIOV so all your PCI
+devices will have is_virtfn == false and the above if shouldn't be a
+problem. is_virtfn indicates the PCI device is a SRIOV VF.
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	(detected by 0, t=10502 jiffies, g=13101, q=1926589 ncpus=2)
-rcu: All QSes seen, last rcu_preempt kthread activity 10500 (4294975059-4294964559), jiffies_till_next_fqs=1, root ->qsmask 0x0
-rcu: rcu_preempt kthread starved for 10501 jiffies! g13101 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:25296 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5322 [inline]
- __schedule+0x1843/0x4ae0 kernel/sched/core.c:6682
- __schedule_loop kernel/sched/core.c:6759 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6774
- schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
- rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2045
- rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2247
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc3-syzkaller-gc964ced77262-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:ip_output+0xcd/0x230 net/ipv4/ip_output.c:429
-Code: 00 00 e8 46 44 7b f7 42 80 3c 33 00 74 08 4c 89 e7 e8 07 d4 e1 f7 49 8b 1c 24 48 83 e3 fe 48 89 d8 48 c1 e8 03 42 80 3c 30 00 <74> 08 48 89 df e8 e9 d3 e1 f7 4c 8b 23 4d 8d 7d 10 4c 89 fd 48 c1
-RSP: 0018:ffffc90000156da8 EFLAGS: 00000246
-RAX: 1ffff11030ec32e0 RBX: ffff888187619700 RCX: ffff88801beeda00
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff888187619700 R08: ffffffff8a19a267 R09: 1ffffffff2037a45
-R10: dffffc0000000000 R11: fffffbfff2037a46 R12: ffff888187618b98
-R13: ffff888187618b40 R14: dffffc0000000000 R15: ffff888187618b40
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa227d5f5b0 CR3: 000000000e734000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- </IRQ>
- <TASK>
- synproxy_send_client_synack+0x8b8/0xf30 net/netfilter/nf_synproxy_core.c:484
- nft_synproxy_eval_v4+0x3ca/0x610 net/netfilter/nft_synproxy.c:59
- nft_synproxy_do_eval+0x362/0xa60 net/netfilter/nft_synproxy.c:141
- expr_call_ops_eval net/netfilter/nf_tables_core.c:240 [inline]
- nft_do_chain+0x4ad/0x1da0 net/netfilter/nf_tables_core.c:288
- nft_do_chain_inet+0x418/0x6b0 net/netfilter/nft_chain_filter.c:161
- nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
- nf_hook_slow+0xc3/0x220 net/netfilter/core.c:626
- nf_hook include/linux/netfilter.h:269 [inline]
- NF_HOOK+0x29e/0x450 include/linux/netfilter.h:312
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- __netif_receive_skb_one_core net/core/dev.c:5666 [inline]
- __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5779
- process_backlog+0x662/0x15b0 net/core/dev.c:6111
- __napi_poll+0xcb/0x490 net/core/dev.c:6775
- napi_poll net/core/dev.c:6844 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6966
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
- smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Your explanation for your problem doesn't really make sense, or there
+is something wrong someplace else to get a bogus is_virtfn..
 
+If you are doing SRIOV with stall, then that is understandable.
 
-Tested on:
-
-commit:         c964ced7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e90240580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c4cf28ed38d86d6b549d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14ccf887980000
-
+Jason
 
