@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-370044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17A49A2688
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:26:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A439A2697
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D191F21320
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE74EB22C2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871971DED41;
-	Thu, 17 Oct 2024 15:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55911DE4D2;
+	Thu, 17 Oct 2024 15:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IChV+AMP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z7hdP4Gn"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8000D1386B4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4CC36127
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729178789; cv=none; b=DmYUnvcXAmhDoSHSibztiSj/9aUYtyAt1O5s6OoFz+Xo0O1uZ/Nf4905rfUILl2pG/+gpbZlsMvXwn3RZphXHYfrpZnore0PTfW/kbHeEOudzRW6lddWJ1rfvoHC3NTjFu5XEPeof3FmRhd3/q5lZrvxofliFW9eK/2A9x/2ZjU=
+	t=1729179038; cv=none; b=T0xbmx6OFQOUhO/oJYXqm9tMmXueDzqmLDYdD40Vv3gWVPReoS1yow8tuDP85Q+qYFUSTtLGpJJfQdmBdjaRU5L7WSUz0uKYcJk2jZKSyh65xk7edL/Mao2e07P9ShWIgoLdDLGL7E0BYiOE9buMLuOKswmMtBktcRR+JfaV1E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729178789; c=relaxed/simple;
-	bh=ZXoCe1q/t4AOpX/1OwAc1gYOxGdRpTyM+HyDxRk1tgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KW9ofkUSdBYOhd/7240H3+R25P6b0NiyJBNIHdgH9aHgClR7WTM5vRQrfO1pzSTQK00AaU+Yjan8sd9fD8NQwyQxhEzwcrUCjcb/4++aovD6Bfk5FH+rmd65NYKc7G6YNhSeXFPhGVsd8LFGXS30YrHKUiBaNDXhzy52RQIbtFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IChV+AMP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8107740E0263;
-	Thu, 17 Oct 2024 15:26:25 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id BW2z_0VrGvFT; Thu, 17 Oct 2024 15:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729178775; bh=WsbRKK2PlAxFhWaznYS34LSEcmmVsVnA5klxIAtFpUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IChV+AMP4+RC8sdmeI7MnkN/EuwDKN02e58gCpHrLGl03maYA83DeHZJ2Yvi9dJoX
-	 NLYUkA3Ebk6C3MFkeTBeFHyw248hGZmnKX4jcdIUtgiCbmpcAN8Pa6lYdWtjgIkK0D
-	 qNeP2lyjXEC9B3aB8sKgC0xmyYK1Ysh4qTOfo4lMdOlSu5CQHR08HupbLcss533hN0
-	 HNb+eR1/+HCySErjD3pAnFr/Z5/CpGjA7LDckrc50h3hw+f6RbeiaquvaCcFAil31S
-	 5zO1Gw1tEFCCvo9hBB8abF8FoSyH8XCbQDycz4VGlOQht7hCmqP25QnYoTFQAjjXNn
-	 mKDOA3tMws5XptxTPfT7erpzVSszwpMl0S8ab9T1h88EQZRScyFh+cQswlfXmteLw/
-	 wq+8pjOYsdSzOjNy3y2JASUVrc7mNMJuyYtEvRrHiKW787X4UfjP1hJbaAknWyNzKp
-	 1v/Rv89vErX+/tC5MWuRocz1znTo9Ut6YEcPpwq7rfPBLM9eI+dqeBbWqqpTDs8dmE
-	 vLNcgCKxiF0D1xNCSmE4ow0XLqC+eyHbsaZeUKfSFKZl9NjI9+TKJPGSPnjWBpXqMd
-	 QZ38tzMZto3nAol5WgkevdKaFc5KlYtvjZ0YceeE3yRJ9i1mqbpOya0Ph4wIPPgIQj
-	 I//HPwn3hbW8bSi/jaTVg9QE=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 39F6A40E0219;
-	Thu, 17 Oct 2024 15:26:07 +0000 (UTC)
-Date: Thu, 17 Oct 2024 17:26:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v3 2/8] x86/sev: Add support for the RMPREAD instruction
-Message-ID: <20241017152601.GAZxEsid01FYKqwnPA@fat_crate.local>
-References: <cover.1727709735.git.thomas.lendacky@amd.com>
- <4f9d9eac997784cd11f4243d545dd05e670b2e4c.1727709735.git.thomas.lendacky@amd.com>
+	s=arc-20240116; t=1729179038; c=relaxed/simple;
+	bh=PNSn8JdwfjZRo0oZBmbRvsDOcpUti8AOvdEcLNSDHQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tYdOti0AJmMgqdnLQUA9VaIUEM2PHpYVL3iB99O48kFbPLD1FQD2f1nNHB+6H7EBV74f9emh7xxIe84H3VvnBsApYCyIsG1p6KWAMNSsguqg/u+vuFejHRhq59xyeZ0C3IIVIHvTDvMTbSxOJEqubefhTzFnKZybErkFGBL086U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z7hdP4Gn; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d4c1b1455so861972f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729179031; x=1729783831; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Feo93T3IFXNm4HhOpDPpsqYNq1DOXUicGO+5dcU2cWc=;
+        b=Z7hdP4Gn/mOzrtOS+vLTcw+fnNSqxShHOg1CrY7wk2VYROdDRrfinNOq7Zd2nKbmpY
+         C9yFLRJksyADiWoEma8fKw7g7jH0apbPI9nQ9N7Y3XDCpwU30jP4IcFbrPqojY2H3b2z
+         dJ2hL5n8Zmqmm2IU9s07YrG0p7Ga3TV/kllBGpW3LJZ8PkIWgTvjTnTvBKCxVCaw8HlH
+         CvW7+ntGGqBHPeu+Ua7iZKzIevS10RsRP3HZk+i0EJ1FDa4BhJgg0KjBc0dukFwSqdao
+         UfmwRjii5ZhSy3tbuZBTA2CTy1uDQWgWe7FQuYH6KjuGQ3Z9Spg5iub0Sq+VqLQuIrG/
+         0+YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729179031; x=1729783831;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Feo93T3IFXNm4HhOpDPpsqYNq1DOXUicGO+5dcU2cWc=;
+        b=HUi5v7kDxjDC/mCQnpNNA6RBtMUb1pemaktw0ScC2QHl3MRjz8aWOXQ8oZ5qmwlSMc
+         tZDp466V1KJd2CMXsSmV1+THYOmBrliqWNOn8DJuVPBDBi+/x1UWj7Vf6oi9ZMd7q99M
+         nAIASWyObRuMl/+FCzmOSx/OtVTl9INBsUpL2kc58nJtQnzYVhTfF4ofj53z67GVug0i
+         9vw86hCvKFVWpYV7kmtKEt6yhkycrjhbCtKAOOCfBgdVAbbEaBeYPmFm12d5tznIvG6X
+         cey9zNXP3W5MytBf02aMw6mglFZQaBaRObKHUAWqyVAQ1amoJp4f+HQp73XVbJQAGGJu
+         ZGIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWE9CWm3thqYu7r+zS8EguE+NME1PKR4uza0qvXwTFcSvLqEFCb5CMCefja2T8OB6strPWxA4ZrYfA5yRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7dkUwETccIyn+Y+mHG7PRDmNzVEwVSGX5BzTu+SSwaJY6WkQO
+	Qvt4RRHsHE3CcabPX/8CJqauaZ8Sr6GJ8qCYK1xdRBo93mvgpj9dr6BLqjvsYnY=
+X-Google-Smtp-Source: AGHT+IHK3ud9hFvyUrnv43neEFvGAqfaknzHE9GK2ql0JjMBxyb/Yb0oE9sW+8FwTmGY0ZDnMPmdHQ==
+X-Received: by 2002:a5d:608e:0:b0:37d:3eec:6214 with SMTP id ffacd0b85a97d-37d5529d96fmr15420694f8f.50.1729179030922;
+        Thu, 17 Oct 2024 08:30:30 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf838dsm7644671f8f.78.2024.10.17.08.30.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 08:30:30 -0700 (PDT)
+Message-ID: <5e9f6bf7-5c4b-4536-a443-5415413992a6@suse.com>
+Date: Thu, 17 Oct 2024 18:30:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4f9d9eac997784cd11f4243d545dd05e670b2e4c.1727709735.git.thomas.lendacky@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/10] x86/mce: Clean up some x86/mce code
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, tony.luck@intel.com, bp@alien8.de
+Cc: tglx@linutronix.de, dave.hansen@linux.intel.com, mingo@redhat.com,
+ hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+ <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 10:22:10AM -0500, Tom Lendacky wrote:
-> +	if (cpu_feature_enabled(X86_FEATURE_RMPREAD)) {
-> +		int ret;
-> +
-> +		asm volatile(".byte 0xf2, 0x0f, 0x01, 0xfd"
-> +			     : "=a" (ret)
-> +			     : "a" (pfn << PAGE_SHIFT), "c" (entry)
-> +			     : "memory", "cc");
-> +
-> +		return ret;
-> +	}
-> +
->  	e = __get_rmpentry(pfn);
 
-So dump_rmpentry() still calls this but it doesn't require the newly added
-services of RMPREAD and so this is looking to be disambiguated: a function
-which gives you the entry coming from RMPREAD, I guess the architectural one,
-and the other one.
 
-IOW, I am still unclear on the nomenclature:
+On 16.10.24 г. 15:30 ч., Qiuxu Zhuo wrote:
+> 1. Clean up some x86/mce code as below. No functional changes intended.
+> 
+>      - Simplify some code.
+> 
+>      - Remove some unnecessary code.
+> 
+>      - Improve readability for some code.
+> 
+>      - Fix some typos.
+> 
+>      [ Reduce the text segment size by ~116 bytes. ]
+> 
+> 2. Pass the following basic tests:
+> 
+>     - Compile test.
+> 
+>     - Correctable/uncorrectable memory errors can be notified via CMCI/MCE interrupts.
+> 
+>     - Correctable/uncorrectable memory errors can be dispatched to the mcelog daemon and the EDAC driver.
+> 
+>     [ Tested on an Intel Sapphire Rapids server. ]
+> 
+> 3. This patch series is based on v6.12-rc3.
+> 
+> 4. Changes in v2:
+> 
+>     - Collect "Reviewed-by:" tags for patch {1-8,10}.
+> 
+>     - Update the commit message of patch 9 to include the names of all
+>       variables that don't need NULL pointer initializations.
+> 
+> Thanks Tony for reviewing this patch series.
+> 
+> Qiuxu Zhuo (10):
+>    x86/mce/dev-mcelog: Use xchg() to get and clear the flags
+>    x86/mce/intel: Use MCG_BANKCNT_MASK instead of 0xff
+>    x86/mce: Make several functions return bool
+>    x86/mce/threshold: Remove the redundant this_cpu_dec_return()
+>    x86/mce/genpool: Make mce_gen_pool_create() return explicit error codes
+>    x86/mce: Convert multiple if () statements into a switch() statement
+>    x86/mce: Remove the unnecessary {}
+>    x86/mce: Remove the redundant zeroing assignments
+>    x86/mce/amd: Remove unnecessary NULL pointer initializations
+>    x86/mce: Fix typos in comments
+> 
+>   arch/x86/include/asm/mce.h           |  4 +--
+>   arch/x86/kernel/cpu/mce/amd.c        | 18 +++++------
+>   arch/x86/kernel/cpu/mce/core.c       | 47 ++++++++++++++--------------
+>   arch/x86/kernel/cpu/mce/dev-mcelog.c | 11 ++-----
+>   arch/x86/kernel/cpu/mce/genpool.c    |  8 ++---
+>   arch/x86/kernel/cpu/mce/intel.c      | 11 ++++---
+>   arch/x86/kernel/cpu/mce/threshold.c  |  2 +-
+>   7 files changed, 46 insertions(+), 55 deletions(-)
+> 
+> 
+> base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
 
-The _raw* entries do not come from the insn but then what's the raw-ness about
-them?
 
-This convention sounds weird as it is now, I'd say.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
