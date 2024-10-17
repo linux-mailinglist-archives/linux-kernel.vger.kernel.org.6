@@ -1,62 +1,77 @@
-Return-Path: <linux-kernel+bounces-369738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866AF9A21F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EBB9A21F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54B8282E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D1D2826EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FF31DD872;
-	Thu, 17 Oct 2024 12:15:03 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0B31DD54A;
-	Thu, 17 Oct 2024 12:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10D31DD0DE;
+	Thu, 17 Oct 2024 12:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nTQd8n36"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4909E1DD0D6
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167303; cv=none; b=n2b8uvA7F0lWY9Wk/eoKGG62R1obwnK8+P2ZVNSOVLUCwDfGffCuMBm7y1nFhvDVjLcJx3UXPNY84LDshC24trEqmI6OEr5lb7rYiqNqtxnZFvX41CEP5MapkngWNQdLHmHvtQRHY6xJH91+BY7mxghRC6kZauaR6k+BQD3MsTM=
+	t=1729167294; cv=none; b=efsSciKOV2NS70pjYe9aVmN33jeTZG8T/Us1WoNR3raZQevE4JowRP4dNm+GPPmTU8IWxkMScSiNXRdQcegY/HuiWlDfO1OVlI7uwZw3BAxqnUi28GyZZhGYUlXJ9/fiAUPmA2DMCUpcnTjvbB1H0v/IAXhKmwYONYeEOf8Sud0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167303; c=relaxed/simple;
-	bh=KR6k2M9sJjNlxnNK+VdzSRJZKqP1DzeXSFhCkLSKWjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G558XZnUIYOLjz+Ukoskoh2RHbROupn47doCmGIUY5OnEOYGpq3kNTLByvRYNSNWogp+DccOoDVlZL0gVM/m9QqRS6+mmzy1ZAJXMoq9Efv5siaXYVMZpkdSDM9JdIKhfyLbWX2mu7P8krjN71Pjl17oSJRG3XtSUT0kXJwFYU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app2 (Coremail) with SMTP id HwEQrACnrACY_xBnf_YVAQ--.14997S2;
-	Thu, 17 Oct 2024 20:14:16 +0800 (CST)
-Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wAXAkGS_xBni3daAA--.37840S2;
-	Thu, 17 Oct 2024 20:14:11 +0800 (CST)
-From: Dongliang Mu <dzm91@hust.edu.cn>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Dongliang Mu <dzm91@hust.edu.cn>
-Cc: hust-os-kernel-patches@googlegroups.com,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1729167294; c=relaxed/simple;
+	bh=EiEsIa7uzb/EJrDvk09DtCg4aPtoR/JNxYMIeuY2138=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k7jA9VFCt/NYKZ8hi55VIiJrlCMqTj2j3v9DkT5ssfITrQmXddDZVsD3dwCoa75kDpAq6CVRvaK4SOebZ0BB04kUVabrOUsOJBk0jrpRQ/Gre3q94lrPPxJ25p53fvtxlCRFLAFmijy0zSXoFaX097lho21bijmC4YXPn0KTJpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nTQd8n36; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so2822405e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729167289; x=1729772089; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pZ9MubZQbPmIWw0TP/sAI/QCOBR9Sgwv17kzjyNhAvM=;
+        b=nTQd8n36+3BUH0rACFIvX8Ls5LLlyScj3fBhSIoF55WL1rsNiD85m804yY3IQOJnsv
+         CqNJoUSVGcbYgGri+DTboLfUtJlv6GzZe1UD7VYCpKMDtF1BOUe/iGaXqIiSnr4LB+dR
+         ezav6dpJqakoDuAAlOULxWAujy6Wn5t9On0SYZQVoJjVbdlYSrJJpFmricD1Au2bfjHx
+         2kMYuEy3rqnhSiJTJug3QSNTpUJlnuURmdzA1oC8H4Yuduj8ip7++zHIXue1TLQLJlBe
+         tbDXYTuOk/MkDLnVoB2piAUsiaqTEI8nLkeh09+NWlJRAeZ/qNAEwKvCzXnaaCJzZ38n
+         qQwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729167289; x=1729772089;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pZ9MubZQbPmIWw0TP/sAI/QCOBR9Sgwv17kzjyNhAvM=;
+        b=gOS7rKdbbZ6p+BnkGrulO+CzWxNrzhdyDq5eWSnnnNpIdBp58WXm20cd8Sbp6Ivzwh
+         0rwnpIXvCfSC/Kl2nNWhvkwrKSgojXR7dGgTx77bMv3ZmzXDvPtYIdbUcAfcD1kWjRAW
+         izmmLE77CxFyl1j3+sWWFAzY7wWfU3sC4bJJYgYB+7uC5VkOo5d2QDrhH1y51gEa6Sdr
+         kcgW7uTI3NJ/vSQI84itWpvCmyoiyKCVDasJ0ne580e1PutrdJ45bV4uUFYKu4B5a+1b
+         WrFJEPwdjxt1Wqivmjct1Ox3u9ltORJ9tHx6GBMMJlHHQTjmWgOzHzcS/76A13m8wc3Y
+         XJtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrLHWpVe9JdmMODUbilqBWizmWCBkdxFU61KnNSUoyBq5xtPG2YZxpeHMOjfcfgOmLZeJN8yjMY4dt3s8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOY65KZSifzq+3ozpGTIn3QHzckMneQfJriY9uKDv9Fd9LUXB3
+	BRjI+XjJx5LLSP8bNtkacL8PLlhO0dD0QHg7v7XqIuRkLVb+qWLq1TtngaiuLbU=
+X-Google-Smtp-Source: AGHT+IE6TUfYPXsAbNZ+/l4g2e1jNYJVBi4RJpfuHlxC/fWasy6zFuXt9VgRiltQrBxozp7XjaFZZw==
+X-Received: by 2002:a5d:5192:0:b0:37d:5496:290c with SMTP id ffacd0b85a97d-37d86bb6740mr4289221f8f.7.1729167289470;
+        Thu, 17 Oct 2024 05:14:49 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3831:fc61:16eb:d0df])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa87b5dsm7057299f8f.40.2024.10.17.05.14.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 05:14:49 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] docs/zh_CN: update the translation of process/programming-language.rst
-Date: Thu, 17 Oct 2024 20:13:59 +0800
-Message-ID: <20241017121407.3431231-1-dzm91@hust.edu.cn>
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: max730x: use devres to shrink and simplify code
+Date: Thu, 17 Oct 2024 14:14:47 +0200
+Message-ID: <20241017121447.73754-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,150 +79,63 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrACnrACY_xBnf_YVAQ--.14997S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3WrW3Gw18WF1rCF4fZr43ZFb_yoW7tr1UpF
-	W7Kr9rKa18J3WxGrZ7Kr17Zr1FkFZ5Ka48trWUt3WYyF40ya9IqFyxKrsxX342vryxCFWD
-	Zw1fuFW8X3y3AFDanT9S1TB71UUUUbJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUHmb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	1q6r43M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVW8ZVWrXw
-	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
-	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_GFv_Wrylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6IIYr7AKxVW8JVW5
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU5
-	2eHPUUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-Update to commit 0b02076f9953 ("docs: programming-language: add Rust
-programming language section")
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-scripts/checktranstatus.py reports:
+Use managed variants of gpiochip_add_data() and mutex_init() to drop a
+label and lose a couple LOC.
 
-Documentation/translations/zh_CN/process/programming-language.rst
-commit 0b02076f9953 ("docs: programming-language: add Rust programming
-language section")
-commit 38484a1d0c50 ("docs: programming-language: remove mention of the
-Intel compiler")
-2 commits needs resolving in total
-
-Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- .../zh_CN/process/programming-language.rst    | 78 +++++++------------
- 1 file changed, 30 insertions(+), 48 deletions(-)
+ drivers/gpio/gpio-max730x.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
-index fabdc338dbfb..55f132a4b212 100644
---- a/Documentation/translations/zh_CN/process/programming-language.rst
-+++ b/Documentation/translations/zh_CN/process/programming-language.rst
-@@ -3,25 +3,22 @@
- :Original: :ref:`Documentation/process/programming-language.rst <programming_language>`
- :Translator: Alex Shi <alex.shi@linux.alibaba.com>
+diff --git a/drivers/gpio/gpio-max730x.c b/drivers/gpio/gpio-max730x.c
+index 701795b9d329..e688c13c8cc3 100644
+--- a/drivers/gpio/gpio-max730x.c
++++ b/drivers/gpio/gpio-max730x.c
+@@ -165,7 +165,10 @@ int __max730x_probe(struct max7301 *ts)
  
--.. _cn_programming_language:
--
- 程序设计语言
- ============
+ 	pdata = dev_get_platdata(dev);
  
--内核是用C语言 :ref:`c-language <cn_c-language>` 编写的。更准确地说，内核通常是用 :ref:`gcc <cn_gcc>`
--在 ``-std=gnu11`` :ref:`gcc-c-dialect-options <cn_gcc-c-dialect-options>` 下编译的：ISO C11的 GNU 方言
--
--这种方言包含对语言 :ref:`gnu-extensions <cn_gnu-extensions>` 的许多扩展，当然，它们许多都在内核中使用。
-+内核是用 C 编程语言编写的 [zh_cn_c-language]_。更准确地说，内核通常使用 ``gcc`` [gcc]_ 编译，
-+并且使用 ``-std=gnu11`` [zh_cn_gcc-c-dialect-options]_：这是 ISO C11 的 GNU 方言。
-+``clang`` [zh_cn_clang]_ 也得到了支持，详见文档：
-+:ref:`使用 Clang/LLVM 构建 Linux <kbuild_llvm>`。
- 
--对于一些体系结构，有一些使用 :ref:`clang <cn_clang>` 和 :ref:`icc <cn_icc>` 编译内核
--的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
-+这种方言包含对 C 语言的许多扩展 [zh_cn_gnu-extensions]_，当然，它们许多都在内核中使用。
- 
- 属性
- ----
- 
--在整个内核中使用的一个常见扩展是属性（attributes） :ref:`gcc-attribute-syntax <cn_gcc-attribute-syntax>`
-+在整个内核中使用的一个常见扩展是属性（attributes） [zh_cn_gcc-attribute-syntax]_。
- 属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
--重大的语法更改（例如添加新关键字） :ref:`n2049 <cn_n2049>`
-+重大的语法更改（例如添加新关键字） [zh_cn_n2049]_。
- 
- 在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
- 即使其速度较慢或执行的编译时检查/诊断次数不够）
-@@ -30,42 +27,27 @@
- ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
- 请参阅 ``include/linux/compiler_attributes.h``
- 
--.. _cn_c-language:
--
--c-language
--   http://www.open-std.org/jtc1/sc22/wg14/www/standards
--
--.. _cn_gcc:
--
--gcc
--   https://gcc.gnu.org
--
--.. _cn_clang:
--
--clang
--   https://clang.llvm.org
--
--.. _cn_icc:
--
--icc
--   https://software.intel.com/en-us/c-compilers
--
--.. _cn_gcc-c-dialect-options:
--
--c-dialect-options
--   https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
--
--.. _cn_gnu-extensions:
--
--gnu-extensions
--   https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
--
--.. _cn_gcc-attribute-syntax:
--
--gcc-attribute-syntax
--   https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
--
--.. _cn_n2049:
-+Rust
-+----
- 
--n2049
--   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
-+内核对 Rust 编程语言 [zh_cn_rust-language]_ 的支持是实验性的，并且可以通过配置选项
-+``CONFIG_RUST`` 来启用。Rust 代码使用 ``rustc`` [rustc]_ 编译器在
-+``--edition=2021`` [zh_cn_rust-editions]_ 选项下进行编译。版本（Editions）是一种
-+在语言中引入非后向兼容的小型变更的方式。
+-	mutex_init(&ts->lock);
++	ret = devm_mutex_init(ts->dev, &ts->lock);
++	if (ret)
++		return ret;
 +
-+除此之外，内核中还使用了一些不稳定的特性 [zh_cn_rust-unstable-features]_。这些不稳定
-+的特性将来可能会发生变化，因此，一个重要的目标是达到仅使用稳定特性的程度。
-+
-+具体请参阅 Documentation/rust/index.rst
-+
-+.. [zh_cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
-+.. [gcc] https://gcc.gnu.org
-+.. [zh_cn_clang] https://clang.llvm.org
-+.. [zh_cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
-+.. [zh_cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
-+.. [zh_cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
-+.. [zh_cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
-+.. [zh_cn_rust-language] https://www.rust-lang.org
-+.. [rustc] https://doc.rust-lang.org/rustc/
-+.. [zh_cn_rust-editions] https://doc.rust-lang.org/edition-guide/editions/
-+.. [zh_cn_rust-unstable-features] https://github.com/Rust-for-Linux/linux/issues/2
+ 	dev_set_drvdata(dev, ts);
+ 
+ 	/* Power up the chip and disable IRQ output */
+@@ -206,17 +209,11 @@ int __max730x_probe(struct max7301 *ts)
+ 			int offset = (i - 1) * 4 + j;
+ 			ret = max7301_direction_input(&ts->chip, offset);
+ 			if (ret)
+-				goto exit_destroy;
++				return ret;
+ 		}
+ 	}
+ 
+-	ret = gpiochip_add_data(&ts->chip, ts);
+-	if (!ret)
+-		return ret;
+-
+-exit_destroy:
+-	mutex_destroy(&ts->lock);
+-	return ret;
++	return devm_gpiochip_add_data(ts->dev, &ts->chip, ts);
+ }
+ EXPORT_SYMBOL_GPL(__max730x_probe);
+ 
+@@ -226,8 +223,6 @@ void __max730x_remove(struct device *dev)
+ 
+ 	/* Power down the chip and disable IRQ output */
+ 	ts->write(dev, 0x04, 0x00);
+-	gpiochip_remove(&ts->chip);
+-	mutex_destroy(&ts->lock);
+ }
+ EXPORT_SYMBOL_GPL(__max730x_remove);
+ 
 -- 
 2.43.0
 
