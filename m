@@ -1,118 +1,181 @@
-Return-Path: <linux-kernel+bounces-369681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997509A20E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:28:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42089A20E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 028A8B2190B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:28:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B79D1C2241C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B6D1DC07D;
-	Thu, 17 Oct 2024 11:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05181DC747;
+	Thu, 17 Oct 2024 11:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i00EyNUW"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZjwDbFIn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4381DB37F
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3483E1DC04D;
+	Thu, 17 Oct 2024 11:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729164496; cv=none; b=q2ty6ByXAk5eVYVOBFzsiNfhq0XIdnXZyWZvozL+btFj0iKlHAyQTajXLJDZg/B/8ZMR3GozKL7QYm4yygm+s7nLtAvGniKNYzimY0L5IAGGSrUnq4mLdPtFcCqRc/eN8K2ihu5Ps8JZmlSUxtsFpU1eBczzT3UOxpX/3ud3Mfg=
+	t=1729164507; cv=none; b=NEwH34M3qt+hOGE4xareHQw/TpfSHIXCOVE0XXCe+WC6KL5M6951+tsLqemHlwzAjPx1iXUBV9YscH+CZG+Ps5xlfQ6+ZIuKiPFeUmolOD+pwMVcisPXtvIcEFdb/zJmXYxGB0GKTeVH/nga8bmiCaV624bjpZxQ2rNRjcnLVr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729164496; c=relaxed/simple;
-	bh=3bstaIXUv6a17OjBqcsZ3jRVz0msaMJniniMIJt1qD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RIN2eHxH0GYh0vVDtFn+gtspPbU9+MC69lNOjUQo27UIPob+AHr7TFd310P0vC1SlLuvkKjCGOaG7cP293rPC1wCif+zQbGG4zlPoQCe2W+XBzAblcK2A3UKtp+on4K0EMh6gK86JqFCWC8Y4el7PucNDS5Kcmbp3WAx+HWV27o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i00EyNUW; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so8528351fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:28:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729164493; x=1729769293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3bstaIXUv6a17OjBqcsZ3jRVz0msaMJniniMIJt1qD4=;
-        b=i00EyNUWdnWnSy3Cn7DQSjaIek1jGM7iopbhcfcFtzhaCI9vmVnFZdO3R+Pyni4gtl
-         ijweL/TBkRXM/9S2mw/eDKkr8Q+rwAk5m+ct8fqt1qa4+pC55fPS0HTVZFcoBnG54o6q
-         G5dCxqgeguBSBpcnY3iY8pyuhKwYgDOGXTioti+6dgQFa6E7zsPEHLD/SMRy6/lXCVyE
-         8iAXUuNM7zsERgGjtXpgVotVMghZbYH+rhEaCdsH8kp9FlKsY29TPMBVyhC1iNvJEodm
-         2QlUU9GnduO+Du2SFgIVKZdyPWnN74mIEZ1eRrLwrXNIO+5Wzm+bmmTyJK0QDOcCGAv2
-         5SfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729164493; x=1729769293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3bstaIXUv6a17OjBqcsZ3jRVz0msaMJniniMIJt1qD4=;
-        b=HNkQGluLnLScAbg2I5B3ViY+Le1HVwZLdTD6WuiLGt64na8Y/qWvdctI0pqzn2OTby
-         zDApC6E1PWH0Y+RXp3eR0KGeu2sb0yPcmcmREezJm+9i6HkzKYl5+hNtyvN8c1jwMJ6E
-         LlY2l8zWud0TOwdDJk2+/uRF5TfQnBIT3UoZb/+63letWlLAi9HSuyKwM1VfC5GUhLfB
-         0aLlEtroJNZmwwfA/Hc2JHq4sdGkr+oaKcJYNE+fadWRi2L73Qkh7m9VgbvS4Tnju+fv
-         4cIIi4T4bJebAeHct3M3sh8tvY/hDGEERD2LSb/mEbZiOmuVBKZ6xk3jZhtSKW1JzszU
-         6u5w==
-X-Forwarded-Encrypted: i=1; AJvYcCX9cJk3HB0i1h+hECizIyLFjtO+v9I2Iuba8CbCH6EZXa/CI0OAOsJBBaCd7HQWlz2jw6Gy7e43NzOt4Us=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkmDEb5G/FB5+jV0F9ENJwMsZ4vbX9V04zv46sDGIieRnPKtuc
-	jmo2J+rOynoXx6kuaXRyTbSwNAzUfnpPFifPzMjU0ItSEXRMXWvKvsDfTcBcN+WdVG4qJti3x92
-	pLsCWAXrr0TiWQZ0UaIIElNchWbLCefDSaQTSMQ==
-X-Google-Smtp-Source: AGHT+IEwdVt6AMUy0dZa8ffDdOfPCN3cB4NRXbqVMD8pKlMzGOo59AxscXSgX2IQKf/+4MH5yGnHCgjzqBA+AeV1wOc=
-X-Received: by 2002:a05:6512:3995:b0:539:f26f:d285 with SMTP id
- 2adb3069b0e04-539f26fd52amr8730107e87.3.1729164492613; Thu, 17 Oct 2024
- 04:28:12 -0700 (PDT)
+	s=arc-20240116; t=1729164507; c=relaxed/simple;
+	bh=q7JryczOX4nhaDX8wxKx/xPO5Uos+wBPazL0dfrPQJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CgIBX/m3PWV5He/2pnlXgYQfxCHuQSnRdaGnNk7HRowQK5niknZtWQM/YVnnfmotfog4Tq4sX8EKpgn/2eDeEIk383iguglS8sVkcLng4Zs0unda2EA471hRClZQflkF68zZxbp4PBH3ppCR/JIeQwjG7ktGYZx3zvh3C+IV6CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZjwDbFIn; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729164504; x=1760700504;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=q7JryczOX4nhaDX8wxKx/xPO5Uos+wBPazL0dfrPQJA=;
+  b=ZjwDbFInhJaQB+yYxJvkyq++liLqxjCxekggNrNSJSfXeqm4+foI/ZC/
+   3bH1eVpOqcLaLOtR1xrZwi3i0dxlrEmQbaTg4SOMZt184ZHMhZOlZRXci
+   chhWwSKA5H2WF5A+F4lZaRC+/38b5c18cBN2uor2RCar0YukmSyEbN05J
+   fkGZmrH79BsZ22t8JQf3TjoBqA9FbggHYaaHzbU1x0uuPR4ulSuQJ3mqc
+   tVsVBqSB+4z0bjNicItpZarvRn2h1YUor0Okg2Jghfh9gG0Jk3faZxx8D
+   vhCCSbazZ8ergoBoAmbwNP6C4cq9hOEiTeNVV58suagHLLXQlaGBMR8m5
+   g==;
+X-CSE-ConnectionGUID: V6Gu6SvMS8aMi0KxLqVq0g==
+X-CSE-MsgGUID: +wGDMOVbSeOdOWC/1uYRmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28530534"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28530534"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 04:28:23 -0700
+X-CSE-ConnectionGUID: GeuGMRC7SeaeP0Za/hiS5Q==
+X-CSE-MsgGUID: MIvSWFNYTmSXUp+2nLmp2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="78127436"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 17 Oct 2024 04:28:19 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1Ofw-000MFP-2f;
+	Thu, 17 Oct 2024 11:28:16 +0000
+Date: Thu, 17 Oct 2024 19:28:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 2/2] hwrng: add support for Airoha EN7581 TRNG
+Message-ID: <202410172126.EXJ0sOkP-lkp@intel.com>
+References: <20241016151845.23712-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
- <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
- <ZweftESPrJNEsqGE@hovoldconsulting.com> <Zwj539cN2DJ7nd3A@linaro.org>
- <Zw5fzNZ_xCwPyw4G@hovoldconsulting.com> <Zw_dE1rQ-Ljsh-sY@linaro.org>
- <CAMRc=MfUEfKHkAVvtGODxvJ-BdL+kX7uDgW+1y4QW3Kc5mpX+w@mail.gmail.com> <cde15d83-6059-47bc-94d6-2a88ba95e5ae@sirena.org.uk>
-In-Reply-To: <cde15d83-6059-47bc-94d6-2a88ba95e5ae@sirena.org.uk>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 17 Oct 2024 13:28:00 +0200
-Message-ID: <CAMRc=MddPDFaw6vYo1FzXHbUsLyr2QKT6oy2i68ZCdJdFWCJww@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016151845.23712-2-ansuelsmth@gmail.com>
 
-On Thu, Oct 17, 2024 at 12:59=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
->
-> On Thu, Oct 17, 2024 at 11:28:18AM +0200, Bartosz Golaszewski wrote:
->
-> > How do others deal with it? I'm asking because I've been seeing these
-> > warnings for years on many platforms which makes me think they are not
-> > a high priority for anyone.
->
-> > The best approach would be to provide an optional bulk get for the
-> > regulator API. Or extend struct regulator_bulk_data with bool optional
-> > and take this into account.
->
-> > Mark: Any thoughts on this?
->
-> Fix your driver to request the supplies that actually exist on the
-> device rather than just some random supplies you hope will work?
+Hi Christian,
 
-Let me rephrase: the device has this supply but on this particular
-board nothing is connected to it. It does sound to me like an example
-of an "optional" supply. Do you have anything against making it
-possible to define optional supplies when using the bulk regulator
-APIs?
+kernel test robot noticed the following build errors:
 
-Bartosz
+[auto build test ERROR on char-misc/char-misc-testing]
+[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus robh/for-next herbert-cryptodev-2.6/master linus/master v6.12-rc3 next-20241017]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/hwrng-add-support-for-Airoha-EN7581-TRNG/20241016-232144
+base:   char-misc/char-misc-testing
+patch link:    https://lore.kernel.org/r/20241016151845.23712-2-ansuelsmth%40gmail.com
+patch subject: [PATCH 2/2] hwrng: add support for Airoha EN7581 TRNG
+config: i386-buildonly-randconfig-003-20241017 (https://download.01.org/0day-ci/archive/20241017/202410172126.EXJ0sOkP-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410172126.EXJ0sOkP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410172126.EXJ0sOkP-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/char/hw_random/airoha-trng.c:115:6: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     115 |                                  FIELD_GET(CNT_TRANS, val) == TRNG_CNT_TRANS_VALID,
+         |                                  ^
+>> drivers/char/hw_random/airoha-trng.c:115:6: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   2 errors generated.
+
+
+vim +/FIELD_GET +115 drivers/char/hw_random/airoha-trng.c
+
+    75	
+    76	static int airoha_trng_init(struct hwrng *rng)
+    77	{
+    78		struct airoha_trng *trng = container_of(rng, struct airoha_trng, rng);
+    79		int ret;
+    80		u32 val;
+    81	
+    82		val = readl(trng->base + TRNG_NS_SEK_AND_DAT_EN);
+    83		val |= RNG_EN;
+    84		writel(val, trng->base + TRNG_NS_SEK_AND_DAT_EN);
+    85	
+    86		/* Set out of SW Reset */
+    87		airoha_trng_irq_unmask(trng);
+    88		writel(0, trng->base + TRNG_HEALTH_TEST_SW_RST);
+    89	
+    90		ret = wait_for_completion_timeout(&trng->rng_op_done, BUSY_LOOP_TIMEOUT);
+    91		if (ret <= 0) {
+    92			dev_err(trng->dev, "Timeout waiting for Health Check\n");
+    93			airoha_trng_irq_mask(trng);
+    94			return -ENODEV;
+    95		}
+    96	
+    97		/* Check if Health Test Failed */
+    98		val = readl(trng->base + TRNG_HEALTH_TEST_STATUS);
+    99		if (val & (RST_STARTUP_AP_TEST_FAIL | RST_STARTUP_RC_TEST_FAIL)) {
+   100			dev_err(trng->dev, "Health Check fail: %s test fail\n",
+   101				val & RST_STARTUP_AP_TEST_FAIL ? "AP" : "RC");
+   102			return -ENODEV;
+   103		}
+   104	
+   105		/* Check if IP is ready */
+   106		ret = readl_poll_timeout(trng->base + TRNG_IP_RDY, val,
+   107					 val & SAMPLE_RDY, 10, 1000);
+   108		if (ret < 0) {
+   109			dev_err(trng->dev, "Timeout waiting for IP ready");
+   110			return -ENODEV;
+   111		}
+   112	
+   113		/* CNT_TRANS must be 0x80 for IP to be considered ready */
+   114		ret = readl_poll_timeout(trng->base + TRNG_IP_RDY, val,
+ > 115					 FIELD_GET(CNT_TRANS, val) == TRNG_CNT_TRANS_VALID,
+   116					 10, 1000);
+   117		if (ret < 0) {
+   118			dev_err(trng->dev, "Timeout waiting for IP ready");
+   119			return -ENODEV;
+   120		}
+   121	
+   122		return 0;
+   123	}
+   124	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
