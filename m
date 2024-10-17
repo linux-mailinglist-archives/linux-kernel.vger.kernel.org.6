@@ -1,157 +1,183 @@
-Return-Path: <linux-kernel+bounces-370478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DFE9A2D57
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:09:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA4D9A2D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320EF283DDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB721C225A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2240621D2D5;
-	Thu, 17 Oct 2024 19:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF40C21C18B;
+	Thu, 17 Oct 2024 19:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMi1f/bC"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZKG9lPnj"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2081.outbound.protection.outlook.com [40.107.100.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E4921BAF3;
-	Thu, 17 Oct 2024 19:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729192135; cv=none; b=TwGGwWj7mgAtYXgiGkGW3pnXzlaRoy9DjQysxuNN1rFSrxMbTrPnTIczr3T++T62Pa9iSjmBFpZ2Naa1SNdDONbU+AJZWygNB7JsHCOuegcmqQONkE+gh5hB6mC5w+/O6bkzEl3pfXrkZKPnZOqHWcAQvL2EgQapSBhBOV5pDg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729192135; c=relaxed/simple;
-	bh=s7U0icbK7FENRImx1tbz0XdY3NYXf6UP4UcAkP83OCo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GypwjKGfOtPLSaT1nwvxs5Y+jKXjFC0CRQsP07N/wiaZADAslMmYE4FxcUnBngYeJOrltRpPzneqPk8BRWuqKNFd2tfTaeYboxHShkUnTLJ28fHqHw2AGlHvkAeZuZfS3Ep/zvbHL8BkRa60WU5t6W/NjynPKGh++jLPlwEd0jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMi1f/bC; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cb47387ceso11406135ad.1;
-        Thu, 17 Oct 2024 12:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729192133; x=1729796933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S2o9SjO3DgGlhTD4DQ2cq3Udc0mM0ErlixCRYYej+Hw=;
-        b=GMi1f/bC9l+mAenVJzAKw/ZGElDtGrYPU9jQ6aUsQPpPG6kGCrYeWKU67ZtoNIxUi7
-         5lH0Sl0Jti7cP8/EH+dZRH4z1P+WI/6l0isfG6lFZc8TOqXwH9Ce3Kd99G3tAaQSNf4E
-         DYD62UGrcRd92tnjhuVvz+ymzE1y5lTXb4H/1mXJJw5LRlXcE5aJLfQv1qIChXGkqsJK
-         4BL8VvGcAFFWMuygbrto8Xxs0N+/efh72mdBdmDvztoO+ApaQ+GEfD3lxNFjE7mas9ul
-         ahgTYkrFrZX347j88xdi7ezyKF6E1yGnbOKxZ//i1UKR1P68upgERXiyM230ZwEu2+jl
-         Mklw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729192133; x=1729796933;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S2o9SjO3DgGlhTD4DQ2cq3Udc0mM0ErlixCRYYej+Hw=;
-        b=TrjbuqC6hNWSQIuJfuWFIU9JsEsKjCS6dIWZglw3Vq+ite7hrfTtdCcOBS29xn4iM1
-         rns8SBEoWEQd2SRM+fE25QYgQPIkIE+lhKuNdvITwRhgMTl957e0CVAhLG532tyK//ip
-         uTfn3TkDbzo1tonz8BnafZGSnrrA9XiA2amMchcEuwnOycKRAn7nsBg9bbnMJplkIxbD
-         9y9vSKmCL2JcCeiGXIaFThS0dZ5vFovNs/LWGhpReYA/yNdwwFjkkEy2stytuBLQLIQ8
-         4OK4yISnpX+I3nt6h6S4FLpVsYwP6dLTKGZ35Z6rsOFbO8FOivUCTMLwGvABGzUxVO5h
-         7SGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlEEszpeT5ixk8MccqYVj6ul5bxMpqR06SfA5d56/GBOp8CZYq/l+pcKa/oboebYR6VncLlj+u@vger.kernel.org, AJvYcCXRmBMipm6wwGdYtPBvnvEC+7hb6H2swk9yJeAGyxU/CKhJjf+fSbF+2rnGrC1FpZ8C+VgB6CKF9/YkK0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNg8OZ+JAk8M4ymiPFfmwHATLu03AfGpm+pw3hZZD/sa8ajonV
-	AA2NBYSq9E0JY8n94JI6LKayRsmSEMJOeX+Rp2eFHaZBHLHDLx4I
-X-Google-Smtp-Source: AGHT+IEM0k8ZiOeY14Pp43NqAoSKS90Nlmf+JIqLSYjbZzH5X+8zlLg8hxHFM6roJOB/MeNcYJkLeg==
-X-Received: by 2002:a17:903:1cd:b0:20c:7a0b:74a5 with SMTP id d9443c01a7336-20d27f1c789mr129133675ad.39.1729192133287;
-        Thu, 17 Oct 2024 12:08:53 -0700 (PDT)
-Received: from ubuntu.worldlink.com.np ([27.34.65.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f8b4e1sm47210085ad.49.2024.10.17.12.08.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 12:08:53 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: Sunil Goutham <sgoutham@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Naveen Mamindlapalli <naveenm@marvell.com>,
-	Suman Ghosh <sumang@marvell.com>
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/6] octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_flows.c
-Date: Thu, 17 Oct 2024 19:08:44 +0000
-Message-ID: <20241017190845.32832-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241017185116.32491-1-kdipendra88@gmail.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089FE21D2BC;
+	Thu, 17 Oct 2024 19:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729192141; cv=fail; b=B94ByPJ5aerCGze1prP1fXnceYa1nVWuM72N/t0sfAvq1Kjvl+Eq/eH58rELq9Nfp8oiYN53fLE1gRwn5HjHG6Jjmdif+eydyKCGZap5bbys4hxAgese0RqRzRpEwdPNjHC4PSZHxp/KLajFrj+ONBtaIVDeJ+/wVV3bJul9Mhw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729192141; c=relaxed/simple;
+	bh=yKYKwcP4MMflXjMBVa9/8muT3vFnLbgLG2IihGr0C6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Pe4akGWdx+bWtXe8hL+CvEtZysu20tCIObW52J7JNLoMki3vHZxOARe1jvx+P6a+DAzCg0hKLNZOE5IZaxyPS0X1kJJQv96xETZorW4s7rsNHBgQ1ys8H0OpvIVQfKfPTEZ3HRC5ktxemPpoF4PxYnbDNWRh/KpllnuFPd/s94M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZKG9lPnj; arc=fail smtp.client-ip=40.107.100.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gnyYotcd8ocgCz3AJ6ys01I0E83AFlDi5SovhT6gYZgQx59harSXPeOeyqMB3z9N3vAoKsI6J78qnk8egy887beH7LtruQkaXgtyp9hAlLvDbZnzuHyzKkOof0GOVy76bVFgLNbAsjCso4ieQOvu38swGv2LZf3Zwik84fA4OKdyhiEUvNdPZhpIMmzPG9OUvIwDAATEf+6530dlJc6eqQ4GIwdhn129PNlac1tlmBHHHTcMbERp5yiWFlOMpgdqMjc6/0qhLdDvluNi3QZ3pRuVsy5HQ27Kesz/TgeBCKvVm63MqBBstSryZToFsUPANhM7/qsBAgdVBUlBIYyXTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Psb+D3Mwb8teVPoRWHL8j9lNPeMKCTw8ZUIQ6pbl8Qs=;
+ b=Z3FiBOvDHgDAORqPBJa593qSGV8Zbo8LWUVJu0Rynlma9xDUW1fvmhzMvpVdryj1BesNNgv9zd8N4wHiZ0oJA8yOpwN+CPRZAqsQuG3wejd4Xq9+4f5H+iwhKhuBXqW6qPoRlNFQMX4lNWTgTz1nKqy4Icw1jC6fGRh8jKHTO0wNU5L57ZCDEVRRPUs6kapoatVo9gEwRToh+EBMPGRAuBNupNyZ2sIzRla5CSCoAXSYEoobtjsThO6/r/Cdzj4VN21cCwbg6QraQr2CZlgt0HVtm7bk86UbL90Sq1ZseJPoqvehqL4IycP0NV9lpQZqnM/PmiUwBTM8KnGoj2Px7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Psb+D3Mwb8teVPoRWHL8j9lNPeMKCTw8ZUIQ6pbl8Qs=;
+ b=ZKG9lPnjTt07ICsID0WvkYV7tJplMhnKcucjh5iw+/xVqsQ3AO6io9AXXWfc0os1Ja/D4+yYoZwGDrdj2EOe7HYI7N43P61+NwTOQrT4DQei6L2fZIUrhK9tFj3BjeFEITP3/8PorWk4OrhMRLvCJ8+beCwfUxJgl/tX4zY/YCRhmQD3c18ktNYFYC0ZmfNmowoXHW4vIAssXHC0PfImHfawGpSM1RT9jNabI7PcjLxJxwmwNiftY3aCK8oSnqAYE7DXJqZv9cTnlfl7zC635im221Q0PtdfERfAUcXJKAL0qWbPLP/IXbwaVBe1LT77DHzxHFeaXBIQd9+RnC3WXg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by CH2PR12MB4213.namprd12.prod.outlook.com (2603:10b6:610:a4::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.21; Thu, 17 Oct
+ 2024 19:08:51 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
+ 19:08:50 +0000
+Date: Thu, 17 Oct 2024 16:08:49 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, patches@lists.linux.dev
+Subject: Re: [PATCH v3 07/16] iommufd: Allow hwpt_id to carry viommu_id for
+ IOMMU_HWPT_INVALIDATE
+Message-ID: <20241017190849.GV3559746@nvidia.com>
+References: <cover.1728491532.git.nicolinc@nvidia.com>
+ <75cde75987bf4a73ec34335e1c13efda93791989.1728491532.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75cde75987bf4a73ec34335e1c13efda93791989.1728491532.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BN0PR08CA0026.namprd08.prod.outlook.com
+ (2603:10b6:408:142::28) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH2PR12MB4213:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8660ac6a-2e3c-4ed3-1b65-08dceedf228d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dGWgswy2OABp9V2pORlLvtBTwPUz1st3vx1KUbILL2XZHQPw2kf55dzs5OHh?=
+ =?us-ascii?Q?Buljyt0Orpbs5h+oCwKT5CfSAWrjsEdmT6E6M3Wmz+aEHKKW8ix6b2KopTrO?=
+ =?us-ascii?Q?gopfwN+Mf0kZM4Cod+algfUyJ0iJYP/QcUY4iP73A3AMH+zuowIK9nZ7xmbo?=
+ =?us-ascii?Q?Q+VoagZrVVbWaSKh/TDxOxIh3H8dkCy1h+pXCDyz4MjuftrfdPjh3kFwUVvc?=
+ =?us-ascii?Q?AC5rdLS948r6omFGES/BYdI09BRh3+Y0su9M2Abw5cTkZ0GP/3IMGU6WK03K?=
+ =?us-ascii?Q?ffahQq2owC9m5pcAyCszIQprRRusT2++A9rbCjNANv+axwUivL8WRRRTsXVy?=
+ =?us-ascii?Q?Y3lWzVSBJ6uxTn8sp2auCPmfTNnnzYdBNk6Yk4cKZabwjRCD+fA31L4VTdIf?=
+ =?us-ascii?Q?dMhyfEoS+l6RoAWt/QbExPXEJdXolb1gng/HBNsUNi0Pvr058s2veGQaI79p?=
+ =?us-ascii?Q?Nec3zS7haHeHEgzMUfm99xIuERv+TsBWwJtMeoQJ2Da6lDsWwoBKGEDTX07i?=
+ =?us-ascii?Q?2op5vSJBklnj+Gc10UrYWz74guXghbd5gqYcwC14iwsEZhfdSUASLPxEoYZc?=
+ =?us-ascii?Q?wKtHhwQ8OspEbksb/QZoz3Ik5bb6ZJQylNgRPjDqj7Zi69RI/sdPRTmnpGs+?=
+ =?us-ascii?Q?w+8fOAfa0+AZSn2qrxsk1wdmxoM8Af8kTXHBU/gDfnGcGOlmNYvoyh0Mnb0T?=
+ =?us-ascii?Q?uoi1neMkSFk6LtNvT6GRGODse9S2cthfCeXylto1f13x4YcguGvYVPxZl1lK?=
+ =?us-ascii?Q?QYrmgqJ0xQ++WsnuBaSRvUAte7HjP/dfWYfSCmK+0BjiBNHpdriB3i6vpiB4?=
+ =?us-ascii?Q?MGQC5yyG4xF2Ly7zarngVCI1kihKiEOp8zmYgpUR+zk1vbuG8e2iBu0Ykl+r?=
+ =?us-ascii?Q?eotp4ohAl70qrW+JQl3v1BcqREnSQ2gN0MHUgnAbJsTTdxgAoM/AKHuCIuqc?=
+ =?us-ascii?Q?7twNSVlD78BMhrj5KA8YUp4wZ+BL5Xk2Kb8c1crtX50DrwDs76LrIyepIcAI?=
+ =?us-ascii?Q?4XcWekAti2IDwoSrRJ1X+DBy2fwgy10Z8Ukq3oEaSGWfBcDY+Km4E8oi4QZs?=
+ =?us-ascii?Q?zuZmdJRNj9/VTfqxiwUJ1b8HMtu0+LPXLY2JXMgTGan9RcLrqI73BdsLYauB?=
+ =?us-ascii?Q?0eEDPmDQg4vr9yAy6sFvuUOG3nQ9YFV1NpmRW0ziG69qTxosylAHJoCyqfz4?=
+ =?us-ascii?Q?QDGGn0b+lE9JbfkhjxvMKcqKLtVpPGF+kEmWUVHA90mvpgqqrvl+BQRoezVQ?=
+ =?us-ascii?Q?bVlC0CFmO5sQph671uS15Uu7csaHYkxEXgaUadTZVN3KwpfuXGR5431bfX3s?=
+ =?us-ascii?Q?ccsD/IbsFmyvo27DIEn9m87D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KU0iYn23JLTRkQAZ8cwRI3VTv+RzBT5wQM6ArQebeckmONAS1pRaRV8qgFmr?=
+ =?us-ascii?Q?DBL2YqSNp74RKviGmRpUjNQ+Meuzb9wrl5dFh/6qNU/ZnSCr9G4YuDh33/te?=
+ =?us-ascii?Q?NzGrH887xs2YwHfyR1kXdWf8EtzFT3r0kWNhFzssDMzbxaTstgu1wwe1g0+A?=
+ =?us-ascii?Q?wTFpUhGCVh0CpF4iiyZ4q0t2eVFiBq5bkYmeLT0dJgZBlqDk6QplPTzBRf0A?=
+ =?us-ascii?Q?3T/qEHPrnLAwlZSUwnEe5N5gLoMm51hgCg9Zc3aOVigejgHl+m04tFXLn6xN?=
+ =?us-ascii?Q?60hDcaMwYe0TEiY8g/eeJgGNEAkhf+hLbzRlTUCyUJUA+YVvjaq/8juPz4jC?=
+ =?us-ascii?Q?HEbbd8/xcbNy6FiOGAcBfjXVrnVs+neM4u6DDImn08SuYUIlJOqERbZuyojW?=
+ =?us-ascii?Q?HpEBCNgNtnjlKqbF0AQnq2NK3vYNTrQ5cI2bpd2mPqgSIafGlj66Ruaz2oHm?=
+ =?us-ascii?Q?DEqeyabWxp14eKy2wqtMuYeOHOg1O6pCbtV2yEsmxbZ9lGCarwXc9TIxKxVW?=
+ =?us-ascii?Q?YUlwMp8Sz4V8IUqKaNzLXrQLzP0RX7us0ZER+VcyEZVutrI0NDSSZ5WWAI+a?=
+ =?us-ascii?Q?xFd7NP8VJs8xJqgwcTKNs+BFxOfHWCm1m3oGaPBos9KiIswwQyEqJlTBqwCp?=
+ =?us-ascii?Q?+VpgyWinGO1JAfn3JCWdtw2zaNaUPs42Bw2DmTDnkpVh3Ph3Mzf3TQnYQfqd?=
+ =?us-ascii?Q?RSREJlO9ttLKssKztLZE0gvXom60avMO9rLJAsBUj2s+dAtPwMtFBc7EEs9V?=
+ =?us-ascii?Q?bJnXwAc7Xq97mOGw2Vtl9ff1G3rQt43E+42oyUrIIOXLgLOWYywJfXmy+xgP?=
+ =?us-ascii?Q?Z5dLUWOr9cZ2vYLTmmWvyEIRX4pOnUSEOurvJuQ79qe8ACdg53p4QhdjrgbB?=
+ =?us-ascii?Q?wGYxZr5ncsc4P2PwepWHLoIOseeQXGLM/M0GEzDgK9lZeGw/KAG8P9EU+rQv?=
+ =?us-ascii?Q?CVOTA+bUmGwVA3G8g0RThlCwgJ1PiEVNDOjmzWmCA9xcEKNd96JTHg2vFSdm?=
+ =?us-ascii?Q?VHoNC9ce5a2U6VFStqu9ecb0BvwkMudpS06aQ0KSV+r29FChiwhArSR29K9F?=
+ =?us-ascii?Q?2EMQ4uJNTcI0yXbmg4pwEjqdB5zFBK62EIK6ahcgRj5tuQh7oAK4khvaNCgU?=
+ =?us-ascii?Q?Be0bxo7PvbKKL8dWexjuHh5QaIym12KIKu1XtM0BjrTkWRiZVsP0jN5knAg+?=
+ =?us-ascii?Q?Nxhqu433LssU8nQW8sZ9vfR9oTLV7ckIOYNERt2axzRUZe8ccu/Jo3ir953f?=
+ =?us-ascii?Q?CKDdMAaGWAMiFKe3P360FakF+GyCna+1idoWqRhMQfkyCN52gA1kEe4F4Qef?=
+ =?us-ascii?Q?FxL2j+gr23Mvc2cSuf7YNxYGf+8GRqQcbzimuaxiwKDqSvJfP9uWKRoZJ/3h?=
+ =?us-ascii?Q?iznWXhwTJLpShPqqHLV+MbhwAFYjJMsc+ah77AOPDeL15mrlUT493MHDWxvU?=
+ =?us-ascii?Q?aCfSAYqixvLwvueM24kJZcyY21TkWaK6picvo2ppz3CrJBviJpviFeV4tLyv?=
+ =?us-ascii?Q?Tc5yiBpkTrH68w/8aAEeXdYNalB1nhTIl6hswoFTrXNRzZh9T+y9kzuMlK+r?=
+ =?us-ascii?Q?Dwun7HjxEsiDni0axpM=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8660ac6a-2e3c-4ed3-1b65-08dceedf228d
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 19:08:50.6272
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7g7oBiyEzJCua1fkaGxtJb0xJkb4r6M8ov6++atApf6bieh2CFYmZeEBS3gO1VrM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4213
 
-Adding error pointer check after calling otx2_mbox_get_rsp().
+On Wed, Oct 09, 2024 at 09:38:19AM -0700, Nicolin Chen wrote:
+> With a vIOMMU object, use space can flush any IOMMU related cache that can
+> be directed using the vIOMMU object. It is similar to IOMMU_HWPT_INVALIDATE
+> uAPI, but can cover a wider range than IOTLB, e.g. device/desciprtor cache.
+> 
+> Allow hwpt_id of the iommu_hwpt_invalidate structure to carry a viommu_id,
+> and reuse the IOMMU_HWPT_INVALIDATE uAPI for vIOMMU invalidations. Drivers
+> can define different structures for vIOMMU invalidations v.s. HWPT ones.
+> 
+> Update the uAPI, kdoc, and selftest case accordingly.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  include/uapi/linux/iommufd.h            |  9 ++++---
+>  drivers/iommu/iommufd/hw_pagetable.c    | 32 +++++++++++++++++++------
+>  tools/testing/selftests/iommu/iommufd.c |  4 ++--
+>  3 files changed, 33 insertions(+), 12 deletions(-)
 
-Fixes: 9917060fc30a ("octeontx2-pf: Cleanup flow rule management")
-Fixes: f0a1913f8a6f ("octeontx2-pf: Add support for ethtool ntuple filters")
-Fixes: 674b3e164238 ("octeontx2-pf: Add additional checks while configuring ucast/bcast/mcast rules")
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
-v4:
- - removed unnecessary line "allocated = PTR_ERR(rsp);"
-v3: https://lore.kernel.org/all/20241006164322.2015-1-kdipendra88@gmail.com/
- - Included in the patch set
- - Changed patch subject
- - Added Fixes: tag
-v2: https://lore.kernel.org/all/20240923063323.1935-1-kdipendra88@gmail.com/
- - Changed the subject to net
- - Changed the typo of the variable from bfvp to pfvf
-v1: https://lore.kernel.org/all/20240922185235.50413-1-kdipendra88@gmail.com/
- .../net/ethernet/marvell/octeontx2/nic/otx2_flows.c    | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
-index 98c31a16c70b..58720a161ee2 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
-@@ -119,6 +119,8 @@ int otx2_alloc_mcam_entries(struct otx2_nic *pfvf, u16 count)
- 
- 		rsp = (struct npc_mcam_alloc_entry_rsp *)otx2_mbox_get_rsp
- 			(&pfvf->mbox.mbox, 0, &req->hdr);
-+		if (IS_ERR(rsp))
-+			goto exit;
- 
- 		for (ent = 0; ent < rsp->count; ent++)
- 			flow_cfg->flow_ent[ent + allocated] = rsp->entry_list[ent];
-@@ -197,6 +199,10 @@ int otx2_mcam_entry_init(struct otx2_nic *pfvf)
- 
- 	rsp = (struct npc_mcam_alloc_entry_rsp *)otx2_mbox_get_rsp
- 	       (&pfvf->mbox.mbox, 0, &req->hdr);
-+	if (IS_ERR(rsp)) {
-+		mutex_unlock(&pfvf->mbox.lock);
-+		return PTR_ERR(rsp);
-+	}
- 
- 	if (rsp->count != req->count) {
- 		netdev_info(pfvf->netdev,
-@@ -232,6 +238,10 @@ int otx2_mcam_entry_init(struct otx2_nic *pfvf)
- 
- 	frsp = (struct npc_get_field_status_rsp *)otx2_mbox_get_rsp
- 	       (&pfvf->mbox.mbox, 0, &freq->hdr);
-+	if (IS_ERR(frsp)) {
-+		mutex_unlock(&pfvf->mbox.lock);
-+		return PTR_ERR(frsp);
-+	}
- 
- 	if (frsp->enable) {
- 		pfvf->flags |= OTX2_FLAG_RX_VLAN_SUPPORT;
--- 
-2.43.0
-
+Jason
 
