@@ -1,169 +1,130 @@
-Return-Path: <linux-kernel+bounces-369252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691269A1AD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:41:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A99C39A1AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269DC28604D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA12853E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B421925A5;
-	Thu, 17 Oct 2024 06:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C371925B1;
+	Thu, 17 Oct 2024 06:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dBxVzCEs"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRdBujC/"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDE318E04E;
-	Thu, 17 Oct 2024 06:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24AC1922CF;
+	Thu, 17 Oct 2024 06:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729147280; cv=none; b=S4BJ50h+IrqElh+uLvydI03cir2qGjtocvRRYs4JGenBxpEi4AvVKLmZ8hNsxCOWCTEkBESoGFc2SflkaU9wBT+bFX2X8yPkis/7PbADZpbg01R5w1sTBBGWv9mxCTilhc+stIL8fryoUSWDrNaduJCY5EsrExQTcDR8tC5rWqQ=
+	t=1729147311; cv=none; b=geB6nuYWg8eCnAkC8myChILaJh9MB9QCzxh83omQOs6H1326QZTuI/6AJA2GdKq9xKlez8Fuc72QEQ2tDI4WA3n+75C694TGc9SYgAZbUtbFN2Zj8tc/Lwpm9uuVVwoqscurIcROSiKIZyzuds3/XP+g7G8KzTh0PJ4LNNjDQT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729147280; c=relaxed/simple;
-	bh=UKK7eZz1Pu+wcpVxUWu2FCVh5OPes/KX5YioqbbLOzU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P3NOwWhxcSmS4dO+7V2iqDGpFO6iYAfOv4IxDOSADmgcw28tRVt4iXT7f+g/UIt/b0ZkVhJYGaQgD0a6TR/ACj75JdTQytMTdCIGeA5Gkdr662XqDVCPEw3fagLP4bJC02QB2yoqTJGq6d4lN9Jsz/xuGugiAkwpjG28ydQE+KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dBxVzCEs; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49H6ekfq002881;
-	Thu, 17 Oct 2024 01:40:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729147246;
-	bh=SXZs1tZeO5dv/QQF+M6mQqAm8Zl6lz5X0ZWRJcpLVxk=;
-	h=From:To:CC:Subject:Date;
-	b=dBxVzCEs2VvkJCD2urQId1wklK1n+2wtc2w8ir0YWIIeBir1TETj4ycdYD6lZDbT5
-	 qL9NsL/YbfwcGjiWn3r0gy/fqJu8AkSY2qkfPyxeyweKM7nawmsIV/gFR2+uxIdZTa
-	 TnePGIBG9H0/79a2SsGgq5DMnageGauCKI/olpyE=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49H6ek3J030539
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 17 Oct 2024 01:40:46 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 17
- Oct 2024 01:40:45 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 17 Oct 2024 01:40:45 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49H6efL4009875;
-	Thu, 17 Oct 2024 01:40:42 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-j784s4-evm: Add overlay for USB2.0 Type A functionality
-Date: Thu, 17 Oct 2024 12:10:41 +0530
-Message-ID: <20241017064041.880119-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1729147311; c=relaxed/simple;
+	bh=JhAptwO2JSYZHXDh8T5Sim3dYS875G7Jg6ADu8A9wVU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ED8gfSFCBftiFq6LtxPOb6vhof6AX1WGLN6mEsMGv6AwdRenwC/gB1y9W+mmwmpkyZMzPpltjaF2HSrWLGUfSMJCBjl1VsHxQVLf1zZsoN1Be//z2T5gEr8HSgDpGifaxfdiTKP4PcToCI1KMxuIlkv4H34Nel0JX3pqDtpECbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRdBujC/; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e5d3f039ccso345111b6e.0;
+        Wed, 16 Oct 2024 23:41:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729147308; x=1729752108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zC8B12diaw0316EjryPxswII1rxWpWPO6nyoBVEE4H0=;
+        b=MRdBujC/vwLGnc0aLuD6Q6AvZW8neKublmCRAygDB8TXlBP6brwz5gDB0SsazdpFu0
+         0Wy2ixxGSNAxmxzzgMBGmVbB/eRZ560eoL5apEBnQhB2NQrnlNcaNcRpGlx0LpKClaZN
+         gYF5wP1l47v7W4wfzqfFvV6+OpvIhZjESbe6eEy9Gapm31/pKmadQ+3ohtwKixNHGNwU
+         6Y3uz4C7/QUSh5MxA6vJpNiOUYqBjS+8gC/vZq5W8k7JKVSD1F805v1vmdcvmmXnpdy8
+         DoLyZa4ir0NFW2c8qwJQx0NDLuPnd5GM3wAqjsjyytcsuD+o1UqR8UxLBnUHDHjD9497
+         UMAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729147308; x=1729752108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zC8B12diaw0316EjryPxswII1rxWpWPO6nyoBVEE4H0=;
+        b=NoiPONAVitua/72OYd1SXn+SRjBWDzYBYm8FgOdhk0YP/ryq4aUvZMeNjcMu1lyuM4
+         OWqVyFFTrSk0yjoEAYTHSBiIYOoD9MP8Xgmf5CeFFL92JlhIOhwA+PuC2XVqb/gOPynr
+         llN1eKUJkJmH9S8+iA+xKEAB92FB1dUvPfgFl/R06lFRCA4pIcrt/RWVcLrKA2GUkyR7
+         pYyDqmAr/WffT3wfjNiXn/hvgbUK1pXfRVkKJpPUW2GK3p/PgDSLztwhD54X1CS/IzjQ
+         6ktsK7g0O03pKwRj3yhTCC+F3k/cbZUeR3UvVo1egLuxUF5TjxvlAbXEtci3AcrwVPYy
+         pb/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXnYYGZ9btzHB2C9e/bohjzFXH7CQdGyKvngvRxAp5Qf1Lwl5WzsrhFPQpD9GdlqNRxSl6FVsT+8O0JWmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIiHe+pgsgsSFUTSm22UOahFWpuLCfqQ30JFWcTYIvQDliHAVm
+	FcYMSDR3zQ1HNwC7bUdkwYP5pRWIr/t3rAuY+Xnl3fWaYJw4xFDAhL3XSz9dZ0k/RVmX3ahy7S5
+	ytUz9kD0TticrY3Cq4Mv1x5XrHORXvQ==
+X-Google-Smtp-Source: AGHT+IGZU49YeXSxAotjEP5RQHN+ozUmRXiWYgPhtvis7m+KY8OMeQym/W/Wnr3rOZmIS67qpIEfH40VNNTZomRinzE=
+X-Received: by 2002:a05:6808:170f:b0:3e5:e243:1861 with SMTP id
+ 5614622812f47-3e5e2431942mr8768458b6e.27.1729147308442; Wed, 16 Oct 2024
+ 23:41:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20240910044024.120009-1-sergio.paracuellos@gmail.com>
+In-Reply-To: <20240910044024.120009-1-sergio.paracuellos@gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Thu, 17 Oct 2024 08:41:37 +0200
+Message-ID: <CAMhs-H9M+ZW1c7Wrdc0ff_hD=hrbq_S-KqzzjH7ux97sZO4mHA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] clk: ralink: mtmips: some fixes and sdhc clock support
+To: linux-clk@vger.kernel.org
+Cc: sboyd@kernel.org, mturquette@baylibre.com, tsbogend@alpha.franken.de, 
+	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The USB0 instance of the USB controller on the J784S4 SoC supports a single
-USB interface with the possible choices being:
-1. USB3.1 Gen1 Type C interface
-2. Two USB2.0 Type A interfaces via an on-board USB Hub.
+On Tue, Sep 10, 2024 at 6:40=E2=80=AFAM Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
+>
+> Hi Stephen,
+>
+> The following first two patches contains several fixes for having a corre=
+ct
+> clock plan from the beggining in old ralink SoCs that could not be tested
+> when the driver was mainlained due to the lack of users. Now some issues
+> have been reported regarding RT3883 in openWRT[0] so I am addressing and
+> fixing them here.
+>
+> The last patch adds new clocks to properly support sdhc 48 MHz clock for
+> Mt7620, Mt7628 and Mt7688 SoCs. OpenWRT people updated to use SDHC upstre=
+am
+> driver so they were forced to add a not desired fixed dts node[1] to make=
+ it
+> works. The correct thing to do is just support it in mtmips driver. Hence
+> we have add it here.
+>
+> Thanks in advance for your time.
+>
+> Best regards,
+>     Sergio Paracuellos
+>
+> [0]: https://github.com/openwrt/openwrt/issues/16054
+> [1]: https://github.com/openwrt/openwrt/pull/15896/files
+>
+> Sergio Paracuellos (3):
+>   clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
+>   clk: ralink: mtmips: fix clocks probe order in oldest ralink SoCs
+>   clk: ralink: mtmips: add mmc related clocks for SoCs MT7620, MT7628
+>     and MT7688
+>
+>  drivers/clk/ralink/clk-mtmips.c | 56 ++++++++++++++++++++++++---------
+>  1 file changed, 41 insertions(+), 15 deletions(-)
 
-Add overlay to enable USB2.0 Type A functionality by:
-1. Configuring the "USB2.0_MUX_SEL" mux to enable the USB Hub connected to
-   the two USB2.0 Type A interfaces on the J784S4-EVM.
-2. Set the Dual-Role Mode to Host.
+Gentle ping on this series :-)
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
-
-Hello,
-
-This patch is based on linux-next tagged next-20241016.
-
-Logs validating USB2.0 Type A interface on the J784S4-EVM:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/41bbcb39f331aa3bb6fd4dd694015189
-
-Regards,
-Siddharth.
-
- arch/arm64/boot/dts/ti/Makefile               |  4 +++
- .../arm64/boot/dts/ti/k3-j784s4-evm-usb2.dtso | 26 +++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-j784s4-evm-usb2.dtso
-
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index bcd392c3206e..fc75d0365558 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -124,6 +124,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am69-sk.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-quad-port-eth-exp1.dtbo
-+dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-usb2.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
- 
- # Build time test only, enabled by CONFIG_OF_ALL_DTBS
-@@ -200,6 +201,8 @@ k3-j784s4-evm-pcie0-pcie1-ep-dtbs := k3-j784s4-evm.dtb \
- 	k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- k3-j784s4-evm-quad-port-eth-exp1-dtbs := k3-j784s4-evm.dtb \
- 	k3-j784s4-evm-quad-port-eth-exp1.dtbo
-+k3-j784s4-evm-usb2-dtbs := k3-j784s4-evm.dtb \
-+	k3-j784s4-evm-usb2.dtbo
- k3-j784s4-evm-usxgmii-exp1-exp2-dtbs := k3-j784s4-evm.dtb \
- 	k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
- dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
-@@ -227,6 +230,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
- 	k3-j721s2-evm-pcie1-ep.dtb \
- 	k3-j784s4-evm-pcie0-pcie1-ep.dtb \
- 	k3-j784s4-evm-quad-port-eth-exp1.dtb \
-+	k3-j784s4-evm-usb2.dtbo \
- 	k3-j784s4-evm-usxgmii-exp1-exp2.dtb
- 
- # Enable support for device-tree overlays
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm-usb2.dtso b/arch/arm64/boot/dts/ti/k3-j784s4-evm-usb2.dtso
-new file mode 100644
-index 000000000000..02f97819aa82
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm-usb2.dtso
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/**
-+ * DT overlay for USB2.0 Type A functionality on J784S4-EVM.
-+ *
-+ * J784S4 EVM Product Link: https://www.ti.com/tool/J784S4XEVM
-+ *
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+&exp2 {
-+	p12-hog {
-+		/* P12 - USB2.0_MUX_SEL */
-+		gpio-hog;
-+		gpios = <12 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+	};
-+};
-+
-+&usb0 {
-+	dr_mode = "host";
-+};
--- 
-2.40.1
-
+Thanks,
+    Sergio Paracuelllos
+>
+> --
+> 2.25.1
+>
 
