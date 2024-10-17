@@ -1,239 +1,159 @@
-Return-Path: <linux-kernel+bounces-369812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CE89A231A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:09:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9793D9A2321
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0086284D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE421F23ACC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCF71DE4E6;
-	Thu, 17 Oct 2024 13:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27071DE8B6;
+	Thu, 17 Oct 2024 13:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qEw5DLXG"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uyZ21wNl"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDAF1DE3AB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E971DE4FF;
+	Thu, 17 Oct 2024 13:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729170483; cv=none; b=iEgnsjKK1Wd8dc9/FmkanEioRJD+nhbtjXoSv9KrOa4iDm+Xn0hLHdpFspdQFzNCRq1+IOVmqDXJZdTlM6c9nbmvx30R3qk9E+83yL0ydR7zFHtKqPvEVo578al8dj1+wu2pMnqvulK2CE7zvQZebZueZ+wFpWjqGkd/UQbopqA=
+	t=1729170491; cv=none; b=CbmExtCUr+grvUnSgKUX1xEd0YNeq3XRNdUSgD76jhulc45wQsF141Tm1gn11One4dgKrgRWtlHJDIyg3UaOYCx54u2zNEeq2lWn5N750huum4QaribImVAmqGY+FicoF+2tAzVYYt4Vjg11BspSr3W4IzbeqSVA3hdjdcJ16mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729170483; c=relaxed/simple;
-	bh=c0bfB1CKojeKX92hRJPTg5p5/+lQ8IefKxOSkHcyjO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A5o25H0xvZYAqWqWwAbEg4Sqx3nLB9PqEN21bdd9FhovdRFfpElwI3kD60hGj02a800rYx+G3Ay4oG6onR+p4HA/w1VrcQkkDHx3tFo42Xk8VHVoKU6cZLQ6Vh4Mjej2U+rivqGBnkR+9nL1cH8Ui9VOx0QidCIoBW7V/O3HB0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qEw5DLXG; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e396a69062so9186837b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729170478; x=1729775278; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZazD9r+QSLhnAO9QyZ44wGVSQLeXIw2HIXMUQofmO6w=;
-        b=qEw5DLXGznRdbFqkSd1ii9xqzJaKiG0n4TIn7Lf0XvMDHHQxWs6Fsp4+3HI8kP1l8H
-         MTg2LT1Zr6Izvtx/U+GyGUOJuYNwVSJa/pxCqT20JL8e0mbHSJDAsCFiegMyAiWdotgk
-         I6OzWank3tVFYzfyi1ma8wV+7b7qm0x4Fs+azVruIc5mKa21vIatjyFmGbEcW28Stdm2
-         rOhwhapUY/K9pq85vz9OR8c3ejTbA2GmpK7z/AiGR5REsi0RCdzU7MrF+pTfz/Mwr9Xk
-         zC/3JSnwQY7TeVlPeFO/zDCZ4ghgoYIAQknI1nXA9dlp+nhZe+8IY2NZ3n4eW+2ZUW7I
-         Xu5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729170478; x=1729775278;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZazD9r+QSLhnAO9QyZ44wGVSQLeXIw2HIXMUQofmO6w=;
-        b=Du13dBp30x8Vl8Odb8mPK7UNrGMj77IJJWZOFUlnarFzzDIAjFdY26pXwzUItTpQxT
-         3ANmsjr4+3l4p2mkCSi4NFbWkHjVnF375JTiVR57P16Djif4Pr+WTElhN3oqUKFcr9tt
-         HAxc77XMkClA/owCGd4yZPIk3kBOlhmSsAPLupeHRVPho1kpIyq7EJge++vO1CG+sF6b
-         H5/7Eiwxegsvok4KI0l4h3bQoD/u4RkC14lf/zj4VXYufUb1Z2CSqpq6NdWs88RG5LL9
-         ZgbC2tCrarE990QKcjK7zFIs6PW/VkbAaUZVWfnk8XALa9BvDXzVocIrp3fE3D+2WF5+
-         VO/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXq0GPxngpcjpEaFCDCHbCyLCCJzPj/5jNyVEUfEySJoZMYCJIViDxx0mYHjb0TcUpMVd2m6P7gOo3WCpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7qAtvtdSSYTbzEC/rxgRnB2MAAVB6VYqxZOTXkD8Y6vLdmtZ6
-	Dx3ay5BeixcO3vJRUBSIoKFHiRITwPb2r752FW8P+ylJIeOBLu1DS+ZD2HGYxJlMgqioCMf0D/3
-	GiPZRon5dJlotAi2AYRqAgwZp58oUW59zvm8RynCNNiop4oKjgrs=
-X-Google-Smtp-Source: AGHT+IFD/gjUzQbbNJWQ5oL5BN76j/UHFd9jGMXlet0DrOEnAF5gNXy8XvWpGdFQ9Exj+PRU+DXn5f1++kiRqKhMIr0=
-X-Received: by 2002:a05:690c:389:b0:64b:5cc7:bcbc with SMTP id
- 00721157ae682-6e347c48627mr218937157b3.32.1729170478430; Thu, 17 Oct 2024
- 06:07:58 -0700 (PDT)
+	s=arc-20240116; t=1729170491; c=relaxed/simple;
+	bh=LjOmfM6uUIDdQR5MPrfSKKZ1tiLjWQIo0f2A44NEoZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TYslmySNOStsTzce04zf9BrBkSIm10uWSYGFbf2+bKAQJnV2giraC/2Cymd8Y+6dfj3hADvV+JfdFDf2QkcOmgoh7iWkeaaUZ9KLoWY5Sy92CQhwV+dYthecCHE1xD9+oh6pmMQ/keVQMu086/pAcbW/Fc08oqWBKhlMMn8ucoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uyZ21wNl; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d52d9df48c8811efb88477ffae1fc7a5-20241017
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=sAzYeyhGebQ0dEi2TLDVwCGX61/HFQTh+vNjDu3CzfM=;
+	b=uyZ21wNlDkBj4Pf4lqVfmmU1Zjan5onrL7vASBAmPUYntWYh4mI7yTIBO4NppZpqEhekBdodHI/gsoCxZN7ngTmClw4KXjs78imTKC7QA9b7ot0yCHyoGcZCg0omz/d9tx9aswHFgOVPEtjLtPFD7PPoCgv4qGCP14dHV24qZIY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:283b1c42-4175-4012-b021-d999102435eb,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:87776a41-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: d52d9df48c8811efb88477ffae1fc7a5-20241017
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1266342419; Thu, 17 Oct 2024 21:07:59 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 17 Oct 2024 21:07:56 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Thu, 17 Oct 2024 21:07:53 +0800
+Message-ID: <17a8f8ce-0623-2e65-deaf-a760862f33c6@mediatek.com>
+Date: Thu, 17 Oct 2024 21:07:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014060130.1162629-1-haibo.chen@nxp.com> <20241014060130.1162629-3-haibo.chen@nxp.com>
-In-Reply-To: <20241014060130.1162629-3-haibo.chen@nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 17 Oct 2024 15:07:22 +0200
-Message-ID: <CAPDyKFr37wLYxdFJ-Lgbq7PbWyiQz+CuwMxwgeeP3QpMvdyjqg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mmc: host: sdhci-esdhc-imx: refactor the system PM logic
-To: haibo.chen@nxp.com
-Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, imx@lists.linux.dev, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, s32@nxp.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [RESEND. PATCH v1] pinctrl: mediatek: paris: Revert "Rework
+ support for PIN_CONFIG_{INPUT,OUTPUT}_ENABLE"
+Content-Language: en-US
+To: Bo Ye <bo.ye@mediatek.com>, Sean Wang <sean.wang@kernel.org>, "Linus
+ Walleij" <linus.walleij@linaro.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>,
+	<Jades.shih@mediatek.com>, <ivan.tseng@mediatek.com>
+CC: Yongdong Zhang <yongdong.zhang@mediatek.com>, Xiujuan Tan
+	<xiujuan.tan@mediatek.com>, Browse Zhang <browse.zhang@mediatek.com>, "Light
+ Hsieh" <light.hsieh@mediatek.com>, Evan Cao <ot_evan.cao@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Bear
+ Wang" <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>
+References: <20241017091238.180920-1-bo.ye@mediatek.com>
+ <20241017091410.181093-1-bo.ye@mediatek.com>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20241017091410.181093-1-bo.ye@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--9.173300-8.000000
+X-TMASE-MatchedRID: QW5G6BKkLToOwH4pD14DsPHkpkyUphL9gHzgwy8qV5oOkJQR4QWbsD7G
+	etjxIg5SEH8iVoDMqR50XH1HHT0dkh9tyJCN9GW1+nWmWoRu6rE5vit32ngSw8lmyIrLVcm1tpB
+	ukiTrasdP7y/XtCN0jd1d7aF3CVBvfnaS/XTl0BLhuXUWQoMQt0yQ5fRSh265CqIJhrrDy28Lhh
+	yrdR5RU8z/3xojTGB1HIoH5j4GqUBI/m1jbRW7J7Muc03hWzjbsuIso71Vk6LJYIv7y0tu9gOR3
+	tZA0vji4vM1YF6AJbZFi+KwZZttL7ew1twePJJB3QfwsVk0UbsIoUKaF27lxRlt5C0CRqm66uYV
+	UUIJYEeWUQGHWRoNfxbMd1Bwmhjvo2Kdp6eQFqcuEtc7PqLQMJr9hTHcIyXRTAxQSHbx/8uvb6Z
+	OHTB4DHzlz/HUVCh2B6+0uCqc8tyLs8R3TAgGUSPYQweeBxKQnqg/VrSZEiM=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--9.173300-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	DD1DF661CCD454EF9FBB90CFCF196A981024EA541D5F07349B705F1DA149245F2000:8
 
-On Mon, 14 Oct 2024 at 08:00, <haibo.chen@nxp.com> wrote:
->
-> From: Haibo Chen <haibo.chen@nxp.com>
->
-> Current suspend/resume logic has one issue. in suspend, will config
-> register when call sdhci_suspend_host(), but at this time, can't
-> guarantee host in runtime resume state. if not, the per clock is gate
-> off, access register will hung.
->
-> Now use pm_runtime_force_suspend/resume() in NOIRQ_SYSTEM_SLEEP_PM,
-> add in NOIRQ stage can cover SDIO wakeup feature, because in interrupt
-> handler, there is register access, need the per clock on.
->
-> In sdhci_esdhc_suspend/sdhci_esdhc_resume, remove sdhci_suspend_host()
-> and sdhci_resume_host(), all are handled in runtime PM callbacks except
-> the wakeup irq setting.
->
-> Remove pinctrl_pm_select_default_state() in sdhci_esdhc_resume, because
-> pm_runtime_force_resume() already config the pinctrl state according to
-> ios timing, and here config the default pinctrl state again is wrong for
-> SDIO3.0 device if it keep power in suspend.
 
-I had a look at the code - and yes, there are certainly several
-problems with PM support in this driver.
 
->
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+On 10/17/24 17:14, Bo Ye wrote:
+> [This reverts commit c5d3b64c568a344e998830e0e94a7c04e372f89b.]
+
+First, this should be "PATCH v2" since you've already modified commit 
+message.
+
+> For MTK HW,
+> 1. to enable GPIO input direction: set DIR=0, IES=1
+> 2. to enable GPIO output direction: set DIR=1, and set DO=1 to output high, set DO=0 to out low
+> 
+> The PIN_CONFIG_INPUT/PIN_CONFIG_OUTPUT/PIN_CONFIG_INPUT_ENABLE/PIN_CONFIG_OUTPUT_ENABLE shall
+> be implemented according to view of its purpose - set GPIO direction and output value (for
+> output only) according to specific HW design.
+> 
+> However, the reverted patch implement according to author's own explanation of IES without
+> understanding of MTK's HW. Such patch does not correctly set DIR/IES bit to control GPIO
+> direction on MTK's HW.
+> 
+> Fixes: c5d3b64c568 ("pinctrl: mediatek: paris: Rework support for PIN_CONFIG_{INPUT,OUTPUT}_ENABLE")
+> Signed-off-by: Light Hsieh <light.hsieh@mediatek.com>
+> Signed-off-by: Evan Cao <ot_evan.cao@mediatek.com>
+> Signed-off-by: Bo Ye <bo.ye@mediatek.com>
 > ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 39 +++++++++++++++---------------
->  1 file changed, 19 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index c7582ad45123..18febfeb60cf 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -1871,11 +1871,13 @@ static int sdhci_esdhc_suspend(struct device *dev)
->         struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
->         int ret;
->
-> -       if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> -               ret = cqhci_suspend(host->mmc);
-> -               if (ret)
-> -                       return ret;
-> -       }
-> +       /*
-> +        * Switch to runtime resume for two reasons:
-> +        * 1, there is register access, so need to make sure gate on ipg clock.
+>   drivers/pinctrl/mediatek/pinctrl-paris.c | 38 +++++++++++++++++-------
+>   1 file changed, 27 insertions(+), 11 deletions(-)
 
-You are right that we need to call pm_runtime_get_sync() for this reason.
+Please add change logs in this section.
+For example:
 
-However, the real question is rather; Under what circumstances do we
-really need to make a register access beyond this point?
+Changes for v2:
+  - Update "Fixes: " tag in commit message.
 
-If the device is already runtime suspended, I am sure we could just
-leave it in that state without having to touch any of its registers.
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> index 87e958d827bf..a8af62e6f8ca 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> @@ -165,21 +165,20 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
 
-As I understand it, there are mainly two reasons why the device may be
-runtime resumed at this point:
-*) The runtime PM usage count has been bumped in
-sdhci_enable_sdio_irq(), since the SDIO irqs are enabled and it's
-likely that we will configure them for system wakeup too.
-*) The device has been used, but nothing really prevents it from being
-put into a low power state via the ->runtime_suspend() callback.
+[snip]
 
-> +        * 2, make sure the pm_runtime_force_suspend() in NOIRQ stage really
-> +        *    invoke its ->runtime_suspend callback.
-> +        */
+Please reply all the questions address by the reviewers.
+For example:
+[1] 
+https://lore.kernel.org/lkml/433295fe-8d34-af8b-f6bf-be1953b6e479@mediatek.com/T/#m168c6138c374009990025b0407f617ba10dede8d
 
-Rather than using the *noirq-callbacks, we should be able to call
-pm_runtime_force_suspend() from sdhci_esdhc_suspend(). And vice versa
-for sdhci_esdhc_resume().
+Otherwise this patch will hard to be reviewed.
+Any open-minded discussion contribute to the improvement of Linux code 
+and the community.
 
-Although, according to my earlier comment above, we also need to take
-into account the SDIO irq. If it's being enabled for system wakeup, we
-must not put the controller into low power mode by calling
-pm_runtime_force_suspend(), otherwise we will not be able to deliver
-the wakeup, right?
-
-> +       pm_runtime_get_sync(dev);
->
->         if ((imx_data->socdata->flags & ESDHC_FLAG_STATE_LOST_IN_LPMODE) &&
->                 (host->tuning_mode != SDHCI_TUNING_MODE_1)) {
-> @@ -1883,12 +1885,11 @@ static int sdhci_esdhc_suspend(struct device *dev)
->                 mmc_retune_needed(host->mmc);
->         }
->
-> -       if (host->tuning_mode != SDHCI_TUNING_MODE_3)
-> -               mmc_retune_needed(host->mmc);
-> -
-> -       ret = sdhci_suspend_host(host);
-> -       if (ret)
-> -               return ret;
-> +       if (device_may_wakeup(dev)) {
-> +               ret = sdhci_enable_irq_wakeups(host);
-> +               if (!ret)
-> +                       dev_warn(dev, "Failed to enable irq wakeup\n");
-> +       }
->
->         ret = pinctrl_pm_select_sleep_state(dev);
->         if (ret)
-> @@ -1904,22 +1905,18 @@ static int sdhci_esdhc_resume(struct device *dev)
->         struct sdhci_host *host = dev_get_drvdata(dev);
->         int ret;
->
-> -       ret = pinctrl_pm_select_default_state(dev);
-> +       ret = mmc_gpio_set_cd_wake(host->mmc, false);
->         if (ret)
->                 return ret;
->
->         /* re-initialize hw state in case it's lost in low power mode */
->         sdhci_esdhc_imx_hwinit(host);
-
-This looks like another special use-case. If I understand correctly,
-on some platforms some additional re-initialization of the controller
-may be needed at system resume.
-
-If you want to move towards using pm_runtime_force_suspend|resume(), I
-suggest moving the above call into the ->runtime_resume() callback. To
-allow the ->runtime_resume() callback to know when this
-re-initialization is needed, we can use a flag that we set here and
-clear in the ->runtime_resume() callback.
-
->
-> -       ret = sdhci_resume_host(host);
-> -       if (ret)
-> -               return ret;
-> -
-> -       if (host->mmc->caps2 & MMC_CAP2_CQE)
-> -               ret = cqhci_resume(host->mmc);
-> +       if (host->irq_wake_enabled)
-> +               sdhci_disable_irq_wakeups(host);
->
-> -       if (!ret)
-> -               ret = mmc_gpio_set_cd_wake(host->mmc, false);
-> +       pm_runtime_mark_last_busy(dev);
-> +       pm_runtime_put_autosuspend(dev);
->
->         return ret;
->  }
-> @@ -2011,6 +2008,8 @@ static const struct dev_pm_ops sdhci_esdhc_pmops = {
->         SET_SYSTEM_SLEEP_PM_OPS(sdhci_esdhc_suspend, sdhci_esdhc_resume)
->         SET_RUNTIME_PM_OPS(sdhci_esdhc_runtime_suspend,
->                                 sdhci_esdhc_runtime_resume, NULL)
-> +       SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +                                       pm_runtime_force_resume)
->  };
->
->  static struct platform_driver sdhci_esdhc_imx_driver = {
-> --
-> 2.34.1
->
-
-Kind regards
-Uffe
+Thanks
+Macpaul Lin
 
