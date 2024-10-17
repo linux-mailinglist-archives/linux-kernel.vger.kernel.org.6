@@ -1,498 +1,116 @@
-Return-Path: <linux-kernel+bounces-369706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F12849A2177
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:53:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777859A217D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A764328934F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:53:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98B31C21F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1291DCB17;
-	Thu, 17 Oct 2024 11:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266E71DD53D;
+	Thu, 17 Oct 2024 11:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HsnUXjQC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lZH67v4L"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824741D90AD;
-	Thu, 17 Oct 2024 11:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BEE1D3647
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729165973; cv=none; b=KJ+5HElq4PsYgC2iDS+sDP4cZVMKZNPVkhGHv5d1lBcku6Ka5PDhcdbTT4EhRDo8bjgOh10Do6OyO9kurLX8GpEcPrLU0DO1/o/HUyfUFmVzi3Qe+aiCvdlKEdNvlS7K88zccOizQwOFo5o/NDmdPdddbFjDrmgB4AMOeCipCZ4=
+	t=1729165988; cv=none; b=CxsQ3RfYXadxFwbT4hqjQ6/mz0wNgsZnxPkGunDkPU7rMuIL6VJ7SRLtwpdzi0dKe0rAUPWjEdqh2LzDWdRbkXGM6vmib93pJV1sWPuSZN8TRfdi0J5XGPM7qE05+P9whthNGyWR56QwPwSJj9uhTw4cwLxcCWXtCn1ABTn0c6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729165973; c=relaxed/simple;
-	bh=H0gwYu7Bit465d2vhK9i5XgdeR3gNV4zGhKRx9ow+sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QCKzGqvAaVVatIdsXtCtrE9PROs57LjARk3JFLeKNaGyfNR9uvxRQ7WtLu0MxvS9+QPerfew0ep6PaQiewY8Eo/Da2mT+dAYK0Agas8fxGimGXfB1hfEBwjdmO8XJWWxWJ5mlpYp0n1kO1icy821a94UGGZmiqpWzVn0fB7oaGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HsnUXjQC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H71AAj031193;
-	Thu, 17 Oct 2024 11:52:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3hBI3QqtWRjF9uXlP6+feMspKh5MHVA4qsgiU1NZ/e4=; b=HsnUXjQCeUi6Ahnv
-	P+P8vaAOLaXOGuX4WJOvVR7Jja4Tgp5lNOTsG0DOKR1Q8qJTvnYo8dniSrG7jaaP
-	6hRWoKAHzf1KBFHsmOXci/AcKsbH1jwFFwPxBnwIH2Qw6alWKQ936UTu9re19gvN
-	ZnBFxh4QyKb9kNdavJnt/2m7LIextDerG4MCNG08Xy0t3UohB+DwrUAajKWHND85
-	+hVB37pq9Z165qBKW1WGpoM/TJfmz4ZowcD+Xxo4bY/SRoOBdHTYvT3bsBeu2KKV
-	t3oqIdHXp6ZA/DiesOT6sIZVF5SKB4EdqFw0c9FtFaAXTp/Kg2Ew/duLri3AqnrY
-	gBujEw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a8nq4gsp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 11:52:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49HBqgCt001688
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 11:52:42 GMT
-Received: from [10.214.67.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 17 Oct
- 2024 04:52:39 -0700
-Message-ID: <037f6cea-28c7-4114-b542-7f12aa1bcb1f@quicinc.com>
-Date: Thu, 17 Oct 2024 17:22:36 +0530
+	s=arc-20240116; t=1729165988; c=relaxed/simple;
+	bh=t/4OG1r5b/GHH35K9RyDd/lJoTIvhxz9+I27ObFBdek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5FYcGXEOMAFXlWaBSeXFsq+wtMrGP4fqXnhbY21+bbbl1oEtNVnSDAsLb8NoNswHF5VuZ7g7J3yFOst91VelsV2nh7t/oJQ6QuKINq+8ZGW9Jy3H4KUh7QlZVuLW83919iI/56qDbvu/Cfwf12pC9HfZ2zuMFikvIVRILKloxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=lZH67v4L; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b147a2ff04so83272685a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1729165986; x=1729770786; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GmBZesZtIEIysD3cyQDt0/aeQz0fuSRlJ48sSX4MZM0=;
+        b=lZH67v4LOonyWoeGNmAI2RYB0P5q1+zd6TsyJeDrGfvHrnN0MwlqM39Mi0qWG1QBUo
+         NrQCIM+wVAvJoQfPtYUZr03XDpdIS2Jqad3+mFldGgNzYL+aoSys42giGQYfSi2NASBL
+         nLXPc5PDMmddSnbR1lXm+W+PZLebZSYOaQWzn/BBl1633iLCwZs9rDdLwluedVO3/Sc9
+         l/ZXp6HyVBztCIJKfNsnKQVFgukqLi/R97w60f0pP/lrg7CPCvMq40M6/4LrrHgBAM3+
+         LOZmdqQsFvNo1KJwtVinVLqyQqBB6aHbaT3SYEsrmZ8EwTG3DY6RT7iXws/hGMLbQlbW
+         TVOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729165986; x=1729770786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GmBZesZtIEIysD3cyQDt0/aeQz0fuSRlJ48sSX4MZM0=;
+        b=KCK02UqXQh8TgRztPxJbIjjTTavzNCZ2qjUv5rZ3bIdJsRaNDrrCynTSyuTyeY6UMs
+         pKxAkMAwVX9DUVaJexL501UVI3OStSv2LI6RpWxj2srbAozEAuiAv8vfZjA/b6yNZZrh
+         by2cuJeyuuK8C2m/lW0ZcenA5ZPdtetuBUwqIVZDlGVVcBfdpMRXK/SC1IyQh/dQWlHz
+         FvoNnDLsrrNgcLiaF6lBzaL8iA4ToVTpvsLhQBD76zRr7ZMAQL5Rh7ZlkGu+ebV3MgIs
+         bLUx6p6qMUdDj2CeRDmDzEwJc9Jl+uibkIaP1NQDe4XkgsyJpp7IgxbkeOt18V5ZzPw6
+         vlzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVa7qPfCr3qsbM1j2UTMHMmjaG3I45Tu/YNl0ALq24Mo1PKAg3CKMRUbm7ghHQXk4wvQ7qQTWd4VibuyxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO/ph8Rjq/1UxQceUlE8SEixoA6BI+Oy5OAe0e6RtmVitLRBzs
+	Ut1JZmQwU8Y/zKiT+I8qw18EfHdpqAq2HTMG6AAUsTpD/zQejhrR9gDf6hBYmzM=
+X-Google-Smtp-Source: AGHT+IE0lhUEHRItAIlBXkzlmf1pFQcVgjaWoPErjcdruR1w2i306r6pb8Z5KQ2AjKUo4kdIciA/gA==
+X-Received: by 2002:a05:620a:3712:b0:7a9:a8c5:d4b3 with SMTP id af79cd13be357-7b120fc4b4emr3591459085a.33.1729165985823;
+        Thu, 17 Oct 2024 04:53:05 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136164d89sm291152685a.3.2024.10.17.04.53.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 04:53:04 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t1P3w-003fyz-5b;
+	Thu, 17 Oct 2024 08:53:04 -0300
+Date: Thu, 17 Oct 2024 08:53:04 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
+	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
+	dri-devel@lists.freedesktop.org, bskeggs@nvidia.com,
+	Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
+Message-ID: <20241017115304.GH4020792@ziepe.ca>
+References: <20241015152348.3055360-1-ymaman@nvidia.com>
+ <20241015152348.3055360-2-ymaman@nvidia.com>
+ <87frow8wdk.fsf@nvdebian.thelocal>
+ <20241016154555.GE4020792@ziepe.ca>
+ <878quno4os.fsf@nvdebian.thelocal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mailbox: qcom-cpucp-mbox: Add support for SC7280
- CPUCP mailbox controller
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Sibi Sankar <quic_sibis@quicinc.com>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "Ramakrishna
- Gottimukkula" <quic_rgottimu@quicinc.com>
-References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
- <20240924050941.1251485-3-quic_kshivnan@quicinc.com>
- <daorjvhony2y2ye2b3tus37bzux4hqqmhftyjsem7fz5cp2z42@a7ftfpnuvbja>
-Content-Language: en-US
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-In-Reply-To: <daorjvhony2y2ye2b3tus37bzux4hqqmhftyjsem7fz5cp2z42@a7ftfpnuvbja>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6ll_INOkeOorh8ArqBOodnoMPhfQSgHo
-X-Proofpoint-GUID: 6ll_INOkeOorh8ArqBOodnoMPhfQSgHo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
- suspectscore=0 adultscore=0 spamscore=0 bulkscore=0 clxscore=1015
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878quno4os.fsf@nvdebian.thelocal>
 
-Thank you, Bjorn, for taking the time to review this patch series.
+On Thu, Oct 17, 2024 at 12:58:48PM +1100, Alistair Popple wrote:
 
+> Actually I think the rule should be don't look at the page at
+> all. hmm_range_fault() is about mirroring PTEs, no assumption should
+> even be made about the existence or otherwise of a struct page.
 
-On 10/6/2024 8:03 AM, Bjorn Andersson wrote:
-> On Tue, Sep 24, 2024 at 10:39:40AM GMT, Shivnandan Kumar wrote:
->> The SC7280 CPUCP mailbox controller is compatible with legacy mailbox
->> hardware.
+We are not there yet..
+ 
+> > We don't need to enforce, it we don't know what else the driver will
+> > want to use that P2P page for after all. It might stick it in a VMA
+> > for some unrelated reason.
 > 
-> "mailbox hardware" is a very vague description of something.
-> 
->> Implement support for this functionality which enable HLOS to
->> CPUCP communication.
->>
-> 
-> Please describe the problem that this solves. What "legacy mailbox
-> hardware"? Why do you want to talk to the CPUCP?  What is a HLOS? What
-> is the CPUCP?
-> 
+> And wouldn't that touch the refcount and therefore be wrong?
 
-ACK, I will add description in next patch series.
+I mean the originating driver would do that
 
-> It seems from the patch that the current implementation supports
-> something we call "version 2" of the cpucp mailbox interface and you're
-> adding support for v1. Please make sure that the commit message describe
-> such things.
-> 
-
-ACK
-
->> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
->> ---
->>   drivers/mailbox/qcom-cpucp-mbox.c | 156 +++++++++++++++++++++++-------
->>   1 file changed, 122 insertions(+), 34 deletions(-)
->>
->> diff --git a/drivers/mailbox/qcom-cpucp-mbox.c b/drivers/mailbox/qcom-cpucp-mbox.c
->> index e5437c294803..faae6e069ea1 100644
->> --- a/drivers/mailbox/qcom-cpucp-mbox.c
->> +++ b/drivers/mailbox/qcom-cpucp-mbox.c
->> @@ -13,18 +13,24 @@
->>   #include <linux/platform_device.h>
->>
->>   #define APSS_CPUCP_IPC_CHAN_SUPPORTED		3
->> -#define APSS_CPUCP_MBOX_CMD_OFF			0x4
->> -
->> -/* Tx Registers */
->> -#define APSS_CPUCP_TX_MBOX_CMD(i)		(0x100 + ((i) * 8))
->>
->>   /* Rx Registers */
->> -#define APSS_CPUCP_RX_MBOX_CMD(i)		(0x100 + ((i) * 8))
->> -#define APSS_CPUCP_RX_MBOX_MAP			0x4000
->> -#define APSS_CPUCP_RX_MBOX_STAT			0x4400
->> -#define APSS_CPUCP_RX_MBOX_CLEAR		0x4800
->> -#define APSS_CPUCP_RX_MBOX_EN			0x4c00
->> -#define APSS_CPUCP_RX_MBOX_CMD_MASK		GENMASK_ULL(63, 0)
->> +#define APSS_CPUCP_V2_RX_MBOX_CMD_MASK		GENMASK_ULL(63, 0)
->> +#define APSS_CPUCP_V1_SEND_IRQ_VAL		BIT(28)
->> +#define APSS_CPUCP_V1_CLEAR_IRQ_VAL		BIT(3)
->> +#define APSS_CPUCP_V1_STATUS_IRQ_VAL		BIT(3)
->> +
->> +struct qcom_cpucp_mbox_desc {
->> +	u32 enable_reg;
-> 
-> Do you really need these parameters to be dynamic? E.g. you only touch
-> enable_reg from the v2 code paths...
-> 
-
-Will remove this in next patch series.
-
->> +	u32 map_reg;
->> +	u32 rx_reg;
->> +	u32 tx_reg;
->> +	u32 status_reg;
->> +	u32 clear_reg;
->> +	u32 chan_stride;
-> 
-> "u32" tells me that this has to be 32 bits, e.g. because the value is
-> going into a register... But these are just offsets...
-> 
-> Please use "unsigned int" to denote "a natural number".
-> 
-
-ACK
-
->> +	bool v2_mbox;
-> 
-> How about "version" and give it a value 1 or 2?
-> 
-
-Ok, will do like that.
-
->> +	u32 num_chans;
->> +};
->>
->>   /**
->>    * struct qcom_cpucp_mbox - Holder for the mailbox driver
->> @@ -35,6 +41,7 @@
->>    */
->>   struct qcom_cpucp_mbox {
->>   	struct mbox_chan chans[APSS_CPUCP_IPC_CHAN_SUPPORTED];
->> +	const struct qcom_cpucp_mbox_desc *desc;
->>   	struct mbox_controller mbox;
->>   	void __iomem *tx_base;
->>   	void __iomem *rx_base;
->> @@ -48,13 +55,40 @@ static inline int channel_number(struct mbox_chan *chan)
->>   static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
-> 
-> Why is the existing function renamed "v2" and this newly introduced
-> function not given a version?
-> 
-
-ACK
-
->>   {
->>   	struct qcom_cpucp_mbox *cpucp = data;
->> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
->> +	int i;
->> +
->> +	for (i = 0; i < desc->num_chans; i++) {
->> +		u32 val = readl(cpucp->rx_base + desc->status_reg + (i * desc->chan_stride));
->> +		struct mbox_chan *chan = &cpucp->chans[i];
->> +		unsigned long flags;
->> +
->> +		if (val & APSS_CPUCP_V1_STATUS_IRQ_VAL) {
->> +			writel(APSS_CPUCP_V1_CLEAR_IRQ_VAL,
->> +			       cpucp->rx_base + desc->clear_reg + (i * desc->chan_stride));
->> +			/* Make sure reg write is complete before proceeding */
->> +			mb();
->> +			spin_lock_irqsave(&chan->lock, flags);
->> +			if (chan->cl)
->> +				mbox_chan_received_data(chan, NULL);
->> +			spin_unlock_irqrestore(&chan->lock, flags);
->> +		}
->> +	}
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static irqreturn_t qcom_cpucp_v2_mbox_irq_fn(int irq, void *data)
->> +{
->> +	struct qcom_cpucp_mbox *cpucp = data;
->> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
->>   	u64 status;
->>   	int i;
->>
->> -	status = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_STAT);
->> +	status = readq(cpucp->rx_base + desc->status_reg);
->>
->> -	for_each_set_bit(i, (unsigned long *)&status, APSS_CPUCP_IPC_CHAN_SUPPORTED) {
->> -		u32 val = readl(cpucp->rx_base + APSS_CPUCP_RX_MBOX_CMD(i) + APSS_CPUCP_MBOX_CMD_OFF);
->> +	for_each_set_bit(i, (unsigned long *)&status, desc->num_chans) {
->> +		u32 val = readl(cpucp->rx_base + desc->rx_reg + (i * desc->chan_stride));
->>   		struct mbox_chan *chan = &cpucp->chans[i];
->>   		unsigned long flags;
->>
->> @@ -62,7 +96,7 @@ static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
->>   		spin_lock_irqsave(&chan->lock, flags);
->>   		if (chan->cl)
->>   			mbox_chan_received_data(chan, &val);
->> -		writeq(BIT(i), cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
->> +		writeq(BIT(i), cpucp->rx_base + desc->clear_reg);
->>   		spin_unlock_irqrestore(&chan->lock, flags);
->>   	}
->>
->> @@ -72,12 +106,15 @@ static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
->>   static int qcom_cpucp_mbox_startup(struct mbox_chan *chan)
->>   {
->>   	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
->> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
->>   	unsigned long chan_id = channel_number(chan);
->>   	u64 val;
->>
->> -	val = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
->> -	val |= BIT(chan_id);
->> -	writeq(val, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
->> +	if (desc->v2_mbox) {
->> +		val = readq(cpucp->rx_base + desc->enable_reg);
->> +		val |= BIT(chan_id);
->> +		writeq(val, cpucp->rx_base + desc->enable_reg);
->> +	}
-> 
-> No equivalent in "legacy"?
-
-Yes, right
-
->>
->>   	return 0;
->>   }
->> @@ -85,22 +122,26 @@ static int qcom_cpucp_mbox_startup(struct mbox_chan *chan)
->>   static void qcom_cpucp_mbox_shutdown(struct mbox_chan *chan)
->>   {
->>   	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
->> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
->>   	unsigned long chan_id = channel_number(chan);
->>   	u64 val;
->>
->> -	val = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
->> -	val &= ~BIT(chan_id);
->> -	writeq(val, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
->> +	if (desc->v2_mbox) {
->> +		val = readq(cpucp->rx_base + desc->enable_reg);
->> +		val &= ~BIT(chan_id);
->> +		writeq(val, cpucp->rx_base + desc->enable_reg);
->> +	}
-> 
-> Ditto
-> 
-
-We do not have equivalent in "legacy".
-
->>   }
->>
->>   static int qcom_cpucp_mbox_send_data(struct mbox_chan *chan, void *data)
->>   {
->>   	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
->> +	const struct qcom_cpucp_mbox_desc *desc = cpucp->desc;
->> +	u32 val = desc->v2_mbox ? *(u32 *)data : APSS_CPUCP_V1_SEND_IRQ_VAL;
-> 
-> Please rewrite this without ternary operators.
-> 
-
-ACK
-
->>   	unsigned long chan_id = channel_number(chan);
->> -	u32 *val = data;
->> -
->> -	writel(*val, cpucp->tx_base + APSS_CPUCP_TX_MBOX_CMD(chan_id) + APSS_CPUCP_MBOX_CMD_OFF);
->> +	u32 offset = desc->v2_mbox ? (chan_id * desc->chan_stride) : 0;
->>
->> +	writel(val, cpucp->tx_base + desc->tx_reg + offset);
->>   	return 0;
->>   }
->>
->> @@ -112,41 +153,66 @@ static const struct mbox_chan_ops qcom_cpucp_mbox_chan_ops = {
->>
->>   static int qcom_cpucp_mbox_probe(struct platform_device *pdev)
->>   {
->> +	const struct qcom_cpucp_mbox_desc *desc;
->>   	struct device *dev = &pdev->dev;
->>   	struct qcom_cpucp_mbox *cpucp;
->>   	struct mbox_controller *mbox;
->> +	struct resource *res;
->>   	int irq, ret;
->>
->> +	desc = device_get_match_data(&pdev->dev);
->> +	if (!desc)
->> +		return -EINVAL;
->> +
->>   	cpucp = devm_kzalloc(dev, sizeof(*cpucp), GFP_KERNEL);
->>   	if (!cpucp)
->>   		return -ENOMEM;
->>
->> -	cpucp->rx_base = devm_of_iomap(dev, dev->of_node, 0, NULL);
->> -	if (IS_ERR(cpucp->rx_base))
->> -		return PTR_ERR(cpucp->rx_base);
->> +	cpucp->desc = desc;
->> +
->> +	if (desc->v2_mbox) {
->> +		cpucp->rx_base = devm_of_iomap(dev, dev->of_node, 0, NULL);
->> +		if (IS_ERR(cpucp->rx_base))
->> +			return PTR_ERR(cpucp->rx_base);
->> +	/* Legacy mailbox quirks due to shared region with EPSS register space */
-> 
-> Why can't we have the same code in both cases?
-> 
-
-
-RX address space share region with EPSS. Due to which devm_of_iomap 
-returns -EBUSY.
-
->> +	} else {
->> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +		if (!res) {
->> +			dev_err(&pdev->dev, "Failed to get the device base address\n");
-> 
-> It's not only base address.
-> 
-
-Will add appropriate print statement.
-
->> +			return -ENODEV;
->> +		}
->> +		cpucp->rx_base = devm_ioremap(dev, res->start, resource_size(res));
->> +		if (!cpucp->rx_base) {
->> +			dev_err(dev, "Failed to ioremap the cpucp rx irq addr\n");
->> +			return -ENOMEM;
->> +		}
->> +	}
->>
->>   	cpucp->tx_base = devm_of_iomap(dev, dev->of_node, 1, NULL);
->>   	if (IS_ERR(cpucp->tx_base))
->>   		return PTR_ERR(cpucp->tx_base);
->>
->> -	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
->> -	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
->> -	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_MAP);
->> +	if (desc->v2_mbox) {
->> +		writeq(0, cpucp->rx_base + desc->enable_reg);
->> +		writeq(0, cpucp->rx_base + desc->clear_reg);
->> +		writeq(0, cpucp->rx_base + desc->map_reg);
-> 
-> 
-> Is there a reason why the legacy system does not need or want to clear
-> these?
-> 
-
-Legacy system does not have equivalent registers.
-
->> +	}
->>
->>   	irq = platform_get_irq(pdev, 0);
->>   	if (irq < 0)
->>   		return irq;
->>
->> -	ret = devm_request_irq(dev, irq, qcom_cpucp_mbox_irq_fn,
->> -			       IRQF_TRIGGER_HIGH, "apss_cpucp_mbox", cpucp);
->> +	ret = devm_request_irq(dev, irq, desc->v2_mbox ? qcom_cpucp_v2_mbox_irq_fn :
->> +		qcom_cpucp_mbox_irq_fn, IRQF_TRIGGER_HIGH, "apss_cpucp_mbox", cpucp);
-> 
-> The use of a ternary operator, in combination with odd line wrapping
-> makes this completely unreadable. Please fix.
-> 
-
-ACK
-
->>   	if (ret < 0)
->>   		return dev_err_probe(dev, ret, "Failed to register irq: %d\n", irq);
->>
->> -	writeq(APSS_CPUCP_RX_MBOX_CMD_MASK, cpucp->rx_base + APSS_CPUCP_RX_MBOX_MAP);
->> +	if (desc->v2_mbox)
->> +		writeq(APSS_CPUCP_V2_RX_MBOX_CMD_MASK, cpucp->rx_base + desc->map_reg);
->>
->>   	mbox = &cpucp->mbox;
->>   	mbox->dev = dev;
->> -	mbox->num_chans = APSS_CPUCP_IPC_CHAN_SUPPORTED;
->> +	mbox->num_chans = desc->num_chans;
->>   	mbox->chans = cpucp->chans;
->>   	mbox->ops = &qcom_cpucp_mbox_chan_ops;
->>
->> @@ -157,8 +223,30 @@ static int qcom_cpucp_mbox_probe(struct platform_device *pdev)
->>   	return 0;
->>   }
->>
->> +static const struct qcom_cpucp_mbox_desc sc7280_cpucp_mbox = {
->> +	.tx_reg = 0xC,
->> +	.chan_stride = 0x1000,
->> +	.status_reg = 0x30C,
-> 
-> Lowercase hex digits please (although the question above whether these
-> needs to be defined remains).
-
-ACK
-
-> 
->> +	.clear_reg = 0x308,
->> +	.v2_mbox = false,
->> +	.num_chans = 2,
->> +};
->> +
->> +static const struct qcom_cpucp_mbox_desc x1e80100_cpucp_mbox = {
->> +	.rx_reg = 0x104,
->> +	.tx_reg = 0x104,
->> +	.chan_stride = 0x8,
->> +	.map_reg = 0x4000,
->> +	.status_reg = 0x4400,
->> +	.clear_reg = 0x4800,
->> +	.enable_reg = 0x4C00,
->> +	.v2_mbox = true,
->> +	.num_chans = 3,
->> +};
->> +
->>   static const struct of_device_id qcom_cpucp_mbox_of_match[] = {
->> -	{ .compatible = "qcom,x1e80100-cpucp-mbox" },
->> +	{ .compatible = "qcom,x1e80100-cpucp-mbox", .data = &x1e80100_cpucp_mbox},
->> +	{ .compatible = "qcom,sc7280-cpucp-mbox", .data = &sc7280_cpucp_mbox},
-> 
-> Perhaps I'm missing something, but seems like the only information you
-> actually need to pass here is 1 or 2, to denote which version/code paths
-> you should take through the driver.
-> 
-
-okay, I will rename sc7280_cpucp_mbox and x1e80100_cpucp_mbox structures 
-as v1 and v2 respectively.
-
-> Regards,
-> Bjorn
-> 
->>   	{}
->>   };
->>   MODULE_DEVICE_TABLE(of, qcom_cpucp_mbox_of_match);
->> --
->> 2.25.1
->>
+Jason
 
