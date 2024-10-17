@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-370659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2289A3043
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:00:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22E19A3052
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0838B1F23652
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:00:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433F8282724
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F781D6DD4;
-	Thu, 17 Oct 2024 22:00:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA631D54E9;
-	Thu, 17 Oct 2024 22:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D975A1D5CD4;
+	Thu, 17 Oct 2024 22:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WxLjW9hC"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BBE190055
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 22:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729202443; cv=none; b=CRkeVelkdHUaxFyiIMRxrf7zMSUQS9A5hoM4Vm3gY2SXFfGe41w5HFErVF3du/2BonCsQa64XyYjD5nhov9J08yURL1zOmnKJKpxDPP3hAd4Peimao6jLE7nnLO3aFTDGKQSW/2MpKqWP79EoYxYv1L8jXNppx49a0GTwxlQGjc=
+	t=1729202562; cv=none; b=owaP4BDYO3bbryHZmt6C5yZOjXv0Q8eUtzax1B+S5x7dmAMGCKs7VCKHZV0b+8bPQM/9YVAydMQWzvqQRCGnDv8hF3Y9QbybYfKKfiNEEw3wE5nzyKW86O92l7q7j99YZyUU3HQdGMcnjAVSb6UBpYMy30Vbw42CeFblz0vKj84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729202443; c=relaxed/simple;
-	bh=/D3cAtxwwBDlyTGCeFoGVi0eLVxzYY9k+S5c5thfVs8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=iOWntM2F9pcFURarJvI5jyz/6hiWWCtMdZUxZQpUQ709AWPhNaF6OaTd+6alqHcg520bfFjSMTe7X3TgOGQqg1W5FvoEPOmLYeT+dyxoXppC1meLDJI2flhiweFafkiNDXR2S0EqXg2efue5bUTdG5Dm6neJhpfTx7VCU5tD+IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BD1FFEC;
-	Thu, 17 Oct 2024 15:01:06 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 728083F58B;
-	Thu, 17 Oct 2024 15:00:35 -0700 (PDT)
-Message-ID: <46853b6e-bad5-4ace-9b23-ff157f234ae3@arm.com>
-Date: Thu, 17 Oct 2024 23:00:33 +0100
+	s=arc-20240116; t=1729202562; c=relaxed/simple;
+	bh=yIanPkyAOg1wef17QNX+j0jpVkr0caNdGTp2+f7dlNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ec215dfozQi2HhFR1zCpmnIJVT62IfPP2i5XzdO6EIXFKuzAd/6gqapYR9PsCDALmbOWChA+BeCxedyimuBf5x+J9bhZNX+t0hqb5U69PQrYR2QHJgWQP+tlwv5u4LnwWt9JDLJwk72dKxW6i41fL4wf7j0LTkQ//GU/a18amrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WxLjW9hC; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729202554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OD/68NBfbbONt3YfZ0HJOsx4tpq5vhse8++D0yg8nXs=;
+	b=WxLjW9hCOLv83msXdtKv8MPvMr98meeVcCS57gkV8efVCAQlszg+KrIojF1e0M3+96SHQO
+	qmRNAWrrQi5GDymjgkcQswLQvMMnc/kP007dFMKJyEhj9GdgrgNZoKhvqBXdSdayap1hf/
+	YcKEGbPLqFmHkSIKi5msUuRVmepsCNc=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v3] scsi: fnic: Use vcalloc() instead of vmalloc() and memset(0)
+Date: Fri, 18 Oct 2024 00:01:52 +0200
+Message-ID: <20241017220152.1342-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Qais Yousef <qyousef@layalina.io>, Viresh Kumar
- <viresh.kumar@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-pm <linux-pm@vger.kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] cpufreq: docs: Reflect latency changes in docs
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-There were two changes related to transition latency recently.
-Namely commit e13aa799c2a6 ("cpufreq: Change default transition delay
-to 2ms") and
-commit 37c6dccd6837 ("cpufreq: Remove LATENCY_MULTIPLIER").
+Use vcalloc() instead of vmalloc() followed by memset(0) to simplify the
+functions fnic_trace_buf_init() and fnic_fc_trace_init().
 
-Both changed the defaults / maximums so let the documentation
-reflect that.
+Compile-tested only.
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- Documentation/admin-guide/pm/cpufreq.rst | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/scsi/fnic/fnic_trace.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
-index fe1be4ad88cb..a21369eba034 100644
---- a/Documentation/admin-guide/pm/cpufreq.rst
-+++ b/Documentation/admin-guide/pm/cpufreq.rst
-@@ -425,8 +425,8 @@ This governor exposes only one tunable:
+diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+index aaa4ea02fb7c..e5e0c0492f23 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -485,8 +485,7 @@ int fnic_trace_buf_init(void)
+ 	}
  
- ``rate_limit_us``
- 	Minimum time (in microseconds) that has to pass between two consecutive
--	runs of governor computations (default: 1000 times the scaling driver's
--	transition latency).
-+	runs of governor computations (default: 1.5 times the scaling driver's
-+	transition latency or the maximum 2ms).
+ 	fnic_trace_entries.page_offset =
+-		vmalloc(array_size(fnic_max_trace_entries,
+-				   sizeof(unsigned long)));
++		vcalloc(fnic_max_trace_entries, sizeof(unsigned long));
+ 	if (!fnic_trace_entries.page_offset) {
+ 		printk(KERN_ERR PFX "Failed to allocate memory for"
+ 				  " page_offset\n");
+@@ -497,8 +496,6 @@ int fnic_trace_buf_init(void)
+ 		err = -ENOMEM;
+ 		goto err_fnic_trace_buf_init;
+ 	}
+-	memset((void *)fnic_trace_entries.page_offset, 0,
+-		  (fnic_max_trace_entries * sizeof(unsigned long)));
+ 	fnic_trace_entries.wr_idx = fnic_trace_entries.rd_idx = 0;
+ 	fnic_buf_head = fnic_trace_buf_p;
  
- 	The purpose of this tunable is to reduce the scheduler context overhead
- 	of the governor which might be excessive without it.
-@@ -474,17 +474,17 @@ This governor exposes the following tunables:
- 	This is how often the governor's worker routine should run, in
- 	microseconds.
+@@ -559,8 +556,7 @@ int fnic_fc_trace_init(void)
+ 	fc_trace_max_entries = (fnic_fc_trace_max_pages * PAGE_SIZE)/
+ 				FC_TRC_SIZE_BYTES;
+ 	fnic_fc_ctlr_trace_buf_p =
+-		(unsigned long)vmalloc(array_size(PAGE_SIZE,
+-						  fnic_fc_trace_max_pages));
++		(unsigned long)vcalloc(fnic_fc_trace_max_pages, PAGE_SIZE);
+ 	if (!fnic_fc_ctlr_trace_buf_p) {
+ 		pr_err("fnic: Failed to allocate memory for "
+ 		       "FC Control Trace Buf\n");
+@@ -568,13 +564,9 @@ int fnic_fc_trace_init(void)
+ 		goto err_fnic_fc_ctlr_trace_buf_init;
+ 	}
  
--	Typically, it is set to values of the order of 10000 (10 ms).  Its
--	default value is equal to the value of ``cpuinfo_transition_latency``
--	for each policy this governor is attached to (but since the unit here
--	is greater by 1000, this means that the time represented by
--	``sampling_rate`` is 1000 times greater than the transition latency by
--	default).
-+	Typically, it is set to values of the order of 2000 (2 ms).  Its
-+	default value is to add a 50% breathing room
-+	to ``cpuinfo_transition_latency`` on each policy this governor is
-+	attached to. The minimum is typically the length of two scheduler
-+	ticks.
+-	memset((void *)fnic_fc_ctlr_trace_buf_p, 0,
+-			fnic_fc_trace_max_pages * PAGE_SIZE);
+-
+ 	/* Allocate memory for page offset */
+ 	fc_trace_entries.page_offset =
+-		vmalloc(array_size(fc_trace_max_entries,
+-				   sizeof(unsigned long)));
++		vcalloc(fc_trace_max_entries, sizeof(unsigned long));
+ 	if (!fc_trace_entries.page_offset) {
+ 		pr_err("fnic:Failed to allocate memory for page_offset\n");
+ 		if (fnic_fc_ctlr_trace_buf_p) {
+@@ -585,8 +577,6 @@ int fnic_fc_trace_init(void)
+ 		err = -ENOMEM;
+ 		goto err_fnic_fc_ctlr_trace_buf_init;
+ 	}
+-	memset((void *)fc_trace_entries.page_offset, 0,
+-	       (fc_trace_max_entries * sizeof(unsigned long)));
  
- 	If this tunable is per-policy, the following shell command sets the time
--	represented by it to be 750 times as high as the transition latency::
-+	represented by it to be 1.5 times as high as the transition latency
-+	(the default)::
- 
--	# echo `$(($(cat cpuinfo_transition_latency) * 750 / 1000)) > ondemand/sampling_rate
-+	# echo `$(($(cat cpuinfo_transition_latency) * 3 / 2)) > ondemand/sampling_rate
- 
- ``up_threshold``
- 	If the estimated CPU load is above this value (in percent), the governor
+ 	fc_trace_entries.rd_idx = fc_trace_entries.wr_idx = 0;
+ 	fc_trace_buf_head = fnic_fc_ctlr_trace_buf_p;
 -- 
-2.34.1
+2.47.0
+
 
