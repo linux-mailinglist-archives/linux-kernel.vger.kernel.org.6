@@ -1,212 +1,158 @@
-Return-Path: <linux-kernel+bounces-369006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBB09A17CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:23:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA829A17E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213461F268EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:23:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBF1CB2505F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EB115EFA1;
-	Thu, 17 Oct 2024 01:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D611225A8;
+	Thu, 17 Oct 2024 01:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JdUf33sN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="F3CutST/"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEE41CD1F;
-	Thu, 17 Oct 2024 01:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15271BF37;
+	Thu, 17 Oct 2024 01:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729128099; cv=none; b=Tbrwa/9a8Mtm2Yr1aSvswpq4r3JNkhI6lAFwYPr7YEmCoLqbyRIJ6fEBlqvPRqCxTlbk54z+x3ryL08phVXR2PPYTx5ZsIBVYtEAGoJxZLv/Ho4Q2aD7/KXSI4nIjJqYQwTQMquuNarBz1fkTniK1uVtI7nj++SGptfxAXhYgBQ=
+	t=1729128126; cv=none; b=d1C/MaHDYNWBSalQV+4LUZn1rf5S7BScpZazdAaOsR3UdrDMHeO2reqOgZbLfSbWVIFe2ReRmNVqzprxZKQvgKTRS5lPAouWK7paZE9Xyo+7pbVpX4Lc1QsXy2BdfU/ZksSMbz8Lwd0aNEQob6Ye3xIOgsOPTJR3UwsbKlLFVow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729128099; c=relaxed/simple;
-	bh=3xCis0LeZTVLzy2+rHx0s2TGJubZ9EAyvJkwx/q1ISo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=eoCdh4+gKh1lSE55SfHEJ+SE7estMO8eMuvjz5p9OedtzghVJI8bULVe+lk+eWQ4AAv4qb7M46/DNQGosSNSVbnoQ3BU0oqHVqip9tV/tBRZ5XPNogSJE0e1gpQoml0vE82kid2EUFDte6+ybsq69O/Kbrr8ZJgdJoCJps2ciG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JdUf33sN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GIoW3p011837;
-	Thu, 17 Oct 2024 01:21:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/XcRoZho/XbalM5+jE/UQCvCaPdIiwjsVlckhm3ziA8=; b=JdUf33sNC1u1pDHH
-	q2YaDuoSugsGEQ+jD12Lhs7u+fwpKsfbHsWoFRZ0XazWmrq/xzEQQjuvMJH5fkzv
-	dLAIxXdm8W99gI3NEFQ7Q8ReDeXa0MeVQhWeOlhLmRbsQGApG/hjxpY2gR+gJCv4
-	wwHIwB7pXckEkKaL3ZePELVApbuC/80Aat5tgzruAUpqs6L4zuM6y4PCHaXXROVS
-	a28TTt/a4X/euv069pm8OOwgcpPvfOIlrxuss+GitBwJXbJeOQ8YjBek+nB2MeDa
-	Y9/hkL7Dujpl/pU97gdExPxjobo3W+L/VK3/Z6vAimFh07WFM30ZIBTUQQGtVdll
-	hepDMA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42abm5jaee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 01:21:23 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49H1LM3G006495
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 01:21:22 GMT
-Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+	s=arc-20240116; t=1729128126; c=relaxed/simple;
+	bh=I1NKDZJkPOOTvvqsSWxUshi93ZcySyT610+Knx4s2jc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WC8B3FbLJ/xepHnTkbmvSAz6cAyV9lQAEq3vgsf4sYk6SmUE/T8MkPBg877wUrCIP+9ZVVuGUbm7E2YSNRV4PqG4jGn0ARRBLXiAL2liNB1NH3uoGMevehPquuni0CKQaDdAu/fhBrPSfMqeyB0ywJ06gfRlpwmASnwmk9kGEwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=F3CutST/; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49H1LtI423838934, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1729128115; bh=I1NKDZJkPOOTvvqsSWxUshi93ZcySyT610+Knx4s2jc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=F3CutST/SLvaPV5es11bRUtGhdVJl8YIAi4k18T1/H85naLGT/LPPUfHXWa019l7B
+	 RkgE9SrIjBz3l4unElvX4DdL7ulJGM0Gvc+kdPxyO1EAffJRDAMYZyP1ks00nwUkJp
+	 BsLofuADn94IQm9hFGBl4+2kCplx9B96RHNmfwhYPPTqskU5++Yb22OAQLHul7LrQS
+	 05M5WRG5wMo6qiOWwiOkIsbRxwCh+8OB5e+ZfuADbC/ixZqADJxqMP7P0q+VOKw6VJ
+	 5ZcZ7ykEYKfENdxo7Vaqxd2xqxcWt8bgQqX1hi0kOkbFMcV5Ek65sBtrE+4fdtDItI
+	 iW77VZ7SVJYtw==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49H1LtI423838934
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 09:21:55 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 16 Oct 2024 18:21:21 -0700
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-Date: Wed, 16 Oct 2024 18:21:29 -0700
-Subject: [PATCH v3 23/23] drm/msm/dpu: Set possible clones for all encoders
+ 15.1.2507.39; Thu, 17 Oct 2024 09:21:55 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 17 Oct 2024 09:21:54 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Thu, 17 Oct 2024 09:21:54 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Kalle Valo <kvalo@kernel.org>
+Subject: RE: [PATCH] wifi: rtw88: Refactor looping in rtw_phy_store_tx_power_by_rate
+Thread-Topic: [PATCH] wifi: rtw88: Refactor looping in
+ rtw_phy_store_tx_power_by_rate
+Thread-Index: AQHbH5G7zMXB5WLj7UST4uYO5eihKrKKJAjA
+Date: Thu, 17 Oct 2024 01:21:54 +0000
+Message-ID: <c0f6c6c3b87c4d048ad9f42dc1dfaed9@realtek.com>
+References: <20241016060605.11359-1-pvmohammedanees2003@gmail.com>
+In-Reply-To: <20241016060605.11359-1-pvmohammedanees2003@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241016-concurrent-wb-v3-23-a33cf9b93835@quicinc.com>
-References: <20241016-concurrent-wb-v3-0-a33cf9b93835@quicinc.com>
-In-Reply-To: <20241016-concurrent-wb-v3-0-a33cf9b93835@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <quic_abhinavk@quicinc.com>, Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Simona Vetter <simona@ffwll.ch>,
-        Simona Vetter <simona.vetter@ffwll.ch>
-CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
-        =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-        "Jessica
- Zhang" <quic_jesszhan@quicinc.com>
-X-Mailer: b4 0.15-dev-2a633
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729128076; l=3734;
- i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
- bh=3xCis0LeZTVLzy2+rHx0s2TGJubZ9EAyvJkwx/q1ISo=;
- b=vQ6Ckh+bUBGDY/V7i6yVNb9VT2PMK92sRoZwiUDAfjq8+ey0ZIXaV46YaLRzwkiau22QNJZxF
- Eb+PFBmCFjXB/OsmB6XQf5ZshjDfDZ2TfZ1+eBLovD2aqyvv94HKy/f
-X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
- pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Eqj8-roXynbsvF89OTZKEifcLWNs86lZ
-X-Proofpoint-GUID: Eqj8-roXynbsvF89OTZKEifcLWNs86lZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1015 impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170008
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-Set writeback encoders as possible clones for DSI encoders and vice
-versa.
+Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
+>=20
+> The previous implementation performs check for the band
+> in each iteration, which is unnecessary and further more
+> there is a else condition which will never get triggered,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 32 +++++++++++++++++++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  2 ++
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     |  7 +++++--
- 3 files changed, 39 insertions(+), 2 deletions(-)
+I feel compilers can optimize the check for the band, and we can just remov=
+e
+the else condition. Or=20
+   if (2ghz)
+      foo_2g();
+   else
+      foo_5g();
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 2084f54e4a6235cc65dedcb0003f83d75dd51ec1..7b8fd1041acaea297ead2a4e0b33b43336ce1a1c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -2397,6 +2397,38 @@ static int dpu_encoder_virt_add_phys_encs(
- 	return 0;
- }
- 
-+/**
-+ * dpu_encoder_get_clones - Calculate the possible_clones for DPU encoder
-+ * @drm_enc:        DRM encoder pointer
-+ * Returns:         possible_clones mask
-+ */
-+uint32_t dpu_encoder_get_clones(struct drm_encoder *drm_enc)
-+{
-+	struct drm_encoder *curr;
-+	int type = drm_enc->encoder_type;
-+	uint32_t clone_mask = drm_encoder_mask(drm_enc);
-+
-+	/*
-+	 * Set writeback as possible clones of real-time DSI encoders and vice
-+	 * versa
-+	 *
-+	 * Writeback encoders can't be clones of each other and DSI
-+	 * encoders can't be clones of each other.
-+	 *
-+	 * TODO: Add DP encoders as valid possible clones for writeback encoders
-+	 * (and vice versa) once concurrent writeback has been validated for DP
-+	 */
-+	drm_for_each_encoder(curr, drm_enc->dev) {
-+		if ((type == DRM_MODE_ENCODER_VIRTUAL &&
-+		    curr->encoder_type == DRM_MODE_ENCODER_DSI) ||
-+		    (type == DRM_MODE_ENCODER_DSI &&
-+		    curr->encoder_type == DRM_MODE_ENCODER_VIRTUAL))
-+			clone_mask |= drm_encoder_mask(curr);
-+	}
-+
-+	return clone_mask;
-+}
-+
- static int dpu_encoder_setup_display(struct dpu_encoder_virt *dpu_enc,
- 				 struct dpu_kms *dpu_kms,
- 				 struct msm_display_info *disp_info)
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-index deaa0463b289fd12eaa0bb4179c58d04425007a6..1692e7de079d6e2e3d7ae20cece30b5b297a7763 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-@@ -98,6 +98,8 @@ enum dpu_intf_mode dpu_encoder_get_intf_mode(struct drm_encoder *encoder);
-  */
- void dpu_encoder_virt_runtime_resume(struct drm_encoder *encoder);
- 
-+uint32_t dpu_encoder_get_clones(struct drm_encoder *drm_enc);
-+
- /**
-  * dpu_encoder_init - initialize virtual encoder object
-  * @dev:        Pointer to drm device structure
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 47e304b357e89b8b3683c37b2abb447411e1e455..5effa108f3282cc52e6a15d71689e9def1205ebc 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -2,7 +2,7 @@
- /*
-  * Copyright (C) 2013 Red Hat
-  * Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
-- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  *
-  * Author: Rob Clark <robdclark@gmail.com>
-  */
-@@ -793,8 +793,11 @@ static int _dpu_kms_drm_obj_init(struct dpu_kms *dpu_kms)
- 		return ret;
- 
- 	num_encoders = 0;
--	drm_for_each_encoder(encoder, dev)
-+	drm_for_each_encoder(encoder, dev) {
- 		num_encoders++;
-+		if (catalog->cwb_count > 0)
-+			encoder->possible_clones = dpu_encoder_get_clones(encoder);
-+	}
- 
- 	max_crtc_count = min(catalog->mixer_count, num_encoders);
- 
 
--- 
-2.34.1
+> since a check is done to see if the band is either 2G or
+> 5G earlier and the band either be any of those 2. We can
+> refactor this by assigning a pointer to the appropriate
+> power offset array based on the band before the loop and
+> updating this.
+>=20
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+> ---
+>  drivers/net/wireless/realtek/rtw88/phy.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw88/phy.c b/drivers/net/wirel=
+ess/realtek/rtw88/phy.c
+> index 37ef80c9091d..17d61f1d9257 100644
+> --- a/drivers/net/wireless/realtek/rtw88/phy.c
+> +++ b/drivers/net/wireless/realtek/rtw88/phy.c
+> @@ -1465,15 +1465,14 @@ static void rtw_phy_store_tx_power_by_rate(struct=
+ rtw_dev *rtwdev,
+>                     rate_num > RTW_RF_PATH_MAX))
+>                 return;
+>=20
+> +       s8 (*tx_pwr_by_rate_offset) =3D (band =3D=3D PHY_BANK_2G)
+> +                                               ? hal->tx_pwr_by_rate_off=
+set_2g[rfpath]
+> +                                               : hal->tx_pwr_by_rate_off=
+set_5g[rfpath];
+> +
+
+Though -Wdeclaration-after-statement was dropped, still recommend to place
+declarations at the beginning of function.
+
+The operands ? and : should place at the end of statement.=20
+
+x =3D y ?
+    z0 :
+    z1;
+
+
+>         for (i =3D 0; i < rate_num; i++) {
+>                 offset =3D pwr_by_rate[i];
+>                 rate =3D rates[i];
+> -               if (band =3D=3D PHY_BAND_2G)
+> -                       hal->tx_pwr_by_rate_offset_2g[rfpath][rate] =3D o=
+ffset;
+> -               else if (band =3D=3D PHY_BAND_5G)
+> -                       hal->tx_pwr_by_rate_offset_5g[rfpath][rate] =3D o=
+ffset;
+> -               else
+> -                       continue;
+> +               tx_pwr_by_rate_offset[rate] =3D offset;
+>         }
+>  }
+>=20
+> --
+> 2.47.0
 
 
