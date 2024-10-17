@@ -1,158 +1,96 @@
-Return-Path: <linux-kernel+bounces-369788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76739A22AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:45:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EB89A22A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C0481F21452
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:45:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9B31C210F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEED1DD894;
-	Thu, 17 Oct 2024 12:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1107C1DD87D;
+	Thu, 17 Oct 2024 12:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Et9Batdd"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MT38eNw/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFEA1D8E01;
-	Thu, 17 Oct 2024 12:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3D71DA61E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729169131; cv=none; b=STBiSj6lblmzRinXSF+qg4W7jZV9E2j7uhLbEXEeqHutwIC9FY7BjzQOYKsL8Xv0qrxmWDD3kcGsKPdA4QyKtnekhHHaGaCItKfCD9Kogbi70H3JTcZ8xw1W+WS+2NbPibEXUXJZ79JoIvkYeTU329pwdMc5Bg73Bb30W9S0HYU=
+	t=1729169086; cv=none; b=KaI3ZQPUpNgkxi04yHgEp4FWw+aCmTaKkF1ntTmbe84jDA2+KhV5Fatt4oI0rxCX0TFIs+J0DpRQqUm5I+RWE82+xfnneYyMx7uiDo9lAE8OwHDAaATqLK/VpUxKFF598KWvOkRBvKTg54+avL9feppv5kulUuUD0/ueWhJPOSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729169131; c=relaxed/simple;
-	bh=deE5KMTn4KaOTECboAmoIAG9aFGuieYcidqotDmDEx4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Dwg5Wgnx5BYhom253Qu6O4Bz1iEo8IHOOAUeeotk+Xlxjv5WwV7iMdboZ17f4p2UI+n391cw4n74kW6vPOmjfvxz6n2WJcIDp/DbQLcoFSQZ7jMHWAfn7MyE2jGD58Be8ws77BuCWsQf/mo1xn337O3zFJsjY5KabiAXR9+ePGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Et9Batdd; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43115887867so6427115e9.0;
-        Thu, 17 Oct 2024 05:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729169126; x=1729773926; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/+innDKOF43hyWEtHatUGWD9jwLhMbIAvPNTvaYpoo=;
-        b=Et9BatddkRYKW2qTuN5bzVcYgoATkhSNYLCqnvlnsHvXfAZNc7UF5tSl3FBgyMD06D
-         IeCliyduGGc3LRRywjNNyUsKVmE6JUdpsVRi7gxkO8btHmB0nBn12gPlqDOyPW7aHnlc
-         YzD0/1E1qzhGbY1G1JNJUHresm0/TXmP3rTIfZmKuP8ikk6iZNAA6qmmrAR9GAxxuqwO
-         9Jw8NgSyH6RoxdIR31T7cbd6n9u+9O755LBa8qe7KiJVc4l50Np3yko8RRUrKaKiO7Ru
-         WrGd61RlB++2PmRmKoL/0aXyLD8XfbIPRLgiG+eHIReji4vVcb/xM/n8OMJBVrOT+sb8
-         +jtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729169126; x=1729773926;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/+innDKOF43hyWEtHatUGWD9jwLhMbIAvPNTvaYpoo=;
-        b=wwm1zjQ51L6lrCogQx0RHLUPIcxrrU3YJafadPokF28niAWiWxOjZVmTIf6D3gxfc1
-         2cOMGxeONZqZwVs0a80WsDbYMPUSdZSWC8CX6HO1ce3vfWLmcJD4U0Aj+BzSGxXgPJcA
-         0hWyQ6ZbHm1151Jq6cNedtT0g9xxaiLkHM7OjI8wl6kXQCdEEQkQsFZHWcyG0ayx/6tz
-         U1sVHzcd7QI54EJjMxr/HFZUS6/h++TFKIZQn8t7mgBunWxJVm0aKNDwejZRCUEE93b/
-         QdvBHVQbR31o0aP0YLvpI6b5BcnPWCiFcSEVx5E5S9YJT4DQ8zUaOXGeN0P/B/ubnR6Z
-         P60w==
-X-Forwarded-Encrypted: i=1; AJvYcCUDFP6d9WRjwUj/AgjVPXDTuUMQTF8QjLJ93ESjhBNs/4mx9tjjf7HxuAtDDHeSQNoJtwe7cNUtyCzT@vger.kernel.org, AJvYcCV22fTSdtWhatTRPhZnjZD+0Nz9rnZHfzX56W82PWgPHUcJCbV6sAEeyBN0b+TCsc+7gpKWDB7LKTEsODT6@vger.kernel.org, AJvYcCVqeSIE9/0onVCwWUN3oH9e/y/Iwf98m6Wahqvjk+IA15nd6wmjnyzhN7YzzVF8agKHPc2Ri+lcmrEJDvJp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwN3jIgYAfH34QGw9H8enUXrPq0UYreQOxU/AUzpxt/0BHRtna
-	n48k6diqOn1d6DyhxqWFhF/j8HI7CvL8WjQGeIyfFW0aIoJtd3JzCKxXnw==
-X-Google-Smtp-Source: AGHT+IGZ8dknLqmk2GIy76wfXtTPGGUCSieGuvFLj4VG2MBO+7hsC4vxw8BnP7Gb9PXqB8CVMYVTGQ==
-X-Received: by 2002:a05:600c:3109:b0:431:3b80:6ca7 with SMTP id 5b1f17b1804b1-43158756ee3mr20576845e9.13.1729169126055;
-        Thu, 17 Oct 2024 05:45:26 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43158c4d9desm24972935e9.35.2024.10.17.05.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 05:45:24 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	upstream@airoha.com
-Subject: [PATCH v2 1/2] dt-bindings: rng: add support for Airoha EN7581 TRNG
-Date: Thu, 17 Oct 2024 14:44:37 +0200
-Message-ID: <20241017124456.32584-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729169086; c=relaxed/simple;
+	bh=xod92abkKPjsuq2xCVMjFOc7B3vn3PWges1C+7+ZYEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kBrjcwtatVzMq3vO+trawarVi6L6JBJT0Rlur8RCpzja/dgs+Mpa6B0HwIfDPkWRkj8E7w1De6A3JbIfW58wkTEVeJyYqcEwy+kcvNVZKaCvQUwcDyWul0sRwzfCprIassX4eyMtUzJeR11v3wLuhCfK4ZhhZOr7NLKr4gmCsc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MT38eNw/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729169081;
+	bh=xod92abkKPjsuq2xCVMjFOc7B3vn3PWges1C+7+ZYEg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MT38eNw/HsuRcTAnrwWxXJImzpQGmpdUEiSzcjpgCgWjrps5+rzZ3zSSr3oXSZfSo
+	 tOpk6sf3U+6/G3qv81iw5lwcxULnV+1a4oi9kluJJCE1Ocbk9oV3gMfEYMqD+OeSNi
+	 SJWTg4sizGCCSuaKzLk7LpTy9qd+oAyxMGro/QOmWVgVbcMofRkmC4RVbVVejkG/a8
+	 UBErYLUSP2aAP/3nbv9uRMZzaR9J/wCVysjF7A1VLAToOONyXVPHgKGbt21ej2I5Vm
+	 3j0gcYAVsErfcJmJ3pzCgXNwyUIoQBokyuT4PbFKOmj6WeIVv4c7PIe1Dr4C8hwNBX
+	 Y1IkjPBOslVuw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 01C6F17E35F5;
+	Thu, 17 Oct 2024 14:44:40 +0200 (CEST)
+Date: Thu, 17 Oct 2024 14:44:38 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Philipp Zabel
+ <p.zabel@pengutronix.de>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] drm/panfrost: Replace DRM driver allocation method
+ with newer one
+Message-ID: <20241017144438.257aaa76@collabora.com>
+In-Reply-To: <20241014233758.994861-1-adrian.larumbe@collabora.com>
+References: <20241014233758.994861-1-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Add support for Airoha EN7581 True Random Number generator.
+On Tue, 15 Oct 2024 00:31:36 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-This module can generate up to 4bytes of raw data at times and support
-self health test at startup. The module gets noise for randomness from
-various source from ADC, AP, dedicated clocks and other devices attached
-to the SoC producing true random numbers.
+> Drop the deprecated DRM driver allocation method in favour of
+> devm_drm_dev_alloc(). Overall just make it the same as in Panthor.
+> Also discard now superfluous generic and platform device pointers inside
+> the main panfrost device structure.
+>=20
+> Some ancient checkpatch issues unearthed as a result of these changes
+> were also fixed, like lines too long or double assignment in one line.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
-Changes v2:
-- Add Reviewed-by tag
+Acked-by: Boris Brezillon <boris.brezillon@collabora.com>
 
- .../bindings/rng/airoha,en7581-trng.yaml      | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rng/airoha,en7581-trng.yaml
+I didn't do a thorough review of the diff, but I'm assuming it's
+correct if the driver compiles.
 
-diff --git a/Documentation/devicetree/bindings/rng/airoha,en7581-trng.yaml b/Documentation/devicetree/bindings/rng/airoha,en7581-trng.yaml
-new file mode 100644
-index 000000000000..dfc6d24ee7d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rng/airoha,en7581-trng.yaml
-@@ -0,0 +1,38 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rng/airoha,en7581-trng.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Airoha EN7851 True Random Number Generator
-+
-+maintainers:
-+  - Christian Marangi <ansuelsmth@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: airoha,en7581-trng
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    rng@1faa1000 {
-+        compatible = "airoha,en7581-trng";
-+        reg = <0x1faa1000 0x1000>;
-+        interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+    };
--- 
-2.45.2
-
+BTW, I don't see it done in this series, but it might be good to also
+turn devm_ calls into drmm_ ones, and dev_<loglevel> into
+drm_<loglevel>.
 
