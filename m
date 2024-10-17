@@ -1,263 +1,370 @@
-Return-Path: <linux-kernel+bounces-369316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213019A1BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E949A1BB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D308E28621D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 294512899E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF251D0488;
-	Thu, 17 Oct 2024 07:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C5F1AFB3E;
+	Thu, 17 Oct 2024 07:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZFxac+so"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NUDRvWBB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6FC1CACF7
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8307E144D21
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729150148; cv=none; b=q5nRknkE/qQWqVipnEhrpCwuMbs2ujL6fQ9E0dL5XvzbDlKFSrxaQBZf8gRz0A0xF4Slt8VimAI+FYANn5iBo52pDG62j9Kw8kQ7T7pgvLso9+z5/ey7+wO0/Yipn9iLas33CJVGgAzdv9HANBkWR70cZLC/p5xtCoNd2gi7FpU=
+	t=1729150389; cv=none; b=umF+9lFpT1AlDVrsU8UNOGP61BvytW3dxaECTTNxEupPvCusubPnJjEpXYQoHMkKA4uAyGd8+jqNPWKUL+hlfU8oa+R22MlGkHQZWLBbDhxHrRqm2Ni5MF0CfAxTggukkLBwFVHVJePhgbxm2t0/2YfjccufJjzvlXOenc91Q7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729150148; c=relaxed/simple;
-	bh=pG7ay44bZsL7fEVkC5sH0sYkLE5VZyJSFBFnQT1x0BY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dnPhcwG5fZA7KTO+DkTwRrbVk/Rq0UqqIX54hhm3yrZFauBNje/BE0UZcqgxuzP0J2ntGLmwp1uCi0lLvzy8SuIESZUtFJ7PayqGNBU6jEwYu5XibDYHcxdRJEK4s53eMGiN62KTzOqDxl6AlVz/muetVdMEEpdCngfxdphA5NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZFxac+so; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b13ff3141aso45662585a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729150144; x=1729754944; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Try3cbmyV9fRcmLE/bIFSZrZawyhof0XNtWGBAiWP34=;
-        b=ZFxac+so4OGknP24VZS5aq+kx8bw1JB53HvgQ4LeaqXd6QY2bMcMfPqRoYofSCDz40
-         764tlfZR3/lMxN9x0LzKJUR/GheYcg4cdjrrHPmxFTFXuJJnLXrgPO8od+x4UlO8kDVC
-         UmWPBA+77+jeizRf2wTRp83rgEiSv+BHzaFx4NfhTVb8Js2pld70EnWw36XkzEvi9wDg
-         Sx8cjR5DWgz5J21q6h/W16zRma2PHeM22PNWUw2RImFZvngfjXwwzJ8+uZbnEW4nvBX2
-         XMfSJ6WoqKWvUc5iq/Rf3kTHhKgvwYcE9lygN8uelVWux5UaUoxz2C0hbJl0gzvN9qkY
-         g6FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729150144; x=1729754944;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Try3cbmyV9fRcmLE/bIFSZrZawyhof0XNtWGBAiWP34=;
-        b=TCN2s3vtLwfWxXISm5W9Fq+3sFo/GsZU2RqfJFMPTfXtMBDvz0Aya94Hd/oEgSwaxN
-         IT/bBwA13g+wpowtmM4yF/++GUVfWbC4bQ6lRElvQkMRoZG6cV+vh2yOeONfwakpWezq
-         41LgW+UV5Wg5tFBtLDbbfPGLewK1HZM421oTfDjTL0mvD3DAODuUQjX3XF/7p7WvlllI
-         iGaSOkQFM6S0jxCYwiDwsLR9cLatZAdYq0nXSOKoY5DTqsUO6eVRA9vzs1CACJaWjLnm
-         Xz9qWv/FGUBSyTxK+urP9QR+41x22VURf4XeqgrRF36kWUa6HR2K0FK3S2ATy0DDlt4s
-         1w2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSk0QyQK9PWQcGiwqy0l2gZqTZbo/oN9TrAOsNV9k6fTgI2U1VXTzqbW7lLoUYpkPq/WKhJBaC8Mu5GyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD3rmdRBHminwihvNM799l1ScJcux9U4f/Ud5XIRA6HuTk0hyZ
-	93SnDFd2Gg3xIkcfVUF2NeNcv7rhbB5ryHbn5QHrlZwKhCAaQXgyk3FAGXUzAWpiNxcxqHVvUez
-	dwxy25gzWKPLBJhgeXSQ3Pjg6zmc1dHL0Oaj4
-X-Google-Smtp-Source: AGHT+IHwH3j9Kjl7xJcKbxJn4JvoFagyzHQY2uSL0C4wTx/gqbGRFlMK76pNjbgQPhne4ZN5V9fylgSExAgePO1uHt0=
-X-Received: by 2002:a05:6214:3bca:b0:6cc:22eb:4508 with SMTP id
- 6a1803df08f44-6cc22eb4552mr101848446d6.47.1729150143775; Thu, 17 Oct 2024
- 00:29:03 -0700 (PDT)
+	s=arc-20240116; t=1729150389; c=relaxed/simple;
+	bh=e7G9iv9x1OU8U0sz8sT9XrAGwJSh7W6mvH+6s/5fobk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eUeFsZzrqU4CXf4MgYwZBo7O7uNZHXRBPvbw4w217Qcs0BX1bevAX+xcbhV79TsLZ63NCg2KCIemPINW4e70VLDRJidtaXbzzat+r+9OsdEGQ4gwJoPMkzZMfLugTOXhFVCOraqwaB8pEtpTcIxDH99N+fW/LWObLl927kCjWuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NUDRvWBB; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729150386; x=1760686386;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=e7G9iv9x1OU8U0sz8sT9XrAGwJSh7W6mvH+6s/5fobk=;
+  b=NUDRvWBB7/B8emHjardHuTlFwmuAVPmnHv7/LiMg4mMUpfKKsJWZIl9F
+   vO6xFO6p56MQ0o0qMi8376Yb3L9m9l0N5Ikd0RdcGP0fk6HJzjUUOuaFT
+   TDQ3GaVJqWvurdy4+I7birj3JubyN/74942KGtQ8cq4bsKyovsMWmvtJI
+   KIAQg+3DI6lq/FJf4BP6qOauhaPBhdPRmOETcaAsqzk1SvR5RBLjzEATr
+   ODpMWze+zJoGSzFBXibYf2rWZ8atp+o9LSLkST6tEWoJxDR9jWufiBUlo
+   0Tq0vVq6qvHy42vrVfXpdeMmMp/SOJi1E2l/iYa0fQm+Qgsu5wFof3cjM
+   Q==;
+X-CSE-ConnectionGUID: mBZ6MdK7RFulKErXcPdNpg==
+X-CSE-MsgGUID: 8B+M1RVqRtuZvXidFWL4Fw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="39994042"
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="39994042"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 00:33:06 -0700
+X-CSE-ConnectionGUID: IGgrc1reRFml4UIFgnbK1Q==
+X-CSE-MsgGUID: iQiCitATRSSn4Uw9We6M7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="78903213"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 17 Oct 2024 00:33:05 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1L0I-000LtH-0k;
+	Thu, 17 Oct 2024 07:33:02 +0000
+Date: Thu, 17 Oct 2024 15:32:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>
+Subject: kernel/bpf/verifier.c:19160:44: sparse: sparse: cast truncates bits
+ from constant value (ffffffc000000000 becomes 0)
+Message-ID: <202410171556.bTA4Suz5-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014-kunit-loongarch-v1-0-1699b2ad6099@linutronix.de> <20241014-kunit-loongarch-v1-1-1699b2ad6099@linutronix.de>
-In-Reply-To: <20241014-kunit-loongarch-v1-1-1699b2ad6099@linutronix.de>
-From: David Gow <davidgow@google.com>
-Date: Thu, 17 Oct 2024 15:28:52 +0800
-Message-ID: <CABVgOSnp1+gWkzZYE-F95VSTZHQDivyLkyPo6SYoi0Xyk6aZ5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] LoongArch: Don't crash in stack_top() for tasks
- without vDSO
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Rae Moar <rmoar@google.com>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000001d7a0b0624a72427"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---0000000000001d7a0b0624a72427
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c964ced7726294d40913f2127c3f185a92cb4a41
+commit: af682b767a41772499f8e54ca7d7e1deb3395f44 bpf: Optimize emit_mov_imm64().
+date:   7 months ago
+config: arm64-randconfig-r131-20241017 (https://download.01.org/0day-ci/archive/20241017/202410171556.bTA4Suz5-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bfe84f7085d82d06d61c632a7bad1e692fd159e4)
+reproduce: (https://download.01.org/0day-ci/archive/20241017/202410171556.bTA4Suz5-lkp@intel.com/reproduce)
 
-On Mon, 14 Oct 2024 at 19:36, Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> Not all tasks have a vDSO mapped, for example kthreads never do.
-> If such a task ever ends up calling stack_top(), it will derefence the
-> NULL vdso pointer and crash.
->
-> This can for example happen when using kunit:
->
->         [<9000000000203874>] stack_top+0x58/0xa8
->         [<90000000002956cc>] arch_pick_mmap_layout+0x164/0x220
->         [<90000000003c284c>] kunit_vm_mmap_init+0x108/0x12c
->         [<90000000003c1fbc>] __kunit_add_resource+0x38/0x8c
->         [<90000000003c2704>] kunit_vm_mmap+0x88/0xc8
->         [<9000000000410b14>] usercopy_test_init+0xbc/0x25c
->         [<90000000003c1db4>] kunit_try_run_case+0x5c/0x184
->         [<90000000003c3d54>] kunit_generic_run_threadfn_adapter+0x24/0x48
->         [<900000000022e4bc>] kthread+0xc8/0xd4
->         [<9000000000200ce8>] ret_from_kernel_thread+0xc/0xa4
->
-> Fixes: 803b0fc5c3f2 ("LoongArch: Add process management")
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> ---
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410171556.bTA4Suz5-lkp@intel.com/
 
-Thanks very much for fixing this: the usercopy tests and kunit_vm_mmap
-stuff has been broken on quite a few architectures, so I really
-appreciate this being fixed "day one" for KUnit support. :-)
+sparse warnings: (new ones prefixed by >>)
+   kernel/bpf/verifier.c:20219:38: sparse: sparse: subtraction of functions? Share your drugs
+   kernel/bpf/verifier.c: note: in included file (through include/linux/bpf.h, include/linux/bpf-cgroup.h):
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
+>> kernel/bpf/verifier.c:19160:44: sparse: sparse: cast truncates bits from constant value (ffffffc000000000 becomes 0)
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
+   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
 
-We'll take the rest of the patches via the kunit/kselftest tree; I
-agree that it makes more sense for this one to go in separately via
-loongarch.
+vim +19160 kernel/bpf/verifier.c
 
-Thanks,
--- David
+ 19113	
+ 19114	static int jit_subprogs(struct bpf_verifier_env *env)
+ 19115	{
+ 19116		struct bpf_prog *prog = env->prog, **func, *tmp;
+ 19117		int i, j, subprog_start, subprog_end = 0, len, subprog;
+ 19118		struct bpf_map *map_ptr;
+ 19119		struct bpf_insn *insn;
+ 19120		void *old_bpf_func;
+ 19121		int err, num_exentries;
+ 19122	
+ 19123		if (env->subprog_cnt <= 1)
+ 19124			return 0;
+ 19125	
+ 19126		for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
+ 19127			if (!bpf_pseudo_func(insn) && !bpf_pseudo_call(insn))
+ 19128				continue;
+ 19129	
+ 19130			/* Upon error here we cannot fall back to interpreter but
+ 19131			 * need a hard reject of the program. Thus -EFAULT is
+ 19132			 * propagated in any case.
+ 19133			 */
+ 19134			subprog = find_subprog(env, i + insn->imm + 1);
+ 19135			if (subprog < 0) {
+ 19136				WARN_ONCE(1, "verifier bug. No program starts at insn %d\n",
+ 19137					  i + insn->imm + 1);
+ 19138				return -EFAULT;
+ 19139			}
+ 19140			/* temporarily remember subprog id inside insn instead of
+ 19141			 * aux_data, since next loop will split up all insns into funcs
+ 19142			 */
+ 19143			insn->off = subprog;
+ 19144			/* remember original imm in case JIT fails and fallback
+ 19145			 * to interpreter will be needed
+ 19146			 */
+ 19147			env->insn_aux_data[i].call_imm = insn->imm;
+ 19148			/* point imm to __bpf_call_base+1 from JITs point of view */
+ 19149			insn->imm = 1;
+ 19150			if (bpf_pseudo_func(insn)) {
+ 19151	#if defined(MODULES_VADDR)
+ 19152				u64 addr = MODULES_VADDR;
+ 19153	#else
+ 19154				u64 addr = VMALLOC_START;
+ 19155	#endif
+ 19156				/* jit (e.g. x86_64) may emit fewer instructions
+ 19157				 * if it learns a u32 imm is the same as a u64 imm.
+ 19158				 * Set close enough to possible prog address.
+ 19159				 */
+ 19160				insn[0].imm = (u32)addr;
+ 19161				insn[1].imm = addr >> 32;
+ 19162			}
+ 19163		}
+ 19164	
+ 19165		err = bpf_prog_alloc_jited_linfo(prog);
+ 19166		if (err)
+ 19167			goto out_undo_insn;
+ 19168	
+ 19169		err = -ENOMEM;
+ 19170		func = kcalloc(env->subprog_cnt, sizeof(prog), GFP_KERNEL);
+ 19171		if (!func)
+ 19172			goto out_undo_insn;
+ 19173	
+ 19174		for (i = 0; i < env->subprog_cnt; i++) {
+ 19175			subprog_start = subprog_end;
+ 19176			subprog_end = env->subprog_info[i + 1].start;
+ 19177	
+ 19178			len = subprog_end - subprog_start;
+ 19179			/* bpf_prog_run() doesn't call subprogs directly,
+ 19180			 * hence main prog stats include the runtime of subprogs.
+ 19181			 * subprogs don't have IDs and not reachable via prog_get_next_id
+ 19182			 * func[i]->stats will never be accessed and stays NULL
+ 19183			 */
+ 19184			func[i] = bpf_prog_alloc_no_stats(bpf_prog_size(len), GFP_USER);
+ 19185			if (!func[i])
+ 19186				goto out_free;
+ 19187			memcpy(func[i]->insnsi, &prog->insnsi[subprog_start],
+ 19188			       len * sizeof(struct bpf_insn));
+ 19189			func[i]->type = prog->type;
+ 19190			func[i]->len = len;
+ 19191			if (bpf_prog_calc_tag(func[i]))
+ 19192				goto out_free;
+ 19193			func[i]->is_func = 1;
+ 19194			func[i]->sleepable = prog->sleepable;
+ 19195			func[i]->aux->func_idx = i;
+ 19196			/* Below members will be freed only at prog->aux */
+ 19197			func[i]->aux->btf = prog->aux->btf;
+ 19198			func[i]->aux->func_info = prog->aux->func_info;
+ 19199			func[i]->aux->func_info_cnt = prog->aux->func_info_cnt;
+ 19200			func[i]->aux->poke_tab = prog->aux->poke_tab;
+ 19201			func[i]->aux->size_poke_tab = prog->aux->size_poke_tab;
+ 19202	
+ 19203			for (j = 0; j < prog->aux->size_poke_tab; j++) {
+ 19204				struct bpf_jit_poke_descriptor *poke;
+ 19205	
+ 19206				poke = &prog->aux->poke_tab[j];
+ 19207				if (poke->insn_idx < subprog_end &&
+ 19208				    poke->insn_idx >= subprog_start)
+ 19209					poke->aux = func[i]->aux;
+ 19210			}
+ 19211	
+ 19212			func[i]->aux->name[0] = 'F';
+ 19213			func[i]->aux->stack_depth = env->subprog_info[i].stack_depth;
+ 19214			func[i]->jit_requested = 1;
+ 19215			func[i]->blinding_requested = prog->blinding_requested;
+ 19216			func[i]->aux->kfunc_tab = prog->aux->kfunc_tab;
+ 19217			func[i]->aux->kfunc_btf_tab = prog->aux->kfunc_btf_tab;
+ 19218			func[i]->aux->linfo = prog->aux->linfo;
+ 19219			func[i]->aux->nr_linfo = prog->aux->nr_linfo;
+ 19220			func[i]->aux->jited_linfo = prog->aux->jited_linfo;
+ 19221			func[i]->aux->linfo_idx = env->subprog_info[i].linfo_idx;
+ 19222			func[i]->aux->arena = prog->aux->arena;
+ 19223			num_exentries = 0;
+ 19224			insn = func[i]->insnsi;
+ 19225			for (j = 0; j < func[i]->len; j++, insn++) {
+ 19226				if (BPF_CLASS(insn->code) == BPF_LDX &&
+ 19227				    (BPF_MODE(insn->code) == BPF_PROBE_MEM ||
+ 19228				     BPF_MODE(insn->code) == BPF_PROBE_MEM32 ||
+ 19229				     BPF_MODE(insn->code) == BPF_PROBE_MEMSX))
+ 19230					num_exentries++;
+ 19231				if ((BPF_CLASS(insn->code) == BPF_STX ||
+ 19232				     BPF_CLASS(insn->code) == BPF_ST) &&
+ 19233				     BPF_MODE(insn->code) == BPF_PROBE_MEM32)
+ 19234					num_exentries++;
+ 19235			}
+ 19236			func[i]->aux->num_exentries = num_exentries;
+ 19237			func[i]->aux->tail_call_reachable = env->subprog_info[i].tail_call_reachable;
+ 19238			func[i]->aux->exception_cb = env->subprog_info[i].is_exception_cb;
+ 19239			if (!i)
+ 19240				func[i]->aux->exception_boundary = env->seen_exception;
+ 19241			func[i] = bpf_int_jit_compile(func[i]);
+ 19242			if (!func[i]->jited) {
+ 19243				err = -ENOTSUPP;
+ 19244				goto out_free;
+ 19245			}
+ 19246			cond_resched();
+ 19247		}
+ 19248	
+ 19249		/* at this point all bpf functions were successfully JITed
+ 19250		 * now populate all bpf_calls with correct addresses and
+ 19251		 * run last pass of JIT
+ 19252		 */
+ 19253		for (i = 0; i < env->subprog_cnt; i++) {
+ 19254			insn = func[i]->insnsi;
+ 19255			for (j = 0; j < func[i]->len; j++, insn++) {
+ 19256				if (bpf_pseudo_func(insn)) {
+ 19257					subprog = insn->off;
+ 19258					insn[0].imm = (u32)(long)func[subprog]->bpf_func;
+ 19259					insn[1].imm = ((u64)(long)func[subprog]->bpf_func) >> 32;
+ 19260					continue;
+ 19261				}
+ 19262				if (!bpf_pseudo_call(insn))
+ 19263					continue;
+ 19264				subprog = insn->off;
+ 19265				insn->imm = BPF_CALL_IMM(func[subprog]->bpf_func);
+ 19266			}
+ 19267	
+ 19268			/* we use the aux data to keep a list of the start addresses
+ 19269			 * of the JITed images for each function in the program
+ 19270			 *
+ 19271			 * for some architectures, such as powerpc64, the imm field
+ 19272			 * might not be large enough to hold the offset of the start
+ 19273			 * address of the callee's JITed image from __bpf_call_base
+ 19274			 *
+ 19275			 * in such cases, we can lookup the start address of a callee
+ 19276			 * by using its subprog id, available from the off field of
+ 19277			 * the call instruction, as an index for this list
+ 19278			 */
+ 19279			func[i]->aux->func = func;
+ 19280			func[i]->aux->func_cnt = env->subprog_cnt - env->hidden_subprog_cnt;
+ 19281			func[i]->aux->real_func_cnt = env->subprog_cnt;
+ 19282		}
+ 19283		for (i = 0; i < env->subprog_cnt; i++) {
+ 19284			old_bpf_func = func[i]->bpf_func;
+ 19285			tmp = bpf_int_jit_compile(func[i]);
+ 19286			if (tmp != func[i] || func[i]->bpf_func != old_bpf_func) {
+ 19287				verbose(env, "JIT doesn't support bpf-to-bpf calls\n");
+ 19288				err = -ENOTSUPP;
+ 19289				goto out_free;
+ 19290			}
+ 19291			cond_resched();
+ 19292		}
+ 19293	
+ 19294		/* finally lock prog and jit images for all functions and
+ 19295		 * populate kallsysm. Begin at the first subprogram, since
+ 19296		 * bpf_prog_load will add the kallsyms for the main program.
+ 19297		 */
+ 19298		for (i = 1; i < env->subprog_cnt; i++) {
+ 19299			err = bpf_prog_lock_ro(func[i]);
+ 19300			if (err)
+ 19301				goto out_free;
+ 19302		}
+ 19303	
+ 19304		for (i = 1; i < env->subprog_cnt; i++)
+ 19305			bpf_prog_kallsyms_add(func[i]);
+ 19306	
+ 19307		/* Last step: make now unused interpreter insns from main
+ 19308		 * prog consistent for later dump requests, so they can
+ 19309		 * later look the same as if they were interpreted only.
+ 19310		 */
+ 19311		for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
+ 19312			if (bpf_pseudo_func(insn)) {
+ 19313				insn[0].imm = env->insn_aux_data[i].call_imm;
+ 19314				insn[1].imm = insn->off;
+ 19315				insn->off = 0;
+ 19316				continue;
+ 19317			}
+ 19318			if (!bpf_pseudo_call(insn))
+ 19319				continue;
+ 19320			insn->off = env->insn_aux_data[i].call_imm;
+ 19321			subprog = find_subprog(env, i + insn->off + 1);
+ 19322			insn->imm = subprog;
+ 19323		}
+ 19324	
+ 19325		prog->jited = 1;
+ 19326		prog->bpf_func = func[0]->bpf_func;
+ 19327		prog->jited_len = func[0]->jited_len;
+ 19328		prog->aux->extable = func[0]->aux->extable;
+ 19329		prog->aux->num_exentries = func[0]->aux->num_exentries;
+ 19330		prog->aux->func = func;
+ 19331		prog->aux->func_cnt = env->subprog_cnt - env->hidden_subprog_cnt;
+ 19332		prog->aux->real_func_cnt = env->subprog_cnt;
+ 19333		prog->aux->bpf_exception_cb = (void *)func[env->exception_callback_subprog]->bpf_func;
+ 19334		prog->aux->exception_boundary = func[0]->aux->exception_boundary;
+ 19335		bpf_prog_jit_attempt_done(prog);
+ 19336		return 0;
+ 19337	out_free:
+ 19338		/* We failed JIT'ing, so at this point we need to unregister poke
+ 19339		 * descriptors from subprogs, so that kernel is not attempting to
+ 19340		 * patch it anymore as we're freeing the subprog JIT memory.
+ 19341		 */
+ 19342		for (i = 0; i < prog->aux->size_poke_tab; i++) {
+ 19343			map_ptr = prog->aux->poke_tab[i].tail_call.map;
+ 19344			map_ptr->ops->map_poke_untrack(map_ptr, prog->aux);
+ 19345		}
+ 19346		/* At this point we're guaranteed that poke descriptors are not
+ 19347		 * live anymore. We can just unlink its descriptor table as it's
+ 19348		 * released with the main prog.
+ 19349		 */
+ 19350		for (i = 0; i < env->subprog_cnt; i++) {
+ 19351			if (!func[i])
+ 19352				continue;
+ 19353			func[i]->aux->poke_tab = NULL;
+ 19354			bpf_jit_free(func[i]);
+ 19355		}
+ 19356		kfree(func);
+ 19357	out_undo_insn:
+ 19358		/* cleanup main prog to be interpreted */
+ 19359		prog->jit_requested = 0;
+ 19360		prog->blinding_requested = 0;
+ 19361		for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
+ 19362			if (!bpf_pseudo_call(insn))
+ 19363				continue;
+ 19364			insn->off = 0;
+ 19365			insn->imm = env->insn_aux_data[i].call_imm;
+ 19366		}
+ 19367		bpf_prog_jit_attempt_done(prog);
+ 19368		return err;
+ 19369	}
+ 19370	
 
->  arch/loongarch/kernel/process.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/loongarch/kernel/process.c b/arch/loongarch/kernel/proc=
-ess.c
-> index f2ff8b5d591e4fd638109d2c98d75543c01a112c..6e58f65455c7ca3eae2e88ed8=
-52c8655a6701e5c 100644
-> --- a/arch/loongarch/kernel/process.c
-> +++ b/arch/loongarch/kernel/process.c
-> @@ -293,13 +293,15 @@ unsigned long stack_top(void)
->  {
->         unsigned long top =3D TASK_SIZE & PAGE_MASK;
->
-> -       /* Space for the VDSO & data page */
-> -       top -=3D PAGE_ALIGN(current->thread.vdso->size);
-> -       top -=3D VVAR_SIZE;
-> -
-> -       /* Space to randomize the VDSO base */
-> -       if (current->flags & PF_RANDOMIZE)
-> -               top -=3D VDSO_RANDOMIZE_SIZE;
-> +       if (current->thread.vdso) {
-> +               /* Space for the VDSO & data page */
-> +               top -=3D PAGE_ALIGN(current->thread.vdso->size);
-> +               top -=3D VVAR_SIZE;
-> +
-> +               /* Space to randomize the VDSO base */
-> +               if (current->flags & PF_RANDOMIZE)
-> +                       top -=3D VDSO_RANDOMIZE_SIZE;
-> +       }
->
->         return top;
->  }
->
-> --
-> 2.47.0
->
-
---0000000000001d7a0b0624a72427
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
-cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
-nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
-hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
-XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
-h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
-ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
-hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
-BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
-0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
-hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
-AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
-eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQg0P8Z+57kNQnB0aLmJLXg78B+G76G
-dYcIYXwl4UIDheowGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
-MDE3MDcyOTA0WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBAI7WuSN6kvCbUZ+1/NPezSsEc6b9E27Jgn3HHbiFPxe1yBqn
-SfAUWwKkN/lqjAl2Pm+cbaZVm1gcr/Um9o6PR8sR1ybT1x/LytAcgz9DMetZpZ8Ixf/7CzvJK+Zn
-xMStUMwlY8OpTgPFF6sX0gN6aj9qDFp1rMF3HiN/jVBBMlSDgvYZFDcoZcTpm8QVc7PJ/oFF30t8
-A0aLMvnSOEZco0V1CmkDpDv0205FzwwV3gEBUmfRpYY4qyeu6OovO27uJ/jqPID2y8YFE2d6Wno2
-JV4lVPmyO8LEXf7HzFkC9JoUbL+8AJh8lxOQV6c4q5SQ+e5RDwH4/NC3QgOg/V2hpfM=
---0000000000001d7a0b0624a72427--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
