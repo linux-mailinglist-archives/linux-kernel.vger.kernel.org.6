@@ -1,296 +1,210 @@
-Return-Path: <linux-kernel+bounces-369182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951A79A1A0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:54:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A70BC9A1A0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C6428456A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:54:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AA9AB21327
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EF7179956;
-	Thu, 17 Oct 2024 04:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ccweTbJ1"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1226615ADA6;
+	Thu, 17 Oct 2024 05:03:32 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5A736AF5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972AC2905
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729140836; cv=none; b=OekDSa4Lhr9FC0HdKbmpPgYH3cc8gUWgwU4irFJ/h30gXG2seTc/VG4imsZ2rj3cG3YWJxPwotRbCdVnjWBNJvTsmHgG8CxISnIs7hILc4awSYytFeuWR+v/MXQX9da4jdXBKBmM1e66NGCJ9PycZv1m2F8kW0GjppvOQgGZtY0=
+	t=1729141411; cv=none; b=TApocLT1aSTciPARKNz85TFHqyTYieQPyx/iDWmRDSnYPx0mFK7h29ELAc4GossiDJLleNwgp4i7jb7Nfd8mPs2rK1GfohE7ovt290qYBt26TKIHbXbeZVDBJiT6MiiYQIpK5T0FlgcH0cQ5qgDxb1ObXI/MJrb9T1P7qBgNavc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729140836; c=relaxed/simple;
-	bh=97DNx9gdVThlibrCf7mEAf4DJ7ZUx62BwJubMb0Yg7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZDj3s0x5JeLDeI+fbnIA6fulyOr6LU0EyE5ZESkO84ibnihI4IDkIevRelmosrSS76RAtuknRHK4eRPtE3DV5i83HnPWLmLj2Y63vRNbAXxEkwZtjOyHFQx6zCo397vN+8+fIIm0sgS9cYd3XZGrKMXUY7E0qLGaUbS4/qKRj3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ccweTbJ1; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c93e9e701fso9311a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729140832; x=1729745632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BnKl1QwbwUsKFMP4HLrcYnPjaoTQ17Jib2qe3x9b52Q=;
-        b=ccweTbJ1kl/T162izeTUMnGFo+V4NXz1Hr+FY+3DBkttEJyrHOlYQl6/PZLdZSnGza
-         FPoBu1r9JzsfNbqwg/+5/JClDErWaVUYmWAJqoZMGqsQuYTeJdNTiT5B2cnO1mMDpBcb
-         VrgAaD/cLniKfDDCocaM7mGhRYzT2Q42xJfg+6yIDuJol1EMt1d5cyLlp7wr90C9zhxK
-         CqIR+cyIUIbGg0LUX9PiXp4VEiTBQoOsntZoHP3/M00zkGOF8O7rn3yUumFpwoO0A5v/
-         /Gqh5xyPlW7hT9gX5OUkJmjDRZS7xivNlv+Dc37wqQw4qSeRg+sH5KAB8y0crcVsVFOZ
-         pTqg==
+	s=arc-20240116; t=1729141411; c=relaxed/simple;
+	bh=vpvtcgmIZHO18G5BBJBL7IfV1fRSrj5q8IVfBqCzu28=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JtfR8rD3hbwjhavjzam7QbjGgatqFmqT5t0v0KlxAfUK602KAq3RRizwaV9mzRCTBGp4LsLDspMDCvLR/wl8c72nJLn6vQh8MIrS/BFlSJpNa3GnZ1FS36mC/rVKGipNT1lBoZyL78clNL3w4cpeR8/PugStsHK93xJyuQuuXJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so6007075ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:03:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729140832; x=1729745632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BnKl1QwbwUsKFMP4HLrcYnPjaoTQ17Jib2qe3x9b52Q=;
-        b=dEnu/bqphHaV8qtibfGvwusiJ8FhlND1GBI6OT9hTFYXrUAAiBb1yyezxJRCHfNcM3
-         kruyAnxIaBOChBVyYLWIlQiy0L32CqiVoZwaRruLtffOIY/TFWOL8MOn/dOL0L9Lu09x
-         sGh0qoYC3eDO+QHFo05SWrfyvYfsZxlpv5eV9gO2ve7T554ONx0AwmFXI23sXYhWGC9k
-         W/uWWfMXoXg49PNPfe0b1pv3dQpAkmoOG0NYgbtrOaWrMOc5k/fNKkxtBUPItMFDkMUZ
-         DCg1oHzNzwYXF+S1QNKAH5RhkP2/vx3MfAvGkCPx70oIpHGCL5vb/iP1HuyVPdL9lnbq
-         Yw4A==
-X-Gm-Message-State: AOJu0Yx87dS0LZ0MHAB2WBejzgSaTnRE/ZO0zgXVj5Y6kk6Jz0Tww0De
-	m5ae0NiL4W/jPip+dGnaAAJmd3rmfXLS5uWfcPaW6u579KkeyTbhLbIQ8q4sLIp1imuHfOx+BtN
-	bEg9u1ujmpuofoPHYzJbDucGVSy/ZNtj4YD1r
-X-Google-Smtp-Source: AGHT+IFCcmMy3OXU8QksT8UF+eXw1a4ADFyOFkBS5bVywWQA6mQyQwUxzFuW9jnMvnjqseJvwvlsa8cfN9d+elGiJq8=
-X-Received: by 2002:a05:6402:2355:b0:5c8:84b5:7e78 with SMTP id
- 4fb4d7f45d1cf-5c9a6613d7fmr307679a12.4.1729140831633; Wed, 16 Oct 2024
- 21:53:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729141407; x=1729746207;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hj81h1R9+1O/badNaKzYflm7VykGj3DAndoTFNRlY8U=;
+        b=SSc3anakcTrK4BaJVo6hCiQB261zpSvhU7l4he1jlj7DsOQRajwHshbYpNmB5/fsDY
+         nwkmZ6nGIPny2kJhyCRzTLcBA0CahG/pCesLVwd7GDpZcNNql/dkTq6xWDhxIlndPJSm
+         d4StJLATtBQ1y07zmIRKOxdYARDPMRQPSmc/QGCroVndgRiQdfVljh4lSqQqH8OSRvQc
+         wwi56+b+M4Ep1wgDz5e5lhAyj0O4sXFhTzSFsnyBIpx9t3hShvSpqUp0k6RU0aPKizg4
+         vXX64DbjbztQKahlRfIqooenWt8vjplhl5Vt7wSCIfI16ZYqx4ZpTqZOHB8+Dqn4ANYj
+         l//g==
+X-Forwarded-Encrypted: i=1; AJvYcCW5/P5I0Fn1cDoILJkbGtKfhFVA5d3NG4iWg/2O7GOjbkytITGKgcufkECOEI9fT7IUhFX/z54cyt4N7+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKVWKo6e8FCB3P++Byz1LRvIWuT8o54VmrUbmFJny/CDYvIhsV
+	WTFSiDKbs57tcNNOH8/wsBkeitAXaR/f8xttkc8GSyBXqz+7l+H4FgHe7c2pjt31rmUJwbZRS9D
+	5eI0+CIeWq84S5Q3NuF32iK51J7GAISyY0FjoQfFrauIKqh7TZQux/54=
+X-Google-Smtp-Source: AGHT+IFqbXGuKnEc08y+ohoc53jfl2vV0B2suYnt95XOZ4geMSK1aAogT7Nz0kKDBmFOOXBIeSV+p4noT1vgRobwvFphpM4oX23c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805093245.889357-1-jgowans@amazon.com>
-In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Thu, 17 Oct 2024 10:23:38 +0530
-Message-ID: <CAGtprH949pMq0GrQzyMvHNCFet+5MrcYBd=qPEscW1KtV5LjXg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-To: James Gowans <jgowans@amazon.com>
-Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Steve Sistare <steven.sistare@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
-	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
-	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
-	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
+X-Received: by 2002:a05:6e02:1caf:b0:3a3:778e:45cd with SMTP id
+ e9e14a558f8ab-3a3b5fbc20cmr199646315ab.21.1729141407620; Wed, 16 Oct 2024
+ 22:03:27 -0700 (PDT)
+Date: Wed, 16 Oct 2024 22:03:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67109a9f.050a0220.d9b66.0182.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_bucket_alloc_trans (2)
+From: syzbot <syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 3:03=E2=80=AFPM James Gowans <jgowans@amazon.com> wr=
-ote:
->
-> In this patch series a new in-memory filesystem designed specifically
-> for live update is implemented. Live update is a mechanism to support
-> updating a hypervisor in a way that has limited impact to running
-> virtual machines. This is done by pausing/serialising running VMs,
-> kexec-ing into a new kernel, starting new VMM processes and then
-> deserialising/resuming the VMs so that they continue running from where
-> they were. To support this, guest memory needs to be preserved.
->
-> Guestmemfs implements preservation acrosss kexec by carving out a large
-> contiguous block of host system RAM early in boot which is then used as
-> the data for the guestmemfs files. As well as preserving that large
-> block of data memory across kexec, the filesystem metadata is preserved
-> via the Kexec Hand Over (KHO) framework (still under review):
-> https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
->
-> Filesystem metadata is structured to make preservation across kexec
-> easy: inodes are one large contiguous array, and each inode has a
-> "mappings" block which defines which block from the filesystem data
-> memory corresponds to which offset in the file.
->
-> There are additional constraints/requirements which guestmemfs aims to
-> meet:
->
-> 1. Secret hiding: all filesystem data is removed from the kernel direct
-> map so immune from speculative access. read()/write() are not supported;
-> the only way to get at the data is via mmap.
->
-> 2. Struct page overhead elimination: the memory is not managed by the
-> buddy allocator and hence has no struct pages.
->
-> 3. PMD and PUD level allocations for TLB performance: guestmemfs
-> allocates PMD-sized pages to back files which improves TLB perf (caveat
-> below!). PUD size allocations are a next step.
->
-> 4. Device assignment: being able to use guestmemfs memory for
-> VFIO/iommufd mappings, and allow those mappings to survive and continue
-> to be used across kexec.
->
->
-> Next steps
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> The idea is that this patch series implements a minimal filesystem to
-> provide the foundations for in-memory persistent across kexec files.
-> One this foundation is in place it will be extended:
->
-> 1. Improve the filesystem to be more comprehensive - currently it's just
-> functional enough to demonstrate the main objective of reserved memory
-> and persistence via KHO.
->
-> 2. Build support for iommufd IOAS and HWPT persistence, and integrate
-> that with guestmemfs. The idea is that if VMs have DMA devices assigned
-> to them, DMA should continue running across kexec. A future patch series
-> will add support for this in iommufd and connect iommufd to guestmemfs
-> so that guestmemfs files can remain mapped into the IOMMU during kexec.
->
-> 3. Support a guest_memfd interface to files so that they can be used for
-> confidential computing without needing to mmap into userspace.
+Hello,
 
-I am guessing this goal was before we discussed the need of supporting
-mmap on guest_memfd for confidential computing usecases to support
-hugepages [1]. This series [1] as of today tries to leverage hugetlb
-allocator functionality to allocate huge pages which seems to be along
-the lines of what you are aiming for. There are also discussions to
-support NUMA mempolicy [2] for guest memfd. In order to use
-guest_memfd to back non-confidential VMs with hugepages, core-mm will
-need to support PMD/PUD level mappings in future.
+syzbot found the following issue on:
 
-David H's suggestion from the other thread to extend guest_memfd to
-support guest memory persistence over kexec instead of introducing
-guestmemfs as a parallel subsystem seems appealing to me.
+HEAD commit:    7234e2ea0edd Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1219f05f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b6a17991a6af64f9489
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14018440580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14eb1087980000
 
-[1] https://lore.kernel.org/kvm/cover.1726009989.git.ackerleytng@google.com=
-/T/
-[2] https://lore.kernel.org/kvm/47476c27-897c-4487-bcd2-7ef6ec089dd1@amd.co=
-m/T/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb89ee889cea/disk-7234e2ea.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/088257a81962/vmlinux-7234e2ea.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2a15a9a5e99a/bzImage-7234e2ea.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2ea41a6e1171/mount_0.gz
 
->
-> 3. Gigantic PUD level mappings for even better TLB perf.
->
-> Caveats
-> =3D=3D=3D=3D=3D=3D=3D
->
-> There are a issues with the current implementation which should be
-> solved either in this patch series or soon in follow-on work:
->
-> 1. Although PMD-size allocations are done, PTE-level page tables are
-> still created. This is because guestmemfs uses remap_pfn_range() to set
-> up userspace pgtables. Currently remap_pfn_range() only creates
-> PTE-level mappings. I suggest enhancing remap_pfn_range() to support
-> creating higher level mappings where possible, by adding pmd_special
-> and pud_special flags.
->
-> 2. NUMA support is currently non-existent. To make this more generally
-> useful it's necessary to have NUMA-awareness. One thought on how to do
-> this is to be able to specify multiple allocations with wNUMA affinity
-> on the kernel cmdline and have multiple mount points, one per NUMA node.
-> Currently, for simplicity, only a single contiguous filesystem data
-> allocation and a single mount point is supported.
->
-> 3. MCEs are currently not handled - we need to add functionality for
-> this to be able to track block ownership and deliver an MCE correctly.
->
-> 4. Looking for reviews from filesystem experts to see if necessary
-> callbacks, refcounting, locking, etc, is done correctly.
->
-> Open questions
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> It is not too clear if or how guestmemfs should use DAX as a source of
-> memory. Seeing as guestmemfs has an in-memory design, it seems that it
-> is not necessary to use DAX as a source of memory, but I am keen for
-> guidance/input on whether DAX should be used here.
->
-> The filesystem data memory is removed from the direct map for secret
-> hiding, but it is still necessary to mmap it to be accessible to KVM.
-> For improving secret hiding even more a guest_memfd-style interface
-> could be used to remove the need to mmap. That introduces a new problem
-> of the memory being completely inaccessible to KVM for this like MMIO
-> instruction emulation. How can this be handled?
->
-> Related Work
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> There are similarities to a few attempts at solving aspects of this
-> problem previously.
->
-> The original was probably PKRAM from Oracle; a tempfs filesystem with
-> persistence:
-> https://lore.kernel.org/kexec/1682554137-13938-1-git-send-email-anthony.y=
-znaga@oracle.com/
-> guestmemfs will additionally provide secret hiding, PMD/PUD allocations
-> and a path to DMA persistence and NUMA support.
->
-> Dmemfs from Tencent aimed to remove the need for struct page overhead:
-> https://lore.kernel.org/kvm/cover.1602093760.git.yuleixzhang@tencent.com/
-> Guestmemfs provides this benefit too, along with persistence across
-> kexec and secret hiding.
->
-> Pkernfs attempted to solve guest memory persistence and IOMMU
-> persistence all in one:
-> https://lore.kernel.org/all/20240205120203.60312-1-jgowans@amazon.com/
-> Guestmemfs is a re-work of that to only persist guest RAM in the
-> filesystem, and to use KHO for filesystem metadata. IOMMU persistence
-> will be implemented independently with persistent iommufd domains via
-> KHO.
->
-> Testing
-> =3D=3D=3D=3D=3D=3D=3D
->
-> The testing for this can be seen in the Documentation file in this patch
-> series. Essentially it is using a guestmemfs file for a QEMU VM's RAM,
-> doing a kexec, restoring the QEMU VM and confirming that the VM picked
-> up from where it left off.
->
-> James Gowans (10):
->   guestmemfs: Introduce filesystem skeleton
->   guestmemfs: add inode store, files and dirs
->   guestmemfs: add persistent data block allocator
->   guestmemfs: support file truncation
->   guestmemfs: add file mmap callback
->   kexec/kho: Add addr flag to not initialise memory
->   guestmemfs: Persist filesystem metadata via KHO
->   guestmemfs: Block modifications when serialised
->   guestmemfs: Add documentation and usage instructions
->   MAINTAINERS: Add maintainers for guestmemfs
->
->  Documentation/filesystems/guestmemfs.rst |  87 +++++++
->  MAINTAINERS                              |   8 +
->  arch/x86/mm/init_64.c                    |   2 +
->  fs/Kconfig                               |   1 +
->  fs/Makefile                              |   1 +
->  fs/guestmemfs/Kconfig                    |  11 +
->  fs/guestmemfs/Makefile                   |   8 +
->  fs/guestmemfs/allocator.c                |  40 +++
->  fs/guestmemfs/dir.c                      |  43 ++++
->  fs/guestmemfs/file.c                     | 106 ++++++++
->  fs/guestmemfs/guestmemfs.c               | 160 ++++++++++++
->  fs/guestmemfs/guestmemfs.h               |  60 +++++
->  fs/guestmemfs/inode.c                    | 189 ++++++++++++++
->  fs/guestmemfs/serialise.c                | 302 +++++++++++++++++++++++
->  include/linux/guestmemfs.h               |  16 ++
->  include/uapi/linux/kexec.h               |   6 +
->  kernel/kexec_kho_in.c                    |  12 +-
->  kernel/kexec_kho_out.c                   |   4 +
->  18 files changed, 1055 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/filesystems/guestmemfs.rst
->  create mode 100644 fs/guestmemfs/Kconfig
->  create mode 100644 fs/guestmemfs/Makefile
->  create mode 100644 fs/guestmemfs/allocator.c
->  create mode 100644 fs/guestmemfs/dir.c
->  create mode 100644 fs/guestmemfs/file.c
->  create mode 100644 fs/guestmemfs/guestmemfs.c
->  create mode 100644 fs/guestmemfs/guestmemfs.h
->  create mode 100644 fs/guestmemfs/inode.c
->  create mode 100644 fs/guestmemfs/serialise.c
->  create mode 100644 include/linux/guestmemfs.h
->
-> --
-> 2.34.1
->
->
+The issue was bisected to:
+
+commit f5095b9f85a1674a92d00e7ab466499a8ba49ce1
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Tue Jan 2 00:42:37 2024 +0000
+
+    bcachefs: dev_usage updated by new accounting
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b37fd0580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12b37fd0580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b37fd0580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Fixes: f5095b9f85a1 ("bcachefs: dev_usage updated by new accounting")
+
+bcachefs (loop0): going read-only
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 1
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/alloc_foreground.c:489!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5220 Comm: syz-executor172 Not tainted 6.12.0-rc2-syzkaller-00305-g7234e2ea0edd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:489 [inline]
+RIP: 0010:bch2_bucket_alloc_trans+0x39ec/0x3a50 fs/bcachefs/alloc_foreground.c:644
+Code: e8 29 8a f0 fd e9 f0 c7 ff ff 89 d9 80 e1 07 38 c1 0f 8c f3 fd ff ff 48 89 df e8 bf 88 f0 fd e9 e6 fd ff ff e8 35 fc 89 fd 90 <0f> 0b e8 2d fc 89 fd 90 0f 0b e8 95 2b b2 07 f3 0f 1e fa e8 1c fc
+RSP: 0018:ffffc90003e851c0 EFLAGS: 00010293
+RAX: ffffffff840aeacb RBX: 0000000000000019 RCX: ffff88802d549e00
+RDX: 0000000000000000 RSI: 0000000000000019 RDI: 0000000000000000
+RBP: ffffc90003e858e8 R08: ffffffff840abd99 R09: 0000000000000000
+R10: ffffc90003e857a8 R11: fffff520007d0afa R12: dffffc0000000000
+R13: ffff88807a51c000 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055555a922380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564dd46df160 CR3: 00000000766a2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_bucket_alloc_set_trans+0x517/0xd30 fs/bcachefs/alloc_foreground.c:804
+ __open_bucket_add_buckets+0x10dc/0x1b60 fs/bcachefs/alloc_foreground.c:1049
+ open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1093
+ bch2_alloc_sectors_start_trans+0xce9/0x2030
+ __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:343 [inline]
+ bch2_btree_reserve_get+0x612/0x1890 fs/bcachefs/btree_update_interior.c:554
+ bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1252
+ bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
+ bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
+ __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
+ wb_flush_one fs/bcachefs/btree_write_buffer.c:183 [inline]
+ bch2_btree_write_buffer_flush_locked+0x2aa8/0x59f0 fs/bcachefs/btree_write_buffer.c:375
+ btree_write_buffer_flush_seq+0x1a43/0x1bc0 fs/bcachefs/btree_write_buffer.c:510
+ bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
+ journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
+ journal_flush_done+0x8e/0x260 fs/bcachefs/journal_reclaim.c:819
+ bch2_journal_flush_pins+0x225/0x3a0 fs/bcachefs/journal_reclaim.c:852
+ bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
+ __bch2_fs_read_only+0x124/0x430 fs/bcachefs/super.c:274
+ bch2_fs_read_only+0xb57/0x1200 fs/bcachefs/super.c:354
+ __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:619
+ bch2_fs_stop+0x15/0x20 fs/bcachefs/super.c:678
+ bch2_fs_get_tree+0xd9f/0x1710 fs/bcachefs/fs.c:2173
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f61de613dea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb66b7d48 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffdb66b7d60 RCX: 00007f61de613dea
+RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffdb66b7d60
+RBP: 0000000000000004 R08: 00007ffdb66b7da0 R09: 0000000000005b42
+R10: 0000000000000002 R11: 0000000000000282 R12: 0000000000000002
+R13: 00007ffdb66b7da0 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:489 [inline]
+RIP: 0010:bch2_bucket_alloc_trans+0x39ec/0x3a50 fs/bcachefs/alloc_foreground.c:644
+Code: e8 29 8a f0 fd e9 f0 c7 ff ff 89 d9 80 e1 07 38 c1 0f 8c f3 fd ff ff 48 89 df e8 bf 88 f0 fd e9 e6 fd ff ff e8 35 fc 89 fd 90 <0f> 0b e8 2d fc 89 fd 90 0f 0b e8 95 2b b2 07 f3 0f 1e fa e8 1c fc
+RSP: 0018:ffffc90003e851c0 EFLAGS: 00010293
+RAX: ffffffff840aeacb RBX: 0000000000000019 RCX: ffff88802d549e00
+RDX: 0000000000000000 RSI: 0000000000000019 RDI: 0000000000000000
+RBP: ffffc90003e858e8 R08: ffffffff840abd99 R09: 0000000000000000
+R10: ffffc90003e857a8 R11: fffff520007d0afa R12: dffffc0000000000
+R13: ffff88807a51c000 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055555a922380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564dd46df160 CR3: 00000000766a2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
