@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-370419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18BB69A2C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24199A2C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C524A1F221E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CAA028173D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A2B1E0B87;
-	Thu, 17 Oct 2024 18:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6EC1DEFF1;
+	Thu, 17 Oct 2024 18:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Acw9OyjX"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q9wcLkJd"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED241DDC31;
-	Thu, 17 Oct 2024 18:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59AF184D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729189589; cv=none; b=EZtd91ImzQG8b00KksowTSA2jgLIUCLAS1Pc4Mf3aPqp+AeWY14IEf7JuIbhEcPvoaEDeK+AM8Am5tN0TohktVOtC5Lrj4jiKzD92E+EcF7umoWcxtZQK6pZl623RWBNK3fPK/XT7MYnH8lTslPrb7E8tD4mScwgMJfO8ey3zfk=
+	t=1729189322; cv=none; b=BW6Vcflky/RIAEPohGnz2dUcCOct+1Dldp1s/sfQQZyfD752ZMRP2vZ6q5PUT0/mYdfZ2sOnNyaFO/rFE9E5uXecfXCvHP9ecpYnvnuo27d34oU/1tEfcoY3O/0w08OPwxPPPyPpmikxoyovmYFyNqPYKUdaoFi54rS3jV3Vi5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729189589; c=relaxed/simple;
-	bh=73LhArcldW9YWoGAUUDQD70Xc6UvchdZ6iaCXM4EhDw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jyW8+D65RwHqnh+8g6hxgONCbyq1Tq9LsPn7wsuiq7mQB6qBxQuSru1lVpDuZwCeJP0AbfP6gemDCz/Y4ky6DeD1XJnBQDo3R7lW2Viv6mK5j92gSje70paWDC7wPqAcNYHKHhjdIMq06+DtnKKlNjxLFtoWpLyIQWdnZ+0GUdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Acw9OyjX; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729189584; x=1729794384; i=markus.elfring@web.de;
-	bh=73LhArcldW9YWoGAUUDQD70Xc6UvchdZ6iaCXM4EhDw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Acw9OyjXs7wAmlpf7VNBmGHcv6iA4K5tdMUMd+KTlEtOk/1/nGtHTQGBxm6PqwyY
-	 k92/DomDJkbcS8nNgDuibD3wh/8Cv3ASyCFTYRouH/l5IPc9D5HcWxRnifMVgWWYI
-	 Ja6dz+31TvUmGjf7Q9DS5IO0KonSstj0O4OwlF21EBOkLv003kKAfZMGq/ZP1xcub
-	 6STWjF5xrwDmkz6Jsj+bi+T7+wq/3a89jEiaV36JnKoWcjqzKbShyGvxTYjRzKlUc
-	 UU26gqp6n536/6hoHx4P5H/JmlIfcwLOUGM0G6V7An3pzEvvHIseMu3hU48BkZeha
-	 UVWbmhqIQ9HJnw6y3g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Ml46y-1tmyTI2g8a-00lUMp; Thu, 17
- Oct 2024 20:20:36 +0200
-Message-ID: <e8bf7b33-01da-43fb-b71e-cd86a02be2e6@web.de>
-Date: Thu, 17 Oct 2024 20:20:33 +0200
+	s=arc-20240116; t=1729189322; c=relaxed/simple;
+	bh=RPqBl/e5kWqnuhA97vgRQ/te+jB+nHObSIWu953FoEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KAmb9m5xdC3iYroulntrrnuxEqP5dTORscZ38osiLxGNYoXqHNJDVvMiUnUCGTvW9qRbxx0a0tTnwiNkUVR+PH6OfLBcS3VEj0MPY7MtDQy1Z57+WiBtMdl5Nk9NSvi9yy/PiSAd4c9/elBuMUdkDGX5lmTZng1/F3idHwpSOm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q9wcLkJd; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e4d5aef2f8so748371b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:21:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729189317; x=1729794117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0vNuwIkZe438Kvv9BoDJdtP4Yx5fJLEE4DgPHUXL9Wg=;
+        b=Q9wcLkJd3weMnatwvhLROZAToggeqNrpMCwuFigGmRLRcGcQxZwQP4AAbW8+4ZTGxN
+         Q+BRrLscGI8PJkl3y8+DxEBP+lW8g387nZn0NE6sjGT6M/n+TNbkQBPqwDhdwOs7JMJM
+         2cMq/omEaytoLdL8+cirPwnKdWxIiTqv1mHJRhquXVejl7TD6F4gDjqexkeNvGuVlS6w
+         Lk+tf3RAS+b9SszAdxE00TH53LuXVaK43lob+roOflum73kiu+ddIjd5ephjDJRS5076
+         CDgjIuZHVBhw5oVgYL6UTsri1vRDXCfmLg+fdMCn2CLRBDtoE17T3ubG8azz2fAA/2Xm
+         wdug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729189317; x=1729794117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0vNuwIkZe438Kvv9BoDJdtP4Yx5fJLEE4DgPHUXL9Wg=;
+        b=HWJQgZrxWyIETixyj98OcuuhHWOmv8Xj2SXRHYkvnT8PQP6qnpBw9f9e/M4AjAbIMa
+         3YL5oMZbDf5Z+okKztEpZeZttbpni8tYKiMfj9nPYxki1BWKE1n72JNjXKZMPYj+/evx
+         qwaWcNOkdOQDOE3ng/4NjGLrklXgciQw9XXOhEGiDBzIuvhOqUtZJdI6iqTBKmg7s6oy
+         c6hBJojkpYZF9BrO/8A7wt+3JhpLut0mMNm6LFGlWfM1dOyQp9Couq0Yf2vQCrApMQDe
+         QeDAtFEH+1gzfJR22wzcGaC/jfwV4WL+o7uQ42hF3Z2TlT44pWkcGbcpVXgNISwRzMKs
+         tqFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXU47oa21/U4sy9w+bcNRZjtheVuoYwfpHF0YSkC7/XRZqnkRSnha5DX1av9secnutHno1NLBSswbEBH+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3qoQep46iXjru/q0ZSEZj39lPLzEUoU0ploYry9xw6cki9cFc
+	b80EsLRg1RCmCJZ1E3eR76hTjgBMMW0AouTnncGk8NbuE5z5g1b4UnYVDpXUe6hK5bN57djoO0X
+	q2W5jvuQh2iAqI5Dmwt3BWKLIBUNpH64pNPRr
+X-Google-Smtp-Source: AGHT+IHM6SgvakHOzfMHe+tK8akdryo1YChetAtJK61+k9hGwygT6I8t9ITw0MGJ7Ss0gI7UGwKq/hQASSlBC+NDQfM=
+X-Received: by 2002:a05:6808:3198:b0:3e6:92:ea86 with SMTP id
+ 5614622812f47-3e60092efc6mr1054575b6e.20.1729189316559; Thu, 17 Oct 2024
+ 11:21:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: kernel-janitors@vger.kernel.org, cocci@inria.fr,
- Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Herbert Xu <herbert@gondor.apana.org.au>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: =?UTF-8?Q?=5BRFC=5D_Growing_usage_of_the_attribute_=E2=80=9C=5F=5Ff?=
- =?UTF-8?B?cmVl4oCdPw==?=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:fOqmabauarM4Mm0Kro7lXPvx52ESGm/sJk6b1D08p6JdQW/nbQv
- UVgShpEpzfIYu/mwL9TtDcPXwyr0eE3HOG9odyw+wdkeca+biwkLt1xZwqIEWcIOpz+C3ls
- Bd2dnBF/Q5KwQOzYbKwgMK3LefW3AFmVzTrJ5wyjAq/bJc4VyLhz/3zBscOUNUgnMjpOeHg
- FNAyA8c87vZVpeiDxVDiw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FaRCpcyoAOM=;Hogbr8WehlRKd2Tt28sGNg1TOPN
- z3I0tejqAhGQ0fMHh/WoQqRAxLHh+j9ICftflvaGSMftdIYbW83ZbW9qQi1jeYzfEt95jUBee
- fvS10OpVhies0Yzuia6qoGiOi4l7cXhfOKL1Y5gIq9cgEePXh1GxeySvEdsm+fGXZGnqnX84D
- tlMUa0esT0dt1o4TZSgRKG/iIggjcePrQlgscH1hlMNG0X2zmVuwCcpBDVePn1jWJCOTsUdA2
- KfjLpQ6tPXyVMBSC3nbYJc1g5+kZ7yXPwgO+BdwUI3FCPEFe+8pZ3VZCZnJ5uHmaWB0uua0Sv
- thjMb9jbfXVpDbkTyZwyKI7akeh96sIvJAojahvq+9B5e0tQ32NCasVSDBULIGJzxZJ4qJnIe
- qL8/2Qv909gU0AomvEhoBEgwZEdVkme4mjTLt+VZusFJzJZsq/kAqNpbkQ4s3Yf1oZcN8sS2N
- FGDEQO5Bq04aVrL9DPnOYwCje+JyzvQi990vVSOeaDJXOkqdv6Ga1/7Rl3elaOCQ19pamQ1wN
- GvFs8KN4ch98dJAShcg1fx0N8kBsJgqXjWQYALFWVvXkwaRHSKKtPrwB/podvAqIOhwvNwie+
- yqErxLrU/uwX7E0KNl4b3ieKhQ9GxjYh8u7jIN1w10Cp4J0yAcvkjGQNj1LqUwpqTKwfIQ4Iz
- uEgQ6Yo6xztxcciir2EeMiFicPv3uTO1LZJCTsq1iXwGyccHM413IuWCJx0grQtBaWgG9bxQE
- AqcHlMKWN8Pe8Xi+gB5yhuvY0KwbjTrle4f3MtgCEs/zD/jr2KDElfOtPOZ04kCLXp+bKjOz+
- Wj2oZBs71tN47QhJTM+6WAPA==
+References: <20241014221231.832959-1-weixugc@google.com> <CAOUHufb2nJ4-qEWrS_d0X_8FbLKR-+=OC3yNh1ExthKXiYYKHQ@mail.gmail.com>
+ <20241016155550.9ff2ab4625c7f19b6be8b7e1@linux-foundation.org>
+In-Reply-To: <20241016155550.9ff2ab4625c7f19b6be8b7e1@linux-foundation.org>
+From: Wei Xu <weixugc@google.com>
+Date: Thu, 17 Oct 2024 11:21:43 -0700
+Message-ID: <CAAPL-u_bzGmB3DkTKZqeCbtiPkuZVsmLFMbN+zCojWsYtkBUNg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm/mglru: reset page lru tier bits when activating
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yu Zhao <yuzhao@google.com>, Brian Geffon <bgeffon@google.com>, 
+	Jan Alexander Steffens <heftig@archlinux.org>, Suleiman Souhlal <suleiman@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGVsbG8sDQoNClRoZSB1c2FnZSBvZiB0aGUgYXR0cmlidXRlIOKAnF9fZnJlZeKAnSBpcyBldm9s
-dmluZyBzaW5jZSBpdCBiZWNhbWUgc3VwcG9ydGVkDQpmb3Igc29tZSBwcm9ncmFtbWluZyBpbnRl
-cmZhY2VzIGJ5IGNvbnRyaWJ1dGlvbnMgb2YgUGV0ZXIgWmlqbHN0cmENCm9uIDIwMjMtMDUtMjYu
-DQpTZWUgYWxzbyB0aGUgY29tbWl0IDU0ZGE2YTA5MjQzMTFjN2NmNTAxNTUzMzk5MWU0NGZiOGVi
-MTI3NzMgKCJsb2NraW5nOg0KSW50cm9kdWNlIF9fY2xlYW51cCgpIGJhc2VkIGluZnJhc3RydWN0
-dXJlIikuDQoNCkkgd291bGQgbGlrZSB0byBwcmVzZW50IGEgY29ycmVzcG9uZGluZyByZXN1bHQg
-d2hpY2ggY2FuIGJlIGRldGVybWluZWQNCmFsc28gYnkgdGhlIG1lYW5zIG9mIHRoZSBzZW1hbnRp
-YyBwYXRjaCBsYW5ndWFnZSAoQ29jY2luZWxsZSkNCmJhc2VkIG9uIHNvdXJjZSBjb2RlIG9mIHRo
-ZSBzb2Z0d2FyZSDigJxMaW51eCBuZXh0LTIwMjQxMDE34oCdLg0KDQrilZTilZDilZDilZDilZDi
-lZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDi
-laTilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZcNCuKVkSAgICAgIHZhcmlhbnQg
-ICAgICAgICAg4pSCIGluY2lkZW5jZSDilZENCuKVoOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKV
-kOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVquKVkOKVkOKVkOKV
-kOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVow0K4pWRIGtmcmVlICAgICAgICAgICAgICAgICDilIIg
-ICAgMjQzICAgIOKVkQ0K4pWRIGRldmljZV9ub2RlICAgICAgICAgICDilIIgICAgOTQgICAgIOKV
-kQ0K4pWRIGZ3bm9kZV9oYW5kbGUgICAgICAgICDilIIgICAgOSAgICAgIOKVkQ0K4pWRIHFjb21f
-dHptZW0gICAgICAgICAgICDilIIgICAgOSAgICAgIOKVkQ0K4pWRIGdwaW9fZGV2aWNlX3B1dCAg
-ICAgICDilIIgICAgNyAgICAgIOKVkQ0K4pWRIGt2ZnJlZSAgICAgICAgICAgICAgICDilIIgICAg
-NyAgICAgIOKVkQ0K4pWRIGJpdG1hcCAgICAgICAgICAgICAgICDilIIgICAgNiAgICAgIOKVkQ0K
-4pWRIHB1dF9kZXZpY2UgICAgICAgICAgICDilIIgICAgNiAgICAgIOKVkQ0K4pWRIHB1dF9jeGxf
-cm9vdCAgICAgICAgICDilIIgICAgNSAgICAgIOKVkQ0K4pWRIGZyZWVfcGVyZl94YSAgICAgICAg
-ICDilIIgICAgNCAgICAgIOKVkQ0K4pWRIHBjaV9kZXZfcHV0ICAgICAgICAgICDilIIgICAgMyAg
-ICAgIOKVkQ0K4pWRIHB1dF9jeGxfcG9ydCAgICAgICAgICDilIIgICAgMyAgICAgIOKVkQ0K4pWR
-IGtmcmVlX3NlbnNpdGl2ZSAgICAgICDilIIgICAgMiAgICAgIOKVkQ0K4pWRIHNuZF9jYXJkX3Vu
-cmVmICAgICAgICDilIIgICAgMiAgICAgIOKVkQ0K4pWRIHg1MDlfZnJlZV9jZXJ0aWZpY2F0ZSDi
-lIIgICAgMiAgICAgIOKVkQ0K4pWRIGNsZWFudXBfZGF4ICAgICAgICAgICDilIIgICAgMSAgICAg
-IOKVkQ0K4pWRIGRlbF9jeGxfcmVzb3VyY2UgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGRz
-bWFzICAgICAgICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGZpcm13YXJlICAgICAg
-ICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGZwdXQgICAgICAgICAgICAgICAgICDilIIg
-ICAgMSAgICAgIOKVkQ0K4pWRIGZyZWVfY21kX21lbSAgICAgICAgICDilIIgICAgMSAgICAgIOKV
-kQ0K4pWRIGZyZWVfY21kcyAgICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHBzdG9y
-ZV9pcHV0ICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHBzdG9yZV9wcml2YXRlICAg
-ICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHB1dF9jeGxyZCAgICAgICAgICAgICDilIIgICAg
-MSAgICAgIOKVkQ0K4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
-4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWn4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
-4pWQ4pWQ4pWdDQoNCg0KSG93IHdpbGwgZGV2ZWxvcG1lbnQgaW50ZXJlc3RzIGV2b2x2ZSBmdXJ0
-aGVyPw0KDQpSZWdhcmRzLA0KTWFya3VzDQo=
+On Wed, Oct 16, 2024 at 3:55=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Tue, 15 Oct 2024 22:55:23 -0600 Yu Zhao <yuzhao@google.com> wrote:
+>
+> > > @@ -257,7 +258,9 @@ static inline bool lru_gen_add_folio(struct lruve=
+c *lruvec, struct folio *folio,
+> > >         gen =3D lru_gen_from_seq(seq);
+> > >         flags =3D (gen + 1UL) << LRU_GEN_PGOFF;
+> > >         /* see the comment on MIN_NR_GENS about PG_active */
+> > > -       set_mask_bits(&folio->flags, LRU_GEN_MASK | BIT(PG_active), f=
+lags);
+> > > +       mask =3D LRU_GEN_MASK | BIT(PG_active);
+> > > +       mask |=3D folio_test_active(folio) ? (LRU_REFS_MASK | LRU_REF=
+S_FLAGS) : 0;
+> >
+> > We shouldn't clear PG_workingset here because it can affect PSI
+> > accounting, if the activation is due to workingset refault.
+> >
+
+Good point. I have addressed this in the v2 patch.
+
+> > Also, nit:
+> >   mask =3D LRU_GEN_MASK;
+> >   if (folio_test_active(folio))
+> >     mask |=3D LRU_REFS_MASK | BIT(PG_active) | BIT(PG_referenced);
+> >
+>
+> Thanks, I'll drop this version of this patch.
+>
+> When resending, please include a full description of the userspace-visibl=
+e
+> effects of the original flaw, thanks.
+
+I have sent out a v2 patch, which includes a description as suggested.
 
