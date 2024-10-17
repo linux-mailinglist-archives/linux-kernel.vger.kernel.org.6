@@ -1,189 +1,193 @@
-Return-Path: <linux-kernel+bounces-369407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A8D9A1CE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:17:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE799A1CF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09EE6B24155
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402031C2550B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3005D1D5AC9;
-	Thu, 17 Oct 2024 08:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E891D0DF7;
+	Thu, 17 Oct 2024 08:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="TMEq17bF"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lhyulja4"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E3242056;
-	Thu, 17 Oct 2024 08:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1F01C3F1C;
+	Thu, 17 Oct 2024 08:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152944; cv=none; b=Caxdv3VoRgNAercrHXE30df/nfhicSPIR2TPBTMsdWhYjNgggDaWZhM9OwETkuWaJp73nMIVecYBsf2hqZRfivRYawKR3YDxPMxqfBxKOzm6mKyN2qyzeXGB4ZsZgfsbD++SuQQcaLzMpqYn6NzDyYFQ57ifjwKOF/DezRjx5xI=
+	t=1729153011; cv=none; b=LOdmjWfa20elUf4S3IyR3qt6EnVYZuuqkMoMmHMokqH76/aTbQeNAkFoCGJMfVYxEktq2tdhs7N3HJr/8DE8+tIpKSEV1JBMcNYEds1+Ga8ivJYBZjXSfy+FElWHtMBqVBjbpxNml9uMHUF3ogwgReXXHeevCxUjNdeua2rk4yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152944; c=relaxed/simple;
-	bh=G6hNOVeDggqQbVNUc0/wip1gX8AR9sqCbjIxljveeV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A7RmVfgjcHl3CFhcmIsP6M7B0cYj5tqnzd5nf+zjWSgqxc0FlI3Mcn/8doN58BxgvxDBzjg3rFZLJv8bKTQbFUDsM3XVpH+sc1V0AeqNITBCxvTExK2u/p+JNnIqeQxpCtvuWPcrv92eCdnb11wGpgWFMf+oh+hCmAuB93tO13g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=TMEq17bF; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: fb55b6b68c5f11efb88477ffae1fc7a5-20241017
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=PB5WhQujeElFpl56LXFf3cDTX5MtznAh+J+4T0I+trg=;
-	b=TMEq17bF1nBaefJOAFQXpHGpHQlT/ttuFUD1zuqdA7N9VjSyXm2u3+IArrmLmwSD843jncwcRetX/K8vYQZ0qUxuKp5lhrtbOSlgXpHU1QBDcQ1jCanKKyrprce1tbtnOsKDWNc6QNXJnyG3B2i+v3+2GOrmzz1A1CGsuZYy2MY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:bdd200df-a6db-4ee4-b6f8-607b433bfaa4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:64be6465-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
-	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: fb55b6b68c5f11efb88477ffae1fc7a5-20241017
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1576536991; Thu, 17 Oct 2024 16:15:33 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 17 Oct 2024 16:15:32 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Thu, 17 Oct 2024 16:15:32 +0800
-Message-ID: <433295fe-8d34-af8b-f6bf-be1953b6e479@mediatek.com>
-Date: Thu, 17 Oct 2024 16:15:30 +0800
+	s=arc-20240116; t=1729153011; c=relaxed/simple;
+	bh=d90PHQSeAh3+rIYCUoOl/q337T76O+cbg+e6ybgRxeM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sTU4uD2gQD4xvN0RFMb5YyziurdJTRpMwoenPfcYCbv+DNW1uqsBB/vgAG4JamPt3uFF7PeB84LxKvcfHzNqfOe2KZdwPyCO5kadLS/4+IKLTj/dKoWK1ShbBb7zB87KVRj8hI4jPhlBbFv5YokFtgsyREIsU6NgMsCCXLsR1uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lhyulja4; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cbca51687so7246275ad.1;
+        Thu, 17 Oct 2024 01:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729153009; x=1729757809; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Bm4jnKa4F9F0RZdsYRUP1p+4Ch47WjbmZE4eaTvz4k=;
+        b=Lhyulja42kpwNY0aREKYAttQmUN57/R94AyeAq+QxhPc14lZkskI8Rv6Lp8vHevlB7
+         STnSVX/Ntx4T13QRlEQMe8PljUsv5gsi78S7Z51Zmwc8hzgVu1LzC+nJF1G66sSro0ZH
+         tfpvYTe9rP4+tKZc3+JBDyfRtN7EL+d67vSoJUzcAKcfTGlQMPDlEUTEnDoOVQowu0C1
+         d2+sBgdUQaTJ7uX3TqJ9iWPFs3gB3Yot8UTQeUnT9HXUoYNg7MBK2SWhenqNEXlWRcI7
+         n4YRfd7MI1FTObl3+yI87TPHKR+/WYB9QKK2F5jfmrVJoFlQbWcyh4Vza+RNdA6wz8qq
+         8L/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729153009; x=1729757809;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9Bm4jnKa4F9F0RZdsYRUP1p+4Ch47WjbmZE4eaTvz4k=;
+        b=n+CL8DZ8zbPm6xESDFWpUnIAqwVlA4yCKeat/CeAIBFW6/hW9lwUuuFyn2BjUE5JYq
+         ypXHxXOR9RCWnuE2pUJduUFgZqB6P/s5RViw3zKX7G3NzpuFGKmaZIXkswdyGVqgeadc
+         KGgHPNpSH3gFBrS4HremJFms8JcA9JDZp+u6pSjYTmUo0zdxA4yn2qT06id2yGp6VT6C
+         ek8eyM1AIz3u4CyAqhdLDX0GtlmeLmXdzAnwpGJQc9YhI6co20NqXr7XIu7g2zAO+7r9
+         lVszu/ILXD8z97Qfw3RTO8z1B11qrxBql+HRw7NORiGwhCyXl2WE7E99hY73ebKWJItN
+         CgsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHRuqZFFxoc5rRn6YDBShCl2i8MQX2DSrAi+Fw6Q1E0pd6+vUjAYjTpAlWhj+oH0jc3pVOl51qg2COB5o=@vger.kernel.org, AJvYcCWUawUzD0uZ9f38T/z5OsFxq3vuFTSmhZRm/i2X59bV29vEHLuOlTN3l+atwxTT/asNCmF0/WT7Q8stO/UsDN5AEFbNyQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ7gHxFmMSkJqlsXZYCEmJ3WWEEiP4hbWZnQokkoeG+g+HA89C
+	QCG+3iTgyaNFVLZQeaNOxj0KrOFoZAmG0BkiY+CWKAHf19Rcaedt
+X-Google-Smtp-Source: AGHT+IHhRobSHaH53eJJuZZCL2A+Cv/16jd21ueCB3B5xPAkX1wy2enBiGkK5Ap/kB0Tf/GbqoMeog==
+X-Received: by 2002:a17:902:ce87:b0:20c:8b10:9660 with SMTP id d9443c01a7336-20cbb2845dcmr299010205ad.44.1729153008847;
+        Thu, 17 Oct 2024 01:16:48 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d419sm39816725ad.93.2024.10.17.01.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 01:16:48 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: W_Armin@gmx.de,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v6 4/5] alienware-wmi: added autodetect_thermal_profile for devices with quirk_unknown
+Date: Thu, 17 Oct 2024 05:16:33 -0300
+Message-ID: <20241017081631.127333-3-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241017081211.126214-2-kuurtb@gmail.com>
+References: <20241017081211.126214-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] pinctrl: mediatek: paris: Revert "Rework support for
- PIN_CONFIG_{INPUT,OUTPUT}_ENABLE"
-Content-Language: en-US
-To: Bo Ye <bo.ye@mediatek.com>, Sean Wang <sean.wang@kernel.org>, Linus
- Walleij <linus.walleij@linaro.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <Jades.shih@mediatek.com>,
-	<ivan.tseng@mediatek.com>
-CC: Yongdong Zhang <yongdong.zhang@mediatek.com>, Xiujuan Tan
-	<xiujuan.tan@mediatek.com>, Browse Zhang <browse.zhang@mediatek.com>, Light
- Hsieh <light.hsieh@mediatek.com>, Evan Cao <ot_evan.cao@mediatek.com>,
-	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241017075522.178337-1-bo.ye@mediatek.com>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20241017075522.178337-1-bo.ye@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Added autodetect_thermal_profile for devices with quirk_unknown.
+Autodetection is done through basic conditions most devices with WMAX's
+thermal interface meet. Function exits returning 0 in case of errors.
 
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 
-On 10/17/24 15:55, Bo Ye wrote:
-> [This reverts commit c5d3b64c568a344e998830e0e94a7c04e372f89b.]
-> 
-> For MTK HW,
-> 1. to enable GPIO input direction: set DIR=0, IES=1
-> 2. to enable GPIO output direction: set DIR=1, and set DO=1 to output high, set DO=0 to out low
-> 
-> The PIN_CONFIG_INPUT/PIN_CONFIG_OUTPUT/PIN_CONFIG_INPUT_ENABLE/PIN_CONFIG_OUTPUT_ENABLE shall
-> be implemented according to view of its purpose - set GPIO direction and output value (for
-> output only) according to specific HW design.
-> 
-> However, the reverted patch implement according to author's own explanation of IES without
-> understanding of MTK's HW. Such patch does not correctly set DIR/IES bit to control GPIO
-> direction on MTK's HW.
-> 
-> Signed-off-by: Light Hsieh <light.hsieh@mediatek.com>
-> Signed-off-by: Evan Cao <ot_evan.cao@mediatek.com>
-> Signed-off-by: Bo Ye <bo.ye@mediatek.com>
+---
+I apologize for the late inclusion. This feature can extend support to
+many devices without having to list them in alienware_quirks.
 
-The "Fixes:" tag is missing. Please add it.
+The conditions for selecting the automatic thermal profile are based on
+observations on a lot of *issues* in AWCC open source alternatives. 
 
-Besides, please update "MAINTAINERS" file with the correct owner.
+I observed only Dell's G-Series laptops have WMAX_THERMAL_BALANCED
+avaliable and when it's present none of the other profiles are
+avaliable, except for GMODE. When a model has USTT profiles avaliable
+usually they have all USTT profiles avaliable, except for cool on mostly
+Alienware devices.
 
-The Linux kernel is open source and anyone modify it.
-If the patch appears reasonable and has been tested, it usually
-will be accepted as long as there are no opposing review opinions.
+I made another implementation of this function, brute-forcing operation
+0x03 of Thermal_Information, which is the operation that varies the most
+across models. I found the implementation too cumbersome to include in
+this series, but it could potentially extend support of this driver to
+all posible devices with this interface automatically.
 
+Another possibility is just including every device I observed into
+alienware_quirks, which I can do but I want to know your opinion first.
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 42 +++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-> ---
->   drivers/pinctrl/mediatek/pinctrl-paris.c | 38 +++++++++++++++++-------
->   1 file changed, 27 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> index 87e958d827bf..a8af62e6f8ca 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> @@ -165,21 +165,20 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->   		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_SR, &ret);
->   		break;
->   	case PIN_CONFIG_INPUT_ENABLE:
-> -		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_IES, &ret);
-> -		if (!ret)
-> -			err = -EINVAL;
-> -		break;
-> -	case PIN_CONFIG_OUTPUT:
-> +	case PIN_CONFIG_OUTPUT_ENABLE:
->   		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &ret);
->   		if (err)
->   			break;
-> +		/*     CONFIG     Current direction return value
-> +		 * -------------  ----------------- ----------------------
-> +		 * OUTPUT_ENABLE       output       1 (= HW value)
-> +		 *                     input        0 (= HW value)
-> +		 * INPUT_ENABLE        output       0 (= reverse HW value)
-> +		 *                     input        1 (= reverse HW value)
-> +		 */
-> +		if (param == PIN_CONFIG_INPUT_ENABLE)
-> +			ret = !ret;
->   
-> -		if (!ret) {
-> -			err = -EINVAL;
-> -			break;
-> -		}
-> -
-> -		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DO, &ret);
->   		break;
->   	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
->   		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &ret);
-> @@ -284,9 +283,26 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
->   			break;
->   		err = hw->soc->bias_set_combo(hw, desc, 0, arg);
->   		break;
-> +	case PIN_CONFIG_OUTPUT_ENABLE:
-> +		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-> +				       MTK_DISABLE);
-> +		/* Keep set direction to consider the case that a GPIO pin
-> +		 *  does not have SMT control
-> +		 */
-> +		if (err != -ENOTSUPP)
-> +			break;
-> +
-> +		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DIR,
-> +				       MTK_OUTPUT);
-> +		break;
->   	case PIN_CONFIG_INPUT_ENABLE:
->   		/* regard all non-zero value as enable */
->   		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_IES, !!arg);
-> +		if (err)
-> +			break;
-> +
-> +		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DIR,
-> +				       MTK_INPUT);
->   		break;
->   	case PIN_CONFIG_SLEW_RATE:
->   		/* regard all non-zero value as enable */
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index 37a898273..a11ff4851 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -30,8 +30,11 @@
+ #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
+ #define WMAX_METHOD_THERMAL_INFORMATION	0x14
+ #define WMAX_METHOD_THERMAL_CONTROL	0x15
++#define WMAX_METHOD_GMODE_STATUS	0x25
+ 
++#define WMAX_ARG_GET_DEFAULT_PROF	0x0A
+ #define WMAX_ARG_GET_CURRENT_PROF	0x0B
++#define WMAX_ARG_GET_GMODE_STATUS	0x02
+ 
+ #define WMAX_FAILURE_CODE		0xFFFFFFFF
+ 
+@@ -968,6 +971,42 @@ static int thermal_profile_set_ustt(struct platform_profile_handler *pprof,
+ 	return 0;
+ }
+ 
++static int autodetect_thermal_profile(void)
++{
++	acpi_status status;
++	u32 in_args;
++	u32 default_profile;
++	u32 gmode;
++
++	in_args = WMAX_ARG_GET_DEFAULT_PROF;
++	status = alienware_wmax_command(&in_args, sizeof(in_args),
++					WMAX_METHOD_THERMAL_INFORMATION, &default_profile);
++
++	if (ACPI_FAILURE(status))
++		return 0;
++
++	in_args = WMAX_ARG_GET_GMODE_STATUS;
++	status = alienware_wmax_command(&in_args, sizeof(in_args),
++					WMAX_METHOD_GMODE_STATUS, &gmode);
++
++	if (ACPI_FAILURE(status))
++		return 0;
++
++	if (default_profile == WMAX_THERMAL_BALANCED && gmode == 1) {
++		quirks->thermal = WMAX_THERMAL_TABLE_SIMPLE;
++		quirks->gmode = 1;
++		return 0;
++	}
++
++	if (default_profile == WMAX_THERMAL_USTT_BALANCED)
++		quirks->thermal = WMAX_THERMAL_TABLE_USTT;
++
++	if (gmode == 0 || gmode == 1)
++		quirks->gmode = 1;
++
++	return 0;
++}
++
+ static int create_thermal_profile(void)
+ {
+ 	pp_handler.profile_get = thermal_profile_get;
+@@ -1050,6 +1089,9 @@ static int __init alienware_wmi_init(void)
+ 			goto fail_prep_deepsleep;
+ 	}
+ 
++	if (interface == WMAX && quirks == &quirk_unknown)
++		autodetect_thermal_profile();
++
+ 	if (quirks->thermal > 0) {
+ 		ret = create_thermal_profile();
+ 		if (ret)
+-- 
+2.47.0
 
-Best regards,
-Macpaul Lin
 
