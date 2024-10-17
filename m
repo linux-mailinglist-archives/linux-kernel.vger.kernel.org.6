@@ -1,190 +1,90 @@
-Return-Path: <linux-kernel+bounces-369886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D408A9A23FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:36:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F5C9A2410
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D211F220AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:36:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DBC928C443
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1178F1DE3A9;
-	Thu, 17 Oct 2024 13:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6991DE2DE;
+	Thu, 17 Oct 2024 13:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btu2kLx7"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MSKdg10T"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFD11D88AD;
-	Thu, 17 Oct 2024 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ABF1DE2DC
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729172154; cv=none; b=CfhHzGLxoWDtv3Xjwo+d+o+QcuaIRaDikUF6e0dlbsgPp1tTGHX/8vzTOg8YB4lgB/A8O10xMCDHGF6kAcnXwIpdHtzrvi6hhEX4qEgfyx25e+zwQon6oMAOMenuyV7TrFKbuFBIH2gAQNjgl809OpyRMDZOk6I0JbwD5hY3OWs=
+	t=1729172214; cv=none; b=HibxylIRjnhLxTAut+dq73ll299ZAL+D0nSkf9HkHNY6G9ElE6E2B9iWX0X6NnkIKqrLSkQjfK4+BfgjXR7lYJSI9OTwnOctIVhKJbSnr1O0N3X8K8WljAMuVVQgrsuRl/QFg2aRQujoiyx23lHAVuF3FTk/poEfR/b9TCafMSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729172154; c=relaxed/simple;
-	bh=+r65+w1nVpxOTrFrf5c8bqIK0FWAzXBCyFXQT/ceMIc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=WxZ63lzotZZ02sYtT0M+nuNg5SIC+FfM6J1eSb7ucAWaf4sHAKeYAeW14K5Mqn1JJRh/a4iWET7LBiqyC1ZK+kVWrxPExXiZc3tnAPEO4RJJ9uXL+kVdzFNrV1iLt+a4dEACleTStgv8fveyyIHNl+MDuJoDTqH8TzxcrGinqm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=btu2kLx7; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5eb858c4d20so18289eaf.1;
-        Thu, 17 Oct 2024 06:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729172151; x=1729776951; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZMuuUkAY9PCNIlorKrSdPeEvdmOXXkn5HiHzeIKVJfY=;
-        b=btu2kLx7vx8UjSfHGu7lcDI+AqZKSNq2XDGKNdxpFO0/yfQNrAMyHE+4+geuuULmT+
-         FgLyXTnX62+Zqk0eltF2l8UOVFpHu7TZUVAG7Yw5W9JRvHoJpBirMbfUGnNkw5XpsEa/
-         EYPf8n8/q+p2J3vknD4deoTsWUivz1PhKvWHbXlr16LO6DoQfXkLv3GdZHqUJ6Px9TIM
-         yf90zA95W7m+Vw8gCq/Svb3hTsMR8T1RjJ/rlnDa+32OPe1jcZec+pqyY8y4Xyb7psrt
-         tS9ERmfnlVMvdfC1rtlnxpuhMR6CVBl3MAUPswYdqMANAKXtxnzfSRZgeqocJ0Ylb8gG
-         bYGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729172151; x=1729776951;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZMuuUkAY9PCNIlorKrSdPeEvdmOXXkn5HiHzeIKVJfY=;
-        b=Q0OdI8CZFAmfQJk52+gTapNjVuhN7yNSSy1pmSnCaIOOAocUBeVBDR16zkDosV3+HL
-         JsA07EB8/W3ou2KRQ1n0H7RjG3smELLliAWCNGBBBKqZjv9aG6lSY8+zss52I3WpY9hG
-         lWLMeL5OpkVfjW/6lL6KDEGA29ZCmHb66Zj7ubZBeCIW1MypbN1HxCE99tBTZe/RTy4j
-         vyq0gweseLF2nvun4KBr5rF8JTVRExQkwclcSGw6mgZCilrYW08jmka38b2FHdusVA8l
-         q4nY0kUWUYUmHqnipjRUvc8y6McbqvS6Hy3k5hEs64zybrQnuqeMjuj9wnX3UdtZ0op5
-         yPsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIXZQRCIrgdPBYeOKMJN0BFTNvFQ7WdTfsnEUdMA68chXNZy7jYD67TIQGqgrYHkX1oFuNjg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWqj50YU4bYj2LlUHUCFK9JDq7ybzzklhNgA1CewYDPQ+Xh9h+
-	KAKk1k7RlifjCxb8wAv0rOnc3OBJlWma4B0mbkBZGaK3RBdcSiHK/uhrpNfM
-X-Google-Smtp-Source: AGHT+IGHOyvUp1rw4yxiA7jGCnAWxfE/5/IXKiKSmuau8z4tW79E0bKJEtzzhh/a35H6caHwdwF7eQ==
-X-Received: by 2002:a05:6358:9387:b0:1c0:ce92:9090 with SMTP id e5c5f4694b2df-1c340de45b6mr644002055d.28.1729172151066;
-        Thu, 17 Oct 2024 06:35:51 -0700 (PDT)
-Received: from localhost.localdomain ([4.15.194.220])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4608fc783cesm16910861cf.32.2024.10.17.06.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 06:35:49 -0700 (PDT)
-From: Vimal Agrawal <avimalin@gmail.com>
-X-Google-Original-From: Vimal Agrawal <vimal.agrawal@sophos.com>
-To: linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	quic_jjohnson@quicinc.com,
-	dan.carpenter@linaro.org
-Cc: avimalin@gmail.com,
-	vimal.agrawal@sophos.com,
-	stable@vger.kernel.org
-Subject: [PATCH v4 1/2] misc: misc_minor_alloc to use ida for all dynamic/misc dynamic minors
-Date: Thu, 17 Oct 2024 13:35:32 +0000
-Message-Id: <20241017133532.94509-1-vimal.agrawal@sophos.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <2024101722-uncharted-wages-5759@gregkh>
-References: <2024101722-uncharted-wages-5759@gregkh>
+	s=arc-20240116; t=1729172214; c=relaxed/simple;
+	bh=SVNNeOOOE6kU3kap2hv3+VtkDF0BM5c8lDJmBS++fM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b4vJJI5Te5XCWshKtb8ypM08kGI+vZaKvntsmWb+XinL2POnI6rqi7LYfmbXpv4ZRI1gLYJY23NplU4lS/L8rl71YgOKxi2pTrnW98A0CKxbvHI2FLwe6ipx52STe6z3GKZGOrxDQGsA2nJ7KGnjn3lkoRnnGy0ZpVUSTmZzC0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MSKdg10T; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F5BE669;
+	Thu, 17 Oct 2024 15:34:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729172100;
+	bh=SVNNeOOOE6kU3kap2hv3+VtkDF0BM5c8lDJmBS++fM8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MSKdg10TcYx64RDHpow2kcNdvSgP8JIBXnzCSwsSDBz9LnJV3f8zf/jiwVvZ4uFcK
+	 7HxIulJ2PJjIpNApNdIj5LtrcF4owC0l5MO+B+Tto8Pps51LKQWfq4Oto6JZKQud+w
+	 PhsiQC7ieHXCUL8KwJDD0QZZSKFSZOxiDq/4u/YQ=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	kernel-list@raspberrypi.com,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH 0/6] staging: vchiq: Further simplify bulk transfer
+Date: Thu, 17 Oct 2024 19:06:23 +0530
+Message-ID: <20241017133629.216672-1-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-misc_minor_alloc was allocating id using ida for minor only in case of
-MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
-using ida_free causing a mismatch and following warn:
-> > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
-> > ida_free called for id=127 which is not allocated.
-> > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-...
-> > [<60941eb4>] ida_free+0x3e0/0x41f
-> > [<605ac993>] misc_minor_free+0x3e/0xbc
-> > [<605acb82>] misc_deregister+0x171/0x1b3
+This series aims at further simplifying the bulk transfer code paths.
+For each of the bulk transfer modes (blocking, nocallback, callback)
+this series tends to reduce the function parameters that are open-coded
+in the respective function signatures - helping with easy readability
+for the various bulk transfer code paths.
 
-misc_minor_alloc is changed to allocate id from ida for all minors
-falling in the range of dynamic/ misc dynamic minors
+Umang Jain (6):
+  staging: vchiq_core: Subsume 'offset' in struct vchiq_bulk
+  staging: vchiq_core: Simplify bulk data preparatory functions
+  staging: vc04_services: Simplify block bulk transfer code paths
+  staging: vc04_services: Simplify (no)callback bulk transfer code paths
+  staging: vchiq_core: Simplify bulk transfer queue message function
+  staging: vchiq_dev: Drop userdata local pointer
 
-Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
-Signed-off-by: Vimal Agrawal <avimalin@gmail.com>
-Cc: stable@vger.kernel.org
----
-v2: Added Fixes:
-    added missed case for static minor in misc_minor_alloc
-v3: Removed kunit changes as that will be added as second patch in this two patch series
-v4: Updated Signed-off-by: to match from:
+ .../interface/vchiq_arm/vchiq_arm.c           | 55 +++++++++----
+ .../interface/vchiq_arm/vchiq_core.c          | 81 +++++++++----------
+ .../interface/vchiq_arm/vchiq_core.h          |  9 +--
+ .../interface/vchiq_arm/vchiq_dev.c           | 30 ++++---
+ 4 files changed, 97 insertions(+), 78 deletions(-)
 
- drivers/char/misc.c | 39 ++++++++++++++++++++++++++++++---------
- 1 file changed, 30 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-index 541edc26ec89..2cf595d2e10b 100644
---- a/drivers/char/misc.c
-+++ b/drivers/char/misc.c
-@@ -63,16 +63,30 @@ static DEFINE_MUTEX(misc_mtx);
- #define DYNAMIC_MINORS 128 /* like dynamic majors */
- static DEFINE_IDA(misc_minors_ida);
- 
--static int misc_minor_alloc(void)
-+static int misc_minor_alloc(int minor)
- {
--	int ret;
--
--	ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
--	if (ret >= 0) {
--		ret = DYNAMIC_MINORS - ret - 1;
-+	int ret = 0;
-+
-+	if (minor == MISC_DYNAMIC_MINOR) {
-+		/* allocate free id */
-+		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
-+		if (ret >= 0) {
-+			ret = DYNAMIC_MINORS - ret - 1;
-+		} else {
-+			ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
-+					      MINORMASK, GFP_KERNEL);
-+		}
- 	} else {
--		ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
--				      MINORMASK, GFP_KERNEL);
-+		/* specific minor, check if it is in dynamic or misc dynamic range  */
-+		if (minor < DYNAMIC_MINORS) {
-+			minor = DYNAMIC_MINORS - minor - 1;
-+			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
-+		} else if (minor > MISC_DYNAMIC_MINOR) {
-+			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
-+		} else {
-+			/* case of non-dynamic minors, no need to allocate id */
-+			ret = 0;
-+		}
- 	}
- 	return ret;
- }
-@@ -219,7 +233,7 @@ int misc_register(struct miscdevice *misc)
- 	mutex_lock(&misc_mtx);
- 
- 	if (is_dynamic) {
--		int i = misc_minor_alloc();
-+		int i = misc_minor_alloc(misc->minor);
- 
- 		if (i < 0) {
- 			err = -EBUSY;
-@@ -228,6 +242,7 @@ int misc_register(struct miscdevice *misc)
- 		misc->minor = i;
- 	} else {
- 		struct miscdevice *c;
-+		int i;
- 
- 		list_for_each_entry(c, &misc_list, list) {
- 			if (c->minor == misc->minor) {
-@@ -235,6 +250,12 @@ int misc_register(struct miscdevice *misc)
- 				goto out;
- 			}
- 		}
-+
-+		i = misc_minor_alloc(misc->minor);
-+		if (i < 0) {
-+			err = -EBUSY;
-+			goto out;
-+		}
- 	}
- 
- 	dev = MKDEV(MISC_MAJOR, misc->minor);
 -- 
-2.17.1
+2.45.2
 
 
