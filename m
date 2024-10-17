@@ -1,249 +1,150 @@
-Return-Path: <linux-kernel+bounces-370124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC419A2824
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:11:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B9E9A2803
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E61FBB225A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AAA6284056
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7431DEFD9;
-	Thu, 17 Oct 2024 16:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83931DED4B;
+	Thu, 17 Oct 2024 16:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gtMErriz"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11022102.outbound.protection.outlook.com [40.93.195.102])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PShb2/MB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC5613B797;
-	Thu, 17 Oct 2024 16:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729181222; cv=fail; b=Ueh7YTBb/HkEowv2j++CfeA3eCLuNQj1UO9vIAp5fdPRuDXu9/HLyG1Aux2OcYaPsmKqjMSpKg3nMQgrE4I9vI5fYnQNuTUYlfXgbeJNIq391gefGyLiN0CCxvM2JyCgyr2jPQORE9fZoS5RjzfUG1dcq8/Ji0GfRBTz/Q3yt3k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729181222; c=relaxed/simple;
-	bh=0+XHxkoMmVS/rHkJ3ux+lyT5E0a+FnrBS0rHHJ1l1Y4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AhPlj21rxYdNJfJLRcNqerZ6w+MEChKiyUq95tWKg6yPPwC1ni4rD6ooxBsD77R7fG8nmRFjjUi/PPKMz/8mgnD+FouBWHN8/uqd/NoWLY1XDb427t9jj4V0iD9FeNSxfnE87kNnBRzrOtfrLl762Ab3regZOkY93cwvcjOLzpU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=gtMErriz; arc=fail smtp.client-ip=40.93.195.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FhmQEFayc6el0Ssc4XqeRXrEdreYBEqnJMTSFr3Hrp4B4W0brmPcITA8P2OjL8iM0iqmubQlh9oRDzCpOo2vpySVFa5/BkKX0q1CWwYdcN9IU2nsTiK/r5iPrbaCTJI/pdqD1H/Aep/wZ1nud+cD4pfhQiZQXXzRKSLneJAYDKl771AakjGXoRPqGRIqJZ6fVEUxrcI2277SEVOhjGBFEfNRb3VqjpidtLlwyzmLvXdEwBS21P6hWoCyVuksutmF2O+A8Smx5qrIcYFR28Xgsu6UI16xMiVLFPiIYKqZS6T0a8/Fo1Hs+LRrDJA60kN/zx9HnQpI2Csacarse8ed7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N7Z03+aD63JYRGZMo0p88/lhxyEIyGk/37vLV+nYUFA=;
- b=dNyFZMmkn8yOb+UOXck0WI5vjYBeyGhHGhztijtXkRbF7qa24qxX1RsGpqPYH5s98+0Eg/jpr/a4TJeoNXbnd2yDi4bEihQWzrU46EEFnZbeNG9zJ7yM/b77POwexTM12A/XghDCCFY0zkHAl+jVwpLr3qjgmXOK0nYZ/fmjuQYsXSdR3H4297nNdFf4Z5XnEyNrL08c1XvbaoIdxpPr1ehLJmFUtNkxAlV5K8DDfEMFdlfna8KtyghlzRdX4PjdPylXuPv68LhVqP+xuLrZwI/yDpd2l1biDyoPj+3SDfJT7Io/yoItSyZC4VVSbqtVOxUnP5WkFUrTgrhRXcKSYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N7Z03+aD63JYRGZMo0p88/lhxyEIyGk/37vLV+nYUFA=;
- b=gtMErriz8+wIhlm42APJed6LtefbVPkEd+R0oRKOhxr0fgoB2XBeliwzMJaRHiew980nN5OeokfQezcN8N2vY8OQZSxgTduCWKzCXNuS318jSQqPSWq67TaG80Fegjw6fIQpkhLP9yd8XS+kgcEOS0FaayKqpgXIRtdlUES5u+I=
-Received: from MW4PR21MB1859.namprd21.prod.outlook.com (2603:10b6:303:7f::6)
- by CH3PR21MB4471.namprd21.prod.outlook.com (2603:10b6:610:21a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.7; Thu, 17 Oct
- 2024 16:06:55 +0000
-Received: from MW4PR21MB1859.namprd21.prod.outlook.com
- ([fe80::a12d:cc9:6939:9559]) by MW4PR21MB1859.namprd21.prod.outlook.com
- ([fe80::a12d:cc9:6939:9559%4]) with mapi id 15.20.8093.000; Thu, 17 Oct 2024
- 16:06:55 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Simon Horman <horms@kernel.org>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, KY Srinivasan
-	<kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui
-	<decui@microsoft.com>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"stephen@networkplumber.org" <stephen@networkplumber.org>,
-	"davem@davemloft.net" <davem@davemloft.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH net,v2] hv_netvsc: Fix VF namespace also in synthetic NIC
- NETDEV_REGISTER event
-Thread-Topic: [PATCH net,v2] hv_netvsc: Fix VF namespace also in synthetic NIC
- NETDEV_REGISTER event
-Thread-Index: AQHbH+JLMJ4jzghu1EqUDt5WATv06LKLFyeAgAAFxbA=
-Date: Thu, 17 Oct 2024 16:06:55 +0000
-Message-ID:
- <MW4PR21MB1859765F7B3BCEA3989D577DCA472@MW4PR21MB1859.namprd21.prod.outlook.com>
-References: <1729093437-28674-1-git-send-email-haiyangz@microsoft.com>
- <20241017154433.GV1697@kernel.org>
-In-Reply-To: <20241017154433.GV1697@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=6c868a48-63fb-46b0-bede-de26ffc86064;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-10-17T16:05:11Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW4PR21MB1859:EE_|CH3PR21MB4471:EE_
-x-ms-office365-filtering-correlation-id: e5b8ce9a-a6ea-46da-c345-08dceec5b878
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?fm1L0Lw1i+LHQPYXOwQkmxT4KQr9d97YYpHCGoW3ohKLGgSu6wG4Du/M9mDt?=
- =?us-ascii?Q?QHUIJoF1ra/Ev31+ojteSN7Xh6jc2b0vvJpWvwTM/XeAWViEMKPM8lH5uA7M?=
- =?us-ascii?Q?UOksNg2vvwjr1vKQHTF3Ai7qhDDFALpll/+PeKfWdW+qHbXDpK30lswNZ5DH?=
- =?us-ascii?Q?1AbbgamSqLqGm+WA4zxjs0O8DxjqEZchCLZwhHOVMByermhUnNfjaY+YWrH/?=
- =?us-ascii?Q?nn2eSF3rbyiKmLBReX7aYwjHuTJMvEx7BCHkYg1H5pvv5MAXMRshBw8/jXHM?=
- =?us-ascii?Q?Jak/uMBxnwT1ndjeXm9Y2lm1VHOQXx4wWOb2kJFxmbFez3E9jfpOWClLBNZI?=
- =?us-ascii?Q?cxi4euDnoLH97aOl5Gi/JW816X/nQrjyFzkCq7Fr8cpC6+sBRcJyKA46hUr2?=
- =?us-ascii?Q?NFIRG/z9FM1Ba5i0DQMToJFTbF+IAWlsv59oqE+l6M+BSXcBMXWbylaRgLgY?=
- =?us-ascii?Q?EFzRzfbRkfOrzPXMnuZq0IzQGFcf3NeH6rS+Z5vtTYDUhX1saenF1NsHsffR?=
- =?us-ascii?Q?e59qZRjzbYJAqEhNMeex3NuMR3zJmq47JjjG7OQ0f1cS+yon5bnC+p5r+ZB3?=
- =?us-ascii?Q?UuJ4yjLezlLHdNfX6On5zfQhWBpzvU3/yC9+Llc3/UeCQ2P3drv2B50iv4BE?=
- =?us-ascii?Q?DLRaeGPuxoMnF656GNY4L31huWfHS4GQSIrPZN1GP5O7ujehir0Ci4J78CIR?=
- =?us-ascii?Q?B4uRaNjKV+iKxpYt7fLMUu1TdwOJg5lwUVA9JU7EqILd93QNXxgBi1g02W6n?=
- =?us-ascii?Q?j5FOHtKFAX67d/TruLXIWNVaDMLXbLmQHylX8riFY/D83qNcMQ8qXH944/hB?=
- =?us-ascii?Q?IZAWHO3nQkFXBpPt2NThtnrP57wqlNxmUID1tZ6yjFtXUkWqOw0laYVCJ0Is?=
- =?us-ascii?Q?NHICPTX493GzUeLWpSG4bA1qSYpFlcOmfuwGVlwWWi1MefXYiZOZc1RizJNZ?=
- =?us-ascii?Q?orF8uG57EGJ6fyNQ5J88MXCaMZL2Lh6UbRNljI8rO9eQ0BKpNKj6XO+mE93P?=
- =?us-ascii?Q?z0oMwdBDdDNsDiBGNl0Bpq67Fvh9Erfx6FYF34K38OjSMoQccQAaHe8dgUSH?=
- =?us-ascii?Q?unNPMcdmONHLbFfAF3WuOnN7lPINIur63qOFuUwsYGC3GFpEmaRlMLg7DX0f?=
- =?us-ascii?Q?6Izl7+AiwcLcxsIUYBD94ud5x8sR21O0aNV33estQj8inCosQEROX0KJDhS5?=
- =?us-ascii?Q?H2sLR9CJJSEJPFq3/k8IzO+LR8yODvoCT5kZAlcfXww29AXe0+lvDP65ZQ/A?=
- =?us-ascii?Q?zuHrJSzhMbopzvQSEADj8QnAcFS9bmn0V8qZ4QSDbwNTeRQyiDs4WzDudJtl?=
- =?us-ascii?Q?/rGNSWO/+kz6jR8TuiVug3z9kwZcsDtK6tcKhKElNALzWoEma8TXi5wPryn4?=
- =?us-ascii?Q?2y207cg=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR21MB1859.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?lraJS95VTBvsfDXpP1yVWf/CFslUuTrQemDYlwe2e12nJQayl4YPgUikNcze?=
- =?us-ascii?Q?3QaVO4sdyS3D5LT5N9+cde2Ix0diUmXAuakfjKDn4D80041IVHrV2bjkb8M1?=
- =?us-ascii?Q?3Po3m/JAWeWGeOCXyosr6vkHmVym2JP92WmLio57cfoR4hHksYZrsrSew1cU?=
- =?us-ascii?Q?MGtyaXj/Ll7+kcnpuYmgDplTR2GxFaIVkF1gqYMJps7D9ZmEL8qJIUnLCwHe?=
- =?us-ascii?Q?q89zmaLKzCfqMaCKGxOVFaWC6ugArN9/wTP5G8/K5nZ3gtRFfNCq8d/M6iCy?=
- =?us-ascii?Q?mkljl83Y1OPlWXyPJTF6Ph0fl5sWXpUUgYfS09Wif/9psoXe3ypeK5AJAJ4O?=
- =?us-ascii?Q?DnRfUKV1YVDtkL4MLOW5tX98exs9Yw0LgJ3okcBwuXNT6zViJfltrehVYKki?=
- =?us-ascii?Q?PQs0zFejXjRfn0Rn0d1aQx8RO/6KpfAaEMmbpi76M/LTpBdCYnfcJId44r3g?=
- =?us-ascii?Q?LS5Bdi9vW+3rakjKRxOufYk5rJojUvAUNTuU4vagPqS3c+wnrUe6ADvoNJwz?=
- =?us-ascii?Q?/Y1LZKiKlajL3x5t56TqWwrIwbazh0MppqfInpaxTM7cyum2GFrbDgRXP4Gu?=
- =?us-ascii?Q?4248nuvWRVVpXwHDDY7kYTysczZ5OV1CoYTLQ1xNTD+kjdQQkKvEYgBZpul5?=
- =?us-ascii?Q?dZr0fDCvqQor3PApx4TB9lLoKPFsXvX5jtCrW+CjEf4dkAE96Smz2sF17ysU?=
- =?us-ascii?Q?CnoCsAMleHvcLMReFNwg4+Lb0T5Q14RN2Dh+2AdGPCvjSNHEcG5Lvuc9J7cb?=
- =?us-ascii?Q?hzDQuuYK+/VDtp3tCBRNVGCRJmE6nO073ZHgXW0f9hvNsmUDcMeZwk8DOBuG?=
- =?us-ascii?Q?b80cfU2L+cpXBoSwdGcBnAlVHGn2p6hZnFkwtvJaRK5HTrElMqXUCykUfe+5?=
- =?us-ascii?Q?Wifj+z7vFL4vfQMP980PRi+lTrFGxllByOVEBKLKB3CkmSDeyskYjl8PXQNT?=
- =?us-ascii?Q?whnLnvdcGr2soH5/tKahOM7518T4Sb5GzZvnajd9INA+DmPBdwugpgseZMSp?=
- =?us-ascii?Q?3nTqG7jIY2C7XGduyd3C5dd//aDSekcRuhr8kU5R/m4Ni4xZKu2JSFRvRHwJ?=
- =?us-ascii?Q?MrvWQnm0AOgLQYIAngieRnZnicYS3+v3Jbm47QbOHl7MQFplOhML1tmi9iZl?=
- =?us-ascii?Q?T2rwVRn7rWtQineINxPegnYcPkrLIXzkMzKNfF55KprKpcQKTOvJF8JeHM5g?=
- =?us-ascii?Q?SJNUh0f6vsk4u6Y8rHOqyMLBvOCyjO6mJ537a1KsTQjUrxs7u71sG4YQo5P6?=
- =?us-ascii?Q?nLASrOH0GaZU242VlXjrLI1LzyOJ1OtmmA1+ZDeXaezHIyRwtWnSxUfaS6Rg?=
- =?us-ascii?Q?8dO0zQpOjzikeYaPJM3yTPzIkMmG1NieOB77iw72fAnazynxPz/b8dZZwEYJ?=
- =?us-ascii?Q?9wz3zILdGeS0K17qcBP+e9rr3+oB6XchY+sRYsvuN/lTX1d8TBTGWeBlNix0?=
- =?us-ascii?Q?2fwtBI6HQovy1mwJosF0pgbFzF1LVmKnTas/qexfX7s52nZYTuuKk8h68fN+?=
- =?us-ascii?Q?Kl9RgQFq7zV0vmQgqxiTaLMridlQE5dR6Sf2ccZQv37JWQubDbLfWMeNaLgG?=
- =?us-ascii?Q?YTBwv+IiaaS3VNLBrZ7aG/xfb6lc3qa+XrYS/hmq?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564E01DE2A6
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729181370; cv=none; b=mWL3FneNQVwXgMbnmzUYtjCsN1ZmSKHVDnryOFEHooGkfK76Am10IQ33/vtY25UmPwZtLBvrdjDFoOblt/hUx6yDQZY5BW/dAk44ixI0SL8bAohXT+CFsqxDNTXSIM+9yEjImFy/NXIWvtAgOx4g6aI4ctDdMJDnBlxWSkpAUzs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729181370; c=relaxed/simple;
+	bh=XWK2CQKBoDnkFJt4/MwIKSAF02nWN2yyjN0bWXOENEc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NtbEE/xH0gLaXu+eRjEIxwxUST0HznxiCqdW7KWyuBLCnCi+vG9ysfew8l5h7D1RK9ncunlhcC0oSWwxTij1M9Kwr1YeHqxPTrpMy17H3TbX62FEQbqLfg4l5R4lPBV9dkgdaCJu83bouAHYxY4QC7yZXz0zDcBx5kYsZFmsmWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PShb2/MB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729181367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DkS5RbL+ncBye36HbvV2swXtYfvhlqwDI5lNtBAyr/g=;
+	b=PShb2/MBs6/0s1wdeq/Mnwawl9BXNs4Rxll2YImQHFyVgtDrnfoTYYn13FjrNPPC4vkEOV
+	A7YQv+6ORTOmNHQdMLkQ2dD6KKN+WszuyNxiQIsEfxgf37cvVhzH7GpG8Zzth7KgbxC4W9
+	h6A67UcEaReDoOAkcnujiTkY0C3wM1Y=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-s0RgOp0DOqyhL-pAZW8xSQ-1; Thu, 17 Oct 2024 12:09:26 -0400
+X-MC-Unique: s0RgOp0DOqyhL-pAZW8xSQ-1
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-716a7c1cd30so854072a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:09:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729181365; x=1729786165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DkS5RbL+ncBye36HbvV2swXtYfvhlqwDI5lNtBAyr/g=;
+        b=SIDquQ2/OOaR159CvJoWmY3anhl4PkzyDfav2pFNaebBI2fYxdkiZ34WNEwN9FaHpg
+         zyqYrVPUWjYZFdAZ4wbNW6v8cM3gGWK+SJXpLTX2eq+nDaOV2gEpflaQi69dGGoDwkG0
+         NCcjRie/yT7viUwDd9kmc3yziY+hE40bo15+MrVRhst6ipN3BAnYKonG0vrWmHG3T9TK
+         FSetmg7AqVkZ3fnVyx+ZwccIg0FwXAAjftaupcrMDEHs/YUDrZ/jrZB/Xc+bCO6JqddY
+         QkLJffrz39+y38jRQR2vErU/WwH1ScjA/bGCjlrSk+yeGhrMiffg5yTx7gJEQeOSVBNu
+         rwsw==
+X-Gm-Message-State: AOJu0Yzv5ZfD5T0Nm4GEY/qMHKGIM+4xtPP92NKKC6Az5OBpqjce+HdB
+	I+jUe1DnasqLFgGv1H4gU4+qZWTLvS+zg/sY64wZVuBAZQnuzzNOySeei46sYgN1aISRv8Q+KvL
+	4OtWC54U6WLwlueQ0BJ7QKNMiuAV+0C2ZkhHD7ZnPCTAf42kd9/ovchO5ruKmBQ==
+X-Received: by 2002:a05:6358:9490:b0:1c3:75c6:599a with SMTP id e5c5f4694b2df-1c3784bf6admr683541155d.21.1729181365634;
+        Thu, 17 Oct 2024 09:09:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfPycPZTZP+D3KLarN8Q1dwMVP6y29vgjcgbThfVJWEkcsbXkg/dm4qCNq6FkIFwCOC2vr1Q==
+X-Received: by 2002:a05:6358:9490:b0:1c3:75c6:599a with SMTP id e5c5f4694b2df-1c3784bf6admr683537955d.21.1729181365317;
+        Thu, 17 Oct 2024 09:09:25 -0700 (PDT)
+Received: from localhost.localdomain (2603-9001-3d00-5353-0000-0000-0000-14c1.inf6.spectrum.com. [2603:9001:3d00:5353::14c1])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-50d7b2a5a67sm881914e0c.42.2024.10.17.09.09.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 09:09:23 -0700 (PDT)
+From: Jennifer Berringer <jberring@redhat.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Jennifer Berringer <jberring@redhat.com>
+Subject: [PATCH 1/3] nvmem: core: improve range check for nvmem_cell_write()
+Date: Thu, 17 Oct 2024 12:09:02 -0400
+Message-ID: <20241017160904.2803663-1-jberring@redhat.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR21MB1859.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5b8ce9a-a6ea-46da-c345-08dceec5b878
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2024 16:06:55.0625
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Y7RmU+0atJ16tH8TGEeDSOWlegc5Pa4ay502ZcF0k9YWKbzlAXTsmxCw1vdNce1fN+/CqXrp7DEP0RAk6dk1EA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR21MB4471
+Content-Transfer-Encoding: 8bit
 
+When __nvmem_cell_entry_write() is called for an nvmem cell that does
+not need bit shifting, it requires that the len parameter exactly
+matches the nvmem cell size. However, when the nvmem cell has a nonzero
+bit_offset, it was skipping this check.
 
+Accepting values of len larger than the cell size results in
+nvmem_cell_prepare_write_buffer() trying to write past the end of a heap
+buffer that it allocates. This patch adds a check to avoid that problem
+and instead return -EINVAL when len is too large.
 
-> -----Original Message-----
-> From: Simon Horman <horms@kernel.org>
-> Sent: Thursday, October 17, 2024 11:45 AM
-> To: Haiyang Zhang <haiyangz@microsoft.com>
-> Cc: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org; KY Srinivasan
-> <kys@microsoft.com>; wei.liu@kernel.org; Dexuan Cui <decui@microsoft.com>=
-;
-> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
-> stephen@networkplumber.org; davem@davemloft.net; linux-
-> kernel@vger.kernel.org; stable@vger.kernel.org
-> Subject: Re: [PATCH net,v2] hv_netvsc: Fix VF namespace also in synthetic
-> NIC NETDEV_REGISTER event
->=20
-> On Wed, Oct 16, 2024 at 08:43:57AM -0700, Haiyang Zhang wrote:
-> > The existing code moves VF to the same namespace as the synthetic NIC
-> > during netvsc_register_vf(). But, if the synthetic device is moved to a
-> > new namespace after the VF registration, the VF won't be moved together=
-.
-> >
-> > To make the behavior more consistent, add a namespace check for
-> synthetic
-> > NIC's NETDEV_REGISTER event (generated during its move), and move the V=
-F
-> > if it is not in the same namespace.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: c0a41b887ce6 ("hv_netvsc: move VF to same namespace as netvsc
-> device")
-> > Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-> > Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-> > ---
-> > v2: Move my fix to synthetic NIC's NETDEV_REGISTER event as suggested b=
-y
-> Stephen.
-> >
-> > ---
-> >  drivers/net/hyperv/netvsc_drv.c | 29 +++++++++++++++++++++++++++++
-> >  1 file changed, 29 insertions(+)
-> >
-> > diff --git a/drivers/net/hyperv/netvsc_drv.c
-> b/drivers/net/hyperv/netvsc_drv.c
-> > index 153b97f8ec0d..54e98356ee93 100644
-> > --- a/drivers/net/hyperv/netvsc_drv.c
-> > +++ b/drivers/net/hyperv/netvsc_drv.c
-> > @@ -2798,6 +2798,30 @@ static struct  hv_driver netvsc_drv =3D {
-> >  	},
-> >  };
-> >
-> > +/* Set VF's namespace same as the synthetic NIC */
-> > +static void netvsc_event_set_vf_ns(struct net_device *ndev)
-> > +{
-> > +	struct net_device_context *ndev_ctx =3D netdev_priv(ndev);
-> > +	struct net_device *vf_netdev =3D rtnl_dereference(ndev_ctx-
-> >vf_netdev);
-> > +	int ret;
->=20
-> In Networking code it is preferred to arrange local variables in reverse
-> xmas tree order - longest line to shortest.
->=20
-> I believe that could be achieved as follows (completely untested!):
->=20
-> 	struct net_device_context *ndev_ctx =3D netdev_priv(ndev);
-> 	struct net_device *vf_netdev;
-> 	int ret;
->=20
-> 	vf_netdev =3D rtnl_dereference(ndev_ctx->vf_netdev);
-> 	if (!vf_netdev)
-> 		return;
->=20
-> With that addressed please feel free to add:
->=20
-> Reviewed-by: Simon Horman <horms@kernel.org>
+Rather than unconditionally checking that len exactly matches the nvmem
+cell size, allowing len to be smaller when bit shifts are involved may
+be helpful because some devices have nvmem cells that are less than 8
+bits but span two bytes, although no current devices or drivers that do
+this seem to rely on nvmem_cell_write(). This possibility can be handled
+by nvmem_cell_prepare_write_buffer() because it allocates an
+appropriately-sized heap buffer and avoids reading past the end of buf.
 
-Sure, I will update them to RCT order.
+Fixes: 69aba7948cbe ("nvmem: Add a simple NVMEM framework for consumers")
 
-Thanks,
-- Haiyang
+Signed-off-by: Jennifer Berringer <jberring@redhat.com>
+---
+ drivers/nvmem/core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 33ffa2aa4c11..74bf4d35a7a7 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -1767,8 +1767,7 @@ static int __nvmem_cell_entry_write(struct nvmem_cell_entry *cell, void *buf, si
+ 	struct nvmem_device *nvmem = cell->nvmem;
+ 	int rc;
+ 
+-	if (!nvmem || nvmem->read_only ||
+-	    (cell->bit_offset == 0 && len != cell->bytes))
++	if (!nvmem || nvmem->read_only)
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -1780,9 +1779,13 @@ static int __nvmem_cell_entry_write(struct nvmem_cell_entry *cell, void *buf, si
+ 		return -EINVAL;
+ 
+ 	if (cell->bit_offset || cell->nbits) {
++		if (len > cell->bytes)
++			return -EINVAL;
+ 		buf = nvmem_cell_prepare_write_buffer(cell, buf, len);
+ 		if (IS_ERR(buf))
+ 			return PTR_ERR(buf);
++	} else if (len != cell->bytes) {
++		return -EINVAL;
+ 	}
+ 
+ 	rc = nvmem_reg_write(nvmem, cell->offset, buf, cell->bytes);
+
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+-- 
+2.46.2
+
 
