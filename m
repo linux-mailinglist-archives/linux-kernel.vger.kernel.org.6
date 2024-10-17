@@ -1,146 +1,92 @@
-Return-Path: <linux-kernel+bounces-369950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885FF9A24CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:17:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F5E9A24D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1917CB237E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5361F22A5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF221DE4DF;
-	Thu, 17 Oct 2024 14:16:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A031DE4C3;
+	Thu, 17 Oct 2024 14:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tvv6Ppsr"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2D91DE2B2;
-	Thu, 17 Oct 2024 14:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777DD1DD0CE;
+	Thu, 17 Oct 2024 14:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729174617; cv=none; b=q3pR+DMNW4KBHwzDgcxnh8w/eZrac5sELevZFzGzSjB2acYbtBG59NsuRUMWG5sHnAoXxzgfyTCgZcqInSH14jtOYhuoLdatbE5mHv7s/SHJnHyZFFjJmKJ7ImESk068F/nNTSBOGN9J1UegNhYqxLERzFV+Ha6abAkRNVBNSr4=
+	t=1729174742; cv=none; b=kP1dN9C4ZRlsF48h/XK+ZZOyEJBl4/leAYYZQU/N8x0A/zzFN+3wsT1dEFbcmNs6Nfku+m7zVofl0OzprGFxulvYUbGV8u0FKqQZtxwVtehF4aL5Y7LgIk9FbdateguY3pvEp+qnzAhi/ZchaGEEdb40j6sBuGb05nZJyNgueOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729174617; c=relaxed/simple;
-	bh=zxlBeAJp2bfYYqmWtSZQo9rE3eewc0ORywp0deKMTcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eCobvcLSrWeYjRpkHPCNp4k30PlzU/UDWVfW/oXBDkeCMFhQN9DoDz+CZprC6DNxrVmWwpTR6MtAJhs3SDbIU8O9tW2rKJ2qeDNaaKfv2RmgUBkl9fHjLkNPiCw8cKYdH0tQY8Ei4w7z02NX6hYkQSkTaK+6eoSSQZz9gwFTia4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E652CC4CEC3;
-	Thu, 17 Oct 2024 14:16:49 +0000 (UTC)
-Date: Thu, 17 Oct 2024 10:17:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain
- <mcgrof@kernel.org>, Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski
- <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain
- <bcain@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, Christoph
- Hellwig <hch@infradead.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>,
- Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, Helge Deller
- <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
- <mingo@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, John Paul
- Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet
- <kent.overstreet@linux.dev>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Matt Turner <mattst88@gmail.com>, Max Filippov
- <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal Simek
- <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>, Richard
- Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>, Song Liu
- <song@kernel.org>, Stafford Horne <shorne@gmail.com>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>,
- Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
- bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
- sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v6 6/8] x86/module: prepare module loading for ROX
- allocations of text
-Message-ID: <20241017101712.5a052712@gandalf.local.home>
-In-Reply-To: <20241016170128.7afeb8b0@gandalf.local.home>
-References: <20241016122424.1655560-1-rppt@kernel.org>
-	<20241016122424.1655560-7-rppt@kernel.org>
-	<20241016170128.7afeb8b0@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729174742; c=relaxed/simple;
+	bh=NDDniqJxzgHwV01RtGVnhVfmeX/eHlg2rFb/J5PUkGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HDXbCz+Nfq9Y/ckVKZmSLE1Cm7wxY2Y2x9rNF9WzhtiknBeyk0nBRgTM6RTQVnFpn8KXFPWQSRus/VIvLzwC/n4X1OFwhSFam/UKBUbCP0hYyGJM3VcqNi0GDI8WKZZvEXyKkl9HiqlTM7jbA79PNKis6FkrJbAdpXiOm1DX8Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tvv6Ppsr; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VUpe5RP1fWYLGbbUSAQN8Sy0lKKV6KEg6Paot5a6ppc=; b=tvv6Ppsr9GSJLGFeYRLEOIeL2f
+	dbWejfWHj9+awYPTEEkcbJ/9wo3+V9QROWHYLRcZzBxls8PC3PlGSr2pT63t34XiV0KP46cJv17Kb
+	88DkrhJ8kbdE5E1uTYcCl+B+P5HilAif1ZISvdEycKL6e450KWT15Euw1mQVCGDyE79KNqNONym7Q
+	M+cQHEJSI67H6VJVLNojN+J6ML358u48TJP+RzffmY06NWZ0rOtzfeXUklhIbXFH9bGsJ7ieJIVOZ
+	CaUuqEeTBdfDzBBcO174ra/NCnU48aUl3NUjGIx0hnteK932Ga5F0Ku6FjbvJuV6kFiNblFagbMlY
+	lC2v23Rw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1RLA-0000000F5Su-2wpy;
+	Thu, 17 Oct 2024 14:19:00 +0000
+Date: Thu, 17 Oct 2024 07:19:00 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
+	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
+	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
+	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
+Message-ID: <ZxEc1HSBP2QuQLj4@infradead.org>
+References: <Zw9F2uiq6-znYmTk@infradead.org>
+ <20241016154428.GD4020792@ziepe.ca>
+ <Zw_sn_DdZRUw5oxq@infradead.org>
+ <20241016174445.GF4020792@ziepe.ca>
+ <ZxD71D66qLI0qHpW@infradead.org>
+ <20241017130539.GA897978@ziepe.ca>
+ <ZxENV_EppCYIXfOW@infradead.org>
+ <20241017134644.GA948948@ziepe.ca>
+ <ZxEV6ocpKLjPC8H4@infradead.org>
+ <20241017140507.GB948948@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017140507.GB948948@ziepe.ca>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, 16 Oct 2024 17:01:28 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> If this is only needed for module load, can we at least still use the
-> text_poke_early() at boot up?
+On Thu, Oct 17, 2024 at 11:05:07AM -0300, Jason Gunthorpe wrote:
+> BTW this:
 > 
->  	if (ftrace_poke_late) {
->  		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
-> 	} else if (system_state == SYSTEM_BOOTING) {
-> 		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
->  	} else {
->  		mutex_lock(&text_mutex);
->  		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
->  		mutex_unlock(&text_mutex);
->  	}
+>   iommu: generalize the batched sync after map interface
 > 
-> ?
-> 
-> The above if statement looks to slow things down just slightly, but only by
-> 2ms, which is more reasonable.
+> I am hoping to in a direction of adding a gather to the map, just like
+> unmap. So eventually instead of open coding iotlb_sync_map() you'd
+> flush the gather and it would do it.
 
-I changed the above to this (yes it's a little hacky) and got my 2ms back!
+I don't really care either way, I just need something to not regress
+map behavior vs map_sg.
 
--- Steve
-
-DEFINE_STATIC_KEY_TRUE(ftrace_modify_boot);
-
-static int __init ftrace_boot_init_done(void)
-{
-	static_branch_disable(&ftrace_modify_boot);
-	return 0;
-}
-/* Ftrace updates happen before core init */
-core_initcall(ftrace_boot_init_done);
-
-/*
- * Marked __ref because it calls text_poke_early() which is .init.text. That is
- * ok because that call will happen early, during boot, when .init sections are
- * still present.
- */
-static int __ref
-ftrace_modify_code_direct(unsigned long ip, const char *old_code,
-			  const char *new_code)
-{
-	int ret = ftrace_verify_code(ip, old_code);
-
-	if (ret)
-		return ret;
-
-	/* replace the text with the new text */
-	if (static_branch_unlikely(&ftrace_modify_boot)) {
-		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
-	} else if (ftrace_poke_late) {
-		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
-	} else {
-		mutex_lock(&text_mutex);
-		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
-		mutex_unlock(&text_mutex);
-	}
-	return 0;
-}
 
