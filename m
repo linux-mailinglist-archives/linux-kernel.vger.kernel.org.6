@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-370068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6650B9A26EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:37:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6BE9A2719
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978451C21EF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:37:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45958B29F92
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374B11DF99E;
-	Thu, 17 Oct 2024 15:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36271E0DA1;
+	Thu, 17 Oct 2024 15:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KioPyikL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fGGsTqSo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933DC1DF98C;
-	Thu, 17 Oct 2024 15:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409F81E04AC;
+	Thu, 17 Oct 2024 15:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179354; cv=none; b=M3J3HQpsSZTIFLDyywnEd2r+DQaTiMHwNwh5K4A/ZpJJH9r63EtytlfzrFyBf/X4wBYmrTpOf7nBCZDPXLbUg2lV8rR3ZDTT1Vm/H6MAavgjG9uKTOLaRQ8rm79zBWMuaYtV7/QzJyndk1EbqFn8rzV+aTGV32x9pdrFbSb6DPE=
+	t=1729179388; cv=none; b=Vl6i14LH0JW9X48ZZAWy2GesebXlK2Kq4l6VPIamJVjzNYRlRnr7TrUiv3C66/McTxauXpULvk05tVUw6XtRqy4WsKorjK+Jr8kWodWfOznQZzV5/CLm4X5juwbKkHLmVp8QvrM04e6auGRd/6yOfV8KkXWzV8j3xcE0OgjRHvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179354; c=relaxed/simple;
-	bh=tQZtVVyCeRnI9TF1cSK9C2Pyi0D01P9dpdlS4+GOqAo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=a1l7c6/VmIldlbM13VknvNDxy2q5N+f+5CQsXO1YUKjfixCbRQevEOVcJQ+u+DDmkcOL1v6di5m09SMl+IPQ+u4lQglLYnYvOSphXQZB1a5JaAnOb7hlUs5kuFMP+Jq2cMhemqWW7t/RAuoKWa17lKpJMwrgRwJyrVEaAfqJWYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KioPyikL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94151C4CEC7;
-	Thu, 17 Oct 2024 15:35:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729179354;
-	bh=tQZtVVyCeRnI9TF1cSK9C2Pyi0D01P9dpdlS4+GOqAo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KioPyikL26+HrMcb/XoQ6mCUhqrcOWg77GM9etxhrPh2M04O1rkbspnA7DAS70dVj
-	 Npm2j6Si0m6kkpx0hqk1B+IsYJCBhcJ4FwODFiMeVtQ5IGH4vGvlAOmO4kuo8oxu4i
-	 EPPv7t4vtl/Cfav4BuRTcXqsx8f/iq4+YMbXLcOBDPqlTM+qCQ/+yx8iYZIn313RiU
-	 fIcmLKWaUrzope7I/b1xg3aZ0Lv5urH5Hyp6KHpGHOXnYk13DPwvSWv/iNyqVJqULk
-	 piQH1J6nuBOXmBWpaA8AkQqt+z8IZSJR09qwtFhLQ9GiQfaay9SOUSkdTg/mYeUYbN
-	 yk1OKEv0jWgyA==
-From: Vinod Koul <vkoul@kernel.org>
-To: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, heiko@sntech.de, Frank Wang <frawang.cn@gmail.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com, 
- tim.chen@rock-chips.com, yubing.zhang@rock-chips.com, 
- Frank Wang <frank.wang@rock-chips.com>
-In-Reply-To: <20241014020342.15974-1-frawang.cn@gmail.com>
-References: <20241014020342.15974-1-frawang.cn@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: rockchip-usbdp: add rk3576
-Message-Id: <172917935024.288841.18254840723244928611.b4-ty@kernel.org>
+	s=arc-20240116; t=1729179388; c=relaxed/simple;
+	bh=FYFwF9IQhF/2ZpIDY/IKE6CrMGovTmqBCt3qf0VGisQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=QKeDFict+NGLIbopWMQJ0Em6gy9yruF1srWu1DaC6ApzL6CEo3tLOOjm73GDdIBb16+dOgtjWJ1mxYUu7ruFPcb28iTThT3tnvordaHih1Jw7KJc5vrZkwcxNeCjMnZ/t0waoMfrqqS1kjOmBXv2GYzdIJzBtaEQAM+eOZiKiNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fGGsTqSo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H8ca8k027127;
+	Thu, 17 Oct 2024 15:36:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oNGIvHQaSnaO1ycWZmCc8iBgwhg4leyZmHFIVZzwFmw=; b=fGGsTqSo5a2asN3C
+	EZQ+UbCcg4cEIxydlA0+yVut79xzROpPi0tPsHOOCQNaciShdf6VDdkuggraoZkd
+	YIXE5WZrNAyeY8B1Izg/rEiqTXEqeNw98X5Ql06H4KT8RuLzoHHTWqRP1BUdE8at
+	FFe+b/EreK0mhQJkP5FV8Q1rpswscTo6lD4+xnN4bPAlc3FS1Ab+yh/S52M4y24M
+	tM76Ks/O1e82Yk/OVvdkpwLzRJrferQyNO7PAWav8Wr4mcag3k0wBOknSPZxOjYf
+	pKr2M1nkcftO6tfcFwgw0jQhvwj/dP1D2vQDcldQlQ/9dxeFWaVmWjFOA2u8Iet+
+	ncO33g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ay8j958h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 15:36:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49HFa1KZ020141
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 15:36:01 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 17 Oct 2024 08:35:57 -0700
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 Date: Thu, 17 Oct 2024 21:05:50 +0530
+Subject: [PATCH v6 1/2] PCI: starfive: Enable PCIe controller's runtime PM
+ before probing host bridge
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,24 +67,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Message-ID: <20241017-runtime_pm-v6-1-55eab5c2c940@quicinc.com>
+References: <20241017-runtime_pm-v6-0-55eab5c2c940@quicinc.com>
+In-Reply-To: <20241017-runtime_pm-v6-0-55eab5c2c940@quicinc.com>
+To: Kevin Xie <kevin.xie@starfivetech.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "Rob Herring" <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+CC: <Markus.Elfring@web.de>, <quic_mrana@quicinc.com>, <rafael@kernel.org>,
+        <m.szyprowski@samsung.com>, <linux-pm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Krishna
+ chaitanya chundru" <quic_krichai@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729179352; l=2328;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=LkSUXnpskxUCZXdVOigHiYq2slUxJStDgoZTxaSv+A4=;
+ b=n2vYAjq1ecfh5OficIcWIjMruvqJXJbPO2aCagiY96l+paubKmxLA2SczzeuCMMCWYLJrw4v1
+ gr6KsYueCJoB5XkIkZgrmINOh31MlQi2Lbzy93eZ7tngj3TVMxZ1ER3
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bKQ5105LXRbzbSTkAg4MAZZdNpfvx5og
+X-Proofpoint-ORIG-GUID: bKQ5105LXRbzbSTkAg4MAZZdNpfvx5og
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 adultscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170107
 
+From: Mayank Rana <quic_mrana@quicinc.com>
 
-On Mon, 14 Oct 2024 10:03:41 +0800, Frank Wang wrote:
-> Add compatible for the USBDP phy in the Rockchip RK3576 SoC.
-> 
-> 
+PCIe controller device (i.e. PCIe starfive device) is parent to PCIe host
+bridge device. To enable runtime PM of PCIe host bridge device (child
+device), it is must to enable parent device's runtime PM to avoid seeing
+the below warning from PM core:
 
-Applied, thanks!
+pcie-starfive 940000000.pcie: Enabling runtime PM for inactive device
+with active children
 
-[1/2] dt-bindings: phy: rockchip-usbdp: add rk3576
-      commit: b3e804ab9aad465ba7285aa5daf83656d5efc59f
-[2/2] phy: rockchip: usbdp: add rk3576 device match data
-      commit: a76de028c619dd18f89786805bcc7bb4d379ea9f
+Fix this issue by enabling starfive pcie controller device's runtime PM
+before calling pci_host_probe() in plda_pcie_host_init().
 
-Best regards,
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+v3->v6:
+- no change
+Link to v3: https://patchwork.kernel.org/project/linux-pci/patch/20241014162607.1247611-1-quic_mrana@quicinc.com/
+v2->v3:
+- Update commit description based on Mani's feedback
+- Updated Reviewed-by tag
+Link to v2: https://patchwork.kernel.org/project/linux-pci/patch/20241011235530.3919347-1-quic_mrana@quicinc.com/
+
+v1->v2: Updated commit description based on Bjorn's feedback
+Link to v1: https://patchwork.kernel.org/project/linux-pci/patch/20241010202950.3263899-1-quic_mrana@quicinc.com/
+---
+ drivers/pci/controller/plda/pcie-starfive.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/controller/plda/pcie-starfive.c b/drivers/pci/controller/plda/pcie-starfive.c
+index c9933ecf6833..0564fdce47c2 100644
+--- a/drivers/pci/controller/plda/pcie-starfive.c
++++ b/drivers/pci/controller/plda/pcie-starfive.c
+@@ -404,6 +404,9 @@ static int starfive_pcie_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	pm_runtime_enable(&pdev->dev);
++	pm_runtime_get_sync(&pdev->dev);
++
+ 	plda->host_ops = &sf_host_ops;
+ 	plda->num_events = PLDA_MAX_EVENT_NUM;
+ 	/* mask doorbell event */
+@@ -413,11 +416,12 @@ static int starfive_pcie_probe(struct platform_device *pdev)
+ 	plda->events_bitmap <<= PLDA_NUM_DMA_EVENTS;
+ 	ret = plda_pcie_host_init(&pcie->plda, &starfive_pcie_ops,
+ 				  &stf_pcie_event);
+-	if (ret)
++	if (ret) {
++		pm_runtime_put_sync(&pdev->dev);
++		pm_runtime_disable(&pdev->dev);
+ 		return ret;
++	}
+ 
+-	pm_runtime_enable(&pdev->dev);
+-	pm_runtime_get_sync(&pdev->dev);
+ 	platform_set_drvdata(pdev, pcie);
+ 
+ 	return 0;
+
 -- 
-~Vinod
-
+2.34.1
 
 
