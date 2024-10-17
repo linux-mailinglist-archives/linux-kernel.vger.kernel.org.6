@@ -1,135 +1,182 @@
-Return-Path: <linux-kernel+bounces-369747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B7A9A221F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:21:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD48D9A2221
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65A56B2574D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A931F22C37
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BF21DD0FE;
-	Thu, 17 Oct 2024 12:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10E31DD0EF;
+	Thu, 17 Oct 2024 12:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OfuWY1fx"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLLqppYJ"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF46B1DA0E3
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643961DA0E3;
+	Thu, 17 Oct 2024 12:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167693; cv=none; b=o87j1Jcu1t7D5n6yrjVsBaYHgxoUms0Mvv1KcC3hI2z1V+1Yf8a+bSIiWyxlK/tcSZMGUQoMs0SE0fJNvyihrCg6L9aHRBKpyElWe9S5f1hfcTv2T8NhX8bMM84FWA3JfX+TY74BTmQBULTTVuj/jVcn3oOXXWQVqGZAjpOy4Xg=
+	t=1729167736; cv=none; b=SDMzDwXiqSq77Es8DTUMECfHoV9HRr1RJOo07A6f5vRHHV9f1n52KRMr719mAEHzJIu76gI7dgeazwWbFWnxQE1lQPhklXbNjY6abEVwQi6gP3wRd9zn4Ct83FILP6gSxIXrN9lyjx9j1WS3wbpnnnl0SICvAdrWSj0hCoskjPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167693; c=relaxed/simple;
-	bh=dZiXlD5sbB2j6jzh26ifCQe+UHqF9fZSmuz2zam6EZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MiwVmOVU9xF2fQYXLSof6tRho7HIkSxvNjxVu/o7BFhREQGTIpp/ji9WJlKXY3YdMortsJjywWdim1kGkGKvADeHeNnaGymDt0HTE6vgBwz9nYspqyNSKV62ro4cyowl5zj4BOlU9SB02VNGZgmHVxwg/oT+p/xmP44v5+omVSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OfuWY1fx; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9150f9ed4so1069860a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:21:27 -0700 (PDT)
+	s=arc-20240116; t=1729167736; c=relaxed/simple;
+	bh=vrUFbMC3z5MCMTTxxHNZMsBU1wNMvowtG2Ijv0C2hLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iWJFila2yORQL4a7ajP2+kiD7e32TtCbb/G3MeMh2DxneCHXXWUIWs5KwRobzRW1ZtPAuegnX6bPS6a/hSYeEp2hgmjmCKvoUdSsilmhhT5WdtO36pFghgBCmt1iMD0Jin+EELf49NM74XsBzmOqdE3IEzXqXZOT8skKBfberC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLLqppYJ; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-50d4a6ef70aso312932e0c.3;
+        Thu, 17 Oct 2024 05:22:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729167686; x=1729772486; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=upV9IxmbyLh24y5KvmoZk8IuzsVT/v4PISDDNTLkG6M=;
-        b=OfuWY1fxb7KBr/PsajSOdYJSb2WYTVh4Bk+hg+/Dw70NMkYlSZ81jCaC/SoVhumcQ4
-         cSe/kOkWUkBbgf61Q/LAbRQeLzBJ1Z8fr5uyoUG5oKqBaDza6UVDR4EMKrDQimGG1wOE
-         a7prgsmTAy3wua8BQ8HlQfMBH4nSPayaEXt3hgfoRcqAtjcWtiKvu3rOGWmDTgk3RkTx
-         0405CPDrKuOyuNd+zKvKEMykc3K5F3LlFp1Tf5uwwngNFxEqBioPVR0f8T0gauH7sOx+
-         2nfzOs9U/SiBR1UFTofM3XDZ5CXx7H74fN5RkwR0Rjo+CuPWvEiEc6SlGkZ7KVTV+oPZ
-         D+0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729167686; x=1729772486;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729167732; x=1729772532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=upV9IxmbyLh24y5KvmoZk8IuzsVT/v4PISDDNTLkG6M=;
-        b=PXdU4h/zQASD1wW/PoLmuC8zLvOTykyJ+gCBSU3s44tQKx7GLdUKLcqLASYQ+2Jfn3
-         PitoFCdS59EXwxXZA8kEa3n8BZdTuljsC/gBZJ4jgpH/8TV/yGC8ueNYV4TabzlByZLy
-         wxhTiWNhfL3have0XmE/xyMb8i5/dnqOFM53Ubr4el/4ZJfKsg/9TVxtsZjh+ENSPGan
-         zxEnm6Z/3XrMDOa5/mo4Y9gFWfMnj1oS0B1jYa3EtVpQ7gG5v3SCnIu5yN+gOPRJtgkI
-         BMav8IkAoAPgH3r79YR6h/OmiL/oLB18l3Gx9+7+PvM1lYMrraE7/9tiYO3orT4OHbCu
-         XYtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWODq4cfIEVTOtyTdTgLmX6dRkL84Rw+6gMXAo4MSG+rb3NpCP0y5Co+oHB+kR+XJ9r2Bup+fQJI+V/ppg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR6wqk7XQTcJMUMDXV2EcwHeFKU5wzaWuc3cR3gmyvvS4KEpch
-	9Tj7S+nkwxZngSCi4BJEi3pWeTro/DNakrh8FQVKEPXuSBwCQWswkG284yKNr9M=
-X-Google-Smtp-Source: AGHT+IGq5ucbFHU1tVBUcI+q8DDYTzRsfdUSa7DEcY8Ig4Lc722w45PjwM12vp8ybtkKQFy10/mN6g==
-X-Received: by 2002:a05:6402:13cd:b0:5c9:3fe:c7b9 with SMTP id 4fb4d7f45d1cf-5c994e6dfd2mr5839341a12.0.1729167686207;
-        Thu, 17 Oct 2024 05:21:26 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d5077e6sm2733482a12.48.2024.10.17.05.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 05:21:25 -0700 (PDT)
-Date: Thu, 17 Oct 2024 14:21:25 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Marsden <greg.marsden@oracle.com>,
-	Ivan Ivanov <ivan.ivanov@suse.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Will Deacon <will@kernel.org>, cgroups@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 03/57] mm/memcontrol: Fix seq_buf size to save
- memory when PAGE_SIZE is large
-Message-ID: <ZxEBRd0jEtVEGWki@tiehlicka>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-3-ryan.roberts@arm.com>
- <ghebtxz4xazx57nnujk6dw2qmskyc5fffaxuqk2oip7k2w2wuf@grnsquoevact>
- <315d4258-ea96-4008-8781-9205f41cec6c@arm.com>
+        bh=xij87LKX+Nlu3IEGLAYU+Sy+Vc3xK5ztqxOSAfKKhBs=;
+        b=OLLqppYJxmkrkEM6qr7pgBmNulo4B4U/DHJBRBZfSl9kuBqIJz90ZCuIomfUIcrGn6
+         XQRw63mddYLWLJtb77VP7Gic8W4k6rSzNxpoJfDPZN4ewNYuLuwpJhZa6StSScO4szys
+         FH1wwa0CTHbe0kt8QCEtSXHqR5P6glDuBO4s9mi7/8oQq6XFJAioQlyGryC7dydT9/xz
+         +DVN4TiQfwjpnly0xf49M3D0NaLXq0q3AV3WTuiJFL9EPGkOqJNcBsrCjkVqOjP57yr2
+         8qjyi3jt9H2yezcrgYt4nN3RDuJMLDr1RvVPj7NQj4aPo7r22gKjiJqP9xn8al+D3Qym
+         +kgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729167732; x=1729772532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xij87LKX+Nlu3IEGLAYU+Sy+Vc3xK5ztqxOSAfKKhBs=;
+        b=Shj7O6Wta//wt4QPwGvhMi0M+JOxL6JzREuCKzbc+jzPUvbRwwTX4/5UrNidZhEmXM
+         D+Fmq0iOZOJ4yQqm3+WU6vAi5gErXb8ahsAzqm075guEXfdBi7csibo+95j7Z9YPDG9U
+         fE/MYUxOkMiNXDGINlHHhP+pYyQ6ac1f0Z11Na4ZKXpzgCEGn+4FGVNlcHTWnB5fb8/9
+         CAkdp0wbrBM9upDbuwBeBrqCaGz++aUXik1RNw35rx8mcgy0atbNXgk7exg4valaUsQ7
+         lFq90aTGw9UFK985ZSwQb2PXth7JD8aDU9VTZOz0Ch48FV2QeUNADlweD7VsCm7zuT7f
+         GDdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlmPNBVGV+67AgL6vUyD3q0nubwvcUZPIVMtfEKbzSYGcJp9ALzGmzUDw1RTAi/3fLjnBV8ndv8bNEXnA/7f67+Ps=@vger.kernel.org, AJvYcCXSV3cX7rgzefdHmWuEFXLjpe4veAHAyn5fe+3tM59Fn4PMcWWmDXggTe0ClyxdpUwbAg39zneTK3YUsYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI1CCb5xH6JfLmuhecDCvLvkM8lJuLhvVh8s9YuqGkQepOrf/6
+	Jb2/T0AuKVM9Xwl7hhZfGm1Wzc9qq++D8jbChNRBEZ5var3CNSu1Er2cWwiVge2FuuNC63tEv2z
+	2p4x3YJzmsKI2O15fj0ySeYr3etxMLjNvcOs=
+X-Google-Smtp-Source: AGHT+IHz0Jc/pt/PjMyrtgxu69/Z3sfXFnrSDaJoXLMpXJTpl2ZljpnpXIgfBoYQ9HgB3jysjEMyVSu7rmpTHqeAo3M=
+X-Received: by 2002:a05:6122:291a:b0:50a:b604:2bb2 with SMTP id
+ 71dfb90a1353d-50d37742226mr10725752e0c.11.1729167732210; Thu, 17 Oct 2024
+ 05:22:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <315d4258-ea96-4008-8781-9205f41cec6c@arm.com>
+References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 17 Oct 2024 13:21:46 +0100
+Message-ID: <CA+V-a8tfBftutbXCuAjTXJ3H65enOENtSdTWXATfa1VZN+LTfA@mail.gmail.com>
+Subject: Re: [PATCH v4] irqchip/renesas-rzg2l: Fix missing put_device
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Markus Elfring <elfring@users.sourceforge.net>, 
+	Markus Elfring <Markus.Elfring@web.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Marc Zyngier <maz@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	linux-kernel@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 15-10-24 11:55:26, Ryan Roberts wrote:
-> On 14/10/2024 20:59, Shakeel Butt wrote:
-> > On Mon, Oct 14, 2024 at 11:58:10AM GMT, Ryan Roberts wrote:
-> >> Previously the seq_buf used for accumulating the memory.stat output was
-> >> sized at PAGE_SIZE. But the amount of output is invariant to PAGE_SIZE;
-> >> If 4K is enough on a 4K page system, then it should also be enough on a
-> >> 64K page system, so we can save 60K om the static buffer used in
-> >> mem_cgroup_print_oom_meminfo(). Let's make it so.
-> >>
-> >> This also has the beneficial side effect of removing a place in the code
-> >> that assumed PAGE_SIZE is a compile-time constant. So this helps our
-> >> quest towards supporting boot-time page size selection.
-> >>
-> >> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> > 
-> > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> 
-> Thanks Shakeel and Johannes, for the acks. Given this patch is totally
-> independent, I'll plan to resubmit it on its own and hopefully we can get it in
-> independently of the rest of the series.
+On Fri, Oct 11, 2024 at 6:20=E2=80=AFPM Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+>
+> rzg2l_irqc_common_init calls of_find_device_by_node, but the
+> corresponding put_device call is missing.
+> This also gets reported by make coccicheck.
+>
+> Make use of the cleanup interfaces from cleanup.h to call into
+> __free_put_device (which in turn calls into put_device) when
+> leaving function rzg2l_irqc_common_init and variable "dev" goes
+> out of scope.
+>
+> Mind that we don't want to "put" "dev" when rzg2l_irqc_common_init
+> completes successfully, therefore assign NULL to "dev" to prevent
+> __free_put_device from calling into put_device within the successful
+> path.
+>
+> "make coccicheck" will still complain about missing put_device calls,
+> but those are false positives now.
+>
+> Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller drive=
+r")
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+>
+> v3->v4:
+>  * switched to using the cleanup interfaces as an alternative to using
+>    goto chains
+>
+>  drivers/irqchip/irq-renesas-rzg2l.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Yes, this makes sense independent on the whole series. 
+Cheers,
+Prabhakar
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+> diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-re=
+nesas-rzg2l.c
+> index 693ff285ca2c..99e27e01b0b1 100644
+> --- a/drivers/irqchip/irq-renesas-rzg2l.c
+> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
+> @@ -8,6 +8,7 @@
+>   */
+>
+>  #include <linux/bitfield.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> @@ -530,12 +531,12 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2l=
+_irqc_priv *priv,
+>  static int rzg2l_irqc_common_init(struct device_node *node, struct devic=
+e_node *parent,
+>                                   const struct irq_chip *irq_chip)
+>  {
+> +       struct platform_device *pdev =3D of_find_device_by_node(node);
+> +       struct device *dev __free(put_device) =3D pdev ? &pdev->dev : NUL=
+L;
+>         struct irq_domain *irq_domain, *parent_domain;
+> -       struct platform_device *pdev;
+>         struct reset_control *resetn;
+>         int ret;
+>
+> -       pdev =3D of_find_device_by_node(node);
+>         if (!pdev)
+>                 return -ENODEV;
+>
+> @@ -591,6 +592,17 @@ static int rzg2l_irqc_common_init(struct device_node=
+ *node, struct device_node *
+>
+>         register_syscore_ops(&rzg2l_irqc_syscore_ops);
+>
+> +       /*
+> +        * Prevent the cleanup function from invoking put_device by assig=
+ning
+> +        * NULL to dev.
+> +        *
+> +        * make coccicheck will complain about missing put_device calls, =
+but
+> +        * those are false positives, as dev will be automatically "put" =
+via
+> +        * __free_put_device on the failing path.
+> +        * On the successful path we don't actually want to "put" dev.
+> +        */
+> +       dev =3D NULL;
+> +
+>         return 0;
+>
+>  pm_put:
+> --
+> 2.34.1
+>
+>
 
