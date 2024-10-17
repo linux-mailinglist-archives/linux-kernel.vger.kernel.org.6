@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-369796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07A39A22C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E779A22C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97624282A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:54:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF581F23E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C37A1DDA24;
-	Thu, 17 Oct 2024 12:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0771C1DDA31;
+	Thu, 17 Oct 2024 12:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDk5dpaJ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONAC/XVq"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DAD770E2;
-	Thu, 17 Oct 2024 12:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D167C770E2;
+	Thu, 17 Oct 2024 12:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729169638; cv=none; b=c8g549mLrUb6WLRyleu8JTMA/y8wPT1DmvPkMYfMJYQO3+SzfAZmVc9kY6twRKzhCrBVsaot+c00p60W9BA9+4crmwEMJtRxvaAbod4JhE6E4EMfEvX6ovdNvmr0HJcSwHKCLzigWea9jRkpjSyMQ9RUp1WzIbSSmCRT5QxxPgw=
+	t=1729169736; cv=none; b=j/MKzyEKEQOde6bMtYNfq7A61FIoGUn5yZmzFMkSWqnWNHdP7ug8N+QlEvoud6ObcmcW8/SnEoEV6+3AGx4TDGXCcRYqDfTeSxIWZrYCdHIK3eQ8gw9fPPfipb4iZD+hjyjnpqSLUiu2QB8bkz9tEv5NJaOHjHggS5zFbYb+a10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729169638; c=relaxed/simple;
-	bh=OI6E1ZdG5U4QiGhkBayUIy9Eq/w0C9aNzQcnITz1/LA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EewOAD9njhl0+rbCABbwXL7w8pqvCiZOr18UWxzoGZ2q0W19bgHY29RY0ckVP439455+SDRadV4QppIFBlZ+lTemhR2dP2HDVUUlCOadhm2fZ4b38R96W8Ia/xiN8ovEqtAf+jy4vRe+BZNI6+dePu2srobzwEKmFGR4XozQ0oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HDk5dpaJ; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1729169736; c=relaxed/simple;
+	bh=ZTXid6J0lRxBXRmOOJZdFDXBQHQ3HqwPcVDkf60LL+w=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lirf1FPAvDXzhNzpbseZBgBesm0gQVzPgvhyeXpgSxK+R5ZyLW9ZNmtdUIH9U+D7DTOP3oaoCt5Dy2FOlvmV16bs8rnMkhy9qFrMGvMqZd0DmvKLT5rkPTWM4okHO2VssAYfauzJaC7hq1rriQfDEGe2tq8E14GnN5YWli6P19M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ONAC/XVq; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c714cd9c8so9372795ad.0;
-        Thu, 17 Oct 2024 05:53:55 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so10125495e9.3;
+        Thu, 17 Oct 2024 05:55:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729169635; x=1729774435; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ftGLp4qSFOJhCRAo4sB3olJpGzNRj3QrVjrXCjsbKo=;
-        b=HDk5dpaJEQS7ynt45TkuZye6i3DyGSAVklfaq0u+asO68uROVBSa2YqLxYlza3OQw7
-         4pNXglKfVRoJfEU6IEbbLgw7KEytQ3wpWJf3rrJaC5qo1JWfaAREoTkLcdD+xu9Djlpk
-         wZp5oWa8RQXuaglak/E8RePVtMi/GyP/Nw5VE9tAA0mWLzgD0eqiRE72dhVqvQ1SkpmU
-         rHR8lt/4m6ljNgWSqcNPpjgArkkO3QoRvICfBZwuKlyKJgtMW8IYG/7URinXMku1hHmA
-         swPECThq3gGLHTDS7xsBJwcZYSCait8wH58/cCStZSkwxvpdhD9wUsyq52OItGTg3kDt
-         ACcQ==
+        d=gmail.com; s=20230601; t=1729169733; x=1729774533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=710SIBW9J/sukd5yvZdpOqpR89j7PM7tq6MYOr7SPZI=;
+        b=ONAC/XVqv+8LSwenYKefQ86+XVFZB0C/vF+Sys/bhGCqPc7rhPpYApC0LdEB8JGT+B
+         z3hnccFmPaQHWK6dfavnJWKbEfYqqqQpw/jflcvL8RGiRBi6wbwkwUIlhYYRFzZDA/mt
+         ClSe9lhRDVbujJcuLwsD5fiY0um0VQwNiuOQK3ZkUD5IYlpUqcoYpXtKkDiT1uxnC2Zz
+         t0GhJSjTyMaFvNRt2e92AGL2kk33q7L57MBohlnmxG90ShEOfATrxyMgbQCHFUCrucG1
+         3j2ZvmxFGkVD/w3Pg/Sulgct3LE72LlwwPWkG4H4GjZix08OafALGjlj93q+Sc443diq
+         G4+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729169635; x=1729774435;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1729169733; x=1729774533;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8ftGLp4qSFOJhCRAo4sB3olJpGzNRj3QrVjrXCjsbKo=;
-        b=iaaL0+13/5cDFydytUIL7Mfw/ZNKo3AYDckQt5nZGJQ5/z4aHXPfWi0+2LRp2TpGKf
-         IT6NKO1pN9ShM+JCubWODdM7vb1En3FtIrYjs9xsSDW6dDkuRJlwuCG33sqqxrcdytDH
-         CDc7a+8+HSBeixa0eb9IL8RjHfoba4fFwyzakLEyyVEm1InlKeuyup+tzfrdvrBwtq7/
-         3UL5Eq3pfNdOPlatUCGrOvAso+N1qGuYFDNGgIgAmsoBlnuaMjtz94ja1NuGzDpYyeM/
-         xdqshvK5Qja//C39VE87ahpY++yiZfNhrKsq3nCr9b8e/AMc94R/6HFITsQCQMBrEUjd
-         AiLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH+D3J6XeK7jhyV1yLkl6ItmsA7QoQ2whQ8qXcgnNWOydGp2S0HIQaOjoWgO3BBPYC/yythvWA8VB1Trwn@vger.kernel.org, AJvYcCVD9BHIuP2NmN3jjGly1MDOYgQLShANbzZHfu2D3GhzXzIfi2PUHLr5lAuc4FY/ucQYhtsUD+aF180f@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS4dC9ifSrkZnkDKGOYnHavh8l4FTOKIvZXhokakwhCQIZzvoW
-	zZarz/RyEJ1VUtCLzD21uW1+f3qp3yXm5xNdkRMRuvRlNYZ+5yIdPN8uQg==
-X-Google-Smtp-Source: AGHT+IGGkfpQ0QbcG5tihgqthqs6i3UnkQO0C3Yufxkmxlf56fL+oyfHiBA3Q5czqCner9Ry+NQe7A==
-X-Received: by 2002:a17:902:e54f:b0:20c:7898:a8f4 with SMTP id d9443c01a7336-20cbb2694e6mr253403145ad.60.1729169634715;
-        Thu, 17 Oct 2024 05:53:54 -0700 (PDT)
-Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1804b5dasm43559235ad.201.2024.10.17.05.53.52
+        bh=710SIBW9J/sukd5yvZdpOqpR89j7PM7tq6MYOr7SPZI=;
+        b=mgyzokHcIecUzDcdstMHQlxL+bFmqG8f7gh21o6CeHjsJQVsjPg1FLAnXUw4cxw4Gz
+         fgkYJJekS2IrRwVOUEHdp4qc8Y3z8loza+kej7b2S7v5P9Et8nlytf5+TZPucMg+sh1s
+         SDr3L4c19B0mjRGFjgv7tGix/SfSStSDK+Fzwu9OEujEVpSv04IG72XOh1IgZiB12rSd
+         jNbwB9EP90bP4/r9PtTNn2tnLlQnf0LAyikXy0lTr6e5P4K2RJrEtcyLDHEXlMWRDJ7c
+         M+DFnPHfJXKeefubUMEOTW9ezrPCXxiMiZeVsNXNctsgvVcIHRz+1HWB1xWR6yjUCWx5
+         sVbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjgp4AgE+cJWqi4VnWTvoXwreNjLhZoGY9ht+pxabnfUREZlgbyOLad75kK4fGrF1QyYII0EambL1n@vger.kernel.org, AJvYcCVsvceAp8rkYLOURtNCWm2DcAEkobiUoCdlNgaMvurbIVijYQcedssAVxPTYP8BKZgwDCSZwRYlJ3uHRaNR@vger.kernel.org, AJvYcCW5reJLwDVh26ER1VTKYEmzdxvGeF7NTK2CZ2GiMyJQQKQymXmbouPIjlIoWPp2cMOsLHBDwJZBMp15WzhL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgbW08/zBNMuiuRdIcidTNjHLTgPj2mEpMoFIFWA7vIh8m0QnL
+	g+jjR3v9kgA1xVyMk5mkOD+ncUWoFfKIqAHDsAIEbJ3EzOFdqJq/
+X-Google-Smtp-Source: AGHT+IHn9ln8/GKixX1FVbCjsOOsgO68yrDzX/FK4hxyxOA0CgKcYmjDNHeNjyhWpJK87axTX9LERQ==
+X-Received: by 2002:a05:600c:b8d:b0:431:12a8:7f1a with SMTP id 5b1f17b1804b1-4314a303409mr68075935e9.16.1729169732955;
+        Thu, 17 Oct 2024 05:55:32 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c3a256sm25325925e9.17.2024.10.17.05.55.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 05:53:54 -0700 (PDT)
-Date: Thu, 17 Oct 2024 20:53:49 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4 8/8] gpiolib: notify user-space about in-kernel line
- state changes
-Message-ID: <20241017125349.GB221864@rigel>
-References: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
- <20241017-gpio-notify-in-kernel-events-v4-8-64bc05f3be0c@linaro.org>
+        Thu, 17 Oct 2024 05:55:32 -0700 (PDT)
+Message-ID: <67110944.7b0a0220.1923e4.814f@mx.google.com>
+X-Google-Original-Message-ID: <ZxEJQV8b1AU3OPXf@Ansuel-XPS.>
+Date: Thu, 17 Oct 2024 14:55:29 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Richard van Schagen <vschagen@icloud.com>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 2/3] dt-bindings: crypto: Add Inside Secure
+ SafeXcel EIP-93 crypto engine
+References: <20241017004335.27471-1-ansuelsmth@gmail.com>
+ <20241017004335.27471-2-ansuelsmth@gmail.com>
+ <dg346xguo5cjx6yotnrdpjyp7n7wwpwnrjvybrrbocekhltpmg@s2j734wd2rnf>
+ <20241017124805.GB3032377-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,52 +96,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017-gpio-notify-in-kernel-events-v4-8-64bc05f3be0c@linaro.org>
+In-Reply-To: <20241017124805.GB3032377-robh@kernel.org>
 
-On Thu, Oct 17, 2024 at 10:14:16AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Oct 17, 2024 at 07:48:05AM -0500, Rob Herring wrote:
+> On Thu, Oct 17, 2024 at 10:23:54AM +0200, Krzysztof Kozlowski wrote:
+> > On Thu, Oct 17, 2024 at 02:43:18AM +0200, Christian Marangi wrote:
+> >  +
+> > > +description: |
+> > > +  The Inside Secure SafeXcel EIP-93 is a cryptographic engine IP block
+> > > +  integrated in varios devices with very different and generic name from
+> > > +  PKTE to simply vendor+EIP93. The real IP under the hood is actually
+> > > +  developed by Inside Secure and given to license to vendors.
+> > > +
+> > > +  The IP block is sold with different model based on what feature are
+> > > +  needed and are identified with the final letter. Each letter correspond
+> > > +  to a specific set of feature and multiple letter reflect the sum of the
+> > > +  feature set.
+> > 
+> > You write it is licensed to vendors, so are you sure these could be
+> > used alone, without vendor customizations/hookups etc? I think you
+> > should have a dedicated, SoC-specific compatible in the front. I am not
+> > sure if this was discussed already, though.
+> 
+> Probably should, but some reason we haven't on other Inside Secure IP. 
+> Perhaps they are just simple enough from a DT perspective to get away 
+> without. Also, there may not be any SoC associated with some of these. 
+> If there is an SoC, then better to add a compatible to help avoid any 
+> future DT changes.
 >
-> @@ -1447,8 +1450,6 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
->  		}
->
->  		WRITE_ONCE(line->edflags, edflags);
-> -
-> -		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
->  	}
->  	return 0;
->  }
 
-I still get errors from this when reconfiguring lines with debounce.
-You should leave this notify in place and use _nonotify when setting the
-direction.
-i.e.
+Would it be ok to have inside-secure,safexcel-eip93i-mediatek IF some
+device will require special handling?
 
-@@ -1436,11 +1432,11 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
-                        int val = gpio_v2_line_config_output_value(&lc, i);
+Again I expect no vendor to modify how the IP works internally with the
+descriptor and the common register.
 
-                        edge_detector_stop(line);
--                       ret = gpiod_direction_output(desc, val);
-+                       ret = gpiod_direction_output_nonotify(desc, val);
-                        if (ret)
-                                return ret;
-                } else {
--                       ret = gpiod_direction_input(desc);
-+                       ret = gpiod_direction_input_nonotify(desc);
-                        if (ret)
-                                return ret;
+Vendor tag is probably not needed as Vendor are not that crazy to modify
+a crypto engine IP and cause disaster on the way.
 
-@@ -1450,6 +1446,8 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
-                }
-
-                WRITE_ONCE(line->edflags, edflags);
-+
-+               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-        }
-        return 0;
- }
-
-Given that, all my current tests are passing.
-
-Cheers,
-Kent.
+-- 
+	Ansuel
 
