@@ -1,112 +1,194 @@
-Return-Path: <linux-kernel+bounces-370628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A26A9A2FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:32:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FEE9A2FD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6DBC1C22FC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C60E284262
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732E61D5CF1;
-	Thu, 17 Oct 2024 21:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9131D5CCF;
+	Thu, 17 Oct 2024 21:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h0MBmsDo"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDC21D5CC9
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YfQb6txF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038CB1D043D;
+	Thu, 17 Oct 2024 21:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729200751; cv=none; b=jUuecn88ySs6BKJ53X+jJoNJWjwVgmpRec4lJBmraA5/Dv7ZqdtNWdVBifRSJDBHG+jnTo7lboVsyMn6CT/I9K6VDKA4WuPhsa1V6PLEp4hXgICKEAj0/sygnaSIFJnwbQzicY0HbGI5gN2xJfTVEsMcyzFC6xJZa/J4asI2z+A=
+	t=1729200869; cv=none; b=omjKgAEH3l/gTIq45lODD8NgPkQnebI06tuwR+dkXqMVBdbAcSXqPdeu7r2HRt8hqrIrS8biANAiQT+VQV7S4r/gUmSqZoW2KsHDgkNHkRt/NFlRUF6ewFaBakU7iFQ8PO7HsX76MfsQsBo2XyUgfvHdGC27VDHOaM47PjBeLec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729200751; c=relaxed/simple;
-	bh=M2+wb2LgzRJhRj6yefyqXu/CkuSPpP66P9LaMg8ISWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BeURCckBUT9eBXwQRHrF25qXXWTMCNb/uqdKKlNEZXXi9jTGtXvH06dJ3knZs56QrsYv+WCTQTehiuyKwTM8XLiqvf/n/HJYSXR2ip739iyNOGzSMENddLDDnFJImXmODbixDr/FqpG/OKY8Mh+le051dhvxftAXrTSQJ3sz+GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h0MBmsDo; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ca03687fdso63745ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729200750; x=1729805550; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M2+wb2LgzRJhRj6yefyqXu/CkuSPpP66P9LaMg8ISWo=;
-        b=h0MBmsDoNXdR3uMW06MuGt+3Kk34e5X9v88Y8+mwvs7cmILJhcnXHHZuy3T2AJZsLI
-         PtqFujfdtL7/L/ofWQ6YNX73vIbJFmkXJqjq+EWDG1TPWS92jaX5srBRdDVVRGErsWWL
-         NQ0ieGhYEKWyTOtR9K6XmCXS7cLI5PD8sePLdUN2rWX01H8z61j4XT//Rmm+9dzWmQEM
-         pWglNnKtqfwsVajVNn45kDd6b8EbQaji+nFsbvCPMwiq3W/OslR5gYBrtXPjhwjnj044
-         zyUpU5P2/udduhC9X3V2kTvay3lEvcOHbdlZkxcfMNcmc6bxZSQGyQRhTF+2Nl935XCF
-         /KRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729200750; x=1729805550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M2+wb2LgzRJhRj6yefyqXu/CkuSPpP66P9LaMg8ISWo=;
-        b=IGolyxaemRptUeiLjtlosvQhlk6/02ZBfqNpJoXeEZ6QM+E9eYajbpJ+ZMirigHOJ0
-         ri82rietAJZpoUJZ3hM5m+xVIxpAW6aQc4QWfzLm6h+jh2t8nq8IiNDzEbNjkaBMhydU
-         2BxU7VJezFVM/VYzFp/6PfKt2sc3xcem7Eu8hBCnmSodk0f0lufTagP8Jrck9O+fHZ4E
-         f2sBxYZnC8aZo7O49dZ6/tKmt9T3KTSa5zAVb7WcjByMnfk9Ez7PX4vxFjuSKYSjTLps
-         5q2Pq9XdFQlWaQfWLFV9BE1bEBdlcPkquFsdmSRCeeh155AUEcFnUAbMwR9ZXFJU89XD
-         329w==
-X-Forwarded-Encrypted: i=1; AJvYcCXN1k+w+AR84KoaGT4R+AWxp/NNEUZDDLUSsmO7yxUXquiQiDgfbEEwFUBgAuiydcxImFzYPyujRhDi3QI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxoGu2Q1H5VV8kOWpxxHrB0HsMNKNGIqpCc9X75TvVaeNmErPH
-	3yoGKjBGE5NkBqK5uaKvOvbF/2NAqKz+H0wzZ18Dw5VNZ0SLJNTo+rjNBsrnvIBel3Bngg0M+mQ
-	AmZs2/MDzukCJd7SszUbLoV1+onlICDgjDDVv
-X-Google-Smtp-Source: AGHT+IE4ntQMyyyTm5zlYwq2ofxDyZx5MXuYcNqBg/PzTdgdJREmYHhcZb5mzIIg2QyNRoAPQcx7cbMrES36X5k1Tng=
-X-Received: by 2002:a17:903:2342:b0:20b:bf5a:c8 with SMTP id
- d9443c01a7336-20e579af565mr890875ad.10.1729200749514; Thu, 17 Oct 2024
- 14:32:29 -0700 (PDT)
+	s=arc-20240116; t=1729200869; c=relaxed/simple;
+	bh=xwmNibCvTj4rRFMBXudGxehYOkCHI2m9yXq6UfKAT+U=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=aasrCaToMdq7d6MGR1qcY8ovdWcVmfUMjymXrK5jM1dwkJjxX7ZxFYy45tFNdZgfhuqy7W59eUq3tm8r3VYZ4SaBPS1kDpYsMkAQHEs2HRasIu0WIvHhtIJQZcrcwKu74bwb7S4w0wRGqLXNv3WslE7FHFuE/lGolPeBG8ck3b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YfQb6txF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [40.64.70.95])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 72DCE20F9E01;
+	Thu, 17 Oct 2024 14:34:25 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 72DCE20F9E01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729200865;
+	bh=5LDQqCj+7IEmGxL9LpUtIL3zTfShlSU/MVLzhi+m0aI=;
+	h=Subject:From:To:Cc:Date:From;
+	b=YfQb6txF0bvMAAag2TqVMOhQrIcYh98UoUqkqbNc1fQE+vSOqI+nOBGAPEJ4oJSl4
+	 2FKlBpurjQGLOwHZzRsIk5I0pKCjRgWPilV8jMNu/bdRSyroezNXvwyRKHbPQt+Z0W
+	 INZ4G0GRkGy5ROL6QRsOxkIDjsIAeNi74OfpiglU=
+Subject: [PATCH] kunit: Introduce autorun option
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: brendan.higgins@linux.dev, davidgow@google.com
+Cc: rmoar@google.com, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Date: Thu, 17 Oct 2024 21:34:25 +0000
+Message-ID: 
+ <172920085854.4578.9203147717033046574.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016213108.549000-1-abhishekbapat@google.com> <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com>
-In-Reply-To: <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com>
-From: Abhishek Bapat <abhishekbapat@google.com>
-Date: Thu, 17 Oct 2024 14:32:18 -0700
-Message-ID: <CAL41Mv4_UjsD1ycpNU1xuQJdGWMf2L-SQYs=LupoM9BKurNXCg@mail.gmail.com>
-Subject: Re: [PATCH] nvme-sysfs: display max_hw_sectors_kb without requiring namespaces
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Prashant Malani <pmalani@google.com>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 9:40=E2=80=AFAM Keith Busch <kbusch@kernel.org> wro=
-te:
->
-> On Wed, Oct 16, 2024 at 09:31:08PM +0000, Abhishek Bapat wrote:
-> > max_hw_sectors based on DMA optimized limitation") introduced a
-> > limitation on the value of max_hw_sectors_kb, restricting it to 128KiB
-> > (MDTS =3D 5). This restricion was implemented to mitigate lockups
-> > encountered in high-core count AMD servers.
->
-> There are other limits that can constrain transfer sizes below the
-> device's MDTS. For example, the driver can only preallocate so much
-> space for DMA and SGL descriptors, so 8MB is the current max transfer
-> sizes the driver can support, and a device's MDTS can be much bigger
-> than that.
->
-> Anyway, yeah, I guess having a controller generic way to export this
-> sounds like a good idea, but I wonder if the nvme driver is the right
-> place to do it. The request_queue has all the limits you need to know
-> about, but these are only exported if a gendisk is attached to it.
-> Maybe we can create a queue subdirectory to the char dev too.
+The new option controls tests run on boot or module load. With the new
+debugfs "run" dentry allowing to run tests on demand, an ability to disable
+automatic tests run becomes a useful option in case of intrusive tests.
 
-Are you suggesting that all the files from the queue subdirectory should
-be included in the char dev (/sys/class/nvme/nvmeX/queue/)? Or that
-just the max_hw_sectors_kb value should be shared within the queue
-subdirectory? And if not the nvme driver, where else can this be done
-from?
+The option is set to true by default to preserve the existent behavior. It
+can be overridden by either the corresponding module option or by the
+corresponding config build option.
+
+Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+---
+ include/kunit/test.h |    4 +++-
+ lib/kunit/Kconfig    |   12 ++++++++++++
+ lib/kunit/debugfs.c  |    2 +-
+ lib/kunit/executor.c |   18 +++++++++++++++++-
+ lib/kunit/test.c     |    6 ++++--
+ 5 files changed, 37 insertions(+), 5 deletions(-)
+
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index 34b71e42fb10..58dbab60f853 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -312,6 +312,7 @@ static inline void kunit_set_failure(struct kunit *test)
+ }
+ 
+ bool kunit_enabled(void);
++bool kunit_autorun(void);
+ const char *kunit_action(void);
+ const char *kunit_filter_glob(void);
+ char *kunit_filter(void);
+@@ -334,7 +335,8 @@ kunit_filter_suites(const struct kunit_suite_set *suite_set,
+ 		    int *err);
+ void kunit_free_suite_set(struct kunit_suite_set suite_set);
+ 
+-int __kunit_test_suites_init(struct kunit_suite * const * const suites, int num_suites);
++int __kunit_test_suites_init(struct kunit_suite * const * const suites, int num_suites,
++			     bool run_tests);
+ 
+ void __kunit_test_suites_exit(struct kunit_suite **suites, int num_suites);
+ 
+diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+index 34d7242d526d..a97897edd964 100644
+--- a/lib/kunit/Kconfig
++++ b/lib/kunit/Kconfig
+@@ -81,4 +81,16 @@ config KUNIT_DEFAULT_ENABLED
+ 	  In most cases this should be left as Y. Only if additional opt-in
+ 	  behavior is needed should this be set to N.
+ 
++config KUNIT_AUTORUN_ENABLED
++	bool "Default value of kunit.autorun"
++	default y
++	help
++	  Sets the default value of kunit.autorun. If set to N then KUnit
++	  tests will not run after initialization unless kunit.autorun=1 is
++	  passed to the kernel command line. The test can still be run manually
++	  via debugfs interface.
++
++	  In most cases this should be left as Y. Only if additional opt-in
++	  behavior is needed should this be set to N.
++
+ endif # KUNIT
+diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+index d548750a325a..9df064f40d98 100644
+--- a/lib/kunit/debugfs.c
++++ b/lib/kunit/debugfs.c
+@@ -145,7 +145,7 @@ static ssize_t debugfs_run(struct file *file,
+ 	struct inode *f_inode = file->f_inode;
+ 	struct kunit_suite *suite = (struct kunit_suite *) f_inode->i_private;
+ 
+-	__kunit_test_suites_init(&suite, 1);
++	__kunit_test_suites_init(&suite, 1, true);
+ 
+ 	return count;
+ }
+diff --git a/lib/kunit/executor.c b/lib/kunit/executor.c
+index 34b7b6833df3..340723571b0f 100644
+--- a/lib/kunit/executor.c
++++ b/lib/kunit/executor.c
+@@ -29,6 +29,22 @@ const char *kunit_action(void)
+ 	return action_param;
+ }
+ 
++/*
++ * Run KUnit tests after initialization
++ */
++#ifdef CONFIG_KUNIT_AUTORUN_ENABLED
++static bool autorun_param = true;
++#else
++static bool autorun_param;
++#endif
++module_param_named(autorun, autorun_param, bool, 0);
++MODULE_PARM_DESC(autorun, "Run KUnit tests after initialization");
++
++bool kunit_autorun(void)
++{
++	return autorun_param;
++}
++
+ static char *filter_glob_param;
+ static char *filter_param;
+ static char *filter_action_param;
+@@ -266,7 +282,7 @@ void kunit_exec_run_tests(struct kunit_suite_set *suite_set, bool builtin)
+ 		pr_info("1..%zu\n", num_suites);
+ 	}
+ 
+-	__kunit_test_suites_init(suite_set->start, num_suites);
++	__kunit_test_suites_init(suite_set->start, num_suites, kunit_autorun());
+ }
+ 
+ void kunit_exec_list_tests(struct kunit_suite_set *suite_set, bool include_attr)
+diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+index 089c832e3cdb..146d1b48a096 100644
+--- a/lib/kunit/test.c
++++ b/lib/kunit/test.c
+@@ -708,7 +708,8 @@ bool kunit_enabled(void)
+ 	return enable_param;
+ }
+ 
+-int __kunit_test_suites_init(struct kunit_suite * const * const suites, int num_suites)
++int __kunit_test_suites_init(struct kunit_suite * const * const suites, int num_suites,
++			     bool run_tests)
+ {
+ 	unsigned int i;
+ 
+@@ -731,7 +732,8 @@ int __kunit_test_suites_init(struct kunit_suite * const * const suites, int num_
+ 
+ 	for (i = 0; i < num_suites; i++) {
+ 		kunit_init_suite(suites[i]);
+-		kunit_run_tests(suites[i]);
++		if (run_tests)
++			kunit_run_tests(suites[i]);
+ 	}
+ 
+ 	static_branch_dec(&kunit_running);
+
+
 
