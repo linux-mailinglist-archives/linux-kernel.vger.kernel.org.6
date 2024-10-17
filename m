@@ -1,229 +1,147 @@
-Return-Path: <linux-kernel+bounces-369576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3FE9A1F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:54:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B239A1F12
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE081C26353
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5ADA28A423
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D641DDC3A;
-	Thu, 17 Oct 2024 09:51:11 +0000 (UTC)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C7B1D9595;
+	Thu, 17 Oct 2024 09:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oKzyx59z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20091DDC17;
-	Thu, 17 Oct 2024 09:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D93165F08;
+	Thu, 17 Oct 2024 09:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158670; cv=none; b=ahYiU2/e5+aCqZMWO7RU1Y3S9m2L8J2p3b8oaCHUyTaBm8AicKsT7MGCfZdfh493FbTtFIgSoNQ7HrQKspXwsz1YW7mUOq7E4E3ttTW1lcGTVmAEBmNK2MO4d3B8z9Y2n5xtDwE9/vlxu7GN7LVII1dZ9LpbYQhp2F/ctcHnpKU=
+	t=1729158730; cv=none; b=rmB/hGvZ5QSTY86h7a8hboUw79CqPOskz17/Qp06zDv5PJB1kfkyDBY+XKENlDFZK+MGD9RpqmfqRiCHGQ0Q91u1yOoM/sXMKH8veCKngWnvzHVgkENG2nHTszVOiMBwbcC3Fm8R5klZaKnyLY3NcSKKhC7bJDt5b5oVi8MgMX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158670; c=relaxed/simple;
-	bh=699IaAmYxIBG1woipqR1z8uM7YOd2b7Yuffv+L/zraM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bJCOdGI9K+L4apyBgI+4L5FuuKIeN+S1+9kAECMRxvhU4D9RMmqAs3gXoBQP3TwxZVmmmvGVFlOvNbWAaXOVVv3/zENnjVR3IDDw9uP9oGZXshjjvcpQ0dgwYUsZCzzFuxVNnjfi5S1fcC5YbaYl7uGVY+ewBf6a62NwxaO3P9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so1084217a12.1;
-        Thu, 17 Oct 2024 02:51:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729158667; x=1729763467;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O/6ZZ3fgX1aNbuNd43s/ViNH42DOc1z9jRYfEzzfadM=;
-        b=Xf3zZqqUKinGVB7n3d0ZPBxPrm80k84RyU17h+lMnnzpDsxIJqlgtPqiGI5LaX32bP
-         QIS3rydZgiHKmBA1DKGA6HF6/whje/NI1lsFHeCrMkGZOhqpr55/S/VzroOK2LK5yxYH
-         sl4v49q1UiFTuuFIikXOBnsC8Z5MPOqcgHbG+jweWOyc9IOjkU1NtVgEZ/amDk+6bW0q
-         gp3mrUXn73YEmegpGnfnjGImrkGB0k1RBk7lIgCPHnAEEbmytWla5nBBabWOQ4VHqXlR
-         MD800NOaCtEzRaUwz+kyjstMuOctbMsMCjc+rLhUWHo4udlbbfxOubbGVRgWSYkbYlKV
-         MqWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9xGPgWcHDeBR1sxQlHGQRjRDw0YUcQPNUePIeVZdw0oK23vFK/K/E4b7GCifcABSf6s9Tn6nE@vger.kernel.org, AJvYcCX6+sHbNWBvvkWAbj86+jxgd/wlYFdp1GUUR9+WePv5fjbT4otTZGjaFLYbpoG5LLAogTmRNWoGDxPgr/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWY8F95lDSU/qtoZVav2yvDS7ev36x3axCAwEh3Tudk64N7pBJ
-	T92JsuHcJZ0u3mPAJWi3ploQYnuDDfx4WDX+i0+f7MRgGQwwT05d
-X-Google-Smtp-Source: AGHT+IGVmZJFxUCl5y/vCznK/RrczOuJRB6CfDSZ3aazuktdwRwJeLo9ncUAyLmFtaMQ+miUOTxvAQ==
-X-Received: by 2002:a17:907:3f1a:b0:a9a:19c8:740c with SMTP id a640c23a62f3a-a9a19c876a7mr1102779066b.47.1729158667133;
-        Thu, 17 Oct 2024 02:51:07 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-112.fbsv.net. [2a03:2880:30ff:70::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29844899sm277175566b.178.2024.10.17.02.51.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 02:51:06 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com
-Cc: thepacketgeek@gmail.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	davej@codemonkey.org.uk,
-	vlad.wing@gmail.com,
-	max@kutsevol.com,
-	kernel-team@meta.com
-Subject: [PATCH net-next v5 9/9] net: netconsole: split send_msg_fragmented
-Date: Thu, 17 Oct 2024 02:50:24 -0700
-Message-ID: <20241017095028.3131508-10-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241017095028.3131508-1-leitao@debian.org>
-References: <20241017095028.3131508-1-leitao@debian.org>
+	s=arc-20240116; t=1729158730; c=relaxed/simple;
+	bh=qOkRZ7dA9PBpum+aq1ZRnwF90KyGgZL2XumS6gLtwOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BriFxHnhuxnVF+pk1z/xlGErBJWGXKgsp7opbopMsYGgvHBAdRDHd/rdVcbEfNsnZQ+P9w5LkjxgQMBRicEt0TmuaQUiYqL9h4gN1o8T2Z85j0FkDsvQIxQ4yR3LH6o+utB97bJxI3qt/4ElLWTtgIKTWvC/oV8OnUu0EiTSD7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oKzyx59z; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729158729; x=1760694729;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qOkRZ7dA9PBpum+aq1ZRnwF90KyGgZL2XumS6gLtwOI=;
+  b=oKzyx59zjxLRimDT1NUjNmATowc81BP6hxtIaVmVLbKgT7B1BxlCvSkv
+   ANzN+IVd3ncKyTGizNn8IO+u+ifUhdh61OZ/xYt0s9bq3KZoNehnWVRZj
+   jyIm+g9x63u/VJCV8+klt4eG3ec1RqryxgtrjI3kr5ebJo8RLUJLyjc6i
+   YIirX+ivb7LRFFJ50tqZL2Y8NxHYmtJxfIg4ltvfrAglT430Q1Swszr6t
+   RIChZBuQ6xx+jkwaH4KwcZtWKkZjwcMMMM0mTgs7aXgpoVW3uqvCrop3B
+   cSphtAp9MxeWTp2CCvU3wzqoPvfG5aM2w15R9m9zRmkSvrlL9JL50/o9s
+   A==;
+X-CSE-ConnectionGUID: Ef/UW/ykQ7SlewZj/URRhA==
+X-CSE-MsgGUID: KLgITmJ5QbOiSY5c9YIrLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="16254562"
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="16254562"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 02:52:08 -0700
+X-CSE-ConnectionGUID: PFFFUSpWQdyCQtOZxuGdoA==
+X-CSE-MsgGUID: 2P9XLtXyRTCx1SyNHhTWHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="83567930"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 02:52:04 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t1NAn-000000044du-1N8X;
+	Thu, 17 Oct 2024 12:52:01 +0300
+Date: Thu, 17 Oct 2024 12:52:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v9 3/7] i2c: Introduce OF component probe function
+Message-ID: <ZxDeQcLVR1LK24Zr@smile.fi.intel.com>
+References: <20241017094222.1014936-1-wenst@chromium.org>
+ <20241017094222.1014936-4-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017094222.1014936-4-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Refactor the send_msg_fragmented() function by extracting the logic for
-sending the message body into a new function called
-send_fragmented_body().
+On Thu, Oct 17, 2024 at 05:34:38PM +0800, Chen-Yu Tsai wrote:
+> Some devices are designed and manufactured with some components having
+> multiple drop-in replacement options. These components are often
+> connected to the mainboard via ribbon cables, having the same signals
+> and pin assignments across all options. These may include the display
+> panel and touchscreen on laptops and tablets, and the trackpad on
+> laptops. Sometimes which component option is used in a particular device
+> can be detected by some firmware provided identifier, other times that
+> information is not available, and the kernel has to try to probe each
+> device.
+> 
+> This change attempts to make the "probe each device" case cleaner. The
+> current approach is to have all options added and enabled in the device
+> tree. The kernel would then bind each device and run each driver's probe
+> function. This works, but has been broken before due to the introduction
+> of asynchronous probing, causing multiple instances requesting "shared"
+> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> time, with only one instance succeeding. Work arounds for these include
+> moving the pinmux to the parent I2C controller, using GPIO hogs or
+> pinmux settings to keep the GPIO pins in some fixed configuration, and
+> requesting the interrupt line very late. Such configurations can be seen
+> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> Lenovo Thinkpad 13S.
+> 
+> Instead of this delicate dance between drivers and device tree quirks,
+> this change introduces a simple I2C component probe function. For a
+> given class of devices on the same I2C bus, it will go through all of
+> them, doing a simple I2C read transfer and see which one of them responds.
+> It will then enable the device that responds.
+> 
+> This requires some minor modifications in the existing device tree. The
+> status for all the device nodes for the component options must be set
+> to "fail-needs-probe". This makes it clear that some mechanism is
+> needed to enable one of them, and also prevents the prober and device
+> drivers running at the same time.
 
-Now, send_msg_fragmented() handles appending the release and header, and
-then delegates the task of breaking up the body and sending the
-fragments to send_fragmented_body().
+...
 
-This is the final flow now:
+> +#include <linux/cleanup.h>
+> +#include <linux/device.h>
+> +#include <linux/dev_printk.h>
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/i2c-of-prober.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/slab.h>
 
-When send_ext_msg_udp() is called to send a message, it will:
-  - call send_msg_no_fragmentation() if no fragmentation is needed
-  or
-  - call send_msg_fragmented() if fragmentation is needed
-    * send_msg_fragmented() appends the header to the buffer, which is
-      be persisted until the function returns
-      * call send_fragmented_body() to iterate and populate the body of
-	the message. It will not touch the header, and it will only
-	replace the body, writing the msgbody and/or userdata.
+In case you need a new version, also add stddef.h for NULL definition.
 
-Also add some comment to make the code easier to review.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- drivers/net/netconsole.c | 81 +++++++++++++++++++++++++---------------
- 1 file changed, 50 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index b04d86fcea8f..4ea44a2f48f7 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -1096,46 +1096,30 @@ static void append_release(char *buf)
- 	scnprintf(buf, MAX_PRINT_CHUNK, "%s,", release);
- }
- 
--static void send_msg_fragmented(struct netconsole_target *nt,
--				const char *msg,
--				int msg_len,
--				int release_len)
-+static void send_fragmented_body(struct netconsole_target *nt, char *buf,
-+				 const char *msgbody, int header_len,
-+				 int msgbody_len)
- {
--	int header_len, msgbody_len, body_len;
--	static char buf[MAX_PRINT_CHUNK]; /* protected by target_list_lock */
--	int offset = 0, userdata_len = 0;
--	const char *header, *msgbody;
- 	const char *userdata = NULL;
-+	int body_len, offset = 0;
-+	int userdata_len = 0;
- 
- #ifdef CONFIG_NETCONSOLE_DYNAMIC
- 	userdata = nt->userdata_complete;
- 	userdata_len = nt->userdata_length;
- #endif
- 
--	/* need to insert extra header fields, detect header and msgbody */
--	header = msg;
--	msgbody = memchr(msg, ';', msg_len);
--	if (WARN_ON_ONCE(!msgbody))
--		return;
--
--	header_len = msgbody - header;
--	msgbody_len = msg_len - header_len - 1;
--	msgbody++;
--
--	/*
--	 * Transfer multiple chunks with the following extra header.
--	 * "ncfrag=<byte-offset>/<total-bytes>"
-+	/* body_len represents the number of bytes that will be sent. This is
-+	 * bigger than MAX_PRINT_CHUNK, thus, it will be split in multiple
-+	 * packets
- 	 */
--	if (release_len)
--		append_release(buf);
--
--	/* Copy the header into the buffer */
--	memcpy(buf + release_len, header, header_len);
--	header_len += release_len;
--
- 	body_len = msgbody_len + userdata_len;
--	/* for now on, the header will be persisted, and the msgbody
--	 * will be replaced
-+
-+	/* In each iteration of the while loop below, we send a packet
-+	 * containing the header and a portion of the body. The body is
-+	 * composed of two parts: msgbody and userdata. We keep track of how
-+	 * many bytes have been sent so far using the offset variable, which
-+	 * ranges from 0 to the total length of the body.
- 	 */
- 	while (offset < body_len) {
- 		int this_header = header_len;
-@@ -1144,7 +1128,7 @@ static void send_msg_fragmented(struct netconsole_target *nt,
- 		int this_chunk = 0;
- 
- 		this_header += scnprintf(buf + this_header,
--					 sizeof(buf) - this_header,
-+					 MAX_PRINT_CHUNK - this_header,
- 					 ",ncfrag=%d/%d;", offset,
- 					 body_len);
- 
-@@ -1199,6 +1183,41 @@ static void send_msg_fragmented(struct netconsole_target *nt,
- 	}
- }
- 
-+static void send_msg_fragmented(struct netconsole_target *nt,
-+				const char *msg,
-+				int msg_len,
-+				int release_len)
-+{
-+	static char buf[MAX_PRINT_CHUNK]; /* protected by target_list_lock */
-+	int header_len, msgbody_len;
-+	const char *msgbody;
-+
-+	/* need to insert extra header fields, detect header and msgbody */
-+	msgbody = memchr(msg, ';', msg_len);
-+	if (WARN_ON_ONCE(!msgbody))
-+		return;
-+
-+	header_len = msgbody - msg;
-+	msgbody_len = msg_len - header_len - 1;
-+	msgbody++;
-+
-+	/*
-+	 * Transfer multiple chunks with the following extra header.
-+	 * "ncfrag=<byte-offset>/<total-bytes>"
-+	 */
-+	if (release_len)
-+		append_release(buf);
-+
-+	/* Copy the header into the buffer */
-+	memcpy(buf + release_len, msg, header_len);
-+	header_len += release_len;
-+
-+	/* for now on, the header will be persisted, and the msgbody
-+	 * will be replaced
-+	 */
-+	send_fragmented_body(nt, buf, msgbody, header_len, msgbody_len);
-+}
-+
- /**
-  * send_ext_msg_udp - send extended log message to target
-  * @nt: target to send message to
 -- 
-2.43.5
+With Best Regards,
+Andy Shevchenko
+
 
 
