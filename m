@@ -1,172 +1,197 @@
-Return-Path: <linux-kernel+bounces-369980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7899A2534
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381C09A2538
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED836B28A22
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:36:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE271C20A4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9792A1DE4ED;
-	Thu, 17 Oct 2024 14:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F61E1DE4F1;
+	Thu, 17 Oct 2024 14:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmXv9C5o"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YYO0ZkzM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD6910F2;
-	Thu, 17 Oct 2024 14:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE801DE4D4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729175808; cv=none; b=Mu1QyE7fYd5Eu8P1owZ9MSfhzJyPbmH0S3CV6xqajvVJZnVBDpEySFd6jin7y/fsQUALjNwRGcj8g3pLcE1xlUeDsvE6TqFbUr7Jayoz8MKaahNDOzGXgSBB5L/r08r9Jo9G/0lkpj4Da0oX3+KOAG2mvG5wBqMdqrm36RDf2Z0=
+	t=1729175819; cv=none; b=ftt22ZqrURn5r5+joSQr6LTgf0b0QhOLUQnBrKnUBrnIaRi9ctbkeDTN5U3iTZbfFFLml5OgvmmsfudF4ApsbFwwG7gRj8HtZWdy6lmU7bXbMVpP3M5GnHFpLPP+yFyG2dY91iEq4QOo3Ng8LTlr6sYkrO6RvGXogi8gIwBLI3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729175808; c=relaxed/simple;
-	bh=6rKRf9Y1WXE42KHKwOnG748h/c4WLjfiy4PNeD5tvY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b93JsdNYzjCDLo9s+0ZnEQhzi3iOxhVt5NTsHBE+fd6SoVyhbwzrNOPp31kX2wgwGe2pEEXkouEUQyJ3fO45smrJPUzfU2kuau7sMTFsk5brHoh7ex1YFf8p3jvxWgRARZ+ikL0psrs53cise6HXmkbrgXnuv28ZX+GgHXDWaNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmXv9C5o; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d495d217bso913620f8f.0;
-        Thu, 17 Oct 2024 07:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729175801; x=1729780601; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZagKg02wl0icL3yNm9ZBuvWQr9E3IdxLZ4rUxrkLGY=;
-        b=nmXv9C5oxYzEcq6TxtJuN1vI+VZOmrhXIRgqV9qa1bU/9aHmM6x5nw3hCRwRU6Gcxz
-         Ch9FqNqxl+hjUzCbXArhvSNAPpED2/uTiF4jiSHHo3hFGzhuvncW/qA4YSUrEJ+JtbLf
-         7oEsn84VPTPH0xEmFFdtw5VFYEn0NgyclhqTOIGe63ixbbGW5t9Ugr2yMJkRH4hnDftr
-         f2b5IlHZpISeI4x9aNacb1DmOsHKe0Bi13Fy9jzaGeC3KUcPkFbvx+BCsSRik0TdF1m2
-         Q6hesiV/sKcC8ikS/snjKZCbr5EJE0NpKh7vZqwdRvicerwCE3TfVJzhodNRMZWdCbEC
-         7/GQ==
+	s=arc-20240116; t=1729175819; c=relaxed/simple;
+	bh=QXtnX+sdvYBkyWY1Bntt5HQGfkMEAVqFb1Kg5Izp/Oo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=igTOXBWeKdmWsHsI/ge5ePt93cUc48R27q8wBBx09yElrmPHI+KXvHISZ4Ev7Tf7cZPbSAFDE/IpqJEbF6HoXFhhoSd1rY4DcE9GUd99oqI+W49zbSsqaeL0gx7nOH4ROV40ATcukQMsJPyzJxe3H64pD1G/JN00DKg0+sZ3Gho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YYO0ZkzM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729175816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UzfXLoTrDUyX1VJYFE3FTnLV0X70G74YSwU8euehzao=;
+	b=YYO0ZkzMlbGZhSuJ1Ojp1KELzju8ZA7i+NcCsjf/YxHiSvYQH6vh1WqvfcCaXoqYsl6sOz
+	zAOKKlOLCC3sZiVlJqigXqh58Rvpk8cG+K1tTZxJWLxvbAhxvX06szDZGbyXgzDdQi9Ste
+	Bm7pH7bFHk2UAMwqhhOlM4ZWDvx/IrE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-649-r7WW8O7hPvOlJ8QqOzX7ug-1; Thu, 17 Oct 2024 10:36:55 -0400
+X-MC-Unique: r7WW8O7hPvOlJ8QqOzX7ug-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43124676f8aso8393865e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:36:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729175801; x=1729780601;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zZagKg02wl0icL3yNm9ZBuvWQr9E3IdxLZ4rUxrkLGY=;
-        b=nS9Xdj0VrqwZb0Z60tczYfqnNY9BveSwVNY1NOzLzQhkrujS3RmboBLPzzK/rnvzbb
-         AR1s/CewxbXTnMMwlBymlIRMmX/b5Kq2joBefDJdUwJvDduQhE10Ha3YcxwqP3cnW2/9
-         P1fxIYNBXZ+98v+JzDrrDHAyO0yCrPMNAFTh1ULZV2+8WITK6aYrjzBqSV3OvYK4U+0q
-         v40JCVblA+luw0VDUZjj6+buiQD9tJfW6UrQEYriK7Upnv56AzjhitW39VcdJDuCoCwn
-         81V1+VxPDa0tIgJdj2HnXw/DNY8YuQDtLyvFzXSugrDOFqbQWe8MNcJDrXgj6KP+Ozxv
-         18MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqotbgs+TjU/ta5/xB3xlA3jSKCOOrafCWLeO/K0Qdc/gJ/k+nXW4QczLCD406y/dT7TVlWTA0PNA7EQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRPo5hSBwrdJPcXrbDbUInIP8PWUeI7KDhSE5Evh/cDivX1cLj
-	PXdKDMAsmrTntwaDVlUU7Xn/uDa8jrl2NiyinD5DYFJRnb2TzERr
-X-Google-Smtp-Source: AGHT+IHfffww4ML1derH7Nbp65Ko+ITzCNOIk4WkP160BiZx9OIx2j+xcWvUgSq3w+mw+RHW1zFZsw==
-X-Received: by 2002:a5d:59a5:0:b0:37d:53d1:84f2 with SMTP id ffacd0b85a97d-37d5ff27fa8mr21397323f8f.11.1729175800873;
-        Thu, 17 Oct 2024 07:36:40 -0700 (PDT)
-Received: from andrea.. ([2a01:5a8:300:22d3:c46d:6fc7:2b80:b267])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa87d56sm7473352f8f.43.2024.10.17.07.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 07:36:40 -0700 (PDT)
-From: Andrea Parri <parri.andrea@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bjorn@kernel.org,
-	pulehui@huawei.com,
-	puranjay@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	paulmck@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Andrea Parri <parri.andrea@gmail.com>
-Subject: [PATCH] riscv, bpf: Make BPF_CMPXCHG fully ordered
-Date: Thu, 17 Oct 2024 17:36:28 +0300
-Message-ID: <20241017143628.2673894-1-parri.andrea@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1729175814; x=1729780614;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UzfXLoTrDUyX1VJYFE3FTnLV0X70G74YSwU8euehzao=;
+        b=dwX6lEJZtMJGnFXgCxI9k9GqpCacWffGZ+tLbIPFM/wWt7GMcLAkMlTx6pC6yNGvA+
+         q6ejsB2yS+EUQKzj+pGtS5PN2lHJb+HkCV5qLsjKq2q2I8BHVpQtQ5McY/ehDjlxxwUO
+         TG3+Wnj8uUl9GqxlcZR5c4z/9yOb0vOSdATPr3yM0CCfGs19zFSDjiDh5ISFUVEEkX5c
+         +5sJ4tKB/BMJZc2MSiT9u8BtQ0QIFFf321PkXuvdhsvjdS97GRzdSVeJyXTE0wYTUXFI
+         zHnqsay8WpCjwo9c+cNKMah9d1oNTWz/uBgmVcI+86RVDqTenbumqLtjuA59Ns/gVygh
+         X8yw==
+X-Gm-Message-State: AOJu0Yy/ZLP2fmuga5WScs5p6ctt0q8NYI9DNP/oMfq/2Byy1vLhZdHk
+	+KtRQVm6y59yLopiX7297/kDJWJqQzJVYVAWkwvgunnr6OW65k2AZTIZ8jjyrnAqyk/6f6sXehD
+	7hlEjA86jNH4xUOO0Lc5aEsVKxQr51JiWE7gDHDGD0FdXupOEZ/hldDPFK+S+mA==
+X-Received: by 2002:a05:600c:3b99:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-4314a3abe93mr69661435e9.30.1729175814116;
+        Thu, 17 Oct 2024 07:36:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHpU9cpWS3yeJ12WQ1qdRFSatXmwxIJA5brFMmY8AiQ4Fgny5eENTh1y2xj5WODUe0A3g91w==
+X-Received: by 2002:a05:600c:3b99:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-4314a3abe93mr69661145e9.30.1729175813692;
+        Thu, 17 Oct 2024 07:36:53 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4314f1c3197sm42435665e9.0.2024.10.17.07.36.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 07:36:53 -0700 (PDT)
+Message-ID: <0224bd06-3a77-474e-917d-814d2082186e@redhat.com>
+Date: Thu, 17 Oct 2024 16:36:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT) to
+ support QEMU/KVM memory devices
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+ Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-5-david@redhat.com>
+ <ZxC+mr5PcGv4fBcY@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <04d5169f-3289-4aac-abca-90b20ad4e9c9@redhat.com>
+ <ZxDetq73hETPMjln@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <1c7ef09e-9ba2-488e-a249-4db3f65e077d@redhat.com>
+ <45de474c-9af3-4d71-959f-6dbc223b432b@redhat.com>
+ <ZxEf6NOs1hDFZd1E@tuxmaker.boeblingen.de.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZxEf6NOs1hDFZd1E@tuxmaker.boeblingen.de.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-According to the prototype formal BPF memory consistency model
-discussed e.g. in [1] and following the ordering properties of
-the C/in-kernel macro atomic_cmpxchg(), a BPF atomic operation
-with the BPF_CMPXCHG modifier is fully ordered.  However, the
-current RISC-V JIT lowerings fail to meet such memory ordering
-property.  This is illustrated by the following litmus test:
+On 17.10.24 16:32, Alexander Gordeev wrote:
+> On Thu, Oct 17, 2024 at 02:07:12PM +0200, David Hildenbrand wrote:
+>> On 17.10.24 12:00, David Hildenbrand wrote:
+>>> Well, DIAGNOSE 260 is z/VM only and DIAG 500 is KVM only. So there are
+>>> currently not really any other reasonable ways besides SCLP.
+>>
+>> Correction: Staring at the code again, in detect_physmem_online_ranges()
+>> we will indeed try:
+>>
+>> a) sclp_early_read_storage_info()
+>> b) diag260()
+> 
+> So why care to call diag260() in case of DIAGNOSE 500? What about the below?
+> 
+> void detect_physmem_online_ranges(unsigned long max_physmem_end)
+> {
+> 	if (!sclp_early_read_storage_info()) {
+> 		physmem_info.info_source = MEM_DETECT_SCLP_STOR_INFO;
+> 	} else if (physmem_info.info_source == MEM_DETECT_DIAG500_STOR_LIMIT) {
+> 		unsigned long online_end;
+> 
+> 		if (!sclp_early_get_memsize(&online_end)) {
+> 			physmem_info.info_source = MEM_DETECT_SCLP_READ_INFO;
+> 			add_physmem_online_range(0, online_end);
+> 		}
+> 	} else if (!diag260()) {
+> 		physmem_info.info_source = MEM_DETECT_DIAG260;
+> 	} else if (max_physmem_end) {
+> 		add_physmem_online_range(0, max_physmem_end);
+> 	}
+> }
 
-BPF BPF__MP+success_cmpxchg+fence
-{
- 0:r1=x; 0:r3=y; 0:r5=1;
- 1:r2=y; 1:r4=f; 1:r7=x;
-}
- P0                               | P1                                         ;
- *(u64 *)(r1 + 0) = 1             | r1 = *(u64 *)(r2 + 0)                      ;
- r2 = cmpxchg_64 (r3 + 0, r4, r5) | r3 = atomic_fetch_add((u64 *)(r4 + 0), r5) ;
-                                  | r6 = *(u64 *)(r7 + 0)                      ;
-exists (1:r1=1 /\ 1:r6=0)
+Works for me, thanks!
 
-whose "exists" clause is not satisfiable according to the BPF
-memory model.  Using the current RISC-V JIT lowerings, the test
-can be mapped to the following RISC-V litmus test:
-
-RISCV RISCV__MP+success_cmpxchg+fence
-{
- 0:x1=x; 0:x3=y; 0:x5=1;
- 1:x2=y; 1:x4=f; 1:x7=x;
-}
- P0                 | P1                          ;
- sd x5, 0(x1)       | ld x1, 0(x2)                ;
- L00:               | amoadd.d.aqrl x3, x5, 0(x4) ;
- lr.d x2, 0(x3)     | ld x6, 0(x7)                ;
- bne x2, x4, L01    |                             ;
- sc.d x6, x5, 0(x3) |                             ;
- bne x6, x4, L00    |                             ;
- fence rw, rw       |                             ;
- L01:               |                             ;
-exists (1:x1=1 /\ 1:x6=0)
-
-where the two stores in P0 can be reordered.  Update the RISC-V
-JIT lowerings/implementation of BPF_CMPXCHG to emit an SC with
-RELEASE ("rl") annotation in order to meet the expected memory
-ordering guarantees.  The resulting RISC-V JIT lowerings of
-BPF_CMPXCHG match the RISC-V lowerings of the C atomic_cmpxchg().
-
-Fixes: dd642ccb45ec ("riscv, bpf: Implement more atomic operations for RV64")
-Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-Link: https://lpc.events/event/18/contributions/1949/attachments/1665/3441/bpfmemmodel.2024.09.19p.pdf [1]
----
- arch/riscv/net/bpf_jit_comp64.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
-index 99f34409fb60f..c207aa33c980b 100644
---- a/arch/riscv/net/bpf_jit_comp64.c
-+++ b/arch/riscv/net/bpf_jit_comp64.c
-@@ -548,8 +548,8 @@ static void emit_atomic(u8 rd, u8 rs, s16 off, s32 imm, bool is64,
- 		     rv_lr_w(r0, 0, rd, 0, 0), ctx);
- 		jmp_offset = ninsns_rvoff(8);
- 		emit(rv_bne(RV_REG_T2, r0, jmp_offset >> 1), ctx);
--		emit(is64 ? rv_sc_d(RV_REG_T3, rs, rd, 0, 0) :
--		     rv_sc_w(RV_REG_T3, rs, rd, 0, 0), ctx);
-+		emit(is64 ? rv_sc_d(RV_REG_T3, rs, rd, 0, 1) :
-+		     rv_sc_w(RV_REG_T3, rs, rd, 0, 1), ctx);
- 		jmp_offset = ninsns_rvoff(-6);
- 		emit(rv_bne(RV_REG_T3, 0, jmp_offset >> 1), ctx);
- 		emit(rv_fence(0x3, 0x3), ctx);
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
