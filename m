@@ -1,104 +1,152 @@
-Return-Path: <linux-kernel+bounces-369817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CA49A2327
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062039A22F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDA18B23359
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B4F283DCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DB71DE3B3;
-	Thu, 17 Oct 2024 13:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E93D1DDC0D;
+	Thu, 17 Oct 2024 13:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxvkNKhf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="QBY7HbEl"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDC31DE3A5;
-	Thu, 17 Oct 2024 13:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3294B1D8E01
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729170552; cv=none; b=ES1zdgWYSgYqeSdrObQD6EKykCdVRcUESW78GH//gcsq6dYsAqNIRgJeCZXvpDIhd8nLy+TOcv4DmpUIWc5xafGTQaaYT8k7i4lDxiQ7abHOorFOArzM6XH/iHNbhOKh7hJdyIswr9p3bVDCvlP0ENIY9a8Pyf8JvXABiDtq6Hw=
+	t=1729170343; cv=none; b=ZKoijWwRuXMcdon+4eKvruT2zYkEITgSZebSeURscmFcL1i40K5lKSqm0STbLtnhjo9cccFrmd9S2NHpun9fHwLfQODDjSsVNvdlnykF9KNkmJDasLaqrbeS7z7dgPCt1y5t/OS9AK9oWSUs6c1Yz5cMLKBBn9kba9yjFOobVxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729170552; c=relaxed/simple;
-	bh=qzP2YzXKrnzveGOYctsIdkN4dNpi8dNyWJklUYxTXUQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FyG2efFq5vGjwWt+GbZoDhhNAA299Yq+wQMuKpSJ3xE3T0O7D6lfLOnJRrCX4ElZeqym9pca2pAP6QfwfQeq7vVZZr0kOXAZqX9U7+bMjFaVeHQLEbP5DOX0KE1kHD7TEja7BIWBLQlxF4aP0ZV9tT0YPVlmI6DmMCeD8u64KGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxvkNKhf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B3DC4CEC3;
-	Thu, 17 Oct 2024 13:09:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729170552;
-	bh=qzP2YzXKrnzveGOYctsIdkN4dNpi8dNyWJklUYxTXUQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GxvkNKhfbtfeXcI2mlIYqAxmVcE6N2cDcNqQ8Qr5j15NjN/n+CQCE4sKJf3kEUH4Q
-	 JOwTbHbwObja2/FaHFH61Vc0lXd+9Km6zWkbC+YMY+75xx1Uk1b6xru/XLvtShpJz4
-	 VhbFFlp8EoY94V7kFp2QjboDadaQB8ZkCiA1VBUvUstDtS7Hhsyvtyif2YdohtV1ox
-	 oEfm/a5VV6d5GgvqWhXUEYVeZZ9nCwYvL0s6j0Ech/DtwJw0mjm5fMwPUBjCgDxc+m
-	 16X+Py/vxaqrPpX3Qhc6rV3Ywtm4H+PwQb+hu0Loe2X0Mx2uJjNeq18UZS7ThiU1PE
-	 KPhDwqiIlq6Mg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Thu, 17 Oct 2024 15:04:40 +0200
-Subject: [PATCH v3 13/13] rust: hrtimer: add maintainer entry
+	s=arc-20240116; t=1729170343; c=relaxed/simple;
+	bh=+1mZ2EnDgiNZEyU5wGe5DDC8TFv/ZPQhAyame6DNc54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ikdGIlaoweN4KdEXMm+H6Vz3qhCIxUqZyJ4b0NTzlb7xPhlL2nFqBAANnhMWN+Hfe9fg7VSeS8xoZxZZ2CpyKr/vY60Ez3Ic6K/w/VpiymqNLIs6s5g8xM42r3r0/wxD5xBedIJQ3k+QviCiFWdpzKtH/rP2RE3wpKxhX9pk9ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=QBY7HbEl; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6c5ab2de184so5244866d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1729170341; x=1729775141; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lk++0v4zwR7xUpep4iNg0I6MKOHA7nEjzuqiKjJzkok=;
+        b=QBY7HbElBdmMPatjmKu+KZSzhkf8RQXNUFNwI1tAWk43au1lJvTSKaUhD38Kbqy55d
+         tEGNbaohEnmAugYaRk9DlQqnNpVw4IBbkKrZLQe3O2TmNH3Lj1sEDl/GcSLMQvdvNq+c
+         W83w7F/UZu5svgvQw3fItUVJowlAvZuq81lhLyIBnH9pN6biK/lfaufr8DAtFgT/Mpki
+         nmKgu0fGp8g6xB1LsNelD8Kfv4SV8OsjchwtQzDl1a/h5uJ9VR08lFD6TKKoSTxtuJhH
+         JbOEAX9Z6s+OzoLP6rzKY5MBrBDUNXaGS8tGray2sBHaCn/IM+E5RBbYaIlLFT2AsQLj
+         2Dnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729170341; x=1729775141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lk++0v4zwR7xUpep4iNg0I6MKOHA7nEjzuqiKjJzkok=;
+        b=PxupHH+gabher/x40RdeJqBimDnZZz9DKIcdfZB6y8zlaCL/0yALFnTyTXms685LPw
+         59A0YEmpbA3Qwq0KOnosTOu9iEQ4HJGExFpLfCBXLvvhC1upOwCJfOmYnw3Mr5ivg4+p
+         2sR7iI/oYJY5xDjQpFv/Ua18lAqGFQ7cN075pW3im7xuR7flV+9lN5qu26XOWT/itcSn
+         ciWfihkPQGiybMosxyRMRF89yf4Ui/JYIFE9XdfQL6Wg6HdAC9L3IZLG/Txja84Njh3n
+         WrqZj5sVIMezBSqLTnDg9peTAlpM0eHFKwNmhelqSHapJ3j15gNd63AGM8ORK5eo1mrC
+         yHOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmpMhNcgpSsHVmxlDA5ooe9NsOoAfnoVuvSO/4dvuH1EgbWU1bCSkBl6iNlpggYIzB5/e7vFset+li1rI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyBcJSvAB1XfEWkzsh4KYMndNpp2loUnscZwY8S2ZLTk1OkZN7
+	Syed5ZByuNiNhPMTuV74cbYH4TsnIIG0ZwOGO83TIrYwLNGSkt+t/eCQ1ZeYw/Y=
+X-Google-Smtp-Source: AGHT+IG5n5S3zHSv/JX5s/LYaf+o3YrOaG8HklVpPKUbKJ/yS6kcQbfiEDJXO6iYDC0yAlGNuOhLug==
+X-Received: by 2002:a05:6214:2b93:b0:6cb:d094:d1c4 with SMTP id 6a1803df08f44-6cbf009b918mr251899446d6.30.1729170340973;
+        Thu, 17 Oct 2024 06:05:40 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cc2290fa01sm27747076d6.24.2024.10.17.06.05.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 06:05:40 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t1QCB-003suE-SU;
+	Thu, 17 Oct 2024 10:05:39 -0300
+Date: Thu, 17 Oct 2024 10:05:39 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
+	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
+	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
+	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
+Message-ID: <20241017130539.GA897978@ziepe.ca>
+References: <20241015152348.3055360-1-ymaman@nvidia.com>
+ <20241015152348.3055360-2-ymaman@nvidia.com>
+ <Zw9F2uiq6-znYmTk@infradead.org>
+ <20241016154428.GD4020792@ziepe.ca>
+ <Zw_sn_DdZRUw5oxq@infradead.org>
+ <20241016174445.GF4020792@ziepe.ca>
+ <ZxD71D66qLI0qHpW@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241017-hrtimer-v3-v6-12-rc2-v3-13-59a75cbb44da@kernel.org>
-References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
-In-Reply-To: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxD71D66qLI0qHpW@infradead.org>
 
-Add Andreas Hindborg as maintainer for Rust `hrtimer` abstractions. Also
-add Boqun Feng as reviewer.
+On Thu, Oct 17, 2024 at 04:58:12AM -0700, Christoph Hellwig wrote:
+> On Wed, Oct 16, 2024 at 02:44:45PM -0300, Jason Gunthorpe wrote:
+> > > > FWIW, I've been expecting this series to be rebased on top of Leon's
+> > > > new DMA API series so it doesn't have this issue..
+> > > 
+> > > That's not going to make a difference at this level.
+> > 
+> > I'm not sure what you are asking then.
+> > 
+> > Patch 2 does pci_p2pdma_add_resource() and so a valid struct page with
+> > a P2P ZONE_DEVICE type exists, and that gets returned back to the
+> > hmm/odp code.
+> > 
+> > Today odp calls dma_map_page() which only works by chance in limited
+> > cases. With Leon's revision it will call hmm_dma_map_pfn() ->
+> > dma_iova_link() which does call pci_p2pdma_map_type() and should do
+> > the right thing.
+> 
+> Again none of this affects the code posted here.  It reshuffles the
+> callers but has no direct affect on the patches posted here.
 
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I didn't realize till last night that Leon's series did not have P2P
+support.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a097afd76ded46ca7adf7a3538ad83643ad6b756..d7313743b723b385b53c0228683d212eb49bd633 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10174,6 +10174,16 @@ F:	kernel/time/timer_list.c
- F:	kernel/time/timer_migration.*
- F:	tools/testing/selftests/timers/
- 
-+HIGH-RESOLUTION TIMERS [RUST]
-+M:	Andreas Hindborg <a.hindborg@kernel.org>
-+R:	Boqun Feng <boqun.feng@gmail.com>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+F:	rust/kernel/hrtimer.rs
-+F:	rust/kernel/hrtimer/
-+
- HIGH-SPEED SCC DRIVER FOR AX.25
- L:	linux-hams@vger.kernel.org
- S:	Orphan
+What I'm trying to say is that this is a multi-series project.
 
--- 
-2.46.0
+A followup based on Leon's initial work will get the ODP DMA mapping
+path able to support ZONE_DEVICE P2P pages.
 
+Once that is done, this series sits on top. This series is only about
+hmm and effectively allows hmm_range_fault() to return a ZONE_DEVICE
+P2P page.
 
+Yonatan should explain this better in the cover letter and mark it as
+a RFC series.
+
+So, I know we are still figuring out the P2P support on the DMA API
+side, but my expectation for hmm is that hmm_range_fault() returing a
+ZONE_DEVICE P2P page is going to be what we want.
+
+> (and the current DMA series lacks P2P support, I'm trying to figure
+> out how to properly handle it at the moment).
+
+Yes, I see, I looked through those patches last night and there is a
+gap there.
+
+Broadly I think whatever flow NVMe uses for P2P will apply to ODP as
+well.
+
+Thanks,
+Jason
 
