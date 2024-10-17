@@ -1,168 +1,131 @@
-Return-Path: <linux-kernel+bounces-369914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D579A2464
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF469A246F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB92C28383E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1488F2866B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FA81DE3B4;
-	Thu, 17 Oct 2024 13:57:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD3A1DE3BE;
+	Thu, 17 Oct 2024 14:01:55 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9691DB346;
-	Thu, 17 Oct 2024 13:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA96439FE5;
+	Thu, 17 Oct 2024 14:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729173433; cv=none; b=io1A17+ylh/JemOSUixJiCgeW/216hnFuzhqAh7yaydECUe/26NW+u38CF+QLppfkb4KwDLvXqK+znut+Jv57uPnLeste2uguMcmXSpTg58vnbkwVBYFjUI+js6PNJKmvC1EO44skJWSBiODBZkGmoPAecd3c9Cr8Ka9/T+al3w=
+	t=1729173714; cv=none; b=APEKMNaaSkJY3ZrMv3CbYP+hKWbPFu+GX1do4KpEVf7gCvGOAtaML8Hrlgz/Em/cN2rIAj6CMiphy7Ym7pntI0ZkhaZA5KcBf62lSmqH9Gj+K6mfQqRBYNmOHI0hGu+o9bWVrZ2B9nmZs7rVI6yoDiKnq9m6Li+Nexqt8pZBVY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729173433; c=relaxed/simple;
-	bh=dtkFcsRlwUuU51KNJdQptg5gAjCKgrQm6G8DaP5HcO4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZeX+CUAddfBJoliskc6LlVF5NS8oM60vweEUU3OlVKFWEYhvTsOw4Ij27R8hQld7wAboMh1XbMv8PR7JBpLREplA29B6FJkpm2aziDTW1zWUUUzsRbFnQNwBFU6m6wL1UUcJrlpa7Qe6DtEIbD7brh8SaQhQNcTHHfdtjGEUo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTq954nS0z6FHBC;
-	Thu, 17 Oct 2024 21:55:21 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DF2A01400C9;
-	Thu, 17 Oct 2024 21:57:05 +0800 (CST)
-Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
- 2024 15:57:04 +0200
-Date: Thu, 17 Oct 2024 14:57:02 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
-	<Benjamin.Cheatham@amd.com>, <rrichter@amd.com>, <nathan.fontenot@amd.com>,
-	<smita.koralahallichannabasappa@amd.com>
-Subject: Re: [PATCH 12/15] cxl/pci: Add error handler for CXL PCIe port RAS
- errors
-Message-ID: <20241017145702.00006e58@Huawei.com>
-In-Reply-To: <20241008221657.1130181-13-terry.bowman@amd.com>
-References: <20241008221657.1130181-1-terry.bowman@amd.com>
-	<20241008221657.1130181-13-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729173714; c=relaxed/simple;
+	bh=YIGa7aKF3zPBjTfPQwEODkjyQxe13e+PbHCs5IPylfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqX/Fj4v7D1CHtaOjLwSkdrdSEzQDusF8li+I4TgINOkYbB2dPK4f6QiTh3xAEMmXQ44wdtSLYRJZ6sveV+caz+VO81BxnJkHIZmZtt7UqjQqFiVYNfOeCf5rqBQRTGPX4TM8jIKGisReT/FYoKlQ2PFTEeTMcYqWASv9Q2bN7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D0FC4CEC3;
+	Thu, 17 Oct 2024 14:01:49 +0000 (UTC)
+Date: Thu, 17 Oct 2024 15:01:47 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Okanovic, Haris" <harisokn@amazon.com>
+Cc: "ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+	"wanpengli@tencent.com" <wanpengli@tencent.com>,
+	"cl@gentwo.org" <cl@gentwo.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"maobibo@loongson.cn" <maobibo@loongson.cn>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"misono.tomohiro@fujitsu.com" <misono.tomohiro@fujitsu.com>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"mtosatti@redhat.com" <mtosatti@redhat.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>
+Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+Message-ID: <ZxEYy9baciwdLnqh@arm.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+ <20240925232425.2763385-2-ankur.a.arora@oracle.com>
+ <Zw5aPAuVi5sxdN5-@arm.com>
+ <7f7ffdcdb79eee0e8a545f544120495477832cd5.camel@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f7ffdcdb79eee0e8a545f544120495477832cd5.camel@amazon.com>
 
-On Tue, 8 Oct 2024 17:16:54 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
-
-> The CXL drivers do not contain error handlers for CXL PCIe port
-> device protocol errors. These are needed in order to handle and log
-> RAS protocol errors.
+On Wed, Oct 16, 2024 at 03:13:33PM +0000, Okanovic, Haris wrote:
+> On Tue, 2024-10-15 at 13:04 +0100, Catalin Marinas wrote:
+> > On Wed, Sep 25, 2024 at 04:24:15PM -0700, Ankur Arora wrote:
+> > > diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
+> > > index 9b6d90a72601..fc1204426158 100644
+> > > --- a/drivers/cpuidle/poll_state.c
+> > > +++ b/drivers/cpuidle/poll_state.c
+> > > @@ -21,21 +21,20 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+> > > 
+> > >       raw_local_irq_enable();
+> > >       if (!current_set_polling_and_test()) {
+> > > -             unsigned int loop_count = 0;
+> > >               u64 limit;
+> > > 
+> > >               limit = cpuidle_poll_time(drv, dev);
+> > > 
+> > >               while (!need_resched()) {
+> > > -                     cpu_relax();
+> > > -                     if (loop_count++ < POLL_IDLE_RELAX_COUNT)
+> > > -                             continue;
+> > > -
+> > > -                     loop_count = 0;
+> > > +                     unsigned int loop_count = 0;
+> > >                       if (local_clock_noinstr() - time_start > limit) {
+> > >                               dev->poll_time_limit = true;
+> > >                               break;
+> > >                       }
+> > > +
+> > > +                     smp_cond_load_relaxed(&current_thread_info()->flags,
+> > > +                                           VAL & _TIF_NEED_RESCHED ||
+> > > +                                           loop_count++ >= POLL_IDLE_RELAX_COUNT);
+> > 
+> > The above is not guaranteed to make progress if _TIF_NEED_RESCHED is
+> > never set. With the event stream enabled on arm64, the WFE will
+> > eventually be woken up, loop_count incremented and the condition would
+> > become true. However, the smp_cond_load_relaxed() semantics require that
+> > a different agent updates the variable being waited on, not the waiting
+> > CPU updating it itself. Also note that the event stream can be disabled
+> > on arm64 on the kernel command line.
 > 
-> Add CXL PCIe port protocol error handlers to the CXL driver.
-> 
-> Provide access to RAS registers for the specific CXL PCIe port types:
-> root port, upstream switch port, and downstream switch port.
-> 
-> Also, register and unregister the CXL PCIe port error handlers with
-> the AER service driver using register_cxl_port_err_hndlrs() and
-> unregister_cxl_port_err_hndlrs(). Invoke the registration from
-> cxl_pci_driver_init() and the unregistration from cxl_pci_driver_exit().
-> 
-> [1] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and
->              Upstream Switch Ports
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-A few comments inline.
+> Alternately could we condition arch_haltpoll_want() on
+> arch_timer_evtstrm_available(), like v7?
 
-Jonathan
+No. The problem is about the smp_cond_load_relaxed() semantics - it
+can't wait on a variable that's only updated in its exit condition. We
+need a new API for this, especially since we are changing generic code
+here (even it was arm64 code only, I'd still object to such
+smp_cond_load_*() constructs).
 
-> ---
->  drivers/cxl/core/pci.c | 83 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/cxl.h      |  5 +++
->  drivers/cxl/pci.c      |  8 ++++
->  3 files changed, 96 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index c3c82c051d73..7e3770f7a955 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -815,6 +815,89 @@ static void cxl_disable_rch_root_ints(struct cxl_dport *dport)
->  	}
->  }
->  
-> +static int match_uport(struct device *dev, const void *data)
-> +{
-> +	struct device *uport_dev = (struct device *)data;
-> +	struct cxl_port *port;
-> +
-> +	if (!is_cxl_port(dev))
-> +		return 0;
-> +
-> +	port = to_cxl_port(dev);
-> +
-> +	return port->uport_dev == uport_dev;
-> +}
-> +
-> +static void __iomem *cxl_pci_port_ras(struct pci_dev *pdev)
-> +{
-> +	void __iomem *ras_base;
-> +	struct cxl_port *port;
-> +
-> +	if (!pdev)
-> +		return NULL;
-Why would this happen?  Seems an odd check to have so maybe a comment.
-
-> +
-> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
-> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM)) {
-> +		struct cxl_dport *dport;
-> +
-> +		port = find_cxl_port(&pdev->dev, &dport);
-Can in theory fail.
-> +		ras_base = dport ? dport->regs.ras : NULL;
-> +		put_device(&port->dev);
-If it fails this is a null pointer dereference.
-
-> +		return ras_base;
-> +	} else if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM) {
-> +		struct device *port_dev __free(put_device);
-
-Should be combined with the next line. We want it to be hard for anyone
-to put code in between!
-
-> +
-> +		port_dev = bus_find_device(&cxl_bus_type, NULL, &pdev->dev, match_uport);
-> +		if (!port_dev)
-> +			return NULL;
-> +
-> +		port = to_cxl_port(port_dev);
-> +		if (!port)
-> +			return NULL;
-> +
-> +		ras_base = port ? port->uport_regs.ras : NULL;
-
-Given check above, port exists. Remove one of the two
-checks.
-
-> +		return ras_base;
-> +	}
-> +
-> +	return NULL;
-> +}
+-- 
+Catalin
 
