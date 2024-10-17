@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-369555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20BAC9A1EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:48:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754359A1EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9609D1F26212
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:48:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCF8DB23F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8567F1DA632;
-	Thu, 17 Oct 2024 09:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AA41DB37F;
+	Thu, 17 Oct 2024 09:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DJP7kB6t"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LymoGsNQ"
 Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F701D9A40
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BF91DACA7
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158471; cv=none; b=dEvAOH10tkpEySE/N9p4+1JJJaVXTqa5FMS1Q52LaHnF+/Vu1gZIDflmHlu3mtW8QACDyorsFc11spYzPOWL06YGXIY0Jw9md2H238uhBNQcWaJbuAd6OT+xpkyKa0UoyZYTyHY+ZBWnwMc2WKqYwis8vMUQ66cpKNnbZ1MDqnU=
+	t=1729158478; cv=none; b=DHMnp3moDiL/A29KCJcGIt1saKGvIi2j3jFOD/XSEAJkRDEWbi1ZwKdewffiYBJv33LPF0RJGV5TxmrRVxGfXzP+nBUfqq9kAC4/aWMppokSzdJD5rqFI045IbOF/d3lUH4FkQZVJGJ4cmGugrASPSLRyemsSjGKYT/CqHrJGok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158471; c=relaxed/simple;
-	bh=Ey4hkJfeuepSmpGBsIu6nk+9hLwceJu2S1dOO0uow7A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JVym11Q6vy6w/PUz6Wq8HPEO1moW0sB4/xlolBQl+tgszRfxpbTD+MPga/FtsyqBcNg7SSnB6tGEfDMyWc5oP7Z2hQku/7RH8V3BDuuTJMpVPV8WIpca5OgF0fAKiICMLm01M7TmjgiEj+LmmaNamfC/suEvs3d+H9Q1BY8QXzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DJP7kB6t; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1729158478; c=relaxed/simple;
+	bh=xy3J47nYQIkyOxm6U50THk/J9Zo0uYz5kNGc+0/M+B8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O2GW3rH+0nNFmWq/NWBWg3ObqPeKiXSiUaXpJ1WTnHOZpyg90do0phaBvpMwlIJ5Bb4ndFr/tyV/qkPkDggXt+Wc+738JCrjOPvONMgtA3gQn4Sl47msD//Wbx9M5XHRgm1kkEkvmMt8/sibYiAfHRbA9R/o8IVetuYo/6Pctdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LymoGsNQ; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso610167a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:47:49 -0700 (PDT)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ea16c7759cso499207a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1729158469; x=1729763269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Her0gSR4BBHnMz6qkjoFdQSLfH6EB46Dm9TwWv8aciM=;
-        b=DJP7kB6tfIPs7mCsy5pVyJT1O0bk80aUR74nnc9WAZmg5L9jkBSmiHrFz92XxWHrqg
-         7ZvAtYT0t7DKxgmgMlxBCMDjKb5WdGutlUE+pwHKCYRHVfNB/Vs6IdjjaDClZrDZ6jYq
-         hm4MbxRJhWvZ7xK9iK5M6Q3W8o7q+jKl2Zq15RApS7YRV/gYLGLiiyiBLyT5dTUdPan7
-         o2JaFkTqK64b5E8/07wB2hXMKN76ZZkEh65U4bNMy6MFvBFArvcvYvXrkYwJMO8azcnI
-         canmos7XELhlZne/X+sD7tooVFSASE+ziR6IxjEyCcePz/LkoVfviVlz0yoeV6PrRGQh
-         jqXg==
+        d=bytedance.com; s=google; t=1729158475; x=1729763275; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+7VdqwStWQj5e7m9yAII5NEsGFIvs7nS0Am+cBAHNsQ=;
+        b=LymoGsNQp2QXmmbwAL3cOXmeaGmYSJu3KKfXEaZchjE5RBd6YHFkonLroX5Tv9chJm
+         BgboUAM4tUcKqKETnF66g1INCPp7poEM8DAD5g85r77c5if+9hKFxoBNGrNOvEkOE4T2
+         t5lI2DR2co8oWEeAugGBXVX0wiuJMWI2paWZsF0+4m8MjdDxb8pM922dch/KEewsIQz/
+         GMao+Bfb29Cu+gIfeF1s6hm3CQrgEtkZopqMEMwW7F3G6vR/bQIoMgS+D0xWgUqUpEpH
+         4dXMtLcYuBc5YRzdbW7/4hOcmPYkja5X3emFT8PT2PSp47yuMPJ+GxS5ahrqQ2WoNtTh
+         X/WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729158469; x=1729763269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Her0gSR4BBHnMz6qkjoFdQSLfH6EB46Dm9TwWv8aciM=;
-        b=SQOHCQAIgxGjg4l0HKnUV4D8eKWg3hrZke5qfrdYM/ICql5EUoVnRl2tDeiR7Yfhsx
-         wmdpUEJhU+veDHD5hoPcpn9yfou+gsiZreRY+Y+kvTD/3d0dyx6XZo5WioLv5t3wOuwv
-         hycuOJOkthp5fpR/aakqt/4hom6fTqy2U+IL3pXYwrsr8ChpCAXSmj4vickPlKDvHgoZ
-         CdEE+/9wRJWNklTfwmB/GD9mZF4M6/FngGwkiFCWd2bU3X1z6bdynCF2ZtRzRPP1kQK/
-         m/JaZ+uD55Cu6aGBAJT6FrINsG4z8/IhqJcHG2BR6BiTZq/bdi17QHsUEuLs7xtZsPG5
-         L9Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtbabqmdQt5D0Wf0hVdJU2Q8IhQ/nbWBEY/DjnmVu3KQNCE8f7N2N9JXnC43Al9ucAcDOVm6mY/xAFwgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxod23v4lwrP5SyfX8EDkyZXTFQyLlPpWCK+iV4muB7He+lJ5SY
-	5LjU/HlV9OUYJlmSnVt8XmbThUmLSXJZ+TBJUObdEr9AvEX4tRRfFyu3nHQuPMs=
-X-Google-Smtp-Source: AGHT+IE1v6XXIN4uy6wpGXlNlRaRH/EFn1RgvKGG6B8slpDy+FU4v/9ncWciKSoJRaJla+Op+ATmuw==
-X-Received: by 2002:a05:6a20:cfa5:b0:1d2:f09e:c15b with SMTP id adf61e73a8af0-1d8bcf42381mr31104053637.25.1729158469098;
-        Thu, 17 Oct 2024 02:47:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729158475; x=1729763275;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+7VdqwStWQj5e7m9yAII5NEsGFIvs7nS0Am+cBAHNsQ=;
+        b=UgLnaS7q0rPeWzMSOv2hcEXUlWzlBkPdG5w5mDUEgLtEMJ7IhlOsvnvpCglgLkBzzO
+         BL2/gTl0KIV/S7DGofEMNoVPq8+cYnFLzXxsrGJGntr4z3wDlIKN21+paQmkc0xaz7TK
+         48XAkfUmBFnzUAxmWQNVSFsw6t3mNPi1N2roIwe9z/TJS7T8RUz9J+jM0LwcvEfeNcqx
+         oMfn5RCTdass4IZLa/jV7ebcp/qyajmMMOXkcGhEMpi+W5nc4O9qXhl7o2Ro7WA45SoL
+         fZ/4nB8WEtXm33de/LAXIOXxHVYSjenlK6oce+OgHTU5ONCRpaZZBXiOYflp+Z7LXaly
+         67Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVx2C/eu/wNqV0vaIfzq0MghArBVWK3zvP1ZexZ+5Tac43CFqawZu2x7ZQ03Ps4ZfTqBP+s8erFRoRJHEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxKZpR1YdDDRUj1Qfy56/Hgbfk0x/Ytg/R/zRTMdenQmCUTJUT
+	cexUh8I3jCdom4ROaigeza53lpwdN50HzRmq3beXzNBk4TwHCj2+DOiU3lXS0to=
+X-Google-Smtp-Source: AGHT+IHzuiiCIun9pa4mZiHfpa9E3frsNbxHgaXVoXJzu+vwbmm9rxbIGaUhA7zByM5nDjwu8FuQmQ==
+X-Received: by 2002:a05:6a21:e8a:b0:1d9:181f:e6d8 with SMTP id adf61e73a8af0-1d9181fe778mr4119688637.31.1729158474948;
+        Thu, 17 Oct 2024 02:47:54 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a4218sm4385365b3a.120.2024.10.17.02.47.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a4218sm4385365b3a.120.2024.10.17.02.47.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 02:47:48 -0700 (PDT)
+        Thu, 17 Oct 2024 02:47:54 -0700 (PDT)
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 To: david@redhat.com,
 	hughd@google.com,
@@ -80,10 +82,12 @@ Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	x86@kernel.org,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v1 0/7] synchronously scan and reclaim empty user PTE pages
-Date: Thu, 17 Oct 2024 17:47:19 +0800
-Message-Id: <cover.1729157502.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v1 1/7] mm: khugepaged: retract_page_tables() use pte_offset_map_lock()
+Date: Thu, 17 Oct 2024 17:47:20 +0800
+Message-Id: <258de4356bdcc01bce0ff1f6c29b2b64a4211494.1729157502.git.zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <cover.1729157502.git.zhengqi.arch@bytedance.com>
+References: <cover.1729157502.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,97 +96,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes in v1:
- - replace [RFC PATCH 1/7] with a separate serise (already merge into mm-unstable):
-   https://lore.kernel.org/lkml/cover.1727332572.git.zhengqi.arch@bytedance.com/
-   (suggested by David Hildenbrand)
- - squash [RFC PATCH 2/7] into [RFC PATCH 4/7]
-   (suggested by David Hildenbrand)
- - change to scan and reclaim empty user PTE pages in zap_pte_range()
-   (suggested by David Hildenbrand)
- - sent a separate RFC patch to track the tlb flushing issue, and remove
-   that part form this series ([RFC PATCH 3/7] and [RFC PATCH 6/7]).
-   link: https://lore.kernel.org/lkml/20240815120715.14516-1-zhengqi.arch@bytedance.com/
- - add [PATCH v1 1/7] into this series
- - drop RFC tag
- - rebase onto the next-20241011
+In retract_page_tables(), we may modify the pmd entry after acquiring the
+pml and ptl, so we should also check whether the pmd entry is stable.
+Using pte_offset_map_lock() to do it, and then we can also remove the
+calling of the pte_lockptr().
 
-Changes in RFC v2:
- - fix compilation errors in [RFC PATCH 5/7] and [RFC PATCH 7/7] reproted by
-   kernel test robot
- - use pte_offset_map_nolock() + pmd_same() instead of check_pmd_still_valid()
-   in retract_page_tables() (in [RFC PATCH 4/7])
- - rebase onto the next-20240805
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+---
+ mm/khugepaged.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Hi all,
-
-Previously, we tried to use a completely asynchronous method to reclaim empty
-user PTE pages [1]. After discussing with David Hildenbrand, we decided to
-implement synchronous reclaimation in the case of madvise(MADV_DONTNEED) as the
-first step.
-
-So this series aims to synchronously free the empty PTE pages in
-madvise(MADV_DONTNEED) case. We will detect and free empty PTE pages in
-zap_pte_range(), and will add zap_details.reclaim_pt to exclude cases other than
-madvise(MADV_DONTNEED).
-
-In zap_pte_range(), mmu_gather is used to perform batch tlb flushing and page
-freeing operations. Therefore, if we want to free the empty PTE page in this
-path, the most natural way is to add it to mmu_gather as well. Now, if
-CONFIG_MMU_GATHER_RCU_TABLE_FREE is selected, mmu_gather will free page table
-pages by semi RCU:
-
- - batch table freeing: asynchronous free by RCU
- - single table freeing: IPI + synchronous free
-
-But this is not enough to free the empty PTE page table pages in paths other
-that munmap and exit_mmap path, because IPI cannot be synchronized with
-rcu_read_lock() in pte_offset_map{_lock}(). So we should let single table also
-be freed by RCU like batch table freeing.
-
-As a first step, we supported this feature on x86_64 and selectd the newly
-introduced CONFIG_ARCH_SUPPORTS_PT_RECLAIM.
-
-For other cases such as madvise(MADV_FREE), consider scanning and freeing empty
-PTE pages asynchronously in the future.
-
-This series is based on next-20241011 (which contains the series [2]).
-
-Comments and suggestions are welcome!
-
-Thanks,
-Qi
-
-[1]. https://lore.kernel.org/lkml/cover.1718267194.git.zhengqi.arch@bytedance.com/
-[2]. https://lore.kernel.org/lkml/cover.1727332572.git.zhengqi.arch@bytedance.com/
-
-Qi Zheng (7):
-  mm: khugepaged: retract_page_tables() use pte_offset_map_lock()
-  mm: make zap_pte_range() handle full within-PMD range
-  mm: zap_install_uffd_wp_if_needed: return whether uffd-wp pte has been
-    re-installed
-  mm: zap_present_ptes: return whether the PTE page is unreclaimable
-  mm: pgtable: try to reclaim empty PTE page in madvise(MADV_DONTNEED)
-  x86: mm: free page table pages by RCU instead of semi RCU
-  x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
-
- arch/x86/Kconfig           |  1 +
- arch/x86/include/asm/tlb.h | 19 ++++++++
- arch/x86/kernel/paravirt.c |  7 +++
- arch/x86/mm/pgtable.c      | 10 +++-
- include/linux/mm.h         |  1 +
- include/linux/mm_inline.h  | 11 +++--
- mm/Kconfig                 | 14 ++++++
- mm/Makefile                |  1 +
- mm/internal.h              | 29 ++++++++++++
- mm/khugepaged.c            |  9 +++-
- mm/madvise.c               |  4 +-
- mm/memory.c                | 95 +++++++++++++++++++++++++++++---------
- mm/mmu_gather.c            |  9 +++-
- mm/pt_reclaim.c            | 68 +++++++++++++++++++++++++++
- 14 files changed, 248 insertions(+), 30 deletions(-)
- create mode 100644 mm/pt_reclaim.c
-
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 94feb85ce996c..b4f49d323c8d9 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1721,6 +1721,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+ 		spinlock_t *pml;
+ 		spinlock_t *ptl;
+ 		bool skipped_uffd = false;
++		pte_t *pte;
+ 
+ 		/*
+ 		 * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
+@@ -1757,9 +1758,15 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+ 		mmu_notifier_invalidate_range_start(&range);
+ 
+ 		pml = pmd_lock(mm, pmd);
+-		ptl = pte_lockptr(mm, pmd);
++		pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
++		if (!pte) {
++			spin_unlock(pml);
++			mmu_notifier_invalidate_range_end(&range);
++			continue;
++		}
+ 		if (ptl != pml)
+ 			spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
++		pte_unmap(pte);
+ 
+ 		/*
+ 		 * Huge page lock is still held, so normally the page table
 -- 
 2.20.1
 
