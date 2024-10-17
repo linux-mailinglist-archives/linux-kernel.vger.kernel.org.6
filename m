@@ -1,82 +1,99 @@
-Return-Path: <linux-kernel+bounces-370224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138749A2991
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:51:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAAF9A29A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C234428099B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF061F22C49
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852B41DF74F;
-	Thu, 17 Oct 2024 16:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0CB1E0B88;
+	Thu, 17 Oct 2024 16:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gs6wF29A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iICARHoM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39AE1DF744;
-	Thu, 17 Oct 2024 16:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61C21E04A5;
+	Thu, 17 Oct 2024 16:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183849; cv=none; b=IITRZY4fExentd9/p6B4HDSL5T1crWz6rVOIWkIniO6PP1yb7N1Lj3m9fTTEqEJyuiuUJKYAamdA/XQjx1RmhlvuEIAOGOh/8qQSZR14kclzApHunp8+HRSv9MStqsu2LFBxMng0X340N/5QR4/33us34PAB58lvTDzKONttvtI=
+	t=1729183863; cv=none; b=KyrRzMzUDPx45EdbRy9U431JrwZm62nNd4JGsogwFbYUSEHGrMokhkOzOuI6w3nasX+f0mWoHBGT0jOIMDyU+YdDdJCCOVyexd4QeA2xrKgjz5qapPqSqZXFgc0bU12I9G3DycbtVM6Gh69BoCuE7GUczDXT5SDnW674aKFpd/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183849; c=relaxed/simple;
-	bh=b0ty3X291n2qYnFhJOJy3qwDfWwIPZtePa+YTcMG2d8=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=u4r3XnbF7eODAMAQoJZwx+ZShG127ajhR00ctjgvJslM5yGH75Dgq3hYrSevWAASBZcLWtmMbqtlS3owCsaHaFnv2yCMMoq2kS63FZcL+/mFZuq/xOgJ7K5rWdoYRucqtpezWhZdS1ElHyRycNmGKmGwD+1kswyN1VVnLQy2txg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gs6wF29A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C20C4CEC3;
-	Thu, 17 Oct 2024 16:50:47 +0000 (UTC)
+	s=arc-20240116; t=1729183863; c=relaxed/simple;
+	bh=nu+/YY2gR1ZzMVmhhVOVpo55R32dWjS/8gyLH+/tacE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PGX53718/RWKgSlCL9M4ccPBb7uE9UD79LwZ6RVGWO2QLe6QBENTgP+MJa7lul/qAKkHKDrNgC5ui+US8AOSpCGCd4H9obhaYuTl9pMDPpm4ia0YDi8vg5WFR9hTGkqgCB4AdZ5y7pT+yZMJu7zi1FuPi2taQmR9k2mqFvzlVMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iICARHoM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EB0C4CED0;
+	Thu, 17 Oct 2024 16:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729183848;
-	bh=b0ty3X291n2qYnFhJOJy3qwDfWwIPZtePa+YTcMG2d8=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=Gs6wF29AUiGlzWagB/JawbaoPM3W9fSlJcoRPPLhCgBB/0cjoeaU8TxbGdSbE1WHb
-	 5kHhnII+ELuK4sy4qNa8oTTXPKKBlMuvG51Lkjlw7ECdyoKvd/719dZNpNLg/dIuLy
-	 OZlim2nMqq0leZOUCj/ltIV/zDEIgR4M8NcEBjG7JertujlOWu5lnVnCgNICaa0OSY
-	 zUH4CSWZeyh/Q22lffLz82aaIW82EMpJgwWOLNVQUu4KrfD8KdqJjJ+POzrWTLyC7e
-	 5T5DIYFVGvVpBPHleWGf4AQMAj3IV1PeeTwjEUDG61tHRagvlZ+5Xv0kgo2ZnxOwYx
-	 kHjrx2HMoZzhw==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1729183862;
+	bh=nu+/YY2gR1ZzMVmhhVOVpo55R32dWjS/8gyLH+/tacE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=iICARHoM8EgPqapQHoINNY0ekt+qzjg1CjSVDrIVOjf2hK6MJ47ONuiS21GKhOA1M
+	 VMwSp8wJ6Yo6UJ6A3kch7OgcsEb4XGHW5VK2v1BVZxbid9qor8LUIM1LQxN7i1LAhI
+	 tjjG+Qcv5cUGDm5D72px83isytUA02K0Fp8YJz5dfIoK88s+Lt+oimaugi68HJKsrx
+	 j8I9uubSdds4qf0Pixbs07UM+Pk7bkHSQBjGh4uYi0svsDZnDlqU+roUMoYYHAOZ9F
+	 u7QrXom4Gl7VFAid/4CWPymwVxYFiyEtAVfbb/GPn08YkwIWbcxqn4Ht/AiFZ+IdEt
+	 a9KLZ+LE7WpEw==
+Message-ID: <30308614a1229870d205c33deba193f3d6732bef.camel@kernel.org>
+Subject: Re: [RFC PATCH v3 03/13] clavis: Introduce a new system keyring
+ called clavis
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Eric Snowberg <eric.snowberg@oracle.com>, 
+	linux-security-module@vger.kernel.org
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
+ davem@davemloft.net, ardb@kernel.org, paul@paul-moore.com,
+ jmorris@namei.org,  serge@hallyn.com, zohar@linux.ibm.com,
+ roberto.sassu@huawei.com,  dmitry.kasatkin@gmail.com, mic@digikod.net,
+ casey@schaufler-ca.com,  stefanb@linux.ibm.com, ebiggers@kernel.org,
+ rdunlap@infradead.org,  linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
+ linux-efi@vger.kernel.org,  linux-integrity@vger.kernel.org
+Date: Thu, 17 Oct 2024 19:50:58 +0300
+In-Reply-To: <20241017155516.2582369-4-eric.snowberg@oracle.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+	 <20241017155516.2582369-4-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: cw1200: Remove unused cw1200_queue_requeue_all()
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20241012203852.229151-1-linux@treblig.org>
-References: <20241012203852.229151-1-linux@treblig.org>
-To: linux@treblig.org
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Dr. David Alan Gilbert" <linux@treblig.org>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172918384627.970100.15604001750511236100.kvalo@kernel.org>
-Date: Thu, 17 Oct 2024 16:50:47 +0000 (UTC)
 
-linux@treblig.org wrote:
+On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
+> +static struct asymmetric_key_id *clavis_parse_boot_param(char *kid,
+> struct asymmetric_key_id *akid,
+> +							 int
+> akid_max_len)
+> +{
+> +	int error, hex_len;
+> +
+> +	if (!kid)
+> +		return 0;
+> +
+> +	hex_len =3D strlen(kid) / 2;
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> cw1200_queue_requeue_all() has been unused since it was added in 2013 by commit
-> a910e4a94f69 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hmmm... I'd consider sanity checking this:
 
-Patch applied to wireless-next.git, thanks.
+	size_t len;
 
-b2d23b83d8d0 wifi: cw1200: Remove unused cw1200_queue_requeue_all()
+	/* ... */
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20241012203852.229151-1-linux@treblig.org/
+	len =3D strlen(kid);
+	if (len % 2) {
+		pr_err("Clavis key id has invalid length %lu\n", len);
+		return 0;
+	}
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+	hex_len =3D len / 2;
+=09
+BR, Jarkko
 
