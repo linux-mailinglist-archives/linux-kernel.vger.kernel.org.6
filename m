@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-369537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4999A1E96
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F41289A1E97
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB80FB2589A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F9DB25B4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B53C1D9339;
-	Thu, 17 Oct 2024 09:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aClISKUz"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF0F13AA4E;
+	Thu, 17 Oct 2024 09:40:04 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06B913AA4E;
-	Thu, 17 Oct 2024 09:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A383F1D90AD;
+	Thu, 17 Oct 2024 09:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729157982; cv=none; b=AdnPAaebtQ9PJA1dDZzkrlABIPow+4jU8+I+KZWDSH0RL3BmZSasoMRSGVvOo8E9X2OqkDBOI4WmvvHUkXcST7As1u+4A7WwknQ5k1X/8qNUeg9qg7fLJkvDqg8+u1aBpoRZG5bGL1LoDFdHcbJuaJJUOej52B2kwhtjuKI4SSU=
+	t=1729158003; cv=none; b=dQTzZWdaAlQ8d2TCnU7K1yhIAe83J9NRzv2O5233ueeAgQhorXfDEIu8E4ffd+ooaXC2NaRdy9vVIDSM7XX2X44aBcOHTO0He7g7MLkCpQMPoT8rjgToqnjm4omDyGLRyZufuos73pps9WlX2KabIWP4VnNE69LYES+mUMmSXM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729157982; c=relaxed/simple;
-	bh=C42URS24IogOW1s8SLEGZKkfR7gnux1L4ZhNjBL9Ipo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LFi/k+CsiAVkpkbhi4cgf3gGRPdrW4aY0k/pG/A2/8JvQbga2vkF6OxGSPVb9S91jed35NpVXmdWrpVZu5nUyebzOLRtEnGzOC8H32T3UwpfObYZLRoJWA2kwMVSWQzfQCm5Uwyxh+NrHBQ6HxeCGL8kEsR3rQzpCAqnIqbAVv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aClISKUz; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db238d07b3so641647a12.2;
-        Thu, 17 Oct 2024 02:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729157980; x=1729762780; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ydf94IBLCbwdFZiD8hQTnCOX05UKhFgbH1jfcRWJdnM=;
-        b=aClISKUz+K3uJEBxIl8r6++G2+R8UM1y8HoTQx+i9HtLxFBq67kFLfMygB31apM7Tz
-         TP6QNZXXW/e4G6HuXP7aXLi3nEsa9aiK0GAsy2H48zGjAuJaXBd7kCQfkGEgNHgPnrgP
-         NGgCBk4YK3K1dLjCYZvk4JXAvrVGQ7PejNKUMMwWOHre4uan9vMJ3OsVKGHQipwcUEVi
-         FL9FZPlFvNWRu2bRe7V8iLCiSL2remOTg20fn71U6N8hPYs3FM8uT9lV9qbZqbkyshXX
-         LI2zcb+ICiPsvD1B9w6p4F7kd6kxGeEo7eVl7vISJYqYOI7pSG5i4MGj3gjNF74fWxB+
-         7yYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729157980; x=1729762780;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ydf94IBLCbwdFZiD8hQTnCOX05UKhFgbH1jfcRWJdnM=;
-        b=u9oxhSjp33BEeWn+5ygWivKpXxrdUKbCpA+OGBK8QjxMkeeY6j83SOstR3SZooy2ri
-         TPRN3Nc9svqWUitv220+/2MTlVOjmvHf/d1MwrzMsM4/kGEawKWceb2BURPVQNBu6Kxo
-         mlg6skqUC9qwObQ3jxxhToUYtbJDYus4pV0cLoKeT3QTGV1SxL17ZU3SbpWpSaf6ryCK
-         edH/hkD2undaSfjRfH2cV0U/W5YYFJoo2iI6ia6ntdddzesXHEOeap0x9inavD6MzcuU
-         5cS0uiUO+/+A0AaNrxPgRt5OTd/mPaGAOZOyMsJFqB/70yWDnwd1TZb1iVdiJj6WDTKE
-         yWWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxVNkngfmFeogdb3lXebIcaKl4/vrnEw0Vt/Su3x0lQQKaOL3uJxnSnVrKuC+VEup7GUcNH41iv4ceyxRq@vger.kernel.org, AJvYcCXZU/HuVRqmTD6kDaPcgUjMyzSNz3b/a6hDnYiyJFKv2ScGhu6sxxJHuRZyU7nBRLPFlB9KU8UK6MdQvk2zd9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3u6Ssp6hfkma0OnZYSCtyv+h6cwC41sIoSaT9SJu5sADwPkAX
-	P+94u59q3fqLq6KpXEaf3T0njSOrlryRPz3lb8wSXDRKDVpdGple
-X-Google-Smtp-Source: AGHT+IEBqVbyOoExw0Cg7ddiHiTaN0dPOHmp4wNIiX3iPqa2LS2/M7QxhxM8sS6KNZx8IP8F0Lj+NA==
-X-Received: by 2002:a05:6a20:d818:b0:1cf:2a35:6d21 with SMTP id adf61e73a8af0-1d905f69115mr11651591637.45.1729157979950;
-        Thu, 17 Oct 2024 02:39:39 -0700 (PDT)
-Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6d3eb7sm4027821a12.45.2024.10.17.02.39.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 02:39:39 -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:39:34 +1300
-From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-To: linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: paulo.miguel.almeida.rodenas@gmail.com, linux-hardening@vger.kernel.org
-Subject: [PATCH] ARM: 8611/1: l2x0: replace snprintf with sysfs_emit helper
- function
-Message-ID: <ZxDbVt6QGzXRBn2v@mail.google.com>
+	s=arc-20240116; t=1729158003; c=relaxed/simple;
+	bh=xuD9QTlnC6oLH7eRBWFZmhsv/WyLxcLAV9aZjEiXovo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=X5iTL2Gy+qbgKTfGbut4m6LQEPGORCaIUTT+zjICP7avYKCKILPWnRk8TvTS9OfhjjYCo8M+HXrLbUPx1Rwn1e3YUTZqMaDINpnGukcR2LXYji5/tJUxkKJ55uf4W5BntHhEDIlhpo4qr6O5+I0gVEEKSPtIHQvwnHhMjJl+oZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTjSR0xWlz689SY;
+	Thu, 17 Oct 2024 17:38:15 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id C74861400C9;
+	Thu, 17 Oct 2024 17:39:58 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 17 Oct 2024 11:39:58 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Thu, 17 Oct 2024 11:39:58 +0200
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Alison Schofield <alison.schofield@intel.com>
+CC: "dave.jiang@intel.com" <dave.jiang@intel.com>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
+	<ira.weiny@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linuxarm
+	<linuxarm@huawei.com>, tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)"
+	<prime.zeng@hisilicon.com>
+Subject: RE: [RFC PATCH 0/4] Updates for CXL Event Records
+Thread-Topic: [RFC PATCH 0/4] Updates for CXL Event Records
+Thread-Index: AQHbH+k/0+IXcnhOQkao9dWzrwOFcLKJu8cAgADzmYA=
+Date: Thu, 17 Oct 2024 09:39:58 +0000
+Message-ID: <9e221493ff4a456cbdd1b773c670d1c7@huawei.com>
+References: <20241016163349.1210-1-shiju.jose@huawei.com>
+ <ZxAppnCBf4wFgcQ0@aschofie-mobl2.lan>
+In-Reply-To: <ZxAppnCBf4wFgcQ0@aschofie-mobl2.lan>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-sysfs_emit() helper function should be used when formatting the value to
-be returned to user space.
+>-----Original Message-----
+>From: Alison Schofield <alison.schofield@intel.com>
+>Sent: 16 October 2024 22:01
+>To: Shiju Jose <shiju.jose@huawei.com>
+>Cc: dave.jiang@intel.com; dan.j.williams@intel.com; Jonathan Cameron
+><jonathan.cameron@huawei.com>; vishal.l.verma@intel.com;
+>ira.weiny@intel.com; dave@stgolabs.net; linux-cxl@vger.kernel.org; linux-
+>kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>; tanxiaofei
+><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>
+>Subject: Re: [RFC PATCH 0/4] Updates for CXL Event Records
+>
+>On Wed, Oct 16, 2024 at 05:33:45PM +0100, shiju.jose@huawei.com wrote:
+>> From: Shiju Jose <shiju.jose@huawei.com>
+>>
+>> CXL spec rev 3.1 CXL Event Records has updated w.r.t CXL spec rev 3.0.
+>> Add updates for the above spec changes in the CXL events records and
+>> CXL trace events implementation.
+>>
+>> Note: Please apply following fix patch first if not present.
+>> https://patchwork.kernel.org/project/cxl/patch/20241014143003.1170-1-s
+>> hiju.jose@huawei.com/
+>>
+>> Shiju Jose (4):
+>>   cxl/events: Updates for CXL Common Event Record Format
+>>   cxl/events: Updates for CXL General Media Event Record
+>>   cxl/events: Updates for CXL DRAM Event Record
+>>   cxl/events: Updates for CXL Memory Module Event Record
+>
+>Thanks, this looks useful! I didn't review line by line but do have some f=
+eedback
+>before for a v1:
+Hi Alison,
+Thanks for the feedbacks.
 
-This patch replaces open-coded snprint with sysfs_emit() helper in
-sysfs .show() callbacks.
+>
+>- Suggest being more explicit in the commit msg(s). Something like:
+>cxl/events: Update Common Event Record to CXL spec 3.1
+Sure. Will add.
 
-Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
----
- arch/arm/mm/cache-l2x0-pmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>- I was a bit surprised that this doesn't simply append new fields to the
+>TP_printk() output. Is there some reason for that?
+Will do. Thought print new fields before region_name and region_uuid.=20
 
-diff --git a/arch/arm/mm/cache-l2x0-pmu.c b/arch/arm/mm/cache-l2x0-pmu.c
-index 993fefdc167a..a9bd05b82003 100644
---- a/arch/arm/mm/cache-l2x0-pmu.c
-+++ b/arch/arm/mm/cache-l2x0-pmu.c
-@@ -343,7 +343,7 @@ static ssize_t l2x0_pmu_event_show(struct device *dev,
- 	struct l2x0_event_attribute *lattr;
- 
- 	lattr = container_of(attr, typeof(*lattr), attr);
--	return snprintf(buf, PAGE_SIZE, "config=0x%x\n", lattr->config);
-+	return sysfs_emit(buf, "config=0x%x\n", lattr->config);
- }
- 
- static umode_t l2x0_pmu_event_attr_is_visible(struct kobject *kobj,
--- 
-2.47.0
-
+>
+>- How about updating the mock of these events to include these new fields.=
+ I
+>don't think this introduces any new formats, but I would certainly eyeball=
+ all 3:
+>dmesg tp_printk, trace file, and monitor output because all 3 (sadly) pres=
+ent a
+>bit differently.
+>
+I will update the CXL mock test for these new fields.
+=20
+>-- Alison
+>
+>>
+>>  drivers/cxl/core/trace.h | 201 +++++++++++++++++++++++++++++++++------
+>>  include/cxl/event.h      |  20 +++-
+>>  2 files changed, 190 insertions(+), 31 deletions(-)
+>>
+>> --
+>> 2.34.1
+>>
+>
+Thanks,
+Shiju
 
