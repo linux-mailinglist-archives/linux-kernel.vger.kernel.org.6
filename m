@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-369858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354A29A23B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:22:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEBF9A23B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE18E285876
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:22:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A0F1F28F76
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A157C1DE2C1;
-	Thu, 17 Oct 2024 13:21:53 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A381DDC2F;
+	Thu, 17 Oct 2024 13:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhnRMrqy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627641D435F;
-	Thu, 17 Oct 2024 13:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC631D414F;
+	Thu, 17 Oct 2024 13:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729171313; cv=none; b=g7J7eqxg2nUu4a40QACEpz7gNENquoQDDsC+jDVZbr4hEQc4gUmIMau07R2ZLomEdh9QKwyQIfk677saO53rR7JNB7zmmdBs26f01mlF7waZoDoMYEFpXp+bd5B7dvQEUtI43mG6wbnOveycO/VxosaWaNyeotBZmQyDiq560Ck=
+	t=1729171326; cv=none; b=K4nMBfcybI3sZ33yQTtdlP3Iitt2WhWwPBwOOIKpQ5GMVe3yCPFdKdYf+FAF7zRtZl660mP8gYFEUCRFagTZNB+SNuaT3tD99kzRcH0020+APo48N1U4Qx3Uo864qJDrYgS47lVtHs7jnYLM+h0AgRKdGeWiOy6I53XdwQdnqsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729171313; c=relaxed/simple;
-	bh=HO7VO/l6vJF2WWghEaMrdSEc1Pa6WBo/pIGgw3SVUHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=c1bDbzNk+/bKC9lk775VQhQr+fuZaUmpu5VlQ+zye/GDJ4mBDHUZp/9I71LY0sJVrZS+MeyJfxj0BaX0RwgBWtwLDCT6COZIgFddBwXUzqH/8PBbWP90N/pFB1sEmVFaM5EUDLsRATQpApPYwW9vvMMKGqKpfNpyJhZmHEgqgcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XTpN83clLz10N2f;
-	Thu, 17 Oct 2024 21:19:52 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id B50281800F2;
-	Thu, 17 Oct 2024 21:21:46 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 17 Oct 2024 21:21:46 +0800
-Message-ID: <cd7ae683-c9b9-cb1c-c5fc-739d66c303ec@hisilicon.com>
-Date: Thu, 17 Oct 2024 21:21:45 +0800
+	s=arc-20240116; t=1729171326; c=relaxed/simple;
+	bh=YEWLovNTfR2Yjoh50Yrs342zOr30abLwFZjLtnK2bjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBDe+AhNonAFW/nfTP6+96Dcw+AyLMQa094+EOOYyElOApmmw8jTLC6LhM8qSDiUOOvZPOqbpVqhoecze3YdUu0ov/BmQhm5o5PGoUzWKuojynELzChCQXhm3cmXyX9LDGQUrULxavJWKQhEjroJW+PQXn+JXHF062oA6VwK65g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhnRMrqy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0049CC4CEC5;
+	Thu, 17 Oct 2024 13:22:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729171326;
+	bh=YEWLovNTfR2Yjoh50Yrs342zOr30abLwFZjLtnK2bjk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OhnRMrqyCNyepnmEad2tOlrrc8m37uT50yZBkbP4PLFnrF1zBBfRjbZ+uRhFXvEoi
+	 sVWo1HgM6NQf2uAccCGoB6kx1QecrgChaGlYddNVK4ruXSUGdEewXzUl+kwqfTgIUO
+	 CxVXA2bAMbfnqRzpRlU5keTuL6oD+3f4zybMF2MrD6TP7UsrldQ7XIx5U0eys7IRcx
+	 mPMaTBVOm70NbKmjdCjjhdhnVvt0H7CgzhbBmo1g/hZI87XhIydRevgLpeuuGu50vi
+	 ArYk4ZLR25KHk0DG4lNpHKbka71I3BCxTrgXKHHlc6xQoR/tpt3N8KA0q0YvWVUA8T
+	 v39doHjqxAHww==
+Date: Thu, 17 Oct 2024 14:22:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Johan Hovold <johan@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
+Message-ID: <f125c7d5-5f85-4ff6-999b-2098ff3103f9@sirena.org.uk>
+References: <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
+ <ZweftESPrJNEsqGE@hovoldconsulting.com>
+ <Zwj539cN2DJ7nd3A@linaro.org>
+ <Zw5fzNZ_xCwPyw4G@hovoldconsulting.com>
+ <Zw_dE1rQ-Ljsh-sY@linaro.org>
+ <CAMRc=MfUEfKHkAVvtGODxvJ-BdL+kX7uDgW+1y4QW3Kc5mpX+w@mail.gmail.com>
+ <cde15d83-6059-47bc-94d6-2a88ba95e5ae@sirena.org.uk>
+ <CAMRc=MddPDFaw6vYo1FzXHbUsLyr2QKT6oy2i68ZCdJdFWCJww@mail.gmail.com>
+ <a14e5488-d0e8-4f04-b419-0b4c566219bf@sirena.org.uk>
+ <CAMRc=MeYDi0_+y7a-KQhh=ft4rstng5H24LJBgsJg1BdXfc-nQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-next 9/9] RDMA/hns: Fix different dgids mapping to the
- same dip_idx
-To: Leon Romanovsky <leon@kernel.org>
-CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240906093444.3571619-1-huangjunxian6@hisilicon.com>
- <20240906093444.3571619-10-huangjunxian6@hisilicon.com>
- <20240910131205.GB4026@unreal>
-Content-Language: en-US
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240910131205.GB4026@unreal>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="n2gD1yr3HYcMMdzy"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeYDi0_+y7a-KQhh=ft4rstng5H24LJBgsJg1BdXfc-nQ@mail.gmail.com>
+X-Cookie: One picture is worth 128K words.
 
 
+--n2gD1yr3HYcMMdzy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024/9/10 21:12, Leon Romanovsky wrote:
-> On Fri, Sep 06, 2024 at 05:34:44PM +0800, Junxian Huang wrote:
->> From: Feng Fang <fangfeng4@huawei.com>
->>
->> DIP algorithm requires a one-to-one mapping between dgid and dip_idx.
->> Currently a queue 'spare_idx' is used to store QPN of QPs that use
->> DIP algorithm. For a new dgid, use a QPN from spare_idx as dip_idx.
->> This method lacks a mechanism for deduplicating QPN, which may result
->> in different dgids sharing the same dip_idx and break the one-to-one
->> mapping requirement.
->>
->> This patch replaces spare_idx with two new bitmaps: qpn_bitmap to record
->> QPN that is not being used as dip_idx, and dip_idx_map to record QPN
->> that is being used. Besides, introduce a reference count of a dip_idx
->> to indicate the number of QPs that using this dip_idx. When creating
->> a DIP QP, if it has a new dgid, set the corresponding bit in dip_idx_map,
->> otherwise add 1 to the reference count of the reused dip_idx and set bit
->> in qpn_bitmap. When destroying a DIP QP, decrement the reference count
->> by 1. If it becomes 0, set bit in qpn_bitmap and clear bit in dip_idx_map.
->>
->> Fixes: eb653eda1e91 ("RDMA/hns: Bugfix for incorrect association between dip_idx and dgid")
->> Fixes: f91696f2f053 ("RDMA/hns: Support congestion control type selection according to the FW")
->> Signed-off-by: Feng Fang <fangfeng4@huawei.com>
->> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->> ---
->>  drivers/infiniband/hw/hns/hns_roce_device.h |  6 +--
->>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 58 ++++++++++++++++++---
->>  drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |  1 +
->>  drivers/infiniband/hw/hns/hns_roce_qp.c     | 16 ++++--
->>  4 files changed, 67 insertions(+), 14 deletions(-)
-> 
-> It is strange implementation, double bitmap and refcount looks like
-> open-coding of some basic coding patterns. Let's wait with applying it
-> for now.
-> 
+On Thu, Oct 17, 2024 at 02:21:08PM +0200, Bartosz Golaszewski wrote:
 
-Hi Leon, it's been a while since this patch was sent. Is it okay to be applied?
+> A device is wired differently on different platforms. It requests a
+> bunch of supplies using devm_regulator_bulk_get(). One of them is
+> unconnected on one of the platforms resulting in the "using dummy
+> regulator" warning.
 
-Regarding your question about the double bitmaps, that's because we have 3 states
-to track:
-1) the context hasn't been created
-2) the context has been created but not used as dip_ctx
-3) the context is being used as dip_ctx.
+> Concrete use-case is: make all but one regulator mandatory when
+> calling regulator_bulk_get(). My proposal is extending struct
+> regulator_bulk_data with a boolean flag called "optional" which would
+> result in the underlying _regulator_get() receiving the OPTIONAL_GET
+> flag only for the regulators that are marked as such.
 
-Junxian
+Sure, but doesn't the device need to know that this supply isn't
+connected - if we can just ignore the result then why bother powering
+the supply on at all?
 
-> Thanks
-> 
+--n2gD1yr3HYcMMdzy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcRD3gACgkQJNaLcl1U
+h9DoIgf/Y+0jxK5/t6n/HarefvAOzATQamisrmCyJ/uDRyQhMfatLC1+lTveGobd
+6pBFd1Hg+TcKq4J3Hx7h+PRuZYb+m6SVLjKX5oXMV58OgGuYVWBIMLdcKYs+AxEn
+0ZNOxWqwRv/NKbEfUqMlV0oxn8d5bRLUzlJDZkI4k/m5Z0x6w8B7fKL2/ZCwX7i5
+S4eU21u8YkVTGW0rrApgz9BeufGMWix/tw14FOxFTzufpx6sR+t7urJUtUbf9QF4
+kdieO9o4KXB+2tddld8DNTEvp+srR77yCKvWbZqL67V8tAbRGcOhJBGI7YsRRssL
+v77kDvn8q9lCFPmj6E5lLNg4ob0d4A==
+=wMGr
+-----END PGP SIGNATURE-----
+
+--n2gD1yr3HYcMMdzy--
 
