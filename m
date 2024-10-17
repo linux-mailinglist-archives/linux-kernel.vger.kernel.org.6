@@ -1,130 +1,168 @@
-Return-Path: <linux-kernel+bounces-369253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99C39A1AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:41:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260399A1AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA12853E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5DDD285F4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C371925B1;
-	Thu, 17 Oct 2024 06:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41E9192B6F;
+	Thu, 17 Oct 2024 06:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRdBujC/"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z2icyQpg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24AC1922CF;
-	Thu, 17 Oct 2024 06:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC07814A91
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729147311; cv=none; b=geB6nuYWg8eCnAkC8myChILaJh9MB9QCzxh83omQOs6H1326QZTuI/6AJA2GdKq9xKlez8Fuc72QEQ2tDI4WA3n+75C694TGc9SYgAZbUtbFN2Zj8tc/Lwpm9uuVVwoqscurIcROSiKIZyzuds3/XP+g7G8KzTh0PJ4LNNjDQT4=
+	t=1729147450; cv=none; b=Wthed0R6M3eE4zUSWJ/U/1K3QD4qf0f+d11UaPS6b3UiageA5gj78RdfjwdCiHY2PpF4MeekKBTGeq6D2R7bBnSgCVO0gkJ1zuBupU+5ur7RK8GI4rFCPA5BP97j/T+PIaBhlZWTEDiDBNKyLmiJ68/fm90mWPjHnoy7Xeg8rww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729147311; c=relaxed/simple;
-	bh=JhAptwO2JSYZHXDh8T5Sim3dYS875G7Jg6ADu8A9wVU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ED8gfSFCBftiFq6LtxPOb6vhof6AX1WGLN6mEsMGv6AwdRenwC/gB1y9W+mmwmpkyZMzPpltjaF2HSrWLGUfSMJCBjl1VsHxQVLf1zZsoN1Be//z2T5gEr8HSgDpGifaxfdiTKP4PcToCI1KMxuIlkv4H34Nel0JX3pqDtpECbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRdBujC/; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e5d3f039ccso345111b6e.0;
-        Wed, 16 Oct 2024 23:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729147308; x=1729752108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zC8B12diaw0316EjryPxswII1rxWpWPO6nyoBVEE4H0=;
-        b=MRdBujC/vwLGnc0aLuD6Q6AvZW8neKublmCRAygDB8TXlBP6brwz5gDB0SsazdpFu0
-         0Wy2ixxGSNAxmxzzgMBGmVbB/eRZ560eoL5apEBnQhB2NQrnlNcaNcRpGlx0LpKClaZN
-         gYF5wP1l47v7W4wfzqfFvV6+OpvIhZjESbe6eEy9Gapm31/pKmadQ+3ohtwKixNHGNwU
-         6Y3uz4C7/QUSh5MxA6vJpNiOUYqBjS+8gC/vZq5W8k7JKVSD1F805v1vmdcvmmXnpdy8
-         DoLyZa4ir0NFW2c8qwJQx0NDLuPnd5GM3wAqjsjyytcsuD+o1UqR8UxLBnUHDHjD9497
-         UMAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729147308; x=1729752108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zC8B12diaw0316EjryPxswII1rxWpWPO6nyoBVEE4H0=;
-        b=NoiPONAVitua/72OYd1SXn+SRjBWDzYBYm8FgOdhk0YP/ryq4aUvZMeNjcMu1lyuM4
-         OWqVyFFTrSk0yjoEAYTHSBiIYOoD9MP8Xgmf5CeFFL92JlhIOhwA+PuC2XVqb/gOPynr
-         llN1eKUJkJmH9S8+iA+xKEAB92FB1dUvPfgFl/R06lFRCA4pIcrt/RWVcLrKA2GUkyR7
-         pYyDqmAr/WffT3wfjNiXn/hvgbUK1pXfRVkKJpPUW2GK3p/PgDSLztwhD54X1CS/IzjQ
-         6ktsK7g0O03pKwRj3yhTCC+F3k/cbZUeR3UvVo1egLuxUF5TjxvlAbXEtci3AcrwVPYy
-         pb/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXnYYGZ9btzHB2C9e/bohjzFXH7CQdGyKvngvRxAp5Qf1Lwl5WzsrhFPQpD9GdlqNRxSl6FVsT+8O0JWmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIiHe+pgsgsSFUTSm22UOahFWpuLCfqQ30JFWcTYIvQDliHAVm
-	FcYMSDR3zQ1HNwC7bUdkwYP5pRWIr/t3rAuY+Xnl3fWaYJw4xFDAhL3XSz9dZ0k/RVmX3ahy7S5
-	ytUz9kD0TticrY3Cq4Mv1x5XrHORXvQ==
-X-Google-Smtp-Source: AGHT+IGZU49YeXSxAotjEP5RQHN+ozUmRXiWYgPhtvis7m+KY8OMeQym/W/Wnr3rOZmIS67qpIEfH40VNNTZomRinzE=
-X-Received: by 2002:a05:6808:170f:b0:3e5:e243:1861 with SMTP id
- 5614622812f47-3e5e2431942mr8768458b6e.27.1729147308442; Wed, 16 Oct 2024
- 23:41:48 -0700 (PDT)
+	s=arc-20240116; t=1729147450; c=relaxed/simple;
+	bh=zZRhs+LJM8PYiIfb9B/c5FEarnXqQ/S1NWxt2ut+LAI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NPRu/niIJj5XXqODmiWXeJ9U7rybTEUfQk7xXeoWszxaPcklDSqxHVrZUfelX2J3R65x74UrxWhXVavanS7G2v02IYujoLNpu2GIDZQ6K81ggCBAKJL04dKURjAxdATuJL03Z1W7t5Aw/NEPQsnC9n8mbcSbsTcOk2fs26lzKo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z2icyQpg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729147442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PmnUx6fZIjucgBmJqe8ji0b+nkj5ikpuINwXC7B1aVY=;
+	b=Z2icyQpgfRLmtHmSJCqovRxVcHZ6OZbsUKumPHadY7WF6vR+b98ZAB2iZBCEIE6VSgYTTy
+	WxfIai5whfVWa8oR8y7VD5qdR1z6es/orqMftLmbu16DG3GptfIDhgyPYTEusqT20QA89R
+	qYkVZd8GbTsjCnvFIFFaSWz7LsIaStk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-135-lPonciA1MjOMKbGPWDvwpA-1; Thu,
+ 17 Oct 2024 02:44:00 -0400
+X-MC-Unique: lPonciA1MjOMKbGPWDvwpA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E1BB1955E9F;
+	Thu, 17 Oct 2024 06:43:59 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.60.16.91])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 13CED19560A2;
+	Thu, 17 Oct 2024 06:43:57 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v2] verification/dot2: Improve dot parser robustness
+Date: Thu, 17 Oct 2024 08:42:39 +0200
+Message-ID: <20241017064238.41394-2-gmonaco@redhat.com>
+In-Reply-To: <20241016135812.59296-1-gmonaco@redhat.com>
+References: <20241016135812.59296-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910044024.120009-1-sergio.paracuellos@gmail.com>
-In-Reply-To: <20240910044024.120009-1-sergio.paracuellos@gmail.com>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Thu, 17 Oct 2024 08:41:37 +0200
-Message-ID: <CAMhs-H9M+ZW1c7Wrdc0ff_hD=hrbq_S-KqzzjH7ux97sZO4mHA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] clk: ralink: mtmips: some fixes and sdhc clock support
-To: linux-clk@vger.kernel.org
-Cc: sboyd@kernel.org, mturquette@baylibre.com, tsbogend@alpha.franken.de, 
-	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Sep 10, 2024 at 6:40=E2=80=AFAM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
->
-> Hi Stephen,
->
-> The following first two patches contains several fixes for having a corre=
-ct
-> clock plan from the beggining in old ralink SoCs that could not be tested
-> when the driver was mainlained due to the lack of users. Now some issues
-> have been reported regarding RT3883 in openWRT[0] so I am addressing and
-> fixing them here.
->
-> The last patch adds new clocks to properly support sdhc 48 MHz clock for
-> Mt7620, Mt7628 and Mt7688 SoCs. OpenWRT people updated to use SDHC upstre=
-am
-> driver so they were forced to add a not desired fixed dts node[1] to make=
- it
-> works. The correct thing to do is just support it in mtmips driver. Hence
-> we have add it here.
->
-> Thanks in advance for your time.
->
-> Best regards,
->     Sergio Paracuellos
->
-> [0]: https://github.com/openwrt/openwrt/issues/16054
-> [1]: https://github.com/openwrt/openwrt/pull/15896/files
->
-> Sergio Paracuellos (3):
->   clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
->   clk: ralink: mtmips: fix clocks probe order in oldest ralink SoCs
->   clk: ralink: mtmips: add mmc related clocks for SoCs MT7620, MT7628
->     and MT7688
->
->  drivers/clk/ralink/clk-mtmips.c | 56 ++++++++++++++++++++++++---------
->  1 file changed, 41 insertions(+), 15 deletions(-)
+This patch makes the dot parser used by dot2c and dot2k slightly more
+robust, namely:
+* allows parsing files with the gv extension (GraphViz)
+* correctly parses edges with any indentation
+    * used to work only with a single character (e.g. '\t')
+Additionally it fixes a couple of warnings reported by pylint such as
+wrong indentation and comparison to False instead of `not ...`
 
-Gentle ping on this series :-)
+Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+---
+V1 -> V2: properly handling shorter gv extension with ntpath.splitext
 
-Thanks,
-    Sergio Paracuelllos
->
-> --
-> 2.25.1
->
+ tools/verification/dot2/automata.py | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/tools/verification/dot2/automata.py b/tools/verification/dot2/automata.py
+index baffeb960ff0..bdeb98baa8b0 100644
+--- a/tools/verification/dot2/automata.py
++++ b/tools/verification/dot2/automata.py
+@@ -29,11 +29,11 @@ class Automata:
+ 
+     def __get_model_name(self):
+         basename = ntpath.basename(self.__dot_path)
+-        if basename.endswith(".dot") == False:
++        if not basename.endswith(".dot") and not basename.endswith(".gv"):
+             print("not a dot file")
+             raise Exception("not a dot file: %s" % self.__dot_path)
+ 
+-        model_name = basename[0:-4]
++        model_name = ntpath.splitext(basename)[0]
+         if model_name.__len__() == 0:
+             raise Exception("not a dot file: %s" % self.__dot_path)
+ 
+@@ -68,9 +68,9 @@ class Automata:
+     def __get_cursor_begin_events(self):
+         cursor = 0
+         while self.__dot_lines[cursor].split()[0] != "{node":
+-           cursor += 1
++            cursor += 1
+         while self.__dot_lines[cursor].split()[0] == "{node":
+-           cursor += 1
++            cursor += 1
+         # skip initial state transition
+         cursor += 1
+         return cursor
+@@ -94,11 +94,11 @@ class Automata:
+                 initial_state = state[7:]
+             else:
+                 states.append(state)
+-                if self.__dot_lines[cursor].__contains__("doublecircle") == True:
++                if "doublecircle" in self.__dot_lines[cursor]:
+                     final_states.append(state)
+                     has_final_states = True
+ 
+-                if self.__dot_lines[cursor].__contains__("ellipse") == True:
++                if "ellipse" in self.__dot_lines[cursor]:
+                     final_states.append(state)
+                     has_final_states = True
+ 
+@@ -110,7 +110,7 @@ class Automata:
+         # Insert the initial state at the bein og the states
+         states.insert(0, initial_state)
+ 
+-        if has_final_states == False:
++        if not has_final_states:
+             final_states.append(initial_state)
+ 
+         return states, initial_state, final_states
+@@ -120,7 +120,7 @@ class Automata:
+         cursor = self.__get_cursor_begin_events()
+ 
+         events = []
+-        while self.__dot_lines[cursor][1] == '"':
++        while self.__dot_lines[cursor].lstrip()[0] == '"':
+             # transitions have the format:
+             # "all_fired" -> "both_fired" [ label = "disable_irq" ];
+             #  ------------ event is here ------------^^^^^
+@@ -161,7 +161,7 @@ class Automata:
+         # and we are back! Let's fill the matrix
+         cursor = self.__get_cursor_begin_events()
+ 
+-        while self.__dot_lines[cursor][1] == '"':
++        while self.__dot_lines[cursor].lstrip()[0] == '"':
+             if self.__dot_lines[cursor].split()[1] == "->":
+                 line = self.__dot_lines[cursor].split()
+                 origin_state = line[0].replace('"','').replace(',','_')
+
+base-commit: 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
+-- 
+2.47.0
+
 
