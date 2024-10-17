@@ -1,150 +1,109 @@
-Return-Path: <linux-kernel+bounces-370696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468C29A30E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:40:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536609A30E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2761C21266
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1974A285D87
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417E41D88B1;
-	Thu, 17 Oct 2024 22:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5E21D86CB;
+	Thu, 17 Oct 2024 22:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="CyxA4Fqx"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSBUYExi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2C01D5CF9;
-	Thu, 17 Oct 2024 22:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46951D5AC6;
+	Thu, 17 Oct 2024 22:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729204790; cv=none; b=VQORldjrpBwcaoloocrdexhu2yPb1TIm3b1rdHNEpy0EkE99kBxSVLsaMdvtYjLvsqApcDECZdc4l4MYiazhQQ8DPxJcR6+zH0Oa+ikyCUWt3I7Q1ZHNMrqsn52VOP1Uv+J2BXwigF1I7/42uCY6yhEWwcw0QNe2oIwS2Sv9GqY=
+	t=1729204855; cv=none; b=rfY5Lv80h/9U/MzdX0iDBQp/vwz5OdxGlNEJDq53I+yTEQDAuopSbY1YfzSwja7kk9vXIspYU3irR9bAII6BwQYQ+rbt0lAFqzJ9get4MC59VSEKzhEXUrNE/+ly0Gt33DVP4KKhyWHFAAJ/DH6mMw18nAfUueD0VVHn3pCwAYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729204790; c=relaxed/simple;
-	bh=h2+4a3UXLQvON98T3hAogaptHvNNyQPUQhgDLRuywZo=;
+	s=arc-20240116; t=1729204855; c=relaxed/simple;
+	bh=3VA1s4WPyge0d7r6lC7GIiPa5t/KqR4sIxFNMwCwcv4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aqLfbX9bLALlrc4pf1ozKGBI3cjBb9Sh+ujxMklL4Ho6gXrw695bvzurDLV6bHEcTobSo3SPUJfINiKtQrxmLD+mlZTdHfV1U74vktlXEYNfbQmytsYFN5e3EQqLpjeFqz5EEfcmFEnkIn5bPeSLjpNdHY/FQUh/vwQQS92JgJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=CyxA4Fqx; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb559b0b00so14507811fa.0;
-        Thu, 17 Oct 2024 15:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1729204786; x=1729809586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ku9zKQJqkNLfJWKDPS+TFMCuu0WdteDDH6Fg6pzAIhs=;
-        b=CyxA4FqxzKL7SWVx20VJllhD4EaB23dhN5EuLLvAHpx+2tktJz39EwU72hOKORwI4H
-         ASKvtRnJxmfe9FKFlsB7Hq0LcwQYLNdDhEIiiLEKTOstTIAygQXDg7628y50mT6ulNSs
-         TBX/9xAsR6fhYu6i5vGrvvRHv0ZV0WJyuU8nIJxqAvlM2wB4RoW4MEvXjuSkonCxCZj0
-         J7YwBBDyreeBcsxI1kDyKyAIJ37ijmNsDSZQAAt+Tz6Ph8v7F0L022LXisjYkXMJShTc
-         HRaDMaRXNA/BSmxaM3Lmej1ZV1JD2lB/+1+Kfie6dPlk+7EUAaKBkIIXR6m28931pRd2
-         +XAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729204786; x=1729809586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ku9zKQJqkNLfJWKDPS+TFMCuu0WdteDDH6Fg6pzAIhs=;
-        b=Nei5+MU7YThcAgV/fOCk+iz2wnKYnQ4wlKEo5NsEP7ILLae1bpO9KTAmlpgv33lWFF
-         tqJkrQSkM5mIP+uBaooXwa9zwZA1Epuz+kDrae8AG6WolFVpfUjVFM7eMHOPjr0oa/qU
-         DkutdQwUvqGUjlDusXk/+t96whMK5kxQsl4scecGJAshqtlUP7N9KpK1Tafbv1gJcREr
-         i0G6Y3/iaUrHmHaTizZx4hygAw0U93NckXKV+ndqYFcnP2bJlAq+E3IceqOrp6D8dA5K
-         N3AvPLUjXW4lOXwz7A0AkJoGT3jecusqCoDwQtRB825OumXomBLc6KnLwRoiqIlmgXn+
-         kuqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdwvnok0bdRiOEfgk7AsS0nOBdFrauQ57Y6o9wWgow8ifAXrL0ZbdwDytPvxmlQsMCWpzjgVwuEMKsUJQl@vger.kernel.org, AJvYcCV8gnF4oOhrKwxHnLhWEY8C8iypEt2zQ4HGclSLeIt/uGp82bbcKnGCiqb5/2bIT09GyCejczBCRjFh@vger.kernel.org, AJvYcCXynskxHTFoq7xvS7etRUQyQWD2yIh0YPnsJMBmyXEAwyFiATEsvS/gMp7ypyCe/lhuvUKIVYDAAIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTMCycmxLFjRrIoR5+G8qh4lP58wzKX1df1c9KU3Z5viwd/rsx
-	Gbv8tx66MXZPgzQ/iVvb2P+U5grlyCSMBOgBKruNM0m54vFn7E4Y+BqKKd9HHdsyMu4UTK6/88N
-	5cde17NKJ8hRfL1byCQwR8sVMq/Q=
-X-Google-Smtp-Source: AGHT+IEBt4Yvb88T1gAjqaYb1uCYv849WEckHreXDTxpceb4obzrlY7JGG0IVTNOHTKgrLdBGp12XLfGrc9y8px9Y4c=
-X-Received: by 2002:a2e:998b:0:b0:2fa:d67a:ada7 with SMTP id
- 38308e7fff4ca-2fb82fb1a44mr791191fa.23.1729204786271; Thu, 17 Oct 2024
- 15:39:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=f2IrtqLULkdIP6Nj1JTCkJhuCqI5/W6n5dKAV51RA1y67SEFtz69Fj/VuMwauRdOEHkP9p9EkIHbcQdYenSWOu0HSKrTqXkEwsKJDYzG/uJXvklABgctriHnoiiM3gADoWTMSRU+NjLxKgTmNGF0UeOWK48kkPMSa8ZDQDMwlHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSBUYExi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 797E4C4CEC3;
+	Thu, 17 Oct 2024 22:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729204855;
+	bh=3VA1s4WPyge0d7r6lC7GIiPa5t/KqR4sIxFNMwCwcv4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aSBUYEximdoPximYDL/O6tGXsFwRjqtS1IWaRGmt/LcrzbJAjaTeVbBaC3g0Rnn4K
+	 mulsXBtuiWlwFqQipa0HUic1Xffh1W0I+yuThaTlDFJTd8wrXbaTrBn1MAAphcfTSn
+	 tHVhACTWED48+1i/+W/0ylnVTedDWy5eMWKNRer5yBeW+vJGHHDBaJivmShf1k2zHH
+	 cuxrQdjeT8iZd4e+MUBTuV05mFdEdA7VxkzhWb31KjzYdiF0PGgh2P6HKTOUAdGhOm
+	 eO/ThzbZYYAR3+aMbK2IHu19eTNySR8QOkaJQx0CduckAm8Nd1JuXFvCZORylncDWp
+	 WD0mRhyoY33kw==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb498a92f6so18658461fa.1;
+        Thu, 17 Oct 2024 15:40:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9MEkMxAu6Q4XC1DdT13mSkYCfS0CrzMBCGfSisFRacswNPYRLbNKjYLnUeKxwM87aDlVS2JjaJGcvJuU=@vger.kernel.org, AJvYcCWsS7hy+Yy/jlqEo/nCS8dcu2frzKDcP9n5keE+D3hzEVqEkvdHeXZ3LS11NjeqwRLFe8V/sQ5aBpDeazg5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc8CVaZCqm6H6odEC4lrvRAug0IwBH3pxStoB6y++/tEmL+Ml/
+	e1Hc/B4xJnqfvrzfQj4XXVsLYoZ/Pk7XYir4lIND/IW71s4awbwHFEpB7Gniy1sAyFEY6xfHqpf
+	QBVoGa1wqC8ozxZQyjbYe4wDFPDA=
+X-Google-Smtp-Source: AGHT+IGH9w+MXZSFQozhnFkOruBOH95ttNVlnPFuU/Che4mBA9S2VbGpFKEhXLhv0qhSUczj+tKzOiCbCgy8RkBPY3A=
+X-Received: by 2002:a05:6512:308b:b0:539:f754:ae15 with SMTP id
+ 2adb3069b0e04-53a15445ebfmr282150e87.41.1729204853857; Thu, 17 Oct 2024
+ 15:40:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014-delstid-v1-0-7ce8a2f4dd24@kernel.org>
-In-Reply-To: <20241014-delstid-v1-0-7ce8a2f4dd24@kernel.org>
-From: Olga Kornievskaia <aglo@umich.edu>
-Date: Thu, 17 Oct 2024 18:39:34 -0400
-Message-ID: <CAN-5tyF4=JC4gmFvb2tF-k+15=gzB7-gkW6mHuaA_8Gzr4dSrA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] nfsd: update the delstid patches for latest draft changes
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Thomas Haynes <loghyr@gmail.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
+References: <20241017094132.2482168-4-ardb+git@google.com> <CAMj1kXFROGbn_49njp_rivEidqfgnLymOCRnfSkV_dTX_hAz9w@mail.gmail.com>
+ <20241017220409.GC11717@sol.localdomain>
+In-Reply-To: <20241017220409.GC11717@sol.localdomain>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 18 Oct 2024 00:40:42 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXG50UeOsHdXwEkEqqW9fjTZivGGqO=LdAGQaHOrZ0vrHg@mail.gmail.com>
+Message-ID: <CAMj1kXG50UeOsHdXwEkEqqW9fjTZivGGqO=LdAGQaHOrZ0vrHg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] arm64: Speed up CRC-32 using PMULL instructions
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	herbert@gondor.apana.org.au, will@kernel.org, catalin.marinas@arm.com, 
+	Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Seeing strangeness in a network trace with this patch series where
-SETATTR is sent with time_deleg_access and server is returning with
-EINVAL. Test is open() with read delegation, triggering a cb_recall
-via a local access. I can see that the client has changed from sending
-just a delegreturn to sending a setattr+delegreturn. Is there no
-server support and this is normal to return EINVAL.
+On Fri, 18 Oct 2024 at 00:04, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Thu, Oct 17, 2024 at 06:30:19PM +0200, Ard Biesheuvel wrote:
+> > > Ard Biesheuvel (2):
+> > >   arm64/lib: Handle CRC-32 alternative in C code
+> > >   arm64/crc32: Implement 4-way interleave using PMULL
+> > >
+> >
+> > I'll need to respin this - the crc32_be code doesn't actually work correctly.
+>
+> Right, good catch.  It looks like it needs an rbit of the crc value at the
+> beginning and end.  lib/crc32test.c doesn't actually test crc32_be_arm64_4way()
+> because it runs the tests with IRQs disabled; it probably shouldn't do that.
+>
 
-On Mon, Oct 14, 2024 at 3:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
+Yeah, we should probably fix that.
+
+> On a slightly related topic, since any crc32_le() and __crc32c_le() functions in
+> arch/*/lib/ are automatically exposed as shash algorithms via the crypto API
+> (this was already the case, but your other patch makes this more explicit by
+> properly separating them from the generic implementation), I wonder if all the
+> remaining arch/*/crypto/crc32*.c should be migrated to arch/*/lib/, and then
+> users of crc32 and crc32c like ext4 and f2fs should just use the library
+> functions instead of shash.  That would simply things greatly.  See e.g. the
+> horrible hacks used in ext4_chksum() and __f2fs_crc32()...
 >
-> This patchset is an update to the delstid patches that went into Chuck's
-> nfsd-next branch recently. The original versions of the spec left out
-> OPEN_DELEGATE_READ_ATTRS_DELEG and OPEN_DELEGATE_WRITE_ATTRS_DELEG. This
-> set adds proper support for them.
+> The only crc32 and crc32c implementations that *aren't* software based are those
+> in drivers/crypto/stm32/stm32-crc32.c and
+> drivers/crypto/inside-secure/safexcel_hash.c.  Access to those would be lost by
+> going through lib.  But I strongly suspect they exist just because the hardware
+> supported it and not because they are actually useful.
 >
-> My suggestion is to drop these two patches from nfsd-next:
->
->     544c67cc0f26 nfsd: handle delegated timestamps in SETATTR
->     eee2c04ca5c1 nfsd: add support for delegated timestamps
->
-> ...and then apply this set on top of the remaining pile. The resulting
-> set is a bit larger than the original, as I took the liberty of adding
-> some more symbols to the autogenerated part of the spec.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> Jeff Layton (6):
->       nfsd: drop inode parameter from nfsd4_change_attribute()
->       nfsd: switch to autogenerated definitions for open_delegation_type4
->       nfsd: rename NFS4_SHARE_WANT_* constants to OPEN4_SHARE_ACCESS_WANT=
-_*
->       nfsd: prepare delegation code for handing out *_ATTRS_DELEG delegat=
-ions
->       nfsd: add support for delegated timestamps
->       nfsd: handle delegated timestamps in SETATTR
->
->  Documentation/sunrpc/xdr/nfs4_1.x    |  22 ++++-
->  fs/nfsd/nfs4callback.c               |  42 ++++++++-
->  fs/nfsd/nfs4proc.c                   |  26 ++++-
->  fs/nfsd/nfs4state.c                  | 178 ++++++++++++++++++++++++++---=
-------
->  fs/nfsd/nfs4xdr.c                    |  57 ++++++++---
->  fs/nfsd/nfs4xdr_gen.c                |  19 +++-
->  fs/nfsd/nfs4xdr_gen.h                |   2 +-
->  fs/nfsd/nfsd.h                       |   2 +
->  fs/nfsd/nfsfh.c                      |  11 +--
->  fs/nfsd/nfsfh.h                      |   3 +-
->  fs/nfsd/state.h                      |  18 ++++
->  fs/nfsd/xdr4cb.h                     |  10 +-
->  include/linux/nfs4.h                 |   2 +-
->  include/linux/sunrpc/xdrgen/nfs4_1.h |  35 ++++++-
->  include/linux/time64.h               |   5 +
->  15 files changed, 348 insertions(+), 84 deletions(-)
-> ---
-> base-commit: 9f8009c5be9367d01cd1627d6a379b4c642d8a28
-> change-id: 20241014-delstid-bf05220ad941
->
-> Best regards,
-> --
-> Jeff Layton <jlayton@kernel.org>
->
->
+
+Indeed. Another case where the flexibility of the shash interface
+doesn't buy us anything but overhead and complexity.
 
