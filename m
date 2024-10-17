@@ -1,145 +1,189 @@
-Return-Path: <linux-kernel+bounces-369987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4DD9A2550
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:42:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651529A2555
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68E60B290BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:42:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE9AAB226A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6081DE4ED;
-	Thu, 17 Oct 2024 14:42:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCC81DE896;
+	Thu, 17 Oct 2024 14:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HcTuBVe9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WRpZSJhl";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HcTuBVe9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WRpZSJhl"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AFD1DE3AC;
-	Thu, 17 Oct 2024 14:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D291DE4D2;
+	Thu, 17 Oct 2024 14:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729176131; cv=none; b=Dq19nOnJieMwlsfXSI1lksIgbaoIxvEcX+8/6YiykMshSEDpT8OnLPNcPMlAG0H+GetDEWuz+0zrdG3zRtJe5OtgWkHu6cHRyThUWA0oHpUTO2uBWest8VLcQFpc1kw4XgONiKsdkBZz6b5R72WevQ1lXPmtmR2EyVQ6FgMePxQ=
+	t=1729176152; cv=none; b=sMhQgK6p7BcaYeHmhmWXTiURNrG6/iixCr1SNn3x/6TPXDInXPOCUMrjlQJxee1p2jVdxkCE9ljWr/2Z5fKiMehgtIeBk4BhlVq2gZdVUKjXOnNqQsyniLdV8ntrSiwlw2sVKqfBElTcadW0fuzyHnLzMqRySprlyQmuWaif+i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729176131; c=relaxed/simple;
-	bh=DUr1Bbl1dTjaF+Myu5nLSC86QGvopTVl0GcWgYO9HFQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kDvsdUIHKvIRa3rSGJAdfuLnmuyJBDWDFc/zW0FEkWKZccA3wroCqrgSf16bz3kRHxt9rViKDr8ud51n/QDaEB6RLpJH2/dAT6Ef9pVAhF9KFFCLEuM1gwS3K74KKzLb52pcoG/2ICXLmALBipG8haBI+8nnikqdXr5jzCmWjEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTr5k6Cl4z6D8XS;
-	Thu, 17 Oct 2024 22:37:30 +0800 (CST)
-Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8ABCE1400C9;
-	Thu, 17 Oct 2024 22:42:02 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 17 Oct 2024 16:42:02 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Thu, 17 Oct 2024 16:42:02 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "dave.jiang@intel.com" <dave.jiang@intel.com>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: RE: [RFC PATCH 2/4] cxl/events: Updates for CXL General Media Event
- Record
-Thread-Topic: [RFC PATCH 2/4] cxl/events: Updates for CXL General Media Event
- Record
-Thread-Index: AQHbH+lA8kAY8gTJ40eyU/HJxBint7KKvdeAgABHIrA=
-Date: Thu, 17 Oct 2024 14:42:02 +0000
-Message-ID: <4ace141bbae84ef69db3c0ae862e6822@huawei.com>
-References: <20241016163349.1210-1-shiju.jose@huawei.com>
-	<20241016163349.1210-3-shiju.jose@huawei.com>
- <20241017132505.00004cf4@Huawei.com>
-In-Reply-To: <20241017132505.00004cf4@Huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1729176152; c=relaxed/simple;
+	bh=aRsXh3WlcPiguO065JSN1ww7Mu+ct1RIHN/oLRfkIiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ayxTPOeusxHX+J+tVV/Gknu4xnJhCbbSpU60KgyoXZCMYvYBafqtbt0veuKK6ULVEAdq0e+xijwaqS92AYrhjt6hIY6Cb7Ya97sJ2cu8zs0oHlVoTS/xozzgzaT/qvpN+FT/vbUEl7m9XR3ohd8VzgTnghAK0Xx2K8OhbpYQC8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HcTuBVe9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WRpZSJhl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HcTuBVe9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WRpZSJhl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C3CE021CA1;
+	Thu, 17 Oct 2024 14:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729176144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hlxh0bcMo2l0x2YqrsdI35AUgQmto6DnXucDuIIvlIQ=;
+	b=HcTuBVe9HTvxG6z5OqXhvYa9479F1a6LuNX1wPgmDEI906oF+i8x4ZFzJW3i2xRXC7WzUT
+	gCfFsMFV6An0Uv58xNfTiQJCOrCtIqChDk9kBwy2zDW2g2pX2lRf031XOy/LwwADRq+FHE
+	67M6y8YivQmyrjYPoC1jlapHrz24yEM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729176144;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hlxh0bcMo2l0x2YqrsdI35AUgQmto6DnXucDuIIvlIQ=;
+	b=WRpZSJhlqTCrbSLk7HJ5HWtBArsFvMFy8cHpnn7W1nNKfU+2jsCaY3J8FGag7XoOUEQv3i
+	M9tUR9Js5kcv3sCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HcTuBVe9;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=WRpZSJhl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729176144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hlxh0bcMo2l0x2YqrsdI35AUgQmto6DnXucDuIIvlIQ=;
+	b=HcTuBVe9HTvxG6z5OqXhvYa9479F1a6LuNX1wPgmDEI906oF+i8x4ZFzJW3i2xRXC7WzUT
+	gCfFsMFV6An0Uv58xNfTiQJCOrCtIqChDk9kBwy2zDW2g2pX2lRf031XOy/LwwADRq+FHE
+	67M6y8YivQmyrjYPoC1jlapHrz24yEM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729176144;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hlxh0bcMo2l0x2YqrsdI35AUgQmto6DnXucDuIIvlIQ=;
+	b=WRpZSJhlqTCrbSLk7HJ5HWtBArsFvMFy8cHpnn7W1nNKfU+2jsCaY3J8FGag7XoOUEQv3i
+	M9tUR9Js5kcv3sCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D343513A42;
+	Thu, 17 Oct 2024 14:42:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vJWEME8iEWfuKwAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 17 Oct 2024 14:42:23 +0000
+Message-ID: <bed7b0ea-494b-429e-8130-12d12eb11bf0@suse.de>
+Date: Thu, 17 Oct 2024 17:42:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/11] PCI: brcmstb: Adjust PHY PLL setup to use a
+ 54MHz input refclk
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20241014130710.413-1-svarbanov@suse.de>
+ <20241014130710.413-10-svarbanov@suse.de>
+ <60de2ae5-af4b-4c31-bc63-9f62b08be2fc@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <60de2ae5-af4b-4c31-bc63-9f62b08be2fc@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C3CE021CA1
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
->-----Original Message-----
->From: Jonathan Cameron <jonathan.cameron@huawei.com>
->Sent: 17 October 2024 13:25
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: dave.jiang@intel.com; dan.j.williams@intel.com; alison.schofield@intel=
-.com;
->vishal.l.verma@intel.com; ira.weiny@intel.com; dave@stgolabs.net; linux-
->cxl@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-><linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
-><prime.zeng@hisilicon.com>
->Subject: Re: [RFC PATCH 2/4] cxl/events: Updates for CXL General Media Eve=
-nt
->Record
->
->On Wed, 16 Oct 2024 17:33:47 +0100
-><shiju.jose@huawei.com> wrote:
->
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> CXL spec rev 3.1 section 8.2.9.2.1.1 Table 8-45, General Media Event
->> Record has updated with following new fields and new types for Memory
->> Event Type and Transaction Type fields.
->> 1. Advanced Programmable Corrected Memory Error Threshold Event Flags
->> 2. Corrected Memory Error Count at Event 3. Memory Event Sub-Type
->>
->> The component identifier format has changed (CXL spec 3.1 section
->> 8.2.9.2.1 Table 8-44).
->>
->> Add updates for the above spec changes in the CXL events record and
->> CXL general media trace event implementations.
->>
->> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->
->It might be worth breaking out the component ID formatting as a separate
->patch.  That comes in 3.1 along with the other fields but is perhaps more
->controversial?
-I will add separate patch for component ID formatting.
+Hi Florian,
 
->
->It's a good change, but will change what is printed. I 'think'
->tracepoint printing is typically not considered ABI though (unlike the tra=
-cepoint
->which is!) so should be fine.
->
->Split or not I like the component ID formatting and the reset LGTM I also =
-slight
->prefer the fact you inserted new fields in logical places (so disagree wit=
-h Alison
->if that's what she meant).
->Good to call that out in the patch description though to highlight it as s=
-omething
->people might want to consider.
-Sure.
->
->Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->
->
->> ---
->> Question:
->> Want more abbreviations for the long lines of code in
->> show_mem_event_sub_type() and for similar in other patches?
->I raised this in internal review, but don't think it matters that much eit=
-her way :)
-Ok.
+On 10/14/24 20:07, Florian Fainelli wrote:
+> On 10/14/24 06:07, Stanimir Varbanov wrote:
+>> Use canned MDIO writes from Broadcom that switch the ref_clk output
+>> pair to run from the internal fractional PLL, and set the internal
+>> PLL to expect a 54MHz input reference clock.
+>>
+>> Without this RPi5 PCIe cannot enumerate endpoint devices on
+>> extension connector.
+> 
+> You could say that the default reference clock for the PLL is 100MHz,
+> except for some devices, where it is 54MHz, like 2712d0. AFAIR, 2712c1
+> might have been 100MHz as well, so whether we need to support that
+> revision of the chip or not might be TBD.
 
-Thanks,
-Shiju
+I'm confused now, according to [1] :
+
+BCM2712C1 - 4GB and 8GB RPi5 models
+BCM2712D0 - 2GB RPi5 models
+
+My device is 4GB RPi5 model so I would expect it is BCM2712C1, thus
+according to your comment the PLL PHY adjustment is not needed. But I
+see that the PCIex1 RC cannot enumerate devices on ext PCI connector
+because of link training failure. Implementing PLL adjustment fixes the
+failure.
+
+
+~Stan
+
+[1]
+https://www.raspberrypi.com/documentation/computers/processors.html#bcm2712
 
