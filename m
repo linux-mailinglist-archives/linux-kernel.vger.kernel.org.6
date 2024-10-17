@@ -1,86 +1,88 @@
-Return-Path: <linux-kernel+bounces-370442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0DB9A2C90
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:51:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045E19A2BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44D37B23A6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365541C23045
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173DE20ADE7;
-	Thu, 17 Oct 2024 18:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD5C1E04B6;
+	Thu, 17 Oct 2024 18:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="a+sK/kik"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cw10VNS9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EEC1D86E4;
-	Thu, 17 Oct 2024 18:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6231E00B3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729191055; cv=none; b=HFt7vk0dr5fiLQuIqXb9RMLIcSagyBTo8yqikHdmgn58A/7OUPmGJVTaEze/Vvs4SCILmI2ci5nOvPA5GCgUrupUClNrBDBtz6chvrKhcGzYcsK24UIm/axYUbWYTYqZhUzGCzZB707LwpDmyRLhgy2z3/ybU+L6uzVq1TKFPpo=
+	t=1729188627; cv=none; b=AkI4dtSW/5VBR4jfrV8aeQJJPNzNJtQ2OElZM3UBN0b46Bn0ntZT/xpFHhveBIVmdwhYk72SBHEbJCvxdpHEKhX3UThKhL0JCwJ4tO52LlxJR31ifOEqPSLyby+k5qDfB45yZqDhUnnWdAnPFgS11XlVmJ+Kan1tuUBV2b5AwA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729191055; c=relaxed/simple;
-	bh=qohtvOtI6k0iO4BEpGvj7ijKYjF2/6jk/iwxseaq3JY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LJKNOmDjBCp9lIggoRYSZwMLNz+eIrmZ9K2/7LqNQHRQe3KzJ1Q203cjEK2QakJiQoBjIHwAQKhdY6ll4nyGE8uj3yWPghowkCYT/qqkxr5fmVwotjCrPsU/GUv9vMas27H6yZX+uBm6/kllIYgbIGVDvjicOCRjzed3Ey5TFX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=a+sK/kik; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1729184173;
-	bh=qohtvOtI6k0iO4BEpGvj7ijKYjF2/6jk/iwxseaq3JY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=a+sK/kikDiKYSdqJeh8QT53+R9kSPD3kC82d8AP7w4agt7nQl6qIJXHVBwMHRB+yG
-	 buG+wSCF7PtjDNjkBY1g/PyPl17ch30X4crABM0DeVrxirSnO7AgzFtuUllN5bA+nv
-	 X4g3kIp1foSOLX965TghrsES65Or4s0oAenoK9gY=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 2FECA40681; Thu, 17 Oct 2024 09:56:13 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 2E368400C9;
-	Thu, 17 Oct 2024 09:56:13 -0700 (PDT)
-Date: Thu, 17 Oct 2024 09:56:13 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-pm@vger.kernel.org, 
-    kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de, 
-    mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-    x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, 
-    vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, 
-    peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, 
-    harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, 
-    misono.tomohiro@fujitsu.com, maobibo@loongson.cn, 
-    joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
-    konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
- smp_cond_load_relaxed()
-In-Reply-To: <Zw-Nb-o76JeHw30G@arm.com>
-Message-ID: <53bf468b-1616-3915-f5bc-aa29130b672d@gentwo.org>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com> <20240925232425.2763385-2-ankur.a.arora@oracle.com> <Zw5aPAuVi5sxdN5-@arm.com> <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org> <Zw6dZ7HxvcHJaDgm@arm.com> <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
- <Zw6o_OyhzYd6hfjZ@arm.com> <87jze9rq15.fsf@oracle.com> <95ba9d4a-b90c-c8e8-57f7-31d82722f39e@gentwo.org> <Zw-Nb-o76JeHw30G@arm.com>
+	s=arc-20240116; t=1729188627; c=relaxed/simple;
+	bh=mLSjiTOUh+E9CxgYwi1U1f5AhkZN84D58GBwPA5jKvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BWyEjG0UJ4qsuJtDft4w2YIIyjWFth0Gy6v568lwLTeqbYaijnIPJlVZa3WywvoQeUhaDSeoKunVIRuKP8/58pDfoMWiJxG0QOrMDB3AgmS2JER2Euprzmpx+XTVGEFlRRuN35AndJRbGH11DQHxRo7PbIBJdm3yP+D4L4pdCic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cw10VNS9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729188624;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mLSjiTOUh+E9CxgYwi1U1f5AhkZN84D58GBwPA5jKvA=;
+	b=cw10VNS9wM0RuHYgerg0dXOicQrl1I2L6qNSJVHzRFCvR2Ql47PnL4suSbywNOiB4hhldR
+	hO8K0KIyrXvMmpzxvO1PwLNx9LggIeAKSZuO20QA63bvQ+KtHSUhXFatUIe/iXtH7bQn8X
+	3F8tuS4JKOAcdoGCkb7CntPcAIheE/Y=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-281-Ehjx0aHHPMOzPn1gosugIw-1; Thu,
+ 17 Oct 2024 14:10:21 -0400
+X-MC-Unique: Ehjx0aHHPMOzPn1gosugIw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17D1019560A3;
+	Thu, 17 Oct 2024 18:10:20 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.106])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7D73E1956086;
+	Thu, 17 Oct 2024 18:10:17 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: kvalo@kernel.org,
+	jjohnson@kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: jtornosm@redhat.com
+Subject: [PATCH v4 0/2] wifi: ath12k: fix issues when unbinding
+Date: Thu, 17 Oct 2024 20:07:30 +0200
+Message-ID: <20241017181004.199589-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Wed, 16 Oct 2024, Catalin Marinas wrote:
+wifi: ath12k: fix issues when unbinding
 
-> The behaviour above is slightly different from the current poll_idle()
-> implementation. The above is more like poll every timeout period rather
-> than continuously poll until either the need_resched() condition is true
-> _or_ the timeout expired. From Ankur's email, an IPI may not happen so
-> we don't have any guarantee that WFET will wake up before the timeout.
-> The only way for WFE/WFET to wake up on need_resched() is to use LDXR to
-> arm the exclusive monitor. That's what smp_cond_load_relaxed() does.
+Currently, ath12k driver is not working from VMs but it cannot be unbinded
+either from there. I would like to send these patches to fix the issues that
+I have found in order to get the unbind operation working there, at least to
+fix the errors found during the process when the initial error is detected.
 
-Sorry no. The IPI will cause the WFE to continue immediately and not wait
-till the end of the timeout period.
+Just FYI and out of the scope of these patches, I am unbinding and binding
+to apply a workaround with an extra module to fix the MSI addressing by
+means of kprobes to be able to work with this device from VMs.
+
+Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
 
 
