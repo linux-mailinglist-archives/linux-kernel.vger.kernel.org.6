@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-369659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C2F9A2086
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:04:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9496E9A208B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C20528837D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:04:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50472288281
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7461D5CC2;
-	Thu, 17 Oct 2024 11:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O61kXz6V"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AE51DB929;
+	Thu, 17 Oct 2024 11:05:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1161DB37C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07256259C;
+	Thu, 17 Oct 2024 11:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729163049; cv=none; b=qlxISIPvt3e1rHFOEnlT5wKvWVk+kJqsk4MdyY/2crXo2y5DuKp0haXq8QBAZRxlKBDk575XoZh+SnpEqbbRKzaw7/zQfgCTNhSIwrBqxIaMhJ1YYpW6Ud/+nzF9pL/Y2GD25vZaYQZ/dQRTcxuyMWzXDXOeGl2gS/bNS0ZSbTw=
+	t=1729163105; cv=none; b=srpTh2Y1xltb/xXG4akgGb/ON3XtMtLaCUnqfIYT5VBUomtvgBaCS0USQ2QJPtZZRbAZrGOjYYycVO/yyGDyz4/bapjwh7kZv6ItrE88ji7Ly/I65sQhwLv5RKmliLjKID5d1DnxbjvfhF5bb342EctmzuBc3IRyMMCwBCvC0eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729163049; c=relaxed/simple;
-	bh=M02vPbZefKtzgbtnglUdvhk8inJ/586iO3nEwG12f9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDNgPAMyaujvO6QN6K52ykWpbL4UdrLB+vMB+vvIe6oBq5KWE/25fuKrrYjaRkYY0OR3h4h+iy1ijzJGny67rNyQ4llPIjSKToKbR6JesOD80pRFKcBUFzGJrZM1eN8aQuRNNjZ5Kr9rmytHyoTsuq1d/byL6cqspII/1qOVE6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=O61kXz6V; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=M02v
-	PbZefKtzgbtnglUdvhk8inJ/586iO3nEwG12f9A=; b=O61kXz6VJz9lGprNXARt
-	RZ9Cg4RlmikIp0nJ6cfrHZ7FmYvJC5gXF/deT+gaZdEGBKKQU7VR0c8L1fPHqJ5t
-	fStipJ26Xn3A0v2eMNNWIz+MTxZVktZLZrNbfwk3BRXXFUdRYNoEegyhw9dt2lg0
-	unZdKHwHl13jLH02q6jDLXt5hPFuZJqaFfgcJpf5SafnXqtB7nVD99G1AgeYyGpO
-	FBYiYW6MGWx5CMfGCJu0PIOkazucB9tpwGxfOH8D1TnqauLXYrWgstI9SKJc20qP
-	ZrQqXiILOdiDdM38jahSvIkGmy1ocSNm0jXSEL5vGVNF4cCJfhu4wOA8p5J3VrAD
-	BA==
-Received: (qmail 3358213 invoked from network); 17 Oct 2024 13:04:05 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2024 13:04:05 +0200
-X-UD-Smtp-Session: l3s3148p1@l0sMJaokT31tKPEX
-Date: Thu, 17 Oct 2024 13:04:04 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <ZxDvJCq_GOBm8nUC@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
- <ZxDqzeA2mz0Ml6cZ@shikoro>
- <CAMuHMdU=o0MzQUoEs5-HrEVP-snXN-hUef1K3U8Ppj18P6HVCg@mail.gmail.com>
+	s=arc-20240116; t=1729163105; c=relaxed/simple;
+	bh=jEeOGKsEWcwjZnI/On0ISkALOsW6ASw+8Llo1EFKORE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gJOQBV8ctL6S2N5i6QjOGIeRKK0b4RjGmBqx/m6rIA6LYDh3Jr6Y3f6FpM+OV7Ibl1tXsHZKLPYrHK1p9AzVYj8VwD2khq1jht9Qs93gaa/ZR8ym7lX4PSuITf0o24tXkctGNhQ2LJl0wOwtmxHqUw13TweinjM46SH9zjhz1yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTlLX3cbHz6FH4h;
+	Thu, 17 Oct 2024 19:03:16 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3727E1400DB;
+	Thu, 17 Oct 2024 19:05:00 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 13:04:58 +0200
+Date: Thu, 17 Oct 2024 12:04:56 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
+ Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, "Maciej W. Rozycki"
+	<macro@orcam.me.uk>, Lukas Wunner <lukas@wunner.de>, Alexandru Gagniuc
+	<mr.nuke.me@gmail.com>, Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>, Smita Koralahalli
+	<Smita.KoralahalliChannabasappa@amd.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, <linux-kernel@vger.kernel.org>, Amit Kucheria
+	<amitk@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v8 7/8] thermal: Add PCIe cooling driver
+Message-ID: <20241017120456.00006023@Huawei.com>
+In-Reply-To: <20241009095223.7093-8-ilpo.jarvinen@linux.intel.com>
+References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
+	<20241009095223.7093-8-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lNCG8WzO0TPLyYgP"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU=o0MzQUoEs5-HrEVP-snXN-hUef1K3U8Ppj18P6HVCg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
+
+On Wed,  9 Oct 2024 12:52:22 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+
+> Add a thermal cooling driver to provide path to access PCIe bandwidth
+> controller using the usual thermal interfaces.
+>=20
+> A cooling device is instantiated for controllable PCIe Ports from the
+> bwctrl service driver.
+>=20
+> If registering the cooling device fails, allow bwctrl's probe to
+> succeed regardless. As cdev in that case contains IS_ERR() pseudo
+> "pointer", clean that up inside the probe function so the remove side
+> doesn't need to suddenly make an odd looking IS_ERR() check.
+>=20
+> The thermal side state 0 means no throttling, i.e., maximum supported
+> PCIe Link Speed.
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Acked-by: Rafael J. Wysocki <rafael@kernel.org> # From the cooling device=
+ interface perspective
+
+Trivial thing noticed on a reread.
 
 
---lNCG8WzO0TPLyYgP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 61e7ae524b1f..d3f9686e26e7 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -220,6 +220,15 @@ config DEVFREQ_THERMAL
+> =20
+>  	  If you want this support, you should say Y here.
+> =20
+> +config PCIE_THERMAL
+> +	bool "PCIe cooling support"
+> +	depends on PCIEPORTBUS
+> +	help
+> +	  This implements PCIe cooling mechanism through bandwidth reduction
+> +	  for PCIe devices.
+
+Technically links not devices, but don't think that matters much
 
 
-> > ... if it has been considered to expand the existing rtc-sh driver? The
-
-...
-
-> Yes it has ;-)
-
-Thanks for the pointer. Well, a few of the limitations apply for RZA1 as
-well but they are not handled in the rtc-sh driver yet (from a glimpse).
-
-Nonetheless, given the other limitations and the bit shuffling in the
-control registers, I agree that a new driver makes sense here.
 
 
---lNCG8WzO0TPLyYgP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcQ7yQACgkQFA3kzBSg
-Kbbb9A//YJ9DUgYEiBVtqS/ma7iA7F8MGfIClcoTBk3HhHlJIaxdXSRQ9Ld19DTB
-5fXKn9jRUQwsOK/O6WU62VW+jr9b70D+EXu0PEEAI2qUI9/LX1acdHwTdp9EVhGg
-JPp1Hn0CGPGQVwgTbe/veNTXMUakpHWP2h+QbSMwRka+a+skEDshgiyZZqeo2l1E
-+o1wseF8obYpb2+iydJA4Vp+DdEEJoHpMJZ0DZbgrIGicnVhDRi1O0tiQ+RIqiBP
-XcP5VWGb9ceABCJuBaXxW3uSJ+2fdJy6Q7f4Tmh7DP+r1R5q5lTO4wEQ9QiGVjvx
-S4JAA2hJskl6wQVcfHeG/tCWByahC3APq2PFGV/4YtvysyK7mke3GEhPknT/aIfu
-UZTkqZottd6vNcHJM+knvTuT+5WJ7Y5kOUpVZ8Ed83Oa3LtuVjTRg7iG+VT01plo
-yaLY0++R5uZNF+ABlM5lO91BSl5VpRAb6xWYOzCq7vU8U99fpXnwGwWw3Wmk7Z/f
-fDMDEz1XhpmR6ETIjCVtIGu9t/Deyyg5tC9esoDe6FP80hhdFps6Mi0/sKW//iiA
-/NaB2XsnC7H1GV7yCSQKCGTKcJNvzSdGFQnsq0DWWHloOfl6nbFdfpjiy/lAcolU
-N2X59O6146VnHrhWtwaC2rt2nBz6qPVobXn+d1L6TA6Xx3ww6kg=
-=bTvk
------END PGP SIGNATURE-----
-
---lNCG8WzO0TPLyYgP--
 
