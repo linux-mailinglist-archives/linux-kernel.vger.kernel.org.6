@@ -1,210 +1,140 @@
-Return-Path: <linux-kernel+bounces-369183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70BC9A1A0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:03:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332BF9A1A11
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AA9AB21327
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA49FB21AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1226615ADA6;
-	Thu, 17 Oct 2024 05:03:32 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583405478E;
+	Thu, 17 Oct 2024 05:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z1Yc1AQu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V2xKV5tV"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972AC2905
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9EF259C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729141411; cv=none; b=TApocLT1aSTciPARKNz85TFHqyTYieQPyx/iDWmRDSnYPx0mFK7h29ELAc4GossiDJLleNwgp4i7jb7Nfd8mPs2rK1GfohE7ovt290qYBt26TKIHbXbeZVDBJiT6MiiYQIpK5T0FlgcH0cQ5qgDxb1ObXI/MJrb9T1P7qBgNavc=
+	t=1729141922; cv=none; b=LfFUAKk50+M213D/jvv7FjFqNd/ITfszJmZCpJftKZP/hFlDsIejW8AVRj61x87kARD7HGte2q06wt2ZMLFQW7PJTAZViZrugUbgll43jUSFo5U3nB2fgefFXyi2ODXe/ytXGudEBNE3LbbyH+8W2716z7RtxI9+ULf7zoEPel0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729141411; c=relaxed/simple;
-	bh=vpvtcgmIZHO18G5BBJBL7IfV1fRSrj5q8IVfBqCzu28=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JtfR8rD3hbwjhavjzam7QbjGgatqFmqT5t0v0KlxAfUK602KAq3RRizwaV9mzRCTBGp4LsLDspMDCvLR/wl8c72nJLn6vQh8MIrS/BFlSJpNa3GnZ1FS36mC/rVKGipNT1lBoZyL78clNL3w4cpeR8/PugStsHK93xJyuQuuXJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so6007075ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:03:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729141407; x=1729746207;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hj81h1R9+1O/badNaKzYflm7VykGj3DAndoTFNRlY8U=;
-        b=SSc3anakcTrK4BaJVo6hCiQB261zpSvhU7l4he1jlj7DsOQRajwHshbYpNmB5/fsDY
-         nwkmZ6nGIPny2kJhyCRzTLcBA0CahG/pCesLVwd7GDpZcNNql/dkTq6xWDhxIlndPJSm
-         d4StJLATtBQ1y07zmIRKOxdYARDPMRQPSmc/QGCroVndgRiQdfVljh4lSqQqH8OSRvQc
-         wwi56+b+M4Ep1wgDz5e5lhAyj0O4sXFhTzSFsnyBIpx9t3hShvSpqUp0k6RU0aPKizg4
-         vXX64DbjbztQKahlRfIqooenWt8vjplhl5Vt7wSCIfI16ZYqx4ZpTqZOHB8+Dqn4ANYj
-         l//g==
-X-Forwarded-Encrypted: i=1; AJvYcCW5/P5I0Fn1cDoILJkbGtKfhFVA5d3NG4iWg/2O7GOjbkytITGKgcufkECOEI9fT7IUhFX/z54cyt4N7+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKVWKo6e8FCB3P++Byz1LRvIWuT8o54VmrUbmFJny/CDYvIhsV
-	WTFSiDKbs57tcNNOH8/wsBkeitAXaR/f8xttkc8GSyBXqz+7l+H4FgHe7c2pjt31rmUJwbZRS9D
-	5eI0+CIeWq84S5Q3NuF32iK51J7GAISyY0FjoQfFrauIKqh7TZQux/54=
-X-Google-Smtp-Source: AGHT+IFqbXGuKnEc08y+ohoc53jfl2vV0B2suYnt95XOZ4geMSK1aAogT7Nz0kKDBmFOOXBIeSV+p4noT1vgRobwvFphpM4oX23c
+	s=arc-20240116; t=1729141922; c=relaxed/simple;
+	bh=fNK3lAqMCXrTaiXReODT7ZcIduhjuQ6hhGKHv0Yov6E=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=AsQ2wn08dsj9BoZxqzYODTmdGClA3yRGS0aBaEM6ZQ4ZinX0iEhBA3+crWZevHQFNzlYZGwT+h2HljCtCqVP5ZlWs6V1mad2+UFTqnLd9565qXL7DaUUSlARXWoQhH+jiS7zRYNxxHdQZqTKSLFeEpsxjCHwr5LDZtA8WElczJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z1Yc1AQu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V2xKV5tV; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2C34513801D7;
+	Thu, 17 Oct 2024 01:11:59 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 17 Oct 2024 01:11:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1729141919;
+	 x=1729228319; bh=417rKyW++kXoBCxiKYzXCjfYZVIaLYr4ooQeqr23rRc=; b=
+	Z1Yc1AQua7MgpuMzhaklr7wC4Pxan3UQW1N62m1pfo28GyyCD7M56ul4vIXfzyHY
+	LQyjwlwrZQQJ3rvIa0pCU53Mk9oq6Ut1xTm2al5EP4iAn4qR2KvgXybuJ0nTU685
+	ot6RHtldW4mruKsfcSuk1xx5IQeexHePSZDwHOBNlwBziXE612p1wmURM8PniquC
+	hKCKsNxA8FokKlkRlBXz0BwRZx91KeifubXlXHhaFkJ3B0tDE1/a1tsVoPiTZgFR
+	kKg+H8R5Wh0OLTTuJ+3SDjEWWohPogP1mkl9kB24EkpOZpI+3yPmjmbLdZXRV7wF
+	fo5KqOmPMzWGdzKj9jelJQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1729141919; x=
+	1729228319; bh=417rKyW++kXoBCxiKYzXCjfYZVIaLYr4ooQeqr23rRc=; b=V
+	2xKV5tVlvGHUKy1/9w+FwaVDS63SvtUdOUxEQcXLcq8VaFKyoi4fcuNPFUpL/l4x
+	uy/zOaNzF7+IAfRTg5WUxGRbuMTr+Gaad0SsoLJy9CHyBMiMlI/NOyFzCJ9fDlI9
+	L6T9Fp/GVpPZBcMXYpyHfSkGCJutZn58nYWaHu4yiKmsqqu3wkYmsYG8BhUKBQ5c
+	uEY2/1AKhBYSp08dXBTPDARJfZdSnyQfi1d3e6YZOyUlh9YSoTV//q4SPY+ZQq7T
+	/jAmn0ioq2gsZAcRzkH0UKDU7JmR1LjkOT5WWbQ9T3TRltLFgzww2mcqL3W540hX
+	L2fQ6gMv+5Gq2MB3CCsCQ==
+X-ME-Sender: <xms:npwQZyGReiVKX36RogAt7hAYnYTmBmkbUizDiIJQ4jd4QrXTaBVP1g>
+    <xme:npwQZzWN9cP75c71gqHhoElHbzFnQwmZAvx08DZAmLuo3eMcmBSJCC7qnt03Fv9zf
+    zYoXP5sdny8b8v5_Zg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehtddgledvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
+    hhpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgt
+    phhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrghnjh
+    gtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehimhhrvgdruggvrghksehinhhtvghl
+    rdgtohhmpdhrtghpthhtoheprhhoughrihhgohdrvhhivhhisehinhhtvghlrdgtohhmpd
+    hrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrhhiphgr
+    rhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlih
+    hnuhigrdhinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:npwQZ8IVpyZoZAXeJbJJOyj4QKhgwXei_wpXByBm4gK2KzoFJHTtJQ>
+    <xmx:npwQZ8H7ayIiY3OlHbngCw-W6aCSRqxzwUi3aayZ1MQpEC7OPdzsMw>
+    <xmx:npwQZ4VbWVxUZ0j13nWJQGlldfM14rbAUXA802PeX9QeiwpJHmHmoQ>
+    <xmx:npwQZ_MRyM8E1frSJtGtCnKZN4Gc-PmgPfYgPaM-lEdKAH3THB3NyA>
+    <xmx:n5wQZ5saNI0QRopPL_GtcGnKG647YsLELqL9jyx07G6gOpx2aYtaRNzh>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3034E2220071; Thu, 17 Oct 2024 01:11:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1caf:b0:3a3:778e:45cd with SMTP id
- e9e14a558f8ab-3a3b5fbc20cmr199646315ab.21.1729141407620; Wed, 16 Oct 2024
- 22:03:27 -0700 (PDT)
-Date: Wed, 16 Oct 2024 22:03:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67109a9f.050a0220.d9b66.0182.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_bucket_alloc_trans (2)
-From: syzbot <syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 17 Oct 2024 05:11:37 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Sean Christopherson" <seanjc@google.com>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Jani Nikula" <jani.nikula@linux.intel.com>,
+ "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
+ "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+ "Tvrtko Ursulin" <tursulin@ursulin.net>, "Dave Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Paolo Bonzini" <pbonzini@redhat.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Imre Deak" <imre.deak@intel.com>, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Message-Id: <6201c467-e5f2-4aa1-967c-8d9116c5367a@app.fastmail.com>
+In-Reply-To: <ZxBZx5EUhJFjTcXP@google.com>
+References: <20241015152157.2955229-1-arnd@kernel.org>
+ <ZxBZx5EUhJFjTcXP@google.com>
+Subject: Re: [PATCH] i915: fix DRM_I915_GVT_KVMGT dependencies
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, Oct 17, 2024, at 00:26, Sean Christopherson wrote:
+> On Tue, Oct 15, 2024, Arnd Bergmann wrote:
+>> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+>> index 46301c06d18a..985cb78d8256 100644
+>> --- a/drivers/gpu/drm/i915/Kconfig
+>> +++ b/drivers/gpu/drm/i915/Kconfig
+>> @@ -118,9 +118,8 @@ config DRM_I915_USERPTR
+>>  config DRM_I915_GVT_KVMGT
+>>  	tristate "Enable KVM host support Intel GVT-g graphics virtualization"
+>>  	depends on DRM_I915
+>> -	depends on X86
+>> +	depends on KVM_X86
+>
+> Can GVT-g even work on non-Intel CPUs?  I.e. would it make sense to take a
+> dependency on KVM_INTEL?
+>
 
-syzbot found the following issue on:
+Yes, I think that should work, but I'm not sure if it needs a dependency
+on both KVM_INTEL and KVM_X86 in that case, to handle the link-time
+dependency in all configurations.
 
-HEAD commit:    7234e2ea0edd Merge tag 'scsi-fixes' of git://git.kernel.or..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1219f05f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b6a17991a6af64f9489
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14018440580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14eb1087980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb89ee889cea/disk-7234e2ea.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/088257a81962/vmlinux-7234e2ea.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2a15a9a5e99a/bzImage-7234e2ea.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2ea41a6e1171/mount_0.gz
-
-The issue was bisected to:
-
-commit f5095b9f85a1674a92d00e7ab466499a8ba49ce1
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Tue Jan 2 00:42:37 2024 +0000
-
-    bcachefs: dev_usage updated by new accounting
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b37fd0580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12b37fd0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14b37fd0580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
-Fixes: f5095b9f85a1 ("bcachefs: dev_usage updated by new accounting")
-
-bcachefs (loop0): going read-only
-bcachefs (loop0): finished waiting for writes to stop
-bcachefs (loop0): flushing journal and stopping allocators, journal seq 1
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/alloc_foreground.c:489!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5220 Comm: syz-executor172 Not tainted 6.12.0-rc2-syzkaller-00305-g7234e2ea0edd #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:489 [inline]
-RIP: 0010:bch2_bucket_alloc_trans+0x39ec/0x3a50 fs/bcachefs/alloc_foreground.c:644
-Code: e8 29 8a f0 fd e9 f0 c7 ff ff 89 d9 80 e1 07 38 c1 0f 8c f3 fd ff ff 48 89 df e8 bf 88 f0 fd e9 e6 fd ff ff e8 35 fc 89 fd 90 <0f> 0b e8 2d fc 89 fd 90 0f 0b e8 95 2b b2 07 f3 0f 1e fa e8 1c fc
-RSP: 0018:ffffc90003e851c0 EFLAGS: 00010293
-RAX: ffffffff840aeacb RBX: 0000000000000019 RCX: ffff88802d549e00
-RDX: 0000000000000000 RSI: 0000000000000019 RDI: 0000000000000000
-RBP: ffffc90003e858e8 R08: ffffffff840abd99 R09: 0000000000000000
-R10: ffffc90003e857a8 R11: fffff520007d0afa R12: dffffc0000000000
-R13: ffff88807a51c000 R14: 0000000000000000 R15: 0000000000000000
-FS:  000055555a922380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000564dd46df160 CR3: 00000000766a2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_bucket_alloc_set_trans+0x517/0xd30 fs/bcachefs/alloc_foreground.c:804
- __open_bucket_add_buckets+0x10dc/0x1b60 fs/bcachefs/alloc_foreground.c:1049
- open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1093
- bch2_alloc_sectors_start_trans+0xce9/0x2030
- __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:343 [inline]
- bch2_btree_reserve_get+0x612/0x1890 fs/bcachefs/btree_update_interior.c:554
- bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1252
- bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
- bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
- __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
- wb_flush_one fs/bcachefs/btree_write_buffer.c:183 [inline]
- bch2_btree_write_buffer_flush_locked+0x2aa8/0x59f0 fs/bcachefs/btree_write_buffer.c:375
- btree_write_buffer_flush_seq+0x1a43/0x1bc0 fs/bcachefs/btree_write_buffer.c:510
- bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
- journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
- journal_flush_done+0x8e/0x260 fs/bcachefs/journal_reclaim.c:819
- bch2_journal_flush_pins+0x225/0x3a0 fs/bcachefs/journal_reclaim.c:852
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- __bch2_fs_read_only+0x124/0x430 fs/bcachefs/super.c:274
- bch2_fs_read_only+0xb57/0x1200 fs/bcachefs/super.c:354
- __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:619
- bch2_fs_stop+0x15/0x20 fs/bcachefs/super.c:678
- bch2_fs_get_tree+0xd9f/0x1710 fs/bcachefs/fs.c:2173
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f61de613dea
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdb66b7d48 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffdb66b7d60 RCX: 00007f61de613dea
-RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffdb66b7d60
-RBP: 0000000000000004 R08: 00007ffdb66b7da0 R09: 0000000000005b42
-R10: 0000000000000002 R11: 0000000000000282 R12: 0000000000000002
-R13: 00007ffdb66b7da0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:489 [inline]
-RIP: 0010:bch2_bucket_alloc_trans+0x39ec/0x3a50 fs/bcachefs/alloc_foreground.c:644
-Code: e8 29 8a f0 fd e9 f0 c7 ff ff 89 d9 80 e1 07 38 c1 0f 8c f3 fd ff ff 48 89 df e8 bf 88 f0 fd e9 e6 fd ff ff e8 35 fc 89 fd 90 <0f> 0b e8 2d fc 89 fd 90 0f 0b e8 95 2b b2 07 f3 0f 1e fa e8 1c fc
-RSP: 0018:ffffc90003e851c0 EFLAGS: 00010293
-RAX: ffffffff840aeacb RBX: 0000000000000019 RCX: ffff88802d549e00
-RDX: 0000000000000000 RSI: 0000000000000019 RDI: 0000000000000000
-RBP: ffffc90003e858e8 R08: ffffffff840abd99 R09: 0000000000000000
-R10: ffffc90003e857a8 R11: fffff520007d0afa R12: dffffc0000000000
-R13: ffff88807a51c000 R14: 0000000000000000 R15: 0000000000000000
-FS:  000055555a922380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000564dd46df160 CR3: 00000000766a2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+    Arnd
 
