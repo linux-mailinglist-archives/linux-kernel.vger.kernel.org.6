@@ -1,131 +1,233 @@
-Return-Path: <linux-kernel+bounces-370503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C4B9A2DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:24:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44A09A2DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 435F9B21991
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:24:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE6C1C233E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70342227387;
-	Thu, 17 Oct 2024 19:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CDB21BB0A;
+	Thu, 17 Oct 2024 19:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFzKBkO0"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="wlZH3XuQ";
+	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="Dv9DtULg";
+	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="EjmLiDXo"
+Received: from e3i122.smtp2go.com (e3i122.smtp2go.com [158.120.84.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747DB21D2A3;
-	Thu, 17 Oct 2024 19:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D6F227388
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729193044; cv=none; b=O8mRa9ChrMrXT4k2AkTe3z/2gLtxSnculY+xm0DHpresXJ+vGKmysil2x6eyD4L4/K6LusYsPlNdD1Q6Yxa9OVTAHVUvk6UGos6aTdH0TQf3dDMH0Mp0ljEsTE0pnpINwPt8FauVGtjTI/bXB88Qvf+Yuq21g+hg17jEzIN8hwY=
+	t=1729193070; cv=none; b=RbDXz8Hpd0weAgwyMrsXXc4KWC/bdT6IglmjcWP7aTFN2kIan3qPzMaGy1nLS/CQDUZP9SUhYVT2urvULIO1/5Y1q61q8Ptf4+T/URa/BTHh+Pl1kLB7LVNw2b4RGyzcmWZtAdlF3C0KEt0e2FVEdrosnYaBTNhp5IjWL5/J+Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729193044; c=relaxed/simple;
-	bh=rrYpyxR+gjDQU3TJ/cfAclUB4zxBbYHHlIOTA+Ubjhs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tGFlgfVGG0o2FD912IPoFKjoLuX25IKs5EVj/th9uUg7ee+MKzjYbQGUow+z4oB+vTNmjUbxdJa1uaJJlDL/zeS0wYjwo/M2fcU4kxO8UH0X4qhTvApPRP/Od6zzPNMek+x4UoQnAPBRg58Sn2+wdKmc6Xb/RwVFf8OOAosnQaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFzKBkO0; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-50d487a93a5so395417e0c.3;
-        Thu, 17 Oct 2024 12:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729193042; x=1729797842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+TOobXn+Ya5c6r0qPo85Xz8jBuI+iMeVackKv7DDL8=;
-        b=mFzKBkO0w466Ow5Gx3PR3VRfsMuaPcJsCP2YLOveoLHs1xhBch3lownM0LF9Iickh1
-         QEp0ivQcAsAbe0y0kT6eZtkQPkQJg6RMa85ZGINZ7cuBoCN5I0hpWL4Yt4nBjD7ri3Uv
-         DDO6btw0DCj7n+ybdLPtTQIWZ9EodeA/CINXgi7846oTqxiY3cM3irMxs6+OPY3TeJ93
-         lDEUZj2gNjtQuNYVY/6h0WIgy8WbUGDIrGpPGyHgoPfxvfpg0hLR4nhY0oPQO3z94HJK
-         YvPbtKXh6vAms9xineP0Q1jACMGarXK6xq4anp1hjefh9mRF85yR5gZuMp/G3csKaGHO
-         1Zyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729193042; x=1729797842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b+TOobXn+Ya5c6r0qPo85Xz8jBuI+iMeVackKv7DDL8=;
-        b=Tb1yDPZ1Ikm5UYdPkZDZOrUitBMItwIUYK4hIeeadajelkS3AItPbxzlAFWbf6UcaI
-         TXKCjf4mDfFnI/t2lrJXWtKk3e0t7RkLo3b8A0/m94s6GcDaHRgXnEJZd2e/XAYPeooA
-         hp/GrOiJ94s+TtdFnmFbO709GBKhr01us1MwrWwVSWQjheTNvTXThEd43zBthUzxMTqe
-         ZO+uPQ3xhM9YxBEiDj0vaDgwpblBLFYzIYhdGbImNO4RND5hBajspJuCo8QQKITZBDyH
-         C426EyxR+645ZRLXZUfTF2E98mB2d5qDWP+u/paYpj2mMVYggspJbqdnQfuh4TqgiJol
-         GDlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmDuP72dCyit6e4dSTILuRJFsHeTc10vMr9vrWXCEcpLaQ/6P4goTDOIwVBMcCLRGP42aGMjpn0/P1cw==@vger.kernel.org, AJvYcCWTv7Jlh/f0DZ+kM9k1l6q1PKW7rbBxR9cPK4zav6qoLWnrr2vPm5z2Z6SUcIJHx6CILbUlNUGAcavRj6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCRXzWMf4XPl3oL/q3de3hfDR2Rdug3SHtrOn9qXX5zaYQKceK
-	OIhNlKobclAHFOiQ81o2yzOAoWzRQ2kY0OeWfe5c7rQK/0Wrh8sYNwL4woTh22WtZVMA01EjatQ
-	qLAno+Bh7uGeYUo7qQDs/q4c2Pu4=
-X-Google-Smtp-Source: AGHT+IE9STtg/HBLbT5CsVtg0opYZo4vhNcEzemldweQ5BsDAjbsCuo2zAnooZF0R3lzDfAiQL9ylIGDPLp8hhibJRU=
-X-Received: by 2002:a05:6122:924:b0:50d:4cb8:5aef with SMTP id
- 71dfb90a1353d-50d8d259605mr6962981e0c.6.1729193042156; Thu, 17 Oct 2024
- 12:24:02 -0700 (PDT)
+	s=arc-20240116; t=1729193070; c=relaxed/simple;
+	bh=gFKgzeE/ZauvTc40+kc1ZCpG82IQ5sf0SexsQDq8u7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qm0R7Y8OBJt+u2lTYMZDcGCy+bzUQlv/fGJN2XLsRutiWyTGH/wiZ/NRDwQJEWbpGGAsnP9ISlo1W7uDDROHwYBznWu3neqzuAlw2tg0mXWhXginK3tJ+WVJ4LSKwu0D7gQsBvOElyw0kNm4LYQoER2/2VxGQBuXazI5CsNf37Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=wlZH3XuQ; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=Dv9DtULg; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=EjmLiDXo; arc=none smtp.client-ip=158.120.84.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1729193063; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=QaZJB7VtPb6Ficd5xom0d1ZB+uspGEK5oHHe4+QV+34=;
+ b=wlZH3XuQjN4km18ZXTWEBu6kH4zQJMq9XLHScTxGmsJV9LkQJsoPLA8m2bYsO4G9ADcF6
+ EaPPUFVRz0EPXWU0TadI8dSjLNaYhMe+nzt57qM7hAhOPF8nVBywf7rf8uhs9ki8Xu3ZO6c
+ gzmPmks1OYy9HzWXk8WVFlGbTTqjZVx8eI+64GdCPbeUrMv3NXyhQeKo36w8Rqv4bnOnnip
+ G2kWJRfu22rwLOTcg6xk7mE2/g8rmro+z4kkboW/rxyCFi0dcFSaJ4F2+qYb2qZKWNx874B
+ u8w+OONye8zFaxsXuKW48iA+/9r24hvPiEKJ8C9TK9M12XRVhROrBFNdEDWA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
+ i=@fjasle.eu; q=dns/txt; s=s1174286; t=1729193063; h=from : subject :
+ to : message-id : date;
+ bh=QaZJB7VtPb6Ficd5xom0d1ZB+uspGEK5oHHe4+QV+34=;
+ b=Dv9DtULgso6zrdMal36mQwACBAyXK2vfJt+kGgcphGDV6a2Pw5tthPSstrlAv2DzpDrfU
+ gDUqv212oHD7Ebmz7QnxXIPzgxitLLK3SrNGkZFOYzV9RDWv3/suQrP9nKP+OCsXrCbT9NT
+ wT9+mJDnVIv0r8KARb1CrEsk5oo7CfaAe8ArFRZhOdLPzyQPHFsy0H9qkyMvSVIHqND4gTB
+ c8GEd2c5+o2RCilq5DeLaxDPG3jMuwPE6t2HkT6g/fkr7rZwNYnH1O4fzGacNYE16Yuy22x
+ Yg/FEUt1mszn2/7Ou0r+ozFA8ppHrB/x5sRWfC7Yb+3qrEK3Xhw8XQezhohA==
+Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97.1-S2G)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1t1W6c-AIkwcC8yyQH-H2dG;
+	Thu, 17 Oct 2024 19:24:18 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
+	t=1729193055; bh=gFKgzeE/ZauvTc40+kc1ZCpG82IQ5sf0SexsQDq8u7s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EjmLiDXoqRkWjuuvGJxxLV5+aTCDOrWLbvlR5lMckKvY/H0XxAO944jsq04kKP23W
+	 a7oHrR5a/RehEXoCX37Bnn9nBEYK3zrG3pTWJEitbXkwkG0uokxOgmlNnxEdKJYBzU
+	 d/ixP73e0olpxUThVwOlAFWPDG9DHu3qIfb/laNU=
+Received: by leknes.fjasle.eu (Postfix, from userid 1000)
+	id 6D0BB3D187; Thu, 17 Oct 2024 21:24:15 +0200 (CEST)
+Date: Thu, 17 Oct 2024 21:24:15 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Ron Economos <re@w6rz.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when
+ possible
+Message-ID: <ZxFkXyfs0jO2QzBv@fjasle.eu>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-5-masahiroy@kernel.org>
+ <b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240922174020.49856-1-kdipendra88@gmail.com> <20241009133643.GI276481@google.com>
- <ZwkLCE9x5DWtaaJU@duo.ucw.cz> <20241015090102.GD8348@google.com>
-In-Reply-To: <20241015090102.GD8348@google.com>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Fri, 18 Oct 2024 01:08:51 +0545
-Message-ID: <CAEKBCKPJDz3=qFWSy3SQRHNC1fK8vAcqJzpJMyyHfCfUc5yTQg@mail.gmail.com>
-Subject: Re: [PATCH] Staging: leds: replace divide condition 'shift / 16' with
- 'shift >= 16'
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, avel@ucw.cz, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1174286m:1174286a9YXZ7r:1174286sZpGuzd6fP
+X-smtpcorp-track: T46pSHyCx3WZ.cZJtxmOcqpEO.M3GJtQ_8EXU
 
-Hi,
+On Thu, Oct 17, 2024 at 07:45:57AM -0700 Ron Economos wrote:
+> On 7/27/24 12:42 AM, Masahiro Yamada wrote:
+> > A long standing issue in the upstream kernel packaging is that the
+> > linux-headers package is not cross-compiled.
+> > 
+> > For example, you can cross-build Debian packages for arm64 by running
+> > the following command:
+> > 
+> >    $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
+> > 
+> > However, the generated linux-headers-*_arm64.deb is useless because the
+> > host programs in it were built for your build machine architecture
+> > (likely x86), not arm64.
+> > 
+> > The Debian kernel maintains its own Makefiles to cross-compile host
+> > tools without relying on Kbuild. [1]
+> > 
+> > Instead of adding such full custom Makefiles, this commit adds a small
+> > piece of code to cross-compile host programs located under the scripts/
+> > directory.
+> > 
+> > A straightforward solution is to pass HOSTCC=${CROSS_COMPILE}gcc, but it
+> > would also cross-compile scripts/basic/fixdep, which needs to be native
+> > to process the if_changed_dep macro. (This approach may work under some
+> > circumstances; you can execute foreign architecture programs with the
+> > help of binfmt_misc because Debian systems enable CONFIG_BINFMT_MISC,
+> > but it would require installing QEMU and libc for that architecture.)
+> > 
+> > A trick is to use the external module build (KBUILD_EXTMOD=), which
+> > does not rebuild scripts/basic/fixdep. ${CC} needs to be able to link
+> > userspace programs (CONFIG_CC_CAN_LINK=y).
+> > 
+> > There are known limitations:
+> > 
+> >   - GCC plugins
+> > 
+> >     It would possible to rebuild GCC plugins for the target architecture
+> >     by passing HOSTCXX=${CROSS_COMPILE}g++ with necessary packages
+> >     installed, but gcc on the installed system emits
+> >     "cc1: error: incompatible gcc/plugin versions". I did not find a
+> >     solution for this because 'gcc' on a foreign architecture is a
+> >     different compiler after all.
+> > 
+> >   - objtool and resolve_btfids
+> > 
+> >     These are built by the tools build system. They are not covered by
+> >     the current solution.
+> > 
+> > I only tested this with Debian, but it should work for other package
+> > systems as well.
+> > 
+> > [1]: https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/debian/rules.real#L586
+> > 
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> > 
+> >   scripts/package/install-extmod-build | 34 ++++++++++++++++++++++++++++
+> >   1 file changed, 34 insertions(+)
+> > 
+> > diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
+> > index cc335945dfbc..0b56d3d7b48f 100755
+> > --- a/scripts/package/install-extmod-build
+> > +++ b/scripts/package/install-extmod-build
+> > @@ -43,4 +43,38 @@ mkdir -p "${destdir}"
+> >   	fi
+> >   } | tar -c -f - -T - | tar -xf - -C "${destdir}"
+> > +# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebuild host
+> > +# programs using ${CC}. This assumes CC=${CROSS_COMPILE}gcc, which is usually
+> > +# the case for package building. It does not cross-compile when CC=clang.
+> > +#
+> > +# This caters to host programs that participate in Kbuild. objtool and
+> > +# resolve_btfids are out of scope.
+> > +if [ "${CC}" != "${HOSTCC}" ] && is_enabled CONFIG_CC_CAN_LINK; then
+> > +	echo "Rebuilding host programs with ${CC}..."
+> > +
+> > +	cat <<-'EOF' >  "${destdir}/Kbuild"
+> > +	subdir-y := scripts
+> > +	EOF
+> > +
+> > +	# HOSTCXX is not overridden. The C++ compiler is used to build:
+> > +	# - scripts/kconfig/qconf, which is unneeded for external module builds
+> > +	# - GCC plugins, which will not work on the installed system even with
+> > +	#   being rebuilt.
+> > +	#
+> > +	# Use the single-target build to avoid the modpost invocation, which
+> > +	# would overwrite Module.symvers.
+> > +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+> > +
+> > +	cat <<-'EOF' >  "${destdir}/scripts/Kbuild"
+> > +	subdir-y := basic
+> > +	hostprogs-always-y := mod/modpost
+> > +	mod/modpost-objs := $(addprefix mod/, modpost.o file2alias.o sumversion.o symsearch.o)
+> > +	EOF
+> > +
+> > +	# Run once again to rebuild scripts/basic/ and scripts/mod/modpost.
+> > +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+> > +
+> > +	rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
+> > +fi
+> > +
+> >   find "${destdir}" \( -name '.*.cmd' -o -name '*.o' \) -delete
+> 
+> This patch causes a build error when cross-compiling for RISC-V. I'm using
+> the cross-compiler from https://github.com/riscv-collab/riscv-gnu-toolchain.
+> When trying to build .debs with:
+> 
+> make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1
+> "KCFLAGS=-mtune=sifive-7-series" LOCALVERSION= bindeb-pkg
+> 
+> I get the following error:
+> 
+> Rebuilding host programs with riscv64-unknown-linux-gnu-gcc...
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms.o
+>   YACC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.[ch]
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.o
+>   LEX debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.c
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.o
+>   HOSTLD debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/genheaders/genheaders
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/mdp/mdp
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/kallsyms
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sorttable
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/asn1_compiler
+>   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file
+> 
+> debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file.c:25:10:
+> fatal error: openssl/opensslv.h: No such file or directory
+>    25 | #include <openssl/opensslv.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
 
-On Tue, 15 Oct 2024 at 14:46, Lee Jones <lee@kernel.org> wrote:
->
-> On Fri, 11 Oct 2024, Pavel Machek wrote:
->
-> > Hi!
-> >
-> > > Staging!  Why Staging?
-> > >
-> > > On Sun, 22 Sep 2024, Dipendra Khadka wrote:
-> > >
-> > > > Smatch reported following:
-> > > > '''
-> > > > drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace di=
-vide condition 'shift / 16' with 'shift >=3D 16'
-> > > > drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide =
-condition 'shift / 16' with 'shift >=3D 16'
-> > > > '''
-> > > > Replacing 'shift / 16' with 'shift >=3D 16'.
-> > >
-> > > More info please.
-> > >
-> > > - What is the current problem you're attempting to solve?
-> > > - How does this patch help with that?
-> > > - What are the consequences for not applying this fix?
-> >
-> > Take a look at patch. Doing shift / 16 when testing on >=3D 16 is just
-> > ugly. It is simple cleanup.
->
-> You missed the point of the comments.
->
-> Copying / pasting the warning into the subject-line and commit message
-> without any additional wordage is sub-optimal.  Please improve the
-> commit message.
->
+I guess you have openssl/opensslv.h available on your system, do you?  (In
+Debian/Ubuntu package libssl-dev or similar)
 
-Sure, I will send a v2 for this.
+Can you natively build a kernel with a similar kernel config?
 
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-
-Best regards,
-Dipendra Khadka
+Kind regards,
+Nicolas
 
