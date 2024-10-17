@@ -1,161 +1,163 @@
-Return-Path: <linux-kernel+bounces-370548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518749A2E4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CD19A2E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD3EA28344C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297091F22FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4B01D8A16;
-	Thu, 17 Oct 2024 20:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82A61E0DF7;
+	Thu, 17 Oct 2024 20:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoZl81wB"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PHTGDhCt"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98798144D21;
-	Thu, 17 Oct 2024 20:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832A025779;
+	Thu, 17 Oct 2024 20:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729196349; cv=none; b=jD0CYX1cFmu0pTzQZSqmWjkVA60XR9vYiR7IQGsN+m4Ry/rar4P47FVm2ySbyPL1jUamZN7jwX0mIFZmZ0hBFJQHFCLOeFvA/FkAGv9SmCDFNbKSfzrP2c6zZYYhANha/3ieG/NaiQq6UFCJBS6yIg9p+B5siTa6o4s/A9m74WY=
+	t=1729196230; cv=none; b=RyxTu/62TYUMfQ08DNDZCyI47W8XJs+Eh+wX5scS1E1ZCzxlS1BArhokm/HKrD/Is1WzQhxhy5frXGdeaqpOUvWunCapzvFvwGSYE+qLO8yVEregPtDmBFvegrswnJUIc5fkMzIxmXhfBsZk7bNZmPe+Uv+oj/QQwUsX6nroTHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729196349; c=relaxed/simple;
-	bh=s4LtUi5qDb8ZUZ23MjLKciF1AK1q2vZlh9Dvnsh8y7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eIOQPDLgM95Tov9tSXqflIq++8cWUP8v+2fmo89RVaHGGSFxVroKPBEOB6hm8KjPte/OQ4Ek4FuBhAIQezjDnvv8oaMRaBh1fk9LyADxDdwkE2N3hPYGCzHr3n1Tw3E0Qal0f43masRGcGmqzxjvegR1/s+EXjwJV8b0emIoa00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoZl81wB; arc=none smtp.client-ip=209.85.216.44
+	s=arc-20240116; t=1729196230; c=relaxed/simple;
+	bh=VoXbOUT+7r+Yb8LrMPapx/77RuQhM0T/wAWw2f3u15E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iiOM8Ve8yrU4dvXLRerNL6Z1/LsPVEgKwx8i3Nv/HBTZKWA/svxLsrYV1pcLGDdrH/pE3jhUqehvytQVywpCuSTFJ5gM/cq6ulVdzex1Pl2Uck66EV6e5tmD8wyYxxxEN0tuZrSN63hk5NbHgyEWjk91fU4hnkrz2yaEoO6q7RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PHTGDhCt; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e34a089cd3so1202299a91.3;
-        Thu, 17 Oct 2024 13:19:07 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso1464479a12.0;
+        Thu, 17 Oct 2024 13:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729196346; x=1729801146; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLuLB8ZqbIpBpx1ND1vbb+62qdXEaSB4nVeZdMJrGZc=;
-        b=XoZl81wBV5dk2pU37hsB6qrKQWMC8ba8I+BRcxq5UsiJt4rEVnk1MLF9rb/9qFmbKg
-         OaREMbit76kOg1bfQbO88Kf9p3b1HYORjqnypF8Puesw8YBFhWJpsIj5g+WKG8vs2qji
-         /8vKC9vqwGci1aj+U88lDaKe5Mz/obVj5OfWnXpMJ3o3A634AksiElQ0nKghev8k529S
-         vCN+i+Q8zrgM38uSeilbXVLumBrwdRfyvTr6sfzoDwst4m8tJs1Q8JavqcBTZJUhx7w9
-         QNlu1AF/pr7tQEkp8Optp4OYiyBVZveAjAulSrmyUpYGzUU/3wDS6G052iQCy/ZQbQPE
-         8BBA==
+        d=gmail.com; s=20230601; t=1729196227; x=1729801027; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7nrUnWBkZq1N8eEwJNkYD3GJ/kWHveA5PFsZPbvCBpM=;
+        b=PHTGDhCt98L9Leg97ERX+1WhtQQ3rfBK0YrgMZ3FdlctqOCh7lfQPVY5ht0k1uOyl3
+         TJT2gruDRkuTWhjbPPgw4za7TisL/UmvaYemJKwA0EBCPZgZyMSTo8DFBqRsNwssWOE2
+         oQ3YN5R2t0THIN1SKa0S3gGJGXF1lna3RJx0utNv/7wICwwyKn8xGgPFNQ3HtyTQFoZB
+         DwCfYOm9QepFdG8B+zA1/9FFkn999Vb0nUpyUsw5hMAXMZKRWmBcJlNbtHQwEmdZPVF1
+         EnRXER+ATQFy3LG73CxvN2YTuqL97YBa9uVbj4EFYiD+VVHlDe1lvNuVyR4DesoBMm+c
+         1ptA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729196346; x=1729801146;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pLuLB8ZqbIpBpx1ND1vbb+62qdXEaSB4nVeZdMJrGZc=;
-        b=SdR6/TlOXed3Ye2pM7jtL4vHaPMUH4uBNN8AcVgnQ7j420pve9nAD5n6IlnBPjwojv
-         jPLu2j1mRAz1sng4SVk2bCIHugc/gkI0a5uETrW7IZBj90OBzZcfLSZtmuYZRLiJPddo
-         GGoJ58kXZwVfYbF5VYe1AfbunFRaLnaLH/abehg2JOS8Z7qg9UE2/bG1XTGxqtR+c2z7
-         e7SY0xFl/mALW3XKQaG85IDCgJzVz3GG7XGePO2CCX3+UplScH94BZcOeDeruWcuY043
-         dpTX/zA9ww5Jqzvl2JyeQYFozfDyPEuoHJX6orhsTr6mUzVxOJ2Ni8SCplGTvk7VKsVY
-         1KQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9JAeONcUvhSLLjIZo8c8HLSt6p482RmO2iDTe5LMpcYfeUKnGEmy+qJ7EDg9QgjY24AEITirdBPC/JNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKss0pzhjTX0sF3doyQgzgZUqZc6dbovCgzpm07lE17SMUjjuh
-	pnblAa+1C5dVtHnq9cnTpMs+N3WWlydj/0bFOgLQx8uW5DD/Pn4lz6vZ0O9B
-X-Google-Smtp-Source: AGHT+IHAshLs1c4PMHir3QhIZHAZUUg/NgBSZeGahxS7a6BaavGEOXnUpiPvqGX4ruCodcMKaJ/XpA==
-X-Received: by 2002:a17:90a:dd93:b0:2e2:bb32:73eb with SMTP id 98e67ed59e1d1-2e561a012camr226188a91.31.1729196346330;
-        Thu, 17 Oct 2024 13:19:06 -0700 (PDT)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e5610b59b0sm133201a91.7.2024.10.17.13.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 13:19:05 -0700 (PDT)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Moudy Ho <moudy.ho@mediatek.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Mohammed Anees <pvmohammedanees2003@gmail.com>
-Subject: [PATCH] media: platform: mtk-mdp3: cmdq: Remove duplicated platforms checks
-Date: Fri, 18 Oct 2024 01:46:12 +0530
-Message-ID: <20241017201612.2607-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1729196227; x=1729801027;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7nrUnWBkZq1N8eEwJNkYD3GJ/kWHveA5PFsZPbvCBpM=;
+        b=jyhn9teS8McIdWVTQ9WBYEIeW8ANYQkcvxoKn/vZS2yhRqxMEn6MTDgPgHtBayGoRy
+         vjkDCr2XFGpHAv38oLm+d0EZxZh53pQ20yhCFGZ6L6laA1D/RHfKXh822I/gTTM/CpUI
+         DtmGexwcrv5n5+HPRalgn7cZWGq484EyvJBdh+5AJ3c89BJB4TuDjL8zE+5zcuLtsbKz
+         4cAGn2Mdd00kj9JY2KhMzgyoGmVONer1BqPLWxKumDjHQZeaAyJsAdWb5kfW8K9Fo8An
+         pXYHkB5aJVBik3WFP+2vqY34DmAxUJyMlOgVxv3pVSC7MSCkk+PDGrMFHflGG2Ig2eM1
+         sqUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBHHnXKvViNKdGVtqtRWjyuR8BxdGTpzRv22VByT62qeIm7k/dkQrOulwwyuSA+1jubcK46I+qg6bRpC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7dD06U5zx1DfwsNvi8OBMof3vRupEHoyWKq4ADwQlD0ee1nWo
+	kMzA+p1jMMTTH3CKCE5+AtFZbu0NuHjvhPkszcnJMdgyg3EadYGIdAl2AQ==
+X-Google-Smtp-Source: AGHT+IGCLd6eKeCgckBmJUVKf9oqGJEwfgWYtzABRoaKBzP1h/p6Ybn1dj8JxMo+j/ZY9STG/Qoimg==
+X-Received: by 2002:a05:6402:13cf:b0:5c9:3026:cf85 with SMTP id 4fb4d7f45d1cf-5c9951ce9d0mr7101938a12.22.1729196226410;
+        Thu, 17 Oct 2024 13:17:06 -0700 (PDT)
+Received: from [192.168.2.30] (85-70-151-113.rcd.o2.cz. [85.70.151.113])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d77996asm3118847a12.74.2024.10.17.13.17.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 13:17:05 -0700 (PDT)
+Message-ID: <b8670e11-61d4-4831-8a21-2dda3c5db131@gmail.com>
+Date: Thu, 17 Oct 2024 22:17:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [RFC PATCH v2 2/2] dm-inlinecrypt: add target for inline block
+ device encryption
+To: Eric Biggers <ebiggers@kernel.org>, dm-devel@lists.linux.dev
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Md Sadre Alam <quic_mdalam@quicinc.com>, Israel Rukshin
+ <israelr@nvidia.com>, Mikulas Patocka <mpatocka@redhat.com>
+References: <20241016232748.134211-1-ebiggers@kernel.org>
+ <20241016232748.134211-3-ebiggers@kernel.org>
+ <20241017194415.GA11717@sol.localdomain>
+Content-Language: en-US
+From: Milan Broz <gmazyland@gmail.com>
+Autocrypt: addr=gmazyland@gmail.com; keydata=
+ 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
+In-Reply-To: <20241017194415.GA11717@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The platform compatibility checks for MT8183 and
-MT8195 in mdp_cmdq_prepare() are redundant as they are
-done in __get_config_offset() itself. Furthermore
-there are two if-else branch in __get_config_offset()
-which have similar conditions and are redundant.
-To address this, remove the check in mdp_cmdq_prepare()
-and combine the two if-else branch into one in
-__get_config_offset().
+On 10/17/24 9:44 PM, Eric Biggers wrote:
+> On Wed, Oct 16, 2024 at 04:27:48PM -0700, Eric Biggers wrote:
+>> Add a new device-mapper target "dm-inlinecrypt" that is similar to
+>> dm-crypt but uses the blk-crypto API instead of the regular crypto API.
+>> This allows it to take advantage of inline encryption hardware such as
+>> that commonly built into UFS host controllers.
+> 
+> A slight difference in behavior vs. dm-crypt that I just became aware of:
+> dm-crypt allows XTS keys whose first half equals the second half, i.e.
+> cipher key == tweak key.  dm-inlinecrypt typically will not allow this.  Inline
+> encryption hardware typically rejects such keys, and blk-crypto-fallback rejects
+> them too because it uses CRYPTO_TFM_REQ_FORBID_WEAK_KEYS.
+> 
+> IMO, rejecting these weak keys is desirable, and the fact that dm-inlinecrypt
+> fixes this issue with dm-crypt will just need to be documented.
 
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
----
- .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    | 24 ++++++-------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+Hm, I thought this is already rejected in crypto API (at least in FIPS mode)...
 
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-index ea2ea119dd2a..6eb5affb0366 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-@@ -114,19 +114,15 @@ static struct img_config *__get_config_offset(struct mdp_dev *mdp,
- 	if (pp_idx >= mdp->mdp_data->pp_used)
- 		goto err_param;
- 
--	if (CFG_CHECK(MT8183, p_id))
-+	if (CFG_CHECK(MT8183, p_id)) {
- 		cfg_c = CFG_OFST(MT8183, param->config, pp_idx);
--	else if (CFG_CHECK(MT8195, p_id))
--		cfg_c = CFG_OFST(MT8195, param->config, pp_idx);
--	else
--		goto err_param;
--
--	if (CFG_CHECK(MT8183, p_id))
- 		cfg_n = CFG_OFST(MT8183, param->config, pp_idx + 1);
--	else if (CFG_CHECK(MT8195, p_id))
-+	} else if (CFG_CHECK(MT8195, p_id)) {
-+		cfg_c = CFG_OFST(MT8195, param->config, pp_idx);
- 		cfg_n = CFG_OFST(MT8195, param->config, pp_idx + 1);
--	else
-+	} else {
- 		goto err_param;
-+	}
- 
- 	if ((long)cfg_n - (long)mdp->vpu.config > bound) {
- 		dev_err(dev, "config offset %ld OOB %ld\n", (long)cfg_n, bound);
-@@ -607,13 +603,6 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
- 		goto err_uninit;
- 	}
- 
--	if (CFG_CHECK(MT8183, p_id))
--		num_comp = CFG_GET(MT8183, config, num_components);
--	else if (CFG_CHECK(MT8195, p_id))
--		num_comp = CFG_GET(MT8195, config, num_components);
--	else
--		goto err_uninit;
--
- 	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
- 	if (!cmd) {
- 		ret = -ENOMEM;
-@@ -631,7 +620,8 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
- 	} else {
- 		ret = -EINVAL;
- 		goto err_destroy_pkt;
--	}
-+	}
-+
- 	comps = kcalloc(num_comp, sizeof(*comps), GFP_KERNEL);
- 	if (!comps) {
- 		ret = -ENOMEM;
--- 
-2.47.0
+It should be rejected exactly as you described even for dm-crypt,
+just the check should be (IMO) part of crypto API (set keys), not dm-crypt itself.
+
+And here I think we should not be backward "compatible" as it is security issue,
+both XTS keys just must not be the same.
+
+Milan
 
 
