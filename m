@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-370209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F5B9A296A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D7E9A296C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3491F28BB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063571C26E78
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDE31DFDAD;
-	Thu, 17 Oct 2024 16:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226341DFE27;
+	Thu, 17 Oct 2024 16:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxDbWaMY"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="1tOFOFfg"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5EE1DEFE2;
-	Thu, 17 Oct 2024 16:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C5C42AB4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183530; cv=none; b=Qv9PCAvqPlex1cNKCVcN2dXbmZZGKRHO0TfJUO+RLYDQqY34lOOFc0ZzzqKY5JIylm8iVsYoMQorpc4LpzzV/uFDfvK5YUKm7MKApGbhaBWBO1j+z9ESah+OMriPji8cBsIWmUgydn/yhlH1gchYQ+LD5NaUwA4mJqL0dx+iU3I=
+	t=1729183531; cv=none; b=THVghbUqJ36LJC14uayIoyzpdWBh/GQLBJCYM+X3I+nPYZxTYO4GjGtuBy8Br3L94MmBU97C2QIwBT3iVyfPDPX4FnoY52gaIaVGsEj0eRkspOeTuk/gbxrCsP+Slo+gCxTbACao81W9Fz9LGnhVdpr4PlMB/ISvZj3cEr+H5cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183530; c=relaxed/simple;
-	bh=mcCUzeXXlnqf/limPhOzfBMV01vv91GtjVpxLhxy9oA=;
+	s=arc-20240116; t=1729183531; c=relaxed/simple;
+	bh=5dtmDLd3dalHwVEgcR+tiAH42FjFSBJ+JMILFC1R808=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YC7nftq7I4VvVAmzBkw71bcKa7DPhOgIoskozOcXpkY64/SLMke5cdUkEQD7T8u2RaGM39y7h5yF4g8PEnVJPilOCuEMy1GFLKUuJYTvhT0QFYLlB0Cxim8yYLxYMqdRKq0T7QptC+b+cOuDdgpWFDtSieh1jVPrI2GlDa9HIlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxDbWaMY; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e29497f11cso178302a91.2;
-        Thu, 17 Oct 2024 09:45:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=dB27NQqP79hv5BITsueuIXhlGuBD55Ur4wTjBlJofh1owSwurxBBzV+3wYgxTJgs+3FuibCUZLTPpoQ3TZF3sEJ7ukYFjtec7QapHc/LHPo1alBmhPbuDzS2FwPSybmDudqI0Yu0Y0GmqyKM7n4lZ+NzJBVmARzzH+idmmcNOPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=1tOFOFfg; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3bd664ebaso4280035ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:45:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729183525; x=1729788325; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1729183525; x=1729788325; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mcCUzeXXlnqf/limPhOzfBMV01vv91GtjVpxLhxy9oA=;
-        b=VxDbWaMYHoPkxrwN735s0Cr7pKRaDjPI4wLrCkeEk9u2BGJiUvBwHzb9XT9Zotozkx
-         nDqTH/lFtf5kNV1KXb2G9zoGcH1dqx6AaF7m548Jqxso3Kk+MGswVH6Y5fMw0K6RauTu
-         sKR9deOHxVWcifN9y7d7VY3KVltWoDgHhCbExf1am/id5FSOLowfnFeptftSDYM8ssNg
-         K7SUr5ZtP63266q/cwiazIiLnCV+7QdSu6N+CdbyhKFPFYIYd2o166quREpAVMwqdbal
-         IT5iPPisUkUNHDmablBF27SRkqdQi7mhVmpCHNfzg4IFUHMEnwz6zW/V6yXEjmPeGKuG
-         ZuRA==
+        bh=D/+hKz9Utv8LPO0aGsn01ZA038qHbKiaHK+Sj+rHiIo=;
+        b=1tOFOFfgiAbHGzHpposiiM2BS5nFxpMxDFB3iQsglSCzVnkEwsUh0YVV/qG+w7iGrC
+         C25YZpxO3Ax/g9HtT/LXLOI6YULerp0L7ioqLYN26tk55c/2Wdvf3B6TuWEpbSRMnPtn
+         hnRRyeQiPf3HsKq0/T01HzRj0aeeoV6lBtvQj4c3b6M2SgNpthbLb7qTJ1gBPwxMowY0
+         0TkMre4PIXOd2e/r63AZs6JLH/iamdmi4HMY7JS3rmztogijmyuw3lM/M+z95+z45BOb
+         f+4V1lomq++085mimq1IzijjMNzgQC4b1Nmx8DTqUwrqvobSSHpztXvDmlpstOaVLvdI
+         UvVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1729183525; x=1729788325;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mcCUzeXXlnqf/limPhOzfBMV01vv91GtjVpxLhxy9oA=;
-        b=clsWhPAXznEy0wymfxPTA5kY0vjeBKjBFc0KCkr7KIB7IAvmiP3ewhWFU1AQQD0CfW
-         0Ed14Kdmo/dKdIwmhM51QSvTFsHRqH1iCxE8iBG5PmV/HWgIyF/2JAOBodMuSQcjJ+ap
-         IXXJn/C1HITY3ioPZO+kNOmNRiV63gda/iNmDSELvSy+qjg/2ePwRPyuhIw5txQTlf+G
-         2VwWLzbw03Kyh4Wz+DJbPwm4hbYxXWgAijrCswp4mDeUkCHj3GapeM6mDlBscU3hgGAN
-         ymM3IPqgGE+u/iusWQ/4TQvOaUMGReP/Y8ETgjg7LAnEOi7zMNp2P6rTF9lcSsAF+RY+
-         yC8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVG1wOk0k1YCSa7+vrmNhgyOhEMsmXCsRIJH5HXQBGVOzHLMlm1OF4y19pe5uCihsAmhbIZxinZAoJl/tY4qfQ=@vger.kernel.org, AJvYcCWP1IDPXnP3EXj3JFMuXWG6SfPe1Dl80oy00+2UwU3RP8UPdxkJpvoxwUAfzAtdIjXhQn+8JVtc577gu+c=@vger.kernel.org, AJvYcCXCN3lCfLEVXl/5AQPAAdXJ9q5r0jKiPDsPC+VTzJFB3lBPqdo/I/g+w/SSS9XWwr30lMdC1XWo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp0MjV7MTflgUkBROKPAwEJXwWSAbC4JW+raBSSm7MelVd9uu4
-	FoRcfinS+98e+e/MfhJkg5ke9cDPMcrFqpFVMxtEEW5ZVnjF22lzXyOJb6vUxKuloebIJD/cmjR
-	S80YecBCaRfJm+3i/Lch7wBsKpLd6VhyM
-X-Google-Smtp-Source: AGHT+IEZ/ui/WWQTx0Ex+vbnYBARRrpyCEM94UWKhfXvnrgnk5ObXl96Hg+jcwk/C2LmKNJtaLaQdYsLROOoM7IM0lU=
-X-Received: by 2002:a17:90b:1c8d:b0:2db:60b:eec with SMTP id
- 98e67ed59e1d1-2e3dc294eb7mr2032178a91.7.1729183525086; Thu, 17 Oct 2024
+        bh=D/+hKz9Utv8LPO0aGsn01ZA038qHbKiaHK+Sj+rHiIo=;
+        b=KejOoEjF8WWf/wM74v0Q6HluRFvWjzX609WXzz2FILtG4xIlkK3OZmmSUmv4npE/gB
+         +R/HJnY4jj5EvhT54Hj5xzNwzLnooRx+ck02FA2dZj4nLn0L0fL05jyUtmfb/aeaMdIA
+         uFzecGvK8gl7nCCOUdnYvOLN7yclEAMu9pNrsTevPRkFlANDHnDLITFy3QWB6wZRqLAv
+         PUT0orFufBHFAeJMQq5ax+MEm3pQfWf83gY7zAJuuKi9DNgBVC38Fhcc7EygD14XLENB
+         7Ixyu4urC1u8vORhIA5uVIMVFpakr3BgyA63nznF/nmid5KxYBesUx/wYZYpKUVjdnwV
+         iXYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1vFDugZUF+EswspIuAqrZPKvXje8zdPE/4cieA6fdhX81ofg5KHJihTDD2ZcVRBQi86930x/1pDovr+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeBmRH/LsMQ9QHOCpburo/YpTf89Yv8xjX3it07tKbFLHCB5Xm
+	pZDOU8ta3wV2rG4Kx+yDauSu90dN7Y7B+HPU/wC4GQ8HRIdW/BQpmUOpbyCIhpCxQOoE5EkjC7k
+	VmYArbQsolPLu7ZIJlXeQfyFs43II1B/Fd2bUlg==
+X-Google-Smtp-Source: AGHT+IEyjFo+SIWSJWyVZBGV5zs/J+99C1GHNHOGAoKVR2hwF/wgFiuTrcZJ9nhmSqqLjMiUKewGgdAueOpzvhLZuL0=
+X-Received: by 2002:a05:6e02:1786:b0:3a0:7687:8c2d with SMTP id
+ e9e14a558f8ab-3a3dc5030b3mr70463775ab.26.1729183525560; Thu, 17 Oct 2024
  09:45:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,44 +70,74 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-4-fujita.tomonori@gmail.com> <CAH5fLgjKH_mQcAjwtAWAxnFYXvL6z24=Zcp-ou188-c=eQwPBw@mail.gmail.com>
- <20241017.161050.543382913045883751.fujita.tomonori@gmail.com>
-In-Reply-To: <20241017.161050.543382913045883751.fujita.tomonori@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 17 Oct 2024 18:45:13 +0200
-Message-ID: <CANiq72nGoT9DxLwDbg8gZVxk0ba=KqvXLAVz=hRNFMqtCeGNvg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 3/8] rust: time: Change output of Ktime's sub
- operation to Delta
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: aliceryhl@google.com, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com, 
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
-	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <cover.1728579958.git.tjeznach@rivosinc.com> <b8da2b00aec3f7b4b2e3a7cc194f7961bf656f24.1728579958.git.tjeznach@rivosinc.com>
+ <lagj6ljulmfjogrzhfd3jrf5fnngev63q2g3bmvftwfzc3s6mb@gw6oz4yriyjf>
+In-Reply-To: <lagj6ljulmfjogrzhfd3jrf5fnngev63q2g3bmvftwfzc3s6mb@gw6oz4yriyjf>
+From: Tomasz Jeznach <tjeznach@rivosinc.com>
+Date: Thu, 17 Oct 2024 09:45:14 -0700
+Message-ID: <CAH2o1u4BYyHhi3dVcBrB8T2JpXdxStsfYodmOT-6a8KMHAot8w@mail.gmail.com>
+Subject: Re: [PATCH v9 2/7] iommu/riscv: Add RISC-V IOMMU platform device driver
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Nick Kossifidis <mick@ics.forth.gr>, Sebastien Boeuf <seb@rivosinc.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux@rivosinc.com, 
+	Lu Baolu <baolu.lu@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 9:11=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
+Hello Uwe,
+
+On Wed, Oct 16, 2024 at 2:35=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
 >
-> Surely, we could create both Delta and Instant. What is Ktime used
-> for? Both can simply use bindings::ktime_t like the followings?
+> Hello,
+>
+> On Thu, Oct 10, 2024 at 12:48:05PM -0700, Tomasz Jeznach wrote:
+> > +static const struct of_device_id riscv_iommu_of_match[] =3D {
+> > +     {.compatible =3D "riscv,iommu",},
+>
+> nitpick: Unusual indention:
+>
+> uwe@taurus:~/gsrc/linux$ git grep -l '{.compatible =3D' | wc -l
+> 192
+> uwe@taurus:~/gsrc/linux$ git grep -l '{ .compatible =3D' | wc -l
+> 4197
+>
+> (Hu, I expected the difference to be bigger than a factor of ~20.)
+>
+> I'd go for a space before ".compatible" and one after the trailing
+> comma.
+>
+> > +     {},
+> > +};
+> > +
+> > +static struct platform_driver riscv_iommu_platform_driver =3D {
+> > +     .probe =3D riscv_iommu_platform_probe,
+> > +     .remove_new =3D riscv_iommu_platform_remove,
+> > +     .driver =3D {
+> > +             .name =3D "riscv,iommu",
+> > +             .of_match_table =3D riscv_iommu_of_match,
+> > +             .suppress_bind_attrs =3D true,
+> > +     },
+> > +};
+>
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers. Please just drop "_new".
+>
 
-I think it may help having 2 (public) types, rather than reusing the
-`Ktime` name for one of them, because people may associate several
-concepts to `ktime_t` which is what they know already, but I would
-suggest mentioning in the docs clearly that these maps to usecase
-subsets of `ktime_t` (whether we mention or not that they are
-supposed to be `ktime_t`s is another thing, even if they are).
+Thank you for those comments, they look reasonable.
+Can we postpone those changes after v10 is merged into the iommu subsystem =
+tree?
 
-Whether we have a third private type internally for `Ktime` or not
-does not matter much, so whatever is best for implementation purposes.
-And if we do have a private `Ktime`, I would avoid making it public
-unless there is a good reason for doing so.
+> Best regards
+> Uwe
 
-Cheers,
-Miguel
+Best regards,
+- Tomasz
 
