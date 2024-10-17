@@ -1,131 +1,143 @@
-Return-Path: <linux-kernel+bounces-369388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B359A1CAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 379C59A1CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B321C2700E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F7BE1C27255
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E267E1D2F6E;
-	Thu, 17 Oct 2024 08:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE24E1D54C1;
+	Thu, 17 Oct 2024 08:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVAOZJQc"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urSYwt2r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB781C1AB1
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170F816EB76;
+	Thu, 17 Oct 2024 08:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152605; cv=none; b=IZgCuaEikI93XgeLXXiumbs1iPtP44+FZNuovJvM1rOhX/NQM4c9TjC0bUf3f5eZ/O/bRTlrixVzAhlVnMm3xDODp1H6iw7ZJ87nfvJjxU5FWX1R8ooLxRnOXhwN6+4BX/8PmS7AomWZT/zRNLfRiW5T43ltoUjTkE2J427TcDk=
+	t=1729152631; cv=none; b=pHT7Lhm97qBwxNGWcsYqLDCneO+22ADvyGb5AVwNREB4Pu6hNIX5SBfxkokA80KfnMYw+nJaFuFltXQCZatjyvHDCfbqszdwSTvU/otOeTbeCj/dsuRixA0fv4h4wk7u8QMgG6Z9dHIx2DBfopGuHxctQc5K+6qy6l0R9gZUWDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152605; c=relaxed/simple;
-	bh=n8c5tm6n2wtjd6JrCMcUul2FDzsI/PMwtNrX3yN5czk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sVwG42J/bmdzdiAl7I4brI9Byd7Ivs2X704uA0UOCf4zb4NvrqWeeVs/DWjaMtfw6UihyrV6R1T5oXWxM//izfMgl757VIK+OzUkqwpLvQ+O31wr7sYt6Oq3TmUYXBTLgtsq3s4viXaKL5c6zPJPovemlbWHZZFbSfmB02kHRds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVAOZJQc; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-84fb56d2fb2so237208241.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729152601; x=1729757401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n8c5tm6n2wtjd6JrCMcUul2FDzsI/PMwtNrX3yN5czk=;
-        b=RVAOZJQcGxHdP3AX922xcT2u5eN4QpbGn0pDmwqYtMGcsCs3jmoQGfTChiWjWkJdtr
-         tO89GVG5IM5oZiEDzwbus9QgdwvwT7HF7OA1ELJ6JhRdbq6uJUDSRJk6dRijcXtHYaz8
-         9MyEixduc0ONPg5qmNLWw8Efkwlo7QRko3bMHRylGoEPhFhMC4x1xYIlkwObKjajVpsq
-         CZdaTfZDXrPVRBMduhF7LDOZEmbUOmSa7Q0ASpsYpKErSFHj4Abq/iYLdKUE+Fgp5pRv
-         gnL+gLgvsnyFvXWecLMRatHVBmSTxjiH44gYwCzG+26vyrYPEaUhV89DR7RtxPswBer8
-         6/fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729152601; x=1729757401;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n8c5tm6n2wtjd6JrCMcUul2FDzsI/PMwtNrX3yN5czk=;
-        b=Mb4UlVowaJvOuX0UASVq5HU/zTO4+4FJN1bz3+sjzS2ZiKLznmwQB9W8G/oZvMlI/F
-         q5B/DHgdijAW0dOfi5CetjSjytmWB4HI8IPnWLuukAepR5WPfRmH+7w+aoARcaI+g5NB
-         8c7g9fNaT5DfJWz+lAGBeBMBeoX/zbl+y3HSjMWI44hbYpO+vzmmDsZJmEnNKrC3qpFL
-         MnoMps914ubJeOmnsbvD6cH9t2hF2b6Ouved+KYNOp8SgA4YVHGc/YEpUGb7GYApq9WP
-         Wc8MVsePgnus6aPJJI0QjVufNmu4Tmxsasl5mOw25rUnkrMMPO418GcjScebwyZA1sjP
-         EpjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCUDEIHeuZtskJXDQHh+JoLb+RwWqYvOFF4fxg05KGwgPo2qRM2DeXgyjwcCauJgEvEJ1vcQvZ//TDHc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFh+IgdzOjeHa2yNRASTWqJPu1YBSNWI4hbOQDUS9FAZZffTtm
-	MSApXgCY7VFaB5ycEYwQbdYbjJvrZFhnoDWFKtt0GWg1W93JXS7z2hJ/Rd3SRi7m5V5kMTgUgzx
-	jyYAcYPRorOOWGYvnFqpSSqvBDe0=
-X-Google-Smtp-Source: AGHT+IGTUtrvSTVPF7UC5Y2BiQUaC3VS/XZL2v9NMKQB4jPDSExZQ2AU04U5a7BbGXBYtBk7rmGLfoW4IAtl9cGzgTA=
-X-Received: by 2002:a05:6102:54a5:b0:4a5:6f41:211d with SMTP id
- ada2fe7eead31-4a5b5a6fddcmr6397469137.24.1729152601057; Thu, 17 Oct 2024
- 01:10:01 -0700 (PDT)
+	s=arc-20240116; t=1729152631; c=relaxed/simple;
+	bh=64LvGzD9gEBjfxxxZ6qCqjt0JN7XE2w1oV67leFXXR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrLeAG/+pWB2HSEOYKUGUzdSwQYeNO+qzt2HMgIFnogCfsC+CySPD5ulvDBwyzESiMBa5j2hJPNQoO1J+QLMfc2jj9n2+SrUZ68qLb5jEdn7szeZNLsVXMDwhzUxDONrY88PwbGiuNT4K3+iuedwjZpD8hFFpbNNz+0fCFYqrms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urSYwt2r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5EB9C4CEC3;
+	Thu, 17 Oct 2024 08:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729152630;
+	bh=64LvGzD9gEBjfxxxZ6qCqjt0JN7XE2w1oV67leFXXR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=urSYwt2rcpIEZ0P3n52AxQMQp9tKPKY8oD5uONoJtFBX0buMHyrYSbyUjpMchfrm1
+	 2Dvn0SooFeU3AGi1xy19BBaAzVA6qUaCwqrANCOPNu0woEKee0vww6FEUmZJCITb4g
+	 hFT+PF+9agwT22HtBtX71UxYyHa+smT+bq2JIrNmMxS/khZ8znpX/uyBAZ6iZ3q3TN
+	 tmi9bVoCNTGjQdj5A1QYSYqp5IrT7xRZl6AWObXa6Bi7oxRE0gXQwt4s7uiCVLzDFt
+	 hL6GfsxsL08rL+1os1+T1sYOwGNTHWjfq++Jf0cyfIe4dA9xXEmfl3eY5GG3rn/f2S
+	 cSwbSCo6k1m7w==
+Date: Thu, 17 Oct 2024 10:10:27 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
+	Anup <anupnewsmail@gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: spi: Convert to dtschema
+Message-ID: <m5pz23mlikndtntbdktkjecgh7jjhoyjcsv7uehugg4p4psgrm@yeckjpqu4tad>
+References: <ZxALy6p8m9eS9uIW@Emma>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017074346.35284-1-21cnbao@gmail.com> <ca27aa75-40a4-4c82-8d84-7968b2ab89d4@linux.alibaba.com>
- <0fa18bcf-9af6-4c99-ad57-613fa38ff741@linux.alibaba.com>
-In-Reply-To: <0fa18bcf-9af6-4c99-ad57-613fa38ff741@linux.alibaba.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 17 Oct 2024 21:09:48 +1300
-Message-ID: <CAGsJ_4yLK3sCeJNdZRKxD2tSdMVFRBp9eq-1mAMu7UT=gqpA_Q@mail.gmail.com>
-Subject: Re: [PATCH RFC] fs: erofs: support PG_mappedtodisk flag for folios
- with zero-filled
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org, 
-	huyue2@coolpad.com, jefflexu@linux.alibaba.com, dhavale@google.com, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZxALy6p8m9eS9uIW@Emma>
 
-On Thu, Oct 17, 2024 at 9:00=E2=80=AFPM Gao Xiang <hsiangkao@linux.alibaba.=
-com> wrote:
->
->
->
-> On 2024/10/17 15:58, Gao Xiang wrote:
-> > Hi Barry,
-> >
-> > On 2024/10/17 15:43, Barry Song wrote:
-> >> From: Barry Song <v-songbaohua@oppo.com>
-> >>
-> >> When a folio has never been zero-filled, mark it as mappedtodisk
-> >> to allow other software components to recognize and utilize the
-> >> flag.
-> >>
-> >> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> >
-> > Thanks for this!
-> >
-> > It looks good to me as an improvement as long as PG_mappedtodisk
-> > is long-term lived and useful to users.
-> >
-> > Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->
+On Wed, Oct 16, 2024 at 06:54:03PM +0000, Karan Sanghavi wrote:
+> Convert bcm2835-aux-spi binding to Dt schema
+> 
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
 
-thanks!
+Thank you for your patch. There is something to discuss/improve.
 
-> BTW, I wonder if iomap supports this since uncompressed EROFS
-> relies on iomap paths...
 
-In the core layer, I only see fs/buffer.c's block_read_full_folio()
-and fs/mpage.c's mpage_readahead() and mpage_readahead()
-supporting this. I haven't found any code in iomap that sets the
-flag.
+Subject misses device prefix and considering Mark's preference about
+spi: it should look like:
 
-I guess erofs doesn't call the above functions for non-compressed
-files?
+spi: dt-bindings: brcm,bcm2835-aux-spi: Convert to dtschema
 
->
-> Thanks,
-> Gao Xiang
+> ---
+> 
+> Changes since V2:
+>  - Modified the Patch subject
+>  - Removed unnecessary description and example
+> 
 
-Barry
+...
+
+> diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
+> new file mode 100644
+> index 000000000..351019d68
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/brcm,bcm2835-aux-spi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM2835 Auxiliary SPI1/2 Controller
+> +
+> +maintainers:
+> +  - Karan Sanghavi <karansanghvi98@gmail.com>
+> +
+> +description: The BCM2835 contains two forms of SPI master controller. One is known simply as
+
+This feels loo long. Wrapping is according to coding style (not
+checkpatch), so at 80. You can also have line break after "description"
+keyword, so:
+
+description:
+  The BCM2835 contains ......
+
+Rest looks good, so please send v4 unless Mark could fix these up when
+applying.
+
+If sending v4, remember about tag (see explanation below):
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
+
 
