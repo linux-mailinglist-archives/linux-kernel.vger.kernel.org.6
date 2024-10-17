@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-370519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395CD9A2DF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:40:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF4A9A2DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3C1EB257CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78259283BD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE36227B9C;
-	Thu, 17 Oct 2024 19:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A20227B8D;
+	Thu, 17 Oct 2024 19:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x6v4QXbK"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuZBcqne"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EBD22738B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A6F1DE8A1
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729194019; cv=none; b=l0ZgHCr8LX8dCPShdPcJlo2JRjxkftZvY2fdbF3w0VuBLDE3uLiQU77M29z2vJOyQKZIQ/q1/r6Z7zIP2WJIHMjOpcUjDRzpTmd7V/6JeAScUQ/WVq8J+YZJH2/ebsQMn2EZdcvKDDIInNEGbsnWqq+OYbJfTI/pq3jDw7CKTeM=
+	t=1729194043; cv=none; b=iTXoIl0LAlOq67QKJJFZl7ZZIe5HXMtPrHEYbiTPnZPJ/wWKVNOSj2jeUZJuDkVb/PWy5Fjs8D1OsRcQtypWN9OZRM0cn2p2X0EpIG/OeCxyOKHrVTJ8lG7xPhB4k14IZM2i68XOE2cAz7tQQl1DyAzg3ptjODlh9CRYXZsBWVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729194019; c=relaxed/simple;
-	bh=3cjJavFR6NC/HCRHI9EPOyrqnyNGb2dE/RAZTMIh2Bk=;
+	s=arc-20240116; t=1729194043; c=relaxed/simple;
+	bh=IHi8t/Hjw1MvLyZq2tHFP9G1ZBIL5ssdRs8SQV2DQwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q5dnC4hJdpNO8R+v+bfDapqXHtbufhgHJOHEV48JZFJUJdQE9jUbRA7Q6j8hgSfao/gB6aPheVib8EplzQwolhe2Ggql0QLDdkHQXBsEb/20vSnkuty+dCKPs8COal3L2YI3x68hN1K2chHH7UUopgfZacTOFx1o56TdHZ7qnc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x6v4QXbK; arc=none smtp.client-ip=209.85.218.52
+	 Content-Disposition; b=XItfXaBYx7/xcyE6jLtV4GZaFEGW5DdRhoY35n5yJ00VKFZ60kT6Mtx9gw3dJeIWzjWIwBflcbwkk+zx84TgoPnXmnwplj9YBt4U7ZPT0OtspcVMYKow8XPfLJiEwNMysMXcAmPvyoEymLRciO9/eGXizZJic+EOVnyZvoiNcKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YuZBcqne; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso169750866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:40:13 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a156513a1so161857766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729194011; x=1729798811; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729194036; x=1729798836; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QZpms9R5kWODAqigQeGsxMS1uylrcIOwy5W+fcCCNgo=;
-        b=x6v4QXbKoA5p/Qg+ZWFTjQ2TBO7yBb8zMc3BLC0JA3KlC5i3HzOZhpdJuHJlVHLBBd
-         Wtgg+94A+u0Wr88PUAMmjQ/UstZW4GOq+qFqNljO+jXLMt52OC4pAvz7A/9eAnwBeyXF
-         QWaf8WGwqH35H5XidZjcPaOOGPC/D90ldKQ0iAuIHBprBcRmilb2Qra3nKT5lltcZnw/
-         nHmlNaZwRcv0/fgY93uEK0ovWKA83+qVqy6QKtOPfVBmtvO/xwGRwrDXTZ+uWos5KRab
-         vkCQpY47rz4C5lGJ7tTKizwXzQP0SFbcJXKifaLQ6gO8QN3CnGWVP5J2GnnWSwCsJr1U
-         /DQA==
+        bh=4OVlCn0UaUWh7bWeiu1Ka2GuXCsdMF034zBPeBiB8O4=;
+        b=YuZBcqne1HtwK3dHYaTNwW++Fj98cHbIkIa4YpJxe3UoQs45T7zV0OxI/W7IS1qVsW
+         yWPd/MayGSAr0A1QJ1H94CYhS4d+TGi2A5ZALoSbxFCwffQogMzxmD5yawmGEvLHb9qe
+         ilnKkgsWf65c3ZRAh0u4OCflnBCl3BQj6tYBbCag0xu4CZuJ9YGHBIL6jeGBVHsLLqiF
+         uldT4iQwJgdwnpbb44l2z+AAC+BO3LsCuwebPGHGUErPBiEg1WHIgdTvbch1+yVUWydK
+         u4QMnkox0GFAk9rITTW2PfzHhzeKJ50zE7fVN/+WIYY33bNVH8OWIHhQMo2CFxrPHuY2
+         dELA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729194011; x=1729798811;
+        d=1e100.net; s=20230601; t=1729194036; x=1729798836;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QZpms9R5kWODAqigQeGsxMS1uylrcIOwy5W+fcCCNgo=;
-        b=Maqif5ysB7nWiLmDaGFPwKAQLmkHHTRxIPojVoVPCRVrsVoYWpKpZA+HqKwPK/gLGU
-         XnLhimkYHpshSvQ5wBwciyIWR/2V3wNUqV/ZLgGuAJF4+f/1KZLvOj/w96FnI0i2k+yt
-         OpEXy5EZekqLgviITguiPtdCXJFLTD7vcPduq1d9wj/pX/kAlWqCN+L6aAxPnuGHw2nf
-         eiMnxVGfJlMkAfLENDrTkm8RcguZAYcAz5tOPvxCCiVL3FntZtzRfAXijaJ3hoMEaBf6
-         XfXl4c9zCFTWpCengvsqr2WFYdsllM1hZP7cJbeTricR7iqt12mUS3vWDMKvxRTxRoMj
-         1i5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUxfq6k8sU7tJIim3PsSuod4iCjE6KVHc02by0cLNYLRWRtlF4r4f/H28dYjd67hLSplcY/ps8zv6OG5hU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/RRxnBd1RPDlFQj9VWZlTe8bdhPeXfho5pRJmE2SItcxJ0jRw
-	xJZKuv1c9V/Dcn/XqPjn95mReHjfNhml0SOFOjSr+6c93W1B46qCG+gZEJzdAE4=
-X-Google-Smtp-Source: AGHT+IGxstbOFapOUqQjp3ZRs6n1QMqDvHLOM3P/WHoCxTXHHg04lmOTKj0g3pfWvKqi+rO1wTNiWw==
-X-Received: by 2002:a17:906:bc23:b0:a99:368d:dad3 with SMTP id a640c23a62f3a-a9a34d078d5mr696337266b.30.1729194011492;
-        Thu, 17 Oct 2024 12:40:11 -0700 (PDT)
+        bh=4OVlCn0UaUWh7bWeiu1Ka2GuXCsdMF034zBPeBiB8O4=;
+        b=eaJxXQbYijKLIjG3mIhTCBxRmSJywjQGHIikj3BrW30DtrgoyEmY868yqFwkApU+Bb
+         eCU5xv3L7td8KaxdU2x1OAj8dIUVMWhDYZRsesIPsh3jb2p901TrZ17spSNU7Is1qsSr
+         IJu8e0n4AN27EM6Vb93++0wBh8zdTrKnXm1xl+BLrK+cn9tlGws06+cgPjYzgI051Z2V
+         W1ibE0Wj+MVF/V3E3h/HI5Z1nxd499a/ZYkVrJct21WcGrbyVVLKM+QvNADsfhpTN8aW
+         oEcNk5Bk1rsIBnWv6RVg7xXsrnciuArm3p8SRhpvdM5Rfi5E8aESqYM4fPDFDvRnatD8
+         XQaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwX3+wPSIL8P+5YnCKZ3sgu9IXmQZmB4iS0KDm7mdMbgOYu1Wz9PsS6Z+xbewgBbKEybswXbHB2s0zcsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBsbZ6l+4xbxnVJsYGQIa9OVV8PpiXApYeDRFmtZzO7i5fx2qb
+	WOV3GAqn1KqrH71XMDzW5zZaMCS+nUR6Gt7LEEEi0ani08HwAJJoZykcJJzATgs=
+X-Google-Smtp-Source: AGHT+IGB8YRLVexFRV2mAH/o1FOXGUr7in+Kju2Iz89bABqeFQYgpmZ27BOoxu2BX9pjvnrZofmNYw==
+X-Received: by 2002:a17:907:f14d:b0:a9a:1792:f24 with SMTP id a640c23a62f3a-a9a34cbece0mr715958666b.24.1729194036034;
+        Thu, 17 Oct 2024 12:40:36 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bf7037sm2959166b.183.2024.10.17.12.40.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c27212sm2902966b.201.2024.10.17.12.40.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 12:40:10 -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:40:05 +0300
+        Thu, 17 Oct 2024 12:40:35 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:40:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ming Qian <ming.qian@nxp.com>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, TaoJiang <tao.jiang_2@nxp.com>,
-	imx@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] media: imx-jpeg: Fix potential error pointer
- dereference in detach_pm()
-Message-ID: <ee0eac36-3bb7-4bc9-8062-1305d5679580@stanley.mountain>
+To: Lijo Lazar <lijo.lazar@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Yang Wang <kevinyang.wang@amd.com>, Tao Zhou <tao.zhou1@amd.com>,
+	Vignesh Chander <Vignesh.Chander@amd.com>,
+	Shiwu Zhang <shiwu.zhang@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
+	Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/amdgpu: Fix a double lock bug
+Message-ID: <2e19e095-c022-45a3-8bb3-9a9321bc1905@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,41 +90,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The proble is on the first line:
+This was supposed to be an unlock instead of a lock.  The original
+code will lead to a deadlock.
 
-	if (jpeg->pd_dev[i] && !pm_runtime_suspended(jpeg->pd_dev[i]))
-
-If jpeg->pd_dev[i] is an error pointer, then passing it to
-pm_runtime_suspended() will lead to an Oops.  The other conditions
-check for both error pointers and NULL, but it would be more clear to
-use the IS_ERR_OR_NULL() check for that.
-
-Fixes: fd0af4cd35da ("media: imx-jpeg: Ensure power suppliers be suspended before detach them")
+Fixes: ee52489d1210 ("drm/amdgpu: Place NPS mode request on unload")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+From static analysis, not testing.
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-index d8e946aebba2..918ab12edc9e 100644
---- a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-+++ b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-@@ -2679,11 +2679,12 @@ static void mxc_jpeg_detach_pm_domains(struct mxc_jpeg_dev *jpeg)
- 	int i;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+index fcdbcff57632..3be07bcfd117 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+@@ -1605,7 +1605,7 @@ int amdgpu_xgmi_request_nps_change(struct amdgpu_device *adev,
+ 					     gmc.xgmi.head)
+ 		adev->gmc.gmc_funcs->request_mem_partition_mode(tmp_adev,
+ 								cur_nps_mode);
+-	mutex_lock(&hive->hive_lock);
++	mutex_unlock(&hive->hive_lock);
  
- 	for (i = 0; i < jpeg->num_domains; i++) {
--		if (jpeg->pd_dev[i] && !pm_runtime_suspended(jpeg->pd_dev[i]))
-+		if (!IS_ERR_OR_NULL(jpeg->pd_dev[i]) &&
-+		    !pm_runtime_suspended(jpeg->pd_dev[i]))
- 			pm_runtime_force_suspend(jpeg->pd_dev[i]);
--		if (jpeg->pd_link[i] && !IS_ERR(jpeg->pd_link[i]))
-+		if (!IS_ERR_OR_NULL(jpeg->pd_link[i]))
- 			device_link_del(jpeg->pd_link[i]);
--		if (jpeg->pd_dev[i] && !IS_ERR(jpeg->pd_dev[i]))
-+		if (!IS_ERR_OR_NULL(jpeg->pd_dev[i]))
- 			dev_pm_domain_detach(jpeg->pd_dev[i], true);
- 		jpeg->pd_dev[i] = NULL;
- 		jpeg->pd_link[i] = NULL;
+ 	return r;
+ }
 -- 
 2.45.2
 
