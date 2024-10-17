@@ -1,233 +1,74 @@
-Return-Path: <linux-kernel+bounces-370504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44A09A2DBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BD59A2DBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE6C1C233E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95A31C245DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CDB21BB0A;
-	Thu, 17 Oct 2024 19:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593EF227397;
+	Thu, 17 Oct 2024 19:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="wlZH3XuQ";
-	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="Dv9DtULg";
-	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="EjmLiDXo"
-Received: from e3i122.smtp2go.com (e3i122.smtp2go.com [158.120.84.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdVfDNpI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D6F227388
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A390A22737E;
+	Thu, 17 Oct 2024 19:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729193070; cv=none; b=RbDXz8Hpd0weAgwyMrsXXc4KWC/bdT6IglmjcWP7aTFN2kIan3qPzMaGy1nLS/CQDUZP9SUhYVT2urvULIO1/5Y1q61q8Ptf4+T/URa/BTHh+Pl1kLB7LVNw2b4RGyzcmWZtAdlF3C0KEt0e2FVEdrosnYaBTNhp5IjWL5/J+Ys=
+	t=1729193106; cv=none; b=iqyjXJqKlGXt9hPS2fJoTCSiPioiDaNtFCjXKAdSv3eXYEwDwITSFF+/Nu+cMuSk56XVrG4yu+y+eWa2GQVHX5z0sfpwJ7e6s4cKyQRK5O1EEF2xHnXUulG8gItEQhd7z8d8Qmv0sUbl7hI8hNkjm6sxVX1f+sujopoo6rO2p6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729193070; c=relaxed/simple;
-	bh=gFKgzeE/ZauvTc40+kc1ZCpG82IQ5sf0SexsQDq8u7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qm0R7Y8OBJt+u2lTYMZDcGCy+bzUQlv/fGJN2XLsRutiWyTGH/wiZ/NRDwQJEWbpGGAsnP9ISlo1W7uDDROHwYBznWu3neqzuAlw2tg0mXWhXginK3tJ+WVJ4LSKwu0D7gQsBvOElyw0kNm4LYQoER2/2VxGQBuXazI5CsNf37Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=wlZH3XuQ; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=Dv9DtULg; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=EjmLiDXo; arc=none smtp.client-ip=158.120.84.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1729193063; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=QaZJB7VtPb6Ficd5xom0d1ZB+uspGEK5oHHe4+QV+34=;
- b=wlZH3XuQjN4km18ZXTWEBu6kH4zQJMq9XLHScTxGmsJV9LkQJsoPLA8m2bYsO4G9ADcF6
- EaPPUFVRz0EPXWU0TadI8dSjLNaYhMe+nzt57qM7hAhOPF8nVBywf7rf8uhs9ki8Xu3ZO6c
- gzmPmks1OYy9HzWXk8WVFlGbTTqjZVx8eI+64GdCPbeUrMv3NXyhQeKo36w8Rqv4bnOnnip
- G2kWJRfu22rwLOTcg6xk7mE2/g8rmro+z4kkboW/rxyCFi0dcFSaJ4F2+qYb2qZKWNx874B
- u8w+OONye8zFaxsXuKW48iA+/9r24hvPiEKJ8C9TK9M12XRVhROrBFNdEDWA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
- i=@fjasle.eu; q=dns/txt; s=s1174286; t=1729193063; h=from : subject :
- to : message-id : date;
- bh=QaZJB7VtPb6Ficd5xom0d1ZB+uspGEK5oHHe4+QV+34=;
- b=Dv9DtULgso6zrdMal36mQwACBAyXK2vfJt+kGgcphGDV6a2Pw5tthPSstrlAv2DzpDrfU
- gDUqv212oHD7Ebmz7QnxXIPzgxitLLK3SrNGkZFOYzV9RDWv3/suQrP9nKP+OCsXrCbT9NT
- wT9+mJDnVIv0r8KARb1CrEsk5oo7CfaAe8ArFRZhOdLPzyQPHFsy0H9qkyMvSVIHqND4gTB
- c8GEd2c5+o2RCilq5DeLaxDPG3jMuwPE6t2HkT6g/fkr7rZwNYnH1O4fzGacNYE16Yuy22x
- Yg/FEUt1mszn2/7Ou0r+ozFA8ppHrB/x5sRWfC7Yb+3qrEK3Xhw8XQezhohA==
-Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97.1-S2G)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1t1W6c-AIkwcC8yyQH-H2dG;
-	Thu, 17 Oct 2024 19:24:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
-	t=1729193055; bh=gFKgzeE/ZauvTc40+kc1ZCpG82IQ5sf0SexsQDq8u7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EjmLiDXoqRkWjuuvGJxxLV5+aTCDOrWLbvlR5lMckKvY/H0XxAO944jsq04kKP23W
-	 a7oHrR5a/RehEXoCX37Bnn9nBEYK3zrG3pTWJEitbXkwkG0uokxOgmlNnxEdKJYBzU
-	 d/ixP73e0olpxUThVwOlAFWPDG9DHu3qIfb/laNU=
-Received: by leknes.fjasle.eu (Postfix, from userid 1000)
-	id 6D0BB3D187; Thu, 17 Oct 2024 21:24:15 +0200 (CEST)
-Date: Thu, 17 Oct 2024 21:24:15 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Ron Economos <re@w6rz.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when
- possible
-Message-ID: <ZxFkXyfs0jO2QzBv@fjasle.eu>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-5-masahiroy@kernel.org>
- <b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net>
+	s=arc-20240116; t=1729193106; c=relaxed/simple;
+	bh=E89hryLxgKiF/GmdeFH0jIvDQbgZ8NL6L5dKM51hM+E=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=anYiWVFSazgrZlYDjVL/QL/hgQg9RSmrAQkiBXhlgqUgpxKitFHSSX3ZfRAGBRG7DcwKvsfUtYfkR63+rYx8ESJHFmxuOFb/vuMWOsBlEIAAILEsEo3+ecNA/GSIQIKK9s5RJljrT821CFFw4M3hFUJk4Qb2R4KKEo9rnsOpNBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdVfDNpI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F66FC4CEC3;
+	Thu, 17 Oct 2024 19:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729193106;
+	bh=E89hryLxgKiF/GmdeFH0jIvDQbgZ8NL6L5dKM51hM+E=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=tdVfDNpI9yLmY7DxePm14sqBwMo5ii05QPABekiRvSI+nObMfBPAUUubx78jTxvuS
+	 gmzdn0VjgdJDAz1bcfFdPy8DWMfhzViV06rQYw5+ii1OujVrlA9oVj7EZ1kLaL6oLg
+	 arSXURs+JG8aBP4I5xpuTL6EvLXqG3NwsJWiz4vq1QM524fDyKaGWyzGglDq57VLTO
+	 Zy5UvHuOzQAVU+h5HQJtS+QIBMsiwPbGLUi5JQX4Pp8PA3+yoZvaghoyLvJHfXapZN
+	 swh24zJetDqkNslAKHJrfU/RGkPmE38AF/Cq+DhoVr1EjRVexqbdPmGA6PklzxsVC+
+	 D5Nc+EXSudn7g==
+Message-ID: <d1b1c3cfb6b97c32aa63a07d3468a1f7.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 1174286m:1174286a9YXZ7r:1174286sZpGuzd6fP
-X-smtpcorp-track: T46pSHyCx3WZ.cZJtxmOcqpEO.M3GJtQ_8EXU
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241017071708.38663-2-y.oudjana@protonmail.com>
+References: <20241017071708.38663-1-y.oudjana@protonmail.com> <20241017071708.38663-2-y.oudjana@protonmail.com>
+Subject: Re: [PATCH v7 1/2] dt-bindings: clock: Add MediaTek MT6735 clock and reset bindings
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Yassine Oudjana <y.oudjana@protonmail.com>, Yassine Oudjana <yassine.oudjana@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Sam Shih <sam.shih@mediatek.com>, Yassine Oudjana <yassine.oudjana@gmail.com>
+Date: Thu, 17 Oct 2024 12:25:04 -0700
+User-Agent: alot/0.10
 
-On Thu, Oct 17, 2024 at 07:45:57AM -0700 Ron Economos wrote:
-> On 7/27/24 12:42 AM, Masahiro Yamada wrote:
-> > A long standing issue in the upstream kernel packaging is that the
-> > linux-headers package is not cross-compiled.
-> > 
-> > For example, you can cross-build Debian packages for arm64 by running
-> > the following command:
-> > 
-> >    $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
-> > 
-> > However, the generated linux-headers-*_arm64.deb is useless because the
-> > host programs in it were built for your build machine architecture
-> > (likely x86), not arm64.
-> > 
-> > The Debian kernel maintains its own Makefiles to cross-compile host
-> > tools without relying on Kbuild. [1]
-> > 
-> > Instead of adding such full custom Makefiles, this commit adds a small
-> > piece of code to cross-compile host programs located under the scripts/
-> > directory.
-> > 
-> > A straightforward solution is to pass HOSTCC=${CROSS_COMPILE}gcc, but it
-> > would also cross-compile scripts/basic/fixdep, which needs to be native
-> > to process the if_changed_dep macro. (This approach may work under some
-> > circumstances; you can execute foreign architecture programs with the
-> > help of binfmt_misc because Debian systems enable CONFIG_BINFMT_MISC,
-> > but it would require installing QEMU and libc for that architecture.)
-> > 
-> > A trick is to use the external module build (KBUILD_EXTMOD=), which
-> > does not rebuild scripts/basic/fixdep. ${CC} needs to be able to link
-> > userspace programs (CONFIG_CC_CAN_LINK=y).
-> > 
-> > There are known limitations:
-> > 
-> >   - GCC plugins
-> > 
-> >     It would possible to rebuild GCC plugins for the target architecture
-> >     by passing HOSTCXX=${CROSS_COMPILE}g++ with necessary packages
-> >     installed, but gcc on the installed system emits
-> >     "cc1: error: incompatible gcc/plugin versions". I did not find a
-> >     solution for this because 'gcc' on a foreign architecture is a
-> >     different compiler after all.
-> > 
-> >   - objtool and resolve_btfids
-> > 
-> >     These are built by the tools build system. They are not covered by
-> >     the current solution.
-> > 
-> > I only tested this with Debian, but it should work for other package
-> > systems as well.
-> > 
-> > [1]: https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/debian/rules.real#L586
-> > 
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> > 
-> >   scripts/package/install-extmod-build | 34 ++++++++++++++++++++++++++++
-> >   1 file changed, 34 insertions(+)
-> > 
-> > diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
-> > index cc335945dfbc..0b56d3d7b48f 100755
-> > --- a/scripts/package/install-extmod-build
-> > +++ b/scripts/package/install-extmod-build
-> > @@ -43,4 +43,38 @@ mkdir -p "${destdir}"
-> >   	fi
-> >   } | tar -c -f - -T - | tar -xf - -C "${destdir}"
-> > +# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebuild host
-> > +# programs using ${CC}. This assumes CC=${CROSS_COMPILE}gcc, which is usually
-> > +# the case for package building. It does not cross-compile when CC=clang.
-> > +#
-> > +# This caters to host programs that participate in Kbuild. objtool and
-> > +# resolve_btfids are out of scope.
-> > +if [ "${CC}" != "${HOSTCC}" ] && is_enabled CONFIG_CC_CAN_LINK; then
-> > +	echo "Rebuilding host programs with ${CC}..."
-> > +
-> > +	cat <<-'EOF' >  "${destdir}/Kbuild"
-> > +	subdir-y := scripts
-> > +	EOF
-> > +
-> > +	# HOSTCXX is not overridden. The C++ compiler is used to build:
-> > +	# - scripts/kconfig/qconf, which is unneeded for external module builds
-> > +	# - GCC plugins, which will not work on the installed system even with
-> > +	#   being rebuilt.
-> > +	#
-> > +	# Use the single-target build to avoid the modpost invocation, which
-> > +	# would overwrite Module.symvers.
-> > +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
-> > +
-> > +	cat <<-'EOF' >  "${destdir}/scripts/Kbuild"
-> > +	subdir-y := basic
-> > +	hostprogs-always-y := mod/modpost
-> > +	mod/modpost-objs := $(addprefix mod/, modpost.o file2alias.o sumversion.o symsearch.o)
-> > +	EOF
-> > +
-> > +	# Run once again to rebuild scripts/basic/ and scripts/mod/modpost.
-> > +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
-> > +
-> > +	rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
-> > +fi
-> > +
-> >   find "${destdir}" \( -name '.*.cmd' -o -name '*.o' \) -delete
-> 
-> This patch causes a build error when cross-compiling for RISC-V. I'm using
-> the cross-compiler from https://github.com/riscv-collab/riscv-gnu-toolchain.
-> When trying to build .debs with:
-> 
-> make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1
-> "KCFLAGS=-mtune=sifive-7-series" LOCALVERSION= bindeb-pkg
-> 
-> I get the following error:
-> 
-> Rebuilding host programs with riscv64-unknown-linux-gnu-gcc...
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms.o
->   YACC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.[ch]
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.o
->   LEX debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.c
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.o
->   HOSTLD debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/genheaders/genheaders
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/mdp/mdp
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/kallsyms
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sorttable
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/asn1_compiler
->   HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file
-> 
-> debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file.c:25:10:
-> fatal error: openssl/opensslv.h: No such file or directory
->    25 | #include <openssl/opensslv.h>
->       |          ^~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
+Quoting Yassine Oudjana (2024-10-17 00:17:05)
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>=20
+> Add clock definitions for the main clock and reset controllers of MT6735
+> (apmixedsys, topckgen, infracfg and pericfg).
+>=20
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> ---
 
-I guess you have openssl/opensslv.h available on your system, do you?  (In
-Debian/Ubuntu package libssl-dev or similar)
-
-Can you natively build a kernel with a similar kernel config?
-
-Kind regards,
-Nicolas
+Applied to clk-next
 
