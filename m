@@ -1,120 +1,139 @@
-Return-Path: <linux-kernel+bounces-370631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0E89A2FDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04669A2FE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2CB1F22BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B66A2847EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA161D63C8;
-	Thu, 17 Oct 2024 21:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D281D61A3;
+	Thu, 17 Oct 2024 21:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xhldz94m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQCHPgOC"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE081D12EA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7D21D5ABD;
+	Thu, 17 Oct 2024 21:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729200899; cv=none; b=HGxTcyLIFzsO3Of2f2hkI4MBKPbkG5svE53GiXZAMvkDbSmyil5RGeOIIgQvfy/1kqSRoIplz4zWFRsUUjP0H/ms515VvDM7PAWV42JdaYZOiKy6nAE7VmqaDfU/NtB9TEJyMBR+B/rNmQamGzmMGfxKctW36cUOy1UIpWp6dnE=
+	t=1729201173; cv=none; b=ePqcrk4ZOkzyJ7lO/0ZrWcGiks1A0iu0uwk+iML1bpvy5lrSQXcA5vqFqwLlZxJEQaMFZf4ZhvaReY++RGNxoVJuxktV6/p2DVP8issv6ZqTlDz8lrp0RefiE08DGEyQC7NLeUB7JU3H5HctjNLbxW9YlnbFDK1/iZISA1PkpsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729200899; c=relaxed/simple;
-	bh=48YG+JGTHE3S5/27NawYLVVHlS4dCY4Gc+EKzKTt1sI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pVaKMqLcOwyytXQgbR496Vu6NFDAAAivAhv+2uy3gL0g9XZCNBqDmDN53k/fc2kKmMM0dcsNjEEsDpBNo3yUZxikt3E+Ovi/ZPy2Odq2q2likfrCdf7vtELfOZ41o1LS2cz3GIXFw3+EH7uQDmFuqIQISs5QdQQEwl9SPJAc1ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xhldz94m; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729200893; x=1760736893;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=48YG+JGTHE3S5/27NawYLVVHlS4dCY4Gc+EKzKTt1sI=;
-  b=Xhldz94m8OADyCn7Yg7NEFlW9a2++gxvDxSgGJJ8IgVYNVVD6a9Y0EDV
-   WiZlnSY+/qSsxCm70eGuX6e/5j65HlWhttPFLmk+wThEwfOjnhfqrrfs/
-   84+GSHmZ2wwug6j3ag1iKwW/0qYFqoSf6WFbRHAByfDwTeF5TYWXpnwy9
-   coyda9mU3uDMRjQMY4iYCc78y7VRy/kJs8lxC9uqQoKcXSQLrG+mRpmY+
-   C7rd5sfJCtRqxVSVAOFuK4kTROinjNc5FPSWKP6V1BaPC9yQMPeP7+d2J
-   QtlUABfEQ5LHAxPFKLdzWWLu5iRMcRgRka4cdd9XKj6MHh/fLOa7AiAjQ
-   g==;
-X-CSE-ConnectionGUID: Hq4+JbTdQpWx6/opg1vIGw==
-X-CSE-MsgGUID: 4ETL3OXwSqKo/QwyMTbO/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39257441"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39257441"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 14:34:53 -0700
-X-CSE-ConnectionGUID: QCA6gA4EQYGs05LFkrlJdg==
-X-CSE-MsgGUID: rYiiZD8rSwulP5cEu4Xizg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="83755207"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 17 Oct 2024 14:34:51 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t1Y8u-000My5-2f;
-	Thu, 17 Oct 2024 21:34:48 +0000
-Date: Fri, 18 Oct 2024 05:34:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241015 17/18]
- ./usr/include/linux/if_arp.h:118:33: error: field 'arp_pa' has incomplete
- type
-Message-ID: <202410180511.pR0VdibP-lkp@intel.com>
+	s=arc-20240116; t=1729201173; c=relaxed/simple;
+	bh=f3KMSqv/ougYBBA0jBTLNV7hUJAB6jWtw7uRdLiiwi4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=E6aSlLSoik11cyxRvoPUpylwWY8yfO4iP5OfDcEmkL1EeoxQ4OJ26OiNV4SM64p6vKgHMDNAysVPHgMIS5q2WH59ylABfSSOPdDVyQnuyaoyQa8uiyYRW8xvqvXIzTyrGKGd7i3xoYoaisWv8zCrdd7EYntJciiDBUWbWRM6d0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQCHPgOC; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d3ecad390so1844467f8f.1;
+        Thu, 17 Oct 2024 14:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729201170; x=1729805970; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WXtSTeKIr7C+v4TkASAN2TDNvn9xALsLgin7qlf7+As=;
+        b=DQCHPgOCCLN2ZBdzngvwUmSez3JWZpggr+2CqbKkRGpc3nroejkWapNTmx4xuUe6LQ
+         1syq359AIryIbZAdNyfs/PQkUvbxmhY/YX1+IlUSFnz0UvcMy13QNES2/OAo0uf27Ek7
+         oowRoDzfmI+j7WWXaK1Bh/ZLc2PH+vFLdrnTdewzxqRXdVoRrJC0W1KJpKRh9QveNK5f
+         jMzODkEUi6CyKY0Ziv5OgpZI8YulkUaZsk5kHF0kDxKS8uFE1fuIMo8aVAwkUeRhQGUV
+         rC7wrxlrL+WkiTSVJzF0+V9yJ6iSorkVRVkX3xh4IAhA0xI1VM6234LPV2X48zeR+QZJ
+         RjRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729201170; x=1729805970;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WXtSTeKIr7C+v4TkASAN2TDNvn9xALsLgin7qlf7+As=;
+        b=Gs1nGjmiNBI4tk1Ylzqv6Rgru6jxKYjD8GmhrcggILDQR9SsmY6DyAAoVQeGWi94/D
+         Z1/aQpC7nYTVe07LLR/4PEU2iWl+TFflscYIzL6DrPKJzcXL0ScjBRIGSdNgZmr3neTY
+         FUNPu6JcNnVFuAkd8hax+BzvNCrNULtBs1TGPDPMkq3Bvh+MVOdffjFyYy6u90ONev0X
+         2lJJVwKluUeNv1D+tkF9qH2F3C4McMVaJel0ABx7Bu7rieR3HrU3goK6mIkOXbUJcGiy
+         QQbqboPWJElQQhbq3ugoNXlikNRNaEcVDYNTfsAsb2NXjmcIweCzTlh4fYOcfgBjIH6b
+         Rwig==
+X-Forwarded-Encrypted: i=1; AJvYcCXD2ugNlLg4clTCdupFQVpt+EM4Wqgi+IFMZnDPgF5e8kcbnG0oFIOSez0+N3/zbM7nCkgIoAJKjrm2@vger.kernel.org, AJvYcCXFgSHBHp4eVBq/VlppjMmonAIu8yvAjccHJ1cAnlpi9lGUlMDpMxOPWriAM3B3I4abQNNsrbB9TUkaJ+BP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbuk2MXoGkc1aYY8KQ/uQMxbvA+ZNnYLHh+Cc9jo30HtFRn40g
+	QU/VxYSCGIugkog9mcmZtZf8IZO2iYbA4CK7TrHmcVKg7ee4oy2a
+X-Google-Smtp-Source: AGHT+IE6iUPY1v5nWaCweLZDZawsr/RQZEFDesDO7/aa0khkmS/UM2Hpmeo/PENgoA+gfyvfLMiydg==
+X-Received: by 2002:a5d:658a:0:b0:37d:3780:31d2 with SMTP id ffacd0b85a97d-37d93da411bmr3026966f8f.15.1729201170079;
+        Thu, 17 Oct 2024 14:39:30 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-bb11-f817-987f-ea1f.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:bb11:f817:987f:ea1f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf06a73esm99874f8f.43.2024.10.17.14.39.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 14:39:29 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/4] iio: light: veml6070: add integration time and minor
+ cleanups.
+Date: Thu, 17 Oct 2024 23:39:24 +0200
+Message-Id: <20241017-veml6070-integration-time-v1-0-3507d17d562a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAyEEWcC/x3MQQrDIBBG4auEWXdARZLSq5QuhvibDDS2qISA5
+ O6RLN/ie40KsqLQa2iUsWvRX+phHwPNq6QFrKE3OeO8Ndbzju07msmwpoolS+2Aq27g6Rkkeog
+ EF6n7f0bU436/P+d5Ab5DU41rAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729201167; l=1791;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=f3KMSqv/ougYBBA0jBTLNV7hUJAB6jWtw7uRdLiiwi4=;
+ b=h1RfuLT1jS6HhqTACqxA9vXnkxXcqTROLvj8keAciN0R6bSIuQu5lnqhSLzTA84d5nltRkl2W
+ tm+2E89S2AfAMM3zXvdbBxICsV/94d+5aWw/KWBiPZ253GWyJC30jau
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi Gustavo,
+This series adds a missing feature in the veml6070 driver to select the
+integration time, which also depends on an external restistor that has
+been added to the corresponding bindings. Its name corresponds to the
+one provided in the datasheet (Rset) and its units (kilo Ohms), but I am
+open to more descriptive names if required.
 
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+The datasheet provides a Refresh time vs Rset graph (figure 7), which
+does not clearly specify the minimum and maximum values for Rset. The
+manufacuter has confirmed that no values under 75 kohms should be used
+to keep linearity, and the graph does not go beyond 1200 kohms, which is
+also the biggest Rset used in the application note. The default value of
+300 kohms has been obtained from the datasheet, where this value is
+given as an example (table 4).
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241015
-head:   d64af418459145b7d8eb94cd300fb4b7d2659a3c
-commit: f04e61e1c69991559f5589080462320bf772499d [17/18] uapi: net: arp: Avoid -Wflex-array-member-not-at-end warnings
-config: x86_64-buildonly-randconfig-002-20241017 (https://download.01.org/0day-ci/archive/20241018/202410180511.pR0VdibP-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410180511.pR0VdibP-lkp@intel.com/reproduce)
+When at it, two minor cleanups have been carried out:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410180511.pR0VdibP-lkp@intel.com/
+- Unsigned int instead of plain unsigned.
+- Use of a field for the integration time, which eases the handling of
+  the available integration times turning them into a simple [0, 3]
+  index.
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (4):
+      iio: light: veml6070: use unsigned int instead of unsigned
+      iio: light: veml6070: use field to set integration time
+      dt-bindings: iio: light: veml6075: document rset-kohms
+      iio: light: veml6070: add support for integration time
 
-   In file included from <command-line>:
->> ./usr/include/linux/if_arp.h:118:33: error: field 'arp_pa' has incomplete type
-     118 |         struct sockaddr_legacy  arp_pa;         /* protocol address              */
-         |                                 ^~~~~~
->> ./usr/include/linux/if_arp.h:119:33: error: field 'arp_ha' has incomplete type
-     119 |         struct sockaddr_legacy  arp_ha;         /* hardware address              */
-         |                                 ^~~~~~
->> ./usr/include/linux/if_arp.h:121:33: error: field 'arp_netmask' has incomplete type
-     121 |         struct sockaddr_legacy  arp_netmask;    /* netmask (only for proxy arps) */
-         |                                 ^~~~~~~~~~~
-   ./usr/include/linux/if_arp.h:126:33: error: field 'arp_pa' has incomplete type
-     126 |         struct sockaddr_legacy  arp_pa;         /* protocol address              */
-         |                                 ^~~~~~
-   ./usr/include/linux/if_arp.h:127:33: error: field 'arp_ha' has incomplete type
-     127 |         struct sockaddr_legacy  arp_ha;         /* hardware address              */
-         |                                 ^~~~~~
+ .../bindings/iio/light/vishay,veml6075.yaml        |  16 +++
+ drivers/iio/light/veml6070.c                       | 118 +++++++++++++++++++--
+ 2 files changed, 128 insertions(+), 6 deletions(-)
+---
+base-commit: 57573ace0c1b142433dfe3d63ebf375269c80fc1
+change-id: 20241014-veml6070-integration-time-78daf4eaad2f
 
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
