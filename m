@@ -1,135 +1,117 @@
-Return-Path: <linux-kernel+bounces-369265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2C49A1B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:51:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4F39A1B10
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE4A1C21A03
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63CA5281AF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31411C1AA5;
-	Thu, 17 Oct 2024 06:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LpiSzyth"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4908C199955;
+	Thu, 17 Oct 2024 06:53:43 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3E61953B0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E3F19340D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729147884; cv=none; b=K9ICZpgA9nCsGnDhIvaJSz/fmiqZuU3WdHZh1PTRPUsIMqkhtthv5atN89VzHShfGsnSFuegwD/PuCYBKfSH4AsYTyCodVNZSWN0cH1nMHpdjFwLuMYbYMbhkbZMG1YtRUNjcO7jBjtmn+J26vN9Q5tFiF0YNtjlekfA7gX+eZY=
+	t=1729148022; cv=none; b=BQFItQTnhKQ9h6udyBitSb0/r6Q3djzU8bNzQ1vRJSbWt3tuJPTj1XNfMffvXYIBAhRC7MKehNUCwx52CzqcPYQNi1VSaJc8oZO4xZTJZHfW4aVG8PtHwLhDhTuWkOLVOmWB4mHO9knR9PHGCGbmf3WSptXYlcCyU/U8zyUOYHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729147884; c=relaxed/simple;
-	bh=xvSTe7MkagrupWBAefdjJyXtMIcCbckwXBrGdN7d9l0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NrrtqxXp9cJIRlFAdbr2NbfGkV5TCTAVGKEFmeA6X9fc3yANOEgiLE9185UCkPUmnTrPbFMNelII1wIs+8ZCYyvsjPdio1Yet89XlpZVBCkWtrrP5QHf81vXxJ3Aprd5uU5daY7nam3tC8PK2QkE6CaNcIWhFLzquXRgqvmcEa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LpiSzyth; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729147881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xay7m0WxFpn21Bz1X2gL8BD4WBjxqjm+qohOUPEun3M=;
-	b=LpiSzythaGuceqZiuQKLuW2GVkl9o69h0qKXb2Sjgq6gmvkCEzvBXFV2rrYiQW0YtSY/fQ
-	KqTdBVKflmjoR27+f56uS1mxnEoZrsnDP4iLHJtIvE6fxlvrvp7WMfCccUPa0lzhEXXpd+
-	eZuP9GT68ZV0bqkDpwqn78GGf1Bm5OI=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-93-_owsF8e1PxmX0NfOABevYQ-1; Thu, 17 Oct 2024 02:51:19 -0400
-X-MC-Unique: _owsF8e1PxmX0NfOABevYQ-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-71e578061ffso660783b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 23:51:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729147879; x=1729752679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xay7m0WxFpn21Bz1X2gL8BD4WBjxqjm+qohOUPEun3M=;
-        b=idkgo/i+6OW+zehYZkIYa/SoO3w7NcmlkbujbB56F7/7JQoNNY4A7nuY7W3XKKvqKJ
-         jDcD19mHRUfEhRlFftwv2iYWCYuq7YH5F1ropx9lk9al/oLCheYME6x+nku2gh7bz6TI
-         CGSVrogTWODriFiZfvD4E14bo6/IAYJqkl+0GgrNaC3fxdyyYZPBIwgCX4w6M8HknUQy
-         FTRZLVk5tQoRfqta+b5r8P1rmeTu9n1jHP1E3X8/xMVu/+weSZ2JKHYg+aldXx6/duQ3
-         WA99CEo74NM67JSiZNbEAHVzbNTFRgM5eVG9tA4g54IOwEVJ70i+Y1QlASNmN0QTTRej
-         EdGw==
-X-Gm-Message-State: AOJu0Yyb0BJxPPL/mdc1rEsjiKJT7RCSEuc5qu0bJB6O4ML82F+hPY6y
-	fYUw/kLBUFCtfxd1Ie6ZRpcf/QccqLW9CnvRPUKQn1f5OW33tLkwzhFbnDwt+PINvGbIF0qiVHB
-	ko7bxn9Q07RZLWxHpP6k4/uxG7vbuP32y0cwOFTe4W9BCXXdeYy2Yv4XW6N8TZkII+Pi2CgHT3J
-	GjXMw7ST7Tnx77RZzBdqnZV+8ggWK5/sFUeB1Y
-X-Received: by 2002:a05:6a00:3e25:b0:71e:6489:d06 with SMTP id d2e1a72fcca58-71e6489127amr18954655b3a.0.1729147878718;
-        Wed, 16 Oct 2024 23:51:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGSON7GqEf790y/2ntpuXKji/SEhnmlTHIdPHQBAwq6YDA8De1J3fJmL4zC3Yp6zQMaH7+G3U/d3cye43jIOs=
-X-Received: by 2002:a05:6a00:3e25:b0:71e:6489:d06 with SMTP id
- d2e1a72fcca58-71e6489127amr18954637b3a.0.1729147878273; Wed, 16 Oct 2024
- 23:51:18 -0700 (PDT)
+	s=arc-20240116; t=1729148022; c=relaxed/simple;
+	bh=k1WvreGiKBv7Jos9jpm36eHR1fDCB/r8ocg0rSeL3o0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJOE6r1rOp12t+6AkyOoSBZnZiiRiRb2r/eVhOC7oeBj7Zz9TymY5/aL46o5M7eAKpIsOxraWPpvioNdIqSLaKMiqg+DrKuaWYkdtHmPHlMddq8oDwM4L8O6LZEbV6YpwWhON/DE2TRj9do3l6S3y472RXkObT3D5BdL1VEHZoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t1KNv-00082t-BV; Thu, 17 Oct 2024 08:53:23 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t1KNu-002U7P-40; Thu, 17 Oct 2024 08:53:22 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id BE97D354D67;
+	Thu, 17 Oct 2024 06:53:21 +0000 (UTC)
+Date: Thu, 17 Oct 2024 08:53:21 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, imx@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH net-next 02/13] net: fec: struct fec_enet_private: remove
+ obsolete comment
+Message-ID: <20241017-adept-quick-caiman-9970df-mkl@pengutronix.de>
+References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
+ <20241016-fec-cleanups-v1-2-de783bd15e6a@pengutronix.de>
+ <ZxBufV7xkX9gK0+m@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <53e2bd6728136d5916e384a7840e5dc7eebff832.1729099611.git.mst@redhat.com>
-In-Reply-To: <53e2bd6728136d5916e384a7840e5dc7eebff832.1729099611.git.mst@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 17 Oct 2024 14:51:06 +0800
-Message-ID: <CACGkMEsovgv9=jj76dfATHWHY7c6NAmiqKDaARDGYju-A6zaKg@mail.gmail.com>
-Subject: Re: [PATCH] virtio_net: fix integer overflow in stats
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, 
-	"Colin King (gmail)" <colin.i.king@gmail.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="parrzsfnfhjfhzyx"
+Content-Disposition: inline
+In-Reply-To: <ZxBufV7xkX9gK0+m@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--parrzsfnfhjfhzyx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 1:27=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> Static analysis on linux-next has detected the following issue
-> in function virtnet_stats_ctx_init, in drivers/net/virtio_net.c :
->
->         if (vi->device_stats_cap & VIRTIO_NET_STATS_TYPE_CVQ) {
->                 queue_type =3D VIRTNET_Q_TYPE_CQ;
->                 ctx->bitmap[queue_type]   |=3D VIRTIO_NET_STATS_TYPE_CVQ;
->                 ctx->desc_num[queue_type] +=3D ARRAY_SIZE(virtnet_stats_c=
-vq_desc);
->                 ctx->size[queue_type]     +=3D sizeof(struct virtio_net_s=
-tats_cvq);
->         }
->
-> ctx->bitmap is declared as a u32 however it is being bit-wise or'd with
-> VIRTIO_NET_STATS_TYPE_CVQ and this is defined as 1 << 32:
->
-> include/uapi/linux/virtio_net.h:#define VIRTIO_NET_STATS_TYPE_CVQ (1ULL <=
-< 32)
->
-> ..and hence the bit-wise or operation won't set any bits in ctx->bitmap
-> because 1ULL < 32 is too wide for a u32.
->
-> In fact, the field is read into a u64:
->
->        u64 offset, bitmap;
-> ....
->        bitmap =3D ctx->bitmap[queue_type];
->
-> so to fix, it is enough to make bitmap an array of u64.
->
-> Fixes: 941168f8b40e5 ("virtio_net: support device stats")
-> Reported-by: "Colin King (gmail)" <colin.i.king@gmail.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
+On 16.10.2024 21:55:09, Frank Li wrote:
+> On Wed, Oct 16, 2024 at 11:51:50PM +0200, Marc Kleine-Budde wrote:
+> > In commit 4d494cdc92b3 ("net: fec: change data structure to support
+> > multiqueue") the data structures were changed, so that the comment
+> > about the sent-in-place skb doesn't apply any more. Remove it.
+>=20
+> nit: wrap at 75 char
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+fixed - my editor is set to auto-wrap at 70.
 
-Thanks
+Marc
 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--parrzsfnfhjfhzyx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcQtF4ACgkQKDiiPnot
+vG+cugf/SqGhWPB+PihEBSh8710+iHULwnBZswiDzTsjf29ij5Jga7XOD/0KSMYL
+XlvDMFdG3riV6kWES0i2PespKfoaEPHFyJGAkAs2u/yMRMxO52gR3wDJq4pDGWKP
+JrTP7an6YjZGoxe583f5K8zDymm9mmOlA3HloDyT/A/5QF9iPDurRsaywfObekHW
+NhcExLglaWokk+kj7on0kN3AvoRjqylKo2tN/3Q/dr4wghSv+So9lMyiWQ3PdMpR
+CR2YUWNenspz/myRxl4dCr4nVoVP13S10r/qRcX9FxuL7i/6N2T0h53nYdTnjeB/
+xyMRL2ZNiOMD4YlWiuCfU7nap7e8ug==
+=eoGx
+-----END PGP SIGNATURE-----
+
+--parrzsfnfhjfhzyx--
 
