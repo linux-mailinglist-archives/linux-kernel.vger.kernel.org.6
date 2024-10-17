@@ -1,155 +1,101 @@
-Return-Path: <linux-kernel+bounces-369533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C10C9A1E8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:35:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDA19A1E90
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB28D1F2439E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4ED288F0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA071D959B;
-	Thu, 17 Oct 2024 09:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A071D9341;
+	Thu, 17 Oct 2024 09:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XiFI8B0o"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B117B12DD8A;
-	Thu, 17 Oct 2024 09:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="gBRHIGkZ"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9377213AA4E;
+	Thu, 17 Oct 2024 09:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729157722; cv=none; b=UpUiOJbtw8iZ3OKHSVxebF+uGWLS8vNm2NCm+hvjhRvzS2cSuF5i2BybNOXgS1e/q+R9OGC+eO0ah6MfCRnpLzk/zuGv45PoEU/Zp1N9Jc0xyA48Ep4am3M+4T/Hg5H16vBQPCu6DnlPnCIg/EOdSROTCR9MDx3Ji3ywBIqg9Kg=
+	t=1729157848; cv=none; b=PdAMFkkgLtLVfEMbypvVEsga6wAWAlmnFySnUs0iKaVDQFhUs9q3uclqKc3b3ZoJM46GhHRjE6F+CwCU0kdW2YQ6Gv1J3MFTdUFq+Bg1zmYM8/aDWTnbBC2nkZj4HRTW2FxgBah9vOcctaO/pggKUW//obJc2e7Rs9bYU71NZbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729157722; c=relaxed/simple;
-	bh=ped3950d54S9hAnLeEAj3X1RF7de8yQC2eJe9g2KexQ=;
+	s=arc-20240116; t=1729157848; c=relaxed/simple;
+	bh=xWI71f8VNY/6jODKPIHujw3pQm8LwrhuDJJKQbpkQ7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sv8MyB8pyytV987E6kqqqbg5g6m9STWTSaQnrT5pgPr5TxCrkicKeIMX69tWBC7ej3UzeOdtxQQw+sespwseuMEdqKv9krABRrG1s6oIFQEi8RksbUHoPXDRQHjNM4Grc+2QyIkS9yxMiEEipChXZtYelJcxlisohlhB27DhJaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XiFI8B0o; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VVu7cX1SI2+XfnYlKmwbrDG3+CJWOAmt2jAl9wbUo9k=; b=XiFI8B0ovduSIe40JjuY242meO
-	1tWdoXPB8Y4u6FvdJlkOh0pr/b+ptTLEARYM4Fz0YcPpgeZ6S8vIFL3pv7C67je495kkW38x9jgPx
-	kZcvMosNEICP21MaeTfL4OcNrqj3D/g6hBzGdP9sE2b36zBWvYJp4QWDybwMxKdlcL3ZpeYi7ki7+
-	suQtk2YIywEtSE8+GUQPkWxddDo9J2uY+LZoII7Oa4V1WDt8U55u9QC4d2zaOtcNPZVh6JsT6n2VV
-	yz3mabQVBKOF3bVpb3D/1s3d5tFfjBLa1mZAU7RdfOnmovvB/POi51RCfYsgOa7ik7FCs2q+EK5D6
-	fjlJqizw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1Mua-000000075pF-1RkI;
-	Thu, 17 Oct 2024 09:35:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EF73A3005AF; Thu, 17 Oct 2024 11:35:15 +0200 (CEST)
-Date: Thu, 17 Oct 2024 11:35:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v6 6/8] x86/module: prepare module loading for ROX
- allocations of text
-Message-ID: <20241017093515.GU16066@noisy.programming.kicks-ass.net>
-References: <20241016122424.1655560-1-rppt@kernel.org>
- <20241016122424.1655560-7-rppt@kernel.org>
- <20241016170128.7afeb8b0@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwADGxFkYYHdQ05iY8Ifp3aMxFC5JjvZCVPlGHjwHFY0rRxLhncHae/0ecrT2nu9hHncR9vw2TCUsxtxqmwlBUkmxO+BVSfzYzpbShTub9/k2WPQBPRXeUejl/PaDclR8FnrnnMCXipz8GKav5wXh0WteE+s/3Z4LoeCaC6bSXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=gBRHIGkZ; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=wyYoVD4usF91bR4K+1sOdk/jm+L3Cg0tKmREs07tdtU=;
+	b=gBRHIGkZvcShdsfxMkTZJUay4GMo4foYD0arYDwW3ElAWvkZwSfsGlf1OYrCDs
+	S2lnrLQswFUXrhGgwzSHJ6cm8SSgy29bjmVejE+Keuz0xGk8FMxZEfjnlorQJaPV
+	aCNzcRcSrUFAtRJnUuXQ/qCu2gCKF64yqWQy/sc4MbL9s=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgBn78N52hBnzR0xAA--.1286S3;
+	Thu, 17 Oct 2024 17:35:55 +0800 (CST)
+Date: Thu, 17 Oct 2024 17:35:52 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 0/2] Add support for new IMX8MP based board
+Message-ID: <ZxDaeH2ZJ2vzFmRh@dragon>
+References: <20240925124903.1837869-1-michal.vokac@ysoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241016170128.7afeb8b0@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240925124903.1837869-1-michal.vokac@ysoft.com>
+X-CM-TRANSID:Ms8vCgBn78N52hBnzR0xAA--.1286S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZrW3GF45KryxZw1UtrW5Jrb_yoWxAwbEk3
+	4ku3WxW347ArW7G3y3trnxWrZxGr1UJr40q34fXwsFkFyxZFn8Xa4vk3s5J34jvF4UAr4f
+	JryFya4vvrWagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU03fQtUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRx7ZWcQ0mcYuAAAsp
 
-On Wed, Oct 16, 2024 at 05:01:28PM -0400, Steven Rostedt wrote:
-> On Wed, 16 Oct 2024 15:24:22 +0300
-> Mike Rapoport <rppt@kernel.org> wrote:
+On Wed, Sep 25, 2024 at 02:49:01PM +0200, Michal Vokáč wrote:
+> Hi,
+> this series adds support for a new member in our IOTA platform.
+> The board is based on the i.MX8MP SoC. It adds support for most
+> of the board functionality except USB Type-C port and some other
+> minor things.
 > 
-> > diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-> > index 8da0e66ca22d..b498897b213c 100644
-> > --- a/arch/x86/kernel/ftrace.c
-> > +++ b/arch/x86/kernel/ftrace.c
-> > @@ -118,10 +118,13 @@ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
-> >  		return ret;
-> >  
-> >  	/* replace the text with the new text */
-> > -	if (ftrace_poke_late)
-> > +	if (ftrace_poke_late) {
-> >  		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
-> > -	else
-> > -		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
-> > +	} else {
-> > +		mutex_lock(&text_mutex);
-> > +		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
-> > +		mutex_unlock(&text_mutex);
-> > +	}
-> >  	return 0;
-> >  }
+> This series originally included the dt-binding for that Type-C
+> port controller but I finally removed it based on a good comment
+> from Krzysztof. I will post the Type-C binding including the driver
+> in a followup series.
 > 
-> So this slows down the boot by over 30ms. That may not sound like much, but
-> we care very much about boot times. This code is serialized with boot and
-> runs whenever ftrace is configured in the kernel. The way I measured this,
-> was that I added:
+> Michal
 > 
+> Michal Vokáč (2):
+>   dt-bindings: arm: Add i.MX8MP IOTA2 Lumpy board
+>   arm64: dts: imx: Add imx8mp-iota2-lumpy board
 
-> If this is only needed for module load, can we at least still use the
-> text_poke_early() at boot up?
+Applied both, thanks!
 
-Right, so I don't understand why this is needed at all.
-ftrace_module_init() runs before complete_formation() which normally
-switches to ROX, as such ftrace should be able to continue to do direct
-modifications here.
-
-Which reminds me, at some point I did patches adding a
-MODULE_STATE_UNFORMED callback in order for static_call / jump_label to
-be able to avoid the expensive patching on module load as well (arguably
-ftrace should be using that too, instead of a custom callback).
 
