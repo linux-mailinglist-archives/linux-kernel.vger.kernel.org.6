@@ -1,156 +1,166 @@
-Return-Path: <linux-kernel+bounces-369956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F90A9A24E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F12689A24E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C293A1C22403
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:21:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C14A1C229CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D251DE4C5;
-	Thu, 17 Oct 2024 14:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HnGprQ//"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E231DE888;
+	Thu, 17 Oct 2024 14:21:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658891DE3AC;
-	Thu, 17 Oct 2024 14:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F3B1DD540
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729174864; cv=none; b=gtYITr7dVJxg9/tqdggZ09nFjMsC3AJCjZUpE695Uz6XI+aXcgQLhK35ck1/5fsK92w3rwsv5kflcrTPMQG6isdDoffEf8woZgkA8Ahs7oYz9R5jw22y18LxZivn/9/iwu68TNrVUcA1cn2J2CpQzXFwwdabp3BuevYhex5+Jcc=
+	t=1729174917; cv=none; b=J7CUaAnQUSWRhqgACBV+kgtTjvJKE5To2TEFhG4MR//8+S4e5lZalEqvSeS/vn4Nd5vkhuOl9HlSlxmGGDyA09eR2WQZGnTWHS+UMa7EkcilWOk6T+T3IdZ3tMO+LvRoop6MHa1CYMq91q+p2ZVz4zVoKRERm1i/+kG37bCMxdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729174864; c=relaxed/simple;
-	bh=+i1+iZgU4s5+YABjJhEG8l/XR+DZP0Rk5slar9YxXlo=;
+	s=arc-20240116; t=1729174917; c=relaxed/simple;
+	bh=zBt6/1o7agVZSX+rWNtucjO/KuWPeQZtxmwFF6XugPc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lc3XoUa2MPkd7V5EmIGZ5Rj2sUoVAJ7s5RlJM36Uz4jONKhq468m0D14XMTnKlGJeRiyYTPFRwzgc3vhy2UtuU07TvDhe77HUCPt9Pw1actT+S+l3J97dG84YiTNbIGaNmgOdtnkSI77+4Fp6hIAG9dNdmi0QfEiCfoWVdOK4WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HnGprQ//; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c9978a221so12635715ad.1;
-        Thu, 17 Oct 2024 07:20:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729174859; x=1729779659; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=x/nghuLwxAlzGHJU3Clv5CuQOvD5vFQQ9Bp/jfeDw9I=;
-        b=HnGprQ//CXS3PCKu0Osp4PypJk+8oJyFc/CPAF7OmacfSFbupWjNrFDsG2leZMDlEn
-         ixPW8h1mUfesLd8/v8lG+rLINqI0MxAiTAHPUWuLzd8RyZfdPrBypHBoTc/rW6KehwB9
-         2xPjh0A/uHJ8m/N9XS3JFpPZ2Jfzyh0ffV78ioU1KjmGuHw67xSTLBKH4rEbPR6/4QUp
-         EWaF7slTmYPaB+YO9vdxMSjmQx//0k8HPG6ZSQthh+FNWIqtBeF6gVG5XrWoJPCAcdul
-         WTTyrS1qme8jXHePWDTTLOaeclarEy4CSjLDaz6l54Lnh+C3XBNAcUeiNz0y9vgAtsbX
-         +jsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729174859; x=1729779659;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x/nghuLwxAlzGHJU3Clv5CuQOvD5vFQQ9Bp/jfeDw9I=;
-        b=puAFJfWJaF2iUQo61k584Cw1Hh1MDV6MHO/IkU2rzIhPPR8rQYD/y1ltQ71kw4wIpr
-         YTo1PinhMpKdtZfgKYNegqGZqRRUjU5hcSXxq8hQFFNAPp5Cc/5vPmSOvk7suPBMM8K6
-         4kbm/4HsW4kbwQDZZmtN8d/2I6UGZdsnMNrTt1US6gn8676xDpXP8VRF3buth7KzzJHp
-         zho9QkbgWtxxiKFOAExFdI4E0CEJCKztqf+aFKxkf1fL/toKWjPiqsxsS41eq8X7ZlkK
-         v4heu7lN6lxMqHpM+6l8/2E9ikeN1pmQaxYkS+pJ/ChnnW0F7f3FxasKWczHdkeTrkM3
-         dABg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZHCDVD4smo+RWbyCPyAzs9TwbD0714cbmfxtBJVv5/J5iI2vE1+ZNeeBWPwo14X+pnKuxpQntQBX7KEuK@vger.kernel.org, AJvYcCVmzrcQZ/vcHVapu5+Zlh/9KROAJFJNYfunytKwwRlV0mrE3YJ+c1zXI4wmubx9oKcv8Pog9ZT04ZoI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6SEUSK1vrAoYuyRP1WNJgacQ6QWj/sTEsEuwHqJEyqF6FNfZz
-	s+soGsUEqPmXhRLzCFxb8a/PCgD8W65P2BD3vysRptgfCruVjMDPycsNdw==
-X-Google-Smtp-Source: AGHT+IF2BSHZjYF3E0lXfXUSyjYzMYs9lF+O3lub1mXer8r94G0iWs2egW53XYAgd2eW6Z81nj+jlg==
-X-Received: by 2002:a17:902:d482:b0:20c:c9db:7c45 with SMTP id d9443c01a7336-20d27eb3629mr111562105ad.20.1729174858464;
-        Thu, 17 Oct 2024 07:20:58 -0700 (PDT)
-Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d436sm45007985ad.84.2024.10.17.07.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 07:20:58 -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:20:53 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4 8/8] gpiolib: notify user-space about in-kernel line
- state changes
-Message-ID: <20241017142053.GB242458@rigel>
-References: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
- <20241017-gpio-notify-in-kernel-events-v4-8-64bc05f3be0c@linaro.org>
- <20241017125349.GB221864@rigel>
- <CAMRc=McjCinBEFNoHSTyFH7zU=JuyRfu1cfrOxkq=OjciKQkvQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=age/KY3oDQkKh5fKyI35H3/VqmyrXDmK7/vpnvTyaVm6WomNhlLsT9VncapL7LIaEPhK+HOUxYD2Ygb625pJqXEQOU1vYIcuS0C56Hya8o67vf7Wq29bSceb9gspOOObGXnaNtO0pIsUr2rWkzFMAFESqi21Leo5yAo3LOMtQ74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t1RNf-0000d3-6B; Thu, 17 Oct 2024 16:21:35 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t1RNe-0003nc-02;
+	Thu, 17 Oct 2024 16:21:34 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id A246B355320;
+	Thu, 17 Oct 2024 14:21:33 +0000 (UTC)
+Date: Thu, 17 Oct 2024 16:21:33 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: RE: RE: [PATCH net-next 07/13] net: fec: fec_probe(): update
+ quirk: bring IRQs in correct order
+Message-ID: <20241017-rainbow-nifty-gazelle-9acee4-mkl@pengutronix.de>
+References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
+ <20241016-fec-cleanups-v1-7-de783bd15e6a@pengutronix.de>
+ <PAXPR04MB85103D3E433F3FBE5DDFA15C88472@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <20241017-affable-impartial-rhino-a422ec-mkl@pengutronix.de>
+ <PAXPR04MB8510149D0E8AC39E048941F988472@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <20241017-manipulative-dove-of-renovation-88d00b-mkl@pengutronix.de>
+ <ZxEZR2lmIbX6+xX2@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qjhlnbg5enicegfn"
+Content-Disposition: inline
+In-Reply-To: <ZxEZR2lmIbX6+xX2@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--qjhlnbg5enicegfn
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McjCinBEFNoHSTyFH7zU=JuyRfu1cfrOxkq=OjciKQkvQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 04:14:24PM +0200, Bartosz Golaszewski wrote:
-> On Thu, Oct 17, 2024 at 2:53 PM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Thu, Oct 17, 2024 at 10:14:16AM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 17.10.2024 10:03:51, Frank Li wrote:
+> > > > Yes, that is IMHO the correct description of the IP core, but the
+> > > > i.MX8M/N/Q DTS have the wrong order of IRQs. And for compatibility
+> > > > reasons (fixed DTS with old driver) it's IMHO not possible to chang=
+e the
+> > > > DTS.
+> > > >
 > > >
-> > > @@ -1447,8 +1450,6 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
-> > >               }
-> > >
-> > >               WRITE_ONCE(line->edflags, edflags);
-> > > -
-> > > -             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-> > >       }
-> > >       return 0;
-> > >  }
+> > > I don't think it is a correct behavior for old drivers to use new DTB=
+s or new
+> > > drivers to use old DTBs. Maybe you are correct, Frank also asked the =
+same
+> > > question, let's see how Frank responded.
 > >
-> > I still get errors from this when reconfiguring lines with debounce.
-> > You should leave this notify in place and use _nonotify when setting the
-> > direction.
-> > i.e.
+> > DTBs should be considered stable ABI.
 > >
-> > @@ -1436,11 +1432,11 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
-> >                         int val = gpio_v2_line_config_output_value(&lc, i);
-> >
-> >                         edge_detector_stop(line);
-> > -                       ret = gpiod_direction_output(desc, val);
-> > +                       ret = gpiod_direction_output_nonotify(desc, val);
-> >                         if (ret)
-> >                                 return ret;
-> >                 } else {
-> > -                       ret = gpiod_direction_input(desc);
-> > +                       ret = gpiod_direction_input_nonotify(desc);
-> >                         if (ret)
-> >                                 return ret;
-> >
-> > @@ -1450,6 +1446,8 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
-> >                 }
-> >
-> >                 WRITE_ONCE(line->edflags, edflags);
-> > +
-> > +               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
-> >         }
-> >         return 0;
-> >  }
-> >
-> > Given that, all my current tests are passing.
-> >
->
-> That looks good - after all we no longer notify from any place in
-> gpiolib-cdev.c anymore - but I'd like to learn what's wrong exactly.
-> Are you getting more events with debounce? Are you not getting any?
->
+>=20
+> ABI defined at binding doc.
+>   interrupt-names:
+>     oneOf:
+>       - items:
+>           - const: int0
+>       - items:
+>           - const: int0
+>           - const: pps
+>       - items:
+>           - const: int0
+>           - const: int1
+>           - const: int2
+>       - items:
+>           - const: int0
+>           - const: int1
+>           - const: int2
+>           - const: pps
+>=20
+> DTB should align binding doc. There are not 'descriptions' at 'interrupt',
+> which should match 'interrupt-names'. So IMX8MP dts have not match ABI,
+> which defined by binding doc. So it is DTS implement wrong.
 
-In linereq_set_config(), the notify comes from the gpiod_direction_input() -
-before the edge_detector_setup() is called (not visible in the patch) and that
-sets the debounce value in the desc.
-So you get an event without the debounce set, or with a stale value.
-Keeping the gpiod_line_state_notify() and using the _nonotify()
-functions means the notify comes after the debounce has been set.
+I follow your conclusion. But keep in mind, fixing the DTB would break
+compatibility. The wrong DTS looks like this:
 
-Cheers,
-Kent.
+- const: int1
+- const: int2
+- const: int0
+- const: pps
 
+Currently we have broken DTS on the i.MX8M* and the
+FEC_QUIRK_WAKEUP_FROM_INT2 that "fixes" this.
+
+This patch uses this quirk to correct the IRQ <-> queue assignment in
+the driver.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--qjhlnbg5enicegfn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcRHWoACgkQKDiiPnot
+vG/STwgAhj7R/YH7PoO9JfIBXoNwyrWTFyN4vrRAwH4MyRPDxByKlcyaZq0Gmmwd
+njOY6aiDDTcEiQTn9lq1LYOJlSfq1zxLh8vY9t9WmX3Sm6YdqnYNmwLqFbhe9vLM
+qdpaxRL0ZqLNFjgzlduaBjEuTjC9AMoaXBGb5U6KJgMBvnrij6ubgNKk9qIzihhS
+XKQ/eiVd0Vx8yydq2/7+YWJzOxK/zQli3G0/a9QTYyEfh6InIBvkLhbiL48Bw7PO
+8ZfJN4W6Yf+IiCN6Ru6dmvomgGNUIE0Iptm06XRW5y5YMKjNX1EtVBLZjBey0Y6c
+6O6KLb8atwIgdsjp0EdKAKqwLPSYig==
+=dEJL
+-----END PGP SIGNATURE-----
+
+--qjhlnbg5enicegfn--
 
