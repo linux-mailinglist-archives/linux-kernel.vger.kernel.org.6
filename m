@@ -1,223 +1,385 @@
-Return-Path: <linux-kernel+bounces-370557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E0C9A2E80
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796B49A2E83
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBB81C2249E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39151282CB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DFD2281E0;
-	Thu, 17 Oct 2024 20:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E15A219CB0;
+	Thu, 17 Oct 2024 20:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="leHQDlVp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nb306tc8"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C188622738A;
-	Thu, 17 Oct 2024 20:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729196964; cv=fail; b=L7mEuFX9zwB+uUHRlSGpPRtdYse4vNjj9p9dYPxqr1yQgeMs5yJSY/steRbSXmD16XxsACNU1kUNXGqiBcxwiR1fnQyWygVFvaj3yrceth2GCoQ0q6MJvOFs1+eGzs/+ufEAjpqA67nPn07FMGaEyePVqkkbpDyiokAOsHMUmYQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729196964; c=relaxed/simple;
-	bh=t6vp905Jfxwi7FzL7Ob+lLGe56EZaEa37GWs66ZVWE4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ik4oit20Rr554HGZeIJ9/7nw+scFKmEPUk3O/onUB/F/ZebBnGw/S8ECcMf2LfS1zHmv6gFcdlhkfn80lBuhdhdxYHUm2CRRMv36loyAxBsyXggydgaDyAJp2EfUF0PDEaq3UHwSfkdMB8aOgSNmhLwXj8lbGCvI8ijwQi4Z5CE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=leHQDlVp; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729196958; x=1760732958;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=t6vp905Jfxwi7FzL7Ob+lLGe56EZaEa37GWs66ZVWE4=;
-  b=leHQDlVpiVfAXAvNLCSQiQaa4alkzHZvwyO9Vn9i27lSDKJ/yGXNaV49
-   5vhf7MBBYl8TRzVSdrxBpRMs9pu8iExRMljQOjZTAXMTxImj++ypWWf+j
-   4TAR+j5lKDN0TNoDjKspEdZ8PXbwro6xYMfa1ufekNvhRQGk5S7wdY+eg
-   5RnRJ/liHdmcY/U48g1eRf3NssjevLuGkgD7OaDZtQJTBu55SmfLe7BT1
-   eH0ax49/juqXyQGk4tSiaQyyn3W1yrkrigj2os5NtlJURbguOJv8CQcc4
-   d7Efei0VvvKlfnD2VcP7nP1GV52C2y4Kz9V/gLPGTaKOI5pa4DrXo0Mok
-   A==;
-X-CSE-ConnectionGUID: WzBnjpV7S9mgxUceXlptYg==
-X-CSE-MsgGUID: EnoZASwkSN2zjlhDRvmMKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46170749"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="46170749"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 13:29:18 -0700
-X-CSE-ConnectionGUID: CJHbJL0fTyyWDLxdjYyG3w==
-X-CSE-MsgGUID: nt+IyeR8RzKm2qw3YfOCOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="109478182"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Oct 2024 13:29:17 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 17 Oct 2024 13:29:16 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 17 Oct 2024 13:29:16 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 17 Oct 2024 13:29:16 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.177)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 17 Oct 2024 13:29:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iiMNF6rHR97aZ27zZyvxUg7JQ3/D7MFoZJxyJ82Xo8io/8UoqNSCpXiG/8pcIuGZ1uat2Gfc/ldEHzEYAt0jKL1onzH3D+HUBQDY4oSa1cerFmXnVyVb4aVQRzYxgb28GCXvmOObH5t7gjpGx+FgUpd2m18QHaBT9GFx9FBtOCHQq5UdE3wEfAiWMq09ZT4D5AT0fjuKGD1G3PPYT7T5u+fLux75Hd/ZWFLlAH5dGK8wN4HWH5PXCUFCLHQg4vu8pwDuQScRYI1J2q64BA7deVjwbTGuM9FaN56WLLDz7sWS9Idf1xfWdvBuU4uViaQP5w6fNKyVdiQ2v7W56qy4Rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/qiW+B7+1bewn5oWLz5VHGCNddiLGKmFZ+Z9qTbe/0o=;
- b=pzRqkmH5Ndtte4+HshON8lkyq5Hxe7wRl+to0aS3gEBdceAN0n6fq3aKBFU4bsUodSHM7eEhNSjNiM7IQ0d2RLfwJON3mXaWluKIT4eaRVmwFKdZfZefsT3k+TvhBJ5h7uISH5RvUjWnF4fmcqWlSrHDDvAO94tTYQVAzkKDI0W6EAAdYdRUN09CU6SXpeeqw0nrW+oz70+fYXSADx504IzmjEQcWuij2r59K1mUX085ibDOW6f1ujg4+eOW7gSz915pcyxIDs2njKipPkuo9rfkGydzXd8kT2sIUUvjJbYwbcVpokl/7prCgbT7dLIkGquSbT/REXcMiHiYTSjlHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by MW3PR11MB4554.namprd11.prod.outlook.com (2603:10b6:303:5d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 20:29:12 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8048.020; Thu, 17 Oct 2024
- 20:29:12 +0000
-Date: Thu, 17 Oct 2024 15:29:02 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ira Weiny
-	<ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 15/28] cxl/region: Refactor common create region code
-Message-ID: <6711738e4caae_2cee294da@iweiny-mobl.notmuch>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-15-c261ee6eeded@intel.com>
- <20241010141826.0000796e@Huawei.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241010141826.0000796e@Huawei.com>
-X-ClientProxiedBy: MW4PR04CA0050.namprd04.prod.outlook.com
- (2603:10b6:303:6a::25) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C19617BEC8;
+	Thu, 17 Oct 2024 20:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729197037; cv=none; b=KuUZmUslYCpHbHPDv5B0R2JVU5A82in4UgvEBItEMuJ77lwyxq/H96bBs91AMsY4Sq0pQdufqt5g2H21Vo3Ga+Njns+IMATuclIlVvmG6/SiK+ZZvZiee6j3u2AX33ZoLGxtN9h5jCV+WhLNmT/wNgh66KktUP2NSe9Bt7sF3EI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729197037; c=relaxed/simple;
+	bh=RmEk2a3SUN0mwg4Zxs4ZtRcHdZD43qyeKyfN8Z+pJKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WG94zwnjuV0okhWoIwbVbX/qdOyH6miSNhdG3AFjNE18eH9k0gxGwHf9VWa7tFK8tIub221d8OxxXtPntIdoeUwkRjWqHZjtLTmJNfxJXbQpoLMqxg8z2QE1nfEhnDp71Mt9hYFRCdPGhmXcLDslYb+JnxnSvqnAWMmnbgMO+RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nb306tc8; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb443746b8so16972181fa.0;
+        Thu, 17 Oct 2024 13:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729197030; x=1729801830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YNxhyOHCQQ+glvsFF+JENSwwTbomwNvvYRHvuSnOhL4=;
+        b=Nb306tc8uRH96fZbPga9IJbyb3tu/euAcNoYnQ+CzQMOpm6zecewi07w03RI+pDLiC
+         TG9de4AiVn62AY7aR0/itU08NGTS7RaxT8erg9eNhvLBLw0H4VrfqbR/T/eIfQ+crexn
+         KtVmtGyxzmnRMuQN19MehC+QEcO8pdi8H64t0d6mTXDe695x2R/cLAec532LkUn5MPYh
+         bfBtWL3CrfjieBs/K3SSOH0YKLfZ73/M/wa+kMrUlM60TIsmWCMbjziwWTe3yxVZMY3C
+         wC8/zLAMLRvkRtZBlvXZSdJIxd5Kpfy5gF566ioOSROV5PSJjRjFHhk1g6+iZ0RADvrN
+         5AnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729197030; x=1729801830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YNxhyOHCQQ+glvsFF+JENSwwTbomwNvvYRHvuSnOhL4=;
+        b=V2Kco+eCnFnpS345LCO/qP9PM2rizXWo9ojJeI9X7NIkU6Qyk+JsFh7sJBv3DrqXZu
+         Eusb3WAub1OdTUoEqMf8OctnOi/6gn8+yM+p8qpfngJr6rgzXslXIm7WTzsa+kHFeLUu
+         y3Xt4WY3cI3eq3X/Tcx3sSiwplqfsEaep4tk5dCQg6ym3WrmAa/rdMn8WxstDRvty6xB
+         F+69+gBmYXcjSpo4bbF1djWntIgpVuaoWjihiZK8ImPru4tUGDJoO/HcAkDtooJoNPCI
+         QWmvG7cCWMcSeqvuWtH5vZ80LjIEobVFA2OBg3HkS/XINYUlBNo6pZc20525w+hqcVQL
+         vWgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGgtCo89dvTEhD/L5QiHo7Jyi1IcMFB2kxLOSlHeAGWBg5HvkOVqLUbe/Bz6wPr3O79yMKtUM+2DluPQ==@vger.kernel.org, AJvYcCWmnEQZNHzp/0jKdVKRWATIJ4+g2U5gyfaKhjf4wYigRoEUN8U91cYjJkDBpqa498QSZWvM9nPtADajZCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwRJDzSKE2b3q0wHSmIDN1up+TsXDPFnNvagg77U/1PnpfpEhT
+	a0/zWBgG73csWo+lazsPtkt5e2y8GV6hz4fR4rvnTQgETdtYg9DTXaaUIUcMX9QIYOeF8V8sNyL
+	J9zP5yfQIpDgYzbodDDbO9UpNRxFYOqEfPjE=
+X-Google-Smtp-Source: AGHT+IHnbPPdNB2w+U68jNynvP4GviJRjFcq6tnYXEleMnMCN8d1RhiI8vYxyzFYAoDrvYPvXCGYj486cGr6tpgU0ko=
+X-Received: by 2002:a05:651c:1546:b0:2f5:2e2:eadf with SMTP id
+ 38308e7fff4ca-2fb61b4c4d3mr57319091fa.10.1729197030134; Thu, 17 Oct 2024
+ 13:30:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MW3PR11MB4554:EE_
-X-MS-Office365-Filtering-Correlation-Id: a912e9a8-d126-4d97-d1cb-08dceeea5c69
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dVsYAYB785u3mOx8bUftpaAsq8y6SqugKSGbmpIocJdAu25a9jSM/+xXz8Sb?=
- =?us-ascii?Q?PIAUgp+84Jifa3wZCEO1Vr3zKtbfAcJGbqqpdpaLmOmzH164Jo9cQ50XgO7W?=
- =?us-ascii?Q?SITYga9OIX1pfBJj7qCzBk5WE8LwnDDSpPOlH8bXkANP5J8pxOtTWDMdCyki?=
- =?us-ascii?Q?Y84ymTsq9sMBzsQfwVKQ6rRwjugdg2p2JK5bnNmdNOOIhfoXoJubgirdaFE7?=
- =?us-ascii?Q?cjR0LRsRIcIuTi2WQvbdV4H14MuNtRQwsKFkM/gFuAgVJt0aOsvzkk29mD0S?=
- =?us-ascii?Q?KszpiOE9x7Vm1KLeHTasdYIK1vsOFnUuXCT6APMf+mpDAEqN6WsIdDN5aq4k?=
- =?us-ascii?Q?KiJ6/NsFStZpL0RZ8R9c0M3Z4hNd0IczX/Y/NhFWT/YBhjLufVuRqWLhyUis?=
- =?us-ascii?Q?Bdb8Tg+VNQkPdjdBcxD5O0UeU0VswawUSJCRpuAnhxGT956bR0PgWaFNNA/n?=
- =?us-ascii?Q?xhk/EF2ZCdjNGvrQBzp6PucA3CxvhAIHoXE7o9fhunun4DDLwefcTRxdf8BY?=
- =?us-ascii?Q?4GwIwetk4WRZurqCViQs5cSE0/8AqCN85jTVqTFgy4ckXIhwzZ3CQL+dt0Im?=
- =?us-ascii?Q?ZcTn8sy4xpIu7w+O4l9lox8mqL3Bw6oO0Ny7n2xCCcb/CBWuSLnM3l8OGgEk?=
- =?us-ascii?Q?Zv7cn58dHl8EMuq+vxoSHGAM4TpY+GlymX6ahOuebPjmvoFCeoBrtLBs/afB?=
- =?us-ascii?Q?oWyu6zoVxtxScuz/YDG3vywqdCjuap8zUZTqCqbVTNeqIpXlbhMYADEtnnBB?=
- =?us-ascii?Q?CR49ef+FzA64eNtlWBbjcOo6YdrtcqqhE8EwqnrQVatyVAWUohfNXd2U0XJg?=
- =?us-ascii?Q?n9sQkq382Oy0DIINaM9y9D8Li9gmIYBCeBOqt+cI1RzIzEMQvx2lS5KT31by?=
- =?us-ascii?Q?SGjp1kXE7GNpa6uTjncpV5pDPayVsEn5OCN2zZdojm8SNeRDEJw00ID0X7lH?=
- =?us-ascii?Q?Hjx8lBLLf6wte4cYS0ouN9rmbWyRObIbxWvaQjgxcUDq2Zl55RsB+9GRUTtv?=
- =?us-ascii?Q?ykn3YSwwL0rAA2nzlz/rJQyUaejQe57rFTAO8I4wCMSa2sDMoGwfk96/ohGG?=
- =?us-ascii?Q?xknAZ0hIoQKnm5nKgjVoVKFG6Op8RWIrxzntzxFc8nRjT13stSd+LNl5Sq3a?=
- =?us-ascii?Q?/cfdJzU5wCYJJN4UUSsJ82wEGNo8lzk8HSiS5Sne3z/fiLrs91pVr/1C+Yra?=
- =?us-ascii?Q?odgbdvLInF0/xZGS/Py9vAzAhTsDtHw3yIoa2G3+uUgYmhpsFlAEBANzOfcH?=
- =?us-ascii?Q?5HeYOaIdMSzbK3QiuxzN0fTtV/VyvbpeLq9JVRJwZaVaY54NfCKzVvdzVfOT?=
- =?us-ascii?Q?+C2JsXLoBW75SPD9MvwV7Phn?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+vmynPRh5GJSzTEQCNysEJPV50B3M3+E1PZd/oNY639QAUP38U78HV2zGaYq?=
- =?us-ascii?Q?3+vDfVszs5QQE0zW6nV1QuOdtLVXnO5Ro4nG/tmlMaRY0Hi3wBy0lg3j1S8T?=
- =?us-ascii?Q?nGpud6GSln1RpJf/gVJ4LmiBlMGoJgqLsH0MgmlEUMgZpWA0XGrpfHslzZeQ?=
- =?us-ascii?Q?uTgeFCuIyh9AzTZmhmBCSPLJFKuPLUK7cIQyoqSjTe4awhLeFVFbk8kHvdTT?=
- =?us-ascii?Q?1NMEYp2G69i4YY3AXYcmyojbGZkXTwEmCI41O+92WNhiNC1j5kRCp4sIhSEs?=
- =?us-ascii?Q?upuWgpOdHU9k9FD0Bc+Kf8XAXKS4XP1vugo79Z/FuBHoWPXlcuuwXGEgVpel?=
- =?us-ascii?Q?gAk0HFnnPjpr7DaSH3Jls0EySA7imnOX7maH6PZ+l9hbirzDoz02VWOf+KsA?=
- =?us-ascii?Q?jTx4Jb/C7jzAP0uW6IGz+JeXfvHVFM3r0KCd0qV5mJOYJOmY8k6mZ9vayC1e?=
- =?us-ascii?Q?ZuZQtBsD7fLvoqUeaTduPfB2zeuupZzTP4UGXGbdC0mQUbv9dN3MqXPfBDlW?=
- =?us-ascii?Q?GQ0WEMBjPmezT2KaPGJtifEc7JtvtvC7kOZJgDsNzHUr5DQAb6Jg2XLRhJMe?=
- =?us-ascii?Q?ljUSAH4ma+Hb4h1HBvxf59bCEErLEOsM8+C05KwXA3VvV4J+Vf4qsZii1OFS?=
- =?us-ascii?Q?tKnvZHNKHMY7BDPd+0FMLqNeHtqBQ1zS0l+Qr7MDz+iZU3Mj4qhUx7APDzkt?=
- =?us-ascii?Q?XtFH5d2HICXVECYcTxnSOgsiqFueHOeYySVJLSdrg/OLjW3/3tpAMbagyDDh?=
- =?us-ascii?Q?NITW1iPJVMDrBUBvPVTjneChgjoIVOu7tBXcZ2glU7TVlWmLrdbJi9h2sJ1Q?=
- =?us-ascii?Q?5GcFaXoU0BZjctr58NromXmGeFDB4aGnwQELnt2eTiQtsEgGWQQreFC1qPKl?=
- =?us-ascii?Q?zzLq8gB1/JLZwwL634bxO8dkqN1TQoO7idn0EjX5g6xMOxaeDmt2xYkN5TVf?=
- =?us-ascii?Q?u3F9I6GHvseN/2TSk6n0WHKWiH3/BasuMN2nj58YF4bWzX8/cmsJn5f5A1/t?=
- =?us-ascii?Q?ZipeR3He0Q+Ckc3WrvXEorz3LizBfv5wrbi72VT3KSodXyKY8hyq6pebChiw?=
- =?us-ascii?Q?A9G2mX+uFUtsW+goojTVKxj6E42/FKk7X4YwQ+fr+bV5duVM95lty65FdHLu?=
- =?us-ascii?Q?5+6e0pqUdKGj24w/G3CGEYYmg4mUFQWqB/05H6Kvxs24rIJYN6djL1cOgd5F?=
- =?us-ascii?Q?Zj3cBEoidZ0RPznqbkoD35c0qbKRUJhh5gZSsrN2lF2TZmVnpL28Z4IAyp3V?=
- =?us-ascii?Q?p+eN8SUnbe2pdY2XWUYAqImER/4EGTrda4GCQY0btqG7/foHHLWMe0yoDdyv?=
- =?us-ascii?Q?n/2xItRTVOfLPn7TuGzVc4sruQ6FHUdoQFmek4aGvdQtrHOJJitIZqXl03En?=
- =?us-ascii?Q?cIn+Y7P0WuCTyrAmlLXiTDT3Z7ISqVDyFkyXR9p77LGqoV+LtOk+XSbpHvgP?=
- =?us-ascii?Q?rx12AKmP9gSRPh4THdR/CeI73tWKbPi2289xgGS2nzmfRlhW2gqyXd7JO2Pv?=
- =?us-ascii?Q?eUL4gZxxsWlUr1E5wfAkCUvmmoukZa5QlH9Yr43BqS6N2edXj5svVEcxQuEf?=
- =?us-ascii?Q?4tNIQ+cRgYlKFZMdiXBVvJTRLE9Xl1lcbs/OfwDj?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a912e9a8-d126-4d97-d1cb-08dceeea5c69
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 20:29:12.3189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3JwOZoAnsv42JFskqBebXUXBJbtupB0fqYwI0Zj0dfBLNF26dlkItQXtBWSaLFLRLtPBJxmDgLp239KjQxlYxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4554
-X-OriginatorOrg: intel.com
+References: <20241015162532.2292871-1-quic_mojha@quicinc.com>
+ <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
+ <Zw7COXsvJsWq4db9@hu-mojha-hyd.qualcomm.com> <CABCoZhCDJfiRtUvQ-4ypaQsiktC3b22r4=TCy5V+RVeOb4wP+A@mail.gmail.com>
+ <Zw9S7LYZ1Sb/eMXe@hu-mojha-hyd.qualcomm.com> <CABCoZhBVEDKaaH36C+r4uMYo_08uRne9jikFCz8-yRuChR8JSw@mail.gmail.com>
+ <385b7baa-8027-c4cf-948f-a1dff570befc@gmail.com> <CABCoZhBq4oFHOoPoWu2g=1Szry7bV9rBRgq_4zDxuS=17jfNhw@mail.gmail.com>
+ <c3965459-c295-c577-8b49-834ea4c19d55@gmail.com>
+In-Reply-To: <c3965459-c295-c577-8b49-834ea4c19d55@gmail.com>
+From: anish kumar <yesanishhere@gmail.com>
+Date: Thu, 17 Oct 2024 13:30:18 -0700
+Message-ID: <CABCoZhBmmmyQ6s27s_gXrv6rR9Wf672-t+OEg-PfdxReFdr++Q@mail.gmail.com>
+Subject: Re: [PATCH] leds: class: Protect brightness_show() with
+ led_cdev->led_access mutex
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jonathan Cameron wrote:
-> On Mon, 07 Oct 2024 18:16:21 -0500
-> Ira Weiny <ira.weiny@intel.com> wrote:
-> 
-> > create_pmem_region_store() and create_ram_region_store() are identical
-> > with the exception of the region mode.  With the addition of DC region
-> > mode this would end up being 3 copies of the same code.
-> > 
-> > Refactor create_pmem_region_store() and create_ram_region_store() to use
-> > a single common function to be used in subsequent DC code.
-> > 
-> > Suggested-by: Fan Ni <fan.ni@samsung.com>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> Nice.
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> Is it worth dragging out cleanup like this to the start of the series so
-> Dave can queue it up as 'good to have whatever' and reduce this set
-> a bit?
+On Thu, Oct 17, 2024 at 10:59=E2=80=AFAM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+>
+>
+>
+> On 10/17/24 18:41, anish kumar wrote:
+> > On Thu, Oct 17, 2024 at 5:12=E2=80=AFAM Jacek Anaszewski
+> > <jacek.anaszewski@gmail.com> wrote:
+> >>
+> >> Hi Anish and Mukesh,
+> >>
+> >> On 10/16/24 18:37, anish kumar wrote:
+> >>> On Tue, Oct 15, 2024 at 10:45=E2=80=AFPM Mukesh Ojha <quic_mojha@quic=
+inc.com> wrote:
+> >>>>
+> >>>> On Tue, Oct 15, 2024 at 03:28:08PM -0700, anish kumar wrote:
+> >>>>> On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mukesh Ojha <quic_mojha@qu=
+icinc.com> wrote:
+> >>>>>>
+> >>>>>> On Tue, Oct 15, 2024 at 10:59:12AM -0700, anish kumar wrote:
+> >>>>>>> On Tue, Oct 15, 2024 at 9:26=E2=80=AFAM Mukesh Ojha <quic_mojha@q=
+uicinc.com> wrote:
+> >>>>>>>>
+> >>>>>>>> There is NULL pointer issue observed if from Process A where hid=
+ device
+> >>>>>>>> being added which results in adding a led_cdev addition and late=
+r a
+> >>>>>>>> another call to access of led_cdev attribute from Process B can =
+result
+> >>>>>>>> in NULL pointer issue.
+> >>>>>>>
+> >>>>>>> Which pointer is NULL? Call stack shows that dualshock4_led_get_b=
+rightness
+> >>>>>>> function could be culprit?
+> >>>>>>
+> >>>>>> in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [=
+2]
+> >>>>>> is not yet completed.
+> >>>>>>
+> >>>>>> [1]
+> >>>>>>    struct hid_device *hdev =3D to_hid_device(led->dev->parent);
+> >>>>>>
+> >>>>>> [2]
+> >>>>>> led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0=
+,
+> >>>>>>                     led_cdev, led_cdev->groups, "%s", final_name);
+> >>>>>>
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> Use mutex led_cdev->led_access to protect access to led->cdev an=
+d its
+> >>>>>>>> attribute inside brightness_show().
+> >>>>>>>
+> >>>>>>> I don't think it is needed here because it is just calling the le=
+d driver
+> >>>>>>> callback and updating the brightness. So, why would we need to se=
+rialize
+> >>>>>>> that using mutex? Maybe the callback needs some debugging.
+> >>>>>>> I'm curious if it is ready by the time the callback is invoked.
+> >>>>>>
+> >>>>>> Because, we should not be allowed to access led_cdev->dev as it is=
+ not
+> >>>>>> completed and since, brightness_store() has this lock brightness_s=
+how()
+> >>>>>> should also have this as we are seeing the issue without it.
+> >>>>>>
+> >>>>>> I hope, above might have answered your question.
+> >>>>>>
+> >>>>>> -Mukesh
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>>           Process A                               Process B
+> >>>>>>>>
+> >>>>>>>>    kthread+0x114
+> >>>>>>>>    worker_thread+0x244
+> >>>>>>>>    process_scheduled_works+0x248
+> >>>>>>>>    uhid_device_add_worker+0x24
+> >>>>>>>>    hid_add_device+0x120
+> >>>>>>>>    device_add+0x268
+> >>>>>>>>    bus_probe_device+0x94
+> >>>>>>>>    device_initial_probe+0x14
+> >>>>>>>>    __device_attach+0xfc
+> >>>>>>>>    bus_for_each_drv+0x10c
+> >>>>>>>>    __device_attach_driver+0x14c
+> >>>>>>>>    driver_probe_device+0x3c
+> >>>>>>>>    __driver_probe_device+0xa0
+> >>>>>>>>    really_probe+0x190
+> >>>>>>>>    hid_device_probe+0x130
+> >>>>>>>>    ps_probe+0x990
+> >>>>>>>>    ps_led_register+0x94
+> >>>>>>>>    devm_led_classdev_register_ext+0x58
+> >>>>>>>>    led_classdev_register_ext+0x1f8
+> >>>>>>>>    device_create_with_groups+0x48
+> >>>>>>>>    device_create_groups_vargs+0xc8
+> >>>>>>>>    device_add+0x244
+> >>>>>>>>    kobject_uevent+0x14
+> >>>>>>>>    kobject_uevent_env[jt]+0x224
+> >>>>>>>>    mutex_unlock[jt]+0xc4
+> >>>>>>>>    __mutex_unlock_slowpath+0xd4
+> >>>>>>>>    wake_up_q+0x70
+> >>>>>>>>    try_to_wake_up[jt]+0x48c
+> >>>>>>>>    preempt_schedule_common+0x28
+> >>>>>>>>    __schedule+0x628
+> >>>>>>>>    __switch_to+0x174
+> >>>>>>>>                                                   el0t_64_sync+0=
+x1a8/0x1ac
+> >>>>>>>>                                                   el0t_64_sync_h=
+andler+0x68/0xbc
+> >>>>>>>>                                                   el0_svc+0x38/0=
+x68
+> >>>>>>>>                                                   do_el0_svc+0x1=
+c/0x28
+> >>>>>>>>                                                   el0_svc_common=
++0x80/0xe0
+> >>>>>>>>                                                   invoke_syscall=
++0x58/0x114
+> >>>>>>>>                                                   __arm64_sys_re=
+ad+0x1c/0x2c
+> >>>>>>>>                                                   ksys_read+0x78=
+/0xe8
+> >>>>>>>>                                                   vfs_read+0x1e0=
+/0x2c8
+> >>>>>>>>                                                   kernfs_fop_rea=
+d_iter+0x68/0x1b4
+> >>>>>>>>                                                   seq_read_iter+=
+0x158/0x4ec
+> >>>>>>>>                                                   kernfs_seq_sho=
+w+0x44/0x54
+> >>>>>>>>                                                   sysfs_kf_seq_s=
+how+0xb4/0x130
+> >>>>>>>>                                                   dev_attr_show+=
+0x38/0x74
+> >>>>>>>>                                                   brightness_sho=
+w+0x20/0x4c
+> >>>>>>>>                                                   dualshock4_led=
+_get_brightness+0xc/0x74
+> >>>>>>>>
+> >>>>>>>> [ 3313.874295][ T4013] Unable to handle kernel NULL pointer dere=
+ference at virtual address 0000000000000060
+> >>>>>>>> [ 3313.874301][ T4013] Mem abort info:
+> >>>>>>>> [ 3313.874303][ T4013]   ESR =3D 0x0000000096000006
+> >>>>>>>> [ 3313.874305][ T4013]   EC =3D 0x25: DABT (current EL), IL =3D =
+32 bits
+> >>>>>>>> [ 3313.874307][ T4013]   SET =3D 0, FnV =3D 0
+> >>>>>>>> [ 3313.874309][ T4013]   EA =3D 0, S1PTW =3D 0
+> >>>>>>>> [ 3313.874311][ T4013]   FSC =3D 0x06: level 2 translation fault
+> >>>>>>>> [ 3313.874313][ T4013] Data abort info:
+> >>>>>>>> [ 3313.874314][ T4013]   ISV =3D 0, ISS =3D 0x00000006, ISS2 =3D=
+ 0x00000000
+> >>>>>>>> [ 3313.874316][ T4013]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAcce=
+ss =3D 0
+> >>>>>>>> [ 3313.874318][ T4013]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D =
+0, Xs =3D 0
+> >>>>>>>> [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=
+=3D00000008f2b0a000
+> >>>>>>>> ..
+> >>>>>>>>
+> >>>>>>>> [ 3313.874332][ T4013] Dumping ftrace buffer:
+> >>>>>>>> [ 3313.874334][ T4013]    (ftrace buffer empty)
+> >>>>>>>> ..
+> >>>>>>>> ..
+> >>>>>>>> [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
+> >>>>>>>> [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x=
+74
+> >>>>>>>> [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
+> >>>>>>>> [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
+> >>>>>>>> ..
+> >>>>>>>> ..
+> >>>>>>>> [ 3313.874685][ T4013] Call trace:
+> >>>>>>>> [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
+> >>>>>>>> [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
+> >>>>>>>> [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
+> >>>>>>>> [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
+> >>>>>>>> [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
+> >>>>>>>> [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
+> >>>>>>>> [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
+> >>>>>>>> [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
+> >>>>>>>> [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
+> >>>>>>>> [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
+> >>>>>>>> [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
+> >>>>>>>> [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
+> >>>>>>>> [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
+> >>>>>>>> [ 3313.874727][ T4013]  el0_svc+0x38/0x68
+> >>>>>>>> [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
+> >>>>>>>> [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> >>>>>>>> ---
+> >>>>>>>>    drivers/leds/led-class.c | 3 ++-
+> >>>>>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> >>>>>>>> index 06b97fd49ad9..e3cb93f19c06 100644
+> >>>>>>>> --- a/drivers/leds/led-class.c
+> >>>>>>>> +++ b/drivers/leds/led-class.c
+> >>>>>>>> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *=
+dev,
+> >>>>>>>>    {
+> >>>>>>>>           struct led_classdev *led_cdev =3D dev_get_drvdata(dev)=
+;
+> >>>>>>>>
+> >>>>>>>> -       /* no lock needed for this */
+> >>>>>
+> >>>>> just get rid of the above comment then.
+> >>>>
+> >>>> If you notice, it is already removed (-) .
+> >>>>
+> >>>>>
+> >>>>> Also, the comment below in file leds.h
+> >>>>> needs an update as originally the idea for this mutex lock was to
+> >>>>> provide quick feedback to userspace based on this commit
+> >>>>> https://github.com/torvalds/linux/commit/acd899e4f3066b6662f6047da5=
+b795cc762093cb
+> >>>>>
+> >>>>> Basically a comment somewhere so that when a new attribute
+> >>>>> gets added, it doesn't make the same mistake of not using the mutex
+> >>>>> and run into the same issue.
+> >>>>>
+> >>>>> /* Ensures consistent access to the LED Flash Class device */
+> >>>>> struct mutex led_access;
+> >>>>
+> >>>> Thanks for accepting that it is an issue.
+> >>>> I think, comment is very obvious actually the patch you mentioned sh=
+ould
+> >>>> be in fixes tag as it introduced the lock but did not protect the sh=
+ow
+> >>>> while it does it for store.
+> >>>
+> >>> Yes, but that patch was added for supporting flash class
+> >>> device and wasn't explicitly to take care of the scenario that you
+> >>> are trying to handle and the above comment in leds.h states the same.
+> >>
+> >> Correct. led_access mutex was introduced to add support for preventing
+> >> any LED class device state changes originating from sysfs while
+> >> v4l2_flash wrapper owns the device.
+> >>
+> >> Since the inception of LED subsystem all the locking was deemed to be
+> >> the responsibility of every single LED class driver and initially sysf=
+s
+> >> attr callbacks didn't have any locking. After some time when LED core
+> >> started to grow it turned out that it was required to lock the LED cla=
+ss
+> >> initialization sequence, so as not to give the userspace an opportunit=
+y
+> >> to set LED brightness on not fully initialized device, which was
+> >> introduced in [0]. led_access mutex was already in place so it was use=
+d.
+> >> However as you noticed, it is not used consistently across all LED cla=
+ss
+> >> sysfs attrs callbacks.
+> >>
+> >> Since brightness_show() does not acquire led_access mutex it is still
+> >> possible to call brightness_get op when LED class initialization
+> >> sequence is not yet finished.
+> >>
+> >> Still, I'd propose to first narrow down the issue and figure out what
+> >> actually causes NULL pointer dereference, as it apparently
+> >> originates from dualshock4_led_get_brightness and not from LED core.
+> >
+> > Mukesh already explained the issue in earlier emails but here is the gi=
+st
+> > anyway.
+> >
+> > led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0,
+> >    led_cdev, led_cdev->groups, "%s", final_name);
+> >
+> > If you look at the above code, device_create_with_groups function
+> > can create all the sysfs and before it returns and assigns led_cdev->de=
+v
+> > pointer, those sysfs callback can get triggered and if the callback
+> > accesses led_cdev->dev this variable, it will crash as it is not yet
+> > assigned.
+>
+> Your trace ends in dualshock4_led_get_brightness(). Did you confirm that
+> NULL pointer dereference is caused by accessing led_cdev->dev there?
 
-The problem was that this patch depended on the region mode change...  But
-that was an easy change.
+Based on the comment from mukesh, he confirmed that.
 
-I've moved it forward.
+Relevant comment from him:
+"
+in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [2]
+is not yet completed.
 
-Ira
+[1]
+struct hid_device *hdev =3D to_hid_device(led->dev->parent);
+
+[2]
+led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0,
+                       led_cdev, led_cdev->groups, "%s", final_name);
+"
+>
+> --
+> Best regards,
+> Jacek Anaszewski
 
