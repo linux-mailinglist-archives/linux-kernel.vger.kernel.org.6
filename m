@@ -1,240 +1,96 @@
-Return-Path: <linux-kernel+bounces-370031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CFF49A2624
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:10:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3A99A2621
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FB7D1C2175A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:10:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FEED287A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579D71DE4FD;
-	Thu, 17 Oct 2024 15:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCF61DE8B5;
+	Thu, 17 Oct 2024 15:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btN0CXLs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBpGVze8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5AF1DED5B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252391DB956;
+	Thu, 17 Oct 2024 15:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729177831; cv=none; b=R4gWmhUh6ypjLmPbN9ij/PrtrlRSJc2pEW3IGwpWKdmg/m9D5nnmdS06kJiySGXgY67gYKJZ3wYm77AIf0xA2hGz8lE+H9q75vSde+DSrWiqMig0fDD+IzpnVTYuuNRMtlt+r38+zU3THOXKr9wImDHTE16dPDYdzoqUQ6ZEOCE=
+	t=1729177824; cv=none; b=RWsGPMIMNXDZVu4PnrTIOSm6jpMgk2m6bI5arNEfxxz+Ig2Fi1GEy4Myvw0wLoUE8BYstH7iUae72V14r8+D1VnZlZ42JASxEOVgKUA+zKwf/GYJ8XKwRrb5AHTyPUshNHPVlAy9FUAK8U8HpEuulvvEwzdOcoM0+8+HZRXJ+BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729177831; c=relaxed/simple;
-	bh=6XP/LzTB3nvKYFWkVuM1f8jskS31WWEbgTeV8UCE0d8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ub9CLo8XsVvIgG3yw1CM6cihygPJGUdIokNpJeohmIxjrKb7HeIxVSRhOMMwy6+xkZTpc48SghcTmW3B/h3GIZKcMEZ0S/gEgjDDCNKlAAsz5QYo3B2s1Tp32NSuEdlWDkA+mVAXv8hM+RPVduer4uE9AdCA6VtAmRaK9ILmkh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btN0CXLs; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729177826; x=1760713826;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6XP/LzTB3nvKYFWkVuM1f8jskS31WWEbgTeV8UCE0d8=;
-  b=btN0CXLs4Z1lAqptz3w4tTk6D5lPC6XheemZUIbHhyxcsIGve9IRtCB9
-   32cKmKYFUZ3y1XPecrnmSbuuHDK9lnxX0vtc8HGR8efPSXYc1R4C5CNni
-   29/uuTQ33oRs6acovgzPRLn3nQUbPK1prYCi9DJ6lBeZjEvFkKxHLrhaN
-   9ro7S38gjTcvBgra5bFYfAGR0teXEqgTYgtMgZ4ortlJumDNG7iZrV5uW
-   k1H39DTtAIz9wpULEQrO9i+YgzJ7BJKFMAFDHLiqOs5KofEo0MRkDqTrn
-   5kqefjRtmDy8jCPIqimtuZNvn7nAbV99oxy8TvaXJMvj8AwPbrzi7OCHB
-   g==;
-X-CSE-ConnectionGUID: Bptue838QsKgOSPYUPyslw==
-X-CSE-MsgGUID: prxkuOxZRAyzkW5dkS2nDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="32351252"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="32351252"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 08:10:26 -0700
-X-CSE-ConnectionGUID: VZBLmX2CTKqnKAJCN9HErw==
-X-CSE-MsgGUID: BxKVCxrIRHe9gJtNIRMSzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="101885038"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO fedora..) ([10.245.246.150])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 08:10:22 -0700
-From: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Maarten Lankhorst <maarten@lankhorst.se>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com
-Subject: [PATCH v3] locking/ww_mutex: Adjust to lockdep nest_lock requirements
-Date: Thu, 17 Oct 2024 17:10:07 +0200
-Message-ID: <20241017151007.92215-1-thomas.hellstrom@linux.intel.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1729177824; c=relaxed/simple;
+	bh=hvs6/KkeeLfo/pqdhicK7HWBMyjlkj8lfbeYVi+E85w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Fr8yGn5A0adM4UMKjqAmwvkCUJEO/KbZzqJsGGjAFprQIjJfNhQKDVA+bCC6WCTQCccSfHcpL9CwrDEEMnkJCfet8BKh1nwkHAHJ39RGTwuJZ3tOChgPGcrsoDgaGQIT+BGczaFBp91cgDqbK08+ZlqXVKC884Ubizsna2YBBzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBpGVze8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F33CC4CEC3;
+	Thu, 17 Oct 2024 15:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729177823;
+	bh=hvs6/KkeeLfo/pqdhicK7HWBMyjlkj8lfbeYVi+E85w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mBpGVze83vITnoccm1uqKS79tpMySV/jX0eTav9Z5urwp1U94OmasOPoHrRw3xPeL
+	 b9WiR5VDQyOOQcEZSkvjyRUZCDSXbhiOlaypWaYskkAjdGevdGNjC1tifV9we5jz/P
+	 RGMVA73P08br45YQ01NONFZ6/tS7Rto5ehMj/FX10aIkc9FAMfFyMTpoSV+7KvfZUh
+	 SieevRshTF1UnQDDiPYar99am7wndpUWtjVIQk/RbidOXYcHakVlY8xYN9L98DmgLm
+	 pQ2sk755QpAS4cq94TqVJY6Yl2/j6Kfg142d9HSgPkJ+jQDx/tH9pPV/hnC6BaDqPy
+	 e5nJM/G8Kk5EQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D023809A8A;
+	Thu, 17 Oct 2024 15:10:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] riscv, bpf: Make BPF_CMPXCHG fully ordered
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172917782901.2501843.16846439136645084983.git-patchwork-notify@kernel.org>
+Date: Thu, 17 Oct 2024 15:10:29 +0000
+References: <20241017143628.2673894-1-parri.andrea@gmail.com>
+In-Reply-To: <20241017143628.2673894-1-parri.andrea@gmail.com>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bjorn@kernel.org,
+ pulehui@huawei.com, puranjay@kernel.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, paulmck@kernel.org,
+ bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
 
-When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
-number of acquired lockdep_maps of mutexes of the same class, and also
-keeps a pointer to the first acquired lockdep_map of a class. That pointer
-is then used for various comparison-, printing- and checking purposes,
-but there is no mechanism to actively ensure that lockdep_map stays in
-memory. Instead, a warning is printed if the lockdep_map is freed and
-there are still held locks of the same lock class, even if the lockdep_map
-itself has been released.
+Hello:
 
-In the context of WW/WD transactions that means that if a user unlocks
-and frees a ww_mutex from within an ongoing ww transaction, and that
-mutex happens to be the first ww_mutex grabbed in the transaction,
-such a warning is printed and there might be a risk of a UAF.
+This patch was applied to bpf/bpf.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-Note that this is only problem when lockdep is enabled and affects only
-dereferences of struct lockdep_map.
+On Thu, 17 Oct 2024 17:36:28 +0300 you wrote:
+> According to the prototype formal BPF memory consistency model
+> discussed e.g. in [1] and following the ordering properties of
+> the C/in-kernel macro atomic_cmpxchg(), a BPF atomic operation
+> with the BPF_CMPXCHG modifier is fully ordered.  However, the
+> current RISC-V JIT lowerings fail to meet such memory ordering
+> property.  This is illustrated by the following litmus test:
+> 
+> [...]
 
-Adjust to this by adding a fake lockdep_map to the acquired context and
-make sure it is the first acquired lockdep map of the associated
-ww_mutex class. Then hold it for the duration of the WW/WD transaction.
+Here is the summary with links:
+  - riscv, bpf: Make BPF_CMPXCHG fully ordered
+    https://git.kernel.org/bpf/bpf/c/98cd61955771
 
-This has the side effect that trying to lock a ww mutex *without* a
-ww_acquire_context but where a such context has been acquire, we'd see
-a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
-modify that particular test to not acquire a ww_acquire_context if it
-is not going to be used.
-
-v2:
-- Lower the number of locks in the test-ww_mutex
-  stress(STRESS_ALL) test to accommodate the dummy lock
-  introduced in this patch without overflowing lockdep held lock
-  references.
-
-v3:
-- Adjust the ww_test_normal locking-api selftest to avoid
-  recursive locking (Boqun Feng)
-- Initialize the dummy lock map with LD_WAIT_SLEEP to agree with
-  how the corresponding ww_mutex lockmaps are initialized
-  (Boqun Feng)
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Maarten Lankhorst <maarten@lankhorst.se>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-Acked-by: maarten.lankhorst@linux.intel.com #v1
----
- include/linux/ww_mutex.h       | 14 ++++++++++++++
- kernel/locking/test-ww_mutex.c |  8 +++++---
- lib/locking-selftest.c         |  4 ++--
- 3 files changed, 21 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-index bb763085479a..45ff6f7a872b 100644
---- a/include/linux/ww_mutex.h
-+++ b/include/linux/ww_mutex.h
-@@ -65,6 +65,16 @@ struct ww_acquire_ctx {
- #endif
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- 	struct lockdep_map dep_map;
-+	/**
-+	 * @first_lock_dep_map: fake lockdep_map for first locked ww_mutex.
-+	 *
-+	 * lockdep requires the lockdep_map for the first locked ww_mutex
-+	 * in a ww transaction to remain in memory until all ww_mutexes of
-+	 * the transaction have been unlocked. Ensure this by keeping a
-+	 * fake locked ww_mutex lockdep map between ww_acquire_init() and
-+	 * ww_acquire_fini().
-+	 */
-+	struct lockdep_map first_lock_dep_map;
- #endif
- #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
- 	unsigned int deadlock_inject_interval;
-@@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
- 	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
- 	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
- 			 &ww_class->acquire_key, 0);
-+	lockdep_init_map_wait(&ctx->first_lock_dep_map, ww_class->mutex_name,
-+			      &ww_class->mutex_key, 0, LD_WAIT_SLEEP);
- 	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
-+	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
- #endif
- #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
- 	ctx->deadlock_inject_interval = 1;
-@@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
- static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
- {
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
-+	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
- 	mutex_release(&ctx->dep_map, _THIS_IP_);
- #endif
- #ifdef DEBUG_WW_MUTEXES
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 10a5736a21c2..5d58b2c0ef98 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
- 	int ret;
- 
- 	ww_mutex_init(&mtx.mutex, &ww_class);
--	ww_acquire_init(&ctx, &ww_class);
-+	if (flags & TEST_MTX_CTX)
-+		ww_acquire_init(&ctx, &ww_class);
- 
- 	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
- 	init_completion(&mtx.ready);
-@@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
- 		ret = wait_for_completion_timeout(&mtx.done, TIMEOUT);
- 	}
- 	ww_mutex_unlock(&mtx.mutex);
--	ww_acquire_fini(&ctx);
-+	if (flags & TEST_MTX_CTX)
-+		ww_acquire_fini(&ctx);
- 
- 	if (ret) {
- 		pr_err("%s(flags=%x): mutual exclusion failure\n",
-@@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
- 	if (ret)
- 		return ret;
- 
--	ret = stress(2047, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
-+	ret = stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
- 	if (ret)
- 		return ret;
- 
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 6f6a5fc85b42..6750321e3e9a 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -1720,8 +1720,6 @@ static void ww_test_normal(void)
- {
- 	int ret;
- 
--	WWAI(&t);
--
- 	/*
- 	 * None of the ww_mutex codepaths should be taken in the 'normal'
- 	 * mutex calls. The easiest way to verify this is by using the
-@@ -1770,6 +1768,8 @@ static void ww_test_normal(void)
- 	ww_mutex_base_unlock(&o.base);
- 	WARN_ON(o.ctx != (void *)~0UL);
- 
-+	WWAI(&t);
-+
- 	/* nest_lock */
- 	o.ctx = (void *)~0UL;
- 	ww_mutex_base_lock_nest_lock(&o.base, &t);
+You are awesome, thank you!
 -- 
-2.46.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
