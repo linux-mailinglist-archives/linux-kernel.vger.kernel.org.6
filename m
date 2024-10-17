@@ -1,195 +1,137 @@
-Return-Path: <linux-kernel+bounces-370404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D6E9A2BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:17:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F729A2C02
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB191C26334
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C1FEB29BC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C37E1E04BA;
-	Thu, 17 Oct 2024 18:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973C01E0DBA;
+	Thu, 17 Oct 2024 18:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MImItx9E"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zerbRrtP"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9AB1E0B82
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529D01EF923
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729188941; cv=none; b=Eu+WCby9oJ7kLtVE8f48TLtbQI4wtDZPX8IDLH5Oz9cSYOSqLQT9w5YIHblsFRLoSN/RvNuecunzcSA50YZWVZPRcVqMLxiQPYl25lVkrtlThY9yvM2D+RuzCTBR7SZOtmYTK72AS4vceW+Ua1KlnwPAfMoTqQaOhqHsLQO8ing=
+	t=1729188951; cv=none; b=kEebzB+03oFXsPej91yslea5ckgX0mUzQl0HT2OlA/s3RYzaWdlDI4ofwE6Zzl/DWcvTEd706zYKTRLxoPfQuNlUpHEYbekMvphWMikmJkPYE5Gek0OOTZs6SzGTsHaMBqTWbzU1Bkm6BB2OYITyF4O4D9K74Y+oVDNYBjjrRDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729188941; c=relaxed/simple;
-	bh=a250gqTybQoLWtogC//ZdkOdpAgR0TH2LFJaXWoUx0c=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=W3nNjPsQB/KNqEfUO5XyQiTd+LgyUJlXL+L0AoUO4TWOp2Mclo6nV029sY94tmxEKGDVXkUyzy6xd6LBEaS1loYZ9iIumyaASqpoqYadRH5PSMju71t35Gq/2BrxrSj23+8rdZM1kLl4zklf3+9XYo4KpzsbCzKJT0Pz2+TJTuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--weixugc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MImItx9E; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--weixugc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20c94c1f692so20493085ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:15:39 -0700 (PDT)
+	s=arc-20240116; t=1729188951; c=relaxed/simple;
+	bh=oTUz/VQn7UklM5M50weS61/LwJNX0gzLAsrslEIBg28=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=USINhJLr2xguzibNjKeLNZd0wsJ+BXo/3TXwMYbdUTatJ+Iqii/aOFO2HiQoFCEq0gZNVVpUzjSlZd9FzBMJ+2z+hlyv7TAybhfT7CrskY6LDH5ajO868Pnwn/Q9Fj3MYUIoC3jS16Es7R6sIVC/ZQ6JVqviGBVA9rYFnA0Qmr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zerbRrtP; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb50e84ec7so11785271fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:15:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729188939; x=1729793739; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HxA9E1IHlt239nhDTqDd4dmPZVRZp9vSfPKedRWwzZg=;
-        b=MImItx9E1ur4keMl35Dk4CssRgYF3mqglgM8o7RpGJICJHjjsVyKsNPkKcbuVsMMd5
-         bjx9k+S4BHRFItdb4YRkIijYp2ZXDmKGjKucISd00wVoW+4p7dkfMjxinv9s4XpGZsX7
-         jOGJVsm6M6ldpzWh9rsFJUSQiKXQYfqbmWtv2YLpPgFYFr/snLXrjwwbpSkoneRnD7NV
-         ou6H9g3LOXAvwDkOnoGWnOkgp+Li1zPqdG1C9iTyVDrJegZK7wLmzgWWH1qrJFnHFUUs
-         rFTRy1VGI8iOzk3ELtVpjh5Z1ZTelFiqIAqxozZPTu9z0B6SzmVYSJx5csrx5QjZOe0M
-         U/Ew==
+        d=linaro.org; s=google; t=1729188943; x=1729793743; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=maudRK96GwrbNZg+HV+z+1R0VXUFq2cWemaNzcdsWgY=;
+        b=zerbRrtP7pmzySwASEdOTqybe8kGYikoCY7Fnn8IlUswLXAwxYlgPm834OmKWk+MsQ
+         YmqK9lKTpOaIpF2ciBEmU6/L8oRbt/xSt26LBbYYSYIDDoDXabCs8sJR+9P6CWIHDew5
+         7K18FVZ0I9CriHmM+Xv80Hdaz+Q/AQ5MrGIpS6y2PMRL4sj7w7bbB6sjggCoiqj8V5e3
+         EmdvglGXvFk1DHih4zvFWQ6lnHKDNp2cVUKMFK1XDlS2PDcY3UEtipduhCPU5vxrXxH+
+         dzlN18b4mWhIBCIHl7UPy/X4EhyzXI1Ddty5RJgDY+5vDMAxeAFOKOUz+oP3Ll7+Yq8R
+         N8SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729188939; x=1729793739;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HxA9E1IHlt239nhDTqDd4dmPZVRZp9vSfPKedRWwzZg=;
-        b=ryKq2ac0rx0N67ZnQKhFCXn2NujXWIQZNQR3OVu/tGsGOFRZjIdTu46vRszs2op5r3
-         cpfPaI3olCnO2Z0x3JJpBilkAAXxvlkdSRju6MSR1jP22GYTsUZtsGKmuJSScdFdkFks
-         V2NwghHu3GHuSdnVUjHxSrzN+5ZoVg1XvEjWE+nrvoeWcJ+G7jzp16yylNn4JGXQ5KRB
-         zMl5clOONIL6EDLjmmpuiXEgQ3q1mlcQjQSPb9s3ELDbQgg9oL8M+66ivtZ9N1zoc6Wb
-         5DOi90y4zht621caBnNrashoO8g8FQoppEPm1wEXL1I2s70uQqSv8YKAGo+Fpz3QZf/U
-         uOpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSnVT4GPsKUJvtm0n38B3PttiybOi6eK1EDkZ6flKbB8KrxJc6gayLMY9sPDVdKCi1uGNigg+c31MRskE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkUjVYfRk/oe27sx4kv9xIzqKasXsURw3V+HTiU2IN3GKikYOe
-	3EU13apULTWBuIvZ0D4OMkTZjqtQdhbKA5+v9KwxpwK3qbO8o8x0TP1NxV328UbKut38cAjOV4q
-	p3gWabA==
-X-Google-Smtp-Source: AGHT+IEM5Vb8Wnjqgfj0YMkL/+m9MvF/5frBqIhXLjjHbwiFYCqRQAulc0R8W0vdNIg7J3UV6981NeDrJSjv
-X-Received: from monterey.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:641d])
- (user=weixugc job=sendgmr) by 2002:a17:903:4287:b0:20c:6764:6681 with SMTP id
- d9443c01a7336-20d4720842bmr44275ad.2.1729188938643; Thu, 17 Oct 2024 11:15:38
- -0700 (PDT)
-Date: Thu, 17 Oct 2024 18:15:28 +0000
+        d=1e100.net; s=20230601; t=1729188943; x=1729793743;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=maudRK96GwrbNZg+HV+z+1R0VXUFq2cWemaNzcdsWgY=;
+        b=j37CCmiuMLrshiBqEVrrrJ8awDVmDkuV1z+hTkJKBumJzJk8XuhwavPtWyUy0jPiij
+         tnzTbiw9HvtxgRex1LSoopdEvPKVegAmTwSXLiquZoBUSfOyKodIHObOlvewJFat5EZL
+         GAKi8H9EIDWaLdc7nJY+xYrxnuEP2av2yfvDDymkGq+9E2CzQXpukZrhUr11J/ceMKAq
+         bFWRBKapLuTtqRtHfz9osQiQRL9Yiilpz7F/VY79pD0K4t+wj9cjEC6VDvE821l2V+Zt
+         W8KWh14e9iGY7myuTgwmldSnT96QUQBEwg2JoQzKstQ4e+yp6gAP6SQdY3MdY3q9aRkb
+         NDRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDEv9IG2yNsAIXt/Sf0jbsz3kDeFtk1wZwUjpQ+m8fyXInLM/0KRC9yalOxMuXLESzKWxRrMLtWTskAhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsv1BmJsJ9jqrG9w95LilV+owN9QuqX3QSuXtOBDTBwlWCFWcF
+	rFbCxBNxVDmeW10ArH4jGb3V0AqebRdlpLxjpzgTD9lIbp8dxr9zjflnWKvqh6S9Yp5dsyg2WU1
+	Ex5Q=
+X-Google-Smtp-Source: AGHT+IGdawn5Jaob6iPB4C/w0/7QS92Bbp6N8Yq8tVyNvT29MkavEawl8TpSWQ8D6QE2vRWSpxWWRg==
+X-Received: by 2002:a2e:a986:0:b0:2fa:dadf:aad5 with SMTP id 38308e7fff4ca-2fb61ba2de2mr61779961fa.28.1729188943494;
+        Thu, 17 Oct 2024 11:15:43 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb6259e026sm6498881fa.133.2024.10.17.11.15.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 11:15:41 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 17 Oct 2024 21:15:37 +0300
+Subject: [PATCH] dt-bindings: mmc: sdhci-msm: Add SAR2130P compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241017181528.3358821-1-weixugc@google.com>
-Subject: [PATCH v2] mm/mglru: reset page lru tier bits when activating
-From: Wei Xu <weixugc@google.com>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Brian Geffon <bgeffon@google.com>, Jan Alexander Steffens <heftig@archlinux.org>, 
-	Suleiman Souhlal <suleiman@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Wei Xu <weixugc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241017-sar2130p-mmc-v1-1-c84da16a001e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAEhUEWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0Nz3eLEIiNDY4MC3dzcZF3zNIskYyMLC8tUY0MloJaCotS0zAqwcdG
+ xtbUAkAT2v14AAAA=
+X-Change-ID: 20241017-sar2130p-mmc-7f8b32889e31
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1041;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=oTUz/VQn7UklM5M50weS61/LwJNX0gzLAsrslEIBg28=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnEVRLpxJmuaX9LvRPCf6aGdEkFFAK8GqzotRHP
+ OiQQIO7YGyJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxFUSwAKCRAU23LtvoBl
+ uNppD/9AqW5dVkYb7y1iJw72O3CbS/xvQi+luYmZAWmfUVRWTQMVs3PdsGaIjuNQIEyrVRqpvOi
+ r2SNzkrd8mqgw9KiaiTTJd2kPI7W0e7GJ/xDK33lZfv5wn9OgPK63Nl6OD84NJG5N+MJI4ktjpA
+ UEBhRX+FCRIvomcMxMblpueUJrASs/QfryitXKOpkUKwTHwTcj/DNrQU1NNzChPChLdDiKR2dty
+ qTr4C5066ClCjgV0RxJSY/OGNhJvUd9Mr5gbTxpTgfOmJiQghnaGPQC2tJUs5W93Hjh/oNnom7H
+ MaumtVjWfNRyIZlLfZPKcJot494NPKmgRyqDG8+itPFnKgK6KwAflh+8wt4F80cQzVEYnxRWPSE
+ m4QQRpU7wljzH2sxSLngsV3zaE+MaH/c2wXRtEGIiQ2nytyJQ90NitvYwWKv6VRck3TKamd+YAf
+ XalQkB0ymOnqbGsOGDHotS0v35oLfZdL52slHD7I1lE2/mxyTeWph//27evJJ47GQp7VnHQ3Uvb
+ RYPlZsqBTBuGcqkwWepn0gZf7CTAdnpAgObzIO2Rk8VwBveh3k/WVieN7OZ5ARyWp55p5NmmV53
+ Ihf15b0tH/nw72g6ijWcxPH5HEOnGc1FmY6SFA+bH+mlCe67P+fKzJk2NJ0vZCu6d0F5PpfIyAX
+ 2WqLCgmccZ8Ni4g==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-When a folio is activated, lru_gen_add_folio() moves the folio to the
-youngest generation.  But unlike folio_update_gen()/folio_inc_gen(),
-lru_gen_add_folio() doesn't reset the folio lru tier bits
-(LRU_REFS_MASK | LRU_REFS_FLAGS).  This inconsistency can affect how
-pages are aged via folio_mark_accessed() (e.g. fd accesses), though
-no user visible impact related to this has been detected yet.
+Document compatible for the SDHCI Controller on SAR2130P platform.
 
-Note that lru_gen_add_folio() cannot clear PG_workingset if the
-activation is due to workingset refault, otherwise PSI accounting
-will be skipped.  So fix lru_gen_add_folio() to clear the lru tier
-bits other than PG_workingset when activating a folio, and also
-clear all the lru tier bits when a folio is activated via
-folio_activate() in lru_gen_look_around().
-
-Fixes: 018ee47f1489 ("mm: multi-gen LRU: exploit locality in rmap")
-Signed-off-by: Wei Xu <weixugc@google.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- include/linux/mm_inline.h | 15 ++++++++++++++-
- include/linux/mmzone.h    |  2 ++
- mm/vmscan.c               |  8 ++++----
- 3 files changed, 20 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 6f801c7b36e2..355cf46a01a6 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -155,6 +155,11 @@ static inline int folio_lru_refs(struct folio *folio)
- 	return ((flags & LRU_REFS_MASK) >> LRU_REFS_PGOFF) + workingset;
- }
- 
-+static inline void folio_clear_lru_refs(struct folio *folio)
-+{
-+	set_mask_bits(&folio->flags, LRU_REFS_MASK | LRU_REFS_FLAGS, 0);
-+}
-+
- static inline int folio_lru_gen(struct folio *folio)
- {
- 	unsigned long flags = READ_ONCE(folio->flags);
-@@ -222,6 +227,7 @@ static inline bool lru_gen_add_folio(struct lruvec *lruvec, struct folio *folio,
- {
- 	unsigned long seq;
- 	unsigned long flags;
-+	unsigned long mask;
- 	int gen = folio_lru_gen(folio);
- 	int type = folio_is_file_lru(folio);
- 	int zone = folio_zonenum(folio);
-@@ -257,7 +263,14 @@ static inline bool lru_gen_add_folio(struct lruvec *lruvec, struct folio *folio,
- 	gen = lru_gen_from_seq(seq);
- 	flags = (gen + 1UL) << LRU_GEN_PGOFF;
- 	/* see the comment on MIN_NR_GENS about PG_active */
--	set_mask_bits(&folio->flags, LRU_GEN_MASK | BIT(PG_active), flags);
-+	mask = LRU_GEN_MASK;
-+	/*
-+	 * Don't clear PG_workingset here because it can affect PSI accounting
-+	 * if the activation is due to workingset refault.
-+	 */
-+	if (folio_test_active(folio))
-+		mask |= LRU_REFS_MASK | BIT(PG_referenced) | BIT(PG_active);
-+	set_mask_bits(&folio->flags, mask, flags);
- 
- 	lru_gen_update_size(lruvec, folio, -1, gen);
- 	/* for folio_rotate_reclaimable() */
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 17506e4a2835..96dea31fb211 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -403,6 +403,8 @@ enum {
- 	NR_LRU_GEN_CAPS
- };
- 
-+#define LRU_REFS_FLAGS		(BIT(PG_referenced) | BIT(PG_workingset))
-+
- #define MIN_LRU_BATCH		BITS_PER_LONG
- #define MAX_LRU_BATCH		(MIN_LRU_BATCH * 64)
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index c12f78b042f3..2d0486189804 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2602,8 +2602,6 @@ static bool should_clear_pmd_young(void)
-  *                          shorthand helpers
-  ******************************************************************************/
- 
--#define LRU_REFS_FLAGS	(BIT(PG_referenced) | BIT(PG_workingset))
--
- #define DEFINE_MAX_SEQ(lruvec)						\
- 	unsigned long max_seq = READ_ONCE((lruvec)->lrugen.max_seq)
- 
-@@ -4138,8 +4136,10 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
- 		old_gen = folio_lru_gen(folio);
- 		if (old_gen < 0)
- 			folio_set_referenced(folio);
--		else if (old_gen != new_gen)
-+		else if (old_gen != new_gen) {
-+			folio_clear_lru_refs(folio);
- 			folio_activate(folio);
-+		}
- 	}
- 
- 	arch_leave_lazy_mmu_mode();
-@@ -4370,7 +4370,7 @@ static bool isolate_folio(struct lruvec *lruvec, struct folio *folio, struct sca
- 
- 	/* see the comment on MAX_NR_TIERS */
- 	if (!folio_test_referenced(folio))
--		set_mask_bits(&folio->flags, LRU_REFS_MASK | LRU_REFS_FLAGS, 0);
-+		folio_clear_lru_refs(folio);
- 
- 	/* for shrink_folio_list() */
- 	folio_clear_reclaim(folio);
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+index b32253c60919eb68f3cc0e1a37381f8cef748728..f2215de02e1b1f40ea9b11cb39f1ebc39d78845f 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+@@ -44,6 +44,7 @@ properties:
+               - qcom,qcm2290-sdhci
+               - qcom,qcs404-sdhci
+               - qcom,qdu1000-sdhci
++              - qcom,sar2130p-sdhci
+               - qcom,sc7180-sdhci
+               - qcom,sc7280-sdhci
+               - qcom,sc8280xp-sdhci
+
+---
+base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+change-id: 20241017-sar2130p-mmc-7f8b32889e31
+
+Best regards,
 -- 
-2.47.0.rc1.288.g06298d1525-goog
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
