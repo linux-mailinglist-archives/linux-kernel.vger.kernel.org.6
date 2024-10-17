@@ -1,98 +1,195 @@
-Return-Path: <linux-kernel+bounces-369612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C549A1F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:16:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5149A1F96
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50845B21F38
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E52728C02B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC1D1DA2E5;
-	Thu, 17 Oct 2024 10:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A0E1DA60F;
+	Thu, 17 Oct 2024 10:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SZv7EJsE"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="f57/N+uw"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4179E1714B4;
-	Thu, 17 Oct 2024 10:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4CC1D934D;
+	Thu, 17 Oct 2024 10:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729160205; cv=none; b=jQ70GenZi0ROcZdBPKFRPuk/I2I5e6tBOmoM9a6jZF4nnILUrQ8YGuPzCf90NSCGydW283wkGzi+F0YtB3w1NunGN3Semaijm+omn72lpr0fuy8iXQsioDALQKuxido5gBfL5yZt13rz6Gjvg6m5+7ck+y0Z4MuCSCG8MI0pess=
+	t=1729160255; cv=none; b=R3E+j4MRs05za4EqRK32D9afIsNnn8ja7s2Nm+RuO2ZRjfv+MOfMJozXiMcWu4TVL078Cul30mZHkm+HGev3D2vCx7TeuslC5tBBHVc3Vz1rJ1cYr9Q2e6oyXHI6gQb/04taCLOwACtSxoAowD+uHvT2jiK0/G9IHDhiEYnp7Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729160205; c=relaxed/simple;
-	bh=RwqIFfRGEqyQW9D+vcB52y+EorSTxslTKNQrItVQj8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jMt039J9nDiniowfgEuoQqupEfaHQ3SInwkpm2ec7i9HwJTX/aJuHMogWk8OBHW7Gcg1AjjiPA5CQXg/rCYstLPm2Loaui5QVrg2bGwgdKg7k6ZARZbgfUqgbl1umXJtxT9xPiCDkQSYv0YDlZk5YDWUvtE3v5sAflQ+fNqWESA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SZv7EJsE; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729160194;
-	bh=RwqIFfRGEqyQW9D+vcB52y+EorSTxslTKNQrItVQj8I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SZv7EJsEYTOyLVOmgPHOkmX/FgACtcDz4NaZtZYGRAjThR7/05LMATp3LlgAkoFn5
-	 KDaX5qqWC5o7jP8Su4IXglFwEgCD8gMzue6evaLee2QCty3JudlV2bIDMntsJFzhs7
-	 Hmk8FO67Aik9t4tO+Sa+qcIus2mX0/iurdq6CuvO9IJYfIMZqtEjwedVFjnG2mLV7V
-	 8BJ9IsKmfqw1jK1QLi6+4mko79ZgNKWqqXi3q5b8r3S7n5w6lc50cVaGCZHgdD9QYa
-	 JypAIBjqHInbR3YLCOD/gDkhPy8Uqwv4mo6erep/YhIcYjTSgHzqGNgaUShss3D+fR
-	 Wyv+v9tuQXfag==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BEBF217E137D;
-	Thu, 17 Oct 2024 12:16:33 +0200 (CEST)
-Message-ID: <d775bf60-f876-475e-8db0-511e87667a19@collabora.com>
-Date: Thu, 17 Oct 2024 12:16:33 +0200
+	s=arc-20240116; t=1729160255; c=relaxed/simple;
+	bh=EwWDEYXey4WDoGsLOcsVgmZ9iPzA8QJbBaHFfctEqKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KGlvdiFM3YMcHh+0r46zU430P8P7oQ/dqwU2stt3NNua3MTToZdHZ/inOpXvuLxrqH6RPKYJtKS60bAtK4TgJ7KiUr9qqQU1A7d5XxmfBHAfwEO8IM9XUtGEWYz1osAPTqi8qAYv8n17xLS8KbHqgPrRRjsX2Zuk9v9Fc9iDQRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=f57/N+uw; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1729160240; bh=02VH0LcaXYOSt5Ygu+ODELH9eyHzbdRPgQj7dW0zZC0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=f57/N+uwS/kEYp2WGLhAKtqghOOt+0qganLxeYpqOG1aH6OnakUAyjYlkRZGqz4kP
+	 7qCnVDW3k2oj0cBP8/HzW1buVFFlWXseY/+oRzkUFVsrb58qOPU8fjOPx3QgtFaQXA
+	 NDs4fnFbrhACQPOHXSh9L5+RhzczmEITsPbfmclI=
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+ arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 2/8] rust: time: Introduce Delta type
+Date: Thu, 17 Oct 2024 12:17:18 +0200
+Message-ID: <89854EA9-63AC-447C-807C-964BB61FF0D6@kloenk.dev>
+In-Reply-To: <20241016035214.2229-3-fujita.tomonori@gmail.com>
+References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
+ <20241016035214.2229-3-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: power: Add binding for MediaTek
- MT6735 power controller
-To: Yassine Oudjana <yassine.oudjana@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Alexandre Mergnat <amergnat@baylibre.com>,
- Fabien Parent <fparent@baylibre.com>,
- Markus Schneider-Pargmann <msp@baylibre.com>,
- Alexandre Bailon <abailon@baylibre.com>, Chen-Yu Tsai <wenst@chromium.org>,
- Eugen Hristev <eugen.hristev@collabora.com>,
- MandyJH Liu <mandyjh.liu@mediatek.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241017085136.68053-1-y.oudjana@protonmail.com>
- <20241017085136.68053-2-y.oudjana@protonmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241017085136.68053-2-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Il 17/10/24 10:51, Yassine Oudjana ha scritto:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> Add DT binding for MediaTek MT6735 SCPSYS power controller.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+
+
+On 16 Oct 2024, at 5:52, FUJITA Tomonori wrote:
+
+> Introduce a type representing a span of time. Define our own type
+> because `core::time::Duration` is large and could panic during
+> creation.
+>
+> time::Ktime could be also used for time duration but timestamp and
+> timedelta are different so better to use a new type.
+>
+> i64 is used instead of u64 to represent a span of time; some C drivers
+> uses negative Deltas and i64 is more compatible with Ktime using i64
+> too (e.g., ktime_[us|ms]_delta() APIs return i64 so we create Delta
+> object without type conversion.
+>
+> Delta::from_[micro|millis|secs] APIs take i64. When a span of time
+> overflows, i64::MAX is used.
+>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 > ---
->   .../bindings/power/mediatek,power-controller.yaml  |  1 +
->   .../devicetree/bindings/soc/mediatek/scpsys.txt    |  1 +
->   .../power/mediatek,mt6735-power-controller.h       | 14 ++++++++++++++
->   3 files changed, 16 insertions(+)
->   create mode 100644 include/dt-bindings/power/mediatek,mt6735-power-controller.h
+>  rust/kernel/time.rs | 74 +++++++++++++++++++++++++++++++++++++++++++++=
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogiaocchino.delregno@collabora.com>
+>  1 file changed, 74 insertions(+)
+>
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 4a7c6037c256..38a70dc98083 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -8,9 +8,15 @@
+>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffie=
+s.h).
+>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h)=
+=2E
+>
+> +/// The number of nanoseconds per microsecond.
+> +pub const NSEC_PER_USEC: i64 =3D bindings::NSEC_PER_USEC as i64;
+> +
+>  /// The number of nanoseconds per millisecond.
+>  pub const NSEC_PER_MSEC: i64 =3D bindings::NSEC_PER_MSEC as i64;
+>
+> +/// The number of nanoseconds per second.
+> +pub const NSEC_PER_SEC: i64 =3D bindings::NSEC_PER_SEC as i64;
+> +
+>  /// The time unit of Linux kernel. One jiffy equals (1/HZ) second.
+>  pub type Jiffies =3D core::ffi::c_ulong;
+>
+> @@ -81,3 +87,71 @@ fn sub(self, other: Ktime) -> Ktime {
+>          }
+>      }
+>  }
+> +
+> +/// A span of time.
+> +#[derive(Copy, Clone)]
 
+Could we also derive PartialEq and Eq (maybe also PartialOrd and Ord)? Wo=
+uld need that to compare deltas in my LED driver.
 
+> +pub struct Delta {
+> +    nanos: i64,
+> +}
+> +
+
+I think all this functions could be const (need from_millis as const for =
+LED, but when at it we could probably make all those const?)
+
+ - Fiona
+
+> +impl Delta {
+> +    /// Create a new `Delta` from a number of nanoseconds.
+> +    #[inline]
+> +    pub fn from_nanos(nanos: i64) -> Self {
+> +        Self { nanos }
+> +    }
+> +
+> +    /// Create a new `Delta` from a number of microseconds.
+> +    #[inline]
+> +    pub fn from_micros(micros: i64) -> Self {
+> +        Self {
+> +            nanos: micros.saturating_mul(NSEC_PER_USEC),
+> +        }
+> +    }
+> +
+> +    /// Create a new `Delta` from a number of milliseconds.
+> +    #[inline]
+> +    pub fn from_millis(millis: i64) -> Self {
+> +        Self {
+> +            nanos: millis.saturating_mul(NSEC_PER_MSEC),
+> +        }
+> +    }
+> +
+> +    /// Create a new `Delta` from a number of seconds.
+> +    #[inline]
+> +    pub fn from_secs(secs: i64) -> Self {
+> +        Self {
+> +            nanos: secs.saturating_mul(NSEC_PER_SEC),
+> +        }
+> +    }
+> +
+> +    /// Return `true` if the `Detla` spans no time.
+> +    #[inline]
+> +    pub fn is_zero(self) -> bool {
+> +        self.nanos =3D=3D 0
+> +    }
+> +
+> +    /// Return the number of nanoseconds in the `Delta`.
+> +    #[inline]
+> +    pub fn as_nanos(self) -> i64 {
+> +        self.nanos
+> +    }
+> +
+> +    /// Return the number of microseconds in the `Delta`.
+> +    #[inline]
+> +    pub fn as_micros(self) -> i64 {
+> +        self.nanos / NSEC_PER_USEC
+> +    }
+> +
+> +    /// Return the number of milliseconds in the `Delta`.
+> +    #[inline]
+> +    pub fn as_millis(self) -> i64 {
+> +        self.nanos / NSEC_PER_MSEC
+> +    }
+> +
+> +    /// Return the number of seconds in the `Delta`.
+> +    #[inline]
+> +    pub fn as_secs(self) -> i64 {
+> +        self.nanos / NSEC_PER_SEC
+> +    }
+> +}
+> -- =
+
+> 2.43.0
 
