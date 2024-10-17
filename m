@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-369955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2084E9A24DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:20:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F90A9A24E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E711C224BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:20:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C293A1C22403
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190931DE8A7;
-	Thu, 17 Oct 2024 14:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D251DE4C5;
+	Thu, 17 Oct 2024 14:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJPU1l5K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HnGprQ//"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4141DDA24;
-	Thu, 17 Oct 2024 14:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658891DE3AC;
+	Thu, 17 Oct 2024 14:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729174803; cv=none; b=AhLeotwwISopy5qsbBvl1Anh+uiFjE0Md4AEPBwrjmRTodMwcm7S0MDwn4OY1H3DJboFn5bN+e/8PrT4kZQvz7GXCTYG1G1BskrUW2MZ1XPGyiYefgxjDBfDpKG4dDmIoEewLMyxs0qKr3KhezOUEUH6EumPVcvAoP9lxZWND00=
+	t=1729174864; cv=none; b=gtYITr7dVJxg9/tqdggZ09nFjMsC3AJCjZUpE695Uz6XI+aXcgQLhK35ck1/5fsK92w3rwsv5kflcrTPMQG6isdDoffEf8woZgkA8Ahs7oYz9R5jw22y18LxZivn/9/iwu68TNrVUcA1cn2J2CpQzXFwwdabp3BuevYhex5+Jcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729174803; c=relaxed/simple;
-	bh=GLCrs3Dovv1NiZDErsK/6Wy5iJ7ydSzeUdxuxMzzEbc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NgzOwb45mQG5PO3HA1c58AGE4SKtGW0TQ19UOrTY6Z5Yj/Fo0yCR/IDE79NylduH9ozl4i207Xo283Z41mFlLjenZW6ohF6Cprl29NSHT7TqZHQbnaumokOmJXwzpaG5r08ixKt+mGXUEaLEEY7IttzH0OScR7aYVOFI9dLVrVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJPU1l5K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 855DFC4CEC7;
-	Thu, 17 Oct 2024 14:19:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729174803;
-	bh=GLCrs3Dovv1NiZDErsK/6Wy5iJ7ydSzeUdxuxMzzEbc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cJPU1l5Kps56v8mtpHDahoOu/sesVEsbfkxPxTBjZJUFVPTfhquqJmMWgfV57Mzxr
-	 g1rd1vIx0qWhbCmkzM6IbOU0nOCP1F0T68LieQMKCfZIshfUbktERB0aoZhno+uJIB
-	 A5o+vNmH35gCfzcJ1QOdrFU13evRECzSwE6VGCf7j0zJO0BnRmoebOmEkEyOrIn/Fv
-	 R89L1k8bbBzfwhnKPHRNxgVxbKJcHvuhl0Yv/hVpD8djyoy1qYZwYfCn3aQs2Yl9av
-	 VvVxXTl2yNmlJn7lkLhFj8V6hfAEtpxPJ6+iyN7zNxSED2vaeBmgGrG4sDBsIoQhrm
-	 +AHc8oQp8Nn9g==
-From: Mark Brown <broonie@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, SeongJae Park <sj@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev, 
- linux-mm@kvack.org, Arnd Bergmann <arnd@arndb.de>, 
- linux-arch@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Andy Whitcroft <apw@canonical.com>, 
- Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- netdev@vger.kernel.org, linux-sound@vger.kernel.org, 
- Michael Ellerman <mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>, 
- linuxppc-dev@lists.ozlabs.org, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- linux-media@vger.kernel.org
-In-Reply-To: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
-References: <20240904-devel-anna-maria-b4-timers-flseep-v1-0-e98760256370@linutronix.de>
-Subject: Re: (subset) [PATCH 00/15] timers: Cleanup delay/sleep related
- mess
-Message-Id: <172917479725.89568.14288418643818666155.b4-ty@kernel.org>
-Date: Thu, 17 Oct 2024 15:19:57 +0100
+	s=arc-20240116; t=1729174864; c=relaxed/simple;
+	bh=+i1+iZgU4s5+YABjJhEG8l/XR+DZP0Rk5slar9YxXlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lc3XoUa2MPkd7V5EmIGZ5Rj2sUoVAJ7s5RlJM36Uz4jONKhq468m0D14XMTnKlGJeRiyYTPFRwzgc3vhy2UtuU07TvDhe77HUCPt9Pw1actT+S+l3J97dG84YiTNbIGaNmgOdtnkSI77+4Fp6hIAG9dNdmi0QfEiCfoWVdOK4WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HnGprQ//; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c9978a221so12635715ad.1;
+        Thu, 17 Oct 2024 07:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729174859; x=1729779659; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=x/nghuLwxAlzGHJU3Clv5CuQOvD5vFQQ9Bp/jfeDw9I=;
+        b=HnGprQ//CXS3PCKu0Osp4PypJk+8oJyFc/CPAF7OmacfSFbupWjNrFDsG2leZMDlEn
+         ixPW8h1mUfesLd8/v8lG+rLINqI0MxAiTAHPUWuLzd8RyZfdPrBypHBoTc/rW6KehwB9
+         2xPjh0A/uHJ8m/N9XS3JFpPZ2Jfzyh0ffV78ioU1KjmGuHw67xSTLBKH4rEbPR6/4QUp
+         EWaF7slTmYPaB+YO9vdxMSjmQx//0k8HPG6ZSQthh+FNWIqtBeF6gVG5XrWoJPCAcdul
+         WTTyrS1qme8jXHePWDTTLOaeclarEy4CSjLDaz6l54Lnh+C3XBNAcUeiNz0y9vgAtsbX
+         +jsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729174859; x=1729779659;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x/nghuLwxAlzGHJU3Clv5CuQOvD5vFQQ9Bp/jfeDw9I=;
+        b=puAFJfWJaF2iUQo61k584Cw1Hh1MDV6MHO/IkU2rzIhPPR8rQYD/y1ltQ71kw4wIpr
+         YTo1PinhMpKdtZfgKYNegqGZqRRUjU5hcSXxq8hQFFNAPp5Cc/5vPmSOvk7suPBMM8K6
+         4kbm/4HsW4kbwQDZZmtN8d/2I6UGZdsnMNrTt1US6gn8676xDpXP8VRF3buth7KzzJHp
+         zho9QkbgWtxxiKFOAExFdI4E0CEJCKztqf+aFKxkf1fL/toKWjPiqsxsS41eq8X7ZlkK
+         v4heu7lN6lxMqHpM+6l8/2E9ikeN1pmQaxYkS+pJ/ChnnW0F7f3FxasKWczHdkeTrkM3
+         dABg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZHCDVD4smo+RWbyCPyAzs9TwbD0714cbmfxtBJVv5/J5iI2vE1+ZNeeBWPwo14X+pnKuxpQntQBX7KEuK@vger.kernel.org, AJvYcCVmzrcQZ/vcHVapu5+Zlh/9KROAJFJNYfunytKwwRlV0mrE3YJ+c1zXI4wmubx9oKcv8Pog9ZT04ZoI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6SEUSK1vrAoYuyRP1WNJgacQ6QWj/sTEsEuwHqJEyqF6FNfZz
+	s+soGsUEqPmXhRLzCFxb8a/PCgD8W65P2BD3vysRptgfCruVjMDPycsNdw==
+X-Google-Smtp-Source: AGHT+IF2BSHZjYF3E0lXfXUSyjYzMYs9lF+O3lub1mXer8r94G0iWs2egW53XYAgd2eW6Z81nj+jlg==
+X-Received: by 2002:a17:902:d482:b0:20c:c9db:7c45 with SMTP id d9443c01a7336-20d27eb3629mr111562105ad.20.1729174858464;
+        Thu, 17 Oct 2024 07:20:58 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d436sm45007985ad.84.2024.10.17.07.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 07:20:58 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:20:53 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v4 8/8] gpiolib: notify user-space about in-kernel line
+ state changes
+Message-ID: <20241017142053.GB242458@rigel>
+References: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
+ <20241017-gpio-notify-in-kernel-events-v4-8-64bc05f3be0c@linaro.org>
+ <20241017125349.GB221864@rigel>
+ <CAMRc=McjCinBEFNoHSTyFH7zU=JuyRfu1cfrOxkq=OjciKQkvQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McjCinBEFNoHSTyFH7zU=JuyRfu1cfrOxkq=OjciKQkvQ@mail.gmail.com>
 
-On Wed, 04 Sep 2024 15:04:50 +0200, Anna-Maria Behnsen wrote:
-> a question about which sleeping function should be used in acpi_os_sleep()
-> started a discussion and examination about the existing documentation and
-> implementation of functions which insert a sleep/delay.
-> 
-> The result of the discussion was, that the documentation is outdated and
-> the implemented fsleep() reflects the outdated documentation but doesn't
-> help to reflect reality which in turns leads to the queue which covers the
-> following things:
-> 
-> [...]
+On Thu, Oct 17, 2024 at 04:14:24PM +0200, Bartosz Golaszewski wrote:
+> On Thu, Oct 17, 2024 at 2:53 PM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > On Thu, Oct 17, 2024 at 10:14:16AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > @@ -1447,8 +1450,6 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > >               }
+> > >
+> > >               WRITE_ONCE(line->edflags, edflags);
+> > > -
+> > > -             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > >       }
+> > >       return 0;
+> > >  }
+> >
+> > I still get errors from this when reconfiguring lines with debounce.
+> > You should leave this notify in place and use _nonotify when setting the
+> > direction.
+> > i.e.
+> >
+> > @@ -1436,11 +1432,11 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> >                         int val = gpio_v2_line_config_output_value(&lc, i);
+> >
+> >                         edge_detector_stop(line);
+> > -                       ret = gpiod_direction_output(desc, val);
+> > +                       ret = gpiod_direction_output_nonotify(desc, val);
+> >                         if (ret)
+> >                                 return ret;
+> >                 } else {
+> > -                       ret = gpiod_direction_input(desc);
+> > +                       ret = gpiod_direction_input_nonotify(desc);
+> >                         if (ret)
+> >                                 return ret;
+> >
+> > @@ -1450,6 +1446,8 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> >                 }
+> >
+> >                 WRITE_ONCE(line->edflags, edflags);
+> > +
+> > +               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> >         }
+> >         return 0;
+> >  }
+> >
+> > Given that, all my current tests are passing.
+> >
+>
+> That looks good - after all we no longer notify from any place in
+> gpiolib-cdev.c anymore - but I'd like to learn what's wrong exactly.
+> Are you getting more events with debounce? Are you not getting any?
+>
 
-Applied to
+In linereq_set_config(), the notify comes from the gpiod_direction_input() -
+before the edge_detector_setup() is called (not visible in the patch) and that
+sets the debounce value in the desc.
+So you get an event without the debounce set, or with a stale value.
+Keeping the gpiod_line_state_notify() and using the _nonotify()
+functions means the notify comes after the debounce has been set.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[11/15] regulator: core: Use fsleep() to get best sleep mechanism
-        commit: f20669fbcf99d0e15e94fb50929bb1c41618e197
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Cheers,
+Kent.
 
 
