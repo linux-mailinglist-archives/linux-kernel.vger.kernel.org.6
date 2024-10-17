@@ -1,218 +1,167 @@
-Return-Path: <linux-kernel+bounces-370011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77179A25F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:02:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E989A25F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F5E4283828
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:02:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65D6B1C23024
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49981DE4EF;
-	Thu, 17 Oct 2024 15:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272181DED55;
+	Thu, 17 Oct 2024 15:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsq2WW3U"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVcjTUTf"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531DF1BFE18;
-	Thu, 17 Oct 2024 15:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2241D966B;
+	Thu, 17 Oct 2024 15:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729177346; cv=none; b=g8SP5ioRjGMrDHt+lUTgAHVniIwTNFFaHzUqRufiflOCubmr5YtCTWCKakcCd0ni+orTZIuW2O2vHHPyMPRUFm763D+iHu2xj8LFz/I8k5rlojOCRGNGBRZWRfOV1DQGx2GALoElf8ED2mpqESOaMOXa0nzbaFxWr1en/dNpRGo=
+	t=1729177348; cv=none; b=bPt2DLOOgDyA+bQN3QWPJAho3KpdhpKr2g/vhBbV+NfosKxu9SvoYezEepnIHBj/XsB/0oKVXOqha7bKjQ7J0eVv71nI73kQ7es/RnYQcVb26IWruSiaS1uSytZWieoPmi8Up7sTcdFt1bm4/sIRI+d2LQ7LeOXjEx0fJrPMuso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729177346; c=relaxed/simple;
-	bh=maVqKFchcKc6Nh4ZD/SW3IcciAmTUh1JeZhmxEcLEkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iqeB7BFC0V+SRymLCHsP05ipyD1sAgk/tIuzbd4wedX2aWVTGLOmOScB0gN0LQSHYP8WCS97qVnbUTNWhYAyuknH5hsTQMkowWk1aV9vAD5X88N4h76Kz+3QNfCEg1dwaVhfyjj3utT06h33h6oCHNL7PxTSZZ1OqsyAff0mtDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsq2WW3U; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1729177348; c=relaxed/simple;
+	bh=c+U48QVgTb45Soxm2r96FLpCj4UVBLV9uv9mx+i3GHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYx+fzaCkIrsIYHDnzYSyVqC2no8MB6NofgKTPztwyNZbKXVApZVCm8hjbPDh2HPdwCmRew7vEuKxn5j1UTY86WGr768u3xk3fwNj91fm5qz0kzFd8kq+xhcsq7aMEwxPk+MET51PsiaHK0HWCurp+CdwhXpJeoid8PoOAyzy3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVcjTUTf; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e49ef3b2bso775541b3a.2;
-        Thu, 17 Oct 2024 08:02:21 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cbcd71012so9939815ad.3;
+        Thu, 17 Oct 2024 08:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729177340; x=1729782140; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pbTepaupxmjTIi44JHiVOejj/VBl6pEdVxqjDmlhRUs=;
-        b=dsq2WW3UONPd9I54efgFEzyIY3oZOIAbMxl9jHHaLNR+TEYv+2/9ZFjnksfNZE6mUO
-         np6qLDO0pcCH66tjj7+CoBK+oDg6UXGWt5gz8ZbSEaZz1BbUnWNxR9SiElzLnfWmqAHn
-         7J5TSeKvQlCJpINBTpfUtHfds2dBwant2pdd1lEOvNl5qvv6R8iLkDwmsFrapO1FrUGW
-         ix78nsPxrNVS0qkLx91UXr9RTqTrLRZwevXuU2Uq4KVQ1ER8PD6BELkMABhD1i2sViJj
-         mQ6x/PPIPNYKhDsr0H0JyWxaVZFxhdFQlRzakdbZdFhBmVZwwH4UHYO+LnlAKV5ETyyR
-         Ojcw==
+        d=gmail.com; s=20230601; t=1729177343; x=1729782143; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=By5LrVGQJ7SUgoS/IDlnafWFvBxuiZQT6c4rVlicH+8=;
+        b=kVcjTUTffzOVUtfh/ZXXAa3wPY/xHQK1cZijzs1P+W0zRZorDNh5dy4AhdB/2zLnNF
+         1n5QocNLmpQFLhW/VGqojVErfa+Jct48Eliicqk7jbc/HIsfFfM0O2wcWZV837sX6oYG
+         6V2+6PiGh8kBDVNi4BtZTMqgNF3Gv1DjsKBlaQNNQePicrIf2YkHVIw76kNKY1Kj26iV
+         R/+ThJJAGsGTgtKCc95s0D7Ay6V3Ll4VwxNTwFD+9MnGpy7owW011oK7lD3KEgZXjXHe
+         IRpyECSa+fZyYephj0E5XYg+dRqZsQEHBj8y74Rdog6DejscHrLG1yqxvvzxx+EgR5Ji
+         lvRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729177340; x=1729782140;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1729177343; x=1729782143;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pbTepaupxmjTIi44JHiVOejj/VBl6pEdVxqjDmlhRUs=;
-        b=HwxvGyTCmsCjRUYwcFRvsQNvGDUbMeiOYV0yPJNm/DhfH4EaONJgTs0v+ses7MsTvy
-         FB8iQRUgBvSXiO04dG/pqx15tZ5E1xxp4M3vj6pUsWCtaVDt8udC4soa/d423+sqwB5T
-         lP/UuCYq5u177RILdwdCShVms+LnuBV3L55sYdo5xHxel1Y94qGDZcZj5QDCpTLe1qos
-         I+LihG0PhJtsP1kjvKA/G2JpXi+FSLQl48embwxUACU3gr9nVVlR8iuIAQGfUoVb36+f
-         8fGuWx8GN5XW8rX9agqFTmBJR2Ra96v1eeb8sBM3USlu9Rom1KmY907eRgGDla8cqv9b
-         aVSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4S5KkTj2hr1flD6VvEtjrwTc+UwM1vSjDSM5kTuWLPZtDSb2ytvA4CKb/cUduqKhA65uACKB3awTb@vger.kernel.org, AJvYcCU4cdomp/YKurvQYkHO4npzrwpVAMduXvR3BRyJ+UKfr9QTIPcFcUX8jnBAqnfC25vMZ5hMvZxn4cuo@vger.kernel.org, AJvYcCXAvZb9pgNgl4wE3YhN1goYd3XgjAHj3TCAFG2naIjHdCI1KaDsADtaYxS82jx8btTqsa6JoCWP4BEUNh9P@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6V9F0CvPzRFVAijclFvAkcgqVUB0jBDjQ9APURZUrnZTkisSy
-	1DnIrKdhlq419S+3e/MYWW/+Pa1UtOo8AJ9KeE1Htw+3Hv+wHqJ8
-X-Google-Smtp-Source: AGHT+IFsfvLVFEbRGcztXFhYtd+BhQrK0AtsjOFGGM8AyzG1oCWj10f8ehC+PZ4ZYN6vG21JfEzzUw==
-X-Received: by 2002:a05:6a21:6b86:b0:1d9:a1c:70a7 with SMTP id adf61e73a8af0-1d90a1c71a9mr8497972637.48.1729177340206;
-        Thu, 17 Oct 2024 08:02:20 -0700 (PDT)
-Received: from Emma ([2401:4900:1c97:c88d:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c715d7dsm5049956a12.88.2024.10.17.08.02.18
+        bh=By5LrVGQJ7SUgoS/IDlnafWFvBxuiZQT6c4rVlicH+8=;
+        b=cfA9vM4nDdI/sMEQmNKV38FJdvew2Xy9Jz1HhCXs9OKmPygxq3MX1LyV5GD/x3qVgB
+         2WFxs/9mwOccYSCPGThi8aqwfpv2XFm8vxOZ0OmBb2opgBLmPNQHAzkW7mhlPZ+bXBEi
+         UhKDP7KjPRDTxpCa95H4Ytfs4sTnBNZq+0cGDdxpC/4a2ZB9NaDYwLtv69e5MocJjkmf
+         18pK96831YFI0JoGxdwt+VGPgoeQC2bPa/3232WNDlvILTzICT2mT4lCjxvYQYjJwh88
+         wILWzcsFCFXOw8iSzkRniMERsE8S3W1fzLVCTUgiqfmngmUT1aRfaXPTIjCjPW6cR9MS
+         DoOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOu4q4p5fs/gEuMITsdVF2Xgbks65JWiU2nqIRKOM98rRuBybnvJb4eU/VU66BqaVWNk3j5SFQd6xYcEVw@vger.kernel.org, AJvYcCX+7X6uedJXyVFaGnRGmXyEgBBG6K3imR70lpbnJdBY+Wy1u5k2zbyX7kPhvcMIWh8iM/wx0mAzcCxH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxnOdYJQikbsuwpoCelBCrQTpigOdZ1fpGtWCXNkBUvMN9oMHL
+	WWAVRAEjhHqmDEFOusIalQr8vEO4MVhDVSZ2py0X7pTI47WWVYs5
+X-Google-Smtp-Source: AGHT+IFGucgTJsNkiPqP4uS26G6H1vlEDv2F/L4gcqN73AsGpadqRbk5Yy7dph9ODLicjOME7Vuyzw==
+X-Received: by 2002:a17:90b:1005:b0:2e2:e0c1:4452 with SMTP id 98e67ed59e1d1-2e31539036fmr21427092a91.41.1729177342755;
+        Thu, 17 Oct 2024 08:02:22 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e094a1b1sm2033066a91.49.2024.10.17.08.02.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 08:02:19 -0700 (PDT)
-Date: Thu, 17 Oct 2024 15:02:16 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Karan Sanghavi <karansanghvi98@gmail.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Anup <anupnewsmail@gmail.com>
-Subject: [PATCH v4] spi: dt-bindings: brcm,bcm2835-aux-spi: Convert to
- dtschema
-Message-ID: <ZxEm-H-PjlQyXeOH@Emma>
+        Thu, 17 Oct 2024 08:02:22 -0700 (PDT)
+Date: Thu, 17 Oct 2024 23:02:17 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v4 8/8] gpiolib: notify user-space about in-kernel line
+ state changes
+Message-ID: <20241017150217.GA262603@rigel>
+References: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
+ <20241017-gpio-notify-in-kernel-events-v4-8-64bc05f3be0c@linaro.org>
+ <20241017125349.GB221864@rigel>
+ <CAMRc=McjCinBEFNoHSTyFH7zU=JuyRfu1cfrOxkq=OjciKQkvQ@mail.gmail.com>
+ <20241017142053.GB242458@rigel>
+ <CAMRc=MeXe2XE_PEJm7iu1K7M=Tv0cWs2wd9pNzJk87dTyqGzeQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeXe2XE_PEJm7iu1K7M=Tv0cWs2wd9pNzJk87dTyqGzeQ@mail.gmail.com>
 
-Convert bcm2835-aux-spi binding to Dt schema
+On Thu, Oct 17, 2024 at 04:59:46PM +0200, Bartosz Golaszewski wrote:
+> On Thu, Oct 17, 2024 at 4:20 PM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > On Thu, Oct 17, 2024 at 04:14:24PM +0200, Bartosz Golaszewski wrote:
+> > > On Thu, Oct 17, 2024 at 2:53 PM Kent Gibson <warthog618@gmail.com> wrote:
+> > > >
+> > > > On Thu, Oct 17, 2024 at 10:14:16AM +0200, Bartosz Golaszewski wrote:
+> > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > > >
+> > > > > @@ -1447,8 +1450,6 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > > > >               }
+> > > > >
+> > > > >               WRITE_ONCE(line->edflags, edflags);
+> > > > > -
+> > > > > -             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > > > >       }
+> > > > >       return 0;
+> > > > >  }
+> > > >
+> > > > I still get errors from this when reconfiguring lines with debounce.
+> > > > You should leave this notify in place and use _nonotify when setting the
+> > > > direction.
+> > > > i.e.
+> > > >
+> > > > @@ -1436,11 +1432,11 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > > >                         int val = gpio_v2_line_config_output_value(&lc, i);
+> > > >
+> > > >                         edge_detector_stop(line);
+> > > > -                       ret = gpiod_direction_output(desc, val);
+> > > > +                       ret = gpiod_direction_output_nonotify(desc, val);
+> > > >                         if (ret)
+> > > >                                 return ret;
+> > > >                 } else {
+> > > > -                       ret = gpiod_direction_input(desc);
+> > > > +                       ret = gpiod_direction_input_nonotify(desc);
+> > > >                         if (ret)
+> > > >                                 return ret;
+> > > >
+> > > > @@ -1450,6 +1446,8 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > > >                 }
+> > > >
+> > > >                 WRITE_ONCE(line->edflags, edflags);
+> > > > +
+> > > > +               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > > >         }
+> > > >         return 0;
+> > > >  }
+> > > >
+> > > > Given that, all my current tests are passing.
+> > > >
+> > >
+> > > That looks good - after all we no longer notify from any place in
+> > > gpiolib-cdev.c anymore - but I'd like to learn what's wrong exactly.
+> > > Are you getting more events with debounce? Are you not getting any?
+> > >
+> >
+> > In linereq_set_config(), the notify comes from the gpiod_direction_input() -
+> > before the edge_detector_setup() is called (not visible in the patch) and that
+> > sets the debounce value in the desc.
+> > So you get an event without the debounce set, or with a stale value.
+> > Keeping the gpiod_line_state_notify() and using the _nonotify()
+> > functions means the notify comes after the debounce has been set.
+> >
+>
+> I see. I guess I should do the same both for linehandle_set_config()
+> and linereq_set_config()?
+>
 
-Changes since v3:
- - Updated the patch subject line
- - Reformatted the description to fit within 80 characters
+linehandles don't support debounce, so it's good as is.
 
-Changes since V2:
- - Modified the Patch subject
- - Removed unnecessary description and example
-
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/spi/brcm,bcm2835-aux-spi.txt     | 38 -------------
- .../bindings/spi/brcm,bcm2835-aux-spi.yaml    | 53 +++++++++++++++++++
- 2 files changed, 53 insertions(+), 38 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
- create mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
-deleted file mode 100644
-index d7668f41b..000000000
---- a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
-+++ /dev/null
-@@ -1,38 +0,0 @@
--Broadcom BCM2835 auxiliary SPI1/2 controller
--
--The BCM2835 contains two forms of SPI master controller, one known simply as
--SPI0, and the other known as the "Universal SPI Master"; part of the
--auxiliary block. This binding applies to the SPI1/2 controller.
--
--Required properties:
--- compatible: Should be "brcm,bcm2835-aux-spi".
--- reg: Should contain register location and length for the spi block
--- interrupts: Should contain shared interrupt of the aux block
--- clocks: The clock feeding the SPI controller - needs to
--	  point to the auxiliary clock driver of the bcm2835,
--	  as this clock will enable the output gate for the specific
--	  clock.
--- cs-gpios: the cs-gpios (native cs is NOT supported)
--	    see also spi-bus.txt
--
--Example:
--
--spi1@7e215080 {
--	compatible = "brcm,bcm2835-aux-spi";
--	reg = <0x7e215080 0x40>;
--	interrupts = <1 29>;
--	clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI1>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	cs-gpios = <&gpio 18>, <&gpio 17>, <&gpio 16>;
--};
--
--spi2@7e2150c0 {
--	compatible = "brcm,bcm2835-aux-spi";
--	reg = <0x7e2150c0 0x40>;
--	interrupts = <1 29>;
--	clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI2>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	cs-gpios = <&gpio 43>, <&gpio 44>, <&gpio 45>;
--};
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-new file mode 100644
-index 000000000..6df060778
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/brcm,bcm2835-aux-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM2835 Auxiliary SPI1/2 Controller
-+
-+maintainers:
-+  - Karan Sanghavi <karansanghvi98@gmail.com>
-+
-+description:
-+  The BCM2835 contains two forms of SPI master controller. One is known simply
-+  as SPI0, and the other as the "Universal SPI Master," which is part of the
-+  auxiliary block. This binding applies to the SPI1 and SPI2 auxiliary
-+  controllers.
-+
-+allOf:
-+  - $ref: spi-controller.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,bcm2835-aux-spi
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/bcm2835-aux.h>
-+    spi@7e215080 {
-+        compatible = "brcm,bcm2835-aux-spi";
-+        reg = <0x7e215080 0x40>;
-+        interrupts = <1 29>;
-+        clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI1>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
--- 
-2.43.0
-
+Cheers,
+Kent.
 
