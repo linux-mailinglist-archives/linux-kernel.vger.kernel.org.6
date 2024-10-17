@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-369515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C459A1E4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352489A1E49
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278D5B21828
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 671E01C270BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DF01D9663;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9811D9327;
 	Thu, 17 Oct 2024 09:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ql0WwyGY"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OXo+6YsN"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91951D90C5;
-	Thu, 17 Oct 2024 09:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435EC1D90D7
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729157208; cv=none; b=FXbT3iyIv4vifQYKKh36v3z7Q3qs/+fXw3/XsHyFan1zsrOJk53uoM2rvvCJTNZRc+0NiNnfdBWpharlFxs2k2VnpkfuBJoMzs8xQ8mYWP4bwIOWZsfKb1MHkHu7zKmzbny/QAzF6p14Wxi6gRicpjfqqYZM4S2ZjnwXy0MWnos=
+	t=1729157208; cv=none; b=E/IgcBTdPhBhSBhoXM9TSYP2WnoqFZopv3tlQJtL92EIIkmKGmG0quiFlMo9z9oxGRW1Y1a2iPDp6/aHdeigZ4gPzHbK1/oanEXmgh4A+aBbfadRlvjxk8WH0JydQT7K9JxpFsyDoIT+efXdGCi3ALcdOVF6dvrmM1YkB/b2Y1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729157208; c=relaxed/simple;
-	bh=nJJW0IqlEidUPTYRziXp8zEdXwJwaiZA85X7aRPrG4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gie3NPCxCsqyiMlin6+z+KSzAEOk/t1t9RgkkHtPJtwzMy9ibV0AmbHXiLj5px5grEXS+JFlMkigasAoXTWkpwUrQ2gUsfD8vQSB08FcOnHEK0ohjE5uVgfGpiMPz/ftVBG9kXVuJJWiWudFTL3uxuJBPk2mo+CXPx5v0kemaaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ql0WwyGY; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7eab7622b61so636749a12.1;
-        Thu, 17 Oct 2024 02:26:46 -0700 (PDT)
+	bh=eZBm3Bmz++hihfRtzii17zgBOodk66D4801Oz6yo8z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dA1WEOpSvapNyLpM0IpI/9NxnQC7zfqr1Dow6TUO7HFazjjM745Sul3vfYUSqEtql2XHE+k86qitRte6EpB+xNgf3HL3fuCaJ094GJ/MdZ/t+NEm18GKTdd2f8sHdd9rrue+zZBicex23bZCvOo1LHIW1Fj2ZIlMW4J9Oe7r8HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OXo+6YsN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4314e64eba4so913705e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:26:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729157206; x=1729762006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJJW0IqlEidUPTYRziXp8zEdXwJwaiZA85X7aRPrG4c=;
-        b=Ql0WwyGY2fJarPQPddHa2mV6FVMnEJ57/Pk6UN6dDfkFmokTshPgmQQv0wkcodqNBy
-         ob3FRdmAWnMdMdKJL71Ai5Z11QPsxG3CML0R0AUskyDrm6E025fCAHtLGKKy9aC6jJIE
-         Nc/s/7WFsQmfTUcm3jmalccJ1K9UrtbdFAlr1JxqNDfsVl/E0Y+EOSQVW0JMnX/T0V4i
-         fIw7WhfLBiC10tSraVYp5YQIvjVdartySKFA1cnx3oJaD4Mb+ZPFmpEGbAe5YwLjGpDw
-         QEcxlvEelbz06X71CUR3CFf5TLpiBTn7lZEvrbwiD8RK80hH4nPllX6TPV/krmEhlAdD
-         cuMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729157206; x=1729762006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1729157202; x=1729762002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nJJW0IqlEidUPTYRziXp8zEdXwJwaiZA85X7aRPrG4c=;
-        b=aIWzEcPGO4RFwWKl4kjSeBNPGPXNdshK9iRl2y2NWl2Fv7/pv1+YPQl8h/+0NolEJ0
-         RQdVjddIpjoZooW4tWnPN5z2qT94nUVjRKR/lS+5ncLahFPvVlDh3jTvvlld65Pftlhf
-         vv/JV9aVl5yitLuMm23R/AUYW/d1B+KU+gE8wjMLGalkTk6o9X6+O8RG99DMgsgeUcOU
-         1zf2EjXeNaZUFz0fuKXbaaTWulzRAlalVRfo9JwVIRrEY5iY/ItaM+aZTIBaLZP+ey0r
-         8oi2lW5JmXB0vMxubT9IG9SnUo7qojmdWmHZqMshpGDNMXaB/C6DWSHljWAoqcKDe0uh
-         KE5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPk/w1l+qlaEMiHXowBzp6U1X3KE3/C1TY5l61CcCrFQBDvd6JzpLzXsyxFWJyUePQ9eKTqHCZHnYeomk8@vger.kernel.org, AJvYcCW0bU0CRytgYxiusDfezrXntoXCZO1Y+aoWq/U7Ekj21dA3fVe64MMu70ci3AGRG8d5o4rOvIFzdyST@vger.kernel.org, AJvYcCXZfVHDfFxgWhwUlqoM8uV7eYWxU0reC3MGsrfzqzAoMxkxN5eBPgwQNwL0WIUgGwP0n1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxgzJfulSlk7IjUwxbNLjTo3nsQbYGqhQe+ZQ44gvQdamhaLeG
-	6udAKl7V4rhZL6JlrmE1wX7Zy9QYr7NlDDw6i0Ny6ZOlwHVvNUZM
-X-Google-Smtp-Source: AGHT+IE96loXrbUlaPAyE8WtyM8lDq1SaDZ9pKic4cShYAdR3fRclLcPo6MZKte8otQzE6KoCHpjSQ==
-X-Received: by 2002:a05:6a20:d504:b0:1cf:3d14:6921 with SMTP id adf61e73a8af0-1d905f4f902mr10429378637.35.1729157206080;
-        Thu, 17 Oct 2024 02:26:46 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a2b20sm4335243b3a.122.2024.10.17.02.26.39
+        bh=/oSOyG8g8KayNyF7yKwR1IFSwarhWkC0f5N43ovDss8=;
+        b=OXo+6YsNzm5VMYgCFvIND7Yt+OeUKDO8xJ3dQLWqtkfBSkcSVjlH7It1JkdJOllAh9
+         ZuiPG1B+qUA+GtCUaRWqowAJxoJLHp9/Mc5N7FftgoGfACPdusO/Qvfi7iTQcFUNQg4g
+         JMWy5+hLnxgiF0zV66yPpQz3lHnJgebgyqHAhYjNXzS6fvOo/7AEWBMQwGTCyStcs7W7
+         AUu3/anK+3mYSNNhHZgun3ztLZ3fVipmjJerNwcLn5jHjSmyLRFXj/YRccU+Xvsv8zCC
+         mC7XONPlBaVuNNt4HrqPr7FBfGP8PsYFQw874LdkMt2fdZxvhYTF2QwaVo0gZbpYa75m
+         1yOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729157202; x=1729762002;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/oSOyG8g8KayNyF7yKwR1IFSwarhWkC0f5N43ovDss8=;
+        b=Qa8O7XOQn6gaYnZDYBzHKorkPdPbqR+ZazYPIBzEaYY+FAzs5KD4Mwgc8Z9jivoSKO
+         SWKh/1XgnU5KJ9iFH2N56kUVppnUpDafNWLNYG73FnAhAADxmx8ZaM9ImG6iCVEgkhlN
+         NNPL9RBvHHJOXTftI/um7XNMqEO5hKok46c/8wkCY6pKKrdZVAtV+MIMU4RcTSIr4+mi
+         4ty3sjK+8NV9IYaK/DZnDNN0dvXfC9KOanK6nbusLBOrxMMhweaBcgkB3JV9ZkYGQU2x
+         0hOAv52DTBI/vAGOVVSzDBDFKfOEUMiHeOFQP/cFvVXAb4jp0SsYjDg7A0VPMGgQyOWS
+         Eo3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVu0HkRDCFKgzTb9GiKaB4EPZ2+nPFc2GkfaTXhruWLhhUmACxu3XQqnFhYB9LVq4PuadNf8dtT7I4Dg48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyI2tfjNCMr1EII0Pjri31XhP8CUi/cpVe1mXJMCKjGMYTL5+p
+	xrOFdWnRrd7BY7pELfz7pIxUrP2/nl0kiM5MFahDINXjUeRcyLAGCcX9kI7UFopBoJMSU/0vhjb
+	M
+X-Google-Smtp-Source: AGHT+IFXs/h7xW57eOUZ/W1Yg/aH+/KUT7TvMC5vfnv02CZTX7VM1dT/0OuOkE9HtNp8A2hz/c5wEw==
+X-Received: by 2002:a05:600c:4508:b0:42c:b55f:f4f with SMTP id 5b1f17b1804b1-431507e9753mr20178565e9.6.1729157202411;
+        Thu, 17 Oct 2024 02:26:42 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c620c5sm19769465e9.48.2024.10.17.02.26.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 02:26:45 -0700 (PDT)
-Date: Thu, 17 Oct 2024 09:26:37 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrii Nakryiko <andriin@fb.com>, Jussi Maki <joamaki@gmail.com>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCHv2 net-next 0/3] Bonding: returns detailed error about XDP
- failures
-Message-ID: <ZxDYTTIgV2tE3tWw@fedora>
-References: <20241017020638.6905-1-liuhangbin@gmail.com>
- <54164763-b635-4ff6-be88-56aeb461b494@blackwall.org>
+        Thu, 17 Oct 2024 02:26:41 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 3/6] dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990 boards
+Date: Thu, 17 Oct 2024 11:26:39 +0200
+Message-ID: <172915711503.42287.18322892549440683443.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241016154747.64343-4-igor.belwon@mentallysanemainliners.org>
+References: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org> <20241016154747.64343-4-igor.belwon@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54164763-b635-4ff6-be88-56aeb461b494@blackwall.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 11:40:34AM +0300, Nikolay Aleksandrov wrote:
-> Please CC reviewers when sending new versions. I was CCed on patches 1 and 2
-> probably due to the tag, but wasn't on patch 3 and had to search for
-> the series.
 
-Oh, sorry for the inconvenient. I thought you are in the cc list. Next time I
-will do double check.
+On Wed, 16 Oct 2024 17:47:44 +0200, Igor Belwon wrote:
+> Add devicetree bindings for Exynos 990 boards. Currently the Galaxy
+> Note20 5G (c1s).
+> 
+> 
 
-Hangbin
+Applied, thanks!
+
+[3/6] dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990 boards
+      https://git.kernel.org/krzk/linux/c/f7aeff28f2768443a49600625b6f3d0aad1fdd52
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
