@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-369534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C5F9A1E8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:36:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598989A1E95
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C421C22B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:36:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC7D7B25022
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65921D9327;
-	Thu, 17 Oct 2024 09:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qi93aXe6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD5D1D933A;
+	Thu, 17 Oct 2024 09:39:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE6713AA4E;
-	Thu, 17 Oct 2024 09:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F1F13AA4E;
+	Thu, 17 Oct 2024 09:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729157807; cv=none; b=FdtdmwTzt82C51wFgKLpvQ5WCEWNDObw0HRgwMS7Elpo8qF8JJhKCsSyORCZy3znHQr7gmVgIQxpiQNPZlM9LwSmxMbCNVeF2JmjM/PwMlqT0qtXTX+xuNh/7GrUqadAYR1fQfa+xJLMeIcmCq5SIUJ3tJL6G39uz4IOFCt4BqQ=
+	t=1729157973; cv=none; b=lNJKuh2/oBb7+bF2LjKgZoodMeN2VBYggbMr2i0OIdrkhT6xd4pOgDDrgK1S5PXxQWf4I9w0lBOXfhehLffv8CymSLewxsRERYoGbb3UhuJTCsWd+Qn0P+jKLu6P8htQpdHYSgKZsG2BjG5WgTCw7XAbI/sfQulU11NwOQbyg7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729157807; c=relaxed/simple;
-	bh=XQ8KSeY0btIB2wEygOoBrpdNMc8EU/NBR4PuXDo8z4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TSEEM1CbUEiz7kiSWCKVODvd0Cer4PoEDj/KGAsAfTuDj4dNJwJ+fcyG1XStRel+Ofh+guK6si/XX4N1qP3KDOWUZ4wsFHTFBgof6d+zoRlY7h757r0FCdILrzC4RD6oQ83T8E+5aQb+iCUqW0HF9FuJq5vk8EiCWTW18J4JmQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qi93aXe6; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729157804; x=1760693804;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=XQ8KSeY0btIB2wEygOoBrpdNMc8EU/NBR4PuXDo8z4g=;
-  b=Qi93aXe6SK/Q381FpTM5QkrkiqjDvM4/uxHJoK+ofddP2sHUMUZIW6Bh
-   3Fo9/eIgUQzI3Ad3caLuOP3Cuw9ersT7UcTEoRDxW73id0GwiDHFnHkjN
-   yUgSKGSb3KU7iWUey1eb/q3vXAWk4vJ72EQhFhOoRaXJjiV7COXtp027F
-   OKob7yeYiUgJrnTiyIgoVfjoKS108CEy78/4OfBQVW3f7+PASG3p5NnlD
-   /eVbOZWKEm3uDbYqHBH8kIFMUuusaEZfCRT4MQwBytqItrxcBM4xqiCCO
-   X3ZbeVJocUZshw2lp1T8O95i0zRN9jz0KYI2zaHNFpGTuE5/Zxv/2nqbs
-   w==;
-X-CSE-ConnectionGUID: aOoe4ojxSmmuGOee3hdZ5Q==
-X-CSE-MsgGUID: BwtlAuOgQ4q7ffZ+rWz8RQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28423793"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28423793"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 02:36:43 -0700
-X-CSE-ConnectionGUID: CBwOZLdzQ5aQAV0SaHbuvQ==
-X-CSE-MsgGUID: dWJSN6+2QV6KoPIzkDOKdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="78394737"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 17 Oct 2024 02:36:41 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D0AC6184; Thu, 17 Oct 2024 12:36:38 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v2 1/1] media: ati_remote: don't push static constants on stack for %*ph
-Date: Thu, 17 Oct 2024 12:36:06 +0300
-Message-ID: <20241017093637.1183703-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1729157973; c=relaxed/simple;
+	bh=DSgUWFQ/auaLINQJmmQujRCU4A1PnCPi/te5rgU51hQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G1H9IlfWBHwCu0MFj689Jn4xCd/DRPcRDqKK3/gkUKJfMn+bVciUXr87T0CTTGbvWmGyq1hd5FAAqnIOfi4MfxhFjC32GPaIIwv3TDzAvy5ahsE8s5DGMw4Myr01RIsNkMKDuYGcTHsHyiZ8ZkJfkO76QlaUVSyLUEjYc17qmf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTjT32j0Bz6JBQb;
+	Thu, 17 Oct 2024 17:38:47 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 40E151400C9;
+	Thu, 17 Oct 2024 17:39:27 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 11:39:25 +0200
+Date: Thu, 17 Oct 2024 10:39:23 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+CC: <mark.rutland@arm.com>, <catalin.marinas@arm.com>, <mingo@redhat.com>,
+	<robin.murphy@arm.com>, <bp@alien8.de>, <rafael@kernel.org>,
+	<wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
+	<mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
+	<gregkh@linuxfoundation.org>, <will@kernel.org>, <jarkko@kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
+	<linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
+	<ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
+	<baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>,
+	<dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
+	<robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
+	<zhuo.song@linux.alibaba.com>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH v14 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+Message-ID: <20241017103923.00007033@Huawei.com>
+In-Reply-To: <20241014084240.18614-2-xueshuai@linux.alibaba.com>
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+	<20241014084240.18614-2-xueshuai@linux.alibaba.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-There is no need to pass constants via stack. The width may be explicitly
-specified in the format.
+On Mon, 14 Oct 2024 16:42:38 +0800
+Shuai Xue <xueshuai@linux.alibaba.com> wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: added 'media' prefix to the Subject line (patchwork integration)
- drivers/media/rc/ati_remote.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Synchronous error was detected as a result of user-space process accessing
+> a 2-bit uncorrected error. The CPU will take a synchronous error exception
+> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
+> memory_failure() work which poisons the related page, unmaps the page, and
+> then sends a SIGBUS to the process, so that a system wide panic can be
+> avoided.
+> 
+> However, no memory_failure() work will be queued when abnormal synchronous
+> errors occur. These errors can include situations such as invalid PA,
+> unexpected severity, no memory failure config support, invalid GUID
+> section, etc. In such case, the user-space process will trigger SEA again.
+> This loop can potentially exceed the platform firmware threshold or even
+> trigger a kernel hard lockup, leading to a system reboot.
+> 
+> Fix it by performing a force kill if no memory_failure() work is queued
+> for synchronous errors.
+> 
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-diff --git a/drivers/media/rc/ati_remote.c b/drivers/media/rc/ati_remote.c
-index d7721e60776e..a733914a2574 100644
---- a/drivers/media/rc/ati_remote.c
-+++ b/drivers/media/rc/ati_remote.c
-@@ -311,9 +311,9 @@ static void ati_remote_dump(struct device *dev, unsigned char *data,
- 		if (data[0] != (unsigned char)0xff && data[0] != 0x00)
- 			dev_warn(dev, "Weird byte 0x%02x\n", data[0]);
- 	} else if (len == 4)
--		dev_warn(dev, "Weird key %*ph\n", 4, data);
-+		dev_warn(dev, "Weird key %4ph\n", data);
- 	else
--		dev_warn(dev, "Weird data, len=%d %*ph ...\n", len, 6, data);
-+		dev_warn(dev, "Weird data, len=%d %6ph ...\n", len, data);
- }
+The subtle cases in here are the various other forms of delayed handling
+buried in some of the record handling that don't set queued.
+I've been through them all and have convinced myself that either 
+hey should never be synchronous or that there is no attempt to
+recover in kernel today (non memory things such as CXL protocol
+collapse, which might I guess be detected synchronously on a read
+- though I'd expect poison and a memory error first) so the correct
+thing to do is what you have here.
+
+Fiddly code though with a lot of paths, so more eyes welcome!
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
++CC linux-cxl for info.
  
- /*
-@@ -502,7 +502,7 @@ static void ati_remote_input_report(struct urb *urb)
- 
- 	if (data[1] != ((data[2] + data[3] + 0xd5) & 0xff)) {
- 		dbginfo(&ati_remote->interface->dev,
--			"wrong checksum in input: %*ph\n", 4, data);
-+			"wrong checksum in input: %4ph\n", data);
- 		return;
- 	}
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+> ---
+>  drivers/acpi/apei/ghes.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index ada93cfde9ba..f2ee28c44d7a 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * If no memory failure work is queued for abnormal synchronous
+> +	 * errors, do a force kill.
+> +	 */
+> +	if (sync && !queued) {
+> +		pr_err("%s:%d: hardware memory corruption (SIGBUS)\n",
+> +			current->comm, task_pid_nr(current));
+> +		force_sig(SIGBUS);
+> +	}
+> +
+>  	return queued;
+>  }
+>  
 
 
