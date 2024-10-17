@@ -1,224 +1,188 @@
-Return-Path: <linux-kernel+bounces-370364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375D99A2B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:56:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A819A2B87
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9C652836F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98DAC1C2771A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE141E0B84;
-	Thu, 17 Oct 2024 17:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FADB1DFDA4;
+	Thu, 17 Oct 2024 17:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YhC/taOD"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="D9asiYnS"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE081DFE1A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47231DFD99;
+	Thu, 17 Oct 2024 17:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729187741; cv=none; b=kUJNFuZZpKQFsCpZsSx4vvgJPax8CcBGjvVpcQrnu7AVvftS1YfGOtY4SimhOA/PtFPmTCooQtw4Q5ovl6vl79ZDgqZbi2R0/AvSDYhq/gxlYxW5oB+xQxlAMRVCScX+x+fQnATzFB3XM1GMTab05NcruLfPhnNfownwdcwg3IU=
+	t=1729187840; cv=none; b=Y/l++TwA2fVtRpP7Vn9HyW0GLIGBzXZoS0ulv/g1Ge78vf+bBCGUl3lp3yKIqa9YDRrvrB9mE5tFmGqAYX6XGIYj/ykwryRXu8vgB6q/20y2O6T6CNZNkHGh1F0f5VW7fRx6m11QVD8bk1WCjCjfPPJIeh6e96jV2qHi0ZAiZro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729187741; c=relaxed/simple;
-	bh=STMCOKdYDrxhAKPIY0TpjnuIkv4jnXIKSv8Ay+ovgds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AZ98xfLQ7sIfX0odcMcXGpP8sPzbk9f1Eswc+y3RwBnMVicONY8L6zRuik0/iW6m0UqZg23UfJzbn+XF9xUisk5oLi4Rv0OVMUB6B6sLvkSmiywCrqVFgTIWGSHLjM1VU1QZ0dnqLaaVyCypyjmYNnsbXJeLVeAeI393AVGiFY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YhC/taOD; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2888bcc0f15so151016fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729187739; x=1729792539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CV2LniEWLkPH855nUnsCCG7rJyx0sg20S+d0YeGEkUg=;
-        b=YhC/taODDpe6B5NzumgTmgAaIK74yfrG4Q7zIPy3VdgqSTDC5QaQgp5MutJzgHzE77
-         RFGqOcqDvSglUx+8NNaR5SPLNO4ofUUQD3xtizmU9GVZOrwqJVllEbo8Zw5xpCOGyw+7
-         y0INERdS/Q+x6l204Ps33ryQWy0djwJaDd3AE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729187739; x=1729792539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CV2LniEWLkPH855nUnsCCG7rJyx0sg20S+d0YeGEkUg=;
-        b=nrKYisVkJXQMHhTKxagSQTTJTTs6jTT/EaA4kEwNWgmgCdAX8XKICULa4QC8hkoLXb
-         +y0ISFSdfQSAtaYFT3rSyuyVLjbD0SsiRM5jePSgXTzlsd9t0sGtIJrQcZNln4lb/MU6
-         fSvhMQStWnL2mDDtm3nOO/5x6DyjorgmrHegUcM94bqxF6/g3tnHjH1hjdHCrf6F0Obc
-         KymJHuO+EOlP8z8Lt/8Rkpv3920N8q7xhJMdGIhV2p/y1Gn3vDflcm6v24evy2yQVnrj
-         +gMhxbBj+htZeZjiCb5q0GI0ybVvWQJ/T197C0lr91m7//isdRqAyFucagGy6mGnRaAo
-         OUXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVxGlNke6F5UPSdwChUWKBONyFek3+NSewTGA9EJdGrQIFz6jcZ2M0Ui7cMLWtLGWsx1yhMnkarWNENlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbEtjUdF2xQ5KI2b352svs7E1wCY15zFALHc1a30aoS8O72WqI
-	UF3pBzJ3R57YgoXE6lc8NrgUzRc8wSDkstmFxKNlBzWasNBqqmRrfmIcVDDa1ZEdY9GoI3sjAA0
-	zJfQDcsvVmcrb1CbaUEaaXDT+Gd+iZTl6pXsm
-X-Google-Smtp-Source: AGHT+IG1jnuyXq9h1zekOO3y6RFjOI6Iala9ya9n67hTOr784Ns2zKDWY0KFsm5CsP7P3OWhBSUD6pMkFv9SEFlmAEM=
-X-Received: by 2002:a05:6870:89a5:b0:277:f3f6:8c5b with SMTP id
- 586e51a60fabf-2890c66ed7cmr1087574fac.4.1729187738983; Thu, 17 Oct 2024
- 10:55:38 -0700 (PDT)
+	s=arc-20240116; t=1729187840; c=relaxed/simple;
+	bh=xmgbeXT8aWrGiZpymwJtYp1/4iIUijg7NtKvkhTd1ns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OMxWBiJMnFzt5h68uNtulDJY3Sw4hasN7rrZ/eYdZJ/DH2qX/U+r9Ui5w0PCp5diikpUZFt7SbYkUQsfi5sIj2kFtG1hLIGa455Ct0fmkblIHZYHxj2WiXSOuo5xC3kCPycYnsGADPZJ1eSh7S3DXCRJmeZPEQdHAnALM9QAYbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=D9asiYnS; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HFBbP6009186;
+	Thu, 17 Oct 2024 17:56:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=mEIYxFwssWTqYAewNViYRm2X7P5Y8
+	SJRPt3cVKr76UA=; b=D9asiYnSGhtl26fgojsFhXqUEGsNM2IWWjBSNGPF4HbdN
+	bz5wuOzCbiy/AY5Esw9Rx5uMzHB6SdVLznR6dHf9FSh0LrE0+/tsVcm5yE6FrwBp
+	5mFh8JcYRjLkzFML8/haOS7pqLV0n+VDhcPbbMPcrwnNZTtxdo6MTvOyTekG9yst
+	z1CmbE6HKRWhgJ3J26GQWTpgn9IqBfPfHig4pCedzjtmDngBCEUp41N48Fa8zN/q
+	HG6COyncJtQiGCu+2WfE+DPexOt0p6KEqF5p3WWU/v3tRgQSZ5JrxniTBfMnZEWW
+	FbG8cx7Tnp9UibDJJxbe6zLSRK5NLX7o2Hw4mpfRw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427gq7q3v9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 17:56:59 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49HHeo9g014276;
+	Thu, 17 Oct 2024 17:56:58 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fjajnwb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 17:56:58 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49HHsmYP037780;
+	Thu, 17 Oct 2024 17:56:57 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 427fjajnup-1;
+	Thu, 17 Oct 2024 17:56:57 +0000
+From: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+To: 
+Cc: saeed.mirzamohammadi@oracle.com, Breno Leitao <leitao@debian.org>,
+        stable@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 5.15, 5.10, 5.4, 4.19 1/1] KVM: Fix a data race on last_boosted_vcpu in kvm_vcpu_on_spin()
+Date: Thu, 17 Oct 2024 10:56:13 -0700
+Message-ID: <20241017175623.2045625-1-saeed.mirzamohammadi@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016201719.2449143-1-Liam.Howlett@oracle.com> <20241016201719.2449143-2-Liam.Howlett@oracle.com>
-In-Reply-To: <20241016201719.2449143-2-Liam.Howlett@oracle.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 17 Oct 2024 10:55:27 -0700
-Message-ID: <CABi2SkWhgY4amyT+EGTma7a9ymPs7ArnFLkAnm5ko556DpC_Cg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm/mremap: Clean up vma_to_resize()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Jann Horn <jannh@google.com>, David Hildenbrand <david@redhat.com>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	Pedro Falcato <pedro.falcato@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-17_20,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410170122
+X-Proofpoint-ORIG-GUID: gOw21oySdl6c-qz8nIRKQJRVCVj6G30y
+X-Proofpoint-GUID: gOw21oySdl6c-qz8nIRKQJRVCVj6G30y
 
-On Wed, Oct 16, 2024 at 1:17=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
->
-> vma_to_resize() is used in two locations to find and validate the vma
-> for the mremap location.  One of the two locations already has the vma,
-> which is then re-found to validate the same vma.
->
-> This code can be simplified by moving the vma_lookup() from
-> vma_to_resize() to mremap_to() and changing the return type to an int
-> error.
->
-> Since the function now just validates the vma, the function is renamed
-> to mremap_vma_check() to better reflect what it is doing.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> ---
->  mm/mremap.c | 39 +++++++++++++++++++--------------------
->  1 file changed, 19 insertions(+), 20 deletions(-)
->
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 5917feafe8cc..648c29f568af 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -826,17 +826,12 @@ static unsigned long move_vma(struct vm_area_struct=
- *vma,
->         return new_addr;
->  }
->
-> -static struct vm_area_struct *vma_to_resize(unsigned long addr,
-> +static int mremap_vma_check(struct vm_area_struct *vma, unsigned long ad=
-dr,
-The original function is vma_to_resize, and mremap_vma_check is
-missing this context.
-Maybe mremap_vma_check_resize is a better name ?
+From: Breno Leitao <leitao@debian.org>
 
+commit 49f683b41f28918df3e51ddc0d928cb2e934ccdb upstream.
 
->         unsigned long old_len, unsigned long new_len, unsigned long flags=
-)
->  {
->         struct mm_struct *mm =3D current->mm;
-> -       struct vm_area_struct *vma;
->         unsigned long pgoff;
->
-> -       vma =3D vma_lookup(mm, addr);
-> -       if (!vma)
-> -               return ERR_PTR(-EFAULT);
-> -
->         /*
->          * !old_len is a special case where an attempt is made to 'duplic=
-ate'
->          * a mapping.  This makes no sense for private mappings as it wil=
-l
-> @@ -847,37 +842,37 @@ static struct vm_area_struct *vma_to_resize(unsigne=
-d long addr,
->          */
->         if (!old_len && !(vma->vm_flags & (VM_SHARED | VM_MAYSHARE))) {
->                 pr_warn_once("%s (%d): attempted to duplicate a private m=
-apping with mremap.  This is not supported.\n", current->comm, current->pid=
-);
-> -               return ERR_PTR(-EINVAL);
-> +               return -EINVAL;
->         }
->
->         if ((flags & MREMAP_DONTUNMAP) &&
->                         (vma->vm_flags & (VM_DONTEXPAND | VM_PFNMAP)))
-> -               return ERR_PTR(-EINVAL);
-> +               return -EINVAL;
->
->         /* We can't remap across vm area boundaries */
->         if (old_len > vma->vm_end - addr)
-> -               return ERR_PTR(-EFAULT);
-> +               return -EFAULT;
->
->         if (new_len =3D=3D old_len)
-> -               return vma;
-> +               return 0;
->
->         /* Need to be careful about a growing mapping */
->         pgoff =3D (addr - vma->vm_start) >> PAGE_SHIFT;
->         pgoff +=3D vma->vm_pgoff;
->         if (pgoff + (new_len >> PAGE_SHIFT) < pgoff)
-> -               return ERR_PTR(-EINVAL);
-> +               return -EINVAL;
->
->         if (vma->vm_flags & (VM_DONTEXPAND | VM_PFNMAP))
-> -               return ERR_PTR(-EFAULT);
-> +               return -EFAULT;
->
->         if (!mlock_future_ok(mm, vma->vm_flags, new_len - old_len))
-> -               return ERR_PTR(-EAGAIN);
-> +               return -EAGAIN;
->
->         if (!may_expand_vm(mm, vma->vm_flags,
->                                 (new_len - old_len) >> PAGE_SHIFT))
-> -               return ERR_PTR(-ENOMEM);
-> +               return -ENOMEM;
->
-> -       return vma;
-> +       return 0;
->  }
->
->  static unsigned long mremap_to(unsigned long addr, unsigned long old_len=
-,
-> @@ -936,7 +931,13 @@ static unsigned long mremap_to(unsigned long addr, u=
-nsigned long old_len,
->                 old_len =3D new_len;
->         }
->
-> -       vma =3D vma_to_resize(addr, old_len, new_len, flags);
-> +       vma =3D vma_lookup(mm, addr);
-> +       if (!vma) {
-> +               ret =3D -EFAULT;
-> +               goto out;
-> +       }
-> +
-> +       mremap_vma_check(vma, addr, old_len, new_len, flags);
->         if (IS_ERR(vma)) {
->                 ret =3D PTR_ERR(vma);
->                 goto out;
-> @@ -1114,11 +1115,9 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsig=
-ned long, old_len,
->         /*
->          * Ok, we need to grow..
->          */
-> -       vma =3D vma_to_resize(addr, old_len, new_len, flags);
-> -       if (IS_ERR(vma)) {
-> -               ret =3D PTR_ERR(vma);
-> +       ret =3D mremap_vma_check(vma, addr, old_len, new_len, flags);
-> +       if (ret)
->                 goto out;
-> -       }
->
->         /* old_len exactly to the end of the area..
->          */
-> --
-> 2.43.0
->
+Use {READ,WRITE}_ONCE() to access kvm->last_boosted_vcpu to ensure the
+loads and stores are atomic.  In the extremely unlikely scenario the
+compiler tears the stores, it's theoretically possible for KVM to attempt
+to get a vCPU using an out-of-bounds index, e.g. if the write is split
+into multiple 8-bit stores, and is paired with a 32-bit load on a VM with
+257 vCPUs:
+
+  CPU0                              CPU1
+  last_boosted_vcpu = 0xff;
+
+                                    (last_boosted_vcpu = 0x100)
+                                    last_boosted_vcpu[15:8] = 0x01;
+  i = (last_boosted_vcpu = 0x1ff)
+                                    last_boosted_vcpu[7:0] = 0x00;
+
+  vcpu = kvm->vcpu_array[0x1ff];
+
+As detected by KCSAN:
+
+  BUG: KCSAN: data-race in kvm_vcpu_on_spin [kvm] / kvm_vcpu_on_spin [kvm]
+
+  write to 0xffffc90025a92344 of 4 bytes by task 4340 on cpu 16:
+  kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112) kvm
+  handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
+  vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:?
+		 arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
+  vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
+  kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
+  kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
+  __se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
+  __x64_sys_ioctl (fs/ioctl.c:890)
+  x64_sys_call (arch/x86/entry/syscall_64.c:33)
+  do_syscall_64 (arch/x86/entry/common.c:?)
+  entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+
+  read to 0xffffc90025a92344 of 4 bytes by task 4342 on cpu 4:
+  kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4069) kvm
+  handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
+  vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:?
+			arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
+  vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
+  kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
+  kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
+  __se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
+  __x64_sys_ioctl (fs/ioctl.c:890)
+  x64_sys_call (arch/x86/entry/syscall_64.c:33)
+  do_syscall_64 (arch/x86/entry/common.c:?)
+  entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+
+  value changed: 0x00000012 -> 0x00000000
+
+Fixes: 217ece6129f2 ("KVM: use yield_to instead of sleep in kvm_vcpu_on_spin")
+Cc: stable@vger.kernel.org # 4.19+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Link: https://lore.kernel.org/r/20240510092353.2261824-1-leitao@debian.org
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+(cherry picked from commit 92c77807d938145c7c3350c944ef9f39d7f6017c)
+Signed-off-by: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+---
+ virt/kvm/kvm_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 801ab0635bc32..8734d5bbd951e 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3525,12 +3525,13 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+ {
+ 	struct kvm *kvm = me->kvm;
+ 	struct kvm_vcpu *vcpu;
+-	int last_boosted_vcpu = me->kvm->last_boosted_vcpu;
++	int last_boosted_vcpu;
+ 	int yielded = 0;
+ 	int try = 3;
+ 	int pass;
+ 	int i;
+ 
++	last_boosted_vcpu = READ_ONCE(kvm->last_boosted_vcpu);
+ 	kvm_vcpu_set_in_spin_loop(me, true);
+ 	/*
+ 	 * We boost the priority of a VCPU that is runnable but not
+@@ -3561,7 +3562,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+ 
+ 			yielded = kvm_vcpu_yield_to(vcpu);
+ 			if (yielded > 0) {
+-				kvm->last_boosted_vcpu = i;
++				WRITE_ONCE(kvm->last_boosted_vcpu, i);
+ 				break;
+ 			} else if (yielded < 0) {
+ 				try--;
+-- 
+2.46.0
+
 
