@@ -1,129 +1,161 @@
-Return-Path: <linux-kernel+bounces-370281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 573AB9A2A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:09:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4FC9A2A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2DB728498F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:09:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600191F28522
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934F71E048C;
-	Thu, 17 Oct 2024 17:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE2E1E0B9D;
+	Thu, 17 Oct 2024 17:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3DaVh6Xp"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PfzY6Kqi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE601DFDA5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117D61E0B66
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729184735; cv=none; b=C+Q47qWAUOQFr5IkJQizooY8GXcYBA/Wv7MqDTr9uZwZhubpEygVg2pmMETjum1un9maXHk64BV+iqIooNtWeDtNHpyCyVm8K4edT7IIPXnPgiL9OQYHvGjFAPadIYsff5c+rMJcXEme2DvpS9rXvmSlfVcKdD4XEI7wuAH6nFE=
+	t=1729184757; cv=none; b=YjoBejVs5cG7h4cW2BnoIl1kpbQ+rnuqR+GdjPfe0mhivhB16naofpuNcI3UxL7mvYQ30QMBhQcUgDYO05fAuCQLJj7IourD6briXDCT3sAvBimEhvgSYsciAJO50iRmHsbM3cyTJQRXvqQEsMgd4a7yMtp4eA0jpmF51VbWnbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729184735; c=relaxed/simple;
-	bh=YlDGtnfGvvX80B/eJZtyrZHBPOgy/mC95P2OySjtvzw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KX/CRaztJAU0v0eZjyUlHB4bx/2pZ0DIG5tp56kRxACCYDaJuffVuN1cbcdbQvxGH1LaWItH5bGfxn6ZqdHMZt/+MLGJltT32gPE21ncFn5pe3xTBzQdk6O4Dxmq0zLPsurLRmbS27HnpMN2gxcGrQXqsSJuAjz1yVNbsxHR04U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3DaVh6Xp; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so8085ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729184732; x=1729789532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RSVZ7x4+MXTZlgRW8/EerjnKSG0Ie4T19KQTgk4b1Lg=;
-        b=3DaVh6XpdkVMjnDXjpI/Z86l7B5o4r0hnC0N9twgpgvYKxzCIB+nSbPckSRqg5gHDf
-         YTib/w7MsgNltttZyKOrZBvyrcpSQ2ore8jfhaDEC1EtLenfE2D0eddm7fLP+IvFUGal
-         S98jaExtYh0h2gTZ9a0e4pqVRQr0vyD/AQpBASgGZmE6VdXCaks3Y6ijJZ/l7FkNiYnE
-         tK81Ypd57czp49a3IemwpRcfMhHmB8BgQxx7lRMJJ/Ylfm7t/Umc46X0+EC8XZVGDf7b
-         TXNwY3kdjUP00dF7jVOCITndAJWjhgZLzRFVbRJqrLDLe6IZ4oYWXf13CNtb64Z3o3w3
-         ArpQ==
+	s=arc-20240116; t=1729184757; c=relaxed/simple;
+	bh=nwUmW3HwWk2L8wzAarlBvpMicClGRl1zSOHwmH7o7OM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fa5hzhaSP3CODNj41dn9nG3jHVDavu3AeGBd0h1Vg7sSmei6Gs33q1KFYtN3rWSPKzJc29rVO+c2XF/VFW1vY7J4N/CP6MXAu6tllcYoIfXXO0ujCVQB9GPg5hvtMqMxtWa8oIW1+vlBq65vAUdeit6EG7RfqmfQmp1Ig1nVCMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PfzY6Kqi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729184755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pTxdalYG31XpePFBi14kwyLsxFtz4ngJLPKLlOmswew=;
+	b=PfzY6KqiKPiFyvF0qNrKWt8hVKUDJ55D7Q6OWmFLJlMBomZ98jjZ9YNUjPc1nsjHIintwE
+	OHcH8y9u0dDlErAH67lSn6+5IqniKcRJBw5hcdCGNMkvKBQhhVgoEU300829ZsBiOPMleg
+	FfmCMLRLTBcoYLuwjBJ34pfvBGSdovg=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-258-4ewwfIhtORyqBazNDPX8Xg-1; Thu, 17 Oct 2024 13:05:53 -0400
+X-MC-Unique: 4ewwfIhtORyqBazNDPX8Xg-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7aed2d01616so183237785a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:05:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729184732; x=1729789532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RSVZ7x4+MXTZlgRW8/EerjnKSG0Ie4T19KQTgk4b1Lg=;
-        b=CCShAS9pqAPxZxHaqLhATOHHNFBGX5wVCsgay15ENScPzd4PxDsL7O6MLX7SFhWp1m
-         qgTMZKp6SDU8TlxjAWiAt5cd+rxh2/NWVjP+K35x6P0ouO80+kqpUuBC4dxsVx6BeGB9
-         Ptrk896ipTVzveiZB0B+CCUuIjABb28eJsCBbZZ5sGB5r94U7meaeScNajEyd3FxHOiw
-         dNhNII40n0bESCeqL2FoFtEhfQLDRBEw+5nUTvI27Gm0tnX1niphybTHbcLfhLOGxjXu
-         UmOgJBQ15G5DlqjcEwTbYq/tJrNVhA2Bx7jCtJeuDHLkGfAJjD6TZal3+OAjpSv35PRu
-         HwPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxLRXUGeOkGC37ZoGh9fg8ubLewC8xIWdVzKZBYV44ozmLj65bLyhtBRo29Zcb6rmoETZpOriyYReJn08=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDoQZKNOdRB9cWt8TIdEqYl/9ZuckbOHlcRNAbpBxlzjuAeAFG
-	MxSBFDBCnbOi4j4J1+lrr8yP8wKCQavCAYiNSaz/cvXl5XxPvvrfKsui0lABP/Z9d+lT4L1asbZ
-	u7poCr5u4AKpP/i9yACvLP1oEN76y/5SsABEo
-X-Google-Smtp-Source: AGHT+IH+cU0DDHe4rbUNruv0FZ8Fo/AK6Md8CtUAz6iHAAL+y8/sNiCrnpMl3Z6oYfxVbJuXUw9bzFLWViCJwR+BVQQ=
-X-Received: by 2002:a05:6e02:12c2:b0:375:bb49:930d with SMTP id
- e9e14a558f8ab-3a3ea039433mr4186845ab.23.1729184732021; Thu, 17 Oct 2024
- 10:05:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729184753; x=1729789553;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pTxdalYG31XpePFBi14kwyLsxFtz4ngJLPKLlOmswew=;
+        b=tYZI5UhNH+vNrlZSBGVrp9PmbcAfDI1br0Cj5QXGD1UIZGie0oIJR8hsDiIYjTEndB
+         oCDj2givCwJ2VbLisfDwiqYjsPBhsmRUAUqwZCxnTO4diEqJB56h8zHOGHzYGC46jIoX
+         C7rsje2sXJuRgX4zS48t6MLKo4PsR3/TgXxbx4HwIDsGFxF7MhO5jJuu1A/uAKC9oLrq
+         EGaUz2IlgzAB32evpRxSmIHxAAQXhcCx3gKuxSxaNknh9dczzcYs/dD/xz1FtEtxaD6J
+         Janyg8X9ti5W9gJSXK1C7HrlMADqYFi7DMStXqdOKXlzb17BK/edFQzL3kl4AqV0zF3f
+         1enA==
+X-Forwarded-Encrypted: i=1; AJvYcCVc7/J+zUum4EUp5Sghnb0CBd9BGDs23o7GWZNn6DEuuF8GyjXHGsc+O5K3CFhdXaOvoYYWieiz2pIxo5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk7Povnh0TN1OBlQlwdPQ4MkGK51xzOMqGzs5NeoAO4bv35fiP
+	+V4UqvA4gjmtmWbYsOonO7CKxo68pLYhkzVr/ZFBU9gD1f/yN+O9HnNbssIoP2kQdSf/GwUm06F
+	G0+cvi8qnCWCFsNrTsIL26eqjPBTbF9yLSUL04uPp6sK2+gXhsx7B7SfSZsWqbQ==
+X-Received: by 2002:a05:620a:372c:b0:7a9:aba6:d037 with SMTP id af79cd13be357-7b1417b3191mr1094415485a.13.1729184753062;
+        Thu, 17 Oct 2024 10:05:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHD0En3wQDJBS0nydKh7vHrLHOJlIadS3w4LKE69c5NsvIujdsOvlVIWDnzPR18WON37rexWg==
+X-Received: by 2002:a05:620a:372c:b0:7a9:aba6:d037 with SMTP id af79cd13be357-7b1417b3191mr1094408885a.13.1729184752627;
+        Thu, 17 Oct 2024 10:05:52 -0700 (PDT)
+Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136170dd7sm308639185a.53.2024.10.17.10.05.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 10:05:51 -0700 (PDT)
+Date: Thu, 17 Oct 2024 13:05:34 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Ackerley Tng <ackerleytng@google.com>, tabba@google.com,
+	quic_eberman@quicinc.com, roypat@amazon.co.uk, rientjes@google.com,
+	fvdl@google.com, jthoughton@google.com, seanjc@google.com,
+	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com,
+	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev,
+	erdemaktas@google.com, vannapurve@google.com, qperret@google.com,
+	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org,
+	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev,
+	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com,
+	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com,
+	vkuznets@redhat.com, maciej.wieczor-retman@intel.com,
+	pgonda@google.com, oliver.upton@linux.dev,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
+ struct kvm_gmem_private
+Message-ID: <ZxFD3kYfKY0b-qFz@x1n>
+References: <diqz8quunrlw.fsf@ackerleytng-ctop.c.googlers.com>
+ <Zw7f3YrzqnH-iWwf@x1n>
+ <diqz1q0hndb3.fsf@ackerleytng-ctop.c.googlers.com>
+ <1d243dde-2ddf-4875-890d-e6bb47931e40@redhat.com>
+ <ZxAfET87vwVwuUfJ@x1n>
+ <20241016225157.GQ3559746@nvidia.com>
+ <ZxBRC-v9w7xS0xgk@x1n>
+ <20241016235424.GU3559746@nvidia.com>
+ <ZxEmFY1FcrRtylJW@x1n>
+ <20241017164713.GF3559746@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016175350.116227-1-irogers@google.com> <172918316032.639809.5792146702013848062.b4-ty@kernel.org>
- <CAP-5=fWMkF-z5t6-Oz8e8YRuW0rsMg7JXj4vSHqLZFe0y3=sUA@mail.gmail.com> <ZxFBdCMFZ50oo-s2@google.com>
-In-Reply-To: <ZxFBdCMFZ50oo-s2@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 17 Oct 2024 10:05:17 -0700
-Message-ID: <CAP-5=fUp8=WYrYT54Cr2XR4yD7gcMP8xP9q8JTs3MYj0Vn5GjA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] CSV/JSON metric thresholds, fix printf modifiers
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241017164713.GF3559746@nvidia.com>
 
-On Thu, Oct 17, 2024 at 9:55=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Thu, Oct 17, 2024 at 09:44:08AM -0700, Ian Rogers wrote:
-> > On Thu, Oct 17, 2024 at 9:39=E2=80=AFAM Namhyung Kim <namhyung@kernel.o=
-rg> wrote:
-> > >
-> > > On Wed, 16 Oct 2024 10:53:42 -0700, Ian Rogers wrote:
-> > >
-> > > > Metric thresholds are being computed for CSV and JSON output but no=
-t
-> > > > displayed. Rename the color that encodes the threshold as enum valu=
-es
-> > > > and use to generate string constants in a CSV column or json
-> > > > dictionary value.
-> > > >
-> > > > Add printf attribute to functions in color.h that could support
-> > > > it. Fix bad printf format strings that this detected.
-> > > >
-> > > > [...]
-> > >
-> > > Applied to perf-tools-next, thanks!
-> >
-> > Sorry for the trouble, could we switch to the v4 series due to issues
-> > on hypervisors with not counted events in CSV output missing a column:
-> > https://lore.kernel.org/lkml/20241016215139.212939-1-irogers@google.com=
-/
-> > The patch set drops the CSV output metric threshold support.
->
-> Oops, sorry for missing v4.  And I also noticed a build error on i386.
-> I'll drop this for now and push perf-tools-next soon.
+On Thu, Oct 17, 2024 at 01:47:13PM -0300, Jason Gunthorpe wrote:
+> On Thu, Oct 17, 2024 at 10:58:29AM -0400, Peter Xu wrote:
+> 
+> > My question was more torwards whether gmemfd could still expose the
+> > possibility to be used in VA forms to other modules that may not support
+> > fd+offsets yet.
+> 
+> I keep hearing they don't want to support page pinning on a guestmemfd
+> mapping, so VA based paths could not work.
 
-Thanks, I'll need to send a v5 to address the 32-bit/i386 issue.
+Do you remember the reasoning of it?  Is it because CoCo still needs to
+have a bounded time window to convert from shared back to private?  If so,
+maybe that's a non-issue for non-CoCo, where the VM object / gmemfd object
+(when created) can have a flag marking that it's always shared and can
+never be converted to private for any page within.
 
-Ian
+So how would VFIO's DMA work even with iommufd if pages cannot be pinned?
+Is some form of bounce buffering required, then?
+
+It sounds like if so there'll be a lot of use cases that won't work with
+current infrastructure..
+
+> 
+> > I think as long as we can provide gmemfd VMAs like what this series
+> > provides, it sounds possible to reuse the old VA interfaces before the CoCo
+> > interfaces are ready, so that people can already start leveraging gmemfd
+> > backing pages.
+> 
+> And you definitely can't get the private pages out of the VA interface
+> because all the VMA PTEs of private pages are non-present by definition.
+
+It's the same as "not present" if the fault() gets a SIGBUS always for
+private pages, IIUC.
+
+My prior references to "VA ranges" are mostly only for shared / faultable
+pages. And they'll get zapped too when requested to be converted from
+shared -> private, aka, always not present for private.
+
+> 
+> Hence, you must use the FD for a lot of use cases here.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
