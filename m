@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-368984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992C09A174E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:51:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42799A1750
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38061C21253
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C561F2307E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4891DFE8;
-	Thu, 17 Oct 2024 00:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5891F949;
+	Thu, 17 Oct 2024 00:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YmcQoIeM"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n/UC59oY"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037C21BF37
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2225B1DA5A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729126277; cv=none; b=bY12jjNVXV1r5AyfbGW1PB0dGboPrp70uNLeedcLzFHmGWR4ubovIrMRcXdzEPYyJ+4ix1L+528eEMRnMr5SPT+4fP3jLDE8pJaEl1HlBU+PgS2h0fhnxES+Xtr+oMc/s0Hw8MBBNK9CNEXWZEA4Es9xky229KmS/U1+ITEcxtQ=
+	t=1729126277; cv=none; b=hsSmJYP+A8RZnKj3vcZxF2KcWF7DSjZtHnJ36cLvFBWFeSJfGccWY7Ud5GYm8+Yjjyrfsab6DF3VNnzmjlRhsntSeO0GGANxwDN0flovCOF9eGf75UlpC6/LNis4JyOA3SlyLJ6dkkZ/6qwZ/ac2qpEJWpNMOl0YHVxkrOkiiHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729126277; c=relaxed/simple;
-	bh=IxD+p5GKEBnqW9bnHP0WW6feXUZp/DU4SEQgGZ6gu7E=;
+	bh=sNhuepxauFrRXvVIMAtmTnGspOhtzLln68OH8rtsxSo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u5RAKCELGkJt6yUr/dn0ILZPS/LX9jPzwZKH3jOmiJGxqXjKkDSxR+x4bUWygU/v1qtsDnnxl328YoNavmksKfEMaZTDzpiMDkWAtaHnqhGpgSuivKRAPXwASj8FFVKZ/lLJTfxiDrCvodyEUj/w5fDo0KmLxCgY+xqFl7e0Uak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YmcQoIeM; arc=none smtp.client-ip=209.85.216.43
+	 MIME-Version; b=YuwodP3jeYBuAfkw3cREu9hANPQaoQqr2ZkmE8W7raoaCXz9RtVJaCxktLrKr5yDFM1QLGBszhSehH8lHcgvhSWDhRTToAUxFKT7+gr/XMjgksJDga8X2Z3BDjfpMbWhUk8Q++TRgEfBQ+pfOw68S7C/MuzWgPmwYHxlAzqiCxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n/UC59oY; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e3c0d1ccc6so44434a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:51:12 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea6a4b3807so58979a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:51:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729126272; x=1729731072; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1729126274; x=1729731074; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qjKlw80hPOriNww9p0Da79oYC5cYurJRNqRcXEepGpg=;
-        b=YmcQoIeMX4SB/eIIlH/U0Do61TzJ88np1flWOZqqF7z1iMdH6pF+EV9EogNJt+duHF
-         rhr391nLukQ429h3dIysyitz0bbXnIovwknBf+5/vHQmIvxFblbuMlvJYFUiMr//hYP1
-         jlsQgSX2g61csAxjUR/xhmSGD9k9fSPg+KB5k=
+        bh=bkOjehUZhf9vTAiDfbTet38c6Gkgb8k55nqJSbDOZQY=;
+        b=n/UC59oYtrP9ZJ+NMk+ibXwz+qhvmWwuqxY0RyuZ4J3geAlf/bVHmHUCS6KCE1yDpE
+         Hfp6UNQEIxilZV/09kciyHzVJDofe7siwoWCO9JThepDr0dqG8ujSbW/mGCAqKeZnF7/
+         lzp04wgA8GezOGyi4dnLY/ks0B16KnruS8jxE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729126272; x=1729731072;
+        d=1e100.net; s=20230601; t=1729126274; x=1729731074;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qjKlw80hPOriNww9p0Da79oYC5cYurJRNqRcXEepGpg=;
-        b=uoItH7X+079OmaBiGAKfh8kZY4FlA1RcTZxz7ps37cTufxHaLhy37gHO0nGw3AdSNH
-         8wLIkU7ZlNWt2Ub295s2V60ohJUjy+K79wDoEgtTVN7gBvddfAn63b0llTlyZ2O9SutV
-         Zfd42c3VLkLbrIxdUOtpYtYku1XyMvypICwHdQQ4jtzz7CU1c2p9LIj8SGv99+/aEjRE
-         ovFUlWVK1C/N7Nx/40J75MK8oRYgdLjSgFpPNbhEcWyMuJvoBqBvONKBkeNtfi3lmIj+
-         GAVNE/NcGU7NMPPr3fUHCO/HlQtkyopqo5OkT49jg2XgxF7dy3h48AY5pVS1tiTOYgig
-         PLtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkyzSNz2vGtxUKBk3imgaQ0gdXq4CwW8dPD+hWmAMGLxSRiEcPbJ66MJ0rj8e1sgnsxufYi4ol8uiULUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo8OCNhQYbcMOZWCjJi7pBdn3F7TJbHQz6PPnHx99R+jGlujrD
-	Fp3Sz5TdjDeJ08jP26jbWBIcSvtTdzeqsqw4LcN9rhvKtqsQvWynY2/8yM+MWQ==
-X-Google-Smtp-Source: AGHT+IG+nZEmIFxEMebL8zJk/ulSdARWGAMWNOvXhzs7CcDij4L3o5BGAmBhyFvsZhnXUwj/YuMYiQ==
-X-Received: by 2002:a17:903:32c4:b0:205:723f:23d4 with SMTP id d9443c01a7336-20d47e69b07mr7460455ad.5.1729126270776;
-        Wed, 16 Oct 2024 17:51:10 -0700 (PDT)
+        bh=bkOjehUZhf9vTAiDfbTet38c6Gkgb8k55nqJSbDOZQY=;
+        b=R/dmcDB2UBxAW/L1WnTUzDxZamPNHDGcTCdfPzd4BGrIDOfLV6Laqbd2vAG9HPeAAw
+         R4zrGucsoLytctovBo7zOIipAYL4vA5+ZDUAfhm1Y1Txg3LBs4xKhu9hcm2k64pyWOnO
+         s9UUf6GGS1WiwcZi7agzl689M10wzY7+J+fOIN0Pn5OstUnaRbEVekmUfKXKHQUCEZnz
+         WGX8GjLIo88t6xaxCnGDIdAzOKNKJqEtGblB3p8H4B1BMpi/Kebo5dnc02ixJUi9nTZf
+         fj9CMyVG6HdQ+PYnqkYo6DfU3IYpYeO4mq7/1RqRxwH9aWHv5nhIVKH0T7WBZ0TWDTCo
+         51OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDVnM5idUPQkTPniEZXsqfc4UuXaldteF3b8q2puq4rI8yrxTILdI+oN/eQ8/FkiWgywhceT3GBFLgov8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKPXkh22MOHeH3u61fykVCrUM/1ibT5bH5oaKelhRj82V7Ymsg
+	8d3+zOqiG9ueLhWSNlijV53Rqrje8TTFDzj/yGeMJB0mMlzh1/vfBhmm1ZzGQA==
+X-Google-Smtp-Source: AGHT+IHy9OceESdtYyqY6xLVtyPe+K9jcM7IV9Ttt1i23Ri9jkWXgMq2TJu6PP5Z70ZTIPLzN7qP/w==
+X-Received: by 2002:a17:902:dac7:b0:20c:a63e:b678 with SMTP id d9443c01a7336-20d47f829a5mr7401195ad.14.1729126274463;
+        Wed, 16 Oct 2024 17:51:14 -0700 (PDT)
 Received: from localhost (56.4.82.34.bc.googleusercontent.com. [34.82.4.56])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20d1804c050sm34102105ad.216.2024.10.16.17.51.10
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20d1804c68bsm34559025ad.185.2024.10.16.17.51.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 17:51:10 -0700 (PDT)
+        Wed, 16 Oct 2024 17:51:14 -0700 (PDT)
 From: jeffxu@chromium.org
 To: akpm@linux-foundation.org,
 	keescook@chromium.org,
@@ -89,9 +89,9 @@ Cc: jeffxu@google.com,
 	rdunlap@infradead.org,
 	Jeff Xu <jeffxu@chromium.org>,
 	stable@vger.kernel.org
-Subject: [PATCH v1 1/2] mseal: Two fixes for madvise(MADV_DONTNEED) when sealed
-Date: Thu, 17 Oct 2024 00:51:04 +0000
-Message-ID: <20241017005105.3047458-2-jeffxu@chromium.org>
+Subject: [PATCH v1 2/2] selftest/mseal: Add tests for madvise fixes
+Date: Thu, 17 Oct 2024 00:51:05 +0000
+Message-ID: <20241017005105.3047458-3-jeffxu@chromium.org>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 In-Reply-To: <20241017005105.3047458-1-jeffxu@chromium.org>
 References: <20241017005105.3047458-1-jeffxu@chromium.org>
@@ -105,130 +105,176 @@ Content-Transfer-Encoding: 8bit
 
 From: Jeff Xu <jeffxu@chromium.org>
 
-Two fixes for madvise(MADV_DONTNEED) when sealed.
+Testcase for "Two fixes for madvise(MADV_DONTNEED) when sealed"
 
-For PROT_NONE mappings, the previous blocking of
-madvise(MADV_DONTNEED) is unnecessary. As PROT_NONE already prohibits
-memory access, madvise(MADV_DONTNEED) should be allowed to proceed in
-order to free the page.
+test_seal_madvise_prot_none
+  shall not block when mapping is PROT_NONE
 
-For file-backed, private, read-only memory mappings, we previously did
-not block the madvise(MADV_DONTNEED). This was based on
-the assumption that the memory's content, being file-backed, could be
-retrieved from the file if accessed again. However, this assumption
-failed to consider scenarios where a mapping is initially created as
-read-write, modified, and subsequently changed to read-only. The newly
-introduced VM_WASWRITE flag addresses this oversight.
+test_madvise_filebacked_writable
+  shall not block writeable private filebacked mapping.
 
-Reported-by: Pedro Falcato <pedro.falcato@gmail.com>
-Link:https://lore.kernel.org/all/CABi2SkW2XzuZ2-TunWOVzTEX1qc29LhjfNQ3hD4Nym8U-_f+ug@mail.gmail.com/
+test_madvise_filebacked_was_writable - shall block.
+  shall block read-only private filebacked mapping which
+  was previously writable.
+
 Fixes: 8be7258aad44 ("mseal: add mseal syscall")
-Cc: <stable@vger.kernel.org> # 6.11.y: 4d1b3416659b: mm: move can_modify_vma to mm/vma.h
-Cc: <stable@vger.kernel.org> # 6.11.y: 4a2dd02b0916: mm/mprotect: replace can_modify_mm with can_modify_vma
-Cc: <stable@vger.kernel.org> # 6.11.y: 23c57d1fa2b9: mseal: replace can_modify_mm_madv with a vma variant
+Cc: <stable@vger.kernel.org> # 6.11.y: 67203f3f2a63: selftests/mm: add mseal test for no-discard madvise
+Cc: <stable@vger.kernel.org> # 6.11.y: f28bdd1b17ec: selftests/mm: add more mseal traversal tests
 Cc: <stable@vger.kernel.org> # 6.11.y
 Signed-off-by: Jeff Xu <jeffxu@chromium.org>
 ---
- include/linux/mm.h |  2 ++
- mm/mprotect.c      |  3 +++
- mm/mseal.c         | 42 ++++++++++++++++++++++++++++++++++++------
- 3 files changed, 41 insertions(+), 6 deletions(-)
+ tools/testing/selftests/mm/mseal_test.c | 118 +++++++++++++++++++++++-
+ 1 file changed, 116 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 4c32003c8404..b402eca2565a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -430,6 +430,8 @@ extern unsigned int kobjsize(const void *objp);
- #ifdef CONFIG_64BIT
- /* VM is sealed, in vm_flags */
- #define VM_SEALED	_BITUL(63)
-+/* VM was writable */
-+#define VM_WASWRITE	_BITUL(62)
- #endif
+diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
+index 01675c412b2a..fa74dbe4a684 100644
+--- a/tools/testing/selftests/mm/mseal_test.c
++++ b/tools/testing/selftests/mm/mseal_test.c
+@@ -1728,7 +1728,7 @@ static void test_seal_discard_ro_anon_on_filebacked(bool seal)
+ 		FAIL_TEST_IF_FALSE(!ret);
+ 	}
  
- /* Bits set in the VMA until the stack is in its final location */
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 0c5d6d06107d..6397135ca526 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -821,6 +821,9 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 			break;
- 		}
+-	/* sealing doesn't apply for file backed mapping. */
++	/* read-only private file-backed mapping, allow always */
+ 	ret = sys_madvise(ptr, size, MADV_DONTNEED);
+ 	FAIL_TEST_IF_FALSE(!ret);
  
-+		if ((vma->vm_flags & VM_WRITE) && !(newflags & VM_WRITE))
-+			newflags |= VM_WASWRITE;
-+
- 		error = security_file_mprotect(vma, reqprot, prot);
- 		if (error)
- 			break;
-diff --git a/mm/mseal.c b/mm/mseal.c
-index ece977bd21e1..28f28487be17 100644
---- a/mm/mseal.c
-+++ b/mm/mseal.c
-@@ -36,12 +36,8 @@ static bool is_madv_discard(int behavior)
- 	return false;
+@@ -1864,6 +1864,111 @@ static void test_seal_madvise_nodiscard(bool seal)
+ 	REPORT_TEST_PASS();
  }
  
--static bool is_ro_anon(struct vm_area_struct *vma)
-+static bool anon_is_ro(struct vm_area_struct *vma)
- {
--	/* check anonymous mapping. */
--	if (vma->vm_file || vma->vm_flags & VM_SHARED)
--		return false;
--
- 	/*
- 	 * check for non-writable:
- 	 * PROT=RO or PKRU is not writeable.
-@@ -53,6 +49,22 @@ static bool is_ro_anon(struct vm_area_struct *vma)
- 	return false;
- }
- 
-+static bool vma_is_prot_none(struct vm_area_struct *vma)
++static void test_seal_madvise_prot_none(bool seal)
 +{
-+	if ((vma->vm_flags & VM_ACCESS_FLAGS) == VM_NONE)
-+		return true;
++	void *ptr;
++	unsigned long page_size = getpagesize();
++	unsigned long size = 4 * page_size;
++	int ret;
 +
-+	return false;
-+}
++	setup_single_address(size, &ptr);
++	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
 +
-+static bool vma_was_writable_turn_readonly(struct vm_area_struct *vma)
-+{
-+	if (!(vma->vm_flags & VM_WRITE) && vma->vm_flags & VM_WASWRITE)
-+		return true;
++	ret = sys_mprotect(ptr + page_size, page_size, PROT_NONE);
++	FAIL_TEST_IF_FALSE(!ret);
 +
-+	return false;
-+}
-+
- /*
-  * Check if a vma is allowed to be modified by madvise.
-  */
-@@ -61,7 +73,25 @@ bool can_modify_vma_madv(struct vm_area_struct *vma, int behavior)
- 	if (!is_madv_discard(behavior))
- 		return true;
- 
--	if (unlikely(!can_modify_vma(vma) && is_ro_anon(vma)))
-+	/* not sealed */
-+	if (likely(can_modify_vma(vma)))
-+		return true;
-+
-+	/* PROT_NONE mapping */
-+	if (vma_is_prot_none(vma))
-+		return true;
-+
-+	/* file-backed private mapping */
-+	if (vma->vm_file) {
-+		/* read-only but was writeable */
-+		if (vma_was_writable_turn_readonly(vma))
-+			return false;
-+
-+		return true;
++	if (seal) {
++		ret = seal_single_address(ptr + page_size, page_size);
++		FAIL_TEST_IF_FALSE(!ret);
 +	}
 +
-+	/* anonymous mapping is read-only */
-+	if (anon_is_ro(vma))
- 		return false;
++	/* madvise(DONTNEED) should pass on PROT_NONE sealed VMA */
++	ret = sys_madvise(ptr + page_size, page_size, MADV_DONTNEED);
++	FAIL_TEST_IF_FALSE(!ret);
++
++	REPORT_TEST_PASS();
++}
++
++static void test_madvise_filebacked_writable(bool seal)
++{
++	void *ptr;
++	unsigned long page_size = getpagesize();
++	unsigned long size = 4 * page_size;
++	int ret;
++	int fd;
++	unsigned long mapflags = MAP_PRIVATE;
++
++	fd = memfd_create("test", 0);
++	FAIL_TEST_IF_FALSE(fd > 0);
++
++	ret = fallocate(fd, 0, 0, size);
++	FAIL_TEST_IF_FALSE(!ret);
++
++	ptr = mmap(NULL, size, PROT_READ|PROT_WRITE, mapflags, fd, 0);
++	FAIL_TEST_IF_FALSE(ptr != MAP_FAILED);
++
++	if (seal) {
++		ret = sys_mseal(ptr, size);
++		FAIL_TEST_IF_FALSE(!ret);
++	}
++
++	/* sealing doesn't apply for writeable file-backed mapping. */
++	ret = sys_madvise(ptr, size, MADV_DONTNEED);
++	FAIL_TEST_IF_FALSE(!ret);
++
++	ret = sys_munmap(ptr, size);
++	if (seal)
++		FAIL_TEST_IF_FALSE(ret < 0);
++	else
++		FAIL_TEST_IF_FALSE(!ret);
++	close(fd);
++
++	REPORT_TEST_PASS();
++}
++
++static void test_madvise_filebacked_was_writable(bool seal)
++{
++	void *ptr;
++	unsigned long page_size = getpagesize();
++	unsigned long size = 4 * page_size;
++	int ret;
++	int fd;
++	unsigned long mapflags = MAP_PRIVATE;
++
++	fd = memfd_create("test", 0);
++	FAIL_TEST_IF_FALSE(fd > 0);
++
++	ret = fallocate(fd, 0, 0, size);
++	FAIL_TEST_IF_FALSE(!ret);
++
++	ptr = mmap(NULL, size, PROT_READ|PROT_WRITE, mapflags, fd, 0);
++	FAIL_TEST_IF_FALSE(ptr != MAP_FAILED);
++
++	ret = sys_mprotect(ptr, size, PROT_READ);
++	FAIL_TEST_IF_FALSE(!ret);
++
++	if (seal) {
++		ret = sys_mseal(ptr, size);
++		FAIL_TEST_IF_FALSE(!ret);
++	}
++
++	/* read-only file-backed mapping, was writable. */
++	ret = sys_madvise(ptr, size, MADV_DONTNEED);
++	if (seal)
++		FAIL_TEST_IF_FALSE(ret < 0);
++	else
++		FAIL_TEST_IF_FALSE(!ret);
++
++	ret = sys_munmap(ptr, size);
++	if (seal)
++		FAIL_TEST_IF_FALSE(ret < 0);
++	else
++		FAIL_TEST_IF_FALSE(!ret);
++	close(fd);
++
++	REPORT_TEST_PASS();
++}
++
+ int main(int argc, char **argv)
+ {
+ 	bool test_seal = seal_support();
+@@ -1876,7 +1981,7 @@ int main(int argc, char **argv)
+ 	if (!pkey_supported())
+ 		ksft_print_msg("PKEY not supported\n");
  
- 	/* Allow by default. */
+-	ksft_set_plan(88);
++	ksft_set_plan(94);
+ 
+ 	test_seal_addseal();
+ 	test_seal_unmapped_start();
+@@ -1985,5 +2090,14 @@ int main(int argc, char **argv)
+ 	test_seal_discard_ro_anon_on_pkey(false);
+ 	test_seal_discard_ro_anon_on_pkey(true);
+ 
++	test_seal_madvise_prot_none(false);
++	test_seal_madvise_prot_none(true);
++
++	test_madvise_filebacked_writable(false);
++	test_madvise_filebacked_writable(true);
++
++	test_madvise_filebacked_was_writable(false);
++	test_madvise_filebacked_was_writable(true);
++
+ 	ksft_finished();
+ }
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
