@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-369902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3559A243D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:49:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB219A243F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7CF91F23EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 111B12846E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86821DE3D0;
-	Thu, 17 Oct 2024 13:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B4Clw0OI"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3321DE3A6;
+	Thu, 17 Oct 2024 13:50:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4F81DE2DE;
-	Thu, 17 Oct 2024 13:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224F5C147;
+	Thu, 17 Oct 2024 13:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729172976; cv=none; b=j9MpMpa5dJiaMKXmQn7O/cAWWark9Xzx32rL9oyCKPlJMhEyd6Vn550QIYBt+NYOlhFCgC/wcudl9ylAY4R1Aq/47/YkBZCin4I8n+ADJWKuQGu1lzZP559QXmDQke4HE8G2NFBCOp3fyR6re4A9vPT7+ywUpcEBt3QvLEXt+7Y=
+	t=1729173033; cv=none; b=O4YlsCd37CO/eiNGjnuE1iNASl4mQPvElU8gPRc3fiSY6QAcuRUafg3okHVVGN6KqQnw6HKhekjP/vNNkRqWX3WJY57OvcjagWEiIb4eWqh/cmFriwxkYRSFmvzAEsjMe/hjoOEXaRRAMOgZDgV06ED1pZwT9wIWLLzeQ5AD+WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729172976; c=relaxed/simple;
-	bh=ZvELszGSOyHnAWYXDkvEi8RTBmD3JAHQ8VKxvMFjJTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DkL9VR2HhHAEGvJKceJ57STjoSfvnaEUyTHbzb2jHoekMAEc82MvktGiHrRxjcVolpUnZWliDNKNJCv2g8/6fPgbVuqSs/64lLLUutCFeC/ZvYzW9Cf6g4w7HDskgZhpkj6jgqEO+MMm40w8legcNc6/jzkouzxO65ab3DohzyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B4Clw0OI; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=snZpsDz54GwpfnkEbUricuY28KyqdWxXHVT3LdPzGmY=; b=B4Clw0OIg5EUXc3aunxOUC9Ez/
-	gKlaSNLiUzISmC0vOFIFFX48E2DBY4cSXf3NU9zFGsZr9w+yRK2sq6rGXUVRHVHPaqf/gJI/roXeY
-	NY0L2+L/6Te6tZVl+6B9CzMGScG0EJFAqggCIf2MwRYzo0l3jUf3ZcLluLRl/yXl10xq/jMm73pFt
-	jhkdiEMaAct/myAd5XzMiM1u+MYQj1G0RJJM9NMfv+XB22sQ4XypBQoG9vOHkD7qO+FImArT3KVjc
-	2wmuYuQtJHyxD8EKA5YTyc5aEu9o8Da4xdg9B5ic7jKjqkAyA9v/xS6RyHxn9bvH5Qmn2nqQHXdd4
-	4PbErMOg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1Qsc-0000000F06G-24M0;
-	Thu, 17 Oct 2024 13:49:30 +0000
-Date: Thu, 17 Oct 2024 06:49:30 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
-	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
-	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
-	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
-	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
-Message-ID: <ZxEV6ocpKLjPC8H4@infradead.org>
-References: <20241015152348.3055360-1-ymaman@nvidia.com>
- <20241015152348.3055360-2-ymaman@nvidia.com>
- <Zw9F2uiq6-znYmTk@infradead.org>
- <20241016154428.GD4020792@ziepe.ca>
- <Zw_sn_DdZRUw5oxq@infradead.org>
- <20241016174445.GF4020792@ziepe.ca>
- <ZxD71D66qLI0qHpW@infradead.org>
- <20241017130539.GA897978@ziepe.ca>
- <ZxENV_EppCYIXfOW@infradead.org>
- <20241017134644.GA948948@ziepe.ca>
+	s=arc-20240116; t=1729173033; c=relaxed/simple;
+	bh=5xPrhuKuYkqwxlo94JQl2Xs8SYAd5QckIzmBS+1GY5k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nmL7DlGhbCSxYi1GZZlFvjQyNzGDP0MmDDGRdko+VPqMOTQvMUweq840sVgH1K8CowgGh7jXOe+BX3I8BAiu3jnDh+o+DZEJ9iEuprpveBhfuWLRarzei8YBOT5qYn1aQjfbUKXz9KqY9SIFSYR3g7+EZE1GP1t7LBnP+jS/K3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTpyD10pRz6D9BV;
+	Thu, 17 Oct 2024 21:45:56 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id BD13E1400F4;
+	Thu, 17 Oct 2024 21:50:27 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 15:50:26 +0200
+Date: Thu, 17 Oct 2024 14:50:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <Terry.Bowman@amd.com>
+CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <oohall@gmail.com>,
+	<Benjamin.Cheatham@amd.com>, <rrichter@amd.com>, <nathan.fontenot@amd.com>,
+	<smita.koralahallichannabasappa@amd.com>
+Subject: Re: [PATCH 09/15] cxl/pci: Map CXL PCIe downstream port RAS
+ registers
+Message-ID: <20241017145025.00002fd3@Huawei.com>
+In-Reply-To: <4a298643-28f0-4aac-be2d-32b8ff835e2a@amd.com>
+References: <20241008221657.1130181-1-terry.bowman@amd.com>
+	<20241008221657.1130181-10-terry.bowman@amd.com>
+	<20241016181459.00000b71@Huawei.com>
+	<4a298643-28f0-4aac-be2d-32b8ff835e2a@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017134644.GA948948@ziepe.ca>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Oct 17, 2024 at 10:46:44AM -0300, Jason Gunthorpe wrote:
-> On Thu, Oct 17, 2024 at 06:12:55AM -0700, Christoph Hellwig wrote:
-> > On Thu, Oct 17, 2024 at 10:05:39AM -0300, Jason Gunthorpe wrote:
-> > > Broadly I think whatever flow NVMe uses for P2P will apply to ODP as
-> > > well.
-> > 
-> > ODP is a lot simpler than NVMe for P2P actually :(
+On Wed, 16 Oct 2024 13:16:34 -0500
+Terry Bowman <Terry.Bowman@amd.com> wrote:
+
+> Hi Jonathan,
 > 
-> What is your thinking there? I'm looking at the latest patches and I
-> would expect dma_iova_init() to accept a phys so it can call
-> pci_p2pdma_map_type() once for the whole transaction. It is a slow
-> operation.
+> On 10/16/24 12:14, Jonathan Cameron wrote:
+> > On Tue, 8 Oct 2024 17:16:51 -0500
+> > Terry Bowman <terry.bowman@amd.com> wrote:
+> >   
+> >> RAS registers are not mapped for CXL root ports, CXL downstream switch
+> >> ports, or CXL upstream switch ports. To prepare for future RAS logging
+> >> and handling, the driver needs updating to map PCIe port RAS registers.  
+> > 
+> > Give the upstream port is in next patch, I'd just mention that you
+> > are adding mapping of RP and DSP here (This confused me before I noticed
+> > the next patch).  
+> 
+> Ok. Good point, 
+> 
+> >>
+> >> Refactor and rename cxl_setup_parent_dport() to be cxl_init_ep_ports_aer().
+> >> Update the function such that it will iterate an endpoint's dports to map
+> >> the RAS registers.
+> >>
+> >> Rename cxl_dport_map_regs() to be cxl_dport_init_aer(). The new
+> >> function name is a more accurate description of the function's work.
+> >>
+> >> This update should also include checking for previously mapped registers
+> >> within the topology, particularly with CXL switches. Endpoints under a
+> >> CXL switch may share a common downstream and upstream port, ensure that
+> >> the registers are only mapped once.  
+> > 
+> > I don't understand why we need to do this for the ras registers but
+> > it doesn't apply for HDM decoders for instance?  Why can't
+> > we map these registers in cxl_port_probe()?
+> >   
+> 
+> We have seen downstream root ports with DVSECs that are not fully populated 
+> immediately after booting. The plan here was to push out the RAS register 
+> block mapping until as late as possible, in the memdev driver. 
 
-You can't do it for the whole transaction.  Here is my suggestion
-for ODP:
+That needs debugging because simply pushing it later like this is
+only going to make the race harder to hit unless we understand the
+'why' of that.   If there is a reason to delay, my gut feeling would
+be to delay the cxl_port_probe() until things are stable rather
+than just trying this a bit later.
 
-http://git.infradead.org/?p=users/hch/misc.git;a=shortlog;h=refs/heads/dma-split-wip
+This might be the whole link must train before CXL registers are
+presented thing (a less than ideal corner of the CXL spec) but not
+sure it would mean they weren't available in cxl_port_probe()
 
-For NVMe I need to figure out a way to split bios on a per P2P
-type boundary as we don't have any space to record if something is a bus
-mapped address.
+Jonathan
+
+
+
+> 
+> 
+> > End of day here, so maybe I'm completely misunderstanding this.
+> > Will take another look tomorrow morning.
+> >   
+> 
+> Thanks for your reviews.
+> 
+> Regards,
+> Terry
+> 
 
 
