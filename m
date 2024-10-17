@@ -1,446 +1,502 @@
-Return-Path: <linux-kernel+bounces-369406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CFF9A1CE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:17:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75BBA9A1CEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20C0C1C24544
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D061F279CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535FB1D5142;
-	Thu, 17 Oct 2024 08:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37881CACF7;
+	Thu, 17 Oct 2024 08:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dteLFjzw"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMV5XMHg"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792991CACF7;
-	Thu, 17 Oct 2024 08:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420C53398B;
+	Thu, 17 Oct 2024 08:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152920; cv=none; b=crUkbMH39JQS9uVpcKwpKnyg9pNwa68aWFqXCaCQpJAuw8DEFDTMv9ulUhD19Bw1Tt6WyvC204YiJPS0ftD1ISoLvQSzVxuQkodaRRzCenlyPL/QXtv1WkNt26RnWNWiQipLQ9kvMq/dbtk1o8Y3B5KyXigPUs9zB3YX61t4WZg=
+	t=1729152984; cv=none; b=iOU9jSrDDUAS+k7OZ04AG3UhVmhjoYHzBHp5MoGWs3A9hWnyp9He0v138N5DHQJQRau6M1L+Jo8dujF9CpxrZbEytw7g8NvxPrQOqBhH47M64gq0jvOF2i3GZ4O6H/3RPZgd/ZSbE3qvKMfI6/mYFUzOtOuziIF4mtJUFzjLsJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152920; c=relaxed/simple;
-	bh=ODMEvT+7qb5RcnLcqwsjd+5KgEx+en9ndAfwLA3x60I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RHt7CdbTSI30XzMMR57MmF05mmia3BZmez1FjdZMZKDdYOdDJ0n7YM0IfC7iS/TYTqAbv3uXe35NFb+3ogo10MpmWxg+ji1/5XIMBKbvVbL1mtJftOrgGeo4MmiWcgZD2IKIn+9oVei6riNM7yjiMqhH81aUlzHsV3Fz0VuOBis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dteLFjzw; arc=none smtp.client-ip=209.85.128.181
+	s=arc-20240116; t=1729152984; c=relaxed/simple;
+	bh=BtWW25QWspbdzM9WoYRYC7Dp2CEImLAiYf2AQzWDhnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nA6qj2+ouFl7MEmjqbDf5yqIDPkOp+YnQIScKgfZnkXO3oRW2J5GJBzaI0hUvRV5jd4Jrrl2ABX96BoRQtZHnMjPItg7WsEOO4uDY1dD/zV4LuY1rpEGWPNttUiBES7dNm6WYToJ5QpAvEiNUCSarr0f+b1viGuK24wLTTkw4gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMV5XMHg; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e22f10cc11so5501927b3.1;
-        Thu, 17 Oct 2024 01:15:16 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2e88cb0bbso470942a91.3;
+        Thu, 17 Oct 2024 01:16:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729152915; x=1729757715; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5WvhUb8ItT1IXqKKnFo6ymSL6Bt/koZbJ8vsU2XeI80=;
-        b=dteLFjzwJUsA4fy8QFYGRree2Oz9JD6dPmZ/QIeVQ2GE+9WMlLWJTVAy65Cu2yGa3S
-         hW0jJuybLqnFxB4GM9Rrgh7OfRf5VZ8Hr4Jk5ehSb4JwC6PC8kTG6sMK9igynTe6uryi
-         Tm7qrbNDVZMgeKuRv1VNwIboagYVa3heInZ9DN/OFgL8LzmUF9QHIvwRjAhvufQps4V/
-         IaKyXKehVhWfsXMh2ep30eAM5q+wrvvBV5+bryuge+2U6ZdwEDo0AfYCRb2GNOHBnO4y
-         rQNNyB+AYe0lZNSefoEtZulyqotw77qaj59Gyy+yh0jzwsZTjml3PysnRv/0kF6q2TZh
-         T7pw==
+        d=gmail.com; s=20230601; t=1729152981; x=1729757781; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJKKWSJtGTH+Zha/IDGEo1+HvKzQHeVOpKBCtqcEBl8=;
+        b=nMV5XMHgzEBPTGCy5EelFgbQ+6np1mVFEz8wOgoL3ygFL15m3hM5ua09pobN3d3Laz
+         1Ldojdxyeyt393TbpIecxENonL6HOdi9blGAnjph1GN8rKAfm8daPlE6idTC116u0T4f
+         P+F/un78lgXQzvnERDqOq/ecH6bWZgcDb69PJViABDuA4XyBEbcz6UvlUJoX6bckzphG
+         fu10q4T79GKgRwolPa48yc1Yis+AL6lOTmBgGBNvQm9cg/wf9Sz3ZPx3C0qlRixcLfaY
+         mOe6EvLNb+auITreI7l2kdsNpcao9WbZXtIzP+jGWfHl7Cwv83INJkkEXL1qp16ARlyf
+         SBaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729152915; x=1729757715;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5WvhUb8ItT1IXqKKnFo6ymSL6Bt/koZbJ8vsU2XeI80=;
-        b=UN/z3z7srTB7G9Q3OCJ56UjFO1b+0T3wTu2O9pIfZsdyX5QbVKU0QBWMCy/GXZBzYe
-         Br4uiHwysMO1HomCrQaytmeoXFR4oYsMmEnARlAr+86D1qaLRjog3mnuj0iBQ/8ilTo5
-         wTeaqJsIR/fRhxnZTMiSD2zLDdnydUgL7QNC/U/tGGEzqVbk+LF1F+zv7BpUnuPluSMS
-         eZNkmxBZO7nGtR+XtdUEFMvPOuX+rptE/GVDZlwPqFWvGyy0Eja1BPiw1o67kF6zG4Jm
-         wFa1cmmC+qUlCYSGltlX93vHGpGV31TrdYPLXColFdzIqCx6M/uShgp/LJ4kEtMkV8HT
-         apxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjoFiULwVtSp1I9oNz+4wrTHQOlH9o0daik82LaSQl45EAD6o0uV5amqh+C1xX9x3FYVpuccU4sB4=@vger.kernel.org, AJvYcCW8TFloNb/pUWpEJoZqgWIjO9xxByvhFmxtXw/Cp8wbaInlxEx2Bt6recj6IvtWkdDWHJTPy7OWOk/VffJngNI=@vger.kernel.org, AJvYcCWXExnyJvDxp0P/Q33UmO9cCnUswz/m7m0dLZjeBk2lIW9XS5zkvBxL79dikooMysaWZYnlUdqNFKBvgouZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB584Rn1aE5qI4hVvic3axFh5MLpNp/VYBM5b4A1sXeRwPv/I9
-	VDs3QnRa3f3YYWMDVE7tR2gdBChVPp3gUSIXKt8N5iEIv3ZLqiba
-X-Google-Smtp-Source: AGHT+IG0KsSE6VD2YX/aV8k68GgO4g3H0CiuJaxA7ijK0YheXHjErYeg0Ux9n/xahOmS4Op5tN9ERQ==
-X-Received: by 2002:a05:690c:6ac2:b0:6e5:b495:27d1 with SMTP id 00721157ae682-6e5b49580f0mr2139547b3.19.1729152915106;
-        Thu, 17 Oct 2024 01:15:15 -0700 (PDT)
-Received: from [192.168.2.226] ([107.175.133.150])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e3c5cbdbe7sm10267587b3.92.2024.10.17.01.15.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 01:15:13 -0700 (PDT)
-Message-ID: <d75654e3-729e-47a7-be87-be786e112ea2@gmail.com>
-Date: Thu, 17 Oct 2024 16:15:00 +0800
+        d=1e100.net; s=20230601; t=1729152981; x=1729757781;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QJKKWSJtGTH+Zha/IDGEo1+HvKzQHeVOpKBCtqcEBl8=;
+        b=laisn4sfoZZtZIyFmxIgzczf/IOA1GCXYcpgqUDXtQgxzmkmCfbpey7h4Cac3uzPGv
+         uvMfcYYJrUXIfJcaVh3rnqXKq35sfbLzv6ws9XP6g4mdeeJUPsUaWn/nlPkMVcKhiVtB
+         DulWgd0ttCbomiNEgtgYhlzfNgcTbod7eQDUnrmkkGsj8T66/nnGMlQbWmrwJ3Qb/1X7
+         +tTAHq3UTrOEPv+wT6M2kzRF17335VjPtHbVd7aLjvQS8Ixgid3hZkyi2z2ImA03GRwG
+         rFqwcKYnSKepiTIgKlZVthwdM2EoX5XEfEJj4ETxTzaQpwfXfx0lh1VvqOvmi6sAdOtm
+         0tKw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/NMKvZ3wYYMYvRoY7z6eVa8so/dYstH4O1wTHG60aF53nQv6BNEYRg7V6TVqHmN33tApSJrBa2kOt8n0=@vger.kernel.org, AJvYcCXL3ecF18Vwxt4XCxjNov4wsnJx4ny+011Fh5dRcTTz2Rn2rZBUm/fi+Ivur1wExHpsH4qudIdvIZYHrrS+RW0mD+ws/g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyokvVp1yomt/QTfSgVIzVNyBFAXbLgxmHJV3LXD8N0LmZTm6/i
+	dTNo3tjKWgGHmUO4pq2gpONq6xV3gWNDPqqpKphkQvieeIxe19Xh
+X-Google-Smtp-Source: AGHT+IGFpQ2iaN29rVbnMub9g2VbmqhDYvwsIoN3G5G0JqMVk4/fJHHnoTqBd0nTQIw+e+ObmRVdfg==
+X-Received: by 2002:a17:90b:4c02:b0:2e2:bd4b:ac2c with SMTP id 98e67ed59e1d1-2e3ab8bcef5mr8325482a91.31.1729152981500;
+        Thu, 17 Oct 2024 01:16:21 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e08f9913sm1343963a91.44.2024.10.17.01.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 01:16:21 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: W_Armin@gmx.de,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v6 3/5] alienware-wmi: added platform profile support
+Date: Thu, 17 Oct 2024 05:15:25 -0300
+Message-ID: <20241017081524.127072-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241017081211.126214-2-kuurtb@gmail.com>
+References: <20241017081211.126214-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/kbuild.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, Yanteng Si
- <si.yanteng@linux.dev>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20241016131710.2619567-1-dzm91@hust.edu.cn>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20241016131710.2619567-1-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-LGTM
+Implements platform profile support for Dell laptops with new WMAX
+thermal interface, present on some Alienware X-Series, Alienware
+M-Series and Dell's G-Series laptops. 
 
-Reviewed-by: Alex Shi <alexs@kernel.org>
+This implementation supports three sets of thermal tables declared in
+enum WMAX_THERMAL_TABLE and gmode, using quirks *thermal* and *gmode*
+respectively. These sets are found in most Dell's devices that support
+WMAX's thermal interface.
 
-On 10/16/24 21:16, Dongliang Mu wrote:
-> Finish the translation of kbuild/kbuild.rst and move kbuild
-> from TODO to the main body.
-> 
-> Update to commit 2eb5d7f24299 ("kbuild: doc: describe the -C
-> option precisely for external module builds")
-> 
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> ---
->  .../translations/zh_CN/kbuild/index.rst       |   2 +-
->  .../translations/zh_CN/kbuild/kbuild.rst      | 304 ++++++++++++++++++
->  2 files changed, 305 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/translations/zh_CN/kbuild/kbuild.rst
-> 
-> diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
-> index e8eb448c1197..c06268cf44be 100644
-> --- a/Documentation/translations/zh_CN/kbuild/index.rst
-> +++ b/Documentation/translations/zh_CN/kbuild/index.rst
-> @@ -15,12 +15,12 @@
->      kconfig
->      headers_install
->      gcc-plugins
-> +    kbuild
->  
->  TODO:
->  
->  - kconfig-language
->  - kconfig-macro-language
-> -- kbuild
->  - makefiles
->  - modules
->  - issues
-> diff --git a/Documentation/translations/zh_CN/kbuild/kbuild.rst b/Documentation/translations/zh_CN/kbuild/kbuild.rst
-> new file mode 100644
-> index 000000000000..e5e2aebe1ebc
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/kbuild/kbuild.rst
-> @@ -0,0 +1,304 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/kbuild/kbuild.rst
-> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-> +
-> +======
-> +Kbuild
-> +======
-> +
-> +
-> +输出文件
-> +========
-> +
-> +modules.order
-> +-------------
-> +该文件记录模块在 Makefile 中出现的顺序。modprobe 使用该文件来确定性
-> +解析匹配多个模块的别名。
-> +
-> +modules.builtin
-> +---------------
-> +该文件列出了所有内置到内核中的模块。modprobe 使用该文件来避免尝试加载
-> +内置模块时出错。
-> +
-> +modules.builtin.modinfo
-> +-----------------------
-> +该文件包含所有内置模块的 modinfo。与单独模块的 modinfo 不同，所有字段
-> +都带有模块名称前缀。
-> +
-> +modules.builtin.ranges
-> +----------------------
-> +该文件包含所有内核内置模块的地址偏移范围（每个 ELF 节）。结合 System.map
-> +文件，它可以用来将模块名称与符号关联起来。
-> +
-> +环境变量
-> +========
-> +
-> +KCPPFLAGS
-> +---------
-> +在预处理时传递的额外选项。kbuild 进行所有预处理（包括构建 C 文件和汇编文件）
-> +时，都会使用这些预处理选项。
-> +
-> +KAFLAGS
-> +-------
-> +传递给汇编器的额外选项（适用于内置模块和外部模块）。
-> +
-> +AFLAGS_MODULE
-> +-------------
-> +外部模块的额外汇编选项。
-> +
-> +AFLAGS_KERNEL
-> +-------------
-> +内置模块的额外汇编选项。
-> +
-> +KCFLAGS
-> +-------
-> +传递给 C 编译器的额外选项（适用于内置模块和外部模块）。
-> +
-> +KRUSTFLAGS
-> +----------
-> +传递给 Rust 编译器的额外选项（适用于内置模块和外部模块）。
-> +
-> +CFLAGS_KERNEL
-> +-------------
-> +在编译内置代码时，传递给 $(CC) 的额外选项。
-> +
-> +CFLAGS_MODULE
-> +-------------
-> +编译外部模块时，传递给 $(CC) 的额外模块特定选项。
-> +
-> +RUSTFLAGS_KERNEL
-> +----------------
-> +在编译内置代码时，传递给 $(RUSTC) 的额外选项。
-> +
-> +RUSTFLAGS_MODULE
-> +----------------
-> +用于 $(RUSTC) 的额外模块特定选项。
-> +
-> +LDFLAGS_MODULE
-> +--------------
-> +用于 $(LD) 链接模块时的额外选项。
-> +
-> +HOSTCFLAGS
-> +----------
-> +在构建主机程序时传递给 $(HOSTCC) 的额外标志。
-> +
-> +HOSTCXXFLAGS
-> +------------
-> +在构建主机程序时传递给 $(HOSTCXX) 的额外标志。
-> +
-> +HOSTRUSTFLAGS
-> +-------------
-> +在构建主机程序时传递给 $(HOSTRUSTC) 的额外标志。
-> +
-> +HOSTLDFLAGS
-> +-----------
-> +链接主机程序时传递的额外选项。
-> +
-> +HOSTLDLIBS
-> +----------
-> +在构建主机程序时链接的额外库。
-> +
-> +.. _zh_cn_userkbuildflags:
-> +
-> +USERCFLAGS
-> +----------
-> +用于 $(CC) 编译用户程序（userprogs）时的额外选项。
-> +
-> +USERLDFLAGS
-> +-----------
-> +用于 $(LD) 链接用户程序时的额外选项。用户程序（userprogs）是使用 CC 链接的，
-> +因此 $(USERLDFLAGS) 应该根据需要包含 "-Wl," 前缀。
-> +
-> +KBUILD_KCONFIG
-> +--------------
-> +将顶级 Kconfig 文件设置为此环境变量的值。默认名称为 "Kconfig"。
-> +
-> +KBUILD_VERBOSE
-> +--------------
-> +设置 kbuild 的详细程度。可以分配与 "V=..." 相同的值。
-> +
-> +有关完整列表，请参见 `make help`。
-> +
-> +设置 "V=..." 优先于 KBUILD_VERBOSE。
-> +
-> +KBUILD_EXTMOD
-> +-------------
-> +在构建外部模块时设置内核源代码的搜索目录。
-> +
-> +设置 "M=..." 优先于 KBUILD_EXTMOD。
-> +
-> +KBUILD_OUTPUT
-> +-------------
-> +指定内核构建的输出目录。
-> +
-> +在单独的构建目录中为预构建内核构建外部模块时，这个变量也可以指向内核输出目录。请注意，
-> +这并不指定外部模块本身的输出目录。
-> +
-> +输出目录也可以使用 "O=..." 指定。
-> +
-> +设置 "O=..." 优先于 KBUILD_OUTPUT。
-> +
-> +KBUILD_EXTRA_WARN
-> +-----------------
-> +指定额外的构建检查。也可以通过在命令行传递 "W=..." 来设置相同的值。
-> +
-> +请参阅 `make help` 了解支持的值列表。
-> +
-> +设置 "W=..." 优先于 KBUILD_EXTRA_WARN。
-> +
-> +KBUILD_DEBARCH
-> +--------------
-> +对于 deb-pkg 目标，允许覆盖 deb-pkg 部署的正常启发式方法。通常 deb-pkg 尝试根据
-> +UTS_MACHINE 变量（在某些架构中还包括内核配置）来猜测正确的架构。KBUILD_DEBARCH
-> +的值假定（不检查）为有效的 Debian 架构。
-> +
-> +KDOCFLAGS
-> +---------
-> +指定在构建过程中用于 kernel-doc 检查的额外（警告/错误）标志，查看
-> +scripts/kernel-doc 了解支持的标志。请注意，这目前不适用于文档构建。
-> +
-> +ARCH
-> +----
-> +设置 ARCH 为要构建的架构。
-> +
-> +在大多数情况下，架构的名称与 arch/ 目录中的子目录名称相同。
-> +
-> +但某些架构（如 x86 和 sparc）有别名。
-> +
-> +- x86: i386 表示 32 位，x86_64 表示 64 位
-> +- parisc: parisc64 表示 64 位
-> +- sparc: sparc32 表示 32 位，sparc64 表示 64 位
-> +
-> +CROSS_COMPILE
-> +-------------
-> +指定 binutils 文件名的可选固定部分。CROSS_COMPILE 可以是文件名的一部分或完整路径。
-> +
-> +在某些设置中，CROSS_COMPILE 也用于 ccache。
-> +
-> +CF
-> +--
-> +用于 sparse 的额外选项。
-> +
-> +CF 通常在命令行中如下所示使用::
-> +
-> +    make CF=-Wbitwise C=2
-> +
-> +INSTALL_PATH
-> +------------
-> +INSTALL_PATH 指定放置更新后的内核和系统映像的路径。默认值是 /boot，但你可以设置
-> +为其他值。
-> +
-> +INSTALLKERNEL
-> +-------------
-> +使用 "make install" 时调用的安装脚本。
-> +默认名称是 "installkernel"。
-> +
-> +该脚本将会以以下参数调用：
-> +
-> +   - $1 - 内核版本
-> +   - $2 - 内核映像文件
-> +   - $3 - 内核映射文件
-> +   - $4 - 默认安装路径（如果为空，则使用根目录）
-> +
-> +"make install" 的实现是架构特定的，可能与上述有所不同。
-> +
-> +提供 INSTALLKERNEL 以便在交叉编译内核时可以指定自定义安装程序。
-> +
-> +MODLIB
-> +------
-> +指定模块的安装位置。
-> +默认值为::
-> +
-> +    $(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)
-> +
-> +该值可以被覆盖，在这种情况下将忽略默认值。
-> +
-> +INSTALL_MOD_PATH
-> +----------------
-> +INSTALL_MOD_PATH 指定了模块目录重定位时 MODLIB 的前缀，通常由构建根
-> +（build roots）所需。它没有在 makefile 中定义，但如果需要，可以作为
-> +参数传递给 make。
-> +
-> +INSTALL_MOD_STRIP
-> +-----------------
-> +如果 INSTALL_MOD_STRIP 被定义，内核模块在安装后会被剥离。如果
-> +INSTALL_MOD_STRIP 的值为 '1'，则会使用默认选项 --strip-debug。否则，
-> +INSTALL_MOD_STRIP 的值将作为 strip 命令的选项。
-> +
-> +INSTALL_HDR_PATH
-> +----------------
-> +INSTALL_HDR_PATH 指定了执行 "make headers_*" 时，用户空间头文件的安装位置。
-> +
-> +默认值为::
-> +
-> +    $(objtree)/usr
-> +
-> +$(objtree) 是保存输出文件的目录。
-> +输出目录通常使用命令行中的 "O=..." 进行设置。
-> +
-> +该值可以被覆盖，在这种情况下将忽略默认值。
-> +
-> +INSTALL_DTBS_PATH
-> +-----------------
-> +INSTALL_DTBS_PATH 指定了设备树二进制文件的安装位置，通常由构建根（build roots）所需。
-> +它没有在 makefile 中定义，但如果需要，可以作为参数传递给 make。
-> +
-> +KBUILD_ABS_SRCTREE
-> +--------------------------------------------------
-> +Kbuild 在可能的情况下使用相对路径指向源代码树。例如，在源代码树中构建时，源代码树路径是
-> +'.'。
-> +
-> +设置该标志请求 Kbuild 使用源代码树的绝对路径。
-> +在某些情况下这是有用的，例如在生成带有绝对路径条目的标签文件时等。
-> +
-> +KBUILD_SIGN_PIN
-> +---------------
-> +当签署内核模块时，如果私钥需要密码或 PIN，此变量允许将密码或 PIN 传递给 sign-file 工具。
-> +
-> +KBUILD_MODPOST_WARN
-> +-------------------
-> +KBUILD_MODPOST_WARN 可以设置为在最终模块链接阶段出现未定义符号时避免错误。它将这些错误
-> +转为警告。
-> +
-> +KBUILD_MODPOST_NOFINAL
-> +----------------------
-> +KBUILD_MODPOST_NOFINAL 可以设置为跳过模块的最终链接。这仅在加速编译测试时有用。
-> +
-> +KBUILD_EXTRA_SYMBOLS
-> +--------------------
-> +用于依赖其他模块符号的模块。详见 modules.rst。
-> +
-> +ALLSOURCE_ARCHS
-> +---------------
-> +对于 tags/TAGS/cscope 目标，可以指定包含在数据库中的多个架构，用空格分隔。例如::
-> +
-> +    $ make ALLSOURCE_ARCHS="x86 mips arm" tags
-> +
-> +要获取所有可用架构，也可以指定 all。例如::
-> +
-> +    $ make ALLSOURCE_ARCHS=all tags
-> +
-> +IGNORE_DIRS
-> +-----------
-> +对于 tags/TAGS/cscope 目标，可以选择不包含在数据库中的目录，用空格分隔。例如::
-> +
-> +    $ make IGNORE_DIRS="drivers/gpu/drm/radeon tools" cscope
-> +
-> +KBUILD_BUILD_TIMESTAMP
-> +----------------------
-> +将该环境变量设置为日期字符串，可以覆盖在 UTS_VERSION 定义中使用的时间戳
-> +（运行内核时的 uname -v）。该值必须是一个可以传递给 date -d 的字符串。默认值是
-> +内核构建某个时刻的 date 命令输出。
-> +
-> +KBUILD_BUILD_USER, KBUILD_BUILD_HOST
-> +------------------------------------
-> +这两个变量允许覆盖启动时显示的 user@host 字符串以及 /proc/version 中的信息。
-> +默认值分别是 whoami 和 host 命令的输出。
-> +
-> +LLVM
-> +----
-> +如果该变量设置为 1，Kbuild 将使用 Clang 和 LLVM 工具，而不是 GCC 和 GNU
-> +binutils 来构建内核。
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+
+---
+v6:
+ - Fixed alignment on some function definitions
+ - Fixed braces on if statment
+ - Removed quirk thermal_ustt
+ - Now quirk thermal can take values defined in enum WMAX_THERMAL_TABLE.
+ - Proper removal of thermal_profile
+---
+ drivers/platform/x86/dell/Kconfig         |   1 +
+ drivers/platform/x86/dell/alienware-wmi.c | 251 ++++++++++++++++++++++
+ 2 files changed, 252 insertions(+)
+
+diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
+index 68a49788a..b06d634cd 100644
+--- a/drivers/platform/x86/dell/Kconfig
++++ b/drivers/platform/x86/dell/Kconfig
+@@ -21,6 +21,7 @@ config ALIENWARE_WMI
+ 	depends on LEDS_CLASS
+ 	depends on NEW_LEDS
+ 	depends on ACPI_WMI
++	select ACPI_PLATFORM_PROFILE
+ 	help
+ 	 This is a driver for controlling Alienware BIOS driven
+ 	 features.  It exposes an interface for controlling the AlienFX
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index b27f3b64c..37a898273 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -8,8 +8,11 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/acpi.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/platform_profile.h>
+ #include <linux/dmi.h>
+ #include <linux/leds.h>
+ 
+@@ -25,6 +28,12 @@
+ #define WMAX_METHOD_AMPLIFIER_CABLE	0x6
+ #define WMAX_METHOD_DEEP_SLEEP_CONTROL	0x0B
+ #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
++#define WMAX_METHOD_THERMAL_INFORMATION	0x14
++#define WMAX_METHOD_THERMAL_CONTROL	0x15
++
++#define WMAX_ARG_GET_CURRENT_PROF	0x0B
++
++#define WMAX_FAILURE_CODE		0xFFFFFFFF
+ 
+ MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
+ MODULE_DESCRIPTION("Alienware special feature control");
+@@ -49,11 +58,33 @@ enum WMAX_CONTROL_STATES {
+ 	WMAX_SUSPEND = 3,
+ };
+ 
++enum WMAX_THERMAL_TABLE {
++	WMAX_THERMAL_TABLE_SIMPLE	= 1,
++	WMAX_THERMAL_TABLE_USTT		= 2,
++	WMAX_THERMAL_TABLE_USTT_COOL	= 3,
++};
++
++enum WMAX_THERMAL_PROFILE {
++	WMAX_THERMAL_QUIET			= 0x96,
++	WMAX_THERMAL_BALANCED			= 0x97,
++	WMAX_THERMAL_BALANCED_PERFORMANCE	= 0x98,
++	WMAX_THERMAL_PERFORMANCE		= 0x99,
++	WMAX_THERMAL_USTT_LOW_POWER		= 0xA5,
++	WMAX_THERMAL_USTT_COOL			= 0xA2,
++	WMAX_THERMAL_USTT_QUIET			= 0xA3,
++	WMAX_THERMAL_USTT_BALANCED		= 0xA0,
++	WMAX_THERMAL_USTT_BALANCED_PERFORMANCE	= 0xA1,
++	WMAX_THERMAL_USTT_PERFORMANCE		= 0xA4,
++	WMAX_THERMAL_GMODE			= 0xAB,
++};
++
+ struct quirk_entry {
+ 	u8 num_zones;
+ 	u8 hdmi_mux;
+ 	u8 amplifier;
+ 	u8 deepslp;
++	u8 thermal;
++	u8 gmode;
+ };
+ 
+ static struct quirk_entry *quirks;
+@@ -64,6 +95,8 @@ static struct quirk_entry quirk_inspiron5675 = {
+ 	.hdmi_mux = 0,
+ 	.amplifier = 0,
+ 	.deepslp = 0,
++	.thermal = 0,
++	.gmode = 0,
+ };
+ 
+ static struct quirk_entry quirk_unknown = {
+@@ -71,6 +104,8 @@ static struct quirk_entry quirk_unknown = {
+ 	.hdmi_mux = 0,
+ 	.amplifier = 0,
+ 	.deepslp = 0,
++	.thermal = 0,
++	.gmode = 0,
+ };
+ 
+ static struct quirk_entry quirk_x51_r1_r2 = {
+@@ -78,6 +113,8 @@ static struct quirk_entry quirk_x51_r1_r2 = {
+ 	.hdmi_mux = 0,
+ 	.amplifier = 0,
+ 	.deepslp = 0,
++	.thermal = 0,
++	.gmode = 0,
+ };
+ 
+ static struct quirk_entry quirk_x51_r3 = {
+@@ -85,6 +122,8 @@ static struct quirk_entry quirk_x51_r3 = {
+ 	.hdmi_mux = 0,
+ 	.amplifier = 1,
+ 	.deepslp = 0,
++	.thermal = 0,
++	.gmode = 0,
+ };
+ 
+ static struct quirk_entry quirk_asm100 = {
+@@ -92,6 +131,8 @@ static struct quirk_entry quirk_asm100 = {
+ 	.hdmi_mux = 1,
+ 	.amplifier = 0,
+ 	.deepslp = 0,
++	.thermal = 0,
++	.gmode = 0,
+ };
+ 
+ static struct quirk_entry quirk_asm200 = {
+@@ -99,6 +140,8 @@ static struct quirk_entry quirk_asm200 = {
+ 	.hdmi_mux = 1,
+ 	.amplifier = 0,
+ 	.deepslp = 1,
++	.thermal = 0,
++	.gmode = 0,
+ };
+ 
+ static struct quirk_entry quirk_asm201 = {
+@@ -106,6 +149,17 @@ static struct quirk_entry quirk_asm201 = {
+ 	.hdmi_mux = 1,
+ 	.amplifier = 1,
+ 	.deepslp = 1,
++	.thermal = 0,
++	.gmode = 0,
++};
++
++static struct quirk_entry quirk_x15_r1 = {
++	.num_zones = 2,
++	.hdmi_mux = 0,
++	.amplifier = 0,
++	.deepslp = 0,
++	.thermal = WMAX_THERMAL_TABLE_USTT,
++	.gmode = 0,
+ };
+ 
+ static int __init dmi_matched(const struct dmi_system_id *dmi)
+@@ -169,6 +223,15 @@ static const struct dmi_system_id alienware_quirks[] __initconst = {
+ 		},
+ 		.driver_data = &quirk_asm201,
+ 	},
++	{
++		.callback = dmi_matched,
++		.ident = "Alienware x15 R1",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware x15 R1")
++		},
++		.driver_data = &quirk_x15_r1,
++	},
+ 	{
+ 		.callback = dmi_matched,
+ 		.ident = "Dell Inc. Inspiron 5675",
+@@ -218,6 +281,7 @@ static struct platform_device *platform_device;
+ static struct device_attribute *zone_dev_attrs;
+ static struct attribute **zone_attrs;
+ static struct platform_zone *zone_data;
++static struct platform_profile_handler pp_handler;
+ 
+ static struct platform_driver platform_driver = {
+ 	.driver = {
+@@ -761,6 +825,184 @@ static int create_deepsleep(struct platform_device *dev)
+ 	return ret;
+ }
+ 
++/*
++ * Thermal Profile control
++ *  - Provides thermal profile control through the Platform Profile API
++ */
++#define WMAX_ARGUMENT_MASK	GENMASK(15, 8)
++#define WMAX_PROFILE_ACTIVATE	0x01
++
++static u32 profile_to_wmax_arg(enum WMAX_THERMAL_PROFILE prof)
++{
++	return FIELD_PREP(WMAX_ARGUMENT_MASK, prof) | WMAX_PROFILE_ACTIVATE;
++}
++
++static int thermal_profile_get(struct platform_profile_handler *pprof,
++			       enum platform_profile_option *profile)
++{
++	acpi_status status;
++	u32 in_args = WMAX_ARG_GET_CURRENT_PROF;
++	u32 out_data;
++
++	status = alienware_wmax_command(&in_args, sizeof(in_args),
++					WMAX_METHOD_THERMAL_INFORMATION, &out_data);
++
++	if (ACPI_FAILURE(status))
++		return -EIO;
++
++	if (out_data == WMAX_FAILURE_CODE)
++		return -EBADRQC;
++
++	switch (out_data) {
++	case WMAX_THERMAL_USTT_LOW_POWER:
++		*profile = PLATFORM_PROFILE_LOW_POWER;
++		break;
++	case WMAX_THERMAL_USTT_COOL:
++		*profile = PLATFORM_PROFILE_COOL;
++		break;
++	case WMAX_THERMAL_QUIET:
++	case WMAX_THERMAL_USTT_QUIET:
++		*profile = PLATFORM_PROFILE_QUIET;
++		break;
++	case WMAX_THERMAL_BALANCED:
++	case WMAX_THERMAL_USTT_BALANCED:
++		*profile = PLATFORM_PROFILE_BALANCED;
++		break;
++	case WMAX_THERMAL_BALANCED_PERFORMANCE:
++	case WMAX_THERMAL_USTT_BALANCED_PERFORMANCE:
++		*profile = PLATFORM_PROFILE_BALANCED_PERFORMANCE;
++		break;
++	case WMAX_THERMAL_GMODE:
++	case WMAX_THERMAL_PERFORMANCE:
++	case WMAX_THERMAL_USTT_PERFORMANCE:
++		*profile = PLATFORM_PROFILE_PERFORMANCE;
++		break;
++	default:
++		return -ENODATA;
++	}
++
++	return 0;
++}
++
++static int thermal_profile_set(struct platform_profile_handler *pprof,
++			       enum platform_profile_option profile)
++{
++	acpi_status status;
++	u32 in_args;
++	u32 out_data;
++
++	switch (profile) {
++	case PLATFORM_PROFILE_QUIET:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_QUIET);
++		break;
++	case PLATFORM_PROFILE_BALANCED:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED);
++		break;
++	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED_PERFORMANCE);
++		break;
++	case PLATFORM_PROFILE_PERFORMANCE:
++		if (quirks->gmode > 0)
++			in_args = profile_to_wmax_arg(WMAX_THERMAL_GMODE);
++		else
++			in_args = profile_to_wmax_arg(WMAX_THERMAL_PERFORMANCE);
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	status = alienware_wmax_command(&in_args, sizeof(in_args),
++					WMAX_METHOD_THERMAL_CONTROL, &out_data);
++
++	if (ACPI_FAILURE(status))
++		return -EIO;
++
++	if (out_data == WMAX_FAILURE_CODE)
++		return -EBADRQC;
++
++	return 0;
++}
++
++static int thermal_profile_set_ustt(struct platform_profile_handler *pprof,
++				    enum platform_profile_option profile)
++{
++	acpi_status status;
++	u32 in_args;
++	u32 out_data;
++
++	switch (profile) {
++	case PLATFORM_PROFILE_LOW_POWER:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_LOW_POWER);
++		break;
++	case PLATFORM_PROFILE_COOL:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_COOL);
++		break;
++	case PLATFORM_PROFILE_QUIET:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_QUIET);
++		break;
++	case PLATFORM_PROFILE_BALANCED:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_BALANCED);
++		break;
++	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
++		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_BALANCED_PERFORMANCE);
++		break;
++	case PLATFORM_PROFILE_PERFORMANCE:
++		if (quirks->gmode > 0)
++			in_args = profile_to_wmax_arg(WMAX_THERMAL_GMODE);
++		else
++			in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_PERFORMANCE);
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	status = alienware_wmax_command(&in_args, sizeof(in_args),
++					WMAX_METHOD_THERMAL_CONTROL, &out_data);
++
++	if (ACPI_FAILURE(status))
++		return -EIO;
++
++	if (out_data == WMAX_FAILURE_CODE)
++		return -EBADRQC;
++
++	return 0;
++}
++
++static int create_thermal_profile(void)
++{
++	pp_handler.profile_get = thermal_profile_get;
++
++	switch (quirks->thermal) {
++	case WMAX_THERMAL_TABLE_SIMPLE:
++		pp_handler.profile_set = thermal_profile_set;
++		break;
++	case WMAX_THERMAL_TABLE_USTT:
++		pp_handler.profile_set = thermal_profile_set_ustt;
++		set_bit(PLATFORM_PROFILE_LOW_POWER, pp_handler.choices);
++		set_bit(PLATFORM_PROFILE_QUIET, pp_handler.choices);
++		set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, pp_handler.choices);
++		break;
++	case WMAX_THERMAL_TABLE_USTT_COOL:
++		pp_handler.profile_set = thermal_profile_set_ustt;
++		set_bit(PLATFORM_PROFILE_LOW_POWER, pp_handler.choices);
++		set_bit(PLATFORM_PROFILE_QUIET, pp_handler.choices);
++		set_bit(PLATFORM_PROFILE_COOL, pp_handler.choices);
++		set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, pp_handler.choices);
++		break;
++	}
++
++	set_bit(PLATFORM_PROFILE_BALANCED, pp_handler.choices);
++	set_bit(PLATFORM_PROFILE_PERFORMANCE, pp_handler.choices);
++
++	return platform_profile_register(&pp_handler);
++}
++
++static void remove_thermal_profile(void)
++{
++	if (quirks->thermal > 0)
++		platform_profile_remove();
++}
++
+ static int __init alienware_wmi_init(void)
+ {
+ 	int ret;
+@@ -808,6 +1050,12 @@ static int __init alienware_wmi_init(void)
+ 			goto fail_prep_deepsleep;
+ 	}
+ 
++	if (quirks->thermal > 0) {
++		ret = create_thermal_profile();
++		if (ret)
++			goto fail_prep_thermal_profile;
++	}
++
+ 	ret = alienware_zone_init(platform_device);
+ 	if (ret)
+ 		goto fail_prep_zones;
+@@ -816,6 +1064,8 @@ static int __init alienware_wmi_init(void)
+ 
+ fail_prep_zones:
+ 	alienware_zone_exit(platform_device);
++	remove_thermal_profile();
++fail_prep_thermal_profile:
+ fail_prep_deepsleep:
+ fail_prep_amplifier:
+ fail_prep_hdmi:
+@@ -835,6 +1085,7 @@ static void __exit alienware_wmi_exit(void)
+ 	if (platform_device) {
+ 		alienware_zone_exit(platform_device);
+ 		remove_hdmi(platform_device);
++		remove_thermal_profile();
+ 		platform_device_unregister(platform_device);
+ 		platform_driver_unregister(&platform_driver);
+ 	}
+-- 
+2.47.0
+
 
