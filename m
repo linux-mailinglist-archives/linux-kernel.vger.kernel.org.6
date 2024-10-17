@@ -1,70 +1,83 @@
-Return-Path: <linux-kernel+bounces-369469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBB29A1DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:58:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDF29A1DAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3424D2837F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:58:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE9ABB25D09
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44981D6DAD;
-	Thu, 17 Oct 2024 08:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8CE1D79A9;
+	Thu, 17 Oct 2024 08:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1eXAmKN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUTEi/QD"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA6F762EB;
-	Thu, 17 Oct 2024 08:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBA7762EB;
+	Thu, 17 Oct 2024 08:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729155487; cv=none; b=kte7PirOzsg/6dagLWIo7hHiKrzAF0Ygq7hW80gQyiD70v3F6kTrcyVRkdVbv6PxLPGfOCi8LFetX0Rgm144Q3YQdnPtd6cQAM+cAzoFbkwAJ5O0psrUH7g+cDxI+lIIPWfFbTVPebJ0B96ln1OLQqbpkO1eywP0sHTXvY6HHW4=
+	t=1729155491; cv=none; b=EQ5NLeeXnmR4SqXfy0rGLzZOib23RwxfgXijCD4Jroj6SA6HEiXT6sQrDss/Y4BRXrDAsGSfea9yELPCyxjOsbaBHvVYA3xeHi+OtPhCmT6KiLk5/2suhF1djU9gixN6j3DehpNtJbSCZfjzLT2+bDipPXw5nTuvVHOzGM+yZgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729155487; c=relaxed/simple;
-	bh=492DZi2xWFhOAumNcACKXQaQl1yah9Ahp5T4snk6DbU=;
+	s=arc-20240116; t=1729155491; c=relaxed/simple;
+	bh=Ag39IeYZIgnJP+0lKOwm8KkvB7IMVGZa6ut5/EY2Y5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddvD//+w5zRIOkXbHIny5dqymjzH650jmj8tJq3e7Y5rRS2FJMklJu7TkxwVJEGGMsfmTv8iL0MU1obI4BuO20Ml5UPZFXZKmWbpoXxG2E+nmF1Q5SPjmavki3po9O9f26YugGJaiCvAVZLmzAm+5udDE+ZSjXRQC3Vrepkq4nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1eXAmKN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F32C4CEC3;
-	Thu, 17 Oct 2024 08:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729155486;
-	bh=492DZi2xWFhOAumNcACKXQaQl1yah9Ahp5T4snk6DbU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X1eXAmKNLWNBi9dB2rkATO6IgpxV3/0wJ3CY2gbjLSU/c3d3nPKaxTVd27TQzYshn
-	 MDnaUTQg15T+NSOLud69ksX7/LniFvo9tK04QgEfKU/n3TgnWYz4ATr6BuPAmncc2z
-	 kxKNtjGp7FMt5eF0q2D6Ouca1ma7pDr31LrZJp4RY+tmQPUHBn1IL2JG91mEa72lDq
-	 XBhcKaYmulNY0AaJ12XDozF2OPoapZaR0i8+Six9AzQolX2/JBJa/6wrfuigrsRdWU
-	 9TPgOobYtfUZGicjWq8qLEtBShShtgejp8FBTjhXpt3DG4yVqmTIckPgcrdM/BHYB2
-	 qrscq2e9GQmVg==
-Date: Thu, 17 Oct 2024 09:58:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	"maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER" <UNGLinuxDriver@microchip.com>,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
-	George McCollister <george.mccollister@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Breno Leitao <leitao@debian.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCHv7 net-next 2/6] net: ibm: emac: remove custom init/exit
- functions
-Message-ID: <20241017085800.GP2162@kernel.org>
-References: <20241015200222.12452-1-rosenp@gmail.com>
- <20241015200222.12452-4-rosenp@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jKYRVgea9e1TDG9XcksVUpPxxHQXszuo6OWAdzzSMtjb6UwVyvREgftgabUPTCa1y77CyAWv6AgQfWt3QixzNSq5AtS6BsLdW5R9SWz9yh0q/edTPyXxDKaC5pueI8UdIXCfUEd8CQZ1fgszm8+vg2i0Y0nm2vEQoWaWL5lXRdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUTEi/QD; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e4d624ac28so447625b6e.2;
+        Thu, 17 Oct 2024 01:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729155489; x=1729760289; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cS2ZrlCICBtkiBuIIXiYosXWwsFkqn4m2OZpO9F2lEg=;
+        b=GUTEi/QD9EfKz9cJ+kcdexLuT9hsJ3Qke5GFpqzn+D80X6t7JqBN/BLYluinWlnh02
+         oBtKsnnezq5Yd6KZYkCFhKmilvsMsxu88K3xFnpZYj0nORDa7CfpCOWSBWc4KR7plZY/
+         RsDDR5BFAwv9JuS2fSXdylHttvGzGXJKtK4eMgSdonnbk2pcJ46VRuzrJ1lotIJJp9Rq
+         qBGe3N9YQqWApuBABGRoPlQk+nNDYODw45MCRCZURU9DfT6Ephl/nXlNzyK0FgfbTMyV
+         MAd5+uwpVLiA3xGpv+TyYX331ZEoHS3x9V3qpyPxYwiMrQ26UM6afp7HQGvOHvznWR9y
+         E85g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729155489; x=1729760289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cS2ZrlCICBtkiBuIIXiYosXWwsFkqn4m2OZpO9F2lEg=;
+        b=OYT8cvd8xLJ5HDToodEjdvsz8QNByiKJ1mViX/dzpys+cSce5jZEHlEEwIg1v7RWT+
+         /bBVDE0ZjehOvnLXrvwqYP8is9VnOhPV6q5i+PBsZEpOdzCV03e/tUgnPehncCgzt0mK
+         qSJU/bOy/suL+Md9xDzyf4Yc20bdJK+bToD95d+tIeGS4CRfeMuIk3Mbnqw8W/VOOi0g
+         UMu0sqrgf0Dhc91+01LszlCjVYVffeNBKB+90uNTOZ/pb9rscpoJKq2Sh8++D8Jnp70b
+         0bfDLxs73BjpX1lNnCKvd9OJQUkSkni7FSv/3Ot191DWEVS9Uqae+dNyF8EEQzxrpyt2
+         jhRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVenPjU+FCZ0z8P5OWAOWc394vsbln6b7DRDLx4x2T8781MGKOnoPJJJ7w7U0D2io6huMa5FqgjJukuHw+HVAg=@vger.kernel.org, AJvYcCWDokyUd6hoNYslp2V4qzS3Lrkie8Q3poipWPXvki48l19ZWFfM5pML/aFXdXV/bGzV4pTRwGUryzmxjw==@vger.kernel.org, AJvYcCX0dkj5e+nN8NRMwCiy/piG3fvzC0h+CbxTFK8HIgtsp37L8gtsyY24zpExJ1VpMtM5A3UCkX0nTBGNalxZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWG1MLoerAY1tJkQt7fY+F50vKAgdx4o6H77o5nlWNS9N7hIMZ
+	lek0vtahGVn2k3ih3UQl7c63lxCVkZApBK5pt34uXgE+4LpMtiXXBoIRZSXq
+X-Google-Smtp-Source: AGHT+IGyolcDbGNV2mTosloiVV44sgC5UtlRgCP5m2wD8324zy9wGkRHfdWw5JtvnK5Y2cZZ4rDYJw==
+X-Received: by 2002:a05:6808:1a10:b0:3e4:d768:91ed with SMTP id 5614622812f47-3e5f0515174mr6294465b6e.41.1729155489333;
+        Thu, 17 Oct 2024 01:58:09 -0700 (PDT)
+Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6d41e3sm4518745a12.55.2024.10.17.01.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 01:58:08 -0700 (PDT)
+Date: Thu, 17 Oct 2024 21:58:02 +1300
+From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	zhanggenjian@kylinos.cn, ricardo@marliere.net, bvanassche@acm.org,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] mips: sgi-ip22: Replace "s[n]?printf" with
+ sysfs_emit in sysfs callbacks
+Message-ID: <ZxDRmlDbtjEaTH8z@mail.google.com>
+References: <Zw2GRQkbx8Z8DlcS@mail.google.com>
+ <alpine.DEB.2.21.2410150220160.40463@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,24 +86,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015200222.12452-4-rosenp@gmail.com>
+In-Reply-To: <alpine.DEB.2.21.2410150220160.40463@angie.orcam.me.uk>
 
-On Tue, Oct 15, 2024 at 01:02:17PM -0700, Rosen Penev wrote:
-> commit c092d0be38f4 ("net: ibm: emac: remove all waiting code")
-> introduced EPROBE_DEFER support. Because of that, we can defer
-> initialization until all modules are ready instead of handling it
-> explicitly with custom init/exit functions.
+On Tue, Oct 15, 2024 at 03:01:13AM +0100, Maciej W. Rozycki wrote:
+> On Tue, 15 Oct 2024, Paulo Miguel Almeida wrote:
 > 
-> As a consequence of removing explicit module initialization and
-> deferring probe until everything is ready, there's no need for custom
-> init and exit functions.
+> > snprintf() has the documented, but still rather strange trait of
+> > returning the length of the data that *would have been* written to the
+> > array if space were available, rather than the arguably more useful
+> > length of data *actually* written, [...]
 > 
-> There are now module_init and module_exit calls but no real change in
-> functionality as these init and exit functions are no longer directly
-> called by core.
+>  Why do you think that just returning `n - 1' in the case of a length 
+> overflow would be more useful than returning the unmet buffer length 
+> requirement?  I think the opposite is the case: the value returned lets 
+> you reallocate the buffer for more space and retry, and there's no other 
+> way to figure out how much this would be.  And if you need to know how 
+> many characters were actually written, then `min(n - 1, snprintf(...))' 
+> will do (and code you propose to replace does exactly that, open-coded).
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>  The change itself makes sense to me, but not your proposed description 
+> I'm afraid.  Just replacing open-coded pieces with calls to `sysfs_emit' 
+> is enough justification.
+> 
+>   Maciej
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Thanks for taking the time to review this patch.
 
+Will submit a v2 with the description you pointed out.
+
+- Paulo A.
 
