@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-369283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DC09A1B3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7029A1B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C43D2815B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82C301F28CAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113E11C173F;
-	Thu, 17 Oct 2024 07:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1oLTo2Q"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18821C1AD4;
+	Thu, 17 Oct 2024 07:04:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A141A155A24
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E575157E9F
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729148621; cv=none; b=goHRjvhLFI29dDvVaTQGWiSNqTWttrrheu4sgwSJb6SsBxA17+lj+hT1LB4agADktNC+shW2Ljeb6JMWVJk1oOZRV7XVJ8B6qfEtisKsVf+c5jQDBnJ1Nyp2YaHZ0ouQQHbLCb8/rcRq1dtHQqUJ3DHkssfGIRLUAEQ1RqNGI1E=
+	t=1729148662; cv=none; b=LmFMbg0a9dD4cUJG+RIqOA+GADWUi8WVFfiVz4M+Z4g+Kbbf4jF1A3t53En68OUMPrJyfPEnY3/nPoCu62hXElZfwSou6mQQ7z1EfNOYtbvdPBifjsnqFivaZfctQV0onNKq9lyK6L+9D4NbAdxX9MDXt02Fn9hkvaAYkUwaemg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729148621; c=relaxed/simple;
-	bh=zDXGu3x/zNVOof1rSjPWuobKaTHcITYX+c97b1xcpvQ=;
+	s=arc-20240116; t=1729148662; c=relaxed/simple;
+	bh=G5OPTcEC82Tosbes+9MlIjTJfQQKAPa9SGVIU4e7AuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1IFAd90ml0tmMf1YMIGzQLvmr1XoHVTwwMRoIVqEFm+Zca7PT3rMbY+wtkUPhL78u9pkCP6+uzt4hPjfjEfBQ+bhNkdyGV0TNnGD3q1EOAKAQgW+Wjh7kCc8JrmKO9eTBKxXj44vBguV2MuNfxo/HUcRaEcphb2yvGH33rk/JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d1oLTo2Q; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f58c68c5so944068e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:03:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729148618; x=1729753418; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iawtoavv1G2RX0l5WVjSkFXmpKxh1NpN/ld6wwOOv/s=;
-        b=d1oLTo2Qu3FdVYuKCpTUJ8ku5itJn8wPy0PEjQjGEN5qaMwbuEG4Z3VO/OlEN2DQJ3
-         9z+icAbYudIvBymVS6HDQozCdvt7BQ5urrjLqpfptqfapjf9/2IItfq32RBCYJZJGSOz
-         4qV4VMBrqaCFrmrha+YmzjEHcas9WJYAlEYyEHFX9gI4Pop+H7wZR00DfWAhALDH09qe
-         M5dA4bKDW3SlNgXrSQcrVBdXKpQNdVVLGmhE2tc4nPKFZhVBAUFi3fzmNLuQcgedwCB/
-         j0Oaf+lkLtTOF8XmSKxng3MaXtHiDojWGGjXspIq6QMhxmZ/ntjPad8Bbhx66YlxMT4G
-         eY3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729148618; x=1729753418;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iawtoavv1G2RX0l5WVjSkFXmpKxh1NpN/ld6wwOOv/s=;
-        b=i5h4y0Rng9c/dc91fY0YECHVtwYGQpgCwULa/4LawSSwfD3Xw7mX48Su+KGNMslZHR
-         gHtELwf9rBw5SA0vI94fyauZH1cmkKdvPIJ6QNaXPhxthscjA0XlHjqzGiQbZeSz1KXF
-         s6zGeBFcLtC2EAQ+bbzYp9rMgQAIwhgQPx6G07tM0m0UBOezvoh+hXK8iHnqdU+e0TpD
-         8NMzk9IXxU7MS7aW4QMa3e8KxkDjXAa3Dq9GAwRlppBezk2pr1Ef+zNwm+cqiriQmdSM
-         hbFDgnu/xT41GYSiUpkQ7V/Napj1JOQGLB7xxKxDlOsJxuaFgf5vN8ZMDo9tHmssDp7v
-         FUng==
-X-Forwarded-Encrypted: i=1; AJvYcCVXBxPX3+40Q4R5f3i91XLUmipP+o8iFDo10SPoyw4Q45oTO+e+895X8nC7gKmOhVUPdkOHa/epQu4/m4E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1RADgnb9aIpkBwuGw/z3W5jqeyQ1vzifApKTMrDvVwOxlKgCA
-	cYBoTLu3wwuyylMq/Qy5hb64jPrUMZUeeYBNWYuHJ7RHKtXsNaR9hsUxfA7kPuI=
-X-Google-Smtp-Source: AGHT+IHSDq0H6zQ11CelWpuA9izCcxSo97xdpRi0sSnTkqGYNPxSymFsUjn53qQvY3ZhbDmWOfE65g==
-X-Received: by 2002:a05:6512:3e06:b0:536:a7a4:c3d4 with SMTP id 2adb3069b0e04-539e571c959mr13304029e87.39.1729148617644;
-        Thu, 17 Oct 2024 00:03:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29717324sm257782966b.36.2024.10.17.00.03.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 00:03:36 -0700 (PDT)
-Date: Thu, 17 Oct 2024 10:03:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: Greg KH <gregkh@linuxfoundation.org>, dpenkler@gmail.com,
-	skhan@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] staging: gpib: Remove a dead condition in if statement
-Message-ID: <92acd116-55f4-4262-8b86-840da55481c3@stanley.mountain>
-References: <20241016075319.4092-1-everestkc@everestkc.com.np>
- <2024101654-jasmine-ransack-7190@gregkh>
- <CAEO-vhGuJUdbBhchbga33TNWvZXTXHWbd4=M8xeWkHAi1rnw2g@mail.gmail.com>
- <f3fdd6b8-53bb-4e9d-bb32-3816035d4d52@stanley.mountain>
- <CAEO-vhFAb=xfc2sZiezW7Zn0dWNQ4axVxE6GErayKs76NtG1bg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wb3E8Jd6uxrHf3bZ92pNxAOitDAZrJY7RbXrHDvQ5bjErQ+8/oFjQ6lJO8mhk+fEoz4d85FGkfpAXrxufzGIlspyA5GnlRo5w/0d7qCQmV3QGy+M81xirttRZ6MBVp7Z6xQUh10wKeOONGZFgpMEO5D7ugjwWB4VHCaA5cfBKmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t1KYG-0000k9-9p; Thu, 17 Oct 2024 09:04:04 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t1KYF-002UDD-Pe; Thu, 17 Oct 2024 09:04:03 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 75FAD354D9A;
+	Thu, 17 Oct 2024 07:04:03 +0000 (UTC)
+Date: Thu, 17 Oct 2024 09:04:03 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, imx@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH net-next 10/13] net: fec: fec_enet_rx_queue(): replace
+ open coded cast by skb_vlan_eth_hdr()
+Message-ID: <20241017-tasteful-frog-of-persistence-ad1223-mkl@pengutronix.de>
+References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
+ <20241016-fec-cleanups-v1-10-de783bd15e6a@pengutronix.de>
+ <ZxB6AuGnoXekCEtp@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bbxuw7yumi54jgxm"
 Content-Disposition: inline
-In-Reply-To: <CAEO-vhFAb=xfc2sZiezW7Zn0dWNQ4axVxE6GErayKs76NtG1bg@mail.gmail.com>
+In-Reply-To: <ZxB6AuGnoXekCEtp@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Oct 16, 2024 at 08:47:21PM -0600, Everest K.C. wrote:
-> > $ git grep get_dma_residue | grep static | grep -v gpib
-> >
-> > arch/alpha/include/asm/dma.h:static __inline__ int get_dma_residue(unsigned int dmanr)
-> > arch/arm/mach-footbridge/dma-isa.c:static int isa_get_dma_residue(unsigned int chan, dma_t *dma)
-> > arch/m68k/include/asm/floppy.h:static int vdma_get_dma_residue(unsigned int dummy)
-> > arch/mips/include/asm/dma.h:static __inline__ int get_dma_residue(unsigned int dmanr)
-> > arch/mips/include/asm/mach-au1x00/au1000_dma.h:static inline int get_dma_residue(unsigned int dmanr)
-> > arch/mips/include/asm/mach-generic/floppy.h:static inline int fd_get_dma_residue(void)
-> > arch/mips/include/asm/mach-jazz/floppy.h:static inline int fd_get_dma_residue(void)
-> > arch/parisc/include/asm/dma.h:static __inline__ int get_dma_residue(unsigned int dmanr)
-> > arch/parisc/include/asm/floppy.h:static int vdma_get_dma_residue(unsigned int dummy)
-> > arch/powerpc/include/asm/dma.h:static __inline__ int get_dma_residue(unsigned int dmanr)
-> > arch/powerpc/include/asm/floppy.h:static int vdma_get_dma_residue(unsigned int dummy)
-> > arch/sh/drivers/dma/dma-pvr2.c:static int pvr2_get_dma_residue(struct dma_channel *chan)
-> > arch/sh/drivers/dma/dma-sh.c:static int sh_dmac_get_dma_residue(struct dma_channel *chan)
-> > arch/sparc/include/asm/floppy_64.h:static unsigned int sun_get_dma_residue(void)
-> > arch/sparc/include/asm/floppy_64.h:static unsigned int sun_pci_get_dma_residue(void)
-> > arch/sparc/include/asm/parport_64.h:static inline unsigned int get_dma_residue(unsigned int dmanr)
-> > arch/x86/include/asm/dma.h:static inline int get_dma_residue(unsigned int dmanr)
-> > arch/x86/include/asm/floppy.h:static int vdma_get_dma_residue(unsigned int dummy)
-> >
-> > Only the Sparc functions return unsigned int.  The rest return int.
-> Why is it so ? Are there any resources I could go through to
-> understand it better?
 
-There isn't a reason for it.  Programmers make millions of little choices and
-some don't matter so it's just a roll of the dice which way things go.
+--bbxuw7yumi54jgxm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards,
-dan carpenter
+On 16.10.2024 22:44:18, Frank Li wrote:
+> On Wed, Oct 16, 2024 at 11:51:58PM +0200, Marc Kleine-Budde wrote:
+> > In order to clean up the VLAN handling, replace an open coded cast
+> > from skb->data to the vlan header with skb_vlan_eth_hdr().
+>=20
+> Replace manual VLAN header calculation with skb_vlan_eth_hdr()
+>=20
+> Use the provided helper function skb_vlan_eth_hdr() to replace manual VLAN
+> header calculation for better readability and maintainability.
 
+Fixed,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--bbxuw7yumi54jgxm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcQtuAACgkQKDiiPnot
+vG/SSwf/RLC1G+yUlyNcaq0ekJTCbBgjaw+gpMeEaIwC3POspzUWlJ0PFEDUvWi2
+NlDWzrkrSMWllWt96vin0rzmRhBSGmZTHiYtccXIyNRUTp56kfGIULu66LDbJJot
+gjQ/mW3W5d0lI6MA7kZ0BHix+Ly6WuUKpUeJfveA4lkLTmSGvIVVocYbJ88G2nbe
+JUPXU9K97TOzKx+7XITqXRN3Y7Ql1uKhJQ5QhrhvBjaf7nIRCZuy6NsTYxDssOPZ
+b4bbpUTxPIIv+xuBGKfSdBM+sSx14hDPzaQ2Hm3RUnNpQsXGvlOEZJdngyJumqMo
+PIrcq5O4veD8gzGxkIhcuKSTdQ8CzQ==
+=tK4s
+-----END PGP SIGNATURE-----
+
+--bbxuw7yumi54jgxm--
 
