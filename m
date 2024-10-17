@@ -1,134 +1,99 @@
-Return-Path: <linux-kernel+bounces-370054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9E59A26A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:33:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2244F9A26AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE87C1C21ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:33:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6971F23A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56561DED69;
-	Thu, 17 Oct 2024 15:32:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E426C1CBE8A;
-	Thu, 17 Oct 2024 15:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432E21DE4CB;
+	Thu, 17 Oct 2024 15:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="XjFGeTHO"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9256111AD;
+	Thu, 17 Oct 2024 15:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179143; cv=none; b=Qkrp5CnyTCXxm+bnkSuxow36yiOqQHY6LsZ4hwMRJHOWRkLtNt62H45654+PcwTnX78X16BIFzBcotThfDplmoD0Ht19FKWe8i81Z/Fcn7pmcQL2WHk9mu7J9FOJGgUoWvSaCYuCoNpEyBYz0TvlvSs2neo9zyazcODr6O4VeU4=
+	t=1729179238; cv=none; b=TjqDRCC6jWkRIuHEdjKa3oRoGMIeQy6VLJtVE50XpP51hXfqursS7iyYEEKpgeUIDpb6OMH3n8UTYXW69KjMYrmmoiAxRLXiXwekp1HgsByCGGsAazUbx0UTc1AhStE5dsL9ZPDcmhOqmHKgCEERtzH7SMvvmET7O5gpLMn/b38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179143; c=relaxed/simple;
-	bh=SXtzKMYQw4YGoZMy9cziDnMey+ubUZZhAaoTGjWv/zI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dtfudgnxHOu9HM+G388X0ZYdTPq7o136x0oau4IuK8s4qW50mwYtlmcoe7+rGTQSO8aeP/YkL8KXKDjCY4rca4pNP8GQ4FN2TCZpaLPfyLKTKYjehqM3xDdJrulHDuTkOXkxqudlMwuwM+O+NPbFobccFppHFRGqOd3oM8JYZjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4AEFFEC;
-	Thu, 17 Oct 2024 08:32:45 -0700 (PDT)
-Received: from [10.57.22.188] (unknown [10.57.22.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F30583F528;
-	Thu, 17 Oct 2024 08:32:12 -0700 (PDT)
-Message-ID: <de0ebef7-8be3-444f-99ee-5e9b6f9140f7@arm.com>
-Date: Thu, 17 Oct 2024 16:32:12 +0100
+	s=arc-20240116; t=1729179238; c=relaxed/simple;
+	bh=3pMuEHpwOaSpll42N13R4aWE8EjuRuJR9CLBAND+jJQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kUzQNdwGjyDIj2lX81mOM8hKBhhCdNc+6ySsTFrkbea+OoQsnFXP5NxLGIyN3RxXS4klLJDHriw/EmrMSn5sb2YkVO+rnJMmG0rfqWWHUdX60tmpngvyUd2IBLzNl4qEJPmkFv4KEtwvKjX8lqQAPuiVNIucqZDmVvL4MTlEBGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=XjFGeTHO; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9342842BFE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1729179232; bh=Cgf6dIwL5A+zDkEGbeh0z0XOnGyBlSao7mUP7QPyko4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=XjFGeTHOtreC3i/PuRJlYTzD2k7pODOmNWJFeyN+dTfx0GggiYigf+UrxC8OrwBFJ
+	 IdosYnmgj4pxMaXDImUni4vFxLdquj/6LHeEJHnlXew8yo6yyz0pTkNEnVfPWaXUIK
+	 yqS5zkAfMD4/guWa2Y+x4AAZZfPdWvLtrbcXYh0vF6ALVk6rnNM90BUpZ9tDDHHrSQ
+	 y1CjtuH6ZQPolTrW+zSS55vjMHWytABxfRRtcYN5z5MJfo1QmL1rgIimmI+LD2Haa9
+	 rY3I3bFfpCj35xWAoi4TRmCPARIFy/OG3fCVO8qVy4yq3jEnsmasbEvULqnZq4LRXI
+	 Q9ect6nwrCcNw==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 9342842BFE;
+	Thu, 17 Oct 2024 15:33:52 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, Horia Geanta
+ <horia.geanta@freescale.com>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kernel-doc: allow object-like macros in ReST output
+In-Reply-To: <20241015181107.536894-1-rdunlap@infradead.org>
+References: <20241015181107.536894-1-rdunlap@infradead.org>
+Date: Thu, 17 Oct 2024 09:33:51 -0600
+Message-ID: <87frou3fs0.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 23/43] KVM: arm64: Validate register access for a Realm
- VM
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-24-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241004152804.72508-24-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi Steven
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-On 04/10/2024 16:27, Steven Price wrote:
-> The RMM only allows setting the lower GPRS (x0-x7) and PC for a realm
-> guest. Check this in kvm_arm_set_reg() so that the VMM can receive a
-> suitable error return if other registers are accessed.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
+> output_function_rst() does not handle object-like macros. It presents
+> a trailing "()" while output_function_man() handles these macros
+> correctly.
+>
+> Update output_function_rst() to handle object-like macros.
+> Don't show the "Parameters" heading if there are no parameters.
+>
+> For output_function_man(), don't show the "ARGUMENTS" heading if there
+> are no parameters.
+>
+> I have tested this quite a bit with my ad hoc test files for both ReST
+> and man format outputs. The generated output looks good.
+>
+> Fixes: cbb4d3e6510b ("scripts/kernel-doc: handle object-like macros")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Horia Geanta <horia.geanta@freescale.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
 > ---
->   arch/arm64/kvm/guest.c | 26 ++++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> index 962f985977c2..c23b9480ceb0 100644
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@ -783,12 +783,38 @@ int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
->   	return kvm_arm_sys_reg_get_reg(vcpu, reg);
->   }
->   
-> +/*
-> + * The RMI ABI only enables setting the lower GPRs (x0-x7) and PC.
+> Cc: linux-doc@vger.kernel.org
+>
+> @Jon, feel free to update the attribution for your patch or I can do it
+> and send a v2 if you like.
+>
+>  scripts/kernel-doc |   43 ++++++++++++++++++++++++++++++-------------
+>  1 file changed, 30 insertions(+), 13 deletions(-)
 
-This is true only for REC_CREATE ? But when we handle SMCCC calls in the
-userspace, we may need to allow setting x0-x17 and we should accommodate
-for that here ?
+Applied - thanks for doing this.
 
-Otherwise looks good to me.
-
-Suzuki
-
-
-> + * All other registers are reset to architectural or otherwise defined reset
-> + * values by the RMM, except for a few configuration fields that correspond to
-> + * Realm parameters.
-> + */
-> +static bool validate_realm_set_reg(struct kvm_vcpu *vcpu,
-> +				   const struct kvm_one_reg *reg)
-> +{
-> +	if ((reg->id & KVM_REG_ARM_COPROC_MASK) == KVM_REG_ARM_CORE) {
-> +		u64 off = core_reg_offset_from_id(reg->id);
-> +
-> +		switch (off) {
-> +		case KVM_REG_ARM_CORE_REG(regs.regs[0]) ...
-> +		     KVM_REG_ARM_CORE_REG(regs.regs[7]):
-
-> +		case KVM_REG_ARM_CORE_REG(regs.pc):
-> +			return true;
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-> +
->   int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
->   {
->   	/* We currently use nothing arch-specific in upper 32 bits */
->   	if ((reg->id & ~KVM_REG_SIZE_MASK) >> 32 != KVM_REG_ARM64 >> 32)
->   		return -EINVAL;
->   
-> +	if (kvm_is_realm(vcpu->kvm) && !validate_realm_set_reg(vcpu, reg))
-> +		return -EINVAL;
-> +
->   	switch (reg->id & KVM_REG_ARM_COPROC_MASK) {
->   	case KVM_REG_ARM_CORE:	return set_core_reg(vcpu, reg);
->   	case KVM_REG_ARM_FW:
-
+jon
 
