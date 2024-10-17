@@ -1,135 +1,225 @@
-Return-Path: <linux-kernel+bounces-369339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5E99A1BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2519A1BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23031285577
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EFC8283951
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770211D0E3C;
-	Thu, 17 Oct 2024 07:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995351CF7C7;
+	Thu, 17 Oct 2024 07:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZqco2w9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnZP/6eq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D252C1D0DC4;
-	Thu, 17 Oct 2024 07:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C7D144D21;
+	Thu, 17 Oct 2024 07:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729151324; cv=none; b=Kc4S5w8Tz5PdD2G42LoTdGojT4yiOxcL4Q/26ai0fsfI/xI7Xzy7zosQegLDXg7tiQmqE3RdwKAp0OZOTzNbhwbGG89Edh5lfyVuv4Hc5bKSGLlBsEqCvs3dcR3GivdMn1GpGEBhQ8/BSLV5+GYOfg5wUUiKmwT0rOu1+E+LAUg=
+	t=1729151414; cv=none; b=Zd9JescGMv3GVvj4U7KSzibRMGKBbtSnKse6T3BPYatM7ijFm4Q3TCTvC0WIqeF+0mOMH5Ylkf+dn0LMCaWoOhbA3VzQhtZdCXucNlqmI/DsMnQguewcdxu8KP8YeGLK04sefsF4kVYfYK1Q4pV4Ct93VOno0vQaJqFTkostVt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729151324; c=relaxed/simple;
-	bh=AbxgFND14fAabCol8XiCmaikesH5sGAZCim6GukqBPA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=eQOpjztSuknblkxq6hi/JD2uzd5AD7TKPn12Pg0ssHUNrgGlypYgMbKW4YrFkvaZ7iyuEKU/Qi7jyKP+jT1G9auWPyt6Vw3ZxznoS7TozgC3onodi9PXVE6No36tCiR011NvcXMYCVfT+P5xMmiz9uTOu0yhSzIJbJhalYflRiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZqco2w9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2178C4CECD;
-	Thu, 17 Oct 2024 07:48:42 +0000 (UTC)
+	s=arc-20240116; t=1729151414; c=relaxed/simple;
+	bh=uYn2gVEAgPj1s74huNKtqM2HJe3OpErKE+EWC0unssc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DxOAr5sgcVddscL2zDchiqdMY3O/7660Ox0+RrfqqB3DTW28vxx5KKEjpmNs2LR3q4xx7LYL4SjL6VJbyq8j8jWzuChB0JIGRTizxUIrsiUcYQaJEaaFpIinHMFdnRBUKBmbGn+2dStfXHsCQzN5fQqrZdLRzjG9TcUwslxWZIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnZP/6eq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B956C4CEC5;
+	Thu, 17 Oct 2024 07:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729151324;
-	bh=AbxgFND14fAabCol8XiCmaikesH5sGAZCim6GukqBPA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=EZqco2w905uQTSAODuE00UWJtI0d16Nh8Tply6BmUT2CqLgMsRGZYOgNxvs039gNH
-	 Djr6j+ATPqSkVYCkZjwVP31J7odXj2Unplzj9lNjOLhcJ85/u45eX7GIALjwPtwL6Q
-	 o8vo7oNVKYXIFUAlfmjDomWR3K/DJ+mbzx1i+x5+doAg8IUkNG3DHPwRICyOFSkn6N
-	 eniY0OQTEYRtq+VT8gtaGJTe4i+gKaOGh9x2PRoyWK8kjE110NQ4dopfIgqvkbMhzX
-	 Qx8osaPw7OdB5nC5boB9Hd6drg4AQDar5Au7pKCvihgPodUsCwFU58VnBtSov14kLi
-	 bKtpnHK5AWqDA==
-From: Kalle Valo <kvalo@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: David Lin <yu-hao.lin@nxp.com>,  linux-wireless@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  johannes@sipsolutions.net,
-  briannorris@chromium.org,  francesco@dolcini.it,
-  tsung-hsien.hsieh@nxp.com,  kernel@pengutronix.de
-Subject: Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to support iw61x
-References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
-	<Zsc1efkBHDXdZtfJ@pengutronix.de>
-Date: Thu, 17 Oct 2024 10:48:40 +0300
-In-Reply-To: <Zsc1efkBHDXdZtfJ@pengutronix.de> (Sascha Hauer's message of
-	"Thu, 22 Aug 2024 14:56:25 +0200")
-Message-ID: <87a5f341bb.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1729151414;
+	bh=uYn2gVEAgPj1s74huNKtqM2HJe3OpErKE+EWC0unssc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fnZP/6eqJezfNW/r6VsumK6jR9TZ0D18TsvkukiaxSpFVRjV6o3aUUmI+IohmBzGM
+	 rrph7vLniNkNcfmE3o2TkK/yc/371sZSrROIuSqq8ZvSAi+Uyy/WM7YVIK6KfwNdJS
+	 pNq1XqbGxhq9+rgbTLjqDReMmI95HPsfYsDR0yvwgw6oUf3TajgJdHbzseIOwZxR7f
+	 hXJZuV2Kz15XXty/WQWnO5KIY/BHZd/xW/eXqZ0FKMvFheyWakz6sDyWl2AnNMwdNC
+	 KyZq+6MkLWK6WjxSsRInwqCVxfgS3Jpe5RO07Khp9cIoxIrEpd0vESTxVMrOxrla3o
+	 BDTtPhdlY/a/Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t1LGt-004KMb-Qk;
+	Thu, 17 Oct 2024 08:50:11 +0100
+Date: Thu, 17 Oct 2024 08:50:11 +0100
+Message-ID: <86v7xr418s.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>,	Bjorn Helgaas <helgaas@kernel.org>,
+	Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,	Johan Hovold
+ <johan+linaro@kernel.org>,	Kishon Vijay Abraham I <kishon@ti.com>,	Xiaowei
+ Song <songxiaowei@hisilicon.com>,	Binghui Wang <wangbinghui@hisilicon.com>,
+	Thierry Reding <thierry.reding@gmail.com>,	Ryder Lee
+ <ryder.lee@mediatek.com>,	Jianjun Wang <jianjun.wang@mediatek.com>,
+	linux-pci@vger.kernel.org,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>,	Ley Foon Tan <ley.foon.tan@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: Why set .suppress_bind_attrs even though .remove() implemented?
+In-Reply-To: <20241017052335.iue4jhvk5q4efigv@thinkpad>
+References: <Yt+6azfwd/LuMzoG@hovoldconsulting.com>
+	<20220727195716.GA220011@bhelgaas>
+	<YuJ+PZIhg8mDrdlX@hovoldconsulting.com>
+	<20241017052335.iue4jhvk5q4efigv@thinkpad>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, johan@kernel.org, helgaas@kernel.org, pali@kernel.org, johan+linaro@kernel.org, kishon@ti.com, songxiaowei@hisilicon.com, wangbinghui@hisilicon.com, thierry.reding@gmail.com, ryder.lee@mediatek.com, jianjun.wang@mediatek.com, linux-pci@vger.kernel.org, kw@linux.com, ley.foon.tan@intel.com, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Sascha Hauer <s.hauer@pengutronix.de> writes:
+On Thu, 17 Oct 2024 06:23:35 +0100,
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> 
+> On Thu, Jul 28, 2022 at 02:17:01PM +0200, Johan Hovold wrote:
+> > On Wed, Jul 27, 2022 at 02:57:16PM -0500, Bjorn Helgaas wrote:
+> > > On Tue, Jul 26, 2022 at 11:56:59AM +0200, Johan Hovold wrote:
+> > > > On Mon, Jul 25, 2022 at 06:35:27PM +0100, Marc Zyngier wrote:
+> > > > > On Mon, 25 Jul 2022 16:18:48 +0100,
+> > > > > Johan Hovold <johan@kernel.org> wrote:
+> > > > 
+> > > > > > Since when is unloading modules something that is expected to
+> > > > > > work perfectly? I keep hearing "well, don't do that then" when
+> > > > > > someone complains about unloading this module while doing this
+> > > > > > or that broke something. (And it's only root that can unload
+> > > > > > modules in the first place.)
+> > > > > 
+> > > > > Well, maybe I have higher standards. For the stuff I maintain, I
+> > > > > now point-blank refuse to support module unloading if this can
+> > > > > result in a crash. Or worse.
+> > > > 
+> > > > That makes sense for regular interrupt controllers where its hard to
+> > > > tell that all consumers are gone, but I don't think that should
+> > > > limit the usefulness of having modular PCI controller drivers where
+> > > > we know that the consumers are gone after deregistering the bus
+> > > > (i.e. the consumers are descendants of the controller in the device
+> > > > tree).
+> > > 
+> > > Those consumers are endpoint drivers, so I think this depends on those
+> > > drivers correctly unmapping the interrupts they use, right?
+> > 
+> > Right. For MSI this means that pci_alloc_irq_vectors() in probe should
+> > be matched by pci_free_irq_vectors() on remove.
+> > 
+> > For legacy interrupts, which can be shared, the mapping is created by
+> > PCI core when binding to the first device and can only be disposed by
+> > the host-bridge driver once all descendants have been removed.
+> > 
+> > The endpoint drivers still need to disable their interrupts of course.
+> > 
+> > Buggy endpoint-driver remove implementations can lead to all sorts of
+> > crashes (e.g. after failing to deregister a class device), and if that's
+> > a worry then don't unload modules (and possibly disable it completely
+> > using CONFIG_MODULE_UNLOAD).
+> > 
+> > > > > > It's useful for developers, but use it at your own risk.
+> > > > > > 
+> > > > > > That said, I agree that if something is next to impossible to
+> > > > > > get right, as may be the case with interrupt controllers
+> > > > > > generally, then fine, let's disable module unloading for that
+> > > > > > class of drivers.
+> > > > > > 
+> > > > > > And this would mean disabling driver unbind for the 20+ driver
+> > > > > > PCI drivers that currently implement it to some degree.
+> > > > > 
+> > > > > That would be Bjorn's and Lorenzo's call.
+> > > > 
+> > > > Sure, but I think it would be the wrong decision here. Especially,
+> > > > since the end result will likely just be that more drivers will
+> > > > become always compiled-in.
+> > > 
+> > > Can you elaborate on this?  I think Marc is suggesting that these PCI
+> > > controller drivers be modular but not removable.  Why would that cause
+> > > more of them to be compiled-in?
+> > 
+> > As mentioned earlier in this thread, we only appear to have some 60
+> > drivers in the entire tree that bother to try to implement that. I fear
+> > that blocking the use of modules (including being able to unload them)
+> > will just make people submit drivers that can only be built in.
+> > 
+> > Not everyone cares about Android's GKI, but being able to unload a
+> > module during development is very useful (and keeping that out-of-tree
+> > prevents sharing the implementation and make it susceptible to even
+> > further bit rot).
+> > 
+> > So continuing to supporting modules properly is a win for everyone (e.g.
+> > GKI and developers).
+> >  
+> > > > > > > > Turns out the pcie-qcom driver does not support legacy
+> > > > > > > > interrupts so there's no risk of there being any lingering
+> > > > > > > > mappings if I understand things correctly.
+> > > > > > > 
+> > > > > > > It still does MSIs, thanks to dw_pcie_host_init(). If you can
+> > > > > > > remove the driver while devices are up and running with MSIs
+> > > > > > > allocated, things may get ugly if things align the wrong way
+> > > > > > > (if a driver still has a reference to an irq_desc or irq_data,
+> > > > > > > for example).
+> > > > > > 
+> > > > > > That is precisely the way I've been testing it and everything
+> > > > > > appears to be tore down as it should.
+> > > > > >
+> > > > > > And a PCI driver that has been unbound should have released its
+> > > > > > resources, or that's a driver bug. Right?
+> > > > > 
+> > > > > But that's the thing: you can easily remove part of the
+> > > > > infrastructure without the endpoint driver even noticing. It may
+> > > > > not happen in your particular case if removing the RC driver will
+> > > > > also nuke the endpoints in the process, but I can't see this is an
+> > > > > absolute guarantee. The crash pointed to by an earlier email is
+> > > > > symptomatic of it.
+> > > > 
+> > > > But that was arguably due to a driver bug, which we know how to fix.
+> > > > For MSIs the endpoint driver will free its interrupts and all is
+> > > > good.
+> > > > 
+> > > > The key observation is that the driver model will make sure that any
+> > > > endpoint drivers have been unbound before the bus is deregistered.
+> > > > 
+> > > > That means there are no longer any consumers of the interrupts,
+> > > > which can be disposed. For MSI this is handled by
+> > > > pci_free_irq_vectors() when unbinding the endpoint drivers. For
+> > > > legacy interrupts, which can be shared, the PCIe RC driver needs to
+> > > > manage this itself after the consumers are gone.
+> > > 
+> > > The driver model ensures that endpoint drivers have been unbound. But
+> > > doesn't the interrupt disposal depend on the correct functioning of
+> > > those endpoint drivers?  So if a buggy endpoint driver failed to
+> > > dispose of them, we're still vulnerable?
+> > 
+> > Just as you are if an endpoint-driver fails to clean up after itself in
+> > some other way (e.g. leaves the interrupt enabled).
+> >
+> 
+> The IRQ disposal issue should hopefully fixed by this series:
+> https://lore.kernel.org/linux-pci/20240715114854.4792-3-kabel@kernel.org/
+> 
+> Then if the dwc driver calls pci_remove_irq_domain() instead of
+> irq_domain_remove(), we can be sure that all the IRQs are disposed during the
+> driver remove.
+> 
+> So can we proceed with the series making Qcom driver modular?
 
-> On Fri, Aug 09, 2024 at 05:44:50PM +0800, David Lin wrote:
->
->> This series adds support for IW61x which is a new family of 2.4/5 GHz
->> dual-band 1x1 Wi-Fi 6, Bluetooth/Bluetooth Low Energy 5.2 and 15.4
->> tri-radio single chip by NXP. These devices support 20/40/80MHz
->> single spatial stream in both STA and AP mode. Communication to the
->> IW61x is done via SDIO interface
->> 
->> This driver is a derivative of existing Mwifiex [1] and based on similar
->> full-MAC architecture [2]. It has been tested with i.MX8M Mini evaluation
->> kits in both AP and STA mode.
->> 
->> All code passes sparse and checkpatch
->> 
->> Data sheet (require registration):
->> https://www.nxp.com/products/wireless-connectivity/wi-fi-plus-bluetooth-
->> plus-802-15-4/2-4-5-ghz-dual-band-1x1-wi-fi-6-802-11ax-plus-bluetooth-5-
->> 4-plus-802-15-4-tri-radio-solution:IW612
->> 
->> Known gaps to be addressed in the following patches,
->>   - Enable 11ax capabilities. This initial patch support up to 11ac.
->>   - Support DFS channel. This initial patch doesn't support DFS channel in
->>     both AP/STA mode.
->> 
->> This patch is presented as a request for comment with the intention of being
->> made into a patch after initial feedbacks are addressed
->> 
->> [1] We had considered adding IW61x to mwifiex driver, however due to
->>     FW architecture, host command interface and supported features are
->>     significantly different, we have to create the new nxpwifi driver.
->>     Subsequent NXP chipsets will be added and sustained in this new driver.
->
-> I added IW61x support to the mwifiex driver and besides the VDLL
-> handling which must be added I didn't notice any differences. There
-> might be other differences, but I doubt that these can't be integrated
-> into the mwifiex driver.
->
-> Honestly I don't think adding a new driver is a good ideai, given how big
-> wifi drivers are and how limited the review bandwidth is.
->
-> What we'll end up with is that we'll receive the same patches for both
-> drivers, or worse, only for one driver while the other stays unpatched.
->
-> I even found some of the bugs and deficiencies I am just fixing for the
-> mwifiex driver in the nxpwifi driver as well. So please direct your
-> effort to improving the existing driver rather than putting more burden
-> to the maintainers by adding a new driver. I am sure this is the faster
-> path to get the necessary changes upstream, plus users of the mwifiex
-> driver will profit from these changes as well.
->
-> Of course I don't have to decide this. The wifi maintainer(s) will have
-> the final word, but these are my 2 cents on this topic.
+Who is volunteering to fix the drivers that will invariably explode
+once we allow this?
 
-Replying to an old mail but I'm with Sascha here and I'm also skeptic
-about adding a new driver. Especially my worry is that after the driver
-is accepted we will not hear from NXP anymore and the community has two
-almost identical drivers to maintain. There have been cases that after
-taking the driver the company disappears and we (the community) are left
-maintaining the abandoned driver.
+Because if the outcome is that we let things bitrot even more than
+they already are, I don't think this is going in the correct direction
+-- as in *the direction of correctness*.
 
-Also I have not seen any convincing reasons why a new driver is needed.
-For me much better approach would be to extend mwifiex like Sascha
-recommends.
+	M.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Without deviation from the norm, progress is not possible.
 
