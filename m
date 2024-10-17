@@ -1,122 +1,219 @@
-Return-Path: <linux-kernel+bounces-370417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24199A2C13
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:22:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483D29A2C1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CAA028173D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 476D71C21036
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6EC1DEFF1;
-	Thu, 17 Oct 2024 18:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CC31E009E;
+	Thu, 17 Oct 2024 18:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q9wcLkJd"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JKt7cyUS"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59AF184D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1321D31B8;
+	Thu, 17 Oct 2024 18:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729189322; cv=none; b=BW6Vcflky/RIAEPohGnz2dUcCOct+1Dldp1s/sfQQZyfD752ZMRP2vZ6q5PUT0/mYdfZ2sOnNyaFO/rFE9E5uXecfXCvHP9ecpYnvnuo27d34oU/1tEfcoY3O/0w08OPwxPPPyPpmikxoyovmYFyNqPYKUdaoFi54rS3jV3Vi5Q=
+	t=1729189586; cv=none; b=biE1gAKSkfxJGA5T2f4yBK867XfxLXJ/8gwVtTRV+k37L5A4Mz6NJnKCJB9YA8tvV+44efC6rNuqW8Xyk2/kViluDdf3BJP8NLbx5OElAhw5i4MhuIcduszDFmWiM6HUs6L4v9Rp18c/55Jo7bInurd87tsrZlQeN1Vcbe4iSfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729189322; c=relaxed/simple;
-	bh=RPqBl/e5kWqnuhA97vgRQ/te+jB+nHObSIWu953FoEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KAmb9m5xdC3iYroulntrrnuxEqP5dTORscZ38osiLxGNYoXqHNJDVvMiUnUCGTvW9qRbxx0a0tTnwiNkUVR+PH6OfLBcS3VEj0MPY7MtDQy1Z57+WiBtMdl5Nk9NSvi9yy/PiSAd4c9/elBuMUdkDGX5lmTZng1/F3idHwpSOm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q9wcLkJd; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e4d5aef2f8so748371b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:21:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729189317; x=1729794117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0vNuwIkZe438Kvv9BoDJdtP4Yx5fJLEE4DgPHUXL9Wg=;
-        b=Q9wcLkJd3weMnatwvhLROZAToggeqNrpMCwuFigGmRLRcGcQxZwQP4AAbW8+4ZTGxN
-         Q+BRrLscGI8PJkl3y8+DxEBP+lW8g387nZn0NE6sjGT6M/n+TNbkQBPqwDhdwOs7JMJM
-         2cMq/omEaytoLdL8+cirPwnKdWxIiTqv1mHJRhquXVejl7TD6F4gDjqexkeNvGuVlS6w
-         Lk+tf3RAS+b9SszAdxE00TH53LuXVaK43lob+roOflum73kiu+ddIjd5ephjDJRS5076
-         CDgjIuZHVBhw5oVgYL6UTsri1vRDXCfmLg+fdMCn2CLRBDtoE17T3ubG8azz2fAA/2Xm
-         wdug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729189317; x=1729794117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0vNuwIkZe438Kvv9BoDJdtP4Yx5fJLEE4DgPHUXL9Wg=;
-        b=HWJQgZrxWyIETixyj98OcuuhHWOmv8Xj2SXRHYkvnT8PQP6qnpBw9f9e/M4AjAbIMa
-         3YL5oMZbDf5Z+okKztEpZeZttbpni8tYKiMfj9nPYxki1BWKE1n72JNjXKZMPYj+/evx
-         qwaWcNOkdOQDOE3ng/4NjGLrklXgciQw9XXOhEGiDBzIuvhOqUtZJdI6iqTBKmg7s6oy
-         c6hBJojkpYZF9BrO/8A7wt+3JhpLut0mMNm6LFGlWfM1dOyQp9Couq0Yf2vQCrApMQDe
-         QeDAtFEH+1gzfJR22wzcGaC/jfwV4WL+o7uQ42hF3Z2TlT44pWkcGbcpVXgNISwRzMKs
-         tqFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXU47oa21/U4sy9w+bcNRZjtheVuoYwfpHF0YSkC7/XRZqnkRSnha5DX1av9secnutHno1NLBSswbEBH+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3qoQep46iXjru/q0ZSEZj39lPLzEUoU0ploYry9xw6cki9cFc
-	b80EsLRg1RCmCJZ1E3eR76hTjgBMMW0AouTnncGk8NbuE5z5g1b4UnYVDpXUe6hK5bN57djoO0X
-	q2W5jvuQh2iAqI5Dmwt3BWKLIBUNpH64pNPRr
-X-Google-Smtp-Source: AGHT+IHM6SgvakHOzfMHe+tK8akdryo1YChetAtJK61+k9hGwygT6I8t9ITw0MGJ7Ss0gI7UGwKq/hQASSlBC+NDQfM=
-X-Received: by 2002:a05:6808:3198:b0:3e6:92:ea86 with SMTP id
- 5614622812f47-3e60092efc6mr1054575b6e.20.1729189316559; Thu, 17 Oct 2024
- 11:21:56 -0700 (PDT)
+	s=arc-20240116; t=1729189586; c=relaxed/simple;
+	bh=w/Dgu9o7SlfhJAtPg0nuc7bjd6Jh+zhUqS2RN9TXNMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eojry6tvpTqIfY/AHEmR8SNVBnuL/vcJDag1vzdHXbwqeOETRwFaNd6du0YcMnwvK1dpHx2KJ6J47zZ0y+UYOoxqiYxLdo+q67UjfoiRWfx8dQyI8PSQw3Xb58Re6KErQBBVeql6yrvLPugMHxmR6/J2yLS+wUzHN5nJ1qdMn9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JKt7cyUS; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HFBvLG024516;
+	Thu, 17 Oct 2024 18:26:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=fWhCJkkh43jAIW4BYl88J+uvVKlUU
+	73T3cJn6QFcM9Y=; b=JKt7cyUSc+tOxKzK0r3I0fBP8NtTWyL+eFkmaPlC5Nfln
+	AUCnKhDwiJNY6ZO4vvJOpD8m1egjoUIeg3MGM5RUhj+8Sphy2rjF0T3vFIROFXkr
+	qcCVEHfvOAZNCJuoVIeqWf82bkN6YuhAyMnlwFoj4ZVuaQJ3UuCMMZLLRqW2gj3Z
+	GtgTvRxB3nt/q5SRtK2gAFwr4CD4P2M1KSWku6KAbfrZsASThoniaM37wmS3IQpI
+	XgRNodh3/+JlZE6blxXCviIUAGiO9t76x8+X9jMYyGqZ0zy5OL5x3KadLRdrDuXt
+	sH4My1IYSNhrS3Bp3mVj4MrxqRmeCWwnQfMCKNK8A==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427fhcpqgq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 18:26:12 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49HI05fv013876;
+	Thu, 17 Oct 2024 18:26:11 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fjakuan-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Oct 2024 18:26:11 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49HIQAdl037718;
+	Thu, 17 Oct 2024 18:26:10 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 427fjaku9n-1;
+	Thu, 17 Oct 2024 18:26:10 +0000
+From: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+To: 
+Cc: saeed.mirzamohammadi@oracle.com, Mikulas Patocka <mpatocka@redhat.com>,
+        stable@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 5.15 1/1] dm-crypt, dm-verity: disable tasklets
+Date: Thu, 17 Oct 2024 11:26:02 -0700
+Message-ID: <20241017182605.2049765-1-saeed.mirzamohammadi@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014221231.832959-1-weixugc@google.com> <CAOUHufb2nJ4-qEWrS_d0X_8FbLKR-+=OC3yNh1ExthKXiYYKHQ@mail.gmail.com>
- <20241016155550.9ff2ab4625c7f19b6be8b7e1@linux-foundation.org>
-In-Reply-To: <20241016155550.9ff2ab4625c7f19b6be8b7e1@linux-foundation.org>
-From: Wei Xu <weixugc@google.com>
-Date: Thu, 17 Oct 2024 11:21:43 -0700
-Message-ID: <CAAPL-u_bzGmB3DkTKZqeCbtiPkuZVsmLFMbN+zCojWsYtkBUNg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm/mglru: reset page lru tier bits when activating
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yu Zhao <yuzhao@google.com>, Brian Geffon <bgeffon@google.com>, 
-	Jan Alexander Steffens <heftig@archlinux.org>, Suleiman Souhlal <suleiman@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-17_20,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410170125
+X-Proofpoint-GUID: i5OHYiGkQHTIONtX5ZQYxPk8wUsgj40a
+X-Proofpoint-ORIG-GUID: i5OHYiGkQHTIONtX5ZQYxPk8wUsgj40a
 
-On Wed, Oct 16, 2024 at 3:55=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 15 Oct 2024 22:55:23 -0600 Yu Zhao <yuzhao@google.com> wrote:
->
-> > > @@ -257,7 +258,9 @@ static inline bool lru_gen_add_folio(struct lruve=
-c *lruvec, struct folio *folio,
-> > >         gen =3D lru_gen_from_seq(seq);
-> > >         flags =3D (gen + 1UL) << LRU_GEN_PGOFF;
-> > >         /* see the comment on MIN_NR_GENS about PG_active */
-> > > -       set_mask_bits(&folio->flags, LRU_GEN_MASK | BIT(PG_active), f=
-lags);
-> > > +       mask =3D LRU_GEN_MASK | BIT(PG_active);
-> > > +       mask |=3D folio_test_active(folio) ? (LRU_REFS_MASK | LRU_REF=
-S_FLAGS) : 0;
-> >
-> > We shouldn't clear PG_workingset here because it can affect PSI
-> > accounting, if the activation is due to workingset refault.
-> >
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-Good point. I have addressed this in the v2 patch.
+commit 0a9bab391e336489169b95cb0d4553d921302189 upstream.
 
-> > Also, nit:
-> >   mask =3D LRU_GEN_MASK;
-> >   if (folio_test_active(folio))
-> >     mask |=3D LRU_REFS_MASK | BIT(PG_active) | BIT(PG_referenced);
-> >
->
-> Thanks, I'll drop this version of this patch.
->
-> When resending, please include a full description of the userspace-visibl=
-e
-> effects of the original flaw, thanks.
+Tasklets have an inherent problem with memory corruption. The function
+tasklet_action_common calls tasklet_trylock, then it calls the tasklet
+callback and then it calls tasklet_unlock. If the tasklet callback frees
+the structure that contains the tasklet or if it calls some code that may
+free it, tasklet_unlock will write into free memory.
 
-I have sent out a v2 patch, which includes a description as suggested.
+The commits 8e14f610159d and d9a02e016aaf try to fix it for dm-crypt, but
+it is not a sufficient fix and the data corruption can still happen [1].
+There is no fix for dm-verity and dm-verity will write into free memory
+with every tasklet-processed bio.
+
+There will be atomic workqueues implemented in the kernel 6.9 [2]. They
+will have better interface and they will not suffer from the memory
+corruption problem.
+
+But we need something that stops the memory corruption now and that can be
+backported to the stable kernels. So, I'm proposing this commit that
+disables tasklets in both dm-crypt and dm-verity. This commit doesn't
+remove the tasklet support, because the tasklet code will be reused when
+atomic workqueues will be implemented.
+
+[1] https://lore.kernel.org/all/d390d7ee-f142-44d3-822a-87949e14608b@suse.de/T/
+[2] https://lore.kernel.org/lkml/20240130091300.2968534-1-tj@kernel.org/
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 39d42fa96ba1b ("dm crypt: add flags to optionally bypass kcryptd workqueues")
+Fixes: 5721d4e5a9cdb ("dm verity: Add optional "try_verify_in_tasklet" feature")
+Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+(cherry picked from commit 30884a44e0cedc3dfda8c22432f3ba4078ec2d94)
+Signed-off-by: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+---
+ drivers/md/dm-crypt.c | 37 ++-----------------------------------
+ 1 file changed, 2 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 9889035c343e3..95b3b69a5e3c4 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -69,10 +69,8 @@ struct dm_crypt_io {
+ 	struct bio *base_bio;
+ 	u8 *integrity_metadata;
+ 	bool integrity_metadata_from_pool:1;
+-	bool in_tasklet:1;
+ 
+ 	struct work_struct work;
+-	struct tasklet_struct tasklet;
+ 
+ 	struct convert_context ctx;
+ 
+@@ -1769,7 +1767,6 @@ static void crypt_io_init(struct dm_crypt_io *io, struct crypt_config *cc,
+ 	io->ctx.r.req = NULL;
+ 	io->integrity_metadata = NULL;
+ 	io->integrity_metadata_from_pool = false;
+-	io->in_tasklet = false;
+ 	atomic_set(&io->io_pending, 0);
+ }
+ 
+@@ -1778,12 +1775,6 @@ static void crypt_inc_pending(struct dm_crypt_io *io)
+ 	atomic_inc(&io->io_pending);
+ }
+ 
+-static void kcryptd_io_bio_endio(struct work_struct *work)
+-{
+-	struct dm_crypt_io *io = container_of(work, struct dm_crypt_io, work);
+-	bio_endio(io->base_bio);
+-}
+-
+ /*
+  * One of the bios was finished. Check for completion of
+  * the whole request and correctly clean up the buffer.
+@@ -1807,20 +1798,6 @@ static void crypt_dec_pending(struct dm_crypt_io *io)
+ 
+ 	base_bio->bi_status = error;
+ 
+-	/*
+-	 * If we are running this function from our tasklet,
+-	 * we can't call bio_endio() here, because it will call
+-	 * clone_endio() from dm.c, which in turn will
+-	 * free the current struct dm_crypt_io structure with
+-	 * our tasklet. In this case we need to delay bio_endio()
+-	 * execution to after the tasklet is done and dequeued.
+-	 */
+-	if (io->in_tasklet) {
+-		INIT_WORK(&io->work, kcryptd_io_bio_endio);
+-		queue_work(cc->io_queue, &io->work);
+-		return;
+-	}
+-
+ 	bio_endio(base_bio);
+ }
+ 
+@@ -2264,11 +2241,6 @@ static void kcryptd_crypt(struct work_struct *work)
+ 		kcryptd_crypt_write_convert(io);
+ }
+ 
+-static void kcryptd_crypt_tasklet(unsigned long work)
+-{
+-	kcryptd_crypt((struct work_struct *)work);
+-}
+-
+ static void kcryptd_queue_crypt(struct dm_crypt_io *io)
+ {
+ 	struct crypt_config *cc = io->cc;
+@@ -2280,15 +2252,10 @@ static void kcryptd_queue_crypt(struct dm_crypt_io *io)
+ 		 * irqs_disabled(): the kernel may run some IO completion from the idle thread, but
+ 		 * it is being executed with irqs disabled.
+ 		 */
+-		if (in_hardirq() || irqs_disabled()) {
+-			io->in_tasklet = true;
+-			tasklet_init(&io->tasklet, kcryptd_crypt_tasklet, (unsigned long)&io->work);
+-			tasklet_schedule(&io->tasklet);
++		if (!(in_hardirq() || irqs_disabled())) {
++			kcryptd_crypt(&io->work);
+ 			return;
+ 		}
+-
+-		kcryptd_crypt(&io->work);
+-		return;
+ 	}
+ 
+ 	INIT_WORK(&io->work, kcryptd_crypt);
+-- 
+2.46.0
+
 
