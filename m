@@ -1,185 +1,312 @@
-Return-Path: <linux-kernel+bounces-369650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A802E9A205F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3067C9A2061
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEF1AB24259
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC8C1F26E83
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4902B1DB34B;
-	Thu, 17 Oct 2024 10:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760C11DACBF;
+	Thu, 17 Oct 2024 10:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W496lQ2b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMyNf0IT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2F31DA0E9;
-	Thu, 17 Oct 2024 10:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BAB1D517A
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729162619; cv=none; b=DP6wQuqooPyHRaASV6s9/J3mK8hGJvWMKIsgpQ2Baw8wH+44tTzyv975xupCaBNODnk6Ymk4VnG03lwM5aHWdIXuIgMUUa+3ky4MRo5qFDXDWLnP2l5+35mp4Wqgfw2tsW9k/jd3sK67nIyYbccLLl9IySLlXAlkrUee2WVHJnQ=
+	t=1729162742; cv=none; b=M7Mpd/RXReOpBLSbXuVB8benp2ecYeeioNdjPtQHsuPxqNeros/LdzjFNj4dDx3+AlQzS++yknSHWBqtC9ZLjG9LPsuQGARVADX9Au72Y+fpkGrcR4GHjLlfCdnaSF/MBtK+VOgDaRSn9JH2wS82eQnBs8QUdwXQ6cBxhsunsQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729162619; c=relaxed/simple;
-	bh=D5RTI9FOOit5KbbEFT2DC25/vMJ92nKXQzGoJvbMPXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qeQqUZ4TeabVYgF8Wjv9sO8R7PUhyUQH3L5/4Q6mWt78ut12uylyyKyEJFh6CwD5wrseXeeb8Tw5Cl8+JSeOC6nmp4Ge49df0qPIfF8bC2hultVX+sBG04F6MNv08Fa6DWrd55cg0MU8XoOmDEdXvSNdaotAbfzTF60CJc7JVDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W496lQ2b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47365C4CEC7;
-	Thu, 17 Oct 2024 10:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729162619;
-	bh=D5RTI9FOOit5KbbEFT2DC25/vMJ92nKXQzGoJvbMPXU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=W496lQ2byJnSKa4PxIA6n48H3WC7Bs1q2K3W4oDOcLlweMFNQWgZ3djy/HUpd4RGG
-	 A0T7QaN3+Ai6zhhKvCCCHB5m+3oObmvkLcajISB3+2RbgnJip2x37PFRlYcEINMLyt
-	 2XAexB3kyQ4Re4LEFYqbRfiry8qzvDaA4swkMAyxARATSiwrsTvqCX5G1gTnt9b+Yd
-	 EGElnt0+/PqR3WJYWqpNMzQka2aziGRs9yEhg/+Mm3GUyu1FJNHrkvgbn2fzGph1DC
-	 x64HYV4eBCRcmFNn7w6jKe6Y5eyzasLk+s3FLjqe/cOJ1tgGU6tF+wQHfBvBVGatpL
-	 mywAaKVtCPXTw==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5daa93677e1so444279eaf.3;
-        Thu, 17 Oct 2024 03:56:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwGz+PpJBtzNJqKT4Mtb9RYeYM7Mu4/uHAW+EfoVP+FZ2p6g8LabXiOJoLGz92SqM76M472pywsVg=@vger.kernel.org, AJvYcCXfIyI2T1v5sAM1rifm1Cv2JKhe3HeBJpHFhMFltP5uDbJkaB1NtaGHGlrRxHbFM1g8AKzyEprnAaVrxfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcv0ieJwXJgM/ndB0Tupp9k+QW1iSDIcAOFbYRaYxIwTSOvJuE
-	ZvFKPGMvlkOey9Tn4GV9uMnRkOxRxhEq5nSGHG4DpVyCsO79qwiJodVWD8xLNlTJ7VHooF/yJy3
-	Hx4ytHGvGQSjjiOoCOOZCEKHRCoM=
-X-Google-Smtp-Source: AGHT+IFf3YEvrAc2/G0NQs4QVU7cxHfpnuZAN/b8kSqqUTXMoL2fKaVj+DCbNBkFcsDdYZgqgYOgXLv1o81cmRIrryA=
-X-Received: by 2002:a05:6870:e0ca:b0:27c:475c:ab2c with SMTP id
- 586e51a60fabf-288ee12a3e2mr6407221fac.43.1729162618602; Thu, 17 Oct 2024
- 03:56:58 -0700 (PDT)
+	s=arc-20240116; t=1729162742; c=relaxed/simple;
+	bh=87iL6FJn+Z8+drF38nk4+Q0zaXlsZb/97pJYQzLAByE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=t2QwI/Gn527XHoDeLj8Kx60dO7Q6IsLhD7PHOKnPzGTi4i7u666o0j0hM4Zop8cJZmKPko86nsdQD3Zw2n7tfrcbG6lwjG0Mg12c0dWxvGvRhKPSqh5BErvUqO8uA7C0DhJ7TOF2iF7zALujmqfcae8pAqFyExrepeX4F+oVEzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMyNf0IT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729162738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mewcKZY1pexaCktLiPPOjAIcUuazJvJ1t70Pvtm2u1E=;
+	b=FMyNf0ITYIplQi4jDbyMf1Xy5HM0UfmMQTzaJ61dFZFd9qQLPrKSMf8Z0e0WICjs9AuwU1
+	S0dCXpGxFE4deCLboy+c3Xs+ru3C1kEsjoB7lk6sZDIKpGVWpS8tJv3laNKSPu6c1cOzEA
+	lCVIL0dG/qgSxIAWOisUQ1IXJTEFpN8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-81-tRHVCJd9NjyQjrY-wJQiKA-1; Thu,
+ 17 Oct 2024 06:58:57 -0400
+X-MC-Unique: tRHVCJd9NjyQjrY-wJQiKA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C24981955F45;
+	Thu, 17 Oct 2024 10:58:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.218])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D12BF300019D;
+	Thu, 17 Oct 2024 10:58:53 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1114103.1729083271@warthog.procyon.org.uk>
+References: <1114103.1729083271@warthog.procyon.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH v2] afs: Fix lock recursion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017090503.1006068-1-wenst@chromium.org>
-In-Reply-To: <20241017090503.1006068-1-wenst@chromium.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 17 Oct 2024 12:56:47 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hZUzubeLt2OBcG=F5QKFh-0V8yqYRoQL0iHK+y+zeZFg@mail.gmail.com>
-Message-ID: <CAJZ5v0hZUzubeLt2OBcG=F5QKFh-0V8yqYRoQL0iHK+y+zeZFg@mail.gmail.com>
-Subject: Re: [PATCH v3] thermal/of: support thermal zones w/o trips subnode
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Icenowy Zheng <uwu@icenowy.me>, Mark Brown <broonie@kernel.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1394601.1729162732.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Thu, 17 Oct 2024 11:58:52 +0100
+Message-ID: <1394602.1729162732@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Oct 17, 2024 at 11:05=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> =
-wrote:
->
-> From: Icenowy Zheng <uwu@icenowy.me>
->
-> Although the current device tree binding of thermal zones require the
-> trips subnode, the binding in kernel v5.15 does not require it, and many
-> device trees shipped with the kernel, for example,
-> allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64, still
-> comply to the old binding and contain no trips subnode.
->
-> Allow the code to successfully register thermal zones w/o trips subnode
-> for DT binding compatibility now.
->
-> Furtherly, the inconsistency between DTs and bindings should be resolved
-> by either adding empty trips subnode or dropping the trips subnode
-> requirement.
->
-> Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
-> Changes since v2:
-> - Stacked on top of Krzysztof's cleanup patches
->   - thermal: of: Use scoped memory and OF handling to simplify thermal_of=
-_trips_init() [1]
-> - Adjusted to account for eliminated error path
->
-> [1] https://lore.kernel.org/all/20241010-b4-cleanup-h-of-node-put-thermal=
--v4-2-bfbe29ad81f4@linaro.org/
->
-> Changes since v1:
-> - set *ntrips at beginning of thermal_of_trips_init()
-> - Keep goto out_of_node_put in of_get_child_count(trips) =3D=3D 0 branch
-> - Check return value of thermal_of_trips_init(), if it is -ENXIO, print
->   warning and clear |trips| pointer
-> - Drop |mask| change, as the variable was removed
->
-> I kept Mark's reviewed-by since the changes are more stylish than
-> functional.
-> ---
->  drivers/thermal/thermal_of.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-> index 93f7c6f8d06d..be1fa6478c21 100644
-> --- a/drivers/thermal/thermal_of.c
-> +++ b/drivers/thermal/thermal_of.c
-> @@ -99,14 +99,14 @@ static struct thermal_trip *thermal_of_trips_init(str=
-uct device_node *np, int *n
->
->         struct device_node *trips __free(device_node) =3D of_get_child_by=
-_name(np, "trips");
->         if (!trips) {
-> -               pr_err("Failed to find 'trips' node\n");
-> -               return ERR_PTR(-EINVAL);
-> +               pr_debug("Failed to find 'trips' node\n");
-> +               return ERR_PTR(-ENXIO);
+    =
 
-Why not
+afs_wake_up_async_call() can incur lock recursion.  The problem is that it
+is called from AF_RXRPC whilst holding the ->notify_lock, but it tries to
+take a ref on the afs_call struct in order to pass it to a work queue - bu=
+t
+if the afs_call is already queued, we then have an extraneous ref that mus=
+t
+be put... calling afs_put_call() may call back down into AF_RXRPC through
+rxrpc_kernel_shutdown_call(), however, which might try taking the
+->notify_lock again.
 
-*ntrips =3D 0;
-return NULL;
+This case isn't very common, however, so defer it to a workqueue.  The oop=
+s
+looks something like:
 
->         }
->
->         count =3D of_get_child_count(trips);
->         if (!count) {
-> -               pr_err("No trip point defined\n");
-> -               return ERR_PTR(-EINVAL);
-> +               pr_debug("No trip point defined\n");
-> +               return ERR_PTR(-ENXIO);
+  BUG: spinlock recursion on CPU#0, krxrpcio/7001/1646
+   lock: 0xffff888141399b30, .magic: dead4ead, .owner: krxrpcio/7001/1646,=
+ .owner_cpu: 0
+  CPU: 0 UID: 0 PID: 1646 Comm: krxrpcio/7001 Not tainted 6.12.0-rc2-build=
+3+ #4351
+  Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x47/0x70
+   do_raw_spin_lock+0x3c/0x90
+   rxrpc_kernel_shutdown_call+0x83/0xb0
+   afs_put_call+0xd7/0x180
+   rxrpc_notify_socket+0xa0/0x190
+   rxrpc_input_split_jumbo+0x198/0x1d0
+   rxrpc_input_data+0x14b/0x1e0
+   ? rxrpc_input_call_packet+0xc2/0x1f0
+   rxrpc_input_call_event+0xad/0x6b0
+   rxrpc_input_packet_on_conn+0x1e1/0x210
+   rxrpc_input_packet+0x3f2/0x4d0
+   rxrpc_io_thread+0x243/0x410
+   ? __pfx_rxrpc_io_thread+0x10/0x10
+   kthread+0xcf/0xe0
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork+0x24/0x40
+   ? __pfx_kthread+0x10/0x10
+   ret_from_fork_asm+0x1a/0x30
+   </TASK>
 
-Is this based on the current mainline code?
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/afs/internal.h |    2 +
+ fs/afs/rxrpc.c    |   83 ++++++++++++++++++++++++++++++++++++++----------=
+------
+ 2 files changed, 61 insertions(+), 24 deletions(-)
 
->         }
->
->         struct thermal_trip *tt __free(kfree) =3D kzalloc(sizeof(*tt) * c=
-ount, GFP_KERNEL);
-> @@ -386,9 +386,15 @@ static struct thermal_zone_device *thermal_of_zone_r=
-egister(struct device_node *
->
->         trips =3D thermal_of_trips_init(np, &ntrips);
->         if (IS_ERR(trips)) {
-> -               pr_err("Failed to find trip points for %pOFn id=3D%d\n", =
-sensor, id);
-> -               ret =3D PTR_ERR(trips);
-> -               goto out_of_node_put;
-> +               if (PTR_ERR(trips) !=3D -ENXIO) {
-> +                       pr_err("Failed to find trip points for %pOFn id=
-=3D%d\n", sensor, id);
-> +                       ret =3D PTR_ERR(trips);
-> +                       goto out_of_node_put;
-> +               }
-> +
-> +               pr_warn("Failed to find trip points for %pOFn id=3D%d\n",=
- sensor, id);
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 6e1d3c4daf72..52aab09a32a9 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -130,6 +130,7 @@ struct afs_call {
+ 	wait_queue_head_t	waitq;		/* processes awaiting completion */
+ 	struct work_struct	async_work;	/* async I/O processor */
+ 	struct work_struct	work;		/* actual work processor */
++	struct work_struct	free_work;	/* Deferred free processor */
+ 	struct rxrpc_call	*rxcall;	/* RxRPC call handle */
+ 	struct rxrpc_peer	*peer;		/* Remote endpoint */
+ 	struct key		*key;		/* security for this call */
+@@ -1331,6 +1332,7 @@ extern int __net_init afs_open_socket(struct afs_net=
+ *);
+ extern void __net_exit afs_close_socket(struct afs_net *);
+ extern void afs_charge_preallocation(struct work_struct *);
+ extern void afs_put_call(struct afs_call *);
++void afs_deferred_put_call(struct afs_call *call);
+ void afs_make_call(struct afs_call *call, gfp_t gfp);
+ void afs_wait_for_call_to_complete(struct afs_call *call);
+ extern struct afs_call *afs_alloc_flat_call(struct afs_net *,
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index c453428f3c8b..9f2a3bb56ec6 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -18,6 +18,7 @@
+ =
 
-Wouldn't pr_info() be sufficient for this?
+ struct workqueue_struct *afs_async_calls;
+ =
 
-> +               trips =3D NULL;
-> +               ntrips =3D 0;
->         }
->
->         ret =3D thermal_of_monitor_init(np, &delay, &pdelay);
-> --
++static void afs_deferred_free_worker(struct work_struct *work);
+ static void afs_wake_up_call_waiter(struct sock *, struct rxrpc_call *, u=
+nsigned long);
+ static void afs_wake_up_async_call(struct sock *, struct rxrpc_call *, un=
+signed long);
+ static void afs_process_async_call(struct work_struct *);
+@@ -149,6 +150,7 @@ static struct afs_call *afs_alloc_call(struct afs_net =
+*net,
+ 	call->debug_id =3D atomic_inc_return(&rxrpc_debug_id);
+ 	refcount_set(&call->ref, 1);
+ 	INIT_WORK(&call->async_work, afs_process_async_call);
++	INIT_WORK(&call->free_work, afs_deferred_free_worker);
+ 	init_waitqueue_head(&call->waitq);
+ 	spin_lock_init(&call->state_lock);
+ 	call->iter =3D &call->def_iter;
+@@ -159,6 +161,36 @@ static struct afs_call *afs_alloc_call(struct afs_net=
+ *net,
+ 	return call;
+ }
+ =
+
++static void afs_free_call(struct afs_call *call)
++{
++	struct afs_net *net =3D call->net;
++	int o;
++
++	ASSERT(!work_pending(&call->async_work));
++
++	rxrpc_kernel_put_peer(call->peer);
++
++	if (call->rxcall) {
++		rxrpc_kernel_shutdown_call(net->socket, call->rxcall);
++		rxrpc_kernel_put_call(net->socket, call->rxcall);
++		call->rxcall =3D NULL;
++	}
++	if (call->type->destructor)
++		call->type->destructor(call);
++
++	afs_unuse_server_notime(call->net, call->server, afs_server_trace_put_ca=
+ll);
++	kfree(call->request);
++
++	o =3D atomic_read(&net->nr_outstanding_calls);
++	trace_afs_call(call->debug_id, afs_call_trace_free, 0, o,
++		       __builtin_return_address(0));
++	kfree(call);
++
++	o =3D atomic_dec_return(&net->nr_outstanding_calls);
++	if (o =3D=3D 0)
++		wake_up_var(&net->nr_outstanding_calls);
++}
++
+ /*
+  * Dispose of a reference on a call.
+  */
+@@ -173,32 +205,34 @@ void afs_put_call(struct afs_call *call)
+ 	o =3D atomic_read(&net->nr_outstanding_calls);
+ 	trace_afs_call(debug_id, afs_call_trace_put, r - 1, o,
+ 		       __builtin_return_address(0));
++	if (zero)
++		afs_free_call(call);
++}
+ =
+
+-	if (zero) {
+-		ASSERT(!work_pending(&call->async_work));
+-		ASSERT(call->type->name !=3D NULL);
+-
+-		rxrpc_kernel_put_peer(call->peer);
+-
+-		if (call->rxcall) {
+-			rxrpc_kernel_shutdown_call(net->socket, call->rxcall);
+-			rxrpc_kernel_put_call(net->socket, call->rxcall);
+-			call->rxcall =3D NULL;
+-		}
+-		if (call->type->destructor)
+-			call->type->destructor(call);
++static void afs_deferred_free_worker(struct work_struct *work)
++{
++	struct afs_call *call =3D container_of(work, struct afs_call, free_work)=
+;
+ =
+
+-		afs_unuse_server_notime(call->net, call->server, afs_server_trace_put_c=
+all);
+-		kfree(call->request);
++	afs_free_call(call);
++}
+ =
+
+-		trace_afs_call(call->debug_id, afs_call_trace_free, 0, o,
+-			       __builtin_return_address(0));
+-		kfree(call);
++/*
++ * Dispose of a reference on a call, deferring the cleanup to a workqueue
++ * to avoid lock recursion.
++ */
++void afs_deferred_put_call(struct afs_call *call)
++{
++	struct afs_net *net =3D call->net;
++	unsigned int debug_id =3D call->debug_id;
++	bool zero;
++	int r, o;
+ =
+
+-		o =3D atomic_dec_return(&net->nr_outstanding_calls);
+-		if (o =3D=3D 0)
+-			wake_up_var(&net->nr_outstanding_calls);
+-	}
++	zero =3D __refcount_dec_and_test(&call->ref, &r);
++	o =3D atomic_read(&net->nr_outstanding_calls);
++	trace_afs_call(debug_id, afs_call_trace_put, r - 1, o,
++		       __builtin_return_address(0));
++	if (zero)
++		schedule_work(&call->free_work);
+ }
+ =
+
+ static struct afs_call *afs_get_call(struct afs_call *call,
+@@ -640,7 +674,8 @@ static void afs_wake_up_call_waiter(struct sock *sk, s=
+truct rxrpc_call *rxcall,
+ }
+ =
+
+ /*
+- * wake up an asynchronous call
++ * Wake up an asynchronous call.  The caller is holding the call notify
++ * spinlock around this, so we can't call afs_put_call().
+  */
+ static void afs_wake_up_async_call(struct sock *sk, struct rxrpc_call *rx=
+call,
+ 				   unsigned long call_user_ID)
+@@ -657,7 +692,7 @@ static void afs_wake_up_async_call(struct sock *sk, st=
+ruct rxrpc_call *rxcall,
+ 			       __builtin_return_address(0));
+ =
+
+ 		if (!queue_work(afs_async_calls, &call->async_work))
+-			afs_put_call(call);
++			afs_deferred_put_call(call);
+ 	}
+ }
+ =
+
 
