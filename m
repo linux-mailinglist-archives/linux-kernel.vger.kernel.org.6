@@ -1,97 +1,165 @@
-Return-Path: <linux-kernel+bounces-369493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7147C9A1DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:16:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321E79A1E09
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3A41F23846
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63361F231A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DDD1D90B9;
-	Thu, 17 Oct 2024 09:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52E11D6DB6;
+	Thu, 17 Oct 2024 09:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMGDaF8J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="OgRzISqj"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5965CB8;
-	Thu, 17 Oct 2024 09:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9DF1D88CA;
+	Thu, 17 Oct 2024 09:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729156586; cv=none; b=t4aQJ600RhQQYmke2vfQbXd9KjBR6g6O634SveJrhxkAUYkPCWfM5Kg1izwkNjOvxwJ0HZuIcHMaSzWQIzviJN81zoTayXC/pi1fI++0RKj2s+A6PsgqfCy/K2tnISF8ObX6mvlHRd1E3lIaouscciTX+lHixkpUcdVWL589fOI=
+	t=1729156665; cv=none; b=Q74K6E2HT/hohVpDCdDdaUPgFpSIengB4gmJRQbSiMIRgDW8DOk9HSDw+JByNmrMpCdUquxcrDmlhyE57kMmIl57FNwaOVTcNeDKxrrZhu8f73p1Or6fddX1T1up/5S8yX90FTGV3YmZd9FbAG0xk92dKgPBiuW1+5yIl2KyEMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729156586; c=relaxed/simple;
-	bh=PVfIhZ+yvdkMBOoyus7ZYqbbJgRP7trgPxTUrrapJQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5iLVZnYRE5tErUUAkBtdLcS/Z+BARJdjbmS0tLwXH+rQaNB92LfdK4Te6rtucaFrDxOhmb1a3uKWA9MIZ8E7MrxAovvZEXxBb7McHvb10UhnxPbgyBpSayWgXQDb+1mKiXbqVrjZLukF6v9/sRmnwdwHH2GDmT3ZK1o1dfP50g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMGDaF8J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DD8C4CEC3;
-	Thu, 17 Oct 2024 09:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729156586;
-	bh=PVfIhZ+yvdkMBOoyus7ZYqbbJgRP7trgPxTUrrapJQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rMGDaF8JqpWiMob4Bo5NrddT7Gshe4C+bs0eFxGkGsMo8w3Kv64cmh0kEDPJ8M+S/
-	 sOKO4yRliujaG8O8MnOn2oyOYKgv+wtANfhkAsR9X2I/VmD5XAhl/MTA4LRXx/XLgf
-	 8TeMjoyMzeMzL0Snw94bTZXfekTbziqx+Y4eT9+PiTZq4BTAnOvjfHk5USl+6dHrL2
-	 6XbBeLIwIdKuMNkGQzm4bOOShwCsFaNSKlqe3zdXJ8pp9td3LoncEN5y9fLR2CGhIQ
-	 5gpIANssklWapNlnv6ziUQPmmXRkjMZTKJ31rCjfZoXP1ZOp3qBj2isO6ckY68K0vy
-	 zMuqLBLAvh3pg==
-Date: Thu, 17 Oct 2024 11:16:22 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kyle Deng <quic_chunkaid@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com, 
-	quic_aiquny@quicinc.com, quic_sudeepgo@quicinc.com, quic_taozhan@quicinc.com, 
-	quic_jiegan@quicinc.com
-Subject: Re: [PATCH 2/3] dt-bindings: aoss: qcom: Document the qcs615 AOSS_QMP
-Message-ID: <qbued4krjognpcyrpetvvjljf44vgqt6umolej4sgdr7n4oa3i@mcait5cuji7c>
-References: <20241017025313.2028120-1-quic_chunkaid@quicinc.com>
- <20241017025313.2028120-3-quic_chunkaid@quicinc.com>
+	s=arc-20240116; t=1729156665; c=relaxed/simple;
+	bh=LtUdGluhJQnO5q9WMuZrsQssfT2AVjf8JPJtouetojY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rxwJtpw4SGh56Tap/KeMjOwKHnjSERY6s+Cm53WTB7DBxu3IRQBVm7qNFKkI9iCPZPwP7l6PPwU1IKjaAtD1T2Rmd867tuWKls2iFjMBJ4swnzCsxM/+/r7WpAtiIXz4NZ4XIbDA3Wsw9ciFZy9I54DqltHso6bVvO4ypZhQwEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=OgRzISqj; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vyyN1RNPlXPbDrkywEKlZ9/QZaS+KKztH3bMbKcpF+4=; b=OgRzISqjEiT64CW5kkJjlVrIyE
+	Iv+yEA9FPWAumsPKtJ2BfmK1spk6A6bCflS2xdf8BbbgZbF7D5gCxoa8p1EpoKPgDGk8fMVtE6dZK
+	gJIhN7qKY9lhY1YAmDgBtI5kvhfSpockOoJtSQ2kNRvufy979o9fkP9Urj66qzQJCdIo=;
+Received: from p4ff13b65.dip0.t-ipconnect.de ([79.241.59.101] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1t1Md4-00Amar-0Z;
+	Thu, 17 Oct 2024 11:17:10 +0200
+Message-ID: <b5739f78-9cd5-4fd0-ae63-d80a5a37aaf0@nbd.name>
+Date: Thu, 17 Oct 2024 11:17:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241017025313.2028120-3-quic_chunkaid@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 net-next 00/12] bridge-fastpath and related
+ improvements
+To: Eric Woudstra <ericwouds@gmail.com>,
+ Nikolay Aleksandrov <razor@blackwall.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+ <9f9f3cf0-7a78-40f1-b8d5-f06a2d428210@blackwall.org>
+ <a07cadd3-a8ff-4d1c-9dca-27a5dba907c3@gmail.com>
+ <0b0a92f2-2e80-429c-8fcd-d4dc162e6e1f@nbd.name>
+ <137aa23a-db21-43c2-8fb0-608cfe221356@gmail.com>
+ <a7ab80d5-ff49-4277-ba73-db46547a8a8e@nbd.name>
+ <d7d48102-4c52-4161-a21c-4d5b42539fbb@gmail.com>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <d7d48102-4c52-4161-a21c-4d5b42539fbb@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 10:53:12AM +0800, Kyle Deng wrote:
-> Document the Always-On Subsystem Qualcomm Message Potocol(AOSS_QMP)
-> on the Qualcomm qcs615 platform.
+On 16.10.24 17:59, Eric Woudstra wrote:
 > 
-> Signed-off-by: Kyle Deng <quic_chunkaid@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> 
+> On 10/15/24 9:44 PM, Felix Fietkau wrote:
+>> On 15.10.24 15:32, Eric Woudstra wrote:
+>>>
+>>>
+>>> On 10/15/24 2:16 PM, Felix Fietkau wrote:
+>>>> Hi Eric,
+>>>>
+>>>> On 14.10.24 20:29, Eric Woudstra wrote:
+>>>>> It would be no problem for me to change the subject and body, if you
+>>>>> think that is better.
+>>>>>
+>>>>> The thing is, these patches actually make it possible to set up a fully
+>>>>> functional software fastpath between bridged interfaces. Only after the
+>>>>> software fastpath is set up and functional, it can be offloaded, which
+>>>>> happens to by my personal motivation to write this patch-set.
+>>>>>
+>>>>> If the offload flag is set in the flowtable, the software fastpath will
+>>>>> be offloaded. But in this patch-set, there is nothing that changes
+>>>>> anything there, the existing code is used unchanged.
+>>>>
+>>>> FWIW, a while back, I also wanted to add a software fast path for the
+>>>> bridge layer to the kernel, also with the intention of using it for
+>>>> hardware offload. It wasn't accepted back then, because (if I remember
+>>>> correctly) people didn't want any extra complexity in the network stack
+>>>> to make the bridge layer faster.
+>>>
+>>> Hello Felix,
+>>>
+>>> I think this patch-set is a clear showcase it is not very complex at
+>>> all. The core of making it possible only consists a few patches. Half of
+>>> this patch-set involves improvements that also apply to the
+>>> forward-fastpath.
+>> 
+>> It's definitely an interesting approach. How does it deal with devices
+>> roaming from one bridge port to another? I couldn't find that in the code.
+> 
+> It is handled in the same manner when dealing with the forward-fastpath,
+> with the aid of conntrack. If roaming is problematic, then it would be
+> for both the forward-fastpath and the bridge-fastpath. I have a topic on
+> the banana-pi forum about this patch-set, so I think long discussions
+> about additional details we could have there, keeping the mailing list
+> more clean.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+You forgot to include a link to the forum topic :)
 
----
+By the way, based on some reports that I received, I do believe that the 
+existing forwarding fastpath also doesn't handle roaming properly.
+I just didn't have the time to properly look into that yet.
 
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-Best regards,
-Krzysztof
-
+- Felix
 
