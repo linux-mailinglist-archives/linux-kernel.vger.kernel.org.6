@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-368935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7BF9A16B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:16:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CD89A16C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FBE71C220A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2892D1F246FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B421E49E;
-	Thu, 17 Oct 2024 00:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721EE22612;
+	Thu, 17 Oct 2024 00:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZALTsV6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="o+GtQB78"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D842168BE
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8AB79FD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729124125; cv=none; b=kSiTgKQEFUYbGTBswY7sBtPyQFEjxhy7CRRGxzsWmpbQ6QcWjxWpq0p66Xh67R69p/D68LbEi+Dw3BIl6OgeE8H3ZL30KnDMn0EoXiKkWbZSaYcyYyf/KSj559v+IJRUwwTSAYBYN59je5U8di3l4JXiLd3/uilI0kA4+XHSPBo=
+	t=1729124228; cv=none; b=NLTNHHpH2hh5z6SA/srBwYyfXt2Kf3B3/nz5Ltz1nTNRcrzRCT8vJzpqJxlu7OTjY/SFWBcUZLY3eztZ3FiqOgugdNfgd4EBzCWp+OvKPqWv13vbe1AF0CKn6C9oF6zwt4/jRk4ZJP1YZS+ciuCRI8DK5H/XX6YS0bbU501yB1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729124125; c=relaxed/simple;
-	bh=FTkCwpCp/85EYo5SWqJaCWTup9Zd3Q50GpEe4JI0guY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbSVArlCUzTx+UhgFbtlK9cOl1zmIt4v0KD1knQTHU/Tg/rA7fCBckHVKPnXAINNsZpJoCCpkDuAPGNCQorBs5+RUcIJwPh1jW2A/F/ORp0LMH61AfYvY8BwWYGLq7b5JuwyBkqKAz1X6ZKAA0MxJwVNypKQWvfrA1aqP61hFLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZALTsV6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729124122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R3IvdWoUm5mT+46GBWorpSOFyy5vanUssXIrq1EZYnM=;
-	b=OZALTsV6NzbcuhlXyTXRmW1uY9cFW4wiDvN/F8NqLDbH+xRb9pxQ9W1rBsAjqxP8AC85ro
-	Jrg76cXAKuvZkKAGJbpL1MU6PIezcFZJkBfQB/Fi5WyqdphAYjMJxLisK4UMcsOm6x2qUC
-	2+dWMrhxjiNGHl2dxrPASK9eHte24yE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-428-6cpvDtSJNcaNc2oBaJWdPA-1; Wed,
- 16 Oct 2024 20:15:19 -0400
-X-MC-Unique: 6cpvDtSJNcaNc2oBaJWdPA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	s=arc-20240116; t=1729124228; c=relaxed/simple;
+	bh=E+7u6KTQexlJ6wdE3PWO5eMFpGPF18HoZLoHSCNHy+M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NFV1yxX1dIiJWEYz4XvcKpP6PN3VrAoR7eugX6EKkGTvuRcuTrXPMtdLR7t5vMCWHS7Vg5D1cTa2T//uObEx6NLI+Bo6kOSOWm70zfegllg3hgqybDBpNH4FrGNSgjLyThkxDojAsF9TdGpYNTFPO4C828QXxc7+khEYV2bNzfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=o+GtQB78; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1EA019560B5;
-	Thu, 17 Oct 2024 00:15:16 +0000 (UTC)
-Received: from f39 (unknown [10.39.192.145])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3DD9B300018D;
-	Thu, 17 Oct 2024 00:15:13 +0000 (UTC)
-Date: Thu, 17 Oct 2024 02:15:10 +0200
-From: Eder Zulian <ezulian@redhat.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, williams@redhat.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
-Subject: Re: [PATCH] rust: Fix build error
-Message-ID: <ZxBXDhZXNgCwAHzN@f39>
-References: <20241014195253.1704625-1-ezulian@redhat.com>
- <CANiq72n5cPxDORQad2_fJPHXaE2YDHW3enavjWyz1MZBU3oasQ@mail.gmail.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9979A2C0517;
+	Thu, 17 Oct 2024 13:16:57 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1729124217;
+	bh=5yDFp/uQn/srePUknm1E5IBHytrSxM87aWnogIJlLxo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o+GtQB78608usSf9v0Q/rYqIFcdipEpfmxCb1+pveLoF6U06tFZsuGYPz403nonXT
+	 bwiiatkZheF0R5eX0vnZs16DP57bqyqx+OoDnsev1XTl3Xr31gTQlon6QgkxjZMQUk
+	 PGV1PW8QP7+id/IWJYkczcGaYCOJiuV0YHEAUmpG1fAEOBbwCjMAkP8wNSaALcph0O
+	 gIo9XbdYxDK3vtuAJ4PKr5COHSiyVeVM3165b799331rWHXuZqERJMUd7OoO071yO5
+	 oFSCAfi+l/2O1w8zAIrs+UEuLJ/ngIbMhjt+u3vHozJn2udxO5lJ0wBwVp1b8NZ/YV
+	 1nlyQCfIF9laA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B671057790000>; Thu, 17 Oct 2024 13:16:57 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 2E93813EE32;
+	Thu, 17 Oct 2024 13:16:57 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 274E02807F7; Thu, 17 Oct 2024 13:16:57 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andi.shyti@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	lee@kernel.org,
+	sre@kernel.org,
+	tsbogend@alpha.franken.de,
+	markus.stockhausen@gmx.de
+Cc: linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v7 0/6] RTL9300 support for reboot and i2c
+Date: Thu, 17 Oct 2024 13:16:47 +1300
+Message-ID: <20241017001653.178399-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72n5cPxDORQad2_fJPHXaE2YDHW3enavjWyz1MZBU3oasQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=67105779 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=bFzpBXSQfSLquZs-7NAA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Hi Miguel,
-On Mon, Oct 14, 2024 at 10:38:45PM +0200, Miguel Ojeda wrote:
-> On Mon, Oct 14, 2024 at 9:54 PM Eder Zulian <ezulian@redhat.com> wrote:
-> >
-> > Error observed while building a rt-debug kernel for aarch64.
-> 
-> Thanks for testing with Rust enabled!
-Sure, it's been fun!
-> 
-> > Suggested-by: Clark Williams <williams@redhat.com>
-> 
-> Do you mean `Reported-by`?
-Yes, my mistake.
-> 
-> Also, I am not sure which `Fixes:` tag would fit best here, since
-> `PREEMPT_RT` has been around for quite a while, but only enabled very
-> recently. Thomas: do you have a preference?
-> 
-I can try to find a culprit and add a 'Fixes:' tag. In my opnion, at first
-glance, it would be the patch that introduced the Rust helper for spinlocks.
-Not sure.
-> In addition (sorry, it was in my backlog):
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202409251238.vetlgXE9-lkp@intel.com/
-> 
-I can fix it and send a v2 if that's ok. Is it valid to add two 'Reported-by'
-tags (Clark and kernel test robot)?
-> Finally, I think we should perhaps put a helper in `spinlock{_,rt}.h`
-> that takes the `key` (instead of having this `#ifdef` here) and then
-> just use that from the Rust helpers, because we don't want to
-> duplicate such logic (conditionals) in helpers. And with the RT init
-Agreed. We don't want code replicated. In my reply to Boqun I added some
-notes. If that makes sense, we could avoid even the helper in
-'spinlock{_,rt}.h'?
-> open coding that Boqun mentioned, even more. After all, helpers are
-> meant to be as straightforward as possible, and if we have this sort
-> of thing in helpers, it is harder for everyone to keep them in sync.
-Please correct me if I misunderstood. It seems that Rust doesn't have a
-pre-processor step to replace macros in the code and the Rust compiler works
-with 'objects/entities' created for functions and variables, but macros would
-be ignored (since they are string substitution.) Do you have pointers for good
-docs on this?
-> 
-> In other words, I see helpers as following the same "avoid `#ifdef`s"
-> rule that we prefer in C source files vs. headers.
-> 
-> What do you think, Thomas?
-> 
-> >
-> 
-> Spurious newline.
-Thanks, I'll fix the spurious new line.
-> 
-Thank you.
-> Cheers,
-> Miguel
-> 
+As requested I've combined my two series into a single one to provide som=
+e
+better context for reviewers. I'm not sure which trees the patches should=
+ go in
+via. The first two have already been applied by Sebastian (thanks). The b=
+inding
+and dts changes (patches 3-5) would make sense to go in via linux-mips wi=
+th
+acks from the dt maintainers and the driver itself (patch 6) can go via
+linux-i2c.
+
+--
+2.46.1
+
+Chris Packham (6):
+  dt-bindings: reset: syscon-reboot: Add reg property
+  power: reset: syscon-reboot: Accept reg property
+  dt-bindings: mfd: Add Realtek RTL9300 switch peripherals
+  mips: dts: realtek: Add syscon-reboot node
+  mips: dts: realtek: Add I2C controllers
+  i2c: Add driver for the RTL9300 I2C controller
+
+ .../bindings/i2c/realtek,rtl9301-i2c.yaml     |  69 +++
+ .../bindings/mfd/realtek,rtl9301-switch.yaml  | 114 +++++
+ .../bindings/power/reset/syscon-reboot.yaml   |  11 +-
+ MAINTAINERS                                   |   7 +
+ .../cameo-rtl9302c-2x-rtl8224-2xge.dts        |   2 +-
+ arch/mips/boot/dts/realtek/rtl9302c.dtsi      |  15 +
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       |  29 ++
+ drivers/i2c/busses/Kconfig                    |  10 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-rtl9300.c              | 425 ++++++++++++++++++
+ drivers/power/reset/syscon-reboot.c           |   3 +-
+ 11 files changed, 683 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9301=
+-i2c.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl9301=
+-switch.yaml
+ create mode 100644 arch/mips/boot/dts/realtek/rtl9302c.dtsi
+ create mode 100644 drivers/i2c/busses/i2c-rtl9300.c
+
+--=20
+2.47.0
 
 
