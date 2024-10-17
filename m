@@ -1,104 +1,248 @@
-Return-Path: <linux-kernel+bounces-369310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65249A1B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:23:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF419A1B9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A141F22B8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FE961C2137C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECECE1C3034;
-	Thu, 17 Oct 2024 07:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBE81C32EB;
+	Thu, 17 Oct 2024 07:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nWlgbTMm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nc7hclRx"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989EC17965E;
-	Thu, 17 Oct 2024 07:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0B017965E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729149812; cv=none; b=dbvn1Soz3x6sU7McVxr5gidDFwVTACwxAGQ5Rmh7v8t747oLD6Tu4GxpOrF09FaepVJTl8HO9Wb5usOymbf9vEq9XbIhoB8RQi6wtKpqqz9e1gjDus7m+hqWQUj1fLCvc4SMnaQQ3cPo/jMJjLfYGHXr6npNj+TDXbDEm0LsYhg=
+	t=1729149876; cv=none; b=rMWYiVKZjy1BQ8avT6kND7ZCKhCPDK4/RsjjdTk+8JGfZ3GBDRVVORYrm4T7azQapnkkPYqCdT7v5AynhmyV+hlGeWrzf/09UazK6uFTIbkWfWw17hok7ujlDW1TQVsgeumnWaWsd4sVv1qTZl8Af7ZaKYO39ssQ9YqQdqyUvdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729149812; c=relaxed/simple;
-	bh=gaNYT1wbbBvCgWZZlW9y2ETIwJkjkGkLYpUVia7y7Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z1Mv6U+ufbQox2EdEOPLEaKGVbeKNcUObZ79TdAwvPLRWWKxeEH0yUbXxiDIoARnvDfp5/OWeypZ2Kdd7hCMFC/P6SGd0ym4R1/6NH8XXo7ExExU6zPcGejU7YD/eU0+f1brjYPGbrXMtizLa8RANy9cYJyEyQS2BMkDWyX236Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nWlgbTMm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729149807;
-	bh=fUleCvwvUcKBwI2BLE4hJsaayNqsBIfT1om49ufLz2E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nWlgbTMm9pV8iO2O0xPY907NLO6M0EhhaQSPSrvoWWNX4pjiMvbGOOCibtWkzzLk7
-	 H0+tT0S4iS/1nJTfKt1Ck1ulUEWSNI5hrzkEJUIjwek4Er+yoHDFXm5Vm3NNRnNJfq
-	 75E+Vytpt0PNzM/jzrVR7P8Ejq9OWWUETh+FRYaQC9N+zwp+8CDG/WlsfaM+cjxoGg
-	 xv4DaW8ACNRRCQpJdoH7K8OyEihhk1p3VqAxj8IFPSc+dA5Y15+9ISo/rqFLy4TrIc
-	 lbRzpBdLreII9K5fkbwDcUHk230gR73Fe0oUTJKQNWxHqOW4RL++r1QnGqsM3OvId3
-	 gFO/9zEI8kZ0A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XTfSv3Fv3z4wc1;
-	Thu, 17 Oct 2024 18:23:26 +1100 (AEDT)
-Date: Thu, 17 Oct 2024 18:23:26 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>, Vineet Gupta
- <vgupta@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the paulmck tree
-Message-ID: <20241017182326.12d8a854@canb.auug.org.au>
+	s=arc-20240116; t=1729149876; c=relaxed/simple;
+	bh=lL4Ntbj1C3yb4L6sPnVcgUdNqSV15WIFYOMmOQ+8JHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WRciGqnMynZ8PwP1IntO39XGRIpt2BCepXg1J/zZQWMv5FzTah3sHf6cDUrHr3wbQZVallb80J3LcsS8BDwj1uOYeYVQhNTe4rT8HqSh22bKq13HHifas+WNRxcN86xCK+TBZvzP5TPJ3eCKdeXnJP5yeI2YZEefLk8SnwobDyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nc7hclRx; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cbf2fc28feso4422226d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729149871; x=1729754671; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lUt1oShJ018vthTVOFaKjXEGAhHJuzfjEh9cGki6cm8=;
+        b=Nc7hclRxE4JeBipmoSGA0iIO8TdKnqZCagn/FTQLxSeN8xs/3x0JZxDfBsESxiXhsW
+         YI2EOY+EBMCYtwG+kQY4lC9u2J4YG1BlA0iXmEuYSSobP41QwC1wDNLz6ozt2I4d4Lbv
+         HvcUIzSzlkPVPgTY+5NmBVqoeuShVjsHQdaKkNO64ZzOo9Q80qfYbMUui9I38z7PdapO
+         gnIaamy+fVcAdDiIMknACluKJbvbfI7f+vmFE4R2SVkPdUoyqwehBUQJLYpipI7v0ISm
+         ivr/NquY9hJb3/acGEfczk/cumQpocFR6Spn/wTbwa/Svvkp1eGZfIhQA/zEQ+RrxX79
+         YnzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729149871; x=1729754671;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lUt1oShJ018vthTVOFaKjXEGAhHJuzfjEh9cGki6cm8=;
+        b=VUcZgze+JQoxOg/NcD5IohQM2jAMOvI4M4p8odtSs+rOGaYexRsVcn8KDnI3v2R178
+         k6i8OXRxtconn7VM5dHz+1UUETuOk/UkjbZvMLgUwrhSccTs1yKBBKqbOHIUwa8MK1YI
+         y4KtNZY0kONTzAEjmrZxRLDNyqRLbU5i7qU/biidIhBlQnUUVBYPqyZNKbaemAWWOVz7
+         murmB3os7USSvFGAoYtDHItObDbPTAiE5daR2Zr33IwSTftxQVT4PEH/h00DzLQ/vZ6i
+         q/ueuuWiUIevLkjNVd6X+cMF57SpzqDpjNNQgQtKiXvOnQkg28vN7x33RXbT6Bd2hIaK
+         RO8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUYL3qjoaPkoXkduD/hdaK2lFmcOdKXEDR67inlVmzMJrQhM1DXDgJkhS/xNWoezMEmVioNefldYSplFk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPCTCk9UW0uZVphjami8iMKVOaKg+1Hh2hGn9cAN+nxhh6lCFm
+	CIopBSdDtldYBCseX+l6u3drDHpE40Ucl2pma5B7qRdcouzk5aFcQnE7Bpm2yKke0/rV02QkjYF
+	p8/D86IFzPGnmIleRIfYiaGiSeLiVhptbjde2
+X-Google-Smtp-Source: AGHT+IEnWC2rmwzmldSNPXviP268N87DK/6rkHgkqCe0pQbXrKOXgWJjhjLS5e43IJIKNz7FzzMZLLVceTPD6CZpmZU=
+X-Received: by 2002:a05:6214:4410:b0:6cb:e9b3:626c with SMTP id
+ 6a1803df08f44-6cc2b8bc8d9mr83896166d6.7.1729149871377; Thu, 17 Oct 2024
+ 00:24:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Z78Lrj0mE6nHvW9/itpVush";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20241014-kunit-loongarch-v1-0-1699b2ad6099@linutronix.de> <20241014-kunit-loongarch-v1-3-1699b2ad6099@linutronix.de>
+In-Reply-To: <20241014-kunit-loongarch-v1-3-1699b2ad6099@linutronix.de>
+From: David Gow <davidgow@google.com>
+Date: Thu, 17 Oct 2024 15:24:19 +0800
+Message-ID: <CABVgOSnKyXMAm5ZG+v4QLMyduf-ftv=fsp9ET9orvTCgwETwsA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] kunit: tool: Allow overriding the shutdown mode from
+ qemu config
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000df49640624a713dd"
 
---Sig_/Z78Lrj0mE6nHvW9/itpVush
-Content-Type: text/plain; charset=US-ASCII
+--000000000000df49640624a713dd
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, 14 Oct 2024 at 19:37, Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> Not all platforms support machine reboot.
+> If it a proper reboot is not supported the machine will hang.
+> Allow the QEMU configuration to override the necessary shutdown mode for
+> the specific system under test.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> ---
 
-The following commit is also in the arc-current tree as a different commit
-(but the same patch):
+I suspect there's a cleaner way of doing this, but it'd involve
+changing all of the architectures over, so this looks good for now.
 
-  8b5e6986360f ("ARC: Use __force to suppress per-CPU cmpxchg complaints")
+Reviewed-by: David Gow <davidgow@google.com>
 
-This is commit
-
-  bb5d272ed94d ("ARC: build: Use __force to suppress per-CPU cmpxchg warnin=
-gs")
-
-in the arc-current tree.
-
---=20
 Cheers,
-Stephen Rothwell
+-- David
 
---Sig_/Z78Lrj0mE6nHvW9/itpVush
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+>  tools/testing/kunit/kunit_kernel.py | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/ku=
+nit_kernel.py
+> index 61931c4926fd6645f2c62dd13f9842a432ec4167..e76d7894b6c5195ece49f0d8c=
+7ac35130df428a9 100644
+> --- a/tools/testing/kunit/kunit_kernel.py
+> +++ b/tools/testing/kunit/kunit_kernel.py
+> @@ -105,7 +105,9 @@ class LinuxSourceTreeOperationsQemu(LinuxSourceTreeOp=
+erations):
+>                 self._kconfig =3D qemu_arch_params.kconfig
+>                 self._qemu_arch =3D qemu_arch_params.qemu_arch
+>                 self._kernel_path =3D qemu_arch_params.kernel_path
+> -               self._kernel_command_line =3D qemu_arch_params.kernel_com=
+mand_line + ' kunit_shutdown=3Dreboot'
+> +               self._kernel_command_line =3D qemu_arch_params.kernel_com=
+mand_line
+> +               if 'kunit_shutdown=3D' not in self._kernel_command_line:
+> +                       self._kernel_command_line +=3D ' kunit_shutdown=
+=3Dreboot'
+>                 self._extra_qemu_params =3D qemu_arch_params.extra_qemu_p=
+arams
+>                 self._serial =3D qemu_arch_params.serial
+>
+>
+> --
+> 2.47.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "KUnit Development" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kunit-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/kunit-dev/20241014-kunit-loongarch-v1-3-1699b2ad6099%40linutronix.de.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcQu24ACgkQAVBC80lX
-0GwX0Qf/SZKXYncC+n4808Vtuq24Pgb1mcwJfDUgptBhAVARRpdxZbnfn9kp7nta
-xERwsco6iJ1Igd/VqOiyXsEu3fbY1C+W9Mkk6AbQtxhTtb3cQ5atCOdNyhvgiQBr
-/Qq7GVqMUbaJonZ67WzAH0lTOxOj1EutNF3BqDrvT3+xYOzXFqQF/HJJqMo0kvMS
-oKLqp9NtFrOGeWtaDLlKEIeJ9LCqtxTlEd4fsGdtbx3N5J5XNIFTOwOIVNW9OjDh
-ZBwRg8/UmB2bXq1eAoJ5eTiHXoIxVNkN7RDRyFQrn2kBvXhDshGQ/8PNUTUPgYYu
-4z+IQ3nYJElYBI5Ii3hcnckZ0LDiqA==
-=vFCl
------END PGP SIGNATURE-----
+--000000000000df49640624a713dd
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
---Sig_/Z78Lrj0mE6nHvW9/itpVush--
+MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
+cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
+nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
+hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
+XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
+h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
+ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
+hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
+BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
+0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
+hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
+AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
+eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgr77llRbM3SScDQ2OKpuGGZkbKZkP
+B8KplKG4i+wOFkAwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
+MDE3MDcyNDMxWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
+BAIBMA0GCSqGSIb3DQEBAQUABIIBAJlYiSsGWUvV85KGJBQ3jduLI2j0whpj7++dEtOnuQY1ljqx
+VU18L4uD6kVOP8Uet0fleGQgpLrAZ3Bis2yDm9EOX2B63aHzUA9N7t4YWyTSBWp31paqt+6kp8/p
+j4RiGQfbelUOwZmTOyJ6MkdaDUAwDfHhJC/Hdi+jPDlXIbge8G9GQ4qg26mXF6cbkuR40h1lBKOp
+EE7Pd+c3hK6VJho4+Be29ERNIbUA+jHlmfz7Lm2e9pbfNXk4YLFQSuSSsAVpJYLu7pvTkuE8g48J
+F0sa0OTleJSA3J8SxmE0Lhx5pC4puwwbZ3rYZ4sDyXjF2QSF5WxokobztSlCVYZPfVE=
+--000000000000df49640624a713dd--
 
