@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-370349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248689A2B62
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5B69A2B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5725C1C23EC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779E21F2350E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E791DFE03;
-	Thu, 17 Oct 2024 17:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C521D95BE;
+	Thu, 17 Oct 2024 17:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2Az3lyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J9lsunhh"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D031D95BE;
-	Thu, 17 Oct 2024 17:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20C31DFDA5
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729187529; cv=none; b=jAxIG09y17Paf12XZV8azHmyKEGHZluzmPGhEUY9Ec32bhcCHv2P4hZcD5rBd8vMeztW+WkBLpq2Q6j73XA5xRDVzh6PF0gT8U7I4kzvSugyZ80IgPwdbPratdlynNyG4ObdH1T1vUP/Ua8r93rQ7MkuJmOW1cJqUMMLSmyktec=
+	t=1729187569; cv=none; b=uH+PhZ5302TPcNlETQGZVgv39pEZfcd143DQ8OHOKClDqHwwD4XSEMEqp0HkM0In0sOzUutOxa63wIVSsaheOFR9nTBF2nBZF26bliLJSZdP8PLRq8Uysvbb6GEHmcc8/xznMWhH60QQPdOrYPaLXPK8HpuCARyG8lPzxSG/4Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729187529; c=relaxed/simple;
-	bh=gmOt13pVPmIXcY0OIAOohx40/5JMQplh61ctXWIWaUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHBRFn72T+3tHJUoSRBKh/ayCwm9JkD13WJWshH0lw2E4c0Vomdrp71MHJDtenH6+qechxvu4CEMmfusk3hHYPEYZ3wQlhUCNyO12CQyDEBpRM6TIlSHoVNQhEAjHiw5Oo93EmgNxIM4rahnnBmz+eP5u4OPh929Mwd/ZtnMbNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2Az3lyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CDF8C4CEC3;
-	Thu, 17 Oct 2024 17:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729187528;
-	bh=gmOt13pVPmIXcY0OIAOohx40/5JMQplh61ctXWIWaUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O2Az3lytMc3zjIDcqG16DuKCCGrBrOYDPGEDE39DOPaF2+SEcc8x39uCb8POps19L
-	 HjODyGTdz+Hb11q/lPG0+qeKi5OEb1lIWNl3cndhmy8kJW3x00D3NyjI7Cztxkhj5n
-	 BI5d62MLCV99uCGYtjovS+0cVhuLAeNtLE3HrQXcFXhcdW9Lx1ucSPsOl28k/guwpj
-	 1a04lOMGGoCLygH1zWJUke7N1ryVFka/McFNlQy8kPRv9Ftmj0NIKRVQGyBMaYWG94
-	 UjqqwdhXuX3g20yVPiO6HNo9/5jmUejo+TSSWKon+TPLTpYYTYMCuQdnVLriZtP/uC
-	 +4/8NN5GBBD2A==
-Date: Thu, 17 Oct 2024 18:52:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= v1] riscv: dts:
- starfive: disable unused csi/camss nodes
-Message-ID: <20241017-condone-angelic-9d4936f1fd37@spud>
-References: <ZQ0PR01MB130298186E09DA19CC1F7736F2472@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1729187569; c=relaxed/simple;
+	bh=mAi7TGRiia+Da5KPG1XOGf9tcPvkQEdQ3DvHsfu5bgE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LdS4Wfw73zGCom2L4WfzDvOSwMQOA9kmTy1pFeybmjv3y22Djx+tm29VB6+iMT5uZ32U+hO5Q/rkBHnwV7Hg3iKObeahvrU6Pv1N3ItFbGhDnYEMrGZ9kue0dTL7/oAJpRgR7gnAXYUE1l30Z7uj8C5RHD7bvWzmGi37JKJ1inM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J9lsunhh; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fb49c64aso1840957e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729187562; x=1729792362; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hbdFmWrJwzGiYfzVEsoi+j+b4BXGAP/pUVjSjR+sM8E=;
+        b=J9lsunhhsqtZntZnPXP2/9jpaTC7ZjnxbKbldgGTbXghHHVYUpfToPO0lIdtZtu0PE
+         Sl//Ou3LvLOXc3yi3H3gvdjjAIjtOUR8xIA0Wi6V8cEhk4nMEBXYNbQzZOc4YAwFnlrF
+         hM1etL3A+8BADKbaVP0UiNunNAcXlHJyeszG/RI9oI42wJkUEjZyJ7aB/+1mD9X1P9XZ
+         JyhnTPiZ7wBWYAr4L4HgvYq1X/vC1CpWs83pJBJT8tztkgTsPkovYM3XOzYv3pEedea3
+         IDFG3PL4wmJeWGdr7SZc4JzOy6oIHJKXG/mJg9o116caq1Gc7LK5wdI4Ww9XgXc0vakt
+         C7dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729187562; x=1729792362;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hbdFmWrJwzGiYfzVEsoi+j+b4BXGAP/pUVjSjR+sM8E=;
+        b=Or3JW0kC2H1ea+Xu1COTAqRslY3ACsJh4LuLARz54y+FWDxptsXfB1VPpY2iT6rzte
+         49HfHilDrxcMQOWTA9y8jLtum5qVtIBEot10NGDOHf0fyQYOy3cCgF+xbwOLE5vsBXfP
+         2iOBEzsGjJYUZmCcbMSc8yZyesk3iVHEe9X0TPBpJ4VQ6tYKqBO4VDjSIYjIRTUxCUE8
+         oDLZA5utFeXEuAhtazId1N4RoL/i9bCyC85HVegQua+Qyw7bzySpMY4TF/CKZ334khrB
+         Uj2wVp+V4YlxaGG9D+j2XlIpTpK6H3yesvA0gl7DEmQoQq1+0VrTk4tJb5q6YzILTL0P
+         T0Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgQmQ9m3uhrRMXrMTfETvkUtSHmLl647e9XG+NcrTldn8Z+/Se0v7kQog2wDO2UhcNLMpIW9N8pb2X9ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz+jsRUS2kTpzu6dYyqd+9RqWfXSExPeB+wWpmGVh5DorqDZJO
+	6eKH9WPeqOhzg/ZNXkhDUItQFUjH4Q36qK9HdT8HezexZyQsAgIbz0+ScpvKOyo=
+X-Google-Smtp-Source: AGHT+IGynKfckX2uFyiVLEnT4UcWjPo9A6yWXdsJkWVGloEMWqnu1QKN6pRjdZJpPpHlCL/yUXkupw==
+X-Received: by 2002:ac2:5684:0:b0:53a:64:6818 with SMTP id 2adb3069b0e04-53a00646940mr10470758e87.47.1729187561790;
+        Thu, 17 Oct 2024 10:52:41 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a00013f8bsm829557e87.286.2024.10.17.10.52.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 10:52:40 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/2] pmdomain: qcom: add support for RPMh power domains on
+ SAR2130P
+Date: Thu, 17 Oct 2024 20:52:34 +0300
+Message-Id: <20241017-sar2130p-rpmhpd-v1-0-f4bf7f6fd12e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="VgIo2QEZSi5NGsOb"
-Content-Disposition: inline
-In-Reply-To: <ZQ0PR01MB130298186E09DA19CC1F7736F2472@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOJOEWcC/x3MMQqAMAxA0atIZgtJtRS9ijiIjZrBWlIQQXp3i
+ +Mb/n8hswpnGJsXlG/JcsUKahtYjyXubCRUg0XbE5I3eVFLHSaj6TxSMEjorA+D885DrZLyJs9
+ /nOZSPu9SaBdhAAAA
+X-Change-ID: 20241017-sar2130p-rpmhpd-010527d95757
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=639;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=mAi7TGRiia+Da5KPG1XOGf9tcPvkQEdQ3DvHsfu5bgE=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnEU7nu99SuIhWevUnJY2HOrjhseGJwIJ3WPq7j
+ 4QrgH8doUCJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxFO5wAKCRAU23LtvoBl
+ uFMOEADEI0rh9B/BygDr3Lc6AKh+9hUb9/PqNjpe2ZwyI255C1SWkJspyeTK1Lah8VrR9wx1nP2
+ GTjgX4nYWTvIkothUHcyNED0OJReML2Ol9xG/ux3QfJvmkHEScWIpLPkPXqxXvOpjQYv9ELWh39
+ PSuOBNywmhTPEP8P81fVjg5NRTrVnKlZ/lUeQnDrmUGhfz/ppTYlcKAAxv67KHPRrU5u20YzDWO
+ 7kYUobOKE6LC+rp7+zVMVJOu9G4M5h6eMwAnUZVwl9FRZKH0adeZUVLAVJOLEQmCImcuc5/lsKu
+ K6o0GyU3/xmc7UufLVYDigSkHmaHV9+BQ+a+1+2ftk+V6j6PPphXsG3B2iZaFD57PkeTC4jJj8B
+ d2Zs40VahWg1dlYpiE+YtsxiA+MrYoS9ocdHoU3h6QQpBt5h1E42kv5g1gvJB3K5moyhPgnVvpQ
+ +gvFCZcqlMrEvz1stVHCIEpVjs7k9dN4lGzhfVG9VQWXXA1BFUHxwyDAourdKi/BZ/+HWKLSrXl
+ aDwbW/lC8BByiBIi67bGkVzn0gR/FmswvVtwiaIv2G7Mj3jf7y5VgVyrofOGxiV+CnU51tYw33F
+ yOcgNm+L+etYNkRClZrCHhLzbzDvxjdYZA4XlJhC3wQBy6Pryxh0pcwxOTYMe3bnMDGJBApHJJT
+ gopaOLxggtzCdHA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+Define power domains as supported by the RPMh on the SAR2130P platform.
 
---VgIo2QEZSi5NGsOb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (2):
+      dt-bindings: power: rpmpd: Add SAR2130P compatible
+      pmdomain: qcom: rpmhpd: add support for SAR2130P
 
-On Thu, Oct 17, 2024 at 05:49:56AM +0000, Changhuang Liang wrote:
-> Hi, Conor,
->=20
-> > Hi, Conor
-> >=20
-> > Thanks for your patch.
-> >=20
-> > > From: Conor Dooley <conor.dooley@microchip.com>
-> > >
-> > > Aurelien reported probe failures due to the csi node being enabled
-> > > without having a camera attached to it. A camera was in the initial
-> > > submissions, but was removed from the dts, as it had not actually been
-> > > present on the board, but was from an addon board used by the develop=
-er
-> > of the relevant drivers.
-> > > The non-camera pipeline nodes were not disabled when this happened and
-> > > the probe failures are problematic for Debian. Disable them.
-> > >
-> > > CC: stable@vger.kernel.org
-> > > Fixes: 28ecaaa5af192 ("riscv: dts: starfive: jh7110: Add camera
-> > > subsystem
-> > > nodes")
-> >=20
-> > Here you write it in 13 characters, should be "Fixes: 28ecaaa5af19 ..."
-> >=20
->=20
-> After fixing this:
-> Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |  1 +
+ drivers/pmdomain/qcom/rpmhpd.c                     | 25 ++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+---
+base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+change-id: 20241017-sar2130p-rpmhpd-010527d95757
 
-Ye, I know it was 13 not 12. I don't think that's a problem though.
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
---VgIo2QEZSi5NGsOb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxFOxAAKCRB4tDGHoIJi
-0r24AQCKINQVQ9g7jUqAtlal7Z82+REbGOsv+I+oqRMQduOLKgD+K/ZCmiECTEgx
-z4CTuvZPyZwHRwjzkEUY9OmWxrRT2Ac=
-=nBzS
------END PGP SIGNATURE-----
-
---VgIo2QEZSi5NGsOb--
 
