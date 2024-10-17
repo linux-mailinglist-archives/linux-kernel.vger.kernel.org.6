@@ -1,184 +1,396 @@
-Return-Path: <linux-kernel+bounces-370195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599819A293D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:42:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3779A293F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744E91C21473
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0F11F227EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7A01DF749;
-	Thu, 17 Oct 2024 16:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A921DF274;
+	Thu, 17 Oct 2024 16:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HArmdek1"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2RqZ5GC"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35ECC1DF998;
-	Thu, 17 Oct 2024 16:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183293; cv=fail; b=Q5v7RQitb3U9zIchHYwa0HYK+rOcL3K5AamgaK2LWIamIcuVUyfjrXB0qsUA8vaZ/TuNWSfqXQcvIdvu3rGh6jEhG+G1u/Z51i57aB56u3z8WT4bRt7HVi6JeN3P6lmMiqW8p4ZCvxjett9Am5Kskgdh9cLsEYWGDMMOh271BxY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183293; c=relaxed/simple;
-	bh=dk/PCmW46MuzmOn1+IvnOfXcUzCVLBNM4HzgpPm1+pI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ek4OQeCPUCH4La6lB79InukSa9mBJQMwPmNbRSm4HZDNypYH4XxYQLxSHUxRcTnasq25uCQmQs99QXHXLr213i/0XK/+KeucmNjsDJsh858Mg61ZxIupONHJfcYDcu2j8AMq+D5JlqAZ8jETZKSgiyEBR7bAy5ZiIAKsGz3vTuU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HArmdek1; arc=fail smtp.client-ip=40.107.94.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jdQ5NatSGIrh6IBp8PhygA1jC6E4QYHQsHkZWXRpWmvZgjZUwZtuNahO+tNgiGyJRcejy9X8uZJ6/smEAPNRKFeDFOd0wq7c4EiYPpO9sNSRnRSHSCAX1G90yh63BPEcq+JX403beVXdtRfSllYh+LqCVabgYJ7sxyETGeuQjeMhyYa9PPq3nDjv8wAaYcO5E7pIehw+FDM/IT1OaKKsMVIxxRMP1xdw2xPdNnba1bG0NbT6qyRRohFZDq/cy7aNHlM6KK8iA9GF2/PU77DBwuSdet3fQicN+13yFy+P/S7ery6SRfzCEyOoxUECurGaX+f128+0aAwj/4KMvMzl5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z/W3h3eryA/B+JzMYSvJr4vNXJUqt4t90p/uJKCdDc8=;
- b=CygR4LwVaO3vOE5vQhq9jLeQgF+Ri6Zw7KFv06jZJgxBez8vpr4qQZzh87/EcVLPeTBBmThDs/oD0KIzQOkJoVueCG0WXPb8YgHiiX8u5/WEoTsoGZCivb2GJ1VkH67wt16POMfM5AMqnjKcIpZAB62AVDtq3u2yFfHqOQh6+6b9/tyoRoqKrFPcJ3bidE+09v0bRldfK2TPclps5s9/TE7RW2d1MZNIujV1tzHMA5V1YgcLScIXP0c6FwUsbQyE612rkjWqK3NpWwjL+EExIVanXgZ1EgPbvMV9nQD3vQ3wg6Aewzz/+Af4wfDrxPQeh9KIw6SFCkrzEE2URyNz+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z/W3h3eryA/B+JzMYSvJr4vNXJUqt4t90p/uJKCdDc8=;
- b=HArmdek1KlPpO1hpmNjua2OsoIXkmPzZJoFEeEohcy1T03GEunYPsrSw0co3iVFU7x6j19pzigFS64U/stz3KHJviYJkb+Y18egwU+wckIb1rxmhsd6Zck0RsxLVrUU43MPGbc46ypfUr7IWqnN8eYnGQYm8rgiAhC315C6by5B8e9EQUhnLHBUZ0A36DU90e7n+ZB/pmrGbRyC8wVtjrFE1N1JWHkW8f6vj3ecwNrdSPmul3AI5npvskMiqNaxDyUbeMJSfD/O5hJVxSS18Lh6Nd6p5FTfMbdUfW+66IllKVDvbnPegsMlfBdoEZDwxpmbBoIKXbJHdzz9SXfd/dw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DM6PR12MB4338.namprd12.prod.outlook.com (2603:10b6:5:2a2::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.21; Thu, 17 Oct
- 2024 16:41:24 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 16:41:24 +0000
-Date: Thu, 17 Oct 2024 13:41:23 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com, aik@amd.com, patches@lists.linux.dev
-Subject: Re: [PATCH v3 11/11] iommu/arm-smmu-v3: Add
- IOMMU_VIOMMU_TYPE_ARM_SMMUV3 support
-Message-ID: <20241017164123.GE3559746@nvidia.com>
-References: <cover.1728491453.git.nicolinc@nvidia.com>
- <562f2bfae1661e6ff6abdb280faa0dd49df9fbdc.1728491453.git.nicolinc@nvidia.com>
- <ZxE7ILug+SL5eMsl@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxE7ILug+SL5eMsl@Asurada-Nvidia>
-X-ClientProxiedBy: IA1P220CA0014.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:464::8) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630371DF269;
+	Thu, 17 Oct 2024 16:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729183306; cv=none; b=hMZWeqjO9Od1RZNV1rVDUFCQPeyOnWc/A+a5rOkWN++R0NKw4df/FrmMGHQ9ZZ5n5Hwh+y7rPW7kakW85JV5dey4dEk+ALUx/ooo7vakyCJjYy6r+AbgtLQcZIFlZsBNrphNW2vZOgvmg7bi4OzV0OiRFMMFnvCCW3Mh9WQmj7M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729183306; c=relaxed/simple;
+	bh=PLYUky9zvPNqrqkJ/B9gcdpk3OdefHM6/CcuBXwOldw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NFGSbZEUagJ9Mr0LKD68nse/15ngCvejdFT6QSnEApYnbCAbQaCH7OrJhQe6W00U4CR4ZpgMv3j5zRDVqb3Og5KF4A6iXqvPy0j56w0qPpwi1hjTnFXkMn55q2y+o9g2/urj2S4JMJ2c25uuX1QgIDuPXoLmAv47hLF5k2x9vbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2RqZ5GC; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f6e1f756so1540950e87.0;
+        Thu, 17 Oct 2024 09:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729183299; x=1729788099; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5YruI1wKdblVS9MrXyz8EFs1zb2kgu58gQQIrYue/4s=;
+        b=h2RqZ5GC+e3Spr2841Awcc725jbh0ITwklaIUsdQJeSKsP0q0ors1ntaM3pWO5oK7b
+         rXOVFqelgP560TSNqQ3OV3NS3+7GC+xGQVsBq5EmErRQVsj8REjYG1T8qOhOAv7Ynb2i
+         Djm/7VdswB8DYlwT+odJI+NeeLRKmZrKqf0kwEoT/Bd8EY8Z+fgIygoymoVAhKd46jCl
+         O90BVg1WapGRHM+yZIE6L4zrMYo97mNJdl9pF8j9YXIP8h2gG/MdAoT1MSzynwDNUgAg
+         zwQ/OV6ZIjh3SwTi9k1WhAXTqFVmczgFr2NdEDPPaehPCm9aMJNnRposLQbI7gbk7+5+
+         Pm+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729183299; x=1729788099;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5YruI1wKdblVS9MrXyz8EFs1zb2kgu58gQQIrYue/4s=;
+        b=ObIqVU9SI8IhmOc7Wfgw0GEBw0fdIqBcns29DNB1BQW3Q3XhlgUQIPTT392Lzb+wJ+
+         YNG4Tod71brObFajKZB/gamLxLjnvmyPsZ/DswxQlQO9guwplkVyvW2QY0NXVP+MU7fX
+         gWzEmOzvTSVEqwIWv4Bnb0P8/7bPzOxy2e2ViAMXW2lNQVX8nwcD1UD+lnXCB6oO7vax
+         H3soSrr03jaM0KMHp0Be/pDX8LNe2IxO+Asy38w0upe2A4SWArcFMeELDOwbDbjDsDba
+         w/WARVwYSuutFZVa0FV4ZTC9cV7twySlQu/C5qj9jD1rhY9yN3ZqKzeJsvcDA3I+GIrs
+         g7Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlnXYNOsOCRuM5e7vO+E9XIknbmG9YNUY6d6BQzf5r0czCjrKQjtlu85q7UwjjKIpU+IZhOMmgkV/lhg==@vger.kernel.org, AJvYcCWRU7OXJg3SQlFMutvmg7lH4fsBWO9/gHxkkEJyiJSZkBiRXVyKFt1UbTw3+oDzBRosmHMDwjkPUQV/xXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGXzOry3Pm6mhOCYCYGvhg7eHumM4BP6u/DQXTLidjB0Mx9ZQv
+	fb97DPGY60L2AMFa2bAsOg2Pp/sAkWvjyOM2PGTXfaPTM2Xncph7IWtZtdI0tELLkoxQXAgtLVv
+	MIv3TzBxaL5KjglEzg+kOgokKeaA=
+X-Google-Smtp-Source: AGHT+IElWI7n/rjmYnkCTeDlBzUXlzvOCvl3dSc57/weiN6h4uUc6kSy4cqaZkK6t0vdFuqwCgARu79lzCrywqz1t84=
+X-Received: by 2002:a05:6512:b08:b0:52e:7542:f469 with SMTP id
+ 2adb3069b0e04-53a03ea078amr5953155e87.0.1729183299029; Thu, 17 Oct 2024
+ 09:41:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DM6PR12MB4338:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e7bfe8d-fa9a-4b8a-e13b-08dceeca89b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PB7FG3pdtKjS9hdBl97NjxMEoXtdEFUOx1rCNFLJdt7pOKCFHCNSfj06iZ36?=
- =?us-ascii?Q?bPt97ju5uiMnBMqbC2zjKFat98OhobTT7EvOEQzm6VDeKJ7G/3ZkewlD1iig?=
- =?us-ascii?Q?nuK/bE0AMSrTyCe6DWWatZGOCj9qjq5/w4Beh4t0ktwZT/bj5P4ZIUreg801?=
- =?us-ascii?Q?hfI5aPGu7Bf35Cuz0SKAiVHZZBumrSJWLXyWnbXIioaTuz99HciipF1yMV38?=
- =?us-ascii?Q?4fjSuV/L/XAK6U4WjXrYIGf0D1Bx3Ww2s/VhGFTAN+N+hxwgUCdbpdZ6+v3m?=
- =?us-ascii?Q?iJKLfbm4lV+Td9pt4rZLHESOkIDSYZOcO2UZYR/UMnKlwkAQyhpvLaW7YhM8?=
- =?us-ascii?Q?QI0Zhw+shWdABJldPwr93naxM5j5zyguWGkyc616EIUTq140YYGnSq0g1TXJ?=
- =?us-ascii?Q?thfHHNEDfjnKIiQztMDjDRl5vR9GeA/ko60IZNln3yPnEvsTMzXD6J6UIruQ?=
- =?us-ascii?Q?g1S+X8s71f0Nb658Kp0nuha7S98Kyoi/pjXJZpl3M4kpClABprZu4ZzoGLkY?=
- =?us-ascii?Q?0cVtzlrGH0P+18z592JEiMnjYCvEQxGjnKTT7GwCJw9ANi766Mnh5amtwF2V?=
- =?us-ascii?Q?VWd1FUZy4rMY0aei8+wbGB3WCNLjUTHvffDS2eTFLJ13Mi8Q5f6wQZqGNsLQ?=
- =?us-ascii?Q?bFdga/4UWrQsvDHO4cnc8PSdIpik6nqJxPYHJl6JmQAjq/y3Xddopnzg+RHo?=
- =?us-ascii?Q?zkF+S4zBHcFeQc1Stbtk+VOeAV1gIGGN6nNbuqJvR9uJPlaAlG1qbQR7vMx0?=
- =?us-ascii?Q?I653oSaj+cWYnQd6A4ivwbQnKNuONm36KlPuIyNxgG411YME9c1mhFan846v?=
- =?us-ascii?Q?Cum4Eot4Hswij7u5yJddbG3Q/zIg0B7BjJ4aSUKTjHHwjRUWZ5aZNaJ1bE0J?=
- =?us-ascii?Q?aA0VyXaWSTr5XFNbGD/gOxACv9myBd4eV6gJXXJ3kxcxzU3HtxO9HaZD3G1W?=
- =?us-ascii?Q?PMklwsX60cYypuDPZ5lFl6IGTLYqkhsk0Hf1lHIs51th4GlDFSJb37xUCths?=
- =?us-ascii?Q?3fXrx+sT/Oo8vvw3Xeo9NcZDd8ISwqKljjpDeIZ/dHbtK83VbQFKbfRSvFmz?=
- =?us-ascii?Q?mWpt6iHskoFc5JfKih9O6M9ve6B7DB//SB9IkBDmvs3MTPOoRkhSjO7V4ht3?=
- =?us-ascii?Q?UDt2vbl1m2YL39pbV6wLWhbTmBxyv1rjRC5ZiJyPWq+QjuBav0hAZaPS+rsz?=
- =?us-ascii?Q?BWLaW5XZf+aNTj1o42eKCJIywlTeLhryE0YM8KRIKgwHBmbtxD/cwGapQbGa?=
- =?us-ascii?Q?a5m0WrUoLlwnKNChBy8woDhdtFIx0srBcEhI8V8iwOiedWj0zQ/8DfMf8S2j?=
- =?us-ascii?Q?Onzb6z9B3MeM7ii0YwE8v9jl?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tcNdwdO1wjMZr3ZDLVStgddld1tqcSNswYdy2KCAEwbOsjJ8LZ4a3PpVMxER?=
- =?us-ascii?Q?vZOlF/uHSxaWw3CDnfAEkLBzLH6+tYHjAFI9s9PkDpXsdziNQxMZd2iByHcq?=
- =?us-ascii?Q?pcR+OTgdzU9a612yqb0sReIKPNjGvXEENrQqx8mzlsQPLvijbLi7R4Z4Mzk1?=
- =?us-ascii?Q?uzxU6WqovMz/PYpJ9Fo/vkPLu+diiSXubgCKl6qGxdZL8vbbOQ7InLoSzR1B?=
- =?us-ascii?Q?KF8rEvf/aLEfVNewdGtP7GNy2rnkbUtyIEg2myq/jIxXaSKeEY0+0CwY04e0?=
- =?us-ascii?Q?t53DxTl3LYRTBDlR6XGzYxgeh0GBHne6vPr8m3eaf6F1G2uAfDlvAoh0BTx7?=
- =?us-ascii?Q?3ofFCv0nwQc7HlzubBL1383/mltmxAog7YOg1p4Mqv4zOBBWora85Zg2yYA4?=
- =?us-ascii?Q?10iCadwfmapznZsDdc9wUHUcZ+q2dx9vAWJCYaVO+CAXAKDp6NSWaEM6n1ph?=
- =?us-ascii?Q?RB9Qeg/fecN50oWj5pDyBSN9aDVtmLd2Z44HmeQPzJDPppaCzoROE6t2HVXJ?=
- =?us-ascii?Q?s+YgBX61h2HzAeXtQT9T5jwzZsGCP7rMKldULDNZBh9TFL3xEytTxgBnLhGG?=
- =?us-ascii?Q?07rqjBOdcCNP42TzwSMpYh+TcOGomkh/vqZZpooTOzPe0TaK/0XfraNIw/5h?=
- =?us-ascii?Q?6cigkmdVzCfJ801DzxMzAwivbk0QjTqEDQyTqlCJHE1GTMdACcM5tXKEIKHN?=
- =?us-ascii?Q?KEYOuARyVDiBb50g5OYMFjVKFo4r+1pkLrtYz4kNc5gvJ+A34Aw0fFOZyi1D?=
- =?us-ascii?Q?/u8YQ5O2qR81+FTvCaMm/Q36mvJejaYwj/JhW2ewliuhkcFcUGgQKRolpUmQ?=
- =?us-ascii?Q?x5aaLgx2rdb7HP+DBft6oJGT0Mi1GgyQhla6UB4H1GUQcHHcDXKUo/8jOrmx?=
- =?us-ascii?Q?cSc22TMUTTqAIy+a+8U82rLgVUkgBcSCz6fU/2qoHIQoJEXGnLneCDft2TKn?=
- =?us-ascii?Q?JXD24c6JOTeTtueE/9ZdAevRt0SFZKSGQ1614CbnsDyxEslgbOtgIfMdsjEk?=
- =?us-ascii?Q?EMWxChGBQNFYXigpM4IIJ+GGC/G5C9DNWQqurA9Hohk6SjuPfLl/e841lnaf?=
- =?us-ascii?Q?Cs+HzhW98rFhIgs2zHHW6+fsYbaKYbPOtpONRhyd8gd8E/DRnPbj/vG+Blo5?=
- =?us-ascii?Q?S3WEtStU7jn8iIE70G+maLlR0GtLkhuwWdTr65quxWyZTjEojn3XqXjXhZ4V?=
- =?us-ascii?Q?5PTwsv6ACs1AQE5ZbigqnCxeGxzKMXo2aMsDowxN3ffo5nFlXloTw7tU49Ut?=
- =?us-ascii?Q?xXJ19XGxu06/a4vUFv6UIGwTN/nb8917hdGkEZSh26Wwx0arnQuJtrHjtUm/?=
- =?us-ascii?Q?Xdz7zk7VGWhOVEnrodA6Ft0Z+OCFrPM70z9TyLPWCVqEzi5/TuGeN4CYFj8P?=
- =?us-ascii?Q?EEaBX+DJp+SAryUXW2ar7UHC+AOoTipmromS9qigJMGlTZQSz+cn0IA6Bh/d?=
- =?us-ascii?Q?hUp8nkO0do6sQteGeiuaIv14yiKXAJkpxDkFHWgMA5K+Da7Nat7Pd9vmZFff?=
- =?us-ascii?Q?72+ylVXK7lNC2MfqyLe4iX6EUnuoNbNyaJsoUA+N2PW0jesS0y6hmhaAZbQm?=
- =?us-ascii?Q?kg2A5IVvTcqrAe4+xnc=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e7bfe8d-fa9a-4b8a-e13b-08dceeca89b5
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:41:24.2966
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CTI+QeoFbJZ62F2/zNKROlvxGyAaXVRNZ301NnYaY/vbIVMOQK68AdRM0T/fb4Pd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4338
+References: <20241015162532.2292871-1-quic_mojha@quicinc.com>
+ <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
+ <Zw7COXsvJsWq4db9@hu-mojha-hyd.qualcomm.com> <CABCoZhCDJfiRtUvQ-4ypaQsiktC3b22r4=TCy5V+RVeOb4wP+A@mail.gmail.com>
+ <Zw9S7LYZ1Sb/eMXe@hu-mojha-hyd.qualcomm.com> <CABCoZhBVEDKaaH36C+r4uMYo_08uRne9jikFCz8-yRuChR8JSw@mail.gmail.com>
+ <385b7baa-8027-c4cf-948f-a1dff570befc@gmail.com>
+In-Reply-To: <385b7baa-8027-c4cf-948f-a1dff570befc@gmail.com>
+From: anish kumar <yesanishhere@gmail.com>
+Date: Thu, 17 Oct 2024 09:41:27 -0700
+Message-ID: <CABCoZhBq4oFHOoPoWu2g=1Szry7bV9rBRgq_4zDxuS=17jfNhw@mail.gmail.com>
+Subject: Re: [PATCH] leds: class: Protect brightness_show() with
+ led_cdev->led_access mutex
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 09:28:16AM -0700, Nicolin Chen wrote:
-> On Wed, Oct 09, 2024 at 09:38:11AM -0700, Nicolin Chen wrote:
-> > Add a new driver-type for ARM SMMUv3 to enum iommu_viommu_type. Implement
-> > the viommu_alloc op with an arm_vsmmu_alloc function. As an initial step,
-> > copy the VMID from s2_parent. A later cleanup series is required to move
-> > the VMID allocation out of the stage-2 domain allocation routine to this.
-> > 
-> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> > ---
-> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 18 ++++++++++++++
-> >  include/uapi/linux/iommufd.h                  |  2 ++
-> >  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 24 +++++++++++++++++++
-> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  1 +
-> >  4 files changed, 45 insertions(+)
-> 
-> I squashed the following changes to this commit (will be in v4).
-> It replaces nested_domain->s2_parent with nested_domain->vsmmu
+On Thu, Oct 17, 2024 at 5:12=E2=80=AFAM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+>
+> Hi Anish and Mukesh,
+>
+> On 10/16/24 18:37, anish kumar wrote:
+> > On Tue, Oct 15, 2024 at 10:45=E2=80=AFPM Mukesh Ojha <quic_mojha@quicin=
+c.com> wrote:
+> >>
+> >> On Tue, Oct 15, 2024 at 03:28:08PM -0700, anish kumar wrote:
+> >>> On Tue, Oct 15, 2024 at 12:28=E2=80=AFPM Mukesh Ojha <quic_mojha@quic=
+inc.com> wrote:
+> >>>>
+> >>>> On Tue, Oct 15, 2024 at 10:59:12AM -0700, anish kumar wrote:
+> >>>>> On Tue, Oct 15, 2024 at 9:26=E2=80=AFAM Mukesh Ojha <quic_mojha@qui=
+cinc.com> wrote:
+> >>>>>>
+> >>>>>> There is NULL pointer issue observed if from Process A where hid d=
+evice
+> >>>>>> being added which results in adding a led_cdev addition and later =
+a
+> >>>>>> another call to access of led_cdev attribute from Process B can re=
+sult
+> >>>>>> in NULL pointer issue.
+> >>>>>
+> >>>>> Which pointer is NULL? Call stack shows that dualshock4_led_get_bri=
+ghtness
+> >>>>> function could be culprit?
+> >>>>
+> >>>> in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [2]
+> >>>> is not yet completed.
+> >>>>
+> >>>> [1]
+> >>>>   struct hid_device *hdev =3D to_hid_device(led->dev->parent);
+> >>>>
+> >>>> [2]
+> >>>> led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0,
+> >>>>                    led_cdev, led_cdev->groups, "%s", final_name);
+> >>>>
+> >>>>>
+> >>>>>>
+> >>>>>> Use mutex led_cdev->led_access to protect access to led->cdev and =
+its
+> >>>>>> attribute inside brightness_show().
+> >>>>>
+> >>>>> I don't think it is needed here because it is just calling the led =
+driver
+> >>>>> callback and updating the brightness. So, why would we need to seri=
+alize
+> >>>>> that using mutex? Maybe the callback needs some debugging.
+> >>>>> I'm curious if it is ready by the time the callback is invoked.
+> >>>>
+> >>>> Because, we should not be allowed to access led_cdev->dev as it is n=
+ot
+> >>>> completed and since, brightness_store() has this lock brightness_sho=
+w()
+> >>>> should also have this as we are seeing the issue without it.
+> >>>>
+> >>>> I hope, above might have answered your question.
+> >>>>
+> >>>> -Mukesh
+> >>>>>
+> >>>>>>
+> >>>>>>          Process A                               Process B
+> >>>>>>
+> >>>>>>   kthread+0x114
+> >>>>>>   worker_thread+0x244
+> >>>>>>   process_scheduled_works+0x248
+> >>>>>>   uhid_device_add_worker+0x24
+> >>>>>>   hid_add_device+0x120
+> >>>>>>   device_add+0x268
+> >>>>>>   bus_probe_device+0x94
+> >>>>>>   device_initial_probe+0x14
+> >>>>>>   __device_attach+0xfc
+> >>>>>>   bus_for_each_drv+0x10c
+> >>>>>>   __device_attach_driver+0x14c
+> >>>>>>   driver_probe_device+0x3c
+> >>>>>>   __driver_probe_device+0xa0
+> >>>>>>   really_probe+0x190
+> >>>>>>   hid_device_probe+0x130
+> >>>>>>   ps_probe+0x990
+> >>>>>>   ps_led_register+0x94
+> >>>>>>   devm_led_classdev_register_ext+0x58
+> >>>>>>   led_classdev_register_ext+0x1f8
+> >>>>>>   device_create_with_groups+0x48
+> >>>>>>   device_create_groups_vargs+0xc8
+> >>>>>>   device_add+0x244
+> >>>>>>   kobject_uevent+0x14
+> >>>>>>   kobject_uevent_env[jt]+0x224
+> >>>>>>   mutex_unlock[jt]+0xc4
+> >>>>>>   __mutex_unlock_slowpath+0xd4
+> >>>>>>   wake_up_q+0x70
+> >>>>>>   try_to_wake_up[jt]+0x48c
+> >>>>>>   preempt_schedule_common+0x28
+> >>>>>>   __schedule+0x628
+> >>>>>>   __switch_to+0x174
+> >>>>>>                                                  el0t_64_sync+0x1a=
+8/0x1ac
+> >>>>>>                                                  el0t_64_sync_hand=
+ler+0x68/0xbc
+> >>>>>>                                                  el0_svc+0x38/0x68
+> >>>>>>                                                  do_el0_svc+0x1c/0=
+x28
+> >>>>>>                                                  el0_svc_common+0x=
+80/0xe0
+> >>>>>>                                                  invoke_syscall+0x=
+58/0x114
+> >>>>>>                                                  __arm64_sys_read+=
+0x1c/0x2c
+> >>>>>>                                                  ksys_read+0x78/0x=
+e8
+> >>>>>>                                                  vfs_read+0x1e0/0x=
+2c8
+> >>>>>>                                                  kernfs_fop_read_i=
+ter+0x68/0x1b4
+> >>>>>>                                                  seq_read_iter+0x1=
+58/0x4ec
+> >>>>>>                                                  kernfs_seq_show+0=
+x44/0x54
+> >>>>>>                                                  sysfs_kf_seq_show=
++0xb4/0x130
+> >>>>>>                                                  dev_attr_show+0x3=
+8/0x74
+> >>>>>>                                                  brightness_show+0=
+x20/0x4c
+> >>>>>>                                                  dualshock4_led_ge=
+t_brightness+0xc/0x74
+> >>>>>>
+> >>>>>> [ 3313.874295][ T4013] Unable to handle kernel NULL pointer derefe=
+rence at virtual address 0000000000000060
+> >>>>>> [ 3313.874301][ T4013] Mem abort info:
+> >>>>>> [ 3313.874303][ T4013]   ESR =3D 0x0000000096000006
+> >>>>>> [ 3313.874305][ T4013]   EC =3D 0x25: DABT (current EL), IL =3D 32=
+ bits
+> >>>>>> [ 3313.874307][ T4013]   SET =3D 0, FnV =3D 0
+> >>>>>> [ 3313.874309][ T4013]   EA =3D 0, S1PTW =3D 0
+> >>>>>> [ 3313.874311][ T4013]   FSC =3D 0x06: level 2 translation fault
+> >>>>>> [ 3313.874313][ T4013] Data abort info:
+> >>>>>> [ 3313.874314][ T4013]   ISV =3D 0, ISS =3D 0x00000006, ISS2 =3D 0=
+x00000000
+> >>>>>> [ 3313.874316][ T4013]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess=
+ =3D 0
+> >>>>>> [ 3313.874318][ T4013]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0,=
+ Xs =3D 0
+> >>>>>> [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=3D=
+00000008f2b0a000
+> >>>>>> ..
+> >>>>>>
+> >>>>>> [ 3313.874332][ T4013] Dumping ftrace buffer:
+> >>>>>> [ 3313.874334][ T4013]    (ftrace buffer empty)
+> >>>>>> ..
+> >>>>>> ..
+> >>>>>> [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
+> >>>>>> [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
+> >>>>>> [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
+> >>>>>> [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
+> >>>>>> ..
+> >>>>>> ..
+> >>>>>> [ 3313.874685][ T4013] Call trace:
+> >>>>>> [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
+> >>>>>> [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
+> >>>>>> [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
+> >>>>>> [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
+> >>>>>> [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
+> >>>>>> [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
+> >>>>>> [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
+> >>>>>> [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
+> >>>>>> [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
+> >>>>>> [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
+> >>>>>> [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
+> >>>>>> [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
+> >>>>>> [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
+> >>>>>> [ 3313.874727][ T4013]  el0_svc+0x38/0x68
+> >>>>>> [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
+> >>>>>> [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
+> >>>>>>
+> >>>>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> >>>>>> ---
+> >>>>>>   drivers/leds/led-class.c | 3 ++-
+> >>>>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> >>>>>> index 06b97fd49ad9..e3cb93f19c06 100644
+> >>>>>> --- a/drivers/leds/led-class.c
+> >>>>>> +++ b/drivers/leds/led-class.c
+> >>>>>> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *de=
+v,
+> >>>>>>   {
+> >>>>>>          struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> >>>>>>
+> >>>>>> -       /* no lock needed for this */
+> >>>
+> >>> just get rid of the above comment then.
+> >>
+> >> If you notice, it is already removed (-) .
+> >>
+> >>>
+> >>> Also, the comment below in file leds.h
+> >>> needs an update as originally the idea for this mutex lock was to
+> >>> provide quick feedback to userspace based on this commit
+> >>> https://github.com/torvalds/linux/commit/acd899e4f3066b6662f6047da5b7=
+95cc762093cb
+> >>>
+> >>> Basically a comment somewhere so that when a new attribute
+> >>> gets added, it doesn't make the same mistake of not using the mutex
+> >>> and run into the same issue.
+> >>>
+> >>> /* Ensures consistent access to the LED Flash Class device */
+> >>> struct mutex led_access;
+> >>
+> >> Thanks for accepting that it is an issue.
+> >> I think, comment is very obvious actually the patch you mentioned shou=
+ld
+> >> be in fixes tag as it introduced the lock but did not protect the show
+> >> while it does it for store.
+> >
+> > Yes, but that patch was added for supporting flash class
+> > device and wasn't explicitly to take care of the scenario that you
+> > are trying to handle and the above comment in leds.h states the same.
+>
+> Correct. led_access mutex was introduced to add support for preventing
+> any LED class device state changes originating from sysfs while
+> v4l2_flash wrapper owns the device.
+>
+> Since the inception of LED subsystem all the locking was deemed to be
+> the responsibility of every single LED class driver and initially sysfs
+> attr callbacks didn't have any locking. After some time when LED core
+> started to grow it turned out that it was required to lock the LED class
+> initialization sequence, so as not to give the userspace an opportunity
+> to set LED brightness on not fully initialized device, which was
+> introduced in [0]. led_access mutex was already in place so it was used.
+> However as you noticed, it is not used consistently across all LED class
+> sysfs attrs callbacks.
+>
+> Since brightness_show() does not acquire led_access mutex it is still
+> possible to call brightness_get op when LED class initialization
+> sequence is not yet finished.
+>
+> Still, I'd propose to first narrow down the issue and figure out what
+> actually causes NULL pointer dereference, as it apparently
+> originates from dualshock4_led_get_brightness and not from LED core.
 
-Err, do we want to make a viommu a hard requirement to use nesting? Is
-that what is happening here?
+Mukesh already explained the issue in earlier emails but here is the gist
+anyway.
 
-Jason
+led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0,
+  led_cdev, led_cdev->groups, "%s", final_name);
+
+If you look at the above code, device_create_with_groups function
+can create all the sysfs and before it returns and assigns led_cdev->dev
+pointer, those sysfs callback can get triggered and if the callback
+accesses led_cdev->dev this variable, it will crash as it is not yet
+assigned.
+
+In my opinion, we just have to put a proper comment in attribute creation
+part so that if a new attribute gets added it uses the lock.
+>
+> I bet that the driver is not fully initialized up to the point when
+> devm_led_classdev_register_ext() is called in it.
+>
+> >
+> > I think we should modify that comment and state clearly that
+> > the aforementioned mutex is also to handle access to led_cdev->dev.
+> > Either here in this .h or where attributes are defined, so that new att=
+ributes
+> > that get added doesn't suffer from the same bug.
+> >
+> > led_trigger_set also this function also suffers from the same bug so yo=
+u
+> > need to handle it the same way.
+>
+> led_trigger_set() is already called with led_access mutex held in
+> led_trigger_write(), i.e. from "trigger" sysfs attr.
+
+makes sense.
+
+>
+> >>
+> >> Fixes: acd899e4f306 ("leds: implement sysfs interface locking mechanis=
+m")
+> >>
+> >> -Mukesh
+> >>>
+> >>>
+> >>>>>
+> >>>>>>> also you missed this.
+> >>>>>
+> >>>>>> +       mutex_lock(&led_cdev->led_access);
+> >>>>>>          led_update_brightness(led_cdev);
+> >>>>>> +       mutex_unlock(&led_cdev->led_access);
+> >>>>>>
+> >>>>>>          return sprintf(buf, "%u\n", led_cdev->brightness);
+> >>>>>>   }
+> >>>>>> --
+> >>>>>> 2.34.1
+> >>>>>>
+> >>>>>>
+> >
+>
+> [0]
+> https://lore.kernel.org/linux-leds/20180523222221.27621-1-lhenriques@suse=
+.com/
+>
+> --
+> Best regards,
+> Jacek Anaszewski
 
