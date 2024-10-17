@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-369997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E609A257F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAAF9A2581
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2412E2834D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9498A283483
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79AE1DE8A8;
-	Thu, 17 Oct 2024 14:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332951DE889;
+	Thu, 17 Oct 2024 14:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RyBrpdNG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="PgwqRZBe"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA231D47AC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D841DE2AD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729176451; cv=none; b=dTqz3FJbGTNaiPbY59po4gsb2pDQA+IAnR4fDvMiF4X1KXi+nBHPRhYNFtrJTvvk0VGwxQjpCjHYokZF0fcbiCL0sb6UJ5PSOP3Un1sFiDM/Xz2BQpe0oxKwRC8CoAI/cZwE/6YXJc9qYTB+RQEnpOiQ4kHLpZBAWv+ONCXUPD4=
+	t=1729176483; cv=none; b=CQrMyhrzcKE2BTgYuPsn/R3+ZM7TvLPzz/g7kiry53+1mbaiPQETBXFDCaKDuTpClFzTlOEHoEPoGHjrwDlYZh/+AGfi2baFQC16m4NU6/wvDbIla6hjsE/dPSe2zdAIz+PbkbD+auUwwwqAaquBI46plS4ukgf5stf+dIfOiVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729176451; c=relaxed/simple;
-	bh=0leTP5OXAUaKPJCy+G4/PrHXTjS88HZH/ihoHn42EWA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sVA5dnMTIVjGNk6gx4Y0pn7xI+vUEFHuoNUTd+XmMQZMfXKKFfjUuDLd2P4LDAst33OGT23slw35o4jqcxoT7Rlh0X6+p8L9FiEteba98FIbRTKks7nzSL1PY/iGp2jaHSMU7qNDOkXgA/oC2wgS60FOiQgeYxv4OO7sEjYrzTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RyBrpdNG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729176444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6lboUGx7ijrgViMjC0XLNeJKa/Wh0MpL+jwO9wWqSXs=;
-	b=RyBrpdNGzykbLTewDc5fbbfiFnaL8cEiBz7LenED8Z5lllNmfVXZAGoz9CL/XVTrYycRsD
-	GKH4aTA2mwiEmlyYQ0LZx7s3xGWxtbX8dB3uJUqOhGZFDVkA3/BVREnbyppdrdPGaCGbWz
-	c35/2JwA9RHUf+hxYOGmSP/jG4/mjnE=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-hjKJL68-P-KkarV8uynkgA-1; Thu, 17 Oct 2024 10:47:23 -0400
-X-MC-Unique: hjKJL68-P-KkarV8uynkgA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9a04210851so54716066b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:47:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729176442; x=1729781242;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6lboUGx7ijrgViMjC0XLNeJKa/Wh0MpL+jwO9wWqSXs=;
-        b=GJ7KsTfU9E9ugHSIAitWJ4W7FeQyJlMZ2RSZRyE9IqeSl04Fl6PRfYJkSYjlgGCZpA
-         jgvE7b/dwZP+Tcbww7QQBqp1HDbrzsbDZCTohvFOnWkMKRmM6h9eM7fKrv7u7uTuF58n
-         G9c8llFcrQZ2d4hvVcazw4zCYWATJgEr8q232NxswyzSbI1sRNKUZWJbycdE36Sv2k3o
-         hpRRatOMP0a/JBt6sS4I5pD7PPW08HxDF1cYHd1z5ugXEKPOFf/UKG/LYNVeAIijnl2Y
-         NSuopxBSoazflOIQL90Ep1L+cPbviKQhZ6cQ3cvID+bi3ZyTKFiT7H7SGJi8Yxz/B4Sp
-         eEnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxrJU7Cxn3jdleUwTK871mTWP9OuV9s6YYJ6tddegX7dCZ01PPJ49NXFWHaspY57/m6Q9++ORbUsd2qWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYlyRjLokJLoU4lT6fXA5u1ENYb/8PyPp2Pt1OmZIhX4WLRrF/
-	XzTxipI/GVPFhHhCjvttUMmPXZzzcg6B8opf2W7+4Yw56ybZypqdFOJ/pXx9xOwx+l58Ov6m6Pg
-	WI3NSB49AmMBbMEGztw/L+EKStBu+MIBF0rF6NuV92R3CnKj2j4pKvkRiMJrG0w==
-X-Received: by 2002:a17:907:c8a8:b0:a99:4b56:cf76 with SMTP id a640c23a62f3a-a9a34dfea2dmr616933366b.47.1729176441876;
-        Thu, 17 Oct 2024 07:47:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8DECNp/sdfcg5mOuDiFFJpXOew2nxBeb2a4vk2UQksCP7zCheHttds1hjqhqehXa9AZoKZQ==
-X-Received: by 2002:a17:907:c8a8:b0:a99:4b56:cf76 with SMTP id a640c23a62f3a-a9a34dfea2dmr616930466b.47.1729176441473;
-        Thu, 17 Oct 2024 07:47:21 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2988c5c0sm303480666b.202.2024.10.17.07.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 07:47:21 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id DC19F160AB52; Thu, 17 Oct 2024 16:47:19 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi
- <lorenzo@kernel.org>, Andrii Nakryiko <andriin@fb.com>, Jussi Maki
- <joamaki@gmail.com>, Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek
- <andy@greyhouse.net>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
- <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Hangbin Liu
- <liuhangbin@gmail.com>, Nikolay Aleksandrov <razor@blackwall.org>
-Subject: Re: [PATCHv2 net-next 2/3] bonding: use correct return value
-In-Reply-To: <20241017020638.6905-3-liuhangbin@gmail.com>
-References: <20241017020638.6905-1-liuhangbin@gmail.com>
- <20241017020638.6905-3-liuhangbin@gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Thu, 17 Oct 2024 16:47:19 +0200
-Message-ID: <878qumzszs.fsf@toke.dk>
+	s=arc-20240116; t=1729176483; c=relaxed/simple;
+	bh=DboRHfwBpHg9o9mviaQ0C8yneuci7g2BeSD/nS16L/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPUUrLKB8ggkT39qzvEQmAEJBBoMnkNevNb5cn7rjWUVZXnWf+VUOoGd1oyqOye12zO1mmVjWAxcoA1zkbUISiZdBAvy0xfSHsTTPtxU6eo1AI5Rdc7xmvqHQpPa7wV/96bXPv279qHAWZJSnKRZG/2naQvpBaLHV13J5SvNhqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=PgwqRZBe; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-118-108.bstnma.fios.verizon.net [173.48.118.108])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 49HElVGx031226
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 10:47:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1729176454; bh=tQcT/FIX/gabRkfcqtUf1zpasLNor2EWth8AjaQOw6I=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=PgwqRZBeMKW+z7WoS7kjDhqrguH0sz5JXR81EglpHo0OQVMRGFWl2eilpRmmJRYaH
+	 VkrL3WNwjh31AoxA3NJW6WsEFthz4ztmVfuWzwTXaV9TaBvNT9NrTSVMJtvemOcUIF
+	 w3XxyI/PnZXbQRS/WvDUTOlVUsvFER8309jNGIo0xImcUce65nbtaSaUeWhRkZCxpI
+	 O0huXILI6HxPIR9iJ6LxrZUe5X+yRn1j38uoBBwYwk3JGphTbCUGePPm5jUoCryP1v
+	 qmdt/yqnjKnKAZjzJ0RdJy5ER4PEt9pAohEk+4af43EjRi0PBFStq7hp1ELVcSyKa/
+	 zW0OK+8CZLo0Q==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 2CF3115C02DB; Thu, 17 Oct 2024 10:47:31 -0400 (EDT)
+Date: Thu, 17 Oct 2024 10:47:31 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, Qianqiang Liu <qianqiang.liu@163.com>,
+        adilger.kernel@dilger.ca,
+        syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
+Message-ID: <20241017144731.GA3254556@mit.edu>
+References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
+ <66efba95.050a0220.3195df.008c.GAE@google.com>
+ <Zu+8aQBJgMn7xVws@thinkpad.lan>
+ <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
+ <20241009155028.u7jpzrw6txldt43j@quack3>
+ <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
+ <20241014163120.hinbd5jc6mp4vev7@quack3>
+ <3930aad6-174d-4422-944e-6c90a3ea065a@huawei.com>
+ <20241016204741.GA3204734@mit.edu>
+ <811eb084-55d4-4725-9388-05a6e8f489d9@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <811eb084-55d4-4725-9388-05a6e8f489d9@huawei.com>
 
-Hangbin Liu <liuhangbin@gmail.com> writes:
+On Thu, Oct 17, 2024 at 08:42:59PM +0800, Baokun Li wrote:
+> Indeed, our rough plan is to first implement isolation of abnormal file
+> system resources, so that the system can continue to run normally even
+> when there is an error; then implement online scanning, so that the
+> maintainer can see the health report at any time; and finally implement
+> the most difficult online repair.
 
-> When a slave already has an XDP program loaded, the correct return value
-> should be -EEXIST instead of -EOPNOTSUPP.
->
-> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
-> Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-> ---
->  drivers/net/bonding/bond_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> index f0f76b6ac8be..6887a867fe8b 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -5699,7 +5699,7 @@ static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
->  		if (dev_xdp_prog_count(slave_dev) > 0) {
->  			SLAVE_NL_ERR(dev, slave_dev, extack,
->  				     "Slave has XDP program loaded, please unload before enslaving");
-> -			err = -EOPNOTSUPP;
-> +			err = -EEXIST;
+We have some of this already; if a block group has obvious
+inconsistencies --- for example, if there is an attempt to mark a
+block or inode as free, but it's already marked as free as the
+allocation bitmap, we can mark the block group as inconsistent, and
+then avoid allocating from the block group.  That's easy because it's
+the kind of inconsistency which can be detected locally.
 
-Hmm, this has been UAPI since kernel 5.15, so can we really change it
-now? What's the purpose of changing it, anyway?
+The problem comes with those inconsistencies which require a global
+examination of the file system data structures.  For example, is the
+refcount of an inode correct?  Or is a block claimed by more than one
+inode?  The e2scrub approach requires creating a read-only snapshot
+(which is why we need LVM) and then running e2fsck in userspace,
+because it does a global examination of all file system data
+structures.
 
--Toke
+> We do need to establish the mapping of physical blocks to inodes and
+> inodes to parent dir. By tree managed by jbd2 do you mean updating
+> the tree when committing to journal? Or are updates to the tree
+> logged to journal?
 
+When we allocate a block, we need to journal the changes to the
+allocation bitmap.  If we are going to also update the reverse mapping
+data structure, that needs to be journalled also, so that after a
+crash, the data structures are consistent.
+
+						- Ted
 
