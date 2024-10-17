@@ -1,209 +1,147 @@
-Return-Path: <linux-kernel+bounces-369696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F309A2140
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7549A2148
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6191F274C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC2E1C215E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60FA1DE2AE;
-	Thu, 17 Oct 2024 11:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4A31DD0EA;
+	Thu, 17 Oct 2024 11:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQw89USm"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mbnd9BNE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60971DD89A;
-	Thu, 17 Oct 2024 11:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB9B1DA619;
+	Thu, 17 Oct 2024 11:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729165203; cv=none; b=OIiUnkJSi8udQ74yUtcNqKOL+JRKl0VQpq3VlogKAu6IEs854oHu5u3OSy7D8nrtoTvCuWgB8Rw2+PYlJrmz4owpRisJ/Cuee8wutMlPIWRhM/BSGRDWJOrVct2M1Ei7saTvzhmmE8n8uN4Dwkc3zbqxQOsBLYsz7tC5xBCOWwQ=
+	t=1729165277; cv=none; b=ieB9/AjeF+RdydKHL3W55QmVHjqsXFhSRd5X03oeprGkvMiYBObUGv+5bQb8pB210+WDo0nMac4AX6At7JbgTiecbNNwODvDeYKcPvnHJNYL3kfWq7+kAUf4MWXA1vyfAXC86VeDgf4MjHhpbwNxb2f8XiaKv0ftze3rMCxxHh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729165203; c=relaxed/simple;
-	bh=9njdWl4KiF2908asDzC3d88euVBuYFIlMgsO2B/Qb9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pKwQeEoLCuT8Hw2htqgQB77JEzcpyPY4I6pkkDuvBMTdL4HV2IKZeGkicASAU7tN4cGFk7t5QohJtAnSYPSErPJsX3l5UcVAD3yAq8D8V6gTbwtxRSmW7Je44Pf2yxJxhKfaFpB2L2z80hCnC1IPA12Px8+cTXV6EuIlTNBV4Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQw89USm; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so619632f8f.2;
-        Thu, 17 Oct 2024 04:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729165197; x=1729769997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6lmoNfsxcZwf01tMx6JvZqR05+RGQ7eUoqDoQfJoNOQ=;
-        b=OQw89USmof/72znmGiTp+QyjjMR0m178j2dG0ZaFU5AxXIkrOhTDq3FF2bMJ2M6zpe
-         HS9z0XNOJWCOzVByvc+zfKnMwBmMbL/xKTk2qIimqbVeXixoRZRnblMpK3oGLZoGzjBv
-         TFYcj26i3oHvC7HzDhwUdKwpAEiLj71n9HLDngOTlSiCOlJzZVKwXXTPe/JeXR4xv/sV
-         OghpSNOudaDfFCTVy14PjpJAsSp16oxi2stMZBr0mu3csUplpED43t8gg5L9WlUrN/0I
-         rURRK1KCVYth/08mpl3KhBfKwFGpxoAIN9UM9NiZAGucoI6/LvIp/6LHfK59nfaQ7BuC
-         UUYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729165197; x=1729769997;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6lmoNfsxcZwf01tMx6JvZqR05+RGQ7eUoqDoQfJoNOQ=;
-        b=t5YztX/mFjfxS8xkI7g3AlmrllNBuGfFBCfoZJQWUeCA2sDoZz1bPa9MpGU7nVnPi4
-         mN/DhV/qibSUCA8em3R4CYgW/rWOdLEEwQlr4Mcbd8lzQzyAUwjT6FgeG6d9wUbhdGrN
-         vpE9p2sQW2mQj/E/xESbS8uppygCPup0tby6KQ1/IstGebQRvLQmeMPPxTQpZ/wKlzIo
-         xItrSOb7qPDbD70Fp4ln6GD+Kgf3M9MjoJ8rBWOC+xzafFmyTZ0f5egqqzJW18DTHbk7
-         d4BFWPGLgJSfJMkCsZ1RGcDuq+o62Lry4VSPyOTRr9MQIUwZ/VWA9lBE+uf01+Z7YChq
-         Z7iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULBrLamKg84dcwE2zT+kpyak0vj9wymK4Mfyqq0K7Opc7KyiXIhx/pHi6wYPV4wnHB36CiiCoWTlSH@vger.kernel.org, AJvYcCVOUuXCwkY/myKYGxdJFEBa2QNt//PreVaFYld6sBJu1Q6TqQUnzmIltJqxjhaDbF8/055FtkkzWh1LEstQsP/XOJE=@vger.kernel.org, AJvYcCX4MXI4Yg/2RIBo2OQoWBQFT9CkaAz/u4GrN6NpeJvFaTI3F/crEdQvdsI3KiFeaCMkqItOyMj9W7L0Cw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwguJM89eH+gTyv3fexZzmiupcD/MvkctLuL2uJcP60WG7xsTD4
-	iaZdXuhGgrJhG+rlNljAUWJ3ghHSHQnWVbpP/kRoWb2rl3SC5Jix
-X-Google-Smtp-Source: AGHT+IH7+WIcxBN1TpQTtJy6P8oj3ID4uCpRAEVwBcvXJXugvSNuZGVbMUJcytLMV0YU4x2E4q9J+g==
-X-Received: by 2002:adf:f803:0:b0:37d:43f1:57fc with SMTP id ffacd0b85a97d-37d86d84f81mr4052151f8f.58.1729165196951;
-        Thu, 17 Oct 2024 04:39:56 -0700 (PDT)
-Received: from prasmi.Home ([2a02:c7c:e309:f400:f6f5:4306:392d:908d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf82b1sm7060399f8f.72.2024.10.17.04.39.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 04:39:56 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 7/7] pinctrl: renesas: pinctrl-rzg2l: Override irq_request/release_resources
-Date: Thu, 17 Oct 2024 12:39:42 +0100
-Message-ID: <20241017113942.139712-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241017113942.139712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241017113942.139712-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1729165277; c=relaxed/simple;
+	bh=JUTOHC7oZchUoyGlIeIQfiHyFCXZ7MguzflTQzHOcGA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XgjFiAGR0KDbNLM3OehUBTEJtI9Jd3RIOrc5TsMsCAPyfdpuSEB47CGe5lqAly1+4PH8nlsTx4nvbPvWGrNhIRPOcTpcn8lCUt3dKhGjT6lD2UAcEKmu/QDRZBnB/p2KqrAJZKQ8MCp/GaIhph0MzkCXM/JYuvagGbIt3nceCAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mbnd9BNE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H3GKjZ007525;
+	Thu, 17 Oct 2024 11:41:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=h8IstpSGptQbHBaHeZzGDDYS4d6etOnMr9ZjcDunz88=; b=Mb
+	nd9BNEEp/d/sbMXgZ9PCIl6s7WMmrMHFKJibHoNEZ925oYVevUVMzrdtzRigh42q
+	DRjn3q40ZTjIHJWys5CkKwx3MFrOGiHPfwgLn/YdjhUzoquv9ffCbS/enNh1LjJJ
+	UqTkI85WXtIa9jZhzw7iCLLEV2xVwwW45vnV2yQ0zBQ/NXzhDDEseJMAOzSQvhCK
+	DbJ6eFSR3VS2JeM9VVlhb024GfG8ZpYCclZeqjX7BytAkZ+vUXrQ4XJfkMTcLRcs
+	LZqgdFHSQMLjHWWOS3Bnrbxj0Zhcw5z2/9V0S5gbWkSKKpOoRoYggM99huYK9Vaz
+	KVZplpi2sONxKq6+V3HA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42athc18vt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 11:41:09 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49HBf8ki006189
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 11:41:08 GMT
+Received: from hu-uaggarwa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 17 Oct 2024 04:41:04 -0700
+From: Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_ppratap@quicinc.com>,
+        <quic_jackp@quicinc.com>,
+        Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
+Subject: [PATCH v2 0/2] Add support to ignore single SE0 glitches
+Date: Thu, 17 Oct 2024 17:10:53 +0530
+Message-ID: <20241017114055.13971-1-quic_uaggarwa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 69v6MbNwFKRVf2rwcvJLPc5iR7TV7cma
+X-Proofpoint-ORIG-GUID: 69v6MbNwFKRVf2rwcvJLPc5iR7TV7cma
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxscore=0 clxscore=1011 malwarescore=0 mlxlogscore=893 impostorscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170079
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Currently in few of Qualcomm chips USB (Low speed) mouse not
+detected showing following errors:
 
-Override the default `irq_request_resources` and `irq_release_resources`
-functions with `rzg2l_gpio_irq_request_resources` and
-`rzg2l_gpio_irq_release_resources` in the RZ/G2L pinctrl driver.
+  usb 1-1: Device not responding to setup address.
+  usb 1-1: device not accepting address 2, error -71
+  usb 1-1: new low-speed USB device number 3 using xhci-hcd
+  usb 1-1: Device not responding to setup address.
+  usb 1-1: Device not responding to setup address.
+  usb 1-1: device not accepting address 3, error -71
+  usb usb1-port1: attempt power cycle
 
-The `rzg2l_gpio_irq_request_resources()` function now ensures that the pin
-is requested by the pinctrl core before locking the GPIO as an IRQ. This
-ensures that the `pinmux-pins` file in sysfs correctly reports the pin as
-claimed. Additionally, the `rzg2l_gpio_direction_input()` call is moved
-into the `rzg2l_gpio_irq_request_resources()` callback, as it makes sense
-to configure the GPIO pin as an input after it has been requested.
+Based on the Logic analyzer waveforms, It has been identified that there
+is skew of about 8nS b/w DP & DM linestate signals (o/p of PHY & i/p to
+controller) at the UTMI interface, Due to this controller is seeing SE0
+glitch condition, this is causing controller to pre-maturely assume that
+PHY has sent all the data & is initiating next packet much early, though
+in reality PHY is still busy sending previous packets.
 
-The `rzg2l_gpio_irq_release_resources()` function unlocks the GPIO as an
-IRQ and then frees the GPIO, ensuring proper cleanup when the IRQ is no
-longer needed. This guarantees that the `pinmux-pins` file in sysfs
-correctly reports the pin as unclaimed.
+Enabling the GUCTL1.FILTER_SE0_FSLS_EOP bit29 allows the controller to
+ignore single SE0 glitches on the linestate during transmission. Only two
+or more SE0 signals are recognized as a valid EOP.
 
-Also add a `pin_requested()` check in `rzg2l_gpio_free()` to return early
-if the pin is already released.
+When this feature is activated, SE0 signals on the linestate are validated
+over two consecutive UTMI/ULPI clock edges for EOP detection.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 41 +++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 6 deletions(-)
+Device mode (FS): If GUCTL1.FILTER_SE0_FSLS_EOP is set, then for device LPM
+handshake, the controller ignores single SE0 glitch on the linestate during
+transmit. Only two or more SE0 is considered as a valid EOP on FS port.
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index b9a8bf43a92a..47b3e296d094 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -1772,8 +1772,12 @@ static int rzg2l_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 
- static void rzg2l_gpio_free(struct gpio_chip *chip, unsigned int offset)
- {
-+	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(chip);
- 	unsigned int virq;
- 
-+	if (!pin_requested(pctrl->pctl, offset))
-+		return;
-+
- 	virq = irq_find_mapping(chip->irq.domain, offset);
- 	if (virq)
- 		irq_dispose_mapping(virq);
-@@ -2357,6 +2361,35 @@ static int rzg2l_gpio_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
- }
- 
-+static int rzg2l_gpio_irq_request_resources(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
-+	unsigned int child = irqd_to_hwirq(d);
-+	int ret;
-+
-+	if (!pin_requested(pctrl->pctl, child)) {
-+		ret = rzg2l_gpio_request(gc, child);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = rzg2l_gpio_direction_input(gc, child);
-+	if (ret)
-+		return ret;
-+
-+	return gpiochip_irq_reqres(d);
-+}
-+
-+static void rzg2l_gpio_irq_release_resources(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	unsigned int child = irqd_to_hwirq(d);
-+
-+	gpiochip_irq_relres(d);
-+	rzg2l_gpio_free(gc, child);
-+}
-+
- static const struct irq_chip rzg2l_gpio_irqchip = {
- 	.name = "rzg2l-gpio",
- 	.irq_disable = rzg2l_gpio_irq_disable,
-@@ -2368,8 +2401,9 @@ static const struct irq_chip rzg2l_gpio_irqchip = {
- 	.irq_print_chip = rzg2l_gpio_irq_print_chip,
- 	.irq_set_affinity = irq_chip_set_affinity_parent,
- 	.irq_set_wake = rzg2l_gpio_irq_set_wake,
-+	.irq_request_resources = rzg2l_gpio_irq_request_resources,
-+	.irq_release_resources = rzg2l_gpio_irq_release_resources,
- 	.flags = IRQCHIP_IMMUTABLE,
--	GPIOCHIP_IRQ_RESOURCE_HELPERS,
- };
- 
- static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
-@@ -2381,16 +2415,11 @@ static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
- 	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	int gpioint, irq;
--	int ret;
- 
- 	gpioint = rzg2l_gpio_get_gpioint(child, pctrl);
- 	if (gpioint < 0)
- 		return gpioint;
- 
--	ret = rzg2l_gpio_direction_input(gc, child);
--	if (ret)
--		return ret;
--
- 	spin_lock_irqsave(&pctrl->bitmap_lock, flags);
- 	irq = bitmap_find_free_region(pctrl->tint_slot, RZG2L_TINT_MAX_INTERRUPT, get_order(1));
- 	spin_unlock_irqrestore(&pctrl->bitmap_lock, flags);
+Host mode (FS/LS): If GUCTL1.FILTER_SE0_FSLS_EOP is set, then the controller
+ignores single SE0 glitch on the linestate during transmit.
+
+DT patch will be sent separately.
+
+Changes in v2:
+Included bindings update for the quirk.
+Updated commit text for core patch.
+
+Link to v1:
+https://lore.kernel.org/all/20240823055642.27638-1-quic_uaggarwa@quicinc.com/
+
+Uttkarsh Aggarwal (2):
+  dt-bindings: usb: snps,dwc3: Add snps,filter-se0-fsls-eop quirk
+  usb: dwc3: core: Add support to ignore single SE0 glitches
+
+ .../devicetree/bindings/usb/snps,dwc3.yaml          |  6 ++++++
+ drivers/usb/dwc3/core.c                             | 13 +++++++++++++
+ drivers/usb/dwc3/core.h                             |  4 ++++
+ 3 files changed, 23 insertions(+)
+
 -- 
-2.43.0
+2.17.1
 
 
