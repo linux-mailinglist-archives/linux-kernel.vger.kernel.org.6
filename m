@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-370139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E21E9A2859
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:17:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAD49A285D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4026B1C22B8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:17:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96E661F2293A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025D41DF738;
-	Thu, 17 Oct 2024 16:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E65C1DF26E;
+	Thu, 17 Oct 2024 16:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRBXnamz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PR3eE2t6"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F31C1AA5;
-	Thu, 17 Oct 2024 16:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E00C13B5B6
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729181797; cv=none; b=FST2IDHlRVQw4lz3x2Rf148yKQMraPOEFSgljJAbSbSzp99SaVTS0Vdxbv5Vj6YskuOuShTV55gZfUWpETHkWcYm2wDpLkgcIzrSGd+qAv6uArnwS3ZK7xrS6LD+8NtTzOTWfqGNJIaNpmThRv2wO3RDIAPa0tgV+7wLO5b3X3s=
+	t=1729181846; cv=none; b=UjKcqxkwwiYF2UE27towia5Jx5w9gJthw4eucqX6Ocsgby32nidQ/tXozANvonNqmDnQ3yAS5jhGjfuPintPxKp4ys8WsjJfdL4VTI19KAbZxmdnYX7rwbZCncU1Y9xIAVikvcmch23VEIdd8JMRcTgVAVgR+SgmHzvpGk2fkH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729181797; c=relaxed/simple;
-	bh=hfI6iabp4PPWvqyvmjXc0F77R4JdfswrHfMqi0ZFT4I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ELs30T+i6WEpJorS6Mekn58o7qyBbHu4TOasPT7KOJGTXjL6eOH1D73LqsP4dzDyermN1dohQODRbGog7wVmpRA4zXB+rnQYJDUMe9yqZBHIl0rose2KRSyigFKEUvdxdetUmCyKSy4QmXkW6b84+9458fwlp0fwn8sopkB7hP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRBXnamz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DA1C4CEC3;
-	Thu, 17 Oct 2024 16:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729181796;
-	bh=hfI6iabp4PPWvqyvmjXc0F77R4JdfswrHfMqi0ZFT4I=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=qRBXnamznV90WcZD8OYvzNujY++b0mmEa3C9GotNIdOfGhLfkY4EKmbWuPd87g6Lk
-	 iAEJwTZ2R+ror6LuBaBvf3leOBXwKH706FsJ+kJz2GOhjY5yBzaf3Y3LbjZ10YS/c8
-	 EXBydRZqjBnTYvFsIGkFsgHO74iqxcxDp6JOTdEq8/hday1otzr0EduWstW3qlE57u
-	 E4+DPf3X5+voaqQUw7DanTn4gAa3tnpABW2onjyD+5ShJkaYsOktYUXKLWj6KfvnOG
-	 rvLz2gmZRrWSYqv4XkFUDdx2LykVXTl68SrsRpyVryTLB+2wjllovlZj3yqhSmsyb3
-	 Xx38eeNU4M1HA==
-Message-ID: <cc7e23de36edb50999cfd9c8dd6acc9d5962a479.camel@kernel.org>
-Subject: Re: [RFC PATCH v3 02/13] certs: Introduce ability to link to a
- system key
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Snowberg <eric.snowberg@oracle.com>, 
-	linux-security-module@vger.kernel.org
-Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
- davem@davemloft.net, ardb@kernel.org, paul@paul-moore.com,
- jmorris@namei.org,  serge@hallyn.com, zohar@linux.ibm.com,
- roberto.sassu@huawei.com,  dmitry.kasatkin@gmail.com, mic@digikod.net,
- casey@schaufler-ca.com,  stefanb@linux.ibm.com, ebiggers@kernel.org,
- rdunlap@infradead.org,  linux-kernel@vger.kernel.org,
- keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
- linux-efi@vger.kernel.org,  linux-integrity@vger.kernel.org
-Date: Thu, 17 Oct 2024 19:16:32 +0300
-In-Reply-To: <20241017155516.2582369-3-eric.snowberg@oracle.com>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <20241017155516.2582369-3-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729181846; c=relaxed/simple;
+	bh=REpSbRLHRT+bYqXXqi34yOmCcGBN1SLrOxSF29WYjxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ouce/Ee5su/sHlPxqAJFJJv9A3e+BMGxuN5I3yCYGhpiJBgJPtsq4/8lmHL1B8YaeAcwmetw0eykvIU9N79AFI9TtCpovQCYN5IzZ6PMcM0YYSv8iE7Zlt4leubA9E4i7DUidvt55QOrqNCBuQ56HJnn87FrvCBCihbVghvdiDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PR3eE2t6; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-718062c1989so40512a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729181840; x=1729786640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0JW21AChuGIHXm/a0oYaXopY0qylbrYU6FFGsXgb1P4=;
+        b=PR3eE2t6IXV2MrJvQxNrF9rNWeIy3xX7vW8k05PbO806DDKzepz0koC7YzOCeDz/B6
+         BeW7gBOPtrnLty5clWaWTW0hAtDNCiSJ/8N4uEMiMlHcpy1IISpk4XUO7KI9Vb3vk4oG
+         QduM9PYdrInH3SHvj3oJwKOzKn5Of1ACw+QHE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729181840; x=1729786640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0JW21AChuGIHXm/a0oYaXopY0qylbrYU6FFGsXgb1P4=;
+        b=HbdUveSa/zN86sCByc7BDRoJIPtcnLWXmm9+pxOFlrFIgQ4b2+cKM40MY/6Oyxax7P
+         RQELnKW1+3o0VooqoCuRHmULZ8DKHZd+sXx2ZYQ4d1MPrkOFxpnccj9s2LpI4CpMhsBX
+         RTGTbiV5MgTaW/kYcfH+NaFV6gsJ5xsRX5a24L2dJbKxAlt3CtbsPb1zMPn6pRsOk7oZ
+         WwU5zN3wytRYkzpwdx7essp3p1LkbD4n/JI9ebqkHaZ9sa6wq7uFBuUk8MnvGKGaRHeg
+         RjUuyzvyzn19NeXK34+CrTp3hQ/gJ24QYvvswabbwgrVNnQ9j3LCawd0jTsW/aEY3iPp
+         vu6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Wsi53dMZPpAxSYCmHgo5GZuLNESptT0KrD+XX2LDE63PRLD4jlGS7lAfXWxlBu6w9mdVVaThFgZghFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ggvAW5NswCvggVENnmFy6oM7oxusVYiHxPlmYsiXTShFUyYI
+	C/ixiw/WIvLXMqlZ6c6BgOoFb3M9HUAx9T+WUtaB6XLS2uCA7pVMQOjPGIjpVhNtv2OyxOdF7Nw
+	3lDL/zJIV1AkWp6fxcLYtTSBfxwnlC4oxIefo
+X-Google-Smtp-Source: AGHT+IHkJFKWi2HwImyhXcWCHDzPIt0NtMmH7KPRIsgXi23zIJJa5MFWOze9uSBgvefBr1YXz4/XAw/TpbeM1TFd/00=
+X-Received: by 2002:a05:6870:5591:b0:285:82b3:6313 with SMTP id
+ 586e51a60fabf-288f78c3509mr1471296fac.6.1729181840481; Thu, 17 Oct 2024
+ 09:17:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241017022627.3112811-1-jeffxu@chromium.org> <2024101722-diligent-baritone-b211@gregkh>
+In-Reply-To: <2024101722-diligent-baritone-b211@gregkh>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 17 Oct 2024 09:17:08 -0700
+Message-ID: <CABi2SkXhHxW9kO2QeM81XCAvqFbQPfra9ApGDi9nuxPuJP5jYw@mail.gmail.com>
+Subject: Re: [PATCH] munmap sealed memory cause memory to split (bug)
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, 
+	torvalds@linux-foundation.org, usama.anjum@collabora.com, corbet@lwn.net, 
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, jeffxu@google.com, 
+	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com, 
+	sroettger@google.com, pedro.falcato@gmail.com, 
+	linux-hardening@vger.kernel.org, willy@infradead.org, deraadt@openbsd.org, 
+	surenb@google.com, merimus@google.com, rdunlap@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
-> Introduce system_key_link(), a new function to allow a keyring to
-> link
-> to a key contained within one of the system keyrings (builtin,
-> secondary,
-> or platform). Depending on how the kernel is built, if the machine
-> keyring is available, it will be checked as well, since it is linked
-> to
-> the secondary keyring. If the asymmetric key id matches a key within
-> one
-> of these system keyrings, the matching key is linked into the passed
-> in
-> keyring.
->=20
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> ---
-> =C2=A0certs/system_keyring.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
-30 ++++++++++++++++++++++++++++++
-> =C2=A0include/keys/system_keyring.h |=C2=A0 7 ++++++-
-> =C2=A02 files changed, 36 insertions(+), 1 deletion(-)
->=20
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index e344cee10d28..4abee7514442 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -20,6 +20,9 @@
-> =C2=A0static struct key *builtin_trusted_keys;
-> =C2=A0#ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-> =C2=A0static struct key *secondary_trusted_keys;
+On Wed, Oct 16, 2024 at 11:04=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> On Thu, Oct 17, 2024 at 02:26:27AM +0000, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@google.com>
+> >
+> > It appears there is a regression on the latest mm,
+> > when munmap sealed memory, it can cause unexpected VMA split.
+> > E.g. repro use this test.
+> > ---
+> >  tools/testing/selftests/mm/mseal_test.c | 76 +++++++++++++++++++++++++
+> >  1 file changed, 76 insertions(+)
+> >
+>
+> Hi,
+>
+> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+> a patch that has triggered this response.  He used to manually respond
+> to these common problems, but in order to save his sanity (he kept
+> writing the same thing over and over, yet to different people), I was
+> created.  Hopefully you will not take offence and will fix the problem
+> in your patch and resubmit it so that it can be accepted into the Linux
+> kernel tree.
+>
+> You are receiving this message because of the following common error(s)
+> as indicated below:
+>
+> - Your patch does not have a Signed-off-by: line.  Please read the
+>   kernel file, Documentation/process/submitting-patches.rst and resend
+>   it after adding that line.  Note, the line needs to be in the body of
+>   the email, before the patch, not at the bottom of the patch or in the
+>   email signature.
+>
+> - You did not write a descriptive Subject: for the patch, allowing Greg,
+>   and everyone else, to know what this patch is all about.  Please read
+>   the section entitled "The canonical patch format" in the kernel file,
+>   Documentation/process/submitting-patches.rst for what a proper
+>   Subject: line should look like.
+>
+> If you wish to discuss this problem further, or you have questions about
+> how to resolve this issue, please feel free to respond to this email and
+> Greg will reply once he has dug out from the pending patches received
+> from other developers.
+>
+Sorry, the title is wrong, it shouldn't start with PATCH, I was trying
+to send a test case to help debug this issue.
 
-/*
- * Explain system_trusted_keys (nothing too detailed, only the gist)
- */
 
-> +#define system_trusted_keys secondary_trusted_keys
-> +#else
-> +#define system_trusted_keys builtin_trusted_keys
-> =C2=A0#endif
-> =C2=A0#ifdef CONFIG_INTEGRITY_MACHINE_KEYRING
-> =C2=A0static struct key *machine_trusted_keys;
-
-We have enough these to make this quite convoluted so let's put some
-helpful reminders. I would forget this in no time ;-) So if it comes
-down to that, please put something because I have a goldfish memory.
-
-BR, Jarkko
+> thanks,
+>
+> greg k-h's patch email bot
 
