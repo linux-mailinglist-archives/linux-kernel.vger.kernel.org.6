@@ -1,87 +1,161 @@
-Return-Path: <linux-kernel+bounces-369960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150B69A24ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:24:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C2E9A24EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA50C1F22596
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BD391C21718
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0E51DE4CF;
-	Thu, 17 Oct 2024 14:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC911DE4C5;
+	Thu, 17 Oct 2024 14:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGUYqOti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9VbtxVo"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF66F199944;
-	Thu, 17 Oct 2024 14:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC051DE3AC;
+	Thu, 17 Oct 2024 14:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729175033; cv=none; b=SRLg7nxbDTCeOWikq4XcbdUqm9KiR/AJ5ny/Edavfh7D+FSQMFKvpqUDApimyXk5VpUPdIBCcpu3NzCzbRPHd8ajS70WZPlpr8uoQ5onhUYqFDIbJ1rxMR9bg7l7zgrShBNrxmYjJPbYRQ1gjayV5TRKe1c/102k3JKB7LQR/70=
+	t=1729175118; cv=none; b=B34IkA76MThdDEBIW57iZTJSgQ1Rz71ib+btbDfof2mDb0Y3vFjf2ulQReN0IqIlbajXbEiYvb663aP0K2M92dESjYO6ltxwfvHEcUhM+PdA2EKcAhdLXXoBgVs37BLtYjqeIzYq8zb++VXNnGldmkznoClk5zhF+AlJEEziunU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729175033; c=relaxed/simple;
-	bh=giWuu8NoBaeV5r0Bde297AKTxT1aCfiVktksXm/BDC4=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=RMZqgEPoNMQtGl8nhlwhDEV4t0iZJlkCx084hUJiv4zWlBXIxwUL34EVEFs88IdcD2+3ZAxaAMz1H4C3aneLXnAwtIS6Cqnkrgzrpo2Z7aM6iNhKeQ2NKOgvtB1Tg2XY8EndA8SyIwuDw9rfI16cTahc3e2PHaHdLM1JBsyHHns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGUYqOti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF3F0C4CEC3;
-	Thu, 17 Oct 2024 14:23:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729175033;
-	bh=giWuu8NoBaeV5r0Bde297AKTxT1aCfiVktksXm/BDC4=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=AGUYqOti/fTL4jGnq837awM54bgcIXns6WrZ53c6qvP6th6O3+xykPeKBkc8TZSAU
-	 KlIzTCeYrghH8w3SJbQLpKUWeCNBdk08LrZplXnZQlJC1HGkck8e0spO7HNSZhc/lN
-	 iHB8DP+UdXRUD6zRlUKy+VSHgs0PxhkFivZ+AbovUoD8WS/JoFIecuxNnoc8V30OuU
-	 p6h/fsG/XRAm/ijGoRVK13SBSGPjaTbtI/Y8ETNPnLG6B1ybhQy02WYGAj75x69xRu
-	 JLaltjuFkTKqH2iTZF/PjMDREEhxjEckLYiX99wL9tz6i1SVAUqSm8XkP741JIbKTb
-	 DLMw4PhfTJBmA==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729175118; c=relaxed/simple;
+	bh=COGNHAe7lodcFPyYT18oj6HIzA5I3YsAW3eM8hHWXTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vyrn0vI4hX4pjQEOqTOqC9sVXWec+R0T6e3n70RYnPR0uOLwfbehoC+FMsBqEyPk5oDLUlgn1WNrtmTStFDNK4DPs07EeCB8kWjvXNOnuQ+y7i0OFrFGGEkKc9EQHXtoaU+o94UI8v4+emitwsW2JHzN0OFqCMt09D+m20CTp0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9VbtxVo; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a3bb6a020dso3971475ab.2;
+        Thu, 17 Oct 2024 07:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729175112; x=1729779912; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KOtiT9HVH6rqSS6Gsqti/X1HA3JpMBABi60k7f393as=;
+        b=X9VbtxVodfM5lYQzCZ+YjgAtXDu4Fd+sKUBn94HS6CwxtbItXmoflfkpeWdPzdQOQs
+         JBMIksaC3bixhMZISMwMai9NPc/zQln/Gmq56+4ybu7Ssyuc3Mp7KucoGvLqrrzTW3T9
+         Kjw2KL0/yq9QTh4K3R841l191Z90kh8fswLJdchy9F34RfG1HA34klzLyVh8XvFqrCum
+         4IQlfyPvDCq11O09yjKVfQxYhOY7+pStat04yXgsWwGPdIiraPxq+/gcFhnYLmRVcfZ5
+         dwfPHCGxJ/O4YiL4IT2hx1Ybfxz0koZYGz9yUlegfBbqtXwBk02pxvKXRlQYEVjipWcM
+         yJFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729175112; x=1729779912;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KOtiT9HVH6rqSS6Gsqti/X1HA3JpMBABi60k7f393as=;
+        b=JuBAoTa24mw32aBP+NP15mlK+Ksd0z87pEIhKDulLPQl/p44Yiof+hcoDadYPsNsK1
+         PfvWUhmwoTCoL8L1z9Iq07ShBfFAM762mtnTXcxoraI493w/smCPcYjarp3ofqgCp5RO
+         nPUDpo3l3uxvyEt9qJq/HE70daR1b+aLchigspEJv+gIZYLuU7fcjl9hypjuYJfWKea9
+         dBNvGUGKhqGb1Z8Q1S0niSyIPzkg4Xzq0BXCgQ17Wwr3Era+YdX3o1YD2hPq0y++yqmw
+         8EyWmo1w6issu8dqUdP74Y6u0Y4YKqXfed/rijbvsHojgLLHqzVd6ur/mbja4bat8edm
+         5ePQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlxnUwVVM+ue8pZHWAhZq2mjfxfQCfz9s7AtDfgmfFKqOXNW4fiCO5KVyJoyb7oEMF44L+bnKrnm8e@vger.kernel.org, AJvYcCV2ISOk4tBBKRQ2Xwg/HHmlFmV6I7jDqD/+rx1maTX3sha7Zttc1y7rH3aBa5fspROM9Sspq0r0Y3Kl6Wmx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyssPe9b2Ig2I7ZkdK+u3YRBqjxH3+j8LWP2DnnhPNcgPJrNB/g
+	nX0tf3A/59adcAJQR7ZbPVC0HuGUM9WzZ3OYAhhjs55a5q3U0iIoRLLH0A==
+X-Google-Smtp-Source: AGHT+IFQy6XuSUqGxOu0tqgyRW0RqxHIjLS7p8ncuS58xfOJUQT76Tr1A+O/qS1tR1Mh+o22lsptgg==
+X-Received: by 2002:a05:6e02:1a0b:b0:3a3:b4dd:4db with SMTP id e9e14a558f8ab-3a3b5c73b7fmr243339385ab.0.1729175112313;
+        Thu, 17 Oct 2024 07:25:12 -0700 (PDT)
+Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6c10aesm5062982a12.21.2024.10.17.07.25.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 07:25:11 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:25:07 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v4 8/8] gpiolib: notify user-space about in-kernel line
+ state changes
+Message-ID: <20241017142507.GA247028@rigel>
+References: <20241017-gpio-notify-in-kernel-events-v4-0-64bc05f3be0c@linaro.org>
+ <20241017-gpio-notify-in-kernel-events-v4-8-64bc05f3be0c@linaro.org>
+ <20241017125349.GB221864@rigel>
+ <CAMRc=McjCinBEFNoHSTyFH7zU=JuyRfu1cfrOxkq=OjciKQkvQ@mail.gmail.com>
+ <20241017142053.GB242458@rigel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: brcm80211: BRCM_TRACING should depend on TRACING
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: 
- <81a29b15eaacc1ac1fb421bdace9ac0c3385f40f.1727179742.git.geert@linux-m68k.org>
-References: 
- <81a29b15eaacc1ac1fb421bdace9ac0c3385f40f.1727179742.git.geert@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
- "John W . Linville" <linville@tuxdriver.com>,
- Seth Forshee <sforshee@kernel.org>,
- Pieter-Paul Giesberts <pieterpg@broadcom.com>,
- linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172917502886.799221.15184578640211936877.kvalo@kernel.org>
-Date: Thu, 17 Oct 2024 14:23:50 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241017142053.GB242458@rigel>
 
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Thu, Oct 17, 2024 at 10:20:53PM +0800, Kent Gibson wrote:
+> On Thu, Oct 17, 2024 at 04:14:24PM +0200, Bartosz Golaszewski wrote:
+> > On Thu, Oct 17, 2024 at 2:53 PM Kent Gibson <warthog618@gmail.com> wrote:
+> > >
+> > > On Thu, Oct 17, 2024 at 10:14:16AM +0200, Bartosz Golaszewski wrote:
+> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > >
+> > > > @@ -1447,8 +1450,6 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > > >               }
+> > > >
+> > > >               WRITE_ONCE(line->edflags, edflags);
+> > > > -
+> > > > -             gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > > >       }
+> > > >       return 0;
+> > > >  }
+> > >
+> > > I still get errors from this when reconfiguring lines with debounce.
+> > > You should leave this notify in place and use _nonotify when setting the
+> > > direction.
+> > > i.e.
+> > >
+> > > @@ -1436,11 +1432,11 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > >                         int val = gpio_v2_line_config_output_value(&lc, i);
+> > >
+> > >                         edge_detector_stop(line);
+> > > -                       ret = gpiod_direction_output(desc, val);
+> > > +                       ret = gpiod_direction_output_nonotify(desc, val);
+> > >                         if (ret)
+> > >                                 return ret;
+> > >                 } else {
+> > > -                       ret = gpiod_direction_input(desc);
+> > > +                       ret = gpiod_direction_input_nonotify(desc);
+> > >                         if (ret)
+> > >                                 return ret;
+> > >
+> > > @@ -1450,6 +1446,8 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > >                 }
+> > >
+> > >                 WRITE_ONCE(line->edflags, edflags);
+> > > +
+> > > +               gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> > >         }
+> > >         return 0;
+> > >  }
+> > >
+> > > Given that, all my current tests are passing.
+> > >
+> >
+> > That looks good - after all we no longer notify from any place in
+> > gpiolib-cdev.c anymore - but I'd like to learn what's wrong exactly.
+> > Are you getting more events with debounce? Are you not getting any?
+> >
+>
+> In linereq_set_config(), the notify comes from the gpiod_direction_input() -
+> before the edge_detector_setup() is called (not visible in the patch) and that
+> sets the debounce value in the desc.
 
-> When tracing is disabled, there is no point in asking the user about
-> enabling Broadcom wireless device tracing.
-> 
-> Fixes: f5c4f10852d42012 ("brcm80211: Allow trace support to be enabled separately from debug")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+That should be edge_detector_update().
 
-Patch applied to wireless.git, thanks.
-
-b73b2069528f wifi: brcm80211: BRCM_TRACING should depend on TRACING
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/81a29b15eaacc1ac1fb421bdace9ac0c3385f40f.1727179742.git.geert@linux-m68k.org/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+> So you get an event without the debounce set, or with a stale value.
+> Keeping the gpiod_line_state_notify() and using the _nonotify()
+> functions means the notify comes after the debounce has been set.
+>
+> Cheers,
+> Kent.
+>
 
