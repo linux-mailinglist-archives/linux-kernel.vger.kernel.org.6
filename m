@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-369905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8799A244A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:52:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7A59A2460
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1501C222BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:52:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 926B0287F80
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E631DE3AE;
-	Thu, 17 Oct 2024 13:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7AC1DE3A6;
+	Thu, 17 Oct 2024 13:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYY+eFBu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyXPz12O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5743C147;
-	Thu, 17 Oct 2024 13:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F901DE4C2;
+	Thu, 17 Oct 2024 13:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729173157; cv=none; b=Od0slvHclXV/q4joHy5w1CAPrBPJqBYtZYjgsE5Q3sHVcBn0MANqdmbqMfnkjzGG+uk1QSUwysq8FwIQq5ZYsag23Vb6Zxc2q1bbpTVMF9yNlm2vXZqAuw4APUBE626HKv+4PODn+/r0pNDGTnv6+EuT1WeuiJJX+TdchDtyESY=
+	t=1729173291; cv=none; b=El+aZdhwNOHpF2bl9snop/40k751f1XEUbiPrbr3sIWODm9pgkiNSW70PMRaI8927rwKNWYYQ23Vf7O9+85TJ9UDh3yN1sH6/cPzi1iLXdiYFUWoj3hVBnTjXdIk1w0GJMxZVgykC7ojSPXxxxcXZb3JMdanHghqQPA6XJNmX2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729173157; c=relaxed/simple;
-	bh=Rzcol+zyCGVlvHsBgpSwKn04w8oJMo/344Wfw4R5Vjg=;
+	s=arc-20240116; t=1729173291; c=relaxed/simple;
+	bh=NGi2A8ULkjuZ6zgbxNmU56QYzHdzG396TXsDqS0rEOM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDWdVwjEKf1QxVNWqXXNgVyKD5Vj7kJXfUnKFIJTOckKEplD56hUrlNNVPxupzhnwz5lNILi1gKz7m3yHYGrYYtDqBN/MtoYMUU3D0v3qgMN3qpxNSVBSFrlhu47RLq1RAE3zREDWcSCFPXpHm4kuchUOpJ2YEk9Z8bC3rUgUU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYY+eFBu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CAE5C4CEC3;
-	Thu, 17 Oct 2024 13:52:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rbD+sJhwUGK19pGfXgW2GCb0OSQbgz3JTLW7Lb8B2Uo0FYJIQw2S+dQqqcT477qAbNa1Ytaj5vYOYb1xztLkA1JqcKymMqjwpExqOjDXhp1IQ+C26+XFKuq8U7pKcE7fZVPKjZRMfe3Uk5BIGhbqGSC9ARAybItNSSD61ueaxe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyXPz12O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22DC7C4CEC3;
+	Thu, 17 Oct 2024 13:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729173157;
-	bh=Rzcol+zyCGVlvHsBgpSwKn04w8oJMo/344Wfw4R5Vjg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=eYY+eFBuzoLsOQaqKw2kQNIxtJLYkTilOyUli0IIbIfdxTYwt4k3m5VhMQImrsA38
-	 Ycnk5dnGZhd974kMeJESTNmt3t7eWmeD2aj63JrEQCLvQ5SFDm7k5BIm+54OQqeYHz
-	 A4P+AvJDQ2JW7EkTGwzLnoqE0VdldhkEfR3gUbUwxlH4cANlhHP6v07niRq/Hy8/cQ
-	 MYxAuvEknNtuXVf4YkWogYAWkY+0Mew0cLz7lGYmXor/A02o//DrqI0CORMMoWA6XH
-	 TJ71/YW7goqhQGKqZ6vv4M36UpkIDIf0b+1Z8iwGpioRyLYjopO7T/MY9LoUe6XRvA
-	 WXQAFCbFhkslg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id DE4AECE08E8; Thu, 17 Oct 2024 06:52:36 -0700 (PDT)
-Date: Thu, 17 Oct 2024 06:52:36 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vineet Gupta <vgupta@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the paulmck tree
-Message-ID: <74a77d99-808d-4265-9456-2c3d0e67d465@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241017182326.12d8a854@canb.auug.org.au>
+	s=k20201202; t=1729173291;
+	bh=NGi2A8ULkjuZ6zgbxNmU56QYzHdzG396TXsDqS0rEOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SyXPz12OU9VQIuhJdzyo3o6ysFRCK68WcHY1Qx17vCnMn0R6NtnCTN1UF/4zXnKvB
+	 wrZ5HTWh3kB6F2S3QUS+iEAyQCzt7AoB72UT3+zocArUhOTGLH9Ik7voyxpW697v3m
+	 MQJfBglXVXnax9HLtZbUxL/usERXCUJyoXXI0UaAehcQ6k1MHmczf7OVrsYMx+bB56
+	 Ogqy/3nJ9orJJwPLMO28adKgcbZ6mUwRrekz0oXvWNUmtFF47mBmm0sC3X9BEmdsLy
+	 jR5fl4EEZK5tJ49l2p7vJDdPBdlkXXH9cSe/dp86IHXCtf0/sBewveelIFs+oXTOuU
+	 xOvvlB4QAYbOA==
+Date: Thu, 17 Oct 2024 14:54:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: Wang Hai <wanghai38@huawei.com>
+Cc: justin.chen@broadcom.com, florian.fainelli@broadcom.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, zhangxiaoxu5@huawei.com,
+	bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net] net: bcmasp: fix potential memory leak in
+ bcmasp_xmit()
+Message-ID: <20241017135417.GM1697@kernel.org>
+References: <20241015143424.71543-1-wanghai38@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,23 +60,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017182326.12d8a854@canb.auug.org.au>
+In-Reply-To: <20241015143424.71543-1-wanghai38@huawei.com>
 
-On Thu, Oct 17, 2024 at 06:23:26PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Tue, Oct 15, 2024 at 10:34:24PM +0800, Wang Hai wrote:
+> The bcmasp_xmit() returns NETDEV_TX_OK without freeing skb
+> in case of mapping fails, add dev_consume_skb_any() to fix it.
 > 
-> The following commit is also in the arc-current tree as a different commit
-> (but the same patch):
-> 
->   8b5e6986360f ("ARC: Use __force to suppress per-CPU cmpxchg complaints")
-> 
-> This is commit
-> 
->   bb5d272ed94d ("ARC: build: Use __force to suppress per-CPU cmpxchg warnings")
-> 
-> in the arc-current tree.
+> Fixes: 490cb412007d ("net: bcmasp: Add support for ASP2.0 Ethernet controller")
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
 
-Excellent news, thank you!  I will remove mine from -rcu.
+There seems to be some confusion over in the thread for v1 of this patchset.
+Perhaps relating to several similar patches being in-flight at the same
+time.
 
-							Thanx, Paul
+1. Changes were requested by Florian
+2. Jakub confirmed this concern
+3. Florian Acked v1 patch
+4. The bot sent a notificaiton that v1 had been applied
+
+But v1 is not in net-next.
+And I assume that 3 was intended for v2.
+
+From my point of view v2 addresses the concerns raised by Florian wrt v1.
+And, moreover, I agree this fix is correct.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+v2 is marked as Changes Requested in patchwork.
+But I suspect that is due to confusion around v1 as summarised above.
+So I am (hopefully) moving it back to Under Review.
+
+-- 
+pw-bot: under-review
+
+...
 
