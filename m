@@ -1,88 +1,82 @@
-Return-Path: <linux-kernel+bounces-370235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2799A29A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:53:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138749A2991
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B33D1C2290D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:53:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C234428099B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FD61E0E0A;
-	Thu, 17 Oct 2024 16:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852B41DF74F;
+	Thu, 17 Oct 2024 16:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIsCIWEv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gs6wF29A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C1E1DF985;
-	Thu, 17 Oct 2024 16:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39AE1DF744;
+	Thu, 17 Oct 2024 16:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183867; cv=none; b=dsj+aUT0PIuY4kKtMzc1fWHNjcTs9wYB3gM5cyNE/+t+38OqrxPYh0Sn+VgMGvD2oUYxV+kbCFwmkrpT/RjKmk1CCwXVV9saNpa3Me4p3xss0diB0zb4JHTVfFYlocqcLqq8TOLvhNohH3zRkthgMzzg5f5TJ914y/YHfapb3tE=
+	t=1729183849; cv=none; b=IITRZY4fExentd9/p6B4HDSL5T1crWz6rVOIWkIniO6PP1yb7N1Lj3m9fTTEqEJyuiuUJKYAamdA/XQjx1RmhlvuEIAOGOh/8qQSZR14kclzApHunp8+HRSv9MStqsu2LFBxMng0X340N/5QR4/33us34PAB58lvTDzKONttvtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183867; c=relaxed/simple;
-	bh=qWttzDemKi/gYPJZ/lRMbh7Bi4m3BbF9VbCZIpdWK8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ndp8tWqAknIVXFXZn8gFyiksRQAGxuanK2d/f6i13i4RZ7PrsdbL2d6CFNMCsPmlch6bPtJkm/3PFXrtHg6SmHCKktfgZVDSK9KbiBco2aaewoRMM9EyBWp7w+WDfka8v+Y1dM9hmJOoqOA3NlO0Vv32dlA0Ht2KT3m+6Mvrvvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIsCIWEv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287F3C4CECE;
-	Thu, 17 Oct 2024 16:51:05 +0000 (UTC)
+	s=arc-20240116; t=1729183849; c=relaxed/simple;
+	bh=b0ty3X291n2qYnFhJOJy3qwDfWwIPZtePa+YTcMG2d8=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=u4r3XnbF7eODAMAQoJZwx+ZShG127ajhR00ctjgvJslM5yGH75Dgq3hYrSevWAASBZcLWtmMbqtlS3owCsaHaFnv2yCMMoq2kS63FZcL+/mFZuq/xOgJ7K5rWdoYRucqtpezWhZdS1ElHyRycNmGKmGwD+1kswyN1VVnLQy2txg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gs6wF29A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C20C4CEC3;
+	Thu, 17 Oct 2024 16:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729183867;
-	bh=qWttzDemKi/gYPJZ/lRMbh7Bi4m3BbF9VbCZIpdWK8A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KIsCIWEvkznDlw5q5sG62VX0pnuqPxncDE+0xrbEQ22SAc+DdQp/m9KysEfAzMGvE
-	 uq/H+HAIRs29EHnwZtffWCz8RsNLOkbgVqiNEGV79xVC43GXrkdzluhy+KPkDU3iNY
-	 bHp2uC/N0BhK7IGPJqBkpLVmYBDtlTcbAbpdiN2yPv75hay+ap0HeHXG6v1RlQixEH
-	 pY2B4Sz9pi74MSIThIOIUIXUaaK1eFErtGkh+F/Yb9GGk7vUgZkstFR8I1QBPJphMw
-	 q/t2h07bx5J94OvPjqIcIGO2PfHA6nUrJh2TZpy/bWJJDFINbCsYrlLZujBFIzlEc1
-	 qbqtxRkatBlNA==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 10/10] drivers/clocksource/timer-tegra: Remove clockevents shutdown call on offlining
-Date: Thu, 17 Oct 2024 18:50:41 +0200
-Message-ID: <20241017165041.6954-11-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241017165041.6954-1-frederic@kernel.org>
-References: <20241017165041.6954-1-frederic@kernel.org>
+	s=k20201202; t=1729183848;
+	bh=b0ty3X291n2qYnFhJOJy3qwDfWwIPZtePa+YTcMG2d8=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=Gs6wF29AUiGlzWagB/JawbaoPM3W9fSlJcoRPPLhCgBB/0cjoeaU8TxbGdSbE1WHb
+	 5kHhnII+ELuK4sy4qNa8oTTXPKKBlMuvG51Lkjlw7ECdyoKvd/719dZNpNLg/dIuLy
+	 OZlim2nMqq0leZOUCj/ltIV/zDEIgR4M8NcEBjG7JertujlOWu5lnVnCgNICaa0OSY
+	 zUH4CSWZeyh/Q22lffLz82aaIW82EMpJgwWOLNVQUu4KrfD8KdqJjJ+POzrWTLyC7e
+	 5T5DIYFVGvVpBPHleWGf4AQMAj3IV1PeeTwjEUDG61tHRagvlZ+5Xv0kgo2ZnxOwYx
+	 kHjrx2HMoZzhw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: wifi: cw1200: Remove unused cw1200_queue_requeue_all()
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20241012203852.229151-1-linux@treblig.org>
+References: <20241012203852.229151-1-linux@treblig.org>
+To: linux@treblig.org
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172918384627.970100.15604001750511236100.kvalo@kernel.org>
+Date: Thu, 17 Oct 2024 16:50:47 +0000 (UTC)
 
-The clockevents core already detached and unregistered it at this stage.
+linux@treblig.org wrote:
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- drivers/clocksource/timer-tegra.c | 1 -
- 1 file changed, 1 deletion(-)
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> cw1200_queue_requeue_all() has been unused since it was added in 2013 by commit
+> a910e4a94f69 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index e9635c25eef4..35b6ce9deffa 100644
---- a/drivers/clocksource/timer-tegra.c
-+++ b/drivers/clocksource/timer-tegra.c
-@@ -158,7 +158,6 @@ static int tegra_timer_stop(unsigned int cpu)
- {
- 	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
- 
--	to->clkevt.set_state_shutdown(&to->clkevt);
- 	disable_irq_nosync(to->clkevt.irq);
- 
- 	return 0;
+Patch applied to wireless-next.git, thanks.
+
+b2d23b83d8d0 wifi: cw1200: Remove unused cw1200_queue_requeue_all()
+
 -- 
-2.46.0
+https://patchwork.kernel.org/project/linux-wireless/patch/20241012203852.229151-1-linux@treblig.org/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
 
