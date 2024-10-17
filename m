@@ -1,192 +1,296 @@
-Return-Path: <linux-kernel+bounces-369181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6E79A1A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:49:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 951A79A1A0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA90EB21FE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C6428456A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF52D1791EB;
-	Thu, 17 Oct 2024 04:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EF7179956;
+	Thu, 17 Oct 2024 04:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sIJYH8A4"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2060.outbound.protection.outlook.com [40.107.96.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ccweTbJ1"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1832679FD;
-	Thu, 17 Oct 2024 04:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729140503; cv=fail; b=I0S45LA5hpZYhnec95X4Sir4PEho3AXtPJER/+qrtZeKDjsEAtd6a/KZKbFk0+z3WqTk8QHPHBS9n9j+UUKv1jf3YATkYFTse9grXrDE+gv3seUPoSH6XuAtrEEgbbS7POa2fwkOJ6tNIomcNPs5xSqXdFzCtigls+30UocPFXE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729140503; c=relaxed/simple;
-	bh=f4HQc2NPju8uMrg9l2NVpyr+xT8HeWzsrAQmnEVDq5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HfKOkOae70IihWULC/wlEoqUx5zdYF/heDcyExIDHMdFivL41I8wrXlP2C19l7FZsMl/6xX/0JrF/TMtfo6FK/9wbgk+ZFYNeIYk9ZfPbt3+0Qu/cmMIZp5eXu5B0LLNC8h96uOdQQge1n0/sKrXDSGXT1hfIwyxhPkGIOHeaas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sIJYH8A4; arc=fail smtp.client-ip=40.107.96.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iDj2Eh74LGETQ3ZUeaOxyRAagM4aX8BpaayDVKl0+WHkkIKCEeHE3QYnozgkmPh7bSn+0zLF2fALD9FAlfq7Bl3jyn/khDib4cvaAEPv0fYqBJBgRWERTt49K5WwUSuHCE2U8X2SNTUV3/H5oQ6Lw4SbtxOvqqbdCU/wzFPh6DSNBTv1LQWOzyQhdGrKZ0bGwgqTo5uvX2l2FfjI5VJd/gfo0aDu6kumCZQrr4CShHs0eYmf2UcZH2auThg4mE3DhQHuIMLd1T7ixgJ1l6jY458hlNkP8/dMv29kGnADuAKzLlnzfKeFrs8IkmXgyQWel9ee6Gbre2nyu9wyRcGBFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=05YzKui+5sgORSNvhSS4GanAfcUobAGVJc0qk1Gnkss=;
- b=wmsGA/9qf4nfd6C8q5YUc5jGu7qmnkEd1vjeAQBDoS0eVbt/vPupMUYR/We7IDz2aYM+KnEO0LeKZyWvv1LibYhjaq1mi5sHWP8B6sIfg0lyGh78Fey+r/swB0m/I+cQKxKeFw2L7p8JFxO5Zc1DegMFLWIF7/jritgyt2JqQKJuKzoCtCH+1vYaYi3OrrvXpl44neJjicDaWzFYFQOLzSa+EGpJo+X5mFVKT4rJ3pICQ1WGs0lUolTgEW2rDKKyK7a1FkRE/p9R77ok0Ior/4e3f2UVk5vk6HCN1E7B9vWdp8QD4CqiSj07CsC+JaFSrHcVstA58CKvP8DxcEJJaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=05YzKui+5sgORSNvhSS4GanAfcUobAGVJc0qk1Gnkss=;
- b=sIJYH8A4/3qsnXaGO3iYyJhfWaDHh9P0sXFsDXvHUhPk6nqlFsFTDN0nOB/kDqPepLDAYL9sb+K+N/ClIspsxhbuAdua8bawEK/kIy9LZ7PUKzBUAwKOaYcoz8BPSGDpF4dtb51Ilvtcz0sdoYwL2g/ywkq3aYfYhwI95pYcEmI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- MN2PR12MB4438.namprd12.prod.outlook.com (2603:10b6:208:267::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Thu, 17 Oct
- 2024 04:48:16 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%5]) with mapi id 15.20.8069.019; Thu, 17 Oct 2024
- 04:48:16 +0000
-Date: Thu, 17 Oct 2024 10:18:07 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	x86@kernel.org, Perry Yuan <perry.yuan@amd.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v3 04/14] x86/msr-index: define AMD heterogeneous CPU
- related MSR
-Message-ID: <ZxCXB3GS0J5Q32V3@BLRRASHENOY1.amd.com>
-References: <20241015213645.1476-1-mario.limonciello@amd.com>
- <20241015213645.1476-5-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015213645.1476-5-mario.limonciello@amd.com>
-X-ClientProxiedBy: PN2PR01CA0074.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:23::19) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5A736AF5
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729140836; cv=none; b=OekDSa4Lhr9FC0HdKbmpPgYH3cc8gUWgwU4irFJ/h30gXG2seTc/VG4imsZ2rj3cG3YWJxPwotRbCdVnjWBNJvTsmHgG8CxISnIs7hILc4awSYytFeuWR+v/MXQX9da4jdXBKBmM1e66NGCJ9PycZv1m2F8kW0GjppvOQgGZtY0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729140836; c=relaxed/simple;
+	bh=97DNx9gdVThlibrCf7mEAf4DJ7ZUx62BwJubMb0Yg7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZDj3s0x5JeLDeI+fbnIA6fulyOr6LU0EyE5ZESkO84ibnihI4IDkIevRelmosrSS76RAtuknRHK4eRPtE3DV5i83HnPWLmLj2Y63vRNbAXxEkwZtjOyHFQx6zCo397vN+8+fIIm0sgS9cYd3XZGrKMXUY7E0qLGaUbS4/qKRj3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ccweTbJ1; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c93e9e701fso9311a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729140832; x=1729745632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BnKl1QwbwUsKFMP4HLrcYnPjaoTQ17Jib2qe3x9b52Q=;
+        b=ccweTbJ1kl/T162izeTUMnGFo+V4NXz1Hr+FY+3DBkttEJyrHOlYQl6/PZLdZSnGza
+         FPoBu1r9JzsfNbqwg/+5/JClDErWaVUYmWAJqoZMGqsQuYTeJdNTiT5B2cnO1mMDpBcb
+         VrgAaD/cLniKfDDCocaM7mGhRYzT2Q42xJfg+6yIDuJol1EMt1d5cyLlp7wr90C9zhxK
+         CqIR+cyIUIbGg0LUX9PiXp4VEiTBQoOsntZoHP3/M00zkGOF8O7rn3yUumFpwoO0A5v/
+         /Gqh5xyPlW7hT9gX5OUkJmjDRZS7xivNlv+Dc37wqQw4qSeRg+sH5KAB8y0crcVsVFOZ
+         pTqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729140832; x=1729745632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BnKl1QwbwUsKFMP4HLrcYnPjaoTQ17Jib2qe3x9b52Q=;
+        b=dEnu/bqphHaV8qtibfGvwusiJ8FhlND1GBI6OT9hTFYXrUAAiBb1yyezxJRCHfNcM3
+         kruyAnxIaBOChBVyYLWIlQiy0L32CqiVoZwaRruLtffOIY/TFWOL8MOn/dOL0L9Lu09x
+         sGh0qoYC3eDO+QHFo05SWrfyvYfsZxlpv5eV9gO2ve7T554ONx0AwmFXI23sXYhWGC9k
+         W/uWWfMXoXg49PNPfe0b1pv3dQpAkmoOG0NYgbtrOaWrMOc5k/fNKkxtBUPItMFDkMUZ
+         DCg1oHzNzwYXF+S1QNKAH5RhkP2/vx3MfAvGkCPx70oIpHGCL5vb/iP1HuyVPdL9lnbq
+         Yw4A==
+X-Gm-Message-State: AOJu0Yx87dS0LZ0MHAB2WBejzgSaTnRE/ZO0zgXVj5Y6kk6Jz0Tww0De
+	m5ae0NiL4W/jPip+dGnaAAJmd3rmfXLS5uWfcPaW6u579KkeyTbhLbIQ8q4sLIp1imuHfOx+BtN
+	bEg9u1ujmpuofoPHYzJbDucGVSy/ZNtj4YD1r
+X-Google-Smtp-Source: AGHT+IFCcmMy3OXU8QksT8UF+eXw1a4ADFyOFkBS5bVywWQA6mQyQwUxzFuW9jnMvnjqseJvwvlsa8cfN9d+elGiJq8=
+X-Received: by 2002:a05:6402:2355:b0:5c8:84b5:7e78 with SMTP id
+ 4fb4d7f45d1cf-5c9a6613d7fmr307679a12.4.1729140831633; Wed, 16 Oct 2024
+ 21:53:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|MN2PR12MB4438:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0ff2103-000d-4124-8bce-08dcee66ea2b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YF591e4T3HkVM90optZjLqD/YKHuIWml7LaECOzYXaYMkqLBLNKmESZDg5o8?=
- =?us-ascii?Q?YegDFZ5kRq9Qwumtt+ywyd5mQg2hZP07VMbTV05TgHa7xsqbz5TQmADAZnAE?=
- =?us-ascii?Q?Aq4ydwRKbnJ0MXtihk8R2dG4oqzops30DOaxCdtp3fEGarThQYZwgUSvvtaU?=
- =?us-ascii?Q?LHMbCWZLR80aLlPy9aixfJ4n+maKuIelWaCIjbAMBnq8uzzq0p6w/LU1ci4H?=
- =?us-ascii?Q?xt0DOP0XggDOqkf9tAk92yN81jPvM1hmcVGbrS6+JSxLPlvmcFvJBKm1/u3n?=
- =?us-ascii?Q?AceUd/k1J9DkYIYXfmI/INrGVxTNCQVVOjGUgM6182FZNUkqK08v0lm9o5qT?=
- =?us-ascii?Q?VXeDbabIHwh+MR4tb0Wu69AqmhroRsgq22SbDELaZORm3pa8Qjd1GyzQtkwF?=
- =?us-ascii?Q?LdxSQpoPN3kjPTto93aWuvRqx/I7Qrfno4E+TXrPwuAu9MEyW2o3ozSf/5AX?=
- =?us-ascii?Q?M540x1AXIh+Tft92yNryj+720VpocC5vxcZRxQk6Cka2x6gaE8oyiJL+OCKf?=
- =?us-ascii?Q?p15iYb73iUEyR1Z2cXTlho7w8LfthKVs28HiktEQDPmdp6rU4lyF3vef9Ime?=
- =?us-ascii?Q?MvsSyeOYfr6Q2cwrEWCnQkHeEPFNF9j8iQ5VBA7qePzpLkWlV05uuPKcAYgy?=
- =?us-ascii?Q?qo1PEeYXO7aLd+tpEgQTNlquKZxMtVefxrg9r1YaadIDyoopaK38XGfhl1Kk?=
- =?us-ascii?Q?mEmSxpU7j5OEWVE/bdApUMjkbKD9JW7kuIDH4fH9r6UXcmivYKwQ69iX/hC7?=
- =?us-ascii?Q?M2rzM3Jhjpa4mQwvfF+mgOZc5Rq0l1NK5CIryk3dwn8PbKgJfyj1vuEkjAco?=
- =?us-ascii?Q?Fn6Gd8JPQPOoPP/HvbS0AyuKa7KQ7B8rtGhhpxR0AiC3cPsjzZSomXbM/GJP?=
- =?us-ascii?Q?7dlyUjZBZ9YOiMnk/Wq3+IHgNQBNtuRmpxqwR3NU/EMuek0Lsr4bfdmA2jnD?=
- =?us-ascii?Q?rJdiQnLuGmPz/vzagqCcyU2ABoWZaZ24aAXNlSub+l0xApUHi0DJYC9kkIIP?=
- =?us-ascii?Q?zogzQkvaVrs0vf0nIx2EEnok+oC5x/bzpcjyMIlbkR753PGQIlibpYTTo5rL?=
- =?us-ascii?Q?YdGopCzCes+L2Kd/ek5nfKXBcr1oD54QeQPJnBLeScnEv9aSfD5OBfJbuCw5?=
- =?us-ascii?Q?uHpfxxZA/OA4LpK/9A4YP7TLvvr0xlCXnpfJlch/rfOJSpkJ9YAKRK+y2Opr?=
- =?us-ascii?Q?Z9jbnx4ptr406bXHgBD/gUoPftWspGC93IiVegMeQaO/UAw9NsLG3A79PrY/?=
- =?us-ascii?Q?L/4YxKEp1IO5eXI45Wu9gaSgkAUeN0AiNRj28mbEz7bnfvlhkEagSR6xvk6d?=
- =?us-ascii?Q?2Jm8sAi5QMdOte+eZgjBmG+/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aYyf1gcb1q4kiqcGaDekaP3HTyEzTT7/hHhg3yQSdaGnW3BJGMoQN7jQZALQ?=
- =?us-ascii?Q?0NaRetLECV2qLeX1v6eAaV7YA68g2DEDMgU4ykXVlx+dk2DRdWaHDMbk+E3R?=
- =?us-ascii?Q?lIIQZTHS6FvUpy7ZjSTK4tRrm5FWUbHMLr/jA+RT0w2sGyw8Dmii5kPzvs5Y?=
- =?us-ascii?Q?8ef6qH3XDglFIkEvop13f+9Av0684pT9f7nF7/Yt3y1iRJ9I3zJ9ltqb+mVS?=
- =?us-ascii?Q?dMmy9GGXaK3pbDa2SPFfjC4H1/maLooqnk3N9P0YkcD503CTDnVPaAhPAhoL?=
- =?us-ascii?Q?LyDO/LmYPxvy6pGoINAc4aSrfWotZGj3YhPF2YWsv/hoEs5ArdpdW0gnpAkE?=
- =?us-ascii?Q?bNnwQpXIfCy90Xmf4V1VeUvRLhoh3HN7fdEPNzt+ClXXCMD2kubccAyxQ1cQ?=
- =?us-ascii?Q?4XABqMv38P28O17t3DJEQyQMx9ZJ75Qn0TClMi2jLMSF3CJYcq69KmB6aM2K?=
- =?us-ascii?Q?M1Hrh6bf2DRI51U4WeA1gF234DvNupJQLLkv14mEkawH10YOAksGgl9s7S4V?=
- =?us-ascii?Q?21ox71ikOV461lpSuESMjx3wTq336y40MM1c7V2kcBKf09fb32xFwC+i5APN?=
- =?us-ascii?Q?D05YnEdV3jpvfHJKMwzEIob3nm8hGG+m2v3x7qzt8j6z9SEJUxxwbmVVzhLz?=
- =?us-ascii?Q?YqNU9Jy+viXTT0X5diIWZdA3+P2i+fpBtCiArAnfvWi8N4Hv1DLhUTN1dL4K?=
- =?us-ascii?Q?UF6P0XNX94q1BG9xPSASSGnkRDz4Lqyxf3AEnFyx6Az9rp2lwpvIMg1xb6No?=
- =?us-ascii?Q?fvbAIRUAU2B8QfGDDOWB0HWpf0rZcWBfIrA3ZRdCnV1gQgDU1HUgeYsd1n1l?=
- =?us-ascii?Q?WGJmNGtb5SYEpAPNh8yRP5HTLsB4qvhaR8E++8L/KpIZ8VZVl6VE9Zhf9Kcq?=
- =?us-ascii?Q?i2lpp844ev+4XZMK8y8wNNkHLmxXBDH9icE3LLFL874+C7eaR7Auf9VhgUJg?=
- =?us-ascii?Q?EhCo4xYn6gpS7gU6izeNSnHdopGJSZ/rJDurb6ibsAZBAaJsXVunKrqSomMW?=
- =?us-ascii?Q?pe5Cq+hpeLkrfi6fX4FBHbx6Leu2RNNBiQsiIoEk9iS1uj3y6yGZg0Jqd6si?=
- =?us-ascii?Q?22JeR3xY4nA9E8k8jdEqChvrm0yj9+Ivd7BhN6AWBhMxP8RPPifkOmxsWexL?=
- =?us-ascii?Q?0nzTKmluQuUFlB7LBy8gpeZy16BZV6v+cxaom6lYprCvr3EsuOsdLhikTlRx?=
- =?us-ascii?Q?fb6jB49P4Uos2ejlPfVruB4YjOKm071qw2QwrnfidFcoggssnxmJcfO9sHGF?=
- =?us-ascii?Q?xj/lscCmeJGVNC1mW111HiwR4rveKMEcEngQIHXjsKs+GDtHzWzV1BqXiDA2?=
- =?us-ascii?Q?16e/xyE8Tbyh2Zpr5DU4k8fFixHbg75DSUBR3CGo1r3BpVWGWvBGZ2gY24LG?=
- =?us-ascii?Q?h1ZxvVcpj6epQ9+aJd4hUILfuyae2oc6oxgNTHRBQOVuXG9s8S5DFh6ujeMc?=
- =?us-ascii?Q?+ZLzZovAYy2RTgL4oq6S+URzK/QYlOgHu/IF3rLWZK05c4QuxywMU//hW/UT?=
- =?us-ascii?Q?gmSfH5rYDYHem7oF+OSPLoowj009SUgC2TPcGbjRsRsD6bq3xqrQxfjwqJnY?=
- =?us-ascii?Q?xHjEIYTJs8XSKkDD6vmKJhcIPgDr8OfzStGnB0QR?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0ff2103-000d-4124-8bce-08dcee66ea2b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 04:48:16.4091
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /Tu9YlxYyDIBmCci7jlM0uVjF2Da3l56FPm2Gcavg2Dd2++ckkvmOuhIkgFmFPVhgrI0ZamSxXhJ+DB5qMFJQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4438
+References: <20240805093245.889357-1-jgowans@amazon.com>
+In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 17 Oct 2024 10:23:38 +0530
+Message-ID: <CAGtprH949pMq0GrQzyMvHNCFet+5MrcYBd=qPEscW1KtV5LjXg@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+To: James Gowans <jgowans@amazon.com>
+Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Steve Sistare <steven.sistare@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
+	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
+	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 04:36:35PM -0500, Mario Limonciello wrote:
-> From: Perry Yuan <perry.yuan@amd.com>
-> 
-> Introduces new MSR registers for AMD hardware feedback support.
-> These registers enable the system to provide workload classification
-> and configuration capabilities.
-> 
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On Mon, Aug 5, 2024 at 3:03=E2=80=AFPM James Gowans <jgowans@amazon.com> wr=
+ote:
+>
+> In this patch series a new in-memory filesystem designed specifically
+> for live update is implemented. Live update is a mechanism to support
+> updating a hypervisor in a way that has limited impact to running
+> virtual machines. This is done by pausing/serialising running VMs,
+> kexec-ing into a new kernel, starting new VMM processes and then
+> deserialising/resuming the VMs so that they continue running from where
+> they were. To support this, guest memory needs to be preserved.
+>
+> Guestmemfs implements preservation acrosss kexec by carving out a large
+> contiguous block of host system RAM early in boot which is then used as
+> the data for the guestmemfs files. As well as preserving that large
+> block of data memory across kexec, the filesystem metadata is preserved
+> via the Kexec Hand Over (KHO) framework (still under review):
+> https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
+>
+> Filesystem metadata is structured to make preservation across kexec
+> easy: inodes are one large contiguous array, and each inode has a
+> "mappings" block which defines which block from the filesystem data
+> memory corresponds to which offset in the file.
+>
+> There are additional constraints/requirements which guestmemfs aims to
+> meet:
+>
+> 1. Secret hiding: all filesystem data is removed from the kernel direct
+> map so immune from speculative access. read()/write() are not supported;
+> the only way to get at the data is via mmap.
+>
+> 2. Struct page overhead elimination: the memory is not managed by the
+> buddy allocator and hence has no struct pages.
+>
+> 3. PMD and PUD level allocations for TLB performance: guestmemfs
+> allocates PMD-sized pages to back files which improves TLB perf (caveat
+> below!). PUD size allocations are a next step.
+>
+> 4. Device assignment: being able to use guestmemfs memory for
+> VFIO/iommufd mappings, and allow those mappings to survive and continue
+> to be used across kexec.
+>
+>
+> Next steps
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> The idea is that this patch series implements a minimal filesystem to
+> provide the foundations for in-memory persistent across kexec files.
+> One this foundation is in place it will be extended:
+>
+> 1. Improve the filesystem to be more comprehensive - currently it's just
+> functional enough to demonstrate the main objective of reserved memory
+> and persistence via KHO.
+>
+> 2. Build support for iommufd IOAS and HWPT persistence, and integrate
+> that with guestmemfs. The idea is that if VMs have DMA devices assigned
+> to them, DMA should continue running across kexec. A future patch series
+> will add support for this in iommufd and connect iommufd to guestmemfs
+> so that guestmemfs files can remain mapped into the IOMMU during kexec.
+>
+> 3. Support a guest_memfd interface to files so that they can be used for
+> confidential computing without needing to mmap into userspace.
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+I am guessing this goal was before we discussed the need of supporting
+mmap on guest_memfd for confidential computing usecases to support
+hugepages [1]. This series [1] as of today tries to leverage hugetlb
+allocator functionality to allocate huge pages which seems to be along
+the lines of what you are aiming for. There are also discussions to
+support NUMA mempolicy [2] for guest memfd. In order to use
+guest_memfd to back non-confidential VMs with hugepages, core-mm will
+need to support PMD/PUD level mappings in future.
 
-> ---
->  arch/x86/include/asm/msr-index.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> index 3ae84c3b8e6d..0cd5ffe50f4a 100644
-> --- a/arch/x86/include/asm/msr-index.h
-> +++ b/arch/x86/include/asm/msr-index.h
-> @@ -712,6 +712,11 @@
->  #define MSR_AMD64_PERF_CNTR_GLOBAL_CTL		0xc0000301
->  #define MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR	0xc0000302
->  
-> +/* AMD Hardware Feedback Support MSRs */
-> +#define AMD_WORKLOAD_CLASS_CONFIG      0xc0000500
-> +#define AMD_WORKLOAD_CLASS_ID          0xc0000501
-> +#define AMD_WORKLOAD_HRST              0xc0000502
-> +
->  /* AMD Last Branch Record MSRs */
->  #define MSR_AMD64_LBR_SELECT			0xc000010e
->  
-> -- 
-> 2.43.0
-> 
+David H's suggestion from the other thread to extend guest_memfd to
+support guest memory persistence over kexec instead of introducing
+guestmemfs as a parallel subsystem seems appealing to me.
+
+[1] https://lore.kernel.org/kvm/cover.1726009989.git.ackerleytng@google.com=
+/T/
+[2] https://lore.kernel.org/kvm/47476c27-897c-4487-bcd2-7ef6ec089dd1@amd.co=
+m/T/
+
+>
+> 3. Gigantic PUD level mappings for even better TLB perf.
+>
+> Caveats
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> There are a issues with the current implementation which should be
+> solved either in this patch series or soon in follow-on work:
+>
+> 1. Although PMD-size allocations are done, PTE-level page tables are
+> still created. This is because guestmemfs uses remap_pfn_range() to set
+> up userspace pgtables. Currently remap_pfn_range() only creates
+> PTE-level mappings. I suggest enhancing remap_pfn_range() to support
+> creating higher level mappings where possible, by adding pmd_special
+> and pud_special flags.
+>
+> 2. NUMA support is currently non-existent. To make this more generally
+> useful it's necessary to have NUMA-awareness. One thought on how to do
+> this is to be able to specify multiple allocations with wNUMA affinity
+> on the kernel cmdline and have multiple mount points, one per NUMA node.
+> Currently, for simplicity, only a single contiguous filesystem data
+> allocation and a single mount point is supported.
+>
+> 3. MCEs are currently not handled - we need to add functionality for
+> this to be able to track block ownership and deliver an MCE correctly.
+>
+> 4. Looking for reviews from filesystem experts to see if necessary
+> callbacks, refcounting, locking, etc, is done correctly.
+>
+> Open questions
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> It is not too clear if or how guestmemfs should use DAX as a source of
+> memory. Seeing as guestmemfs has an in-memory design, it seems that it
+> is not necessary to use DAX as a source of memory, but I am keen for
+> guidance/input on whether DAX should be used here.
+>
+> The filesystem data memory is removed from the direct map for secret
+> hiding, but it is still necessary to mmap it to be accessible to KVM.
+> For improving secret hiding even more a guest_memfd-style interface
+> could be used to remove the need to mmap. That introduces a new problem
+> of the memory being completely inaccessible to KVM for this like MMIO
+> instruction emulation. How can this be handled?
+>
+> Related Work
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> There are similarities to a few attempts at solving aspects of this
+> problem previously.
+>
+> The original was probably PKRAM from Oracle; a tempfs filesystem with
+> persistence:
+> https://lore.kernel.org/kexec/1682554137-13938-1-git-send-email-anthony.y=
+znaga@oracle.com/
+> guestmemfs will additionally provide secret hiding, PMD/PUD allocations
+> and a path to DMA persistence and NUMA support.
+>
+> Dmemfs from Tencent aimed to remove the need for struct page overhead:
+> https://lore.kernel.org/kvm/cover.1602093760.git.yuleixzhang@tencent.com/
+> Guestmemfs provides this benefit too, along with persistence across
+> kexec and secret hiding.
+>
+> Pkernfs attempted to solve guest memory persistence and IOMMU
+> persistence all in one:
+> https://lore.kernel.org/all/20240205120203.60312-1-jgowans@amazon.com/
+> Guestmemfs is a re-work of that to only persist guest RAM in the
+> filesystem, and to use KHO for filesystem metadata. IOMMU persistence
+> will be implemented independently with persistent iommufd domains via
+> KHO.
+>
+> Testing
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> The testing for this can be seen in the Documentation file in this patch
+> series. Essentially it is using a guestmemfs file for a QEMU VM's RAM,
+> doing a kexec, restoring the QEMU VM and confirming that the VM picked
+> up from where it left off.
+>
+> James Gowans (10):
+>   guestmemfs: Introduce filesystem skeleton
+>   guestmemfs: add inode store, files and dirs
+>   guestmemfs: add persistent data block allocator
+>   guestmemfs: support file truncation
+>   guestmemfs: add file mmap callback
+>   kexec/kho: Add addr flag to not initialise memory
+>   guestmemfs: Persist filesystem metadata via KHO
+>   guestmemfs: Block modifications when serialised
+>   guestmemfs: Add documentation and usage instructions
+>   MAINTAINERS: Add maintainers for guestmemfs
+>
+>  Documentation/filesystems/guestmemfs.rst |  87 +++++++
+>  MAINTAINERS                              |   8 +
+>  arch/x86/mm/init_64.c                    |   2 +
+>  fs/Kconfig                               |   1 +
+>  fs/Makefile                              |   1 +
+>  fs/guestmemfs/Kconfig                    |  11 +
+>  fs/guestmemfs/Makefile                   |   8 +
+>  fs/guestmemfs/allocator.c                |  40 +++
+>  fs/guestmemfs/dir.c                      |  43 ++++
+>  fs/guestmemfs/file.c                     | 106 ++++++++
+>  fs/guestmemfs/guestmemfs.c               | 160 ++++++++++++
+>  fs/guestmemfs/guestmemfs.h               |  60 +++++
+>  fs/guestmemfs/inode.c                    | 189 ++++++++++++++
+>  fs/guestmemfs/serialise.c                | 302 +++++++++++++++++++++++
+>  include/linux/guestmemfs.h               |  16 ++
+>  include/uapi/linux/kexec.h               |   6 +
+>  kernel/kexec_kho_in.c                    |  12 +-
+>  kernel/kexec_kho_out.c                   |   4 +
+>  18 files changed, 1055 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/filesystems/guestmemfs.rst
+>  create mode 100644 fs/guestmemfs/Kconfig
+>  create mode 100644 fs/guestmemfs/Makefile
+>  create mode 100644 fs/guestmemfs/allocator.c
+>  create mode 100644 fs/guestmemfs/dir.c
+>  create mode 100644 fs/guestmemfs/file.c
+>  create mode 100644 fs/guestmemfs/guestmemfs.c
+>  create mode 100644 fs/guestmemfs/guestmemfs.h
+>  create mode 100644 fs/guestmemfs/inode.c
+>  create mode 100644 fs/guestmemfs/serialise.c
+>  create mode 100644 include/linux/guestmemfs.h
+>
+> --
+> 2.34.1
+>
+>
 
