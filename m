@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-370325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BCE9A2B22
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D332F9A2B26
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D712844E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A35B1F21E03
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF251DFDAD;
-	Thu, 17 Oct 2024 17:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBC71DFE2C;
+	Thu, 17 Oct 2024 17:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDuQEAAg"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glSQ5Ir0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70681DF991;
-	Thu, 17 Oct 2024 17:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D421DF990;
+	Thu, 17 Oct 2024 17:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729186799; cv=none; b=CN3LfGuhFiTSOZKhq5U9C7mbaBzb9ADjEhAOOm83X2NyVZYWmaKe6JRj5AIRngBsqFqNnYRgrRX4oDnM2etT5W8UESImG4sPSxQyvm7nxbodWwVsJBbJd2+Md1GgwPvryKUctBv08+PIY+D9J7G2M7dMI7ADyVGESg8qujsznGU=
+	t=1729186803; cv=none; b=fAgc9GTsfY1+A6uo3L/AngUoxdWlNw1OdvL0ktYy4v6zQPJbJlizwdK3NJHoNU25KJuo/4Y1X1ZDMVwpTpdJkpM7ti+pk92BrKiqA/cKI2ZIloi4UBXIy+5HQ3825Ipky2Tkyo3YNCGnuSCP0aa65EVf7tVZqYX926qQby7d1Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729186799; c=relaxed/simple;
-	bh=XNhYFcnBb2qAtLDWT7ob6Tja21YLROu8fBAm57b1QQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nrjE6iUN9gGBlQL6N7HpzWt9u+3SN3OEVWv0XvDHkpPmU5tHCUuXCaqebF6SiEol8KzdjgCgfceet2FL3Mf27gz+rSqVY4JzNyfiVlQYsR4wSYqdUk9nwExkSNYJfdzyREHAYcGDMt7/IqTmgIn2UhEoErHoINFzYDikyJ2P80g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDuQEAAg; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2da8529e1so185980a91.1;
-        Thu, 17 Oct 2024 10:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729186797; x=1729791597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DVbAzyc9I6m3RIJUQ1MXWzv3RJTPsyczSm1xKWtX5dw=;
-        b=MDuQEAAgfyDkC2YOc+Fi0cXVxZ3vG8Qye3uL0KFNtl5HBkE7vACZTRCpV+SmtYU3bN
-         39yZH+1MNxb2dQxwQOjtCgJ/EJCvxGJnLx+mVh/f8gI8EipBWwoRiDt2aPt+0r1OfmSS
-         grFJ2JVQOVBQvPhCUwKJOrU0FVaKXL0ieBQB6uPrMLMwbot2EVIWJFs6NgfBKUCp8JaH
-         l8CwB6WHOdCDarVMQesT95ekneb00F39O+hT/xG1Le30PWy0u7FU7Ml1+OILpHgbl6t1
-         gtoxi73hVbgTXMPpoxHNE7t7+MkKJgViNt0hAaFHqIrr9P0Vq98VUcIzqLOZbQ/FfmnA
-         rV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729186797; x=1729791597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DVbAzyc9I6m3RIJUQ1MXWzv3RJTPsyczSm1xKWtX5dw=;
-        b=UaaOShfeYGPdTnBx6cYeHkrzmuaRiermaVqcpnd7t1yHPu55Gyqq81Ft4fi2gP6KVd
-         Z1kKrnlQluRhlVbpeNtt4A7XnTeFGECJgONUe0p/2zasvrNT33ErTcGeJn6ryjXUf0kb
-         OhWI0/m60LM2d8JRt19IqEiQs7zBcuwAWu1jwPplmJ9f19VvMX/KMLYqxeA88JhqvHsA
-         AzOACIE5SC0Z1qrl4XaLYVUGRs5WxpfE84gtWXu+TPYoJa7L6UmZ0CiC2fOC2nv3VDTE
-         oKoeoiNTOT+sodSBk0SiJWSLwwgLfxYaqv2LcgAgDVsC217fLa/U/WsgXPNBQb8+NbaA
-         wZnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaU+PYY1exmNnqjyZwxWZ+SSYdjWWZrUhWA78a6qeRe4ATopxfq1Uv/IRpA3pREov6I7+fKYQ5VCishng2rA==@vger.kernel.org, AJvYcCV6uVyTagIrexJILOo+lU73A7ZITaBMbhcfxLB1m6zwQj8xQ4xyvKTFfasvON8q6lDrEpp+6pjNQT/IVATE@vger.kernel.org, AJvYcCW0FP7sfvVXO7EqkPH+HNGfPaEERzNFHpPDfuHrjKjfs9qdCiY3aXsFyBIB4F4JuVAYWEOs8ro1MTrZN9Ym5p+I@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIN7AfRfZ2ANA1o8p3V28KmqHfZcTVeGsxzYabrtXFpNhdNQT5
-	+R2WDBNUBJ9Rl6NK/GAQlv4/BfK6DB3A2A/U9wV7CvgKt7XEdwdopxcVyxfbIZKCTc6Zerum5F/
-	Xp6oZNE8JlA7TXUh5mwGaPlk7i3s=
-X-Google-Smtp-Source: AGHT+IFKzPCfniyRQAO3KPKy/OOw3FuLREb1jofve8Ca+H1mRB5ShgyM2jfaUY0+oY9BlPJVrOG307sYawNQmU4mkPo=
-X-Received: by 2002:a17:90b:784:b0:2e2:da69:e3fa with SMTP id
- 98e67ed59e1d1-2e3dc135040mr2166896a91.2.1729186797074; Thu, 17 Oct 2024
- 10:39:57 -0700 (PDT)
+	s=arc-20240116; t=1729186803; c=relaxed/simple;
+	bh=eGmzCTTfolXYxIXlEZqURsG7yQDabkHprLnAi5gYhRI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=VfKE9Xj+lJBeKj5kXwTwAwKUbm3bxGeZtVkeC/7CtdCICoUBfbbf2VCikSaRpvHMye9QChvb83cVmd/5gWXiHQxfYQss5DoklJcQ0iWBv+DV3IuxqkE6ekX91zDzR34XctJvSSEnlA5RMajBBkIgtssN/gkJeOibGr4Uh3sZx9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glSQ5Ir0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A434AC4CEC3;
+	Thu, 17 Oct 2024 17:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729186802;
+	bh=eGmzCTTfolXYxIXlEZqURsG7yQDabkHprLnAi5gYhRI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=glSQ5Ir0IXJdd/DeUA5hVUP66u5XhWUN6wV15v/3chTzXH2EC52CLjSCxotkXSVLs
+	 iOCN+0WeaOEu70juaaAyZs780Zw+p4mm+hbncREiNoJGmecpmMTtErM2KHdAFP109D
+	 RoS23lVxMok6ihFN0zQ+EevZNq8UHuTvAayD/4k8ehQ8rVh1CDAH7gtaFooBfOZ7YT
+	 goshtYZyc4FLIKmT4p2zLif7czqgGLeMaYNPh7oWd/JJ/dFEuP5OWaRPylkxyaRrZx
+	 uNBkx5IlfjsQq5WDwD3FmyLJ8DEqo2Faq3wWa2ZKrmO7JtKt+2lUPTR28rzbM52ZCC
+	 5xRMQNYHXHmrg==
+Message-ID: <6bb3565e576062c781e29e414483daec.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zv6BEO-1Y0oJ3krr@archlinux> <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
- <Zv61dCaxScXuOjZg@archlinux> <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux> <202410040958.C19D3B9E48@keescook>
- <ZwNb-_UPL9BPSg9N@archlinux> <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
- <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
- <ZxB-uh1KzfD4ww2a@archlinux> <20241017165522.GA370674@thelio-3990X>
-In-Reply-To: <20241017165522.GA370674@thelio-3990X>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 17 Oct 2024 19:39:43 +0200
-Message-ID: <CANiq72=cUS4GRzuU0WAWn9owttU-L4UpV1Dip6QjUdudCoT8VA@mail.gmail.com>
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in bch2_xattr_validate
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Bill Wendling <morbo@google.com>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev, 
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ardb@kernel.org, ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <daa8998b-a008-42cf-a941-00218683cce2@quicinc.com>
+References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com> <20241015-qcom_ipq_cmnpll-v4-2-27817fbe3505@quicinc.com> <77ad972276c165acc3d0e9d72df1a021.sboyd@kernel.org> <daa8998b-a008-42cf-a941-00218683cce2@quicinc.com>
+Subject: Re: [PATCH v4 2/4] clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
+To: Bjorn Andersson <andersson@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Jie Luo <quic_luoj@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
+Date: Thu, 17 Oct 2024 10:40:00 -0700
+User-Agent: alot/0.10
 
-On Thu, Oct 17, 2024 at 6:55=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> Should this include a Fixes tag to give the stable folks a hint about
-> how far back this should go? Maybe
->
-> Fixes: c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and id=
-entifier expansion")
+Quoting Jie Luo (2024-10-17 08:35:43)
+> On 10/17/2024 5:37 AM, Stephen Boyd wrote:
+> > Quoting Luo Jie (2024-10-15 07:16:52)
+> >> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> >> index 30eb8236c9d8..3def659fc5cb 100644
+> >> --- a/drivers/clk/qcom/Kconfig
+> >> +++ b/drivers/clk/qcom/Kconfig
+> >> @@ -190,6 +190,16 @@ config IPQ_APSS_6018
+> >>            Say Y if you want to support CPU frequency scaling on
+> >>            ipq based devices.
+> >>  =20
+> >> +config IPQ_CMN_PLL
+> >> +       tristate "IPQ CMN PLL Clock Controller"
+> >> +       depends on IPQ_GCC_9574
+> >=20
+> > What is the build dependency?
+>=20
+> Will remove this dependency. There is no build dependency on=20
+> IPQ_GCC_9574, but only a functional dependency on the SoC's GCC block
+> since the CMNPLL consumes AHB/SYS clocks from the GCC.
 
-Yeah, I am not sure -- it does not really fix that commit, but if it
-helps the stable team...
+Ok. It can probably be a select or imply statement then.
 
-> compiler_attributes.h is intended to be free from compiler and version
-> checks, so adding a version check means that __counted_by() needs to be
+>=20
+> >=20
+> >> +       help
+> >> +         Support for CMN PLL clock controller on IPQ platform. The
+> >> +         CMN PLL feeds the reference clocks to the Ethernet devices
+> >> +         based on IPQ SoC.
+> >> +         Say Y or M if you want to support CMN PLL clock on the IPQ
+> >> +         based devices.
+> >> +
+> >>   config IPQ_GCC_4019
+> >>          tristate "IPQ4019 Global Clock Controller"
+> >>          help
+> >> diff --git a/drivers/clk/qcom/ipq-cmn-pll.c b/drivers/clk/qcom/ipq-cmn=
+-pll.c
+> >> new file mode 100644
+> >> index 000000000000..f5ebc7d93ed8
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/ipq-cmn-pll.c
+[...]
+> >> +       }
+> >> +
+> >> +       ret =3D regmap_update_bits(cmn_pll->regmap, CMN_PLL_REFCLK_CON=
+FIG,
+> >> +                                CMN_PLL_REFCLK_INDEX,
+> >> +                                FIELD_PREP(CMN_PLL_REFCLK_INDEX, val)=
+);
+> >=20
+> > The determine_rate() function shouldn't modify the hardware. This should
+> > be done in the set_rate() callback. Likely you'll need to use
+> > assigned-clock-rates to do that.
+>=20
+> OK. I will move the hardware configuration code into clk_ops::set_rate().
+> We are using the DT property assigned-clock-rates-u64 to configure the
+> clock rate of CMN PLL to 12 GHZ since 64 bits are required.
+>=20
 
-Yeah, ideally we should avoid that since the goal was to have a file
-with the straightforward ones.
-
-Though if we do go for `CC_HAS_*`, I guess it would be simple enough
-too, i.e. similar to `has_attribute` (but on our side), but it also
-loses the simplicity of knowing those do not have arbitrarily complex
-conditions which `CC_HAS_*` could hide.
-
-> moved into compiler_types.h. This might be a good opportunity to
-> introduce something like CC_HAS_COUNTED_BY in Kconfig, so that we can
-> keep the checks unified (since there are already multiple places that
-> want to know about __counted_by support for the sake of testing) and
-> adjust versions like this easily in the future if something else comes
-> up, especially since __counted_by() is not available in a released GCC
-> version yet.
-
-Sounds good to me (even if we did the unification somewhere else).
-Using `CLANG_VERSION` looks better too.
-
-> +config CC_HAS_COUNTED_BY
-> +       def_bool $(success,echo 'struct flex { int count; int array[] __a=
-ttribute__((__counted_by__(count))); };' | $(CC) $(CLANG_FLAGS) -x c - -c -=
-o /dev/null -Werror)
-
-I am probably missing some context, but what is the reason for the
-build test? i.e. is there a reason we cannot test the GCC version too?
-If the reason it is that it is not released, should we change it
-later?
-
-Thanks! (and for the Cc).
-
-Cheers,
-Miguel
+Sounds good. Thanks.
 
