@@ -1,97 +1,159 @@
-Return-Path: <linux-kernel+bounces-369185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954F69A1A13
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EB19A1A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A6A7B21B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4902A1C22641
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49CB146013;
-	Thu, 17 Oct 2024 05:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2AD14EC59;
+	Thu, 17 Oct 2024 05:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bXurL2c2"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fsGcO1wy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0D5137C35
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 05:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6E421E3C1;
+	Thu, 17 Oct 2024 05:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729142014; cv=none; b=cw+3ZNkNVgx1UUg0JjrMfxqgn9Lr4NkJW1GPMzaGnkjSu6K3twb7vf9Qy9Go+LXj8Jeu7L8Gl2JV2HHFuGi77oty5gIva+pmUBRpP/TWejM1PGzBX79N2SrM+Api9WWNKLWXNbVBRT3Lvyek89UKgQFvAc0q6BlOkxnV3PUjFhY=
+	t=1729142341; cv=none; b=BRLE3TdlzK8H/GOQso02rfh0lgDzZOjGkpLco3vyezx2WTVnf4cMnEfm9Fz2lwMFztJbtwfGDB8Br426ku4W4yyj+ZjkEmOLSJ5X4v0l0QgW3jckQ7XxPT8UiZQOrDnylbjtIUcVBxF88/NqBn9wcGLQI7BkcuVcc4rjEOVrfVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729142014; c=relaxed/simple;
-	bh=6V6eNGdE0SPvqcSpqgKb+DQULJcURDQCfkY0VUPRIas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sIiYjdGDPdXECOso9QhVspnV1bOX7m/VF0SNJmEd6n08ejq9HAtOIPrYYzfo0sfZJRR3y60gH9eqVpR9Dl7BJzPwGdRTpNsRjEbC1uM33Pn5pRV3DxYgsZHp/Mv3jDF5HQkO2Wh/oEjesvyO38J7hLXzt7l00AkrSquOgRA/o3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bXurL2c2; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so538600e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 22:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729142009; x=1729746809; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6V6eNGdE0SPvqcSpqgKb+DQULJcURDQCfkY0VUPRIas=;
-        b=bXurL2c2zXRW1vZ6OfSZLMolriV7qrpw5pGwH1BNh3VOrGYBlsvmx3fNPjzMAj4EJn
-         ZfOwiocEDKv2/Y4NfmxGzqfVmp164w7MTxkxiQaeelHAS2GP0JS6AhAVTrCTsbhyoAoj
-         Pr2VqiZNktsSSClkXjjRFUvusWI7qaaB6DAKk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729142009; x=1729746809;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6V6eNGdE0SPvqcSpqgKb+DQULJcURDQCfkY0VUPRIas=;
-        b=ZfTWaR1RtgkLjQGu/GIZ3pcLN8YufyO+o4uR4V3jD3FrwogzJhpdnnAuuZyAvDK9T8
-         QqJ4nK1xhBBbUutlT//J8o+nSt+yVvZVh8MA0pX5nhl1h2FBlM00cTZnSP7m9Y2C1Hgy
-         zGHq2A4BjdDXD+5vEzWTUvoMtBfyeoWcFffH9LntlfPfzAKKb69WFt+rcl8XsTJ4B3Xz
-         MzLfnOt+y9eAQcTRlL7KQLkQDlthCBrkW26EbhxR5XpoHq/qrwjn982X15JNVVN+0gBi
-         VWCk7lRqxYa6/Le2JTOKhcCEJsA5A0G+VgpCzUleZyZXAdTX9RksJgbEbvQXCLWJyHVE
-         PV4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmhfcXl+FGMHRKrphUJOtFv9tA5C7a39/Rm2P7SoMcLs9rIQh05sjmNeWQmM0iKpvvKmW6k8Wpe/9Pjyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+SluydMrX2Ui8G/Y7ON7gHTTSi7bVuVw8IzFTCyEQGvcemej7
-	hz+rwoui0seqrrJS7cPwKSQAVJWM0YvTgErNWTvuhIDmXlWW3zLy29NOuG6Bf+IBsEL/BPrNwaM
-	Y4BHGI+FnPA9C6iwrdKO0AMzeaAMtPj+9HO6W
-X-Google-Smtp-Source: AGHT+IFjzb2wpcnGWFDBZjNo1M6JPjsOZT8OvpkoK5cl54wpJ09jbG8ZH+YgyEBJvP+ZZVXYFVWt2kcbszuvdny5JUo=
-X-Received: by 2002:a05:6512:1292:b0:53a:bb9:b54a with SMTP id
- 2adb3069b0e04-53a0bb9b6f0mr1366138e87.48.1729142008876; Wed, 16 Oct 2024
- 22:13:28 -0700 (PDT)
+	s=arc-20240116; t=1729142341; c=relaxed/simple;
+	bh=TuQRiqF9k/AH7Q8hFTYN4orBdMYxKFCqWIPeB9w8pSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E5SKMbQGaDtQWOkvMYpfyiMhQNDqbY4FRBpjSAHYvg+b6GQFerYTChQ4h1tYRAI4aj4ehE14ty8e7WE15nkQAEQD2PROnUlvWBGV0IvHBOZa7eIPeXIw7zgrfmbXI/IpW2bCCsLBbrQ7soj+LAvs23Ar0OIz10JVd+r7pBqbxuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fsGcO1wy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49GGhivx002349;
+	Thu, 17 Oct 2024 05:18:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3UU2Q8AxXEd/LLE/ZWfsYFcgd4DEBPjdeTHrnLciEY4=; b=fsGcO1wyaLUr0rcA
+	n3qL15vfocS7sec2iU2EwbX0T9BPLC2yvJnbZeN7XIdQpPGjSci3CClhhuKlbDIx
+	dNn9w1/WMclmU6GB2dDTIi7CcCJ8ECIloIgCXndScbIVxy9SEQN8byCWjcx826f6
+	Qu7iIfoANFuP1yJDsTnbZziwI40+M4xDEXzWfAyoR+ZHU3qAx3YxLwjyn3k2xVPa
+	vvtgdWCOqPtnEopbrIkdDzJgHCZQOvCj77g/U6prQdf/J3bi3E7CnNQ07rlwWVve
+	uEprZtWPNiOWOC6SPHFo/ozmxwTFbBrIUYOE9VuXQDxSJNr64gUfy/N9Seb/6mbx
+	9btGdA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42a5xykux4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 05:18:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49H5Ink5030081
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 05:18:49 GMT
+Received: from [10.214.67.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 16 Oct
+ 2024 22:18:46 -0700
+Message-ID: <7bf56716-886d-4e2c-9a90-e31b0bfa4a89@quicinc.com>
+Date: Thu, 17 Oct 2024 10:48:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016223312.3430051-1-treapking@chromium.org>
-In-Reply-To: <20241016223312.3430051-1-treapking@chromium.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 17 Oct 2024 13:13:17 +0800
-Message-ID: <CAGXv+5FEEXYu_h=_cnLGfwVQh5kdf0KpRFKfUYgFsR5oV9s=nQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: mt8183: Add port node to mt8183.dtsi
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Jitao Shi <jitao.shi@mediatek.com>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: qcom,cpucp-mbox: Add sc7280
+ cpucp mailbox instance
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Herring <robh@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>,
+        "Jassi Brar" <jassisinghbrar@gmail.com>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "Ramakrishna Gottimukkula"
+	<quic_rgottimu@quicinc.com>
+References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
+ <20240924050941.1251485-2-quic_kshivnan@quicinc.com>
+ <20240924232526.GA563039-robh@kernel.org>
+ <2d4e47fd-0aaf-4533-a96f-95ada853d9a0@quicinc.com>
+ <kzlhhovfffvg227oxbpl3nv6q2lyn53pz2fyqis22brkd4bkkz@vqprudcdfunb>
+Content-Language: en-US
+From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+In-Reply-To: <kzlhhovfffvg227oxbpl3nv6q2lyn53pz2fyqis22brkd4bkkz@vqprudcdfunb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AjP0Rs-BfMjWDqorJ5-ssnVIzvAZl_NY
+X-Proofpoint-ORIG-GUID: AjP0Rs-BfMjWDqorJ5-ssnVIzvAZl_NY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 clxscore=1011 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170033
 
-On Thu, Oct 17, 2024 at 6:33=E2=80=AFAM Pin-yen Lin <treapking@chromium.org=
-> wrote:
->
-> Add the port node to fix the binding schema check. Also update
-> mt8183-kukui to reference the new port node.
->
-> Fixes: 88ec840270e6 ("arm64: dts: mt8183: Add dsi node")
-> Fixes: 27eaf34df364 ("arm64: dts: mt8183: config dsi node")
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+Thanks Dmitry for reviewing the patch
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+On 10/6/2024 10:41 PM, Dmitry Baryshkov wrote:
+> On Thu, Oct 03, 2024 at 11:13:02AM GMT, Shivnandan Kumar wrote:
+>> thanks Rob for reviewing this patch.
+>>
+>>
+>> On 9/25/2024 4:55 AM, Rob Herring wrote:
+>>> On Tue, Sep 24, 2024 at 10:39:39AM +0530, Shivnandan Kumar wrote:
+>>>> sc7280 has a cpucp mailbox. Document them.
+>>>
+>>> And is different from the existing device how?
+>>
+>> It is different with respect to the register placement.
+> 
+> Register placement in the global map or the internal register structure?
+
+the register placement varies both internally and globally as well.
+
+> 
+>>
+>> Thanks,
+>> Shivnandan
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+>>>> ---
+>>>>    .../devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml         | 5 +++--
+>>>>    1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+>>>> index f7342d04beec..4a7ea072a3c1 100644
+>>>> --- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+>>>> +++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+>>>> @@ -15,8 +15,9 @@ description:
+>>>>
+>>>>    properties:
+>>>>      compatible:
+>>>> -    items:
+>>>> -      - const: qcom,x1e80100-cpucp-mbox
+>>>> +    enum:
+>>>> +      - qcom,x1e80100-cpucp-mbox
+>>>> +      - qcom,sc7280-cpucp-mbox
+>>>>
+>>>>      reg:
+>>>>        items:
+>>>> --
+>>>> 2.25.1
+>>>>
+> 
 
