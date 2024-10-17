@@ -1,180 +1,302 @@
-Return-Path: <linux-kernel+bounces-370287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A9C9A2A63
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:10:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034E59A2A65
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCDBC284EA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:10:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86DBD1F2936F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56011E379D;
-	Thu, 17 Oct 2024 17:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QdNbVh+5"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2043.outbound.protection.outlook.com [40.107.92.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4922C1DF969;
+	Thu, 17 Oct 2024 17:08:22 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A161DF73C;
-	Thu, 17 Oct 2024 17:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729184861; cv=fail; b=GWBtzVPQHUUp8Oatn8uaf1iOTSRUL+rAP8GaQVh9izwD0cx6bA5wH/7fc+Y3u0wKHQXWOvscihhXT79WVaH9OC32xhPkPmwkHtlwcJFb+HqmQedSppvbvkYnkDRlRdWQrl1X8k01KgK13h165kDRxr7K3kRjOyBINjVdtmquBC8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729184861; c=relaxed/simple;
-	bh=8wYHVW3MxbYsrhB5z3wDOe6anROQ8Q6gkNE6vASuL+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gUcLBYLkUb06TWGjSm+oklJaTQAqHjueb8/6wH4LXAL2Cg6XjVXQrCBrIuYMecLhe0NV0SOJj7PeKWvWLU826Ex8gmELNaCE5B6JkWRKwGuts6wehpps3LxP87hBMstokCbltIvoE7JiRmwzFdKjt+ojTPkk8xXE51FAARzO/FY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QdNbVh+5; arc=fail smtp.client-ip=40.107.92.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l7b2MesKGNaqlJBVan4oJFCfr7YU5TbYYBvmtZZWF4oIENbgQMVwOx936oZRoVRBjjP5RElAgj46R9gp80EXFYaIHtOVjtlCdxnEEZwc8QM1Rd61I3BsoSKHaQ32f6z802pBJR0seKO3+v0ZCbihZhdRWdkWVKZLvt5jiYHw4AE8obMWxl7/SrH7Fiq1Dlzj0oShpEFYzu3DcbEFqtVK/PdZfUAiGsePmxGaW+mOWBxGNuHilKum1eQ7TzDcQ6YpwYTp8weWt+MN1KaGZzLmy0RNK63nN0IKc/MbWiIZ3iJZnMp85mxhrx3aVeaoxxvSwb08qzSSnPWHyEoaZIYy5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kJL1CSM8ItlrSONWLpSpa7mkJ6XZ9CCwnzzLXsLVZvA=;
- b=LugN6OJMC7hArismnOpn061BkiwjMyvvponPK70h0bruhiU4zRa7rRv/vloYYFCahttbUJl4ontEsXaZvcydeNTF4QX2X6nTuwedjfa8ZR3Ih95eCdP7e99QMx2qVbKMEsM4MtK6g6+9Ng11ApG8FRoLlrsots6z0veHwy7xG/SOzxBmo3DYLbnt4d2nJHxzS2sY829qcvglInJYQMxI+L8pDGBQUZ8tv7uFhK9vOj260AW0tPh2/5ZaZ4fJir6QfJD66qAWUOtmWNdn6PogU/SoqpEJ977nWhdeelDAIBneDZerod49rF05/DnIZTMcbR7g4q9PMhuZJbUS4/25rQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kJL1CSM8ItlrSONWLpSpa7mkJ6XZ9CCwnzzLXsLVZvA=;
- b=QdNbVh+5wnCLMYfaXFW7LZe75Sqj0GFOZXUSQGsi/h5tPSCF5TZAl/xFSiOBUJWyZ99Bs+PLh9bCee6Agi2hPXjss3veoJ+iBWQuOfIkJ7Wdu/aKdfLOMWysoqAS+mxB7JMzFO9tK1dAsT2cU+t0/H6iULo78Fz6Ajye83qdSbw6gpboafh0SaFeiWw/PmBb3PB+7LulLon356oCkANPtPDxWIVQX2kgz7WJkFNUfxuNzA5pa2UKXXRi7KXwgUOw7bLC/7S1axNw5Bi6kOzCsV1Qb6t740czOvgduoVVlKCMZ1LkL8injGoXuzi87JrLdDGDF8Nj40F1/xmu4hOs8Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by LV2PR12MB6015.namprd12.prod.outlook.com (2603:10b6:408:14f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.17; Thu, 17 Oct
- 2024 17:07:37 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 17:07:37 +0000
-Date: Thu, 17 Oct 2024 14:07:36 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com, aik@amd.com, patches@lists.linux.dev
-Subject: Re: [PATCH v3 03/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
- related struct
-Message-ID: <20241017170736.GJ3559746@nvidia.com>
-References: <cover.1728491453.git.nicolinc@nvidia.com>
- <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
- <20241017163359.GB3559746@nvidia.com>
- <ZxFC6KSLVLOi8ok4@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxFC6KSLVLOi8ok4@Asurada-Nvidia>
-X-ClientProxiedBy: BL0PR1501CA0036.namprd15.prod.outlook.com
- (2603:10b6:207:17::49) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438841DE2C8;
+	Thu, 17 Oct 2024 17:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729184901; cv=none; b=qMTf1rDh/XYomYWldWXQrc8YThJuHqTzYOm76nEnMMmBE8RbG6Q3+1uzsBx5BnEYwmql/f2g3Tjm1BfmQiM+YEEbHghhvE/LzHL8azQJuehh44Y1UnZSwQC43nXA3mq5KVGRIUencCzr2AWtftx6ueh02hVaiRI3DIbEgSVzf5s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729184901; c=relaxed/simple;
+	bh=j93455ZXaGgpi6kTTtELZ3GhwIidte/wJbX20pcw7TY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QrZkkEez8w5D3SB5pD0YTafdA0stRarL9EbrPGT55/rN/z0eg0EPDcznKwrVwM/RAetOCmdaL6yAfzpI/3UgHe0SfigqjasDPyUPye7jgXwPk+Ld3u1CNiIKL4yB1l1qTNq/93ZH2h9k9eahoPVfPqk7ITJFwdelyqib0K07JyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTvLQ2bRPz6D9K8;
+	Fri, 18 Oct 2024 01:03:42 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 31D9D14011A;
+	Fri, 18 Oct 2024 01:08:14 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 19:08:13 +0200
+Date: Thu, 17 Oct 2024 18:08:11 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Bowman, Terry" <kibowman@amd.com>
+CC: Terry Bowman <Terry.Bowman@amd.com>, <ming4.li@intel.com>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <mahesh@linux.ibm.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <smita.koralahallichannabasappa@amd.com>
+Subject: Re: [PATCH 07/15] cxl/aer/pci: Add CXL PCIe port uncorrectable
+ error recovery in AER service driver
+Message-ID: <20241017180811.0000306a@Huawei.com>
+In-Reply-To: <c756f2e4-2fa8-413a-b6b8-2f3ca8ec27a5@amd.com>
+References: <20241008221657.1130181-1-terry.bowman@amd.com>
+	<20241008221657.1130181-8-terry.bowman@amd.com>
+	<20241016175426.0000411e@Huawei.com>
+	<ac5f05ec-5017-4ac7-b238-b90585e7a5bc@amd.com>
+	<20241017144315.0000074c@Huawei.com>
+	<c756f2e4-2fa8-413a-b6b8-2f3ca8ec27a5@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV2PR12MB6015:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a0a9dfc-e3c6-4d0c-9ed9-08dceece3322
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?i+XAvA2mzAr9NdVEWH/NAsE4PtmjU1ughFka7WAXrjETxPUMknpLxFXtz8rQ?=
- =?us-ascii?Q?xZzQQoSiEksNQRJTShtC6bUhGCPEUizEUx/VKSGdLUZV0DifHxuVYX666z+t?=
- =?us-ascii?Q?0zITSFGbCERnmB4mw4JjyFRLZ2fjN1bnVw6fEviWel/ikN6Ov2+46d9itMti?=
- =?us-ascii?Q?QZBET8YWqQWicXUr6AQI8fYnD3w8qzijdTm82EL/5ab0XZdChggh0CXh7U15?=
- =?us-ascii?Q?xPJExoIkdrVoRvV3+F6SWRhblzvVw8oeL6gK7/9Sy1zgsJ3DB3Ni6APzi6H0?=
- =?us-ascii?Q?GtLH2olz7E4JO0Cl/zlu5LQliuikBxa+cibOVuac6ITuV9SqyyjKkUNN1GVV?=
- =?us-ascii?Q?muBDs/gdE9QtTGr4xXfv+N9PqUvCGQ3RzJKl56MFaFxks4UE5KMZjLOlUDjb?=
- =?us-ascii?Q?ajMSdRrAaR1miG1KNN0hxjGqpqM/nUZBC6HRx+oQhDlnw8/hMclumEGUwD8k?=
- =?us-ascii?Q?BmU8qbXTS6+bqPHoS6a+2y1gp9nMy9a82Z2eswmxgiQCWs975KzL5pDFgkdZ?=
- =?us-ascii?Q?a9vQCQ7xRZlmtJIL9v7qn2OSqE2DdH913R6/9sBzdF8nt7sB34TQhi1fajNw?=
- =?us-ascii?Q?08xFqgc1/DsH9o6WPWvvfuLKnqTvGVXFDc7npQ4Ma+CsmW0+BkvfjY1cV84d?=
- =?us-ascii?Q?bATxW5TGBc47f2lNwmcQOUWK7fb5cDRe/CoSkXxQ8gRj0ThN6A15suHTFmcC?=
- =?us-ascii?Q?ci2ZAf3d8BLwVYqPGx1yVPIp8VAjgo5CVcjiCwP9FvFAjJmfg2b2c0vLcYb8?=
- =?us-ascii?Q?TaHeIgu8eiK+id+/5FlCYAkPfpTkcwx/shPBGKop3ug2Cp4Av5hTe2fXGFd1?=
- =?us-ascii?Q?2joT/6an1jOQkFkXHc5TAejrG/5DI/Nt37njltymV8moZjvDiTynbu5m4LV3?=
- =?us-ascii?Q?UZeRSRbsJPu4M2969ho/Cjtm9PhP40YIMwIVcznqK+fKMekFzJ2F5noK1IqG?=
- =?us-ascii?Q?V0D9VNLlbe2VdtEMGEUbAV3e9wbg9Bxih2nFl3pKz8YoPeIFwLJwzZWv5pco?=
- =?us-ascii?Q?xb+LIEqnxLf1wQhip2l+8/PimYE2tsKDVbGXK2uU8NvAaxxWjmMT5nZftv7n?=
- =?us-ascii?Q?fYjXBK0/Rd6SMq8vCOmFQoGz9zPpgq8nXF4eWtJJkDIPpGky3yedYJuyFzlB?=
- =?us-ascii?Q?BjozELJoz2oIY6OIHubzVS4EZ6Hm4FAOmIL8X5tulJ2yUxiU6+Ggx0WeAn2q?=
- =?us-ascii?Q?v21W/KnO1vBPWhg6888H09/BKadm00h+PJ0l9MJVJbT5HZTHHxbmuVk1hbbY?=
- =?us-ascii?Q?4kdhTeZrFrgUCe7BVnQOft5KKg0S/JEmxPcbxxorVswpeWIzLjG+sJzxtfgv?=
- =?us-ascii?Q?X0rZg6Xnn8nMLdFLahsHCy71?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5lUiavR4l3vTKNXFU8lc6GSGUOBjhBasp6m8Fe3uT9QCq67KQF/wzEs/tGr5?=
- =?us-ascii?Q?PTSykfzwIjO3J1ABsA/I1N5zjcxdJ7eKdCFEfZV+PQ8YoBxxLPnL6uGBTRrW?=
- =?us-ascii?Q?93YGv3rRnBnsqTMo0ybpyBWpzX3RN/3q2lBFbcP9qZR8chMDnXLA69cIMzSE?=
- =?us-ascii?Q?wJ0/c+32MczS7VAQLtjwdZvIrse2ZEgdPqJdmWpe0CKGkO6GXsGOFzrJRoRI?=
- =?us-ascii?Q?PJh+JnOF83OQ4xU8W0yNyB4yTbmul/UlYfWUt5KMxpc9tbtMZN5iPl/x4a5u?=
- =?us-ascii?Q?ILhg91qgth5I8f4//okQGDfLp4jV44YfsN3j1jEINlehsXBdSbvOjE2fXLnC?=
- =?us-ascii?Q?xnCQAXcVaMsSfKuPtasSFDZZaeCmIWPVeMR9QfrMfISMayU/Mm0uLr8e4t73?=
- =?us-ascii?Q?nJ7AWjNRnNhNpZvHyqFx4lknllGlSqX88uaTLnJkgqnvfAA9ZJ9Csz7829vo?=
- =?us-ascii?Q?GieLVzm98NEfBTsCk8EgLXXglXGHqUSnqWjHICiGm6/KjxZh0nkeBzryJh6h?=
- =?us-ascii?Q?gFqnoaquwPlrOiGYSaxVR0xLOPQv0EXxXnzWBXO8mq5yGFyhPvz9dHbP9G8O?=
- =?us-ascii?Q?S77iR7m5JuuLe6I03a3Tq5LgF4GEQfQkapZ1aTm4BCVy7UQg72Mj8K8xIwuN?=
- =?us-ascii?Q?d/m/CtiYypygovar6+BlHNnbLuXwQjyJqJZAaSAmsIKc4wyf7KfCEg+8Cy8g?=
- =?us-ascii?Q?XuasisMs1VX6cRwHYNoXT97ghIVfVNXQxHTlN0kJnoGm4sJX8v/FzKFnaCL0?=
- =?us-ascii?Q?ZZjsaP+BC6+j3uIyPtGKXg0Z+4R+3CTq8EcSAhrzFl8z8myT5tRjYZ4bzK/I?=
- =?us-ascii?Q?Vzc6qq/hcYqP3U02+j3SDgXYpUxzOdnbCCQq4rlYiSJOnMRT9vDWdJnOpkuG?=
- =?us-ascii?Q?TmTVKfJBBsngEHm6ulXx6HLpAI0nCxKd2uynphs9tRUT6AuEFMimoWYGLfD+?=
- =?us-ascii?Q?3xybKkkuQR/aieIA9yJFKOKer4eWYaYg+D5bcghDXHcOMezK1coU/Rlas3KQ?=
- =?us-ascii?Q?Avzhtvh69NCR3ZfwQECc46Y5gby3qMsvXCcGQ1pemmtW1Hqvyu439hAGSKWV?=
- =?us-ascii?Q?/GalYgrflEDS1leX9q2/BoYJBM+5Fv3Mkqd/gkYExYX4Uu14qbP0C4GQdzhd?=
- =?us-ascii?Q?jNUiHpdtYJUbU3RC9rKRLMHHRgMe9lIsjAKQ6Dc83lam2UJEaCn7VBFYHj+L?=
- =?us-ascii?Q?GvqELTS6+p1eZQExR8gq8TxtVau5f8kdLkTw0Q6cnlNRXnffsBJntQgLONMq?=
- =?us-ascii?Q?K0S3TuwAl7RJcjsOExxBx8F2xO0G0FIyYXbL6dduBNu5IMC8wkGQEqnSjGN0?=
- =?us-ascii?Q?Su6XUCK2Mu98oEjeThix8UkTK0RDZECiPl5IPt5fzdNNRtyjhsIC7bM0A0ye?=
- =?us-ascii?Q?BicCzM+pklmQ22bEL8db4EV7EEM3AP4hWL61y99qISq+vqX6rI/FToO6jA6x?=
- =?us-ascii?Q?mDt9PcmHHB9zUsYNZiw/qGm5pDsCspFGeHPEqx77PNi+DjTqJvM66rq0W8Hm?=
- =?us-ascii?Q?URs4ZtIkh+GNqNm+sEgBuJrVPQd3MX/YNNTZYZTA+6Jt0qu79eeqQXEHM7Pi?=
- =?us-ascii?Q?ZdiE2yZ4PWHgaPMChxs=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a0a9dfc-e3c6-4d0c-9ed9-08dceece3322
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 17:07:36.9772
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zh17WjscpWg8wcOmJqnEJjqUZXpkQuH3Woy3/U3ePEBi/6KsH+WsmomaPpK0vtGR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB6015
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Oct 17, 2024 at 10:01:28AM -0700, Nicolin Chen wrote:
-> On Thu, Oct 17, 2024 at 01:33:59PM -0300, Jason Gunthorpe wrote:
+On Thu, 17 Oct 2024 11:21:36 -0500
+"Bowman, Terry" <kibowman@amd.com> wrote:
+
+> Hi Jonathan,
 > 
-> > > diff --git a/drivers/iommu/iommufd/viommu_api.c b/drivers/iommu/iommufd/viommu_api.c
-> > > new file mode 100644
-> > > index 000000000000..c1731f080d6b
-> > > --- /dev/null
-> > > +++ b/drivers/iommu/iommufd/viommu_api.c
+> On 10/17/2024 8:43 AM, Jonathan Cameron wrote:
+> > On Wed, 16 Oct 2024 13:07:37 -0500
+> > Terry Bowman <Terry.Bowman@amd.com> wrote:
+> >   
+> >> Hi Jonathan,
+> >>
+> >> On 10/16/24 11:54, Jonathan Cameron wrote:  
+> >>> On Tue, 8 Oct 2024 17:16:49 -0500
+> >>> Terry Bowman <terry.bowman@amd.com> wrote:
+> >>>      
+> >>>> The current pcie_do_recovery() handles device recovery as result of
+> >>>> uncorrectable errors (UCE). But, CXL port devices require unique
+> >>>> recovery handling.
+> >>>>
+> >>>> Create a cxl_do_recovery() function parallel to pcie_do_recovery(). Add CXL
+> >>>> specific handling to the new recovery function.
+> >>>>
+> >>>> The CXL port UCE recovery must invoke the AER service driver's CXL port
+> >>>> UCE callback. This is different than the standard pcie_do_recovery()
+> >>>> recovery that calls the pci_driver::err_handler UCE handler instead.
+> >>>>
+> >>>> Treat all CXL PCIe port UCE errors as fatal and call kernel panic to
+> >>>> "recover" the error. A panic is called instead of attempting recovery
+> >>>> to avoid potential system corruption.
+> >>>>
+> >>>> The uncorrectable support added here will be used to complete CXL PCIe
+> >>>> port error handling in the future.
+> >>>>
+> >>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>  
+> >>>
+> >>> Hi Terry,
+> >>>
+> >>> I'm a little bothered by the subtle difference in the bus walks
+> >>> in here vs the existing cases. If we need them, comments needed
+> >>> to explain why.
+> >>>      
+> >>
+> >> Yes, I will add more details in the commit message about "why".
+> >> I added explanation following your below comment.
+> >>  
+> >>> If we are going to have separate handling, see if you can share
+> >>> a lot more of the code by factoring out common functions for
+> >>> the pci and cxl handling with callbacks to handle the differences.
+> >>>      
+> >>
+> >> Dan requested separate paths for the PCIe and CXL recovery. The intent,
+> >> as I understand, is to isolate the handling of PCIe and CXL protocol
+> >> errors. This is to create 2 different classes of protocol errors.  
+> > Function call chain wise I'm reasonably convinced that might be a good
+> > idea.  But not code wise if it means we end up with more hard to review
+> > code.
+> >   
+> >>  
+> >>> I've managed to get my head around this code a few times in the past
+> >>> (I think!) and really don't fancy having two subtle variants to
+> >>> consider next time we get a bug :( The RC_EC additions hurt my head.
+> >>>
+> >>> Jonathan  
+> >>
+> >> Right, the UCE recovery logic is not straightforward. The code can  be
+> >> refactored to take advantage of reuse. I'm interested in your thoughts
+> >> after I have provided some responses here.
+> >>  
+> >>>      
+> >>>>   static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
+> >>>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> >>>> index 31090770fffc..de12f2eb19ef 100644
+> >>>> --- a/drivers/pci/pcie/err.c
+> >>>> +++ b/drivers/pci/pcie/err.c
+> >>>> @@ -86,6 +86,63 @@ static int report_error_detected(struct pci_dev *dev,
+> >>>>   	return 0;
+> >>>>   }
+> >>>>   
+> >>>> +static int cxl_report_error_detected(struct pci_dev *dev,
+> >>>> +				     pci_channel_state_t state,
+> >>>> +				     enum pci_ers_result *result)
+> >>>> +{
+> >>>> +	struct cxl_port_err_hndlrs *cxl_port_hndlrs;
+> >>>> +	struct pci_driver *pdrv;
+> >>>> +	pci_ers_result_t vote;
+> >>>> +
+> >>>> +	device_lock(&dev->dev);
+> >>>> +	cxl_port_hndlrs = find_cxl_port_hndlrs();  
+> >>>
+> >>> Can we refactor to have a common function under this and report_error_detected()?
+> >>>      
+> >>
+> >> Sure, this can be refactored.
+> >>
+> >> The difference between cxl_report_error_detected() and report_error_detected() is the
+> >> handlers that are called.
+> >>
+> >> cxl_report_error_detected() calls the CXL driver's registered port error handler.
+> >>
+> >> report_error_recovery() calls the pcie_dev::err_handlers.
+> >>
+> >> Let me know if I should refactor for common code here?  
 > > 
-> > Let's call this file driver.c to match CONFIG_IOMMUFD_DRIVER
+> > It certainly makes sense to do that somewhere in here.  Just have light
+> > wrappers that provide callbacks so the bulk of the code is shared.
+> >   
 > 
-> Would this make its scope too large that it might feel odd to have
-> the iova_bitmap.c in a separate file?
+> Ok, Ill start on that. I have a v2 ready to-go without the reuse changes.
+> You want me to wait on sending v2 till it has reuse refactoring?
 
-Think of it as the catchall ?
+I'd imagine we might have some time after v2, so go ahead - experiments
+with refactoring can come later.
 
-Jason
+
+> >>>> + */
+> >>>> +static void cxl_walk_bridge(struct pci_dev *bridge,
+> >>>> +			    int (*cb)(struct pci_dev *, void *),
+> >>>> +			    void *userdata)
+> >>>> +{
+> >>>> +	cb(bridge, userdata);
+> >>>> +	if (bridge->subordinate)
+> >>>> +		pci_walk_bus(bridge->subordinate, cb, userdata);  
+> >>> The difference between this and pci_walk_bridge() is subtle and
+> >>> I'd like to avoid having both if we can.
+> >>>      
+> >>
+> >> The cxl_walk_bridge() was added because pci_walk_bridge() does not report
+> >> CXL errors as needed. If the erroring device is a bridge then pci_walk_bridge()
+> >> does not call report_error_detected() for the root port itself. If the bridge
+> >> is a CXL root port then the CXL port error handler is not called. This has 2
+> >> problems: 1. Error logging is not provided, 2. A result vote is not provided
+> >> by the root port's CXL port handler.  
+> > 
+> > So what happens for PCIe errors on the root port?  How are they reported?
+> > What I'm failing to understand is why these should be different.
+> > Maybe there is something missing on the PCIe side though!
+> > That code plays a game with what bridge and I thought that was there to handle
+> > this case.
+> >   
+> 
+> PCIe errors (not CXL errors) on a root port will be processed as they are today.
+Sure, I was just failing to understand why the code didn't need to check
+for error_detected on the root port, but the CXL code does.
+
+> 
+> An AER error is treated as a CXL error if *all* of the following are met:
+> - The AER error is not an internal error
+>     - Check is in AER's is_internal_error(info) function.
+> - The device is not a CXL device
+>     - Check is in AER's handles_cxl_errors() function.
+> 
+> Root port device PCIe error processing will not call the the pci_dev::err_handlers::error_detected().
+> because of the walk_bridge() implementation. The result vote to direct handling
+> is determined by downstream devices. This has probably been Ok until now because ports have been
+> fairly vanilla and standard until CXL.
+
+Ah. Got it - Root ports didn't have the handler.
+So is there any harm in making them run it? (well not as they don't have it -
+actually they do.  There is one in portdrv)
+That way the two codes look more similar.  Also, does this mean there were
+runtime pm and other calls that didn't hit the root port for PCIe that should have
+done?
+
+Comes back to I don't want too complex bits of code.  I'm fine with changing
+the PCIe one to add new handling needed for CXL.
+
+Just to be clear I'm fine with totally separate call paths just with lots
+of code reuse.   That may mean a few precursor patches touching only the
+PCIe code to make it fit for reuse.
+
+Jonathan
+
+
+
+> 
+> 
+> >>  
+> >>>> +}
+> >>>> +
+> >>>>   pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+> >>>>   		pci_channel_state_t state,
+> >>>>   		pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev))
+> >>>> @@ -276,3 +355,74 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+> >>>>   
+> >>>>   	return status;
+> >>>>   }
+> >>>> +
+> >>>> +pci_ers_result_t cxl_do_recovery(struct pci_dev *bridge,
+> >>>> +				 pci_channel_state_t state,
+> >>>> +				 pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev))
+> >>>> +{
+> >>>> +	struct pci_host_bridge *host = pci_find_host_bridge(bridge->bus);
+> >>>> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+> >>>> +	int type = pci_pcie_type(bridge);
+> >>>> +
+> >>>> +	if ((type != PCI_EXP_TYPE_ROOT_PORT) &&
+> >>>> +	    (type != PCI_EXP_TYPE_RC_EC) &&
+> >>>> +	    (type != PCI_EXP_TYPE_DOWNSTREAM) &&
+> >>>> +	    (type != PCI_EXP_TYPE_UPSTREAM)) {
+> >>>> +		pci_dbg(bridge, "Unsupported device type (%x)\n", type);
+> >>>> +		return status;
+> >>>> +	}
+> >>>> +  
+> >>>
+> >>> Would similar trick to in pcie_do_recovery work here for the upstream
+> >>> and downstream ports use pci_upstream_bridge() and for the others pass the dev into
+> >>> pci_walk_bridge()?
+> >>>      
+> >>
+> >> Yes, that would be a good starting point to begin reuse refactoring.
+> >> I'm interested in getting yours and others feedback on the separation of the
+> >> PCI and CXL protocol errors and how much separation is or not needed.  
+> > 
+> > Separation may make sense (I'm still thinking about it) for separate passes
+> > through the topology and separate callbacks / handling when an error is seen.
+> > What I don't want to see is two horribly complex separate walking codes if
+> > we can possibly avoid it.  Long term to me that just means two sets of bugs
+> > and problem corners instead of one.
+> > 
+> > Jonathan
+> >   
+> 
+> I understand. I will look to make changes here for reuse.
+> 
+> Regards,
+> Terry
+> 
+
 
