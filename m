@@ -1,206 +1,149 @@
-Return-Path: <linux-kernel+bounces-369634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A62D9A201E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8C59A2022
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475E42835BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1932819D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C171D95B5;
-	Thu, 17 Oct 2024 10:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F64B1D9697;
+	Thu, 17 Oct 2024 10:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="G98204VL"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXYbZDQR"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EB41D270B;
-	Thu, 17 Oct 2024 10:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AEF1D270B;
+	Thu, 17 Oct 2024 10:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729161371; cv=none; b=b5qMUd8VDfii0vhK+UL8g3LTJfV8qo69+2ygIesJsji/ymncV09mb41inc6c8fJF+LptDyNe07ypfJ9+PRkm0ObTlC+ujIofTmqnnBtyIuIj98/Yc555oB4fMMtlpXmPO1Ewih8YKaf0qmLozdO5kz4apsaGH9rg8f/LOJLfn/s=
+	t=1729161484; cv=none; b=hyNRHRcddHhH8cg3nmsLnL/xGC6Fz1gkgGTahhn+tndks6qrFecxuYxiy0h+sGz/kxHqlMfn4smIzcnGIQ+p0JwlLa0NPU5/60HeJ3W61SNQHxgZH4sEhPy5lnQB9li1imgutojgtxj/22Dxy2hxlQvg4hIW6GCF383QGVFtsak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729161371; c=relaxed/simple;
-	bh=bN0ynZ5VvEebxpXgXh2TCBbbaoPHNbGQrJn45V3ZuV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZFzQ70O68clmj1Sq71U3ePTYb4KfnUsNDGt1YnaKzJ2yIWvK1tsyticTAu7Y1IVFuooBVGoHL/UC5CnSJ2iIQrHV42zQofn8q0wn/sRUeHSEJ1V0eVT0KUNyGGRewiN+unMGnv4kQN92VgRryFBH2cJJGs5s/VerVOCr5K+c/n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=G98204VL; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ADEE91BF204;
-	Thu, 17 Oct 2024 10:35:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729161360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FU3ajgfKVQdp/DGYqfIoFwgjGz2NDpydxrXXIn2bE1U=;
-	b=G98204VLPKaAcWsavGd30rRwqEypallNrziTcStzdHkRWaKtaMkSoHfpTQYq6rlY1nQ9AX
-	oA97FMVpRw7r7fNmacsDX2Wo3haxFqhvQGZwRhHfs5DmGTcNPCPk1gnmvMdodkgnJs/8Lv
-	yOb4mGFH/6qKarFgC398y2e6MV1wuOtFtUUX3vDEzXCNrbPV8jmIf06Fjrcs9BR4K6Us/H
-	eRuyPpFGdEVEsDn09l0eqt0bqDUEJCdA6E269M8MKpWpK2iNhfq+wr2m+KhyJWNU9x9sS/
-	hY8egc0q6dio7a5KWPfC6PoqxbjxHxru/zYSduyYqpE+moqvOJ0piu8KKv2Ozw==
-Date: Thu, 17 Oct 2024 12:35:57 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Kyle Swenson <kyle.swenson@est.tech>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, Dent Project
- <dentproject@linuxfoundation.org>, "kernel@pengutronix.de"
- <kernel@pengutronix.de>
-Subject: Re: [PATCH net-next 00/12] Add support for PSE port priority
-Message-ID: <20241017123557.68189d5b@kmaincent-XPS-13-7390>
-In-Reply-To: <20241015114352.2034b84a@kmaincent-XPS-13-7390>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-	<ZwaLDW6sKcytVhYX@p620.local.tld>
-	<20241009170400.3988b2ac@kmaincent-XPS-13-7390>
-	<ZwbAYyciOcjt7q3e@est-xps15>
-	<ZwdpQRRGst1Z0eQE@pengutronix.de>
-	<20241015114352.2034b84a@kmaincent-XPS-13-7390>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729161484; c=relaxed/simple;
+	bh=xvy8QYUo0YSyjxJgjQdwvoTCrWBXm6b95/ydl1O85og=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r+MopmFrvunZHzLKw/YRbeT8w73uvFFYqq0rSgO8I3vyTkd3yg5/0eqqR4YRnxedAiBJfrxhoWCgMye3ztU6KlE6kKvxf9uL9YbYxqXz48Dnekkfp+h0SL5LyB81fLuzuTZ38FBa4ZMzZQNrwBgXZnqvbWIjF7UM8PQxutAenpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXYbZDQR; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20b533c6865so158655ad.2;
+        Thu, 17 Oct 2024 03:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729161482; x=1729766282; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fJQFaU9PYKDrUfwWE8Dyr8hUKo1FhUF9LzWiqIbRd8s=;
+        b=UXYbZDQR7N9+OcRnDfKtsgyswxxHplpWBN6cIFleQJleXOPvQym2+vsUhQMBnkDuB8
+         ayfJ8Uf6bHR6itvpBtgGUpWJrtEM6Bt18bKXTIFvC6nbZNiR9sIrZMpxWpKfXBbPAxlD
+         OKzEJi4jbWbx+SL3l+CllslHSrfjyU1sTZxbzPHPjeBTcy1zpgmW/ggXgvaaTqT+bzEN
+         vrwKJuJs0gVV6K0rOBzfOlP+RE+bJkNSUscWeK1bl+OWJjIQNCEr9LfrIUiPi7YIgl9U
+         QsSn+F7QOzZ1p78AkGrX1jFTAgzzyJWzjQFLgzthEqZL5UaWzdoUXkiqyObtE/iTlv/U
+         /+sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729161482; x=1729766282;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fJQFaU9PYKDrUfwWE8Dyr8hUKo1FhUF9LzWiqIbRd8s=;
+        b=fr/4yaEdHRrQnCJ0xBHl3aVFHrsOepkUArUIeqEdY9EcCmUMX+tlRzP0A4EZlZ23S1
+         m9H/Ij+c3++fm0WeOo/QqpaOoBfmXuyNYfMAKDWMVIZhy2ZmfxtAdaMMBdze34XPkIqU
+         ojkU12b9cK+6qxywtKG9kkwhQX2r3jI4dWu7LWECmDh7NcNU67MPyomGccxf971eYGvY
+         CUtvqhoSBh60JkP+IIMn3e0xYXn/sDLTY+6mIra/VE9Qpl82+zqnaPh7Ej8Kj91qU9x5
+         6q5bKydxpFfkcX+hGIylH1YXUuvVi6UJgluH+PHbwLfU/ptadj7QRQuJh7cc+4WpnEE4
+         mzMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+moQiaZoBDlyce6rV9a7MPSShiBPtCl7aMx0CWSlOxxGldaLGQTC6/sLIggN5+tyig8CgqN+G3bJUaOzL@vger.kernel.org, AJvYcCVWlwfjVoNfwpCQpnQSEMy1bzWvcFshqQSVteobIuOFLuGEsEJN055rZ30ydng/qsFseCcqKI6KqWuU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVaCtEXXL6bFk0z23Fdyd/D+TfYiooNtl/w7qU48RAZmHDgOq1
+	M4ObBjtk9OQvloaX75DdlopL1HOLV5TvTNNM/bMeFa2DjHnwIRff
+X-Google-Smtp-Source: AGHT+IGyGn2AOOUh3MpR3jBqCRzIX9fVl91xqa1PifHlX+dSApMhtMPDdJB9mUxD60nuUASNIab5bA==
+X-Received: by 2002:a17:902:db06:b0:20c:876a:fdac with SMTP id d9443c01a7336-20d47d13fefmr15666585ad.0.1729161482324;
+        Thu, 17 Oct 2024 03:38:02 -0700 (PDT)
+Received: from [127.0.1.1] ([45.32.86.188])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d17f9d51esm41899025ad.104.2024.10.17.03.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 03:38:01 -0700 (PDT)
+From: Yasin Lee <yasin.lee.x@gmail.com>
+Subject: [PATCH v3 0/2] iio: proximity: hx9023s: Add performance tuning
+ function
+Date: Thu, 17 Oct 2024 18:36:43 +0800
+Message-Id: <20241017-add-performance-tuning-configuration-v3-0-e7289791f523@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALvoEGcC/5XNsQ6CMBSF4Vcxna0pFyjo5HsYh9Lewk2kJS0QD
+ eHdLUyMOp4zfP/CIgbCyG6nhQWcKZJ3aeTnE9Odci1yMmkzEFCIK+RcGcMHDNaHXjmNfJwcuZZ
+ r7yy1U1BjAjiCyCQWRqIAlqghoKX3nnk80+4ojj589uqcbe+fgTnjgpd1BSB0rVDjve0VvS7a9
+ 2wLzHBE5Y8oJNSappFlYctKVkd0XdcvWs0V7i0BAAA=
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, yasin.lee.x@outlook.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Yasin Lee <yasin.lee.x@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2615; i=yasin.lee.x@gmail.com;
+ h=from:subject:message-id; bh=xvy8QYUo0YSyjxJgjQdwvoTCrWBXm6b95/ydl1O85og=;
+ b=owGbwMvMwCEYyfeRr6Zs90zG02pJDOkCL07X/a08+Nxp/2O1oP2NdmzhkgVv1WYv9VQXlhTKK
+ 34Q/fB9RykLgyAHg6yYIsuZ129Y81Uf7gn+7ZoBM4eVCWQIAxenAEzEzoDhf8ab4JycorZXGbM3
+ Lts38+LNCbv7xcNXTrp466B/rXN+XhnDf49Pvb9OXvopuKvJYmNTT/Y735nKDV/uMHMduSQcxek
+ aeQsA
+X-Developer-Key: i=yasin.lee.x@gmail.com; a=openpgp;
+ fpr=CCEBEC056F25E1BC53FB4568590EF10E7C76BB99
 
-On Tue, 15 Oct 2024 11:43:52 +0200
-Kory Maincent <kory.maincent@bootlin.com> wrote:
+When hardware design introduces significant sensor data noise,
+performance can be improved by adjusting register settings.
 
-> > Policy Variants and Implementation
-> >=20
-> > In cases where we are discussing prioritization, we are fundamentally
-> > talking about over-provisioning. This typically means that while a devi=
-ce
-> > advertises a certain maximum per-port power capacity (e.g., 95W), the t=
-otal
-> > system power budget (e.g., 300W) is insufficient to supply maximum powe=
-r to
-> > all ports simultaneously. This is often due to various system limitatio=
-ns,
-> > and if there were no power limits, prioritization wouldn't be necessary.
-> >=20
-> > The challenge then becomes how to squeeze more Powered Devices (PDs) on=
-to
-> > one PSE system. Here are two methods for over-provisioning:
-> >=20
-> > 1. Static Method:
-> > =20
-> >    This method involves distributing power based on PD classification. =
-It=E2=80=99s
-> >    straightforward and stable, with the software (probably within the P=
-SE
-> >    framework) keeping track of the budget and subtracting the power
-> > requested by each PD=E2=80=99s class.=20
-> > =20
-> >    Advantages: Every PD gets its promised power at any time, which
-> > guarantees reliability.=20
-> >=20
-> >    Disadvantages: PD classification steps are large, meaning devices re=
-quest
-> >    much more power than they actually need. As a result, the power supp=
-ly
-> > may only operate at, say, 50% capacity, which is inefficient and wastes
-> > money.
-> >=20
-> > 2. Dynamic Method: =20
-> >=20
-> >    To address the inefficiencies of the static method, vendors like
-> > Microchip have introduced dynamic power budgeting, as seen in the PD692=
-x0
-> > firmware. This method monitors the current consumption per port and
-> > subtracts it from the available power budget. When the budget is exceed=
-ed,
-> > lower-priority ports are shut down. =20
-> >=20
-> >    Advantages: This method optimizes resource utilization, saving costs.
-> >=20
-> >    Disadvantages: Low-priority devices may experience instability. A
-> > possible improvement could involve using LLDP protocols to dynamically
-> > configure power limits per port, thus allowing us to reduce power on
-> > over-consuming ports rather than shutting them down entirely. =20
->=20
-> Indeed we will have only static method for PSE controllers not supporting
-> system power budget management like the TPS2388x or LTC426.
-> Both method could be supported for "smart" PSE controller like PD692x0.
->=20
-> Let's begin with the static method implementation in the PSE framework for
-> now. It will need the power domain notion you have talked about.
+Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+---
+Changes in v3:
+- Removed global register block configuration:
+  - Replaced global tuning blob with individual properties for each configurable setting.
+- New properties added for individual configurations:
+  - tyhx,odr: Added scanning period configuration.
+  - tyhx,range: Full-scale range configuration for each channel.
+  - tyhx,avg: ADC averaging number configuration for each channel.
+  - tyhx,osr: Oversampling rate configuration for each channel.
+  - tyhx,sample-num: ADC sample frequency configuration.
+  - tyhx,integration-num: Integration number configuration.
+  - tyhx,lp-alpha: Low-pass filter coefficient configuration for each channel.
+  - tyhx,bl-up-alpha: Baseline filter up coefficient configuration.
+  - tyhx,bl-down-alpha: Baseline filter down coefficient configuration.
+  - tyhx,drdy-interrupt: Added interrupt function enable configuration.
+  - tyhx,int-high-num: Proximity persistency number (Near).
+  - tyhx,int-low-num: Proximity persistency number (Far).
+- General improvements:
+  - Improved description clarity for all properties.
+  - Updated examples section for better clarity and accuracy based on new properties.
+- Parsing functions added:
+  - Implemented parsing functions for the newly added properties.
+- Link to v2: https://lore.kernel.org/r/20240926-add-performance-tuning-configuration-v2-0-fdbb654f5767@gmail.com
 
-While developing the software support for port priority in static method, I
-faced an issue.
+Changes in v2:
+- In the YAML file, boundary constraints have been applied to the `tyhx,performance-tuning` property, requiring the number of elements to be between 2 and 512. The description also informs users that the number of elements must be a multiple of 2.
+- In the function implementation, boundary checks have been added for this property, ensuring that the number of elements is even.
+- Link to v1: https://lore.kernel.org/r/20240923-add-performance-tuning-configuration-v1-0-587220c8aece@gmail.com
 
-Supposing we are exceeding the power budget when we plug a new PD.
-The port power should not be enabled directly or magic smoke will appear.
-So we have to separate the detection part to know the needs of the PD from =
-the
-power enable part.
+---
+Yasin Lee (2):
+      dt-bindings: iio: tyhx,hx9023s: Add performance tuning configuration
+      iio: proximity: hx9023s: Add performance tuning function
 
-Currently the port power is enabled on the hardware automatically after the
-detection process. There is no way to separate power port process and detec=
-tion
-process with the PD692x0 controller and it could be done on the TPS23881 by
-configuring it to manual mode but: "The use of this mode is intended for sy=
-stem
-diagnostic purposes only in the event that ports cannot be powered in
-accordance with the IEEE 802.3bt standard from semiauto or auto modes."
-Not sure we want that.
+ .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 195 +++++++++++++++++
+ drivers/iio/proximity/hx9023s.c                    | 234 +++++++++++++++++++++
+ 2 files changed, 429 insertions(+)
+---
+base-commit: 7f6f44a9e58cd19093b544423bc04e1d668ec341
+change-id: 20240923-add-performance-tuning-configuration-e2016e4d6e02
 
-So in fact the workaround you talked about above will be needed for the two=
- PSE
-controllers.
-=20
-> Both methods have their pros and cons. Since the dynamic method is not al=
-ways
-> desirable, and if there's no way to disable it in the PD692x0's firmware,=
- one
-> potential workaround could be handling the budget in software and dynamic=
-ally
-> setting per-port limits. For instance, with a total budget of 300W and un=
-used
-> ports, we could initially set 95W limits per port. As high-priority PDs (=
-e.g.,
-> three 95W devices) are powered, we could dynamically reduce the power lim=
-it on
-> the remaining ports to 15W, ensuring that no device exceeds that
-> classification threshold.
+Best regards,
+-- 
+Yasin Lee <yasin.lee.x@gmail.com>
 
-We would set port overcurrent limit for all unpowered ports when the power
-budget available is less than max PI power 100W as you described.
-If a new PD plugged exceed the overcurrent limit then it will raise an inte=
-rrupt
-and we could deal with the power budget to turn off low priority ports at t=
-hat
-time.=20
-
-Mmh in fact I could not know if the overcurrent event interrupt comes from a
-newly plugged PD or not.
-
-An option: When we get new PD device plug interrupt event, we wait the end =
-of
-classification time (Tpon 400ms) and read the interrupt states again to kno=
-w if
-there is an overcurrent or not on the port.
-
-What do you think?
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
