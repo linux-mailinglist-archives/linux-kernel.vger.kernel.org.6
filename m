@@ -1,412 +1,138 @@
-Return-Path: <linux-kernel+bounces-369789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7D29A22AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:45:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355E19A22B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB7EB26D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48C21F211DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05C81DDC1E;
-	Thu, 17 Oct 2024 12:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5F41DD55A;
+	Thu, 17 Oct 2024 12:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeKAPGCI"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="LEju+Lr7"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F318E1DA113;
-	Thu, 17 Oct 2024 12:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729169133; cv=none; b=Uf/vPPJddCw4jkiqbWIHfWojQER906+MaC5g7WqOwW2OxZYx7LGDx3I5FVO+qo5YYuJ6ZcOiuNeol3I0LGuZjhn1zjVcZ+elZ8XZSdHMQwCC/iDFzkWgrVfI57CHFL4RLT/+tvTgaXj9js1d1P2D7OO4TDy+mr+fbKROtvJSu0U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729169133; c=relaxed/simple;
-	bh=rLMuLlvNxUmI/HYbU7n1zwDepmiigcIx6X3+oCrYkTM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oo64GcE/l88zUsAj2uXaTtDtveqy8YyKwQ2pri9AG7pc0zsKJiW0CJElB1ZVb+ylGCbf/v919oBN08FP4Xr5MCUIxRqPQqgK/9sDF9/sqyeAcrbBHtWIIbQ7QPw5QI42Mr3tJdqY8ObnHZO+KW/PIbcQvnWxNbm/WMnXqh8dxus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeKAPGCI; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso9016795e9.0;
-        Thu, 17 Oct 2024 05:45:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729169127; x=1729773927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HUqOU/B9V5bI7aGKr6oAsSPOnkfnMzWjy3ytFshj7Go=;
-        b=jeKAPGCIOD3jwZ2bKAghqK7C3b+eoN1hfLrSF3wrzBUX71IrWL7VM0oOi25P4eBJnM
-         fTUHlsyTay+rYqCYkEElRAED8VWpGZwBc0x93rluYPR3iPHYJztfDHeZ8fmo9mBUNtUb
-         jmW/nyTFN4MuJoA5O2//+xYOSc5ckzRJO7v3y2qEO7NbtXhKsgAcZX+/RSle+7boLRJt
-         HwiMi/rNblLVxPa1QWo19Qfeh7+CIzFdyAaQaePWESdJeI0HUQ8MZyT24WT/zWMn8fLc
-         UUU1kr6rzy0FiPCW2o0xKHejdxK05JOMF7hq9MwL/x4F6TLtE9ciOG/2qu7Zo8jWVkAH
-         WqgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729169127; x=1729773927;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HUqOU/B9V5bI7aGKr6oAsSPOnkfnMzWjy3ytFshj7Go=;
-        b=aXTwgkc9KQx7RDSyXvP39mwRtKvAV35B4Blwb15/bGr4pUnQxt43H4qv6r4XCKCe/4
-         Lpijskda+J+010XysFI9HgI3gvcuzcftfOJIFw11iLR6RFAa82vHUWgSgn6O1jTz0LEr
-         fAwLDshFzoQXgRVFMT31C+lJfKqffCzFxKbkvrcNNJLrRec9LEOYRwPxLL/kKi1LM2/Y
-         owJ57F05XZQqfLcTWSyMue02LrgjrsMQMzg/fmQekIf1WB0VVgUrgszUkZsttliWkS5A
-         P5Pg1xyViQDpXC0X/g/+I0QP7dfSSRQHSUm0/Hj9Bb3mV31lkAGe5dOgDtR6cGmFk5Rw
-         TRbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzyb1iqxRWWewawp0T3H70FQJEjlHq14vVNnhgM/tUigubfoFrh42zSvzkrY+3swPB212Mn3mNc7jKbQ0U@vger.kernel.org, AJvYcCVr7yBIz679mhW1QpjB04FXBNfcS9mCuoIbzfwmrhD0LIRfbEG3jIM9MvkuzIcsgoRsy71EXBlofVPnxgz9@vger.kernel.org, AJvYcCWjFyPibxGBlygCjvNTV2ClG11c2qR+DGRKVYwmt9CvN6r9+PBmYy8n1hptumbVwgggKabeU0VVuYXk@vger.kernel.org
-X-Gm-Message-State: AOJu0YwueFrFrK0zruREKNrDCRrQqMNc6ObngB9iHxO9U3aDSIoMZ6ee
-	K/xbT0F7+5GbbwLE4R6ehoXQTca8zMUE/AP4qqfpVnadQZwolq7s6W7wOw==
-X-Google-Smtp-Source: AGHT+IGvuMPufDXVDYbEhJWtD46EBlhB5FmV62WB5Un0gh6JrnWiCzE3F9WFz/2/bCs7ocs/lbKLCg==
-X-Received: by 2002:a05:600c:4f8f:b0:431:5ba1:a529 with SMTP id 5b1f17b1804b1-4315ba1a7eemr12857475e9.14.1729169127146;
-        Thu, 17 Oct 2024 05:45:27 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43158c4d9desm24972935e9.35.2024.10.17.05.45.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 05:45:26 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	upstream@airoha.com
-Subject: [PATCH v2 2/2] hwrng: add support for Airoha EN7581 TRNG
-Date: Thu, 17 Oct 2024 14:44:38 +0200
-Message-ID: <20241017124456.32584-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241017124456.32584-1-ansuelsmth@gmail.com>
-References: <20241017124456.32584-1-ansuelsmth@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569651D8E01;
+	Thu, 17 Oct 2024 12:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729169278; cv=pass; b=hGx8nkkrvxkewPr0SS3j70i8L7fekXxRt321z71CTukTDzXuy9zl70Jl7Sh7uepPUrY1/qjhK/329tyrn5y4FVssSDkpz0Cl5m+PVBhReWoApM1XpJ630O676vEfpiGNSBn/tuR9+2KaeBn+y+3LZ6hb4V7iz+fkNvKufpZxqg4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729169278; c=relaxed/simple;
+	bh=AB3ixU4FHKfi/uz1PhlxCNMlD8rXSkmlLAR8gmpMAhs=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=p/LIpLceo458TUTuip08TuOkJs/7PCu/b9nJc8oaqt90226cpwVC6Hav5G0uNdFdrwPCQ9ffmggh3wE6c1MpHuUFMgdAKd5rlMyT+LpKbiTHdxOe6/gmRdxdy1U5SMC8mon8AZGe8kEP8DH3u5EW0ZFc8vTGLQyvk25w9AHjx14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=LEju+Lr7; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729169235; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Vitan82VWa0VpuYsbnQE3faj9qcVggHPseswfANHc9KJbwilf4g80vvuLivkHciXkNrdAOENhKrJ3TkF7FA1KsOySg0ZtAIWH2A62fZgA9r25mGPYliQGjcCtC4YzaXZCdlpD1Vb2/VUO0qcPDyMS6iu+G39MaF5IrEHSk0Vo1M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729169235; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9RKSSJl4V/xRCGKzVFWhOE3IgVlJP3bRUWHtmpUXoKE=; 
+	b=aXtG2nGb9DowApozbXJYyv0TrcMZR/cvscKEet/H0qWUtdduoBKaJfNb7hl0Ulh1uJnF/q1UkVX7KgilcZt94UdrgGCeBZSsLxyUrUdvc8lGh133gNVGafFGhJ5uIomrzz/H5S8yi0MaC8P7zIydAHdOHveL1QKrROFZYZjO4Pg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729169235;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=9RKSSJl4V/xRCGKzVFWhOE3IgVlJP3bRUWHtmpUXoKE=;
+	b=LEju+Lr7MBwbnqd9DbyjIE3tqQoXAU9R17MpyPPtR504JGMZvgmg1AKAHv6RImy/
+	TEa0VK1ZrAN4kpNJxeejuwxOwlQKYtlp2LP7ztw5CAaAwqXfT6HHo3oOHvRnHNKHCNE
+	xFDh+py6xncRUbRhLDBk2YIxfMbBNqeV45YPDrj0=
+Received: by mx.zohomail.com with SMTPS id 1729169234292227.94396743823324;
+	Thu, 17 Oct 2024 05:47:14 -0700 (PDT)
+Message-ID: <c1e8265d-f329-4ab4-afa0-218c9f660340@collabora.com>
+Date: Thu, 17 Oct 2024 17:46:56 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.15 000/691] 5.15.168-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241015112440.309539031@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241015112440.309539031@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Add support for Airoha TRNG. The Airoha SoC provide a True RNG module
-that can output 4 bytes of raw data at times.
+On 10/15/24 4:19 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.168 release.
+> There are 691 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 17 Oct 2024 11:22:41 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.168-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
 
-The module makes use of various noise source to provide True Random
-Number Generation.
+Hi,
 
-On probe the module is reset to operate Health Test and verify correct
-execution of it.
+Please find the KernelCI report below :-
 
-The module can also provide DRBG function but the execution mode is
-mutually exclusive, running as TRNG doesn't permit to also run it as
-DRBG.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-Changes v2:
-- Sort include header
-- Add missing bitfield.h
+OVERVIEW
 
- drivers/char/hw_random/Kconfig       |  13 ++
- drivers/char/hw_random/Makefile      |   1 +
- drivers/char/hw_random/airoha-trng.c | 243 +++++++++++++++++++++++++++
- 3 files changed, 257 insertions(+)
- create mode 100644 drivers/char/hw_random/airoha-trng.c
+    Builds: 24 passed, 0 failed
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 5912c2dd6398..bda283f290bc 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -62,6 +62,19 @@ config HW_RANDOM_AMD
- 
- 	  If unsure, say Y.
- 
-+config HW_RANDOM_AIROHA
-+	tristate "Airoha True HW Random Number Generator support"
-+	depends on ARCH_AIROHA || COMPILE_TEST
-+	default HW_RANDOM
-+	help
-+	  This driver provides kernel-side support for the True Random Number
-+	  Generator hardware found on Airoha SoC.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called airoha-rng.
-+
-+	  If unsure, say Y.
-+
- config HW_RANDOM_ATMEL
- 	tristate "Atmel Random Number Generator support"
- 	depends on (ARCH_AT91 || COMPILE_TEST)
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 01f012eab440..dfb717b12f0b 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -8,6 +8,7 @@ rng-core-y := core.o
- obj-$(CONFIG_HW_RANDOM_TIMERIOMEM) += timeriomem-rng.o
- obj-$(CONFIG_HW_RANDOM_INTEL) += intel-rng.o
- obj-$(CONFIG_HW_RANDOM_AMD) += amd-rng.o
-+obj-$(CONFIG_HW_RANDOM_AIROHA) += airoha-trng.o
- obj-$(CONFIG_HW_RANDOM_ATMEL) += atmel-rng.o
- obj-$(CONFIG_HW_RANDOM_BA431) += ba431-rng.o
- obj-$(CONFIG_HW_RANDOM_GEODE) += geode-rng.o
-diff --git a/drivers/char/hw_random/airoha-trng.c b/drivers/char/hw_random/airoha-trng.c
-new file mode 100644
-index 000000000000..1dbfa9505c21
---- /dev/null
-+++ b/drivers/char/hw_random/airoha-trng.c
-@@ -0,0 +1,243 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2024 Christian Marangi */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/hw_random.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/platform_device.h>
-+
-+#define TRNG_IP_RDY			0x800
-+#define   CNT_TRANS			GENMASK(15, 8)
-+#define   SAMPLE_RDY			BIT(0)
-+#define TRNG_NS_SEK_AND_DAT_EN		0x804
-+#define	  RNG_EN			BIT(31) /* referenced as ring_en */
-+#define	  RAW_DATA_EN			BIT(16)
-+#define TRNG_HEALTH_TEST_SW_RST		0x808
-+#define   SW_RST			BIT(0) /* Active High */
-+#define TRNG_INTR_EN			0x818
-+#define   INTR_MASK			BIT(16)
-+#define   CONTINUOUS_HEALTH_INITR_EN	BIT(2)
-+#define   SW_STARTUP_INITR_EN		BIT(1)
-+#define   RST_STARTUP_INITR_EN		BIT(0)
-+/* Notice that Health Test are done only out of Reset and with RNG_EN */
-+#define TRNG_HEALTH_TEST_STATUS		0x824
-+#define   CONTINUOUS_HEALTH_AP_TEST_FAIL BIT(23)
-+#define   CONTINUOUS_HEALTH_RC_TEST_FAIL BIT(22)
-+#define   SW_STARTUP_TEST_DONE		BIT(21)
-+#define   SW_STARTUP_AP_TEST_FAIL	BIT(20)
-+#define   SW_STARTUP_RC_TEST_FAIL	BIT(19)
-+#define   RST_STARTUP_TEST_DONE		BIT(18)
-+#define   RST_STARTUP_AP_TEST_FAIL	BIT(17)
-+#define   RST_STARTUP_RC_TEST_FAIL	BIT(16)
-+#define   RAW_DATA_VALID		BIT(7)
-+
-+#define TRNG_RAW_DATA_OUT		0x828
-+
-+#define TRNG_CNT_TRANS_VALID		0x80
-+#define BUSY_LOOP_SLEEP			10
-+#define BUSY_LOOP_TIMEOUT		(BUSY_LOOP_SLEEP * 10000)
-+
-+struct airoha_trng {
-+	void __iomem *base;
-+	struct hwrng rng;
-+	struct device *dev;
-+
-+	struct completion rng_op_done;
-+};
-+
-+static int airoha_trng_irq_mask(struct airoha_trng *trng)
-+{
-+	u32 val;
-+
-+	val = readl(trng->base + TRNG_INTR_EN);
-+	val |= INTR_MASK;
-+	writel(val, trng->base + TRNG_INTR_EN);
-+
-+	return 0;
-+}
-+
-+static int airoha_trng_irq_unmask(struct airoha_trng *trng)
-+{
-+	u32 val;
-+
-+	val = readl(trng->base + TRNG_INTR_EN);
-+	val &= ~INTR_MASK;
-+	writel(val, trng->base + TRNG_INTR_EN);
-+
-+	return 0;
-+}
-+
-+static int airoha_trng_init(struct hwrng *rng)
-+{
-+	struct airoha_trng *trng = container_of(rng, struct airoha_trng, rng);
-+	int ret;
-+	u32 val;
-+
-+	val = readl(trng->base + TRNG_NS_SEK_AND_DAT_EN);
-+	val |= RNG_EN;
-+	writel(val, trng->base + TRNG_NS_SEK_AND_DAT_EN);
-+
-+	/* Set out of SW Reset */
-+	airoha_trng_irq_unmask(trng);
-+	writel(0, trng->base + TRNG_HEALTH_TEST_SW_RST);
-+
-+	ret = wait_for_completion_timeout(&trng->rng_op_done, BUSY_LOOP_TIMEOUT);
-+	if (ret <= 0) {
-+		dev_err(trng->dev, "Timeout waiting for Health Check\n");
-+		airoha_trng_irq_mask(trng);
-+		return -ENODEV;
-+	}
-+
-+	/* Check if Health Test Failed */
-+	val = readl(trng->base + TRNG_HEALTH_TEST_STATUS);
-+	if (val & (RST_STARTUP_AP_TEST_FAIL | RST_STARTUP_RC_TEST_FAIL)) {
-+		dev_err(trng->dev, "Health Check fail: %s test fail\n",
-+			val & RST_STARTUP_AP_TEST_FAIL ? "AP" : "RC");
-+		return -ENODEV;
-+	}
-+
-+	/* Check if IP is ready */
-+	ret = readl_poll_timeout(trng->base + TRNG_IP_RDY, val,
-+				 val & SAMPLE_RDY, 10, 1000);
-+	if (ret < 0) {
-+		dev_err(trng->dev, "Timeout waiting for IP ready");
-+		return -ENODEV;
-+	}
-+
-+	/* CNT_TRANS must be 0x80 for IP to be considered ready */
-+	ret = readl_poll_timeout(trng->base + TRNG_IP_RDY, val,
-+				 FIELD_GET(CNT_TRANS, val) == TRNG_CNT_TRANS_VALID,
-+				 10, 1000);
-+	if (ret < 0) {
-+		dev_err(trng->dev, "Timeout waiting for IP ready");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static void airoha_trng_cleanup(struct hwrng *rng)
-+{
-+	struct airoha_trng *trng = container_of(rng, struct airoha_trng, rng);
-+	u32 val;
-+
-+	val = readl(trng->base + TRNG_NS_SEK_AND_DAT_EN);
-+	val &= ~RNG_EN;
-+	writel(val, trng->base + TRNG_NS_SEK_AND_DAT_EN);
-+
-+	/* Put it in SW Reset */
-+	writel(SW_RST, trng->base + TRNG_HEALTH_TEST_SW_RST);
-+}
-+
-+static int airoha_trng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-+{
-+	struct airoha_trng *trng = container_of(rng, struct airoha_trng, rng);
-+	u32 *data = buf;
-+	u32 status;
-+	int ret;
-+
-+	ret = readl_poll_timeout(trng->base + TRNG_HEALTH_TEST_STATUS, status,
-+				 status & RAW_DATA_VALID, 10, 1000);
-+	if (ret < 0) {
-+		dev_err(trng->dev, "Timeout waiting for TRNG RAW Data valid\n");
-+		return ret;
-+	}
-+
-+	*data = readl(trng->base + TRNG_RAW_DATA_OUT);
-+
-+	return 4;
-+}
-+
-+static irqreturn_t airoha_trng_irq(int irq, void *priv)
-+{
-+	struct airoha_trng *trng = (struct airoha_trng *)priv;
-+
-+	airoha_trng_irq_mask(trng);
-+	/* Just complete the task, we will read the value later */
-+	complete(&trng->rng_op_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int airoha_trng_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct airoha_trng *trng;
-+	int irq, ret;
-+	u32 val;
-+
-+	trng = devm_kzalloc(dev, sizeof(*trng), GFP_KERNEL);
-+	if (!trng)
-+		return -ENOMEM;
-+
-+	trng->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(trng->base))
-+		return PTR_ERR(trng->base);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	airoha_trng_irq_mask(trng);
-+	ret = devm_request_irq(&pdev->dev, irq, airoha_trng_irq, 0,
-+			       pdev->name, (void *)trng);
-+	if (ret) {
-+		dev_err(dev, "Can't get interrupt working.\n");
-+		return ret;
-+	}
-+
-+	init_completion(&trng->rng_op_done);
-+
-+	/* Enable interrupt for SW reset Health Check */
-+	val = readl(trng->base + TRNG_INTR_EN);
-+	val |= RST_STARTUP_INITR_EN;
-+	writel(val, trng->base + TRNG_INTR_EN);
-+
-+	/* Set output to raw data */
-+	val = readl(trng->base + TRNG_NS_SEK_AND_DAT_EN);
-+	val |= RAW_DATA_EN;
-+	writel(val, trng->base + TRNG_NS_SEK_AND_DAT_EN);
-+
-+	/* Put it in SW Reset */
-+	writel(SW_RST, trng->base + TRNG_HEALTH_TEST_SW_RST);
-+
-+	trng->dev = dev;
-+	trng->rng.name = pdev->name;
-+	trng->rng.init = airoha_trng_init;
-+	trng->rng.cleanup = airoha_trng_cleanup;
-+	trng->rng.read = airoha_trng_read;
-+
-+	ret = devm_hwrng_register(dev, &trng->rng);
-+	if (ret) {
-+		dev_err(dev, "failed to register rng device: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id airoha_trng_of_match[] = {
-+	{ .compatible = "airoha,en7581-trng", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, airoha_trng_of_match);
-+
-+static struct platform_driver airoha_trng_driver = {
-+	.driver = {
-+		.name = "airoha-trng",
-+		.of_match_table	= airoha_trng_of_match,
-+	},
-+	.probe = airoha_trng_probe,
-+};
-+
-+module_platform_driver(airoha_trng_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_DESCRIPTION("Airoha True Random Number Generator driver");
--- 
-2.45.2
+    Boot tests: 42 passed, 0 failed
+
+    CI systems: maestro
+
+REVISION
+
+    Commit
+        name: 
+        hash: 63cec7aeaef787deed4608a04b93cf521ddc11bf
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+
+
+BUILDS
+
+    No new build failures found
+
+BOOT TESTS
+
+    No new boot failures found
+
+See complete and up-to-date report at:
+ https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=63cec7aeaef787deed4608a04b93cf521ddc11bf&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
 
