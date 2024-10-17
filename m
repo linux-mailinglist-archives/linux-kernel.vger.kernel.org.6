@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-369667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A8E9A20BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:12:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C5D9A20BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9FE1C222CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5861F2602B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777A01DBB2C;
-	Thu, 17 Oct 2024 11:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2cztVCj"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5391DC730;
+	Thu, 17 Oct 2024 11:12:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47981DBB0C
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7B21DBB0C;
+	Thu, 17 Oct 2024 11:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729163537; cv=none; b=cSyusf4SPP2BFK4gAyyZJAaWIJzSs9RfTj0ch5A+bAy16AMmziPrNojjCEr0OlsT8Y9+qoVJxUiOj0/tav3egRvo3Cf0YbbAzMSN3BF5WslzOzx3WHrntWqTYK0WlAG/IfgZLAGehl4SGWmXgB9s/AU5+pvRFXs4NZmaWWB/p/I=
+	t=1729163531; cv=none; b=TG0u1nzdCLw4fGd3LBHP4aARfW7uVqjPZAPzPU6uxMx9QyLfntKgEGwEcUt0fgmBwx/4QrNDt3vzfO9e+iZiS+OPb2Ic95mU+y10sd3wf7xztaTif1qhFJ2ADycVB/4ChsXg5EJteZJpL7NeaUU+OJ1A62iwR/Ey12gfzw8/FkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729163537; c=relaxed/simple;
-	bh=zKdUS339pHOOXA+tBvmsS8ugcMtfQs7dgxpIpkGWeuw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FFa1ifJKj2NdQLwZjQPN3hTm616hcBsxJT9zLBk1adpL7jnF4iQey2lGwkO/RnP0jNic3YZXdIdXBbgFsOkEXzFMxqlnugC8wuv/TOTPcpjT01ji/5xmbqFZbEPyza7+oLBkqozihF/eGfEAs2Bam6oMQi9L/P2kB5fcogPRJiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2cztVCj; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c948c41edeso1024285a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:12:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729163533; x=1729768333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X2f/5CdwlqDZzfToSurNpkysibov1LhVKsU7xXN+KuE=;
-        b=R2cztVCj1M6HojvKnwyaZlGoo9cKNQqLg5oZ0K+jMEVLfCsTvkBdPNfpgH51ueDJLY
-         ZEAjVGmApowhU5KZfBbjU9RcmQR4+/1gFYYsSAGKQwEKH8O0ZE30Vzr/2HjOzbZy9+Tj
-         +tatnt9BPuB+zCDY6fD1fZx3fZ89NvSIPRCrNUL6huSacVwf6EMEYvEpg17Ecpuqp5zK
-         d9kgC3n+D2yHGo3UUoz+XrU9w4OVO3Pu4ZWi5Dca+C21jYT9bgBO0o2GGM3ZbCBSzpBl
-         lc//pbNVDV3txOqz4v2D7qo23rLWUCL7MCWXN6ECHsFIn05ix/8CHBGsAnF9OEjHp7cW
-         e59w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729163533; x=1729768333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X2f/5CdwlqDZzfToSurNpkysibov1LhVKsU7xXN+KuE=;
-        b=JNCM8avxKYfReprCEofUfdn3bOy/oVPaeDR2A+f23xYyx/3TXevBq00TRXs48ZErmk
-         xZK7A8ArG93bCo6/aWYas/fr+x6TsVY/TqbEsla0S4Wi2mCHRdeL42NYSpFeJIY9v7uh
-         UWZMOf6Qy7ploYmm5xd2AYu8YheYg5/pC6pzVKaJHw61m7imXX1BcUykkj0P7dYYcDwZ
-         GNJtEica+WMNrDdCjM6ky18p0v1YL4PuPp9eQpJRZQp/gUk6KAohhyswR6IHIaiTXQIP
-         Anr38IrTOb4oPAUqLlsSoh10d1HovAnkqGCAKsH8fjH7dmPwuFxY/s0YKPL5bItOgaZ0
-         ITpg==
-X-Gm-Message-State: AOJu0Ywo6XKGkBAFVRhwRVMb4Jkiw/PWbVm8ANQWUMXDzq5sDqdRmwbN
-	Iunw8+tEXSztqb2IAd3GTnkcAJRTTKiJeBaH/VC1ezorZVz6PSWeTau2R0UdANBC6W0/oPnJOo2
-	uIoZ6T7OFtO4eE8y4VdoS+P93rchZMC7v
-X-Google-Smtp-Source: AGHT+IHSlLqfHkfXjcrCrqw6HVJJpqqJW1sN04velCYQ/+/CcptzRhKhS5HTJ56w/NaVMDxgvs11CXhycPsWrCOogtU=
-X-Received: by 2002:a05:6402:42c9:b0:5c9:6bd9:68db with SMTP id
- 4fb4d7f45d1cf-5c96bd96bd1mr12186832a12.3.1729163532841; Thu, 17 Oct 2024
- 04:12:12 -0700 (PDT)
+	s=arc-20240116; t=1729163531; c=relaxed/simple;
+	bh=/QVN2zJk27N2Yyg3PrNEHCYcXhhz6+Tedclh7QlzfGo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QUWXu5u3V5S2QQOY8RhyWsCoasKok6NKE55LQtcQ2vky5ySiPZaCWgHUcKd6e327hBA7OF8ABd1/u0lxGMyfsS5JC8n3wMIvB0e89bSLfFysb9DY/Rism2YCDSYLH+YazQLqEMKlFIhDVvUvunv9D27kV3nzkH07G/EFS8lFsiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTlRV0xN5z6J7Q4;
+	Thu, 17 Oct 2024 19:07:34 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 95644140CB9;
+	Thu, 17 Oct 2024 19:12:05 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 13:12:05 +0200
+Date: Thu, 17 Oct 2024 12:12:03 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: Philipp Stanner <pstanner@redhat.com>, Bjorn Helgaas
+	<bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] PCI: Improve printout in pdev_sort_resources()
+Message-ID: <20241017121203.000003d8@Huawei.com>
+In-Reply-To: <20241017095545.1424-1-ilpo.jarvinen@linux.intel.com>
+References: <20241017095545.1424-1-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2024101416-scouring-upbeat-b658@gregkh> <20241015070226.15790-1-vimal.agrawal@sophos.com>
- <92435cd4-c0e1-4d05-8ecf-52dd9249adf4@quicinc.com>
-In-Reply-To: <92435cd4-c0e1-4d05-8ecf-52dd9249adf4@quicinc.com>
-From: Vimal Agrawal <avimalin@gmail.com>
-Date: Thu, 17 Oct 2024 16:42:01 +0530
-Message-ID: <CALkUMdS3wEuSi5SGqsRKt3nSb4mHue1bJTJm8=QL3OLYU2GWig@mail.gmail.com>
-Subject: Re: [PATCH v2] misc: misc_minor_alloc to use ida for all dynamic/misc
- dynamic minors
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, 
-	vimal.agrawal@sophos.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Jeff,
+On Thu, 17 Oct 2024 12:55:45 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-Thanks. I will be adding MODULE_DESCRIPTION in the next version of the
-patch. Will be splitting kunit changes from this patch in two patch
-series.
+> Use pci_resource_name() helper in pdev_sort_resources() to print
+> resources in user-friendly format. Also replace the vague "bogus
+> alignment" with a more precise explanation of the problem.
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>=20
+> v2:
+> - Place colon after %s %pR to be consistent with other printouts
+> - Replace vague "bogus alignment" with the exact cause
+>=20
+>  drivers/pci/setup-bus.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index 23082bc0ca37..0fd286f79674 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -134,6 +134,7 @@ static void pdev_sort_resources(struct pci_dev *dev, =
+struct list_head *head)
+>  	int i;
+> =20
+>  	pci_dev_for_each_resource(dev, r, i) {
+> +		const char *r_name =3D pci_resource_name(dev, i);
+>  		struct pci_dev_resource *dev_res, *tmp;
+>  		resource_size_t r_align;
+>  		struct list_head *n;
+> @@ -146,8 +147,8 @@ static void pdev_sort_resources(struct pci_dev *dev, =
+struct list_head *head)
+> =20
+>  		r_align =3D pci_resource_alignment(dev, r);
+>  		if (!r_align) {
+> -			pci_warn(dev, "BAR %d: %pR has bogus alignment\n",
+> -				 i, r);
+> +			pci_warn(dev, "%s %pR: alignment must not be zero\n",
+> +				 r_name, r);
+Why bother with local variable if only used here?
+Absolutely fine if you have more code coming that uses it again though!
 
-Vimal
+Otherwise seems sensible change.
 
-On Wed, Oct 16, 2024 at 3:48=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
->
-> On 10/15/24 00:02, Vimal Agrawal wrote:
-> ...
-> > +static struct kunit_suite test_suite =3D {
-> > +     .name =3D "misc_minor_test",
-> > +     .test_cases =3D test_cases,
-> > +};
-> > +kunit_test_suite(test_suite);
-> > +
-> > +MODULE_LICENSE("GPL");
->
-> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-> description is missing"), a module without a MODULE_DESCRIPTION() will
-> result in a warning when built with make W=3D1. Recently, multiple
-> developers have been eradicating these warnings treewide, and very few
-> (if any) are left, so please don't introduce a new one :)
->
-> Please add the missing MODULE_DESCRIPTION()
->
-> /jeff
+>  			continue;
+>  		}
+> =20
+
 
