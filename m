@@ -1,162 +1,189 @@
-Return-Path: <linux-kernel+bounces-369774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1809A2283
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:39:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FA09A2286
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D653D2835A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:39:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27973281AFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143F91DDC3A;
-	Thu, 17 Oct 2024 12:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9EYVNij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F511DDC0F;
+	Thu, 17 Oct 2024 12:38:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640B41DD555;
-	Thu, 17 Oct 2024 12:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292051DDC0E;
+	Thu, 17 Oct 2024 12:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729168705; cv=none; b=pd/cypmx7DcWA2yndLLuvIU10MmgPQ/H0pIvqjihPVJ6nCYIa17aeQjnW6BHQU1QEJBzTolWQILiSTimKZb76IhP2aimubo4t79CRTio4zCPYp0z+ZhhLtI6QrgIbyqkFQvrAuAU4yfw5lPqEGNiJ8HWyF5bBvY6Uh06kINVdHY=
+	t=1729168727; cv=none; b=uddaySqTx6Px1KcMsAqETjyIAnEm4rmLfvf9Itj+clyqvGZchRJVZBzjCflmzSAXPwmnAMPxYsiQyocCrZOVclWTctGwsou39UkTps7QniXo1AuOu7FFAJurUAANi4jp5jCs/QRU7hY590CTJzTcGRvViQ+WufBxiNAKqWd76Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729168705; c=relaxed/simple;
-	bh=OIrbp2CVtvg4UWFxQXRqZHrfcrJEkOcp4KyDD/C3SZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uB/IaVhYcn/HeOSTc3l4M/d7fyyKt4sUaotAhZ1m+omGNQ9W42KzfgZDu3Y29OcEgcYvlNPztiUWEnZRQ70RcERUmWToxEEq6YndMnkKxnwfjbjiRAZkwZJrPBp1eYkpXxpTvee+ELJMP6tGiDgHOCI+3pgojsg8/7669LVqt+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9EYVNij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B29C4CEC3;
-	Thu, 17 Oct 2024 12:38:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729168705;
-	bh=OIrbp2CVtvg4UWFxQXRqZHrfcrJEkOcp4KyDD/C3SZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j9EYVNijAzTcR9+Q0nJWF76QGbpC+i2F8Ibd8Pe90Lok8iYwrawrW1sU7xB48VpbX
-	 DusFdxUNub+eo2+w5hWdTMVqxJOMKF1L84kcSNbOJAsluJd2oBkBwYM5J7LzRmp0B/
-	 eKaik9MtUzVjTAg0rc94FslYDLuYTN29+jqiAsjRR7rFjEBsUYlmk7S0GSo4ES3HRZ
-	 2keZZ9VINR1rnGmQwjR2xlHfHUBoKoHqPBY8Sr4w23dsdsyn3P5rz5a+RHiSSFWpr8
-	 oi3DIiTkz5PyHoFXhI8WdQb7eAXy6Zx3eS3ICgzkda0hwfX+2EPPBn8+BXg1EimbIB
-	 OtBDc/5J7JCGQ==
-Date: Thu, 17 Oct 2024 07:38:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Richard van Schagen <vschagen@icloud.com>,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/3] dt-bindings: crypto: Add Inside Secure
- SafeXcel EIP-93 crypto engine
-Message-ID: <20241017123823.GA3032377-robh@kernel.org>
-References: <20241017004335.27471-1-ansuelsmth@gmail.com>
- <20241017004335.27471-2-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1729168727; c=relaxed/simple;
+	bh=gJowPuj2eGVIHd+l3ktq8ceYKlOGYjghKnJE8W+rq8s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FTIBBnNAZeUlGarLzafe718h1LBTxtrhsKjw4APy+6Bl7LHlOjzv9j9bL3DGf1d0hPfMNbBV9GG/Fas7sJRzzLJsl1l25NOLsnjYyNb0SlsJLt9bhuMG5trcJgvkSjgDKEQ0jnAVZO1z4wYNqzZUTb1WQi5OOoaAlWfdTINl4Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTnMQ06xCz6LDF7;
+	Thu, 17 Oct 2024 20:34:10 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8D9DC140B33;
+	Thu, 17 Oct 2024 20:38:41 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 14:38:40 +0200
+Date: Thu, 17 Oct 2024 13:38:39 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
+Subject: Re: [RFC PATCH 3/4] cxl/events: Updates for CXL DRAM Event Record
+Message-ID: <20241017133839.000035dd@Huawei.com>
+In-Reply-To: <20241016163349.1210-4-shiju.jose@huawei.com>
+References: <20241016163349.1210-1-shiju.jose@huawei.com>
+	<20241016163349.1210-4-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017004335.27471-2-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Oct 17, 2024 at 02:43:18AM +0200, Christian Marangi wrote:
-> Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
+On Wed, 16 Oct 2024 17:33:48 +0100
+<shiju.jose@huawei.com> wrote:
+
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> The IP is present on Airoha SoC and on various Mediatek devices and
-> other SoC under different names like mtk-eip93 or PKTE.
+> CXL spec 3.1 section 8.2.9.2.1.2 Table 8-46, DRAM Event Record has updated
+> with following new fields and new types for Memory Event Type, Transaction
+> Type and Validity Flags fields.
+> 1. Component Identifier
+> 2. Sub-channel
+> 3. Advanced Programmable Corrected Memory Error Threshold Event Flags
+> 4. Corrected Memory Error Count at Event
+> 5. Memory Event Sub-Type
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Add updates for the above spec changes in the CXL events record and CXL
+> DRAM trace event implementations.
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Passing comments on two things inline.
+1) There are a couple of whitespace consistency changes in here.
+   Spaces to tabs for alignment.  That's fine but maybe needs a brief
+   mention in the patch description.
+2) Really odd that the spec didn't have a component ID field for DRAM
+   errors.  They weren't all that useful before the PLDM format was added
+   but still a curiosity that made me open up the 3.0 spec.  Indeed, no
+   such field.
+
+With that one line added to the patch description this looks good to me.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
 > ---
-> Changes v2:
-> - Change to better compatible
-> - Add description for EIP93 models
+>  drivers/cxl/core/trace.h | 44 ++++++++++++++++++++++++++++++++--------
+>  include/cxl/event.h      |  7 ++++++-
+>  2 files changed, 42 insertions(+), 9 deletions(-)
 > 
->  .../crypto/inside-secure,safexcel-eip93.yaml  | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> new file mode 100644
-> index 000000000000..fc0877d93514
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> @@ -0,0 +1,61 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/crypto/inside-secure,safexcel-eip93.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Inside Secure SafeXcel EIP-93 cryptographic engine
-> +
-> +maintainers:
-> +  - Christian Marangi <ansuelsmth@gmail.com>
-> +
-> +description: |
-> +  The Inside Secure SafeXcel EIP-93 is a cryptographic engine IP block
-> +  integrated in varios devices with very different and generic name from
-> +  PKTE to simply vendor+EIP93. The real IP under the hood is actually
-> +  developed by Inside Secure and given to license to vendors.
-> +
-> +  The IP block is sold with different model based on what feature are
-> +  needed and are identified with the final letter. Each letter correspond
-> +  to a specific set of feature and multiple letter reflect the sum of the
-> +  feature set.
-> +
-> +  EIP-93 models:
-> +    - EIP-93i: (basic) DES/Triple DES, AES, PRNG, IPsec ESP, SRTP, SHA1
-> +    - EIP-93ie: i + SHA224/256, AES-192/256
-> +    - EIP-93is: i + SSL/DTLS/DTLS, MD5, ARC4
-> +    - EIP-93ies: i + e + s
-> +    - EIP-93iw: i + AES-XCB-MAC, AES-CCM
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - inside-secure,safexcel-eip93i
-> +      - inside-secure,safexcel-eip93ie
-> +      - inside-secure,safexcel-eip93is
-> +      - inside-secure,safexcel-eip93ies
-> +      - inside-secure,safexcel-eip93iw
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index e638e82429bc..20790dffa2b4 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
+> @@ -468,7 +468,7 @@ TRACE_EVENT(cxl_general_media,
+>  /*
+>   * DRAM Event Record - DER
+>   *
+> - * CXL rev 3.0 section 8.2.9.2.1.2; Table 8-44
+> + * CXL rev 3.1 section 8.2.9.2.1.2; Table 8-46
+>   */
+>  /*
+>   * DRAM Event Record defines many fields the same as the General Media Event
+> @@ -478,11 +478,17 @@ TRACE_EVENT(cxl_general_media,
+>  #define CXL_DER_MEM_EVT_TYPE_SCRUB_MEDIA_ECC_ERROR	0x01
+>  #define CXL_DER_MEM_EVT_TYPE_INV_ADDR			0x02
+>  #define CXL_DER_MEM_EVT_TYPE_DATA_PATH_ERROR		0x03
+> -#define show_dram_mem_event_type(type)  __print_symbolic(type,				\
+> +#define CXL_DER_MEM_EVT_TYPE_TE_STATE_VIOLATION	0x04
+> +#define CXL_DER_MEM_EVT_TYPE_AP_CME_COUNTER_EXPIRE	0x05
+> +#define CXL_DER_MEM_EVT_TYPE_CKID_VIOLATION		0x06
+> +#define show_dram_mem_event_type(type)	__print_symbolic(type,				\
 
+This change looks odd here but does print the line above into the
+same formatting style as the other similar cases in the file.
+Maybe worth a line in the patch description to say "Includes trivial consistency of white
+space improvements" just to flag up that it was intentional.
 
-No clocks? All their other IP has clocks.
+>  	{ CXL_DER_MEM_EVT_TYPE_ECC_ERROR,		"ECC Error" },			\
+>  	{ CXL_DER_MEM_EVT_TYPE_SCRUB_MEDIA_ECC_ERROR,	"Scrub Media ECC Error" },	\
+>  	{ CXL_DER_MEM_EVT_TYPE_INV_ADDR,		"Invalid Address" },		\
+> -	{ CXL_DER_MEM_EVT_TYPE_DATA_PATH_ERROR,		"Data Path Error" }		\
+> +	{ CXL_DER_MEM_EVT_TYPE_DATA_PATH_ERROR,		"Data Path Error" },		\
+> +	{ CXL_DER_MEM_EVT_TYPE_TE_STATE_VIOLATION,	"TE State Violation" },		\
+> +	{ CXL_DER_MEM_EVT_TYPE_AP_CME_COUNTER_EXPIRE,	"Adv Prog CME Counter Expiration" },	\
+> +	{ CXL_DER_MEM_EVT_TYPE_CKID_VIOLATION,		"CKID Violation" }		\
+>  )
+>  
+>  #define CXL_DER_VALID_CHANNEL				BIT(0)
+> @@ -493,7 +499,10 @@ TRACE_EVENT(cxl_general_media,
+>  #define CXL_DER_VALID_ROW				BIT(5)
+>  #define CXL_DER_VALID_COLUMN				BIT(6)
+>  #define CXL_DER_VALID_CORRECTION_MASK			BIT(7)
+> -#define show_dram_valid_flags(flags)	__print_flags(flags, "|",			   \
+> +#define CXL_DER_VALID_COMPONENT				BIT(8)
+> +#define CXL_DER_VALID_COMPONENT_ID_FORMAT		BIT(9)
+> +#define CXL_DER_VALID_SUB_CHANNEL			BIT(10)
+> +#define show_dram_valid_flags(flags)	__print_flags(flags, "|",		   \
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    crypto@1e004000 {
-> +      compatible = "inside-secure,safexcel-eip93ies";
-> +      reg = <0x1fb70000 0x1000>;
-> +
-> +      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> +    };
-> -- 
-> 2.45.2
-> 
+As above this is a minor white space consistency change.
+
+>  	{ CXL_DER_VALID_CHANNEL,			"CHANNEL"		}, \
+>  	{ CXL_DER_VALID_RANK,				"RANK"			}, \
+>  	{ CXL_DER_VALID_NIBBLE,				"NIBBLE"		}, \
+> @@ -501,7 +510,9 @@ TRACE_EVENT(cxl_general_media,
+>  	{ CXL_DER_VALID_BANK,				"BANK"			}, \
+>  	{ CXL_DER_VALID_ROW,				"ROW"			}, \
+>  	{ CXL_DER_VALID_COLUMN,				"COLUMN"		}, \
+> -	{ CXL_DER_VALID_CORRECTION_MASK,		"CORRECTION MASK"	}  \
+> +	{ CXL_DER_VALID_CORRECTION_MASK,		"CORRECTION MASK"	}, \
+> +	{ CXL_DER_VALID_COMPONENT,			"COMPONENT"		}, \
+> +	{ CXL_DER_VALID_SUB_CHANNEL,			"SUB CHANNEL"		}  \
+>  )
+
+> diff --git a/include/cxl/event.h b/include/cxl/event.h
+> index ea8cd44a52e9..7e98492c85df 100644
+> --- a/include/cxl/event.h
+> +++ b/include/cxl/event.h
+> @@ -71,7 +71,12 @@ struct cxl_event_dram {
+>  	u8 row[3];
+>  	u8 column[2];
+>  	u8 correction_mask[CXL_EVENT_DER_CORRECTION_MASK_SIZE];
+> -	u8 reserved[0x17];
+> +	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+Odd that the general media had this field in 3.0 but DRAM didn't.
+I checked though and indeed the case!
+
+> +	u8 sub_channel;
+> +	u8 cme_threshold_ev_flags;
+> +	u8 cvme_count[3];
+> +	u8 sub_type;
+> +	u8 reserved;
+>  } __packed;
+>  
+>  /*
+
 
