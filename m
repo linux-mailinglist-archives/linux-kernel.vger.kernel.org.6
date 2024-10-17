@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-370654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0979A3027
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:56:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB6C9A3026
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 740DCB2374C
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180151F22B18
 	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B021EE028;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4287E1EE027;
 	Thu, 17 Oct 2024 21:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QScC8JXg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxSb0QpA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84A81D7E57
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8314C1DE4ED
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729202131; cv=none; b=Tc/SC15Xw6p9Pg7fx8P+5TSWch31m8vw4t9vbf0Uhautc5Syq1tBZc83K+VSOdWWcSbtW4nveeQeK9nu0ER4RCtXhA17Jc5PcuZcIypP0ncTHH/zWjKZHUhOV21UtsIVpDcGsZZq6WvydBdxIcspWXdzklwf3sEnNmW2cyrqPB4=
+	t=1729202131; cv=none; b=htJkh0T61zjZPHH9tk9i2NAIpmUy18Sq4uRkPgrca7l42ivn7Ird+PgI57AB7BW/wYRxMGfoIN45RN0XwZWTztaendT/0nvqDj8FPLJuJ2ANBjPbu2EZka7iuXLn5CpBtdexZ4pkGpEc9CPQHkInQNyjiXMEbyN6DTEBt3d65X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729202131; c=relaxed/simple;
-	bh=3+6cqjky5SJ8pbbT1W6aRTHDrkhRTtSUbUYAfyoehbs=;
+	bh=opTfvoucneR4FnsToYqJIQ2vAsIrtZ9GVWhav979RCg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rBiNpIfvgIY4qE/myg5BtmvLJUf8LUPtWG0rkl23VxTiNZ8QvjPasXoAyhFIoF8HCxiC/AS1xNRAMR8mDwNQUU5UYfCEV9EddV3KZfsK1XICiiiMwmL8N68PAx1zQosCa14jsWvUnVHl8WugJTPh7IzKqpqUHpCJQTr0pJd0MfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QScC8JXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15429C4CED0;
+	 MIME-Version; b=WfKc58HYePyCLcwYvqUObu1uRcvqf4eYtPCEaBuzp7b+DC/mEkf/nf/kpIS07hTuJut4DRVIGw/GbfF9ixRgnfN502xuxEq1mxUYAd5I6257w4PPuftM/ukCjgqtdQ5VJYweqmzvx2FD9H+REU+i15jAA0FCnIlgoYWeBeqng1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxSb0QpA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17A8C4CEC3;
 	Thu, 17 Oct 2024 21:55:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729202130;
-	bh=3+6cqjky5SJ8pbbT1W6aRTHDrkhRTtSUbUYAfyoehbs=;
+	s=k20201202; t=1729202131;
+	bh=opTfvoucneR4FnsToYqJIQ2vAsIrtZ9GVWhav979RCg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QScC8JXg1nhIsJfvLMXZp0T/67JQHRKuGALw/DEQDyZqG5bhTI5VunzUliAmaDCTy
-	 c/IGDphRQwyP6so/z6M/bZGusu6oMxqktvU2B/PxIyBH09VpBrFCizxBN/yNOraMcH
-	 LPv7C82XvgQjd7Cw0C7dkk81Qv4RG68Udm1ukCLHRDJEctcSNXt1xTWyxp9Smy6ggB
-	 irDMBk+hdz68zwzRFKTky05dws961rQB+l/+CuG5u5sysjQN0L6VF+X+Xe6jAzw8Zr
-	 96AOyOlz/q0+wljnFl74MsTItpZfzA1wWN+6rVInJrwOm+isaX+aJ/EEDqOw+Ww0XL
-	 9jOJGvTtKjZ3Q==
+	b=TxSb0QpAIMqiN4HI9o5K6GW+rkBMV2URDlO14dMxDoDJzEWfPvquUxVQ5hm8pQmkx
+	 43qcYbZDzeLJqryctoK0nWFeX51ZT5JQwsA3zcUlKHjW/V3/WYXNA5dHkSBiMDmR7r
+	 FNs/BZvZOhDnougKtZALz8ZZxadM48pBr24W2appoYcj7pUuIr1FDlDmmJO89CXqs6
+	 6CuDXUronT/fSOE0ULA/lFjCU6Ot0QmXBgvr9vPWd+isX+b8RkNv6gPKtPgq6GKI8h
+	 KiFV2651yGF27415Tjt3LZ2FXdVzMG11jflBg3CcVtQcyqZWDr3K2Lwl4y4ABsU9bV
+	 VX+CnZpzvHY4A==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Andrew Cooper <andrew.cooper3@citrix.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	"Kirill A . Shutemov" <kirill@shutemov.name>
-Subject: [PATCH v2 5/6] x86/uaccess: Add user pointer masking to copy_to_user()
-Date: Thu, 17 Oct 2024 14:55:24 -0700
-Message-ID: <6500dcd8e7700b4dfe5de4f82ed2da19edc23c58.1729201904.git.jpoimboe@kernel.org>
+Subject: [PATCH v2 6/6] x86/uaccess: Add user pointer masking to clear_user()
+Date: Thu, 17 Oct 2024 14:55:25 -0700
+Message-ID: <7db4ec5c9444e4b76d45a189fdd37f6483c06bef.1729201904.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <cover.1729201904.git.jpoimboe@kernel.org>
 References: <cover.1729201904.git.jpoimboe@kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add user pointer masking to copy_to_user() to mitigate Spectre v1.
+Add user pointer masking to clear_user() to mitigate Spectre v1.
 
 A write in a mispredicted access_ok() branch to a user-controlled kernel
 address can populate the rest of the affected cache line with kernel
@@ -78,21 +78,22 @@ data.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/include/asm/uaccess_64.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/uaccess_64.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index 61693028ea2b..0587830a47e1 100644
+index 0587830a47e1..8027db7f68c2 100644
 --- a/arch/x86/include/asm/uaccess_64.h
 +++ b/arch/x86/include/asm/uaccess_64.h
-@@ -140,6 +140,7 @@ raw_copy_from_user(void *dst, const void __user *src, unsigned long size)
- static __always_inline __must_check unsigned long
- raw_copy_to_user(void __user *dst, const void *src, unsigned long size)
+@@ -199,7 +199,7 @@ static __always_inline __must_check unsigned long __clear_user(void __user *addr
+ static __always_inline unsigned long clear_user(void __user *to, unsigned long n)
  {
-+	dst = mask_user_address(dst);
- 	return copy_user_generic((__force void *)dst, src, size);
+ 	if (__access_ok(to, n))
+-		return __clear_user(to, n);
++		return __clear_user(mask_user_address(to), n);
+ 	return n;
  }
- 
+ #endif /* _ASM_X86_UACCESS_64_H */
 -- 
 2.47.0
 
