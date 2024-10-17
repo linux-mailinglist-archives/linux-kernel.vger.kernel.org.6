@@ -1,151 +1,179 @@
-Return-Path: <linux-kernel+bounces-370273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E593A9A2A34
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:06:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4389A2A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B7A283B61
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364D62820A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B71FAC2A;
-	Thu, 17 Oct 2024 16:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105751F4720;
+	Thu, 17 Oct 2024 16:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dDS4lzqE"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xXkTu4E2"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C251EABBB
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C981EF936
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729184288; cv=none; b=ocryT4ZzvLlekmP+P1t69C++/CWvQCDopFI5+qZyFMDSyVsY8wCTk2VdgLsAYRMx9wWiXryht/TAdPnz4W1fKG6iP1phf/9hvqfaTS2eSDvivjxlx9LpDpWmVvqc0l3WipcmnBHkzqa+43icqkpQjE4yw2gNM9VhsstUHF1AQxY=
+	t=1729184307; cv=none; b=gqAIaG4qxGMI7OBw+IMVGckVwpQH0uiq8iBeh/bx4nSq6KvvDtjHJDxO3YEjEJtIb2NL9jF/TwNbV0KLnDOS7gFbGd05W7K0Np+UsBF3ED5lxfmLDsGpEc8q1jgtvkk6+TTbyTWhGyaoVINV3PMT9sHb42L2ubcYj7h5a5dUk+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729184288; c=relaxed/simple;
-	bh=PrFPdr0NKJQKUfFjYkGfH7X4s8YeIB65gqZrdgLFzgg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=W0fYUfNrucp7/S0fAcMNru1btLVWJCmOBronfYEL2/VuqM51f5vt9lLIdRQHSW1qmASefWDfFtMV7guayIHwPxVnfcRXTrWvJCWkk4/A1ORs6CFfIkBTx3kJXcJuNbtxn1CagdKswryzK3jPXGw0ZC3y0ATSvv/nBT14m8jJ2LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dDS4lzqE; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1729184307; c=relaxed/simple;
+	bh=ybHhA5/R7pbdbj45UZ3zkxXyZMiIBdZSFEF4YHrgap8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=egxbXyY718l0zQAfE8b+pgqx9U1Ml9pdRiyVBoxGlgDVTlAvpo8UJP7nmYLvpm8fxQo4IigGt423DjRg13It8dzDBn8blYms8zl3UlDJ3KsAHxYPi9/CEqDebqggi0srPtbykAdrKcl97+YDOj6aRFFk71wkh6BlBwAa5+Wg1ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xXkTu4E2; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2939e25402so1754152276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:58:06 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460969c49f2so10531cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:58:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729184286; x=1729789086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JPTate8nHmfNvm5RLlOrViAXjwxlfzdSZEYjXEbaR7Q=;
-        b=dDS4lzqE+qvGsIXjESIHfbSiHuUkgmRuua1qeCfqtdFdLhGDXK6aDNl7HXYVCKo71/
-         Y2loqRt/wXqvaCY+Ob7nw15H42rqOrPWGhc0c7d0ZsyEs+iIo6XfEsTE7EzhcYFYF3Ay
-         HPkpv9Wa1q6rFoa9vO6oGaicPXO1xeAorbrVtbeuIRf47JxpLmuDBvvett906w+r4WcL
-         MZdwWfpe/mdlGsbA62xEAD2QsHIxtpGYgH04XltImtK+f6YzI5dQyw84QXWGF7PAv60f
-         qkvEerPsuqSYodb9nmdhUIXH/KXBeT37ztQsfIJhxQTSILU0NgHMA+Vyp7cCx9neBPW4
-         Ne1w==
+        d=google.com; s=20230601; t=1729184301; x=1729789101; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ZAuyvgP7Mex+OXNMQOiLN+FLzq1Ru9ajNrmNmE+0Cs=;
+        b=xXkTu4E2S70AKa0A2E9A8v/q26G6g1Bcxo+EfZuxT2hpbTdUoyjvF1v09U+ve2aRUK
+         ikMSGkCxaGFe9LWSGmGxXj6R4DZs1QSEOhKYoxkAV8Q+66Hkl/gSxFBr5Xc/U7aVECw0
+         LGxBfypVM5S1Mv/dkEI29a21M+5m/zcaEtgQvM/DBi+Cxjd3xNcc1OGSdkeRDjdZG8z7
+         a8DDesPlqHT+FZ1Jb9iVxfEMmjmVNz9cLXgux3nBWnuT41WENHGWZnsV6WD7qO9SdTVf
+         hdKYCGLU4qCngS0KQ6hewnVzQ7rARz8HVKuzVDu2f9ur9XHY+PJnbV6KTrQELpahL+Pc
+         KBLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729184286; x=1729789086;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JPTate8nHmfNvm5RLlOrViAXjwxlfzdSZEYjXEbaR7Q=;
-        b=AqodewCPc6AVU68l+NXRyU1o7iY1wHwDK5NS/3rwmq2sAGx+Jg9GZSn+xcJFBBztnN
-         GPx72SshF6aTFya4NGz+RWseP1iF4MWkoe04/8zggZJQVEtnBRNNBuKC/1uMxUigACNY
-         tFosjrTDW4IOkPGNmqErEST0Nro4FUEcQTDOYbZHoLTO8Ul08hIWXszVWesy9yUuV5iP
-         wMCxlrbgjluEtf45KmDJMbhf8hXHizQvfip0Y+IDIY/HhR2p7srIyZDWxIMjCT4VYFCr
-         wFdxoA9c5rxaCA1hsK4WcDtnsa02huG1yCJvBtqu7JdwI2XYxw8/2aGY+7YgendJL3sQ
-         K25A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCOn7jH46tkwLPuNrUDx6UkYjyThEer1D7r7POHmTiVvlAfQrqMj5bggTxcKQ1QNSu3q4nU+NAwVBTBvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNVOxPTuST8OkAS0EOIZLF9Ec3vfPNQQG4HTw1c1GBOe3RGoe3
-	gptZH+hpgEpgRUaMnMyv8jOv001amYBRq9ZI98F+esmARADkHqdXZPWbukodS14BYYtIbCSiucr
-	Enw==
-X-Google-Smtp-Source: AGHT+IF7B084V115Sr72nxCNj1jAu1r6gImTDt3pvbXTzRx/HxKwq71Gvz4aJ0aVLn+pxpF6UyiW5mTVJRo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:9bc9:0:b0:e2b:a511:2e51 with SMTP id
- 3f1490d57ef6-e2ba5112f27mr2946276.11.1729184285606; Thu, 17 Oct 2024 09:58:05
- -0700 (PDT)
-Date: Thu, 17 Oct 2024 09:58:03 -0700
-In-Reply-To: <bd116c27908111619b6cfffbe9a25e98e0e7cc20.camel@infradead.org>
+        d=1e100.net; s=20230601; t=1729184301; x=1729789101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ZAuyvgP7Mex+OXNMQOiLN+FLzq1Ru9ajNrmNmE+0Cs=;
+        b=H5jDY1Q0ujyHbpMNCAZ5/xD/+w9cR30Trntifc4A0opFfkBXqK+Jjuy/Yis8/v/kVF
+         Kl+ZAy3bayu6VTa+qckSPao2KOXJcpky6jaTAlq2esUijaRhhVPzxsxrWfj9hjpqte/4
+         7pvRS2YBZ0tzj8RWtrp369Fs4wwk8sw9FkvNNsW2BobdIWlUpzOgZehRtGBuYbTtuyYA
+         zdQNYgytDSY55MSwnt+VxcXHkcLbxU37vHbQrQyweC59V/dg9yGzh5LTPwONhWJeAAFN
+         y9mmfnwKRDB63D/JwH0YWtjDmEMmhs7sr0ZCTNgOh1YziwQduwjEY+HlydbLBmVRQAdG
+         B9tA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0bQ7glsJQubDeGo5tQVP+8fq5U15oUQynVLHBGO6YQeHTni1MnNMEtEUd0/0JCZV7wT30hBZDBLOsNI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybGzyY2K9YtAg5rlwjC6ErWuWxK9FNQq37m0w4IGivQ9wQPv7X
+	16mxlycM4jOy5JaSOFg3H8sJTz5aeEZXvzbWMXgIOgrBfufLSkYDYjHWbdLHurS7lAevw8Kl1Kj
+	oqV58A2r8iFwygz4bfVL0u55PCkarjHK/IzKq
+X-Google-Smtp-Source: AGHT+IHfBZeQIa7ROJrJ7k/xkA9z0KhNnu9hZirf3xo7+oJZYUkRAFCzIM5kFIuF81OI4I4P86ABcKSVB+ao/9rVsKM=
+X-Received: by 2002:a05:622a:5b0f:b0:460:44ee:9e6a with SMTP id
+ d75a77b69052e-4609bfd7787mr4184611cf.0.1729184301134; Thu, 17 Oct 2024
+ 09:58:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240927161657.68110-1-iorlov@amazon.com> <20240927161657.68110-4-iorlov@amazon.com>
- <ZwnBGtdbvmKHc4in@google.com> <bd116c27908111619b6cfffbe9a25e98e0e7cc20.camel@infradead.org>
-Message-ID: <ZxFCG7pxWXs1D0p5@google.com>
-Subject: Re: [PATCH 3/3] selftests: KVM: Add test case for MMIO during event delivery
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Ivan Orlov <iorlov@amazon.com>, bp@alien8.de, dave.hansen@linux.intel.com, 
-	mingo@redhat.com, pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, 
-	hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, x86@kernel.org, jalliste@amazon.com, 
-	nh-open-source@amazon.com, pdurrant@amazon.co.uk
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20241016220944.370539-1-salomondush@google.com> <CAMGffEmEJp_oVAsbCVV9PKs7vOKWLrUhRGcBGoUSx7+t4ZtsQA@mail.gmail.com>
+In-Reply-To: <CAMGffEmEJp_oVAsbCVV9PKs7vOKWLrUhRGcBGoUSx7+t4ZtsQA@mail.gmail.com>
+From: Salomon Dushimirimana <salomondush@google.com>
+Date: Thu, 17 Oct 2024 12:58:10 -0400
+Message-ID: <CAPE3x15ryZw4s=qA=7HSDyZZXf3FUz2Ms7cxXHjc_R+UbPZTwA@mail.gmail.com>
+Subject: Re: [PATCH] scsi: pm80xx: Use module param to set pcs event log severity
+To: Jinpu Wang <jinpu.wang@ionos.com>
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bhavesh Jashnani <bjashnani@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024, David Woodhouse wrote:
-> On Fri, 2024-10-11 at 17:21 -0700, Sean Christopherson wrote:
-> >=20
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* We should never reach t=
-his point */
-> >=20
-> > No pronouns.=C2=A0 Yes, it's nitpicky, but "we" gets _very_ ambiguous w=
-hen "we" could
-> > mean the admin, the user, the VMM, KVM, the guest, etc.
-> >=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0GUEST_ASSERT(0);
->=20
->=20
-> Is there really *any* way that can be interpreted as anything other
-> than "the CPU executing this code will never get to this point and
-> that's why there's an ASSERT(0) right after this comment"?
->=20
-> I don't believe there's *any* way that particular pronoun can be
-> ambiguous, and now we've got to the point of fetishising the bizarre
-> "no pronouns" rule just for the sake of it.
+Hi,
 
-No, it's not just for the sake of it.  In this case, "we" isn't all that am=
-biguous,
-(though my interpretation of it is "the test", not "the CPU"), but only bec=
-ause the
-comment is utterly useless.  The GUEST_ASSERT(0) communicates very clearly =
-that it's
-supposed to be unreachable.
+3 works well for Google, but a different value might be better for
+others. Having a module parameter would allow users to customize the
+level of logging based on their specific needs. If that is not a
+concern, I can change the default to just 3.
 
-And if the comment were rewritten to explain _why_ the code is unreachable,=
- then
-"we" is all bug guaranateed to become ambiguous, because explaining "why" l=
-ikely
-means preciesly describing the behavior the userspace side, the guest side,=
- and/or
-KVM.  In other words, using "we" or "us" is often a hint that either the st=
-atement
-is likely ambiguous or doesn't add value.
+Thank you!
 
-And irrespective of whether or not you agree with the above, having a hard =
-rule of
-"no we, no us" eliminates all subjectivity, and for me that is sufficient r=
-eason
-to enforce the rule.
+Salomon Dushimirimana
 
-> I get it, especially for some individuals it *can* be difficult to take
-> context into account, and the wilful use of pronouns instead of
-> spelling things out explicitly *every* *single* *time* can sometimes
-> help. But at a cost of conciseness and brevity.
 
-In this particular case, I am more than willing to sacrifice brevity.  I 10=
-0%
-agree that there is value in having to-the-point comments and changelogs, b=
-ut I
-can't recall a single time where avoiding a "we" or "us" made a statement
-meaningfully harder to read and understand.  On ther hand, I can recall man=
-y, many
-changelogs I had to re-read multiple times because I struggled to figure ou=
-t how
-the author _intended_ "we" or "us" to be interpreted.
+On Thu, Oct 17, 2024 at 2:45=E2=80=AFAM Jinpu Wang <jinpu.wang@ionos.com> w=
+rote:
+>
+> Hi,
+>
+> On Thu, Oct 17, 2024 at 12:10=E2=80=AFAM Salomon Dushimirimana
+> <salomondush@google.com> wrote:
+> >
+> > The pm8006 driver sets pcs event log threshold very high which causes
+> > most of the FW logs to not be captured. This adds a module parameter to
+> > configure pcs event log severity with 3 (medium severity) as the
+> > default.
+> upstream does not like more module parameters, can we just change the
+> default to 3, any harm?
+>
+> Thx!
+> >
+> > Signed-off-by: Bhavesh Jashnani <bjashnani@google.com>
+> > Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
+> > ---
+> >  drivers/scsi/pm8001/pm8001_init.c | 4 ++++
+> >  drivers/scsi/pm8001/pm8001_sas.h  | 2 ++
+> >  drivers/scsi/pm8001/pm80xx_hwi.c  | 3 ++-
+> >  3 files changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/scsi/pm8001/pm8001_init.c b/drivers/scsi/pm8001/pm=
+8001_init.c
+> > index 1e63cb6cd8e3..355aab0c982a 100644
+> > --- a/drivers/scsi/pm8001/pm8001_init.c
+> > +++ b/drivers/scsi/pm8001/pm8001_init.c
+> > @@ -68,6 +68,10 @@ static bool pm8001_read_wwn =3D true;
+> >  module_param_named(read_wwn, pm8001_read_wwn, bool, 0444);
+> >  MODULE_PARM_DESC(zoned, "Get WWN from the controller. Default: true");
+> >
+> > +uint pcs_event_log_severity =3D 0x03;
+> > +module_param(pcs_event_log_severity, int, 0644);
+> > +MODULE_PARM_DESC(pcs_event_log_severity, "PCS event log severity level=
+");
+> > +
+> >  static struct scsi_transport_template *pm8001_stt;
+> >  static int pm8001_init_ccb_tag(struct pm8001_hba_info *);
+> >
+> > diff --git a/drivers/scsi/pm8001/pm8001_sas.h b/drivers/scsi/pm8001/pm8=
+001_sas.h
+> > index ced6721380a8..42c7b3f7afbf 100644
+> > --- a/drivers/scsi/pm8001/pm8001_sas.h
+> > +++ b/drivers/scsi/pm8001/pm8001_sas.h
+> > @@ -96,6 +96,8 @@ extern struct list_head hba_list;
+> >  extern const struct pm8001_dispatch pm8001_8001_dispatch;
+> >  extern const struct pm8001_dispatch pm8001_80xx_dispatch;
+> >
+> > +extern uint pcs_event_log_severity;
+> > +
+> >  struct pm8001_hba_info;
+> >  struct pm8001_ccb_info;
+> >  struct pm8001_device;
+> > diff --git a/drivers/scsi/pm8001/pm80xx_hwi.c b/drivers/scsi/pm8001/pm8=
+0xx_hwi.c
+> > index 8fe886dc5e47..9b237a764d0b 100644
+> > --- a/drivers/scsi/pm8001/pm80xx_hwi.c
+> > +++ b/drivers/scsi/pm8001/pm80xx_hwi.c
+> > @@ -763,7 +763,8 @@ static void init_default_table_values(struct pm8001=
+_hba_info *pm8001_ha)
+> >                 pm8001_ha->memoryMap.region[IOP].phys_addr_lo;
+> >         pm8001_ha->main_cfg_tbl.pm80xx_tbl.pcs_event_log_size          =
+ =3D
+> >                                                         PM8001_EVENT_LO=
+G_SIZE;
+> > -       pm8001_ha->main_cfg_tbl.pm80xx_tbl.pcs_event_log_severity      =
+ =3D 0x01;
+> > +       pm8001_ha->main_cfg_tbl.pm80xx_tbl.pcs_event_log_severity      =
+ =3D
+> > +               pcs_event_log_severity;
+> >         pm8001_ha->main_cfg_tbl.pm80xx_tbl.fatal_err_interrupt         =
+ =3D 0x01;
+> >
+> >         /* Enable higher IQs and OQs, 32 to 63, bit 16 */
+> > --
+> > 2.47.0.rc1.288.g06298d1525-goog
+> >
 
