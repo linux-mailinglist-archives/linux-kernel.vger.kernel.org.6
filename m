@@ -1,162 +1,135 @@
-Return-Path: <linux-kernel+bounces-370351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2169A2B70
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EAE9A2B75
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 529BB1C258CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FFC1C2620C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD3D1E00AA;
-	Thu, 17 Oct 2024 17:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D08D1DFE18;
+	Thu, 17 Oct 2024 17:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZE2ZVD21"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eJUF7H/R"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3553B1DFDA4
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8935E1DFD99
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729187569; cv=none; b=Un+SxpMkby8d6eR5Dc+haOYoIWLPS6z92/5FFNPiCmQM+6KsgxHAW+p11ePlrOgmhRsB2w/7z/lawIooOtsOQVBMX67qS6RGdof4svkMBOXVpNCISJoB5RuB++BxhrHehUAqv++7h5NUIPtSRQcmdKipAA1m336UojBkBnMBHFQ=
+	t=1729187647; cv=none; b=bFMWC210Ge5PPFESQfne/oFdgG2zLgbW3HrkMVX4BmIVls7+j+w3UzFCVro0cuUaKQY9RiINz6ZsY93xuUpZKIe5Gtc0JrrqgwphMz7g6pRfMqGS4Av20CbotiiI8LIC09sXBAN+4ypQEnPqP99xhEpkCukT7lehGl4NNT2eTXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729187569; c=relaxed/simple;
-	bh=E6sSET5NTanEf8su5V13W3kLbMh4cgFTxZO6VeLZC/s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i1254NPFxYK2XX2fjPM2KyfvQUR6g0JvTEDQ+CD2PuQSzhejouP0Xo0mJNSWEdb79YIC1oD14M4ya2QfFKK5zjmI7FqWPM3lCE4qNoN68mxjrIe8t044IOERs+OnZ6ce7m8TdNCV/wNWY8WpFUtLb3YWWpnev2VTG1/KbrMmNOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZE2ZVD21; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so1544263e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:52:47 -0700 (PDT)
+	s=arc-20240116; t=1729187647; c=relaxed/simple;
+	bh=kPguH/PiaSmjemQkDLtAr4Sd5dUG1i9Ovu2OSFHi93Y=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=JQZ6jJPpscCjflUh8Zeia62kKrSEyGBKjGE+dfWJVPnoau05AtF08WaKbHdedhAtchSzz1WTADM4toJvtkeSWBJb8q+WsO5ujc480cgkmL+n+Xu37DqqDj8dQDY0RFlYEFnNIdx2eovk1SBWj3fM523XiGjfxyor4mNfCi0VK08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eJUF7H/R; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e32b43e053so20649947b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:54:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729187565; x=1729792365; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GGopXLJTzCLfhqUsTpJkqnxqFQeGkxJFucKx0VxQEO4=;
-        b=ZE2ZVD21dWI6T2bK0f2+G2oa03al2DvKIw4Lx1fIJjnpUf/wUCCgGL+yZdufrKVd5U
-         oBTOtFehedBX2hNwJiEA5d/RreDC/HabH6y5IIpdyrfgJUAQAwU5/kqJhxMUVNl6bZ2q
-         C20AheVX1JOZNYWYYmvAitL1crhszGqxy8/+6oqMwXLf/VPXalR07WRpxZMkTak99hFU
-         EAYlyNCjaglBUnHM3JnZBhBRwKavwpBG15gxzovyCPel3aF0qGlKhr8uq0TIknxRKlfU
-         nCdh5l/tA2ILJ1XEOY8SHzJYo/vNRYAPxhJILJdjcy0iU+J1cKY+RqAgrTFsb/MsGyL7
-         lF2g==
+        d=google.com; s=20230601; t=1729187641; x=1729792441; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tgSCV8aNz2YfjZPfKysuQB9Bz04ABsxXUUx1RTdITWc=;
+        b=eJUF7H/RijwxR4dqT1wXAAa6PtrEOMNnn6oyTBhCU953SGcd4o79/7U3vYCW1xGWa2
+         ZF9xBaOCcdllrEBzGBMRSc+XCUdhEjqHjIWYqu+YogjRlW9MK2U+52pQCvAPnpMyKvAw
+         yIcoLQrnSxH2OAKDCwtX3qBCA2r7nId0uaEeziIAMaDP4tNyYJ7Nee0dmF731Xoz8bVo
+         Ezhnk8E6rMdfG2IdGNCl0gT/+SsI9hbXFOLudAFAL2jjLk3WdhHK4DGbpYed5258QCUV
+         m/AbN0XwsBwzFtcsxsAMxshSPrxmeJR1pGMqC0PQ1gHu93hmexSDn+WZYx7aujL9dAtN
+         KTqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729187565; x=1729792365;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GGopXLJTzCLfhqUsTpJkqnxqFQeGkxJFucKx0VxQEO4=;
-        b=MG1sK/PX2DKdHcQh+ONQwOliqZqqD3sff9FRQYSN1fuY9d6e+L6cv8dIeR5qstzUaT
-         6a+BA3f8Trj/u9IO/s3m7uVsRIidENPFbUUJUVtfTg8MamI9ZeU8EnZf+KzcTIU/f95H
-         YewMIrSgnGWF8G9gY5JGUfdEJpcOWEG0UfIoIkrOZju/YEa+i8kDF+hj3Z0V+7G6SG04
-         lD+NLy9zd6MO+k/8+Ui3Yq28Do9oNq3FXaBxiO7usP9gMEsTgQIRrvI9QnssuWLXs6UU
-         tS8bz5iNZu6ygQlvuEonjzKTOZba1g+fXjcfL3pxoQ+lfIIev2COuhezTeq3h8pU2VHW
-         H+6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUNq5k7TumY/IVLAaNZlI/YlRJYJrmhwXiIdPkM43WkCa7c5ahWsfDSI3KrZN7d+0qYS5RsMSG6zZSPIvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6dcY11FgVseC3Hume/brkeAVC8OlOc4IsjPsFkQpbMdU3gpE/
-	Vbxjy50Fb6XnTFQRwuKNcXKX2QRxjdS/WQJy7H8HDqIOUIAU8Bebe03LQbsfcTEIbDi+fkj35Lk
-	W/8E=
-X-Google-Smtp-Source: AGHT+IH6+buk6yaAI9YJVrIAMsjfJtRGGoRZPI/6YbiUBaiUNOpD2lVTXPHL+siqaaTkG8jrqrmyAg==
-X-Received: by 2002:a05:6512:3d17:b0:539:948a:aadb with SMTP id 2adb3069b0e04-53a03f81a5emr6415982e87.42.1729187565363;
-        Thu, 17 Oct 2024 10:52:45 -0700 (PDT)
-Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a00013f8bsm829557e87.286.2024.10.17.10.52.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 10:52:44 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 17 Oct 2024 20:52:36 +0300
-Subject: [PATCH 2/2] pmdomain: qcom: rpmhpd: add support for SAR2130P
+        d=1e100.net; s=20230601; t=1729187641; x=1729792441;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tgSCV8aNz2YfjZPfKysuQB9Bz04ABsxXUUx1RTdITWc=;
+        b=pVwyF2y3A7jN/eubHFxPzvuTYFGMUmcHAbMVxchBbw9+aBwVREdTOOEtfoZ/P+gg2a
+         jUmGF1v3IlNLCptbmWK1Z+GwKYJoxiFX8l6cKg7UVPa/GZwJp6fm4gQRK9vlaf6jY41v
+         WRP9Z3WhiIxybL+ra6+lEhhYie/RkppWlBS0jdf5VOfpG1n9G+khIvuBlrg5A6a/lBMn
+         kkievwred6VBt/bnB/BDHTSY4W6P8A6fCQ6UXyJIIQB84d1I6r+ULw32IM317KWIw72F
+         IT/RrHPqulUPsrbgVLsQuxWc/xK1fC/Hh1+aw8nO3zU6mLs0QYXYeISPWoPP5tercR0A
+         DmTA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1mNaUfl+Q2gn2sR6CbRxQqIFwKxk7wjlxpRiUFMWUv5X+7Tuv3MSJIpcQLP9iVcZ7qALE9zHWG4PBDmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMLeCcMNKIeszcnLHi65YWSig20fedGN9oyH/sIgOzKJPPaeIG
+	ZS3/cQAtzPeW/dFK4cZDnYG9o4iljAcSy0Nku8JmOcqvqOsLZMCj63sdMqbN9fM2aImY+WBrOFn
+	UGRb+YA==
+X-Google-Smtp-Source: AGHT+IHsAPMo+2mDgpT6mwWtaIgH/co9MMJFDhhG4V/GVuYrhlly/7CrOKCeJQPys15hveYgmB6kOrY076PT
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:98a5:142e:8c2e:e9e5])
+ (user=irogers job=sendgmr) by 2002:a05:690c:4447:b0:6e3:189a:ad66 with SMTP
+ id 00721157ae682-6e3d41c59camr1931517b3.5.1729187641581; Thu, 17 Oct 2024
+ 10:54:01 -0700 (PDT)
+Date: Thu, 17 Oct 2024 10:53:49 -0700
+Message-Id: <20241017175356.783793-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241017-sar2130p-rpmhpd-v1-2-f4bf7f6fd12e@linaro.org>
-References: <20241017-sar2130p-rpmhpd-v1-0-f4bf7f6fd12e@linaro.org>
-In-Reply-To: <20241017-sar2130p-rpmhpd-v1-0-f4bf7f6fd12e@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1921;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=E6sSET5NTanEf8su5V13W3kLbMh4cgFTxZO6VeLZC/s=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnEU7oMWrzR66N2bIKoRCxtF+Wfk3UJKHC+yMm0
- Nf2dyxqYqSJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxFO6AAKCRAU23LtvoBl
- uOjvD/kBIY5uaOVx3oJnoec9/FanLeD3f5mDWUw1vZHIEhA/irTrfLYtoxNeUzw/zJV+oEALKV5
- NFVRSEUPLRGZwa5Fqjay1oiroZOLhOzUpeTaioGv6iU3WdYUHcNxVlFzXYY/cMr7cb90M26TD26
- fX1+/O/AwTRPCwfxyc/iwSFkz9Bajev4EXTwloe0eeVx+8CUlDuTg3HONFAIawH+QmvLWj5he42
- yiXWzB/4c1OPUVneGX/JBOGxl6f6B9RoVPI1wZvU3FX4R1ZMzn3k57ofITH5iQ0b4g8SrzokKXl
- uN2OMUTZkZFJorxCMk0S9FSu610TCxD0nKQOMTm8QvwQn7M7EIgxZ4bHNnEbX1ru7kKSpef5wop
- hpEJwe7C+vgH7yliVtK4jgCxwFcm71oaZtn49t/K6cq8JOr2+g7R7rSz6fZOJv7220fUXx60Kvq
- S+0tUnjXV1YoFOa+LQq2Yo8MnAn1/vTXZXJ+Rg37LL2Ovi8Qubj28m4WTuOzxttdIn+GoxKpQIC
- PQQELMoWowEaAf65JHb6dqW8tX/vIodP9Rzrk6ftV1lpDan9QWmv2QiHqcMxwnwxjP0/m8DKOxC
- 2CnP7hJ5G7a1DEmG/IjFfMdAQPzz3h/Mh1b6GYxdk5YUsMQigp1GUGh0cxTb2YXBaepmtzq9R6E
- p+CmCqzR+k/o+RQ==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Subject: [PATCH v5 0/7] CSV/JSON metric thresholds, fix printf modifiers
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Define power domains as supported by the RPMh on the SAR2130P platform.
+Metric thresholds are being computed for CSV and JSON output but not
+displayed. Rename the color that encodes the threshold as enum values
+and use to generate string constants for a json dictionary
+value. Disable metric thresholds with CSV output.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/pmdomain/qcom/rpmhpd.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Add printf attribute to functions in color.h that could support
+it. Fix bad printf format strings that this detected.
 
-diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhpd.c
-index 731feab9f17ddae699815332d193e9a298fff0e1..5c5f9542c3925045cc90872e81cae3e6c2936212 100644
---- a/drivers/pmdomain/qcom/rpmhpd.c
-+++ b/drivers/pmdomain/qcom/rpmhpd.c
-@@ -259,6 +259,30 @@ static const struct rpmhpd_desc sa8775p_desc = {
- 	.num_pds = ARRAY_SIZE(sa8775p_rpmhpds),
- };
- 
-+/* SAR2130P RPMH powerdomains */
-+static struct rpmhpd *sar2130p_rpmhpds[] = {
-+	[RPMHPD_CX] = &cx,
-+	[RPMHPD_CX_AO] = &cx_ao,
-+	[RPMHPD_EBI] = &ebi,
-+	[RPMHPD_GFX] = &gfx,
-+	[RPMHPD_LCX] = &lcx,
-+	[RPMHPD_LMX] = &lmx,
-+	[RPMHPD_MMCX] = &mmcx_w_cx_parent,
-+	[RPMHPD_MMCX_AO] = &mmcx_ao_w_cx_parent,
-+	[RPMHPD_MSS] = &mss,
-+	[RPMHPD_MX] = &mx,
-+	[RPMHPD_MX_AO] = &mx_ao,
-+	[RPMHPD_MXC] = &mxc,
-+	[RPMHPD_MXC_AO] = &mxc_ao,
-+	[RPMHPD_NSP] = &nsp,
-+	[RPMHPD_QPHY] = &qphy,
-+};
-+
-+static const struct rpmhpd_desc sar2130p_desc = {
-+	.rpmhpds = sar2130p_rpmhpds,
-+	.num_pds = ARRAY_SIZE(sar2130p_rpmhpds),
-+};
-+
- /* SDM670 RPMH powerdomains */
- static struct rpmhpd *sdm670_rpmhpds[] = {
- 	[SDM670_CX] = &cx_w_mx_parent,
-@@ -665,6 +689,7 @@ static const struct of_device_id rpmhpd_match_table[] = {
- 	{ .compatible = "qcom,sa8155p-rpmhpd", .data = &sa8155p_desc },
- 	{ .compatible = "qcom,sa8540p-rpmhpd", .data = &sa8540p_desc },
- 	{ .compatible = "qcom,sa8775p-rpmhpd", .data = &sa8775p_desc },
-+	{ .compatible = "qcom,sar2130p-rpmhpd", .data = &sar2130p_desc},
- 	{ .compatible = "qcom,sc7180-rpmhpd", .data = &sc7180_desc },
- 	{ .compatible = "qcom,sc7280-rpmhpd", .data = &sc7280_desc },
- 	{ .compatible = "qcom,sc8180x-rpmhpd", .data = &sc8180x_desc },
+v5. Switch some u64 printf flags to PRIx64 rather than llx (kernel
+    convention) to resolve 32-bit build issues.
+v4. Drop CSV metric thresholds due to formatting variation on
+    hypervisors (broken counters) and not as detected by
+    tests/shell/stat+csv_output.sh.
+v3. Rebase.
+v2. Don't display metric-value for json output if there is no unit.
+
+Ian Rogers (7):
+  perf color: Add printf format checking and resolve issues
+  perf stat: Fix/add parameter names for print_metric
+  perf stat: Display "none" for NaN with metric only json
+  perf stat: Drop metric-unit if unit is NULL
+  perf stat: Change color to threshold in print_metric
+  perf stat: Add metric-threshold to json output
+  perf stat: Disable metric thresholds for CSV and JSON metric-only mode
+
+ tools/perf/arch/x86/util/iostat.c             |   2 +-
+ tools/perf/builtin-sched.c                    |   2 +-
+ tools/perf/builtin-script.c                   |   6 +-
+ tools/perf/builtin-stat.c                     |   8 ++
+ tools/perf/builtin-trace.c                    |   2 +-
+ .../tests/shell/lib/perf_json_output_lint.py  |   5 +-
+ tools/perf/util/arm-spe.c                     |   2 +-
+ tools/perf/util/color.h                       |   9 +-
+ tools/perf/util/intel-bts.c                   |   2 +-
+ tools/perf/util/intel-pt.c                    |   2 +-
+ tools/perf/util/s390-cpumsf.c                 |   2 +-
+ tools/perf/util/s390-sample-raw.c             |   8 +-
+ tools/perf/util/stat-display.c                |  73 +++++++---
+ tools/perf/util/stat-shadow.c                 | 128 ++++++++++--------
+ tools/perf/util/stat.h                        |  16 ++-
+ 15 files changed, 170 insertions(+), 97 deletions(-)
 
 -- 
-2.39.5
+2.47.0.105.g07ac214952-goog
 
 
