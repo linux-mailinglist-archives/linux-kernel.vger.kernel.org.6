@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-370700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525C99A30F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:48:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9B79A30FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79F41F22EE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58F221F22B6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5021D798B;
-	Thu, 17 Oct 2024 22:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232971D79B3;
+	Thu, 17 Oct 2024 22:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXCC9vs0"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9kmZI6a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E3B1D278C;
-	Thu, 17 Oct 2024 22:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EFF1D6DBE;
+	Thu, 17 Oct 2024 22:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729205275; cv=none; b=fbCVmrKVkGfkz/c/d3d+4tFPG0UNxXLP542MKVBN7j+cYYFjEGnqWIinr7dpvPWhBzoAi42K9JxtRixc2EfHCAaUepJ8SGUzJyqv1j2DxUPzyF3HBZeNOV4rD2uj4+YLUvSChURauV+tTR0m6FAdlVJ2N+CgpXgKA+kDlTjgiDA=
+	t=1729205340; cv=none; b=sSG/2JV+TRsZEZ2aS1FugqH5EUi8TyAS3U7gwH2+Npacs30rJ/dy7dl4qh8+OHni9k1mdnMm2MJxnruzKTRUCiN3+G73BXSIV9Ciya6PeMH0OqXL/ucb3EhG26sz1lZgBbBoDw/k+QPSI3NaBiRSaoyAZV2/UBwKN7RfxXWQoeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729205275; c=relaxed/simple;
-	bh=AT0CKTmzN9UIcVwUdUYWDqnb8/y4DzK1JkMFAUKplHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=URRIv9WgUoLukt4zal99qqthTkZkbyFpDgt75GeZyh2K6v+CHzaF3JDVtSXT7rinfMVyEJ36sPvT64+6XT0Jmp2yiTRtV/Bmlplke4KrfQR/8Q+ZPQT2G14kyBfcn+EawFTevSv9yrUKMKSJN+5QQD1VCioS1UKBDxZMO+9bY1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TXCC9vs0; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43158124a54so1807425e9.3;
-        Thu, 17 Oct 2024 15:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729205272; x=1729810072; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AT0CKTmzN9UIcVwUdUYWDqnb8/y4DzK1JkMFAUKplHA=;
-        b=TXCC9vs0WRM1YD6l9AsnFfzs+0caGK6Y1OS48pKpzjXMbOm8PmuswYCtMm02BBd4n9
-         kPO4Tse7n6L/oIFPBxBiml4hil+g4lx8D/h9ZaDzrT46hLcFlTKQDLHmpfmLPRqZmQYS
-         xF6whGJ3ixYeOZGitf/OZkhRwUTR5+WFcP86WzzxsBvhCjik7Xt85B2OhZVOciVEkVcu
-         t6/hC1aqpdfHkZtOnwWtm4gTXDkisWztZvNRslN0lM6geCE0MBPp0dfnVPPtc20BggDC
-         S9u7DFUcyolGGQu/C+kBTy2kcXbwJxm3rwxCMzLt+SmzRqe0BIzHP09rLE1FiIZeZ8zr
-         bT9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729205272; x=1729810072;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AT0CKTmzN9UIcVwUdUYWDqnb8/y4DzK1JkMFAUKplHA=;
-        b=YL1WnLMw86G30UOFkKWZyobv6bJVaIONh20uGsa9feGCO/Q7/UyljbBxk6x/yL4+9g
-         rATYlKzMKXy397OEW2x2NtenXPqNBEPG4NDpTlbAOSPk3KXi3wxgVQVbk++HAYHcai1H
-         1fb1ncl6PTaP9By8ptC4gaSochsxlnuMa7WdjK4vf1RVxiEGpFV2r7ImAfVeuDXJUxTl
-         kJFocrFY5xJ3rxwnNevaAv5iuXjzvIVkFZFBO5nkO5ekJyhVQ86pl7KjOzXZKV+WJkaF
-         q8XTHjbPRB5T42vhI1zCXUJuFZPkNfxjb/peJj2f09dXgInUEOksDg+hOah/XBnC0EhS
-         aO8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUTPGHdjEwx0uyLcsCv4ld+jHBIgmvCxc/1SjubC9WghFMKk3l7ulngu04epUyRrZUAv3AeljxBlBR9vtyN@vger.kernel.org, AJvYcCVMlIrmkG2Cc8JYsuSgDOeROkgrL2Ku57EU1WXVnS4lVb/+PXvyNqr/MaTCqJNiWYzTXXmeI2HofA8cNId/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS5ohYQgDsbObHiVmK4m19lbpFU8rDUPJLJm92EscQo5jN2RuX
-	J9DrnIkQYMuvCHuqG+aQlzuP/NFStEd+9ULkooTLtems/AuMIV56W6Mv4nqLP7QctjE2jKG7s12
-	TVxAY6aAkWL4KsIxVqnSakJY7DZyRE8ge
-X-Google-Smtp-Source: AGHT+IEj3Bezk3oy/u5PlhV0gduFBYFDDk4hQmhS2jsHk6PcYNkNX6O+zW6SHbKUMZZmQCP43pxBC9eIl4PRTW574PE=
-X-Received: by 2002:a05:6000:1fa1:b0:37d:4864:397f with SMTP id
- ffacd0b85a97d-37ea21da66emr149426f8f.3.1729205272264; Thu, 17 Oct 2024
- 15:47:52 -0700 (PDT)
+	s=arc-20240116; t=1729205340; c=relaxed/simple;
+	bh=Iv+6OmHuMrO+YnI4hpYi4pu0LsU15h8P3GuX6Qr7+UM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ObnpLpa1hwi2PL7v8HvHNE1Gse2+9UAfZTK6UNJw3c3OauccUWa22OYZvfzPUaml6iArOk+DNeONR5gPIvmbLlL+okmKXeyAOFFjmlLXJvzUdi0/GHdAfXeg2Ec3+JUrrau4JF5t4GytazlVgyHV18JiuSJMyGcjBr/jRYb8SGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9kmZI6a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7FEC4CEC7;
+	Thu, 17 Oct 2024 22:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729205340;
+	bh=Iv+6OmHuMrO+YnI4hpYi4pu0LsU15h8P3GuX6Qr7+UM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V9kmZI6aqNv4Omj7l7ixp9aldfUHsARhgLVlSM1N1j6UEco/PPP3J5BWmSJYLB5Db
+	 lk/euDAKpwhJ5ppiyAb8AvykxOD2lFPYOEYGQtGFTEDnp56cdL1Pro9ZTIZUKLnAeM
+	 9SSfsUQg1dGmyzoFy6DblCFv8rifalGcxc2u/+q+UHv3+dgWTTMfARqmsSR7K58Mw7
+	 A+gjOOgRO+ND7vzjoc0bilM9CWBo3+bV+bU7VleUl+DpskIxNGS7NFRXf0WSPO+6o4
+	 zLSyDmlPz4Lh1fSBZNluMQPFpmoIjtOTDLO/1JeoMKuIH1CS3JdBxQHmF+xW7p1rK4
+	 laN834IB9EqiA==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.12-rc3
+Date: Thu, 17 Oct 2024 15:48:58 -0700
+Message-ID: <20241017224858.2175159-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJg=8jz4OwA9LdXtWJuPup+wGVJ8kKFXSboT3G8kjPXBSa-qHA@mail.gmail.com>
- <20240612-hofiert-hymne-11f5a03b7e73@brauner> <CAJg=8jxMZ16pCEHTyv3Xr0dcHRYdwEZ6ZshXkQPYMXbNfkVTvg@mail.gmail.com>
- <CAJg=8jyAtJh6Mbj88Ri3J9fXBN0BM+Fh3qwaChGLL0ECuD7w+w@mail.gmail.com> <CACT4Y+YS+mSjvx8JheONVbrnA0FZUdm6ciWcvEJOCUzsMwWqXA@mail.gmail.com>
-In-Reply-To: <CACT4Y+YS+mSjvx8JheONVbrnA0FZUdm6ciWcvEJOCUzsMwWqXA@mail.gmail.com>
-From: Marius Fleischer <fleischermarius@gmail.com>
-Date: Thu, 17 Oct 2024 15:47:40 -0700
-Message-ID: <CAJg=8jyj=pRA_dW9DNA0O841W9jRzg8jV6a3KFtD2Nn=seCwyg@mail.gmail.com>
-Subject: Re: possible deadlock in freeze_super
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: brauner@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com, harrisonmichaelgreen@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Dmitry,
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-Thank you for the pointer!
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-I tested the reproducer on 6.12-rc3 - it does not seem to trigger the bug there.
+are available in the Git repository at:
 
-Thank you and wishing you a nice day!
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Best,
-Marius
+for you to fetch changes up to 6b5cca7868fdd2499384e21279fdab86bfa04997:
+
+  clk: test: Fix some memory leaks (2024-10-16 14:39:18 -0700)
+
+----------------------------------------------------------------
+Two clk driver fixes and a unit test fix:
+
+ - Terminate the of_device_id table in the Samsung exynosautov920 clk
+   driver so that device matching logic doesn't run off the end of the
+   array into other memory and break matching for any kernel with this
+   driver loaded
+
+ - Properly limit the max clk ID in the Rockchip clk driver
+
+ - Use clk kunit helpers in the clk tests so that memory isn't leaked
+   after the test concludes
+
+----------------------------------------------------------------
+Jinjie Ruan (2):
+      clk: samsung: Fix out-of-bound access of of_match_node()
+      clk: test: Fix some memory leaks
+
+Stephen Boyd (1):
+      Merge tag 'samsung-clk-fixes-6.12' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux into clk-fixes
+
+Yao Zi (1):
+      clk: rockchip: fix finding of maximum clock ID
+
+ drivers/clk/clk_test.c                   | 61 ++++++++------------------------
+ drivers/clk/rockchip/clk.c               |  2 +-
+ drivers/clk/samsung/clk-exynosautov920.c |  1 +
+ 3 files changed, 16 insertions(+), 48 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
