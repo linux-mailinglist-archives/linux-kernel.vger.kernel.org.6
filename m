@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-370089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A3B9A2732
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF979A273D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68A89283890
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:44:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6514A1F21277
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FC01DEFD8;
-	Thu, 17 Oct 2024 15:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0711DD537;
+	Thu, 17 Oct 2024 15:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfvWlQxl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a2puW260"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A1D1DED58;
-	Thu, 17 Oct 2024 15:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1485B1DED40
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179879; cv=none; b=iUeXvtM7CFSUncsbagfZ4TUj4FECmEVcKkB7eGy25Qwtculkl5VxwaMYbhkcPPtbwYDCcNRdsSNUGv3h1GXOPTzoSJe+iG5DUrEn+1NhZdtq7VKdwq0Wiy5jbpWMYN57fCpaKZJ4eYBSFOyG0OXRKUpsvCD3MYTksHmuUuwECdA=
+	t=1729179938; cv=none; b=d/MBlmxLMYTvBPn+rcomA6urqEyrcSmwnF8zURtyWA28oyYIPQJPS+I/N9fZynVxNHtvF+amhb/tRBefnvg4mS1dI5UrZFxyFn57nB84cwTS7LnLDps/i2mcv7cxdUMdfoFI4jDrLovapof5J6Tj1Jwe5/Fe9u+8VDx2nd0K9L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179879; c=relaxed/simple;
-	bh=H/WlUb69oaYSW2WFy03JE5lcNIzLGLsQCemNi3ZnmaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfU3qK3QKFNwPZzAOAXbVdkzaoc/c5/cOgnC0JH8YXhMQIzm7NakTn0IN2z98agv1Vs5S2/Xcm/i82YrgneCh26cwIGB54KnXQMwHitZxcw7HzRyi8PWD1m3G6Jks2Kp8QWZWfrwUGPTKe9es53SBAeNWGADZj5FKe1uQMvh8Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfvWlQxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19EEC4CEC3;
-	Thu, 17 Oct 2024 15:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729179878;
-	bh=H/WlUb69oaYSW2WFy03JE5lcNIzLGLsQCemNi3ZnmaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UfvWlQxlnQukgvMdFy/P1UrJxtK89LTdB03AhAnjVil4VDv2MAZhLY4D3ScnLXd1D
-	 gE6uTJ6EwjCpi6evZkIhApQfCQgj9sDe5/TU5XlNQzid+hJw/NR4mtioijT+e7AIhS
-	 2EHuWxPWtkKb8NEHnJ1r3T88QH6nVL9uyaPVat6Jikz7I/dC4Nwr/htv8QrutlCa4N
-	 i1/Jd/6y+lBgfdQMu1tZsaLuCtCfzut3VsiqxMRbBSU4yxRVgzzoFaewHmal66eMn8
-	 31NqR8975kSHZTaNOPVrWvv9/uJqKKx2KVn4OxVXQ7trWEVt7ut+I3VB9uAD2CDZSn
-	 8ulEJE8n5buXA==
-Date: Thu, 17 Oct 2024 16:44:33 +0100
-From: Simon Horman <horms@kernel.org>
-To: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org, kys@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, stephen@networkplumber.org,
-	davem@davemloft.net, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net,v2] hv_netvsc: Fix VF namespace also in synthetic NIC
- NETDEV_REGISTER event
-Message-ID: <20241017154433.GV1697@kernel.org>
-References: <1729093437-28674-1-git-send-email-haiyangz@microsoft.com>
+	s=arc-20240116; t=1729179938; c=relaxed/simple;
+	bh=Tf/9FF4ryDOCGk5Axz8hHeCv34zmpcWdeQwBFbKecTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dg7ucO94vq5KK4hpdDP1+8hNrTzcbZB7Zudzc6HQs9EqvU1xmfgzSED9JLDrupnZ0cpiLil1KCejukyRAP2Qw966fy3NrjY7e9sguZ15S3ckGrUxWbumv7fk8KAX579judz+ydqAkDS9nXbwaG3SztYBDWPcQRrkqh+IR99Ey1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=a2puW260; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83aae6aba1aso44207339f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:45:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729179932; x=1729784732; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wgzc6Tanx1j/oxduWDX4CPi0S2/TOLRwOCCY8Sr81rI=;
+        b=a2puW260RAPyUTbwvnQBTFS8k+7SL8+YSTbERYkWp3lOAHe54+CEt8jwcuUbGYYfNA
+         lAHK5l2WMjQJJpYZJbtlOpUzpFN9HN2nj0Sq21Feap4LtS0KnxaVQjXw1fGFxzxI4xx4
+         LmLJ9pw++S2/b5CeuNnS7ISZ6chnNKZyo1xG8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729179932; x=1729784732;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wgzc6Tanx1j/oxduWDX4CPi0S2/TOLRwOCCY8Sr81rI=;
+        b=mIiFfkZVvrAIW1UjpFsQZr5KD7QAPLAWdg/EcaXnEFy+pjgGJzJAkiyGns6gg4k2Oq
+         Hpo2YXeIMPrwAYsa5ZlvLLcoYubYkmkktORW8CXqNfgyjy1OXgPKEeTUXlypvdXnW4vK
+         Yvjfvke7mEQVNMMwr6mZcfSWi6t7v7QnZHd/BS8AbMbMeG6Jwg55GLp+cJCmoa8PBoLN
+         OE7PRktbyenzYnS4K9x9Nu/aubMFpurTTYITQCdrMz7H5pCGLW/ypZWLMO/3cugnvEli
+         sLqeFJ9XCwtjLGUkrHaOpIAp4ZA9073Rh6/hWt1mgHRaYvL1FfOPb3dR6NkvlJDaTDEp
+         oIaw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2R+bie5wLDl8F83mu0X/NdksPUO7GaWlVRRetlnu2SEXWBt1SIyu74wDYRPvpWvqaxTyVjjVYJ16pacA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2icw4roGfofp1NgV+w1A9ql/+0LGzCT+2XV7IntZmhZ3K/1ID
+	hBlXrGwBez5bn9EHHl69WgLX59No9Vvj3k0dmxdsd1UjCzd4qlkgoNxrgJQ5mJ0=
+X-Google-Smtp-Source: AGHT+IEBeL+uRYHNmHyvAAgibrTgO3SnP5KZI8eJYAGY0+BnOezh/JDiKtJTlMw9i/w2YOgMrBrqrg==
+X-Received: by 2002:a05:6602:6416:b0:83a:af06:4ae3 with SMTP id ca18e2360f4ac-83aaf064b4emr264500439f.0.1729179931909;
+        Thu, 17 Oct 2024 08:45:31 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbec95e8edsm1414082173.9.2024.10.17.08.45.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 08:45:31 -0700 (PDT)
+Message-ID: <01c1aed5-af19-4636-9ef6-ff519841e421@linuxfoundation.org>
+Date: Thu, 17 Oct 2024 09:45:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1729093437-28674-1-git-send-email-haiyangz@microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 2/2] selftests:timers: remove unneeded semicolon
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, anna-maria@linutronix.de
+Cc: frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
+ sboyd@kernel.org, shuah@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241017062737.98466-1-jiapeng.chong@linux.alibaba.com>
+ <20241017062737.98466-2-jiapeng.chong@linux.alibaba.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241017062737.98466-2-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 08:43:57AM -0700, Haiyang Zhang wrote:
-> The existing code moves VF to the same namespace as the synthetic NIC
-> during netvsc_register_vf(). But, if the synthetic device is moved to a
-> new namespace after the VF registration, the VF won't be moved together.
+On 10/17/24 00:27, Jiapeng Chong wrote:
+> No functional modification involved.
 > 
-> To make the behavior more consistent, add a namespace check for synthetic
-> NIC's NETDEV_REGISTER event (generated during its move), and move the VF
-> if it is not in the same namespace.
+> ./tools/testing/selftests/timers/nsleep-lat.c:62:2-3: Unneeded semicolon.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: c0a41b887ce6 ("hv_netvsc: move VF to same namespace as netvsc device")
-> Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11406
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 > ---
-> v2: Move my fix to synthetic NIC's NETDEV_REGISTER event as suggested by Stephen.
+>   tools/testing/selftests/timers/nsleep-lat.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> ---
->  drivers/net/hyperv/netvsc_drv.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-> index 153b97f8ec0d..54e98356ee93 100644
-> --- a/drivers/net/hyperv/netvsc_drv.c
-> +++ b/drivers/net/hyperv/netvsc_drv.c
-> @@ -2798,6 +2798,30 @@ static struct  hv_driver netvsc_drv = {
->  	},
->  };
->  
-> +/* Set VF's namespace same as the synthetic NIC */
-> +static void netvsc_event_set_vf_ns(struct net_device *ndev)
-> +{
-> +	struct net_device_context *ndev_ctx = netdev_priv(ndev);
-> +	struct net_device *vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
-> +	int ret;
-
-In Networking code it is preferred to arrange local variables in reverse
-xmas tree order - longest line to shortest.
-
-I believe that could be achieved as follows (completely untested!):
-
-	struct net_device_context *ndev_ctx = netdev_priv(ndev);
-	struct net_device *vf_netdev;
-	int ret;
-
-	vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
-	if (!vf_netdev)
-		return;
-
-With that addressed please feel free to add:
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-> +
-> +	if (!vf_netdev)
-> +		return;
-> +
-> +	if (!net_eq(dev_net(ndev), dev_net(vf_netdev))) {
-> +		ret = dev_change_net_namespace(vf_netdev, dev_net(ndev),
-> +					       "eth%d");
-> +		if (ret)
-> +			netdev_err(vf_netdev,
-> +				   "Cannot move to same namespace as %s: %d\n",
-> +				   ndev->name, ret);
-> +		else
-> +			netdev_info(vf_netdev,
-> +				    "Moved VF to namespace with: %s\n",
-> +				    ndev->name);
+> diff --git a/tools/testing/selftests/timers/nsleep-lat.c b/tools/testing/selftests/timers/nsleep-lat.c
+> index de23dc0c9f97..6f7f7d682439 100644
+> --- a/tools/testing/selftests/timers/nsleep-lat.c
+> +++ b/tools/testing/selftests/timers/nsleep-lat.c
+> @@ -59,7 +59,7 @@ char *clockstring(int clockid)
+>   		return "CLOCK_BOOTTIME_ALARM";
+>   	case CLOCK_TAI:
+>   		return "CLOCK_TAI";
+> -	};
 > +	}
-> +}
-> +
->  /*
->   * On Hyper-V, every VF interface is matched with a corresponding
->   * synthetic interface. The synthetic interface is presented first
-> @@ -2810,6 +2834,11 @@ static int netvsc_netdev_event(struct notifier_block *this,
->  	struct net_device *event_dev = netdev_notifier_info_to_dev(ptr);
->  	int ret = 0;
->  
-> +	if (event_dev->netdev_ops == &device_ops && event == NETDEV_REGISTER) {
-> +		netvsc_event_set_vf_ns(event_dev);
-> +		return NOTIFY_DONE;
-> +	}
-> +
->  	ret = check_dev_is_matching_vf(event_dev);
->  	if (ret != 0)
->  		return NOTIFY_DONE;
+>   	return "UNKNOWN_CLOCKID";
+>   }
+>   
 
--- 
-pw-bot: changes-requested
+This is the same change. same comment on this one too.
+I am working on deleting the duplicate code and there
+is no need to make these changes.
+
+thanks,
+-- Shuah
 
