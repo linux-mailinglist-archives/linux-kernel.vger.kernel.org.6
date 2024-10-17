@@ -1,339 +1,92 @@
-Return-Path: <linux-kernel+bounces-369474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9719A9A1DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC679A1DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF647B2198E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3971C21796
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F981D6DC5;
-	Thu, 17 Oct 2024 08:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDDF1D79B1;
+	Thu, 17 Oct 2024 08:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QN3IC5bq"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B981D63E6;
-	Thu, 17 Oct 2024 08:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwjWpD/3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252AE1D7996;
+	Thu, 17 Oct 2024 08:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729155560; cv=none; b=L9G815aUT2xrkY/SXtMORI9+r+wRDSi5VsdmD39U/v7+rrfEUAzX8EGynVFamUbDAu4GmuwDxNzPGDylln+sEH/S/V3WkXeA23UpXtxpNI6nJHvA6dMQbsGgBkseVS4M8ZLVP2V467zRanUNyf0hl67BaJdqWzt4JhCHs9fUS0o=
+	t=1729155540; cv=none; b=iTYvVdnOFE3NOUSsktbTuU+cG7gJpeeoEgZGQHelVUBMpzGDON39Lci+DYnWuOl2TgUZJoF+TYt1Xo1/ghDt2hoGn1UqQtCtzwxNGHAF/2/2CBnFohta2cgKXYFa+CcpnJPXrV1tnOkzAedCnJoKct5S7xDEaGB7VpOsax8dT7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729155560; c=relaxed/simple;
-	bh=gJhvlJnq8dFTPHfGW9ESvjuesnJAYBifZP+PHZbxdKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S0rcf/QhtQxYheiIFVpgsZ3b9sN6JfK42yfiDOG6uB7TNHLZZWM0DcFRfHlYygM6ekiD811+v72M4JHcoDKSQqH5d6l/dYQ+2K0f7ulQ0AKuYl1sxQyd3KSn/gIhrl8fR6RIGniqH3i57TWRuZaPP7jUT2K0rBdLTEoumcTsH08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QN3IC5bq; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=MEcogBKGnF5OFql5xBOOEvBxjmUMJdyno0Kir1D6Xqw=;
-	b=QN3IC5bqPAqiRYtxxuhtRfUdYTyZF1v/RihQUUPSAigVmPf8rXFvGsC3xbM9xr
-	z9VMJWoRmG7hmMaPygAvI01ip3dgvqk4x0vfGWQc6EFc9DejmRpBGdmbvw/l0RVn
-	zv/3PfKef1aEnIvkmfiKRMwq1hHeBdZgTLHCV6Ojd6lbs=
-Received: from [10.42.12.92] (unknown [111.48.69.246])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgCnNyzJ0RBnQOslAg--.55500S2;
-	Thu, 17 Oct 2024 16:58:51 +0800 (CST)
-Message-ID: <43d6a661-b28a-4318-977c-66a4e7593aea@163.com>
-Date: Thu, 17 Oct 2024 16:58:49 +0800
+	s=arc-20240116; t=1729155540; c=relaxed/simple;
+	bh=l32QBf7Ydpv0UfOXGtjji83gO7qLXEQRgzkYtcP6NUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3Pj3QUKeJMdIj+fgMddKzxyyklNid9NGZVOms9gTj0lOvuz5K2JPpdUzXz4cLTQ1A6BJgQqD6nz/uUDQKH0DY/rauEDCayjr7r8qtiy+DfKl7y36BHskSNw6fvIkcRtPZjIeOdo85jcVsX4PnwvjpiDw8lcKuaUpjI4pkkDoFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwjWpD/3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECCEC4CEC3;
+	Thu, 17 Oct 2024 08:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729155539;
+	bh=l32QBf7Ydpv0UfOXGtjji83gO7qLXEQRgzkYtcP6NUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iwjWpD/3D7bKZljV7PRHcYswQ0aitCyhZdLuPmfjBLQXh9+8GlXzTTY6MMiqPxmLs
+	 5s8staspLLj9ygOzBDONUxmj9mcB+rHeOeRmVSAJRIwtnxbU7dLEDoh8H0Hz8jVlQc
+	 U0oypsIzTOysdbQoED44fttLaijGShvXB9zF0CM/npocXCQmC6A8kGo6FjvBcTcSpr
+	 qkoqIuXGR/O83Hl3bPKx9qUFup2Hd/zrhAhbKrt0CzstORt8zgdETLVj5p7Z6P20J1
+	 urlF86LAjX30mUtweec72UxFfYmDrS0FD4RQYrm/9H2XiuMGpPG0gj7QNt11j/8FuF
+	 po7OmiHpS8rKg==
+Date: Thu, 17 Oct 2024 09:58:53 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kurt Kanzenbach <kurt@linutronix.de>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	"maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER" <UNGLinuxDriver@microchip.com>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	George McCollister <george.mccollister@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Breno Leitao <leitao@debian.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCHv7 net-next 6/6] net: ibm: emac: generate random MAC if
+ not found
+Message-ID: <20241017085853.GR2162@kernel.org>
+References: <20241015200222.12452-1-rosenp@gmail.com>
+ <20241015200222.12452-8-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: clone3: Use the capget and capset syscall
- directly
-Content-Language: en-US
-To: Shuah Khan <skhan@linuxfoundation.org>, brauner@kernel.org,
- shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>
-References: <20241015105955.126994-1-zhouyuhang1010@163.com>
- <806bee31-d740-49c9-abe0-06820cfa7395@linuxfoundation.org>
- <dea6d512-64c7-4ec1-a99d-6796e434c9a4@163.com>
- <a0944037-e90a-4884-b12f-284b373a0d63@linuxfoundation.org>
-From: zhouyuhang <zhouyuhang1010@163.com>
-In-Reply-To: <a0944037-e90a-4884-b12f-284b373a0d63@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgCnNyzJ0RBnQOslAg--.55500S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtF18GF45Zr4kJF1kWrW3Wrg_yoWfZw1Upa
-	48CF4YkFs5Xr1xGFyIvwsI9Fn2yFW8XF1xXr1UJ34jvrnI9rn7tF40yFyj9F10939xuw4F
-	va18KFWfuF98AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jafOrUUUUU=
-X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiLxF6JmcQO6uaSAABsW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015200222.12452-8-rosenp@gmail.com>
 
+On Tue, Oct 15, 2024 at 01:02:21PM -0700, Rosen Penev wrote:
+> On this Cisco MX60W, u-boot sets the local-mac-address property.
+> Unfortunately by default, the MAC is wrong and is actually located on a
+> UBI partition. Which means nvmem needs to be used to grab it.
+> 
+> In the case where that fails, EMAC fails to initialize instead of
+> generating a random MAC as many other drivers do.
+> 
+> Match behavior with other drivers to have a working ethernet interface.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-
-在 2024/10/17 07:10, Shuah Khan 写道:
-> On 10/16/24 03:18, zhouyuhang wrote:
->>
->>
->> 在 2024/10/15 23:31, Shuah Khan 写道:
->>> On 10/15/24 04:59, zhouyuhang wrote:
->>>> From: zhouyuhang <zhouyuhang@kylinos.cn>
->>>>
->>>> The libcap commit aca076443591 ("Make cap_t operations thread safe.")
->>>> added a __u8 mutex at the beginning of the struct _cap_struct, it 
->>>> changes
->>>> the offset of the members in the structure that breaks the assumption
->>>> made in the "struct libcap" definition in 
->>>> clone3_cap_checkpoint_restore.c.
->>>> This will make the test fail. So use the capget and capset syscall
->>>> directly and remove the libcap library dependency like the
->>>> commit 663af70aabb7 ("bpf: selftests: Add helpers to directly use
->>>> the capget and capset syscall") does.
->>>>
->>>> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
->>>> ---
->>>>   tools/testing/selftests/clone3/Makefile       |  1 -
->>>>   .../clone3/clone3_cap_checkpoint_restore.c    | 53 
->>>> ++++++++-----------
->>>>   .../selftests/clone3/clone3_cap_helpers.h     | 23 ++++++++
->>>>   3 files changed, 44 insertions(+), 33 deletions(-)
->>>>   create mode 100644 
->>>> tools/testing/selftests/clone3/clone3_cap_helpers.h
->>>>
->>>> diff --git a/tools/testing/selftests/clone3/Makefile 
->>>> b/tools/testing/selftests/clone3/Makefile
->>>> index 84832c369a2e..59d26e8da8d2 100644
->>>> --- a/tools/testing/selftests/clone3/Makefile
->>>> +++ b/tools/testing/selftests/clone3/Makefile
->>>> @@ -1,6 +1,5 @@
->>>>   # SPDX-License-Identifier: GPL-2.0
->>>>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
->>>> -LDLIBS += -lcap
->>>>     TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
->>>>       clone3_cap_checkpoint_restore
->>>> diff --git 
->>>> a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c 
->>>> b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->>>> index 3c196fa86c99..242088eeec88 100644
->>>> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->>>> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
->>>> @@ -15,7 +15,6 @@
->>>>   #include <stdio.h>
->>>>   #include <stdlib.h>
->>>>   #include <stdbool.h>
->>>> -#include <sys/capability.h>
->>>>   #include <sys/prctl.h>
->>>>   #include <sys/syscall.h>
->>>>   #include <sys/types.h>
->>>> @@ -26,6 +25,7 @@
->>>>     #include "../kselftest_harness.h"
->>>>   #include "clone3_selftests.h"
->>>> +#include "clone3_cap_helpers.h"
->>>>     static void child_exit(int ret)
->>>>   {
->>>> @@ -87,47 +87,36 @@ static int test_clone3_set_tid(struct 
->>>> __test_metadata *_metadata,
->>>>       return ret;
->>>>   }
->>>>   -struct libcap {
->>>> -    struct __user_cap_header_struct hdr;
->>>> -    struct __user_cap_data_struct data[2];
->>>> -};
->>>> -
->>>>   static int set_capability(void)
->>>>   {
->>>> -    cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
->>>> -    struct libcap *cap;
->>>> -    int ret = -1;
->>>> -    cap_t caps;
->>>> -
->>>> -    caps = cap_get_proc();
->>>> -    if (!caps) {
->>>> -        perror("cap_get_proc");
->>>> +    struct __user_cap_data_struct data[2];
->>>> +    struct __user_cap_header_struct hdr = {
->>>> +        .version = _LINUX_CAPABILITY_VERSION_3,
->>>> +    };
->>>> +    __u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
->>>> +    __u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
->>>> +    int ret;
->>>> +
->>>> +    ret = capget(&hdr, data);
->>>> +    if (ret) {
->>>> +        perror("capget");
->>>>           return -1;
->>>>       }
->>>>         /* Drop all capabilities */
->>>> -    if (cap_clear(caps)) {
->>>> -        perror("cap_clear");
->>>> -        goto out;
->>>> -    }
->>>> +    memset(&data, 0, sizeof(data));
->>>>   -    cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
->>>> -    cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
->>>> +    data[0].effective |= cap0;
->>>> +    data[0].permitted |= cap0;
->>>>   -    cap = (struct libcap *) caps;
->>>> +    data[1].effective |= cap1;
->>>> +    data[1].permitted |= cap1;
->>>>   -    /* 40 -> CAP_CHECKPOINT_RESTORE */
->>>> -    cap->data[1].effective |= 1 << (40 - 32);
->>>> -    cap->data[1].permitted |= 1 << (40 - 32);
->>>> -
->>>> -    if (cap_set_proc(caps)) {
->>>> -        perror("cap_set_proc");
->>>> -        goto out;
->>>> +    ret = capset(&hdr, data);
->>>> +    if (ret) {
->>>> +        perror("capset");
->>>> +        return -1;
->>>>       }
->>>> -    ret = 0;
->>>> -out:
->>>> -    if (cap_free(caps))
->>>> -        perror("cap_free");
->>>>       return ret;
->>>>   }
->>>>   diff --git a/tools/testing/selftests/clone3/clone3_cap_helpers.h 
->>>> b/tools/testing/selftests/clone3/clone3_cap_helpers.h
->>>> new file mode 100644
->>>> index 000000000000..3fa59ef68fb8
->>>> --- /dev/null
->>>> +++ b/tools/testing/selftests/clone3/clone3_cap_helpers.h
->>>> @@ -0,0 +1,23 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>> +#ifndef __CLONE3_CAP_HELPERS_H
->>>> +#define __CLONE3_CAP_HELPERS_H
->>>> +
->>>> +#include <linux/capability.h>
->>>> +
->>>> +/*
->>>> + * Compatible with older version
->>>> + * header file without defined
->>>> + * CAP_CHECKPOINT_RESTORE.
->>>> + */
->>>> +#ifndef CAP_CHECKPOINT_RESTORE
->>>> +#define CAP_CHECKPOINT_RESTORE 40
->>>> +#endif
->>>> +
->>>> +/*
->>>> + * Removed the libcap library dependency.
->>>> + * So declare them here directly.
->>>> + */
->>>> +int capget(cap_user_header_t header, cap_user_data_t data);
->>>> +int capset(cap_user_header_t header, const cap_user_data_t data);
->>>
->>> Sorry you haven't addressed my comments on your v1 yet.
->>>
->>> I repeat that this is not the right direction to define system
->>> calls locally.
->>>
->>
->> I got it. I am willing to modify the code so that syscalls are not 
->> defined in local files,
->> but this would require including sys/capability.h which would not 
->> remove the
->> dependency on the libcap library. So, should we directly use syscalls 
->> or use the
->> libcap library function in the "set_capability" function, or do you 
->> have a better way.
->> I'd like to refer to your advice.
->>
->>> Try this:
->>>
->>> Run make headers in the kernel repo.
->>> Build without making any changes.
->>> Then add you changes and add linux/capability.h to include files
->>>
->>> Tell me what happens.
->>>
->>> thanks,
->>> -- Shuah
->>
->> I tried this, here are my steps.
->>
->> Firstly, I ran 'make headers' in the kernel repo and it was successful.
->> Then I wasn't quite sure which path you were referring to as' build ',
->
-> Sorry if what I said wasn't clear:
->
-> - This test depends on libcap and yes you will have to install it.
-> - Run ake headers in the kernel repo.
-> - Build the test without your patch (changes)
-> - If you don't have libcap, the test build will fail
-> - Install libcap
-> - Build and run.
->
-> Looks like you have done the above. Now:
->
-> - Add your patch without the local capget() and capset()
->   and without removing
-
-It will generate the following warning but can be compiled successfully,
-because my patch only includes linux/capability.h and removes the local 
-capget() and capset().
-
-CC       clone3_cap_checkpoint_restore
-clone3_cap_checkpoint_restore.c: In function ‘set_capability’:
-clone3_cap_checkpoint_restore.c:105:8: warning: implicit declaration of 
-function ‘capget’ [-Wimplicit-function-declaration]
-105 |  ret = capget(&hdr, data);
-|        ^~~~~~
-clone3_cap_checkpoint_restore.c:120:8: warning: implicit declaration of 
-function ‘capset’ [-Wimplicit-function-declaration]
-120 |  ret = capset(&hdr, data);
-
->
->> so I compiled and installed libcap, and also compiled test, all of 
->> which were successful.
->
-> Why do you need to compile libcap? Is it because this latest
-> change isn't available to install from the distro you are using?
-
-No, I just didn't fully understand the path you were referring to as 
-"build",
-so I compiled libcap as well, which wasn't really necessary.
-
->
->> Afterwards, I applied my patch and the test was successfully built 
->> and running.
->> I guess what you're trying to express may be that these system calls 
->> have already
->> been defined in sys/capability, and those defined in the local file 
->> are duplicated with it.
->
-> Correct. You don't need the local defines and in fact you should not
-> define them locally.
->
->> So I included sys/capability.h and linux/capability.h and defined the 
->> system calls in the test,
->> but there were no errors.
->
-> Please don't define system calls locally. What happens if you don't?
-
-I know it can be successfully compiled without any warnings.
-Because I added sys/capability.h here, which was not included earlier.
-
-What I want to express is that I tested that defining them again in the
-local file would not cause compilation errors, but I know this is 
-incorrect,
-so I will remove them and modify the test to make it pass.
-
-Let's go back to this code.
-I think there may be the following solutions to modify this code on the 
-basis of removing local system calls:
-
-1. Includes linux/capability.h, using capget and capset, but this will 
-result in compilation warnings.
-2. Includes sys/capability.h, using capget and capset.
-3. Includes sys/capability.h, using libcap library functions.
-
-I tend to use capget and capset, By doing so, test may not need to be 
-maintained again in the future.
-Which of the above solutions do you think is better, and I will refer to 
-your suggestions to modify the code and resend the patch.
-
->
-> thanks,
-> -- Shuah
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
