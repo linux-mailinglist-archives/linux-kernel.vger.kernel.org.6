@@ -1,112 +1,76 @@
-Return-Path: <linux-kernel+bounces-370677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1E29A309C
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 300A79A30A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 00:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9FB61F21F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:23:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAB171F22A5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 22:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86251D7E4A;
-	Thu, 17 Oct 2024 22:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785C71D88DC;
+	Thu, 17 Oct 2024 22:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VeSe/Jxf"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m35UKRgW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4128B1D61AF;
-	Thu, 17 Oct 2024 22:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B501D7E5F;
+	Thu, 17 Oct 2024 22:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729203798; cv=none; b=BQ2/ttcKwAVP7GFsefCvm7ffCugWpp+Pg0Qpe1175njL/+DgPS0R1TuIPoDUwxiwsp/PtgKFGXRek0f2Z+7XprUMTzmu/oyIU8c6qvAwx6b4PNTCGS7/vyixd0GblCluGsy2cV2+lvlPPweXPmeUoltwkfFjiF26hNIqVJULXvs=
+	t=1729203800; cv=none; b=We84oBMrOsvQwdGQ5gXYKTOz/Dw6ObV6BSPwqHqxaW04brZX1V5kf+GAGuxFzIryqFbABjCFSDGjHCFgyr73Yb7bsMI9wJkzCnHejU0JcOawG/FXS0wGy/6fY8KsQ2LYr1Q/vLgcU1CYDCBOzjfpEYYAGDN/xYOnvSvbpYYn7ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729203798; c=relaxed/simple;
-	bh=QYhmAmLP2nPzlbUsoASoKDmHWKjUctENSTsKZahkwFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tM37o7o3Ran1yEEVwl0Qc9ae3rK2JX1aGgX1UxE/uIc5+sZfOEKO4d6/VnzKEVf7OWZizI3fVKwpoDkUURb7KuNomMsugYu9i3uNVPdX3eL6BPOc6oWjVNcvRJsyZt/9PRq8bkDEz8oXTUmX7n/L/+rq+mklyVcDTVyqaJtsg08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VeSe/Jxf; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e983487a1so736407b3a.2;
-        Thu, 17 Oct 2024 15:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729203792; x=1729808592; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1qrbLXwNBIakYwgTs8RIOIeir05sW7FvJD9Nk1kl0I=;
-        b=VeSe/Jxfc+ZLuOI/emF3UNV5lgbKcL4YLkjWa6aBXOgXcVen9E5M3Whia8bCJSsetX
-         WoP5Vm2AJF3/yH7Ejpoh3X83EBm25TYcWUw9AlMkmuIDGyauqCjKJ7XwsgCN3lE0P0BB
-         V+G3GaWKCDcdts7IXUwZ1VTVNgaJCmlqGlF8L01WxJMxA9s5QPqJPdA/6O50XLoJqtEo
-         PqOGkxC84SEi3L+46JTx7zEturuDiVbAdtmiq6UWqpCLSY/PocjbNEpRifnBUY9C3Y28
-         7osvCsBRA8W1WosPme+4jr3Xc9QfcJ5jeXuuKoRfyK0gHYbAMIr8Y6rJCd72QIr/PfVQ
-         Qcpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729203792; x=1729808592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1qrbLXwNBIakYwgTs8RIOIeir05sW7FvJD9Nk1kl0I=;
-        b=et9KmT3imvntin78DEEUxPMGUGqtjQGxgJOJ1KKrSg6penhnWVCLa3ykSOSBb3M9Cd
-         uxaxkpUBC5cgbIqK9FVHga4+2sk5dWLoL9X4NPvqMgSRqQ6W2QXQtOvixCAWuIUJqPzp
-         arFo96EQgC80dOTihOvRNBKixL2Q0Stfs/XxeS0FEvYdZw1B9hVtr0CKMK0nNhu5hh6N
-         KbXQewpS8Oiu1ED+0b+97zkrSEIGDfhZVSux+PtvAYDXfvYpxDb6fRuYyJFVg2IKs83K
-         0M3qjeXTbtVIj+2Y09FKqKJjZTsh6VC/XhyubkWDuESHgb/+23RsarMa50n+m/lYc3J+
-         tB8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUx+2cJdXzX1z1ZJRFAogTj04ky1LXoVSBNMSOYvjUA2kthYMdYo0hg3LEFVXVAh3hClGmamRRd/zDT@vger.kernel.org, AJvYcCVcxsJx7Iu9QnznIktn7OsK0452bRpM60oipCRt5hETpUxvEcLxpH8votKiaJR9ex+eHEuTxSamt3K0xlIX@vger.kernel.org, AJvYcCVgSEh1DhEWLgGOp7PUPMNKnqtlgtn7loX1gKrCvqECmODy11Sj93llO/DlwkMLxZb/QeeuPFjgNYkAuQ8=@vger.kernel.org, AJvYcCW3TPNPr+xSYCeK+kVu4RVi6X7TVAi8czX3sV3sgFfN+QVoV7ODp92+fKzjiEYbrRAkgdHJwUytcIdx@vger.kernel.org, AJvYcCWaijxzsPNZu3muO+eOE6ZK/vEj+J4/RNHj2E77xc/VqQoK0viGE+5/VTSxKyAOMUAyzB63yVzcd1l85D4iH7LBhPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3waNSX4pwZ4elN5r6CmmYVPmyjruDV1RLA1iCDeeIl4/Nmf1K
-	JRoSprRnD6E69d/4DiWYeQo26IcGuc3gjklmo2MUf5DP44PeYOg6
-X-Google-Smtp-Source: AGHT+IEACbmCkP4uPX7tIuqeK5pwHkpGEuKMQNoS5Rs2gqNlMpwudEdjicf8cxKS21s2VavzC72BzQ==
-X-Received: by 2002:a05:6a00:1913:b0:71e:4c01:b3da with SMTP id d2e1a72fcca58-71ea31d28dfmr587637b3a.5.1729203792405;
-        Thu, 17 Oct 2024 15:23:12 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ea34a7fa8sm155263b3a.184.2024.10.17.15.23.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 15:23:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 17 Oct 2024 15:23:10 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
-Cc: patrick@stwcx.xyz, Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Carsten =?iso-8859-1?Q?Spie=DF?= <mail@carsten-spiess.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v8 2/2] hwmon: (isl28022) new driver for ISL28022 power
- monitor
-Message-ID: <099949db-2436-4479-8ccd-bbabcd174c7d@roeck-us.net>
-References: <20241002081133.13123-1-yikai.tsai.wiwynn@gmail.com>
- <20241002081133.13123-3-yikai.tsai.wiwynn@gmail.com>
+	s=arc-20240116; t=1729203800; c=relaxed/simple;
+	bh=KwT/aJPiK5xkDRNj9pug3grDAGO4P5xSfLj+FmVfLyw=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ZKhFamHneXiwErKnYOzNSbhIoBICHZVj9X/oxXtMMilUcCxXbOx1iovGsr69gfcbPeU5+UoqrZ+ak3i1rSMbqTS79GFZLDa77n+tQ2886teudnZgrP+4A5MTS/+TWKv5BziGJA4Ne5iEQqXYjrHCK66pCe+M9mzJjXE0pgqbwzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m35UKRgW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40C67C4CEC3;
+	Thu, 17 Oct 2024 22:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729203800;
+	bh=KwT/aJPiK5xkDRNj9pug3grDAGO4P5xSfLj+FmVfLyw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=m35UKRgWmadvUcB4X61Ask++YicqU09fqrTf4VnB0Vsv2xgJZUviSmxYPDrxG0TXE
+	 qTV2ulmJySWIpWTMtvlZFTld6ReLwIDyXsoJ3v1gLZDAIXGz+2KxArh8XM8F/GYiE/
+	 0i4w+QZ+TjC1uyCxTOM9mXcYfiNsFeK9UszNGIdvV6abueMHTMb3zsfc9P5SxngUxx
+	 7B5UWU1kZkY25oP+VwP1SPFdt2Uy25OROQFtvlBxV9nzFVsVsevvlUKd9ppjkZhbCp
+	 ZiafBn0gB+B2gVHTGRb1iqOZ92KoZpdu/YXvQgmulxPq+HMsbJbKqV2Fx7RKn3S1IT
+	 j68GAAQVxbfLQ==
+Message-ID: <94fe46018da3f565b065cf914733531d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241002081133.13123-3-yikai.tsai.wiwynn@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240912191038.981105-4-tmaimon77@gmail.com>
+References: <20240912191038.981105-1-tmaimon77@gmail.com> <20240912191038.981105-4-tmaimon77@gmail.com>
+Subject: Re: [PATCH v28 3/3] clk: npcm8xx: add clock controller
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
+To: Tomer Maimon <tmaimon77@gmail.com>, benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org, tali.perry1@gmail.com, venture@google.com, yuenn@google.com
+Date: Thu, 17 Oct 2024 15:23:18 -0700
+User-Agent: alot/0.10
 
-On Wed, Oct 02, 2024 at 04:11:30PM +0800, Yikai Tsai wrote:
-> Driver for Renesas ISL28022 power monitor with I2C interface.
-> The device monitors voltage, current via shunt resistor
-> and calculated power.
-> 
-> Signed-off-by: Carsten Spieﬂ <mail@carsten-spiess.de>
-> Signed-off-by: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
+Quoting Tomer Maimon (2024-09-12 12:10:38)
+> Add auxiliary driver to support Nuvoton Arbel BMC NPCM8XX contains an
+> integrated clock controller which generates and supplies clocks to all
+> modules within the BMC.
+>=20
+> The NPCM8xx clock controller is created using the auxiliary device
+> framework and set up in the npcm reset driver since the NPCM8xx clock is
+> using the same register region.
+>=20
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> Tested-by: Benjamin Fair <benjaminfair@google.com>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-There are several alignment issues. I fixed those up, no need to resend.
-
-Applied.
-
-Thanks,
-Guenter
+Applied to clk-next
 
