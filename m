@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-370056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110B49A26AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAE89A26CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B739A1F240D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CB01F2698D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A983B1DE4D3;
-	Thu, 17 Oct 2024 15:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11AA1DE880;
+	Thu, 17 Oct 2024 15:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+p4fgfg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Z22CHj4q"
+Received: from mr85p00im-ztdg06011201.me.com (mr85p00im-ztdg06011201.me.com [17.58.23.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1647E1DD9AD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499261DDC14
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179253; cv=none; b=Ij7EPir9hSfkdoJqPx9OcX+f58jOcq47Rafs9QCowYd0uG+y/mtM01CuQmOsrlXvF/tZmU11HT/VqAGLuOM0enwt0BGn/PWJk1a3DzmQrb6iK0ZQfhL901hUb4BIfixu81oUGunRERuxxPeDq/RsWe58xSRd8nHwbBl5qNfYAwo=
+	t=1729179311; cv=none; b=A3ArBJXJIP+c6fhL9W5nCqyNsuyVCeeJ1lhEmE61P7KZH/byPQTTd6y7cPGMIJNHsPzJN3wyeLic1NqXmo1i3RFALOmG/dZDTFdi6J/Md30wszwt4yghk8rHR8ZrMeYq8HCHaRUBXWxZthUlTKKvfJ8CEFIbCvBi6cdQJ5wgG/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179253; c=relaxed/simple;
-	bh=V1nvvkLpIs5sD2OFrJ2euHz95qyDMltWcmHdJi8Yxew=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ecSPrmOaKtVJB2X5rmZmzZIKFsqLu3rfWYrEgwasCAmnk9++StxgBvozE9oeNyeX88NYu8BjhYDVX5Jcnpcp8gihFQbqK3iu2hI658WXh/Qnwc6PIyn7wr3C1z6tpJwGTUFaseM8flg8ZEC3v1YeXp9Y+ZKyt27QZbzkSGgyeBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+p4fgfg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89271C4CEC7;
-	Thu, 17 Oct 2024 15:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729179252;
-	bh=V1nvvkLpIs5sD2OFrJ2euHz95qyDMltWcmHdJi8Yxew=;
-	h=Date:From:To:Cc:Subject:From;
-	b=N+p4fgfg8QbVlO0mXs4I+LGKT9ri0wD9wAaQMDGFTdhr0cAPRCDq2mkozxce/GB/c
-	 K/4gtA7CqZsC0k2yK2dTAEj09Yrjg9Dw4n+nRGNmGtebcu6oGjOs6li1S491PwMFeU
-	 uzGsbXFMXhkkcuC/yFwwGhVtSq7epmBX+CLSBCPcIcgjPW2ImzBAmxMiw7FjVX//3+
-	 h2Rv1DaR/g+cuJcSYI9LGCegNm1kjJukJ+C9smPUPWuv2d1MRHYdRQ8Y44ZN6FEQFN
-	 J22PE7TSSjcBqFmCzTtV5yV4/PJwDgh4wjNsfs9GY8loJHntG1pzkrCJfiDJRv7ZiM
-	 td93Gj97K/QLQ==
-Date: Thu, 17 Oct 2024 16:34:08 +0100
-From: Will Deacon <will@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: [GIT PULL] arm64 fixes for -rc4
-Message-ID: <20241017153407.GA22230@willie-the-truck>
+	s=arc-20240116; t=1729179311; c=relaxed/simple;
+	bh=Wgz89BkETBsknJ1bG4vgcyNpx9ZR5zoPyUv+MpPSScY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R0M7SyTVyDM7rvsTcnp5Wiiagfb/fiOl35JRxGxHOEob5l/FKnO3ddZpS+tjA8zzJgNiZZkgK+HCKY+2Q/gCR4Omoa9cLOdhVFCsJdlcQ10SDYieW7x9rnhOx/BtxCboHky9icjxHvQ+MroD5jhZHC1+yYvbordHAnfZ9BNXuDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Z22CHj4q; arc=none smtp.client-ip=17.58.23.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1729179305;
+	bh=NgwwknkJJpfTdCab9EonH5stt9SEBiaDmBUnx2avHas=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=Z22CHj4qy4K5pzQlckk2mMxF4CyM99qmrdT31PkhM7klomuX3EPTbQlV/a0Jl+X7K
+	 YVAVj+AXo40AJQSOdwgb1r6cZOyOqlpaN1VUulziSDAw2DTYxt+N0EXPK0xL9Znek1
+	 Pgmu58mZkaOB7hkBEoQ6X2O0nOh3kCFS2zQSsGqimpqaD+OUCUJoZn7OIT9Dbt4lqZ
+	 LpVTGrFtiFvPDiP5jxh8maisFUj8lMtS+C1pRX+FrIrHa/s8h7wu6tKqjnpe7RGMIo
+	 Duq+Fm+OzTnUeehCPgoRnfM/tARnFBPxPtGwhMvrmWk0dMzjJ7x1pUGa1TeM7ZLSQE
+	 Wr42jiPhc8JOw==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-ztdg06011201.me.com (Postfix) with ESMTPSA id 8A5929604EF;
+	Thu, 17 Oct 2024 15:35:03 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Thu, 17 Oct 2024 23:34:49 +0800
+Subject: [PATCH] kernel/resource: Simplify API __devm_release_region()
+ implementation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241017-release_region_fix-v1-1-84a3e8441284@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJguEWcC/x2M7QpAQBBFX0Xz29Z+yMarSNq4mBKaLSl5d5Of5
+ 3bueShDGJna4iHBxZmPXcGVBY1r2hcYnpTJW18566IRbEgZg2BRdZj5Nj6lODch1BGW9HgKdP6
+ jXf++H3thKstkAAAA
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: UXufjuedCGInnPlTHJBjJcXuuGK9x5-k
+X-Proofpoint-GUID: UXufjuedCGInnPlTHJBjJcXuuGK9x5-k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-17_18,2024-10-17_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1011 adultscore=0
+ mlxlogscore=950 suspectscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2410170107
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-Hi Linus,
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Please pull this crop of arm64 fixes for 6.12-rc4. The summary is in the
-tag, but we will have some more POE fixes relating to signal delivery in
-the next week or so.
+Simplify __devm_release_region() implementation by dedicated
+API devres_release() which have below advantages than current
+__release_region() + devres_destroy():
 
-Cheers,
+It is simpler if __devm_release_region() is undoing what
+__devm_request_region() did, otherwise, it can avoid wrong and
+undesired __release_region().
 
-Will
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+linux-next tree has similar fixes as shown below:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=0ee4dcafda9576910559f0471a3d6891daf9ab92
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
+---
+ kernel/resource.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---->8
+diff --git a/kernel/resource.c b/kernel/resource.c
+index b730bd28b422..8d619c449a73 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1673,8 +1673,7 @@ void __devm_release_region(struct device *dev, struct resource *parent,
+ {
+ 	struct region_devres match_data = { parent, start, n };
+ 
+-	__release_region(parent, start, n);
+-	WARN_ON(devres_destroy(dev, devm_region_release, devm_region_match,
++	WARN_ON(devres_release(dev, devm_region_release, devm_region_match,
+ 			       &match_data));
+ }
+ EXPORT_SYMBOL(__devm_release_region);
 
-The following changes since commit 3eddb108abe3de6723cc4b77e8558ce1b3047987:
+---
+base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
+change-id: 20241017-release_region_fix-2aa7f93367e0
 
-  arm64: Subscribe Microsoft Azure Cobalt 100 to erratum 3194386 (2024-10-04 12:38:03 +0100)
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 7aed6a2c51ffc97a126e0ea0c270fab7af97ae18:
-
-  kasan: Disable Software Tag-Based KASAN with GCC (2024-10-15 11:38:10 +0100)
-
-----------------------------------------------------------------
-arm64 fixes for -rc4
-
-- Disable software tag-based KASAN when compiling with GCC, as functions
-  are incorrectly instrumented leading to a crash early during boot.
-
-- Fix pkey configuration for kernel threads when POE is enabled.
-
-- Fix invalid memory accesses in uprobes when targetting load-literal
-  instructions.
-
-----------------------------------------------------------------
-Joey Gouly (2):
-      arm64: set POR_EL0 for kernel threads
-      Documentation/protection-keys: add AArch64 to documentation
-
-Mark Rutland (3):
-      arm64: probes: Remove broken LDR (literal) uprobe support
-      arm64: probes: Fix simulate_ldr*_literal()
-      arm64: probes: Fix uprobes for big-endian kernels
-
-Will Deacon (1):
-      kasan: Disable Software Tag-Based KASAN with GCC
-
- Documentation/core-api/protection-keys.rst | 38 +++++++++++++++++++++++-------
- arch/arm64/include/asm/uprobes.h           |  8 +++----
- arch/arm64/kernel/probes/decode-insn.c     | 16 +++++++++----
- arch/arm64/kernel/probes/simulate-insn.c   | 18 ++++++--------
- arch/arm64/kernel/probes/uprobes.c         |  4 ++--
- arch/arm64/kernel/process.c                |  3 +++
- lib/Kconfig.kasan                          |  7 ++++--
- 7 files changed, 61 insertions(+), 33 deletions(-)
 
