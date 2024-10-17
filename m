@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-368978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D3D9A1738
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:41:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D449A173B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF9C285C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:41:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58371F26F1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAFEC139;
-	Thu, 17 Oct 2024 00:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1068CA4E;
+	Thu, 17 Oct 2024 00:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="BH+Qo8Cw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GZaU02+l"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KV9S2X/P"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE0D23A6;
-	Thu, 17 Oct 2024 00:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9E01F942;
+	Thu, 17 Oct 2024 00:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729125711; cv=none; b=IkRNauYSfKzzTapNfAyHeqL2J6xzmOtgzsOvewuS1JjBcV8WG255Vsiw6DhxNNLfz71iveJCa7hNs/Zddbag/MT+zmILP5NoHUWu/Ai+8usJIVNKB3+xCJWOlht855NhMr4zlW2pyiOBFJyPmN9xo0oBXjU6mvho7MY/juGebb8=
+	t=1729125853; cv=none; b=GRMwd+MO2Ncg5FWW4BX2AOrpA58t0/mwSBp2eQzkSVFKaSdxnMnJOXQ7m5SxYYPB1UJmHvG0wz2a7ftCDJOVt1+XsPvPrPn8B3GHsT8I3rL9tDzMi2e4+WqH01J25LFTwx1XVGGL3smRfHh9XGjjCa6tvpixpW/413Wcyi7jjoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729125711; c=relaxed/simple;
-	bh=7QkoQYQX3zTw7nHF+GB459hVBusGgSOd7/jSBdPBJD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=guz150GljGh9Tq40mKuX0ocXvs1BENU664TOlSMoz2djwvsv2U2bzpLmbc3XhDj/S3qH2y1mCeGRMNsbJmAmeeCrLKp7R2Nck5Htk4MwJSYOQ5nr4zv2cSkPNlTUsCoDLHVMmeR2K4Gtkl6cCcaomOwJ0BIf+LJFTTC6XTBz8zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=BH+Qo8Cw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GZaU02+l; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 66ED913800F6;
-	Wed, 16 Oct 2024 20:41:48 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Wed, 16 Oct 2024 20:41:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1729125708; x=1729212108; bh=7QkoQYQX3z
-	Tw7nHF+GB459hVBusGgSOd7/jSBdPBJD8=; b=BH+Qo8CwQbiGXvse6CHyuR0zbi
-	mHg7VF39duGWH9HnpYPS1dDFhxVs66wXBVSfDRQzUiMWO61PHxTjKDlBQakQy7XP
-	4MEDxwsKHzDtTBm67KqFEheWcZMoEEqzUzZE7XUaRfGQjBNVI/fEkJXfNDwsDlxM
-	e+6mRcqjXyZcLCOw3I/juNErPbo98bWs8uD0Mwm53Jwch11bJlcNXw+48pJGgvrp
-	7LnnQFfk7o5ffAzv/IOQkGb54zjSjYyj44wOUx5ujwVszVjZZtgWRZkeo2s0Kn7x
-	u846ZigQPBuKNpeJVTRcpM5AKBUSeWYn11Nsch7IIBw2CpwXJyQNpxDoH7Hw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1729125708; x=1729212108; bh=7QkoQYQX3zTw7nHF+GB459hVBusG
-	gSOd7/jSBdPBJD8=; b=GZaU02+lMQGSBhjhgsOnTQlWffn6SlfIOffOqHbT/NjO
-	2L3vg0TSJW9drvrpeRRbeCwuU+8Yfm1om/mtJiQ8ArK35b/6xNRTCb4sS7rv6C69
-	CaH/C4IqxIE7yUhVBStKaaXcVoFCRSUAVS5XAkbr1G/xYbN/aL/OcJA34j14Y9+8
-	MBTlCRlRvbZLRT5F6HYWHLOwK2bgm7gqTzZINefYdpqkNNr/JUq1P5mZpY7PXprS
-	yK6Qd1hXDXkB8nVOLRLpM7Oh23P0hVo4DdmyCHd6pafesN7FbQ7XVAIglJH9SgKx
-	IaB8c12GvyXD0mX1QlCydYwqVqABYvTtsQrZrTj9eQ==
-X-ME-Sender: <xms:S10QZzvo8wLPjxy06WB9SaJh8H3bsW2iMuGo7avw0eY5EM9R5Ep4XA>
-    <xme:S10QZ0f_2OyRtD45auHV1dhhNNMY31CuzEu0eH5iVuGd1wXww7A19-BLRg5-0Kx3T
-    bniHuKPezik7yNeGy8>
-X-ME-Received: <xmr:S10QZ2zTkqy1gnSC7xB9Qd5V0iUzjiBR3-zZcVKyey-66hGmqPv24cPAgNBWpzSXoWO4SkQi5-IFbUYy5Ve6IEuXUl4y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehtddgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdludehmdenucfjughrpeffhffvvefukfhf
-    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
-    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpefffeejffev
-    geejudeiveektdeiveefgefghfffveeujeefhfefffdvvdfgiedvheenucffohhmrghinh
-    epghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttgdpnhgspghrtghpthhtoheple
-    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgt
-    ohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthh
-    horhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvghnthdr
-    ohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprhgvghhrvghssh
-    hiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgs
-    tggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eprghruggssehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:S10QZyN56jgDuy0MUeD44oE83BxlpO46fFS4j8MFpaOMSIRLQIk-9w>
-    <xmx:S10QZz_KMie2o9TWgU-MjdMIFHYE4KvYTAjYMx3_4Tl6BEe8NmXi1w>
-    <xmx:S10QZyVTT-fc4lkbLBKDevoRaIDx3guDWGfYVcQ42p5IzUuNFS9FFg>
-    <xmx:S10QZ0c2M_BetIcQrf4dBFaDgM-_NBrde7Ok9Hg7khFTsOTYBD1_HQ>
-    <xmx:TF0QZ6YobGkUYnu5XwrXbeM5DZwK5zkw2LwiacGgpvHLfj8miwqEVHQq>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Oct 2024 20:41:46 -0400 (EDT)
-Date: Thu, 17 Oct 2024 02:41:44 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Bill Wendling <morbo@google.com>
-Cc: Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@toblux.com>,
-	kent.overstreet@linux.dev, regressions@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ardb@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <ZxBdSKuDWh6w_w-z@archlinux>
-References: <202409281331.1F04259@keescook>
- <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
- <Zv6BEO-1Y0oJ3krr@archlinux>
- <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
- <Zv61dCaxScXuOjZg@archlinux>
- <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux>
- <202410040958.C19D3B9E48@keescook>
- <ZwNb-_UPL9BPSg9N@archlinux>
- <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
+	s=arc-20240116; t=1729125853; c=relaxed/simple;
+	bh=rrAFgt7MmFcWWN8PLPvDb7FLmqPUwpsbvQDeeE0PzlE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Z6ttKkhJQmU4+ROBZFD43kKqDSndR9fz/KFWHuJdfnMBwzg9q9dT8eedwRbTR4jJBjVdZt6MFg/ATKGgiBfy/jsfS1gv5bGG5Dgx4KNTBiovZyAJlPeoT/3HlLgKMR8O1jLkjj7rN84VW5RUd+1Mh6i5YEDy+1/CFw2wX8mq4UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KV9S2X/P; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d41894a32so224551f8f.1;
+        Wed, 16 Oct 2024 17:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729125850; x=1729730650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3Hb5EF2QXHTPkKjiIQ0VTrF8MSdq781n7gJ5VZ5vSg=;
+        b=KV9S2X/PmypgzvbiaNzzlO5ugIipmvPiL+r4qU4hzmJMHImliIYDgjppmIQbCPSvck
+         FX+z2JUVg/hUkJBgKTvSdlzKbbts6lvYXmoE1R2HJVD1bzLpklgQ6zBVnep3Eq5EXYMk
+         pDpFcoztYsMK0V+kjfru9BR170j00CqBEmmQTMkN8IsZ+F85PzZ/RxaSY82UIxb6SV0S
+         QPpbWf9vjdNhEZDJ0kWU5btHJTmTbvGmQY2/q1+Mgxz/eZoQEc0JM0iNfEMEuRYH2Vm7
+         q5a7ghn1bcnJ6QP+iqO3yyRl/DvF7miORK/x+ZWwofFTpzogNokCV+BFuy1W7ISfi1mV
+         enBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729125850; x=1729730650;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3Hb5EF2QXHTPkKjiIQ0VTrF8MSdq781n7gJ5VZ5vSg=;
+        b=MwBAKT9UuWV20fNSI1+lrarFOlvcmTA9+0o2AuEPC7UD1D6uY+tcn9Hgf7qeV7ycRn
+         TvXlOmCAAVrF4vxkOQDB6lMkehfOAwXTSF3fS9hQ1JvZuSwbVw9ey0yk7YfX60mGJZKy
+         vQyd0pwQlqf8LHZ3pObt236rzdDNd+UG1eIUu266HCN9rOcKPFqrk+8MfTgsurq4rsQT
+         x5C32JvgDuW9L451crwYZ+Krc78I3x8v51KrSK+8o6bUVmHofFGYtPEWsaVlD7qD+a93
+         TmA5/w9ZZJQBupJqIGE3y7OKrH7hbKey0SRPgfBc+fMKPgZoTiP6vbNHtPBOW/SM4bTU
+         2OGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGCHBuxCjcDtMHElG45m3hPUqUy3hulMlkis15ZipY83k9+hX4k3LkL8pONuLwuHiEvGsExBoudYRA@vger.kernel.org, AJvYcCV+KFsLMi5YCKTJvTeLSrcSeqDrNnKqDnkYqGZN8JFJ9AU7TOWLupglG2acPu1rb3kJ0VD1k/2Dc96aEF+1@vger.kernel.org, AJvYcCWIctmlDLxMu6UVhskJLbbBPhlFr2sPWYPDil4U3MkdrbXPMuwN74UWA/LgI6HI+KCm17Bj+2pvmnph9smI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJfIHbt7d5Il1vCJATMFXL/mmRUVUlNIUrs7zBAhmKqDZ/sXq5
+	JIwwfAWYBqyJx6yqGdahgbs1yEDGNm7hMu96k/Fgj/uwYuAkHpam
+X-Google-Smtp-Source: AGHT+IGdBKabY17pkuhk5yWFmI5laYYTxziqcNsqEErFpXogkxzv8n0d8IYCqMT+dRHAo2kXyu541g==
+X-Received: by 2002:a5d:6703:0:b0:37d:34e7:6d24 with SMTP id ffacd0b85a97d-37d93e25a4fmr750472f8f.18.1729125849607;
+        Wed, 16 Oct 2024 17:44:09 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a1a3sm5617172f8f.12.2024.10.16.17.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 17:44:08 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Richard van Schagen <vschagen@icloud.com>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2 1/3] spinlock: extend guard with spinlock_bh variants
+Date: Thu, 17 Oct 2024 02:43:17 +0200
+Message-ID: <20241017004335.27471-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-> I would be in favor of disabling __bdos on a whole struct pointer if
-> it will match the functionality between the compilers. I don't think
-> Qing has that on her plate at the moment, but when / if she revisits
-> that we can discuss exactly how to perform the calculations then.
+Extend guard APIs with missing raw/spinlock_bh variants.
 
-That's a good approach from my perspective.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ include/linux/spinlock.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-To get this done we would:
-
-Now:
-1. Disable the __counted_by attribute calculation in clang for whole
-struct __bdos cases like in [1] and get this into the next clang point
-release (19.1.3)
-
-2. In the kernel, disable __counted_by for clang versions < 19.1.3. Also
-backport that into the stable kernels
-
-In the future:
-3. Try and figure out what the correct counted_by calculation for whole
-structs should be in conjunction with gcc and clang. Either provide an
-option in clang and gcc to follow the kernels expectations or change
-struct_size in the kernel to match gcc's and clang's future behavior.
-
-
-[1] https://github.com/llvm/llvm-project/pull/112636
-
-Best Regards
-Jan
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 3fcd20de6ca8..e016b27f64c4 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -550,6 +550,12 @@ DEFINE_LOCK_GUARD_1(raw_spinlock_irq, raw_spinlock_t,
+ 
+ DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irq, _try, raw_spin_trylock_irq(_T->lock))
+ 
++DEFINE_LOCK_GUARD_1(raw_spinlock_bh, raw_spinlock_t,
++		    raw_spin_lock_bh(_T->lock),
++		    raw_spin_unlock_bh(_T->lock))
++
++DEFINE_LOCK_GUARD_1_COND(raw_spinlock_bh, _try, raw_spin_trylock_bh(_T->lock))
++
+ DEFINE_LOCK_GUARD_1(raw_spinlock_irqsave, raw_spinlock_t,
+ 		    raw_spin_lock_irqsave(_T->lock, _T->flags),
+ 		    raw_spin_unlock_irqrestore(_T->lock, _T->flags),
+@@ -571,6 +577,13 @@ DEFINE_LOCK_GUARD_1(spinlock_irq, spinlock_t,
+ DEFINE_LOCK_GUARD_1_COND(spinlock_irq, _try,
+ 			 spin_trylock_irq(_T->lock))
+ 
++DEFINE_LOCK_GUARD_1(spinlock_bh, spinlock_t,
++		    spin_lock_bh(_T->lock),
++		    spin_unlock_bh(_T->lock))
++
++DEFINE_LOCK_GUARD_1_COND(spinlock_bh, _try,
++			 spin_trylock_bh(_T->lock))
++
+ DEFINE_LOCK_GUARD_1(spinlock_irqsave, spinlock_t,
+ 		    spin_lock_irqsave(_T->lock, _T->flags),
+ 		    spin_unlock_irqrestore(_T->lock, _T->flags),
+-- 
+2.45.2
 
 
