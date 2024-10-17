@@ -1,268 +1,142 @@
-Return-Path: <linux-kernel+bounces-369030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3E09A17F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32249A17FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AC481F2697E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:40:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDF0287580
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 01:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B061E868;
-	Thu, 17 Oct 2024 01:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344611E517;
+	Thu, 17 Oct 2024 01:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEhqY/L1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uoAg7Q5G"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1C71DA5A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB21A2D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729129247; cv=none; b=ujKO+Uo0DjhWepjghvcbJHOAMU+ozlDdu4ivNaKcvd4oPP0epUbuvksi4zbNuKxY7coivjxXoz9ONl9iaoNq1Cze8pZjF/N7Rlm5D6ONqRNI/RfITb/F6mPzWUNtwKbrbiOL7Pe5EP8C/8Lc2jdlxtCHD6mUZiJ7WCEhYxG/tGc=
+	t=1729129474; cv=none; b=N1gR4zLD/Lhf40RsIOzQXDgrLWRyQL5EGoNq84oFneL2Uqdc8QjvqeYl+QQEPF/UJhuIsV9CwBEITUMTjad94EAPpgyhHV1B8M7XBbUs5svx2mYReKQAg5V2YXVYBs9YSr6VWstBociNVlANGTQHFW8zzdTf2GoDr/9+u5RmLvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729129247; c=relaxed/simple;
-	bh=QBXcG8AaOaKQI4kAu38K3G1Kq1jpuYIb4ZPbCp3Xfws=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=u4IRlKWVKtni37WltY8v+IQ/tK20YDMoNVUlSY+nejVRqTTaC/uOQWXL91dOijOKuWiTAC8nPFn3CUlnO+Mb9XKpLWBg/h3hUwgMt26zTiVYNOOnTAatyX6VPL9Z9pzpyN/nrAbLNSCU/ahSX0VBRIuxZMzv82n81eIh7c4Wa/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEhqY/L1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B252CC4CEC5;
-	Thu, 17 Oct 2024 01:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729129246;
-	bh=QBXcG8AaOaKQI4kAu38K3G1Kq1jpuYIb4ZPbCp3Xfws=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=cEhqY/L1ESt4MqVjweqmgPElvjAIA5ZuHQ1fUbg7XoX2XIo9P/dstqqqCfiOzyj0s
-	 EgiDOkqWCSQvrc1LWkNTPzS/Y/5u9q/YHhqpDfQvtifxf4EpgnihTg1INqau4AzuZU
-	 T+On3+2YVkmn6k2/cRNQUqVd2v1lJdwsoWRObabKNb6k72eTBvu46NITWtgO1ku/ha
-	 NiTC2Pbh/qKTuJKnfMb+EdsNi7X6TCS5iA1r4OymcXfmt8ewf6flcDlKtX1jl3kXQ/
-	 wYadhlFofB/xXFfSrgvFe756ZfoFnf2jlMmooAXTXoD1vRMSaGFQlOq86rIt8E/6df
-	 BWQeMArdSvGqQ==
-Message-ID: <52de7b11-e118-433d-b187-0642e81428ef@kernel.org>
-Date: Thu, 17 Oct 2024 09:40:41 +0800
+	s=arc-20240116; t=1729129474; c=relaxed/simple;
+	bh=2+pnXpEJ3Ejed6zS36rBiZimXMhI+VQNS2H6P//GnIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f6q5KMKh/gSt06CZkSDwMtELXbh/sqPZ9K9usvgaM2gBz3OPUoBWUcg07DhTawnQJnlZJq5nhQrOExjkbrIbH8b72GsckAWTDTmGmbW1CiKhVnJ/GdBkdHDc3vZy4/cKRe++r1mP6pQU2es0a3W/2zSTl138Suh2mVmpu6pZLOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uoAg7Q5G; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e59dadebso626524e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 18:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729129469; x=1729734269; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bOLME2vkiS4WulapUGeKy8qBzIm8BZ3xRNuJKUmClTw=;
+        b=uoAg7Q5GOesefggL/sil0B4rzHSvF6K+wn0kUOH/RD8nytmi1kAuuP+B08gIGqnT2z
+         ox8kP6V6z17GvP2G4lHbhj77qh304wM5jBb3SnUnUw4Qo90Gr8uOUlFNqWb1OyFQgcPP
+         VYtESDTQme1HtdQkiVQNy6vc2KabpVIFcWs1hist2Z+NusFLxKexLKnBdXmaydD3MGpZ
+         f2oFgZlJuc5Rgxc0aDm5/xU/eg+7EihhC3KudlXgT9VqkYYd3lZqpCa9LI4HMpNpFBPq
+         omQnEvYHm6aOfWh1UOk9YZpdhaEl/7VhpZTDfa6nohq9N64Ug//e9RbDzhw2OfAEs8fu
+         N8Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729129469; x=1729734269;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bOLME2vkiS4WulapUGeKy8qBzIm8BZ3xRNuJKUmClTw=;
+        b=MP4wtJkf3ahcY6DKW7GPNaSMXYCh3JU60c+EnIoMzFy2KtdzLxUy+LhZiFvwui9Csl
+         /iPomBZzvwPuvrJ/x7po40PYaUeH4KXxgIu1gXKt0r7vBdp8/WkuBVXO4CZB+EdKmdfw
+         e+QklWPyrpaeHAeoG01g0o/sI+oO0Rz0AVuIS46AFYR++iYrRxhIikFXQbWANcOLGl1Z
+         j3IQ1K2pStwoOPAOD62396hvW/24SIreIH7dChCW/uddQ9sDP1OguP5g1/1JVsu3v22a
+         ISwOSMf4vVSMZDHwTwNvJVHY/jwaGj0F5M3kJeADiHbwHuwpPm+KECrgI7QqAzYorgOE
+         Tolw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmL8c4S1qvqTFOA7ODK4VEIPc441RnGl/yWcTactCyGLrqMLlZLGgF+39IiTpZSIi+i8e6ThlmdEoaFZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1bu9h9vOesMuwbjkQD6pskn2i6pbsAKrZthP67wiMBM4Tc0SZ
+	ycutUwbnqXIYBzjsaJ39QysQ+lOPPFQj+c0lO5H9E+Gh6Nck6TCnxVGpVDc3BTkoBHHpxdFWPjZ
+	cKmXipCHNaGutDhjru7zgI1m8pZUNbSRzJJOOyA==
+X-Google-Smtp-Source: AGHT+IGqvkXfSOamlQfTibVlHYj9ChYt1KAqdmYe0Mwzkkqn6GXfzsT96yxwcBZHy6+yoP+eA8EwacKcwppzcsWH1y0=
+X-Received: by 2002:a05:6512:124c:b0:539:e333:181f with SMTP id
+ 2adb3069b0e04-53a03f04762mr4004850e87.10.1729129469334; Wed, 16 Oct 2024
+ 18:44:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- sunyibuaa@gmail.com, niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com,
- ke.wang@unisoc.com
-Subject: Re: [RFC PATCH 2/2] f2fs: introduce
- f2fs_invalidate_consecutive_blocks()
-To: Yi Sun <yi.sun@unisoc.com>
-References: <20241016052758.3400359-1-yi.sun@unisoc.com>
- <20241016052758.3400359-3-yi.sun@unisoc.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241016052758.3400359-3-yi.sun@unisoc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
+ <20240702063444.105814-8-baolu.lu@linux.intel.com> <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
+ <20241015125420.GK1825128@ziepe.ca> <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
+ <20241016152503.GB4020792@ziepe.ca>
+In-Reply-To: <20241016152503.GB4020792@ziepe.ca>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Thu, 17 Oct 2024 09:44:18 +0800
+Message-ID: <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
+Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt attach/detach/replace
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Jean-Philippe Brucker <jean-philippe@linaro.org>, Nicolin Chen <nicolinc@nvidia.com>, 
+	Yi Liu <yi.l.liu@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, 
+	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev, 
+	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/10/16 13:27, Yi Sun wrote:
-> When doing truncate, consecutive blocks in the same segment
-> can be processed at the same time. So that the efficiency of
-> doing truncate can be improved.
-> 
-> Add f2fs_invalidate_compress_pages_range() only for doing truncate.
-> Add check_f2fs_invalidate_consecutive_blocks() only for doing
-> truncate and to determine whether the blocks are continuous and
-> belong to the same segment.
-> 
-> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
-> ---
->   fs/f2fs/compress.c | 14 ++++++++++++++
->   fs/f2fs/f2fs.h     |  5 +++++
->   fs/f2fs/file.c     | 34 +++++++++++++++++++++++++++++++++-
->   fs/f2fs/segment.c  | 25 +++++++++++++++++++++++++
->   4 files changed, 77 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 7f26440e8595..70929a87e9bf 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -2014,6 +2014,20 @@ void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino)
->   	} while (index < end);
->   }
->   
-> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
-> +					block_t blkaddr, int cnt)
-> +{
-> +	if (!sbi->compress_inode)
-> +		return;
-> +
-> +	if (cnt < 1) {
-> +		f2fs_bug_on(sbi, 1);
-> +		cnt = 1;
-> +	}
-> +
-> +	invalidate_mapping_pages(COMPRESS_MAPPING(sbi), blkaddr, blkaddr + cnt - 1);
-> +}
-> +
->   int f2fs_init_compress_inode(struct f2fs_sb_info *sbi)
->   {
->   	struct inode *inode;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index ce00cb546f4a..99767f35678f 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3716,6 +3716,7 @@ int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
->   int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
->   void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
->   void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
-> +void f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi, block_t addr, int cnt);
->   bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
->   int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
->   void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
-> @@ -4375,6 +4376,8 @@ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
->   bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
->   								block_t blkaddr);
->   void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino);
-> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
-> +					block_t blkaddr, int cnt);
->   #define inc_compr_inode_stat(inode)					\
->   	do {								\
->   		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);		\
-> @@ -4432,6 +4435,8 @@ static inline bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi,
->   				struct page *page, block_t blkaddr) { return false; }
->   static inline void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi,
->   							nid_t ino) { }
-> +static inline void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
-> +						block_t blkaddr, int cnt) { }
->   #define inc_compr_inode_stat(inode)		do { } while (0)
->   static inline int f2fs_is_compressed_cluster(
->   				struct inode *inode,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 7057efa8ec17..634691e3b5f1 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -612,6 +612,18 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
->   	return finish_preallocate_blocks(inode);
->   }
->   
-> +static bool check_f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi,
-> +					block_t blkaddr1, block_t blkaddr2)
-> +{
-> +	if (blkaddr2 - blkaddr1 != 1)
-> +		return false;
-> +
-> +	if (GET_SEGNO(sbi, blkaddr1) != GET_SEGNO(sbi, blkaddr2))
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
->   void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->   {
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-> @@ -621,6 +633,9 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->   	int cluster_index = 0, valid_blocks = 0;
->   	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
->   	bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
-> +	block_t con_start;
-> +	bool run_invalid = true;
-> +	int con_cnt = 1;
->   
->   	addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
->   
-> @@ -652,7 +667,24 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->   				valid_blocks++;
->   		}
->   
-> -		f2fs_invalidate_blocks(sbi, blkaddr);
-> +		if (run_invalid)
-> +			con_start = blkaddr;
-> +
-> +		if (count > 1 &&
-> +			check_f2fs_invalidate_consecutive_blocks(sbi, blkaddr,
-> +				le32_to_cpu(*(addr + 1)))) {
-> +			run_invalid = false;
-> +
-> +			if (con_cnt++ == 1)
-> +				con_start = blkaddr;
-> +		} else {
-> +			run_invalid = true;
-> +		}
-> +
-> +		if (run_invalid) {
-> +			f2fs_invalidate_consecutive_blocks(sbi, con_start, con_cnt);
-> +			con_cnt = 1;
-> +		}
->   
->   		if (!released || blkaddr != COMPRESS_ADDR)
->   			nr_free++;
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index f118faf36d35..edb8a78985ba 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2570,6 +2570,31 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
->   	up_write(&sit_i->sentry_lock);
->   }
->   
-> +void f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi, block_t addr, int cnt)
-> +{
-> +	unsigned int segno = GET_SEGNO(sbi, addr);
-> +	unsigned int segno2 = GET_SEGNO(sbi, addr + cnt - 1);
-> +	struct sit_info *sit_i = SIT_I(sbi);
-> +
-> +	f2fs_bug_on(sbi, addr == NULL_ADDR || segno != segno2);
-> +	if (addr == NEW_ADDR || addr == COMPRESS_ADDR)
-> +		return;
-> +
-> +	f2fs_truncate_meta_inode_pages(sbi, addr, cnt);
-> +	f2fs_invalidate_compress_pages_range(sbi, addr, cnt);
-> +
-> +	/* add it into sit main buffer */
-> +	down_write(&sit_i->sentry_lock);
-> +
-> +	update_segment_mtime(sbi, addr, 0);
-> +	update_sit_entry(sbi, addr, -cnt);
-> +
-> +	/* add it into dirty seglist */
-> +	locate_dirty_segment(sbi, segno);
-> +
-> +	up_write(&sit_i->sentry_lock);
+On Wed, 16 Oct 2024 at 23:25, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Wed, Oct 16, 2024 at 09:58:36AM +0800, Zhangfei Gao wrote:
+> > On Tue, 15 Oct 2024 at 20:54, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > >
+> > > On Tue, Oct 15, 2024 at 11:19:33AM +0800, Zhangfei Gao wrote:
+> > > > > +static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+> > > > > +{
+> > > > > +       struct device *dev = idev->dev;
+> > > > > +       int ret;
+> > > > > +
+> > > > > +       /*
+> > > > > +        * Once we turn on PCI/PRI support for VF, the response failure code
+> > > > > +        * should not be forwarded to the hardware due to PRI being a shared
+> > > > > +        * resource between PF and VFs. There is no coordination for this
+> > > > > +        * shared capability. This waits for a vPRI reset to recover.
+> > > > > +        */
+> > > > > +       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+> > > > > +               return -EINVAL;
+> > > >
+> > > > I am using the SMMUv3 stall feature, and need to forward this to hardware,
+> > > > And now I am hacking to comment this check.
+> > > > Any suggestions?
+> > >
+> > > Are you using PCI SRIOV and stall together?
+> >
+> > Only use smmuv3 stall feature.
+>
+> Then isn't to_pci_dev(dev)->is_virtfn == false?
+>
+> That should only be true with SRIOV
 
-I think it needs to clean up this patchset, what about expanding
-f2fs_invalidate_blocks() to support invalidating block address extent?
+Do you mean
+if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn == false)
+    return -EINVAL;
 
-Something like this:
+This is fine
 
-void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t blkaddr,
-						unsigned int len)
-{
-	struct sit_info *sit_i = SIT_I(sbi);
-	int i;
+>
+> > > FEAT_SVA needs to be deleted, not added too.
+> > >
+> > > smmu-v3 needs some more fixing to move that
+> > > arm_smmu_master_enable_sva() logic into domain attachment.
+> >
+> > Will think about this, Thanks Jason
+>
+> Can you test it if a patch is made?
 
-	/* TODO: do sanity check on blkaddr extent */
+Yes, sure.
 
-	down_write(&sit_i->sentry_lock);
-
-	/* TODO: expand f2fs_invalidate_internal_cache() to invalidate blkaddr extent */
-	f2fs_invalidate_internal_cache(sbi, blkaddr, len);
-
-	for (i = 0; i < len; i++) {
-		update_segment_mtime(sbi, blkaddr, 0);
-		update_sit_entry(sbi, blkaddr, -1);
-
-		/* add it into dirty seglist */
-		locate_dirty_segment(sbi, GET_SEGNO(sbi, blkaddr));
-	}
-
-	up_write(&sit_i->sentry_lock);
-}
-
-Thanks,
-
-> +}
-> +
->   bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
->   {
->   	struct sit_info *sit_i = SIT_I(sbi);
-
+Thanks
 
