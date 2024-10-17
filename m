@@ -1,194 +1,118 @@
-Return-Path: <linux-kernel+bounces-370088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0FF9A2731
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:44:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2E99A2748
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C97B28384F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:44:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F103B221D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFE47D3F4;
-	Thu, 17 Oct 2024 15:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF991DED44;
+	Thu, 17 Oct 2024 15:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fdel1XrE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hBcyfC6D"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HI8ATAdk"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622CB1DED68
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA07F111AD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179868; cv=none; b=qh9xIAKWJAG6InLB84nK6kcVZ3+0y7hw/s3UpIe+ZdzfIRBDIXE1vWkrF6JNh8kxD3d5zXDMjr837f9T1YPxBmEcEDYm43V2hnbH6E5QT9X7QIlIkTzbt0dQ+I/FU35nh+yDWIeND/BSBGUqneHTL1zUkVIv7Lb1f7qB+SV4Zlc=
+	t=1729179838; cv=none; b=rrxCENXnki/P9rPaVyiaJSOLwvBQVXrJGlnQR/uq7ctQ5RGNJrjF62agGW2yp7Zmbg0Qm4Ng5Oa2/029DL1fOcBUjKxcX7bGgsI+XQSIiVmUfp5G7E9FUrqA2fi0reWVRIYLRLHdfqrNER9Y+vuj+pa7JdUdASvw8HfJqqHbHFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179868; c=relaxed/simple;
-	bh=FRxkecjtvUvwte0xSUSYZxq2kF/Dmn4parCodFu2Leo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=S2ORVaeY7W+Z0iY4e/qE/Rti0DQfxe+tyLHhzctf9zb/5uBk9nvzRmE8QlZMzzmNhaJjpTXb9QUPbVJHfmG/8EYIFzRCruzpk5zTMd/nkbTWG5YVxnG68BVEBHkqu+xq9J9r3znsbw7VUj1wQk75S1U4WMffCQTkgD8nqyurwL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fdel1XrE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hBcyfC6D; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8413E1140567;
-	Thu, 17 Oct 2024 11:44:21 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 17 Oct 2024 11:44:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1729179861; x=1729266261; bh=7c
-	pF33KFxEOvQ38NTBG4ubLmixGF6wSWjOOxuK17G3M=; b=fdel1XrES+zMYQJb/K
-	4IX9YIqgBJIFYDodbpzSU2vjaYa+tg3Geg0jOvSB6UemlK2zIAo12Sd56s23tsaW
-	fBYyA/B0+9TLvQB7dESTDVLSeJ3fGLylZ/laH3FCcaBzU24ADFOhiX9ER/ehIji+
-	YiWsM1M/EgbQNkGaSaHS9s8lINJXW5CASMvtohwebIo35visYowENabfx4A9uYfC
-	kNdv7GvvYocVULIkkYX3iAXkwjdLHEfIVrUva3YN8wDUbKLWD54g+/zFVS06apN4
-	4mBSRNEvOV+N6l75jkMB9n4ClCbrF8CgQ6anzV5aZBKrdlbgtyyM/12THYDnKyPE
-	5Z3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm2; t=1729179861; x=1729266261; bh=7cpF33KFxEOvQ
-	38NTBG4ubLmixGF6wSWjOOxuK17G3M=; b=hBcyfC6DvUocnyir0JHxH8RedTcPY
-	m9QGnPm457JxQ6uKhD75+C2YuShDtszWUVECRArUBCO8sxAExQBBTEFTSRTwkbVO
-	KoqF9JV3Ojtl6ZH0SSeItBMp1LSt+IxZoQOQnZxqw1W4uKRCFLbqyZcEqOcqM9d5
-	F6CXwqzjt5jiGmgrypHzRGmDYEik3oe58Ze+nPFZGFIISSQG2MZAENYb6BVSQR3o
-	azF+id7KyoUwyNLX9kUUa3ypOx30vD5Q0DdirUBHjbGRfRf1Ms9hMewMnaLFYWfg
-	ovuzc30D4y7eNO7klg5viiWh7fuxeKXrlEWtpq37oBjN9nxrNcPABkf+Q==
-X-ME-Sender: <xms:1TARZ7CQ48Lhe35xHq4eUEFUEvzY8G8kfcSzeRmCVkoiVfg-bIaNZg>
-    <xme:1TARZxjXGLlH5j9-8SUqLRqBFc7YnOVfxq-TassSNIvnqCEvzBByLjY7nSmA5ZWHe
-    i0l59xvE7yjj4cfkl0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdehuddgleegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkffutgfgsehtjeertdertddtnecu
-    hfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvg
-    eqnecuggftrfgrthhtvghrnhepteetgfejvdfgtdeiteelvedvieduieekteeludetgfdt
-    uedtuddvtefgvdduuedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuh
-    gsrdgtohhmpdhpvghnghhuthhrohhnihigrdguvgenucevlhhushhtvghrufhiiigvpedt
-    necurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprh
-    gtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgu
-    sheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghp
-    thhtohepshhotgeslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:1TARZ2l9UzJubX_GWK1B563cQLP4SNJwZE1oC8v5GAaoaHpULav1AA>
-    <xmx:1TARZ9wn6F8uJcOoAXC1kqTOd2D6QhaDwuYYT6uvH2Wayp1ahLKgIQ>
-    <xmx:1TARZwRlvCxZWzFQpVWXcK2aYlnA3pTQNz8-N1lNBDoBNkctNyLhIQ>
-    <xmx:1TARZwY3j2cOmoL8mN9zbSQ77XaHHKQT2SOiV_DjjSZcaB7VoBosXg>
-    <xmx:1TARZ2c3KeDllxOIvFWFwnu3GrgB7zOtxLsfbVhKeqDKDGlaXGRI9kV_>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3B1582220072; Thu, 17 Oct 2024 11:44:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729179838; c=relaxed/simple;
+	bh=utfjfPeHwxg2ZkIgiCPxWkeetoe7r6m/ZjpNGiYWtbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wqvu1oD8PCEpg/tSl35BTeN58K8nFraHuzA6dJlRGpGOENeUkbU9Ep4Xf2iu9lQrikFa5VbTOiSiDeaY1hFsJLFYU/NrNqKVFcOQzGBIzkoqHBF65Hbo2PTfryNQ6IFlg6PGJlfCAc2SkfUcr8s6sjPbVf0Xyf40bCMWGsYKLpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HI8ATAdk; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a3bd664ebaso4017215ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729179833; x=1729784633; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N2TLRyPiVkwRPOD0VHQUjyER2asTM1IMsaE3PwZ1ReU=;
+        b=HI8ATAdk8ekRK+bI0akMzAsUD6BLMv5yNy4OrlKTnYPXCySThD4Ja1catV2AQZp5wl
+         jweD0OiONv9PXiFT0hH+KRDSBrwYUTx9FCz46Q/XhxlF3C9Mi9kOZSszwTjynbfoAwOf
+         ytCon6prm51yRxeoal4+ef108fJep0/IwRvzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729179833; x=1729784633;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2TLRyPiVkwRPOD0VHQUjyER2asTM1IMsaE3PwZ1ReU=;
+        b=UJNKWRKlsNjRT+8H5o4gbmT09PWOUjHoqXvWDNWW0Zmd0osZy+g6g/DL7Z+yGZYRv8
+         HWJXmbgvL/ZtrHuXFmVjc1U+Xr1gfyDzDztdJr9rRBeSl/WhGAtwS84Or3ifaQpc5fYr
+         +W1exzDj2oyNyjQzzGABXQUZR94PLRIRTACjImg04iqCdDTvHecxFxfFPqc6+QE7SnH6
+         F8o9GkzgmrTmNFf0ru3a6oGRHG5OVQCRcIKesWyyqBoyfYAHBfQ8bw2/wuUzlktdRfrT
+         Xax3RNUyq2+WsaHAP9zpxFxzPM0Ubu/bgA1TvZ80X07f57qwvu5zBVOgUbB5GFhy2WwB
+         WsZw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/OnPKgKZD57hLMGgCzVZOfyFn+F63nqJR2+0C6jNmEUJzBdGgaEqswamkmhSI5LOA0WBxmqitCpFt3j8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzUmXzBocRtayZpv1daYcFNMT+Km9DjNHMopDjUrloVOM23rhC
+	JaF5mXLlE/NFWknlf33ycMaR7cgB554sNaCqIyAf2C0RhB/I8dkh4vqtNQ3cUS4=
+X-Google-Smtp-Source: AGHT+IEZp6wBEKaSOqa1wms4hZzU3RSefNxrdR8NAhHCfaTD7AXl8cVaxR0cdU1fbru8TXzbANus3w==
+X-Received: by 2002:a05:6e02:1fec:b0:3a0:9244:191d with SMTP id e9e14a558f8ab-3a3dc4eee80mr79026895ab.16.1729179832979;
+        Thu, 17 Oct 2024 08:43:52 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3d714ed00sm14221635ab.53.2024.10.17.08.43.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 08:43:52 -0700 (PDT)
+Message-ID: <c5411c4e-ade7-4d9f-9b01-2ac4ad42bbbd@linuxfoundation.org>
+Date: Thu, 17 Oct 2024 09:43:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 17 Oct 2024 15:43:42 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <5547084c-db39-4a92-968b-413f5d843582@app.fastmail.com>
-Subject: [GIT PULL] soc: fixes for 6.12
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 1/2] selftests:timers: remove unneeded semicolon
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, anna-maria@linutronix.de
+Cc: frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
+ sboyd@kernel.org, shuah@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241017062737.98466-1-jiapeng.chong@linux.alibaba.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241017062737.98466-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+On 10/17/24 00:27, Jiapeng Chong wrote:
+> No functional modification involved.
 
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+Please include the report details in the change log
+> 
+> ./tools/testing/selftests/timers/nanosleep.c:63:2-3: Unneeded semicolon.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11407
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>   tools/testing/selftests/timers/nanosleep.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/timers/nanosleep.c b/tools/testing/selftests/timers/nanosleep.c
+> index 252c6308c569..36f9b97f232a 100644
+> --- a/tools/testing/selftests/timers/nanosleep.c
+> +++ b/tools/testing/selftests/timers/nanosleep.c
+> @@ -60,7 +60,7 @@ char *clockstring(int clockid)
+>   		return "CLOCK_BOOTTIME_ALARM";
+>   	case CLOCK_TAI:
+>   		return "CLOCK_TAI";
+> -	};
+> +	}
+>   	return "UNKNOWN_CLOCKID";
+>   }
+>   
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/arm-fixes-6.12
-
-for you to fetch changes up to 1b59d6c19c2ca4e705effee5c2f68fd8ab307c90:
-
-  Merge tag 'scmi-fixes-6.12' of https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into arm/fixes (2024-10-15 20:39:43 +0000)
-
-----------------------------------------------------------------
-soc: fixes for 6.12
-
-Most of the fixes this time are for platform specific drivers, addressing
-issues found through build testing on freescale, ep93xx, starfive,
-and npcm platforms, as as well as the ffa firmware.
-
-The fixes for the scmi firmware driver address compatibility problems
-found on broadcom machines.
-
-There are only two devicetree fixes, addressing incorrect in configuration
-on broadcom and marvell machines.
-
-The changes to the Documentation and MAINTAINERS files are for
-clarification only.
-
-----------------------------------------------------------------
-Alexander Sverdlin (2):
-      dmaengine: cirrus: ERR_CAST() ioremap error
-      dmaengine: cirrus: check that output may be truncated
-
-Arnd Bergmann (7):
-      Merge tag 'soc_fsl-6.12-3' of https://github.com/chleroy/linux into arm/fixes
-      Merge tag 'arm-soc/for-6.12/devicetree-fixes' of https://github.com/Broadcom/stblinux into arm/fixes
-      firmware: arm_ffa: Avoid string-fortify warning in export_uuid()
-      Merge tag 'reset-fixes-for-v6.12' of git://git.pengutronix.de/pza/linux into arm/fixes
-      Merge tag 'mvebu-fixes-6.12-1' of https://git.kernel.org/pub/scm/linux/kernel/git/gclement/mvebu into arm/fixes
-      Merge tag 'ffa-fixes-6.12' of https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into arm/fixes
-      Merge tag 'scmi-fixes-6.12' of https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into arm/fixes
-
-Changhuang Liang (1):
-      reset: starfive: jh71x0: Fix accessing the empty member on JH7110 SoC
-
-Florian Fainelli (1):
-      firmware: arm_scmi: Give SMC transport precedence over mailbox
-
-Florian Klink (1):
-      ARM: dts: bcm2837-rpi-cm3-io3: Fix HDMI hpd-gpio pin
-
-Gavin Shan (1):
-      firmware: arm_ffa: Avoid string-fortify warning caused by memcpy()
-
-Geert Uytterhoeven (1):
-      soc: fsl: cpm1: qmc: Do not use IS_ERR_VALUE() on error pointers
-
-Herve Codina (1):
-      soc: fsl: cpm1: qmc: Fix unused data compilation warning
-
-Josua Mayer (1):
-      arm64: dts: marvell: cn9130-sr-som: fix cp0 mdio pin numbers
-
-Justin Chen (1):
-      firmware: arm_scmi: Queue in scmi layer for mailbox implementation
-
-Konstantin Ryabitsev (1):
-      MAINTAINERS: use the canonical soc mailing list address and mark it as L:
-
-Krzysztof Kozlowski (1):
-      Documentation/process: maintainer-soc: clarify submitting patches
-
-Su Hui (1):
-      firmware: arm_scmi: Fix the double free in scmi_debugfs_common_setup()
-
-Yan Zhen (1):
-      reset: npcm: convert comma to semicolon
-
- Documentation/process/maintainer-soc.rst           | 42 +++++++++++++++++++---
- MAINTAINERS                                        |  4 +--
- arch/arm/boot/dts/broadcom/bcm2837-rpi-cm3-io3.dts |  2 +-
- arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi     |  2 +-
- drivers/dma/ep93xx_dma.c                           |  9 +++--
- drivers/firmware/arm_ffa/driver.c                  | 13 ++++---
- drivers/firmware/arm_scmi/driver.c                 |  4 +--
- drivers/firmware/arm_scmi/transports/Makefile      |  6 ++--
- drivers/firmware/arm_scmi/transports/mailbox.c     | 32 +++++++++++------
- drivers/reset/reset-npcm.c                         |  4 +--
- drivers/reset/starfive/reset-starfive-jh71x0.c     |  3 ++
- drivers/soc/fsl/qe/qmc.c                           | 11 +++---
- 12 files changed, 92 insertions(+), 40 deletions(-)
+thanks,
+-- Shuah
 
