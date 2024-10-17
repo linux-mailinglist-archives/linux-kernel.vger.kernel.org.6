@@ -1,65 +1,79 @@
-Return-Path: <linux-kernel+bounces-369483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CCA9A1DDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:10:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B969A1DE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF36283C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3396F283E91
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C561D88BE;
-	Thu, 17 Oct 2024 09:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9186F1D88AD;
+	Thu, 17 Oct 2024 09:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bsPsW6+W"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImV5Yxov"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3344C1D88A4;
-	Thu, 17 Oct 2024 09:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E611D89F7;
+	Thu, 17 Oct 2024 09:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729156248; cv=none; b=SOUnIkwqXlogEwp4rQ36+gd/j0AfvMDd5iTIm1KclD2mJ8Quaeox9RfbCqxdtdnDkMX9TfWbUxf80ryVRts4yaBfLS6tZG1Xk+fL3yTfeKORdtOKhkhlBYQaGOlJmngfDKOlLpDY9Z1x+OJQ/hNdzl++7/NycjTI1Y+EZyZcnlc=
+	t=1729156350; cv=none; b=KOts0WrIiDaW1X8B51burhQTGxKuTwOkVcfFvDjSpTLIsbj/vI6h7dbPMGW9b/M9RoAKSti0YINRbaWdw2tdcNng3mJzF6QIQset5SEWzZW7OiceK8x7I3LecN59sz3uz7dziujtaPJ0VmuWe0MfXeCQMvFHj3iPBEZJZcTid+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729156248; c=relaxed/simple;
-	bh=vkUdPO+YIv6UsgWnupr1JbvuHq5pN/V19qg0DmTGilY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6iOna4IketU0lRqikydrHI198CAPtckhrKu7Lw4P3w6rG8bMTkYTyX3HY6axk6KGz0Bv/Ux6iHuyWxrw0QQj7q91Xt8r7iU8I98/3+ikGD0P009B+o2m9Q38xVLBk5LvYmtAvDg6/7ELum1W5sDnmZKkBCADEDw9JrDhWaRs+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bsPsW6+W; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=93T41rkeDd78b9KfSigfA60vyErE/d0x4myn52H8IsQ=; b=bsPsW6+WGCYP5M4+yngNqGJPSF
-	nhKuJlJXlsw+v8fRY0BZfLQtlw8pDt7EFuP6b0w+YO9a9qc2TcZfG0T0pGXNwt/3/9ELb+rqBSvY4
-	Wtv23BEw2JGsHV7DWJqSjl608roQ0kKjuyCCzO5z7mqr9PX/G2vVyqgUOgae82875EQ5na2fMee7c
-	7QrbT1MtEF1GAWhaot5Ttb+UPK2lpaNwaFQ9b/9HC+LrlP+pTzvjaKAgW/O7O4rRIsQeZsVn02kZo
-	R5Wsu3WN0ov0GK5+E/mkSFtWFJCzMrP2RNEHBG1uxVbF+OyuY4WI5uxOq3EFdMG2DKY8Y18M1P5xw
-	9KQhWH6Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1MWj-000000075cM-0S7F;
-	Thu, 17 Oct 2024 09:10:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5BD613005AF; Thu, 17 Oct 2024 11:10:36 +0200 (CEST)
-Date: Thu, 17 Oct 2024 11:10:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Cristian Prundeanu <cpru@amazon.com>
-Cc: linux-tip-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Bjoern Doebel <doebel@amazon.com>,
-	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
-	Geoff Blake <blakgeof@amazon.com>, Ali Saidi <alisaidi@amazon.com>,
-	Csaba Csoma <csabac@amazon.com>, gautham.shenoy@amd.com
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-Message-ID: <20241017091036.GT16066@noisy.programming.kicks-ass.net>
-References: <20241017052000.99200-1-cpru@amazon.com>
+	s=arc-20240116; t=1729156350; c=relaxed/simple;
+	bh=VQKpQUPLP6jDrGoWhK5yRAaATy3xmktpnMBji+kNj5U=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNqROlNgj5iaZZZRm6FkUWw/vCGU8emg3dC6I7g7WtdebcndVtnnxsZ48IUPAmxUOLEkmaRRtQRCykrixkeN9O5yuMT0ULKy8tZp3yFTlijr+jgTOziJxfnT7UFQuCpoPicgfX6A/9P9kmwIy12D10Wd8g9jTfhTNXCgnPCpm2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImV5Yxov; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c7edf2872so14517225ad.1;
+        Thu, 17 Oct 2024 02:12:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729156347; x=1729761147; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BlXoQm/yFiDeheRocrn0VG+bRjvZ3nOq2vlDgKl6468=;
+        b=ImV5YxovbBG0V3Mywen/6mXOSbQStaLZzWHgwK2BaCLLzMyOHx7bRFCJQefLeomqRa
+         KmFpYrSSIBh5qBFK5g9rfiq59BGMcf4EEA+hPQ9ChpU2CcLKuzDq+flvXtm2JrIePbDw
+         28VCtrMOuFrL03dJZUxeoEoU+DzZQej2THeKynjWLoQHZx5NIYEmP6igXZtsSTAZwWT9
+         SPPtg+AbSL9jPqsH2fPyWJaSDxADsy1Ys6puuqnU+SESMu+UMT8Ahb3lV30ENd+TY8DP
+         NEcG9TeGwxTbSwv0zoHzQYIC6W2mR1fPdS/P706dXKl3IAj+YAJwto/l+kteOVccACLO
+         R2GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729156347; x=1729761147;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BlXoQm/yFiDeheRocrn0VG+bRjvZ3nOq2vlDgKl6468=;
+        b=IkRxGGVfkgFLea80LjMATHKTTTvIWmPucas2eAj5oPgmG0E7EZPwJQYeHeM8FQxrT6
+         YDxZfDjkgrtqp3mB9+qWYn1XrWKaXQ6xUlM5AzCufuWQhXqq22U0e2Ys6QD34anIjm9s
+         +yMJoLwrAEWqEz/cI2A9SXeiBbevELNcTfnt/9R1FBAoQkyL3lCx94ZmNa/Z6nEbXuyk
+         MpBUGbwoGehRHfMBE83hpv1Qtmfj2q2OgVlz+c2bYs9q/TcHxOu2EDstYhmPIuuajcGU
+         F2LY1sDzkeEJMaVepL/9i18BbMOc8MilG6efWDmChBjWG4xk2nhpfm5m59Dovl4tWXYd
+         1pLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6FAW/WG+xsMhWT35IWP/dyA1etoR5LvVQYp+7Fbrxe8MUI/jCUf9Nw5thyuuEEv1nbVMxkOuX760NrQ==@vger.kernel.org, AJvYcCXhFSVS0SI/C2jdI7lOOQXPUEl0bszskZTWG4aj4hrU5j6ywFKk0biSthxs15IcOcqiSvyhHt0L1P7KB20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoyX2ZUNJXcQqv1y807LQO1sph7/ZejvHIj/3opP4cGzZME1o3
+	RuY1FgqD2aepgB5d10pPzGI1ikHrHrZ9VPfqpXHlt7PiXTfDg0bu
+X-Google-Smtp-Source: AGHT+IHMujc9ZkKY1eItePeJedaKgn8rxEpnC7suJYuriBSZGXj/H+kLKY0lhafYYueqaqavzaq+bQ==
+X-Received: by 2002:a17:90b:4ad0:b0:2e2:a96b:2ccb with SMTP id 98e67ed59e1d1-2e3dc20b4c2mr3642036a91.7.1729156346790;
+        Thu, 17 Oct 2024 02:12:26 -0700 (PDT)
+Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e08dae1asm1335530a91.33.2024.10.17.02.12.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 02:12:26 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:12:20 +1300
+From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+To: tsbogend@alpha.franken.de, bvanassche@acm.org,
+	gregkh@linuxfoundation.org, ricardo@marliere.net,
+	zhanggenjian@kylinos.cn, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re:
+Message-ID: <ZxDU9HhXvEY00lki@mail.google.com>
+References: <ZxDURnNKjNOgvPtJ@mail.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,32 +82,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017052000.99200-1-cpru@amazon.com>
+In-Reply-To: <ZxDURnNKjNOgvPtJ@mail.google.com>
 
-On Thu, Oct 17, 2024 at 12:19:58AM -0500, Cristian Prundeanu wrote:
+On Thu, Oct 17, 2024 at 10:09:26PM +1300, Paulo Miguel Almeida wrote:
+> linux-hardening@vger.kernel.org
+> Bcc: 
+> Subject: [PATCH v2][next] mips: sgi-ip22: Replace "s[n]?printf" with
+>  sysfs_emit in sysfs callbacks
+> Reply-To: 
+> 
+> Replace open-coded pieces with sysfs_emit() helper in sysfs .show()
+> callbacks.
+> 
+> Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
+> ---
+> Changelog:
+> - v2: amend commit message (Req: Maciej W. Rozycki)
+> - v1: https://lore.kernel.org/lkml/Zw2GRQkbx8Z8DlcS@mail.google.com/
+> ---
+> 
 
-> For example, running mysql+hammerdb results in a 12-17% throughput 
+Apologies to you all. Fat finger from my part (and a little of mutt's fault too)
 
-Gautham, is this a benchmark you're running?
+Will submit the patch shortly
 
-> Testing combinations of available scheduler features showed that the 
-> largest improvement (short of disabling all EEVDF features) came from 
-> disabling both PLACE_LAG and RUN_TO_PARITY:
-
-How does using SCHED_BATCH compare?
-
-> While the long term approach is debugging and fixing the scheduler 
-> behavior, algorithm changes to address performance issues of this nature 
-> are specialized (and likely prolonged or open-ended) research. Until a 
-> change is identified which fixes the performance degradation, in the 
-> interest of a better out-of-the-box performance: (1) disable these 
-> features by default, and (2) expose these values in sysctl instead of 
-> debugfs, so they can be more easily persisted across reboots.
-
-So disabling them by default will undoubtedly affect a ton of other
-workloads. And sysctl is arguably more of an ABI than debugfs, which
-doesn't really sound suitable for workaround.
-
-And I don't see how adding a line to /etc/rc.local is harder than adding
-a line to /etc/sysctl.conf
+- Paulo A.
 
