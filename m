@@ -1,149 +1,159 @@
-Return-Path: <linux-kernel+bounces-369336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BB49A1BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:47:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E01A9A1C04
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEA52857EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09753281990
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2918F1D0E3A;
-	Thu, 17 Oct 2024 07:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C981D043A;
+	Thu, 17 Oct 2024 07:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Wg/OVTD8"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ipgqoqjj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0861D0944;
-	Thu, 17 Oct 2024 07:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCB21CF5E7;
+	Thu, 17 Oct 2024 07:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729151221; cv=none; b=oozt0YYYLZ7pKCHo3vOJum32WFnkTUVUX1Gjj8pEGVjSa3HX6lG+RTIGepztLGqnUisYGOzQ231F7fN4nyni0of/SdpNeIR7/Pf/quuy5t31okmCs7GF1H+Uevq6SrxDmsOfwKJlHpkD45Xq5XrVnB16Xl2wjoSgSMNhfX6WMU4=
+	t=1729151504; cv=none; b=s52zbfr1K+VCmPbcPuD+MFiN/TJ+Ghr2uKAwsmqwhrAh4dHGMC1Q6rAFvTuCVx4q6ZHEHXRoebwWwyoF9NyWZafE5/vZogGlTC41i5bab7IZz4N3KcQpB81RJ3X4oTQemSVj+KsxHvRmy8X9TMlRNMKFHotjHfHdQyL9dyPZJoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729151221; c=relaxed/simple;
-	bh=WEFdQ/1L+cmTVsAcxrGY36jlTD/ge+KIdlKGr8ku+FU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kKj6Bj62jtJD6tDCxzMjlIJomqlg2cYkJ7K8HO9x1+kFz6HsV/MM4GEpdRYrkHslPE2yJ+yzN7EPq3WRFjYcAUk0BVshIpjmxSM48rUPxp11bn09fIHcNAz9CKSPj/ihiN6q95GMtqCcBdVhD7C6rWz6N5e9OMF4HLXy9bE7seQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Wg/OVTD8; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729151211; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=p/n6v8y3zOUWRlDxRyulKqDGLAfg7PcAzIuEmf9PNHs=;
-	b=Wg/OVTD8xPPbUeyFLkGppjk7aUenuUlXe87AjWXaW5XVQzoJOBAE5MaANHYUVhjEWm9QOHcUd+GN0exChpCyvB9G6EcpjmuiVBktqeBD0YxxDoXM06Qa/LjjefGVtwq9zkhsH0YYvUicj6bWE8VPpwVG6plh7M5mlHmxuoliEYM=
-Received: from 30.221.128.107(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WHK3y4z_1729151209 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 17 Oct 2024 15:46:50 +0800
-Message-ID: <d9327631-0673-4e70-afe0-5923bda6fd45@linux.alibaba.com>
-Date: Thu, 17 Oct 2024 15:46:49 +0800
+	s=arc-20240116; t=1729151504; c=relaxed/simple;
+	bh=REIKD1HxvzYNIbz9uCq0Hz8fovFtDXa2dgj1UHMlgiA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BakNu/12VR8DzTjA0s23NZFYgeS7S5XHuYAxTDGyY5UQJiqB7TWSvoXWw+/CA5Ru3i44N6YtlSsAlr/BtofyzdNH1asajkYY4GytTAR1P+xceuyIc4dKib6C9ksZIB5JrzDn6j1oaAnVaOk+kAcPokrYog+F/rX+DGmh9kSUpr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ipgqoqjj; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729151500; x=1760687500;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=REIKD1HxvzYNIbz9uCq0Hz8fovFtDXa2dgj1UHMlgiA=;
+  b=ipgqoqjji8IkZRlxP1qM99bFBckoJJ4sBpMDYaghEwtdWG3u4/CGTprO
+   Qgldm7O7ZRnuIuhvGxnNCjO4Ns9UYGVNpa0XKVHAuBm5RtZ5RCj0avs/O
+   N00YSw7npJMfMgFD7ew67Uyfgzj+3zovrfGk9U30F3yr9hPseaU5EMlRu
+   v9zd5CdBliB+JcBAJyU/uJ8H562Bp8Pdd6QpVQUsGlZ0yJwCfAsQtuCSq
+   dMMu0T3yryCgL0n1LRrQvLc+t1wJpEfQWiOpGiIoRv4ihpuHm60YHXFcR
+   uduXKoneEiNmvCru7t66NO4QboGkeh4MzmMYY2SO+v8H64K0Hgq64pd9h
+   A==;
+X-CSE-ConnectionGUID: mvzVCO0CRyqdKC9McaosFQ==
+X-CSE-MsgGUID: 4M38skxLSzGmr3rrmjHDnw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39746770"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39746770"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 00:51:39 -0700
+X-CSE-ConnectionGUID: gQEdFuC1SRi9xZ8fxPzgeQ==
+X-CSE-MsgGUID: 8lAFyR3gRKixJAuKNvk8Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="83247961"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 00:51:37 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Alejandro Lucero Palau <alucerop@amd.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,  Dave Jiang
+ <dave.jiang@intel.com>,  <linux-cxl@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  Gregory Price <gourry@gourry.net>,
+  "Davidlohr Bueso" <dave@stgolabs.net>,  Jonathan Cameron
+ <jonathan.cameron@huawei.com>,  Alison Schofield
+ <alison.schofield@intel.com>,  Vishal Verma <vishal.l.verma@intel.com>,
+  Ira Weiny <ira.weiny@intel.com>,  Ben Cheatham
+ <benjamin.cheatham@amd.com>
+Subject: Re: [PATCH 5/5] cxl: Avoid to create dax regions for type2
+ accelerators
+In-Reply-To: <ea8afddb-9e97-98f6-b1ee-b5394d35e8c0@amd.com> (Alejandro Lucero
+	Palau's message of "Thu, 17 Oct 2024 08:27:01 +0100")
+References: <20241015065713.308671-1-ying.huang@intel.com>
+	<20241015065713.308671-6-ying.huang@intel.com>
+	<d5233135-9d70-9080-c7eb-0906f07e5104@amd.com>
+	<87jze76y4r.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ea8afddb-9e97-98f6-b1ee-b5394d35e8c0@amd.com>
+Date: Thu, 17 Oct 2024 15:48:04 +0800
+Message-ID: <87frov6uh7.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 net-next 2/3] net/udp: Add 4-tuple hash list basis
-To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, dsahern@kernel.org,
- antony.antony@secunet.com, steffen.klassert@secunet.com,
- linux-kernel@vger.kernel.org, dust.li@linux.alibaba.com,
- jakub@cloudflare.com, fred.cc@alibaba-inc.com,
- yubing.qiuyubing@alibaba-inc.com
-References: <20241012012918.70888-1-lulie@linux.alibaba.com>
- <20241012012918.70888-3-lulie@linux.alibaba.com>
- <9d611cbc-3728-463d-ba8a-5732e28b8cf4@redhat.com>
- <2888bb8f-1ee4-4342-968f-82573d583709@linux.alibaba.com>
- <7dde23ec-e813-4495-a0ca-6ed0f1276aa6@redhat.com>
-From: Philo Lu <lulie@linux.alibaba.com>
-In-Reply-To: <7dde23ec-e813-4495-a0ca-6ed0f1276aa6@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
+Alejandro Lucero Palau <alucerop@amd.com> writes:
 
-
-On 2024/10/16 15:45, Paolo Abeni wrote:
-> On 10/16/24 08:30, Philo Lu wrote:
->> On 2024/10/14 18:07, Paolo Abeni wrote:
->>> It would be great if you could please share some benchmark showing the
->>> raw max receive PPS performances for unconnected sockets, with and
->>> without this series applied, to ensure this does not cause any real
->>> regression for such workloads.
+> On 10/17/24 07:29, Huang, Ying wrote:
+>> Hi, Alejandro,
+>>
+>> Alejandro Lucero Palau <alucerop@amd.com> writes:
+>>
+>>> I did comment on this some time ago and I'm doing it again.
 >>>
+>>>
+>>> This is originally part of the type2 patchset, and I'm keeping it in
+>>> V4. I do not understand why you pick code changes (you explicitly said
+>>> that in the first RFC) from there and use it here, and without
+>>> previous discussion about this necessity in the list. I do not think
+>>> this is usual, at least in other kernel subsystems I'm more familiar
+>>> with, so I will raise this in today's cxl open source collaboration
+>>> sync.
+>> No.  I picked this change from Dan's series as follows,
 >>
->> Tested using sockperf tp with default msgsize (14B), 3 times for w/ and
->> w/o the patch set, and results show no obvious difference:
+>> https://eclists.intel.com/sympa//arc/linux-bkc/2024-10/msg00018.html
 >>
->> [msg/sec]  test1    test2    test3    mean
->> w/o patch  514,664  519,040  527,115  520.3k
->> w/  patch  516,863  526,337  527,195  523.5k (+0.6%)
+>> So, I added co-developed-by and signed-off-by of Dan.
 >>
->> Thank you for review, Paolo.
-> 
-> Are the value in packet per seconds, or bytes per seconds? Are you doing 
-> a loopback test or over the wire? The most important question is: is the 
-> receiver side keeping (at least) 1 CPU fully busy? Otherwise the test is 
-> not very relevant.
-> 
-> It looks like you have some setup issue, or you are using a relatively 
-> low end H/W: the expected packet rate for reasonable server H/W is well 
-> above 1M (possibly much more than that, but I can't put my hands on 
-> recent H/W, so I can't provide a more accurate figure).
-> 
-> A single socket, user-space, UDP sender is usually unable to reach such 
-> tput without USO, and even with USO you likely need to do an over-the- 
-> wire test to really be able to keep the receiver fully busy. AFAICS 
-> sockperf does not support USO for the sender.
-> 
-> You could use the udpgso_bench_tx/udpgso_bench_rx pair from the net 
-> selftests directory instead.
-> 
-> Or you could use pktgen as traffic generator.
-> 
+>> IIUC, your picked this change from Dan's series too?
+>
+>
+> Look, this is not going well.
+>
+>
+> You specifically said in your first patchset you considered the type2
+> support patchset complete but too large or complex, so you were taking
+> parts of it as a prelude for making it easier to review/accept. Just
+> face that and not twist the argument.
 
-I test it again with udpgso_bench_tx/udpgso_bench_rx. In server, 2 cpus 
-are involved, one for udpgso_bench_rx and the other for nic rx queue so 
-that the si of nic rx cpu is 100%. udpgso_bench_tx runs with payload 
-size 20, and the tx pps is larger than rx ensuring rx is the bottleneck.
+Although I listed your patchset in my cover letter.  All changes I
+picked was from Dan's patchset instead of yours.  And, I kept Dan's
+co-developed-by and signed-off-by.  If you will pick changes from Dan,
+please do that too.
 
-The outputs of udpgso_bench_rx:
-[without patchset]
-udp rx:     20 MB/s  1092546 calls/s
-udp rx:     20 MB/s  1095051 calls/s
-udp rx:     20 MB/s  1094136 calls/s
-udp rx:     20 MB/s  1098860 calls/s
-udp rx:     20 MB/s  1097963 calls/s
-udp rx:     20 MB/s  1097460 calls/s
-udp rx:     20 MB/s  1098370 calls/s
-udp rx:     20 MB/s  1098089 calls/s
-udp rx:     20 MB/s  1095330 calls/s
-udp rx:     20 MB/s  1095486 calls/s
+> FWIW, I'm against you doing so because:
+>
+>
+> 1) You should have commented in the type2 patchset about your concern,
+> and gave advice about doing such a prelude (by me) or offer yourself
+> for doing it.
+>
+> 2) Just following your approach, anyone could do the same for any
+> patchset sent to the list. This is not a good precedent.
+>
+> 3) If this is going to be allowed/approved, I'm not going to be
+> comfortable within this community. If it is just me, I guess it will
+> not be a big loss.
+>
+>
+> None has commented yet except you and me, what I do not know if it is
+> because this is a nasty discussion they do not want to get entangle
+> with, or because they just think your approach is OK. If not further
+> comment and your patchset is accepted, nothing else will be needed to
+> say.
+>
+>
+>> Feel free to include this change in your series.  If your patchset is
+>> merged firstly, I will rebase on yours and drop this change.
+>>
+>> [snip]
 
-[with patchset]
-udp rx:     21 MB/s  1105533 calls/s
-udp rx:     21 MB/s  1105475 calls/s
-udp rx:     21 MB/s  1104244 calls/s
-udp rx:     21 MB/s  1105600 calls/s
-udp rx:     21 MB/s  1108019 calls/s
-udp rx:     21 MB/s  1101971 calls/s
-udp rx:     21 MB/s  1104147 calls/s
-udp rx:     21 MB/s  1104874 calls/s
-udp rx:     21 MB/s  1101987 calls/s
-udp rx:     21 MB/s  1105500 calls/s
-
-The averages w/ and w/o the patchset are 1104735 and 1096329, the gap is 
-0.8%, which I think is negligible.
-
-Besides, perf shows ~0.6% higher cpu consumption of __udp4_lib_lookup() 
-with this patchset (increasing from 5.7% to 6.3%).
-
-Thanks.
--- 
-Philo
-
+--
+Best Regards,
+Huang, Ying
 
