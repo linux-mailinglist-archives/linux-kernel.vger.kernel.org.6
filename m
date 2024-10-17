@@ -1,188 +1,155 @@
-Return-Path: <linux-kernel+bounces-369704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068879A2163
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:45:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2489A2171
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98662889B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:45:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44A45B22010
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDC81DCB06;
-	Thu, 17 Oct 2024 11:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC8E1DB534;
+	Thu, 17 Oct 2024 11:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGddNEgd"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TuDnVNgN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E711D365B;
-	Thu, 17 Oct 2024 11:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04D41925B2;
+	Thu, 17 Oct 2024 11:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729165500; cv=none; b=Gwij3zEKKeb5IR79bdaCSUu/J41ZCzimHidfbWa1AlPNWxNnTFkyBDB+/VHGg3JnKcXqa/fSeCkdNX5DVv/6MrHkLaTjmibxlF+qxfTENIyQdTBm30FxJiZZURmE24Y6nJK+AoqLcPXH9ylDDNUaFfVY99S31Befsc18bWwELvk=
+	t=1729165907; cv=none; b=SAE4UNVAAjz5W4nOTWh9I4nAxjAm2UmvbV3hGrbyJygd5yWPobNIZyC3IhyfzkWSiH1dz0tb4wcicLAued/6NhuGLUfhHo9NwxlUK8SWz5Uz+E8L5zf5pquEBhhICScjNbIbLYUKdUAJ5RfbIU8EQepzLPhUuIoa0gjXO++LEYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729165500; c=relaxed/simple;
-	bh=BDrLAoYk78DuFKycHy6PJuwIencOiI6AZC8wRXXtIGw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=iZibZzM4T/WVMvmuoy/wosYlVlDvwe2KK97tTnTMq9US8W/pMTTjOEwQV/wV2ip3y3Dhni1dVJvf6hTliHHK2ZXKZVKUQHD/xFkZcPWEro6fp+Tpwo3xgX/UBOgxPFaxwEpYi5vHw65detkQOuTZAxRDweXpzpPPnVcR0EGh6Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aGddNEgd; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b13bf566c0so51393385a.3;
-        Thu, 17 Oct 2024 04:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729165495; x=1729770295; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=T0gij7O8vtIgOEZIkJrRtW3eNqnKO7oPYnchc+vKsZQ=;
-        b=aGddNEgd6GuMltMjXCIc6ocGr9nnDJrYe71ioNADiNZ1TsSSDPXJWU/ksuYokjNH6L
-         v8dOh38JmvzsCtI1Td/9OqoOQZua0iMjWgC41iYfWd8cXMKoW62A9uEZ3LtbNkbvHPc5
-         0U8PWsYZkz7eSLU7a+1zjfnAy3QltMvkkCE10gLkLxteZrojxPxRxseI2nqJ8F1UcqQv
-         Fb5uCXiFZ0stP5dxFrrtsButsDbnzftnFMmozGD5zN9v95vOlpmHo4KDpo1kWaXp1YpS
-         J8ugmCwmQUJGTAyLOOYk5BYQC3mQjHjpA0E+0A34GSC+r5tZ/F1DFucHEceuRz2yE7Mr
-         +CmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729165495; x=1729770295;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T0gij7O8vtIgOEZIkJrRtW3eNqnKO7oPYnchc+vKsZQ=;
-        b=bz6corYZwEWfGeEgGff7c7V7Aivgf+UYNBv0+mglicOt8pXXeLagzNoMXz7fTQ9AAN
-         cLSINDUUMvEPJfdYIY6J/N1SLB5ny1wB2fKEI3uAunSTQyY0AFn3M9NVHwF7pm+QKWxQ
-         drLvuW0y8jw+lOOjLcZsAh9l+v8fwNUY2wQp3UBGpdPtauLRlF7Y4sRuKu1kkH9VkXbm
-         927bA5Rt7qATaC8kk+Yq7AHjaRXrZ7KPjI/6ar8gxSnqNUdk93ChHhqdVGRJpLeovn8v
-         3tgm3e2ZzzWw4sVKBP8SnBYqVzWZzpdyygsfiLGzjsb93q5WdSe9NRCcZ7m6Ch9leENl
-         DzCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxbh055QqCq7Bo+8zfq45CDRk+bPXqSHsH6W3P2iCC/XfQmo4TuoT+PLtlExHPU6tqMdSt9PA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxraF4kEitXBFph7SpLeWpNfa1JkdVVSPiVQOM0mgReHrpVRqjw
-	1cTVXdWTWIoGO/iZUnLFePQzlJyS3dILOCy4rPfZ8R9TgFeMyNWYsdq8MVMk
-X-Google-Smtp-Source: AGHT+IGOVpfENdHUvZfa88a/CpAR85h9UtlEt/EralxbrJ/14qVsSERYblgWpbk6Mo4h+zBCPIX9fA==
-X-Received: by 2002:a05:620a:4015:b0:7b1:4783:b7b1 with SMTP id af79cd13be357-7b14783b92bmr594140585a.64.1729165494986;
-        Thu, 17 Oct 2024 04:44:54 -0700 (PDT)
-Received: from localhost.localdomain ([4.15.194.220])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1540f9075sm14070185a.78.2024.10.17.04.44.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 04:44:54 -0700 (PDT)
-From: Vimal Agrawal <avimalin@gmail.com>
-X-Google-Original-From: Vimal Agrawal <vimal.agrawal@sophos.com>
-To: linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	quic_jjohnson@quicinc.com,
-	dan.carpenter@linaro.org
-Cc: avimalin@gmail.com,
-	vimal.agrawal@sophos.com,
-	stable@vger.kernel.org
-Subject: [PATCH v3 1/2] misc: misc_minor_alloc to use ida for all dynamic/misc dynamic minors
-Date: Thu, 17 Oct 2024 11:43:29 +0000
-Message-Id: <20241017114329.22351-2-vimal.agrawal@sophos.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241017114329.22351-1-vimal.agrawal@sophos.com>
-References: <CALkUMdS3wEuSi5SGqsRKt3nSb4mHue1bJTJm8=QL3OLYU2GWig@mail.gmail.com>
- <20241017114329.22351-1-vimal.agrawal@sophos.com>
+	s=arc-20240116; t=1729165907; c=relaxed/simple;
+	bh=inv45XADrsDt1jFABPVX4fZMFQQMPrs5UxK1KmYRdZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nJ2wMfAg0IerS5zJRUOGZRb1P5QNn0JhQbbksf3ueAGr8FLk2IT/Url7sa5DKIMXq2ReGZ/84fpN5aj/oaqWh7CWmTXuQrc4IQcwTHE0L3hYO1LckCtUquYtlfXwPw6TfdT9diPB762wWh45sz70T1yPSSCyqg1S5j20dOUlpLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TuDnVNgN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H7xIbd020048;
+	Thu, 17 Oct 2024 11:51:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	07LEl3QOyvGw3wLHY/eLmcg8dUTTIv1s/tqYJg7zcrc=; b=TuDnVNgNNOEI6W+K
+	lpjcve5PwsFVzAlVXzPLHm6DevTGqxYLmgAcDeZ6t4yZ0BntpPLHIjZTPJ5/F84k
+	7tOstVBk84cE0QwsYLmofzQQWxcbPZUZRtWgVbyZ/bEqw3F5H/261yaBCRvmuVlF
+	Lly/qQj6htyyRLCtdcZ02I+hG8ay8ke4EUTtVKIUxpKxBjgfsGvlFeCytV02WR1/
+	w/zaggLLQlrCpv2p9Xho7Y1yEfl2NMEmhwzBD6gG0FjNJmY8vRzqp/Y2H5P1yo5R
+	1du6eGE7IeXjC+YPCwHxZng8R7WuRC/YJ/liJFCRRcoj0bu2sWoFerjHNuodAQy7
+	aSNj3Q==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 429m0fg36s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 11:51:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49HBpaP7022290
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 11:51:36 GMT
+Received: from [10.214.67.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 17 Oct
+ 2024 04:51:33 -0700
+Message-ID: <32cf828b-91c8-4710-8943-f2d174ada53b@quicinc.com>
+Date: Thu, 17 Oct 2024 17:21:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc7280: Add cpucp mbox node
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Sibi Sankar <quic_sibis@quicinc.com>,
+        Jassi Brar
+	<jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "Ramakrishna
+ Gottimukkula" <quic_rgottimu@quicinc.com>
+References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
+ <20240924050941.1251485-4-quic_kshivnan@quicinc.com>
+ <grvdxaiakv62nfom5r5m7zv43xpxfwhxnp7x5byfubbvecfers@pqydhpu7a2vm>
+Content-Language: en-US
+From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+In-Reply-To: <grvdxaiakv62nfom5r5m7zv43xpxfwhxnp7x5byfubbvecfers@pqydhpu7a2vm>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RmnCT6i0ypCqfqcsorFjrrJEuIQB0qQr
+X-Proofpoint-ORIG-GUID: RmnCT6i0ypCqfqcsorFjrrJEuIQB0qQr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015 phishscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170081
 
-misc_minor_alloc was allocating id using ida for minor only in case of
-MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
-using ida_free causing a mismatch and following warn:
-> > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
-> > ida_free called for id=127 which is not allocated.
-> > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-...
-> > [<60941eb4>] ida_free+0x3e0/0x41f
-> > [<605ac993>] misc_minor_free+0x3e/0xbc
-> > [<605acb82>] misc_deregister+0x171/0x1b3
 
-misc_minor_alloc is changed to allocate id from ida for all minors
-falling in the range of dynamic/ misc dynamic minors
 
-Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
-Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
-Cc: stable@vger.kernel.org
----
-v2: Added Fixes:
-    added missed case for static minor in misc_minor_alloc
-v3: removed kunit changes as that will be added as second patch in this two patch series
+On 10/6/2024 8:05 AM, Bjorn Andersson wrote:
+> On Tue, Sep 24, 2024 at 10:39:41AM GMT, Shivnandan Kumar wrote:
+>> Add the CPUCP mailbox node required for communication with CPUCP.
+> 
+> I'd like to see a description of why that's useful...
+> 
 
- drivers/char/misc.c | 35 ++++++++++++++++++++++++++++-------
- 1 file changed, 28 insertions(+), 7 deletions(-)
+I will add in next patch set.
 
-diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-index 541edc26ec89..9d0cd3459b4f 100644
---- a/drivers/char/misc.c
-+++ b/drivers/char/misc.c
-@@ -63,16 +63,30 @@ static DEFINE_MUTEX(misc_mtx);
- #define DYNAMIC_MINORS 128 /* like dynamic majors */
- static DEFINE_IDA(misc_minors_ida);
- 
--static int misc_minor_alloc(void)
-+static int misc_minor_alloc(int minor)
- {
- 	int ret = 0;
- 
--	ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
--	if (ret >= 0) {
--		ret = DYNAMIC_MINORS - ret - 1;
--	} else {
--		ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
-+	if (minor == MISC_DYNAMIC_MINOR) {
-+		/* allocate free id */
-+		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
-+		if (ret >= 0) {
-+			ret = DYNAMIC_MINORS - ret - 1;
-+		} else {
-+			ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
- 				      MINORMASK, GFP_KERNEL);
-+		}
-+	} else {
-+		/* specific minor, check if it is in dynamic or misc dynamic range  */
-+		if (minor < DYNAMIC_MINORS) {
-+			minor = DYNAMIC_MINORS - minor - 1;
-+			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
-+		} else if (minor > MISC_DYNAMIC_MINOR) {
-+			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
-+		} else {
-+			/* case of non-dynamic minors, no need to allocate id */
-+			ret = 0;
-+		}
- 	}
- 	return ret;
- }
-@@ -219,7 +233,7 @@ int misc_register(struct miscdevice *misc)
- 	mutex_lock(&misc_mtx);
- 
- 	if (is_dynamic) {
--		int i = misc_minor_alloc();
-+		int i = misc_minor_alloc(misc->minor);
- 
- 		if (i < 0) {
- 			err = -EBUSY;
-@@ -228,6 +242,7 @@ int misc_register(struct miscdevice *misc)
- 		misc->minor = i;
- 	} else {
- 		struct miscdevice *c;
-+		int i;
- 
- 		list_for_each_entry(c, &misc_list, list) {
- 			if (c->minor == misc->minor) {
-@@ -235,6 +250,12 @@ int misc_register(struct miscdevice *misc)
- 				goto out;
- 			}
- 		}
-+
-+		i = misc_minor_alloc(misc->minor);
-+		if (i < 0) {
-+			err = -EBUSY;
-+			goto out;
-+		}
- 	}
- 
- 	dev = MKDEV(MISC_MAJOR, misc->minor);
--- 
-2.17.1
+> But perhaps more importantly, why are there no user(s) of this?
+> 
 
+We will later add features such as BUS DCVS (memlat algorithm in CPUCP) 
+and CPUCP logging based on this series.
+
+> Regards,
+> Bjorn
+> 
+
+
+>>
+>> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sc7280.dtsi | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> index 3d8410683402..4b9b26a75c62 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> @@ -4009,6 +4009,14 @@ gem_noc: interconnect@9100000 {
+>>   			qcom,bcm-voters = <&apps_bcm_voter>;
+>>   		};
+>>
+>> +		cpucp_mbox: mailbox@17430000 {
+>> +			compatible = "qcom,sc7280-cpucp-mbox";
+>> +			reg = <0 0x18590000 0 0x2000>,
+>> +			      <0 0x17C00000 0 0x10>;
+>> +			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+>> +			#mbox-cells = <1>;
+>> +		};
+>> +
+>>   		system-cache-controller@9200000 {
+>>   			compatible = "qcom,sc7280-llcc";
+>>   			reg = <0 0x09200000 0 0x58000>, <0 0x09280000 0 0x58000>,
+>> --
+>> 2.25.1
+>>
 
