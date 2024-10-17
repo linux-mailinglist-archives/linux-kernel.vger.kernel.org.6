@@ -1,116 +1,108 @@
-Return-Path: <linux-kernel+bounces-369272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D509A1B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:56:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E6E9A1B23
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BC45B246D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:56:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CD11C21B60
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8E11B2189;
-	Thu, 17 Oct 2024 06:56:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06C01BBBE3;
+	Thu, 17 Oct 2024 06:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4WYBpTA"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D508D16F8F5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8389199955;
+	Thu, 17 Oct 2024 06:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729148184; cv=none; b=TDqXm6T1A/2wCjOb+OAISR/PvIrhGWXIVCGvxPgwPIopkWHRibVFaesHXebTAur27emvpy1JA2mKsYBYXj8GgXfcpCqdEyazR/t2lAcuEK+bjxP4Jk7sVahxmk19lt+AbOwg5WPFYQCMKWayHsDRS53tcfzRo+oXntVsde5KDrk=
+	t=1729148233; cv=none; b=HN2bJzumIHHn7sBhYS86Cf6+7mUHkwfSGPkyH8xGlIWd8tMDY4/FUSoywY5f+iKNxRLlzM7Vl5qICsI7SQlp8vahLBGhv3PEhkNMk75q00d7o3La5YPo/9z6MBuBUF3b29iLfajSdIKy02j0PWkYpC/mBC0iAfLgmPDSeCCGqNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729148184; c=relaxed/simple;
-	bh=2LXFTfPKVtP+wXDiw37jeu5qX7y5o0JZRZk1/lZryKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLcXRfQ6C3hYL6L3mt58dKhPVwZqxMHRdJr7RFaT1zNe+0DX5YUUyA2r0ZQuANGRND+QrLjnWGVZ6GeWmEGjjfOIgcAumBTpzA7x2qStJoiuT0LY1aF62ScKjsi08vUQZ5PhUhQC6HZHJYTqd1uD2cfSjb5R07GzRmwEnfC1LWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1KQZ-0008Qx-Q2; Thu, 17 Oct 2024 08:56:07 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1KQZ-002U7v-A0; Thu, 17 Oct 2024 08:56:07 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 04DA6354D79;
-	Thu, 17 Oct 2024 06:56:07 +0000 (UTC)
-Date: Thu, 17 Oct 2024 08:56:06 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, imx@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH net-next 05/13] net: fec: fec_restart(): introduce a
- define for FEC_ECR_SPEED
-Message-ID: <20241017-elegant-smilodon-of-fascination-0ccf4c-mkl@pengutronix.de>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
- <20241016-fec-cleanups-v1-5-de783bd15e6a@pengutronix.de>
- <ZxBw8Jph6mPW8ExQ@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1729148233; c=relaxed/simple;
+	bh=shtix6Vyx5HBndb6WI7X44kldclZ5gMnq8azhK9OOKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZkozH6Jq/kWGpAYPL9hsjzv2kSj2XYwzsqWR0f4XmPOvjdnhMjW39hgZtNlzQIInrw5VgVPqXX/3p8kXZV3Ji84tj862R1AohHP2idYboOfzVJZLhAyqq3kJg5OmXK6NWvz44Qzyz4pT5RjfkFAGJItf8uue4aNltFdNCAy8Ml4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4WYBpTA; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e5f835c024so326931b6e.2;
+        Wed, 16 Oct 2024 23:57:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729148230; x=1729753030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hvRvosvvlInmc5nTg/6cdvc7/Szsbe6+XJ5j1b95qIg=;
+        b=S4WYBpTA9V7KBO3IKU7QHn7hZRf9l+NzTN9OMVkg6hqxMCxo1IgILr+GZSf/13TqBq
+         OSEc2dHoMx91znC6UNntfO6sk6D/SKUcYgDppXcd/oIzKUkAUAhbmvjmgb/G+nOJ0RNk
+         nYwpYlhULo4WMGmAlDZZ82w+MqlZjc97+OtorDddgSEnWbAB6b98vJuLL3F2Y+el920o
+         gKswrHthTo3Gu0TRLZsd6IXH2e5e0zYlbcbyzURilU5Z9tOUIvyBxibjG8ratB6wsLZV
+         FZQ8QwzEruSUcR6bLPMHv87N9Lio6fyk5FATVw1c3pNsvhxfoEiko2mLJ3qKmu8hGZb9
+         ChqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729148230; x=1729753030;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hvRvosvvlInmc5nTg/6cdvc7/Szsbe6+XJ5j1b95qIg=;
+        b=J2iB1/WULjLZiESaM4AeTFtG877xiirR7DMIzKwLHkwSlLVLPV1DtmKaNuyuxfIo6W
+         YVDrq5aBm1GcJgeXVd6l2KmVAy1wvmLRKJNYnEv8/SjmUSGynIHpTYaPz8ag2cbLn0SW
+         HeocU+xSx8W/5hp6WTehfvGEvVy/lD6U2h9ua6bYcJyt/nyZyETaa4IAYhVC+rjZM487
+         kw+eOEr09tB99SZ7RjGUfS++r3AsEXJBEr4Wd1QR8Ud1zibR+Tkgarr8Sm7kc+meJp6x
+         Sg89w35yOz8WoG+lSjz2iDKcH+R0vFwNPq/4izMPXk0yqxWg09DdMM2BUqsVUdnprxzb
+         +6XA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDtAqGSRWqKi2NJEAgJeaLwKgLu48TKukvbn1atUSlnpP244o4fusXj8GXMQoPEgvqlEXKPI8D2Mc9fm1jnJw=@vger.kernel.org, AJvYcCUI4sk4GZySGt7amgJXHQ7hncxMwlcjwN5PhWUV7hSo9uvRBHMwTl36ek8GfF2PI5nUpXmKb+uOkziifk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhg5bKcNrJbNP7nZodWsUYMuSYbZnrzoQQcIHOIz9tEZFgSUEo
+	//1cqJ9onN/Ngkqmi6LO+IDlnWo0eUVFTBdfmn70d+Emac2UWN4c
+X-Google-Smtp-Source: AGHT+IFS/PFID+fQBk/3FX/YxH/oX621qepd442RlZ2cJYJ06pljfbm4uZRR6iorUD1sNZlBK8dWAA==
+X-Received: by 2002:a05:6808:2021:b0:3e0:36a7:710f with SMTP id 5614622812f47-3e5f024a7fbmr5664005b6e.20.1729148230603;
+        Wed, 16 Oct 2024 23:57:10 -0700 (PDT)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ea9c6ba33csm4292808a12.17.2024.10.16.23.57.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 23:57:10 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: pkshih@realtek.com
+Cc: kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	pvmohammedanees2003@gmail.com
+Subject: Re: [PATCH] wifi: rtw88: Refactor looping in rtw_phy_store_tx_power_by_rate
+Date: Thu, 17 Oct 2024 12:26:45 +0530
+Message-ID: <20241017065645.5409-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <c0f6c6c3b87c4d048ad9f42dc1dfaed9@realtek.com>
+References: <c0f6c6c3b87c4d048ad9f42dc1dfaed9@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fzhhiooh6gpdajeh"
-Content-Disposition: inline
-In-Reply-To: <ZxBw8Jph6mPW8ExQ@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+Oops, I sent over the wrong patch with typo,
+I'll make sure to fix that in the next version.
 
---fzhhiooh6gpdajeh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I feel compilers can optimize the check for the band, and we can just remove
+> the else condition. Or
+>   if (2ghz)
+>      foo_2g();
+>   else
+>      foo_5g();
 
-On 16.10.2024 22:05:36, Frank Li wrote:
-> On Wed, Oct 16, 2024 at 11:51:53PM +0200, Marc Kleine-Budde wrote:
-> > Instead of open coding the bit mask to configure for 1000 MBit/s add a
-> > define for it.
->=20
-> Replace "1 << 5" for configuring 1000 MBit/s with a defined constant to
-> improve code readability and maintainability.
+I do agree with that but I feel, it would be
+better to make it independent of compiler
+optimization, thoughts?
 
-Fixed,
-Marc
+Let me know what you think is better, that is 
+whether letting it be if - else, or using a
+pointer.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---fzhhiooh6gpdajeh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcQtQQACgkQKDiiPnot
-vG/HNQf+Ibh78Ah8wakBm9pOmoQ66lmfz/spL7rOeMDtANUon1MNOBbVlRku0aFs
-nS35Nbc2rOXw5gkqUO/3xS06xPWMD0I+JSn0kS3K5kAVI1rWJxNYZ1aeFh6ErdYR
-fL7WdYCEgwHSFx7wmTpUCRNr071qf58rYemuflT5sk6pj5JTQ5grjEXj/nKaPZSq
-R1p+NbYKuN2v7rUxaxSBj5XOztiHPaPOqFlpn3Gi96291q2OqssZS0rrI0EWz8ST
-tL7Y9Ao2qLCARsA1NDwFBGCBc8YUwE6amp8mpZu1yynn2bkAZm0AJz5vlmreQZFv
-Jhgo7W5sSbLW/dR7iwg8t/nobYNcBA==
-=ury5
------END PGP SIGNATURE-----
-
---fzhhiooh6gpdajeh--
+thanks
 
