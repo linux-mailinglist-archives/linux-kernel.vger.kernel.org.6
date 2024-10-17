@@ -1,84 +1,78 @@
-Return-Path: <linux-kernel+bounces-369295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023DC9A1B6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:11:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7B29A1B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857941F22385
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF1B284A65
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4A51CDFA3;
-	Thu, 17 Oct 2024 07:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D1B1C2448;
+	Thu, 17 Oct 2024 07:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LvaDN6y4"
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OJsqnWmf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98EB1C1ADA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF42155A24;
+	Thu, 17 Oct 2024 07:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729149067; cv=none; b=jB0izdAh+8BImMFtZX5AOeCDNTYU1+Q9zJcLnIGXlGlMFwqXdaWMTGWWt2HNst1/ketyHkhLtz1k9jlmRH4TXdhutQvyFlaNjCd6NWMAkEtqo9cBGlStwcP11pLcVVTmUTYEGtHm2eFjqBjXKat+yT8RroDIYKKpBVAuU+YC29w=
+	t=1729149139; cv=none; b=top0KS0cH+FkxAhVO52QZO30TccMjI3awZ6vpGh92cRjZ2mLAVvm51ruHnxv1oIIUCT4ULJY5l1w3nsmfvv4K1Y777mosfVrSXsGKZSnPAJjoWN/uSp3mzB4YcPYJFmBBArcoKuxzAPTBhhAUWOUi9AW6UCxkBA6S/WhpGSK+y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729149067; c=relaxed/simple;
-	bh=l3Uydk7duhpi48eTsX3h/4LpvTxOP5SMHvfOvswHse8=;
+	s=arc-20240116; t=1729149139; c=relaxed/simple;
+	bh=42g5tVEQu2XF9M+6+sCwBJngAcYz5fH+z4CcJnsK0Ls=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2ECnYxxnjAxT7IWvafk4VCM26V5VBbX40VLYHZVGdIfz1bLnDVRljADiMssXNfnodUJoIJsZfutKNdU5yeSxPilqyRskf0Ft8W4D2m86zvt92vKSleAgZSXINY4itoWnSMjpKkd2QiBp/b303jt46IX+i/nqGb54O4UddCPEbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LvaDN6y4; arc=none smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-37d4ba20075so414682f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729149064; x=1729753864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0KdVXBGhFi7dGB+P4f8qZ3lXk3mjBstSPC2oOpH8z5Y=;
-        b=LvaDN6y4PNxtGDTKh51s54VGqaNcPrACs8sAhpUh7dfPbTp/CTgBLPFuXVCbZtYzCG
-         WGBUC0DWE0Ug1X5DfuwUIiqg4YUgeHu+Hjpsc+kLzNsWOc62PqAL/Vv3YaL5ylqOTmh+
-         cCkCKHQocEB0emmSTcE6AOheEPn1nO81855RfeW1vxGsLnjM6P2yFg77oiIOucqzcTIH
-         XDsFytXxwk7sqDSzy13UX71bcczLPUjeiQfiGAobIJ4W5Xi3IWyeWC4+XR7miJr905kV
-         SKJMI85dFEfq4k0h8WgzdYXb/1C9srgrsFj0h1xvkrdlyjSW3mcF/7yaFu7rDXWvzJxG
-         c3rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729149064; x=1729753864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0KdVXBGhFi7dGB+P4f8qZ3lXk3mjBstSPC2oOpH8z5Y=;
-        b=LHfAFLQ+o0vhz7fTnxjRmkexxxb0FvIKHmqgZyGATsYGHji9GacQPd+KAf9QUfq1c5
-         T0FO2deRJ1bmz+8Paicao53hs2aTnIoYfvkzuQYfjXVprGfSizBxQDaEEvK/4P7kTGNH
-         RercYwav0XV0cbPAGhF+MB15jydlU9Ndkaca9b7lh9FGHR+SyJAWH9UTIv/Doq6BzGoY
-         ho8WdQlXQHaT3Un8rxJxszmmLKVvEWatVI1sOg80QUv1jQ5WdJ6DyiJpJiZCTFCVtBfv
-         hS/hhkHTRZHxigBSekcw0sL3AdKToJi23Ig4NLrGA8cDxvx8uQFEIm1y7LatOzvfzHKh
-         ZSRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2VsWNiN0GRslb/y15RbEzbzEG1Paa1VYm3AVgioOpdmF5fWZmLhrjHPnAq0vAAIhlO1TJq8z0bza3tjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBkL2fJ3lAj4jqT8lJmvOGYo7A+MwIODlIzTTSTlbka0gJY5rg
-	UFrApFTuQz97acnyydA3wWMaY9fLJm5ZJGkxPwBKXpxo1tLcYIaVJ8I69pwbVws=
-X-Google-Smtp-Source: AGHT+IHS9c0AQj2cx/Fpyoxeg7T4HwlSFDWY1656nHRQ5XO23p1Tr4JtGzw0IsCtZe1nsYz0oAXgTw==
-X-Received: by 2002:a05:6000:1092:b0:375:c4c7:c7ac with SMTP id ffacd0b85a97d-37d552cb121mr14038233f8f.49.1729149064050;
-        Thu, 17 Oct 2024 00:11:04 -0700 (PDT)
-Received: from u94a (27-242-4-121.adsl.fetnet.net. [27.242.4.121])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3d714f027sm12231535ab.62.2024.10.17.00.10.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 00:11:02 -0700 (PDT)
-Date: Thu, 17 Oct 2024 15:10:50 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, xavier_qy@163.com, longman@redhat.com, 
-	lizefan.x@bytedance.com, hannes@cmpxchg.org, mkoutny@suse.com, akpm@linux-foundation.org, 
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Christoph Hellwig <hch@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Using union-find in BPF verifier (was: Enhance union-find with KUnit
- tests and optimization improvements)
-Message-ID: <aci6pn57bqjfcshbak7ekxb7zr5zz72u3rxyu4zbp5w3mvljx2@b4rn2e4rb4rl>
-References: <20241007152833.2282199-1-visitorckw@gmail.com>
- <ZwQJ_hQENEE7uj0q@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q99tkwg13PpHv7ITtDbYzb5cB8WiK0fRVCojq+9O0q69acG8tKuTxRFGqZKk1jF9dxFhApvpMw1AgtRfFvUaXMCjeuOJknsDMEOg7e5g/NWl29IK19g/wCNN8KSGAar81IKvIkymOSKK2eSuUqNjkfWgHG/036qtjkelt+ppDa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OJsqnWmf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729149136; x=1760685136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=42g5tVEQu2XF9M+6+sCwBJngAcYz5fH+z4CcJnsK0Ls=;
+  b=OJsqnWmfZL5sC8BM0a6jaOEQ7ccryjkYJvz16fhZn3IbeNoT+INujzWf
+   27bC02k2NLzYURE97D54xfazMvM3kTxuMLaB16xuDzmKfBqRu+N9dUgzd
+   qgk1TEO1dPFgjtgWYeymQd/Lb0Wy+qc7iH701gYxgLaGJmR6L6aKekumB
+   8T8xPo+hIjPS0WC6zkMmBs+miqlh3fN1fuYnZ6/aIZ8anO6C84HyLO5r7
+   Z+DU8eVi+dp2etMsyC2DIfjwaLIDMlZh+i0yPWErry8GZKoCIPcd7eVxb
+   HENXVPkrZckc91rCUyvlScSd+jd7R1wTP30vqYRp7cmpOzdkXNkALf8Aa
+   A==;
+X-CSE-ConnectionGUID: l4T9FsLqSequ+O0F++itzA==
+X-CSE-MsgGUID: m5QE0+VlRr2z3opKTMCxMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="16241321"
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="16241321"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 00:12:15 -0700
+X-CSE-ConnectionGUID: heUNPcFNQwqnvINBVZmcaw==
+X-CSE-MsgGUID: IKkiIo2+QqiDuo/gMAvMLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
+   d="scan'208";a="83238536"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 17 Oct 2024 00:12:04 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1Kfx-000Lrf-0P;
+	Thu, 17 Oct 2024 07:12:01 +0000
+Date: Thu, 17 Oct 2024 15:11:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Heusel <christian@heusel.eu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dirk Holten <dirk.holten@gmx.de>,
+	stable@vger.kernel.org, Christian Heusel <christian@heusel.eu>
+Subject: Re: [PATCH] ACPI: resource: Add LG 16T90SP to
+ irq1_level_low_skip_override[]
+Message-ID: <202410171432.vrXoRLhw-lkp@intel.com>
+References: <20241016-lg-gram-pro-keyboard-v1-1-34306123102f@heusel.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,83 +81,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwQJ_hQENEE7uj0q@slm.duckdns.org>
+In-Reply-To: <20241016-lg-gram-pro-keyboard-v1-1-34306123102f@heusel.eu>
 
-Michal mentioned lib/union_find.c during a discussion. I think we may
-have a use for in BPF verifier (kernel/bpf/verifier.c) that could
-further simplify the code. Eduard (who wrote the code shown below)
-probably would have a better idea.
+Hi Christian,
 
-On Mon, Oct 07, 2024 at 06:19:10AM GMT, Tejun Heo wrote:
-> On Mon, Oct 07, 2024 at 11:28:27PM +0800, Kuan-Wei Chiu wrote:
-> > This patch series adds KUnit tests for the union-find implementation
-> > and optimizes the path compression in the uf_find() function to achieve
-> > a lower tree height and improved efficiency. Additionally, it modifies
-> > uf_union() to return a boolean value indicating whether a merge
-> > occurred, enhancing the process of calculating the number of groups in
-> > the cgroup cpuset.
-> 
-> I'm not necessarily against the patchset but this probably is becoming too
-> much polishing for something which is only used by cpuset in a pretty cold
-> path. It probably would be a good idea to concentrate on finding more use
-> cases.
+kernel test robot noticed the following build warnings:
 
-In BPF verifier we do the following to identify the outermost loop in a
-BPF program.
+[auto build test WARNING on 8e929cb546ee42c9a61d24fae60605e9e3192354]
 
-	static struct bpf_verifier_state *get_loop_entry(struct bpf_verifier_state *st)
-	{
-		struct bpf_verifier_state *topmost = st->loop_entry, *old;
-	
-		while (topmost && topmost->loop_entry && topmost != topmost->loop_entry)
-			topmost = topmost->loop_entry;
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Heusel/ACPI-resource-Add-LG-16T90SP-to-irq1_level_low_skip_override/20241016-224929
+base:   8e929cb546ee42c9a61d24fae60605e9e3192354
+patch link:    https://lore.kernel.org/r/20241016-lg-gram-pro-keyboard-v1-1-34306123102f%40heusel.eu
+patch subject: [PATCH] ACPI: resource: Add LG 16T90SP to irq1_level_low_skip_override[]
+config: x86_64-randconfig-122-20241017 (https://download.01.org/0day-ci/archive/20241017/202410171432.vrXoRLhw-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410171432.vrXoRLhw-lkp@intel.com/reproduce)
 
-		while (st && st->loop_entry != topmost) {
-			old = st->loop_entry;
-			st->loop_entry = topmost;
-			st = old;
-		}
-		return topmost;
-	}
-	
-	static void update_loop_entry(struct bpf_verifier_state *cur, struct bpf_verifier_state *hdr)
-	{
-		struct bpf_verifier_state *cur1, *hdr1;
-	
-		cur1 = get_loop_entry(cur) ?: cur;
-		hdr1 = get_loop_entry(hdr) ?: hdr;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410171432.vrXoRLhw-lkp@intel.com/
 
-		if (hdr1->branches && hdr1->dfs_depth <= cur1->dfs_depth) {
-			cur->loop_entry = hdr;
-			hdr->used_as_loop_entry = true;
-		}
-	}
+sparse warnings: (new ones prefixed by >>)
+>> drivers/acpi/resource.c:501:18: sparse: sparse: Initializer entry defined twice
+   drivers/acpi/resource.c:506:18: sparse:   also defined here
+   drivers/acpi/resource.c: note: in included file (through include/linux/resource_ext.h, include/linux/acpi.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
 
-Squinting a bit get_loop_entry() looks quite like uf_find() and
-update_loop_entry() looks quite link uf_union(). So perhaps we could get
-a straight-forward conversion here.
+vim +501 drivers/acpi/resource.c
 
----
+55a93417c27c6ad Christophe Ricard 2015-12-23  387  
+d37273af0e428e9 Hans de Goede     2023-09-13  388  /*
+d37273af0e428e9 Hans de Goede     2023-09-13  389   * DMI matches for boards where the DSDT specifies the kbd IRQ as
+d37273af0e428e9 Hans de Goede     2023-09-13  390   * level active-low and using the override changes this to rising edge,
+d37273af0e428e9 Hans de Goede     2023-09-13  391   * stopping the keyboard from working.
+d37273af0e428e9 Hans de Goede     2023-09-13  392   */
+d37273af0e428e9 Hans de Goede     2023-09-13  393  static const struct dmi_system_id irq1_level_low_skip_override[] = {
+892a012699fc0b9 Hui Wang          2021-09-15  394  	{
+424009ab2030862 Hans de Goede     2023-09-13  395  		/* MEDION P15651 */
+892a012699fc0b9 Hui Wang          2021-09-15  396  		.matches = {
+892a012699fc0b9 Hui Wang          2021-09-15  397  			DMI_MATCH(DMI_SYS_VENDOR, "MEDION"),
+892a012699fc0b9 Hui Wang          2021-09-15  398  			DMI_MATCH(DMI_BOARD_NAME, "M15T"),
+892a012699fc0b9 Hui Wang          2021-09-15  399  		},
+892a012699fc0b9 Hui Wang          2021-09-15  400  	},
+1b26ae40092b43b Hui Wang          2021-10-25  401  	{
+424009ab2030862 Hans de Goede     2023-09-13  402  		/* MEDION S17405 */
+1b26ae40092b43b Hui Wang          2021-10-25  403  		.matches = {
+1b26ae40092b43b Hui Wang          2021-10-25  404  			DMI_MATCH(DMI_SYS_VENDOR, "MEDION"),
+1b26ae40092b43b Hui Wang          2021-10-25  405  			DMI_MATCH(DMI_BOARD_NAME, "M17T"),
+1b26ae40092b43b Hui Wang          2021-10-25  406  		},
+1b26ae40092b43b Hui Wang          2021-10-25  407  	},
+2d0ab14634a26e5 Aymeric Wibo      2023-03-19  408  	{
+424009ab2030862 Hans de Goede     2023-09-13  409  		/* MEDION S17413 */
+2d0ab14634a26e5 Aymeric Wibo      2023-03-19  410  		.matches = {
+2d0ab14634a26e5 Aymeric Wibo      2023-03-19  411  			DMI_MATCH(DMI_SYS_VENDOR, "MEDION"),
+2d0ab14634a26e5 Aymeric Wibo      2023-03-19  412  			DMI_MATCH(DMI_BOARD_NAME, "M1xA"),
+2d0ab14634a26e5 Aymeric Wibo      2023-03-19  413  		},
+2d0ab14634a26e5 Aymeric Wibo      2023-03-19  414  	},
+e12dee3736731e2 Tamim Khan        2022-08-28  415  	{
+424009ab2030862 Hans de Goede     2023-09-13  416  		/* Asus Vivobook K3402ZA */
+e12dee3736731e2 Tamim Khan        2022-08-28  417  		.matches = {
+e12dee3736731e2 Tamim Khan        2022-08-28  418  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+e12dee3736731e2 Tamim Khan        2022-08-28  419  			DMI_MATCH(DMI_BOARD_NAME, "K3402ZA"),
+e12dee3736731e2 Tamim Khan        2022-08-28  420  		},
+e12dee3736731e2 Tamim Khan        2022-08-28  421  	},
+e12dee3736731e2 Tamim Khan        2022-08-28  422  	{
+424009ab2030862 Hans de Goede     2023-09-13  423  		/* Asus Vivobook K3502ZA */
+e12dee3736731e2 Tamim Khan        2022-08-28  424  		.matches = {
+e12dee3736731e2 Tamim Khan        2022-08-28  425  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+e12dee3736731e2 Tamim Khan        2022-08-28  426  			DMI_MATCH(DMI_BOARD_NAME, "K3502ZA"),
+e12dee3736731e2 Tamim Khan        2022-08-28  427  		},
+e12dee3736731e2 Tamim Khan        2022-08-28  428  	},
+6e5cbe7c4b41824 Kellen Renshaw    2022-09-21  429  	{
+424009ab2030862 Hans de Goede     2023-09-13  430  		/* Asus Vivobook S5402ZA */
+6e5cbe7c4b41824 Kellen Renshaw    2022-09-21  431  		.matches = {
+6e5cbe7c4b41824 Kellen Renshaw    2022-09-21  432  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+6e5cbe7c4b41824 Kellen Renshaw    2022-09-21  433  			DMI_MATCH(DMI_BOARD_NAME, "S5402ZA"),
+6e5cbe7c4b41824 Kellen Renshaw    2022-09-21  434  		},
+6e5cbe7c4b41824 Kellen Renshaw    2022-09-21  435  	},
+b5f9223a105d9b5 Tamim Khan        2022-10-14  436  	{
+424009ab2030862 Hans de Goede     2023-09-13  437  		/* Asus Vivobook S5602ZA */
+b5f9223a105d9b5 Tamim Khan        2022-10-14  438  		.matches = {
+b5f9223a105d9b5 Tamim Khan        2022-10-14  439  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+b5f9223a105d9b5 Tamim Khan        2022-10-14  440  			DMI_MATCH(DMI_BOARD_NAME, "S5602ZA"),
+b5f9223a105d9b5 Tamim Khan        2022-10-14  441  		},
+b5f9223a105d9b5 Tamim Khan        2022-10-14  442  	},
+2f80ce0b78c340e Hans de Goede     2024-09-27  443  	{
+2f80ce0b78c340e Hans de Goede     2024-09-27  444  		/* Asus Vivobook X1704VAP */
+2f80ce0b78c340e Hans de Goede     2024-09-27  445  		.matches = {
+2f80ce0b78c340e Hans de Goede     2024-09-27  446  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+2f80ce0b78c340e Hans de Goede     2024-09-27  447  			DMI_MATCH(DMI_BOARD_NAME, "X1704VAP"),
+2f80ce0b78c340e Hans de Goede     2024-09-27  448  		},
+2f80ce0b78c340e Hans de Goede     2024-09-27  449  	},
+c1ed72171ed580f Hans de Goede     2023-09-12  450  	{
+158d0f3700fd719 Hans de Goede     2024-10-05  451  		/* Asus ExpertBook B1402C* */
+c1ed72171ed580f Hans de Goede     2023-09-12  452  		.matches = {
+c1ed72171ed580f Hans de Goede     2023-09-12  453  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+158d0f3700fd719 Hans de Goede     2024-10-05  454  			DMI_MATCH(DMI_BOARD_NAME, "B1402C"),
+c1ed72171ed580f Hans de Goede     2023-09-12  455  		},
+c1ed72171ed580f Hans de Goede     2023-09-12  456  	},
+bd911485294a6f0 Hans de Goede     2023-11-15  457  	{
+158d0f3700fd719 Hans de Goede     2024-10-05  458  		/* Asus ExpertBook B1502C* */
+bd911485294a6f0 Hans de Goede     2023-11-15  459  		.matches = {
+bd911485294a6f0 Hans de Goede     2023-11-15  460  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+158d0f3700fd719 Hans de Goede     2024-10-05  461  			DMI_MATCH(DMI_BOARD_NAME, "B1502C"),
+ca3afc2806046f6 Nicolas Haye      2024-01-30  462  		},
+ca3afc2806046f6 Nicolas Haye      2024-01-30  463  	},
+77c724888238539 Tamim Khan        2022-12-30  464  	{
+564a278573783cd Hans de Goede     2024-10-05  465  		/* Asus ExpertBook B2402 (B2402CBA / B2402FBA / B2402CVA / B2402FVA) */
+77c724888238539 Tamim Khan        2022-12-30  466  		.matches = {
+77c724888238539 Tamim Khan        2022-12-30  467  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+564a278573783cd Hans de Goede     2024-10-05  468  			DMI_MATCH(DMI_BOARD_NAME, "B2402"),
+65eb2867f5bf460 Vojtech Hejsek    2023-02-16  469  		},
+65eb2867f5bf460 Vojtech Hejsek    2023-02-16  470  	},
+7203481fd12b125 Hans de Goede     2022-12-15  471  	{
+435f2d87579e240 Hans de Goede     2024-10-05  472  		/* Asus ExpertBook B2502 (B2502CBA / B2502FBA / B2502CVA / B2502FVA) */
+7203481fd12b125 Hans de Goede     2022-12-15  473  		.matches = {
+7203481fd12b125 Hans de Goede     2022-12-15  474  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+435f2d87579e240 Hans de Goede     2024-10-05  475  			DMI_MATCH(DMI_BOARD_NAME, "B2502"),
+056301e7c7c886f Hans de Goede     2024-09-27  476  		},
+056301e7c7c886f Hans de Goede     2024-09-27  477  	},
+49e9cc315604972 Tamim Khan        2024-09-02  478  	{
+63539defee17bf0 Hans de Goede     2024-09-27  479  		/* Asus Vivobook Go E1404GA* */
+49e9cc315604972 Tamim Khan        2024-09-02  480  		.matches = {
+49e9cc315604972 Tamim Khan        2024-09-02  481  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+63539defee17bf0 Hans de Goede     2024-09-27  482  			DMI_MATCH(DMI_BOARD_NAME, "E1404GA"),
+49e9cc315604972 Tamim Khan        2024-09-02  483  		},
+49e9cc315604972 Tamim Khan        2024-09-02  484  	},
+d2aaf19965045f7 Ben Mayo          2024-01-06  485  	{
+65bdebf38e5fac7 Hans de Goede     2024-09-27  486  		/* Asus Vivobook E1504GA* */
+d2aaf19965045f7 Ben Mayo          2024-01-06  487  		.matches = {
+d2aaf19965045f7 Ben Mayo          2024-01-06  488  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+d2aaf19965045f7 Ben Mayo          2024-01-06  489  			DMI_MATCH(DMI_BOARD_NAME, "E1504GA"),
+d2aaf19965045f7 Ben Mayo          2024-01-06  490  		},
+d2aaf19965045f7 Ben Mayo          2024-01-06  491  	},
+7c52c7071bd403a Tamim Khan        2024-04-28  492  	{
+1af7e441feb08cd Hans de Goede     2024-10-05  493  		/* Asus Vivobook Pro N6506M* */
+7c52c7071bd403a Tamim Khan        2024-04-28  494  		.matches = {
+7c52c7071bd403a Tamim Khan        2024-04-28  495  			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+1af7e441feb08cd Hans de Goede     2024-10-05  496  			DMI_MATCH(DMI_BOARD_NAME, "N6506M"),
+e2e7f037b400aeb Tamim Khan        2024-07-07  497  		},
+e2e7f037b400aeb Tamim Khan        2024-07-07  498  	},
+d37273af0e428e9 Hans de Goede     2023-09-13  499  	{
+424009ab2030862 Hans de Goede     2023-09-13  500  		/* LG Electronics 17U70P */
+d37273af0e428e9 Hans de Goede     2023-09-13 @501  		.matches = {
+d37273af0e428e9 Hans de Goede     2023-09-13  502  			DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
+d37273af0e428e9 Hans de Goede     2023-09-13  503  			DMI_MATCH(DMI_BOARD_NAME, "17U70P"),
+d37273af0e428e9 Hans de Goede     2023-09-13  504  		},
+6576e827971bb3b Christian Heusel  2024-10-16  505  		/* LG Electronics 16T90SP */
+6576e827971bb3b Christian Heusel  2024-10-16  506  		.matches = {
+6576e827971bb3b Christian Heusel  2024-10-16  507  			DMI_MATCH(DMI_SYS_VENDOR, "LG Electronics"),
+6576e827971bb3b Christian Heusel  2024-10-16  508  			DMI_MATCH(DMI_BOARD_NAME, "16T90SP"),
+6576e827971bb3b Christian Heusel  2024-10-16  509  		},
+d37273af0e428e9 Hans de Goede     2023-09-13  510  	},
+e12dee3736731e2 Tamim Khan        2022-08-28  511  	{ }
+e12dee3736731e2 Tamim Khan        2022-08-28  512  };
+e12dee3736731e2 Tamim Khan        2022-08-28  513  
 
-Another (comparatively worst) idea is to use it for tracking whether two
-register has the same content (this is currently done with struct
-bpf_reg_state.id).
-
-	r0 = random();
-	r1 = r0; /* r1 is the same as r0 */
-
-However it doesn't seem like union-find would be as useful here, because
-1. registers might later be reassigned
-2. in addition to equivalence, BPF verifier also track whether content
-of two register differs by some value (see sync_linked_regs()).
-
-	r0 = random();
-	r1 = r0 + 1; /* r1 differs r0 by 1 */
-
-So maybe not here, at least I don't see how union-find can make things
-simpler. But data structure and algorithm really isn't my strength and
-I'm happy to be proven wrong.
-
-
-Shung-Hsi
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
