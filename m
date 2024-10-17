@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-369559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEFE09A1EE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:49:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF489A1EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0811F26A65
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE731F23447
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482CB1DA605;
-	Thu, 17 Oct 2024 09:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD98F1DC1BE;
+	Thu, 17 Oct 2024 09:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OVjItaAx"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="er0o5HLf"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9932D1DB953
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429161DC194
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158490; cv=none; b=gD+svAtAh/xl0dVe4kvR9a7Ce0+MjYQkHJolqm9JvdQbiqi7kpTahCnWeb1AyS8+eGeESCmMF+W48Z+dgfezSRukAdRZtI0tp3q5cNXJQh2ZSvGLAnXzy8FduWeTk2DPmWCMczFGfqMFH6qC5MJyPb1T5hThitBIHHD5Y/BWV1c=
+	t=1729158496; cv=none; b=fvmYs0nMSSFJImhFpfxAh7cyUIBH/SYHhZ6Fi41D9TNNC08pG5fz5BCsbxuaEFhRgCPn8zDxZCyHO06wZkcsD4HgLdgwi2KtvHhC5XUP/fKfOHY/COjWSkoX6YMSxXW+mpNbRUc2l6igbO8hZOoJqHgaJD5r+4IIhKpObVJeeyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158490; c=relaxed/simple;
-	bh=XMqo9JC0uvRaenR0CNJgp9Ct19xGAvPL0Vj/MIAQrlc=;
+	s=arc-20240116; t=1729158496; c=relaxed/simple;
+	bh=H6+wTWP26uqZ4YBcgcKoTuVx8AqbeFe0Q57a4F7QhGU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rv/fG3BN1G/ujcAVNR4dKA7uEZWjX4DBkOU27smAwixqQnbXsRZSHkWYbhVJMiQnPaIPzgFWgXEtrweKSL9YyRc1HenkdjdM4Bk8blM7HVt7En+NG0/XWpR8yPMNtXdgEuCjZ4dS4lVYh0KPE8nL5z3FjN0l7sDoCzfO9r1IbvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OVjItaAx; arc=none smtp.client-ip=209.85.160.47
+	 MIME-Version; b=e5Cnt7YLUJww7eI7VCd0/bgSYB9h1RFAN4ippOrV7xmnAQPEhByhdyP8gloQLa/hMzjBEH5dkxbf2JSZgMehIdWBTL+fhcb8cYbI0tpHLGs+cn8FzjBjMc2OMJ0gT5pGupcLCuOJ3wpWYyNZiEwZF0i9m4Y1QBPo/gt4FLIdb9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=er0o5HLf; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-28847f4207dso339781fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:48:07 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e5130832aso499846b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1729158487; x=1729763287; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1729158492; x=1729763292; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ns8LrZyEwJOJHznjnD7PlHQ9MHEMoW624Fd3QWpp04I=;
-        b=OVjItaAxwftIJm0xQkZV3VPxaUEZliINdH8RZchGKyGTaGRE/eJ4ZgFiPBAPKXRpdW
-         6DSARKSykJNRZQ3MlpQ/5edBYzHWYxbQAO53bjvXBcCRvtNSYiPTViAF0p5fZx8mpKDj
-         V4b9WHMzhoju5dNb1s0ApTVYJC1evTeKcoT7iH4Sa4WWZvDJVXFX1pgQj1Fe9CovVfEX
-         vIwzCHQqpqNf9UjwpQ38XMJb+T0ILU1r7VJw4aCNMtsGGW1AXyZW8RVNHP+fLN5ceDoj
-         3u3gwoDFsPdXMeTqPLIsHLjOLL3LgZSvNkx5mKZyIowC71enG1ngV1SY9nb4efbNdsJ2
-         o/eQ==
+        bh=Dj3ri9p71nmuCZf/HvkLHVU1fpbThKpmsfMSEQvNK9I=;
+        b=er0o5HLf/f9slaOjlpuD4/dBrwP2oWdKRWK/0qMpXig0yQGFj9U8SgWW1aynnlqovf
+         8s1AOGVpF2wFfcQD1C+B2mMkT7I4h+xzHBWYSZlpZnIvDLpvyOoCQHLDZ+5H/RIrRjmy
+         YdIjqhQSXOfkp9YFvRKIsJaWGIYMakeVQbmgXv1bCj9nZBi8FXCRGf5o7UzqrOXMLjHU
+         p6yDTr3zHJ2fL20IxtYMVcLU4a/zSy3papYz5TNge5PP4vU1UHNslydr5DJDPZFYTOHw
+         ziAvRSPNwByfvIzgj9G9SGp5qsdJ11eUDkWnO/T7Fnx8JD9pLd8QLcrXLFRn96sw3xJv
+         Opfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729158487; x=1729763287;
+        d=1e100.net; s=20230601; t=1729158492; x=1729763292;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ns8LrZyEwJOJHznjnD7PlHQ9MHEMoW624Fd3QWpp04I=;
-        b=d7RG13VT30+xX6/m1COlllImPX+vLqKKt1TGeavXMPpxx/+P2EKm5BSKMlH9bHhz4S
-         SQVfqcy8YiZFqU3fiIm5aFShXZ6OPoHOIcWKjPoPMQJjEZlKTJwOF8XJhOWWRC2Rj52W
-         VACvjIz01ZxNTIrh5TeplBnXL4aaz4YaiDc0sP8v3J17iWiNTy/SeuogYVU7Gar9ElMk
-         AOp1eWgLHaNXGwNIOmQnqpA+0CzW0OKke1UJMz2cpS4Afl8xi+TGapmkbHlLqh4lbULS
-         ob+wcO1Z0+cfHZOund+0LJ8Ec3mISbcUJdHSNRNCFxl0FLKU2P7OHAms9inD8AANcXSg
-         4wYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWw01b5jPlOdvL3z+I6GIiyz+U4z2EC5wXPGRQjpOO+pWeZufsHYtFeyc8CRjmPwXBn4hDJZlOxQwaCOsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtF7uSnc5Prm8ciHqiVxW0koUqkGczCaLmcmhHUFzNvcYatC0B
-	IfF2Ij+LH2vo+c4Dg5EIfYfXAqWa0Seu14/fx1FTLpgSQOSKcAXKi0M7v+O78A0=
-X-Google-Smtp-Source: AGHT+IHvYEBhNwHNitO8wA559PhHl4cuzZKZHlF0Sd6OJ2vGi8dRLztGVbwRe2pbe9tQOZtPvKzwMw==
-X-Received: by 2002:a05:6870:798:b0:287:ce7:7c4a with SMTP id 586e51a60fabf-2886e00f920mr16405829fac.38.1729158486665;
-        Thu, 17 Oct 2024 02:48:06 -0700 (PDT)
+        bh=Dj3ri9p71nmuCZf/HvkLHVU1fpbThKpmsfMSEQvNK9I=;
+        b=jEb7JIyznwg+eWuNGeHb1HQOZfPR6F9stxGjBjDLF7sD9zyV/J+pSsTZbQGc3FDpxA
+         11Ck5Cr+9ODlFLyungl7PxyKM/8XDojCgNBxO0CK9d3uhe4ipe7BdKG1jFF9Q3SaN6Ci
+         rMI9PwxvkZWsuNRp6W6ruLCF62ilgOHsCJIcL/gvEFlvhXtqFzB0ixO7TeUWsghXUU8X
+         zwLEquu1iPbSdqskJHwZCftdtOhvCIw6pha/dXL9o7cvFuy5fFkiQ1alq9Uk4Y4uIMpA
+         IXyPcQDEk7S5WUUIOpD49OLdigVhjpBvicyRdlCz+yb3e7KNGBEq9TE2psDfSFA1ZS3O
+         3K5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVqwxfGFZXYH0+lBSxS87ksE/sF73RIQt+3LX1dqw2Xl1Qy/w+bOYQbzdBLXH3KKv4OGfkLOWjfOD/A8HI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+sBg596fkMsMAIAYBtCwBNvf2JybZf1+kFSSvvj9YN5LZ2dVF
+	wHIqfrns+BTxHfwGNIL21hLb6OrPCMeOrf3Bxp0w5eqUZ2BEo38aROGx5rcRnXo=
+X-Google-Smtp-Source: AGHT+IEKEDRwguwxshyZXMicxDUmcRCwiWXS2djsKDNBwB/wtcHqk2whV9zra/Oag0PCIfiHyKtsxQ==
+X-Received: by 2002:a05:6a20:9f4a:b0:1d5:1729:35ec with SMTP id adf61e73a8af0-1d8c955c8ebmr29391532637.7.1729158492598;
+        Thu, 17 Oct 2024 02:48:12 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a4218sm4385365b3a.120.2024.10.17.02.48.01
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a4218sm4385365b3a.120.2024.10.17.02.48.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 02:48:06 -0700 (PDT)
+        Thu, 17 Oct 2024 02:48:12 -0700 (PDT)
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 To: david@redhat.com,
 	hughd@google.com,
@@ -82,9 +82,9 @@ Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	x86@kernel.org,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v1 3/7] mm: zap_install_uffd_wp_if_needed: return whether uffd-wp pte has been re-installed
-Date: Thu, 17 Oct 2024 17:47:22 +0800
-Message-Id: <37983544cb4fbd27c244b68d3e37d170ea51f444.1729157502.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v1 4/7] mm: zap_present_ptes: return whether the PTE page is unreclaimable
+Date: Thu, 17 Oct 2024 17:47:23 +0800
+Message-Id: <84a9fddde9993e4a5108f188193fd9c8ff1c5c31.1729157502.git.zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <cover.1729157502.git.zhengqi.arch@bytedance.com>
 References: <cover.1729157502.git.zhengqi.arch@bytedance.com>
@@ -96,100 +96,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In some cases, we'll replace the none pte with an uffd-wp swap special pte
-marker when necessary. Let's expose this information to the caller through
-the return value, so that subsequent commits can use this information to
-detect whether the PTE page is empty.
+In the following two cases, the PTE page cannot be empty and cannot be
+reclaimed:
+
+1. an uffd-wp pte was re-installed
+2. should_zap_folio() return false
+
+Let's expose this information to the caller through is_pt_unreclaimable,
+so that subsequent commits can use this information in zap_pte_range() to
+detect whether the PTE page can be reclaimed.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- include/linux/mm_inline.h | 11 ++++++++---
- mm/memory.c               | 15 +++++++++++----
- 2 files changed, 19 insertions(+), 7 deletions(-)
+ mm/memory.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 6f801c7b36e2f..c3ba1da418caf 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -552,8 +552,10 @@ static inline pte_marker copy_pte_marker(
-  * pte, and if they see it, they'll fault and serialize at the pgtable lock.
-  *
-  * This function is a no-op if PTE_MARKER_UFFD_WP is not enabled.
-+ *
-+ * Returns true if an uffd-wp pte was installed, false otherwise.
-  */
--static inline void
-+static inline bool
- pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
- 			      pte_t *pte, pte_t pteval)
- {
-@@ -570,7 +572,7 @@ pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
- 	 * with a swap pte.  There's no way of leaking the bit.
- 	 */
- 	if (vma_is_anonymous(vma) || !userfaultfd_wp(vma))
--		return;
-+		return false;
- 
- 	/* A uffd-wp wr-protected normal pte */
- 	if (unlikely(pte_present(pteval) && pte_uffd_wp(pteval)))
-@@ -583,10 +585,13 @@ pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
- 	if (unlikely(pte_swp_uffd_wp_any(pteval)))
- 		arm_uffd_pte = true;
- 
--	if (unlikely(arm_uffd_pte))
-+	if (unlikely(arm_uffd_pte)) {
- 		set_pte_at(vma->vm_mm, addr, pte,
- 			   make_pte_marker(PTE_MARKER_UFFD_WP));
-+		return true;
-+	}
- #endif
-+	return false;
- }
- 
- static inline bool vma_has_recency(struct vm_area_struct *vma)
 diff --git a/mm/memory.c b/mm/memory.c
-index fd57c0f49fce2..534d9d52b5ebe 100644
+index 534d9d52b5ebe..cc89ede8ce2ab 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -1467,27 +1467,34 @@ static inline bool zap_drop_file_uffd_wp(struct zap_details *details)
- /*
-  * This function makes sure that we'll replace the none pte with an uffd-wp
-  * swap special pte marker when necessary. Must be with the pgtable lock held.
-+ *
-+ * Returns true if uffd-wp ptes was installed, false otherwise.
-  */
--static inline void
-+static inline bool
- zap_install_uffd_wp_if_needed(struct vm_area_struct *vma,
- 			      unsigned long addr, pte_t *pte, int nr,
- 			      struct zap_details *details, pte_t pteval)
+@@ -1501,7 +1501,7 @@ static __always_inline void zap_present_folio_ptes(struct mmu_gather *tlb,
+ 		struct vm_area_struct *vma, struct folio *folio,
+ 		struct page *page, pte_t *pte, pte_t ptent, unsigned int nr,
+ 		unsigned long addr, struct zap_details *details, int *rss,
+-		bool *force_flush, bool *force_break)
++		bool *force_flush, bool *force_break, bool *is_pt_unreclaimable)
  {
-+	bool was_installed = false;
-+
- 	/* Zap on anonymous always means dropping everything */
- 	if (vma_is_anonymous(vma))
--		return;
-+		return false;
+ 	struct mm_struct *mm = tlb->mm;
+ 	bool delay_rmap = false;
+@@ -1527,8 +1527,8 @@ static __always_inline void zap_present_folio_ptes(struct mmu_gather *tlb,
+ 	arch_check_zapped_pte(vma, ptent);
+ 	tlb_remove_tlb_entries(tlb, pte, nr, addr);
+ 	if (unlikely(userfaultfd_pte_wp(vma, ptent)))
+-		zap_install_uffd_wp_if_needed(vma, addr, pte, nr, details,
+-					      ptent);
++		*is_pt_unreclaimable =
++			zap_install_uffd_wp_if_needed(vma, addr, pte, nr, details, ptent);
  
- 	if (zap_drop_file_uffd_wp(details))
--		return;
-+		return false;
- 
- 	for (;;) {
- 		/* the PFN in the PTE is irrelevant. */
--		pte_install_uffd_wp_if_needed(vma, addr, pte, pteval);
-+		if (pte_install_uffd_wp_if_needed(vma, addr, pte, pteval))
-+			was_installed = true;
- 		if (--nr == 0)
- 			break;
- 		pte++;
- 		addr += PAGE_SIZE;
+ 	if (!delay_rmap) {
+ 		folio_remove_rmap_ptes(folio, page, nr, vma);
+@@ -1552,7 +1552,7 @@ static inline int zap_present_ptes(struct mmu_gather *tlb,
+ 		struct vm_area_struct *vma, pte_t *pte, pte_t ptent,
+ 		unsigned int max_nr, unsigned long addr,
+ 		struct zap_details *details, int *rss, bool *force_flush,
+-		bool *force_break)
++		bool *force_break, bool *is_pt_unreclaimable)
+ {
+ 	const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+ 	struct mm_struct *mm = tlb->mm;
+@@ -1567,15 +1567,18 @@ static inline int zap_present_ptes(struct mmu_gather *tlb,
+ 		arch_check_zapped_pte(vma, ptent);
+ 		tlb_remove_tlb_entry(tlb, pte, addr);
+ 		if (userfaultfd_pte_wp(vma, ptent))
+-			zap_install_uffd_wp_if_needed(vma, addr, pte, 1,
+-						      details, ptent);
++			*is_pt_unreclaimable =
++				zap_install_uffd_wp_if_needed(vma, addr, pte, 1,
++							      details, ptent);
+ 		ksm_might_unmap_zero_page(mm, ptent);
+ 		return 1;
  	}
-+
-+	return was_installed;
+ 
+ 	folio = page_folio(page);
+-	if (unlikely(!should_zap_folio(details, folio)))
++	if (unlikely(!should_zap_folio(details, folio))) {
++		*is_pt_unreclaimable = true;
+ 		return 1;
++	}
+ 
+ 	/*
+ 	 * Make sure that the common "small folio" case is as fast as possible
+@@ -1587,11 +1590,12 @@ static inline int zap_present_ptes(struct mmu_gather *tlb,
+ 
+ 		zap_present_folio_ptes(tlb, vma, folio, page, pte, ptent, nr,
+ 				       addr, details, rss, force_flush,
+-				       force_break);
++				       force_break, is_pt_unreclaimable);
+ 		return nr;
+ 	}
+ 	zap_present_folio_ptes(tlb, vma, folio, page, pte, ptent, 1, addr,
+-			       details, rss, force_flush, force_break);
++			       details, rss, force_flush, force_break,
++			       is_pt_unreclaimable);
+ 	return 1;
  }
  
- static __always_inline void zap_present_folio_ptes(struct mmu_gather *tlb,
+@@ -1622,6 +1626,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 		pte_t ptent = ptep_get(pte);
+ 		struct folio *folio;
+ 		struct page *page;
++		bool is_pt_unreclaimable = false;
+ 		int max_nr;
+ 
+ 		nr = 1;
+@@ -1635,7 +1640,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 			max_nr = (end - addr) / PAGE_SIZE;
+ 			nr = zap_present_ptes(tlb, vma, pte, ptent, max_nr,
+ 					      addr, details, rss, &force_flush,
+-					      &force_break);
++					      &force_break, &is_pt_unreclaimable);
+ 			if (unlikely(force_break)) {
+ 				addr += nr * PAGE_SIZE;
+ 				break;
 -- 
 2.20.1
 
