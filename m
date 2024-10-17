@@ -1,86 +1,144 @@
-Return-Path: <linux-kernel+bounces-369153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006929A197F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C39B89A1982
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B291C21809
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0107E1C21A58
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C74A13B29B;
-	Thu, 17 Oct 2024 03:51:10 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A447C13B5A1;
+	Thu, 17 Oct 2024 03:51:53 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3862E61FD8
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F022D05E;
+	Thu, 17 Oct 2024 03:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729137070; cv=none; b=G34SU4dBPCTWLkdYDRpSG0KLNt7l/uZaGxA+1Hxe+vwHHAPNsDGJFZYaYQvnDzuw74/IEtE1RbCfLoIVwcEvXz8OeCR4lZTdHryaWY9tEhTeaHASW8eafBi83YdegvEvLf4nnj77jo8AEPPCaxtJNCNLMKGjPAxM1Q+HzjgWhMw=
+	t=1729137113; cv=none; b=CCxvFb0j3vzK1BKxaszOc5a4wRD2gwrEaG7s6Pm7lupkzCcO80Te+uQ2LDhCWRspJ0Niaz2fYKd0slx1wePn5nsLCfTZVdugFGmztOqk6FJaQPbGKcbgaUG4U7ERjgif2H8iQaJ23wlPovEjytbpNzJ1d/4UhNAK+o7Tsy+xQ2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729137070; c=relaxed/simple;
-	bh=5sgLZJpPyyKTWiSQH/3D7hHhK7wGKyyZVpJjar0izCI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BCGvR6gUruW1ojDvQ29DD5zG/Tdpuzm3PNbvtvQ+bnZqLEHL2cOs6QjXfutQ7R7g6OQonbt1MNgP2c7STflfUo4vmT73452plFelrjKXoW6wSzSo3aVznH9Af1OqgjfBVrCWuA6qYv0RjW8EMWtlcUAEZqUnaFWVDGxZ9dFOeUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b2aee1a3so5416965ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 20:51:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729137066; x=1729741866;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z2o1r8g3kxMJj+oyImbuuMcrd3JNRmjseZBIKax5nbE=;
-        b=RMECZbIZkT6kQpTG/bv5/x0+s07sbN92f2LSdxqrwUJblExXAY28IPfoaiPi7wFNHf
-         BcqxfdVCYKlVq4GKcHI4mhJt8k9ziHD0Av5IZbxgab6cUyWUysonUXjsVUdlu2T8xhv1
-         3xTctRfaRJrbzUwNAI0NlEPdisQPNammdemnTC0qK9XqeG9CTV/aeN2s8JjZupPnvZl/
-         n+ZRs94G0/t2QwuhlJkg5cqVhXLGveJVtY2GLJCdtbuEWcf6QZxMJukoRXl5o4a35vW0
-         KAi/2dB2qy5gdA9ueBi58B3qbfZKbr/cng4LsTG9ldE4KAaaszLXuWO/lYkrU/AbyYc8
-         /cPg==
-X-Gm-Message-State: AOJu0YxtIi4Z6TMgjKLCRA1QrYqXtB47doP6RuXMbX/Py70vXFk6ALIq
-	JUEL/z3ZZl9VU6AU+rBVp79cA9IpjWYRn62J4XlKkQef5pTEi/NvAMkGEGNuG5NbEaSxcaGaTiY
-	u0WXNFZAJOjP0Mn+sj29idHAQtmOLOoVBl29+iFpIPEli1CJqzmxNlwQ=
-X-Google-Smtp-Source: AGHT+IFrsWEpbAWxrJDcxJBhQCGCH2IlUMnQdpZahH205SVL4D8DubWZPexWpdBsl+xnawmS+PTUtaEn9QODKkLnSQYf21uE0roi
+	s=arc-20240116; t=1729137113; c=relaxed/simple;
+	bh=KBSmgoKWd/GgRU0uLa3i0Dqsp9OYyeb7JKqvvVU6VAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Btgt+SU9GPgJZyil0hw7evkZxcRbW+6ZkXRNlqOq4kkg42qKfSUmuIRzpB9HdqWCd9x9fVLZvCoFUJBoMbD+aiEiPdkCV99tgTflZCsMrqwK2qhYhfK2NcmJwpQm8SsWlJUy89N7yBDtG2rchaTm363HQ8cK2l1DxDkPvXViOy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XTYlC605hz1j9v8;
+	Thu, 17 Oct 2024 11:50:31 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id C47291A0188;
+	Thu, 17 Oct 2024 11:51:46 +0800 (CST)
+Received: from [10.174.179.113] (10.174.179.113) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 17 Oct 2024 11:51:45 +0800
+Message-ID: <4d80b2fd-17d8-a7bd-0e80-7d33c9764810@huawei.com>
+Date: Thu, 17 Oct 2024 11:51:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:160a:b0:82a:a4e7:5544 with SMTP id
- ca18e2360f4ac-83792ef2fa9mr2076269539f.9.1729137065792; Wed, 16 Oct 2024
- 20:51:05 -0700 (PDT)
-Date: Wed, 16 Oct 2024 20:51:05 -0700
-In-Reply-To: <20241017031934.156050-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671089a9.050a0220.d9b66.017a.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_fiemap
-From: syzbot <syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [Intel-wired-lan] [PATCH net] igc: Fix passing 0 to ERR_PTR in
+ igc_xdp_run_prog()
+Content-Language: en-US
+To: Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>
+CC: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<hawk@kernel.org>, <john.fastabend@gmail.com>, <vedang.patel@intel.com>,
+	<andre.guedes@intel.com>, <maciej.fijalkowski@intel.com>,
+	<jithu.joseph@intel.com>, <intel-wired-lan@lists.osuosl.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>
+References: <20241016105310.3500279-1-yuehaibing@huawei.com>
+ <20241016185333.GL2162@kernel.org>
+ <8e4ef7f6-1d7d-45dc-b26e-4d9bc37269de@intel.com>
+ <f8bcde08-b526-4b2e-8098-88402107c8ee@intel.com>
+From: Yue Haibing <yuehaibing@huawei.com>
+In-Reply-To: <f8bcde08-b526-4b2e-8098-88402107c8ee@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Hello,
+On 2024/10/17 7:12, Jacob Keller wrote:
+> 
+> 
+> On 10/16/2024 4:06 PM, Jacob Keller wrote:
+>>
+>>
+>> On 10/16/2024 11:53 AM, Simon Horman wrote:
+>>> On Wed, Oct 16, 2024 at 06:53:10PM +0800, Yue Haibing wrote:
+>>>> Return NULL instead of passing to ERR_PTR while res is IGC_XDP_PASS,
+>>>> which is zero, this fix smatch warnings:
+>>>> drivers/net/ethernet/intel/igc/igc_main.c:2533
+>>>>  igc_xdp_run_prog() warn: passing zero to 'ERR_PTR'
+>>>>
+>>>> Fixes: 26575105d6ed ("igc: Add initial XDP support")
+>>>> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+>>>> ---
+>>>>  drivers/net/ethernet/intel/igc/igc_main.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+>>>> index 6e70bca15db1..c3d6e20c0be0 100644
+>>>> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+>>>> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+>>>> @@ -2530,7 +2530,7 @@ static struct sk_buff *igc_xdp_run_prog(struct igc_adapter *adapter,
+>>>>  	res = __igc_xdp_run_prog(adapter, prog, xdp);
+>>>>  
+>>>>  out:
+>>>> -	return ERR_PTR(-res);
+>>>> +	return res ? ERR_PTR(-res) : NULL;
+>>>
+>>> I think this is what PTR_ERR_OR_ZERO() is for.
+>>
+>> Not quite. PTR_ERR_OR_ZERO is intended for the case where you are
+>> extracting an error from a pointer. This is converting an error into a
+>> pointer.
+>>
+>> I am not sure what is really expected here. If res is zero, shouldn't we
+>> be returning an skb pointer and not NULL?
+>>
+>> Why does igc_xdp_run_prog even return a sk_buff pointer at all? It never
+>> actually returns an skb...
+>>
+>> This feels like the wrong fix entirely.
+>>
+>> __igc_xdp_run_prog returns a custom value for the action, between
+>> IGC_XDP_PASS, IGC_XDP_TX, IGC_XDP_REDIRECT, or IGC_XDP_CONSUMED.
+>>
+>> This function is called by igc_xdp_run_prog which converts this to a
+>> negative error code with the sk_buff pointer type.
+>>
+>> All so that we can assign a value to the skb pointer in
+>> ice_clean_rx_irq, and check it with IS_ERR
+>>
+>> I don't like this fix, I think we could drop the igc_xdp_run_prog
+>> wrapper, call __igc_xdp_run_prog directly and check its return value
+>> instead of this method of using an error pointer.
+> 
+> Indeed, this SKB error stuff was added by 26575105d6ed ("igc: Add
+> initial XDP support") which claims to be aligning with other Intel drivers.
+> 
+> But the other Intel drivers just have a function that returns the xdp
+> result and checks it directly.
+>Thanks for review，maybe can fix this as commit 12738ac4754e ("i40e: Fix sparse errors in i40e_txrx.c")?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com
-Tested-by: syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         c964ced7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=135ab887980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca440b457d21568f8021
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1383dc40580000
-
-Note: testing is done by a robot and is best-effort only.
+> Perhaps this is due to the way that the igc driver shares rings between
+> XDP and the regular path?
+> 
+> Its not clear to me, but I think this fix is not what I would do.
+> 
+> .
 
