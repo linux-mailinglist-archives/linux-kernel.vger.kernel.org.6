@@ -1,173 +1,156 @@
-Return-Path: <linux-kernel+bounces-369617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD509A1FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 167D09A1FA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4832283369
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCFC9282263
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42141DA60F;
-	Thu, 17 Oct 2024 10:21:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037251DA2FD;
+	Thu, 17 Oct 2024 10:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="cpLgd7qz"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A406B1D9688
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2395879FD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729160491; cv=none; b=flEwlnWXbKGQOwglCE92waqSrFTZqCM7qFe6uNu95X5x7/Eh8ijBuDiiqexfStP9hGqwH6dn98MICereNUb8RsZmcaCXZSqIFu6Q9dzeq/Ae0cSXN/53oMmzNfkSB/kc/Z/TErHJ3wQ7Dw/GQnOYKifS5LG2ltMslM9nUiwu/Pw=
+	t=1729160592; cv=none; b=cP3SzRIeLqcF3X5lGywRgHDEKFLEA1Rbp3f63sm8aAKTtZ+osGtwOu1oHDjzJ0wbrMyPqQF0hfbT7Sn+sVHwa5Hq8WWGw2EqdpkHVQxQ85gZ1dEIsLfBaNpgO++YHMSXBUvLc5aEQqJPoI/6k9EnLA1uGSUlc9oH8xJyQgiWuds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729160491; c=relaxed/simple;
-	bh=+MgRCFw9CRBVNuLmPgQwbgWY4iaSOd6df9Y5vpQXJtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WjivPUuGrZjinCZ8xJn6zpUkz6dYr/I9DqEp7PvZZX1hpawqUJ12W+4jHORuD09R3+HFiR+rLaHOs8XMEb1d8fk3tNyhlDd9i33p8DB/CCDyLhHKLIU4uU7EBl7+EfrO1xcgtYM9w+lmDf/0rarWPQjgxxgZc2PROd06gHXVWtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1Nd2-00043j-Kv; Thu, 17 Oct 2024 12:21:12 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1Nd0-002WRC-W2; Thu, 17 Oct 2024 12:21:11 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	s=arc-20240116; t=1729160592; c=relaxed/simple;
+	bh=bbr35+9isQ8wofNh6ZDkD37Ju3+OeAOdl24bZU3TErQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gOM+mU9XFYO+WN2FQ/nq/2/kdgWU3RyK6dQTxLH/zsIbq8E0kcrp2p/h4/Ts9tVKrTPdTXk9g+jxOFsSrxt1c7caKy/EWn6y4fErcvtuXuXxAE9dMdlbvlX/sJVfOog1ZHUgGfZp2ePRrgsoMi3tyJ7Ih9A0URwM1ENu1sHxK68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=cpLgd7qz; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A3C39355053;
-	Thu, 17 Oct 2024 10:21:10 +0000 (UTC)
-Date: Thu, 17 Oct 2024 12:21:10 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: RE: RE: [PATCH net-next 07/13] net: fec: fec_probe(): update
- quirk: bring IRQs in correct order
-Message-ID: <20241017-manipulative-dove-of-renovation-88d00b-mkl@pengutronix.de>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
- <20241016-fec-cleanups-v1-7-de783bd15e6a@pengutronix.de>
- <PAXPR04MB85103D3E433F3FBE5DDFA15C88472@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20241017-affable-impartial-rhino-a422ec-mkl@pengutronix.de>
- <PAXPR04MB8510149D0E8AC39E048941F988472@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D94323F5E4
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1729160578;
+	bh=kCvd0dMyZkfoCLYD8bJ+IFh9dnrt8COhHjyrZcYmQRk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=cpLgd7qz0rhO6hyEYHdTAPNTNJF1+iXU1pBQp2i1MABrxo4yYqrwqhodCY4r25HUV
+	 4+M3VHOPzwEEyGhMInDncxHEikRVDDqv2W0tm5SN8D6a3KfOIDJxdtpVa2xqpCK84c
+	 VAfOLwx2+yQMkKFpFHpkVZWAGsyi1hG1tU03vAmB5qCfdxciA9k5OoflKGOM9mTUj9
+	 2Wj5DBDpT5WxBQV+cva8XtL+UjuDnSpzRtPEN2AsA8YWFXlwPKFDAT0XXRoTfWyTKX
+	 qIe4dlAaZajC+UAhPEBEJh8jHhYWN0LP9JXPqTHeSxiTByZzyXMA94TWi8NUWjDB77
+	 yFc6Ta4UuiVSQ==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a99fa9f0c25so42592566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:22:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729160577; x=1729765377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kCvd0dMyZkfoCLYD8bJ+IFh9dnrt8COhHjyrZcYmQRk=;
+        b=o1QQRvmLK4MIT7npv/hnUJIAYSe3NwQOZ4e4jSscsqFlIuFWO1CkiwKLUbOpCSiJpL
+         Uf+QtGvLTKcdo4LU1+Ar+QiuJ3j0rDjfix7ub1S+jVJxE54QYIdeI9RDLM8vFMW+DZwi
+         PId29eJLL3tHraOKjDWROmR2tvGv77QAuO8LhX095ykcU/BSYmB9TdqhwIdLemsR/LLo
+         0RAurCj6Qt3hCiXR1XAqaWS1bT7buKEvPq8P0JpTNOinvAuDcW2Z7Lmw9+hcgoj+3TAv
+         Y1eWYOhTWz2wKbaDr8EkH6sNvrnxuLfw32x8PdfsjPjN/MkrmQFgwWj7fJ3uyAYc4+8J
+         Vicw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+o9XpMIBY6lV9CSrPTuFvVjFXGodomZ7mkCf//FXnDkixNFOLGgjNY6qz8CXGs8CaQZpBAL7wA0/tTZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSzHYThfc7uI1TjW8OaoYTNOo4FvFvK+Qnhb+Uwx23aqKCFMh9
+	9RRFIABsRXw2WvnzW3EuCiFtlO/EJg5zFiSaEUUw7pZy17VviX5mk0Z/YbF7GKMIH9Bt59lYswt
+	60U46sfbPvS/EoNvAzM5w+iMqDm1pSODmyRmOmtcolBQOLCXkJT4rz+CZ77ErS1BNPH3AfPeU6N
+	2pYQ==
+X-Received: by 2002:a17:907:1c82:b0:a9a:55dd:4d52 with SMTP id a640c23a62f3a-a9a55dd4dfdmr149778166b.63.1729160577499;
+        Thu, 17 Oct 2024 03:22:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGM6S4XX/EPCEoCC/ZA+2uXsarMGgV9RZEl4NFKueBEeHiFveaPmhxtEq4aAeIRbLvDffWUYw==
+X-Received: by 2002:a17:907:1c82:b0:a9a:55dd:4d52 with SMTP id a640c23a62f3a-a9a55dd4dfdmr149774066b.63.1729160576975;
+        Thu, 17 Oct 2024 03:22:56 -0700 (PDT)
+Received: from amikhalitsyn.lan ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2981702bsm280022366b.112.2024.10.17.03.22.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 03:22:56 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: mingo@redhat.com
+Cc: James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Gavin Shan <gshan@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Simon Deziel <simon.deziel@canonical.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/cpuacct: show only present CPUs to userspace
+Date: Thu, 17 Oct 2024 12:21:38 +0200
+Message-Id: <20241017102138.92504-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="if6uf6fuhmiren6s"
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510149D0E8AC39E048941F988472@PAXPR04MB8510.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+After commit b0c69e1214bc ("drivers: base: Use present CPUs in GENERIC_CPU_DEVICES")
+changed which CPUs are shown in /sys/devices/system/cpu/ (only "present" ones)
+it also makes sense to change cpuacct cgroupv1 code not to report CPUs
+which are not present in the system as it confuses userspace.
+Let's make it consistent.
 
---if6uf6fuhmiren6s
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A configuration when #(present CPUs) < #(possible CPUs) is easy to get with:
+qemu-system-x86_64
+	-smp 3,maxcpus=12 \
+	...
 
-On 17.10.2024 07:43:55, Wei Fang wrote:
-> > > > Subject: [PATCH net-next 07/13] net: fec: fec_probe(): update quirk=
-: bring
-> > IRQs
-> > > > in correct order
-> > > >
-> > > > With i.MX8MQ and compatible SoCs, the order of the IRQs in the devi=
-ce
-> > > > tree is not optimal. The driver expects the first three IRQs to mat=
-ch
-> > > > their corresponding queue, while the last (fourth) IRQ is used for =
-the
-> > > > PPS:
-> > > >
-> > > > - 1st IRQ: "int0": queue0 + other IRQs
-> > > > - 2nd IRQ: "int1": queue1
-> > > > - 3rd IRQ: "int2": queue2
-> > > > - 4th IRQ: "pps": pps
-> > > >
-> > > > However, the i.MX8MQ and compatible SoCs do not use the
-> > > > "interrupt-names" property and specify the IRQs in the wrong order:
-> > > >
-> > > > - 1st IRQ: queue1
-> > > > - 2nd IRQ: queue2
-> > > > - 3rd IRQ: queue0 + other IRQs
-> > > > - 4th IRQ: pps
-> > > >
-> > > > First rename the quirk from FEC_QUIRK_WAKEUP_FROM_INT2 to
-> > > > FEC_QUIRK_INT2_IS_MAIN_IRQ, to better reflect it's functionality.
-> > > >
-> > > > If the FEC_QUIRK_INT2_IS_MAIN_IRQ quirk is active, put the IRQs back
-> > > > in the correct order, this is done in fec_probe().
-> > > >
-> > >
-> > > I think FEC_QUIRK_INT2_IS_MAIN_IRQ or FEC_QUIRK_WAKEUP_FROM_INT2
-> > > is *NO* needed anymore. Actually, INT2 is also the main IRQ for i.MX8=
-QM
-> > and
-> > > its compatible SoCs, but i.MX8QM uses a different solution. I don't k=
-now
-> > why
-> > > there are two different ways of doing it, as I don't know the history=
-=2E But you
-> > can
-> > > refer to the solution of i.MX8QM, which I think is more suitable.
-> > >
-> > > See arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi, the IRQ 258 is
-> > > placed first.
-> >=20
-> > Yes, that is IMHO the correct description of the IP core, but the
-> > i.MX8M/N/Q DTS have the wrong order of IRQs. And for compatibility
-> > reasons (fixed DTS with old driver) it's IMHO not possible to change the
-> > DTS.
-> >=20
->=20
-> I don't think it is a correct behavior for old drivers to use new DTBs or=
- new
-> drivers to use old DTBs. Maybe you are correct, Frank also asked the same
-> question, let's see how Frank responded.
+Cc: James Morse <james.morse@arm.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Gavin Shan <gshan@redhat.com>
+Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Reported-by: Simon Deziel <simon.deziel@canonical.com>
+Closes: https://github.com/canonical/lxd/issues/13324
+Co-developed-by: Simon Deziel <simon.deziel@canonical.com>
+Signed-off-by: Simon Deziel <simon.deziel@canonical.com>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ kernel/sched/cpuacct.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-DTBs should be considered stable ABI.
+diff --git a/kernel/sched/cpuacct.c b/kernel/sched/cpuacct.c
+index 0de9dda09949..0f07fbfdb20e 100644
+--- a/kernel/sched/cpuacct.c
++++ b/kernel/sched/cpuacct.c
+@@ -213,7 +213,7 @@ static int __cpuacct_percpu_seq_show(struct seq_file *m,
+ 	u64 percpu;
+ 	int i;
+ 
+-	for_each_possible_cpu(i) {
++	for_each_present_cpu(i) {
+ 		percpu = cpuacct_cpuusage_read(ca, i, index);
+ 		seq_printf(m, "%llu ", (unsigned long long) percpu);
+ 	}
+@@ -247,7 +247,7 @@ static int cpuacct_all_seq_show(struct seq_file *m, void *V)
+ 		seq_printf(m, " %s", cpuacct_stat_desc[index]);
+ 	seq_puts(m, "\n");
+ 
+-	for_each_possible_cpu(cpu) {
++	for_each_present_cpu(cpu) {
+ 		seq_printf(m, "%d", cpu);
+ 		for (index = 0; index < CPUACCT_STAT_NSTATS; index++)
+ 			seq_printf(m, " %llu",
+-- 
+2.34.1
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---if6uf6fuhmiren6s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcQ5RMACgkQKDiiPnot
-vG+R0Qf/dzxXVRvh+Z9JPr2Jdy5B8+osttD+2QGvftI+k1uNHix9NpNYeAK+sngy
-wOxHzaLOwFbKujUDkS+DkmRNuwS1V2Tdq2vvNX+lmV+ZYF3QMHijcc+yrW+gN91X
-R1WNoO3k/VyGOWfQhAHlZAXz97lqSB95CJC1CjlyDjxrs9n0kxft2L8SSCs3Wgyp
-siN/4e5zwil2CGggMsipL6gmtv6UnloCQSWRBRZgy915QuiON+RKhF3fmJKX1+Zi
-FvYJ8yWCCEMZHp/lNr1xrstYq6ciw4vLImp8NqVS5wEx8hzb01HXkKemVyuSstPa
-/DsvlxWa60Ri1dcosipadLBLp2j1Qw==
-=0KhN
------END PGP SIGNATURE-----
-
---if6uf6fuhmiren6s--
 
