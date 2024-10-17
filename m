@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-369721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70A59A21AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647FD9A21B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150DA1C21EB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:59:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201682826CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEBD1DCB0D;
-	Thu, 17 Oct 2024 11:59:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BEE1D365B;
-	Thu, 17 Oct 2024 11:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC541DD0DB;
+	Thu, 17 Oct 2024 12:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4w6yPT3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EE91D88D7;
+	Thu, 17 Oct 2024 12:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729166354; cv=none; b=AMe65iePHPChx+btBsZEClJLVEPWjmfWCgMo12V75skkbRhxBPHCPdvpPUOQmikpW2KeoWxXCNqwirWQnLMtr+KkypmlUmrqR1OlxNeNQxQbmWjujQ6etg0x0MvScXGwJT2WtU4/UjrhO54n1DYNsZS1NHZyv3KqGlvLftE0AXE=
+	t=1729166460; cv=none; b=A+OgY5BbPCPei/duHbF9QwGE150QiPVPt8BFMQtZlpU28e41opLqpgw//mrBf7nUj9WT3jG5Rb/RNDNLUm1CA5WdeZ7TmrQSBsbekT+qkuzs/LKbI/5nZ2dezXpKp99xvtU9t2ziqOgHTBSjyTGqgfQmUy/xIyD6vw+K5u2nVFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729166354; c=relaxed/simple;
-	bh=KVx90sJAya4fJeJB1T9VQH8syX+5Y2Dms8kUeU21dyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jtOsydJ6B+J5yvuA21fQiALXNdhTEYoU5u2+6NybyJU6j/L6yzDcXSQTKhugrHMBVop+zlUcoEkrApbCtljKpTRb7BKImMa8mp2XdjZiSHOKs7m4DxMhsRbEKPQuBSMQMNhom+4ufq06Q7rwgU8ORLwEcb8TnixW1+z7jydEKpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1DF1FEC;
-	Thu, 17 Oct 2024 04:59:39 -0700 (PDT)
-Received: from [10.57.22.188] (unknown [10.57.22.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5CE593F71E;
-	Thu, 17 Oct 2024 04:59:07 -0700 (PDT)
-Message-ID: <710c066e-75fa-4f12-b27a-c8948d02bb4b@arm.com>
-Date: Thu, 17 Oct 2024 12:59:06 +0100
+	s=arc-20240116; t=1729166460; c=relaxed/simple;
+	bh=Lq5bsJFDUWvad5T0uiQGeRMenMI6v23zITJKBVgyHDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q1kY8zbSYSNOCwBCemluvFWTmAjJBvweeS0Qzw5W0DDkc4+/wF/XlgUUwv+Rk2wnODlRGdRT8dW+b8MTya71JYvHX4QYvnlNReL1z325FQJ7UxyBz8jaKt2+g1RgDEWFE1/4h8+OQsg1223kGTN90rZeLqGaMfegQNV12XAYtLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4w6yPT3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEBB9C4CEC3;
+	Thu, 17 Oct 2024 12:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729166459;
+	bh=Lq5bsJFDUWvad5T0uiQGeRMenMI6v23zITJKBVgyHDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P4w6yPT3yJD/bsJd/ZkvhRqMyhio2cBqy5iP0mNDnLcuy2s22iQi/Tmwelva2R81P
+	 +mqjVdBPnshDXO+v6sPzaUNvqJYaPTFSLaKyWlvX+PPJ00zg02CRXwbbqUDi29jk8N
+	 UxUmAXKpRDKnEBzlNxoCH+qpI8kFlgIAMje0vnrbuFAKLbBDW2ZZSHaBmn2q9EmwRq
+	 MPkhUH49Tadsbt7btJ8B18vs2yJ8g5lHcg/CWUErSndyCLMZZBfbhGo0AcOWgRsX0c
+	 aCDlhw+x5sYrlUPX7xnidxjgMcZY2mnnnFPPh3bFibUcsIZEC90AxhnP9qA+sl8uHl
+	 jJKaRl60UiHyg==
+Date: Thu, 17 Oct 2024 13:00:53 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Johan Hovold <johan@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
+Message-ID: <a14e5488-d0e8-4f04-b419-0b4c566219bf@sirena.org.uk>
+References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
+ <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
+ <ZweftESPrJNEsqGE@hovoldconsulting.com>
+ <Zwj539cN2DJ7nd3A@linaro.org>
+ <Zw5fzNZ_xCwPyw4G@hovoldconsulting.com>
+ <Zw_dE1rQ-Ljsh-sY@linaro.org>
+ <CAMRc=MfUEfKHkAVvtGODxvJ-BdL+kX7uDgW+1y4QW3Kc5mpX+w@mail.gmail.com>
+ <cde15d83-6059-47bc-94d6-2a88ba95e5ae@sirena.org.uk>
+ <CAMRc=MddPDFaw6vYo1FzXHbUsLyr2QKT6oy2i68ZCdJdFWCJww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 19/43] KVM: arm64: Handle realm MMIO emulation
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-20-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241004152804.72508-20-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 04/10/2024 16:27, Steven Price wrote:
-> MMIO emulation for a realm cannot be done directly with the VM's
-> registers as they are protected from the host. However, for emulatable
-> data aborts, the RMM uses GPRS[0] to provide the read/written value.
-> We can transfer this from/to the equivalent VCPU's register entry and
-> then depend on the generic MMIO handling code in KVM.
-> 
-> For a MMIO read, the value is placed in the shared RecExit structure
-> during kvm_handle_mmio_return() rather than in the VCPU's register
-> entry.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> v3: Adapt to previous patch changes
-> ---
->   arch/arm64/kvm/mmio.c     | 10 +++++++++-
->   arch/arm64/kvm/rme-exit.c |  6 ++++++
->   2 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kvm/mmio.c b/arch/arm64/kvm/mmio.c
-> index cd6b7b83e2c3..66a838b3776a 100644
-> --- a/arch/arm64/kvm/mmio.c
-> +++ b/arch/arm64/kvm/mmio.c
-> @@ -6,6 +6,7 @@
->   
->   #include <linux/kvm_host.h>
->   #include <asm/kvm_emulate.h>
-> +#include <asm/rmi_smc.h>
->   #include <trace/events/kvm.h>
->   
->   #include "trace.h"
-> @@ -90,6 +91,9 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu)
->   
->   	vcpu->mmio_needed = 0;
->   
-> +	if (vcpu_is_rec(vcpu))
-> +		vcpu->arch.rec.run->enter.flags |= REC_ENTER_EMULATED_MMIO;
-> +
->   	if (!kvm_vcpu_dabt_iswrite(vcpu)) {
->   		struct kvm_run *run = vcpu->run;
-
-Should we additionally handle injecting an abort if there was no valid
-syndrome information ? Like we do for protected VMs and normal VMs when
-userspace doesn't offer to help ?
-
->   
-> @@ -108,7 +112,11 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu)
->   		trace_kvm_mmio(KVM_TRACE_MMIO_READ, len, run->mmio.phys_addr,
->   			       &data);
->   		data = vcpu_data_host_to_guest(vcpu, data, len);
-> -		vcpu_set_reg(vcpu, kvm_vcpu_dabt_get_rd(vcpu), data);
-> +
-> +		if (vcpu_is_rec(vcpu))
-> +			vcpu->arch.rec.run->enter.gprs[0] = data;
-
-I wonder if we can skip this here and we can sync the "enter.gprs[]"
-from vcpu state at rec_enter, similar to what we do for PSCI/HOST call
-exits. Also the ESR_ELx_SRT is always x0 for a Realm exit. So, we should
-always find the enter.gpr[0] in vcpu.regs[0] at rec_enter.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wDvrxtDPKSAoYDD5"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MddPDFaw6vYo1FzXHbUsLyr2QKT6oy2i68ZCdJdFWCJww@mail.gmail.com>
+X-Cookie: One picture is worth 128K words.
 
 
-Suzuki
+--wDvrxtDPKSAoYDD5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Oct 17, 2024 at 01:28:00PM +0200, Bartosz Golaszewski wrote:
+> On Thu, Oct 17, 2024 at 12:59=E2=80=AFPM Mark Brown <broonie@kernel.org> =
+wrote:
 
-> +		else
-> +			vcpu_set_reg(vcpu, kvm_vcpu_dabt_get_rd(vcpu), data);
->   	}
->   
->   	/*
-> diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
-> index e96ea308212c..1ddbff123149 100644
-> --- a/arch/arm64/kvm/rme-exit.c
-> +++ b/arch/arm64/kvm/rme-exit.c
-> @@ -25,6 +25,12 @@ static int rec_exit_reason_notimpl(struct kvm_vcpu *vcpu)
->   
->   static int rec_exit_sync_dabt(struct kvm_vcpu *vcpu)
->   {
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +
-> +	if (kvm_vcpu_dabt_iswrite(vcpu) && kvm_vcpu_dabt_isvalid(vcpu))
-> +		vcpu_set_reg(vcpu, kvm_vcpu_dabt_get_rd(vcpu),
-> +			     rec->run->exit.gprs[0]);
-> +
->   	return kvm_handle_guest_abort(vcpu);
->   }
->   
+> > Fix your driver to request the supplies that actually exist on the
+> > device rather than just some random supplies you hope will work?
 
+> Let me rephrase: the device has this supply but on this particular
+> board nothing is connected to it. It does sound to me like an example
+> of an "optional" supply. Do you have anything against making it
+> possible to define optional supplies when using the bulk regulator
+> APIs?
+
+Oh, right - please if asking questions ask a complete question rather
+than having a long email thread and adding an "any thoughts" at the end
+which makes it unclear what the actual question is.  In general the
+expectation for optional supplies is that you will need to do something
+different depending on if the supply is there, that will tend to mean
+that it's fairly natural to do a separate request for it as well.
+What's the concrete use case here?
+
+--wDvrxtDPKSAoYDD5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcQ/HUACgkQJNaLcl1U
+h9AlUgf/a+6QvMECSleIoCzj/+SOHAB3hBaVVWT7nAhgXOlczOug9t4lcpUBurlw
+ULMhgu0MNz8bHMYHb22hnKBbfE+tIlGo8l3yb/hK3zszHfJiRwj68puiLs9n0ltK
+XPMvUTPZunyFIZHL+HgdQcY1AynelXawMvfZRIAPoz0KfEOy1EEoleVUoAcdF0Nk
+R2ppe32gbm9wzWAjFELRc+E/TWC/r457KYaNz+k75iEhrWmG3+CyjG+3FYlfVgXs
+zhndkfjHKHzdM/wApj0Zhrfp+zXTELyzK1TO2qkPRCYa7X06fYjIStPl/aAG9ufm
+V1mjvh7VtXFDVO6w9ovkFuCZR/oecg==
+=NiuG
+-----END PGP SIGNATURE-----
+
+--wDvrxtDPKSAoYDD5--
 
