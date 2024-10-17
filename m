@@ -1,196 +1,214 @@
-Return-Path: <linux-kernel+bounces-369379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC1B9A1C95
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:09:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B1D9A1C97
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C72AB23D19
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63DA52849BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75331D434E;
-	Thu, 17 Oct 2024 08:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AC41D6DB5;
+	Thu, 17 Oct 2024 08:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cFY05F3A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Q7jAAyXh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SvL/xg5m";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="S3nudW/7"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7efwpBA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34751C1AB5;
-	Thu, 17 Oct 2024 08:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC11C17DFEF;
+	Thu, 17 Oct 2024 08:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152356; cv=none; b=BLHpEIlpcTpP0Q1UBE0FUFeLt4zgIjBRFd34oWgIIyXnRMXf/lbGbYWYfljrRRasix8DaCrs7HSIAcGCJUgtWJFqFNkFYZKlUwe1pbR8mmNvqI54l0NDlAIftFGMT1M+XAj+e4ksOY0yvcJyh54hUeoXWGg8y3MvH3zoGC/WyvI=
+	t=1729152366; cv=none; b=ayy/nYKOX+O7D/+/9xG0Q3ydLnvYp9WV7HnWi3m2CGnd6InId3zWGq9jlAIHRHbNQO7iF1Lv8tZQWp45Er4VyeIRREPomD5DhdDgqp9D43VCFfeItoxmL8m/UuouTN6vR1xtUJP7bDJpB2yykJuh86q1q+7XALtBC5UndEMKwpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152356; c=relaxed/simple;
-	bh=GXJMVyFELub+vdQLJcy+oGUeVVcTIu+YTDM23hkd3CE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nd2rTBzstFnW771BsIFmEDeB7Letk4SvunxJaDweUsDgAT+8ZxqZFzHCIwkLO32vco/cpmT82/fDz7hFaQLEwyVDO37Df1kLVn3fupMR7y0j9W+LMjwoh1yMJx4+6cYG1uxw6gZZme6/S94evgAVQfOIAo8rRWYzG4n4cGbpzFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cFY05F3A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Q7jAAyXh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SvL/xg5m; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=S3nudW/7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EBEDD1F88F;
-	Thu, 17 Oct 2024 08:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729152351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X8FGyRrg5NXMlwUjlKAiy/xJZRw8FDMkvWHXVincjfY=;
-	b=cFY05F3AK6V0Ppa7cc9hMCsGr0F5FB6kl2qbtkZNaKtAueLJU8fyN5tHaYk+LRB813DHK3
-	PvGQKdKiGW3xkTxh6Kv6/+R+jvj/wuYT8obuBbUOmSev8sxSvEG7COj80A/tbT7UD5a1Ti
-	wCzd+VDHQmSg6HLagpainiTqJEljE5E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729152351;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X8FGyRrg5NXMlwUjlKAiy/xJZRw8FDMkvWHXVincjfY=;
-	b=Q7jAAyXhJYB6Qa/4DRorKsSiwi/66ya1zbFHf0cRs3xauMO3Hz8t66TWjDssuIVyCaBoA3
-	gDonh2PnqEP68ZCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="SvL/xg5m";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="S3nudW/7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729152350; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X8FGyRrg5NXMlwUjlKAiy/xJZRw8FDMkvWHXVincjfY=;
-	b=SvL/xg5mHNGm7BSlfjqukmxyPfZokjmuUANQJqZcLEYV0WmO45LzZ6B8P3EH8xYHmSbM2j
-	umhA3TZWOVMlJ0TcJjQqJzqCSlPNxg/6JuuinwaJL0uV9xNqMPonJo2IdZb5RKdH4Ci/iN
-	V9v/ccJ+QR/MdcrW1uU5cfNAHtJyCtE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729152350;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X8FGyRrg5NXMlwUjlKAiy/xJZRw8FDMkvWHXVincjfY=;
-	b=S3nudW/7nQgPORIo8jRWgrQYZvZJHDQHRFHXEXvPcfj/XzOpU1sy1LYGQClLyw45eO94Vy
-	YqPbV/KHl3Ad8sCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F41B013A53;
-	Thu, 17 Oct 2024 08:05:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qu1mM13FEGc4MQAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Thu, 17 Oct 2024 08:05:49 +0000
-Message-ID: <3b3f22e9-2cc8-4c8b-9726-651eb5e75e0d@suse.de>
-Date: Thu, 17 Oct 2024 11:05:45 +0300
+	s=arc-20240116; t=1729152366; c=relaxed/simple;
+	bh=xhFeg8d3ZWTLiCtqZ3vBuXhl5x01QSY54MvjjIElYqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MWMnhnTifL8m1DYoLwnoGlAY8S1VRcpmyqeXboRlP9wigtXmt5POO9/LQq8SBRIVFADjeePvedLb0xhIu9alSVPCBdV0PwASx/VJ9GGLt7PsnIQd0ysACrXeZLwTr8GlP+UN6v8hJiF0zkOkME6V4Wte3KxSGcy0okGWO+L5faY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7efwpBA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9B8C4CEC3;
+	Thu, 17 Oct 2024 08:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729152365;
+	bh=xhFeg8d3ZWTLiCtqZ3vBuXhl5x01QSY54MvjjIElYqk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K7efwpBAPFGbHuhzunUc2QaAoYXQGvgJ0Z4GkctsmDARFen9LFPnov4tOVlsL6ajn
+	 MtuBCbLOr705HX4kPXojoTFNYCmqyUJT3cw4vFplqwBkkjUfQosAWmp/xO3VD0Ayby
+	 Nys6vuOCh5t7WOYofWupYigpR6FTnYZILFI7c0ndK+NtB+b+k7NBvhLniC/rdQ/2dh
+	 P9jlEzaK3mO2wPV6ioY6EO4S9W/Vyz7tJ+/CZ2uvTcmStDfck+WCcO9DA60ZgpMeHL
+	 c8OVaEOWifVvOh8F00/dqILMx00M3QektgYxY5yGXqFZK9R82GHrh9cG5n3qluMTaQ
+	 miQ6c5PJmvWug==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH bpf-next 1/2] bpf: Add open coded version of kmem_cache iterator
+Date: Thu, 17 Oct 2024 01:06:03 -0700
+Message-ID: <20241017080604.541872-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/11] PCI: brcmstb: Avoid turn off of bridge reset
-To: Jim Quinlan <jim2101024@gmail.com>, Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
- linux-pci@vger.kernel.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Thomas Gleixner
- <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20241014130710.413-1-svarbanov@suse.de>
- <20241014130710.413-7-svarbanov@suse.de>
- <CANCKTBt-QAOytUSp6=HcS_SiPD7wSOFdFv2U=4c146uzmdinAQ@mail.gmail.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <CANCKTBt-QAOytUSp6=HcS_SiPD7wSOFdFv2U=4c146uzmdinAQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: EBEDD1F88F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[dt];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com,suse.de];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
 
-Hi Jim,
+Add a new open coded iterator for kmem_cache which can be called from a
+BPF program like below.  It doesn't take any argument and traverses all
+kmem_cache entries.
 
-On 10/16/24 20:17, Jim Quinlan wrote:
-> On Mon, Oct 14, 2024 at 9:07 AM Stanimir Varbanov <svarbanov@suse.de> wrote:
->>
->> On PCIe turn off avoid shutdown of bridge reset,
->> by introducing a quirk flag.
->>
->> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
->> ---
->> v2 -> v3:
->>  - Added more descriptive comment on CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN quirk.
->>
->>  drivers/pci/controller/pcie-brcmstb.c | 17 +++++++++++++++--
->>  1 file changed, 15 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
->> index b76c16287f37..757a1646d53c 100644
->> --- a/drivers/pci/controller/pcie-brcmstb.c
->> +++ b/drivers/pci/controller/pcie-brcmstb.c
->> @@ -234,10 +234,20 @@ struct inbound_win {
->>         u64 cpu_addr;
->>  };
->>
->> +/*
->> + * The RESCAL block is tied to PCIe controller #1, regardless of the number of
->> + * controllers, and turning off PCIe controller #1 prevents access to the RESCAL
->> + * register blocks, therefore not other controller can access this register
-> 
-> s/no/not/
-> 
-> I assume that the quirks is specific to 2712 as the 7712 does not need
-> this since it only has PCIe1
-> (I'll probably seethis as I read more of your commits).
+  struct kmem_cache *pos;
 
-Yes, the .post_setup op is implemented for 2712 only. Look into next
-patch in the series.
+  bpf_for_each(kmem_cache, pos) {
+      ...
+  }
 
-~Stan
+As it needs to grab slab_mutex, it should be called from sleepable BPF
+programs only.
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ kernel/bpf/helpers.c         |  3 ++
+ kernel/bpf/kmem_cache_iter.c | 87 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 90 insertions(+)
+
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 073e6f04f4d765ff..d1dfa4f335577914 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -3111,6 +3111,9 @@ BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
+ BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
+ BTF_ID_FLAGS(func, bpf_get_kmem_cache)
++BTF_ID_FLAGS(func, bpf_iter_kmem_cache_new, KF_ITER_NEW | KF_SLEEPABLE)
++BTF_ID_FLAGS(func, bpf_iter_kmem_cache_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPABLE)
++BTF_ID_FLAGS(func, bpf_iter_kmem_cache_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+ BTF_KFUNCS_END(common_btf_ids)
+ 
+ static const struct btf_kfunc_id_set common_kfunc_set = {
+diff --git a/kernel/bpf/kmem_cache_iter.c b/kernel/bpf/kmem_cache_iter.c
+index ebc101d7da51b57c..31ddaf452b20a458 100644
+--- a/kernel/bpf/kmem_cache_iter.c
++++ b/kernel/bpf/kmem_cache_iter.c
+@@ -145,6 +145,93 @@ static const struct bpf_iter_seq_info kmem_cache_iter_seq_info = {
+ 	.seq_ops		= &kmem_cache_iter_seq_ops,
+ };
+ 
++/* open-coded version */
++struct bpf_iter_kmem_cache {
++	__u64 __opaque[1];
++} __attribute__((aligned(8)));
++
++struct bpf_iter_kmem_cache_kern {
++	struct kmem_cache *pos;
++} __attribute__((aligned(8)));
++
++__bpf_kfunc_start_defs();
++
++__bpf_kfunc int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it)
++{
++	struct bpf_iter_kmem_cache_kern *kit = (void *)it;
++
++	BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
++	BUILD_BUG_ON(__alignof__(*kit) != __alignof__(*it));
++
++	kit->pos = NULL;
++	return 0;
++}
++
++__bpf_kfunc struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it)
++{
++	struct bpf_iter_kmem_cache_kern *kit = (void *)it;
++	struct kmem_cache *prev = kit->pos;
++	struct kmem_cache *next;
++	bool destroy = false;
++
++	mutex_lock(&slab_mutex);
++
++	if (list_empty(&slab_caches)) {
++		mutex_unlock(&slab_mutex);
++		return NULL;
++	}
++
++	if (prev == NULL)
++		next = list_first_entry(&slab_caches, struct kmem_cache, list);
++	else if (list_last_entry(&slab_caches, struct kmem_cache, list) == prev)
++		next = NULL;
++	else
++		next = list_next_entry(prev, list);
++
++	/* boot_caches have negative refcount, don't touch them */
++	if (next && next->refcount > 0)
++		next->refcount++;
++
++	/* Skip kmem_cache_destroy() for active entries */
++	if (prev && prev->refcount > 1)
++		prev->refcount--;
++	else if (prev && prev->refcount == 1)
++		destroy = true;
++
++	mutex_unlock(&slab_mutex);
++
++	if (destroy)
++		kmem_cache_destroy(prev);
++
++	kit->pos = next;
++	return next;
++}
++
++__bpf_kfunc void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it)
++{
++	struct bpf_iter_kmem_cache_kern *kit = (void *)it;
++	struct kmem_cache *s = kit->pos;
++	bool destroy = false;
++
++	if (s == NULL)
++		return;
++
++	mutex_lock(&slab_mutex);
++
++	/* Skip kmem_cache_destroy() for active entries */
++	if (s->refcount > 1)
++		s->refcount--;
++	else if (s->refcount == 1)
++		destroy = true;
++
++	mutex_unlock(&slab_mutex);
++
++	if (destroy)
++		kmem_cache_destroy(s);
++}
++
++__bpf_kfunc_end_defs();
++
+ static void bpf_iter_kmem_cache_show_fdinfo(const struct bpf_iter_aux_info *aux,
+ 					    struct seq_file *seq)
+ {
+-- 
+2.47.0.rc1.288.g06298d1525-goog
+
 
