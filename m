@@ -1,200 +1,222 @@
-Return-Path: <linux-kernel+bounces-368990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-368989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E451B9A176A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:58:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFEA69A1766
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 02:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D2F1C21B90
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:58:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E99D21C21D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 00:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A963BBD8;
-	Thu, 17 Oct 2024 00:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C5E282FA;
+	Thu, 17 Oct 2024 00:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O0tyEMPU"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="yPxScOC6"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7541D540
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1825DF9EC
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 00:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729126690; cv=none; b=O7lO0yPcerysp0qrP848SgtPS00RQ6Le/ZQanHE4k/JPH+5XSxRVngjD/9KYOeCtd8X+LmLWYWjVyDg6b3wePIF2bwOrhgKxX4SuwGrOClFv3EcU5LMbgvJ9IC6h/4HD63Vf25p3zsauyRl8nL3Eql/mQNkmG1HoTsmYvQG8Ztk=
+	t=1729126687; cv=none; b=DjKHFaUtrcNbLCH7QECSZg9zCvkzjY/mZsex1tAvXsDtPJFZkdg7UORkO3pRnl2BW6wfnsSMit9+OS8ozDFdpC9WMwwauG7alnilTCKlN94usRdCap1qkRUVzojUBzq6pl4KrpjIqig8KuCkM47ejKCySzYgb0b7iAqTPlgx8mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729126690; c=relaxed/simple;
-	bh=CNL+Ig34N68+kHITtnAhpOxpkfoD0PwUku+ZSbvZG6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EP3Tw9Zf2MNxxsSAbz1oZbO031zEZcQTQBb8CNmQV7i/RkcY9f7VmhE0NT6JCN6BgStSxge3Ki7/CTXbjIUdYsSdfEA3iNWqeLchMMZvGJ8EcfOkDPQisGx3hXEvifpqFEP8RfkXI2g/pU8fd9QQYRSAfC8dvIoEgosvfW5uOtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O0tyEMPU; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43124843b04so3791415e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:58:07 -0700 (PDT)
+	s=arc-20240116; t=1729126687; c=relaxed/simple;
+	bh=/4RUeLr+et2XGCUbuzy/59HVyDqinnzOiuWr/pyQ8Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/gaTjChRL1Muek3/atTVEEU4b5rX4ErGmqo1F/m5JxiNhADmKYRX4o7Dcl9L7Uc0xwwZKQgs/2Zs/5H5m+iwcOWLg1q5YypqBPuqPy95Ua1DX907VjjC3B2tVVwXZnPPMkC9tV5s1JNfvmqUyUWV2LRGvcSNHOLOh90BwlfFt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=yPxScOC6; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e585ef0b3so301990b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 17:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729126686; x=1729731486; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Og+1aRqu8Inhthlmi6UocpEoa0BnsYlXmjVa8fHly7A=;
-        b=O0tyEMPUVt3mLH2BpSjJmsgC3VbftKEFA1na5UHhji0I0O8t2TDar7kJGhenK7vdU7
-         7QtMh2ziR08fXvoVYdn69oB0VZF8E8YiCRS7AlWiCQNRjWbUep1b+yuZgBKnCiVZIxtH
-         bEyEG3Aajm7e430T5xrukWu344ZayNVSffrsVVIH1Tz9rJbMuTSinQ4/RfVoW3NytIuG
-         lTZKzqWJrAG2cPf6sjc5NWmw2yCWWwGG1d4VJMa7LUyXvTsWdRI9/CxtcxqMq0qwrncU
-         uJxLlLEdJk+BCQoGx3sZEJlpkCMLWieFZWozp+a70Q7+Yi8LLzrvw2ukJwy6DR2IVISk
-         FKAg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1729126683; x=1729731483; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+xzsoLjsBfwusEklaj61R5Uo3anocunfPETWtAtlm4w=;
+        b=yPxScOC6rOS4h7TflgY7lvn/kzD8BbsbmRCn+eOBDnqxQOHV0uKSuFOWQ2Dwr0vhKL
+         wZa9b87jfQtphzRWokEqMfE4YV2kbbmh3lt9/Jm1f4d8pDeMLn8fXXJmAoA5WNnSU3uw
+         VXub5yPFbYSghs39pcrPzQpJuJ7z7PrainXJZj7qa45d1TAOTLbJgKXpH3yIr1/LMi5Y
+         eS7wcPdRvCgLmfM2Swc28gdFVT8VHGgiIKHDjKRkXL28dqjLnypNi682Dq5WyLYzQcHK
+         u7Q0z0rIMLhkOUSo0RpNEQT5/PIC/XUUHoCwN+dWZZJlRF+q/vZZWWF4p/as0ZXpGdhu
+         wE/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729126686; x=1729731486;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Og+1aRqu8Inhthlmi6UocpEoa0BnsYlXmjVa8fHly7A=;
-        b=O34taPQIxAOYFFBkwkHchV1wRJqotQUokenfwwgWiIcm/flstArEe6TAwvLYXWl3U3
-         OzJkA4ltxfUE1VXBPbjfV+7b1UQ/M/rrTC6x1MjnB7CZzyIjSuE0bHxreeaVayxzlno4
-         JzYk0rwphFa13x2ilwMxoLI/ssTdzCSV0FCVGkaBM7woCy24ss808nxZngtYJgEmIaPi
-         CCHxNbLl7GKiTW2NsOCRvU7LIuQB8GY397XwY+K1gqKGCQGYksBAgPTjlmQPHswC2t/M
-         mupgqv9jMbjcjBaxsaM7vsglxnTdpWLYY6/gf+KqWiiWc2pDgAqWk6E1vasa6Gp02Kvn
-         5pog==
-X-Forwarded-Encrypted: i=1; AJvYcCX6oeyPCcz+o2k/6ijIucf864e1Xxn+OUbbdZxnJpOWoO5np0BmLQZZLU3h+tE9hAQmJqAj89/YwJGRI0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpOLEgICpJxMXcVd+dVnUxn4FBQ/bVaECsR9+KUr+ylrnoLB8n
-	kY9cMu9kAW8b8B9fqi7cTA9IyD9xHU/Qv6WDlhcHwq0IeCNp3x97WXQ03IbJQuc=
-X-Google-Smtp-Source: AGHT+IEr/ZnAkhAbk9S5+rbnfpSpRxrzL7ZprPo9nms4Jz3Tz2ueRbft0PW7G2V5hKrnIXz3jc2DlA==
-X-Received: by 2002:a05:600c:1d0b:b0:42c:ba83:3f01 with SMTP id 5b1f17b1804b1-4311ded4265mr173332155e9.8.1729126685224;
-        Wed, 16 Oct 2024 17:58:05 -0700 (PDT)
-Received: from localhost.localdomain ([2.125.184.148])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa9053csm5657259f8f.59.2024.10.16.17.58.03
+        d=1e100.net; s=20230601; t=1729126683; x=1729731483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+xzsoLjsBfwusEklaj61R5Uo3anocunfPETWtAtlm4w=;
+        b=SclwLtJC2k80DmLNVrDIALBASbqBMBgPVx51h+54yfY3kMF7Rb0P8pZoaGenz4PTNJ
+         17aCEsycfiAThZAFr8SSADqzR7zr60L+b+0t56IYKp5KUpQlcfFdRvwrD/1HZPTCDvdv
+         Gmj5ANE+A2noHfu81Cvl1qOdvkeh3bj2aSaJ5Rw0mkRqsPkvO2rY182tZPLimtb/nsaC
+         VEenZtNipPMlQX5ePTS3i17dEEKD7Vp/wj0earN8hvWchj0N8MrRwONIAnTYADdh6Jl2
+         bb8CDRsswKuUnDihFsDwpclyZo2ZVu/zKKnSUIPamBcMF3ueyM/rRo6ZQyVJZKFHlYtj
+         nQig==
+X-Forwarded-Encrypted: i=1; AJvYcCVYWcyOMnWr2ZFSK64lBXbzWWGw7iW2LUK8I8Z8cqTjEcJSsyWbkaBdME+QqROm42CKPGcnSkVIxWUJ0/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhsFIsRLFHVYQxKfDDZWidZffww0mEqaVvFMlVt8AdEtDrMhJD
+	8360+UXBegqdZ7hcwWObATBL6xsv+P1OgKldj9J4TH3donwSAzVZGtCIR+odqh8=
+X-Google-Smtp-Source: AGHT+IFI5+8g1IH2PEm3dnUF8kWImgREgaaIoBfaxKZbuFwo/Iq7b+tVuBUdCdwUiID1rBG7ZmL/ig==
+X-Received: by 2002:a05:6a00:10c9:b0:71e:5f2c:c019 with SMTP id d2e1a72fcca58-71e5f2ccbadmr19417242b3a.9.1729126683343;
+        Wed, 16 Oct 2024 17:58:03 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e7737178bsm3678688b3a.36.2024.10.16.17.58.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 17:58:04 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: konradybcio@kernel.org,
-	konrad.dybcio@oss.qualcomm.com,
-	andersson@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	krzk+dt@kernel.org
-Cc: robh@kernel.org,
-	conor+dt@kernel.org,
-	srinivas.kandagatla@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+        Wed, 16 Oct 2024 17:58:02 -0700 (PDT)
+Date: Wed, 16 Oct 2024 17:58:00 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] dt-bindings: clock: Add Qualcomm SM6115 LPASS clock controller
-Date: Thu, 17 Oct 2024 01:57:59 +0100
-Message-ID: <20241017005800.1175419-2-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241017005800.1175419-1-alexey.klimov@linaro.org>
-References: <20241017005800.1175419-1-alexey.klimov@linaro.org>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
+	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com,
+	Atish Patra <atishp@atishpatra.org>,
+	Evgenii Stepanov <eugenis@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v4 06/10] riscv: Allow ptrace control of the tagged
+ address ABI
+Message-ID: <ZxBhGJ0-hir0gFor@ghost>
+References: <20240829010151.2813377-1-samuel.holland@sifive.com>
+ <20240829010151.2813377-7-samuel.holland@sifive.com>
+ <ZuOoqTfKs/7G075O@ghost>
+ <2e25597c-6278-4bc6-a0c2-3826841c2ac0@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e25597c-6278-4bc6-a0c2-3826841c2ac0@sifive.com>
 
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Wed, Oct 16, 2024 at 12:50:32PM -0500, Samuel Holland wrote:
+> Hi Charlie,
+> 
+> On 2024-09-12 9:51 PM, Charlie Jenkins wrote:
+> > On Wed, Aug 28, 2024 at 06:01:28PM -0700, Samuel Holland wrote:
+> >> This allows a tracer to control the ABI of the tracee, as on arm64.
+> >>
+> >> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> >> ---
+> > 
+> > Since this code is identical to the arm64 port, could it be extracted
+> > out into the generic ptrace.c and ifdef on either CONFIG_RISCV_ISA_SUPM
+> > or CONFIG_ARM64_TAGGED_ADDR_ABI by adding some generic flag like
+> > CONFIG_HAVE_ARCH_TAGGED_ADDR_ABI?
+> 
+> Yes, it could be factored out, though I don't know if it is worth the overhead
+> for these two trivial functions. I don't see any other code like this outside of
+> arch/.
 
-SM6115 (and its derivatives or similar SoCs) has an LPASS clock
-controller block which provides audio-related resets.
+In my ideal world there is just a generic header somewhere so the only
+"overhead" is creating the generic header. But I will defer to you on
+whether it is worthwhile.
 
-Add bindings for it.
+- Charlie
 
-Cc: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-[alexey.klimov] slightly changed the commit message
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 53 +++++++++++++++++++
- .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
- 2 files changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
- create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
-new file mode 100644
-index 000000000000..58ee84aed073
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sm6115-lpasscc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm LPASS Core & Audio Clock Controller on SM6115
-+
-+maintainers:
-+  - Konrad Dybcio <konrad.dybcio@linaro.org>
-+  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-+
-+description: |
-+  Qualcomm LPASS core and audio clock controllers provide audio-related resets
-+  on SM6115 and its derivatives.
-+
-+  See also::
-+    include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sm6115-lpassaudiocc
-+      - qcom,sm6115-lpasscc
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    lpass_audiocc: clock-controller@a6a9000 {
-+        compatible = "qcom,sm6115-lpassaudiocc";
-+        reg = <0x0a6a9000 0x1000>;
-+        #reset-cells = <1>;
-+    };
-+
-+  - |
-+    lpasscc: clock-controller@a7ec000 {
-+        compatible = "qcom,sm6115-lpasscc";
-+        reg = <0x0a7ec000 0x1000>;
-+        #reset-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,sm6115-lpasscc.h b/include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-new file mode 100644
-index 000000000000..799274517c9a
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm6115-lpasscc.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2023, Linaro Ltd.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_LPASSCC_SM6115_H
-+#define _DT_BINDINGS_CLK_QCOM_LPASSCC_SM6115_H
-+
-+/* LPASS CC */
-+#define LPASS_SWR_TX_CONFIG_CGCR		0
-+
-+/* LPASS_AUDIO CC */
-+#define LPASS_AUDIO_SWR_RX_CGCR			0
-+
-+#endif
--- 
-2.45.2
-
+> 
+> Regards,
+> Samuel
+> 
+> >>
+> >> (no changes since v1)
+> >>
+> >>  arch/riscv/kernel/ptrace.c | 42 ++++++++++++++++++++++++++++++++++++++
+> >>  include/uapi/linux/elf.h   |  1 +
+> >>  2 files changed, 43 insertions(+)
+> >>
+> >> diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+> >> index 92731ff8c79a..ea67e9fb7a58 100644
+> >> --- a/arch/riscv/kernel/ptrace.c
+> >> +++ b/arch/riscv/kernel/ptrace.c
+> >> @@ -28,6 +28,9 @@ enum riscv_regset {
+> >>  #ifdef CONFIG_RISCV_ISA_V
+> >>  	REGSET_V,
+> >>  #endif
+> >> +#ifdef CONFIG_RISCV_ISA_SUPM
+> >> +	REGSET_TAGGED_ADDR_CTRL,
+> >> +#endif
+> >>  };
+> >>  
+> >>  static int riscv_gpr_get(struct task_struct *target,
+> >> @@ -152,6 +155,35 @@ static int riscv_vr_set(struct task_struct *target,
+> >>  }
+> >>  #endif
+> >>  
+> >> +#ifdef CONFIG_RISCV_ISA_SUPM
+> >> +static int tagged_addr_ctrl_get(struct task_struct *target,
+> >> +				const struct user_regset *regset,
+> >> +				struct membuf to)
+> >> +{
+> >> +	long ctrl = get_tagged_addr_ctrl(target);
+> >> +
+> >> +	if (IS_ERR_VALUE(ctrl))
+> >> +		return ctrl;
+> >> +
+> >> +	return membuf_write(&to, &ctrl, sizeof(ctrl));
+> >> +}
+> >> +
+> >> +static int tagged_addr_ctrl_set(struct task_struct *target,
+> >> +				const struct user_regset *regset,
+> >> +				unsigned int pos, unsigned int count,
+> >> +				const void *kbuf, const void __user *ubuf)
+> >> +{
+> >> +	int ret;
+> >> +	long ctrl;
+> >> +
+> >> +	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &ctrl, 0, -1);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	return set_tagged_addr_ctrl(target, ctrl);
+> >> +}
+> >> +#endif
+> >> +
+> >>  static const struct user_regset riscv_user_regset[] = {
+> >>  	[REGSET_X] = {
+> >>  		.core_note_type = NT_PRSTATUS,
+> >> @@ -182,6 +214,16 @@ static const struct user_regset riscv_user_regset[] = {
+> >>  		.set = riscv_vr_set,
+> >>  	},
+> >>  #endif
+> >> +#ifdef CONFIG_RISCV_ISA_SUPM
+> >> +	[REGSET_TAGGED_ADDR_CTRL] = {
+> >> +		.core_note_type = NT_RISCV_TAGGED_ADDR_CTRL,
+> >> +		.n = 1,
+> >> +		.size = sizeof(long),
+> >> +		.align = sizeof(long),
+> >> +		.regset_get = tagged_addr_ctrl_get,
+> >> +		.set = tagged_addr_ctrl_set,
+> >> +	},
+> >> +#endif
+> >>  };
+> >>  
+> >>  static const struct user_regset_view riscv_user_native_view = {
+> >> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+> >> index b54b313bcf07..9a32532d7264 100644
+> >> --- a/include/uapi/linux/elf.h
+> >> +++ b/include/uapi/linux/elf.h
+> >> @@ -448,6 +448,7 @@ typedef struct elf64_shdr {
+> >>  #define NT_MIPS_MSA	0x802		/* MIPS SIMD registers */
+> >>  #define NT_RISCV_CSR	0x900		/* RISC-V Control and Status Registers */
+> >>  #define NT_RISCV_VECTOR	0x901		/* RISC-V vector registers */
+> >> +#define NT_RISCV_TAGGED_ADDR_CTRL 0x902	/* RISC-V tagged address control (prctl()) */
+> >>  #define NT_LOONGARCH_CPUCFG	0xa00	/* LoongArch CPU config registers */
+> >>  #define NT_LOONGARCH_CSR	0xa01	/* LoongArch control and status registers */
+> >>  #define NT_LOONGARCH_LSX	0xa02	/* LoongArch Loongson SIMD Extension registers */
+> >> -- 
+> >> 2.45.1
+> >>
+> >>
+> >> _______________________________________________
+> >> linux-riscv mailing list
+> >> linux-riscv@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
