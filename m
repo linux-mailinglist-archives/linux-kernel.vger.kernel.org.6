@@ -1,216 +1,100 @@
-Return-Path: <linux-kernel+bounces-370362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49AAC9A2B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:56:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7489A2B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA601C27354
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:56:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1B31F25CDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5D91E00A8;
-	Thu, 17 Oct 2024 17:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEA31E04A6;
+	Thu, 17 Oct 2024 17:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WlK0B10J"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mb8OutvS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03F61E008A
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78561E0484;
+	Thu, 17 Oct 2024 17:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729187716; cv=none; b=rq2R/j82wGcHtbGFf7HAwi0eIbLz8cP9s4awv/OkKOu4990DJAHtzC0QLacAPmCQqGc60ET12GNfAsz0ppKldW+8YagOmPgzi8sU3QCqQX91e60EtmQwOHd/2HfYSYIGIdCfHaMhQDACRpFOudRRMVy36zshJ5MBROigNsQpV80=
+	t=1729187728; cv=none; b=ReCdjcxt1N2iL7TG78pv4R2i8/rdTEgkvpOGl+Sh8XGJpkte4c9HI5LUHtC+Qy5hNyFy8yNa5dGdXFmiT26sAW6MR6QbwACF4eCY6aPrv72GWwVpQ3BfUjM1CAnBsehf9BFJZs/NvyLC7n7RGg6XTs4DUy3VIIjGd3T+xzYLJlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729187716; c=relaxed/simple;
-	bh=mMcsp/iMlAmoBKZKBMJoWh4WxLSeWmI4w7731hcUnKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rntHrtkIENUvmmbeESU7d4ZsYX4M87aY3EchWuD/kbCY0jbO4AEojGYGblu92BZJ163YCqIXZBQ8gjK6s1hbewyT5o65oGKwf2A8qNbwNEJumN1/7a2HtGDIC32Ji/XbhdV3sjg4R8xf/y87azS59C2E6a8BBKwAdtOn9rJPRZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WlK0B10J; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729187713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DTYljF8POalugMXuFvWjkYZLAf4we1kA3NrQt2GmKV4=;
-	b=WlK0B10JbbQ578yMMIQmLnKiF4bBTm6pnIbJxTiEhPlWVivkSoblPDnydnQjF2o4Jbl/dN
-	bH4MsRHVNj/HQrn4+DNjH/6fMCURiiqFmfgk6mZyxlzj4XduwqPUZzAFt9QuEtCWYC1X01
-	QMnn/dYCigtM6ZjEtAC3q7KnA8WsVY4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-694-ZXsA3EX6NsCzPt6YmI7NvA-1; Thu, 17 Oct 2024 13:55:12 -0400
-X-MC-Unique: ZXsA3EX6NsCzPt6YmI7NvA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43159c07193so10045505e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:55:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729187711; x=1729792511;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DTYljF8POalugMXuFvWjkYZLAf4we1kA3NrQt2GmKV4=;
-        b=A2b+OohACZeN4Gv0PzB36NgTGLjmgUw5qCr+k0XujHfCrrgXVRfc0yELUyRmv/sqcb
-         yZ/ZBE3gO91Yey6kX1mSDejuKfup4UftqNuY0GxVCrWVIG2tD+6gO25kvwszL+n7ssZ0
-         1N7nfIdPEi+zVPzMK7QBgVq0VbD7B9lrpHtVU2ubis1r5Lkq/nNS/lvqImo4bWQnMiFl
-         ecyVRBchjYNhGhqYBP3WvBTWViydo1YS79vkuMuVnOqiAlD5CNbTd7AxUEMlQyhF6PJl
-         opi5/Lw5NGYaeFhafAwRWM38mnEArKy8+H4s+Z/4BLBWAotX9iETeeebfvcaJ4zHXavj
-         sMWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbTHS+o6ybhoWpEXhpUrrULA248AjgGcGjadEJBOYbKkGimm645LNfnuQD0eRxyzteqY2aDuZy4ReOdb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl6rx/eMR8e4m/myrGcZk0a7CauEQuymTJOJwTDQkWIsvoALrh
-	fAjUmSAEiM6+6sIkQn+z9VaVNvQdJ+2feK155uZ1O3djMEDWRn752TZMXCSF00CciUdcTASzrst
-	RX6yPR7SGeGBR2UFhw45Upku/dFRWuEY14cOwg3PqoAi/D1ZEjBIIIXN4jz5YIA==
-X-Received: by 2002:a05:600c:3b8e:b0:431:24c3:dbaa with SMTP id 5b1f17b1804b1-431255cea47mr208053835e9.2.1729187710678;
-        Thu, 17 Oct 2024 10:55:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHnxbUQfWueTkDkaivXXE1yKf5gKXrsNzTMq1SSj058gURZUSa2g/DuU7vFomh7hQIpIbadg==
-X-Received: by 2002:a05:600c:3b8e:b0:431:24c3:dbaa with SMTP id 5b1f17b1804b1-431255cea47mr208053525e9.2.1729187710262;
-        Thu, 17 Oct 2024 10:55:10 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431606940e9sm2562995e9.19.2024.10.17.10.55.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 10:55:09 -0700 (PDT)
-Message-ID: <9cee402b-eea0-4a66-870b-d2bc7a137c9f@redhat.com>
-Date: Thu, 17 Oct 2024 19:55:06 +0200
+	s=arc-20240116; t=1729187728; c=relaxed/simple;
+	bh=UoZIjoquc7ianrvVX05sSUHV7hg2qpqSbdJFzAVzsU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S1UGdIIJ7ErmCUyfPxL9z2jZT5gIRtlU3v+vYfwJIQooBGUxdHvbFd8GTYulZL0ONHaPDsH1Zz33lZ8LxFRH97MFaj7EioGMuna947eY+369ManbBMp0vVzkDTifgEIkKC3n/F3vVMgJ0mJtBSdIsDIYotryqBM7RshiGe6+x+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mb8OutvS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C41C4CEC3;
+	Thu, 17 Oct 2024 17:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729187726;
+	bh=UoZIjoquc7ianrvVX05sSUHV7hg2qpqSbdJFzAVzsU0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Mb8OutvS+HulwhEvASibptQnz7JsKTs3lDxbpwDr/KgyH1R23Wmm7DUkekOo3hWx0
+	 fvRDb16lthRGCzAHDP7gXUDhSs2+8I3MzDSAWIDRhlAzaBzvoWiZPOyzP8faPMWf3+
+	 dJsXv561uK/Kh0ic5L6vBNruWehnd89IfyHuWREVCytJWlKRaKMJd1HRRMOngtJYl4
+	 C9FAkPQpn4uK8QuuU1TH4lhq44JcVEbHErLztouGkAdc4p6vxnyKA+3JL6E1HkHlLC
+	 kMuU6f6gK80g8sVJXnl0QpY6/sy+qJ8tkwk1fpeM+G/rUx6KyPhl2M5jDlOo6TKRZP
+	 hM6+DQ4kfp59Q==
+Date: Thu, 17 Oct 2024 18:55:07 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Alex Lanzano <lanzano.alex@gmail.com>
+Cc: Yang Li <yang.lee@linux.alibaba.com>, lars@metafoo.de,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Abaci Robot
+ <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] iio: imu: bmi270: Remove duplicated include in
+ bmi270_i2c.c
+Message-ID: <20241017185507.547c5505@jic23-huawei>
+In-Reply-To: <v3xzvojyycil7jszgxfnrwjiqxonz6aqrmfs6hgmru7pfuzgyv@3qrbzqo6p5mk>
+References: <20241016003919.113306-1-yang.lee@linux.alibaba.com>
+	<v3xzvojyycil7jszgxfnrwjiqxonz6aqrmfs6hgmru7pfuzgyv@3qrbzqo6p5mk>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
- struct kvm_gmem_private
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Peter Xu <peterx@redhat.com>, Ackerley Tng <ackerleytng@google.com>,
- tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk,
- rientjes@google.com, fvdl@google.com, jthoughton@google.com,
- seanjc@google.com, pbonzini@redhat.com, zhiquan1.li@intel.com,
- fan.du@intel.com, jun.miao@intel.com, isaku.yamahata@intel.com,
- muchun.song@linux.dev, erdemaktas@google.com, vannapurve@google.com,
- qperret@google.com, jhubbard@nvidia.com, willy@infradead.org,
- shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com,
- kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org,
- richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com,
- ajones@ventanamicro.com, vkuznets@redhat.com,
- maciej.wieczor-retman@intel.com, pgonda@google.com, oliver.upton@linux.dev,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <Zw7f3YrzqnH-iWwf@x1n>
- <diqz1q0hndb3.fsf@ackerleytng-ctop.c.googlers.com>
- <1d243dde-2ddf-4875-890d-e6bb47931e40@redhat.com> <ZxAfET87vwVwuUfJ@x1n>
- <20241016225157.GQ3559746@nvidia.com> <ZxBRC-v9w7xS0xgk@x1n>
- <20241016235424.GU3559746@nvidia.com> <ZxEmFY1FcrRtylJW@x1n>
- <20241017164713.GF3559746@nvidia.com>
- <a63f0f7a-e367-4f0e-8d8e-ca7b632712df@redhat.com>
- <20241017171639.GN3559746@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241017171639.GN3559746@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 17.10.24 19:16, Jason Gunthorpe wrote:
-> On Thu, Oct 17, 2024 at 07:11:46PM +0200, David Hildenbrand wrote:
->> On 17.10.24 18:47, Jason Gunthorpe wrote:
->>> On Thu, Oct 17, 2024 at 10:58:29AM -0400, Peter Xu wrote:
->>>
->>>> My question was more torwards whether gmemfd could still expose the
->>>> possibility to be used in VA forms to other modules that may not support
->>>> fd+offsets yet.
->>>
->>> I keep hearing they don't want to support page pinning on a guestmemfd
->>> mapping, so VA based paths could not work.
->>
->> For shared pages it absolutely must work. That's what I keep hearing :)
+On Tue, 15 Oct 2024 22:31:57 -0400
+Alex Lanzano <lanzano.alex@gmail.com> wrote:
+
+> On Wed, Oct 16, 2024 at 08:39:19AM +0800, Yang Li wrote:
+> > The header files linux/module.h is included twice in bmi270_i2c.c,
+> > so one inclusion of each can be removed.
+> > 
+> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11363
+> > Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> > ---
+> >  drivers/iio/imu/bmi270/bmi270_i2c.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
+> > index e9025d22d5cc..71cc271cdf30 100644
+> > --- a/drivers/iio/imu/bmi270/bmi270_i2c.c
+> > +++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
+> > @@ -3,7 +3,6 @@
+> >  #include <linux/module.h>
+> >  #include <linux/i2c.h>
+> >  #include <linux/iio/iio.h>
+> > -#include <linux/module.h>
+> >  #include <linux/mod_devicetable.h>
+> >  #include <linux/regmap.h>  
 > 
-> Oh that's confusing. I assume non longterm pins desired on shared
-> pages though??
+> Good catch!
+> 
+> Minor nit: Should remove the top module.h include instead to keep
+> alphabetical ordering.
+> 
 
-For user space to driver I/O to shared pages GUP is often required 
-(e.g., O_DIRECT), as was raised at LPC in a session IIRC (someone 
-brought up a use case that involved vhost-user and friends).
-
-Of course, for the guest_memfd use cases where we want to remove also 
-shared pages from the directmap, it's not possible, but let's put that 
-aside (I recall there was a brief discussion at LPC about that: it's 
-tricky for shared memory for exactly this reason -- I/O).
-
-longterm pins would have to be used with care, and it's under user-space 
-control, and user-space must be aware of the implications: for example, 
-registering shared pages as fixed buffers for liburing is possible, but 
-when a conversion to private is requested it must unregister these buffers.
-
-(in VFIO terms, a prior unmap operation would be required)
-
-Of course, a conversion to private will not work as long as the pages 
-are pinned, and this is under user space control.
-
-If the guest attempts to perform such a conversion while pages will be 
-pinned, there will likely be a notification to user space (we touched on 
-that today in the upstream call) that something is blocking the 
-conversion of that page, and user space has to fix that up and retry.
-
-It's not expected to matter much in practice, but it can be triggered 
-and there must be a way to handle it: if a guest triggers a 
-shared->private conversion while there is still I/O going on the page, 
-something is messed up, and the conversion will be delayed until the I/O 
-is done and the page can be converted.
-
-There are still quite some things to be clarified, but this is my 
-understanding so far.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Given I messed up the pull request anyway, I've snuck this one is
+as an obviously fine last minute tidy up. With the other entry removed as
+suggested.
 
