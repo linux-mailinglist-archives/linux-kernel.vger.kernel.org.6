@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-370355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A50B9A2B76
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:54:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580DD9A2B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D915286BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1801728768F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACB81DFE1B;
-	Thu, 17 Oct 2024 17:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0FE1E0093;
+	Thu, 17 Oct 2024 17:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QoIlyL0t"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pth671ox"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B971DFDAD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3681DFD8D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 17:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729187647; cv=none; b=sGwl03D1xhsAGR5e/M7gqGLLmJhncSV/ixpOJtEgywwayZdG+LueN5C/rnr6kUeUzub1QBsPBYUVxwUBop/1gcxNRhxQ5UZKOYw+9kjQOItC2ORRi0DuWr62W1JNYJ5yE8RfV1CPtptBwOlqOBdLvesMX8jSSW1mwXpqiB9rWOc=
+	t=1729187648; cv=none; b=TXSgK0LCze2LiKHuLs8zB+3DbSbgcpb00ASIVIvggzIeafpLsRm83tGWk1vyFx2ONhy0NJDY+dvFFXAemS5qAVKWI0yquKWwIDbXKM88HNfCngjHDnor2emUuZFy9ycwb3GaqvL4Mwv3TvoOKmm6AaoKWrcv76aIIaFlqXEl6OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729187647; c=relaxed/simple;
-	bh=JHZeSmkWIrj8EFARpnwwv3ZxZXRwxkO0vkOgH6dtkac=;
+	s=arc-20240116; t=1729187648; c=relaxed/simple;
+	bh=WUodcAb4TVW2yeFy1LDOu4j2dnFFiTlcHPQcWZN06qw=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=fYF0Jpk8nRSKGi2NCYXt00SX+/kSlq5lOowArCid8uTPH1b7NG7oDZUNdQUU27xuiyPm7x55lpjerP3Kh3ydmdeN6AH+4Pd2JTpzL7jCLyZ6RXESJtzi85fEiFrvpfpdzpWoUVDDmt16RTfjotar6Jlz+naaRW8myJYq3gybJKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QoIlyL0t; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=X9jF+gbiiI/gH/rOUJ0JfhLUHAPoKAQHE3tBORCWGw4rURlrRDFsoZU898ETXa3KibfM/y7ULjG9YuRxkVK8Pn+cr+q0uhcQkn9fSqlx9ksEp019n/vYHY9MzcvQPm/Nj7lzMu9O3iPWaAmqBrTqc3dqoLLDMX0aO7NLGqs+A8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pth671ox; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e315a5b199so21355247b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:54:04 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e59dc7df64so15110047b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:54:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729187644; x=1729792444; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729187646; x=1729792446; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=j2gIFyt42nntsnGaIcEwttdqpxaZNfusYx2zy+lIpHc=;
-        b=QoIlyL0tBLLfEwdePreiKV/41rOpxPdkWGVW3dbfC40Oont4rjxMm6zeu5bDMmvrdp
-         W+ADQknoDgpRzKdzbtu7F3OBOSB9JOg9oQnpoR4B5vxOL8t0g6rTbd8v9UOj1aRvPNfk
-         2ZqGNe9hjVS9ADnv30Yz+cJeQRdyDhKh4by/pc25eQyP9cAM7shPohV74mSpCcSRPqZG
-         hQ5Z2dvIIfumsqw1n+2uOi7ya3XSNdpTyZkO5y4dRvhc6Ia3sFDYqhD5sO/Qp8vIYdto
-         99+7/NBERu8IZTvCCq6VGYwHWh+XTqGwCPHuMN0SkCQBJJ3vver4KSXQqlYOE4yw1WuN
-         AhEA==
+        bh=SvCFzl8c1PGWsh4EV+hkwTVYrXNfM9i5AC+z8XoTGw0=;
+        b=Pth671oxxtcIlNon0+FEUMyhymRyo2nEh/6RaSJa28IIb2FECju+8tcV8kH5Ygpbj+
+         0fOLF+zX7ulmy/safBqzNN5c6llSesiNpsb0ezURFyrtIjNOwARHIjITkYokAByQixhi
+         VF5SbRiFcp+lLNBAQOxKqZbK6Y1M7G1salw/u8192C6NYYKMespaC7rHHwgPbp666QQV
+         +8yS67Kw6vmmBbLhaMrAaB/QFZ4yfWK9K/QlpJ/0ig8A/g2InLpDgXzBXsGoeNxLkDHA
+         iwwgZUqExdoPMkcDPceqKcT0UxhLlP7bmd5uNZezQ5SfYPbpSPeEI2LW2JsAyZXVwgqT
+         Uwag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729187644; x=1729792444;
+        d=1e100.net; s=20230601; t=1729187646; x=1729792446;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2gIFyt42nntsnGaIcEwttdqpxaZNfusYx2zy+lIpHc=;
-        b=QfExfqezS7LplVig83N4+BIeP+VrxT6OvqICAOqVAQa9n145Oj9tJTpU2d8KF6+efJ
-         QPFm14AqzstfuPwDcVw8XbczNTEsm4EtMLNZ2nS/sA/r6THHaas/mR6mm2h4jVPGUsmk
-         Pk4LME3qUaDlZlKNYtwkzu3IF2Ihc0QkGNmEJ6nSgpOUZA7RS9cwxkyn8zdV99j2RQjm
-         xk9atejADYciQp6iBa1ri+0wJYs6w3OcxD4c33oraxv2LiinewcvwW9C08pqmNmMxqj/
-         vm/ZhVXANGXWufSD+jFuAvGtmIHiTy7JtABIRd3bo+8r9t/+YcA7sn1ClKdUeNqQR5Wc
-         34uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCuUdS6/19Qo/dzL6s47JpeSRkIhuaXiBl4cGLOZ5B2W8L/mBKhHKnkFGKSHH4QNjtU070PHz6y8vPM8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKlubfh2CkOnD+1PCqV3sBRz+FF6IBvQ6S8CgIcJ1fuCaqCC6y
-	ExQ8Plhe62pCrsP1pzsMqb+YMDYFhW1FR9tp/srTzbAPYc1QKFRlN+Qm5OPTMb7iXspzb/zanGd
-	U/T31FA==
-X-Google-Smtp-Source: AGHT+IFOb7Ly95ignRrZpM2eJffAbLiYBD5BXqW5NZZKWGFTAymVVA4fkRvwEwltD1JaiD5Sx3sRyDuUmgkk
+        bh=SvCFzl8c1PGWsh4EV+hkwTVYrXNfM9i5AC+z8XoTGw0=;
+        b=T2twUbw0dfOJzt5PltJgaVgGErmR8psiRyEeFwFm2/ATUitcfG1rU9oYsdp1R/vBFp
+         ubOp2rhQN2GBgK6SX9j+rLeKYuKHmof0xlYfftlr/DXfBMD1wR4q6g86Dl/fkiwZAtfi
+         DKHk2G+gLQLMBDCiloCXEgMi1gJoGRE4dDjeNJtfzYOcrv7N/ZFF801mNs9dZkYeUoqX
+         CcBM0iboDC4bX8uQoFcaPpEKw4B6jD8f1AMgizkiuJMKNgCZIOIs23TnFhGKYcfmTWRV
+         Oww777x3Fif11wWwdazGfcUWSWwCmHnhRleTdpyAeinGMiuhqOsk0ZZoxoaolWOT9PSc
+         buzA==
+X-Forwarded-Encrypted: i=1; AJvYcCU55AbEBFG36nJz0L0It9eHs/mDOaC7kO5jiLrZfcXbLXV22lA//fANE9/W/EAlKBnQj19uBVhVN9vSxPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzaiDC+/eGs8/+JLJb52HAjtn6NNyvlShYYsWA/8Wf/SwLSHs3
+	TVddItg+oROC4HWzjEP0rf6HiwDeNlJEDuesD/fyN+JT7U41XSfV/cZ3BXOjlJ+aMBVLhsjRfy9
+	X2JY0NQ==
+X-Google-Smtp-Source: AGHT+IFlmA1tf2B1a5er6bTub7GvcxLouK/2eBonblCcnbTWMLGRQp2J49vwfdT3KnR075GkZWCQGOMeiBp8
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:98a5:142e:8c2e:e9e5])
- (user=irogers job=sendgmr) by 2002:a05:690c:d8b:b0:69b:c01:82a5 with SMTP id
- 00721157ae682-6e3d41e6b49mr1223917b3.7.1729187643820; Thu, 17 Oct 2024
- 10:54:03 -0700 (PDT)
-Date: Thu, 17 Oct 2024 10:53:50 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:670a:b0:6db:e464:addc with SMTP
+ id 00721157ae682-6e5a3d922c2mr1475937b3.4.1729187646038; Thu, 17 Oct 2024
+ 10:54:06 -0700 (PDT)
+Date: Thu, 17 Oct 2024 10:53:51 -0700
 In-Reply-To: <20241017175356.783793-1-irogers@google.com>
-Message-Id: <20241017175356.783793-2-irogers@google.com>
+Message-Id: <20241017175356.783793-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241017175356.783793-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH v5 1/7] perf color: Add printf format checking and resolve issues
+Subject: [PATCH v5 2/7] perf stat: Fix/add parameter names for print_metric
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,165 +90,153 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Add printf format checking to vararg printf routines in
-color.h. Resolve build errors/bugs that are found through this
-checking.
+The print_metric parameter names were rearranged, fix and add comments
+in the stat-shadow callers to ensure they are correct.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-sched.c        | 2 +-
- tools/perf/builtin-trace.c        | 2 +-
- tools/perf/util/arm-spe.c         | 2 +-
- tools/perf/util/color.h           | 9 +++++----
- tools/perf/util/intel-bts.c       | 2 +-
- tools/perf/util/intel-pt.c        | 2 +-
- tools/perf/util/s390-cpumsf.c     | 2 +-
- tools/perf/util/s390-sample-raw.c | 8 ++++----
- 8 files changed, 15 insertions(+), 14 deletions(-)
+ tools/perf/util/stat-shadow.c | 55 ++++++++++++++++++++---------------
+ tools/perf/util/stat.h        |  6 ++--
+ 2 files changed, 36 insertions(+), 25 deletions(-)
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index fdf979aaf275..99bfc3ad71e2 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -1739,7 +1739,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index 6227de848083..512890d50b69 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -196,17 +196,21 @@ static void print_ratio(struct perf_stat_config *config,
+ 			const struct evsel *evsel, int aggr_idx,
+ 			double numerator, struct perf_stat_output_ctx *out,
+ 			enum stat_type denominator_type,
+-			const double color_ratios[3], const char *unit)
++			const double color_ratios[3], const char *_unit)
+ {
+ 	double denominator = find_stat(evsel, aggr_idx, denominator_type);
++	double ratio = 0;
++	const char *color = NULL;
++	const char *fmt = NULL;
++	const char *unit = NULL;
+ 
+ 	if (numerator && denominator) {
+-		double ratio = numerator / denominator * 100.0;
+-		const char *color = get_ratio_color(color_ratios, ratio);
+-
+-		out->print_metric(config, out->ctx, color, "%7.2f%%", unit, ratio);
+-	} else
+-		out->print_metric(config, out->ctx, NULL, NULL, unit, 0);
++		ratio = numerator / denominator * 100.0;
++		color = get_ratio_color(color_ratios, ratio);
++		fmt = "%7.2f%%";
++		unit = _unit;
++	}
++	out->print_metric(config, out->ctx, color, fmt, unit, ratio);
+ }
+ 
+ static void print_stalled_cycles_front(struct perf_stat_config *config,
+@@ -320,14 +324,15 @@ static void print_instructions(struct perf_stat_config *config,
+ 				find_stat(evsel, aggr_idx, STAT_STALLED_CYCLES_BACK));
+ 
+ 	if (cycles) {
+-		print_metric(config, ctxp, NULL, "%7.2f ", "insn per cycle",
+-			instructions / cycles);
+-	} else
+-		print_metric(config, ctxp, NULL, NULL, "insn per cycle", 0);
++		print_metric(config, ctxp, /*color=*/NULL, "%7.2f ", "insn per cycle",
++			     instructions / cycles);
++	} else {
++		print_metric(config, ctxp, /*color=*/NULL, /*fmt=*/NULL, "insn per cycle", 0);
++	}
+ 
+ 	if (max_stalled && instructions) {
+ 		out->new_line(config, ctxp);
+-		print_metric(config, ctxp, NULL, "%7.2f ", "stalled cycles per insn",
++		print_metric(config, ctxp, /*color=*/NULL, "%7.2f ", "stalled cycles per insn",
+ 			max_stalled / instructions);
  	}
+ }
+@@ -342,9 +347,10 @@ static void print_cycles(struct perf_stat_config *config,
+ 	if (cycles && nsecs) {
+ 		double ratio = cycles / nsecs;
  
- 	if (sched->map.comp && new_cpu)
--		color_fprintf(stdout, color, " (CPU %d)", this_cpu);
-+		color_fprintf(stdout, color, " (CPU %d)", this_cpu.cpu);
+-		out->print_metric(config, out->ctx, NULL, "%8.3f", "GHz", ratio);
+-	} else
+-		out->print_metric(config, out->ctx, NULL, NULL, "GHz", 0);
++		out->print_metric(config, out->ctx, /*color=*/NULL, "%8.3f", "GHz", ratio);
++	} else {
++		out->print_metric(config, out->ctx, /*color=*/NULL, /*fmt=*/NULL, "GHz", 0);
++	}
+ }
  
- 	if (proceed != 1) {
- 		color_fprintf(stdout, color, "\n");
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 0b30297b4ecb..748b061f8678 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1873,7 +1873,7 @@ static int trace__process_event(struct trace *trace, struct machine *machine,
- 	switch (event->header.type) {
- 	case PERF_RECORD_LOST:
- 		color_fprintf(trace->output, PERF_COLOR_RED,
--			      "LOST %" PRIu64 " events!\n", event->lost.lost);
-+			      "LOST %" PRIu64 " events!\n", (u64)event->lost.lost);
- 		ret = machine__process_lost_event(machine, event, sample);
- 		break;
- 	default:
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 13fd2c8afebd..fd0d793ecad8 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -122,7 +122,7 @@ static void arm_spe_dump(struct arm_spe *spe __maybe_unused,
- 		else
- 			pkt_len = 1;
- 		printf(".");
--		color_fprintf(stdout, color, "  %08x: ", pos);
-+		color_fprintf(stdout, color, "  %08zx: ", pos);
- 		for (i = 0; i < pkt_len; i++)
- 			color_fprintf(stdout, color, " %02x", buf[i]);
- 		for (; i < 16; i++)
-diff --git a/tools/perf/util/color.h b/tools/perf/util/color.h
-index aecf56dae73f..b2f37de305f6 100644
---- a/tools/perf/util/color.h
-+++ b/tools/perf/util/color.h
-@@ -2,6 +2,7 @@
- #ifndef __PERF_COLOR_H
- #define __PERF_COLOR_H
+ static void print_nsecs(struct perf_stat_config *config,
+@@ -357,10 +363,11 @@ static void print_nsecs(struct perf_stat_config *config,
+ 	double wall_time = avg_stats(&walltime_nsecs_stats);
  
-+#include <linux/compiler.h>
- #include <stdio.h>
- #include <stdarg.h>
+ 	if (wall_time) {
+-		print_metric(config, ctxp, NULL, "%8.3f", "CPUs utilized",
++		print_metric(config, ctxp, /*color=*/NULL, "%8.3f", "CPUs utilized",
+ 			nsecs / (wall_time * evsel->scale));
+-	} else
+-		print_metric(config, ctxp, NULL, NULL, "CPUs utilized", 0);
++	} else {
++		print_metric(config, ctxp, /*color=*/NULL, /*fmt=*/NULL, "CPUs utilized", 0);
++	}
+ }
  
-@@ -37,11 +38,11 @@ int perf_config_colorbool(const char *var, const char *value, int stdout_is_tty)
- int color_vsnprintf(char *bf, size_t size, const char *color,
- 		    const char *fmt, va_list args);
- int color_vfprintf(FILE *fp, const char *color, const char *fmt, va_list args);
--int color_fprintf(FILE *fp, const char *color, const char *fmt, ...);
--int color_snprintf(char *bf, size_t size, const char *color, const char *fmt, ...);
-+int color_fprintf(FILE *fp, const char *color, const char *fmt, ...) __printf(3, 4);
-+int color_snprintf(char *bf, size_t size, const char *color, const char *fmt, ...) __printf(4, 5);
- int value_color_snprintf(char *bf, size_t size, const char *fmt, double value);
--int percent_color_snprintf(char *bf, size_t size, const char *fmt, ...);
--int percent_color_len_snprintf(char *bf, size_t size, const char *fmt, ...);
-+int percent_color_snprintf(char *bf, size_t size, const char *fmt, ...) __printf(3, 4);
-+int percent_color_len_snprintf(char *bf, size_t size, const char *fmt, ...) __printf(3, 4);
- int percent_color_fprintf(FILE *fp, const char *fmt, double percent);
- const char *get_percent_color(double percent);
- 
-diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-index 27d9b5c9fec8..3ea82d5e8d2e 100644
---- a/tools/perf/util/intel-bts.c
-+++ b/tools/perf/util/intel-bts.c
-@@ -100,7 +100,7 @@ static void intel_bts_dump(struct intel_bts *bts __maybe_unused,
- 		else
- 			sz = len;
- 		printf(".");
--		color_fprintf(stdout, color, "  %08x: ", pos);
-+		color_fprintf(stdout, color, "  %08zx: ", pos);
- 		for (i = 0; i < sz; i++)
- 			color_fprintf(stdout, color, " %02x", buf[i]);
- 		for (; i < br_sz; i++)
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index fd2597613f3d..3fe67bf652b6 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -249,7 +249,7 @@ static void intel_pt_dump(struct intel_pt *pt __maybe_unused,
- 		else
- 			pkt_len = 1;
- 		printf(".");
--		color_fprintf(stdout, color, "  %08x: ", pos);
-+		color_fprintf(stdout, color, "  %08zx: ", pos);
- 		for (i = 0; i < pkt_len; i++)
- 			color_fprintf(stdout, color, " %02x", buf[i]);
- 		for (; i < 16; i++)
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index 73846b73d0cf..30638653ad2d 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -345,7 +345,7 @@ static bool s390_cpumsf_trailer_show(const char *color, size_t pos,
- 	}
- 	color_fprintf(stdout, color, "    [%#08zx] Trailer %c%c%c bsdes:%d"
- 		      " dsdes:%d Overflow:%lld Time:%#llx\n"
--		      "\t\tC:%d TOD:%#lx\n",
-+		      "\t\tC:%d TOD:%#llx\n",
- 		      pos,
- 		      te->f ? 'F' : ' ',
- 		      te->a ? 'A' : ' ',
-diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
-index 53383e97ec9d..335217bb532b 100644
---- a/tools/perf/util/s390-sample-raw.c
-+++ b/tools/perf/util/s390-sample-raw.c
-@@ -98,12 +98,12 @@ static void s390_cpumcfdg_dumptrail(const char *color, size_t offset,
- 	te.res2 = be32_to_cpu(tep->res2);
- 
- 	color_fprintf(stdout, color, "    [%#08zx] Trailer:%c%c%c%c%c"
--		      " Cfvn:%d Csvn:%d Speed:%d TOD:%#llx\n",
-+		      " Cfvn:%d Csvn:%d Speed:%d TOD:%#lx\n",
- 		      offset, te.clock_base ? 'T' : ' ',
- 		      te.speed ? 'S' : ' ', te.mtda ? 'M' : ' ',
- 		      te.caca ? 'C' : ' ', te.lcda ? 'L' : ' ',
- 		      te.cfvn, te.csvn, te.cpu_speed, te.timestamp);
--	color_fprintf(stdout, color, "\t\t1:%lx 2:%lx 3:%lx TOD-Base:%#llx"
-+	color_fprintf(stdout, color, "\t\t1:%lx 2:%lx 3:%lx TOD-Base:%#lx"
- 		      " Type:%x\n\n",
- 		      te.progusage1, te.progusage2, te.progusage3,
- 		      te.tod_base, te.mach_type);
-@@ -205,7 +205,7 @@ static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
- 			char *ev_name = get_counter_name(ce.set, i, pmu);
- 
- 			color_fprintf(stdout, color,
--				      "\tCounter:%03d %s Value:%#018lx\n", i,
-+				      "\tCounter:%03zd %s Value:%#018"PRIx64"\n", i,
- 				      ev_name ?: "<unknown>", be64_to_cpu(*p));
- 			free(ev_name);
+ static int prepare_metric(const struct metric_expr *mexp,
+@@ -542,12 +549,12 @@ static void generic_metric(struct perf_stat_config *config,
+ 					ratio);
+ 			}
+ 		} else {
+-			print_metric(config, ctxp, color, /*unit=*/NULL,
++			print_metric(config, ctxp, color, /*fmt=*/NULL,
+ 				     out->force_header ?
+ 				     (metric_name ?: evsel->name) : "", 0);
  		}
-@@ -260,7 +260,7 @@ static void s390_pai_all_dump(struct evsel *evsel, struct perf_sample *sample)
+ 	} else {
+-		print_metric(config, ctxp, color, /*unit=*/NULL,
++		print_metric(config, ctxp, color, /*fmt=*/NULL,
+ 			     out->force_header ?
+ 			     (metric_name ?: evsel->name) : "", 0);
+ 	}
+@@ -718,9 +725,11 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
  
- 		ev_name = get_counter_name(evsel->core.attr.config,
- 					   pai_data.event_nr, evsel->pmu);
--		color_fprintf(stdout, color, "\tCounter:%03d %s Value:%#018lx\n",
-+		color_fprintf(stdout, color, "\tCounter:%03d %s Value:%#018"PRIx64"\n",
- 			      pai_data.event_nr, ev_name ?: "<unknown>",
- 			      pai_data.event_val);
- 		free(ev_name);
+ 				if (unit != ' ')
+ 					snprintf(unit_buf, sizeof(unit_buf), "%c/sec", unit);
+-				print_metric(config, ctxp, NULL, "%8.3f", unit_buf, ratio);
+-			} else
++				print_metric(config, ctxp, /*color=*/NULL, "%8.3f",
++					     unit_buf, ratio);
++			} else {
+ 				num = 0;
++			}
+ 		}
+ 	}
+ 
+@@ -728,7 +737,7 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
+ 						  &num, NULL, out, metric_events);
+ 
+ 	if (num == 0)
+-		print_metric(config, ctxp, NULL, NULL, NULL, 0);
++		print_metric(config, ctxp, /*color=*/NULL, /*fmt=*/NULL, /*unit=*/NULL, 0);
+ }
+ 
+ /**
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index fd7a187551bd..a5f3d7d00101 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -155,8 +155,10 @@ extern struct stats walltime_nsecs_stats;
+ extern struct rusage_stats ru_stats;
+ 
+ typedef void (*print_metric_t)(struct perf_stat_config *config,
+-			       void *ctx, const char *color, const char *unit,
+-			       const char *fmt, double val);
++			       void *ctx, const char *color,
++			       const char *fmt,
++			       const char *unit,
++			       double val);
+ typedef void (*new_line_t)(struct perf_stat_config *config, void *ctx);
+ 
+ /* Used to print the display name of the Default metricgroup for now. */
 -- 
 2.47.0.105.g07ac214952-goog
 
