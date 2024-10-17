@@ -1,113 +1,357 @@
-Return-Path: <linux-kernel+bounces-369652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465189A2067
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0BF9A206A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC41EB25347
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:59:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 228F5B2428C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B43B1DB375;
-	Thu, 17 Oct 2024 10:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75581DA116;
+	Thu, 17 Oct 2024 11:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDHoX9Nb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wdr0AZNn"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8216F1D517A;
-	Thu, 17 Oct 2024 10:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9672199E92
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729162783; cv=none; b=UzZ42zhKmVgBfzUX5/rb/Qx3DDc3p2nqtagHZ+ROcprcj65U2Jny+y2OFlgDpDxc5GwGrEF8M5R1Xztm7D7lvm0d10zOYC9zgNqEqZiBvi+F6F33s26Qs3Vc/ndvTOCLQtpv8p2h4tGIJ7RMTWy7BjVh3VEBo141BS+jA6C4h2Y=
+	t=1729162845; cv=none; b=cwNuA5t4uik4777YttTerC5X2tVUGqwN4e5Ty8egDdUyLh9slDlx1dfmfCOpXKUwPED9TYStWDoAcWog2FsIOwg2TXBtIaVwD/gHyz6mgl8p5HhRu/0UhL27phbj1cPFnmhR5u/373C3+dPgZh7Gg48M5wLqskSDFiat1eTzRgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729162783; c=relaxed/simple;
-	bh=XhkxeKR67k/H/6xZZUYqc3A+4NyHmk68WKAnJ8aXEuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eH3nxoqrupSUPNhLqvSM0YAzNrZYvX9WWN73MCfnHrLhLxuoxV006WM6KBqns4/U1aRE7yBmR9bkQk6MQPyAL0TZPtPvID5yWtcg1ozKOCbhk3Uq74ZR6EeB51MLFL+olD3jSM5hQaz/al8JiFHZbCJ+Mzj3jv6iI3n6xNQRkoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDHoX9Nb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5014DC4CEC3;
-	Thu, 17 Oct 2024 10:59:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729162783;
-	bh=XhkxeKR67k/H/6xZZUYqc3A+4NyHmk68WKAnJ8aXEuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lDHoX9NbdBoGBfvrnuszF/NVTCzNO2wMDHsKvCVr0r6jFBEB0/qVjmR/H8HusqWD3
-	 6Q4dpx0MIi0mQMgkFPIDYOlCr/SwAvLY5FIJO+Gau0Es410PkyypKK337JBmeSZKbG
-	 OYtdypx1n9c9IsgYIrg/GENTHI1BSJYHU1rWqbDK5KWFdKvKHimI3M2Wn5uXpWfDwm
-	 Jrif0Xo6OtoLjtbyak21n1ITdbQiS6+H4A52fUrrNEaO3N9GQD0SllapL6fkvJuYQF
-	 L+6qkaomTMrxM/hoHAaUvyb1PZc8NjWCelS4U3K2LLCsrHFVS6Izs55aRqB1oecyFe
-	 fPmlWLlCRjX0Q==
-Date: Thu, 17 Oct 2024 11:59:37 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Johan Hovold <johan@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
-Message-ID: <cde15d83-6059-47bc-94d6-2a88ba95e5ae@sirena.org.uk>
-References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
- <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
- <ZweftESPrJNEsqGE@hovoldconsulting.com>
- <Zwj539cN2DJ7nd3A@linaro.org>
- <Zw5fzNZ_xCwPyw4G@hovoldconsulting.com>
- <Zw_dE1rQ-Ljsh-sY@linaro.org>
- <CAMRc=MfUEfKHkAVvtGODxvJ-BdL+kX7uDgW+1y4QW3Kc5mpX+w@mail.gmail.com>
+	s=arc-20240116; t=1729162845; c=relaxed/simple;
+	bh=Tw2O507qDyj5T4Ew0nr4flfNKi/+FS+aYSJc+22Me/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f8yDoGezOv/I//dLOe0tdCjOgoZIKcfBSWOwePPsHu5pIXfDf8oFFIP9c2AbHHfGm1ilGux0cy0lww+Cr+5PnztAfESNN+nW2c+JqbVgik4U9DyiAcKjFWDYxMgcLinZWtDH6o5VE/8n3KC0DeBQsK5u0sAjlGVlySkwPSrsW5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wdr0AZNn; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4a46d5aa949so237663137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:00:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729162841; x=1729767641; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dzueIzrbpWQAQzIPzKgcuzvlN5AJYKxxLdrxhltbeaY=;
+        b=Wdr0AZNn8lsG54z6WsSwM6XvtEMDjAsp383ttAbAihTP8uhb8uhoYft5Evo51sFXmW
+         AQsa0VbKE6Wh7ufb581JlQ3gCl/9IGg0EMo7FYmWJfr3c5nzWEdyaBMWaCDDMklr9Mzw
+         wGncBR7uCX/MVbFgjeEtdkYMkiXFg2JlC2hIPWa1Rd713e1tcAJDGtM+BgKeGdbamGMP
+         +EEL8tCVSeosc+rdIZAS5UEBc/Ltu4PQKbmbZI3rDL0f8dqVS4cMADLcEkLvvX4z11IF
+         KcE/fs0j5ZcN74jh065Lwpkx7LlOcGYJu/FlkPtohM1l3LcyFOk+ezz6HFp4MlgDoy/M
+         hbbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729162841; x=1729767641;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dzueIzrbpWQAQzIPzKgcuzvlN5AJYKxxLdrxhltbeaY=;
+        b=pvrIAzLAX7ArAm5fHPLrCvxShI4F5LeUebq1xMDsb1VBaeDTLAsk/pQKO5KY0a33k1
+         Tu+s/WPaZuxJV3P8BzUSW9jVWy9dAwY9nSh5h3K0ndlcW0mrtyzZGXlbAO72U0EsnvIV
+         jWZNgJxtljff5NdhogoEB5NR+qV1+UfjznNz/5Rv6H48NJxJ1bfuHhFx68chUeiIAp5M
+         p+0z81LQHn8LlV/KLA6S7kriHAbmu52rgelo4ZxsGeiyvCMZ5s4dfnwq4fb1msUz3pC9
+         RSxI8D4mzWPrZozZX7QeH9ocnouMsFMUCqJFLIjw0xfi2I4nk88Gt/KSXfYrKhxa8uqg
+         ebaA==
+X-Gm-Message-State: AOJu0Yz1vTPj1J31qHhkJXviNxFGHGSs2b45QyvKnMZyyXQ7zigmzBrR
+	nkrH3FQWdspR+IW1jqJu6gVxCUeT2+8P7V6lfDiHflZ6etpMeWklZjlI/oxCrOnAV5OhNXXS1e9
+	KkQlOP9g4sJGtnFt4kMBGz8E6c6YDdibONnRYUg==
+X-Google-Smtp-Source: AGHT+IFIkSv1zq1QUikiociz6eI2jMdfdZm0OR2khmhrLpWMG/LnXM7lEBRD+jifjqruQfchix8Rv601CB8w9YyRG6g=
+X-Received: by 2002:a05:6102:41a1:b0:4a3:ed09:4746 with SMTP id
+ ada2fe7eead31-4a5b57946e1mr6309322137.0.1729162840664; Thu, 17 Oct 2024
+ 04:00:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rBHfmTlXKIjpSods"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfUEfKHkAVvtGODxvJ-BdL+kX7uDgW+1y4QW3Kc5mpX+w@mail.gmail.com>
-X-Cookie: One picture is worth 128K words.
+References: <20241015101716.740829-1-jens.wiklander@linaro.org> <20241015101716.740829-3-jens.wiklander@linaro.org>
+In-Reply-To: <20241015101716.740829-3-jens.wiklander@linaro.org>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Thu, 17 Oct 2024 16:30:29 +0530
+Message-ID: <CAFA6WYMFys_woiF3dzwaXjMy7Y-gTLgHE0PBZtEf6jH-mkc40g@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/2] optee: support restricted memory allocation
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Jens,
 
---rBHfmTlXKIjpSods
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, 15 Oct 2024 at 15:47, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+>
+> Add support in the OP-TEE backend driver for restricted memory
+> allocation. The support is limited to only the SMC ABI and for secure
+> video buffers.
+>
+> OP-TEE is probed for the range of restricted physical memory and a
+> memory pool allocator is initialized if OP-TEE have support for such
+> memory.
+>
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> ---
+>  drivers/tee/optee/core.c          | 21 +++++++++++++++
+>  drivers/tee/optee/optee_private.h |  6 +++++
+>  drivers/tee/optee/optee_smc.h     | 35 ++++++++++++++++++++++++
+>  drivers/tee/optee/smc_abi.c       | 45 ++++++++++++++++++++++++++++---
+>  4 files changed, 104 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+> index 39e688d4e974..b6d5cbc6728d 100644
+> --- a/drivers/tee/optee/core.c
+> +++ b/drivers/tee/optee/core.c
+> @@ -95,6 +95,25 @@ void optee_release_supp(struct tee_context *ctx)
+>         optee_supp_release(&optee->supp);
+>  }
+>
+> +int optee_rstmem_alloc(struct tee_context *ctx, struct tee_shm *shm,
+> +                      u32 flags, size_t size)
+> +{
+> +       struct optee *optee = tee_get_drvdata(ctx->teedev);
+> +
+> +       if (!optee->sdp_pool)
+> +               return -EINVAL;
+> +       if (flags != TEE_IOC_FLAG_SECURE_VIDEO)
+> +               return -EINVAL;
+> +       return optee->sdp_pool->ops->alloc(optee->sdp_pool, shm, size, 0);
+> +}
+> +
+> +void optee_rstmem_free(struct tee_context *ctx, struct tee_shm *shm)
+> +{
+> +       struct optee *optee = tee_get_drvdata(ctx->teedev);
+> +
+> +       optee->sdp_pool->ops->free(optee->sdp_pool, shm);
+> +}
+> +
+>  void optee_remove_common(struct optee *optee)
+>  {
+>         /* Unregister OP-TEE specific client devices on TEE bus */
+> @@ -111,6 +130,8 @@ void optee_remove_common(struct optee *optee)
+>         tee_device_unregister(optee->teedev);
+>
+>         tee_shm_pool_free(optee->pool);
+> +       if (optee->sdp_pool)
+> +               optee->sdp_pool->ops->destroy_pool(optee->sdp_pool);
+>         optee_supp_uninit(&optee->supp);
+>         mutex_destroy(&optee->call_queue.mutex);
+>  }
+> diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_private.h
+> index 424898cdc4e9..1f6b2cc992a9 100644
+> --- a/drivers/tee/optee/optee_private.h
+> +++ b/drivers/tee/optee/optee_private.h
+> @@ -200,6 +200,7 @@ struct optee_ops {
+>   * @notif:             notification synchronization struct
+>   * @supp:              supplicant synchronization struct for RPC to supplicant
+>   * @pool:              shared memory pool
+> + * @sdp_pool:          restricted memory pool for secure data path
+>   * @rpc_param_count:   If > 0 number of RPC parameters to make room for
+>   * @scan_bus_done      flag if device registation was already done.
+>   * @scan_bus_work      workq to scan optee bus and register optee drivers
+> @@ -218,6 +219,7 @@ struct optee {
+>         struct optee_notif notif;
+>         struct optee_supp supp;
+>         struct tee_shm_pool *pool;
+> +       struct tee_shm_pool *sdp_pool;
+>         unsigned int rpc_param_count;
+>         bool   scan_bus_done;
+>         struct work_struct scan_bus_work;
+> @@ -340,6 +342,10 @@ void optee_rpc_cmd(struct tee_context *ctx, struct optee *optee,
+>  int optee_do_bottom_half(struct tee_context *ctx);
+>  int optee_stop_async_notif(struct tee_context *ctx);
+>
+> +int optee_rstmem_alloc(struct tee_context *ctx, struct tee_shm *shm,
+> +                      u32 flags, size_t size);
+> +void optee_rstmem_free(struct tee_context *ctx, struct tee_shm *shm);
+> +
+>  /*
+>   * Small helpers
+>   */
+> diff --git a/drivers/tee/optee/optee_smc.h b/drivers/tee/optee/optee_smc.h
+> index 7d9fa426505b..c3b8a1c204af 100644
+> --- a/drivers/tee/optee/optee_smc.h
+> +++ b/drivers/tee/optee/optee_smc.h
+> @@ -234,6 +234,39 @@ struct optee_smc_get_shm_config_result {
+>         unsigned long settings;
+>  };
+>
+> +/*
+> + * Get Secure Data Path memory config
+> + *
+> + * Returns the Secure Data Path memory config.
+> + *
+> + * Call register usage:
+> + * a0   SMC Function ID, OPTEE_SMC_GET_SDP_CONFIG
+> + * a2-6 Not used, must be zero
+> + * a7   Hypervisor Client ID register
+> + *
+> + * Have config return register usage:
+> + * a0   OPTEE_SMC_RETURN_OK
+> + * a1   Physical address of start of SDP memory
+> + * a2   Size of SDP memory
+> + * a3   Not used
+> + * a4-7 Preserved
+> + *
+> + * Not available register usage:
+> + * a0   OPTEE_SMC_RETURN_ENOTAVAIL
+> + * a1-3 Not used
+> + * a4-7 Preserved
+> + */
+> +#define OPTEE_SMC_FUNCID_GET_SDP_CONFIG        20
+> +#define OPTEE_SMC_GET_SDP_CONFIG \
+> +       OPTEE_SMC_FAST_CALL_VAL(OPTEE_SMC_FUNCID_GET_SDP_CONFIG)
+> +
+> +struct optee_smc_get_sdp_config_result {
+> +       unsigned long status;
+> +       unsigned long start;
+> +       unsigned long size;
+> +       unsigned long flags;
+> +};
+> +
+>  /*
+>   * Exchanges capabilities between normal world and secure world
+>   *
+> @@ -278,6 +311,8 @@ struct optee_smc_get_shm_config_result {
+>  #define OPTEE_SMC_SEC_CAP_ASYNC_NOTIF          BIT(5)
+>  /* Secure world supports pre-allocating RPC arg struct */
+>  #define OPTEE_SMC_SEC_CAP_RPC_ARG              BIT(6)
+> +/* Secure world supports Secure Data Path */
+> +#define OPTEE_SMC_SEC_CAP_SDP                  BIT(7)
+>
+>  #define OPTEE_SMC_FUNCID_EXCHANGE_CAPABILITIES 9
+>  #define OPTEE_SMC_EXCHANGE_CAPABILITIES \
+> diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
+> index 844285d4f03c..05068c70c791 100644
+> --- a/drivers/tee/optee/smc_abi.c
+> +++ b/drivers/tee/optee/smc_abi.c
+> @@ -1164,6 +1164,8 @@ static void optee_get_version(struct tee_device *teedev,
+>                 v.gen_caps |= TEE_GEN_CAP_REG_MEM;
+>         if (optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_MEMREF_NULL)
+>                 v.gen_caps |= TEE_GEN_CAP_MEMREF_NULL;
+> +       if (optee->sdp_pool)
+> +               v.gen_caps |= TEE_GEN_CAP_RSTMEM;
+>         *vers = v;
+>  }
+>
+> @@ -1186,6 +1188,8 @@ static const struct tee_driver_ops optee_clnt_ops = {
+>         .cancel_req = optee_cancel_req,
+>         .shm_register = optee_shm_register,
+>         .shm_unregister = optee_shm_unregister,
+> +       .rstmem_alloc = optee_rstmem_alloc,
+> +       .rstmem_free = optee_rstmem_free,
+>  };
+>
+>  static const struct tee_desc optee_clnt_desc = {
+> @@ -1202,6 +1206,8 @@ static const struct tee_driver_ops optee_supp_ops = {
+>         .supp_send = optee_supp_send,
+>         .shm_register = optee_shm_register_supp,
+>         .shm_unregister = optee_shm_unregister_supp,
+> +       .rstmem_alloc = optee_rstmem_alloc,
+> +       .rstmem_free = optee_rstmem_free,
+>  };
+>
+>  static const struct tee_desc optee_supp_desc = {
+> @@ -1582,6 +1588,32 @@ static inline int optee_load_fw(struct platform_device *pdev,
+>  }
+>  #endif
+>
+> +static int optee_sdp_pool_init(struct optee *optee)
+> +{
+> +       struct tee_shm_pool *pool;
+> +       union {
+> +               struct arm_smccc_res smccc;
+> +               struct optee_smc_get_sdp_config_result result;
+> +       } res;
+> +
+> +       if (!(optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_SDP))
+> +               return 0;
+> +
+> +       optee->smc.invoke_fn(OPTEE_SMC_GET_SDP_CONFIG, 0, 0, 0, 0, 0, 0, 0,
+> +                            &res.smccc);
 
-On Thu, Oct 17, 2024 at 11:28:18AM +0200, Bartosz Golaszewski wrote:
+IMHO, to put more weight on this proposal we should also include
+allocation from the kernel CMA pool alongside the reserved restricted
+memory pool. The implementation would be quite similar to how we
+support dynamic SHM based on platform specific capability:
+OPTEE_SMC_SEC_CAP_DYNAMIC_SHM. We can have a similar capability for
+dynamic restricted memory as: OPTEE_SMC_SEC_CAP_DYNAMIC_RSTMEM.
 
-> How do others deal with it? I'm asking because I've been seeing these
-> warnings for years on many platforms which makes me think they are not
-> a high priority for anyone.
+The major reason to support it is to allow mediatek use-case [1] of
+restricting memory dynamically which gets allocated from the CMA pool.
+Although, it won't be something that we can test on Qemu from a
+hardware enforcement perspective, at least we can test it on Qemu
+conceptually. Thoughts?
 
-> The best approach would be to provide an optional bulk get for the
-> regulator API. Or extend struct regulator_bulk_data with bool optional
-> and take this into account.
+[1] https://lore.kernel.org/linux-arm-kernel/20240515112308.10171-9-yong.wu@mediatek.com/
 
-> Mark: Any thoughts on this?
+-Sumit
 
-Fix your driver to request the supplies that actually exist on the
-device rather than just some random supplies you hope will work?
-
---rBHfmTlXKIjpSods
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcQ7hgACgkQJNaLcl1U
-h9Ci9gf/f+gbtL98BfY+EJiIAxVPWn0hxT/VgVKz2EM4rpu6GnK+Tg3r11PB8jSa
-ZGj+rygs+0MwxNtWj+DsNYK5IkISba8ZbxbJ3Gh7b5tb+zwdFrj+a+o5+CIzShi0
-rh5Ozp0jqq/zhQzBN/meE+klSIidwnZWYp4Gjm/zAmEH5CxvZ0CTmxWKBeMl0gVH
-4A+lkMIVTtpeXhDKqoTFO60YJ/nM+CSR/5qvPZh3u2DqwHYMRasdhSWhO87zCiiE
-Tjv6Y2CqgCI+b2p2POii4DsMbKFuddlWS5sYHDearIYEer78xO3ZTuBrRzq5mntD
-WRE/1mUUU8KupzjI/xAZXsrNMhTOWw==
-=NXPx
------END PGP SIGNATURE-----
-
---rBHfmTlXKIjpSods--
+> +       if (res.result.status != OPTEE_SMC_RETURN_OK) {
+> +               pr_err("Secure Data Path service not available\n");
+> +               return 0;
+> +       }
+> +
+> +       pool = tee_rstmem_gen_pool_alloc(res.result.start, res.result.size);
+> +       if (IS_ERR(pool))
+> +               return PTR_ERR(pool);
+> +       optee->sdp_pool = pool;
+> +
+> +       return 0;
+> +}
+> +
+>  static int optee_probe(struct platform_device *pdev)
+>  {
+>         optee_invoke_fn *invoke_fn;
+> @@ -1677,7 +1709,7 @@ static int optee_probe(struct platform_device *pdev)
+>         optee = kzalloc(sizeof(*optee), GFP_KERNEL);
+>         if (!optee) {
+>                 rc = -ENOMEM;
+> -               goto err_free_pool;
+> +               goto err_free_shm_pool;
+>         }
+>
+>         optee->ops = &optee_ops;
+> @@ -1685,10 +1717,14 @@ static int optee_probe(struct platform_device *pdev)
+>         optee->smc.sec_caps = sec_caps;
+>         optee->rpc_param_count = rpc_param_count;
+>
+> +       rc = optee_sdp_pool_init(optee);
+> +       if (rc)
+> +               goto err_free_optee;
+> +
+>         teedev = tee_device_alloc(&optee_clnt_desc, NULL, pool, optee);
+>         if (IS_ERR(teedev)) {
+>                 rc = PTR_ERR(teedev);
+> -               goto err_free_optee;
+> +               goto err_sdp_pool_uninit;
+>         }
+>         optee->teedev = teedev;
+>
+> @@ -1786,9 +1822,12 @@ static int optee_probe(struct platform_device *pdev)
+>         tee_device_unregister(optee->supp_teedev);
+>  err_unreg_teedev:
+>         tee_device_unregister(optee->teedev);
+> +err_sdp_pool_uninit:
+> +       if (optee->sdp_pool)
+> +               optee->sdp_pool->ops->destroy_pool(optee->sdp_pool);
+>  err_free_optee:
+>         kfree(optee);
+> -err_free_pool:
+> +err_free_shm_pool:
+>         tee_shm_pool_free(pool);
+>         if (memremaped_shm)
+>                 memunmap(memremaped_shm);
+> --
+> 2.43.0
+>
 
