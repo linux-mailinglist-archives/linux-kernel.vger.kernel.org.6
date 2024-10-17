@@ -1,142 +1,206 @@
-Return-Path: <linux-kernel+bounces-369591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD219A1F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:00:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DBA9A1F47
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14D41C266DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B311F28FCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261141D9665;
-	Thu, 17 Oct 2024 10:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93441D9A40;
+	Thu, 17 Oct 2024 10:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9z1zxcR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fkpcSU7J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8161CCB44;
-	Thu, 17 Oct 2024 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFE61D8E0D
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729159243; cv=none; b=Inpj+nyTEdoENEBFD4ZdhtgwegSjA9BtWpx39KQUeA9wSL6DryxIZH5x6BX552e25JQXwucQS2+FadeK79LT1rm0GamtoGWbLSjjiYSuP17YIzCa3/kl5LGZks0dcinWaQExOzPxGKepqmHAUGVrqQt9UHFnLu8cHwwbI73D3uU=
+	t=1729159266; cv=none; b=k6muJF+ekFvRIBiERuwuLb0LmoM4wLTrYqgCu8VZQTbIEPeBU0vu9zPShqkfjQb1dXk7lX4d+LXCgBiQpBfWqrzjVw0Fa1lJe7pGwO7028c+PrEwnCgq82/1+JevURP1cxNSy8xq6IRPFGwg3Y3aX0sp4i97v1mNEbeaOXzPVLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729159243; c=relaxed/simple;
-	bh=j6dtf+1nsGntL6BOPrfU67/30TxswPd84Ugr4PzJXJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cAtwjLZSAsRGnPhSSoeDWQx6VJQ8SggWS0AUzf6xi8xFI5jeAZwxKrzk5RBE+lVy1yxPCh3ONwAJGYd64NbdcqVfP+RSsGBY32HHhbE4xX+6DylQ+wZTQNdU2Gjv98pmSC2nzoFTRPHSlIH0MlYTywLKGQs1hX3B2R319cduAag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9z1zxcR; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729159240; x=1760695240;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j6dtf+1nsGntL6BOPrfU67/30TxswPd84Ugr4PzJXJU=;
-  b=M9z1zxcRY7dhIoPI2MlZ2ffFJpmZ/GGXyAuoqpE3taxzWprC6PEEmZtD
-   BzCtZUlmk55RxGOr0hkKb47gwLa7C8b4CaYatdbNUrF9IvCyfsL7MNs+j
-   gL5n3THdElHld/V2Z2lkymvmjxgF5hXcR88fRjJOyLL3+BcqmF+mMgtgT
-   JrU28Ay9dJQowEbdYUbmwhgUNqxRgExdsb6Cuj0E8Fz2R8UCN7uQPXXpn
-   UpYSBKmheywqX72ExY3dHf4PAenIu8bYufSy87coMsZFnBKQOcgc6DypN
-   EhebX6Z0hzH2Z0LcDx3W0uJh3bhPc4m2SP2/2xbQNCSR7FuwvU0lBMfUi
-   Q==;
-X-CSE-ConnectionGUID: X22PaXytRlefobwfjkC/HA==
-X-CSE-MsgGUID: 9eJN3cUQQQaRl6WnEbBE7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11227"; a="28845177"
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="28845177"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 03:00:39 -0700
-X-CSE-ConnectionGUID: Vd/xbfNLREKHhrzvo/Ki8A==
-X-CSE-MsgGUID: pH7o0+e9SXWfNTmMB00Ypw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,210,1725346800"; 
-   d="scan'208";a="109247908"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 03:00:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t1NJ2-000000044ml-3TYc;
-	Thu, 17 Oct 2024 13:00:32 +0300
-Date: Thu, 17 Oct 2024 13:00:32 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v9 0/7] platform/chrome: Introduce DT hardware prober
-Message-ID: <ZxDgQISmr_gn_aDF@smile.fi.intel.com>
-References: <20241017094222.1014936-1-wenst@chromium.org>
+	s=arc-20240116; t=1729159266; c=relaxed/simple;
+	bh=VKBNhI+Ue429dozrCIKUPXiUij6uamodEC+N98AL0lo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NAYWEkOSnHdaC4A7gNmsjPd5zadwRcBZLFcmHDBu9gHP5YRApFta/E8eXLh7jJxFX2YtL5sps1t4Cv3jc+cUMUiXfL5GWrVWzTgzWd7JSabhxYpLTpnSU4Pw5L7h64L04OiL41ufvxktvwKMxw8JmqUd5Dp85ySf5mDnplsCCUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fkpcSU7J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729159263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MNXpYWC/snVv/RcQcy4Z6FTQ4rOQoP2EVP5TGZ+dUTk=;
+	b=fkpcSU7JR+MpaNzTFfldfCeXZ4Ytv22KwM9zjkS8Jt3GRjgv2i6+O4zVsY1xM3k8fKPSJv
+	bVEr/uL9lP17joeQu6gveFOitm36B55CF/k5O+uJeAvq63jF51c6NpHeDdtz4U7k8j7qpj
+	vp3Jsp/VNGfP7xCl444LtlXsvF7LI0w=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-620-xnQEZnzqPKykEoVdyCe_9w-1; Thu, 17 Oct 2024 06:01:02 -0400
+X-MC-Unique: xnQEZnzqPKykEoVdyCe_9w-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43124676f8aso6216095e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:01:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729159261; x=1729764061;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MNXpYWC/snVv/RcQcy4Z6FTQ4rOQoP2EVP5TGZ+dUTk=;
+        b=tVfQR4VpjlFegQn7n5OV1DEeNTKkOmYQ51xlFfXgD8oa7Uefb1AhdhFsL7q/B3WZie
+         NXEanhe+hKC0fcp9+UeZFObKCsq7pWRgndv+RunwsKFMQyi8poljniGaMESm677SRCuJ
+         KY0uKE2AaUEEMxAxiArBPK9TAEd8G7DKDniJ1pcmd7/YfhjSO7KJwAAimKVAwDbBOCLN
+         zUJSQKDjYzi0cq6uuA963BtGoZH0nftg0SxKeWMgE/a+9Dk85GlGF/JKAVk69ffW1krS
+         Stl/gwVHRVscwQwro1sm3XkWzeLAm490p2i0d+eJNVIZWkd5KDdYjCWp5IGQvZl2jB5t
+         0yrA==
+X-Gm-Message-State: AOJu0YwpAXzK9jy4SW/aYH06LwaiNDqifctUYD+pPc9/EmjSgqhShGkj
+	jWr1WHHJllbRRNoOjijXb3yM0q3538Jn9/QYVrtH2KMxLP4ChzreMjBSURB8ezRk41lF3n2pozx
+	p5D03BE1qg3/S+IvBwMTW4CdwFWxTvYYTZX+BYLgcjampFyd6u/ediFOrY2G+Ug==
+X-Received: by 2002:adf:f803:0:b0:37d:43f1:57fc with SMTP id ffacd0b85a97d-37d86d84f81mr3888590f8f.58.1729159260961;
+        Thu, 17 Oct 2024 03:01:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeAsN2x2tkKcYuYJ2ZGm7ZZUGgpQNN57Jt9VpZjjuVf5PjflWwSWuvgSY7iIq2nRYvpheTJQ==
+X-Received: by 2002:adf:f803:0:b0:37d:43f1:57fc with SMTP id ffacd0b85a97d-37d86d84f81mr3888571f8f.58.1729159260463;
+        Thu, 17 Oct 2024 03:01:00 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:7600:62cc:24c1:9dbe:a2f5? (p200300cbc705760062cc24c19dbea2f5.dip0.t-ipconnect.de. [2003:cb:c705:7600:62cc:24c1:9dbe:a2f5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a2a8sm6734586f8f.3.2024.10.17.03.00.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 03:01:00 -0700 (PDT)
+Message-ID: <1c7ef09e-9ba2-488e-a249-4db3f65e077d@redhat.com>
+Date: Thu, 17 Oct 2024 12:00:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017094222.1014936-1-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT) to
+ support QEMU/KVM memory devices
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+ Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-5-david@redhat.com>
+ <ZxC+mr5PcGv4fBcY@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <04d5169f-3289-4aac-abca-90b20ad4e9c9@redhat.com>
+ <ZxDetq73hETPMjln@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZxDetq73hETPMjln@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 05:34:35PM +0800, Chen-Yu Tsai wrote:
+On 17.10.24 11:53, Alexander Gordeev wrote:
+>>> Why search_mem_end() is not tried in case sclp_early_get_memsize() failed?
+>>
+>> Patch #3 documents that:
+>>
+>> +    The storage limit does not indicate currently usable storage, it may
+>> +    include holes, standby storage and areas reserved for other means, such
+>> +    as memory hotplug or virtio-mem devices. Other interfaces for detecting
+>> +    actually usable storage, such as SCLP, must be used in conjunction with
+>> +    this subfunction.
+> 
+> Yes, I read this and that exactly what causes my confusion. In this wording it
+> sounds like SCLP *or* other methods are fine to use. But then you use SCLP or
+> DIAGNOSE 260, but not memory scanning. So I am still confused ;)
 
-> For the I2C component (touchscreens and trackpads) case from the
-> original series, the hardware prober driver finds the particular
-> class of device in the device tree, gets its parent I2C adapter,
-> and tries to initiate a simple I2C read for each device under that
-> I2C bus. When it finds one that responds, it considers that one
-> present, marks it as "okay", and returns, letting the driver core
-> actually probe the device.
-> 
-> This works fine in most cases since these components are connected
-> via a ribbon cable and always have the same resources. The prober
-> will also grab these resources and enable them.
-> 
-> The other case, selecting a display panel to use based on the SKU ID
-> from the firmware, hit a bit of an issue with fixing the OF graph.
-> It has been left out since v3.
-> 
-> Patch 1 adds of_changeset_update_prop_string(), as requested by Rob.
-> 
-> Patch 2 adds for_each_child_of_node_with_prefix(), as suggested by Andy.
+Well, DIAGNOSE 260 is z/VM only and DIAG 500 is KVM only. So there are 
+currently not really any other reasonable ways besides SCLP.
 
-> Patch 3 implements probing the I2C bus for presence of components as
-> a hookable helper function in the I2C core.
 > 
-> Patch 4 implements regulator supply support as a set of simple helpers
-> for the I2C component prober.
+>> If SCLP would fail, something would be seriously wrong and we should just crash
+>> instead of trying to fallback to the legacy way of scanning.
 > 
-> Patch 5 implements GPIO support for the I2C component prober simple
-> helpers.
+> But what is wrong with the legacy way of scanning?
 
-Not that I am really a fan of the idea, but I have nothing to counter propose.
-Also my big concern about random msleep() calls seems to be addressed in a way
-that it's now a caller's problem to supply the (correct) one.
+Missing to detect holes and starting to use them, detecting and using 
+device memory without negotiating with the device ... it all falls to 
+pieces.
 
-Hence FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-for patches 3,4, and 5.
-
-> Patch 6 adds a ChromeOS specific DT hardware prober. This initial
-> version targets the Hana Chromebooks, probing its I2C trackpads and
-> touchscreens.
 > 
-> Patch 7 modifies the Hana device tree and marks the touchscreens
-> and trackpads as "fail-needs-probe", ready for the driver to probe.
+>>>> +	case MEM_DETECT_DIAG500_STOR_LIMIT:
+>>>> +		return "diag500 storage limit";
+>>>
+>>> AFAIU you want to always override MEM_DETECT_DIAG500_STOR_LIMIT method
+>>> with an online memory detection method. In that case this code is dead.
+>>
+>> Not in the above case, pathological case above where something went wrong
+>> during sclp_early_get_memsize(). In that scenario, die_oom() would indicate
+>> that there are no memory ranges but that "diag500 storage limit" worked.
+>>
+>> Does that make sense?
+> 
+> Yes, I get your approach.
+
+Thanks, please let me know if I should make it clearer in the 
+description, of if you think we can improve the code.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Cheers,
 
+David / dhildenb
 
 
