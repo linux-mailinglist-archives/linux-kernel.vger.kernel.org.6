@@ -1,116 +1,119 @@
-Return-Path: <linux-kernel+bounces-370037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DDB9A2640
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:16:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637539A2664
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA3B1C217B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:16:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BDEDB26D32
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F014B1DE4DF;
-	Thu, 17 Oct 2024 15:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="bekfGzNy"
-Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9823E111AD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CC01DED51;
+	Thu, 17 Oct 2024 15:17:37 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D6F1DED55;
+	Thu, 17 Oct 2024 15:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729178191; cv=none; b=Uf5XcMDUhZmmqYkti2YwPno5R6F+MGGCtgU3UAJ6TW+hrJC2C6SGiqs08fxWThEdlQM7zgLqlrn2S75lEeHYf//lsEWvpawOoGLTdHPsZKVRZH3TxapwfGB4VbMfzIVxf/WZYy7iwD7QjgMEUJvTfVcClyLtn3GmObt7tr2+SQE=
+	t=1729178257; cv=none; b=n9O+uPlqu0vhS6wY6VFwxBoC4ME1NS58tkEnPmBi85h3wgWWT55xgseIgECfzcH72dnYHRX7OVnOs8f38Zq/hqf0lj+ljHsUTkwZ0Tj1YxwHBijcmhQ801pVZoXt8o2vAVV3gOkRuRGqlEw4YYrwbKZI7At/BfIye2UFKeLTqIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729178191; c=relaxed/simple;
-	bh=0jrxNKr44EWevwzYZOe3obIVtjx6gJzr3afqa3w3+Zw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aETzCqTVAAWHP6gAleZ0s8uWa1EXBGBv+dsqRgoK5woixHHDywot9nu21gDJcZUqISjH3oQW5m9baWTszrg2cBQLrXeM+KbiapqKNxZH2bWl2JgMAColLowEdo+UEM2eMr4jtMY9npvrPudedalAnjrbN7VppJY+iHbFOoerndg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=bekfGzNy; arc=none smtp.client-ip=17.58.6.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1729178186;
-	bh=/VqUV/PfUOYudG6pKRJp2s/oZtsw+8LT2DuRdKOIijc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=bekfGzNy1/tGjsE3l9BalKF5SO/D/4tJm2XZU/DhNP5hWjVvrdhNcRXYiDYSV0mNL
-	 9++quD75K0rZIOlNC6lAVUmo3NKt4wgWcTmx0rhTKpz7GgpkuX3/zI2v6g5MatKl5L
-	 mdPkJr5hp33zMfZg+qxuKK8uKLQgNCt6UOjaLQEYM6ggHm0iWMeH0/yZ06iILM4/Vp
-	 CGa4jyFv/jI6RwkfUQP/FzgM+UOudo6mcW4b3d14OxTKxxOyMbDgfifdYAEPLXdUCh
-	 pibcMjz/r4AMZyOufSFy7DAN8jbq9mHvVBr4OgKEgcD5EA6LCa3RfpZ4JTcSliPf+V
-	 2iBGHTEM54zlw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 567DB1803C8;
-	Thu, 17 Oct 2024 15:16:20 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 17 Oct 2024 23:16:01 +0800
-Subject: [PATCH] genirq/devres: Simplify API devm_free_irq() implementation
+	s=arc-20240116; t=1729178257; c=relaxed/simple;
+	bh=N8FDTjAAHjLrgVYYhi2Io42aCBZbm6lwhNbA2oeQm+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rlD4uDm0AjQ4rfc/Ea24nDxtrAGrcpC/O2q3MJjUe0dp0md+Cu6dCYNSvTz8tUfumvs0Fl2pvNF6+MMNGDjXg6xjno4RGn8iPFynxJBLO21X6pNX86nv5eibfqKHBJ8udnMNZ8nwB/TDOTIyn24R97OpguiANiYt/erT3A/ihtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app1 (Coremail) with SMTP id HgEQrADXGqRWKhFntYz1Bw--.55446S2;
+	Thu, 17 Oct 2024 23:16:38 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wD3_49UKhFnazxNAA--.51778S2;
+	Thu, 17 Oct 2024 23:16:37 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: si.yanteng@linux.dev,
+	Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	SeongJae Park <sj@kernel.org>,
+	Federico Vaga <federico.vaga@vaga.pv.it>,
+	Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	Miguel Ojeda <ojeda@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs/zh_CN: update the translation of process/coding-style.rst
+Date: Thu, 17 Oct 2024 23:16:17 +0800
+Message-ID: <20241017151624.3532430-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241017-devres_kernel_fix-v1-1-4aa0d7c4fee4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIADEqEWcC/x2M4QpAMBRGX0X3t9W2JvEqksw+3Gh0V1Ly7paf5
- 9Q5DyUII1FbPCS4OPERM5iyoGkd4wLFITNZbZ3RplYBlyANGyRiH2a+lfO28aiMDwiUu1OQ9f/
- s+vf9AFA12bpjAAAA
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: 4tSlSpHvjZP-CPzrJEYbXsdgrTqqJtdg
-X-Proofpoint-GUID: 4tSlSpHvjZP-CPzrJEYbXsdgrTqqJtdg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-17_18,2024-10-17_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=954 malwarescore=0
- spamscore=0 adultscore=0 clxscore=1011 bulkscore=0 suspectscore=0
- phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410170105
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HgEQrADXGqRWKhFntYz1Bw--.55446S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFy5ZFy5Ar1xZF1xtF1kZrb_yoW8Ww18pF
+	y7Kr1xGa18Cryjk34xGry8Xr48GF18Jay5Kr4agwnaqFs5CFyIvrZxtF9Yva47XrW0yay5
+	XF4akrW8Gw1FvaUanT9S1TB71UUUUbUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQ2b7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2
+	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxVWUAV
+	WUtwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AI
+	YIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Cr
+	0_Gr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1UMcvj
+	eVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04
+	k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUorcTDUUUU
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Update to commit c5d436f05a3f ("docs/process: fix typos")
 
-Simplify devm_free_irq() implementation by dedicated API devres_release()
-which have below advantages than current devres_destroy() + free_irq().
+scripts/checktranstatus.py reports:
 
-It is simpler if devm_free_irq() is undoing what any devm_request_irq()
-variant did, otherwise, it can avoid wrong and undesired free_irq().
+Documentation/translations/zh_CN/process/coding-style.rst
+commit c5d436f05a3f ("docs/process: fix typos")
+commit 82b8000c28b5 ("net: drop special comment style")
+2 commits needs resolving in total
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 ---
-linux-next tree has similar fixes as shown below:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=0ee4dcafda9576910559f0471a3d6891daf9ab92
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
----
- kernel/irq/devres.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../translations/zh_CN/process/coding-style.rst       | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
-index b3e98668f4dd..eb16a58e0322 100644
---- a/kernel/irq/devres.c
-+++ b/kernel/irq/devres.c
-@@ -141,9 +141,8 @@ void devm_free_irq(struct device *dev, unsigned int irq, void *dev_id)
- {
- 	struct irq_devres match_data = { irq, dev_id };
+diff --git a/Documentation/translations/zh_CN/process/coding-style.rst b/Documentation/translations/zh_CN/process/coding-style.rst
+index 10b9cb4f6a65..0484d0c65c25 100644
+--- a/Documentation/translations/zh_CN/process/coding-style.rst
++++ b/Documentation/translations/zh_CN/process/coding-style.rst
+@@ -560,17 +560,6 @@ Documentation/translations/zh_CN/doc-guide/index.rst 和 scripts/kernel-doc 。
+ 	 * with beginning and ending almost-blank lines.
+ 	 */
  
--	WARN_ON(devres_destroy(dev, devm_irq_release, devm_irq_match,
-+	WARN_ON(devres_release(dev, devm_irq_release, devm_irq_match,
- 			       &match_data));
--	free_irq(irq, dev_id);
- }
- EXPORT_SYMBOL(devm_free_irq);
- 
-
----
-base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
-change-id: 20241017-devres_kernel_fix-4b29be51bded
-
-Best regards,
+-对于在 net/ 和 drivers/net/ 的文件，首选的长 (多行) 注释风格有些不同。
+-
+-.. code-block:: c
+-
+-	/* The preferred comment style for files in net/ and drivers/net
+-	 * looks like this.
+-	 *
+-	 * It is nearly the same as the generally preferred comment style,
+-	 * but there is no initial almost-blank line.
+-	 */
+-
+ 注释数据也是很重要的，不管是基本类型还是衍生类型。为了方便实现这一点，每一行
+ 应只声明一个数据 (不要使用逗号来一次声明多个数据)。这样你就有空间来为每个数据
+ 写一段小注释来解释它们的用途了。
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+2.43.0
 
 
