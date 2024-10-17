@@ -1,220 +1,466 @@
-Return-Path: <linux-kernel+bounces-370150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D025D9A2885
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:24:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CDC9A2890
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8DCB25D61
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:24:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F091C20FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49F71DF253;
-	Thu, 17 Oct 2024 16:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB1E1DF268;
+	Thu, 17 Oct 2024 16:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hZpx7TVB"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kp3nz0jY"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8B05FDA7
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729182252; cv=fail; b=eUlVRmHcC/AQRM7Ss6cuLGwIITKs7lmtwkL1CkbwAI3WgMV75IJ3BldTIJeVC9P6v9W9P0xYGKjxpoBvVetInYUk0GsC+s8Hf7qANEv/lOsj+8NisKYlMmoL/DmoYRvt0Sbiqcm2KaseRMwLNQzHeEfbLLAIcxlGRR0F0lMXg+c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729182252; c=relaxed/simple;
-	bh=S1w4/8cHikJGsscMmdrfoRJXfiDo+9BnScR6Kuf2Hc4=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=eqUiqW7Pnb4FjF7ZJrhb0rgniXmkcqFMXVozte8dx9l4y6vgddetb8OBAoiu0jc1Um1NhwkXVuo6bWk/3Hz1WNr5Xc2vRMNjTrIeC/yQeZI/V3z/RH/TyUO0vm6Zzj90522xf1OrTm1lbXDBs1Jgr5VrDMAa0Uk6gwaKQJ0fEaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hZpx7TVB; arc=fail smtp.client-ip=40.107.244.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hBiBLv1EY+inPjR2VTILRETZy0Z+l0VXFblbgrw3FmmttDuzyNY3GjB2/4r4N+/6C+7SzIYYdXhWHYLtU24XEshlvn+IjwJ89654vrQyhickNMua0l9rXGCYrgJ7/Q5KEZL2bqSSTCz6qbMfVo3EbnYQYaN2KSz+sigHBkTxZSFvLjg02w7+iDaTOMNp41BZoNg+mzswxKKds2yQpEoE/RwMIZgliyr4+t5NcT4JImC/qjlmW8zXd03sbBl2T+v4iVXNUralwV1US3dnO7jqBVF8Nd5a3Lmm+YmkgMQTVAGsHME2yxcuzi/Q/25zDj8Wx256HmknGA5xCq3y0qzIIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LwObs9KqIlC1Edv3JjkbykS2XzuU/tDuiIegjYOekGo=;
- b=Z+2lT8Nymx6JnSaL2F1SjYs2PkYhKv0uPW4M1TQt5nb9TSZwb2JfHKOZQMRsqwClBw8HIeHmNkfKC2TpJeZByJOuL+QGKsNj/zHOK7bem+5W7o0x4toblJPT3HMB6XavqEt4SiPzEwnEpYZuWrlUholW3HnLZFew9GhuaX/nf2O9WnyQA/jWWYFBuThrJ8KtPA7nn+f4pM3UyRaR1J7aia50wvhUJK2COl6B/D+8JvY6MHB2BTtUNXISannflgZ8tvcLKjxnow6ZTx6MEWRu31x14H0xfHkllS4fdOGs8waO/qPNRF2ZJqTZzGA1enLWWH94dDiKm+xoMh+1STzZXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LwObs9KqIlC1Edv3JjkbykS2XzuU/tDuiIegjYOekGo=;
- b=hZpx7TVBwat7iHWtXMmyy689/Z9YIQcN8V22H1G6kOMqxlu8dhptpv1FSR3MsRR9CEVYIpfBzqmuiQD0xd4O9+6wjOVerH1s2cdLebGTqg4MGFQeXdU1O3c7kTDlBXg75PfO8JK/SSviC216c2871r9HYmUX7d89yx5tdFtKw9c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by MN6PR12MB8492.namprd12.prod.outlook.com (2603:10b6:208:472::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
- 2024 16:24:08 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 16:24:08 +0000
-Message-ID: <f5383cb1-0c0e-eb8a-e3b5-bb7d5a80fcbd@amd.com>
-Date: Thu, 17 Oct 2024 11:24:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
-References: <cover.1727709735.git.thomas.lendacky@amd.com>
- <4f9d9eac997784cd11f4243d545dd05e670b2e4c.1727709735.git.thomas.lendacky@amd.com>
- <20241017152601.GAZxEsid01FYKqwnPA@fat_crate.local>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v3 2/8] x86/sev: Add support for the RMPREAD instruction
-In-Reply-To: <20241017152601.GAZxEsid01FYKqwnPA@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR03CA0006.namprd03.prod.outlook.com
- (2603:10b6:806:20::11) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFC71DEFF6
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729182318; cv=none; b=BALMBX8hBypbvaVhsZSt5Q2lPCzBRpg9O1kMHmH60hGiMBs/fIZNbX0ueeaKNUqLuph4jkLOAsN+OIBf1Fnusqj/akBucsUJIKK+96EKJgLZhtmSku44oPMRqo3tQ9wAJ+GIlayLdTXzBWeaKHMrXrao7BN2cQnt9CdbrTQ3nvE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729182318; c=relaxed/simple;
+	bh=/FaY1lFvVjH9QwLETjeGCFR+Fp8VYdm7FtlLJk8rELo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QPpyFnXA+MZKClM2pgwoX7Rr5Oje81uzyAtjsuPQnuY03VgIN87D9/tV0ibCcvw8XSEsG6Ea0YspUqxVJGIfcsnRKcdwRWoxY7C9CuNetydHV/EWHyJUyY2e0rcjp8KZxcUIKYHas+P8XhEUH88f1/WnbngFhzahEM+q/sB2GXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kp3nz0jY; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e5a5abc915so10083487b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729182311; x=1729787111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZwh7t78Vk465g82TwHaDZNony7B/4eq7p1Xpp2l3tU=;
+        b=Kp3nz0jY6FxTuJ8wt9gYObm7JO0H3LFTsSFM1vd3oqCr76ayHWe8qGE+iJAp0c0eD3
+         TQIPfPhC+/0xqi7bsnlNfdQKUNM2k0iP90PFeSXfpkqkfDqYpUbIdTCOHtXKshnt1kWY
+         mJ3hgPPSyl1iaoxlVTOX0DV8cUGd/x0hIHMjT/ALJrwT07LsJqVcWOi19NDmEIbq1est
+         2Mws86yX7fddiuGXk48Bq9gZOtiGdnB/GnWsXI6gZN5pjl8G8QhR//crwzKtCL0GYmrS
+         BpY5tA+3hxJU1zt+2Q704KtTQse0wJ7rVvY/4ljMfQyRCKwvZKP3dQgCZq/soIU6kAim
+         9Asg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729182311; x=1729787111;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TZwh7t78Vk465g82TwHaDZNony7B/4eq7p1Xpp2l3tU=;
+        b=wqRJ/4Ce0NTEXgZSYBaItTBWlY5aH/CdAVJ7MEbP7JgwupTdkPueh9FL61JWhdxO/P
+         FC439NYRQmJ4zA26Pmb9Yr6f0D0TAPVZ5lLpYpoVqs+X21KRsG4uCrY5O0ltSljmkQv7
+         +Q3l7NHcnF/BPWcLPXu5cLpMmQWZi7x+jtCA8j3Ot7aJL+QaZeJ443bGV7xxUyO8Tzu5
+         yixPt3dnRUzKtW3R5DT0sjniB5EkOR9ehi2ausUT0R9YWs/JkvNl1GIXtomoRv7Kk3rB
+         e2T23fgIQmC7g1AI+1rn0NekAv3OnTTuqy7YrSWlAK5wmejA5L9kTf1AB89SQKL0Q1hR
+         87Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUX8zs4Wl44yNBxV7D1XYp7TWzat/BoSjpvflMYywXt0kNPUlV0js8lQV6CDYiZqHUHy1GEqid/YWtetbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJMRdaaWEMMoix3sv/ImMidjlFgVXfOylmAvJeLPTI2u4DBzoy
+	aFjp8h+Xbe1m6cja265Ge41RJGBiCbs4FTFDnBJmk1BtyMUumCwRcx15fNHKUZ2I/zmGgTuRx/8
+	tYAiSWzLMl/FbecFOmu73zFHfD0O100wkJOQojw==
+X-Google-Smtp-Source: AGHT+IG+z7JiwbpvRkeGgL4nIC2w1Qb71J+yKnmH+5Tz5yAXgK5P14q3seBm+iVaUT9iKi72+W6fA607pnAQOICUX/w=
+X-Received: by 2002:a05:690c:680c:b0:6e3:dc4a:34b0 with SMTP id
+ 00721157ae682-6e3dc4ad12dmr67881107b3.22.1729182311276; Thu, 17 Oct 2024
+ 09:25:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|MN6PR12MB8492:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1bae622c-0e54-40bf-164d-08dceec82017
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V05MUWgzd0g4YU9zR284TTlYNXh1blZNVTV2V1VZai8rWGlQNVdHZ1dYQXdH?=
- =?utf-8?B?cVUrb2ttcEJBMTk4ZExURmszOTUray85eFZMUUxWYllnQXJVaWp6TG1CeVBH?=
- =?utf-8?B?SktkU2RoU05mZ3pLcVFUUFY1UGJNbnVDMmVhZGJmVWUrd2c3aGxJMHhTVUs2?=
- =?utf-8?B?aWEvdDVEOWNFNUZ3bUllZTBaV2FoYkVQUGZEa0dSaE9EVDV5TVNrc3cyQVVh?=
- =?utf-8?B?cjFFRzBjN1Y0KzVVMElGbFMrdHVPcHhwbWM3N3U4S1pqVm9LaHdUd2h3RE5R?=
- =?utf-8?B?NUxkdzRjcUFGREtmTnNQNTZPdUMyKzhvUSt0ZXhZTHpOdVM1ZHBxL3NSelo1?=
- =?utf-8?B?U0t3VE9XVVljeUxldzRIT1dlVlhMT2t4WWJJNnB5bHhCenFISDRNYUtVUUZX?=
- =?utf-8?B?VllaZFl1azFZdndiNjgwTUJWRER6OGhUL0dSQmZhcTJ1TFI5OS9yS0lhdFdS?=
- =?utf-8?B?amorOVVMdHZFZnppMTFSZzRxaEl6cGR5MFpKSTJlc0VOUmdoTWZqL3lJM3BE?=
- =?utf-8?B?SlJkM3I4U0RoaEFTai9KRDFUN3FDR29zOXJHZm1OS0x0Y0FmMFhTY09TWCsx?=
- =?utf-8?B?NXhMR1duakN4MUF5WjlVNVF3OTJaK0s3bXJkQzcyU1MzQ0w4T0V5RWdXUU9x?=
- =?utf-8?B?WHRYd1lDcW9FRzdZbTZhV09OZ2NIdTIxZm1vV3NoNGJhTGpYWjhsbHlhRWFQ?=
- =?utf-8?B?QzFzTHNNMU5xeHA2aXM2eDY0ZDg1WG54QU1aSVdBbEVRVjNVOElzQkpqZW40?=
- =?utf-8?B?czhQeDYxN3B0SGdMQzJaWDZUalBEdFVPd0doYWZVMXJzdG8xTDBGdGhjQVMz?=
- =?utf-8?B?RkJBUm9EL0tnTnZxbUxzOWJmVko4b0NMbXhtbEdQbDI1RGFlZDZVTXVwN0Vy?=
- =?utf-8?B?TUY1dk5ReEFNbXNPQmVpTzN4bnBQNDNIVk02bER4Ujl3ZU9TQ2E0MnpDMHRW?=
- =?utf-8?B?Q2NabW9TVDlzSUtPaXJoZndLSjJERWZma05ld2t3K25TMDdoUmhBWlozd09V?=
- =?utf-8?B?NElUb2pCNmF2SFBpTk9BdWMvZUh1bWZFOEE1UVp4QVNDQ3d5b2JMcHdLMjlr?=
- =?utf-8?B?b2NweXorL2JrQzFiVFlrdGp5a3VqaXJmOWpxSnluLzRjYWRsNUlyU29UQ09s?=
- =?utf-8?B?dUxtSFBMSTNxR1RZdlVydlYzMXRkVlI4dlRJU1FKcWJtQ0VHeVJROWd4MW9C?=
- =?utf-8?B?dlkrRllSdFlIbkNvRmV4a0g3T3Zwb0ZGZElBUVVWUVprTDlMNVFKcStJSDEx?=
- =?utf-8?B?Mzc0K3VpTFlTbElYWWVCZlJmMVB1VTRDSWVma1ZCUk5FcERaYnVRbmNKWWNL?=
- =?utf-8?B?Sy9BbVlJZGdBVzZwNXdzR0FIdUUrZ1lpMXUvREEzRjhKdFlRQU83ekhWWWhn?=
- =?utf-8?B?bGxMVWtYc2d2TTlPVmJrRElpMGJPdm8xMzVGSHcxNWc3bzlQa0FCclovN3JV?=
- =?utf-8?B?czlVZk5kYmFqMkVBVHp4L1BLQ0dNakZLalZkamVCdlNqYk5GdnFUZEVLVlJU?=
- =?utf-8?B?Um5WMHM1UUZBYjFNK0RVYXVzZmcyOFdXU1ZMZTNDNTZNbk9hMzJTUzJCeEZM?=
- =?utf-8?B?L2I4MGhZOFVFUlZGZTFjTHBSVmdndW9JWDlFcUpXdFpwR2JIcUIvVm1hdjhZ?=
- =?utf-8?B?ZitBUmxPZnV5WWxoRHU3VG1FbXVUZUJUS25IbDRWUnZzZEc3YkZ1S0Q0OEVr?=
- =?utf-8?B?bTd1T3NmRWdMUkJ6eGxTK3VnYWE5alJUaWdxby9QOVhTQUNRb0hMRk9zWHVR?=
- =?utf-8?Q?QxmFY7PS1gd8umDKiecJjdHgvITSrfHMQpRaL8D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YXNBWlNFczZuM0ZFY1hDRTU1NitxYVlJZUlzMHVyK0RUbEhBY2gvZmFmRzdt?=
- =?utf-8?B?L0RPL3VtS2t6aTFHNk5RSUl1eThVSjFQTnJwTFk4R0cwemZoUm5hWUZIRDE3?=
- =?utf-8?B?NTNJb055Sys1N1BDc2VCR3QzK3UyL2VQLzJtWFpzc1VsOW9sTXpNVWxTV1lU?=
- =?utf-8?B?cnJaa2QrZFlYdkpPQU9rQmwwSVRuc0dLTnRkeUdoODkrbjE0MVhuZFVrTTZy?=
- =?utf-8?B?ZUlsRHpKZGFyOVI4TjFrUHNqSU4vZFpiTElBeG8wWjhSby9pU3ZONHo2U1M2?=
- =?utf-8?B?Z3ZLOHRPQ2lJRFl3c2JtNE9JNFo3WEVpVkwxMVNyMGJqWXYzVWpEcm5EQWQx?=
- =?utf-8?B?YjdoVUpvTkNNVWxCMlFncTcza2hNOTdDRG01WXk3Rnc5bTdSU053MkF3Z3Rl?=
- =?utf-8?B?YmErcTVSM1FHZ2tWc0FpV2MwTTByWGZQYWlnTyttRW1OWHBpb0prVU50UlA3?=
- =?utf-8?B?R2FMbUl3bmZlQ0UzTUJVLzNJWnNqWUllVlZmalBtdmtkMVQvcVE5UFlreW5x?=
- =?utf-8?B?aERSVlB2bDNLR211TTlnejNZaEJvblYxNlFBbTFnRThzU3lKMHc0a2lSSUo4?=
- =?utf-8?B?N04xYURuYnkxYnJ5NHJtRmZlWUlvcCtnSGtmWUowTmx6TUREdHo3N1BOcE9p?=
- =?utf-8?B?eEliRGY2NTNuWjZoOXJrbWl2bk1wN0ZuaWJCVWUzMHFWRy9sMXhxRm9raXZB?=
- =?utf-8?B?T1RnM1hQaDNhdkFRbDRubE1ucWlFbWhlaU1Ca0psNXdoa01MUGcxYVBDRlBl?=
- =?utf-8?B?SFUvWEpkeGsyeWhYSlRQMEcrdkNkTVpidWxXblMwd0U1YmRyYTQvYmEyWmVi?=
- =?utf-8?B?RFlaWEw2TjREckpZdDYwZE42L0NvYUpVVzJxZ2dLZjhobEpkd1JJUTFOaU53?=
- =?utf-8?B?Z1d5UmRMSndZYmR0bThRZVN6TmpYOWtoR3cvKzJramlHdm5zNlZka2hZWnhR?=
- =?utf-8?B?dncvTFh2TllIRWVqNWpSaFRyTXJGTUNNSHpSTUhVYkkwZ0IzaDZnTVR6ZStW?=
- =?utf-8?B?RHgybzZZZEVRcmxrTklBWGN6SFN1RkpQbDA5WUdzRTEvZHdiVEhKcmtDUG1E?=
- =?utf-8?B?R1d1RU82b0xUbzFlVlMrOFZySjJtZHY2TzViaWw1OTgvdDJJZytob0pMR252?=
- =?utf-8?B?YUlzbnNXUnBDeHhPSDlrcHg1cmdBYmpPYkNUWFNsaUozbjduUXVaQms0V0lU?=
- =?utf-8?B?bFZtZlJvZithUUJyRHdnU0xxTE8wU3hTNVE1R014bmVkZXB6ajJHTEJNWjlh?=
- =?utf-8?B?dUVwN09GMVlxaEtaUGFHY1JuaGhrMm5KTE5yRFhubGpON0c2RElXZ3JHMVU1?=
- =?utf-8?B?U3RSei9jMEpvTUxxZlFrQVZZcDRCdXpwR0VCK2RlTWsxK3REWG91SWxHQmN5?=
- =?utf-8?B?UzRLTWU1Z2xWemp5VmhxU1FOQW9Vb1hydU5NdHBhMjJXTm9jeEZrclJCSUh6?=
- =?utf-8?B?eGR5dVRvMXNwYXFWUWZINmdON0Y1SXcwOUV5Yy9HRTNMOE1FeThlUTB4OFpP?=
- =?utf-8?B?MGswbG5XbzhSYzRJTzRsR1FYclBBVENCb0dkMTZRZmlSUmx4Zm1mbmJPalJV?=
- =?utf-8?B?M2x1cGUvaUF5enhIaEZoc1plVG4wOENJekdrSjRoVFdyN0V0enA0RXNiYldm?=
- =?utf-8?B?ayt1THBYV0VzU2NIWlhaVHh6Z1hSM2FMa3NnSDZpZ2l4R0N3b05IbXdiRmlk?=
- =?utf-8?B?T3hwc3RreTNKRGxpZ2xrdExXN3o3UThtaStXWGVvOFdsV1ZNTUJndGcvbDZ3?=
- =?utf-8?B?MTNoNmhKZU8zeWF4T05GNEJyUmNQS01ET2ZZbGVwejIzNURJQkZ1VFZ2RXZj?=
- =?utf-8?B?MndpTVVpUEp0NTByTkJXR3FKN2pWSndaeE1CemZvbTJhYjdxa3YyaVFuOExx?=
- =?utf-8?B?Y2h6dzhqcDlxRDBvZkt6akRQZkZaUVlhbTYvTWhPdE1QeU50M2NOSmFiTklQ?=
- =?utf-8?B?RmFhR3J0SU1mQW5OU2hIZmlSUmZCWDY4UHo3RzJTRHVCeS92Z2ZqWmZ3emF6?=
- =?utf-8?B?c1J0U2Yyd1dWYlhKU1pOQTZ0UHhFeGdWWHFJbEZCUG9KTUhFR1ZabitoS0R0?=
- =?utf-8?B?YWVIY1FWWEM0WEJCbGZnaGNJSno1alk1NjdhbFY5QmcxZ3VMNW5udEROSGdx?=
- =?utf-8?Q?HSIuG0bSCLB3DItC1Y1GoWMUR?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bae622c-0e54-40bf-164d-08dceec82017
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 16:24:08.1691
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: svYsasxQjBxjUn/FTMlIyT4azbFQDRw0eRmWfeBR5qLOly3pY/VKIA2lKZNdqrT41P4QJY6QqEUoWkiS1bLiOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8492
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-8-9560b7c71369@quicinc.com> <spaudnuoam3cj7glxmnlw7y3m46d2vsm42s576jqwrcrmywl2n@oyrynorzhddg>
+ <872e1c39-4547-7cd3-ba49-bbbe59e52087@quicinc.com> <32488500-05B7-4D25-9AAF-06A249CC6B1D@linaro.org>
+ <d0c8b466-5df2-853c-608d-ab67af1a9f32@quicinc.com> <CAA8EJpo7J9ZXC9uERg=WkjMbDD-fDTOO2VXaRVOCVZXiN18oSw@mail.gmail.com>
+ <4d67915a-d57d-0a33-cdef-3bdf05961d16@quicinc.com> <CAA8EJppa2Z-h0vH2Cmeem_1Cw8C+53q7pXkJ03mut4Bsn+Vm7A@mail.gmail.com>
+ <4c111681-03b8-9b4c-6b5b-ebfa4c5a7377@quicinc.com> <w547dmmxqqa4atd62jqiqcfzhlnpjc7n64btjmre5pmbsci4br@w45tuny3mcmn>
+ <9b2831a4-b2c5-2282-a7bc-497a7a215ffa@quicinc.com>
+In-Reply-To: <9b2831a4-b2c5-2282-a7bc-497a7a215ffa@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 17 Oct 2024 19:24:59 +0300
+Message-ID: <CAA8EJpqFhpAZtCCwDz9GBcPKwrdOFBmypajL0Sd7wKUwp=seKg@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] PCI: pwrctl: Add power control driver for qps615
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, cros-qcom-dts-watchers@chromium.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Jingoo Han <jingoohan1@gmail.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, andersson@kernel.org, 
+	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/17/24 10:26, Borislav Petkov wrote:
-> On Mon, Sep 30, 2024 at 10:22:10AM -0500, Tom Lendacky wrote:
->> +	if (cpu_feature_enabled(X86_FEATURE_RMPREAD)) {
->> +		int ret;
->> +
->> +		asm volatile(".byte 0xf2, 0x0f, 0x01, 0xfd"
->> +			     : "=a" (ret)
->> +			     : "a" (pfn << PAGE_SHIFT), "c" (entry)
->> +			     : "memory", "cc");
->> +
->> +		return ret;
->> +	}
->> +
->>  	e = __get_rmpentry(pfn);
-> 
-> So dump_rmpentry() still calls this but it doesn't require the newly added
-> services of RMPREAD and so this is looking to be disambiguated: a function
-> which gives you the entry coming from RMPREAD, I guess the architectural one,
-> and the other one.
+On Thu, 17 Oct 2024 at 18:48, Krishna Chaitanya Chundru
+<quic_krichai@quicinc.com> wrote:
+>
+>
+>
+> On 9/3/2024 12:07 AM, Dmitry Baryshkov wrote:
+> > On Mon, Sep 02, 2024 at 04:17:06PM GMT, Krishna Chaitanya Chundru wrote:
+> >>
+> >>
+> >> On 9/2/2024 3:42 PM, Dmitry Baryshkov wrote:
+> >>> On Mon, 2 Sept 2024 at 11:32, Krishna Chaitanya Chundru
+> >>> <quic_krichai@quicinc.com> wrote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 9/2/2024 12:50 PM, Dmitry Baryshkov wrote:
+> >>>>> On Mon, 2 Sept 2024 at 10:13, Krishna Chaitanya Chundru
+> >>>>> <quic_krichai@quicinc.com> wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>> On 8/8/2024 9:00 AM, Dmitry Baryshkov wrote:
+> >>>>>>> On August 5, 2024 1:14:47 PM GMT+07:00, Krishna Chaitanya Chundru <quic_krichai@quicinc.com> wrote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 8/3/2024 5:04 PM, Dmitry Baryshkov wrote:
+> >>>>>>>>> On Sat, Aug 03, 2024 at 08:52:54AM GMT, Krishna chaitanya chundru wrote:
+> >>>>>>>>>> QPS615 switch needs to be configured after powering on and before
+> >>>>>>>>>> PCIe link was up.
+> >>>>>>>>>>
+> >>>>>>>>>> As the PCIe controller driver already enables the PCIe link training
+> >>>>>>>>>> at the host side, stop the link training. Otherwise the moment we turn
+> >>>>>>>>>> on the switch it will participate in the link training and link may come
+> >>>>>>>>>> up before switch is configured through i2c.
+> >>>>>>>>>>
+> >>>>>>>>>> The device tree properties are parsed per node under pci-pci bridge in the
+> >>>>>>>>>> driver. Each node has unique bdf value in the reg property, driver
+> >>>>>>>>>> uses this bdf to differentiate ports, as there are certain i2c writes to
+> >>>>>>>>>> select particular port.
+> >>>>>>>>>>
+> >>>>>>>>>> Based up on dt property and port, qps615 is configured through i2c.
+> >>>>>>>>>>
+> >>>>>>>>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> >>>>>>>>>> ---
+> >>>>>>>>>>       drivers/pci/pwrctl/Kconfig             |   7 +
+> >>>>>>>>>>       drivers/pci/pwrctl/Makefile            |   1 +
+> >>>>>>>>>>       drivers/pci/pwrctl/pci-pwrctl-qps615.c | 638 +++++++++++++++++++++++++++++++++
+> >>>>>>>>>>       3 files changed, 646 insertions(+)
+> >>>>>>>>>>
+> >
+> >>>>>>>>>> +
+> >>>>>>>>>> +  return qps615_pwrctl_i2c_write(ctx->client,
+> >>>>>>>>>> +                                 is_l1 ? QPS615_PORT_L1_DELAY : QPS615_PORT_L0S_DELAY, units);
+> >>>>>>>>>> +}
+> >>>>>>>>>> +
+> >>>>>>>>>> +static int qps615_pwrctl_set_tx_amplitude(struct qps615_pwrctl_ctx *ctx,
+> >>>>>>>>>> +                                    enum qps615_pwrctl_ports port, u32 amp)
+> >>>>>>>>>> +{
+> >>>>>>>>>> +  int port_access;
+> >>>>>>>>>> +
+> >>>>>>>>>> +  switch (port) {
+> >>>>>>>>>> +  case QPS615_USP:
+> >>>>>>>>>> +          port_access = 0x1;
+> >>>>>>>>>> +          break;
+> >>>>>>>>>> +  case QPS615_DSP1:
+> >>>>>>>>>> +          port_access = 0x2;
+> >>>>>>>>>> +          break;
+> >>>>>>>>>> +  case QPS615_DSP2:
+> >>>>>>>>>> +          port_access = 0x8;
+> >>>>>>>>>> +          break;
+> >>>>>>>>>> +  default:
+> >>>>>>>>>> +          return -EINVAL;
+> >>>>>>>>>> +  };
+> >>>>>>>>>> +
+> >>>>>>>>>> +  struct qps615_pwrctl_reg_setting tx_amp_seq[] = {
+> >>>>>>>>>> +          {QPS615_PORT_ACCESS_ENABLE, port_access},
+> >>>>>>>>>
+> >>>>>>>>> Hmm, this looks like another port selection, so most likely it should
+> >>>>>>>>> also be under the same lock.
+> >>>>>>>>>
+> >>>>>>>>>> +          {QPS615_PORT_LANE_ACCESS_ENABLE, 0x3},
+> >>>>>>>>>> +          {QPS615_TX_MARGIN, amp},
+> >>>>>>>>>> +  };
+> >>>>>>>>>> +
+> >>>>>>>>>> +  return qps615_pwrctl_i2c_bulk_write(ctx->client, tx_amp_seq, ARRAY_SIZE(tx_amp_seq));
+> >>>>>>>>>> +}
+> >>>>>>>>>> +
+> >>>>>>>>>> +static int qps615_pwrctl_disable_dfe(struct qps615_pwrctl_ctx *ctx,
+> >>>>>>>>>> +                               enum qps615_pwrctl_ports port)
+> >>>>>>>>>> +{
+> >>>>>>>>>> +  int port_access, lane_access = 0x3;
+> >>>>>>>>>> +  u32 phy_rate = 0x21;
+> >>>>>>>>>> +
+> >>>>>>>>>> +  switch (port) {
+> >>>>>>>>>> +  case QPS615_USP:
+> >>>>>>>>>> +          phy_rate = 0x1;
+> >>>>>>>>>> +          port_access = 0x1;
+> >>>>>>>>>> +          break;
+> >>>>>>>>>> +  case QPS615_DSP1:
+> >>>>>>>>>> +          port_access = 0x2;
+> >>>>>>>>>> +          break;
+> >>>>>>>>>> +  case QPS615_DSP2:
+> >>>>>>>>>> +          port_access = 0x8;
+> >>>>>>>>>> +          lane_access = 0x1;
+> >>>>>>>>>> +          break;
+> >>>>>>>>>> +  default:
+> >>>>>>>>>> +          return -EINVAL;
+> >>>>>>>>>> +  };
+> >>>>>>>>>> +
+> >>>>>>>>>> +  struct qps615_pwrctl_reg_setting disable_dfe_seq[] = {
+> >>>>>>>>>> +          {QPS615_PORT_ACCESS_ENABLE, port_access},
+> >>>>>>>>>> +          {QPS615_PORT_LANE_ACCESS_ENABLE, lane_access},
+> >>>>>>>>>> +          {QPS615_DFE_ENABLE, 0x0},
+> >>>>>>>>>> +          {QPS615_DFE_EQ0_MODE, 0x411},
+> >>>>>>>>>> +          {QPS615_DFE_EQ1_MODE, 0x11},
+> >>>>>>>>>> +          {QPS615_DFE_EQ2_MODE, 0x11},
+> >>>>>>>>>> +          {QPS615_DFE_PD_MASK, 0x7},
+> >>>>>>>>>> +          {QPS615_PHY_RATE_CHANGE_OVERRIDE, 0x10},
+> >>>>>>>>>> +          {QPS615_PHY_RATE_CHANGE, phy_rate},
+> >>>>>>>>>> +          {QPS615_PHY_RATE_CHANGE, 0x0},
+> >>>>>>>>>> +          {QPS615_PHY_RATE_CHANGE_OVERRIDE, 0x0},
+> >>>>>>>>>> +
+> >>>>>>>>>> +  };
+> >>>>>>>>>> +
+> >>>>>>>>>> +  return qps615_pwrctl_i2c_bulk_write(ctx->client,
+> >>>>>>>>>> +                                      disable_dfe_seq, ARRAY_SIZE(disable_dfe_seq));
+> >>>>>>>>>> +}
+> >>>>>>>>>> +
+> >>>>>>>>>> +static int qps615_pwrctl_set_nfts(struct qps615_pwrctl_ctx *ctx,
+> >>>>>>>>>> +                            enum qps615_pwrctl_ports port, u32 nfts)
+> >>>>>>>>>> +{
+> >>>>>>>>>> +  int ret;
+> >>>>>>>>>> +  struct qps615_pwrctl_reg_setting nfts_seq[] = {
+> >>>>>>>>>> +          {QPS615_NFTS_2_5_GT, nfts},
+> >>>>>>>>>> +          {QPS615_NFTS_5_GT, nfts},
+> >>>>>>>>>> +  };
+> >>>>>>>>>> +
+> >>>>>>>>>> +  ret =  qps615_pwrctl_i2c_write(ctx->client, QPS615_PORT_SELECT, BIT(port));
+> >>>>>>>>>> +  if (ret)
+> >>>>>>>>>> +          return ret;
+> >>>>>>>>>> +
+> >>>>>>>>>> +  return qps615_pwrctl_i2c_bulk_write(ctx->client, nfts_seq, ARRAY_SIZE(nfts_seq));
+> >>>>>>>>>> +}
+> >>>>>>>>>> +
+> >>>>>>>>>> +static int qps615_pwrctl_assert_deassert_reset(struct qps615_pwrctl_ctx *ctx, bool deassert)
+> >>>>>>>>>> +{
+> >>>>>>>>>> +  int ret, val = 0;
+> >>>>>>>>>> +
+> >>>>>>>>>> +  if (deassert)
+> >>>>>>>>>> +          val = 0xc;
+> >>>>>>>>>> +
+> >>>>>>>>>> +  ret = qps615_pwrctl_i2c_write(ctx->client, QPS615_GPIO_CONFIG, 0xfffffff3);
+> >>>>>>>>>
+> >>>>>>>>> It's a kind of magic
+> >>>>>>>>>
+> >>>>>>>> I will add a macro in next patch.
+> >>>>>>>>>> +  if (ret)
+> >>>>>>>>>> +          return ret;
+> >>>>>>>>>> +
+> >>>>>>>>>> +  return qps615_pwrctl_i2c_write(ctx->client, QPS615_RESET_GPIO, val);
+> >>>>>>>>>> +}
+> >>>>>>>>>> +
+> >>>>>>>>>> +static int qps615_pwrctl_parse_device_dt(struct qps615_pwrctl_ctx *ctx, struct device_node *node)
+> >>>>>>>>>> +{
+> >>>>>>>>>> +  enum qps615_pwrctl_ports port;
+> >>>>>>>>>> +  struct qps615_pwrctl_cfg *cfg;
+> >>>>>>>>>> +  struct device_node *np;
+> >>>>>>>>>> +  int bdf, fun_no;
+> >>>>>>>>>> +
+> >>>>>>>>>> +  bdf = of_pci_get_bdf(node);
+> >>>>>>>>>> +  if (bdf < 0) {
+> >>>>>>>>>
+> >>>>>>>>> This is incorrect, it will fail if at any point BDF uses the most
+> >>>>>>>>> significant bit (which is permitted by the spec, if I'm not mistaken).
+> >>>>>>>>>
+> >>>>>>>> As per the reg property as described in the binding document we are not
+> >>>>>>>> expecting any change here.
+> >>>>>>>> https://elixir.bootlin.com/linux/v6.10.3/source/Documentation/devicetree/bindings/pci/pci.txt#L50.
+> >>>>>>>
+> >>>>>>> What will this function return if the bus no is 256?
+> >>>>>>> The supported PCI bus number is from 0x0 to 0xff only. so we
+> >>>>>> are not expecting any numbers greater than 0xff.
+> >>>>>>> Also please either move the function to the generic PCI code is change its name to match the rest of the driver. The of_pci_ prefix is reserved for the generic code.
+> >>>>>>>
+> >>>>>> ack.
+> >>>>>>>
+> >>>>>>>>>> +          dev_err(ctx->pwrctl.dev, "Getting BDF failed\n");
+> >>>>>>>>>> +          return 0;
+> >>>>>>>>>> +  }
+> >>>>>>>>>> +
+> >>>>>>>>>> +  fun_no = bdf & 0x7;
+> >>>>>>>>>
+> >>>>>>>>> I assume that ARI is not supported?
+> >>>>>>>>>
+> >>>>>>>> Yes this doesn't support ARI.
+> >>>>>>>>>> +
+> >>>>>>>>>> +  /* In multi function node, ignore function 1 node */
+> >>>>>>>>>> +  if (of_pci_get_bdf(of_get_parent(node)) == ctx->bdf->dsp3_bdf && !fun_no)
+> >>>>>>>>>> +          port = QPS615_ETHERNET;
+> >>>>>>>>>> +  else if (bdf == ctx->bdf->usp_bdf)
+> >>>>>>>>>> +          port = QPS615_USP;
+> >>>>>>>>>
+> >>>>>>>>> The function is being called for child device nodes. Thus upstream
+> >>>>>>>>> facing port (I assume that this is what USP means) can not be enumerated
+> >>>>>>>>> in this way.
+> >>>>>>>> Sorry, but I didn't your question.
+> >>>>>>>>
+> >>>>>>>> These settings will not affect the enumeration sequence these are
+> >>>>>>>> for configuring ports only.
+> >>>>>>>
+> >>>>>>> You are handling the case of bdf equal to the USP. Is it possible at all?
+> >>>>>>>
+> >>>>>> at the time of the configuration the PCI link is not enabled yet,
+> >>>>>> once we are done with the configurations only we are resumeing the link
+> >>>>>> training. so when we start this configuration the link is not up yet.
+> >>>>>
+> >>>>> Is your answer relevant to the question I have asked?
+> >>>>>
+> >>>> sorry dmitry I might got your question wrong. what I understood is
+> >>>> "you are configuring USP port before the link is up, is that possible?"
+> >>>> I might read your statement wrongly.
+> >>>>
+> >>>> If the question is "why do we need to configure USP?" I will try to
+> >>>> respond below.
+> >>>> "USP also will have l0s, L1 entry delays, nfts etc which can be
+> >>>> configured".
+> >>>>
+> >>>> Sorry once again if your question doesn't fall in both can you tell
+> >>>> me your question.
+> >>>
+> >>> My question was why the function gets executed for the root port. But
+> >>> after reading the qps615_pwrctl_parse_device_dt() I have another
+> >>> question: you are parsing DT nodes recursively. You should stop
+> >>> parsing at the first level, so that grandchildren nodes can not
+> >>> override your data (and so that the time isn't spent on parsing
+> >>> useless data). Also I have the feeling that BDF parsing isn't so
+> >>> correct. Will it work if QPS is sitting behind a PCI-PCI bridge?
+> >>>
+> >> we are not executing for root port. we are configuring for USP
+> >> since there are some features of USP which can be configured.
+> >
+> > What is USP? Upstream side port?
+> >
+> >>
+> >> we are trying to store each configurations in below line.
+> >> cfg = &ctx->cfg[port];
+> >>
+> >> port will have enum value based upon the bdf. after filling
+> >> the parent node we calling recursive function for child nodes.
+> >> As the BDF is unique value for each node we not expecting to get
+> >> same enum value for child or grand child nodes and there will
+> >> be no overwrite. If the BDF is not matched we are just returning
+> >> instead of looking for the properties.
+> >>
+> >> QPS615 node is defined as child of the pci-pci bridge only.
+> >> The pwrctl framework is designed to work if the device
+> >> is represented as child node in the pci-pci bridge only.
+> >
+> > Of course. Each PCIe device is either a child of the root port or a
+> > child of a pci-pci bridge. So are the BDFs specific to the case of
+> > QPS615 being a child of the root PCIe bridge?
+> >
+> yes these are specific to qps615 being a child of the root PCIe bridge.
 
-Right, because for debugging purposes we want to dump the raw RMP entry
-that is in the RMP table, not just the information returned by RMPREAD
-(since RMPREAD doesn't return everything defined in the RMP entry).
+Then your approach doesn't scale. Please reimplement it in a way that
+doesn't require knowing what is the actual topology of the bus. The
+driver must work with no changes if you have another PCI-to-PCI bridge
+between RC and QPS615.
 
-This is why dump_rmpentry() merely prints out the RMP entry as two u64
-values.
+> >>
+> >> Hope it clarifies all the queries.
+> >
+> > Yes. Please drop recursive parsing and add explicit single
+> > for_each_child_of_node().
+> >
+> Dimitry, the ethernet nodes which are child of dsp3 need extra
+> for_each_child_of_node and also we are going to add support for cascade
+> switch once this patch lands, in that cascade switch one more QPS615
+> switch will be connected to the one of the downstream port of the first
+> switch in that case we might need to do for_each_child_of_node twice
+> from  the dsp node where cascade switch is connected.
+> So it will good if we have this recursive parsing.
 
-> 
-> IOW, I am still unclear on the nomenclature:
-> 
-> The _raw* entries do not come from the insn but then what's the raw-ness about
-> them?
+Well, unless I miss something, your child bridge should be handled by
+the driver for that bridge, not by the driver for the root bridge. So
+recursive parsing should not be necessary.
 
-The raw-ness is that it is the actual data in the RMP table. The reason
-for RMPREAD is because there is no guarantee that the raw data won't be
-reformatted in a future program, which is why we only allow access to
-the RMP entry for Milan and Genoa, where the format is known and the same.
+>
+> - Krishna Chaitanya.
+> >
+> >> - Krishna chaitanya.
+> >>>>>>>
+> >>>>>>>>>
+> >>>>>>>>>> +  else if (bdf == ctx->bdf->dsp1_bdf)
+> >>>>>>>>>> +          port = QPS615_DSP1;
+> >>>>>>>>>> +  else if (bdf == ctx->bdf->dsp2_bdf)
+> >>>>>>>>>> +          port = QPS615_DSP2;
+> >>>>>>>>>> +  else if (bdf == ctx->bdf->dsp3_bdf)
+> >>>>>>>>>> +          port = QPS615_DSP3;
+> >>>>>>>>>> +  else
+> >>>>>>>>>> +          return 0;
+> >>>>>>>>>
+> >>>>>>>>> -EINVAL >
+> >>>>>>>> There are can be nodes describing endpoints also,
+> >>>>>>>> for those nodes bdf will not match and we are not
+> >>>>>>>> returning since it is expected for endpoint nodes.
+> >>>>>>>
+> >>>>>>> Which endpoints? Bindings don't describe them.
+> >>>>>>>
+> >>>>>> The client drivers like ethernet will add them once
+> >>>>>> this series is merged. Their drivers are not present
+> >>>>>> in the linux as of now.
+> >>>>>
+> >>>>> The bindings describe the hardware, not the drivers. Also the driver
+> >>>>> should work with the bindings that you have submitted, not some
+> >>>>> imaginary to-be-submitted state. Please either update the bindings
+> >>>>> within the patchset or fix the driver to return -EINVAL.
+> >>>>>
+> >>>> The qps615 bindings describes only the PCIe switch part,
+> >>>> the endpoints binding connected to the switch should be described by the
+> >>>> respective clients like USB hub, NVMe, ethernet etc bindings should
+> >>>> describe their hardware and its properties. And these bindings will
+> >>>> defined in seperate bindinds file not in qps615 bindings.
+> >>>>
+> >>>> for example:-
+> >>>>
+> >>>> in the following example pcie@0,0 describes usp and
+> >>>> pcie@1,0 & pcie@2,0 describes dsp's of the switch.
+> >>>> now if we say usb hub is connected to dsp1 i.e to the
+> >>>> node pcie@1,0 there will be a child node to the pcie@1,0
+> >>>> to denote usb hub hardware.
+> >>>> And that node is external to the switch and we are not
+> >>>> configuring it through i2c. As these are pcie devices
+> >>>> representation is generic one we can't say if the client
+> >>>> nodes(in this case usb hub) will be present or not. if the child
+> >>>> node( for example usb hub) is present we can't return -EINVAL
+> >>>> because qps615 will not configure it.
+> >>>>
+> >>>> &pcieport {
+> >>>>           pcie@0,0 {
+> >>>>                   pcie@1,0 {
+> >>>>                           reg = <0x20800 0x0 0x0 0x0 0x0>;
+> >>>>                           #address-cells = <3>;
+> >>>>                           #size-cells = <2>;
+> >>>>
+> >>>>                           device_type = "pci";
+> >>>>                           ranges;
+> >>>>                           usb_hub@0,0 {
+> >>>>                                   //describes USB hub
+> >>>>                           };
+> >>>>                   };
+> >>>>
+> >>>>                   pcie@2,0 {
+> >>>>                           reg = <0x21000 0x0 0x0 0x0 0x0>;
+> >>>>                           #address-cells = <3>;
+> >>>>                           #size-cells = <2>;
+> >>>>
+> >>>>                           device_type = "pci";
+> >>>>                           ranges;
+> >>>>                   };
+> >>>>           };
+> >>>> };
+> >
 
-Thanks,
-Tom
 
-> 
-> This convention sounds weird as it is now, I'd say.
-> 
-> Thx.
-> 
+
+-- 
+With best wishes
+Dmitry
 
