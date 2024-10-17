@@ -1,149 +1,151 @@
-Return-Path: <linux-kernel+bounces-370272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554399A2A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:06:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E593A9A2A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159EC28809B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B7A283B61
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218331EF950;
-	Thu, 17 Oct 2024 16:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B71FAC2A;
+	Thu, 17 Oct 2024 16:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qdl14ogP"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dDS4lzqE"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE6E1E102D
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C251EABBB
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729184286; cv=none; b=MFWxTe+iGA7zra5kE5/LYTb9aVE8w/L6OiZcYlPAUXRR3bmIHdG1oL91hKwyn10GmXREA9B9u8rzDjq2jfy9wKd3/Em/qUfO28/pUeDMAN2UZX9TKSclzqbVTsyq8fLuirVicHn1Jqtd/jepNwaEmb7q0VqnINsiNadkz3eU1TQ=
+	t=1729184288; cv=none; b=ocryT4ZzvLlekmP+P1t69C++/CWvQCDopFI5+qZyFMDSyVsY8wCTk2VdgLsAYRMx9wWiXryht/TAdPnz4W1fKG6iP1phf/9hvqfaTS2eSDvivjxlx9LpDpWmVvqc0l3WipcmnBHkzqa+43icqkpQjE4yw2gNM9VhsstUHF1AQxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729184286; c=relaxed/simple;
-	bh=8XB3a7uxPWVYCaQb9TO1KjD2csy1sUqq2mVlddinEQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H+eJwxa4LVgxnkfjREmtm8C3/UFBxYeeZknKhi3f5tQgHIuUbcZg3v1JjsV/beNFURQsjvrfjXWlVhwnWpPwumBmUotSEtWSH/M2BQWfPxonxavVFZD4a2El8uRRPI5Uzeyl2c2goqASW+PvdF1gHrmDmtBzVDgYuX6s6JkMwAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qdl14ogP; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1729184288; c=relaxed/simple;
+	bh=PrFPdr0NKJQKUfFjYkGfH7X4s8YeIB65gqZrdgLFzgg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=W0fYUfNrucp7/S0fAcMNru1btLVWJCmOBronfYEL2/VuqM51f5vt9lLIdRQHSW1qmASefWDfFtMV7guayIHwPxVnfcRXTrWvJCWkk4/A1ORs6CFfIkBTx3kJXcJuNbtxn1CagdKswryzK3jPXGw0ZC3y0ATSvv/nBT14m8jJ2LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dDS4lzqE; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e66ba398so894e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:58:04 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2939e25402so1754152276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:58:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729184283; x=1729789083; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8XB3a7uxPWVYCaQb9TO1KjD2csy1sUqq2mVlddinEQA=;
-        b=qdl14ogP5xgIxkzJD4PDjVxbjUqSH6DG4GYN8NaP9DZ4S79o0E+xefubfDSino+abk
-         DeUJFB3mqIDXEA2VaZCE1iqoBiBABc4LNtBR4opnYLlm8XaLc5aR02kFgNWfZd0TCClC
-         5PRiFi7xzFVO1VtTwFLTiBQU+cT0xKD0lGaLKp0pdWBUHMj673NDQAi1j17FLRU04z1p
-         JSXepI/vdJEKXg1n0avbFrUYNcfNGN+2kQJdopVNP55kQomStPgoXsFkNJ/pKwkJ5+Mf
-         BqJ48ENXKCqOkWhAuxQDjjoZ6kRKjI+7AGowUo/yCbLwziZx36RbvXLd4LLQcuOyBiFu
-         5K+A==
+        d=google.com; s=20230601; t=1729184286; x=1729789086; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JPTate8nHmfNvm5RLlOrViAXjwxlfzdSZEYjXEbaR7Q=;
+        b=dDS4lzqE+qvGsIXjESIHfbSiHuUkgmRuua1qeCfqtdFdLhGDXK6aDNl7HXYVCKo71/
+         Y2loqRt/wXqvaCY+Ob7nw15H42rqOrPWGhc0c7d0ZsyEs+iIo6XfEsTE7EzhcYFYF3Ay
+         HPkpv9Wa1q6rFoa9vO6oGaicPXO1xeAorbrVtbeuIRf47JxpLmuDBvvett906w+r4WcL
+         MZdwWfpe/mdlGsbA62xEAD2QsHIxtpGYgH04XltImtK+f6YzI5dQyw84QXWGF7PAv60f
+         qkvEerPsuqSYodb9nmdhUIXH/KXBeT37ztQsfIJhxQTSILU0NgHMA+Vyp7cCx9neBPW4
+         Ne1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729184283; x=1729789083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8XB3a7uxPWVYCaQb9TO1KjD2csy1sUqq2mVlddinEQA=;
-        b=Tv9/x56Ej9CtzAwHQeZaMnUY0Zkopib6JYBKdqE5y0T0UiBvGytETj6CgwDl8dxtdS
-         O7foLIyVdaO2oQgdK8wmXgGcQeTM0l+MZxI78wxc6NSci0FvtMEUvnHRor4p9p8+Mo2s
-         Tk0DzHSAcNQHkY7pyOJTaMKUO4yu3s26xkt9jTdmTPk+UlFriw1NFMa6NKD++gvT4z8s
-         9n7NxSbwX4/Ub+0VHInBCJcpW1vZkrlwETjsM3B8sQgicm0k7gTeuKoz8orwiI8fDbXc
-         52m67K0x23kkELTffBTFcN8utjdgqVgBbA/nfDrbwO4k6m++DLwL/GmTm41aSC2rQ2Pa
-         R7jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4QKA0NMTHCgJyEX6KNUzquZSsdBvSPdds4TBM+2BVhoDiYWXcv8K1n8KNKKQYweePuiHxtpedVa4f4eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyazqGR337EultS+fQbJJvU66tPWlbDS/IyQFHWctDzyqQtO7Z
-	Pj9hgQoty3AstksAcb4qskd2FN/Php3DZoTS74/3qjFMBnsTdDUCJr8e8UeBGVDcFKp2WPSGMnj
-	yEmhD0K3AqOXwzbhsbZpkE7e9slMDdesKCYRH7z7hkmQ0pBsqYwZw
-X-Google-Smtp-Source: AGHT+IF6sxueAeebQ+K/v/kvkzKRFCdnShMJs7BNzRIjwiQCbzUDpO4yO96f/vtMBIZUVpSVOO3kE2IgJtfLm39ShC0=
-X-Received: by 2002:a05:6512:b22:b0:538:9e44:3034 with SMTP id
- 2adb3069b0e04-53a0d20566bmr563106e87.6.1729184282455; Thu, 17 Oct 2024
- 09:58:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729184286; x=1729789086;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JPTate8nHmfNvm5RLlOrViAXjwxlfzdSZEYjXEbaR7Q=;
+        b=AqodewCPc6AVU68l+NXRyU1o7iY1wHwDK5NS/3rwmq2sAGx+Jg9GZSn+xcJFBBztnN
+         GPx72SshF6aTFya4NGz+RWseP1iF4MWkoe04/8zggZJQVEtnBRNNBuKC/1uMxUigACNY
+         tFosjrTDW4IOkPGNmqErEST0Nro4FUEcQTDOYbZHoLTO8Ul08hIWXszVWesy9yUuV5iP
+         wMCxlrbgjluEtf45KmDJMbhf8hXHizQvfip0Y+IDIY/HhR2p7srIyZDWxIMjCT4VYFCr
+         wFdxoA9c5rxaCA1hsK4WcDtnsa02huG1yCJvBtqu7JdwI2XYxw8/2aGY+7YgendJL3sQ
+         K25A==
+X-Forwarded-Encrypted: i=1; AJvYcCWCOn7jH46tkwLPuNrUDx6UkYjyThEer1D7r7POHmTiVvlAfQrqMj5bggTxcKQ1QNSu3q4nU+NAwVBTBvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNVOxPTuST8OkAS0EOIZLF9Ec3vfPNQQG4HTw1c1GBOe3RGoe3
+	gptZH+hpgEpgRUaMnMyv8jOv001amYBRq9ZI98F+esmARADkHqdXZPWbukodS14BYYtIbCSiucr
+	Enw==
+X-Google-Smtp-Source: AGHT+IF7B084V115Sr72nxCNj1jAu1r6gImTDt3pvbXTzRx/HxKwq71Gvz4aJ0aVLn+pxpF6UyiW5mTVJRo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:9bc9:0:b0:e2b:a511:2e51 with SMTP id
+ 3f1490d57ef6-e2ba5112f27mr2946276.11.1729184285606; Thu, 17 Oct 2024 09:58:05
+ -0700 (PDT)
+Date: Thu, 17 Oct 2024 09:58:03 -0700
+In-Reply-To: <bd116c27908111619b6cfffbe9a25e98e0e7cc20.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241016-fix-munmap-abort-v1-1-601c94b2240d@google.com> <b5cfb010-c892-49d6-a278-fae0e1a0b0fc@lucifer.local>
-In-Reply-To: <b5cfb010-c892-49d6-a278-fae0e1a0b0fc@lucifer.local>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 17 Oct 2024 18:57:24 +0200
-Message-ID: <CAG48ez2-opg-OBmY=Toah0A_qxJ3XmG4VkWHnXe2yqzZf3F2+g@mail.gmail.com>
-Subject: Re: [PATCH fix 6.12] mm: mark mas allocation in vms_abort_munmap_vmas
- as __GFP_NOFAIL
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240927161657.68110-1-iorlov@amazon.com> <20240927161657.68110-4-iorlov@amazon.com>
+ <ZwnBGtdbvmKHc4in@google.com> <bd116c27908111619b6cfffbe9a25e98e0e7cc20.camel@infradead.org>
+Message-ID: <ZxFCG7pxWXs1D0p5@google.com>
+Subject: Re: [PATCH 3/3] selftests: KVM: Add test case for MMIO during event delivery
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Ivan Orlov <iorlov@amazon.com>, bp@alien8.de, dave.hansen@linux.intel.com, 
+	mingo@redhat.com, pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, 
+	hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, x86@kernel.org, jalliste@amazon.com, 
+	nh-open-source@amazon.com, pdurrant@amazon.co.uk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 11:47=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> On Wed, Oct 16, 2024 at 05:07:53PM +0200, Jann Horn wrote:
-> > vms_abort_munmap_vmas() is a recovery path where, on entry, some VMAs
-> > have already been torn down halfway (in a way we can't undo) but are
-> > still present in the maple tree.
-> >
-> > At this point, we *must* remove the VMAs from the VMA tree, otherwise
-> > we get UAF.
-> >
-> > Because removing VMA tree nodes can require memory allocation, the
-> > existing code has an error path which tries to handle this by
-> > reattaching the VMAs; but that can't be done safely.
-> >
-> > A nicer way to fix it would probably be to preallocate enough maple
-> > tree nodes for the removal before the point of no return, or something
-> > like that; but for now, fix it the easy and kinda ugly way, by marking
-> > this allocation __GFP_NOFAIL.
-> >
-> > Fixes: 4f87153e82c4 ("mm: change failure of MAP_FIXED to restoring the =
-gap on failure")
-> > Signed-off-by: Jann Horn <jannh@google.com>
->
-> I kind of question whether this is real-world achievable (yes I realise y=
-ou
-> included a repro, but one prodding /sys/kernel/debug bits :>) but to be
-> honest at this point I think I feel a lot safer just clearing this here f=
-or
-> sure. So:
+On Thu, Oct 17, 2024, David Woodhouse wrote:
+> On Fri, 2024-10-11 at 17:21 -0700, Sean Christopherson wrote:
+> >=20
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* We should never reach t=
+his point */
+> >=20
+> > No pronouns.=C2=A0 Yes, it's nitpicky, but "we" gets _very_ ambiguous w=
+hen "we" could
+> > mean the admin, the user, the VMM, KVM, the guest, etc.
+> >=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0GUEST_ASSERT(0);
+>=20
+>=20
+> Is there really *any* way that can be interpreted as anything other
+> than "the CPU executing this code will never get to this point and
+> that's why there's an ASSERT(0) right after this comment"?
+>=20
+> I don't believe there's *any* way that particular pronoun can be
+> ambiguous, and now we've got to the point of fetishising the bizarre
+> "no pronouns" rule just for the sake of it.
 
-I mean, there is a reason why we have __GFP_NOFAIL, and if you don't
-set it, my understanding is that you *can* end up failing allocations
-when the page allocator sees no other way to make progress...
+No, it's not just for the sake of it.  In this case, "we" isn't all that am=
+biguous,
+(though my interpretation of it is "the test", not "the CPU"), but only bec=
+ause the
+comment is utterly useless.  The GUEST_ASSERT(0) communicates very clearly =
+that it's
+supposed to be unreachable.
 
-I think as a rough sketch, what you'd have to do to hit this issue
-without cheating using fault injection might be something like this,
-for simplicity assume all of this happens on the same CPU core:
+And if the comment were rewritten to explain _why_ the code is unreachable,=
+ then
+"we" is all bug guaranateed to become ambiguous, because explaining "why" l=
+ikely
+means preciesly describing the behavior the userspace side, the guest side,=
+ and/or
+KVM.  In other words, using "we" or "us" is often a hint that either the st=
+atement
+is likely ambiguous or doesn't add value.
 
- - make processes A, B, C, D; with A having threads A1 and A2
- - let process A consume most of the available RAM+swap (so that
-process A will be killed first by the OOM killer)
- - let thread A2 enter some syscall that will allocate a lot of
-order-0 pages without fatal_signal_pending() checks, then
-block/preempt it somehow
- - let thread A1 enter an mmap() syscall, then block/preempt it somehow
- - let process B consume remaining available RAM, until B blocks and
-the OOM killer decides to reap process A. Note that the OOM killer
-starts by basically just setting a flag on the target process and
-sending it a fatal signal; only if the target process doesn't exit for
-some time after that (OOM_REAPER_DELAY =3D 2 seconds), the OOM killer
-starts actively reaping the target's memory
- - let process C allocate as many maple tree nodes as possible (to
-drain the slab cache's freelists), until C blocks on memory allocation
- - maybe let process D free one maple tree node or such, so that the
-first maple node allocation in mmap() for constructing the detached
-tree works?
- - let thread A2 continue - it will have access to ALLOC_OOM memory
-reserves, and AFAIU will be able to completely empty out the memory
-reserves, and will then hit a __GFP_KERNEL allocation failure
- - once A2 has hit an allocation failure, let thread A1 continue
-execution - it, too, should hit a __GFP_KERNEL allocation failure
+And irrespective of whether or not you agree with the above, having a hard =
+rule of
+"no we, no us" eliminates all subjectivity, and for me that is sufficient r=
+eason
+to enforce the rule.
 
-But I haven't actually tested that.
+> I get it, especially for some individuals it *can* be difficult to take
+> context into account, and the wilful use of pronouns instead of
+> spelling things out explicitly *every* *single* *time* can sometimes
+> help. But at a cost of conciseness and brevity.
+
+In this particular case, I am more than willing to sacrifice brevity.  I 10=
+0%
+agree that there is value in having to-the-point comments and changelogs, b=
+ut I
+can't recall a single time where avoiding a "we" or "us" made a statement
+meaningfully harder to read and understand.  On ther hand, I can recall man=
+y, many
+changelogs I had to re-read multiple times because I struggled to figure ou=
+t how
+the author _intended_ "we" or "us" to be interpreted.
 
