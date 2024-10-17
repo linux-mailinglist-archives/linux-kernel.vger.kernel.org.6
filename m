@@ -1,326 +1,252 @@
-Return-Path: <linux-kernel+bounces-370367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455229A2B8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:59:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2738E9A2B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0F91C2771A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6F21F2121F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110CB1DFDB4;
-	Thu, 17 Oct 2024 17:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFECB1DFE34;
+	Thu, 17 Oct 2024 17:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDYsDxXc"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wHatS3GP"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E0D1D95BE;
-	Thu, 17 Oct 2024 17:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729187949; cv=none; b=vEmojqU4ARJhFXMZilpawsHJebM6/Ux2K8pMCjz9juUAOH08McQiRcHilxwAJvgF5QCAajy7aOygVUSfmCVd+fwGlOV+Ic2bIyR8EU9CGy4fIyqg6yEiVNVFOYDDgtxSObVy/itKDb2GkFKF+OdKjNHUe/kEV2WHhBeZ1GxwVUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729187949; c=relaxed/simple;
-	bh=7SqJC9pFiwbpf0LX/JQifbtAyBNyeDs3+hWmcbAqqTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LMjUy87h6UstuHaxGfRlsKcvdia4NyolAoCu+jU8H69QIzJr/yeYRX+9SHhlQhuLcg64YJhIs1M89tPlDDZSknQw6nmvkKworRAzbvnPiW3gwxbnN5pv7YFflm5zKludwEAk9tMY5NFNBBl/diHvPgZixU9nO7QTvjo7eXXIp34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDYsDxXc; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a86e9db75b9so165194866b.1;
-        Thu, 17 Oct 2024 10:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729187942; x=1729792742; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uvQrgOjAHlZRrBrPvACIpKwOIht0Nu1NboFA+g925w0=;
-        b=KDYsDxXcPHxNxYN/W5yTvqi0zhXjIrwyFJyq6li985aMmU2b/wBerstaykJ2tTO4hW
-         4vv/MKaWRkP/4aRs1nsfkZKTQvEoXWG1FNbwnHcVyF0I1hbEAFcaeOgnNXQ+mvS6LUbp
-         TvN8+XyS39MPKaHb/bwZx4ABhEe3yLho2W1IyvK3TlKZrTnFSAYQyFKpsjqFXkvc720c
-         CZuFl2bASYPQzraOZsvspF1PEAkIJo2M/nSmujKzxjixKam7tXxbJenIpDl8ozq9SvaH
-         R01ySzmB9CEKa7wM/zfR8V/45tyD20jHfdAmE8IRTmAFR5u5J1XjwO+Iiy9MMdY05c4S
-         3zlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729187942; x=1729792742;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uvQrgOjAHlZRrBrPvACIpKwOIht0Nu1NboFA+g925w0=;
-        b=aMKhnDGCi8JQf4Koonwpj+Ek9u6SiIm/whB0edBXhbFLoL59L5Y8mwFs/iTqocSjSk
-         7kt50orgLLIipuh1UG2r8m26iiH4XEnS4o+4JbPbn+QALosU3QfYv5fZvC4yWIRJYBt/
-         yHRGV9DKnLrjNjksJtOXqcOqquiRLfDhWez0nzd8Vf7y10/Vm6djjbEjr0CE9mA/Bwjb
-         aPTe00z92YdOfqHtV3vcVkVVqMEXRXu5xddcMvZouvMm12jcQEsjPC0szuIGKlKslFGm
-         eIpe1PjbQcKMcKcZyE5xWX5vLJIn1fs/S7wdw5VJsAtwsA6ikxWskXLDBUXlDlvgydnF
-         +h4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUHecwuzBiMFhgxeBIrDwkX+cyryfeLVIqBJeZU4duRtqRNeMKvXO5qw9Z6DS3qDImcpJQtcD51tYZC5w==@vger.kernel.org, AJvYcCVomYW6LZYNjkUPo5CR2DddIC164AFqV0Z99Pb/nZU9YfvtSw9XB4Ik7Z8A8gAwpm73zhnhxBYRnJQuXPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPvxfGDPSnIETs4ZYFC40gamFwu+atmBphhpZLPl7z8hvexrRP
-	4TtJL8/T9G1eyYTdraIf2Xx7/1hu3lKd3bvqQWTlMUD95W9KYFUl
-X-Google-Smtp-Source: AGHT+IFM4ZPg3CHF2owqATI8AWOFfLVcMwgoTw/hnRbe9m/y27yBkr44haiyBLrYw93gkjmPWS4vYg==
-X-Received: by 2002:a17:907:9489:b0:a99:e98f:e73d with SMTP id a640c23a62f3a-a99e9900010mr1382684066b.37.1729187941808;
-        Thu, 17 Oct 2024 10:59:01 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a2981765esm319154366b.129.2024.10.17.10.59.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 10:59:01 -0700 (PDT)
-Message-ID: <c3965459-c295-c577-8b49-834ea4c19d55@gmail.com>
-Date: Thu, 17 Oct 2024 19:58:59 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8CA1D95BE;
+	Thu, 17 Oct 2024 17:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729187966; cv=fail; b=K13UN+5OZtV3wBxTmcuvkXz9ijFhxmlWqotBWcLHh2Qspx3tZKZvLncjcS/a87IcsIiTbEm9/PrQfUIpvTTIfss4X6ektCwtHW0KZ4s+VcuU55pQfD3JK0VREbWLUAvgSE7K51vNnOAb8z3mdFfvcHyENBkh394vYmlRjwxH8Ec=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729187966; c=relaxed/simple;
+	bh=WwssymYyzvuhVwdeBprWWzR++WxAGUZayG15kPXAFNw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qBAFzHogAcRtNIyvqLEfVR/Zd3D2HAcr0bQWp97mTqcv/s4aTS88p/Ao5SgtBfFZBswrRXHvkPdcff8UbKuFWjHHkc8Z3wxPFuIYYGFqxThOmZ/m0sYpQaMUqswxJlT+LdaxTv0+DFSjESg13wFpGVYHChIb5DPK46ZFk54z6jM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wHatS3GP; arc=fail smtp.client-ip=40.107.220.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aWiPRnGaIfEvOy09sEFNiKK+8rEOo32VkrBwLDxYHjNVgMl+zx1VTKzKG/rrAo7XIudKzJay6BhQf796sdwAnSWLN5FOfR+X2ux6cISczoZ6irJMku5ORdBHbvBM5cy9dRj+/NqApR1opoaWkwNdZl97wjE8O0UZekY0tUYDj3vIMdcO6o0nDXdCj4u0AEqgdujWArfnymRT8RfbBarg8DdQ0Pn8FlUa0OrgikXfBOc2GoTotj0iuRhny1SM87+MNisjYTnGzpcfCJ0VV60K3cqgdYogLa/lg70QRWc31Or8HzoNR/i3N5K2rbptsg78TULuom8ircmGGhKBDFn5KA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OSpAWiEZkkow0uFclR/I0vmXVPYnvlEwE5EgCoqDES0=;
+ b=FKdnH2kV/y/MsuVWdxb4cZj958uAk39KRef/MSbWw+2TXcmuDevojHmrHS5kp3PNYG4QSOpBoUpmVkZToyduRibSUKCLlsk6DADTjR2DKXEMCor9KLanXZ2pw99HWbEVJXPkZ1I13Q1eJvb26jgruSP3Qy1Ufu5Svb0I2Ex3kgSV87liVFMGYdxGp8sjVdpHYYsaC6XgIAQClzb4Daspba+08HO6M17wId2T7kkSNen19r9FzZxLK9Ns5XrH8b6C/r8Jtpl1d5DlDx2fwjKqkAQqaOYhrSng+NEMbu99pJcZbE5eHenEXQVmtySDABRyMeSF/RHCi6Ff7UphNyxcQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OSpAWiEZkkow0uFclR/I0vmXVPYnvlEwE5EgCoqDES0=;
+ b=wHatS3GP2d+vWKOUfMs6D8XtVyLX5b6++kil3HLVGcS0t8n1pguL+64C1XHqIf/wU74h9uZ/7ZFwW5onADzMchohZDV4OW6loLcxxSVH5tH+EL6pL4rO1Bxji8SiaJ1mM1ps1adDVqsvKVIag3HKfbawol5PZ9QQAKGfmlTX56s=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by MN0PR12MB6368.namprd12.prod.outlook.com (2603:10b6:208:3d2::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
+ 2024 17:59:16 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8069.018; Thu, 17 Oct 2024
+ 17:59:15 +0000
+Message-ID: <d4c39495-aafa-43dc-b5a9-d36c22ae4db2@amd.com>
+Date: Thu, 17 Oct 2024 12:59:11 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v8 12/25] x86/resctrl: Remove MSR reading of event
+ configuration value
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1728495588.git.babu.moger@amd.com>
+ <d6e298e9ccbf04207cb352b4f3c9f90613547b52.1728495588.git.babu.moger@amd.com>
+ <dd53ed4f-d1c3-4b1c-9f4c-1852a64e9d87@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <dd53ed4f-d1c3-4b1c-9f4c-1852a64e9d87@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0126.namprd13.prod.outlook.com
+ (2603:10b6:806:27::11) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] leds: class: Protect brightness_show() with
- led_cdev->led_access mutex
-To: anish kumar <yesanishhere@gmail.com>
-Cc: Mukesh Ojha <quic_mojha@quicinc.com>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241015162532.2292871-1-quic_mojha@quicinc.com>
- <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
- <Zw7COXsvJsWq4db9@hu-mojha-hyd.qualcomm.com>
- <CABCoZhCDJfiRtUvQ-4ypaQsiktC3b22r4=TCy5V+RVeOb4wP+A@mail.gmail.com>
- <Zw9S7LYZ1Sb/eMXe@hu-mojha-hyd.qualcomm.com>
- <CABCoZhBVEDKaaH36C+r4uMYo_08uRne9jikFCz8-yRuChR8JSw@mail.gmail.com>
- <385b7baa-8027-c4cf-948f-a1dff570befc@gmail.com>
- <CABCoZhBq4oFHOoPoWu2g=1Szry7bV9rBRgq_4zDxuS=17jfNhw@mail.gmail.com>
-Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <CABCoZhBq4oFHOoPoWu2g=1Szry7bV9rBRgq_4zDxuS=17jfNhw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|MN0PR12MB6368:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58d4558c-4820-4419-039e-08dceed56a2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aE5TZUJVQ2pnUmxCVHdOZk0yZ2Mxd1dkV0tOc2pkd2hDVlFQZy9tWjYxaEZG?=
+ =?utf-8?B?QW9tWmZqM3phTElxelBjRGdMY0NrVWp6OWdRaG4zdGdhZFhISHpxUE1vSU5s?=
+ =?utf-8?B?Q2Rwai9vMHQ3VVNzQmRWbkN6RHo4WU5sNnhlb3NOZm9tdTgyaEI3TDBKQWpR?=
+ =?utf-8?B?NWpTQWZkVWZjdG82RFNTKzNKVEhvYnVVdi9kZ3hWdWtPZ0hRRlZNYnkreVJy?=
+ =?utf-8?B?RjJIN2lNZCtuSHZ0c21iWXo2N203RVJJTkFpdVRDbjBKTXFXV1ZMUmI1RjRu?=
+ =?utf-8?B?Z3dmeUFaL2QwblRpS3Vtc001ZkxYcDhaSW5kZWo5bDVlWThxMTBOL3BhVHhL?=
+ =?utf-8?B?OHp6eDZBUjZiSWJwQ0tEY0VFaHFUNU9kY2gzUENKQ1pRZ0syd0FuaGlZTTAr?=
+ =?utf-8?B?UE42S0Y5eTBJeGY4K01DdFVYRWxYUnZYOE41YTNrMFlQU1VBNW5Kbjc1WENu?=
+ =?utf-8?B?ZjJXMGNDaDJUaDcvUFNtNE5JZzhCTXJYN290NFh1dFRydTVNdFQrVk9ZNm95?=
+ =?utf-8?B?RGkxTFJUTVdPVlZyakk5RERXZWttRzFxY21Qd3ZUZlRhcDdwOHlQZVVJZDFw?=
+ =?utf-8?B?djJzTDRqOWVnNHZNc1M4bllsL0tDMVpWcGo3TVlqajN3NTVHc0M0d3E2aVdI?=
+ =?utf-8?B?TVV6MzJWcnhOR1BVdElUUy84c2VBM1FnSjR2VDRGZTI1bEM0QXp6Z3pxWEk1?=
+ =?utf-8?B?clF2U3BZVTN2VGI3eXBjYWFzc2RQYjh2VG5vSm5uQVM2a2pMSTZZa3Q3bW1W?=
+ =?utf-8?B?RzR3V0ZDNHIwOWg3Y2VuRVhxeTN1MHJBQTJTWTBwNzBGMWx5SUpPUmN5Z2lh?=
+ =?utf-8?B?Tm11UzJuK3BpS3pHcWlrTzhzOVlVY2ZzNG5BTEwydHRsU0ZpNlViandvZWxt?=
+ =?utf-8?B?MWExTnBVWVJUZkZtUUlVNkVyTy9OcGV1ekU5MDhiK1gya2wySThRbXhQb2Z0?=
+ =?utf-8?B?OUtmSitlNnpWYythYTZqU21MV04zcWk2UXVIY1JXNjhDdTIyODAzRFp6TzdP?=
+ =?utf-8?B?ZlpHcTJoTXBQSFNmei9MeDZKWXdEa1R5bGRDelRWNmhYWGx0VWN1WFZOWmtp?=
+ =?utf-8?B?YThpMFJDZ0JFdEFvc1luN0k0VDd3MkQ5bnlway9QaTFhUk9RSEZwNStiYlNN?=
+ =?utf-8?B?dE9DMmt0QVNJVzJQU0VvRXQ5anB3akR6dlBpdnVBODNQcVdlNTdQdEFDekMw?=
+ =?utf-8?B?NFhrZDVUSWk1eWp4RVVWRzdRa2dBWHZ3Sy9MdmxiNDBndm13QUovRWZyYlly?=
+ =?utf-8?B?elBqa0crdTcxTE1VUkJVOWI3ZmRGZlJveHJwOEFCc2YrdUF6ZmRxSHhSOXhW?=
+ =?utf-8?B?c1diVnArODBtSjdacGxpNlhnYWNBaDh4R3h0NnBWNmZzMkxESXJyOUMrcFRm?=
+ =?utf-8?B?TnhxcWpPSVNxMGFSQ2JSVTRubGVEK2RNQzMyZndMZ2dwRUYxaEliaDhURUw5?=
+ =?utf-8?B?NHpsRlc0UXJXN2RPLzFlM1NST2ZVb2J4ZXpvZGFHU3J3Sm1pWlZSekxkc2x2?=
+ =?utf-8?B?SnpCQkYwUTNYRWRjZCtKTnNKcE1MYmNpclNUSHovV244WDk3SmxiUWpWMklo?=
+ =?utf-8?B?cmtobG5MamNtK3cydVhrRGhBSXZPaXlQR3ZIUkZSWUZVVFVONmZQUUpWN1Bw?=
+ =?utf-8?B?OFE3N1h3SVI2Q3ExY3hpZUhIVDlCMXFkOXkxdElmWG5zVlpCeXFpRzdrNW9P?=
+ =?utf-8?B?OUxjVkxZNGdSRnZLUU1DTUFHRW5kLzRpblBZYmlPamV5WVM2NVZRdG9BOVFU?=
+ =?utf-8?Q?4ul8aK+UYZqjiY4h8P/pYswuA3HD1bi07ISefzM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?d2Z3QS9ybExHQXpZV2R3ZVNqSWJHbWFNRkJMOTZTN0hlcUQzRmZBYmtJcVVh?=
+ =?utf-8?B?NkdjYkJBRmcwMTRnM0ZqYjRoQnhjc0VwWXdCL0tReHhkZ3R3bXR0YU1qMkZM?=
+ =?utf-8?B?VjE0VExRMTM2ektFbmRRNGhPaW8zeXZXWDRzbjVGSVdjcUZCRXpDditnbVUx?=
+ =?utf-8?B?dElqcEdQM2o3QjBjWEdaUkNmVUNYbDZINmZKY1NUckdKa2NYUkpUWmlRRHFj?=
+ =?utf-8?B?N0RNdFlBT2JYbyswUENFR1FLQW5hTW16RjNTeVVlWWErcmpjSWQ2MDBndXh4?=
+ =?utf-8?B?WHZBeUlTallsNGlFVVdZR3hlL1NNN05JZXJmclJFTk10S2ZPWThibmZsZjhr?=
+ =?utf-8?B?YTZqTTBPUjR4OWFQME1sRUxFRUIzNWVVdzkrdmVEL3k2TkNFVzc1Q0JzV0pi?=
+ =?utf-8?B?QWdaeFYvS2UxNlFhcmlPNlhFSDlZb3psZ2NtMlV0a1M1NFZ2bVo5NDVSYUNx?=
+ =?utf-8?B?RVlPY2lHYzJ4ZGJBMkVaODhlNDY5Vlp0WERObzVNUHZRcE1TSUJhU1dRM1J1?=
+ =?utf-8?B?TU1OMjZ1NmdKZHl0V2RXYmNiWGQ5QWlwNkp1U0YwREFOTWsvOTVaRE1VTnhV?=
+ =?utf-8?B?TXJ5K2Z2WEIxOFE1cERuWkVDTWQvYlRuK3JLYnA2LzcrVUZEYkxxczJuWDBT?=
+ =?utf-8?B?ZW1hbXJ4WW04dmVNNkZRWVovc0t5T0J2OGxyVmJZeEx6SjM2N3psM3p1RS93?=
+ =?utf-8?B?RysyQ1NzbVRGWExkSENkM2toaDZ4NDh2RThyUWVLbnk1RDBBc2ZCQndLeXE0?=
+ =?utf-8?B?RnZ2RDVmZi8wOWpJZnJYb2hJcHFHMHhIRUpOenVKcEJQNkYrbS8rc2ZkNDUr?=
+ =?utf-8?B?aWpOeFJyWW5aNzlYaXFlc2liTUxvcDloVGx2NUs3TGh0R1ZWQ0dPb0NjTlp4?=
+ =?utf-8?B?c1VGVUpsZW9YUitVS3pVNGJDdmZGdU10NUhrU2JSck4yZ09VZjBDWlF3TDhS?=
+ =?utf-8?B?NUhEZ0xPa1NUWGhoS2x0RGpsZE5uYW1WU0prVGxBUUo4bnJjMjUvWDhTZGVl?=
+ =?utf-8?B?RTFQV0FYSTZIVC9EdFhOdVlIb3FQa05HSHIxQk5telBPNDFOaWIvSFJuYTdS?=
+ =?utf-8?B?N2E2QkdUZXBsTzJGZHdpNHZ3SzV3aGU1TTgzb0tzQVQ0cEZNZEFNSjVWWDhh?=
+ =?utf-8?B?NzNwSXlOSUlYMFZNZjlrZmdiRitremtqNklvaURkOWxVMzFOVndWS3NKaGoy?=
+ =?utf-8?B?L3dtaExKdHB1Q2NXamFKS3BJeTVpSmRiR2NaSHV1K1U5OEtXdGtnTHZOL3ND?=
+ =?utf-8?B?V2o2TlpwakpVdXpkWFMvOWdMTkdRNXFRQU9Wb0h5aUdESEVTMWRBUzBDZEg2?=
+ =?utf-8?B?T0xwOEtvd2w0aHE4dWp1d1JVSVJrUVZwaEdtY0xpc29Ta1M5eHpMTFdXRVFl?=
+ =?utf-8?B?aUp5WktvZG9QOGFUZ0ZORmhYbEwrUjRQSnc2SmlBTXJEKzIrdjVFdjV3bXlh?=
+ =?utf-8?B?RWppTjFDcU0xNkQzVndMcEpUTlppYWdyTFBwZjdyQzdWNUx4V3J3aEE5aitW?=
+ =?utf-8?B?N2dwUE05cllYeTNRTS9mLzMzSjVzSGhGcjhkMkVyME85RTU5RWZyZmZOTzlo?=
+ =?utf-8?B?clJ3YU9ZNmdUOVYwOTVQZzArd3hwZDczQXdPalpuSFRjVFJ6b2VIWkJHaEY5?=
+ =?utf-8?B?QTBRYmFZTjRBSTlBeXhoSjJFcXZ4bVpNQStRaGZqWHRHbEhteXd5K1N4SVkw?=
+ =?utf-8?B?Y21yUm1PZzhuRW5tWUZUM2dqYWxSb29seUFCSUdpYXdqa3g2SldSRWlDL3dY?=
+ =?utf-8?B?V3NNMHRwSm1OaVdmZlV0SXg5ZWtBY01yUkdCNmxSaGZ2NTFDOVdQVjZHZ2NI?=
+ =?utf-8?B?SFJJZ212TGVPTUFKdG9maFBqYVpWVzFLekUrWlZlLzIyUDJxSXcyQitNUE5v?=
+ =?utf-8?B?dDJSbGdZMlh2M3hNQXNtVGcwT2RwZ2llRWJ3eUpHaUZacHJBNG1lbWVQaFBC?=
+ =?utf-8?B?eW5WNmFGZHA3UWdTMGhrUmZ3T3hDd0dINzFnRVJERU5FUWtiU1d1VlpnU1Mx?=
+ =?utf-8?B?bVpBNENJWWxYVlpNYktqN2VVVDhKakhBNk5ZUERRbmgrbUE5NUpSblFKaFVP?=
+ =?utf-8?B?UEZqS3MwREttUEtWT1BHcENjc1dXWC94VWprOXlhbWNadkZDM1FmdFIrdy82?=
+ =?utf-8?Q?jjC0=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58d4558c-4820-4419-039e-08dceed56a2f
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 17:59:15.8283
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iq/9RDBwMZWSpGuPsaCnoSwRTE5sxFilEtZsCnVAr657cHVWlxJScl4MehAStCGy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6368
 
+Hi Reinette,
 
-
-On 10/17/24 18:41, anish kumar wrote:
-> On Thu, Oct 17, 2024 at 5:12 AM Jacek Anaszewski
-> <jacek.anaszewski@gmail.com> wrote:
->>
->> Hi Anish and Mukesh,
->>
->> On 10/16/24 18:37, anish kumar wrote:
->>> On Tue, Oct 15, 2024 at 10:45 PM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
->>>>
->>>> On Tue, Oct 15, 2024 at 03:28:08PM -0700, anish kumar wrote:
->>>>> On Tue, Oct 15, 2024 at 12:28 PM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
->>>>>>
->>>>>> On Tue, Oct 15, 2024 at 10:59:12AM -0700, anish kumar wrote:
->>>>>>> On Tue, Oct 15, 2024 at 9:26 AM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
->>>>>>>>
->>>>>>>> There is NULL pointer issue observed if from Process A where hid device
->>>>>>>> being added which results in adding a led_cdev addition and later a
->>>>>>>> another call to access of led_cdev attribute from Process B can result
->>>>>>>> in NULL pointer issue.
->>>>>>>
->>>>>>> Which pointer is NULL? Call stack shows that dualshock4_led_get_brightness
->>>>>>> function could be culprit?
->>>>>>
->>>>>> in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [2]
->>>>>> is not yet completed.
->>>>>>
->>>>>> [1]
->>>>>>    struct hid_device *hdev = to_hid_device(led->dev->parent);
->>>>>>
->>>>>> [2]
->>>>>> led_cdev->dev = device_create_with_groups(&leds_class, parent, 0,
->>>>>>                     led_cdev, led_cdev->groups, "%s", final_name);
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Use mutex led_cdev->led_access to protect access to led->cdev and its
->>>>>>>> attribute inside brightness_show().
->>>>>>>
->>>>>>> I don't think it is needed here because it is just calling the led driver
->>>>>>> callback and updating the brightness. So, why would we need to serialize
->>>>>>> that using mutex? Maybe the callback needs some debugging.
->>>>>>> I'm curious if it is ready by the time the callback is invoked.
->>>>>>
->>>>>> Because, we should not be allowed to access led_cdev->dev as it is not
->>>>>> completed and since, brightness_store() has this lock brightness_show()
->>>>>> should also have this as we are seeing the issue without it.
->>>>>>
->>>>>> I hope, above might have answered your question.
->>>>>>
->>>>>> -Mukesh
->>>>>>>
->>>>>>>>
->>>>>>>>           Process A                               Process B
->>>>>>>>
->>>>>>>>    kthread+0x114
->>>>>>>>    worker_thread+0x244
->>>>>>>>    process_scheduled_works+0x248
->>>>>>>>    uhid_device_add_worker+0x24
->>>>>>>>    hid_add_device+0x120
->>>>>>>>    device_add+0x268
->>>>>>>>    bus_probe_device+0x94
->>>>>>>>    device_initial_probe+0x14
->>>>>>>>    __device_attach+0xfc
->>>>>>>>    bus_for_each_drv+0x10c
->>>>>>>>    __device_attach_driver+0x14c
->>>>>>>>    driver_probe_device+0x3c
->>>>>>>>    __driver_probe_device+0xa0
->>>>>>>>    really_probe+0x190
->>>>>>>>    hid_device_probe+0x130
->>>>>>>>    ps_probe+0x990
->>>>>>>>    ps_led_register+0x94
->>>>>>>>    devm_led_classdev_register_ext+0x58
->>>>>>>>    led_classdev_register_ext+0x1f8
->>>>>>>>    device_create_with_groups+0x48
->>>>>>>>    device_create_groups_vargs+0xc8
->>>>>>>>    device_add+0x244
->>>>>>>>    kobject_uevent+0x14
->>>>>>>>    kobject_uevent_env[jt]+0x224
->>>>>>>>    mutex_unlock[jt]+0xc4
->>>>>>>>    __mutex_unlock_slowpath+0xd4
->>>>>>>>    wake_up_q+0x70
->>>>>>>>    try_to_wake_up[jt]+0x48c
->>>>>>>>    preempt_schedule_common+0x28
->>>>>>>>    __schedule+0x628
->>>>>>>>    __switch_to+0x174
->>>>>>>>                                                   el0t_64_sync+0x1a8/0x1ac
->>>>>>>>                                                   el0t_64_sync_handler+0x68/0xbc
->>>>>>>>                                                   el0_svc+0x38/0x68
->>>>>>>>                                                   do_el0_svc+0x1c/0x28
->>>>>>>>                                                   el0_svc_common+0x80/0xe0
->>>>>>>>                                                   invoke_syscall+0x58/0x114
->>>>>>>>                                                   __arm64_sys_read+0x1c/0x2c
->>>>>>>>                                                   ksys_read+0x78/0xe8
->>>>>>>>                                                   vfs_read+0x1e0/0x2c8
->>>>>>>>                                                   kernfs_fop_read_iter+0x68/0x1b4
->>>>>>>>                                                   seq_read_iter+0x158/0x4ec
->>>>>>>>                                                   kernfs_seq_show+0x44/0x54
->>>>>>>>                                                   sysfs_kf_seq_show+0xb4/0x130
->>>>>>>>                                                   dev_attr_show+0x38/0x74
->>>>>>>>                                                   brightness_show+0x20/0x4c
->>>>>>>>                                                   dualshock4_led_get_brightness+0xc/0x74
->>>>>>>>
->>>>>>>> [ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
->>>>>>>> [ 3313.874301][ T4013] Mem abort info:
->>>>>>>> [ 3313.874303][ T4013]   ESR = 0x0000000096000006
->>>>>>>> [ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
->>>>>>>> [ 3313.874307][ T4013]   SET = 0, FnV = 0
->>>>>>>> [ 3313.874309][ T4013]   EA = 0, S1PTW = 0
->>>>>>>> [ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
->>>>>>>> [ 3313.874313][ T4013] Data abort info:
->>>>>>>> [ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
->>>>>>>> [ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>>>>>>> [ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>>>>>>> [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
->>>>>>>> ..
->>>>>>>>
->>>>>>>> [ 3313.874332][ T4013] Dumping ftrace buffer:
->>>>>>>> [ 3313.874334][ T4013]    (ftrace buffer empty)
->>>>>>>> ..
->>>>>>>> ..
->>>>>>>> [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
->>>>>>>> [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
->>>>>>>> [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
->>>>>>>> [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
->>>>>>>> ..
->>>>>>>> ..
->>>>>>>> [ 3313.874685][ T4013] Call trace:
->>>>>>>> [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
->>>>>>>> [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
->>>>>>>> [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
->>>>>>>> [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
->>>>>>>> [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
->>>>>>>> [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
->>>>>>>> [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
->>>>>>>> [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
->>>>>>>> [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
->>>>>>>> [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
->>>>>>>> [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
->>>>>>>> [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
->>>>>>>> [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
->>>>>>>> [ 3313.874727][ T4013]  el0_svc+0x38/0x68
->>>>>>>> [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
->>>>>>>> [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
->>>>>>>>
->>>>>>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->>>>>>>> ---
->>>>>>>>    drivers/leds/led-class.c | 3 ++-
->>>>>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->>>>>>>> index 06b97fd49ad9..e3cb93f19c06 100644
->>>>>>>> --- a/drivers/leds/led-class.c
->>>>>>>> +++ b/drivers/leds/led-class.c
->>>>>>>> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
->>>>>>>>    {
->>>>>>>>           struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>>>>>>>
->>>>>>>> -       /* no lock needed for this */
->>>>>
->>>>> just get rid of the above comment then.
->>>>
->>>> If you notice, it is already removed (-) .
->>>>
->>>>>
->>>>> Also, the comment below in file leds.h
->>>>> needs an update as originally the idea for this mutex lock was to
->>>>> provide quick feedback to userspace based on this commit
->>>>> https://github.com/torvalds/linux/commit/acd899e4f3066b6662f6047da5b795cc762093cb
->>>>>
->>>>> Basically a comment somewhere so that when a new attribute
->>>>> gets added, it doesn't make the same mistake of not using the mutex
->>>>> and run into the same issue.
->>>>>
->>>>> /* Ensures consistent access to the LED Flash Class device */
->>>>> struct mutex led_access;
->>>>
->>>> Thanks for accepting that it is an issue.
->>>> I think, comment is very obvious actually the patch you mentioned should
->>>> be in fixes tag as it introduced the lock but did not protect the show
->>>> while it does it for store.
->>>
->>> Yes, but that patch was added for supporting flash class
->>> device and wasn't explicitly to take care of the scenario that you
->>> are trying to handle and the above comment in leds.h states the same.
->>
->> Correct. led_access mutex was introduced to add support for preventing
->> any LED class device state changes originating from sysfs while
->> v4l2_flash wrapper owns the device.
->>
->> Since the inception of LED subsystem all the locking was deemed to be
->> the responsibility of every single LED class driver and initially sysfs
->> attr callbacks didn't have any locking. After some time when LED core
->> started to grow it turned out that it was required to lock the LED class
->> initialization sequence, so as not to give the userspace an opportunity
->> to set LED brightness on not fully initialized device, which was
->> introduced in [0]. led_access mutex was already in place so it was used.
->> However as you noticed, it is not used consistently across all LED class
->> sysfs attrs callbacks.
->>
->> Since brightness_show() does not acquire led_access mutex it is still
->> possible to call brightness_get op when LED class initialization
->> sequence is not yet finished.
->>
->> Still, I'd propose to first narrow down the issue and figure out what
->> actually causes NULL pointer dereference, as it apparently
->> originates from dualshock4_led_get_brightness and not from LED core.
+On 10/15/24 22:16, Reinette Chatre wrote:
+> Hi Babu,
 > 
-> Mukesh already explained the issue in earlier emails but here is the gist
-> anyway.
+> On 10/9/24 10:39 AM, Babu Moger wrote:
+>> The event configuration is domain specific and initialized during domain
+>> initialization. The values are stored in struct rdt_hw_mon_domain.
+>>
+>> It is not required to read the configuration register every time user asks
+>> for it. Use the value stored in struct rdt_hw_mon_domain instead.
+>>
+>> Introduce resctrl_arch_mon_event_config_get() and
+>> resctrl_arch_mon_event_config_set() to get/set architecture domain specific
+>> mbm_total_cfg/mbm_local_cfg values.
+>>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> ...
 > 
-> led_cdev->dev = device_create_with_groups(&leds_class, parent, 0,
->    led_cdev, led_cdev->groups, "%s", final_name);
 > 
-> If you look at the above code, device_create_with_groups function
-> can create all the sysfs and before it returns and assigns led_cdev->dev
-> pointer, those sysfs callback can get triggered and if the callback
-> accesses led_cdev->dev this variable, it will crash as it is not yet
-> assigned.
+>> +void resctrl_arch_mon_event_config_set(void *info)
+>> +{
+>> +	struct mon_config_info *mon_info = info;
+>> +	struct rdt_hw_mon_domain *hw_dom;
+>> +	unsigned int index;
+>> +
+>> +	index = mon_event_config_index_get(mon_info->evtid);
+>> +	if (index == INVALID_CONFIG_INDEX)
+>> +		return;
+>> +
+>> +	wrmsr(MSR_IA32_EVT_CFG_BASE + index, mon_info->mon_config, 0);
+>> +
+>> +	hw_dom = resctrl_to_arch_mon_dom(mon_info->d);
+>> +
+>> +	switch (mon_info->evtid) {
+>> +	case QOS_L3_OCCUP_EVENT_ID:
+>> +		break;
+> 
+> This check does no harm but I do not think it is necessary since earlier
+> mon_event_config_index_get() would return INVALID_CONFIG_INDEX if the
+> evtid is QOS_L3_OCCUP_EVENT_ID.
 
-Your trace ends in dualshock4_led_get_brightness(). Did you confirm that
-NULL pointer dereference is caused by accessing led_cdev->dev there?
+Sure. Will remove it.
+
+> 
+>> +	case QOS_L3_MBM_TOTAL_EVENT_ID:
+>> +		hw_dom->mbm_total_cfg = mon_info->mon_config;
+>> +		break;
+>> +	case QOS_L3_MBM_LOCAL_EVENT_ID:
+>> +		hw_dom->mbm_local_cfg =  mon_info->mon_config;
+> 
+> nit: unnecessary space
+
+Sure.
+
+> 
+>> +		break;
+>> +	}
+>> +}
+>> +
+> 
+> Reinette
+> 
+> 
 
 -- 
-Best regards,
-Jacek Anaszewski
+Thanks
+Babu Moger
 
