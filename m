@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-369895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBD49A241C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D11C9A241F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884EBB26344
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:39:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C714328E621
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB5F1DE3B8;
-	Thu, 17 Oct 2024 13:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F58E1DE2BF;
+	Thu, 17 Oct 2024 13:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SPQutJ3l"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="YkXUNo1P"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267E91DE3AE;
-	Thu, 17 Oct 2024 13:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416A91DDC22;
+	Thu, 17 Oct 2024 13:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729172355; cv=none; b=jdN9oAAemom/c6HYESwjjH7f9Imnc+Ubssk6ONp3xmZlukaupFpUbQt8sTc2DE37XEPFiC3KLKXSAwjPiq0FK9FwwDh7bvNFVmC5GSZMWC7c5BnUVwm7ZQJJr1cEVxxPZbe4zmqjhCHifkaJ39xv/Cb0dtE8XW2daTcWEVZ0QSk=
+	t=1729172383; cv=none; b=QnPZMeAaNoXuqtyOKy823gK0deYvmPSm1/0ax1sYGaZfW/M/jJb0bRWG9fz4SgQZOp71zaA10pLswmkPsvsCBqIHqdIkYZXx92s9yDveQb3G6Eb0UIYc7gIoQbe7TzvtvdPMOl8k7n1wcUaRVPAwHzhuH1ZtlVXIPM5uLzGwMEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729172355; c=relaxed/simple;
-	bh=RaKhN2VDuQLWNQ2Oq2Tvf0ihMcrAd4aJ/LDWckcjBOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dSdgxluqF2BDZjmnRC6DM7151f3OU3GH274NNWUtDZ8BLcV8PW30gbw5EDYJnnHNR3oMd5izQ3N0BrsBRQP8TaPdl72BtrRy+FAaLFhNtnZZhhos5MRVKPdLzu2vW0mEtW+ChaBK31F5v5u6WQe+k04VBBEjr6RKr0ip36eGnn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SPQutJ3l; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729172351;
-	bh=RaKhN2VDuQLWNQ2Oq2Tvf0ihMcrAd4aJ/LDWckcjBOU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SPQutJ3lknDz4wr024BhyOyWthJhP0eYzroDjQrWaiGu9ZW6dWqBiVXCkGFrmoaoq
-	 CIupIouccGH2bHQNJ788l4L/IlVlnhS/RoGNWqzo7+SV+yrW32/ZHWWYmam13g7poL
-	 cDRHA5axOTFR4TrgiYg1Jk3MDbBBN40VSRlzMF0/mL1wRvSomSEiAnVHukOoDJ89BC
-	 aM7jHiU5mZkp66CMHfjwx/SdcO7GKPX1vI+ZtUf6xhYgJXIi5Wb0qHER2SxTfTC4by
-	 edSp3fHgV6gvW7NGWf65+643d9uVofCg9ZHdE4Ju4YLdmgET3ZtnN5f3EA7qj3ZfcF
-	 6+SPMIiuXUZLw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F3E2517E360A;
-	Thu, 17 Oct 2024 15:39:10 +0200 (CEST)
-Message-ID: <f771788c-bdcd-4378-a9c4-4bd6bbf93591@collabora.com>
-Date: Thu, 17 Oct 2024 15:39:10 +0200
+	s=arc-20240116; t=1729172383; c=relaxed/simple;
+	bh=/Z6nbXADLiIGjPex3JCDSxQPOzXF5Or/GK2vQ2ICUEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2hgZUuiAi1zOZKFWlGfTyOluZbrW0ef6E0sa46DlOvmSKxBI+ww+wnTi3//vJSaeE4yOgAjfR8NkALHU/sYtAVxeUZQyKNxJXTt3gOtXfRCUrCz+smXDEjbcHTCEIh+Morm/1cnHKbXsT/EKuzwtHwhMUI1QXk0v4z7uR71+h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=YkXUNo1P; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id B612E1F9C7;
+	Thu, 17 Oct 2024 15:39:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1729172378;
+	bh=RqKqCojaEzQZ+8p1QMDFCOmzawbTxuGxzwtudrDemAE=; h=From:To:Subject;
+	b=YkXUNo1PMxy8eEuP3x7vyw2bxc6SR/1ixpxecn6kKLYhbAlINHUw1/OMo4KKIcgOl
+	 lcI4oADlV3Q7srMrx22ObObGAAMbg6lF1nW9DtiyMFr2GPyY1P67Ud/OfyoeNQNCsq
+	 yO08+mVJ5dxgz7+e7J9WhZ4VDDXibXUoMAZz0vXuwdtbyw5s/my4geNf5HcBB/p9nB
+	 5mwcID5lHjc7lftPZ6sCxyGRG3evArW5HjUPPVosCei6rAZmLyPHEkEYXfxMzL8f7s
+	 G1Z/qnatclbyo9fp5vyBINCby/cKLV6YaYGYBVcot/nRSBrb2aU7VX198cwaBupnAa
+	 P9RHUWzO8XHGw==
+Date: Thu, 17 Oct 2024 15:39:33 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: Re: [PATCH 2/2] hwrng: add support for Airoha EN7581 TRNG
+Message-ID: <20241017133933.GA31667@francesco-nb>
+References: <20241016151845.23712-1-ansuelsmth@gmail.com>
+ <20241016151845.23712-2-ansuelsmth@gmail.com>
+ <20241017131112.GA28955@francesco-nb>
+ <67110d84.050a0220.2ae4bd.8910@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: platform: mtk-mdp3: Remove unwanted else in
- mdp-cmdp-prepare()
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Moudy Ho <moudy.ho@mediatek.com>, Ricardo Ribalda <ribalda@chromium.org>
-References: <20241016113808.4311-1-pvmohammedanees2003@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241016113808.4311-1-pvmohammedanees2003@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67110d84.050a0220.2ae4bd.8910@mx.google.com>
 
-Il 16/10/24 13:38, Mohammed Anees ha scritto:
-> Since platform compatibility is already verified, the
-> additional else branch is unnecessary and will never
-> be executed. To fix, remove this else condition.
-
-Well, actually, even the one before the allocation of cmd can be removed,
-because compatibility is already checked by __get_config_offset().
-
-Besides, __get_config_offset() has another occurrence of an unneeded
-else branch, as it's checking platform twice.... so you can clean up
-that one as well.
-
-P.S.: "media: platform: mtk-mdp3: cmdq: Remove duplicated platforms checks"
-
-Cheers,
-Angelo
-
+On Thu, Oct 17, 2024 at 03:13:37PM +0200, Christian Marangi wrote:
+> On Thu, Oct 17, 2024 at 03:11:12PM +0200, Francesco Dolcini wrote:
+> > On Wed, Oct 16, 2024 at 05:18:42PM +0200, Christian Marangi wrote:
+> > > Add support for Airoha TRNG. The Airoha SoC provide a True RNG module
+> > > that can output 4 bytes of raw data at times.
+> > > 
+> > > The module makes use of various noise source to provide True Random
+> > > Number Generation.
+> > > 
+> > > On probe the module is reset to operate Health Test and verify correct
+> > > execution of it.
+> > > 
+> > > The module can also provide DRBG function but the execution mode is
+> > > mutually exclusive, running as TRNG doesn't permit to also run it as
+> > > DRBG.
+> > > 
+> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > ---
+> > >  drivers/char/hw_random/Kconfig       |  13 ++
+> > >  drivers/char/hw_random/Makefile      |   1 +
+> > >  drivers/char/hw_random/airoha-trng.c | 243 +++++++++++++++++++++++++++
+> > >  3 files changed, 257 insertions(+)
+> > >  create mode 100644 drivers/char/hw_random/airoha-trng.c
+> > > 
+> > > diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+> > > index 5912c2dd6398..bda283f290bc 100644
+> > > --- a/drivers/char/hw_random/Kconfig
+> > > +++ b/drivers/char/hw_random/Kconfig
+> > > @@ -62,6 +62,19 @@ config HW_RANDOM_AMD
+> > >  
+> > >  	  If unsure, say Y.
+> > >  
+> > > +config HW_RANDOM_AIROHA
+> > > +	tristate "Airoha True HW Random Number Generator support"
+> > > +	depends on ARCH_AIROHA || COMPILE_TEST
+> > 
+> > > +	default HW_RANDOM
+> > This should not be always enabled when HW_RANDOM is enabled. Enabling
+> > driver should be a opt-in.
 > 
-> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-> ---
->   drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c | 9 +++------
->   1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-> index ea2ea119dd2a..168beed4155a 100644
-> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-> @@ -624,14 +624,11 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
->   	if (ret)
->   		goto err_free_cmd;
->   
-> -	if (CFG_CHECK(MT8183, p_id)) {
-> +	if (CFG_CHECK(MT8183, p_id))
->   		num_comp = CFG_GET(MT8183, param->config, num_components);
-> -	} else if (CFG_CHECK(MT8195, p_id)) {
-> +	else if (CFG_CHECK(MT8195, p_id))
->   		num_comp = CFG_GET(MT8195, param->config, num_components);
-> -	} else {
-> -		ret = -EINVAL;
-> -		goto err_destroy_pkt;
-> -	}
-> +
->   	comps = kcalloc(num_comp, sizeof(*comps), GFP_KERNEL);
->   	if (!comps) {
->   		ret = -ENOMEM;
+> Was following the pattern with other HW_RANDOM config. Ok will drop.
 
+Whoops. I missed that it depends on ARCH_AIROHA. Given that dependency
+is fine to me without any change.
+
+Francesco
 
 
