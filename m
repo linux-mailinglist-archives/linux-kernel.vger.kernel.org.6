@@ -1,144 +1,91 @@
-Return-Path: <linux-kernel+bounces-369643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3BC9A2041
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:45:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC62B9A2046
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1096C1F2325C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551121F2384F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24971D2B37;
-	Thu, 17 Oct 2024 10:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2221DACAA;
+	Thu, 17 Oct 2024 10:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HllfLsOi"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NyNYbsHD"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A39213B29B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0513C1DA2E0
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 10:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729161945; cv=none; b=uTFPGZ9vdhqfsN7TU6WPsfnG79SE2910SfXUBDeI5Cf/JWlt0g6kzzxRAb131D/aVw7m4ZEH7t7h8E7gnyYMqymO9p7nrfqk7CWBmJ5J99nMTZ0HoEZl4qQYGqggRmof9xWsVWfmSzUR2NN2kloBmOMyy0M6aMq66DI3h2JiWq0=
+	t=1729161985; cv=none; b=t7HqARIBoVhtvNk/yspqQQigjgc1uBrMnnMgsn3qMblecQrWVuCumaD4aSHUAYJGXD1++Mo9KdZ1Q0YNg29tKTSeCLrEX6RLOiknI6YKirGnJ+ka0zwmjXyJxhCYbS2z/QgW82O83c9oRGbM9SdlTXSnRqGxTVs2AX6tyUP/zBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729161945; c=relaxed/simple;
-	bh=QdA6vOlmDZJ7NqYoYDzaqmLd2u3S8tMiLHjIhKDQCVk=;
+	s=arc-20240116; t=1729161985; c=relaxed/simple;
+	bh=ksJfOqZ0F+aqfgOXPTdsDbbytvSSQ9OVM/xbZDl3uy8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbYUuU7wf3ayfrQJJiqa6474oV8tMyRb8ERbFq1u94n8+129pEM1P1X1sOw+p7VEfct1B45acxd5gKZz/eqpFCGJ0y6IOkdsOpGA2WsvQ5ekhTuH+rKUXFqahqpP06bN8u1c92W0hZ2ThTcXqA5FKH7c8xH3q670XwOZ4izn41s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HllfLsOi; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=/5y0
-	ypsfWq7EM2KRl4pjCSLN0M/AE8QUTI2X2N4U0hY=; b=HllfLsOiSWvJ6YQMcw05
-	CIZu/zpLjm9y9XdHu32UmKfmhK8yZ0Em61+QHu48vt/rReZqr2A75c5ebtWd1dVg
-	+qJ/1W7fhiYtkhGUSuZXcGWmwV65cyFUHi157A4CORMXHIvEXajsv4VORx7S2Gra
-	Mi73/ozkoDlc0AclHnKNLmLa3idXML51+6PumRav1ztPDMEkdPiHP8mZ8TSvWLGa
-	4Vrm5kh3kSxb/zShgpC5TNfSvb3OyTztIx9Vg8J1dpkcJUfCbYjr04kgmm//CDtG
-	INmFzS/TKIZfb7PcisBuTDawK4sZxps95VIgqm8gX84sk6Z6qMytP+p0Vs2p9o6w
-	hQ==
-Received: (qmail 3353394 invoked from network); 17 Oct 2024 12:45:34 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Oct 2024 12:45:34 +0200
-X-UD-Smtp-Session: l3s3148p1@t6/R4qkkC0BtKPEX
-Date: Thu, 17 Oct 2024 12:45:33 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <ZxDqzeA2mz0Ml6cZ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=syvLsPVPugca8LqI3WwD+SIj0LyTlBCfWZrHCAtn6tgmWnZeID8eH2RZep0HCxp3TC+3BdJ/bJQRMmw/XiIkJgDRbquSnbxS7NnJ55gKbIjyAM6C6suvjPNNEDWE8wAxeqnjbyyOcQBR5/E2bdEbeAcZbS3IxeUxPmTXhwXucbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NyNYbsHD; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 17 Oct 2024 06:46:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729161981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TuEkyXRK4a+z24nUqtPTb40oaVXyvk6oaPG3UBwJUew=;
+	b=NyNYbsHDJQPkgXNY5JdRUA7Zh5I4863hzQEO7Dmv0Pc1JnNfmFBiE0GU89OHQ0JZkRtGAD
+	u74yRbmA1j782KQL4lIBEySIJKlhXPHoeEHDtPRxh/nDRf/7SYcgbI4bonoeLaDIGvDsQI
+	W9trTM7Iw3OYTp34mGWXyCqzAedPDsc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de, 
+	msakai@redhat.com, corbet@lwn.net, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, akpm@linux-foundation.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, 
+	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/3] lib/min_heap: Introduce non-inline versions of min
+ heap API functions
+Message-ID: <zne3invtehte3ym34ufnydtggigxazdb2ltfa26ca4tykvprls@rcawukx5hhcn>
+References: <20241013184703.659652-1-visitorckw@gmail.com>
+ <20241013184703.659652-2-visitorckw@gmail.com>
+ <20241014081358.GS17263@noisy.programming.kicks-ass.net>
+ <ZwznQzdZsg82KNT4@visitorckw-System-Product-Name>
+ <xb2gihmastm3wjn2o2sufvtglvjkelhiiwhnlzoiz4qncywyga@txf4vvnyxhvu>
+ <20241017095520.GV16066@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y12kh0Tsg/wH5L1d"
-Content-Disposition: inline
-In-Reply-To: <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
-
-
---y12kh0Tsg/wH5L1d
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241017095520.GV16066@noisy.programming.kicks-ass.net>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On Thu, Oct 17, 2024 at 11:55:20AM +0200, Peter Zijlstra wrote:
+> On Wed, Oct 16, 2024 at 11:26:30PM -0400, Kent Overstreet wrote:
+> 
+> > yeah, I think we would prefer smaller codesize, by default.
+> > 
+> > it'd be well worth checking the code size difference on inlined vs. not,
+> > and then the really think to do would be to provide optional _inlined()
+> > helpers that we can switch to if/when a particular codepath shows up in
+> > a profile
+> 
+> Make sure to build with kCFI and IBT enabled when you do this and enjoy
+> seeing ec_stripes_heap_cmp turn into this:
 
-sorry for being late to the game. I just noticed this series and
-wonder...
+I wouldn't worry too much about the stripes heap, I'm going to replace
+that with a persistent LRU.
 
-> +/* Counter registers. */
-> +#define RTCA3_RSECCNT			0x2
-> +#define RTCA3_RSECCNT_SEC		GENMASK(6, 0)
-> +#define RTCA3_RMINCNT			0x4
-> +#define RTCA3_RMINCNT_MIN		GENMASK(6, 0)
-> +#define RTCA3_RHRCNT			0x6
-> +#define RTCA3_RHRCNT_HR			GENMASK(5, 0)
-> +#define RTCA3_RHRCNT_PM			BIT(6)
-> +#define RTCA3_RWKCNT			0x8
-> +#define RTCA3_RWKCNT_WK			GENMASK(2, 0)
-> +#define RTCA3_RDAYCNT			0xa
-> +#define RTCA3_RDAYCNT_DAY		GENMASK(5, 0)
-> +#define RTCA3_RMONCNT			0xc
-> +#define RTCA3_RMONCNT_MONTH		GENMASK(4, 0)
-> +#define RTCA3_RYRCNT			0xe
-> +#define RTCA3_RYRCNT_YEAR		GENMASK(7, 0)
-
-... if it has been considered to expand the existing rtc-sh driver? The
-register set looks identical up to RMONAR. From that on, it looks a
-different. Maybe the different offsets and bit positions could be
-abstracted away by some sh_rtc_{read|write} helper? Or is there some
-other new handling which makes re-using rtc-sh cumbersome?
-
-Thanks and happy hacking,
-
-   Wolfram
-
-
---y12kh0Tsg/wH5L1d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcQ6skACgkQFA3kzBSg
-KbZzFhAAkxKvkdBgA6qdjGdJIVpKSuaZugMZFjvBRXw6WR7IP65QB6OP7P0GHUE1
-OX2i57KUnQfkce0KYw5Ak+rFvPGkE/KbVTJcqno9UyiqhL7MjoRj0sAbOe7z/N3N
-NSZ+gOyAdCYkQ+yau/XhyWoFntbFKEbIknhN7agIm9eTqO5weEwC7hlIoX4JVq2t
-+lZ0uMjAhf/QNnNaEeiCWMnZ+ltJuO9gNdFIGwef4dox6LiNy1JSRIy6627N3gx/
-8Lc6ap6k7sKW/4FLxoKkL/7CDfNdx8LlJZH/RgQ1Cvy8kUZ5qUctssDX2sgYz3uL
-V8G/t5cNfjafZd1z5pPbQRpyBG6S8YLRF/TfpekvY/fFgKWsFKoZGSikMsxx3Wua
-3c6dCIp4Bau60iWXCMxdpdP69k16KEgD8EkM4gap24Is14yoyq9VbZXej0pBQfne
-ak5w6P10ddga+AJu//ghA3ML1ZmY12f/jtDMiKDr7iFq0jLaKu9lBlAUbQeoOMQY
-eC4K555DNJYlTr5cFUa2obs9w/+9ATc+wiMYuetNccVnpmcdmoPcUBf2Zo3jSuqz
-hdo9kmzqcerK9YZHhYHCZwnBxl+h4ga9DGMFVJ6dbbiAD5x1Dk5LuOHd9X62b0+8
-H6zskyMykGIuxTlkr0rNkUHDHLpu4XYafiCsyGKSetE2hW66Tu0=
-=bN8G
------END PGP SIGNATURE-----
-
---y12kh0Tsg/wH5L1d--
+After that it looks like the only heap left in bcachefs will be in the
+clock code. Shame, they're one of my favorite data structures...
 
