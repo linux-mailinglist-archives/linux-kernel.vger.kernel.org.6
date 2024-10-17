@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-369677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADF49A20D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:22:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC6B9A20D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D458DB23151
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195791F23FE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AD81DB34E;
-	Thu, 17 Oct 2024 11:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9651A1DC18F;
+	Thu, 17 Oct 2024 11:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ia85zXEc"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rK6wZKGy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4CE1DCB20;
-	Thu, 17 Oct 2024 11:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0201DA612;
+	Thu, 17 Oct 2024 11:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729164135; cv=none; b=Ij+AqmY/41sdUMZ/G/WBUHLSgEQqsQSC03mKI4JbHF8akFk9l6wI5z2FUoM0TSfzm6MBNSPAP6vaJcWvaOiZ6Daz5wsMB7f9YZqVSm01hLche37phLGKK9mq62aIb/gDy3fDMs4gmrZ4rEhUmaLt1Y3Oupct5i7cj7qY2dxszzE=
+	t=1729164129; cv=none; b=s32xFJU6PCkR6wh6k+IHt0DpAwJsljTDlU7mjC5mIe1BrcDLe5dTYaP+QurMsQrezm9SfWskkk1ViArvwIuGJEJBlqiakRbvqnUvSAuX92BhnvQzrZ3QcsyEESBbuSL7KffFhsYdivYjXnKKCjcGSHP/4capN50gZkgLZygElCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729164135; c=relaxed/simple;
-	bh=dg6kW0E7auxWV0POqBOWHIqceEqWu/lCqzB3gvn67SE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GigL7u43p0PhDzDbwvadXHBnzDpSy+njXONPLh9OKd2WgjUihnzS5QFw69bFLKfI20zilWPu6ponmSr6I+pVra2iT/Lu4bA6XI+fUSMNWsdnfV5AEYewZnEPLVL6254t/mVb5Ab670ABuKKNfxgXQz26iPpoy3+wRK1OtmxuUpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ia85zXEc; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f58c68c5so1371448e87.3;
-        Thu, 17 Oct 2024 04:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729164130; x=1729768930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Lpg70dVZFGWL0eBVtV0mgtxSnHXtZ24Juc2ryF+tOA=;
-        b=ia85zXEcpGNyMzI66/RJB5UAPlXB/DsLLcG92DyP6irA2b3p9d+jL6iKQw+ydYkv7q
-         0SYCDlKHtfa0tvWb/9Sv8pv3S5tROPSuTANJBoiEnzHkHhXe0ul9v0OwAIwTGbRU9+5K
-         n8TxBsQw0FDqGsMo63gMoTMh2Eg1gqgT2Xg2T/H6qvL+48aYvxrUFMigU4oJOBMg1sgw
-         Pb3dQWpI4wA2l0vOKusy6n46NKOt5VUG0bCEG8OYIavHXxj77iq6KFIlivFMYjICmvsf
-         PYrHlXnBSP36TVbPCW0RsGR8YImpKS23QuSJywTENzSmoWo4+/YhsX+GIstT2PVdqDKT
-         WLCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729164130; x=1729768930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Lpg70dVZFGWL0eBVtV0mgtxSnHXtZ24Juc2ryF+tOA=;
-        b=BaC+zwQnuoWFj9nrfd5xwblxOWHVA8gpWi5EnyPKBzxX5VIO2N37R/uoXeyFbSUWra
-         19PdbeJAtpRG1F0PyIFZKo7lKvc5wzhLkOg2XUd6Lm3GftF5B4NeEp3ZsRDl5HaY9PL+
-         CV9sg4JQmn2MYq59+HeFSh62UGUlyFY/zOGAbm03DbvfVbqF47p+aK3QAZdAiVjvea5i
-         DHfDTcBBJL0sNkVNFxRp8AsQbYZ6BjjjLDGXI/1rHkzyJ2wtDHX79ZCLazPueiNZIQ8s
-         zusUn/RNvJwvEocPDosYEmn7WDj6zjN7uC6Xoh03WBoxyz5oaGicCuaj/I9gJgS3iPVC
-         7mHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbovIEG2YtRGbW3BfKDGSG3Apw5eKV9NUg46FltNtTKtFHitGg1QeTn7AI5CT7FO/xqu/8oJwmBTETsT0A@vger.kernel.org, AJvYcCVNb3rp7RIWzxvp9seyeJW+iI//UCPKHY/jOlQHW7p6fXVb943+oI3mdeh8kg57xSo4CHPCeNwWuJzN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTrJww5dWpfRANxn0d0zWteXlCqpicw/YAQ/eLTODG7ocQbQpe
-	iN23jjmDiLGC4POGCejOnYtKbZLUv6tx0ChGzvVvDJc+qQzn3LiJKbK/4G5Uj/n4x1WHr6bTdVa
-	vUMD8rK7Mwzu/t2Bre4tPZdkXkqc=
-X-Google-Smtp-Source: AGHT+IFmINcPbgxoJLt/7Ebjfjq3hSNSdJlHHzzYgp4XwPgYyWiLyCRbszfoBLoqzdmBxM4F5Jq7/a5nDiOmpi73fcI=
-X-Received: by 2002:a05:6512:3a8f:b0:536:7377:7d23 with SMTP id
- 2adb3069b0e04-539e571ce7bmr15312700e87.40.1729164129617; Thu, 17 Oct 2024
- 04:22:09 -0700 (PDT)
+	s=arc-20240116; t=1729164129; c=relaxed/simple;
+	bh=Z4LR3CRnxCq5BQ9I7QAYlCCccUdbY5cPtdO7aItqP6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pixJYq43teGCfOhNvBEKqMaLcMEbSUsED+LMPlvryyGq9WuH7NPIhTW1Xk+qy3bVLe4qSTrBcMza6J6G4NSjEDHo2C7W69VC7K7hWvKFFOa4vUjKvkm+E2bIbkbvm5VtVhm6a2TmQIUWWuEZjf6KrUlzWRr6hxDm0tgZL16XmIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rK6wZKGy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C2E8C4CEC5;
+	Thu, 17 Oct 2024 11:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729164128;
+	bh=Z4LR3CRnxCq5BQ9I7QAYlCCccUdbY5cPtdO7aItqP6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rK6wZKGylGdhEKFKYYKm5FhubKKCvW2LX8PfnXDspi4lWRNoyBmX/Hu4ee0TnO5tQ
+	 Vjy4lPwdN2N1sVMtpGj8qGxaJylgPWwVDWcxxk3BEvKai++DnDecXqOY3HItFQTp7U
+	 pNJiI7FSAvVviyzvJOYyNROVPPx90/cD5/Hiz/A1HIY1I2MRYZasWmAdKuS77OSUn8
+	 UWPW1l3WlLtc3/knuylT5vc6lJhJnKtHC6zkSOLIe2m2UcbuYCXFc4IeWdNptANeu4
+	 aHfgsSXAXrcC5XIgUV8Zx+I4M3lZctG/VfemAeUjlJdgxuPksU8T7O4NT6y5Y91oN4
+	 EewoF5bfUtWCA==
+Date: Thu, 17 Oct 2024 12:22:02 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: Re: [PATCH RFC/RFT v2 1/2] mm: helper `is_shadow_stack_vma` to check
+ shadow stack vma
+Message-ID: <2b24849e-3595-414a-b11e-eb03cd3c3b28@sirena.org.uk>
+References: <20241016-shstk_converge-v2-0-c41536eb5c3b@rivosinc.com>
+ <20241016-shstk_converge-v2-1-c41536eb5c3b@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010081719.2993296-1-lukma@denx.de> <20241010081719.2993296-2-lukma@denx.de>
- <20241017103534.259584f6@wsk>
-In-Reply-To: <20241017103534.259584f6@wsk>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 17 Oct 2024 08:21:57 -0300
-Message-ID: <CAOMZO5DkmU4C0YQoVwCbHTBo=DTRGcz+9K1qHY=3V29eWAfEKQ@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] ARM: dts: mxs: Add descriptions for imx287 based
- btt3-[012] devices
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Stefan Wahren <wahrenst@gmx.net>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="muUhb7tZMOd3DMds"
+Content-Disposition: inline
+In-Reply-To: <20241016-shstk_converge-v2-1-c41536eb5c3b@rivosinc.com>
+X-Cookie: One picture is worth 128K words.
+
+
+--muUhb7tZMOd3DMds
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Lukasz,
+On Wed, Oct 16, 2024 at 02:57:33PM -0700, Deepak Gupta wrote:
+> VM_SHADOW_STACK (alias to VM_HIGH_ARCH_5) is used to encode shadow stack
+> VMA on three architectures (x86 shadow stack, arm GCS and RISC-V shadow
+> stack). In case architecture doesn't implement shadow stack, it's VM_NONE
+> Introducing a helper `is_shadow_stack_vma` to determine shadow stack vma
+> or not.
 
-On Thu, Oct 17, 2024 at 5:35=E2=80=AFAM Lukasz Majewski <lukma@denx.de> wro=
-te:
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-> Stefan, do you have comments for this version?
+though
 
-Rob's bot reported new warnings after applying your series:
+> @@ -387,7 +392,6 @@ static inline bool is_data_mapping(vm_flags_t flags)
+>  	return (flags & (VM_WRITE | VM_SHARED | VM_STACK)) =3D=3D VM_WRITE;
+>  }
+> =20
+> -
+>  static inline void vma_iter_config(struct vma_iterator *vmi,
+>  		unsigned long index, unsigned long last)
+>  {
+>=20
 
-        from schema $id:
-http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
-arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dtb: panel: compatible:
-['panel-dpi'] is too short
-        from schema $id:
-http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
-arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dtb: panel: compatible:
-['panel-dpi'] is too short
-        from schema $id:
-http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
+Unrelated (but reasonable) whitespace change.
 
-Please address it.
+--muUhb7tZMOd3DMds
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcQ81kACgkQJNaLcl1U
+h9CQUQf+JD018dyJIN7oFahuVrCr4JxvO/kwj3Bwd5KXTc+C4NvzP4V9NwC9RYKh
+G+wqnGlQWOikoDJCPjXJ4zR6eipO4Svgrxa+rtmM5x6Tp11gTF11GBUdSdXB79+1
+8eyIIDM7gb70YdEbNFRRIXc83XmpOJpekDhtcmEB7mt3HOSUY4ss/UPyfQ6MpBUU
+9m4qvm31pDeNnVxR186xVUWYP9h+7P54JY4ijrA4NXMOSsJP3/mkyCAwRrSIzvUw
+rZOiuOE22hHihqQ72tnCdTTERhQBJHdVGkQNLb+lPP4KrVVG+OK31wpdgZXVLgPl
+HaI+lM+gTYDPBta6eEXKbTDgs+irEg==
+=LfV7
+-----END PGP SIGNATURE-----
+
+--muUhb7tZMOd3DMds--
 
