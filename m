@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-369893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117639A2417
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:38:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4786C9A2419
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A10FEB2716F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E841C23797
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E132C1DE3B3;
-	Thu, 17 Oct 2024 13:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7251DE2D7;
+	Thu, 17 Oct 2024 13:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YoEVG+BO"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ulqQLaXI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8951DE4FA
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 13:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DD01C07C7;
+	Thu, 17 Oct 2024 13:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729172236; cv=none; b=QthOTGrB7sbWSZWDOKK7I5LsJue8ZLJYUmhnXwH2Gmxex7H5meC9SIRsy5cOL8Vhn6eN9K8rv4Pk6JqYd2JWuK5xr8EapjPQwoX7gCazO3/1IxZYYUomrHp3dW6cCxDSkQugukpdvaqyfD9MuPP2nyZST/sQmQQkx+RAyC7/Ty0=
+	t=1729172349; cv=none; b=PKl8CTGROlMJPk2/MJOVOJyaNu9aKTlUNwpi/49oCQWoJ1wSwba430kq/A0x8BWDVk6zfyYQItfRF7K56T23lXy16/DQVnyXl+hhXroM/4mA3qAD8E4hRDXxiaoOR8vr/bMnXTa3cAaI8AYNKPZ6sKh6JFr4JZFYXN23IpyGZgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729172236; c=relaxed/simple;
-	bh=dS4uASWxwyiXNL8/Q5N7rvqc7RgiswAf7xz30dE+mG0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fAKVqhcD6Pw49I0c1YsggfpBEJzgZZUMYcq77rcfOIlfjrk4t0yP/PfrW0AcoqIkCJ010KU2x6N/Eowx1ykfRipW96FBTTjTUoCMh1U94MouFSV9cRUgAlgwvCCQWejTEHIaW3z+REqfGVdcV4lN5HnIyFqGrCiyI/oJrbAchq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YoEVG+BO; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 61390195A;
-	Thu, 17 Oct 2024 15:35:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729172114;
-	bh=dS4uASWxwyiXNL8/Q5N7rvqc7RgiswAf7xz30dE+mG0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YoEVG+BOTSGL884vjYG7dq5gaa4M1CKbduLrPRFnRCRfi/k8ztEkvVyigrKVkukft
-	 4Ne3Oi+l8CUwe9G7mJuYnj1GFrruq8eg50oLfERjRQkTf9sxDXreTD2WadzMAgz14/
-	 QTP6mhs4lWLAx02vm4/gAAndF5+/HTDhFGMKu57Y=
-From: Umang Jain <umang.jain@ideasonboard.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	kernel-list@raspberrypi.com,
-	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH 6/6] staging: vchiq_dev: Drop userdata local pointer
-Date: Thu, 17 Oct 2024 19:06:29 +0530
-Message-ID: <20241017133629.216672-7-umang.jain@ideasonboard.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241017133629.216672-1-umang.jain@ideasonboard.com>
-References: <20241017133629.216672-1-umang.jain@ideasonboard.com>
+	s=arc-20240116; t=1729172349; c=relaxed/simple;
+	bh=ZzzYnZcVVmf5k7zsxQyVHK7Uv4btO9xlyLEJg5slnso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AOtpqGyFWcn9eAeZ9VMNNaR3cNuPkNxkM2ySa3k4KOTLhMQwBKsfF7rNQ67EOS/JLbDDKCbh0GB3NRdRldehiC7X5dFbZWmvy9RoOBiLDqBQWqNuRe5m9XgBOufs1aYu4Zu6OZJFCpV97ImGaTiJND470dHaWwED4FvnYySg7r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ulqQLaXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4758C4CEC3;
+	Thu, 17 Oct 2024 13:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729172349;
+	bh=ZzzYnZcVVmf5k7zsxQyVHK7Uv4btO9xlyLEJg5slnso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ulqQLaXIYO1xXVJlwmP9DV11ThvuEe7T3Ur9g/CblBHix8B1N+IVHiOiO0IzgpY8L
+	 OFZ+PLvGI9bIFhhyNJPtT7um88z1n9Yth103U+bvzaQsn7zHa69y6Y+M3HuAjFQ2bD
+	 m51WZ5Tv4K1VwMR1LwJoeMDiZYEYUyVzaqT9y0cs=
+Date: Thu, 17 Oct 2024 15:39:06 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vimal Agrawal <avimalin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, quic_jjohnson@quicinc.com,
+	dan.carpenter@linaro.org, vimal.agrawal@sophos.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] misc: misc_minor_alloc to use ida for all
+ dynamic/misc dynamic minors
+Message-ID: <2024101715-flounder-delusion-8edb@gregkh>
+References: <2024101722-uncharted-wages-5759@gregkh>
+ <20241017133532.94509-1-vimal.agrawal@sophos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017133532.94509-1-vimal.agrawal@sophos.com>
 
-The 'userdata' local pointer can be dropped which is set to bulk_waiter.
-We can directly pass the waiter->bulk_waiter pointer to
-vchiq_bulk_xfer_waiting().
+On Thu, Oct 17, 2024 at 01:35:32PM +0000, Vimal Agrawal wrote:
+> misc_minor_alloc was allocating id using ida for minor only in case of
+> MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
+> using ida_free causing a mismatch and following warn:
+> > > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
+> > > ida_free called for id=127 which is not allocated.
+> > > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+> ...
+> > > [<60941eb4>] ida_free+0x3e0/0x41f
+> > > [<605ac993>] misc_minor_free+0x3e/0xbc
+> > > [<605acb82>] misc_deregister+0x171/0x1b3
+> 
+> misc_minor_alloc is changed to allocate id from ida for all minors
+> falling in the range of dynamic/ misc dynamic minors
+> 
+> Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
+> Signed-off-by: Vimal Agrawal <avimalin@gmail.com>
 
-Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c    | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Sorry, but no, do not hide behind a gmail.com address.  Either fix your
+corporate email system to be able to send patches out, or use the other
+method of sending from a different address as documented in the kernel
+documentation.
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-index f56057e17963..6a9685d9fafc 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-@@ -289,7 +289,6 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- 	struct vchiq_service *service;
- 	struct bulk_waiter_node *waiter = NULL, *iter;
- 	struct vchiq_bulk bulk_params = {};
--	void *userdata;
- 	int status = 0;
- 	int ret;
- 
-@@ -331,9 +330,9 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
- 		}
- 		dev_dbg(service->state->dev, "arm: found bulk_waiter %pK for pid %d\n",
- 			waiter, current->pid);
--		userdata = &waiter->bulk_waiter;
- 
--		status = vchiq_bulk_xfer_waiting(instance, args->handle, userdata);
-+		status = vchiq_bulk_xfer_waiting(instance, args->handle,
-+						 &waiter->bulk_waiter);
- 	} else {
- 		bulk_params.uoffset = args->data;
- 		bulk_params.mode = args->mode;
--- 
-2.45.2
+As it is, I can't take this, sorry.
 
+greg k-h
 
