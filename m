@@ -1,167 +1,104 @@
-Return-Path: <linux-kernel+bounces-370726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3759A3150
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EFF9A3151
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30A8628342C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8902828E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF61B1FF5F1;
-	Thu, 17 Oct 2024 23:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558061FCF4A;
+	Thu, 17 Oct 2024 23:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZYHuTNQM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GE1NalVr"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDE63DABE6;
-	Thu, 17 Oct 2024 23:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535A1FCF42
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 23:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729207078; cv=none; b=iJYvOWDKpwyx1Hp0UJ00fNlTPjvdROMvZgOmntCzW5ZXyRH5S8dwGtcazR3V0+FLBdKJFpc2ROlg5P8wPYSYpV2HeT+HnQtZgpcBo17zpwnvhMn44iDcHqSrFbNrzo6EibMJ1cuJZflzi+s60innk8WsmCB2l4VeYFPCAoBylV8=
+	t=1729207109; cv=none; b=huvfPOsYWL4dhdnGhRhwgzKvMDF0rHLGtq+kc35yjN65yg0Hn76snw4MNTY9TkWt31qGR6aLU2pHFijLJjQVmM96nWjzDEbtUeq6csbRuYHWktdDqs3dbuVaNToapO/RkstOfeJu+N3NgtdrmF54s66Hexjm5FjGnMRqEkCq+dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729207078; c=relaxed/simple;
-	bh=+v4i8SuZvvhEqQkHlKh3lLDEBDoh8ci5Kiu8HXeA9H8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BGTE4My9ePEQttRh4Bpuugy8dt/aUDF8d/IXhqtAHqt+0VKTmhrHV+tKZ0omB3Q8t/rdky0gQaWE+oDiGgZB9nDnmtSCQlYY4U4k+Lp2y7IuvQY6hiq0VTkYIfWVy8bIlqgXVWGtouns4D6oSXbKrRqpzDfLG5Hk11r56LChQEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZYHuTNQM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729207074;
-	bh=+v4i8SuZvvhEqQkHlKh3lLDEBDoh8ci5Kiu8HXeA9H8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZYHuTNQMJnryRyaZm9XZa2hJkih8wK7/1dL1UP2sdAnfV3ggqQ7zAy/2R8RVjaqee
-	 rX8I1Lp93FWp+n9jNbXzC6yWvE9yxTSoywv09/UY0zZRbKk7LRz0DUPSC91tBiU1FV
-	 EuPerdCXZyYM0qhNCsU1gAk1+26uZJStpvCMvpagaLycOZ+gW+S+tlj0e/zQ2/CkIK
-	 hX0ijWb1LVvnd8y85dX1ZjpQKan/NCbqGvf41Yw6hMM7puDWKpUj58PEkc42Sl2mVg
-	 BhdII88AWt0o+tJnWkv9P9MWFzHLhsMbF9F3vReb7IKGCKXenc51YWGm6WUEDRO7Cn
-	 8A87bIKVBA60g==
-Received: from localhost (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 794E417E0EF1;
-	Fri, 18 Oct 2024 01:17:54 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Fri, 18 Oct 2024 02:17:32 +0300
-Subject: [PATCH v3 4/4] clk: Drop obsolete devm_clk_bulk_get_all_enable()
- helper
+	s=arc-20240116; t=1729207109; c=relaxed/simple;
+	bh=1YJKLaDzXZJBGszdCWaBM9BXlp4oLn2Qp1cIPCql4+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BeRQ+EyXmRB21FWQ70xLyEmHTAj108iAPnIEGzctnSSv9CWlfEmVE7uhcIGVCTux1PoC4xTyBKY91vrwj+odDsK/JxR1EptkEVoMfpbyGQAGfnXSslrU+m4MuMMDxwzjqcycpApWBCOGmx+qGV/1hGuru6aL2LHRHxplYxqsTDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GE1NalVr; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460464090d5so12519051cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729207106; x=1729811906; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6FDSzJ8bhsF8vdcDCL94rN1SI/To9xp299yFHn5dIsI=;
+        b=GE1NalVrFxg5Jqj0mCxRulNBO2wyL/ppkuvZY1T/sc4tjfC1Tv4AAn8s5ptUsJ+l7f
+         ycfTEp8sHMlsLykeeXUTlL4PYJtdw9X977VuQBg7ePHYv7RcMDeYs3UTRiCfQfEjlHOx
+         yEX/ZEq0N6jrue0HC0bcpnBhHQ+yhrW1uHd7I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729207106; x=1729811906;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6FDSzJ8bhsF8vdcDCL94rN1SI/To9xp299yFHn5dIsI=;
+        b=SAD9I7BjCYFmOa/P9cGcPCWm3TpqVuZeQwZSSm5k09CW5VHZrOYNX306DPguFMRAGa
+         /Mzot6e00rbAsRfmSD/vLwdSAtRZBC7HWFNn5WjyDXUzJ5+TMr4YR2AvFIYHHa5iY5kk
+         thtEGtBn8WIizCsInGuYIc+WbFqsC8zdyRZ6iHeicQr8XWDA6R6AoC+0hJmPeYyMSPgy
+         yTLnAGazFaZpPZfCFRN9AvTtwmUso7yt6qSjR81HGy45EBsqrC+5uGeuAyqq6CA4cxxq
+         oevPTxSQPPEMOUmj1T6tEa2RMi1QOdWOcNPcLnu3/XCjtsAhW35yZ0zpakRP/f2U2fc2
+         mXSA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6bWVfzoRZ8N1+Z1m7SW5ugz2fHoEWbUDjgsA4KTALlHRCtB3F/oWlmmHz01ecbmELePyiMu7ES93NiIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTCBut/Abo0ga91+2NYByDCjqtOBi5epRS/Tv++FRKBrnhKvNw
+	yh7xUMuL3roHPFLsWXHtam7VHiAG88YVJDUn6Vdc46BHq8vwO6zxeo+NdGKEpZAsESi26KSEtaZ
+	Zr0or0VJ16qHRq81oEPN6W1HnsgBxSd9EwZBa
+X-Google-Smtp-Source: AGHT+IGfp5gAE5G4KXGJWAqhtTz9SCjd92YYOnHa8m+fbXN9Ki68pFCs7qSpp+M8wRW+2iIS00tS/Yjx7pckeE5onug=
+X-Received: by 2002:a05:6214:4808:b0:6cb:99db:bdbf with SMTP id
+ 6a1803df08f44-6cde160f1bdmr9758756d6.43.1729207106060; Thu, 17 Oct 2024
+ 16:18:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241018-clk_bulk_ena_fix-v3-4-57e8bb82460c@collabora.com>
-References: <20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com>
-In-Reply-To: <20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jingoo Han <jingoohan1@gmail.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org
-X-Mailer: b4 0.14.2
+References: <20241016060523.888804-1-patrick.rudolph@9elements.com> <20241016060523.888804-25-patrick.rudolph@9elements.com>
+In-Reply-To: <20241016060523.888804-25-patrick.rudolph@9elements.com>
+From: Simon Glass <sjg@chromium.org>
+Date: Thu, 17 Oct 2024 17:18:15 -0600
+Message-ID: <CAFLszTh4Z8p-8d8ASrpUTnNdDhmijDm8fcct-wDWR1nRFxs5JA@mail.gmail.com>
+Subject: Re: [PATCH v9 24/37] common: Enable BLOBLIST_TABLES on arm
+To: Patrick Rudolph <patrick.rudolph@9elements.com>
+Cc: u-boot@lists.denx.de, linux-kernel@vger.kernel.org, 
+	Tom Rini <trini@konsulko.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-return the number of clocks stored in the clk_bulk_data table referenced
-by the clks argument.  Without knowing the number, it's not possible to
-iterate these clocks when needed, hence the argument is useless and
-could have been simply removed.
+Hi Patrick,
 
-A new helper devm_clk_bulk_get_all_enabled() has been introduced, which
-is consistent with devm_clk_bulk_get_all() in terms of the returned
-value.
+On Wed, 16 Oct 2024 at 00:16, Patrick Rudolph
+<patrick.rudolph@9elements.com> wrote:
+>
+> Allow to use BLOBLIST_TABLES on arm to store ACPI or other tables.
+>
+> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+> Cc: Tom Rini <trini@konsulko.com>
+> ---
+> Changelog v9:
+> - default to BLOBLIST_ALLOC on arm
+> - Move default for BLOBLIST_SIZE_RELOC up
+> ---
+>  common/Kconfig |  2 ++
+>  lib/Kconfig    | 15 +++++++++------
+>  2 files changed, 11 insertions(+), 6 deletions(-)
+>
 
-Drop the obsolete function since all users switched to the new helper.
+This is fine, but please disable it for snow since it needs the FIXED
+option for now.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/clk/clk-devres.c |  9 ---------
- include/linux/clk.h      | 22 ----------------------
- 2 files changed, 31 deletions(-)
-
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 0d0fe364b66a8590d5e7c63dc6c1e70c59d53e89..14a657f336feababe8588f3eda90b9a6ae0e6297 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -218,15 +218,6 @@ static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
- 	clk_bulk_put_all(devres->num_clks, devres->clks);
- }
- 
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks)
--{
--	int ret = devm_clk_bulk_get_all_enabled(dev, clks);
--
--	return ret > 0 ? 0 : ret;
--}
--EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
--
- int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
- 					       struct clk_bulk_data **clks)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 158c5072852e36c1583dc47ca7516fcdd928fe59..b607482ca77e987b9344c38f25ebb5c8d35c1d39 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -495,22 +495,6 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
- int __must_check devm_clk_bulk_get_all(struct device *dev,
- 				       struct clk_bulk_data **clks);
- 
--/**
-- * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consumer (managed)
-- * @dev: device for clock "consumer"
-- * @clks: pointer to the clk_bulk_data table of consumer
-- *
-- * Returns success (0) or negative errno.
-- *
-- * This helper function allows drivers to get all clocks of the
-- * consumer and enables them in one operation with management.
-- * The clks will automatically be disabled and freed when the device
-- * is unbound.
-- */
--
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks);
--
- /**
-  * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consumer (managed)
-  * @dev: device for clock "consumer"
-@@ -1052,12 +1036,6 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
- 	return 0;
- }
- 
--static inline int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--						struct clk_bulk_data **clks)
--{
--	return 0;
--}
--
- static inline int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
- 						struct clk_bulk_data **clks)
- {
-
--- 
-2.47.0
-
+Regards,
+Simon
 
