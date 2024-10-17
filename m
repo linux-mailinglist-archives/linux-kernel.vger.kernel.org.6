@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-369611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59589A1F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:12:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101289A1F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D8B1F2656C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACAFF1F22E0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AD81DAC83;
-	Thu, 17 Oct 2024 10:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eQ23cedV"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649DE1DA2F1;
+	Thu, 17 Oct 2024 10:12:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962921D6DB4;
-	Thu, 17 Oct 2024 10:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFED1D6DB4;
+	Thu, 17 Oct 2024 10:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729159950; cv=none; b=YgmCzkUKn9YkAVpcL2WyOFGAwvCU4ApXliBZvCvkXlrGCujP6f7BWx5my3RAWImnl8zkaalr9fVulgREW5a+2OdotUUpN1NacciOHAr8M40AjghOJpFDOKDkQw+R9XKIlM4kvpoFJb4hyymKq3QHi2jRRUBI7B75fcNUAUc+3pU=
+	t=1729159944; cv=none; b=Gf/WTfifdXl742PmityH11P8q9ooIByOtMHc+wRESe7NOajdBcy2gV8KkJFsQpMD6SF3GFSIQMxt9ToXzADSeN1qX6LjhkCAEBgfwAgIMFgfuo9/VUVmswDtwst+XcuYaEiSgP1o208ThwcYdOZWJKnCPV44R7PoVyZ5o04rJ7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729159950; c=relaxed/simple;
-	bh=HRwTtXBd0rzPza1sOBwcwZwIzJbAJOaolyGxwN914LU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nacPl0QdVtv8ujQ7Sp2O27b9fuuM+ejRihZPsS5qHWbh8aEbE+3NiZuIAkzDbv4i0Fm94JbYKo28diyuS1vzeZSUBAY/qnqZypLbo0Mw7vEGsBar9La4Wwwn8ovMqeZk0FVaFpNasUZ5YkWHQnVpmkiK1gpeY2DlOyVavmvfPm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eQ23cedV; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H9Mc2w014197;
-	Thu, 17 Oct 2024 10:12:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=s73tJ0hyFkkOF9n4p1lw99E67Ld2g
-	Qx79AxiNligKP0=; b=eQ23cedVlEBkvEzpFsNmitpCWFoXzgjV23ToDRuDbMiTJ
-	zbR5f008KfzPnHYGCwwXE8q5Z6g4YH7Rb+0ewhpNwePUbP/3yyqndczgBzywELbq
-	1rWPUUp15nILrpxmtg/IygO9Q7j495QSsg6Genfn2YI9L4bQSc1NXctCU9toicK6
-	Jb3pQ7irJEix5wiCU3hByLbJ0dOxgqm2s5ynRzwkJtxUbXu8mCCN6pnNLPI3oMTR
-	wgdV+humexZiw9AopMBR3cqra9gRvEnOylJNa+qd2PFiSFEU2rViMOU/J8MtlBdR
-	idFfoJ4ttxsyASUJ4AEw1bzD/yEls74/7r+jtBboQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427gqt5yb1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 10:12:23 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49H9GDII026244;
-	Thu, 17 Oct 2024 10:12:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fja0xaq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 10:12:22 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49HACLkq007628;
-	Thu, 17 Oct 2024 10:12:22 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 427fja0x9p-1;
-	Thu, 17 Oct 2024 10:12:21 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Jane Chu <jane.chu@oracle.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-cxl@vger.kernel.org
-Cc: Vegard Nossum <vegard.nossum@oracle.com>
-Subject: [PATCH] dax: delete a stale directory pmem
-Date: Thu, 17 Oct 2024 03:11:25 -0700
-Message-ID: <20241017101144.1654085-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1729159944; c=relaxed/simple;
+	bh=YzeVeOLHzuEbx+F9HKk7j53SetYaUbEgSj9ZRMYNBhM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oMhtt8e9RpR7wcFh980FEa6LMB8enPPSvEm5KM1Hute40TNB7g8iKnFpo+XbTkrrNjkCD40cwnVDXbpdtpi9L16vy05hX0OSjIuFd32h09wZdJ0Rh8usN8DSBfqD/6AQee2x8ecauQuM6ki/UukLmEvCOSPwDhYxf9Y6p0btSwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTk9h708Dz6GBxS;
+	Thu, 17 Oct 2024 18:10:32 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B37BA1400F4;
+	Thu, 17 Oct 2024 18:12:16 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 12:12:15 +0200
+Date: Thu, 17 Oct 2024 11:12:13 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
+ Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, "Maciej W. Rozycki"
+	<macro@orcam.me.uk>, Lukas Wunner <lukas@wunner.de>, Alexandru Gagniuc
+	<mr.nuke.me@gmail.com>, Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>, Smita Koralahalli
+	<Smita.KoralahalliChannabasappa@amd.com>, Jonathan Corbet <corbet@lwn.net>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, Zhang Rui
+	<rui.zhang@intel.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v8 1/8] PCI: Protect Link Control 2 Register with RMW
+ locking
+Message-ID: <20241017111213.00005d4f@Huawei.com>
+In-Reply-To: <20241009095223.7093-2-ilpo.jarvinen@linux.intel.com>
+References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
+	<20241009095223.7093-2-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-17_10,2024-10-17_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410170069
-X-Proofpoint-GUID: GMXc2AHCPDCEDU_DzcNQNZ8IV7STjcWq
-X-Proofpoint-ORIG-GUID: GMXc2AHCPDCEDU_DzcNQNZ8IV7STjcWq
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-After commit: 83762cb5c7c4 ("dax: Kill DEV_DAX_PMEM_COMPAT") the pmem/
-directory is not needed anymore and Makefile changes were made
-accordingly in this commit, but there is a Makefile and pmem.c in pmem/
-which are now stale and pmem.c is empty, remove them.
+On Wed,  9 Oct 2024 12:52:16 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-Fixes: 83762cb5c7c4 ("dax: Kill DEV_DAX_PMEM_COMPAT")
-Suggested-by: Vegard Nossum <vegard.nossum@oracle.com>
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
- drivers/dax/pmem/Makefile |  7 -------
- drivers/dax/pmem/pmem.c   | 10 ----------
- 2 files changed, 17 deletions(-)
- delete mode 100644 drivers/dax/pmem/Makefile
- delete mode 100644 drivers/dax/pmem/pmem.c
+> PCIe Bandwidth Controller performs RMW accesses the Link Control 2
+> Register which can occur concurrently to other sources of Link Control
+> 2 Register writes. Therefore, add Link Control 2 Register among the PCI
+> Express Capability Registers that need RMW locking.
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+Totally trivial comment inline.
 
-diff --git a/drivers/dax/pmem/Makefile b/drivers/dax/pmem/Makefile
-deleted file mode 100644
-index 191c31f0d4f0..000000000000
---- a/drivers/dax/pmem/Makefile
-+++ /dev/null
-@@ -1,7 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem.o
--obj-$(CONFIG_DEV_DAX_PMEM) += dax_pmem_core.o
--
--dax_pmem-y := pmem.o
--dax_pmem_core-y := core.o
--dax_pmem_compat-y := compat.o
-diff --git a/drivers/dax/pmem/pmem.c b/drivers/dax/pmem/pmem.c
-deleted file mode 100644
-index dfe91a2990fe..000000000000
---- a/drivers/dax/pmem/pmem.c
-+++ /dev/null
-@@ -1,10 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/* Copyright(c) 2016 - 2018 Intel Corporation. All rights reserved. */
--#include <linux/percpu-refcount.h>
--#include <linux/memremap.h>
--#include <linux/module.h>
--#include <linux/pfn_t.h>
--#include <linux/nd.h>
--#include "../bus.h"
--
--
--- 
-2.46.0
+LGTM
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  Documentation/PCI/pciebus-howto.rst | 14 +++++++++-----
+>  include/linux/pci.h                 |  1 +
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/PCI/pciebus-howto.rst b/Documentation/PCI/pcie=
+bus-howto.rst
+> index f344452651e1..375d9ce171f6 100644
+> --- a/Documentation/PCI/pciebus-howto.rst
+> +++ b/Documentation/PCI/pciebus-howto.rst
+> @@ -217,8 +217,12 @@ capability structure except the PCI Express capabili=
+ty structure,
+>  that is shared between many drivers including the service drivers.
+>  RMW Capability accessors (pcie_capability_clear_and_set_word(),
+>  pcie_capability_set_word(), and pcie_capability_clear_word()) protect
+> -a selected set of PCI Express Capability Registers (Link Control
+> -Register and Root Control Register). Any change to those registers
+> -should be performed using RMW accessors to avoid problems due to
+> -concurrent updates. For the up-to-date list of protected registers,
+> -see pcie_capability_clear_and_set_word().
+> +a selected set of PCI Express Capability Registers:
+> +
+> +* Link Control Register
+> +* Root Control Register
+> +* Link Control 2 Register
+> +
+> +Any change to those registers should be performed using RMW accessors to
+> +avoid problems due to concurrent updates. For the up-to-date list of
+> +protected registers, see pcie_capability_clear_and_set_word().
+
+If I were super fussy I'd ask for a precursor patch doing the reformat.
+
+Meh - up to Bjorn, but for me this is small enough to not be worth
+the effort.
+
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 573b4c4c2be6..be5ed534c39c 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1274,6 +1274,7 @@ static inline int pcie_capability_clear_and_set_wor=
+d(struct pci_dev *dev,
+>  {
+>  	switch (pos) {
+>  	case PCI_EXP_LNKCTL:
+> +	case PCI_EXP_LNKCTL2:
+>  	case PCI_EXP_RTCTL:
+>  		return pcie_capability_clear_and_set_word_locked(dev, pos,
+>  								 clear, set);
 
 
