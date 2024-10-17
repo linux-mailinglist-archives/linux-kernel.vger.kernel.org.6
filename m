@@ -1,148 +1,115 @@
-Return-Path: <linux-kernel+bounces-369830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23E69A2337
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA7B9A233A
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A75772835D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64350283497
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3AD1DDC34;
-	Thu, 17 Oct 2024 13:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B33F1DE2DB;
+	Thu, 17 Oct 2024 13:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="X/Gu63v+"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="LMgYX+On"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB15E1DDA2E;
-	Thu, 17 Oct 2024 13:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729170691; cv=pass; b=tOIoFXWDOISilKLMzkpkDY+irddRdFqUwuc1gxtsd2WsKWtjlVcLbGuzUXExsPRuyJkoLK/A64ND0tfp9+x7tWqZMwRrFmziKQgQewCVxkGediE4k8nrLMxvcl0ncyoUS6f8g+SOTtbrTLdvV9TjMP/BlrV4xzgBUKORePklseU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729170691; c=relaxed/simple;
-	bh=VV3G8kk0MTCBQENc3kPb0qtSqYzGlVt+3CFlerf4hI8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=I5/vTLU/+T6UJERN6BgR5rcZ0T85yXHp2wd2JoAQr+HStV/fvV2Db+3DxUsR2fX5K5cAcLvT9xE9V90j5h8g8yrc0uSjZB0fPSQvj8Ke2/Qs3F1wCMP+fnpa1iW4XmnpRf5+ELSzMhiaEpd3XSyTYX5qZb/hjA2WkHTTcvw7sh0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=X/Gu63v+; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729170648; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JWXLYm4SJERwqe2sW6tsWT0mmhYHT2WaMuE8DyIuTtgKRK961wAIVtIsiHf667Kw1jbWlMa5HBHLwxuYireJMzyFgA9kKz+80NHc8AKn+rObegQ9PYepoWSXdJavRgfAoTO1Vi1WSF2K+xDq3+H9HpmzNq7gLxo4VPsjTOCs33c=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729170648; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FnaAKukhsjvuGKX8Vxza369r8BbCp2F9MMnF3AL10MA=; 
-	b=LqN1kxLNM8GlW1JSKTTV2H6VYxDQ1vLA9hpO0oqmn28ebVbt6kzesJ3yxGyp1DtGASTT8DSxElfZMRcr56f2ZDSwtEh6jSF25PJENoGBz8ChsdC68Wt0MbTxgvd0sfP2MNWfYg0Zv4xw+EuQVCDtWBNRGJfxoFhDbjeeUM+B0u8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729170648;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=FnaAKukhsjvuGKX8Vxza369r8BbCp2F9MMnF3AL10MA=;
-	b=X/Gu63v+z/fMcX/+mBc7+IHCA3/wxTRxoBe2Zcs1Z3whkdpAcKZT0yG4xi/l6wld
-	3c0QU4BOD2XtBDXfkmJlvLNBEEJ9//UNDWIKIU3K4dc+vn89NUVfIA5BV548dbj+oh3
-	XwD69F5B+ltH/nuaB6SkO0kj3vU5pPnDJD3JRNhE=
-Received: by mx.zohomail.com with SMTPS id 1729170645105389.88507980663735;
-	Thu, 17 Oct 2024 06:10:45 -0700 (PDT)
-Message-ID: <8e0e267b-34cf-47a8-8669-473a22bbd523@collabora.com>
-Date: Thu, 17 Oct 2024 18:10:32 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A2E1DD55F;
+	Thu, 17 Oct 2024 13:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729170693; cv=none; b=GohLIrM9eRFHs8LhZD8uh0pY2ggn5D/1h/5aOMA9F/btSA18wCPazpdcdTm+L03ZPcOldSsE6gAcMQPCrYrfn/NhgV5C/aE5zGTyiujF/w1f9SZFfDOxpsLl4sC6/5qgk6Bh7nyDYNee7ZDmSQ1sFAsILorCnJTrFwd6EsbiNEU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729170693; c=relaxed/simple;
+	bh=+wZxc5RHbItq3Om/97Yf/bxIJpCua9j0x2F4k1spuoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWsNJHSqG4GA1UBUX2FxqgPw9g8mUop6X2p/u+sC3RdwmY5Di3Cm5IRLn0puZsXINCI6Nca9Ipgk2YCdb9EfbizlfIzQENDr+ZD5qZ+/dxhQXXOj69larArzziy9axzDReoi/Fs2QkW72hm5z4GTHvq2+KeibPjas5FBR30u6bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=LMgYX+On; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 0AFA41FC42;
+	Thu, 17 Oct 2024 15:11:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1729170677;
+	bh=zUQMYtIBgZDMICEqQVq0exrUsPCv8RdUk/uxkBPVgi0=; h=From:To:Subject;
+	b=LMgYX+OnGnrp5oHDXiHbgph/QCRhrm+oAR97nLOS+MSWkkoCYFHCeOPlotH7t6XL6
+	 Au7MKhYaNYccRCwFIsX8CRmsRNDe7YqRPtPFtpTGhWJ1YtO72MNt2cLOV09wfm8mcu
+	 XGZvKeaVyHKQ6YmtyrnujJ790N/UP66UsgCvJhN4atibydcXy9YB07LEPArAH5m03U
+	 jSM8nuSo2mtSsIffdINea/MAPVlh7EfMJvSSJO2acN44oqz/mTjvuXyeRfOyYdjc8o
+	 GCytORySQl6IvTHWINGidv7EoBEgo5MrwwC97uYvTgjmFuBIbeK5LoZruoTpmzWQm1
+	 JYD3/YbhpIzYA==
+Date: Thu, 17 Oct 2024 15:11:12 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: Re: [PATCH 2/2] hwrng: add support for Airoha EN7581 TRNG
+Message-ID: <20241017131112.GA28955@francesco-nb>
+References: <20241016151845.23712-1-ansuelsmth@gmail.com>
+ <20241016151845.23712-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 000/518] 5.10.227-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241015123916.821186887@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241015123916.821186887@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016151845.23712-2-ansuelsmth@gmail.com>
 
-On 10/15/24 5:38 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.227 release.
-> There are 518 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Oct 16, 2024 at 05:18:42PM +0200, Christian Marangi wrote:
+> Add support for Airoha TRNG. The Airoha SoC provide a True RNG module
+> that can output 4 bytes of raw data at times.
 > 
-> Responses should be made by Thu, 17 Oct 2024 12:37:45 +0000.
-> Anything received after that time might be too late.
+> The module makes use of various noise source to provide True Random
+> Number Generation.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.227-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> On probe the module is reset to operate Health Test and verify correct
+> execution of it.
 > 
-> thanks,
+> The module can also provide DRBG function but the execution mode is
+> mutually exclusive, running as TRNG doesn't permit to also run it as
+> DRBG.
 > 
-> greg k-h
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/char/hw_random/Kconfig       |  13 ++
+>  drivers/char/hw_random/Makefile      |   1 +
+>  drivers/char/hw_random/airoha-trng.c | 243 +++++++++++++++++++++++++++
+>  3 files changed, 257 insertions(+)
+>  create mode 100644 drivers/char/hw_random/airoha-trng.c
 > 
-> -------------
-Hi,
+> diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+> index 5912c2dd6398..bda283f290bc 100644
+> --- a/drivers/char/hw_random/Kconfig
+> +++ b/drivers/char/hw_random/Kconfig
+> @@ -62,6 +62,19 @@ config HW_RANDOM_AMD
+>  
+>  	  If unsure, say Y.
+>  
+> +config HW_RANDOM_AIROHA
+> +	tristate "Airoha True HW Random Number Generator support"
+> +	depends on ARCH_AIROHA || COMPILE_TEST
 
-Please find the KernelCI report below :-
+> +	default HW_RANDOM
+This should not be always enabled when HW_RANDOM is enabled. Enabling
+driver should be a opt-in.
 
+Francesco
 
-OVERVIEW
-
-    Builds: 24 passed, 1 failed
-
-    Boot tests: 52 passed, 2 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 
-        hash: 5807510dd5773e507a5ba5ca98fce623d87256a0
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-
-
-BUILDS
-
-    Failures
-      - x86_64 (x86_64_defconfig)
-      Build detail: https://kcidb.kernelci.org/d/build/build?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:670e6dd25c0f1c2335e57199&var-test-path=boot&orgId=1
-      Build error: drivers/i2c/i2c-core-base.c:101:31: error: passing 'const struct device *' to parameter of type 'struct device *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      data = device_get_match_data(&client->dev);
-
-
-BOOT TESTS
-
-    Failures
-      - i386 (defconfig)
-      Error detail: [   15.624317] BUG: kernel NULL pointer dereference, address: 00000000
-      Build error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:670e713c5c0f1c2335e57a48&orgId=1
-      - i386 (defconfig)
-      Error detail:     [   15.008295] BUG: kernel NULL pointer dereference, address: 00000000
-      Build error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:670e71405c0f1c2335e57a4e&orgId=1
-
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=5807510dd5773e507a5ba5ca98fce623d87256a0&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
 
 
