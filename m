@@ -1,142 +1,174 @@
-Return-Path: <linux-kernel+bounces-369836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422B39A2345
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:14:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94CE9A2346
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1B7EB21D91
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:14:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6E128927B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B60D1DE2A4;
-	Thu, 17 Oct 2024 13:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/xByAKp"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2042D1DDC0F;
-	Thu, 17 Oct 2024 13:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D8B1DDC3C;
+	Thu, 17 Oct 2024 13:14:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6E31DDC15;
+	Thu, 17 Oct 2024 13:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729170824; cv=none; b=DVXmc3xG4m6lY9OalJEeIdUOhV0IStY9ZurWQ7q3/y5Q62Jhrujh+6eSWe4mrFXNzKHzK/ZKWi9l8Rzjl/pqg1TNVLXl8Y/2MS+S2HKitfho3UC5R0Vso5vPth1ATOvjblVVqEFs5TLxP+wXcoTL1R/Dag+UQDlUhSoAiBP6/ik=
+	t=1729170890; cv=none; b=BTbaVCPxH/E+PeFSHVR2ZtGsFVRq3qNYEYkyu/MQR6Nfbx//tu4OEOsWwWHkTGcQ7wZDWbVeeEv3aN1H9ixNNqEuFftcXotriOl2DIbQ9EpDoWAzCE/0p7lPlQVhuuiBwZCEyEKNW2ZPxg939x0g88jqdiol/7Uo+E88jjWoZhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729170824; c=relaxed/simple;
-	bh=ks38cldXQ+qom2/nXAIS7rVVbG3reoQ/rayAxCuAne0=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0cgpA5PkwgH3OrjDvI4y5BL4HEly7l5qCxakqXUwEArvZfoQ04gJ3xmHmoUVYzrcSOzBB9n0LJr+zSGHv+Kf0atuY0JaS2x3AS1QZcZGd8QR/rabRU8MnP6FPUhNaO1zVdObJVmrGyjw8j79o1ZsQWnjyDMdlmnHrBFS87L4DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/xByAKp; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431137d12a5so9892515e9.1;
-        Thu, 17 Oct 2024 06:13:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729170821; x=1729775621; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=O9UUCFR2zTOfml+UbZqKlXZwimpmJqPwLWgyjJXS5Ec=;
-        b=L/xByAKpwvSowdW1dF0OuSeC8K+I9wVGFv1Ik1uLzwIm52NymYWZJ0qLA0oBhrGq7b
-         2o6sGKVTKSNmN2R8MjfeptIBNtHCnXt36s8Q9l44YOoHGVTMKXuLMeuz5SIENbyCi7kb
-         fmsl6W0DEbiqiZ3KQ/du9gckMa6VEowUOP2F+HfM3oSA6TkI6jm/Ama+DT4gDtA88VLT
-         EdQwc3ghGaRFRNeQCRSQk/WafbkcjDe7JFLkuMsXcMTdqwH8k2gh+rzMMrEk1HW89lLn
-         CXe5JFfrVVpP1G3vzO5z8MYXnFwJickUwOPsU7XPDyo6l/TrdviA8gCreiN2fsGYAZ/7
-         VJWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729170821; x=1729775621;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O9UUCFR2zTOfml+UbZqKlXZwimpmJqPwLWgyjJXS5Ec=;
-        b=XHh4XJm6h2Fa9l6NXhNTLZv9l/D9vU2oZRPY59YGlBs2S6T56fLk2vdqfnCQTbIZTp
-         8d/bUS2iOREmLM242G7R7xAlhEnOtWbAuMyyDC++QYjdBNIox6zPBAuAVo4c+Pm4lo6J
-         V0Z2I4llLXnEgCbqBRZ1TCFQ3DxmKgbMSMiT+5PjIMhVozxhiGlt1JhQL1bSbQENe20Z
-         c+GJ0BYKEnWLsk8yjeMH9Y1v0mg94Yk/9muYGhGae+iC8ZYumX+dJtrh67h9NzNzoAnQ
-         eu2moE+A/3qxFLrewBSpupi3IisWHZHT6t5ae9Z5g39kYMcYesOz8uDSOSgG+wgCniQ0
-         k1ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVTPpaFe3mNKaLzEVEV9fLBaWMNKIdZa4K9rYjjpIeWuFaVEuxktsqeTMZlnBBQPVs2W9kBtKCl/GQS@vger.kernel.org, AJvYcCW2y1emc+IFyn8HCO1f445AQs/F/m4l1bl/kqWyepYipGAx1gpi17nF984y+T/kAruK5KWr2Bq0opcWjPDe@vger.kernel.org, AJvYcCXbDvIhhl9ttNtxYDRT5wlVZg7Z6+cN4EgfbMDq+HZK2k+kMyucN9fiJGnVO7Va5XLnk4IAhAB5qrI6cT7w@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZGm4qpEEdbdeIjVz+PxV4u9fxxxyGY2SGt3/dpXKLPD+aeiv7
-	POlGbK0hMzcoJ0uD7wM7LPFeE6QwVytpAyRC7Z16jFVsn+LzV8R/
-X-Google-Smtp-Source: AGHT+IEs09lD8CfbNSSrtQl7fd7pmaGnM9ILsqzV0s0TBi3C13Vg21fjUqJBxbIJdouRegNNPNKPsA==
-X-Received: by 2002:a05:600c:3c9a:b0:431:51e5:2316 with SMTP id 5b1f17b1804b1-43151e52855mr43998635e9.34.1729170821217;
-        Thu, 17 Oct 2024 06:13:41 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c620c5sm25791185e9.48.2024.10.17.06.13.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 06:13:40 -0700 (PDT)
-Message-ID: <67110d84.050a0220.2ae4bd.8910@mx.google.com>
-X-Google-Original-Message-ID: <ZxENgbSfBzEIrgdJ@Ansuel-XPS.>
-Date: Thu, 17 Oct 2024 15:13:37 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
-	upstream@airoha.com
-Subject: Re: [PATCH 2/2] hwrng: add support for Airoha EN7581 TRNG
-References: <20241016151845.23712-1-ansuelsmth@gmail.com>
- <20241016151845.23712-2-ansuelsmth@gmail.com>
- <20241017131112.GA28955@francesco-nb>
+	s=arc-20240116; t=1729170890; c=relaxed/simple;
+	bh=k1b4Z/arKRmCiQYswwQStzqw3B3x8CNEVrfSGrBQTmw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nN/8UAZ9rgwd2PrQcJLdB3EDRRJxWhLw3C7wtcUXrElZUk8J1oRE1LN8yeFqdrc4EoVObf6Mf3bgvdZxGpNLOxgGOyoPdLkLz/HnJ4Xo1R42lz7hA23Pw1BjFhOB5IsWXePVP3O2ldHAtjtkbVJFB9ES+jTtwhtlGNr0X4/X31g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE1B8FEC;
+	Thu, 17 Oct 2024 06:15:16 -0700 (PDT)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.35.62])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D7C13F71E;
+	Thu, 17 Oct 2024 06:14:42 -0700 (PDT)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: [PATCH v7 00/11] arm64: Support for running as a guest in Arm CCA
+Date: Thu, 17 Oct 2024 14:14:23 +0100
+Message-Id: <20241017131434.40935-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017131112.GA28955@francesco-nb>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 03:11:12PM +0200, Francesco Dolcini wrote:
-> On Wed, Oct 16, 2024 at 05:18:42PM +0200, Christian Marangi wrote:
-> > Add support for Airoha TRNG. The Airoha SoC provide a True RNG module
-> > that can output 4 bytes of raw data at times.
-> > 
-> > The module makes use of various noise source to provide True Random
-> > Number Generation.
-> > 
-> > On probe the module is reset to operate Health Test and verify correct
-> > execution of it.
-> > 
-> > The module can also provide DRBG function but the execution mode is
-> > mutually exclusive, running as TRNG doesn't permit to also run it as
-> > DRBG.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/char/hw_random/Kconfig       |  13 ++
-> >  drivers/char/hw_random/Makefile      |   1 +
-> >  drivers/char/hw_random/airoha-trng.c | 243 +++++++++++++++++++++++++++
-> >  3 files changed, 257 insertions(+)
-> >  create mode 100644 drivers/char/hw_random/airoha-trng.c
-> > 
-> > diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-> > index 5912c2dd6398..bda283f290bc 100644
-> > --- a/drivers/char/hw_random/Kconfig
-> > +++ b/drivers/char/hw_random/Kconfig
-> > @@ -62,6 +62,19 @@ config HW_RANDOM_AMD
-> >  
-> >  	  If unsure, say Y.
-> >  
-> > +config HW_RANDOM_AIROHA
-> > +	tristate "Airoha True HW Random Number Generator support"
-> > +	depends on ARCH_AIROHA || COMPILE_TEST
-> 
-> > +	default HW_RANDOM
-> This should not be always enabled when HW_RANDOM is enabled. Enabling
-> driver should be a opt-in.
+This series adds support for running Linux in a protected VM under the
+Arm Confidential Compute Architecture (CCA). This is a minor update
+following the feedback from the v6 posting[1]. Thanks for the feedback!
 
-Was following the pattern with other HW_RANDOM config. Ok will drop.
+Individual patches have a change log. The biggest changes are in patch
+10 where Gavin gave some great feedback to tidy things up a bit.
+
+This series is based on v6.12-rc1.
+
+Testing
+=======
+
+Since a couple of the patches have been merged separately, and there was
+also a bug[2] in -rc1 which impacts 9p filesystems, I've provided the
+below git tree with everything you need for a CCA guest:
+
+https://gitlab.arm.com/linux-arm/linux-cca cca-guest/v7
+
+Back by popular demand is also a tree with both host and guest changes:
+
+https://gitlab.arm.com/linux-arm/linux-cca cca-full/v5+v7
+
+You will also need an up-to-date RMM - the necessary changes have been
+merged into the 'main' branch of upstream:
+
+https://git.trustedfirmware.org/TF-RMM/tf-rmm.git main
+
+And you also need an updated kvmtool, there's a branch with the
+necessary changes here:
+
+https://git.gitlab.arm.com/linux-arm/kvmtool-cca.git cca/v3
+
+earlycon
+--------
+
+If using 'earlycon' on the kernel command line it is now necessary to
+pass the address of the serial port *in the unprotected IPA*. This is
+because the fixmap changes were dropped (due to the late probing of the
+RMM). E.g. for kvmtool you will need:
+
+  earlycon=uart,mmio,0x101000000
+
+This is the main drawback to late probing. One potential improvement
+would be an option like "earlycon=realm" to identify that the earlycon
+uart is in the unprotected space without having to know the actual IPA.
+I've left this out for now as I'm not sure whether there is any actual
+interest in this.
+
+[1] https://lore.kernel.org/r/20241004144307.66199-1-steven.price%40arm.com
+[2] https://lore.kernel.org/all/cbaf141ba6c0e2e209717d02746584072844841a.1727722269.git.osandov@fb.com/
+
+Sami Mujawar (1):
+  virt: arm-cca-guest: TSM_REPORT support for realms
+
+Steven Price (4):
+  arm64: realm: Query IPA size from the RMM
+  arm64: Enforce bounce buffers for realm DMA
+  arm64: mm: Avoid TLBI when marking pages as valid
+  arm64: Document Arm Confidential Compute
+
+Suzuki K Poulose (6):
+  arm64: rsi: Add RSI definitions
+  arm64: Detect if in a realm and set RIPAS RAM
+  arm64: rsi: Add support for checking whether an MMIO is protected
+  arm64: rsi: Map unprotected MMIO as decrypted
+  efi: arm64: Map Device with Prot Shared
+  arm64: Enable memory encrypt for Realms
+
+ Documentation/arch/arm64/arm-cca.rst          |  69 ++++++
+ Documentation/arch/arm64/booting.rst          |   3 +
+ Documentation/arch/arm64/index.rst            |   1 +
+ arch/arm64/Kconfig                            |   3 +
+ arch/arm64/include/asm/io.h                   |   8 +
+ arch/arm64/include/asm/mem_encrypt.h          |   9 +
+ arch/arm64/include/asm/pgtable-prot.h         |   4 +
+ arch/arm64/include/asm/pgtable.h              |   5 +
+ arch/arm64/include/asm/rsi.h                  |  68 ++++++
+ arch/arm64/include/asm/rsi_cmds.h             | 160 +++++++++++++
+ arch/arm64/include/asm/rsi_smc.h              | 193 +++++++++++++++
+ arch/arm64/include/asm/set_memory.h           |   3 +
+ arch/arm64/kernel/Makefile                    |   3 +-
+ arch/arm64/kernel/efi.c                       |  12 +-
+ arch/arm64/kernel/rsi.c                       | 142 +++++++++++
+ arch/arm64/kernel/setup.c                     |   3 +
+ arch/arm64/mm/init.c                          |  10 +-
+ arch/arm64/mm/pageattr.c                      |  98 +++++++-
+ drivers/virt/coco/Kconfig                     |   2 +
+ drivers/virt/coco/Makefile                    |   1 +
+ drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
+ drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
+ .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 224 ++++++++++++++++++
+ 23 files changed, 1026 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/arch/arm64/arm-cca.rst
+ create mode 100644 arch/arm64/include/asm/rsi.h
+ create mode 100644 arch/arm64/include/asm/rsi_cmds.h
+ create mode 100644 arch/arm64/include/asm/rsi_smc.h
+ create mode 100644 arch/arm64/kernel/rsi.c
+ create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
+ create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
+ create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
 
 -- 
-	Ansuel
+2.34.1
+
 
