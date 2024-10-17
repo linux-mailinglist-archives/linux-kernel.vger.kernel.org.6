@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-369783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2149A229E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D729A22A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02BEEB26848
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:42:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806A1B269CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B141DD559;
-	Thu, 17 Oct 2024 12:42:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803B01D357B;
-	Thu, 17 Oct 2024 12:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0EC1DD894;
+	Thu, 17 Oct 2024 12:43:07 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAF21D357B;
+	Thu, 17 Oct 2024 12:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729168951; cv=none; b=KaBEE2PX52A3n97/vfEI2PuWa87YggQiFezoFMiINjYGi2sJMNI2kPuaI8C5iwcGBuzM1qeLb5ErGqP53vDVlcALaCOhbDuw9VxnqAMjyztOYaHRT433JW8tI0i/bnZvb6I/NSKctMJ48U3sNM+/3BpbB4JwdixRwtHtN75leAU=
+	t=1729168986; cv=none; b=l/rI7TefFWG9QgYsBWfvOzQDSK10vkFF6yOJ+MKR3YTx0uV0RJYHTiEPD1w5/r8fh9Hg3fMBfANL8spymMLt7Dyjylvx3+OI4OTkD1msn9nW/gMqTO8zRjAu8HsETD0fjraISYZOVlIiUgZODy13ORg0q4JP/ZAENHaHoRR2E+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729168951; c=relaxed/simple;
-	bh=mc/yzIWYCjgGLm4SahWWAiiUzXVOAVxI1mD/8EoJXOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T53NKgK1zyOnnKwATpsRHUjAEEhTQEXoJzUe5GSFEv/PorJWbwKupxJgBclV5NIkR1+mPOIFIbOszHPF4vyUkBwDwJuwDCPWadmbJzqJyscZ5sKjAH1S0DIpfg6JHvdDxvfgSJyQFCffld8AVz/QJOYn/OtRIn8r2/oPsM3+6U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70B1FFEC;
-	Thu, 17 Oct 2024 05:42:55 -0700 (PDT)
-Received: from [10.1.34.186] (XHFQ2J9959.cambridge.arm.com [10.1.34.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 720173F71E;
-	Thu, 17 Oct 2024 05:42:23 -0700 (PDT)
-Message-ID: <7aa84080-6845-496a-a394-30d334632298@arm.com>
-Date: Thu, 17 Oct 2024 13:42:22 +0100
+	s=arc-20240116; t=1729168986; c=relaxed/simple;
+	bh=rx/LOMzs1iX8GUHxDF2M09WYjulzlkNX622H4gN8KIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hnl82Z0sz3bk2YHvJCP/9F50wUSWnv8KiUdCTiJ2uYMvt558uvHeQNtC0s9CcN0HSSa6seQ8CJslXY8Y06/NcZzaOlBVyTIboSq/zAS1gGQ0X6STBYf2AVDHyWEIqWRqo3euFB84ei/742Fmjn6go96XHHJp91OPdtBMCRzNvcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XTnXk65XLzQrSl;
+	Thu, 17 Oct 2024 20:42:14 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id 65F6B18007C;
+	Thu, 17 Oct 2024 20:43:00 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpeml100021.china.huawei.com
+ (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 20:42:59 +0800
+Message-ID: <811eb084-55d4-4725-9388-05a6e8f489d9@huawei.com>
+Date: Thu, 17 Oct 2024 20:42:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,202 +47,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 34/57] sata_sil24: Remove PAGE_SIZE compile-time
- constant assumption
-Content-Language: en-GB
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Damien Le Moal <dlemoal@kernel.org>, David Hildenbrand <david@redhat.com>,
- Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, Kees Cook <kees@kernel.org>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-34-ryan.roberts@arm.com> <ZxDUZMDf2Xfz2tvi@ryzen.lan>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ZxDUZMDf2Xfz2tvi@ryzen.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
+To: Theodore Ts'o <tytso@mit.edu>
+CC: Jan Kara <jack@suse.cz>, Qianqiang Liu <qianqiang.liu@163.com>,
+	<adilger.kernel@dilger.ca>, syzbot
+	<syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
+	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<syzkaller-bugs@googlegroups.com>, Yang Erkun <yangerkun@huawei.com>, Baokun
+ Li <libaokun1@huawei.com>
+References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
+ <66efba95.050a0220.3195df.008c.GAE@google.com>
+ <Zu+8aQBJgMn7xVws@thinkpad.lan>
+ <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
+ <20241009155028.u7jpzrw6txldt43j@quack3>
+ <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
+ <20241014163120.hinbd5jc6mp4vev7@quack3>
+ <3930aad6-174d-4422-944e-6c90a3ea065a@huawei.com>
+ <20241016204741.GA3204734@mit.edu>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20241016204741.GA3204734@mit.edu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
-On 17/10/2024 10:09, Niklas Cassel wrote:
-> Hello Ryan,
-> 
-> While I realize that this has not always been consistent,
-> please prefix the subject with "ata: ", so that it becomes
-> "ata: sata_sil24: ".
+On 2024/10/17 4:47, Theodore Ts'o wrote:
+> On Wed, Oct 16, 2024 at 04:02:40PM +0800, Baokun Li wrote:
+>> As server clusters get larger and larger, server maintenance becomes very
+>> difficult. Therefore, timely detection of problems (i.e. online scanning,
+>> similar to e2fsck -fn) and timely and non-stop fixing of problems (i.e.
+>> online fsck, similar to e2fsck -a) have always been the requirements of
+>> our customers. Thus online fsck has been on our TODO list, and it's really
+>> time to start doing it. 😀
+> As far as online scaning is concerned, if you are using LVM, we can
+> use a combination of dm-snapshot and e2fsck -fn --- that is what the
+> e2scrub command automates.
+Yes, e2scrub is very nice, but it has too many limitations. We have some
+customers who don't use lvm.
+> Online fsck is much harder, since it would require back pointers to do
+> this efficienctly.
+Indeed, our rough plan is to first implement isolation of abnormal file
+system resources, so that the system can continue to run normally even
+when there is an error; then implement online scanning, so that the
+maintainer can see the health report at any time; and finally implement
+the most difficult online repair.
+>   To do this, a general way of solving this would
+> involve a generalized some kind of b-tree or b+tree where changes are
+> managed via jbd2.  This could be used so that (for example) if we had
+> a tree which maps block ranges to an inode number, then given a block
+> number, we can figure out which inode "owns" that block.  The harder
+> part is those objects that have multiple forward pointers --- for
+> example an inode might have multiple hard links to multiple
+> directories, so we need to handle this somehow.
+We do need to establish the mapping of physical blocks to inodes and inodes
+to parent dir. By tree managed by jbd2 do you mean updating the tree when
+committing to journal? Or are updates to the tree logged to journal?
+>
+> If we had the jbd2-aware b+tree, we could also use this add support
+> for reflink/clone, which would also be cool.
+Yeah, reflink is pretty cool, we can try it out when the others are done.
+>
+> If this is something that your team really weants to work on, what I'd
+> suggest is to create a rough design of what the journaled b+tree would
+> look like, and then implement it first, since this is the prerequisite
+> for a huge number of advanced file system features.  Implementation
+> should be done in a way that makes it easy for the code to be usable
+> both in the kernel and in e2fsprogs, since life will be much easier if
+> we have e2fsck and debugfs support for the new file system data
+> structures from the very beginning of the development.
+Thank you for your suggestion! This is really key to the development. We'll
+discuss the overall design internally before consulting the community.
+> If your company is willing to invest in the engineering effort to do
+> this, great!  But I have to point out that an alternative approach
+> that you should consider is whether XFS might be a closer match for
+> some of your customers' needs.  The advantage of ext4 is that it is
+> much simpler and easier to understand that XFS.
+The XFS maintainability enhancement is something my colleague is working
+on. But we have a fair number of downstream customers who prefer ext4, so
+it's worth investing the time to do that.
+> But as we add these
+> new features, ext4 will get more complex.  And so one of the design
+> considerations we should keep in mind is to keep ext4 as simple and
+> miantainable as possible, even as we add new functionality.
+>
+> Cheers,
+>
+> 						- Ted
+Of course! we will keep the code as simple and maintainable as possible.
 
-Noted; I'll fix this in the next version.
+Thanks again for your input! 😉
 
-> 
-> On Mon, Oct 14, 2024 at 11:58:41AM +0100, Ryan Roberts wrote:
->> To prepare for supporting boot-time page size selection, refactor code
->> to remove assumptions about PAGE_SIZE being compile-time constant. Code
->> intended to be equivalent when compile-time page size is active.
->>
->> Convert "struct sil24_ata_block" and "struct sil24_atapi_block" to use a
->> flexible array member for their sge[] array. The previous static size of
->> SIL24_MAX_SGE depends on PAGE_SIZE so doesn't work for boot-time page
->> size.
->>
->> Wrap global variables that are initialized with PAGE_SIZE derived values
->> using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
->> deferred for boot-time page size builds.
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>
->> ***NOTE***
->> Any confused maintainers may want to read the cover note here for context:
->> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
->>
->>  drivers/ata/sata_sil24.c | 46 +++++++++++++++++++---------------------
->>  1 file changed, 22 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/ata/sata_sil24.c b/drivers/ata/sata_sil24.c
->> index 72c03cbdaff43..85c6382976626 100644
->> --- a/drivers/ata/sata_sil24.c
->> +++ b/drivers/ata/sata_sil24.c
->> @@ -42,26 +42,25 @@ struct sil24_sge {
->>  	__le32	flags;
->>  };
->>  
->> +/*
->> + * sil24 fetches in chunks of 64bytes.  The first block
->> + * contains the PRB and two SGEs.  From the second block, it's
->> + * consisted of four SGEs and called SGT.  Calculate the
->> + * number of SGTs that fit into one page.
->> + */
->> +#define SIL24_PRB_SZ	(sizeof(struct sil24_prb) + 2 * sizeof(struct sil24_sge))
->> +#define SIL24_MAX_SGT	((PAGE_SIZE - SIL24_PRB_SZ) / (4 * sizeof(struct sil24_sge)))
->> +
->> +/*
->> + * This will give us one unused SGEs for ATA.  This extra SGE
->> + * will be used to store CDB for ATAPI devices.
->> + */
->> +#define SIL24_MAX_SGE	(4 * SIL24_MAX_SGT + 1)
->>  
->>  enum {
->>  	SIL24_HOST_BAR		= 0,
->>  	SIL24_PORT_BAR		= 2,
->>  
->> -	/* sil24 fetches in chunks of 64bytes.  The first block
->> -	 * contains the PRB and two SGEs.  From the second block, it's
->> -	 * consisted of four SGEs and called SGT.  Calculate the
->> -	 * number of SGTs that fit into one page.
->> -	 */
->> -	SIL24_PRB_SZ		= sizeof(struct sil24_prb)
->> -				  + 2 * sizeof(struct sil24_sge),
->> -	SIL24_MAX_SGT		= (PAGE_SIZE - SIL24_PRB_SZ)
->> -				  / (4 * sizeof(struct sil24_sge)),
->> -
->> -	/* This will give us one unused SGEs for ATA.  This extra SGE
->> -	 * will be used to store CDB for ATAPI devices.
->> -	 */
->> -	SIL24_MAX_SGE		= 4 * SIL24_MAX_SGT + 1,
->> -
->>  	/*
->>  	 * Global controller registers (128 bytes @ BAR0)
->>  	 */
->> @@ -244,13 +243,13 @@ enum {
->>  
->>  struct sil24_ata_block {
->>  	struct sil24_prb prb;
->> -	struct sil24_sge sge[SIL24_MAX_SGE];
->> +	struct sil24_sge sge[];
->>  };
->>  
->>  struct sil24_atapi_block {
->>  	struct sil24_prb prb;
->>  	u8 cdb[16];
->> -	struct sil24_sge sge[SIL24_MAX_SGE];
->> +	struct sil24_sge sge[];
->>  };
->>  
->>  union sil24_cmd_block {
->> @@ -373,7 +372,7 @@ static struct pci_driver sil24_pci_driver = {
->>  #endif
->>  };
->>  
->> -static const struct scsi_host_template sil24_sht = {
->> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(struct scsi_host_template, sil24_sht, {
->>  	__ATA_BASE_SHT(DRV_NAME),
->>  	.can_queue		= SIL24_MAX_CMDS,
->>  	.sg_tablesize		= SIL24_MAX_SGE,
->> @@ -382,7 +381,7 @@ static const struct scsi_host_template sil24_sht = {
->>  	.sdev_groups		= ata_ncq_sdev_groups,
->>  	.change_queue_depth	= ata_scsi_change_queue_depth,
->>  	.device_configure	= ata_scsi_device_configure
->> -};
->> +});
->>  
->>  static struct ata_port_operations sil24_ops = {
->>  	.inherits		= &sata_pmp_port_ops,
->> @@ -1193,7 +1192,7 @@ static int sil24_port_start(struct ata_port *ap)
->>  	struct device *dev = ap->host->dev;
->>  	struct sil24_port_priv *pp;
->>  	union sil24_cmd_block *cb;
->> -	size_t cb_size = sizeof(*cb) * SIL24_MAX_CMDS;
->> +	size_t cb_size = PAGE_SIZE * SIL24_MAX_CMDS;
->>  	dma_addr_t cb_dma;
->>  
->>  	pp = devm_kzalloc(dev, sizeof(*pp), GFP_KERNEL);
->> @@ -1258,7 +1257,6 @@ static void sil24_init_controller(struct ata_host *host)
->>  
->>  static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
->>  {
->> -	extern int __MARKER__sil24_cmd_block_is_sized_wrongly;
->>  	struct ata_port_info pi = sil24_port_info[ent->driver_data];
->>  	const struct ata_port_info *ppi[] = { &pi, NULL };
->>  	void __iomem * const *iomap;
->> @@ -1266,9 +1264,9 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
->>  	int rc;
->>  	u32 tmp;
->>  
->> -	/* cause link error if sil24_cmd_block is sized wrongly */
->> -	if (sizeof(union sil24_cmd_block) != PAGE_SIZE)
->> -		__MARKER__sil24_cmd_block_is_sized_wrongly = 1;
->> +	/* union sil24_cmd_block must be PAGE_SIZE */
->> +	BUG_ON(struct_size_t(struct sil24_atapi_block, sge, SIL24_MAX_SGE) != PAGE_SIZE);
->> +	BUG_ON(struct_size_t(struct sil24_ata_block, sge, SIL24_MAX_SGE) > PAGE_SIZE);
->>  
->>  	ata_print_version_once(&pdev->dev, DRV_VERSION);
->>  
->> -- 
->> 2.43.0
->>
-> 
-> As you might know, there is an effort to annotate all flexible array
-> members with their run-time size information, see commit:
-> dd06e72e68bc ("Compiler Attributes: Add __counted_by macro")
-
-I'm vaguely aware of it. But as I understand it, __counted_by() nominates
-another member in the struct which keeps the count? In this case, there is no
-such member, it's size is implicit based on the value of PAGE_SIZE. So I'm not
-sure if it's practical to use it here?
-
-> 
-> I haven't looked at the DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST macro, but since
-
-DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(), when doing a boot-time page size build,
-defers the initialization of the global variable to kernel init time, when
-PAGE_SIZE is known. Because SIL24_MAX_SGE is defined in terms of PAGE_SIZE, this
-deferral is required.
-
-> sge[] now becomes a flexible array member, I think it would be nice if it
-> would be possible to somehow use the __counted_by macro.
-> 
-> Other than that, this looks good to me.
-
-Thanks for the review!
-
-> 
-> 
-> Kind regards,
-> Niklas
-
+Cheers,
+Baokun
 
