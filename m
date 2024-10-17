@@ -1,132 +1,161 @@
-Return-Path: <linux-kernel+bounces-369742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B394D9A2203
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:18:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD28C9A2205
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786BF2853A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29CF5B255B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFEF1DD520;
-	Thu, 17 Oct 2024 12:18:14 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D60C1DD0FE;
+	Thu, 17 Oct 2024 12:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="q74oSr2O"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A1E1C695;
-	Thu, 17 Oct 2024 12:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B13E1DA619;
+	Thu, 17 Oct 2024 12:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167494; cv=none; b=IwvPUTpAmgY9a3ioxLoYEcVwEpfUc/M5ujMeFPbXGPYzQqeq8/1Sjj1iznZRatg94zhLx+xG0pAbW6jt6Ceoe79H316IoviHdKSjkpGLODNFKr71M4qO+l6UKfkupFFnUs3uDnCcMjE0fOJtanTsXKRchEWEt3g0y3D2Yn47aUc=
+	t=1729167505; cv=none; b=jpe5y+DC279GTBW5SJkfIVAWTLImhIYnWhy3iP1Gzw/juyE34LFCeYpRRC7NWACO2En8gXjx54d0yaCOLTZaDkUArG4+I7l2MEObUkC2FYCB4xJZEDfGzaA90uMKs+Ugs1s1XJBS6dLQxvJQdeu5Ewdolha+q8g6WzGpUrEXh08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167494; c=relaxed/simple;
-	bh=8xOP+fyn8S9TsJvLes6SdW4DK+kDiUgc2CPyz+uilZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qN3QgLrnzhRGXCDmihUhFlCkITz1y9SxdIKlbuziLIx2e9hiwOp/Yl0RCUtHmlnCHjyWGzbai14qr5NktjVR4mhJlY2ehfhSM9oD8ZioYA34ScRKoPiuY52DTEQTRiY7QAaeVd3A6DW7EfhZeBnK5bqhOmY27FJSgVFJr+gRZFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XTn0X3WzBz4f3lXV;
-	Thu, 17 Oct 2024 20:17:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 901B81A08DC;
-	Thu, 17 Oct 2024 20:18:00 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgB3q8d3ABFnPJpjEQ--.54302S2;
-	Thu, 17 Oct 2024 20:18:00 +0800 (CST)
-Message-ID: <12f57831-6b88-49db-bfb6-eabfc5e1d40c@huaweicloud.com>
-Date: Thu, 17 Oct 2024 20:17:58 +0800
+	s=arc-20240116; t=1729167505; c=relaxed/simple;
+	bh=gt8gvpe6J2AdHwJ+LUNpkrX8JWv+1a66G9T6SpCOtLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gdmh8vOlhq9CRN+95/XNVzzHRzFh82MnARTtUuhc5B9FXQg1oOylvkPvGX4zAKCn5W2Ao89x/azofaZmJDINSFMSxmaYy3rBCgW6dTCgn1hTirOeJr2u4kddMttM++7nUEkNlIRqJti8Lq4w0H7yO/xcWTxwY/Hy72zEUm1MHNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=q74oSr2O; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id DEEC288B0C;
+	Thu, 17 Oct 2024 14:18:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1729167500;
+	bh=pVUgWkPelntpCEb7Gok5hnVy4nS3JZLLW/8rBG0KN2I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q74oSr2OPreCTa+OV9WA3F1v4onZTttSfbgIuzwylZRRdDkFpXYw2no75iEuMs2ZN
+	 6mBoYNmLP/tn6SAmATsJv7KfGXQF0x2pAGB+Q0rWVS99YU4/FmpFBBDdhyIOFy1pe/
+	 x1pra9iI57+Gkn0OPTKDtEwUCXYs0B7ojs318dRTk1xtOvVCXmK1hRs0N/znVLgUuZ
+	 o/JZwZGiD9ffzqfCfl/Qt9IVTIYDG1JRzfu4uuHu+37bIdK7dVvMkHZvncZXVr/N8c
+	 Wp46fVG/IpqzakpfsPm7he3HXoClJ4DmlQmUUmfBWHzYQuwFzzvDjUeFCAYeIMfYYd
+	 SC1P+5j0M6Mlg==
+Date: Thu, 17 Oct 2024 14:18:18 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Stefan Wahren <wahrenst@gmx.net>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/2] ARM: dts: mxs: Add descriptions for imx287 based
+ btt3-[012] devices
+Message-ID: <20241017141818.2cf462ce@wsk>
+In-Reply-To: <CAOMZO5DkmU4C0YQoVwCbHTBo=DTRGcz+9K1qHY=3V29eWAfEKQ@mail.gmail.com>
+References: <20241010081719.2993296-1-lukma@denx.de>
+	<20241010081719.2993296-2-lukma@denx.de>
+	<20241017103534.259584f6@wsk>
+	<CAOMZO5DkmU4C0YQoVwCbHTBo=DTRGcz+9K1qHY=3V29eWAfEKQ@mail.gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup/bpf: fix NULL pointer dereference at
- cgroup_bpf_offline
-To: Tejun Heo <tj@kernel.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: Chen Ridong <chenridong@huaweicloud.com>, lizefan.x@bytedance.com,
- hannes@cmpxchg.org, longman@redhat.com, john.fastabend@gmail.com,
- roman.gushchin@linux.dev, quanyang.wang@windriver.com, ast@kernel.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- wangweiyang2@huawei.com
-References: <20241016093633.670555-1-chenridong@huaweicloud.com>
- <bidpqhgxflkaj6wzhkqj5fqoc2zumf3vcyidspz4mqm4erq3bu@r4mzs45sbe7g>
- <Zw_yHEJCBwtYFJoR@slm.duckdns.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <Zw_yHEJCBwtYFJoR@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3q8d3ABFnPJpjEQ--.54302S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWrGr1DurWrJw4UJw4kXrb_yoW8ZF15pr
-	savFnFk3Z5GrZ0yryvva4FvF15CF4Iq34UXrWUJry3AFnrWrWUtry2kFy5CF98AFn7Kr13
-	JrWYvrySk3yq93DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: multipart/signed; boundary="Sig_/JwpjArDAe6QUo9hHvQoT_3b";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
+
+--Sig_/JwpjArDAe6QUo9hHvQoT_3b
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi Fabio,
+
+> Hi Lukasz,
+>=20
+> On Thu, Oct 17, 2024 at 5:35=E2=80=AFAM Lukasz Majewski <lukma@denx.de> w=
+rote:
+>=20
+> > Stefan, do you have comments for this version? =20
+>=20
+> Rob's bot reported new warnings after applying your series:
+>=20
+>         from schema $id:
+> http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
+> arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dtb: panel: compatible:
+> ['panel-dpi'] is too short
+>         from schema $id:
+> http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
+> arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dtb: panel: compatible:
+> ['panel-dpi'] is too short
+>         from schema $id:
+> http://devicetree.org/schemas/display/panel/panel-dpi.yaml#
+>=20
+> Please address it.
+
+The problem is that I don't know the name of the display itself
+(different vendors) [*].
+
+Schema requires following syntax:
+arch/arm/boot/dts/ti/omap/am437x-gp-evm.dts:89:         compatible =3D
+"osddisplays,osd070t1718-19ts", "panel-dpi";
+
+arch/arm/boot/dts/ti/omap/omap3-thunder.dts:86:         compatible =3D
+"samsung,lte430wq-f0c", "panel-dpi";
+
+which require two compatible entries - one specific type of the display
+(e.g. "samsung,lte430wq-f0c") and the second one generic ("panel-dpi").
+
+As I don't know what is the manufacturer of it - I can add:
+
+ compatible =3D "foo", "panel-dpi";
+
+and then Schema and Rob's scripts would be happy...
 
 
+Another option is to adjust the
+Documentation/devicetree/bindings/display/panel/panel-dpi.yaml to allow
+only single entry.
 
-On 2024/10/17 1:04, Tejun Heo wrote:
-> On Wed, Oct 16, 2024 at 03:13:52PM +0200, Michal Koutný wrote:
->> Hello.
->>
->> On Wed, Oct 16, 2024 at 09:36:33AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
->>> As mentioned above, when cgroup_bpf_inherit returns an error in
->>> cgroup_setup_root, cgrp->bpf.refcnt has been exited. If cgrp->bpf.refcnt is
->>> killed again in the cgroup_kill_sb function, the data of cgrp->bpf.refcnt
->>> may have become NULL, leading to NULL pointer dereference.
->>>
->>> To fix this issue, goto err when cgroup_bpf_inherit returns an error.
->>> Additionally, if cgroup_bpf_inherit returns an error after rebinding
->>> subsystems, the root_cgrp->self.refcnt is exited, which leads to
->>> cgroup1_root_to_use return 1 (restart) when subsystems is  mounted next.
->>> This is due to a failure trying to get the refcnt(the root is root_cgrp,
->>> without rebinding back to cgrp_dfl_root). So move the call to
->>> cgroup_bpf_inherit above rebind_subsystems in the cgroup_setup_root.
->>>
->>> Fixes: 04f8ef5643bc ("cgroup: Fix memory leak caused by missing cgroup_bpf_offline")
->>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>
->> Hm, I always thought that BPF progs can only be attached to the default
->> hierarchy (cgroup_bpf_prog_attach/cgroup_get_from_fd should prevent
->> that).
->>
->> Thus I wonder whether cgroup_bpf_inherit (which is more like
->> cgroup_bpf_init in this case) needs to be called no v1 roots at all (and
->> with such a change, 04f8ef5643bc could be effectively reverted too).
->>
->> Or can bpf data be used on v1 hierarchies somehow?
-> 
-> We relaxed some of the usages (see cgroup_v1v2_get_from_fd()) but cgroup BPF
-> progs can only be attached to v2.
-> 
-> Thanks.
-> 
 
-So, should commit 04f8ef5643bc ("cgroup: Fix memory leak caused by 
-missing cgroup_bpf_offline") be reverted, and should cgroup_bpf_inherit 
-be only called in v2?
-Have I understood this correctly?
+[*] maybe I can obtain the info regarding at least one vendor ...
 
 Best regards,
-Ridong
 
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/JwpjArDAe6QUo9hHvQoT_3b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmcRAIoACgkQAR8vZIA0
+zr1NHwf9EZhOkrZrNMYoRDxZ9kwVP/qQ8IcrI4dlPE+B2zHqZNUIecNWsoTdeasW
+83zprstpywZTQvmkC5Np4qFQTNvFsdDPFXK9IgEnoJnHGlqFWF2YETLRFmE73cCK
+wzXpipCZcM9N14gByMrctugXelTRPos6Wxfg5JTBCqi/6MZKVM4I0kf4xlbxWqO6
+68uqCSF7eAfzsWrkC8+JRQm5GNuJ8mnMWrsbaq82i4t6wmYFyMByobXPO3D9LAZj
+7i7jEknC1TrGAvF9x2c6/I/5X1oCUylWKe85xnHr0MAokKV91TWOiJHEv13y+DOj
+lTDYew5AUH05crsTgunWSE8645E07A==
+=x9MY
+-----END PGP SIGNATURE-----
+
+--Sig_/JwpjArDAe6QUo9hHvQoT_3b--
 
