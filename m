@@ -1,88 +1,129 @@
-Return-Path: <linux-kernel+bounces-369163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814169A199E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:18:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB90D9A19A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8926B240D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E4B1F25176
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 04:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE607DA6C;
-	Thu, 17 Oct 2024 04:18:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C923414E2FD;
+	Thu, 17 Oct 2024 04:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T41cO075"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F922E634
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A22487BF;
+	Thu, 17 Oct 2024 04:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729138686; cv=none; b=n5wWDQ4QeLG76Uy2a68lGkOJrAvxhm2dBupysu+LP0xXaJQ0zreL5lr0F8ubqHL/wY3aP8yJ/lGr7eCi17/LDnSYpQxya4EIFWl2mNeLTZZbmC37Kl4OCuCY0wiUa+Q5XDC599C91TivJDn64zDY4HiyIGfQfrBKtf17dd0f1DU=
+	t=1729139037; cv=none; b=KW+QnLhKX2m1BPIotD3yrxfiSQ8pIlTOwJjVi1IZAjhZOx4+x92uOVjdpT0UIgRcVaYn5FUunpCLZKgmFkA3U7zCD1iAOkEORk5FX+tQyYZD7WezXekuFm2aHOaT3ANWclM69rKNSxYfmoAvbNQNLQpr9B4v547w97GY+Xefj7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729138686; c=relaxed/simple;
-	bh=1OU3n6Oq4M7nhUUx2iIxEh0l7ukW95iagzuvOHRgB+A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Nl4GM1UnQVpV3DaU+Le02znDBd5ZNb5uZl+ndlClwB2nJxOfEXLmqjGao+DIDSpS+zknI5YhkLpxy8U+uO3gxIpmbMhih5wjMwVlvZ/Hp+dr+IV+H1k4J9Zo5CJRqPp51VHsGIh3fjkHSz5qcYMpbZCZWgPJLMz66v0kqx2+Niw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8352a3cc8b5so53426439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Oct 2024 21:18:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729138683; x=1729743483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jY61h8LqdmtDNf/l3f6Fa7vLNIRrdlFHFmkic/5tLgU=;
-        b=OAl4JDaZPC7hygq1eu52xeCtVsIXrCpJeZZDMhGOw5jGWNfKX2urr3fNs3GtwwtFlR
-         /9J63R5jHFUtZnk9AnSreA3tv8HQ/hUT7G9LSCyuMJy0WZBj4LcKIBDgFSDiGdDtIfVR
-         WDD2f01y0dI3JikieEjwuEsB8NNgz+jpPBpa6Kif9S+AceB3mOJ59EPeTJqFLHmE45B/
-         GQEttnP10ql7uGmjdgiHan47N1lFiB9aHjDUO5x10NIgQzkuXs0ac2i/xwLuDis3oG+X
-         pY3If0f6HK9zmbm9H52B126T9y7SBRlwe5MBIsQStMbaYfwFHHouq/BpPYGKoF982rLK
-         o+4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUULcqOy4RmfjmbxnBvvCBbSmJo8BPKhUSCuAs7k8XonmRRT5TlEFuyfzY/0Z3LTU9iKVsKqUVD8nSN9KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbU+w8sLU9QaLngds3UX39ArrZl00jbG3u+aTTlS07DRGN8nIH
-	i1vtisMPNNN+ESJveQrkxOwbfP5jcDSlyYoSCDb4Pb0Q9FwlIFXwSz99JkmJ4S6BVlF9FD237DA
-	Tdp1pHBhNMykkKi7QbW+CjIVG0p3JVJw5U6GWGC1E/vy4ftfTT/u7InI=
-X-Google-Smtp-Source: AGHT+IHecXCjdNhKl7trxeGNO/H1tW6w8QYfFSoocTY3Dx0XEd9VtaLK94WhYDh/oL4TAV/MRqJ5eZL6zMp1j2JWD9vUrLE/dJdZ
+	s=arc-20240116; t=1729139037; c=relaxed/simple;
+	bh=LXiMc445BOYtvHxbcRuffWDg6gqPWOIif7UCCCHA4Y8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZXfXJaNS2czzot3IQzqchDfiDTRS9kPTHd/dCtgNPhioHuhnOso4kQ7/N302hQWxIgHl17rTzO5f9RqCX+xytLnEy/O2litFZzIotPqd4vlmO9R9LAMxklMcajUwBKdhZG0NfhfF1rFYj3CixqDbJ+IJsPZe7YlditreI03wRuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T41cO075; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H0N9nr010224;
+	Thu, 17 Oct 2024 04:23:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nsGiqOGRtHAx5CaZ1Icwl7
+	KnYHotsWjzGfffnFggC0U=; b=T41cO075PnAJ2FUUuzSx2PibGa+77PqpkK71Yr
+	0g70E5i9F7p+jSmGSMOkD7g98Zw1ahal/T0NMaQrNThLCrGKo2wG3g4dtASoJsg8
+	O51bJGMqkIocOksGWUvHGFaFh6lKJG2fLNq82i5i2hu1kFxCwXYZqFlqNFhkTtFY
+	8ooDYyfjEJgqLijccwwnfOnuUHqc96VIuDoEFuwvVuVdKJsDfqunCWwxkTe3Lja5
+	i5E7tlmexmsWgk7hm8tWLQsxEaH7e/bP4XawSvIIJdNjb6r7THqQiojfAQQRvtt6
+	UJxhEfLpMKaRcj9SQhJYwwzV4fOmSIzEbCXb0y86DKSYpwbw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ar050ggv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 04:23:36 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49H4NaaM019426
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Oct 2024 04:23:36 GMT
+Received: from liuxin-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 16 Oct 2024 21:23:29 -0700
+From: Xin Liu <quic_liuxin@quicinc.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <quic_jiegan@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <quic_sayalil@quicinc.com>
+Subject: [PATCH v1 0/4] Enable UFS on QCS615
+Date: Thu, 17 Oct 2024 12:22:56 +0800
+Message-ID: <20241017042300.872963-1-quic_liuxin@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d06:b0:803:5e55:ecb2 with SMTP id
- ca18e2360f4ac-8378f64c49dmr2521392539f.0.1729138682825; Wed, 16 Oct 2024
- 21:18:02 -0700 (PDT)
-Date: Wed, 16 Oct 2024 21:18:02 -0700
-In-Reply-To: <PUZPR04MB6316311A4447A7FCDF5A796E81472@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67108ffa.050a0220.d5849.0020.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
-From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8Fu7MJ7BqXGfQ1Z8xPhDmlnS-0AxJvZr
+X-Proofpoint-ORIG-GUID: 8Fu7MJ7BqXGfQ1Z8xPhDmlnS-0AxJvZr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ clxscore=1011 spamscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410170029
 
-Hello,
+From: Sayali Lokhande <quic_sayalil@quicinc.com>	
+	
+Add UFS support to the QCS615 Ride platform. The UFS host controller and
+QMP UFS PHY hardware of QCS615 are derived from SM6115. Include the
+relevant binding documents accordingly. Additionally, configure UFS-related
+clock, power, and interconnect settings in the device tree.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+---
+This patch series depends on below patch series:
+https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
+https://lore.kernel.org/all/20241011063112.19087-1-quic_qqzhou@quicinc.com/
 
-Reported-by: syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com
-Tested-by: syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com
+Xin Liu (4):
+  dt-bindings: phy: Add QMP UFS PHY comptible for QCS615
+  dt-bindings: ufs: qcom: Add UFS Host Controller for QCS615
+  arm64: dts: qcom: qcs615: add UFS node
+  arm64: dts: qcom: qcs615-ride: Enable UFS node
 
-Tested on:
+ .../phy/qcom,sc8280xp-qmp-ufs-phy.yaml        | 45 ++++++-----
+ .../devicetree/bindings/ufs/qcom,ufs.yaml     |  2 +
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts      | 16 ++++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi          | 74 +++++++++++++++++++
+ 4 files changed, 117 insertions(+), 20 deletions(-)
+---
+base-commit: b852e1e7a0389ed6168ef1d38eb0bad71a6b11e8
 
-commit:         c964ced7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ce345f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5242e0e980477c72
-dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15ca345f980000
+-- 
+2.34.1
 
-Note: testing is done by a robot and is best-effort only.
 
