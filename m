@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-370222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA24A9A298D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:50:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8519A298F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9C51C27D23
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:50:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD69280DB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC561DF74F;
-	Thu, 17 Oct 2024 16:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A931DF269;
+	Thu, 17 Oct 2024 16:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTnKiKDo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9WmVyVG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390C71DEFE5;
-	Thu, 17 Oct 2024 16:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAD71DF723
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183829; cv=none; b=mtXqR/PlAEnTX0TpuDlHm0cxJyo8qqDwpg2tI6oho/59gkw1DKrJsbb+OrO/ats3Jq4CMWIbOOPX7wq0NAZXCa0aMJJsh6zFFVh9pr8HcnowbdQe13glv/Xm/rfp6vDdDR54gIc3dLUzGC3rT18EhejFcS2KSE/xPfUUvVkDsFY=
+	t=1729183847; cv=none; b=qLjraeX9xQJ6mMUqNgD8389tEgF8F5zXSlN6K2TkX/ABul+3zFXkGXNMGjAZ/fKsNOhBRx8IV7PhMKlvum0g4DdsyUNaJ965Yj0m9PdcYHUpSnRrhmUBL15UwS9iiwArqsR3y/95EDJFJ4dDn1TV+ljjfrz5dPT2pNJXnZbyrDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183829; c=relaxed/simple;
-	bh=UllFQKr9ZAnWaE3xb2CQYdQk61oEW5zaZ5EFbiVCenM=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=JnlguOvLMgr4EQI1q4oTZ8Wt/hyM6HeEOW6uCgmBY1xTsYyO39o4EhQisih8+NmhhrPIAcoQsJzE04Dlc2X1y3X3QhoEni1dvRLickrpQBX+m0Tw2dh7OGJx7Zdhf6qK2Up2cWsoJaBPin1Vl/bPsdg4OKiUPc8rctXowQbCR/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTnKiKDo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E8FFC4CEC3;
-	Thu, 17 Oct 2024 16:50:25 +0000 (UTC)
+	s=arc-20240116; t=1729183847; c=relaxed/simple;
+	bh=/Yd7Di+LPG3k5F26oGx5g5AkCxjly5CQwnOdlgPosWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rjqnXAh4Doqktf7y+syZQgLRATX15Vw8KLQqQNy6Kx9FxmomJvFqk7LqWR4ozdhVQTYegXAfxmfw5o9ItA6Ss3HENaaHWN4VfTKTbRBfDp2fd1XQVeP3m3/kbfYTfrrhgNwh30NDazSh7Kupaiav3K1zfT2P9jncE+xybBeBIp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9WmVyVG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE003C4CEC3;
+	Thu, 17 Oct 2024 16:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729183828;
-	bh=UllFQKr9ZAnWaE3xb2CQYdQk61oEW5zaZ5EFbiVCenM=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=nTnKiKDosjmc+V0CmeMdJQ16bXQCuBHc7PHC8oMXv6fPfODNSOoF2FqoW1naK/kFG
-	 W3ir8fKcGARiRqFMI4fNoCvaxo6trgW4CSdAW9QECKMxEyh2oF8Af/P+Cmj5kyhxTP
-	 u7sV9/HwY+4aVHL3USy+cktpeYCXBhZC85SI6Xl19E60yplkPx+NHY7EkQo2uLUCgE
-	 QBqH3yWZaCg+49AfqdyTOYVQBQtLcg/0sFKtT37iv75lObo0x9tw25+3re4pdvIsz+
-	 lf9ODlUUi0jJK6SvGqBv08jfbittowgC1BYYFMTuj6k2aPXVAGQxSpadN03hBTECFp
-	 ZOEDGhUQgc2gA==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1729183847;
+	bh=/Yd7Di+LPG3k5F26oGx5g5AkCxjly5CQwnOdlgPosWo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=t9WmVyVGQj7kXMVv+eeq+ix9NxHi2SDl+y8QPIy2Z6UHw54iAXJQvUMgK6zivUFzq
+	 /WMj9sBvq/kXYNl1+fHBYZXPIS2G0/Q2Avk23oSHXjOtG2io0406AGVGukqtNEYVWf
+	 mIbsLldW9WFmEvR4dc+tL+ZURWkDS6S88AC2XmpINliIzlgdngsgLqJ6OVQHeluF8f
+	 3Hk785FPYLV41Qf6iHMeBtqqEswuxVNfRYEi60WNHk0VKlUiTWJA6nSQIDGSskhRwk
+	 xaAfkKb9NcNConDG/QSOX/3Fus7Fez29+uT+BPH/HDKqvfNKYW3xj14tyQxa0/Py2/
+	 vv49dZHgrqcCQ==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: [PATCH 00/10] clockevents: Rearrange cpuhotplug operations
+Date: Thu, 17 Oct 2024 18:50:31 +0200
+Message-ID: <20241017165041.6954-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 1/2] wifi: mwifiex: Fix memcpy() field-spanning write
- warning in mwifiex_config_scan()
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20241007222301.24154-1-alpernebiyasak@gmail.com>
-References: <20241007222301.24154-1-alpernebiyasak@gmail.com>
-To: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- Francesco Dolcini <francesco@dolcini.it>,
- Johannes Berg <johannes.berg@intel.com>, Kees Cook <kees@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Dmitry Antipov <dmantipov@yandex.ru>,
- "Gustavo A . R . Silva" <gustavoars@kernel.org>,
- Jeff Johnson <quic_jjohnson@quicinc.com>,
- Brian Norris <briannorris@chromium.org>, David Lin <yu-hao.lin@nxp.com>,
- linux-hardening@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Alper Nebi Yasak <alpernebiyasak@gmail.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172918382395.970100.13551398619999494547.kvalo@kernel.org>
-Date: Thu, 17 Oct 2024 16:50:25 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 
-Alper Nebi Yasak <alpernebiyasak@gmail.com> wrote:
+Some recent RCU issues triggered with offline ticks uncovered
+hotplug behaviour differences between oneshot and periodic ticks.
+The former is disabled on the dying CPU but not the latter. Also
+the clockevents hotplug code is quite chaotic. This is a proposal to
+fix the situation.
 
-> Replace one-element array with a flexible-array member in `struct
-> mwifiex_ie_types_wildcard_ssid_params` to fix the following warning
-> on a MT8173 Chromebook (mt8173-elm-hana):
-> 
-> [  356.775250] ------------[ cut here ]------------
-> [  356.784543] memcpy: detected field-spanning write (size 6) of single field "wildcard_ssid_tlv->ssid" at drivers/net/wireless/marvell/mwifiex/scan.c:904 (size 1)
-> [  356.813403] WARNING: CPU: 3 PID: 742 at drivers/net/wireless/marvell/mwifiex/scan.c:904 mwifiex_scan_networks+0x4fc/0xf28 [mwifiex]
-> 
-> The "(size 6)" above is exactly the length of the SSID of the network
-> this device was connected to. The source of the warning looks like:
-> 
->     ssid_len = user_scan_in->ssid_list[i].ssid_len;
->     [...]
->     memcpy(wildcard_ssid_tlv->ssid,
->            user_scan_in->ssid_list[i].ssid, ssid_len);
-> 
-> There is a #define WILDCARD_SSID_TLV_MAX_SIZE that uses sizeof() on this
-> struct, but it already didn't account for the size of the one-element
-> array, so it doesn't need to be changed.
-> 
-> Fixes: 5e6e3a92b9a4 ("wireless: mwifiex: initial commit for Marvell mwifiex driver")
-> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-> Acked-by: Brian Norris <briannorris@chromium.org>
+Frederic Weisbecker (10):
+  clockevents: Improve clockevents_notify_released() comment
+  clockevents: Shutdown and unregister current clockevents at
+    CPUHP_AP_TICK_DYING
+  tick: Remove now unneeded low-res tick stop on CPUHP_AP_TICK_DYING
+  arm/twd: Remove clockevents shutdown call on offlining
+  clocksource/drivers/arm_arch_timer: Remove clockevents shutdown call
+    on offlining
+  clocksource/driver/arm_global_timer: Remove clockevents shutdown call
+    on offlining
+  drivers/clocksource/exynos_mct: Remove clockevents shutdown call on
+    offlining
+  clocksource/drivers/armada-370-xp: Remove clockevents shutdown call on
+    offlining
+  clocksource/drivers/qcom: Remove clockevents shutdown call on
+    offlining
+  drivers/clocksource/timer-tegra: Remove clockevents shutdown call on
+    offlining
 
-Patch applied to wireless-next.git, thanks.
-
-d241a139c2e9 wifi: mwifiex: Fix memcpy() field-spanning write warning in mwifiex_config_scan()
+ arch/arm/kernel/smp_twd.c                 |  1 -
+ drivers/clocksource/arm_arch_timer.c      |  2 -
+ drivers/clocksource/arm_global_timer.c    |  1 -
+ drivers/clocksource/exynos_mct.c          |  1 -
+ drivers/clocksource/timer-armada-370-xp.c |  1 -
+ drivers/clocksource/timer-qcom.c          |  1 -
+ drivers/clocksource/timer-tegra.c         |  1 -
+ include/linux/tick.h                      |  2 -
+ kernel/cpu.c                              |  2 -
+ kernel/time/clockevents.c                 | 45 ++++++++++++-----------
+ kernel/time/tick-sched.c                  | 25 +++----------
+ 11 files changed, 30 insertions(+), 52 deletions(-)
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20241007222301.24154-1-alpernebiyasak@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.46.0
 
 
