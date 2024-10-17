@@ -1,200 +1,146 @@
-Return-Path: <linux-kernel+bounces-369798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0F39A22D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748449A22D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79C81F23E75
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A555282A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FF91DDC02;
-	Thu, 17 Oct 2024 12:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cP1NCxaM"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED91DDA24;
+	Thu, 17 Oct 2024 12:58:20 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48D1DCB0F;
-	Thu, 17 Oct 2024 12:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965771DD875
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729169890; cv=none; b=rOoWzaQbe9ZtGHwnT+PYhvXGJrQTGbICMth9/b6DRkAFwu93TVEZg+JT8IBmFw3hJyq8Vtk7zmXkPIjZ7I2tE0mfdOkN9sB2J08xNQyGqWaPS5UmpGojJLjRj4G05AAa75DTArnnieV9eGfRWcIdk+eAFTX/Cre9pAm5Ee+UJYk=
+	t=1729169899; cv=none; b=BdJxFzw7d0DmlM+FyXfMKg7kjPCzR6ZBoSlLjEscyWuH3ngPBXK9m4g0jtd6FgS6KnbYW6+QXN6w0Lq0SrFMs0/3itLJfel16VxIf4XQ2TG2rIPMnVe15Eua+KZLg3R1dyb7t5p3AS3yul0T4WijXD7D75p5TvIznK6SR1wL4lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729169890; c=relaxed/simple;
-	bh=bIePXqAtUlqkTufvGumQxPUc0PqpBMo4EmQ3/DSX1hE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvfnIuwGHu6hZJLd61oV+iKZazdHHl046GAnMBMDxt7QgFRDpWZ8gQ7cbWgBoKx7+xKpxbRJAS7Y6c4QrJkvyV74NwDXJ0Y9LzHsEwuKaY6LgFVSmtH4uqOtMG0OuZvL7qqqkAvH28ObMkdBWBC3BEPKgfTrO+/h06tOiNZvaqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cP1NCxaM; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43159c9f617so6869255e9.2;
-        Thu, 17 Oct 2024 05:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729169886; x=1729774686; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5VuFpsKd1Glm/eRZkFsD3jO6x6bmNRZsuLbQ0G2y7yU=;
-        b=cP1NCxaMYPGhqrwroXk4+iaS3/saXCqq7ZWH4nGoCgAtTKw1+6GYyZ+jCxfhuzoJq1
-         5+dpmeL8MqgLj7+a5TxKvUepjWGFFzRcXzpCZbIqA74cojhgEpFTa67z3OwS++oq2v9Y
-         a/NMgzGG0fbNYAJ5Ci0g2Cy7wsGhmFY1F9ZASe6aWzFMnEXxFnLj8U42XCHDTKjqxAZQ
-         xfhGfr/cGwZIWPhi8+fjY3gqy7l7npbU20RUE36ZB+EKn1kQfLDidX4Ot5mDRYXEikdc
-         4XS70w7z/4RhgrrhZcO8TNGfwU1YX4E6Jrz07RinPEW+7ELGmYk1tItIm8iHYQL2JEhd
-         kZkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729169886; x=1729774686;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5VuFpsKd1Glm/eRZkFsD3jO6x6bmNRZsuLbQ0G2y7yU=;
-        b=LCWeoB0QBxMOF3Sbh5B/FpPvzA7/mPvNKNxNCKmD1FQR9zpKDyQDp/XSn3uNOrFIyE
-         5OlS5CjVQtmEkRQkkRpJ7Z5X95abni1RgrV8vkpmh3XmekPxGzYW1oB2mbm3MEHY6CU6
-         PDwtetBw3XFRIpRo1Kaf2F8bVIWkRFFrrzcwnVcW/eiy0ZTMC03g8w2rHYlNe7po4ac1
-         UKS2uZgvZZIs/5QL7ay+tEBMC6sN/vQoFcAkXyMnApb/r+PdVIGrXa066MK6ZGATU7oc
-         wItasBaBYVqgneOluFNNjYmfrhTsEvWHAhh0YVd3Shx7NLNUbN9KPAoWPJpZXS5UG1tb
-         Tdvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAjniJUA/M2DjQ9tRhlzEIhyl23mEBlNbjSQXXtV+5VPP3sBybpYeTclQz0SY/Zb6YK3bqCJQCIcdu9yrw@vger.kernel.org, AJvYcCXPnnu9wM1DUWiAPyCzHT2tby2pS5rWGMeFaDWgV0kQmD84H6dDx080Iynzw9Nbaw5AKrn0wvs6z0t2@vger.kernel.org, AJvYcCXnZdl7dGuG65+YRIGlUIz9j6poouGQ66K+kOh8rv3QwiEx5U+9mw3mXEFungi5X8Y1Ix0PTrp3GMkEIGU8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwVE8egM8jJBuS6161v9hwX49RouGj5kDQd6xKKErVtLVklpI7
-	4VGPu/Oy1F027MhZaWzukXzfNPc2bSxwbqZ6Ff2YjhxlKylI9/z7mNdIpA==
-X-Google-Smtp-Source: AGHT+IEHtuRD9oDrBXiWk+27egjDRvZxIs2hhjYZB4oJFwN2wDbiqtmYcbXPus2BKXPg1GIc9bXBxA==
-X-Received: by 2002:adf:ce83:0:b0:37d:4cf9:e085 with SMTP id ffacd0b85a97d-37d86bdc2c4mr4984748f8f.25.1729169885956;
-        Thu, 17 Oct 2024 05:58:05 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc41a15sm7164214f8f.110.2024.10.17.05.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 05:58:05 -0700 (PDT)
-Message-ID: <671109dd.df0a0220.20fb5e.b4ad@mx.google.com>
-X-Google-Original-Message-ID: <ZxEJ2jIwUHBrpE53@Ansuel-XPS.>
-Date: Thu, 17 Oct 2024 14:58:02 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Richard van Schagen <vschagen@icloud.com>,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/3] dt-bindings: crypto: Add Inside Secure
- SafeXcel EIP-93 crypto engine
-References: <20241017004335.27471-1-ansuelsmth@gmail.com>
- <20241017004335.27471-2-ansuelsmth@gmail.com>
- <20241017123823.GA3032377-robh@kernel.org>
+	s=arc-20240116; t=1729169899; c=relaxed/simple;
+	bh=QTEIK+hjRYcsCWe0UVg7ofyNR9soooVcGWuUXTn5uls=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KNFGfmbr0bdIxgQVyegFqKk9YHW4mOlcgYM0xmC0QXfrSwc5EjrHELRzhowdoyuxw/Jftn8dYYh9bcPVuHdjkpYg9C8Bcpg8IiMztsPlI/on7cxzN2kqlYZE572nQ2qRXVT6rgK3VWQK2tUc8yAEhl+bvnSSziTdvUf122hQcHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTns92yJQz6FGnM;
+	Thu, 17 Oct 2024 20:56:29 +0800 (CST)
+Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 818D01400F4;
+	Thu, 17 Oct 2024 20:58:13 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 17 Oct 2024 14:58:13 +0200
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Thu, 17 Oct 2024 14:58:13 +0200
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>, Jason Gunthorpe <jgg@ziepe.ca>
+CC: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>, Jacob Pan
+	<jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"virtualization@lists.linux-foundation.org"
+	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v8 07/10] iommufd: Fault-capable hwpt
+ attach/detach/replace
+Thread-Topic: [PATCH v8 07/10] iommufd: Fault-capable hwpt
+ attach/detach/replace
+Thread-Index: AQHazEqXxVp4lf+dEUeIMwqdhDxFmrKHp/+AgACgmACAANsfAIAA4VKAgACtBACAAK2BAIAACGkAgAAneCA=
+Date: Thu, 17 Oct 2024 12:58:13 +0000
+Message-ID: <50ee0c0b052b40f6b67d1ad3b1b0eeb9@huawei.com>
+References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
+ <20240702063444.105814-8-baolu.lu@linux.intel.com>
+ <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
+ <20241015125420.GK1825128@ziepe.ca>
+ <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
+ <20241016152503.GB4020792@ziepe.ca>
+ <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
+ <20241017120518.GI4020792@ziepe.ca>
+ <CABQgh9EnEqDKkxg3VUgjSqBzz27h8B3Ct4w=A0vR6JK=d7fXHQ@mail.gmail.com>
+In-Reply-To: <CABQgh9EnEqDKkxg3VUgjSqBzz27h8B3Ct4w=A0vR6JK=d7fXHQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017123823.GA3032377-robh@kernel.org>
 
-On Thu, Oct 17, 2024 at 07:38:23AM -0500, Rob Herring wrote:
-> On Thu, Oct 17, 2024 at 02:43:18AM +0200, Christian Marangi wrote:
-> > Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
-> > 
-> > The IP is present on Airoha SoC and on various Mediatek devices and
-> > other SoC under different names like mtk-eip93 or PKTE.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> > Changes v2:
-> > - Change to better compatible
-> > - Add description for EIP93 models
-> > 
-> >  .../crypto/inside-secure,safexcel-eip93.yaml  | 61 +++++++++++++++++++
-> >  1 file changed, 61 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> > new file mode 100644
-> > index 000000000000..fc0877d93514
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> > @@ -0,0 +1,61 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/crypto/inside-secure,safexcel-eip93.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Inside Secure SafeXcel EIP-93 cryptographic engine
-> > +
-> > +maintainers:
-> > +  - Christian Marangi <ansuelsmth@gmail.com>
-> > +
-> > +description: |
-> > +  The Inside Secure SafeXcel EIP-93 is a cryptographic engine IP block
-> > +  integrated in varios devices with very different and generic name from
-> > +  PKTE to simply vendor+EIP93. The real IP under the hood is actually
-> > +  developed by Inside Secure and given to license to vendors.
-> > +
-> > +  The IP block is sold with different model based on what feature are
-> > +  needed and are identified with the final letter. Each letter correspond
-> > +  to a specific set of feature and multiple letter reflect the sum of the
-> > +  feature set.
-> > +
-> > +  EIP-93 models:
-> > +    - EIP-93i: (basic) DES/Triple DES, AES, PRNG, IPsec ESP, SRTP, SHA1
-> > +    - EIP-93ie: i + SHA224/256, AES-192/256
-> > +    - EIP-93is: i + SSL/DTLS/DTLS, MD5, ARC4
-> > +    - EIP-93ies: i + e + s
-> > +    - EIP-93iw: i + AES-XCB-MAC, AES-CCM
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - inside-secure,safexcel-eip93i
-> > +      - inside-secure,safexcel-eip93ie
-> > +      - inside-secure,safexcel-eip93is
-> > +      - inside-secure,safexcel-eip93ies
-> > +      - inside-secure,safexcel-eip93iw
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> 
-> 
-> No clocks? All their other IP has clocks.
->
-
-They are handled internally for each submodule. From the IP side, they
-can be disabled with some register but in Autonomous mode (the one the
-driver supports) they are handled automatically.
-
-In short, yes for this "old" IP, no clock.
-
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +    crypto@1e004000 {
-> > +      compatible = "inside-secure,safexcel-eip93ies";
-> > +      reg = <0x1fb70000 0x1000>;
-> > +
-> > +      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> > +    };
-> > -- 
-> > 2.45.2
-> > 
-
--- 
-	Ansuel
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogWmhhbmdmZWkgR2FvIDx6
+aGFuZ2ZlaS5nYW9AbGluYXJvLm9yZz4NCj4gU2VudDogVGh1cnNkYXksIE9jdG9iZXIgMTcsIDIw
+MjQgMTozNSBQTQ0KPiBUbzogSmFzb24gR3VudGhvcnBlIDxqZ2dAemllcGUuY2E+DQo+IENjOiBM
+dSBCYW9sdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPjsgS2V2aW4gVGlhbg0KPiA8a2V2aW4u
+dGlhbkBpbnRlbC5jb20+OyBKb2VyZyBSb2VkZWwgPGpvcm9AOGJ5dGVzLm9yZz47IFdpbGwgRGVh
+Y29uDQo+IDx3aWxsQGtlcm5lbC5vcmc+OyBSb2JpbiBNdXJwaHkgPHJvYmluLm11cnBoeUBhcm0u
+Y29tPjsgSmVhbi0NCj4gUGhpbGlwcGUgQnJ1Y2tlciA8amVhbi1waGlsaXBwZUBsaW5hcm8ub3Jn
+PjsgTmljb2xpbiBDaGVuDQo+IDxuaWNvbGluY0BudmlkaWEuY29tPjsgWWkgTGl1IDx5aS5sLmxp
+dUBpbnRlbC5jb20+OyBKYWNvYiBQYW4NCj4gPGphY29iLmp1bi5wYW5AbGludXguaW50ZWwuY29t
+PjsgSm9lbCBHcmFuYWRvcw0KPiA8ai5ncmFuYWRvc0BzYW1zdW5nLmNvbT47IGlvbW11QGxpc3Rz
+LmxpbnV4LmRldjsNCj4gdmlydHVhbGl6YXRpb25AbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmc7
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IFNoYW1lZXJhbGkgS29sb3RodW0gVGhv
+ZGkgPHNoYW1lZXJhbGkua29sb3RodW0udGhvZGlAaHVhd2VpLmNvbT4NCj4gU3ViamVjdDogUmU6
+IFtQQVRDSCB2OCAwNy8xMF0gaW9tbXVmZDogRmF1bHQtY2FwYWJsZSBod3B0DQo+IGF0dGFjaC9k
+ZXRhY2gvcmVwbGFjZQ0KPiANCj4gT24gVGh1LCAxNyBPY3QgMjAyNCBhdCAyMDowNSwgSmFzb24g
+R3VudGhvcnBlIDxqZ2dAemllcGUuY2E+IHdyb3RlOg0KPiA+DQo+ID4gT24gVGh1LCBPY3QgMTcs
+IDIwMjQgYXQgMDk6NDQ6MThBTSArMDgwMCwgWmhhbmdmZWkgR2FvIHdyb3RlOg0KPiA+ID4gT24g
+V2VkLCAxNiBPY3QgMjAyNCBhdCAyMzoyNSwgSmFzb24gR3VudGhvcnBlIDxqZ2dAemllcGUuY2E+
+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPiBPbiBXZWQsIE9jdCAxNiwgMjAyNCBhdCAwOTo1ODoz
+NkFNICswODAwLCBaaGFuZ2ZlaSBHYW8gd3JvdGU6DQo+ID4gPiA+ID4gT24gVHVlLCAxNSBPY3Qg
+MjAyNCBhdCAyMDo1NCwgSmFzb24gR3VudGhvcnBlIDxqZ2dAemllcGUuY2E+DQo+IHdyb3RlOg0K
+PiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IE9uIFR1ZSwgT2N0IDE1LCAyMDI0IGF0IDExOjE5OjMz
+QU0gKzA4MDAsIFpoYW5nZmVpIEdhbyB3cm90ZToNCj4gPiA+ID4gPiA+ID4gPiArc3RhdGljIGlu
+dCBpb21tdWZkX2ZhdWx0X2lvcGZfZW5hYmxlKHN0cnVjdA0KPiA+ID4gPiA+ID4gPiA+ICtpb21t
+dWZkX2RldmljZSAqaWRldikgew0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgc3RydWN0IGRldmlj
+ZSAqZGV2ID0gaWRldi0+ZGV2Ow0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgaW50IHJldDsNCj4g
+PiA+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAvKg0KPiA+ID4gPiA+ID4g
+PiA+ICsgICAgICAgICogT25jZSB3ZSB0dXJuIG9uIFBDSS9QUkkgc3VwcG9ydCBmb3IgVkYsIHRo
+ZSByZXNwb25zZQ0KPiBmYWlsdXJlIGNvZGUNCj4gPiA+ID4gPiA+ID4gPiArICAgICAgICAqIHNo
+b3VsZCBub3QgYmUgZm9yd2FyZGVkIHRvIHRoZSBoYXJkd2FyZSBkdWUgdG8gUFJJDQo+IGJlaW5n
+IGEgc2hhcmVkDQo+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAgKiByZXNvdXJjZSBiZXR3ZWVuIFBG
+IGFuZCBWRnMuIFRoZXJlIGlzIG5vIGNvb3JkaW5hdGlvbg0KPiBmb3IgdGhpcw0KPiA+ID4gPiA+
+ID4gPiA+ICsgICAgICAgICogc2hhcmVkIGNhcGFiaWxpdHkuIFRoaXMgd2FpdHMgZm9yIGEgdlBS
+SSByZXNldCB0byByZWNvdmVyLg0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgICovDQo+ID4gPiA+
+ID4gPiA+ID4gKyAgICAgICBpZiAoZGV2X2lzX3BjaShkZXYpICYmIHRvX3BjaV9kZXYoZGV2KS0+
+aXNfdmlydGZuKQ0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZB
+TDsNCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gSSBhbSB1c2luZyB0aGUgU01NVXYzIHN0
+YWxsIGZlYXR1cmUsIGFuZCBuZWVkIHRvIGZvcndhcmQNCj4gPiA+ID4gPiA+ID4gdGhpcyB0byBo
+YXJkd2FyZSwgQW5kIG5vdyBJIGFtIGhhY2tpbmcgdG8gY29tbWVudCB0aGlzIGNoZWNrLg0KPiA+
+ID4gPiA+ID4gPiBBbnkgc3VnZ2VzdGlvbnM/DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gQXJl
+IHlvdSB1c2luZyBQQ0kgU1JJT1YgYW5kIHN0YWxsIHRvZ2V0aGVyPw0KPiA+ID4gPiA+DQo+ID4g
+PiA+ID4gT25seSB1c2Ugc21tdXYzIHN0YWxsIGZlYXR1cmUuDQo+IFNvcnJ5LCB0aGlzIGlzIG5v
+dCBjb3JyZWN0DQo+IA0KPiA+ID4gPg0KPiA+ID4gPiBUaGVuIGlzbid0IHRvX3BjaV9kZXYoZGV2
+KS0+aXNfdmlydGZuID09IGZhbHNlPw0KPiA+ID4gPg0KPiA+ID4gPiBUaGF0IHNob3VsZCBvbmx5
+IGJlIHRydWUgd2l0aCBTUklPVg0KPiA+ID4NCj4gPiA+IERvIHlvdSBtZWFuDQo+ID4gPiBpZiAo
+ZGV2X2lzX3BjaShkZXYpICYmIHRvX3BjaV9kZXYoZGV2KS0+aXNfdmlydGZuID09IGZhbHNlKQ0K
+PiA+ID4gICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ID4NCj4gPiA+IFRoaXMgaXMgZmluZQ0KPiA+
+DQo+ID4gTm8sIEkgbWVhbiBvbiB5b3VyIHRlc3Qgc3lzdGVtIHlvdSBhcmUgbm90IHVzaW5nIFNS
+SU9WIHNvIGFsbCB5b3VyIFBDSQ0KPiA+IGRldmljZXMgd2lsbCBoYXZlIGlzX3ZpcnRmbiA9PSBm
+YWxzZSBhbmQgdGhlIGFib3ZlIGlmIHNob3VsZG4ndCBiZSBhDQo+ID4gcHJvYmxlbS4gaXNfdmly
+dGZuIGluZGljYXRlcyB0aGUgUENJIGRldmljZSBpcyBhIFNSSU9WIFZGLg0KPiA+DQo+ID4gWW91
+ciBleHBsYW5hdGlvbiBmb3IgeW91ciBwcm9ibGVtIGRvZXNuJ3QgcmVhbGx5IG1ha2Ugc2Vuc2Us
+IG9yIHRoZXJlDQo+ID4gaXMgc29tZXRoaW5nIHdyb25nIHNvbWVwbGFjZSBlbHNlIHRvIGdldCBh
+IGJvZ3VzIGlzX3ZpcnRmbi4uDQo+ID4NCj4gPiBJZiB5b3UgYXJlIGRvaW5nIFNSSU9WIHdpdGgg
+c3RhbGwsIHRoZW4gdGhhdCBpcyB1bmRlcnN0YW5kYWJsZS4NCj4gDQo+IFllcywgeW91IGFyZSBy
+aWdodA0KPiAgSSBhbSB1c2luZyBTUklPViB2ZiBhbmQgc3RhbGwgZmVhdHVyZSwgc28gaXNfdmly
+dGZuID09IHRydWUNCj4gDQo+IE91ciBBQ0MgZGV2aWNlcyBhcmUgZmFrZSBwY2kgZW5kcG9pbnQg
+ZGV2aWNlcyB3aGljaCBzdXBwb3J0cyBzdGFsbCwgQW5kDQo+IHRoZXkgYWxzbyBzdXBwb3J0cyBz
+cmlvdg0KDQpNYXkgYmUgdGhpcyB3aWxsIGhlbHAgdG8gZ2V0IHRoZSBiYWNrZ3JvdW5kOg0KaHR0
+cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzE2MjYxNDQ4NzYtMTEzNTItMS1naXQtc2VuZC1lbWFp
+bC16aGFuZ2ZlaS5nYW9AbGluYXJvLm9yZy8NCg0KU2hhbWVlcg0KDQo=
 
