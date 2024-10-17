@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-369427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E929A1D2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:27:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D759A1D2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2E11F275C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:27:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231921C21573
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646311D27BA;
-	Thu, 17 Oct 2024 08:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3DB1D318B;
+	Thu, 17 Oct 2024 08:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQXJR2cu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTX6GnHE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CA21C3F1C;
-	Thu, 17 Oct 2024 08:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501CA1D2200;
+	Thu, 17 Oct 2024 08:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729153671; cv=none; b=QniMcqbMeqoJkFOjGZSztm9lMNT3wM3+KyveCuTUo332ni4Xg8lXMTVNXzAlisbXd3a9yHHsb8ibIBfQwtZbHWaBBCpGuqG0kbrznTOOwMBqo7ffOvEhOvbFqOG9ZjFkQfLPzBAeXkhlNFTsVN+h0CdoWkNU6KUxvleX2/P67rw=
+	t=1729153769; cv=none; b=j5vv/AXiR5mP/xhxCJy+3qCxxPPoD8QImmOVKkILcMT8wXWYFKDb27LR9UnCYtct9pE1NpKQV/6Gix97Rm2N4ijowkkW9Wt8DeJfWH453ZVYI7aeeq81AQ71T6jPWaKpIuivDnr3t6H7p8DagxBbHxQTfV84s9EocD/ihHdZWGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729153671; c=relaxed/simple;
-	bh=mKeMUmu9wWEy4M6tYmbNmKQAoJldzHlugNgkL3nXty8=;
+	s=arc-20240116; t=1729153769; c=relaxed/simple;
+	bh=M+/XrHY4LUdQvprB3NDCFEVmvOF5skkVES1svfVrtOE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LxsYs6KuOldpXP1YgDFZ9S1eYe2Ue9SK3ovvxTLU/hdR1hqkEWO5DD/TNPLed4h9dACyhzdgmU7hhj5gTATbIX3qEIV1owBjrVTyiq+Uh2EX92BVFY39i6Mw5yz/Z/H05Ms0Bg+3/5zKhfaF/dibXrnPyD2w5ZCqfs5eTUQpLE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQXJR2cu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A12C4CEC3;
-	Thu, 17 Oct 2024 08:27:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ShnNofzYRlAzu7z4qYG+109EzZ7wTJKLHSGva625O9tYbQnA9r+v6ipwKANNBKDdvMzcVNv+Re+Rw7Iz6JZBOIIFoujqzYnGbNuj8c4mT9CPcHCRncH5V8umKLGyUCtiPe7j/KoelG8NF7grLg3y92WhAm7Cm0mTZjLmecBaw+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTX6GnHE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE6F9C4CEC3;
+	Thu, 17 Oct 2024 08:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729153671;
-	bh=mKeMUmu9wWEy4M6tYmbNmKQAoJldzHlugNgkL3nXty8=;
+	s=k20201202; t=1729153768;
+	bh=M+/XrHY4LUdQvprB3NDCFEVmvOF5skkVES1svfVrtOE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vQXJR2cuWna8A1Dy5yQkw9x80lL5A99d03zdPEv6xKYVdTNuL+uD3cMauYGLwEd/W
-	 7AxJjNzjilqPvwp3hhg5jUmigeunfetBxWes3bx+hKygSjrB0NNMg/MjWMggUCFnxo
-	 +JAdgD02nHsFqSiUd/NW69Mb/3vZNv4Rx4PbjX8daCR8g/kZGZKKuock5eVHBKPH+e
-	 zX0SsuUGyjwyh9WNiDjjNtxVzgG/RpnD7yEqYLTwt+iZQSfRpSyls+hztw0FDrIMj7
-	 HWXJPuxZwPTFlrl9KRY7Vybl4mgnX5zGq/vnk8GFgwn3BkoU0UW9HRa3Uvwxvr0Kja
-	 WHZ5IH5U6BU/Q==
-Date: Thu, 17 Oct 2024 10:27:47 +0200
+	b=eTX6GnHEGtkCPxlUORUfk6J4IcWCBcum5OJaddlPAxNpx9JtKctMCwS9qGzCq0tE3
+	 ogOokShvEx+qy6bU5UWlw+mWaE83H2GdBgj8ryDfNuWNZVjI9UmIhxhYWhdcdusXIA
+	 eAT3JG3clVFhQAKUlusf2GN38UuP3QO9qxHoT+Cz0uL7fEnFMlRTFANKXYMktG6MI/
+	 ep8HSyhIyH/YPDj9HVIpuGHSHEd26S+eozxhyIyIr7+NxykmY6XwLswsvVfz7+JnRS
+	 V000m0pEe8Lzt556yzjhlh+cV18lcdAXWAwqxbvGJhwdUk11ECxPx+g44ynKTVOIgz
+	 7QGspQR6VDK6A==
+Date: Thu, 17 Oct 2024 10:29:24 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, conor@kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] dt-bindings: rtc: mpfs-rtc: remove Lewis from
- maintainers
-Message-ID: <eufc7sxcgby2ipmesegjzxfnrmjzyedp2bxtbixmmhi7e3odit@fpmasdurqtll>
-References: <20241015-surcharge-caucasian-095d1fd2fa27@wendy>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com
+Subject: Re: [PATCH 1/3] dt-bindings: arm: qcom,ids: add SoC ID for
+ IPQ5424/IPQ5404
+Message-ID: <hqi3vzsega63x6ac5adctgvgfbr427qgjuzhjci7awnvev26kv@z66mtob5yyjd>
+References: <20241016151528.2893599-1-quic_mmanikan@quicinc.com>
+ <20241016151528.2893599-2-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,20 +60,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241015-surcharge-caucasian-095d1fd2fa27@wendy>
+In-Reply-To: <20241016151528.2893599-2-quic_mmanikan@quicinc.com>
 
-On Tue, Oct 15, 2024 at 07:52:05AM +0100, Conor Dooley wrote:
-> Lewis hasn't worked at Microchip for a while, and IIRC never actually
-> worked on the RTC in the first place. Remove him from the maintainers
-> list in the binding, leaving Daire.
+On Wed, Oct 16, 2024 at 08:45:26PM +0530, Manikanta Mylavarapu wrote:
+> Add the ID for Qualcomm IPQ5424/IPQ5404 SoC.
 > 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 > ---
-> Noticed him in the CC list of your resend, figured it was worth removing
-> him.
+>  include/dt-bindings/arm/qcom,ids.h | 2 ++
+>  1 file changed, 2 insertions(+)
 
-FWIW
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
