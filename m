@@ -1,144 +1,171 @@
-Return-Path: <linux-kernel+bounces-369566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AB19A1EF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 954CB9A1EFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47DE1C2153D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C72EC1C215E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04651DB360;
-	Thu, 17 Oct 2024 09:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="KqcUXZ7b"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C542C1DA100;
+	Thu, 17 Oct 2024 09:50:53 +0000 (UTC)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCF71D9660;
-	Thu, 17 Oct 2024 09:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DD8165F08;
+	Thu, 17 Oct 2024 09:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158590; cv=none; b=W3q8kKxUbZ1sGVzSk3kPkDWZ4gyLqxJ1cYdkykhZfNWlLbFfDKcf2InR9gtJYifEG+P7pdt6/1w150M5q18v/k/Z6TB3jIO8Iwoi0vZSfA7fqLoZfimhW2S2eqliLexXgAk9c74Sjxcq2BxaWmkOUWQkVCbN8fNw5HKPkekEWOM=
+	t=1729158653; cv=none; b=jKSKe9gsV9vU+u2uLWBWbuHB8Ep6KG1m+7VGgAgja9LHF92Yy28dp6pWcxRvHvRnWBpZz4/GzuNCFYKx91C1cen9TCwf1k6s97yUthjSnGMb0oJYWVxfFvWYyHI1VpdkDOea9/I+Ou49wSTy2AjNAc5ifeO/KdkSPE+JGmwKh08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158590; c=relaxed/simple;
-	bh=2wZg0oXgvbXJdjVnabs2hqotKgpbefNELHGNr8c2O9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F8RU01iLdMzUwl03Oqw4Xqo58aYOISU4v4aCq3kiBnPlLEbFKJeWQYE6mL4g2o71UIKp3NzFRuTqXgJbdXsZ09oR+W5P+DoCXN5FUpf6Lda4keFjQLzgmxqETaMWEvAsCRISuvbApzspZtbgnNYxbRjFvuNDhcYiVF0J3Yn+xQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=KqcUXZ7b; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=PAmgwQ9HJVkLBL3nAuwtVWU4GsXSFcbwnusbC9mK3S0=; b=KqcUXZ7bvW99bnhv6i+JE/H7Z5
-	niw3SJXX7OuDcYkt6McP1BULZZIyMTvoy4c8Xmv+1gsDh0HoJd/RMa4aamzsYFheREVXG5gnm85CC
-	dGdByyXmdv+fUMdmGXNut7YYREjxLu5MMPShwwMJwU/b5VMHrVuUitShYRO4fHH39vrCzTxMmIEgn
-	OB40/RhpAj86/QL1dADAdsF9nphGCnNyGKnf9yZUDss09qfH4TWxJUvcYjYz5xv9oSpnPeg2L7JY1
-	yp2B6TZA0qiSyp00E33tNkOirwMQdFXtBWqkLDxaQxsR7IMDX40XRVV7qI//Yc+F1oV0Gqr20wR49
-	90+tHBwQ==;
-Date: Thu, 17 Oct 2024 11:49:34 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
- linux-omap@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, tony@atomide.com
-Subject: Re: [PATCH v2 0/4] ARM: dts: omap: omap4-epson-embt2ws: misc gpio
- definitions
-Message-ID: <20241017114934.240d35b4@akair>
-In-Reply-To: <172857036157.1533290.9663617637580743712.robh@kernel.org>
-References: <20241010122957.85164-1-andreas@kemnade.info>
-	<172857036157.1533290.9663617637580743712.robh@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729158653; c=relaxed/simple;
+	bh=L2iZyYNzU5n0vMmFAaG9I2sAgUj6MrJPfvyqjwuin7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MTVL3hr/RSIC5/XhXdmlHRq42LNpqABoz/8ikHkXWyEcjqKo/kiASMNDEOijaZj3R1ZPc8nrbCbJbJeiKrFPB7lbUrAuISM6wJxaQ0SUitktiviiAm7CxAHiefQ2UZFloZde+eLzcfJkKU8R/I5sMcxkYby4pplZwV4gvYd1paI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb498a92f6so9616881fa.1;
+        Thu, 17 Oct 2024 02:50:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729158650; x=1729763450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+YH0bb/VsAy0uWyC1771z0ENOP+IISgwLjVL9e394kY=;
+        b=f/kVzsJWTq+koF+G2uoHXXNzPj6F9fi47CFJnMIXjGplNFN2QLRt0ZAlD1Yxqdmwwo
+         6MGAIiIyOFxqmbnI1o4JJwIkXJoqcqN+l2PXK7pcglb7J405JdTeGCY/PaoTqxn3cZQM
+         AVNvXP2xDXPVgq+B9rt1B1N9HJg15FuBiwSQ6lpQZlotLRlSaJs2Ja5nFqOPyCq60aAe
+         kVokQ/QTiZb/OLpmlYwzClG6Ei3YJayM6/HWzWTzhywiW4iPlouYyzeCFcr663AEzskm
+         yAhAmjziKrRHTZWOOoYG6NZ6I3AEkuzU6Y1JjTgVOHUfuH4m1N1110eWcR2l8IL51v0p
+         /SQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVivILWr3yAypfQCcD/yYqbUA+yrvYe+BnXcF9w6ep+ktRxGlgG6ZuS+4T03M9IYL40vBIfzd1lAneIKac=@vger.kernel.org, AJvYcCXcVcoV0rxvJlQlAdQZh4xQobItuZrVv+9U3ns6j5D5QoHOnUH+fgdZMkd5nYtNrQNB6gx/P8eV@vger.kernel.org
+X-Gm-Message-State: AOJu0YylHbl5cP0KtFFNKgDW1gOnzKncQKAUMILM3TDz4dhlf9wMFr92
+	zpYmGyPv6Km/ZQ0EJUkUB3+xyzaK46gWqp5QHw1M/1vPb0GSf540
+X-Google-Smtp-Source: AGHT+IH8PD+FFVnvIIekbt1so5+Oy8KFjqg+MMuqSzWgVmFRB18TwVY3j69Rj2toznWO1qA3NwCmRw==
+X-Received: by 2002:a2e:a9a1:0:b0:2fb:5bb8:7c23 with SMTP id 38308e7fff4ca-2fb61b8a505mr40422181fa.26.1729158649349;
+        Thu, 17 Oct 2024 02:50:49 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d4d6269sm2605245a12.2.2024.10.17.02.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 02:50:48 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: thepacketgeek@gmail.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	davej@codemonkey.org.uk,
+	vlad.wing@gmail.com,
+	max@kutsevol.com,
+	kernel-team@meta.com
+Subject: [PATCH net-next v5 0/9] net: netconsole refactoring and warning fix
+Date: Thu, 17 Oct 2024 02:50:15 -0700
+Message-ID: <20241017095028.3131508-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Am Thu, 10 Oct 2024 09:30:09 -0500
-schrieb "Rob Herring (Arm)" <robh@kernel.org>:
+The netconsole driver was showing a warning related to userdata
+information, depending on the message size being transmitted:
 
-> On Thu, 10 Oct 2024 14:29:53 +0200, Andreas Kemnade wrote:
-> > Bring the system into a more defined state and do not rely
-> > on things being initialized by bootloader.
-> > 
-> > Changes in V2:
-> > - better comment strange GPIOs
-> > - proper names for regulator nodes
-> > 
-> > Andreas Kemnade (4):
-> >   ARM: dts: omap: omap4-epson-embt2ws: define GPIO regulators
-> >   ARM: dts: omap: omap4-epson-embt2ws: wire up regulators
-> >   ARM: dts: omap: omap4-epson-embt2ws: add unknown gpio outputs
-> >   ARM: dts: omap: omap4-epson-embt2ws: add GPIO expander
-> > 
-> >  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 183
-> > +++++++++++++++++- 1 file changed, 179 insertions(+), 4 deletions(-)
-> > 
-> > --
-> > 2.39.5
-> > 
-> > 
-> >   
-> 
-> 
-> My bot found new DTB warnings on the .dts files added or changed in
-> this series.
-> 
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the
-> warnings are fixed by another series. Ultimately, it is up to the
-> platform maintainer whether these warnings are acceptable or not. No
-> need to reply unless the platform maintainer has comments.
-> 
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
-> 
->   pip3 install dtschema --upgrade
-> 
-> 
-> New warnings running 'make CHECK_DTBS=y
-> ti/omap/omap4-epson-embt2ws.dtb' for
-> 20241010122957.85164-1-andreas@kemnade.info:
-> 
-> arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dtb: serial@0:
-> {'compatible': ['ti,omap4-uart'], 'reg': [[0, 256]], 'interrupts':
-> [[0, 74, 4]], 'clock-frequency': 48000000, 'pinctrl-names':
-> ['default'], 'pinctrl-0': [[115]], 'interrupts-extended': [[1, 0, 74,
-> 4], [116, 260]], '$nodename': ['serial@0']} is valid under each of
-> {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-> from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-> arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dtb: serial@0:
-> {'compatible': ['ti,omap4-uart'], 'reg': [[0, 256]], 'interrupts':
-> [[0, 73, 4]], 'clock-frequency': 48000000, 'pinctrl-names':
-> ['default'], 'pinctrl-0': [[118, 119]], 'interrupts-extended': [[1,
-> 0, 73, 4], [116, 220]], 'bluetooth-gnss': {'compatible':
-> ['ti,wl1283-st'], 'enable-gpios': [[120, 25, 0]], 'clocks': [[121,
-> 1]], 'clock-names': ['ext_clock']}, '$nodename': ['serial@0']} is
-> valid under each of {'required': ['interrupts-extended']},
-> {'required': ['interrupts']} from schema $id:
-> http://devicetree.org/schemas/serial/8250_omap.yaml#
->
-To make sure I am getting this right: According to wdiff, the
-difference is:
+	------------[ cut here ]------------
+	WARNING: CPU: 13 PID: 3013042 at drivers/net/netconsole.c:1122 write_ext_msg+0x3b6/0x3d0
+	 ? write_ext_msg+0x3b6/0x3d0
+	 console_flush_all+0x1e9/0x330
+	 ...
 
- 'pinctrl-0': [-[[116, 117]],-] {+[[118, 119]],+}
-'interrupts-extended': [[1, 0, 73, 4], [-[114,-] {+[116,+} 220]]
+Identifying the cause of this warning proved to be non-trivial due to:
 
-So my understanding is that phandle numbers are reordered and one
-of the reordered numbers pops up in a warning message and cannot
-easily be filtered away. Are there any tools or procedures in general to
-filter out phandle reenumeration noise? Also when reordering things
-expecting no functional change and diffing dtbs that would be helpful.
+ * The write_ext_msg() function being over 100 lines long
+ * Extensive use of pointer arithmetic
+ * Inconsistent naming conventions and concept application
 
-Regards,
-Andreas
+The send_ext_msg() function grew organically over time:
+
+ * Initially, the UDP packet consisted of a header and body
+ * Later additions included release prepend and userdata
+ * Naming became inconsistent (e.g., "body" excludes userdata, "header"
+   excludes prepended release)
+
+This lack of consistency made investigating issues like the above warning
+more challenging than what it should be.
+
+To address these issues, the following steps were taken:
+
+ * Breaking down write_ext_msg() into smaller functions with clear scopes
+ * Improving readability and reasoning about the code
+ * Simplifying and clarifying naming conventions
+
+Warning Fix
+-----------
+
+The warning occurred when there was insufficient buffer space to append
+userdata. While this scenario is acceptable (as userdata can be sent in a
+separate packet later), the kernel was incorrectly raising a warning.  A
+one-line fix has been implemented to resolve this issue.
+
+The fix was already sent to net, and is already available in net-next
+also.
+
+Changelog:
+
+v5:
+ * Exact same version as v4, except that the last patch from v4 
+  ("net: netconsole: fix wrong warning") was already landed into
+  netnext, so, dropping it from v5.
+
+v4:
+ * Pass NULL to userdata in patch 08 ("net: netconsole: do not pass
+   userdata up to the tail") (Simon)
+ * Do not try to read nt->userdata_length outside
+   CONFIG_NETCONSOLE_DYNAMIC in patch 3 ("net: netconsole: separate
+   fragmented message handling in send_ext_msg") (Jakub)
+ * Improve msgbody_written assignment in patch 6 ("net: netconsole:
+   track explicitly if msgbody was written to buffer") (Jakub)
+ * https://lore.kernel.org/all/20240930131214.3771313-1-leitao@debian.org/
+
+v3:
+ * Fix variable definition to an earlier patch (Simon)
+   * Same final code.
+ * https://lore.kernel.org/all/20240910100410.2690012-1-leitao@debian.org/
+
+v2:
+ * Separated the userdata variable move to the tail function into a
+   separated fix (Simon)
+ * Reformated the patches to fit in 80-lines. Only one not respecting
+   this is a copy from previous commit.
+ * https://lore.kernel.org/all/20240909130756.2722126-1-leitao@debian.org/
+
+v1:
+ * https://lore.kernel.org/all/20240903140757.2802765-1-leitao@debian.org/
+
+Breno Leitao (9):
+  net: netconsole: remove msg_ready variable
+  net: netconsole: split send_ext_msg_udp() function
+  net: netconsole: separate fragmented message handling in send_ext_msg
+  net: netconsole: rename body to msg_body
+  net: netconsole: introduce variable to track body length
+  net: netconsole: track explicitly if msgbody was written to buffer
+  net: netconsole: extract release appending into separate function
+  net: netconsole: do not pass userdata up to the tail
+  net: netconsole: split send_msg_fragmented
+
+ drivers/net/netconsole.c | 197 ++++++++++++++++++++++++++-------------
+ 1 file changed, 132 insertions(+), 65 deletions(-)
+
+-- 
+2.43.5
 
 
