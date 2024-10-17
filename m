@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-370373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34D59A2BA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:05:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602259A2BA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E70286044
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74F21F24599
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22911DFE31;
-	Thu, 17 Oct 2024 18:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1981E0496;
+	Thu, 17 Oct 2024 18:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hx3nQy3m"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nB8KkKna"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E299D1DD548
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AFF1E0089;
+	Thu, 17 Oct 2024 18:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729188308; cv=none; b=o/0eaxtwUQUWcW2990pHRwSqyk7TUSTdH1u7WP9ubB7SZtjJyg4Bw2pI3Ip50aSFnaq6ub9j0tkhu7goRGvjY35H56nfmyexmBwH6A5OeWKSMZvUSQ41JZzCDnuHWqK7P4kxS124hLkPrVyUISVBujaQ5ecTJt+DjHdUSj3eCd0=
+	t=1729188317; cv=none; b=OYnbOqSUupIT8a8chqIC5GkwaJ0U53lASFtZE+rEFFI9UirJaZig1oD6SUNHhjgXSNIthJ9UaO3et5K5LStUZ9NvIygZOLtJiluPJCenzqX9RKW7Ew111Prh245YtXmW6207ombIDeHaeMHUijwRPvqaBI2rUsgOAWN6DZkq1sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729188308; c=relaxed/simple;
-	bh=UEMwPbPjhOeCuGpW7CvJjh71+cV/9jSkHyqh/UfS9SM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MfEKE3iNLm3hEeJQ9e01zD+SRAGpL6ZQb0LxD2yKrMTETPyw9Pw0S6OHxU1vo/hg+hFOCKGSqemxREL9QOuBtKYVZh+3NmC2hRS0AYmfsWO6ML2ToersNnq1XXHgemGS86kffduATxPW9Gv8AocsemmoYedFxH/719uLMJyMSv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hx3nQy3m; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729188306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UEMwPbPjhOeCuGpW7CvJjh71+cV/9jSkHyqh/UfS9SM=;
-	b=hx3nQy3mxjlBMPNJv6yz8gdJlEGtmsXlJK5S0nF9OYFj0ozYKFFxHkyddZrSWNxbD5CWPs
-	LO7Gohk2oH7dndzOCXmsZymwb25Z1xVHg7bCEg/okU3DsOLgZD7Gx4w1oL3vVLZ8psF0rX
-	qiZG+lcViKJFHEr1B8F0z1Lsk6OURN0=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-nLPF2UYVOHu9s-shOmjP-g-1; Thu,
- 17 Oct 2024 14:05:02 -0400
-X-MC-Unique: nLPF2UYVOHu9s-shOmjP-g-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8332319560A2;
-	Thu, 17 Oct 2024 18:05:01 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.106])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7385F300018D;
-	Thu, 17 Oct 2024 18:04:58 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: quic_jjohnson@quicinc.com
-Cc: ath12k@lists.infradead.org,
-	jjohnson@kernel.org,
-	jtornosm@redhat.com,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] wifi: ath12k: fix crash when unbinding
-Date: Thu, 17 Oct 2024 20:04:52 +0200
-Message-ID: <20241017180456.199393-1-jtornosm@redhat.com>
-In-Reply-To: <f9013f01-a61b-4697-a85a-60d70b6596db@quicinc.com>
-References: <f9013f01-a61b-4697-a85a-60d70b6596db@quicinc.com>
+	s=arc-20240116; t=1729188317; c=relaxed/simple;
+	bh=RDfDcHscGDDn1krobGn9EY6WlG/idbfvbr+OBlw0sR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TgswmIRtx5gr7vgrysh5hVb6CLJH5QBFNH6qTsZhcdQ3oOnuSM000KOBEdqE1AqECOis38dfVR5BSCoOKwQwlnxVDLg2UAzrzrCmVOVTnC8phlRTNbzxD77cu+rlNVrisbps2xpXZQi+Fo+7oRAdjRWzZC1aPaonN40YQ+Rezok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nB8KkKna; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 771F2C4CECE;
+	Thu, 17 Oct 2024 18:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729188316;
+	bh=RDfDcHscGDDn1krobGn9EY6WlG/idbfvbr+OBlw0sR0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nB8KkKnabc1hgY9VeiQy8U110IRxnLEtZmLwYPjdP8nfkmFFjbN5WXwjc3dzurhTV
+	 4ng9ygBNojCXU3M5y9OM6MklUGeUFLcqSk3RMSghF8APGY/oMVZORTtkOuHd2t+QsE
+	 JYMgmCetQgYIG1dRN+8Hl6IqAli8GyP6haS7aYlAtpAI3zuVebIM44cwsXWw7YQ1tF
+	 A5gHGpf2StC+bc2Vm++g9LoBKAxgsiH3KXyIQ+4s4WPfKMOTl6AVw74tDKo6mTTzca
+	 Rb0w14OGaG5CaCVjXBGAG1KGfrf7WxuSWTplpaRLh4h1vcctxoCz7xMk6u0QGHHNnw
+	 fm704pb/lTUlw==
+Date: Thu, 17 Oct 2024 19:05:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFC 1/4] dt-bindings: iio: adc: ad7380: add adaq4370-4
+ and adaq4380-4 compatible parts
+Message-ID: <20241017190500.215b895e@jic23-huawei>
+In-Reply-To: <20241015-ad7380-add-adaq4380-4-support-v1-1-d2e1a95fb248@baylibre.com>
+References: <20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com>
+	<20241015-ad7380-add-adaq4380-4-support-v1-1-d2e1a95fb248@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,24 +64,221 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: quoted-printable
 
-Hello Jeff,
+On Tue, 15 Oct 2024 11:09:06 +0200
+Julien Stephan <jstephan@baylibre.com> wrote:
 
-> Your v3 patches look ok to me, however they are not showing up in Patchwork so
-> I cannot act upon them. I suspect the issue is that you did not link them
-> together (the 2/2 patch should References: the 1/2 patch). Better would have
-> been to maintain a cover letter and have both the 1/1 and 1/2 patch reference
-> that, just like you did in the "v1":
-> https://msgid.link/20241010175102.207324-1-jtornosm@redhat.com
->
-> Can you submit a v4 that follows that original pattern?
-Sure, I will do as you say.
+> adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS) are quad-channel precision data
+> acquisition signal chain =CE=BCModule solutions compatible with the ad738x
+> family, with the following differences:
+>=20
+> - configurable gain in front of each 4 adc
+> - internal reference is 3V derived from refin-supply (5V)
 
-Thanks
+Now I'm confused.=20
 
-Best regards
-José Ignacio
+The earlier refin-supply change appears unused in this patch.
+I was expecting it to be required for the additional devices.
+With additions to the docs from the fix to explain the new
+cases.  I'm not seeing that in here.
+
+
+> - additional supplies
+>=20
+> To configure the gain a new patternProperties is added to describe each
+> channel. It is restricted to adaq devices.
+>=20
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7380.yaml    | 117 +++++++++++++++=
+++++++
+>  1 file changed, 117 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> index 74d82721637c..3007d8e39684 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+> @@ -25,6 +25,8 @@ description: |
+>    * https://www.analog.com/en/products/ad7386-4.html
+>    * https://www.analog.com/en/products/ad7387-4.html
+>    * https://www.analog.com/en/products/ad7388-4.html
+> +  * https://www.analog.com/en/products/adaq4370-4.html
+> +  * https://www.analog.com/en/products/adaq4380-4.html
+> =20
+> =20
+>  $ref: /schemas/spi/spi-peripheral-props.yaml#
+> @@ -46,6 +48,8 @@ properties:
+>        - adi,ad7386-4
+>        - adi,ad7387-4
+>        - adi,ad7388-4
+> +      - adi,adaq4370-4
+> +      - adi,adaq4380-4
+> =20
+>    reg:
+>      maxItems: 1
+> @@ -59,6 +63,9 @@ properties:
+>    vlogic-supply: true
+>    refio-supply: true
+>    refin-supply: true
+> +  vs-p-supply: true
+> +  vs-n-supply: true
+> +  ldo-supply: true
+> =20
+>    aina-supply:
+>      description:
+> @@ -86,12 +93,43 @@ properties:
+>        specify the ALERT interrupt.
+>      maxItems: 1
+> =20
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+>  required:
+>    - compatible
+>    - reg
+>    - vcc-supply
+>    - vlogic-supply
+> =20
+> +patternProperties:
+> +  "^channel@([0-3])$":
+> +    $ref: adc.yaml
+> +    type: object
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          The channel number. From 0 to 3 corresponding to channels A,B,=
+C,D
+> +        items:
+> +          minimum: 0
+> +          maximum: 3
+> +
+> +      adi,gain-milli:
+> +        description:
+> +          The hardware gain applied to the ADC input (in milli units).
+> +          If not present, default to 1000 (no actual gain applied).
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        default: 1000
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+>  unevaluatedProperties: false
+> =20
+>  allOf:
+> @@ -128,7 +166,21 @@ allOf:
+>          ainc-supply: false
+>          aind-supply: false
+> =20
+> +  # Using channel to declare gain property only applies to adaq devices
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          not:
+> +            contains:
+> +              enum:
+> +                - adi,adaq4370-4
+> +                - adi,adaq4380-4
+> +    then:
+> +      patternProperties:
+> +        "^channel@([0-3])$": false
+> +
+>    # ad7380-4 uses refin-supply as external reference.
+> +  # adaq devices use internal reference only, derived from refin-supply
+>    # All other chips from ad738x family use refio as optional external re=
+ference.
+>    # When refio-supply is omitted, internal reference is used.
+>    - if:
+> @@ -136,6 +188,8 @@ allOf:
+>          compatible:
+>            enum:
+>              - adi,ad7380-4
+> +            - adi,adaq4370-4
+> +            - adi,adaq4380-4
+>      then:
+>        properties:
+>          refio-supply: false
+> @@ -145,6 +199,24 @@ allOf:
+>        properties:
+>          refin-supply: false
+> =20
+> +  # adaq devices need more supplies
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - adi,adaq4370-4
+> +            - adi,adaq4380-4
+> +    then:
+> +      required:
+> +        - vs-p-supply
+> +        - vs-n-supply
+> +        - ldo-supply
+> +    else:
+> +      properties:
+> +        vs-p-supply: false
+> +        vs-n-supply: false
+> +        ldo-supply: false
+> +
+>  examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/irq.h>
+> @@ -169,3 +241,48 @@ examples:
+>              refio-supply =3D <&supply_2_5V>;
+>          };
+>      };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    spi {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        adc@0 {
+> +            compatible =3D "adi,adaq4380-4";
+> +            reg =3D <0>;
+> +
+> +            spi-cpol;
+> +            spi-cpha;
+> +            spi-max-frequency =3D <80000000>;
+> +
+> +            interrupts =3D <27 IRQ_TYPE_EDGE_FALLING>;
+> +            interrupt-parent =3D <&gpio0>;
+> +
+> +            vcc-supply =3D <&supply_3_3V>;
+> +            vlogic-supply =3D <&supply_3_3V>;
+> +            refin-supply =3D <&supply_5V>;
+> +            vs-p-supply =3D <&supply_5V>;
+> +            vs-n-supply =3D <&supply_0V>;
+> +            ldo-supply =3D <&supply_5V>;
+> +
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +
+> +            channel@0 {
+> +                reg =3D <0>;
+> +                adi,gain-milli =3D <300>;
+> +            };
+> +
+> +            channel@2 {
+> +                reg =3D <2>;
+> +                adi,gain-milli =3D <600>;
+> +            };
+> +
+> +            channel@3 {
+> +                reg =3D <3>;
+> +                adi,gain-milli =3D <1000>;
+> +            };
+> +        };
+> +    };
+>=20
 
 
