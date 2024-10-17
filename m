@@ -1,153 +1,179 @@
-Return-Path: <linux-kernel+bounces-369654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7919A206D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:01:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527519A2073
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8492876C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B223AB212BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C4C1DA116;
-	Thu, 17 Oct 2024 11:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="uPWXaMm3"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8481DB375;
+	Thu, 17 Oct 2024 11:02:20 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7391D63F5
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A110E259C;
+	Thu, 17 Oct 2024 11:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729162899; cv=none; b=VoRaNu5VqpLugRqh19/B2HnhpgF1Veuw6fqMKT2niLqS5m3LHAob1EES7/a2YvR7lvl5PTDSkJ9oGW2FGbnRIBF5t4CUDU0frlxbs53GuCkij6oPtx7cow+SeespUnnJcqK6Js5qxSIumuOaMZSUVcXyV87VblfeypdggZ1AM58=
+	t=1729162939; cv=none; b=EfwN+QQ1+VJQY5jh7q5Enq72oVIxhbzKENgr+VrvWD40RuyTrZfFBaodkPr08yQKpUEgRtkCsciAJTqSG60Ulsk094o1/XKtE2kr2HJyicxBmxUCHdW1EwHtSl0CZoMaEciSFJQrjSjxFxmW6cgCDRVz1DyOATUNhK2ckkUP5Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729162899; c=relaxed/simple;
-	bh=+MrT++Scx29PaRgKv58oxzVZcqzx7TYELWD2t6Fb0D0=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O+xCh+ajrSmbptIqGSrXQvwDEqst9pCjtXTeASnXAPf8SoaHHOMEWM0ne34IHi3q7gZaG9HOy1h16FzXj5AAVmo6dsaWKp62YS79y9PU4fcIWaGEKGtBRAFGRW5Nd9Juf/vsQBN7R8V71FbvKm7alVNUXhpnLa7COZ+rWDs9LjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=uPWXaMm3; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6C7343F28B
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1729162893;
-	bh=rBZFdT3MLsNU1ABGIaObRFXCBfywuT/8DVsj8czEnD0=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=uPWXaMm3Tin3JL+SPrLU5hNvx0oNzxbN/3vcOvcg/uTSDj5qmS9LuPiK/xjbdwCS8
-	 Yg7R1PaWMishErWtJwRgJme1GPC80BQqTPOkRgGcdff7pkkY0XRd5xcHH3pdJdwSvS
-	 UINzDzSyzbhUNAKpANht83uKt0+2Rcx+b99yasIvNVQPLhzJ04Vs416yEUUMm2mg6s
-	 y/MFcb5mBhTUg+2aCOaJkCBL+mjD9DrhknRa50paSWkhYou+zg61mBq68TIrZ0UEvv
-	 nf3XGuE2XTs4UrmuzIUFq+E8UcClVVbxhBCSP07uvNqYuAqPGuNjWPUr93BLsmUZK7
-	 i/0xf+zGGeWOQ==
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-288ae5eabaaso644184fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 04:01:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729162892; x=1729767692;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rBZFdT3MLsNU1ABGIaObRFXCBfywuT/8DVsj8czEnD0=;
-        b=n1N2y99Qd0E1URA7L6ibl0rmBDvEkczhNs0NwAiKkzNqfbtrHZ0iz3LpuolafvqPKX
-         GDFNR2/GEaseHBegdKGchiCTDZYHDQgfTq2+9Wz75f5yzu+HTiPXB0R7i6vnD1DTUj0j
-         7Vx6bViPI54+fF6+GncPOerU8zKZTIBNuolpYcNsGR8IiIGr+oACN/YOLANdcTgRSvc+
-         VOwLNN67ZO0LglqbXvf3zXYP59fkZ9TEkTUPiK9csuV6GoVcS1lQpDYFoueYOt0ilJEY
-         RQwVrsj8GwcbLw61NDUP5KA1wPSVfVDYAk6GQrnhaJEJWzmTJNR98XKgiZcVjQspiZft
-         xBvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjmrDBGeW5VBAZBeixixVJq1tNv5quZ2zfHpJydff8DDLl9RCA+fyUCsJze9wq6niIbksYW0Nr74h8WlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy03jxadn95JNmzQvTun0JubQ1MY+QuWgrxlUfM7Jv33ozbzML3
-	o6u7VNRSNGa1SGqxZ69iTSwovUJ3wl/q5x+YrSsNVNhYRvRFSUdYBvHZ3bRcWtJ8G/j1nkTtZxe
-	Cw/zWDwkjQqQMkxQuCGBAhSa9M5qI/Z2UNfMmSMaloyb25cL16w5+I5Ta7tYoczJdPv32R7m0hI
-	ow/TklGywpLin/2BdIar5XufrUuV2SNew/eX0XNy3ykOGPnMc85QZx
-X-Received: by 2002:a05:6870:6b8b:b0:288:6220:fe18 with SMTP id 586e51a60fabf-288ede29989mr5858216fac.15.1729162892274;
-        Thu, 17 Oct 2024 04:01:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHMQG+kH208gfIiCgVMibniBpJ9STBwlor/4oG77CWFuIW/8xPcr2jPuy853NfEotH6tqZk6Hzqg2xW/WrByQ=
-X-Received: by 2002:a05:6870:6b8b:b0:288:6220:fe18 with SMTP id
- 586e51a60fabf-288ede29989mr5858187fac.15.1729162891890; Thu, 17 Oct 2024
- 04:01:31 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 17 Oct 2024 04:01:31 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20241016-moonscape-tremor-8d41e6f741ff@spud>
-References: <20241016-moonscape-tremor-8d41e6f741ff@spud>
+	s=arc-20240116; t=1729162939; c=relaxed/simple;
+	bh=gHvkkRQKd0KU3aP2/Gj51PALd37c2yik7+Xwflenyuw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AtJFpNNpwwudDAj7Y8zVSa961bQS8CF6MUnPisZr8Hm6qVqdh89IEkYMSQacnKxH97GK8NZ3x1nCbava4fQ2B18dZZpDROTcC8L0i8Y3owxL+Z3o+WVTYjY5ebZU4IfJbi9NG7VMdYXJslsJ57t3JtHCWA+1wSUz8zn5DQ5w2uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTlHL3Xrfz6FH5m;
+	Thu, 17 Oct 2024 19:00:30 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 501571404F4;
+	Thu, 17 Oct 2024 19:02:14 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 13:02:13 +0200
+Date: Thu, 17 Oct 2024 12:02:11 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
+ Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, "Maciej W. Rozycki"
+	<macro@orcam.me.uk>, Lukas Wunner <lukas@wunner.de>, Alexandru Gagniuc
+	<mr.nuke.me@gmail.com>, Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>, Smita Koralahalli
+	<Smita.KoralahalliChannabasappa@amd.com>, <linux-kernel@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v8 6/8] PCI/bwctrl: Add API to set PCIe Link Speed
+Message-ID: <20241017120211.00005b1e@Huawei.com>
+In-Reply-To: <20241009095223.7093-7-ilpo.jarvinen@linux.intel.com>
+References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
+	<20241009095223.7093-7-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 17 Oct 2024 04:01:31 -0700
-Message-ID: <CAJM55Z-3R5tbvpQB7mLF6b=FD9Wg-78_KPww2nqOLr566WPOFg@mail.gmail.com>
-Subject: Re: [PATCH v1] riscv: dts: starfive: disable unused csi/camss nodes
-To: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org
-Cc: Conor Dooley <conor.dooley@microchip.com>, stable@vger.kernel.org, 
-	Aurelien Jarno <aurelien@aurel32.net>, Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Changhuang Liang <changhuang.liang@starfivetech.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> Aurelien reported probe failures due to the csi node being enabled
-> without having a camera attached to it. A camera was in the initial
-> submissions, but was removed from the dts, as it had not actually been
-> present on the board, but was from an addon board used by the
-> developer of the relevant drivers. The non-camera pipeline nodes were
-> not disabled when this happened and the probe failures are problematic
-> for Debian. Disable them.
->
-> CC: stable@vger.kernel.org
-> Fixes: 28ecaaa5af192 ("riscv: dts: starfive: jh7110: Add camera subsystem nodes")
-> Closes: https://lore.kernel.org/all/Zw1-vcN4CoVkfLjU@aurel32.net/
-> Reported-by: Aurelien Jarno <aurelien@aurel32.net>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+On Wed,  9 Oct 2024 12:52:21 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-Thanks!
+> Currently, PCIe Link Speeds are adjusted by custom code rather than in
+> a common function provided in PCI core. PCIe bandwidth controller
+> (bwctrl) introduces an in-kernel API to set PCIe Link Speed.
+>=20
+> Convert Target Speed quirk to use the new API. The Target Speed quirk
+> runs very early when bwctrl is not yet probed for a Port and can also
+> run later when bwctrl is already setup for the Port, which requires the
+> per port mutex (set_speed_mutex) to be only taken if the bwctrl setup
+> is already complete.
+>=20
+> The new API is also intended to be used in an upcoming commit that adds
+> a thermal cooling device to throttle PCIe bandwidth when thermal
+> thresholds are reached.
+>=20
+> The PCIe bandwidth control procedure is as follows. The highest speed
+> supported by the Port and the PCIe device which is not higher than the
+> requested speed is selected and written into the Target Link Speed in
+> the Link Control 2 Register. Then bandwidth controller retrains the
+> PCIe Link.
+>=20
+> Bandwidth Notifications enable the cur_bus_speed in the struct pci_bus
+> to keep track PCIe Link Speed changes. While Bandwidth Notifications
+> should also be generated when bandwidth controller alters the PCIe Link
+> Speed, a few platforms do not deliver LMBS interrupt after Link
+> Training as expected. Thus, after changing the Link Speed, bandwidth
+> controller makes additional read for the Link Status Register to ensure
+> cur_bus_speed is consistent with the new PCIe Link Speed.
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Trivial stuff inline.  The mutex_destroy discussion is a just a consistency
+thing given that call is rarely bothered with but here it might help with
+debug.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+Jonathan
 
 > ---
-> CC: Emil Renner Berthing <kernel@esmil.dk>
-> CC: Rob Herring <robh@kernel.org>
-> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> CC: Conor Dooley <conor+dt@kernel.org>
-> CC: Changhuang Liang <changhuang.liang@starfivetech.com>
-> CC: devicetree@vger.kernel.org
-> CC: linux-riscv@lists.infradead.org
-> CC: linux-kernel@vger.kernel.org
-> ---
->  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> index c7771b3b64758..d6c55f1cc96a9 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> @@ -128,7 +128,6 @@ &camss {
->  	assigned-clocks = <&ispcrg JH7110_ISPCLK_DOM4_APB_FUNC>,
->  			  <&ispcrg JH7110_ISPCLK_MIPI_RX0_PXL>;
->  	assigned-clock-rates = <49500000>, <198000000>;
-> -	status = "okay";
->
->  	ports {
->  		#address-cells = <1>;
-> @@ -151,7 +150,6 @@ camss_from_csi2rx: endpoint {
->  &csi2rx {
->  	assigned-clocks = <&ispcrg JH7110_ISPCLK_VIN_SYS>;
->  	assigned-clock-rates = <297000000>;
-> -	status = "okay";
->
->  	ports {
->  		#address-cells = <1>;
-> --
-> 2.45.2
->
+>  drivers/pci/pci.h         |  20 +++++
+>  drivers/pci/pcie/bwctrl.c | 161 +++++++++++++++++++++++++++++++++++++-
+>  drivers/pci/quirks.c      |  17 +---
+>  include/linux/pci.h       |  10 +++
+>  4 files changed, 193 insertions(+), 15 deletions(-)
+>=20
+
+
+
+> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+> index 1b11b5da79d4..1d3680ea8e06 100644
+> --- a/drivers/pci/pcie/bwctrl.c
+> +++ b/drivers/pci/pcie/bwctrl.c
+> @@ -7,6 +7,11 @@
+
+
+
+
+
+
+>  static void pcie_bwnotif_enable(struct pcie_device *srv)
+>  {
+>  	struct pcie_bwctrl_data *data =3D get_service_data(srv);
+> @@ -135,6 +288,7 @@ static int pcie_bwnotif_probe(struct pcie_device *srv)
+>  	if (!data)
+>  		return -ENOMEM;
+> =20
+> +	mutex_init(&data->set_speed_mutex);
+>  	set_service_data(srv, data);
+> =20
+>  	ret =3D request_threaded_irq(srv->irq, NULL, pcie_bwnotif_irq_thread,
+> @@ -142,8 +296,10 @@ static int pcie_bwnotif_probe(struct pcie_device *sr=
+v)
+>  	if (ret)
+>  		return ret;
+> =20
+> -	port->link_bwctrl =3D no_free_ptr(data);
+> -	pcie_bwnotif_enable(srv);
+> +	scoped_guard(rwsem_write, &pcie_bwctrl_remove_rwsem) {
+
+Calling it remove_rwsem and using it to protect against not yet
+present seems odd. Maybe rename, pcie_bwctrl_bound_rswem or something like =
+that?
+
+> +		port->link_bwctrl =3D no_free_ptr(data);
+> +		pcie_bwnotif_enable(srv);
+> +	}
+> =20
+>  	pci_dbg(port, "enabled with IRQ %d\n", srv->irq);
+> =20
+> @@ -159,6 +315,7 @@ static void pcie_bwnotif_remove(struct pcie_device *s=
+rv)
+>  		srv->port->link_bwctrl =3D NULL;
+> =20
+>  	free_irq(srv->irq, srv);
+> +	mutex_destroy(&data->set_speed_mutex);
+Probably not worth doing.  Also you don't do error handling for this above.
+Ideal is use devm_ for data and then devm_mutex_init()
+
+
+>  	kfree(data);
+>  }
+> =20
+
 
