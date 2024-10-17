@@ -1,122 +1,90 @@
-Return-Path: <linux-kernel+bounces-369525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D3E9A1E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:30:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4044F9A1E6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6883D28A01B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 040F528616C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18331D95B4;
-	Thu, 17 Oct 2024 09:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1D1D9320;
+	Thu, 17 Oct 2024 09:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="tfpmL3yo"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6711D90BD
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bYhcebF9"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84AC1D8A0B;
+	Thu, 17 Oct 2024 09:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729157377; cv=none; b=HsmGLVw4oDrB3xMV/zvn+TPrzSfa6vdon0ujgeasYUi2qfTQy+EjnLe9VX5IuyAZqG4JNoT9yOd5dNkUPyEYJ66IrhNIZr26scSZ0FB6WCPJXspUa8cKlwaVEgkqtglDIxbhir8kVtTiRcUt4z3MqI+45Oyszw7cTj3P9ybsqV4=
+	t=1729157435; cv=none; b=lP0rhnme0CLED6HVjNwPFB1JFP2OrpMQDZi7fRz6+ePp7U1STrh3I6Iwvihsg1/bGHRloQQWm1HT4XEq2SFOj3nfq1ZHExEUU0LWD3z8J2zwJgujhWCw4rC3qen4fRD716oU5ry4BMOmA/p5UxkAgbJ7FsI6pgJrqBVnuEdudRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729157377; c=relaxed/simple;
-	bh=2BwbOLLmrev0DEkdKU/J1Uf9cnFyU/EArcl5PfVyQqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ddWtExtjvKVEEAY/T83HT7pUZTWMeHss5a4Z/hGkl0jJROlRN/6lCKJDdjrKHq7QB94RMF9ovS8ITyaO4A1b/kVUpJRNVkkqlWoToqmk1C7w1zdTs6curO1kAcGaVJTk9uFwfaksdF/QLAQkZTLrYmM5RuLruOEk8HEmkBq9bpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=tfpmL3yo; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c935d99dc5so860463a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729157372; x=1729762172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5qKzlhjU/lCm02BVIQEq56igyc/HvbAaIKSc/+Cfz6E=;
-        b=tfpmL3yoixcoPvpu/JzjeKniapRJ8stRc5C/eTCZsKK02LNrPzksComFvuVtcpClUY
-         FoXvKGj23JnH+171AIEZwS4VqA/8A57XPTyeHlHQ2eaOL2rl2DjuJjD/aQ0EhJU38O2m
-         brOS7dFfnNR9VxIg1vw013RmdVOJIoIZs4580mOguLUFwNiljQpvaJuLndnJzkTfl79X
-         ky8XG9+brEMbfs+Fcg2lBv94ALUS/FM5M8Y/ih9Dwq4/7XqSSqLZfHDc5LPFLqfEqlI9
-         jFhik2ekR6Frz7NkOiSno184OzpO9vRGQIDCcb0jzd95CzqBPu4oMsHX/FLdz9hQYpxX
-         F4Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729157372; x=1729762172;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5qKzlhjU/lCm02BVIQEq56igyc/HvbAaIKSc/+Cfz6E=;
-        b=cq3VWADi5eulOebvsk8q2KaNVty5dUrzsODZhA4pdHmsn64gCCES//OOz0qLne7EZu
-         UVYFi+vw2cBorKzVBaz5ar11/0SVVkKF8xVbKs7ANSjb79QedQobfJIldn/qVZ//m9tt
-         TZmcoJ8cPiHsJ10tx0VuqltFKh1v76CXG25FDTizCF5T8QbvFUtaijO66FhzifOvEujx
-         wKbvoah0BWYSnJw7Z/ie8i7k9x7LFgpjHUcGiIVUQI8X5m/mHPl9MZtVvdyDPOAQ6JBo
-         iepluhmDavB65CtC8MJIkZBJrePxTxN87LeAxtqF1oBUZzEzdFKtGD+abvPUwCD5/aqK
-         Vl9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVktJFqsjJJVIagyEa6Xj60hv8thXbrVt3QPwc/rKv86rpmW6DuQ/wLZ51xMRTLc5EtVqXYoxrdugAqQXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCg5+unrgW6I/dAQfMIaSj9V80U+itKcMlBO6YluAUQv6Ym984
-	KVVLgp+xNnpX1thS9VuFiuHyY0rJR1WVnLhq52Dmvi7k9tqZ6ZDO0FwoRRv+87M/LdLUd6Axt4i
-	oMq84geTTkKS/RakGerG2ATXAWhEkBvIASr242bNXTL6UfyaQ5ifHmU9E
-X-Google-Smtp-Source: AGHT+IHQuIrk6tkwFaRZW8HCE+De7KpmbbPUN1UvWoHF8GYLJXLjUh6P69bytRBvqyiyWXA8doMSnNZ99QI2wlrM+x4=
-X-Received: by 2002:a05:6402:321c:b0:5c9:9bed:a5cd with SMTP id
- 4fb4d7f45d1cf-5c99beda6d4mr3438038a12.34.1729157372138; Thu, 17 Oct 2024
- 02:29:32 -0700 (PDT)
+	s=arc-20240116; t=1729157435; c=relaxed/simple;
+	bh=tpjG1VzlcbKlqImlMTci/wT9sMew797mn03v3At5H4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lLWRDpetLz2KAcqu1eHrmT/JDWUui+fa96wg51HGXy9AkHEaN5Y5omrdQu7wCZcMcY4dm07hKH3elXerSJZPMhbi9bj8n2nsnopS7Xq7Izp60ukr2yp9yPm9yZmc/nO3bY3k+/12ZpoRxQ6z7KLQ2i0bs3OCjjwDUOfCdo7N7MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bYhcebF9; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=5RNGgtfTwAvQY9/y046REOp1czW+WTASXN0YNwPj/G8=;
+	b=bYhcebF9oG89CR6a3vDpBFiUROxHgE6xJfKDyEniiSIwKTsuhEvXIwLWUt7uu3
+	qGQBEhYO3+2KvXfOdLu/TFNtp0JbcF2Ag0zkbXdnEYxGF++j1Vm1gExV6qAbFQA8
+	ULjA3Hu84i8L9o1YvIAjfyo1zHxzUeoXt96JNEbSRAc4w=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXW7D92BBndAAxAA--.1315S3;
+	Thu, 17 Oct 2024 17:29:35 +0800 (CST)
+Date: Thu, 17 Oct 2024 17:29:33 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 0/3] arm64: dts: freescale: imx8mp-verdin: Add Ivy
+ carrier
+Message-ID: <ZxDY/SiDSaz0HcsJ@dragon>
+References: <20240924114053.127737-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <912561b9-e446-42e8-8922-9e8952355c79@stanley.mountain>
-In-Reply-To: <912561b9-e446-42e8-8922-9e8952355c79@stanley.mountain>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Thu, 17 Oct 2024 03:29:21 -0600
-Message-ID: <CAEO-vhF0NWB4J+WFu_c7Nn9tu_kYzAvNeFgLrLKc_Lk5DD51hQ@mail.gmail.com>
-Subject: Re: other staging/gpib bugs completed
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, dpenkler@gmail.com, 
-	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240924114053.127737-1-francesco@dolcini.it>
+X-CM-TRANSID:Ms8vCgDXW7D92BBndAAxAA--.1315S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JFWftFykCr4DKw4ktFW5Jrb_yoW3ArgE9F
+	WFgr10gr4DKrnxtws8KF47Xw1vkw4Fyr10q3sFgr1fXF97Za98Ja9rKryrXFnIgan8tF93
+	J3WSgrZ3trWYkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0t8nUUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQl7ZWcQs3R00QAAsT
 
-On Wed, Oct 16, 2024 at 8:20=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Keep up the good work, Everest.  Here are some other bugs you could fix i=
-f you
-> want.
-Thank you for all your feedback and help. I am learning a lot :)
-I will look into these and try my best to fix them and send patches.
-> drivers/staging/gpib/agilent_82357a/agilent_82357a.c:1381 agilent_82357a_=
-attach() warn: inconsistent returns '&agilent_82357a_hotplug_lock'.
-> drivers/staging/gpib/common/gpib_os.c:889 board_type_ioctl() warn: maybe =
-return -EFAULT instead of the bytes remaining?
-> drivers/staging/gpib/common/iblib.c:242 ibonline() warn: assigning IS_ERR=
-()
-> drivers/staging/gpib/common/iblib.c:505 ibsad() warn: AAA no lower bound =
-on 'addr' rl=3D's32min-30'
-> drivers/staging/gpib/eastwood/fluke_gpib.c:592 fluke_dma_read() error: NU=
-LL dereference inside function 'dma_unmap_single_attrs((0), bus_address, le=
-ngth, 2, 0)()'. '0' '(0)' 17 9
-> drivers/staging/gpib/eastwood/fluke_gpib.c:592 fluke_dma_read() error: NU=
-LL dereference inside function (pos=3D17)
-> drivers/staging/gpib/eastwood/fluke_gpib.c:949 fluke_init() warn: was hex=
-adecimal intended '10'
-> (perhaps intentional?  Just leave it if so.)
-> drivers/staging/gpib/ni_usb/ni_usb_gpib.c:837 ni_usb_write() warn: incons=
-istent returns '&ni_priv->addressed_transfer_lock'.
-> drivers/staging/gpib/ni_usb/ni_usb_gpib.c:1103 ni_usb_request_system_cont=
-rol() error: uninitialized symbol 'ibsta'.
-> (this last bug is tricky to spot.)
->
-> regards,
-> dan carpenter
->
->
-Thanks,
-Everest K.C.
+On Tue, Sep 24, 2024 at 01:40:50PM +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> Add support for the Toradex Verdin iMX8MP Ivy carrier board. Ivy is a carrier
+> board designed for industrial environments, supporting industrial
+> I/O interfaces such as CAN, RS485, RS232, Gigabit Ethernet, 0-25mA analog
+> inputs, relays, PCIe and more. The board also includes a TPM for security
+> applications.
+> 
+> https://www.toradex.com/products/carrier-board/ivy-carrier-board
+> 
+> João Paulo Gonçalves (3):
+>   dt-bindings: arm: freescale: Add verdin imx8mp ivy board
+>   arm64: dts: freescale: imx8mp-verdin: add labels to som nodes
+>   arm64: dts: freescale: imx8mp-verdin: Add Ivy carrier board
+
+Applied all, thanks!
+
 
