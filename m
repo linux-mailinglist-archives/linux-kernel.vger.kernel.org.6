@@ -1,139 +1,214 @@
-Return-Path: <linux-kernel+bounces-369735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FB69A21EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866AF9A21F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D221C2138A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54B8282E1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACD11DD0F2;
-	Thu, 17 Oct 2024 12:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJ/QLe9F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3881DD0E0
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FF31DD872;
+	Thu, 17 Oct 2024 12:15:03 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0B31DD54A;
+	Thu, 17 Oct 2024 12:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167208; cv=none; b=haSXjtOWELXVlzJaeFj0DSD3UfXPnpIrz1bt9NYQ9oD444Bih02OmHW+vC7k/f6WNSyDIPegX26qtpveiGqrjaQX601RP11GHPP2ARxz2g4t1BHTWPNudpKSGBZkNadQUzy/GwiaqgbD7dCn5wM/Ztxz4z0H1SKwiHnU/9wzrxU=
+	t=1729167303; cv=none; b=n2b8uvA7F0lWY9Wk/eoKGG62R1obwnK8+P2ZVNSOVLUCwDfGffCuMBm7y1nFhvDVjLcJx3UXPNY84LDshC24trEqmI6OEr5lb7rYiqNqtxnZFvX41CEP5MapkngWNQdLHmHvtQRHY6xJH91+BY7mxghRC6kZauaR6k+BQD3MsTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167208; c=relaxed/simple;
-	bh=FZrh2cYXSymBvwhsnn+sY5mjJHV0HuES4LzynSZHkyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpD/oPWGG4kQuIJaFENKLOQRcCtugCqsRP0KOiI+2AM7q5V3NX7bmLQG54ARUKeQZfa4nFqiUpTJvFYDYBU/Uw4FcN4INoXSYfG1qOcOZSe9YKH2l2q53lxkFQfjtm9/0luLJZuCvCR6ya2K6jbN5evwMFVVpOU03iIT9kKlMKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJ/QLe9F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0459C4CEC3;
-	Thu, 17 Oct 2024 12:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729167205;
-	bh=FZrh2cYXSymBvwhsnn+sY5mjJHV0HuES4LzynSZHkyA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VJ/QLe9Fl2ZF0wDKwObrrbSp4f57etrtYEhUwJ1YIA1e0QCwyrTrvUYmSps+gO70M
-	 AIdKg7p2yNm0EwiUZsYG6sSnYcaXXzwA9wnJkdL/m7KMUvlreBvpnUReo+yy4cvtaK
-	 UCv7dSYUn/QGf1WlUbi32YGLXnrpdw0RMUR2j+GWP/FsPPYuN+on3WUgse2V7R2fIN
-	 ATyscKmNIc4RENBJhPPQrm3XlH+bjyflr+Khs+QAfUqPVkIC48hISH8WjBbcLzPLRR
-	 SzBLVeNSJ/st4MryBYoOHqNwAougUPuvurlJabVZ9TZN4vYuWXIK0MJXMwl2e0PGlM
-	 jkZB8lo7SQ5kw==
-Date: Thu, 17 Oct 2024 14:13:21 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, christian.koenig@amd.com, ray.huang@amd.com, 
-	dmitry.baryshkov@linaro.org, dave.stevenson@raspberrypi.com, mcanal@igalia.com, 
-	quic_jjohnson@quicinc.com, skhan@linuxfoundation.org, davidgow@google.com, 
-	karolina.stolarek@intel.com, Arunpravin.PaneerSelvam@amd.com, 
-	thomas.hellstrom@linux.intel.com, asomalap@amd.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] drm/tests: helpers: Add helper for
- drm_display_mode_from_cea_vic()
-Message-ID: <20241017-fearless-terrier-from-avalon-b9769f@houat>
-References: <20241014125204.1294934-1-ruanjinjie@huawei.com>
- <20241014125204.1294934-2-ruanjinjie@huawei.com>
- <20241016-poised-athletic-adder-ef2998@houat>
- <8ddc72c9-8662-59d0-c3b6-904f2688cb29@huawei.com>
+	s=arc-20240116; t=1729167303; c=relaxed/simple;
+	bh=KR6k2M9sJjNlxnNK+VdzSRJZKqP1DzeXSFhCkLSKWjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G558XZnUIYOLjz+Ukoskoh2RHbROupn47doCmGIUY5OnEOYGpq3kNTLByvRYNSNWogp+DccOoDVlZL0gVM/m9QqRS6+mmzy1ZAJXMoq9Efv5siaXYVMZpkdSDM9JdIKhfyLbWX2mu7P8krjN71Pjl17oSJRG3XtSUT0kXJwFYU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app2 (Coremail) with SMTP id HwEQrACnrACY_xBnf_YVAQ--.14997S2;
+	Thu, 17 Oct 2024 20:14:16 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wAXAkGS_xBni3daAA--.37840S2;
+	Thu, 17 Oct 2024 20:14:11 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] docs/zh_CN: update the translation of process/programming-language.rst
+Date: Thu, 17 Oct 2024 20:13:59 +0800
+Message-ID: <20241017121407.3431231-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="jr3n2neihasnwj2m"
-Content-Disposition: inline
-In-Reply-To: <8ddc72c9-8662-59d0-c3b6-904f2688cb29@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrACnrACY_xBnf_YVAQ--.14997S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW3WrW3Gw18WF1rCF4fZr43ZFb_yoW7tr1UpF
+	W7Kr9rKa18J3WxGrZ7Kr17Zr1FkFZ5Ka48trWUt3WYyF40ya9IqFyxKrsxX342vryxCFWD
+	Zw1fuFW8X3y3AFDanT9S1TB71UUUUbJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUHmb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+	1q6r43M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
+	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
+	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVW8ZVWrXw
+	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_GFv_Wrylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6IIYr7AKxVW8JVW5
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU5
+	2eHPUUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
+Update to commit 0b02076f9953 ("docs: programming-language: add Rust
+programming language section")
 
---jr3n2neihasnwj2m
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+scripts/checktranstatus.py reports:
 
-On Thu, Oct 17, 2024 at 09:33:07AM GMT, Jinjie Ruan wrote:
-> >> diff --git a/include/drm/drm_kunit_helpers.h b/include/drm/drm_kunit_h=
-elpers.h
-> >> index e7cc17ee4934..1e7fd4be550c 100644
-> >> --- a/include/drm/drm_kunit_helpers.h
-> >> +++ b/include/drm/drm_kunit_helpers.h
-> >> @@ -4,6 +4,7 @@
-> >>  #define DRM_KUNIT_HELPERS_H_
-> >> =20
-> >>  #include <drm/drm_drv.h>
-> >> +#include <drm/drm_edid.h>
-> >>
-> >>  #include <linux/device.h>
-> >> =20
-> >> @@ -120,4 +121,9 @@ drm_kunit_helper_create_crtc(struct kunit *test,
-> >>  			     const struct drm_crtc_funcs *funcs,
-> >>  			     const struct drm_crtc_helper_funcs *helper_funcs);
-> >> =20
-> >> +struct drm_display_mode *
-> >> +drm_kunit_helper_display_mode_from_cea_vic(struct kunit *test,
-> >> +					   struct drm_device *dev,
-> >> +					   u8 video_code);
-> >=20
-> > It's not clear to me what you need the drm_edid header, you just return
-> > a drm_display_mode pointer so you can just forward declare the structure
->=20
->=20
-> There is a compile error without the header=EF=BC=8Cbecause there is no
-> "drm_display_mode_from_cea_vic()" declare.
->=20
-> drivers/gpu/drm/tests/drm_kunit_helpers.c:341:16: error: implicit
-> declaration of function =E2=80=98drm_display_mode_from_cea_vic=E2=80=99; =
-did you mean
-> =E2=80=98drm_kunit_display_mode_from_cea_vic=E2=80=99?
-> [-Werror=3Dimplicit-function-declaration]
->   341 |         mode =3D drm_display_mode_from_cea_vic(dev, video_code);
->       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                drm_kunit_display_mode_from_cea_vic
-> drivers/gpu/drm/tests/drm_kunit_helpers.c:341:14: warning: assignment to
-> =E2=80=98struct drm_display_mode *=E2=80=99 from =E2=80=98int=E2=80=99 ma=
-kes pointer from integer
-> without a cast [-Wint-conversion]
->   341 |         mode =3D drm_display_mode_from_cea_vic(dev, video_code);
->       |              ^
+Documentation/translations/zh_CN/process/programming-language.rst
+commit 0b02076f9953 ("docs: programming-language: add Rust programming
+language section")
+commit 38484a1d0c50 ("docs: programming-language: remove mention of the
+Intel compiler")
+2 commits needs resolving in total
 
-Right, but the error is in the C file, not the header.
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+ .../zh_CN/process/programming-language.rst    | 78 +++++++------------
+ 1 file changed, 30 insertions(+), 48 deletions(-)
 
-Maxime
+diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
+index fabdc338dbfb..55f132a4b212 100644
+--- a/Documentation/translations/zh_CN/process/programming-language.rst
++++ b/Documentation/translations/zh_CN/process/programming-language.rst
+@@ -3,25 +3,22 @@
+ :Original: :ref:`Documentation/process/programming-language.rst <programming_language>`
+ :Translator: Alex Shi <alex.shi@linux.alibaba.com>
+ 
+-.. _cn_programming_language:
+-
+ 程序设计语言
+ ============
+ 
+-内核是用C语言 :ref:`c-language <cn_c-language>` 编写的。更准确地说，内核通常是用 :ref:`gcc <cn_gcc>`
+-在 ``-std=gnu11`` :ref:`gcc-c-dialect-options <cn_gcc-c-dialect-options>` 下编译的：ISO C11的 GNU 方言
+-
+-这种方言包含对语言 :ref:`gnu-extensions <cn_gnu-extensions>` 的许多扩展，当然，它们许多都在内核中使用。
++内核是用 C 编程语言编写的 [zh_cn_c-language]_。更准确地说，内核通常使用 ``gcc`` [gcc]_ 编译，
++并且使用 ``-std=gnu11`` [zh_cn_gcc-c-dialect-options]_：这是 ISO C11 的 GNU 方言。
++``clang`` [zh_cn_clang]_ 也得到了支持，详见文档：
++:ref:`使用 Clang/LLVM 构建 Linux <kbuild_llvm>`。
+ 
+-对于一些体系结构，有一些使用 :ref:`clang <cn_clang>` 和 :ref:`icc <cn_icc>` 编译内核
+-的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
++这种方言包含对 C 语言的许多扩展 [zh_cn_gnu-extensions]_，当然，它们许多都在内核中使用。
+ 
+ 属性
+ ----
+ 
+-在整个内核中使用的一个常见扩展是属性（attributes） :ref:`gcc-attribute-syntax <cn_gcc-attribute-syntax>`
++在整个内核中使用的一个常见扩展是属性（attributes） [zh_cn_gcc-attribute-syntax]_。
+ 属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
+-重大的语法更改（例如添加新关键字） :ref:`n2049 <cn_n2049>`
++重大的语法更改（例如添加新关键字） [zh_cn_n2049]_。
+ 
+ 在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
+ 即使其速度较慢或执行的编译时检查/诊断次数不够）
+@@ -30,42 +27,27 @@
+ ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
+ 请参阅 ``include/linux/compiler_attributes.h``
+ 
+-.. _cn_c-language:
+-
+-c-language
+-   http://www.open-std.org/jtc1/sc22/wg14/www/standards
+-
+-.. _cn_gcc:
+-
+-gcc
+-   https://gcc.gnu.org
+-
+-.. _cn_clang:
+-
+-clang
+-   https://clang.llvm.org
+-
+-.. _cn_icc:
+-
+-icc
+-   https://software.intel.com/en-us/c-compilers
+-
+-.. _cn_gcc-c-dialect-options:
+-
+-c-dialect-options
+-   https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
+-
+-.. _cn_gnu-extensions:
+-
+-gnu-extensions
+-   https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
+-
+-.. _cn_gcc-attribute-syntax:
+-
+-gcc-attribute-syntax
+-   https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
+-
+-.. _cn_n2049:
++Rust
++----
+ 
+-n2049
+-   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
++内核对 Rust 编程语言 [zh_cn_rust-language]_ 的支持是实验性的，并且可以通过配置选项
++``CONFIG_RUST`` 来启用。Rust 代码使用 ``rustc`` [rustc]_ 编译器在
++``--edition=2021`` [zh_cn_rust-editions]_ 选项下进行编译。版本（Editions）是一种
++在语言中引入非后向兼容的小型变更的方式。
++
++除此之外，内核中还使用了一些不稳定的特性 [zh_cn_rust-unstable-features]_。这些不稳定
++的特性将来可能会发生变化，因此，一个重要的目标是达到仅使用稳定特性的程度。
++
++具体请参阅 Documentation/rust/index.rst
++
++.. [zh_cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
++.. [gcc] https://gcc.gnu.org
++.. [zh_cn_clang] https://clang.llvm.org
++.. [zh_cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
++.. [zh_cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
++.. [zh_cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
++.. [zh_cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
++.. [zh_cn_rust-language] https://www.rust-lang.org
++.. [rustc] https://doc.rust-lang.org/rustc/
++.. [zh_cn_rust-editions] https://doc.rust-lang.org/edition-guide/editions/
++.. [zh_cn_rust-unstable-features] https://github.com/Rust-for-Linux/linux/issues/2
+-- 
+2.43.0
 
---jr3n2neihasnwj2m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxD/YAAKCRAnX84Zoj2+
-dgqwAX9Cl1tRywgR6t4UbBMXW2l8tdFFiFYGwo/RwCqlmNME7a2m3LOA+UEPwKMZ
-h2djCgEBgOukMQIw3mWIdAEkUtuwe2MNdopAp1rNumoDvksclKfXWrBtvKH4gYad
-naPhDqXd5A==
-=OXLz
------END PGP SIGNATURE-----
-
---jr3n2neihasnwj2m--
 
