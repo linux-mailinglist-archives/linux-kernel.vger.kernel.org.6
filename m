@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-369918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42059A247A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813839A2480
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61FC7B23142
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:05:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB6A1F2223C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AED1DE4CB;
-	Thu, 17 Oct 2024 14:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A045D1DE3D2;
+	Thu, 17 Oct 2024 14:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OR+mHA0N"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y87UXVyc"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928BA1DDA39
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 14:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CB21DDC3C;
+	Thu, 17 Oct 2024 14:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729173914; cv=none; b=US9oxluGemQwfRxYKIFaK0BpCj+3tqRe2DWQB1lVy6XcmVbI21GNrIvp34ntdUKLw27Z8pmb+mpfNe35EjgmA92MA7l3LLDhHuUPCOGMCrABgUcSebMhxi+JYxjG2ImKgcoPN0NQSEQUT95OSHZY4RtFdMOKaGCw32sbo/+vPcw=
+	t=1729173977; cv=none; b=D3nWGx/BRPMnCIhHSjVSh+0NiZ1WRwYWIl9G1Axs24QhtWS7EHaNnfaXctTr0EhyZLAcxORTfyy/hV5Q8KVAQdO9uTv7vFK9Ahfc+pfTLVG7pWjUAvt+vhyjqe9ZRFzZwLKRn3NTF1QCV3D81xAVR/cvJnnagRjWk/fEqR5P5ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729173914; c=relaxed/simple;
-	bh=sDTmyRBhZeZQtrFrujlScwd8GcBMDV/Qu61nx/GWiyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pxwX505V0K42rHBVm/j1cHQeV9gdITNRrOCQ9AZ417jowHMmdD7hQ+f1QteBmDCSSp/mCbYvR4R7I1IPPNHYkMh5hskt4VUZ5deDti9bZdCLlSopM64u/Z5og8WRBmYtPUYLw35IWCUI9LDxEASMeTmFaQ4ejHNNO6/XgiXV27Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OR+mHA0N; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e6cec7227so827666b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:05:11 -0700 (PDT)
+	s=arc-20240116; t=1729173977; c=relaxed/simple;
+	bh=w9wJTWU2a5qVi7Mhg5hkYv7mEL5zyvHWEPt9bZTl71w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kYOKe9r7nSDGhKpeHkFIV5X0WtQHutpGMilwdt9EwT+z+7gjTlgzLlcG96za3bHJbJ8nWuoICFozLP97n0Bs3tY1O90qiJ0/UwlqETKfI8QMiH8fGXMVw47VzP0zRxxl/5yFJBG3deL3cIJV4Hw2bf7ngm0t4CChXetPftbCDm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y87UXVyc; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea7d509e61so519942a12.1;
+        Thu, 17 Oct 2024 07:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729173911; x=1729778711; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q3b9WTpgaEfQ62qsPZIMgsRHEUWTtDopign4ULhcO2Y=;
-        b=OR+mHA0NEANGK46pzHtRyjTv6edb/kHFuK1H1eUVsxNPFdkEhH24Yu/24+CrEr4AD7
-         MMbGe/W5R9wL86tMWMYuFceJ08bpoBbeczDeVgqcYAwIA17awczEvF6UspPiruzJF7YM
-         4ysDI4QtFx9TIaoRS+AfiCSvsAKx8W0wXWeFdubyG9Y/J/Y72H3CgnxLEZifDwjnPOP0
-         rCKV/QDsmETPEXvdT5mkfEiU8GiPJ/qHlS4I4/vLCWd2jnze1kU0z0WZCosAFJT4yCfE
-         06h97+5KGZioHsLtkikRp9+EsIQmr4rZvInNrq//GXK8cwJsENs8If/IqG6mahQ1qj99
-         ZRvg==
+        d=gmail.com; s=20230601; t=1729173975; x=1729778775; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w9wJTWU2a5qVi7Mhg5hkYv7mEL5zyvHWEPt9bZTl71w=;
+        b=Y87UXVyc2T/xENjTXK5Z1tONuwv8enEzlXazSq6d6l+mbIxnKqRGryyNanAwYVAivZ
+         TaVDDc1Vh9df7S9QUeykRQwOL6WE3T32PNXKqMI/ytdCiBnf2fcfY0CGRCtFdsHunHLm
+         w6VTThJAhRWBt5rEgzeNMxEBebXoFK92Jw+WOdA2v2AAJ+CoDUjitEKx3J3O4eKm+NXf
+         tuboxu3I1rznDGReHTA5ZQxqT9SVuRpwABxLLDQzVNbQ5iUDzZitloRg9yGoAbZxFJYK
+         5IUvYtOaTUtLjqFzkUOxkPqGzl8t9HzfH+iGModocGPD8Sds6A5gROjlXU97Cq6raVva
+         U0aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729173911; x=1729778711;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q3b9WTpgaEfQ62qsPZIMgsRHEUWTtDopign4ULhcO2Y=;
-        b=AxwD7xs+F/4XPvvFFlqAF46thUHpMMa/Caloi87Ei8VvKTYG+jb6DNSBiyx2sRPd+T
-         EHmV0XrWhu5IPHRnEhVNhprZmuWiyk95ivlENU1I2J8l4HycoxpReZG6OPJa/bAIpl1j
-         MIlsF7+VqsdZQdN13m2Uv9NGfxKKnKtxaqsXZBCggWgQeiqcIfQCdC7hJbPm0OqHp2Og
-         EECXvJ5iSBMXrv4SZlMO0lK95UjzW54Cp8BBvidqkEGPdcD+cMf6KKiKt/p6xLtAvzQ6
-         G92uw74gmu7CfDeA4bPooBwpvH5MYdVh2KteWIc116eVVPK/cS6Gk/K4E9bMuARDjsr/
-         +wpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwKLoeJ++fg5qp9Y+0KFduN8f4v7+/oChURWjbHKss7ycRtyrD0b9RKuk/5/+V6rDr/IFVN17KWle+4jI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM4DS4NM7Wb4kAsY9qR6y/+WZFruOveFbxH87fwMv5dhQ8pDnn
-	AlxzR6/o7a/jyVoKvkzrZ47hVlTCQ6f01uO25yYa1AZGt77dNxiDBRrfDJAq5cU=
-X-Google-Smtp-Source: AGHT+IE826OH5Qi8TBuZE8FFeZ78wE+lMdNZpV3vFd7r+PlC14bgo6QWYfG3qrQ7sSNf8eB2EMFBjQ==
-X-Received: by 2002:a05:6a00:929e:b0:71e:768b:700a with SMTP id d2e1a72fcca58-71e7db05c3amr13164700b3a.23.1729173910861;
-        Thu, 17 Oct 2024 07:05:10 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e773ea180sm4923376b3a.90.2024.10.17.07.05.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 07:05:10 -0700 (PDT)
-Message-ID: <3400cf0b-85ca-4ec2-a8a0-c9d75889d573@kernel.dk>
-Date: Thu, 17 Oct 2024 08:05:09 -0600
+        d=1e100.net; s=20230601; t=1729173975; x=1729778775;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w9wJTWU2a5qVi7Mhg5hkYv7mEL5zyvHWEPt9bZTl71w=;
+        b=OtiPPazlHaijZwpZ5hAcCc5SxTxK57XzKpnx4SNkay1QEUCJ6br1WVNMktwDY4ifeO
+         EFwdLIu+LhseR71gl2v4I+Hi7HCOhMUp4gGqL3YWEBb36hB8UojTKZBqCP8nYURHP53M
+         g4bvaRRKSyc3dgxsveVM4XGOlL+Z9PxFud0mybbLPNEgo2kHWZ0RCTksLW18mz3tUy/q
+         w7qfn78sRNcWmXWuwcA4oqAKh7AxTF9GsEeAmIqILUSN+UeUNsKpzEbqUZCqd9vddwK5
+         rvzRVk4uFiWoqX8AgKEm5yp9kCn5LA75eNx2pKE3aQa4izgk+fj70wh4KsulA2sbv9er
+         h19w==
+X-Forwarded-Encrypted: i=1; AJvYcCW9gxGHMgSiYb9oVVwX6L3FJH/Zq2fpGLOiNKlrj7ifw0/ag6KT9cuSvhSv4f/JO06gM1XX0U6zmIBM0A==@vger.kernel.org, AJvYcCWCBTwQRXCspNHrxZ67+1uLY/+FzJEAvbIJLlVEJDvWQPBshUzQUZEJgXqsDviFbQYJdksOwlzXNbyMYpY=@vger.kernel.org, AJvYcCXtJZjWNPUT5IoAFbOY1/XiK07Z6zec2XRep7hNViF1zpV7NagUDuOJjilgLfL6actVsw+AQPrD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwszdtE4me4srBUoV39+JkxOhHkiB4ZuBnw2fgfczkoOGchIr/8
+	K/hwqp//oLW8xNrnmZ5+2u1dnOQ3c1BI/CFtcEIrFe+G4S4npciu5moMqCX3
+X-Google-Smtp-Source: AGHT+IFh1CyapyiDDJnauYK+23Jv5vxqqLi47WppR37qF6Q6jcd8Zk7CmGwlKhUYcNIPLdCWCMSelw==
+X-Received: by 2002:a05:6a21:1693:b0:1d9:252f:a074 with SMTP id adf61e73a8af0-1d9252fa20emr1719508637.22.1729173975024;
+        Thu, 17 Oct 2024 07:06:15 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e77370dccsm4930396b3a.18.2024.10.17.07.06.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 07:06:14 -0700 (PDT)
+Date: Thu, 17 Oct 2024 07:06:12 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] PtP driver for s390 clocks
+Message-ID: <ZxEZ1G-p5jfxQK7n@hoboy.vegasvil.org>
+References: <20241017060749.3893793-1-svens@linux.ibm.com>
+ <20241017094606.6757-A-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: AMD zen microcode updates breaks boot
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- the arch/x86 maintainers <x86@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-References: <5fe1e264-c285-4988-b1e3-46771d07172b@kernel.dk>
- <20240930044313.GAZvosYZF5mHi2OZbC@fat_crate.local>
- <d7aff674-ad92-4a36-9ebf-8d3c42774723@kernel.dk>
- <CC418B80-5ED9-4F64-917F-BA6F94130F83@alien8.de>
- <ad9638b4-0a4a-4cd0-9fcb-2690693da157@kernel.dk>
- <20241009091247.GCZwZJDwFETmN5pEGe@fat_crate.local>
- <77f16324-47e1-41e6-a9e9-2cb7cbc8d14d@kernel.dk>
- <20241010134613.GDZwfapaZ8AKp0n72C@fat_crate.local>
- <842a76fe-3d6a-4846-83da-bb113634b8bc@kernel.dk>
- <13fe104b-d83b-4d6d-a348-1103d402540d@kernel.dk>
- <20241017100257.GAZxDg0VqDAesee00m@fat_crate.local>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241017100257.GAZxDg0VqDAesee00m@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017094606.6757-A-hca@linux.ibm.com>
 
-On 10/17/24 4:02 AM, Borislav Petkov wrote:
-> On Wed, Oct 16, 2024 at 08:34:09PM -0600, Jens Axboe wrote:
->> And then I totally forgot... Got it done now, but it still just hangs
->> after loading the kernel. No output.
-> 
-> Hmm...
-> 
-> Let's verify it still actually selects the correct patch. Diff below, it
-> should boot with it as it won't apply the microcode and you should be able to
-> gather dmesg.
+On Thu, Oct 17, 2024 at 11:46:06AM +0200, Heiko Carstens wrote:
 
-Same thing, doesn't boot, just hangs after loading the kernel.
+> Richard, if this looks good for you too, how should this go upstream?
+> We could carry this via the s390 tree, if you want.
 
--- 
-Jens Axboe
+PTP drivers normally go through net-next.
 
+Thanks,
+Richard
 
