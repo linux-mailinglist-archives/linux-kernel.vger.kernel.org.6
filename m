@@ -1,83 +1,90 @@
-Return-Path: <linux-kernel+bounces-370449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D889A2CAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:53:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F059A2CAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0FE62824FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6111F224B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FF0219CB0;
-	Thu, 17 Oct 2024 18:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB24219C86;
+	Thu, 17 Oct 2024 18:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nRTsqgso"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zbeYCxJ0"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039981FC7E9;
-	Thu, 17 Oct 2024 18:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5E4219CBF;
+	Thu, 17 Oct 2024 18:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729191157; cv=fail; b=MYQU0NzW7EPGbua3vHrla5ldLxKMpmPla0E0tdvI9WZZDsKTTgaFHZEO+HQDcEaF8vSli82gP5eKBK/mScdneJnwg/saAcJLIm5JCtNzcDj1T2I/s1NQsE7RPK028OQVKjW7tuvRDT1qtStKdwBiuHCywXpZu1Lo9RIPUG7gudY=
+	t=1729191173; cv=fail; b=LjV72I7ChJALhOV+t7XyUMbSD90VTQSKLNXssX1IkDZOMqgnqV9ak3ykcteTGtJci9Qnj7aLiGjF+CO+yzStlVCatZOc+OGokFWQbV6crgVIglfgStjo6eDMdiTQH0uaVY9Y6UvNR6coIr737yjfUIQzO12rrjBnFtGg1wUJvo0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729191157; c=relaxed/simple;
-	bh=947PwkkWalxDBil87lJKwYPv9z4ZLQuLxA/AXP52wGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uoyl/8FtRUEufHfotbDbkF+UccxO04OPrddSuOZTOEvuPtx78km9YC3lfZhSuYZoomEfLN8HgRbfe0rD+YDjkUdynHxmbsmbPFwvA1nOgoe2E7jnuUXa6F8ULEt8gX5lvTzq9mM5JpNbldS0Ch4KvXPcpizmNuQCuW9eBSyJD2A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nRTsqgso; arc=fail smtp.client-ip=40.107.237.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1729191173; c=relaxed/simple;
+	bh=KDIGXm3Nm6Sh8+8LeC3iRry5NWMvrJ61QZELeV6Es7U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=noUlRCNWWnTBkBIZmBXbztR3EPaeBZDULBg7TtKXQXBqhtJiZmCSZ61C/mX1spsW9lUUxRo4WT70ZI6JicEbNNDYJfCKleE3NoSrxCt7f5Wr9wkhYr7Lj7g7pWtsuNFbVgNTjGmdIsPcpkfb16v4P+SC7OKg7geMiHN+QaWyZus=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zbeYCxJ0; arc=fail smtp.client-ip=40.107.236.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dpUpuipmsnz7oK7Azh9H6UaCjhvdI7uM8s4G91PttNeyZWAbxxlPlQ8UCidFBkH011L5TZIO308OZbHk/G5ZC6XzXKD2pqRp9qMQ38qzCQqnFn7HtbUKAqmANOOGbEE2JmWshGxphUWawB8roZzGHnSFcU/eOQ3ZE7X9U8ZVhdkJhR5u+ObFD1T97nT2QcYJdmlzbj4e2dw72sJrLwadmgQg4afSBHQHbtuGg6towKtXKKZxKniYaPU5xbMN/hQhXFknZkwO2gjMrUgQ+GCXHjs+XR614+28cdcQmJb8hP6Z/IXpWMkCxLebdkkTodE7nUyrGzEijm1M+DI8ZTuYAQ==
+ b=nMUfipsUuYkSOSdEiEpo9P9852iPI3loG6JEa0O585JRBEj2Z1ZBVgXiWnF+Vv4RIj8O6Z9MfQseFBwvI1HBl5s+MYo+SeCrgntAUQYlHDqtcOHyM9bIDHcBwrrFmaiDz3AlkHavP7iK2wGFmAcQHmKjriVlboVv7Lk+hL+f6Xi8oXj2gI5c53OQwZG/IwMcFFLhn/xXMEniGWIFVlcQszg+wAv7SMhGSBUtf1a8yJ24eax5FPnDXaJRwpOmloBsQOUMDyBW7vODodhW1TcKy5dYgR5gfaGZfpUCJmEICZneh2Ru/ZQV0tFrn9jaoEnMqTD4QAJxHgYKVQJp87zY/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uuumkGx4ZqXhWWqsbZdCKrFfR0QqlOWV+/hPWY6qiII=;
- b=dZUrI5302xSS7+bYUzxlCj2/KxeyAkGsD4+usukr6OA2twTSZcS2c7icBBGq7ylGBa/8Q6PxGrp/e4cHa3rYJQGiIKCK9OZjtJNXr2o2UNIbxn0vPLCifnQCOKYFTXOdw1eIhkoACp08FUOPBjj2AkCAWV/9kRcNrGVWNPOb+vh1m7T9k1ny1QuTPYpNs+9WbuUqsM9TwkvWC438PndjQ3BsDy9BapkRCXb/sr0UPRFJ0UJavznjRuC4MCAUtpdXtPOlVH+sXpTcs3RyBf3IqsIeOqfVgFSacLRXo2aq43St+iHfg+bgp+hmSG47XMmNR+Go4jhtNNV0EfLovogGHA==
+ bh=OTtSFUatlgnSEG9ZGKPO9TdCyTJF2Vh/KAnTZNl1dmE=;
+ b=PwOT9IwuJIJoeKvmeEBxJXyjy7e6niQmO+kAZqGOSHmy7ozkSkAaWTDMs1R1ip26Ox+byr27TGhVQ44f1AKFfCHv+Cyj0jQJnnGvApkJfKD2jyBiM40JI3eTUm2rNPYY7+IWsnLfRFUAPYVhNM8FsPNX3Zd3Qya04KlkZ29F3OcJ7Q1Bjs3yoDXNN0CNBZzetrTAFyzPAMjcFruDotD1bJ16x8sWzOBZDKrEVtYIW7o88a9G60FTlz12yqeYld91HjMoiRNj2W+emQiKlurrYVH6GJdknNDivZVApu6xLqKqmn5TXCkLde20NRkDpECzHWzLUzJARsNnj3tN0LaQoA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uuumkGx4ZqXhWWqsbZdCKrFfR0QqlOWV+/hPWY6qiII=;
- b=nRTsqgsofBwsiWbheCllUtkA5L0JqxHTYUU1b3WxeSy1LgZuRd91znfy86ue/23wSs8p7zYi9psoJTi/x/YJ2T4QDYW9YL09O8YbCeGi0AbyGPAjjQMW1pCeWpHafo902jekb4S7A0M27KLDQh66UxqtqKB785YWjCo+gm+rf6MadsmNxbRSeFboJ4zRSPTdr8ZqDQ+EzXvyzDTFrX0BcKp80zenr4M1o6PgxQ2N0JY/8nxA25fbym8JJTgt3FxuZmSC80BKDBZGR6TYnJLDEEbp8tXQ8VoNUt4HtNBSxDFcw28jRLiIgqgtjWLEfvfzS4YSFGjaW/LtdA83Pkg/Lw==
+ bh=OTtSFUatlgnSEG9ZGKPO9TdCyTJF2Vh/KAnTZNl1dmE=;
+ b=zbeYCxJ040XXE/KTZTtBL+i/ZrUcWWjTmsju9r61uB8oH59VPUk084aC/5Lu45p+kD+tRFJKS+nh5At699cIKKfa7T3fL5Ja6+tJAR4uwZ+KW2QvIosAxuNDLNYFVt4Sk3bxKWUuYYx5ggfXelWtMHJ7ZGIm32q0lh+MUx6ukCw=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS7PR12MB6213.namprd12.prod.outlook.com (2603:10b6:8:97::13) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by BL1PR12MB5875.namprd12.prod.outlook.com (2603:10b6:208:397::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Thu, 17 Oct
- 2024 18:52:32 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
- 18:52:31 +0000
-Date: Thu, 17 Oct 2024 15:52:30 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com, aik@amd.com, patches@lists.linux.dev
-Subject: Re: [PATCH v3 03/16] iommufd/viommu: Add IOMMU_VDEVICE_ALLOC ioctl
-Message-ID: <20241017185230.GS3559746@nvidia.com>
-References: <cover.1728491532.git.nicolinc@nvidia.com>
- <df942c216c0e5d1740ba5add73375becf0713dfd.1728491532.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df942c216c0e5d1740ba5add73375becf0713dfd.1728491532.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BL1PR13CA0194.namprd13.prod.outlook.com
- (2603:10b6:208:2be::19) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.28; Thu, 17 Oct
+ 2024 18:52:44 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8069.018; Thu, 17 Oct 2024
+ 18:52:44 +0000
+Message-ID: <c81c9b9d-9897-4f97-9d41-37a9fbfcfd7e@amd.com>
+Date: Thu, 17 Oct 2024 13:52:40 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v8 14/25] x86/resctrl: Add data structures and definitions
+ for ABMC assignment
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ kirill.shutemov@linux.intel.com, jithu.joseph@intel.com,
+ kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1728495588.git.babu.moger@amd.com>
+ <94cfd19bf9b16570b07649e1058b4ee55ac8c102.1728495588.git.babu.moger@amd.com>
+ <6af4b2f8-c6f4-4195-8c5e-d2efe0384521@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <6af4b2f8-c6f4-4195-8c5e-d2efe0384521@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN7PR04CA0204.namprd04.prod.outlook.com
+ (2603:10b6:806:126::29) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,167 +92,280 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS7PR12MB6213:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33dd42a2-bc60-4a8e-dc79-08dceedcdb23
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|BL1PR12MB5875:EE_
+X-MS-Office365-Filtering-Correlation-Id: b83340e2-694c-41eb-f3de-08dceedce2c4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kseFXxEV4zjcRgLCLDeCEmrNy19Drqm1yks6+WbAYW1OPS+H0DDBNxgb32tV?=
- =?us-ascii?Q?MOEv8dkS8SGZGpK5qTlZkEiowa6UCI/iy0GK220lTFN8VQdpCd6Quuv7GGwU?=
- =?us-ascii?Q?6Bw9c4GQE5HQmG8rOtrcjbLBxNOaeBlYryzV4GLQV4lCkW8ESNzou8lWfpkJ?=
- =?us-ascii?Q?rg+Q7mQgPa8bBM5A8RgP1CZHZ9QdTogVfM10JbFkR8UBl0TFwxT4zQb3ArZ3?=
- =?us-ascii?Q?qcubP89yKZUT/C1ygXTf1k621s/afvXrqrIc/P3uXqV6NAwjgsPlGaLZE02Q?=
- =?us-ascii?Q?/+gdWGTO7iQx5XMmA7n26+hQznZ9aA1waSHzAIRLwZTFo4Mef/eqhV5wnVoD?=
- =?us-ascii?Q?rNfflAmagSkT+cvAJCDOP0scRQJDGBF4zShJcSrPNHPqjaoEYF1v9vSXfLoE?=
- =?us-ascii?Q?IDRiC4DKcA0rFYf3woZECCto0AQM2eCRIKNOWy6jiiyCXb0G7A1qOX2KmFyn?=
- =?us-ascii?Q?92EagvE4VOEPS/jRk8bX0qezH36dzMxzpBk+vwYX0H79Z/0SYcWjtbbzgIFM?=
- =?us-ascii?Q?LrLJ3XUcciHHT6Id0KRBZvUvOmijlpSiYcJLbI1MgILe4hatRaCLHrL+GIWK?=
- =?us-ascii?Q?w0kCgbHJITKcb911463LYuarAjqGIYS2HO2OXWLFEkFX6c2TLtA88FU3BZ8b?=
- =?us-ascii?Q?kcnUm1yAUId55eOvVFs6b/nwMzg+VxaZWiqZIvXwR7tIQi7+gZzg6ReyzSxZ?=
- =?us-ascii?Q?cbi+CFwHsJz+UxNfOku9kmtn3AdYy14n4YnVhswk94KWN1qCzOLnz8RLiwZZ?=
- =?us-ascii?Q?dNZbswOGcAEL1cLDdt5dLLi7dacSDIKWiSz4KqMTcVN5Q7Bpd2gDsI9UdWtj?=
- =?us-ascii?Q?+qLSQEC9aj/XT16A3D2oZSc8w9dYYUoosSaRI+cNW5tL1Gtwl/J7+dMi7aAI?=
- =?us-ascii?Q?iRmgN7anJuJ5vlOXs6bxK05HFNuOOTz9H8q3UKLTCuYHQDokanGepSbTZa9R?=
- =?us-ascii?Q?+QefxSSbpYWouKrXF5oY823vc9S1fzLibJeecj+iTlDxchgBsXq8ekR1FW+g?=
- =?us-ascii?Q?oU61s/ebwcv1RRZUHF2NOki0NNXQVUpcAv77T4dX8PrrpURQ0L2Vo0+VGmSI?=
- =?us-ascii?Q?qDL00UbzxsYiDpa5znrYYdJUcUoSKTfH38feGsZf65Yln1Nw/K+tU0J5gMwj?=
- =?us-ascii?Q?+ifnm8zir7io38ZN7DSIpoGn7XqEEnStzYRYaNRM+wbZAWjmdNzL9QiLmS5d?=
- =?us-ascii?Q?J+IJzZYFp2y+YXtTdZXOUC2MaBUJIRu73HSt02pQ7yeKbodXI1MwZsHvMFTs?=
- =?us-ascii?Q?rU2ePH8fy1a3KwQ/8X7fTXFFsaFffQuCaekLmYu1x//95HuBUwcbcANvllLa?=
- =?us-ascii?Q?ClImk71dzSo5VGeSDJxr/nBw?=
+	=?utf-8?B?NHY5QURwdU1maDR6NHFqeURTS2Z6ZFBIQmhTc3NTY1g4bjY2Wm9LelNuRlg1?=
+ =?utf-8?B?VHcvaW80UlVoakhOdkk1QWI2V1hJVFNXaVpDTFZweVdxTHdheU81dEVaN2xD?=
+ =?utf-8?B?MGdjUm8raCtGRSsvM0JnejNpQUNVbUl1UHpEcTJ6dXA0T1YxK2dhSXBmdFZk?=
+ =?utf-8?B?dVp5enZrUGIvdU1ONHBwUlYyc1cwY0I0M3o2OWwyQkVnTUo3eGxNMFh0c1hu?=
+ =?utf-8?B?SFFIMmdRYlZ6SGd5SCtmc2pxM0FsODNkWk1EVVlSblY5NUFjbUxKTVhIL3FG?=
+ =?utf-8?B?VkQ1NUlyTTdVVHhXQ1h3QS95VC85cW5Uc3V4T3BrdW9hTlpDZlc0VHlZM1lH?=
+ =?utf-8?B?cVRpUHQ4Tno2QzRKODh4aWZIcHA0M3RXKytXbTNmYUxoendBOURhekIyUWlx?=
+ =?utf-8?B?U2U2TEpUYjYwVU0rOVFLNlFBam8ybFRKZE9RSWdpOU1zL3JsaG4zaVF6R3RC?=
+ =?utf-8?B?WEhPUk5LdDVCa3hUOHNiR0x4SkU3SnJwYU5EQlV4VnkwU1N3Q0xLZnNXd21N?=
+ =?utf-8?B?eVFrQmdNWEdlVDhzeWUrR1RiN2lYOFJrWDRDejI0azlKbk0zQW4zU01QNDIz?=
+ =?utf-8?B?akNpWlM0bjFGTkJPTGFROWRwckphU1RVejlmWlRXWlJRR3F4TFY4ai8wN04v?=
+ =?utf-8?B?VTFFUGRTTDdVVUJaVEpUa1NreTJ0bGZVditTQ1k5a0ZCdEwvUU15ZWtNUTBp?=
+ =?utf-8?B?TnpDcDhPcFpvd1FLZGw2a2hnaloxbTY4RElmTllIUWpjK2x6Ujl0ZjlyQVRN?=
+ =?utf-8?B?b3V1bDVYUDgzMG5rK0NtcXJKS2dZRGIzeDV6dmxPRHVGcTF2RVZvVFN6Vk5O?=
+ =?utf-8?B?aDVYK2hEOCtPTXJPZFNyWVJVVFRQQ0tvNElUemYxMi9oR2E3RytjVk1Jc0xk?=
+ =?utf-8?B?MzBpU1lnQUFiZDNpbW9HNEEyWWl5VVFUbkNoNlVRSkUvcHY5a2crNEZQL3Z1?=
+ =?utf-8?B?Nitzck90UW1qZFA4UkxYMFNMc2dqWjBNT3VHa2s2bHJ4ZWZtKytSd0tiV3g2?=
+ =?utf-8?B?ZVFaL3JpWVp3MnZhRHhGZWZwRHBYZFFzRFVQbklWblhZN25IQThjMWRoeVhN?=
+ =?utf-8?B?VTZJQkdVNDBVczkzeDdHUEtZZ0pKRU95SXd5dkxhVENwY2NsQWpvYzZWcllT?=
+ =?utf-8?B?bldFTFJCZndSQ3psT2NmZDFMNDFPclJGMEZyYlBuK296MlNrOWNHTFZaMWl0?=
+ =?utf-8?B?c1RmRnVST2JxWEpEc2w1ZEVVODNYY0NoM3lXQWdLWUFWdmpWSlBDTmt3amI4?=
+ =?utf-8?B?dk01Zk85blJwV0d5SHNIMnJYMVFXUWc0NlFidGxaR3l3S3crdS9RcUE1RUZs?=
+ =?utf-8?B?SXUrSTFWUGk3ZERGTFQ1RkFNZ2NVamJuZkswY04yY0E0YXRhTmt3Ky8ra2tH?=
+ =?utf-8?B?aU82N0hweE5aMkpCTnJyNVVFNHJ2OHpDUU1tZHdWdzlHMVN6eS9xcjdLQTNq?=
+ =?utf-8?B?SHZ3dW5DY0xlVXRialMraGF0SjByczBxWjJqRGZJd1pobnhWUVBQWEtpNjUx?=
+ =?utf-8?B?NmtMbjZhTjkwYmgwbThNa1NORXQvV0c1dFkzckdoLzd1bUpjTlN6R2U0M3pz?=
+ =?utf-8?B?NG5pZGl6ODU0M0t4VVpFQ21uZkpmMDJCeGwxcitybFUvams1ZWowUjJMZjZY?=
+ =?utf-8?B?eFU0RCtwKzdYNzl1MmZJTy9BYjU4OXpuV09QMENXQmNrT0c3c0xFUW1VN1pN?=
+ =?utf-8?B?RzNDOFZKZ3JDR0hoV2pSRFlGYmtLTUdpamlXeGZJemUzY1ViVy9laitxb1RI?=
+ =?utf-8?Q?ybhvb+ka4CglTR3I4hjqayU7lpZV3hyViNYE2Wc?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?waHG3JLhlwj2P+1qQrpPiwOhvPA5TkPKiJiD1U0/HT/UFTjTl5o8DbGI2Vlx?=
- =?us-ascii?Q?gteqt2OGxt/67blTGK4AGTEWu/I6GDqkc2M7xgEIqzPfiC3XJgbn9WplfcVT?=
- =?us-ascii?Q?NU7piJ0JFvnqOZDc1vVCnDMufYTIAGRBJFN7oCf/jqSgV22Dd6ggfci7tfph?=
- =?us-ascii?Q?bGux7sN1F0N2z75JXRyCc4SjAXMqFZmv6SfSu5kYAwM5XRdA6aorTCnM6phQ?=
- =?us-ascii?Q?r5pEog/acrOtrc6ulO7yTwmexX2nRsswO/5g9R/BY/qG6hkm4B2azZJr19BT?=
- =?us-ascii?Q?SOLEF0ay2EDoHVrnPvRrBVq23alWcU9lenlL96sABkekFSAOJ8heLKrume0P?=
- =?us-ascii?Q?Kl9NFH7lW7/uC7tsu/sRQjZmEngH+3KHXL6CnozEBSh0vUY7yP9fwbwfy+aq?=
- =?us-ascii?Q?ZQ+tYRtONmOcmemcsv525FHtIa34TsaZ5lTMi/rMbAy0B54zm5a4uiCJbv+T?=
- =?us-ascii?Q?EeXd8BPOzH8iKtmoPZYMvZpKrBu0m2RDXvhFnTjUzL80QvkV7+Wm6KTAyZKn?=
- =?us-ascii?Q?WS8QxwpZIFv8JlIyw5OA06hhWcXWshAJWkYycA5WjIEzFudzqrnev1zDoeyS?=
- =?us-ascii?Q?mFfUwUV3/gYYFaaPafG9/t/fdCbB+5+GtAXwDV9PI3PmHV+ttib5S70qizW1?=
- =?us-ascii?Q?XIezh1AjvqzQSGR8BOhIFGJm4/TiPNJdP+m8KT34Ruqod7KcL6areqcU+gJ7?=
- =?us-ascii?Q?OOFjHcbKDTGPaKr8nho1lwNgfxZCCRa6HzLn8kt2S+H9q3kNaiKcAF7QTHed?=
- =?us-ascii?Q?xj2DNQu0mPAYA87tOdL28uA3dzdVPNfEs9GHg0PnajBreTogDhZv2y7+bjhs?=
- =?us-ascii?Q?VbqBbqGVx+zdAnqQ53iAxc+m3JhdmBp5McYDCOLHo66zpVjjbNQoLaoAhbJh?=
- =?us-ascii?Q?8LFpqwT0YAEPDXD3LmLAJY6QeailIB3zte0nb0XD0jMXRUjsNeECRa9Gv7ZS?=
- =?us-ascii?Q?q5iKaRLIgWx9EkzF3ImSTsNzU6NC/IJ3ZxKEmbYPQwMAb6Vox8c7HJGNvMzy?=
- =?us-ascii?Q?V0ifdi0cYggUy0RqwwQ7DnpMd2ZuGu4y1Abrl9olNGPd+P0ywrK9c+6F7Od1?=
- =?us-ascii?Q?RxjS5dQnQ9jggkONJegQ1ZbOyekSTM/SzMAubc1S62bRK+27TyprIXbflvV7?=
- =?us-ascii?Q?tcOwGuIdURt/dWN86cyXyaSmMnPC83Ez4qnXcaU/vx5iwrOodQRGuC6m6wyg?=
- =?us-ascii?Q?gki0s4iZQRCAH/yF4gqEKbgwy9nTU0F3tTuNGG8iiPDmY+jcKMq3CGoTJk9c?=
- =?us-ascii?Q?gO1JiryqEXxaYpF7Ms3r3BnLxJEgw+nDlT9IM+1myAfDUXArL6A/bUGhl2//?=
- =?us-ascii?Q?eSEjIV+/LiuiLBvb4Z2MMesHFvuDcbAVyWc0RdkEvFqTiCbB9lpQcR4dqXkW?=
- =?us-ascii?Q?vd4hNT38dGkTDN8jij32cxj46tEJ7B9beCodz92b8vxID8xksG/uebRmu1be?=
- =?us-ascii?Q?TF6SFt2knTsSjI6WN98oOnwzM4n8b/qPtKY9OLqX9fCsnRZ7Ez5GMSfL5+df?=
- =?us-ascii?Q?8h191/ihFuxA6QIxzComc6tBdQ2FIwPNIGFFqUabk/jTqDtgoFdbXl/SOipU?=
- =?us-ascii?Q?uz/0yFDz0gmUuM16Amw=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33dd42a2-bc60-4a8e-dc79-08dceedcdb23
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+	=?utf-8?B?aFdWYXJpSmovaXF6SzgwN2x2cUxWNitFZDlRdnM4WjhzbjFPaWVISjFrLzRE?=
+ =?utf-8?B?VUtZWU1FZ3hMaFRQV3k0dkFOSjhhVzlFWDVZUGxGRUY5aXo2SitQSFpOSnRK?=
+ =?utf-8?B?ZHQ1SXh6czdJNjJvSVNlMzkycnkya21QR1Vpb2dSVUx0RFZBL2Z0RDNqOE9E?=
+ =?utf-8?B?cW95RUR0MXBvaTI2OW9tWmdlTWF6V0g0aE1nSVZ5NlR1SlQ2elhZSXJPekM5?=
+ =?utf-8?B?Z3YwM2NqYlh4S2Q3UDZlNWZRSE9YQU5FYzlHbUtnUjJLNTN0SXo2SnRKWDdh?=
+ =?utf-8?B?YjMyczVIR0p1MENWYUt4OFRSdUZ0ZDJiQnVBWFkwWGlKL2ExTE9aNDFyRSs0?=
+ =?utf-8?B?RHJaeHMwTTI4QUIwb2txR0xiNXkwNnovWTdKdWFkU2FiWHE0ZUFPTkl0cnR6?=
+ =?utf-8?B?dzNRZVArNjc2amMwVDdHNWp1bVRzZzVVcFJKK0ZjSTZKd0JMR1FJWHovVkNi?=
+ =?utf-8?B?K0g2ZG9ZNEptTGswMDF4ZU9pVGs3b1hWK0pBYkZBRnBKdTZMUTFFS0ZaK3VO?=
+ =?utf-8?B?TlpYVDAxMWhiRG1sdllmaEEvSDI2ZXBMdlRZYzlDbVBpOVpucmxGbHkvSWdZ?=
+ =?utf-8?B?bWdjQnVnR0w1bHoxNUZpUG53eFZpRk5xV25iQVBVUUVMOXVzMDY5byszck5W?=
+ =?utf-8?B?d2xGR2pLRzhYcURCQ0EzRTVkVkNFVWJwaHJ4REYyZ0lIVjJtN3IzVUlIVyts?=
+ =?utf-8?B?aXNCdXp2eXh3eUtZQ0xHV1ZNdHV5b0E1aDh0dHA0YlZoYmEwM2tkRGRIQjha?=
+ =?utf-8?B?MGRYSzZXM3Nib2M4M3Qwd0pmbWJ2N09pWkdqZUk0MXhBanhCbFgvekh1OWtz?=
+ =?utf-8?B?M1lYdUlzRjc0RmVpOENYZWhnYTlOdXpjMlRJelZRVzg0bEM5c01NUDB3NTRS?=
+ =?utf-8?B?N1JXZVc4SHBxcTNVK0NGeUU1L0tyNDFmbTFhbWJLUExBSUV4cVdiQU9LTzg3?=
+ =?utf-8?B?QVREbDRvMi9oZzZJQUVZSHFTYzFpVjNMcmtTZSs3ZkF2Z3VLdlZDc0g5VGhH?=
+ =?utf-8?B?eTFjdGJmeHUrVGlIUkpaekVwL1MrSU96K1M5ZmMvUVlWU0VSZytQazhQWjIx?=
+ =?utf-8?B?UTFJY1h4cnBtY2o0eDJFRlN5cDNFbDdOWmJOR3F1TGU0NmwzclhqK2JnS2tv?=
+ =?utf-8?B?MTk3Sk11eWNQdlhCZWFDeWdGdkxRbHBVdXA1RHBMdStKRVF1SExKZnZxQUtC?=
+ =?utf-8?B?S1lsUDZaT3hJMVAzWlBOSFh4MVdVcFlLZXBMRzhCL0Y5bjJDbWtLUHNPR1Zz?=
+ =?utf-8?B?eVFBd1V2c2NHekxqbWNvcVhtQmFCanFzd3c5TGxpR2kzbEg1WUszMW1ZdU0y?=
+ =?utf-8?B?WkF3YThyaDlUSmhZMGUvS2FxUFFwODNEVnEra1REK3I1UFMrZ21yUUNsS0NY?=
+ =?utf-8?B?b2NmcytDS3R3YTB5Y2dMVWVnWGxDTTZ1YndOa0dOTUtNSlo2UElVOFVaMzRW?=
+ =?utf-8?B?Y3FKNFJRaERvSmNoNlFldTVFeEordThKR0JndjBaZnRLZ3F6WnlnMSt6TkR2?=
+ =?utf-8?B?R2hjS1pXbTIxNG14NHppZytjb2FTczFXUjNzMFhGOFRtcGhIeDJDM3A2enE0?=
+ =?utf-8?B?YThUb0ZUNFZUQXY1VFcxVDE1TC9MTFZTdDhWb05VeHJ3cnVrUHI1NWRPSWVN?=
+ =?utf-8?B?NnNRYnZEN21DaXU3ai83bm81OFJwbzZORDRJYzl4YW94NEFNeGQyQ21MVlpp?=
+ =?utf-8?B?RW0ybThDa0hNRWd3R3JSZGdPcUZOQ2UveE1EZ2xFRCtObkxjLzh4Mmt4UDNi?=
+ =?utf-8?B?YmJZU2hoSGdLUGN5VlNhOTM5ZFBqb3BQbGhxYmhxUE1tTEVZUm9UK21NWnhB?=
+ =?utf-8?B?bnVKRmpRaUxvYnJ5Q2grK3RyMTRxS3FVLzFKMXpLdU5LT3p5YytuMThFZC9J?=
+ =?utf-8?B?VStsaVJNOWg1dEwxS1hwanFMaEdQblpoRlRtNVNqOFhvN2tkNVJmWEh1bFFI?=
+ =?utf-8?B?VmczL2xDK203eTlzcTdwNFJBYkdDWDIxdUcwY2JjMXpVOTRjNFQwVGxBdGZM?=
+ =?utf-8?B?WE9xa0tlb2pRRlcrQjFlb2p3SDdCajVHb0I2NTE3SXlMMDdhWmNUV2Q5MlZk?=
+ =?utf-8?B?UHlHOEdsb1pIMzUwcnlReWhoU1l2OTFpKzVBbDF4TFVjNm80VW9xbzFiSEc3?=
+ =?utf-8?Q?do+I=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b83340e2-694c-41eb-f3de-08dceedce2c4
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 18:52:31.8045
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 18:52:44.6266
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RbL74IqCvHbM8rRonjs9Bckos7y5S6rd+DPJpktEKW/zLb3m5tfQwx0JggCR626m
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6213
+X-MS-Exchange-CrossTenant-UserPrincipalName: toSzxK6HAAPPqHSGHL7d6Uqqa7E4rLK57ehJVBhYcsWRPWuRmKDFspIs+Byae0YC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5875
 
-On Wed, Oct 09, 2024 at 09:38:15AM -0700, Nicolin Chen wrote:
-> +void iommufd_vdevice_destroy(struct iommufd_object *obj)
-> +{
-> +	struct iommufd_vdevice *old, *vdev =
-> +		container_of(obj, struct iommufd_vdevice, obj);
-> +	struct iommufd_viommu *viommu = vdev->viommu;
-> +	struct iommufd_device *idev = vdev->idev;
-> +
-> +	if (viommu->ops && viommu->ops->vdevice_free)
-> +		viommu->ops->vdevice_free(vdev);
-> +
-> +	old = xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
-> +	if (old)
-> +		WARN_ON(old != vdev);
-> +
-> +	refcount_dec(&viommu->obj.users);
-> +	refcount_dec(&idev->obj.users);
-> +	idev->vdev = NULL;
+Hi Reinette,
 
-This should hold the igroup lock when touching vdev?
+On 10/15/24 22:21, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 10/9/24 10:39 AM, Babu Moger wrote:
+>> The ABMC feature provides an option to the user to assign a hardware
+>> counter to an RMID, event pair and monitor the bandwidth as long as the
+>> counter is assigned. The bandwidth events will be tracked by the hardware
+>> until the user changes the configuration. Each resctrl group can configure
+>> maximum two counters, one for total event and one for local event.
+>>
+>> The ABMC feature implements an MSR L3_QOS_ABMC_CFG (C000_03FDh).
+>> Configuration is done by setting the counter id, bandwidth source (RMID)
+>> and bandwidth configuration supported by BMEC (Bandwidth Monitoring Event
+>> Configuration).
+>>
+>> Attempts to read or write the MSR when ABMC is not enabled will result
+>> in a #GP(0) exception.
+>>
+>> Introduce the data structures and definitions for MSR L3_QOS_ABMC_CFG
+>> (0xC000_03FDh):
+>> =========================================================================
+>> Bits 	Mnemonic	Description			Access Reset
+>> 							Type   Value
+>> =========================================================================
+>> 63 	CfgEn 		Configuration Enable 		R/W 	0
+>>
+>> 62 	CtrEn 		Enable/disable counting		R/W 	0
+>>
+>> 61:53 	– 		Reserved 			MBZ 	0
+>>
+>> 52:48 	CtrID 		Counter Identifier		R/W	0
+>>
+>> 47 	IsCOS		BwSrc field is a CLOSID		R/W	0
+>> 			(not an RMID)
+>>
+>> 46:44 	–		Reserved			MBZ	0
+>>
+>> 43:32	BwSrc		Bandwidth Source		R/W	0
+>> 			(RMID or CLOSID)
+>>
+>> 31:0	BwType		Bandwidth configuration		R/W	0
+>> 			to track for this counter
+>> ==========================================================================
+>>
+>> The feature details are documented in the APM listed below [1].
+>> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+>> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+>> Monitoring (ABMC).
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> 
+> ...
+> 
+>> ---
+>>  arch/x86/include/asm/msr-index.h       |  1 +
+>>  arch/x86/kernel/cpu/resctrl/internal.h | 33 ++++++++++++++++++++++++++
+>>  2 files changed, 34 insertions(+)
+>>
+>> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+>> index 43c9dc473aba..2c281c977342 100644
+>> --- a/arch/x86/include/asm/msr-index.h
+>> +++ b/arch/x86/include/asm/msr-index.h
+>> @@ -1196,6 +1196,7 @@
+>>  #define MSR_IA32_SMBA_BW_BASE		0xc0000280
+>>  #define MSR_IA32_EVT_CFG_BASE		0xc0000400
+>>  #define MSR_IA32_L3_QOS_EXT_CFG		0xc00003ff
+>> +#define MSR_IA32_L3_QOS_ABMC_CFG	0xc00003fd
+>>  
+> 
+> As Tony mentioned, also please correct order of this MSR.
 
-> +int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
-> +{
-> +	struct iommu_vdevice_alloc *cmd = ucmd->cmd;
-> +	struct iommufd_vdevice *vdev, *curr;
-> +	struct iommufd_viommu *viommu;
-> +	struct iommufd_device *idev;
-> +	u64 virt_id = cmd->virt_id;
-> +	int rc = 0;
-> +
-> +	if (virt_id > ULONG_MAX)
-> +		return -EINVAL;
-> +
-> +	viommu = iommufd_get_viommu(ucmd, cmd->viommu_id);
-> +	if (IS_ERR(viommu))
-> +		return PTR_ERR(viommu);
-> +
-> +	idev = iommufd_get_device(ucmd, cmd->dev_id);
-> +	if (IS_ERR(idev)) {
-> +		rc = PTR_ERR(idev);
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	mutex_lock(&idev->igroup->lock);
-> +	if (idev->vdev) {
-> +		rc = -EEXIST;
-> +		goto out_unlock_igroup;
-> +	}
+Sure.
 
-Otherwise this won't work right
+> 
+>>  /* AMD-V MSRs */
+>>  #define MSR_VM_CR                       0xc0010114
+>> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+>> index 86e3e188c119..de397468b945 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+>> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+>> @@ -602,6 +602,39 @@ union cpuid_0x10_x_edx {
+>>  	unsigned int full;
+>>  };
+>>  
+>> +/*
+>> + * ABMC counters can be configured by writing to L3_QOS_ABMC_CFG.
+> 
+> "ABMC counters are configured by writing to L3_QOS_ABMC_CFG."
 
-> +	if (viommu->ops && viommu->ops->vdevice_alloc)
-> +		vdev = viommu->ops->vdevice_alloc(viommu, idev->dev, virt_id);
-> +	else
-> +		vdev = __iommufd_vdevice_alloc(ucmd->ictx, sizeof(*vdev));
-> +	if (IS_ERR(vdev)) {
-> +		rc = PTR_ERR(vdev);
-> +		goto out_unlock_igroup;
-> +	}
-> +
-> +	vdev->idev = idev;
-> +	vdev->id = virt_id;
-> +	vdev->viommu = viommu;
-> +
-> +	idev->vdev = vdev;
-> +	refcount_inc(&idev->obj.users);
-> +	refcount_inc(&viommu->obj.users);
-> +
-> +	curr = xa_cmpxchg(&viommu->vdevs, virt_id, NULL, vdev, GFP_KERNEL);
-> +	if (curr) {
-> +		rc = xa_err(curr) ? : -EBUSY;
-> +		goto out_abort;
-> +	}
-> +
-> +	cmd->out_vdevice_id = vdev->obj.id;
-> +	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
-> +	if (rc)
-> +		goto out_abort;
-> +	iommufd_object_finalize(ucmd->ictx, &vdev->obj);
-> +	goto out_unlock_igroup;
-> +
-> +out_abort:
-> +	iommufd_object_abort_and_destroy(ucmd->ictx, &vdev->obj);
+Sure.
 
-But be mindful of this abort, it doesn't want to be inside the lock if
-it also gets the lock.. fail_nth should be updated to cover these new
-ioctls to look for tricky things like that
+> 
+>> + * Reading L3_QOS_ABMC_DSC returns the configuration of the counter id
+>> + * specified in L3_QOS_ABMC_CFG.cntr_id.
+> 
+> First and only mention/use of L3_QOS_ABMC_DSC in this series. If this register
+> is not used then references to it can be removed.
 
-But the design looks OK
+Sure.
 
-Jason
+> 
+>> + * @bw_type		: Bandwidth configuration(supported by BMEC)
+> 
+> "configuration(supported" -> "configuration (supported" 
+
+Sure.
+
+> 
+>> + *			  tracked by the @cntr_id.
+>> + * @bw_src		: Bandwidth source (RMID or CLOSID).
+>> + * @reserved1		: Reserved.
+>> + * @is_clos		: @bw_src field is a CLOSID (not an RMID).
+>> + * @cntr_id		: Counter identifier.
+>> + * @reserved		: Reserved.
+>> + * @cntr_en		: Counting enable bit.
+>> + * @cfg_en		: Configuration enable bit.
+>> + *
+>> + * Configuration and counting:
+>> + * cfg_en=0,            : No configuration changes applied.
+> 
+> Can this be expanded? (sidenote: It is taking a long time to get clarity on how
+> to interact with hardware. These incremental cryptic fragments make it difficult
+> to know how to interact with the hardware.)
+> 
+> For example, "No configuration changes applied. Counter can be configured across
+> multiple writes to MSR while @cfg_en=0. Configuration applied when @cfg_en=1."
+> 
+>> + * cfg_en=1, cntr_en=0  : Configure cntr_id and but no counting the events.
+> 
+> hmmm ... still the same (""but no counting the events") strange language I
+> highlighted in V7 ...
+> 
+> I think it will make things easier to understand if similar language is used
+> between the descriptions of the different fields.
+> 
+> "Apply @cntr_id configuration but do not count events." 
+>  
+>> + * cfg_en=1, cntr_en=1  : Configure cntr_id and start counting the events.
+> 
+> "Apply @cntr_id configuration and start counting events." 
+> 
+> Can it be added here which of these settings (or combination of settings) result
+> in counters being reset?
+
+Any change in the configuration will reset the counters.
+
+Little bit lost here. Let me summarize. How about this?
+
+Configuration and counting:
+Counter can be configured across multiple writes to MSR. Configuration
+is applied only when @cfg_en = 1. The event counters will reset when any
+of the configuration is changed.
+cfg_en = 1, cntr_en = 0 : Apply @cntr_id configuration but do not count
+events.
+cfg_en = 1, cntr_en = 1 : Apply @cntr_id configuration and start counting
+events.
+
+
+> 
+>> + */
+>> +union l3_qos_abmc_cfg {
+>> +	struct {
+>> +		unsigned long bw_type  :32,
+>> +			      bw_src   :12,
+>> +			      reserved1: 3,
+>> +			      is_clos  : 1,
+>> +			      cntr_id  : 5,
+>> +			      reserved : 9,
+>> +			      cntr_en  : 1,
+>> +			      cfg_en   : 1;
+>> +	} split;
+>> +	unsigned long full;
+>> +};
+>> +
+>>  void rdt_last_cmd_clear(void);
+>>  void rdt_last_cmd_puts(const char *s);
+>>  __printf(1, 2)
+> 
+> Reinette
+> 
+
+-- 
+Thanks
+Babu Moger
 
