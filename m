@@ -1,89 +1,106 @@
-Return-Path: <linux-kernel+bounces-370307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEBE9A2ADD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:26:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0419A29E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ADF71F22237
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B1D28227B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796A01DFE15;
-	Thu, 17 Oct 2024 17:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748E71E0085;
+	Thu, 17 Oct 2024 16:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="L0Gevzpo"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcpYffaW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9305E1DFDB5;
-	Thu, 17 Oct 2024 17:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4901DFDBC;
+	Thu, 17 Oct 2024 16:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729185960; cv=none; b=rwrznJq896if183++MEaWx5CjWkIYUSYKMDbUSX7HE2Nr2Y9LN0eFgyOydYASwl8uv58zY5ujC5Xj7lEe9IYg7BuXtOrDTXuIkFH614lcxbw1tjpN8EvKXz6SNUsHXeWUaIxilSS7xVaKWN6jDaRXD+oSaIwXAPpjPinOzA2MT4=
+	t=1729184118; cv=none; b=fyi3H2ZEmw2ozoSxKRbqaY9XVO4Gzz3HWKPEiX6OHw8bth3o2oLMKgCFynsAlC5PUBXYGgp+95+J2m3ILlaUu8Ja9TMFgSl6uRElXnYx1b9SMRxhoVDogvv9feBwp7bfva3kOkqbo2frbQMBK2oXBRunqQKw2JpJ76MuxqqRN8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729185960; c=relaxed/simple;
-	bh=oxTupLXSgxbLn39ngHQOrPR9z7y/bIXj7Kei68yHNAM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=IZ7EGhZL6B0C655twwLjyqemPjJ/oZtWVwGI8pf+IdKAbY+O1c+J3s6qv955YiFP9tguJklg7fMqCs96/bmnqhK3pOI+ZIi7ogxexUbF73AzfrOyOPpq3hlBGvgtsfvQ4jpzKrr4WYJYWwtO0chaEb2E6X0fbsG/wOpoaxvoIVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=L0Gevzpo; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1729184074;
-	bh=oxTupLXSgxbLn39ngHQOrPR9z7y/bIXj7Kei68yHNAM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=L0GevzpoDEAMzElBztpL1IWC/IxrvBuA849C4ewpzp9+I63Bjnl8V7oWWsDEi6x4u
-	 WXrb3V16oKlo/eebJBlEyHBU7XvC3VUmG7PzBVRAUR9VOlQ9nJrOZQg1XHxnszu91C
-	 Bv7KsLgC8BHeV1vx5Y1ITmA/7Wz6lNZzOUUmX/bk=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id C754540280; Thu, 17 Oct 2024 09:54:34 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id C5197400C9;
-	Thu, 17 Oct 2024 09:54:34 -0700 (PDT)
-Date: Thu, 17 Oct 2024 09:54:34 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-cc: Catalin Marinas <catalin.marinas@arm.com>, linux-pm@vger.kernel.org, 
-    kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de, 
-    mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-    x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, 
-    vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, 
-    peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, 
-    harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, 
-    misono.tomohiro@fujitsu.com, maobibo@loongson.cn, 
-    joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
-    konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
- smp_cond_load_relaxed()
-In-Reply-To: <87frowr0fo.fsf@oracle.com>
-Message-ID: <a07fb08b-d9d0-c9cc-8e03-3857d0adffdf@gentwo.org>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com> <20240925232425.2763385-2-ankur.a.arora@oracle.com> <Zw5aPAuVi5sxdN5-@arm.com> <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org> <Zw6dZ7HxvcHJaDgm@arm.com> <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
- <Zw6o_OyhzYd6hfjZ@arm.com> <87jze9rq15.fsf@oracle.com> <2c232dc6-6a13-e34b-bdcc-691c966796d4@gentwo.org> <87frowr0fo.fsf@oracle.com>
+	s=arc-20240116; t=1729184118; c=relaxed/simple;
+	bh=1yhSqIrkwoDDD3H433S45ysEdGXUHCZezek1jfBZpok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBoaUV4RWhw9GEyrAjt+c+bpt5vSgRv0PioUECtloWvrKTV1BtGvVlJuKXC+lB9p9lHg3DhyxqfnaocTXIOhDj84qDKB+Du+zBbVGKiPQzXHof+/i0kb5hQWTG+MuFptWDLVn8TI8TjF9TwX9S0/dyFu6QWdEwi7xGnk6aHRLlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcpYffaW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA684C4CEC3;
+	Thu, 17 Oct 2024 16:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729184118;
+	bh=1yhSqIrkwoDDD3H433S45ysEdGXUHCZezek1jfBZpok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CcpYffaW0CzrdKWRnvYQkSoejoNPZQknMzlXmLXUqaevk6GLsmEnZgL+L7ZF5OBl6
+	 9lbpDr9N8Nl67JA8d/JXXVYrsshi+y+dJuYZxlNfSLTz0X4QhvyGA8FNvoUZj1SUUn
+	 ZNUb0nmA76j3edAQ1URifedBL/flbe67Cn5502AOmoFhDt1f7nxwPOsjAE0H4GhZ4D
+	 beTKNC+pFNrSbTqdjFyvx1uvYKhu764uPHhmCDLOT61dsyWT0v3pnn+q3rE+TVAlIB
+	 iF8/tADAHKY8f1MfTieqlaHSIW3LDgBJI1Tu+7EGV+/c1zKX9mjWPsX23MW/Ww0jSj
+	 guxyhYlKyirGQ==
+Date: Thu, 17 Oct 2024 09:55:16 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Sumanth Korikkar <sumanthk@linux.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] CSV/JSON metric thresholds, fix printf modifiers
+Message-ID: <ZxFBdCMFZ50oo-s2@google.com>
+References: <20241016175350.116227-1-irogers@google.com>
+ <172918316032.639809.5792146702013848062.b4-ty@kernel.org>
+ <CAP-5=fWMkF-z5t6-Oz8e8YRuW0rsMg7JXj4vSHqLZFe0y3=sUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWMkF-z5t6-Oz8e8YRuW0rsMg7JXj4vSHqLZFe0y3=sUA@mail.gmail.com>
 
-On Wed, 16 Oct 2024, Ankur Arora wrote:
+On Thu, Oct 17, 2024 at 09:44:08AM -0700, Ian Rogers wrote:
+> On Thu, Oct 17, 2024 at 9:39 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Wed, 16 Oct 2024 10:53:42 -0700, Ian Rogers wrote:
+> >
+> > > Metric thresholds are being computed for CSV and JSON output but not
+> > > displayed. Rename the color that encodes the threshold as enum values
+> > > and use to generate string constants in a CSV column or json
+> > > dictionary value.
+> > >
+> > > Add printf attribute to functions in color.h that could support
+> > > it. Fix bad printf format strings that this detected.
+> > >
+> > > [...]
+> >
+> > Applied to perf-tools-next, thanks!
+> 
+> Sorry for the trouble, could we switch to the v4 series due to issues
+> on hypervisors with not counted events in CSV output missing a column:
+> https://lore.kernel.org/lkml/20241016215139.212939-1-irogers@google.com/
+> The patch set drops the CSV output metric threshold support.
 
-> > The other core will wake our core up by sending an IPI. The IPI will
-> > invoke a scheduler function on our core and the WFE will continue.
->
-> Why? The target core is not sleeping. It is *polling* on a memory
-> address (on arm64, via LDXR; WFE). Ergo an IPI is not needed to tell
-> it that a need-resched bit is set.
+Oops, sorry for missing v4.  And I also noticed a build error on i386.
+I'll drop this for now and push perf-tools-next soon.
 
-The IPI is sent to interrupt the process that is not sleeping. This is
-done so the busy processor can reschedule the currently running process
-and respond to the event.
-
-It does not matter if the core is "sleeping" or not.
-
+Thanks,
+Namhyung
 
 
