@@ -1,368 +1,128 @@
-Return-Path: <linux-kernel+bounces-369219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E2E9A1A7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:08:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4AB9A1A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728F21F25086
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C7E2823BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B2917D36A;
-	Thu, 17 Oct 2024 06:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47FC17C9E9;
+	Thu, 17 Oct 2024 06:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CHrKPkOL"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gkSuFnwq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776E3176FCE;
-	Thu, 17 Oct 2024 06:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354281791ED;
+	Thu, 17 Oct 2024 06:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729145290; cv=none; b=kDmV6s5HfrfGgNnKRVHCS3yrjPerOAIlw1C9mQfx/LXxQT1Dv9pjHOiiWBjb2w8eg13Z++H63MAWarOieVBZSsfgmxX1nd6JNPtVlFsoelM0BZdVOHcfjbu3KKdPbzTKuP9E9C3NoB5KHC3CEAEnouQVhGDPc5VkLGKrEDtPh7g=
+	t=1729145347; cv=none; b=HV1CrHVHO9CGqZ9XZUZMJrQfMUSNRlIT5b1kBksseQ+kXabFrgo5r5yveWsd73CiiC60laptbTuRLkb60QH83LCdxuxxBDfcAc5q4C71ixN8SJri7HZBtNfhm1G+v72m1uX4jzQXpyKCmvcHX7byWZ6YSHWmfcfWqAWeNaWbz9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729145290; c=relaxed/simple;
-	bh=Deqeir7Yq5TZXFU7JwR6pwkJuzsfiylJtg4bNkK1TUU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tticYpYPm32Kvj2TK61Aww5Yc1IcNpvKfFoqbn53uzJS4AQZ0tqEh/sQcN4kzwMJEhPFMJRb/mr+k4vXuRKLiPUhEeTsG3CtYy2eLVT1exrf+Q7ObGC4pZW50XaWzu7VCDA1Ii14rxRG/oG1/6bH6fk81naaaj04OJsoPFd45Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CHrKPkOL; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49H1mifA017438;
-	Thu, 17 Oct 2024 06:08:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=beY2LTJMnO004QPqS
-	f2yZS6lu99iD23mpP6b7ewyyCE=; b=CHrKPkOLPvHNLIo7jK2U2Mc7eGG12uqcj
-	K9hfxi1TK4OKDdkNrhk37j343UJrUrGox5omISLwbP9UypxHqTElxXmwMhckE7qu
-	WYE39ADGCwgetwOOgEySH/Tg9qWz2JLCfelJsGWnjXOuavqc8Fs8oBVLMR1l0fC3
-	NNNNpFrhuy99fszANBIwoD85lofc4hEdim9INjyx0P9MiKlUdlM6M+tsF+ocgFsN
-	yt+8VFLCMcl7tmyhneAFvz6UZmdirEWqYsy7mq2f1mAM8rAdGLtV0ajdSyt2uADb
-	cqKXUPCmLwwUb/xFSGFcydVd70Zyy47Y1SsicVB65tboU/wDBLp1g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42as8a0rta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 06:08:03 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49H61PWE009270;
-	Thu, 17 Oct 2024 06:08:03 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42as8a0rt9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 06:08:03 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49H4wR6c006671;
-	Thu, 17 Oct 2024 06:08:02 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4283es5d2s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 06:08:02 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49H67wQw41091482
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 06:07:58 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C901C2004B;
-	Thu, 17 Oct 2024 06:07:58 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE9FE20043;
-	Thu, 17 Oct 2024 06:07:58 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 17 Oct 2024 06:07:58 +0000 (GMT)
-Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55390)
-	id 2FA4DE03C4; Thu, 17 Oct 2024 08:07:58 +0200 (CEST)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Ricardo B. Marliere" <ricardo@marliere.net>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH v3 2/2] s390/time: Add PtP driver
-Date: Thu, 17 Oct 2024 08:07:49 +0200
-Message-ID: <20241017060749.3893793-3-svens@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241017060749.3893793-1-svens@linux.ibm.com>
-References: <20241017060749.3893793-1-svens@linux.ibm.com>
+	s=arc-20240116; t=1729145347; c=relaxed/simple;
+	bh=zzviSHXex8TPLDdrZJqN5fZayjpTt4dWNyEM/M8atPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQIHX2A5WcZv5n5LFQaryJuuFuD2ucJw4wDBdnvQ8wPYlOO1pSH4rYhx88NsfDX9Il7pVjdf9jfiJWjVnuREa9d9Zoi/DhgNpj8UPja8OEh2ZbQli0FBuAJo8UiX1IJTTo90VAr/tTJuKJjJy8Cno/QN7PpqRTgw3D0WvcjOm7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gkSuFnwq; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729145344; x=1760681344;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zzviSHXex8TPLDdrZJqN5fZayjpTt4dWNyEM/M8atPo=;
+  b=gkSuFnwq4TUUdvmlJ73Fzuif3pEngJO+UlJMq1SUzAen86tCJrOPLwFQ
+   HqUR+iF4FUvlUvGGHgmCPrsZWRAbQHztAkbxC4LTIL2JttFFsH6vE26jx
+   tnfh8fmylKXUdQpcZqukaBi4YcB9NMRjDjaqI3H+I1Ei/Pqf5LYIzPb58
+   2voTL8EyCX5WlluShDlIJ/Ip1/zyvAAH0d1mayGi3EoNtYjG1LXDVhOkr
+   eXOd1RcD7fYQsmrzoWIPCjmyWFuF50Ua5P9gn62kg7bKFbQp9PZ6K1bEU
+   7CYJRoEi5a4JELObz3paxVSuRWZXrCzLq1fHiNsxYA+716iJrrRCxr48H
+   Q==;
+X-CSE-ConnectionGUID: /poa9g1nTYKygCWngMrj/A==
+X-CSE-MsgGUID: hngsHGvETIapa4ejZPSIcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28405746"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28405746"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2024 23:09:03 -0700
+X-CSE-ConnectionGUID: ZzgtjC7GShOjBNwP2TOfKA==
+X-CSE-MsgGUID: +iO2538wT/ymUYtHNPEhZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="83275367"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 16 Oct 2024 23:08:59 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1Jgu-000LnB-24;
+	Thu, 17 Oct 2024 06:08:56 +0000
+Date: Thu, 17 Oct 2024 14:08:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sebastian Fricke <sebastian.fricke@collabora.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Vedang Nagar <quic_vnagar@quicinc.com>
+Subject: Re: [PATCH v4 25/28] media: iris: implement power scaling for vpu2
+ and vpu3
+Message-ID: <202410171314.IZGQN4kN-lkp@intel.com>
+References: <20241014-qcom-video-iris-v4-v4-25-c5eaa4e9ab9e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: b_oXjS86uw1Y8JWR6uRBdknKMXRfMLgj
-X-Proofpoint-ORIG-GUID: em-HTKCbS4JaZibtamG7mmBJcmcOZEnZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410170039
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014-qcom-video-iris-v4-v4-25-c5eaa4e9ab9e@quicinc.com>
 
-Add a small PtP driver which allows user space to get
-the values of the physical and tod clock. This allows
-programs like chrony to use STP as clock source and
-steer the kernel clock. The physical clock can be used
-as a debugging aid to get the clock without any additional
-offsets like STP steering or LPAR offset.
+Hi Dikshita,
 
-Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
----
- MAINTAINERS                   |   6 ++
- arch/s390/include/asm/stp.h   |   1 +
- arch/s390/include/asm/timex.h |   6 ++
- arch/s390/kernel/time.c       |   6 ++
- drivers/ptp/Kconfig           |  11 +++
- drivers/ptp/Makefile          |   1 +
- drivers/ptp/ptp_s390.c        | 129 ++++++++++++++++++++++++++++++++++
- 7 files changed, 160 insertions(+)
- create mode 100644 drivers/ptp/ptp_s390.c
+kernel test robot noticed the following build errors:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7ad507f49324..94793c935e86 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20328,6 +20328,12 @@ F:	Documentation/arch/s390/pci.rst
- F:	arch/s390/pci/
- F:	drivers/pci/hotplug/s390_pci_hpc.c
- 
-+S390 PTP DRIVER
-+M:	Sven Schnelle <svens@linux.ibm.com>
-+L:	linux-s390@vger.kernel.org
-+S:	Supported
-+F:	drivers/ptp/ptp_s390.c
-+
- S390 SCM DRIVER
- M:	Vineeth Vijayan <vneethv@linux.ibm.com>
- L:	linux-s390@vger.kernel.org
-diff --git a/arch/s390/include/asm/stp.h b/arch/s390/include/asm/stp.h
-index 4d74d7e33340..827cb208de86 100644
---- a/arch/s390/include/asm/stp.h
-+++ b/arch/s390/include/asm/stp.h
-@@ -94,5 +94,6 @@ struct stp_stzi {
- int stp_sync_check(void);
- int stp_island_check(void);
- void stp_queue_work(void);
-+bool stp_enabled(void);
- 
- #endif /* __S390_STP_H */
-diff --git a/arch/s390/include/asm/timex.h b/arch/s390/include/asm/timex.h
-index 640901f2fbc3..642fd303ce01 100644
---- a/arch/s390/include/asm/timex.h
-+++ b/arch/s390/include/asm/timex.h
-@@ -93,6 +93,7 @@ extern unsigned char ptff_function_mask[16];
- #define PTFF_QAF	0x00	/* query available functions */
- #define PTFF_QTO	0x01	/* query tod offset */
- #define PTFF_QSI	0x02	/* query steering information */
-+#define PTFF_QPT	0x03	/* query physical clock */
- #define PTFF_QUI	0x04	/* query UTC information */
- #define PTFF_ATO	0x40	/* adjust tod offset */
- #define PTFF_STO	0x41	/* set tod offset */
-@@ -250,6 +251,11 @@ static __always_inline unsigned long tod_to_ns(unsigned long todval)
- 	return ((todval >> 9) * 125) + (((todval & 0x1ff) * 125) >> 9);
- }
- 
-+static __always_inline u128 eitod_to_ns(u128 todval)
-+{
-+	return (todval * 125) >> 9;
-+}
-+
- /**
-  * tod_after - compare two 64 bit TOD values
-  * @a: first 64 bit TOD timestamp
-diff --git a/arch/s390/kernel/time.c b/arch/s390/kernel/time.c
-index 4214901c3ab0..cc60b16a7dd0 100644
---- a/arch/s390/kernel/time.c
-+++ b/arch/s390/kernel/time.c
-@@ -469,6 +469,12 @@ static void __init stp_reset(void)
- 	}
- }
- 
-+bool stp_enabled(void)
-+{
-+	return test_bit(CLOCK_SYNC_HAS_STP, &clock_sync_flags) && stp_online;
-+}
-+EXPORT_SYMBOL(stp_enabled);
-+
- static void stp_timeout(struct timer_list *unused)
- {
- 	queue_work(time_sync_wq, &stp_work);
-diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
-index 604541dcb320..8aaca40cab08 100644
---- a/drivers/ptp/Kconfig
-+++ b/drivers/ptp/Kconfig
-@@ -224,4 +224,15 @@ config PTP_DFL_TOD
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called ptp_dfl_tod.
- 
-+config PTP_S390
-+	tristate "S390 PTP driver"
-+	depends on PTP_1588_CLOCK
-+	depends on S390
-+	help
-+	  This driver adds support for S390 time steering via the PtP
-+	  interface. This works by adding a in-kernel clock delta value,
-+	  which is always added to time values used in the kernel. The PtP
-+	  driver provides the raw clock value without the delta to
-+	  userspace. That way userspace programs like chrony could steer
-+	  the kernel clock.
- endmenu
-diff --git a/drivers/ptp/Makefile b/drivers/ptp/Makefile
-index 68bf02078053..4dd9f35eb0cf 100644
---- a/drivers/ptp/Makefile
-+++ b/drivers/ptp/Makefile
-@@ -21,3 +21,4 @@ obj-$(CONFIG_PTP_1588_CLOCK_MOCK)	+= ptp_mock.o
- obj-$(CONFIG_PTP_1588_CLOCK_VMW)	+= ptp_vmw.o
- obj-$(CONFIG_PTP_1588_CLOCK_OCP)	+= ptp_ocp.o
- obj-$(CONFIG_PTP_DFL_TOD)		+= ptp_dfl_tod.o
-+obj-$(CONFIG_PTP_S390)			+= ptp_s390.o
-diff --git a/drivers/ptp/ptp_s390.c b/drivers/ptp/ptp_s390.c
-new file mode 100644
-index 000000000000..6218983080f8
---- /dev/null
-+++ b/drivers/ptp/ptp_s390.c
-@@ -0,0 +1,129 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * s390 PTP clock driver
-+ *
-+ */
-+
-+#include "ptp_private.h"
-+#include <linux/time.h>
-+#include <asm/stp.h>
-+
-+static struct ptp_clock *ptp_stcke_clock, *ptp_qpt_clock;
-+
-+static int ptp_s390_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static int ptp_s390_adjtime(struct ptp_clock_info *ptp, s64 delta)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static struct timespec64 eitod_to_timespec64(union tod_clock *clk)
-+{
-+	return ns_to_timespec64(eitod_to_ns(clk->eitod - TOD_UNIX_EPOCH));
-+}
-+
-+static struct timespec64 tod_to_timespec64(unsigned long tod)
-+{
-+	return ns_to_timespec64(tod_to_ns(tod - TOD_UNIX_EPOCH));
-+}
-+
-+static int ptp_s390_stcke_gettime(struct ptp_clock_info *ptp,
-+				  struct timespec64 *ts)
-+{
-+	union tod_clock tod;
-+
-+	if (!stp_enabled())
-+		return -EOPNOTSUPP;
-+
-+	store_tod_clock_ext(&tod);
-+	*ts = eitod_to_timespec64(&tod);
-+	return 0;
-+}
-+
-+static int ptp_s390_qpt_gettime(struct ptp_clock_info *ptp,
-+				struct timespec64 *ts)
-+{
-+	unsigned long tod;
-+
-+	ptff(&tod, sizeof(tod), PTFF_QPT);
-+	*ts = tod_to_timespec64(tod);
-+	return 0;
-+}
-+
-+static int ptp_s390_settime(struct ptp_clock_info *ptp,
-+			    const struct timespec64 *ts)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static int s390_arch_ptp_get_crosststamp(ktime_t *device_time,
-+					 struct system_counterval_t *system_counter,
-+					 void *ctx)
-+{
-+	union tod_clock clk;
-+
-+	store_tod_clock_ext(&clk);
-+	*device_time = ns_to_ktime(tod_to_ns(clk.tod - TOD_UNIX_EPOCH));
-+	system_counter->cycles = clk.tod;
-+	system_counter->cs_id = CSID_S390_TOD;
-+	return 0;
-+}
-+
-+static int ptp_s390_getcrosststamp(struct ptp_clock_info *ptp,
-+				   struct system_device_crosststamp *xtstamp)
-+{
-+	if (!stp_enabled())
-+		return -EOPNOTSUPP;
-+	return get_device_system_crosststamp(s390_arch_ptp_get_crosststamp, NULL, NULL, xtstamp);
-+}
-+
-+static struct ptp_clock_info ptp_s390_stcke_info = {
-+	.owner		= THIS_MODULE,
-+	.name		= "s390 STCKE Clock",
-+	.max_adj	= 0,
-+	.adjfine	= ptp_s390_adjfine,
-+	.adjtime	= ptp_s390_adjtime,
-+	.gettime64	= ptp_s390_stcke_gettime,
-+	.settime64	= ptp_s390_settime,
-+	.getcrosststamp = ptp_s390_getcrosststamp,
-+};
-+
-+static struct ptp_clock_info ptp_s390_qpt_info = {
-+	.owner		= THIS_MODULE,
-+	.name		= "s390 Physical Clock",
-+	.max_adj	= 0,
-+	.adjfine	= ptp_s390_adjfine,
-+	.adjtime	= ptp_s390_adjtime,
-+	.gettime64	= ptp_s390_qpt_gettime,
-+	.settime64	= ptp_s390_settime,
-+};
-+
-+static __init int ptp_s390_init(void)
-+{
-+	ptp_stcke_clock = ptp_clock_register(&ptp_s390_stcke_info, NULL);
-+	if (IS_ERR(ptp_stcke_clock))
-+		return PTR_ERR(ptp_stcke_clock);
-+
-+	ptp_qpt_clock = ptp_clock_register(&ptp_s390_qpt_info, NULL);
-+	if (IS_ERR(ptp_qpt_clock)) {
-+		ptp_clock_unregister(ptp_stcke_clock);
-+		return PTR_ERR(ptp_qpt_clock);
-+	}
-+	return 0;
-+}
-+
-+static __exit void ptp_s390_exit(void)
-+{
-+	ptp_clock_unregister(ptp_qpt_clock);
-+	ptp_clock_unregister(ptp_stcke_clock);
-+}
-+
-+module_init(ptp_s390_init);
-+module_exit(ptp_s390_exit);
-+
-+MODULE_AUTHOR("Sven Schnelle <svens@linux.ibm.com>");
-+MODULE_DESCRIPTION("s390 Physical/STCKE Clock PtP Driver");
-+MODULE_LICENSE("GPL");
+[auto build test ERROR on 67cefecf2a039b9ed0030b9213ceafcd45e6f9e3]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dikshita-Agarwal/dt-bindings-media-Add-video-support-for-QCOM-SM8550-SoC/20241014-171950
+base:   67cefecf2a039b9ed0030b9213ceafcd45e6f9e3
+patch link:    https://lore.kernel.org/r/20241014-qcom-video-iris-v4-v4-25-c5eaa4e9ab9e%40quicinc.com
+patch subject: [PATCH v4 25/28] media: iris: implement power scaling for vpu2 and vpu3
+config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20241017/202410171314.IZGQN4kN-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241017/202410171314.IZGQN4kN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410171314.IZGQN4kN-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arm-linux-gnueabi-ld: drivers/media/platform/qcom/iris/iris_vpu3.o: in function `iris_vpu3_calculate_frequency':
+>> iris_vpu3.c:(.text.iris_vpu3_calculate_frequency+0x114): undefined reference to `__aeabi_ldivmod'
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
