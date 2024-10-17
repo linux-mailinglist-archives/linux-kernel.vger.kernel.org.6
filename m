@@ -1,182 +1,206 @@
-Return-Path: <linux-kernel+bounces-369633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEE69A2017
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:34:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A62D9A201E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0DC1C247C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475E42835BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26401DAC9B;
-	Thu, 17 Oct 2024 10:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C171D95B5;
+	Thu, 17 Oct 2024 10:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fitoWWqw"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="G98204VL"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839441D966B;
-	Thu, 17 Oct 2024 10:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EB41D270B;
+	Thu, 17 Oct 2024 10:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729161275; cv=none; b=cvE/e+DHwojIUBmWLnMaijEdFYQ47NAjJf+V2ue3qHAceE5CWyvbWlAOYfGXyx2Y0/wZhrAEpg3+cp9mpOOLtrGmNMDtLWde6pcj5ZOXsWBYyIwB80g68utrAfDUosuVUSmczi2zGpES3gm3wBCFVvG7cbu7oNGQy1BhFv+7MF8=
+	t=1729161371; cv=none; b=b5qMUd8VDfii0vhK+UL8g3LTJfV8qo69+2ygIesJsji/ymncV09mb41inc6c8fJF+LptDyNe07ypfJ9+PRkm0ObTlC+ujIofTmqnnBtyIuIj98/Yc555oB4fMMtlpXmPO1Ewih8YKaf0qmLozdO5kz4apsaGH9rg8f/LOJLfn/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729161275; c=relaxed/simple;
-	bh=2HKS+YmD5B2Dly0sLQmjE7gavsagPyykmQJ+lhyDz5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTrvuRdvKqrSLfKw5FnHIF/BGl1OkXl6nxcYBuGh+uFqkiv0iPnNvw3a/myBaWJWEeJq71ouOgLjf37OA95UsbvgnbHMy2toxW08QKGc6SZ5t2cuOP/DDR2IRRybKSX2ZBmWrreiFKbyoS5W4dIr8kzr7fGOGDVwZSGPpa9jris=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fitoWWqw; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso111795766b.1;
-        Thu, 17 Oct 2024 03:34:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729161272; x=1729766072; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RI5Duu0ie0BXr5/GSCqGUartM+TPyPW+SIijWcsO3Pg=;
-        b=fitoWWqwV2dKskn7T4b+rzk4XaaruQYNJfE4+39RQRKa/xt/GTm3GkZ9RCK8Decqcq
-         GJjkLxJeD+V4fkV/wnM+x7Qf0QHFFvbJWxylW9RdfwRgpAagZluOYRz5X6MW1zYxOOxs
-         iiUX6KeLY6ro9Jg2TSlPTTJWulVmLUPFzLs8O34rDBt05ec2ZUU6KXhJpWcFfqNKqdbZ
-         zxQMGyOi1nsCueMCNChNxhlRLbnvW8/sDFzi7AxP6Q2t4GmFnd1n7q2kMfoyHVNxAB+r
-         TbMTbXLQEQugrxR2rHMvv5ImwTOWVPfG4ZnSYVP6jHWp2TahJdjxZ/2MxESJCQk6aQC0
-         xI0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729161272; x=1729766072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RI5Duu0ie0BXr5/GSCqGUartM+TPyPW+SIijWcsO3Pg=;
-        b=dGIRopKhodWDSFkRobsN3k7ZD30pG8tXO3wu9YgQPCXxTJz/8thT57df90ZNZUQSuD
-         We7aspxA7a6t8ZyG+5urvqTfz+sEUgPpWChjQaCQNCP5ENReLIdG14j/uJN2koFSmckS
-         PuUHRO91P2dHc5qc3thJ3QuY1mjr1ayno9VudIspLEeP2JDR41mqYpPYLYnBuSK4WRhK
-         nRiACt/TweBTxxe4hR+37lAfY9j7vrXqM5rzdq4DdmThopKXYvbwj3irGGJiyrMC2xW8
-         hu4UoPgawGYZOit3zOtkt65ZZfwCbFRdccvZxQUs77Tw+BWQ8zSMbSRfcIRkyHtp8fTL
-         A4XA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNOBdItzJtCR8QN+dnakKlg+dNSJPf6xhPdifclGTj6qKKXoXI2krwQj5lTmJQxjV0eUoE7mVe@vger.kernel.org, AJvYcCVvr+oMhh2FiinQIJ8IUOup4pkFnrj0DVdW5Sub5ZJGz4al29JpmAsaL3BFi+2s89mdzvt2WQlQHyGEXsc=@vger.kernel.org, AJvYcCXbgYL9F2YzOI+7HuFiMWxWNf4uMbss75BVM+e+1QZdUAjgzIsSHD6vaB/C0r0z5DL6ZzeREFGTsgoUqGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOyOFxNgLQylr4ZHJ+EobmkOkY2mbnLUEWUDjA0NNnbxLK38ba
-	HafhV64U12CtbyvJ0/QygS9QJsWducVABpbHJHAVKCCKzBShEmzV
-X-Google-Smtp-Source: AGHT+IHRVOJYobAlUFIv1wiiXYcuRBS4ZuRqxfY4PRApRdzrHhuzQvlH24VlwuZQCRC6AMhLM/PzzQ==
-X-Received: by 2002:a17:907:930d:b0:a9a:dac:2ab9 with SMTP id a640c23a62f3a-a9a0dac2ec0mr1424435566b.42.1729161271476;
-        Thu, 17 Oct 2024 03:34:31 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29718b84sm282176466b.29.2024.10.17.03.34.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Oct 2024 03:34:30 -0700 (PDT)
-Message-ID: <48d9f9b4-8b28-f24b-c0bd-d899c59bd247@gmail.com>
-Date: Thu, 17 Oct 2024 12:34:28 +0200
+	s=arc-20240116; t=1729161371; c=relaxed/simple;
+	bh=bN0ynZ5VvEebxpXgXh2TCBbbaoPHNbGQrJn45V3ZuV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZFzQ70O68clmj1Sq71U3ePTYb4KfnUsNDGt1YnaKzJ2yIWvK1tsyticTAu7Y1IVFuooBVGoHL/UC5CnSJ2iIQrHV42zQofn8q0wn/sRUeHSEJ1V0eVT0KUNyGGRewiN+unMGnv4kQN92VgRryFBH2cJJGs5s/VerVOCr5K+c/n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=G98204VL; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ADEE91BF204;
+	Thu, 17 Oct 2024 10:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729161360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FU3ajgfKVQdp/DGYqfIoFwgjGz2NDpydxrXXIn2bE1U=;
+	b=G98204VLPKaAcWsavGd30rRwqEypallNrziTcStzdHkRWaKtaMkSoHfpTQYq6rlY1nQ9AX
+	oA97FMVpRw7r7fNmacsDX2Wo3haxFqhvQGZwRhHfs5DmGTcNPCPk1gnmvMdodkgnJs/8Lv
+	yOb4mGFH/6qKarFgC398y2e6MV1wuOtFtUUX3vDEzXCNrbPV8jmIf06Fjrcs9BR4K6Us/H
+	eRuyPpFGdEVEsDn09l0eqt0bqDUEJCdA6E269M8MKpWpK2iNhfq+wr2m+KhyJWNU9x9sS/
+	hY8egc0q6dio7a5KWPfC6PoqxbjxHxru/zYSduyYqpE+moqvOJ0piu8KKv2Ozw==
+Date: Thu, 17 Oct 2024 12:35:57 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Kyle Swenson <kyle.swenson@est.tech>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, Dent Project
+ <dentproject@linuxfoundation.org>, "kernel@pengutronix.de"
+ <kernel@pengutronix.de>
+Subject: Re: [PATCH net-next 00/12] Add support for PSE port priority
+Message-ID: <20241017123557.68189d5b@kmaincent-XPS-13-7390>
+In-Reply-To: <20241015114352.2034b84a@kmaincent-XPS-13-7390>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+	<ZwaLDW6sKcytVhYX@p620.local.tld>
+	<20241009170400.3988b2ac@kmaincent-XPS-13-7390>
+	<ZwbAYyciOcjt7q3e@est-xps15>
+	<ZwdpQRRGst1Z0eQE@pengutronix.de>
+	<20241015114352.2034b84a@kmaincent-XPS-13-7390>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 07/13] media: s5p-jpeg: prevent buffer overflows
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
- Hans Verkuil <hans.verkuil@cisco.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, stable@vger.kernel.org
-References: <cover.1729074076.git.mchehab+huawei@kernel.org>
- <16ccf3d588665a5a0dda91cbb04374d6aea99ca6.1729074076.git.mchehab+huawei@kernel.org>
-Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <16ccf3d588665a5a0dda91cbb04374d6aea99ca6.1729074076.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hi Mauro,
+On Tue, 15 Oct 2024 11:43:52 +0200
+Kory Maincent <kory.maincent@bootlin.com> wrote:
 
-On 10/16/24 12:22, Mauro Carvalho Chehab wrote:
-> The current logic allows word to be less than 2. If this happens,
-> there will be buffer overflows. Add extra checks to prevent it.
-> 
-> While here, remove an unused word = 0 assignment.
-> 
-> Fixes: 6c96dbbc2aa9 ("[media] s5p-jpeg: add support for 5433")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->   .../media/platform/samsung/s5p-jpeg/jpeg-core.c | 17 +++++++++++------
->   1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c
-> index d2c4a0178b3c..1db4609b3557 100644
-> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c
-> @@ -775,11 +775,14 @@ static void exynos4_jpeg_parse_decode_h_tbl(struct s5p_jpeg_ctx *ctx)
->   		(unsigned long)vb2_plane_vaddr(&vb->vb2_buf, 0) + ctx->out_q.sos + 2;
->   	jpeg_buffer.curr = 0;
->   
-> -	word = 0;
-> -
->   	if (get_word_be(&jpeg_buffer, &word))
->   		return;
-> -	jpeg_buffer.size = (long)word - 2;
-> +
-> +	if (word < 2)
-> +		jpeg_buffer.size = 0;
-> +	else
-> +		jpeg_buffer.size = (long)word - 2;
-> +
->   	jpeg_buffer.data += 2;
->   	jpeg_buffer.curr = 0;
->   
-> @@ -1058,6 +1061,7 @@ static int get_word_be(struct s5p_jpeg_buffer *buf, unsigned int *word)
->   	if (byte == -1)
->   		return -1;
->   	*word = (unsigned int)byte | temp;
-> +
->   	return 0;
->   }
->   
-> @@ -1145,7 +1149,7 @@ static bool s5p_jpeg_parse_hdr(struct s5p_jpeg_q_data *result,
->   			if (get_word_be(&jpeg_buffer, &word))
->   				break;
->   			length = (long)word - 2;
-> -			if (!length)
-> +			if (length <= 0)
->   				return false;
->   			sof = jpeg_buffer.curr; /* after 0xffc0 */
->   			sof_len = length;
-> @@ -1176,7 +1180,7 @@ static bool s5p_jpeg_parse_hdr(struct s5p_jpeg_q_data *result,
->   			if (get_word_be(&jpeg_buffer, &word))
->   				break;
->   			length = (long)word - 2;
-> -			if (!length)
-> +			if (length <= 0)
->   				return false;
->   			if (n_dqt >= S5P_JPEG_MAX_MARKER)
->   				return false;
-> @@ -1189,7 +1193,7 @@ static bool s5p_jpeg_parse_hdr(struct s5p_jpeg_q_data *result,
->   			if (get_word_be(&jpeg_buffer, &word))
->   				break;
->   			length = (long)word - 2;
-> -			if (!length)
-> +			if (length <= 0)
->   				return false;
->   			if (n_dht >= S5P_JPEG_MAX_MARKER)
->   				return false;
-> @@ -1214,6 +1218,7 @@ static bool s5p_jpeg_parse_hdr(struct s5p_jpeg_q_data *result,
->   			if (get_word_be(&jpeg_buffer, &word))
->   				break;
->   			length = (long)word - 2;
-> +			/* No need to check underflows as skip() does it  */
->   			skip(&jpeg_buffer, length);
->   			break;
->   		}
+> > Policy Variants and Implementation
+> >=20
+> > In cases where we are discussing prioritization, we are fundamentally
+> > talking about over-provisioning. This typically means that while a devi=
+ce
+> > advertises a certain maximum per-port power capacity (e.g., 95W), the t=
+otal
+> > system power budget (e.g., 300W) is insufficient to supply maximum powe=
+r to
+> > all ports simultaneously. This is often due to various system limitatio=
+ns,
+> > and if there were no power limits, prioritization wouldn't be necessary.
+> >=20
+> > The challenge then becomes how to squeeze more Powered Devices (PDs) on=
+to
+> > one PSE system. Here are two methods for over-provisioning:
+> >=20
+> > 1. Static Method:
+> > =20
+> >    This method involves distributing power based on PD classification. =
+It=E2=80=99s
+> >    straightforward and stable, with the software (probably within the P=
+SE
+> >    framework) keeping track of the budget and subtracting the power
+> > requested by each PD=E2=80=99s class.=20
+> > =20
+> >    Advantages: Every PD gets its promised power at any time, which
+> > guarantees reliability.=20
+> >=20
+> >    Disadvantages: PD classification steps are large, meaning devices re=
+quest
+> >    much more power than they actually need. As a result, the power supp=
+ly
+> > may only operate at, say, 50% capacity, which is inefficient and wastes
+> > money.
+> >=20
+> > 2. Dynamic Method: =20
+> >=20
+> >    To address the inefficiencies of the static method, vendors like
+> > Microchip have introduced dynamic power budgeting, as seen in the PD692=
+x0
+> > firmware. This method monitors the current consumption per port and
+> > subtracts it from the available power budget. When the budget is exceed=
+ed,
+> > lower-priority ports are shut down. =20
+> >=20
+> >    Advantages: This method optimizes resource utilization, saving costs.
+> >=20
+> >    Disadvantages: Low-priority devices may experience instability. A
+> > possible improvement could involve using LLDP protocols to dynamically
+> > configure power limits per port, thus allowing us to reduce power on
+> > over-consuming ports rather than shutting them down entirely. =20
+>=20
+> Indeed we will have only static method for PSE controllers not supporting
+> system power budget management like the TPS2388x or LTC426.
+> Both method could be supported for "smart" PSE controller like PD692x0.
+>=20
+> Let's begin with the static method implementation in the PSE framework for
+> now. It will need the power domain notion you have talked about.
 
-Seems reasonable.
+While developing the software support for port priority in static method, I
+faced an issue.
 
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Supposing we are exceeding the power budget when we plug a new PD.
+The port power should not be enabled directly or magic smoke will appear.
+So we have to separate the detection part to know the needs of the PD from =
+the
+power enable part.
 
--- 
-Best regards,
-Jacek Anaszewski
+Currently the port power is enabled on the hardware automatically after the
+detection process. There is no way to separate power port process and detec=
+tion
+process with the PD692x0 controller and it could be done on the TPS23881 by
+configuring it to manual mode but: "The use of this mode is intended for sy=
+stem
+diagnostic purposes only in the event that ports cannot be powered in
+accordance with the IEEE 802.3bt standard from semiauto or auto modes."
+Not sure we want that.
+
+So in fact the workaround you talked about above will be needed for the two=
+ PSE
+controllers.
+=20
+> Both methods have their pros and cons. Since the dynamic method is not al=
+ways
+> desirable, and if there's no way to disable it in the PD692x0's firmware,=
+ one
+> potential workaround could be handling the budget in software and dynamic=
+ally
+> setting per-port limits. For instance, with a total budget of 300W and un=
+used
+> ports, we could initially set 95W limits per port. As high-priority PDs (=
+e.g.,
+> three 95W devices) are powered, we could dynamically reduce the power lim=
+it on
+> the remaining ports to 15W, ensuring that no device exceeds that
+> classification threshold.
+
+We would set port overcurrent limit for all unpowered ports when the power
+budget available is less than max PI power 100W as you described.
+If a new PD plugged exceed the overcurrent limit then it will raise an inte=
+rrupt
+and we could deal with the power budget to turn off low priority ports at t=
+hat
+time.=20
+
+Mmh in fact I could not know if the overcurrent event interrupt comes from a
+newly plugged PD or not.
+
+An option: When we get new PD device plug interrupt event, we wait the end =
+of
+classification time (Tpon 400ms) and read the interrupt states again to kno=
+w if
+there is an overcurrent or not on the port.
+
+What do you think?
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
