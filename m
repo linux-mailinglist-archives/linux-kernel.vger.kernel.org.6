@@ -1,81 +1,75 @@
-Return-Path: <linux-kernel+bounces-370630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5FE9A2FDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:35:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0E89A2FDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC851C209E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2CB1F22BB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352561D5CCF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA161D63C8;
 	Thu, 17 Oct 2024 21:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W12ayIYR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xhldz94m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A7A1D5CE7;
-	Thu, 17 Oct 2024 21:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE081D12EA
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 21:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729200898; cv=none; b=phUuZ5ucMlE7Pxmvv4fMbNouTdByLD01mgmWGN6v0EfGnfyEdHT5GtPWOgb8tAoKRs6ifAk9eUHo0Rb2yUHTO4R2+k29EOu3X0jAv8sbV1wrHw96iKU23xeDHFhcjoijuXAfwuhDRDKAviFjPukoHU4gctyTuNnMHqQ3J8pHw0o=
+	t=1729200899; cv=none; b=HGxTcyLIFzsO3Of2f2hkI4MBKPbkG5svE53GiXZAMvkDbSmyil5RGeOIIgQvfy/1kqSRoIplz4zWFRsUUjP0H/ms515VvDM7PAWV42JdaYZOiKy6nAE7VmqaDfU/NtB9TEJyMBR+B/rNmQamGzmMGfxKctW36cUOy1UIpWp6dnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729200898; c=relaxed/simple;
-	bh=xGsL5XIxEekvC5G0mKLGSSS+iQcB9KWvXvXMx2Sz9vc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BdZ/zgHE3kPAGEIr4cmhUHYL3XrUGmRx6HYgZXGk9BHfQXBnOslI8komqzbwOwBofOCHZMo3euMv5zNsSUep+64boCaXFQK0+djdwDOBKo35zTXvFir9/aUIKZ49BXZ4w54FEQBXH2d/UtcbXmDnb583/zNZkZpqP5JIW317Qe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W12ayIYR; arc=none smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1729200899; c=relaxed/simple;
+	bh=48YG+JGTHE3S5/27NawYLVVHlS4dCY4Gc+EKzKTt1sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pVaKMqLcOwyytXQgbR496Vu6NFDAAAivAhv+2uy3gL0g9XZCNBqDmDN53k/fc2kKmMM0dcsNjEEsDpBNo3yUZxikt3E+Ovi/ZPy2Odq2q2likfrCdf7vtELfOZ41o1LS2cz3GIXFw3+EH7uQDmFuqIQISs5QdQQEwl9SPJAc1ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xhldz94m; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729200895; x=1760736895;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xGsL5XIxEekvC5G0mKLGSSS+iQcB9KWvXvXMx2Sz9vc=;
-  b=W12ayIYR4OCcgcU0PzfpdMABSBNXh5vHKesq75g+2GiyxqN2jHHIN5ZR
-   OterShU/HyAdJs4HD/kQzfx1N+uS7EKy/GkJSqVVKgj4uX0os9k6WGxZI
-   IVP+c/NOcqCaXIJD7kIxi/pVLXc9bdTABkvqj9uoEJQbKH3JHpZm4jOls
-   whEs6aod+3INKIUdCd3/XzGpn/rSJzyrRQa2KmiACql2D6F5RFL9yYteP
-   Rr4WcUG/H6sObFv0muoo2CTSvSVJAcDOU7OenAf9XtRV5Wy5Us7e8Rr3k
-   HWFcCFUJkWmcWt9HVUewKwEfRIfTCHodE4lAvSCuPjy0suX90udhn84r4
+  t=1729200893; x=1760736893;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=48YG+JGTHE3S5/27NawYLVVHlS4dCY4Gc+EKzKTt1sI=;
+  b=Xhldz94m8OADyCn7Yg7NEFlW9a2++gxvDxSgGJJ8IgVYNVVD6a9Y0EDV
+   WiZlnSY+/qSsxCm70eGuX6e/5j65HlWhttPFLmk+wThEwfOjnhfqrrfs/
+   84+GSHmZ2wwug6j3ag1iKwW/0qYFqoSf6WFbRHAByfDwTeF5TYWXpnwy9
+   coyda9mU3uDMRjQMY4iYCc78y7VRy/kJs8lxC9uqQoKcXSQLrG+mRpmY+
+   C7rd5sfJCtRqxVSVAOFuK4kTROinjNc5FPSWKP6V1BaPC9yQMPeP7+d2J
+   QtlUABfEQ5LHAxPFKLdzWWLu5iRMcRgRka4cdd9XKj6MHh/fLOa7AiAjQ
    g==;
-X-CSE-ConnectionGUID: D2QGCCs4Tb+W0x8feUlPuA==
-X-CSE-MsgGUID: Xi0UVl5GShyEnJxzeU/yag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28153947"
-X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="28153947"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 14:34:55 -0700
-X-CSE-ConnectionGUID: gTSFiqAUSEG5Z/jbnNq7FQ==
-X-CSE-MsgGUID: VDgd6iYYQaKGQ00RkGM8Ew==
+X-CSE-ConnectionGUID: Hq4+JbTdQpWx6/opg1vIGw==
+X-CSE-MsgGUID: 4ETL3OXwSqKo/QwyMTbO/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39257441"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39257441"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 14:34:53 -0700
+X-CSE-ConnectionGUID: QCA6gA4EQYGs05LFkrlJdg==
+X-CSE-MsgGUID: rYiiZD8rSwulP5cEu4Xizg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,211,1725346800"; 
-   d="scan'208";a="83313101"
+   d="scan'208";a="83755207"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 17 Oct 2024 14:34:51 -0700
+  by orviesa004.jf.intel.com with ESMTP; 17 Oct 2024 14:34:51 -0700
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1t1Y8u-000MyB-2w;
+	id 1t1Y8u-000My5-2f;
 	Thu, 17 Oct 2024 21:34:48 +0000
-Date: Fri, 18 Oct 2024 05:34:35 +0800
+Date: Fri, 18 Oct 2024 05:34:41 +0800
 From: kernel test robot <lkp@intel.com>
-To: Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	rickard.andersson@axis.com, kernel@axis.com,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>
-Subject: Re: [PATCH v3 2/2] iio: light: Add support for TI OPT4060 color
- sensor
-Message-ID: <202410180508.XPNXNSLX-lkp@intel.com>
-References: <20241015143713.2017626-3-perdaniel.olsson@axis.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20241015 17/18]
+ ./usr/include/linux/if_arp.h:118:33: error: field 'arp_pa' has incomplete
+ type
+Message-ID: <202410180511.pR0VdibP-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,158 +78,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241015143713.2017626-3-perdaniel.olsson@axis.com>
 
-Hi Per-Daniel,
+Hi Gustavo,
 
-kernel test robot noticed the following build errors:
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
-[auto build test ERROR on eca631b8fe808748d7585059c4307005ca5c5820]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Per-Daniel-Olsson/dt-bindings-iio-light-Document-TI-OPT4060-RGBW-sensor/20241015-224128
-base:   eca631b8fe808748d7585059c4307005ca5c5820
-patch link:    https://lore.kernel.org/r/20241015143713.2017626-3-perdaniel.olsson%40axis.com
-patch subject: [PATCH v3 2/2] iio: light: Add support for TI OPT4060 color sensor
-config: um-randconfig-r113-20241017 (https://download.01.org/0day-ci/archive/20241018/202410180508.XPNXNSLX-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410180508.XPNXNSLX-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241015
+head:   d64af418459145b7d8eb94cd300fb4b7d2659a3c
+commit: f04e61e1c69991559f5589080462320bf772499d [17/18] uapi: net: arp: Avoid -Wflex-array-member-not-at-end warnings
+config: x86_64-buildonly-randconfig-002-20241017 (https://download.01.org/0day-ci/archive/20241018/202410180511.pR0VdibP-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410180511.pR0VdibP-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410180508.XPNXNSLX-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410180511.pR0VdibP-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   In file included from drivers/iio/light/opt4060.c:11:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-                                                     ^
-   In file included from drivers/iio/light/opt4060.c:11:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-                                                     ^
-   In file included from drivers/iio/light/opt4060.c:11:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsb(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsw(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsl(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesb(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesw(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesl(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
->> drivers/iio/light/opt4060.c:835:10: error: label at end of compound statement: expected statement
-           default:
-                   ^
-                    ;
-   12 warnings and 1 error generated.
-
-
-vim +835 drivers/iio/light/opt4060.c
-
-   807	
-   808	static int opt4060_write_event(struct iio_dev *indio_dev,
-   809				       const struct iio_chan_spec *chan,
-   810				       enum iio_event_type type,
-   811				       enum iio_event_direction dir,
-   812				       enum iio_event_info info,
-   813				       int val, int val2)
-   814	{
-   815		struct opt4060_chip *chip = iio_priv(indio_dev);
-   816	
-   817		switch (info) {
-   818		case IIO_EV_INFO_VALUE:
-   819			if (chan->type == IIO_INTENSITY && type == IIO_EV_TYPE_THRESH) {
-   820				u32 th_lo, th_hi;
-   821	
-   822				if (opt4060_get_thresholds(chip, &th_lo, &th_hi))
-   823					return -EFAULT;
-   824				if (dir == IIO_EV_DIR_FALLING)
-   825					th_lo = val;
-   826				else if (dir == IIO_EV_DIR_RISING)
-   827					th_hi = val;
-   828				if (opt4060_set_thresholds(chip, th_lo, th_hi))
-   829					return -EFAULT;
-   830				return 0;
-   831			}
-   832			break;
-   833		case IIO_EV_INFO_PERIOD:
-   834			return opt4060_write_ev_period(chip, val, val2);
- > 835		default:
-   836		}
-   837		return -EINVAL;
-   838	}
-   839	
+   In file included from <command-line>:
+>> ./usr/include/linux/if_arp.h:118:33: error: field 'arp_pa' has incomplete type
+     118 |         struct sockaddr_legacy  arp_pa;         /* protocol address              */
+         |                                 ^~~~~~
+>> ./usr/include/linux/if_arp.h:119:33: error: field 'arp_ha' has incomplete type
+     119 |         struct sockaddr_legacy  arp_ha;         /* hardware address              */
+         |                                 ^~~~~~
+>> ./usr/include/linux/if_arp.h:121:33: error: field 'arp_netmask' has incomplete type
+     121 |         struct sockaddr_legacy  arp_netmask;    /* netmask (only for proxy arps) */
+         |                                 ^~~~~~~~~~~
+   ./usr/include/linux/if_arp.h:126:33: error: field 'arp_pa' has incomplete type
+     126 |         struct sockaddr_legacy  arp_pa;         /* protocol address              */
+         |                                 ^~~~~~
+   ./usr/include/linux/if_arp.h:127:33: error: field 'arp_ha' has incomplete type
+     127 |         struct sockaddr_legacy  arp_ha;         /* hardware address              */
+         |                                 ^~~~~~
 
 -- 
 0-DAY CI Kernel Test Service
