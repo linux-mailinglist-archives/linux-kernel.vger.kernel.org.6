@@ -1,87 +1,102 @@
-Return-Path: <linux-kernel+bounces-370187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 973CA9A2928
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C449A292B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534B72868FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:39:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8A9282BF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 16:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAA21DF99D;
-	Thu, 17 Oct 2024 16:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123581DF738;
+	Thu, 17 Oct 2024 16:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2+EarCM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBE6ED0f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0139E1DF96A;
-	Thu, 17 Oct 2024 16:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7351DF727;
+	Thu, 17 Oct 2024 16:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729183162; cv=none; b=sGf9Zd1TYA9TY952x7NGlyBnosTX21FCzLizZ1S36kh1m6TR6KuUCTc3GLEi7W4i4Dsv120gBoxw5BeFVngZ8nDbf0GaZTV8OjQChXwv3XIZGCB69iYXS12bbVPdPR9SvtsHP27dt9Rm7YF7g6KSjrrxv3U63p7iEhcnkwkspIM=
+	t=1729183186; cv=none; b=dslF09LE8/zh/0pF/iMSKSszti7Npyl+2Mb9MoWfRZHVVtXIPPP3G3NU7OEnEfFs1gBzF9Z6BPLRFnMsYEXFIMzRr6hJmOiFNbScvT6/Ajt2Ut9OM4Ag4rM56soRxwFwnwRqVfmGR/z7w4bfSsRnh2JMJIIzPsT1uu6dTZTjCVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729183162; c=relaxed/simple;
-	bh=cOKKWhh4cH54ijyTYF/dhdvlBiofHanqyemxRApam/g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mOKnh83vjJNAuKvIQcUtj+DRxu7QVCBsbuMfZtc9YirQni/StK0CIM88G8ai3AMODogNYz3reXaKs8Gi+jQODvHNj3mj1KJ94cz1jIoQA65AhXRBVjB4sLH1vG4gr4iy+3IFCiJlMxtVwF3XVAI/KJFivSFaHTUocdKbgVUdKjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2+EarCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D34C4CED0;
-	Thu, 17 Oct 2024 16:39:21 +0000 (UTC)
+	s=arc-20240116; t=1729183186; c=relaxed/simple;
+	bh=o4qSJBepvvbVGnVs0fleFT15etsdqBjCksHaXu9qaSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZhL/L8aGTpSh4WuAyXz8P17GkDd3/Cmkr52R/ZNIzDPH2lfbPaoyKL3PCAC6fus1BbVaNnfBBPFFi4PVEhSJeda0fCnUONkngE/QMLWoVCkQYWZHtNNPEMiBZP41akoKiE9jM/R19R2yczfDXDCYKpOWgnuXqCWWveKjq3v8fLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBE6ED0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B72C4CEC3;
+	Thu, 17 Oct 2024 16:39:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729183161;
-	bh=cOKKWhh4cH54ijyTYF/dhdvlBiofHanqyemxRApam/g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=q2+EarCMJB8qYHH0x5PU3mu7w8XLt1gZYteP8OI3HbJfooSJBc+fxWZEvRYSBu8Qr
-	 nu0dkZGzpTqw4bSlMIXI/4S+YyT0DCSkUUbh5Auc4TLkVv9YxK580ujKMKgnusSK8V
-	 bRAuTIVngcVYablwOdIk6LjaK3oOg0feJ9CBDQ4Qjkg2VyfPB7n/brG1ZipbFmCXVS
-	 grvoyIFelNqUbbrsewgSGkBXxzsecYzqAzvGm6GyC1al9C53Rlbs5jymJqO/QPS3aQ
-	 UeT/sWRQ7my+7v1kF81yZsWFS4qqDtV5onH3etDhwKMY9UjFOKBg2D/bNAt4SdXsze
-	 WAZDX89s1VC3w==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
- Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
- James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
- German Gomez <german.gomez@arm.com>, 
- Carsten Haitzler <carsten.haitzler@arm.com>
-In-Reply-To: <20241016065654.269994-1-namhyung@kernel.org>
-References: <20241016065654.269994-1-namhyung@kernel.org>
-Subject: Re: [PATCH] perf test: Speed up some tests using perf list
-Message-Id: <172918316105.639809.18120373431908950671.b4-ty@kernel.org>
-Date: Thu, 17 Oct 2024 09:39:21 -0700
+	s=k20201202; t=1729183186;
+	bh=o4qSJBepvvbVGnVs0fleFT15etsdqBjCksHaXu9qaSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZBE6ED0fkBlDe4tsyo3V8d7kEHPVZicGEcPQkSSCQ4uzjw2OFQb52AyaoxaS37wGb
+	 c4PJlFrk71LMU9LjI0iFd9FgJMpidLH+cwwu0+jS3pfA1zusS+FrWGlMXpwK68c0Qf
+	 qid1l9FMT9raCWhB3UodxR86fYBCoOGG9jyRgyz/6JgvkvmP7LzhZx/7NcjhqTiHNn
+	 Nw/PdymrPJKpSp1r4hmS06Ff8+0sZiV0VdFBrLhhseOYiz+jEHBmmljoOaXwJ775eX
+	 JQ1kJA0zywgYVAGO6afyMtrsMO6cpwiPiNi4ZVB0+7i27ISdzAXSfZWio6DuQvYuFj
+	 GFt9MVMQhqBEg==
+Date: Thu, 17 Oct 2024 17:39:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kevin Hao <haokexin@gmail.com>,
+	Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>,
+	linux-kernel@vger.kernel.org, Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH net-next] MAINTAINERS: add samples/pktgen to NETWORKING
+ [GENERAL]
+Message-ID: <20241017163942.GA1697@kernel.org>
+References: <20241017111601.9292-1-liuhangbin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017111601.9292-1-liuhangbin@gmail.com>
 
-On Tue, 15 Oct 2024 23:56:54 -0700, Namhyung Kim wrote:
-
-> On my system, perf list is very slow to print the whole events.  I think
-> there's a performance issue in SDT and uprobes event listing.  I noticed
-> this issue while running perf test on x86 but it takes long to check
-> some CoreSight event which should be skipped quickly.
+On Thu, Oct 17, 2024 at 11:16:01AM +0000, Hangbin Liu wrote:
+> samples/pktgen is missing in the MAINTAINERS file.
 > 
-> Anyway, some test uses perf list to check whether the required event is
-> available before running the test.  The perf list command can take an
-> argument to specify event class or (glob) pattern.  But glob pattern is
-> only to suppress output for unmatched ones after checking all events.
+> Suggested-by: Antoine Tenart <atenart@kernel.org>
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> [...]
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 44d599651690..3b11a2aa2861 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16202,6 +16202,7 @@ F:	lib/random32.c
+>  F:	net/
+>  F:	tools/net/
+>  F:	tools/testing/selftests/net/
+> +F:	samples/pktgen/
+>  X:	Documentation/networking/mac80211-injection.rst
+>  X:	Documentation/networking/mac80211_hwsim/
+>  X:	Documentation/networking/regulatory.rst
 
-Applied to perf-tools-next, thanks!
+Hi Hangbin,
 
-Best regards,
-Namhyung
+Nice find.
+But lets preserve alphabetical order.
 
+With that fixed feel free to add:
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+Also, I think this can be for net.
+That is the usual target for MAINTAINERS changes AFAIK.
+
+-- 
+pw-bot: cr
 
