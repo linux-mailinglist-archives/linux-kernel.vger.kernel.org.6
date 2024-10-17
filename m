@@ -1,76 +1,125 @@
-Return-Path: <linux-kernel+bounces-370713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E989A3128
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:09:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3CF9A3129
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45725B22718
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355D21F20933
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EB91F4271;
-	Thu, 17 Oct 2024 23:09:45 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FEF1F427A;
+	Thu, 17 Oct 2024 23:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ChehaxuT"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BB01F4269
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 23:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C61EE027
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 23:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729206585; cv=none; b=rhV/Hw/IYXKUrIACwQ0HkQLLszT1ZL44Yk2lEso7aG7vsDMq6/q9ge2MDUuV1g+Nzmvrk/mH3yfEqlQjNXR2dDAkblRz+20/TzcBZSDo5p7F7jufi3nYWxQwouAXZRz5NwHhYOGoXLoFtSilt02MqKR4/cqLY9fGg4kf4WRwZB0=
+	t=1729206624; cv=none; b=OcSn5zcI6aiQRO5hkC3VZNYJE0qakFT0Q2nHLUExTOdZkEMUXD3EXzgqYCIP3jqJ7xIFb1UACyUs1fvSVHcPl9TH7GWyM5LxJBi+L7m7gp/UGApc3/BZg3P+v6tAaCC5k4ecSiPRWrDspFzjZfRIva6v4d8U/3YZ9rbgCbWqg0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729206585; c=relaxed/simple;
-	bh=TQiIEXNFBhfxFbtyIzx4fJr8iobuFC0g4dUqZ2k3S6c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=k54nCUIjHbsBfyEE0g8wO8j1Ki+TnBTFVLFepoBthtm27ASGipJ6ojojAvuQwEXv/W4PKCIEPrykqqU3K2KsJrMDQmvU9Qxbv6RqS/y9d32eydxpAcofD+lPPtkCQKZGKM0Km92n0Agkk75/gQAAZNZLKqcGtG+YnQlWa2oi/No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so16139275ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:09:43 -0700 (PDT)
+	s=arc-20240116; t=1729206624; c=relaxed/simple;
+	bh=kLIIwiAQXCgqNdxcz8z50Zez94nn91mEY4o5I5uWC3E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qw6nmFWrLsIvsVixn4oNGpvHsc6clxpW/bz3tNgyx5Fc2waYLE/9OqJn07RX4gx6AwCy9Yz4FEaXhdhnRtf4CMzjisLJ7mD0AmIvB4tSsK+JVMDnM+JskzW35pj990B3O3onBA2X9g5v/7/2xxBO6D95C2PvQ8GnKJ9/cHfeodA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ChehaxuT; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e2b9f71917bso1374102276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 16:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729206621; x=1729811421; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fr7LkEYEQ2i7ItvFzGynv5JHdOaDwJd+YsSvx5gsy4M=;
+        b=ChehaxuTiGQsQ2j5fsRr1G1SJ5Rx9bon6oDV4ThxvnE4Z0OwXXEztawCsEmo8sSfVS
+         FyubIcMRm7q+gNteqFMpPHrNk6KanWWTHhA/gNrx4Enwr0m162yZMRij3+STKvO7rdYC
+         6O3y5NowVCOkWbVHaRIuSLJBP5uSuhRTEcu26psQZlY02/zTsvOrwDgrnFekIcjJ3JYr
+         /UB4RfiC6AlVZEbdp2ldJGwolMFvqfTPuVYxc6WRA4u5De+fcqi8KRm54a1JJDG648+a
+         6RaLKPi5Us4hAe3KwFqQQ2C+7nT6Vc3bJlRPtn9lyv7dVHcu5dxvnZLCuzJYJbPmDh08
+         btTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729206583; x=1729811383;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQiIEXNFBhfxFbtyIzx4fJr8iobuFC0g4dUqZ2k3S6c=;
-        b=g29zqRLj45rB6rWEal5KhDy9CbaKoIoxaJNvcnL7TAdmFd75HaNkGIxZ7QCfblD3HH
-         WJEh0WWJdYDOfx/pg/D4ruR4scWdK5DV2xNUZeJAtRRHE/q6BRw1MJ3MupBwnc+s4bmw
-         vggxDoOMR8Dt6Q0TBR9QXp46DMe9XZ4tNa32ThJVRo9/oMmvl8Zbg5DoPPzzAJzQT6PZ
-         HuIdXJKPQcqP1sU5eCZj6QMDqb0xE4VzhbYBcOJ15Qz//8KcWu6GnLB0YlO6+gT6QRMK
-         oKlyYH6CYNTCD/F7r0QNrEPc1KnnIW3FiUEJPGTlNL8uWf3XFER6Wy2ydh0/a3ITTR6J
-         DeYA==
-X-Gm-Message-State: AOJu0YwyBMNmYz0pnpk2LPeUcF4HJqmKAKgO0jbp7L902FvAPjpYpSeK
-	ozklisdPVzMLcJfPBWFChcM1NmPz/FzzY3p0WcGTyCFbqR1j+SES+GuBTkYyH7OJlm6CLb9bvaq
-	wbW5xlxvoGE+4bxJpIudDT2NYViStgNWlX2y4EyLLUi7FgY8LF3K+GuA=
-X-Google-Smtp-Source: AGHT+IF2CUz5HqLNvE7dr3SK88Nz4orjPg1OlYIjv53rpMOvrzadyDjxdO6Oy5eSxqh9LCNpXtfDoWom8O8fOjKHMut3XpvxpfUi
+        d=1e100.net; s=20230601; t=1729206621; x=1729811421;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fr7LkEYEQ2i7ItvFzGynv5JHdOaDwJd+YsSvx5gsy4M=;
+        b=Z6y5VYyBbFegSRQlGyub3J+b5HKaSc4M9SS90J1MohFuyJb8d0jAo0xWlVE+YaJPNO
+         avbCMMwSZeOvJPsT6IdtP3T+g0PDi6joqBUnSN5NpOgWob4jbi8Mx6q8CD1zCRExPDfm
+         CtAzq5cOjdUsDmmfkPqosxK3WbNXEVqNIyrbRYqy8GjR8jVTe+opdlm9fGX1A0AGGpT5
+         pSmodqX5//Mo/QRtkdPdV2Baz3f4m/TCXnr7qzCV4/ySPibf4ChgiPkzDgzhlbKhMVJ6
+         NpUatE0/jQvVU+05infB9k70ZdFucik23bvKcGDxHkVXpwWwHYdcrnfpIuGtK9GyKGhO
+         G0OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIfSJzZmxBFVBp1pBK79tWYSMxrTm7wsnHjHH97/YIs08bYvEyPFsamSYIWc8FHAKiVgMRMgIoPkNODpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzG0MaTgJHRamVZWI3y3Bk59aGMBqBkH/jCXPvnR6B1utd15Ui
+	NLhghBjKvVTUKB/MJpzBK35y3Hq4Lumq3wPkA2MUNAb7y3vzZZNDCuI0cqcxRrgzgXvpv8nwYRr
+	a1Jo54qo7+Q==
+X-Google-Smtp-Source: AGHT+IENKH1N57vAuzezME1AKL8ZcgxjFf76kHwETDmIM/ia9x3pCbTLwMe9I3IJxACLuXxxmv0ADtZTtlT+/Q==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:b1:7045:ac11:6237])
+ (user=davidgow job=sendgmr) by 2002:a5b:648:0:b0:e24:c330:f4cc with SMTP id
+ 3f1490d57ef6-e2b9d04de9bmr11384276.6.1729206620705; Thu, 17 Oct 2024 16:10:20
+ -0700 (PDT)
+Date: Fri, 18 Oct 2024 07:10:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:ca4c:0:b0:3a1:a163:ba58 with SMTP id
- e9e14a558f8ab-3a3f40cc571mr4156805ab.26.1729206582902; Thu, 17 Oct 2024
- 16:09:42 -0700 (PDT)
-Date: Thu, 17 Oct 2024 16:09:42 -0700
-In-Reply-To: <66f057eb.050a0220.a27de.0004.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67119936.050a0220.1e4b4d.0005.GAE@google.com>
-Subject: Re: [syzbot] KMSAN: please work
-From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241017231007.1500497-2-davidgow@google.com>
+Subject: [PATCH] um: Fix misaligned stack in stub_exe
+From: David Gow <davidgow@google.com>
+To: Benjamin Berg <benjamin.berg@intel.com>, Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+The stub_exe could segfault when built with some compilers (e.g. gcc
+13.2.0), as SSE instructions which relied on stack alignment could be
+generated, but the stack was misaligned.
 
-***
+This seems to be due to the __start entry point being run with a 16-byte
+aligned stack, but the x86_64 SYSV ABI wanting the stack to be so
+aligned _before_ a function call (so it is misaligned when the function
+is entered due to the return address being pushed). The function
+prologue then realigns it. Because the entry point is never _called_,
+and hence there is no return address, the prologue is therefore actually
+misaligning it, and causing the generated movaps instructions to
+SIGSEGV. This results in the following error:
+start_userspace : expected SIGSTOP, got status = 139
 
-Subject: KMSAN: please work
-Author: danielyangkang@gmail.com
+Don't generate this prologue for __start by using
+__attribute__((naked)), which resolves the issue.
 
-#syz test
+Fixes: 32e8eaf263d9 ("um: use execveat to create userspace MMs")
+Signed-off-by: David Gow <davidgow@google.com>
+---
+
+See the discussion here:
+https://lore.kernel.org/linux-um/c7c5228e9de1e79dc88b304e28d25f5ffd7e36dd.camel@sipsolutions.net/T/#m90c1c5b6c34ebaaa043b402e97009c5825fd158a
+
+---
+ arch/um/kernel/skas/stub_exe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/um/kernel/skas/stub_exe.c b/arch/um/kernel/skas/stub_exe.c
+index 04f75c577f1a..722ce6267476 100644
+--- a/arch/um/kernel/skas/stub_exe.c
++++ b/arch/um/kernel/skas/stub_exe.c
+@@ -79,7 +79,7 @@ noinline static void real_init(void)
+ 	__builtin_unreachable();
+ }
+ 
+-void _start(void)
++__attribute__((naked)) void _start(void)
+ {
+ 	char *alloc;
+ 
+-- 
+2.47.0.rc1.288.g06298d1525-goog
+
 
