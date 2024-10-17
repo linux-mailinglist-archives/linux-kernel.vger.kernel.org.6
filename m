@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-370027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8A69A2618
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:08:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E8E9A2667
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54DA3B29AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B416284734
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8F31DE8A1;
-	Thu, 17 Oct 2024 15:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5401B1DED5A;
+	Thu, 17 Oct 2024 15:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFRttVsk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="D/yhiiAJ"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FD51DB956;
-	Thu, 17 Oct 2024 15:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB0E1DED6E;
+	Thu, 17 Oct 2024 15:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729177674; cv=none; b=IPChfB38fuCgv5KoaoH5hC4ohwO5mEvtPNOsi+h/bElPEpxJT74UMv51KlyVfemPR1kOT3fWiOlplyrXWCVaZpud9+Ai8oGrUiNun5RkBqJxTNrpQz3zNFaRAnjhh8W9zWo0WqqvyIGY3aLSZC07Mq7zUGXoVERQUnwjB0xo1Ko=
+	t=1729178263; cv=none; b=AOHH2HAK074Io1crhw60uZqeOBrUovZKy7BsVeYGegoMilhNpH7mzjX5Gv5Fag4EsGLsfjdwTrlPPumB6o9rXF5remd1HnI0quOyZ7s7i5roLbjVHW+5eto3kxX5Luhfc+172a0BdSDeEuBEf1BipDHuEjm3ZICCT19Tc/sZP5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729177674; c=relaxed/simple;
-	bh=QSHRYCgTGOlCiy4/3pMT/U8yrfGOKzLeEBt2l4JooDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9t7PS3dDoEzlUxOQzhPIkFaR1D0RWClLCSgP2pMBLZWoh6reQx06TmLlGDizug7tBVRXhPf2/AYU0emULGkFuGLRW99kqklmBcfNkgwqR0H2hv8EtelxF/RnK8U5zxUxbgwic1LzuyZ0mIxZTTSqq9ae9JuVeEz5+LJAc9BU18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFRttVsk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64523C4CEC3;
-	Thu, 17 Oct 2024 15:07:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729177674;
-	bh=QSHRYCgTGOlCiy4/3pMT/U8yrfGOKzLeEBt2l4JooDs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CFRttVskpXJdZmzXS4i18eQ+LNNQMCt69nRPxzVeYLkG11w2iN+qG7z8JAHKvrUYP
-	 sIcMBAicKVakCf4jFp2gj7pFoknqUHYwD/L92o2ZZUKHCAXFC66bTrCPIox0zdmdbV
-	 we3bY9UrD8C8nB2uKK1LG/LTp0Z0KV8tGbltXuT3o4/ik3JrGSjvLnZDJlAutVrMnY
-	 dEbKDCb9IRNOk7E40SbX+dgs+qrTlTgncjp5Kuym2CREvoeNtg2quki9kccxbH22OL
-	 l16kRl9rp6Mp8PZzSuE5FZpHoBsQOQnAP1LPmue2/b63VtYSw6D7jQ/mMYsroBDvFY
-	 h68GuIeGFXrgQ==
-Date: Thu, 17 Oct 2024 16:07:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Anup <anupnewsmail@gmail.com>
-Subject: Re: [PATCH v4] spi: dt-bindings: brcm,bcm2835-aux-spi: Convert to
- dtschema
-Message-ID: <e9a3b158-5c38-44cf-829e-3c9e1d607842@sirena.org.uk>
-References: <ZxEm-H-PjlQyXeOH@Emma>
+	s=arc-20240116; t=1729178263; c=relaxed/simple;
+	bh=/NihlQJA6Z7tTr9YQe6+KoIQTIW0kV4EScxxfXk4vyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HoWbMqskOlJOhJ0UzvBB+ptPfc0GqRNu2DTzuuV68h49R83U0fpNMkpdVAfpf5o7ySh9kFFjv17enMSLPY/sTrYXFcL5V/iyg32HFigKiPw+/+wBCw+HxuH8U6EJqSwXY0xsbCSO3Sv8Drqo0Xo7Yigd3ca+iQwKhu3fBt6Tn8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=D/yhiiAJ; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1729177710;
+	bh=sDJoIPTfhEjh0TSEIcd63E+5stOgL4Hf4FbuPvcUPbI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D/yhiiAJ749VjL5CID0IZc0490lqPmIKK4O7Wc17vh5Pj34w05Z2YD97PpoQWDoSz
+	 ioJokNnbf1/+z0PTf5li9dLdJflBDjuuY6d7zglk+iNfh3GKN9+AWEVcifmuRhwPKG
+	 e3t8OYY9cDzIT8E+ytNoqRSFC5KQyDjMyS3s1Imw=
+Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id DFED8A021E;
+	Thu, 17 Oct 2024 17:08:29 +0200 (CEST)
+From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] leds: lp55xx: Remove redundant test for invalid channel number
+Date: Thu, 17 Oct 2024 17:08:12 +0200
+Message-ID: <20241017150812.3563629-1-michal.vokac@ysoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6sGS+dIfSb9JFEzO"
-Content-Disposition: inline
-In-Reply-To: <ZxEm-H-PjlQyXeOH@Emma>
-X-Cookie: One picture is worth 128K words.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Since commit 92a81562e695 ("leds: lp55xx: Add multicolor framework
+support to lp55xx") there are two subsequent tests if the chan_nr
+(reg property) is in valid range. One in the lp55xx_init_led()
+function and one in the lp55xx_parse_common_child() function that
+was added with the mentioned commit.
 
---6sGS+dIfSb9JFEzO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are two issues with that.
 
-On Thu, Oct 17, 2024 at 03:02:16PM +0000, Karan Sanghavi wrote:
-> Convert bcm2835-aux-spi binding to Dt schema
->=20
-> Changes since v3:
->  - Updated the patch subject line
->  - Reformatted the description to fit within 80 characters
+First is in the lp55xx_parse_common_child() function where the reg
+property is tested right after it is read from the device tree.
+Test for the upper range is not correct though. Valid reg values are
+0 to (max_channel - 1) so it should be >=.
 
-As covered in submitting-patches.rst inter-version changelogs go after
-the ---.  There is no need to resubmit for this alone.
+Second issue is that in case the parsed value is out of the range
+the probe just fails and no error message is shown as the code never
+reaches the second test that prints and error message.
 
---6sGS+dIfSb9JFEzO
-Content-Type: application/pgp-signature; name="signature.asc"
+Remove the test form lp55xx_parse_common_child() function completely
+and keep the one in lp55xx_init_led() function to deal with it.
 
------BEGIN PGP SIGNATURE-----
+Fixes: 92a81562e695 ("leds: lp55xx: Add multicolor framework support to lp55xx")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+---
+v2:
+- Complete change of the approach to the problem.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcRKEMACgkQJNaLcl1U
-h9Dcsgf+JBEgmTMplzymu/DfsofE8ALvY5+J5gISHD6rGIZEJMq37kBdTpixn11i
-jlthfsWz30df9pU+G6fg9tIvtRckm374sqI7zCL8ITz6k3BFyGJGGfhnGizttsBQ
-s0OfsMWlwwFYEU03VmFCCk9nLr9U764j9VtQ8pVT1jhBD4gbvgK8LQZRtNnshqj5
-zcbQDs4X/u4lncbHh6whAIlEtsyhdVAPxoXBQ1gHN/mnqJDNjIO6WOCoxImte143
-SfmBPHCJIpACxsTHq3ZazUuvMbhgsSkhuLpyqqdf2XRKhIyQqI2F7LCdhwy6c/DV
-GfZV5Ncu2rq9fQ4hvmpLgWqjK5mmlQ==
-=Aiz5
------END PGP SIGNATURE-----
+In v1 I removed the test from lp55xx_init_led() but I failed  to test that
+solution properly. It could not work. In v2 I removed the test for chan_nr
+being out of range from the lp55xx_parse_common_child() function.
 
---6sGS+dIfSb9JFEzO--
+- Re-worded the subject and commit message to fit the changes. It was:
+
+ "leds: lp55xx: Fix check for invalid channel number"
+
+ drivers/leds/leds-lp55xx-common.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
+index 5a2e259679cf..e71456a56ab8 100644
+--- a/drivers/leds/leds-lp55xx-common.c
++++ b/drivers/leds/leds-lp55xx-common.c
+@@ -1132,9 +1132,6 @@ static int lp55xx_parse_common_child(struct device_node *np,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (*chan_nr < 0 || *chan_nr > cfg->max_channel)
+-		return -EINVAL;
+-
+ 	return 0;
+ }
+ 
+-- 
+2.1.4
+
 
