@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-370055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2244F9A26AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:34:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110B49A26AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6971F23A84
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:34:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B739A1F240D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432E21DE4CB;
-	Thu, 17 Oct 2024 15:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A983B1DE4D3;
+	Thu, 17 Oct 2024 15:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="XjFGeTHO"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+p4fgfg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9256111AD;
-	Thu, 17 Oct 2024 15:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1647E1DD9AD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 15:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729179238; cv=none; b=TjqDRCC6jWkRIuHEdjKa3oRoGMIeQy6VLJtVE50XpP51hXfqursS7iyYEEKpgeUIDpb6OMH3n8UTYXW69KjMYrmmoiAxRLXiXwekp1HgsByCGGsAazUbx0UTc1AhStE5dsL9ZPDcmhOqmHKgCEERtzH7SMvvmET7O5gpLMn/b38=
+	t=1729179253; cv=none; b=Ij7EPir9hSfkdoJqPx9OcX+f58jOcq47Rafs9QCowYd0uG+y/mtM01CuQmOsrlXvF/tZmU11HT/VqAGLuOM0enwt0BGn/PWJk1a3DzmQrb6iK0ZQfhL901hUb4BIfixu81oUGunRERuxxPeDq/RsWe58xSRd8nHwbBl5qNfYAwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729179238; c=relaxed/simple;
-	bh=3pMuEHpwOaSpll42N13R4aWE8EjuRuJR9CLBAND+jJQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kUzQNdwGjyDIj2lX81mOM8hKBhhCdNc+6ySsTFrkbea+OoQsnFXP5NxLGIyN3RxXS4klLJDHriw/EmrMSn5sb2YkVO+rnJMmG0rfqWWHUdX60tmpngvyUd2IBLzNl4qEJPmkFv4KEtwvKjX8lqQAPuiVNIucqZDmVvL4MTlEBGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=XjFGeTHO; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9342842BFE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1729179232; bh=Cgf6dIwL5A+zDkEGbeh0z0XOnGyBlSao7mUP7QPyko4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XjFGeTHOtreC3i/PuRJlYTzD2k7pODOmNWJFeyN+dTfx0GggiYigf+UrxC8OrwBFJ
-	 IdosYnmgj4pxMaXDImUni4vFxLdquj/6LHeEJHnlXew8yo6yyz0pTkNEnVfPWaXUIK
-	 yqS5zkAfMD4/guWa2Y+x4AAZZfPdWvLtrbcXYh0vF6ALVk6rnNM90BUpZ9tDDHHrSQ
-	 y1CjtuH6ZQPolTrW+zSS55vjMHWytABxfRRtcYN5z5MJfo1QmL1rgIimmI+LD2Haa9
-	 rY3I3bFfpCj35xWAoi4TRmCPARIFy/OG3fCVO8qVy4yq3jEnsmasbEvULqnZq4LRXI
-	 Q9ect6nwrCcNw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 9342842BFE;
-	Thu, 17 Oct 2024 15:33:52 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>, Horia Geanta
- <horia.geanta@freescale.com>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] kernel-doc: allow object-like macros in ReST output
-In-Reply-To: <20241015181107.536894-1-rdunlap@infradead.org>
-References: <20241015181107.536894-1-rdunlap@infradead.org>
-Date: Thu, 17 Oct 2024 09:33:51 -0600
-Message-ID: <87frou3fs0.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1729179253; c=relaxed/simple;
+	bh=V1nvvkLpIs5sD2OFrJ2euHz95qyDMltWcmHdJi8Yxew=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ecSPrmOaKtVJB2X5rmZmzZIKFsqLu3rfWYrEgwasCAmnk9++StxgBvozE9oeNyeX88NYu8BjhYDVX5Jcnpcp8gihFQbqK3iu2hI658WXh/Qnwc6PIyn7wr3C1z6tpJwGTUFaseM8flg8ZEC3v1YeXp9Y+ZKyt27QZbzkSGgyeBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+p4fgfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89271C4CEC7;
+	Thu, 17 Oct 2024 15:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729179252;
+	bh=V1nvvkLpIs5sD2OFrJ2euHz95qyDMltWcmHdJi8Yxew=;
+	h=Date:From:To:Cc:Subject:From;
+	b=N+p4fgfg8QbVlO0mXs4I+LGKT9ri0wD9wAaQMDGFTdhr0cAPRCDq2mkozxce/GB/c
+	 K/4gtA7CqZsC0k2yK2dTAEj09Yrjg9Dw4n+nRGNmGtebcu6oGjOs6li1S491PwMFeU
+	 uzGsbXFMXhkkcuC/yFwwGhVtSq7epmBX+CLSBCPcIcgjPW2ImzBAmxMiw7FjVX//3+
+	 h2Rv1DaR/g+cuJcSYI9LGCegNm1kjJukJ+C9smPUPWuv2d1MRHYdRQ8Y44ZN6FEQFN
+	 J22PE7TSSjcBqFmCzTtV5yV4/PJwDgh4wjNsfs9GY8loJHntG1pzkrCJfiDJRv7ZiM
+	 td93Gj97K/QLQ==
+Date: Thu, 17 Oct 2024 16:34:08 +0100
+From: Will Deacon <will@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: [GIT PULL] arm64 fixes for -rc4
+Message-ID: <20241017153407.GA22230@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Randy Dunlap <rdunlap@infradead.org> writes:
+Hi Linus,
 
-> output_function_rst() does not handle object-like macros. It presents
-> a trailing "()" while output_function_man() handles these macros
-> correctly.
->
-> Update output_function_rst() to handle object-like macros.
-> Don't show the "Parameters" heading if there are no parameters.
->
-> For output_function_man(), don't show the "ARGUMENTS" heading if there
-> are no parameters.
->
-> I have tested this quite a bit with my ad hoc test files for both ReST
-> and man format outputs. The generated output looks good.
->
-> Fixes: cbb4d3e6510b ("scripts/kernel-doc: handle object-like macros")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Horia Geanta <horia.geanta@freescale.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> ---
-> Cc: linux-doc@vger.kernel.org
->
-> @Jon, feel free to update the attribution for your patch or I can do it
-> and send a v2 if you like.
->
->  scripts/kernel-doc |   43 ++++++++++++++++++++++++++++++-------------
->  1 file changed, 30 insertions(+), 13 deletions(-)
+Please pull this crop of arm64 fixes for 6.12-rc4. The summary is in the
+tag, but we will have some more POE fixes relating to signal delivery in
+the next week or so.
 
-Applied - thanks for doing this.
+Cheers,
 
-jon
+Will
+
+--->8
+
+The following changes since commit 3eddb108abe3de6723cc4b77e8558ce1b3047987:
+
+  arm64: Subscribe Microsoft Azure Cobalt 100 to erratum 3194386 (2024-10-04 12:38:03 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to 7aed6a2c51ffc97a126e0ea0c270fab7af97ae18:
+
+  kasan: Disable Software Tag-Based KASAN with GCC (2024-10-15 11:38:10 +0100)
+
+----------------------------------------------------------------
+arm64 fixes for -rc4
+
+- Disable software tag-based KASAN when compiling with GCC, as functions
+  are incorrectly instrumented leading to a crash early during boot.
+
+- Fix pkey configuration for kernel threads when POE is enabled.
+
+- Fix invalid memory accesses in uprobes when targetting load-literal
+  instructions.
+
+----------------------------------------------------------------
+Joey Gouly (2):
+      arm64: set POR_EL0 for kernel threads
+      Documentation/protection-keys: add AArch64 to documentation
+
+Mark Rutland (3):
+      arm64: probes: Remove broken LDR (literal) uprobe support
+      arm64: probes: Fix simulate_ldr*_literal()
+      arm64: probes: Fix uprobes for big-endian kernels
+
+Will Deacon (1):
+      kasan: Disable Software Tag-Based KASAN with GCC
+
+ Documentation/core-api/protection-keys.rst | 38 +++++++++++++++++++++++-------
+ arch/arm64/include/asm/uprobes.h           |  8 +++----
+ arch/arm64/kernel/probes/decode-insn.c     | 16 +++++++++----
+ arch/arm64/kernel/probes/simulate-insn.c   | 18 ++++++--------
+ arch/arm64/kernel/probes/uprobes.c         |  4 ++--
+ arch/arm64/kernel/process.c                |  3 +++
+ lib/Kconfig.kasan                          |  7 ++++--
+ 7 files changed, 61 insertions(+), 33 deletions(-)
 
