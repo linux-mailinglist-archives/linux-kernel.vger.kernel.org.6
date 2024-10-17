@@ -1,146 +1,140 @@
-Return-Path: <linux-kernel+bounces-369799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748449A22D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:58:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFFF9A22D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A555282A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:58:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACC51B24033
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED91DDA24;
-	Thu, 17 Oct 2024 12:58:20 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDCB1DDC17;
+	Thu, 17 Oct 2024 12:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wbukw1on"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965771DD875
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 12:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254EA1DCB0F;
+	Thu, 17 Oct 2024 12:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729169899; cv=none; b=BdJxFzw7d0DmlM+FyXfMKg7kjPCzR6ZBoSlLjEscyWuH3ngPBXK9m4g0jtd6FgS6KnbYW6+QXN6w0Lq0SrFMs0/3itLJfel16VxIf4XQ2TG2rIPMnVe15Eua+KZLg3R1dyb7t5p3AS3yul0T4WijXD7D75p5TvIznK6SR1wL4lk=
+	t=1729169913; cv=none; b=tLd3oMFloPPxh4P+kBx89fCfYUspvSnBtuiK4njrnPvw8FTtwBA+QQmghQWvIM+9MNW/lhpNmyPNtmH3IlIvCm/jqa6Pqz/WynezsPJ/3y9vY+jxUMB9FJJFGRc23gcNgyAvU4iAodAMbed18fVGjJfAMtRNA7y1Iquh6Kjeh+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729169899; c=relaxed/simple;
-	bh=QTEIK+hjRYcsCWe0UVg7ofyNR9soooVcGWuUXTn5uls=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KNFGfmbr0bdIxgQVyegFqKk9YHW4mOlcgYM0xmC0QXfrSwc5EjrHELRzhowdoyuxw/Jftn8dYYh9bcPVuHdjkpYg9C8Bcpg8IiMztsPlI/on7cxzN2kqlYZE572nQ2qRXVT6rgK3VWQK2tUc8yAEhl+bvnSSziTdvUf122hQcHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTns92yJQz6FGnM;
-	Thu, 17 Oct 2024 20:56:29 +0800 (CST)
-Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 818D01400F4;
-	Thu, 17 Oct 2024 20:58:13 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 17 Oct 2024 14:58:13 +0200
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Thu, 17 Oct 2024 14:58:13 +0200
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Zhangfei Gao <zhangfei.gao@linaro.org>, Jason Gunthorpe <jgg@ziepe.ca>
-CC: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>, Jacob Pan
-	<jacob.jun.pan@linux.intel.com>, Joel Granados <j.granados@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org"
-	<virtualization@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v8 07/10] iommufd: Fault-capable hwpt
- attach/detach/replace
-Thread-Topic: [PATCH v8 07/10] iommufd: Fault-capable hwpt
- attach/detach/replace
-Thread-Index: AQHazEqXxVp4lf+dEUeIMwqdhDxFmrKHp/+AgACgmACAANsfAIAA4VKAgACtBACAAK2BAIAACGkAgAAneCA=
-Date: Thu, 17 Oct 2024 12:58:13 +0000
-Message-ID: <50ee0c0b052b40f6b67d1ad3b1b0eeb9@huawei.com>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-8-baolu.lu@linux.intel.com>
- <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
- <20241015125420.GK1825128@ziepe.ca>
- <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
- <20241016152503.GB4020792@ziepe.ca>
- <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
- <20241017120518.GI4020792@ziepe.ca>
- <CABQgh9EnEqDKkxg3VUgjSqBzz27h8B3Ct4w=A0vR6JK=d7fXHQ@mail.gmail.com>
-In-Reply-To: <CABQgh9EnEqDKkxg3VUgjSqBzz27h8B3Ct4w=A0vR6JK=d7fXHQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1729169913; c=relaxed/simple;
+	bh=gdynTxNANi2KNxHKv2MHHr9xLwfTrrBA8Udodpuyqhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LMsg9kpcYq/1s9RqLV6XkbPn23F3J3mB3IIdAMKavC8zf3EmwbNj3aEg7MiA7UvbmvGWo4qINLISjBTG9bplDueTxE51Xs1wmT+xUQv6ei+wJfEWJQ8VyuINezG56x9GAyxWO31W72s0aB5V/EqZoN78tfdC6oaFYAgBb/FL7iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wbukw1on; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D92A4C4CED3;
+	Thu, 17 Oct 2024 12:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729169912;
+	bh=gdynTxNANi2KNxHKv2MHHr9xLwfTrrBA8Udodpuyqhg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Wbukw1onyQHirWmPimfD1118dA3UwDswpz0oB768gaUOKR+jWTvieSNp9w7NgH0QK
+	 8VOMRgRUU0rLZIIgk8V4tzYSeowUizZQlBOdmPrbOg0eO5RNLmWasTFsgk7ZpbU/dZ
+	 O7UTMj0Dk/wNIqA8lql75A9Qf2JZqcu4xtPqqFdEegFBIUbMQGepbP4+IpBQ99HgjM
+	 ZRTWBRPr0rJU8y59NZcAlqUXwiivNsgaW0yfISDmT8Ff/e7FWM9EOo7GjNsYGkDEqY
+	 cYLWcZVY55M1Np9WFt7Ql8Rx78iOnXJ1qe7zIMVoDAMTxhWQkcPikWZgLpw0HzV9XW
+	 bi8z4oth0z6/g==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-277e6002b7dso266412fac.1;
+        Thu, 17 Oct 2024 05:58:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXH3A0ExBCLgs5qgiSsCNXVWarobz0FRw2Bt7hrwtH0MKAEzexjLhWuRPAGgf+9i3RgWD5cleB8wsj1m2A=@vger.kernel.org, AJvYcCXbNbJUtpd5940qFuLZ0vy+yck+BsSpaFd5Jv7TVIEpvMhZ1xNZ6kGsurCLDYN/ooWdNjHW8ZeCBerb@vger.kernel.org, AJvYcCXmdvUQ15Iv20f7k+HwI4cj6HkuZbQ8xZ2JYgGMxhvCazUuhzhd59tWjB6pPjaK9+PuqMTob2POAd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOtk5HVFlXrCiSrREJcWYb83wyFBaS/DDTaXmTnuaKSbHeoKD9
+	SsWkMdNVZp6tbQ4cDytb6GOlkrJV+ci/HqUCAXHvs311xkrbUOLGEgOgy+IaaHDYlXpBWWmlsjv
+	/TMdMnVZver0eG/2VkzjXGZFdc+0=
+X-Google-Smtp-Source: AGHT+IEoiRWlSghMxMNbPvvqj2OGNuaMKjUnltHxhpb3As8Sl93/qFI0tyB6ATi/OZqfImlB3jiBQK9gOAjuQpfi+r0=
+X-Received: by 2002:a05:6870:71c6:b0:286:f74a:93cc with SMTP id
+ 586e51a60fabf-288872d3234mr11019440fac.2.1729169912149; Thu, 17 Oct 2024
+ 05:58:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
+ <20241009095223.7093-8-ilpo.jarvinen@linux.intel.com> <20241017120456.00006023@Huawei.com>
+ <70507175-dc7d-d334-4a2a-988239f380a6@linux.intel.com>
+In-Reply-To: <70507175-dc7d-d334-4a2a-988239f380a6@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 17 Oct 2024 14:58:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g+4ZorOVrC_Pr8BvhDUXckqg5WqREw2Wz+8_WzL_d52g@mail.gmail.com>
+Message-ID: <CAJZ5v0g+4ZorOVrC_Pr8BvhDUXckqg5WqREw2Wz+8_WzL_d52g@mail.gmail.com>
+Subject: Re: [PATCH v8 7/8] thermal: Add PCIe cooling driver
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-pci@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Rob Herring <robh@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Lukas Wunner <lukas@wunner.de>, 
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>, Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Amit Kucheria <amitk@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogWmhhbmdmZWkgR2FvIDx6
-aGFuZ2ZlaS5nYW9AbGluYXJvLm9yZz4NCj4gU2VudDogVGh1cnNkYXksIE9jdG9iZXIgMTcsIDIw
-MjQgMTozNSBQTQ0KPiBUbzogSmFzb24gR3VudGhvcnBlIDxqZ2dAemllcGUuY2E+DQo+IENjOiBM
-dSBCYW9sdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPjsgS2V2aW4gVGlhbg0KPiA8a2V2aW4u
-dGlhbkBpbnRlbC5jb20+OyBKb2VyZyBSb2VkZWwgPGpvcm9AOGJ5dGVzLm9yZz47IFdpbGwgRGVh
-Y29uDQo+IDx3aWxsQGtlcm5lbC5vcmc+OyBSb2JpbiBNdXJwaHkgPHJvYmluLm11cnBoeUBhcm0u
-Y29tPjsgSmVhbi0NCj4gUGhpbGlwcGUgQnJ1Y2tlciA8amVhbi1waGlsaXBwZUBsaW5hcm8ub3Jn
-PjsgTmljb2xpbiBDaGVuDQo+IDxuaWNvbGluY0BudmlkaWEuY29tPjsgWWkgTGl1IDx5aS5sLmxp
-dUBpbnRlbC5jb20+OyBKYWNvYiBQYW4NCj4gPGphY29iLmp1bi5wYW5AbGludXguaW50ZWwuY29t
-PjsgSm9lbCBHcmFuYWRvcw0KPiA8ai5ncmFuYWRvc0BzYW1zdW5nLmNvbT47IGlvbW11QGxpc3Rz
-LmxpbnV4LmRldjsNCj4gdmlydHVhbGl6YXRpb25AbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmc7
-IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IFNoYW1lZXJhbGkgS29sb3RodW0gVGhv
-ZGkgPHNoYW1lZXJhbGkua29sb3RodW0udGhvZGlAaHVhd2VpLmNvbT4NCj4gU3ViamVjdDogUmU6
-IFtQQVRDSCB2OCAwNy8xMF0gaW9tbXVmZDogRmF1bHQtY2FwYWJsZSBod3B0DQo+IGF0dGFjaC9k
-ZXRhY2gvcmVwbGFjZQ0KPiANCj4gT24gVGh1LCAxNyBPY3QgMjAyNCBhdCAyMDowNSwgSmFzb24g
-R3VudGhvcnBlIDxqZ2dAemllcGUuY2E+IHdyb3RlOg0KPiA+DQo+ID4gT24gVGh1LCBPY3QgMTcs
-IDIwMjQgYXQgMDk6NDQ6MThBTSArMDgwMCwgWmhhbmdmZWkgR2FvIHdyb3RlOg0KPiA+ID4gT24g
-V2VkLCAxNiBPY3QgMjAyNCBhdCAyMzoyNSwgSmFzb24gR3VudGhvcnBlIDxqZ2dAemllcGUuY2E+
-IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPiBPbiBXZWQsIE9jdCAxNiwgMjAyNCBhdCAwOTo1ODoz
-NkFNICswODAwLCBaaGFuZ2ZlaSBHYW8gd3JvdGU6DQo+ID4gPiA+ID4gT24gVHVlLCAxNSBPY3Qg
-MjAyNCBhdCAyMDo1NCwgSmFzb24gR3VudGhvcnBlIDxqZ2dAemllcGUuY2E+DQo+IHdyb3RlOg0K
-PiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IE9uIFR1ZSwgT2N0IDE1LCAyMDI0IGF0IDExOjE5OjMz
-QU0gKzA4MDAsIFpoYW5nZmVpIEdhbyB3cm90ZToNCj4gPiA+ID4gPiA+ID4gPiArc3RhdGljIGlu
-dCBpb21tdWZkX2ZhdWx0X2lvcGZfZW5hYmxlKHN0cnVjdA0KPiA+ID4gPiA+ID4gPiA+ICtpb21t
-dWZkX2RldmljZSAqaWRldikgew0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgc3RydWN0IGRldmlj
-ZSAqZGV2ID0gaWRldi0+ZGV2Ow0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgaW50IHJldDsNCj4g
-PiA+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAvKg0KPiA+ID4gPiA+ID4g
-PiA+ICsgICAgICAgICogT25jZSB3ZSB0dXJuIG9uIFBDSS9QUkkgc3VwcG9ydCBmb3IgVkYsIHRo
-ZSByZXNwb25zZQ0KPiBmYWlsdXJlIGNvZGUNCj4gPiA+ID4gPiA+ID4gPiArICAgICAgICAqIHNo
-b3VsZCBub3QgYmUgZm9yd2FyZGVkIHRvIHRoZSBoYXJkd2FyZSBkdWUgdG8gUFJJDQo+IGJlaW5n
-IGEgc2hhcmVkDQo+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAgKiByZXNvdXJjZSBiZXR3ZWVuIFBG
-IGFuZCBWRnMuIFRoZXJlIGlzIG5vIGNvb3JkaW5hdGlvbg0KPiBmb3IgdGhpcw0KPiA+ID4gPiA+
-ID4gPiA+ICsgICAgICAgICogc2hhcmVkIGNhcGFiaWxpdHkuIFRoaXMgd2FpdHMgZm9yIGEgdlBS
-SSByZXNldCB0byByZWNvdmVyLg0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgICovDQo+ID4gPiA+
-ID4gPiA+ID4gKyAgICAgICBpZiAoZGV2X2lzX3BjaShkZXYpICYmIHRvX3BjaV9kZXYoZGV2KS0+
-aXNfdmlydGZuKQ0KPiA+ID4gPiA+ID4gPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZB
-TDsNCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gSSBhbSB1c2luZyB0aGUgU01NVXYzIHN0
-YWxsIGZlYXR1cmUsIGFuZCBuZWVkIHRvIGZvcndhcmQNCj4gPiA+ID4gPiA+ID4gdGhpcyB0byBo
-YXJkd2FyZSwgQW5kIG5vdyBJIGFtIGhhY2tpbmcgdG8gY29tbWVudCB0aGlzIGNoZWNrLg0KPiA+
-ID4gPiA+ID4gPiBBbnkgc3VnZ2VzdGlvbnM/DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gQXJl
-IHlvdSB1c2luZyBQQ0kgU1JJT1YgYW5kIHN0YWxsIHRvZ2V0aGVyPw0KPiA+ID4gPiA+DQo+ID4g
-PiA+ID4gT25seSB1c2Ugc21tdXYzIHN0YWxsIGZlYXR1cmUuDQo+IFNvcnJ5LCB0aGlzIGlzIG5v
-dCBjb3JyZWN0DQo+IA0KPiA+ID4gPg0KPiA+ID4gPiBUaGVuIGlzbid0IHRvX3BjaV9kZXYoZGV2
-KS0+aXNfdmlydGZuID09IGZhbHNlPw0KPiA+ID4gPg0KPiA+ID4gPiBUaGF0IHNob3VsZCBvbmx5
-IGJlIHRydWUgd2l0aCBTUklPVg0KPiA+ID4NCj4gPiA+IERvIHlvdSBtZWFuDQo+ID4gPiBpZiAo
-ZGV2X2lzX3BjaShkZXYpICYmIHRvX3BjaV9kZXYoZGV2KS0+aXNfdmlydGZuID09IGZhbHNlKQ0K
-PiA+ID4gICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ID4NCj4gPiA+IFRoaXMgaXMgZmluZQ0KPiA+
-DQo+ID4gTm8sIEkgbWVhbiBvbiB5b3VyIHRlc3Qgc3lzdGVtIHlvdSBhcmUgbm90IHVzaW5nIFNS
-SU9WIHNvIGFsbCB5b3VyIFBDSQ0KPiA+IGRldmljZXMgd2lsbCBoYXZlIGlzX3ZpcnRmbiA9PSBm
-YWxzZSBhbmQgdGhlIGFib3ZlIGlmIHNob3VsZG4ndCBiZSBhDQo+ID4gcHJvYmxlbS4gaXNfdmly
-dGZuIGluZGljYXRlcyB0aGUgUENJIGRldmljZSBpcyBhIFNSSU9WIFZGLg0KPiA+DQo+ID4gWW91
-ciBleHBsYW5hdGlvbiBmb3IgeW91ciBwcm9ibGVtIGRvZXNuJ3QgcmVhbGx5IG1ha2Ugc2Vuc2Us
-IG9yIHRoZXJlDQo+ID4gaXMgc29tZXRoaW5nIHdyb25nIHNvbWVwbGFjZSBlbHNlIHRvIGdldCBh
-IGJvZ3VzIGlzX3ZpcnRmbi4uDQo+ID4NCj4gPiBJZiB5b3UgYXJlIGRvaW5nIFNSSU9WIHdpdGgg
-c3RhbGwsIHRoZW4gdGhhdCBpcyB1bmRlcnN0YW5kYWJsZS4NCj4gDQo+IFllcywgeW91IGFyZSBy
-aWdodA0KPiAgSSBhbSB1c2luZyBTUklPViB2ZiBhbmQgc3RhbGwgZmVhdHVyZSwgc28gaXNfdmly
-dGZuID09IHRydWUNCj4gDQo+IE91ciBBQ0MgZGV2aWNlcyBhcmUgZmFrZSBwY2kgZW5kcG9pbnQg
-ZGV2aWNlcyB3aGljaCBzdXBwb3J0cyBzdGFsbCwgQW5kDQo+IHRoZXkgYWxzbyBzdXBwb3J0cyBz
-cmlvdg0KDQpNYXkgYmUgdGhpcyB3aWxsIGhlbHAgdG8gZ2V0IHRoZSBiYWNrZ3JvdW5kOg0KaHR0
-cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzE2MjYxNDQ4NzYtMTEzNTItMS1naXQtc2VuZC1lbWFp
-bC16aGFuZ2ZlaS5nYW9AbGluYXJvLm9yZy8NCg0KU2hhbWVlcg0KDQo=
+On Thu, Oct 17, 2024 at 2:16=E2=80=AFPM Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> On Thu, 17 Oct 2024, Jonathan Cameron wrote:
+>
+> > On Wed,  9 Oct 2024 12:52:22 +0300
+> > Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+> >
+> > > Add a thermal cooling driver to provide path to access PCIe bandwidth
+> > > controller using the usual thermal interfaces.
+> > >
+> > > A cooling device is instantiated for controllable PCIe Ports from the
+> > > bwctrl service driver.
+> > >
+> > > If registering the cooling device fails, allow bwctrl's probe to
+> > > succeed regardless. As cdev in that case contains IS_ERR() pseudo
+> > > "pointer", clean that up inside the probe function so the remove side
+> > > doesn't need to suddenly make an odd looking IS_ERR() check.
+> > >
+> > > The thermal side state 0 means no throttling, i.e., maximum supported
+> > > PCIe Link Speed.
+> > >
+> > > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > Acked-by: Rafael J. Wysocki <rafael@kernel.org> # From the cooling de=
+vice interface perspective
+> >
+> > Trivial thing noticed on a reread.
+> >
+> >
+> > > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> > > index 61e7ae524b1f..d3f9686e26e7 100644
+> > > --- a/drivers/thermal/Kconfig
+> > > +++ b/drivers/thermal/Kconfig
+> > > @@ -220,6 +220,15 @@ config DEVFREQ_THERMAL
+> > >
+> > >       If you want this support, you should say Y here.
+> > >
+> > > +config PCIE_THERMAL
+> > > +   bool "PCIe cooling support"
+> > > +   depends on PCIEPORTBUS
+> > > +   help
+> > > +     This implements PCIe cooling mechanism through bandwidth reduct=
+ion
+> > > +     for PCIe devices.
+> >
+> > Technically links not devices, but don't think that matters much
+>
+> That distinction would be splitting hairs beyond what seems useful from
+> ordinary user's point of view. If there's no device attached, BW
+> controller cannot do anything since the link is not going to train.
+> The link speed reduction is going to impact the speed the device
+> can communicate with even if it technically occurs on the link.
+
+From the Kconfig description perspective I think it's better to say
+"devices" even though technically it is about links, because device
+performance is what users will measure and notice any changes of.
 
