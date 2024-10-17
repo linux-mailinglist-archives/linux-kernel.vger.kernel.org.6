@@ -1,573 +1,341 @@
-Return-Path: <linux-kernel+bounces-369733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC2D9A21E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:12:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9969A21E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D48284BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528A81F27CF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD0D1DD0FE;
-	Thu, 17 Oct 2024 12:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D581DD53E;
+	Thu, 17 Oct 2024 12:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="dn86cJ3h"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaLG9QLH"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4647B1D517D;
-	Thu, 17 Oct 2024 12:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC811DAC9B;
+	Thu, 17 Oct 2024 12:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167166; cv=none; b=qX8jOI0apKteh/JBQtAKmVTRfwgAuuNSqAsLTewOvVEJ9R280UW++Pk54I9VO7g3zWnwchSMqVX4ryE4DSc6v3gwTg/22/Shikj0nK1EiXqrOofjhzABdtD/A2ClDZK0BDYxp8bkTNHQQ+PlA8t7ppa7Q+UWDBucORx1B8q7o6Q=
+	t=1729167168; cv=none; b=jMHsMy7U4PWX1Kbo9tkrPyb6Rpe1UoxxEkQ/hl5lbxlgqx0I3RW035ZUf1nssNNJmfkCUYC/8RooyZ/n3L0rw7DURswdby07/4yLdFjCvNu+8Fi8JlKAJ3pgsFROmpAL78Cdt3GekjhuPLZYm5xltB3ytell3nOBmxTLqV7mZzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167166; c=relaxed/simple;
-	bh=sCcYcaMwq6fqQmkyi9NqMZGze0pz3Lig8cctdhpIu2U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SahQTAyue5ZaUoZcJA75Tslbd5JkGbGJfGPYBJtYVzA9VcmFusAF4oia6hABJgnXFd2F1k/YgQFb2PBbaVd8WXRacXPkZYu1lAsLokzi4Hzlne03xGFQYAZ/NlyE/5qhPNwiTvp8YAyvkVRUt1mV0iQbGnMGxq2fgAEYDfjCi/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=dn86cJ3h; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HAoMlD005209;
-	Thu, 17 Oct 2024 05:12:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=aDLiraul/A9OhiyDOFQLbwPPY
-	meq2Urm69irJMzyudA=; b=dn86cJ3hAv4nc4AQUCenT4leSUkG+eaEZIZt74vrZ
-	/LmJDQs65vmG815hYIYkZw/HCTOI2ayB0SW2NPEhGJPsHg9+8OJwBPxGSyTsZov4
-	5FaP+lKf+RI+ndljqBRc1VL2UKts/6sqY//p8sNB2DTl/UGeNUDeYnCy3HBZSewc
-	Omoc6CU65qMezDAm3KtwhCOoy0Mlu0adwXuViy30OXGgfxY+DnmNlKQCSmGY/ElC
-	AaQoYlt8+slgnggykbN5mJAEfL3IDQryeKnV6fFoXZeDpr+bT/JggCceL5cMthSM
-	1066hYZIPBSPfA6XOA+9rXDhqLHtUB1GU1tkA4b1asoWQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42ayw089wb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 17 Oct 2024 05:12:27 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 17 Oct 2024 05:12:26 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 17 Oct 2024 05:12:26 -0700
-Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
-	by maili.marvell.com (Postfix) with SMTP id 508273F7055;
-	Thu, 17 Oct 2024 05:12:22 -0700 (PDT)
-Date: Thu, 17 Oct 2024 17:42:21 +0530
-From: Linu Cherian <lcherian@marvell.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-CC: <mike.leach@linaro.org>, <james.clark@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gcherian@marvell.com>
-Subject: Re: [PATCH v10 4/8] coresight: tmc: Enable panic sync handling
-Message-ID: <20241017121221.GA901001@hyd1403.caveonetworks.com>
-References: <20240916103437.226816-1-lcherian@marvell.com>
- <20240916103437.226816-5-lcherian@marvell.com>
- <6b405b22-9b1e-487b-9b9c-5944358488e2@arm.com>
+	s=arc-20240116; t=1729167168; c=relaxed/simple;
+	bh=5AU4AvMwydVw38lM6Qy3PIPIPPqXzNqxpjGtHJ111yQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dy2UXYph0mrPX69pDSTO0MSAFfw5BVpZ9LlCiSuTsXPkAUUUHMluJwHIMXgmeD5e7iqW58poMhwtk5nTbrw1430VH2YxRJOajarROIirLPwjjdDctc8xQ4ANFxoEoXv2FFCvJyLQcwm9aOj2QlBIOU1N9JbnB+96fgi7axOfLYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaLG9QLH; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so1267837a12.1;
+        Thu, 17 Oct 2024 05:12:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729167163; x=1729771963; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=prafHWwilckEmuBSPFQjgfyPtIT1PuYnt6Q5bSY46Co=;
+        b=VaLG9QLH5CY2fkkP+wkkRiDL5Nm2TOYuqUPHmS5kj/VWiWphf8tz1YDmdd07lxEg2n
+         j62ZTI2QAq4Cjudzyu/ybJTRinQ+PUtka/HXEDTaHrjF+EwNtcZ55HAwjPN1M3JWdFsg
+         PBHrZIxRZvpZu1sQVTfc2M76gW4Yka0vcQ7ZC8dI1nBa7fmkaOoPQCk93E39jaWVOIE+
+         63hTMaKpumE3/uTZ8arBL0MSr2s1IXCg89acyD39SVAxts2LJITh3SIMJs5P9dQmmQWV
+         pkx3UU/MsTcbiRI/aj+QnsevsMfN7Ifq/itpjYbVjYWgV8UrX2+AByKWzIebx8KaBmZQ
+         nYjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729167163; x=1729771963;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=prafHWwilckEmuBSPFQjgfyPtIT1PuYnt6Q5bSY46Co=;
+        b=ZHsjaPqm69omfq/tKi7kqj6Xb5mrmAj6mkPgZthyuFCqEBX2G7LxLwD08sJzJzMPaU
+         4uafYbeGhKoMVMmcXdOtJBc1RmI5MFkQw7BQhBcMkx0YsgFLWSC63nWNSvQmTrCUsbR8
+         LBmt2xUo/p1KOWk91wBySb4y40lcCjTJJz5hy3Zcz3yTARaHLL+d2N4Ai/082EcfZdzK
+         +bUrW/kYB2dwuUFs3zGEi5+4h+R8Czoa9tc7zQ1zAximaMEQQlb1rzILrzNwz6uZUeCu
+         MD+zbRHilPrIKAC6n7JJ34Ks7Nnjnhns15ypufddIiAfxVeoTeHA906HbLF7omiIKN18
+         Dtzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYIlTY9Q1awfP+SuwJjOd/7MepfnHAGkryGM5lqCvkof1RvNuceDIGsKaMhpjm87SnB9H7Fa3P3H5HHQ==@vger.kernel.org, AJvYcCVSQ+vMu0I+t1NK1E4fWsXs0FAgA5rzDYxNUoPgg1HUFwfJ+Sn2xi+jfYtT+7ofkA4uedYUpEN1ovMfIw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcWZTuLPB2ZwpsF+mqrWCYwxtQP4IUtKXSft8K1MyHUTMcd6Fh
+	Th/CkzXmz/qTyjgINFsTCJ02/h9OMGSO1E4knijSNFt7dGQyclhD
+X-Google-Smtp-Source: AGHT+IHMzh8gslj5XHHXo1nhZG0Y374k+Y2Y4cJh51UOF2ceQRIMKBYxwQTgaKOha+vWSPW7pE2x/w==
+X-Received: by 2002:a17:906:ef0a:b0:a99:6791:5449 with SMTP id a640c23a62f3a-a99e3e4c383mr1919651166b.52.1729167162308;
+        Thu, 17 Oct 2024 05:12:42 -0700 (PDT)
+Received: from [192.168.0.131] ([194.183.54.57])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a297172edsm291769266b.38.2024.10.17.05.12.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Oct 2024 05:12:41 -0700 (PDT)
+Message-ID: <385b7baa-8027-c4cf-948f-a1dff570befc@gmail.com>
+Date: Thu, 17 Oct 2024 14:12:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <6b405b22-9b1e-487b-9b9c-5944358488e2@arm.com>
-X-Proofpoint-GUID: fFgVxo911AkhQOW98aZQFvfHQ0KF2oHO
-X-Proofpoint-ORIG-GUID: fFgVxo911AkhQOW98aZQFvfHQ0KF2oHO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
- definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] leds: class: Protect brightness_show() with
+ led_cdev->led_access mutex
+Content-Language: en-US
+To: anish kumar <yesanishhere@gmail.com>, Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241015162532.2292871-1-quic_mojha@quicinc.com>
+ <CABCoZhB97E46NTRq-=JeUCH3V9fc45qC0WpA8qN2y6gxvWmbHA@mail.gmail.com>
+ <Zw7COXsvJsWq4db9@hu-mojha-hyd.qualcomm.com>
+ <CABCoZhCDJfiRtUvQ-4ypaQsiktC3b22r4=TCy5V+RVeOb4wP+A@mail.gmail.com>
+ <Zw9S7LYZ1Sb/eMXe@hu-mojha-hyd.qualcomm.com>
+ <CABCoZhBVEDKaaH36C+r4uMYo_08uRne9jikFCz8-yRuChR8JSw@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+In-Reply-To: <CABCoZhBVEDKaaH36C+r4uMYo_08uRne9jikFCz8-yRuChR8JSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Suzuki,
+Hi Anish and Mukesh,
 
-On 2024-10-01 at 22:13:12, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
-> Hi Linu
+On 10/16/24 18:37, anish kumar wrote:
+> On Tue, Oct 15, 2024 at 10:45 PM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+>>
+>> On Tue, Oct 15, 2024 at 03:28:08PM -0700, anish kumar wrote:
+>>> On Tue, Oct 15, 2024 at 12:28 PM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+>>>>
+>>>> On Tue, Oct 15, 2024 at 10:59:12AM -0700, anish kumar wrote:
+>>>>> On Tue, Oct 15, 2024 at 9:26 AM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+>>>>>>
+>>>>>> There is NULL pointer issue observed if from Process A where hid device
+>>>>>> being added which results in adding a led_cdev addition and later a
+>>>>>> another call to access of led_cdev attribute from Process B can result
+>>>>>> in NULL pointer issue.
+>>>>>
+>>>>> Which pointer is NULL? Call stack shows that dualshock4_led_get_brightness
+>>>>> function could be culprit?
+>>>>
+>>>> in dualshock4_led_get_brightness()[1], led->dev is NULL here, as [2]
+>>>> is not yet completed.
+>>>>
+>>>> [1]
+>>>>   struct hid_device *hdev = to_hid_device(led->dev->parent);
+>>>>
+>>>> [2]
+>>>> led_cdev->dev = device_create_with_groups(&leds_class, parent, 0,
+>>>>                    led_cdev, led_cdev->groups, "%s", final_name);
+>>>>
+>>>>>
+>>>>>>
+>>>>>> Use mutex led_cdev->led_access to protect access to led->cdev and its
+>>>>>> attribute inside brightness_show().
+>>>>>
+>>>>> I don't think it is needed here because it is just calling the led driver
+>>>>> callback and updating the brightness. So, why would we need to serialize
+>>>>> that using mutex? Maybe the callback needs some debugging.
+>>>>> I'm curious if it is ready by the time the callback is invoked.
+>>>>
+>>>> Because, we should not be allowed to access led_cdev->dev as it is not
+>>>> completed and since, brightness_store() has this lock brightness_show()
+>>>> should also have this as we are seeing the issue without it.
+>>>>
+>>>> I hope, above might have answered your question.
+>>>>
+>>>> -Mukesh
+>>>>>
+>>>>>>
+>>>>>>          Process A                               Process B
+>>>>>>
+>>>>>>   kthread+0x114
+>>>>>>   worker_thread+0x244
+>>>>>>   process_scheduled_works+0x248
+>>>>>>   uhid_device_add_worker+0x24
+>>>>>>   hid_add_device+0x120
+>>>>>>   device_add+0x268
+>>>>>>   bus_probe_device+0x94
+>>>>>>   device_initial_probe+0x14
+>>>>>>   __device_attach+0xfc
+>>>>>>   bus_for_each_drv+0x10c
+>>>>>>   __device_attach_driver+0x14c
+>>>>>>   driver_probe_device+0x3c
+>>>>>>   __driver_probe_device+0xa0
+>>>>>>   really_probe+0x190
+>>>>>>   hid_device_probe+0x130
+>>>>>>   ps_probe+0x990
+>>>>>>   ps_led_register+0x94
+>>>>>>   devm_led_classdev_register_ext+0x58
+>>>>>>   led_classdev_register_ext+0x1f8
+>>>>>>   device_create_with_groups+0x48
+>>>>>>   device_create_groups_vargs+0xc8
+>>>>>>   device_add+0x244
+>>>>>>   kobject_uevent+0x14
+>>>>>>   kobject_uevent_env[jt]+0x224
+>>>>>>   mutex_unlock[jt]+0xc4
+>>>>>>   __mutex_unlock_slowpath+0xd4
+>>>>>>   wake_up_q+0x70
+>>>>>>   try_to_wake_up[jt]+0x48c
+>>>>>>   preempt_schedule_common+0x28
+>>>>>>   __schedule+0x628
+>>>>>>   __switch_to+0x174
+>>>>>>                                                  el0t_64_sync+0x1a8/0x1ac
+>>>>>>                                                  el0t_64_sync_handler+0x68/0xbc
+>>>>>>                                                  el0_svc+0x38/0x68
+>>>>>>                                                  do_el0_svc+0x1c/0x28
+>>>>>>                                                  el0_svc_common+0x80/0xe0
+>>>>>>                                                  invoke_syscall+0x58/0x114
+>>>>>>                                                  __arm64_sys_read+0x1c/0x2c
+>>>>>>                                                  ksys_read+0x78/0xe8
+>>>>>>                                                  vfs_read+0x1e0/0x2c8
+>>>>>>                                                  kernfs_fop_read_iter+0x68/0x1b4
+>>>>>>                                                  seq_read_iter+0x158/0x4ec
+>>>>>>                                                  kernfs_seq_show+0x44/0x54
+>>>>>>                                                  sysfs_kf_seq_show+0xb4/0x130
+>>>>>>                                                  dev_attr_show+0x38/0x74
+>>>>>>                                                  brightness_show+0x20/0x4c
+>>>>>>                                                  dualshock4_led_get_brightness+0xc/0x74
+>>>>>>
+>>>>>> [ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
+>>>>>> [ 3313.874301][ T4013] Mem abort info:
+>>>>>> [ 3313.874303][ T4013]   ESR = 0x0000000096000006
+>>>>>> [ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
+>>>>>> [ 3313.874307][ T4013]   SET = 0, FnV = 0
+>>>>>> [ 3313.874309][ T4013]   EA = 0, S1PTW = 0
+>>>>>> [ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
+>>>>>> [ 3313.874313][ T4013] Data abort info:
+>>>>>> [ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+>>>>>> [ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>>>>>> [ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>>>>>> [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
+>>>>>> ..
+>>>>>>
+>>>>>> [ 3313.874332][ T4013] Dumping ftrace buffer:
+>>>>>> [ 3313.874334][ T4013]    (ftrace buffer empty)
+>>>>>> ..
+>>>>>> ..
+>>>>>> [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
+>>>>>> [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
+>>>>>> [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
+>>>>>> [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
+>>>>>> ..
+>>>>>> ..
+>>>>>> [ 3313.874685][ T4013] Call trace:
+>>>>>> [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
+>>>>>> [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
+>>>>>> [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
+>>>>>> [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
+>>>>>> [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
+>>>>>> [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
+>>>>>> [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
+>>>>>> [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
+>>>>>> [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
+>>>>>> [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
+>>>>>> [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
+>>>>>> [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
+>>>>>> [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
+>>>>>> [ 3313.874727][ T4013]  el0_svc+0x38/0x68
+>>>>>> [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
+>>>>>> [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
+>>>>>>
+>>>>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>>>>>> ---
+>>>>>>   drivers/leds/led-class.c | 3 ++-
+>>>>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>>>>>> index 06b97fd49ad9..e3cb93f19c06 100644
+>>>>>> --- a/drivers/leds/led-class.c
+>>>>>> +++ b/drivers/leds/led-class.c
+>>>>>> @@ -30,8 +30,9 @@ static ssize_t brightness_show(struct device *dev,
+>>>>>>   {
+>>>>>>          struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>>>>>>
+>>>>>> -       /* no lock needed for this */
+>>>
+>>> just get rid of the above comment then.
+>>
+>> If you notice, it is already removed (-) .
+>>
+>>>
+>>> Also, the comment below in file leds.h
+>>> needs an update as originally the idea for this mutex lock was to
+>>> provide quick feedback to userspace based on this commit
+>>> https://github.com/torvalds/linux/commit/acd899e4f3066b6662f6047da5b795cc762093cb
+>>>
+>>> Basically a comment somewhere so that when a new attribute
+>>> gets added, it doesn't make the same mistake of not using the mutex
+>>> and run into the same issue.
+>>>
+>>> /* Ensures consistent access to the LED Flash Class device */
+>>> struct mutex led_access;
+>>
+>> Thanks for accepting that it is an issue.
+>> I think, comment is very obvious actually the patch you mentioned should
+>> be in fixes tag as it introduced the lock but did not protect the show
+>> while it does it for store.
 > 
-> On 16/09/2024 11:34, Linu Cherian wrote:
-> > - Get reserved region from device tree node for metadata
-> > - Define metadata format for TMC
-> > - Add TMC ETR panic sync handler that syncs register snapshot
-> >    to metadata region
-> > - Add TMC ETF panic sync handler that syncs register snapshot
-> >    to metadata region and internal SRAM to reserved trace buffer
-> >    region.
-> 
-> The patch looks good overall. Some minor comments below.
-> 
-> > 
-> > Signed-off-by: Linu Cherian <lcherian@marvell.com>
-> > ---
-> > Changelog from v9:
-> > - Add common helper function of_tmc_get_reserved_resource_by_name
-> >    for better code reuse
-> > - Inorder to keep the reserved buffer validity and crashdata validity
-> >    independent, is_tmc_reserved_region_valid renamed to tmc_has_reserved_buffer
-> > - drvdata->crash_tbuf renamed to drvdata->resrv_buf
-> > - New fields added to crash metadata: version, ffcr, ffsr, mode
-> > - Defined crashdata version with Major version 1, Minor version 0
-> > - Set version while creating crashdata record
-> > - Removed Reviewed-by tag due to the above changes
-> >   .../hwtracing/coresight/coresight-tmc-core.c  | 14 ++++
-> >   .../hwtracing/coresight/coresight-tmc-etf.c   | 77 ++++++++++++++++++
-> >   .../hwtracing/coresight/coresight-tmc-etr.c   | 78 +++++++++++++++++++
-> >   drivers/hwtracing/coresight/coresight-tmc.h   | 66 ++++++++++++++++
-> >   4 files changed, 235 insertions(+)
-> > 
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > index 0764c21aba0f..54bf8ae2bff8 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > @@ -445,6 +445,20 @@ static void tmc_get_reserved_region(struct device *parent)
-> >   	drvdata->resrv_buf.paddr = res.start;
-> >   	drvdata->resrv_buf.size  = resource_size(&res);
-> > +
-> > +	if (of_tmc_get_reserved_resource_by_name(parent, "metadata", &res))
-> > +		return;
-> > +
-> > +	drvdata->crash_mdata.vaddr = memremap(res.start,
-> > +					       resource_size(&res),
-> > +					       MEMREMAP_WC);
-> > +	if (IS_ERR_OR_NULL(drvdata->crash_mdata.vaddr)) {
-> > +		dev_err(parent, "Metadata memory mapping failed\n");
-> > +		return;
-> > +	}
-> > +
-> > +	drvdata->crash_mdata.paddr = res.start;
-> > +	drvdata->crash_mdata.size  = resource_size(&res);
-> >   }
-> >   /* Detect and initialise the capabilities of a TMC ETR */
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> > index d4f641cd9de6..d77ec9307e98 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-> > @@ -590,6 +590,78 @@ static unsigned long tmc_update_etf_buffer(struct coresight_device *csdev,
-> >   	return to_read;
-> >   }
-> > +static int tmc_panic_sync_etf(struct coresight_device *csdev)
-> > +{
-> > +	u32 val;
-> > +	struct csdev_access *csa;
-> > +	struct tmc_crash_metadata *mdata;
-> > +	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> > +
-> > +	csa = &drvdata->csdev->access;
-> > +	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
-> > +
-> > +	/* Make sure we have valid reserved memory */
-> > +	if (!tmc_has_reserved_buffer(drvdata) ||
-> > +	    !tmc_has_crash_mdata_buffer(drvdata))
-> > +		return 0;
-> > +
-> > +	tmc_crashdata_set_invalid(drvdata);
-> > +
-> > +	CS_UNLOCK(drvdata->base);
-> > +
-> > +	/* Proceed only if ETF is enabled or configured as sink */
-> > +	val = readl(drvdata->base + TMC_CTL);
-> > +	if (!(val & TMC_CTL_CAPT_EN))
-> > +		goto out;
-> > +
-> 
-> minor nit : Since the check below is "covered" by the same comment
-> above, please drop the extra line here to make it clear that "we check
-> for sink" by checking the "MODE == CIRCULAR_BUFFER".
+> Yes, but that patch was added for supporting flash class
+> device and wasn't explicitly to take care of the scenario that you
+> are trying to handle and the above comment in leds.h states the same.
 
-Ack.
+Correct. led_access mutex was introduced to add support for preventing
+any LED class device state changes originating from sysfs while
+v4l2_flash wrapper owns the device.
 
-> 
-> > +	val = readl(drvdata->base + TMC_MODE);
-> > +	if (val != TMC_MODE_CIRCULAR_BUFFER)
-> > +		goto out;
-> > +
-> > +	val = readl(drvdata->base + TMC_FFSR);
-> > +	/* Do manual flush and stop only if its not auto-stopped */
-> > +	if (!(val & TMC_FFSR_FT_STOPPED)) {
-> > +		dev_info(&csdev->dev,
-> > +			 "%s: Triggering manual flush\n", __func__);
-> 
-> Please drop the ^^^ line. We don't want to do anything like that from a
-> panic callback.
+Since the inception of LED subsystem all the locking was deemed to be
+the responsibility of every single LED class driver and initially sysfs
+attr callbacks didn't have any locking. After some time when LED core
+started to grow it turned out that it was required to lock the LED class
+initialization sequence, so as not to give the userspace an opportunity
+to set LED brightness on not fully initialized device, which was
+introduced in [0]. led_access mutex was already in place so it was used.
+However as you noticed, it is not used consistently across all LED class
+sysfs attrs callbacks.
 
-Ack.
+Since brightness_show() does not acquire led_access mutex it is still
+possible to call brightness_get op when LED class initialization
+sequence is not yet finished.
 
-> 
-> > +		tmc_flush_and_stop(drvdata);
-> > +	} else
-> > +		tmc_wait_for_tmcready(drvdata);
-> > +
-> > +	/* Sync registers from hardware to metadata region */
-> > +	mdata->sts = csdev_access_relaxed_read32(csa, TMC_STS);
-> 
-> Why are we using "csa" here and not for TMC_CTL etc ? Simply drop the "csa"
-> and use the raw reads like above. TMC doesn't have anyother modes
-> of access.
-> 
+Still, I'd propose to first narrow down the issue and figure out what
+actually causes NULL pointer dereference, as it apparently
+originates from dualshock4_led_get_brightness and not from LED core.
 
-Okay.
-
-> > +	mdata->mode = csdev_access_relaxed_read32(csa, TMC_MODE);
-> > +	mdata->ffcr = csdev_access_relaxed_read32(csa, TMC_FFCR);
-> > +	mdata->ffsr = csdev_access_relaxed_read32(csa, TMC_FFSR);
-> > +	mdata->trace_paddr = drvdata->resrv_buf.paddr;
-> > +
-> > +	/* Sync Internal SRAM to reserved trace buffer region */
-> > +	drvdata->buf = drvdata->resrv_buf.vaddr;
-> > +	tmc_etb_dump_hw(drvdata);
-> > +	/* Store as per RSZ register convention */
-> > +	mdata->size = drvdata->len >> 2;
-> > +	mdata->version = CS_CRASHDATA_VERSION;
-> > +
-> > +	/*
-> > +	 * Make sure all previous writes are completed,
-> > +	 * before we mark valid
-> > +	 */
-> > +	dsb(sy);
-> 
-> I don't think this matters much, as this would only be read by a
-> secondary kernel. In the worst case, you only need `dmb(ish)` to make
-> sure the writes are visible before valid is set to true.
-
-Ack. Will change that.
-
-> 
-> > +	mdata->valid = true;
-> > +	/*
-> > +	 * Below order need to maintained, since crc of metadata
-> > +	 * is dependent on first
-> > +	 */
-> > +	mdata->crc32_tdata = find_crash_tracedata_crc(drvdata, mdata);
-> > +	mdata->crc32_mdata = find_crash_metadata_crc(mdata);
-> > +
-> > +	tmc_disable_hw(drvdata);
-> > +
-> > +	dev_info(&csdev->dev, "%s: success\n", __func__);
-> 
-> Please no "prints" from a panic call back, unless it absolutely CRITICAL.
-
-Ack.
-
-> 
-> > +out:
-> > +	CS_UNLOCK(drvdata->base);
-> > +	return 0;
-> > +}
-> > +
-> >   static const struct coresight_ops_sink tmc_etf_sink_ops = {
-> >   	.enable		= tmc_enable_etf_sink,
-> >   	.disable	= tmc_disable_etf_sink,
-> > @@ -603,6 +675,10 @@ static const struct coresight_ops_link tmc_etf_link_ops = {
-> >   	.disable	= tmc_disable_etf_link,
-> >   };
-> > +static const struct coresight_ops_panic tmc_etf_sync_ops = {
-> > +	.sync		= tmc_panic_sync_etf,
-> > +};
-> > +
-> >   const struct coresight_ops tmc_etb_cs_ops = {
-> >   	.sink_ops	= &tmc_etf_sink_ops,
-> >   };
-> > @@ -610,6 +686,7 @@ const struct coresight_ops tmc_etb_cs_ops = {
-> >   const struct coresight_ops tmc_etf_cs_ops = {
-> >   	.sink_ops	= &tmc_etf_sink_ops,
-> >   	.link_ops	= &tmc_etf_link_ops,
-> > +	.panic_ops	= &tmc_etf_sync_ops,
-> >   };
-> >   int tmc_read_prepare_etb(struct tmc_drvdata *drvdata)
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > index 8bca5b36334a..8228d7aaa361 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > @@ -1814,6 +1814,79 @@ static int tmc_disable_etr_sink(struct coresight_device *csdev)
-> >   	return 0;
-> >   }
-> > +static int tmc_panic_sync_etr(struct coresight_device *csdev)
-> > +{
-> > +	u32 val;
-> > +	struct csdev_access *csa;
-> > +	struct tmc_crash_metadata *mdata;
-> > +	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> > +
-> > +	csa = &drvdata->csdev->access;
-> 
-> As earlier, drop the csa.
-
-
-Okay.
-
-> 
-> > +	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
-> > +
-> > +	if (!drvdata->etr_buf)
-> > +		return 0;
-> > +
-> > +	/* Being in RESRV mode implies valid reserved memory as well */
-> > +	if (drvdata->etr_buf->mode != ETR_MODE_RESRV)
-> > +		return 0;
-> > +
-> > +	if (!tmc_has_reserved_buffer(drvdata) ||
-> 
-> Do we need to check this again ? We wouldn't be in ETR_MODE_RESRV
-> otherwise, also indicated by the comment.
-
-Will drop.
+I bet that the driver is not fully initialized up to the point when
+devm_led_classdev_register_ext() is called in it.
 
 > 
-> > +	    !tmc_has_crash_mdata_buffer(drvdata))
-> > +		return 0;
-> > +
-> > +	tmc_crashdata_set_invalid(drvdata);
-> > +
-> > +	CS_UNLOCK(drvdata->base);
-> > +
-> > +	/* Proceed only if ETR is enabled */
-> > +	val = readl(drvdata->base + TMC_CTL);
-> > +	if (!(val & TMC_CTL_CAPT_EN))
-> > +		goto out;
-> > +
-> > +	val = readl(drvdata->base + TMC_FFSR);
-> > +	/* Do manual flush and stop only if its not auto-stopped */
-> > +	if (!(val & TMC_FFSR_FT_STOPPED)) {
-> > +		dev_info(&csdev->dev,
-> > +			 "%s: Triggering manual flush\n", __func__);
+> I think we should modify that comment and state clearly that
+> the aforementioned mutex is also to handle access to led_cdev->dev.
+> Either here in this .h or where attributes are defined, so that new attributes
+> that get added doesn't suffer from the same bug.
 > 
-> Drop the info
+> led_trigger_set also this function also suffers from the same bug so you
+> need to handle it the same way.
 
-Ack.
+led_trigger_set() is already called with led_access mutex held in
+led_trigger_write(), i.e. from "trigger" sysfs attr.
 
+>>
+>> Fixes: acd899e4f306 ("leds: implement sysfs interface locking mechanism")
+>>
+>> -Mukesh
+>>>
+>>>
+>>>>>
+>>>>>>> also you missed this.
+>>>>>
+>>>>>> +       mutex_lock(&led_cdev->led_access);
+>>>>>>          led_update_brightness(led_cdev);
+>>>>>> +       mutex_unlock(&led_cdev->led_access);
+>>>>>>
+>>>>>>          return sprintf(buf, "%u\n", led_cdev->brightness);
+>>>>>>   }
+>>>>>> --
+>>>>>> 2.34.1
+>>>>>>
+>>>>>>
 > 
-> > +		tmc_flush_and_stop(drvdata);
-> > +	} else
-> > +		tmc_wait_for_tmcready(drvdata);
-> > +
-> > +	/* Sync registers from hardware to metadata region */
-> > +	mdata->size = csdev_access_relaxed_read32(csa, TMC_RSZ);
-> > +	mdata->sts = csdev_access_relaxed_read32(csa, TMC_STS);
-> > +	mdata->mode = csdev_access_relaxed_read32(csa, TMC_MODE);
-> > +	mdata->ffcr = csdev_access_relaxed_read32(csa, TMC_FFCR);
-> > +	mdata->ffsr = csdev_access_relaxed_read32(csa, TMC_FFSR);
-> 
-> Please use raw reads, don't mix csa and raw reads.
 
-Ack.
+[0] 
+https://lore.kernel.org/linux-leds/20180523222221.27621-1-lhenriques@suse.com/
 
-> 
-> > +	mdata->rrp = tmc_read_rrp(drvdata);
-> > +	mdata->rwp = tmc_read_rwp(drvdata);
-> > +	mdata->dba = tmc_read_dba(drvdata);
-> > +	mdata->trace_paddr = drvdata->resrv_buf.paddr;
-> > +	mdata->version = CS_CRASHDATA_VERSION;
-> > +
-> > +	/*
-> > +	 * Make sure all previous writes are completed,
-> > +	 * before we mark valid
-> > +	 */
-> > +	dsb(sy);
-> 
-> Same as earlier, doesn't buy us much
-
-Will convert to dmb.
-
-> 
-> > +	mdata->valid = true;
-> > +	/*
-> > +	 * Below order need to maintained, since crc of metadata
-> > +	 * is dependent on first
-> > +	 */
-> > +	mdata->crc32_tdata = find_crash_tracedata_crc(drvdata, mdata);
-> > +	mdata->crc32_mdata = find_crash_metadata_crc(mdata);
-> > +
-> > +	tmc_disable_hw(drvdata);
-> > +
-> > +	dev_info(&csdev->dev, "%s: success\n", __func__);
-> 
-> Drop
-> 
-> > +out:
-> > +	CS_UNLOCK(drvdata->base);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static const struct coresight_ops_sink tmc_etr_sink_ops = {
-> >   	.enable		= tmc_enable_etr_sink,
-> >   	.disable	= tmc_disable_etr_sink,
-> > @@ -1822,8 +1895,13 @@ static const struct coresight_ops_sink tmc_etr_sink_ops = {
-> >   	.free_buffer	= tmc_free_etr_buffer,
-> >   };
-> > +static const struct coresight_ops_panic tmc_etr_sync_ops = {
-> > +	.sync		= tmc_panic_sync_etr,
-> > +};
-> > +
-> >   const struct coresight_ops tmc_etr_cs_ops = {
-> >   	.sink_ops	= &tmc_etr_sink_ops,
-> > +	.panic_ops	= &tmc_etr_sync_ops,
-> >   };
-> >   int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> > index d2261eddab71..75e504e51956 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> > @@ -12,6 +12,7 @@
-> >   #include <linux/miscdevice.h>
-> >   #include <linux/mutex.h>
-> >   #include <linux/refcount.h>
-> > +#include <linux/crc32.h>
-> >   #define TMC_RSZ			0x004
-> >   #define TMC_STS			0x00c
-> > @@ -76,6 +77,9 @@
-> >   #define TMC_AXICTL_AXCACHE_OS	(0xf << 2)
-> >   #define TMC_AXICTL_ARCACHE_OS	(0xf << 16)
-> > +/* TMC_FFSR - 0x300 */
-> > +#define TMC_FFSR_FT_STOPPED	BIT(1)
-> > +
-> >   /* TMC_FFCR - 0x304 */
-> >   #define TMC_FFCR_FLUSHMAN_BIT	6
-> >   #define TMC_FFCR_EN_FMT		BIT(0)
-> > @@ -94,6 +98,9 @@
-> >   #define TMC_AUTH_NSID_MASK	GENMASK(1, 0)
-> > +/* Major version 1 Minor version 0 */
-> > +#define CS_CRASHDATA_VERSION	(1 << 16)
-> > +
-> >   enum tmc_config_type {
-> >   	TMC_CONFIG_TYPE_ETB,
-> >   	TMC_CONFIG_TYPE_ETR,
-> > @@ -131,6 +138,25 @@ enum tmc_mem_intf_width {
-> >   #define CORESIGHT_SOC_600_ETR_CAPS	\
-> >   	(TMC_ETR_SAVE_RESTORE | TMC_ETR_AXI_ARCACHE)
-> > +/* TMC metadata region for ETR and ETF configurations */
-> > +struct tmc_crash_metadata {
-> > +	uint32_t crc32_mdata;	/* crc of metadata */
-> > +	uint32_t crc32_tdata;	/* crc of tracedata */
-> > +	uint32_t version;	/* 31:16 Major version, 15:0 Minor version */
-> > +	uint32_t valid;         /* Indicate if this ETF/ETR was enabled */
-> > +	uint32_t size;          /* Ram Size register */
-> 
-> Please could you not keep this "plain bytes" ? Or rename the field to
-> tmc_ram_size if we want to stick to TMC RAM SIZE register. It is very
-> easy to confuse it with "normal" bytes.
-
-Okay. Will change the name.
-
-> 
-> > +	uint32_t sts;           /* Status register */
-> 
-> tmc_sts
-> 
-> > +	uint32_t mode;		/* Mode register */
-> 
-> tmc_mode
-> 
-> This doesn't look packed. Please could you add a padding here to make sure
-> the fields are 64bit aligned ?
-> 
-> > +	uint64_t ffcr;		/* Formatter and flush control register */
-> 
-> tmc_ffcr
-> 
-> > +	uint64_t ffsr;		/* Formatter and flush status register */
-> 
-> tmc_ffsr
-> 
-> 
-> Also, why are they both 64bit ? They are all 32bit for sure ?
-> 
-> > +	uint32_t reserved32[3];
-> 
-> Why do we have reserved bits here ? They should be near the 32bit fields.
-
-Have added them for the sake of future extensions, just in case if we
-wish to add additional registers without changing the overall metadata
-size.
-
-
-> 
-> I think, once you fix the type of ffcr and ffsr things, everything will
-> be in order.
-
-
-Okay will fix.
-
-> 
-> 
-> > +	uint64_t rrp;           /* Ram Read pointer register */
-> > +	uint64_t rwp;           /* Ram Write pointer register */
-> > +	uint64_t dba;		/* Data buffer address register */
-> > +	uint64_t trace_paddr;	/* Phys address of trace buffer */
-> > +	uint64_t reserved64[3];
-> > +};
-> 
-> 
-> Suzuki
-> 
-> 
-> > +
-> >   enum etr_mode {
-> >   	ETR_MODE_FLAT,		/* Uses contiguous flat buffer */
-> >   	ETR_MODE_ETR_SG,	/* Uses in-built TMC ETR SG mechanism */
-> > @@ -205,6 +231,8 @@ struct tmc_resrv_buf {
-> >    *		retention (after crash) only when ETR_MODE_RESRV buffer
-> >    *		mode is enabled. Used by ETF for trace data retention
-> >    *		(after crash) by default.
-> > + * @crash_mdata: Reserved memory for storing tmc crash metadata.
-> > + *		 Used by ETR/ETF.
-> >    */
-> >   struct tmc_drvdata {
-> >   	struct clk		*pclk;
-> > @@ -231,6 +259,7 @@ struct tmc_drvdata {
-> >   	struct etr_buf		*sysfs_buf;
-> >   	struct etr_buf		*perf_buf;
-> >   	struct tmc_resrv_buf	resrv_buf;
-> > +	struct tmc_resrv_buf	crash_mdata;
-> >   };
-> >   struct etr_buf_operations {
-> > @@ -356,6 +385,43 @@ static inline bool tmc_has_reserved_buffer(struct tmc_drvdata *drvdata)
-> >   	return false;
-> >   }
-> > +static inline bool tmc_has_crash_mdata_buffer(struct tmc_drvdata *drvdata)
-> > +{
-> > +	if (drvdata->crash_mdata.vaddr &&
-> > +	    drvdata->crash_mdata.size)
-> > +		return true;
-> > +	return false;
-> > +}
-> > +
-> > +static inline void tmc_crashdata_set_invalid(struct tmc_drvdata *drvdata)
-> > +{
-> > +	struct tmc_crash_metadata *mdata;
-> > +
-> > +	mdata = (struct tmc_crash_metadata *)drvdata->crash_mdata.vaddr;
-> > +
-> > +	if (tmc_has_crash_mdata_buffer(drvdata))
-> > +		mdata->valid = false;
-> > +}
-> > +
-> > +static inline uint32_t find_crash_metadata_crc(struct tmc_crash_metadata *md)
-> > +{
-> > +	unsigned long crc_size;
-> > +
-> > +	crc_size = sizeof(struct tmc_crash_metadata) -
-> > +		offsetof(struct tmc_crash_metadata, crc32_tdata);
-> > +	return crc32_le(0, (void *)&md->crc32_tdata, crc_size);
-> > +}
-> > +
-> > +static inline uint32_t find_crash_tracedata_crc(struct tmc_drvdata *drvdata,
-> > +						struct tmc_crash_metadata *md)
-> > +{
-> > +	unsigned long crc_size;
-> > +
-> > +	/* Take CRC of configured buffer size to keep it simple */
-> > +	crc_size = md->size << 2;
-> > +	return crc32_le(0, (void *)drvdata->resrv_buf.vaddr, crc_size);
-> > +}
-> > +
-> >   struct coresight_device *tmc_etr_get_catu_device(struct tmc_drvdata *drvdata);
-> >   void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu);
-> 
-> 
+-- 
+Best regards,
+Jacek Anaszewski
 
