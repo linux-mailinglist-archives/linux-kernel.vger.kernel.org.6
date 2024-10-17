@@ -1,168 +1,189 @@
-Return-Path: <linux-kernel+bounces-369554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190E69A1ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:48:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BAC9A1EDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 760B9B2670A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9609D1F26212
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3197F1D95B7;
-	Thu, 17 Oct 2024 09:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8567F1DA632;
+	Thu, 17 Oct 2024 09:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="N23q9ZA6"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DJP7kB6t"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866581D9662;
-	Thu, 17 Oct 2024 09:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F701D9A40
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729158462; cv=none; b=gsN43iMW0sirX+5VAxOe3IXey6/H7KaDC8vRqAYoUf+Lt5X0fk0bECeIChiC+koIn6wO3tXWaRIrX7YLsTubz3b9Xx9oNIKIUcyDY1L/1U+f2vUZ2nOvnX/Iu7ADpVzV0z73D27+mCj9ROZoNxQT5M5iU7d4MrK10nQ1dZxRcuE=
+	t=1729158471; cv=none; b=dEvAOH10tkpEySE/N9p4+1JJJaVXTqa5FMS1Q52LaHnF+/Vu1gZIDflmHlu3mtW8QACDyorsFc11spYzPOWL06YGXIY0Jw9md2H238uhBNQcWaJbuAd6OT+xpkyKa0UoyZYTyHY+ZBWnwMc2WKqYwis8vMUQ66cpKNnbZ1MDqnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729158462; c=relaxed/simple;
-	bh=rlctYl5U8K1DKzy7dCypquZqcKDhUvVVu5KxJ9C02oU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pqo9WK54RToGBc18m4xkJtZCcCtY3HJbv0JlSLW20/SNPDTXPZgoRnkVTQyLS1rbUZNo/+MmW+zjPPcLghOFAHw0PQj6kmNUMHt64Xz96PsosAaxkwFSW51iVPQR2ULNHa5GEm5bM+uIXgfsubz7CKSMBRGPktWaZrgxu72iNqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=N23q9ZA6; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1729158456;
-	bh=rlctYl5U8K1DKzy7dCypquZqcKDhUvVVu5KxJ9C02oU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N23q9ZA6sy1EIr9zwziOQpOWGgVq4gSDunvu2KNPq1DvM4JLlga80RaIaK2DPcWLa
-	 z8W7K8POX+fMP1iW/5DP3vIY5bXfY06hJZHByxQRmCISoixHSyQST/C4Qt8j+k5akx
-	 57ghcd4hofmJiw0loyLmuP9qATpwglBV1tljXYfcpQPPbHzuLn3uRm1hBGu0Jk0SkB
-	 qw10i8YPymETDrghCmMCL/5DReXGhJKOdqqK159JOFdyIrz/E6B9SuZXVhBVBvPlsR
-	 ellZI5htKVyRoKt6kLFPxgj9xb6fDrw0i9MbWe+KKb7wLNMVvPqPrwOePYZLs9ivp1
-	 sI924R2d6HEAw==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id F41A7600C4;
-	Thu, 17 Oct 2024 09:47:11 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id 1CB8A2039AA; Thu, 17 Oct 2024 09:47:08 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	David Ahern <dsahern@kernel.org>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	netdev@vger.kernel.org,
-	mptcp@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] tools: ynl-gen: use big-endian netlink attribute types
-Date: Thu, 17 Oct 2024 09:47:02 +0000
-Message-ID: <20241017094704.3222173-1-ast@fiberby.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729158471; c=relaxed/simple;
+	bh=Ey4hkJfeuepSmpGBsIu6nk+9hLwceJu2S1dOO0uow7A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JVym11Q6vy6w/PUz6Wq8HPEO1moW0sB4/xlolBQl+tgszRfxpbTD+MPga/FtsyqBcNg7SSnB6tGEfDMyWc5oP7Z2hQku/7RH8V3BDuuTJMpVPV8WIpca5OgF0fAKiICMLm01M7TmjgiEj+LmmaNamfC/suEvs3d+H9Q1BY8QXzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DJP7kB6t; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso610167a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1729158469; x=1729763269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Her0gSR4BBHnMz6qkjoFdQSLfH6EB46Dm9TwWv8aciM=;
+        b=DJP7kB6tfIPs7mCsy5pVyJT1O0bk80aUR74nnc9WAZmg5L9jkBSmiHrFz92XxWHrqg
+         7ZvAtYT0t7DKxgmgMlxBCMDjKb5WdGutlUE+pwHKCYRHVfNB/Vs6IdjjaDClZrDZ6jYq
+         hm4MbxRJhWvZ7xK9iK5M6Q3W8o7q+jKl2Zq15RApS7YRV/gYLGLiiyiBLyT5dTUdPan7
+         o2JaFkTqK64b5E8/07wB2hXMKN76ZZkEh65U4bNMy6MFvBFArvcvYvXrkYwJMO8azcnI
+         canmos7XELhlZne/X+sD7tooVFSASE+ziR6IxjEyCcePz/LkoVfviVlz0yoeV6PrRGQh
+         jqXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729158469; x=1729763269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Her0gSR4BBHnMz6qkjoFdQSLfH6EB46Dm9TwWv8aciM=;
+        b=SQOHCQAIgxGjg4l0HKnUV4D8eKWg3hrZke5qfrdYM/ICql5EUoVnRl2tDeiR7Yfhsx
+         wmdpUEJhU+veDHD5hoPcpn9yfou+gsiZreRY+Y+kvTD/3d0dyx6XZo5WioLv5t3wOuwv
+         hycuOJOkthp5fpR/aakqt/4hom6fTqy2U+IL3pXYwrsr8ChpCAXSmj4vickPlKDvHgoZ
+         CdEE+/9wRJWNklTfwmB/GD9mZF4M6/FngGwkiFCWd2bU3X1z6bdynCF2ZtRzRPP1kQK/
+         m/JaZ+uD55Cu6aGBAJT6FrINsG4z8/IhqJcHG2BR6BiTZq/bdi17QHsUEuLs7xtZsPG5
+         L9Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtbabqmdQt5D0Wf0hVdJU2Q8IhQ/nbWBEY/DjnmVu3KQNCE8f7N2N9JXnC43Al9ucAcDOVm6mY/xAFwgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxod23v4lwrP5SyfX8EDkyZXTFQyLlPpWCK+iV4muB7He+lJ5SY
+	5LjU/HlV9OUYJlmSnVt8XmbThUmLSXJZ+TBJUObdEr9AvEX4tRRfFyu3nHQuPMs=
+X-Google-Smtp-Source: AGHT+IE1v6XXIN4uy6wpGXlNlRaRH/EFn1RgvKGG6B8slpDy+FU4v/9ncWciKSoJRaJla+Op+ATmuw==
+X-Received: by 2002:a05:6a20:cfa5:b0:1d2:f09e:c15b with SMTP id adf61e73a8af0-1d8bcf42381mr31104053637.25.1729158469098;
+        Thu, 17 Oct 2024 02:47:49 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e774a4218sm4385365b3a.120.2024.10.17.02.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 02:47:48 -0700 (PDT)
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+To: david@redhat.com,
+	hughd@google.com,
+	willy@infradead.org,
+	mgorman@suse.de,
+	muchun.song@linux.dev,
+	vbabka@kernel.org,
+	akpm@linux-foundation.org,
+	zokeefe@google.com,
+	rientjes@google.com,
+	jannh@google.com,
+	peterx@redhat.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v1 0/7] synchronously scan and reclaim empty user PTE pages
+Date: Thu, 17 Oct 2024 17:47:19 +0800
+Message-Id: <cover.1729157502.git.zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Change ynl-gen-c.py to use NLA_BE16 and NLA_BE32 types to represent
-big-endian u16 and u32 ynl types.
+Changes in v1:
+ - replace [RFC PATCH 1/7] with a separate serise (already merge into mm-unstable):
+   https://lore.kernel.org/lkml/cover.1727332572.git.zhengqi.arch@bytedance.com/
+   (suggested by David Hildenbrand)
+ - squash [RFC PATCH 2/7] into [RFC PATCH 4/7]
+   (suggested by David Hildenbrand)
+ - change to scan and reclaim empty user PTE pages in zap_pte_range()
+   (suggested by David Hildenbrand)
+ - sent a separate RFC patch to track the tlb flushing issue, and remove
+   that part form this series ([RFC PATCH 3/7] and [RFC PATCH 6/7]).
+   link: https://lore.kernel.org/lkml/20240815120715.14516-1-zhengqi.arch@bytedance.com/
+ - add [PATCH v1 1/7] into this series
+ - drop RFC tag
+ - rebase onto the next-20241011
 
-Doing this enables those attributes to have range checks applied, as
-the validator will then convert to host endianness prior to validation.
+Changes in RFC v2:
+ - fix compilation errors in [RFC PATCH 5/7] and [RFC PATCH 7/7] reproted by
+   kernel test robot
+ - use pte_offset_map_nolock() + pmd_same() instead of check_pmd_still_valid()
+   in retract_page_tables() (in [RFC PATCH 4/7])
+ - rebase onto the next-20240805
 
-The autogenerated kernel/uapi code have been regenerated by running:
-  ./tools/net/ynl/ynl-regen.sh -f
+Hi all,
 
-This changes the policy types of the following attributes:
+Previously, we tried to use a completely asynchronous method to reclaim empty
+user PTE pages [1]. After discussing with David Hildenbrand, we decided to
+implement synchronous reclaimation in the case of madvise(MADV_DONTNEED) as the
+first step.
 
-  FOU_ATTR_PORT (NLA_U16 -> NLA_BE16)
-  FOU_ATTR_PEER_PORT (NLA_U16 -> NLA_BE16)
-    These two are used with nla_get_be16/nla_put_be16().
+So this series aims to synchronously free the empty PTE pages in
+madvise(MADV_DONTNEED) case. We will detect and free empty PTE pages in
+zap_pte_range(), and will add zap_details.reclaim_pt to exclude cases other than
+madvise(MADV_DONTNEED).
 
-  MPTCP_PM_ADDR_ATTR_ADDR4 (NLA_U32 -> NLA_BE32)
-    This one is used with nla_get_in_addr/nla_put_in_addr(),
-    which uses nla_get_be32/nla_put_be32().
+In zap_pte_range(), mmu_gather is used to perform batch tlb flushing and page
+freeing operations. Therefore, if we want to free the empty PTE page in this
+path, the most natural way is to add it to mmu_gather as well. Now, if
+CONFIG_MMU_GATHER_RCU_TABLE_FREE is selected, mmu_gather will free page table
+pages by semi RCU:
 
-IOWs the generated changes are AFAICT aligned with their implementations.
+ - batch table freeing: asynchronous free by RCU
+ - single table freeing: IPI + synchronous free
 
-The generated userspace code remains identical, and have been verified
-by comparing the output generated by the following command:
-  make -C tools/net/ynl/generated
+But this is not enough to free the empty PTE page table pages in paths other
+that munmap and exit_mmap path, because IPI cannot be synchronized with
+rcu_read_lock() in pte_offset_map{_lock}(). So we should let single table also
+be freed by RCU like batch table freeing.
 
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+As a first step, we supported this feature on x86_64 and selectd the newly
+introduced CONFIG_ARCH_SUPPORTS_PT_RECLAIM.
 
----
-Changelog:
+For other cases such as madvise(MADV_FREE), consider scanning and freeing empty
+PTE pages asynchronously in the future.
 
-v2:
-- Re-implement to avoid adding a new Type attribute (Requested by Jakub).
+This series is based on next-20241011 (which contains the series [2]).
 
-v1: https://lore.kernel.org/netdev/20240913085555.134788-1-ast@fiberby.net/
----
- net/ipv4/fou_nl.c          | 4 ++--
- net/mptcp/mptcp_pm_gen.c   | 2 +-
- tools/net/ynl/ynl-gen-c.py | 5 ++++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+Comments and suggestions are welcome!
 
-diff --git a/net/ipv4/fou_nl.c b/net/ipv4/fou_nl.c
-index 98b90107b5ab..3d9614609b2d 100644
---- a/net/ipv4/fou_nl.c
-+++ b/net/ipv4/fou_nl.c
-@@ -12,7 +12,7 @@
- 
- /* Global operation policy for fou */
- const struct nla_policy fou_nl_policy[FOU_ATTR_IFINDEX + 1] = {
--	[FOU_ATTR_PORT] = { .type = NLA_U16, },
-+	[FOU_ATTR_PORT] = { .type = NLA_BE16, },
- 	[FOU_ATTR_AF] = { .type = NLA_U8, },
- 	[FOU_ATTR_IPPROTO] = { .type = NLA_U8, },
- 	[FOU_ATTR_TYPE] = { .type = NLA_U8, },
-@@ -21,7 +21,7 @@ const struct nla_policy fou_nl_policy[FOU_ATTR_IFINDEX + 1] = {
- 	[FOU_ATTR_LOCAL_V6] = { .len = 16, },
- 	[FOU_ATTR_PEER_V4] = { .type = NLA_U32, },
- 	[FOU_ATTR_PEER_V6] = { .len = 16, },
--	[FOU_ATTR_PEER_PORT] = { .type = NLA_U16, },
-+	[FOU_ATTR_PEER_PORT] = { .type = NLA_BE16, },
- 	[FOU_ATTR_IFINDEX] = { .type = NLA_S32, },
- };
- 
-diff --git a/net/mptcp/mptcp_pm_gen.c b/net/mptcp/mptcp_pm_gen.c
-index c30a2a90a192..5a6b2b4510d3 100644
---- a/net/mptcp/mptcp_pm_gen.c
-+++ b/net/mptcp/mptcp_pm_gen.c
-@@ -14,7 +14,7 @@
- const struct nla_policy mptcp_pm_address_nl_policy[MPTCP_PM_ADDR_ATTR_IF_IDX + 1] = {
- 	[MPTCP_PM_ADDR_ATTR_FAMILY] = { .type = NLA_U16, },
- 	[MPTCP_PM_ADDR_ATTR_ID] = { .type = NLA_U8, },
--	[MPTCP_PM_ADDR_ATTR_ADDR4] = { .type = NLA_U32, },
-+	[MPTCP_PM_ADDR_ATTR_ADDR4] = { .type = NLA_BE32, },
- 	[MPTCP_PM_ADDR_ATTR_ADDR6] = NLA_POLICY_EXACT_LEN(16),
- 	[MPTCP_PM_ADDR_ATTR_PORT] = { .type = NLA_U16, },
- 	[MPTCP_PM_ADDR_ATTR_FLAGS] = { .type = NLA_U32, },
-diff --git a/tools/net/ynl/ynl-gen-c.py b/tools/net/ynl/ynl-gen-c.py
-index d64cb2b49c44..1a825b4081b2 100755
---- a/tools/net/ynl/ynl-gen-c.py
-+++ b/tools/net/ynl/ynl-gen-c.py
-@@ -167,7 +167,10 @@ class Type(SpecAttr):
-         return '{ .type = ' + policy + ', }'
- 
-     def attr_policy(self, cw):
--        policy = c_upper('nla-' + self.attr['type'])
-+        policy = f'NLA_{c_upper(self.type)}'
-+        if self.attr.get('byte-order') == 'big-endian':
-+            if self.type in {'u16', 'u32'}:
-+                policy = f'NLA_BE{self.type[1:]}'
- 
-         spec = self._attr_policy(policy)
-         cw.p(f"\t[{self.enum_name}] = {spec},")
+Thanks,
+Qi
+
+[1]. https://lore.kernel.org/lkml/cover.1718267194.git.zhengqi.arch@bytedance.com/
+[2]. https://lore.kernel.org/lkml/cover.1727332572.git.zhengqi.arch@bytedance.com/
+
+Qi Zheng (7):
+  mm: khugepaged: retract_page_tables() use pte_offset_map_lock()
+  mm: make zap_pte_range() handle full within-PMD range
+  mm: zap_install_uffd_wp_if_needed: return whether uffd-wp pte has been
+    re-installed
+  mm: zap_present_ptes: return whether the PTE page is unreclaimable
+  mm: pgtable: try to reclaim empty PTE page in madvise(MADV_DONTNEED)
+  x86: mm: free page table pages by RCU instead of semi RCU
+  x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
+
+ arch/x86/Kconfig           |  1 +
+ arch/x86/include/asm/tlb.h | 19 ++++++++
+ arch/x86/kernel/paravirt.c |  7 +++
+ arch/x86/mm/pgtable.c      | 10 +++-
+ include/linux/mm.h         |  1 +
+ include/linux/mm_inline.h  | 11 +++--
+ mm/Kconfig                 | 14 ++++++
+ mm/Makefile                |  1 +
+ mm/internal.h              | 29 ++++++++++++
+ mm/khugepaged.c            |  9 +++-
+ mm/madvise.c               |  4 +-
+ mm/memory.c                | 95 +++++++++++++++++++++++++++++---------
+ mm/mmu_gather.c            |  9 +++-
+ mm/pt_reclaim.c            | 68 +++++++++++++++++++++++++++
+ 14 files changed, 248 insertions(+), 30 deletions(-)
+ create mode 100644 mm/pt_reclaim.c
+
 -- 
-2.45.2
+2.20.1
 
 
