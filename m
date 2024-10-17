@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-369781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88F49A2299
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:41:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C699A229B
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A314D2816A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:41:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4AA11C247D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED58A1DDC21;
-	Thu, 17 Oct 2024 12:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145761DDA09;
+	Thu, 17 Oct 2024 12:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xaamtl8K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPYY28+f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559EE770E2;
-	Thu, 17 Oct 2024 12:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741961DD55F;
+	Thu, 17 Oct 2024 12:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729168819; cv=none; b=Stjelxy7rbWr/yHLvvnlOlqOv9wyX+vjfaGEj15eT2jJOqPvkwKxQC+ZFoFcdfBidtlD3m9OrNROYpuiRtu2CH8QkgRRPDmx7IHnAIqrgBJBhUcuct8kIwNuZbBVER/SgUzs0H3/kTDGHV0Fy12qN4WV4Y4LvVf5w01upkstaCQ=
+	t=1729168867; cv=none; b=Mn4MmL4KJYHWaQKaK7EgqmQpDEm+5DFIFGk94acg3ZU4K4SHT6FiRhvUDmIwdsGwMambLTyE+fepyg1pg1s1NqHHWXz3jb8OrXHzjRB3kcqatATFlLLdfkecwsRao38C2sFh8YZIfrbvHluIgAdgMzaS44EQ0mx8f8QLr5MJaHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729168819; c=relaxed/simple;
+	s=arc-20240116; t=1729168867; c=relaxed/simple;
 	bh=LtW4cH6RJ/U6LGh2Snc/2Z+gjm0u80RPvBaReDRovUk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c85yHil0PJWdvFsdaza9Hw49sMe2Y1NKWZND+3Bkh4MNWV4gv95ynQbNKMuhOoyAhlJBk2hnWj7d2Bv2PPBeqBaxd1uQoXQ9F7U8txNc48WNJutNIFo29KhHuywIuh/twwVgqXyyoMDyxlKU3maGWhJNgGkJBWkDlhJDUlgpbQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xaamtl8K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B334C4CEC3;
-	Thu, 17 Oct 2024 12:40:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiAGz8z2FfY9Ybn87gp4GubiYYw86RsKNM/9DmbKqIrdj0M/OYkK8hKfmdh51AVkSchnSKOeEdU2mWiqPsFnRSyxIpkbpTxczlPJNtI6Koto7ePLy7xaTzAdk7NucQrcEFwKb1hGDnbpzxxdhUCIbTb26GY5ahTrnRR5WwQT7QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPYY28+f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 519F3C4CEC3;
+	Thu, 17 Oct 2024 12:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729168819;
+	s=k20201202; t=1729168867;
 	bh=LtW4cH6RJ/U6LGh2Snc/2Z+gjm0u80RPvBaReDRovUk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xaamtl8KRjOjP51N2cKoVPsK0zRx6djNcjncvqtnwYUuBwRg5DdXYfa8W+Vk/8f7C
-	 neGj0fgMMYaoVghCbsrKFk85x1JteUEEDY/rIc6fFlO/bqOmHJ5dOUIjk59rwwh0m/
-	 pCinou1Vryco6ewHX/t3XzeXKY/eBar1Tzj6mrg7LPtTA/CxeumsQBwakZ9oQL7LPD
-	 D6ZnJHhKPJ9DVuCrHRKhG+glrHA9dzrtNYBOuMsrfB8TN8SB7G+Mhn4xaFajrU4AoK
-	 m4Qyjh3SKXAwu0xMc9GdmnJRROn+3UlTgxToIUFtpZ4JuCvj6fQazVKjVS1ONrr7CA
-	 TALJ8a5mR8lBQ==
-Date: Thu, 17 Oct 2024 13:40:14 +0100
+	b=hPYY28+fhwc4pmigbR28drVzI/W2FB1fpX/kXNd5YYdkzH+v6cnTj3FF0nUgcoOU7
+	 YgItldM3bwxpQM/fxlGdL6B04oP9RmJmpg8nqQLWvpD46CFYVBgn++N8sY3fQctpg3
+	 W4V7w4VyRuhPH4/uR+tbLdFCxTWTo6hg/f4dg9f9SlIbpyJiL/dpC5Z/8C/+3jdqLJ
+	 au9dsxX5a3gbMxeA4aMT5k2Fwew6MCCfjcHr3IU5HDHoQSUFTv0jhzqlct3DvAIpoS
+	 eyyT893E4zX5SFzeEAlBlBEWxHc4hCvPuLq+POsjbeEzhedqd6/T28rtN4l3FIkDIW
+	 9GycGACvP8NJQ==
+Date: Thu, 17 Oct 2024 13:41:02 +0100
 From: Simon Horman <horms@kernel.org>
 To: Furong Xu <0x1207@gmail.com>
 Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
@@ -54,7 +54,7 @@ Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
 	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com
 Subject: Re: [PATCH net-next v1 4/5] net: stmmac: xgmac: Rename XGMAC_RQ to
  XGMAC_FPRQ
-Message-ID: <20241017124014.GJ1697@kernel.org>
+Message-ID: <20241017124102.GK1697@kernel.org>
 References: <cover.1728980110.git.0x1207@gmail.com>
  <4557515b4df0ebe7fb8c1fd8b3725386bf77d1a4.1728980110.git.0x1207@gmail.com>
 Precedence: bulk
