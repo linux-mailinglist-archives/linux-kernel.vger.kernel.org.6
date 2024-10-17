@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-369906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9ED89A244C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178E79A2450
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A459B21074
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:54:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8188BB267A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853241DE3A0;
-	Thu, 17 Oct 2024 13:53:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8321DE3DA;
+	Thu, 17 Oct 2024 13:54:05 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239D01DD548;
-	Thu, 17 Oct 2024 13:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5079B1DD548;
+	Thu, 17 Oct 2024 13:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729173238; cv=none; b=kUxOzjRhVXpfrsRDzSyQ33o2W/n9DBdtQ/kuvJwl+ljHe2PWvEPKsISaqKOt2ySxrSST/LxgaeNrk9Z911KGzu8QuHzpXpNULicov9Zk1s5qxoSvyqJyf+zxdJkeb2VhbAfUWdJo0JNQJQnDb+QAV7hPCc4AnafyLafDPtOHFSM=
+	t=1729173244; cv=none; b=kHIQ2lT6a8dcnm4xIsEZDLvggtOJkzzbJQHldh8YyUAJ/CzqD/hGEAPPksSDtMimv6OsYMI0rXmGWmEm19CaDoOu2xONpIorw2X46pJl+H70yHBx4pbhijhNJMnKfnI/abLcNdI0X4dub11FRhcQt6Xo/fFHdMIhO2NZZ86NzNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729173238; c=relaxed/simple;
-	bh=uklFFPidP+USloNpflBWOfFCND6KnGqXGXhmRyKIG0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y/q/MSMv8sACKOltzjkI77rMqpVFyAjI/jZK60fqfHfNKFFW4jhJFhzTuyYt6I13l89FDeQlpjUkubK4ILIHvskWp9NCNIRy1gKrKyjUTBs83KEHVQvVyDiY3lU2rXaP70rjXq0it9r00YcfSyhGdZeZxUOer/W1p8RKzQJ9bKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F98C4CEC3;
-	Thu, 17 Oct 2024 13:53:56 +0000 (UTC)
-Date: Thu, 17 Oct 2024 09:54:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: Avadhut Naik <avadhut.naik@amd.com>, "x86@kernel.org" <x86@kernel.org>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
- <mingo@redhat.com>, "mchehab@kernel.org" <mchehab@kernel.org>,
- "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>, "john.allen@amd.com"
- <john.allen@amd.com>
-Subject: Re: [PATCH v6 2/5] tracing: Add __print_dynamic_array() helper
-Message-ID: <20241017095419.2c4a7943@gandalf.local.home>
-In-Reply-To: <CY8PR11MB7134B1AA1F13546D2B84728089472@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20241016064021.2773618-1-avadhut.naik@amd.com>
-	<20241016064021.2773618-3-avadhut.naik@amd.com>
-	<CY8PR11MB7134B1AA1F13546D2B84728089472@CY8PR11MB7134.namprd11.prod.outlook.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729173244; c=relaxed/simple;
+	bh=IH3Uylx1YONf9VtitwIhuesyCxpppdWrAVAobKbN2Ck=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ApjnaSYSbrHEhIeENAC/tHfBz5HUDQZCmIfkq5ybXpJ4htpZQEYkQSzn5occgIYiy2dYei3Xqsu9G2RCYeQZiReu1s7PPkjUdYLkyqB1FCjhW3LRC3x55s4dv/5K3QRHom0D3JgmiuokpzCb0w/v71sa2pK7At8vLTpzMIcDJsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XTq4g71r5zfdCc;
+	Thu, 17 Oct 2024 21:51:31 +0800 (CST)
+Received: from dggpemf500014.china.huawei.com (unknown [7.185.36.43])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8F0961800F2;
+	Thu, 17 Oct 2024 21:53:59 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500014.china.huawei.com
+ (7.185.36.43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 17 Oct
+ 2024 21:53:58 +0800
+From: Muyang Tian <tianmuyang@huawei.com>
+To: <bpf@vger.kernel.org>
+CC: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>, Magnus Karlsson
+	<magnus.karlsson@intel.com>, Maciej Fijalkowski
+	<maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<yanan@huawei.com>, <xiesongyang@huawei.com>, <wuchangye@huawei.com>,
+	<liuxin350@huawei.com>, <zhangmingyi5@huawei.com>, <liwei883@huawei.com>,
+	<tianmuyang@huawei.com>
+Subject: [PATCH 0/3] XDP metadata: Rx checksum/GSO hint; Tx GSO offload
+Date: Thu, 17 Oct 2024 21:54:27 +0800
+Message-ID: <20241017135430.51655-1-tianmuyang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500014.china.huawei.com (7.185.36.43)
 
-On Thu, 17 Oct 2024 06:58:30 +0000
-"Zhuo, Qiuxu" <qiuxu.zhuo@intel.com> wrote:
+This series introduce XDP metadata functionality, including Rx checksum/GSO hint
+and Tx GSO offload. This is aimed to transfer control fields when processing jumbo
+frames between VMs.
 
-> When running the check below: 
-> 
->     ${LINUX}/scripts/checkpatch.pl --strict  <this patch> 
-> 
-> it complains:
-> 
->     CHECK: Macro argument 'el_size' may be better as '(el_size)' to avoid precedence issues
->     #36: FILE: include/trace/stages/stage3_trace_output.h:123:
->     +#define __print_dynamic_array(array, el_size)                          \
->     +       ({                                                              \
->     +               __print_array(__get_dynamic_array(array),               \
->     +                             __get_dynamic_array_len(array) / el_size, \
->     +                             el_size);                                 \
->     +       })
+Muyang Tian (3):
+  xdp: Add Rx checksum hint
+  xdp: Add Rx GSO hint
+  xsk: Add Tx GSO type and size offload support
 
-For once I actually agree with checkpatch in an include/trace file.
+ Documentation/netlink/specs/netdev.yaml      | 12 +++++
+ Documentation/networking/xdp-rx-metadata.rst |  6 +++
+ include/net/xdp.h                            | 50 ++++++++++++++++++++
+ include/net/xdp_sock.h                       |  8 ++++
+ include/net/xdp_sock_drv.h                   |  1 +
+ include/uapi/linux/if_xdp.h                  | 11 +++++
+ include/uapi/linux/netdev.h                  |  8 ++++
+ net/core/xdp.c                               | 41 ++++++++++++++++
+ net/xdp/xsk.c                                |  5 ++
+ tools/include/uapi/linux/if_xdp.h            | 11 +++++
+ tools/include/uapi/linux/netdev.h            |  8 ++++
+ 11 files changed, 161 insertions(+)
 
-I can send another version for you.
+-- 
+2.41.0
 
--- Steve
 
