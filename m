@@ -1,116 +1,153 @@
-Return-Path: <linux-kernel+bounces-369720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BD59A21AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70A59A21AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06F231C23212
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150DA1C21EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470D01DC1AF;
-	Thu, 17 Oct 2024 11:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="w6k0JD7i"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58041D365B;
-	Thu, 17 Oct 2024 11:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEBD1DCB0D;
+	Thu, 17 Oct 2024 11:59:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BEE1D365B;
+	Thu, 17 Oct 2024 11:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729166295; cv=none; b=O+hw9g7ICEP+BAQWNaHkQXlAXuU3g5O1rEX9EKLk7qPjU4pIr5Z9vmKymd8jKHIaCRAb+q0SmECSk32QcY1MkZLB4uHkR9ndzLY6XiqZetB5uY69n3hxbEIDc6ZE1CUzD85XyZBYQMkgMEQHckG01oQ3+gk4kxvOqvtgE5SRpIk=
+	t=1729166354; cv=none; b=AMe65iePHPChx+btBsZEClJLVEPWjmfWCgMo12V75skkbRhxBPHCPdvpPUOQmikpW2KeoWxXCNqwirWQnLMtr+KkypmlUmrqR1OlxNeNQxQbmWjujQ6etg0x0MvScXGwJT2WtU4/UjrhO54n1DYNsZS1NHZyv3KqGlvLftE0AXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729166295; c=relaxed/simple;
-	bh=syO4Q8j73NSxChEE/Yr5+Lf2IfP7DEdL/cSY2QgVTtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoJAdJwpQ76whzfwQh/PKtzg6uEx1Acu1A0JwekeqG+0BbeaAzLV8mkbwtNxQ9QbZllOkiwFUq86oyHElbO4i4jVaKzRNbup1QC/ycsa9rYMAt9EkoMopaN5xNYcjI9vO78HQl8HsEU+TRs1aBOonBIBbY4uw9LTIzu9iVs5eUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=w6k0JD7i; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EEDlW0Z+27Cz1a36GnGWzG69pvQQcfAeec1992co/rU=; b=w6k0JD7itqBz1TeMuMUHKr2szV
-	HdrbD5T6KpkzUq67echeUaMGiLU86Jhj67No8E02ULxoUSkbQFEG7QeJlA9i6jCbzVyHdhuhVrCm9
-	QEbjccVpvAry4xZVtmywe8TpIdwRgeQCAf04vKCPZdaH0ibPWuCoga7WOklEOu7G9flfeP3TOMDbj
-	PeQV3HJ2agNF9brsTbkzHmLHdvpuHq/vmfopnhKxf+H7kerzEqeNPCkgpGhg4A7F5abFkIj1VoBQt
-	8WiBq5FPcPVE4wxmfiUHJ0j0xYFX5ygiAo17X3gLbyq5MXBm5g5AmNIOBNOYG/WNS1rlPDNX1CXF/
-	NYo8NzBQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t1P8u-0000000Ehiu-2ZiO;
-	Thu, 17 Oct 2024 11:58:12 +0000
-Date: Thu, 17 Oct 2024 04:58:12 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Yonatan Maman <ymaman@nvidia.com>, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, herbst@redhat.com, lyude@redhat.com,
-	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
-	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
-	dri-devel@lists.freedesktop.org, apopple@nvidia.com,
-	bskeggs@nvidia.com, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v1 1/4] mm/hmm: HMM API for P2P DMA to device zone pages
-Message-ID: <ZxD71D66qLI0qHpW@infradead.org>
-References: <20241015152348.3055360-1-ymaman@nvidia.com>
- <20241015152348.3055360-2-ymaman@nvidia.com>
- <Zw9F2uiq6-znYmTk@infradead.org>
- <20241016154428.GD4020792@ziepe.ca>
- <Zw_sn_DdZRUw5oxq@infradead.org>
- <20241016174445.GF4020792@ziepe.ca>
+	s=arc-20240116; t=1729166354; c=relaxed/simple;
+	bh=KVx90sJAya4fJeJB1T9VQH8syX+5Y2Dms8kUeU21dyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jtOsydJ6B+J5yvuA21fQiALXNdhTEYoU5u2+6NybyJU6j/L6yzDcXSQTKhugrHMBVop+zlUcoEkrApbCtljKpTRb7BKImMa8mp2XdjZiSHOKs7m4DxMhsRbEKPQuBSMQMNhom+4ufq06Q7rwgU8ORLwEcb8TnixW1+z7jydEKpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1DF1FEC;
+	Thu, 17 Oct 2024 04:59:39 -0700 (PDT)
+Received: from [10.57.22.188] (unknown [10.57.22.188])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5CE593F71E;
+	Thu, 17 Oct 2024 04:59:07 -0700 (PDT)
+Message-ID: <710c066e-75fa-4f12-b27a-c8948d02bb4b@arm.com>
+Date: Thu, 17 Oct 2024 12:59:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016174445.GF4020792@ziepe.ca>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 19/43] KVM: arm64: Handle realm MMIO emulation
+Content-Language: en-GB
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-20-steven.price@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241004152804.72508-20-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 02:44:45PM -0300, Jason Gunthorpe wrote:
-> > > FWIW, I've been expecting this series to be rebased on top of Leon's
-> > > new DMA API series so it doesn't have this issue..
-> > 
-> > That's not going to make a difference at this level.
+On 04/10/2024 16:27, Steven Price wrote:
+> MMIO emulation for a realm cannot be done directly with the VM's
+> registers as they are protected from the host. However, for emulatable
+> data aborts, the RMM uses GPRS[0] to provide the read/written value.
+> We can transfer this from/to the equivalent VCPU's register entry and
+> then depend on the generic MMIO handling code in KVM.
 > 
-> I'm not sure what you are asking then.
+> For a MMIO read, the value is placed in the shared RecExit structure
+> during kvm_handle_mmio_return() rather than in the VCPU's register
+> entry.
 > 
-> Patch 2 does pci_p2pdma_add_resource() and so a valid struct page with
-> a P2P ZONE_DEVICE type exists, and that gets returned back to the
-> hmm/odp code.
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> v3: Adapt to previous patch changes
+> ---
+>   arch/arm64/kvm/mmio.c     | 10 +++++++++-
+>   arch/arm64/kvm/rme-exit.c |  6 ++++++
+>   2 files changed, 15 insertions(+), 1 deletion(-)
 > 
-> Today odp calls dma_map_page() which only works by chance in limited
-> cases. With Leon's revision it will call hmm_dma_map_pfn() ->
-> dma_iova_link() which does call pci_p2pdma_map_type() and should do
-> the right thing.
+> diff --git a/arch/arm64/kvm/mmio.c b/arch/arm64/kvm/mmio.c
+> index cd6b7b83e2c3..66a838b3776a 100644
+> --- a/arch/arm64/kvm/mmio.c
+> +++ b/arch/arm64/kvm/mmio.c
+> @@ -6,6 +6,7 @@
+>   
+>   #include <linux/kvm_host.h>
+>   #include <asm/kvm_emulate.h>
+> +#include <asm/rmi_smc.h>
+>   #include <trace/events/kvm.h>
+>   
+>   #include "trace.h"
+> @@ -90,6 +91,9 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu)
+>   
+>   	vcpu->mmio_needed = 0;
+>   
+> +	if (vcpu_is_rec(vcpu))
+> +		vcpu->arch.rec.run->enter.flags |= REC_ENTER_EMULATED_MMIO;
+> +
+>   	if (!kvm_vcpu_dabt_iswrite(vcpu)) {
+>   		struct kvm_run *run = vcpu->run;
 
-Again none of this affects the code posted here.  It reshuffles the
-callers but has no direct affect on the patches posted here.
+Should we additionally handle injecting an abort if there was no valid
+syndrome information ? Like we do for protected VMs and normal VMs when
+userspace doesn't offer to help ?
 
-(and the current DMA series lacks P2P support, I'm trying to figure
-out how to properly handle it at the moment).
+>   
+> @@ -108,7 +112,11 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu)
+>   		trace_kvm_mmio(KVM_TRACE_MMIO_READ, len, run->mmio.phys_addr,
+>   			       &data);
+>   		data = vcpu_data_host_to_guest(vcpu, data, len);
+> -		vcpu_set_reg(vcpu, kvm_vcpu_dabt_get_rd(vcpu), data);
+> +
+> +		if (vcpu_is_rec(vcpu))
+> +			vcpu->arch.rec.run->enter.gprs[0] = data;
 
-> > IOMMU or not doens't matter much for P2P.  The important difference is
-> > through the host bridge or through a switch.  dma_map_page will work
-> > for P2P through the host brige (assuming the host bridge even support
-> > it as it also lacks the error handling for when not), but it lacks the
-> > handling for P2P through a switch.
-> 
-> On most x86 systems the BAR/bus address of the P2P memory is the same
-> as the CPU address, so without an IOMMU translation dma_map_page()
-> will return the CPU/host physical address which is the same as the
-> BAR/bus address and that will take the P2P switch path for testing.
-
-Maybe.  Either way the use of dma_map_page is incorrect.
+I wonder if we can skip this here and we can sync the "enter.gprs[]"
+from vcpu state at rec_enter, similar to what we do for PSCI/HOST call
+exits. Also the ESR_ELx_SRT is always x0 for a Realm exit. So, we should
+always find the enter.gpr[0] in vcpu.regs[0] at rec_enter.
 
 
-> 
-> Jason
----end quoted text---
+Suzuki
+
+
+> +		else
+> +			vcpu_set_reg(vcpu, kvm_vcpu_dabt_get_rd(vcpu), data);
+>   	}
+>   
+>   	/*
+> diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
+> index e96ea308212c..1ddbff123149 100644
+> --- a/arch/arm64/kvm/rme-exit.c
+> +++ b/arch/arm64/kvm/rme-exit.c
+> @@ -25,6 +25,12 @@ static int rec_exit_reason_notimpl(struct kvm_vcpu *vcpu)
+>   
+>   static int rec_exit_sync_dabt(struct kvm_vcpu *vcpu)
+>   {
+> +	struct realm_rec *rec = &vcpu->arch.rec;
+> +
+> +	if (kvm_vcpu_dabt_iswrite(vcpu) && kvm_vcpu_dabt_isvalid(vcpu))
+> +		vcpu_set_reg(vcpu, kvm_vcpu_dabt_get_rd(vcpu),
+> +			     rec->run->exit.gprs[0]);
+> +
+>   	return kvm_handle_guest_abort(vcpu);
+>   }
+>   
+
 
