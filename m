@@ -1,199 +1,119 @@
-Return-Path: <linux-kernel+bounces-369368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6C09A1C70
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A51B19A1C7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE71287FCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6840A28289E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA201D1E64;
-	Thu, 17 Oct 2024 08:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D67E1D5AC7;
+	Thu, 17 Oct 2024 08:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKZ+7nKW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nQ4t7L+A";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKZ+7nKW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nQ4t7L+A"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YcCGXIv7"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712361D2200;
-	Thu, 17 Oct 2024 08:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BCF1D9698
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152172; cv=none; b=IeXEsl4Y6FwJ8EIOs9kj/6fzXtvJvJXlLVX7+EC/9ZmlPMRfDo0gVEg4lz7ZLijfS0k0CdDlQmWKBX72OCbMGgJ4iJBjJRpTdJ+ugDBJcgizj12MezjEcU7cFuOJVhm6ySyikynXnVQAbu4zO5/zTkrR8Cl7oTArfuJJZq/Rbj8=
+	t=1729152201; cv=none; b=AbA1tm/erR1K9E13LXTwMihpCX4S8ZZVddonKdjs9XxM5/sWrx2wEJdEBUV/hZl7IqNyx5RQ6XB+Z5fMi4ok7/VOMEzjh3HBV67hMW3pIsGvJC4p+ltCQC2bfDVKr/TyVQqOzIgvds9UTAy5y3H0pYFsZq2/BmQOXokLw7KbUOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152172; c=relaxed/simple;
-	bh=V4BJk5KxBF4m37hxR/CxOWtyY33ThgFlaqbsXRJ6+Sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JuD6kJ2SabWFKgd58qjFQO0zkbrr8V/0O5P7QetQpe5xJKTLz/a/+TiGV3WmkwEbfAI5WpJ9Mz2Q6BhIrjkhns3rIGnP17l3QVFLWa90Dw81SlB5C4luD69onTGESpqY0KcMLzFNbGrRq07Uon7ce6IqKKEdORaZiK4L3Ojmw+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKZ+7nKW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nQ4t7L+A; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKZ+7nKW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nQ4t7L+A; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1DE6421C53;
-	Thu, 17 Oct 2024 08:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729152163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lef/WUqsQk/+4fftS5U7JFsSwY0sjGlKvSnKtlvMSmE=;
-	b=qKZ+7nKWYqY5XkDVYxLzj/ojWgM/RqddCk8hoew7r6cqPU+gtJX6Y86/yAKjvGqk/43sc3
-	tZTBhl3dSC9S3kV7Deugq7VeEPM6QkvFq5Kpts8FEE+WI/f0IQMIl4ocPdMHT148q3Nc5V
-	PTX4U4ArReUyN+v5Ri3zJ2qGrb38n10=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729152163;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lef/WUqsQk/+4fftS5U7JFsSwY0sjGlKvSnKtlvMSmE=;
-	b=nQ4t7L+AkFxPs24GgcuxYBF7kuD/jIUHbez6gLDbZL2vYy76BzorlSC0gB70yH4UuJlaVU
-	pPZx+bhPXDxo9PDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729152163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lef/WUqsQk/+4fftS5U7JFsSwY0sjGlKvSnKtlvMSmE=;
-	b=qKZ+7nKWYqY5XkDVYxLzj/ojWgM/RqddCk8hoew7r6cqPU+gtJX6Y86/yAKjvGqk/43sc3
-	tZTBhl3dSC9S3kV7Deugq7VeEPM6QkvFq5Kpts8FEE+WI/f0IQMIl4ocPdMHT148q3Nc5V
-	PTX4U4ArReUyN+v5Ri3zJ2qGrb38n10=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729152163;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lef/WUqsQk/+4fftS5U7JFsSwY0sjGlKvSnKtlvMSmE=;
-	b=nQ4t7L+AkFxPs24GgcuxYBF7kuD/jIUHbez6gLDbZL2vYy76BzorlSC0gB70yH4UuJlaVU
-	pPZx+bhPXDxo9PDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 061F713A53;
-	Thu, 17 Oct 2024 08:02:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XJ6SOqHEEGdGMAAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Thu, 17 Oct 2024 08:02:41 +0000
-Message-ID: <27c18374-8120-40bd-87d2-183c40945fbf@suse.de>
-Date: Thu, 17 Oct 2024 11:02:33 +0300
+	s=arc-20240116; t=1729152201; c=relaxed/simple;
+	bh=4apx67hMPEGfW+X8x9LFHcZNR7+Evj0GhnAX780tCk8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qlvnUuwDiUQMg1NbcGCG5pb79kwEejSGlXSXSQQHFpf4IZO3Pa8+Qe0y+N9or80Uf7imBAC02HbkUBBxbrl3LkqN79AYb1WWaCV+MKrgwSPT2dLkHJqIw7OhHOwaY3//fxI58aiqni4uujGJvl/ud2RKf8Dg7QqrB2JHvSFWNj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YcCGXIv7; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43159469053so950185e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729152195; x=1729756995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lgDrUEOZ94rd/JYn5q5SRCaHm/3syJ91b47zWHTaaZg=;
+        b=YcCGXIv7wed2keCKFBSpByTu1X3n4saKmeOV8B48UmEPqIT8TdhkPw/J0vdWGA5Qk5
+         EwKCEMEY5oVL7G9qfEVpxuLrC9N5u7OdPUbyzFfeMDcORE6wopN9x1iXwEC9r/Em+ZT5
+         P7Q2nu/UB0ne5hQFavco00HwaTwihNk12RRrifXsuSB3l5FSHP29QJhf3/DjFmZ3UNC6
+         q0uZlGbeSBhrL97o6RUOFm3N2Rph9RExFwOjSZrFuGai7YttnCZ1zxV7K9tndXGHgsG6
+         5LnUV2htXTmIlrxR0wdEQeEcoUXQU1J6M/cnrSYwHonkxxoFLKyJ7ziPq7uUE0ZZCQlG
+         kS2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729152195; x=1729756995;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lgDrUEOZ94rd/JYn5q5SRCaHm/3syJ91b47zWHTaaZg=;
+        b=HgaV04jvldTTkM1f7AsO4y1TilkjcbmyZsLg5mmY+2gj0u47TYmFY+6aMnMAuaW3+u
+         Y2Z9Y1YXzZrRrAyKvLhN6Va4W0UXJ2nKDoiLhCmrV2jyqccYybAx3rAJ18157r3I0zwI
+         Y+x3QWQkW0A3yuzvTkxlOb2aOd260paaUM5625bSEKQFUYHYBP82gWG/jFZ1YndAV032
+         eloXWM+dMeNZgkRsX7c+UcE0dHJQOfHonrBG3I9J+7Kx3jBM+hbOX+uwNkyDLZQ8AJXC
+         z2sbpMc/8SlsgYmPJuurxpQCAPq1jNvSb+aZK6V+orvfQkbwrmd6q8QliF2KUdfE92LF
+         fEeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Jmb7Up7AP9S5eIjI2O9xg/GMBT6Mj4yjpZN/4A8YqDQbfskSzuvaVRpNDLZSbgm41UKIHo7umVh7z8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/Q6t6I+o44QDPUlN7fhD/atx2cK8Ir7uZ1dAX3e57hdRm9t6u
+	10+yPZ9CN3Rf+iqGjucfCQTrqeH4s9UwV8tefs+YzkIqsz9P8GWqVGgXHFIlWDQ=
+X-Google-Smtp-Source: AGHT+IHv78ZK3kwWzebAfwfv7YsgLxzY87tYqG8Cfv9L84+hdRFMj6rOmLuL//nV67nrynimgjjL4w==
+X-Received: by 2002:a05:600c:5120:b0:431:5632:448d with SMTP id 5b1f17b1804b1-4315861d9e8mr7487085e9.9.1729152195045;
+        Thu, 17 Oct 2024 01:03:15 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a151sm6387002f8f.10.2024.10.17.01.03.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 01:03:14 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
+References: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
+Subject: Re: (subset) [PATCH v3 0/6] Add minimal Exynos990 SoC and SM-N981B
+ support
+Message-Id: <172915219372.18330.2035321894922518356.b4-ty@linaro.org>
+Date: Thu, 17 Oct 2024 10:03:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/11] PCI: brcmstb: Expand inbound size calculation
- helper
-To: Bjorn Helgaas <helgaas@kernel.org>, Jim Quinlan <jim2101024@gmail.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Thomas Gleixner
- <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20241016193802.GA645895@bhelgaas>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20241016193802.GA645895@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[dt];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -6.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Bjorn,
 
-On 10/16/24 22:38, Bjorn Helgaas wrote:
-> On Wed, Oct 16, 2024 at 01:09:00PM -0400, Jim Quinlan wrote:
->> On Mon, Oct 14, 2024 at 1:25 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->>> On Mon, Oct 14, 2024 at 10:10:11AM -0700, Florian Fainelli wrote:
->>>> On 10/14/24 09:57, Bjorn Helgaas wrote:
->>>>> On Mon, Oct 14, 2024 at 04:07:03PM +0300, Stanimir Varbanov wrote:
->>>>>> BCM2712 memory map can supports up to 64GB of system
->>>>>> memory, thus expand the inbound size calculation in
->>>>>> helper function up to 64GB.
->>>>>
->>>>> The fact that the calculation is done in a helper isn't important
->>>>> here.  Can you make the subject line say something about supporting
->>>>> DMA for up to 64GB of system memory?
->>>>>
->>>>> This is being done specifically for BCM2712, but I assume it's safe
->>>>> for *all* brcmstb devices, right?
->>>>
->>>> It is safe in the sense that all brcmstb devices with this PCIe
->>>> controller will adopt the same encoding of the size, all of the
->>>> currently supported brcmstb devices have a variety of
->>>> limitations when it comes to the amount of addressable DRAM
->>>> however. Typically we have a hard limit at 4GB of DRAM per
->>>> memory controller, some devices can do 2GB x3, 4GB x2, or 4GB
->>>> x1.
->>>>
->>>> Does that answer your question?
->>>
->>> I'd like something in the commit log to the effect that while
->>> we're doing this to support more system memory on BCM2712, this
->>> change is safe for other SoCs that don't support as much system
->>> memory.
->>
->> This setting configures the size of an RC's inbound window to system
->> memory.  Any inbound access outside of all of the inbound windows
->> will be discarded.
->>
->> Some existing SoCs cannot support the 64GB size.  Configuring such
->> an SoC to 64GB will effectively disable the entire window.
+On Wed, 16 Oct 2024 17:47:41 +0200, Igor Belwon wrote:
+> This series adds initial support for the Exynos 990 SoC and also
+> initial board support for the Samsung Galaxy Note20 5G (SM-N981B)
+> codenamed c1s.
 > 
-> So I *think* you're saying that this patch will break existing SoCs
-> that don't support the 64GB size, right?
+> The Exynos 990 SoC is also used in the S20 series, as well as in the
+> Note 20 Ultra phones. Currently the device trees added are for the
+> Exynos 990 SoC and c1s. The device tree has been tested with
+> dtbs_check W=1 and results in no warnings.
+> 
+> [...]
 
-Existing SoCs will not be impacted. It could be theoretically possible
-to break inbound window translations only if you wrongly populate window
-sizes in DT.
+Applied, thanks!
 
-~Stan
+[1/6] dt-bindings: arm: cpus: Add Samsung Mongoose M5
+      https://git.kernel.org/krzk/linux/c/0d16910e899d0645e45128102c5113836eaf9bc1
+[3/6] dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990 boards
+      https://git.kernel.org/krzk/linux/c/f7aeff28f2768443a49600625b6f3d0aad1fdd52
+[5/6] arm64: dts: exynos: Add initial support for the Exynos 990 SoC
+      https://git.kernel.org/krzk/linux/c/1e5f14efd65caf1d173af8fb4eeb3e04b2625ad3
+[6/6] arm64: dts: exynos: Add initial support for Samsung Galaxy Note20 5G (c1s)
+      https://git.kernel.org/krzk/linux/c/8354f854a90bcecd32dc1dc9646e805d60e96f0a
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
