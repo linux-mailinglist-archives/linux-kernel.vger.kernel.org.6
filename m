@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-370728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D799A3155
-	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F29199A315B
+	for <lists+linux-kernel@lfdr.de>; Fri, 18 Oct 2024 01:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E811F226C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F871F22AAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 23:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7672B3DABE3;
-	Thu, 17 Oct 2024 23:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF5E200B87;
+	Thu, 17 Oct 2024 23:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a8ExjZa7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mceWJUx5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDCA1FF5F5;
-	Thu, 17 Oct 2024 23:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E916200B86
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 23:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729207444; cv=none; b=HWHjKLNgNbpo9Gknxqj8u5JG7B1um8Y5pJ3dOltRFUWbTDrgLbENugWRmsr8XralseW2VVXmrefXIE3mAki1wDvasZ0CDPjs02TDPa9mz+RtMKiPy0TCML7oc5XsW3zWbM5HTOV17dCceCTlY6pPG532oWvhwb7go6+HJZ3XUCw=
+	t=1729207678; cv=none; b=oobkENbmCuCCnlSK/Om+NBUmU4FQpziWSVjQC3wb6yJeN8yBWSFzTDYxXFOU0PpdSeIWbJ+Zb38QFLxJupZ5w7QDW3wcsw9Sucjscrd1a+DiMkuHZKlMNe+SOermLkgJdcR5+eCacS7wAltaPHt/k3PCECRH/xi4ZOorLFWMcJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729207444; c=relaxed/simple;
-	bh=stynPAKb67QZa/lU7ZIP8zDcPVSvZM4VE/kuZgRvW68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=be5cl8euHWNeV+qq4quHN+6ny3hep+ym5EUWwu8O0O7RLbGtRLgG9PFXBBp2P7ERM4FsOGFxJY27KHTW50y9Ts1uWFfM2u+44HghYkAinE6YnOvv7XCf2KX+6kmBfcaECi6qpbfTtviMqixL3NMvb6lkKzd4FBE7Y2dIzcFDnSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a8ExjZa7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729207441;
-	bh=stynPAKb67QZa/lU7ZIP8zDcPVSvZM4VE/kuZgRvW68=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a8ExjZa7BXve8hN7bF41EjrnBaIRjB1DZGyLFYJFg5m3YcIb8+01SRWT4XOuSnd1g
-	 951q26phmb2PPL+3JnRQbyvLhpoHdGOKwtJIFiIAj0UaCR1uSIVU4LMo/RKPMlC16b
-	 zoYykMa8grW3NO3hvmHH3U/PIa6K3YRAhsKQntX4yAnXJr24bMMyBx29558glxL2uZ
-	 kdky/hm5Tr3xB3CThNHTnDJtDvSu3MkYd1powH5Xrhaw4tEWzh5QSo8+JJAjuJED7P
-	 67Ykrw+4TGTsg9Vh41NW9DjkPofMi25k8i7cDnvFWZ/gKCFbIQMyjQxIjvlTLidC7Y
-	 6N1rL2y+qSwTw==
-Received: from [192.168.1.90] (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7079317E0ED2;
-	Fri, 18 Oct 2024 01:24:00 +0200 (CEST)
-Message-ID: <6acaeefe-54f1-4a7f-9e07-bc8b1bfbab08@collabora.com>
-Date: Fri, 18 Oct 2024 02:23:59 +0300
+	s=arc-20240116; t=1729207678; c=relaxed/simple;
+	bh=8wybGY0ydF9v2ZwakRGZBI+jXb6WuS4RpdWx3qtCY9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iRJCGLx6/etRgwOA98xvbad0HjtC4SrhDn3sszhxG6MSBg0Fqd42HeucScyDeHLfK7/mLoZQAj0ygBl/RhZShS3/J8Ng0otZKfXf3lPt5AnWqZSdiMuwj91EyTyLIiafhe1Hs/J0e+yjmxlw7h9CDeb2wKk9Fs2sXPcUk7MAj+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mceWJUx5; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729207676; x=1760743676;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8wybGY0ydF9v2ZwakRGZBI+jXb6WuS4RpdWx3qtCY9A=;
+  b=mceWJUx5RkS/Y2/5MLdSZw1oVcPQn2d5yQFjam1volC7OpB6qs/Kb2yL
+   62iTCT9xm6h+3HAS8RzYWJ8j/YL3BHFQgMYd+jVhFm0v2UUGXJjfJlycI
+   2Qt1VAWWgmnKfZNN4omI5Co7dnNQFe65dbMoWyc8gPh1hM1iDGSKN34MS
+   fGfGOjapn8J2KifFllv+kY7qhrxIDrC4+L5kaKQDndVmvroKkdMJScDPA
+   Vy0NWQrNqaFS0Ma2+q0ZygZzdNi2MG2ix0pYB4kDmA48rYyGDOTKV8qmp
+   ffc0l2UgV3+IqNR7Q1+FW+9uZko4elAXua+TNyVBSn7yk1DuJarzrFak7
+   w==;
+X-CSE-ConnectionGUID: RlfofI2iS72ENM2zX4vtXg==
+X-CSE-MsgGUID: 6rpBU/2FRk+MEl7XaCXW1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11228"; a="28606581"
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="28606581"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2024 16:27:55 -0700
+X-CSE-ConnectionGUID: 2zFf06XPTqiI3W485Yfefw==
+X-CSE-MsgGUID: xsBMhgbMRDWtQ9GUo8Lydw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,212,1725346800"; 
+   d="scan'208";a="102007434"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 17 Oct 2024 16:27:53 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t1ZuJ-000N2B-1G;
+	Thu, 17 Oct 2024 23:27:51 +0000
+Date: Fri, 18 Oct 2024 07:27:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: fs/bcachefs/btree_cache.o: warning: objtool:
+ btree_node_lock.isra.0+0x90: stack state mismatch: reg1[22]=-1+0
+ reg2[22]=-2-16
+Message-ID: <202410180702.84IG5drg-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] clk: Provide devm_clk_bulk_get_all_enabled()
- helper
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Russell King <linux@armlinux.org.uk>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
- <20240926-clk_bulk_ena_fix-v2-1-9c767510fbb5@collabora.com>
- <347771679b3ac765de3f79c26f3d3595.sboyd@kernel.org>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <347771679b3ac765de3f79c26f3d3595.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/17/24 10:45 PM, Stephen Boyd wrote:
-> Quoting Cristian Ciocaltea (2024-09-26 03:43:20)
->> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
->> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
->> return the number of clocks stored in the clk_bulk_data table referenced
->> by the clks argument.  Without knowing the number, it's not possible to
->> iterate these clocks when needed, hence the argument is useless and
->> could have been simply removed.
->>
->> Introduce devm_clk_bulk_get_all_enabled() variant, which is consistent
->> with devm_clk_bulk_get_all() in terms of the returned value:
->>
->>  > 0 if one or more clocks have been stored
->>  = 0 if there are no clocks
->>  < 0 if an error occurred
->>
->> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
->> the past form of 'enable'.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6efbea77b390604a7be7364583e19cd2d6a1291b
+commit: f1625637b85191a0ac6f9ebf2b30d8b335f08547 bcachefs: Assert that we don't lock nodes when !trans->locked
+date:   5 weeks ago
+config: loongarch-randconfig-001-20241018 (https://download.01.org/0day-ci/archive/20241018/202410180702.84IG5drg-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241018/202410180702.84IG5drg-lkp@intel.com/reproduce)
 
-[...]
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410180702.84IG5drg-lkp@intel.com/
 
-> Instead of duplicating can you make devm_clk_bulk_get_all_enable() use
-> the devm_clk_bulk_get_all_enabled() function but not return the number
-> of clks all in this patch? It will make the diff much more readable that
-> way.
+All warnings (new ones prefixed by >>):
 
-Done in v3 [1].
+>> fs/bcachefs/btree_cache.o: warning: objtool: btree_node_lock.isra.0+0x90: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
 
-Thanks for reviewing,
-Cristian
-
-[1] https://lore.kernel.org/all/20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com/
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
