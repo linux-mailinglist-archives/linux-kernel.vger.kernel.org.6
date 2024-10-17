@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-369372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51B19A1C7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:07:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FD89A1C8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 10:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6840A28289E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:07:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25B7B26FFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D67E1D5AC7;
-	Thu, 17 Oct 2024 08:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733AB1DB37A;
+	Thu, 17 Oct 2024 08:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YcCGXIv7"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TY+IwGkP"
 Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BCF1D9698
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683B51DA624
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 08:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729152201; cv=none; b=AbA1tm/erR1K9E13LXTwMihpCX4S8ZZVddonKdjs9XxM5/sWrx2wEJdEBUV/hZl7IqNyx5RQ6XB+Z5fMi4ok7/VOMEzjh3HBV67hMW3pIsGvJC4p+ltCQC2bfDVKr/TyVQqOzIgvds9UTAy5y3H0pYFsZq2/BmQOXokLw7KbUOg=
+	t=1729152215; cv=none; b=WmIUBN7Di+puWK6/NJ4fB5wXcRTnhZP31mIjxx1bvSbrQSVWHuaNbEKkboO33/hIUMpNhIBpT1BOB8Nux0jJo1hkIaGywLRkQp9Ps0xA20h0XZQRcw9QP4FRX/VM7HUFdBzZykZitP0px4e3YHzXMSXMDmUVmM2BNMVz21rIlUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729152201; c=relaxed/simple;
-	bh=4apx67hMPEGfW+X8x9LFHcZNR7+Evj0GhnAX780tCk8=;
+	s=arc-20240116; t=1729152215; c=relaxed/simple;
+	bh=83Dd0h1px/j5ajoCG4zVpqu1+In9jyu17dpSI+y3J5k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qlvnUuwDiUQMg1NbcGCG5pb79kwEejSGlXSXSQQHFpf4IZO3Pa8+Qe0y+N9or80Uf7imBAC02HbkUBBxbrl3LkqN79AYb1WWaCV+MKrgwSPT2dLkHJqIw7OhHOwaY3//fxI58aiqni4uujGJvl/ud2RKf8Dg7QqrB2JHvSFWNj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YcCGXIv7; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version:Content-Type; b=dYXnpZcJjdC+4lDZQ2Dke1svT4uYMZCjR6pPGDcehc5QgFjKyrGYtmPXTRvi1VRGpBP9VBWsKzJyhLtoFQ5v+4yw1/xp/GzAflNT4EkGA5gc2SCr2Q25NlPARQ3eRXQEslspMo1dYvVojkndyz29sT2R1VD4HPxcxlrPrbc5N44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TY+IwGkP; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43159469053so950185e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:03:16 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43054ddfd52so1097765e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 01:03:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729152195; x=1729756995; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729152210; x=1729757010; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lgDrUEOZ94rd/JYn5q5SRCaHm/3syJ91b47zWHTaaZg=;
-        b=YcCGXIv7wed2keCKFBSpByTu1X3n4saKmeOV8B48UmEPqIT8TdhkPw/J0vdWGA5Qk5
-         EwKCEMEY5oVL7G9qfEVpxuLrC9N5u7OdPUbyzFfeMDcORE6wopN9x1iXwEC9r/Em+ZT5
-         P7Q2nu/UB0ne5hQFavco00HwaTwihNk12RRrifXsuSB3l5FSHP29QJhf3/DjFmZ3UNC6
-         q0uZlGbeSBhrL97o6RUOFm3N2Rph9RExFwOjSZrFuGai7YttnCZ1zxV7K9tndXGHgsG6
-         5LnUV2htXTmIlrxR0wdEQeEcoUXQU1J6M/cnrSYwHonkxxoFLKyJ7ziPq7uUE0ZZCQlG
-         kS2g==
+        bh=yXsd7OwDazZFDqhWrK2bvttfQ59ruGxGdVAPrWSzcns=;
+        b=TY+IwGkPAKVf6gSp04CMoJyk/S2f1TYIAmGRkgxDHbinSstGfgD/i8D+K5gxrpylmP
+         hjrtVkWApzu6243hS2zr/HSJl1f4AVyWHvAzaqO3xT42h/QXVIHBtaDThu9KoK01HBxZ
+         9CMF1mRAR+FVcLn2ivvdRX5Tb5nehOXHrzBYNK4l6pLJwYbT6F9ITFmtIHM8AEMfi/PF
+         NgUKhB0XVzvB2ERF9uqNrct3Fj0OK3+e/YObLJAssB/EATyf0h3LQQuP5SqDoZMAugHW
+         JEgtHFDFpBl5XEka/L2ycpSyHl6MN5So+olD4Zmg5atSdGkNWYLHCGgD+pqkQU5vVhfq
+         nrzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729152195; x=1729756995;
+        d=1e100.net; s=20230601; t=1729152210; x=1729757010;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lgDrUEOZ94rd/JYn5q5SRCaHm/3syJ91b47zWHTaaZg=;
-        b=HgaV04jvldTTkM1f7AsO4y1TilkjcbmyZsLg5mmY+2gj0u47TYmFY+6aMnMAuaW3+u
-         Y2Z9Y1YXzZrRrAyKvLhN6Va4W0UXJ2nKDoiLhCmrV2jyqccYybAx3rAJ18157r3I0zwI
-         Y+x3QWQkW0A3yuzvTkxlOb2aOd260paaUM5625bSEKQFUYHYBP82gWG/jFZ1YndAV032
-         eloXWM+dMeNZgkRsX7c+UcE0dHJQOfHonrBG3I9J+7Kx3jBM+hbOX+uwNkyDLZQ8AJXC
-         z2sbpMc/8SlsgYmPJuurxpQCAPq1jNvSb+aZK6V+orvfQkbwrmd6q8QliF2KUdfE92LF
-         fEeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1Jmb7Up7AP9S5eIjI2O9xg/GMBT6Mj4yjpZN/4A8YqDQbfskSzuvaVRpNDLZSbgm41UKIHo7umVh7z8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/Q6t6I+o44QDPUlN7fhD/atx2cK8Ir7uZ1dAX3e57hdRm9t6u
-	10+yPZ9CN3Rf+iqGjucfCQTrqeH4s9UwV8tefs+YzkIqsz9P8GWqVGgXHFIlWDQ=
-X-Google-Smtp-Source: AGHT+IHv78ZK3kwWzebAfwfv7YsgLxzY87tYqG8Cfv9L84+hdRFMj6rOmLuL//nV67nrynimgjjL4w==
-X-Received: by 2002:a05:600c:5120:b0:431:5632:448d with SMTP id 5b1f17b1804b1-4315861d9e8mr7487085e9.9.1729152195045;
-        Thu, 17 Oct 2024 01:03:15 -0700 (PDT)
+        bh=yXsd7OwDazZFDqhWrK2bvttfQ59ruGxGdVAPrWSzcns=;
+        b=DJLlClbt0Mv+AcafC7h+y+PYRVkG6bfc368djowyTEzjkJFivZngENIO5VAif/YOIE
+         fsNals2m1MPn/F4BVRda/Bh+a5LNAZwHEbNYBsI6XYn+RP2CEle8moO6Wj79ins4gPUD
+         PptkazWxsOQVqBU//Ep9OAU21C3Zb6g7KXoWLIQGeQVBWZeSF/iK/uqCyMFZKrqLLd5Q
+         ODQkam82Qj4k5uoNoHlkqfGQSFgP86t6aYpC6qkAGWStUxyAagwE8/1OUfR5fswQxFIZ
+         29XOip0Veh1LiBHfGM5nUxzNKYxy16Msm0wwJ5vQgBiouRkAMUU6yeeOdot+1nrE/47e
+         pLig==
+X-Forwarded-Encrypted: i=1; AJvYcCWxjXpEYUYApw6kb6hSoReDqNoyjxDbPmYNgXhvik73n6wpo6EoJy5eZDkzX7MPMwaTmf7JX78z6wZx1hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB/KhkLMh4eO8udOvXhLsQqQ1vWzf/scumPxKrv5yQc3oP7K5h
+	ptjCz4l+LB4PTJLbzcwkTsZH6st4AIGCUCKycY4K4xaCuAswZzLMcaT1jSGmNug=
+X-Google-Smtp-Source: AGHT+IHr1OcjFahO9alclfAwT/WY6QFt68A+u/zlKpWaJcX2JRHqW5bckWKzwqLpuoosFBGXYQ1Bbg==
+X-Received: by 2002:a05:600c:4f10:b0:431:558c:d9e9 with SMTP id 5b1f17b1804b1-431585e4aa1mr7672805e9.5.1729152209621;
+        Thu, 17 Oct 2024 01:03:29 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a151sm6387002f8f.10.2024.10.17.01.03.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43158c61aedsm17631915e9.43.2024.10.17.01.03.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 01:03:14 -0700 (PDT)
+        Thu, 17 Oct 2024 01:03:29 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
  Igor Belwon <igor.belwon@mentallysanemainliners.org>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
+In-Reply-To: <20241016154747.64343-3-igor.belwon@mentallysanemainliners.org>
 References: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
-Subject: Re: (subset) [PATCH v3 0/6] Add minimal Exynos990 SoC and SM-N981B
- support
-Message-Id: <172915219372.18330.2035321894922518356.b4-ty@linaro.org>
-Date: Thu, 17 Oct 2024 10:03:13 +0200
+ <20241016154747.64343-3-igor.belwon@mentallysanemainliners.org>
+Subject: Re: (subset) [PATCH v3 2/6] dt-bindings: hwinfo: exynos-chipid:
+ Add compatible for Exynos 990 chipid
+Message-Id: <172915220833.18392.17035280597662284700.b4-ty@linaro.org>
+Date: Thu, 17 Oct 2024 10:03:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,28 +90,16 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 16 Oct 2024 17:47:41 +0200, Igor Belwon wrote:
-> This series adds initial support for the Exynos 990 SoC and also
-> initial board support for the Samsung Galaxy Note20 5G (SM-N981B)
-> codenamed c1s.
+On Wed, 16 Oct 2024 17:47:43 +0200, Igor Belwon wrote:
+> Add a compatible for the exynos990-chipid node, used by
+> Exynos 990 platforms.
 > 
-> The Exynos 990 SoC is also used in the S20 series, as well as in the
-> Note 20 Ultra phones. Currently the device trees added are for the
-> Exynos 990 SoC and c1s. The device tree has been tested with
-> dtbs_check W=1 and results in no warnings.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/6] dt-bindings: arm: cpus: Add Samsung Mongoose M5
-      https://git.kernel.org/krzk/linux/c/0d16910e899d0645e45128102c5113836eaf9bc1
-[3/6] dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990 boards
-      https://git.kernel.org/krzk/linux/c/f7aeff28f2768443a49600625b6f3d0aad1fdd52
-[5/6] arm64: dts: exynos: Add initial support for the Exynos 990 SoC
-      https://git.kernel.org/krzk/linux/c/1e5f14efd65caf1d173af8fb4eeb3e04b2625ad3
-[6/6] arm64: dts: exynos: Add initial support for Samsung Galaxy Note20 5G (c1s)
-      https://git.kernel.org/krzk/linux/c/8354f854a90bcecd32dc1dc9646e805d60e96f0a
+[2/6] dt-bindings: hwinfo: exynos-chipid: Add compatible for Exynos 990 chipid
+      https://git.kernel.org/krzk/linux/c/c6dac8443dabe7a9215f00025f78a9c55a0651e6
 
 Best regards,
 -- 
