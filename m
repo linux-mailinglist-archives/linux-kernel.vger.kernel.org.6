@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-370415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BC89A2C0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:20:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BB69A2C21
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F7A2832A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C524A1F221E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A981DF990;
-	Thu, 17 Oct 2024 18:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A2B1E0B87;
+	Thu, 17 Oct 2024 18:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovBq+K/H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Acw9OyjX"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAE01DED44;
-	Thu, 17 Oct 2024 18:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED241DDC31;
+	Thu, 17 Oct 2024 18:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729189220; cv=none; b=BXReezfh+LPHWq6tpzhrFdajWAdI6pfd7+KG6ukwlKFbZ6MI2255f7t5lHG8iQcPqKUURlSwCqzorfBs40knkVSgV2AwcJy5Cjf9Kb8kfXLoAQtwlhMI2tsBD/sUk/yTMmXWvDRG0CK1s0IhHd1lpQCpmqIQ0ffbCf0vsMqBZGs=
+	t=1729189589; cv=none; b=EZtd91ImzQG8b00KksowTSA2jgLIUCLAS1Pc4Mf3aPqp+AeWY14IEf7JuIbhEcPvoaEDeK+AM8Am5tN0TohktVOtC5Lrj4jiKzD92E+EcF7umoWcxtZQK6pZl623RWBNK3fPK/XT7MYnH8lTslPrb7E8tD4mScwgMJfO8ey3zfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729189220; c=relaxed/simple;
-	bh=ivkBgESkuHQeUA+hxdWGTQLdKw0exukVJcksX9LbMxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdvUidEA6eZR1tFDwDjmrPjXUVXf370fKw4QGeQBydHtsBqFz/NyIZKMc4LEkJSs/M/3XeungL4WNdNJglT0Iac84C36MJTExfhj24zuDfnA8+L3NRDeS5Y/GPCHjXLgDgFtWuqIoLl5SMfiogeqOHEs22UEIxUiCMDdG1viFOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovBq+K/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89230C4CECD;
-	Thu, 17 Oct 2024 18:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729189220;
-	bh=ivkBgESkuHQeUA+hxdWGTQLdKw0exukVJcksX9LbMxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ovBq+K/H7+b8B/o7XLNJQRdTJ2nu0ua/et6QA9Md3FGAoQhaYijMmhpJtLAwAUITB
-	 ZvDjvgyf9I+KLJdc3Nu2FxQL9ATakg541vOUOKvUtpgfHJ/LAOkLM3f4aayQwMsiyh
-	 Muw24OtqMe1xkwvKpi58IBzVQmrutKBuDOK3xnJBRffkBNmFd1KjzJOzALdmItxz6X
-	 rfrDEDFuxnrgAqoh5PXA2EJGnxbYUVqcKnAMReVi1uw3YKcve6HHcVF2EH/h7Xgus8
-	 EWU5MCYER8q/42OX1QhVBfMCmsnH1FBVGzB6a+QU4G9ibZ6OpeM+j+8UNZjj0q/oiE
-	 aXav1LWXIQEAA==
-Date: Thu, 17 Oct 2024 11:20:18 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/7] CSV/JSON metric thresholds, fix printf modifiers
-Message-ID: <ZxFVYvDTtmz_JbMU@google.com>
-References: <20241017175356.783793-1-irogers@google.com>
+	s=arc-20240116; t=1729189589; c=relaxed/simple;
+	bh=73LhArcldW9YWoGAUUDQD70Xc6UvchdZ6iaCXM4EhDw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jyW8+D65RwHqnh+8g6hxgONCbyq1Tq9LsPn7wsuiq7mQB6qBxQuSru1lVpDuZwCeJP0AbfP6gemDCz/Y4ky6DeD1XJnBQDo3R7lW2Viv6mK5j92gSje70paWDC7wPqAcNYHKHhjdIMq06+DtnKKlNjxLFtoWpLyIQWdnZ+0GUdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Acw9OyjX; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1729189584; x=1729794384; i=markus.elfring@web.de;
+	bh=73LhArcldW9YWoGAUUDQD70Xc6UvchdZ6iaCXM4EhDw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Acw9OyjXs7wAmlpf7VNBmGHcv6iA4K5tdMUMd+KTlEtOk/1/nGtHTQGBxm6PqwyY
+	 k92/DomDJkbcS8nNgDuibD3wh/8Cv3ASyCFTYRouH/l5IPc9D5HcWxRnifMVgWWYI
+	 Ja6dz+31TvUmGjf7Q9DS5IO0KonSstj0O4OwlF21EBOkLv003kKAfZMGq/ZP1xcub
+	 6STWjF5xrwDmkz6Jsj+bi+T7+wq/3a89jEiaV36JnKoWcjqzKbShyGvxTYjRzKlUc
+	 UU26gqp6n536/6hoHx4P5H/JmlIfcwLOUGM0G6V7An3pzEvvHIseMu3hU48BkZeha
+	 UVWbmhqIQ9HJnw6y3g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Ml46y-1tmyTI2g8a-00lUMp; Thu, 17
+ Oct 2024 20:20:36 +0200
+Message-ID: <e8bf7b33-01da-43fb-b71e-cd86a02be2e6@web.de>
+Date: Thu, 17 Oct 2024 20:20:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241017175356.783793-1-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+To: kernel-janitors@vger.kernel.org, cocci@inria.fr,
+ Peter Zijlstra <peterz@infradead.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: =?UTF-8?Q?=5BRFC=5D_Growing_usage_of_the_attribute_=E2=80=9C=5F=5Ff?=
+ =?UTF-8?B?cmVl4oCdPw==?=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:fOqmabauarM4Mm0Kro7lXPvx52ESGm/sJk6b1D08p6JdQW/nbQv
+ UVgShpEpzfIYu/mwL9TtDcPXwyr0eE3HOG9odyw+wdkeca+biwkLt1xZwqIEWcIOpz+C3ls
+ Bd2dnBF/Q5KwQOzYbKwgMK3LefW3AFmVzTrJ5wyjAq/bJc4VyLhz/3zBscOUNUgnMjpOeHg
+ FNAyA8c87vZVpeiDxVDiw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FaRCpcyoAOM=;Hogbr8WehlRKd2Tt28sGNg1TOPN
+ z3I0tejqAhGQ0fMHh/WoQqRAxLHh+j9ICftflvaGSMftdIYbW83ZbW9qQi1jeYzfEt95jUBee
+ fvS10OpVhies0Yzuia6qoGiOi4l7cXhfOKL1Y5gIq9cgEePXh1GxeySvEdsm+fGXZGnqnX84D
+ tlMUa0esT0dt1o4TZSgRKG/iIggjcePrQlgscH1hlMNG0X2zmVuwCcpBDVePn1jWJCOTsUdA2
+ KfjLpQ6tPXyVMBSC3nbYJc1g5+kZ7yXPwgO+BdwUI3FCPEFe+8pZ3VZCZnJ5uHmaWB0uua0Sv
+ thjMb9jbfXVpDbkTyZwyKI7akeh96sIvJAojahvq+9B5e0tQ32NCasVSDBULIGJzxZJ4qJnIe
+ qL8/2Qv909gU0AomvEhoBEgwZEdVkme4mjTLt+VZusFJzJZsq/kAqNpbkQ4s3Yf1oZcN8sS2N
+ FGDEQO5Bq04aVrL9DPnOYwCje+JyzvQi990vVSOeaDJXOkqdv6Ga1/7Rl3elaOCQ19pamQ1wN
+ GvFs8KN4ch98dJAShcg1fx0N8kBsJgqXjWQYALFWVvXkwaRHSKKtPrwB/podvAqIOhwvNwie+
+ yqErxLrU/uwX7E0KNl4b3ieKhQ9GxjYh8u7jIN1w10Cp4J0yAcvkjGQNj1LqUwpqTKwfIQ4Iz
+ uEgQ6Yo6xztxcciir2EeMiFicPv3uTO1LZJCTsq1iXwGyccHM413IuWCJx0grQtBaWgG9bxQE
+ AqcHlMKWN8Pe8Xi+gB5yhuvY0KwbjTrle4f3MtgCEs/zD/jr2KDElfOtPOZ04kCLXp+bKjOz+
+ Wj2oZBs71tN47QhJTM+6WAPA==
 
-Hi Ian,
-
-On Thu, Oct 17, 2024 at 10:53:49AM -0700, Ian Rogers wrote:
-> Metric thresholds are being computed for CSV and JSON output but not
-> displayed. Rename the color that encodes the threshold as enum values
-> and use to generate string constants for a json dictionary
-> value. Disable metric thresholds with CSV output.
-> 
-> Add printf attribute to functions in color.h that could support
-> it. Fix bad printf format strings that this detected.
-
-Thanks for the quick fix, I'll take this.
-
-> 
-> v5. Switch some u64 printf flags to PRIx64 rather than llx (kernel
->     convention) to resolve 32-bit build issues.
-> v4. Drop CSV metric thresholds due to formatting variation on
->     hypervisors (broken counters) and not as detected by
->     tests/shell/stat+csv_output.sh.
-
-I'm ok with dropping CSV support for now, but could you explain
-a bit more detail about the problem?  Is it possible to see the
-same problem on host if it has a unsupported event?
-
-Thanks,
-Namhyung
-
-
-> v3. Rebase.
-> v2. Don't display metric-value for json output if there is no unit.
-> 
-> Ian Rogers (7):
->   perf color: Add printf format checking and resolve issues
->   perf stat: Fix/add parameter names for print_metric
->   perf stat: Display "none" for NaN with metric only json
->   perf stat: Drop metric-unit if unit is NULL
->   perf stat: Change color to threshold in print_metric
->   perf stat: Add metric-threshold to json output
->   perf stat: Disable metric thresholds for CSV and JSON metric-only mode
-> 
->  tools/perf/arch/x86/util/iostat.c             |   2 +-
->  tools/perf/builtin-sched.c                    |   2 +-
->  tools/perf/builtin-script.c                   |   6 +-
->  tools/perf/builtin-stat.c                     |   8 ++
->  tools/perf/builtin-trace.c                    |   2 +-
->  .../tests/shell/lib/perf_json_output_lint.py  |   5 +-
->  tools/perf/util/arm-spe.c                     |   2 +-
->  tools/perf/util/color.h                       |   9 +-
->  tools/perf/util/intel-bts.c                   |   2 +-
->  tools/perf/util/intel-pt.c                    |   2 +-
->  tools/perf/util/s390-cpumsf.c                 |   2 +-
->  tools/perf/util/s390-sample-raw.c             |   8 +-
->  tools/perf/util/stat-display.c                |  73 +++++++---
->  tools/perf/util/stat-shadow.c                 | 128 ++++++++++--------
->  tools/perf/util/stat.h                        |  16 ++-
->  15 files changed, 170 insertions(+), 97 deletions(-)
-> 
-> -- 
-> 2.47.0.105.g07ac214952-goog
-> 
+SGVsbG8sDQoNClRoZSB1c2FnZSBvZiB0aGUgYXR0cmlidXRlIOKAnF9fZnJlZeKAnSBpcyBldm9s
+dmluZyBzaW5jZSBpdCBiZWNhbWUgc3VwcG9ydGVkDQpmb3Igc29tZSBwcm9ncmFtbWluZyBpbnRl
+cmZhY2VzIGJ5IGNvbnRyaWJ1dGlvbnMgb2YgUGV0ZXIgWmlqbHN0cmENCm9uIDIwMjMtMDUtMjYu
+DQpTZWUgYWxzbyB0aGUgY29tbWl0IDU0ZGE2YTA5MjQzMTFjN2NmNTAxNTUzMzk5MWU0NGZiOGVi
+MTI3NzMgKCJsb2NraW5nOg0KSW50cm9kdWNlIF9fY2xlYW51cCgpIGJhc2VkIGluZnJhc3RydWN0
+dXJlIikuDQoNCkkgd291bGQgbGlrZSB0byBwcmVzZW50IGEgY29ycmVzcG9uZGluZyByZXN1bHQg
+d2hpY2ggY2FuIGJlIGRldGVybWluZWQNCmFsc28gYnkgdGhlIG1lYW5zIG9mIHRoZSBzZW1hbnRp
+YyBwYXRjaCBsYW5ndWFnZSAoQ29jY2luZWxsZSkNCmJhc2VkIG9uIHNvdXJjZSBjb2RlIG9mIHRo
+ZSBzb2Z0d2FyZSDigJxMaW51eCBuZXh0LTIwMjQxMDE34oCdLg0KDQrilZTilZDilZDilZDilZDi
+lZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDi
+laTilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZcNCuKVkSAgICAgIHZhcmlhbnQg
+ICAgICAgICAg4pSCIGluY2lkZW5jZSDilZENCuKVoOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKV
+kOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVquKVkOKVkOKVkOKV
+kOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVow0K4pWRIGtmcmVlICAgICAgICAgICAgICAgICDilIIg
+ICAgMjQzICAgIOKVkQ0K4pWRIGRldmljZV9ub2RlICAgICAgICAgICDilIIgICAgOTQgICAgIOKV
+kQ0K4pWRIGZ3bm9kZV9oYW5kbGUgICAgICAgICDilIIgICAgOSAgICAgIOKVkQ0K4pWRIHFjb21f
+dHptZW0gICAgICAgICAgICDilIIgICAgOSAgICAgIOKVkQ0K4pWRIGdwaW9fZGV2aWNlX3B1dCAg
+ICAgICDilIIgICAgNyAgICAgIOKVkQ0K4pWRIGt2ZnJlZSAgICAgICAgICAgICAgICDilIIgICAg
+NyAgICAgIOKVkQ0K4pWRIGJpdG1hcCAgICAgICAgICAgICAgICDilIIgICAgNiAgICAgIOKVkQ0K
+4pWRIHB1dF9kZXZpY2UgICAgICAgICAgICDilIIgICAgNiAgICAgIOKVkQ0K4pWRIHB1dF9jeGxf
+cm9vdCAgICAgICAgICDilIIgICAgNSAgICAgIOKVkQ0K4pWRIGZyZWVfcGVyZl94YSAgICAgICAg
+ICDilIIgICAgNCAgICAgIOKVkQ0K4pWRIHBjaV9kZXZfcHV0ICAgICAgICAgICDilIIgICAgMyAg
+ICAgIOKVkQ0K4pWRIHB1dF9jeGxfcG9ydCAgICAgICAgICDilIIgICAgMyAgICAgIOKVkQ0K4pWR
+IGtmcmVlX3NlbnNpdGl2ZSAgICAgICDilIIgICAgMiAgICAgIOKVkQ0K4pWRIHNuZF9jYXJkX3Vu
+cmVmICAgICAgICDilIIgICAgMiAgICAgIOKVkQ0K4pWRIHg1MDlfZnJlZV9jZXJ0aWZpY2F0ZSDi
+lIIgICAgMiAgICAgIOKVkQ0K4pWRIGNsZWFudXBfZGF4ICAgICAgICAgICDilIIgICAgMSAgICAg
+IOKVkQ0K4pWRIGRlbF9jeGxfcmVzb3VyY2UgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGRz
+bWFzICAgICAgICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGZpcm13YXJlICAgICAg
+ICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGZwdXQgICAgICAgICAgICAgICAgICDilIIg
+ICAgMSAgICAgIOKVkQ0K4pWRIGZyZWVfY21kX21lbSAgICAgICAgICDilIIgICAgMSAgICAgIOKV
+kQ0K4pWRIGZyZWVfY21kcyAgICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHBzdG9y
+ZV9pcHV0ICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHBzdG9yZV9wcml2YXRlICAg
+ICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHB1dF9jeGxyZCAgICAgICAgICAgICDilIIgICAg
+MSAgICAgIOKVkQ0K4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
+4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWn4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
+4pWQ4pWQ4pWdDQoNCg0KSG93IHdpbGwgZGV2ZWxvcG1lbnQgaW50ZXJlc3RzIGV2b2x2ZSBmdXJ0
+aGVyPw0KDQpSZWdhcmRzLA0KTWFya3VzDQo=
 
