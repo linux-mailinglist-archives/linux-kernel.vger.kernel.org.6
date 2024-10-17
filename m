@@ -1,139 +1,180 @@
-Return-Path: <linux-kernel+bounces-369129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB519A194B
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:24:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CFA09A194C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33913B2326A
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:24:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF839B25366
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EF81386B4;
-	Thu, 17 Oct 2024 03:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DDC7E583;
+	Thu, 17 Oct 2024 03:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="VSlA6GYN"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XVgh+yOu"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3944F46434;
-	Thu, 17 Oct 2024 03:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE77C8F6C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729135460; cv=none; b=nho6Xv8hCXcfTFaau/WZ2dGuZrLCpE/f2VN3eBr92nQQRItL6qS/AmM9ncol1dG14S2F+ovfz/ohiU4I2cbwc0fubtyAXahzN3QI5IQbd0mnmWw7D8n5+YCbokzfJ5NSUPq2BuHMp0V+O+EIrbCfrXDrEZ8cEwUyqr9iRwLunLI=
+	t=1729135547; cv=none; b=qP0L8evp1Si+iMH1bDtf38fWYycsVQDr4KlHSILNw1kWn0JSbjfCjdN0maCCK/T34+4wPXhFUo3nBS81Vr1w3y9OMhgGpj9pgGyiUAa0lOYziUfapu4ZFYXVn1Piv45GtEvFXSVEHjHBkai6dzZ8ywi4ApfbpQOV8M3I9Ts/i1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729135460; c=relaxed/simple;
-	bh=NC0s/TO2RBn25Q9K/fc3C4XMAHBk1fPB2DVcxhQZrBc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jpwqvn0wIxduoJNF7HB8hebg293cvgx5s9TI+hT3f/uJ6w+IP+tZR/HrwHm+9+0yaUEY9zl7zAYCQNZad19+4HtOURcowGeRsvOpeG6LZ+B8ULe8vx2NHLhFtAS2N5vKERsMrDX1zp1xVfSAhv4gGKvfGYcss09MQWUyaC3JtSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=VSlA6GYN; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 47f8b0aa8c3711efbd192953cf12861f-20241017
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=68USvSZu77qzMKozbSicW9caulcy9M9tEmfAfhNd7F0=;
-	b=VSlA6GYNP4pKdY90l4iyiN2UwX9xyWu0tYCt2BCvCw3yd8HmNyCsorbuF3P68jH1tG21sjfEpaRHg1Bu8LaLW6v1zTw+aG2+bRPlMW9jzw0A4wb5Mhqc/1J4XHicz0XuUjNuz8ZRbqwUOAFqDIEBnBJ3hc44OQjTczzYtcJjWFQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:c2da1cd9-c9ea-4fce-8682-7f49851b751d,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:8481ea06-3d5c-41f6-8d90-a8be388b5b5b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 47f8b0aa8c3711efbd192953cf12861f-20241017
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <skylake.huang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 829530303; Thu, 17 Oct 2024 11:24:13 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 17 Oct 2024 11:24:10 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 17 Oct 2024 11:24:10 +0800
-From: Sky Huang <SkyLake.Huang@mediatek.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Daniel Golle
-	<daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, SkyLake Huang
-	<SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Simon
- Horman" <horms@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-CC: Steven Liu <Steven.Liu@mediatek.com>, SkyLake.Huang
-	<skylake.huang@mediatek.com>
-Subject: [PATCH net-next v2 3/3] net: phy: mediatek-ge-soc: Propagate error code correctly in cal_cycle()
-Date: Thu, 17 Oct 2024 11:22:13 +0800
-Message-ID: <20241017032213.22256-4-SkyLake.Huang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241017032213.22256-1-SkyLake.Huang@mediatek.com>
-References: <20241017032213.22256-1-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1729135547; c=relaxed/simple;
+	bh=imCL1m4BIcB95ncEb8kEhZkGxOtX4M/m1Anw4W4/2N0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bPte19GZjBnQzfda/w3u2zUxV7VpjZG7QeA6TGWQp1SOLYFXeEVzQeT4+H2BEdN1aulQY6m86GIglFxKYRwjgxV1zZ4MO+zx2wk93uIFe9h2B5bpTLwv+tlyXVDDEPqPOux6njT/WQMeh/x1RGbiX8S8XH4ra9o4sQGloADL3rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XVgh+yOu; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729135541; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=9WfeWxzTjli81jKhloyV8TsWg0tcegzsoqDI3F/SNH8=;
+	b=XVgh+yOuSzBofOrDfepGDsXn7wdhC2T4MOquoiwW6GFbx22m5nlxh7qiBqFsXQtlO5Gn3yFht1l/P0qzr9Q1t5IEX+SFS5HgTmDbWbB5mqKcggFYFHfCHc5vXp0EJJAjttlQSOhiXpptBlP6mvCPdBhsStngFA2bbHcrr7ZwxTk=
+Received: from 30.74.144.140(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHJGsIc_1729135540 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Oct 2024 11:25:40 +0800
+Message-ID: <2b3572e1-a618-4f86-979d-87f59282fe8f@linux.alibaba.com>
+Date: Thu, 17 Oct 2024 11:25:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--4.666600-8.000000
-X-TMASE-MatchedRID: E1MpS5hJl2mf9SROPcS9xgPZZctd3P4B8JzVOUQUG5wKogmGusPLb4KO
-	HgdS51oIrXsnC0Bkz2K9TnZXLseR1h8TzIzimOwPC24oEZ6SpSk6XEE7Yhw4FnRn8zaQo/+MPMM
-	1RXgEGV0FW/CNJroz7afHryy2FmoegvZxKPAABDf8y7GIVr9A+A4GheOti5yjN6mpdfdFp0iWSi
-	jrUwB5vMGQYFMiVRG5ehcPPz6UzEWlb5ogMngNpHOTEn5IiRSOUASbXCnDmH6UTGVAhB5EbQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.666600-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	980CD781AF41FA93E07A9F7F9A7BDAED161D100E5D645F141870E13AEF892F792000:8
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm: shmem: improve the tmpfs large folio read
+ performance
+To: Yang Shi <shy828301@gmail.com>, Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1729072803.git.baolin.wang@linux.alibaba.com>
+ <df801bca5026c4b06cb843b9366fba21f0d45981.1729072803.git.baolin.wang@linux.alibaba.com>
+ <Zw_d0EVAJkpNJEbA@casper.infradead.org>
+ <CAHbLzkogrubD_rPH7zf1T454r-BsxL951YH=rGAfNqPZJSCGow@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAHbLzkogrubD_rPH7zf1T454r-BsxL951YH=rGAfNqPZJSCGow@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: "SkyLake.Huang" <skylake.huang@mediatek.com>
 
-This patch propagates error code correctly in cal_cycle()
-and improve with FIELD_GET().
 
-Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
----
- drivers/net/phy/mediatek-ge-soc.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+On 2024/10/17 01:33, Yang Shi wrote:
+> On Wed, Oct 16, 2024 at 8:38 AM Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> On Wed, Oct 16, 2024 at 06:09:30PM +0800, Baolin Wang wrote:
+>>> @@ -3128,8 +3127,9 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>>                if (folio) {
+>>>                        folio_unlock(folio);
+>>>
+>>> -                     page = folio_file_page(folio, index);
+>>> -                     if (PageHWPoison(page)) {
+>>> +                     if (folio_test_hwpoison(folio) ||
+>>> +                         (folio_test_large(folio) &&
+>>> +                          folio_test_has_hwpoisoned(folio))) {
+>>
+>> Hm, so if we have hwpoison set on one page in a folio, we now can't read
+>> bytes from any page in the folio?  That seems like we've made a bad
+>> situation worse.
+> 
+> Yeah, I agree. I think we can fallback to page copy if
+> folio_test_has_hwpoisoned is true. The PG_hwpoison flag is per page.
+> 
+> The folio_test_has_hwpoisoned is kept set if the folio split is failed
+> in memory failure handler.
 
-diff --git a/drivers/net/phy/mediatek-ge-soc.c b/drivers/net/phy/mediatek-ge-soc.c
-index 1d7719b..a931832 100644
---- a/drivers/net/phy/mediatek-ge-soc.c
-+++ b/drivers/net/phy/mediatek-ge-soc.c
-@@ -110,7 +110,7 @@
- #define   MTK_PHY_CR_TX_AMP_OFFSET_D_MASK	GENMASK(6, 0)
- 
- #define MTK_PHY_RG_AD_CAL_COMP			0x17a
--#define   MTK_PHY_AD_CAL_COMP_OUT_SHIFT		(8)
-+#define   MTK_PHY_AD_CAL_COMP_OUT_MASK		GENMASK(8, 8)
- 
- #define MTK_PHY_RG_AD_CAL_CLK			0x17b
- #define   MTK_PHY_DA_CAL_CLK			BIT(0)
-@@ -351,8 +351,10 @@ static int cal_cycle(struct phy_device *phydev, int devad,
- 
- 	phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, MTK_PHY_RG_AD_CALIN,
- 			   MTK_PHY_DA_CALIN_FLAG);
--	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, MTK_PHY_RG_AD_CAL_COMP) >>
--			   MTK_PHY_AD_CAL_COMP_OUT_SHIFT;
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, MTK_PHY_RG_AD_CAL_COMP);
-+	if (ret < 0)
-+		return ret;
-+	ret = FIELD_GET(MTK_PHY_AD_CAL_COMP_OUT_MASK, ret);
- 	phydev_dbg(phydev, "cal_val: 0x%x, ret: %d\n", cal_val, ret);
- 
- 	return ret;
--- 
-2.45.2
+Right. I can still keep the page size copy if 
+folio_test_has_hwpoisoned() is true. Some sample changes are as follow.
 
+Moreover, I noticed shmem splice_read() and write() also simply return 
+an error if the folio_test_has_hwpoisoned() is true, without any 
+fallback to page granularity. I wonder if it is worth adding page 
+granularity support as well?
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 7e79b6a96da0..f30e24e529b9 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3111,9 +3111,11 @@ static ssize_t shmem_file_read_iter(struct kiocb 
+*iocb, struct iov_iter *to)
+
+         for (;;) {
+                 struct folio *folio = NULL;
++               struct page *page = NULL;
+                 unsigned long nr, ret;
+                 loff_t end_offset, i_size = i_size_read(inode);
+                 size_t fsize;
++               bool fallback_page_copy = false;
+
+                 if (unlikely(iocb->ki_pos >= i_size))
+                         break;
+@@ -3127,13 +3129,16 @@ static ssize_t shmem_file_read_iter(struct kiocb 
+*iocb, struct iov_iter *to)
+                 if (folio) {
+                         folio_unlock(folio);
+
+-                       if (folio_test_hwpoison(folio) ||
+-                           (folio_test_large(folio) &&
+-                            folio_test_has_hwpoisoned(folio))) {
++                       page = folio_file_page(folio, index);
++                       if (PageHWPoison(page)) {
+                                 folio_put(folio);
+                                 error = -EIO;
+                                 break;
+                         }
++
++                       if (folio_test_large(folio) &&
++                           folio_test_has_hwpoisoned(folio))
++                               fallback_page_copy = true;
+                 }
+
+                 /*
+@@ -3147,7 +3152,7 @@ static ssize_t shmem_file_read_iter(struct kiocb 
+*iocb, struct iov_iter *to)
+                         break;
+                 }
+                 end_offset = min_t(loff_t, i_size, iocb->ki_pos + 
+to->count);
+-               if (folio)
++               if (folio && likely(!fallback_page_copy))
+                         fsize = folio_size(folio);
+                 else
+                         fsize = PAGE_SIZE;
+@@ -3160,8 +3165,13 @@ static ssize_t shmem_file_read_iter(struct kiocb 
+*iocb, struct iov_iter *to)
+                          * virtual addresses, take care about potential 
+aliasing
+                          * before reading the page on the kernel side.
+                          */
+-                       if (mapping_writably_mapped(mapping))
+-                               flush_dcache_folio(folio);
++                       if (mapping_writably_mapped(mapping)) {
++                               if (unlikely(fallback_page_copy))
++                                       flush_dcache_page(page);
++                               else
++                                       flush_dcache_folio(folio);
++                       }
++
+                         /*
+                          * Mark the page accessed if we read the beginning.
+                          */
+@@ -3171,7 +3181,10 @@ static ssize_t shmem_file_read_iter(struct kiocb 
+*iocb, struct iov_iter *to)
+                          * Ok, we have the page, and it's up-to-date, so
+                          * now we can copy it to user space...
+                          */
+-                       ret = copy_folio_to_iter(folio, offset, nr, to);
++                       if (unlikely(fallback_page_copy))
++                               ret = copy_page_to_iter(page, offset, 
+nr, to);
++                       else
++                               ret = copy_folio_to_iter(folio, offset, 
+nr, to);
+                         folio_put(folio);
+                 } else if (user_backed_iter(to)) {
+                         /*
 
