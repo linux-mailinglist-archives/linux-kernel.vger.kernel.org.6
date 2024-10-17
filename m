@@ -1,185 +1,209 @@
-Return-Path: <linux-kernel+bounces-369657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12F99A2079
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:03:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8820F9A2075
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED9D287740
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:03:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19CD91F2778D
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36191DB375;
-	Thu, 17 Oct 2024 11:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242F11DB37C;
+	Thu, 17 Oct 2024 11:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dsc2CUd2"
-Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NHov7A+Q"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2089.outbound.protection.outlook.com [40.107.241.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791ED1D8E16
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729162991; cv=none; b=g+x5qb9NpmblQUzNaDumMXyVsgr1a2mBu4VBA7oneoP6/p2KOHoweLMM6zXsh6+P0qmrXC56h5ubXoUsH5QGOas0uPbTqSdLBUnxeKgR2q80GJLcdjXu9+58/xIGvenkGFP5W/NQsjEeBbfkmNnlN0tuOWB3x6lTI1pQck70RCM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729162991; c=relaxed/simple;
-	bh=FBxEpMv95jAUtqrJmvMlDJmw8hCzAm/5/M7nERRARGA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nvNF6OVBNVGyIJv4SC16/B6/sH3u4jwCUOOQi9+zgcH6LrYKfjlX2y+SvvfCPvSUCwJDASlMXm+6B6VgXpMlRwyn7fYSwVj/mJMmBJVap9mW8anqsGTjVXvqA8SQ2J751QpSuX/b5fwyrCnKXWYw7vnafXd9QS5+kvfi+CdJDVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dsc2CUd2; arc=none smtp.client-ip=185.70.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1729162980; x=1729422180;
-	bh=FBxEpMv95jAUtqrJmvMlDJmw8hCzAm/5/M7nERRARGA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=dsc2CUd2huQnURbHT2YcVLGZjRF5b0SJfwHJ6cPdoO1yUO15aamqhBa5oAaOs8YR5
-	 y5At4xHRHzrqaLlUZ6zq+cHxAP7H0kr9HCLoh4OpCwB9uXANkkAJA4aSvTgh0x6tqi
-	 MYA8Bjk4xu7iAsY7w5CDcrTNSAtdUM4juEFrgYhGVdxnaAfI73tPNWMG24HHL+ZqLW
-	 F8TWaz0Rqj8omB53EbOMPF0q6Go6PWzCBflhyECDhqowgQqMqEjX6i8wSUDsbAcC+4
-	 cLPzKdauY6I0lJDpYPbt6AfCO3yHi4PO2gVHzXpAono0nFcejLWuxgbiN7l1w4bHgi
-	 NSCS8k8hVUsJQ==
-Date: Thu, 17 Oct 2024 11:02:55 +0000
-To: Shawn Lin <shawn.lin@rock-chips.com>
-From: sydarn <sydarn@proton.me>
-Cc: Adam Green <greena88@gmail.com>, regressions@lists.linux.dev, linux-kernel@vger.kernel.org, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Subject: Re: Unable to handle kernel paging request at virtual address ffffffc08058e000
-Message-ID: <ziwdBCnXuueftpsLEbuPLnsq81mkIIY8aMRd07gGqPHrJ7ivO0PYUJ3Ik5dcguC1YgM_So6u4OwgYXIChhUvXlZ2GuG5pTlfOsFFd7gQe18=@proton.me>
-In-Reply-To: <3748add3-18e5-42ef-9d48-93650cfc0682@rock-chips.com>
-References: <CAC8uq=Ppnmv98mpa1CrWLawWoPnu5abtU69v-=G-P7ysATQ2Pw@mail.gmail.com> <3748add3-18e5-42ef-9d48-93650cfc0682@rock-chips.com>
-Feedback-ID: 92491476:user:proton
-X-Pm-Message-ID: 790c47bfe94c8121b7c0ddd8365812c7fcfa5afc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323FE1D9660;
+	Thu, 17 Oct 2024 11:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729162953; cv=fail; b=JrOBw9yP4EYCg8HxOUJHJ0GJJr+izeYG6U+PaTc7OqKxm20Z1N3hGrwRr7zEJnTg1+hK5YUStNlEiAsfAMI5gCwMiEb77qWdd5eruHl6DG/urgvhKwlqawE+3afPb5/OiD9Oc68P8kgt/O0zKqcRIyinjQHQyjLNxLBRjFZLOxQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729162953; c=relaxed/simple;
+	bh=yALLdb0dbxPW6ycLAH3PsyYeJhsPbq0K26UR6OPZnwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=s+X9oHskotJwD0C0o74egtrvFm8pg0FujanTx1Mg2UFwdBDa18I1yoDj67JnXzpAmJnnqjlP0N1Jg0j9Y2C4lzzyyzoBqM6C6j1Rq837Poa8a785BdNho5Db+R0U/oZ6OgN364vgZsa2LFLfF1aS6c/kkL8Vhf1m7mO0B3UzyWM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NHov7A+Q; arc=fail smtp.client-ip=40.107.241.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=grOh9WXSf+oUaf6iy+fZec8ndCXjBfm+lLEYuyDvaM/W0S+QgtUqDxMBnh9UdwNWMFgxaHEwABDsLtwPsurh7jmXraQt53XKikc/V4jX3D38TBpfWedBeq5Fkd11teUuFf8snEHV68DgInvn0WAhHfj+qmiOS55VNva7ELcvs/MCl4ZDHCFWxg0UOVtLXEjGCzY25NDFyLvtMa6sbTagyyyYgz30WxxTbnQURIDSpkskROXT7ykffSOK8+FH2LEO378qAwynswdrRPaIRP3f4VwwtZH/HuL86lEwxS8pN/HetYVt4EVC05L+SlS1YwxuUHKPFne4d3nw/2Jg8Ak1RQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kmrxZgN4TBMtUyCROHM2QsJDWaSedZEBBEoWrZRJlWY=;
+ b=opQ3dQC2JnKIQ46ZZLHtLGTO+IEgfulgYM/N/5kFz408MiaysVwqd12nKjuvUi+38dRxqu+Xi0sL0Ddrjg7rt0oAirBWLUiMSrfP8+Yxm+5T1UIrzeevp58XycaUObSKdAy0jRA6PW06/QONDrI/+46ZLdGo8PHOWHOGNbySpF8PD7z2YdGTnJ8wSQiWZk2QVVcMT5HEuyswjnUrN8fJtfcrbDOiY54roJBp+CDeSZXz/HVRsJwIJ4FVuM11gXkAC1mwMA1Yu9KaEEK0A5mcxhJQV0DbE5wYAbkjVZd8X/0ujghNedWVk9GgfO6SxCQ2UZYN2ST0WkkXAqgDvjGL3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kmrxZgN4TBMtUyCROHM2QsJDWaSedZEBBEoWrZRJlWY=;
+ b=NHov7A+Q08U00hT5h5XjpygC5SuGh/HYGLsCCdOzetAICIYeq6G/yiBIGkoHuvbp0OcmDvb9Jomq1ORJpk17lqvOgF7GpA6cmsHY/w57vU83H+U66BKO6p4XCGntxv0TAN2Js7MzcJPY7yby4ET9ZeWMBzl3rKdp/UtyGpseKOSJTWXJPRoovW57RBMv9XzD9iw/XDqXBDzQlSnVYodpPleFks8YzronlKs9heDiZiNNmujFrScUhzcI3k3nZkeDv3sYZg3ob+HoE9cZsnrzLVWR/8V3WhVYNKwllJ0/5F98s6PizhjPLZ08348drHOQXWiLVODE47KFVnKzVo+Ftg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
+ by AS8PR04MB8087.eurprd04.prod.outlook.com (2603:10a6:20b:3fb::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.18; Thu, 17 Oct
+ 2024 11:02:26 +0000
+Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6]) by AS8PR04MB8247.eurprd04.prod.outlook.com
+ ([fe80::84f7:e2c3:ceed:c0a6%6]) with mapi id 15.20.8069.016; Thu, 17 Oct 2024
+ 11:02:26 +0000
+From: Daniel Baluta <daniel.baluta@nxp.com>
+To: broonie@kernel.org,
+	linux-sound@vger.kernel.org
+Cc: lgirdwood@gmail.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	Anne Onciulescu <anne.onciulescu@gmail.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Chao Song <chao.song@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH] ASoC: SOF: sof-of-dev: add parameter to override tplg/fw_filename
+Date: Thu, 17 Oct 2024 14:03:13 +0300
+Message-ID: <20241017110313.1423258-1-daniel.baluta@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4PR09CA0027.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5d4::17) To AS8PR04MB8247.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3f2::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|AS8PR04MB8087:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97a861d1-8171-4631-35b4-08dcee9b2f25
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dVWn+3iVOKRRVWkShblcEvbbmNK9dSBaNNvsX0FXCDARJG6ztkMSBzga/Xh7?=
+ =?us-ascii?Q?EOa9mvYulVFkkukzcCgqwTwAIFiaJyAr6HkLC45gAOPveBVSgadiLLwRwqdX?=
+ =?us-ascii?Q?ON+uKSLGqLmtf52kpfHoqFHr13oGgWPDVMYGXehtuUPJP/EMydwFmBplON6j?=
+ =?us-ascii?Q?Gdc6f7/LxXp9SpSdLM5kfuLitL2JCcF8G+p1h+norv2HleKRjo5wAdwva/qI?=
+ =?us-ascii?Q?wHg9PjpVrPziEHYWI3D9WW+QMcN2bbIG0IQy6LAAkmVL4mI2vhxz2Sd2BFz0?=
+ =?us-ascii?Q?cQ0nuShfiULVgQL9zD3AUMcs2JUol53ok2DFHlXn6Zgd3lZR22XyOF0GsKXA?=
+ =?us-ascii?Q?5H6sMgAsfj7oduAtfllWthkt+vQTpUdHe0ULZsqCZMDZVk8oXOZB7Rl33nMu?=
+ =?us-ascii?Q?9Vf/gdXeWssejC7Gaj0gNsH6aM4PPG8oOIxqhzNkOs5rcVJ6K0NytGVtucIf?=
+ =?us-ascii?Q?PT0LdTmlAfM+eWPpmFRiUZ5EvIEqPFgPyPkcDhr1goFYHOeyoSW10qsE6xvv?=
+ =?us-ascii?Q?9/l6eJzHijSEcsji9cx7FLuMYe4Y6jrbYVlonJwAz3CjpdAzmMA+0sp7hJHC?=
+ =?us-ascii?Q?SMCxZar5RWgTk7MAmv/TwHfDKBSdQ9gMq0/WpeAXcrVU68xX0SBF7IrM+Q47?=
+ =?us-ascii?Q?7U2bgEcw203weO0IGvSpZcOYZ4Sr9LbaPbS80WaCYLnC3H94yp5rIR4qbmrC?=
+ =?us-ascii?Q?ZC+Nz3uxqRiZLQdhw6jkq9ZqTfg6yfYLCkNfgie8OFGjtKKYrWnCt8W0qgUU?=
+ =?us-ascii?Q?VGupDNun+HbtUolpbUb+wC8uNotBHITuY4u/HsZg2bIAwSIIpa68ZDSHhXu8?=
+ =?us-ascii?Q?/aR4Uv6SzywIN6HKfOz+/HKoXWJw5HzgXco+F6I/hqPgNnXExcZi5EkfqwVr?=
+ =?us-ascii?Q?dUTaC2EjaI125+56S+UqDVUum2NxvWdhJ8ef1rWqj2U7rdUQ3JJBmR7LpuD9?=
+ =?us-ascii?Q?wBYmeDI9PAGp7wQxK/KRQIz4gKij7fTYau9fF0DHwhYODA2o4XTaXk8IgpZH?=
+ =?us-ascii?Q?U9KgGeLrPKCCdqJVPqIpct5wAwmpMaD2lQG6PVpzE2yhigrquev8bN9Pl3nl?=
+ =?us-ascii?Q?QOkrpuSXrO3iRx2x4ObZb2OrA66SEwozUv4uo31j7Xv/bjwtLVFqbu1WzdBs?=
+ =?us-ascii?Q?rJJSFSBPOgH9QcdS3C1NeWhW8GTkdW5CFVE9fDczRTDLfElOiv5ByYCRWV53?=
+ =?us-ascii?Q?P0Rz+GACvr4n9YUZ0/EE0WnVPMyopczhP3BWtj+aJqIjZtEqLbqpsKSRflB1?=
+ =?us-ascii?Q?6T592oTkZ5gCIWgqzZkZZixptLKnTGEnJXFNMrY5j1+DHrxQXL5z4kSLRZfI?=
+ =?us-ascii?Q?9ZlKHZq94l+tQm/lHRb0u3WQzdXCshFFr7VxwdxTXOweUMKAgeMz97byDyf4?=
+ =?us-ascii?Q?t1IY3r8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QDcZV8S3QKmvoS0cTwgIBgkaKYUHgg8oXUhX2fdUrFoWkhxHmRuHLBV7oHuG?=
+ =?us-ascii?Q?vCFsXGcRuzhVV/oxCLww+3QWt34e9rYrs0ScObv1IdB0Kyqw2Rnr1crzLdSF?=
+ =?us-ascii?Q?3OcoaTNyqiFEpn8BEPhsVfpZy3Hc4cyRsynQvQ8PqSzG/JXEO8AEPeDEbZvb?=
+ =?us-ascii?Q?WD0MVSWPXOghqOaB3MWLE4W+JaO1HPwKLxERVmytQ8BwPi5nNZakDGZMTtQZ?=
+ =?us-ascii?Q?AmmN0psaNor7dTsYjjduNjfYy5R+eJXCgDw7T6jdEJXI1xk7DfBUzWZka7iF?=
+ =?us-ascii?Q?Unfv8fSgwGARTa0V19QxiEScT5u5rSHn4COu4P+mqTiZ4jTpSKQ/seR1M0YX?=
+ =?us-ascii?Q?Blz3yblOh67hP5g5d5imQv6zNBWzWrBKRtQW0DoZ9tAcItfoWXJXE8smjGWI?=
+ =?us-ascii?Q?GsFBWBg3Z7UfFHpoIPbbPvC2V2qzhEEEB6Jfc9nLqMFf0EaX1TpIuExkZBKX?=
+ =?us-ascii?Q?IvDpz8+aL1Te68BUi0QByT0OhEMdnNlxZILdEK026O3b/R9eoO8N2qngFGbC?=
+ =?us-ascii?Q?uu/VCmh6d8wKgQz6Per7GEEJbxzrf9vtrtW9ZvGQtKnfOe4rqoYqDevnQLRI?=
+ =?us-ascii?Q?OClg9pUBWmLDK9l6y5DiDR6Ca/mIo3YPq6Yh3WNQl1PDR2B7bsD4sfUTk6F8?=
+ =?us-ascii?Q?koG3s+IQar7Fa8D579NSuWgAoizzdZ31BS0SNh6aazWRJNEkkPImuvX5efuE?=
+ =?us-ascii?Q?ZRbjjyuaLsmNppeAVXLu62oR/e85CyU2J3haQne52x5Sbo68IB8DWYdmTptF?=
+ =?us-ascii?Q?AuMBzvvdDeSHKB3g6x+LZZXjrBPgUAxVq+Lgqfqid8urSyvH6BkiymhEBltS?=
+ =?us-ascii?Q?4zxEVN2V0SBxHUzHvPc9N18MVQisXeyWnb3220N1cacEQPds/rHvJVUoEa9s?=
+ =?us-ascii?Q?d2uDRky8PzSxhfhGeGWy8Z0I646aSvRF3MUBIbIzTelJN7z9IaFKGFESHrVH?=
+ =?us-ascii?Q?VdGUFqTfht8rIIeDB8FhCurXX/2JX5C9rg23aibXUo6C/5PdYfmCTc3gS5iC?=
+ =?us-ascii?Q?ShV/G7oC3UP47KU+jUeWNdpWVHjTbfbhu7xg7OPR95VI2jsD+QG7WSAZ/7CS?=
+ =?us-ascii?Q?NDCxMgpEgEfXq8h6f9VaUApvizjeTkf9aJc8fGX2KlqdgEGmQs0yLawpdtSv?=
+ =?us-ascii?Q?SweB2s60UkpYxKDtd0YgGEHs3qJfUOQcbSqU1PXdMsgYaRma3T4+dP++lI6C?=
+ =?us-ascii?Q?8EANDehUQUrvNnQkSEzQzEvs50i91qYPBcWPa9gcar0BURS+/ejtSJqTK8or?=
+ =?us-ascii?Q?2PfQJugA4mMrq1HwMjwvbj6Zmtf03GYc59ydLwH8V0xVIN+hAza5REziyaUo?=
+ =?us-ascii?Q?Fr6zbY6tvwjHrGoG06Su2d9228hU/gLqwSXyJwP1FM52pdhaYYVNbpiMcjJz?=
+ =?us-ascii?Q?Vs4A6tt2UujO3EBgHmJWsISUUuG1hDH9a5POuekJkNvqqQgGuM2y7diD6aYQ?=
+ =?us-ascii?Q?1AeRlHLENQTzmZp/ARYGvXoqalw+HheRCottRaJ1G8IY5CK0JEf44PRocFkT?=
+ =?us-ascii?Q?qyZZro8ddlCFbo1cygm9cZAHf01ycDxh/MdVJitaKs/wkc67Dve9x1gfEj7r?=
+ =?us-ascii?Q?ZCOvaksC94V11iDXoykFGswVA1+g2QafDAUdryD8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97a861d1-8171-4631-35b4-08dcee9b2f25
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 11:02:25.9732
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pBS1ig3SPJtwgXxaFSkpIxtZTvNzqpFDUWdQK/qfIbLMgsgkljxm8/Pg0ie177kAm14WArQzy780+irF1S+xVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8087
 
-> =E5=9C=A8 2024/10/16 17:55, Adam Green =E5=86=99=E9=81=93:
->=20
-> > Good morning,
-> >=20
-> > I would like to report a regression that appears to have been
-> > introduced into the linux kernel since v6.9.
->=20
->=20
-> I didn't see many patches for dw_mmc since 6.9. So I guess the fastest
-> way is to do a bisect. Or maybe you could try reverting this commit
-> first to see what will happen.
->=20
-> commit 8396c793ffdf28bb8aee7cfe0891080f8cab7890
-> Author: Sam Protsenko semen.protsenko@linaro.org
->=20
-> Date: Wed Mar 6 17:20:52 2024 -0600
->=20
-> mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
+From: Anne Onciulescu <anne.onciulescu@gmail.com>
 
-We have reverted this commit and done some testing on 6.10.13. We have not =
-had a panic so far. It was specifically prone to happen during our initiali=
-zation process, I tested that 7 times successfully yesterday. It used to ha=
-ppen more than 50% of time during that process.
+Add support to override topology and firmware filename,
+using module parameters. This is helpful for development
+and also for testing various scenarios.
 
-> > My device is currently experiencing a panic booting the kernel/rootfs
-> > from an SD card.
-> >=20
-> > The device is a Powkiddy RGB30 which is a portable handheld gaming
-> > console with a Rockchip RK3566 SoC (arm64).
-> >=20
-> > I have tested a variety of devices from a couple of manufacturers with
-> > the same SoC and they all have the same issue,
-> > I have also tested, 6.12-rc3 and linux-next and the same issue appears =
-present.
-> >=20
-> > A full UART dump can be found here: https://clbin.com/zLZAW
-> >=20
-> > [ 41.547983] Unable to handle kernel paging request at virtual
-> > address ffffffc08058e000
-> > [ 41.553426] Mem abort info:
-> > [ 41.558231] ESR =3D 0x0000000096000007
-> > [ 41.563115] EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> > [ 41.568135] SET =3D 0, FnV =3D 0
-> > [ 41.572882] EA =3D 0, S1PTW =3D 0
-> > [ 41.577575] FSC =3D 0x07: level 3 translation fault
-> > [ 41.582404] Data abort info:
-> > [ 41.586995] ISV =3D 0, ISS =3D 0x00000007, ISS2 =3D 0x00000000
-> > [ 41.591848] CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> > [ 41.596664] GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> > [ 41.601457] swapper pgtable: 4k pages, 39-bit VAs, pgdp=3D000000000363=
-e000
-> > [ 41.606359] [ffffffc08058e000] pgd=3D1000000000225003,
-> > p4d=3D1000000000225003, pud=3D1000000000225003, pmd=3D1000000000c8c003,
-> > pte=3D0000000000000000
-> > [ 41.616442] Internal error: Oops: 0000000096000007 [#1] PREEMPT SMP
-> > [ 41.621544] Modules linked in: hci_uart btrtl bluetooth rfkill
-> > [ 41.626678] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-rc=
-2 #1
-> > [ 41.631922] Hardware name: Powkiddy RGB30 (DT)
-> > [ 41.636951] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYP=
-E=3D--)
-> > [ 41.642330] pc : dw_mci_idmac_start_dma+0xa0/0x358
-> > [ 41.647585] lr : __dw_mci_start_request+0x21c/0x6a0
-> > [ 41.652827] sp : ffffffc080003da0
-> > [ 41.657882] x29: ffffffc080003da0 x28: ffffff8001f06d80 x27: ffffffc08=
-058d000
-> > [ 41.663399] x26: ffffffc08058e000 x25: 0000000000002711 x24: 000000000=
-0002000
-> > [ 41.668864] x23: ffffff800167dc80 x22: 0000000080000012 x21: 000000000=
-0001000
-> > [ 41.674257] x20: 000000003b5d1000 x19: 0000000000001000 x18: 000000097=
-2073a81
-> > [ 41.679654] x17: ffffff9c39b47000 x16: ffffffc080000000 x15: 000000000=
-0000001
-> > [ 41.685074] x14: 0000000000000004 x13: 000001ba5087c8e8 x12: 000000000=
-00001a8
-> > [ 41.690506] x11: 0000000000000040 x10: ffffffe40628d890 x9 : 000000000=
-0000000
-> > [ 41.695972] x8 : ffffff803fd44080 x7 : 0000000008f0d180 x6 : 000000003=
-b9ac9ff
-> > [ 41.701495] x5 : 0000000000fffffe x4 : ffffffc08058de80 x3 : 00000000b=
-2d05e00
-> > [ 41.707073] x2 : ffffffe40546ab08 x1 : ffffffc08058e000 x0 : 000000000=
-0001000
-> > [ 41.712686] Call trace:
-> > [ 41.717857] dw_mci_idmac_start_dma+0xa0/0x358
-> > [ 41.723266] __dw_mci_start_request+0x21c/0x6a0
-> > [ 41.728719] dw_mci_work_func+0x4c8/0x4d8
-> > [ 41.734144] process_one_work+0x148/0x284
-> > [ 41.739587] bh_worker+0x224/0x278
-> > [ 41.744985] workqueue_softirq_action+0x78/0x88
-> > [ 41.750545] tasklet_action+0x14/0x3c
-> > [ 41.756023] handle_softirqs+0x100/0x23c
-> > [ 41.761506] __do_softirq+0x14/0x20
-> > [ 41.766917] ____do_softirq+0x10/0x20
-> > [ 41.772301] call_on_irq_stack+0x24/0x54
-> > [ 41.777689] do_softirq_own_stack+0x1c/0x40
-> > [ 41.783106] irq_exit_rcu+0x94/0xd0
-> > [ 41.788455] el1_interrupt+0x38/0x68
-> > [ 41.793799] el1h_64_irq_handler+0x18/0x24
-> > [ 41.799200] el1h_64_irq+0x68/0x6c
-> > [ 41.804532] default_idle_call+0x28/0x58
-> > [ 41.809931] do_idle+0x1fc/0x260
-> > [ 41.815152] cpu_startup_entry+0x34/0x40
-> > [ 41.820346] kernel_init+0x0/0x140
-> > [ 41.825437] console_on_rootfs+0x0/0x6c
-> > [ 41.830477] __primary_switched+0x80/0x88
-> > [ 41.835501] Code: 54000280 d294f8c0 940e1f8c d503203f (b9400340)
-> > [ 41.840748] ---[ end trace 0000000000000000 ]---
-> > [ 41.845896] Kernel panic - not syncing: Oops: Fatal exception in inter=
-rupt
-> > [ 41.851321] SMP: stopping secondary CPUs
-> > [ 41.856502] Kernel Offset: 0x2384800000 from 0xffffffc080000000
-> > [ 41.861840] PHYS_OFFSET: 0x0
-> > [ 41.866814] CPU features: 0x0c,00000014,00280928,4201720b
-> > [ 41.872087] Memory Limit: none
-> > [ 41.877119] Rebooting in 1 seconds..
-> >=20
-> > Best regards,
-> >=20
-> > Adam Green
+Signed-off-by: Anne Onciulescu <anne.onciulescu@gmail.com>
+Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Reviewed-by: Chao Song <chao.song@linux.intel.com>
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+---
+ sound/soc/sof/sof-of-dev.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/sound/soc/sof/sof-of-dev.c b/sound/soc/sof/sof-of-dev.c
+index 71f7153cf79c..f245c1b48c47 100644
+--- a/sound/soc/sof/sof-of-dev.c
++++ b/sound/soc/sof/sof-of-dev.c
+@@ -18,10 +18,18 @@ static char *fw_path;
+ module_param(fw_path, charp, 0444);
+ MODULE_PARM_DESC(fw_path, "alternate path for SOF firmware.");
+ 
++static char *fw_filename;
++module_param(fw_filename, charp, 0444);
++MODULE_PARM_DESC(fw_filename, "alternate filename for SOF firmware.");
++
+ static char *tplg_path;
+ module_param(tplg_path, charp, 0444);
+ MODULE_PARM_DESC(tplg_path, "alternate path for SOF topology.");
+ 
++static char *tplg_filename;
++module_param(tplg_filename, charp, 0444);
++MODULE_PARM_DESC(tplg_filename, "alternate filename for SOF topology.");
++
+ const struct dev_pm_ops sof_of_pm = {
+ 	.prepare = snd_sof_prepare,
+ 	.complete = snd_sof_complete,
+@@ -68,6 +76,8 @@ int sof_of_probe(struct platform_device *pdev)
+ 	sof_pdata->ipc_file_profile_base.ipc_type = desc->ipc_default;
+ 	sof_pdata->ipc_file_profile_base.fw_path = fw_path;
+ 	sof_pdata->ipc_file_profile_base.tplg_path = tplg_path;
++	sof_pdata->ipc_file_profile_base.fw_name = fw_filename;
++	sof_pdata->ipc_file_profile_base.tplg_name = tplg_filename;
+ 
+ 	/* set callback to be called on successful device probe to enable runtime_pm */
+ 	sof_pdata->sof_probe_complete = sof_of_probe_complete;
+-- 
+2.43.0
+
 
