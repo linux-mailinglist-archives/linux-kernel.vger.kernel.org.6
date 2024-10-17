@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-369489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E7F9A1DF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BB19A1DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE371C2155F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73EF61C21204
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A251D88D3;
-	Thu, 17 Oct 2024 09:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C0A1D89FD;
+	Thu, 17 Oct 2024 09:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="buisB53u"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u7Hf8xom"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BC01442F6;
-	Thu, 17 Oct 2024 09:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CF01D88AD
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 09:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729156468; cv=none; b=eauyrFOlgBueWCUKJGWMxcyifm5sIf/WD5Le+UKJ6ULMaHnsZWU0ZJW8V2PSrJeVtpJ+X/A9qjPY1P0gCNoC2p2Ezfkp99DuE/Zq1aE0vkKvTUKdsw+TMy+tiXj1Quq2tjIHoilIwjO9xBfQgKMCYs15geLvKGLntuMDVPTvD+s=
+	t=1729156497; cv=none; b=HgSPGTmoxwXwz9oIk2OOsK3J5w9baCRzzgH4wEGzkQRGtWtRkM43V3r42loPSNM5JQBCQIGc3WPKkpixZ/VFoTR7OcC1wmpjx4zf81qIqrnKhsErAbTl0+zttx8PUkLcmmR5bMgnsSkZLj8bfBtGLvpYV7Ei7EGr3Cp2evSHLYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729156468; c=relaxed/simple;
-	bh=kk13r6qCmNinZekKxvWUEEgek1VIRJknqF3Oq7+hfpM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P2vAiJZQIeaNoNRN4YiDi2wRFkQyQMwwzJJmgJJZ6g3cGDJscx1eMiFu1xnvl8tiElW3k+MWUkHL3nzruvkNLTivL48Xy3kdroEbiPDxhU4ffUWRw0yriazXfglhM3/+7VSOhdoiDWkiEU1UEciuYATOLCuvbDGyuyzTFtiNOqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=buisB53u; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 2fb98af68c6811efb88477ffae1fc7a5-20241017
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=mh9+gxbI0a2SUdKDoNPUGs5qDkayXH7hjsv/TJG1FDk=;
-	b=buisB53uZxrO1zJ3trUY0t4r/LTpwDNH+JyifRlRRKRr0H6gHFzkZt9pxisIbjsnobO91dJ/OKg/+UYhO1r42X01pKY00X5WFxKXijXxa2niX4nVaIHk9bpc82iFFil0zSWrqv2qQC4IABwDd5MlAAMUM0S0uGxseVN9olqptxo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:17a965bd-957c-48c1-923e-30a296ddcaad,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:13b56565-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 2fb98af68c6811efb88477ffae1fc7a5-20241017
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <bo.ye@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1038899658; Thu, 17 Oct 2024 17:14:17 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 17 Oct 2024 17:14:16 +0800
-Received: from mcddlt001.gcn.mediatek.inc (10.19.240.15) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 17 Oct 2024 17:14:15 +0800
-From: Bo Ye <bo.ye@mediatek.com>
-To: Sean Wang <sean.wang@kernel.org>, Linus Walleij
-	<linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu
- Tsai <wenst@chromium.org>
-CC: Yongdong Zhang <yongdong.zhang@mediatek.com>, Xiujuan Tan
-	<xiujuan.tan@mediatek.com>, Browse Zhang <browse.zhang@mediatek.com>, Bo Ye
-	<bo.ye@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>, Evan Cao
-	<ot_evan.cao@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: [RESEND. PATCH v1] pinctrl: mediatek: paris: Revert "Rework support for PIN_CONFIG_{INPUT,OUTPUT}_ENABLE"
-Date: Thu, 17 Oct 2024 17:14:09 +0800
-Message-ID: <20241017091410.181093-1-bo.ye@mediatek.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20241017091238.180920-1-bo.ye@mediatek.com>
-References: <20241017091238.180920-1-bo.ye@mediatek.com>
+	s=arc-20240116; t=1729156497; c=relaxed/simple;
+	bh=OFUTbt01W57UIzbwt1gpTo3z57X1onq8v0mSZ7fvckY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i9Ml/n7xYsLJgr7zOJSqYd+SKv1cNdMyE0F1WjpC1+pnuFjk8SfcHU8HYdt985bo0+hF5DJuLYYiYzVX5JRALsHx7wKess58F1ZykNf1j/NEZ2sCBSp8lukKM72IkgtwyLzBlRIzlcDJqxcUW/tMsG20qpQTO8XX1hAkY0Y7npc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u7Hf8xom; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d4dbb4a89so81796f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 02:14:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729156491; x=1729761291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=++RZvUSYm5I0ITBIr1eDkKq7SHCu0gvOfmRf7dj2AKQ=;
+        b=u7Hf8xomKotgv0K6Fe8eh3K8uKgYJe6IPo2CeDagYQ7YEjDyr8xgodIbfm0TLWzFAS
+         Lv/fpAWDjqWiIMFszWM1LbSw5UuJC5FYIzDH7oBi8A8XM+oXm1rJqs9x1nwJEsaI9gFg
+         SDpxmIBPseOtyr0WzxiO1eutKE5ookgrfpm9/weh36PBHo8Ib6DVS4l0SuGxA/3WTav3
+         +JC3ScPIgoN+ws94VseMSKXepFB+0QRYK9ZSki/cXtfbIIHmnmJ+VwyHoUJiFvexEAZY
+         wYY5apiXZ5t2dKUQSdcvQwmhx1WG0/VuZevbIuZ5ZQEepwxT7BWBTkoiY+DdtBfLP2/h
+         yyCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729156491; x=1729761291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=++RZvUSYm5I0ITBIr1eDkKq7SHCu0gvOfmRf7dj2AKQ=;
+        b=kXTkn5pm6lpedI2ySE5QLw+hk8ZyN8Z6Qqk3BUAHx0syjKKrZaOqXyx2c7rsannP7u
+         u4am3TDdnOAPN9hLMzn5bqxzCWqK8LbtoM3k16OpEP33XigOK9LZB7SZbOekMbS92A0Z
+         iXXFtbe/d2poflPY90NsxyJ2IwlLmvMFsJzAQeNDcNNqCmiYzf9XSaTKGMUMxlVHJoaw
+         kq77ms0BfEN0vwUKaPG/Axxeox/J0lIthiw7G3lpTRStpfyimXRoM+C24c4OGap6QeEE
+         OFJ4Tn8fEdlwYF1Lhf/9baN9mA8t4cRkGrwd9605v3E8+ei5whGo7mzBUvzF8jU1v886
+         GKmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5NjMIz3XhmZ54MfMiC8O1iV8smGGXlMUpKpN32SlYOPrxZ9BgNwibDqOOZcZAgOVWRUeCBj4x1wl5y0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypZbUZsk9vEJBuH+9MSVPcfYO1EOIDsChAQ6+rrAkTQ2FydGdr
+	KNW/bWaspR+liWlb+5rVZcc5U2BBBd2XdTwVp4Oy71rRPP+bRcFgWcm8JgWJkGs=
+X-Google-Smtp-Source: AGHT+IEE02ekLjm8TbPP6kTm+oXFzkRyX+nHueXutR7x0HjMCzdjaSTpWmIK7+MmtHTpAANlj6Cbrw==
+X-Received: by 2002:a5d:47a6:0:b0:37d:4517:acfb with SMTP id ffacd0b85a97d-37d936999e4mr953956f8f.2.1729156491016;
+        Thu, 17 Oct 2024 02:14:51 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa8778csm6614252f8f.25.2024.10.17.02.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 02:14:50 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: mailbox: qcom,apcs-kpss-global: correct expected clocks for fallbacks
+Date: Thu, 17 Oct 2024 11:14:47 +0200
+Message-ID: <20241017091447.41450-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 8bit
 
-[This reverts commit c5d3b64c568a344e998830e0e94a7c04e372f89b.]
+Commit 1e9cb7e007dc ("dt-bindings: mailbox: qcom,apcs-kpss-global: use
+fallbacks") and commit 34d8775a0edc ("dt-bindings: mailbox:
+qcom,apcs-kpss-global: use fallbacks for few variants") added fallbacks
+to few existing compatibles.  Neither devices with these existing
+compatibles nor devices using fallbacks alone, have clocks, so the
+"if:then:" block defining this constrain should be written as
+"contains:".
 
-For MTK HW,
-1. to enable GPIO input direction: set DIR=0, IES=1
-2. to enable GPIO output direction: set DIR=1, and set DO=1 to output high, set DO=0 to out low
-
-The PIN_CONFIG_INPUT/PIN_CONFIG_OUTPUT/PIN_CONFIG_INPUT_ENABLE/PIN_CONFIG_OUTPUT_ENABLE shall
-be implemented according to view of its purpose - set GPIO direction and output value (for
-output only) according to specific HW design.
-
-However, the reverted patch implement according to author's own explanation of IES without
-understanding of MTK's HW. Such patch does not correctly set DIR/IES bit to control GPIO
-direction on MTK's HW.
-
-Fixes: c5d3b64c568 ("pinctrl: mediatek: paris: Rework support for PIN_CONFIG_{INPUT,OUTPUT}_ENABLE")
-Signed-off-by: Light Hsieh <light.hsieh@mediatek.com>
-Signed-off-by: Evan Cao <ot_evan.cao@mediatek.com>
-Signed-off-by: Bo Ye <bo.ye@mediatek.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/pinctrl/mediatek/pinctrl-paris.c | 38 +++++++++++++++++-------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ .../bindings/mailbox/qcom,apcs-kpss-global.yaml     | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 87e958d827bf..a8af62e6f8ca 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -165,21 +165,20 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
- 		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_SR, &ret);
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_IES, &ret);
--		if (!ret)
--			err = -EINVAL;
--		break;
--	case PIN_CONFIG_OUTPUT:
-+	case PIN_CONFIG_OUTPUT_ENABLE:
- 		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &ret);
- 		if (err)
- 			break;
-+		/*     CONFIG     Current direction return value
-+		 * -------------  ----------------- ----------------------
-+		 * OUTPUT_ENABLE       output       1 (= HW value)
-+		 *                     input        0 (= HW value)
-+		 * INPUT_ENABLE        output       0 (= reverse HW value)
-+		 *                     input        1 (= reverse HW value)
-+		 */
-+		if (param == PIN_CONFIG_INPUT_ENABLE)
-+			ret = !ret;
- 
--		if (!ret) {
--			err = -EINVAL;
--			break;
--		}
--
--		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DO, &ret);
- 		break;
- 	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
- 		err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &ret);
-@@ -284,9 +283,26 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			break;
- 		err = hw->soc->bias_set_combo(hw, desc, 0, arg);
- 		break;
-+	case PIN_CONFIG_OUTPUT_ENABLE:
-+		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-+				       MTK_DISABLE);
-+		/* Keep set direction to consider the case that a GPIO pin
-+		 *  does not have SMT control
-+		 */
-+		if (err != -ENOTSUPP)
-+			break;
-+
-+		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DIR,
-+				       MTK_OUTPUT);
-+		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
- 		/* regard all non-zero value as enable */
- 		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_IES, !!arg);
-+		if (err)
-+			break;
-+
-+		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DIR,
-+				       MTK_INPUT);
- 		break;
- 	case PIN_CONFIG_SLEW_RATE:
- 		/* regard all non-zero value as enable */
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+index 982c741e6225..9d2dfd85b207 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
++++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+@@ -165,12 +165,13 @@ allOf:
+   - if:
+       properties:
+         compatible:
+-          enum:
+-            - qcom,msm8953-apcs-kpss-global
+-            - qcom,msm8994-apcs-kpss-global
+-            - qcom,msm8996-apcs-hmss-global
+-            - qcom,qcm2290-apcs-hmss-global
+-            - qcom,sdm845-apss-shared
++          contains:
++            enum:
++              - qcom,msm8953-apcs-kpss-global
++              - qcom,msm8994-apcs-kpss-global
++              - qcom,msm8996-apcs-hmss-global
++              - qcom,qcm2290-apcs-hmss-global
++              - qcom,sdm845-apss-shared
+     then:
+       properties:
+         clocks: false
 -- 
-2.17.0
+2.43.0
 
 
