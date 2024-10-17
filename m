@@ -1,114 +1,175 @@
-Return-Path: <linux-kernel+bounces-369288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EA69A1B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:06:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC3D9A1B57
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7013D1F2439E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F5E31C21138
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 07:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992041C2309;
-	Thu, 17 Oct 2024 07:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DAB1C1AC8;
+	Thu, 17 Oct 2024 07:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="JRhWuOb8"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kmE8RUCy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z97onf52"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9DD19306C;
-	Thu, 17 Oct 2024 07:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E20918E04E
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 07:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729148795; cv=none; b=Lj/5ZLA+AUzBvVPUyfxQN+Qw2HYvIV/j3rbCq8HznQpvu7HCFvB/p+9vK7V66bKsASq6il1L6Dj2V26hOFnWwkNteSTZbWeENSFkcqcpVoZ3Q3vZK7MJH+9irk6AS26EFhvTrI9ygKtqNtVAid8OuFTGGyJkEnHUT86loPwwLT8=
+	t=1729148841; cv=none; b=lBsp1krd6tzxiyc1XqiNsWC74c4p8Ur6ezeSrhjdLRvuizeb38AGjbjOQb9hB4iOrm3muebahzxQx4ZKUNp4KWOL680a5Wz53xC45bMchWJxKujD0kcGQVMjpt98hk7Y2cxYnrRtoXJ1PMnAOys1eaPLKhCEzmYWf+MW4mnhhJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729148795; c=relaxed/simple;
-	bh=5PmxHLGPRAQmvS0X+WcMDhQ2VwBm3erGoq+fv7JCD/Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gsTbLtxASXWcflZU08HBkYcMkhnPsY4wDXkEMZ0eCj6ohP9NZ6xWgErjwcTJ3ownhw2/Z2Hsf4qwKTmCGhnbkjQdrzh0qQYfjT/RmxW+l1KHA3DHLYvANVOP5evvlwPVEf59yoZzfLDyz0KIqd9Fj32mqUEj/jsEi6dx6RsYOpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=JRhWuOb8; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49H76NVg8025163, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1729148783; bh=5PmxHLGPRAQmvS0X+WcMDhQ2VwBm3erGoq+fv7JCD/Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=JRhWuOb80WI4swpTzwmmWRLidwRGR8clDEHfn8NAXpkzDmJJ4KlpZ1Pl6wRiAlPNY
-	 IZB3JV7PsCCfsaGh7f//lDBdaRiMUkp2xdL4jQmT8hP+m6xpmZb6kMKFJ6dSecSpN5
-	 oSboHLFhXq/j83p2qQ5YizuF9FJGHXvaYoFCd5dndHaqcyIhG/H2nh5XUkyr0onEBe
-	 b39LFb4uNKUkzpVjocGuRyjsZtDfX6tJPiqZ/dFzwPnpdtcYM34ENB+a0A9RxGujRh
-	 ibDjt5Jx2DLloa300x1ZPJi1avK06St0x5I8RhTMAkI/8VNSVIt8mzPG59dVe2oIfO
-	 4PPeAHhFl6ubg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49H76NVg8025163
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 15:06:23 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 17 Oct 2024 15:06:23 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 17 Oct 2024 15:06:23 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Thu, 17 Oct 2024 15:06:23 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>
-CC: "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtw88: Refactor looping in rtw_phy_store_tx_power_by_rate
-Thread-Topic: [PATCH] wifi: rtw88: Refactor looping in
- rtw_phy_store_tx_power_by_rate
-Thread-Index: AQHbH5G7zMXB5WLj7UST4uYO5eihKrKKJAjA///aLYCAAIcFwA==
-Date: Thu, 17 Oct 2024 07:06:23 +0000
-Message-ID: <e25e1e06fbe549dc9e9b48719f66653b@realtek.com>
-References: <c0f6c6c3b87c4d048ad9f42dc1dfaed9@realtek.com>
- <20241017065645.5409-1-pvmohammedanees2003@gmail.com>
-In-Reply-To: <20241017065645.5409-1-pvmohammedanees2003@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1729148841; c=relaxed/simple;
+	bh=sIGqqdWlmhjVGI/u89kG3FIvtMw1rrXgFC9g3MqsmpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4m/OL/p2OJbQvdJ6V2kZqor8KJI1NLq9fTOHUef0a4GepbidySwSCbXzthrGXFaS0u2aKzIGEZ7Jr9kEbMqDAMBhsM6+aOSdDw/IUXlqkoXj2WEY5+bNX+5cHfMlDlwyCGyuMB8AlLMIAJd6CBnnLj5/UzYIFso1C6/dVBHJHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kmE8RUCy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z97onf52; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 17 Oct 2024 09:07:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729148831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7DoTdKA3nDK8yE5XNgt+32K3vKfokW3R0/yLlbmoGAM=;
+	b=kmE8RUCy7XtJYq7seJLu+EpMgRCm0SLRmSz4i0wW5DTKiLvvKXVJNcqXubGXzJvl+HNcsp
+	xtkTy3gsNWNviOEjQXLPxsrk4hYZOiGIad5RPoTBeaLw8py3DXZporwampud2VP27XWgSA
+	0GMt/Cudu48r06gksSOChgTI4ta3o5o8edmifna4t8TmzKsCOT0PnxOkkGVmvokuX5kSVN
+	fVsVkllbXctNesR1gJ2yb/dv8Dc36Uy5P+h+XlLOM7Qyxyu7UuLZeSKegXpalL1lQFZowb
+	zXHaSGAf+P96FGwD+un607CZE43b/oMfs/dp4E0Na5+DKZZe4A2+00ARMwKDQg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729148831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7DoTdKA3nDK8yE5XNgt+32K3vKfokW3R0/yLlbmoGAM=;
+	b=Z97onf52XQAy+W8UxRgIIV8LNK2jwWrTgcN0yTHbLQUFMXwRjNzS63+lf3G3s6gtBl/xAF
+	srRzC4WrPQSieyDA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ankur Arora <ankur.a.arora@oracle.com>,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
+	efault@gmx.de
+Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
+Message-ID: <20241017070710.U9bTJFMS@linutronix.de>
+References: <20241010100308.GE17263@noisy.programming.kicks-ass.net>
+ <20241010102657.H7HpIbVp@linutronix.de>
+ <20241010104438.GJ14587@noisy.programming.kicks-ass.net>
+ <c6cbc343-01c3-4a38-8723-cc44e83dedf7@paulmck-laptop>
+ <20241011081847.r2x73XIr@linutronix.de>
+ <db3b0a4b-bec6-4b2b-bb22-d02179779cf9@paulmck-laptop>
+ <20241011144341.mQKXkGkm@linutronix.de>
+ <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
+ <20241015112224.KdvzKo80@linutronix.de>
+ <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
 
-Mohammed Anees <pvmohammedanees2003@gmail.com> wrote:
-> Oops, I sent over the wrong patch with typo,
-> I'll make sure to fix that in the next version.
->=20
-> > I feel compilers can optimize the check for the band, and we can just r=
-emove
-> > the else condition. Or
-> >   if (2ghz)
-> >      foo_2g();
-> >   else
-> >      foo_5g();
->=20
-> I do agree with that but I feel, it would be
-> better to make it independent of compiler
-> optimization, thoughts?
->=20
-> Let me know what you think is better, that is
-> whether letting it be if - else, or using a
-> pointer.
+On 2024-10-15 16:11:55 [-0700], Paul E. McKenney wrote:
+> > | config PREEMPT_RCU
+> > | 	bool
+> > | 	default y if (PREEMPT || PREEMPT_RT || PREEMPT_DYNAMIC)
+> > | 	select TREE_RCU
+> > | 	help
+> > 
+> > would disable PREEMPT_RCU while the default model is PREEMPT. You argue
+> > that only people on small embedded would do such a thing and they would
+> > like to safe additional memory. 
+> 
+> I am more worried about large datacenter deployments than small embedded
+> systems.  Larger systems, but various considerations often limit the
+> amount of memory on a given system.
 
-Using a pointer looks delicate and optimized. The if-else code is simple to
-read. Since this chunk is small, I don't bias one of them. If I must choose
-one, I vote if-else.
+okay.
 
+> > I don't think this is always the case because the "preemptible" users
+> > would also get this and this is an unexpected change for them.
+> 
+> Is this series now removing PREEMPT_NONE and PREEMPT_VOLUNTARY?
+no, not yet. It is only adding PREEMPT_LAZY as new model, next to
+PREEMPT_NONE and PREEMPT_VOLUNTARY. But is is likely to be on schedule.
+
+> As conceived last time around, the change would affect only kernels
+> built with one of the other of those two Kconfig options, which will
+> not be users expecting preemption.
+
+If you continue to use PREEMPT_NONE/ PREEMPT_VOLUNTARY nothing changes
+right now.
+
+> > diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+> > index 8cf8a9a4d868c..2183c775e7808 100644
+> > --- a/kernel/Kconfig.preempt
+> > +++ b/kernel/Kconfig.preempt
+> > @@ -121,6 +121,7 @@ config PREEMPT_COUNT
+> >  config PREEMPTION
+> >         bool
+> >         select PREEMPT_COUNT
+> > +       select PREEMPT_RCU if PREEMPT_DYNAMIC
+> >  
+> >  config PREEMPT_DYNAMIC
+> >  	bool "Preemption behaviour defined on boot"
+> > diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+> > index 3e079de0f5b43..9e4bdbbca4ff9 100644
+> > --- a/kernel/rcu/Kconfig
+> > +++ b/kernel/rcu/Kconfig
+> > @@ -17,7 +17,7 @@ config TREE_RCU
+> >  	  smaller systems.
+> >  
+> >  config PREEMPT_RCU
+> > -	bool
+> > +	bool "Preemptible RCU"
+> >  	default y if PREEMPTION
+> >  	select TREE_RCU
+> >  	help
+> > @@ -91,7 +91,7 @@ config NEED_TASKS_RCU
+> 
+> If PREEMPT_NONE and PREEMPT_VOLUNTARY are still around, it would be
+> far better to make PREEMPT_RCU depend on neither of those being set.
+> That would leave the RCU Kconfig settings fully automatic, and this
+> automation is not to be abandoned lightly.
+
+Yes, that was my intention - only to make is selectable with
+LAZY-preemption enabled but without dynamic.
+So you are not complete against it.
+
+> >  config TASKS_RCU
+> >  	bool
+> > -	default NEED_TASKS_RCU && (PREEMPTION || PREEMPT_AUTO)
+> > +	default NEED_TASKS_RCU && PREEMPTION
+> >  	select IRQ_WORK
+> >  
+> >  config FORCE_TASKS_RUDE_RCU
+> > 
+> > I added TASKS_RCU to the hunk since I am not sure if you wish to follow
+> > PREEMPTION (which is set by LAZY) or PREEMPT_RCU.
+> 
+> TASKS_RCU needs to be selected when there is preemption of any kind,
+> lazy or otherwise, regardless of the settign of PREEMPT_RCU.
+
+Okay. In that case PREEMPT_AUTO can be removed.
+
+> The current substition of vanilla RCU for Tasks RCU works only in
+> kernels that are guaranteed non-preemptible, which does not include
+> kernels built with lazy preemption.
+> 
+> 							Thanx, Paul
+
+Sebastian
 
