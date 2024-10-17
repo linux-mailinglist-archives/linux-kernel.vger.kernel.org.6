@@ -1,95 +1,239 @@
-Return-Path: <linux-kernel+bounces-370093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D2F9A274F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 772C29A274E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 17:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3F0B2B159
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:47:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD047B2BD58
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0231DEFF7;
-	Thu, 17 Oct 2024 15:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600AB1DEFD3;
+	Thu, 17 Oct 2024 15:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="AOOtwpWa"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQLLNmbR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9926C1DEFCB;
-	Thu, 17 Oct 2024 15:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9DF1D47AC;
+	Thu, 17 Oct 2024 15:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729180012; cv=none; b=PWrrt/Vivnr/MTIzdn7etS9zCrphukDBiqVDQwLXEJbadXj+RqhuzLucPojgQVAOI9b4h9zcYZfAe8vVbNzjMSfvaZN1vpOYqePHluztU9T8gYiTKo0gT01e/SHIpfGoFtXMEhPLuGMeuBvg++catseNsJSBL3b2cJvPqdc7gng=
+	t=1729180028; cv=none; b=cpe9w1Xtbz9DWj3J7wivepMQ6Iq/8BvFq6fMfw/d+VrwIzlonfXoOMG0RbI/CVjT/guMTA7NjUwxRWHthj6dz3ROd0YQz0bacGixTalLSt2ms85Q350jbufSq/Wp8Vh59Q2NvfIj0EJdXg3pQr8/lGz3ilK6vNwJ5bEOiSE8vWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729180012; c=relaxed/simple;
-	bh=xfZsdaouK9c11NS8MJBUJaGS9qi4/dGFd60QE8h2lGU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pIMItSwNpfHezhuYPBQg9KhmoLsodrVH+9YaAZDl1peb+12ioHM4TVK01elmnzVOs+euDcpwjEA/z876RmQlmPdfSzIndWyU8Cf9qc1nLLyANECPOxP54oHL1l+QCEiNNQAlq1vlJJobkZ0tSkU8EJztOWj5YkftjpKKXCwr1NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=AOOtwpWa; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B371B42C26
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1729180006; bh=lbIoIO+xJXLQRNK9loyEZijJ54dZ/V3Q+NLtfSIBhHU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AOOtwpWa+OXFoGebwTqmsOuOwOuQAVD231H5Cy2aG/2WvwRUXy/Fgo7zNdEWSIYsH
-	 dVeyt1gQWtsUABzjRSuAWK67VHUn3qPNoSws+FGsMsgZnaTYOL+WYX4KjGyeiJILwG
-	 riPBpEOfiNQ2QXBdADanVZbkaQvZi+UA+sVooc/mBNPTDtOJNSkumqjECGojmjQ6n3
-	 si17Ah8F7segVuQmpdMf1snL1easHlQicqHmXQg3mbur35G4jyUKg7uMYTCcn1nHV9
-	 w092ccf9272m0oBEqHD7VdSXmBtUIcBs+6TgjQcX8WCdK+0fOaqCAWelHVLe8dL1T1
-	 AVp0ymaM9m2DA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id B371B42C26;
-	Thu, 17 Oct 2024 15:46:46 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, Yanteng
- Si <siyanteng@loongson.cn>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno
- Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Dongliang Mu <dzm91@hust.edu.cn>
-Cc: hust-os-kernel-patches@googlegroups.com, Yanteng Si
- <si.yanteng@linux.dev>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- llvm@lists.linux.dev
-Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/kbuild.rst
-In-Reply-To: <20241016131710.2619567-1-dzm91@hust.edu.cn>
-References: <20241016131710.2619567-1-dzm91@hust.edu.cn>
-Date: Thu, 17 Oct 2024 09:46:45 -0600
-Message-ID: <8734ku3f6i.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1729180028; c=relaxed/simple;
+	bh=Uvx5j39oQwVjqMRql4ui9TrzD7d3TLD7Bw2r34x+59A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k95Lt4Qb6IAeF3bwmXmLNeRrD61WkXxkLvGxA2B5yEdKdQfBFO4XUQ7OPQ8K27BRKTNWX0YPBo47fpkw09go3K40yvsw2sPNS884PMXr5C8jHBVIiP1eQM4WwujUOIkodJncdzs8V8efa7MCa6YLIhe/scCjiaC2YFXUnbUDxNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQLLNmbR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31A02C4CEC3;
+	Thu, 17 Oct 2024 15:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729180028;
+	bh=Uvx5j39oQwVjqMRql4ui9TrzD7d3TLD7Bw2r34x+59A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sQLLNmbRBlRc4oyZ+uiiRgwg8u9G3p7xZ/R8kJ2htAWL/8gCd7EeNLXr9DUD6+35f
+	 AUNQ2vXxOoyaEmJLfyZ8wQA1kFy4RWHT+vtidmgbPofSdvpPoCT10i3QNfVUkfF8Lr
+	 EEAsRgiGcd9HrhakR183XerTwEnUYLN0djK7iQSugnqLj69pdQTx1HiLf4w4Av7sY6
+	 gCPy1vkBaE32D1qa6Xoj6/2rXNYVh+YazQCkwzT07xdWixXAYMlN7pBwav3y2jLgk4
+	 SO6s1lkjpRUz3jhlHs+k6exXJRILxndnjyVx5PqERHTIc/70V5e5g2xUA2WvXSEdLe
+	 400Sv9+GKLdgA==
+Date: Thu, 17 Oct 2024 08:47:03 -0700
+From: Kees Cook <kees@kernel.org>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <202410170840.8E974776@keescook>
+References: <20240924141001.116584-1-tycho@tycho.pizza>
+ <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+ <Zv1aA4I6r4py-8yW@kawka3.in.waw.pl>
+ <ZwaWG/ult2P7HR5A@tycho.pizza>
+ <202410141403.D8B6671@keescook>
+ <ZxEgg+CEnvIHJJ4q@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxEgg+CEnvIHJJ4q@tycho.pizza>
 
-Dongliang Mu <dzm91@hust.edu.cn> writes:
+On Thu, Oct 17, 2024 at 08:34:43AM -0600, Tycho Andersen wrote:
+> On Mon, Oct 14, 2024 at 02:13:32PM -0700, Kees Cook wrote:
+> > On Wed, Oct 09, 2024 at 08:41:31AM -0600, Tycho Andersen wrote:
+> > > +static int bprm_add_fixup_comm(struct linux_binprm *bprm, struct user_arg_ptr argv)
+> > > +{
+> > > +	const char __user *p = get_user_arg_ptr(argv, 0);
+> > > +
+> > > +	/*
+> > > +	 * In keeping with the logic in do_execveat_common(), we say p == NULL
+> > > +	 * => "" for comm.
+> > > +	 */
+> > > +	if (!p) {
+> > > +		bprm->argv0 = kstrdup("", GFP_KERNEL);
+> > > +		return 0;
+> > > +	}
+> > > +
+> > > +	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
+> > > +	if (bprm->argv0)
+> > > +		return 0;
+> > > +
+> > > +	return -EFAULT;
+> > > +}
+> > 
+> > I'd rather this logic got done in copy_strings() and to avoid duplicating
+> > a copy for all exec users. I think it should be possible to just do
+> > this, to find the __user char *:
+> > 
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index 77364806b48d..e12fd706f577 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -642,6 +642,8 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+> >  				goto out;
+> >  			}
+> >  		}
+> > +		if (argc == 0)
+> > +			bprm->argv0 = str;
+> >  	}
+> >  	ret = 0;
+> >  out:
+> 
+> Isn't str here a __user? We want a kernel string for setting comm, so
+> I guess kaddr+offset? But that's not mapped any more...
 
-> Finish the translation of kbuild/kbuild.rst and move kbuild
-> from TODO to the main body.
->
-> Update to commit 2eb5d7f24299 ("kbuild: doc: describe the -C
-> option precisely for external module builds")
->
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> ---
->  .../translations/zh_CN/kbuild/index.rst       |   2 +-
->  .../translations/zh_CN/kbuild/kbuild.rst      | 304 ++++++++++++++++++
->  2 files changed, 305 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/translations/zh_CN/kbuild/kbuild.rst
+Yes, but it'll be valid __user addr in the new process. (IIUC)
 
-Applied, thanks.
+> > Once we get to begin_new_exec(), only if we need to do the work (fdpath
+> > set), then we can do the strndup_user() instead of making every exec
+> > hold a copy regardless of whether it will be needed.
+> 
+> What happens if that allocation fails? begin_new_exec() says it is the
+> point of no return, so we would just swallow the exec? Or have
+> mysteriously inconsistent behavior?
 
-jon
+If we can't alloc a string in begin_new_exec() we're going to have much
+later problems, so yeah, I'm fine with it failing there.
+
+> I think we could check ->fdpath in the bprm_add_fixup_comm() above,
+> and only do the allocation when really necessary. I should have done
+> that in the above version, which would have made the comment about
+> checking fdpath even somewhat true :)
+
+But to keep this more readable, I do like your version below, with some
+notes.
+
+> 
+> Something like the below?
+> 
+> Tycho
+> 
+> 
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index dad402d55681..7ec0bbfbc3c3 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1416,7 +1416,16 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  		set_dumpable(current->mm, SUID_DUMP_USER);
+>  
+>  	perf_event_exec();
+> -	__set_task_comm(me, kbasename(bprm->filename), true);
+> +
+> +	/*
+> +	 * If argv0 was set, execveat() made up a path that will
+> +	 * probably not be useful to admins running ps or similar.
+> +	 * Let's fix it up to be something reasonable.
+> +	 */
+> +	if (bprm->argv0)
+> +		__set_task_comm(me, kbasename(bprm->argv0), true);
+> +	else
+> +		__set_task_comm(me, kbasename(bprm->filename), true);
+>  
+>  	/* An exec changes our domain. We are no longer part of the thread
+>  	   group */
+> @@ -1566,9 +1575,36 @@ static void free_bprm(struct linux_binprm *bprm)
+>  	if (bprm->interp != bprm->filename)
+>  		kfree(bprm->interp);
+>  	kfree(bprm->fdpath);
+> +	kfree(bprm->argv0);
+>  	kfree(bprm);
+>  }
+>  
+> +static int bprm_add_fixup_comm(struct linux_binprm *bprm, struct user_arg_ptr argv)
+> +{
+> +	const char __user *p = get_user_arg_ptr(argv, 0);
+
+To keep this const but not call get_user_arg_ptr() before the fdpath
+check, how about externalizing it. See further below...
+
+> +
+> +	/*
+> +	 * If this isn't an execveat(), we don't need to fix up the command.
+> +	 */
+> +	if (!bprm->fdpath)
+> +		return 0;
+> +
+> +	/*
+> +	 * In keeping with the logic in do_execveat_common(), we say p == NULL
+> +	 * => "" for comm.
+> +	 */
+> +	if (!p) {
+> +		bprm->argv0 = kstrdup("", GFP_KERNEL);
+
+Do we want an empty argv0, though? Shouldn't an empty fall back to
+fdpath?
+
+> +		return 0;
+> +	}
+> +
+> +	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
+> +	if (bprm->argv0)
+> +		return 0;
+> +
+> +	return -EFAULT;
+> +}
+> +
+>  static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
+>  {
+>  	struct linux_binprm *bprm;
+> @@ -1975,6 +2011,10 @@ static int do_execveat_common(int fd, struct filename *filename,
+>  		goto out_ret;
+>  	}
+>  
+> +	retval = bprm_add_fixup_comm(bprm, argv);
+> +	if (retval != 0)
+> +		goto out_free;
+
+How about:
+
+	if (unlikely(bprm->fdpath)) {
+		retval = bprm_add_fixup_comm(bprm, argv);
+		if (retval != 0)
+			goto out_free;
+	}
+
+with the fdpath removed from bprm_add_fixup_comm()?
+
+> +
+>  	retval = count(argv, MAX_ARG_STRINGS);
+>  	if (retval == 0)
+>  		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
+
+-- 
+Kees Cook
 
