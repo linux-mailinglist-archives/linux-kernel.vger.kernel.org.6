@@ -1,115 +1,77 @@
-Return-Path: <linux-kernel+bounces-369494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A399A1E02
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 150359A1E16
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 11:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FDD91C22053
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:17:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4703F1C21C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 09:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AE61D8A04;
-	Thu, 17 Oct 2024 09:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484081D8A1D;
+	Thu, 17 Oct 2024 09:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnnWAINU"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwkrYWTt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5D71D4150;
-	Thu, 17 Oct 2024 09:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF9244C97;
+	Thu, 17 Oct 2024 09:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729156647; cv=none; b=qbKZs/3BdAhNa+o1apHdyVOLYgmnc/oyaY/ISFRFmUliF0Hz8qZtGJA8QQagRvl2R1CzsWdy+HwM4F/fvBy8N93h7UOQB3jRmcqJkr2XS73NacplYL0XZL2rh0/uzPKWp/knXsMW431cmjuBo5rtqNjqYfs19Lcyebl/XCXnqfg=
+	t=1729156733; cv=none; b=EtGdYjw1MB2tr2X+hcnMzl0dhrpjs43G22UJ+IyZfOF6H0+M+A8uqa7maYGacaB//7vV/psUNVvCocmPHSnDmvj8kNfFXMyO4hlbfAGlsCSD5nTXJh280nsxdJwMEeKVv2XuRVVjTnupeivdGc4q3uuehkMO/8I4/Rpde/07j9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729156647; c=relaxed/simple;
-	bh=tnGQZ6lVUra0MiSs7K66Y5k5frQFbVkK1r1M+VtYFT4=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cirRxIXnV3rJNjVb6+g93K2YD+5lGspz8JFgmVFGx5URmzrzJ6VZzQ1lyVeq7tQm9R+U/eHbsaP+GigCzc34bUmi6PWgO+0ks73sdUN9+mBxloaghq8e3SqxbDTlhqaENYSXlgjX3Pu9M6EOBR0geXPmcDuPPEHcooHmVgtGddc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OnnWAINU; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so607774a91.1;
-        Thu, 17 Oct 2024 02:17:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729156645; x=1729761445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yH9xzXbkXQtIf26L75aCO7ntLQ/eZaOKeycwP5Fq5/Y=;
-        b=OnnWAINUceeGGyoSOoe1wiEShxYin0CXrtOM+75IaeI1fb7DifQwpC1K2juTLsGcSO
-         fZxUyX3kg2tfhv/ZDtOZlws0CUKIhTbZX+10xI1fgg7liceXzYeEWAvqmh0o2HN3xvDq
-         Zz9wbugWTIJLTHMRsTPO05xR/hHIdZncGRXgDO2QGLXIQrDuNLo4Tud/jfjyCJd1IXC+
-         2Y7aflyolOSXGUnHaoncHOME14AUDtdb2GIiVrCWzbXt5d7vdtTxN4uoMWluQ6mKgqfP
-         mB+VKjiPQO1NtFgXtaRYpclk0DfX46pdM+Vk+KtVawADIht8tODp+pWmNqT7X/cQGstQ
-         diKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729156645; x=1729761445;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yH9xzXbkXQtIf26L75aCO7ntLQ/eZaOKeycwP5Fq5/Y=;
-        b=h1Q5T09t4Wvny3jph4uS+SKxddjZ7vI7D4tuTfl5mVIR6Sj3Dz/toM+HGz76B0azv3
-         txz9SOee/d1BWFV53WM/MljuVNQxZQ+DAo2HBvBjBwcSxPWKYNDOMREsnMKiWrxSL5H3
-         I0LAC6v7PRb/3bgjL8tV/VFKP3HggXCLi+2QBsyndRQIZkNZdE0JPedP/BmRwnPt2ZSs
-         4nz3TT7vl5V7xRKPvVVRCTlUOoSTZRca4lQxI188FjYwM2VCeQhW348gCwWYRhBkXjzi
-         w7S5xSpKtb2ii7FEpW25FNhxEeUUORasu6HFdmSXO9f25BzrW+uEYS5HXNWRhvIuSXl9
-         7zYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMscER0To0DkLdRhNk6n8B2EPZZfxi26wjryjrTxk47Pk5iCKznJfR//Aw5pzDfsogzBJdnM9Y@vger.kernel.org, AJvYcCVoxiyb212pfwo2wRg23CSxeQPMO4y1Gg/hyVTSAiCUVRxIj8eXxaMOorqnufj/8ckupzF5v4IToJTh8/lhyig=@vger.kernel.org, AJvYcCXD5Gep2ChxVaJDPTVtlFqjGg+IIkuWlHR++5xPDoTsxMTo1L7nbfQWVQotOTCLg3A1KQaFh7AsLHWGEYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+tDJrO7xq0hGR0Q89D1erv+MS8ZYOVrkxRjp5t7SJoGhHUtkd
-	tr8ObxybI/NS4SnXG8FfhU8a7QMdTSD/RQZOmaIKGD1qlHr5pqR0
-X-Google-Smtp-Source: AGHT+IFVEcY1hgk/uwScEfhUWsPC7yT+/rSLWFxI9G28BBKV/hTtZtoqA+IfxcWbw3Do2sFpRKoAtg==
-X-Received: by 2002:a17:90a:640e:b0:2e2:c681:51ce with SMTP id 98e67ed59e1d1-2e3151b77e0mr23884426a91.1.1729156645101;
-        Thu, 17 Oct 2024 02:17:25 -0700 (PDT)
-Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3e094bd0bsm1354958a91.53.2024.10.17.02.17.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 02:17:24 -0700 (PDT)
-Date: Thu, 17 Oct 2024 18:17:11 +0900 (JST)
-Message-Id: <20241017.181711.1319333992452672716.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com
-Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
- jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 3/8] rust: time: Change output of Ktime's
- sub operation to Delta
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <ZxAcJEDFQ-n64mnd@Boquns-Mac-mini.local>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
-	<20241016035214.2229-4-fujita.tomonori@gmail.com>
-	<ZxAcJEDFQ-n64mnd@Boquns-Mac-mini.local>
+	s=arc-20240116; t=1729156733; c=relaxed/simple;
+	bh=tV3efZQI4OFaUYHYWz700zx7CRJQ2GV1PCnE/moNRlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0yJ2cDip+BlAvOAJ2K3eGxDE2YssoTJLjZ6ZyK/HiFRJ+z8VRMyDHNPyzs0nzREbakyWw9zFXCBDURl4xWRO9YbwUWVhR1RU/VwaRkUG6bXYwADQvLd2RQBJ78AHDhYoB8CgqD6sim/Ty20HFKzDVJmK2WhJdOtMC/m2YOFhfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwkrYWTt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD03C4CEC3;
+	Thu, 17 Oct 2024 09:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729156733;
+	bh=tV3efZQI4OFaUYHYWz700zx7CRJQ2GV1PCnE/moNRlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hwkrYWTt1nQVtftMfLOOKbct0Oi6k6oT1DV/jbjZ6WIbtQ8oVrC7oOcruZ0ZfgkzN
+	 Dr3SX3iFVtcCO2aybnaacDIN923DwSefLT/d5LgwqX/0ibgdNRZB/ORZy8wq4n5Swz
+	 t6hH+M+oQmuQBA5eMzrLUj58dErkB3U1K469TZc6+xEkg3LS2Nqknp55JhvT05qqog
+	 hYEsOFlUtb0k/wL/E1kyYxugf05Z2nSfYpZie+jYMA2jl+XmfubKcELNZ1LqP0tuJo
+	 KMHTprhtaRH+Mhy+zuizafBj3W8/crmO8aYGH/MuC3QISqt3h1mXzXalOQoQ8ubsg7
+	 RJrmE/WdqpqLA==
+Date: Thu, 17 Oct 2024 11:18:49 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kyle Deng <quic_chunkaid@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com, 
+	quic_aiquny@quicinc.com, quic_sudeepgo@quicinc.com, quic_taozhan@quicinc.com, 
+	quic_jiegan@quicinc.com
+Subject: Re: [PATCH 2/3] dt-bindings: aoss: qcom: Document the qcs615 AOSS_QMP
+Message-ID: <u7y2eu6t4ljk42rigfgxylpzpog2ygbwcou7e6jalnfqsqxsfy@ifezf2435be4>
+References: <20241017025313.2028120-1-quic_chunkaid@quicinc.com>
+ <20241017025313.2028120-3-quic_chunkaid@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241017025313.2028120-3-quic_chunkaid@quicinc.com>
 
-On Wed, 16 Oct 2024 13:03:48 -0700
-Boqun Feng <boqun.feng@gmail.com> wrote:
+On Thu, Oct 17, 2024 at 10:53:12AM +0800, Kyle Deng wrote:
+> Document the Always-On Subsystem Qualcomm Message Potocol(AOSS_QMP)
 
->>  impl core::ops::Sub for Ktime {
->> -    type Output = Ktime;
->> +    type Output = Delta;
->>  
->>      #[inline]
->> -    fn sub(self, other: Ktime) -> Ktime {
->> -        Self {
->> -            inner: self.inner - other.inner,
->> +    fn sub(self, other: Ktime) -> Delta {
->> +        Delta {
->> +            nanos: self.inner - other.inner,
+typo: Protocol
+
+> on the Qualcomm qcs615 platform.
 > 
-> My understanding is that ktime_t, when used as a timestamp, can only
-> have a value in range [0, i64::MAX], so this substraction here never
-> overflows, maybe we want add a comment here?
+> Signed-off-by: Kyle Deng <quic_chunkaid@quicinc.com>
 
-Sure, I'll add.
+Best regards,
+Krzysztof
+
 
