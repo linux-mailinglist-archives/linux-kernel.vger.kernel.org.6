@@ -1,87 +1,122 @@
-Return-Path: <linux-kernel+bounces-369894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4786C9A2419
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBD49A241C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 15:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E841C23797
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:39:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884EBB26344
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 13:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7251DE2D7;
-	Thu, 17 Oct 2024 13:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB5F1DE3B8;
+	Thu, 17 Oct 2024 13:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ulqQLaXI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SPQutJ3l"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DD01C07C7;
-	Thu, 17 Oct 2024 13:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267E91DE3AE;
+	Thu, 17 Oct 2024 13:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729172349; cv=none; b=PKl8CTGROlMJPk2/MJOVOJyaNu9aKTlUNwpi/49oCQWoJ1wSwba430kq/A0x8BWDVk6zfyYQItfRF7K56T23lXy16/DQVnyXl+hhXroM/4mA3qAD8E4hRDXxiaoOR8vr/bMnXTa3cAaI8AYNKPZ6sKh6JFr4JZFYXN23IpyGZgs=
+	t=1729172355; cv=none; b=jdN9oAAemom/c6HYESwjjH7f9Imnc+Ubssk6ONp3xmZlukaupFpUbQt8sTc2DE37XEPFiC3KLKXSAwjPiq0FK9FwwDh7bvNFVmC5GSZMWC7c5BnUVwm7ZQJJr1cEVxxPZbe4zmqjhCHifkaJ39xv/Cb0dtE8XW2daTcWEVZ0QSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729172349; c=relaxed/simple;
-	bh=ZzzYnZcVVmf5k7zsxQyVHK7Uv4btO9xlyLEJg5slnso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AOtpqGyFWcn9eAeZ9VMNNaR3cNuPkNxkM2ySa3k4KOTLhMQwBKsfF7rNQ67EOS/JLbDDKCbh0GB3NRdRldehiC7X5dFbZWmvy9RoOBiLDqBQWqNuRe5m9XgBOufs1aYu4Zu6OZJFCpV97ImGaTiJND470dHaWwED4FvnYySg7r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ulqQLaXI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4758C4CEC3;
-	Thu, 17 Oct 2024 13:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729172349;
-	bh=ZzzYnZcVVmf5k7zsxQyVHK7Uv4btO9xlyLEJg5slnso=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ulqQLaXIYO1xXVJlwmP9DV11ThvuEe7T3Ur9g/CblBHix8B1N+IVHiOiO0IzgpY8L
-	 OFZ+PLvGI9bIFhhyNJPtT7um88z1n9Yth103U+bvzaQsn7zHa69y6Y+M3HuAjFQ2bD
-	 m51WZ5Tv4K1VwMR1LwJoeMDiZYEYUyVzaqT9y0cs=
-Date: Thu, 17 Oct 2024 15:39:06 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vimal Agrawal <avimalin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, quic_jjohnson@quicinc.com,
-	dan.carpenter@linaro.org, vimal.agrawal@sophos.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] misc: misc_minor_alloc to use ida for all
- dynamic/misc dynamic minors
-Message-ID: <2024101715-flounder-delusion-8edb@gregkh>
-References: <2024101722-uncharted-wages-5759@gregkh>
- <20241017133532.94509-1-vimal.agrawal@sophos.com>
+	s=arc-20240116; t=1729172355; c=relaxed/simple;
+	bh=RaKhN2VDuQLWNQ2Oq2Tvf0ihMcrAd4aJ/LDWckcjBOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dSdgxluqF2BDZjmnRC6DM7151f3OU3GH274NNWUtDZ8BLcV8PW30gbw5EDYJnnHNR3oMd5izQ3N0BrsBRQP8TaPdl72BtrRy+FAaLFhNtnZZhhos5MRVKPdLzu2vW0mEtW+ChaBK31F5v5u6WQe+k04VBBEjr6RKr0ip36eGnn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SPQutJ3l; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729172351;
+	bh=RaKhN2VDuQLWNQ2Oq2Tvf0ihMcrAd4aJ/LDWckcjBOU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SPQutJ3lknDz4wr024BhyOyWthJhP0eYzroDjQrWaiGu9ZW6dWqBiVXCkGFrmoaoq
+	 CIupIouccGH2bHQNJ788l4L/IlVlnhS/RoGNWqzo7+SV+yrW32/ZHWWYmam13g7poL
+	 cDRHA5axOTFR4TrgiYg1Jk3MDbBBN40VSRlzMF0/mL1wRvSomSEiAnVHukOoDJ89BC
+	 aM7jHiU5mZkp66CMHfjwx/SdcO7GKPX1vI+ZtUf6xhYgJXIi5Wb0qHER2SxTfTC4by
+	 edSp3fHgV6gvW7NGWf65+643d9uVofCg9ZHdE4Ju4YLdmgET3ZtnN5f3EA7qj3ZfcF
+	 6+SPMIiuXUZLw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F3E2517E360A;
+	Thu, 17 Oct 2024 15:39:10 +0200 (CEST)
+Message-ID: <f771788c-bdcd-4378-a9c4-4bd6bbf93591@collabora.com>
+Date: Thu, 17 Oct 2024 15:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017133532.94509-1-vimal.agrawal@sophos.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: platform: mtk-mdp3: Remove unwanted else in
+ mdp-cmdp-prepare()
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Moudy Ho <moudy.ho@mediatek.com>, Ricardo Ribalda <ribalda@chromium.org>
+References: <20241016113808.4311-1-pvmohammedanees2003@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241016113808.4311-1-pvmohammedanees2003@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 01:35:32PM +0000, Vimal Agrawal wrote:
-> misc_minor_alloc was allocating id using ida for minor only in case of
-> MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
-> using ida_free causing a mismatch and following warn:
-> > > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
-> > > ida_free called for id=127 which is not allocated.
-> > > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-> ...
-> > > [<60941eb4>] ida_free+0x3e0/0x41f
-> > > [<605ac993>] misc_minor_free+0x3e/0xbc
-> > > [<605acb82>] misc_deregister+0x171/0x1b3
+Il 16/10/24 13:38, Mohammed Anees ha scritto:
+> Since platform compatibility is already verified, the
+> additional else branch is unnecessary and will never
+> be executed. To fix, remove this else condition.
+
+Well, actually, even the one before the allocation of cmd can be removed,
+because compatibility is already checked by __get_config_offset().
+
+Besides, __get_config_offset() has another occurrence of an unneeded
+else branch, as it's checking platform twice.... so you can clean up
+that one as well.
+
+P.S.: "media: platform: mtk-mdp3: cmdq: Remove duplicated platforms checks"
+
+Cheers,
+Angelo
+
 > 
-> misc_minor_alloc is changed to allocate id from ida for all minors
-> falling in the range of dynamic/ misc dynamic minors
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+> ---
+>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c | 9 +++------
+>   1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-> Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
-> Signed-off-by: Vimal Agrawal <avimalin@gmail.com>
+> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> index ea2ea119dd2a..168beed4155a 100644
+> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
+> @@ -624,14 +624,11 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
+>   	if (ret)
+>   		goto err_free_cmd;
+>   
+> -	if (CFG_CHECK(MT8183, p_id)) {
+> +	if (CFG_CHECK(MT8183, p_id))
+>   		num_comp = CFG_GET(MT8183, param->config, num_components);
+> -	} else if (CFG_CHECK(MT8195, p_id)) {
+> +	else if (CFG_CHECK(MT8195, p_id))
+>   		num_comp = CFG_GET(MT8195, param->config, num_components);
+> -	} else {
+> -		ret = -EINVAL;
+> -		goto err_destroy_pkt;
+> -	}
+> +
+>   	comps = kcalloc(num_comp, sizeof(*comps), GFP_KERNEL);
+>   	if (!comps) {
+>   		ret = -ENOMEM;
 
-Sorry, but no, do not hide behind a gmail.com address.  Either fix your
-corporate email system to be able to send patches out, or use the other
-method of sending from a different address as documented in the kernel
-documentation.
 
-As it is, I can't take this, sorry.
-
-greg k-h
 
