@@ -1,222 +1,82 @@
-Return-Path: <linux-kernel+bounces-370523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65A69A2DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:43:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01D59A2E04
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A361C2677E
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C68285D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8948227B8D;
-	Thu, 17 Oct 2024 19:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141B5227BA7;
+	Thu, 17 Oct 2024 19:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1yf3urIj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZOikoWCX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kA0ZtQvA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C18222738A;
-	Thu, 17 Oct 2024 19:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6234D193409;
+	Thu, 17 Oct 2024 19:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729194228; cv=none; b=h4UF1v+QaopPab/j3OXozb4xTokqQf+sFOpL03RfOmbKUyRjWTYM22K+765XAiWfUggJlG3GFH9cL8XARTzenc3kzzbEWsdOQFE4JDsgxd2A/JiJZVDQWXx0IeILqa+hDalbhnvVXKL0dV9/yoEiOfQdFkXoXErYm81TZfB4pIo=
+	t=1729194257; cv=none; b=Gw3igwhiJ3PH2b7tU8n2dUhsr6iVOANIUIswy2KhWJBKt+MXVh5Mg279S60YFiufycjZkC0ntZ1i2dEVqrhWBztYe4dSb7uB1ia3gm7KZyAmOFZvg+XHwOZqBeAovB0mXFvBTHVZHwdB7mJtSOUvHCv6ttDOoy/IGIY2P1nJGBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729194228; c=relaxed/simple;
-	bh=R8HgjdDGExRzcHarES8XZ5db42R/qNUB/AmNsIT5n8g=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dAO6sVqNh0LpndoV5rU3Mu/5C1kbvKy7HIDKCmUtAE2XgTFoGnOHak2Td+HLALTGsprtrVxYfpYYfYVN7jJLE6rEhUf3Yevt0aDT4BY8TJ4nbgwNLXk33qvIbC4i1jpjw7BYaRMI5ipsOgtXv+DMh0mVO+GRvcCV9hO7Rz4tOeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1yf3urIj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZOikoWCX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 17 Oct 2024 19:43:40 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729194221;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2ilCSoVrZpRMZGOHz8ag23av6GrTG+k4D5wQiUtLLtY=;
-	b=1yf3urIjUyeXkOkgfujXUmYEqUw6bUxwQpPTVgklNz/oB/4z8UUEaaRzmTq/VjNSDwiJMS
-	d7Y3F5qJrCaUuuEW5UmukQJBeSG9pG+07TWcBb59SN3yP3s0qLzGDLPb3Ox2OG9lDzhV3t
-	2rQqNfU1ko9ORz6bCqm2UNJpdA0hCWawlx5yAzguEKbY01BnM+g68OJZJeTTxOz0/fDH3U
-	shQTDmCeV0+FvwZk6Eejuzi5BwBbIM2Xnfm+uyO//upTvVCkwDVIj5BKcOO0TOVUCqDF3y
-	BvuScmCahG/m5/60PeghpfQVLjlSAimDUpPh5b1YKn11L/IvfV7HPBNJeB7JKQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729194221;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2ilCSoVrZpRMZGOHz8ag23av6GrTG+k4D5wQiUtLLtY=;
-	b=ZOikoWCXfy1bw8olBZ83BcwTGLp98trMSwvIYKrOtgb2cbGNAkIVWbrx+IcmIWvF/AMudU
-	br3zKWnACr4Yz8Bg==
-From: "tip-bot2 for Kevin Chen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] dt-bindings: interrupt-controller: Add support for
- ASPEED AST27XX INTC
-Cc: Kevin Chen <kevin_chen@aspeedtech.com>,
- Thomas Gleixner <tglx@linutronix.de>, "Rob Herring (Arm)" <robh@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241016022410.1154574-2-kevin_chen@aspeedtech.com>
-References: <20241016022410.1154574-2-kevin_chen@aspeedtech.com>
+	s=arc-20240116; t=1729194257; c=relaxed/simple;
+	bh=3XFUiq+FrQjOla6ffWyuWjodsUa4VVjrvMC6hXatxzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLbOjgL2FGNs6qXQgJZZzRt2kdLCQvOcN8NVFSa71vWV55afmBicv6wpaBraj8mjwbGWL60W2LDQx25KCVFPqvu0HZp5mQtM7++fBmvODPAiC8Qev/gy7k4AqQ2MEZrVDr1pY8yUnH2o4Divgcv4o9zD10/XfWvWZx7dv/3ngZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kA0ZtQvA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAFCC4CECD;
+	Thu, 17 Oct 2024 19:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729194256;
+	bh=3XFUiq+FrQjOla6ffWyuWjodsUa4VVjrvMC6hXatxzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kA0ZtQvA4neszzT+VvxYFyQcMq4hk/0l38j9tekH24z2z7K8aCVbiFdzh2INgtrKE
+	 p7PXSjecvEb4oGol5st8u8ZaHCP46RXL7ezJ1pBXXL5A2W0cseEQDfdb+70yGeGluU
+	 WkftJZefoYRutWkUQpInrewm8HW5ZPt8DJqR+e8T0wYQD972SwccPlcz4TAJngAiNC
+	 t5Cy0yFrZEVuVDxF8EApP9fERtpIWOvafVTpFv1u97V8QNNwgl04zYpnc5n8Dgfk4E
+	 sdDHYPmZ5K3ng1XHNTnFEu/rlcJYbpqNXAOYbM5u6JWxpOPkZHRJBft0O+tU11SDLE
+	 BrOL7y57A5hyg==
+Date: Thu, 17 Oct 2024 12:44:15 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: dm-devel@lists.linux.dev
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	Israel Rukshin <israelr@nvidia.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [RFC PATCH v2 2/2] dm-inlinecrypt: add target for inline block
+ device encryption
+Message-ID: <20241017194415.GA11717@sol.localdomain>
+References: <20241016232748.134211-1-ebiggers@kernel.org>
+ <20241016232748.134211-3-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172919422081.1442.10684895848827385137.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016232748.134211-3-ebiggers@kernel.org>
 
-The following commit has been merged into the irq/core branch of tip:
+On Wed, Oct 16, 2024 at 04:27:48PM -0700, Eric Biggers wrote:
+> Add a new device-mapper target "dm-inlinecrypt" that is similar to
+> dm-crypt but uses the blk-crypto API instead of the regular crypto API.
+> This allows it to take advantage of inline encryption hardware such as
+> that commonly built into UFS host controllers.
 
-Commit-ID:     37a99ff53d1d913ec5b435cbe977a811b7b37995
-Gitweb:        https://git.kernel.org/tip/37a99ff53d1d913ec5b435cbe977a811b7b37995
-Author:        Kevin Chen <kevin_chen@aspeedtech.com>
-AuthorDate:    Wed, 16 Oct 2024 10:24:09 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 17 Oct 2024 21:35:28 +02:00
+A slight difference in behavior vs. dm-crypt that I just became aware of:
+dm-crypt allows XTS keys whose first half equals the second half, i.e.
+cipher key == tweak key.  dm-inlinecrypt typically will not allow this.  Inline
+encryption hardware typically rejects such keys, and blk-crypto-fallback rejects
+them too because it uses CRYPTO_TFM_REQ_FORBID_WEAK_KEYS.
 
-dt-bindings: interrupt-controller: Add support for ASPEED AST27XX INTC
+IMO, rejecting these weak keys is desirable, and the fact that dm-inlinecrypt
+fixes this issue with dm-crypt will just need to be documented.
 
-The ASPEED AST27XX interrupt controller(INTC) contains second level and
-third level interrupt controller.
-
-INTC0:
-The second level INTC, which used to assert GIC if interrupt in INTC1 asserted.
-
-INTC1_x:
-The third level INTC, which used to assert INTC0 if interrupt in modules
-of INTC asserted.
-
-The relationship is like the following:
-  +-----+   +-------+     +---------+---module0
-  | GIC |---| INTC0 |--+--| INTC1_0 |---module1
-  |     |   |       |  |  |         |---...
-  +-----+   +-------+  |  +---------+---module31
-                       |
-                       |   +---------+---module0
-                       +---| INTC1_1 |---module1
-                       |   |         |---...
-                       |   +---------+---module31
-                      ...
-                       |   +---------+---module0
-                       +---| INTC1_5 |---module1
-                           |         |---...
-                           +---------+---module31
-
-Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Link: https://lore.kernel.org/all/20241016022410.1154574-2-kevin_chen@aspeedtech.com
-
----
- Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-new file mode 100644
-index 0000000..55636d0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-@@ -0,0 +1,86 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Aspeed AST2700 Interrupt Controller
-+
-+description:
-+  This interrupt controller hardware is second level interrupt controller that
-+  is hooked to a parent interrupt controller. It's useful to combine multiple
-+  interrupt sources into 1 interrupt to parent interrupt controller.
-+
-+maintainers:
-+  - Kevin Chen <kevin_chen@aspeedtech.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - aspeed,ast2700-intc-ic
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 2
-+    description:
-+      The first cell is the IRQ number, the second cell is the trigger
-+      type as defined in interrupt.txt in this directory.
-+
-+  interrupts:
-+    maxItems: 6
-+    description: |
-+      Depend to which INTC0 or INTC1 used.
-+      INTC0 and INTC1 are two kinds of interrupt controller with enable and raw
-+      status registers for use.
-+      INTC0 is used to assert GIC if interrupt in INTC1 asserted.
-+      INTC1 is used to assert INTC0 if interrupt of modules asserted.
-+      +-----+   +-------+     +---------+---module0
-+      | GIC |---| INTC0 |--+--| INTC1_0 |---module2
-+      |     |   |       |  |  |         |---...
-+      +-----+   +-------+  |  +---------+---module31
-+                           |
-+                           |   +---------+---module0
-+                           +---| INTC1_1 |---module2
-+                           |   |         |---...
-+                           |   +---------+---module31
-+                          ...
-+                           |   +---------+---module0
-+                           +---| INTC1_5 |---module2
-+                               |         |---...
-+                               +---------+---module31
-+
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    bus {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        interrupt-controller@12101b00 {
-+            compatible = "aspeed,ast2700-intc-ic";
-+            reg = <0 0x12101b00 0 0x10>;
-+            #interrupt-cells = <2>;
-+            interrupt-controller;
-+            interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+        };
-+    };
+- Eric
 
