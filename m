@@ -1,78 +1,112 @@
-Return-Path: <linux-kernel+bounces-369750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F8F9A2227
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:25:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C8C9A2228
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 14:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1476283C81
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:25:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 778ED1C226FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 12:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960541DD525;
-	Thu, 17 Oct 2024 12:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVzYAOwq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DD11DD539;
+	Thu, 17 Oct 2024 12:25:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E491DBB3A;
-	Thu, 17 Oct 2024 12:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347501DBB3A;
+	Thu, 17 Oct 2024 12:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729167898; cv=none; b=ijW2mb3HC/58FCnb3OIx+pHtci1p7Oc9sDEnx9LsRUbZB2HGtk4ZxHdHqTn5XI9EEmZpx1TeykP5a4QP0QrJulKBHvhNWItuB8OEo6lvcI5MNI3XNLswSiV0tbDLbi03XSUBAEU9eOCmQjCjcj2eNwxtGsU7ubLLu9GaGfF6tck=
+	t=1729167913; cv=none; b=pkyp27pHJXEPOh4mYokIjoB+0btsoq+5kvOEQMOxjnaoSoFTeL+dbFrRpM06BHshLV3Yd7HyURlo85wz95Fpah00/AqQEtkVxAYiMq2O1goUvdXDPJybGX2oxjlNUBZ6xDpmxYe1gAaiHOIr1vKQ2a9l4C83n3TVRHJIkkqeuTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729167898; c=relaxed/simple;
-	bh=CW0hMWyo2CYtUdqfyZ09UX9xcAAU7iDBLUtOAnPTY8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRq5YWPnJi6rGvXzlsECUYrfZ4DE0B2TJw3+iyGBoA+oOcva/iK3TZRH9yJjpdEzERqhfHFEY3eWI875HESCtAgLnK4Q1wzYBiYI6ipqQuDBzLV/YtmIzsaub0kav4HkccLZl5z6wzjxqQKqj/JG2BzFnZIqdHewkPAm9ZWhFLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVzYAOwq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEFFC4CEC3;
-	Thu, 17 Oct 2024 12:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729167897;
-	bh=CW0hMWyo2CYtUdqfyZ09UX9xcAAU7iDBLUtOAnPTY8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gVzYAOwqsKNX5nYMMSdBZDwo5DMglsoVuAQ8qTTJK1fxjfI/FdhK1eCGa+TeeJxRZ
-	 jijDqAWgGCNJNoyeKvIuR1o/nqQGgoIDop/EAdl71l+iEJyp8Oc5fBJQGC2EBO7fXD
-	 ofAoKfbXnBavtxgtTgAb3jwGV8DY54EtK04ncBTT/cZYM3NymyN7jmkqDCUnZ0UuM9
-	 i4S+chkk14qLxmh1cWKFRPdBUB64hqlY68c1pUc4iHjPJW5Uk9JToyR0s1hvCSElq4
-	 7IjIqwzVTRem0BWza2Bhu2y1IRmMey30vFeROOrxCJwd9j3ADHXWBM5oZmb1rkh7YX
-	 rM4AqWo5G1TyQ==
-Date: Thu, 17 Oct 2024 17:54:54 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Bard Liao <yung-chuan.liao@linux.intel.com>
-Cc: broonie@kernel.org, tiwai@suse.de, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, pierre-louis.bossart@linux.dev,
-	bard.liao@intel.com
-Subject: Re: [PATCH 04/11] soundwire: slave: lookup SDCA version and functions
-Message-ID: <ZxECFhGHkl+wqBEa@vaman>
-References: <20241016102333.294448-1-yung-chuan.liao@linux.intel.com>
- <20241016102333.294448-5-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1729167913; c=relaxed/simple;
+	bh=HOAc7i52uw9GM5U6hFKf2IyVcmV5ukFbRD8mDU3Iick=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rSPvgTsswIp270lVRxc0QhPF7P+Z+6trcvMSTGODud7OYZRNV68JCHojiiT+PdDQGgkyyEeNKlpbRNdNtTZu8HhcvIRp9K40TqOTBC6olW6Tqmen9nukrQfJ1Aib/UQhUSbqfmz1mR+tWvggRuvytfutBXUVK/1KavzJbo0wJJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTn8C618Jz6JB2C;
+	Thu, 17 Oct 2024 20:24:27 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 10C2F1400DB;
+	Thu, 17 Oct 2024 20:25:08 +0800 (CST)
+Received: from localhost (10.126.174.164) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 17 Oct
+ 2024 14:25:07 +0200
+Date: Thu, 17 Oct 2024 13:25:05 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
+Subject: Re: [RFC PATCH 2/4] cxl/events: Updates for CXL General Media Event
+ Record
+Message-ID: <20241017132505.00004cf4@Huawei.com>
+In-Reply-To: <20241016163349.1210-3-shiju.jose@huawei.com>
+References: <20241016163349.1210-1-shiju.jose@huawei.com>
+	<20241016163349.1210-3-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016102333.294448-5-yung-chuan.liao@linux.intel.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 16-10-24, 18:23, Bard Liao wrote:
-> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+On Wed, 16 Oct 2024 17:33:47 +0100
+<shiju.jose@huawei.com> wrote:
+
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> Use SDCA helpers to get the basic information and store it in the
-> slave context. The information will be optionally be used in codec
-> drivers to register sub-devices for each Function.
+> CXL spec rev 3.1 section 8.2.9.2.1.1 Table 8-45, General Media Event
+> Record has updated with following new fields and new types for Memory
+> Event Type and Transaction Type fields.
+> 1. Advanced Programmable Corrected Memory Error Threshold Event Flags
+> 2. Corrected Memory Error Count at Event
+> 3. Memory Event Sub-Type
 > 
-> When platforms are not based on ACPI the helpers do absolutely
-> nothing.
+> The component identifier format has changed (CXL spec 3.1 section
+> 8.2.9.2.1 Table 8-44).
+> 
+> Add updates for the above spec changes in the CXL events record and CXL
+> general media trace event implementations.
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
+It might be worth breaking out the component ID formatting as
+a separate patch.  That comes in 3.1 along with the other fields
+but is perhaps more controversial?
+
+It's a good change, but will change what is printed. I 'think'
+tracepoint printing is typically not considered ABI though (unlike
+the tracepoint which is!) so should be fine.
+
+Split or not I like the component ID formatting and the reset LGTM
+I also slight prefer the fact you inserted new fields in logical
+places (so disagree with Alison if that's what she meant).
+Good to call that out in the patch description though to highlight
+it as something people might want to consider.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 
--- 
-~Vinod
+> ---
+> Question:
+> Want more abbreviations for the long lines of code in
+> show_mem_event_sub_type() and for similar in other patches?
+I raised this in internal review, but don't think it matters
+that much either way :)
+
 
