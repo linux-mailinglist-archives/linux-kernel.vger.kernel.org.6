@@ -1,221 +1,142 @@
-Return-Path: <linux-kernel+bounces-370393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5A69A2BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:16:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE4A9A2C16
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44CC8B28043
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:14:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF14BB285A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15B11E00A8;
-	Thu, 17 Oct 2024 18:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC641DFE31;
+	Thu, 17 Oct 2024 18:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cuRuTJaQ"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLaqBY24"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E421E00BC
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB8D1E009B
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729188852; cv=none; b=rcT7vzZMQRirI2vI/jkEVF6O43chucaSge7sX9n8/jzrqfvkeV/nEcESYGGfdupJCJpmsCnGKwF/bP5puV8XQInOVghVYqDge9SmJ1/RtpfrLeZKriwyd9dLWeAgCfQZzU56Y4fQ7dpzU+18z/jT6K3p89gpWzIL6AtUilm/Wwk=
+	t=1729188856; cv=none; b=DzXAVHGzRjVz43Spb9PZcQH/d+tg3oUfQ3UhQvGQ5COgMkr3zfVhD3GHkTCypsW4ChuB3BJzkYrGnwhTdtMROxK2YABIwVfR4Gwku41G391EOKBS+SMSJSaq5uM24y6FeMwKnLobETTNZhY4JpgUCw92ykgAt2fWVlWxpLyoC9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729188852; c=relaxed/simple;
-	bh=Bkxf/s2KVugIM6ypQC9OHaVP5BGsDoJqzVxswBQsqLQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uo2eYYqeBvxo8F640CMoCq2p7WoEAXqvqS+90an5nv0a/dGsZBmSeYhLiY+wdzWPFIuOzAVWzL/QK4MO0k+B0mjAA/nYzgFmT2JzOPmt/Hjs4Ip62wpREtZnqiVBC9f93NV10b361xeeyH/6j6+kzMh28RXg5DIlt1Q0b6Jf3QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cuRuTJaQ; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729188847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e4+EelHK0Kh0nAsHxkJLrbq+zC392Zdrc6//8o5rDy0=;
-	b=cuRuTJaQlcgxCM1mjYSkLgff+DNPD8vIUGZcFslEp5RVh5KPhMY2tTOItMrUBAGlS8xlAR
-	QCl7EnQF0FNUksuZCqj6bxjZ7CNwTFI5lbBjhi9q6MzbyTaYAnFgXcLzqG+iHTCqzAdQG8
-	4T/rHKIw8PRWp93GT9HZhWfE31nC+Zc=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Christoph Hellwig <hch@lst.de>,
-	iommu@lists.linux.dev
-Cc: linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH 3/3] dma-mapping: Trace more error paths
-Date: Thu, 17 Oct 2024 14:13:54 -0400
-Message-Id: <20241017181354.2834674-4-sean.anderson@linux.dev>
-In-Reply-To: <20241017181354.2834674-1-sean.anderson@linux.dev>
-References: <20241017181354.2834674-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1729188856; c=relaxed/simple;
+	bh=Lgjp5XVgoGmDiK8kT6aQvjeU/v0P5XtPbWZlzVPG8zM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rdrHvHzvxRVf47XT/y+fPPrmOPCwfk4BfUl+igkKXunAkkma8e5YBGdElv4zru88D6GeQI/DuYD90n+CTc2+6XsnHV59spdwsXr5HZ2KoTReqJ+xZZiIqj1wNtcYZm3hzEMe6aykIDhNcO3hPRAMUTlnzVt6vat3UC5hZens/dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bLaqBY24; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e3f35268so1627372e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729188848; x=1729793648; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rdNFD2cphGzL2BomZa1IYH9iZ0GkCDn9MRpnCMuLN6s=;
+        b=bLaqBY240zKYy9ylMQ8r1wtoBy9KFRSEc16MPCYYRWr038gZ6n3/xbyosYRKRlSgi1
+         9na5xiNCTn8hJvUfscIx03iv90dpJix/PMFJ52Yjk31288tRZTRFmFHqby/Lo1sELxnA
+         zlSHw/oETvzltOUfzIZHB9AZVsQJQAaPFbuy9x6lqAheC62lC/RsReGrF23Rr04ivuBJ
+         PGUcTXZ9PIDpFXgGFJtQuK1O89DR7tgdQ/g2qKAwism0bsmm7Qsk9dYeBEdKRDyu9OO3
+         rWw6t3zbfc4HmLz1/1rgFCfRNYSgd4IvUIrQD+8guyuZSUNXrKa7WtGfsMHAlcCI2wol
+         SMlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729188848; x=1729793648;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rdNFD2cphGzL2BomZa1IYH9iZ0GkCDn9MRpnCMuLN6s=;
+        b=NlRZjXluzBZAJBz1jcYt+CF2UC7ErzG9WwqQlZhwC/M6cbN2oAEQmokoj+UVB8s8h5
+         xReOwwRngjBEkLdVc7Kvz43biQGEAtazrqUmFRWOvSgHSfZ9WB+UcELB8cB/iiyj73GU
+         GCXoOTZ27oJwerk6VJrApMu7EUMV65/ff6oFCwKnsHGjenvQZaNvSJTnhmzPjk6XsjNR
+         rCIuWtAglz9NrxG5L9bf+INg9t4KHnVRBMEgnwFyD6wUPmVtLIqjwwUEEbAC6z73oBFN
+         m1Ht4bcd0MRmENvfWVPz3k0EggqE9RSy7FGAgpNSn8Yw8ii1VPPXvwtU2qBTT9c4eNh4
+         hGag==
+X-Forwarded-Encrypted: i=1; AJvYcCVfhJWm2g5GltJJN/J2YrZaUEzFe8ZBrcSzilHr1G6gPWebu6tyTTRT5TYGJ0P6ewxYvrh0XyVAXgW1sk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH5h+pD02euhs9mKzhtSvsYybrG0uBgOxsLbOSUXt16vdDCvm/
+	kF2g7zMdbTY/vA9o6FA9NCLNEtIXdsX01JyTpsmW/7iBWib49h9IohtTmysC67k=
+X-Google-Smtp-Source: AGHT+IGYlENtSdHVIknFWn3bTCeEZD1pDwTA8bOtxifsLfCGtoTomI2bqJvmi1dBUbkAoMM0KWAUnA==
+X-Received: by 2002:a05:6512:3d23:b0:536:a6c6:33f with SMTP id 2adb3069b0e04-539e54e82f9mr11694378e87.13.1729188848182;
+        Thu, 17 Oct 2024 11:14:08 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a00013a8bsm831733e87.258.2024.10.17.11.14.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 11:14:06 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 17 Oct 2024 21:14:03 +0300
+Subject: [PATCH] dt-bindings: spmi: qcom,x1e80100-spmi-pmic-arb: Add
+ SAR2130P compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241017-sar2130p-spmi-v1-1-43ac741ee071@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAOpTEWcC/x3MMQqAMAxA0auUzAbaqCheRRyKTTWDWhoQQXp3i
+ +Mb/n9BOQsrTOaFzLeoXGeFawysuz83RgnVQJY6Z92A6jO51ibUdAgGomGMfbQhtlCblDnK8//
+ mpZQPhjamJV8AAAA=
+X-Change-ID: 20241017-sar2130p-spmi-d2278f5f0df3
+To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1224;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=Lgjp5XVgoGmDiK8kT6aQvjeU/v0P5XtPbWZlzVPG8zM=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnEVPs/kGw4xf876K46k103X3WCo5k3dW2/gjGc
+ T1twNvwIUqJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxFT7AAKCRAU23LtvoBl
+ uL83D/9BEgpzq3RGhDVMJ234o8gk1mfK593gaybjFkNHpNa2ypUpImgWY0NxtXySQfk26VVZS/O
+ lhKvuxJ4UiAXBnyXP1u/Y/76gfTq4jXt4yVMNLBrGbe/LNBLkBvLXBuyNdTlYMcLvPXA4JYBpTv
+ pxvwZrIXVdlOlHQpz6bcn7o7q4CvhT17CILoeeHu2ia1RLWpgXINQFnwcLU7XLqO37fnyt9JtWU
+ RzXzECtBITz57S/PjB1VgswOHluaMciywdaoau9x6fM0vWOxZ7Us2t4GlmyRyMXLJHqbVwJacCE
+ oLbnMvS5MJraKnj0yRTksa8kw+Chnq8dh/OJV23o9Fpdqx4n1FnXjYTEm+C4pwd7mdr35FHtUqN
+ NpMojiMotcWJ0Nw84kxxmoR+q5BlvALDOZF4dNGIZO1QqSLraA9l0n7tYzz7OKgF4Aj3LnH3R6X
+ XP3ltuUoAgCZ6Iw4m/VbnhY35RPRCxw6F9axxlGkFGsiEnxcHCXCe4X5qUgudB1QOuwkmitAr02
+ 0u3uttF+Jo2uY4CiPhKH49tiMMjrkANw1PNk8zpLIzFh9MXVQgUU5Bq3OsymYAc9FDcvcov//ae
+ i0W5k8zo0SxdaRGVAoZi7EuKc929GiqNALw95hPUvxXRluHWuqCddyFAoiHc7Z+G4Zh51MmmvKf
+ fSTftX5n0l74Asg==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-It can be surprising to the user if DMA functions are only traced on
-success. On failure, it can be unclear what the source of the problem
-is. Fix this by tracing all functions even when they fail. Cases where
-we BUG/WARN are skipped, since those should be sufficiently noisy
-already.
+SAR2130P has SPMI v7 arbiter. Although it has only a single bus
+configuration, use the new bindings for v7 platforms.
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
+ .../devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml       | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
- include/trace/events/dma.h | 41 ++++++++++++++++++++++++++++++++++++++
- kernel/dma/mapping.c       | 27 +++++++++++++++++--------
- 2 files changed, 60 insertions(+), 8 deletions(-)
+diff --git a/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml b/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml
+index a28b70fb330a3a9831a24c0c5f5ab3251c184df2..7c3cc20a80d6cf8fe7c4614032cc4df6d8b54973 100644
+--- a/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml
++++ b/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml
+@@ -19,7 +19,11 @@ description: |
+ 
+ properties:
+   compatible:
+-    const: qcom,x1e80100-spmi-pmic-arb
++    oneOf:
++      - items:
++          - const: qcom,sar2130p-spmi-pmic-arb
++          - const: qcom,x1e80100-spmi-pmic-arb
++      - const: qcom,x1e80100-spmi-pmic-arb
+ 
+   reg:
+     items:
 
-diff --git a/include/trace/events/dma.h b/include/trace/events/dma.h
-index 9bc647f9ad4d..321cce327404 100644
---- a/include/trace/events/dma.h
-+++ b/include/trace/events/dma.h
-@@ -161,6 +161,12 @@ DEFINE_EVENT(_dma_alloc, dma_alloc_pages,
- 		 unsigned long attrs),
- 	TP_ARGS(dev, virt_addr, dma_addr, size, dir, flags, attrs));
- 
-+DEFINE_EVENT(_dma_alloc, dma_alloc_sgt_err,
-+	TP_PROTO(struct device *dev, void *virt_addr, dma_addr_t dma_addr,
-+		 size_t size, enum dma_data_direction dir, gfp_t flags,
-+		 unsigned long attrs),
-+	TP_ARGS(dev, virt_addr, dma_addr, size, dir, flags, attrs));
-+
- TRACE_EVENT(dma_alloc_sgt,
- 	TP_PROTO(struct device *dev, struct sg_table *sgt, size_t size,
- 		 enum dma_data_direction dir, gfp_t flags, unsigned long attrs),
-@@ -325,6 +331,41 @@ TRACE_EVENT(dma_map_sg,
- 		decode_dma_attrs(__entry->attrs))
- );
- 
-+TRACE_EVENT(dma_map_sg_err,
-+	TP_PROTO(struct device *dev, struct scatterlist *sgl, int nents,
-+		 int err, enum dma_data_direction dir, unsigned long attrs),
-+	TP_ARGS(dev, sgl, nents, err, dir, attrs),
-+
-+	TP_STRUCT__entry(
-+		__string(device, dev_name(dev))
-+		__dynamic_array(u64, phys_addrs, nents)
-+		__field(int, err)
-+		__field(enum dma_data_direction, dir)
-+		__field(unsigned long, attrs)
-+	),
-+
-+	TP_fast_assign(
-+		struct scatterlist *sg;
-+		int i;
-+
-+		__assign_str(device);
-+		for_each_sg(sgl, sg, nents, i)
-+			((u64 *)__get_dynamic_array(phys_addrs))[i] = sg_phys(sg);
-+		__entry->err = err;
-+		__entry->dir = dir;
-+		__entry->attrs = attrs;
-+	),
-+
-+	TP_printk("%s dir=%s dma_addrs=%s err=%d attrs=%s",
-+		__get_str(device),
-+		decode_dma_data_direction(__entry->dir),
-+		__print_array(__get_dynamic_array(phys_addrs),
-+			      __get_dynamic_array_len(phys_addrs) /
-+				sizeof(u64), sizeof(u64)),
-+		__entry->err,
-+		decode_dma_attrs(__entry->attrs))
-+);
-+
- TRACE_EVENT(dma_unmap_sg,
- 	TP_PROTO(struct device *dev, struct scatterlist *sgl, int nents,
- 		 enum dma_data_direction dir, unsigned long attrs),
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index b8a6bc492fae..636dbb0629a4 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -223,6 +223,7 @@ static int __dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
- 		debug_dma_map_sg(dev, sg, nents, ents, dir, attrs);
- 	} else if (WARN_ON_ONCE(ents != -EINVAL && ents != -ENOMEM &&
- 				ents != -EIO && ents != -EREMOTEIO)) {
-+		trace_dma_map_sg_err(dev, sg, nents, ents, dir, attrs);
- 		return -EIO;
- 	}
- 
-@@ -604,20 +605,26 @@ void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	if (WARN_ON_ONCE(flag & __GFP_COMP))
- 		return NULL;
- 
--	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
-+	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr)) {
-+		trace_dma_alloc(dev, cpu_addr, *dma_handle, size,
-+				DMA_BIDIRECTIONAL, flag, attrs);
- 		return cpu_addr;
-+	}
- 
- 	/* let the implementation decide on the zone to allocate from: */
- 	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
- 
--	if (dma_alloc_direct(dev, ops))
-+	if (dma_alloc_direct(dev, ops)) {
- 		cpu_addr = dma_direct_alloc(dev, size, dma_handle, flag, attrs);
--	else if (use_dma_iommu(dev))
-+	} else if (use_dma_iommu(dev)) {
- 		cpu_addr = iommu_dma_alloc(dev, size, dma_handle, flag, attrs);
--	else if (ops->alloc)
-+	} else if (ops->alloc) {
- 		cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
--	else
-+	} else {
-+		trace_dma_alloc(dev, NULL, 0, size, DMA_BIDIRECTIONAL, flag,
-+				attrs);
- 		return NULL;
-+	}
- 
- 	trace_dma_alloc(dev, cpu_addr, *dma_handle, size, DMA_BIDIRECTIONAL,
- 			flag, attrs);
-@@ -642,11 +649,11 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
- 	 */
- 	WARN_ON(irqs_disabled());
- 
--	if (!cpu_addr)
--		return;
--
- 	trace_dma_free(dev, cpu_addr, dma_handle, size, DMA_BIDIRECTIONAL,
- 		       attrs);
-+	if (!cpu_addr)
-+		return;
-+
- 	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
- 	if (dma_alloc_direct(dev, ops))
- 		dma_direct_free(dev, size, cpu_addr, dma_handle, attrs);
-@@ -688,6 +695,8 @@ struct page *dma_alloc_pages(struct device *dev, size_t size,
- 		trace_dma_alloc_pages(dev, page_to_virt(page), *dma_handle,
- 				      size, dir, gfp, 0);
- 		debug_dma_map_page(dev, page, 0, size, dir, *dma_handle, 0);
-+	} else {
-+		trace_dma_alloc_pages(dev, NULL, 0, size, dir, gfp, 0);
- 	}
- 	return page;
- }
-@@ -772,6 +781,8 @@ struct sg_table *dma_alloc_noncontiguous(struct device *dev, size_t size,
- 		sgt->nents = 1;
- 		trace_dma_alloc_sgt(dev, sgt, size, dir, gfp, attrs);
- 		debug_dma_map_sg(dev, sgt->sgl, sgt->orig_nents, 1, dir, attrs);
-+	} else {
-+		trace_dma_alloc_sgt_err(dev, NULL, 0, size, gfp, dir, attrs);
- 	}
- 	return sgt;
- }
+---
+base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
+change-id: 20241017-sar2130p-spmi-d2278f5f0df3
+
+Best regards,
 -- 
-2.35.1.1320.gc452695387.dirty
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
