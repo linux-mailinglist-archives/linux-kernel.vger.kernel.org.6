@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-369224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58ABD9A1A8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C75E9A1A93
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 08:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8B81C214B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913CD1F23B84
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 06:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4A417A5BD;
-	Thu, 17 Oct 2024 06:13:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036AE17C9F8;
+	Thu, 17 Oct 2024 06:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="h69ar9II"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B98C178CF6
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 06:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEBF17BEAE;
+	Thu, 17 Oct 2024 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729145612; cv=none; b=obhi3FsV6yxf1+qSyvXnTdbaLNnfIXSnln1X7cImx+mmWiDtzjrc1D6TBmUJqxiULTY6EBb+lPWmm4fQUSUdGNo5YpYMKgJZmNUTo9Fig5MfF+A8t3qV0GnkFTZ43AKclVXt4mVxOsG2yXF8HwdYyWNIQQ7sA2u1z3xLQbLXN6k=
+	t=1729145707; cv=none; b=oDGAsD4JrISIik1RdSpphtcx9RoB1iULYFMhhhygy4aDZPMLRfQoQMPznH8aOBjZKlsFc+8CgaXXTzPXnq7kpXU5BjexkwBFoQbE58ScoJTaawN05muRxqJWR1sWstNYkOTYWO9mN3m2IkYIWwMO1NMEYsCUuAtH1t3f6No4qOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729145612; c=relaxed/simple;
-	bh=bJKmjLwH9BvfxSNccXi/g5mAmMWF2AY3QT9/gKADG4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=euL+9JWJq8AAnMkboN/m1IFg6vU9GqyI2vo/M1W7WvQirGoPEbEZItCkglJ2nQpGgKzBF4bqV88tp7ehmOWunNyZmhkCPLsRe7GW+CKBFcGJdus7K5xPgUK8Z69eJGeVGijjs0+WMW9QT8X+zcuLs1L8I6A33vLW729fiouslpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1Jl5-0005WM-7A; Thu, 17 Oct 2024 08:13:15 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t1Jl3-002TsA-4b; Thu, 17 Oct 2024 08:13:13 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id C31A1354D07;
-	Thu, 17 Oct 2024 06:13:12 +0000 (UTC)
-Date: Thu, 17 Oct 2024 08:13:12 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, imx@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH net-next 07/13] net: fec: fec_probe(): update quirk:
- bring IRQs in correct order
-Message-ID: <20241017-ambitious-truthful-pegasus-8f1078-mkl@pengutronix.de>
-References: <20241016-fec-cleanups-v1-0-de783bd15e6a@pengutronix.de>
- <20241016-fec-cleanups-v1-7-de783bd15e6a@pengutronix.de>
- <ZxBzT2/SZFhgfPpW@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1729145707; c=relaxed/simple;
+	bh=QuwHsti+BEFxd1GuNg6SPmi9WOz/qDElc/ktA+gI/+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rxOq5qoAAHZkktVHQdNV27kqvmlCytftCDaABdLcNRcjgJPnr/6KUxUu7wAOkPWzgK5MRA8g0N8ABMGdwL0vHDfeXOyX9lpqnWZ5+7ZLzd5BXYFx32pbrxWn9Luq9O6PPouSfc3WbJYvrBy3N5NLumiiugIAdVxMUvJW5P9Tb9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=h69ar9II; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1729145626;
+	bh=hA4hUN+9KBWHFCEFczU3MeRYWfArLynwxZaFIvHd2oQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=h69ar9IICG9t9Gvoz4CEfc75c7ZodsKdkcnAN5eRkUopodeP4UkAHGFoDbI/4on4e
+	 Nhk5eM6ZfbVuD2ckWFBJGOOsqBPTAXGNBWsZJh1jk/sZ7aD3fXwQwiUEvhd+PidV0Q
+	 ki0u19djg63d1NvgcQ0Zx6mP33dbziKrm4YvMROw=
+X-QQ-mid: bizesmtpsz4t1729145617taeiv3x
+X-QQ-Originating-IP: uYtshKjOGBnpjT4JIwF/uJpPdH4CCOgdEKjvuAdhe+g=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 17 Oct 2024 14:13:35 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 12168614839949333599
+From: WangYuli <wangyuli@uniontech.com>
+To: maz@kernel.org,
+	oliver.upton@linux.dev,
+	james.morse@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	rdunlap@infradead.org,
+	sebott@redhat.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] KVM: arm64: vgic-its: Do not call vgic_put_irq() within vgic_its_inject_cached_translation()
+Date: Thu, 17 Oct 2024 14:13:34 +0800
+Message-ID: <FEBA39FEBDA1C9D7+20241017061334.222103-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2r46lw4nlvumw4s4"
-Content-Disposition: inline
-In-Reply-To: <ZxBzT2/SZFhgfPpW@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MW//binZVb2sL+UWdPGGY1m+g/fkq/LNgUPkGibMmgIYoLIB5nrMuIm7
+	8jYdBTUIYdBEALg1DA3D8jtrKgnpMm4QErFuFaEWBZckUJJio2y2+vySK+LrUs8uzZhMdRB
+	x5Jx1SPYxPKkuOIRi7Pa+CO3s/auRVymKcipQ7IkG+PPllxnSzkAJtvFYKy8GxUZGeUGYZp
+	XrsaR9JFV4zN8wB46fSUk+zSSXrW5XxFFFa/PsCjCqPnZ/660mNzrUbnQLv37mo/aDNr5An
+	U/3nk2nV/evPEHcbO6l7Enh10DTPTrQPQ+jsUHwY0+d/h5xUExECOM26WqrcGiShr7kzq8z
+	EDlrJcktNs+Ou8wSp655V2ITogZHcWE0M6oxpXPc9kGkdnZywl2i13gpj+4yEgA0Up/dgUm
+	mrjmSXQy8Vtkf29JmT3lLIHR0Pwq+w+FIsscBGbjir3tBySh1WBQaA6g3SDFa7V48VPVMQ/
+	uWmuPDbxkskOUGHPVHmOBrSuanI6+LB/QeTUpIcRrT0n7d24lj9GgYr2GTKTz4izhyCgvyF
+	IYx/6xyyBwDEzBiF0EvlZsyrH+wDet/jZr3awh/JkSFZgtifJ/9qDwxN9gy9+uNK2o0axF8
+	34tlhZqwaoSD7jXYt6glVH2vIu+/PMAXZTHBUdHdKPNd6i3oiXRLIBzs47bV+Dw52IhKVSt
+	eoWSZ/Lqg0JEwKxOEY6t8nNLQ8nd99IiFhQxLX0xvoALq/epavQS+bnudXgMGOvatS0oRcr
+	+S3nbjm6v739ZTMPw6KCPFcnN8rZakpbCcHSU0ink3hQDrRnN0k/UDaMEc+MVoNKmNKaSif
+	Wpk05KHtS7tTZxfGnYKiNcn1KrUHpsQcX9kUpKxl6XNZ9IMSIZgk+Tj2MBHJqUp0NnAKMgu
+	mbFjEU6Fe3Ka3kuXkHpKsSvHwWrThwc6tsKRy9hZfqPS53cvCMSM9J6PK9HTRdeX4Bu0B07
+	o+vNVBKLW7nbZpdaAnxmgLFZobArfxVnvYZfq3bb45VV0UY+u+tKVEQSijzA5G+q9RB1U21
+	D0nc7uXAOlYDY/ThPk
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
+There is a probability that the host machine will also restart
+when the virtual machine is restarting.
 
---2r46lw4nlvumw4s4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit ad362fe07fec ("KVM: arm64: vgic-its: Avoid potential UAF
+in LPI translation cache") released the reference count of an IRQ
+when it shouldn't have. This led to a situation where, when the
+system finally released the IRQ, it found that the structure had
+already been freed, triggering a
+'refcount_t: underflow; use-after-free' error.
 
-On 16.10.2024 22:15:43, Frank Li wrote:
-> On Wed, Oct 16, 2024 at 11:51:55PM +0200, Marc Kleine-Budde wrote:
-> > With i.MX8MQ and compatible SoCs, the order of the IRQs in the device
-> > tree is not optimal. The driver expects the first three IRQs to match
-> > their corresponding queue, while the last (fourth) IRQ is used for the
-> > PPS:
-> >
-> > - 1st IRQ: "int0": queue0 + other IRQs
-> > - 2nd IRQ: "int1": queue1
-> > - 3rd IRQ: "int2": queue2
-> > - 4th IRQ: "pps": pps
-> >
-> > However, the i.MX8MQ and compatible SoCs do not use the
-> > "interrupt-names" property and specify the IRQs in the wrong order:
-> >
-> > - 1st IRQ: queue1
-> > - 2nd IRQ: queue2
-> > - 3rd IRQ: queue0 + other IRQs
-> > - 4th IRQ: pps
->=20
-> why not fix dts?
+In fact, the function "vgic_put_irq" should be called by
+"vgic_its_inject_cached_translation" instead of
+"vgic_its_trigger_msi".
 
-Because of compatibility. You could update the fec driver and try to
-detect if the IRQs in the DTS are in the "correct" order, but the new
-DTS will be incompatible with the old driver.
+Call trace:
+  its_free_ite+0x90/0xa0
+  vgic_its_free_device+0x3c/0xa0
+  vgic_its_destroy+0x4c/0xb8
+  kvm_put_kvm+0x214/0x358
+  kvm_vcpu_release+0x24/0x38
+  __fput+0x84/0x278
+  ____fput+0x20/0x30
+  task_work_run+0xcc/0x190
+  do_exit+0x36c/0xa88
+  do_group_exit+0x4c/0xb8
+  __arm64_sys_exit_group+0x24/0x28
+  invoke_syscall+0x54/0x120
+  el0_svc_common.constprop.4+0x16c/0x1f0
+  do_el0_svc+0x34/0xb0
+  el0_svc+0x1c/0x28
+  el0_sync_handler+0x8c/0xb0
+  el0_sync+0x148/0x180
 
-I'm working on a patch series that updates the fec driver to "per queue
-IRQ and NAPI" handling. For this approach it's crucial that the IRQs
-match the queue number.
+Fixes: ad362fe07fec ("KVM: arm64: vgic-its: Avoid potential UAF in LPI translation cache")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wenyao Hai <haiwenyao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/arm64/kvm/vgic/vgic-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-Marc
+diff --git a/arch/arm64/kvm/vgic/vgic-its.c b/arch/arm64/kvm/vgic/vgic-its.c
+index ba945ba78cc7..fb5f57cbab42 100644
+--- a/arch/arm64/kvm/vgic/vgic-its.c
++++ b/arch/arm64/kvm/vgic/vgic-its.c
+@@ -679,6 +679,7 @@ static int vgic_its_trigger_msi(struct kvm *kvm, struct vgic_its *its,
+ 	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+ 	irq->pending_latch = true;
+ 	vgic_queue_irq_unlock(kvm, irq, flags);
++	vgic_put_irq(kvm, irq);
+ 
+ 	return 0;
+ }
+@@ -697,7 +698,6 @@ int vgic_its_inject_cached_translation(struct kvm *kvm, struct kvm_msi *msi)
+ 	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+ 	irq->pending_latch = true;
+ 	vgic_queue_irq_unlock(kvm, irq, flags);
+-	vgic_put_irq(kvm, irq);
+ 
+ 	return 0;
+ }
+-- 
+2.45.2
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---2r46lw4nlvumw4s4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcQqvUACgkQKDiiPnot
-vG/FCgf+NP/8LkAHc+Nfss/bVYAT8KoQgWzYCPN8uEae0UzcD16U3VfZMyUL9uz5
-HNyeWG9F3p0ZZlP0pTGtOH983B8dF7u9Qdto1sW2wtz829MekSmZ/mx7YKvTbufu
-9E7nztKVHzNoeEskHBuf9XO8xJ1VICvBM3idGnjkGWfWGZBL0kODkvGi21PFgvxE
-29RUnJ1XZFkQ2zAsEBoWBKq/qLuUsTB2EknxUkD6LY6c8dX0vdq4YhlV5FhI2llt
-nQiYuCnU8RIzyi+z9Lhd82UUsNtwissO3n3IdtvyhKQzpA2XBYOPCjBmEyMXKFzr
-uz+6oikrCX6775/ofot97615bfc01g==
-=Pxnm
------END PGP SIGNATURE-----
-
---2r46lw4nlvumw4s4--
 
