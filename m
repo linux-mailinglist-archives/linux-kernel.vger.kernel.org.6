@@ -1,129 +1,195 @@
-Return-Path: <linux-kernel+bounces-370421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CA09A2C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:27:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73ACC9A2C2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717481F21FAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A53F51C21B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1968E1E0B63;
-	Thu, 17 Oct 2024 18:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TKXSEj/A"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB9B1E0B87;
+	Thu, 17 Oct 2024 18:28:59 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86A71E00A3
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 18:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709D41E0090;
+	Thu, 17 Oct 2024 18:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729189637; cv=none; b=OmqOWU3Em98Rb5XKuVkVwm73EROzGKavFntG3CSWJN6RpqzI9D/XXrCqxOGhJAy4R/4VgQ2JcYwoa0Nv2eP+pKApf4jAAaJv0XK2AbgSGaVRbavsNvng0YkR+lox+ooBve60teWz9PEYGwTI6U/zLuGhV8XYeOH8t1Ej+M9RLY8=
+	t=1729189738; cv=none; b=HyR4ZRJypbc8RJcxTEILz/h6xtcs8u7i+8r54R6hpwkf2/wSJ2DKeMQNiNu8mJUBX69yztm8aI1SJoQTbUBOf45KELktkUu7FMuW4H/MU09VDokwOArnO2u5KTqB+rW11hOYHbSMejCrhZ6g1i4rVxZYWmoxdMX5w5EQDA6OGDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729189637; c=relaxed/simple;
-	bh=hb7ga30lPrrAOxRByClB2ldtT2Wkqy4TGWkBSn5WR44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a0mZfM+tgvWklIxYNzOC5R2Gs57XCgTBWk7Xfi1QwR+kgYdHRRh62IJmVU/AXhqEnXuvxNbrwCzPpTHovTY+7muAEi+ApX6WehzlW/J62Rd/LJ4hWoATBk3WAfMAAOCt10T4X9W0PNSkFrmtlhYmWa2dAYbIWXYlDlaJOPApPFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TKXSEj/A; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e0d9b70455so1016939a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 11:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729189632; x=1729794432; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lcOVFkyx88H+mC/bq0EZCpI9upDma/Jw5+qbBpyx8bU=;
-        b=TKXSEj/AGcWIlhUScc08S5qFpo6/K2wBUA5pdwy5nNWUDvGvQgC0hszIm3b0naSEMq
-         0/UY2YN6QiUhtxHsMY1C5Nau048X/haOzMHyWNiPJNDoz3r5XmsFRVDpM06n2bDwm5VT
-         c87F3+aDqYBLfwblLzlZofEHgMUUyzFPJyKLISTRXjrg5Gn1v5+UAM756MK7FN7qQOGK
-         HPbnLFIsPFyW3HrqCldgEWp40fMVBPNtALnqWRPNMKT+HHlNl1APc76YwJ5PYTEI1I+k
-         u+spmr5jhSc6dZPHufP1b0nFia+X2NS3M6ooC8DHQw1yrpY08hi+JaK4ZZlo8v/QWRev
-         NwVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729189632; x=1729794432;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lcOVFkyx88H+mC/bq0EZCpI9upDma/Jw5+qbBpyx8bU=;
-        b=cMpndbGOouL9uVn9ezj5hrg7/b6DPoB6ic0KEc9fRYMKkcxF/3O7CvDQkEzotbgAB5
-         3mpDdIql9DQLxGkc5fEahwEqShEjXzOkfH0m0yk7XQrSOPEt7sK+WKwQVaIIe+I/aEQy
-         CFKtotPCzSBiZTjIVFyA3kMIxKlLyaZNcKvzd0ymLD5XMsafpxs2ufv+pAvCKoXbpG49
-         222XZKGJL5siqtp4chCvejZuh6q1pYlcveADbF0vIVJGHHqKNZyY/1F1lgruTjowb72U
-         rImZRwpUNPjR/QsfqjWZY4DWLrnInp3zQ+AhVWn495IxgpUCuYb27d40uK/FnG3Ov0XO
-         UHTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEw6EgQ+UKlDzJh+i6ZNUsxeNRpjJb2DyWms3WJQ7GNMoxrylKy2wSTOk2i3mJjZBoUFbsyveg/O1l1I0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzviv/qfz6Btfi7HFOlH5Px5XEC5CjmJobeaprMqMrCH8jdnH4Y
-	WmR7I8XVufSBP7EJAoURGjHtRnjvM5l/MJLrANwQvntyIZxfdUXlWdL4J2BHl8DT0qP2bFmLaqx
-	+mDyWvLAR6/cRUaRGO+bQGFFg2Y4UHKnVqljbUQ==
-X-Google-Smtp-Source: AGHT+IHq42uS45Aa2zsUDZ2QLKAl8iW2NZgItryZE9nh9Tm5rzwutObVfbkmZNaI/67kuCJcXJFjr+dtin3hgfaxKyk=
-X-Received: by 2002:a17:90b:1241:b0:2e2:857e:fcfb with SMTP id
- 98e67ed59e1d1-2e2f0b09d89mr24643105a91.19.1729189632162; Thu, 17 Oct 2024
- 11:27:12 -0700 (PDT)
+	s=arc-20240116; t=1729189738; c=relaxed/simple;
+	bh=uuaudKX2orE9wyDF+rH3EySw0ewulqXBQVobjQsJkU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDO7lkfLQ1zjTYNI52qPASOui7ahJ6TvrBMLBlX+9r4TY3VeNCQVIdXRbe35vS4RCKhsW6029B2BBQLab1/VT8XP/s5BkTcdN7Q+n3FU4Mfsze04Gb2kV+7csR+hdGkN3D/VopyYNHL7Q2rBwR+9wz8f5YJZwyUSy9wS8Jw5d2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1t1VEp-00079c-Jr; Thu, 17 Oct 2024 20:28:43 +0200
+Date: Thu, 17 Oct 2024 20:28:43 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Stefan Wiehler <stefan.wiehler@nokia.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v6 07/10] ip6mr: Lock RCU before ip6mr_get_table()
+ call in ip6_mroute_setsockopt()
+Message-ID: <20241017182843.GD25857@breakpoint.cc>
+References: <20241017174109.85717-1-stefan.wiehler@nokia.com>
+ <20241017174109.85717-8-stefan.wiehler@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017130701.3301785-1-quic_kriskura@quicinc.com> <20241017130701.3301785-6-quic_kriskura@quicinc.com>
-In-Reply-To: <20241017130701.3301785-6-quic_kriskura@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 17 Oct 2024 21:27:00 +0300
-Message-ID: <CAA8EJprcOU6qeJvHH+MVoPnQ+mGcos=pDOVBSeSUfBGw-KR6tA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] phy: qcom: qmp-usbc: Add qmp configuration for QCS615
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
-	Wesley Cheng <quic_wcheng@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-phy@lists.infradead.org, 
-	quic_ppratap@quicinc.com, quic_jackp@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017174109.85717-8-stefan.wiehler@nokia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, 17 Oct 2024 at 16:07, Krishna Kurapati
-<quic_kriskura@quicinc.com> wrote:
->
-> Provide PHY configuration for the USB QMP PHY for QCS615 Platform.
->
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-After checking platform details,
-
-Unreviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Please perform global s/QCS615/SM6150/ and s/qcs615/sm6150/
-
+Stefan Wiehler <stefan.wiehler@nokia.com> wrote:
+> When IPV6_MROUTE_MULTIPLE_TABLES is enabled, multicast routing tables
+> must be read under RCU or RTNL lock.
+> 
+> Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
+> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
-> index d4fa1063ea61..c56ba8468538 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
-> @@ -1123,6 +1123,9 @@ static const struct of_device_id qmp_usbc_of_match_table[] = {
->         }, {
->                 .compatible = "qcom,qcm2290-qmp-usb3-phy",
->                 .data = &qcm2290_usb3phy_cfg,
-> +       }, {
-> +               .compatible = "qcom,qcs615-qmp-usb3-phy",
-> +               .data = &qcm2290_usb3phy_cfg,
->         }, {
->                 .compatible = "qcom,sdm660-qmp-usb3-phy",
->                 .data = &sdm660_usb3phy_cfg,
-> --
-> 2.34.1
->
+>  net/ipv6/ip6mr.c | 165 +++++++++++++++++++++++++++--------------------
+>  1 file changed, 95 insertions(+), 70 deletions(-)
+> 
+> diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
+> index 90d0f09cdd4e..4726b9e156c7 100644
+> --- a/net/ipv6/ip6mr.c
+> +++ b/net/ipv6/ip6mr.c
+> @@ -1667,7 +1667,7 @@ EXPORT_SYMBOL(mroute6_is_socket);
+>  int ip6_mroute_setsockopt(struct sock *sk, int optname, sockptr_t optval,
+>  			  unsigned int optlen)
+>  {
+> -	int ret, parent = 0;
+> +	int ret, flags, v, parent = 0;
+>  	struct mif6ctl vif;
+>  	struct mf6cctl mfc;
+>  	mifi_t mifi;
+> @@ -1678,48 +1678,103 @@ int ip6_mroute_setsockopt(struct sock *sk, int optname, sockptr_t optval,
+>  	    inet_sk(sk)->inet_num != IPPROTO_ICMPV6)
+>  		return -EOPNOTSUPP;
+>  
+> +	switch (optname) {
+> +	case MRT6_ADD_MIF:
+> +		if (optlen < sizeof(vif))
+> +			return -EINVAL;
+> +		if (copy_from_sockptr(&vif, optval, sizeof(vif)))
+> +			return -EFAULT;
+> +		break;
+> +
+> +	case MRT6_DEL_MIF:
+> +		if (optlen < sizeof(mifi_t))
+> +			return -EINVAL;
+> +		if (copy_from_sockptr(&mifi, optval, sizeof(mifi_t)))
+> +			return -EFAULT;
+> +		break;
+> +
+> +	case MRT6_ADD_MFC:
+> +	case MRT6_DEL_MFC:
+> +	case MRT6_ADD_MFC_PROXY:
+> +	case MRT6_DEL_MFC_PROXY:
+> +		if (optlen < sizeof(mfc))
+> +			return -EINVAL;
+> +		if (copy_from_sockptr(&mfc, optval, sizeof(mfc)))
+> +			return -EFAULT;
+> +		break;
+> +
+> +	case MRT6_FLUSH:
+> +		if (optlen != sizeof(flags))
+> +			return -EINVAL;
+> +		if (copy_from_sockptr(&flags, optval, sizeof(flags)))
+> +			return -EFAULT;
+> +		break;
+> +
+> +	case MRT6_ASSERT:
+> +#ifdef CONFIG_IPV6_PIMSM_V2
+> +	case MRT6_PIM:
+> +#endif
+> +#ifdef CONFIG_IPV6_MROUTE_MULTIPLE_TABLES
+> +	case MRT6_TABLE:
+> +#endif
+> +		if (optlen != sizeof(v))
+> +			return -EINVAL;
+> +		if (copy_from_sockptr(&v, optval, sizeof(v)))
+> +			return -EFAULT;
+> +		break;
+> +	/*
+> +	 *	Spurious command, or MRT6_VERSION which you cannot
+> +	 *	set.
+> +	 */
+> +	default:
+> +		return -ENOPROTOOPT;
+> +	}
+> +
+> +	rcu_read_lock();
 
+RCU read section start ...
 
--- 
-With best wishes
-Dmitry
+>  	mrt = ip6mr_get_table(net, raw6_sk(sk)->ip6mr_table ? : RT6_TABLE_DFLT);
+> +	if (!mrt) {
+> +		ret = -ENOENT;
+> +		goto out;
+> +	}
+>  
+>  	if (optname != MRT6_INIT) {
+>  		if (sk != rcu_access_pointer(mrt->mroute_sk) &&
+> -		    !ns_capable(net->user_ns, CAP_NET_ADMIN))
+> -			return -EACCES;
+> +		    !ns_capable(net->user_ns, CAP_NET_ADMIN)) {
+> +			ret = -EACCES;
+> +			goto out;
+> +		}
+>  	}
+>  
+>  	switch (optname) {
+>  	case MRT6_INIT:
+> -		if (optlen < sizeof(int))
+> -			return -EINVAL;
+> +		if (optlen < sizeof(int)) {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+>  
+> -		return ip6mr_sk_init(mrt, sk);
+> +		ret = ip6mr_sk_init(mrt, sk);
+
+ip6mr_sk_init() calls rtnl_lock(), which can sleep.
+
+> +		goto out;
+>  
+>  	case MRT6_DONE:
+> -		return ip6mr_sk_done(sk);
+> +		ret = ip6mr_sk_done(sk);
+
+Likewise.
+
+>  	case MRT6_ADD_MIF:
+> -		if (optlen < sizeof(vif))
+> -			return -EINVAL;
+> -		if (copy_from_sockptr(&vif, optval, sizeof(vif)))
+> -			return -EFAULT;
+> -		if (vif.mif6c_mifi >= MAXMIFS)
+> -			return -ENFILE;
+> +		if (vif.mif6c_mifi >= MAXMIFS) {
+> +			ret = -ENFILE;
+> +			goto out;
+> +		}
+>  		rtnl_lock();
+
+Same, sleeping function called in rcu read side section.
+
+Maybe its time to add refcount_t to struct mr_table?
 
