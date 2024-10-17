@@ -1,158 +1,132 @@
-Return-Path: <linux-kernel+bounces-370455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31449A2CC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:56:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F63B9A2CD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 20:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABD11F22F76
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446152835FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 18:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A0B219CBC;
-	Thu, 17 Oct 2024 18:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B490219C8B;
+	Thu, 17 Oct 2024 18:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3x5x+Ap"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3owkIRg"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EA9219CA7;
-	Thu, 17 Oct 2024 18:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE351DF754;
+	Thu, 17 Oct 2024 18:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729191355; cv=none; b=sxNwb2F0bb2C16y3aeIA6muS1MpH2ZqS5jdrEIBIl1q8raP/N+i2jJG4Omc95BRElwJOevqD4H0TgjcdHyf4K1MeE5q67vfPb6WTjBKeje16Vd5O15waO6/hIElVcdwSIiO4uyoPnCMjcTb2hekAuH7C0R12dOm7NBjyZzlrcvg=
+	t=1729191405; cv=none; b=K0tNcpKUEw3amDP9YEMHJq6rH91/fI30KfWgbRrvYV5lh57KLwBinwAH0awF17yspquajUxY4PXDXbQryffULQ1TRxLWkDEKAjOUUpQyLnLhQH7xawlriuPxiKTkyJRDCCV4GrL7wJQFpumofUHnbx3Od+omhuNei0azqdnl8/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729191355; c=relaxed/simple;
-	bh=X7HCFoaUk82oqckdGpNK/01aR61kZ+YTuBrRRtP5v14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqPdVtwU6dbIQldSq66S1N0D9W6/wxD/P3q0BdWTUUPHhQGwOfGr0xaLuDtqxXZzb/kaEM7t+KT9VOYIMM5bc9A4EHJZUQffttwQuQUlCxPv0vj+nVj5qnZpqS2nIe+u1nQSr3q/alczkrQqlodXfjbIYfcoyxWnXMezNTVTHIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3x5x+Ap; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBC9C4CEC3;
-	Thu, 17 Oct 2024 18:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729191355;
-	bh=X7HCFoaUk82oqckdGpNK/01aR61kZ+YTuBrRRtP5v14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h3x5x+Apad7J+kdq6cENxZgJPqTl3MDck0PCFp28aU7XIzU00m6PjEq6goo6rlJlL
-	 +6X8P0WD2yvcKbw3oQfdjv+EyzEJhQ0UnjpwFERy4DSWqe8n49pIZoM5CKxAhu3uyy
-	 vXxK04LGjo9sckN9h34nVWVZdPWUrCrCOBAm2LrCJG1Hul/jM+DRu0BZ77m4H/YdqR
-	 8+K1CH//dpJRFqXrvFdDhZ17Oe+RfobYjFPBkMdgIoit7denq9ppBb57cYTs9Zm8o5
-	 pqk4M+im90JInBnpRHlMs6nrSM8poLnRavbxBXVJkkKz4/m5MCDUy4LzGh3TUQakz0
-	 9je/c+/3DqTlg==
-Date: Thu, 17 Oct 2024 11:55:52 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Jan Hendrik Farr <kernel@jfarr.cc>, Bill Wendling <morbo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, ojeda@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <20241017185552.GA2263054@thelio-3990X>
-References: <Zv61dCaxScXuOjZg@archlinux>
- <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux>
- <202410040958.C19D3B9E48@keescook>
- <ZwNb-_UPL9BPSg9N@archlinux>
- <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
- <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
- <ZxB-uh1KzfD4ww2a@archlinux>
- <20241017165522.GA370674@thelio-3990X>
- <CANiq72=cUS4GRzuU0WAWn9owttU-L4UpV1Dip6QjUdudCoT8VA@mail.gmail.com>
+	s=arc-20240116; t=1729191405; c=relaxed/simple;
+	bh=1jWi19cLw/O33YUTHG2Apv87raGY8kQsXoFmbI0GCSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eHFZ2xgmU0xxkqke0VnKTOi3NJuGZa5WkbFjPNQL7by3yhPUbgY5CB3/ZY8tYryOBV+vJ94YeueBWActh57ygfhE3vwdcIfb7tiC8oc5JO74zVVI+uCAf8syfBPFvSCRQ17RgBMQ2dQIAP5PLYaq9DlcRwrkJHf8JU7r33o1Z3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J3owkIRg; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbca51687so14394475ad.1;
+        Thu, 17 Oct 2024 11:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729191404; x=1729796204; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ZGaeyV9U4r0R6f6UfyYJ79PA19GqkLIm1iDSxXpf74=;
+        b=J3owkIRgcjdwtjjnV2qGIvhHFcWHcxQuTI1gPLdeKlKUaHrdl9IBW1P9211dF1E44W
+         Ncy/OGO9gbOn9SLXKBZwf3kMlnaKFReiPl70fgbwg5Upyw+vDOWxWRJsGvOHQM7utPBy
+         lBg1pynJgFD8rHOLGG5RCeuxE5pnfTxDombOt1jQPR0/ywXxBjZ+8JSaaKonH2siFlfU
+         wHM6gaNPn6+qVOVJcOvX8mufvKl8Vy11U177/SMrSWO4QXeQLlPYRiv+iZtuWyi1HK40
+         L0Zu8higQgejvqv7H7h1zpFVaN29FZST0oMrdZ6ppFEncTaNyI9rbE2W/Qu1bVuGektt
+         N8UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729191404; x=1729796204;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ZGaeyV9U4r0R6f6UfyYJ79PA19GqkLIm1iDSxXpf74=;
+        b=qc0qrYJoqtBwOksWMGWFgyVAOwUqEJ7xmCWLUMh8PdbNwPbx/3NSDaAbyYBHWR3dMZ
+         RS8ySRiywBN4jRlQQvH0cy0HOj2E9FaYMKaIANu3au0ZB8PHWcBsIaIY48HbIh6v/CTQ
+         aLJRymGXtP0itlzgQ6gS5+KepeaTc1T4oOvt116Ez0jK4O4gRkAvcxi2ijhBRRwwceGz
+         CmJDE6sbozerIyzPN/iPOxpyaZla8R8+5diwbwFQRUkDerBY4alpXtGthkeubSPv+yvt
+         T17AQQQhzSlxag19lsB6pu04qY863Xvvi19MXKQMZqu+E6d0plsgpy/KU11pnWDrI3lR
+         /zHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeoGjxoGgYBqtN5tMD6MxCOzoDLRMrau/ll/j8Bmk3+n69GImG7b/ABI4hgqBv4D9OTikgyzws@vger.kernel.org, AJvYcCXe/zEwasU8GlgpfMvik7RT/Ha1Jm/RML0nLBJ0p8vr9ePiZXVEVR7j2Vjl93p1jVJXc1FQI+KbQdp3Mzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCavXfx6HQNG8iaUknC0iaOkpnHOCkLjdB1bObS/pNApZ/v20o
+	7ADokNgrChKldPtzlItCJoqeukbWK+NgX8yjd/hy/owYYmu9RkTD
+X-Google-Smtp-Source: AGHT+IEN8L3F+2UOnnf6YIXnuEGWgGPfecKEnJlHK6uTQIVyKYblzyxlvKNGAeKYZY3Du56J3b42Qw==
+X-Received: by 2002:a17:903:2283:b0:20c:92ce:359d with SMTP id d9443c01a7336-20cbb2845b9mr353494695ad.45.1729191403573;
+        Thu, 17 Oct 2024 11:56:43 -0700 (PDT)
+Received: from ubuntu.worldlink.com.np ([27.34.65.170])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20d1806b5ebsm47546335ad.293.2024.10.17.11.56.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 11:56:43 -0700 (PDT)
+From: Dipendra Khadka <kdipendra88@gmail.com>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.cocdm>
+Cc: Dipendra Khadka <kdipendra88@gmail.com>,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/6] octeontx2-pf: handle otx2_mbox_get_rsp errors in otx2_common.c
+Date: Thu, 17 Oct 2024 18:56:33 +0000
+Message-ID: <20241017185636.32583-1-kdipendra88@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241017185116.32491-1-kdipendra88@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=cUS4GRzuU0WAWn9owttU-L4UpV1Dip6QjUdudCoT8VA@mail.gmail.com>
 
-Hi Miguel,
+Add error pointer check after calling otx2_mbox_get_rsp().
 
-On Thu, Oct 17, 2024 at 07:39:43PM +0200, Miguel Ojeda wrote:
-> On Thu, Oct 17, 2024 at 6:55 PM Nathan Chancellor <nathan@kernel.org> wrote:
-> >
-> > Should this include a Fixes tag to give the stable folks a hint about
-> > how far back this should go? Maybe
-> >
-> > Fixes: c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and identifier expansion")
-> 
-> Yeah, I am not sure -- it does not really fix that commit, but if it
-> helps the stable team...
+Fixes: ab58a416c93f ("octeontx2-pf: cn10k: Get max mtu supported from admin function")
+Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+---
+v4:
+ - Sent for patch version consistency.
+v3:https://lore.kernel.org/all/20241006164018.1820-1-kdipendra88@gmail.com/
+ - Included in the patch set
+ - Changed the patch subject
+v2: https://lore.kernel.org/all/20240923161738.4988-1-kdipendra88@gmail.com/
+ - Added Fixes: tag.
+ - Changed the return logic to follow the existing return path.
+v1: https://lore.kernel.org/all/20240923110633.3782-1-kdipendra88@gmail.com/
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-The most "correct" Fixes tag would appear to be the one that first
-introduced __counted_by itself (dd06e72e68bc) but __counted_by can never
-be used at that original change because the test used __element_count__
-as the attribute name, which never shipped in any compiler. So I would
-argue that this change really does fix c8248faf3ca2 because that is the
-point in time that needs this fix.
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index 87d5776e3b88..7510a918d942 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -1837,6 +1837,10 @@ u16 otx2_get_max_mtu(struct otx2_nic *pfvf)
+ 	if (!rc) {
+ 		rsp = (struct nix_hw_info *)
+ 		       otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
++		if (IS_ERR(rsp)) {
++			rc = PTR_ERR(rsp);
++			goto out;
++		}
+ 
+ 		/* HW counts VLAN insertion bytes (8 for double tag)
+ 		 * irrespective of whether SQE is requesting to insert VLAN
+-- 
+2.43.0
 
-> > compiler_attributes.h is intended to be free from compiler and version
-> > checks, so adding a version check means that __counted_by() needs to be
-> 
-> Yeah, ideally we should avoid that since the goal was to have a file
-> with the straightforward ones.
-> 
-> Though if we do go for `CC_HAS_*`, I guess it would be simple enough
-> too, i.e. similar to `has_attribute` (but on our side), but it also
-> loses the simplicity of knowing those do not have arbitrarily complex
-> conditions which `CC_HAS_*` could hide.
-
-Yeah, I think the way compiler_attributes.h has operated so far with
-regards to tests and such is working fine so far, no real need to switch
-things up yet.
-
-> > moved into compiler_types.h. This might be a good opportunity to
-> > introduce something like CC_HAS_COUNTED_BY in Kconfig, so that we can
-> > keep the checks unified (since there are already multiple places that
-> > want to know about __counted_by support for the sake of testing) and
-> > adjust versions like this easily in the future if something else comes
-> > up, especially since __counted_by() is not available in a released GCC
-> > version yet.
-> 
-> Sounds good to me (even if we did the unification somewhere else).
-> Using `CLANG_VERSION` looks better too.
-> 
-> > +config CC_HAS_COUNTED_BY
-> > +       def_bool $(success,echo 'struct flex { int count; int array[] __attribute__((__counted_by__(count))); };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
-> 
-> I am probably missing some context, but what is the reason for the
-> build test? i.e. is there a reason we cannot test the GCC version too?
-
-The only reason I generally do build tests plus compiler version checks
-is due to certain vendor versions of clang, such as Android, which may
-hijack the patch version and appear newer than they actually are.
-However, now that I think about it, LLVM moving to GCC's minor
-versioning scheme of 0 for the development / main branch and 1+ for
-released versions should avoid that issue, so it isn't strictly
-necessary for that reason. However...
-
-> If the reason it is that it is not released, should we change it
-> later?
-
-This is a good point, as technically to allow use of __counted_by with
-GCC with a version check, it would need to be 150000, which would
-potentially break GCC versions between the 15 version bump and landing
-__counted_by support without the feature check. We could also just do
-150100 to be simple about it but I am not sure that is worth doing,
-since I believe it is important that we support using __counted_by with
-prerelease GCC. We want to make sure that this attribute gets decent
-testing coverage while in development.
-
-We could ship this with a comment to simplify the check when GCC 15.1.0
-is released, since this is a feature very unlikely to be backported to
-earlier GCC releases?
-
-Cheers,
-Nathan
-
-
-I guess since we have a hard version check for clang, we might as well
-have one for GCC as well.
 
