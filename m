@@ -1,247 +1,253 @@
-Return-Path: <linux-kernel+bounces-370516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-370515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA109A2DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BD19A2DE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 21:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C68B283591
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E512283322
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 19:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965AB227B84;
-	Thu, 17 Oct 2024 19:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D556D1FCC46;
+	Thu, 17 Oct 2024 19:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LAhgoegm";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VfjdYFy4"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="EiLiqXY9"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884621E00A7;
-	Thu, 17 Oct 2024 19:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729193733; cv=fail; b=mWEtV4oPu1qKtrfCBtMHl/D6ge7x4MiMGgLBBhkUxxgzgJ9zkXEYS0SPXbxRXpV9GU2RDg3Rlo2Z+aSG+ehWF2D9h0yzQr3/CnmQbUEk/uiy/xiwRkdIT93jDCW9jkYIHRLM/deBuGMhAH1aFbWFqGxtBfRpzPxfKAXt4gNtz0w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729193733; c=relaxed/simple;
-	bh=RPFn4J2gVdhqY9nF9gEKRrMSUbTLWmuN6D+nLCRmAfQ=;
-	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
-	 Content-Type:MIME-Version; b=Rd1iJo2FOcEGck7lJrFN1JeVVdwcMbx/iHkg3OcZ1p0CvkC9vrokTPqgKzA/cPMDLQWwpXhVzlB5285OSUTbXoqFqJLKLFScblEBLBPL/01npc60nEGSPV1tlOUxfA/4EF6E6qTf/Lt18o44Zco21h9pSfGlC62bppSRaUFpPa0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LAhgoegm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VfjdYFy4; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49HFBnhj019227;
-	Thu, 17 Oct 2024 19:34:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=RPFn4J2gVdhqY9nF9g
-	EKRrMSUbTLWmuN6D+nLCRmAfQ=; b=LAhgoegm7SkC+QPvWhuYpG4H1omgFd+HDR
-	n7RgWBKudOSMoS54jI9hbCigbcpxAZgQ/NaUFdP02k+p76RgPv/XfiqEILbKTXk3
-	SRXeh7hX9SYjZDt2r8N+jL1DhBmPBfFfnChKnFBH6hWuHCUXvPgYGoiCZXG66OAo
-	6Q2Jn0BjgqaEfz5V7+aGqyfzFJb1Zup/ethXm+hd4L7Zwshp+R6AyfI2DlB9edT7
-	gwq0ny3g/x7qkIOst/Q8ryCTJ9PbzeBf7P/J8NbOXbIenTGoMR6z17QxH6uwTyh7
-	16myXKaN4xPFz2e8BEbfaYM1OH2RbpBRjTypQ7Cf26Jl4unscKTw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 427h5cqnn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 19:34:34 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49HJC2qe014817;
-	Thu, 17 Oct 2024 19:34:33 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2040.outbound.protection.outlook.com [104.47.55.40])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 427fjapbr7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 17 Oct 2024 19:34:33 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j/bB0SYkW7n3XlN28+W0/5BUAuoBSfLuyL/g327fxwQQx0b2XDEHRmX5QeI//onOQwY22sZWIdA3FqsMp4yDrzixpfty0slibjxUuGIepE06oABVjqKsPvF9cfUBTXg75ZBsT962TFxq0ncfDeCl9XX2F7cLmSxVbZy/es5eR2dUuTW0AlfSJvBXgUUU1N2dzE8WdR4V8jDLl9fuQE4gj2N0fRCYYG6s5Yil6Cllruxa6qS6Jq47iUSyAfc54L4nDYsoxc8iXl9Z/NH2EBRolFszh9qo+QJpmm/2nb9yfoYABDHP4yjZHb1EqypAxnTM0aFiDYoaXbulcPdSCiXg/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RPFn4J2gVdhqY9nF9gEKRrMSUbTLWmuN6D+nLCRmAfQ=;
- b=eeMtLz+pHH8nvKSXel2Dk5i7sx4uN69Tg79RRbicRZZZpkZSS78EUWlsoQ7rPQtKPNIdDRL5xbspGr1E4X7wq/GrFh5+ZQCE6H1paltFigD8nWBpaWfKDHPVRaq6CJ1aIGbkV02Jz/dYj4X7JsT7x/ZGe6KYhh9w+535T2vpYcnfGTq1uNm0YNXqkrsLSF3AgK1B93/a4KetN5Fy5Q8IpFtlmUNZI7idl7fbio4ahHouSl+ynsNwjiLi1GoYVeaezYOq8MTYqVPkMJeZNt+B/83WoDjFX6KwW+YWXJ750h5SVVaSZoeP2Y29iL0lJ+5ZwBHhFCL+3ISOakHBxSWjDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RPFn4J2gVdhqY9nF9gEKRrMSUbTLWmuN6D+nLCRmAfQ=;
- b=VfjdYFy4EwjFymVeLhsg4d/LrjvKZa3fQPxB0rF7aI37vbIexibnE2SisLn4uYApBL87thXGQoSFFTwP0uIjC1Zlt4anl4fO6/ciky4DB1YB74auTR5pGBrykNk3355WfL1kDPN73BTkxeimvEtn4mzL6KK7K6uIBeFXE0+HH3Y=
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by DS0PR10MB7126.namprd10.prod.outlook.com (2603:10b6:8:dc::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.18; Thu, 17 Oct 2024 19:34:30 +0000
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e%4]) with mapi id 15.20.8069.019; Thu, 17 Oct 2024
- 19:34:30 +0000
-References: <20240925232425.2763385-2-ankur.a.arora@oracle.com>
- <Zw5aPAuVi5sxdN5-@arm.com>
- <086081ed-e2a8-508d-863c-21f2ff7c5490@gentwo.org>
- <Zw6dZ7HxvcHJaDgm@arm.com>
- <1e56e83e-83b3-d4fd-67a8-0bc89f3e3d20@gentwo.org>
- <Zw6o_OyhzYd6hfjZ@arm.com> <87jze9rq15.fsf@oracle.com>
- <95ba9d4a-b90c-c8e8-57f7-31d82722f39e@gentwo.org>
- <Zw-Nb-o76JeHw30G@arm.com>
- <53bf468b-1616-3915-f5bc-aa29130b672d@gentwo.org>
- <ZxFUJ05EYumCUUY3@arm.com>
-User-agent: mu4e 1.4.10; emacs 27.2
-From: Ankur Arora <ankur.a.arora@oracle.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
-        Ankur Arora
- <ankur.a.arora@oracle.com>, linux-pm@vger.kernel.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, will@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com,
-        wanpengli@tencent.com, vkuznets@redhat.com, rafael@kernel.org,
-        daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de,
-        lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com,
-        mtosatti@redhat.com, sudeep.holla@arm.com, misono.tomohiro@fujitsu.com,
-        maobibo@loongson.cn, joao.m.martins@oracle.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 01/11] cpuidle/poll_state: poll via
- smp_cond_load_relaxed()
-In-reply-to: <ZxFUJ05EYumCUUY3@arm.com>
-Date: Thu, 17 Oct 2024 12:34:29 -0700
-Message-ID: <87r08eo75m.fsf@oracle.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0117.namprd04.prod.outlook.com
- (2603:10b6:303:83::32) To CO6PR10MB5409.namprd10.prod.outlook.com
- (2603:10b6:5:357::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1CE1DE4D3
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 19:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729193702; cv=none; b=tPS/g0DNAaIiZks6dof6SERnUWU9UlohTvbqmhvpS77VM792S0n2oFun15lovTQKDUKlKrYdwUFkdGbOUlb/UlP75z4yoEX7oV5/EuCt56lDzaPgPlNwxuOETspwQbh61SyMOIdq2W8rk6Nz6CkWqQuaMhGimpX2vmTkAOwN3Y8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729193702; c=relaxed/simple;
+	bh=sn+2P/tA5O6yXBIKkoQrUX8/FHV+cf5yzeqY8ZICpqo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NRcmKzIBlcPqBdFSyw9u2rBp4aoxxZbO9wmZQrL+MmZFDLB6Qq+KWNiuTrily3AhyFwWKhwlM2YoPC41b8NKUvAXeyvgIPAC0UnrZcNzReK8F8aIBKx4d4QXVzE63z28c64lXIZgDP7xK/Cic+CIjVPcODqmomZ+9LSnD/UHjOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=EiLiqXY9; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
+	by cmsmtp with ESMTPS
+	id 1TcptC120Vpzp1WGqtJZ2m; Thu, 17 Oct 2024 19:34:53 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 1WGpt0KxvNH2w1WGptdCmc; Thu, 17 Oct 2024 19:34:52 +0000
+X-Authority-Analysis: v=2.4 cv=a8E291SF c=1 sm=1 tr=0 ts=671166dc
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=xNf9USuDAAAA:8
+ a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=XsbjqL5OE-XFCOJEq9cA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
+	Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Q3SAUjlmmjdb7sJ8Uirzeafr8zGxoG/DRwEZgVzyteU=; b=EiLiqXY9BHgH+dMPgMXWnO3qmG
+	khoy+Glc5dRVRiuSLVg3ytyj3wr348Bnu1ZzrvvORZyDYAkbeuwIYyPoETupfNOYTffNN29iMzlC6
+	0xrVTC2R0uMskN0uOZDOOOeDASVy/PYmwkbY+fFmfaPx5SPfOnAf05PSoz0TgdOfle8gVsMSWEJWP
+	IjwbD+DPw8Xcx/1JlnU2RkVdIF20JqQXj1bpRjZoiZ5w2c48WO2WJCqrpg/aCr96ETFRv3GXj8An6
+	toj6qlmTn63f8sKlA3IgE+bazGCSqe98CmykqHUT8P0aGfmw9vHdlNSHS6s1zdCEkA/cil2rUu9px
+	IhUMjeYA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:48484 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1t1WGp-003J7Q-0M;
+	Thu, 17 Oct 2024 13:34:51 -0600
+Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when
+ possible
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Ben Hutchings <ben@decadent.org.uk>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-5-masahiroy@kernel.org>
+ <b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net> <ZxFkXyfs0jO2QzBv@fjasle.eu>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <8e7802cc-7d76-6929-cb6e-cefc020dd8e2@w6rz.net>
+Date: Thu, 17 Oct 2024 12:34:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS0PR10MB7126:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7aba2c36-18d3-46c2-30b6-08dceee2b85e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sGBkh6Ep3bJVRVMIlkMKBpF3hfz1NhnxilH4PEAg/ulWVH/uSsGaeUb19mdD?=
- =?us-ascii?Q?NTulkI7vzllxYTTBRagNmlTxM4wOPazltybLMXrRCBgEu6RgU19dJ9m/rAgz?=
- =?us-ascii?Q?lNYn/10PIPVnSvCX10Y7zHU0LGAW9aVUFQ792b86h9LDybzBm5ts7ViKRjEI?=
- =?us-ascii?Q?ioyadC/6R+kdaLY9eHjgcNKLB+mgHX4Q6tzTgrWVWCpQmeYIIuA6PpScTlfw?=
- =?us-ascii?Q?y3YZb29r2lC3yAES9uv4RTn8kMibcA9iysdyR2cP4Vk8WjR+g6U9LMXqqHCK?=
- =?us-ascii?Q?m4EgQz51B1i+Tf1EwApSejm9OT3qquInBMeUVUUO2YJmYB9kE6QqcTLjKvlN?=
- =?us-ascii?Q?pCttFM9cphewcluV0YMKd65tOwPTYDvBKnqKbmmtuoSxNSoCOq/HeMjAU+Km?=
- =?us-ascii?Q?45nYpEklcU1NcknJGCbw66/MEzID216SH7T7cQfpk45t63J3UuckMDD4MF6e?=
- =?us-ascii?Q?Klhiqfh1cpsYS/3K9Ok7llrRwNFQFxyUF6QgkrAEg/jLbiSxlPnqI5OZ287x?=
- =?us-ascii?Q?WdElCUWQUoHMHnQV8+mF2LsvDWOAUXOml++SeT3UOhgC5QYqOLQjROTfYGM/?=
- =?us-ascii?Q?Bnx8QdEumkOwtsJfMFCClTzJRKB/ImRb0KXJeQz+O791iuAwzJGz9nU3odo4?=
- =?us-ascii?Q?TqzfQETZRC37QZ5Sfncp1WMRMP25cQbT3x4Cl/PlqO8Z9r7FwiXCA4e4ZEcF?=
- =?us-ascii?Q?/9eDbXDYFN4PFrZVcKiPesEkliqGzRgQa/ZnitZb9l3RBz0JoDdiETbvR2QD?=
- =?us-ascii?Q?fE3Kx+MRSV/odIHJacFurf8Lep7NrbIVjzWMJOw1RnqEuHiXikUHLqu19aIi?=
- =?us-ascii?Q?20tOmQcFd4IbpztuYy5qYhO9pgqyqAhTnfRa/OEyiXFsYCnV4meoEkIqbj/e?=
- =?us-ascii?Q?rT850tePTwMgqg3bLrhtlNPd0bxpUaA5yDHUv+qOYbU/AG66c8QJZ8N6Te5Q?=
- =?us-ascii?Q?AK3caOzUwZ+SYi5ogSM7j94S4V6ZpsX6uhFWvORPED+Ks0kFZyoeRfZ0s17j?=
- =?us-ascii?Q?qz6aJgvS/EQNH+JQAAwNeed1F45TzPazV3e37vm701pTR6Ztd+SX/Kt5bBhN?=
- =?us-ascii?Q?frUx055voCG+Kdy+hnQ8nrkT+KM36BdnBiXMdiCKWMcunHAvnlASbEHSUFro?=
- =?us-ascii?Q?Ekkj51xn/d44krUFbl5+hzxd5wx721Ue2eYArx6oLtL2ATRfuoydD+iWuO5a?=
- =?us-ascii?Q?9GWYkBwGAiPoSyDM/OpqK++4Hxhxq9tNtIQ5Xs3PMNzDsK8R7MVVXjFJ4fKv?=
- =?us-ascii?Q?qFK+zzHlFVXUUGqeQKyADDGkpVVzz8jHq/yLPVDT2P05VBX+4ZclpItWvqqJ?=
- =?us-ascii?Q?Z8GvvrHryODSj24c3VyJMDk/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6GVC79yJHzj8sY8T0a4/as+lSFzBAf+2i/cZu/JP0To7/N0Jf/eVMcVu7sqk?=
- =?us-ascii?Q?0n6MiX+VbrjL3/WQfbbX3euLnZlZoSs0H8Ljlgo/c/TCe5a2V/icOnvxFn0W?=
- =?us-ascii?Q?vYE690Au++L74O+cVWdz8q/VPN1bBCVpXziQphHKGsjRjxVDbduQnvEV5Wfp?=
- =?us-ascii?Q?olHTR08hM7W5uex9wpPkgrVMb0LyeV4nKLDFYynD820I9PqtdjCzXmfUhPFC?=
- =?us-ascii?Q?ISND3QzfgRcQTTtX7L7n/UuIYMOA2VaX8GLQHfwuKUavbVclKMG7heym+0zj?=
- =?us-ascii?Q?0N56mnlgyrBkNjIVV/ycLveNXJqGPci/L17aeiTjAR8RzyB9N+kyRiGVMQE1?=
- =?us-ascii?Q?giTUlq1MSbZ4jyaWj53AeHVPMlbC0SOaKWlMy4knTY42RV8rvn+ej21Cf+dW?=
- =?us-ascii?Q?tR7vlUxOP8a3rC+KxbeptaJ9tP6Mi0vnAewljKmAEYJJMxmLN/9kUPebdATe?=
- =?us-ascii?Q?EazK9oIOJgeTyRAG1FuNYKav4kK98THpLcR9Tz+ofeZc+FDBBgRLlgc91SWE?=
- =?us-ascii?Q?wKvuqxfaR357K35MPLMdBtttyBxCTdJKleBYawQEyepLKyCnsJZsLfGTGKS1?=
- =?us-ascii?Q?hu879kSLSFwRiXiK4Dq6geCr+HyejpmDgInB8pWnzg4YK08zLl6rqpAAXYRo?=
- =?us-ascii?Q?4BizuH/O0dX4RX04uBM2+RwMBtwa0tgB4h6jAr9WrDmuwzG1nCLSKOei/o8I?=
- =?us-ascii?Q?zrMn11HZKyTOFSkrWwhu7cVciYXt8LTc6+iZR0IEI4pzHsQkhtVlxdgfhtMj?=
- =?us-ascii?Q?ypK6GvbUy9wJUpNEOdDxGoLggjSGpkTqmQ4pc3xWgj6wbsqzGSXYoWszVH+m?=
- =?us-ascii?Q?Em7P/PcZBAnpmtPATAJZrECX8/bJT8Meux3+qx9xlwMqMngYW8M41tgZgBRg?=
- =?us-ascii?Q?TJ3Y474igadnoZkicSb6qq4moJmQFnd2t2fE3hCgpxvdw/jvPcMuMXX2vtpI?=
- =?us-ascii?Q?Kaex2gTMK1GoCChUPlbnnzGadrf/ZcmXuOjgFN18a0NurLNzrSoD7Sxw8J9m?=
- =?us-ascii?Q?ASHpbpILouCG5VuDMb2tBXeTkGPvS/QvEchfGi1pInfJ4HDIE5UbhJD3CLv2?=
- =?us-ascii?Q?YRgq/IaUuoD70lzW3QezErhndezen/ivi+IyyCjJDdlKpnypxOK5V6yShjJ5?=
- =?us-ascii?Q?bgfAmIZsnUs6ZmRGu/dnaatTohcFd8wiNxHD/qyX24Gd4ZHzap7h8XN6nv3Z?=
- =?us-ascii?Q?vKIKFKUmJ2DUK1+mqqdSoNp90ogDDx49tj+3szp8YuQUKPj8HA7cdNNlekZZ?=
- =?us-ascii?Q?NcG1C/VWI57H8RfblbCiWqHnDYtmtN+CxhLw+Jlxm2nQnL2V1LXeWvpPen82?=
- =?us-ascii?Q?SaZRkj8tr7xz7ae3Sm3UpxOzDzxvFcFPDC3UPLngv0P5GxGoqflWY712s/yv?=
- =?us-ascii?Q?OdwtkndhJYNG4bllGP4eJoWcdm8MvX+tRgcG1P1eoBQDV+Low0WIxieEBYB6?=
- =?us-ascii?Q?BExrMKtxPF/xrtgPpc3XqZlhl1lc4YHTTJX3YZHcsGBPERjUr0oMXBqiY/Bz?=
- =?us-ascii?Q?+INaTj9O5PNFGAfQeOZhzyzQM+ALCDdIfxefaafuKckteoZBWgR1kY1rqwAD?=
- =?us-ascii?Q?8IxJ/lG/fXS5YwQxxqFcYd44GwoRR74aHWihmI3C?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	laT1LfWislH0LVMzsgciF7NFtD+nV8Oh4Kch18bTJgDvFnDzoAfvv+yDu4g6vONHAZ7DvnYrydWXh/txo82D+S1TOQCyZhcjnsESdDPsdCCVhtnOv+NkGDJF8hJvXxWiiiMEkkjZsEJPfMVmLFryh4vNXCeDFL3LeY5C8tn79NzqjZMZxfMqj9VVIRKdHkA3VsplmLsnVQK0TnHgvxVQdBGM5/heA/fFNLtE2rVLZCKNqXYPgGeFliz8HeYUCDpj187RLE3mcbGHASaum7TzdqAQaLoY5kvipoQLUV9V4N/WnTw4mYpHUzrFqtJGnswYf95DbFy0fgLkFZQ8SLr8pLFL5EuEKbk8B9nKAbdB+Y2CGAUX2qxTIS1r/BICuOK2WXgN8VHXLAVQ1+wrDksYwKfyT0O4o6ahO6cS1g7HHIMnXm0m3Vm9Ti1K7SrDarphTnLuS4cVGFjMZNgOvtG1pi9NaShcQ4h1Moajh/0tV76K9+jKsDei2aZBSIhQL7KinYOU3u54OFLscmKG9RhE9KBR4B34rA3A4A7K6bhZwEGMOBZDC8Wx/R3sDO/ea1DEYHmppkKBQX6hER6LsDy6mUieUdiqgofMLXmHDyafpco=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7aba2c36-18d3-46c2-30b6-08dceee2b85e
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2024 19:34:30.4860
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6eF89LWIfcPOno+xjUQ89f06y5yvZXpUBGkmjy0JZ1TnS9yT55qdfUisy83Qo7L968dA/0QOOkPbyZ/EKf5oUxVFtvPVvJv61LOawqJ1SNM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7126
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-17_22,2024-10-17_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 mlxscore=0
- mlxlogscore=737 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410170131
-X-Proofpoint-ORIG-GUID: v5h63TPFuabqAIjgh-0I5-NetN8AQBtL
-X-Proofpoint-GUID: v5h63TPFuabqAIjgh-0I5-NetN8AQBtL
+In-Reply-To: <ZxFkXyfs0jO2QzBv@fjasle.eu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1t1WGp-003J7Q-0M
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:48484
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfE/qs4EFbJIQHgEkHZQPSTzPTi54BoD4/EjOXdJWb3ZsxU4vTaUPSD6u6eldHKOGHMs1ONSFTcJdolyEV4g2fi/nUWLj28t23aHxo3dJEWcb56AvQrl+
+ aUQEx/xRapf1laVa6GgUTRQbnNgcYtIySO3+VMTXXyp5mXhnZkCQb/Iq1RKgY6EJs+O3vBH5nhhE9cRTYWow44yzrSOdw5VSjsM=
 
-
-Catalin Marinas <catalin.marinas@arm.com> writes:
-
-> On Thu, Oct 17, 2024 at 09:56:13AM -0700, Christoph Lameter (Ampere) wrote:
->> On Wed, 16 Oct 2024, Catalin Marinas wrote:
->> > The behaviour above is slightly different from the current poll_idle()
->> > implementation. The above is more like poll every timeout period rather
->> > than continuously poll until either the need_resched() condition is true
->> > _or_ the timeout expired. From Ankur's email, an IPI may not happen so
->> > we don't have any guarantee that WFET will wake up before the timeout.
->> > The only way for WFE/WFET to wake up on need_resched() is to use LDXR to
->> > arm the exclusive monitor. That's what smp_cond_load_relaxed() does.
+On 10/17/24 12:24 PM, Nicolas Schier wrote:
+> On Thu, Oct 17, 2024 at 07:45:57AM -0700 Ron Economos wrote:
+>> On 7/27/24 12:42 AM, Masahiro Yamada wrote:
+>>> A long standing issue in the upstream kernel packaging is that the
+>>> linux-headers package is not cross-compiled.
+>>>
+>>> For example, you can cross-build Debian packages for arm64 by running
+>>> the following command:
+>>>
+>>>     $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
+>>>
+>>> However, the generated linux-headers-*_arm64.deb is useless because the
+>>> host programs in it were built for your build machine architecture
+>>> (likely x86), not arm64.
+>>>
+>>> The Debian kernel maintains its own Makefiles to cross-compile host
+>>> tools without relying on Kbuild. [1]
+>>>
+>>> Instead of adding such full custom Makefiles, this commit adds a small
+>>> piece of code to cross-compile host programs located under the scripts/
+>>> directory.
+>>>
+>>> A straightforward solution is to pass HOSTCC=${CROSS_COMPILE}gcc, but it
+>>> would also cross-compile scripts/basic/fixdep, which needs to be native
+>>> to process the if_changed_dep macro. (This approach may work under some
+>>> circumstances; you can execute foreign architecture programs with the
+>>> help of binfmt_misc because Debian systems enable CONFIG_BINFMT_MISC,
+>>> but it would require installing QEMU and libc for that architecture.)
+>>>
+>>> A trick is to use the external module build (KBUILD_EXTMOD=), which
+>>> does not rebuild scripts/basic/fixdep. ${CC} needs to be able to link
+>>> userspace programs (CONFIG_CC_CAN_LINK=y).
+>>>
+>>> There are known limitations:
+>>>
+>>>    - GCC plugins
+>>>
+>>>      It would possible to rebuild GCC plugins for the target architecture
+>>>      by passing HOSTCXX=${CROSS_COMPILE}g++ with necessary packages
+>>>      installed, but gcc on the installed system emits
+>>>      "cc1: error: incompatible gcc/plugin versions". I did not find a
+>>>      solution for this because 'gcc' on a foreign architecture is a
+>>>      different compiler after all.
+>>>
+>>>    - objtool and resolve_btfids
+>>>
+>>>      These are built by the tools build system. They are not covered by
+>>>      the current solution.
+>>>
+>>> I only tested this with Debian, but it should work for other package
+>>> systems as well.
+>>>
+>>> [1]: https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/debian/rules.real#L586
+>>>
+>>> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>>> ---
+>>>
+>>>    scripts/package/install-extmod-build | 34 ++++++++++++++++++++++++++++
+>>>    1 file changed, 34 insertions(+)
+>>>
+>>> diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
+>>> index cc335945dfbc..0b56d3d7b48f 100755
+>>> --- a/scripts/package/install-extmod-build
+>>> +++ b/scripts/package/install-extmod-build
+>>> @@ -43,4 +43,38 @@ mkdir -p "${destdir}"
+>>>    	fi
+>>>    } | tar -c -f - -T - | tar -xf - -C "${destdir}"
+>>> +# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebuild host
+>>> +# programs using ${CC}. This assumes CC=${CROSS_COMPILE}gcc, which is usually
+>>> +# the case for package building. It does not cross-compile when CC=clang.
+>>> +#
+>>> +# This caters to host programs that participate in Kbuild. objtool and
+>>> +# resolve_btfids are out of scope.
+>>> +if [ "${CC}" != "${HOSTCC}" ] && is_enabled CONFIG_CC_CAN_LINK; then
+>>> +	echo "Rebuilding host programs with ${CC}..."
+>>> +
+>>> +	cat <<-'EOF' >  "${destdir}/Kbuild"
+>>> +	subdir-y := scripts
+>>> +	EOF
+>>> +
+>>> +	# HOSTCXX is not overridden. The C++ compiler is used to build:
+>>> +	# - scripts/kconfig/qconf, which is unneeded for external module builds
+>>> +	# - GCC plugins, which will not work on the installed system even with
+>>> +	#   being rebuilt.
+>>> +	#
+>>> +	# Use the single-target build to avoid the modpost invocation, which
+>>> +	# would overwrite Module.symvers.
+>>> +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+>>> +
+>>> +	cat <<-'EOF' >  "${destdir}/scripts/Kbuild"
+>>> +	subdir-y := basic
+>>> +	hostprogs-always-y := mod/modpost
+>>> +	mod/modpost-objs := $(addprefix mod/, modpost.o file2alias.o sumversion.o symsearch.o)
+>>> +	EOF
+>>> +
+>>> +	# Run once again to rebuild scripts/basic/ and scripts/mod/modpost.
+>>> +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
+>>> +
+>>> +	rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
+>>> +fi
+>>> +
+>>>    find "${destdir}" \( -name '.*.cmd' -o -name '*.o' \) -delete
+>> This patch causes a build error when cross-compiling for RISC-V. I'm using
+>> the cross-compiler from https://github.com/riscv-collab/riscv-gnu-toolchain.
+>> When trying to build .debs with:
 >>
->> Sorry no. The IPI will cause the WFE to continue immediately and not wait
->> till the end of the timeout period.
+>> make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1
+>> "KCFLAGS=-mtune=sifive-7-series" LOCALVERSION= bindeb-pkg
+>>
+>> I get the following error:
+>>
+>> Rebuilding host programs with riscv64-unknown-linux-gnu-gcc...
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms.o
+>>    YACC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.[ch]
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.o
+>>    LEX debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.c
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.o
+>>    HOSTLD debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/genheaders/genheaders
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/mdp/mdp
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/kallsyms
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sorttable
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/asn1_compiler
+>>    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file
+>>
+>> debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file.c:25:10:
+>> fatal error: openssl/opensslv.h: No such file or directory
+>>     25 | #include <openssl/opensslv.h>
+>>        |          ^~~~~~~~~~~~~~~~~~~~
+>> compilation terminated.
+> I guess you have openssl/opensslv.h available on your system, do you?  (In
+> Debian/Ubuntu package libssl-dev or similar)
 >
-> *If* there is an IPI. The scheduler is not really my area but some
-> functions like wake_up_idle_cpu() seem to elide the IPI if
-> TIF_NR_POLLING is set.
+> Can you natively build a kernel with a similar kernel config?
 >
-> But even if we had an IPI, it still feels like abusing the semantics of
-> smp_cond_load_relaxed() when relying on it to increment a variable in
-> the condition check as a result of some unrelated wake-up event. This
-> API is meant to wait for a condition on a single variable. It cannot
-> wait on multiple variables and especially not one it updates itself
-> (even if it happens to work on arm64 under certain conditions).
+> Kind regards,
+> Nicolas
 
-Yeah that makes sense. smp_cond_load_relaxed() uses two separate
-side-effects to make sure things work: the event-stream and the
-increment in the conditional.
+Yes, I have /usr/include/openssl/opensslv.h on my system. But that's the 
+x86 version. The cross compiler can't use that.
 
-I do want to thresh out smp_cond_load_timeout() a bit more but let
-me reply to your other mail for that.
+A native build works fine.
 
-> My strong preference would be to revive the smp_cond_load_timeout()
-> proposal from Ankur earlier in the year.
+Ron
 
-Ack that.
 
---
-ankur
 
