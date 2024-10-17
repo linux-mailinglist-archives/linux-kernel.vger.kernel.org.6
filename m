@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-369145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-369138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2EA9A196D
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1311D9A195E
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 05:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EBC1F22B79
-	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C79285749
+	for <lists+linux-kernel@lfdr.de>; Thu, 17 Oct 2024 03:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A7B16BE0D;
-	Thu, 17 Oct 2024 03:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59887E575;
+	Thu, 17 Oct 2024 03:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="e/OX4j3l"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GeiWSmCv"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A717E575
-	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D51941C6C
+	for <linux-kernel@vger.kernel.org>; Thu, 17 Oct 2024 03:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729136536; cv=none; b=gibaQ6vQRBQ+6Vh2Iq7hc39OXS/b/rTRwz/AAhaUpF+r8lXWtyBSqCnJCylg2r1JhhnkR4mrD1GAAFCucHi7FGwllbmTQZPqDMWWnQwEADkHjy3HJm/DcGuj3MnXgGYHopBKrpm8eNciRJ8QOvOWg89pPR6oQTzl8dajzMa7yu0=
+	t=1729136406; cv=none; b=ekxOZKKxikfwxVy6I6aBfMG0Uy3YXDqoJjCL3KRWrIn3Fty3SrqXR2nfbuozuo+OulM2ameSevECLVV7n0ijr35fG/ltKNcVv4qE1PYVECDrvivEaFxIy0mW7bATQjU2hmECu770pHaHkLMOcuyUofA4TzJYmyvA6vncDT3a6Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729136536; c=relaxed/simple;
-	bh=1A4VyPidRPzjffgEHunRjqNWTKRofBYCMgXWPZ31zPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GGDDJ/zaxiH6ot/iSHegQI7CVL8+8SsLmswZy4/QXfXBIwj1CICUpLu6qeIIT383O7f7H8La6ovTyvKON1lBdNuCJGmymEWlTthNa3XhfTnRVp/LVndwT9rS2Nk4mqHy6/AJlwct7AgO4qxZeMIzuRc2XsnWbQLsbAMztB1KiJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=e/OX4j3l; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1729136462;
-	bh=RC2PbTe+FDm7zLc+8APOYm4+AzjmOpO3efPzB4XXvWM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=e/OX4j3lb122VzmkBRoA4OfJOBK1O2/aYUBoBuIFwiCehFduumxPQoY0qzRiP8Mrx
-	 cGCiCDqqf5pKsnWGXp0RnyvkU+4PmEqqEgVolJlXxlJO7ubVluv8bH7WAUP0JKYdyV
-	 QebD3XsLrobX1mwHzl6IVhULHuGhUaFa6oBFVkao=
-X-QQ-mid: bizesmtpsz5t1729136426txbi37g
-X-QQ-Originating-IP: 7TxsSelKf0dMgeMEChKRtZqHq7GfN6ly+pDP2DMneNw=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 17 Oct 2024 11:40:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4008574617543499355
-From: WangYuli <wangyuli@uniontech.com>
-To: helen.koike@collabora.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	wangyuli@uniontech.com,
-	david.heidelberg@collabora.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Subject: [RESEND. PATCH 5/5] drm/ci: Upgrade certifi requirement to 2024.07.04
-Date: Thu, 17 Oct 2024 11:39:52 +0800
-Message-ID: <DDEA395AF9015F5F+20241017034004.113456-5-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241017034004.113456-1-wangyuli@uniontech.com>
-References: <20241017034004.113456-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1729136406; c=relaxed/simple;
+	bh=V7VGbicfm4qmKIZnTqZrTUgqnZUd5lNs4C/4Y2ZN+30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WHMn41iJuIWwgwF7ijSxbbDTX+vg5CGlDKRS10DrrP8nNOfiuZvFmC/zyvziyu++oBgK/kkr39LGFUbezfBaK3y0mcrRjdfos/FkYwCk67bf+hPpVEkhASSyTdLDBuLM6c7UutUo1sNi4kR6BhMSrxlfA7Dm95OEmWEAt/5QmXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GeiWSmCv; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729136394; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=BEdFcsWdIAk9ivYlkVbjLUq7w2ocbRx/r+bMp0elD6k=;
+	b=GeiWSmCvsUtwAUIeVYTJ3JGFdQAz9WDsUdrBi27khZkZT4RI59TsPYHj/45Vr1hl+HQ2eR5YRIJVLz6FdFp5kwOo71jq8oNoHgBlB0ddtcFQPLLeBEITTgpggNJN5uvKOZx7/tju6Yk1w6X/s0T4WKxhRqJUMsBewLFQfKQdVcY=
+Received: from 30.221.129.137(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WHJR1ca_1729136393 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Oct 2024 11:39:54 +0800
+Message-ID: <e5843bc0-4157-4bbb-908d-2997e95e6007@linux.alibaba.com>
+Date: Thu, 17 Oct 2024 11:39:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Nwz8Cs33/Lpr8t5cDPma9YzNfP0jHpxsqyP3CJmidkZkevrV5JdfSJIj
-	V6GQxc4uN0bqtGzZqaCXoj6esyUm4I6OVAxCnvLIHQxkqF40uvMyXluGBtrnJZXiMhNL858
-	mEQN4ABmz73KnOOw8it8buUYBSU9cAq3fXP3NQbA7FdKoqBg1pcx7t7DicK0AUBdz+rJmaw
-	sJurKDxljBfHWQwCQi+zCOhypzW9XBsZ5vlM2/D24VIA+lsQRFfZPABN5V8Z5j6LnY72eMF
-	hgqmqJa+YkUU/JZBCEg16WcA8q3DmDYCtCCKljmlp3B5lEjgghsTrTiaa5jzlCemgK92nc6
-	YUbdnoIcDQE3cFMDkU/ZRYe0oDSVADZt5kEnJQ9YIurhiJ1EETpdWLNC7VwMmzb//dQ8vgt
-	zPacKmxPbyFg604ZIdVUUB3c1ZK4qOv4MT475ujA2gjcKMhswjG9W4qoqijHryqFUCrCLmq
-	M1n0lJi9k22KxstA0waXdA5Bts8TVihdD0eFf72Hm+IfAgXaaNtgZq4555d642rIkssvxk5
-	3cTfgCxiZPptoMArNCYuYZCK0j8rue2llg9+EDF0ay0moLuZDz/2dFCf6miwR4tIQFvOkwS
-	VrEZEuZWcX9feYr/ilX74fOkxW0zWS8Ff2epuWQyHhzmhY+6c+K0zBRb7SLDxodU7L/26pt
-	hbBE7dFc1RldUrVunTnSsWFfaOFWf6olSz83XLIxaQx5NtRjjhuLlpNRHLhyy0joy08dkje
-	Ql+/RcVmhl/rnseeBUdmfPjrAes8O2veCPuCH2l223INV9UUxKvfmiWb97+B1QA9eRwCkCl
-	HEyZVxNObUoUHZqLSW7JXoj2dWbxFO7OPjgm323FHyvzAQgWl8iQVV62cGkeZzOQ7cJ6NUA
-	HiOz+4BiKE0rbBhXuto4nyLpm1qkwFJL/VX/MyI0OIN2E9MM1sVupENJFwpVPzAeLvjypEt
-	4tLQITgwQ2AooK9OPGufnA5a9G/6iQ4R4D35duWV0NyRglrMVDzPCJMZ+EWxXTnTWOElwlC
-	TwKHT9wilZboep3ghJIOjesObbuO8=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] erofs: using macro instead of definition of log
+ functions
+To: Gou Hao <gouhao@uniontech.com>, xiang@kernel.org, chao@kernel.org
+Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ gouhaojake@163.com
+References: <20241016152430.3456-1-gouhao@uniontech.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241016152430.3456-1-gouhao@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-GitHub Dependabot has issued the following alert:
+Hi Hao,
 
-"build(deps): bump certifi from 2023.7.22 to 2024.7.4 in
- /drivers/gpu/drm/ci/xfails.
+On 2024/10/16 23:24, Gou Hao wrote:
+> No functional change intended.
+> 
+> Signed-off-by: Gou Hao <gouhao@uniontech.com>
+> ---
+>   fs/erofs/super.c | 51 ++++++++++++++++++------------------------------
+>   1 file changed, 19 insertions(+), 32 deletions(-)
+> 
+> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+> index 666873f745da..b04f888c8123 100644
+> --- a/fs/erofs/super.c
+> +++ b/fs/erofs/super.c
+> @@ -18,39 +18,26 @@
+>   
+>   static struct kmem_cache *erofs_inode_cachep __read_mostly;
+>   
+> -void _erofs_err(struct super_block *sb, const char *func, const char *fmt, ...)
+> -{
+> -	struct va_format vaf;
+> -	va_list args;
+> -
+> -	va_start(args, fmt);
+> -
+> -	vaf.fmt = fmt;
+> -	vaf.va = &args;
+> -
+> -	if (sb)
+> -		pr_err("(device %s): %s: %pV", sb->s_id, func, &vaf);
+> -	else
+> -		pr_err("%s: %pV", func, &vaf);
+> -	va_end(args);
+> -}
+> -
+> -void _erofs_info(struct super_block *sb, const char *func, const char *fmt, ...)
+> -{
+> -	struct va_format vaf;
+> -	va_list args;
+> -
+> -	va_start(args, fmt);
+> -
+> -	vaf.fmt = fmt;
+> -	vaf.va = &args;
+> +#define _erofs_log_def(name) \
+> +	void _erofs_##name(struct super_block *sb, const char *func, const char *fmt, ...) \
+> +	{ \
+> +		struct va_format vaf; \
+> +		va_list args; \
+> +		\
+> +		va_start(args, (fmt)); \
+> +		\
+> +		vaf.fmt = (fmt); \
+> +		vaf.va = &args; \
+> +		\
+> +		if ((sb)) \
+> +			pr_##name("(device %s): %s: %pV", (sb)->s_id, (func), &vaf); \
+> +		else \
+> +			pr_##name("%s: %pV", (func), &vaf); \
+> +		va_end(args); \
+> +	}
 
- Certifi 2024.07.04 removes root certificates from "GLOBALTRUST"
- from the root store. These are in the process of being removed from
- Mozilla's trust store.
+Thanks for the patch!
 
- GLOBALTRUST's root certificates are being removed pursuant to an
- investigation which identified "long-running and unresolved compliance
- issues".
+Although code simplicity is quite important for EROFS, but
+I'm not sure introducing unnecessary macro definitions (which
+can be avoided) is better for code readability.
 
- Severity:          Low
- CVE ID: CVE-2024-39689"
+I wonder if we can put this into another way, like the current
+_btrfs_printk() and _f2fs_printk() if we really need to work
+on this.
 
-To avoid disturbing everyone with the kernel repo hosted on GitHub,
-I suggest we upgrade our python dependencies once again to appease
-GitHub Dependabot.
-
-Link: https://github.com/dependabot
-Link: https://groups.google.com/a/mozilla.org/g/dev-security-policy/c/XpknYMPO8dI
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/gpu/drm/ci/xfails/requirements.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/ci/xfails/requirements.txt b/drivers/gpu/drm/ci/xfails/requirements.txt
-index 8b2b1fa16614..4f7ac688d448 100644
---- a/drivers/gpu/drm/ci/xfails/requirements.txt
-+++ b/drivers/gpu/drm/ci/xfails/requirements.txt
-@@ -2,7 +2,7 @@ git+https://gitlab.freedesktop.org/gfx-ci/ci-collate@09e7142715c16f54344ddf97013
- termcolor==2.3.0
- 
- # ci-collate dependencies
--certifi==2023.7.22
-+certifi==2024.07.04
- charset-normalizer==3.2.0
- idna==3.7
- pip==23.3
--- 
-2.45.2
-
+Thanks,
+Gao Xiang
 
